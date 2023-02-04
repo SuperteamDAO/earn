@@ -12,7 +12,6 @@ export const ConnectWallet = () => {
   const onConnectWallet = async (wallet: SolanaWallet) => {
     try {
       await wallet.adapter.connect();
-
       select(wallet.adapter.name);
     } catch (e) {
       toast.error('Wallet not found');
@@ -23,7 +22,7 @@ export const ConnectWallet = () => {
       <Grid
         mt={'0'}
         w="100%"
-        h="100vh"
+        h="120vh"
         placeContent="center"
         bgImage={`url('/assets/bg/banner.png')`}
         bgRepeat="no-repeat"
@@ -32,8 +31,8 @@ export const ConnectWallet = () => {
         fontFamily="Inter"
       >
         <Navbar />
-        {/* {!noNav && <Navbar showMenu={noMenu} />} */}
         <Flex
+          mt={20}
           padding="2.5rem 2.2rem"
           flexFlow="column"
           align="center"
