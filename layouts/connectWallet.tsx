@@ -1,11 +1,11 @@
 /* eslint-disable @next/next/no-img-element */
-import React from 'react';
 import { Box, Text, Grid, Flex, Image } from '@chakra-ui/react';
 import {
   useWallet,
   Wallet as SolanaWallet,
 } from '@solana/wallet-adapter-react';
 import { toast } from 'react-hot-toast';
+import { Navbar } from '../components/navbar/navbar';
 
 export const ConnectWallet = () => {
   const { wallets, select } = useWallet();
@@ -31,20 +31,21 @@ export const ConnectWallet = () => {
         bgSize="cover"
         fontFamily="Inter"
       >
+        <Navbar />
         {/* {!noNav && <Navbar showMenu={noMenu} />} */}
         <Flex
           padding="2.5rem 2.2rem"
           flexFlow="column"
           align="center"
           justify="center"
-          w="34rem"
+          w="22rem"
           bg="white"
           border="1px solid #E2E8EF"
           boxShadow="0px 2px 4px rgba(56, 77, 110, 0.06)"
           borderRadius="1.6rem"
-          gap="2rem"
+          gap="1rem"
         >
-          <Box h="2.4rem" w="21.3rem" alignSelf="start">
+          <Box h="2rem" w="13rem" alignSelf="start">
             <img
               src="/assets/logo/logo.png"
               width="100%"
@@ -54,7 +55,7 @@ export const ConnectWallet = () => {
           </Box>
 
           <Text
-            fontSize="1.5rem"
+            fontSize="1rem"
             fontWeight={500}
             color="gray.400"
             paddingBottom="1rem"
@@ -73,11 +74,11 @@ export const ConnectWallet = () => {
               return (
                 <Flex
                   key={index}
-                  h="4.6rem"
+                  h="2.5rem"
                   align="center"
                   w="100%"
                   bg="gray.50"
-                  borderRadius="3.5rem"
+                  borderRadius="1rem"
                   cursor="pointer"
                   transition="200ms"
                   _hover={{
@@ -87,16 +88,22 @@ export const ConnectWallet = () => {
                   onClick={onConnectWallet.bind(null, wallet)}
                 >
                   <Flex gap="1rem" align="center">
-                    <Box w="2.5rem" h="2.5rem">
+                    <Box
+                      display={'flex'}
+                      justifyContent={'center'}
+                      alignItems={'center'}
+                      w="2rem"
+                      h="2rem"
+                    >
                       <Image
-                        width="100%"
-                        height="100%"
+                        width="70%"
+                        height="70%"
                         src={wallet.adapter.icon}
                         alt={`${wallet.adapter.name} Icon`}
                       />
                     </Box>
                     <Text
-                      fontSize="1.4rem"
+                      fontSize="1.1rem"
                       ml={2}
                       fontWeight={600}
                       color="gray.500"
