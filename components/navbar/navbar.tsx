@@ -19,25 +19,35 @@ import { createUser } from '../../utils/functions';
 import Avatar from 'boring-avatars';
 import { truncatedPublicKey } from '../../utils/helpers';
 import { MdOutlineKeyboardArrowDown } from 'react-icons/md';
+import { userStore } from '../../store/user';
 
 export const Navbar = () => {
+  const { setUserInfo } = userStore();
   const router = useRouter();
-  const { connected, publicKey } = useWallet();
+  const { connected, publicKey, wallet } = useWallet();
   useEffect(() => {
     const makeUser = async () => {
-      if (publicKey) {
+      console.log(publicKey, connected);
+
+      if (publicKey && connected) {
         const res = await createUser(publicKey.toBase58() as string);
-        console.log(res);
+        setUserInfo(res.data);
       }
     };
     makeUser();
-  }, [publicKey]);
+  }, [publicKey, connected]);
+  const onDisconnectWallet = async () => {
+    if (wallet == null) {
+      return;
+    }
+    await wallet.adapter.disconnect();
+  };
   return (
     <>
       <Container
         maxW={'full'}
         p={{ xs: 10, md: 0 }}
-        h={14}
+        h={12}
         position={'absolute'}
         zIndex={10}
         top={0}
@@ -50,14 +60,14 @@ export const Navbar = () => {
         }}
       >
         <Flex
+          px={6}
           align={'center'}
           justify={'space-between'}
           h={'full'}
-          maxW={['4xl', '5xl', '6xl', '7xl', '8xl']}
           mx="auto"
         >
           <Box cursor={'pointer'} onClick={() => router.push('/')}>
-            <Image src={'/assets/logo/logo.png'} alt={'logo'} />
+            <Image w={'12rem'} src={'/assets/logo/logo.png'} alt={'logo'} />
           </Box>
           <Box>
             {!connected ? (
@@ -107,6 +117,24 @@ export const Navbar = () => {
                     <MenuItem onClick={() => {}}>
                       <Text fontSize="0.9rem" color="gray.600">
                         View Profile
+                      </Text>
+                    </MenuItem>
+                    <MenuItem
+                      onClick={() => {
+                        router.push('/dashboard/team');
+                      }}
+                    >
+                      <Text fontSize="0.9rem" color="gray.600">
+                        Dashboard
+                      </Text>
+                    </MenuItem>
+                    <MenuItem
+                      onClick={() => {
+                        onDisconnectWallet();
+                      }}
+                    >
+                      <Text fontSize="0.9rem" color="gray.600">
+                        Disconnect
                       </Text>
                     </MenuItem>
                   </MenuList>

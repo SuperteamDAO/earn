@@ -1,8 +1,8 @@
 import { sponsorType } from './types';
 
 interface SponsorType {
-  id: string;
-  orgId: string;
+  id?: string;
+  orgId?: string;
   publickey: string;
   name: string;
   logo: string;
@@ -13,5 +13,6 @@ interface SponsorType {
   verified: boolean;
   type: sponsorType;
   email: string;
+  username: string;
 }
 export type { SponsorType };
