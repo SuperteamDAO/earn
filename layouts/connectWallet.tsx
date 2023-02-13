@@ -77,7 +77,7 @@ export const ConnectWallet = () => {
             w="100%"
             gap="1rem"
           >
-            <WalletMultiButton />
+            {/* <WalletMultiButton /> */}
             {wallets.map((wallet: SolanaWallet, index) => {
               return (
                 <>
