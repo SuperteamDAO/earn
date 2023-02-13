@@ -6,7 +6,8 @@
     "dev": "NODE_ENV=development next dev",
     "build": "next build",
     "start": "NODE_ENV=production next start",
-    "lint": "next lint"
+    "lint": "next lint",
+    "prepare": "husky install"
   },
   "dependencies": {
     "@chakra-ui/icons": "^2.0.17",
@@ -30,6 +31,7 @@
     "crypto-js": "^4.1.1",
     "degen": "^0.0.121",
     "framer-motion": "^8.5.2",
+    "husky": "^8.0.3",
     "immer": "^9.0.19",
     "next": "12.2.3",
     "react": "18.2.0",
