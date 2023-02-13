@@ -25,6 +25,7 @@ interface Bounties {
   bugBounty: string;
   orgId: string;
   winner: Winner[];
+  showTop: boolean;
 }
 interface Winner {
   id: string;
