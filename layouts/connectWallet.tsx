@@ -14,9 +14,9 @@ export const ConnectWallet = () => {
     try {
       console.log('con', wallet.readyState);
 
-      await wallet.adapter.connect();
       console.log('done');
       select(wallet.adapter.name);
+      // await connect();
 
       console.log(connected);
     } catch (e) {

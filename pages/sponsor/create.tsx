@@ -21,12 +21,25 @@ import { uploadToCloudinary } from '../../utils/upload';
 import { genrateOtp } from '../../utils/functions';
 import { useState } from 'react';
 import { SponsorType } from '../../interface/sponsor';
-import { genrateNanoid, genrateuuid } from '../../utils/helpers';
+import {
+  genrateCode,
+  genrateCodeLast,
+  genrateNanoid,
+  genrateuuid,
+} from '../../utils/helpers';
 import { ConnectWallet } from '../../layouts/connectWallet';
+interface Totp {
+  current: number;
+  last: number;
+}
 
 const CreateSponsor = () => {
   const { isOpen, onOpen, onClose } = useDisclosure();
   const [imageUrl, setImageUrl] = useState<string>('');
+  const [otp, setOtp] = useState<Totp>({
+    current: 0,
+    last: 0,
+  });
   const [sponsor, setSponsor] = useState<SponsorType>();
   const { publicKey, connected } = useWallet();
   const {
@@ -42,6 +55,7 @@ const CreateSponsor = () => {
           email={sponsor?.email as string}
           onClose={onClose}
           isOpen={isOpen}
+          totp={otp}
         />
       )}
       {!connected ? (
@@ -91,8 +105,20 @@ const CreateSponsor = () => {
                         orgId: genrateNanoid(),
                         id: genrateuuid(),
                       });
-                      const a = await genrateOtp('add');
+                      const a = await genrateOtp(
+                        publicKey?.toBase58() as string,
+                        e.sponsoremail
+                      );
                       console.log(a);
+
+                      const code = genrateCode(publicKey?.toBase58() as string);
+                      const codeLast = genrateCodeLast(
+                        publicKey?.toBase58() as string
+                      );
+                      setOtp({
+                        current: code,
+                        last: codeLast,
+                      });
                       onOpen();
                     })}
                     style={{ width: '100%' }}

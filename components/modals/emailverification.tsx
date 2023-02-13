@@ -13,10 +13,12 @@ import {
   PinInput,
   PinInputField,
   Text,
+  Toast,
   VStack,
 } from '@chakra-ui/react';
 import { useRouter } from 'next/router';
 import { useState } from 'react';
+import toast, { Toaster } from 'react-hot-toast';
 import { SponsorType } from '../../interface/sponsor';
 import { createSponsor } from '../../utils/functions';
 interface Props {
@@ -24,14 +26,21 @@ interface Props {
   isOpen: boolean;
   email: string;
   sponsor: SponsorType;
+  totp: Totp;
+}
+interface Totp {
+  current: number;
+  last: number;
 }
 export const Emailverification = ({
   onClose,
   isOpen,
   email,
   sponsor,
+  totp,
 }: Props) => {
   const [success, setSuccess] = useState<boolean>(false);
+  const [xpin, setXpin] = useState<string>('');
   const router = useRouter();
   return (
     <Modal isOpen={isOpen} onClose={onClose}>
@@ -96,7 +105,16 @@ export const Emailverification = ({
                 Enter the OTP sent on {email}
               </Text>
               <Box mt={3}>
-                <PinInput type="alphanumeric" mask manageFocus>
+                <PinInput
+                  onComplete={(e) => {
+                    setXpin(e);
+                  }}
+                  type="alphanumeric"
+                  mask
+                  manageFocus
+                >
+                  <PinInputField mx={2} />
+                  <PinInputField mx={2} />
                   <PinInputField mx={2} />
                   <PinInputField mx={2} />
                   <PinInputField mx={2} />
@@ -105,10 +123,18 @@ export const Emailverification = ({
               </Box>
               <Button
                 onClick={async () => {
-                  const a = await createSponsor(sponsor);
-                  console.log(a);
-                  if (a.data) {
-                    setSuccess(true);
+                  if (
+                    totp.current === Number(xpin) ||
+                    totp.last === Number(xpin)
+                  ) {
+                    toast.success('Success');
+                    const a = await createSponsor(sponsor);
+                    console.log(a);
+                    if (a.data) {
+                      setSuccess(true);
+                    }
+                  } else {
+                    toast.error('Wrong OTP');
                   }
                 }}
                 w={'full'}
@@ -118,6 +144,7 @@ export const Emailverification = ({
               >
                 Verify
               </Button>
+              <Toaster />
             </VStack>
           </ModalBody>
         )}

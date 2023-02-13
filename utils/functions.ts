@@ -22,10 +22,11 @@ export const createUser = async (publickey: string) => {
   }
 };
 
-export const genrateOtp = async (publicKey: string) => {
+export const genrateOtp = async (publicKey: string, email: string) => {
   try {
     const res = await axios.post(`${Backend_Url}/email/totp`, {
       publicKey,
+      email,
     });
     return res.headers.get;
   } catch (e) {
