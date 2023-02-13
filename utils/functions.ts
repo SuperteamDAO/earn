@@ -3,10 +3,7 @@ import { v4 as uuidV4 } from 'uuid';
 import { SponsorType } from '../interface/sponsor';
 import { SponsorStore } from '../store/sponsor';
 
-let Backend_Url = 'http://localhost:3001/api/v1';
-if (process.env.NODE_ENV === 'production') {
-  Backend_Url = '';
-}
+const Backend_Url = process.env.NEXT_PUBLIC_BACKEND_URL;
 
 export const createUser = async (publickey: string) => {
   const id = uuidV4();
