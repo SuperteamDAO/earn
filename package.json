@@ -39,6 +39,7 @@
     "react-hook-form": "^7.43.0",
     "react-hot-toast": "^2.4.0",
     "react-icons": "^4.7.1",
+    "react-select": "^5.7.0",
     "sass": "^1.57.1",
     "simple-zustand-devtools": "^1.1.0",
     "uuid": "^9.0.0",

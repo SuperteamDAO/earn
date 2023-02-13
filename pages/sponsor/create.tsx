@@ -28,6 +28,9 @@ import {
   genrateuuid,
 } from '../../utils/helpers';
 import { ConnectWallet } from '../../layouts/connectWallet';
+import Select from 'react-select';
+import makeAnimated from 'react-select/animated';
+import { IndustryList, MultiSelectOptions } from '../../constants';
 interface Totp {
   current: number;
   last: number;
@@ -36,6 +39,8 @@ interface Totp {
 const CreateSponsor = () => {
   const { isOpen, onOpen, onClose } = useDisclosure();
   const [imageUrl, setImageUrl] = useState<string>('');
+  const [industrys, setIndustry] = useState<MultiSelectOptions>();
+  const animatedComponents = makeAnimated();
   const [otp, setOtp] = useState<Totp>({
     current: 0,
     last: 0,
@@ -93,7 +98,7 @@ const CreateSponsor = () => {
                       setSponsor({
                         bio: e.bio,
                         email: e.sponsoremail,
-                        industry: e.industry,
+                        industry: JSON.stringify(industrys),
                         publickey: publicKey?.toBase58() as string,
                         verified: true,
                         name: e.sponsorname,
@@ -131,7 +136,7 @@ const CreateSponsor = () => {
                           fontSize={'15px'}
                           htmlFor={'sponsorname'}
                         >
-                          Sponsor Name
+                          Company Name
                         </FormLabel>
                         <Input
                           w={'18rem'}
@@ -196,27 +201,8 @@ const CreateSponsor = () => {
                         </FormErrorMessage>
                       </FormControl>
                     </Box>
-                    <VStack gap={2} my={3} align={'start'}>
-                      <Heading
-                        color={'gray.400'}
-                        fontWeight={600}
-                        fontSize={'15px'}
-                      >
-                        Add your logo
-                      </Heading>
-                      <HStack gap={5}>
-                        <MediaPicker
-                          onChange={async (e) => {
-                            const a = await uploadToCloudinary(e);
-                            setImageUrl(a);
-                          }}
-                          compact
-                          label="Choose or drag and drop media"
-                        />
-                      </HStack>
-                    </VStack>
-                    <Box my={6}>
-                      <FormControl isRequired>
+                    <HStack w={'full'} justify={'space-between'} my={6}>
+                      <FormControl w={'18rem'} isRequired>
                         <FormLabel
                           color={'gray.400'}
                           fontWeight={600}
@@ -239,31 +225,6 @@ const CreateSponsor = () => {
                           )}
                         </FormErrorMessage>
                       </FormControl>
-                    </Box>
-                    <HStack w={'full'} justify={'space-between'}>
-                      <FormControl w={'18rem'} isRequired>
-                        <FormLabel
-                          color={'gray.400'}
-                          fontWeight={600}
-                          fontSize={'15px'}
-                          htmlFor={'industry'}
-                        >
-                          Industry
-                        </FormLabel>
-                        <Input
-                          w={'18rem'}
-                          id="industry"
-                          placeholder="Pick a Industry"
-                          {...register('industry')}
-                        />
-                        <FormErrorMessage>
-                          {errors.industry ? (
-                            <>{errors.industry.message}</>
-                          ) : (
-                            <></>
-                          )}
-                        </FormErrorMessage>
-                      </FormControl>
                       <FormControl w={'18rem'} isRequired>
                         <FormLabel
                           color={'gray.400'}
@@ -271,7 +232,7 @@ const CreateSponsor = () => {
                           fontSize={'15px'}
                           htmlFor={'twitterHandle'}
                         >
-                          Project Twitter
+                          Company Tiwtter
                         </FormLabel>
                         <Input
                           id="twitterHandle"
@@ -287,6 +248,60 @@ const CreateSponsor = () => {
                         </FormErrorMessage>
                       </FormControl>
                     </HStack>
+                    <VStack gap={2} my={3} align={'start'}>
+                      <Heading
+                        color={'gray.400'}
+                        fontWeight={600}
+                        fontSize={'15px'}
+                      >
+                        Add your logo
+                      </Heading>
+                      <HStack gap={5}>
+                        <MediaPicker
+                          onChange={async (e) => {
+                            const a = await uploadToCloudinary(e);
+                            setImageUrl(a);
+                          }}
+                          compact
+                          label="Choose or drag and drop media"
+                        />
+                      </HStack>
+                    </VStack>
+
+                    <HStack w={'full'} justify={'space-between'}>
+                      <FormControl w={'full'} isRequired>
+                        <FormLabel
+                          color={'gray.400'}
+                          fontWeight={600}
+                          fontSize={'15px'}
+                          htmlFor={'industry'}
+                        >
+                          Industry
+                        </FormLabel>
+                        {/* <Input
+                          w={'18rem'}
+                          id="industry"
+                          placeholder="Pick a Industry"
+                          {...register('industry')}
+                        /> */}
+                        <Select
+                          closeMenuOnSelect={false}
+                          components={animatedComponents}
+                          isMulti
+                          options={IndustryList}
+                          onChange={(e) => {
+                            setIndustry(e as any);
+                          }}
+                        />
+                        <FormErrorMessage>
+                          {errors.industry ? (
+                            <>{errors.industry.message}</>
+                          ) : (
+                            <></>
+                          )}
+                        </FormErrorMessage>
+                      </FormControl>
+                    </HStack>
                     <Box my={6}>
                       <FormControl isRequired>
                         <FormLabel
@@ -295,7 +310,7 @@ const CreateSponsor = () => {
                           fontSize={'15px'}
                           htmlFor={'bio'}
                         >
-                          Short Bio
+                          Company Short Bio
                         </FormLabel>
                         <Input
                           w={'full'}
