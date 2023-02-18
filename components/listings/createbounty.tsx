@@ -24,6 +24,7 @@ import { useForm } from 'react-hook-form';
 import { tokenList, PrizeList } from '../../constants';
 import { Skill, SkillList, TalentSkillMap } from '../../interface/types';
 import { CreatebountyBasic } from './CreateBountyBasic';
+import { CreatebountyPayment } from './CreateBountyPayments';
 export interface BountyBasicType {
   title: string;
   // description: string;
@@ -32,13 +33,18 @@ export interface BountyBasicType {
   deadline: string;
   estimatedTime: string;
 }
-export const Createbounty = () => {
+interface Props {
+  steps: number;
+}
+export const Createbounty = ({ steps }: Props) => {
   // handles the info from basic form
   const [bountybasic, setBountyBasic] = useState<BountyBasicType | undefined>();
 
   return (
     <>
-      <CreatebountyBasic setbountyBasic={setBountyBasic} />
+      {steps === 2 && <CreatebountyBasic setbountyBasic={setBountyBasic} />}
+
+      {steps === 4 && <CreatebountyPayment />}
     </>
   );
 };
