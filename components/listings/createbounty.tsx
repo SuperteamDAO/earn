@@ -23,7 +23,22 @@ import React, { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { tokenList, PrizeList } from '../../constants';
 import { Skill, SkillList, TalentSkillMap } from '../../interface/types';
-
+import { CreatebountyBasic } from './CreateBountyBasic';
+export interface BountyBasicType {
+  title: string;
+  // description: string;
+  contact: string;
+  skills: string;
+  deadline: string;
+  estimatedTime: string;
+}
 export const Createbounty = () => {
-  return <div>createbounty</div>;
+  // handles the info from basic form
+  const [bountybasic, setBountyBasic] = useState<BountyBasicType | undefined>();
+
+  return (
+    <>
+      <CreatebountyBasic setbountyBasic={setBountyBasic} />
+    </>
+  );
 };

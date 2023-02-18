@@ -142,7 +142,7 @@ export const CreatebountyPayment = () => {
               isDisabled={prizes.length === 5 && true}
               bg={'transparent'}
               w="full"
-              border={'1px solid #cbd5e1 '}
+              border={'1px solid #e2e8f0'}
               onClick={() => {
                 setPrize([
                   ...prizes,

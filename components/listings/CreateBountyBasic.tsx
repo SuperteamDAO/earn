@@ -18,11 +18,14 @@ import {
   Tooltip,
   VStack,
 } from '@chakra-ui/react';
-import { useState } from 'react';
+import { Dispatch, SetStateAction, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { Skill, SkillList, TalentSkillMap } from '../../interface/types';
-
-export const CreatebountyBasic = () => {
+import { BountyBasicType } from './Createbounty';
+interface Props {
+  setbountyBasic: Dispatch<SetStateAction<BountyBasicType | undefined>>;
+}
+export const CreatebountyBasic = ({ setbountyBasic }: Props) => {
   const {
     formState: { errors },
     register,
@@ -39,7 +42,13 @@ export const CreatebountyBasic = () => {
       <VStack pt={7} align={'start'} w={'full'}>
         <form
           onSubmit={handleSubmit((e) => {
-            console.log(e, skills);
+            setbountyBasic({
+              title: e.title,
+              contact: e.handle,
+              deadline: e.deadline,
+              estimatedTime: e.time,
+              skills: '',
+            });
           })}
           style={{ width: '100%' }}
         >
@@ -306,9 +315,9 @@ export const CreatebountyBasic = () => {
                 Estimated Time to complete
               </FormLabel>
               <Input
-                id="twitterHandle"
+                id="time"
                 placeholder="Estimated Time to complete"
-                {...register('twitterHandle')}
+                {...register('time')}
               />
               <FormErrorMessage>
                 {errors.time ? <>{errors.time.message}</> : <></>}

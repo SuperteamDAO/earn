@@ -1,16 +1,24 @@
-import { Heading, Text, VStack } from '@chakra-ui/react';
-import React from 'react';
+import { Box, Flex, Heading, HStack, Text, VStack } from '@chakra-ui/react';
+import React, { Dispatch, SetStateAction } from 'react';
+import { Steps } from '../components/misc/steps';
 import { Navbar } from '../components/navbar/navbar';
-import { Step, Steps, useSteps } from 'chakra-ui-steps';
-const FormLayout = ({ steps, children }: { steps: any[]; children: any }) => {
-  const { nextStep, prevStep, setStep, activeStep } = useSteps({
-    initialStep: 2,
-  });
+
+interface StepsList {
+  label: string;
+  number: number;
+}
+interface Props {
+  children: any;
+  currentStep: number;
+  stepList: StepsList[];
+  setStep: Dispatch<SetStateAction<number>>;
+}
+const FormLayout = ({ children, currentStep, stepList, setStep }: Props) => {
   return (
     <>
       <VStack>
         <Navbar />
-        <VStack>
+        <VStack gap={10}>
           <VStack mt={20}>
             <Heading
               color={'#334254'}
@@ -29,7 +37,43 @@ const FormLayout = ({ steps, children }: { steps: any[]; children: any }) => {
               Start from Scratch or use our readymade templates to save time
             </Text>
           </VStack>
-
+          <HStack w="full">
+            {stepList.map((step) => {
+              return (
+                <>
+                  <Steps
+                    setStep={setStep}
+                    currentStep={currentStep}
+                    label={step.label}
+                    thisStep={step.number}
+                  />
+                  {step.number !== stepList.length && (
+                    <>
+                      <hr
+                        style={{
+                          width: '50%',
+                          outline:
+                            currentStep >= step.number
+                              ? '1px solid #6562FF'
+                              : '1px solid #CBD5E1',
+                          border: 'none',
+                        }}
+                      />
+                      {step.number === currentStep && (
+                        <hr
+                          style={{
+                            width: '50%',
+                            outline: '1px solid #CBD5E1',
+                            border: 'none',
+                          }}
+                        />
+                      )}
+                    </>
+                  )}
+                </>
+              );
+            })}
+          </HStack>
           {children}
         </VStack>
       </VStack>
