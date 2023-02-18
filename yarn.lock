@@ -3393,6 +3393,11 @@ cbor-sync@^1.0.4:
   resolved "https://registry.yarnpkg.com/cbor-sync/-/cbor-sync-1.0.4.tgz#5a11a1ab75c2a14d1af1b237fd84aa8c1593662f"
   integrity sha512-GWlXN4wiz0vdWWXBU71Dvc1q3aBo0HytqwAZnXF1wOwjqNnDWA1vZ1gDMFLlqohak31VQzmhiYfiCX5QSSfagA==
 
+chakra-ui-steps@^2.0.4:
+  version "2.0.4"
+  resolved "https://registry.yarnpkg.com/chakra-ui-steps/-/chakra-ui-steps-2.0.4.tgz#f846f0b1fafd2805424d113609174754de90f661"
+  integrity sha512-aImiPsw3hgqvfb9z3TVkt8WK32Hg0OOrJE5g/2Pt/1cA1Wqps2vDcWKShp8JZZQ1nyvNX3rxtrjPoDeRWdBO4A==
+
 chalk@2.4.2, chalk@^2.0.0:
   version "2.4.2"
   resolved "https://registry.yarnpkg.com/chalk/-/chalk-2.4.2.tgz#cd42541677a54333cf541a49108c1432b44c9424"

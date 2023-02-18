@@ -27,6 +27,7 @@
     "axios": "^1.3.2",
     "base32.js": "^0.1.0",
     "boring-avatars": "^1.7.0",
+    "chakra-ui-steps": "^2.0.4",
     "cloudinary": "^1.33.0",
     "crypto-js": "^4.1.1",
     "degen": "^0.0.121",
