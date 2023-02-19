@@ -2,8 +2,17 @@ import { Flex } from '@chakra-ui/react';
 import FormLayout from '../../layouts/FormLayout';
 import { Createbounty } from '../../components/listings/Createbounty';
 import { useState } from 'react';
-import { CreateJob } from '../../components/listings/jobs/createJob';
-
+import { CreateJob } from '../../components/listings/jobs/CreateJob';
+// import { Description } from '../../components/listings/description';
+import dynamic from 'next/dynamic';
+import { OutputData } from '@editorjs/editorjs';
+import Template from '../../components/listings/templates/template';
+const Description = dynamic(
+  () => import('../../components/listings/description'),
+  {
+    ssr: false,
+  }
+);
 const content = <Flex py={4}>jere</Flex>;
 
 const CreateListing = () => {
@@ -12,6 +21,7 @@ const CreateListing = () => {
   // Description - 3
   // payment form - 4
   const [steps, setSteps] = useState<number>(1);
+  const [editorData, setEditorData] = useState<OutputData | undefined>();
   return (
     <>
       <FormLayout
@@ -36,8 +46,14 @@ const CreateListing = () => {
           },
         ]}
       >
-        {/* <Createbounty steps={steps} /> */}
-        <CreateJob />
+        {steps === 1 && <Template setSteps={setSteps} />}
+        <Createbounty
+          editorData={editorData}
+          setEditorData={setEditorData}
+          setSteps={setSteps}
+          steps={steps}
+        />
+        {/* <CreateJob /> */}
       </FormLayout>
     </>
   );

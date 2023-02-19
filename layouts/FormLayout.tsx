@@ -16,9 +16,9 @@ interface Props {
 const FormLayout = ({ children, currentStep, stepList, setStep }: Props) => {
   return (
     <>
-      <VStack>
+      <VStack bg={currentStep !== 1 ? 'white' : '#F6FAFD'}>
         <Navbar />
-        <VStack gap={10}>
+        <VStack w={'80%'} gap={10}>
           <VStack mt={20}>
             <Heading
               color={'#334254'}
@@ -37,7 +37,7 @@ const FormLayout = ({ children, currentStep, stepList, setStep }: Props) => {
               Start from Scratch or use our readymade templates to save time
             </Text>
           </VStack>
-          <HStack w="full">
+          <HStack w="50%">
             {stepList.map((step) => {
               return (
                 <>

@@ -19,7 +19,7 @@ import {
   Tooltip,
   VStack,
 } from '@chakra-ui/react';
-import React, { useState } from 'react';
+import React, { Dispatch, SetStateAction, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { tokenList, PrizeList } from '../../constants';
 import { Skill, SkillList, TalentSkillMap } from '../../interface/types';
@@ -28,7 +28,10 @@ interface PrizeList {
   label: string;
   placeHolder: number;
 }
-export const CreatebountyPayment = () => {
+interface Props {
+  setSteps: Dispatch<SetStateAction<number>>;
+}
+export const CreatebountyPayment = ({ setSteps }: Props) => {
   const {
     formState: { errors },
     register,
@@ -43,7 +46,7 @@ export const CreatebountyPayment = () => {
   ]);
   return (
     <>
-      <VStack pb={10} color={'gray.500'} pt={7} align={'start'} w={'full'}>
+      <VStack pb={10} color={'gray.500'} pt={7} align={'start'} w={'2xl'}>
         <form onSubmit={handleSubmit((e) => {})} style={{ width: '100%' }}>
           <FormControl isRequired>
             <FormLabel>Select Token</FormLabel>

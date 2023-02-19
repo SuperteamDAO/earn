@@ -13,6 +13,7 @@ import {
   MenuButton,
   MenuItem,
   MenuList,
+  Select,
   Text,
   Textarea,
   Tooltip,
@@ -24,8 +25,9 @@ import { Skill, SkillList, TalentSkillMap } from '../../interface/types';
 import { BountyBasicType } from './Createbounty';
 interface Props {
   setbountyBasic: Dispatch<SetStateAction<BountyBasicType | undefined>>;
+  setSteps: Dispatch<SetStateAction<number>>;
 }
-export const CreatebountyBasic = ({ setbountyBasic }: Props) => {
+export const CreatebountyBasic = ({ setbountyBasic, setSteps }: Props) => {
   const {
     formState: { errors },
     register,
@@ -37,9 +39,19 @@ export const CreatebountyBasic = ({ setbountyBasic }: Props) => {
   );
   // holds the change in state
   const [skills, setSkills] = useState<string[]>([]);
+
+  // list for Time
+  const TimeList = [
+    '< 1 Week',
+    '< 1 Hour',
+    '< 1 Day',
+    '< 1 Month',
+    '< 1 Months',
+    '< 3 Months',
+  ];
   return (
     <>
-      <VStack pt={7} align={'start'} w={'full'}>
+      <VStack pt={7} align={'start'} w={'2xl'}>
         <form
           onSubmit={handleSubmit((e) => {
             setbountyBasic({
@@ -49,10 +61,11 @@ export const CreatebountyBasic = ({ setbountyBasic }: Props) => {
               estimatedTime: e.time,
               skills: '',
             });
+            setSteps(3);
           })}
           style={{ width: '100%' }}
         >
-          <FormControl w="full" isRequired>
+          <FormControl mb={5} w="full" isRequired>
             <Flex>
               <FormLabel
                 color={'gray.400'}
@@ -91,45 +104,7 @@ export const CreatebountyBasic = ({ setbountyBasic }: Props) => {
               {errors.title ? <>{errors.title.message}</> : <></>}
             </FormErrorMessage>
           </FormControl>
-          <FormControl my={6} w="full" isRequired>
-            <Flex>
-              <FormLabel
-                color={'gray.400'}
-                fontWeight={600}
-                fontSize={'15px'}
-                htmlFor={'description'}
-              >
-                Description
-              </FormLabel>
-              <Tooltip
-                placement="right-end"
-                fontSize="0.9rem"
-                padding="0.7rem"
-                bg="#6562FF"
-                color="white"
-                fontWeight={600}
-                borderRadius="0.5rem"
-                hasArrow
-                w="max"
-                label={`Who will respond to questions about the opportunity from your team?`}
-              >
-                <Image
-                  mt={-2}
-                  src={'/assets/icons/info-icon.svg'}
-                  alt={'Info Icon'}
-                />
-              </Tooltip>
-            </Flex>
-            <Textarea
-              id="title"
-              placeholder="Develop a new landing page"
-              {...register('title')}
-            ></Textarea>
 
-            <FormErrorMessage>
-              {errors.description ? <>errors.description.message</> : <></>}
-            </FormErrorMessage>
-          </FormControl>
           <FormControl w="full" isRequired>
             <Flex align={'center'} justify={'start'}>
               <FormLabel
@@ -314,11 +289,22 @@ export const CreatebountyBasic = ({ setbountyBasic }: Props) => {
               >
                 Estimated Time to complete
               </FormLabel>
-              <Input
+
+              <Select
                 id="time"
                 placeholder="Estimated Time to complete"
                 {...register('time')}
-              />
+                defaultValue={TimeList[0]}
+                color={'gray.500'}
+              >
+                {TimeList.map((el) => {
+                  return (
+                    <option key={el} value={el}>
+                      {el}
+                    </option>
+                  );
+                })}
+              </Select>
               <FormErrorMessage>
                 {errors.time ? <>{errors.time.message}</> : <></>}
               </FormErrorMessage>
