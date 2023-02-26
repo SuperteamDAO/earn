@@ -19,7 +19,8 @@ import { useRouter } from 'next/router';
 import { useState } from 'react';
 import toast, { Toaster } from 'react-hot-toast';
 import { SponsorType } from '../../interface/sponsor';
-import { createSponsor } from '../../utils/functions';
+import { userStore } from '../../store/user';
+import { createSponsor, UpdateUser } from '../../utils/functions';
 interface Props {
   onClose: () => void;
   isOpen: boolean;
@@ -41,6 +42,7 @@ export const Emailverification = ({
   const [success, setSuccess] = useState<boolean>(false);
   const [xpin, setXpin] = useState<string>('');
   const router = useRouter();
+  const { userInfo } = userStore();
   return (
     <Modal isOpen={isOpen} onClose={onClose}>
       <ModalOverlay />
@@ -128,6 +130,9 @@ export const Emailverification = ({
                   ) {
                     toast.success('Success');
                     const a = await createSponsor(sponsor);
+                    const res = await UpdateUser(userInfo?.id as string, {
+                      sponsor: true,
+                    });
                     console.log(a);
                     if (a.data) {
                       setSuccess(true);

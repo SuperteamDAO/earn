@@ -23,6 +23,7 @@ import { MdOutlineKeyboardArrowDown } from 'react-icons/md';
 import { userStore } from '../../store/user';
 import { SponsorType } from '../../interface/sponsor';
 import { SponsorStore } from '../../store/sponsor';
+import { useStore } from 'zustand';
 
 interface Props {
   sponsors?: SponsorType[];
@@ -51,6 +52,7 @@ export const Navbar = ({ sponsors }: Props) => {
 
   // --
   const { setCurrentSponsor } = SponsorStore();
+  const { userInfo } = userStore();
   return (
     <>
       <Container
@@ -112,6 +114,21 @@ export const Navbar = ({ sponsors }: Props) => {
               </Button>
             ) : (
               <HStack gap={2}>
+                {userInfo?.sponsor && (
+                  <Button
+                    w="100%"
+                    fontSize="0.9rem"
+                    fontWeight={600}
+                    color="#6562FF"
+                    border="1px solid #6562FF"
+                    bg="transparent"
+                    onClick={() => {
+                      router.push('/listings/create');
+                    }}
+                  >
+                    Create a listing
+                  </Button>
+                )}
                 <Divider
                   borderColor={'gray.300'}
                   h={14}

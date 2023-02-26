@@ -19,6 +19,7 @@ interface Props {
   setMainSkills: Dispatch<SetStateAction<MultiSelectOptions[]>>;
   subSkills: MultiSelectOptions[];
   setSubSkills: Dispatch<SetStateAction<MultiSelectOptions[]>>;
+  onOpen: () => void;
 }
 export const CreateJob = ({
   editorData,
@@ -31,6 +32,7 @@ export const CreateJob = ({
   subSkills,
   jobBasics,
   setJobBasic,
+  onOpen,
 }: Props) => {
   return (
     <>
@@ -52,7 +54,15 @@ export const CreateJob = ({
           setSteps={setSteps}
         />
       )}
-      {steps === 4 && <CreateJobPayments />}
+      {steps === 4 && (
+        <CreateJobPayments
+          jobBasics={jobBasics}
+          subSkills={subSkills}
+          editorData={editorData}
+          mainSkills={mainSkills}
+          onOpen={onOpen}
+        />
+      )}
     </>
   );
 };

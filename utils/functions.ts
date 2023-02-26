@@ -21,7 +21,18 @@ export const createUser = async (publickey: string) => {
     return null;
   }
 };
-
+export const UpdateUser = async (id: string, update: any) => {
+  try {
+    const res = await axios.patch(`${Backend_Url}/user/update`, {
+      id: id,
+      update,
+    });
+    return res;
+  } catch (e) {
+    console.log(e);
+    return null;
+  }
+};
 export const genrateOtp = async (publicKey: string, email: string) => {
   try {
     const res = await axios.post(`${Backend_Url}/email/totp`, {

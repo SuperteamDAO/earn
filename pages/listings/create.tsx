@@ -18,6 +18,7 @@ import { SponsorStore } from '../../store/sponsor';
 import { CreateSponsorModel } from '../../components/modals/createSponsor';
 import { useQuery } from '@tanstack/react-query';
 import { findSponsors } from '../../utils/functions';
+import { userStore } from '../../store/user';
 const Description = dynamic(
   () => import('../../components/listings/description'),
   {
@@ -40,6 +41,7 @@ const CreateListing = () => {
   const [jobBasics, setJobBasics] = useState<JobBasicsType | undefined>();
   const { connected, publicKey } = useWallet();
   const { currentSponsor } = SponsorStore();
+  const { userInfo } = userStore();
   const sponsors = useQuery({
     queryKey: ['sponsor', publicKey?.toBase58() ?? ''],
     queryFn: ({ queryKey }) => findSponsors(queryKey[1]),
@@ -70,7 +72,7 @@ const CreateListing = () => {
             },
           ]}
         >
-          {!currentSponsor && (
+          {!userInfo?.sponsor && (
             <CreateSponsorModel isOpen={true} onClose={() => {}} />
           )}
           {isOpen && (
@@ -102,6 +104,7 @@ const CreateListing = () => {
               setEditorData={setEditorData}
               setSteps={setSteps}
               steps={steps}
+              onOpen={onOpen}
             />
           )}
           {router.query.type && router.query.type === 'grants' && (

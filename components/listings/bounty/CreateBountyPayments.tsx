@@ -27,7 +27,8 @@ import { PrizeListType } from '../../../interface/listings';
 import { SponsorType } from '../../../interface/sponsor';
 import { PrizeLabels } from '../../../interface/types';
 import { SponsorStore } from '../../../store/sponsor';
-import { createBounty } from '../../../utils/functions';
+import { userStore } from '../../../store/user';
+import { createBounty, UpdateUser } from '../../../utils/functions';
 import { BountyBasicType } from './Createbounty';
 
 interface PrizeList {
@@ -69,6 +70,7 @@ export const CreatebountyPayment = ({
   ]);
   // sponsor
   const { currentSponsor } = SponsorStore();
+  const { userInfo } = userStore();
 
   return (
     <>

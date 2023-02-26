@@ -9,10 +9,25 @@ import {
   Select,
   VStack,
 } from '@chakra-ui/react';
+import { OutputData } from '@editorjs/editorjs';
 import { useForm } from 'react-hook-form';
-import { ExperienceList } from '../../../constants';
+import { ExperienceList, MultiSelectOptions } from '../../../constants';
+import { JobBasicsType } from '../../../interface/listings';
 
-export const CreateJobPayments = () => {
+interface Props {
+  jobBasics: JobBasicsType | undefined;
+  editorData: OutputData | undefined;
+  mainSkills: MultiSelectOptions[];
+  subSkills: MultiSelectOptions[];
+  onOpen: () => void;
+}
+export const CreateJobPayments = ({
+  jobBasics,
+  editorData,
+  mainSkills,
+  onOpen,
+  subSkills,
+}: Props) => {
   const {
     formState: { errors },
     register,
