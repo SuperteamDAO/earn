@@ -2,15 +2,12 @@ import { OutputData } from '@editorjs/editorjs';
 import dynamic from 'next/dynamic';
 import React, { Dispatch, SetStateAction } from 'react';
 import { MultiSelectOptions } from '../../../constants';
-import { JobBasicsType } from '../../../interface/listings';
+import { CreateGrantsBasic } from './CreateGrantsBasic';
+import { CreateGrantsPayment } from './CreateGrantsPayments';
 const Description = dynamic(() => import('../description'), {
   ssr: false,
 });
-import { CreateJobBasic } from './CreateJobBasic';
-import { CreateJobPayments } from './CreateJobPayments';
 interface Props {
-  jobBasics: JobBasicsType | undefined;
-  setJobBasic: Dispatch<SetStateAction<JobBasicsType | undefined>>;
   steps: number;
   setSteps: Dispatch<SetStateAction<number>>;
   setEditorData: Dispatch<SetStateAction<OutputData | undefined>>;
@@ -20,29 +17,26 @@ interface Props {
   subSkills: MultiSelectOptions[];
   setSubSkills: Dispatch<SetStateAction<MultiSelectOptions[]>>;
 }
-export const CreateJob = ({
+export const CreateGrants = ({
+  steps,
   editorData,
   mainSkills,
   setEditorData,
   setMainSkills,
   setSteps,
   setSubSkills,
-  steps,
   subSkills,
-  jobBasics,
-  setJobBasic,
 }: Props) => {
+  2;
   return (
     <>
       {steps === 2 && (
-        <CreateJobBasic
-          jobBasics={jobBasics}
-          setJobBasic={setJobBasic}
-          setSkills={setMainSkills}
-          setSteps={setSteps}
+        <CreateGrantsBasic
           skills={mainSkills}
           subSkills={subSkills}
           setSubSkills={setSubSkills}
+          setSkills={setMainSkills}
+          setSteps={setSteps}
         />
       )}
       {steps === 3 && (
@@ -52,7 +46,14 @@ export const CreateJob = ({
           setSteps={setSteps}
         />
       )}
-      {steps === 4 && <CreateJobPayments />}
+      {steps === 4 && (
+        <CreateGrantsPayment
+          editorData={editorData}
+          mainSkills={mainSkills}
+          setSteps={setSteps}
+          subSkills={subSkills}
+        />
+      )}
     </>
   );
 };

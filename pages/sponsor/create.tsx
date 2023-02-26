@@ -278,12 +278,7 @@ const CreateSponsor = () => {
                         >
                           Industry
                         </FormLabel>
-                        {/* <Input
-                          w={'18rem'}
-                          id="industry"
-                          placeholder="Pick a Industry"
-                          {...register('industry')}
-                        /> */}
+
                         <Select
                           closeMenuOnSelect={false}
                           components={animatedComponents}

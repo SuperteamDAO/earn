@@ -1,3 +1,5 @@
+import { Experience } from '../interface/listings';
+
 export interface MultiSelectOptions {
   value: string;
   label: string;
@@ -118,5 +120,53 @@ export const tokenList = [
     icon: 'https://s2.coinmarketcap.com/static/img/coins/64x64/11165.png',
   },
 ];
-
+export const MainSkills: MultiSelectOptions[] = [
+  {
+    label: 'Front-End Dev',
+    value: 'Front-End-Dev',
+  },
+  {
+    label: 'Back-End Dev',
+    value: 'Back-End-Dev',
+  },
+  {
+    label: 'Blockchain Dev',
+    value: 'Blockchain-Dev',
+  },
+  {
+    label: 'Fullstack Dev',
+    value: 'Fullstack-Dev',
+  },
+  {
+    label: 'Mobile Engineer',
+    value: 'Mobile-Engineer',
+  },
+  {
+    label: 'Design',
+    value: 'Design',
+  },
+  {
+    label: 'Community',
+    value: 'Community',
+  },
+  {
+    label: 'Growth',
+    value: 'Growth',
+  },
+  {
+    label: 'Content',
+    value: 'Content',
+  },
+  {
+    label: 'Other',
+    value: 'Other',
+  },
+];
+export const ExperienceList: Experience[] = [
+  '0 Yrs: Fresher/Graduate ',
+  '0-1 Yrs: Some Experience Required',
+  '1-5 Yrs: Early Career Professional',
+  '5-10 Yrs: Mid Career Professional',
+  '10 Yrs+: Senior Professional',
+];
 export const PrizeList = ['First', 'Second', 'Third', 'Forth', 'Fifth'];

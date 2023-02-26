@@ -1,7 +1,5 @@
-import { ChevronDownIcon } from '@chakra-ui/icons';
 import {
   Button,
-  Checkbox,
   Flex,
   FormControl,
   FormErrorMessage,
@@ -9,36 +7,39 @@ import {
   HStack,
   Image,
   Input,
-  Menu,
-  MenuButton,
-  MenuItem,
-  MenuList,
   Select,
-  Text,
-  Textarea,
   Tooltip,
   VStack,
 } from '@chakra-ui/react';
+import ReactSelect from 'react-select';
+import makeAnimated from 'react-select/animated';
 import { Dispatch, SetStateAction, useState } from 'react';
 import { useForm } from 'react-hook-form';
-import { Skill, SkillList, TalentSkillMap } from '../../interface/types';
+import { Skill } from '../../../interface/types';
 import { BountyBasicType } from './Createbounty';
+import { MainSkills, MultiSelectOptions } from '../../../constants';
 interface Props {
+  bountyBasic: BountyBasicType | undefined;
   setbountyBasic: Dispatch<SetStateAction<BountyBasicType | undefined>>;
   setSteps: Dispatch<SetStateAction<number>>;
+  setSkills: Dispatch<SetStateAction<MultiSelectOptions[]>>;
+  setSubSkills: Dispatch<SetStateAction<MultiSelectOptions[]>>;
+  subSkills: MultiSelectOptions[];
+  skills: MultiSelectOptions[];
 }
-export const CreatebountyBasic = ({ setbountyBasic, setSteps }: Props) => {
+export const CreatebountyBasic = ({
+  setbountyBasic,
+  setSteps,
+  setSkills,
+  bountyBasic,
+}: Props) => {
   const {
     formState: { errors },
     register,
     handleSubmit,
   } = useForm();
-  // Handles the selected skill for menu
-  const [selectedSkill, setSelectedSkill] = useState<Skill | undefined>(
-    undefined
-  );
+
   // holds the change in state
-  const [skills, setSkills] = useState<string[]>([]);
 
   // list for Time
   const TimeList = [
@@ -49,6 +50,8 @@ export const CreatebountyBasic = ({ setbountyBasic, setSteps }: Props) => {
     '< 1 Months',
     '< 3 Months',
   ];
+
+  const animatedComponents = makeAnimated();
   return (
     <>
       <VStack pt={7} align={'start'} w={'2xl'}>
@@ -98,6 +101,7 @@ export const CreatebountyBasic = ({ setbountyBasic, setSteps }: Props) => {
             <Input
               id="title"
               placeholder="Develop a new landing page"
+              value={bountyBasic && bountyBasic.title}
               {...register('title')}
             />
             <FormErrorMessage>
@@ -138,6 +142,7 @@ export const CreatebountyBasic = ({ setbountyBasic, setSteps }: Props) => {
               id="handle"
               placeholder="@telegram handle"
               {...register('handle')}
+              value={bountyBasic && bountyBasic.contact}
             />
             <FormErrorMessage>
               {errors.handle ? <>{errors.handle.message}</> : <></>}
@@ -172,71 +177,15 @@ export const CreatebountyBasic = ({ setbountyBasic, setSteps }: Props) => {
                 />
               </Tooltip>
             </Flex>
-            <Menu>
-              <MenuButton
-                as={Button}
-                rightIcon={<ChevronDownIcon />}
-                w="100%"
-                h="2.7rem"
-                mb={3}
-                fontSize="0.9rem"
-                fontWeight={500}
-                color={selectedSkill ? 'gray.500' : 'gray.300'}
-                bg="transparent"
-                border={errors.type ? '2px solid #FF8585' : '1px solid #e2e8f0'}
-                textAlign="start"
-              >
-                {selectedSkill || 'Select'}
-              </MenuButton>
-              <MenuList
-                zIndex={10}
-                overflow="scroll"
-                w="fullrem"
-                fontSize="0.9rem"
-                fontWeight={500}
-                color="gray.400"
-              >
-                {SkillList.map((skill) => (
-                  <MenuItem key={skill} onClick={() => setSelectedSkill(skill)}>
-                    {skill}
-                  </MenuItem>
-                ))}
-              </MenuList>
-            </Menu>
-
-            {selectedSkill && (
-              <>
-                <Flex
-                  flexWrap="wrap"
-                  rowGap={3}
-                  color="gray.400"
-                  justify="space-between"
-                >
-                  {TalentSkillMap[selectedSkill].map((skill: string) => (
-                    <Checkbox
-                      key={skill}
-                      _invalid={{ color: '#FF8585' }}
-                      size="lg"
-                      flex="0 0 33.3%"
-                      onChange={(e) => {
-                        if (e.target.checked) {
-                          setSkills([...skills, skill]);
-                        } else {
-                          console.log(
-                            skills.splice(skills.indexOf(skill) - 1, 1),
-                            'change'
-                          );
-
-                          setSkills(skills.splice(skills.indexOf(skill), 1));
-                        }
-                      }}
-                    >
-                      <Text fontSize="0.9rem">{skill}</Text>
-                    </Checkbox>
-                  ))}
-                </Flex>
-              </>
-            )}
+            <ReactSelect
+              closeMenuOnSelect={false}
+              components={animatedComponents}
+              isMulti
+              options={MainSkills}
+              onChange={(e) => {
+                setSkills(e as any);
+              }}
+            />
           </FormControl>
           <HStack w={'full'} justify={'space-between'} my={6}>
             <FormControl w={'18rem'} isRequired>
@@ -273,6 +222,7 @@ export const CreatebountyBasic = ({ setbountyBasic, setSteps }: Props) => {
                 id="deadline"
                 type={'date'}
                 placeholder="deadline"
+                value={bountyBasic && bountyBasic.deadline}
                 color={'gray.500'}
                 {...register('deadline')}
               />
@@ -294,6 +244,7 @@ export const CreatebountyBasic = ({ setbountyBasic, setSteps }: Props) => {
                 id="time"
                 placeholder="Estimated Time to complete"
                 {...register('time')}
+                value={bountyBasic && bountyBasic.estimatedTime}
                 defaultValue={TimeList[0]}
                 color={'gray.500'}
               >

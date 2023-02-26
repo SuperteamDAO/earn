@@ -5,7 +5,7 @@ export type JobType = 'parttime' | 'fulltime' | 'intership';
 export type Source = 'native' | 'manual';
 
 export type Prize = 'first' | 'second' | 'third' | 'forth' | 'fifth';
-
+export const PrizeLabels = ['first', 'second', 'third', 'forth', 'fifth'];
 export type SponsorStatus = 'Unassigned' | 'Assigned';
 
 export type sponsorType = 'Admin' | 'Member';

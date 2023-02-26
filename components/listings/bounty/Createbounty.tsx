@@ -1,9 +1,10 @@
 import { OutputData } from '@editorjs/editorjs';
 import dynamic from 'next/dynamic';
 import React, { Dispatch, SetStateAction, useState } from 'react';
+import { MultiSelectOptions } from '../../../constants';
 import { CreatebountyBasic } from './CreateBountyBasic';
 import { CreatebountyPayment } from './CreateBountyPayments';
-const Description = dynamic(() => import('./description'), {
+const Description = dynamic(() => import('../description'), {
   ssr: false,
 });
 export interface BountyBasicType {
@@ -19,12 +20,20 @@ interface Props {
   setSteps: Dispatch<SetStateAction<number>>;
   setEditorData: Dispatch<SetStateAction<OutputData | undefined>>;
   editorData: OutputData | undefined;
+  mainSkills: MultiSelectOptions[];
+  setMainSkills: Dispatch<SetStateAction<MultiSelectOptions[]>>;
+  subSkills: MultiSelectOptions[];
+  setSubSkills: Dispatch<SetStateAction<MultiSelectOptions[]>>;
 }
 export const Createbounty = ({
   steps,
   editorData,
   setEditorData,
   setSteps,
+  mainSkills,
+  setMainSkills,
+  setSubSkills,
+  subSkills,
 }: Props) => {
   // handles the info from basic form
   const [bountybasic, setBountyBasic] = useState<BountyBasicType | undefined>();
@@ -33,6 +42,11 @@ export const Createbounty = ({
     <>
       {steps === 2 && (
         <CreatebountyBasic
+          skills={mainSkills}
+          subSkills={subSkills}
+          setSubSkills={setSubSkills}
+          setSkills={setMainSkills}
+          bountyBasic={bountybasic}
           setSteps={setSteps}
           setbountyBasic={setBountyBasic}
         />
@@ -45,7 +59,15 @@ export const Createbounty = ({
         />
       )}
 
-      {steps === 4 && <CreatebountyPayment setSteps={setSteps} />}
+      {steps === 4 && (
+        <CreatebountyPayment
+          subSkills={subSkills}
+          mainSkills={mainSkills}
+          setSteps={setSteps}
+          bountyBasic={bountybasic}
+          editorData={editorData}
+        />
+      )}
     </>
   );
 };

@@ -19,10 +19,16 @@ import {
   Tooltip,
   VStack,
 } from '@chakra-ui/react';
+import { OutputData } from '@editorjs/editorjs';
 import React, { Dispatch, SetStateAction, useState } from 'react';
 import { useForm } from 'react-hook-form';
-import { tokenList, PrizeList } from '../../constants';
-import { Skill, SkillList, TalentSkillMap } from '../../interface/types';
+import { tokenList, PrizeList, MultiSelectOptions } from '../../../constants';
+import { PrizeListType } from '../../../interface/listings';
+import { SponsorType } from '../../../interface/sponsor';
+import { PrizeLabels } from '../../../interface/types';
+import { SponsorStore } from '../../../store/sponsor';
+import { createBounty } from '../../../utils/functions';
+import { BountyBasicType } from './Createbounty';
 
 interface PrizeList {
   label: string;
@@ -30,24 +36,80 @@ interface PrizeList {
 }
 interface Props {
   setSteps: Dispatch<SetStateAction<number>>;
+  bountyBasic: BountyBasicType | undefined;
+  editorData: OutputData | undefined;
+  mainSkills: MultiSelectOptions[];
+  subSkills: MultiSelectOptions[];
 }
-export const CreatebountyPayment = ({ setSteps }: Props) => {
+export const CreatebountyPayment = ({
+  setSteps,
+  bountyBasic,
+  editorData,
+  mainSkills,
+  subSkills,
+}: Props) => {
   const {
     formState: { errors },
     register,
     handleSubmit,
   } = useForm();
+  // handles which token is selected
   const [tokenIndex, setTokenIndex] = useState<number | undefined>(undefined);
-  const [prizes, setPrize] = useState<PrizeList[]>([
+  // stores the state for prize
+  const [prize, setPrize] = useState<Object>();
+
+  // handles the UI for prize
+  const [prizes, setPrizes] = useState<PrizeList[]>([
     {
       label: 'First prize',
       placeHolder: 2500,
     },
   ]);
+  // sponsor
+  const { currentSponsor } = SponsorStore();
+
   return (
     <>
       <VStack pb={10} color={'gray.500'} pt={7} align={'start'} w={'2xl'}>
-        <form onSubmit={handleSubmit((e) => {})} style={{ width: '100%' }}>
+        <form
+          onSubmit={handleSubmit(async (e) => {
+            console.log(e);
+            const Prizevalues = Object.values(e);
+            let amount = 0;
+            let Prizes: Partial<PrizeListType> = Object();
+            Prizevalues.map((el, index) => {
+              amount += Number(el);
+              Prizes = {
+                ...Prizes,
+                [PrizeLabels[index]]: el,
+              };
+            });
+            setPrize(e);
+            const data = await createBounty(
+              {
+                active: true,
+                bugBounty: false,
+                completeTime: bountyBasic?.estimatedTime ?? '',
+                deadline: bountyBasic?.deadline ?? '',
+                description: JSON.stringify(editorData),
+                featured: false,
+                orgId: currentSponsor?.orgId ?? '',
+                private: false,
+                title: bountyBasic?.title ?? '',
+                source: 'native',
+                showTop: true,
+                sponsorStatus: 'Unassigned',
+                prizeList: Prizes,
+                amount: JSON.stringify(amount),
+                skills: JSON.stringify(mainSkills),
+                subSkills: JSON.stringify(subSkills),
+                token: tokenList[tokenIndex as number].mintAddress,
+              },
+              currentSponsor as SponsorType
+            );
+          })}
+          style={{ width: '100%' }}
+        >
           <FormControl isRequired>
             <FormLabel>Select Token</FormLabel>
             <Menu>
@@ -120,6 +182,7 @@ export const CreatebountyPayment = ({ setSteps }: Props) => {
                   <Flex gap={3}>
                     <Input
                       type={'number'}
+                      {...register(el.label)}
                       placeholder={JSON.stringify(el.placeHolder)}
                     />
                     {index === prizes.length - 1 && (
@@ -147,7 +210,7 @@ export const CreatebountyPayment = ({ setSteps }: Props) => {
               w="full"
               border={'1px solid #e2e8f0'}
               onClick={() => {
-                setPrize([
+                setPrizes([
                   ...prizes,
                   {
                     label: PrizeList[prizes.length] + ' ' + 'prize',

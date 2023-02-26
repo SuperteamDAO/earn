@@ -1,10 +1,12 @@
 import { AddIcon } from '@chakra-ui/icons';
 import { Box, Flex, Text, VStack } from '@chakra-ui/react';
+import { useRouter } from 'next/router';
 import React, { Dispatch, SetStateAction } from 'react';
 interface Props {
   setSteps: Dispatch<SetStateAction<number>>;
 }
 const Template = ({ setSteps }: Props) => {
+  const router = useRouter();
   return (
     <>
       <VStack align={'start'} w="full">
@@ -34,6 +36,7 @@ const Template = ({ setSteps }: Props) => {
               cursor={'pointer'}
               onClick={() => {
                 setSteps(2);
+                router.replace('/listings/create?type=bounties');
               }}
             >
               <AddIcon color="gray.500" mb="1rem" />
@@ -67,7 +70,10 @@ const Template = ({ setSteps }: Props) => {
               alignItems={'center'}
               flexDirection={'column'}
               cursor={'pointer'}
-              onClick={() => {}}
+              onClick={() => {
+                setSteps(2);
+                router.replace('/listings/create?type=jobs');
+              }}
             >
               <AddIcon color="gray.500" mb="1rem" />
               <Text fontSize="1rem" color="gray.500" fontWeight={500}>
@@ -100,7 +106,10 @@ const Template = ({ setSteps }: Props) => {
               alignItems={'center'}
               flexDirection={'column'}
               cursor={'pointer'}
-              onClick={() => {}}
+              onClick={() => {
+                setSteps(2);
+                router.replace('/listings/create?type=grants');
+              }}
             >
               <AddIcon color="gray.500" mb="1rem" />
               <Text fontSize="1rem" color="gray.500" fontWeight={500}>
