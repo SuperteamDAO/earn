@@ -1,4 +1,4 @@
-import { Flex } from '@chakra-ui/react';
+import { Flex, useDisclosure } from '@chakra-ui/react';
 import FormLayout from '../../layouts/FormLayout';
 import { Createbounty } from '../../components/listings/bounty/Createbounty';
 import { useState } from 'react';
@@ -11,6 +11,13 @@ import { MultiSelectOptions } from '../../constants';
 import { useRouter } from 'next/router';
 import { JobBasicsType } from '../../interface/listings';
 import { CreateGrants } from '../../components/listings/grants/CreateGrants';
+import { SuccessListings } from '../../components/modals/successListings';
+import { useWallet } from '@solana/wallet-adapter-react';
+import { ConnectWallet } from '../../layouts/connectWallet';
+import { SponsorStore } from '../../store/sponsor';
+import { CreateSponsorModel } from '../../components/modals/createSponsor';
+import { useQuery } from '@tanstack/react-query';
+import { findSponsors } from '../../utils/functions';
 const Description = dynamic(
   () => import('../../components/listings/description'),
   {
@@ -28,73 +35,91 @@ const CreateListing = () => {
   const [editorData, setEditorData] = useState<OutputData | undefined>();
   const [mainSkills, setMainSkills] = useState<MultiSelectOptions[]>([]);
   const [subSkill, setSubSkill] = useState<MultiSelectOptions[]>([]);
-
+  const { isOpen, onOpen } = useDisclosure();
   // -- Jobs
   const [jobBasics, setJobBasics] = useState<JobBasicsType | undefined>();
+  const { connected, publicKey } = useWallet();
+  const { currentSponsor } = SponsorStore();
+  const sponsors = useQuery({
+    queryKey: ['sponsor', publicKey?.toBase58() ?? ''],
+    queryFn: ({ queryKey }) => findSponsors(queryKey[1]),
+  });
   return (
     <>
-      <FormLayout
-        setStep={setSteps}
-        currentStep={steps}
-        stepList={[
-          {
-            label: 'Template',
-            number: 1,
-          },
-          {
-            label: 'Listings',
-            number: 2,
-          },
-          {
-            label: 'Description',
-            number: 3,
-          },
-          {
-            label: 'Payment',
-            number: 4,
-          },
-        ]}
-      >
-        {steps === 1 && <Template setSteps={setSteps} />}
-        {router.query.type && router.query.type === 'bounties' && (
-          <Createbounty
-            setSubSkills={setSubSkill}
-            subSkills={subSkill}
-            setMainSkills={setMainSkills}
-            mainSkills={mainSkills}
-            editorData={editorData}
-            setEditorData={setEditorData}
-            setSteps={setSteps}
-            steps={steps}
-          />
-        )}
-        {router.query.type && router.query.type === 'jobs' && (
-          <CreateJob
-            setJobBasic={setJobBasics}
-            jobBasics={jobBasics}
-            setSubSkills={setSubSkill}
-            subSkills={subSkill}
-            setMainSkills={setMainSkills}
-            mainSkills={mainSkills}
-            editorData={editorData}
-            setEditorData={setEditorData}
-            setSteps={setSteps}
-            steps={steps}
-          />
-        )}
-        {router.query.type && router.query.type === 'grants' && (
-          <CreateGrants
-            setSubSkills={setSubSkill}
-            subSkills={subSkill}
-            setMainSkills={setMainSkills}
-            mainSkills={mainSkills}
-            editorData={editorData}
-            setEditorData={setEditorData}
-            setSteps={setSteps}
-            steps={steps}
-          />
-        )}
-      </FormLayout>
+      {connected ? (
+        <FormLayout
+          sponsors={sponsors.data}
+          setStep={setSteps}
+          currentStep={steps}
+          stepList={[
+            {
+              label: 'Template',
+              number: 1,
+            },
+            {
+              label: 'Listings',
+              number: 2,
+            },
+            {
+              label: 'Description',
+              number: 3,
+            },
+            {
+              label: 'Payment',
+              number: 4,
+            },
+          ]}
+        >
+          {!currentSponsor && (
+            <CreateSponsorModel isOpen={true} onClose={() => {}} />
+          )}
+          {isOpen && (
+            <SuccessListings slug="" isOpen={isOpen} onClose={() => {}} />
+          )}
+          {steps === 1 && <Template setSteps={setSteps} />}
+          {router.query.type && router.query.type === 'bounties' && (
+            <Createbounty
+              onOpen={onOpen}
+              setSubSkills={setSubSkill}
+              subSkills={subSkill}
+              setMainSkills={setMainSkills}
+              mainSkills={mainSkills}
+              editorData={editorData}
+              setEditorData={setEditorData}
+              setSteps={setSteps}
+              steps={steps}
+            />
+          )}
+          {router.query.type && router.query.type === 'jobs' && (
+            <CreateJob
+              setJobBasic={setJobBasics}
+              jobBasics={jobBasics}
+              setSubSkills={setSubSkill}
+              subSkills={subSkill}
+              setMainSkills={setMainSkills}
+              mainSkills={mainSkills}
+              editorData={editorData}
+              setEditorData={setEditorData}
+              setSteps={setSteps}
+              steps={steps}
+            />
+          )}
+          {router.query.type && router.query.type === 'grants' && (
+            <CreateGrants
+              setSubSkills={setSubSkill}
+              subSkills={subSkill}
+              setMainSkills={setMainSkills}
+              mainSkills={mainSkills}
+              editorData={editorData}
+              setEditorData={setEditorData}
+              setSteps={setSteps}
+              steps={steps}
+            />
+          )}
+        </FormLayout>
+      ) : (
+        <ConnectWallet />
+      )}
     </>
   );
 };

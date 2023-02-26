@@ -40,6 +40,7 @@ interface Props {
   editorData: OutputData | undefined;
   mainSkills: MultiSelectOptions[];
   subSkills: MultiSelectOptions[];
+  onOpen: () => void;
 }
 export const CreatebountyPayment = ({
   setSteps,
@@ -47,6 +48,7 @@ export const CreatebountyPayment = ({
   editorData,
   mainSkills,
   subSkills,
+  onOpen,
 }: Props) => {
   const {
     formState: { errors },
@@ -84,7 +86,8 @@ export const CreatebountyPayment = ({
                 [PrizeLabels[index]]: el,
               };
             });
-            setPrize(e);
+            console.log(amount);
+
             const data = await createBounty(
               {
                 active: true,
@@ -94,7 +97,7 @@ export const CreatebountyPayment = ({
                 description: JSON.stringify(editorData),
                 featured: false,
                 orgId: currentSponsor?.orgId ?? '',
-                private: false,
+                privateBool: false,
                 title: bountyBasic?.title ?? '',
                 source: 'native',
                 showTop: true,
@@ -107,6 +110,10 @@ export const CreatebountyPayment = ({
               },
               currentSponsor as SponsorType
             );
+
+            if (data.data) {
+              onOpen();
+            }
           })}
           style={{ width: '100%' }}
         >

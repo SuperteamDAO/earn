@@ -10,6 +10,7 @@ import {
   MenuButton,
   MenuItem,
   MenuList,
+  Select,
   Text,
 } from '@chakra-ui/react';
 import { useWallet } from '@solana/wallet-adapter-react';
@@ -20,8 +21,13 @@ import Avatar from 'boring-avatars';
 import { truncatedPublicKey } from '../../utils/helpers';
 import { MdOutlineKeyboardArrowDown } from 'react-icons/md';
 import { userStore } from '../../store/user';
+import { SponsorType } from '../../interface/sponsor';
+import { SponsorStore } from '../../store/sponsor';
 
-export const Navbar = () => {
+interface Props {
+  sponsors?: SponsorType[];
+}
+export const Navbar = ({ sponsors }: Props) => {
   const { setUserInfo } = userStore();
   const router = useRouter();
   const { connected, publicKey, wallet } = useWallet();
@@ -42,6 +48,9 @@ export const Navbar = () => {
     }
     await wallet.adapter.disconnect();
   };
+
+  // --
+  const { setCurrentSponsor } = SponsorStore();
   return (
     <>
       <Container
@@ -66,9 +75,27 @@ export const Navbar = () => {
           h={'full'}
           mx="auto"
         >
-          <Box cursor={'pointer'} onClick={() => router.push('/')}>
-            <Image w={'12rem'} src={'/assets/logo/logo.png'} alt={'logo'} />
-          </Box>
+          <HStack w={'full'}>
+            <Box cursor={'pointer'} onClick={() => router.push('/')}>
+              <Image w={'12rem'} src={'/assets/logo/logo.png'} alt={'logo'} />
+            </Box>
+            {sponsors && (
+              <Select
+                w={'12rem'}
+                onChange={(e) => {
+                  setCurrentSponsor(sponsors![Number(e.currentTarget.value)]);
+                }}
+              >
+                {sponsors?.map((sponsor, index) => {
+                  return (
+                    <option key={sponsor.id} value={index}>
+                      {sponsor.name}
+                    </option>
+                  );
+                })}
+              </Select>
+            )}
+          </HStack>
           <Box>
             {!connected ? (
               <Button

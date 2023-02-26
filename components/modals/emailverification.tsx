@@ -13,7 +13,6 @@ import {
   PinInput,
   PinInputField,
   Text,
-  Toast,
   VStack,
 } from '@chakra-ui/react';
 import { useRouter } from 'next/router';

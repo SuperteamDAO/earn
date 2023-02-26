@@ -2,6 +2,7 @@ import { Box, Flex, Heading, HStack, Text, VStack } from '@chakra-ui/react';
 import React, { Dispatch, SetStateAction } from 'react';
 import { Steps } from '../components/misc/steps';
 import { Navbar } from '../components/navbar/navbar';
+import { SponsorType } from '../interface/sponsor';
 
 interface StepsList {
   label: string;
@@ -12,12 +13,19 @@ interface Props {
   currentStep: number;
   stepList: StepsList[];
   setStep: Dispatch<SetStateAction<number>>;
+  sponsors?: SponsorType[];
 }
-const FormLayout = ({ children, currentStep, stepList, setStep }: Props) => {
+const FormLayout = ({
+  children,
+  currentStep,
+  stepList,
+  setStep,
+  sponsors,
+}: Props) => {
   return (
     <>
       <VStack bg={currentStep !== 1 ? 'white' : '#F6FAFD'}>
-        <Navbar />
+        <Navbar sponsors={sponsors} />
         <VStack w={'80%'} gap={10}>
           <VStack mt={20}>
             <Heading

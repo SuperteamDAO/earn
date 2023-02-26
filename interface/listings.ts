@@ -16,7 +16,7 @@ interface Bounties {
   token: string;
   sponsorStatus: SponsorStatus;
   active: boolean;
-  private: boolean;
+  privateBool: boolean;
   featured: boolean;
   prizeList: Partial<PrizeListType>; // change to enum and string
   bugBounty: boolean;

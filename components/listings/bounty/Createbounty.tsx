@@ -11,7 +11,6 @@ export interface BountyBasicType {
   title: string;
   // description: string;
   contact: string;
-  skills: string;
   deadline: string;
   estimatedTime: string;
 }
@@ -24,6 +23,7 @@ interface Props {
   setMainSkills: Dispatch<SetStateAction<MultiSelectOptions[]>>;
   subSkills: MultiSelectOptions[];
   setSubSkills: Dispatch<SetStateAction<MultiSelectOptions[]>>;
+  onOpen: () => void;
 }
 export const Createbounty = ({
   steps,
@@ -34,6 +34,7 @@ export const Createbounty = ({
   setMainSkills,
   setSubSkills,
   subSkills,
+  onOpen,
 }: Props) => {
   // handles the info from basic form
   const [bountybasic, setBountyBasic] = useState<BountyBasicType | undefined>();
@@ -61,6 +62,7 @@ export const Createbounty = ({
 
       {steps === 4 && (
         <CreatebountyPayment
+          onOpen={onOpen}
           subSkills={subSkills}
           mainSkills={mainSkills}
           setSteps={setSteps}

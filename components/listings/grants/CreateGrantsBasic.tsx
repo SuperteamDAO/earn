@@ -11,7 +11,7 @@ import {
 } from '@chakra-ui/react';
 import React, { Dispatch, SetStateAction } from 'react';
 import { useForm } from 'react-hook-form';
-import { MainSkills, MultiSelectOptions } from '../../../constants';
+import { MainSkills, MultiSelectOptions, SubSkills } from '../../../constants';
 import ReactSelect from 'react-select';
 import makeAnimated from 'react-select/animated';
 
@@ -158,6 +158,45 @@ export const CreateGrantsBasic = ({
               options={MainSkills}
               onChange={(e) => {
                 setSkills(e as any);
+              }}
+            />
+          </FormControl>
+          <FormControl my={6}>
+            <Flex align={'center'} justify={'start'}>
+              <FormLabel
+                color={'gray.400'}
+                fontWeight={600}
+                fontSize={'15px'}
+                htmlFor={'skills'}
+              >
+                Sub Skills Needed
+              </FormLabel>
+              <Tooltip
+                placement="right-end"
+                fontSize="0.9rem"
+                padding="0.7rem"
+                bg="#6562FF"
+                color="white"
+                fontWeight={600}
+                borderRadius="0.5rem"
+                hasArrow
+                w="max"
+                label={`Select all that apply`}
+              >
+                <Image
+                  mt={-2}
+                  src={'/assets/icons/info-icon.svg'}
+                  alt={'Info Icon'}
+                />
+              </Tooltip>
+            </Flex>
+            <ReactSelect
+              closeMenuOnSelect={false}
+              components={animatedComponents}
+              isMulti
+              options={SubSkills}
+              onChange={(e) => {
+                setSubSkills(e as any);
               }}
             />
           </FormControl>

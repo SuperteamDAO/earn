@@ -80,7 +80,7 @@ export const createBounty = async (
   sponsor: SponsorType
 ) => {
   try {
-    const { data } = await axios.post(`${Backend_Url}/bounty/create`, {
+    const { data } = await axios.post(`${Backend_Url}/listings/bounty/create`, {
       id: genrateuuid(),
       title: bounties.title,
       token: bounties.token,
@@ -96,6 +96,7 @@ export const createBounty = async (
       prizeList: bounties.prizeList,
       active: bounties.active,
       private: false,
+      amount: bounties.amount,
     });
     return data;
   } catch (e) {
