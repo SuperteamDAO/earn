@@ -108,6 +108,7 @@ export const createBounty = async (
       private: false,
       amount: bounties.amount,
       eligibility: bounties.eligibility,
+      status: bounties.status,
     });
     return data;
   } catch (e) {

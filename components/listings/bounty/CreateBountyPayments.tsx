@@ -110,6 +110,7 @@ export const CreatebountyPayment = ({
                 subSkills: JSON.stringify(subSkills),
                 token: tokenList[tokenIndex as number].mintAddress,
                 eligibility: bountyBasic?.eligibility ?? '',
+                status: 'open',
               },
               currentSponsor as SponsorType
             );

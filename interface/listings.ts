@@ -23,7 +23,10 @@ interface Bounties {
   winner?: Winner[];
   showTop: boolean;
   eligibility: string;
+  status: BountyStatus;
 }
+
+type BountyStatus = 'open' | 'review' | 'close';
 interface Winner {
   id: string;
   email: string;
