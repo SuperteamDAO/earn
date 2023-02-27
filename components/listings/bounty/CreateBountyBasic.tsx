@@ -43,16 +43,6 @@ export const CreatebountyBasic = ({
 
   // holds the change in state
 
-  // list for Time
-  const TimeList = [
-    '< 1 Week',
-    '< 1 Hour',
-    '< 1 Day',
-    '< 1 Month',
-    '< 1 Months',
-    '< 3 Months',
-  ];
-
   const animatedComponents = makeAnimated();
   return (
     <>
@@ -61,9 +51,8 @@ export const CreatebountyBasic = ({
           onSubmit={handleSubmit((e) => {
             setbountyBasic({
               title: e.title,
-              contact: e.handle,
               deadline: e.deadline,
-              estimatedTime: e.time,
+              eligibility: e.eligibility,
             });
             setSteps(3);
           })}
@@ -109,16 +98,15 @@ export const CreatebountyBasic = ({
               {errors.title ? <>{errors.title.message}</> : <></>}
             </FormErrorMessage>
           </FormControl>
-
-          <FormControl w="full" isRequired>
-            <Flex align={'center'} justify={'start'}>
+          <FormControl mb={5} w="full" isRequired>
+            <Flex>
               <FormLabel
                 color={'gray.400'}
                 fontWeight={600}
                 fontSize={'15px'}
-                htmlFor={'title'}
+                htmlFor={'eligility'}
               >
-                Point of Contact
+                Eligibility
               </FormLabel>
               <Tooltip
                 placement="right-end"
@@ -139,16 +127,18 @@ export const CreatebountyBasic = ({
                 />
               </Tooltip>
             </Flex>
+
             <Input
-              id="handle"
-              placeholder="@telegram handle"
-              {...register('handle')}
-              value={bountyBasic && bountyBasic.contact}
+              id="eligibility"
+              placeholder="Develop a new landing page"
+              value={bountyBasic?.eligibility}
+              {...register('eligibility')}
             />
             <FormErrorMessage>
-              {errors.handle ? <>{errors.handle.message}</> : <></>}
+              {errors.eligibility ? <>{errors.eligibility.message}</> : <></>}
             </FormErrorMessage>
           </FormControl>
+
           <FormControl my={6}>
             <Flex align={'center'} justify={'start'}>
               <FormLabel
@@ -227,80 +217,48 @@ export const CreatebountyBasic = ({
               }}
             />
           </FormControl>
-          <HStack w={'full'} justify={'space-between'} my={6}>
-            <FormControl w={'18rem'} isRequired>
-              <Flex align={'center'} justify={'start'}>
-                <FormLabel
-                  color={'gray.400'}
-                  fontWeight={600}
-                  fontSize={'15px'}
-                  htmlFor={'deadline'}
-                >
-                  Deadline
-                </FormLabel>
-                <Tooltip
-                  placement="right-end"
-                  fontSize="0.9rem"
-                  padding="0.7rem"
-                  bg="#6562FF"
-                  color="white"
-                  fontWeight={600}
-                  borderRadius="0.5rem"
-                  hasArrow
-                  w="max"
-                  label={`Who will respond to questions about the opportunity from your team?`}
-                >
-                  <Image
-                    mt={-2}
-                    src={'/assets/icons/info-icon.svg'}
-                    alt={'Info Icon'}
-                  />
-                </Tooltip>
-              </Flex>
-              <Input
-                w={'full'}
-                id="deadline"
-                type={'date'}
-                placeholder="deadline"
-                value={bountyBasic && bountyBasic.deadline}
-                color={'gray.500'}
-                {...register('deadline')}
-              />
-              <FormErrorMessage>
-                {errors.deadline ? <>{errors.deadline.message}</> : <></>}
-              </FormErrorMessage>
-            </FormControl>
-            <FormControl w={'18rem'} isRequired>
+          <FormControl isRequired>
+            <Flex align={'center'} justify={'start'}>
               <FormLabel
                 color={'gray.400'}
                 fontWeight={600}
                 fontSize={'15px'}
-                htmlFor={'time'}
+                htmlFor={'deadline'}
               >
-                Estimated Time to complete
+                Deadline
               </FormLabel>
-
-              <Select
-                id="time"
-                placeholder="Estimated Time to complete"
-                {...register('time')}
-                value={bountyBasic && bountyBasic.estimatedTime}
-                defaultValue={TimeList[0]}
-                color={'gray.500'}
+              <Tooltip
+                placement="right-end"
+                fontSize="0.9rem"
+                padding="0.7rem"
+                bg="#6562FF"
+                color="white"
+                fontWeight={600}
+                borderRadius="0.5rem"
+                hasArrow
+                w="max"
+                label={`Who will respond to questions about the opportunity from your team?`}
               >
-                {TimeList.map((el) => {
-                  return (
-                    <option key={el} value={el}>
-                      {el}
-                    </option>
-                  );
-                })}
-              </Select>
-              <FormErrorMessage>
-                {errors.time ? <>{errors.time.message}</> : <></>}
-              </FormErrorMessage>
-            </FormControl>
-          </HStack>
+                <Image
+                  mt={-2}
+                  src={'/assets/icons/info-icon.svg'}
+                  alt={'Info Icon'}
+                />
+              </Tooltip>
+            </Flex>
+            <Input
+              w={'full'}
+              id="deadline"
+              type={'date'}
+              placeholder="deadline"
+              value={bountyBasic && bountyBasic.deadline}
+              color={'gray.500'}
+              {...register('deadline')}
+            />
+            <FormErrorMessage>
+              {errors.deadline ? <>{errors.deadline.message}</> : <></>}
+            </FormErrorMessage>
+          </FormControl>
           <VStack gap={6} mt={10}>
             <Button
               w="100%"

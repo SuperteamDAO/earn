@@ -3,7 +3,7 @@ import { v4 as uuidV4 } from 'uuid';
 import { SponsorStore } from '../store/sponsor';
 //types
 import { SponsorType } from '../interface/sponsor';
-import { Bounties } from '../interface/listings';
+import { Bounties, GrantsType, JobsType } from '../interface/listings';
 import { genrateuuid } from './helpers';
 
 const Backend_Url = process.env.NEXT_PUBLIC_BACKEND_URL;
@@ -96,7 +96,6 @@ export const createBounty = async (
       title: bounties.title,
       token: bounties.token,
       slug: bounties.title.split(' ').join().toLowerCase(),
-      completeTime: bounties.completeTime,
       deadline: bounties.deadline,
       description: bounties.description,
       sponsorStatus: bounties.sponsorStatus,
@@ -108,10 +107,36 @@ export const createBounty = async (
       active: bounties.active,
       private: false,
       amount: bounties.amount,
+      eligibility: bounties.eligibility,
     });
     return data;
   } catch (e) {
     console.log(e);
+    return null;
+  }
+};
+
+export const createJob = async (jobs: JobsType) => {
+  try {
+    const res = await axios.post(`${Backend_Url}/listings/job/create`, {
+      ...jobs,
+    });
+    return res;
+  } catch (error) {
+    console.log(error);
+
+    return null;
+  }
+};
+export const createGrants = async (grants: GrantsType) => {
+  try {
+    const res = await axios.post(`${Backend_Url}/listings/grants/create`, {
+      ...grants,
+    });
+    return res;
+  } catch (error) {
+    console.log(error);
+
     return null;
   }
 };

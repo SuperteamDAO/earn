@@ -323,4 +323,30 @@ export const ExperienceList: Experience[] = [
   '5-10 Yrs: Mid Career Professional',
   '10 Yrs+: Senior Professional',
 ];
+export const TimeZoneList: MultiSelectOptions[] = [
+  {
+    label: 'Asia',
+    value: 'Asia',
+  },
+  {
+    label: 'India',
+    value: 'India',
+  },
+  {
+    label: 'North/South America',
+    value: 'North/South America',
+  },
+  {
+    label: 'APAC',
+    value: 'APAC',
+  },
+  {
+    label: 'EMEA',
+    value: 'EMEA',
+  },
+  {
+    label: 'All',
+    value: 'All',
+  },
+];
 export const PrizeList = ['First', 'Second', 'Third', 'Forth', 'Fifth'];

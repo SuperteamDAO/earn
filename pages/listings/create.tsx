@@ -9,7 +9,7 @@ import { OutputData } from '@editorjs/editorjs';
 import Template from '../../components/listings/templates/template';
 import { MultiSelectOptions } from '../../constants';
 import { useRouter } from 'next/router';
-import { JobBasicsType } from '../../interface/listings';
+import { GrantsBasicType, JobBasicsType } from '../../interface/listings';
 import { CreateGrants } from '../../components/listings/grants/CreateGrants';
 import { SuccessListings } from '../../components/modals/successListings';
 import { useWallet } from '@solana/wallet-adapter-react';
@@ -39,6 +39,9 @@ const CreateListing = () => {
   const { isOpen, onOpen } = useDisclosure();
   // -- Jobs
   const [jobBasics, setJobBasics] = useState<JobBasicsType | undefined>();
+
+  // -- Grants
+  const [grantBasic, setgrantsBasic] = useState<GrantsBasicType | undefined>();
   const { connected, publicKey } = useWallet();
   const { currentSponsor } = SponsorStore();
   const { userInfo } = userStore();
@@ -109,6 +112,9 @@ const CreateListing = () => {
           )}
           {router.query.type && router.query.type === 'grants' && (
             <CreateGrants
+              onOpen={onOpen}
+              grantBasic={grantBasic}
+              setGrantBasic={setgrantsBasic}
               setSubSkills={setSubSkill}
               subSkills={subSkill}
               setMainSkills={setMainSkills}

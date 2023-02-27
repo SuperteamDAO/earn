@@ -14,20 +14,19 @@ import { useForm } from 'react-hook-form';
 import { MainSkills, MultiSelectOptions, SubSkills } from '../../../constants';
 import ReactSelect from 'react-select';
 import makeAnimated from 'react-select/animated';
+import { GrantsBasicType } from '../../../interface/listings';
 
 interface Props {
   setSteps: Dispatch<SetStateAction<number>>;
   setSkills: Dispatch<SetStateAction<MultiSelectOptions[]>>;
   setSubSkills: Dispatch<SetStateAction<MultiSelectOptions[]>>;
-  subSkills: MultiSelectOptions[];
-  skills: MultiSelectOptions[];
+  setGrantBasic: Dispatch<SetStateAction<GrantsBasicType | undefined>>;
 }
 export const CreateGrantsBasic = ({
   setSkills,
   setSteps,
   setSubSkills,
-  skills,
-  subSkills,
+  setGrantBasic,
 }: Props) => {
   const {
     formState: { errors },
@@ -40,6 +39,10 @@ export const CreateGrantsBasic = ({
       <VStack pb={10} color={'gray.500'} pt={7} align={'start'} w={'2xl'}>
         <form
           onSubmit={handleSubmit((e) => {
+            setGrantBasic({
+              contact: e.contact,
+              title: e.title,
+            });
             setSteps(3);
           })}
           style={{ width: '100%' }}
@@ -90,7 +93,7 @@ export const CreateGrantsBasic = ({
                 color={'gray.400'}
                 fontWeight={600}
                 fontSize={'15px'}
-                htmlFor={'title'}
+                htmlFor={'contact'}
               >
                 Point of Contact
               </FormLabel>
@@ -116,10 +119,10 @@ export const CreateGrantsBasic = ({
             <Input
               id="handle"
               placeholder="@telegram handle"
-              {...register('handle')}
+              {...register('contact')}
             />
             <FormErrorMessage>
-              {errors.handle ? <>{errors.handle.message}</> : <></>}
+              {errors.contact ? <>{errors.contact.message}</> : <></>}
             </FormErrorMessage>
           </FormControl>
           <FormControl my={6}>

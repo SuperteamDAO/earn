@@ -9,10 +9,8 @@ const Description = dynamic(() => import('../description'), {
 });
 export interface BountyBasicType {
   title: string;
-  // description: string;
-  contact: string;
   deadline: string;
-  estimatedTime: string;
+  eligibility: string;
 }
 interface Props {
   steps: number;

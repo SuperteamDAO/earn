@@ -19,9 +19,15 @@ import { OutputData } from '@editorjs/editorjs';
 import { Dispatch, SetStateAction, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { tokenList, PrizeList, MultiSelectOptions } from '../../../constants';
-import { PrizeListType } from '../../../interface/listings';
+import {
+  GrantsBasicType,
+  GrantsType,
+  PrizeListType,
+} from '../../../interface/listings';
 import { PrizeLabels } from '../../../interface/types';
 import { SponsorStore } from '../../../store/sponsor';
+import { createGrants } from '../../../utils/functions';
+import { genrateuuid } from '../../../utils/helpers';
 
 interface PrizeList {
   label: string;
@@ -32,12 +38,16 @@ interface Props {
   editorData: OutputData | undefined;
   mainSkills: MultiSelectOptions[];
   subSkills: MultiSelectOptions[];
+  grantsBasic: GrantsBasicType | undefined;
+  onOpen: () => void;
 }
 export const CreateGrantsPayment = ({
   setSteps,
   editorData,
   mainSkills,
   subSkills,
+  grantsBasic,
+  onOpen,
 }: Props) => {
   const {
     formState: { errors },
@@ -47,13 +57,31 @@ export const CreateGrantsPayment = ({
   // handles which token is selected
   const [tokenIndex, setTokenIndex] = useState<number | undefined>(undefined);
   // stores the state for prize
-
+  const { currentSponsor } = SponsorStore();
   return (
     <>
       <VStack pb={10} color={'gray.500'} pt={7} align={'start'} w={'2xl'}>
         <form
           onSubmit={handleSubmit(async (e) => {
             console.log(e);
+            const info: GrantsType = {
+              id: genrateuuid(),
+              active: true,
+              token: tokenList[tokenIndex as number].mintAddress,
+              orgId: currentSponsor?.orgId ?? '',
+              maxSalary: Number(e.max_sal),
+              minSalary: Number(e.min_sal),
+              contact: grantsBasic?.contact ?? '',
+              description: JSON.stringify(editorData),
+              skills: JSON.stringify(mainSkills),
+              subSkills: JSON.stringify(subSkills),
+              source: 'native',
+              title: grantsBasic?.title ?? '',
+            };
+            const res = await createGrants(info);
+            if (res && res.data.code === 201) {
+              onOpen();
+            }
           })}
           style={{ width: '100%' }}
         >

@@ -10,9 +10,20 @@ import {
   VStack,
 } from '@chakra-ui/react';
 import { OutputData } from '@editorjs/editorjs';
+import { useState } from 'react';
 import { useForm } from 'react-hook-form';
-import { ExperienceList, MultiSelectOptions } from '../../../constants';
-import { JobBasicsType } from '../../../interface/listings';
+import ReactSelect from 'react-select';
+import makeAnimated from 'react-select/animated';
+import {
+  ExperienceList,
+  MultiSelectOptions,
+  TimeZoneList,
+} from '../../../constants';
+import { JobBasicsType, JobsType } from '../../../interface/listings';
+import { JobType } from '../../../interface/types';
+import { SponsorStore } from '../../../store/sponsor';
+import { createJob } from '../../../utils/functions';
+import { genrateuuid } from '../../../utils/helpers';
 
 interface Props {
   jobBasics: JobBasicsType | undefined;
@@ -33,11 +44,99 @@ export const CreateJobPayments = ({
     register,
     handleSubmit,
   } = useForm();
+  const { currentSponsor } = SponsorStore();
+  const [location, setLocation] = useState<string>('');
+  const [timeZone, setTimeZone] = useState<MultiSelectOptions[]>([]);
+  const animatedComponents = makeAnimated();
   return (
     <>
       <VStack pb={10} color={'gray.500'} pt={7} align={'start'} w={'2xl'}>
-        <form style={{ width: '100%' }}>
+        <form
+          onSubmit={handleSubmit(async (e) => {
+            console.log(e);
+            const info: JobsType = {
+              active: true,
+              deadline: jobBasics?.deadline ?? '',
+              description: JSON.stringify(editorData),
+              featured: false,
+              id: genrateuuid(),
+              jobType: jobBasics?.type as JobType,
+              maxEq: Number(e.max_eq),
+              minEq: Number(e.min_eq),
+              maxSalary: Number(e.max_sal),
+              minSalary: Number(e.min_sal),
+              orgId: currentSponsor?.orgId ?? '',
+              skills: JSON.stringify(mainSkills),
+              source: 'native',
+              subskills: JSON.stringify(subSkills),
+              title: jobBasics?.title ?? '',
+              location: location,
+              experience: e.exp,
+              timezone: JSON.stringify(timeZone),
+            };
+            const res = await createJob(info);
+            console.log(res);
+
+            if (res && res.data.code === 201) {
+              onOpen();
+            }
+          })}
+          style={{ width: '100%' }}
+        >
           <FormControl isRequired>
+            <FormLabel
+              color={'gray.400'}
+              fontWeight={600}
+              fontSize={'15px'}
+              htmlFor={'exp'}
+            >
+              Location
+            </FormLabel>
+
+            <Select
+              id="exp"
+              placeholder="Location"
+              color={'gray.500'}
+              onChange={(e) => {
+                setLocation(e.target.value);
+              }}
+            >
+              {['Remote', 'In Person'].map((el) => {
+                return (
+                  <option key={el} value={el}>
+                    {el}
+                  </option>
+                );
+              })}
+            </Select>
+            <FormErrorMessage>
+              {errors.time ? <>{errors.time.message}</> : <></>}
+            </FormErrorMessage>
+          </FormControl>
+          {location === 'Remote' && (
+            <FormControl mt={5} isRequired>
+              <FormLabel
+                color={'gray.400'}
+                fontWeight={600}
+                fontSize={'15px'}
+                htmlFor={'exp'}
+              >
+                Time Zone
+              </FormLabel>
+
+              <ReactSelect
+                closeMenuOnSelect={false}
+                components={animatedComponents}
+                isMulti
+                options={TimeZoneList}
+                onChange={(e) => {
+                  setTimeZone(e as any);
+                }}
+              />
+            </FormControl>
+          )}
+
+          <FormControl my={5} isRequired>
             <FormLabel
               color={'gray.400'}
               fontWeight={600}
@@ -142,12 +241,7 @@ export const CreateJobPayments = ({
                 </FormLabel>
               </Flex>
 
-              <Input
-                id="max_eq"
-                placeholder="5%"
-                type={'number'}
-                {...register('max_eq')}
-              />
+              <Input id="max_eq" placeholder="5%" {...register('max_eq')} />
               <FormErrorMessage>
                 {errors.max_eq ? <>{errors.max_eq.message}</> : <></>}
               </FormErrorMessage>

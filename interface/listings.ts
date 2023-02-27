@@ -1,4 +1,4 @@
-import { Prize, Source, SponsorStatus } from './types';
+import { JobType, Prize, Source, SponsorStatus } from './types';
 
 type PrizeListType = {
   [key in Prize]: string;
@@ -11,7 +11,6 @@ interface Bounties {
   subSkills: string;
   deadline: string;
   source: Source;
-  completeTime: string;
   amount: string;
   token: string;
   sponsorStatus: SponsorStatus;
@@ -23,6 +22,7 @@ interface Bounties {
   orgId: string;
   winner?: Winner[];
   showTop: boolean;
+  eligibility: string;
 }
 interface Winner {
   id: string;
@@ -34,11 +34,49 @@ interface Winner {
 }
 interface JobBasicsType {
   title: string;
-  type: string;
+  type: JobType;
   link: string;
   deadline: string;
 }
+interface JobsType {
+  active: boolean;
+  deadline: string;
+  description: string;
+  experience: string;
+  featured: boolean;
+  jobType: JobType;
+  location: string;
+  maxEq: number;
+  maxSalary: number;
+  minEq: number;
+  minSalary: number;
+  orgId: string;
+  skills: string;
+  source: Source;
+  title: string;
+  subskills: string;
+  id: string;
+  timezone: string;
+}
 
+interface GrantsBasicType {
+  title: string;
+  contact: string;
+}
+interface GrantsType {
+  id: string;
+  title: string;
+  description: string;
+  skills: string;
+  subSkills: String;
+  source: Source;
+  contact: string;
+  token: string;
+  active: boolean;
+  orgId: string;
+  maxSalary: number;
+  minSalary: number;
+}
 type Experience =
   | '0 Yrs: Fresher/Graduate '
   | '0-1 Yrs: Some Experience Required'
@@ -46,4 +84,13 @@ type Experience =
   | '5-10 Yrs: Mid Career Professional'
   | '10 Yrs+: Senior Professional';
 
-export type { Bounties, Winner, PrizeListType, JobBasicsType, Experience };
+export type {
+  Bounties,
+  Winner,
+  PrizeListType,
+  JobsType,
+  JobBasicsType,
+  Experience,
+  GrantsType,
+  GrantsBasicType,
+};

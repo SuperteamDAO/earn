@@ -94,7 +94,6 @@ export const CreatebountyPayment = ({
               {
                 active: true,
                 bugBounty: false,
-                completeTime: bountyBasic?.estimatedTime ?? '',
                 deadline: bountyBasic?.deadline ?? '',
                 description: JSON.stringify(editorData),
                 featured: false,
@@ -109,6 +108,7 @@ export const CreatebountyPayment = ({
                 skills: JSON.stringify(mainSkills),
                 subSkills: JSON.stringify(subSkills),
                 token: tokenList[tokenIndex as number].mintAddress,
+                eligibility: bountyBasic?.eligibility ?? '',
               },
               currentSponsor as SponsorType
             );
