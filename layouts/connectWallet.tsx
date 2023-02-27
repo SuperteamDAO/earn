@@ -30,7 +30,7 @@ export const ConnectWallet = () => {
       <Grid
         mt={'0'}
         w="100%"
-        h="120vh"
+        h="110vh"
         placeContent="center"
         bgImage={`url('/assets/bg/banner.png')`}
         bgRepeat="no-repeat"

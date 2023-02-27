@@ -10,6 +10,7 @@ import {
   MenuButton,
   MenuItem,
   MenuList,
+  Select,
   Text,
 } from '@chakra-ui/react';
 import { useWallet } from '@solana/wallet-adapter-react';
@@ -20,8 +21,14 @@ import Avatar from 'boring-avatars';
 import { truncatedPublicKey } from '../../utils/helpers';
 import { MdOutlineKeyboardArrowDown } from 'react-icons/md';
 import { userStore } from '../../store/user';
+import { SponsorType } from '../../interface/sponsor';
+import { SponsorStore } from '../../store/sponsor';
+import { useStore } from 'zustand';
 
-export const Navbar = () => {
+interface Props {
+  sponsors?: SponsorType[];
+}
+export const Navbar = ({ sponsors }: Props) => {
   const { setUserInfo } = userStore();
   const router = useRouter();
   const { connected, publicKey, wallet } = useWallet();
@@ -42,6 +49,10 @@ export const Navbar = () => {
     }
     await wallet.adapter.disconnect();
   };
+
+  // --
+  const { setCurrentSponsor } = SponsorStore();
+  const { userInfo } = userStore();
   return (
     <>
       <Container
@@ -66,9 +77,27 @@ export const Navbar = () => {
           h={'full'}
           mx="auto"
         >
-          <Box cursor={'pointer'} onClick={() => router.push('/')}>
-            <Image w={'12rem'} src={'/assets/logo/logo.png'} alt={'logo'} />
-          </Box>
+          <HStack w={'full'}>
+            <Box cursor={'pointer'} onClick={() => router.push('/')}>
+              <Image w={'12rem'} src={'/assets/logo/logo.png'} alt={'logo'} />
+            </Box>
+            {sponsors && (
+              <Select
+                w={'12rem'}
+                onChange={(e) => {
+                  setCurrentSponsor(sponsors![Number(e.currentTarget.value)]);
+                }}
+              >
+                {sponsors?.map((sponsor, index) => {
+                  return (
+                    <option key={sponsor.id} value={index}>
+                      {sponsor.name}
+                    </option>
+                  );
+                })}
+              </Select>
+            )}
+          </HStack>
           <Box>
             {!connected ? (
               <Button
@@ -85,6 +114,21 @@ export const Navbar = () => {
               </Button>
             ) : (
               <HStack gap={2}>
+                {userInfo?.sponsor && (
+                  <Button
+                    w="100%"
+                    fontSize="0.9rem"
+                    fontWeight={600}
+                    color="#6562FF"
+                    border="1px solid #6562FF"
+                    bg="transparent"
+                    onClick={() => {
+                      router.push('/listings/create');
+                    }}
+                  >
+                    Create a listing
+                  </Button>
+                )}
                 <Divider
                   borderColor={'gray.300'}
                   h={14}

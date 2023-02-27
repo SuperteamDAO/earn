@@ -13,14 +13,14 @@ import {
   PinInput,
   PinInputField,
   Text,
-  Toast,
   VStack,
 } from '@chakra-ui/react';
 import { useRouter } from 'next/router';
 import { useState } from 'react';
 import toast, { Toaster } from 'react-hot-toast';
 import { SponsorType } from '../../interface/sponsor';
-import { createSponsor } from '../../utils/functions';
+import { userStore } from '../../store/user';
+import { createSponsor, UpdateUser } from '../../utils/functions';
 interface Props {
   onClose: () => void;
   isOpen: boolean;
@@ -42,6 +42,8 @@ export const Emailverification = ({
   const [success, setSuccess] = useState<boolean>(false);
   const [xpin, setXpin] = useState<string>('');
   const router = useRouter();
+  const { userInfo } = userStore();
+  const [loading, setLoading] = useState<boolean>(false);
   return (
     <Modal isOpen={isOpen} onClose={onClose}>
       <ModalOverlay />
@@ -75,6 +77,7 @@ export const Emailverification = ({
                 }}
                 w={'full'}
                 bg={'#6562FF'}
+                _hover={{ bg: '#6562FF' }}
                 color={'white'}
                 mt={10}
               >
@@ -122,16 +125,23 @@ export const Emailverification = ({
                 </PinInput>
               </Box>
               <Button
+                isLoading={loading}
+                isDisabled={loading}
                 onClick={async () => {
                   if (
                     totp.current === Number(xpin) ||
                     totp.last === Number(xpin)
                   ) {
+                    setLoading(true);
                     toast.success('Success');
                     const a = await createSponsor(sponsor);
+                    const res = await UpdateUser(userInfo?.id as string, {
+                      sponsor: true,
+                    });
                     console.log(a);
-                    if (a.data) {
+                    if (a.data && res) {
                       setSuccess(true);
+                      setLoading(false);
                     }
                   } else {
                     toast.error('Wrong OTP');
@@ -139,6 +149,7 @@ export const Emailverification = ({
                 }}
                 w={'full'}
                 bg={'#6562FF'}
+                _hover={{ bg: '#6562FF' }}
                 color={'white'}
                 mt={10}
               >

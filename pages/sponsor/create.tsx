@@ -278,12 +278,7 @@ const CreateSponsor = () => {
                         >
                           Industry
                         </FormLabel>
-                        {/* <Input
-                          w={'18rem'}
-                          id="industry"
-                          placeholder="Pick a Industry"
-                          {...register('industry')}
-                        /> */}
+
                         <Select
                           closeMenuOnSelect={false}
                           components={animatedComponents}
@@ -327,6 +322,7 @@ const CreateSponsor = () => {
                       <Button
                         w="100%"
                         bg={'#6562FF'}
+                        _hover={{ bg: '#6562FF' }}
                         color={'white'}
                         fontSize="1rem"
                         fontWeight={600}
