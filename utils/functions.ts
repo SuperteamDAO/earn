@@ -74,6 +74,14 @@ export const findSponsors = async (publicKey: string) => {
   }
 };
 
+export const findSponsorListing = async (orgId: string) => {
+  if (!orgId) {
+    throw new Error('orgId undefined!');
+  }
+  let res = await axios.get(`${Backend_Url}/listings/find?orgId=${orgId}`);
+  return res.data.data;
+};
+
 export const findTeam = async (id: string) => {
   if (!id) return null;
   try {
@@ -85,6 +93,15 @@ export const findTeam = async (id: string) => {
     return null;
   }
 };
+
+export const findSponsorDrafts = async (orgId: string) => {
+  if (!orgId) {
+    throw new Error('orgId undefined!');
+  }
+  let res = await axios.get(`${Backend_Url}/drafts/findall?orgId=${orgId}`);
+  return res.data.data;
+};
+
 // Bounties
 export const createBounty = async (
   bounties: Bounties,

@@ -6,15 +6,22 @@ import React from 'react';
 import { Navbar } from '../components/navbar/navbar';
 import { DashboardSidbar } from '../components/sidebar/DashboardSidbar';
 import { findSponsors } from '../utils/functions';
+import { ConnectWallet } from './connectWallet';
+
 interface Props {
   children: React.ReactNode;
 }
 const DashboardLayout = ({ children }: Props) => {
-  const { publicKey } = useWallet();
+  const { connected, publicKey } = useWallet();
   const sponsors = useQuery({
     queryKey: ['sponsor', publicKey?.toBase58() ?? ''],
     queryFn: ({ queryKey }) => findSponsors(queryKey[1]),
   });
+
+  // if (!connected) {
+  //   return <ConnectWallet />
+  // }
+
   return (
     <>
       <VStack w={'full'}>
