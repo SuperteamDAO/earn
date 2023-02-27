@@ -207,6 +207,7 @@ export const CreateGrantsBasic = ({
             <Button
               w="100%"
               bg={'#6562FF'}
+              _hover={{ bg: '#6562FF' }}
               color={'white'}
               fontSize="1rem"
               fontWeight={600}

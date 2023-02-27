@@ -117,6 +117,7 @@ const Index = () => {
                     w={'full'}
                     h={12}
                     color={'white'}
+                    _hover={{ bg: '#6562FF' }}
                     bg={'#6562FF'}
                     onClick={() => {
                       router.push('/listings/create');
@@ -205,6 +206,7 @@ const Index = () => {
                     fontSize={'0.9rem'}
                     h={12}
                     color={'white'}
+                    _hover={{ bg: '#6562FF' }}
                     bg={'#6562FF'}
                   >
                     Get to work

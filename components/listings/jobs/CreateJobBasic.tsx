@@ -314,6 +314,7 @@ export const CreateJobBasic = ({
               color={'white'}
               fontSize="1rem"
               fontWeight={600}
+              _hover={{ bg: '#6562FF' }}
               type={'submit'}
             >
               Continue

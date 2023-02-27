@@ -48,11 +48,13 @@ export const CreateJobPayments = ({
   const [location, setLocation] = useState<string>('');
   const [timeZone, setTimeZone] = useState<MultiSelectOptions[]>([]);
   const animatedComponents = makeAnimated();
+  const [loading, setLoading] = useState<boolean>(false);
   return (
     <>
       <VStack pb={10} color={'gray.500'} pt={7} align={'start'} w={'2xl'}>
         <form
           onSubmit={handleSubmit(async (e) => {
+            setLoading(true);
             console.log(e);
             const info: JobsType = {
               active: true,
@@ -79,6 +81,9 @@ export const CreateJobPayments = ({
 
             if (res && res.data.code === 201) {
               onOpen();
+              setLoading(false);
+            } else {
+              setLoading(false);
             }
           })}
           style={{ width: '100%' }}
@@ -256,6 +261,9 @@ export const CreateJobPayments = ({
               fontSize="1rem"
               fontWeight={600}
               type={'submit'}
+              _hover={{ bg: '#6562FF' }}
+              isLoading={loading}
+              disabled={loading}
             >
               Finish the listing
             </Button>

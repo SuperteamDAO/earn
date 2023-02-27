@@ -58,11 +58,13 @@ export const CreateGrantsPayment = ({
   const [tokenIndex, setTokenIndex] = useState<number | undefined>(undefined);
   // stores the state for prize
   const { currentSponsor } = SponsorStore();
+  const [loading, setLoading] = useState<boolean>(false);
   return (
     <>
       <VStack pb={10} color={'gray.500'} pt={7} align={'start'} w={'2xl'}>
         <form
           onSubmit={handleSubmit(async (e) => {
+            setLoading(true);
             console.log(e);
             const info: GrantsType = {
               id: genrateuuid(),
@@ -81,6 +83,9 @@ export const CreateGrantsPayment = ({
             const res = await createGrants(info);
             if (res && res.data.code === 201) {
               onOpen();
+              setLoading(false);
+            } else {
+              setLoading(false);
             }
           })}
           style={{ width: '100%' }}
@@ -200,9 +205,12 @@ export const CreateGrantsPayment = ({
               w="100%"
               bg={'#6562FF'}
               color={'white'}
+              _hover={{ bg: '#6562FF' }}
               fontSize="1rem"
               fontWeight={600}
               type={'submit'}
+              isLoading={loading}
+              disabled={loading}
             >
               Finish the listing
             </Button>

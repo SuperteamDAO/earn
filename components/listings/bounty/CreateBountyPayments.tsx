@@ -71,12 +71,13 @@ export const CreatebountyPayment = ({
   // sponsor
   const { currentSponsor } = SponsorStore();
   const { userInfo } = userStore();
-
+  const [loading, setLoading] = useState<boolean>(false);
   return (
     <>
       <VStack pb={10} color={'gray.500'} pt={7} align={'start'} w={'2xl'}>
         <form
           onSubmit={handleSubmit(async (e) => {
+            setLoading(true);
             console.log(e);
             const Prizevalues = Object.values(e);
             let amount = 0;
@@ -115,6 +116,9 @@ export const CreatebountyPayment = ({
 
             if (data.data) {
               onOpen();
+              setLoading(false);
+            } else {
+              setLoading(false);
             }
           })}
           style={{ width: '100%' }}
@@ -235,10 +239,13 @@ export const CreatebountyPayment = ({
             <Button
               w="100%"
               bg={'#6562FF'}
+              _hover={{ bg: '#6562FF' }}
               color={'white'}
               fontSize="1rem"
               fontWeight={600}
               type={'submit'}
+              isLoading={loading}
+              disabled={loading}
             >
               Finish the listing
             </Button>

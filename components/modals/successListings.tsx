@@ -64,6 +64,7 @@ export const SuccessListings = ({ isOpen, onClose, slug }: Props) => {
                 color={'white'}
                 fontSize="1rem"
                 fontWeight={600}
+                _hover={{ bg: '#6562FF' }}
               >
                 Continue with Listings
               </Button>
