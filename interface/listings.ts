@@ -1,31 +1,28 @@
-import { Prize, Source, SponsorStatus } from './types';
+import { JobType, Prize, Source, SponsorStatus } from './types';
 
-type PrizeList = {
+type PrizeListType = {
   [key in Prize]: string;
 };
 interface Bounties {
-  id: string;
+  id?: string;
   title: string;
   description: string;
   skills: string;
+  subSkills: string;
   deadline: string;
   source: Source;
-  completeTime: string;
   amount: string;
   token: string;
   sponsorStatus: SponsorStatus;
   active: boolean;
-  tx: string;
-  private: boolean;
+  privateBool: boolean;
   featured: boolean;
-  industry: string;
-  escrow: boolean;
-  prizeList: Partial<PrizeList>; // change to enum and string
-  claimLink: string;
-  bugBounty: string;
+  prizeList: Partial<PrizeListType>; // change to enum and string
+  bugBounty: boolean;
   orgId: string;
-  winner: Winner[];
+  winner?: Winner[];
   showTop: boolean;
+  eligibility: string;
 }
 interface Winner {
   id: string;
@@ -35,4 +32,65 @@ interface Winner {
   bountiesId: string;
   prize: Prize;
 }
-export type { Bounties, Winner };
+interface JobBasicsType {
+  title: string;
+  type: JobType;
+  link: string;
+  deadline: string;
+}
+interface JobsType {
+  active: boolean;
+  deadline: string;
+  description: string;
+  experience: string;
+  featured: boolean;
+  jobType: JobType;
+  location: string;
+  maxEq: number;
+  maxSalary: number;
+  minEq: number;
+  minSalary: number;
+  orgId: string;
+  skills: string;
+  source: Source;
+  title: string;
+  subskills: string;
+  id: string;
+  timezone: string;
+}
+
+interface GrantsBasicType {
+  title: string;
+  contact: string;
+}
+interface GrantsType {
+  id: string;
+  title: string;
+  description: string;
+  skills: string;
+  subSkills: String;
+  source: Source;
+  contact: string;
+  token: string;
+  active: boolean;
+  orgId: string;
+  maxSalary: number;
+  minSalary: number;
+}
+type Experience =
+  | '0 Yrs: Fresher/Graduate '
+  | '0-1 Yrs: Some Experience Required'
+  | '1-5 Yrs: Early Career Professional'
+  | '5-10 Yrs: Mid Career Professional'
+  | '10 Yrs+: Senior Professional';
+
+export type {
+  Bounties,
+  Winner,
+  PrizeListType,
+  JobsType,
+  JobBasicsType,
+  Experience,
+  GrantsType,
+  GrantsBasicType,
+};
