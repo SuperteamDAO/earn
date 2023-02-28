@@ -63,7 +63,6 @@ export const Createbounty = ({
           onOpen={onOpen}
           subSkills={subSkills}
           mainSkills={mainSkills}
-          setSteps={setSteps}
           bountyBasic={bountybasic}
           editorData={editorData}
         />

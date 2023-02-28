@@ -34,8 +34,10 @@ const CreateListing = () => {
   const [steps, setSteps] = useState<number>(1);
   const router = useRouter();
   const [editorData, setEditorData] = useState<OutputData | undefined>();
+  //
   const [mainSkills, setMainSkills] = useState<MultiSelectOptions[]>([]);
   const [subSkill, setSubSkill] = useState<MultiSelectOptions[]>([]);
+  //
   const { isOpen, onOpen } = useDisclosure();
   // -- Jobs
   const [jobBasics, setJobBasics] = useState<JobBasicsType | undefined>();
