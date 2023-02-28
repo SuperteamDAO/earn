@@ -49,35 +49,43 @@ function Drafts() {
     return (
         <DashboardLayout>
             {(!SponsorData.isSuccess) ?
-                <Center outline={"1px"} h={'85vh'}><Spinner
-                    thickness='4px'
-                    speed='0.65s'
-                    emptyColor='gray.200'
-                    color='blue.500'
-                    size='xl'
-                /></Center> : <Box w={"100%"} px={"2.1875rem"} py={"1.125rem"} >
+                <Center outline={"1px"} h={'85vh'}>
+                    <Spinner
+                        thickness='4px'
+                        speed='0.65s'
+                        emptyColor='gray.200'
+                        color='blue.500'
+                        size='xl'
+                    />
+                </Center> : <Box w={"100%"} px={"2.1875rem"} py={"1.125rem"} >
                     <DashboardHeader />
                     <Box>
                         <Text fontWeight={"600"} fontSize={"1.25rem"}>💼 Drafts</Text>
                         <Text mt={"5px"} color={"#94A3B8"} fontSize={"1.125rem"}>Here are all the drafts made by your company</Text>
                     </Box>
-                    <Box
-                        w="100%"
-                        mt={"36px"}
-                        bg="white"
-                        boxShadow="0px 4px 4px rgba(219, 220, 221, 0.25)"
-                    >
-                        <Table size={'lg'} variant="simple">
-                            <DraftHeader />
-                            {
-                                drafts.map(({ basic, type }: basicType, idx: number) => {
-                                    return (
-                                        <DraftBody key={'d' + idx} type={type} basic={basic} />
-                                    )
-                                })
-                            }
-                        </Table>
-                    </Box>
+                    {(!(drafts.length > 0)) ?
+                        <Text fontSize={"20px"} fontWeight={"400"} mt={"15px"} color={"#94A3B8"}>
+                            You don&apos;t have any draft listings at the moment. Get started by creating a bounty, grant, or job
+                            <Link color={"blue"} href='/listings/create'>{" "}here</Link>
+                            .
+                        </Text> : <Box
+                            w="100%"
+                            mt={"36px"}
+                            bg="white"
+                            boxShadow="0px 4px 4px rgba(219, 220, 221, 0.25)"
+                        >
+                            <Table size={'lg'} variant="simple">
+                                <DraftHeader />
+                                {
+                                    drafts.map(({ basic, type }: basicType, idx: number) => {
+                                        return (
+                                            <DraftBody key={'d' + idx} type={type} basic={basic} />
+                                        )
+                                    })
+                                }
+                            </Table>
+                        </Box>
+                    }
                 </Box>}
         </DashboardLayout>)
 }

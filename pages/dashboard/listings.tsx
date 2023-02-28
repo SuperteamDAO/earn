@@ -68,71 +68,74 @@ function Listing() {
 
     return (
         <DashboardLayout>
-            {(!listingData.isSuccess) ? <Center outline={"1px"} h={'85vh'}><Spinner
-                thickness='4px'
-                speed='0.65s'
-                emptyColor='gray.200'
-                color='blue.500'
-                size='xl'
-            /></Center> : <Box w={"100%"} px={"2.1875rem"} py={"1.125rem"} >
-                <DashboardHeader />
-                <Box>
-                    <Text fontWeight={"600"} fontSize={"1.25rem"}>💼 Your Listings</Text>
-                    <Text mt={"5px"} color={"#94A3B8"} fontSize={"1.125rem"}>Here are all the listing made by your company</Text>
+            {(!listingData.isSuccess) ?
+                <Center outline={"1px"} h={'85vh'}>
+                    <Spinner
+                        thickness='4px'
+                        speed='0.65s'
+                        emptyColor='gray.200'
+                        color='blue.500'
+                        size='xl'
+                    />
+                </Center> : <Box w={"100%"} px={"2.1875rem"} py={"1.125rem"} >
+                    <DashboardHeader />
+                    <Box>
+                        <Text fontWeight={"600"} fontSize={"1.25rem"}>💼 Your Listings</Text>
+                        <Text mt={"5px"} color={"#94A3B8"} fontSize={"1.125rem"}>Here are all the listing made by your company</Text>
+                    </Box>
+
+                    {(listings.bounties.length > 0 || listings.jobs > 0 || listings.grants > 0) ? <Box
+                        w="100%"
+                        mt={"36px"}
+                        bg="white"
+                        boxShadow="0px 4px 4px rgba(219, 220, 221, 0.25)"
+                    > <Table size={'lg'} variant="simple">
+                            <ListingHeader />
+                            {
+                                listings.bounties.map(({ title, amount, deadline }: listElm, idx: number) => {
+                                    return (
+                                        <ListingBody
+                                            title={title}
+                                            amount={amount}
+                                            deadline={deadline}
+                                            type={'💰 Bounties'}
+                                            key={"b" + idx} />
+                                    )
+                                })
+                            }
+                            {
+                                listings.jobs.map(({ title, amount, deadline }: listElm, idx: number) => {
+                                    return (
+                                        <ListingBody
+                                            title={title}
+                                            amount={amount}
+                                            deadline={deadline}
+                                            type={'💼 Jobs'}
+                                            key={"j" + idx} />
+                                    )
+                                })
+                            }
+                            {
+                                listings.grants.map(({ title, amount, deadline }: listElm, idx: number) => {
+                                    return (
+                                        <ListingBody
+                                            title={title}
+                                            amount={amount}
+                                            deadline={deadline}
+                                            type={'💰 Grants'}
+                                            key={"g" + idx} />
+                                    )
+                                })
+                            }
+                        </Table></Box> :
+                        <Text fontSize={"20px"} fontWeight={"400"} mt={"15px"} color={"#94A3B8"}>
+                            You don&apos;t have any listings at the moment. Get started by creating a bounty, grant, or job
+                            <Link color={"blue"} href='/listings/create'>{" "}here</Link>
+                            .
+                        </Text>
+                    }
+
                 </Box>
-
-                {(listings.bounties.length > 0 || listings.jobs > 0 || listings.grants > 0) ? <Box
-                    w="100%"
-                    mt={"36px"}
-                    bg="white"
-                    boxShadow="0px 4px 4px rgba(219, 220, 221, 0.25)"
-                > <Table size={'lg'} variant="simple">
-                        <ListingHeader />
-                        {
-                            listings.bounties.map(({ title, amount, deadline }: listElm, idx: number) => {
-                                return (
-                                    <ListingBody
-                                        title={title}
-                                        amount={amount}
-                                        deadline={deadline}
-                                        type={'💰 Bounties'}
-                                        key={"b" + idx} />
-                                )
-                            })
-                        }
-                        {
-                            listings.jobs.map(({ title, amount, deadline }: listElm, idx: number) => {
-                                return (
-                                    <ListingBody
-                                        title={title}
-                                        amount={amount}
-                                        deadline={deadline}
-                                        type={'💼 Jobs'}
-                                        key={"j" + idx} />
-                                )
-                            })
-                        }
-                        {
-                            listings.grants.map(({ title, amount, deadline }: listElm, idx: number) => {
-                                return (
-                                    <ListingBody
-                                        title={title}
-                                        amount={amount}
-                                        deadline={deadline}
-                                        type={'💰 Grants'}
-                                        key={"g" + idx} />
-                                )
-                            })
-                        }
-                    </Table></Box> :
-                    <Text fontSize={"20px"} fontWeight={"400"} mt={"15px"} color={"#94A3B8"}>
-                        You don&apos;t have any draft listings at the moment. Get started by creating a bounty, grant, or job
-                        <Link color={"blue"} href='/listings/create'>{" "}here</Link>
-                        .
-                    </Text>
-                }
-
-            </Box>
             }
 
         </DashboardLayout >
