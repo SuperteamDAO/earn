@@ -1,4 +1,4 @@
-import { Box, VStack } from '@chakra-ui/react';
+import { Box, Center, VStack, Spinner } from '@chakra-ui/react';
 import { useWallet } from '@solana/wallet-adapter-react';
 import { useQuery } from '@tanstack/react-query';
 import { useRouter } from 'next/router';
@@ -12,15 +12,15 @@ interface Props {
   children: React.ReactNode;
 }
 const DashboardLayout = ({ children }: Props) => {
-  const { connected, publicKey } = useWallet();
+  const { connected, publicKey, connecting } = useWallet();
   const sponsors = useQuery({
     queryKey: ['sponsor', publicKey?.toBase58() ?? ''],
     queryFn: ({ queryKey }) => findSponsors(queryKey[1]),
   });
 
-  // if (!connected) {
-  //   return <ConnectWallet />
-  // }
+  if (!connected) {
+    return <ConnectWallet />
+  }
 
   return (
     <>

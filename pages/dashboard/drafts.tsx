@@ -46,7 +46,6 @@ function Drafts() {
 
     let drafts = SponsorData.data;
 
-
     return (
         <DashboardLayout>
             {(!SponsorData.isSuccess) ?
