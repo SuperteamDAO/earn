@@ -82,6 +82,14 @@ export const findSponsorListing = async (orgId: string) => {
   return res.data.data;
 };
 
+export const findSponsorDrafts = async (orgId: string) => {
+  if (!orgId) {
+    throw new Error('orgId undefined!');
+  }
+  let res = await axios.get(`${Backend_Url}/drafts/findall?orgId=${orgId}`);
+  return res.data.data;
+};
+
 export const findTeam = async (id: string) => {
   if (!id) return null;
   try {
@@ -92,14 +100,6 @@ export const findTeam = async (id: string) => {
     console.log(error);
     return null;
   }
-};
-
-export const findSponsorDrafts = async (orgId: string) => {
-  if (!orgId) {
-    throw new Error('orgId undefined!');
-  }
-  let res = await axios.get(`${Backend_Url}/drafts/findall?orgId=${orgId}`);
-  return res.data.data;
 };
 
 // Bounties

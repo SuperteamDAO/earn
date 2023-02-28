@@ -81,7 +81,7 @@ function Listing() {
                     <Text mt={"5px"} color={"#94A3B8"} fontSize={"1.125rem"}>Here are all the listing made by your company</Text>
                 </Box>
 
-                {(listings.bounties.length > 0 && listings.jobs > 0 && listings.grants > 0) ? <Box
+                {(listings.bounties.length > 0 || listings.jobs > 0 || listings.grants > 0) ? <Box
                     w="100%"
                     mt={"36px"}
                     bg="white"

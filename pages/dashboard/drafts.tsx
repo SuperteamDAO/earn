@@ -31,6 +31,13 @@ import DashboardLayout from '../../layouts/dashboardLayout'
 //components
 import DashboardHeader from '../../components/dashboardHead';
 
+
+
+type basicType = {
+    basic: string,
+    type: string
+}
+
 function Drafts() {
 
     let { currentSponsor } = SponsorStore()
@@ -39,51 +46,67 @@ function Drafts() {
 
     let drafts = SponsorData.data;
 
-    console.log(drafts)
 
     return (
         <DashboardLayout>
-            <Box w={"100%"} px={"2.1875rem"} py={"1.125rem"} >
-                <DashboardHeader />
-                <Box>
-                    <Text fontWeight={"600"} fontSize={"1.25rem"}>💼 Drafts</Text>
-                    <Text mt={"5px"} color={"#94A3B8"} fontSize={"1.125rem"}>Here are all the drafts made by your company</Text>
-                </Box>
-                <Box
-                    w="100%"
-                    mt={"36px"}
-                    bg="white"
-                    boxShadow="0px 4px 4px rgba(219, 220, 221, 0.25)"
-                >
-                    <Table size={'lg'} variant="simple">
-                        <DraftHeader />
-                        <DraftBody />
-                        <DraftBody />
-                        <DraftBody />
-                    </Table>
-                </Box>
-            </Box>
+            {(!SponsorData.isSuccess) ?
+                <Center outline={"1px"} h={'85vh'}><Spinner
+                    thickness='4px'
+                    speed='0.65s'
+                    emptyColor='gray.200'
+                    color='blue.500'
+                    size='xl'
+                /></Center> : <Box w={"100%"} px={"2.1875rem"} py={"1.125rem"} >
+                    <DashboardHeader />
+                    <Box>
+                        <Text fontWeight={"600"} fontSize={"1.25rem"}>💼 Drafts</Text>
+                        <Text mt={"5px"} color={"#94A3B8"} fontSize={"1.125rem"}>Here are all the drafts made by your company</Text>
+                    </Box>
+                    <Box
+                        w="100%"
+                        mt={"36px"}
+                        bg="white"
+                        boxShadow="0px 4px 4px rgba(219, 220, 221, 0.25)"
+                    >
+                        <Table size={'lg'} variant="simple">
+                            <DraftHeader />
+                            {
+                                drafts.map(({ basic, type }: basicType, idx: number) => {
+                                    return (
+                                        <DraftBody key={'d' + idx} type={type} basic={basic} />
+                                    )
+                                })
+                            }
+                        </Table>
+                    </Box>
+                </Box>}
         </DashboardLayout>)
 }
 
-const DraftBody = () => {
+const DraftBody = (props: basicType) => {
+
+
+    let data = JSON.parse(props.basic.replaceAll(`'`, `"`));
+
+    console.log(props.basic)
     return (
         <Tbody h={"70px"}>
             <Tr>
                 <Td py={"0"} fontSize={"1rem"} fontWeight={"600"} color={"#334254"} >
-                    Landing Page Redesign
+                    {data.title}
                 </Td>
                 <Td py={"0"}>
                     <Center fontSize={"12px"} bg={"#F7FAFC"} py={"0.3125rem"} px={"0.75rem"} color={"#94A3B8"}>
                         💰
-                        Bounties
+                        {" "}
+                        {props.type}
                     </Center>
                 </Td >
                 <Td py={"0"}>
                     <Center fontWeight={"600"} fontSize={"0.75rem"}>
                         <Text mr={"0.395rem"} color={"#94A3B8"}>$</Text>
                         <Text mr={"0.1875rem"} color={"#334254"}>
-                            10,000
+                            {data.amount}
                         </Text>
                         <Text color={"#94A3B8"}>USD</Text>
                     </Center>
@@ -93,7 +116,7 @@ const DraftBody = () => {
                         <Box w={"1rem"} height="1rem" mb={"0.1563rem"}>
                             <Image width={"100%"} height={"100%"} src={'/assets/icons/time.svg'} alt="" />
                         </Box>
-                        <Text color={"#94A3B8"} fontSize={"0.75rem"} fontWeight={"600"}>30th Jun</Text>
+                        <Text color={"#94A3B8"} fontSize={"0.75rem"} fontWeight={"600"}>{data.deadline}</Text>
                     </Center>
                 </Td>
                 <Td py={"0"}>
