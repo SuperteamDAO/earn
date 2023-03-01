@@ -23,6 +23,7 @@ interface Props {
   setSubSkills: Dispatch<SetStateAction<MultiSelectOptions[]>>;
   subSkills: MultiSelectOptions[];
   skills: MultiSelectOptions[];
+  createDraft: (payment: string) => void;
 }
 interface ErrorsBasic {
   title: boolean;
@@ -39,6 +40,7 @@ export const CreatebountyBasic = ({
   skills,
   subSkills,
   bountyBasic,
+  createDraft,
 }: Props) => {
   const [errorState, setErrorState] = useState<ErrorsBasic>({
     deadline: false,
@@ -85,6 +87,7 @@ export const CreatebountyBasic = ({
           <Input
             id="title"
             placeholder="Develop a new landing page"
+            value={bountyBasic?.title}
             onChange={(e) => {
               setbountyBasic({
                 ...(bountyBasic as BountyBasicType),
@@ -134,6 +137,7 @@ export const CreatebountyBasic = ({
           <Input
             id="eligibility"
             placeholder="Develop a new landing page"
+            value={bountyBasic?.eligibility}
             onChange={(e) => {
               setbountyBasic({
                 ...(bountyBasic as BountyBasicType),
@@ -185,6 +189,7 @@ export const CreatebountyBasic = ({
             closeMenuOnSelect={false}
             components={animatedComponents}
             isMulti
+            value={skills}
             required={true}
             options={MainSkills}
             onChange={(e) => {
@@ -233,6 +238,7 @@ export const CreatebountyBasic = ({
             closeMenuOnSelect={false}
             components={animatedComponents}
             isMulti
+            value={subSkills}
             options={SubSkills}
             onChange={(e) => {
               setSubSkills(e as any);
@@ -273,6 +279,7 @@ export const CreatebountyBasic = ({
             id="deadline"
             type={'date'}
             placeholder="deadline"
+            value={bountyBasic?.deadline}
             color={'gray.500'}
             onChange={(e) => {
               setbountyBasic({
@@ -335,6 +342,9 @@ export const CreatebountyBasic = ({
             border="1px solid"
             borderColor="gray.200"
             bg="transparent"
+            onClick={() => {
+              createDraft('nothing');
+            }}
           >
             Save as Drafts
           </Button>

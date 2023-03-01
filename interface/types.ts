@@ -1,4 +1,4 @@
-export type ListingJobs = 'Bounties' | 'Jobs' | 'Grants';
+export type Listingtype = 'Bounties' | 'Jobs' | 'Grants';
 
 export type JobType = 'parttime' | 'fulltime' | 'intership';
 

@@ -34,14 +34,15 @@ interface Props {
   mainSkills: MultiSelectOptions[];
   subSkills: MultiSelectOptions[];
   onOpen: () => void;
+  createDraft: (payment: string) => void;
 }
-interface PRIZE {}
 export const CreatebountyPayment = ({
   bountyBasic,
   editorData,
   mainSkills,
   subSkills,
   onOpen,
+  createDraft,
 }: Props) => {
   // handles which token is selected
   const [tokenIndex, setTokenIndex] = useState<number | undefined>(undefined);
@@ -248,6 +249,14 @@ export const CreatebountyPayment = ({
             border="1px solid"
             borderColor="gray.200"
             bg="transparent"
+            onClick={() => {
+              createDraft(
+                JSON.stringify({
+                  prizevalues,
+                  token: tokenList[tokenIndex as number].mintAddress,
+                })
+              );
+            }}
           >
             Save as Drafts
           </Button>

@@ -21,6 +21,7 @@ interface Props {
   setSkills: Dispatch<SetStateAction<MultiSelectOptions[]>>;
   setSubSkills: Dispatch<SetStateAction<MultiSelectOptions[]>>;
   setGrantBasic: Dispatch<SetStateAction<GrantsBasicType | undefined>>;
+  createDraft: (payment: string) => void;
 }
 export const CreateGrantsBasic = ({
   setSkills,

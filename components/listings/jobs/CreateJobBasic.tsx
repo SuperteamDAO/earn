@@ -28,6 +28,7 @@ interface Props {
   skills: MultiSelectOptions[];
   jobBasics: JobBasicsType | undefined;
   setJobBasic: Dispatch<SetStateAction<JobBasicsType | undefined>>;
+  createDraft: (payment: string) => void;
 }
 interface ErrorsBasic {
   deadline: boolean;
@@ -45,6 +46,7 @@ export const CreateJobBasic = ({
   subSkills,
   jobBasics,
   setJobBasic,
+  createDraft,
 }: Props) => {
   const {
     formState: { errors },
@@ -98,6 +100,7 @@ export const CreateJobBasic = ({
           <Input
             id="title"
             placeholder="Develop a new landing page"
+            value={jobBasics?.title}
             onChange={(e) => {
               setJobBasic({
                 ...(jobBasics as JobBasicsType),
@@ -139,6 +142,7 @@ export const CreateJobBasic = ({
             </Tooltip>
           </Flex>
           <Select
+            value={jobBasics?.type}
             onChange={(e) => {
               setJobBasic({
                 ...(jobBasics as JobBasicsType),
@@ -200,6 +204,7 @@ export const CreateJobBasic = ({
                 fontSize="1rem"
                 focusBorderColor="#CFD2D7"
                 fontWeight={500}
+                value={jobBasics?.link}
                 placeholder="Where are you collecting applications for this work"
                 onChange={(e) => {
                   setJobBasic({
@@ -247,6 +252,7 @@ export const CreateJobBasic = ({
                 border: errorState.skills ? '2px solid red' : baseStyles.border,
               }),
             }}
+            value={skills}
             closeMenuOnSelect={false}
             components={animatedComponents}
             isMulti
@@ -297,6 +303,7 @@ export const CreateJobBasic = ({
             closeMenuOnSelect={false}
             components={animatedComponents}
             isMulti
+            value={subSkills}
             options={SubSkills}
             onChange={(e) => {
               setSubSkills(e as any);
@@ -338,6 +345,7 @@ export const CreateJobBasic = ({
             type={'date'}
             placeholder="deadline"
             color={'gray.500'}
+            value={jobBasics?.deadline}
             onChange={(e) => {
               setJobBasic({
                 ...(jobBasics as JobBasicsType),
@@ -389,6 +397,9 @@ export const CreateJobBasic = ({
             border="1px solid"
             borderColor="gray.200"
             bg="transparent"
+            onClick={() => {
+              createDraft('nothing');
+            }}
           >
             Save as Drafts
           </Button>

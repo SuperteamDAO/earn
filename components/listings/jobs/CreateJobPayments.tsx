@@ -31,6 +31,7 @@ interface Props {
   mainSkills: MultiSelectOptions[];
   subSkills: MultiSelectOptions[];
   onOpen: () => void;
+  createDraft: (payment: string) => void;
 }
 interface PaymentsState {
   max_eq: string;
@@ -52,6 +53,7 @@ export const CreateJobPayments = ({
   mainSkills,
   onOpen,
   subSkills,
+  createDraft,
 }: Props) => {
   const {
     formState: { errors },
@@ -341,6 +343,15 @@ export const CreateJobPayments = ({
             border="1px solid"
             borderColor="gray.200"
             bg="transparent"
+            onClick={() => {
+              createDraft(
+                JSON.stringify({
+                  payment,
+                  location,
+                  timeZone,
+                })
+              );
+            }}
           >
             Save as Drafts
           </Button>
