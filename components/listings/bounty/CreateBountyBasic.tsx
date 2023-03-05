@@ -15,6 +15,7 @@ import { Dispatch, SetStateAction, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { BountyBasicType } from './Createbounty';
 import { MainSkills, MultiSelectOptions, SubSkills } from '../../../constants';
+import { SkillSelect } from '../../misc/SkillSelect';
 interface Props {
   bountyBasic: BountyBasicType | undefined;
   setbountyBasic: Dispatch<SetStateAction<BountyBasicType | undefined>>;
@@ -150,101 +151,14 @@ export const CreatebountyBasic = ({
           </FormErrorMessage>
         </FormControl>
 
-        <FormControl my={6} isRequired>
-          <Flex align={'center'} justify={'start'}>
-            <FormLabel
-              color={'gray.400'}
-              fontWeight={600}
-              fontSize={'15px'}
-              htmlFor={'skills'}
-            >
-              Skills Needed
-            </FormLabel>
-            <Tooltip
-              placement="right-end"
-              fontSize="0.9rem"
-              padding="0.7rem"
-              bg="#6562FF"
-              color="white"
-              fontWeight={600}
-              borderRadius="0.5rem"
-              hasArrow
-              w="max"
-              label={`Select all that apply`}
-            >
-              <Image
-                mt={-2}
-                src={'/assets/icons/info-icon.svg'}
-                alt={'Info Icon'}
-              />
-            </Tooltip>
-          </Flex>
-          <ReactSelect
-            styles={{
-              control: (baseStyles, state) => ({
-                ...baseStyles,
-                border: errorState.skills ? '2px solid red' : baseStyles.border,
-              }),
-            }}
-            closeMenuOnSelect={false}
-            components={animatedComponents}
-            isMulti
-            value={skills}
-            required={true}
-            options={MainSkills}
-            onChange={(e) => {
-              setSkills(e as any);
-            }}
-          />
-        </FormControl>
-        <FormControl my={6}>
-          <Flex align={'center'} justify={'start'}>
-            <FormLabel
-              color={'gray.400'}
-              fontWeight={600}
-              fontSize={'15px'}
-              htmlFor={'skills'}
-            >
-              Sub Skills Needed
-            </FormLabel>
-            <Tooltip
-              placement="right-end"
-              fontSize="0.9rem"
-              padding="0.7rem"
-              bg="#6562FF"
-              color="white"
-              fontWeight={600}
-              borderRadius="0.5rem"
-              hasArrow
-              w="max"
-              label={`Select all that apply`}
-            >
-              <Image
-                mt={-2}
-                src={'/assets/icons/info-icon.svg'}
-                alt={'Info Icon'}
-              />
-            </Tooltip>
-          </Flex>
-          <ReactSelect
-            styles={{
-              control: (baseStyles, state) => ({
-                ...baseStyles,
-                border: errorState.subSkills
-                  ? '2px solid red'
-                  : baseStyles.border,
-              }),
-            }}
-            closeMenuOnSelect={false}
-            components={animatedComponents}
-            isMulti
-            value={subSkills}
-            options={SubSkills}
-            onChange={(e) => {
-              setSubSkills(e as any);
-            }}
-          />
-        </FormControl>
+        <SkillSelect
+          errorSkill={errorState.skills}
+          errorSubSkill={errorState.subSkills}
+          setSkills={setSkills}
+          setSubSkills={setSubSkills}
+          skills={skills}
+          subSkills={subSkills}
+        />
         <FormControl isRequired isInvalid={errorState.deadline}>
           <Flex align={'center'} justify={'start'}>
             <FormLabel
