@@ -989,6 +989,9 @@ const OtpScreen = ({ setStep }: { setStep: () => void }) => {
 
 
 const SuccessScreen = () => {
+
+    let form = useFormStore().form;
+
     return (
         <Box pt={"6.25rem"} backgroundSize={"cover"} backgroundRepeat={"no-repeat"} w={"100%"} minH={"100vh"} h={"100%"} backgroundImage="url('/assets/bg/success-bg.png')">
             <VStack>
@@ -1001,7 +1004,7 @@ const SuccessScreen = () => {
                 </Text>
             </VStack>
             <HStack w={"fit-content"} mx={"auto"} mt={"66px"} gap={"1.25rem"}>
-                <TalentBio />
+                <TalentBio data={form} />
                 <Flex alignItems={"center"} flexDirection={"column"} bg={"white"} w={"34.375rem"} h={"21.375rem"} borderRadius={"0.6875rem"} pt={"33px"}>
                     <Center w={"30.6875rem"} h={"206px"} bg={"#E0F2FF"} mx={"auto"}>
                         <Image w={"26.875rem"} h={"12.875rem"} src='/assets/talent/fake-tasks.png' alt={""} />
