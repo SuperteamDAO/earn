@@ -28,17 +28,17 @@ const defalutSponsor: SponsorType = {
 };
 const Bounties = () => {
   const router = useRouter();
-  // const listingInfo = useQuery({
-  //   queryFn: ({ queryKey }) => findBouties((queryKey[1] as string) ?? ''),
-  //   queryKey: ['bounties', router.query.id ?? ''],
-  // });
-  // let total = 0;
-  // const prizes = Object.values(
-  //   (listingInfo.data?.listing.prizeList as PrizeListType) ?? {}
-  // );
-  // prizes.forEach((el) => {
-  //   total += Number(el);
-  // });
+  const listingInfo = useQuery({
+    queryFn: ({ queryKey }) => findBouties((queryKey[1] as string) ?? ''),
+    queryKey: ['bounties', router.query.id ?? ''],
+  });
+  let total = 0;
+  const prizes = Object.values(
+    (listingInfo.data?.listing.prizeList as PrizeListType) ?? {}
+  );
+  prizes.forEach((el) => {
+    total += Number(el);
+  });
   return (
     <>
       {/* <ListingHeader
@@ -48,7 +48,7 @@ const Bounties = () => {
             ? (listingInfo.data?.sponsor as SponsorType)
             : defalutSponsor
         }
-      />
+      />*/}
       {router.query.submission ? (
         <HStack
           maxW={'7xl'}
@@ -74,11 +74,13 @@ const Bounties = () => {
             <Comments />
           </VStack>
           <DetailSideCard
-            prizeList={listingInfo.data?.listing.prizeList as PrizeListType}
+            prizeList={
+              (listingInfo.data?.listing.prizeList as PrizeListType) ?? {}
+            }
             total={total}
           />
         </HStack>
-      )} */}
+      )}
     </>
   );
 };
