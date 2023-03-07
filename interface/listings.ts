@@ -24,6 +24,7 @@ interface Bounties {
   showTop: boolean;
   eligibility: string;
   status: BountyStatus;
+  slug: string;
 }
 
 type BountyStatus = 'open' | 'review' | 'close';

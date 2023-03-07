@@ -95,7 +95,7 @@ export const CreatebountyPayment = ({
         token: tokenList[tokenIndex as number].mintAddress,
         eligibility: bountyBasic?.eligibility ?? '',
         status: 'open',
-        slug: bountyBasic?.title.split(' ').join('-') as string,
+        slug: (bountyBasic?.title.split(' ').join('-') as string) ?? '',
       },
       currentSponsor as SponsorType
     );
