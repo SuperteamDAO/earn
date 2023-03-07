@@ -30,6 +30,7 @@ interface Props {
   jobBasics: JobBasicsType | undefined;
   setJobBasic: Dispatch<SetStateAction<JobBasicsType | undefined>>;
   createDraft: (payment: string) => void;
+  draftLoading: boolean;
 }
 interface ErrorsBasic {
   deadline: boolean;
@@ -48,6 +49,7 @@ export const CreateJobBasic = ({
   jobBasics,
   setJobBasic,
   createDraft,
+  draftLoading,
 }: Props) => {
   const {
     formState: { errors },
@@ -88,7 +90,7 @@ export const CreateJobBasic = ({
               borderRadius="0.5rem"
               hasArrow
               w="max"
-              label={`Who will respond to questions about the opportunity from your team?`}
+              label={`Use a short title to describe the opportunity`}
             >
               <Image
                 mt={-2}
@@ -245,7 +247,7 @@ export const CreateJobBasic = ({
               borderRadius="0.5rem"
               hasArrow
               w="max"
-              label={`Who will respond to questions about the opportunity from your team?`}
+              label={`Select the deadline date for accepting submissions`}
             >
               <Image
                 mt={-2}
@@ -257,7 +259,7 @@ export const CreateJobBasic = ({
           <Input
             w={'full'}
             id="deadline"
-            type={'date'}
+            type={'datetime-local'}
             placeholder="deadline"
             color={'gray.500'}
             value={jobBasics?.deadline}
@@ -312,6 +314,7 @@ export const CreateJobBasic = ({
             border="1px solid"
             borderColor="gray.200"
             bg="transparent"
+            isLoading={draftLoading}
             onClick={() => {
               createDraft('nothing');
             }}

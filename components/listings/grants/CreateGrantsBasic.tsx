@@ -62,7 +62,7 @@ export const CreateGrantsBasic = ({
               borderRadius="0.5rem"
               hasArrow
               w="max"
-              label={`Who will respond to questions about the opportunity from your team?`}
+              label={`Use a short title to describe the opportunity`}
             >
               <Image
                 mt={-2}

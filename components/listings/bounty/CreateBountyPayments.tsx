@@ -34,6 +34,7 @@ interface Props {
   mainSkills: MultiSelectOptions[];
   subSkills: MultiSelectOptions[];
   onOpen: () => void;
+  draftLoading: boolean;
   createDraft: (payment: string) => void;
 }
 export const CreatebountyPayment = ({
@@ -43,6 +44,7 @@ export const CreatebountyPayment = ({
   subSkills,
   onOpen,
   createDraft,
+  draftLoading,
 }: Props) => {
   // handles which token is selected
   const [tokenIndex, setTokenIndex] = useState<number | undefined>(undefined);
@@ -249,6 +251,7 @@ export const CreatebountyPayment = ({
             color="gray.500"
             border="1px solid"
             borderColor="gray.200"
+            isLoading={draftLoading}
             bg="transparent"
             onClick={() => {
               createDraft(
