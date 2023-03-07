@@ -525,8 +525,19 @@ export const TimeZoneList: MultiSelectOptions[] = [
 ];
 export const PrizeList = ['First', 'Second', 'Third', 'Forth', 'Fifth'];
 
+
+export const CommunityList: string[] = [
+  'LamportDAO',
+  "Grape / Dean's List",
+  'SuperWomenDao',
+  'DeveloperDAO',
+  'Metacamp',
+  '10K Designers',
+];
+
 export const ListingTypeQueryMap = {
   Jobs: 'jobs',
   Bounties: 'bounties',
   Grants: 'grants',
 };
+
