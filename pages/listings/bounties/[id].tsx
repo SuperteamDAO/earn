@@ -11,25 +11,43 @@ import { PrizeListType } from '../../../interface/listings';
 import { SponsorType } from '../../../interface/sponsor';
 import { findBouties } from '../../../utils/functions';
 
+const defalutSponsor: SponsorType = {
+  bio: '',
+  email: '',
+  industry: '',
+  logo: '',
+  name: 'default',
+  publickey: '',
+  twitter: '',
+  type: 'Admin',
+  url: '',
+  username: '',
+  verified: false,
+  id: '',
+  orgId: '',
+};
 const Bounties = () => {
   const router = useRouter();
-  const listingInfo = useQuery({
-    queryFn: ({ queryKey }) => findBouties(queryKey[1] as string),
-    queryKey: ['bounties', router.query.id ?? ''],
-  });
-  console.log(listingInfo.data);
-  let total = 0;
-  const prizes = Object.values(
-    listingInfo.data?.listing.prizeList as PrizeListType
-  );
-  prizes.forEach((el) => {
-    total += Number(el);
-  });
+  // const listingInfo = useQuery({
+  //   queryFn: ({ queryKey }) => findBouties((queryKey[1] as string) ?? ''),
+  //   queryKey: ['bounties', router.query.id ?? ''],
+  // });
+  // let total = 0;
+  // const prizes = Object.values(
+  //   (listingInfo.data?.listing.prizeList as PrizeListType) ?? {}
+  // );
+  // prizes.forEach((el) => {
+  //   total += Number(el);
+  // });
   return (
     <>
-      <ListingHeader
+      {/* <ListingHeader
         title={listingInfo.data?.listing?.title ?? ''}
-        sponsor={listingInfo.data?.sponsor as SponsorType}
+        sponsor={
+          !listingInfo.data?.sponsor
+            ? (listingInfo.data?.sponsor as SponsorType)
+            : defalutSponsor
+        }
       />
       {router.query.submission ? (
         <HStack
@@ -60,7 +78,7 @@ const Bounties = () => {
             total={total}
           />
         </HStack>
-      )}
+      )} */}
     </>
   );
 };
