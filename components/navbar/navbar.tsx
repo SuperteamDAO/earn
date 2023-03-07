@@ -131,7 +131,7 @@ export const Navbar = ({ sponsors }: Props) => {
                 )}
                 <Divider
                   borderColor={'gray.300'}
-                  h={14}
+                  h={12}
                   orientation={'vertical'}
                 />
 

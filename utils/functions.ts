@@ -79,6 +79,16 @@ export const findSponsors = async (publicKey: string) => {
     return null;
   }
 };
+export const DeleteSponsor = async (id: string) => {
+  try {
+    const { data } = await axios.delete(`${Backend_Url}/sponsor/delete/${id}`);
+    return data;
+  } catch (e) {
+    console.log(e);
+
+    return null;
+  }
+};
 
 export const findSponsorListing = async (orgId: string) => {
   if (!orgId) {

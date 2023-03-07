@@ -179,7 +179,7 @@ const CreateListing = () => {
               number: 1,
             },
             {
-              label: 'Listings',
+              label: 'Basics',
               number: 2,
             },
             {
@@ -187,7 +187,7 @@ const CreateListing = () => {
               number: 3,
             },
             {
-              label: 'Payment',
+              label: 'Reward',
               number: 4,
             },
           ]}

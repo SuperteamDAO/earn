@@ -20,10 +20,11 @@ import {
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import Avatar from 'boring-avatars';
 import { useForm } from 'react-hook-form';
+import toast from 'react-hot-toast';
 import { SponsorType } from '../../interface/sponsor';
 import DashboardLayout from '../../layouts/dashboardLayout';
 import { SponsorStore } from '../../store/sponsor';
-import { createSponsor, findTeam } from '../../utils/functions';
+import { createSponsor, DeleteSponsor, findTeam } from '../../utils/functions';
 import { genrateuuid } from '../../utils/helpers';
 
 const Team = () => {
@@ -39,6 +40,21 @@ const Team = () => {
       queryClient.invalidateQueries(['team', currentSponsor?.orgId], {
         exact: true,
       });
+    },
+  });
+
+  const deleteMemberMutation = useMutation({
+    mutationFn: DeleteSponsor,
+    onSuccess: () => {
+      toast.success('Successfully Removed');
+
+      queryClient.invalidateQueries(['team', currentSponsor?.orgId], {
+        exact: true,
+      });
+    },
+
+    onError: () => {
+      toast.error('Error');
     },
   });
   const {
@@ -57,6 +73,7 @@ const Team = () => {
     };
     createMemberMutation.mutate(sponsor);
   };
+
   return (
     <>
       <DashboardLayout>
@@ -160,9 +177,26 @@ const Team = () => {
                             </Text>
                           </Td>
                           <Td>
-                            <Button variant={'ghost'} isDisabled={true}>
-                              <DeleteIcon />
-                            </Button>
+                            {el.type === 'Admin' && (
+                              <Button variant={'ghost'} isDisabled={true}>
+                                <DeleteIcon />
+                              </Button>
+                            )}
+                            {el.type === 'Member' && (
+                              <Button
+                                onClick={() => {
+                                  deleteMemberMutation.mutate(el.id as string);
+                                }}
+                                variant={'ghost'}
+                                isDisabled={
+                                  currentSponsor?.type !== 'Admin'
+                                    ? true
+                                    : false
+                                }
+                              >
+                                <DeleteIcon />
+                              </Button>
+                            )}
                           </Td>
                         </Tr>
                       );
@@ -171,9 +205,9 @@ const Team = () => {
                 </Table>
               </TableContainer>
             </Skeleton>
-            <Flex width={'25rem'} flexDir="column">
+            <Flex rounded={'lg'} p={4} width={'25rem'} flexDir="column">
               <Text color={'gray.500'} fontSize="16px" fontWeight={600} mb={5}>
-                Add New Member
+                Add a New Member
               </Text>
               <form
                 onSubmit={handleSubmit(async (e) => {

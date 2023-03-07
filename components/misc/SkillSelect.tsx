@@ -41,7 +41,7 @@ export const SkillSelect = ({
       <FormControl my={6} isRequired>
         <Flex align={'center'} justify={'start'}>
           <FormLabel
-            color={'gray.400'}
+            color={'gray.500'}
             fontWeight={600}
             fontSize={'15px'}
             htmlFor={'skills'}
@@ -90,7 +90,7 @@ export const SkillSelect = ({
       <FormControl my={6}>
         <Flex align={'center'} justify={'start'}>
           <FormLabel
-            color={'gray.400'}
+            color={'gray.500'}
             fontWeight={600}
             fontSize={'15px'}
             htmlFor={'skills'}

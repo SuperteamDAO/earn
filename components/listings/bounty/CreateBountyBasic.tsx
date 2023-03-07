@@ -58,7 +58,7 @@ export const CreatebountyBasic = ({
         <FormControl mb={5} w="full" isRequired isInvalid={errorState.title}>
           <Flex>
             <FormLabel
-              color={'gray.400'}
+              color={'gray.500'}
               fontWeight={600}
               fontSize={'15px'}
               htmlFor={'title'}
@@ -108,7 +108,7 @@ export const CreatebountyBasic = ({
         >
           <Flex>
             <FormLabel
-              color={'gray.400'}
+              color={'gray.500'}
               fontWeight={600}
               fontSize={'15px'}
               htmlFor={'eligility'}
@@ -162,7 +162,7 @@ export const CreatebountyBasic = ({
         <FormControl isRequired isInvalid={errorState.deadline}>
           <Flex align={'center'} justify={'start'}>
             <FormLabel
-              color={'gray.400'}
+              color={'gray.500'}
               fontWeight={600}
               fontSize={'15px'}
               htmlFor={'deadline'}

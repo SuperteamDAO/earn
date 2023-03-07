@@ -334,6 +334,7 @@ export const skillSubSkillMap = {
       value: 'Operations',
     },
   ],
+  'Fullstack-Dev': [],
 };
 export const SubSkills: MultiSelectOptions[] = [
   {

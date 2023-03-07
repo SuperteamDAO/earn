@@ -71,7 +71,7 @@ export const CreateJobBasic = ({
         <FormControl w="full" isRequired isInvalid={errorState.title}>
           <Flex>
             <FormLabel
-              color={'gray.400'}
+              color={'gray.500'}
               fontWeight={600}
               fontSize={'15px'}
               htmlFor={'title'}
@@ -116,7 +116,7 @@ export const CreateJobBasic = ({
         <FormControl my={5} isRequired isInvalid={errorState.type}>
           <Flex>
             <FormLabel
-              color={'gray.400'}
+              color={'gray.500'}
               fontWeight={600}
               fontSize={'15px'}
               htmlFor={'title'}
@@ -158,7 +158,7 @@ export const CreateJobBasic = ({
           <FormControl my={5} isRequired isInvalid={errorState.link}>
             <Flex>
               <FormLabel
-                color={'gray.400'}
+                color={'gray.500'}
                 fontWeight={600}
                 fontSize={'15px'}
                 htmlFor={'application_link'}
@@ -228,7 +228,7 @@ export const CreateJobBasic = ({
         <FormControl isRequired isInvalid={errorState.deadline}>
           <Flex align={'center'} justify={'start'}>
             <FormLabel
-              color={'gray.400'}
+              color={'gray.500'}
               fontWeight={600}
               fontSize={'15px'}
               htmlFor={'deadline'}

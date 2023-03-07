@@ -93,6 +93,7 @@ export const CreatebountyPayment = ({
         token: tokenList[tokenIndex as number].mintAddress,
         eligibility: bountyBasic?.eligibility ?? '',
         status: 'open',
+        slug: bountyBasic?.title.split(' ').join('-') as string,
       },
       currentSponsor as SponsorType
     );
@@ -108,7 +109,7 @@ export const CreatebountyPayment = ({
     <>
       <VStack pb={10} color={'gray.500'} pt={7} align={'start'} w={'2xl'}>
         <FormControl isRequired>
-          <FormLabel>Select Token</FormLabel>
+          <FormLabel color={'gray.500'}>Select Token</FormLabel>
           <Menu>
             <MenuButton
               as={Button}
@@ -175,7 +176,7 @@ export const CreatebountyPayment = ({
           {prizes.map((el, index) => {
             return (
               <FormControl key={el.label}>
-                <FormLabel>{el.label}</FormLabel>
+                <FormLabel color={'gray.500'}>{el.label}</FormLabel>
                 <Flex gap={3}>
                   <Input
                     type={'number'}

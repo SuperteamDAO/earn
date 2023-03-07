@@ -232,11 +232,11 @@ const CreateSponsor = () => {
                           fontSize={'15px'}
                           htmlFor={'twitterHandle'}
                         >
-                          Company Tiwtter
+                          Company Twitter
                         </FormLabel>
                         <Input
                           id="twitterHandle"
-                          placeholder="Your Twitter"
+                          placeholder="SuperteamDAO"
                           {...register('twitterHandle')}
                         />
                         <FormErrorMessage>
@@ -254,7 +254,7 @@ const CreateSponsor = () => {
                         fontWeight={600}
                         fontSize={'15px'}
                       >
-                        Add your logo
+                        Add Your Logo
                       </Heading>
                       <HStack gap={5}>
                         <MediaPicker
@@ -263,7 +263,7 @@ const CreateSponsor = () => {
                             setImageUrl(a);
                           }}
                           compact
-                          label="Choose or drag and drop media"
+                          label="Choose or Drag & Drop Media"
                         />
                       </HStack>
                     </VStack>

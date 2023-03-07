@@ -41,6 +41,7 @@ export const CreateGrants = ({
     <>
       {steps === 2 && (
         <CreateGrantsBasic
+          grantBasic={grantBasic}
           createDraft={createDraft}
           setSubSkills={setSubSkills}
           setSkills={setMainSkills}
