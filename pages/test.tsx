@@ -233,8 +233,10 @@ const Test = () => {
         gap={10}
       >
         <MenuBar editor={editor} />
-        <Box border={'2px solid red'} p={10} w={'5xl'}>
-          <EditorContent width={'100%'} editor={editor} />
+        <Box className="" border={'2px solid red'} p={10} w={'5xl'}>
+          <div className="reset">
+            <EditorContent width={'100%'} editor={editor} />
+          </div>
         </Box>
       </Box>
     </>
