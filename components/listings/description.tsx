@@ -23,8 +23,14 @@ interface Props {
   setEditorData: Dispatch<SetStateAction<OutputData | undefined>>;
   editorData: OutputData | undefined;
   setSteps: Dispatch<SetStateAction<number>>;
+  createDraft: (payment: string) => void;
 }
-const Description = ({ editorData, setEditorData, setSteps }: Props) => {
+const Description = ({
+  editorData,
+  setEditorData,
+  setSteps,
+  createDraft,
+}: Props) => {
   const ref = useRef<EditorJS>();
   const initializeEditor = () => {
     const editor = new EditorJS({
@@ -104,6 +110,9 @@ const Description = ({ editorData, setEditorData, setSteps }: Props) => {
           border="1px solid"
           borderColor="gray.200"
           bg="transparent"
+          onClick={() => {
+            createDraft('nothing');
+          }}
         >
           Save as Drafts
         </Button>

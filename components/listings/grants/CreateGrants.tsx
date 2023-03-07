@@ -20,6 +20,7 @@ interface Props {
   subSkills: MultiSelectOptions[];
   setSubSkills: Dispatch<SetStateAction<MultiSelectOptions[]>>;
   onOpen: () => void;
+  createDraft: (payment: string) => void;
 }
 export const CreateGrants = ({
   steps,
@@ -33,12 +34,15 @@ export const CreateGrants = ({
   grantBasic,
   setGrantBasic,
   onOpen,
+  createDraft,
 }: Props) => {
   2;
   return (
     <>
       {steps === 2 && (
         <CreateGrantsBasic
+          grantBasic={grantBasic}
+          createDraft={createDraft}
           setSubSkills={setSubSkills}
           setSkills={setMainSkills}
           setSteps={setSteps}
@@ -47,6 +51,7 @@ export const CreateGrants = ({
       )}
       {steps === 3 && (
         <Description
+          createDraft={createDraft}
           setEditorData={setEditorData}
           editorData={editorData}
           setSteps={setSteps}
@@ -54,6 +59,7 @@ export const CreateGrants = ({
       )}
       {steps === 4 && (
         <CreateGrantsPayment
+          createDraft={createDraft}
           onOpen={onOpen}
           grantsBasic={grantBasic}
           editorData={editorData}

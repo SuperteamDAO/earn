@@ -162,6 +162,180 @@ export const MainSkills: MultiSelectOptions[] = [
     value: 'Other',
   },
 ];
+
+export const skillSubSkillMap = {
+  'Front-End-Dev': [
+    {
+      label: 'React',
+      value: 'React',
+    },
+    {
+      label: 'Angular',
+      value: 'Angular',
+    },
+    {
+      label: 'Vue',
+      value: 'Vue',
+    },
+    {
+      label: 'Redux',
+      value: 'Redux',
+    },
+  ],
+  'Back-End-Dev': [
+    {
+      label: 'Javascript',
+      value: 'Javascript',
+    },
+    {
+      label: 'PHP',
+      value: 'PHP',
+    },
+    {
+      label: 'Python',
+      value: 'Python',
+    },
+    {
+      label: 'Java',
+      value: 'Java',
+    },
+    {
+      label: 'C++',
+      value: 'C++',
+    },
+    {
+      label: 'C',
+      value: 'C',
+    },
+    {
+      label: 'Ruby',
+      value: 'Ruby',
+    },
+    {
+      label: 'Go',
+      value: 'Go',
+    },
+    {
+      label: 'MySQL',
+      value: 'MySQL',
+    },
+    {
+      label: 'Postgres',
+      value: 'Postgres',
+    },
+    {
+      label: 'MongoDB',
+      value: 'MongoDB',
+    },
+  ],
+  'Blockchain-Dev': [
+    {
+      label: 'Rust',
+      value: 'Rust',
+    },
+    {
+      label: 'Solidity',
+      value: 'Solidity',
+    },
+    {
+      label: 'Move',
+      value: 'Move',
+    },
+  ],
+  'Mobile-Engineer': [
+    {
+      label: 'Android',
+      value: 'Android',
+    },
+    {
+      label: 'iOS',
+      value: 'iOS',
+    },
+    {
+      label: 'Flutter',
+      value: 'Flutter',
+    },
+    {
+      label: 'React Native',
+      value: 'React Native',
+    },
+  ],
+  Design: [
+    {
+      label: 'UI/UX Design',
+      value: 'UI/UX Design',
+    },
+    {
+      label: 'Graphic Design',
+      value: 'Graphic Design',
+    },
+    {
+      label: 'Illustration',
+      value: 'Illustration',
+    },
+    {
+      label: 'Game Design',
+      value: 'Game Design',
+    },
+    {
+      label: 'Presentation Design',
+      value: 'Presentation Design',
+    },
+  ],
+  Community: [
+    {
+      label: 'Community Manager',
+      value: 'Community Manager',
+    },
+    {
+      label: 'Discord Moderator',
+      value: 'Discord Moderator',
+    },
+  ],
+  Growth: [
+    {
+      label: 'Business Development',
+      value: 'Business Development',
+    },
+    {
+      label: 'Digital Marketing',
+      value: 'Digital Marketing',
+    },
+    {
+      label: 'Marketing',
+      value: 'Marketing',
+    },
+  ],
+  Content: [
+    {
+      label: 'Research',
+      value: 'Research',
+    },
+    {
+      label: 'Video',
+      value: 'Video',
+    },
+    {
+      label: 'Writing',
+      value: 'Writing',
+    },
+    {
+      label: 'Social Media',
+      value: 'Social Media',
+    },
+  ],
+  other: [
+    {
+      label: 'Data Analytics',
+      value: 'Data Analytics',
+    },
+    {
+      label: 'Operations',
+      value: 'Operations',
+    },
+  ],
+  'Fullstack-Dev': [],
+};
 export const SubSkills: MultiSelectOptions[] = [
   {
     label: 'React',
@@ -351,6 +525,7 @@ export const TimeZoneList: MultiSelectOptions[] = [
 ];
 export const PrizeList = ['First', 'Second', 'Third', 'Forth', 'Fifth'];
 
+
 export const CommunityList: string[] = [
   'LamportDAO',
   "Grape / Dean's List",
@@ -359,3 +534,10 @@ export const CommunityList: string[] = [
   'Metacamp',
   '10K Designers',
 ];
+
+export const ListingTypeQueryMap = {
+  Jobs: 'jobs',
+  Bounties: 'bounties',
+  Grants: 'grants',
+};
+

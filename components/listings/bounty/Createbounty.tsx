@@ -22,6 +22,10 @@ interface Props {
   subSkills: MultiSelectOptions[];
   setSubSkills: Dispatch<SetStateAction<MultiSelectOptions[]>>;
   onOpen: () => void;
+  bountybasic: BountyBasicType | undefined;
+  setBountyBasic: Dispatch<SetStateAction<BountyBasicType | undefined>>;
+  createDraft: (payment: string) => void;
+  draftLoading: boolean;
 }
 export const Createbounty = ({
   steps,
@@ -33,14 +37,19 @@ export const Createbounty = ({
   setSubSkills,
   subSkills,
   onOpen,
+  bountybasic,
+  setBountyBasic,
+  draftLoading,
+  createDraft,
 }: Props) => {
   // handles the info from basic form
-  const [bountybasic, setBountyBasic] = useState<BountyBasicType | undefined>();
 
   return (
     <>
       {steps === 2 && (
         <CreatebountyBasic
+          draftLoading={draftLoading}
+          createDraft={createDraft}
           skills={mainSkills}
           subSkills={subSkills}
           setSubSkills={setSubSkills}
@@ -52,6 +61,7 @@ export const Createbounty = ({
       )}
       {steps === 3 && (
         <Description
+          createDraft={createDraft}
           editorData={editorData}
           setSteps={setSteps}
           setEditorData={setEditorData}
@@ -60,10 +70,11 @@ export const Createbounty = ({
 
       {steps === 4 && (
         <CreatebountyPayment
+          draftLoading={draftLoading}
+          createDraft={createDraft}
           onOpen={onOpen}
           subSkills={subSkills}
           mainSkills={mainSkills}
-          setSteps={setSteps}
           bountyBasic={bountybasic}
           editorData={editorData}
         />

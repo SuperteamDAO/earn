@@ -87,7 +87,7 @@ const CreateSponsor = () => {
                     fontSize={'20px'}
                   >
                     {
-                      "Let's start with some basic information about your project"
+                      "Let's start with some basic information about you and your team"
                     }
                   </Text>
                 </VStack>
@@ -131,7 +131,7 @@ const CreateSponsor = () => {
                     <HStack w={'full'} justify={'space-between'}>
                       <FormControl w={'18rem'} isRequired>
                         <FormLabel
-                          color={'gray.400'}
+                          color={'gray.500'}
                           fontWeight={600}
                           fontSize={'15px'}
                           htmlFor={'sponsorname'}
@@ -154,7 +154,7 @@ const CreateSponsor = () => {
                       </FormControl>
                       <FormControl w={'18rem'} isRequired>
                         <FormLabel
-                          color={'gray.400'}
+                          color={'gray.500'}
                           fontWeight={600}
                           fontSize={'15px'}
                           htmlFor={'sponsorname'}
@@ -163,7 +163,7 @@ const CreateSponsor = () => {
                         </FormLabel>
                         <Input
                           id="sponsorurl"
-                          placeholder="Enter your website"
+                          placeholder="Enter Your Website"
                           {...register('sponsorurl')}
                         />
                         <FormErrorMessage>
@@ -178,7 +178,7 @@ const CreateSponsor = () => {
                     <Box my={6}>
                       <FormControl isRequired>
                         <FormLabel
-                          color={'gray.400'}
+                          color={'gray.500'}
                           fontWeight={600}
                           fontSize={'15px'}
                           htmlFor={'sponsoremail'}
@@ -189,7 +189,7 @@ const CreateSponsor = () => {
                           w={'full'}
                           id="sponsoremail"
                           type={'email'}
-                          placeholder="Enter your website"
+                          placeholder="Enter Your Email"
                           {...register('sponsoremail')}
                         />
                         <FormErrorMessage>
@@ -204,7 +204,7 @@ const CreateSponsor = () => {
                     <HStack w={'full'} justify={'space-between'} my={6}>
                       <FormControl w={'18rem'} isRequired>
                         <FormLabel
-                          color={'gray.400'}
+                          color={'gray.500'}
                           fontWeight={600}
                           fontSize={'15px'}
                           htmlFor={'bio'}
@@ -214,7 +214,7 @@ const CreateSponsor = () => {
                         <Input
                           w={'full'}
                           id="username"
-                          placeholder="username"
+                          placeholder="Username"
                           {...register('username')}
                         />
                         <FormErrorMessage>
@@ -227,16 +227,16 @@ const CreateSponsor = () => {
                       </FormControl>
                       <FormControl w={'18rem'} isRequired>
                         <FormLabel
-                          color={'gray.400'}
+                          color={'gray.500'}
                           fontWeight={600}
                           fontSize={'15px'}
                           htmlFor={'twitterHandle'}
                         >
-                          Company Tiwtter
+                          Company Twitter
                         </FormLabel>
                         <Input
                           id="twitterHandle"
-                          placeholder="@yourtwitter"
+                          placeholder="SuperteamDAO"
                           {...register('twitterHandle')}
                         />
                         <FormErrorMessage>
@@ -254,7 +254,7 @@ const CreateSponsor = () => {
                         fontWeight={600}
                         fontSize={'15px'}
                       >
-                        Add your logo
+                        Add Your Logo
                       </Heading>
                       <HStack gap={5}>
                         <MediaPicker
@@ -263,7 +263,7 @@ const CreateSponsor = () => {
                             setImageUrl(a);
                           }}
                           compact
-                          label="Choose or drag and drop media"
+                          label="Choose or Drag & Drop Media"
                         />
                       </HStack>
                     </VStack>
@@ -271,7 +271,7 @@ const CreateSponsor = () => {
                     <HStack w={'full'} justify={'space-between'}>
                       <FormControl w={'full'} isRequired>
                         <FormLabel
-                          color={'gray.400'}
+                          color={'gray.500'}
                           fontWeight={600}
                           fontSize={'15px'}
                           htmlFor={'industry'}
@@ -300,7 +300,7 @@ const CreateSponsor = () => {
                     <Box my={6}>
                       <FormControl isRequired>
                         <FormLabel
-                          color={'gray.400'}
+                          color={'gray.500'}
                           fontWeight={600}
                           fontSize={'15px'}
                           htmlFor={'bio'}
@@ -310,7 +310,7 @@ const CreateSponsor = () => {
                         <Input
                           w={'full'}
                           id="bio"
-                          placeholder="What does your company do ?"
+                          placeholder="What Does Your Company Do ?"
                           {...register('bio')}
                         />
                         <FormErrorMessage>

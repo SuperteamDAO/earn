@@ -1,4 +1,4 @@
-import { JobType, Prize, Source, SponsorStatus } from './types';
+import { JobType, Listingtype, Prize, Source, SponsorStatus } from './types';
 
 type PrizeListType = {
   [key in Prize]: string;
@@ -23,7 +23,11 @@ interface Bounties {
   winner?: Winner[];
   showTop: boolean;
   eligibility: string;
+  status: BountyStatus;
+  slug: string;
 }
+
+type BountyStatus = 'open' | 'review' | 'close';
 interface Winner {
   id: string;
   email: string;
@@ -84,6 +88,14 @@ type Experience =
   | '5-10 Yrs: Mid Career Professional'
   | '10 Yrs+: Senior Professional';
 
+interface DraftType {
+  id: string;
+  orgId: string;
+  type: Listingtype;
+  basic: string;
+  payments: string;
+}
+
 export type {
   Bounties,
   Winner,
@@ -93,4 +105,5 @@ export type {
   Experience,
   GrantsType,
   GrantsBasicType,
+  DraftType,
 };

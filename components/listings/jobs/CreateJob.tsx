@@ -20,6 +20,8 @@ interface Props {
   subSkills: MultiSelectOptions[];
   setSubSkills: Dispatch<SetStateAction<MultiSelectOptions[]>>;
   onOpen: () => void;
+  createDraft: (payment: string) => void;
+  draftLoading: boolean;
 }
 export const CreateJob = ({
   editorData,
@@ -33,11 +35,15 @@ export const CreateJob = ({
   jobBasics,
   setJobBasic,
   onOpen,
+  createDraft,
+  draftLoading,
 }: Props) => {
   return (
     <>
       {steps === 2 && (
         <CreateJobBasic
+          draftLoading={draftLoading}
+          createDraft={createDraft}
           jobBasics={jobBasics}
           setJobBasic={setJobBasic}
           setSkills={setMainSkills}
@@ -49,6 +55,7 @@ export const CreateJob = ({
       )}
       {steps === 3 && (
         <Description
+          createDraft={createDraft}
           setEditorData={setEditorData}
           editorData={editorData}
           setSteps={setSteps}
@@ -56,6 +63,8 @@ export const CreateJob = ({
       )}
       {steps === 4 && (
         <CreateJobPayments
+          draftLoading={draftLoading}
+          createDraft={createDraft}
           jobBasics={jobBasics}
           subSkills={subSkills}
           editorData={editorData}
