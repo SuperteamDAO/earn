@@ -1,6 +1,6 @@
 import { useWallet } from '@solana/wallet-adapter-react';
 import { useQuery } from '@tanstack/react-query';
-import React, { Children, Dispatch, SetStateAction, useState } from 'react'
+import React, { Children, Dispatch, SetStateAction, useEffect, useState } from 'react'
 import { Box, Flex, FormControl, FormLabel, Heading, HStack, Text, VStack, Input, Select, Textarea, Button, Center, useDisclosure, InputGroup } from '@chakra-ui/react';
 import makeAnimated from 'react-select/animated';
 import { Image } from '@chakra-ui/react';
@@ -46,6 +46,7 @@ interface AboutYouType {
     email: string;
     firstname: string;
     lastname: string;
+    username: string;
     location: string;
     avatar: string;
 }
@@ -68,13 +69,13 @@ interface links {
 
 interface userStoreType { otp: number | undefined; setOtp: (data: number) => void; emailVerified: boolean; verifyEmail: () => void; form: AboutYouType & workType & links; updateState: (data: AboutYouType | workType | links | { email: string }) => void }
 
-
 const useFormStore = create<userStoreType>()((set) => ({
     form: {
         bio: '',
         email: '',
         firstname: '',
         lastname: '',
+        username: '',
         location: '',
         avatar: '',
         experience: '',
@@ -95,7 +96,7 @@ const useFormStore = create<userStoreType>()((set) => ({
             return { ...state }
         })
     },
-    emailVerified: true,
+    emailVerified: false,
     verifyEmail: () => {
         set((state) => {
             state.emailVerified = true;
@@ -113,13 +114,12 @@ const useFormStore = create<userStoreType>()((set) => ({
 let pages = ["welcome", "email", "otp", "steps", "success"]
 
 function Talent() {
+    const [currentPage, setcurrentPage] = useState("welcome");
+    const { connected } = useWallet();
 
-
-
-    const [currentPage, setcurrentPage] = useState("welcome")
-
-
-
+    if (!connected) {
+        return <ConnectWallet />
+    }
 
     return (
         <VStack >
@@ -226,18 +226,33 @@ type Step1Props = {
     setStep: Dispatch<SetStateAction<number>>
 }
 
+const userNameAvailable = async (term: string) => {
+    try {
+        let res = await axios.get(`${process.env.NEXT_PUBLIC_BACKEND_URL}/talent/check?username=${term}`);
+        if (res.status == 204) {
+            return true
+        }
+        return false
+    } catch (error) {
+        console.log(error);
+        return false
+    }
+}
+
 const AboutYou = ({ setStep }: Step1Props) => {
 
     const [imageUrl, setImageUrl] = useState<string>('');
     const [uploadLoading, setuploadLoading] = useState<boolean>(false);
+    const [userNameValid, setuserNameValid] = useState(true);
 
-    let updateState = useFormStore().updateState;
-    let form = useFormStore().form;
+    let { updateState, form, emailVerified } = useFormStore();
+
     const { register, handleSubmit, watch, formState: { errors } } = useForm({
         defaultValues: {
             email: form.email,
             firstname: form.firstname,
             lastname: form.lastname,
+            username: form.username,
             location: form.location,
             avatar: form.avatar,
             bio: form.bio
@@ -245,9 +260,17 @@ const AboutYou = ({ setStep }: Step1Props) => {
     }
     );
 
-    const onSubmit = (data: any) => { updateState({ ...data, avatar: imageUrl }); setStep(i => i + 1) };
-
-    let emailVerified = useFormStore().emailVerified;
+    const onSubmit = async (data: any) => {
+        if (data.username) {
+            let avl = await userNameAvailable(data.username);
+            if (!avl) {
+                setuserNameValid(false);
+                return false
+            }
+        }
+        updateState({ ...data, avatar: imageUrl });
+        setStep(i => i + 1)
+    };
 
     return (
         <Box w={'full'}>
@@ -311,6 +334,19 @@ const AboutYou = ({ setStep }: Step1Props) => {
                     </Box>
                     <Box w={'full'} mb={"1.25rem"}>
                         <FormLabel color={"gray.400"}>
+                            Username
+                        </FormLabel>
+                        <Input
+                            id="username"
+                            placeholder="Username"
+                            {...register("username", { required: true })}
+                            isInvalid={!userNameValid}
+                        />
+                        {(!userNameValid) && <Text color={"red"}>Username is unavailable ! Please try another Username</Text>}
+                    </Box>
+
+                    <Box w={'full'} mb={"1.25rem"}>
+                        <FormLabel color={"gray.400"}>
                             Location
                         </FormLabel>
                         <Select id={"location"} placeholder='Select your Country' {...register("location", { required: true })}>
@@ -343,10 +379,11 @@ const YourWork = ({ setStep }: Step1Props) => {
         skills: "", subskills: "", interests: "", community: ""
     })
 
-    console.log(useFormStore())
-
     let updateState = useFormStore().updateState;
     let form = useFormStore().form;
+
+    const [post, setpost] = useState(false);
+
     const { register, handleSubmit, watch, formState: { errors } } = useForm({
         defaultValues: {
             experience: form.experience,
@@ -356,7 +393,14 @@ const YourWork = ({ setStep }: Step1Props) => {
             workPrefernce: form.workPrefernce
         }
     });
-    const onSubmit = (data: any) => { updateState({ ...data, ...DropDownValues }); setStep(i => i + 1) };
+
+    const onSubmit = (data: any) => {
+        setpost(true);
+        if (DropDownValues.skills.length == 0 || DropDownValues.subskills.length == 0 || DropDownValues.interests.length == 0 || DropDownValues.community.length == 0) {
+            return false;
+        }
+        updateState({ ...data, ...DropDownValues }); setStep(i => i + 1)
+    };
 
     console.log(DropDownValues)
 
@@ -419,6 +463,7 @@ const YourWork = ({ setStep }: Step1Props) => {
                             options={CommunityList.map((elm: string) => {
                                 return { label: elm, value: elm }
                             })}
+                            required
                             onChange={(e: any) => {
                                 setDropDownValues((st) => {
                                     st.community = JSON.stringify(e.map((elm: { label: string; value: string }) => elm.value))
@@ -426,6 +471,7 @@ const YourWork = ({ setStep }: Step1Props) => {
                                 })
                             }}
                         />
+                        {(DropDownValues.community.length == 0 && post) && <Text color={"red"}>This field cannot be empty</Text>}
                     </Box>
                     <Box w={'full'} mb={"1.25rem"}>
                         <FormLabel color={"gray.400"}>
@@ -436,6 +482,7 @@ const YourWork = ({ setStep }: Step1Props) => {
                             components={animatedComponents}
                             isMulti
                             options={IndustryList}
+                            required
                             onChange={(e: any) => {
                                 setDropDownValues((st) => {
                                     st.interests = JSON.stringify(e.map((elm: { label: string; value: string }) => elm.value))
@@ -443,6 +490,7 @@ const YourWork = ({ setStep }: Step1Props) => {
                                 })
                             }}
                         />
+                        {(DropDownValues.interests.length == 0 && post) && <Text color={"red"}>This field cannot be empty</Text>}
                     </Box>
                     <Box w={'full'} mb={"1.25rem"}>
                         <FormLabel color={"gray.400"}>
@@ -453,6 +501,7 @@ const YourWork = ({ setStep }: Step1Props) => {
                             components={animatedComponents}
                             isMulti
                             options={MainSkills}
+                            required
                             onChange={(e: any) => {
                                 setDropDownValues((st) => {
                                     st.skills = JSON.stringify(e.map((elm: { label: string; value: string }) => elm.value))
@@ -460,6 +509,7 @@ const YourWork = ({ setStep }: Step1Props) => {
                                 })
                             }}
                         />
+                        {(DropDownValues.skills.length == 0 && post) && <Text color={"red"}>This field cannot be empty</Text>}
                     </Box>
                     <Box w={'full'} mb={"1.25rem"}>
                         <FormLabel color={"gray.400"}>
@@ -477,6 +527,7 @@ const YourWork = ({ setStep }: Step1Props) => {
                                 })
                             }}
                         />
+                        {(DropDownValues.subskills.length == 0 && post) && <Text color={"red"}>This field cannot be empty</Text>}
                     </Box>
                     <Button type='submit' w={"full"} h="50px" color={"white"} bg={"rgb(101, 98, 255)"}>
                         Continue
@@ -573,14 +624,15 @@ const SocialInput = ({ label, placeHolder, icon, register }: TypeSocialInput) =>
 
 
 const YourLinks = ({ setStep, success }: { setStep: Dispatch<SetStateAction<number>>, success: () => void }) => {
-    const animatedComponents = makeAnimated();
+
     const { isOpen, onOpen, onClose } = useDisclosure()
+    const [pow, setpow] = useState<string[]>([]);
 
     console.log(useFormStore())
 
     const uploadProfile = async (socials: string, pow: string) => {
         let res = await axios.post(`${process.env.NEXT_PUBLIC_BACKEND_URL}/talent/create`, {
-            ...form, username: form.firstname, socials, pow,
+            ...form, socials, pow,
             verified: true, superteamLevel: "Lurker",
             id: genrateuuid()
         })
@@ -590,10 +642,9 @@ const YourLinks = ({ setStep, success }: { setStep: Dispatch<SetStateAction<numb
         }
     }
 
-    let updateState = useFormStore().updateState;
     let form = useFormStore().form;
     const { register, handleSubmit, watch, formState: { errors } } = useForm();
-    const onSubmit = (data: any) => { uploadProfile(JSON.stringify(data), `["pow"]`) };
+    const onSubmit = (data: any) => { uploadProfile(JSON.stringify(data), JSON.stringify(pow)) };
 
     return (
         <>
@@ -610,6 +661,14 @@ const YourLinks = ({ setStep, success }: { setStep: Dispatch<SetStateAction<numb
                         <Text fontSize={"0.9375rem"} fontWeight={"600"}>
                             Other Proof of Work
                         </Text>
+                        <Box>
+                            {
+                                pow.map((ele) => {
+                                    let data = JSON.parse(ele)
+                                    return <Text boxShadow={'md'} rounded={"md"} key={data.title} px={"1rem"} py={"0.3rem"} w={"full"} mt="2" mb={"1.5"}>{data.title}</Text>
+                                })
+                            }
+                        </Box>
                         <Button onClick={onOpen} fontSize={"12px"} color={"gray.400"} leftIcon={<AddIcon color={"gray.400"} />} w={"full"} mt="2" mb={"6"}>
                             Add Project
                         </Button>
@@ -619,74 +678,110 @@ const YourLinks = ({ setStep, success }: { setStep: Dispatch<SetStateAction<numb
                     </FormControl>
                 </form>
             </Box >
-            <Modal isOpen={isOpen} onClose={onClose}>
-                <ModalOverlay />
-                <ModalContent maxW={"607px"} py={"1.4375rem"}>
-                    <ModalBody>
-                        <Box w={'full'} mb={"1.25rem"}>
-                            <FormLabel color={"gray.400"}>
-                                Project Title
-                            </FormLabel>
-                            <Input
-                                id="title"
-                                placeholder="Your last name"
-                                value={''}
-                            />
-                        </Box>
-                        <Box w={'full'} mb={"1.25rem"}>
-                            <FormLabel color={"gray.400"}>
-                                Describe your work
-                            </FormLabel>
-                            <Textarea placeholder='Here is a sample placeholder' />
-                        </Box>
-                        <Box w={'full'} mb={"1.25rem"}>
-                            <FormLabel color={"gray.400"}>
-                                Your Skills
-                            </FormLabel>
-                            <ReactSelect
-                                closeMenuOnSelect={false}
-                                components={animatedComponents}
-                                isMulti
-                                options={MainSkills}
-                                onChange={(e) => {
-
-                                }}
-                            />
-                        </Box>
-                        <Box w={'full'} mb={"1.25rem"}>
-                            <FormLabel color={"gray.400"}>
-                                Sub Skills
-                            </FormLabel>
-                            <ReactSelect
-                                closeMenuOnSelect={false}
-                                components={animatedComponents}
-                                isMulti
-                                options={SubSkills}
-                                onChange={(e) => {
-
-                                }}
-                            />
-                        </Box>
-                        <Box w={'full'} mb={"1.25rem"}>
-                            <FormLabel color={"gray.400"}>
-                                Link
-                            </FormLabel>
-                            <InputGroup>
-                                <InputLeftElement
-                                    pointerEvents='none'
-                                    // eslint-disable-next-line react/no-children-prop
-                                    children={<LinkIcon color='gray.300' />}
-                                />
-                                <Input />
-                            </InputGroup>
-                        </Box>
-                        <Button w={"full"} h="50px" color={"white"} bg={"rgb(101, 98, 255)"}>
-                            Add Project
-                        </Button>
-                    </ModalBody>
-                </ModalContent>
-            </Modal>
+            <AddProject key={pow.length + 'project'} {...{ isOpen, onClose, setpow }} />
         </>
+    )
+}
+
+const AddProject = ({ isOpen, onClose, setpow }: { isOpen: boolean, onClose: () => void, setpow: Dispatch<SetStateAction<string[]>> }) => {
+    const animatedComponents = makeAnimated();
+    const { register, handleSubmit, watch, formState: { errors } } = useForm();
+    const [post, setpost] = useState(false);
+
+    const [DropDownValues, setDropDownValues] = useState({
+        skills: "", subskills: ""
+    })
+
+    const onSubmit = (data: any) => {
+        setpost(true);
+        if (DropDownValues.skills.length == 0 || DropDownValues.subskills.length == 0) {
+            return false;
+        }
+        setpow(elm => [...elm, JSON.stringify(data)])
+    }
+
+    return (
+        <Modal isOpen={isOpen} onClose={onClose}>
+            <ModalOverlay />
+            <ModalContent maxW={"607px"} py={"1.4375rem"}>
+                <ModalBody>
+                    <form onSubmit={handleSubmit(onSubmit)}>
+                        <FormControl isRequired  >
+                            <Box w={'full'} mb={"1.25rem"}>
+                                <FormLabel color={"gray.400"}>
+                                    Project Title
+                                </FormLabel>
+                                <Input
+                                    id="title"
+                                    placeholder="Project Title"
+                                    {...register("title", { required: true })}
+                                />
+                            </Box>
+                            <Box w={'full'} mb={"1.25rem"}>
+                                <FormLabel color={"gray.400"}>
+                                    Describe your work
+                                </FormLabel>
+                                <Textarea placeholder='About the Project'
+                                    {...register("description", { required: true })}
+                                />
+                            </Box>
+                            <Box w={'full'} mb={"1.25rem"}>
+                                <FormLabel color={"gray.400"}>
+                                    Your Skills
+                                </FormLabel>
+                                <ReactSelect
+                                    closeMenuOnSelect={false}
+                                    components={animatedComponents}
+                                    isMulti
+                                    options={MainSkills}
+                                    onChange={(e: any) => {
+                                        setDropDownValues((st) => {
+                                            st.skills = JSON.stringify(e.map((elm: { label: string; value: string }) => elm.value))
+                                            return { ...st }
+                                        })
+                                    }}
+                                />
+                                {(DropDownValues.skills.length == 0 && post) && <Text color={"red"}>This field cannot be empty</Text>}
+                            </Box>
+                            <Box w={'full'} mb={"1.25rem"}>
+                                <FormLabel color={"gray.400"}>
+                                    Sub Skills
+                                </FormLabel>
+                                <ReactSelect
+                                    closeMenuOnSelect={false}
+                                    components={animatedComponents}
+                                    isMulti
+                                    options={SubSkills}
+                                    onChange={(e: any) => {
+                                        setDropDownValues((st) => {
+                                            st.subskills = JSON.stringify(e.map((elm: { label: string; value: string }) => elm.value))
+                                            return { ...st }
+                                        })
+                                    }}
+                                />
+                                {(DropDownValues.subskills.length == 0 && post) && <Text color={"red"}>This field cannot be empty</Text>}
+                            </Box>
+                            <Box w={'full'} mb={"1.25rem"}>
+                                <FormLabel color={"gray.400"}>
+                                    Link
+                                </FormLabel>
+                                <InputGroup>
+                                    <InputLeftElement
+                                        pointerEvents='none'
+                                        // eslint-disable-next-line react/no-children-prop
+                                        children={<LinkIcon color='gray.300' />}
+                                    />
+                                    <Input   {...register("link", { required: true })} />
+                                </InputGroup>
+                            </Box>
+                            <Button type='submit' w={"full"} h="50px" color={"white"} bg={"rgb(101, 98, 255)"}>
+                                Add Project
+                            </Button>
+                        </FormControl >
+                    </form>
+                </ModalBody>
+            </ModalContent>
+        </Modal>
     )
 }
 
@@ -754,7 +849,6 @@ const VerifyEmail = ({ setStep }: { setStep: () => void }) => {
         setStep();
     }
 
-    let set
 
     return (
         <Box w={"xl"} minH={"100vh"} >
@@ -803,15 +897,39 @@ const VerifyEmail = ({ setStep }: { setStep: () => void }) => {
 
 import { PinInput, PinInputField } from '@chakra-ui/react'
 import axios from 'axios';
+import { json } from 'stream/consumers';
+import { ConnectWallet } from '../../layouts/connectWallet';
 
 
 const OtpScreen = ({ setStep }: { setStep: () => void }) => {
 
-    let otp = useFormStore().otp;
-    let email = useFormStore()?.form?.email;
-    let verifyEmail = useFormStore().verifyEmail;
+    let { otp, verifyEmail } = useFormStore();
+    let email = useFormStore().form.email;
 
     const [invalidOtp, setinvalidOtp] = useState(false);
+
+    let setOtpStore = useFormStore().setOtp;
+    let updateState = useFormStore().updateState;
+
+    const { connected, publicKey } = useWallet();
+
+    const otpSend = async () => {
+        updateState({ email: email });
+        const a = await genrateOtp(
+            publicKey?.toBase58() as string,
+            email
+        );
+        console.log(a);
+
+        const code = genrateCode(publicKey?.toBase58() as string);
+        const codeLast = genrateCodeLast(
+            publicKey?.toBase58() as string
+        );
+        setOtpStore(code);
+    }
+
+    console.log(otp)
+
 
     return (
         <Box w={"xl"} minH={"100vh"}>
@@ -856,9 +974,11 @@ const OtpScreen = ({ setStep }: { setStep: () => void }) => {
             </Flex>
             <Flex mt={"130px"} justifyContent="space-between">
                 <Text fontSize={"1rem"} color={"gray.400"} fontWeight={"500"}>
-                    00:34
+
                 </Text>
-                <Text fontSize={"1rem"} color={"#6562FF"} fontWeight={"500"}>
+                <Text onClick={() => {
+                    otpSend()
+                }} fontSize={"1rem"} color={"#6562FF"} fontWeight={"500"}>
                     RESEND
                 </Text>
             </Flex>
