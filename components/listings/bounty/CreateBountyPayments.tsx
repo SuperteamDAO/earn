@@ -85,6 +85,7 @@ export const CreatebountyPayment = ({
         title: bountyBasic?.title ?? '',
         source: 'native',
         showTop: true,
+        slug: bountyBasic?.title.split(' ').join('-') ?? '',
         sponsorStatus: 'Unassigned',
         prizeList: Prizes,
         amount: JSON.stringify(amount),

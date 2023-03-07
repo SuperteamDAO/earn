@@ -3,6 +3,13 @@ import { JobType, Listingtype, Prize, Source, SponsorStatus } from './types';
 type PrizeListType = {
   [key in Prize]: string;
 };
+export const PrizeListMap = {
+  first: 'First prize',
+  second: 'Second prize',
+  third: 'Third prize',
+  forth: 'Forth prize',
+  fifth: 'Fifth prize',
+};
 interface Bounties {
   id?: string;
   title: string;
@@ -24,6 +31,7 @@ interface Bounties {
   showTop: boolean;
   eligibility: string;
   status: BountyStatus;
+  slug: string;
 }
 
 type BountyStatus = 'open' | 'review' | 'close';

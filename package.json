@@ -48,6 +48,7 @@
     "immer": "^9.0.19",
     "next": "12.2.3",
     "react": "18.2.0",
+    "react-countdown": "^2.3.5",
     "react-dom": "18.2.0",
     "react-editor-js": "^2.1.0",
     "react-hook-form": "^7.43.0",

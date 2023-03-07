@@ -140,7 +140,7 @@ export const createBounty = async (
       id: genrateuuid(),
       title: bounties.title,
       token: bounties.token,
-      slug: bounties.title.split(' ').join().toLowerCase(),
+      slug: bounties.slug,
       deadline: bounties.deadline,
       description: bounties.description,
       sponsorStatus: bounties.sponsorStatus,
@@ -160,6 +160,20 @@ export const createBounty = async (
     console.log(e);
     return null;
   }
+};
+type FindBoutiesReturn = {
+  listing: Bounties;
+  sponsor: SponsorType;
+} | null;
+
+export const findBouties = async (slug: string): Promise<FindBoutiesReturn> => {
+  const { data, status } = await axios.get(
+    `${Backend_Url}/listings/bounty/find/${slug}`
+  );
+  if (status === 204) {
+    return null;
+  }
+  return data.data;
 };
 
 export const createJob = async (jobs: JobsType) => {
