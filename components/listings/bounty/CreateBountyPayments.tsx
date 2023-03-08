@@ -34,6 +34,7 @@ interface Props {
   mainSkills: MultiSelectOptions[];
   subSkills: MultiSelectOptions[];
   onOpen: () => void;
+  draftLoading: boolean;
   createDraft: (payment: string) => void;
 }
 export const CreatebountyPayment = ({
@@ -43,6 +44,7 @@ export const CreatebountyPayment = ({
   subSkills,
   onOpen,
   createDraft,
+  draftLoading,
 }: Props) => {
   // handles which token is selected
   const [tokenIndex, setTokenIndex] = useState<number | undefined>(undefined);
@@ -94,6 +96,7 @@ export const CreatebountyPayment = ({
         token: tokenList[tokenIndex as number].mintAddress,
         eligibility: bountyBasic?.eligibility ?? '',
         status: 'open',
+        slug: (bountyBasic?.title.split(' ').join('-') as string) ?? '',
       },
       currentSponsor as SponsorType
     );
@@ -109,7 +112,7 @@ export const CreatebountyPayment = ({
     <>
       <VStack pb={10} color={'gray.500'} pt={7} align={'start'} w={'2xl'}>
         <FormControl isRequired>
-          <FormLabel>Select Token</FormLabel>
+          <FormLabel color={'gray.500'}>Select Token</FormLabel>
           <Menu>
             <MenuButton
               as={Button}
@@ -176,7 +179,7 @@ export const CreatebountyPayment = ({
           {prizes.map((el, index) => {
             return (
               <FormControl key={el.label}>
-                <FormLabel>{el.label}</FormLabel>
+                <FormLabel color={'gray.500'}>{el.label}</FormLabel>
                 <Flex gap={3}>
                   <Input
                     type={'number'}
@@ -249,6 +252,7 @@ export const CreatebountyPayment = ({
             color="gray.500"
             border="1px solid"
             borderColor="gray.200"
+            isLoading={draftLoading}
             bg="transparent"
             onClick={() => {
               createDraft(

@@ -92,7 +92,7 @@ export const CreateGrantsPayment = ({
           style={{ width: '100%' }}
         >
           <FormControl isRequired>
-            <FormLabel>Select Token</FormLabel>
+            <FormLabel color={'gray.500'}>Select Token</FormLabel>
             <Menu>
               <MenuButton
                 as={Button}
@@ -159,7 +159,7 @@ export const CreateGrantsPayment = ({
             <FormControl w="full" isRequired>
               <Flex>
                 <FormLabel
-                  color={'gray.400'}
+                  color={'gray.500'}
                   fontWeight={600}
                   fontSize={'15px'}
                   htmlFor={'min_sal'}
@@ -181,7 +181,7 @@ export const CreateGrantsPayment = ({
             <FormControl w="full" isRequired>
               <Flex>
                 <FormLabel
-                  color={'gray.400'}
+                  color={'gray.500'}
                   fontWeight={600}
                   fontSize={'15px'}
                   htmlFor={'max_sal'}

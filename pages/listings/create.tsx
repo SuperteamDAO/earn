@@ -43,6 +43,7 @@ const CreateListing = () => {
   // payment form - 4
   const [steps, setSteps] = useState<number>(1);
   const router = useRouter();
+  const [draftLoading, setDraftLoading] = useState<boolean>(false);
   const [editorData, setEditorData] = useState<OutputData | undefined>();
   //
   const [mainSkills, setMainSkills] = useState<MultiSelectOptions[]>([]);
@@ -65,6 +66,7 @@ const CreateListing = () => {
   });
 
   const createDraft = async (payment: string) => {
+    setDraftLoading(true);
     let draft: DraftType = {
       id: genrateuuid(),
       orgId: currentSponsor?.orgId ?? '',
@@ -115,6 +117,7 @@ const CreateListing = () => {
     } else {
       toast.error('Error');
     }
+    setDraftLoading(false);
   };
 
   useEffect(() => {
@@ -166,6 +169,7 @@ const CreateListing = () => {
     };
     fetch();
   }, [router.query.draft]);
+
   return (
     <>
       {connected ? (
@@ -179,7 +183,7 @@ const CreateListing = () => {
               number: 1,
             },
             {
-              label: 'Listings',
+              label: 'Basics',
               number: 2,
             },
             {
@@ -187,7 +191,7 @@ const CreateListing = () => {
               number: 3,
             },
             {
-              label: 'Payment',
+              label: 'Reward',
               number: 4,
             },
           ]}
@@ -210,6 +214,7 @@ const CreateListing = () => {
           {steps === 1 && <Template setSteps={setSteps} />}
           {router.query.type && router.query.type === 'bounties' && (
             <Createbounty
+              draftLoading={draftLoading}
               createDraft={createDraft}
               bountybasic={bountybasic}
               setBountyBasic={setBountyBasic}
@@ -226,6 +231,7 @@ const CreateListing = () => {
           )}
           {router.query.type && router.query.type === 'jobs' && (
             <CreateJob
+              draftLoading={draftLoading}
               createDraft={createDraft}
               setJobBasic={setJobBasics}
               jobBasics={jobBasics}

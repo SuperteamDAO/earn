@@ -9,8 +9,8 @@ const Template = ({ setSteps }: Props) => {
   const router = useRouter();
   return (
     <>
-      <VStack align={'start'} w="full">
-        <VStack w={'full'} mb={6} align="start">
+      <VStack gap={8} align={'start'} w="full">
+        <VStack w={'full'} align="start">
           <Flex align="center" w="full" justify="center" gap="2rem" mb="2rem">
             <Text fontSize="1.3rem" color="gray.600" fontWeight={600}>
               Bounty
@@ -46,7 +46,7 @@ const Template = ({ setSteps }: Props) => {
             </Box>
           </Flex>
         </VStack>
-        <VStack w={'full'} mb={6} align="start">
+        <VStack w={'full'} align="start">
           <Flex align="center" w="full" justify="center" gap="2rem" mb="2rem">
             <Text fontSize="1.3rem" color="gray.600" fontWeight={600}>
               Jobs
@@ -82,7 +82,7 @@ const Template = ({ setSteps }: Props) => {
             </Box>
           </Flex>
         </VStack>
-        <VStack w={'full'} mb={6} align="start">
+        <VStack w={'full'} align="start">
           <Flex align="center" w="full" justify="center" gap="2rem" mb="2rem">
             <Text fontSize="1.3rem" color="gray.600" fontWeight={600}>
               Grants

@@ -201,7 +201,9 @@ const Index = () => {
                     </Flex>
                   </Box>
                   <Button
-                    onClick={() => {}}
+                    onClick={() => {
+                      router.push('/new/talent');
+                    }}
                     w={'full'}
                     fontSize={'0.9rem'}
                     h={12}

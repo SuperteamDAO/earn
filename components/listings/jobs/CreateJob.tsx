@@ -21,6 +21,7 @@ interface Props {
   setSubSkills: Dispatch<SetStateAction<MultiSelectOptions[]>>;
   onOpen: () => void;
   createDraft: (payment: string) => void;
+  draftLoading: boolean;
 }
 export const CreateJob = ({
   editorData,
@@ -35,11 +36,13 @@ export const CreateJob = ({
   setJobBasic,
   onOpen,
   createDraft,
+  draftLoading,
 }: Props) => {
   return (
     <>
       {steps === 2 && (
         <CreateJobBasic
+          draftLoading={draftLoading}
           createDraft={createDraft}
           jobBasics={jobBasics}
           setJobBasic={setJobBasic}
@@ -60,6 +63,7 @@ export const CreateJob = ({
       )}
       {steps === 4 && (
         <CreateJobPayments
+          draftLoading={draftLoading}
           createDraft={createDraft}
           jobBasics={jobBasics}
           subSkills={subSkills}

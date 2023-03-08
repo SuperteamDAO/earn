@@ -25,6 +25,7 @@ interface Props {
   subSkills: MultiSelectOptions[];
   skills: MultiSelectOptions[];
   createDraft: (payment: string) => void;
+  draftLoading: boolean;
 }
 interface ErrorsBasic {
   title: boolean;
@@ -42,6 +43,7 @@ export const CreatebountyBasic = ({
   subSkills,
   bountyBasic,
   createDraft,
+  draftLoading,
 }: Props) => {
   const [errorState, setErrorState] = useState<ErrorsBasic>({
     deadline: false,
@@ -58,7 +60,7 @@ export const CreatebountyBasic = ({
         <FormControl mb={5} w="full" isRequired isInvalid={errorState.title}>
           <Flex>
             <FormLabel
-              color={'gray.400'}
+              color={'gray.500'}
               fontWeight={600}
               fontSize={'15px'}
               htmlFor={'title'}
@@ -75,7 +77,7 @@ export const CreatebountyBasic = ({
               borderRadius="0.5rem"
               hasArrow
               w="max"
-              label={`Who will respond to questions about the opportunity from your team?`}
+              label={`Use a short title to describe the opportunity`}
             >
               <Image
                 mt={-2}
@@ -108,7 +110,7 @@ export const CreatebountyBasic = ({
         >
           <Flex>
             <FormLabel
-              color={'gray.400'}
+              color={'gray.500'}
               fontWeight={600}
               fontSize={'15px'}
               htmlFor={'eligility'}
@@ -125,7 +127,7 @@ export const CreatebountyBasic = ({
               borderRadius="0.5rem"
               hasArrow
               w="max"
-              label={`Who will respond to questions about the opportunity from your team?`}
+              label={`Select the deadline date for accepting submissions`}
             >
               <Image
                 mt={-2}
@@ -162,7 +164,7 @@ export const CreatebountyBasic = ({
         <FormControl isRequired isInvalid={errorState.deadline}>
           <Flex align={'center'} justify={'start'}>
             <FormLabel
-              color={'gray.400'}
+              color={'gray.500'}
               fontWeight={600}
               fontSize={'15px'}
               htmlFor={'deadline'}
@@ -191,11 +193,13 @@ export const CreatebountyBasic = ({
           <Input
             w={'full'}
             id="deadline"
-            type={'date'}
+            type={'datetime-local'}
             placeholder="deadline"
             value={bountyBasic?.deadline}
             color={'gray.500'}
             onChange={(e) => {
+              console.log(e.target.value);
+
               setbountyBasic({
                 ...(bountyBasic as BountyBasicType),
                 deadline: e.target.value,
@@ -256,6 +260,7 @@ export const CreatebountyBasic = ({
             border="1px solid"
             borderColor="gray.200"
             bg="transparent"
+            isLoading={draftLoading}
             onClick={() => {
               createDraft('nothing');
             }}

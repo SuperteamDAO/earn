@@ -52,8 +52,13 @@ export const Emailverification = ({
           {success ? (
             ''
           ) : (
-            <Text color={'gray.700'} fontWeight={600} fontFamily={'Inter'}>
-              Please confirm your email
+            <Text
+              textAlign={'center'}
+              color={'gray.700'}
+              fontWeight={600}
+              fontFamily={'Inter'}
+            >
+              Please Confirm Your Email
             </Text>
           )}
         </ModalHeader>

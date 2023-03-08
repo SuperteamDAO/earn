@@ -32,6 +32,7 @@ interface Props {
   subSkills: MultiSelectOptions[];
   onOpen: () => void;
   createDraft: (payment: string) => void;
+  draftLoading: boolean;
 }
 interface PaymentsState {
   max_eq: string;
@@ -54,6 +55,7 @@ export const CreateJobPayments = ({
   onOpen,
   subSkills,
   createDraft,
+  draftLoading,
 }: Props) => {
   const {
     formState: { errors },
@@ -107,7 +109,7 @@ export const CreateJobPayments = ({
       <VStack pb={10} color={'gray.500'} pt={7} align={'start'} w={'2xl'}>
         <FormControl isRequired>
           <FormLabel
-            color={'gray.400'}
+            color={'gray.500'}
             fontWeight={600}
             fontSize={'15px'}
             htmlFor={'exp'}
@@ -138,7 +140,7 @@ export const CreateJobPayments = ({
         {location === 'Remote' && (
           <FormControl mt={5} isRequired>
             <FormLabel
-              color={'gray.400'}
+              color={'gray.500'}
               fontWeight={600}
               fontSize={'15px'}
               htmlFor={'exp'}
@@ -160,7 +162,7 @@ export const CreateJobPayments = ({
 
         <FormControl my={5} isRequired isInvalid={errorState?.exp}>
           <FormLabel
-            color={'gray.400'}
+            color={'gray.500'}
             fontWeight={600}
             fontSize={'15px'}
             htmlFor={'exp'}
@@ -197,7 +199,7 @@ export const CreateJobPayments = ({
           <FormControl w="full" isRequired isInvalid={errorState?.min_sal}>
             <Flex>
               <FormLabel
-                color={'gray.400'}
+                color={'gray.500'}
                 fontWeight={600}
                 fontSize={'15px'}
                 htmlFor={'min_sal'}
@@ -224,7 +226,7 @@ export const CreateJobPayments = ({
           <FormControl w="full" isRequired isInvalid={errorState?.max_sal}>
             <Flex>
               <FormLabel
-                color={'gray.400'}
+                color={'gray.500'}
                 fontWeight={600}
                 fontSize={'15px'}
                 htmlFor={'max_sal'}
@@ -253,7 +255,7 @@ export const CreateJobPayments = ({
           <FormControl w="full" isRequired isInvalid={errorState?.min_eq}>
             <Flex>
               <FormLabel
-                color={'gray.400'}
+                color={'gray.500'}
                 fontWeight={600}
                 fontSize={'15px'}
                 htmlFor={'min-eq'}
@@ -279,7 +281,7 @@ export const CreateJobPayments = ({
           <FormControl w="full" isRequired isInvalid={errorState?.max_eq}>
             <Flex>
               <FormLabel
-                color={'gray.400'}
+                color={'gray.500'}
                 fontWeight={600}
                 fontSize={'15px'}
                 htmlFor={'max_eq'}
@@ -343,6 +345,7 @@ export const CreateJobPayments = ({
             border="1px solid"
             borderColor="gray.200"
             bg="transparent"
+            isLoading={draftLoading}
             onClick={() => {
               createDraft(
                 JSON.stringify({
