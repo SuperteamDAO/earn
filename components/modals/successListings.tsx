@@ -20,7 +20,7 @@ interface Props {
 }
 export const SuccessListings = ({ isOpen, onClose, slug }: Props) => {
   const { hasCopied, onCopy } = useClipboard(
-    `https://earn.superteam.fun/dashboard/invoice/`
+    'http://localhost:3000/listings' + slug
   );
   return (
     <>
@@ -40,7 +40,7 @@ export const SuccessListings = ({ isOpen, onClose, slug }: Props) => {
                 whiteSpace="nowrap"
                 focusBorderColor="#CFD2D7"
                 fontWeight={500}
-                value={`https://earn.superteam.fun/dashboard/ta...`}
+                value={'http://localhost:3000/listings' + slug}
                 isReadOnly
               />
               <InputRightElement h="100%" marginRight="1rem">

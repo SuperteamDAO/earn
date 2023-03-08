@@ -197,10 +197,19 @@ const CreateListing = () => {
           ]}
         >
           {!userInfo?.sponsor && (
-            <CreateSponsorModel isOpen={true} onClose={() => { }} />
+            <CreateSponsorModel isOpen={true} onClose={() => {}} />
           )}
           {isOpen && (
-            <SuccessListings slug="" isOpen={isOpen} onClose={() => { }} />
+            <SuccessListings
+              slug={
+                '/' +
+                  (router.query.type as string) +
+                  '/' +
+                  bountybasic?.title.split(' ').join('-') ?? ''
+              }
+              isOpen={isOpen}
+              onClose={() => {}}
+            />
           )}
           {steps === 1 && <Template setSteps={setSteps} />}
           {router.query.type && router.query.type === 'bounties' && (
