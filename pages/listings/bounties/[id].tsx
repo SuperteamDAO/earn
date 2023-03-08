@@ -1,4 +1,4 @@
-import { Box, HStack, VStack } from '@chakra-ui/react';
+import { Box, HStack, useDisclosure, VStack } from '@chakra-ui/react';
 import { useQuery } from '@tanstack/react-query';
 import { useRouter } from 'next/router';
 import React from 'react';
@@ -7,6 +7,7 @@ import { DetailDescription } from '../../../components/listings/listings/details
 import { DetailSideCard } from '../../../components/listings/listings/details/detailSideCard';
 import { ListingHeader } from '../../../components/listings/listings/ListingHeader';
 import { Submission } from '../../../components/listings/listings/submissions/submission';
+import { CreateProfileModal } from '../../../components/modals/createProfile';
 import { PrizeListType } from '../../../interface/listings';
 import { SponsorType } from '../../../interface/sponsor';
 import { findBouties } from '../../../utils/functions';
@@ -26,8 +27,12 @@ const defalutSponsor: SponsorType = {
   id: '',
   orgId: '',
 };
+
 const Bounties = () => {
   const router = useRouter();
+
+  const { onOpen, isOpen, onClose } = useDisclosure();
+
   const listingInfo = useQuery({
     queryFn: ({ queryKey }) => findBouties((queryKey[1] as string) ?? ''),
     queryKey: ['bounties', router.query.id ?? ''],
@@ -41,14 +46,15 @@ const Bounties = () => {
   });
   return (
     <>
-      {/* <ListingHeader
+      {isOpen && <CreateProfileModal isOpen={isOpen} onClose={onClose} />}
+      <ListingHeader
         title={listingInfo.data?.listing?.title ?? ''}
         sponsor={
           !listingInfo.data?.sponsor
             ? (listingInfo.data?.sponsor as SponsorType)
             : defalutSponsor
         }
-      />*/}
+      />
       {router.query.submission ? (
         <HStack
           maxW={'7xl'}
@@ -71,9 +77,13 @@ const Bounties = () => {
         >
           <VStack gap={8} w={['22rem', '22rem', 'full', 'full']} mt={10}>
             <DetailDescription />
-            <Comments />
+            <Comments
+              refId={listingInfo.data?.listing.id ?? ''}
+              onOpen={onOpen}
+            />
           </VStack>
           <DetailSideCard
+            onOpen={onOpen}
             prizeList={
               (listingInfo.data?.listing.prizeList as PrizeListType) ?? {}
             }

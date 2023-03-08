@@ -11,6 +11,7 @@ import {
 } from '../interface/listings';
 import { genrateuuid } from './helpers';
 import toast from 'react-hot-toast';
+import { Comments } from '../interface/comments';
 
 const Backend_Url = process.env.NEXT_PUBLIC_BACKEND_URL;
 
@@ -209,4 +210,15 @@ export const createGrants = async (grants: GrantsType) => {
 
     return null;
   }
+};
+
+export const createComment = async (comment: Comments) => {
+  const { data, status } = await axios.post(`${Backend_Url}/comment/create`, {
+    ...comment,
+  });
+
+  if (status !== 200) {
+    return null;
+  }
+  return data;
 };

@@ -7,9 +7,28 @@ import {
   Textarea,
   VStack,
 } from '@chakra-ui/react';
-import React from 'react';
+import { useMutation } from '@tanstack/react-query';
+import React, { useState } from 'react';
+import toast from 'react-hot-toast';
 import { GoCommentDiscussion } from 'react-icons/go';
-export const Comments = () => {
+import { createComment } from '../../../utils/functions';
+import { genrateuuid } from '../../../utils/helpers';
+
+interface Props {
+  onOpen: () => void;
+  refId: string;
+}
+export const Comments = ({ onOpen, refId }: Props) => {
+  const [message, setMessage] = useState<string>('');
+  const commentMutation = useMutation({
+    mutationFn: createComment,
+    onError: () => {
+      toast.success('Error occur while commenting');
+    },
+    onSuccess: () => {
+      toast.success('commented');
+    },
+  });
   return (
     <>
       <VStack
@@ -36,9 +55,25 @@ export const Comments = () => {
             h={32}
             border={'1px solid #E2E8EF'}
             placeholder="Write a comment..."
+            onChange={(e) => {
+              setMessage(e.target.value);
+            }}
           ></Textarea>
           <Flex w="full" justify={'end'}>
-            <Button bg={'#6562FF'} color={'white'} fontSize={'1rem'}>
+            <Button
+              onClick={() => {
+                commentMutation.mutate({
+                  id: genrateuuid(),
+                  message: message,
+                  refId: refId,
+                  talentId: '',
+                  timeStamp: JSON.stringify(Date.now()),
+                });
+              }}
+              bg={'#6562FF'}
+              color={'white'}
+              fontSize={'1rem'}
+            >
               Comment
             </Button>
           </Flex>

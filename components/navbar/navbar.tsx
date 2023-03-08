@@ -43,6 +43,7 @@ export const Navbar = ({ sponsors }: Props) => {
     };
     makeUser();
   }, [publicKey, connected]);
+  const FindTalent = async () => {};
   const onDisconnectWallet = async () => {
     if (wallet == null) {
       return;
