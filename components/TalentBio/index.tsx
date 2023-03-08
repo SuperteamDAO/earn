@@ -40,7 +40,12 @@ let Chip = ({ icon, label, value }: ChipType) => {
   );
 };
 
-function TalentBio() {
+function TalentBio({ data }: { data: any }) {
+
+  let socials = JSON.parse(data.socials);
+
+  console.log(socials)
+
   return (
     <Box
       px={'1.5625rem'}
@@ -48,20 +53,20 @@ function TalentBio() {
       borderRadius={'0.6875rem'}
       bg={'white'}
       w={'20.4375rem'}
-      h={'21.375rem'}
+      minH={'21.375rem'}
     >
       <Flex align={'center'}>
         <Avatar
           name="Dan Abrahmov"
-          src="https://bit.ly/dan-abramov"
+          src={data.avatar}
           size="lg"
         />
         <Box ml={'21'}>
           <Text fontWeight={'600'} fontSize={'1.25rem'}>
-            Dan Abrahmov
+            {data.firstname} {data.lastname}
           </Text>
           <Text fontWeight={'600'} fontSize={'1rem'} color={'gray.400'}>
-            @Dan Abrahmov
+            @{data.username}
           </Text>
         </Box>
       </Flex>
@@ -71,18 +76,18 @@ function TalentBio() {
         fontSize={'1rem'}
         color={'gray.400'}
       >
-        Lead Front-End developer at Netflix Corp. Excited about crypto
+        {data.bio}
       </Text>
       <Flex justifyContent={'space-between'} mt={'2.1875rem'}>
         <Chip
           icon={'/assets/talent/eyes.png'}
           label={'Interested In'}
-          value={'Working Fulltime'}
+          value={data.workPrefernce}
         />
         <Chip
           icon={'/assets/talent/cap.png'}
           label={'Works At'}
-          value={'Netflix Corp'}
+          value={data.currentEmployer}
         />
       </Flex>
       <Button color={'white'} bg={'#6562FF'} w={'full'} mt={'1.575rem'}>
@@ -90,40 +95,48 @@ function TalentBio() {
       </Button>
       <Flex mt={'32px'} justifyContent={'space-between'}>
         <Box w={'22px'} h={'22px'}>
-          <Image
-            objectFit="contain"
-            width={'100%'}
-            height={'100%'}
-            alt=""
-            src={'/assets/talent/twitter.png'}
-          />
+          <a href={socials['Twitter']}>
+            <Image
+              objectFit="contain"
+              width={'100%'}
+              height={'100%'}
+              alt=""
+              src={'/assets/talent/twitter.png'}
+            />
+          </a>
         </Box>
         <Box w={'22px'} h={'22px'}>
-          <Image
-            objectFit="contain"
-            width={'100%'}
-            height={'100%'}
-            alt=""
-            src={'/assets/talent/linkedIn.png'}
-          />
+          <a href={socials['LinkedIn']}>
+            <Image
+              objectFit="contain"
+              width={'100%'}
+              height={'100%'}
+              alt=""
+              src={'/assets/talent/linkedIn.png'}
+            />
+          </a>
         </Box>
         <Box w={'22px'} h={'22px'}>
-          <Image
-            objectFit="contain"
-            width={'100%'}
-            height={'100%'}
-            alt=""
-            src={'/assets/talent/github.png'}
-          />
+          <a href={socials['GitHub']}>
+            <Image
+              objectFit="contain"
+              width={'100%'}
+              height={'100%'}
+              alt=""
+              src={'/assets/talent/github.png'}
+            />
+          </a>
         </Box>
         <Box w={'22px'} h={'22px'}>
-          <Image
-            objectFit="contain"
-            width={'100%'}
-            height={'100%'}
-            alt=""
-            src={'/assets/talent/site.png'}
-          />
+          <a href={socials['Site']}>
+            <Image
+              objectFit="contain"
+              width={'100%'}
+              height={'100%'}
+              alt=""
+              src={'/assets/talent/site.png'}
+            />
+          </a>
         </Box>
       </Flex>
     </Box>

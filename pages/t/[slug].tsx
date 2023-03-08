@@ -1,5 +1,5 @@
 import React from 'react';
-import { Box, Flex, VStack, Text, Button, Wrap } from '@chakra-ui/react';
+import { Box, Flex, VStack, Text, Button, Wrap, Center, Spinner } from '@chakra-ui/react';
 import { Badge } from '@chakra-ui/react'
 import { Avatar } from '@chakra-ui/react';
 import { Image } from '@chakra-ui/react';
@@ -8,6 +8,8 @@ import TalentBio from '../../components/TalentBio'
 import { icons } from 'react-icons/lib';
 
 import { Navbar } from '../../components/navbar/navbar';
+import { useQuery } from '@tanstack/react-query';
+import axios from 'axios';
 
 const ProofWork = () => {
   return (
@@ -104,8 +106,13 @@ const Interest = ({ label, icon }: { label: string; icon: string }) => {
   )
 }
 
+let colors = ['Red', 'Orange', 'Yellow', 'Green', 'Blue', 'Indigo', 'Violet'];
 
-const SkillsAndInterests = () => {
+const SkillsAndInterests = ({ data }: { data: any }) => {
+
+  let skills = JSON.parse(data.skills);
+  let interests = JSON.parse(data.interests);
+
   return (
     <Box
       px={'1.5625rem'}
@@ -124,9 +131,13 @@ const SkillsAndInterests = () => {
           Skills
         </Text>
         <Flex columnGap={"0.4375rem"} mt={"0.8125rem"}>
-          <Badge px={"0.625rem"} py={"0.2813rem"} colorScheme='purple'>Back-End Dev</Badge>
-          <Badge px={"0.625rem"} py={"0.2813rem"} colorScheme='green'>Design</Badge>
-          <Badge px={"0.625rem"} py={"0.2813rem"} colorScheme='red'>C++</Badge>
+          {
+            skills.map((ele: string, idx: number) => {
+              return (
+                <Badge key={ele} px={"0.625rem"} py={"0.2813rem"} colorScheme={colors[idx].toLocaleLowerCase()}>{ele}</Badge>
+              )
+            })
+          }
         </Flex>
       </Box>
       <Box mt={"1rem"}>
@@ -134,8 +145,13 @@ const SkillsAndInterests = () => {
           Interests
         </Text>
         <Flex flexWrap={"wrap"} gap={"0.4375rem"} mt={"0.8125rem"}>
-          <Interest label='Defi' icon='/assets/talent/site.png' />
-          <Interest label='DAO' icon='/assets/talent/supercoin.png' />
+          {
+            interests.map((ele: string) => {
+              return (
+                <Interest key={ele} label={ele} icon='/assets/talent/site.png' />
+              )
+            })
+          }
         </Flex>
       </Box>
       <Box mt={"0.5rem"}>
@@ -180,8 +196,35 @@ const Nft = () => {
   )
 }
 
+import { useRouter } from 'next/router'
 
 function TalentProfile() {
+  const router = useRouter()
+  let { slug } = router.query
+
+  let { isSuccess, data } = useQuery({
+    queryKey: [slug], queryFn: () => {
+      if (!slug) {
+        throw new Error("slug error")
+      }
+      return axios.get(`${process.env.NEXT_PUBLIC_BACKEND_URL}/talent/find?username=${slug}`)
+    }
+  })
+
+
+
+  if (!isSuccess) {
+    return <Center w={'100%'} h={"100vh"} pt={"3rem"} >
+      <Spinner
+        thickness='4px'
+        speed='0.65s'
+        emptyColor='gray.200'
+        color='blue.500'
+        size='xl'
+      />
+    </Center>
+  }
+
   return (
     <>
       <Navbar />
@@ -195,8 +238,8 @@ function TalentProfile() {
           backgroundRepeat={"no-repeat"}
           backgroundSize={"cover "}
         >
-          <TalentBio />
-          <SkillsAndInterests />
+          <TalentBio data={data?.data.data} />
+          <SkillsAndInterests data={data?.data.data} />
           <Nft />
         </VStack>
         <Box w={"100%"} bg={"#F7FAFC"} px={"23px"} py={"35px"} >
@@ -238,7 +281,5 @@ function TalentProfile() {
     </>
   );
 }
-
-
 
 export default TalentProfile;
