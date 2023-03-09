@@ -107,6 +107,8 @@ export const Comments = ({ onOpen, refId }: Props) => {
             <HStack key={el.id} align={'start'} px={6}>
               <Image
                 w={10}
+                h={10}
+                objectFit={'contain'}
                 rounded={'full'}
                 src={el.talent.avatar}
                 alt={'profile image'}
