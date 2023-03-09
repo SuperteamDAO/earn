@@ -1,9 +1,16 @@
-import { Box, Button, Flex, Text, VStack } from '@chakra-ui/react';
+import { Box, Button, Flex, HStack, Text, VStack } from '@chakra-ui/react';
 import React, { useState } from 'react';
 import { BiDownArrowAlt, BiUpArrowAlt } from 'react-icons/bi';
+import { MultiSelectOptions, skillSubSkillMap } from '../../../../constants';
+import { SkillColor } from '../../../../utils/constants';
 
-export const DetailDescription = () => {
+interface Props {
+  skills: MultiSelectOptions[];
+}
+
+export const DetailDescription = ({ skills }: Props) => {
   const [show, setShow] = useState<boolean>(false);
+
   return (
     <>
       <VStack rounded={'xl'} p={5} bg={'white'}>
@@ -11,7 +18,23 @@ export const DetailDescription = () => {
           <Text color={'#94A3B8'} fontWeight={500}>
             Skills Needed
           </Text>
-          <Text>sds</Text>
+          <HStack>
+            {skills.map((e) => {
+              return (
+                <Box
+                  bg={SkillColor[e.label as any] + '1A'}
+                  key={e.value}
+                  px={4}
+                  py={1}
+                  rounded={'md'}
+                >
+                  <Text fontSize={'0.8rem'} color={SkillColor[e.label as any]}>
+                    {e.label}
+                  </Text>
+                </Box>
+              );
+            })}
+          </HStack>
         </Flex>
         <Flex position={'relative'} flexDir={'column'}>
           <Flex

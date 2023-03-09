@@ -239,3 +239,15 @@ export const CountryList: string[] = [
   'Zambia',
   'Zimbabwe',
 ];
+export const SkillColor: any = {
+  Growth: '#16A368',
+  Community: '#F5C723',
+  Content: '#5EA8BF',
+  Design: '#7E51FF',
+  Other: '#64758B',
+  'Back-End Dev': '#FF833E',
+  'Front-End Dev': '#3E8BFF',
+  'Blockchain Dev': '#FF3EC9',
+  'Fullstack Dev': '#16A368',
+  'Mobile Engineer': '#7E51FF',
+};

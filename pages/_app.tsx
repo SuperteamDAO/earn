@@ -1,8 +1,13 @@
 import type { AppProps } from 'next/app';
 import { ChakraProvider } from '@chakra-ui/react';
 import theme from '../config/chakra.config';
-import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
+import {
+  Hydrate,
+  QueryClient,
+  QueryClientProvider,
+} from '@tanstack/react-query';
 import { Wallet } from '../context/connectWalletContext';
+import { ReactQueryDevtools } from '@tanstack/react-query-devtools';
 import 'degen/styles';
 // Styles
 import '@fontsource/inter/';
@@ -18,7 +23,10 @@ function MyApp({ Component, pageProps }: AppProps) {
       <ChakraProvider theme={theme}>
         <Wallet>
           <QueryClientProvider client={queryClient}>
-            <Component {...pageProps} />
+            <Hydrate state={pageProps.dehydratedState}>
+              <ReactQueryDevtools initialIsOpen={false} />
+              <Component {...pageProps} />
+            </Hydrate>
           </QueryClientProvider>
         </Wallet>
       </ChakraProvider>

@@ -12,20 +12,50 @@ import {
   Th,
   Thead,
   Tr,
+  useDisclosure,
   VStack,
 } from '@chakra-ui/react';
 import { VerticalStep } from '../../../misc/steps';
 import Countdown from 'react-countdown';
 import { PrizeListType } from '../../../../interface/listings';
+import { SubmissionModal } from '../../../modals/submissionModal';
+import { userStore } from '../../../../store/user';
+import { useWallet } from '@solana/wallet-adapter-react';
+import { UseMutationResult } from '@tanstack/react-query';
 
 interface Props {
   total: number;
   prizeList: Partial<PrizeListType>;
   onOpen: () => void;
+  endingTime: string;
+  submissionNumber: number;
+  submissionisOpen: boolean;
+  submissiononClose: () => void;
+  submissiononOpen: () => void;
+  SubmssionMutation: UseMutationResult<void, any, string, unknown>;
 }
-export const DetailSideCard = ({ total, prizeList, onOpen }: Props) => {
+export const DetailSideCard = ({
+  total,
+  prizeList,
+  onOpen,
+  endingTime,
+  SubmssionMutation,
+  submissionNumber,
+  submissionisOpen,
+  submissiononClose,
+  submissiononOpen,
+}: Props) => {
+  const { userInfo } = userStore();
+  const { connected } = useWallet();
   return (
     <>
+      {submissionisOpen && (
+        <SubmissionModal
+          SubmssionMutation={SubmssionMutation}
+          onClose={submissiononClose}
+          isOpen={submissionisOpen}
+        />
+      )}
       <VStack pt={10} gap={2}>
         <VStack
           rounded={'xl'}
@@ -235,7 +265,7 @@ export const DetailSideCard = ({ total, prizeList, onOpen }: Props) => {
                   w={'1.4rem'}
                 />
                 <Text color={'#000000'} fontSize="1.3rem" fontWeight={500}>
-                  05
+                  {submissionNumber}
                 </Text>
               </Flex>
               <Text color={'#94A3B8'}>Submissions</Text>
@@ -249,7 +279,7 @@ export const DetailSideCard = ({ total, prizeList, onOpen }: Props) => {
                   w={'1.4rem'}
                 />
                 <Text color={'#000000'} fontSize="1.3rem" fontWeight={500}>
-                  <Countdown date={Date.now() + 100000000} daysInHours />
+                  <Countdown date={endingTime} daysInHours />
                 </Text>
               </Flex>
               <Text color={'#94A3B8'}>Remaining</Text>
@@ -261,7 +291,11 @@ export const DetailSideCard = ({ total, prizeList, onOpen }: Props) => {
             color={'white'}
             w={'90%'}
             onClick={() => {
-              onOpen();
+              if (!userInfo?.talent || !connected) {
+                onOpen();
+                return;
+              }
+              submissiononOpen();
             }}
           >
             Submit Now

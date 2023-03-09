@@ -16,7 +16,7 @@ import {
 import { useWallet } from '@solana/wallet-adapter-react';
 import { useRouter } from 'next/router';
 import { useEffect } from 'react';
-import { createUser } from '../../utils/functions';
+import { createUser, findTalentPubkey } from '../../utils/functions';
 import Avatar from 'boring-avatars';
 import { truncatedPublicKey } from '../../utils/helpers';
 import { MdOutlineKeyboardArrowDown } from 'react-icons/md';
@@ -24,12 +24,14 @@ import { userStore } from '../../store/user';
 import { SponsorType } from '../../interface/sponsor';
 import { SponsorStore } from '../../store/sponsor';
 import { useStore } from 'zustand';
+import { TalentStore } from '../../store/talent';
 
 interface Props {
   sponsors?: SponsorType[];
 }
 export const Navbar = ({ sponsors }: Props) => {
   const { setUserInfo } = userStore();
+  const { setTalentInfo } = TalentStore();
   const router = useRouter();
   const { connected, publicKey, wallet } = useWallet();
   useEffect(() => {
@@ -39,11 +41,22 @@ export const Navbar = ({ sponsors }: Props) => {
       if (publicKey && connected) {
         const res = await createUser(publicKey.toBase58() as string);
         setUserInfo(res.data);
+        if (res.data.talent) {
+          console.log('In');
+
+          await findTalent();
+        }
       }
     };
     makeUser();
   }, [publicKey, connected]);
-  const FindTalent = async () => {};
+  const findTalent = async () => {
+    const talent = await findTalentPubkey(publicKey?.toBase58() as string);
+    if (!talent) {
+      return;
+    }
+    return setTalentInfo(talent.data);
+  };
   const onDisconnectWallet = async () => {
     if (wallet == null) {
       return;
