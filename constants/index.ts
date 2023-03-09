@@ -525,16 +525,6 @@ export const TimeZoneList: MultiSelectOptions[] = [
 ];
 export const PrizeList = ['First', 'Second', 'Third', 'Forth', 'Fifth'];
 
-export const CommunityList: string[] = [
-  'LamportDAO',
-  "Grape / Dean's List",
-  'Superteam',
-  'SuperWomenDao',
-  'DeveloperDAO',
-  'Metacamp',
-  '10K Designers',
-];
-
 export const ListingTypeQueryMap = {
   Jobs: 'jobs',
   Bounties: 'bounties',
@@ -783,7 +773,18 @@ export const CountryList: string[] = [
   'Zimbabwe',
 ];
 
+export const CommunityList: string[] = [
+  'LamportDAO',
+  "Grape / Dean's List",
+  'Superteam',
+  'SuperWomenDao',
+  'DeveloperDAO',
+  'Metacamp',
+  '10K Designers',
+];
+
 export const CommunityImage: { [key in string]: string } = {
+  Superteam: '/assets/talent/superteam-logo.png',
   LamportDAO:
     'https://white-chemical-flamingo-683.mypinata.cloud/ipfs/QmSdqwxpmr2ouFFTapMbywqiBoEzJ3NBUEsAAZ8szB72Sj',
   "Grape / Dean's List":
