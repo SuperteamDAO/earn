@@ -42,9 +42,9 @@ let Chip = ({ icon, label, value }: ChipType) => {
 
 function TalentBio({ data }: { data: any }) {
 
-  let socials = JSON.parse(data.socials);
+  console.log(data);
 
-  console.log(socials)
+  let socials = JSON.parse(data.socials);
 
   return (
     <Box

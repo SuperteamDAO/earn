@@ -1,11 +1,12 @@
 import { useWallet } from '@solana/wallet-adapter-react';
 import { useQuery } from '@tanstack/react-query';
 import React, { Children, Dispatch, SetStateAction, useEffect, useState } from 'react'
-import { Box, Flex, FormControl, FormLabel, Heading, HStack, Text, VStack, Input, Select, Textarea, Button, Center, useDisclosure, InputGroup } from '@chakra-ui/react';
+import { Box, Flex, FormControl, FormLabel, Heading, HStack, Text, VStack, Input, Select, Textarea, Button, Center, useDisclosure, InputGroup, Spinner } from '@chakra-ui/react';
 import makeAnimated from 'react-select/animated';
 import { Image } from '@chakra-ui/react';
 import { MediaPicker } from 'degen';
 
+import { workExp, web3Exp, workType } from '../../constants'
 
 //layouts
 import FormLayout from '../../layouts/FormLayout';
@@ -14,7 +15,7 @@ import { Steps } from '../../components/misc/steps';
 import { type } from 'os';
 import ReactSelect from 'react-select';
 import { CommunityList, IndustryList, MainSkills, SubSkills } from '../../constants';
-import { AddIcon, LinkIcon } from '@chakra-ui/icons';
+import { AddIcon, LinkIcon, EditIcon, DeleteIcon } from '@chakra-ui/icons';
 import { Navbar } from '../../components/navbar/navbar';
 import { Verify } from 'crypto';
 
@@ -22,7 +23,7 @@ import TalentBio from '../../components/TalentBio';
 
 import { uploadToCloudinary } from '../../utils/upload';
 
-import { CountryList } from '../../utils/constants';
+import { CountryList } from '../../constants';
 
 import { create } from 'zustand'
 
@@ -114,7 +115,7 @@ const useFormStore = create<userStoreType>()((set) => ({
 let pages = ["welcome", "email", "otp", "steps", "success"]
 
 function Talent() {
-    const [currentPage, setcurrentPage] = useState("welcome");
+    const [currentPage, setcurrentPage] = useState("steps");
     const { connected } = useWallet();
 
     if (!connected) {
@@ -127,7 +128,7 @@ function Talent() {
             {currentPage == "welcome" && <WelcomeMessage setStep={() => { setcurrentPage("email") }} />}
             {currentPage == "email" && <VerifyEmail setStep={() => { setcurrentPage("otp") }} />}
             {currentPage == "otp" && <OtpScreen setStep={() => { setcurrentPage("steps") }} />}
-            {currentPage == "steps" && <StepsCon setStep={() => { setcurrentPage("success") }} />}
+            {currentPage == "steps" && <StepsCon setSuccess={() => { setcurrentPage("success") }} />}
             {currentPage == "success" && <SuccessScreen />}
         </VStack >
     )
@@ -140,8 +141,10 @@ type stepsType = {
     children?: any;
 }
 
-const StepsCon = ({ setStep }: { setStep: () => void }) => {
-    const [currentStep, setSteps] = useState<number>(1);
+
+
+const StepsCon = ({ setSuccess }: { setSuccess: () => void }) => {
+    const [currentStep, setSteps] = useState<number>(3);
     let stepList = [
         {
 
@@ -157,6 +160,12 @@ const StepsCon = ({ setStep }: { setStep: () => void }) => {
         },
     ]
 
+    let TitleArray = [
+        { "title": "Create Your Profile", "subTitle": " If you&apos;re ready to start contributing to Solana, you&apos;re in the right place." },
+        { "title": "Tell Us About Your Work", "subTitle": "The more you tell us, the better we can match you" },
+        { "title": "Socials & Proof of Work", "subTitle": "Where can people learn more about your work?" },
+    ]
+
     return (
         <VStack w={"xl"} gap={10}>
             <VStack mt={20}>
@@ -166,7 +175,7 @@ const StepsCon = ({ setStep }: { setStep: () => void }) => {
                     fontSize={'24px'}
                     fontFamily={'Inter'}
                 >
-                    Create Your Profile
+                    {TitleArray[currentStep - 1].title}
                 </Heading>
                 <Text
                     color={'#94A3B8'}
@@ -175,7 +184,7 @@ const StepsCon = ({ setStep }: { setStep: () => void }) => {
                     fontWeight={500}
                     textAlign={"center"}
                 >
-                    If you&apos;re ready to start contributing to Solana, you&apos;re in the right place.
+                    {TitleArray[currentStep - 1].subTitle}
                 </Text>
             </VStack>
             <HStack w="100%">
@@ -217,7 +226,7 @@ const StepsCon = ({ setStep }: { setStep: () => void }) => {
             </HStack>
             {currentStep == 1 && <AboutYou setStep={setSteps} />}
             {currentStep == 2 && <YourWork setStep={setSteps} />}
-            {currentStep == 3 && <YourLinks setStep={setSteps} success={() => { setStep() }} />}
+            {currentStep == 3 && <YourLinks setStep={setSteps} success={() => { setSuccess() }} />}
         </VStack>
     )
 }
@@ -372,6 +381,9 @@ const AboutYou = ({ setStep }: Step1Props) => {
     )
 }
 
+
+
+
 const YourWork = ({ setStep }: Step1Props) => {
     const animatedComponents = makeAnimated();
 
@@ -402,7 +414,6 @@ const YourWork = ({ setStep }: Step1Props) => {
         updateState({ ...data, ...DropDownValues }); setStep(i => i + 1)
     };
 
-    console.log(DropDownValues)
 
     return (
         <Box w={'full'}>
@@ -413,34 +424,46 @@ const YourWork = ({ setStep }: Step1Props) => {
                             <FormLabel color={"gray.400"}>
                                 How familiar are you with Web3?
                             </FormLabel>
-                            <Input
-                                id="cryptoExperience"
+
+                            <Select id="cryptoExperience"
                                 placeholder="Experience in Years"
-                                type={"number"}
-                                {...register("cryptoExperience", { required: true })}
-                            />
+                                {...register("cryptoExperience", { required: true })}>
+                                {
+                                    web3Exp.map((ct) => {
+                                        return <option key={ct} value={ct}>{ct}</option>
+                                    })
+                                }
+                            </Select>
                         </Box>
                         <Box w={'full'}>
                             <FormLabel color={"gray.400"}>
                                 Work Experience
                             </FormLabel>
-                            <Input
-                                id="experience"
+                            <Select id="experience"
                                 placeholder="Experience in Years"
-                                type={"number"}
-                                {...register("experience", { required: true })}
-                            />
+                                {...register("experience", { required: true })}>
+                                {
+                                    workExp.map((ct) => {
+                                        return <option key={ct} value={ct}>{ct}</option>
+                                    })
+                                }
+                            </Select>
                         </Box>
                     </Flex>
                     <Box w={'full'} mb={"1.25rem"}>
                         <FormLabel color={"gray.400"}>
                             Work Preference
                         </FormLabel>
-                        <Input
+                        <Select
                             id="workPrefernce"
                             placeholder="Type of work"
-                            {...register("workPrefernce", { required: true })}
-                        />
+                            {...register("workPrefernce", { required: true })}>
+                            {
+                                workType.map((ct) => {
+                                    return <option key={ct} value={ct}>{ct}</option>
+                                })
+                            }
+                        </Select>
                     </Box>
                     <Box w={'full'} mb={"1.25rem"}>
                         <FormLabel color={"gray.400"}>
@@ -628,13 +651,20 @@ const YourLinks = ({ setStep, success }: { setStep: Dispatch<SetStateAction<numb
     const { isOpen, onOpen, onClose } = useDisclosure()
     const [pow, setpow] = useState<string[]>([]);
 
-    console.log(useFormStore())
+
+    const { connected, publicKey } = useWallet();
+
+    let { updateState } = useFormStore();
 
     const uploadProfile = async (socials: string, pow: string) => {
+
+        updateState({ pow, socials });
+
         let res = await axios.post(`${process.env.NEXT_PUBLIC_BACKEND_URL}/talent/create`, {
             ...form, socials, pow,
             verified: true, superteamLevel: "Lurker",
-            id: genrateuuid()
+            id: genrateuuid(),
+            publickey: JSON.stringify(publicKey)
         })
         console.log(res);
         if (res) {
@@ -645,6 +675,7 @@ const YourLinks = ({ setStep, success }: { setStep: Dispatch<SetStateAction<numb
     let form = useFormStore().form;
     const { register, handleSubmit, watch, formState: { errors } } = useForm();
     const onSubmit = (data: any) => { uploadProfile(JSON.stringify(data), JSON.stringify(pow)) };
+    const [selectedProject, setselectedProject] = useState<number>(-1);
 
     return (
         <>
@@ -663,13 +694,25 @@ const YourLinks = ({ setStep, success }: { setStep: Dispatch<SetStateAction<numb
                         </Text>
                         <Box>
                             {
-                                pow.map((ele) => {
+                                pow.map((ele, idx) => {
                                     let data = JSON.parse(ele)
-                                    return <Text boxShadow={'md'} rounded={"md"} key={data.title} px={"1rem"} py={"0.3rem"} w={"full"} mt="2" mb={"1.5"}>{data.title}</Text>
+                                    return (
+                                        <Flex alignItems={"center"} key={data.title} border={'1px solid gray'} rounded={"md"} px={"1rem"} py={"0.5rem"} color={"gray.400"} borderColor={"gray.200"} mt="2" mb={"1.5"}>
+                                            <Text fontSize={"0.8rem"} w={"full"} >{data.title}</Text>
+                                            <Center columnGap={"0.8rem"}>
+                                                {/* <EditIcon onClick={() => { setselectedProject(idx) }} cursor={"pointer"} fontSize={"0.8rem"} /> */}
+                                                <DeleteIcon onClick={() => {
+                                                    setpow((ele) => {
+                                                        return [...ele.filter((ele, id) => idx != id)]
+                                                    })
+                                                }} cursor={"pointer"} fontSize={"0.8rem"} />
+                                            </Center>
+                                        </Flex>
+                                    )
                                 })
                             }
                         </Box>
-                        <Button onClick={onOpen} fontSize={"12px"} color={"gray.400"} leftIcon={<AddIcon color={"gray.400"} />} w={"full"} mt="2" mb={"6"}>
+                        <Button onClick={() => { onOpen(); setselectedProject(-1) }} fontSize={"12px"} color={"gray.400"} leftIcon={<AddIcon color={"gray.400"} />} w={"full"} mt="2" mb={"6"}>
                             Add Project
                         </Button>
                         <Button type='submit' w={"full"} h="50px" color={"white"} bg={"rgb(101, 98, 255)"} >
@@ -678,12 +721,12 @@ const YourLinks = ({ setStep, success }: { setStep: Dispatch<SetStateAction<numb
                     </FormControl>
                 </form>
             </Box >
-            <AddProject key={pow.length + 'project'} {...{ isOpen, onClose, setpow }} />
+            <AddProject key={pow.length + 'project'} {...{ isOpen, onClose, pow, setpow }} />
         </>
     )
 }
 
-const AddProject = ({ isOpen, onClose, setpow }: { isOpen: boolean, onClose: () => void, setpow: Dispatch<SetStateAction<string[]>> }) => {
+const AddProject = ({ isOpen, onClose, pow, setpow }: { isOpen: boolean, onClose: () => void, pow: string[], setpow: Dispatch<SetStateAction<string[]>> }) => {
     const animatedComponents = makeAnimated();
     const { register, handleSubmit, watch, formState: { errors } } = useForm();
     const [post, setpost] = useState(false);
@@ -698,6 +741,7 @@ const AddProject = ({ isOpen, onClose, setpow }: { isOpen: boolean, onClose: () 
             return false;
         }
         setpow(elm => [...elm, JSON.stringify(data)])
+        onClose();
     }
 
     return (
@@ -719,7 +763,7 @@ const AddProject = ({ isOpen, onClose, setpow }: { isOpen: boolean, onClose: () 
                             </Box>
                             <Box w={'full'} mb={"1.25rem"}>
                                 <FormLabel color={"gray.400"}>
-                                    Describe your work
+                                    Describe Your Work
                                 </FormLabel>
                                 <Textarea placeholder='About the Project'
                                     {...register("description", { required: true })}
@@ -776,6 +820,109 @@ const AddProject = ({ isOpen, onClose, setpow }: { isOpen: boolean, onClose: () 
                             </Box>
                             <Button type='submit' w={"full"} h="50px" color={"white"} bg={"rgb(101, 98, 255)"}>
                                 Add Project
+                            </Button>
+                        </FormControl >
+                    </form>
+                </ModalBody>
+            </ModalContent>
+        </Modal>
+    )
+}
+
+const Save = ({ isOpen, onClose, pow, setpow, selectedProject }: { isOpen: boolean, onClose: () => void, pow: string[], setpow: Dispatch<SetStateAction<string[]>>, selectedProject: number }) => {
+    const animatedComponents = makeAnimated();
+    const { register, handleSubmit, watch, formState: { errors } } = useForm();
+    const [post, setpost] = useState(false);
+
+    const [DropDownValues, setDropDownValues] = useState({
+        skills: "", subskills: ""
+    })
+
+    const onSubmit = (data: any) => {
+        setpost(true);
+        if (DropDownValues.skills.length == 0 || DropDownValues.subskills.length == 0) {
+            return false;
+        }
+        setpow(elm => [...elm, JSON.stringify(data)])
+        onClose();
+    }
+
+    return (
+        <Modal isOpen={isOpen} onClose={onClose}>
+            <ModalOverlay />
+            <ModalContent maxW={"607px"} py={"1.4375rem"}>
+                <ModalBody>
+                    <form onSubmit={handleSubmit(onSubmit)}>
+                        <FormControl isRequired  >
+                            <Box w={'full'} mb={"1.25rem"}>
+                                <FormLabel color={"gray.400"}>
+                                    Project Title
+                                </FormLabel>
+                                <Input
+                                    id="title"
+                                    placeholder="Project Title"
+                                    {...register("title", { required: true })}
+                                />
+                            </Box>
+                            <Box w={'full'} mb={"1.25rem"}>
+                                <FormLabel color={"gray.400"}>
+                                    Describe Your Work
+                                </FormLabel>
+                                <Textarea placeholder='About the Project'
+                                    {...register("description", { required: true })}
+                                />
+                            </Box>
+                            <Box w={'full'} mb={"1.25rem"}>
+                                <FormLabel color={"gray.400"}>
+                                    Your Skills
+                                </FormLabel>
+                                <ReactSelect
+                                    closeMenuOnSelect={false}
+                                    components={animatedComponents}
+                                    isMulti
+                                    options={MainSkills}
+                                    onChange={(e: any) => {
+                                        setDropDownValues((st) => {
+                                            st.skills = JSON.stringify(e.map((elm: { label: string; value: string }) => elm.value))
+                                            return { ...st }
+                                        })
+                                    }}
+                                />
+                                {(DropDownValues.skills.length == 0 && post) && <Text color={"red"}>This field cannot be empty</Text>}
+                            </Box>
+                            <Box w={'full'} mb={"1.25rem"}>
+                                <FormLabel color={"gray.400"}>
+                                    Sub Skills
+                                </FormLabel>
+                                <ReactSelect
+                                    closeMenuOnSelect={false}
+                                    components={animatedComponents}
+                                    isMulti
+                                    options={SubSkills}
+                                    onChange={(e: any) => {
+                                        setDropDownValues((st) => {
+                                            st.subskills = JSON.stringify(e.map((elm: { label: string; value: string }) => elm.value))
+                                            return { ...st }
+                                        })
+                                    }}
+                                />
+                                {(DropDownValues.subskills.length == 0 && post) && <Text color={"red"}>This field cannot be empty</Text>}
+                            </Box>
+                            <Box w={'full'} mb={"1.25rem"}>
+                                <FormLabel color={"gray.400"}>
+                                    Link
+                                </FormLabel>
+                                <InputGroup>
+                                    <InputLeftElement
+                                        pointerEvents='none'
+                                        // eslint-disable-next-line react/no-children-prop
+                                        children={<LinkIcon color='gray.300' />}
+                                    />
+                                    <Input   {...register("link", { required: true })} />
+                                </InputGroup>
+                            </Box>
+                            <Button type='submit' w={"full"} h="50px" color={"white"} bg={"rgb(101, 98, 255)"}>
+                                Save Project
                             </Button>
                         </FormControl >
                     </form>
@@ -885,7 +1032,7 @@ const VerifyEmail = ({ setStep }: { setStep: () => void }) => {
                     </FormLabel>
                     <Input required type={"email"} value={email} onChange={(e) => {
                         setemail(e.target.value);
-                    }} w={"34.375rem"} placeholder='yb@yashbhardwaj.com' />
+                    }} w={"34.375rem"} placeholder='john.doe@gmail.com' />
                 </Box>
                 <Button type='submit' mt={"1.8125rem"} w={"34.375rem"} h="50px" color={"white"} bg={"rgb(101, 98, 255)"} >
                     Send Verification
@@ -949,7 +1096,7 @@ const OtpScreen = ({ setStep }: { setStep: () => void }) => {
                     fontWeight={500}
                     textAlign={"center"}
                 >
-                    We sent you an otp on {email}
+                    We sent you an OTP on {email}
                 </Text>
             </VStack>
             <Flex columnGap={"25px"} mx={"auto"} justifyContent={"center"} mt={"10.375rem"}>
@@ -976,7 +1123,7 @@ const OtpScreen = ({ setStep }: { setStep: () => void }) => {
                 <Text fontSize={"1rem"} color={"gray.400"} fontWeight={"500"}>
 
                 </Text>
-                <Text onClick={() => {
+                <Text _hover={{ opacity: 0.5 }} cursor={"pointer"} onClick={() => {
                     otpSend()
                 }} fontSize={"1rem"} color={"#6562FF"} fontWeight={"500"}>
                     RESEND
@@ -990,7 +1137,31 @@ const OtpScreen = ({ setStep }: { setStep: () => void }) => {
 
 const SuccessScreen = () => {
 
-    let form = useFormStore().form;
+    let { form } = useFormStore();
+
+    // let { isSuccess, data } = useQuery({
+    //     queryKey: [username], queryFn: () => {
+    //         if (!username) {
+    //             throw new Error("slug error")
+    //         }
+    //         return axios.get(`${process.env.NEXT_PUBLIC_BACKEND_URL}/talent/find?username=${username}`)
+    //     }
+    // })
+
+
+    if (!form) {
+        return <Center w={'100%'} h={"100vh"} pt={"3rem"} >
+            <Spinner
+                thickness='4px'
+                speed='0.65s'
+                emptyColor='gray.200'
+                color='blue.500'
+                size='xl'
+            />
+        </Center>
+    }
+    console.log(form);
+
 
     return (
         <Box pt={"6.25rem"} backgroundSize={"cover"} backgroundRepeat={"no-repeat"} w={"100%"} minH={"100vh"} h={"100%"} backgroundImage="url('/assets/bg/success-bg.png')">
@@ -1010,11 +1181,10 @@ const SuccessScreen = () => {
                         <Image w={"26.875rem"} h={"12.875rem"} src='/assets/talent/fake-tasks.png' alt={""} />
                     </Center>
                     <Button mt={"1.8125rem"} w={"31.0625rem"} h="50px" color={"white"} bg={"rgb(101, 98, 255)"} >
-                        Send Verification
+                        Start Earning
                     </Button>
                 </Flex>
             </HStack>
-
         </Box>
     )
 }
