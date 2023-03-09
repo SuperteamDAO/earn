@@ -115,7 +115,7 @@ const useFormStore = create<userStoreType>()((set) => ({
 let pages = ["welcome", "email", "otp", "steps", "success"]
 
 function Talent() {
-    const [currentPage, setcurrentPage] = useState("steps");
+    const [currentPage, setcurrentPage] = useState("welcome");
     const { connected } = useWallet();
 
     if (!connected) {
@@ -144,7 +144,7 @@ type stepsType = {
 
 
 const StepsCon = ({ setSuccess }: { setSuccess: () => void }) => {
-    const [currentStep, setSteps] = useState<number>(3);
+    const [currentStep, setSteps] = useState<number>(1);
     let stepList = [
         {
 
