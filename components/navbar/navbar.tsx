@@ -12,8 +12,12 @@ import {
   MenuList,
   Select,
   Text,
+  useDisclosure,
 } from '@chakra-ui/react';
-import { useWallet } from '@solana/wallet-adapter-react';
+import {
+  useWallet,
+  Wallet as SolanaWallet,
+} from '@solana/wallet-adapter-react';
 import { useRouter } from 'next/router';
 import { useEffect } from 'react';
 import { createUser, findTalentPubkey } from '../../utils/functions';
@@ -25,6 +29,8 @@ import { SponsorType } from '../../interface/sponsor';
 import { SponsorStore } from '../../store/sponsor';
 import { useStore } from 'zustand';
 import { TalentStore } from '../../store/talent';
+import { ConnectWalletModal } from '../modals/connectWalletModal';
+import toast from 'react-hot-toast';
 
 interface Props {
   sponsors?: SponsorType[];
@@ -33,7 +39,8 @@ export const Navbar = ({ sponsors }: Props) => {
   const { setUserInfo } = userStore();
   const { setTalentInfo } = TalentStore();
   const router = useRouter();
-  const { connected, publicKey, wallet } = useWallet();
+  const { connected, publicKey, wallet, connect, select, wallets } =
+    useWallet();
   useEffect(() => {
     const makeUser = async () => {
       console.log(publicKey, connected);
@@ -63,12 +70,32 @@ export const Navbar = ({ sponsors }: Props) => {
     }
     await wallet.adapter.disconnect();
   };
-
+  const { isOpen, onOpen, onClose } = useDisclosure();
   // --
   const { setCurrentSponsor } = SponsorStore();
   const { userInfo } = userStore();
+
+  const onConnectWallet = async (wallet: SolanaWallet) => {
+    try {
+      // await connect();
+
+      select(wallet.adapter.name);
+    } catch (e) {
+      console.log(e, '--');
+
+      toast.error('Wallet not found');
+    }
+  };
+
   return (
     <>
+      {(isOpen || !connected) && (
+        <ConnectWalletModal
+          onConnectWallet={onConnectWallet}
+          isOpen={isOpen}
+          onClose={onClose}
+        />
+      )}
       <Container
         maxW={'full'}
         p={{ xs: 10, md: 0 }}
@@ -121,7 +148,8 @@ export const Navbar = ({ sponsors }: Props) => {
                 px={10}
                 bg={'#6562FF'}
                 onClick={() => {
-                  router.push('/new');
+                  onOpen();
+                  // router.push('/new');
                 }}
               >
                 Connect wallet
