@@ -11,6 +11,8 @@ import { Navbar } from '../../components/navbar/navbar';
 import { useQuery } from '@tanstack/react-query';
 import axios from 'axios';
 
+import { CommunityImage } from '../../constants/index'
+
 const ProofWork = () => {
   return (
     <Box py={"26.94px"} w={"20.0225rem"} h={"8.3575rem"} bg={"white "} borderRadius={"0.1804rem"} boxShadow='md' >
@@ -112,6 +114,7 @@ const SkillsAndInterests = ({ data }: { data: any }) => {
 
   let skills = JSON.parse(data.skills);
   let interests = JSON.parse(data.interests);
+  let community = JSON.parse(data.community);
 
   return (
     <Box
@@ -130,7 +133,7 @@ const SkillsAndInterests = ({ data }: { data: any }) => {
         <Text color={"gray.400"} fontWeight={"500"}>
           Skills
         </Text>
-        <Flex columnGap={"0.4375rem"} mt={"0.8125rem"}>
+        <Flex flexWrap={"wrap"} gap={"0.4375rem"} mt={"0.8125rem"}>
           {
             skills.map((ele: string, idx: number) => {
               return (
@@ -158,21 +161,31 @@ const SkillsAndInterests = ({ data }: { data: any }) => {
         <Text color={"gray.400"} fontWeight={"500"}>
           Communities
         </Text>
-        <Flex borderRadius={"0.3563rem"} mt={"0.8125rem"} border={"0.6px solid #E2E8EF"} w={"137.92px"} py={"5.1px"} px={"0.375rem"}>
-          <Box mr={"0.6312rem"} w={"1.5625rem"} h={"1.5625rem"} borderRadius={"full"} overflow={"hidden"}>
-            <Image src={"/assets/talent/superteam.png"} alt='' width={"100%"} height={"100%"} />
-          </Box>
-          <Box>
-            <Text fontSize={"0.625rem"}>
-              Superteam
-            </Text>
-            <Text color={"gray.400"} fontSize={"0.5rem"}>
-              Member
-            </Text>
-          </Box>
-        </Flex>
+        {
+          community.map((ele: string) => {
+            return (<CommunityChip label={ele} key={ele} />)
+          })
+        }
       </Box>
     </Box>
+  )
+}
+
+const CommunityChip = ({ label }: { label: string }) => {
+  return (
+    <Flex borderRadius={"0.3563rem"} mt={"0.8125rem"} border={"0.6px solid #E2E8EF"} w={"fit-content"} py={"5.1px"} px={"0.375rem"}>
+      <Box mr={"0.6312rem"} w={"1.5625rem"} h={"1.5625rem"} borderRadius={"full"} overflow={"hidden"}>
+        <Image src={CommunityImage[label]} alt='' width={"100%"} height={"100%"} />
+      </Box>
+      <Box>
+        <Text fontSize={"0.625rem"}>
+          {label}
+        </Text>
+        <Text color={"gray.400"} fontSize={"0.5rem"}>
+          Member
+        </Text>
+      </Box>
+    </Flex>
   )
 }
 
