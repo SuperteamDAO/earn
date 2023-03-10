@@ -1,3 +1,4 @@
+import { Talent } from './talent';
 import { JobType, Listingtype, Prize, Source, SponsorStatus } from './types';
 
 type PrizeListType = {
@@ -28,6 +29,7 @@ interface Bounties {
   bugBounty: boolean;
   orgId: string;
   winner?: Winner[];
+  submission?: SubmissionType[];
   showTop: boolean;
   eligibility: string;
   status: BountyStatus;
@@ -102,10 +104,19 @@ interface DraftType {
   basic: string;
   payments: string;
 }
-
+interface SubmissionType {
+  id: string;
+  image: string;
+  likes: string;
+  link: string;
+  talent: string;
+  bountiesId: string;
+  Talent?: Talent;
+}
 export type {
   Bounties,
   Winner,
+  SubmissionType,
   PrizeListType,
   JobsType,
   JobBasicsType,

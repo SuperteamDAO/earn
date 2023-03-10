@@ -8,9 +8,11 @@ import {
   DraftType,
   GrantsType,
   JobsType,
+  SubmissionType,
 } from '../interface/listings';
 import { genrateuuid } from './helpers';
 import toast from 'react-hot-toast';
+import { Comments } from '../interface/comments';
 
 const Backend_Url = process.env.NEXT_PUBLIC_BACKEND_URL;
 
@@ -177,12 +179,14 @@ type FindBoutiesReturn = {
 } | null;
 
 export const findBouties = async (slug: string): Promise<FindBoutiesReturn> => {
+  if (!slug) return null;
   const { data, status } = await axios.get(
     `${Backend_Url}/listings/bounty/find/${slug}`
   );
   if (status === 204) {
     return null;
   }
+
   return data.data;
 };
 
@@ -204,6 +208,88 @@ export const createGrants = async (grants: GrantsType) => {
       ...grants,
     });
     return res;
+  } catch (error) {
+    console.log(error);
+
+    return null;
+  }
+};
+
+export const createComment = async (comment: Comments) => {
+  const { data, status } = await axios.post(`${Backend_Url}/comment/create`, {
+    ...comment,
+  });
+
+  if (status !== 200) {
+    return null;
+  }
+  return data;
+};
+
+export const findTalentPubkey = async (pubkey: string) => {
+  const { data, status } = await axios.get(
+    `${Backend_Url}/talent/find/publickey/${pubkey}`
+  );
+
+  if (status !== 200) {
+    return null;
+  }
+  return data;
+};
+
+export const fetchComments = async (id: string) => {
+  if (!id) return null;
+  const { data } = await axios.get(`${Backend_Url}/comment/find/${id}`);
+  console.log(data);
+
+  return data.data ?? [];
+};
+
+export const createSubmission = async (sub: SubmissionType) => {
+  try {
+    const { data } = await axios.post(`${Backend_Url}/submission/create`, {
+      ...sub,
+    });
+    return data;
+  } catch (error) {
+    console.log(error);
+    return null;
+  }
+};
+
+export const fetchOgImage = async (url: string) => {
+  try {
+    const res = await axios.post(`${Backend_Url}/submission/ogimage`, {
+      url: url,
+    });
+    return res.data;
+  } catch (error) {
+    return null;
+  }
+};
+export const addLike = async (id: string, likeId: string) => {
+  try {
+    const res = await axios.post(`${Backend_Url}/submission/create/like`, {
+      id,
+      likeId,
+    });
+    return res.data;
+  } catch (error) {
+    return null;
+  }
+};
+
+export const findSubmission = async (id: string) => {
+  try {
+    const { status, data } = await axios.get(
+      `${Backend_Url}/submission/find/${id}`
+    );
+
+    if (status !== 200) {
+      return null;
+    }
+
+    return data.data as SubmissionType;
   } catch (error) {
     console.log(error);
 

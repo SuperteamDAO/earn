@@ -1,10 +1,10 @@
-import { Box, Flex, Image, Text, Avatar, Button } from "@chakra-ui/react";
-
+import { Box, Flex, Image, Text, Avatar, Button } from '@chakra-ui/react';
+import { Talent } from '../../interface/talent';
 
 type ChipType = {
-  icon: string,
-  label: string,
-  value: string,
+  icon: string;
+  label: string;
+  value: string;
 };
 
 let Chip = ({ icon, label, value }: ChipType) => {
@@ -56,17 +56,13 @@ function TalentBio({ data }: { data: any }) {
       minH={'21.375rem'}
     >
       <Flex align={'center'}>
-        <Avatar
-          name="Dan Abrahmov"
-          src={data.avatar}
-          size="lg"
-        />
+        <Avatar name="Dan Abrahmov" src={data?.avatar} size="lg" />
         <Box ml={'21'}>
           <Text fontWeight={'600'} fontSize={'1.25rem'}>
-            {data.firstname} {data.lastname}
+            {data?.firstname} {data?.lastname}
           </Text>
           <Text fontWeight={'600'} fontSize={'1rem'} color={'gray.400'}>
-            @{data.username}
+            @{data?.username}
           </Text>
         </Box>
       </Flex>
@@ -76,18 +72,18 @@ function TalentBio({ data }: { data: any }) {
         fontSize={'1rem'}
         color={'gray.400'}
       >
-        {data.bio}
+        {data?.bio}
       </Text>
       <Flex justifyContent={'space-between'} mt={'2.1875rem'}>
         <Chip
           icon={'/assets/talent/eyes.png'}
           label={'Interested In'}
-          value={data.workPrefernce}
+          value={data?.workPrefernce}
         />
         <Chip
           icon={'/assets/talent/cap.png'}
           label={'Works At'}
-          value={data.currentEmployer}
+          value={data?.currentEmployer}
         />
       </Flex>
       <Button color={'white'} bg={'#6562FF'} w={'full'} mt={'1.575rem'}>
@@ -143,4 +139,4 @@ function TalentBio({ data }: { data: any }) {
   );
 }
 
-export default TalentBio
+export default TalentBio;

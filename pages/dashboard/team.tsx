@@ -59,7 +59,7 @@ const Team = () => {
   });
   const {
     register,
-    formState: { errors, isSubmitting },
+    formState: { errors },
     handleSubmit,
   } = useForm();
   const createMember = async (name: string, email: string, address: string) => {

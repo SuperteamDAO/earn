@@ -7,9 +7,47 @@ import {
   Textarea,
   VStack,
 } from '@chakra-ui/react';
-import React from 'react';
+import { useWallet } from '@solana/wallet-adapter-react';
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
+import React, { useState } from 'react';
+import toast from 'react-hot-toast';
 import { GoCommentDiscussion } from 'react-icons/go';
-export const Comments = () => {
+import { TalentStore } from '../../../store/talent';
+import { userStore } from '../../../store/user';
+import { createComment, fetchComments } from '../../../utils/functions';
+import { genrateuuid } from '../../../utils/helpers';
+
+interface Props {
+  onOpen: () => void;
+  refId: string;
+}
+export const Comments = ({ onOpen, refId }: Props) => {
+  const [message, setMessage] = useState<string>('');
+  const queryClient = useQueryClient();
+  const { connected } = useWallet();
+  const { userInfo } = userStore();
+
+  const { talentInfo } = TalentStore();
+
+  const Comments = useQuery({
+    queryFn: ({ queryKey }) => fetchComments(queryKey[1] as string),
+    queryKey: ['comments', refId],
+  });
+  const commentMutation = useMutation({
+    mutationFn: createComment,
+    onSuccess: () => {
+      queryClient.invalidateQueries(['comments', refId]);
+      toast.success('commented');
+    },
+    onError: () => {
+      toast.success('Error occur while commenting');
+    },
+  });
+  let sortedComments = (Comments.data ?? []).sort(
+    (a: { timeStamp: string }, b: { timeStamp: string }) => {
+      return Number(b.timeStamp) - Number(a.timeStamp);
+    }
+  );
   return (
     <>
       <VStack
@@ -24,7 +62,7 @@ export const Comments = () => {
           <GoCommentDiscussion fontWeight={600} fontSize={'1.5rem'} />
           <HStack>
             <Text fontWeight={600} color={'#64758B'} fontSize={'1.1rem'}>
-              233
+              {Comments.data?.length ?? 0}
             </Text>
             <Text fontWeight={400} color={'#64758B'} fontSize={'1.1rem'}>
               Comments
@@ -36,36 +74,63 @@ export const Comments = () => {
             h={32}
             border={'1px solid #E2E8EF'}
             placeholder="Write a comment..."
+            onChange={(e) => {
+              setMessage(e.target.value);
+            }}
           ></Textarea>
           <Flex w="full" justify={'end'}>
-            <Button bg={'#6562FF'} color={'white'} fontSize={'1rem'}>
+            <Button
+              onClick={() => {
+                if (!userInfo || !userInfo.talent) {
+                  onOpen();
+                  return;
+                }
+                commentMutation.mutate({
+                  id: genrateuuid(),
+                  message: message,
+                  refId: refId,
+                  talentId: talentInfo?.id ?? '',
+                  timeStamp: JSON.stringify(Date.now()),
+                });
+              }}
+              bg={'#6562FF'}
+              color={'white'}
+              fontSize={'1rem'}
+            >
               Comment
             </Button>
           </Flex>
         </VStack>
-        <HStack align={'start'} px={6}>
-          <Image src={'/assets/randompeople/nft5.svg'} alt={'profile image'} />
-          <VStack align={'start'}>
-            <HStack>
-              <Text color={'#1E293B'} fontWeight={600}>
-                James Mckey
-              </Text>
-              <Text color={'#94A3B8'} fontWeight={500}>
-                7:38 PM
-              </Text>
+        {sortedComments?.map((el: any) => {
+          const date = new Date(Number(el.timeStamp));
+          return (
+            <HStack key={el.id} align={'start'} px={6}>
+              <Image
+                w={10}
+                h={10}
+                objectFit={'contain'}
+                rounded={'full'}
+                src={el.talent.avatar}
+                alt={'profile image'}
+              />
+
+              <VStack align={'start'}>
+                <HStack>
+                  <Text color={'#1E293B'} fontWeight={600}>
+                    {el.talent.username}
+                  </Text>
+                  <Text color={'#94A3B8'} fontWeight={500}>
+                    {date.toLocaleTimeString('en-US', {
+                      hour: '2-digit',
+                      minute: '2-digit',
+                    })}
+                  </Text>
+                </HStack>
+                <Text mt={'0px !important'}>{el.message}</Text>
+              </VStack>
             </HStack>
-            <Text mt={'0px !important'}>
-              Lorem ipsum dolor sit amet consectetur adipisicing elit. Lorem
-              ipsum dolor, sit amet consectetur adipisicing elit. Culpa maiores
-              reprehenderit mollitia iusto fugiat vero tempora necessitatibus
-              expedita facere velit? Obcaecati adipisci accusamus nihil labore
-              ducimus. Iure, pariatur. Placeat repellendus mollitia error non
-              numquam. Consequuntur reiciendis veritatis dolore aut deserunt
-              quis unde impedit omnis eum ducimus repellat eius, necessitatibus
-              quasi accusantium veniam nemo dolorem molestiae, id et officia
-            </Text>
-          </VStack>
-        </HStack>
+          );
+        })}
       </VStack>
     </>
   );

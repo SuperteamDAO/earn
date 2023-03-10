@@ -1,8 +1,13 @@
 import { Flex, Text, VStack } from '@chakra-ui/react';
 import React from 'react';
+import { SubmissionType } from '../../../../interface/listings';
+import { Talent } from '../../../../interface/talent';
 import { SubmissionCard } from './submissionCard';
 
-export const Submission = () => {
+interface Props {
+  submissions: SubmissionType[];
+}
+export const Submission = ({ submissions }: Props) => {
   return (
     <>
       <VStack
@@ -12,7 +17,7 @@ export const Submission = () => {
       >
         <Flex gap={3} ml={5}>
           <Text fontWeight={600} fontSize={'1.2rem'} color={'#1E293B'}>
-            44
+            {submissions.length}
           </Text>
           <Text fontWeight={600} fontSize={'1.2rem'} color={'#94A3B8'}>
             Submissions
@@ -24,14 +29,19 @@ export const Submission = () => {
           justify={['center', 'center', 'start', 'start']}
           mt={10}
         >
-          <SubmissionCard />
-          <SubmissionCard />
-          <SubmissionCard />
-          <SubmissionCard />
-          <SubmissionCard />
-          <SubmissionCard />
-          <SubmissionCard />
-          <SubmissionCard />
+          {submissions?.map((el) => {
+            const likes = JSON.parse(el.likes);
+            return (
+              <SubmissionCard
+                id={el.id}
+                likes={likes}
+                talent={el.Talent as Talent}
+                key={el.id}
+                winner={false}
+                image={el.image}
+              />
+            );
+          })}
         </Flex>
       </VStack>
     </>
