@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { Box, Flex, VStack, Text, Button, Wrap, Center, Spinner } from '@chakra-ui/react';
 import { Badge } from '@chakra-ui/react'
 import { Avatar } from '@chakra-ui/react';
@@ -32,13 +32,34 @@ const ProofWork = () => {
   )
 }
 
-const LinkPreview = () => {
+const LinkPreview = ({ data }: { data: powType }) => {
+
+
+  const [imgUrl, setimgUrl] = useState('/assets/bg/banner.png');
+
+  try {
+    (async () => {
+      let res = await axios.post(`https://earn-backend-v2-production.up.railway.app/api/v1/submission/ogimage`, {
+        url: data.link
+      })
+      if (res) {
+        if (res?.data?.data?.ogImage?.url) {
+          setimgUrl(res?.data?.data?.ogImage?.url)
+        }
+      }
+    })()
+  } catch (error) {
+
+  }
+
   return (
-    <Box w={"14.75rem"} h={"11.5rem"} bg={"white"} borderRadius={'0.1875rem'}>
-      <Image w={"100%"} h={"8.875rem"} src='/assets/bg/banner.png' />
+    <Box cursor={"pointer"} w={"14.75rem"} h={"11.5rem"} bg={"white"} borderRadius={'0.1875rem'} onClick={() => {
+      location.href = data?.link;
+    }}>
+      <Image w={"100%"} h={"8.875rem"} src={imgUrl} objectFit={"contain"} />
       <Box px={"1rem"} py={"0.5625rem"}>
         <Text color={"gray.400"}>
-          Rockstar
+          {data.title}
         </Text>
       </Box>
     </Box>
@@ -127,7 +148,7 @@ const SkillsAndInterests = ({ data }: { data: any }) => {
       pb={"1.9375rem"}
     >
       <Box py={"0.6875rem"} borderBottom={"1px solid #F1F5F9"}>
-        <Chip label='Location' value='India' icon='/assets/talent/site.png' />
+        <Chip label='Location' value={data.location} icon='/assets/talent/site.png' />
       </Box>
       <Box mt={"1rem"}>
         <Text color={"gray.400"} fontWeight={"500"}>
@@ -151,21 +172,23 @@ const SkillsAndInterests = ({ data }: { data: any }) => {
           {
             interests.map((ele: string) => {
               return (
-                <Interest key={ele} label={ele} icon='/assets/talent/site.png' />
+                <Interest key={ele} label={ele} icon={`/assets/interests/${ele}.png`} />
               )
             })
           }
         </Flex>
       </Box>
-      <Box mt={"0.5rem"}>
+      <Box mt={"1rem"}>
         <Text color={"gray.400"} fontWeight={"500"}>
           Communities
         </Text>
-        {
-          community.map((ele: string) => {
-            return (<CommunityChip label={ele} key={ele} />)
-          })
-        }
+        <Flex flexWrap={"wrap"} gap={"0.4375rem"} >
+          {
+            community.map((ele: string) => {
+              return (<CommunityChip label={ele} key={ele} />)
+            })
+          }
+        </Flex>
       </Box>
     </Box>
   )
@@ -209,7 +232,18 @@ const Nft = () => {
   )
 }
 
+interface powType {
+  title: string,
+  description: string,
+  link: string,
+  skills: string[]
+}
+
+
+
 import { useRouter } from 'next/router'
+import { json } from 'stream/consumers';
+import { url } from 'inspector';
 
 function TalentProfile() {
   const router = useRouter()
@@ -224,6 +258,18 @@ function TalentProfile() {
     }
   })
 
+  const [pow, setpow] = useState<powType[]>([])
+
+  useEffect(() => {
+    try {
+      if (data?.data.data.pow.length > 2) {
+        let powData = JSON.parse(data?.data.data.pow);
+        setpow(powData.map((ele: string) => JSON.parse(ele)));
+      }
+    } catch (error) {
+      console.log(error);
+    }
+  }, [isSuccess])
 
 
   if (!isSuccess) {
@@ -274,10 +320,13 @@ function TalentProfile() {
             </Text>
           </Box>
           <Flex gap={"1.1425rem"} wrap={"wrap"} mb={"44px"}>
-            <LinkPreview />
-            <LinkPreview />
-            <LinkPreview />
-            <LinkPreview />
+            {pow.map((ele, idx) => {
+              return (
+                <LinkPreview key={idx + 'lk'} data={ele} />
+              )
+            })
+            }
+
           </Flex>
           <Box borderBottom={"1px solid #E2E8EF"} mb={"18.5px"}>
             <Text fontSize={"17.94px"} fontWeight={"500"} mb={"1.0625rem"}>

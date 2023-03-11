@@ -32,19 +32,24 @@ let Chip = ({ icon, label, value }: ChipType) => {
         <Text fontWeight={'400'} fontSize={'0.5813rem'} color={'gray.400'}>
           {label}
         </Text>
-        <Text fontWeight={'400'} fontSize={'0.775rem'}>
-          {value}
+        <Text maxW={"7rem"} textOverflow={"ellipsis"} fontWeight={'400'} fontSize={'0.775rem'}>
+          {overFlowText(12, value)}
         </Text>
       </Box>
     </Flex>
   );
 };
 
+let overFlowText = (limit: number, text: string) => {
+  if (text.length >= limit) {
+    return text.slice(0, limit - 3) + '...'
+  }
+  return text
+}
+
 function TalentBio({ data }: { data: any }) {
 
   console.log(data);
-
-  let socials = JSON.parse(data.socials);
 
   return (
     <Box
@@ -86,12 +91,14 @@ function TalentBio({ data }: { data: any }) {
           value={data?.currentEmployer}
         />
       </Flex>
-      <Button color={'white'} bg={'#6562FF'} w={'full'} mt={'1.575rem'}>
-        Get in touch
-      </Button>
+      <a href={`mailto:${data.email}`}>
+        <Button color={'white'} bg={'#6562FF'} w={'full'} mt={'1.575rem'}>
+          Get in touch
+        </Button>
+      </a>
       <Flex mt={'32px'} justifyContent={'space-between'}>
         <Box w={'22px'} h={'22px'}>
-          <a href={socials['Twitter']}>
+          <a href={data.twitter}>
             <Image
               objectFit="contain"
               width={'100%'}
@@ -102,7 +109,7 @@ function TalentBio({ data }: { data: any }) {
           </a>
         </Box>
         <Box w={'22px'} h={'22px'}>
-          <a href={socials['LinkedIn']}>
+          <a href={data.linkedin}>
             <Image
               objectFit="contain"
               width={'100%'}
@@ -113,7 +120,7 @@ function TalentBio({ data }: { data: any }) {
           </a>
         </Box>
         <Box w={'22px'} h={'22px'}>
-          <a href={socials['GitHub']}>
+          <a href={data.github}>
             <Image
               objectFit="contain"
               width={'100%'}
@@ -124,7 +131,7 @@ function TalentBio({ data }: { data: any }) {
           </a>
         </Box>
         <Box w={'22px'} h={'22px'}>
-          <a href={socials['Site']}>
+          <a href={data.website}>
             <Image
               objectFit="contain"
               width={'100%'}

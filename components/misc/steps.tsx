@@ -52,6 +52,7 @@ export const Steps = ({ currentStep, thisStep, label, setStep }: Props) => {
           position="absolute"
           color={currentStep === thisStep ? '#1E293B' : '#CBD5E1'}
           fontWeight={600}
+          w={"max-content"}
         >
           {label}
         </Text>
