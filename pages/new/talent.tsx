@@ -621,7 +621,7 @@ const SocialInput = ({ label, placeHolder, icon, register }: TypeSocialInput) =>
                 placeholder={placeHolder}
                 type="text"
                 title={label}
-                {...register(label, { required: true })}
+                {...register(label)}
             />
         </Flex>
     )
@@ -651,6 +651,7 @@ const YourLinks = ({ setStep, success }: { setStep: Dispatch<SetStateAction<numb
         })
         console.log(res);
         if (res) {
+
             success();
         }
     }
@@ -840,7 +841,6 @@ const VerifyEmail = ({ setStep }: { setStep: () => void }) => {
             publicKey?.toBase58() as string,
             email
         );
-        console.log(a);
 
         const code = genrateCode(publicKey?.toBase58() as string);
         const codeLast = genrateCodeLast(
@@ -933,7 +933,7 @@ const OtpScreen = ({ setStep }: { setStep: () => void }) => {
         setOtpStore(code);
     }
 
-    console.log(otp)
+
 
 
     return (
@@ -996,15 +996,6 @@ const OtpScreen = ({ setStep }: { setStep: () => void }) => {
 const SuccessScreen = () => {
 
     let { form } = useFormStore();
-
-    // let { isSuccess, data } = useQuery({
-    //     queryKey: [username], queryFn: () => {
-    //         if (!username) {
-    //             throw new Error("slug error")
-    //         }
-    //         return axios.get(`${process.env.NEXT_PUBLIC_BACKEND_URL}/talent/find?username=${username}`)
-    //     }
-    // })
 
 
     if (!form) {
