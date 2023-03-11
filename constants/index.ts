@@ -34,6 +34,7 @@ export const IndustryList: MultiSelectOptions[] = [
     label: 'Consumer dApps',
   },
 ];
+
 export const tokenList = [
   {
     tokenName: 'Solana (SOL)',

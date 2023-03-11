@@ -148,7 +148,7 @@ const SkillsAndInterests = ({ data }: { data: any }) => {
       pb={"1.9375rem"}
     >
       <Box py={"0.6875rem"} borderBottom={"1px solid #F1F5F9"}>
-        <Chip label='Location' value='India' icon='/assets/talent/site.png' />
+        <Chip label='Location' value={data.location} icon='/assets/talent/site.png' />
       </Box>
       <Box mt={"1rem"}>
         <Text color={"gray.400"} fontWeight={"500"}>
@@ -172,7 +172,7 @@ const SkillsAndInterests = ({ data }: { data: any }) => {
           {
             interests.map((ele: string) => {
               return (
-                <Interest key={ele} label={ele} icon='/assets/talent/site.png' />
+                <Interest key={ele} label={ele} icon={`/assets/interests/${ele}.png`} />
               )
             })
           }
