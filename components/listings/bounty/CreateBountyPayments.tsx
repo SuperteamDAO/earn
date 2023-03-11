@@ -15,7 +15,7 @@ import {
   VStack,
 } from '@chakra-ui/react';
 import { OutputData } from '@editorjs/editorjs';
-import { useState } from 'react';
+import { Dispatch, SetStateAction, useState } from 'react';
 import { tokenList, PrizeList, MultiSelectOptions } from '../../../constants';
 import { PrizeListType } from '../../../interface/listings';
 import { SponsorType } from '../../../interface/sponsor';
@@ -36,6 +36,7 @@ interface Props {
   onOpen: () => void;
   draftLoading: boolean;
   createDraft: (payment: string) => void;
+  setSlug: Dispatch<SetStateAction<string>>;
 }
 export const CreatebountyPayment = ({
   bountyBasic,
@@ -45,6 +46,7 @@ export const CreatebountyPayment = ({
   onOpen,
   createDraft,
   draftLoading,
+  setSlug,
 }: Props) => {
   // handles which token is selected
   const [tokenIndex, setTokenIndex] = useState<number | undefined>(undefined);
@@ -102,6 +104,9 @@ export const CreatebountyPayment = ({
 
     if (data.data) {
       onOpen();
+      setSlug(
+        ('/bounties/' + bountyBasic?.title.split(' ').join('-')) as string
+      );
       setLoading(false);
     } else {
       setLoading(false);

@@ -7,27 +7,26 @@ import {
   useQueryClient,
 } from '@tanstack/react-query';
 import { useRouter } from 'next/router';
-import React, { useState } from 'react';
 import toast from 'react-hot-toast';
-import { Comments } from '../../../components/listings/listings/comments';
-import { DetailDescription } from '../../../components/listings/listings/details/detailDescription';
-import { DetailSideCard } from '../../../components/listings/listings/details/detailSideCard';
-import { ListingHeader } from '../../../components/listings/listings/ListingHeader';
-import { Submission } from '../../../components/listings/listings/submissions/submission';
-import { CreateProfileModal } from '../../../components/modals/createProfile';
-import { PrizeListType } from '../../../interface/listings';
-import { SponsorType } from '../../../interface/sponsor';
-import { TalentStore } from '../../../store/talent';
+import { Comments } from '../../../../components/listings/listings/comments';
+import { DetailDescription } from '../../../../components/listings/listings/details/detailDescription';
+import { DetailSideCard } from '../../../../components/listings/listings/details/detailSideCard';
+import { ListingHeader } from '../../../../components/listings/listings/ListingHeader';
+import { Submission } from '../../../../components/listings/listings/submissions/submission';
+import { CreateProfileModal } from '../../../../components/modals/createProfile';
+import { PrizeListType } from '../../../../interface/listings';
+import { SponsorType } from '../../../../interface/sponsor';
+import { TalentStore } from '../../../../store/talent';
 import { GetServerSideProps } from 'next';
 import {
   createSubmission,
   fetchComments,
   fetchOgImage,
   findBouties,
-} from '../../../utils/functions';
-import { genrateuuid } from '../../../utils/helpers';
-import TalentBio from '../../../components/TalentBio';
-import { SubmissionPage } from '../../../components/listings/listings/submissions/submissionPage';
+} from '../../../../utils/functions';
+import { genrateuuid } from '../../../../utils/helpers';
+// import TalentBio from '../../../components/TalentBio';
+import { SubmissionPage } from '../../../../components/listings/listings/submissions/submissionPage';
 
 const defalutSponsor: SponsorType = {
   bio: '',
@@ -67,6 +66,7 @@ const Bounties = () => {
     onClose: submissiononClose,
     onOpen: submissiononOpen,
   } = useDisclosure();
+
   const onSubmit = async (link: string) => {
     const res = await fetchOgImage(link);
 
@@ -98,6 +98,7 @@ const Bounties = () => {
     <>
       {isOpen && <CreateProfileModal isOpen={isOpen} onClose={onClose} />}
       <ListingHeader
+        tabs={true}
         title={listingInfo.data?.listing?.title ?? ''}
         sponsor={
           !listingInfo.data?.sponsor
@@ -105,23 +106,19 @@ const Bounties = () => {
             : defalutSponsor
         }
       />
-      {router.query.submission ? (
-        router.query.subid ? (
-          <SubmissionPage onOpen={onOpen} />
-        ) : (
-          <HStack
-            maxW={'7xl'}
-            mx={'auto'}
-            align={['center', 'center', 'start', 'start']}
-            gap={4}
-            flexDir={['column-reverse', 'column-reverse', 'row', 'row']}
-            justify={['center', 'center', 'space-between', 'space-between']}
-          >
-            <Submission
-              submissions={listingInfo.data?.listing.submission ?? []}
-            />
-          </HStack>
-        )
+      {router.query.subid ? (
+        <HStack
+          maxW={'7xl'}
+          mx={'auto'}
+          align={['center', 'center', 'start', 'start']}
+          gap={4}
+          flexDir={['column-reverse', 'column-reverse', 'row', 'row']}
+          justify={['center', 'center', 'space-between', 'space-between']}
+        >
+          <Submission
+            submissions={listingInfo.data?.listing.submission ?? []}
+          />
+        </HStack>
       ) : (
         <HStack
           maxW={'7xl'}

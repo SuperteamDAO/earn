@@ -65,6 +65,7 @@ interface JobsType {
   minSalary: number;
   orgId: string;
   skills: string;
+  link: string;
   source: Source;
   title: string;
   subskills: string;

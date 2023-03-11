@@ -22,6 +22,7 @@ interface Props {
   onOpen: () => void;
   createDraft: (payment: string) => void;
   draftLoading: boolean;
+  setSlug: Dispatch<SetStateAction<string>>;
 }
 export const CreateJob = ({
   editorData,
@@ -37,6 +38,7 @@ export const CreateJob = ({
   onOpen,
   createDraft,
   draftLoading,
+  setSlug,
 }: Props) => {
   return (
     <>
@@ -63,6 +65,7 @@ export const CreateJob = ({
       )}
       {steps === 4 && (
         <CreateJobPayments
+          setSlug={setSlug}
           draftLoading={draftLoading}
           createDraft={createDraft}
           jobBasics={jobBasics}

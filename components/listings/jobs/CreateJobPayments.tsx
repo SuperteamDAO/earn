@@ -10,7 +10,7 @@ import {
   VStack,
 } from '@chakra-ui/react';
 import { OutputData } from '@editorjs/editorjs';
-import { useState } from 'react';
+import { Dispatch, SetStateAction, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import ReactSelect from 'react-select';
 import makeAnimated from 'react-select/animated';
@@ -32,6 +32,7 @@ interface Props {
   subSkills: MultiSelectOptions[];
   onOpen: () => void;
   createDraft: (payment: string) => void;
+  setSlug: Dispatch<SetStateAction<string>>;
   draftLoading: boolean;
 }
 interface PaymentsState {
@@ -56,6 +57,7 @@ export const CreateJobPayments = ({
   subSkills,
   createDraft,
   draftLoading,
+  setSlug,
 }: Props) => {
   const {
     formState: { errors },
@@ -91,6 +93,7 @@ export const CreateJobPayments = ({
       subskills: JSON.stringify(subSkills),
       title: jobBasics?.title ?? '',
       location: location,
+      link: jobBasics?.link ?? '',
       experience: payment?.exp as string,
       timezone: JSON.stringify(timeZone),
     };
@@ -99,6 +102,7 @@ export const CreateJobPayments = ({
 
     if (res && res.data.code === 201) {
       onOpen();
+      setSlug(('/jobs/' + jobBasics?.title.split(' ').join('-')) as string);
       setLoading(false);
     } else {
       setLoading(false);

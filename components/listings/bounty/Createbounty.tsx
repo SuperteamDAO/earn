@@ -26,6 +26,7 @@ interface Props {
   setBountyBasic: Dispatch<SetStateAction<BountyBasicType | undefined>>;
   createDraft: (payment: string) => void;
   draftLoading: boolean;
+  setSlug: Dispatch<SetStateAction<string>>;
 }
 export const Createbounty = ({
   steps,
@@ -41,6 +42,7 @@ export const Createbounty = ({
   setBountyBasic,
   draftLoading,
   createDraft,
+  setSlug,
 }: Props) => {
   // handles the info from basic form
 
@@ -70,6 +72,7 @@ export const Createbounty = ({
 
       {steps === 4 && (
         <CreatebountyPayment
+          setSlug={setSlug}
           draftLoading={draftLoading}
           createDraft={createDraft}
           onOpen={onOpen}

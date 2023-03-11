@@ -19,7 +19,7 @@ export const DetailDescription = ({ skills }: Props) => {
             Skills Needed
           </Text>
           <HStack>
-            {skills.map((e) => {
+            {skills?.map((e) => {
               return (
                 <Box
                   bg={SkillColor[e.label as any] + '1A'}

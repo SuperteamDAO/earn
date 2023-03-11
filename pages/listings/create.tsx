@@ -48,6 +48,7 @@ const CreateListing = () => {
   //
   const [mainSkills, setMainSkills] = useState<MultiSelectOptions[]>([]);
   const [subSkill, setSubSkill] = useState<MultiSelectOptions[]>([]);
+  const [slug, setSlug] = useState<string>('');
   //
   const { isOpen, onOpen } = useDisclosure();
   // -- Jobs
@@ -200,20 +201,12 @@ const CreateListing = () => {
             <CreateSponsorModel isOpen={true} onClose={() => {}} />
           )}
           {isOpen && (
-            <SuccessListings
-              slug={
-                '/' +
-                  (router.query.type as string) +
-                  '/' +
-                  bountybasic?.title.split(' ').join('-') ?? ''
-              }
-              isOpen={isOpen}
-              onClose={() => {}}
-            />
+            <SuccessListings slug={slug} isOpen={isOpen} onClose={() => {}} />
           )}
           {steps === 1 && <Template setSteps={setSteps} />}
           {router.query.type && router.query.type === 'bounties' && (
             <Createbounty
+              setSlug={setSlug}
               draftLoading={draftLoading}
               createDraft={createDraft}
               bountybasic={bountybasic}
@@ -231,6 +224,7 @@ const CreateListing = () => {
           )}
           {router.query.type && router.query.type === 'jobs' && (
             <CreateJob
+              setSlug={setSlug}
               draftLoading={draftLoading}
               createDraft={createDraft}
               setJobBasic={setJobBasics}
@@ -250,6 +244,7 @@ const CreateListing = () => {
             <CreateGrants
               createDraft={createDraft}
               onOpen={onOpen}
+              setSlug={setSlug}
               grantBasic={grantBasic}
               setGrantBasic={setgrantsBasic}
               setSubSkills={setSubSkill}

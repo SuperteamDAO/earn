@@ -13,6 +13,7 @@ import {
 import { genrateuuid } from './helpers';
 import toast from 'react-hot-toast';
 import { Comments } from '../interface/comments';
+import { JobType } from '../interface/types';
 
 const Backend_Url = process.env.NEXT_PUBLIC_BACKEND_URL;
 
@@ -240,7 +241,6 @@ export const findTalentPubkey = async (pubkey: string) => {
 export const fetchComments = async (id: string) => {
   if (!id) return null;
   const { data } = await axios.get(`${Backend_Url}/comment/find/${id}`);
-  console.log(data);
 
   return data.data ?? [];
 };
@@ -293,6 +293,26 @@ export const findSubmission = async (id: string) => {
   } catch (error) {
     console.log(error);
 
+    return null;
+  }
+};
+
+type FindJobsReturn = {
+  listing: JobsType;
+  sponsor: SponsorType;
+} | null;
+export const findJobs = async (slug: string): Promise<FindJobsReturn> => {
+  if (!slug) return null;
+  try {
+    const { data, status } = await axios.get(
+      `${Backend_Url}/listings/jobs/find/${slug}`
+    );
+    if (status !== 200) {
+      return null;
+    }
+    return data.data;
+  } catch (error) {
+    console.log(error);
     return null;
   }
 };

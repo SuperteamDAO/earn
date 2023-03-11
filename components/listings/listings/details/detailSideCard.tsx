@@ -1,4 +1,5 @@
 import {
+  Box,
   Button,
   Divider,
   Flex,
@@ -67,22 +68,26 @@ export const DetailSideCard = ({
         >
           <HStack
             h={16}
-            px={3}
+            px={8}
             justify={'space-between'}
             w={'full'}
             borderBottom={'1px solid #E2E8EF'}
           >
-            <Flex
-              fontSize={'1rem'}
-              bg={'#C6C6C62B'}
+            <Box
+              w={10}
+              display={'flex'}
+              justifyContent={'center'}
+              alignItems={'center'}
               rounded={'full'}
-              w={8}
-              h={8}
-              align={'center'}
-              justify={'center'}
+              h={10}
+              bg={'#9EFFAE2B'}
             >
-              $
-            </Flex>
+              <Image
+                src={'/assets/icons/green-doller.svg'}
+                alt={'green doller'}
+                w={3}
+              />
+            </Box>
             <Text fontSize={'1.5rem'} color={'#000000'} fontWeight={600}>
               ${total.toLocaleString() ?? 0}
             </Text>

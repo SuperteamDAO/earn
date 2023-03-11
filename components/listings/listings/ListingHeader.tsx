@@ -15,8 +15,9 @@ import { SponsorType } from '../../../interface/sponsor';
 interface Props {
   sponsor: SponsorType;
   title: string;
+  tabs: boolean;
 }
-export const ListingHeader = ({ sponsor, title }: Props) => {
+export const ListingHeader = ({ sponsor, title, tabs }: Props) => {
   const router = useRouter();
   return (
     <>
@@ -62,27 +63,30 @@ export const ListingHeader = ({ sponsor, title }: Props) => {
         </VStack>
         <HStack px={[3, 3, 0, 0]} maxW={'7xl'} w="full" h={'max'}>
           <Button
-            borderBottom={!router.query.submission ? '3px solid #6562FF' : '0'}
+            borderBottom={!router.query.subid ? '3px solid #6562FF' : '0'}
             rounded={0}
             variant={'ghost'}
-            color={router.query.submission ? '#94A3B8' : '#1E293B'}
+            color={router.query.subid ? '#94A3B8' : '#1E293B'}
             onClick={() => {
-              router.push(router.asPath.split('?')[0]);
+              if (!tabs) return;
+              router.push(`/listings/bounties/${title.split(' ').join('-')}`);
             }}
           >
             Details
           </Button>
-          <Button
-            onClick={() => {
-              router.push(router.asPath + '?submission=true');
-            }}
-            borderBottom={router.query.submission ? '3px solid #6562FF' : '0'}
-            rounded={0}
-            variant={'ghost'}
-            color={router.query.submission ? '#1E293B' : '#94A3B8'}
-          >
-            Submissions
-          </Button>
+          {tabs && (
+            <Button
+              onClick={() => {
+                router.push(router.asPath + '?subid=true');
+              }}
+              borderBottom={router.query.subid ? '3px solid #6562FF' : '0'}
+              rounded={0}
+              variant={'ghost'}
+              color={router.query.subid ? '#1E293B' : '#94A3B8'}
+            >
+              Submissions
+            </Button>
+          )}
         </HStack>
       </VStack>
     </>

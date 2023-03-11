@@ -37,7 +37,7 @@ export const SubmissionCard = ({ image, id, winner, talent, likes }: Props) => {
         w={'18rem'}
         bg={'white'}
         onClick={() => {
-          router.push(router.asPath + `&subid=${id}`);
+          router.push(router.asPath.split('?')[0] + `/submission/${id}`);
         }}
       >
         <Image

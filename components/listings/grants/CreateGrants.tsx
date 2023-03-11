@@ -21,6 +21,7 @@ interface Props {
   setSubSkills: Dispatch<SetStateAction<MultiSelectOptions[]>>;
   onOpen: () => void;
   createDraft: (payment: string) => void;
+  setSlug: Dispatch<SetStateAction<string>>;
 }
 export const CreateGrants = ({
   steps,
@@ -35,6 +36,7 @@ export const CreateGrants = ({
   setGrantBasic,
   onOpen,
   createDraft,
+  setSlug,
 }: Props) => {
   2;
   return (
@@ -59,6 +61,7 @@ export const CreateGrants = ({
       )}
       {steps === 4 && (
         <CreateGrantsPayment
+          setSlug={setSlug}
           createDraft={createDraft}
           onOpen={onOpen}
           grantsBasic={grantBasic}

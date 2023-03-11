@@ -41,6 +41,7 @@ interface Props {
   grantsBasic: GrantsBasicType | undefined;
   onOpen: () => void;
   createDraft: (payment: string) => void;
+  setSlug: Dispatch<SetStateAction<string>>;
 }
 export const CreateGrantsPayment = ({
   setSteps,
@@ -49,6 +50,7 @@ export const CreateGrantsPayment = ({
   subSkills,
   grantsBasic,
   onOpen,
+  setSlug,
 }: Props) => {
   const {
     formState: { errors },
@@ -84,6 +86,9 @@ export const CreateGrantsPayment = ({
             const res = await createGrants(info);
             if (res && res.data.code === 201) {
               onOpen();
+              setSlug(
+                ('/grants/' + grantsBasic?.title.split(' ').join('-')) as string
+              );
               setLoading(false);
             } else {
               setLoading(false);
