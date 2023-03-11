@@ -1,12 +1,12 @@
 import { useWallet } from '@solana/wallet-adapter-react';
 import { useQuery } from '@tanstack/react-query';
 import React, { Children, Dispatch, SetStateAction, useEffect, useState } from 'react'
-import { Box, Flex, FormControl, FormLabel, Heading, HStack, Text, VStack, Input, Select, Textarea, Button, Center, useDisclosure, InputGroup, Spinner } from '@chakra-ui/react';
+import { Box, Flex, FormControl, FormLabel, Heading, HStack, Text, VStack, Input, Select, Textarea, Button, Center, useDisclosure, InputGroup, Spinner, color } from '@chakra-ui/react';
 import makeAnimated from 'react-select/animated';
 import { Image } from '@chakra-ui/react';
 import { MediaPicker } from 'degen';
 
-import { workExp, web3Exp, workType } from '../../constants'
+import { workExp, web3Exp, workType, MultiSelectOptions } from '../../constants'
 
 //layouts
 import FormLayout from '../../layouts/FormLayout';
@@ -14,7 +14,7 @@ import { findSponsors, genrateOtp } from '../../utils/functions';
 import { Steps } from '../../components/misc/steps';
 import { type } from 'os';
 import ReactSelect from 'react-select';
-import { CommunityList, IndustryList, MainSkills, SubSkills } from '../../constants';
+import { CommunityList, IndustryList, MainSkills, SubSkills, skillSubSkillMap } from '../../constants';
 import { AddIcon, LinkIcon, EditIcon, DeleteIcon } from '@chakra-ui/icons';
 import { Navbar } from '../../components/navbar/navbar';
 import { Verify } from 'crypto';
@@ -26,6 +26,8 @@ import { uploadToCloudinary } from '../../utils/upload';
 import { CountryList } from '../../constants';
 
 import { create } from 'zustand'
+
+import { SkillSelect } from '../../components/misc/SkillSelectTalent';
 
 import {
     Modal,
@@ -64,7 +66,11 @@ interface workType {
 }
 
 interface links {
-    socials: string;
+    twitter: string,
+    github: string,
+    linkedin: string,
+    website: string,
+    telegram: string,
     pow: string;
 }
 
@@ -87,7 +93,11 @@ const useFormStore = create<userStoreType>()((set) => ({
         skills: '',
         subskills: '',
         workPrefernce: '',
-        socials: '',
+        twitter: '',
+        github: '',
+        linkedin: '',
+        website: '',
+        telegram: '',
         pow: ''
     },
     otp: undefined,
@@ -147,21 +157,21 @@ const StepsCon = ({ setSuccess }: { setSuccess: () => void }) => {
     const [currentStep, setSteps] = useState<number>(1);
     let stepList = [
         {
-
+            label: "About You",
             number: 1,
         },
         {
-
+            label: "Your Work",
             number: 2,
         },
         {
-
+            label: "Links",
             number: 3,
         },
     ]
 
     let TitleArray = [
-        { "title": "Create Your Profile", "subTitle": " If you&apos;re ready to start contributing to Solana, you&apos;re in the right place." },
+        { "title": "Create Your Profile", "subTitle": " If you're ready to start contributing to Solana, you're in the right place." },
         { "title": "Tell Us About Your Work", "subTitle": "The more you tell us, the better we can match you" },
         { "title": "Socials & Proof of Work", "subTitle": "Where can people learn more about your work?" },
     ]
@@ -187,14 +197,14 @@ const StepsCon = ({ setSuccess }: { setSuccess: () => void }) => {
                     {TitleArray[currentStep - 1].subTitle}
                 </Text>
             </VStack>
-            <HStack w="100%">
+            <HStack w="100%" pb={"2rem"}>
                 {stepList.map((step) => {
                     return (
                         <>
                             <Steps
                                 setStep={setSteps}
                                 currentStep={currentStep}
-                                label={''}
+                                label={step.label}
                                 thisStep={step.number}
                             />
                             {step.number !== stepList.length && (
@@ -281,18 +291,15 @@ const AboutYou = ({ setStep }: Step1Props) => {
         setStep(i => i + 1)
     };
 
+
     return (
         <Box w={'full'}>
             <form style={{ width: "100%" }} onSubmit={handleSubmit(onSubmit)}>
                 <FormControl mb={5} w="full" isRequired >
                     <VStack gap={2} my={3} align={'start'} mb={"25px"}>
-                        <Heading
-                            color={'gray.400'}
-                            fontWeight={600}
-                            fontSize={'15px'}
-                        >
+                        <FormLabel requiredIndicator={<></>} color={"gray.400"}>
                             Profile Picture
-                        </Heading>
+                        </FormLabel>
                         <HStack gap={5}>
                             <MediaPicker
                                 onChange={async (e) => {
@@ -358,7 +365,7 @@ const AboutYou = ({ setStep }: Step1Props) => {
                         <FormLabel color={"gray.400"}>
                             Location
                         </FormLabel>
-                        <Select id={"location"} placeholder='Select your Country' {...register("location", { required: true })}>
+                        <Select color={(watch().location.length == 0 ? "gray.500" : "")} id={"location"} placeholder='Select your Country' {...register("location", { required: true })}>
                             {
                                 CountryList.map((ct) => {
                                     return <option key={ct} value={ct}>{ct}</option>
@@ -377,7 +384,7 @@ const AboutYou = ({ setStep }: Step1Props) => {
                     </Button>
                 </FormControl>
             </form>
-        </Box>
+        </Box >
     )
 }
 
@@ -387,9 +394,10 @@ const AboutYou = ({ setStep }: Step1Props) => {
 const YourWork = ({ setStep }: Step1Props) => {
     const animatedComponents = makeAnimated();
 
-    const [DropDownValues, setDropDownValues] = useState({
-        skills: "", subskills: "", interests: "", community: ""
-    })
+    const [skills, setskills] = useState<MultiSelectOptions[]>([]);
+    const [subskills, setsubskills] = useState<MultiSelectOptions[]>([]);
+
+    const [DropDownValues, setDropDownValues] = useState({ community: '', interests: '' })
 
     let updateState = useFormStore().updateState;
     let form = useFormStore().form;
@@ -408,12 +416,20 @@ const YourWork = ({ setStep }: Step1Props) => {
 
     const onSubmit = (data: any) => {
         setpost(true);
-        if (DropDownValues.skills.length == 0 || DropDownValues.subskills.length == 0 || DropDownValues.interests.length == 0 || DropDownValues.community.length == 0) {
+        if (skills.length == 0 || subskills.length == 0 || DropDownValues.interests.length == 0 || DropDownValues.community.length == 0) {
             return false;
         }
-        updateState({ ...data, ...DropDownValues }); setStep(i => i + 1)
+        //totdo
+        updateState({
+            ...data,
+            skills: JSON.stringify(skills.map(ele => ele.value)),
+            subskills: JSON.stringify(subskills.map(ele => ele.value)),
+            ...DropDownValues
+        }); setStep(i => i + 1)
     };
 
+    console.log(skills);
+    console.log(subskills);
 
     return (
         <Box w={'full'}>
@@ -426,7 +442,8 @@ const YourWork = ({ setStep }: Step1Props) => {
                             </FormLabel>
 
                             <Select id="cryptoExperience"
-                                placeholder="Experience in Years"
+                                color={(watch().cryptoExperience.length == 0 ? "gray.500" : "")}
+                                placeholder="Pick your Experience"
                                 {...register("cryptoExperience", { required: true })}>
                                 {
                                     web3Exp.map((ct) => {
@@ -440,7 +457,8 @@ const YourWork = ({ setStep }: Step1Props) => {
                                 Work Experience
                             </FormLabel>
                             <Select id="experience"
-                                placeholder="Experience in Years"
+                                color={(watch().experience.length == 0 ? "gray.500" : "")}
+                                placeholder="Pick your experience"
                                 {...register("experience", { required: true })}>
                                 {
                                     workExp.map((ct) => {
@@ -457,6 +475,7 @@ const YourWork = ({ setStep }: Step1Props) => {
                         <Select
                             id="workPrefernce"
                             placeholder="Type of work"
+                            color={(watch().workPrefernce.length == 0 ? "gray.500" : "")}
                             {...register("workPrefernce", { required: true })}>
                             {
                                 workType.map((ct) => {
@@ -515,43 +534,7 @@ const YourWork = ({ setStep }: Step1Props) => {
                         />
                         {(DropDownValues.interests.length == 0 && post) && <Text color={"red"}>This field cannot be empty</Text>}
                     </Box>
-                    <Box w={'full'} mb={"1.25rem"}>
-                        <FormLabel color={"gray.400"}>
-                            Your Skills
-                        </FormLabel>
-                        <ReactSelect
-                            closeMenuOnSelect={false}
-                            components={animatedComponents}
-                            isMulti
-                            options={MainSkills}
-                            required
-                            onChange={(e: any) => {
-                                setDropDownValues((st) => {
-                                    st.skills = JSON.stringify(e.map((elm: { label: string; value: string }) => elm.value))
-                                    return { ...st }
-                                })
-                            }}
-                        />
-                        {(DropDownValues.skills.length == 0 && post) && <Text color={"red"}>This field cannot be empty</Text>}
-                    </Box>
-                    <Box w={'full'} mb={"1.25rem"}>
-                        <FormLabel color={"gray.400"}>
-                            Sub Skills
-                        </FormLabel>
-                        <ReactSelect
-                            closeMenuOnSelect={false}
-                            components={animatedComponents}
-                            isMulti
-                            options={SubSkills}
-                            onChange={(e: any) => {
-                                setDropDownValues((st) => {
-                                    st.subskills = JSON.stringify(e.map((elm: { label: string; value: string }) => elm.value))
-                                    return { ...st }
-                                })
-                            }}
-                        />
-                        {(DropDownValues.subskills.length == 0 && post) && <Text color={"red"}>This field cannot be empty</Text>}
-                    </Box>
+                    <SkillSelect skills={skills} subSkills={subskills} setSkills={setskills} setSubSkills={setsubskills} />
                     <Button type='submit' w={"full"} h="50px" color={"white"} bg={"rgb(101, 98, 255)"}>
                         Continue
                     </Button>
@@ -656,12 +639,12 @@ const YourLinks = ({ setStep, success }: { setStep: Dispatch<SetStateAction<numb
 
     let { updateState } = useFormStore();
 
-    const uploadProfile = async (socials: string, pow: string) => {
+    const uploadProfile = async (socials: { twitter: string, github: string, linkedin: string, telegram: string, website: string }, pow: string) => {
 
-        updateState({ pow, socials });
-
+        updateState({ pow, ...socials });
+        console.log(form);
         let res = await axios.post(`${process.env.NEXT_PUBLIC_BACKEND_URL}/talent/create`, {
-            ...form, socials, pow,
+            ...form, pow, ...socials,
             verified: true, superteamLevel: "Lurker",
             id: genrateuuid(),
             publickey: JSON.stringify(publicKey)
@@ -673,8 +656,19 @@ const YourLinks = ({ setStep, success }: { setStep: Dispatch<SetStateAction<numb
     }
 
     let form = useFormStore().form;
+
+
     const { register, handleSubmit, watch, formState: { errors } } = useForm();
-    const onSubmit = (data: any) => { uploadProfile(JSON.stringify(data), JSON.stringify(pow)) };
+    const onSubmit = (data: any) => {
+        console.log(data)
+        uploadProfile({
+            twitter: data.Twitter,
+            github: data.GitHub,
+            linkedin: data.LinkedIn,
+            telegram: data.Telegram,
+            website: data.Site
+        }, JSON.stringify(pow))
+    };
     const [selectedProject, setselectedProject] = useState<number>(-1);
 
     return (
@@ -731,16 +725,17 @@ const AddProject = ({ isOpen, onClose, pow, setpow }: { isOpen: boolean, onClose
     const { register, handleSubmit, watch, formState: { errors } } = useForm();
     const [post, setpost] = useState(false);
 
-    const [DropDownValues, setDropDownValues] = useState({
-        skills: "", subskills: ""
-    })
+    const [skills, setskills] = useState<MultiSelectOptions[]>([]);
+    const [subskills, setsubskills] = useState<MultiSelectOptions[]>([]);
+
+    console.log(skills, subskills);
 
     const onSubmit = (data: any) => {
         setpost(true);
-        if (DropDownValues.skills.length == 0 || DropDownValues.subskills.length == 0) {
+        if (skills.length == 0 || subskills.length == 0) {
             return false;
         }
-        setpow(elm => [...elm, JSON.stringify(data)])
+        setpow(elm => [...elm, JSON.stringify({ ...data, skills: skills.map(ele => ele.value), SubSkills: subskills.map(ele => ele.value) })])
         onClose();
     }
 
@@ -769,42 +764,7 @@ const AddProject = ({ isOpen, onClose, pow, setpow }: { isOpen: boolean, onClose
                                     {...register("description", { required: true })}
                                 />
                             </Box>
-                            <Box w={'full'} mb={"1.25rem"}>
-                                <FormLabel color={"gray.400"}>
-                                    Your Skills
-                                </FormLabel>
-                                <ReactSelect
-                                    closeMenuOnSelect={false}
-                                    components={animatedComponents}
-                                    isMulti
-                                    options={MainSkills}
-                                    onChange={(e: any) => {
-                                        setDropDownValues((st) => {
-                                            st.skills = JSON.stringify(e.map((elm: { label: string; value: string }) => elm.value))
-                                            return { ...st }
-                                        })
-                                    }}
-                                />
-                                {(DropDownValues.skills.length == 0 && post) && <Text color={"red"}>This field cannot be empty</Text>}
-                            </Box>
-                            <Box w={'full'} mb={"1.25rem"}>
-                                <FormLabel color={"gray.400"}>
-                                    Sub Skills
-                                </FormLabel>
-                                <ReactSelect
-                                    closeMenuOnSelect={false}
-                                    components={animatedComponents}
-                                    isMulti
-                                    options={SubSkills}
-                                    onChange={(e: any) => {
-                                        setDropDownValues((st) => {
-                                            st.subskills = JSON.stringify(e.map((elm: { label: string; value: string }) => elm.value))
-                                            return { ...st }
-                                        })
-                                    }}
-                                />
-                                {(DropDownValues.subskills.length == 0 && post) && <Text color={"red"}>This field cannot be empty</Text>}
-                            </Box>
+                            <SkillSelect skills={skills} subSkills={subskills} setSkills={setskills} setSubSkills={setsubskills} />
                             <Box w={'full'} mb={"1.25rem"}>
                                 <FormLabel color={"gray.400"}>
                                     Link
@@ -829,108 +789,6 @@ const AddProject = ({ isOpen, onClose, pow, setpow }: { isOpen: boolean, onClose
     )
 }
 
-const Save = ({ isOpen, onClose, pow, setpow, selectedProject }: { isOpen: boolean, onClose: () => void, pow: string[], setpow: Dispatch<SetStateAction<string[]>>, selectedProject: number }) => {
-    const animatedComponents = makeAnimated();
-    const { register, handleSubmit, watch, formState: { errors } } = useForm();
-    const [post, setpost] = useState(false);
-
-    const [DropDownValues, setDropDownValues] = useState({
-        skills: "", subskills: ""
-    })
-
-    const onSubmit = (data: any) => {
-        setpost(true);
-        if (DropDownValues.skills.length == 0 || DropDownValues.subskills.length == 0) {
-            return false;
-        }
-        setpow(elm => [...elm, JSON.stringify(data)])
-        onClose();
-    }
-
-    return (
-        <Modal isOpen={isOpen} onClose={onClose}>
-            <ModalOverlay />
-            <ModalContent maxW={"607px"} py={"1.4375rem"}>
-                <ModalBody>
-                    <form onSubmit={handleSubmit(onSubmit)}>
-                        <FormControl isRequired  >
-                            <Box w={'full'} mb={"1.25rem"}>
-                                <FormLabel color={"gray.400"}>
-                                    Project Title
-                                </FormLabel>
-                                <Input
-                                    id="title"
-                                    placeholder="Project Title"
-                                    {...register("title", { required: true })}
-                                />
-                            </Box>
-                            <Box w={'full'} mb={"1.25rem"}>
-                                <FormLabel color={"gray.400"}>
-                                    Describe Your Work
-                                </FormLabel>
-                                <Textarea placeholder='About the Project'
-                                    {...register("description", { required: true })}
-                                />
-                            </Box>
-                            <Box w={'full'} mb={"1.25rem"}>
-                                <FormLabel color={"gray.400"}>
-                                    Your Skills
-                                </FormLabel>
-                                <ReactSelect
-                                    closeMenuOnSelect={false}
-                                    components={animatedComponents}
-                                    isMulti
-                                    options={MainSkills}
-                                    onChange={(e: any) => {
-                                        setDropDownValues((st) => {
-                                            st.skills = JSON.stringify(e.map((elm: { label: string; value: string }) => elm.value))
-                                            return { ...st }
-                                        })
-                                    }}
-                                />
-                                {(DropDownValues.skills.length == 0 && post) && <Text color={"red"}>This field cannot be empty</Text>}
-                            </Box>
-                            <Box w={'full'} mb={"1.25rem"}>
-                                <FormLabel color={"gray.400"}>
-                                    Sub Skills
-                                </FormLabel>
-                                <ReactSelect
-                                    closeMenuOnSelect={false}
-                                    components={animatedComponents}
-                                    isMulti
-                                    options={SubSkills}
-                                    onChange={(e: any) => {
-                                        setDropDownValues((st) => {
-                                            st.subskills = JSON.stringify(e.map((elm: { label: string; value: string }) => elm.value))
-                                            return { ...st }
-                                        })
-                                    }}
-                                />
-                                {(DropDownValues.subskills.length == 0 && post) && <Text color={"red"}>This field cannot be empty</Text>}
-                            </Box>
-                            <Box w={'full'} mb={"1.25rem"}>
-                                <FormLabel color={"gray.400"}>
-                                    Link
-                                </FormLabel>
-                                <InputGroup>
-                                    <InputLeftElement
-                                        pointerEvents='none'
-                                        // eslint-disable-next-line react/no-children-prop
-                                        children={<LinkIcon color='gray.300' />}
-                                    />
-                                    <Input   {...register("link", { required: true })} />
-                                </InputGroup>
-                            </Box>
-                            <Button type='submit' w={"full"} h="50px" color={"white"} bg={"rgb(101, 98, 255)"}>
-                                Save Project
-                            </Button>
-                        </FormControl >
-                    </form>
-                </ModalBody>
-            </ModalContent>
-        </Modal>
-    )
-}
 
 const WelcomeMessage = ({ setStep }: { setStep: () => void }) => {
     return (
