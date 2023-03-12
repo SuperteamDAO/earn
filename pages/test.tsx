@@ -1,10 +1,28 @@
-import React from 'react';
-import { useEditor, EditorContent } from '@tiptap/react';
+import React, { useState } from 'react';
+import { useEditor, EditorContent, BubbleMenu, Editor } from '@tiptap/react';
 import StarterKit from '@tiptap/starter-kit';
-import { Box, Button, HStack } from '@chakra-ui/react';
+import { Box, Button, Divider, Flex, HStack, VStack } from '@chakra-ui/react';
 import { Color } from '@tiptap/extension-color';
 import ListItem from '@tiptap/extension-list-item';
+import { GoBold } from 'react-icons/go';
 import TextStyle from '@tiptap/extension-text-style';
+import {
+  BsBlockquoteLeft,
+  BsCodeSlash,
+  BsFileBreak,
+  BsTypeItalic,
+} from 'react-icons/bs';
+import {
+  AiOutlineLink,
+  AiOutlineOrderedList,
+  AiOutlineStrikethrough,
+} from 'react-icons/ai';
+import { BiFontColor } from 'react-icons/bi';
+import {
+  MdOutlineFormatListBulleted,
+  MdOutlineHorizontalRule,
+} from 'react-icons/md';
+import { CiRedo, CiUndo } from 'react-icons/ci';
 
 const MenuBar = ({ editor }: any) => {
   if (!editor) {
@@ -174,6 +192,7 @@ const MenuBar = ({ editor }: any) => {
 };
 
 const Test = () => {
+  const [url, setUrl] = useState<string>('');
   const editor = useEditor({
     extensions: [
       Color.configure({ types: [TextStyle.name, ListItem.name] }),
@@ -189,6 +208,12 @@ const Test = () => {
         },
       }),
     ],
+    editorProps: {
+      attributes: {
+        class:
+          'prose dark:prose-invert prose-sm sm:prose-base lg:prose-lg xl:prose-2xl m-5 focus:outline-none',
+      },
+    },
     content: `
       <h2>
         Hi there,
@@ -196,6 +221,30 @@ const Test = () => {
       <p>
         this is a <em>basic</em> example of <strong>tiptap</strong>. Sure, there are all kind of basic text styles you’d probably expect from a text editor. But wait until you see the lists:
       </p>
+      <ul>
+        <li>
+          That’s a bullet list with one …
+        </li>
+        <li>
+          … or two list items.
+        </li>
+      </ul>
+      <ul>
+        <li>
+          That’s a bullet list with one …
+        </li>
+        <li>
+          … or two list items.
+        </li>
+      </ul>
+      <ul>
+        <li>
+          That’s a bullet list with one …
+        </li>
+        <li>
+          … or two list items.
+        </li>
+      </ul>
       <ul>
         <li>
           That’s a bullet list with one …
@@ -223,22 +272,294 @@ const Test = () => {
 
   return (
     <>
-      <Box
-        w={'80%'}
-        display={'flex'}
-        justifyContent={'center'}
-        alignItems={'center'}
-        flexDir={'column'}
+      <VStack
+        mt={10}
         mx={'auto'}
-        gap={10}
+        h={'50rem !impotant'}
+        minH={'50rem'}
+        w={'3xl'}
       >
-        <MenuBar editor={editor} />
-        <Box className="" border={'2px solid red'} p={10} w={'5xl'}>
-          <div className="reset">
-            <EditorContent width={'100%'} editor={editor} />
+        <Flex
+          w={'full'}
+          align={'center'}
+          justify={'start'}
+          borderBottom={'1px solid #D2D2D2'}
+        >
+          <Button
+            borderLeft={'1px solid #D2D2D2'}
+            variant={'unstyled'}
+            borderRadius={'0px'}
+            borderTop={'1px solid #D2D2D2'}
+            borderRight={'1px solid #D2D2D2'}
+            bg={editor?.isActive('heading', { level: 1 }) ? 'gray.200' : ''}
+            onClick={() => {
+              editor?.chain().focus().toggleHeading({ level: 1 }).run();
+            }}
+          >
+            H1
+          </Button>
+          <Button
+            variant={'unstyled'}
+            borderRadius={'0px'}
+            borderTop={'1px solid #D2D2D2'}
+            borderRight={'1px solid #D2D2D2'}
+            bg={editor?.isActive('heading', { level: 2 }) ? 'gray.200' : ''}
+            onClick={() => {
+              editor?.chain().focus().toggleHeading({ level: 2 }).run();
+            }}
+          >
+            H2
+          </Button>
+          <Button
+            variant={'unstyled'}
+            borderRadius={'0px'}
+            borderTop={'1px solid #D2D2D2'}
+            borderRight={'1px solid #D2D2D2'}
+            bg={editor?.isActive('heading', { level: 3 }) ? 'gray.200' : ''}
+            onClick={() => {
+              editor?.chain().focus().toggleHeading({ level: 3 }).run();
+            }}
+          >
+            H3
+          </Button>
+          <Button
+            variant={'unstyled'}
+            borderRadius={'0px'}
+            borderTop={'1px solid #D2D2D2'}
+            borderRight={'1px solid #D2D2D2'}
+            bg={editor?.isActive('heading', { level: 4 }) ? 'gray.200' : ''}
+            onClick={() => {
+              editor?.chain().focus().toggleHeading({ level: 4 }).run();
+            }}
+          >
+            H4
+          </Button>
+          <Button
+            variant={'unstyled'}
+            borderRadius={'0px'}
+            borderTop={'1px solid #D2D2D2'}
+            borderRight={'1px solid #D2D2D2'}
+            bg={editor?.isActive('heading', { level: 5 }) ? 'gray.200' : ''}
+            onClick={() => {
+              editor?.chain().focus().toggleHeading({ level: 5 }).run();
+            }}
+          >
+            H5
+          </Button>
+          <Button
+            variant={'unstyled'}
+            borderRadius={'0px'}
+            borderTop={'1px solid #D2D2D2'}
+            borderRight={'1px solid #D2D2D2'}
+            bg={editor?.isActive('heading', { level: 6 }) ? 'gray.200' : ''}
+            onClick={() => {
+              editor?.chain().focus().toggleHeading({ level: 6 }).run();
+            }}
+          >
+            H6
+          </Button>
+          <Button
+            variant={'unstyled'}
+            borderRadius={'0px'}
+            display={'flex'}
+            justifyContent={'center'}
+            alignItems={'center'}
+            borderTop={'1px solid #D2D2D2'}
+            borderRight={'1px solid #D2D2D2'}
+            bg={editor?.isActive('bold') ? 'gray.200' : ''}
+            onClick={() => {
+              editor?.chain().focus().toggleBold().run();
+            }}
+          >
+            <GoBold />
+          </Button>
+          <Button
+            variant={'unstyled'}
+            borderRadius={'0px'}
+            display={'flex'}
+            justifyContent={'center'}
+            alignItems={'center'}
+            borderTop={'1px solid #D2D2D2'}
+            borderRight={'1px solid #D2D2D2'}
+            bg={editor?.isActive('italic') ? 'gray.200' : ''}
+            onClick={() => {
+              editor?.chain().focus().toggleItalic().run();
+            }}
+          >
+            <BsTypeItalic />
+          </Button>
+          <Button
+            variant={'unstyled'}
+            borderRadius={'0px'}
+            display={'flex'}
+            justifyContent={'center'}
+            alignItems={'center'}
+            borderTop={'1px solid #D2D2D2'}
+            borderRight={'1px solid #D2D2D2'}
+            bg={editor?.isActive('italic') ? 'gray.200' : ''}
+            onClick={() => {}}
+          >
+            <AiOutlineLink />
+          </Button>
+          <Button
+            variant={'unstyled'}
+            borderRadius={'0px'}
+            display={'flex'}
+            justifyContent={'center'}
+            alignItems={'center'}
+            borderTop={'1px solid #D2D2D2'}
+            borderRight={'1px solid #D2D2D2'}
+            bg={editor?.isActive('strike') ? 'gray.200' : ''}
+            onClick={() => {
+              editor?.chain().focus().toggleStrike().run();
+            }}
+          >
+            <AiOutlineStrikethrough />
+          </Button>
+          <Button
+            variant={'unstyled'}
+            borderRadius={'0px'}
+            display={'flex'}
+            justifyContent={'center'}
+            alignItems={'center'}
+            borderTop={'1px solid #D2D2D2'}
+            borderRight={'1px solid #D2D2D2'}
+            bg={editor?.isActive('bulletList') ? 'gray.200' : ''}
+            onClick={() => {
+              editor?.chain().focus().toggleBulletList().run();
+            }}
+          >
+            <MdOutlineFormatListBulleted />
+          </Button>
+          <Button
+            variant={'unstyled'}
+            borderRadius={'0px'}
+            display={'flex'}
+            justifyContent={'center'}
+            alignItems={'center'}
+            borderTop={'1px solid #D2D2D2'}
+            borderRight={'1px solid #D2D2D2'}
+            bg={editor?.isActive('orderedList') ? 'gray.200' : ''}
+            onClick={() => {
+              editor?.chain().focus().toggleOrderedList().run();
+            }}
+          >
+            <AiOutlineOrderedList />
+          </Button>
+          <Button
+            variant={'unstyled'}
+            borderRadius={'0px'}
+            display={'flex'}
+            justifyContent={'center'}
+            alignItems={'center'}
+            borderTop={'1px solid #D2D2D2'}
+            borderRight={'1px solid #D2D2D2'}
+            bg={editor?.isActive('codeBlock') ? 'gray.200' : ''}
+            onClick={() => {
+              editor?.chain().focus().toggleCodeBlock().run();
+            }}
+          >
+            <BsCodeSlash />
+          </Button>
+          <Button
+            variant={'unstyled'}
+            borderRadius={'0px'}
+            display={'flex'}
+            justifyContent={'center'}
+            alignItems={'center'}
+            borderTop={'1px solid #D2D2D2'}
+            borderRight={'1px solid #D2D2D2'}
+            bg={editor?.isActive('blockquote') ? 'gray.200' : ''}
+            onClick={() => {
+              editor?.chain().focus().toggleBlockquote().run();
+            }}
+          >
+            <BsBlockquoteLeft />
+          </Button>
+          <Button
+            variant={'unstyled'}
+            borderRadius={'0px'}
+            display={'flex'}
+            justifyContent={'center'}
+            alignItems={'center'}
+            borderTop={'1px solid #D2D2D2'}
+            borderRight={'1px solid #D2D2D2'}
+            onClick={() => {
+              editor?.chain().focus().setHorizontalRule().run();
+            }}
+          >
+            <MdOutlineHorizontalRule />
+          </Button>
+          <Button
+            variant={'unstyled'}
+            borderRadius={'0px'}
+            display={'flex'}
+            justifyContent={'center'}
+            alignItems={'center'}
+            borderTop={'1px solid #D2D2D2'}
+            borderRight={'1px solid #D2D2D2'}
+            onClick={() => {
+              editor?.chain().focus().setHardBreak().run();
+            }}
+          >
+            <BsFileBreak />
+          </Button>
+          <Button
+            variant={'unstyled'}
+            borderRadius={'0px'}
+            display={'flex'}
+            justifyContent={'center'}
+            alignItems={'center'}
+            borderTop={'1px solid #D2D2D2'}
+            borderRight={'1px solid #D2D2D2'}
+            w={'full'}
+            onClick={() => {
+              editor?.chain().focus().undo().run();
+            }}
+          >
+            <CiUndo />
+          </Button>
+          <Button
+            variant={'unstyled'}
+            borderRadius={'0px'}
+            display={'flex'}
+            justifyContent={'center'}
+            alignItems={'center'}
+            borderTop={'1px solid #D2D2D2'}
+            borderRight={'1px solid #D2D2D2'}
+            w={'full'}
+            onClick={() => {
+              editor?.chain().focus().redo().run();
+            }}
+          >
+            <CiRedo />
+          </Button>
+          <Button
+            variant={'unstyled'}
+            borderRadius={'0px'}
+            display={'flex'}
+            justifyContent={'center'}
+            alignItems={'center'}
+            borderTop={'1px solid #D2D2D2'}
+            borderRight={'1px solid #D2D2D2'}
+            onClick={() => {}}
+            w={'full'}
+          >
+            <BiFontColor />
+          </Button>
+        </Flex>
+
+        <Box w={'full'} height={'full'}>
+          <div style={{ height: '100% !important' }} className="reset">
+            <EditorContent
+              style={{}}
+              width={'100%'}
+              height={'100%'}
+              editor={editor}
+            />
           </div>
         </Box>
-      </Box>
+      </VStack>
     </>
   );
 };

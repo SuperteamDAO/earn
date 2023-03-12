@@ -2,7 +2,6 @@ body {
   background-color: #f1f5f9;
 }
 h1,
-code,
 h2,
 h3,
 h4,
@@ -12,4 +11,42 @@ strong,
 ul,
 li {
   all: revert !important;
+}
+code {
+  background-color: rgba(#616161, 0.1);
+  color: #616161;
+}
+
+pre {
+  background: #0d0d0d;
+  color: #fff;
+  font-family: 'JetBrainsMono', monospace;
+  padding: 0.75rem 1rem;
+  border-radius: 0.5rem;
+
+  code {
+    color: inherit;
+    padding: 0;
+    background: none;
+    font-size: 0.8rem;
+  }
+  blockquote {
+    padding-left: 1rem;
+    border-left: 2px solid rgba(#0d0d0d, 0.1);
+  }
+
+  hr {
+    border: none;
+    border-top: 2px solid rgba(#0d0d0d, 0.1);
+    margin: 2rem 0;
+  }
+}
+.ProseMirror {
+  min-height: 40rem;
+  border: 1px solid #d2d2d2;
+  padding: 0rem 2rem;
+  &::-moz-focus-inner {
+    border: 'none';
+    outline: 'none !important';
+  }
 }
