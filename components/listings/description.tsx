@@ -1,11 +1,26 @@
-import React, { useState, Dispatch, SetStateAction } from 'react';
-import { Box, Button, Divider, Flex, HStack, VStack } from '@chakra-ui/react';
+import React, { useState, Dispatch, SetStateAction, useCallback } from 'react';
+import {
+  Box,
+  Button,
+  Divider,
+  Flex,
+  HStack,
+  Input,
+  Modal,
+  ModalBody,
+  ModalContent,
+  ModalOverlay,
+  useDisclosure,
+  VStack,
+} from '@chakra-ui/react';
 import StarterKit from '@tiptap/starter-kit';
 import { useEditor, EditorContent } from '@tiptap/react';
 import { Color } from '@tiptap/extension-color';
 import ListItem from '@tiptap/extension-list-item';
 import TextStyle from '@tiptap/extension-text-style';
+import Link from '@tiptap/extension-link';
 import parse from 'html-react-parser';
+import Underline from '@tiptap/extension-underline';
 import { GoBold } from 'react-icons/go';
 import {
   BsBlockquoteLeft,
@@ -21,9 +36,45 @@ import {
 import { BiFontColor } from 'react-icons/bi';
 import {
   MdOutlineFormatListBulleted,
+  MdOutlineFormatUnderlined,
   MdOutlineHorizontalRule,
 } from 'react-icons/md';
 import { CiRedo, CiUndo } from 'react-icons/ci';
+
+const LinkModal = ({
+  isOpen,
+  onClose,
+  setUrl,
+  setLink,
+}: {
+  isOpen: boolean;
+  onClose: () => void;
+  setUrl: Dispatch<SetStateAction<string>>;
+  setLink: () => void;
+}) => {
+  return (
+    <>
+      <Modal isOpen={isOpen} onClose={onClose}>
+        <ModalOverlay />
+        <ModalContent>
+          <ModalBody my={5}>
+            <Input
+              placeholder="add a link"
+              onChange={(e) => {
+                setUrl(e.target.value);
+              }}
+            />
+            <HStack mt={5} w={'full'} justify={'end'}>
+              <Button onClick={setLink}>Submit</Button>
+              <Button onClick={onClose}>Cancel</Button>
+            </HStack>
+          </ModalBody>
+        </ModalContent>
+      </Modal>
+    </>
+  );
+};
+
 interface Props {
   setEditorData: Dispatch<SetStateAction<string | undefined>>;
   editorData: string | undefined;
@@ -36,10 +87,15 @@ const Description = ({
   setSteps,
   createDraft,
 }: Props) => {
+  const [url, setUrl] = useState<string>('');
   const editor = useEditor({
     extensions: [
+      Underline,
       Color.configure({ types: [TextStyle.name, ListItem.name] }),
       TextStyle.configure(),
+      Link.configure({
+        openOnClick: false,
+      }),
       StarterKit.configure({
         bulletList: {
           keepMarks: true,
@@ -116,8 +172,42 @@ const Description = ({
       </blockquote>
     `,
   });
+
+  const setLink = useCallback(() => {
+    const previousUrl = editor?.getAttributes('link').href;
+
+    // cancelled
+    if (url === null) {
+      return;
+    }
+
+    // empty
+    if (url === '') {
+      editor?.chain().focus().extendMarkRange('link').unsetLink().run();
+      onClose();
+      return;
+    }
+
+    // update link
+    editor
+      ?.chain()
+      .focus()
+      .extendMarkRange('link')
+      .setLink({ href: url })
+      .run();
+    onClose();
+  }, [editor]);
+  const { isOpen, onClose, onOpen } = useDisclosure();
   return (
     <>
+      {isOpen && (
+        <LinkModal
+          setLink={setLink}
+          isOpen={isOpen}
+          onClose={onClose}
+          setUrl={setUrl}
+        />
+      )}
       <VStack
         mt={10}
         mx={'auto'}
@@ -233,6 +323,21 @@ const Description = ({
             }}
           >
             <BsTypeItalic />
+          </Button>{' '}
+          <Button
+            variant={'unstyled'}
+            borderRadius={'0px'}
+            display={'flex'}
+            justifyContent={'center'}
+            alignItems={'center'}
+            borderTop={'1px solid #D2D2D2'}
+            borderRight={'1px solid #D2D2D2'}
+            bg={editor?.isActive('underline') ? 'gray.200' : ''}
+            onClick={() => {
+              editor?.chain().focus().toggleUnderline().run();
+            }}
+          >
+            <MdOutlineFormatUnderlined />
           </Button>
           <Button
             variant={'unstyled'}
@@ -243,24 +348,11 @@ const Description = ({
             borderTop={'1px solid #D2D2D2'}
             borderRight={'1px solid #D2D2D2'}
             bg={editor?.isActive('link') ? 'gray.200' : ''}
-            onClick={() => {}}
-          >
-            <AiOutlineLink />
-          </Button>
-          <Button
-            variant={'unstyled'}
-            borderRadius={'0px'}
-            display={'flex'}
-            justifyContent={'center'}
-            alignItems={'center'}
-            borderTop={'1px solid #D2D2D2'}
-            borderRight={'1px solid #D2D2D2'}
-            bg={editor?.isActive('strike') ? 'gray.200' : ''}
             onClick={() => {
-              editor?.chain().focus().toggleStrike().run();
+              onOpen();
             }}
           >
-            <AiOutlineStrikethrough />
+            <AiOutlineLink />
           </Button>
           <Button
             variant={'unstyled'}
@@ -398,6 +490,7 @@ const Description = ({
         <Box w={'full'} height={'full'}>
           <div style={{ height: '100% !important' }} className="reset">
             <EditorContent
+              id="reset-des"
               style={{}}
               width={'100%'}
               height={'100%'}
@@ -406,7 +499,7 @@ const Description = ({
           </div>
         </Box>
       </VStack>
-      <VStack w={'2xl'} gap={6} h={'10rem'} my={10}>
+      <VStack w={'2xl'} gap={6} h={'10rem'} my={7}>
         <Button
           w="100%"
           bg={'#6562FF'}

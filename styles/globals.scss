@@ -2,16 +2,20 @@
   font-family: 'Inter';
 }
 
-// h1,
-// // h2,
-// h3,
-// h4,
-// br,
-// strong,
-// ul,
-// li {
-//   all: revert !important;
-// }
+#reset-des h1,
+h2,
+h3,
+h4,
+br,
+strong,
+ul,
+a,
+ol,
+blockquote,
+li {
+  all: revert !important;
+}
+
 code {
   background-color: rgba(#616161, 0.1);
   color: #616161;
@@ -44,7 +48,7 @@ pre {
 .ProseMirror {
   min-height: 40rem;
   border: 1px solid #d2d2d2 !important;
-  padding: 0rem 2rem;
+  padding: 1rem 2rem;
   &::-moz-focus-inner {
     border: 'none';
     outline: 'none !important';
