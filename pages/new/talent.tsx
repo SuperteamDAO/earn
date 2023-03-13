@@ -1,7 +1,7 @@
 import { useWallet } from '@solana/wallet-adapter-react';
 import { useQuery } from '@tanstack/react-query';
 import React, { Children, Dispatch, SetStateAction, useEffect, useState } from 'react'
-import { Box, Flex, FormControl, FormLabel, Heading, HStack, Text, VStack, Input, Select, Textarea, Button, Center, useDisclosure, InputGroup, Spinner, color } from '@chakra-ui/react';
+import { Checkbox, Box, Flex, FormControl, FormLabel, Heading, HStack, Text, VStack, Input, Select, Textarea, Button, Center, useDisclosure, InputGroup, Spinner, color, Tooltip } from '@chakra-ui/react';
 import makeAnimated from 'react-select/animated';
 import { Image } from '@chakra-ui/react';
 import { MediaPicker } from 'degen';
@@ -296,40 +296,38 @@ const AboutYou = ({ setStep }: Step1Props) => {
         <Box w={'full'}>
             <form style={{ width: "100%" }} onSubmit={handleSubmit(onSubmit)}>
                 <FormControl mb={5} w="full" isRequired >
-                    <VStack gap={2} my={3} align={'start'} mb={"25px"}>
-                        <FormLabel requiredIndicator={<></>} color={"gray.400"}>
+                    <VStack gap={2} rowGap={"0"} my={3} align={'start'} mb={"25px"}>
+                        <FormLabel requiredIndicator={<></>} color={"gray.600"} mb={"0"} pb={"0"}>
                             Profile Picture
                         </FormLabel>
-                        <HStack gap={5}>
-                            <MediaPicker
-                                onChange={async (e) => {
-                                    setuploadLoading(true);
-                                    const a = await uploadToCloudinary(e);
-                                    console.log(a);
-                                    setImageUrl(a);
-                                    setuploadLoading(false);
-                                }}
-                                compact
-                                label="Choose or drag and drop media"
-                            />
-                        </HStack>
+                        <MediaPicker
+                            onChange={async (e) => {
+                                setuploadLoading(true);
+                                const a = await uploadToCloudinary(e);
+                                console.log(a);
+                                setImageUrl(a);
+                                setuploadLoading(false);
+                            }}
+                            compact
+                            label="Choose or drag and drop media"
+                        />
                     </VStack>
                     <Flex w={'full'} outline={"0.3125rem"} gap={"1.25rem"} mb={"1.25rem"}>
                         <Box w={'full'}>
-                            <FormLabel color={"gray.400"}>
+                            <FormLabel color={"gray.600"}>
                                 First Name
                             </FormLabel>
-                            <Input
+                            <Input color={"gray.800"} _placeholder={{ color: "gray.500" }}
                                 id="firstname"
                                 placeholder="Your first name"
                                 {...register("firstname", { required: true })}
                             />
                         </Box>
                         <Box w={'full'}>
-                            <FormLabel color={"gray.400"}>
+                            <FormLabel color={"gray.600"}>
                                 Last Name
                             </FormLabel>
-                            <Input
+                            <Input color={"gray.800"} _placeholder={{ color: "gray.500" }}
                                 id="lastname"
                                 placeholder="Your last name"
                                 {...register("lastname", { required: true })}
@@ -337,10 +335,10 @@ const AboutYou = ({ setStep }: Step1Props) => {
                         </Box>
                     </Flex>
                     <Box w={'full'} mb={"1.25rem"}>
-                        <FormLabel color={"gray.400"}>
+                        <FormLabel color={"gray.600"}>
                             Email
                         </FormLabel>
-                        <Input
+                        <Input color={"gray.800"} _placeholder={{ color: "gray.500" }}
                             id="email"
                             type={"email"}
                             placeholder="Email Address"
@@ -349,10 +347,10 @@ const AboutYou = ({ setStep }: Step1Props) => {
                         />
                     </Box>
                     <Box w={'full'} mb={"1.25rem"}>
-                        <FormLabel color={"gray.400"}>
+                        <FormLabel color={"gray.600"}>
                             Username
                         </FormLabel>
-                        <Input
+                        <Input color={"gray.800"} _placeholder={{ color: "gray.500" }}
                             id="username"
                             placeholder="Username"
                             {...register("username", { required: true })}
@@ -362,7 +360,7 @@ const AboutYou = ({ setStep }: Step1Props) => {
                     </Box>
 
                     <Box w={'full'} mb={"1.25rem"}>
-                        <FormLabel color={"gray.400"}>
+                        <FormLabel color={"gray.600"}>
                             Location
                         </FormLabel>
                         <Select color={(watch().location.length == 0 ? "gray.500" : "")} id={"location"} placeholder='Select your Country' {...register("location", { required: true })}>
@@ -374,7 +372,7 @@ const AboutYou = ({ setStep }: Step1Props) => {
                         </Select>
                     </Box>
                     <Box w={'full'} mb={"1.25rem"}>
-                        <FormLabel color={"gray.400"}>
+                        <FormLabel color={"gray.600"}>
                             Your One-Line Bio
                         </FormLabel>
                         <Textarea id={"bio"} placeholder='Here is a sample placeholder' {...register("bio", { required: true })} />
@@ -428,8 +426,41 @@ const YourWork = ({ setStep }: Step1Props) => {
         }); setStep(i => i + 1)
     };
 
-    console.log(skills);
-    console.log(subskills);
+
+
+    useEffect(() => {
+        try {
+            if (form.skills.length > 2) {
+                let skills = JSON.parse(form.skills);
+                setskills((sk) => {
+                    return [...sk, ...skills.map((ele: string) => {
+                        return (
+                            {
+                                label: ele,
+                                value: ele,
+                            }
+                        )
+                    })]
+                })
+            }
+            if (form.subskills.length > 2) {
+                let subskills = JSON.parse(form.subskills);
+                setsubskills((sk) => {
+                    return [...sk, ...subskills.map((ele: string) => {
+                        return (
+                            {
+                                label: ele,
+                                value: ele,
+                            }
+                        )
+                    })]
+                })
+            }
+        } catch (error) {
+
+        }
+    }, [])
+
 
     return (
         <Box w={'full'}>
@@ -437,7 +468,7 @@ const YourWork = ({ setStep }: Step1Props) => {
                 <FormControl mb={5} w="full" isRequired >
                     <Flex w={'full'} outline={"0.3125rem"} gap={"1.25rem"} mb={"1.25rem"}>
                         <Box w={'full'}>
-                            <FormLabel color={"gray.400"}>
+                            <FormLabel color={"gray.600"}>
                                 How familiar are you with Web3?
                             </FormLabel>
 
@@ -453,7 +484,7 @@ const YourWork = ({ setStep }: Step1Props) => {
                             </Select>
                         </Box>
                         <Box w={'full'}>
-                            <FormLabel color={"gray.400"}>
+                            <FormLabel color={"gray.600"}>
                                 Work Experience
                             </FormLabel>
                             <Select id="experience"
@@ -469,7 +500,7 @@ const YourWork = ({ setStep }: Step1Props) => {
                         </Box>
                     </Flex>
                     <Box w={'full'} mb={"1.25rem"}>
-                        <FormLabel color={"gray.400"}>
+                        <FormLabel color={"gray.600"}>
                             Work Preference
                         </FormLabel>
                         <Select
@@ -485,17 +516,17 @@ const YourWork = ({ setStep }: Step1Props) => {
                         </Select>
                     </Box>
                     <Box w={'full'} mb={"1.25rem"}>
-                        <FormLabel color={"gray.400"}>
+                        <FormLabel color={"gray.600"}>
                             Current Employer
                         </FormLabel>
-                        <Input
+                        <Input color={"gray.800"} _placeholder={{ color: "gray.500" }}
                             id="currentEmployer"
                             placeholder="Current Employer"
                             {...register("currentEmployer", { required: true })}
                         />
                     </Box>
                     <Box w={'full'} mb={"1.25rem"}>
-                        <FormLabel color={"gray.400"}>
+                        <FormLabel color={"gray.600"}>
                             Community Affiliations
                         </FormLabel>
                         <ReactSelect
@@ -512,11 +543,16 @@ const YourWork = ({ setStep }: Step1Props) => {
                                     return { ...st }
                                 })
                             }}
+                            styles={{
+                                control: (baseStyles, state) => ({
+                                    ...baseStyles,
+                                    border: (DropDownValues.community.length == 0 && post) ? '2px solid red' : baseStyles.border,
+                                }),
+                            }}
                         />
-                        {(DropDownValues.community.length == 0 && post) && <Text color={"red"}>This field cannot be empty</Text>}
                     </Box>
                     <Box w={'full'} mb={"1.25rem"}>
-                        <FormLabel color={"gray.400"}>
+                        <FormLabel color={"gray.600"}>
                             What areas of Web3 are you most interested in?
                         </FormLabel>
                         <ReactSelect
@@ -531,10 +567,42 @@ const YourWork = ({ setStep }: Step1Props) => {
                                     return { ...st }
                                 })
                             }}
+                            styles={{
+                                control: (baseStyles, state) => ({
+                                    ...baseStyles,
+                                    border: (DropDownValues.interests.length == 0 && post) ? '2px solid red' : baseStyles.border,
+                                }),
+                            }}
                         />
-                        {(DropDownValues.interests.length == 0 && post) && <Text color={"red"}>This field cannot be empty</Text>}
                     </Box>
-                    <SkillSelect skills={skills} subSkills={subskills} setSkills={setskills} setSubSkills={setsubskills} />
+                    <SkillSelect
+                        errorSkill={post && (skills.length == 0)}
+                        errorSubSkill={post && (subskills.length == 0)}
+                        skills={skills} subSkills={subskills} setSkills={setskills} setSubSkills={setsubskills} />
+                    <Flex alignItems={"center"} mb={"2.5rem"}>
+                        <Checkbox required={false} size='md' colorScheme='green' mr={"0.7rem"}>
+                            Keep my info private
+                        </Checkbox>
+                        <Tooltip
+
+                            placement="right-end"
+                            fontSize="0.9rem"
+                            padding="0.7rem"
+                            bg="#6562FF"
+                            color="white"
+                            fontWeight={600}
+                            borderRadius="0.5rem"
+                            hasArrow
+                            w="max"
+                            label={`Keep my info private`}
+                        >
+                            <Image
+
+                                src={'/assets/icons/info-icon.svg'}
+                                alt={'Info Icon'}
+                            />
+                        </Tooltip>
+                    </Flex>
                     <Button type='submit' w={"full"} h="50px" color={"white"} bg={"rgb(101, 98, 255)"}>
                         Continue
                     </Button>
@@ -558,7 +626,7 @@ const socials = [
     {
         label: "LinkedIn",
         placeHolder: "https://linkedin.com/in/superteamDAO",
-        icon: "/assets/talent/linkedin.png",
+        icon: "/assets/talent/link.png",
     },
     {
         label: "Telegram",
@@ -611,7 +679,7 @@ const SocialInput = ({ label, placeHolder, icon, register }: TypeSocialInput) =>
                     </Text>
                 </Flex>
             </Box>
-            <Input
+            <Input color={"gray.800"} _placeholder={{ color: "gray.500" }}
                 w="70%"
                 h="2.6875rem"
                 borderLeftRadius="0"
@@ -619,7 +687,7 @@ const SocialInput = ({ label, placeHolder, icon, register }: TypeSocialInput) =>
                 focusBorderColor="#CFD2D7"
                 fontWeight={500}
                 placeholder={placeHolder}
-                type="text"
+                type="url"
                 title={label}
                 {...register(label)}
             />
@@ -692,7 +760,7 @@ const YourLinks = ({ setStep, success }: { setStep: Dispatch<SetStateAction<numb
                                 pow.map((ele, idx) => {
                                     let data = JSON.parse(ele)
                                     return (
-                                        <Flex alignItems={"center"} key={data.title} border={'1px solid gray'} rounded={"md"} px={"1rem"} py={"0.5rem"} color={"gray.400"} borderColor={"gray.200"} mt="2" mb={"1.5"}>
+                                        <Flex alignItems={"center"} key={data.title} border={'1px solid gray'} rounded={"md"} px={"1rem"} py={"0.5rem"} color={"gray.600"} borderColor={"gray.200"} mt="2" mb={"1.5"}>
                                             <Text fontSize={"0.8rem"} w={"full"} >{data.title}</Text>
                                             <Center columnGap={"0.8rem"}>
                                                 {/* <EditIcon onClick={() => { setselectedProject(idx) }} cursor={"pointer"} fontSize={"0.8rem"} /> */}
@@ -707,7 +775,7 @@ const YourLinks = ({ setStep, success }: { setStep: Dispatch<SetStateAction<numb
                                 })
                             }
                         </Box>
-                        <Button onClick={() => { onOpen(); setselectedProject(-1) }} fontSize={"12px"} color={"gray.400"} leftIcon={<AddIcon color={"gray.400"} />} w={"full"} mt="2" mb={"6"}>
+                        <Button onClick={() => { onOpen(); setselectedProject(-1) }} fontSize={"12px"} color={"gray.600"} leftIcon={<AddIcon color={"gray.600"} />} w={"full"} mt="2" mb={"6"}>
                             Add Project
                         </Button>
                         <Button type='submit' w={"full"} h="50px" color={"white"} bg={"rgb(101, 98, 255)"} >
@@ -748,17 +816,17 @@ const AddProject = ({ isOpen, onClose, pow, setpow }: { isOpen: boolean, onClose
                     <form onSubmit={handleSubmit(onSubmit)}>
                         <FormControl isRequired  >
                             <Box w={'full'} mb={"1.25rem"}>
-                                <FormLabel color={"gray.400"}>
+                                <FormLabel color={"gray.600"}>
                                     Project Title
                                 </FormLabel>
-                                <Input
+                                <Input color={"gray.800"} _placeholder={{ color: "gray.500" }}
                                     id="title"
                                     placeholder="Project Title"
                                     {...register("title", { required: true })}
                                 />
                             </Box>
                             <Box w={'full'} mb={"1.25rem"}>
-                                <FormLabel color={"gray.400"}>
+                                <FormLabel color={"gray.600"}>
                                     Describe Your Work
                                 </FormLabel>
                                 <Textarea placeholder='About the Project'
@@ -767,16 +835,16 @@ const AddProject = ({ isOpen, onClose, pow, setpow }: { isOpen: boolean, onClose
                             </Box>
                             <SkillSelect skills={skills} subSkills={subskills} setSkills={setskills} setSubSkills={setsubskills} />
                             <Box w={'full'} mb={"1.25rem"}>
-                                <FormLabel color={"gray.400"}>
+                                <FormLabel color={"gray.600"}>
                                     Link
                                 </FormLabel>
-                                <InputGroup>
-                                    <InputLeftElement
+                                <InputGroup _placeholder={{ color: "gray.500" }} >
+                                    <InputLeftElement _placeholder={{ color: "gray.500" }}
                                         pointerEvents='none'
                                         // eslint-disable-next-line react/no-children-prop
                                         children={<LinkIcon color='gray.300' />}
                                     />
-                                    <Input   {...register("link", { required: true })} />
+                                    <Input type="url" color={"gray.800"} _placeholder={{ color: "gray.500" }}   {...register("link", { required: true })} />
                                 </InputGroup>
                             </Box>
                             <Button type='submit' w={"full"} h="50px" color={"white"} bg={"rgb(101, 98, 255)"}>
@@ -885,10 +953,10 @@ const VerifyEmail = ({ setStep }: { setStep: () => void }) => {
                 otpSend();
             }}>
                 <Box mt={"4.6875rem"}>
-                    <FormLabel color={"gray.400"}>
+                    <FormLabel color={"gray.600"}>
                         Your Email
                     </FormLabel>
-                    <Input required type={"email"} value={email} onChange={(e) => {
+                    <Input color={"gray.800"} _placeholder={{ color: "gray.500" }} required type={"email"} value={email} onChange={(e) => {
                         setemail(e.target.value);
                     }} w={"34.375rem"} placeholder='john.doe@gmail.com' />
                 </Box>
@@ -978,7 +1046,7 @@ const OtpScreen = ({ setStep }: { setStep: () => void }) => {
                 </ PinInput>
             </Flex>
             <Flex mt={"130px"} justifyContent="space-between">
-                <Text fontSize={"1rem"} color={"gray.400"} fontWeight={"500"}>
+                <Text fontSize={"1rem"} color={"gray.600"} fontWeight={"500"}>
 
                 </Text>
                 <Text _hover={{ opacity: 0.5 }} cursor={"pointer"} onClick={() => {
@@ -1017,19 +1085,21 @@ const SuccessScreen = () => {
             <VStack>
                 <Image alt={""} w={"40px"} h={"40px"} src='/assets/icons/success.png' />
                 <Text fontWeight={"700"} fontSize={"1.8125rem"} color={"white"}>
-                    That&apos;s All You&apos;re In
+                    Your Earn Profile is Ready!
                 </Text>
                 <Text fontWeight={"500"} fontSize={"29px"} color={"rgba(255, 255, 255, 0.53)"}>
                     Have a look at your profile or start earning
                 </Text>
             </VStack>
             <HStack w={"fit-content"} mx={"auto"} mt={"66px"} gap={"1.25rem"}>
-                <TalentBio data={form} />
+                <TalentBio data={form} successPage={true} />
                 <Flex alignItems={"center"} flexDirection={"column"} bg={"white"} w={"34.375rem"} h={"21.375rem"} borderRadius={"0.6875rem"} pt={"33px"}>
                     <Center w={"30.6875rem"} h={"206px"} bg={"#E0F2FF"} mx={"auto"}>
                         <Image w={"26.875rem"} h={"12.875rem"} src='/assets/talent/fake-tasks.png' alt={""} />
                     </Center>
-                    <Button mt={"1.8125rem"} w={"31.0625rem"} h="50px" color={"white"} bg={"rgb(101, 98, 255)"} >
+                    <Button onClick={() => {
+                        window.location.href = window.location.origin
+                    }} mt={"1.8125rem"} w={"31.0625rem"} h="50px" color={"white"} bg={"rgb(101, 98, 255)"} >
                         Start Earning
                     </Button>
                 </Flex>
