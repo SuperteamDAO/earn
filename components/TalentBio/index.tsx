@@ -47,9 +47,34 @@ let overFlowText = (limit: number, text: string) => {
   return text
 }
 
-function TalentBio({ data }: { data: any }) {
+
+
+
+function TalentBio({ data, successPage }: { data: any, successPage?: boolean }) {
 
   console.log(data);
+
+  const socialLinks = [
+    {
+      icon: "/assets/talent/twitter.png",
+      link: data.twitter
+    },
+
+    {
+      icon: "/assets/talent/link.png",
+      link: data.linkedin
+    },
+
+    {
+      icon: "/assets/talent/github.png",
+      link: data.github
+    },
+
+    {
+      icon: "/assets/talent/site.png",
+      link: data.website
+    }
+  ]
 
   return (
     <Box
@@ -91,58 +116,49 @@ function TalentBio({ data }: { data: any }) {
           value={data?.currentEmployer}
         />
       </Flex>
-      <a href={`mailto:${data.email}`}>
-        <Button color={'white'} bg={'#6562FF'} w={'full'} mt={'1.575rem'}>
-          Get in touch
-        </Button>
-      </a>
+
+      {
+        (successPage) ? <a href={`/t/${data?.username}`}>
+          <Button color={'white'} bg={'#6562FF'} w={'full'} mt={'1.575rem'}>
+            View Your Profile
+          </Button>
+        </a> :
+          <a href={`mailto:${data.email}`}>
+            <Button color={'white'} bg={'#6562FF'} w={'full'} mt={'1.575rem'}>
+              Get in touch
+            </Button>
+          </a>
+      }
+
       <Flex mt={'32px'} justifyContent={'space-between'}>
-        <Box w={'22px'} h={'22px'}>
-          <a href={data.twitter}>
-            <Image
-              objectFit="contain"
-              width={'100%'}
-              height={'100%'}
-              alt=""
-              src={'/assets/talent/twitter.png'}
-            />
-          </a>
-        </Box>
-        <Box w={'22px'} h={'22px'}>
-          <a href={data.linkedin}>
-            <Image
-              objectFit="contain"
-              width={'100%'}
-              height={'100%'}
-              alt=""
-              src={'/assets/talent/linkedIn.png'}
-            />
-          </a>
-        </Box>
-        <Box w={'22px'} h={'22px'}>
-          <a href={data.github}>
-            <Image
-              objectFit="contain"
-              width={'100%'}
-              height={'100%'}
-              alt=""
-              src={'/assets/talent/github.png'}
-            />
-          </a>
-        </Box>
-        <Box w={'22px'} h={'22px'}>
-          <a href={data.website}>
-            <Image
-              objectFit="contain"
-              width={'100%'}
-              height={'100%'}
-              alt=""
-              src={'/assets/talent/site.png'}
-            />
-          </a>
-        </Box>
+
+        {
+          socialLinks.map((ele) => {
+            return (
+              <Box key={ele.link} w={'22px'} h={'22px'}
+                onClick={() => {
+                  if (ele.link) {
+                    location.href = ele.link
+                  }
+                }}
+              >
+                <Image
+                  objectFit="contain"
+                  width={'100%'}
+                  height={'100%'}
+                  alt=""
+                  src={ele.icon}
+                  cursor={(ele.link) && "pointer"}
+                  filter={(!ele.link) ? 'grayscale(80%)' : ''}
+                  opacity={(!ele.link) ? '0.3' : ''}
+                />
+              </Box>
+            )
+          })
+        }
+
       </Flex>
-    </Box>
+    </Box >
   );
 }
 

@@ -271,6 +271,7 @@ function TalentProfile() {
     }
   }, [isSuccess])
 
+  console.log(data)
 
   if (!isSuccess) {
     return <Center w={'100%'} h={"100vh"} pt={"3rem"} >
@@ -314,11 +315,11 @@ function TalentProfile() {
             <ProofWork />
             <ProofWork />
           </Flex>
-          <Box borderBottom={"1px solid #E2E8EF"} mb={"18.5px"}>
+          {(pow.length > 0) && <Box borderBottom={"1px solid #E2E8EF"} mb={"18.5px"}>
             <Text fontSize={"17.94px"} fontWeight={"500"} mb={"1.0625rem"}>
               Other Proof Work
             </Text>
-          </Box>
+          </Box>}
           <Flex gap={"1.1425rem"} wrap={"wrap"} mb={"44px"}>
             {pow.map((ele, idx) => {
               return (
@@ -326,7 +327,6 @@ function TalentProfile() {
               )
             })
             }
-
           </Flex>
           <Box borderBottom={"1px solid #E2E8EF"} mb={"18.5px"}>
             <Text fontSize={"17.94px"} fontWeight={"500"} mb={"1.0625rem"}>

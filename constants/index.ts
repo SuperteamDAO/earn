@@ -804,14 +804,13 @@ export const web3Exp = [
   'New to Crypto',
   'Occasionally contributing',
   'Contributing regularly',
-  'Learning, not yet contributing',
 ];
 
 export const workExp = [
-  'Not Yet Graduated',
-  'New Grad (1-2 years)',
-  'Mid-Level (3-5 years)',
-  'Senior (5-9 years)',
-  'Expert (10+ years)',
+  '0 Years',
+  '>2 Years',
+  '2 to 5 Years',
+  '5 to 9 Years',
+  '<9 Years',
 ];
 export const workType = ['Freelance', 'Fulltime', 'Internship'];
