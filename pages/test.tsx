@@ -6,6 +6,7 @@ import { Color } from '@tiptap/extension-color';
 import ListItem from '@tiptap/extension-list-item';
 import { GoBold } from 'react-icons/go';
 import TextStyle from '@tiptap/extension-text-style';
+import parse from 'html-react-parser';
 import {
   BsBlockquoteLeft,
   BsCodeSlash,
@@ -193,6 +194,7 @@ const MenuBar = ({ editor }: any) => {
 
 const Test = () => {
   const [url, setUrl] = useState<string>('');
+  const [data, setData] = useState<string>('');
   const editor = useEditor({
     extensions: [
       Color.configure({ types: [TextStyle.name, ListItem.name] }),
@@ -208,6 +210,10 @@ const Test = () => {
         },
       }),
     ],
+    onUpdate: ({ editor }) => {
+      const html = editor.getHTML();
+      setData(html);
+    },
     editorProps: {
       attributes: {
         class:
@@ -396,7 +402,7 @@ const Test = () => {
             alignItems={'center'}
             borderTop={'1px solid #D2D2D2'}
             borderRight={'1px solid #D2D2D2'}
-            bg={editor?.isActive('italic') ? 'gray.200' : ''}
+            bg={editor?.isActive('link') ? 'gray.200' : ''}
             onClick={() => {}}
           >
             <AiOutlineLink />
@@ -559,6 +565,15 @@ const Test = () => {
             />
           </div>
         </Box>
+      </VStack>
+      <VStack
+        className="ProseMirror"
+        w={'3xl'}
+        align={'start'}
+        mx={'auto'}
+        border={'1px solid red'}
+      >
+        {parse(data, {})}
       </VStack>
     </>
   );
