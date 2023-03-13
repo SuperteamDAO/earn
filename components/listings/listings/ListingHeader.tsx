@@ -8,12 +8,14 @@ import {
   HStack,
   Text,
   Button,
+  useDisclosure,
 } from '@chakra-ui/react';
 import { BsBell } from 'react-icons/bs';
 import { useRouter } from 'next/router';
 import { SponsorType } from '../../../interface/sponsor';
 import { TalentStore } from '../../../store/talent';
 import { userStore } from '../../../store/user';
+import { CreateProfileModal } from '../../modals/createProfile';
 interface Props {
   sponsor: SponsorType;
   title: string;
@@ -21,9 +23,12 @@ interface Props {
 }
 export const ListingHeader = ({ sponsor, title, tabs }: Props) => {
   const router = useRouter();
+
   const { userInfo } = userStore();
+  const { isOpen, onClose, onOpen } = useDisclosure();
   return (
     <>
+      {isOpen && <CreateProfileModal isOpen={isOpen} onClose={onClose} />}
       <Navbar />
       <VStack bg={'white'}>
         <VStack
@@ -55,16 +60,28 @@ export const ListingHeader = ({ sponsor, title, tabs }: Props) => {
               >
                 {title}
               </Heading>
-              <Text color={'#94A3B8'}>
-                by @{sponsor?.username} at {sponsor.name}
-              </Text>
+              <HStack>
+                <Text color={'#94A3B8'}>
+                  by @{sponsor?.username} at {sponsor.name}
+                </Text>
+                <Text
+                  px={3}
+                  py={1}
+                  rounded={'full'}
+                  bg={'#16A36821'}
+                  color={'#16A368'}
+                  fontSize={'0.75rem'}
+                >
+                  Submission Open
+                </Text>
+              </HStack>
             </VStack>
           </HStack>
           <HStack align="start" px={[3, 3, 0, 0]}>
             <Button
               onClick={() => {
                 if (!userInfo?.talent) {
-                  return;
+                  return onOpen();
                 }
               }}
               bg="#F7FAFC"

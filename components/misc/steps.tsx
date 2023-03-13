@@ -4,6 +4,7 @@ interface Props {
   currentStep: number;
   thisStep: number;
   label: string;
+  sublabel?: string;
   setStep?: Dispatch<SetStateAction<number>>;
 }
 export const Steps = ({ currentStep, thisStep, label, setStep }: Props) => {
@@ -71,7 +72,12 @@ export const Steps = ({ currentStep, thisStep, label, setStep }: Props) => {
   );
 };
 
-export const VerticalStep = ({ currentStep, thisStep, label }: Props) => {
+export const VerticalStep = ({
+  currentStep,
+  thisStep,
+  label,
+  sublabel,
+}: Props) => {
   return (
     <Flex
       cursor={'pointer'}
@@ -110,7 +116,7 @@ export const VerticalStep = ({ currentStep, thisStep, label }: Props) => {
           {label}
         </Text>
         <Text fontSize="1rem" color={'#94A3B8'} fontWeight={500}>
-          Give your best shot
+          {sublabel}
         </Text>
       </Flex>
     </Flex>

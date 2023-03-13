@@ -74,10 +74,12 @@ export const Comments = ({ onOpen, refId }: Props) => {
             h={32}
             border={'1px solid #E2E8EF'}
             placeholder="Write a comment..."
+            value={message}
             onChange={(e) => {
               setMessage(e.target.value);
             }}
           ></Textarea>
+
           <Flex w="full" justify={'end'}>
             <Button
               onClick={() => {
@@ -92,6 +94,7 @@ export const Comments = ({ onOpen, refId }: Props) => {
                   talentId: talentInfo?.id ?? '',
                   timeStamp: JSON.stringify(Date.now()),
                 });
+                setMessage('');
               }}
               bg={'#6562FF'}
               color={'white'}

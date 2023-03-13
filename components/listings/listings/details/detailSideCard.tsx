@@ -68,7 +68,7 @@ export const DetailSideCard = ({
         >
           <HStack
             h={16}
-            px={8}
+            px={'1.5rem'}
             justify={'space-between'}
             w={'full'}
             borderBottom={'1px solid #E2E8EF'}
@@ -315,7 +315,12 @@ export const DetailSideCard = ({
           align={'start'}
           p={6}
         >
-          <VerticalStep currentStep={1} thisStep={1} label={'Submission'} />
+          <VerticalStep
+            sublabel={'Give your best shot'}
+            currentStep={1}
+            thisStep={1}
+            label={'Submission Open'}
+          />
 
           <Divider
             border={'2px'}
@@ -324,7 +329,12 @@ export const DetailSideCard = ({
             transform={'translate(1rem)'}
             orientation="vertical"
           />
-          <VerticalStep currentStep={1} thisStep={2} label={'Submission'} />
+          <VerticalStep
+            currentStep={1}
+            thisStep={2}
+            sublabel={'Give your best shot'}
+            label={'Bounties being assessed'}
+          />
           <Divider
             border={'2px'}
             borderColor={'#CBD5E1'}
@@ -332,7 +342,12 @@ export const DetailSideCard = ({
             transform={'translate(1rem)'}
             orientation="vertical"
           />
-          <VerticalStep currentStep={1} thisStep={3} label={'Submission'} />
+          <VerticalStep
+            currentStep={1}
+            thisStep={3}
+            sublabel={'Winner will be announce'}
+            label={'Winner Announcement'}
+          />
         </VStack>
       </VStack>
     </>
