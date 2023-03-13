@@ -56,7 +56,7 @@ const LinkPreview = ({ data }: { data: powType }) => {
     <Box cursor={"pointer"} w={"14.75rem"} h={"11.5rem"} bg={"white"} borderRadius={'0.1875rem'} onClick={() => {
       location.href = data?.link;
     }}>
-      <Image w={"100%"} h={"8.875rem"} src={imgUrl} objectFit={"contain"} />
+      <Image alt='' w={"100%"} h={"8.875rem"} src={imgUrl} objectFit={"contain"} />
       <Box px={"1rem"} py={"0.5625rem"}>
         <Text color={"gray.400"}>
           {data.title}

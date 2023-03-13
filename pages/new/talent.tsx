@@ -701,25 +701,38 @@ const YourLinks = ({ setStep, success }: { setStep: Dispatch<SetStateAction<numb
 
     const { isOpen, onOpen, onClose } = useDisclosure()
     const [pow, setpow] = useState<string[]>([]);
+    const [socialsError, setsocialsError] = useState<boolean>(false);
 
 
     const { connected, publicKey } = useWallet();
 
     let { updateState } = useFormStore();
 
-    const uploadProfile = async (socials: { twitter: string, github: string, linkedin: string, telegram: string, website: string }, pow: string) => {
+    let user = userStore().userInfo
 
+    const uploadProfile = async (socials: { twitter: string, github: string, linkedin: string, telegram: string, website: string }, pow: string) => {
+        if (socials.twitter.length == 0 && socials.github.length == 0 && socials.linkedin.length == 0 && socials.telegram.length == 0 && socials.website.length == 0) {
+            return setsocialsError(true);
+        }
         updateState({ pow, ...socials });
         console.log(form);
-        let res = await axios.post(`${process.env.NEXT_PUBLIC_BACKEND_URL}/talent/create`, {
+        let createTalent = axios.post(`${process.env.NEXT_PUBLIC_BACKEND_URL}/talent/create`, {
             ...form, pow, ...socials,
             verified: true, superteamLevel: "Lurker",
             id: genrateuuid(),
-            publickey: JSON.stringify(publicKey)
+            publickey: publicKey?.toBase58() as string
         })
-        console.log(res);
-        if (res) {
+        let updateUser = axios.patch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/user/update`, {
+            id: user?.id,
+            update: {
+                talent: true
+            }
+        })
 
+        let res = await Promise.all([createTalent, updateUser]);
+
+        console.log(res);
+        if (res[0] && res[1]) {
             success();
         }
     }
@@ -778,6 +791,7 @@ const YourLinks = ({ setStep, success }: { setStep: Dispatch<SetStateAction<numb
                         <Button onClick={() => { onOpen(); setselectedProject(-1) }} fontSize={"12px"} color={"gray.600"} leftIcon={<AddIcon color={"gray.600"} />} w={"full"} mt="2" mb={"6"}>
                             Add Project
                         </Button>
+                        {(socialsError) && <Text mb={"0.5rem"} color={"red"}>Please fill at least one social link to continue !</Text>}
                         <Button type='submit' w={"full"} h="50px" color={"white"} bg={"rgb(101, 98, 255)"} >
                             Finish Profile
                         </Button>

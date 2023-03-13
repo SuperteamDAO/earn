@@ -37,7 +37,7 @@ interface Props {
 }
 export const Navbar = ({ sponsors }: Props) => {
   const { setUserInfo } = userStore();
-  const { setTalentInfo } = TalentStore();
+  const { setTalentInfo, talentInfo } = TalentStore();
   const router = useRouter();
   const { connected, publicKey, wallet, connect, select, wallets } =
     useWallet();
@@ -57,6 +57,7 @@ export const Navbar = ({ sponsors }: Props) => {
     };
     makeUser();
   }, [publicKey, connected]);
+
   const findTalent = async () => {
     const talent = await findTalentPubkey(publicKey?.toBase58() as string);
     if (!talent) {
@@ -64,6 +65,7 @@ export const Navbar = ({ sponsors }: Props) => {
     }
     return setTalentInfo(talent.data);
   };
+
   const onDisconnectWallet = async () => {
     if (wallet == null) {
       return;
@@ -86,6 +88,8 @@ export const Navbar = ({ sponsors }: Props) => {
       toast.error('Wallet not found');
     }
   };
+
+  console.log(talentInfo)
 
   return (
     <>
@@ -200,7 +204,7 @@ export const Navbar = ({ sponsors }: Props) => {
                     </HStack>
                   </MenuButton>
                   <MenuList w={'15rem'}>
-                    <MenuItem onClick={() => {}}>
+                    <MenuItem isDisabled={!talentInfo?.username} onClick={() => router.push(`/t/${talentInfo?.username}`)}>
                       <Text fontSize="0.9rem" color="gray.600">
                         View Profile
                       </Text>
