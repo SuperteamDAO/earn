@@ -720,7 +720,7 @@ const YourLinks = ({ setStep, success }: { setStep: Dispatch<SetStateAction<numb
             ...form, pow, ...socials,
             verified: true, superteamLevel: "Lurker",
             id: genrateuuid(),
-            publickey: JSON.stringify(publicKey)
+            publickey: publicKey?.toBase58() as string
         })
         let updateUser = axios.patch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/user/update`, {
             id: user?.id,
