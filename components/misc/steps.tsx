@@ -15,7 +15,16 @@ export const Steps = ({ currentStep, thisStep, label, setStep }: Props) => {
   };
   return (
     <>
-      <Box onClick={handleChange} cursor={'pointer'} position="relative">
+      <Box
+        display={'flex'}
+        justifyContent={'center'}
+        alignItems={'start'}
+        flexDir={'column'}
+        onClick={handleChange}
+        cursor={'pointer'}
+        position="relative"
+        h={'6rem'}
+      >
         <Flex
           w="2.3rem"
           h="2.3rem"
@@ -47,12 +56,13 @@ export const Steps = ({ currentStep, thisStep, label, setStep }: Props) => {
               ? 'translate(-1.5rem)'
               : 'translate(-0.7rem)'
           }
-          mt="0.8rem"
           fontSize="1rem"
+          bottom={0}
+          left={currentStep === thisStep ? -2 : 1}
           position="absolute"
           color={currentStep === thisStep ? '#1E293B' : '#CBD5E1'}
           fontWeight={600}
-          w={"max-content"}
+          w={'max-content'}
         >
           {label}
         </Text>

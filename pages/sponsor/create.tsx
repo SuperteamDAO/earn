@@ -236,7 +236,7 @@ const CreateSponsor = () => {
                         </FormLabel>
                         <Input
                           id="twitterHandle"
-                          placeholder="SuperteamDAO"
+                          placeholder="@SuperteamDAO"
                           {...register('twitterHandle')}
                         />
                         <FormErrorMessage>

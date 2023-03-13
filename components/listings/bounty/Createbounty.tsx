@@ -1,12 +1,9 @@
-import { OutputData } from '@editorjs/editorjs';
 import dynamic from 'next/dynamic';
 import React, { Dispatch, SetStateAction, useState } from 'react';
 import { MultiSelectOptions } from '../../../constants';
 import { CreatebountyBasic } from './CreateBountyBasic';
 import { CreatebountyPayment } from './CreateBountyPayments';
-const Description = dynamic(() => import('../description'), {
-  ssr: false,
-});
+import Description from '../description';
 export interface BountyBasicType {
   title: string;
   deadline: string;
@@ -15,8 +12,8 @@ export interface BountyBasicType {
 interface Props {
   steps: number;
   setSteps: Dispatch<SetStateAction<number>>;
-  setEditorData: Dispatch<SetStateAction<OutputData | undefined>>;
-  editorData: OutputData | undefined;
+  setEditorData: Dispatch<SetStateAction<string | undefined>>;
+  editorData: string | undefined;
   mainSkills: MultiSelectOptions[];
   setMainSkills: Dispatch<SetStateAction<MultiSelectOptions[]>>;
   subSkills: MultiSelectOptions[];

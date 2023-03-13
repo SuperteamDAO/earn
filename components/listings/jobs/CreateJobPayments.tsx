@@ -27,7 +27,7 @@ import { genrateuuid } from '../../../utils/helpers';
 
 interface Props {
   jobBasics: JobBasicsType | undefined;
-  editorData: OutputData | undefined;
+  editorData: string | undefined;
   mainSkills: MultiSelectOptions[];
   subSkills: MultiSelectOptions[];
   onOpen: () => void;

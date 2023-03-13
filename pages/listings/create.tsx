@@ -8,7 +8,6 @@ import { useEffect, useState } from 'react';
 import { CreateJob } from '../../components/listings/jobs/CreateJob';
 // import { Description } from '../../components/listings/description';
 import dynamic from 'next/dynamic';
-import { OutputData } from '@editorjs/editorjs';
 import Template from '../../components/listings/templates/template';
 import { MultiSelectOptions } from '../../constants';
 import { useRouter } from 'next/router';
@@ -29,12 +28,6 @@ import { userStore } from '../../store/user';
 import { genrateuuid } from '../../utils/helpers';
 import axios from 'axios';
 import toast, { ToastBar, Toaster } from 'react-hot-toast';
-const Description = dynamic(
-  () => import('../../components/listings/description'),
-  {
-    ssr: false,
-  }
-);
 
 const CreateListing = () => {
   // Templates - 1
@@ -44,7 +37,7 @@ const CreateListing = () => {
   const [steps, setSteps] = useState<number>(1);
   const router = useRouter();
   const [draftLoading, setDraftLoading] = useState<boolean>(false);
-  const [editorData, setEditorData] = useState<OutputData | undefined>();
+  const [editorData, setEditorData] = useState<string | undefined>();
   //
   const [mainSkills, setMainSkills] = useState<MultiSelectOptions[]>([]);
   const [subSkill, setSubSkill] = useState<MultiSelectOptions[]>([]);

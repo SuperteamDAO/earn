@@ -10,6 +10,7 @@ import { Wallet } from '../context/connectWalletContext';
 import { ReactQueryDevtools } from '@tanstack/react-query-devtools';
 import 'degen/styles';
 // Styles
+import '../styles/globals.scss';
 import '@fontsource/inter/';
 import '@fontsource/inter/400.css';
 import '@fontsource/inter/500.css';

@@ -1,20 +1,18 @@
-import { OutputData } from '@editorjs/editorjs';
+import Description from '../description';
 import dynamic from 'next/dynamic';
 import React, { Dispatch, SetStateAction } from 'react';
 import { MultiSelectOptions } from '../../../constants';
 import { GrantsBasicType } from '../../../interface/listings';
 import { CreateGrantsBasic } from './CreateGrantsBasic';
 import { CreateGrantsPayment } from './CreateGrantsPayments';
-const Description = dynamic(() => import('../description'), {
-  ssr: false,
-});
+
 interface Props {
   grantBasic: GrantsBasicType | undefined;
   setGrantBasic: Dispatch<SetStateAction<GrantsBasicType | undefined>>;
   steps: number;
   setSteps: Dispatch<SetStateAction<number>>;
-  setEditorData: Dispatch<SetStateAction<OutputData | undefined>>;
-  editorData: OutputData | undefined;
+  setEditorData: Dispatch<SetStateAction<string | undefined>>;
+  editorData: string | undefined;
   mainSkills: MultiSelectOptions[];
   setMainSkills: Dispatch<SetStateAction<MultiSelectOptions[]>>;
   subSkills: MultiSelectOptions[];

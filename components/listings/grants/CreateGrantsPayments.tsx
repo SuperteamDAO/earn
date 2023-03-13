@@ -35,7 +35,7 @@ interface PrizeList {
 }
 interface Props {
   setSteps: Dispatch<SetStateAction<number>>;
-  editorData: OutputData | undefined;
+  editorData: string | undefined;
   mainSkills: MultiSelectOptions[];
   subSkills: MultiSelectOptions[];
   grantsBasic: GrantsBasicType | undefined;

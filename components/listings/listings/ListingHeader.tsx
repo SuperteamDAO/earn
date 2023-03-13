@@ -12,6 +12,8 @@ import {
 import { BsBell } from 'react-icons/bs';
 import { useRouter } from 'next/router';
 import { SponsorType } from '../../../interface/sponsor';
+import { TalentStore } from '../../../store/talent';
+import { userStore } from '../../../store/user';
 interface Props {
   sponsor: SponsorType;
   title: string;
@@ -19,6 +21,7 @@ interface Props {
 }
 export const ListingHeader = ({ sponsor, title, tabs }: Props) => {
   const router = useRouter();
+  const { userInfo } = userStore();
   return (
     <>
       <Navbar />
@@ -46,18 +49,27 @@ export const ListingHeader = ({ sponsor, title, tabs }: Props) => {
             <VStack align={'start'}>
               <Heading
                 fontFamily={'Inter'}
-                fontSize={'1.2rem'}
+                fontSize={'1.3rem'}
                 fontWeight={700}
                 color={'#334254'}
               >
                 {title}
               </Heading>
-              <Text color={'#94A3B8'}>by @{sponsor?.name}</Text>
+              <Text color={'#94A3B8'}>
+                by @{sponsor?.username} at {sponsor.name}
+              </Text>
             </VStack>
           </HStack>
           <HStack align="start" px={[3, 3, 0, 0]}>
-            <Button bg="#F7FAFC">
-              <BsBell color="#DADADA" />
+            <Button
+              onClick={() => {
+                if (!userInfo?.talent) {
+                  return;
+                }
+              }}
+              bg="#F7FAFC"
+            >
+              <BsBell color="rgb(107 114 128)" />
             </Button>
           </HStack>
         </VStack>

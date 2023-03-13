@@ -20,7 +20,7 @@ import {
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import Avatar from 'boring-avatars';
 import { useForm } from 'react-hook-form';
-import toast from 'react-hot-toast';
+import toast, { Toaster } from 'react-hot-toast';
 import { SponsorType } from '../../interface/sponsor';
 import DashboardLayout from '../../layouts/dashboardLayout';
 import { SponsorStore } from '../../store/sponsor';
@@ -87,7 +87,8 @@ const Team = () => {
             Team Members
           </Text>
           <Text mb={5} color="gray.400" fontWeight={500} fontSize="1rem">
-            Invite your team to create bounties on Superteam Earn.
+            Invite your team members to co-create listings with you on Superteam
+            Earn
           </Text>
           <Flex pr={10} gap={10} justify={'space-between'}>
             <Skeleton w={'60%rem'} isLoaded={!Team.isLoading}>
@@ -184,6 +185,7 @@ const Team = () => {
                             )}
                             {el.type === 'Member' && (
                               <Button
+                                isLoading={deleteMemberMutation.isLoading}
                                 onClick={() => {
                                   deleteMemberMutation.mutate(el.id as string);
                                 }}
@@ -211,10 +213,26 @@ const Team = () => {
               </Text>
               <form
                 onSubmit={handleSubmit(async (e) => {
-                  await createMember(e.name, e.email, e.address);
+                  Team.data.map(async (el: SponsorType) => {
+                    if (el.email === e.email) {
+                      return toast.error('Email already exist');
+                    }
+                    if (el.publickey === e.address) {
+                      return toast.error('Wallet address already exist');
+                    }
+                    await createMember(e.name, e.email, e.address);
+                  });
                 })}
               >
-                <Flex flexDir={'column'} w={'full'} px={7} bg={'white'} gap={2}>
+                <Toaster />
+                <Flex
+                  rounded={'md'}
+                  flexDir={'column'}
+                  w={'full'}
+                  px={7}
+                  bg={'white'}
+                  gap={2}
+                >
                   <FormControl isRequired>
                     <Box fontSize="14px" my={2}>
                       <Text color={'gray.400'} mb="3">
@@ -285,15 +303,15 @@ const Team = () => {
                   >
                     Send Invite
                   </Button>
-                  <Box w="full" h={20} bg={'#F4F3FF'}>
+                  <Box w="full" h={'max'} mb={5} rounded={'md'} bg={'#F4F3FF'}>
                     <Text
                       color={'#3F3DA1'}
                       fontSize="11px"
                       fontWeight={400}
                       p={4}
                     >
-                      Note members can create and fund bounties, but only you
-                      can add/remove members
+                      Note: All Team Members can create and fund bounties, but
+                      only Admins can add or remove Team Members
                     </Text>
                   </Box>
                 </Flex>

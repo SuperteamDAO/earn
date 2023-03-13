@@ -94,6 +94,8 @@ const Bounties = () => {
       toast.success('Error occur while commenting');
     },
   });
+  console.log(listingInfo.data);
+
   return (
     <>
       {isOpen && <CreateProfileModal isOpen={isOpen} onClose={onClose} />}
@@ -101,7 +103,7 @@ const Bounties = () => {
         tabs={true}
         title={listingInfo.data?.listing?.title ?? ''}
         sponsor={
-          !listingInfo.data?.sponsor
+          listingInfo.data?.sponsor
             ? (listingInfo.data?.sponsor as SponsorType)
             : defalutSponsor
         }

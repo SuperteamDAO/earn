@@ -30,7 +30,7 @@ interface PrizeList {
 }
 interface Props {
   bountyBasic: BountyBasicType | undefined;
-  editorData: OutputData | undefined;
+  editorData: string | undefined;
   mainSkills: MultiSelectOptions[];
   subSkills: MultiSelectOptions[];
   onOpen: () => void;

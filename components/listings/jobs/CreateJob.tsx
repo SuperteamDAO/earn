@@ -1,11 +1,9 @@
-import { OutputData } from '@editorjs/editorjs';
+import Description from '../description';
 import dynamic from 'next/dynamic';
 import React, { Dispatch, SetStateAction } from 'react';
 import { MultiSelectOptions } from '../../../constants';
 import { JobBasicsType } from '../../../interface/listings';
-const Description = dynamic(() => import('../description'), {
-  ssr: false,
-});
+
 import { CreateJobBasic } from './CreateJobBasic';
 import { CreateJobPayments } from './CreateJobPayments';
 interface Props {
@@ -13,8 +11,8 @@ interface Props {
   setJobBasic: Dispatch<SetStateAction<JobBasicsType | undefined>>;
   steps: number;
   setSteps: Dispatch<SetStateAction<number>>;
-  setEditorData: Dispatch<SetStateAction<OutputData | undefined>>;
-  editorData: OutputData | undefined;
+  setEditorData: Dispatch<SetStateAction<string | undefined>>;
+  editorData: string | undefined;
   mainSkills: MultiSelectOptions[];
   setMainSkills: Dispatch<SetStateAction<MultiSelectOptions[]>>;
   subSkills: MultiSelectOptions[];
