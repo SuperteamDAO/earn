@@ -15,7 +15,6 @@ import {
   Text,
   VStack,
 } from '@chakra-ui/react';
-import { OutputData } from '@editorjs/editorjs';
 import { Dispatch, SetStateAction, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { tokenList, PrizeList, MultiSelectOptions } from '../../../constants';

@@ -9,7 +9,6 @@ import {
   Select,
   VStack,
 } from '@chakra-ui/react';
-import { OutputData } from '@editorjs/editorjs';
 import { Dispatch, SetStateAction, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import ReactSelect from 'react-select';
