@@ -54,6 +54,7 @@ export const Steps = ({ currentStep, thisStep, label, setStep }: Props) => {
         <Text
           fontSize="1rem"
           bottom={0}
+          w={'max-content'}
           display={'flex'}
           justifyContent={'center'}
           alignItems={'center'}
