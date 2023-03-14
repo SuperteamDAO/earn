@@ -7,6 +7,7 @@ import { SponsorType } from '../interface/sponsor';
 interface StepsList {
   label: string;
   number: number;
+  description?: string;
 }
 interface Props {
   children: any;
@@ -42,7 +43,7 @@ const FormLayout = ({
               fontFamily={'Inter'}
               fontWeight={500}
             >
-              Start from Scratch or use our readymade templates to save time
+              {stepList[currentStep - 1].description}
             </Text>
           </VStack>
           <HStack w="50%">

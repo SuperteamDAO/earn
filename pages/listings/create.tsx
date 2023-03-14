@@ -180,18 +180,23 @@ const CreateListing = () => {
             {
               label: 'Template',
               number: 1,
+              description:
+                'To save time, check out our ready made templates below. If you already have a listing elsewhere, use "Start from Scratch" and copy/paste your text.',
             },
             {
               label: 'Basics',
               number: 2,
+              description: `Now let's learn a bit more about the work you need completed`,
             },
             {
               label: 'Description',
               number: 3,
+              description: 'Create a description',
             },
             {
               label: 'Reward',
               number: 4,
+              description: 'Quickly create a listing on the platform',
             },
           ]}
         >

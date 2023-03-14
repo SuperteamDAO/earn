@@ -43,6 +43,9 @@ const Jobs = () => {
             skills={
               JSON.parse(listingInfo.data?.listing.skills as string) ?? []
             }
+            description={
+              (listingInfo.data?.listing.description as string) ?? ''
+            }
           />
         </HStack>
         <Flex
