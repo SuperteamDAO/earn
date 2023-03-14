@@ -135,6 +135,9 @@ const Bounties = () => {
               skills={
                 JSON.parse(listingInfo.data?.listing.skills as string) ?? []
               }
+              description={
+                (listingInfo.data?.listing.description as string) ?? ''
+              }
             />
             <Comments
               refId={listingInfo.data?.listing.id ?? ''}

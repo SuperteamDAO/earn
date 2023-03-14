@@ -12,6 +12,7 @@ import {
   Tooltip,
   VStack,
 } from '@chakra-ui/react';
+import moment from 'moment';
 import React, { Dispatch, SetStateAction, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import ReactSelect from 'react-select';
@@ -51,11 +52,6 @@ export const CreateJobBasic = ({
   createDraft,
   draftLoading,
 }: Props) => {
-  const {
-    formState: { errors },
-    register,
-    handleSubmit,
-  } = useForm();
   //
   const [errorState, setErrorState] = useState<ErrorsBasic>({
     deadline: false,
@@ -65,8 +61,7 @@ export const CreateJobBasic = ({
     link: false,
     type: false,
   });
-
-  const animatedComponents = makeAnimated();
+  const date = moment().format('YYYY-MM-DD');
   return (
     <>
       <VStack py={7} align={'start'} w={'2xl'}>
@@ -111,41 +106,25 @@ export const CreateJobBasic = ({
               });
             }}
           />
-          <FormErrorMessage>
-            {errors.title ? <>{errors.title.message}</> : <></>}
-          </FormErrorMessage>
+          <FormErrorMessage></FormErrorMessage>
         </FormControl>
         <FormControl my={5} isRequired isInvalid={errorState.type}>
-          <Flex>
-            <FormLabel
-              color={'gray.500'}
-              fontWeight={600}
-              fontSize={'15px'}
-              htmlFor={'title'}
-            >
-              Job Type
-            </FormLabel>
-            <Tooltip
-              placement="right-end"
-              fontSize="0.9rem"
-              padding="0.7rem"
-              bg="#6562FF"
-              color="white"
-              fontWeight={600}
-              borderRadius="0.5rem"
-              hasArrow
-              w="max"
-              label={`Who will respond to questions about the opportunity from your team?`}
-            >
-              <Image
-                mt={-2}
-                src={'/assets/icons/info-icon.svg'}
-                alt={'Info Icon'}
-              />
-            </Tooltip>
-          </Flex>
+          <FormLabel
+            color={'gray.500'}
+            fontWeight={600}
+            fontSize={'15px'}
+            htmlFor={'title'}
+          >
+            Job Type
+          </FormLabel>
           <Select
             value={jobBasics?.type}
+            placeholder={'Job Type'}
+            color={'gray.700'}
+            defaultValue={'fulltime'}
+            _placeholder={{
+              color: 'gray.400',
+            }}
             onChange={(e) => {
               setJobBasic({
                 ...(jobBasics as JobBasicsType),
@@ -158,34 +137,14 @@ export const CreateJobBasic = ({
             <option value="parttime">Part Time</option>
           </Select>
           <FormControl my={5} isRequired isInvalid={errorState.link}>
-            <Flex>
-              <FormLabel
-                color={'gray.500'}
-                fontWeight={600}
-                fontSize={'15px'}
-                htmlFor={'application_link'}
-              >
-                Application Link
-              </FormLabel>
-              <Tooltip
-                placement="right-end"
-                fontSize="0.9rem"
-                padding="0.7rem"
-                bg="#6562FF"
-                color="white"
-                fontWeight={600}
-                borderRadius="0.5rem"
-                hasArrow
-                w="max"
-                label={`Who will respond to questions about the opportunity from your team?`}
-              >
-                <Image
-                  mt={-2}
-                  src={'/assets/icons/info-icon.svg'}
-                  alt={'Info Icon'}
-                />
-              </Tooltip>
-            </Flex>
+            <FormLabel
+              color={'gray.500'}
+              fontWeight={600}
+              fontSize={'15px'}
+              htmlFor={'application_link'}
+            >
+              Application Link
+            </FormLabel>
 
             <InputGroup>
               <InputLeftElement
@@ -261,6 +220,7 @@ export const CreateJobBasic = ({
             id="deadline"
             type={'datetime-local'}
             placeholder="deadline"
+            min={date + 'T00:00'}
             color={'gray.500'}
             value={jobBasics?.deadline}
             onChange={(e) => {
@@ -270,9 +230,7 @@ export const CreateJobBasic = ({
               });
             }}
           />
-          <FormErrorMessage>
-            {errors.deadline ? <>{errors.deadline.message}</> : <></>}
-          </FormErrorMessage>
+          <FormErrorMessage></FormErrorMessage>
         </FormControl>
         <VStack gap={6} w={'full'} pt={10}>
           <Button

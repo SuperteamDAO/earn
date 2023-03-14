@@ -16,6 +16,7 @@ import { useForm } from 'react-hook-form';
 import { BountyBasicType } from './Createbounty';
 import { MainSkills, MultiSelectOptions, SubSkills } from '../../../constants';
 import { SkillSelect } from '../../misc/SkillSelect';
+import moment from 'moment';
 interface Props {
   bountyBasic: BountyBasicType | undefined;
   setbountyBasic: Dispatch<SetStateAction<BountyBasicType | undefined>>;
@@ -53,11 +54,12 @@ export const CreatebountyBasic = ({
     skills: false,
   });
 
-  const animatedComponents = makeAnimated();
+  const date = moment().format('YYYY-MM-DD');
+
   return (
     <>
-      <VStack pt={7} align={'start'} w={'2xl'}>
-        <FormControl mb={5} w="full" isRequired isInvalid={errorState.title}>
+      <VStack gap={3} pt={7} align={'start'} w={'2xl'}>
+        <FormControl w="full" isRequired isInvalid={errorState.title}>
           <Flex>
             <FormLabel
               color={'gray.500'}
@@ -194,6 +196,7 @@ export const CreatebountyBasic = ({
             w={'full'}
             id="deadline"
             type={'datetime-local'}
+            min={date + 'T00:00'}
             placeholder="deadline"
             value={bountyBasic?.deadline}
             color={'gray.500'}

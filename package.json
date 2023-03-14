@@ -45,6 +45,7 @@
     "html-react-parser": "^3.0.12",
     "husky": "^8.0.3",
     "immer": "^9.0.19",
+    "moment": "^2.29.4",
     "next": "12.2.3",
     "open-graph-scraper": "^5.1.1",
     "react": "18.2.0",

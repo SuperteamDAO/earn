@@ -11,6 +11,7 @@ import {
 } from '@chakra-ui/react';
 import { Dispatch, SetStateAction, useState } from 'react';
 import { useForm } from 'react-hook-form';
+import toast, { Toaster } from 'react-hot-toast';
 import ReactSelect from 'react-select';
 import makeAnimated from 'react-select/animated';
 import {
@@ -66,6 +67,7 @@ export const CreateJobPayments = ({
   const { currentSponsor } = SponsorStore();
   const [location, setLocation] = useState<string>('');
   const [timeZone, setTimeZone] = useState<MultiSelectOptions[]>([]);
+  const [irlSpace, setIrlSpace] = useState<string>('');
   const animatedComponents = makeAnimated();
   const [loading, setLoading] = useState<boolean>(false);
   // payment values
@@ -91,7 +93,7 @@ export const CreateJobPayments = ({
       source: 'native',
       subskills: JSON.stringify(subSkills),
       title: jobBasics?.title ?? '',
-      location: location,
+      location: location === 'In Person' ? irlSpace : location,
       link: jobBasics?.link ?? '',
       experience: payment?.exp as string,
       timezone: JSON.stringify(timeZone),
@@ -109,7 +111,14 @@ export const CreateJobPayments = ({
   };
   return (
     <>
-      <VStack pb={10} color={'gray.500'} pt={7} align={'start'} w={'2xl'}>
+      <VStack
+        pb={10}
+        color={'gray.700'}
+        gap={2}
+        pt={7}
+        align={'start'}
+        w={'2xl'}
+      >
         <FormControl isRequired>
           <FormLabel
             color={'gray.500'}
@@ -117,13 +126,13 @@ export const CreateJobPayments = ({
             fontSize={'15px'}
             htmlFor={'exp'}
           >
-            Location
+            Location Type
           </FormLabel>
 
           <Select
             id="exp"
             placeholder="Location"
-            color={'gray.500'}
+            color={'gray.700'}
             onChange={(e) => {
               setLocation(e.target.value);
             }}
@@ -155,11 +164,40 @@ export const CreateJobPayments = ({
               closeMenuOnSelect={false}
               components={animatedComponents}
               isMulti
+              styles={{
+                control: (baseStyles, state) => ({
+                  ...baseStyles,
+                  color: 'gray.600',
+                }),
+              }}
               options={TimeZoneList}
               onChange={(e) => {
                 setTimeZone(e as any);
               }}
             />
+          </FormControl>
+        )}
+        {location === 'In Person' && (
+          <FormControl w="full" isRequired isInvalid={errorState?.min_sal}>
+            <Flex>
+              <FormLabel
+                color={'gray.500'}
+                fontWeight={600}
+                fontSize={'15px'}
+                htmlFor={'location'}
+              >
+                Location
+              </FormLabel>
+            </Flex>
+
+            <Input
+              color={'gray.700'}
+              placeholder="City, Country"
+              onChange={(e) => {
+                setIrlSpace(e.target.value);
+              }}
+            />
+            <FormErrorMessage></FormErrorMessage>
           </FormControl>
         )}
 
@@ -184,7 +222,7 @@ export const CreateJobPayments = ({
               });
             }}
             defaultValue={ExperienceList[0]}
-            color={'gray.500'}
+            color={'gray.700'}
           >
             {ExperienceList.map((el) => {
               return (
@@ -198,7 +236,7 @@ export const CreateJobPayments = ({
             {errors.time ? <>{errors.time.message}</> : <></>}
           </FormErrorMessage>
         </FormControl>
-        <HStack my={6}>
+        <HStack w={'full'} my={6}>
           <FormControl w="full" isRequired isInvalid={errorState?.min_sal}>
             <Flex>
               <FormLabel
@@ -214,6 +252,7 @@ export const CreateJobPayments = ({
             <Input
               id="min_sal"
               type={'number'}
+              color={'gray.700'}
               placeholder="100,000"
               onChange={(e) => {
                 setPayment({
@@ -241,6 +280,7 @@ export const CreateJobPayments = ({
             <Input
               id="max_sal"
               placeholder="150,000"
+              color={'gray.700'}
               type={'number'}
               onChange={(e) => {
                 setPayment({
@@ -254,7 +294,7 @@ export const CreateJobPayments = ({
             </FormErrorMessage>
           </FormControl>
         </HStack>
-        <HStack>
+        <HStack w={'full'}>
           <FormControl w="full" isRequired isInvalid={errorState?.min_eq}>
             <Flex>
               <FormLabel
@@ -268,6 +308,7 @@ export const CreateJobPayments = ({
             </Flex>
 
             <Input
+              color={'gray.700'}
               id="min-eq"
               placeholder="0.5%"
               onChange={(e) => {
@@ -294,7 +335,9 @@ export const CreateJobPayments = ({
             </Flex>
 
             <Input
+              color={'gray.700'}
               id="max_eq"
+              max={100}
               onChange={(e) => {
                 setPayment({
                   ...(payment as PaymentsState),
@@ -308,8 +351,7 @@ export const CreateJobPayments = ({
             </FormErrorMessage>
           </FormControl>
         </HStack>
-
-        <VStack gap={6} mt={10}>
+        <VStack gap={6} w={'full'} mt={10}>
           <Button
             w="100%"
             bg={'#6562FF'}
@@ -324,6 +366,37 @@ export const CreateJobPayments = ({
                 max_sal: payment?.max_sal ? false : true,
                 min_sal: payment?.min_sal ? false : true,
               });
+
+              if (Number(payment?.max_eq) > 100) {
+                setErrorState({
+                  ...(errorState as ErrorState),
+                  max_eq: true,
+                });
+                toast.error('Maximum Equity Cannot Be More Than 100%');
+                return;
+              }
+              if (Number(payment?.max_eq) < Number(payment?.min_eq)) {
+                toast.error(
+                  'Minimum Equity Cannot Be More Than Maximum Equity'
+                );
+                setErrorState({
+                  ...(errorState as ErrorState),
+                  max_eq: true,
+                  min_eq: true,
+                });
+                return;
+              }
+              if (Number(payment?.max_sal) < Number(payment?.min_sal)) {
+                toast.error(
+                  'Minimum Salary Cannot Be More Than Maximum Salary'
+                );
+                setErrorState({
+                  ...(errorState as ErrorState),
+                  max_sal: true,
+                  min_sal: true,
+                });
+                return;
+              }
               if (
                 payment?.exp &&
                 payment.max_eq &&
@@ -338,7 +411,7 @@ export const CreateJobPayments = ({
             isLoading={loading}
             disabled={loading}
           >
-            Finish the listing
+            Finish the Listing
           </Button>
           <Button
             w="100%"
@@ -363,6 +436,7 @@ export const CreateJobPayments = ({
           </Button>
         </VStack>
       </VStack>
+      <Toaster />
     </>
   );
 };

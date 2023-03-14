@@ -96,7 +96,7 @@ export const DetailSideCard = ({
             </Text>
           </HStack>
           <VStack borderBottom={'1px solid #E2E8EF'} w={'full'}>
-            <TableContainer>
+            <TableContainer w={'full'}>
               <Table mt={-8} variant={'unstyled'}>
                 <Thead>
                   <Tr>
@@ -114,6 +114,8 @@ export const DetailSideCard = ({
                           bg={'#C6C6C62B'}
                           rounded={'full'}
                           p={1.5}
+                          w={8}
+                          h={8}
                           justify={'center'}
                           align={'center'}
                         >
@@ -144,6 +146,8 @@ export const DetailSideCard = ({
                           bg={'#C6C6C62B'}
                           rounded={'full'}
                           p={1.5}
+                          w={8}
+                          h={8}
                           justify={'center'}
                           align={'center'}
                         >
@@ -174,6 +178,8 @@ export const DetailSideCard = ({
                           bg={'#C6C6C62B'}
                           rounded={'full'}
                           p={1.5}
+                          w={8}
+                          h={8}
                           justify={'center'}
                           align={'center'}
                         >
@@ -203,6 +209,8 @@ export const DetailSideCard = ({
                           fontSize={'0.7rem'}
                           bg={'#C6C6C62B'}
                           rounded={'full'}
+                          w={8}
+                          h={8}
                           justify={'center'}
                           align={'center'}
                           p={1.5}
@@ -234,6 +242,8 @@ export const DetailSideCard = ({
                           bg={'#C6C6C62B'}
                           rounded={'full'}
                           p={1.5}
+                          w={8}
+                          h={8}
                           justify={'center'}
                           align={'center'}
                         >

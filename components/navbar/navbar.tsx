@@ -89,7 +89,7 @@ export const Navbar = ({ sponsors }: Props) => {
     }
   };
 
-  console.log(talentInfo)
+  console.log(talentInfo);
 
   return (
     <>
@@ -172,7 +172,7 @@ export const Navbar = ({ sponsors }: Props) => {
                       router.push('/listings/create');
                     }}
                   >
-                    Create a listing
+                    Create a Listing
                   </Button>
                 )}
                 <Divider
@@ -204,7 +204,10 @@ export const Navbar = ({ sponsors }: Props) => {
                     </HStack>
                   </MenuButton>
                   <MenuList w={'15rem'}>
-                    <MenuItem isDisabled={!talentInfo?.username} onClick={() => router.push(`/t/${talentInfo?.username}`)}>
+                    <MenuItem
+                      isDisabled={!talentInfo?.username}
+                      onClick={() => router.push(`/t/${talentInfo?.username}`)}
+                    >
                       <Text fontSize="0.9rem" color="gray.600">
                         View Profile
                       </Text>

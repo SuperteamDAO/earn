@@ -12,6 +12,7 @@ import {
   useClipboard,
   VStack,
 } from '@chakra-ui/react';
+import { useRouter } from 'next/router';
 import React from 'react';
 interface Props {
   onClose: () => void;
@@ -22,6 +23,7 @@ export const SuccessListings = ({ isOpen, onClose, slug }: Props) => {
   const { hasCopied, onCopy } = useClipboard(
     'http://localhost:3000/listings' + slug
   );
+  const router = useRouter();
   return (
     <>
       <Modal isOpen={isOpen} onClose={onClose}>
@@ -29,7 +31,7 @@ export const SuccessListings = ({ isOpen, onClose, slug }: Props) => {
         <ModalContent py={5} h={'max'}>
           <ModalHeader>
             <Text color={'gray.700'} fontWeight={600} fontFamily={'Inter'}>
-              You have successfully created a listing
+              You Have Successfully Created A Listing
             </Text>
             <InputGroup mt={5}>
               <Input
@@ -65,6 +67,9 @@ export const SuccessListings = ({ isOpen, onClose, slug }: Props) => {
                 fontSize="1rem"
                 fontWeight={600}
                 _hover={{ bg: '#6562FF' }}
+                onClick={() => {
+                  router.push(`/listings` + slug);
+                }}
               >
                 Continue with Listings
               </Button>
@@ -76,6 +81,9 @@ export const SuccessListings = ({ isOpen, onClose, slug }: Props) => {
                 border="1px solid"
                 borderColor="gray.200"
                 bg="transparent"
+                onClick={() => {
+                  router.push('/dashboard/listings');
+                }}
               >
                 Listing Dashboard
               </Button>

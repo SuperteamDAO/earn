@@ -113,7 +113,14 @@ export const CreatebountyPayment = ({
   };
   return (
     <>
-      <VStack pb={10} color={'gray.500'} pt={7} align={'start'} w={'2xl'}>
+      <VStack
+        gap={2}
+        pb={10}
+        color={'gray.500'}
+        pt={7}
+        align={'start'}
+        w={'2xl'}
+      >
         <FormControl isRequired>
           <FormLabel color={'gray.500'}>Select Token</FormLabel>
           <Menu>
@@ -125,7 +132,7 @@ export const CreatebountyPayment = ({
               fontSize="1rem"
               height={'2.6rem'}
               fontWeight={500}
-              color="gray.400"
+              color="gray.700"
               bg="transparent"
               textAlign="start"
               overflow="hidden"
@@ -149,7 +156,7 @@ export const CreatebountyPayment = ({
               w="40rem"
               fontSize="1rem"
               fontWeight={500}
-              color="gray.400"
+              color="gray.600"
               maxHeight="15rem"
               overflow="scroll"
             >
@@ -169,7 +176,7 @@ export const CreatebountyPayment = ({
                           src={token.icon}
                           alt={token.tokenName}
                         />
-                        <Text>{token.tokenName}</Text>
+                        <Text color="gray.600">{token.tokenName}</Text>
                       </HStack>
                     </MenuItem>
                   </>
@@ -186,6 +193,7 @@ export const CreatebountyPayment = ({
                 <Flex gap={3}>
                   <Input
                     type={'number'}
+                    color="gray.700"
                     onChange={(e) => {
                       setPrizevalues({
                         ...(prizevalues as Object),
@@ -246,7 +254,7 @@ export const CreatebountyPayment = ({
             isLoading={loading}
             disabled={loading}
           >
-            Finish the listing
+            Finish the Listing
           </Button>
           <Button
             w="100%"

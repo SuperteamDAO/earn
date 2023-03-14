@@ -17,6 +17,7 @@ import {
 } from '@chakra-ui/react';
 import { Dispatch, SetStateAction, useState } from 'react';
 import { useForm } from 'react-hook-form';
+import toast from 'react-hot-toast';
 import { tokenList, PrizeList, MultiSelectOptions } from '../../../constants';
 import {
   GrantsBasicType,
@@ -66,6 +67,12 @@ export const CreateGrantsPayment = ({
       <VStack pb={10} color={'gray.500'} pt={7} align={'start'} w={'2xl'}>
         <form
           onSubmit={handleSubmit(async (e) => {
+            if (Number(e.max_sal) < Number(e.min_sal)) {
+              toast.error('Minimum Grants Cannot Be More Than Maximum Grants');
+
+              return;
+            }
+
             setLoading(true);
             console.log(e);
             const info: GrantsType = {
@@ -168,7 +175,7 @@ export const CreateGrantsPayment = ({
                   fontSize={'15px'}
                   htmlFor={'min_sal'}
                 >
-                  Minimum Salary (USD)
+                  Minimum Grants (USD)
                 </FormLabel>
               </Flex>
 
@@ -190,7 +197,7 @@ export const CreateGrantsPayment = ({
                   fontSize={'15px'}
                   htmlFor={'max_sal'}
                 >
-                  Maximum Salary (USD)
+                  Maximum Grants (USD)
                 </FormLabel>
               </Flex>
 
@@ -217,7 +224,7 @@ export const CreateGrantsPayment = ({
               isLoading={loading}
               disabled={loading}
             >
-              Finish the listing
+              Finish the Listing
             </Button>
             <Button
               w="100%"

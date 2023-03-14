@@ -45,7 +45,12 @@ const CreateListing = () => {
   //
   const { isOpen, onOpen } = useDisclosure();
   // -- Jobs
-  const [jobBasics, setJobBasics] = useState<JobBasicsType | undefined>();
+  const [jobBasics, setJobBasics] = useState<JobBasicsType | undefined>({
+    deadline: '',
+    link: '',
+    title: '',
+    type: 'fulltime',
+  });
 
   //- Bounty
   const [bountybasic, setBountyBasic] = useState<BountyBasicType | undefined>();

@@ -19,7 +19,7 @@ export const Steps = ({ currentStep, thisStep, label, setStep }: Props) => {
       <Box
         display={'flex'}
         justifyContent={'center'}
-        alignItems={'start'}
+        alignItems={'center'}
         flexDir={'column'}
         onClick={handleChange}
         cursor={'pointer'}
@@ -52,18 +52,14 @@ export const Steps = ({ currentStep, thisStep, label, setStep }: Props) => {
           )}
         </Flex>
         <Text
-          transform={
-            label === 'Company' || label === 'Template'
-              ? 'translate(-1.5rem)'
-              : 'translate(-0.7rem)'
-          }
           fontSize="1rem"
           bottom={0}
-          left={currentStep === thisStep ? -2 : 1}
+          display={'flex'}
+          justifyContent={'center'}
+          alignItems={'center'}
           position="absolute"
           color={currentStep === thisStep ? '#1E293B' : '#CBD5E1'}
           fontWeight={600}
-          w={'max-content'}
         >
           {label}
         </Text>

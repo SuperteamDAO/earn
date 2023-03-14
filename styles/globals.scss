@@ -2,20 +2,45 @@
   font-family: 'Inter';
 }
 
-#reset-des h1,
-h2,
-h3,
-h4,
-br,
-strong,
-ul,
-a,
-ol,
-blockquote,
-li {
+#reset-des blockquote {
   all: revert !important;
 }
-
+#reset-des ol {
+  all: revert !important;
+}
+#reset-des li {
+  all: revert !important;
+}
+#reset-des a {
+  all: revert !important;
+}
+#reset-des ul {
+  all: revert !important;
+}
+#reset-des strong {
+  all: revert !important;
+}
+#reset-des br {
+  all: revert !important;
+}
+#reset-des h1 {
+  all: revert !important;
+}
+#reset-des h2 {
+  all: revert !important;
+}
+#reset-des h3 {
+  all: revert !important;
+}
+#reset-des h4 {
+  all: revert !important;
+}
+#reset-des h5 {
+  all: revert !important;
+}
+#reset-des h6 {
+  all: revert !important;
+}
 code {
   background-color: rgba(#616161, 0.1);
   color: #616161;

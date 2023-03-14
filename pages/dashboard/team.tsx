@@ -215,7 +215,7 @@ const Team = () => {
                 onSubmit={handleSubmit(async (e) => {
                   Team.data.map(async (el: SponsorType) => {
                     if (el.email === e.email) {
-                      return toast.error('Email already exist');
+                      return toast.error('Email Already Exists');
                     }
                     if (el.publickey === e.address) {
                       return toast.error('Wallet address already exist');

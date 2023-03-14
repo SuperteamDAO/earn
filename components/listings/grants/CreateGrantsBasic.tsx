@@ -208,7 +208,7 @@ export const CreateGrantsBasic = ({
             }}
           />
         </FormControl>
-        <VStack gap={6} mt={10}>
+        <VStack gap={6} w={'full'} mt={10}>
           <Button
             w="100%"
             bg={'#6562FF'}
