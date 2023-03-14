@@ -118,14 +118,14 @@ function TalentBio({ data, successPage }: { data: any, successPage?: boolean }) 
       </Flex>
 
       {
-        (successPage) ? <a href={`/t/${data?.username}`}>
+        (successPage) ? <a style={{ textDecoration: "none" }} href={`/t/${data?.username}`} >
           <Button color={'white'} bg={'#6562FF'} w={'full'} mt={'1.575rem'}>
             View Your Profile
           </Button>
         </a> :
-          <a href={`mailto:${data.email}`}>
+          <a style={{ textDecoration: "none" }} href={`mailto:${data.email}`}>
             <Button color={'white'} bg={'#6562FF'} w={'full'} mt={'1.575rem'}>
-              Get in touch
+              Get in Touch
             </Button>
           </a>
       }
