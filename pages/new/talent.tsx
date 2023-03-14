@@ -594,7 +594,7 @@ const YourWork = ({ setStep }: Step1Props) => {
                             borderRadius="0.5rem"
                             hasArrow
                             w="max"
-                            label={`Keep my info private`}
+                            label={`Your "Looking For" information will be hidden from your public talent profile. Although, you will continue to receive updates about new opportunities on your email.`}
                         >
                             <Image
 
@@ -663,7 +663,7 @@ const SocialInput = ({ label, placeHolder, icon, register }: TypeSocialInput) =>
                 borderRight="none"
             >
                 <Flex w={"100%"} h={"100%"} align="center" justify="start">
-                    <Box width={"1rem"} mt={"0.25rem"} >
+                    <Box width={"1rem"}  >
                         <Image objectFit='contain' width={"100%"} height={"100%"} src={icon} alt="Twitter" />
                     </Box>
                     <Text
@@ -673,7 +673,6 @@ const SocialInput = ({ label, placeHolder, icon, register }: TypeSocialInput) =>
                         fontSize="0.875rem"
                         fontWeight={500}
                         textAlign="left"
-
                     >
                         {label}
                     </Text>
@@ -687,7 +686,6 @@ const SocialInput = ({ label, placeHolder, icon, register }: TypeSocialInput) =>
                 focusBorderColor="#CFD2D7"
                 fontWeight={500}
                 placeholder={placeHolder}
-                type="url"
                 title={label}
                 {...register(label)}
             />
@@ -695,6 +693,18 @@ const SocialInput = ({ label, placeHolder, icon, register }: TypeSocialInput) =>
     )
 }
 
+function isValidHttpUrl(string: string) {
+    if (string.length == 0) {
+        return true;
+    }
+    let url;
+    try {
+        url = new URL(string);
+    } catch (_) {
+        return false;
+    }
+    return url.protocol === "http:" || url.protocol === "https:";
+}
 
 
 const YourLinks = ({ setStep, success }: { setStep: Dispatch<SetStateAction<number>>, success: () => void }) => {
@@ -702,6 +712,8 @@ const YourLinks = ({ setStep, success }: { setStep: Dispatch<SetStateAction<numb
     const { isOpen, onOpen, onClose } = useDisclosure()
     const [pow, setpow] = useState<string[]>([]);
     const [socialsError, setsocialsError] = useState<boolean>(false);
+    const [urlError, seturlError] = useState<boolean>(false);
+    const [isLoading, setisLoading] = useState<boolean>(false);
 
 
     const { connected, publicKey } = useWallet();
@@ -711,11 +723,32 @@ const YourLinks = ({ setStep, success }: { setStep: Dispatch<SetStateAction<numb
     let user = userStore().userInfo
 
     const uploadProfile = async (socials: { twitter: string, github: string, linkedin: string, telegram: string, website: string }, pow: string) => {
+        //atleast one URL
         if (socials.twitter.length == 0 && socials.github.length == 0 && socials.linkedin.length == 0 && socials.telegram.length == 0 && socials.website.length == 0) {
             return setsocialsError(true);
         }
+        setsocialsError(false);
+
+        //Valid URL
+        if (!isValidHttpUrl(socials.twitter)) {
+            return seturlError(true)
+        }
+        if (!isValidHttpUrl(socials.github)) {
+            return seturlError(true)
+        }
+        if (!isValidHttpUrl(socials.linkedin)) {
+            return seturlError(true)
+        }
+        if (!isValidHttpUrl(socials.telegram)) {
+            return seturlError(true)
+        }
+        if (!isValidHttpUrl(socials.website)) {
+            return seturlError(true)
+        }
+
         updateState({ pow, ...socials });
         console.log(form);
+        setisLoading(true);
         let createTalent = axios.post(`${process.env.NEXT_PUBLIC_BACKEND_URL}/talent/create`, {
             ...form, pow, ...socials,
             verified: true, superteamLevel: "Lurker",
@@ -741,6 +774,7 @@ const YourLinks = ({ setStep, success }: { setStep: Dispatch<SetStateAction<numb
 
 
     const { register, handleSubmit, watch, formState: { errors } } = useForm();
+
     const onSubmit = (data: any) => {
         console.log(data)
         uploadProfile({
@@ -792,7 +826,8 @@ const YourLinks = ({ setStep, success }: { setStep: Dispatch<SetStateAction<numb
                             Add Project
                         </Button>
                         {(socialsError) && <Text mb={"0.5rem"} color={"red"}>Please fill at least one social link to continue !</Text>}
-                        <Button type='submit' w={"full"} h="50px" color={"white"} bg={"rgb(101, 98, 255)"} >
+                        {(urlError) && <Text mb={"0.5rem"} color={"red"}>URL needs to contain &quot;http://&quot; prefix</Text>}
+                        <Button spinnerPlacement='start' isLoading={isLoading} type='submit' w={"full"} h="50px" color={"white"} bg={"rgb(101, 98, 255)"} >
                             Finish Profile
                         </Button>
                     </FormControl>
@@ -806,7 +841,8 @@ const YourLinks = ({ setStep, success }: { setStep: Dispatch<SetStateAction<numb
 const AddProject = ({ isOpen, onClose, pow, setpow }: { isOpen: boolean, onClose: () => void, pow: string[], setpow: Dispatch<SetStateAction<string[]>> }) => {
     const animatedComponents = makeAnimated();
     const { register, handleSubmit, watch, formState: { errors } } = useForm();
-    const [post, setpost] = useState(false);
+    const [skillsError, setskillsError] = useState<boolean>(false);
+    const [linkError, setlinkError] = useState<boolean>(false);
 
     const [skills, setskills] = useState<MultiSelectOptions[]>([]);
     const [subskills, setsubskills] = useState<MultiSelectOptions[]>([]);
@@ -814,13 +850,32 @@ const AddProject = ({ isOpen, onClose, pow, setpow }: { isOpen: boolean, onClose
     console.log(skills, subskills);
 
     const onSubmit = (data: any) => {
-        setpost(true);
+        let error = false;
+
+        if (!isValidHttpUrl(data.link)) {
+            setlinkError(true);
+            error = true;
+        }
+        else {
+            setlinkError(false);
+        }
         if (skills.length == 0 || subskills.length == 0) {
+            setskillsError(true);
+            error = true;
+        }
+        else {
+            setskillsError(false);
+        }
+
+        if (error) {
             return false;
         }
+
         setpow(elm => [...elm, JSON.stringify({ ...data, skills: skills.map(ele => ele.value), SubSkills: subskills.map(ele => ele.value) })])
         onClose();
     }
+
+
 
     return (
         <Modal isOpen={isOpen} onClose={onClose}>
@@ -848,6 +903,7 @@ const AddProject = ({ isOpen, onClose, pow, setpow }: { isOpen: boolean, onClose
                                 />
                             </Box>
                             <SkillSelect skills={skills} subSkills={subskills} setSkills={setskills} setSubSkills={setsubskills} />
+
                             <Box w={'full'} mb={"1.25rem"}>
                                 <FormLabel color={"gray.600"}>
                                     Link
@@ -858,8 +914,12 @@ const AddProject = ({ isOpen, onClose, pow, setpow }: { isOpen: boolean, onClose
                                         // eslint-disable-next-line react/no-children-prop
                                         children={<LinkIcon color='gray.300' />}
                                     />
-                                    <Input type="url" color={"gray.800"} _placeholder={{ color: "gray.500" }}   {...register("link", { required: true })} />
+                                    <Input placeholder='https://example.com' color={"gray.800"} _placeholder={{ color: "gray.500" }}   {...register("link", { required: true })} />
                                 </InputGroup>
+                            </Box>
+                            <Box w={'full'} mb={"1.25rem"}>
+                                {(skillsError) && <Text color={"red"}>Please add Skills and Sub Skills</Text>}
+                                {(linkError) && <Text color={"red"}>Link URL needs to contain &quot;http://&quot; prefix</Text>}
                             </Box>
                             <Button type='submit' w={"full"} h="50px" color={"white"} bg={"rgb(101, 98, 255)"}>
                                 Add Project
@@ -871,7 +931,6 @@ const AddProject = ({ isOpen, onClose, pow, setpow }: { isOpen: boolean, onClose
         </Modal>
     )
 }
-
 
 const WelcomeMessage = ({ setStep }: { setStep: () => void }) => {
     return (

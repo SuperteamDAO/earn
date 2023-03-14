@@ -158,7 +158,7 @@ const SkillsAndInterests = ({ data }: { data: any }) => {
           {
             skills.map((ele: string, idx: number) => {
               return (
-                <Badge key={ele} px={"0.625rem"} py={"0.2813rem"} colorScheme={colors[idx].toLocaleLowerCase()}>{ele}</Badge>
+                <Badge key={ele} px={"0.625rem"} py={"0.2813rem"} colorScheme={colors[idx].toLocaleLowerCase()}>{ele.replaceAll('-Dev', '')}</Badge>
               )
             })
           }
