@@ -316,3 +316,22 @@ export const findJobs = async (slug: string): Promise<FindJobsReturn> => {
     return null;
   }
 };
+type FindGrantsReturn = {
+  listing: GrantsType;
+  sponsor: SponsorType;
+} | null;
+export const findGrants = async (slug: string): Promise<FindGrantsReturn> => {
+  if (!slug) return null;
+  try {
+    const { data, status } = await axios.get(
+      `${Backend_Url}/listings/grants/find/${slug}`
+    );
+    if (status !== 200) {
+      return null;
+    }
+    return data.data;
+  } catch (error) {
+    console.log(error);
+    return null;
+  }
+};

@@ -48,7 +48,7 @@ export const CreatebountyPayment = ({
   setSlug,
 }: Props) => {
   // handles which token is selected
-  const [tokenIndex, setTokenIndex] = useState<number | undefined>(undefined);
+  const [tokenIndex, setTokenIndex] = useState<number>(0);
 
   // stores the state for prize
   const [prizevalues, setPrizevalues] = useState<Object>({});

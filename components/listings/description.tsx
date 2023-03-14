@@ -40,6 +40,7 @@ import {
   MdOutlineHorizontalRule,
 } from 'react-icons/md';
 import { CiRedo, CiUndo } from 'react-icons/ci';
+import toast from 'react-hot-toast';
 
 const LinkModal = ({
   isOpen,
@@ -117,9 +118,7 @@ const Description = ({
           'prose dark:prose-invert prose-sm sm:prose-base lg:prose-lg xl:prose-2xl m-5 focus:outline-none',
       },
     },
-    content: `
-     
-    `,
+    content: editorData,
   });
 
   const setLink = useCallback(() => {
@@ -455,6 +454,10 @@ const Description = ({
           fontSize="1rem"
           fontWeight={600}
           onClick={() => {
+            if ((editorData?.length as number) > 5000) {
+              toast.error('Max length for description is 4,500 characters');
+              return;
+            }
             setSteps(4);
           }}
         >

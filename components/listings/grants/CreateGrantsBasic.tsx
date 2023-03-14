@@ -41,8 +41,8 @@ export const CreateGrantsBasic = ({
 
   return (
     <>
-      <VStack pb={10} color={'gray.500'} pt={7} align={'start'} w={'2xl'}>
-        <FormControl mb={5} w="full" isRequired>
+      <VStack pb={10} color={'gray.500'} gap={3} align={'start'} w={'2xl'}>
+        <FormControl w="full" isRequired>
           <Flex>
             <FormLabel
               color={'gray.500'}
@@ -75,6 +75,7 @@ export const CreateGrantsBasic = ({
           <Input
             id="title"
             placeholder="Develop a new landing page"
+            color={'gray.700'}
             value={grantBasic?.title}
             onChange={(e) => {
               setGrantBasic({
@@ -119,6 +120,7 @@ export const CreateGrantsBasic = ({
             id="handle"
             placeholder="@telegram handle"
             value={grantBasic?.contact}
+            color={'gray.700'}
             onChange={(e) => {
               setGrantBasic({
                 ...(grantBasic as GrantsBasicType),

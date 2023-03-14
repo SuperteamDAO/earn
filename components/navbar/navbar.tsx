@@ -152,8 +152,11 @@ export const Navbar = ({ sponsors }: Props) => {
                 px={10}
                 bg={'#6562FF'}
                 onClick={() => {
+                  if (router.asPath === '/') {
+                    router.push('/new');
+                    return;
+                  }
                   onOpen();
-                  // router.push('/new');
                 }}
               >
                 Connect wallet
