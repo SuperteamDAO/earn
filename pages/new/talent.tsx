@@ -713,6 +713,7 @@ const YourLinks = ({ setStep, success }: { setStep: Dispatch<SetStateAction<numb
     const [pow, setpow] = useState<string[]>([]);
     const [socialsError, setsocialsError] = useState<boolean>(false);
     const [urlError, seturlError] = useState<boolean>(false);
+    const [isLoading, setisLoading] = useState<boolean>(false);
 
 
     const { connected, publicKey } = useWallet();
@@ -747,6 +748,7 @@ const YourLinks = ({ setStep, success }: { setStep: Dispatch<SetStateAction<numb
 
         updateState({ pow, ...socials });
         console.log(form);
+        setisLoading(true);
         let createTalent = axios.post(`${process.env.NEXT_PUBLIC_BACKEND_URL}/talent/create`, {
             ...form, pow, ...socials,
             verified: true, superteamLevel: "Lurker",
@@ -825,7 +827,7 @@ const YourLinks = ({ setStep, success }: { setStep: Dispatch<SetStateAction<numb
                         </Button>
                         {(socialsError) && <Text mb={"0.5rem"} color={"red"}>Please fill at least one social link to continue !</Text>}
                         {(urlError) && <Text mb={"0.5rem"} color={"red"}>URL needs to contain &quot;http://&quot; prefix</Text>}
-                        <Button type='submit' w={"full"} h="50px" color={"white"} bg={"rgb(101, 98, 255)"} >
+                        <Button spinnerPlacement='start' isLoading={isLoading} type='submit' w={"full"} h="50px" color={"white"} bg={"rgb(101, 98, 255)"} >
                             Finish Profile
                         </Button>
                     </FormControl>
