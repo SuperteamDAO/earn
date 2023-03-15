@@ -48,7 +48,7 @@ export const Navbar = ({ sponsors }: Props) => {
       if (publicKey && connected) {
         const res = await createUser(publicKey.toBase58() as string);
         setUserInfo(res.data);
-        if (res.data.talent) {
+        if (res.data?.talent) {
           console.log('In');
 
           await findTalent();

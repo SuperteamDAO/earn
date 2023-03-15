@@ -87,8 +87,8 @@ function Listing() {
           </Box>
 
           {listings.bounties.length > 0 ||
-          listings.jobs > 0 ||
-          listings.grants > 0 ? (
+            listings.jobs > 0 ||
+            listings.grants > 0 ? (
             <Box
               w="100%"
               mt={'36px'}
@@ -248,9 +248,6 @@ const ListingBody = (props: listElm) => {
         </Td>
         <Td py={'0'}>
           <Center fontWeight={'600'} fontSize={'0.75rem'}>
-            <Text mr={'0.395rem'} color={'#94A3B8'}>
-              $
-            </Text>
             <Text mr={'0.1875rem'} color={'#334254'}>
               {props.amount}
             </Text>
@@ -259,7 +256,7 @@ const ListingBody = (props: listElm) => {
         </Td>
         <Td py={'0'}>
           <Center alignItems={'center'} columnGap="0.9688rem">
-            <Box w={'1rem'} height="1rem">
+            <Box w={'1rem'} height="1rem" mb={"0.26rem"}>
               <Image
                 width={'100%'}
                 height={'100%'}
@@ -268,7 +265,7 @@ const ListingBody = (props: listElm) => {
               />
             </Box>
             <Text color={'#94A3B8'} fontSize={'0.75rem'} fontWeight={'600'}>
-              {props.deadline}
+              {timeStamFormat(props.deadline)}
             </Text>
           </Center>
         </Td>
@@ -331,6 +328,11 @@ const ListingBody = (props: listElm) => {
     </Tbody>
   );
 };
+
+const timeStamFormat = (time: string): string => {
+  let t = time.split('T');
+  return t[0] + ' ' + t[1]
+}
 
 type AppProps = {
   selectWinnerOpen: boolean;
