@@ -9,12 +9,17 @@ import {
   Text,
   VStack,
 } from '@chakra-ui/react';
+import { useMutation } from '@tanstack/react-query';
+import { useRouter } from 'next/router';
 import React from 'react';
+import { createSubscription } from '../../utils/functions';
 interface Props {
   onClose: () => void;
   isOpen: boolean;
 }
 export const CreateProfileModal = ({ isOpen, onClose }: Props) => {
+  const router = useRouter();
+
   return (
     <>
       <Modal size={'sm'} isOpen={isOpen} onClose={onClose}>
@@ -39,7 +44,14 @@ export const CreateProfileModal = ({ isOpen, onClose }: Props) => {
                 </Text>
               </HStack>
             </VStack>
-            <Button color={'white'} w={'full'} bg={'#6562FF'}>
+            <Button
+              onClick={() => {
+                router.push('/new/talent');
+              }}
+              color={'white'}
+              w={'full'}
+              bg={'#6562FF'}
+            >
               Create Now
             </Button>
           </VStack>

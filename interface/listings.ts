@@ -28,12 +28,13 @@ interface Bounties {
   prizeList: Partial<PrizeListType>; // change to enum and string
   bugBounty: boolean;
   orgId: string;
-  winner?: Winner[];
-  submission?: SubmissionType[];
   showTop: boolean;
   eligibility: string;
   status: BountyStatus;
   slug: string;
+  winner?: Winner[];
+  submission?: SubmissionType[];
+  subscribe?: SubscribeType[];
 }
 
 type BountyStatus = 'open' | 'review' | 'close';
@@ -114,6 +115,14 @@ interface SubmissionType {
   bountiesId: string;
   Talent?: Talent;
 }
+
+interface SubscribeType {
+  id?: string;
+  talentId: string;
+  bountiesId: string;
+  Talent?: Talent;
+}
+
 export type {
   Bounties,
   Winner,
@@ -125,4 +134,5 @@ export type {
   GrantsType,
   GrantsBasicType,
   DraftType,
+  SubscribeType,
 };

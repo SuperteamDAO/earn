@@ -10,7 +10,6 @@ export interface Talent {
   avatar: string;
   interests: string;
   bio: string;
-  socials: string;
   community: string;
   verified: boolean;
   experience: string;
@@ -20,4 +19,9 @@ export interface Talent {
   workPrefernce: string;
   currentEmployer: string;
   pow: string;
+  github?: string;
+  linkedin?: string;
+  telegram?: string;
+  twitter?: string;
+  website?: string;
 }

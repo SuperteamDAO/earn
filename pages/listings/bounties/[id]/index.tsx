@@ -100,6 +100,8 @@ const Bounties = () => {
     <>
       {isOpen && <CreateProfileModal isOpen={isOpen} onClose={onClose} />}
       <ListingHeader
+        sub={listingInfo.data?.listing.subscribe}
+        id={listingInfo.data?.listing.id as string}
         tabs={true}
         title={listingInfo.data?.listing?.title ?? ''}
         sponsor={

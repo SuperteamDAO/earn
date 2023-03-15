@@ -9,6 +9,7 @@ import {
   GrantsType,
   JobsType,
   SubmissionType,
+  SubscribeType,
 } from '../interface/listings';
 import { genrateuuid } from './helpers';
 import toast from 'react-hot-toast';
@@ -325,6 +326,38 @@ export const findGrants = async (slug: string): Promise<FindGrantsReturn> => {
   try {
     const { data, status } = await axios.get(
       `${Backend_Url}/listings/grants/find/${slug}`
+    );
+    if (status !== 200) {
+      return null;
+    }
+    return data.data;
+  } catch (error) {
+    console.log(error);
+    return null;
+  }
+};
+export const createSubscription = async (sub: SubscribeType) => {
+  try {
+    const { data, status } = await axios.post(
+      `${Backend_Url}/listings/sub/create`,
+      {
+        ...sub,
+      }
+    );
+    if (status !== 201) {
+      return null;
+    }
+    return data.data;
+  } catch (error) {
+    console.log(error);
+    return null;
+  }
+};
+
+export const removeSubscription = async (id: string) => {
+  try {
+    const { data, status } = await axios.delete(
+      `${Backend_Url}/listings/sub/delete/${id}`
     );
     if (status !== 200) {
       return null;

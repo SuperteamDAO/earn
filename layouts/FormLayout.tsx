@@ -8,6 +8,7 @@ interface StepsList {
   label: string;
   number: number;
   description?: string;
+  mainHead?: string;
 }
 interface Props {
   children: any;
@@ -35,7 +36,7 @@ const FormLayout = ({
               fontSize={'24px'}
               fontFamily={'Inter'}
             >
-              Create a new listing
+              {stepList[currentStep - 1].mainHead}
             </Heading>
             <Text
               color={'#94A3B8'}

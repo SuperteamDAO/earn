@@ -10,22 +10,51 @@ import {
   Button,
   useDisclosure,
 } from '@chakra-ui/react';
+import { TbBellRinging } from 'react-icons/tb';
 import { BsBell } from 'react-icons/bs';
 import { useRouter } from 'next/router';
 import { SponsorType } from '../../../interface/sponsor';
 import { TalentStore } from '../../../store/talent';
 import { userStore } from '../../../store/user';
 import { CreateProfileModal } from '../../modals/createProfile';
+import { useMutation, useQueryClient } from '@tanstack/react-query';
+import {
+  createSubscription,
+  removeSubscription,
+} from '../../../utils/functions';
+import { genrateuuid } from '../../../utils/helpers';
+import toast from 'react-hot-toast';
+import { SubscribeType } from '../../../interface/listings';
 interface Props {
   sponsor: SponsorType;
   title: string;
   tabs: boolean;
+  id?: string;
+  sub?: SubscribeType[];
 }
-export const ListingHeader = ({ sponsor, title, tabs }: Props) => {
+export const ListingHeader = ({ sponsor, title, tabs, id, sub }: Props) => {
   const router = useRouter();
+  const queryClient = useQueryClient();
 
   const { userInfo } = userStore();
+  const { talentInfo } = TalentStore();
   const { isOpen, onClose, onOpen } = useDisclosure();
+  const subMutation = useMutation({
+    mutationFn: createSubscription,
+    mutationKey: ['subscribe'],
+    onSuccess: () => {
+      queryClient.invalidateQueries(['bounties', router.query.id ?? '']);
+      toast.success('Alerts For Bounty Is Active');
+    },
+  });
+  const subDeleteMutation = useMutation({
+    mutationFn: removeSubscription,
+    mutationKey: ['subscribe', 'delete'],
+    onSuccess: () => {
+      queryClient.invalidateQueries(['bounties', router.query.id ?? '']);
+      toast.success('Alerts For Bounty Is Active');
+    },
+  });
   return (
     <>
       {isOpen && <CreateProfileModal isOpen={isOpen} onClose={onClose} />}
@@ -77,18 +106,86 @@ export const ListingHeader = ({ sponsor, title, tabs }: Props) => {
               </HStack>
             </VStack>
           </HStack>
-          <HStack align="start" px={[3, 3, 0, 0]}>
-            <Button
-              onClick={() => {
-                if (!userInfo?.talent) {
-                  return onOpen();
-                }
-              }}
-              bg="#F7FAFC"
-            >
-              <BsBell color="rgb(107 114 128)" />
-            </Button>
-          </HStack>
+          {router.asPath.includes('bounties') && (
+            <HStack>
+              <HStack align="start" px={[3, 3, 0, 0]}>
+                {sub?.filter((e) => e.talentId === (talentInfo?.id as string))
+                  ?.length! > 0 ? (
+                  <Button
+                    isLoading={subDeleteMutation.isLoading}
+                    onClick={() => {
+                      subDeleteMutation.mutate(
+                        sub?.filter(
+                          (e) => e.talentId === (talentInfo?.id as string)
+                        )[0].id as string
+                      );
+                    }}
+                    bg="#F7FAFC"
+                  >
+                    <TbBellRinging color="rgb(107 114 128)" />
+                  </Button>
+                ) : (
+                  <Button
+                    isLoading={subMutation.isLoading}
+                    onClick={() => {
+                      if (!userInfo?.talent) {
+                        return onOpen();
+                      }
+                      subMutation.mutate({
+                        bountiesId: id as string,
+                        talentId: talentInfo?.id as string,
+                        id: genrateuuid(),
+                      });
+                    }}
+                    bg="#F7FAFC"
+                  >
+                    <BsBell color="rgb(107 114 128)" />
+                  </Button>
+                )}
+              </HStack>
+              <HStack>
+                <HStack
+                  position={'relative'}
+                  align={'center'}
+                  justify={'center'}
+                  w={'3rem'}
+                >
+                  {sub?.slice(0, 3).map((e, index) => {
+                    return (
+                      <Box
+                        position={'absolute'}
+                        left={index}
+                        marginInlineStart={1}
+                        key={e.id}
+                      >
+                        <Image
+                          w={8}
+                          objectFit={'contain'}
+                          rounded={'full'}
+                          h={8}
+                          src={e.Talent?.avatar}
+                          alt={e.Talent?.username}
+                        />
+                      </Box>
+                    );
+                  })}
+                </HStack>
+                <VStack align={'start'}>
+                  <Text color={'#000000'} fontSize={'1rem'} fontWeight={500}>
+                    {sub?.length ?? 0}
+                  </Text>
+                  <Text
+                    mt={'0px !important'}
+                    color={'gray.500'}
+                    fontSize={'1rem'}
+                    fontWeight={500}
+                  >
+                    People Interested
+                  </Text>
+                </VStack>
+              </HStack>
+            </HStack>
+          )}
         </VStack>
         <HStack px={[3, 3, 0, 0]} maxW={'7xl'} w="full" h={'max'}>
           <Button
