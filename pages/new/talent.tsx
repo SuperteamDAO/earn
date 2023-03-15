@@ -594,7 +594,7 @@ const YourWork = ({ setStep }: Step1Props) => {
                             borderRadius="0.5rem"
                             hasArrow
                             w="max"
-                            label={`Your "Looking For" information will be hidden from your public talent profile. Although, you will continue to receive updates about new opportunities on your email.`}
+                            label={`Your "Work Preference" information will be hidden from your public talent profile. However, you will continue to receive updates about new opportunities on your email.`}
                         >
                             <Image
 
