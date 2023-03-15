@@ -23,6 +23,7 @@ import { SubmissionModal } from '../../../modals/submissionModal';
 import { userStore } from '../../../../store/user';
 import { useWallet } from '@solana/wallet-adapter-react';
 import { UseMutationResult } from '@tanstack/react-query';
+import moment from 'moment';
 
 interface Props {
   total: number;
@@ -48,6 +49,11 @@ export const DetailSideCard = ({
 }: Props) => {
   const { userInfo } = userStore();
   const { connected } = useWallet();
+  let submissionStatus = 0;
+  if (Number(moment(endingTime).format('x')) < Date.now()) {
+    submissionStatus = 1;
+  }
+
   return (
     <>
       {submissionisOpen && (
@@ -327,7 +333,7 @@ export const DetailSideCard = ({
         >
           <VerticalStep
             sublabel={'Give your best shot'}
-            currentStep={1}
+            currentStep={submissionStatus + 1}
             thisStep={1}
             label={'Submission Open'}
           />
@@ -340,7 +346,7 @@ export const DetailSideCard = ({
             orientation="vertical"
           />
           <VerticalStep
-            currentStep={1}
+            currentStep={submissionStatus + 1}
             thisStep={2}
             sublabel={'Give your best shot'}
             label={'Bounties being assessed'}
@@ -353,7 +359,7 @@ export const DetailSideCard = ({
             orientation="vertical"
           />
           <VerticalStep
-            currentStep={1}
+            currentStep={submissionStatus + 1}
             thisStep={3}
             sublabel={'Winner will be announce'}
             label={'Winner Announcement'}

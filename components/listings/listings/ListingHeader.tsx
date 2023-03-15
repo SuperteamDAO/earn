@@ -25,14 +25,23 @@ import {
 import { genrateuuid } from '../../../utils/helpers';
 import toast from 'react-hot-toast';
 import { SubscribeType } from '../../../interface/listings';
+import moment from 'moment';
 interface Props {
   sponsor: SponsorType;
   title: string;
   tabs: boolean;
   id?: string;
   sub?: SubscribeType[];
+  endTime?: string;
 }
-export const ListingHeader = ({ sponsor, title, tabs, id, sub }: Props) => {
+export const ListingHeader = ({
+  sponsor,
+  title,
+  tabs,
+  id,
+  sub,
+  endTime,
+}: Props) => {
   const router = useRouter();
   const queryClient = useQueryClient();
 
@@ -93,16 +102,42 @@ export const ListingHeader = ({ sponsor, title, tabs, id, sub }: Props) => {
                 <Text color={'#94A3B8'}>
                   by @{sponsor?.username} at {sponsor.name}
                 </Text>
-                <Text
-                  px={3}
-                  py={1}
-                  rounded={'full'}
-                  bg={'#16A36821'}
-                  color={'#16A368'}
-                  fontSize={'0.75rem'}
-                >
-                  Submission Open
-                </Text>
+                {endTime ? (
+                  Number(moment(endTime).format('x')) > Date.now() ? (
+                    <Text
+                      px={3}
+                      py={1}
+                      rounded={'full'}
+                      bg={'#16A36821'}
+                      color={'#16A368'}
+                      fontSize={'0.75rem'}
+                    >
+                      Submission Open
+                    </Text>
+                  ) : (
+                    <Text
+                      px={3}
+                      py={1}
+                      rounded={'full'}
+                      bg={'#A3731621'}
+                      color={'#A35A16'}
+                      fontSize={'0.75rem'}
+                    >
+                      In Review
+                    </Text>
+                  )
+                ) : (
+                  <Text
+                    px={3}
+                    py={1}
+                    rounded={'full'}
+                    bg={'#16A36821'}
+                    color={'#16A368'}
+                    fontSize={'0.75rem'}
+                  >
+                    Open
+                  </Text>
+                )}
               </HStack>
             </VStack>
           </HStack>
