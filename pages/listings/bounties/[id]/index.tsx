@@ -26,7 +26,6 @@ import {
 } from '../../../../utils/functions';
 import { genrateuuid } from '../../../../utils/helpers';
 // import TalentBio from '../../../components/TalentBio';
-import { SubmissionPage } from '../../../../components/listings/listings/submissions/submissionPage';
 
 const defalutSponsor: SponsorType = {
   bio: '',
@@ -121,6 +120,7 @@ const Bounties = () => {
           justify={['center', 'center', 'space-between', 'space-between']}
         >
           <Submission
+            endTime={listingInfo.data?.listing.deadline ?? ''}
             submissions={listingInfo.data?.listing.submission ?? []}
           />
         </HStack>
