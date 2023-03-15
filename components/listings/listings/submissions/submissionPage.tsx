@@ -60,9 +60,7 @@ export const SubmissionPage = () => {
     queryFn: ({ queryKey }) => findSubmission(queryKey[1] as string),
     queryKey: ['submission', router.query.subid],
   });
-  let socials = JSON.parse(
-    (SubmissionInfo.data?.Talent?.socials as string) ?? '{}'
-  );
+
   const { userInfo } = userStore();
   const { isOpen, onClose, onOpen } = useDisclosure();
   const likeMutation = useMutation({
@@ -185,7 +183,7 @@ export const SubmissionPage = () => {
           </Button>
           <Flex mt={'32px'} justifyContent={'space-between'}>
             <Box w={'22px'} h={'22px'}>
-              <a href={socials['Twitter']}>
+              <a href={SubmissionInfo.data?.Talent?.twitter}>
                 <Image
                   objectFit="contain"
                   width={'100%'}
@@ -196,7 +194,7 @@ export const SubmissionPage = () => {
               </a>
             </Box>
             <Box w={'22px'} h={'22px'}>
-              <a href={socials['LinkedIn']}>
+              <a href={SubmissionInfo.data?.Talent?.linkedin}>
                 <Image
                   objectFit="contain"
                   width={'100%'}
@@ -207,7 +205,7 @@ export const SubmissionPage = () => {
               </a>
             </Box>
             <Box w={'22px'} h={'22px'}>
-              <a href={socials['GitHub']}>
+              <a href={SubmissionInfo.data?.Talent?.github}>
                 <Image
                   objectFit="contain"
                   width={'100%'}
@@ -218,7 +216,7 @@ export const SubmissionPage = () => {
               </a>
             </Box>
             <Box w={'22px'} h={'22px'}>
-              <a href={socials['Site']}>
+              <a href={SubmissionInfo.data?.Talent?.website}>
                 <Image
                   objectFit="contain"
                   width={'100%'}
