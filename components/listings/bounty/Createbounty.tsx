@@ -4,6 +4,7 @@ import { MultiSelectOptions } from '../../../constants';
 import { CreatebountyBasic } from './CreateBountyBasic';
 import { CreatebountyPayment } from './CreateBountyPayments';
 import Description from '../description';
+import Builder, { Ques } from './questions/builder';
 export interface BountyBasicType {
   title: string;
   deadline: string;
@@ -24,6 +25,8 @@ interface Props {
   createDraft: (payment: string) => void;
   draftLoading: boolean;
   setSlug: Dispatch<SetStateAction<string>>;
+  setQuestions: Dispatch<SetStateAction<Ques[]>>;
+  questions: Ques[];
 }
 export const Createbounty = ({
   steps,
@@ -40,6 +43,8 @@ export const Createbounty = ({
   draftLoading,
   createDraft,
   setSlug,
+  questions,
+  setQuestions,
 }: Props) => {
   // handles the info from basic form
 
@@ -66,10 +71,20 @@ export const Createbounty = ({
           setEditorData={setEditorData}
         />
       )}
-
       {steps === 4 && (
+        <Builder
+          setSteps={setSteps}
+          draftLoading={draftLoading}
+          createDraft={createDraft}
+          setQuestions={setQuestions}
+          questions={questions}
+        />
+      )}
+
+      {steps === 5 && (
         <CreatebountyPayment
           setSlug={setSlug}
+          questions={questions}
           draftLoading={draftLoading}
           createDraft={createDraft}
           onOpen={onOpen}

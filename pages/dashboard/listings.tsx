@@ -61,6 +61,7 @@ function Listing() {
   });
 
   let listings = listingData.data;
+  console.log(listings);
 
   return (
     <DashboardLayout>

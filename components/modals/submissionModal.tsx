@@ -30,6 +30,7 @@ interface Props {
   isOpen: boolean;
   onClose: () => void;
   SubmssionMutation: UseMutationResult<void, any, string, unknown>;
+  questions: string;
 }
 export const SubmissionModal = ({
   isOpen,

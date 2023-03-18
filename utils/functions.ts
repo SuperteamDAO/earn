@@ -151,7 +151,7 @@ export const createBounty = async (
 ) => {
   try {
     const { data } = await axios.post(`${Backend_Url}/listings/bounty/create`, {
-      id: genrateuuid(),
+      id: bounties.id,
       title: bounties.title,
       token: bounties.token,
       slug: bounties.slug,
@@ -363,6 +363,30 @@ export const removeSubscription = async (id: string) => {
       return null;
     }
     return data.data;
+  } catch (error) {
+    console.log(error);
+    return null;
+  }
+};
+
+export const createQuestions = async (questions: {
+  id: string;
+  bountiesId: string;
+  questions: string;
+}) => {
+  try {
+    const { data, status } = await axios.post(
+      `${Backend_Url}/listings/question/create`,
+      {
+        ...questions,
+      }
+    );
+    console.log(data, status);
+
+    if (status !== 201) {
+      return null;
+    }
+    return data;
   } catch (error) {
     console.log(error);
     return null;

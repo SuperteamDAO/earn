@@ -1,4 +1,4 @@
-import { Flex, useDisclosure } from '@chakra-ui/react';
+import { useDisclosure } from '@chakra-ui/react';
 import FormLayout from '../../layouts/FormLayout';
 import {
   BountyBasicType,
@@ -6,8 +6,6 @@ import {
 } from '../../components/listings/bounty/Createbounty';
 import { useEffect, useState } from 'react';
 import { CreateJob } from '../../components/listings/jobs/CreateJob';
-// import { Description } from '../../components/listings/description';
-import dynamic from 'next/dynamic';
 import Template from '../../components/listings/templates/template';
 import { MultiSelectOptions } from '../../constants';
 import { useRouter } from 'next/router';
@@ -26,15 +24,15 @@ import { useQuery } from '@tanstack/react-query';
 import { CreateDraft, findOneDraft, findSponsors } from '../../utils/functions';
 import { userStore } from '../../store/user';
 import { genrateuuid } from '../../utils/helpers';
-import axios from 'axios';
-import toast, { ToastBar, Toaster } from 'react-hot-toast';
+import toast, { Toaster } from 'react-hot-toast';
+import { Ques } from '../../components/listings/bounty/questions/builder';
 
 const CreateListing = () => {
   // Templates - 1
   // Basic Info - 2
   // Description - 3
   // payment form - 4
-  const [steps, setSteps] = useState<number>(1);
+  const [steps, setSteps] = useState<number>(4);
   const router = useRouter();
   const [draftLoading, setDraftLoading] = useState<boolean>(false);
   const [editorData, setEditorData] = useState<string | undefined>();
@@ -52,13 +50,25 @@ const CreateListing = () => {
     type: 'fulltime',
   });
 
+  const [questions, setQuestions] = useState<Ques[]>([
+    {
+      id: genrateuuid(),
+      question: 'What is your name?',
+      type: 'text',
+      options: [],
+    },
+  ]);
+
   //- Bounty
   const [bountybasic, setBountyBasic] = useState<BountyBasicType | undefined>();
   // -- Grants
   const [grantBasic, setgrantsBasic] = useState<GrantsBasicType | undefined>();
+  // -- wallet
   const { connected, publicKey } = useWallet();
+  // -- sponsor
   const { currentSponsor } = SponsorStore();
   const { userInfo } = userStore();
+
   const sponsors = useQuery({
     queryKey: ['sponsor', publicKey?.toBase58() ?? ''],
     queryFn: ({ queryKey }) => findSponsors(queryKey[1]),
@@ -176,34 +186,74 @@ const CreateListing = () => {
           sponsors={sponsors.data}
           setStep={setSteps}
           currentStep={steps}
-          stepList={[
-            {
-              label: 'Template',
-              number: 1,
-              mainHead: 'Create Your Opportunity Listing',
-              description:
-                'To save time, check out our ready made templates below. If you already have a listing elsewhere, use "Start from Scratch" and copy/paste your text.',
-            },
-            {
-              label: 'Basics',
-              number: 2,
-              mainHead: 'Create a listing',
-              description: `Now let's learn a bit more about the work you need completed`,
-            },
-            {
-              label: 'Description',
-              number: 3,
-              mainHead: 'Tell us some more',
-              description:
-                'Add more details about the opportunity, submission requirements, reward(s) details, and resources',
-            },
-            {
-              label: 'Reward',
-              number: 4,
-              mainHead: 'Create a listing',
-              description: 'Quickly create a listing on the platform',
-            },
-          ]}
+          stepList={
+            router.query.type !== 'bounties'
+              ? [
+                  {
+                    label: 'Template',
+                    number: 1,
+                    mainHead: 'Create Your Opportunity Listing',
+                    description:
+                      'To save time, check out our ready made templates below. If you already have a listing elsewhere, use "Start from Scratch" and copy/paste your text.',
+                  },
+                  {
+                    label: 'Basics',
+                    number: 2,
+                    mainHead: 'Create a listing',
+                    description: `Now let's learn a bit more about the work you need completed`,
+                  },
+                  {
+                    label: 'Description',
+                    number: 3,
+                    mainHead: 'Tell us some more',
+                    description:
+                      'Add more details about the opportunity, submission requirements, reward(s) details, and resources',
+                  },
+                  {
+                    label: 'Reward',
+                    number: 4,
+                    mainHead: 'Add the reward amount',
+                    description:
+                      'Decide the compensation amount for your listing',
+                  },
+                ]
+              : [
+                  {
+                    label: 'Template',
+                    number: 1,
+                    mainHead: 'Create Your Opportunity Listing',
+                    description:
+                      'To save time, check out our ready made templates below. If you already have a listing elsewhere, use "Start from Scratch" and copy/paste your text.',
+                  },
+                  {
+                    label: 'Basics',
+                    number: 2,
+                    mainHead: 'Create a listing',
+                    description: `Now let's learn a bit more about the work you need completed`,
+                  },
+                  {
+                    label: 'Description',
+                    number: 3,
+                    mainHead: 'Tell us some more',
+                    description:
+                      'Add more details about the opportunity, submission requirements, reward(s) details, and resources',
+                  },
+                  {
+                    label: 'Questions',
+                    number: 4,
+                    mainHead: 'Add the reward amount',
+                    description:
+                      'Decide the compensation amount for your listing',
+                  },
+                  {
+                    label: 'Reward',
+                    number: 5,
+                    mainHead: 'Add the reward amount',
+                    description:
+                      'Decide the compensation amount for your listing',
+                  },
+                ]
+          }
         >
           {!userInfo?.sponsor && (
             <CreateSponsorModel isOpen={true} onClose={() => {}} />
@@ -214,6 +264,8 @@ const CreateListing = () => {
           {steps === 1 && <Template setSteps={setSteps} />}
           {router.query.type && router.query.type === 'bounties' && (
             <Createbounty
+              questions={questions}
+              setQuestions={setQuestions}
               setSlug={setSlug}
               draftLoading={draftLoading}
               createDraft={createDraft}

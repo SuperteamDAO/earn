@@ -148,6 +148,10 @@ const Bounties = () => {
             />
           </VStack>
           <DetailSideCard
+            questions={
+              listingInfo.data?.listing.Questions?.questions ??
+              JSON.stringify('[]')
+            }
             submissionisOpen={submissionisOpen}
             submissiononClose={submissiononClose}
             submissiononOpen={submissiononOpen}

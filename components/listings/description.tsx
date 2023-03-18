@@ -133,6 +133,7 @@ const Description = ({
       onClose();
       return;
     }
+    console.log(url);
 
     // update link
     editor

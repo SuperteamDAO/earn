@@ -35,6 +35,7 @@ interface Props {
   submissiononClose: () => void;
   submissiononOpen: () => void;
   SubmssionMutation: UseMutationResult<void, any, string, unknown>;
+  questions: string;
 }
 export const DetailSideCard = ({
   total,
@@ -46,6 +47,7 @@ export const DetailSideCard = ({
   submissionisOpen,
   submissiononClose,
   submissiononOpen,
+  questions,
 }: Props) => {
   const { userInfo } = userStore();
   const { connected } = useWallet();
@@ -58,6 +60,7 @@ export const DetailSideCard = ({
     <>
       {submissionisOpen && (
         <SubmissionModal
+          questions={questions}
           SubmssionMutation={SubmssionMutation}
           onClose={submissiononClose}
           isOpen={submissionisOpen}

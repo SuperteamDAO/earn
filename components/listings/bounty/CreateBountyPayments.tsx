@@ -15,13 +15,16 @@ import {
   VStack,
 } from '@chakra-ui/react';
 import { Dispatch, SetStateAction, useState } from 'react';
+import toast, { Toaster } from 'react-hot-toast';
 import { tokenList, PrizeList, MultiSelectOptions } from '../../../constants';
 import { PrizeListType } from '../../../interface/listings';
 import { SponsorType } from '../../../interface/sponsor';
 import { PrizeLabels } from '../../../interface/types';
 import { SponsorStore } from '../../../store/sponsor';
-import { createBounty } from '../../../utils/functions';
+import { createBounty, createQuestions } from '../../../utils/functions';
+import { genrateuuid } from '../../../utils/helpers';
 import { BountyBasicType } from './Createbounty';
+import { Ques } from './questions/builder';
 
 interface PrizeList {
   label: string;
@@ -36,6 +39,7 @@ interface Props {
   draftLoading: boolean;
   createDraft: (payment: string) => void;
   setSlug: Dispatch<SetStateAction<string>>;
+  questions: Ques[];
 }
 export const CreatebountyPayment = ({
   bountyBasic,
@@ -46,6 +50,7 @@ export const CreatebountyPayment = ({
   createDraft,
   draftLoading,
   setSlug,
+  questions,
 }: Props) => {
   // handles which token is selected
   const [tokenIndex, setTokenIndex] = useState<number>(0);
@@ -66,18 +71,24 @@ export const CreatebountyPayment = ({
   const onSubmit = async () => {
     setLoading(true);
     const Prizevalues = Object.values(prizevalues as Object);
+    if (Prizevalues.length <= 0) {
+      toast.error('Please add atleast one prize');
+      return;
+    }
+
     let amount = 0;
     let Prizes: Partial<PrizeListType> = Object();
     prizes.map((el, index) => {
-      amount += Prizevalues[index];
+      amount += Number(Prizevalues[index]);
       Prizes = {
         ...Prizes,
         [PrizeLabels[index]]: Prizevalues[index],
       };
     });
-
+    const bountyId = genrateuuid();
     const data = await createBounty(
       {
+        id: bountyId,
         active: true,
         bugBounty: false,
         deadline: bountyBasic?.deadline ?? '',
@@ -100,14 +111,20 @@ export const CreatebountyPayment = ({
       },
       currentSponsor as SponsorType
     );
+    const questionsRes = await createQuestions({
+      id: genrateuuid(),
+      bountiesId: bountyId,
+      questions: JSON.stringify(questions),
+    });
 
-    if (data.data) {
+    if (questionsRes) {
       onOpen();
       setSlug(
         ('/bounties/' + bountyBasic?.title.split(' ').join('-')) as string
       );
       setLoading(false);
     } else {
+      toast.error('Error creating bounty, please try again later.');
       setLoading(false);
     }
   };
@@ -242,6 +259,7 @@ export const CreatebountyPayment = ({
             Add Prize
           </Button>
         </VStack>
+        <Toaster />
         <VStack w={'full'} gap={6} mt={10}>
           <Button
             w="100%"

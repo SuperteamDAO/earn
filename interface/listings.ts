@@ -11,6 +11,13 @@ export const PrizeListMap = {
   forth: 'Forth prize',
   fifth: 'Fifth prize',
 };
+
+interface Questions {
+  id: string;
+  bountiesId: string;
+  questions: string;
+}
+
 interface Bounties {
   id?: string;
   title: string;
@@ -35,6 +42,7 @@ interface Bounties {
   winner?: Winner[];
   submission?: SubmissionType[];
   subscribe?: SubscribeType[];
+  Questions?: Questions;
 }
 
 type BountyStatus = 'open' | 'review' | 'close';
