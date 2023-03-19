@@ -248,9 +248,12 @@ export const fetchComments = async (id: string) => {
 
 export const createSubmission = async (sub: SubmissionType) => {
   try {
-    const { data } = await axios.post(`${Backend_Url}/submission/create`, {
-      ...sub,
-    });
+    const { data, status } = await axios.post(
+      `${Backend_Url}/submission/create`,
+      {
+        ...sub,
+      }
+    );
     return data;
   } catch (error) {
     console.log(error);

@@ -15,7 +15,9 @@ export interface Ques {
   id: string;
   question: string;
   type: QuestionType;
+  delete: boolean;
   options?: string[];
+  label?: string;
 }
 const Builder = ({
   setSteps,
@@ -24,9 +26,6 @@ const Builder = ({
   questions,
   setQuestions,
 }: Props) => {
-  // const [questions, setQuestions] = useState<Ques[]>([
-
-  // ]);
   return (
     <>
       <VStack gap={3} pt={7} align={'start'} w={'2xl'}>
@@ -63,6 +62,7 @@ const Builder = ({
                 question: 'What is your name?',
                 type: 'text',
                 options: [],
+                delete: true,
               },
             ]);
           }}

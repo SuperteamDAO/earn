@@ -113,6 +113,7 @@ interface DraftType {
   type: Listingtype;
   basic: string;
   payments: string;
+  question?: string;
 }
 interface SubmissionType {
   id: string;
@@ -120,6 +121,7 @@ interface SubmissionType {
   likes: string;
   link: string;
   talent: string;
+  questions: string;
   bountiesId: string;
   Talent?: Talent;
 }

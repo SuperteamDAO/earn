@@ -56,6 +56,15 @@ const CreateListing = () => {
       question: 'What is your name?',
       type: 'text',
       options: [],
+      delete: false,
+    },
+    {
+      id: genrateuuid(),
+      question: 'Application Link',
+      type: 'text',
+      options: [],
+      delete: false,
+      label: 'link',
     },
   ]);
 
@@ -106,6 +115,7 @@ const CreateListing = () => {
         }),
         type: 'Bounties',
         payments: payment,
+        question: JSON.stringify(questions),
       };
     } else if (router.query.type === 'grants') {
       draft = {

@@ -26,23 +26,35 @@ import toast from 'react-hot-toast';
 import { TalentStore } from '../../store/talent';
 import { createSubmission, fetchOgImage } from '../../utils/functions';
 import { genrateuuid } from '../../utils/helpers';
+import { Ques } from '../listings/bounty/questions/builder';
+import { QuestionHandler } from '../listings/bounty/questions/questionHandler';
 interface Props {
   isOpen: boolean;
   onClose: () => void;
-  SubmssionMutation: UseMutationResult<void, any, string, unknown>;
+  SubmssionMutation: UseMutationResult<
+    void,
+    any,
+    {
+      link: string;
+      questions: string;
+    },
+    unknown
+  >;
   questions: string;
 }
 export const SubmissionModal = ({
   isOpen,
   onClose,
   SubmssionMutation,
+
+  questions,
 }: Props) => {
   const {
     register,
     handleSubmit,
     formState: { isSubmitting },
   } = useForm();
-
+  const questionsArr = JSON.parse(questions) as Ques[];
   return (
     <>
       <Modal size={'xl'} isOpen={isOpen} onClose={onClose}>
@@ -61,96 +73,38 @@ export const SubmissionModal = ({
             <form
               style={{ width: '100%' }}
               onSubmit={handleSubmit((e) => {
-                SubmssionMutation.mutate(e.link);
+                SubmssionMutation.mutate({
+                  link: e.link,
+                  questions: JSON.stringify(e),
+                });
               })}
             >
-              <VStack w={'full'} gap={4}>
-                <FormControl isRequired>
-                  <Flex align={'center'} justify={'start'}>
-                    <FormLabel
-                      color={'gray.500'}
-                      fontWeight={600}
-                      fontSize={'15px'}
-                      htmlFor={'username'}
-                    >
-                      Discord Username
-                    </FormLabel>
-                  </Flex>
-                  <Input
-                    w={'full'}
-                    id="username"
-                    placeholder="username"
-                    color={'gray.500'}
-                    {...register('username')}
-                  />
-                </FormControl>
-                <FormControl>
-                  <Flex align={'center'} justify={'start'}>
-                    <FormLabel
-                      color={'gray.500'}
-                      fontWeight={600}
-                      fontSize={'15px'}
-                      htmlFor={'twitter'}
-                    >
-                      Tweet Link
-                    </FormLabel>
-                  </Flex>
-                  <Input
-                    w={'full'}
-                    id="twitter"
-                    placeholder="twitter"
-                    color={'gray.500'}
-                    {...register('twitter')}
-                  />
-                </FormControl>
-                <FormControl isRequired>
-                  <Flex align={'center'} justify={'start'}>
-                    <FormLabel
-                      color={'gray.500'}
-                      fontWeight={600}
-                      fontSize={'15px'}
-                      htmlFor={'link'}
-                    >
-                      Submssion Link
-                    </FormLabel>
-                  </Flex>
-                  <Input
-                    w={'full'}
-                    id="link"
-                    placeholder="link"
-                    color={'gray.500'}
-                    {...register('link')}
-                  />
-                </FormControl>
-                <FormControl isRequired>
-                  <Flex align={'center'} justify={'start'}>
-                    <FormLabel
-                      color={'gray.500'}
-                      fontWeight={600}
-                      fontSize={'15px'}
-                      htmlFor={'wallet'}
-                    >
-                      Sol Wallet
-                    </FormLabel>
-                  </Flex>
-                  <Input
-                    w={'full'}
-                    id="wallet"
-                    placeholder="wallet"
-                    color={'gray.500'}
-                    {...register('wallet')}
-                  />
-                </FormControl>
-                <Button
-                  isLoading={isSubmitting}
-                  type="submit"
-                  bg={'#6562FF'}
-                  color={'white'}
-                  w={'full'}
-                >
-                  Submit
-                </Button>
+              <VStack gap={4} my={5}>
+                {questionsArr.map((e) => {
+                  return (
+                    <FormControl key={e.id} isRequired>
+                      <QuestionHandler
+                        register={register}
+                        index={e.id}
+                        question={e.question}
+                        type={e.type}
+                        label={e.label ?? undefined}
+                        options={e.options ?? []}
+                      />
+                    </FormControl>
+                  );
+                })}
               </VStack>
+
+              <Button
+                isLoading={isSubmitting}
+                type="submit"
+                bg={'#6562FF'}
+                color={'white'}
+                w={'full'}
+              >
+                Submit
+              </Button>
             </form>
           </VStack>
         </ModalContent>

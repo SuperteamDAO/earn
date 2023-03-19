@@ -128,7 +128,7 @@ export const QuestionCard = ({
                 <ChevronDownIcon />
               </Button>
             )}
-            {questions.length !== 1 && (
+            {questions.length !== 1 && curentQuestion.delete && (
               <Button
                 onClick={() => {
                   setQuestions((prev) => {
@@ -142,8 +142,7 @@ export const QuestionCard = ({
             )}
           </HStack>
         </HStack>
-        {(curentQuestion.type === 'checkbox' ||
-          curentQuestion.type === 'single-choice') && (
+        {curentQuestion.type === 'single-choice' && (
           <>
             <VStack w={'full'}>
               {curentQuestion.options?.map((option, index) => {

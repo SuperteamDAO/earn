@@ -180,6 +180,7 @@ export const ListingHeader = ({
               </HStack>
               <HStack>
                 <HStack
+                  display={sub?.length! === 0 ? 'none' : 'flex'}
                   position={'relative'}
                   align={'center'}
                   justify={'center'}

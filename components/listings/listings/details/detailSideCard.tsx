@@ -34,7 +34,15 @@ interface Props {
   submissionisOpen: boolean;
   submissiononClose: () => void;
   submissiononOpen: () => void;
-  SubmssionMutation: UseMutationResult<void, any, string, unknown>;
+  SubmssionMutation: UseMutationResult<
+    void,
+    any,
+    {
+      link: string;
+      questions: string;
+    },
+    unknown
+  >;
   questions: string;
 }
 export const DetailSideCard = ({

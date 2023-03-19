@@ -66,8 +66,16 @@ const Bounties = () => {
     onOpen: submissiononOpen,
   } = useDisclosure();
 
-  const onSubmit = async (link: string) => {
+  const onSubmit = async ({
+    link,
+    questions,
+  }: {
+    link: string;
+    questions: string;
+  }) => {
+    console.log(questions);
     const res = await fetchOgImage(link);
+    console.log(res);
 
     const submissionRes = await createSubmission({
       id: genrateuuid(),
@@ -76,6 +84,7 @@ const Bounties = () => {
       link: link,
       bountiesId: listingInfo.data?.listing.id ?? '',
       talent: talentInfo?.id ?? '',
+      questions: JSON.stringify(questions ?? []),
     });
     if (submissionRes) {
       submissiononClose();
