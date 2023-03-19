@@ -32,7 +32,7 @@ const CreateListing = () => {
   // Basic Info - 2
   // Description - 3
   // payment form - 4
-  const [steps, setSteps] = useState<number>(4);
+  const [steps, setSteps] = useState<number>(1);
   const router = useRouter();
   const [draftLoading, setDraftLoading] = useState<boolean>(false);
   const [editorData, setEditorData] = useState<string | undefined>();
