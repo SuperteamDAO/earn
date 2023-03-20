@@ -250,7 +250,7 @@ const ListingBody = (props: listElm) => {
         <Td py={'0'}>
           <Center fontWeight={'600'} fontSize={'0.75rem'}>
             <Text mr={'0.1875rem'} color={'#334254'}>
-              {props.amount}
+              {`${props.amount}`}
             </Text>
             <Text color={'#94A3B8'}>USD</Text>
           </Center>
