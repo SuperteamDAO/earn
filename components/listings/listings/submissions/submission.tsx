@@ -18,7 +18,7 @@ export const Submission = ({ submissions, endTime }: Props) => {
         mt={10}
         w={'full'}
       >
-        {Number(moment(endTime).format('x')) < Date.now() ? (
+        {Number(moment(endTime).format('x')) > Date.now() ? (
           <>
             <Flex gap={3} ml={5}>
               <Text fontWeight={600} fontSize={'1.2rem'} color={'#1E293B'}>

@@ -6,7 +6,6 @@ import {
   Select,
   Textarea,
 } from '@chakra-ui/react';
-import React from 'react';
 import { FieldValues, UseFormRegister } from 'react-hook-form';
 import { QuestionType } from './builder';
 
@@ -15,7 +14,7 @@ interface Props {
   index: string;
   type: QuestionType;
   options: string[];
-  label: string | undefined;
+  label: string;
   register: UseFormRegister<FieldValues>;
 }
 export const QuestionHandler = ({
@@ -32,7 +31,7 @@ export const QuestionHandler = ({
         <FormLabel color={'gray.600 !important'} fontSize={'1.1rem'}>
           {question}
         </FormLabel>
-        <Input {...register(label ?? question)} />
+        <Input {...register(label)} />
       </>
     );
   } else if (type === 'long-text') {
@@ -41,7 +40,7 @@ export const QuestionHandler = ({
         <FormLabel color={'gray.600 !important'} fontSize={'1.1rem'}>
           {question}
         </FormLabel>
-        <Textarea {...register(label ?? question)} />
+        <Textarea {...register(label)} />
       </>
     );
   } else if (type === 'checkbox') {
@@ -51,7 +50,7 @@ export const QuestionHandler = ({
           <FormLabel color={'gray.600 !important'} fontSize={'1.1rem'}>
             {question}
           </FormLabel>
-          <Checkbox {...register(label ?? question)} mt={'-10px !important'} />
+          <Checkbox {...register(label)} mt={'-10px !important'} />
         </HStack>
       </>
     );
@@ -61,7 +60,7 @@ export const QuestionHandler = ({
         <FormLabel color={'gray.600 !important'} fontSize={'1.1rem'}>
           {question}
         </FormLabel>
-        <Select {...register(label ?? question)}>
+        <Select {...register(label)}>
           {options.map((e) => {
             return (
               <option key={index} value={e}>

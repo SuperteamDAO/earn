@@ -57,6 +57,7 @@ const CreateListing = () => {
       type: 'text',
       options: [],
       delete: false,
+      label: 'whats is your name',
     },
     {
       id: genrateuuid(),

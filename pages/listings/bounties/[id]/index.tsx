@@ -188,6 +188,7 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
     const res = await queryClient.fetchQuery(['bounties', id], () =>
       findBouties(id as string)
     );
+    console.log(res);
     await queryClient.prefetchQuery(['comments', res?.listing.id], () =>
       fetchComments(res?.listing.id as string)
     );

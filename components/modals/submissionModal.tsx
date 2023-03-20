@@ -97,7 +97,7 @@ export const SubmissionModal = ({
               </VStack>
 
               <Button
-                isLoading={isSubmitting}
+                isLoading={SubmssionMutation.isLoading}
                 type="submit"
                 bg={'#6562FF'}
                 color={'white'}

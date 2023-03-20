@@ -34,7 +34,13 @@ export const QuestionCard = ({
   const handleChangeQuestion = (newq: string) => {
     setQuestions((prev) => {
       return prev.map((q) => {
-        if (q.id === curentQuestion.id) {
+        if (q.id === curentQuestion.id && q.delete === false) {
+          return {
+            ...q,
+            question: newq,
+            label: newq,
+          };
+        } else if (q.id === curentQuestion.id && q.delete) {
           return {
             ...q,
             question: newq,

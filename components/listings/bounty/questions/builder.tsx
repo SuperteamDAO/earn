@@ -17,7 +17,7 @@ export interface Ques {
   type: QuestionType;
   delete: boolean;
   options?: string[];
-  label?: string;
+  label: string;
 }
 const Builder = ({
   setSteps,
@@ -63,6 +63,7 @@ const Builder = ({
                 type: 'text',
                 options: [],
                 delete: true,
+                label: 'name',
               },
             ]);
           }}
