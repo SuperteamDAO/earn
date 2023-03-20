@@ -62,10 +62,10 @@ const Sponsor = () => {
         let html = document.querySelector('html');
         try {
             if (isLessThan600px) {
-                html.style.fontSize = "60%"
+                html!.style.fontSize = "60%"
             }
             else {
-                html.style.fontSize = "100%"
+                html!.style.fontSize = "100%"
             }
         } catch (error) {
             console.log(error);
