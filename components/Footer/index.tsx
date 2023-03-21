@@ -19,7 +19,7 @@ export const Footer = ({ style }: Props) => (
             ...style,
         }}
     >
-        <Flex justifyContent="space-evenly" alignItems="center" gap="1.875rem">
+        <Flex justifyContent="space-evenly" alignItems="start" gap="1.875rem">
             <Flex alignItems="start" flexFlow="column" w="40%" gap="1.25rem">
                 <img src="/assets/logo/logo.png" alt="Icon" />
 
