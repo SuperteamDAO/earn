@@ -54,7 +54,7 @@ const Sponsor = () => {
         if (window.scrollY >= 80) {
             setNavbarBg(true);
         } else {
-            setNavbarBg(false);
+            setNavbarBg(true);
         }
     };
 
@@ -169,7 +169,11 @@ const Sponsor = () => {
                     variant="primary"
                     bg={"#6562FF"}
                     color={"white"}
-                    onClick={() => router.push('/new')}
+                    onClick={() => {
+                        //alert('')
+                        // router.push('/new')
+                        window.location.href = '/new'
+                    }}
                 >
                     Get Started
                 </Button>
@@ -250,7 +254,11 @@ const Sponsor = () => {
                     w="12.5rem"
                     fontSize="1.125rem"
                     borderRadius="0.625rem"
-                    onClick={() => router.push('/new')}
+                    onClick={() => {
+                        //alert('')
+                        // router.push('/new')
+                        window.location.href = '/new'
+                    }}
                 >
                     Get Started
                 </Button>
@@ -417,7 +425,7 @@ const Sponsor = () => {
                         DIRECTORY
                     </Text>
                     <Text fontSize="2.75rem" color="gray.700" fontWeight={700}>
-                        Identify and reach out to top talent
+                        Identify and Reach Out to Top Talent
                     </Text>
                     <Text fontSize="1.5rem" color="gray.500" fontWeight={400}>
                         Our Talent Directory captures verified on-chain earnings to
@@ -506,7 +514,7 @@ const Sponsor = () => {
                             560+
                         </Text>
                         <Text fontSize="1.25rem" fontWeight={600} color="gray.500">
-                            Earning Opportunity
+                            Earning Opportunities
                         </Text>
                     </Box>
                 </Flex>
@@ -592,6 +600,8 @@ const Sponsor = () => {
                                 onClick={() => setVideoPopup(true)}
                                 fontSize="1.125rem"
                                 variant="purple"
+                                bg={"#DCDBFF"}
+                                color={"#4E41E1"}
                             >
                                 Watch Video
                             </Button>
@@ -654,7 +664,7 @@ const Sponsor = () => {
                         need filled, we&apos;re here to help (for free!)
                     </Text>
 
-                    <Flex gap="3.75rem" w="100%" justify="start">
+                    <Flex gap="2rem" w="100%" justify="start">
                         <Button
                             variant="primary"
                             h="3.125rem"
@@ -663,13 +673,18 @@ const Sponsor = () => {
                             borderRadius="0.625rem"
                             bg={"#6562FF"}
                             color={"white"}
+                            onClick={() => {
+                                //alert('')
+                                // router.push('/new')
+                                window.location.href = '/new'
+                            }}
                         >
                             Get Started
                         </Button>
                         <Flex
                             fontSize="1rem"
                             fontWeight={700}
-                            gap="1.25rem"
+                            gap="0.5rem"
                             align="center"
                         >
                             <Box minW="2.3125rem" h="2.3125rem" borderRadius="50%">
@@ -690,7 +705,7 @@ const Sponsor = () => {
                                     lineHeight="1.25rem"
                                     cursor="pointer"
                                     fontWeight={700}
-                                    fontSize="1rem"
+                                    fontSize="0.9rem"
                                     borderBottom="0.0625rem dashed"
                                     borderColor="gray.400"
                                     padding="0.125rem"
@@ -702,8 +717,9 @@ const Sponsor = () => {
                     </Flex>
                 </Flex>
 
+
                 {isLargerThan12800px ? (
-                    <Box w="60%" maxW="90rem" pos="absolute" top="-10%" right="-10%">
+                    <Box w="60%" maxW="90rem" pos="absolute" right="-10%" top={{ base: '-400px', lg: '-500px', xl: "-180px", '2xl': "-500px" }}>
                         <Image
                             src={SponsorHeroDisplay}
                             alt="Image"
@@ -719,5 +735,16 @@ const Sponsor = () => {
     }
 
 };
+
+
+/*
+ const breakpoints = {
+  sm: '30em', // 480px
+  md: '48em', // 768px
+  lg: '62em', // 992px
+  xl: '80em', // 1280px
+ '2xl': '96em', // 1536px
+}
+ */
 
 export default Sponsor;

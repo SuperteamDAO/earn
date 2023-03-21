@@ -101,6 +101,11 @@ export const Footer = ({ style }: Props) => (
                         Germany
                     </Text>
                 </Link>
+                <Link href="https://mx.superteam.fun" mr="4" isExternal>
+                    <Text fontSize="1.0625rem" fontWeight={400} color="gray.400">
+                        Mexico
+                    </Text>
+                </Link>
             </Flex>
 
             <Flex alignItems="start" flexFlow="column" gap="0.625rem">
