@@ -172,7 +172,7 @@ const Sponsor = () => {
                     onClick={() => {
                         //alert('')
                         // router.push('/new')
-                        window.location.href = '/new'
+                        window.location.href = '/sponsor/create'
                     }}
                 >
                     Get Started
@@ -257,7 +257,7 @@ const Sponsor = () => {
                     onClick={() => {
                         //alert('')
                         // router.push('/new')
-                        window.location.href = '/new'
+                        window.location.href = '/sponsor/create'
                     }}
                 >
                     Get Started
@@ -358,13 +358,7 @@ const Sponsor = () => {
                 w="100%"
                 flexWrap="wrap"
             >
-                <Box w="18.75rem">
-                    <img
-                        src={PrivateListingsDisplay}
-                        alt="Image"
-                        width=""
-                        height="100%" />
-                </Box>
+
                 <Box w="18.75rem">
                     <img
                         src={TemplateDisplay}
@@ -375,6 +369,13 @@ const Sponsor = () => {
                 <Box w="18.75rem">
                     <img
                         src={SPLTokenDisplay}
+                        alt="Image"
+                        width=""
+                        height="100%" />
+                </Box>
+                <Box w="18.75rem">
+                    <img
+                        src={PrivateListingsDisplay}
                         alt="Image"
                         width=""
                         height="100%" />
@@ -674,9 +675,8 @@ const Sponsor = () => {
                             bg={"#6562FF"}
                             color={"white"}
                             onClick={() => {
-                                //alert('')
                                 // router.push('/new')
-                                window.location.href = '/new'
+                                window.location.href = '/sponsor/create'
                             }}
                         >
                             Get Started
