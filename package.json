@@ -16,6 +16,7 @@
     "@chakra-ui/theme-tools": "^2.0.16",
     "@emotion/react": "^11.10.5",
     "@emotion/styled": "^11.10.5",
+    "@fontsource/domine": "^4.5.10",
     "@fontsource/inter": "^4.5.15",
     "@solana-mobile/wallet-adapter-mobile": "^1.0.0",
     "@solana/spl-token": "^0.3.7",
