@@ -20,9 +20,10 @@ import {
   UseMutationResult,
 } from '@tanstack/react-query';
 import { useRouter } from 'next/router';
-import React from 'react';
+import React, { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import toast from 'react-hot-toast';
+import { MultiSelectOptions } from '../../constants';
 import { TalentStore } from '../../store/talent';
 import { createSubmission, fetchOgImage } from '../../utils/functions';
 import { genrateuuid } from '../../utils/helpers';
@@ -52,6 +53,7 @@ export const SubmissionModal = ({
   const {
     register,
     handleSubmit,
+    control,
     formState: { isSubmitting },
   } = useForm();
   const questionsArr = JSON.parse(questions) as Ques[];
@@ -84,6 +86,7 @@ export const SubmissionModal = ({
                   return (
                     <FormControl key={e.id} isRequired>
                       <QuestionHandler
+                        control={control}
                         register={register}
                         index={e.id}
                         question={e.question}

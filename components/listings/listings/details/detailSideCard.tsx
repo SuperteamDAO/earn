@@ -327,6 +327,7 @@ export const DetailSideCard = ({
                 onOpen();
                 return;
               }
+              console.log(questions);
               submissiononOpen();
             }}
           >

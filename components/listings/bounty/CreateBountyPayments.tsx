@@ -68,6 +68,56 @@ export const CreatebountyPayment = ({
   // sponsor
   const { currentSponsor } = SponsorStore();
   const [loading, setLoading] = useState<boolean>(false);
+  const defaultQuestion: Ques[] = [
+    {
+      delete: false,
+      id: genrateuuid(),
+      label: 'Discord Username',
+      question: 'Discord Username',
+      type: 'text',
+      options: [],
+    },
+    {
+      delete: false,
+      id: genrateuuid(),
+      label: 'Tweet link',
+      question: 'Tweet Link',
+      type: 'text',
+      options: [],
+    },
+    {
+      delete: false,
+      id: genrateuuid(),
+      label: 'link',
+      question: 'Application Link',
+      type: 'text',
+      options: [],
+    },
+    {
+      delete: false,
+      id: genrateuuid(),
+      label: 'SOL Wallet',
+      question: 'SOL Wallet',
+      type: 'text',
+      options: [],
+    },
+    {
+      delete: false,
+      id: genrateuuid(),
+      label: 'Email',
+      question: 'Your email address',
+      type: 'text',
+      options: [],
+    },
+    {
+      delete: false,
+      id: genrateuuid(),
+      label: 'Twitter',
+      question: 'Your Twitter Handle',
+      type: 'text',
+      options: [],
+    },
+  ];
   const onSubmit = async () => {
     setLoading(true);
     const Prizevalues = Object.values(prizevalues as Object);
@@ -114,7 +164,7 @@ export const CreatebountyPayment = ({
     const questionsRes = await createQuestions({
       id: genrateuuid(),
       bountiesId: bountyId,
-      questions: JSON.stringify(questions),
+      questions: JSON.stringify([...defaultQuestion, ...questions]),
     });
 
     if (questionsRes) {

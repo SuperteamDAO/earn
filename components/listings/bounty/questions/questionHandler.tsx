@@ -6,8 +6,20 @@ import {
   Select,
   Textarea,
 } from '@chakra-ui/react';
-import { FieldValues, UseFormRegister } from 'react-hook-form';
+import {
+  Control,
+  ControllerFieldState,
+  ControllerRenderProps,
+  FieldValues,
+  UseFormRegister,
+  UseFormStateReturn,
+} from 'react-hook-form';
+import ReactSelect from 'react-select';
 import { QuestionType } from './builder';
+import makeAnimated from 'react-select/animated';
+import { MainSkills, MultiSelectOptions } from '../../../../constants';
+import { Controller } from 'react-hook-form';
+import { ReactElement, JSXElementConstructor } from 'react';
 
 interface Props {
   question: string;
@@ -16,6 +28,7 @@ interface Props {
   options: string[];
   label: string;
   register: UseFormRegister<FieldValues>;
+  control: Control<FieldValues, any>;
 }
 export const QuestionHandler = ({
   index,
@@ -24,6 +37,7 @@ export const QuestionHandler = ({
   options,
   register,
   label,
+  control,
 }: Props) => {
   if (type === 'text') {
     return (
@@ -69,6 +83,35 @@ export const QuestionHandler = ({
             );
           })}
         </Select>
+      </>
+    );
+  } else if (type === 'multi-choice') {
+    const animatedComponents = makeAnimated();
+    const option: MultiSelectOptions[] = [];
+    options.map((e) => {
+      option.push({ value: e, label: e });
+    });
+    return (
+      <>
+        <FormLabel color={'gray.600 !important'} fontSize={'1.1rem'}>
+          {question}
+        </FormLabel>
+        <Controller
+          control={control}
+          render={({ field }) => {
+            return (
+              <ReactSelect
+                closeMenuOnSelect={false}
+                components={animatedComponents}
+                isMulti
+                required={true}
+                options={option}
+                {...field}
+              />
+            );
+          }}
+          name={'multi-choice'}
+        ></Controller>
       </>
     );
   } else {

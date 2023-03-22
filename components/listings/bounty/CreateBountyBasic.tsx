@@ -6,6 +6,7 @@ import {
   FormLabel,
   Image,
   Input,
+  Select,
   Tooltip,
   VStack,
 } from '@chakra-ui/react';
@@ -139,8 +140,7 @@ export const CreatebountyBasic = ({
             </Tooltip>
           </Flex>
 
-          <Input
-            id="eligibility"
+          <Select
             placeholder="Develop a new landing page"
             value={bountyBasic?.eligibility}
             onChange={(e) => {
@@ -149,7 +149,14 @@ export const CreatebountyBasic = ({
                 eligibility: e.target.value,
               });
             }}
-          />
+          >
+            <option value="premission">
+              Permissioned Bounty — selected people can apply
+            </option>
+            <option value="premission-less">
+              Permissioned Less Bounty — anyone can apply
+            </option>
+          </Select>
           <FormErrorMessage>
             {/* {errors.eligibility ? <>{errors.eligibility.message}</> : <></>} */}
           </FormErrorMessage>

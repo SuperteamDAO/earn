@@ -1,6 +1,7 @@
 import type { AppProps } from 'next/app';
 import { ChakraProvider } from '@chakra-ui/react';
 import theme from '../config/chakra.config';
+import { Router } from 'next/router';
 import {
   Hydrate,
   QueryClient,
@@ -8,9 +9,13 @@ import {
 } from '@tanstack/react-query';
 import { Wallet } from '../context/connectWalletContext';
 import { ReactQueryDevtools } from '@tanstack/react-query-devtools';
-import 'degen/styles';
+import NProgress from 'nprogress';
+
 // Styles
+import 'degen/styles';
+import 'nprogress/nprogress.css';
 import '../styles/globals.scss';
+// Fonts
 import '@fontsource/inter/';
 import '@fontsource/inter/400.css';
 import '@fontsource/inter/500.css';
@@ -24,6 +29,9 @@ import "@fontsource/domine/700.css"
 
 function MyApp({ Component, pageProps }: AppProps) {
   const queryClient = new QueryClient();
+  Router.events.on('routeChangeStart', () => NProgress.start());
+  Router.events.on('routeChangeComplete', () => NProgress.done());
+  Router.events.on('routeChangeError', () => NProgress.done());
   return (
     <>
       <ChakraProvider theme={theme}>

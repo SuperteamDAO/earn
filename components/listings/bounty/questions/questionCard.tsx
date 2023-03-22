@@ -34,16 +34,11 @@ export const QuestionCard = ({
   const handleChangeQuestion = (newq: string) => {
     setQuestions((prev) => {
       return prev.map((q) => {
-        if (q.id === curentQuestion.id && q.delete === false) {
+        if (q.id === curentQuestion.id) {
           return {
             ...q,
             question: newq,
             label: newq,
-          };
-        } else if (q.id === curentQuestion.id && q.delete) {
-          return {
-            ...q,
-            question: newq,
           };
         }
         return q;
@@ -67,12 +62,15 @@ export const QuestionCard = ({
     <>
       <VStack align={'start'} w={'full'}>
         <FormControl w={'full'}>
-          <FormLabel>
-            <Text fontSize={'0.88rem'} fontWeight={600} color={'gray.600'}>
+          <FormLabel color={'gray.500'}>
+            <Text fontSize={'0.88rem'} fontWeight={600} color={'gray.500'}>
               Question {index + 1}
             </Text>
           </FormLabel>
           <Input
+            _placeholder={{
+              color: 'gray.400',
+            }}
             onChange={(e) => {
               handleChangeQuestion(e.target.value);
             }}
@@ -82,6 +80,9 @@ export const QuestionCard = ({
         </FormControl>
         <HStack w={'full'} justify={'space-between'}>
           <Select
+            _placeholder={{
+              color: 'gray.400',
+            }}
             onChange={(e) => {
               handleChangeType(e.target.value as QuestionType);
             }}
@@ -92,6 +93,8 @@ export const QuestionCard = ({
             <option value="checkbox">Checkbox</option>
             <option value="long-text">Long Text</option>
             <option value="single-choice">Single Choice</option>
+            <option value="multi-choice">Multiple Choice</option>
+            <option value="url">URL</option>
           </Select>
           <HStack>
             {index + 1 !== 1 && (
@@ -148,7 +151,8 @@ export const QuestionCard = ({
             )}
           </HStack>
         </HStack>
-        {curentQuestion.type === 'single-choice' && (
+        {(curentQuestion.type === 'single-choice' ||
+          curentQuestion.type === 'multi-choice') && (
           <>
             <VStack w={'full'}>
               {curentQuestion.options?.map((option, index) => {
@@ -202,6 +206,9 @@ export const QuestionCard = ({
               })}
               <HStack w={'full'}>
                 <Input
+                  _placeholder={{
+                    color: 'gray.400',
+                  }}
                   value={option}
                   onChange={(e) => {
                     setOption(e.target.value);

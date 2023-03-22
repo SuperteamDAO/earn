@@ -1,5 +1,6 @@
 import { Box, Button, HStack, Image, Text, VStack } from '@chakra-ui/react';
 import React, { Dispatch, SetStateAction, useState } from 'react';
+import toast, { Toaster } from 'react-hot-toast';
 import { genrateuuid } from '../../../../utils/helpers';
 import { QuestionCard } from './questionCard';
 
@@ -10,7 +11,13 @@ interface Props {
   questions: Ques[];
   setQuestions: Dispatch<SetStateAction<Ques[]>>;
 }
-export type QuestionType = 'text' | 'single-choice' | 'long-text' | 'checkbox';
+export type QuestionType =
+  | 'text'
+  | 'single-choice'
+  | 'long-text'
+  | 'checkbox'
+  | 'multi-choice'
+  | 'url';
 export interface Ques {
   id: string;
   question: string;
@@ -59,11 +66,11 @@ const Builder = ({
               ...questions,
               {
                 id: genrateuuid(),
-                question: 'What is your name?',
+                question: '',
                 type: 'text',
                 options: [],
                 delete: true,
-                label: 'name',
+                label: '',
               },
             ]);
           }}
@@ -74,6 +81,7 @@ const Builder = ({
         >
           + Add Question
         </Button>
+        <Toaster />
         <VStack w={'full'} gap={6} pt={10}>
           <Button
             w="100%"
@@ -83,7 +91,26 @@ const Builder = ({
             fontSize="1rem"
             fontWeight={600}
             onClick={() => {
-              setSteps(5);
+              if (questions.length === 0) {
+                toast.error('Add minimun of one question');
+                return;
+              }
+              let rejectedQuestion: any[] = [];
+
+              const a = questions
+                .filter(
+                  (e) => e.type === 'single-choice' || e.type === 'multi-choice'
+                )
+                .map((e) => {
+                  if (e.options?.length === 0) {
+                    toast.error('Missing Options for a questions');
+                    rejectedQuestion.push(e);
+                    return e;
+                  }
+                });
+              if (rejectedQuestion.length === 0) {
+                setSteps(5);
+              }
             }}
           >
             Continue

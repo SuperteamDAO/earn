@@ -25,6 +25,8 @@ import {
   findBouties,
 } from '../../../../utils/functions';
 import { genrateuuid } from '../../../../utils/helpers';
+import { SubmissionSuccess } from '../../../../components/modals/SubmissionSuccess';
+import { useState } from 'react';
 // import TalentBio from '../../../components/TalentBio';
 
 const defalutSponsor: SponsorType = {
@@ -45,7 +47,7 @@ const defalutSponsor: SponsorType = {
 
 const Bounties = () => {
   const router = useRouter();
-
+  const [subID, setSubID] = useState<string>('');
   const { onOpen, isOpen, onClose } = useDisclosure();
   const { talentInfo } = TalentStore();
   const queryClient = useQueryClient();
@@ -66,6 +68,12 @@ const Bounties = () => {
     onOpen: submissiononOpen,
   } = useDisclosure();
 
+  const {
+    isOpen: submissionSuccisOpen,
+    onClose: submissionSucconClose,
+    onOpen: submissionSucconOpen,
+  } = useDisclosure();
+
   const onSubmit = async ({
     link,
     questions,
@@ -73,9 +81,7 @@ const Bounties = () => {
     link: string;
     questions: string;
   }) => {
-    console.log(questions);
     const res = await fetchOgImage(link);
-    console.log(res);
 
     const submissionRes = await createSubmission({
       id: genrateuuid(),
@@ -87,7 +93,9 @@ const Bounties = () => {
       questions: JSON.stringify(questions ?? []),
     });
     if (submissionRes) {
+      setSubID(submissionRes.data?.id ?? '');
       submissiononClose();
+      submissionSucconOpen();
     }
   };
   const SubmssionMutation = useMutation({
@@ -102,10 +110,15 @@ const Bounties = () => {
       toast.success('Error occur while commenting');
     },
   });
-  console.log(listingInfo.data);
 
   return (
     <>
+      {submissionSuccisOpen && (
+        <SubmissionSuccess
+          isOpen={submissionSuccisOpen}
+          onClose={submissionSucconClose}
+        />
+      )}
       {isOpen && <CreateProfileModal isOpen={isOpen} onClose={onClose} />}
       <ListingHeader
         endTime={listingInfo.data?.listing.deadline ?? ''}

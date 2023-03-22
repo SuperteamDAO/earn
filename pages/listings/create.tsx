@@ -50,24 +50,7 @@ const CreateListing = () => {
     type: 'fulltime',
   });
 
-  const [questions, setQuestions] = useState<Ques[]>([
-    {
-      id: genrateuuid(),
-      question: 'What is your name?',
-      type: 'text',
-      options: [],
-      delete: false,
-      label: 'whats is your name',
-    },
-    {
-      id: genrateuuid(),
-      question: 'Application Link',
-      type: 'text',
-      options: [],
-      delete: false,
-      label: 'link',
-    },
-  ]);
+  const [questions, setQuestions] = useState<Ques[]>([]);
 
   //- Bounty
   const [bountybasic, setBountyBasic] = useState<BountyBasicType | undefined>();

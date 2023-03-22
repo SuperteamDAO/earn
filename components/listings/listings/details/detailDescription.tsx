@@ -76,7 +76,7 @@ export const DetailDescription = ({ skills, description }: Props) => {
             pb={8}
             px={5}
           >
-            {parse(description ?? '')}
+            {parse(JSON.parse(description) ?? '')}
           </Flex>
           <Box
             h={'50%'}
