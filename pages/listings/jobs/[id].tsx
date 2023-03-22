@@ -25,6 +25,7 @@ const Jobs = () => {
   return (
     <>
       <ListingHeader
+        eligibility={'premission-less'}
         sponsor={listingInfo.data?.sponsor as SponsorType}
         title={listingInfo.data?.listing.title as string}
         tabs={false}

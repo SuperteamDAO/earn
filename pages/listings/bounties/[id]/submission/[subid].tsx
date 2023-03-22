@@ -1,4 +1,4 @@
-import { HStack } from '@chakra-ui/react';
+import { HStack, list } from '@chakra-ui/react';
 import { dehydrate, QueryClient, useQuery } from '@tanstack/react-query';
 import { GetServerSideProps } from 'next';
 import { useRouter } from 'next/router';
@@ -33,6 +33,7 @@ const Sumbissions = () => {
   return (
     <>
       <ListingHeader
+        eligibility={listingInfo.data?.listing.eligibility as any}
         tabs={true}
         title={listingInfo.data?.listing?.title ?? ''}
         sponsor={
