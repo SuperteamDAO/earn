@@ -44,6 +44,7 @@ interface Props {
     unknown
   >;
   questions: string;
+  eligibility: string;
 }
 export const DetailSideCard = ({
   total,
@@ -56,6 +57,7 @@ export const DetailSideCard = ({
   submissiononClose,
   submissiononOpen,
   questions,
+  eligibility,
 }: Props) => {
   const { userInfo } = userStore();
   const { connected } = useWallet();
@@ -68,6 +70,7 @@ export const DetailSideCard = ({
     <>
       {submissionisOpen && (
         <SubmissionModal
+          eligibility={eligibility as string}
           questions={questions}
           SubmssionMutation={SubmssionMutation}
           onClose={submissiononClose}
@@ -303,18 +306,22 @@ export const DetailSideCard = ({
               <Text color={'#94A3B8'}>Submissions</Text>
             </Flex>
             <Flex py={3} flexDir={'column'} align={'start'} justify={'center'}>
-              <Flex gap={1} align={'center'} justify={'center'}>
+              <Flex gap={1} align={'start'} justify={'center'}>
                 <Image
-                  mt={-1}
+                  mt={1}
                   src={'/assets/icons/purple-timer.svg'}
                   alt={'suit case'}
                   w={'1.4rem'}
                 />
-                <Text color={'#000000'} fontSize="1.3rem" fontWeight={500}>
-                  <Countdown date={endingTime} daysInHours />
-                </Text>
+                <VStack align={'start'}>
+                  <Text color={'#000000'} fontSize="1.3rem" fontWeight={500}>
+                    <Countdown date={endingTime} daysInHours />
+                  </Text>
+                  <Text mt={'0px !important'} color={'#94A3B8'}>
+                    Remaining
+                  </Text>
+                </VStack>
               </Flex>
-              <Text color={'#94A3B8'}>Remaining</Text>
             </Flex>
           </Flex>
           <Button
@@ -360,8 +367,8 @@ export const DetailSideCard = ({
           <VerticalStep
             currentStep={submissionStatus + 1}
             thisStep={2}
-            sublabel={'Give your best shot'}
-            label={'Bounties being assessed'}
+            label={'Submission Review'}
+            sublabel={'Bounties being assessed'}
           />
           <Divider
             border={'2px'}
@@ -373,7 +380,7 @@ export const DetailSideCard = ({
           <VerticalStep
             currentStep={submissionStatus + 1}
             thisStep={3}
-            sublabel={'Winner will be announce'}
+            sublabel={moment(endingTime).format('MMM Do YY')}
             label={'Winner Announcement'}
           />
         </VStack>

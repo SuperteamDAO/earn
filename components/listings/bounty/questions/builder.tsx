@@ -43,8 +43,9 @@ const Builder = ({
               Note
             </Text>
             <Text mt={'0px !important'} fontSize={'0.88rem'} color={'#94A3B8'}>
-              Names, Emails, Discord / Twitter IDs and SOL wallet are collected
-              by default, use this space to ask about anything else
+              Names, Emails, Discord / Twitter IDs, SOL wallet and Profile Links
+              are collected by default. Please use this space to ask about
+              anything else!
             </Text>
           </VStack>
         </HStack>

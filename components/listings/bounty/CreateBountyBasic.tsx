@@ -151,10 +151,10 @@ export const CreatebountyBasic = ({
             }}
           >
             <option value="premission">
-              Permissioned Bounty — selected people can apply
+              Permissioned Bounty - only selected people can work on the bounty
             </option>
             <option value="premission-less">
-              Permissioned Less Bounty — anyone can apply
+              Permissionless Bounty - anyone can apply
             </option>
           </Select>
           <FormErrorMessage>

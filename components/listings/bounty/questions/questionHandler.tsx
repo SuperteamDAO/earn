@@ -64,7 +64,7 @@ export const QuestionHandler = ({
           <FormLabel color={'gray.600 !important'} fontSize={'1.1rem'}>
             {question}
           </FormLabel>
-          <Checkbox {...register(label)} mt={'-10px !important'} />
+          <Checkbox {...register(label)} mt={'-6px !important'} />
         </HStack>
       </>
     );
