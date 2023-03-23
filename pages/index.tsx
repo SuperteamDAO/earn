@@ -1,6 +1,8 @@
-import { Avatar, AvatarGroup, Box, Button, Flex, Text, Image } from '@chakra-ui/react';
+import { Avatar, AvatarGroup, Box, Button, Flex, Text, Image, Center } from '@chakra-ui/react';
 import type { NextPage } from 'next';
 import { Navbar } from '../components/navbar/navbar';
+
+import { BellIcon } from '@chakra-ui/icons'
 
 //components
 import Banner from '../components/home/Banner';
@@ -18,6 +20,7 @@ const Home: NextPage = () => {
       <Flex w={"100%"} h={"max-content"} minH={"100vh"} bg={"white"} pt={'3.5rem'} justifyContent={"center"} >
         <Box>
           <Banner />
+          <CategoryBanner />
           <Box mt={"32px"}>
             <ListingSection
               title='Active Bounties'
@@ -138,3 +141,24 @@ const Grants = () => {
     </Flex >
   )
 }
+
+const CategoryBanner = () => {
+  return (
+    <Flex p={"24px"} rounded={"lg"} backgroundSize={"contain"} w={"737px"} h={"118px"} mt={"25px"} bg={"url('/assets/home/display/bg_frontend.png')"}>
+      <Center mr={"17px"} bg={"#FEA8EB"} w={"59px"} h={"59px"} rounded={"md"}>
+        <Image src='/assets/home/category/frontend.png' />
+      </Center>
+      <Box w={"60%"}>
+        <Text fontWeight={"700"} fontFamily={"Domine"}>
+          Frontend Development
+        </Text>
+        <Text fontSize={"14px"} color={"#64748B"}>
+          If you are a pixel-perfectionist who creates interfaces that users love, check out the earning opportunities below.
+        </Text>
+      </Box>
+      <Button ml={"auto"} my={"auto"} px={"16px"} fontWeight={"300"} border={"1px solid #CBD5E1"} color={"#94A3B8"} leftIcon={<BellIcon />} bg={"white"} variant='solid'>
+        Notify Me
+      </Button>
+    </Flex>
+  )
+} 
