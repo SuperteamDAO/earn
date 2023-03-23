@@ -115,6 +115,7 @@ const Bounties = () => {
     <>
       {submissionSuccisOpen && (
         <SubmissionSuccess
+          eligibility={listingInfo.data?.listing.eligibility as string}
           isOpen={submissionSuccisOpen}
           onClose={submissionSucconClose}
         />

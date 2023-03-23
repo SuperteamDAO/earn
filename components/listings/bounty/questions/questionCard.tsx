@@ -8,6 +8,7 @@ import {
 import {
   Button,
   FormControl,
+  FormErrorMessage,
   FormLabel,
   HStack,
   Input,
@@ -23,12 +24,18 @@ interface Props {
   curentQuestion: Ques;
   questions: Ques[];
   index: number;
+  errorState: ErrorState[];
 }
+type ErrorState = {
+  id: string;
+  errMessage: string;
+};
 export const QuestionCard = ({
   setQuestions,
   curentQuestion,
   questions,
   index,
+  errorState,
 }: Props) => {
   const [option, setOption] = useState<string>('');
   const handleChangeQuestion = (newq: string) => {
@@ -61,7 +68,14 @@ export const QuestionCard = ({
   return (
     <>
       <VStack align={'start'} w={'full'}>
-        <FormControl w={'full'}>
+        <FormControl
+          w={'full'}
+          isInvalid={
+            errorState.filter((e) => e.id === curentQuestion.id)[0]
+              ? true
+              : false
+          }
+        >
           <FormLabel color={'gray.500'}>
             <Text fontSize={'0.88rem'} fontWeight={600} color={'gray.500'}>
               Question {index + 1}
@@ -77,6 +91,11 @@ export const QuestionCard = ({
             value={curentQuestion.question}
             placeholder="Enter your question here"
           />
+          <FormErrorMessage>
+            {errorState.filter((e) => e.id === curentQuestion.id)[0] &&
+              errorState.filter((e) => e.id === curentQuestion.id)[0]
+                .errMessage}
+          </FormErrorMessage>
         </FormControl>
         <HStack w={'full'} justify={'space-between'}>
           <Select
@@ -205,15 +224,23 @@ export const QuestionCard = ({
                 );
               })}
               <HStack w={'full'}>
-                <Input
-                  _placeholder={{
-                    color: 'gray.400',
-                  }}
-                  value={option}
-                  onChange={(e) => {
-                    setOption(e.target.value);
-                  }}
-                />
+                <FormControl
+                  isInvalid={
+                    errorState.filter((e) => e.id === curentQuestion.id)[0]
+                      ? true
+                      : false
+                  }
+                >
+                  <Input
+                    _placeholder={{
+                      color: 'gray.400',
+                    }}
+                    value={option}
+                    onChange={(e) => {
+                      setOption(e.target.value);
+                    }}
+                  />
+                </FormControl>
                 <Button
                   onClick={() => {
                     setQuestions((prev) => {

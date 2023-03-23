@@ -26,6 +26,10 @@ export interface Ques {
   options?: string[];
   label: string;
 }
+type ErrorState = {
+  id: string;
+  errMessage: string;
+};
 const Builder = ({
   setSteps,
   createDraft,
@@ -33,6 +37,7 @@ const Builder = ({
   questions,
   setQuestions,
 }: Props) => {
+  const [error, setError] = useState<ErrorState[]>([]);
   return (
     <>
       <VStack gap={3} pt={7} align={'start'} w={'2xl'}>
@@ -53,6 +58,7 @@ const Builder = ({
           return (
             <>
               <QuestionCard
+                errorState={error}
                 index={index}
                 questions={questions}
                 curentQuestion={question}
@@ -106,6 +112,24 @@ const Builder = ({
                   if (e.options?.length === 0) {
                     toast.error('Missing Options for a questions');
                     rejectedQuestion.push(e);
+                    setError([
+                      ...error,
+                      {
+                        id: e.id,
+                        errMessage: 'Missing Options',
+                      },
+                    ]);
+                    return e;
+                  }
+                  if (e.options?.length === 1) {
+                    rejectedQuestion.push(e);
+                    setError([
+                      ...error,
+                      {
+                        id: e.id,
+                        errMessage: 'Please add 1 more option',
+                      },
+                    ]);
                     return e;
                   }
                 });

@@ -9,7 +9,7 @@ import {
 } from '@chakra-ui/react';
 import { useWallet } from '@solana/wallet-adapter-react';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
-import React, { useState } from 'react';
+import { useState } from 'react';
 import toast from 'react-hot-toast';
 import { GoCommentDiscussion } from 'react-icons/go';
 import { SponsorStore } from '../../../store/sponsor';
@@ -85,7 +85,7 @@ export const Comments = ({ onOpen, refId }: Props) => {
           <Flex w="full" justify={'end'}>
             <Button
               onClick={() => {
-                if (!userInfo || (!userInfo.talent && !userInfo.sponsor)) {
+                if (!userInfo || !userInfo.talent) {
                   onOpen();
                   return;
                 }

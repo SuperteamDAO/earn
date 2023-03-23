@@ -15,8 +15,9 @@ import { Confetti } from '../misc/confetti';
 interface Props {
   isOpen: boolean;
   onClose: () => void;
+  eligibility: string;
 }
-export const SubmissionSuccess = ({ isOpen, onClose }: Props) => {
+export const SubmissionSuccess = ({ isOpen, onClose, eligibility }: Props) => {
   return (
     <>
       <Modal size={'xxl'} isOpen={isOpen} onClose={onClose}>
@@ -43,7 +44,9 @@ export const SubmissionSuccess = ({ isOpen, onClose }: Props) => {
               fontWeight={500}
               fontSize={'1rem'}
             >
-              {`We can't wait to see what you've created! Winners will receive prizes as well as instant admission to our DAO.`}
+              {eligibility === 'premission-less'
+                ? 'Thanks for the submission! The sponsors will review your listing submission and choose a winner soon - we will notify you as soon as they do so!'
+                : 'Thanks for the submission! The sponsors will review your application and announce a winner soon - we will notify you as soon as they do so!'}
             </Text>
             <Button
               onClick={onClose}
