@@ -24,6 +24,7 @@ import { userStore } from '../../../../store/user';
 import { useWallet } from '@solana/wallet-adapter-react';
 import { UseMutationResult } from '@tanstack/react-query';
 import moment from 'moment';
+import { tokenList } from '../../../../constants';
 
 interface Props {
   total: number;
@@ -34,6 +35,7 @@ interface Props {
   submissionisOpen: boolean;
   submissiononClose: () => void;
   submissiononOpen: () => void;
+  token: string;
   SubmssionMutation: UseMutationResult<
     void,
     any,
@@ -58,6 +60,7 @@ export const DetailSideCard = ({
   submissiononOpen,
   questions,
   eligibility,
+  token,
 }: Props) => {
   const { userInfo } = userStore();
   const { connected } = useWallet();
@@ -99,17 +102,19 @@ export const DetailSideCard = ({
               justifyContent={'center'}
               alignItems={'center'}
               rounded={'full'}
-              h={10}
-              bg={'#9EFFAE2B'}
+              h={7}
             >
               <Image
-                src={'/assets/icons/green-doller.svg'}
+                rounded={'full'}
+                src={
+                  tokenList.filter((e) => e.mintAddress === token)[0].icon ??
+                  '/assets/icons/green-doller.svg'
+                }
                 alt={'green doller'}
-                w={3}
               />
             </Box>
             <Text fontSize={'1.5rem'} color={'#000000'} fontWeight={600}>
-              ${total.toLocaleString() ?? 0}
+              {total.toLocaleString() ?? 0}
             </Text>
             <Text fontSize={'1.2rem'} color={'#CBD5E1'} fontWeight={500}>
               Total Prizes
@@ -148,7 +153,7 @@ export const DetailSideCard = ({
                           fontSize={'1.1rem'}
                           fontWeight={600}
                         >
-                          $ {prizeList['first']}
+                          {prizeList['first']}
                         </Text>
                       </Td>
                       <Td>
@@ -180,7 +185,7 @@ export const DetailSideCard = ({
                           fontSize={'1.1rem'}
                           fontWeight={600}
                         >
-                          $ {prizeList['second']}
+                          {prizeList['second']}
                         </Text>
                       </Td>
                       <Td>
@@ -212,7 +217,7 @@ export const DetailSideCard = ({
                           fontSize={'1.1rem'}
                           fontWeight={600}
                         >
-                          $ {prizeList['third']}
+                          {prizeList['third']}
                         </Text>
                       </Td>
                       <Td>
@@ -244,7 +249,7 @@ export const DetailSideCard = ({
                           fontSize={'1.1rem'}
                           fontWeight={600}
                         >
-                          $ {prizeList['forth']}
+                          {prizeList['forth']}
                         </Text>
                       </Td>
                       <Td>
@@ -276,7 +281,7 @@ export const DetailSideCard = ({
                           fontSize={'1.1rem'}
                           fontWeight={600}
                         >
-                          $ {prizeList['fifth']}
+                          {prizeList['fifth']}
                         </Text>
                       </Td>
                       <Td>
@@ -380,7 +385,7 @@ export const DetailSideCard = ({
           <VerticalStep
             currentStep={submissionStatus + 1}
             thisStep={3}
-            sublabel={moment(endingTime).format('MMM Do YY')}
+            sublabel={'On ' + moment(endingTime).format('Do MMM  YY')}
             label={'Winner Announcement'}
           />
         </VStack>

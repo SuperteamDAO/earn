@@ -65,6 +65,7 @@ export const Createbounty = ({
       )}
       {steps === 3 && (
         <Description
+          bountyBasics={bountybasic}
           createDraft={createDraft}
           editorData={editorData}
           setSteps={setSteps}

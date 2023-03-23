@@ -158,6 +158,7 @@ const Bounties = () => {
           />
         </VStack>
         <DetailSideCard
+          token={listingInfo.data?.listing.token as string}
           eligibility={listingInfo.data?.listing.eligibility as string}
           questions={
             listingInfo.data?.listing.Questions?.questions ??

@@ -110,13 +110,13 @@ const Builder = ({
                 )
                 .map((e) => {
                   if (e.options?.length === 0) {
-                    toast.error('Missing Options for a questions');
                     rejectedQuestion.push(e);
                     setError([
                       ...error,
                       {
                         id: e.id,
-                        errMessage: 'Missing Options',
+                        errMessage:
+                          'Please add at least one more option for this question',
                       },
                     ]);
                     return e;
@@ -127,7 +127,8 @@ const Builder = ({
                       ...error,
                       {
                         id: e.id,
-                        errMessage: 'Please add 1 more option',
+                        errMessage:
+                          'Please add at least one more option for this question',
                       },
                     ]);
                     return e;

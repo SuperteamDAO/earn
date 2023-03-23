@@ -235,9 +235,9 @@ const CreateListing = () => {
                   {
                     label: 'Questions',
                     number: 4,
-                    mainHead: 'Add the reward amount',
+                    mainHead: 'Enter your questions',
                     description:
-                      'Decide the compensation amount for your listing',
+                      'Ask applicants various questions before submitting',
                   },
                   {
                     label: 'Reward',

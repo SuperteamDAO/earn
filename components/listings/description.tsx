@@ -41,6 +41,8 @@ import {
 } from 'react-icons/md';
 import { CiRedo, CiUndo } from 'react-icons/ci';
 import toast from 'react-hot-toast';
+import { useRouter } from 'next/router';
+import { BountyBasicType } from './bounty/Createbounty';
 
 const LinkModal = ({
   isOpen,
@@ -81,14 +83,17 @@ interface Props {
   editorData: string | undefined;
   setSteps: Dispatch<SetStateAction<number>>;
   createDraft: (payment: string) => void;
+  bountyBasics?: BountyBasicType;
 }
 const Description = ({
   editorData,
   setEditorData,
   setSteps,
   createDraft,
+  bountyBasics,
 }: Props) => {
   const [url, setUrl] = useState<string>('');
+  const router = useRouter();
   const editor = useEditor({
     extensions: [
       Underline,
@@ -457,6 +462,14 @@ const Description = ({
           onClick={() => {
             if ((editorData?.length as number) > 5000) {
               toast.error('Max length for description is 4,500 characters');
+              return;
+            }
+            if (
+              router.query.type === 'bounties' &&
+              bountyBasics &&
+              bountyBasics.eligibility === 'premission-less'
+            ) {
+              setSteps(5);
               return;
             }
             setSteps(4);

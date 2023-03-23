@@ -243,6 +243,7 @@ export const QuestionCard = ({
                 </FormControl>
                 <Button
                   onClick={() => {
+                    if (option.length === 0) return;
                     setQuestions((prev) => {
                       return prev.map((q) => {
                         if (q.id === curentQuestion.id) {

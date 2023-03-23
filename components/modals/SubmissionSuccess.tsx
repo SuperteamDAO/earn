@@ -4,12 +4,10 @@ import {
   Image,
   Modal,
   ModalContent,
-  ModalHeader,
   ModalOverlay,
   Text,
   VStack,
 } from '@chakra-ui/react';
-import React from 'react';
 import { Confetti } from '../misc/confetti';
 
 interface Props {

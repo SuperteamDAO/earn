@@ -118,7 +118,7 @@ export const CreatebountyBasic = ({
               fontSize={'15px'}
               htmlFor={'eligility'}
             >
-              Eligibility
+              Listing Type
             </FormLabel>
             <Tooltip
               placement="right-end"
@@ -150,11 +150,11 @@ export const CreatebountyBasic = ({
               });
             }}
           >
-            <option value="premission">
-              Permissioned Bounty - only selected people can work on the bounty
-            </option>
             <option value="premission-less">
               Permissionless Bounty - anyone can apply
+            </option>
+            <option value="premission">
+              Permissioned Bounty - only selected people can work on the bounty
             </option>
           </Select>
           <FormErrorMessage>
