@@ -66,13 +66,13 @@ export const SubmissionModal = ({
           <ModalHeader>Bounty Submission</ModalHeader>
           <VStack gap={3} p={5} align={'start'}>
             <Text color={'gray.500'} fontWeight={500} fontSize={'1rem'}>
-              {eligibility === 'premission-less'
+              {eligibility !== 'premission-less'
                 ? `This is a permissioned bounty - which means only the applicant that the sponsor will select will be eligible to work on this bounty`
                 : `We can't wait to see what you've created! Winners will receive
               prizes as well as instant admission to our DAO.`}
             </Text>
             <Text color={'gray.500'} fontWeight={500} fontSize={'1rem'}>
-              {eligibility === 'premission-less'
+              {eligibility !== 'premission-less'
                 ? 'Please shill your best work/profile in the application link field below, and do your best to answer any custom questions added by the sponsor. We will send you an email once the applicant has been selected by the sponsor. All the best!'
                 : 'Please note that bounties typically take ~5 days after the end date to be evaluated.'}
             </Text>
