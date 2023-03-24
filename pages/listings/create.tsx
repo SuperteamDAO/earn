@@ -237,7 +237,7 @@ const CreateListing = () => {
                     number: 4,
                     mainHead: 'Enter your questions',
                     description:
-                      'Ask applicants various questions before submitting',
+                      'What would you like to know about your applicants?',
                   },
                   {
                     label: 'Reward',

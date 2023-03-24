@@ -134,6 +134,21 @@ const Builder = ({
                     return e;
                   }
                 });
+
+              questions.map((e) => {
+                if (e.question.length === 0) {
+                  rejectedQuestion.push(e);
+                  setError([
+                    ...error,
+                    {
+                      id: e.id,
+                      errMessage: 'Add question',
+                    },
+                  ]);
+                  return;
+                }
+              });
+
               if (rejectedQuestion.length === 0) {
                 setSteps(5);
               }

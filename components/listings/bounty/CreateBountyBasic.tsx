@@ -141,7 +141,7 @@ export const CreatebountyBasic = ({
           </Flex>
 
           <Select
-            placeholder="Develop a new landing page"
+            defaultValue={'premission-less'}
             value={bountyBasic?.eligibility}
             onChange={(e) => {
               setbountyBasic({
