@@ -1,6 +1,6 @@
 import { Avatar, AvatarGroup, Box, Button, Flex, Text, Image, Center } from '@chakra-ui/react';
 import type { NextPage } from 'next';
-import { Navbar } from '../components/navbar/navbar';
+import NavHome from '../components/home/NavHome'
 
 import { BellIcon } from '@chakra-ui/icons'
 
@@ -16,7 +16,7 @@ let slate = "#1E293B"
 const Home: NextPage = () => {
   return (
     <>
-      <Navbar />
+      <NavHome />
       <Flex w={"100%"} h={"max-content"} minH={"100vh"} bg={"white"} pt={'3.5rem'} justifyContent={"center"} >
         <Box>
           <Banner />
