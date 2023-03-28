@@ -95,6 +95,51 @@ export const CreateGrantsBasic = ({
               fontSize={'15px'}
               htmlFor={'contact'}
             >
+              Application Link
+            </FormLabel>
+            <Tooltip
+              placement="right-end"
+              fontSize="0.9rem"
+              padding="0.7rem"
+              bg="#6562FF"
+              color="white"
+              fontWeight={600}
+              borderRadius="0.5rem"
+              hasArrow
+              w="max"
+              label={`Who will respond to questions about the opportunity from your team?`}
+            >
+              <Image
+                mt={-2}
+                src={'/assets/icons/info-icon.svg'}
+                alt={'Info Icon'}
+              />
+            </Tooltip>
+          </Flex>
+          <Input
+            id="link"
+            placeholder="link to application form"
+            value={grantBasic?.link}
+            color={'gray.700'}
+            onChange={(e) => {
+              setGrantBasic({
+                ...(grantBasic as GrantsBasicType),
+                link: e.target.value,
+              });
+            }}
+          />
+          <FormErrorMessage>
+            {errors.contact ? <>{errors.contact.message}</> : <></>}
+          </FormErrorMessage>
+        </FormControl>
+        <FormControl w="full" isRequired>
+          <Flex align={'center'} justify={'start'}>
+            <FormLabel
+              color={'gray.500'}
+              fontWeight={600}
+              fontSize={'15px'}
+              htmlFor={'contact'}
+            >
               Point of Contact
             </FormLabel>
             <Tooltip

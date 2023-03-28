@@ -161,6 +161,7 @@ const CreateListing = () => {
               setgrantsBasic({
                 contact: data.contact,
                 title: data.title,
+                link: data.link,
               });
             }
             setSteps(2);

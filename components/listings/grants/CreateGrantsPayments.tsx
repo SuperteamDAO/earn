@@ -78,6 +78,7 @@ export const CreateGrantsPayment = ({
             const info: GrantsType = {
               id: genrateuuid(),
               active: true,
+              link: grantsBasic?.link ?? '',
               token: tokenList[tokenIndex as number].mintAddress,
               orgId: currentSponsor?.orgId ?? '',
               maxSalary: Number(e.max_sal),

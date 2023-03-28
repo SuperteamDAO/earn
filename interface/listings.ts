@@ -85,10 +85,12 @@ interface JobsType {
 interface GrantsBasicType {
   title: string;
   contact: string;
+  link: string;
 }
 interface GrantsType {
   id: string;
   title: string;
+  link: string;
   description: string;
   skills: string;
   subSkills: String;
