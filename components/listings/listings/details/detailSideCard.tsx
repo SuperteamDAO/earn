@@ -13,7 +13,6 @@ import {
   Th,
   Thead,
   Tr,
-  useDisclosure,
   VStack,
 } from '@chakra-ui/react';
 import { VerticalStep } from '../../../misc/steps';
