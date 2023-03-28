@@ -395,3 +395,21 @@ export const createQuestions = async (questions: {
     return null;
   }
 };
+
+export const fetchAll = async (): Promise<{
+  grants: {
+    grants: GrantsType;
+    sponsorInfo: SponsorType;
+  }[];
+  jobs: { jobs: JobsType; sponsorInfo: SponsorType }[];
+  bounties: { bounty: Bounties; sponsorInfo: SponsorType }[];
+} | null> => {
+  try {
+    const { data } = await axios.get(`${Backend_Url}/listings/find/all`);
+
+    return data.data;
+  } catch (error) {
+    console.log(error, 'error');
+    return null;
+  }
+};
