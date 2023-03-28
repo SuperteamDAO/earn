@@ -43,6 +43,7 @@ const FormLayout = ({
               fontSize={'20px'}
               fontFamily={'Inter'}
               fontWeight={500}
+              textAlign={'center'}
             >
               {stepList[currentStep - 1].description}
             </Text>

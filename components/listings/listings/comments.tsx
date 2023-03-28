@@ -9,9 +9,10 @@ import {
 } from '@chakra-ui/react';
 import { useWallet } from '@solana/wallet-adapter-react';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
-import React, { useState } from 'react';
+import { useState } from 'react';
 import toast from 'react-hot-toast';
 import { GoCommentDiscussion } from 'react-icons/go';
+import { SponsorStore } from '../../../store/sponsor';
 import { TalentStore } from '../../../store/talent';
 import { userStore } from '../../../store/user';
 import { createComment, fetchComments } from '../../../utils/functions';
@@ -28,6 +29,7 @@ export const Comments = ({ onOpen, refId }: Props) => {
   const { userInfo } = userStore();
 
   const { talentInfo } = TalentStore();
+  const { currentSponsor } = SponsorStore();
 
   const Comments = useQuery({
     queryFn: ({ queryKey }) => fetchComments(queryKey[1] as string),
@@ -87,6 +89,7 @@ export const Comments = ({ onOpen, refId }: Props) => {
                   onOpen();
                   return;
                 }
+
                 commentMutation.mutate({
                   id: genrateuuid(),
                   message: message,

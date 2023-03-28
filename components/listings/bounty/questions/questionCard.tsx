@@ -8,6 +8,7 @@ import {
 import {
   Button,
   FormControl,
+  FormErrorMessage,
   FormLabel,
   HStack,
   Input,
@@ -23,12 +24,18 @@ interface Props {
   curentQuestion: Ques;
   questions: Ques[];
   index: number;
+  errorState: ErrorState[];
 }
+type ErrorState = {
+  id: string;
+  errMessage: string;
+};
 export const QuestionCard = ({
   setQuestions,
   curentQuestion,
   questions,
   index,
+  errorState,
 }: Props) => {
   const [option, setOption] = useState<string>('');
   const handleChangeQuestion = (newq: string) => {
@@ -38,6 +45,7 @@ export const QuestionCard = ({
           return {
             ...q,
             question: newq,
+            label: newq,
           };
         }
         return q;
@@ -60,22 +68,40 @@ export const QuestionCard = ({
   return (
     <>
       <VStack align={'start'} w={'full'}>
-        <FormControl w={'full'}>
-          <FormLabel>
-            <Text fontSize={'0.88rem'} fontWeight={600} color={'gray.600'}>
+        <FormControl
+          w={'full'}
+          isInvalid={
+            errorState.filter((e) => e.id === curentQuestion.id)[0]
+              ? true
+              : false
+          }
+        >
+          <FormLabel color={'gray.500'}>
+            <Text fontSize={'0.88rem'} fontWeight={600} color={'gray.500'}>
               Question {index + 1}
             </Text>
           </FormLabel>
           <Input
+            _placeholder={{
+              color: 'gray.400',
+            }}
             onChange={(e) => {
               handleChangeQuestion(e.target.value);
             }}
             value={curentQuestion.question}
             placeholder="Enter your question here"
           />
+          <FormErrorMessage>
+            {errorState.filter((e) => e.id === curentQuestion.id)[0] &&
+              errorState.filter((e) => e.id === curentQuestion.id)[0]
+                .errMessage}
+          </FormErrorMessage>
         </FormControl>
         <HStack w={'full'} justify={'space-between'}>
           <Select
+            _placeholder={{
+              color: 'gray.400',
+            }}
             onChange={(e) => {
               handleChangeType(e.target.value as QuestionType);
             }}
@@ -86,6 +112,8 @@ export const QuestionCard = ({
             <option value="checkbox">Checkbox</option>
             <option value="long-text">Long Text</option>
             <option value="single-choice">Single Choice</option>
+            <option value="multi-choice">Multiple Choice</option>
+            <option value="url">URL</option>
           </Select>
           <HStack>
             {index + 1 !== 1 && (
@@ -142,7 +170,8 @@ export const QuestionCard = ({
             )}
           </HStack>
         </HStack>
-        {curentQuestion.type === 'single-choice' && (
+        {(curentQuestion.type === 'single-choice' ||
+          curentQuestion.type === 'multi-choice') && (
           <>
             <VStack w={'full'}>
               {curentQuestion.options?.map((option, index) => {
@@ -195,14 +224,26 @@ export const QuestionCard = ({
                 );
               })}
               <HStack w={'full'}>
-                <Input
-                  value={option}
-                  onChange={(e) => {
-                    setOption(e.target.value);
-                  }}
-                />
+                <FormControl
+                  isInvalid={
+                    errorState.filter((e) => e.id === curentQuestion.id)[0]
+                      ? true
+                      : false
+                  }
+                >
+                  <Input
+                    _placeholder={{
+                      color: 'gray.400',
+                    }}
+                    value={option}
+                    onChange={(e) => {
+                      setOption(e.target.value);
+                    }}
+                  />
+                </FormControl>
                 <Button
                   onClick={() => {
+                    if (option.length === 0) return;
                     setQuestions((prev) => {
                       return prev.map((q) => {
                         if (q.id === curentQuestion.id) {

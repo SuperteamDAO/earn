@@ -68,7 +68,7 @@ export const DetailDescription = ({ skills, description }: Props) => {
         <Flex w={'full'} position={'relative'} flexDir={'column'}>
           <Flex
             id="reset-des"
-            h={show ? 'full' : '21.5rem'}
+            h={show ? 'full' : description.length > 100 ? '21.5rem' : 'max'}
             overflow={'hidden'}
             flexDir={'column'}
             mt={10}
@@ -76,48 +76,51 @@ export const DetailDescription = ({ skills, description }: Props) => {
             pb={8}
             px={5}
           >
-            {parse(description ?? '')}
+            {parse(JSON.parse(description) ?? '')}
           </Flex>
-          <Box
-            h={'50%'}
-            position={'absolute'}
-            bottom={0}
-            display={'flex'}
-            justifyContent={'center'}
-            alignItems={'start'}
-            w={'full'}
-            transform={'matrix(1, 0, 0, -1, 0, 0);'}
-            bg={
-              show
-                ? 'transparent'
-                : 'linear-gradient(180deg, #FFFFFF 0%, rgba(255, 255, 255, 0.57) 100%)'
-            }
-          >
-            <Button
-              color={'#94A3B8'}
-              fontSize={'1.1rem'}
-              w={'12rem'}
-              onClick={() => {
-                setShow(!show);
-              }}
+          {description.length > 100 && (
+            <Box
+              h={'50%'}
+              position={'absolute'}
+              bottom={0}
+              display={'flex'}
+              justifyContent={'center'}
+              alignItems={'start'}
+              w={'full'}
               transform={'matrix(1, 0, 0, -1, 0, 0);'}
-              boxShadow={'0px 4px 4px rgba(0, 0, 0, 0.06)'}
-              bg={'#FFFFFF'}
-              rounded={'2xl'}
+              bg={
+                show
+                  ? 'transparent'
+                  : 'linear-gradient(180deg, #FFFFFF 0%, rgba(255, 255, 255, 0.57) 100%)'
+              }
             >
-              {show ? (
-                <>
-                  <BiUpArrowAlt fontSize={'1.3rem'} />
-                  <Text mx={3}>Read Less</Text>
-                </>
-              ) : (
-                <>
-                  <BiDownArrowAlt fontSize={'1.3rem'} />
-                  <Text mx={3}>Read More</Text>
-                </>
-              )}
-            </Button>
-          </Box>
+              <Button
+                color={'#94A3B8'}
+                fontSize={'1.1rem'}
+                w={'12rem'}
+                onClick={() => {
+                  setShow(!show);
+                }}
+                transform={'matrix(1, 0, 0, -1, 0, 0);'}
+                boxShadow={'0px 4px 4px rgba(0, 0, 0, 0.06)'}
+                bg={'#FFFFFF'}
+                rounded={'2xl'}
+                mt={-3}
+              >
+                {show ? (
+                  <>
+                    <BiUpArrowAlt fontSize={'1.3rem'} />
+                    <Text mx={3}>Read Less</Text>
+                  </>
+                ) : (
+                  <>
+                    <BiDownArrowAlt fontSize={'1.3rem'} />
+                    <Text mx={3}>Read More</Text>
+                  </>
+                )}
+              </Button>
+            </Box>
+          )}
         </Flex>
       </VStack>
     </>

@@ -38,6 +38,7 @@ interface Props {
 export const Navbar = ({ sponsors }: Props) => {
   const { setUserInfo } = userStore();
   const { setTalentInfo, talentInfo } = TalentStore();
+  const { currentSponsor, setCurrentSponsor } = SponsorStore();
   const router = useRouter();
   const { connected, publicKey, wallet, connect, select, wallets } =
     useWallet();
@@ -49,8 +50,6 @@ export const Navbar = ({ sponsors }: Props) => {
         const res = await createUser(publicKey.toBase58() as string);
         setUserInfo(res.data);
         if (res.data?.talent) {
-          console.log('In');
-
           await findTalent();
         }
       }
@@ -74,7 +73,6 @@ export const Navbar = ({ sponsors }: Props) => {
   };
   const { isOpen, onOpen, onClose } = useDisclosure();
   // --
-  const { setCurrentSponsor } = SponsorStore();
   const { userInfo } = userStore();
 
   const onConnectWallet = async (wallet: SolanaWallet) => {

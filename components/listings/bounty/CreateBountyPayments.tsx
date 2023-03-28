@@ -68,6 +68,99 @@ export const CreatebountyPayment = ({
   // sponsor
   const { currentSponsor } = SponsorStore();
   const [loading, setLoading] = useState<boolean>(false);
+  const defaultQuestionPremission: Ques[] = [
+    {
+      delete: false,
+      id: genrateuuid(),
+      label: 'Discord Username',
+      question: 'Discord Username',
+      type: 'text',
+      options: [],
+    },
+
+    {
+      delete: false,
+      id: genrateuuid(),
+      label: 'link',
+      question: 'Profile Link',
+      type: 'text',
+      options: [],
+    },
+    {
+      delete: false,
+      id: genrateuuid(),
+      label: 'SOL Wallet',
+      question: 'SOL Wallet',
+      type: 'text',
+      options: [],
+    },
+    {
+      delete: false,
+      id: genrateuuid(),
+      label: 'Email',
+      question: 'Your email address',
+      type: 'text',
+      options: [],
+    },
+    {
+      delete: false,
+      id: genrateuuid(),
+      label: 'Twitter',
+      question: 'Your Twitter Handle',
+      type: 'text',
+      options: [],
+    },
+  ];
+  const defaultQuestionPremissionLess: Ques[] = [
+    {
+      delete: false,
+      id: genrateuuid(),
+      label: 'Discord Username',
+      question: 'Discord Username',
+      type: 'text',
+      options: [],
+    },
+    {
+      delete: false,
+      id: genrateuuid(),
+      label: 'Tweet Link',
+      question: 'Tweet Link',
+      type: 'text',
+      options: [],
+    },
+    {
+      delete: false,
+      id: genrateuuid(),
+      label: 'link',
+      question: 'Application Link',
+      type: 'text',
+      options: [],
+    },
+    {
+      delete: false,
+      id: genrateuuid(),
+      label: 'SOL Wallet',
+      question: 'SOL Wallet',
+      type: 'text',
+      options: [],
+    },
+    {
+      delete: false,
+      id: genrateuuid(),
+      label: 'Email',
+      question: 'Your email address',
+      type: 'text',
+      options: [],
+    },
+    {
+      delete: false,
+      id: genrateuuid(),
+      label: 'Twitter',
+      question: 'Your Twitter Handle',
+      type: 'text',
+      options: [],
+    },
+  ];
   const onSubmit = async () => {
     setLoading(true);
     const Prizevalues = Object.values(prizevalues as Object);
@@ -114,7 +207,10 @@ export const CreatebountyPayment = ({
     const questionsRes = await createQuestions({
       id: genrateuuid(),
       bountiesId: bountyId,
-      questions: JSON.stringify(questions),
+      questions:
+        bountyBasic?.eligibility === 'premission'
+          ? JSON.stringify([...defaultQuestionPremission, ...questions])
+          : JSON.stringify([...defaultQuestionPremissionLess]),
     });
 
     if (questionsRes) {

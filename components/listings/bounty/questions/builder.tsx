@@ -1,5 +1,6 @@
 import { Box, Button, HStack, Image, Text, VStack } from '@chakra-ui/react';
 import React, { Dispatch, SetStateAction, useState } from 'react';
+import toast, { Toaster } from 'react-hot-toast';
 import { genrateuuid } from '../../../../utils/helpers';
 import { QuestionCard } from './questionCard';
 
@@ -10,15 +11,25 @@ interface Props {
   questions: Ques[];
   setQuestions: Dispatch<SetStateAction<Ques[]>>;
 }
-export type QuestionType = 'text' | 'single-choice' | 'long-text' | 'checkbox';
+export type QuestionType =
+  | 'text'
+  | 'single-choice'
+  | 'long-text'
+  | 'checkbox'
+  | 'multi-choice'
+  | 'url';
 export interface Ques {
   id: string;
   question: string;
   type: QuestionType;
   delete: boolean;
   options?: string[];
-  label?: string;
+  label: string;
 }
+type ErrorState = {
+  id: string;
+  errMessage: string;
+};
 const Builder = ({
   setSteps,
   createDraft,
@@ -26,6 +37,7 @@ const Builder = ({
   questions,
   setQuestions,
 }: Props) => {
+  const [error, setError] = useState<ErrorState[]>([]);
   return (
     <>
       <VStack gap={3} pt={7} align={'start'} w={'2xl'}>
@@ -36,8 +48,9 @@ const Builder = ({
               Note
             </Text>
             <Text mt={'0px !important'} fontSize={'0.88rem'} color={'#94A3B8'}>
-              Names, Emails, Discord / Twitter IDs and SOL wallet are collected
-              by default, use this space to ask about anything else
+              Names, Emails, Discord / Twitter IDs, SOL wallet and Profile Links
+              are collected by default. Please use this space to ask about
+              anything else!
             </Text>
           </VStack>
         </HStack>
@@ -45,6 +58,7 @@ const Builder = ({
           return (
             <>
               <QuestionCard
+                errorState={error}
                 index={index}
                 questions={questions}
                 curentQuestion={question}
@@ -59,10 +73,11 @@ const Builder = ({
               ...questions,
               {
                 id: genrateuuid(),
-                question: 'What is your name?',
+                question: '',
                 type: 'text',
                 options: [],
                 delete: true,
+                label: '',
               },
             ]);
           }}
@@ -73,6 +88,7 @@ const Builder = ({
         >
           + Add Question
         </Button>
+        <Toaster />
         <VStack w={'full'} gap={6} pt={10}>
           <Button
             w="100%"
@@ -82,7 +98,60 @@ const Builder = ({
             fontSize="1rem"
             fontWeight={600}
             onClick={() => {
-              setSteps(5);
+              if (questions.length === 0) {
+                toast.error('Add minimun of one question');
+                return;
+              }
+              let rejectedQuestion: any[] = [];
+
+              const a = questions
+                .filter(
+                  (e) => e.type === 'single-choice' || e.type === 'multi-choice'
+                )
+                .map((e) => {
+                  if (e.options?.length === 0) {
+                    rejectedQuestion.push(e);
+                    setError([
+                      ...error,
+                      {
+                        id: e.id,
+                        errMessage:
+                          'Please add at least one more option for this question',
+                      },
+                    ]);
+                    return e;
+                  }
+                  if (e.options?.length === 1) {
+                    rejectedQuestion.push(e);
+                    setError([
+                      ...error,
+                      {
+                        id: e.id,
+                        errMessage:
+                          'Please add at least one more option for this question',
+                      },
+                    ]);
+                    return e;
+                  }
+                });
+
+              questions.map((e) => {
+                if (e.question.length === 0) {
+                  rejectedQuestion.push(e);
+                  setError([
+                    ...error,
+                    {
+                      id: e.id,
+                      errMessage: 'Add question',
+                    },
+                  ]);
+                  return;
+                }
+              });
+
+              if (rejectedQuestion.length === 0) {
+                setSteps(5);
+              }
             }}
           >
             Continue

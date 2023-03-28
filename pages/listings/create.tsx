@@ -32,7 +32,7 @@ const CreateListing = () => {
   // Basic Info - 2
   // Description - 3
   // payment form - 4
-  const [steps, setSteps] = useState<number>(4);
+  const [steps, setSteps] = useState<number>(1);
   const router = useRouter();
   const [draftLoading, setDraftLoading] = useState<boolean>(false);
   const [editorData, setEditorData] = useState<string | undefined>();
@@ -50,23 +50,7 @@ const CreateListing = () => {
     type: 'fulltime',
   });
 
-  const [questions, setQuestions] = useState<Ques[]>([
-    {
-      id: genrateuuid(),
-      question: 'What is your name?',
-      type: 'text',
-      options: [],
-      delete: false,
-    },
-    {
-      id: genrateuuid(),
-      question: 'Application Link',
-      type: 'text',
-      options: [],
-      delete: false,
-      label: 'link',
-    },
-  ]);
+  const [questions, setQuestions] = useState<Ques[]>([]);
 
   //- Bounty
   const [bountybasic, setBountyBasic] = useState<BountyBasicType | undefined>();
@@ -177,6 +161,7 @@ const CreateListing = () => {
               setgrantsBasic({
                 contact: data.contact,
                 title: data.title,
+                link: data.link,
               });
             }
             setSteps(2);
@@ -251,9 +236,9 @@ const CreateListing = () => {
                   {
                     label: 'Questions',
                     number: 4,
-                    mainHead: 'Add the reward amount',
+                    mainHead: 'Enter your questions',
                     description:
-                      'Decide the compensation amount for your listing',
+                      'What would you like to know about your applicants?',
                   },
                   {
                     label: 'Reward',

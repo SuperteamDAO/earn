@@ -25,6 +25,8 @@ import {
   findBouties,
 } from '../../../../utils/functions';
 import { genrateuuid } from '../../../../utils/helpers';
+import { SubmissionSuccess } from '../../../../components/modals/SubmissionSuccess';
+import { useState } from 'react';
 // import TalentBio from '../../../components/TalentBio';
 
 const defalutSponsor: SponsorType = {
@@ -45,7 +47,7 @@ const defalutSponsor: SponsorType = {
 
 const Bounties = () => {
   const router = useRouter();
-
+  const [subID, setSubID] = useState<string>('');
   const { onOpen, isOpen, onClose } = useDisclosure();
   const { talentInfo } = TalentStore();
   const queryClient = useQueryClient();
@@ -66,6 +68,12 @@ const Bounties = () => {
     onOpen: submissiononOpen,
   } = useDisclosure();
 
+  const {
+    isOpen: submissionSuccisOpen,
+    onClose: submissionSucconClose,
+    onOpen: submissionSucconOpen,
+  } = useDisclosure();
+
   const onSubmit = async ({
     link,
     questions,
@@ -73,9 +81,7 @@ const Bounties = () => {
     link: string;
     questions: string;
   }) => {
-    console.log(questions);
     const res = await fetchOgImage(link);
-    console.log(res);
 
     const submissionRes = await createSubmission({
       id: genrateuuid(),
@@ -87,7 +93,9 @@ const Bounties = () => {
       questions: JSON.stringify(questions ?? []),
     });
     if (submissionRes) {
+      setSubID(submissionRes.data?.id ?? '');
       submissiononClose();
+      submissionSucconOpen();
     }
   };
   const SubmssionMutation = useMutation({
@@ -102,12 +110,19 @@ const Bounties = () => {
       toast.success('Error occur while commenting');
     },
   });
-  console.log(listingInfo.data);
 
   return (
     <>
+      {submissionSuccisOpen && (
+        <SubmissionSuccess
+          eligibility={listingInfo.data?.listing.eligibility as string}
+          isOpen={submissionSuccisOpen}
+          onClose={submissionSucconClose}
+        />
+      )}
       {isOpen && <CreateProfileModal isOpen={isOpen} onClose={onClose} />}
       <ListingHeader
+        eligibility={listingInfo.data?.listing.eligibility as any}
         endTime={listingInfo.data?.listing.deadline ?? ''}
         sub={listingInfo.data?.listing.subscribe}
         id={listingInfo.data?.listing.id as string}
@@ -119,62 +134,49 @@ const Bounties = () => {
             : defalutSponsor
         }
       />
-      {router.query.subid ? (
-        <HStack
-          maxW={'7xl'}
-          mx={'auto'}
-          align={['center', 'center', 'start', 'start']}
-          gap={4}
-          flexDir={['column-reverse', 'column-reverse', 'row', 'row']}
-          justify={['center', 'center', 'space-between', 'space-between']}
-        >
-          <Submission
-            endTime={listingInfo.data?.listing.deadline ?? ''}
-            submissions={listingInfo.data?.listing.submission ?? []}
-          />
-        </HStack>
-      ) : (
-        <HStack
-          maxW={'7xl'}
-          mx={'auto'}
-          align={['center', 'center', 'start', 'start']}
-          gap={4}
-          flexDir={['column-reverse', 'column-reverse', 'row', 'row']}
-          justify={['center', 'center', 'space-between', 'space-between']}
-        >
-          <VStack gap={8} w={['22rem', '22rem', 'full', 'full']} mt={10}>
-            <DetailDescription
-              skills={
-                JSON.parse(listingInfo.data?.listing.skills as string) ?? []
-              }
-              description={
-                (listingInfo.data?.listing.description as string) ?? ''
-              }
-            />
-            <Comments
-              refId={listingInfo.data?.listing.id ?? ''}
-              onOpen={onOpen}
-            />
-          </VStack>
-          <DetailSideCard
-            questions={
-              listingInfo.data?.listing.Questions?.questions ??
-              JSON.stringify('[]')
+
+      <HStack
+        maxW={'7xl'}
+        mx={'auto'}
+        align={['center', 'center', 'start', 'start']}
+        gap={4}
+        flexDir={['column-reverse', 'column-reverse', 'row', 'row']}
+        justify={['center', 'center', 'space-between', 'space-between']}
+      >
+        <VStack gap={8} w={['22rem', '22rem', 'full', 'full']} mt={10}>
+          <DetailDescription
+            skills={
+              JSON.parse(listingInfo.data?.listing.skills as string) ?? []
             }
-            submissionisOpen={submissionisOpen}
-            submissiononClose={submissiononClose}
-            submissiononOpen={submissiononOpen}
-            submissionNumber={listingInfo.data?.listing.submission?.length ?? 0}
-            SubmssionMutation={SubmssionMutation}
-            endingTime={listingInfo.data?.listing.deadline ?? ''}
+            description={
+              (listingInfo.data?.listing.description as string) ?? ''
+            }
+          />
+          <Comments
+            refId={listingInfo.data?.listing.id ?? ''}
             onOpen={onOpen}
-            prizeList={
-              (listingInfo.data?.listing.prizeList as PrizeListType) ?? {}
-            }
-            total={total}
           />
-        </HStack>
-      )}
+        </VStack>
+        <DetailSideCard
+          token={listingInfo.data?.listing.token as string}
+          eligibility={listingInfo.data?.listing.eligibility as string}
+          questions={
+            listingInfo.data?.listing.Questions?.questions ??
+            JSON.stringify('[]')
+          }
+          submissionisOpen={submissionisOpen}
+          submissiononClose={submissiononClose}
+          submissiononOpen={submissiononOpen}
+          submissionNumber={listingInfo.data?.listing.submission?.length ?? 0}
+          SubmssionMutation={SubmssionMutation}
+          endingTime={listingInfo.data?.listing.deadline ?? ''}
+          onOpen={onOpen}
+          prizeList={
+            (listingInfo.data?.listing.prizeList as PrizeListType) ?? {}
+          }
+          total={total}
+        />
+      </HStack>
     </>
   );
 };
@@ -188,6 +190,7 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
     const res = await queryClient.fetchQuery(['bounties', id], () =>
       findBouties(id as string)
     );
+    console.log(res);
     await queryClient.prefetchQuery(['comments', res?.listing.id], () =>
       fetchComments(res?.listing.id as string)
     );

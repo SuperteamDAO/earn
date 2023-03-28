@@ -1,6 +1,8 @@
 import { CheckIcon, CopyIcon } from '@chakra-ui/icons';
 import {
+  Box,
   Button,
+  Image,
   Input,
   InputGroup,
   InputRightElement,
@@ -29,7 +31,10 @@ export const SuccessListings = ({ isOpen, onClose, slug }: Props) => {
       <Modal isOpen={isOpen} onClose={onClose}>
         <ModalOverlay />
         <ModalContent py={5} h={'max'}>
-          <ModalHeader>
+          <VStack gap={4} px={10}>
+            <Box>
+              <Image w={14} src={'/assets/icons/cong.svg'} alt={'Cong Svg'} />
+            </Box>
             <Text color={'gray.700'} fontWeight={600} fontFamily={'Inter'}>
               You Have Successfully Created A Listing
             </Text>
@@ -59,7 +64,7 @@ export const SuccessListings = ({ isOpen, onClose, slug }: Props) => {
                 )}
               </InputRightElement>
             </InputGroup>
-            <VStack mt={5}>
+            <VStack w={'full'}>
               <Button
                 w="100%"
                 bg={'#6562FF'}
@@ -88,7 +93,7 @@ export const SuccessListings = ({ isOpen, onClose, slug }: Props) => {
                 Listing Dashboard
               </Button>
             </VStack>
-          </ModalHeader>
+          </VStack>
         </ModalContent>
       </Modal>
     </>

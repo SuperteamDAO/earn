@@ -28,19 +28,21 @@ export const CreateProfileModal = ({ isOpen, onClose }: Props) => {
           <Box bg={'#F0E4FF'} w={'full'} h={36} rounded={'lg'}></Box>
           <VStack gap={5} align={'center'} mt={5}>
             <Text color={'#000000'} fontSize={'1.1rem'} fontWeight={600}>
-              Create a profile to continue
+              Ready to Get Involved?
             </Text>
             <VStack>
               <HStack gap={2}>
                 <Image src={'/assets/icons/purple-tick.svg'} alt={'tick'} />
                 <Text fontSize={'1rem'} fontWeight={500} color={'gray.700'}>
-                  Port Finance aims to provide a whole suite of money market{' '}
+                  Create a profile to leave comments, get personalized
+                  notifications
                 </Text>
               </HStack>
               <HStack gap={2}>
                 <Image src={'/assets/icons/purple-tick.svg'} alt={'tick'} />
                 <Text fontSize={'1rem'} fontWeight={500} color={'gray.700'}>
-                  Port Finance aims to provide a whole suite of money market{' '}
+                  Get access to exclusive earning opportunities. It takes 2
+                  minutes and is entirely free.
                 </Text>
               </HStack>
             </VStack>
@@ -52,7 +54,7 @@ export const CreateProfileModal = ({ isOpen, onClose }: Props) => {
               w={'full'}
               bg={'#6562FF'}
             >
-              Create Now
+              Create Your Profile
             </Button>
           </VStack>
         </ModalContent>

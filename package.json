@@ -48,8 +48,10 @@
     "immer": "^9.0.19",
     "moment": "^2.29.4",
     "next": "12.2.3",
+    "nprogress": "^0.2.0",
     "open-graph-scraper": "^5.1.1",
     "react": "18.2.0",
+    "react-confetti": "^6.1.0",
     "react-countdown": "^2.3.5",
     "react-dom": "18.2.0",
     "react-hook-form": "^7.43.0",
@@ -63,6 +65,7 @@
   },
   "devDependencies": {
     "@types/node": "18.11.18",
+    "@types/nprogress": "^0.2.0",
     "@types/react": "18.0.15",
     "@types/react-dom": "18.0.6",
     "@types/uuid": "^9.0.0",

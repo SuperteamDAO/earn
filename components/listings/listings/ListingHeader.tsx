@@ -26,6 +26,9 @@ import { genrateuuid } from '../../../utils/helpers';
 import toast from 'react-hot-toast';
 import { SubscribeType } from '../../../interface/listings';
 import moment from 'moment';
+
+type Eligibility = 'premission' | 'premission-less';
+
 interface Props {
   sponsor: SponsorType;
   title: string;
@@ -33,6 +36,7 @@ interface Props {
   id?: string;
   sub?: SubscribeType[];
   endTime?: string;
+  eligibility: Eligibility;
 }
 export const ListingHeader = ({
   sponsor,
@@ -41,6 +45,7 @@ export const ListingHeader = ({
   id,
   sub,
   endTime,
+  eligibility,
 }: Props) => {
   const router = useRouter();
   const queryClient = useQueryClient();
@@ -225,10 +230,12 @@ export const ListingHeader = ({
         </VStack>
         <HStack px={[3, 3, 0, 0]} maxW={'7xl'} w="full" h={'max'}>
           <Button
-            borderBottom={!router.query.subid ? '3px solid #6562FF' : '0'}
+            borderBottom={
+              !router.asPath.includes('submission') ? '3px solid #6562FF' : '0'
+            }
             rounded={0}
             variant={'ghost'}
-            color={router.query.subid ? '#94A3B8' : '#1E293B'}
+            color={router.asPath.includes('submission') ? '#94A3B8' : '#1E293B'}
             onClick={() => {
               if (!tabs) return;
               router.push(`/listings/bounties/${title.split(' ').join('-')}`);
@@ -236,12 +243,14 @@ export const ListingHeader = ({
           >
             Details
           </Button>
-          {tabs && (
+          {tabs && eligibility === 'premission-less' && (
             <Button
               onClick={() => {
-                router.push(router.asPath + '?subid=true');
+                router.push(router.asPath + '/submission');
               }}
-              borderBottom={router.query.subid ? '3px solid #6562FF' : '0'}
+              borderBottom={
+                router.asPath.includes('submission') ? '3px solid #6562FF' : '0'
+              }
               rounded={0}
               variant={'ghost'}
               color={router.query.subid ? '#1E293B' : '#94A3B8'}

@@ -20,9 +20,10 @@ import {
   UseMutationResult,
 } from '@tanstack/react-query';
 import { useRouter } from 'next/router';
-import React from 'react';
+import React, { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import toast from 'react-hot-toast';
+import { MultiSelectOptions } from '../../constants';
 import { TalentStore } from '../../store/talent';
 import { createSubmission, fetchOgImage } from '../../utils/functions';
 import { genrateuuid } from '../../utils/helpers';
@@ -41,17 +42,19 @@ interface Props {
     unknown
   >;
   questions: string;
+  eligibility: string;
 }
 export const SubmissionModal = ({
   isOpen,
   onClose,
   SubmssionMutation,
-
   questions,
+  eligibility,
 }: Props) => {
   const {
     register,
     handleSubmit,
+    control,
     formState: { isSubmitting },
   } = useForm();
   const questionsArr = JSON.parse(questions) as Ques[];
@@ -63,12 +66,15 @@ export const SubmissionModal = ({
           <ModalHeader>Bounty Submission</ModalHeader>
           <VStack gap={3} p={5} align={'start'}>
             <Text color={'gray.500'} fontWeight={500} fontSize={'1rem'}>
-              {`We can't wait to see what you've created! Winners will receive
+              {eligibility !== 'premission-less'
+                ? `This is a permissioned bounty - which means only the applicant that the sponsor will select will be eligible to work on this bounty`
+                : `We can't wait to see what you've created! Winners will receive
               prizes as well as instant admission to our DAO.`}
             </Text>
             <Text color={'gray.500'} fontWeight={500} fontSize={'1rem'}>
-              Please note that bounties typically take ~5 days after the end
-              date to be evaluated.
+              {eligibility !== 'premission-less'
+                ? 'Please shill your best work/profile in the application link field below, and do your best to answer any custom questions added by the sponsor. We will send you an email once the applicant has been selected by the sponsor. All the best!'
+                : 'Please note that bounties typically take ~5 days after the end date to be evaluated.'}
             </Text>
             <form
               style={{ width: '100%' }}
@@ -84,6 +90,7 @@ export const SubmissionModal = ({
                   return (
                     <FormControl key={e.id} isRequired>
                       <QuestionHandler
+                        control={control}
                         register={register}
                         index={e.id}
                         question={e.question}
@@ -97,13 +104,13 @@ export const SubmissionModal = ({
               </VStack>
 
               <Button
-                isLoading={isSubmitting}
+                isLoading={SubmssionMutation.isLoading}
                 type="submit"
                 bg={'#6562FF'}
                 color={'white'}
                 w={'full'}
               >
-                Submit
+                {eligibility === 'premission-less' ? 'Submit' : 'Apply Now'}
               </Button>
             </form>
           </VStack>
