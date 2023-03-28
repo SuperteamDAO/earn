@@ -1,14 +1,17 @@
-import { Avatar, AvatarGroup, Box, Button, Flex, Text, Image, VStack, Center } from '@chakra-ui/react';
+import { Avatar, AvatarGroup, Box, Button, Flex, Text, Image, VStack, Center, Checkbox } from '@chakra-ui/react';
 
 const SideBar = () => {
     return (
-        <Flex flexDirection={"column"} w={"354px"} borderLeft={"1px solid #F1F5F9"} ml={"24px"} pt={"1.5rem"} pl={"20px"} rowGap={"40px"}>
+        <Flex flexDirection={"column"} w={"354px"} borderLeft={"1px solid #F1F5F9"} ml={"24px"} pt={"1.5rem"} pl={"20px"} rowGap={"40px"} pb={"100px"}>
+            <NewToEarn />
             <GettingStarted />
             <TotalStats />
             <AlphaAccess />
             <RecentEarners />
             <HiringNow />
             <Featured />
+            <Filter title={'FILTER BY INDUSTRY'} entries={['Gaming', 'Payments', 'Consumer', 'Infrastructure', 'DAOs']} />
+            <Filter title={'FILTER BY INDUSTRY'} entries={['Bounties', 'Jobs', 'Grants']} />
         </Flex>
     )
 }
@@ -209,5 +212,42 @@ const AlphaAccess = () => {
                 Join the Alpha Squad
             </Button>
         </Flex>
+    )
+}
+
+const NewToEarn = () => {
+    return (
+        <Box w={"354px"} bg={"#F8FAFC"} rounded={"md"} p={"16px"}>
+            <Image w={"22px"} h={"22px"} alt='' src={"assets/home/emojis/wave.png"} />
+            <Text mt={"10px"} fontSize={"16px"} fontWeight={"600"}>New to Earn?</Text>
+            <Text mt={"5px"} color={"#64748B"} fontWeight={"500"}>Our only goal is to help you earn more crypto, faster. </Text>
+            <Button fontSize={"12px"} fontWeight={"500"} mt={"11px"} w={"100%"}>Read the Beginner’s Guide</Button>
+        </Box>
+    )
+}
+
+const FilterEntry = ({ label }: { label: string }) => {
+    return <Flex justifyContent={"space-between"}>
+        <Checkbox size='md' colorScheme='blue' defaultChecked>
+            <Text color={"#64748B"} fontSize={"14px"} ml={"10px"}>{label}</Text>
+        </Checkbox>
+        <Text color={"#64748B"} fontSize={"14px"} ml={"10px"}>{1234}</Text>
+    </Flex>
+}
+
+const Filter = ({ title, entries }: { title: string, entries: string[] }) => {
+    return (
+        <Box>
+            <Text mb={"24px"} color={"#94A3B8"}>{title}</Text>
+            <Flex flexDirection={"column"} rowGap={"16px"}>
+                {
+                    entries.map((ele) => {
+                        return (
+                            <FilterEntry key={"fil" + ele} label={ele} />
+                        )
+                    })
+                }
+            </Flex>
+        </Box >
     )
 }
