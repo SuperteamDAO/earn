@@ -1,4 +1,13 @@
-import { Box, Button, Flex, Text, Image, Center, Link } from '@chakra-ui/react';
+import {
+  Box,
+  Button,
+  Flex,
+  Text,
+  Image,
+  Center,
+  Link,
+  VStack,
+} from '@chakra-ui/react';
 import type { GetServerSideProps, NextPage } from 'next';
 import NavHome from '../components/home/NavHome';
 import moment from 'moment';
@@ -12,10 +21,14 @@ import { dehydrate, QueryClient, useQuery } from '@tanstack/react-query';
 import { fetchAll } from '../utils/functions';
 import { MultiSelectOptions } from '../constants';
 import { useRouter } from 'next/router';
+import { useState } from 'react';
 
 const Home: NextPage = () => {
-  const listings = useQuery(['all', 'listings'], () => fetchAll());
   const router = useRouter();
+  const listings = useQuery(
+    ['all', 'listings', router.query.search ?? ''],
+    ({ queryKey }) => fetchAll(queryKey[2] as string)
+  );
   return (
     <>
       <NavHome />
@@ -27,16 +40,20 @@ const Home: NextPage = () => {
         pt={'3.5rem'}
         justifyContent={'center'}
       >
-        <Box>
-          <Banner />
-          {/* <CategoryBanner /> */}
-          <Box mt={'32px'}>
-            <ListingSection
-              type="bounties"
-              title="Active Bounties"
-              sub="Bite sized tasks for freelancers"
-              emoji="/assets/home/emojis/moneyman.png"
-            >
+        {router.asPath.includes('search') ? (
+          <Box>
+            <Flex gap={1}>
+              <Text color={'#64748B'}>
+                Found{' '}
+                {(listings.data?.bounties.length as number) +
+                  (listings.data?.jobs.length as number) +
+                  (listings.data?.grants.length as number)}{' '}
+                opportunities matching{' '}
+              </Text>
+              <Text color={'#1E293B'}>{"'" + router.query.search + "'"}</Text>
+            </Flex>
+            {/* <CategoryBanner /> */}
+            <VStack mt={'32px'} gap={5}>
               {listings.data?.bounties?.map((bounty) => {
                 return (
                   <Bounties
@@ -49,13 +66,7 @@ const Home: NextPage = () => {
                   />
                 );
               })}
-            </ListingSection>
-            <ListingSection
-              type="jobs"
-              title="Jobs"
-              sub="Join a high-growth team"
-              emoji="/assets/home/emojis/job.png"
-            >
+
               {listings.data?.jobs?.map((job) => {
                 return (
                   <Jobs
@@ -69,13 +80,7 @@ const Home: NextPage = () => {
                   />
                 );
               })}
-            </ListingSection>
-            <ListingSection
-              type="grants"
-              title="Grants"
-              sub="Equity-free funding opportunities for builders"
-              emoji="/assets/home/emojis/grants.png"
-            >
+
               {listings.data?.grants?.map((grant) => {
                 return (
                   <Grants
@@ -88,9 +93,74 @@ const Home: NextPage = () => {
                   />
                 );
               })}
-            </ListingSection>
+            </VStack>
           </Box>
-        </Box>
+        ) : (
+          <Box>
+            <Banner />
+            {/* <CategoryBanner /> */}
+            <Box mt={'32px'}>
+              <ListingSection
+                type="bounties"
+                title="Active Bounties"
+                sub="Bite sized tasks for freelancers"
+                emoji="/assets/home/emojis/moneyman.png"
+              >
+                {listings.data?.bounties?.map((bounty) => {
+                  return (
+                    <Bounties
+                      amount={bounty.bounty?.amount}
+                      key={bounty.bounty?.id}
+                      description={bounty.bounty?.description}
+                      due={bounty.bounty?.deadline}
+                      title={bounty.bounty?.title}
+                      logo={bounty.sponsorInfo?.logo}
+                    />
+                  );
+                })}
+              </ListingSection>
+              <ListingSection
+                type="jobs"
+                title="Jobs"
+                sub="Join a high-growth team"
+                emoji="/assets/home/emojis/job.png"
+              >
+                {listings.data?.jobs?.map((job) => {
+                  return (
+                    <Jobs
+                      logo={job.sponsorInfo.logo}
+                      description=""
+                      max={job.jobs.maxSalary}
+                      min={job.jobs.minSalary}
+                      key={job.jobs.id}
+                      skills={JSON.parse(job.jobs.skills)}
+                      title={job.jobs.title}
+                    />
+                  );
+                })}
+              </ListingSection>
+              <ListingSection
+                type="grants"
+                title="Grants"
+                sub="Equity-free funding opportunities for builders"
+                emoji="/assets/home/emojis/grants.png"
+              >
+                {listings.data?.grants?.map((grant) => {
+                  return (
+                    <Grants
+                      description=""
+                      logo={grant.sponsorInfo.logo}
+                      key={grant.grants.id}
+                      max={grant.grants.maxSalary}
+                      title={grant.grants.title}
+                      min={grant.grants.minSalary}
+                    />
+                  );
+                })}
+              </ListingSection>
+            </Box>
+          </Box>
+        )}
         <SideBar
           total={''}
           listings={
@@ -106,8 +176,11 @@ const Home: NextPage = () => {
 };
 export const getServerSideProps: GetServerSideProps = async (context) => {
   const queryClient = new QueryClient();
+  const { query } = context;
   try {
-    await queryClient.prefetchQuery(['all', 'listings'], () => fetchAll());
+    await queryClient.prefetchQuery(['all', 'listings'], () =>
+      fetchAll(query.search as string)
+    );
   } catch (error) {
     console.log(error);
   }
@@ -138,7 +211,7 @@ const ListingSection = ({
   return (
     <Box
       display={
-        router.asPath !== '/'
+        router.query.type
           ? router.query.type === (type as string)
             ? 'block'
             : 'none'

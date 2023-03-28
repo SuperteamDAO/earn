@@ -5,6 +5,7 @@ import { useRouter } from 'next/router';
 function NavHome() {
   const [selected, setselected] = useState('All Opportunties');
   const router = useRouter();
+  const [search, setSearch] = useState<string>('');
   return (
     <Box bg={'FFFFFF'}>
       <Flex
@@ -20,8 +21,33 @@ function NavHome() {
           objectFit={'contain'}
           src={'/assets/logo/logo.png'}
         />
-        <Input w={'172px'} h={'32px'} ml={'50px'} />
-
+        <Flex align={'center'} gap={2}>
+          <Input
+            onChange={(e) => {
+              setSearch(e.target.value);
+            }}
+            placeholder="Search"
+            w={'172px'}
+            h={'32px'}
+            ml={'50px'}
+          />
+          <Button
+            onClick={() => {
+              router.replace(
+                router.asPath.includes('?')
+                  ? router.query.search
+                    ? router.asPath.split('?')[0] + '?search=' + search
+                    : router.asPath + '&search=' + search
+                  : router.asPath + '?search=' + search
+              );
+            }}
+            bg={'#6366F1'}
+            color={'white'}
+            size={'sm'}
+          >
+            Search
+          </Button>
+        </Flex>
         <Flex h={'full'} columnGap={'25px'} ml={'20px'}>
           {['All Opportunties', 'Bounties', 'Grants', 'Jobs'].map((elm) => {
             return (

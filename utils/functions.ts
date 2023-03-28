@@ -15,6 +15,7 @@ import { genrateuuid } from './helpers';
 import toast from 'react-hot-toast';
 import { Comments } from '../interface/comments';
 import { JobType } from '../interface/types';
+import { client } from './algolia';
 
 const Backend_Url = process.env.NEXT_PUBLIC_BACKEND_URL;
 
@@ -396,7 +397,9 @@ export const createQuestions = async (questions: {
   }
 };
 
-export const fetchAll = async (): Promise<{
+export const fetchAll = async (
+  search: string | undefined
+): Promise<{
   grants: {
     grants: GrantsType;
     sponsorInfo: SponsorType;
@@ -405,7 +408,60 @@ export const fetchAll = async (): Promise<{
   bounties: { bounty: Bounties; sponsorInfo: SponsorType }[];
 } | null> => {
   try {
+    if (search) {
+      const index = client.initIndex('listings');
+      const jobs: { jobs: JobsType; sponsorInfo: SponsorType }[] = [];
+      const bounties: { bounty: Bounties; sponsorInfo: SponsorType }[] = [];
+      const grants: {
+        grants: GrantsType;
+        sponsorInfo: SponsorType;
+      }[] = [];
+      const { hits }: { hits: any } = await index.search(search, {});
+      console.log(hits);
+      hits.map((hit: any) => {
+        if (hit.jobs as any) {
+          jobs.push({
+            jobs: hit.jobs,
+            sponsorInfo: hit.sponsorInfo,
+          });
+        } else if (hit.bounty) {
+          bounties.push({
+            bounty: hit.bounty,
+            sponsorInfo: hit.sponsorInfo,
+          });
+        } else if (hit.grants) {
+          grants.push({
+            grants: hit.grants,
+            sponsorInfo: hit.sponsorInfo,
+          });
+        }
+      });
+
+      return {
+        bounties: bounties,
+        grants: grants,
+        jobs: jobs,
+      };
+    }
     const { data } = await axios.get(`${Backend_Url}/listings/find/all`);
+
+    return data.data;
+  } catch (error) {
+    console.log(error, 'error');
+    return null;
+  }
+};
+
+export const AllGrants = async (): Promise<
+  | {
+      grants: GrantsType;
+      sponsorInfo: SponsorType;
+    }[]
+  | null
+> => {
+  try {
+    const { data } = await axios.get(`${Backend_Url}/listings/grants/find/all`);
+    console.log(data);
 
     return data.data;
   } catch (error) {
