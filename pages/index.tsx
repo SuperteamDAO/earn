@@ -11,10 +11,11 @@ import SideBar from '../components/home/SideBar';
 import { dehydrate, QueryClient, useQuery } from '@tanstack/react-query';
 import { fetchAll } from '../utils/functions';
 import { MultiSelectOptions } from '../constants';
+import { useRouter } from 'next/router';
 
 const Home: NextPage = () => {
   const listings = useQuery(['all', 'listings'], () => fetchAll());
-
+  const router = useRouter();
   return (
     <>
       <NavHome />
@@ -31,6 +32,7 @@ const Home: NextPage = () => {
           {/* <CategoryBanner /> */}
           <Box mt={'32px'}>
             <ListingSection
+              type="bounties"
               title="Active Bounties"
               sub="Bite sized tasks for freelancers"
               emoji="/assets/home/emojis/moneyman.png"
@@ -49,6 +51,7 @@ const Home: NextPage = () => {
               })}
             </ListingSection>
             <ListingSection
+              type="jobs"
               title="Jobs"
               sub="Join a high-growth team"
               emoji="/assets/home/emojis/job.png"
@@ -68,6 +71,7 @@ const Home: NextPage = () => {
               })}
             </ListingSection>
             <ListingSection
+              type="grants"
               title="Grants"
               sub="Equity-free funding opportunities for builders"
               emoji="/assets/home/emojis/grants.png"
@@ -119,6 +123,7 @@ type ListingSectionProps = {
   title: string;
   sub: string;
   emoji: string;
+  type: 'bounties' | 'jobs' | 'grants';
 };
 
 const ListingSection = ({
@@ -126,9 +131,23 @@ const ListingSection = ({
   title,
   sub,
   emoji,
+  type,
 }: ListingSectionProps) => {
+  const router = useRouter();
+
   return (
-    <Box w={'737px'} mt={'1rem'} mb={'45px'}>
+    <Box
+      display={
+        router.asPath !== '/'
+          ? router.query.type === (type as string)
+            ? 'block'
+            : 'none'
+          : 'block'
+      }
+      w={'737px'}
+      mt={'1rem'}
+      mb={'45px'}
+    >
       <Flex borderBottom={'1px solid #E2E8F0'} pb={'12px'} mb={'14px'}>
         <Image mr={'12px'} alt="" src={emoji} />
         <Text color={'#334155'} fontWeight={'600'}>
