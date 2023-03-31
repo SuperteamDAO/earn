@@ -1,6 +1,7 @@
 import axios from 'axios';
 import { v4 as uuidV4 } from 'uuid';
 import { SponsorStore } from '../store/sponsor';
+import { Redis } from '@upstash/redis';
 //types
 import { SponsorType } from '../interface/sponsor';
 import {
@@ -11,13 +12,16 @@ import {
   SubmissionType,
   SubscribeType,
 } from '../interface/listings';
-import { genrateuuid } from './helpers';
 import toast from 'react-hot-toast';
 import { Comments } from '../interface/comments';
-import { JobType } from '../interface/types';
 import { client } from './algolia';
 
 const Backend_Url = process.env.NEXT_PUBLIC_BACKEND_URL;
+
+const redis = new Redis({
+  url: process.env.NEXT_PUBLIC_REDIS_URL,
+  token: process.env.NEXT_PUBLIC_REDIS_TOKEN,
+});
 
 export const createUser = async (publickey: string) => {
   const id = uuidV4();
@@ -453,9 +457,35 @@ export const fetchAll = async (
         jobs: jobs,
       };
     }
-    const { data } = await axios.get(`${Backend_Url}/listings/find/all`);
+    const bountyPromise: Promise<
+      { bounty: Bounties; sponsorInfo: SponsorType }[] | null
+    > = redis.get('bounties');
+    const jobsPromise: Promise<
+      { jobs: JobsType; sponsorInfo: SponsorType }[] | null
+    > = redis.get('jobs');
+    const grantsPromise: Promise<
+      | {
+          grants: GrantsType;
+          sponsorInfo: SponsorType;
+        }[]
+      | null
+    > = redis.get('grants');
 
-    return data.data;
+    const [bounties, jobs, grants] = await Promise.all([
+      bountyPromise,
+      jobsPromise,
+      grantsPromise,
+    ]);
+    console.log(bounties, jobs, grants);
+
+    return {
+      bounty: bounties as { bounty: Bounties; sponsorInfo: SponsorType }[],
+      grants: grants as {
+        grants: GrantsType;
+        sponsorInfo: SponsorType;
+      }[],
+      jobs: jobs as { jobs: JobsType; sponsorInfo: SponsorType }[],
+    };
   } catch (error) {
     console.log(error, 'error');
     return null;
