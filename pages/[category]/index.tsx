@@ -11,33 +11,32 @@ import {
   useDisclosure,
 } from '@chakra-ui/react';
 import type { GetServerSideProps, NextPage } from 'next';
-import NavHome from '../components/home/NavHome';
+import NavHome from '../../components/home/NavHome';
 import moment from 'moment';
 import { BellIcon } from '@chakra-ui/icons';
 import parse from 'html-react-parser';
 //components
-import Banner from '../components/home/Banner';
-import SideBar from '../components/home/SideBar';
+import Banner from '../../components/home/Banner';
+import SideBar from '../../components/home/SideBar';
 
 import { dehydrate, QueryClient, useQuery } from '@tanstack/react-query';
 import {
   fetchAll,
   findTalentPubkey,
   updateNotification,
-} from '../utils/functions';
-import { MultiSelectOptions } from '../constants';
+} from '../../utils/functions';
+import { MultiSelectOptions } from '../../constants';
 import { useRouter } from 'next/router';
 import { useEffect, useState } from 'react';
 import { type } from 'os';
-import { userStore } from '../store/user';
-import { CreateProfileModal } from '../components/modals/createProfile';
-import { TalentStore } from '../store/talent';
+import { userStore } from '../../store/user';
+import { CreateProfileModal } from '../../components/modals/createProfile';
+import { TalentStore } from '../../store/talent';
 import toast, { Toaster } from 'react-hot-toast';
 import { TiTick } from 'react-icons/ti';
 import { useWallet } from '@solana/wallet-adapter-react';
-import { EarningModal } from '../components/modals/earningModal';
 
-const Home: NextPage = () => {
+const Index: NextPage = () => {
   const router = useRouter();
   const { connected } = useWallet();
   const { talentInfo } = TalentStore();
@@ -163,7 +162,7 @@ const Home: NextPage = () => {
                 <Banner />
               </>
             )}
-            {router.asPath.includes('filter') && (
+            {router.query.filter && (
               <CategoryBanner
                 type={
                   listingsType.find((type) =>
@@ -266,7 +265,7 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
   };
 };
 
-export default Home;
+export default Index;
 
 type ListingSectionProps = {
   children?: React.ReactNode;
@@ -288,8 +287,8 @@ const ListingSection = ({
   return (
     <Box
       display={
-        router.query.type
-          ? router.query.type === (type as string)
+        router.query.category
+          ? router.query.category === (type as string)
             ? 'block'
             : 'none'
           : 'block'
@@ -317,7 +316,7 @@ const ListingSection = ({
           color={'#334155'}
           fontWeight={'600'}
         >
-          {title}
+          {title} {router.query.category}
         </Text>
         <Text color={'#CBD5E1'} mx={'0.625rem'}>
           |
@@ -617,7 +616,7 @@ const CategoryBanner = ({ type }: { type: string }) => {
   };
   return (
     <>
-      {isOpen && <EarningModal isOpen={isOpen} onClose={onClose} />}
+      {isOpen && <CreateProfileModal isOpen={isOpen} onClose={onClose} />}
       <Flex
         p={'1.5rem'}
         rounded={'lg'}

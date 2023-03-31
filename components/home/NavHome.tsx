@@ -168,44 +168,25 @@ function NavHome() {
                       return (
                         <MenuItem
                           onClick={() => {
-                            if (elm.toLocaleLowerCase() == 'all opportunties') {
-                              if (
-                                option.toLocaleLowerCase() == 'all opportunties'
-                              ) {
-                                router.replace(router.asPath.split('?')[0]);
+                            if (option != 'All Opportunties') {
+                              if (elm === 'All Opportunties') {
+                                router.replace(`/all/${option.toLowerCase()}`);
+                                setselected(option);
+                                return;
+                              }
+                              router.replace(
+                                `/${elm.toLowerCase()}/${option.toLowerCase()}`
+                              );
+                              setselected(elm);
+                            } else {
+                              if (elm === 'All Opportunties') {
+                                router.replace(`/`);
                                 setselected(elm);
                                 return;
                               }
-
-                              router.replace(
-                                router.asPath.split('?')[0] +
-                                  '?filter=' +
-                                  option.toLocaleLowerCase()
-                              );
+                              router.replace(`/${elm.toLowerCase()}`);
                               setselected(elm);
-                              return;
                             }
-                            if (router.asPath.split('?')[1]) {
-                              router.replace(
-                                router.asPath.split('?')[0] +
-                                  '?type=' +
-                                  elm.toLocaleLowerCase() +
-                                  (option != 'All Opportunties'
-                                    ? '&filter=' + option.toLocaleLowerCase()
-                                    : '')
-                              );
-                              setselected(elm);
-                              return;
-                            }
-                            router.replace(
-                              router.asPath +
-                                '?type=' +
-                                elm.toLocaleLowerCase() +
-                                (option != 'All Opportunties'
-                                  ? '&filter=' + option.toLocaleLowerCase()
-                                  : '')
-                            );
-                            setselected(elm);
                           }}
                           key={option}
                         >

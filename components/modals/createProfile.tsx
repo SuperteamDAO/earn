@@ -9,10 +9,7 @@ import {
   Text,
   VStack,
 } from '@chakra-ui/react';
-import { useMutation } from '@tanstack/react-query';
 import { useRouter } from 'next/router';
-import React from 'react';
-import { createSubscription } from '../../utils/functions';
 interface Props {
   onClose: () => void;
   isOpen: boolean;
