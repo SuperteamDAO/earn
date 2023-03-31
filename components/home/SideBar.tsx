@@ -9,18 +9,18 @@ import {
   VStack,
   Center,
   Link,
-  Checkbox
+  Checkbox,
 } from '@chakra-ui/react';
 import { JobsType } from '../../interface/listings';
 import { SponsorType } from '../../interface/sponsor';
 
 interface SideBarProps {
   jobs:
-  | {
-    jobs: JobsType;
-    sponsorInfo: SponsorType;
-  }[]
-  | undefined;
+    | {
+        jobs: JobsType;
+        sponsorInfo: SponsorType;
+      }[]
+    | undefined;
   total: string;
   listings: number;
 }
@@ -38,7 +38,7 @@ const SideBar = ({ jobs, listings, total }: SideBarProps) => {
       <GettingStarted />
       <TotalStats total={listings} listings={total} />
       <AlphaAccess />
-      <Filter title={'FILTER BY INDUSTRY'} entries={['Gaming', 'Payments', 'Consumer', 'Infrastructure', 'DAOs']} />
+      {/* <Filter title={'FILTER BY INDUSTRY'} entries={['Gaming', 'Payments', 'Consumer', 'Infrastructure', 'DAOs']} /> */}
       <RecentEarners />
       <HiringNow jobs={jobs} />
       <Featured />
@@ -105,7 +105,12 @@ const GettingStarted = () => {
           <Step number={1} isComplete={true} />
           <Step number={2} isComplete={false} />
           <Step number={3} isComplete={false} />
-          <Flex w={'0.0625rem'} h={'90%'} position={'absolute'} bg={'#CBD5E1'} />
+          <Flex
+            w={'0.0625rem'}
+            h={'90%'}
+            position={'absolute'}
+            bg={'#CBD5E1'}
+          />
         </VStack>
         <VStack
           h={'100%'}
@@ -280,11 +285,11 @@ const Hiring = ({ logo, title, location, type }: HiringProps) => {
 
 interface HiringNowProps {
   jobs:
-  | {
-    jobs: JobsType;
-    sponsorInfo: SponsorType;
-  }[]
-  | undefined;
+    | {
+        jobs: JobsType;
+        sponsorInfo: SponsorType;
+      }[]
+    | undefined;
 }
 const HiringNow = ({ jobs }: HiringNowProps) => {
   return (
@@ -368,11 +373,21 @@ const AlphaAccess = () => {
       <Text color={'white'} fontWeight={'600'} fontSize={'1.25rem'} mt={'auto'}>
         Want Early Access to Projects?
       </Text>
-      <Text lineHeight={'1.1875rem'} fontSize={'1rem'} color={'white'} mt={'0.5rem'}>
+      <Text
+        lineHeight={'1.1875rem'}
+        fontSize={'1rem'}
+        color={'white'}
+        mt={'0.5rem'}
+      >
         Get exclusive early access to the latest Solana projects and win product
         feedback bounties, for free.
       </Text>
-      <Button fontWeight={'500'} py={'0.8125rem'} bg={'#FFFFFF'} mt={'1.5625rem'}>
+      <Button
+        fontWeight={'500'}
+        py={'0.8125rem'}
+        bg={'#FFFFFF'}
+        mt={'1.5625rem'}
+      >
         Join the Alpha Squad
       </Button>
     </Flex>
@@ -380,27 +395,31 @@ const AlphaAccess = () => {
 };
 
 const FilterEntry = ({ label }: { label: string }) => {
-  return <Flex justifyContent={"space-between"}>
-    <Checkbox size='md' colorScheme='blue' defaultChecked>
-      <Text color={"#64748B"} fontSize={"0.875rem"} ml={"0.625rem"}>{label}</Text>
-    </Checkbox>
-    <Text color={"#64748B"} fontSize={"0.875rem"} ml={"0.625rem"}>{1234}</Text>
-  </Flex>
-}
+  return (
+    <Flex justifyContent={'space-between'}>
+      <Checkbox size="md" colorScheme="blue" defaultChecked>
+        <Text color={'#64748B'} fontSize={'0.875rem'} ml={'0.625rem'}>
+          {label}
+        </Text>
+      </Checkbox>
+      <Text color={'#64748B'} fontSize={'0.875rem'} ml={'0.625rem'}>
+        {1234}
+      </Text>
+    </Flex>
+  );
+};
 
-const Filter = ({ title, entries }: { title: string, entries: string[] }) => {
+const Filter = ({ title, entries }: { title: string; entries: string[] }) => {
   return (
     <Box>
-      <Text mb={"1.5rem"} color={"#94A3B8"}>{title}</Text>
-      <Flex flexDirection={"column"} rowGap={"1rem"}>
-        {
-          entries.map((ele) => {
-            return (
-              <FilterEntry key={"fil" + ele} label={ele} />
-            )
-          })
-        }
+      <Text mb={'1.5rem'} color={'#94A3B8'}>
+        {title}
+      </Text>
+      <Flex flexDirection={'column'} rowGap={'1rem'}>
+        {entries.map((ele) => {
+          return <FilterEntry key={'fil' + ele} label={ele} />;
+        })}
       </Flex>
-    </Box >
-  )
-}
+    </Box>
+  );
+};

@@ -8,28 +8,39 @@ import {
   Link,
   VStack,
   useMediaQuery,
+  useDisclosure,
 } from '@chakra-ui/react';
 import type { GetServerSideProps, NextPage } from 'next';
 import NavHome from '../components/home/NavHome';
 import moment from 'moment';
 import { BellIcon } from '@chakra-ui/icons';
-
+import parse from 'html-react-parser';
 //components
 import Banner from '../components/home/Banner';
 import SideBar from '../components/home/SideBar';
 
 import { dehydrate, QueryClient, useQuery } from '@tanstack/react-query';
-import { fetchAll } from '../utils/functions';
+import {
+  fetchAll,
+  findTalentPubkey,
+  updateNotification,
+} from '../utils/functions';
 import { MultiSelectOptions } from '../constants';
 import { useRouter } from 'next/router';
 import { useEffect, useState } from 'react';
 import { type } from 'os';
+import { userStore } from '../store/user';
+import { CreateProfileModal } from '../components/modals/createProfile';
+import { TalentStore } from '../store/talent';
+import toast, { Toaster } from 'react-hot-toast';
+import { TiTick } from 'react-icons/ti';
+import { useWallet } from '@solana/wallet-adapter-react';
 
 const Home: NextPage = () => {
   const router = useRouter();
   const listings = useQuery(
-    ['all', 'listings', router.query.search ?? ''],
-    ({ queryKey }) => fetchAll(queryKey[2] as string)
+    ['all', 'listings', router.query.search ?? '', router.query.filter ?? ''],
+    ({ queryKey }) => fetchAll(queryKey[2] as string, queryKey[3] as string)
   );
 
   const [isLessThan1200px] = useMediaQuery('(max-width: 1200px)');
@@ -40,26 +51,29 @@ const Home: NextPage = () => {
     let html = document.querySelector('html');
     try {
       if (isLessThan768px) {
-        html!.style.fontSize = "100%"
-      }
-      else if (isLessThan850px) {
-        html!.style.fontSize = "60%"
-      }
-      else if (isLessThan1200px) {
-        html!.style.fontSize = "70%"
-      }
-      else {
-        html!.style.fontSize = "100%"
+        html!.style.fontSize = '100%';
+      } else if (isLessThan850px) {
+        html!.style.fontSize = '60%';
+      } else if (isLessThan1200px) {
+        html!.style.fontSize = '70%';
+      } else {
+        html!.style.fontSize = '100%';
       }
     } catch (error) {
       console.log(error);
     }
-
-  }, [isLessThan1200px, isLessThan850px, isLessThan768px])
-
+  }, [isLessThan1200px, isLessThan850px, isLessThan768px]);
+  const listingsType = [
+    'Design',
+    'Growth',
+    'Content',
+    'Frontend Development',
+    'Backend Development',
+    'Contract Development',
+  ];
   return (
     <>
-      {(!isLessThan768px) && <NavHome />}
+      {!isLessThan768px && <NavHome />}
       <Flex
         w={'100%'}
         h={'max-content'}
@@ -70,7 +84,7 @@ const Home: NextPage = () => {
       >
         {router.asPath.includes('search') ? (
           <Box>
-            <Flex gap={1}>
+            <Flex w={['full', 'full', '50rem', '50rem']} gap={1}>
               <Text color={'#64748B'}>
                 Found{' '}
                 {(listings.data?.bounties.length as number) +
@@ -99,7 +113,7 @@ const Home: NextPage = () => {
                 return (
                   <Jobs
                     logo={job.sponsorInfo.logo}
-                    description=""
+                    description={job.jobs.description}
                     max={job.jobs.maxSalary}
                     min={job.jobs.minSalary}
                     key={job.jobs.id}
@@ -112,7 +126,7 @@ const Home: NextPage = () => {
               {listings.data?.grants?.map((grant) => {
                 return (
                   <Grants
-                    description=""
+                    description={grant.grants.description}
                     logo={grant.sponsorInfo.logo}
                     key={grant.grants.id}
                     max={grant.grants.maxSalary}
@@ -125,14 +139,18 @@ const Home: NextPage = () => {
           </Box>
         ) : (
           <Box>
-            {/* <Banner /> */}
-            {/* <CategoryBanner type={[
-              'Design',
-              'Growth',
-              'Content',
-              'Frontend Development',
-              'Backend Development',
-              'Contract Development',][3]} /> */}
+            <Banner />
+            {router.asPath.includes('filter') && (
+              <CategoryBanner
+                type={
+                  listingsType.find((type) =>
+                    type
+                      .toLocaleLowerCase()
+                      .includes(router.query.filter as string)
+                  ) as string
+                }
+              />
+            )}
             <Box mt={'2rem'}>
               <ListingSection
                 type="bounties"
@@ -163,7 +181,7 @@ const Home: NextPage = () => {
                   return (
                     <Jobs
                       logo={job.sponsorInfo.logo}
-                      description=""
+                      description={job.jobs.description}
                       max={job.jobs.maxSalary}
                       min={job.jobs.minSalary}
                       key={job.jobs.id}
@@ -182,7 +200,7 @@ const Home: NextPage = () => {
                 {listings.data?.grants?.map((grant) => {
                   return (
                     <Grants
-                      description=""
+                      description={grant.grants.description}
                       logo={grant.sponsorInfo.logo}
                       key={grant.grants.id}
                       max={grant.grants.maxSalary}
@@ -195,15 +213,17 @@ const Home: NextPage = () => {
             </Box>
           </Box>
         )}
-        {(!isLessThan768px) && <SideBar
-          total={''}
-          listings={
-            (listings.data?.bounties.length as number) +
-            (listings.data?.jobs.length as number) +
-            (listings.data?.grants.length as number)
-          }
-          jobs={listings.data?.jobs}
-        />}
+        {!isLessThan768px && (
+          <SideBar
+            total={''}
+            listings={
+              (listings.data?.bounties.length as number) +
+              (listings.data?.jobs.length as number) +
+              (listings.data?.grants.length as number)
+            }
+            jobs={listings.data?.jobs}
+          />
+        )}
       </Flex>
     </>
   );
@@ -213,7 +233,7 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
   const { query } = context;
   try {
     await queryClient.prefetchQuery(['all', 'listings'], () =>
-      fetchAll(query.search as string)
+      fetchAll(query.search as string, query.filter as string)
     );
   } catch (error) {
     console.log(error);
@@ -251,25 +271,42 @@ const ListingSection = ({
             : 'none'
           : 'block'
       }
-      w={{ md: '46.0625rem', base: "100%" }}
+      w={{ md: '46.0625rem', base: '100%' }}
       mt={'1rem'}
       mb={'2.8125rem'}
-      mx={"auto"}
+      mx={'auto'}
     >
-      <Flex borderBottom={'0.0625rem solid #E2E8F0'} pb={'0.75rem'} mb={'0.875rem'} alignItems={"center"}>
-        <Image w={"1.4375rem"} h={"1.4375rem"} mr={'0.75rem'} alt="" src={emoji} />
-        <Text fontSize={{ base: "14px", md: "16px" }} color={'#334155'} fontWeight={'600'} >
+      <Flex
+        borderBottom={'0.0625rem solid #E2E8F0'}
+        pb={'0.75rem'}
+        mb={'0.875rem'}
+        alignItems={'center'}
+      >
+        <Image
+          w={'1.4375rem'}
+          h={'1.4375rem'}
+          mr={'0.75rem'}
+          alt=""
+          src={emoji}
+        />
+        <Text
+          fontSize={{ base: '14px', md: '16px' }}
+          color={'#334155'}
+          fontWeight={'600'}
+        >
           {title}
         </Text>
         <Text color={'#CBD5E1'} mx={'0.625rem'}>
           |
         </Text>
-        <Text fontSize={{ base: "12px", md: "14px" }} color={'#64748B'}>{sub}</Text>
+        <Text fontSize={{ base: '12px', md: '14px' }} color={'#64748B'}>
+          {sub}
+        </Text>
       </Flex>
       <Flex direction={'column'} rowGap={'2.625rem'}>
         {children}
       </Flex>
-    </Box >
+    </Box>
   );
 };
 
@@ -291,12 +328,18 @@ const Bounties = ({ amount, description, due, logo, title }: BountyProps) => {
         h={'3.9375rem'}
         alt={''}
       />
-      <Flex direction={'column'} justifyContent={'space-between'}>
+      <Flex direction={'column'} w={'full'} justifyContent={'space-between'}>
         <Text fontWeight={'600'} color={'#334155'} fontSize={'1rem'}>
           {title}
         </Text>
-        <Text fontWeight={'400'} color={'#64748B'} fontSize={{ md: '0.875rem', base: "0.7688rem" }}>
-          We’re looking to design gum’s landing page
+        <Text
+          fontWeight={'400'}
+          color={'#64748B'}
+          fontSize={{ md: '0.875rem', base: '0.7688rem' }}
+          w={'full'}
+          noOfLines={1}
+        >
+          {parse(JSON.parse(description).slice(0, 100))}
         </Text>
         <Flex alignItems={'center'}>
           <Image
@@ -332,7 +375,7 @@ const Bounties = ({ amount, description, due, logo, title }: BountyProps) => {
           color={'#94A3B8'}
           bg={'transparent'}
           border={'0.0625rem solid #94A3B8'}
-          display={{ base: "none", md: "block" }}
+          display={{ base: 'none', md: 'block' }}
         >
           Apply
         </Button>
@@ -350,7 +393,7 @@ interface JobsProps {
 }
 const Jobs = ({ description, max, min, skills, title, logo }: JobsProps) => {
   return (
-    <Flex w={{ base: '100%', md: '46.125rem' }} h={'3.9375rem'} >
+    <Flex w={{ base: '100%', md: '46.125rem' }} h={'3.9375rem'}>
       <Image
         mr={'1.375rem'}
         rounded={'md'}
@@ -363,8 +406,12 @@ const Jobs = ({ description, max, min, skills, title, logo }: JobsProps) => {
         <Text fontWeight={'600'} color={'#334155'} fontSize={'1rem'}>
           {title}
         </Text>
-        <Text fontWeight={'400'} color={'#64748B'} fontSize={{ md: '0.875rem', base: "0.7688rem" }}>
-          We’re looking to design gum’s landing page
+        <Text
+          fontWeight={'400'}
+          color={'#64748B'}
+          fontSize={{ md: '0.875rem', base: '0.7688rem' }}
+        >
+          {parse(JSON.parse(description).slice(0, 100))}
         </Text>
         <Flex alignItems={'center'}>
           <Image
@@ -382,7 +429,13 @@ const Jobs = ({ description, max, min, skills, title, logo }: JobsProps) => {
           </Text>
           {skills.slice(0, 3).map((e) => {
             return (
-              <Text display={{ base: "none", md: "block" }} key={''} color={'#64748B'} fontSize={'0.75rem'} mr={'0.6875rem'}>
+              <Text
+                display={{ base: 'none', md: 'block' }}
+                key={''}
+                color={'#64748B'}
+                fontSize={'0.75rem'}
+                mr={'0.6875rem'}
+              >
                 {e.label}
               </Text>
             );
@@ -404,12 +457,12 @@ const Jobs = ({ description, max, min, skills, title, logo }: JobsProps) => {
           color={'#94A3B8'}
           bg={'transparent'}
           border={'0.0625rem solid #94A3B8'}
-          display={{ base: "none", md: "block" }}
+          display={{ base: 'none', md: 'block' }}
         >
           Apply
         </Button>
       </Link>
-    </Flex >
+    </Flex>
   );
 };
 
@@ -435,8 +488,12 @@ const Grants = ({ description, title, logo, max, min }: GrantsProps) => {
         <Text fontWeight={'600'} color={'#334155'} fontSize={'1rem'}>
           {title}
         </Text>
-        <Text fontWeight={'400'} color={'#64748B'} fontSize={{ md: '0.875rem', base: "0.7688rem" }}>
-          We’re looking to design gum’s landing page
+        <Text
+          fontWeight={'400'}
+          color={'#64748B'}
+          fontSize={{ md: '0.875rem', base: '0.7688rem' }}
+        >
+          {parse(JSON.parse(description).slice(0, 100))}
         </Text>
         <Flex alignItems={'center'}>
           <Image
@@ -466,7 +523,7 @@ const Grants = ({ description, title, logo, max, min }: GrantsProps) => {
           color={'#94A3B8'}
           bg={'transparent'}
           border={'0.0625rem solid #94A3B8'}
-          display={{ base: "none", md: "block" }}
+          display={{ base: 'none', md: 'block' }}
         >
           Apply
         </Button>
@@ -481,84 +538,138 @@ type categoryAssetsType = {
     desc: string;
     color: string;
     icon: string;
-  }
-}
+  };
+};
 
 const CategoryBanner = ({ type }: { type: string }) => {
-
+  const { userInfo } = userStore();
+  const { talentInfo, setTalentInfo } = TalentStore();
+  const [loading, setLoading] = useState(false);
   let categoryAssets: categoryAssetsType = {
-    'Design': {
+    Design: {
       bg: `/assets/category_assets/bg/design.png`,
-      desc: "If delighting users with eye-catching designs is your jam, you should check out the earning opportunities below.",
-      color: "#FEFBA8",
-      icon: "/assets/category_assets/icon/design.png"
+      desc: 'If delighting users with eye-catching designs is your jam, you should check out the earning opportunities below.',
+      color: '#FEFBA8',
+      icon: '/assets/category_assets/icon/design.png',
     },
-    'Growth': {
+    Growth: {
       bg: `/assets/category_assets/bg/growth.png`,
-      desc: "If you’re a master of campaigns, building relationships, or data-driven strategy, we have earning opportunities for you.",
-      color: "#BFA8FE",
-      icon: "/assets/category_assets/icon/growth.png"
+      desc: 'If you’re a master of campaigns, building relationships, or data-driven strategy, we have earning opportunities for you.',
+      color: '#BFA8FE',
+      icon: '/assets/category_assets/icon/growth.png',
     },
-    'Content': {
+    Content: {
       bg: `/assets/category_assets/bg/content.png`,
-      desc: "If you can write insightful essays, make stunning videos, or create killer memes, the opportunities below are calling your name.",
-      color: "#FEB8A8",
-      icon: "/assets/category_assets/icon/content.png"
+      desc: 'If you can write insightful essays, make stunning videos, or create killer memes, the opportunities below are calling your name.',
+      color: '#FEB8A8',
+      icon: '/assets/category_assets/icon/content.png',
     },
     'Frontend Development': {
       bg: `/assets/category_assets/bg/frontend.png`,
-      desc: "If you are a pixel-perfectionist who creates interfaces that users love, check out the earning opportunities below.",
-      color: "#FEA8EB",
-      icon: "/assets/category_assets/icon/frontend.png"
+      desc: 'If you are a pixel-perfectionist who creates interfaces that users love, check out the earning opportunities below.',
+      color: '#FEA8EB',
+      icon: '/assets/category_assets/icon/frontend.png',
     },
     'Backend Development': {
       bg: `/assets/category_assets/bg/backend.png`,
-      desc: "Opportunities to build high-performance databases, on and off-chain. ",
-      color: "#FEEBA8",
-      icon: "/assets/category_assets/icon/backend.png"
+      desc: 'Opportunities to build high-performance databases, on and off-chain. ',
+      color: '#FEEBA8',
+      icon: '/assets/category_assets/icon/backend.png',
     },
     'Contract Development': {
       bg: `/assets/category_assets/bg/contract.png`,
-      desc: "If you can write insightful essays, make stunning videos, or create killer memes, the opportunities below are calling your name.",
-      color: "#A8FEC0",
-      icon: "/assets/category_assets/icon/contract.png"
+      desc: 'If you can write insightful essays, make stunning videos, or create killer memes, the opportunities below are calling your name.',
+      color: '#A8FEC0',
+      icon: '/assets/category_assets/icon/contract.png',
     },
-  }
-
+  };
+  const { publicKey } = useWallet();
+  const { isOpen, onClose, onOpen } = useDisclosure();
+  const updateTalent = async () => {
+    const talent = await findTalentPubkey(publicKey?.toBase58() as string);
+    if (!talent) {
+      return;
+    }
+    return setTalentInfo(talent.data);
+  };
   return (
-    <Flex
-      p={'1.5rem'}
-      rounded={'lg'}
-      backgroundSize={'contain'}
-      w={'46.0625rem'}
-      h={'7.375rem'}
-      mt={'1.5625rem'}
-      bg={`url('${categoryAssets[type].bg}')`}
-    >
-      <Center mr={'1.0625rem'} bg={categoryAssets[type].color} w={'3.6875rem'} h={'3.6875rem'} rounded={'md'}>
-        <Image src={categoryAssets[type].icon} />
-      </Center>
-      <Box w={'60%'}>
-        <Text fontWeight={'700'} fontFamily={'Domine'}>
-          {type}
-        </Text>
-        <Text fontSize={'0.875rem'} color={'#64748B'}>
-          {categoryAssets[type].desc}
-        </Text>
-      </Box>
-      <Button
-        ml={'auto'}
-        my={'auto'}
-        px={'1rem'}
-        fontWeight={'300'}
-        border={'0.0625rem solid #CBD5E1'}
-        color={'#94A3B8'}
-        leftIcon={<BellIcon />}
-        bg={'white'}
-        variant="solid"
+    <>
+      {isOpen && <CreateProfileModal isOpen={isOpen} onClose={onClose} />}
+      <Flex
+        p={'1.5rem'}
+        rounded={'lg'}
+        backgroundSize={'contain'}
+        w={'46.0625rem'}
+        h={'7.375rem'}
+        mt={'1.5625rem'}
+        bg={`url('${categoryAssets[type].bg}')`}
       >
-        Notify Me
-      </Button>
-    </Flex>
+        <Center
+          mr={'1.0625rem'}
+          bg={categoryAssets[type].color}
+          w={'3.6875rem'}
+          h={'3.6875rem'}
+          rounded={'md'}
+        >
+          <Image src={categoryAssets[type].icon} />
+        </Center>
+        <Box w={'60%'}>
+          <Text fontWeight={'700'} fontFamily={'Domine'}>
+            {type}
+          </Text>
+          <Text fontSize={'0.875rem'} color={'#64748B'}>
+            {categoryAssets[type].desc}
+          </Text>
+        </Box>
+        <Button
+          ml={'auto'}
+          my={'auto'}
+          px={'1rem'}
+          fontWeight={'300'}
+          border={'0.0625rem solid #CBD5E1'}
+          color={'#94A3B8'}
+          isLoading={loading}
+          leftIcon={
+            JSON.parse(talentInfo?.notifications ?? '[]').includes(type) ? (
+              <TiTick />
+            ) : (
+              <BellIcon />
+            )
+          }
+          bg={'white'}
+          variant="solid"
+          onClick={async () => {
+            if (!userInfo?.talent) {
+              return onOpen();
+            }
+            if (
+              JSON.parse(talentInfo?.notifications as string).includes(type)
+            ) {
+              setLoading(true);
+              const notification: string[] = [];
+
+              JSON.parse(talentInfo?.notifications as string).map((e: any) => {
+                if (e !== type) {
+                  notification.push(e);
+                }
+              });
+              await updateNotification(talentInfo?.id as string, notification);
+              await updateTalent();
+              return setLoading(false);
+            }
+            setLoading(true);
+            await updateNotification(talentInfo?.id as string, [
+              ...JSON.parse(talentInfo?.notifications as string),
+              type,
+            ]);
+            await updateTalent();
+            setLoading(false);
+          }}
+        >
+          Notify Me
+        </Button>
+        <Toaster />
+      </Flex>
+    </>
   );
 };

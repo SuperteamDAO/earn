@@ -398,7 +398,8 @@ export const createQuestions = async (questions: {
 };
 
 export const fetchAll = async (
-  search: string | undefined
+  search: string | undefined,
+  filter: string | undefined
 ): Promise<{
   grants: {
     grants: GrantsType;
@@ -408,7 +409,7 @@ export const fetchAll = async (
   bounties: { bounty: Bounties; sponsorInfo: SponsorType }[];
 } | null> => {
   try {
-    if (search) {
+    if (search || filter) {
       const index = client.initIndex('listings');
       const jobs: { jobs: JobsType; sponsorInfo: SponsorType }[] = [];
       const bounties: { bounty: Bounties; sponsorInfo: SponsorType }[] = [];
@@ -416,10 +417,19 @@ export const fetchAll = async (
         grants: GrantsType;
         sponsorInfo: SponsorType;
       }[] = [];
-      const { hits }: { hits: any } = await index.search(search, {});
-      console.log(hits);
+      const { hits }: { hits: any } = await index.search(
+        search
+          ? filter
+            ? ((filter + search) as string)
+            : (search as string)
+          : (filter as string),
+        {}
+      );
+
       hits.map((hit: any) => {
         if (hit.jobs as any) {
+          console.log(hit.jobs.description);
+
           jobs.push({
             jobs: hit.jobs,
             sponsorInfo: hit.sponsorInfo,
@@ -466,6 +476,27 @@ export const AllGrants = async (): Promise<
     return data.data;
   } catch (error) {
     console.log(error, 'error');
+    return null;
+  }
+};
+
+export const updateNotification = async (
+  id: string,
+  notification: string[]
+) => {
+  try {
+    const { data, status } = await axios.post(
+      `${Backend_Url}/talent/notification/update/${id}`,
+      {
+        notification,
+      }
+    );
+    if (status !== 200) {
+      return null;
+    }
+    return data.data;
+  } catch (error) {
+    console.log(error);
     return null;
   }
 };

@@ -14,6 +14,7 @@ import {
   Text,
   VStack,
 } from '@chakra-ui/react';
+import axios from 'axios';
 import { Dispatch, SetStateAction, useState } from 'react';
 import toast, { Toaster } from 'react-hot-toast';
 import { tokenList, PrizeList, MultiSelectOptions } from '../../../constants';
@@ -214,6 +215,7 @@ export const CreatebountyPayment = ({
     });
 
     if (questionsRes) {
+      await axios.post('/api/updateSearch');
       onOpen();
       setSlug(
         ('/bounties/' + bountyBasic?.title.split(' ').join('-')) as string

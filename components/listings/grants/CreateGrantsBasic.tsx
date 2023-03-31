@@ -9,7 +9,7 @@ import {
   Tooltip,
   VStack,
 } from '@chakra-ui/react';
-import React, { Dispatch, SetStateAction } from 'react';
+import { Dispatch, SetStateAction } from 'react';
 import { useForm } from 'react-hook-form';
 import { MainSkills, MultiSelectOptions, SubSkills } from '../../../constants';
 import ReactSelect from 'react-select';
