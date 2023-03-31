@@ -406,7 +406,7 @@ export const fetchAll = async (
     sponsorInfo: SponsorType;
   }[];
   jobs: { jobs: JobsType; sponsorInfo: SponsorType }[];
-  bounties: { bounty: Bounties; sponsorInfo: SponsorType }[];
+  bounty: { bounty: Bounties; sponsorInfo: SponsorType }[];
 } | null> => {
   try {
     if (search || filter) {
@@ -448,7 +448,7 @@ export const fetchAll = async (
       });
 
       return {
-        bounties: bounties,
+        bounty: bounties,
         grants: grants,
         jobs: jobs,
       };
@@ -494,6 +494,24 @@ export const updateNotification = async (
     if (status !== 200) {
       return null;
     }
+    return data.data;
+  } catch (error) {
+    console.log(error);
+    return null;
+  }
+};
+
+export const fetchBasicInfo = async (): Promise<{
+  total: number;
+  count: number;
+} | null> => {
+  try {
+    const { data, status } = await axios.get(`${Backend_Url}/listings/info`);
+    if (status !== 200) {
+      return null;
+    }
+    console.log(data.data, '--');
+
     return data.data;
   } catch (error) {
     console.log(error);

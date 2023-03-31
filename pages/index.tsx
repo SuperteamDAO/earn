@@ -22,6 +22,7 @@ import SideBar from '../components/home/SideBar';
 import { dehydrate, QueryClient, useQuery } from '@tanstack/react-query';
 import {
   fetchAll,
+  fetchBasicInfo,
   findTalentPubkey,
   updateNotification,
 } from '../utils/functions';
@@ -46,6 +47,10 @@ const Home: NextPage = () => {
     ['all', 'listings', router.query.search ?? '', router.query.filter ?? ''],
     ({ queryKey }) => fetchAll(queryKey[2] as string, queryKey[3] as string)
   );
+  const listingBasic = useQuery({
+    queryFn: () => fetchBasicInfo(),
+    queryKey: ['all', 'basic'],
+  });
 
   const [isLessThan1200px] = useMediaQuery('(max-width: 1200px)');
   const [isLessThan850px] = useMediaQuery('(max-width: 850px)');
@@ -91,7 +96,7 @@ const Home: NextPage = () => {
             <Flex w={['full', 'full', '50rem', '50rem']} gap={1}>
               <Text color={'#64748B'}>
                 Found{' '}
-                {(listings.data?.bounties.length as number) +
+                {(listings.data?.bounty.length as number) +
                   (listings.data?.jobs.length as number) +
                   (listings.data?.grants.length as number)}{' '}
                 opportunities matching{' '}
@@ -100,7 +105,7 @@ const Home: NextPage = () => {
             </Flex>
             {/* <CategoryBanner /> */}
             <VStack mt={'2rem'} gap={5}>
-              {listings.data?.bounties?.map((bounty) => {
+              {listings.data?.bounty?.map((bounty) => {
                 return (
                   <Bounties
                     amount={bounty.bounty?.amount}
@@ -181,7 +186,7 @@ const Home: NextPage = () => {
                 sub="Bite sized tasks for freelancers"
                 emoji="/assets/home/emojis/moneyman.png"
               >
-                {listings.data?.bounties?.map((bounty) => {
+                {listings.data?.bounty?.map((bounty) => {
                   return (
                     <Bounties
                       amount={bounty.bounty?.amount}
@@ -238,12 +243,8 @@ const Home: NextPage = () => {
         )}
         {!isLessThan768px && (
           <SideBar
-            total={''}
-            listings={
-              (listings.data?.bounties.length as number) +
-              (listings.data?.jobs.length as number) +
-              (listings.data?.grants.length as number)
-            }
+            total={listingBasic.data?.total ?? 0}
+            listings={listingBasic.data?.count ?? 0}
             jobs={listings.data?.jobs}
           />
         )}
@@ -258,6 +259,7 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
     await queryClient.prefetchQuery(['all', 'listings'], () =>
       fetchAll(query.search as string, query.filter as string)
     );
+    await queryClient.prefetchQuery(['all', 'basic'], () => fetchBasicInfo());
   } catch (error) {
     console.log(error);
   }

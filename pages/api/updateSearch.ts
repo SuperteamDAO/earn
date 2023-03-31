@@ -10,6 +10,9 @@ export default async function handler(
       await axios.post(
         process.env.NEXT_PUBLIC_BACKEND_URL + '/listings/search/update'
       );
+      await axios.post(
+        process.env.NEXT_PUBLIC_BACKEND_URL + '/listings/update'
+      );
       return res.status(200).send('updated');
     } catch (error) {
       console.log(error);

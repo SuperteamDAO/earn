@@ -21,7 +21,7 @@ interface SideBarProps {
         sponsorInfo: SponsorType;
       }[]
     | undefined;
-  total: string;
+  total: number;
   listings: number;
 }
 const SideBar = ({ jobs, listings, total }: SideBarProps) => {
@@ -152,7 +152,7 @@ const TotalStats = ({
   listings,
 }: {
   total: number;
-  listings: string;
+  listings: number;
 }) => {
   return (
     <Flex
@@ -173,7 +173,7 @@ const TotalStats = ({
         />
         <Box>
           <Text fontWeight={'600'} color={'black'} fontSize={'0.875rem'}>
-            $1,340,403 USD
+            ${listings.toLocaleString()} USD
           </Text>
           <Text fontWeight={'400'} color={'#64748B'} fontSize={'0.75rem'}>
             Community Earnings
