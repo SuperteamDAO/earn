@@ -476,7 +476,6 @@ export const fetchAll = async (
       jobsPromise,
       grantsPromise,
     ]);
-    console.log(bounties, jobs, grants);
 
     return {
       bounty: bounties as { bounty: Bounties; sponsorInfo: SponsorType }[],
@@ -542,7 +541,7 @@ export const fetchBasicInfo = async (): Promise<{
     }
     console.log(data.data, '--');
 
-    return data.data;
+    return JSON.parse(data.data);
   } catch (error) {
     console.log(error);
     return null;

@@ -254,7 +254,12 @@ const Home: NextPage = () => {
 };
 export const getServerSideProps: GetServerSideProps = async (context) => {
   const queryClient = new QueryClient();
-  const { query } = context;
+
+  const { query, res } = context;
+  res.setHeader(
+    'Cache-Control',
+    'public, s-maxage=10, stale-while-revalidate=59'
+  );
   try {
     await queryClient.prefetchQuery(['all', 'listings'], () =>
       fetchAll(query.search as string, query.filter as string)
