@@ -16,6 +16,7 @@ import toast from 'react-hot-toast';
 import { Comments } from '../interface/comments';
 import { client } from './algolia';
 import { Talent } from '../interface/talent';
+import moment from 'moment';
 
 const Backend_Url = process.env.NEXT_PUBLIC_BACKEND_URL;
 
@@ -451,7 +452,12 @@ export const fetchAll = async (
           });
         }
       });
-
+      bounties.sort((a, b) => {
+        return (
+          parseInt(moment(b.bounty.deadline).format('x')) -
+          parseInt(moment(a.bounty.deadline).format('x'))
+        );
+      });
       return {
         bounty: bounties,
         grants: grants,

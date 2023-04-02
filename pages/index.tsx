@@ -255,16 +255,11 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
   const queryClient = new QueryClient();
 
   const { query, res } = context;
-  res.setHeader(
-    'Cache-Control',
-    'public, s-maxage=10, stale-while-revalidate=59'
-  );
+
   try {
     await queryClient.prefetchQuery(['all', 'listings'], () =>
       fetchAll(query.search as string, query.filter as string)
     );
-    await queryClient.prefetchQuery(['all', 'basic'], () => fetchBasicInfo());
-    await queryClient.prefetchQuery(['talent'], () => TalentTVE());
   } catch (error) {
     console.log(error);
   }
