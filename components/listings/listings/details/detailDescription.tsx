@@ -76,7 +76,11 @@ export const DetailDescription = ({ skills, description }: Props) => {
             pb={8}
             px={5}
           >
-            {parse(JSON.parse(description) ?? '')}
+            {parse(
+              description.startsWith('"')
+                ? JSON.parse(description)
+                : description ?? ''
+            )}
           </Flex>
           {description.length > 100 && (
             <Box

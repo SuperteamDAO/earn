@@ -82,6 +82,7 @@ function NavHome() {
     }
     await wallet.adapter.disconnect();
   };
+
   return (
     <Box bg={'FFFFFF'}>
       {(isOpen || !connected) && (
@@ -137,13 +138,27 @@ function NavHome() {
         </Flex>
         <Flex h={'full'} columnGap={'1.5625rem'} ml={'1.25rem'}>
           {['All Opportunties', 'Bounties', 'Grants', 'Jobs'].map((elm) => {
+            console.log(router.query.category);
+
             return (
               <Center
                 cursor={'pointer'}
                 fontSize={'0.75rem'}
                 h={'full'}
                 key={elm}
-                borderBottom={selected == elm ? '0.0625rem solid #6366F1' : ''}
+                borderBottom={
+                  router.asPath !== '/'
+                    ? router.query.category
+                      ? router.query.category === elm.toLowerCase()
+                        ? '0.0625rem solid #6366F1'
+                        : ''
+                      : router.asPath === '/' ||
+                        (router.asPath.startsWith('/?') &&
+                          elm === 'All Opportunties')
+                      ? '0.0625rem solid #6366F1'
+                      : ''
+                    : ''
+                }
               >
                 <Menu>
                   <MenuButton

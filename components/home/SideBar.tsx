@@ -1,6 +1,4 @@
 import {
-  Avatar,
-  AvatarGroup,
   Box,
   Button,
   Flex,
@@ -13,7 +11,9 @@ import {
 } from '@chakra-ui/react';
 import { JobsType } from '../../interface/listings';
 import { SponsorType } from '../../interface/sponsor';
-
+import Slider from 'react-slick';
+import { useQuery } from '@tanstack/react-query';
+import { TalentTVE } from '../../utils/functions';
 interface SideBarProps {
   jobs:
     | {
@@ -37,7 +37,7 @@ const SideBar = ({ jobs, listings, total }: SideBarProps) => {
     >
       <GettingStarted />
       <TotalStats total={listings} listings={total} />
-      <AlphaAccess />
+      {/* <AlphaAccess /> */}
       {/* <Filter title={'FILTER BY INDUSTRY'} entries={['Gaming', 'Payments', 'Consumer', 'Infrastructure', 'DAOs']} /> */}
       <RecentEarners />
       <HiringNow jobs={jobs} />
@@ -202,45 +202,74 @@ const TotalStats = ({
   );
 };
 
-const Earner = () => {
+interface EarnerProps {
+  name: string;
+  avatar?: string;
+  amount: number;
+  work?: string;
+}
+const Earner = ({ amount, name, avatar, work }: EarnerProps) => {
   return (
-    <Flex align={'center'} w={'100%'}>
+    <Flex my={1} align={'center'} w={'100%'}>
       <Image
         mr={'1.0625rem'}
         w={'2.125rem'}
         h={'2.125rem'}
         rounded={'full'}
-        src="https://bit.ly/kent-c-dodds"
+        src={avatar !== '' ? avatar : 'https://bit.ly/kent-c-dodds'}
         alt=""
       />
       <Box>
         <Text fontWeight={'500'} color={'black'} fontSize={'0.8125rem'}>
-          Madhur Dixit
+          {name}
         </Text>
         <Text color={'#64748B'} fontSize={'0.8125rem'}>
-          won Underdog Smart...
+          {work?.slice(0, 20)}
         </Text>
       </Box>
       <Flex columnGap={'0.3125rem'} ml={'auto'}>
         <Image src="/assets/landingsponsor/icons/usdc.svg" alt="" />
-        <Text>$3,000</Text>
+        <Text>${amount.toLocaleString()}</Text>
       </Flex>
     </Flex>
   );
 };
 
 const RecentEarners = () => {
+  const talent = useQuery({
+    queryKey: ['talent'],
+    queryFn: () => TalentTVE(),
+  });
+
+  const settings = {
+    dots: false,
+    infinite: true,
+    slidesToShow: 6,
+    slidesToScroll: 1,
+    vertical: true,
+    verticalSwiping: true,
+    autoplay: true,
+    autoplaySpeed: 200,
+  };
   return (
     <Box>
       <Text mb={'1.5rem'} color={'#94A3B8'}>
         RECENT EARNERS
       </Text>
       <VStack rowGap={'1.8125rem'}>
-        <Earner />
-        <Earner />
-        <Earner />
-        <Earner />
-        <Earner />
+        <Slider {...settings}>
+          {talent.data?.map((t) => {
+            return (
+              <Earner
+                amount={t.tve ?? 0}
+                name={t.firstname + ' ' + t.lastname}
+                avatar={t.avatar}
+                key={t.id}
+                work={t.currentEmployer}
+              />
+            );
+          })}
+        </Slider>
       </VStack>
     </Box>
   );

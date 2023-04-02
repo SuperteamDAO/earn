@@ -11,6 +11,8 @@ import { Wallet } from '../context/connectWalletContext';
 import { ReactQueryDevtools } from '@tanstack/react-query-devtools';
 import NProgress from 'nprogress';
 
+import 'slick-carousel/slick/slick.css';
+import 'slick-carousel/slick/slick-theme.css';
 // Styles
 import 'degen/styles';
 import 'nprogress/nprogress.css';

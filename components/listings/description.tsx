@@ -460,10 +460,12 @@ const Description = ({
           fontSize="1rem"
           fontWeight={600}
           onClick={() => {
-            if ((editorData?.length as number) > 5000) {
-              toast.error('Max length for description is 4,500 characters');
-              return;
-            }
+            toast.success(JSON.stringify(editorData?.length));
+            // // return;
+            // if ((editorData?.length as number) > 10000) {
+            //   toast.error('Max length for description is 4,500 characters');
+            //   return;
+            // }
             if (
               router.query.type === 'bounties' &&
               bountyBasics &&

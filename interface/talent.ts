@@ -19,6 +19,7 @@ export interface Talent {
   workPrefernce: string;
   currentEmployer: string;
   pow: string;
+  tve?: number;
   github?: string;
   linkedin?: string;
   telegram?: string;

@@ -15,10 +15,11 @@ import {
 import toast from 'react-hot-toast';
 import { Comments } from '../interface/comments';
 import { client } from './algolia';
+import { Talent } from '../interface/talent';
 
 const Backend_Url = process.env.NEXT_PUBLIC_BACKEND_URL;
 
-const redis = new Redis({
+export const redis = new Redis({
   url: process.env.NEXT_PUBLIC_REDIS_URL,
   token: process.env.NEXT_PUBLIC_REDIS_TOKEN,
 });
@@ -535,13 +536,22 @@ export const fetchBasicInfo = async (): Promise<{
   count: number;
 } | null> => {
   try {
-    const { data, status } = await axios.get(`${Backend_Url}/listings/info`);
-    if (status !== 200) {
-      return null;
-    }
-    console.log(data.data, '--');
+    const res = (await redis.get('basicInfo')) as {
+      total: number;
+      count: number;
+    };
 
-    return JSON.parse(data.data);
+    return res;
+  } catch (error) {
+    console.log(error);
+    return null;
+  }
+};
+
+export const TalentTVE = async (): Promise<Talent[] | null> => {
+  try {
+    const { data } = await axios.get(`${Backend_Url}/talent/find/tve`);
+    return data.data;
   } catch (error) {
     console.log(error);
     return null;

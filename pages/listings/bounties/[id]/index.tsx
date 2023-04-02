@@ -174,7 +174,7 @@ const Bounties = () => {
           prizeList={
             (listingInfo.data?.listing.prizeList as PrizeListType) ?? {}
           }
-          total={total}
+          total={parseInt(listingInfo.data?.listing.amount as string)}
         />
       </HStack>
     </>
