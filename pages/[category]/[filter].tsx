@@ -85,7 +85,7 @@ const Home: NextPage = () => {
     'Content',
     'Frontend Development',
     'Backend Development',
-    'Contract Development',
+    'Blockchain',
   ];
   return (
     <>

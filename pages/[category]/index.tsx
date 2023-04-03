@@ -87,7 +87,7 @@ const Index: NextPage = () => {
     'Content',
     'Frontend Development',
     'Backend Development',
-    'Contract Development',
+    'Blockchain',
   ];
   return (
     <>
@@ -112,7 +112,6 @@ const Index: NextPage = () => {
               </Text>
               <Text color={'#1E293B'}>{"'" + router.query.search + "'"}</Text>
             </Flex>
-            {/* <CategoryBanner /> */}
             <VStack mt={'2rem'} gap={5}>
               {listings.data?.bounty?.map((bounty) => {
                 return (

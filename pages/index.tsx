@@ -147,20 +147,16 @@ const Home: NextPage = () => {
         ) : (
           <Box>
             {connected ? (
-              userInfo?.talent ? (
-                <>
-                  <Text
-                    fontFamily={'Domine'}
-                    fontWeight={700}
-                    fontSize={'26px'}
-                    color={'#1E293B'}
-                  >
-                    Welcome back,{talentInfo?.username}
-                  </Text>
-                </>
-              ) : (
-                ''
-              )
+              <>
+                <Text
+                  fontFamily={'Domine'}
+                  fontWeight={700}
+                  fontSize={'26px'}
+                  color={'#1E293B'}
+                >
+                  Welcome back,{talentInfo?.firstname ?? 'Anon'}
+                </Text>
+              </>
             ) : (
               <>
                 <Banner />

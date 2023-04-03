@@ -483,7 +483,12 @@ export const fetchAll = async (
       jobsPromise,
       grantsPromise,
     ]);
-
+    bounties?.sort((a, b) => {
+      return (
+        parseInt(moment(b.bounty.deadline).format('x')) -
+        parseInt(moment(a.bounty.deadline).format('x'))
+      );
+    });
     return {
       bounty: bounties as { bounty: Bounties; sponsorInfo: SponsorType }[],
       grants: grants as {

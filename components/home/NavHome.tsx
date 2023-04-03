@@ -82,7 +82,28 @@ function NavHome() {
     }
     await wallet.adapter.disconnect();
   };
+  const handleKeyDown = (event: any) => {
+    if (event.key === 'Enter') {
+      event.preventDefault();
+      router.replace(
+        router.asPath.includes('?')
+          ? router.query.search
+            ? router.asPath.split('?')[0] + '?search=' + search
+            : router.asPath + '&search=' + search
+          : router.asPath + '?search=' + search
+      );
+    }
+  };
 
+  useEffect(() => {
+    if (!search) return;
+    document.addEventListener('keydown', handleKeyDown);
+
+    return () => {
+      document.removeEventListener('keydown', handleKeyDown);
+    };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [search]);
   return (
     <Box bg={'FFFFFF'}>
       {(isOpen || !connected) && (

@@ -44,7 +44,8 @@ export const ListingSection = ({
     <Box
       display={
         router.query.category
-          ? router.query.category === (type as string)
+          ? router.query.category === (type as string) ||
+            router.query.category === 'all'
             ? 'block'
             : 'none'
           : 'block'
@@ -72,7 +73,7 @@ export const ListingSection = ({
           color={'#334155'}
           fontWeight={'600'}
         >
-          {title} {router.query.category}
+          {title}
         </Text>
         <Text color={'#CBD5E1'} mx={'0.625rem'}>
           |
@@ -146,7 +147,9 @@ export const BountiesCard = ({
             |
           </Text>
           <Text color={'#64748B'} fontSize={'0.75rem'}>
-            {moment(due).fromNow()}
+            {moment(due).fromNow().includes('ago')
+              ? 'Closed ' + moment(due).fromNow()
+              : 'Closing ' + moment(due).fromNow()}
           </Text>
         </Flex>
       </Flex>
@@ -170,7 +173,7 @@ export const BountiesCard = ({
           {Number(moment(due).format('x')) < Date.now()
             ? status === 'close'
               ? 'View'
-              : 'Review'
+              : 'View'
             : 'Apply'}
         </Button>
       </Link>
@@ -350,6 +353,7 @@ type categoryAssetsType = {
 
 export const CategoryBanner = ({ type }: { type: string }) => {
   const { userInfo } = userStore();
+
   const { talentInfo, setTalentInfo } = TalentStore();
   const [loading, setLoading] = useState(false);
   let categoryAssets: categoryAssetsType = {
@@ -383,7 +387,7 @@ export const CategoryBanner = ({ type }: { type: string }) => {
       color: '#FEEBA8',
       icon: '/assets/category_assets/icon/backend.png',
     },
-    'Contract Development': {
+    Blockchain: {
       bg: `/assets/category_assets/bg/contract.png`,
       desc: 'If you can write insightful essays, make stunning videos, or create killer memes, the opportunities below are calling your name.',
       color: '#A8FEC0',

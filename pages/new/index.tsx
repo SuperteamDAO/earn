@@ -90,7 +90,7 @@ const Index = () => {
                       </Box>
                       <Text
                         color={'gray.400'}
-                        fontSize={'0.8rem'}
+                        fontSize={'0.9rem'}
                         fontWeight={400}
                       >
                         Quickly create listings with our highly effective
