@@ -154,7 +154,7 @@ const Home: NextPage = () => {
                   fontSize={'26px'}
                   color={'#1E293B'}
                 >
-                  Welcome back,{talentInfo?.firstname ?? 'Anon'}
+                  Welcome back , {talentInfo?.firstname ?? 'Anon'}
                 </Text>
               </>
             ) : (

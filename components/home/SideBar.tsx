@@ -176,7 +176,7 @@ const TotalStats = ({
             ${listings.toLocaleString()} USD
           </Text>
           <Text fontWeight={'400'} color={'#64748B'} fontSize={'0.75rem'}>
-            Community Earnings
+            Total Value Listed
           </Text>
         </Box>
       </Flex>

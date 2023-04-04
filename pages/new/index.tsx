@@ -80,7 +80,7 @@ const Index = () => {
                         Get in front of 1,000+ weekly visitors
                       </Text>
                     </Flex>
-                    <Flex gap={2} alignItems={'center'} justify={'center'}>
+                    <Flex gap={2} alignItems={'center'} justify={'start'}>
                       <Box w={5}>
                         <Image
                           width={4}
@@ -93,8 +93,7 @@ const Index = () => {
                         fontSize={'0.9rem'}
                         fontWeight={400}
                       >
-                        Quickly create listings with our highly effective
-                        templates
+                        Instant listing creation through templates
                       </Text>
                     </Flex>
                     <Flex gap={2} alignItems={'center'}>
