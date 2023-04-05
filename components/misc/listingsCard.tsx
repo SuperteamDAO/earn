@@ -98,6 +98,7 @@ interface BountyProps {
   logo: string;
   status: BountyStatus;
   token: string;
+  slug: string;
 }
 export const BountiesCard = ({
   amount,
@@ -107,6 +108,7 @@ export const BountiesCard = ({
   logo,
   title,
   token,
+  slug,
 }: BountyProps) => {
   return (
     <Flex w={{ base: '100%', md: '46.125rem' }} h={'3.9375rem'}>
@@ -164,10 +166,7 @@ export const BountiesCard = ({
       </Flex>
       <Link
         ml={'auto'}
-        href={
-          `https://earn-frontend-v2.vercel.app/listings/bounties/` +
-          title.split(' ').join('-')
-        }
+        href={`https://earn-frontend-v2.vercel.app/listings/bounties/` + slug}
         isExternal
       >
         <Button

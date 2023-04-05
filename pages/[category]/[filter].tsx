@@ -115,6 +115,7 @@ const Home: NextPage = () => {
               {listings.data?.bounty?.map((bounty) => {
                 return (
                   <BountiesCard
+                    slug={bounty.bounty.slug as string}
                     status={bounty.bounty.status as BountyStatus}
                     amount={bounty.bounty?.amount}
                     key={bounty.bounty?.id}
@@ -196,9 +197,10 @@ const Home: NextPage = () => {
                 emoji="/assets/home/emojis/moneyman.png"
               >
                 {listings.data?.bounty?.map((bounty) => {
-                  console.log(bounty)
+                  console.log(bounty);
                   return (
                     <BountiesCard
+                      slug={bounty.bounty.slug as string}
                       status={bounty.bounty.status as BountyStatus}
                       amount={bounty.bounty?.amount}
                       key={bounty.bounty?.id}

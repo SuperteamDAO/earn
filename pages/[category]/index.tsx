@@ -116,6 +116,7 @@ const Index: NextPage = () => {
               {listings.data?.bounty?.map((bounty) => {
                 return (
                   <BountiesCard
+                    slug={bounty.bounty.slug as string}
                     status={bounty.bounty?.status as BountyStatus}
                     amount={bounty.bounty?.amount}
                     key={bounty.bounty?.id}
@@ -199,6 +200,7 @@ const Index: NextPage = () => {
                 {listings.data?.bounty?.map((bounty) => {
                   return (
                     <BountiesCard
+                      slug={bounty.bounty.slug as string}
                       status={bounty.bounty?.status as BountyStatus}
                       amount={bounty.bounty?.amount}
                       key={bounty.bounty?.id}
