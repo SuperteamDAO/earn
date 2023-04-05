@@ -196,6 +196,7 @@ const Home: NextPage = () => {
                 emoji="/assets/home/emojis/moneyman.png"
               >
                 {listings.data?.bounty?.map((bounty) => {
+                  console.log(bounty)
                   return (
                     <BountiesCard
                       status={bounty.bounty.status as BountyStatus}

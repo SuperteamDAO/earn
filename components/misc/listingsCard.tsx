@@ -107,7 +107,7 @@ export const BountiesCard = ({
   title,
   token
 }: BountyProps) => {
-  console.log(token)
+
 
   return (
     <Flex w={{ base: '100%', md: '46.125rem' }} h={'3.9375rem'}>
