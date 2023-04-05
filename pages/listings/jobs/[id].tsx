@@ -93,7 +93,12 @@ const Jobs = () => {
               </Text>
             </VStack>
             <VStack align={'start'}>
-              <Text fontSize={'1.25rem'} color={'black'} fontWeight={500}>
+              <Text
+                textTransform={'capitalize'}
+                fontSize={'1.25rem'}
+                color={'black'}
+                fontWeight={500}
+              >
                 {listingInfo.data?.listing.jobType}
               </Text>
               <Text fontSize={'1rem'} color={'gray.500'} fontWeight={500}>

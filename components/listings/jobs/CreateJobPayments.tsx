@@ -239,34 +239,6 @@ export const CreateJobPayments = ({
           </FormErrorMessage>
         </FormControl>
         <HStack w={'full'} my={6}>
-          <FormControl w="full" isRequired isInvalid={errorState?.min_sal}>
-            <Flex>
-              <FormLabel
-                color={'gray.500'}
-                fontWeight={600}
-                fontSize={'15px'}
-                htmlFor={'min_sal'}
-              >
-                Minimum Salary (USD)
-              </FormLabel>
-            </Flex>
-
-            <Input
-              id="min_sal"
-              type={'number'}
-              color={'gray.700'}
-              placeholder="100,000"
-              onChange={(e) => {
-                setPayment({
-                  ...(payment as PaymentsState),
-                  min_sal: e.target.value,
-                });
-              }}
-            />
-            <FormErrorMessage>
-              {errors.min_sal ? <>{errors.min_sal.message}</> : <></>}
-            </FormErrorMessage>
-          </FormControl>
           <FormControl w="full" isRequired isInvalid={errorState?.max_sal}>
             <Flex>
               <FormLabel
@@ -295,35 +267,36 @@ export const CreateJobPayments = ({
               {errors.max_sal ? <>{errors.max_sal.message}</> : <></>}
             </FormErrorMessage>
           </FormControl>
-        </HStack>
-        <HStack w={'full'}>
-          <FormControl w="full" isRequired isInvalid={errorState?.min_eq}>
+          <FormControl w="full" isRequired isInvalid={errorState?.min_sal}>
             <Flex>
               <FormLabel
                 color={'gray.500'}
                 fontWeight={600}
                 fontSize={'15px'}
-                htmlFor={'min-eq'}
+                htmlFor={'min_sal'}
               >
-                Minimum Equity
+                Minimum Salary (USD)
               </FormLabel>
             </Flex>
 
             <Input
+              id="min_sal"
+              type={'number'}
               color={'gray.700'}
-              id="min-eq"
-              placeholder="0.5%"
+              placeholder="100,000"
               onChange={(e) => {
                 setPayment({
                   ...(payment as PaymentsState),
-                  min_eq: e.target.value,
+                  min_sal: e.target.value,
                 });
               }}
             />
             <FormErrorMessage>
-              {errors.min_eq ? <>{errors.min_eq.message}</> : <></>}
+              {errors.min_sal ? <>{errors.min_sal.message}</> : <></>}
             </FormErrorMessage>
           </FormControl>
+        </HStack>
+        <HStack w={'full'}>
           <FormControl w="full" isRequired isInvalid={errorState?.max_eq}>
             <Flex>
               <FormLabel
@@ -350,6 +323,33 @@ export const CreateJobPayments = ({
             />
             <FormErrorMessage>
               {errors.max_eq ? <>{errors.max_eq.message}</> : <></>}
+            </FormErrorMessage>
+          </FormControl>
+          <FormControl w="full" isRequired isInvalid={errorState?.min_eq}>
+            <Flex>
+              <FormLabel
+                color={'gray.500'}
+                fontWeight={600}
+                fontSize={'15px'}
+                htmlFor={'min-eq'}
+              >
+                Minimum Equity
+              </FormLabel>
+            </Flex>
+
+            <Input
+              color={'gray.700'}
+              id="min-eq"
+              placeholder="0.5%"
+              onChange={(e) => {
+                setPayment({
+                  ...(payment as PaymentsState),
+                  min_eq: e.target.value,
+                });
+              }}
+            />
+            <FormErrorMessage>
+              {errors.min_eq ? <>{errors.min_eq.message}</> : <></>}
             </FormErrorMessage>
           </FormControl>
         </HStack>
