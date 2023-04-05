@@ -121,7 +121,7 @@ export const BountiesCard = ({
       />
       <Flex direction={'column'} w={'full'} justifyContent={'space-between'}>
         <Text fontWeight={'600'} color={'#334155'} fontSize={'1rem'}>
-          {title}
+          {textLimiter(title, 30)}
         </Text>
         <Text
           fontWeight={'400'}
@@ -488,4 +488,12 @@ export const CategoryBanner = ({ type }: { type: string }) => {
       </Flex>
     </>
   );
+};
+
+
+const textLimiter = (text: string, len: number) => {
+  if (text.length > len) {
+    return text.slice(0, len) + "...";
+  }
+  return text;
 };
