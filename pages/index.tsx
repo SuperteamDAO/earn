@@ -111,6 +111,7 @@ const Home: NextPage = () => {
                       due={bounty.bounty?.deadline}
                       title={bounty.bounty?.title}
                       logo={bounty.sponsorInfo?.logo}
+                      token={bounty.bounty?.token}
                     />
                   );
                 })}
@@ -190,6 +191,7 @@ const Home: NextPage = () => {
                       due={bounty.bounty?.deadline}
                       title={bounty.bounty?.title}
                       logo={bounty.sponsorInfo?.logo}
+                      token={bounty.bounty?.token}
                     />
                   );
                 })}

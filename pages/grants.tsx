@@ -18,6 +18,8 @@ import { GetServerSideProps } from 'next';
 import { dehydrate, QueryClient, useQuery } from '@tanstack/react-query';
 import { AllGrants } from '../utils/functions';
 
+import NavHome from '../components/home/NavHome';
+
 function Grants() {
   const grants = useQuery({
     queryFn: AllGrants,
@@ -25,76 +27,81 @@ function Grants() {
   });
   const colors = ['#D2FFF7', '#F1FFD2', '#D2DFFF', '#FFD8D2'];
   return (
-    <Flex
-      justifyContent={'center'}
-      position={'relative'}
-      minH={'100vg'}
-      w={'100%'}
-      flexDirection={'column'}
-      pb={'100px'}
-      bg={'#F5F5F5'}
-    >
-      <Image
-        w={'100%'}
-        top={'0'}
-        left={'0'}
-        right={'0'}
-        position={'absolute'}
-        alt=""
-        src="/assets/home/bg_grad.svg"
-      />
+    <>
+      <NavHome />
       <Flex
+        justifyContent={'center'}
+        position={'relative'}
+        minH={'100vg'}
+        w={'100%'}
         flexDirection={'column'}
-        alignItems={'center'}
-        mt={'107px'}
-        mb={'80px'}
+        pb={'100px'}
+        bg={'#F5F5F5'}
       >
-        <Text fontFamily={'Domine'} fontSize={'36px'} fontWeight={'700'}>
-          Need funds to build out your idea?
-        </Text>
-        <Text
-          mt={'10px'}
-          textAlign={'center'}
-          fontSize={'24px'}
-          fontWeight={'400'}
-          w={'633.05px'}
+        <Image
+          w={'100%'}
+          top={'0'}
+          left={'0'}
+          right={'0'}
+          position={'absolute'}
+          alt=""
+          src="/assets/home/bg_grad.svg"
+        />
+        <Flex
+          flexDirection={'column'}
+          alignItems={'center'}
+          mt={'107px'}
+          mb={'80px'}
         >
-          Discover the complete list of Solana grants available to support your
-          project.
-        </Text>
-        <Button mt={'33px'} px={'106px'} color={'white'} bg={'#6366F1'}>
-          Get A Grant
-        </Button>
-        <Text mt={'14px'} fontSize={'14px'} color={'#64748B'}>
-          Equity-Free • No Bullshit • Fast AF
-        </Text>
+          <Text fontFamily={'Domine'} fontSize={'36px'} fontWeight={'700'}>
+            Need funds to build out your idea?
+          </Text>
+          <Text
+            mt={'10px'}
+            textAlign={'center'}
+            fontSize={'24px'}
+            fontWeight={'400'}
+            w={'633.05px'}
+          >
+            Discover the complete list of Solana grants available to support your
+            project.
+          </Text>
+          <Button mt={'33px'} px={'106px'} color={'white'} bg={'#6366F1'}>
+            Get A Grant
+          </Button>
+          <Text mt={'14px'} fontSize={'14px'} color={'#64748B'}>
+            Equity-Free • No Bullshit • Fast AF
+          </Text>
+        </Flex>
+        <Center>
+          <Wrap spacingX={'27px'} spacingY={'33px'} w={'1145px'}>
+            {grants.data?.map((grant) => {
+              return (
+                <>
+                  <WrapItem>
+                    <GrantEntry
+                      title={grant.grants.title}
+                      color={colors[Math.floor(Math.random() * colors.length)]}
+                      icon={
+                        grant.sponsorInfo?.logo ??
+                        '/assets/home/placeholder/ph5.png'
+                      }
+                    />
+                  </WrapItem>
+                </>
+              );
+            })}
+          </Wrap>
+        </Center>
       </Flex>
-      <Center>
-        <Wrap spacingX={'27px'} spacingY={'33px'} w={'1145px'}>
-          {grants.data?.map((grant) => {
-            return (
-              <>
-                <WrapItem>
-                  <GrantEntry
-                    title={grant.grants.title}
-                    color={colors[Math.floor(Math.random() * colors.length)]}
-                    icon={
-                      grant.sponsorInfo?.logo ??
-                      '/assets/home/placeholder/ph5.png'
-                    }
-                  />
-                </WrapItem>
-              </>
-            );
-          })}
-        </Wrap>
-      </Center>
-    </Flex>
+    </>
   );
 }
+
+
 export const getServerSideProps: GetServerSideProps = async (context) => {
   const queryClient = new QueryClient();
-  await queryClient.prefetchQuery(['all', 'grants'], () => {});
+  await queryClient.prefetchQuery(['all', 'grants'], () => { });
   return {
     props: { dehydratedState: dehydrate(queryClient) },
   };

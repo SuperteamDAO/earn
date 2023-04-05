@@ -123,6 +123,7 @@ const Index: NextPage = () => {
                     due={bounty.bounty?.deadline}
                     title={bounty.bounty?.title}
                     logo={bounty.sponsorInfo?.logo}
+                    token={bounty.bounty?.token}
                   />
                 );
               })}
@@ -205,6 +206,7 @@ const Index: NextPage = () => {
                       due={bounty.bounty?.deadline}
                       title={bounty.bounty?.title}
                       logo={bounty.sponsorInfo?.logo}
+                      token={bounty.bounty?.token}
                     />
                   );
                 })}

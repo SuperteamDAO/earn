@@ -122,6 +122,7 @@ const Home: NextPage = () => {
                     due={bounty.bounty?.deadline}
                     title={bounty.bounty?.title}
                     logo={bounty.sponsorInfo?.logo}
+                    token={bounty.bounty?.token}
                   />
                 );
               })}
@@ -195,6 +196,7 @@ const Home: NextPage = () => {
                 emoji="/assets/home/emojis/moneyman.png"
               >
                 {listings.data?.bounty?.map((bounty) => {
+                  console.log(bounty)
                   return (
                     <BountiesCard
                       status={bounty.bounty.status as BountyStatus}
@@ -204,6 +206,7 @@ const Home: NextPage = () => {
                       due={bounty.bounty?.deadline}
                       title={bounty.bounty?.title}
                       logo={bounty.sponsorInfo?.logo}
+                      token={bounty.bounty?.token}
                     />
                   );
                 })}
