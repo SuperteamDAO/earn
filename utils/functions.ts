@@ -452,14 +452,23 @@ export const fetchAll = async (
           });
         }
       });
-      bounties.sort((a, b) => {
+      const active: { bounty: Bounties; sponsorInfo: SponsorType }[] = [];
+      const inActive: { bounty: Bounties; sponsorInfo: SponsorType }[] = [];
+      bounties.map((a) => {
+        if (a.bounty.active) {
+          return active.push(a);
+        } else {
+          return inActive.push(a);
+        }
+      });
+      active.sort((a, b) => {
         return (
           parseInt(moment(b.bounty.deadline).format('x')) -
           parseInt(moment(a.bounty.deadline).format('x'))
         );
       });
       return {
-        bounty: bounties,
+        bounty: [...active, ...inActive],
         grants: grants,
         jobs: jobs,
       };
@@ -483,14 +492,28 @@ export const fetchAll = async (
       jobsPromise,
       grantsPromise,
     ]);
-    bounties?.sort((a, b) => {
+    const active: { bounty: Bounties; sponsorInfo: SponsorType }[] = [];
+    const inActive: { bounty: Bounties; sponsorInfo: SponsorType }[] = [];
+    bounties?.map((a) => {
+      console.log(a.bounty.active);
+
+      if (a.bounty.active) {
+        return active.push(a);
+      } else {
+        return inActive.push(a);
+      }
+    });
+    active.sort((a, b) => {
       return (
         parseInt(moment(b.bounty.deadline).format('x')) -
         parseInt(moment(a.bounty.deadline).format('x'))
       );
     });
     return {
-      bounty: bounties as { bounty: Bounties; sponsorInfo: SponsorType }[],
+      bounty: [...active, ...inActive] as {
+        bounty: Bounties;
+        sponsorInfo: SponsorType;
+      }[],
       grants: grants as {
         grants: GrantsType;
         sponsorInfo: SponsorType;

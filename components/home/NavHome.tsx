@@ -53,6 +53,11 @@ function NavHome() {
         setUserInfo(res.data);
         if (res.data?.talent) {
           await findTalent();
+          return;
+        }
+
+        if (!res.data?.sponsor) {
+          router.push('/new');
         }
       }
     };
@@ -176,8 +181,8 @@ function NavHome() {
                       : router.asPath === '/' ||
                         (router.asPath.startsWith('/?') &&
                           elm === 'All Opportunties')
-                        ? '0.0625rem solid #6366F1'
-                        : ''
+                      ? '0.0625rem solid #6366F1'
+                      : ''
                     : ''
                 }
               >
@@ -236,17 +241,17 @@ function NavHome() {
             );
           })}
           <Center
-            fontWeight={"600"}
+            fontWeight={'600'}
             cursor={'pointer'}
             fontSize={'0.75rem'}
-            height={"min-content"}
+            height={'min-content'}
             _hover={{
-              bg: "gray.100"
+              bg: 'gray.100',
             }}
-            px={"0.3rem"}
-            py={"0.65rem"}
-            my={"auto"}
-            rounded={"md"}
+            px={'0.3rem'}
+            py={'0.65rem'}
+            my={'auto'}
+            rounded={'md'}
             onClick={() => {
               router.replace(`/grants`);
             }}
