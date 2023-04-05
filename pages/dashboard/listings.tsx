@@ -1,10 +1,11 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Center, Td, Text, Th, Thead, useQuery } from '@chakra-ui/react';
 import Image from 'next/image';
 import { useStore } from 'zustand';
 import { SponsorStore } from '../../store/sponsor';
 import axios from 'axios';
 import { useQuery as tanQuery } from '@tanstack/react-query';
+import Select from 'react-select'
 
 //utils
 import { findSponsorListing } from '../../utils/functions';
@@ -20,6 +21,7 @@ import {
   Tbody,
   Tr,
   Input,
+
 } from '@chakra-ui/react';
 
 import {
@@ -38,21 +40,64 @@ import {
   VStack,
   Tooltip,
   useToast,
+
 } from '@chakra-ui/react';
 
-import { AddIcon, CopyIcon } from '@chakra-ui/icons';
-import { BsThreeDotsVertical } from 'react-icons/bs';
+import { AddIcon, CopyIcon, ArrowBackIcon, TimeIcon, LinkIcon, DownloadIcon } from '@chakra-ui/icons';
+import { BsThreeDotsVertical, BsTwitter, BsDiscord, BsWallet } from 'react-icons/bs';
+import { FaWallet } from 'react-icons/fa'
 
 //Layouts
 import DashboardLayout from '../../layouts/dashboardLayout';
 
 //components
 import DashboardHeader from '../../components/dashboardHead';
+import Avatar from 'boring-avatars';
+
+import { create } from 'zustand'
 import { type } from 'os';
+
 
 const Backend_Url = process.env.NEXT_PUBLIC_BACKEND_URL;
 
+type SubmissionPageType = {
+  submissionList: string[],
+  setsubmissionList: (list: string[]) => void, selected_sub: string, setselected_sub: (id: string) => void, id: string, page: string, setPage: (page: string, id: string) => void
+}
+
+let SelectionStore = create<SubmissionPageType>()((set) => ({
+  page: 'listings',
+  id: '',
+  selected_sub: '',
+  submissionList: [],
+  setsubmissionList: (list: string[]) => {
+    set((state) => {
+      state.submissionList = list;
+      return { ...state }
+    })
+  },
+  setselected_sub: (id: string) => {
+    set((state) => {
+      state.selected_sub = id;
+      return { ...state }
+    })
+  },
+  setPage: (page: string, id: string) => {
+    set((state) => {
+      if (id) {
+        state.id = id;
+      }
+      state.page = page;
+      return { ...state }
+    })
+  }
+}))
+
+
 function Listing() {
+
+  let { page, id } = SelectionStore()
+
   let { currentSponsor } = SponsorStore();
 
   const listingData = tanQuery({
@@ -60,11 +105,245 @@ function Listing() {
     queryFn: ({ queryKey }) => findSponsorListing(queryKey[1]),
   });
 
+
+  return (
+    <DashboardLayout>
+      {(page == 'listings') && <ListingsPage listingData={listingData} />}
+      {(page == 'submission') && <SubmissionsPage listingData={listingData} id={id} />}
+    </DashboardLayout>
+  );
+}
+
+const SubmissionsPage = ({ id, listingData }: { id: string, listingData: any }) => {
+
+  const [selectWinnerOpen, setSelectWinnerOpen] = useState<boolean>(false);
+
+  let subData = tanQuery({
+    queryKey: ['submissions', id], queryFn: async (query) => {
+      let res = await axios.get(`${process.env.NEXT_PUBLIC_BACKEND_URL}/submission/find/bounty/${query.queryKey[1]}`);
+      return res.data.data
+    }
+  })
+
+  let listing = listingData.data.bounties.find((ele: any) => ele.id == id);
+
+  console.log({ listing })
+
+
+  let { page, setPage } = SelectionStore()
+
+  if (!subData.isSuccess) {
+    return <p>loading</p>
+  }
+
+
+
+  return (
+    <Box px={"34px"} py={"54px"} >
+      <SelectWinnerModal
+        selectWinnerOpen={selectWinnerOpen}
+        setSelectWinnerOpen={setSelectWinnerOpen}
+      />
+      <Flex justifyContent={"space-between"}>
+        <Box cursor={"pointer"}>
+          <Flex color={"gray.400"} alignItems={"center"} onClick={() => {
+            setPage('listings', '');
+          }}>
+            <ArrowBackIcon fontSize={"24px"} mr={"6px"} />
+            <Text fontSize={"16px"} >
+              Dashboard / Bounties / {id}
+            </Text>
+          </Flex>
+          <Text fontSize={"19px"} fontWeight={"500"} mt={"10px"}>
+            {listing.title}
+          </Text>
+        </Box>
+        <Button
+          variant="outline"
+          leftIcon={<AddIcon />}
+          fontSize="0.875rem"
+          fontWeight={500}
+          padding="1rem 2rem"
+          w="9.0625rem"
+          color="gray.400"
+          h="2.25rem"
+          onClick={() => {
+            setSelectWinnerOpen(true)
+          }}
+        >
+          Select Winner
+        </Button>
+      </Flex>
+      <Flex alignItems={"center"} bg={"white"} px={"27px"} py={"24px"} rounded={"md"} mt={"17px"}>
+        <Flex columnGap={"5px"} mr={"15px"}>
+          <Text fontWeight={"500"} color={"black"} >
+            {listing.amount}
+          </Text>
+          <Text fontWeight={"500"} color={"#CBD5E1"}>
+            USD
+          </Text>
+        </Flex>
+        <Flex alignItems={"center"} columnGap={"16px"}>
+          <TimeIcon fontSize={"18px"} color={"#CBD5E1"} />
+          <Text color={"gray.400"}>
+            {listing.deadline.split('T')[0] + ' ' + listing.deadline.split('T')[1]}
+          </Text>
+        </Flex>
+        <Center
+          fontSize={'12px'}
+          bg={'#F7FAFC'}
+          py={'0.3125rem'}
+          px={'0.75rem'}
+          color={'#94A3B8'}
+          columnGap={"5px"}
+          ml={"26px"}
+        >
+          <Image alt='' width={"18px"} height={"18px"} src={"/assets/home/emojis/grants.png"} />
+          Bounty
+        </Center>
+      </Flex>
+      {
+        <SubView id={id} subData={subData} />
+      }
+    </Box >
+  )
+}
+
+
+const SubView = ({ id, subData }: { id: string, subData: any }) => {
+
+  let subList = subData.data;
+
+  let { selected_sub, setselected_sub, setsubmissionList } = SelectionStore();
+
+  useEffect(() => {
+    setselected_sub(subData.data[0].id)
+    setsubmissionList(subList);
+  }, [])
+
+  let current_submission = subList.find((ele: any) => {
+    return ele.id == selected_sub
+  })
+
+  if (!current_submission) {
+    return <></>
+  }
+
+  let submission_question = (current_submission.questions) ? JSON.parse(JSON.parse(current_submission.questions)) : {}
+
+  console.log(submission_question)
+
+  return (
+    <>
+      <Flex columnGap={"5px"} mt={"20px "}>
+        <Text>{subList.length}</Text>
+        <Text color={"gray.400"}>Submissions</Text>
+        <Flex ml={"110px"} columnGap={"8px"} alignItems={"center"} fontWeight={"700"} color={"#A3B0B8"}> <DownloadIcon /> <Text>EXPORT AS CSV</Text></Flex>
+        <Text ml={"20px"}>{subList.map((ele: any) => ele.id).indexOf(selected_sub) + 1} OF {subList.length}</Text>
+      </Flex>
+      <Flex mt={"26px"} columnGap={"20px"}>
+        <Table bg={"#FFFFFF"} w={"360px"} overflow={"hidden"} >
+          <Thead>
+            <Tr >
+              <Th color={"gray.400"} w={"250px"}>
+                Name
+              </Th>
+            </Tr>
+          </Thead>
+          <Tbody display={"flex"} flexDirection={"column"} overflow={"hidden"} maxH={"480px"} overflowY={"auto"}>
+            {
+              subList.map((ele: any, idx: number) => {
+                return (
+                  <Tr cursor={"pointer"} onClick={() => {
+                    setselected_sub(ele.id)
+                  }} key={"sub" + idx} display={"flex"} bg={(selected_sub == ele.id) ? 'rgba(101, 98, 255, 0.06)' : ''}>
+                    <Flex columnGap={"17px"} px={"20px"} py={"12px"}  >
+                      <Avatar></Avatar>
+                      <Box >
+                        <Text>{ele.Talent.firstname ? ele.Talent.firstname + ' ' + ele.Talent.lastname : "Not Available"}</Text>
+                        <Text fontSize={"12px"} color={"gray.400"}>{ele.Talent.email}</Text>
+                      </Box>
+                    </Flex>
+                  </Tr>
+                )
+              })
+            }
+          </Tbody>
+        </Table>
+        <Box w={"740px"} h={"519px"} bg={"white"} py={"15px"} px={"33px"}>
+          <Flex>
+            <Flex columnGap={"17px"} mr={"auto"}>
+              <Avatar ></Avatar>
+              <Box>
+                <Text fontSize={"14px"}>{current_submission?.Talent.firstname ? current_submission.Talent.firstname + ' ' + current_submission.Talent.lastname : "Not Available"}</Text>
+                <Text fontSize={"12px"} color={"gray.400"}>{current_submission.Talent.email}</Text>
+              </Box>
+            </Flex>
+            <Button fontSize={"12px"} fontWeight={"500"} color={"gray.600"} bg={"transparent"} leftIcon={<BsTwitter color='#94A3B8' fontSize={"20px"} />}>
+              {current_submission.Talent.twitter || "N/A"}
+            </Button>
+            <Button fontSize={"12px"} fontWeight={"500"} color={"gray.600"} bg={"transparent"} leftIcon={<BsDiscord color='#94A3B8' fontSize={"20px"} />}>
+              {current_submission.Talent.discord || "N/A"}
+            </Button>
+            <Button fontSize={"12px"} fontWeight={"500"} color={"gray.600"} bg={"transparent"} leftIcon={<FaWallet color='#94A3B8' fontSize={"20px"} />}>
+              {walletLimit(current_submission.Talent.publickey)}
+            </Button>
+          </Flex>
+          <Flex overflow={"hidden"} overflowY={"auto"} rowGap={"1rem"} flexDirection={"column"} w={"100%"} marginTop={"10px"} p={"8px"} h={"85%"} >
+            {
+              Object.keys(submission_question).map((qn, idx) => {
+                return <QuestionAnswer key={"i" + idx} sub={submission_question} label={qn} />
+              })
+            }
+          </Flex>
+        </Box>
+      </Flex>
+    </>
+  )
+}
+
+let LinkAns = ({ label, value }: { label: string, value: string }) => {
+  return <Box >
+    <Text fontSize={"11px"} color={"gray.400"}>{label}</Text>
+    <Flex rounded={"xl"} px={"20px"} py={"15px"} mt={"10px"} color={"#3656C7"} bg={"rgba(39, 117, 202, 0.04)"} alignItems={"center"}>
+      <LinkIcon mr={"10px"} />
+      <Text>
+        {value}
+      </Text>
+    </Flex>
+  </Box>
+}
+let TextAns = ({ label, value }: { label: string, value: string }) => {
+  return (
+    <Box>
+      <Text marginTop={"15px"} fontSize={"11px"} color={"gray.400"}>{label}</Text>
+      <Text color={"gray.500"} mt={"10px"}>
+        {value}
+      </Text>
+    </Box>
+  )
+}
+
+const QuestionAnswer = ({ sub, label }: { sub: any, label: string }) => {
+  let value = sub[label];
+
+  if (value.slice(0, 4) == 'http') {
+    return <LinkAns label={label} value={sub[label]} />
+  }
+
+  return <TextAns label={label} value={sub[label]} />
+
+}
+
+
+const ListingsPage = ({ listingData }: { listingData: any }) => {
+
+
   let listings = listingData.data;
   console.log(listings);
 
   return (
-    <DashboardLayout>
+    <>
       {!listingData.isSuccess ? (
         <Center outline={'1px'} h={'85vh'}>
           <Spinner
@@ -100,7 +379,7 @@ function Listing() {
               <Table size={'lg'} variant="simple">
                 <ListingHeader />
                 {listings.bounties.map(
-                  ({ title, amount, deadline }: listElm, idx: number) => {
+                  ({ title, amount, deadline, id }: listElm, idx: number) => {
                     return (
                       <ListingBody
                         title={title}
@@ -108,12 +387,13 @@ function Listing() {
                         deadline={deadline}
                         type={'💰 Bounties'}
                         key={'b' + idx}
+                        id={id}
                       />
                     );
                   }
                 )}
                 {listings.jobs.map(
-                  ({ title, amount, deadline }: listElm, idx: number) => {
+                  ({ title, amount, deadline, id }: listElm, idx: number) => {
                     return (
                       <ListingBody
                         title={title}
@@ -121,12 +401,13 @@ function Listing() {
                         deadline={deadline}
                         type={'💼 Jobs'}
                         key={'j' + idx}
+                        id={id}
                       />
                     );
                   }
                 )}
                 {listings.grants.map(
-                  ({ title, amount, deadline }: listElm, idx: number) => {
+                  ({ title, amount, deadline, id }: listElm, idx: number) => {
                     return (
                       <ListingBody
                         title={title}
@@ -134,6 +415,7 @@ function Listing() {
                         deadline={deadline}
                         type={'💰 Grants'}
                         key={'g' + idx}
+                        id={id}
                       />
                     );
                   }
@@ -158,8 +440,8 @@ function Listing() {
           )}
         </Box>
       )}
-    </DashboardLayout>
-  );
+    </>
+  )
 }
 
 export const ListingHeader = () => {
@@ -221,13 +503,18 @@ type listElm = {
   type?: string;
   amount: string;
   deadline: string;
+  id: string;
 };
 
 const ListingBody = (props: listElm) => {
   const [selectWinnerOpen, setSelectWinnerOpen] = useState<boolean>(false);
 
+  let setPage = SelectionStore().setPage;
+
   return (
-    <Tbody h={'70px'}>
+    <Tbody h={'70px'} onClick={() => {
+      setPage('submission', props.id)
+    }}>
       <SelectWinnerModal
         selectWinnerOpen={selectWinnerOpen}
         setSelectWinnerOpen={setSelectWinnerOpen}
@@ -301,7 +588,6 @@ const ListingBody = (props: listElm) => {
                 }
                 variant="unstyled"
               />
-
               <MenuList bg={'white'} fontWeight={600} color="gray.600" py={'0'}>
                 <MenuItem
                   as={Button}
@@ -340,10 +626,30 @@ type AppProps = {
   setSelectWinnerOpen: (state: boolean) => void;
 };
 
+type optionType = { value: string, label: string }
+
+//wallet name email
+
 const SelectWinnerModal = ({
   selectWinnerOpen,
   setSelectWinnerOpen,
 }: AppProps) => {
+
+  let { submissionList } = SelectionStore();
+
+  let wallets: optionType[] = submissionList.map((ele: any) => {
+    return { value: ele.Talent.publickey, label: ele.Talent.publickey }
+  })
+
+  let name: optionType[] = submissionList.map((ele: any) => {
+    return { value: ele.Talent.firstname + ' ' + ele.Talent.lastname, label: ele.Talent.firstname + ' ' + ele.Talent.lastname }
+  })
+
+  let email: optionType[] = submissionList.map((ele: any) => {
+    return { value: ele.Talent.email, label: ele.Talent.email }
+  })
+
+
   return (
     <Modal
       isOpen={selectWinnerOpen}
@@ -425,31 +731,24 @@ const SelectWinnerModal = ({
                 <Text color={'#94A3B8'} fontWeight={'600'}>
                   What&apos;s the freelancer&apos;s wallet address?
                 </Text>
-                <Input
-                  mt={'0.5rem'}
-                  placeholder="Solana Wallet Address"
-                  _placeholder={{ color: '#CBD5E1', fontSize: '0.9375rem' }}
-                ></Input>
+                <Select defaultValue={{}} name='wallets' options={wallets} />
+
               </Box>
               <Box mb={'1.3125rem'} mt={'21px'}>
                 <Text color={'#94A3B8'} fontWeight={'600'}>
                   What&apos;s the freelancer&apos;s name?
                 </Text>
-                <Input
-                  mt={'0.5rem'}
-                  placeholder="Solana Wallet Address"
-                  _placeholder={{ color: '#CBD5E1', fontSize: '0.9375rem' }}
-                ></Input>
+                <Select defaultValue={{}} name='name' options={name} />
+
               </Box>
               <Box mb={'1.3125rem'} mt={'21px'}>
                 <Text color={'#94A3B8'} fontWeight={'600'}>
                   What&apos;s their email?
                 </Text>
-                <Input
-                  mt={'0.5rem'}
-                  placeholder="Solana Wallet Address"
-                  _placeholder={{ color: '#CBD5E1', fontSize: '0.9375rem' }}
-                ></Input>
+                <Select onChange={(e) => {
+                  console.log(e)
+                }} defaultValue={{}} name='email' options={email} />
+
               </Box>
             </Box>
           </Flex>
@@ -479,3 +778,102 @@ const SelectWinnerModal = ({
 };
 
 export default Listing;
+
+
+
+// unused components
+
+
+const SubTable = () => {
+  return (
+    <>
+      <Flex columnGap={"5px"} mt={"20px "}>
+        <Text>45</Text>
+        <Text color={"gray.400"}>Submissions</Text>
+      </Flex>
+
+      <Table mt={"28px"}>
+        <Thead bg={"rgba(241, 245, 249, 0.77)"}>
+          <Tr >
+            <Th color={"gray.400"} w={"250px"}>
+              Name
+            </Th>
+            <Th color={"gray.400"} w={"200px"}>
+              Link
+            </Th>
+            <Th color={"gray.400"} w={"200px"}>
+              Tweet
+            </Th>
+            <Th color={"gray.400"}>
+              Wallet
+            </Th>
+            <Th color={"gray.400"}>
+              Twitter
+            </Th>
+            <Th color={"gray.400"}>
+              Discord
+            </Th>
+          </Tr>
+        </Thead>
+        <Tbody bg={"white"} >
+          <SubTableEntry />
+          <SubTableEntry />
+          <SubTableEntry />
+          <SubTableEntry />
+          <SubTableEntry />
+          <SubTableEntry />
+        </Tbody>
+      </Table>
+    </>
+  )
+}
+
+const SubTableEntry = () => {
+
+
+  return (
+    <Tr >
+      <Td>
+        <Flex columnGap={"17px"}>
+          <Avatar></Avatar>
+          <Box>
+            <Text>Yash Bhardwaj</Text>
+            <Text fontSize={"12px"} color={"gray.400"}>yb@yashbhardwaj.com</Text>
+          </Box>
+        </Flex>
+      </Td>
+      <Td>
+        <Flex columnGap={"4px"} color={"#3173C2"} alignItems={"center"}>
+          < LinkIcon />
+          <Text>superteam.subs....</Text>
+        </Flex>
+      </Td>
+      <Td>
+        <Flex columnGap={"4px"} color={"#3173C2"} alignItems={"center"}>
+          < LinkIcon />
+          <Text>twitter.com/ybhrd..</Text>
+        </Flex>
+      </Td>
+      <Td>
+        <Flex columnGap={"4px"} alignItems={"center"}>
+          <Text color={"black"}>9sJf...393</Text>
+          < CopyIcon color={"gray.400"} />
+        </Flex>
+      </Td>
+      <Td>
+        @ybhrdwj
+      </Td>
+      <Td>
+        yash#2540
+      </Td>
+    </Tr>
+  )
+}
+
+
+const walletLimit = (text: string) => {
+  if (text.length > 0) {
+    return text.slice(0, 4) + '...' + text.slice(-3);
+  }
+  return 'N/A';
+};
