@@ -22,6 +22,7 @@ import { findTalentPubkey, updateNotification } from '../../utils/functions';
 import { EarningModal } from '../modals/earningModal';
 import parse from 'html-react-parser';
 import { useRouter } from 'next/router';
+import { tokenList } from '../../constants/index'
 
 type ListingSectionProps = {
   children?: React.ReactNode;
@@ -95,6 +96,7 @@ interface BountyProps {
   due: string;
   logo: string;
   status: BountyStatus;
+  token: string;
 }
 export const BountiesCard = ({
   amount,
@@ -103,7 +105,10 @@ export const BountiesCard = ({
   status,
   logo,
   title,
+  token
 }: BountyProps) => {
+  console.log(token)
+
   return (
     <Flex w={{ base: '100%', md: '46.125rem' }} h={'3.9375rem'}>
       <Image
@@ -137,7 +142,9 @@ export const BountiesCard = ({
             w={'0.8125rem'}
             h={'0.8125rem'}
             alt=""
-            src="/assets/landingsponsor/icons/usdc.svg"
+            src={tokenList.find((ele) => {
+              return ele.mintAddress == token
+            })?.icon}
           />
           <Text color={'#334155'} fontWeight={'600'} fontSize={'0.8125rem'}>
             ${amount}
@@ -406,8 +413,9 @@ export const CategoryBanner = ({ type }: { type: string }) => {
         p={'1.5rem'}
         rounded={'lg'}
         backgroundSize={'contain'}
-        w={'46.0625rem'}
-        h={'7.375rem'}
+        w={{ md: '46.0625rem', base: "24.125rem" }}
+        h={{ md: '7.375rem', base: "fit-content" }}
+        flexDirection={{ md: "row", base: "column" }}
         mt={'1.5625rem'}
         bg={`url('${categoryAssets[type].bg}')`}
       >
@@ -420,7 +428,7 @@ export const CategoryBanner = ({ type }: { type: string }) => {
         >
           <Image src={categoryAssets[type].icon} />
         </Center>
-        <Box w={'60%'}>
+        <Box w={{ md: '60%', base: "100%" }} mt={{ base: "1rem", md: "0" }}>
           <Text fontWeight={'700'} fontFamily={'Domine'}>
             {type}
           </Text>
@@ -429,8 +437,9 @@ export const CategoryBanner = ({ type }: { type: string }) => {
           </Text>
         </Box>
         <Button
-          ml={'auto'}
-          my={'auto'}
+          ml={{ base: '', md: "auto" }}
+          my={{ base: '', md: "auto" }}
+          mt={{ base: '1rem', md: "" }}
           px={'1rem'}
           fontWeight={'300'}
           border={'0.0625rem solid #CBD5E1'}

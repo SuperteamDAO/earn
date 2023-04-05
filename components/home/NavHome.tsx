@@ -137,7 +137,7 @@ function NavHome() {
           </Button>
         </Flex>
         <Flex h={'full'} columnGap={'1.5625rem'} ml={'1.25rem'}>
-          {['All Opportunties', 'Bounties', 'Grants', 'Jobs'].map((elm) => {
+          {['All Opportunties', 'Bounties', 'Jobs'].map((elm) => {
             console.log(router.query.category);
 
             return (
@@ -155,8 +155,8 @@ function NavHome() {
                       : router.asPath === '/' ||
                         (router.asPath.startsWith('/?') &&
                           elm === 'All Opportunties')
-                      ? '0.0625rem solid #6366F1'
-                      : ''
+                        ? '0.0625rem solid #6366F1'
+                        : ''
                     : ''
                 }
               >
@@ -214,6 +214,24 @@ function NavHome() {
               </Center>
             );
           })}
+          <Center
+            fontWeight={"600"}
+            cursor={'pointer'}
+            fontSize={'0.75rem'}
+            height={"min-content"}
+            _hover={{
+              bg: "gray.100"
+            }}
+            px={"0.3rem"}
+            py={"0.65rem"}
+            my={"auto"}
+            rounded={"md"}
+            onClick={() => {
+              router.replace(`/grants`);
+            }}
+          >
+            Grants
+          </Center>
         </Flex>
 
         <Flex ml={'auto'} columnGap={'1.5625rem'} alignItems={'center'}>
