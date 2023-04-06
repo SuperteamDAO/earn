@@ -14,13 +14,23 @@ import { SponsorType } from '../../interface/sponsor';
 import Slider from 'react-slick';
 import { useQuery } from '@tanstack/react-query';
 import { TalentTVE } from '../../utils/functions';
+
+import Avatar from "boring-avatars";
+
+<Avatar
+  size={40}
+  name="Maria Mitchell"
+  variant="marble"
+  colors={["#92A1C6", "#146A7C", "#F0AB3D", "#C271B4", "#C20D90"]}
+/>;
+
 interface SideBarProps {
   jobs:
-    | {
-        jobs: JobsType;
-        sponsorInfo: SponsorType;
-      }[]
-    | undefined;
+  | {
+    jobs: JobsType;
+    sponsorInfo: SponsorType;
+  }[]
+  | undefined;
   total: number;
   listings: number;
 }
@@ -211,14 +221,24 @@ interface EarnerProps {
 const Earner = ({ amount, name, avatar, work }: EarnerProps) => {
   return (
     <Flex my={1} align={'center'} w={'100%'}>
-      <Image
-        mr={'1.0625rem'}
-        w={'2.125rem'}
-        h={'2.125rem'}
-        rounded={'full'}
-        src={avatar !== '' ? avatar : 'https://bit.ly/kent-c-dodds'}
-        alt=""
-      />
+      {
+        (avatar !== '') ? <Image
+          mr={'1.0625rem'}
+          w={'2.125rem'}
+          h={'2.125rem'}
+          rounded={'full'}
+          src={avatar}
+          alt=""
+        /> : <Center mr={'1.0625rem'}>
+          <Avatar
+            size={40}
+            name={name}
+            variant="marble"
+            colors={["#da4c65", "#5e25c2", "#d433ab", "#2e53af", "#ceea94"]}
+          />
+        </Center>
+      }
+
       <Box>
         <Text fontWeight={'500'} color={'black'} fontSize={'0.8125rem'}>
           {name}
@@ -314,11 +334,11 @@ const Hiring = ({ logo, title, location, type }: HiringProps) => {
 
 interface HiringNowProps {
   jobs:
-    | {
-        jobs: JobsType;
-        sponsorInfo: SponsorType;
-      }[]
-    | undefined;
+  | {
+    jobs: JobsType;
+    sponsorInfo: SponsorType;
+  }[]
+  | undefined;
 }
 const HiringNow = ({ jobs }: HiringNowProps) => {
   return (
