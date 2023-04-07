@@ -234,7 +234,7 @@ export const JobsCard = ({
             src="/assets/icons/dollar.svg"
           />
           <Text color={'#64748B'} fontSize={'0.75rem'} mr={'0.6875rem'}>
-            {max.toLocaleString()}-{min.toLocaleString()}
+            {min.toLocaleString()} - {max.toLocaleString()}
           </Text>
           <Text color={'#64748B'} fontSize={'0.75rem'} mr={'0.6875rem'}>
             0.02% Equity
