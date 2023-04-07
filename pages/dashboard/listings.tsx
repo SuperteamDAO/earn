@@ -759,13 +759,7 @@ const SelectWinnerModal = ({
     option?.push({ label: e.Talent?.firstname as string, value: e.id });
   });
   const handleSelect = async () => {
-    const { blockhash } = await connection.getLatestBlockhash('finalized');
-
     const transaction = new anchor.web3.Transaction();
-
-    transaction.recentBlockhash = blockhash;
-
-    transaction.feePayer = Anchorwallet?.publicKey;
 
     const ix: anchor.web3.TransactionInstruction[] = [];
 
@@ -795,11 +789,21 @@ const SelectWinnerModal = ({
           new anchor.web3.PublicKey(e.Talent?.publickey as string),
           amount,
           new anchor.web3.PublicKey(bounty?.token as string),
-          0
+          2
         )
       );
     });
-    console.log(ix, '--ix');
+    const { blockhash } = await connection.getLatestBlockhash('finalized');
+    transaction.recentBlockhash = blockhash;
+    transaction.feePayer = Anchorwallet?.publicKey;
+
+    transaction.add(...ix);
+    const signed = await Anchorwallet?.signTransaction(transaction);
+    const txid = await connection.sendRawTransaction(
+      signed?.serialize() as any
+    );
+
+    console.log(txid, '--ix');
 
     if (winner.length > 0) {
       console.log(ix);
