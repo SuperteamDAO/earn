@@ -76,8 +76,8 @@ const Grants = () => {
             </Box>
             <VStack align={'start'}>
               <Text color={'#000000'} fontWeight={500} fontSize={'1.25rem'}>
-                ${listingInfo.data?.listing.minSalary} - $
-                {listingInfo.data?.listing.maxSalary}
+                ${listingInfo.data?.listing.minSalary.toLocaleString()} - $
+                {listingInfo.data?.listing.maxSalary.toLocaleString()}
               </Text>
               <Text color={'gray.500'} mt={'0px !important'}>
                 Check Size
