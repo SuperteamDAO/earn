@@ -1,12 +1,11 @@
-import React, { useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Center, Td, Text, Th, Thead, useQuery } from '@chakra-ui/react';
 import Image from 'next/image';
-import { useStore } from 'zustand';
 import { SponsorStore } from '../../store/sponsor';
 import axios from 'axios';
 import { useQuery as tanQuery } from '@tanstack/react-query';
-import Select from 'react-select'
-
+import Select, { OptionsOrGroups } from 'react-select';
+import * as anchor from '@project-serum/anchor';
 //utils
 import { findSponsorListing } from '../../utils/functions';
 
@@ -17,11 +16,9 @@ import {
   Link,
   Table,
   Button,
-  useClipboard,
   Tbody,
   Tr,
   Input,
-
 } from '@chakra-ui/react';
 
 import {
@@ -40,12 +37,18 @@ import {
   VStack,
   Tooltip,
   useToast,
-
 } from '@chakra-ui/react';
 
-import { AddIcon, CopyIcon, ArrowBackIcon, TimeIcon, LinkIcon, DownloadIcon } from '@chakra-ui/icons';
-import { BsThreeDotsVertical, BsTwitter, BsDiscord, BsWallet } from 'react-icons/bs';
-import { FaWallet } from 'react-icons/fa'
+import {
+  AddIcon,
+  CopyIcon,
+  ArrowBackIcon,
+  TimeIcon,
+  LinkIcon,
+  DownloadIcon,
+} from '@chakra-ui/icons';
+import { BsThreeDotsVertical, BsTwitter, BsDiscord } from 'react-icons/bs';
+import { FaWallet } from 'react-icons/fa';
 
 //Layouts
 import DashboardLayout from '../../layouts/dashboardLayout';
@@ -54,33 +57,42 @@ import DashboardLayout from '../../layouts/dashboardLayout';
 import DashboardHeader from '../../components/dashboardHead';
 import Avatar from 'boring-avatars';
 
-import { create } from 'zustand'
-import { type } from 'os';
-
-
-const Backend_Url = process.env.NEXT_PUBLIC_BACKEND_URL;
+import { create } from 'zustand';
+import ReactSelect from 'react-select';
+import { MultiSelectOptions } from '../../constants';
+import { Bounties, SubmissionType } from '../../interface/listings';
+import { Talent } from '../../interface/talent';
+import { connection, createPayment } from '../../utils/contract/contract';
+import { useAnchorWallet } from '@solana/wallet-adapter-react';
+import NodeWallet from '@project-serum/anchor/dist/cjs/nodewallet';
+import { Prize } from '../../interface/types';
 
 type SubmissionPageType = {
-  submissionList: string[],
-  setsubmissionList: (list: string[]) => void, selected_sub: string, setselected_sub: (id: string) => void, id: string, page: string, setPage: (page: string, id: string) => void
-}
+  submissionList: SubmissionType[];
+  setsubmissionList: (list: SubmissionType[]) => void;
+  selected_sub: string;
+  setselected_sub: (id: string) => void;
+  id: string;
+  page: string;
+  setPage: (page: string, id: string) => void;
+};
 
 let SelectionStore = create<SubmissionPageType>()((set) => ({
   page: 'listings',
   id: '',
   selected_sub: '',
   submissionList: [],
-  setsubmissionList: (list: string[]) => {
+  setsubmissionList: (list: SubmissionType[]) => {
     set((state) => {
       state.submissionList = list;
-      return { ...state }
-    })
+      return { ...state };
+    });
   },
   setselected_sub: (id: string) => {
     set((state) => {
       state.selected_sub = id;
-      return { ...state }
-    })
+      return { ...state };
+    });
   },
   setPage: (page: string, id: string) => {
     set((state) => {
@@ -88,15 +100,13 @@ let SelectionStore = create<SubmissionPageType>()((set) => ({
         state.id = id;
       }
       state.page = page;
-      return { ...state }
-    })
-  }
-}))
-
+      return { ...state };
+    });
+  },
+}));
 
 function Listing() {
-
-  let { page, id } = SelectionStore()
+  let { page, id } = SelectionStore();
 
   let { currentSponsor } = SponsorStore();
 
@@ -105,56 +115,66 @@ function Listing() {
     queryFn: ({ queryKey }) => findSponsorListing(queryKey[1]),
   });
 
-
   return (
     <DashboardLayout>
-      {(page == 'listings') && <ListingsPage listingData={listingData} />}
-      {(page == 'submission') && <SubmissionsPage listingData={listingData} id={id} />}
+      {page == 'listings' && <ListingsPage listingData={listingData} />}
+      {page == 'submission' && (
+        <SubmissionsPage listingData={listingData} id={id} />
+      )}
     </DashboardLayout>
   );
 }
 
-const SubmissionsPage = ({ id, listingData }: { id: string, listingData: any }) => {
-
+const SubmissionsPage = ({
+  id,
+  listingData,
+}: {
+  id: string;
+  listingData: any;
+}) => {
   const [selectWinnerOpen, setSelectWinnerOpen] = useState<boolean>(false);
 
   let subData = tanQuery({
-    queryKey: ['submissions', id], queryFn: async (query) => {
-      let res = await axios.get(`${process.env.NEXT_PUBLIC_BACKEND_URL}/submission/find/bounty/${query.queryKey[1]}`);
-      return res.data.data
-    }
-  })
+    queryKey: ['submissions', id],
+    queryFn: async (query) => {
+      let res = await axios.get(
+        `${process.env.NEXT_PUBLIC_BACKEND_URL}/submission/find/bounty/${query.queryKey[1]}`
+      );
+      return res.data.data;
+    },
+  });
 
   let listing = listingData.data.bounties.find((ele: any) => ele.id == id);
 
-  console.log({ listing })
+  console.log({ listing });
 
-
-  let { page, setPage } = SelectionStore()
+  let { page, setPage } = SelectionStore();
 
   if (!subData.isSuccess) {
-    return <p>loading</p>
+    return <p>loading</p>;
   }
 
-
-
   return (
-    <Box px={"34px"} py={"54px"} >
+    <Box px={'34px'} py={'54px'}>
       <SelectWinnerModal
+        bounty={listing as Bounties}
+        submission={(subData.data.data as SubmissionType[]) ?? []}
         selectWinnerOpen={selectWinnerOpen}
         setSelectWinnerOpen={setSelectWinnerOpen}
       />
-      <Flex justifyContent={"space-between"}>
-        <Box cursor={"pointer"}>
-          <Flex color={"gray.400"} alignItems={"center"} onClick={() => {
-            setPage('listings', '');
-          }}>
-            <ArrowBackIcon fontSize={"24px"} mr={"6px"} />
-            <Text fontSize={"16px"} >
-              Dashboard / Bounties / {id}
-            </Text>
+      <Flex justifyContent={'space-between'}>
+        <Box cursor={'pointer'}>
+          <Flex
+            color={'gray.400'}
+            alignItems={'center'}
+            onClick={() => {
+              setPage('listings', '');
+            }}
+          >
+            <ArrowBackIcon fontSize={'24px'} mr={'6px'} />
+            <Text fontSize={'16px'}>Dashboard / Bounties / {id}</Text>
           </Flex>
-          <Text fontSize={"19px"} fontWeight={"500"} mt={"10px"}>
+          <Text fontSize={'19px'} fontWeight={'500'} mt={'10px'}>
             {listing.title}
           </Text>
         </Box>
@@ -168,25 +188,34 @@ const SubmissionsPage = ({ id, listingData }: { id: string, listingData: any }) 
           color="gray.400"
           h="2.25rem"
           onClick={() => {
-            setSelectWinnerOpen(true)
+            setSelectWinnerOpen(true);
           }}
         >
           Select Winner
         </Button>
       </Flex>
-      <Flex alignItems={"center"} bg={"white"} px={"27px"} py={"24px"} rounded={"md"} mt={"17px"}>
-        <Flex columnGap={"5px"} mr={"15px"}>
-          <Text fontWeight={"500"} color={"black"} >
+      <Flex
+        alignItems={'center'}
+        bg={'white'}
+        px={'27px'}
+        py={'24px'}
+        rounded={'md'}
+        mt={'17px'}
+      >
+        <Flex columnGap={'5px'} mr={'15px'}>
+          <Text fontWeight={'500'} color={'black'}>
             {listing.amount}
           </Text>
-          <Text fontWeight={"500"} color={"#CBD5E1"}>
+          <Text fontWeight={'500'} color={'#CBD5E1'}>
             USD
           </Text>
         </Flex>
-        <Flex alignItems={"center"} columnGap={"16px"}>
-          <TimeIcon fontSize={"18px"} color={"#CBD5E1"} />
-          <Text color={"gray.400"}>
-            {listing.deadline.split('T')[0] + ' ' + listing.deadline.split('T')[1]}
+        <Flex alignItems={'center'} columnGap={'16px'}>
+          <TimeIcon fontSize={'18px'} color={'#CBD5E1'} />
+          <Text color={'gray.400'}>
+            {listing.deadline.split('T')[0] +
+              ' ' +
+              listing.deadline.split('T')[1]}
           </Text>
         </Flex>
         <Center
@@ -195,150 +224,227 @@ const SubmissionsPage = ({ id, listingData }: { id: string, listingData: any }) 
           py={'0.3125rem'}
           px={'0.75rem'}
           color={'#94A3B8'}
-          columnGap={"5px"}
-          ml={"26px"}
+          columnGap={'5px'}
+          ml={'26px'}
         >
-          <Image alt='' width={"18px"} height={"18px"} src={"/assets/home/emojis/grants.png"} />
+          <Image
+            alt=""
+            width={'18px'}
+            height={'18px'}
+            src={'/assets/home/emojis/grants.png'}
+          />
           Bounty
         </Center>
       </Flex>
-      {
-        <SubView id={id} subData={subData} />
-      }
-    </Box >
-  )
-}
+      {<SubView id={id} subData={subData} />}
+    </Box>
+  );
+};
 
-
-const SubView = ({ id, subData }: { id: string, subData: any }) => {
-
+const SubView = ({ id, subData }: { id: string; subData: any }) => {
   let subList = subData.data;
 
   let { selected_sub, setselected_sub, setsubmissionList } = SelectionStore();
 
   useEffect(() => {
-    setselected_sub(subData.data[0].id)
+    setselected_sub(subData.data[0].id);
     setsubmissionList(subList);
-  }, [])
+  }, []);
 
   let current_submission = subList.find((ele: any) => {
-    return ele.id == selected_sub
-  })
+    return ele.id == selected_sub;
+  });
 
   if (!current_submission) {
-    return <></>
+    return <></>;
   }
 
-  let submission_question = (current_submission.questions) ? JSON.parse(JSON.parse(current_submission.questions)) : {}
+  let submission_question = current_submission.questions
+    ? JSON.parse(JSON.parse(current_submission.questions))
+    : {};
 
-  console.log(submission_question)
+  console.log(submission_question);
 
   return (
     <>
-      <Flex columnGap={"5px"} mt={"20px "}>
+      <Flex columnGap={'5px'} mt={'20px '}>
         <Text>{subList.length}</Text>
-        <Text color={"gray.400"}>Submissions</Text>
-        <Flex ml={"110px"} columnGap={"8px"} alignItems={"center"} fontWeight={"700"} color={"#A3B0B8"}> <DownloadIcon /> <Text>EXPORT AS CSV</Text></Flex>
-        <Text ml={"20px"}>{subList.map((ele: any) => ele.id).indexOf(selected_sub) + 1} OF {subList.length}</Text>
+        <Text color={'gray.400'}>Submissions</Text>
+        <Flex
+          ml={'110px'}
+          columnGap={'8px'}
+          alignItems={'center'}
+          fontWeight={'700'}
+          color={'#A3B0B8'}
+        >
+          <DownloadIcon /> <Text>EXPORT AS CSV</Text>
+        </Flex>
+        <Text ml={'20px'}>
+          {subList.map((ele: any) => ele.id).indexOf(selected_sub) + 1} OF{' '}
+          {subList.length}
+        </Text>
       </Flex>
-      <Flex mt={"26px"} columnGap={"20px"}>
-        <Table bg={"#FFFFFF"} w={"360px"} overflow={"hidden"} >
+      <Flex mt={'26px'} columnGap={'20px'}>
+        <Table bg={'#FFFFFF'} w={'360px'} overflow={'hidden'}>
           <Thead>
-            <Tr >
-              <Th color={"gray.400"} w={"250px"}>
+            <Tr>
+              <Th color={'gray.400'} w={'250px'}>
                 Name
               </Th>
             </Tr>
           </Thead>
-          <Tbody display={"flex"} flexDirection={"column"} overflow={"hidden"} maxH={"480px"} overflowY={"auto"}>
-            {
-              subList.map((ele: any, idx: number) => {
-                return (
-                  <Tr cursor={"pointer"} onClick={() => {
-                    setselected_sub(ele.id)
-                  }} key={"sub" + idx} display={"flex"} bg={(selected_sub == ele.id) ? 'rgba(101, 98, 255, 0.06)' : ''}>
-                    <Flex columnGap={"17px"} px={"20px"} py={"12px"}  >
-                      <Avatar></Avatar>
-                      <Box >
-                        <Text>{ele.Talent.firstname ? ele.Talent.firstname + ' ' + ele.Talent.lastname : "Not Available"}</Text>
-                        <Text fontSize={"12px"} color={"gray.400"}>{ele.Talent.email}</Text>
-                      </Box>
-                    </Flex>
-                  </Tr>
-                )
-              })
-            }
+          <Tbody
+            display={'flex'}
+            flexDirection={'column'}
+            overflow={'hidden'}
+            maxH={'480px'}
+            overflowY={'auto'}
+          >
+            {subList.map((ele: any, idx: number) => {
+              return (
+                <Tr
+                  cursor={'pointer'}
+                  onClick={() => {
+                    setselected_sub(ele.id);
+                  }}
+                  key={'sub' + idx}
+                  display={'flex'}
+                  bg={selected_sub == ele.id ? 'rgba(101, 98, 255, 0.06)' : ''}
+                >
+                  <Flex columnGap={'17px'} px={'20px'} py={'12px'}>
+                    <Avatar></Avatar>
+                    <Box>
+                      <Text>
+                        {ele.Talent.firstname
+                          ? ele.Talent.firstname + ' ' + ele.Talent.lastname
+                          : 'Not Available'}
+                      </Text>
+                      <Text fontSize={'12px'} color={'gray.400'}>
+                        {ele.Talent.email}
+                      </Text>
+                    </Box>
+                  </Flex>
+                </Tr>
+              );
+            })}
           </Tbody>
         </Table>
-        <Box w={"740px"} h={"519px"} bg={"white"} py={"15px"} px={"33px"}>
+        <Box w={'740px'} h={'519px'} bg={'white'} py={'15px'} px={'33px'}>
           <Flex>
-            <Flex columnGap={"17px"} mr={"auto"}>
-              <Avatar ></Avatar>
+            <Flex columnGap={'17px'} mr={'auto'}>
+              <Avatar></Avatar>
               <Box>
-                <Text fontSize={"14px"}>{current_submission?.Talent.firstname ? current_submission.Talent.firstname + ' ' + current_submission.Talent.lastname : "Not Available"}</Text>
-                <Text fontSize={"12px"} color={"gray.400"}>{current_submission.Talent.email}</Text>
+                <Text fontSize={'14px'}>
+                  {current_submission?.Talent.firstname
+                    ? current_submission.Talent.firstname +
+                      ' ' +
+                      current_submission.Talent.lastname
+                    : 'Not Available'}
+                </Text>
+                <Text fontSize={'12px'} color={'gray.400'}>
+                  {current_submission.Talent.email}
+                </Text>
               </Box>
             </Flex>
-            <Button fontSize={"12px"} fontWeight={"500"} color={"gray.600"} bg={"transparent"} leftIcon={<BsTwitter color='#94A3B8' fontSize={"20px"} />}>
-              {current_submission.Talent.twitter || "N/A"}
+            <Button
+              fontSize={'12px'}
+              fontWeight={'500'}
+              color={'gray.600'}
+              bg={'transparent'}
+              leftIcon={<BsTwitter color="#94A3B8" fontSize={'20px'} />}
+            >
+              {current_submission.Talent.twitter || 'N/A'}
             </Button>
-            <Button fontSize={"12px"} fontWeight={"500"} color={"gray.600"} bg={"transparent"} leftIcon={<BsDiscord color='#94A3B8' fontSize={"20px"} />}>
-              {current_submission.Talent.discord || "N/A"}
+            <Button
+              fontSize={'12px'}
+              fontWeight={'500'}
+              color={'gray.600'}
+              bg={'transparent'}
+              leftIcon={<BsDiscord color="#94A3B8" fontSize={'20px'} />}
+            >
+              {current_submission.Talent.discord || 'N/A'}
             </Button>
-            <Button fontSize={"12px"} fontWeight={"500"} color={"gray.600"} bg={"transparent"} leftIcon={<FaWallet color='#94A3B8' fontSize={"20px"} />}>
+            <Button
+              fontSize={'12px'}
+              fontWeight={'500'}
+              color={'gray.600'}
+              bg={'transparent'}
+              leftIcon={<FaWallet color="#94A3B8" fontSize={'20px'} />}
+            >
               {walletLimit(current_submission.Talent.publickey)}
             </Button>
           </Flex>
-          <Flex overflow={"hidden"} overflowY={"auto"} rowGap={"1rem"} flexDirection={"column"} w={"100%"} marginTop={"10px"} p={"8px"} h={"85%"} >
-            {
-              Object.keys(submission_question).map((qn, idx) => {
-                return <QuestionAnswer key={"i" + idx} sub={submission_question} label={qn} />
-              })
-            }
+          <Flex
+            overflow={'hidden'}
+            overflowY={'auto'}
+            rowGap={'1rem'}
+            flexDirection={'column'}
+            w={'100%'}
+            marginTop={'10px'}
+            p={'8px'}
+            h={'85%'}
+          >
+            {Object.keys(submission_question).map((qn, idx) => {
+              return (
+                <QuestionAnswer
+                  key={'i' + idx}
+                  sub={submission_question}
+                  label={qn}
+                />
+              );
+            })}
           </Flex>
         </Box>
       </Flex>
     </>
-  )
-}
+  );
+};
 
-let LinkAns = ({ label, value }: { label: string, value: string }) => {
-  return <Box >
-    <Text fontSize={"11px"} color={"gray.400"}>{label}</Text>
-    <Flex rounded={"xl"} px={"20px"} py={"15px"} mt={"10px"} color={"#3656C7"} bg={"rgba(39, 117, 202, 0.04)"} alignItems={"center"}>
-      <LinkIcon mr={"10px"} />
-      <Text>
-        {value}
-      </Text>
-    </Flex>
-  </Box>
-}
-let TextAns = ({ label, value }: { label: string, value: string }) => {
+let LinkAns = ({ label, value }: { label: string; value: string }) => {
   return (
     <Box>
-      <Text marginTop={"15px"} fontSize={"11px"} color={"gray.400"}>{label}</Text>
-      <Text color={"gray.500"} mt={"10px"}>
+      <Text fontSize={'11px'} color={'gray.400'}>
+        {label}
+      </Text>
+      <Flex
+        rounded={'xl'}
+        px={'20px'}
+        py={'15px'}
+        mt={'10px'}
+        color={'#3656C7'}
+        bg={'rgba(39, 117, 202, 0.04)'}
+        alignItems={'center'}
+      >
+        <LinkIcon mr={'10px'} />
+        <Text>{value}</Text>
+      </Flex>
+    </Box>
+  );
+};
+let TextAns = ({ label, value }: { label: string; value: string }) => {
+  return (
+    <Box>
+      <Text marginTop={'15px'} fontSize={'11px'} color={'gray.400'}>
+        {label}
+      </Text>
+      <Text color={'gray.500'} mt={'10px'}>
         {value}
       </Text>
     </Box>
-  )
-}
+  );
+};
 
-const QuestionAnswer = ({ sub, label }: { sub: any, label: string }) => {
+const QuestionAnswer = ({ sub, label }: { sub: any; label: string }) => {
   let value = sub[label];
 
   if (value.slice(0, 4) == 'http') {
-    return <LinkAns label={label} value={sub[label]} />
+    return <LinkAns label={label} value={sub[label]} />;
   }
 
-  return <TextAns label={label} value={sub[label]} />
-
-}
-
+  return <TextAns label={label} value={sub[label]} />;
+};
 
 const ListingsPage = ({ listingData }: { listingData: any }) => {
-
-
   let listings = listingData.data;
   console.log(listings);
 
@@ -367,8 +473,8 @@ const ListingsPage = ({ listingData }: { listingData: any }) => {
           </Box>
 
           {listings.bounties.length > 0 ||
-            listings.jobs > 0 ||
-            listings.grants > 0 ? (
+          listings.jobs > 0 ||
+          listings.grants > 0 ? (
             <Box
               w="100%"
               mt={'36px'}
@@ -441,8 +547,8 @@ const ListingsPage = ({ listingData }: { listingData: any }) => {
         </Box>
       )}
     </>
-  )
-}
+  );
+};
 
 export const ListingHeader = () => {
   return (
@@ -512,9 +618,12 @@ const ListingBody = (props: listElm) => {
   let setPage = SelectionStore().setPage;
 
   return (
-    <Tbody h={'70px'} onClick={() => {
-      setPage('submission', props.id)
-    }}>
+    <Tbody
+      h={'70px'}
+      onClick={() => {
+        setPage('submission', props.id);
+      }}
+    >
       <SelectWinnerModal
         selectWinnerOpen={selectWinnerOpen}
         setSelectWinnerOpen={setSelectWinnerOpen}
@@ -544,7 +653,7 @@ const ListingBody = (props: listElm) => {
         </Td>
         <Td py={'0'}>
           <Center alignItems={'center'} columnGap="0.9688rem">
-            <Box w={'1rem'} height="1rem" mb={"0.26rem"}>
+            <Box w={'1rem'} height="1rem" mb={'0.26rem'}>
               <Image
                 width={'100%'}
                 height={'100%'}
@@ -618,37 +727,84 @@ const ListingBody = (props: listElm) => {
 
 const timeStamFormat = (time: string): string => {
   let t = time.split('T');
-  return t[0] + ' ' + t[1]
-}
+  return t[0] + ' ' + t[1];
+};
 
 type AppProps = {
   selectWinnerOpen: boolean;
   setSelectWinnerOpen: (state: boolean) => void;
+  bounty?: Bounties;
+  submission?: SubmissionType[];
 };
-
-type optionType = { value: string, label: string }
-
-//wallet name email
-
+type WinnerTempState = {
+  id: string;
+  Talent: Talent;
+  place: number;
+};
 const SelectWinnerModal = ({
   selectWinnerOpen,
   setSelectWinnerOpen,
+  bounty,
+  submission,
 }: AppProps) => {
+  let { submissionList, page } = SelectionStore();
+  const Anchorwallet = useAnchorWallet();
+  const [selectedOption, setSelectedOption] = useState<MultiSelectOptions[]>(
+    []
+  );
 
-  let { submissionList } = SelectionStore();
+  const [winner, setWinner] = useState<WinnerTempState[]>([]);
+  let option: MultiSelectOptions[] = [];
+  submissionList.map((e) => {
+    option?.push({ label: e.Talent?.firstname as string, value: e.id });
+  });
+  const handleSelect = async () => {
+    const { blockhash } = await connection.getLatestBlockhash('finalized');
 
-  let wallets: optionType[] = submissionList.map((ele: any) => {
-    return { value: ele.Talent.publickey, label: ele.Talent.publickey }
-  })
+    const transaction = new anchor.web3.Transaction();
 
-  let name: optionType[] = submissionList.map((ele: any) => {
-    return { value: ele.Talent.firstname + ' ' + ele.Talent.lastname, label: ele.Talent.firstname + ' ' + ele.Talent.lastname }
-  })
+    transaction.recentBlockhash = blockhash;
 
-  let email: optionType[] = submissionList.map((ele: any) => {
-    return { value: ele.Talent.email, label: ele.Talent.email }
-  })
+    transaction.feePayer = Anchorwallet?.publicKey;
 
+    const ix: anchor.web3.TransactionInstruction[] = [];
+
+    // const prize = JSON.parse(bounty?.prizeList as string);
+
+    console.log(typeof bounty?.prizeList);
+
+    // return;
+
+    winner.forEach(async (e) => {
+      let amount = 0;
+
+      if (e.place === 1) {
+        amount = parseInt(bounty?.prizeList['first'] as string);
+      } else if (e.place === 2) {
+        amount = parseInt(bounty?.prizeList['second'] as string);
+      } else if (e.place === 3) {
+        amount = parseInt(bounty?.prizeList['third'] as string);
+      } else if (e.place === 4) {
+        amount = parseInt(bounty?.prizeList['forth'] as string);
+      } else if (e.place === 5) {
+        amount = parseInt(bounty?.prizeList['fifth'] as string);
+      }
+      ix.push(
+        await createPayment(
+          Anchorwallet as NodeWallet,
+          new anchor.web3.PublicKey(e.Talent?.publickey as string),
+          amount,
+          new anchor.web3.PublicKey(bounty?.token as string),
+          0
+        )
+      );
+    });
+    console.log(ix, '--ix');
+
+    if (winner.length > 0) {
+      console.log(ix);
+    }
+  };
 
   return (
     <Modal
@@ -675,31 +831,18 @@ const SelectWinnerModal = ({
               ></Image>
             </Box>
             <Text fontSize={'0.8125rem'} color={'#94A3B8'}>
-              PORT FINANCE
-            </Text>
-            <Text
-              ml={'auto'}
-              color={'#A05EBF'}
-              borderRadius={'2.0625rem'}
-              py={'0.3438rem'}
-              px={'0.875rem'}
-              h={'min-content'}
-              fontSize={'0.75rem'}
-              fontWeight={'400'}
-              bg={'rgba(101, 98, 255, 0.14)'}
-            >
-              Bug Bounty
+              {bounty?.title}
             </Text>
           </Flex>
           <Box borderBottom={'1px'} borderBottomColor={'#E2E8EF'}></Box>
-          <Flex px={'1.6875rem'} pt="1.375rem">
+          <Flex px={'1.6875rem'} pt="0">
             <Box w={'fit-content'} minWidth={'12rem'}>
               <Text fontSize={'0.8125rem'} color={'#94A3B8'}>
                 FUNDING
               </Text>
               <Flex>
                 <Text fontSize={'1rem'} fontWeight="500">
-                  1 USDC
+                  {bounty?.amount}
                 </Text>
               </Flex>
             </Box>
@@ -709,7 +852,7 @@ const SelectWinnerModal = ({
               </Text>
               <Flex>
                 <Text fontSize={'1rem'} fontWeight="500">
-                  1 USDC
+                  {bounty?.deadline}
                 </Text>
               </Flex>
             </Box>
@@ -724,33 +867,36 @@ const SelectWinnerModal = ({
               </Flex>
             </Box>
           </Flex>
-          <Flex px={'1.6875rem'} pt="1.6875rem">
-            <Box w={'full'}>
-              <Text fontWeight={'600'}>Winner 1</Text>
-              <Box mb={'1.3125rem'} mt={'21px'}>
-                <Text color={'#94A3B8'} fontWeight={'600'}>
-                  What&apos;s the freelancer&apos;s wallet address?
-                </Text>
-                <Select defaultValue={{}} name='wallets' options={wallets} />
 
-              </Box>
-              <Box mb={'1.3125rem'} mt={'21px'}>
-                <Text color={'#94A3B8'} fontWeight={'600'}>
-                  What&apos;s the freelancer&apos;s name?
-                </Text>
-                <Select defaultValue={{}} name='name' options={name} />
+          <Flex flexDir={'column'} px={'1.6875rem'} pt="1rem">
+            {selectedOption?.map((e, index) => {
+              return (
+                <Box key={''} w={'full'}>
+                  <Text fontWeight={'600'}>Winner {index + 1}</Text>
+                  <Box mb={'1.3125rem'} mt={'21px'}>
+                    <ReactSelect
+                      onChange={(e) => {
+                        console.log(e);
 
-              </Box>
-              <Box mb={'1.3125rem'} mt={'21px'}>
-                <Text color={'#94A3B8'} fontWeight={'600'}>
-                  What&apos;s their email?
-                </Text>
-                <Select onChange={(e) => {
-                  console.log(e)
-                }} defaultValue={{}} name='email' options={email} />
-
-              </Box>
-            </Box>
+                        const sub = submissionList.find(
+                          (s) => (s.id as string) === e?.value
+                        );
+                        setWinner([
+                          ...winner,
+                          {
+                            id: e?.value as string,
+                            Talent: sub?.Talent as Talent,
+                            place: index + 1,
+                          },
+                        ]);
+                      }}
+                      isMulti={false}
+                      options={option}
+                    />
+                  </Box>
+                </Box>
+              );
+            })}
           </Flex>
           <Flex px={'1.6875rem'} flexDir="column">
             <Button
@@ -759,10 +905,17 @@ const SelectWinnerModal = ({
               color={'#94A3B8'}
               fontSize={'0.6875rem'}
               variant="link"
+              onClick={() => {
+                setSelectedOption([
+                  ...selectedOption,
+                  { label: 'Winner 2', value: '2' },
+                ]);
+              }}
             >
               ADD WINNER
             </Button>
             <Button
+              onClick={handleSelect}
               mt={'1.4375rem'}
               fontSize={'0.9375rem'}
               color={'white'}
@@ -779,43 +932,34 @@ const SelectWinnerModal = ({
 
 export default Listing;
 
-
-
 // unused components
-
 
 const SubTable = () => {
   return (
     <>
-      <Flex columnGap={"5px"} mt={"20px "}>
+      <Flex columnGap={'5px'} mt={'20px '}>
         <Text>45</Text>
-        <Text color={"gray.400"}>Submissions</Text>
+        <Text color={'gray.400'}>Submissions</Text>
       </Flex>
 
-      <Table mt={"28px"}>
-        <Thead bg={"rgba(241, 245, 249, 0.77)"}>
-          <Tr >
-            <Th color={"gray.400"} w={"250px"}>
+      <Table mt={'28px'}>
+        <Thead bg={'rgba(241, 245, 249, 0.77)'}>
+          <Tr>
+            <Th color={'gray.400'} w={'250px'}>
               Name
             </Th>
-            <Th color={"gray.400"} w={"200px"}>
+            <Th color={'gray.400'} w={'200px'}>
               Link
             </Th>
-            <Th color={"gray.400"} w={"200px"}>
+            <Th color={'gray.400'} w={'200px'}>
               Tweet
             </Th>
-            <Th color={"gray.400"}>
-              Wallet
-            </Th>
-            <Th color={"gray.400"}>
-              Twitter
-            </Th>
-            <Th color={"gray.400"}>
-              Discord
-            </Th>
+            <Th color={'gray.400'}>Wallet</Th>
+            <Th color={'gray.400'}>Twitter</Th>
+            <Th color={'gray.400'}>Discord</Th>
           </Tr>
         </Thead>
-        <Tbody bg={"white"} >
+        <Tbody bg={'white'}>
           <SubTableEntry />
           <SubTableEntry />
           <SubTableEntry />
@@ -825,51 +969,46 @@ const SubTable = () => {
         </Tbody>
       </Table>
     </>
-  )
-}
+  );
+};
 
 const SubTableEntry = () => {
-
-
   return (
-    <Tr >
+    <Tr>
       <Td>
-        <Flex columnGap={"17px"}>
+        <Flex columnGap={'17px'}>
           <Avatar></Avatar>
           <Box>
             <Text>Yash Bhardwaj</Text>
-            <Text fontSize={"12px"} color={"gray.400"}>yb@yashbhardwaj.com</Text>
+            <Text fontSize={'12px'} color={'gray.400'}>
+              yb@yashbhardwaj.com
+            </Text>
           </Box>
         </Flex>
       </Td>
       <Td>
-        <Flex columnGap={"4px"} color={"#3173C2"} alignItems={"center"}>
-          < LinkIcon />
+        <Flex columnGap={'4px'} color={'#3173C2'} alignItems={'center'}>
+          <LinkIcon />
           <Text>superteam.subs....</Text>
         </Flex>
       </Td>
       <Td>
-        <Flex columnGap={"4px"} color={"#3173C2"} alignItems={"center"}>
-          < LinkIcon />
+        <Flex columnGap={'4px'} color={'#3173C2'} alignItems={'center'}>
+          <LinkIcon />
           <Text>twitter.com/ybhrd..</Text>
         </Flex>
       </Td>
       <Td>
-        <Flex columnGap={"4px"} alignItems={"center"}>
-          <Text color={"black"}>9sJf...393</Text>
-          < CopyIcon color={"gray.400"} />
+        <Flex columnGap={'4px'} alignItems={'center'}>
+          <Text color={'black'}>9sJf...393</Text>
+          <CopyIcon color={'gray.400'} />
         </Flex>
       </Td>
-      <Td>
-        @ybhrdwj
-      </Td>
-      <Td>
-        yash#2540
-      </Td>
+      <Td>@ybhrdwj</Td>
+      <Td>yash#2540</Td>
     </Tr>
-  )
-}
-
+  );
+};
 
 const walletLimit = (text: string) => {
   if (text.length > 0) {

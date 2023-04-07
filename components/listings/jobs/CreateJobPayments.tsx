@@ -239,34 +239,6 @@ export const CreateJobPayments = ({
           </FormErrorMessage>
         </FormControl>
         <HStack w={'full'} my={6}>
-          <FormControl w="full" isRequired isInvalid={errorState?.max_sal}>
-            <Flex>
-              <FormLabel
-                color={'gray.500'}
-                fontWeight={600}
-                fontSize={'15px'}
-                htmlFor={'max_sal'}
-              >
-                Maximum Salary (USD)
-              </FormLabel>
-            </Flex>
-
-            <Input
-              id="max_sal"
-              placeholder="150,000"
-              color={'gray.700'}
-              type={'number'}
-              onChange={(e) => {
-                setPayment({
-                  ...(payment as PaymentsState),
-                  max_sal: e.target.value,
-                });
-              }}
-            />
-            <FormErrorMessage>
-              {errors.max_sal ? <>{errors.max_sal.message}</> : <></>}
-            </FormErrorMessage>
-          </FormControl>
           <FormControl w="full" isRequired isInvalid={errorState?.min_sal}>
             <Flex>
               <FormLabel
@@ -295,8 +267,63 @@ export const CreateJobPayments = ({
               {errors.min_sal ? <>{errors.min_sal.message}</> : <></>}
             </FormErrorMessage>
           </FormControl>
+          <FormControl w="full" isRequired isInvalid={errorState?.max_sal}>
+            <Flex>
+              <FormLabel
+                color={'gray.500'}
+                fontWeight={600}
+                fontSize={'15px'}
+                htmlFor={'max_sal'}
+              >
+                Maximum Salary (USD)
+              </FormLabel>
+            </Flex>
+
+            <Input
+              id="max_sal"
+              placeholder="150,000"
+              color={'gray.700'}
+              type={'number'}
+              onChange={(e) => {
+                setPayment({
+                  ...(payment as PaymentsState),
+                  max_sal: e.target.value,
+                });
+              }}
+            />
+            <FormErrorMessage>
+              {errors.max_sal ? <>{errors.max_sal.message}</> : <></>}
+            </FormErrorMessage>
+          </FormControl>
         </HStack>
         <HStack w={'full'}>
+          <FormControl w="full" isRequired isInvalid={errorState?.min_eq}>
+            <Flex>
+              <FormLabel
+                color={'gray.500'}
+                fontWeight={600}
+                fontSize={'15px'}
+                htmlFor={'min-eq'}
+              >
+                Minimum Equity
+              </FormLabel>
+            </Flex>
+
+            <Input
+              color={'gray.700'}
+              id="min-eq"
+              placeholder="0.5%"
+              onChange={(e) => {
+                setPayment({
+                  ...(payment as PaymentsState),
+                  min_eq: e.target.value,
+                });
+              }}
+            />
+            <FormErrorMessage>
+              {errors.min_eq ? <>{errors.min_eq.message}</> : <></>}
+            </FormErrorMessage>
+          </FormControl>
           <FormControl w="full" isRequired isInvalid={errorState?.max_eq}>
             <Flex>
               <FormLabel
@@ -323,33 +350,6 @@ export const CreateJobPayments = ({
             />
             <FormErrorMessage>
               {errors.max_eq ? <>{errors.max_eq.message}</> : <></>}
-            </FormErrorMessage>
-          </FormControl>
-          <FormControl w="full" isRequired isInvalid={errorState?.min_eq}>
-            <Flex>
-              <FormLabel
-                color={'gray.500'}
-                fontWeight={600}
-                fontSize={'15px'}
-                htmlFor={'min-eq'}
-              >
-                Minimum Equity
-              </FormLabel>
-            </Flex>
-
-            <Input
-              color={'gray.700'}
-              id="min-eq"
-              placeholder="0.5%"
-              onChange={(e) => {
-                setPayment({
-                  ...(payment as PaymentsState),
-                  min_eq: e.target.value,
-                });
-              }}
-            />
-            <FormErrorMessage>
-              {errors.min_eq ? <>{errors.min_eq.message}</> : <></>}
             </FormErrorMessage>
           </FormControl>
         </HStack>
