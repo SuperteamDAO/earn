@@ -463,12 +463,12 @@ export const fetchAll = async (
       });
       active.sort((a, b) => {
         return (
-          parseInt(moment(b.bounty.deadline).format('x')) -
-          parseInt(moment(a.bounty.deadline).format('x'))
+          parseInt(moment(a.bounty.deadline).format('x')) -
+          parseInt(moment(b.bounty.deadline).format('x'))
         );
       });
       return {
-        bounty: [...active, ...inActive],
+        bounty: search ? [...active, ...inActive] : [...active],
         grants: grants,
         jobs: jobs,
       };
@@ -505,8 +505,8 @@ export const fetchAll = async (
     });
     active.sort((a, b) => {
       return (
-        parseInt(moment(b.bounty.deadline).format('x')) -
-        parseInt(moment(a.bounty.deadline).format('x'))
+        parseInt(moment(a.bounty.deadline).format('x')) -
+        parseInt(moment(b.bounty.deadline).format('x'))
       );
     });
     return {
