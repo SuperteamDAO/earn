@@ -322,7 +322,7 @@ export const GrantsCard = ({
             src="/assets/icons/dollar.svg"
           />
           <Text color={'#64748B'} fontSize={'0.75rem'} mr={'0.6875rem'}>
-            {max.toLocaleString()} - {min.toLocaleString()}
+            {min.toLocaleString()} - {max.toLocaleString()}
           </Text>
         </Flex>
       </Flex>
