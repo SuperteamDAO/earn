@@ -131,13 +131,13 @@ const Home: NextPage = () => {
               {listings.data?.jobs?.map((job) => {
                 return (
                   <JobsCard
-                    logo={job.sponsorInfo.logo}
-                    description={job.jobs.description}
-                    max={job.jobs.maxSalary}
-                    min={job.jobs.minSalary}
-                    key={job.jobs.id}
-                    skills={JSON.parse(job.jobs.skills)}
-                    title={job.jobs.title}
+                    logo={job?.sponsorInfo?.logo}
+                    description={job?.jobs?.description}
+                    max={job?.jobs?.maxSalary}
+                    min={job?.jobs?.minSalary}
+                    key={job?.jobs?.id}
+                    skills={JSON.parse(job?.jobs?.skills || "[]")}
+                    title={job?.jobs?.title}
                   />
                 );
               })}
@@ -222,13 +222,13 @@ const Home: NextPage = () => {
                 {listings.data?.jobs?.map((job) => {
                   return (
                     <JobsCard
-                      logo={job.sponsorInfo.logo}
-                      description={job.jobs.description}
-                      max={job.jobs.maxSalary}
-                      min={job.jobs.minSalary}
-                      key={job.jobs.id}
-                      skills={JSON.parse(job.jobs.skills)}
-                      title={job.jobs.title}
+                      logo={job?.sponsorInfo?.logo}
+                      description={job?.jobs?.description}
+                      max={job?.jobs?.maxSalary}
+                      min={job?.jobs?.minSalary}
+                      key={job?.jobs?.id}
+                      skills={JSON.parse(job?.jobs?.skills || "[]")}
+                      title={job?.jobs?.title}
                     />
                   );
                 })}

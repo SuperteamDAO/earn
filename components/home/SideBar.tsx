@@ -352,11 +352,11 @@ const HiringNow = ({ jobs }: HiringNowProps) => {
         {jobs?.map((job) => {
           return (
             <Hiring
-              type={job.jobs.jobType}
-              location={job.jobs.location}
-              key={job.jobs.id}
-              logo={job.sponsorInfo.logo}
-              title={job.jobs.title}
+              type={job?.jobs?.jobType}
+              location={job?.jobs?.location}
+              key={job?.jobs?.id}
+              logo={job?.sponsorInfo?.logo}
+              title={job?.jobs?.title}
             />
           );
         })}

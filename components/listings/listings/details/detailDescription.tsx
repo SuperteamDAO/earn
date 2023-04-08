@@ -78,7 +78,7 @@ export const DetailDescription = ({ skills, description }: Props) => {
           >
             {parse(
               description.startsWith('"')
-                ? JSON.parse(description)
+                ? JSON.parse(description || "")
                 : description ?? ''
             )}
           </Flex>

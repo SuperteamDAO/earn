@@ -132,9 +132,9 @@ export const BountiesCard = ({
           noOfLines={1}
         >
           {parse(
-            description.startsWith('"')
-              ? JSON.parse(description).slice(0, 100)
-              : description.slice(0, 100)
+            description?.startsWith('"')
+              ? JSON.parse(description || "")?.slice(0, 100)
+              : (description ?? "")?.slice(0, 100)
           )}
         </Text>
         <Flex alignItems={'center'}>
@@ -223,7 +223,11 @@ export const JobsCard = ({
           color={'#64748B'}
           fontSize={{ md: '0.875rem', base: '0.7688rem' }}
         >
-          {parse(JSON.parse(description).slice(0, 100))}
+          {parse(
+            description?.startsWith('"')
+              ? JSON.parse(description || "")?.slice(0, 100)
+              : (description ?? '')?.slice(0, 100)
+          )}
         </Text>
         <Flex alignItems={'center'}>
           <Image
@@ -311,7 +315,11 @@ export const GrantsCard = ({
           color={'#64748B'}
           fontSize={{ md: '0.875rem', base: '0.7688rem' }}
         >
-          {parse(JSON.parse(description).slice(0, 100))}
+          {parse(
+            description?.startsWith('"')
+              ? JSON.parse(description || "")?.slice(0, 100)
+              : (description ?? '')?.slice(0, 100)
+          )}
         </Text>
         <Flex alignItems={'center'}>
           <Image
