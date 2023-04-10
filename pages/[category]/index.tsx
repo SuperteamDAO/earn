@@ -132,10 +132,14 @@ const Index: NextPage = () => {
               {listings.data?.jobs?.map((job) => {
                 return (
                   <JobsCard
+                    orgName={job?.sponsorInfo?.name} 
                     logo={job?.sponsorInfo?.logo}
                     description={job?.jobs?.description}
                     max={job?.jobs?.maxSalary}
                     min={job?.jobs?.minSalary}
+                    maxEq={job?.jobs?.maxEq}
+                    minEq={job?.jobs?.minEq}
+                    link={job?.jobs?.link}
                     key={job?.jobs?.id}
                     skills={JSON.parse(job?.jobs?.skills || "[]")}
                     title={job?.jobs?.title}
@@ -223,10 +227,14 @@ const Index: NextPage = () => {
                   console.log("hello123", job);
                   return (
                     <JobsCard
+                      orgName={job?.sponsorInfo?.name}
                       logo={job?.sponsorInfo?.logo}
                       description={job?.jobs?.description}
                       max={job?.jobs?.maxSalary}
                       min={job?.jobs?.minSalary}
+                      maxEq={job?.jobs?.maxEq}
+                      minEq={job?.jobs?.minEq}
+                      link={job?.jobs?.link}
                       key={job?.jobs?.id}
                       skills={JSON.parse(job?.jobs?.skills || "[]")}
                       title={job?.jobs?.title}
