@@ -227,13 +227,13 @@ const Index: NextPage = () => {
                   console.log("hello123", job);
                   return (
                     <JobsCard
-                      orgName={job?.sponsorInfo?.name}
                       logo={job?.sponsorInfo?.logo}
                       description={job?.jobs?.description}
                       max={job?.jobs?.maxSalary}
                       min={job?.jobs?.minSalary}
                       maxEq={job?.jobs?.maxEq}
                       minEq={job?.jobs?.minEq}
+                      orgName={job?.sponsorInfo?.name}
                       link={job?.jobs?.link}
                       key={job?.jobs?.id}
                       skills={JSON.parse(job?.jobs?.skills || "[]")}

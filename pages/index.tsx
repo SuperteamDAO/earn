@@ -124,6 +124,9 @@ const Home: NextPage = () => {
                       description={job?.jobs?.description}
                       max={job?.jobs?.maxSalary}
                       min={job?.jobs?.minSalary}
+                      maxEq={job?.jobs?.maxEq}
+                      minEq={job?.jobs?.minEq}
+                      orgName={job?.sponsorInfo?.name}
                       key={job?.jobs?.id}
                       skills={JSON.parse(job?.jobs?.skills || "[]")}
                       title={job?.jobs?.title}
@@ -211,6 +214,9 @@ const Home: NextPage = () => {
                       description={job?.jobs?.description}
                       max={job?.jobs?.maxSalary}
                       min={job?.jobs?.minSalary}
+                      maxEq={job?.jobs?.maxEq}
+                      minEq={job?.jobs?.minEq}
+                      orgName={job?.sponsorInfo?.name}
                       key={job?.jobs?.id}
                       skills={JSON.parse(job?.jobs?.skills || "[]")}
                       title={job?.jobs?.title}
