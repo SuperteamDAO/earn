@@ -5,6 +5,7 @@ import {
   Image,
   VStack,
   useMediaQuery,
+  HStack,
 } from '@chakra-ui/react';
 import type { GetServerSideProps, NextPage } from 'next';
 import NavHome from '../components/home/NavHome';
@@ -128,7 +129,7 @@ const Home: NextPage = () => {
                       minEq={job?.jobs?.minEq}
                       orgName={job?.sponsorInfo?.name}
                       key={job?.jobs?.id}
-                      skills={JSON.parse(job?.jobs?.skills || "[]")}
+                      skills={JSON.parse(job?.jobs?.skills || '[]')}
                       title={job?.jobs?.title}
                     />
                   );
@@ -153,14 +154,25 @@ const Home: NextPage = () => {
           <Box>
             {connected ? (
               <>
-                <Text
-                  fontFamily={'Domine'}
-                  fontWeight={700}
-                  fontSize={'26px'}
-                  color={'#1E293B'}
-                >
-                  Welcome back, {talentInfo?.firstname ?? 'Anon'}
-                </Text>
+                <HStack gap={1}>
+                  <Text
+                    fontFamily={'Domine'}
+                    fontWeight={700}
+                    fontSize={'26px'}
+                    color={'#1E293B'}
+                  >
+                    Welcome back,
+                  </Text>
+
+                  <Text
+                    fontFamily={'Domine'}
+                    fontWeight={700}
+                    fontSize={'26px'}
+                    color={'#1E293B'}
+                  >
+                    {talentInfo?.firstname ?? 'Anon'}
+                  </Text>
+                </HStack>
               </>
             ) : (
               <>
@@ -207,7 +219,7 @@ const Home: NextPage = () => {
                 sub="Join a high-growth team"
                 emoji="/assets/home/emojis/job.png"
               >
-                {listings.data?.jobs?.map((job) => {
+                {listings.data?.jobs?.slice(0, 10).map((job) => {
                   return (
                     <JobsCard
                       logo={job?.sponsorInfo?.logo}
@@ -218,7 +230,7 @@ const Home: NextPage = () => {
                       minEq={job?.jobs?.minEq}
                       orgName={job?.sponsorInfo?.name}
                       key={job?.jobs?.id}
-                      skills={JSON.parse(job?.jobs?.skills || "[]")}
+                      skills={JSON.parse(job?.jobs?.skills || '[]')}
                       title={job?.jobs?.title}
                     />
                   );

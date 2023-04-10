@@ -233,37 +233,37 @@ export const JobsCard = ({
             fontSize={{ md: '0.875rem', base: '0.7688rem' }}
           >
             {!!description ? parse(
-              description?.startsWith('"')
-                ? JSON.parse(description || "")?.slice(0, 100)
-                : (description ?? '')?.slice(0, 100)
-            ): orgName}
+                description?.startsWith('"')
+                  ? JSON.parse(description || "")?.slice(0, 100)
+                  : (description ?? '')?.slice(0, 100)
+              ): orgName}
           </Text>
           <Flex alignItems={'center'}>
             {!!min && !!max && (<Text color={'#64748B'} fontSize={'0.75rem'} mr={'0.6875rem'}>
-              <Text as="span" fontWeight="700">$ </Text>
-              {min.toLocaleString()} - {max.toLocaleString()}
-            </Text>)}
-            {!!minEq && !!maxEq && (<Text color={'#64748B'} fontSize={'0.75rem'} mr={'0.6875rem'}>
-              {minEq.toLocaleString()}% - {maxEq.toLocaleString()}% Equity
-            </Text>)}
-            {skills?.length && skills.slice(0, 3).map((e) => {
-              return (
-                <Text
-                  display={{ base: 'none', md: 'block' }}
-                  key={''}
-                  color={'#64748B'}
-                  fontSize={'0.75rem'}
-                  mr={'0.6875rem'}
-                >
-                  {e.label}
-                </Text>
-              );
-            })}
+                <Text as="span" fontWeight="700">$ </Text>
+                {min.toLocaleString()} - {max.toLocaleString()}
+              </Text>)}
+              {!!minEq && !!maxEq && (<Text color={'#64748B'} fontSize={'0.75rem'} mr={'0.6875rem'}>
+                {minEq.toLocaleString()}% - {maxEq.toLocaleString()}% Equity
+              </Text>)}
+              {skills?.length && skills.slice(0, 3).map((e) => {
+                return (
+                  <Text
+                    display={{ base: 'none', md: 'block' }}
+                    key={''}
+                    color={'#64748B'}
+                    fontSize={'0.75rem'}
+                    mr={'0.6875rem'}
+                  >
+                    {e.label}
+                  </Text>
+                );
+              })}
           </Flex>
         </Flex>
       </Flex>
       <Link
-        href={link ||
+        href={link || 
           `https://earn-frontend-v2.vercel.app/listings/jobs/` +
           title.split(' ').join('-')
         }
@@ -281,26 +281,6 @@ export const JobsCard = ({
       >
         Apply
       </Link>
-      {/* <Link
-        ml={'auto'}
-        href={
-          `https://earn-frontend-v2.vercel.app/listings/jobs/` +
-          title.split(' ').join('-')
-        }
-        isExternal
-      >
-        <Button
-          ml={'auto'}
-          py={'0.5rem'}
-          px={'1.5rem'}
-          color={'#94A3B8'}
-          bg={'transparent'}
-          border={'0.0625rem solid #94A3B8'}
-          display={{ base: 'none', md: 'block' }}
-        >
-          Apply
-        </Button>
-      </Link> */}
     </Flex>
   );
 };
