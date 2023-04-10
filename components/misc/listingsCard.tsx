@@ -230,6 +230,8 @@ export const JobsCard = ({
           )}
         </Text>
         <Flex alignItems={'center'}>
+          {min !== max && (
+
           <Image
             mr={'0.1969rem'}
             h={'0.875rem'}
@@ -237,8 +239,11 @@ export const JobsCard = ({
             alt=""
             src="/assets/icons/dollar.svg"
           />
+          )}
           <Text color={'#64748B'} fontSize={'0.75rem'} mr={'0.6875rem'}>
-            {min.toLocaleString()} - {max.toLocaleString()}
+            {min !== max ? (
+              <>{min.toLocaleString()} - {max.toLocaleString()}</>
+            ): "negotiable"}
           </Text>
           <Text color={'#64748B'} fontSize={'0.75rem'} mr={'0.6875rem'}>
             0.02% Equity
