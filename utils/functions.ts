@@ -53,13 +53,23 @@ export const UpdateUser = async (id: string, update: any) => {
   }
 };
 
-export const generateOtp = async (publicKey: string, email: string) => {
+export const generateOtp = async (
+  publicKey: string,
+  email: string
+): Promise<
+  | any
+  | {
+      (headerName: string, parser: RegExp): RegExpExecArray | null;
+      (headerName: string, matcher?: true | undefined): any;
+    }
+  | undefined
+> => {
   try {
     const res = await axios.post(`${BACKEND_URL}/email/totp`, {
       publicKey,
       email,
     });
-    return res.headers.get;
+    return res?.headers?.get;
   } catch (e) {
     console.log(e);
     return null;
