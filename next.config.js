@@ -5,7 +5,6 @@ const nextConfig = {
   },
   poweredByHeader: false,
   trailingSlash: true,
-  basePath: '',
   reactStrictMode: true,
   swcMinify: true,
   images: {

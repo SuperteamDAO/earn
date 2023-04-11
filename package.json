@@ -9,7 +9,8 @@
     "lint": "next lint",
     "format": "next lint --fix && prettier '**/*.{json,yaml}' --write --ignore-path .gitignore",
     "check-types": "tsc --noEmit --pretty && tsc --project cypress --noEmit --pretty",
-    "prepare": "husky install"
+    "prepare": "husky install",
+    "postbuild": "next-sitemap"
   },
   "dependencies": {
     "@bomdi/codebox": "^2.0.0",
@@ -53,7 +54,10 @@
     "husky": "^8.0.3",
     "immer": "^9.0.19",
     "moment": "^2.29.4",
+    "nanoid": "^4.0.2",
     "next": "12.2.3",
+    "next-seo": "^6.0.0",
+    "next-sitemap": "^4.0.7",
     "nprogress": "^0.2.0",
     "open-graph-scraper": "^5.1.1",
     "react": "18.2.0",
