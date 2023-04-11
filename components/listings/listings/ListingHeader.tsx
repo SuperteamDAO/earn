@@ -1,31 +1,33 @@
-import React from 'react';
-import { Navbar } from '../../navbar/navbar';
+/* eslint-disable no-nested-ternary */
 import {
   Box,
-  VStack,
-  Image,
+  Button,
   Heading,
   HStack,
+  Image,
   Text,
-  Button,
   useDisclosure,
+  VStack,
 } from '@chakra-ui/react';
-import { TbBellRinging } from 'react-icons/tb';
-import { BsBell } from 'react-icons/bs';
+import { useMutation, useQueryClient } from '@tanstack/react-query';
+import moment from 'moment';
 import { useRouter } from 'next/router';
-import { SponsorType } from '../../../interface/sponsor';
+import React from 'react';
+import toast from 'react-hot-toast';
+import { BsBell } from 'react-icons/bs';
+import { TbBellRinging } from 'react-icons/tb';
+
+import type { SubscribeType } from '../../../interface/listings';
+import type { SponsorType } from '../../../interface/sponsor';
 import { TalentStore } from '../../../store/talent';
 import { userStore } from '../../../store/user';
-import { CreateProfileModal } from '../../modals/createProfile';
-import { useMutation, useQueryClient } from '@tanstack/react-query';
 import {
   createSubscription,
   removeSubscription,
 } from '../../../utils/functions';
 import { genrateuuid } from '../../../utils/helpers';
-import toast from 'react-hot-toast';
-import { SubscribeType } from '../../../interface/listings';
-import moment from 'moment';
+import { CreateProfileModal } from '../../modals/createProfile';
+import { Navbar } from '../../navbar/navbar';
 
 type Eligibility = 'premission' | 'premission-less';
 
@@ -75,31 +77,31 @@ export const ListingHeader = ({
       <Navbar />
       <VStack bg={'white'}>
         <VStack
-          maxW={'7xl'}
           align="start"
           justify={['start', 'start', 'space-between', 'space-between']}
           flexDir={['column', 'column', 'row', 'row']}
-          mx={'auto'}
-          h={'14rem'}
           gap={5}
-          pt={24}
           w={'full'}
+          maxW={'7xl'}
+          h={'14rem'}
+          mx={'auto'}
+          pt={24}
         >
-          <HStack px={[3, 3, 0, 0]} align="start">
+          <HStack align="start" px={[3, 3, 0, 0]}>
             <Image
-              src={sponsor?.logo}
-              alt={'phantom'}
               w={'4rem'}
-              rounded={'md'}
               h={'4rem'}
               objectFit={'cover'}
+              alt={'phantom'}
+              rounded={'md'}
+              src={sponsor?.logo}
             />
             <VStack align={'start'}>
               <Heading
+                color={'#334254'}
                 fontFamily={'Inter'}
                 fontSize={'1.3rem'}
                 fontWeight={700}
-                color={'#334254'}
               >
                 {title}
               </Heading>
@@ -112,10 +114,10 @@ export const ListingHeader = ({
                     <Text
                       px={3}
                       py={1}
-                      rounded={'full'}
-                      bg={'#16A36821'}
                       color={'#16A368'}
                       fontSize={'0.75rem'}
+                      bg={'#16A36821'}
+                      rounded={'full'}
                     >
                       Submission Open
                     </Text>
@@ -123,10 +125,10 @@ export const ListingHeader = ({
                     <Text
                       px={3}
                       py={1}
-                      rounded={'full'}
-                      bg={'#A3731621'}
                       color={'#A35A16'}
                       fontSize={'0.75rem'}
+                      bg={'#A3731621'}
+                      rounded={'full'}
                     >
                       In Review
                     </Text>
@@ -135,10 +137,10 @@ export const ListingHeader = ({
                   <Text
                     px={3}
                     py={1}
-                    rounded={'full'}
-                    bg={'#16A36821'}
                     color={'#16A368'}
                     fontSize={'0.75rem'}
+                    bg={'#16A36821'}
+                    rounded={'full'}
                   >
                     Open
                   </Text>
@@ -152,24 +154,25 @@ export const ListingHeader = ({
                 {sub?.filter((e) => e.talentId === (talentInfo?.id as string))
                   ?.length! > 0 ? (
                   <Button
+                    bg="#F7FAFC"
                     isLoading={subDeleteMutation.isLoading}
                     onClick={() => {
                       subDeleteMutation.mutate(
                         sub?.filter(
-                          (e) => e.talentId === (talentInfo?.id as string)
-                        )[0].id as string
+                          (e) => e?.talentId === (talentInfo?.id as string)
+                        )[0]?.id as string
                       );
                     }}
-                    bg="#F7FAFC"
                   >
                     <TbBellRinging color="rgb(107 114 128)" />
                   </Button>
                 ) : (
                   <Button
+                    bg="#F7FAFC"
                     isLoading={subMutation.isLoading}
                     onClick={() => {
                       if (!userInfo?.talent) {
-                        return onOpen();
+                        onOpen();
                       }
                       subMutation.mutate({
                         bountiesId: id as string,
@@ -177,7 +180,6 @@ export const ListingHeader = ({
                         id: genrateuuid(),
                       });
                     }}
-                    bg="#F7FAFC"
                   >
                     <BsBell color="rgb(107 114 128)" />
                   </Button>
@@ -185,27 +187,27 @@ export const ListingHeader = ({
               </HStack>
               <HStack>
                 <HStack
-                  display={sub?.length! === 0 ? 'none' : 'flex'}
-                  position={'relative'}
+                  pos={'relative'}
                   align={'center'}
                   justify={'center'}
+                  display={sub?.length! === 0 ? 'none' : 'flex'}
                   w={'3rem'}
                 >
                   {sub?.slice(0, 3).map((e, index) => {
                     return (
                       <Box
-                        position={'absolute'}
+                        key={e.id}
+                        pos={'absolute'}
                         left={index}
                         marginInlineStart={1}
-                        key={e.id}
                       >
                         <Image
                           w={8}
-                          objectFit={'contain'}
-                          rounded={'full'}
                           h={8}
-                          src={e.Talent?.avatar}
+                          objectFit={'contain'}
                           alt={e.Talent?.username}
+                          rounded={'full'}
+                          src={e.Talent?.avatar}
                         />
                       </Box>
                     );
@@ -228,32 +230,32 @@ export const ListingHeader = ({
             </HStack>
           )}
         </VStack>
-        <HStack px={[3, 3, 0, 0]} maxW={'7xl'} w="full" h={'max'}>
+        <HStack w="full" maxW={'7xl'} h={'max'} px={[3, 3, 0, 0]}>
           <Button
+            color={router.asPath.includes('submission') ? '#94A3B8' : '#1E293B'}
             borderBottom={
               !router.asPath.includes('submission') ? '3px solid #6562FF' : '0'
             }
-            rounded={0}
-            variant={'ghost'}
-            color={router.asPath.includes('submission') ? '#94A3B8' : '#1E293B'}
             onClick={() => {
               if (!tabs) return;
               router.push(`/listings/bounties/${title.split(' ').join('-')}`);
             }}
+            rounded={0}
+            variant={'ghost'}
           >
             Details
           </Button>
           {tabs && eligibility === 'premission-less' && (
             <Button
-              onClick={() => {
-                router.push(router.asPath + '/submission');
-              }}
+              color={router.query.subid ? '#1E293B' : '#94A3B8'}
               borderBottom={
                 router.asPath.includes('submission') ? '3px solid #6562FF' : '0'
               }
+              onClick={() => {
+                router.push(`${router.asPath}/submission`);
+              }}
               rounded={0}
               variant={'ghost'}
-              color={router.query.subid ? '#1E293B' : '#94A3B8'}
             >
               Submissions
             </Button>

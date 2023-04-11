@@ -1,6 +1,8 @@
 import axios from 'axios';
 import type { NextApiRequest, NextApiResponse } from 'next';
+
 import { redis } from '../../utils/functions';
+
 export default async function handler(
   req: NextApiRequest,
   res: NextApiResponse
@@ -10,10 +12,10 @@ export default async function handler(
   if (req.method === 'POST') {
     try {
       await axios.post(
-        process.env.NEXT_PUBLIC_BACKEND_URL + '/listings/search/update'
+        `${process.env.NEXT_PUBLIC_BACKEND_URL}/listings/search/update`
       );
       const resAll = await axios.get(
-        process.env.NEXT_PUBLIC_BACKEND_URL + '/listings/all'
+        `${process.env.NEXT_PUBLIC_BACKEND_URL}/listings/all`
       );
       await redis.set('bounties', JSON.stringify(resAll.data.data.bounties));
       await redis.set('grants', JSON.stringify(resAll.data.data.grants));
@@ -32,6 +34,6 @@ export default async function handler(
       return res.status(500).send('error');
     }
   } else {
-    res.status(404).json({ message: 'Not found' });
+    return res.status(404).json({ message: 'Not found' });
   }
 }

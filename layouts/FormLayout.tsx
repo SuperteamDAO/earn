@@ -1,8 +1,10 @@
-import { Box, Flex, Heading, HStack, Text, VStack } from '@chakra-ui/react';
-import React, { Dispatch, SetStateAction } from 'react';
+import { Heading, HStack, Text, VStack } from '@chakra-ui/react';
+import type { Dispatch, SetStateAction } from 'react';
+import React from 'react';
+
 import { Steps } from '../components/misc/steps';
 import { Navbar } from '../components/navbar/navbar';
-import { SponsorType } from '../interface/sponsor';
+import type { SponsorType } from '../interface/sponsor';
 
 interface StepsList {
   label: string;
@@ -28,24 +30,24 @@ const FormLayout = ({
     <>
       <VStack bg={currentStep !== 1 ? 'white' : '#F6FAFD'}>
         <Navbar sponsors={sponsors} />
-        <VStack w={'80%'} gap={10}>
+        <VStack gap={10} w={'80%'}>
           <VStack mt={20}>
             <Heading
               color={'#334254'}
-              fontWeight={700}
-              fontSize={'24px'}
               fontFamily={'Inter'}
+              fontSize={'24px'}
+              fontWeight={700}
             >
-              {stepList[currentStep - 1].mainHead}
+              {stepList[currentStep - 1]?.mainHead}
             </Heading>
             <Text
               color={'#94A3B8'}
-              fontSize={'20px'}
               fontFamily={'Inter'}
+              fontSize={'20px'}
               fontWeight={500}
               textAlign={'center'}
             >
-              {stepList[currentStep - 1].description}
+              {stepList[currentStep - 1]?.description}
             </Text>
           </VStack>
           <HStack w="50%">

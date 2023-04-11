@@ -12,25 +12,28 @@ import {
   useDisclosure,
   VStack,
 } from '@chakra-ui/react';
-import { Navbar } from '../../components/navbar/navbar';
-import { useForm } from 'react-hook-form';
-import { Emailverification } from '../../components/modals/emailverification';
 import { useWallet } from '@solana/wallet-adapter-react';
 import { MediaPicker } from 'degen';
-import { uploadToCloudinary } from '../../utils/upload';
-import { genrateOtp } from '../../utils/functions';
 import { useState } from 'react';
-import { SponsorType } from '../../interface/sponsor';
+import { useForm } from 'react-hook-form';
+import Select from 'react-select';
+import makeAnimated from 'react-select/animated';
+
+import { Emailverification } from '../../components/modals/emailverification';
+import { Navbar } from '../../components/navbar/navbar';
+import type { MultiSelectOptions } from '../../constants';
+import { IndustryList } from '../../constants';
+import type { SponsorType } from '../../interface/sponsor';
+import { ConnectWallet } from '../../layouts/connectWallet';
+import { generateOtp } from '../../utils/functions';
 import {
   genrateCode,
   genrateCodeLast,
   genrateNanoid,
   genrateuuid,
 } from '../../utils/helpers';
-import { ConnectWallet } from '../../layouts/connectWallet';
-import Select from 'react-select';
-import makeAnimated from 'react-select/animated';
-import { IndustryList, MultiSelectOptions } from '../../constants';
+import { uploadToCloudinary } from '../../utils/upload';
+
 interface Totp {
   current: number;
   last: number;
@@ -68,23 +71,23 @@ const CreateSponsor = () => {
       ) : (
         <>
           <Container maxW={'full'}>
-            <VStack mx={'auto'} maxW={'6xl'}>
+            <VStack maxW={'6xl'} mx={'auto'}>
               <Navbar />
-              <VStack pb={'5rem'} minH={'100vh'} pt={24} w="full">
+              <VStack w="full" minH={'100vh'} pt={24} pb={'5rem'}>
                 <VStack>
                   <Heading
                     color={'gray.700'}
                     fontFamily={'Inter'}
-                    fontWeight={700}
                     fontSize={'24px'}
+                    fontWeight={700}
                   >
                     Welcome to Superteam Earn
                   </Heading>
                   <Text
-                    fontFamily={'Inter'}
-                    fontWeight={500}
                     color={'gray.400'}
+                    fontFamily={'Inter'}
                     fontSize={'20px'}
+                    fontWeight={500}
                   >
                     {
                       "Let's start with some basic information about you and your team"
@@ -110,7 +113,7 @@ const CreateSponsor = () => {
                         orgId: genrateNanoid(),
                         id: genrateuuid(),
                       });
-                      const a = await genrateOtp(
+                      const a = await generateOtp(
                         publicKey?.toBase58() as string,
                         e.sponsoremail
                       );
@@ -128,12 +131,12 @@ const CreateSponsor = () => {
                     })}
                     style={{ width: '100%' }}
                   >
-                    <HStack w={'full'} justify={'space-between'}>
+                    <HStack justify={'space-between'} w={'full'}>
                       <FormControl w={'18rem'} isRequired>
                         <FormLabel
                           color={'gray.500'}
-                          fontWeight={600}
                           fontSize={'15px'}
+                          fontWeight={600}
                           htmlFor={'sponsorname'}
                         >
                           Company Name
@@ -155,8 +158,8 @@ const CreateSponsor = () => {
                       <FormControl w={'18rem'} isRequired>
                         <FormLabel
                           color={'gray.500'}
-                          fontWeight={600}
                           fontSize={'15px'}
+                          fontWeight={600}
                           htmlFor={'sponsorname'}
                         >
                           Company URL
@@ -179,8 +182,8 @@ const CreateSponsor = () => {
                       <FormControl isRequired>
                         <FormLabel
                           color={'gray.500'}
-                          fontWeight={600}
                           fontSize={'15px'}
+                          fontWeight={600}
                           htmlFor={'sponsoremail'}
                         >
                           Your Email
@@ -188,8 +191,8 @@ const CreateSponsor = () => {
                         <Input
                           w={'full'}
                           id="sponsoremail"
-                          type={'email'}
                           placeholder="Enter Your Email"
+                          type={'email'}
                           {...register('sponsoremail')}
                         />
                         <FormErrorMessage>
@@ -201,12 +204,12 @@ const CreateSponsor = () => {
                         </FormErrorMessage>
                       </FormControl>
                     </Box>
-                    <HStack w={'full'} justify={'space-between'} my={6}>
+                    <HStack justify={'space-between'} w={'full'} my={6}>
                       <FormControl w={'18rem'} isRequired>
                         <FormLabel
                           color={'gray.500'}
-                          fontWeight={600}
                           fontSize={'15px'}
+                          fontWeight={600}
                           htmlFor={'bio'}
                         >
                           Username
@@ -228,8 +231,8 @@ const CreateSponsor = () => {
                       <FormControl w={'18rem'} isRequired>
                         <FormLabel
                           color={'gray.500'}
-                          fontWeight={600}
                           fontSize={'15px'}
+                          fontWeight={600}
                           htmlFor={'twitterHandle'}
                         >
                           Company Twitter
@@ -248,11 +251,11 @@ const CreateSponsor = () => {
                         </FormErrorMessage>
                       </FormControl>
                     </HStack>
-                    <VStack gap={2} my={3} align={'start'}>
+                    <VStack align={'start'} gap={2} my={3}>
                       <Heading
                         color={'gray.400'}
-                        fontWeight={600}
                         fontSize={'15px'}
+                        fontWeight={600}
                       >
                         Add Your Logo
                       </Heading>
@@ -268,12 +271,12 @@ const CreateSponsor = () => {
                       </HStack>
                     </VStack>
 
-                    <HStack w={'full'} justify={'space-between'}>
+                    <HStack justify={'space-between'} w={'full'}>
                       <FormControl w={'full'} isRequired>
                         <FormLabel
                           color={'gray.500'}
-                          fontWeight={600}
                           fontSize={'15px'}
+                          fontWeight={600}
                           htmlFor={'industry'}
                         >
                           Industry
@@ -301,8 +304,8 @@ const CreateSponsor = () => {
                       <FormControl isRequired>
                         <FormLabel
                           color={'gray.500'}
-                          fontWeight={600}
                           fontSize={'15px'}
+                          fontWeight={600}
                           htmlFor={'bio'}
                         >
                           Company Short Bio
@@ -321,12 +324,12 @@ const CreateSponsor = () => {
                     <Box>
                       <Button
                         w="100%"
-                        bg={'#6562FF'}
-                        _hover={{ bg: '#6562FF' }}
+                        h="2.6rem"
                         color={'white'}
                         fontSize="1rem"
                         fontWeight={600}
-                        h="2.6rem"
+                        bg={'#6562FF'}
+                        _hover={{ bg: '#6562FF' }}
                         type="submit"
                       >
                         Continue

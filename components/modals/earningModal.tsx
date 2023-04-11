@@ -1,9 +1,6 @@
-import React from 'react';
 import {
   Box,
   Button,
-  HStack,
-  Image,
   Modal,
   ModalContent,
   ModalOverlay,
@@ -11,6 +8,7 @@ import {
   VStack,
 } from '@chakra-ui/react';
 import { useRouter } from 'next/router';
+import React from 'react';
 
 interface Props {
   onClose: () => void;
@@ -20,16 +18,16 @@ export const EarningModal = ({ isOpen, onClose }: Props) => {
   const router = useRouter();
   return (
     <>
-      <Modal size={'sm'} isOpen={isOpen} onClose={onClose}>
+      <Modal isOpen={isOpen} onClose={onClose} size={'sm'}>
         <ModalOverlay />
-        <ModalContent p={5} h={'max'}>
+        <ModalContent h={'max'} p={5}>
           <Box
-            display={'flex'}
-            justifyContent={'center'}
             alignItems={'center'}
-            bg={'#DCFFF2'}
+            justifyContent={'center'}
+            display={'flex'}
             w={'full'}
             h={36}
+            bg={'#DCFFF2'}
             rounded={'lg'}
           >
             <svg
@@ -62,10 +60,10 @@ export const EarningModal = ({ isOpen, onClose }: Props) => {
               </defs>
             </svg>
           </Box>
-          <VStack gap={2} align={'start'} mt={5}>
+          <VStack align={'start'} gap={2} mt={5}>
             <Text
-              fontFamily={'Domine'}
               color={'#000000'}
+              fontFamily={'Domine'}
               fontSize={'24px'}
               fontWeight={700}
             >
@@ -74,21 +72,21 @@ export const EarningModal = ({ isOpen, onClose }: Props) => {
               earning opportunities <br /> in your inbox
             </Text>
             <Text
-              fontFamily={'Inter'}
-              fontWeight={400}
-              fontSize={'14px'}
               color={'#64748B'}
+              fontFamily={'Inter'}
+              fontSize={'14px'}
+              fontWeight={400}
             >
               It takes less than a minute, but might lead to the bounty or job
               that changes your life.
             </Text>
             <Button
+              w={'full'}
+              color={'white'}
+              bg={'#6562FF'}
               onClick={() => {
                 router.push('/new');
               }}
-              color={'white'}
-              w={'full'}
-              bg={'#6562FF'}
             >
               Sign Up
             </Button>

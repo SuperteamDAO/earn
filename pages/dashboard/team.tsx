@@ -21,13 +21,14 @@ import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import Avatar from 'boring-avatars';
 import { useForm } from 'react-hook-form';
 import toast, { Toaster } from 'react-hot-toast';
-import { SponsorType } from '../../interface/sponsor';
+
+import type { SponsorType } from '../../interface/sponsor';
 import DashboardLayout from '../../layouts/dashboardLayout';
 import { SponsorStore } from '../../store/sponsor';
 import { createSponsor, DeleteSponsor, findTeam } from '../../utils/functions';
 import { genrateuuid } from '../../utils/helpers';
 
-const Team = () => {
+const TeamDashboard = () => {
   const { currentSponsor } = SponsorStore();
   const queryClient = useQueryClient();
   const Team = useQuery({
@@ -78,19 +79,14 @@ const Team = () => {
     <>
       <DashboardLayout>
         <Box w={'full'} fontFamily={'Inter'}>
-          <Text
-            fontSize="1.3rem"
-            color="gray.800"
-            fontWeight={600}
-            marginTop="4rem"
-          >
+          <Text mt="4rem" color="gray.800" fontSize="1.3rem" fontWeight={600}>
             Team Members
           </Text>
-          <Text mb={5} color="gray.400" fontWeight={500} fontSize="1rem">
+          <Text mb={5} color="gray.400" fontSize="1rem" fontWeight={500}>
             Invite your team members to co-create listings with you on Superteam
             Earn
           </Text>
-          <Flex pr={10} gap={10} justify={'space-between'}>
+          <Flex justify={'space-between'} gap={10} pr={10}>
             <Skeleton w={'60%rem'} isLoaded={!Team.isLoading}>
               <TableContainer w={'100%'}>
                 <Table>
@@ -99,8 +95,8 @@ const Team = () => {
                       <Th>
                         <Text
                           color="gray.300"
-                          fontWeight={600}
                           fontSize="0.9rem"
+                          fontWeight={600}
                         >
                           Name
                         </Text>
@@ -108,8 +104,8 @@ const Team = () => {
                       <Th>
                         <Text
                           color="gray.300"
-                          fontWeight={600}
                           fontSize="0.9rem"
+                          fontWeight={600}
                         >
                           Email
                         </Text>
@@ -117,8 +113,8 @@ const Team = () => {
                       <Th>
                         <Text
                           color="gray.300"
-                          fontWeight={600}
                           fontSize="0.9rem"
+                          fontWeight={600}
                         >
                           Role
                         </Text>
@@ -126,8 +122,8 @@ const Team = () => {
                       <Th>
                         <Text
                           color="gray.300"
-                          fontWeight={600}
                           fontSize="0.9rem"
+                          fontWeight={600}
                         >
                           Actions
                         </Text>
@@ -135,7 +131,7 @@ const Team = () => {
                     </Tr>
                   </Thead>
                   <Tbody>
-                    {Team.data?.map((el: SponsorType, index: number) => {
+                    {Team.data?.map((el: SponsorType) => {
                       return (
                         <Tr key={el.id}>
                           <Td w="16rem">
@@ -143,12 +139,12 @@ const Team = () => {
                               {!el.logo ? (
                                 <Avatar />
                               ) : (
-                                <Image w={8} src={el.logo} alt={'logo'} />
+                                <Image w={8} alt={'logo'} src={el.logo} />
                               )}
                               <Text
                                 color={'gray.800'}
-                                fontWeight="500"
                                 fontSize={'14px'}
+                                fontWeight="500"
                               >
                                 {el?.username}
                               </Text>
@@ -157,44 +153,40 @@ const Team = () => {
                           <Td>
                             <Text
                               color={'gray.500'}
-                              fontWeight="500"
                               fontSize={'14px'}
+                              fontWeight="500"
                             >
                               {el.email}
                             </Text>
                           </Td>
                           <Td>
                             <Text
-                              bg="#F1F5F9"
+                              w={'4.5rem'}
+                              p={2}
                               color={'gray.500'}
                               fontSize="12px"
                               fontWeight={500}
-                              p={2}
-                              w={'4.5rem'}
-                              borderRadius={'10px'}
                               textAlign="center"
+                              bg="#F1F5F9"
+                              borderRadius={'10px'}
                             >
                               {el.type}
                             </Text>
                           </Td>
                           <Td>
                             {el.type === 'Admin' && (
-                              <Button variant={'ghost'} isDisabled={true}>
+                              <Button isDisabled={true} variant={'ghost'}>
                                 <DeleteIcon />
                               </Button>
                             )}
                             {el.type === 'Member' && (
                               <Button
+                                isDisabled={currentSponsor?.type !== 'Admin'}
                                 isLoading={deleteMemberMutation.isLoading}
                                 onClick={() => {
                                   deleteMemberMutation.mutate(el.id as string);
                                 }}
                                 variant={'ghost'}
-                                isDisabled={
-                                  currentSponsor?.type !== 'Admin'
-                                    ? true
-                                    : false
-                                }
                               >
                                 <DeleteIcon />
                               </Button>
@@ -207,8 +199,8 @@ const Team = () => {
                 </Table>
               </TableContainer>
             </Skeleton>
-            <Flex rounded={'lg'} p={4} width={'25rem'} flexDir="column">
-              <Text color={'gray.500'} fontSize="16px" fontWeight={600} mb={5}>
+            <Flex direction="column" w={'25rem'} p={4} rounded={'lg'}>
+              <Text mb={5} color={'gray.500'} fontSize="16px" fontWeight={600}>
                 Add a New Member
               </Text>
               <form
@@ -221,30 +213,31 @@ const Team = () => {
                       return toast.error('Wallet address already exist');
                     }
                     await createMember(e.name, e.email, e.address);
+                    return null;
                   });
                 })}
               >
                 <Toaster />
                 <Flex
-                  rounded={'md'}
-                  flexDir={'column'}
+                  direction={'column'}
+                  gap={2}
                   w={'full'}
                   px={7}
                   bg={'white'}
-                  gap={2}
+                  rounded={'md'}
                 >
                   <FormControl isRequired>
-                    <Box fontSize="14px" my={2}>
-                      <Text color={'gray.400'} mb="3">
+                    <Box my={2} fontSize="14px">
+                      <Text mb="3" color={'gray.400'}>
                         Enter their name
                       </Text>
                       <Input
                         {...register('name')}
-                        id={'name'}
                         w={'full'}
-                        fontSize="14px"
-                        placeholder="Name"
                         color={'gray.700'}
+                        fontSize="14px"
+                        id={'name'}
+                        placeholder="Name"
                       />
                       <FormErrorMessage>
                         {errors.name ? <>{errors.name.message}</> : <></>}
@@ -252,16 +245,16 @@ const Team = () => {
                     </Box>
                   </FormControl>
                   <FormControl isRequired>
-                    <Box fontSize="14px" mt={2} mb={2}>
-                      <Text color={'gray.400'} mb="3">
+                    <Box mt={2} mb={2} fontSize="14px">
+                      <Text mb="3" color={'gray.400'}>
                         Enter their email
                       </Text>
                       <Input
                         {...register('email')}
                         w={'full'}
                         color={'gray.700'}
-                        id={'email'}
                         fontSize="14px"
+                        id={'email'}
                         placeholder="Email"
                       />
                       <FormErrorMessage>
@@ -270,14 +263,14 @@ const Team = () => {
                     </Box>
                   </FormControl>
                   <FormControl isRequired>
-                    <Box color={'gray.700'} fontSize="14px" mt={2} mb={2}>
-                      <Text color={'gray.400'} mb="3">
+                    <Box mt={2} mb={2} color={'gray.700'} fontSize="14px">
+                      <Text mb="3" color={'gray.400'}>
                         Enter their wallet address
                       </Text>
                       <Input
                         w={'full'}
-                        fontSize="14px"
                         color={'gray.700'}
+                        fontSize="14px"
                         {...register('address')}
                         id={'address'}
                         placeholder="walletAddress"
@@ -288,13 +281,13 @@ const Team = () => {
                     </Box>
                   </FormControl>
                   <Button
+                    w={'full'}
                     py={4}
                     color={'white'}
+                    fontSize="14px"
+                    fontWeight={500}
                     bg="#6562FF"
                     borderRadius={'4px'}
-                    fontWeight={500}
-                    fontSize="14px"
-                    w={'full'}
                     _hover={{
                       bg: '#6562FF',
                     }}
@@ -303,12 +296,12 @@ const Team = () => {
                   >
                     Send Invite
                   </Button>
-                  <Box w="full" h={'max'} mb={5} rounded={'md'} bg={'#F4F3FF'}>
+                  <Box w="full" h={'max'} mb={5} bg={'#F4F3FF'} rounded={'md'}>
                     <Text
+                      p={4}
                       color={'#3F3DA1'}
                       fontSize="11px"
                       fontWeight={400}
-                      p={4}
                     >
                       Note: All Team Members can create and fund bounties, but
                       only Admins can add or remove Team Members
@@ -324,4 +317,4 @@ const Team = () => {
   );
 };
 
-export default Team;
+export default TeamDashboard;

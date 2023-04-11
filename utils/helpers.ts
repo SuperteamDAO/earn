@@ -1,16 +1,12 @@
+// @ts-ignore
+import base32 from 'base32.js';
+import Crypto from 'crypto-js';
 import { nanoid } from 'nanoid';
 import { v4 as uuidV4 } from 'uuid';
 
-//@ts-ignore
-import base32 from 'base32.js';
-import Crypto from 'crypto-js';
-
-export const truncatedPublicKey = (publicKey: string, length?: number) => {
-  if (!publicKey) return;
-  if (!length) {
-    length = 5;
-  }
-  return publicKey.replace(publicKey.slice(length, 44 - length), '...');
+export const truncatedPublicKey = (publicKey: string, length: number = 5) => {
+  if (!publicKey) return null;
+  return publicKey?.replace(publicKey.slice(length, 44 - length), '...');
 };
 export const genrateNanoid = () => {
   const id = nanoid();
@@ -29,7 +25,8 @@ export const genrateCode = (seed: string) => {
     message.toString(),
     decoder.write(seed).finalize()
   );
-  const code = hash.words[0] & 0x7fffffff;
+  // eslint-disable-next-line no-bitwise
+  const code = hash?.words[0]! & 0x7fffffff;
   return code % 1000000;
 };
 export const genrateCodeLast = (seed: String) => {
@@ -40,6 +37,7 @@ export const genrateCodeLast = (seed: String) => {
     message.toString(),
     decoder.write(seed).finalize()
   );
-  const code = hash.words[0] & 0x7fffffff;
+  // eslint-disable-next-line no-bitwise
+  const code = hash?.words[0]! & 0x7fffffff;
   return code % 1000000;
 };

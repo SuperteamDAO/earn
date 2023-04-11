@@ -15,15 +15,16 @@ import {
   Tr,
   VStack,
 } from '@chakra-ui/react';
-import { VerticalStep } from '../../../misc/steps';
-import Countdown from 'react-countdown';
-import { PrizeListType } from '../../../../interface/listings';
-import { SubmissionModal } from '../../../modals/submissionModal';
-import { userStore } from '../../../../store/user';
 import { useWallet } from '@solana/wallet-adapter-react';
-import { UseMutationResult } from '@tanstack/react-query';
+import type { UseMutationResult } from '@tanstack/react-query';
 import moment from 'moment';
+import Countdown from 'react-countdown';
+
 import { tokenList } from '../../../../constants';
+import type { PrizeListType } from '../../../../interface/listings';
+import { userStore } from '../../../../store/user';
+import { VerticalStep } from '../../../misc/steps';
+import { SubmissionModal } from '../../../modals/submissionModal';
 
 interface Props {
   total: number;
@@ -79,47 +80,47 @@ export const DetailSideCard = ({
           isOpen={submissionisOpen}
         />
       )}
-      <VStack pt={10} gap={2}>
+      <VStack gap={2} pt={10}>
         <VStack
-          rounded={'xl'}
           justify={'center'}
-          w={'22rem'}
-          bg={'#FFFFFF'}
           gap={0}
+          w={'22rem'}
           pb={5}
+          bg={'#FFFFFF'}
+          rounded={'xl'}
         >
           <HStack
-            h={16}
-            px={'1.5rem'}
             justify={'space-between'}
             w={'full'}
+            h={16}
+            px={'1.5rem'}
             borderBottom={'1px solid #E2E8EF'}
           >
             <Box
-              w={10}
-              display={'flex'}
-              justifyContent={'center'}
               alignItems={'center'}
-              rounded={'full'}
+              justifyContent={'center'}
+              display={'flex'}
+              w={10}
               h={7}
+              rounded={'full'}
             >
               <Image
+                alt={'green doller'}
                 rounded={'full'}
                 src={
-                  tokenList.filter((e) => e.mintAddress === token)[0].icon ??
+                  tokenList.filter((e) => e?.mintAddress === token)[0]?.icon ??
                   '/assets/icons/green-doller.svg'
                 }
-                alt={'green doller'}
               />
             </Box>
-            <Text fontSize={'1.5rem'} color={'#000000'} fontWeight={600}>
+            <Text color={'#000000'} fontSize={'1.5rem'} fontWeight={600}>
               {total.toLocaleString() ?? 0}
             </Text>
-            <Text fontSize={'1.2rem'} color={'#CBD5E1'} fontWeight={500}>
+            <Text color={'#CBD5E1'} fontSize={'1.2rem'} fontWeight={500}>
               Total Prizes
             </Text>
           </HStack>
-          <VStack borderBottom={'1px solid #E2E8EF'} w={'full'}>
+          <VStack w={'full'} borderBottom={'1px solid #E2E8EF'}>
             <TableContainer w={'full'}>
               <Table mt={-8} variant={'unstyled'}>
                 <Thead>
@@ -130,18 +131,18 @@ export const DetailSideCard = ({
                   </Tr>
                 </Thead>
                 <Tbody>
-                  {prizeList['first'] && (
+                  {prizeList.first && (
                     <Tr>
                       <Td>
                         <Flex
+                          align={'center'}
+                          justify={'center'}
+                          w={8}
+                          h={8}
+                          p={1.5}
                           fontSize={'0.7rem'}
                           bg={'#C6C6C62B'}
                           rounded={'full'}
-                          p={1.5}
-                          w={8}
-                          h={8}
-                          justify={'center'}
-                          align={'center'}
                         >
                           1st
                         </Flex>
@@ -152,7 +153,7 @@ export const DetailSideCard = ({
                           fontSize={'1.1rem'}
                           fontWeight={600}
                         >
-                          {prizeList['first']}
+                          {prizeList.first}
                         </Text>
                       </Td>
                       <Td>
@@ -162,18 +163,18 @@ export const DetailSideCard = ({
                       </Td>
                     </Tr>
                   )}
-                  {prizeList['second'] && (
+                  {prizeList.second && (
                     <Tr>
                       <Td>
                         <Flex
+                          align={'center'}
+                          justify={'center'}
+                          w={8}
+                          h={8}
+                          p={1.5}
                           fontSize={'0.7rem'}
                           bg={'#C6C6C62B'}
                           rounded={'full'}
-                          p={1.5}
-                          w={8}
-                          h={8}
-                          justify={'center'}
-                          align={'center'}
                         >
                           2nd
                         </Flex>
@@ -184,7 +185,7 @@ export const DetailSideCard = ({
                           fontSize={'1.1rem'}
                           fontWeight={600}
                         >
-                          {prizeList['second']}
+                          {prizeList.second}
                         </Text>
                       </Td>
                       <Td>
@@ -194,18 +195,18 @@ export const DetailSideCard = ({
                       </Td>
                     </Tr>
                   )}
-                  {prizeList['third'] && (
+                  {prizeList.third && (
                     <Tr>
                       <Td>
                         <Flex
+                          align={'center'}
+                          justify={'center'}
+                          w={8}
+                          h={8}
+                          p={1.5}
                           fontSize={'0.7rem'}
                           bg={'#C6C6C62B'}
                           rounded={'full'}
-                          p={1.5}
-                          w={8}
-                          h={8}
-                          justify={'center'}
-                          align={'center'}
                         >
                           3rd
                         </Flex>
@@ -216,7 +217,7 @@ export const DetailSideCard = ({
                           fontSize={'1.1rem'}
                           fontWeight={600}
                         >
-                          {prizeList['third']}
+                          {prizeList.third}
                         </Text>
                       </Td>
                       <Td>
@@ -226,18 +227,18 @@ export const DetailSideCard = ({
                       </Td>
                     </Tr>
                   )}
-                  {prizeList['forth'] && (
+                  {prizeList.forth && (
                     <Tr>
                       <Td>
                         <Flex
+                          align={'center'}
+                          justify={'center'}
+                          w={8}
+                          h={8}
+                          p={1.5}
                           fontSize={'0.7rem'}
                           bg={'#C6C6C62B'}
                           rounded={'full'}
-                          w={8}
-                          h={8}
-                          justify={'center'}
-                          align={'center'}
-                          p={1.5}
                         >
                           4th
                         </Flex>
@@ -248,7 +249,7 @@ export const DetailSideCard = ({
                           fontSize={'1.1rem'}
                           fontWeight={600}
                         >
-                          {prizeList['forth']}
+                          {prizeList.forth}
                         </Text>
                       </Td>
                       <Td>
@@ -258,18 +259,18 @@ export const DetailSideCard = ({
                       </Td>
                     </Tr>
                   )}
-                  {prizeList['fifth'] && (
+                  {prizeList.fifth && (
                     <Tr>
                       <Td>
                         <Flex
+                          align={'center'}
+                          justify={'center'}
+                          w={8}
+                          h={8}
+                          p={1.5}
                           fontSize={'0.7rem'}
                           bg={'#C6C6C62B'}
                           rounded={'full'}
-                          p={1.5}
-                          w={8}
-                          h={8}
-                          justify={'center'}
-                          align={'center'}
                         >
                           5th
                         </Flex>
@@ -280,7 +281,7 @@ export const DetailSideCard = ({
                           fontSize={'1.1rem'}
                           fontWeight={600}
                         >
-                          {prizeList['fifth']}
+                          {prizeList.fifth}
                         </Text>
                       </Td>
                       <Td>
@@ -294,14 +295,14 @@ export const DetailSideCard = ({
               </Table>
             </TableContainer>
           </VStack>
-          <Flex w={'full'} justify={'space-between'} px={5}>
-            <Flex flexDir={'column'} align={'start'} justify={'center'}>
-              <Flex gap={1} align={'center'} justify={'center'}>
+          <Flex justify={'space-between'} w={'full'} px={5}>
+            <Flex align={'start'} justify={'center'} direction={'column'}>
+              <Flex align={'center'} justify={'center'} gap={1}>
                 <Image
-                  mt={-1}
-                  src={'/assets/icons/purple-suitcase.svg'}
-                  alt={'suit case'}
                   w={'1.4rem'}
+                  mt={-1}
+                  alt={'suit case'}
+                  src={'/assets/icons/purple-suitcase.svg'}
                 />
                 <Text color={'#000000'} fontSize="1.3rem" fontWeight={500}>
                   {submissionNumber}
@@ -309,13 +310,18 @@ export const DetailSideCard = ({
               </Flex>
               <Text color={'#94A3B8'}>Submissions</Text>
             </Flex>
-            <Flex py={3} flexDir={'column'} align={'start'} justify={'center'}>
-              <Flex gap={1} align={'start'} justify={'center'}>
+            <Flex
+              align={'start'}
+              justify={'center'}
+              direction={'column'}
+              py={3}
+            >
+              <Flex align={'start'} justify={'center'} gap={1}>
                 <Image
-                  mt={1}
-                  src={'/assets/icons/purple-timer.svg'}
-                  alt={'suit case'}
                   w={'1.4rem'}
+                  mt={1}
+                  alt={'suit case'}
+                  src={'/assets/icons/purple-timer.svg'}
                 />
                 <VStack align={'start'}>
                   <Text color={'#000000'} fontSize="1.3rem" fontWeight={500}>
@@ -329,10 +335,10 @@ export const DetailSideCard = ({
             </Flex>
           </Flex>
           <Button
+            w={'90%'}
+            color={'white'}
             bg={'#6562FF'}
             _hover={{ bg: '#6562FF' }}
-            color={'white'}
-            w={'90%'}
             onClick={() => {
               if (!userInfo?.talent || !connected) {
                 onOpen();
@@ -346,13 +352,13 @@ export const DetailSideCard = ({
           </Button>
         </VStack>
         <VStack
-          mt={4}
-          rounded={'xl'}
+          align={'start'}
           justify={'center'}
           w={'22rem'}
-          bg={'#FFFFFF'}
-          align={'start'}
+          mt={4}
           p={6}
+          bg={'#FFFFFF'}
+          rounded={'xl'}
         >
           <VerticalStep
             sublabel={'Give your best shot'}
@@ -362,9 +368,9 @@ export const DetailSideCard = ({
           />
 
           <Divider
+            h={10}
             border={'2px'}
             borderColor={'#6562FF'}
-            h={10}
             transform={'translate(1rem)'}
             orientation="vertical"
           />
@@ -375,16 +381,16 @@ export const DetailSideCard = ({
             sublabel={'Bounties being assessed'}
           />
           <Divider
+            h={10}
             border={'2px'}
             borderColor={'#CBD5E1'}
-            h={10}
             transform={'translate(1rem)'}
             orientation="vertical"
           />
           <VerticalStep
             currentStep={submissionStatus + 1}
             thisStep={3}
-            sublabel={'On ' + moment(endingTime).format('Do MMM  YY')}
+            sublabel={`On ${moment(endingTime).format('Do MMM  YY')}`}
             label={'Winner Announcement'}
           />
         </VStack>

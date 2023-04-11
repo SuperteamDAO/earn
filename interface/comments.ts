@@ -1,4 +1,4 @@
-import { Talent } from './talent';
+import type { Talent } from './talent';
 
 export interface Comments {
   id: string;

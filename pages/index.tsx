@@ -1,30 +1,23 @@
+/* eslint-disable no-nested-ternary */
 import {
   Box,
   Flex,
-  Text,
-  Image,
-  VStack,
-  useMediaQuery,
   HStack,
+  Text,
+  useMediaQuery,
+  VStack,
 } from '@chakra-ui/react';
-import type { GetServerSideProps, NextPage } from 'next';
-import NavHome from '../components/home/NavHome';
-
-//components
-import Banner from '../components/home/Banner';
-import SideBar from '../components/home/SideBar';
-
+import { useWallet } from '@solana/wallet-adapter-react';
 import { dehydrate, QueryClient, useQuery } from '@tanstack/react-query';
-import { fetchAll, fetchBasicInfo, TalentTVE } from '../utils/functions';
+import type { GetServerSideProps, NextPage } from 'next';
 import { useRouter } from 'next/router';
 import { useEffect } from 'react';
 
-import { userStore } from '../store/user';
-
-import { TalentStore } from '../store/talent';
-import { useWallet } from '@solana/wallet-adapter-react';
+// components
+import Banner from '../components/home/Banner';
+import NavHome from '../components/home/NavHome';
+import SideBar from '../components/home/SideBar';
 import SearchLoading from '../components/Loading/searchLoading';
-import { BountyStatus } from '../interface/types';
 import {
   BountiesCard,
   CategoryBanner,
@@ -32,12 +25,14 @@ import {
   JobsCard,
   ListingSection,
 } from '../components/misc/listingsCard';
+import type { BountyStatus } from '../interface/types';
+import { TalentStore } from '../store/talent';
+import { fetchAll, fetchBasicInfo } from '../utils/functions';
 
 const Home: NextPage = () => {
   const router = useRouter();
   const { connected } = useWallet();
   const { talentInfo } = TalentStore();
-  const { userInfo } = userStore();
   const listings = useQuery(
     ['all', 'listings', router.query.search ?? '', router.query.filter ?? ''],
     ({ queryKey }) => fetchAll(queryKey[2] as string, queryKey[3] as string)
@@ -52,7 +47,7 @@ const Home: NextPage = () => {
   const [isLessThan768px] = useMediaQuery('(max-width: 768px)');
 
   useEffect(() => {
-    let html = document.querySelector('html');
+    const html = document.querySelector('html');
     try {
       if (isLessThan768px) {
         html!.style.fontSize = '100%';
@@ -79,19 +74,19 @@ const Home: NextPage = () => {
     <>
       {!isLessThan768px && <NavHome />}
       <Flex
+        justify={'center'}
         w={'100%'}
         h={'max-content'}
         minH={'100vh'}
-        bg={'white'}
         pt={'3.5rem'}
-        justifyContent={'center'}
+        bg={'white'}
       >
         {router.asPath.includes('search') ? (
           router.query.search && listings.isLoading ? (
             <SearchLoading />
           ) : (
             <Box>
-              <Flex w={['full', 'full', '50rem', '50rem']} gap={1}>
+              <Flex gap={1} w={['full', 'full', '50rem', '50rem']}>
                 <Text color={'#64748B'}>
                   Found{' '}
                   {(listings.data?.bounty.length as number) +
@@ -99,9 +94,9 @@ const Home: NextPage = () => {
                     (listings.data?.grants.length as number)}{' '}
                   opportunities matching{' '}
                 </Text>
-                <Text color={'#1E293B'}>{"'" + router.query.search + "'"}</Text>
+                <Text color={'#1E293B'}>{`'${router.query.search}'`}</Text>
               </Flex>
-              <VStack mt={'2rem'} gap={5}>
+              <VStack gap={5} mt={'2rem'}>
                 {listings.data?.bounty?.map((bounty) => {
                   return (
                     <BountiesCard
@@ -156,19 +151,19 @@ const Home: NextPage = () => {
               <>
                 <HStack gap={1}>
                   <Text
-                    fontFamily={'Domine'}
-                    fontWeight={700}
-                    fontSize={'26px'}
                     color={'#1E293B'}
+                    fontFamily={'Domine'}
+                    fontSize={'26px'}
+                    fontWeight={700}
                   >
                     Welcome back,
                   </Text>
 
                   <Text
-                    fontFamily={'Domine'}
-                    fontWeight={700}
-                    fontSize={'26px'}
                     color={'#1E293B'}
+                    fontFamily={'Domine'}
+                    fontSize={'26px'}
+                    fontWeight={700}
                   >
                     {talentInfo?.firstname ?? 'Anon'}
                   </Text>
@@ -272,7 +267,7 @@ const Home: NextPage = () => {
 export const getServerSideProps: GetServerSideProps = async (context) => {
   const queryClient = new QueryClient();
 
-  const { query, res } = context;
+  const { query } = context;
 
   try {
     await queryClient.prefetchQuery(['all', 'listings'], () =>

@@ -1,9 +1,10 @@
 import axios from 'axios';
-const Backend_Url = process.env.NEXT_PUBLIC_BACKEND_URL;
+
+const BACKEND_URL = process.env.NEXT_PUBLIC_BACKEND_URL;
 
 export const createOTP = async (email: string, name: string) => {
   try {
-    const { data } = await axios.post(`${Backend_Url}/email/otp`, {
+    const { data } = await axios.post(`${BACKEND_URL}/email/otp`, {
       email,
       name,
     });
@@ -18,7 +19,7 @@ export const createOTP = async (email: string, name: string) => {
 
 export const verifyOTP = async (id: string, email: string, otp: string) => {
   try {
-    const { data } = await axios.post(`${Backend_Url}/email/otp/verify`, {
+    const { data } = await axios.post(`${BACKEND_URL}/email/otp/verify`, {
       id,
       email,
       otp,
@@ -34,7 +35,7 @@ export const verifyOTP = async (id: string, email: string, otp: string) => {
 
 export const WelcomeSponsor = async (email: string, name: string) => {
   try {
-    const { data } = await axios.post(`${Backend_Url}/email/sponsor/welcome`, {
+    const { data } = await axios.post(`${BACKEND_URL}/email/sponsor/welcome`, {
       email,
       name,
     });
@@ -48,7 +49,7 @@ export const WelcomeSponsor = async (email: string, name: string) => {
 };
 export const WelcomeTalent = async (email: string, name: string) => {
   try {
-    const { data } = await axios.post(`${Backend_Url}/email/talent/welcome`, {
+    const { data } = await axios.post(`${BACKEND_URL}/email/talent/welcome`, {
       email,
       name,
     });

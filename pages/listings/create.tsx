@@ -1,31 +1,30 @@
 import { useDisclosure } from '@chakra-ui/react';
-import FormLayout from '../../layouts/FormLayout';
-import {
-  BountyBasicType,
-  Createbounty,
-} from '../../components/listings/bounty/Createbounty';
+import { useWallet } from '@solana/wallet-adapter-react';
+import { useQuery } from '@tanstack/react-query';
+import { useRouter } from 'next/router';
 import { useEffect, useState } from 'react';
+import toast, { Toaster } from 'react-hot-toast';
+
+import type { BountyBasicType } from '../../components/listings/bounty/Createbounty';
+import { Createbounty } from '../../components/listings/bounty/Createbounty';
+import type { Ques } from '../../components/listings/bounty/questions/builder';
+import { CreateGrants } from '../../components/listings/grants/CreateGrants';
 import { CreateJob } from '../../components/listings/jobs/CreateJob';
 import Template from '../../components/listings/templates/template';
-import { MultiSelectOptions } from '../../constants';
-import { useRouter } from 'next/router';
-import {
+import { CreateSponsorModel } from '../../components/modals/createSponsor';
+import { SuccessListings } from '../../components/modals/successListings';
+import type { MultiSelectOptions } from '../../constants';
+import type {
   DraftType,
   GrantsBasicType,
   JobBasicsType,
 } from '../../interface/listings';
-import { CreateGrants } from '../../components/listings/grants/CreateGrants';
-import { SuccessListings } from '../../components/modals/successListings';
-import { useWallet } from '@solana/wallet-adapter-react';
 import { ConnectWallet } from '../../layouts/connectWallet';
+import FormLayout from '../../layouts/FormLayout';
 import { SponsorStore } from '../../store/sponsor';
-import { CreateSponsorModel } from '../../components/modals/createSponsor';
-import { useQuery } from '@tanstack/react-query';
-import { CreateDraft, findOneDraft, findSponsors } from '../../utils/functions';
 import { userStore } from '../../store/user';
+import { CreateDraft, findOneDraft, findSponsors } from '../../utils/functions';
 import { genrateuuid } from '../../utils/helpers';
-import toast, { Toaster } from 'react-hot-toast';
-import { Ques } from '../../components/listings/bounty/questions/builder';
 
 const CreateListing = () => {
   // Templates - 1
@@ -52,7 +51,7 @@ const CreateListing = () => {
 
   const [questions, setQuestions] = useState<Ques[]>([]);
 
-  //- Bounty
+  // - Bounty
   const [bountybasic, setBountyBasic] = useState<BountyBasicType | undefined>();
   // -- Grants
   const [grantBasic, setgrantsBasic] = useState<GrantsBasicType | undefined>();
@@ -64,7 +63,7 @@ const CreateListing = () => {
 
   const sponsors = useQuery({
     queryKey: ['sponsor', publicKey?.toBase58() ?? ''],
-    queryFn: ({ queryKey }) => findSponsors(queryKey[1]),
+    queryFn: ({ queryKey }) => findSponsors(queryKey[1] || ''),
   });
 
   const createDraft = async (payment: string) => {
@@ -81,7 +80,7 @@ const CreateListing = () => {
         ...draft,
         basic: JSON.stringify({
           skills: mainSkills,
-          subSkill: subSkill,
+          subSkill,
           description: JSON.stringify(editorData),
           ...jobBasics,
         }),
@@ -93,7 +92,7 @@ const CreateListing = () => {
         ...draft,
         basic: JSON.stringify({
           skills: mainSkills,
-          subSkill: subSkill,
+          subSkill,
           description: JSON.stringify(editorData),
           ...bountybasic,
         }),
@@ -106,7 +105,7 @@ const CreateListing = () => {
         ...draft,
         basic: JSON.stringify({
           skills: mainSkills,
-          subSkill: subSkill,
+          subSkill,
           description: JSON.stringify(editorData),
           ...grantBasic,
         }),

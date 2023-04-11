@@ -1,3 +1,4 @@
+/* tslint:disable */
 import {
   AddIcon,
   ChevronDownIcon,
@@ -16,8 +17,10 @@ import {
   Text,
   VStack,
 } from '@chakra-ui/react';
-import { Dispatch, SetStateAction, useState } from 'react';
-import { Ques, QuestionType } from './builder';
+import type { Dispatch, SetStateAction } from 'react';
+import { useState } from 'react';
+
+import type { Ques, QuestionType } from './builder';
 
 interface Props {
   setQuestions: Dispatch<SetStateAction<Ques[]>>;
@@ -70,14 +73,10 @@ export const QuestionCard = ({
       <VStack align={'start'} w={'full'}>
         <FormControl
           w={'full'}
-          isInvalid={
-            errorState.filter((e) => e.id === curentQuestion.id)[0]
-              ? true
-              : false
-          }
+          isInvalid={!!errorState.filter((e) => e.id === curentQuestion.id)[0]}
         >
           <FormLabel color={'gray.500'}>
-            <Text fontSize={'0.88rem'} fontWeight={600} color={'gray.500'}>
+            <Text color={'gray.500'} fontSize={'0.88rem'} fontWeight={600}>
               Question {index + 1}
             </Text>
           </FormLabel>
@@ -88,17 +87,18 @@ export const QuestionCard = ({
             onChange={(e) => {
               handleChangeQuestion(e.target.value);
             }}
-            value={curentQuestion.question}
             placeholder="Enter your question here"
+            value={curentQuestion.question}
           />
           <FormErrorMessage>
-            {errorState.filter((e) => e.id === curentQuestion.id)[0] &&
-              errorState.filter((e) => e.id === curentQuestion.id)[0]
-                .errMessage}
+            {errorState?.filter((e) => e?.id === curentQuestion.id)[0] &&
+              errorState?.filter((e) => e?.id === curentQuestion.id)[0]
+                ?.errMessage}
           </FormErrorMessage>
         </FormControl>
-        <HStack w={'full'} justify={'space-between'}>
+        <HStack justify={'space-between'} w={'full'}>
           <Select
+            w={'10rem'}
             _placeholder={{
               color: 'gray.400',
             }}
@@ -106,7 +106,6 @@ export const QuestionCard = ({
               handleChangeType(e.target.value as QuestionType);
             }}
             value={curentQuestion.type}
-            w={'10rem'}
           >
             <option value="text">Text</option>
             <option value="checkbox">Checkbox</option>
@@ -119,8 +118,8 @@ export const QuestionCard = ({
             {index + 1 !== 1 && (
               <Button
                 onClick={() => {
-                  setQuestions((prev) => {
-                    return prev.map((q, i) => {
+                  setQuestions((prev: any) => {
+                    return prev.map((q: any, i: number) => {
                       if (i === index) {
                         return prev[i - 1];
                       }
@@ -139,8 +138,8 @@ export const QuestionCard = ({
             {index + 1 !== questions.length && (
               <Button
                 onClick={() => {
-                  setQuestions((prev) => {
-                    return prev.map((q, i) => {
+                  setQuestions((prev: any) => {
+                    return prev?.map((q: any, i: number) => {
                       if (i === index) {
                         return prev[i + 1];
                       }
@@ -174,14 +173,14 @@ export const QuestionCard = ({
           curentQuestion.type === 'multi-choice') && (
           <>
             <VStack w={'full'}>
-              {curentQuestion.options?.map((option, index) => {
+              {curentQuestion.options?.map((currentOption, currentIndex) => {
                 return (
-                  <HStack key={index} w={'full'}>
+                  <HStack key={currentIndex} w={'full'}>
                     <HStack w={'full'}>
                       <Text
+                        color={'gray.600'}
                         fontSize={'0.88rem'}
                         fontWeight={600}
-                        color={'gray.600'}
                       >
                         <svg
                           width="18"
@@ -198,10 +197,9 @@ export const QuestionCard = ({
                           />
                         </svg>
                       </Text>
-                      <Text>{option}</Text>
+                      <Text>{currentOption}</Text>
                     </HStack>
                     <Button
-                      variant={'unstyled'}
                       onClick={() => {
                         setQuestions((prev) => {
                           return prev.map((q) => {
@@ -209,7 +207,7 @@ export const QuestionCard = ({
                               return {
                                 ...q,
                                 options: q.options?.filter(
-                                  (o, i) => i !== index
+                                  (_o, i) => i !== currentIndex
                                 ),
                               };
                             }
@@ -217,6 +215,7 @@ export const QuestionCard = ({
                           });
                         });
                       }}
+                      variant={'unstyled'}
                     >
                       <CloseIcon />
                     </Button>
@@ -226,19 +225,17 @@ export const QuestionCard = ({
               <HStack w={'full'}>
                 <FormControl
                   isInvalid={
-                    errorState.filter((e) => e.id === curentQuestion.id)[0]
-                      ? true
-                      : false
+                    !!errorState.filter((e) => e.id === curentQuestion.id)[0]
                   }
                 >
                   <Input
                     _placeholder={{
                       color: 'gray.400',
                     }}
-                    value={option}
                     onChange={(e) => {
                       setOption(e.target.value);
                     }}
+                    value={option}
                   />
                 </FormControl>
                 <Button

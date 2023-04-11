@@ -6,20 +6,13 @@ import {
   Select,
   Textarea,
 } from '@chakra-ui/react';
-import {
-  Control,
-  ControllerFieldState,
-  ControllerRenderProps,
-  FieldValues,
-  UseFormRegister,
-  UseFormStateReturn,
-} from 'react-hook-form';
-import ReactSelect from 'react-select';
-import { QuestionType } from './builder';
-import makeAnimated from 'react-select/animated';
-import { MainSkills, MultiSelectOptions } from '../../../../constants';
+import type { Control, FieldValues, UseFormRegister } from 'react-hook-form';
 import { Controller } from 'react-hook-form';
-import { ReactElement, JSXElementConstructor } from 'react';
+import ReactSelect from 'react-select';
+import makeAnimated from 'react-select/animated';
+
+import type { MultiSelectOptions } from '../../../../constants';
+import type { QuestionType } from './builder';
 
 interface Props {
   question: string;
@@ -48,7 +41,8 @@ export const QuestionHandler = ({
         <Input {...register(label)} />
       </>
     );
-  } else if (type === 'long-text') {
+  }
+  if (type === 'long-text') {
     return (
       <>
         <FormLabel color={'gray.600 !important'} fontSize={'1.1rem'}>
@@ -57,10 +51,11 @@ export const QuestionHandler = ({
         <Textarea {...register(label)} />
       </>
     );
-  } else if (type === 'checkbox') {
+  }
+  if (type === 'checkbox') {
     return (
       <>
-        <HStack justify={'start'} align={'center'}>
+        <HStack align={'center'} justify={'start'}>
           <FormLabel color={'gray.600 !important'} fontSize={'1.1rem'}>
             {question}
           </FormLabel>
@@ -68,7 +63,8 @@ export const QuestionHandler = ({
         </HStack>
       </>
     );
-  } else if (type === 'single-choice') {
+  }
+  if (type === 'single-choice') {
     return (
       <>
         <FormLabel color={'gray.600 !important'} fontSize={'1.1rem'}>
@@ -85,10 +81,11 @@ export const QuestionHandler = ({
         </Select>
       </>
     );
-  } else if (type === 'multi-choice') {
+  }
+  if (type === 'multi-choice') {
     const animatedComponents = makeAnimated();
     const option: MultiSelectOptions[] = [];
-    options.map((e) => {
+    options.forEach((e) => {
       option.push({ value: e, label: e });
     });
     return (
@@ -114,7 +111,6 @@ export const QuestionHandler = ({
         ></Controller>
       </>
     );
-  } else {
-    return <></>;
   }
+  return <></>;
 };

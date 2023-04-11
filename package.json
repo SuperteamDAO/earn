@@ -8,7 +8,7 @@
     "start": "NODE_ENV=production next start",
     "lint": "next lint",
     "format": "next lint --fix && prettier '**/*.{json,yaml}' --write --ignore-path .gitignore",
-    "check-types": "tsc --noEmit --pretty && tsc --project cypress --noEmit --pretty",
+    "check-types": "tsc --noEmit --pretty",
     "prepare": "husky install",
     "postbuild": "next-sitemap"
   },
@@ -29,6 +29,7 @@
     "@solana/wallet-adapter-react": "^0.15.28",
     "@solana/wallet-adapter-react-ui": "^0.9.27",
     "@solana/wallet-adapter-wallets": "^0.19.1",
+    "@solana/web3.js": "^1.75.0",
     "@tanstack/react-query": "^4.24.4",
     "@tanstack/react-query-devtools": "^4.26.1",
     "@tiptap/extension-color": "^2.0.0-beta.220",

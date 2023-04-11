@@ -1,13 +1,12 @@
-import { HStack, list } from '@chakra-ui/react';
 import { dehydrate, QueryClient, useQuery } from '@tanstack/react-query';
-import { GetServerSideProps } from 'next';
+import type { GetServerSideProps } from 'next';
 import { useRouter } from 'next/router';
 import React from 'react';
-import { Submission } from '../../../../../components/listings/listings/submissions/submission';
-import { SponsorType } from '../../../../../interface/sponsor';
-import { findBouties } from '../../../../../utils/functions';
+
 import { ListingHeader } from '../../../../../components/listings/listings/ListingHeader';
 import { SubmissionPage } from '../../../../../components/listings/listings/submissions/submissionPage';
+import type { SponsorType } from '../../../../../interface/sponsor';
+import { findBouties } from '../../../../../utils/functions';
 
 const defalutSponsor: SponsorType = {
   bio: '',
@@ -50,13 +49,11 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
   const queryClient = new QueryClient();
   const { id } = context.query;
 
-  let isError = false;
   try {
     await queryClient.fetchQuery(['bounties', id], () =>
       findBouties(id as string)
     );
   } catch (error) {
-    isError;
     console.log(error);
   }
   return {

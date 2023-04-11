@@ -1,16 +1,3 @@
-import type { AppProps } from 'next/app';
-import { ChakraProvider } from '@chakra-ui/react';
-import theme from '../config/chakra.config';
-import { Router } from 'next/router';
-import {
-  Hydrate,
-  QueryClient,
-  QueryClientProvider,
-} from '@tanstack/react-query';
-import { Wallet } from '../context/connectWalletContext';
-import { ReactQueryDevtools } from '@tanstack/react-query-devtools';
-import NProgress from 'nprogress';
-
 import 'slick-carousel/slick/slick.css';
 import 'slick-carousel/slick/slick-theme.css';
 // Styles
@@ -28,6 +15,20 @@ import '@fontsource/domine/400.css';
 import '@fontsource/domine/500.css';
 import '@fontsource/domine/600.css';
 import '@fontsource/domine/700.css';
+
+import { ChakraProvider } from '@chakra-ui/react';
+import {
+  Hydrate,
+  QueryClient,
+  QueryClientProvider,
+} from '@tanstack/react-query';
+import { ReactQueryDevtools } from '@tanstack/react-query-devtools';
+import type { AppProps } from 'next/app';
+import { Router } from 'next/router';
+import NProgress from 'nprogress';
+
+import theme from '../config/chakra.config';
+import { Wallet } from '../context/connectWalletContext';
 
 function MyApp({ Component, pageProps }: AppProps) {
   const queryClient = new QueryClient();

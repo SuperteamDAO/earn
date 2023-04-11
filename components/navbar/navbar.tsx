@@ -14,23 +14,20 @@ import {
   Text,
   useDisclosure,
 } from '@chakra-ui/react';
-import {
-  useWallet,
-  Wallet as SolanaWallet,
-} from '@solana/wallet-adapter-react';
+import type { Wallet as SolanaWallet } from '@solana/wallet-adapter-react';
+import { useWallet } from '@solana/wallet-adapter-react';
+import Avatar from 'boring-avatars';
 import { useRouter } from 'next/router';
 import { useEffect } from 'react';
-import { createUser, findTalentPubkey } from '../../utils/functions';
-import Avatar from 'boring-avatars';
-import { truncatedPublicKey } from '../../utils/helpers';
-import { MdOutlineKeyboardArrowDown } from 'react-icons/md';
-import { userStore } from '../../store/user';
-import { SponsorType } from '../../interface/sponsor';
-import { SponsorStore } from '../../store/sponsor';
-import { useStore } from 'zustand';
-import { TalentStore } from '../../store/talent';
-import { ConnectWalletModal } from '../modals/connectWalletModal';
 import toast from 'react-hot-toast';
+import { MdOutlineKeyboardArrowDown } from 'react-icons/md';
+
+import type { SponsorType } from '../../interface/sponsor';
+import { TalentStore } from '../../store/talent';
+import { userStore } from '../../store/user';
+import { createUser, findTalentPubkey } from '../../utils/functions';
+import { truncatedPublicKey } from '../../utils/helpers';
+import { ConnectWalletModal } from '../modals/connectWalletModal';
 
 interface Props {
   sponsors?: SponsorType[];
@@ -38,14 +35,19 @@ interface Props {
 export const Navbar = ({ sponsors }: Props) => {
   const { setUserInfo } = userStore();
   const { setTalentInfo, talentInfo } = TalentStore();
-  const { currentSponsor, setCurrentSponsor } = SponsorStore();
   const router = useRouter();
-  const { connected, publicKey, wallet, connect, select, wallets } =
-    useWallet();
+  const { connected, publicKey, wallet, select } = useWallet();
+
+  const findTalent = async () => {
+    const talent = await findTalentPubkey(publicKey?.toBase58() as string);
+    if (!talent) {
+      return null;
+    }
+    return setTalentInfo(talent.data);
+  };
+
   useEffect(() => {
     const makeUser = async () => {
-      console.log(publicKey, connected);
-
       if (publicKey && connected) {
         const res = await createUser(publicKey.toBase58() as string);
         setUserInfo(res.data);
@@ -57,14 +59,6 @@ export const Navbar = ({ sponsors }: Props) => {
     makeUser();
   }, [publicKey, connected]);
 
-  const findTalent = async () => {
-    const talent = await findTalentPubkey(publicKey?.toBase58() as string);
-    if (!talent) {
-      return;
-    }
-    return setTalentInfo(talent.data);
-  };
-
   const onDisconnectWallet = async () => {
     if (wallet == null) {
       return;
@@ -75,19 +69,15 @@ export const Navbar = ({ sponsors }: Props) => {
   // --
   const { userInfo } = userStore();
 
-  const onConnectWallet = async (wallet: SolanaWallet) => {
+  const onConnectWallet = async (solanaWallet: SolanaWallet) => {
     try {
       // await connect();
 
-      select(wallet.adapter.name);
+      select(solanaWallet.adapter.name);
     } catch (e) {
-      console.log(e, '--');
-
       toast.error('Wallet not found');
     }
   };
-
-  console.log(talentInfo);
 
   return (
     <>
@@ -99,38 +89,33 @@ export const Navbar = ({ sponsors }: Props) => {
         />
       )}
       <Container
-        maxW={'full'}
-        p={{ xs: 10, md: 0 }}
-        h={12}
-        position={'absolute'}
-        zIndex={10}
-        top={0}
-        bg={'#F1F5F9'}
-        borderBottom={'1px solid rgba(255, 255, 255, 0.15)'}
         sx={{
           backdropFilter: 'blur(10px)',
           margin: '0px !important',
           marginTop: '0px !important',
         }}
+        pos={'absolute'}
+        zIndex={10}
+        top={0}
+        maxW={'full'}
+        h={12}
+        p={{ xs: 10, md: 0 }}
+        bg={'#F1F5F9'}
+        borderBottom={'1px solid rgba(255, 255, 255, 0.15)'}
       >
         <Flex
-          px={6}
           align={'center'}
           justify={'space-between'}
           h={'full'}
           mx="auto"
+          px={6}
         >
           <HStack w={'full'}>
             <Box cursor={'pointer'} onClick={() => router.push('/')}>
-              <Image w={'12rem'} src={'/assets/logo/logo.png'} alt={'logo'} />
+              <Image w={'12rem'} alt={'logo'} src={'/assets/logo/logo.png'} />
             </Box>
             {sponsors && (
-              <Select
-                w={'12rem'}
-                onChange={(e) => {
-                  setCurrentSponsor(sponsors![Number(e.currentTarget.value)]);
-                }}
-              >
+              <Select w={'12rem'}>
                 {sponsors?.map((sponsor, index) => {
                   return (
                     <option key={sponsor.id} value={index}>
@@ -144,11 +129,11 @@ export const Navbar = ({ sponsors }: Props) => {
           <Box>
             {!connected ? (
               <Button
-                _hover={{ bg: '#6562FF' }}
-                color={'white'}
                 h={10}
                 px={10}
+                color={'white'}
                 bg={'#6562FF'}
+                _hover={{ bg: '#6562FF' }}
                 onClick={() => {
                   if (router.asPath === '/') {
                     router.push('/new');
@@ -164,11 +149,11 @@ export const Navbar = ({ sponsors }: Props) => {
                 {userInfo?.sponsor && (
                   <Button
                     w="100%"
+                    color="#6562FF"
                     fontSize="0.9rem"
                     fontWeight={600}
-                    color="#6562FF"
-                    border="1px solid #6562FF"
                     bg="transparent"
+                    border="1px solid #6562FF"
                     onClick={() => {
                       router.push('/listings/create');
                     }}
@@ -177,8 +162,8 @@ export const Navbar = ({ sponsors }: Props) => {
                   </Button>
                 )}
                 <Divider
-                  borderColor={'gray.300'}
                   h={12}
+                  borderColor={'gray.300'}
                   orientation={'vertical'}
                 />
 
@@ -189,11 +174,11 @@ export const Navbar = ({ sponsors }: Props) => {
                         variant="marble"
                         colors={['#92A1C6', '#F0AB3D', '#C271B4']}
                       />
-                      <Flex gap={5} justify={'space-between'} align={'center'}>
+                      <Flex align={'center'} justify={'space-between'} gap={5}>
                         <Text
                           color={'gray.600'}
-                          fontWeight={600}
                           fontFamily={'Inter'}
+                          fontWeight={600}
                         >
                           {truncatedPublicKey(
                             publicKey?.toString() as string,
@@ -209,7 +194,7 @@ export const Navbar = ({ sponsors }: Props) => {
                       isDisabled={!talentInfo?.username}
                       onClick={() => router.push(`/t/${talentInfo?.username}`)}
                     >
-                      <Text fontSize="0.9rem" color="gray.600">
+                      <Text color="gray.600" fontSize="0.9rem">
                         View Profile
                       </Text>
                     </MenuItem>
@@ -218,7 +203,7 @@ export const Navbar = ({ sponsors }: Props) => {
                         router.push('/dashboard/team');
                       }}
                     >
-                      <Text fontSize="0.9rem" color="gray.600">
+                      <Text color="gray.600" fontSize="0.9rem">
                         Dashboard
                       </Text>
                     </MenuItem>
@@ -227,7 +212,7 @@ export const Navbar = ({ sponsors }: Props) => {
                         onDisconnectWallet();
                       }}
                     >
-                      <Text fontSize="0.9rem" color="gray.600">
+                      <Text color="gray.600" fontSize="0.9rem">
                         Disconnect
                       </Text>
                     </MenuItem>

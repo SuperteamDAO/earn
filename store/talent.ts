@@ -1,9 +1,9 @@
-import { create } from 'zustand';
-import { User } from '../interface/user';
 import produce from 'immer';
 import { mountStoreDevtool } from 'simple-zustand-devtools';
-import { SponsorType } from '../interface/sponsor';
-import { Talent } from '../interface/talent';
+import { create } from 'zustand';
+
+import type { Talent } from '../interface/talent';
+
 interface TalentState {
   talentInfo: Talent | null;
   setTalentInfo: (user: Talent) => void;
@@ -14,6 +14,7 @@ export const TalentStore = create<TalentState>((set) => ({
   setTalentInfo: (talent: Talent): void =>
     set(
       produce((state: TalentState) => {
+        // eslint-disable-next-line no-param-reassign
         state.talentInfo = talent;
       })
     ),

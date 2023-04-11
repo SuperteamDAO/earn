@@ -1,7 +1,7 @@
-import { mode, StyleFunctionProps } from '@chakra-ui/theme-tools';
+import type { StyleFunctionProps } from '@chakra-ui/theme-tools';
 
 export const styles = {
-  global: (props: StyleFunctionProps) => ({
+  global: (_props: StyleFunctionProps) => ({
     fonts: {
       body: 'Inter',
       heading: 'Inter',

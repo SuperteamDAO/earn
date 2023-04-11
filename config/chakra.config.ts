@@ -1,6 +1,9 @@
-import { ThemeConfig, extendTheme } from '@chakra-ui/react';
-import { styles } from '../theme/styles';
+import type { ThemeConfig } from '@chakra-ui/react';
+import { extendTheme } from '@chakra-ui/react';
 import { StepsTheme as Steps } from 'chakra-ui-steps';
+
+import { styles } from '../theme/styles';
+
 const config: ThemeConfig = {
   initialColorMode: 'light',
   useSystemColorMode: false,

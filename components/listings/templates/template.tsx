@@ -1,7 +1,9 @@
 import { AddIcon } from '@chakra-ui/icons';
 import { Box, Flex, Text, VStack } from '@chakra-ui/react';
 import { useRouter } from 'next/router';
-import React, { Dispatch, SetStateAction } from 'react';
+import type { Dispatch, SetStateAction } from 'react';
+import React from 'react';
+
 interface Props {
   setSteps: Dispatch<SetStateAction<number>>;
 }
@@ -9,10 +11,10 @@ const Template = ({ setSteps }: Props) => {
   const router = useRouter();
   return (
     <>
-      <VStack gap={8} align={'start'} w="full">
-        <VStack w={'full'} align="start">
-          <Flex align="center" w="full" justify="center" gap="2rem" mb="2rem">
-            <Text fontSize="1.3rem" color="gray.600" fontWeight={600}>
+      <VStack align={'start'} gap={8} w="full">
+        <VStack align="start" w={'full'}>
+          <Flex align="center" justify="center" gap="2rem" w="full" mb="2rem">
+            <Text color="gray.600" fontSize="1.3rem" fontWeight={600}>
               Bounty
             </Text>
             <hr
@@ -25,14 +27,14 @@ const Template = ({ setSteps }: Props) => {
           </Flex>
           <Flex>
             <Box
-              bg={'white'}
+              alignItems={'center'}
+              justifyContent={'center'}
+              flexDir={'column'}
+              display={'flex'}
               w={'15rem'}
               h={'15rem'}
+              bg={'white'}
               border={'1px solid #cbd5e1'}
-              display={'flex'}
-              justifyContent={'center'}
-              alignItems={'center'}
-              flexDirection={'column'}
               cursor={'pointer'}
               onClick={() => {
                 setSteps(2);
@@ -40,15 +42,15 @@ const Template = ({ setSteps }: Props) => {
               }}
             >
               <AddIcon color="gray.500" mb="1rem" />
-              <Text fontSize="1rem" color="gray.500" fontWeight={500}>
+              <Text color="gray.500" fontSize="1rem" fontWeight={500}>
                 Start from Scratch
               </Text>
             </Box>
           </Flex>
         </VStack>
-        <VStack w={'full'} align="start">
-          <Flex align="center" w="full" justify="center" gap="2rem" mb="2rem">
-            <Text fontSize="1.3rem" color="gray.600" fontWeight={600}>
+        <VStack align="start" w={'full'}>
+          <Flex align="center" justify="center" gap="2rem" w="full" mb="2rem">
+            <Text color="gray.600" fontSize="1.3rem" fontWeight={600}>
               Jobs
             </Text>
             <hr
@@ -61,14 +63,14 @@ const Template = ({ setSteps }: Props) => {
           </Flex>
           <Flex>
             <Box
-              bg={'white'}
+              alignItems={'center'}
+              justifyContent={'center'}
+              flexDir={'column'}
+              display={'flex'}
               w={'15rem'}
               h={'15rem'}
+              bg={'white'}
               border={'1px solid #cbd5e1'}
-              display={'flex'}
-              justifyContent={'center'}
-              alignItems={'center'}
-              flexDirection={'column'}
               cursor={'pointer'}
               onClick={() => {
                 setSteps(2);
@@ -76,15 +78,15 @@ const Template = ({ setSteps }: Props) => {
               }}
             >
               <AddIcon color="gray.500" mb="1rem" />
-              <Text fontSize="1rem" color="gray.500" fontWeight={500}>
+              <Text color="gray.500" fontSize="1rem" fontWeight={500}>
                 Start from Scratch
               </Text>
             </Box>
           </Flex>
         </VStack>
-        <VStack w={'full'} align="start">
-          <Flex align="center" w="full" justify="center" gap="2rem" mb="2rem">
-            <Text fontSize="1.3rem" color="gray.600" fontWeight={600}>
+        <VStack align="start" w={'full'}>
+          <Flex align="center" justify="center" gap="2rem" w="full" mb="2rem">
+            <Text color="gray.600" fontSize="1.3rem" fontWeight={600}>
               Grants
             </Text>
             <hr
@@ -97,14 +99,14 @@ const Template = ({ setSteps }: Props) => {
           </Flex>
           <Flex>
             <Box
-              bg={'white'}
+              alignItems={'center'}
+              justifyContent={'center'}
+              flexDir={'column'}
+              display={'flex'}
               w={'15rem'}
               h={'15rem'}
+              bg={'white'}
               border={'1px solid #cbd5e1'}
-              display={'flex'}
-              justifyContent={'center'}
-              alignItems={'center'}
-              flexDirection={'column'}
               cursor={'pointer'}
               onClick={() => {
                 setSteps(2);
@@ -112,7 +114,7 @@ const Template = ({ setSteps }: Props) => {
               }}
             >
               <AddIcon color="gray.500" mb="1rem" />
-              <Text fontSize="1rem" color="gray.500" fontWeight={500}>
+              <Text color="gray.500" fontSize="1rem" fontWeight={500}>
                 Start from Scratch
               </Text>
             </Box>

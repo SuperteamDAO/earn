@@ -1,4 +1,4 @@
-import { Box, HStack, list, useDisclosure, VStack } from '@chakra-ui/react';
+import { HStack, useDisclosure, VStack } from '@chakra-ui/react';
 import {
   dehydrate,
   QueryClient,
@@ -6,18 +6,19 @@ import {
   useQuery,
   useQueryClient,
 } from '@tanstack/react-query';
+import type { GetServerSideProps } from 'next';
 import { useRouter } from 'next/router';
 import toast from 'react-hot-toast';
+
 import { Comments } from '../../../../components/listings/listings/comments';
 import { DetailDescription } from '../../../../components/listings/listings/details/detailDescription';
 import { DetailSideCard } from '../../../../components/listings/listings/details/detailSideCard';
 import { ListingHeader } from '../../../../components/listings/listings/ListingHeader';
-import { Submission } from '../../../../components/listings/listings/submissions/submission';
 import { CreateProfileModal } from '../../../../components/modals/createProfile';
-import { PrizeListType } from '../../../../interface/listings';
-import { SponsorType } from '../../../../interface/sponsor';
+import { SubmissionSuccess } from '../../../../components/modals/SubmissionSuccess';
+import type { PrizeListType } from '../../../../interface/listings';
+import type { SponsorType } from '../../../../interface/sponsor';
 import { TalentStore } from '../../../../store/talent';
-import { GetServerSideProps } from 'next';
 import {
   createSubmission,
   fetchComments,
@@ -25,8 +26,6 @@ import {
   findBouties,
 } from '../../../../utils/functions';
 import { genrateuuid } from '../../../../utils/helpers';
-import { SubmissionSuccess } from '../../../../components/modals/SubmissionSuccess';
-import { useState } from 'react';
 // import TalentBio from '../../../components/TalentBio';
 
 const defalutSponsor: SponsorType = {
@@ -47,7 +46,6 @@ const defalutSponsor: SponsorType = {
 
 const Bounties = () => {
   const router = useRouter();
-  const [subID, setSubID] = useState<string>('');
   const { onOpen, isOpen, onClose } = useDisclosure();
   const { talentInfo } = TalentStore();
   const queryClient = useQueryClient();
@@ -55,13 +53,6 @@ const Bounties = () => {
   const listingInfo = useQuery(['bounties', router.query.id], () =>
     findBouties(router.query.id as string)
   );
-  let total = 0;
-  const prizes = Object.values(
-    (listingInfo.data?.listing.prizeList as PrizeListType) ?? {}
-  );
-  prizes.forEach((el) => {
-    total += Number(el);
-  });
   const {
     isOpen: submissionisOpen,
     onClose: submissiononClose,
@@ -87,13 +78,12 @@ const Bounties = () => {
       id: genrateuuid(),
       image: res.data?.ogImage?.url ?? '',
       likes: JSON.stringify([]),
-      link: link,
+      link,
       bountiesId: listingInfo.data?.listing.id ?? '',
       talent: talentInfo?.id ?? '',
       questions: JSON.stringify(questions ?? []),
     });
     if (submissionRes) {
-      setSubID(submissionRes.data?.id ?? '');
       submissiononClose();
       submissionSucconOpen();
     }
@@ -136,12 +126,12 @@ const Bounties = () => {
       />
 
       <HStack
+        align={['center', 'center', 'start', 'start']}
+        justify={['center', 'center', 'space-between', 'space-between']}
+        flexDir={['column-reverse', 'column-reverse', 'row', 'row']}
+        gap={4}
         maxW={'7xl'}
         mx={'auto'}
-        align={['center', 'center', 'start', 'start']}
-        gap={4}
-        flexDir={['column-reverse', 'column-reverse', 'row', 'row']}
-        justify={['center', 'center', 'space-between', 'space-between']}
       >
         <VStack gap={8} w={['22rem', '22rem', 'full', 'full']} mt={10}>
           <DetailDescription
@@ -174,7 +164,7 @@ const Bounties = () => {
           prizeList={
             (listingInfo.data?.listing.prizeList as PrizeListType) ?? {}
           }
-          total={parseInt(listingInfo.data?.listing.amount as string)}
+          total={parseInt(listingInfo.data?.listing.amount as string, 10)}
         />
       </HStack>
     </>
@@ -185,7 +175,6 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
   const queryClient = new QueryClient();
   const { id } = context.query;
 
-  let isError = false;
   try {
     const res = await queryClient.fetchQuery(['bounties', id], () =>
       findBouties(id as string)
@@ -195,7 +184,6 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
       fetchComments(res?.listing.id as string)
     );
   } catch (error) {
-    isError;
     console.log(error);
   }
   return {

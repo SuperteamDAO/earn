@@ -9,12 +9,14 @@ import {
   Tooltip,
   VStack,
 } from '@chakra-ui/react';
-import { Dispatch, SetStateAction } from 'react';
+import type { Dispatch, SetStateAction } from 'react';
 import { useForm } from 'react-hook-form';
-import { MainSkills, MultiSelectOptions, SubSkills } from '../../../constants';
 import ReactSelect from 'react-select';
 import makeAnimated from 'react-select/animated';
-import { GrantsBasicType } from '../../../interface/listings';
+
+import type { MultiSelectOptions } from '../../../constants';
+import { MainSkills, SubSkills } from '../../../constants';
+import type { GrantsBasicType } from '../../../interface/listings';
 
 interface Props {
   grantBasic: GrantsBasicType | undefined;
@@ -22,7 +24,7 @@ interface Props {
   setSkills: Dispatch<SetStateAction<MultiSelectOptions[]>>;
   setSubSkills: Dispatch<SetStateAction<MultiSelectOptions[]>>;
   setGrantBasic: Dispatch<SetStateAction<GrantsBasicType | undefined>>;
-  createDraft: (payment: string) => void;
+  createDraft?: (payment: string) => void;
 }
 export const CreateGrantsBasic = ({
   setSkills,
@@ -30,59 +32,56 @@ export const CreateGrantsBasic = ({
   setSubSkills,
   setGrantBasic,
   grantBasic,
-  createDraft,
 }: Props) => {
   const {
     formState: { errors },
-    register,
-    handleSubmit,
   } = useForm();
   const animatedComponents = makeAnimated();
 
   return (
     <>
-      <VStack pb={10} color={'gray.500'} gap={3} align={'start'} w={'2xl'}>
+      <VStack align={'start'} gap={3} w={'2xl'} pb={10} color={'gray.500'}>
         <FormControl w="full" isRequired>
           <Flex>
             <FormLabel
               color={'gray.500'}
-              fontWeight={600}
               fontSize={'15px'}
+              fontWeight={600}
               htmlFor={'title'}
             >
               Opportunity Title
             </FormLabel>
             <Tooltip
-              placement="right-end"
-              fontSize="0.9rem"
-              padding="0.7rem"
-              bg="#6562FF"
+              w="max"
+              p="0.7rem"
               color="white"
+              fontSize="0.9rem"
               fontWeight={600}
+              bg="#6562FF"
               borderRadius="0.5rem"
               hasArrow
-              w="max"
               label={`Use a short title to describe the opportunity`}
+              placement="right-end"
             >
               <Image
                 mt={-2}
-                src={'/assets/icons/info-icon.svg'}
                 alt={'Info Icon'}
+                src={'/assets/icons/info-icon.svg'}
               />
             </Tooltip>
           </Flex>
 
           <Input
-            id="title"
-            placeholder="Develop a new landing page"
             color={'gray.700'}
-            value={grantBasic?.title}
+            id="title"
             onChange={(e) => {
               setGrantBasic({
                 ...(grantBasic as GrantsBasicType),
                 title: e.target.value,
               });
             }}
+            placeholder="Develop a new landing page"
+            value={grantBasic?.title}
           />
           <FormErrorMessage></FormErrorMessage>
         </FormControl>
@@ -91,42 +90,42 @@ export const CreateGrantsBasic = ({
           <Flex align={'center'} justify={'start'}>
             <FormLabel
               color={'gray.500'}
-              fontWeight={600}
               fontSize={'15px'}
+              fontWeight={600}
               htmlFor={'contact'}
             >
               Application Link
             </FormLabel>
             <Tooltip
-              placement="right-end"
-              fontSize="0.9rem"
-              padding="0.7rem"
-              bg="#6562FF"
+              w="max"
+              p="0.7rem"
               color="white"
+              fontSize="0.9rem"
               fontWeight={600}
+              bg="#6562FF"
               borderRadius="0.5rem"
               hasArrow
-              w="max"
               label={`Who will respond to questions about the opportunity from your team?`}
+              placement="right-end"
             >
               <Image
                 mt={-2}
-                src={'/assets/icons/info-icon.svg'}
                 alt={'Info Icon'}
+                src={'/assets/icons/info-icon.svg'}
               />
             </Tooltip>
           </Flex>
           <Input
-            id="link"
-            placeholder="link to application form"
-            value={grantBasic?.link}
             color={'gray.700'}
+            id="link"
             onChange={(e) => {
               setGrantBasic({
                 ...(grantBasic as GrantsBasicType),
                 link: e.target.value,
               });
             }}
+            placeholder="link to application form"
+            value={grantBasic?.link}
           />
           <FormErrorMessage>
             {errors.contact ? <>{errors.contact.message}</> : <></>}
@@ -136,42 +135,42 @@ export const CreateGrantsBasic = ({
           <Flex align={'center'} justify={'start'}>
             <FormLabel
               color={'gray.500'}
-              fontWeight={600}
               fontSize={'15px'}
+              fontWeight={600}
               htmlFor={'contact'}
             >
               Point of Contact
             </FormLabel>
             <Tooltip
-              placement="right-end"
-              fontSize="0.9rem"
-              padding="0.7rem"
-              bg="#6562FF"
+              w="max"
+              p="0.7rem"
               color="white"
+              fontSize="0.9rem"
               fontWeight={600}
+              bg="#6562FF"
               borderRadius="0.5rem"
               hasArrow
-              w="max"
               label={`Who will respond to questions about the opportunity from your team?`}
+              placement="right-end"
             >
               <Image
                 mt={-2}
-                src={'/assets/icons/info-icon.svg'}
                 alt={'Info Icon'}
+                src={'/assets/icons/info-icon.svg'}
               />
             </Tooltip>
           </Flex>
           <Input
-            id="handle"
-            placeholder="@telegram handle"
-            value={grantBasic?.contact}
             color={'gray.700'}
+            id="handle"
             onChange={(e) => {
               setGrantBasic({
                 ...(grantBasic as GrantsBasicType),
                 contact: e.target.value,
               });
             }}
+            placeholder="@telegram handle"
+            value={grantBasic?.contact}
           />
           <FormErrorMessage>
             {errors.contact ? <>{errors.contact.message}</> : <></>}
@@ -181,28 +180,28 @@ export const CreateGrantsBasic = ({
           <Flex align={'center'} justify={'start'}>
             <FormLabel
               color={'gray.500'}
-              fontWeight={600}
               fontSize={'15px'}
+              fontWeight={600}
               htmlFor={'skills'}
             >
               Skills Needed
             </FormLabel>
             <Tooltip
-              placement="right-end"
-              fontSize="0.9rem"
-              padding="0.7rem"
-              bg="#6562FF"
+              w="max"
+              p="0.7rem"
               color="white"
+              fontSize="0.9rem"
               fontWeight={600}
+              bg="#6562FF"
               borderRadius="0.5rem"
               hasArrow
-              w="max"
               label={`Select all that apply`}
+              placement="right-end"
             >
               <Image
                 mt={-2}
-                src={'/assets/icons/info-icon.svg'}
                 alt={'Info Icon'}
+                src={'/assets/icons/info-icon.svg'}
               />
             </Tooltip>
           </Flex>
@@ -220,28 +219,28 @@ export const CreateGrantsBasic = ({
           <Flex align={'center'} justify={'start'}>
             <FormLabel
               color={'gray.500'}
-              fontWeight={600}
               fontSize={'15px'}
+              fontWeight={600}
               htmlFor={'skills'}
             >
               Sub Skills Needed
             </FormLabel>
             <Tooltip
-              placement="right-end"
-              fontSize="0.9rem"
-              padding="0.7rem"
-              bg="#6562FF"
+              w="max"
+              p="0.7rem"
               color="white"
+              fontSize="0.9rem"
               fontWeight={600}
+              bg="#6562FF"
               borderRadius="0.5rem"
               hasArrow
-              w="max"
               label={`Select all that apply`}
+              placement="right-end"
             >
               <Image
                 mt={-2}
-                src={'/assets/icons/info-icon.svg'}
                 alt={'Info Icon'}
+                src={'/assets/icons/info-icon.svg'}
               />
             </Tooltip>
           </Flex>
@@ -258,11 +257,11 @@ export const CreateGrantsBasic = ({
         <VStack gap={6} w={'full'} mt={10}>
           <Button
             w="100%"
-            bg={'#6562FF'}
-            _hover={{ bg: '#6562FF' }}
             color={'white'}
             fontSize="1rem"
             fontWeight={600}
+            bg={'#6562FF'}
+            _hover={{ bg: '#6562FF' }}
             onClick={() => {
               setSteps(3);
             }}
@@ -271,12 +270,12 @@ export const CreateGrantsBasic = ({
           </Button>
           <Button
             w="100%"
+            color="gray.500"
             fontSize="1rem"
             fontWeight={600}
-            color="gray.500"
+            bg="transparent"
             border="1px solid"
             borderColor="gray.200"
-            bg="transparent"
           >
             Save as Drafts
           </Button>

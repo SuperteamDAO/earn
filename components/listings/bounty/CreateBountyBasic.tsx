@@ -10,14 +10,14 @@ import {
   Tooltip,
   VStack,
 } from '@chakra-ui/react';
-import ReactSelect from 'react-select';
-import makeAnimated from 'react-select/animated';
-import { Dispatch, SetStateAction, useState } from 'react';
-import { useForm } from 'react-hook-form';
-import { BountyBasicType } from './Createbounty';
-import { MainSkills, MultiSelectOptions, SubSkills } from '../../../constants';
-import { SkillSelect } from '../../misc/SkillSelect';
 import moment from 'moment';
+import type { Dispatch, SetStateAction } from 'react';
+import { useState } from 'react';
+
+import type { MultiSelectOptions } from '../../../constants';
+import { SkillSelect } from '../../misc/SkillSelect';
+import type { BountyBasicType } from './Createbounty';
+
 interface Props {
   bountyBasic: BountyBasicType | undefined;
   setbountyBasic: Dispatch<SetStateAction<BountyBasicType | undefined>>;
@@ -59,96 +59,96 @@ export const CreatebountyBasic = ({
 
   return (
     <>
-      <VStack gap={3} pt={7} align={'start'} w={'2xl'}>
-        <FormControl w="full" isRequired isInvalid={errorState.title}>
+      <VStack align={'start'} gap={3} w={'2xl'} pt={7}>
+        <FormControl w="full" isInvalid={errorState.title} isRequired>
           <Flex>
             <FormLabel
               color={'gray.500'}
-              fontWeight={600}
               fontSize={'15px'}
+              fontWeight={600}
               htmlFor={'title'}
             >
               Opportunity Title
             </FormLabel>
             <Tooltip
-              placement="right-end"
-              fontSize="0.9rem"
-              padding="0.7rem"
-              bg="#6562FF"
+              w="max"
+              p="0.7rem"
               color="white"
+              fontSize="0.9rem"
               fontWeight={600}
+              bg="#6562FF"
               borderRadius="0.5rem"
               hasArrow
-              w="max"
               label={`Use a short title to describe the opportunity`}
+              placement="right-end"
             >
               <Image
                 mt={-2}
-                src={'/assets/icons/info-icon.svg'}
                 alt={'Info Icon'}
+                src={'/assets/icons/info-icon.svg'}
               />
             </Tooltip>
           </Flex>
 
           <Input
             id="title"
-            placeholder="Develop a new landing page"
-            value={bountyBasic?.title}
             onChange={(e) => {
               setbountyBasic({
                 ...(bountyBasic as BountyBasicType),
                 title: e.target.value,
               });
             }}
+            placeholder="Develop a new landing page"
+            value={bountyBasic?.title}
           />
           <FormErrorMessage>
             {/* {errors.title ? <>{errors.title.message}</> : <></>} */}
           </FormErrorMessage>
         </FormControl>
         <FormControl
-          mb={5}
           w="full"
-          isRequired
+          mb={5}
           isInvalid={errorState.eligibility}
+          isRequired
         >
           <Flex>
             <FormLabel
               color={'gray.500'}
-              fontWeight={600}
               fontSize={'15px'}
+              fontWeight={600}
               htmlFor={'eligility'}
             >
               Listing Type
             </FormLabel>
             <Tooltip
-              placement="right-end"
-              fontSize="0.9rem"
-              padding="0.7rem"
-              bg="#6562FF"
+              w="max"
+              p="0.7rem"
               color="white"
+              fontSize="0.9rem"
               fontWeight={600}
+              bg="#6562FF"
               borderRadius="0.5rem"
               hasArrow
-              w="max"
               label={`Select the deadline date for accepting submissions`}
+              placement="right-end"
             >
               <Image
                 mt={-2}
-                src={'/assets/icons/info-icon.svg'}
                 alt={'Info Icon'}
+                src={'/assets/icons/info-icon.svg'}
               />
             </Tooltip>
           </Flex>
 
           <Select
-            placeholder="Choose the type of bounty"
-            value={bountyBasic?.eligibility}
             onChange={(e) => {
               setbountyBasic({
                 ...(bountyBasic as BountyBasicType),
                 eligibility: e.target.value,
               });
             }}
+            placeholder="Choose the type of bounty"
+            value={bountyBasic?.eligibility}
           >
             <option value="premission-less">
               Permissionless Bounty - anyone can apply
@@ -170,84 +170,70 @@ export const CreatebountyBasic = ({
           skills={skills}
           subSkills={subSkills}
         />
-        <FormControl isRequired isInvalid={errorState.deadline}>
+        <FormControl isInvalid={errorState.deadline} isRequired>
           <Flex align={'center'} justify={'start'}>
             <FormLabel
               color={'gray.500'}
-              fontWeight={600}
               fontSize={'15px'}
+              fontWeight={600}
               htmlFor={'deadline'}
             >
               Deadline
             </FormLabel>
             <Tooltip
-              placement="right-end"
-              fontSize="0.9rem"
-              padding="0.7rem"
-              bg="#6562FF"
+              w="max"
+              p="0.7rem"
               color="white"
+              fontSize="0.9rem"
               fontWeight={600}
+              bg="#6562FF"
               borderRadius="0.5rem"
               hasArrow
-              w="max"
               label={`Who will respond to questions about the opportunity from your team?`}
+              placement="right-end"
             >
               <Image
                 mt={-2}
-                src={'/assets/icons/info-icon.svg'}
                 alt={'Info Icon'}
+                src={'/assets/icons/info-icon.svg'}
               />
             </Tooltip>
           </Flex>
           <Input
             w={'full'}
-            id="deadline"
-            type={'datetime-local'}
-            min={date + 'T00:00'}
-            placeholder="deadline"
-            value={bountyBasic?.deadline}
             color={'gray.500'}
+            id="deadline"
+            min={`${date}T00:00`}
             onChange={(e) => {
-              console.log(e.target.value);
-
               setbountyBasic({
                 ...(bountyBasic as BountyBasicType),
                 deadline: e.target.value,
               });
             }}
+            placeholder="deadline"
+            type={'datetime-local'}
+            value={bountyBasic?.deadline}
           />
           <FormErrorMessage>
             {/* {errors.deadline ? <>{errors.deadline.message}</> : <></>} */}
           </FormErrorMessage>
         </FormControl>
-        <VStack w={'full'} gap={6} pt={10}>
+        <VStack gap={6} w={'full'} pt={10}>
           <Button
             w="100%"
-            bg={'#6562FF'}
-            _hover={{ bg: '#6562FF' }}
             color={'white'}
             fontSize="1rem"
             fontWeight={600}
+            bg={'#6562FF'}
+            _hover={{ bg: '#6562FF' }}
             onClick={() => {
               setErrorState({
-                deadline: bountyBasic?.deadline ? false : true,
-                eligibility: bountyBasic?.eligibility ? false : true,
-                skills: skills.length !== 0 ? false : true,
-                subSkills: subSkills.length !== 0 ? false : true,
-                title: bountyBasic?.title ? false : true,
+                deadline: !bountyBasic?.deadline,
+                eligibility: !bountyBasic?.eligibility,
+                skills: skills.length === 0,
+                subSkills: subSkills.length === 0,
+                title: !bountyBasic?.title,
               });
-              console.log(
-                !bountyBasic?.deadline,
-                !bountyBasic?.eligibility,
-                !bountyBasic?.title,
-                skills.length === 0,
-                subSkills.length === 0,
-                !bountyBasic?.deadline &&
-                  !bountyBasic?.eligibility &&
-                  !bountyBasic?.title &&
-                  skills.length === 0 &&
-                  subSkills.length === 0
-              );
 
               if (
                 bountyBasic?.deadline &&
@@ -264,12 +250,12 @@ export const CreatebountyBasic = ({
           </Button>
           <Button
             w="100%"
+            color="gray.500"
             fontSize="1rem"
             fontWeight={600}
-            color="gray.500"
+            bg="transparent"
             border="1px solid"
             borderColor="gray.200"
-            bg="transparent"
             isLoading={draftLoading}
             onClick={() => {
               createDraft('nothing');

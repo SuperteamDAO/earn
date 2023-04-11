@@ -1,7 +1,8 @@
-import { Box, Button, Flex, Image, Text, VStack } from '@chakra-ui/react';
+import { Box, Button, Flex, Image, Text } from '@chakra-ui/react';
 import { useWallet } from '@solana/wallet-adapter-react';
 import { useRouter } from 'next/router';
 import React from 'react';
+
 import { Navbar } from '../../components/navbar/navbar';
 import { ConnectWallet } from '../../layouts/connectWallet';
 
@@ -16,61 +17,61 @@ const Index = () => {
         <>
           <Navbar />
           <Box
-            position={'relative'}
-            display={'flex'}
+            pos={'relative'}
             justifyContent={'center'}
-            fontFamily="Inter"
+            display={'flex'}
             h={'100vh'}
+            fontFamily="Inter"
           >
             <Box
-              position={'absolute'}
-              bgImage={`url(/assets/bg/newbanner.svg)`}
-              w={'full'}
+              pos={'absolute'}
               top={10}
+              w={'full'}
               h={'20rem'}
+              bgImage={`url(/assets/bg/newbanner.svg)`}
             ></Box>
             <Flex
-              position={'relative'}
+              pos={'relative'}
               align={'center'}
               justify={'center'}
+              direction={{ base: 'column', lg: 'row' }}
               gap={{ base: '3rem', lg: '6rem' }}
-              flexDir={{ base: 'column', lg: 'row' }}
             >
               <Flex
+                direction={'column'}
+                w={'24rem'}
+                h={'30rem'}
                 bg={'white'}
                 borderRadius={'7px'}
-                boxShadow={'0px 4px 11px rgba(0, 0, 0, 0.08)'}
-                h={'30rem'}
-                w={'24rem'}
-                flexDir={'column'}
+                shadow={'0px 4px 11px rgba(0, 0, 0, 0.08)'}
               >
                 <Box
-                  h={'15rem'}
-                  w={'full'}
-                  display={'flex'}
-                  justifyContent={'center'}
                   alignItems={'center'}
+                  justifyContent={'center'}
+                  display={'flex'}
+                  w={'full'}
+                  h={'15rem'}
                   bg={'rgba(101, 98, 255, 0.12)'}
                 >
                   <Image
-                    src={'/assets/icons/suitcase.svg'}
                     alt={'suitcase icon'}
+                    src={'/assets/icons/suitcase.svg'}
                   />
                 </Box>
                 <Box p={4}>
-                  <Text fontSize={'1rem'} color={'black'} fontWeight={600}>
+                  <Text color={'black'} fontSize={'1rem'} fontWeight={600}>
                     Looking for Talent?
                   </Text>
                   <Text color={'gray.400'} fontSize={'0.9rem'} fontWeight={400}>
                     List a bounty, job, or grant for your Solana project and
                     find your next contributor..
                   </Text>
-                  <Box display={'flex'} my={6} flexDir={'column'} gap={5}>
-                    <Flex gap={2} alignItems={'center'}>
+                  <Box flexDir={'column'} gap={5} display={'flex'} my={6}>
+                    <Flex align={'center'} gap={2}>
                       <Image
-                        width={4}
-                        src={'/assets/icons/purple-tick.svg'}
+                        w={4}
                         alt={'tick'}
+                        src={'/assets/icons/purple-tick.svg'}
                       />
                       <Text
                         color={'gray.400'}
@@ -80,12 +81,12 @@ const Index = () => {
                         Get in front of 1,000+ weekly visitors
                       </Text>
                     </Flex>
-                    <Flex gap={2} alignItems={'center'} justify={'start'}>
+                    <Flex align={'center'} justify={'start'} gap={2}>
                       <Box w={5}>
                         <Image
-                          width={4}
-                          src={'/assets/icons/purple-tick.svg'}
+                          w={4}
                           alt={'tick'}
+                          src={'/assets/icons/purple-tick.svg'}
                         />
                       </Box>
                       <Text
@@ -96,11 +97,11 @@ const Index = () => {
                         Instant listing creation through templates
                       </Text>
                     </Flex>
-                    <Flex gap={2} alignItems={'center'}>
+                    <Flex align={'center'} gap={2}>
                       <Image
-                        width={4}
-                        src={'/assets/icons/purple-tick.svg'}
+                        w={4}
                         alt={'tick'}
+                        src={'/assets/icons/purple-tick.svg'}
                       />
                       <Text
                         color={'gray.400'}
@@ -112,12 +113,12 @@ const Index = () => {
                     </Flex>
                   </Box>
                   <Button
-                    fontSize={'0.9rem'}
                     w={'full'}
                     h={12}
                     color={'white'}
-                    _hover={{ bg: '#6562FF' }}
+                    fontSize={'0.9rem'}
                     bg={'#6562FF'}
+                    _hover={{ bg: '#6562FF' }}
                     onClick={() => {
                       router.push('/listings/create');
                     }}
@@ -128,39 +129,39 @@ const Index = () => {
               </Flex>
 
               <Flex
+                direction={'column'}
+                w={'24rem'}
+                h={'30rem'}
                 bg={'white'}
                 borderRadius={'7px'}
-                boxShadow={'0px 4px 11px rgba(0, 0, 0, 0.08)'}
-                flexDirection={'column'}
-                h={'30rem'}
-                w={'24rem'}
+                shadow={'0px 4px 11px rgba(0, 0, 0, 0.08)'}
               >
                 <Box
-                  h={'15rem'}
-                  w={'full'}
-                  display={'flex'}
-                  justifyContent={'center'}
                   alignItems={'center'}
+                  justifyContent={'center'}
+                  display={'flex'}
+                  w={'full'}
+                  h={'15rem'}
                   bg={
                     'radial-gradient(50% 50% at 50% 50%, rgba(101, 98, 255, 0.12) 0%, rgba(98, 255, 246, 0.12) 100%)'
                   }
                 >
-                  <Image src={'/assets/icons/userIcon.svg'} alt={'user icon'} />
+                  <Image alt={'user icon'} src={'/assets/icons/userIcon.svg'} />
                 </Box>
                 <Box p={4}>
-                  <Text fontSize={'1rem'} color={'black'} fontWeight={600}>
+                  <Text color={'black'} fontSize={'1rem'} fontWeight={600}>
                     Looking to Earn?
                   </Text>
                   <Text color={'gray.400'} fontSize={'0.9rem'} fontWeight={400}>
                     Create a profile to get notified when new earning
                     opportunities get posted.
                   </Text>
-                  <Box display={'flex'} my={8} flexDir={'column'} gap={5}>
-                    <Flex gap={2} alignItems={'center'}>
+                  <Box flexDir={'column'} gap={5} display={'flex'} my={8}>
+                    <Flex align={'center'} gap={2}>
                       <Image
-                        width={4}
-                        src={'/assets/icons/purple-tick.svg'}
+                        w={4}
                         alt={'tick'}
+                        src={'/assets/icons/purple-tick.svg'}
                       />
                       <Text
                         color={'gray.400'}
@@ -170,11 +171,11 @@ const Index = () => {
                         Start contributing to top Solana projects
                       </Text>
                     </Flex>
-                    <Flex gap={2} alignItems={'center'}>
+                    <Flex align={'center'} gap={2}>
                       <Image
-                        width={4}
-                        src={'/assets/icons/purple-tick.svg'}
+                        w={4}
                         alt={'tick'}
+                        src={'/assets/icons/purple-tick.svg'}
                       />
                       <Text
                         color={'gray.400'}
@@ -184,11 +185,11 @@ const Index = () => {
                         Build your on-chain resume
                       </Text>
                     </Flex>
-                    <Flex gap={2} alignItems={'center'}>
+                    <Flex align={'center'} gap={2}>
                       <Image
-                        width={4}
-                        src={'/assets/icons/purple-tick.svg'}
+                        w={4}
                         alt={'tick'}
+                        src={'/assets/icons/purple-tick.svg'}
                       />
                       <Text
                         color={'gray.400'}
@@ -200,15 +201,15 @@ const Index = () => {
                     </Flex>
                   </Box>
                   <Button
+                    w={'full'}
+                    h={12}
+                    color={'white'}
+                    fontSize={'0.9rem'}
+                    bg={'#6562FF'}
+                    _hover={{ bg: '#6562FF' }}
                     onClick={() => {
                       router.push('/new/talent');
                     }}
-                    w={'full'}
-                    fontSize={'0.9rem'}
-                    h={12}
-                    color={'white'}
-                    _hover={{ bg: '#6562FF' }}
-                    bg={'#6562FF'}
                   >
                     Get to work
                   </Button>

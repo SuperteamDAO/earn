@@ -1,8 +1,11 @@
+/* eslint-disable @typescript-eslint/naming-convention */
+import type { Program } from '@project-serum/anchor';
 import * as anchor from '@project-serum/anchor';
-import { Program } from '@project-serum/anchor';
-import NodeWallet from '@project-serum/anchor/dist/cjs/nodewallet';
-import { Contract, ContractType } from './program';
+import type NodeWallet from '@project-serum/anchor/dist/cjs/nodewallet';
 import * as spl from '@solana/spl-token';
+
+import type { ContractType } from './program';
+import { Contract } from './program';
 
 const PROGRAM_ID = '9X22YWBVvXwiAB2GNDxWU2EmDsUrsXwmkG1e4zJUt7We';
 const RPC_URL = 'https://api.devnet.solana.com';
@@ -41,7 +44,7 @@ export const createPayment = async (
   count: number
 ) => {
   const program = anchorProgram(anchorWallet);
-  let [payout_account, bump] = await anchor.web3.PublicKey.findProgramAddress(
+  const [payout_account] = await anchor.web3.PublicKey.findProgramAddress(
     [
       anchor.utils.bytes.utf8.encode('payout'),
       anchor.utils.bytes.utf8.encode(JSON.stringify(count)),
@@ -64,7 +67,7 @@ export const createPayment = async (
     spl.TOKEN_PROGRAM_ID,
     spl.ASSOCIATED_TOKEN_PROGRAM_ID
   );
-  let ix = await program.methods
+  const ix = await program.methods
     .payout(JSON.stringify(count), receiver, new anchor.BN(amount))
     .accounts({
       authority: anchorWallet.publicKey,

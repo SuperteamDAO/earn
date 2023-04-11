@@ -1,20 +1,19 @@
 import { Flex, FormControl, FormLabel, Image, Tooltip } from '@chakra-ui/react';
-import React, { Dispatch, SetStateAction, useState } from 'react';
+import type { Dispatch, SetStateAction } from 'react';
+import React, { useState } from 'react';
 import ReactSelect from 'react-select';
 import makeAnimated from 'react-select/animated';
-import {
-  MainSkills,
-  MultiSelectOptions,
-  skillSubSkillMap,
-} from '../../constants';
+
+import type { MultiSelectOptions } from '../../constants';
+import { MainSkills, skillSubSkillMap } from '../../constants';
 
 interface Props {
   skills: MultiSelectOptions[];
   subSkills: MultiSelectOptions[];
   setSkills: Dispatch<SetStateAction<MultiSelectOptions[]>>;
   setSubSkills: Dispatch<SetStateAction<MultiSelectOptions[]>>;
-  skillLabe?: string,
-  subSkillsLabel?: string,
+  skillLabe?: string;
+  subSkillsLabel?: string;
   errorSkill?: boolean;
   errorSubSkill?: boolean;
 }
@@ -31,9 +30,9 @@ export const SkillSelect = ({
     []
   );
   const handleChange = (e: MultiSelectOptions[]) => {
-    let sub: MultiSelectOptions[] = [];
-    e.map((op) => {
-      //@ts-ignore
+    const sub: MultiSelectOptions[] = [];
+    e.forEach((op) => {
+      // @ts-ignore
       sub.push(...(skillSubSkillMap[op.value as any] as any));
     });
     setSubSkillOptions(sub);
@@ -42,34 +41,31 @@ export const SkillSelect = ({
     <>
       <FormControl my={6} isRequired>
         <Flex align={'center'} justify={'start'}>
-          <FormLabel
-            color={'gray.400'}
-            htmlFor={'skills'}
-          >
+          <FormLabel color={'gray.400'} htmlFor={'skills'}>
             Skills
           </FormLabel>
           <Tooltip
-            placement="right-end"
-            fontSize="0.9rem"
-            padding="0.7rem"
-            bg="#6562FF"
+            w="max"
+            p="0.7rem"
             color="white"
+            fontSize="0.9rem"
             fontWeight={600}
+            bg="#6562FF"
             borderRadius="0.5rem"
             hasArrow
-            w="max"
             label={`Select all that apply`}
+            placement="right-end"
           >
             <Image
               mt={-2}
-              src={'/assets/icons/info-icon.svg'}
               alt={'Info Icon'}
+              src={'/assets/icons/info-icon.svg'}
             />
           </Tooltip>
         </Flex>
         <ReactSelect
           styles={{
-            control: (baseStyles, state) => ({
+            control: (baseStyles) => ({
               ...baseStyles,
               border: errorSkill ? '2px solid red' : baseStyles.border,
             }),
@@ -89,34 +85,31 @@ export const SkillSelect = ({
       </FormControl>
       <FormControl my={6}>
         <Flex align={'center'} justify={'start'}>
-          <FormLabel
-            color={'gray.400'}
-            htmlFor={'skills'}
-          >
+          <FormLabel color={'gray.400'} htmlFor={'skills'}>
             Sub Skills
           </FormLabel>
           <Tooltip
-            placement="right-end"
-            fontSize="0.9rem"
-            padding="0.7rem"
-            bg="#6562FF"
+            w="max"
+            p="0.7rem"
             color="white"
+            fontSize="0.9rem"
             fontWeight={600}
+            bg="#6562FF"
             borderRadius="0.5rem"
             hasArrow
-            w="max"
             label={`Select all that apply`}
+            placement="right-end"
           >
             <Image
               mt={-2}
-              src={'/assets/icons/info-icon.svg'}
               alt={'Info Icon'}
+              src={'/assets/icons/info-icon.svg'}
             />
           </Tooltip>
         </Flex>
         <ReactSelect
           styles={{
-            control: (baseStyles, state) => ({
+            control: (baseStyles) => ({
               ...baseStyles,
               border: errorSubSkill ? '2px solid red' : baseStyles.border,
             }),

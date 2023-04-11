@@ -1,10 +1,12 @@
-import axios from 'axios';
-import { v4 as uuidV4 } from 'uuid';
-import { SponsorStore } from '../store/sponsor';
+/* eslint-disable no-nested-ternary */
 import { Redis } from '@upstash/redis';
-//types
-import { SponsorType } from '../interface/sponsor';
-import {
+import axios from 'axios';
+import moment from 'moment';
+import toast from 'react-hot-toast';
+import { v4 as uuidV4 } from 'uuid';
+
+import type { Comments } from '../interface/comments';
+import type {
   Bounties,
   DraftType,
   GrantsType,
@@ -12,13 +14,13 @@ import {
   SubmissionType,
   SubscribeType,
 } from '../interface/listings';
-import toast from 'react-hot-toast';
-import { Comments } from '../interface/comments';
+// types
+import type { SponsorType } from '../interface/sponsor';
+import type { Talent } from '../interface/talent';
+import { SponsorStore } from '../store/sponsor';
 import { client } from './algolia';
-import { Talent } from '../interface/talent';
-import moment from 'moment';
 
-const Backend_Url = process.env.NEXT_PUBLIC_BACKEND_URL;
+const BACKEND_URL = process.env.NEXT_PUBLIC_BACKEND_URL;
 
 export const redis = new Redis({
   url: process.env.NEXT_PUBLIC_REDIS_URL,
@@ -28,8 +30,8 @@ export const redis = new Redis({
 export const createUser = async (publickey: string) => {
   const id = uuidV4();
   try {
-    const res = await axios.post(`${Backend_Url}/user/create`, {
-      id: id,
+    const res = await axios.post(`${BACKEND_URL}/user/create`, {
+      id,
       publickey,
     });
     return res.data;
@@ -40,8 +42,8 @@ export const createUser = async (publickey: string) => {
 };
 export const UpdateUser = async (id: string, update: any) => {
   try {
-    const res = await axios.patch(`${Backend_Url}/user/update`, {
-      id: id,
+    const res = await axios.patch(`${BACKEND_URL}/user/update`, {
+      id,
       update,
     });
     return res;
@@ -50,9 +52,10 @@ export const UpdateUser = async (id: string, update: any) => {
     return null;
   }
 };
-export const genrateOtp = async (publicKey: string, email: string) => {
+
+export const generateOtp = async (publicKey: string, email: string) => {
   try {
-    const res = await axios.post(`${Backend_Url}/email/totp`, {
+    const res = await axios.post(`${BACKEND_URL}/email/totp`, {
       publicKey,
       email,
     });
@@ -65,7 +68,7 @@ export const genrateOtp = async (publicKey: string, email: string) => {
 // Sponsors
 export const createSponsor = async (sponsor: SponsorType) => {
   try {
-    const res = await axios.post(`${Backend_Url}/sponsor/create`, {
+    const res = await axios.post(`${BACKEND_URL}/sponsor/create`, {
       ...sponsor,
     });
     return res.data;
@@ -79,7 +82,7 @@ export const findSponsors = async (publicKey: string) => {
   if (!publicKey) return null;
   try {
     const { data } = await axios.get(
-      `${Backend_Url}/sponsor/find?publickey=${publicKey}`
+      `${BACKEND_URL}/sponsor/find?publickey=${publicKey}`
     );
     SponsorStore.setState({
       currentSponsor: data.data[0],
@@ -92,7 +95,7 @@ export const findSponsors = async (publicKey: string) => {
 };
 export const DeleteSponsor = async (id: string) => {
   try {
-    const { data } = await axios.delete(`${Backend_Url}/sponsor/delete/${id}`);
+    const { data } = await axios.delete(`${BACKEND_URL}/sponsor/delete/${id}`);
     return data;
   } catch (e) {
     console.log(e);
@@ -105,7 +108,7 @@ export const findSponsorListing = async (orgId: string) => {
   if (!orgId) {
     throw new Error('orgId undefined!');
   }
-  let res = await axios.get(`${Backend_Url}/listings/find?orgId=${orgId}`);
+  const res = await axios.get(`${BACKEND_URL}/listings/find?orgId=${orgId}`);
   return res.data.data;
 };
 
@@ -114,12 +117,12 @@ export const findSponsorDrafts = async (orgId: string) => {
   if (!orgId) {
     throw new Error('orgId undefined!');
   }
-  let res = await axios.get(`${Backend_Url}/drafts/findall?orgId=${orgId}`);
+  const res = await axios.get(`${BACKEND_URL}/drafts/findall?orgId=${orgId}`);
   return res.data.data;
 };
 export const CreateDraft = async (draft: DraftType) => {
   try {
-    const { data } = await axios.post(`${Backend_Url}/drafts/create`, {
+    const { data } = await axios.post(`${BACKEND_URL}/drafts/create`, {
       ...draft,
     });
     return data.data;
@@ -129,20 +132,20 @@ export const CreateDraft = async (draft: DraftType) => {
 };
 export const findOneDraft = async (id: string) => {
   const { data, status } = await axios.get(
-    `${Backend_Url}/drafts/find?id=${id}`
+    `${BACKEND_URL}/drafts/find?id=${id}`
   );
-  if (status == 200) {
+  if (status === 200) {
     return data;
-  } else if (status === 204) {
-    return toast.error('draft not found');
-  } else {
-    return null;
   }
+  if (status === 204) {
+    return toast.error('draft not found');
+  }
+  return null;
 };
 export const findTeam = async (id: string) => {
   if (!id) return null;
   try {
-    const { data } = await axios.get(`${Backend_Url}/sponsor/team?id=${id}`);
+    const { data } = await axios.get(`${BACKEND_URL}/sponsor/team?id=${id}`);
 
     return data.data ?? [];
   } catch (error) {
@@ -157,7 +160,7 @@ export const createBounty = async (
   sponsor: SponsorType
 ) => {
   try {
-    const { data } = await axios.post(`${Backend_Url}/listings/bounty/create`, {
+    const { data } = await axios.post(`${BACKEND_URL}/listings/bounty/create`, {
       id: bounties.id,
       title: bounties.title,
       token: bounties.token,
@@ -190,7 +193,7 @@ type FindBoutiesReturn = {
 export const findBouties = async (slug: string): Promise<FindBoutiesReturn> => {
   if (!slug) return null;
   const { data, status } = await axios.get(
-    `${Backend_Url}/listings/bounty/find/${slug}`
+    `${BACKEND_URL}/listings/bounty/find/${slug}`
   );
   if (status === 204) {
     return null;
@@ -201,7 +204,7 @@ export const findBouties = async (slug: string): Promise<FindBoutiesReturn> => {
 
 export const createJob = async (jobs: JobsType) => {
   try {
-    const res = await axios.post(`${Backend_Url}/listings/job/create`, {
+    const res = await axios.post(`${BACKEND_URL}/listings/job/create`, {
       ...jobs,
     });
     return res;
@@ -213,7 +216,7 @@ export const createJob = async (jobs: JobsType) => {
 };
 export const createGrants = async (grants: GrantsType) => {
   try {
-    const res = await axios.post(`${Backend_Url}/listings/grants/create`, {
+    const res = await axios.post(`${BACKEND_URL}/listings/grants/create`, {
       ...grants,
     });
     return res;
@@ -225,7 +228,7 @@ export const createGrants = async (grants: GrantsType) => {
 };
 
 export const createComment = async (comment: Comments) => {
-  const { data, status } = await axios.post(`${Backend_Url}/comment/create`, {
+  const { data, status } = await axios.post(`${BACKEND_URL}/comment/create`, {
     ...comment,
   });
 
@@ -237,7 +240,7 @@ export const createComment = async (comment: Comments) => {
 
 export const findTalentPubkey = async (pubkey: string) => {
   const { data, status } = await axios.get(
-    `${Backend_Url}/talent/find/publickey/${pubkey}`
+    `${BACKEND_URL}/talent/find/publickey/${pubkey}`
   );
 
   if (status !== 200) {
@@ -248,19 +251,16 @@ export const findTalentPubkey = async (pubkey: string) => {
 
 export const fetchComments = async (id: string) => {
   if (!id) return null;
-  const { data } = await axios.get(`${Backend_Url}/comment/find/${id}`);
+  const { data } = await axios.get(`${BACKEND_URL}/comment/find/${id}`);
 
   return data.data ?? [];
 };
 
 export const createSubmission = async (sub: SubmissionType) => {
   try {
-    const { data, status } = await axios.post(
-      `${Backend_Url}/submission/create`,
-      {
-        ...sub,
-      }
-    );
+    const { data } = await axios.post(`${BACKEND_URL}/submission/create`, {
+      ...sub,
+    });
     return data;
   } catch (error) {
     console.log(error);
@@ -270,8 +270,8 @@ export const createSubmission = async (sub: SubmissionType) => {
 
 export const fetchOgImage = async (url: string) => {
   try {
-    const res = await axios.post(`${Backend_Url}/submission/ogimage`, {
-      url: url,
+    const res = await axios.post(`${BACKEND_URL}/submission/ogimage`, {
+      url,
     });
     return res.data;
   } catch (error) {
@@ -280,7 +280,7 @@ export const fetchOgImage = async (url: string) => {
 };
 export const addLike = async (id: string, likeId: string) => {
   try {
-    const res = await axios.post(`${Backend_Url}/submission/create/like`, {
+    const res = await axios.post(`${BACKEND_URL}/submission/create/like`, {
       id,
       likeId,
     });
@@ -293,7 +293,7 @@ export const addLike = async (id: string, likeId: string) => {
 export const findSubmission = async (id: string) => {
   try {
     const { status, data } = await axios.get(
-      `${Backend_Url}/submission/find/${id}`
+      `${BACKEND_URL}/submission/find/${id}`
     );
 
     if (status !== 200) {
@@ -316,7 +316,7 @@ export const findJobs = async (slug: string): Promise<FindJobsReturn> => {
   if (!slug) return null;
   try {
     const { data, status } = await axios.get(
-      `${Backend_Url}/listings/jobs/find/${slug}`
+      `${BACKEND_URL}/listings/jobs/find/${slug}`
     );
     if (status !== 200) {
       return null;
@@ -335,7 +335,7 @@ export const findGrants = async (slug: string): Promise<FindGrantsReturn> => {
   if (!slug) return null;
   try {
     const { data, status } = await axios.get(
-      `${Backend_Url}/listings/grants/find/${slug}`
+      `${BACKEND_URL}/listings/grants/find/${slug}`
     );
     if (status !== 200) {
       return null;
@@ -349,7 +349,7 @@ export const findGrants = async (slug: string): Promise<FindGrantsReturn> => {
 export const createSubscription = async (sub: SubscribeType) => {
   try {
     const { data, status } = await axios.post(
-      `${Backend_Url}/listings/sub/create`,
+      `${BACKEND_URL}/listings/sub/create`,
       {
         ...sub,
       }
@@ -367,7 +367,7 @@ export const createSubscription = async (sub: SubscribeType) => {
 export const removeSubscription = async (id: string) => {
   try {
     const { data, status } = await axios.delete(
-      `${Backend_Url}/listings/sub/delete/${id}`
+      `${BACKEND_URL}/listings/sub/delete/${id}`
     );
     if (status !== 200) {
       return null;
@@ -386,7 +386,7 @@ export const createQuestions = async (questions: {
 }) => {
   try {
     const { data, status } = await axios.post(
-      `${Backend_Url}/listings/question/create`,
+      `${BACKEND_URL}/listings/question/create`,
       {
         ...questions,
       }
@@ -432,7 +432,7 @@ export const fetchAll = async (
         {}
       );
 
-      hits.map((hit: any) => {
+      hits.forEach((hit: any) => {
         if (hit.jobs as any) {
           console.log(hit.jobs.description);
 
@@ -457,20 +457,19 @@ export const fetchAll = async (
       bounties.map((a) => {
         if (a.bounty.active) {
           return active.push(a);
-        } else {
-          return inActive.push(a);
         }
+        return inActive.push(a);
       });
       active.sort((a, b) => {
         return (
-          parseInt(moment(a.bounty.deadline).format('x')) -
-          parseInt(moment(b.bounty.deadline).format('x'))
+          parseInt(moment(a.bounty.deadline).format('x'), 10) -
+          parseInt(moment(b.bounty.deadline).format('x'), 10)
         );
       });
       return {
         bounty: search ? [...active, ...inActive] : [...active],
-        grants: grants,
-        jobs: jobs,
+        grants,
+        jobs,
       };
     }
     const bountyPromise: Promise<
@@ -499,14 +498,13 @@ export const fetchAll = async (
 
       if (a.bounty.active) {
         return active.push(a);
-      } else {
-        return inActive.push(a);
       }
+      return inActive.push(a);
     });
     active.sort((a, b) => {
       return (
-        parseInt(moment(a.bounty.deadline).format('x')) -
-        parseInt(moment(b.bounty.deadline).format('x'))
+        parseInt(moment(a.bounty.deadline).format('x'), 10) -
+        parseInt(moment(b.bounty.deadline).format('x'), 10)
       );
     });
     return {
@@ -534,7 +532,7 @@ export const AllGrants = async (): Promise<
   | null
 > => {
   try {
-    const { data } = await axios.get(`${Backend_Url}/listings/grants/find/all`);
+    const { data } = await axios.get(`${BACKEND_URL}/listings/grants/find/all`);
     console.log(data);
 
     return data.data;
@@ -550,7 +548,7 @@ export const updateNotification = async (
 ) => {
   try {
     const { data, status } = await axios.post(
-      `${Backend_Url}/talent/notification/update/${id}`,
+      `${BACKEND_URL}/talent/notification/update/${id}`,
       {
         notification,
       }
@@ -584,7 +582,7 @@ export const fetchBasicInfo = async (): Promise<{
 
 export const TalentTVE = async (): Promise<Talent[] | null> => {
   try {
-    const { data } = await axios.get(`${Backend_Url}/talent/find/tve`);
+    const { data } = await axios.get(`${BACKEND_URL}/talent/find/tve`);
     return data.data;
   } catch (error) {
     console.log(error);

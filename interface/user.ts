@@ -1,4 +1,4 @@
-import { SponsorType } from './sponsor';
+import type { SponsorType } from './sponsor';
 
 interface User {
   id: string;

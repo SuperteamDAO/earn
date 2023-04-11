@@ -10,18 +10,17 @@ import {
   VStack,
 } from '@chakra-ui/react';
 import axios from 'axios';
-import { Dispatch, SetStateAction, useState } from 'react';
+import type { Dispatch, SetStateAction } from 'react';
+import { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import toast, { Toaster } from 'react-hot-toast';
 import ReactSelect from 'react-select';
 import makeAnimated from 'react-select/animated';
-import {
-  ExperienceList,
-  MultiSelectOptions,
-  TimeZoneList,
-} from '../../../constants';
-import { JobBasicsType, JobsType } from '../../../interface/listings';
-import { JobType } from '../../../interface/types';
+
+import type { MultiSelectOptions } from '../../../constants';
+import { ExperienceList, TimeZoneList } from '../../../constants';
+import type { JobBasicsType, JobsType } from '../../../interface/listings';
+import type { JobType } from '../../../interface/types';
 import { SponsorStore } from '../../../store/sponsor';
 import { createJob } from '../../../utils/functions';
 import { genrateuuid } from '../../../utils/helpers';
@@ -63,7 +62,6 @@ export const CreateJobPayments = ({
   const {
     formState: { errors },
     register,
-    handleSubmit,
   } = useForm();
   const { currentSponsor } = SponsorStore();
   const [location, setLocation] = useState<string>('');
@@ -105,7 +103,7 @@ export const CreateJobPayments = ({
     if (res && res.data.code === 201) {
       await axios.post('/api/updateSearch');
       onOpen();
-      setSlug(('/jobs/' + jobBasics?.title.split(' ').join('-')) as string);
+      setSlug(`/jobs/${jobBasics?.title.split(' ').join('-')}` as string);
       setLoading(false);
     } else {
       setLoading(false);
@@ -114,30 +112,30 @@ export const CreateJobPayments = ({
   return (
     <>
       <VStack
+        align={'start'}
+        gap={2}
+        w={'2xl'}
+        pt={7}
         pb={10}
         color={'gray.700'}
-        gap={2}
-        pt={7}
-        align={'start'}
-        w={'2xl'}
       >
         <FormControl isRequired>
           <FormLabel
             color={'gray.500'}
-            fontWeight={600}
             fontSize={'15px'}
+            fontWeight={600}
             htmlFor={'exp'}
           >
             Location Type
           </FormLabel>
 
           <Select
-            id="exp"
-            placeholder="Location"
             color={'gray.700'}
+            id="exp"
             onChange={(e) => {
               setLocation(e.target.value);
             }}
+            placeholder="Location"
           >
             {['Remote', 'In Person'].map((el) => {
               return (
@@ -155,8 +153,8 @@ export const CreateJobPayments = ({
           <FormControl mt={5} isRequired>
             <FormLabel
               color={'gray.500'}
-              fontWeight={600}
               fontSize={'15px'}
+              fontWeight={600}
               htmlFor={'exp'}
             >
               Time Zone
@@ -167,7 +165,7 @@ export const CreateJobPayments = ({
               components={animatedComponents}
               isMulti
               styles={{
-                control: (baseStyles, state) => ({
+                control: (baseStyles) => ({
                   ...baseStyles,
                   color: 'gray.600',
                 }),
@@ -180,12 +178,12 @@ export const CreateJobPayments = ({
           </FormControl>
         )}
         {location === 'In Person' && (
-          <FormControl w="full" isRequired isInvalid={errorState?.min_sal}>
+          <FormControl w="full" isInvalid={errorState?.min_sal} isRequired>
             <Flex>
               <FormLabel
                 color={'gray.500'}
-                fontWeight={600}
                 fontSize={'15px'}
+                fontWeight={600}
                 htmlFor={'location'}
               >
                 Location
@@ -194,20 +192,20 @@ export const CreateJobPayments = ({
 
             <Input
               color={'gray.700'}
-              placeholder="City, Country"
               onChange={(e) => {
                 setIrlSpace(e.target.value);
               }}
+              placeholder="City, Country"
             />
             <FormErrorMessage></FormErrorMessage>
           </FormControl>
         )}
 
-        <FormControl my={5} isRequired isInvalid={errorState?.exp}>
+        <FormControl my={5} isInvalid={errorState?.exp} isRequired>
           <FormLabel
             color={'gray.500'}
-            fontWeight={600}
             fontSize={'15px'}
+            fontWeight={600}
             htmlFor={'exp'}
           >
             Experience
@@ -217,14 +215,14 @@ export const CreateJobPayments = ({
             id="exp"
             placeholder="Estimated Time to complete"
             {...register('exp')}
+            color={'gray.700'}
+            defaultValue={ExperienceList[0]}
             onChange={(e) => {
               setPayment({
                 ...(payment as PaymentsState),
                 exp: e.target.value,
               });
             }}
-            defaultValue={ExperienceList[0]}
-            color={'gray.700'}
           >
             {ExperienceList.map((el) => {
               return (
@@ -239,12 +237,12 @@ export const CreateJobPayments = ({
           </FormErrorMessage>
         </FormControl>
         <HStack w={'full'} my={6}>
-          <FormControl w="full" isRequired isInvalid={errorState?.min_sal}>
+          <FormControl w="full" isInvalid={errorState?.min_sal} isRequired>
             <Flex>
               <FormLabel
                 color={'gray.500'}
-                fontWeight={600}
                 fontSize={'15px'}
+                fontWeight={600}
                 htmlFor={'min_sal'}
               >
                 Minimum Salary (USD)
@@ -252,27 +250,27 @@ export const CreateJobPayments = ({
             </Flex>
 
             <Input
-              id="min_sal"
-              type={'number'}
               color={'gray.700'}
-              placeholder="100,000"
+              id="min_sal"
               onChange={(e) => {
                 setPayment({
                   ...(payment as PaymentsState),
                   min_sal: e.target.value,
                 });
               }}
+              placeholder="100,000"
+              type={'number'}
             />
             <FormErrorMessage>
               {errors.min_sal ? <>{errors.min_sal.message}</> : <></>}
             </FormErrorMessage>
           </FormControl>
-          <FormControl w="full" isRequired isInvalid={errorState?.max_sal}>
+          <FormControl w="full" isInvalid={errorState?.max_sal} isRequired>
             <Flex>
               <FormLabel
                 color={'gray.500'}
-                fontWeight={600}
                 fontSize={'15px'}
+                fontWeight={600}
                 htmlFor={'max_sal'}
               >
                 Maximum Salary (USD)
@@ -280,16 +278,16 @@ export const CreateJobPayments = ({
             </Flex>
 
             <Input
-              id="max_sal"
-              placeholder="150,000"
               color={'gray.700'}
-              type={'number'}
+              id="max_sal"
               onChange={(e) => {
                 setPayment({
                   ...(payment as PaymentsState),
                   max_sal: e.target.value,
                 });
               }}
+              placeholder="150,000"
+              type={'number'}
             />
             <FormErrorMessage>
               {errors.max_sal ? <>{errors.max_sal.message}</> : <></>}
@@ -297,12 +295,12 @@ export const CreateJobPayments = ({
           </FormControl>
         </HStack>
         <HStack w={'full'}>
-          <FormControl w="full" isRequired isInvalid={errorState?.min_eq}>
+          <FormControl w="full" isInvalid={errorState?.min_eq} isRequired>
             <Flex>
               <FormLabel
                 color={'gray.500'}
-                fontWeight={600}
                 fontSize={'15px'}
+                fontWeight={600}
                 htmlFor={'min-eq'}
               >
                 Minimum Equity
@@ -312,24 +310,24 @@ export const CreateJobPayments = ({
             <Input
               color={'gray.700'}
               id="min-eq"
-              placeholder="0.5%"
               onChange={(e) => {
                 setPayment({
                   ...(payment as PaymentsState),
                   min_eq: e.target.value,
                 });
               }}
+              placeholder="0.5%"
             />
             <FormErrorMessage>
               {errors.min_eq ? <>{errors.min_eq.message}</> : <></>}
             </FormErrorMessage>
           </FormControl>
-          <FormControl w="full" isRequired isInvalid={errorState?.max_eq}>
+          <FormControl w="full" isInvalid={errorState?.max_eq} isRequired>
             <Flex>
               <FormLabel
                 color={'gray.500'}
-                fontWeight={600}
                 fontSize={'15px'}
+                fontWeight={600}
                 htmlFor={'max_eq'}
               >
                 Maximum Equity
@@ -356,17 +354,20 @@ export const CreateJobPayments = ({
         <VStack gap={6} w={'full'} mt={10}>
           <Button
             w="100%"
-            bg={'#6562FF'}
             color={'white'}
             fontSize="1rem"
             fontWeight={600}
+            bg={'#6562FF'}
+            _hover={{ bg: '#6562FF' }}
+            disabled={loading}
+            isLoading={loading}
             onClick={() => {
               setErrorState({
-                exp: payment?.exp ? false : true,
-                max_eq: payment?.max_eq ? false : true,
-                min_eq: payment?.min_eq ? false : true,
-                max_sal: payment?.max_sal ? false : true,
-                min_sal: payment?.min_sal ? false : true,
+                exp: !payment?.exp,
+                max_eq: !payment?.max_eq,
+                min_eq: !payment?.min_eq,
+                max_sal: !payment?.max_sal,
+                min_sal: !payment?.min_sal,
               });
 
               if (Number(payment?.max_eq) > 100) {
@@ -409,20 +410,17 @@ export const CreateJobPayments = ({
                 onSubmit();
               }
             }}
-            _hover={{ bg: '#6562FF' }}
-            isLoading={loading}
-            disabled={loading}
           >
             Finish the Listing
           </Button>
           <Button
             w="100%"
+            color="gray.500"
             fontSize="1rem"
             fontWeight={600}
-            color="gray.500"
+            bg="transparent"
             border="1px solid"
             borderColor="gray.200"
-            bg="transparent"
             isLoading={draftLoading}
             onClick={() => {
               createDraft(

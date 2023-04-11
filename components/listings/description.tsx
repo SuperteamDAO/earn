@@ -1,8 +1,6 @@
-import React, { useState, Dispatch, SetStateAction, useCallback } from 'react';
 import {
   Box,
   Button,
-  Divider,
   Flex,
   HStack,
   Input,
@@ -13,36 +11,33 @@ import {
   useDisclosure,
   VStack,
 } from '@chakra-ui/react';
-import StarterKit from '@tiptap/starter-kit';
-import { useEditor, EditorContent } from '@tiptap/react';
 import { Color } from '@tiptap/extension-color';
+import Link from '@tiptap/extension-link';
 import ListItem from '@tiptap/extension-list-item';
 import TextStyle from '@tiptap/extension-text-style';
-import Link from '@tiptap/extension-link';
-import parse from 'html-react-parser';
 import Underline from '@tiptap/extension-underline';
-import { GoBold } from 'react-icons/go';
+import { EditorContent, useEditor } from '@tiptap/react';
+import StarterKit from '@tiptap/starter-kit';
+import { useRouter } from 'next/router';
+import type { Dispatch, SetStateAction } from 'react';
+import React, { useCallback, useState } from 'react';
+import { AiOutlineLink, AiOutlineOrderedList } from 'react-icons/ai';
+import { BiFontColor } from 'react-icons/bi';
 import {
   BsBlockquoteLeft,
   BsCodeSlash,
   BsFileBreak,
   BsTypeItalic,
 } from 'react-icons/bs';
-import {
-  AiOutlineLink,
-  AiOutlineOrderedList,
-  AiOutlineStrikethrough,
-} from 'react-icons/ai';
-import { BiFontColor } from 'react-icons/bi';
+import { CiRedo, CiUndo } from 'react-icons/ci';
+import { GoBold } from 'react-icons/go';
 import {
   MdOutlineFormatListBulleted,
   MdOutlineFormatUnderlined,
   MdOutlineHorizontalRule,
 } from 'react-icons/md';
-import { CiRedo, CiUndo } from 'react-icons/ci';
-import toast from 'react-hot-toast';
-import { useRouter } from 'next/router';
-import { BountyBasicType } from './bounty/Createbounty';
+
+import type { BountyBasicType } from './bounty/Createbounty';
 
 const LinkModal = ({
   isOpen,
@@ -62,12 +57,12 @@ const LinkModal = ({
         <ModalContent>
           <ModalBody my={5}>
             <Input
-              placeholder="add a link"
               onChange={(e) => {
                 setUrl(e.target.value);
               }}
+              placeholder="add a link"
             />
-            <HStack mt={5} w={'full'} justify={'end'}>
+            <HStack justify={'end'} w={'full'} mt={5}>
               <Button onClick={setLink}>Submit</Button>
               <Button onClick={onClose}>Cancel</Button>
             </HStack>
@@ -94,6 +89,7 @@ const Description = ({
 }: Props) => {
   const [url, setUrl] = useState<string>('');
   const router = useRouter();
+  const { isOpen, onClose, onOpen } = useDisclosure();
   const editor = useEditor({
     extensions: [
       Underline,
@@ -113,6 +109,7 @@ const Description = ({
         },
       }),
     ],
+    // eslint-disable-next-line @typescript-eslint/no-shadow
     onUpdate: ({ editor }) => {
       const html = editor.getHTML();
       setEditorData(html);
@@ -149,7 +146,6 @@ const Description = ({
       .run();
     onClose();
   }, [editor]);
-  const { isOpen, onClose, onOpen } = useDisclosure();
   return (
     <>
       {isOpen && (
@@ -161,285 +157,285 @@ const Description = ({
         />
       )}
       <VStack
-        mt={10}
-        mx={'auto'}
+        w={'3xl'}
         h={'50rem !impotant'}
         minH={'50rem'}
-        w={'3xl'}
+        mt={10}
+        mx={'auto'}
       >
         <Flex
-          w={'full'}
           align={'center'}
           justify={'start'}
+          w={'full'}
           borderBottom={'1px solid #D2D2D2'}
         >
           <Button
-            borderLeft={'1px solid #D2D2D2'}
-            variant={'unstyled'}
-            borderRadius={'0px'}
+            bg={editor?.isActive('heading', { level: 1 }) ? 'gray.200' : ''}
             borderTop={'1px solid #D2D2D2'}
             borderRight={'1px solid #D2D2D2'}
-            bg={editor?.isActive('heading', { level: 1 }) ? 'gray.200' : ''}
+            borderLeft={'1px solid #D2D2D2'}
+            borderRadius={'0px'}
             onClick={() => {
               editor?.chain().focus().toggleHeading({ level: 1 }).run();
             }}
+            variant={'unstyled'}
           >
             H1
           </Button>
           <Button
-            variant={'unstyled'}
-            borderRadius={'0px'}
+            bg={editor?.isActive('heading', { level: 2 }) ? 'gray.200' : ''}
             borderTop={'1px solid #D2D2D2'}
             borderRight={'1px solid #D2D2D2'}
-            bg={editor?.isActive('heading', { level: 2 }) ? 'gray.200' : ''}
+            borderRadius={'0px'}
             onClick={() => {
               editor?.chain().focus().toggleHeading({ level: 2 }).run();
             }}
+            variant={'unstyled'}
           >
             H2
           </Button>
           <Button
-            variant={'unstyled'}
-            borderRadius={'0px'}
+            bg={editor?.isActive('heading', { level: 3 }) ? 'gray.200' : ''}
             borderTop={'1px solid #D2D2D2'}
             borderRight={'1px solid #D2D2D2'}
-            bg={editor?.isActive('heading', { level: 3 }) ? 'gray.200' : ''}
+            borderRadius={'0px'}
             onClick={() => {
               editor?.chain().focus().toggleHeading({ level: 3 }).run();
             }}
+            variant={'unstyled'}
           >
             H3
           </Button>
           <Button
-            variant={'unstyled'}
-            borderRadius={'0px'}
+            bg={editor?.isActive('heading', { level: 4 }) ? 'gray.200' : ''}
             borderTop={'1px solid #D2D2D2'}
             borderRight={'1px solid #D2D2D2'}
-            bg={editor?.isActive('heading', { level: 4 }) ? 'gray.200' : ''}
+            borderRadius={'0px'}
             onClick={() => {
               editor?.chain().focus().toggleHeading({ level: 4 }).run();
             }}
+            variant={'unstyled'}
           >
             H4
           </Button>
           <Button
-            variant={'unstyled'}
-            borderRadius={'0px'}
+            bg={editor?.isActive('heading', { level: 5 }) ? 'gray.200' : ''}
             borderTop={'1px solid #D2D2D2'}
             borderRight={'1px solid #D2D2D2'}
-            bg={editor?.isActive('heading', { level: 5 }) ? 'gray.200' : ''}
+            borderRadius={'0px'}
             onClick={() => {
               editor?.chain().focus().toggleHeading({ level: 5 }).run();
             }}
+            variant={'unstyled'}
           >
             H5
           </Button>
           <Button
-            variant={'unstyled'}
-            borderRadius={'0px'}
+            bg={editor?.isActive('heading', { level: 6 }) ? 'gray.200' : ''}
             borderTop={'1px solid #D2D2D2'}
             borderRight={'1px solid #D2D2D2'}
-            bg={editor?.isActive('heading', { level: 6 }) ? 'gray.200' : ''}
+            borderRadius={'0px'}
             onClick={() => {
               editor?.chain().focus().toggleHeading({ level: 6 }).run();
             }}
+            variant={'unstyled'}
           >
             H6
           </Button>
           <Button
-            variant={'unstyled'}
-            borderRadius={'0px'}
-            display={'flex'}
-            justifyContent={'center'}
             alignItems={'center'}
+            justifyContent={'center'}
+            display={'flex'}
+            bg={editor?.isActive('bold') ? 'gray.200' : ''}
             borderTop={'1px solid #D2D2D2'}
             borderRight={'1px solid #D2D2D2'}
-            bg={editor?.isActive('bold') ? 'gray.200' : ''}
+            borderRadius={'0px'}
             onClick={() => {
               editor?.chain().focus().toggleBold().run();
             }}
+            variant={'unstyled'}
           >
             <GoBold />
           </Button>
           <Button
-            variant={'unstyled'}
-            borderRadius={'0px'}
-            display={'flex'}
-            justifyContent={'center'}
             alignItems={'center'}
+            justifyContent={'center'}
+            display={'flex'}
+            bg={editor?.isActive('italic') ? 'gray.200' : ''}
             borderTop={'1px solid #D2D2D2'}
             borderRight={'1px solid #D2D2D2'}
-            bg={editor?.isActive('italic') ? 'gray.200' : ''}
+            borderRadius={'0px'}
             onClick={() => {
               editor?.chain().focus().toggleItalic().run();
             }}
+            variant={'unstyled'}
           >
             <BsTypeItalic />
           </Button>{' '}
           <Button
-            variant={'unstyled'}
-            borderRadius={'0px'}
-            display={'flex'}
-            justifyContent={'center'}
             alignItems={'center'}
+            justifyContent={'center'}
+            display={'flex'}
+            bg={editor?.isActive('underline') ? 'gray.200' : ''}
             borderTop={'1px solid #D2D2D2'}
             borderRight={'1px solid #D2D2D2'}
-            bg={editor?.isActive('underline') ? 'gray.200' : ''}
+            borderRadius={'0px'}
             onClick={() => {
               editor?.chain().focus().toggleUnderline().run();
             }}
+            variant={'unstyled'}
           >
             <MdOutlineFormatUnderlined />
           </Button>
           <Button
-            variant={'unstyled'}
-            borderRadius={'0px'}
-            display={'flex'}
-            justifyContent={'center'}
             alignItems={'center'}
+            justifyContent={'center'}
+            display={'flex'}
+            bg={editor?.isActive('link') ? 'gray.200' : ''}
             borderTop={'1px solid #D2D2D2'}
             borderRight={'1px solid #D2D2D2'}
-            bg={editor?.isActive('link') ? 'gray.200' : ''}
+            borderRadius={'0px'}
             onClick={() => {
               onOpen();
             }}
+            variant={'unstyled'}
           >
             <AiOutlineLink />
           </Button>
           <Button
-            variant={'unstyled'}
-            borderRadius={'0px'}
-            display={'flex'}
-            justifyContent={'center'}
             alignItems={'center'}
+            justifyContent={'center'}
+            display={'flex'}
+            bg={editor?.isActive('bulletList') ? 'gray.200' : ''}
             borderTop={'1px solid #D2D2D2'}
             borderRight={'1px solid #D2D2D2'}
-            bg={editor?.isActive('bulletList') ? 'gray.200' : ''}
+            borderRadius={'0px'}
             onClick={() => {
               editor?.chain().focus().toggleBulletList().run();
             }}
+            variant={'unstyled'}
           >
             <MdOutlineFormatListBulleted />
           </Button>
           <Button
-            variant={'unstyled'}
-            borderRadius={'0px'}
-            display={'flex'}
-            justifyContent={'center'}
             alignItems={'center'}
+            justifyContent={'center'}
+            display={'flex'}
+            bg={editor?.isActive('orderedList') ? 'gray.200' : ''}
             borderTop={'1px solid #D2D2D2'}
             borderRight={'1px solid #D2D2D2'}
-            bg={editor?.isActive('orderedList') ? 'gray.200' : ''}
+            borderRadius={'0px'}
             onClick={() => {
               editor?.chain().focus().toggleOrderedList().run();
             }}
+            variant={'unstyled'}
           >
             <AiOutlineOrderedList />
           </Button>
           <Button
-            variant={'unstyled'}
-            borderRadius={'0px'}
-            display={'flex'}
-            justifyContent={'center'}
             alignItems={'center'}
+            justifyContent={'center'}
+            display={'flex'}
+            bg={editor?.isActive('codeBlock') ? 'gray.200' : ''}
             borderTop={'1px solid #D2D2D2'}
             borderRight={'1px solid #D2D2D2'}
-            bg={editor?.isActive('codeBlock') ? 'gray.200' : ''}
+            borderRadius={'0px'}
             onClick={() => {
               editor?.chain().focus().toggleCodeBlock().run();
             }}
+            variant={'unstyled'}
           >
             <BsCodeSlash />
           </Button>
           <Button
-            variant={'unstyled'}
-            borderRadius={'0px'}
-            display={'flex'}
-            justifyContent={'center'}
             alignItems={'center'}
+            justifyContent={'center'}
+            display={'flex'}
+            bg={editor?.isActive('blockquote') ? 'gray.200' : ''}
             borderTop={'1px solid #D2D2D2'}
             borderRight={'1px solid #D2D2D2'}
-            bg={editor?.isActive('blockquote') ? 'gray.200' : ''}
+            borderRadius={'0px'}
             onClick={() => {
               editor?.chain().focus().toggleBlockquote().run();
             }}
+            variant={'unstyled'}
           >
             <BsBlockquoteLeft />
           </Button>
           <Button
-            variant={'unstyled'}
-            borderRadius={'0px'}
-            display={'flex'}
-            justifyContent={'center'}
             alignItems={'center'}
+            justifyContent={'center'}
+            display={'flex'}
             borderTop={'1px solid #D2D2D2'}
             borderRight={'1px solid #D2D2D2'}
+            borderRadius={'0px'}
             onClick={() => {
               editor?.chain().focus().setHorizontalRule().run();
             }}
+            variant={'unstyled'}
           >
             <MdOutlineHorizontalRule />
           </Button>
           <Button
-            variant={'unstyled'}
-            borderRadius={'0px'}
-            display={'flex'}
-            justifyContent={'center'}
             alignItems={'center'}
+            justifyContent={'center'}
+            display={'flex'}
             borderTop={'1px solid #D2D2D2'}
             borderRight={'1px solid #D2D2D2'}
+            borderRadius={'0px'}
             onClick={() => {
               editor?.chain().focus().setHardBreak().run();
             }}
+            variant={'unstyled'}
           >
             <BsFileBreak />
           </Button>
           <Button
-            variant={'unstyled'}
-            borderRadius={'0px'}
-            display={'flex'}
-            justifyContent={'center'}
             alignItems={'center'}
+            justifyContent={'center'}
+            display={'flex'}
+            w={'full'}
             borderTop={'1px solid #D2D2D2'}
             borderRight={'1px solid #D2D2D2'}
-            w={'full'}
+            borderRadius={'0px'}
             onClick={() => {
               editor?.chain().focus().undo().run();
             }}
+            variant={'unstyled'}
           >
             <CiUndo />
           </Button>
           <Button
-            variant={'unstyled'}
-            borderRadius={'0px'}
-            display={'flex'}
-            justifyContent={'center'}
             alignItems={'center'}
+            justifyContent={'center'}
+            display={'flex'}
+            w={'full'}
             borderTop={'1px solid #D2D2D2'}
             borderRight={'1px solid #D2D2D2'}
-            w={'full'}
+            borderRadius={'0px'}
             onClick={() => {
               editor?.chain().focus().redo().run();
             }}
+            variant={'unstyled'}
           >
             <CiRedo />
           </Button>
           <Button
-            variant={'unstyled'}
-            borderRadius={'0px'}
-            display={'flex'}
-            justifyContent={'center'}
             alignItems={'center'}
+            justifyContent={'center'}
+            display={'flex'}
+            w={'full'}
             borderTop={'1px solid #D2D2D2'}
             borderRight={'1px solid #D2D2D2'}
+            borderRadius={'0px'}
             onClick={() => {}}
-            w={'full'}
+            variant={'unstyled'}
           >
             <BiFontColor />
           </Button>
         </Flex>
 
-        <Box w={'full'} height={'full'}>
+        <Box w={'full'} h={'full'}>
           <div style={{ height: '100% !important' }} className="reset">
             <EditorContent
               id="reset-des"
@@ -451,14 +447,14 @@ const Description = ({
           </div>
         </Box>
       </VStack>
-      <VStack w={'2xl'} gap={6} h={'10rem'} my={7}>
+      <VStack gap={6} w={'2xl'} h={'10rem'} my={7}>
         <Button
           w="100%"
-          bg={'#6562FF'}
-          _hover={{ bg: '#6562FF' }}
           color={'white'}
           fontSize="1rem"
           fontWeight={600}
+          bg={'#6562FF'}
+          _hover={{ bg: '#6562FF' }}
           onClick={() => {
             if (
               router.query.type === 'bounties' &&
@@ -475,12 +471,12 @@ const Description = ({
         </Button>
         <Button
           w="100%"
+          color="gray.500"
           fontSize="1rem"
           fontWeight={600}
-          color="gray.500"
+          bg="transparent"
           border="1px solid"
           borderColor="gray.200"
-          bg="transparent"
           onClick={() => {
             createDraft('nothing');
           }}

@@ -4,16 +4,16 @@ import { Player } from '@lottiefiles/react-lottie-player';
 const SearchLoading = () => {
   return (
     <>
-      <Center h={'12rem'} w={['full', 'full', '50rem', '50rem']}>
+      <Center w={['full', 'full', '50rem', '50rem']} h={'12rem'}>
         <HStack
-          gap="0.1rem"
-          padding="1rem"
-          bg="white"
-          m="1rem"
-          maxW="fit-content"
-          rounded="6px"
           alignItems={'center'}
           justify="center"
+          gap="0.1rem"
+          maxW="fit-content"
+          m="1rem"
+          p="1rem"
+          bg="white"
+          rounded="6px"
         >
           <Player
             style={{ height: '300px', width: '300px' }}
