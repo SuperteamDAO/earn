@@ -1,6 +1,8 @@
-import { Box, Button, HStack, Image, Text, VStack } from '@chakra-ui/react';
-import React, { Dispatch, SetStateAction, useState } from 'react';
+import { Button, HStack, Image, Text, VStack } from '@chakra-ui/react';
+import type { Dispatch, SetStateAction } from 'react';
+import React, { useState } from 'react';
 import toast, { Toaster } from 'react-hot-toast';
+
 import { genrateuuid } from '../../../../utils/helpers';
 import { QuestionCard } from './questionCard';
 
@@ -40,14 +42,14 @@ const Builder = ({
   const [error, setError] = useState<ErrorState[]>([]);
   return (
     <>
-      <VStack gap={3} pt={7} align={'start'} w={'2xl'}>
-        <HStack p={5} gap={3} w={'full'} bg={'#F7FAFC'} rounded={'md'}>
-          <Image src={'/assets/icons/hands.svg'} alt={'hands'} />
-          <VStack justify={'start'} align={'start'}>
-            <Text fontWeight={600} fontSize={'0.88rem'} color={'#334254'}>
+      <VStack align={'start'} gap={3} w={'2xl'} pt={7}>
+        <HStack gap={3} w={'full'} p={5} bg={'#F7FAFC'} rounded={'md'}>
+          <Image alt={'hands'} src={'/assets/icons/hands.svg'} />
+          <VStack align={'start'} justify={'start'}>
+            <Text color={'#334254'} fontSize={'0.88rem'} fontWeight={600}>
               Note
             </Text>
-            <Text mt={'0px !important'} fontSize={'0.88rem'} color={'#94A3B8'}>
+            <Text mt={'0px !important'} color={'#94A3B8'} fontSize={'0.88rem'}>
               Names, Emails, Discord / Twitter IDs, SOL wallet and Profile Links
               are collected by default. Please use this space to ask about
               anything else!
@@ -68,6 +70,10 @@ const Builder = ({
           );
         })}
         <Button
+          w={'full'}
+          h={12}
+          color={'#64758B'}
+          bg={'#F1F5F9'}
           onClick={() => {
             setQuestions([
               ...questions,
@@ -81,30 +87,26 @@ const Builder = ({
               },
             ]);
           }}
-          color={'#64758B'}
-          bg={'#F1F5F9'}
-          w={'full'}
-          h={12}
         >
           + Add Question
         </Button>
         <Toaster />
-        <VStack w={'full'} gap={6} pt={10}>
+        <VStack gap={6} w={'full'} pt={10}>
           <Button
             w="100%"
-            bg={'#6562FF'}
-            _hover={{ bg: '#6562FF' }}
             color={'white'}
             fontSize="1rem"
             fontWeight={600}
+            bg={'#6562FF'}
+            _hover={{ bg: '#6562FF' }}
             onClick={() => {
               if (questions.length === 0) {
                 toast.error('Add minimun of one question');
                 return;
               }
-              let rejectedQuestion: any[] = [];
+              const rejectedQuestion: any[] = [];
 
-              const a = questions
+              questions
                 .filter(
                   (e) => e.type === 'single-choice' || e.type === 'multi-choice'
                 )
@@ -133,6 +135,7 @@ const Builder = ({
                     ]);
                     return e;
                   }
+                  return null;
                 });
 
               questions.map((e) => {
@@ -145,8 +148,8 @@ const Builder = ({
                       errMessage: 'Add question',
                     },
                   ]);
-                  return;
                 }
+                return null;
               });
 
               if (rejectedQuestion.length === 0) {
@@ -158,12 +161,12 @@ const Builder = ({
           </Button>
           <Button
             w="100%"
+            color="gray.500"
             fontSize="1rem"
             fontWeight={600}
-            color="gray.500"
+            bg="transparent"
             border="1px solid"
             borderColor="gray.200"
-            bg="transparent"
             isLoading={draftLoading}
             onClick={() => {
               createDraft('nothing');

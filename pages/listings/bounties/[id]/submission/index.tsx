@@ -1,11 +1,13 @@
 import { HStack } from '@chakra-ui/react';
 import { dehydrate, QueryClient, useQuery } from '@tanstack/react-query';
-import { GetServerSideProps } from 'next';
+import console from 'console';
+import type { GetServerSideProps } from 'next';
 import { useRouter } from 'next/router';
 import React from 'react';
+
 import { ListingHeader } from '../../../../../components/listings/listings/ListingHeader';
 import { Submission } from '../../../../../components/listings/listings/submissions/submission';
-import { SponsorType } from '../../../../../interface/sponsor';
+import type { SponsorType } from '../../../../../interface/sponsor';
 import { findBouties } from '../../../../../utils/functions';
 
 const SubmissionPage = () => {
@@ -25,12 +27,12 @@ const SubmissionPage = () => {
         sponsor={listingInfo.data?.sponsor as SponsorType}
       />
       <HStack
+        align={['center', 'center', 'start', 'start']}
+        justify={['center', 'center', 'space-between', 'space-between']}
+        flexDir={['column-reverse', 'column-reverse', 'row', 'row']}
+        gap={4}
         maxW={'7xl'}
         mx={'auto'}
-        align={['center', 'center', 'start', 'start']}
-        gap={4}
-        flexDir={['column-reverse', 'column-reverse', 'row', 'row']}
-        justify={['center', 'center', 'space-between', 'space-between']}
       >
         <Submission
           endTime={listingInfo.data?.listing.deadline ?? ''}
@@ -44,13 +46,11 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
   const queryClient = new QueryClient();
   const { id } = context.query;
 
-  let isError = false;
   try {
-    const res = await queryClient.fetchQuery(['bounties', id], () =>
+    await queryClient.fetchQuery(['bounties', id], () =>
       findBouties(id as string)
     );
   } catch (error) {
-    isError;
     console.log(error);
   }
   return {

@@ -1,4 +1,4 @@
-import { Experience } from '../interface/listings';
+import type { Experience } from '../interface/listings';
 
 export interface MultiSelectOptions {
   value: string;

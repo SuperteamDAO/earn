@@ -9,12 +9,13 @@ import {
   VStack,
 } from '@chakra-ui/react';
 import { dehydrate, QueryClient, useQuery } from '@tanstack/react-query';
-import { GetServerSideProps } from 'next';
+import type { GetServerSideProps } from 'next';
 import { useRouter } from 'next/router';
 import React from 'react';
+
 import { DetailDescription } from '../../../components/listings/listings/details/detailDescription';
 import { ListingHeader } from '../../../components/listings/listings/ListingHeader';
-import { SponsorType } from '../../../interface/sponsor';
+import type { SponsorType } from '../../../interface/sponsor';
 import { findGrants } from '../../../utils/functions';
 
 const Grants = () => {
@@ -32,13 +33,13 @@ const Grants = () => {
         tabs={false}
       />
       <HStack
-        maxW={'7xl'}
-        mx={'auto'}
         align={['center', 'center', 'start', 'start']}
-        gap={4}
-        mt={10}
-        flexDir={['column-reverse', 'column-reverse', 'row', 'row']}
         justify={['center', 'center', 'space-between', 'space-between']}
+        flexDir={['column-reverse', 'column-reverse', 'row', 'row']}
+        gap={4}
+        maxW={'7xl'}
+        mt={10}
+        mx={'auto'}
       >
         <HStack w={['22rem', '22rem', 'full', 'full']}>
           <DetailDescription
@@ -51,42 +52,42 @@ const Grants = () => {
           />
         </HStack>
         <Flex
-          rounded={'md'}
           direction={'column'}
-          bg={'white'}
-          h={'10rem'}
-          w={'32rem'}
           gap={5}
+          w={'32rem'}
+          h={'10rem'}
+          bg={'white'}
+          rounded={'md'}
         >
-          <HStack mt={5} gap={3} px={8}>
+          <HStack gap={3} mt={5} px={8}>
             <Box
-              w={12}
-              display={'flex'}
-              justifyContent={'center'}
               alignItems={'center'}
-              rounded={'full'}
+              justifyContent={'center'}
+              display={'flex'}
+              w={12}
               h={12}
               bg={'#9EFFAE2B'}
+              rounded={'full'}
             >
               <Image
-                src={'/assets/icons/green-doller.svg'}
-                alt={'green doller'}
                 w={4}
+                alt={'green doller'}
+                src={'/assets/icons/green-doller.svg'}
               />
             </Box>
             <VStack align={'start'}>
-              <Text color={'#000000'} fontWeight={500} fontSize={'1.25rem'}>
+              <Text color={'#000000'} fontSize={'1.25rem'} fontWeight={500}>
                 ${listingInfo.data?.listing.minSalary.toLocaleString()} - $
                 {listingInfo.data?.listing.maxSalary.toLocaleString()}
               </Text>
-              <Text color={'gray.500'} mt={'0px !important'}>
+              <Text mt={'0px !important'} color={'gray.500'}>
                 Check Size
               </Text>
             </VStack>
           </HStack>
 
-          <Box px={10} w={'full'}>
-            <Button color={'white'} bg={'#6562FF'} h={12} w={'full'}>
+          <Box w={'full'} px={10}>
+            <Button w={'full'} h={12} color={'white'} bg={'#6562FF'}>
               <Link href={listingInfo.data?.listing.contact} isExternal>
                 Submit Now
               </Link>
@@ -101,13 +102,11 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
   const queryClient = new QueryClient();
   const { id } = context.query;
 
-  let isError = false;
   try {
-    const res = await queryClient.fetchQuery(['grants', id], () =>
+    await queryClient.fetchQuery(['grants', id], () =>
       findGrants(id as string)
     );
   } catch (error) {
-    isError;
     console.log(error);
   }
   return {

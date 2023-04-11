@@ -5,7 +5,7 @@ export async function uploadToCloudinary(image: any) {
 
   formData.append('file', image);
   formData.append('upload_preset', process.env.NEXT_PUBLIC_CLOUDNARY as string);
-  let post = await axios.post(
+  const post = await axios.post(
     `https://api.cloudinary.com/v1_1/dgvnuwspr/image/upload`,
     formData
   );

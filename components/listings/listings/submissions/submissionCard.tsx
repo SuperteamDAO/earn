@@ -4,7 +4,8 @@ import { useRouter } from 'next/router';
 import React from 'react';
 import toast, { Toaster } from 'react-hot-toast';
 import { AiFillHeart } from 'react-icons/ai';
-import { Talent } from '../../../../interface/talent';
+
+import type { Talent } from '../../../../interface/talent';
 import { userStore } from '../../../../store/user';
 import { addLike } from '../../../../utils/functions';
 
@@ -29,23 +30,23 @@ export const SubmissionCard = ({ image, id, winner, talent, likes }: Props) => {
   return (
     <>
       <VStack
+        pos={'relative'}
         overflow={'hidden'}
-        h={'18rem'}
-        rounded={'lg'}
-        p={5}
-        position={'relative'}
         w={'18rem'}
+        h={'18rem'}
+        p={5}
         bg={'white'}
         onClick={() => {
-          router.push(router.asPath.split('?')[0] + '/' + `${id}`);
+          router.push(`${router.asPath.split('?')[0]}/${id}`);
         }}
+        rounded={'lg'}
       >
         <Image
-          src={image ?? '/assets/random/submission-card.svg'}
           w={'full'}
           h={'21rem'}
           objectFit={'cover'}
           alt={'card'}
+          src={image ?? '/assets/random/submission-card.svg'}
         />
         <HStack align={'center'} justify={'space-between'} w={'full'}>
           <VStack align={'start'}>
@@ -56,27 +57,27 @@ export const SubmissionCard = ({ image, id, winner, talent, likes }: Props) => {
               <Image
                 w={5}
                 objectFit={'cover'}
+                alt={'profile image'}
                 rounded={'full'}
                 src={talent.avatar ?? '/assets/randompeople/nft5.svg'}
-                alt={'profile image'}
               />
               <Text color={'gray.400'}>by @{talent.username}</Text>
             </HStack>
           </VStack>
           <Button
-            variant={'unstyled'}
-            border={'1px solid #CBD5E1'}
-            w={14}
-            display={'flex'}
+            pos={'absolute'}
+            zIndex={10}
+            right={5}
             alignItems={'center'}
             gap={2}
-            right={5}
-            position={'absolute'}
-            zIndex={10}
+            display={'flex'}
+            w={14}
+            border={'1px solid #CBD5E1'}
             onClick={() => {
               if (!userInfo?.id) return;
               likeMutation.mutate();
             }}
+            variant={'unstyled'}
           >
             <AiFillHeart
               color={
@@ -90,23 +91,23 @@ export const SubmissionCard = ({ image, id, winner, talent, likes }: Props) => {
           <Toaster />
         </HStack>
         <Box
-          bg={'#FFE6B6'}
-          transform={'rotate(45deg) translate(4.5rem) translateY(-2rem)'}
-          w={'15rem'}
-          h={'2rem'}
+          pos={'absolute'}
           zIndex={3}
           top={0}
-          overflowX={'hidden'}
-          position={'absolute'}
-          display={winner ? 'flex' : 'none'}
           justifyContent={'center'}
+          display={winner ? 'flex' : 'none'}
+          overflowX={'hidden'}
+          w={'15rem'}
+          h={'2rem'}
+          bg={'#FFE6B6'}
+          transform={'rotate(45deg) translate(4.5rem) translateY(-2rem)'}
         >
           <Text
-            letterSpacing={'0.195rem'}
+            ml={5}
             color={'#D26F12'}
             fontWeight={600}
             lineHeight={8}
-            ml={5}
+            letterSpacing={'0.195rem'}
           >
             WINNER
           </Text>

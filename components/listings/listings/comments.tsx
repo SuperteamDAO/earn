@@ -7,12 +7,11 @@ import {
   Textarea,
   VStack,
 } from '@chakra-ui/react';
-import { useWallet } from '@solana/wallet-adapter-react';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { useState } from 'react';
 import toast from 'react-hot-toast';
 import { GoCommentDiscussion } from 'react-icons/go';
-import { SponsorStore } from '../../../store/sponsor';
+
 import { TalentStore } from '../../../store/talent';
 import { userStore } from '../../../store/user';
 import { createComment, fetchComments } from '../../../utils/functions';
@@ -25,13 +24,11 @@ interface Props {
 export const Comments = ({ onOpen, refId }: Props) => {
   const [message, setMessage] = useState<string>('');
   const queryClient = useQueryClient();
-  const { connected } = useWallet();
   const { userInfo } = userStore();
 
   const { talentInfo } = TalentStore();
-  const { currentSponsor } = SponsorStore();
 
-  const Comments = useQuery({
+  const CommentsQuery = useQuery({
     queryFn: ({ queryKey }) => fetchComments(queryKey[1] as string),
     queryKey: ['comments', refId],
   });
@@ -45,7 +42,7 @@ export const Comments = ({ onOpen, refId }: Props) => {
       toast.success('Error occur while commenting');
     },
   });
-  let sortedComments = (Comments.data ?? []).sort(
+  const sortedComments = (CommentsQuery.data ?? []).sort(
     (a: { timeStamp: string }, b: { timeStamp: string }) => {
       return Number(b.timeStamp) - Number(a.timeStamp);
     }
@@ -53,37 +50,40 @@ export const Comments = ({ onOpen, refId }: Props) => {
   return (
     <>
       <VStack
-        rounded={'xl'}
+        align={'start'}
         gap={3}
         w={'full'}
-        align={'start'}
-        bg={'#FFFFFF'}
         pb={5}
+        bg={'#FFFFFF'}
+        rounded={'xl'}
       >
-        <HStack px={6} pt={4} w={'full'}>
+        <HStack w={'full'} pt={4} px={6}>
           <GoCommentDiscussion fontWeight={600} fontSize={'1.5rem'} />
           <HStack>
-            <Text fontWeight={600} color={'#64758B'} fontSize={'1.1rem'}>
-              {Comments.data?.length ?? 0}
+            <Text color={'#64758B'} fontSize={'1.1rem'} fontWeight={600}>
+              {CommentsQuery.data?.length ?? 0}
             </Text>
-            <Text fontWeight={400} color={'#64758B'} fontSize={'1.1rem'}>
+            <Text color={'#64758B'} fontSize={'1.1rem'} fontWeight={400}>
               Comments
             </Text>
           </HStack>
         </HStack>
-        <VStack px={6} w={'full'}>
+        <VStack w={'full'} px={6}>
           <Textarea
             h={32}
             border={'1px solid #E2E8EF'}
-            placeholder="Write a comment..."
-            value={message}
             onChange={(e) => {
               setMessage(e.target.value);
             }}
+            placeholder="Write a comment..."
+            value={message}
           ></Textarea>
 
-          <Flex w="full" justify={'end'}>
+          <Flex justify={'end'} w="full">
             <Button
+              color={'white'}
+              fontSize={'1rem'}
+              bg={'#6562FF'}
               onClick={() => {
                 if (!userInfo || !userInfo.talent) {
                   onOpen();
@@ -92,16 +92,13 @@ export const Comments = ({ onOpen, refId }: Props) => {
 
                 commentMutation.mutate({
                   id: genrateuuid(),
-                  message: message,
-                  refId: refId,
+                  message,
+                  refId,
                   talentId: talentInfo?.id ?? '',
                   timeStamp: JSON.stringify(Date.now()),
                 });
                 setMessage('');
               }}
-              bg={'#6562FF'}
-              color={'white'}
-              fontSize={'1rem'}
             >
               Comment
             </Button>
@@ -115,9 +112,9 @@ export const Comments = ({ onOpen, refId }: Props) => {
                 w={10}
                 h={10}
                 objectFit={'contain'}
+                alt={'profile image'}
                 rounded={'full'}
                 src={el.talent.avatar}
-                alt={'profile image'}
               />
 
               <VStack align={'start'}>

@@ -1,5 +1,6 @@
-import Head from "next/head";
-import SeoPropsType from "../../interface/seo";
+import Head from 'next/head';
+
+import type { SeoPropsType } from '../../interface/seo';
 
 const SEO = ({
   title,

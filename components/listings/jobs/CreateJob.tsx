@@ -1,11 +1,12 @@
-import Description from '../description';
-import dynamic from 'next/dynamic';
-import React, { Dispatch, SetStateAction } from 'react';
-import { MultiSelectOptions } from '../../../constants';
-import { JobBasicsType } from '../../../interface/listings';
+import type { Dispatch, SetStateAction } from 'react';
+import React from 'react';
 
+import type { MultiSelectOptions } from '../../../constants';
+import type { JobBasicsType } from '../../../interface/listings';
+import Description from '../description';
 import { CreateJobBasic } from './CreateJobBasic';
 import { CreateJobPayments } from './CreateJobPayments';
+
 interface Props {
   jobBasics: JobBasicsType | undefined;
   setJobBasic: Dispatch<SetStateAction<JobBasicsType | undefined>>;

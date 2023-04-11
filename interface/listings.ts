@@ -1,5 +1,11 @@
-import { Talent } from './talent';
-import { JobType, Listingtype, Prize, Source, SponsorStatus } from './types';
+import type { Talent } from './talent';
+import type {
+  JobType,
+  Listingtype,
+  Prize,
+  Source,
+  SponsorStatus,
+} from './types';
 
 type PrizeListType = {
   [key in Prize]: string;
@@ -137,14 +143,14 @@ interface SubscribeType {
 
 export type {
   Bounties,
-  Winner,
-  SubmissionType,
-  PrizeListType,
-  JobsType,
-  JobBasicsType,
-  Experience,
-  GrantsType,
-  GrantsBasicType,
   DraftType,
+  Experience,
+  GrantsBasicType,
+  GrantsType,
+  JobBasicsType,
+  JobsType,
+  PrizeListType,
+  SubmissionType,
   SubscribeType,
+  Winner,
 };

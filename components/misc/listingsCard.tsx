@@ -1,3 +1,4 @@
+/* eslint-disable no-nested-ternary */
 import { BellIcon } from '@chakra-ui/icons';
 import {
   Box,
@@ -10,19 +11,20 @@ import {
   useDisclosure,
 } from '@chakra-ui/react';
 import { useWallet } from '@solana/wallet-adapter-react';
+import parse from 'html-react-parser';
 import moment from 'moment';
+import { useRouter } from 'next/router';
 import { useState } from 'react';
 import { Toaster } from 'react-hot-toast';
 import { TiTick } from 'react-icons/ti';
-import { MultiSelectOptions } from '../../constants';
-import { BountyStatus } from '../../interface/types';
+
+import type { MultiSelectOptions } from '../../constants';
+import { tokenList } from '../../constants';
+import type { BountyStatus } from '../../interface/types';
 import { TalentStore } from '../../store/talent';
 import { userStore } from '../../store/user';
 import { findTalentPubkey, updateNotification } from '../../utils/functions';
 import { EarningModal } from '../modals/earningModal';
-import parse from 'html-react-parser';
-import { useRouter } from 'next/router';
-import { tokenList } from '../../constants/index';
 
 type ListingSectionProps = {
   children?: React.ReactNode;
@@ -57,10 +59,10 @@ export const ListingSection = ({
       mx={'auto'}
     >
       <Flex
-        borderBottom={'0.0625rem solid #E2E8F0'}
-        pb={'0.75rem'}
+        align={'center'}
         mb={'0.875rem'}
-        alignItems={'center'}
+        pb={'0.75rem'}
+        borderBottom={'0.0625rem solid #E2E8F0'}
       >
         <Image
           w={'1.4375rem'}
@@ -70,16 +72,16 @@ export const ListingSection = ({
           src={emoji}
         />
         <Text
-          fontSize={{ base: '14px', md: '16px' }}
           color={'#334155'}
+          fontSize={{ base: '14px', md: '16px' }}
           fontWeight={'600'}
         >
           {title}
         </Text>
-        <Text color={'#CBD5E1'} mx={'0.625rem'}>
+        <Text mx={'0.625rem'} color={'#CBD5E1'}>
           |
         </Text>
-        <Text fontSize={{ base: '12px', md: '14px' }} color={'#64748B'}>
+        <Text color={'#64748B'} fontSize={{ base: '12px', md: '14px' }}>
           {sub}
         </Text>
       </Flex>
@@ -88,6 +90,13 @@ export const ListingSection = ({
       </Flex>
     </Box>
   );
+};
+
+const textLimiter = (text: string, len: number) => {
+  if (text.length > len) {
+    return `${text.slice(0, len)}...`;
+  }
+  return text;
 };
 
 interface BountyProps {
@@ -113,70 +122,70 @@ export const BountiesCard = ({
   return (
     <Flex w={{ base: '100%', md: '46.125rem' }} h={'3.9375rem'}>
       <Image
-        mr={'1.375rem'}
-        rounded={'md'}
-        src={logo ?? '/assets/home/placeholder/ph1.png'}
         w={'3.9375rem'}
         h={'3.9375rem'}
+        mr={'1.375rem'}
         alt={''}
+        rounded={'md'}
+        src={logo ?? '/assets/home/placeholder/ph1.png'}
       />
-      <Flex direction={'column'} w={'full'} justifyContent={'space-between'}>
-        <Text fontWeight={'600'} color={'#334155'} fontSize={'1rem'}>
+      <Flex justify={'space-between'} direction={'column'} w={'full'}>
+        <Text color={'#334155'} fontSize={'1rem'} fontWeight={'600'}>
           {textLimiter(title, 30)}
         </Text>
         <Text
-          fontWeight={'400'}
+          w={'full'}
           color={'#64748B'}
           fontSize={{ md: '0.875rem', base: '0.7688rem' }}
-          w={'full'}
+          fontWeight={'400'}
           noOfLines={1}
         >
           {parse(
             description?.startsWith('"')
-              ? JSON.parse(description || "")?.slice(0, 100)
-              : (description ?? "")?.slice(0, 100)
+              ? JSON.parse(description || '')?.slice(0, 100)
+              : (description ?? '')?.slice(0, 100)
           )}
         </Text>
-        <Flex alignItems={'center'}>
+        <Flex align={'center'}>
           <Image
-            mr={'0.1969rem'}
             w={'0.8125rem'}
             h={'0.8125rem'}
+            mr={'0.1969rem'}
             alt=""
             rounded={'full'}
             src={
               tokenList.find((ele) => {
-                return ele.mintAddress == token;
+                return ele.mintAddress === token;
               })?.icon
             }
           />
 
-          <Text color={'#334155'} fontWeight={'600'} fontSize={'0.8125rem'}>
+          <Text color={'#334155'} fontSize={'0.8125rem'} fontWeight={'600'}>
             {amount}
           </Text>
-          <Text color={'#CBD5E1'} mx={'0.5rem'} fontSize={'0.75rem'}>
+          <Text mx={'0.5rem'} color={'#CBD5E1'} fontSize={'0.75rem'}>
             |
           </Text>
           <Text color={'#64748B'} fontSize={'0.75rem'}>
             {moment(due).fromNow().includes('ago')
-              ? 'Closed ' + moment(due).fromNow()
-              : 'Closing ' + moment(due).fromNow()}
+              ? `Closed ${moment(due).fromNow()}`
+              : `Closing ${moment(due).fromNow()}`}
           </Text>
         </Flex>
       </Flex>
       <Link
         ml={'auto'}
-        href={`https://earn-frontend-v2.vercel.app/listings/bounties/` + slug}
+        href={`https://earn-frontend-v2.vercel.app/listings/bounties/${slug}`}
         isExternal
       >
         <Button
+          display={{ base: 'none', md: 'block' }}
           ml={'auto'}
-          py={'0.5rem'}
           px={'1.5rem'}
+          py={'0.5rem'}
           color={'#94A3B8'}
           bg={'transparent'}
           border={'0.0625rem solid #94A3B8'}
-          display={{ base: 'none', md: 'block' }}
         >
           {Number(moment(due).format('x')) < Date.now()
             ? status === 'close'
@@ -213,47 +222,61 @@ export const JobsCard = ({
   link,
 }: JobsProps) => {
   return (
-    <Flex w={{ base: '100%', md: '46.125rem' }} h={'3.9375rem'} justifyContent="space-between" alignItems="center">
-      <Flex justifyContent="start">
+    <Flex
+      align="center"
+      justify="space-between"
+      w={{ base: '100%', md: '46.125rem' }}
+      h={'3.9375rem'}
+    >
+      <Flex justify="start">
         <Image
-          mr={'1.375rem'}
-          rounded={'md'}
-          src={logo ?? '/assets/home/placeholder/ph2.png'}
           w={'3.9375rem'}
           h={'3.9375rem'}
+          mr={'1.375rem'}
           alt={''}
+          rounded={'md'}
+          src={logo ?? '/assets/home/placeholder/ph2.png'}
         />
-        <Flex direction={'column'} justifyContent={'space-between'}>
-          <Text fontWeight={'600'} color={'#334155'} fontSize={'1rem'}>
+        <Flex justify={'space-between'} direction={'column'}>
+          <Text color={'#334155'} fontSize={'1rem'} fontWeight={'600'}>
             {title}
           </Text>
           <Text
-            fontWeight={'400'}
             color={'#64748B'}
             fontSize={{ md: '0.875rem', base: '0.7688rem' }}
+            fontWeight={'400'}
           >
-            {!!description ? parse(
-                description?.startsWith('"')
-                  ? JSON.parse(description || "")?.slice(0, 100)
-                  : (description ?? '')?.slice(0, 100)
-              ): orgName}
+            {description
+              ? parse(
+                  description?.startsWith('"')
+                    ? JSON.parse(description || '')?.slice(0, 100)
+                    : (description ?? '')?.slice(0, 100)
+                )
+              : orgName}
           </Text>
-          <Flex alignItems={'center'}>
-            {!!min && !!max && (<Text color={'#64748B'} fontSize={'0.75rem'} mr={'0.6875rem'}>
-                <Text as="span" fontWeight="700">$ </Text>
+          <Flex align={'center'}>
+            {!!min && !!max && (
+              <Text mr={'0.6875rem'} color={'#64748B'} fontSize={'0.75rem'}>
+                <Text as="span" fontWeight="700">
+                  ${' '}
+                </Text>
                 {min.toLocaleString()} - {max.toLocaleString()}
-              </Text>)}
-              {!!minEq && !!maxEq && (<Text color={'#64748B'} fontSize={'0.75rem'} mr={'0.6875rem'}>
+              </Text>
+            )}
+            {!!minEq && !!maxEq && (
+              <Text mr={'0.6875rem'} color={'#64748B'} fontSize={'0.75rem'}>
                 {minEq.toLocaleString()}% - {maxEq.toLocaleString()}% Equity
-              </Text>)}
-              {skills?.length && skills.slice(0, 3).map((e) => {
+              </Text>
+            )}
+            {skills?.length &&
+              skills.slice(0, 3).map((e) => {
                 return (
                   <Text
-                    display={{ base: 'none', md: 'block' }}
                     key={''}
+                    display={{ base: 'none', md: 'block' }}
+                    mr={'0.6875rem'}
                     color={'#64748B'}
                     fontSize={'0.75rem'}
-                    mr={'0.6875rem'}
                   >
                     {e.label}
                   </Text>
@@ -263,21 +286,23 @@ export const JobsCard = ({
         </Flex>
       </Flex>
       <Link
-        href={link || 
-          `https://earn-frontend-v2.vercel.app/listings/jobs/` +
-          title.split(' ').join('-')
-        }
-        isExternal
+        px={'1.5rem'}
+        py={'0.5rem'}
         color={'#94A3B8'}
         border={'0.0625rem solid #94A3B8'}
         borderRadius="4px"
-        py={'0.5rem'}
-        px={'1.5rem'}
         _hover={{
-          textDecoration: "none",
+          textDecoration: 'none',
           bg: '#94A3B8',
-          color: "#ffffff"
+          color: '#ffffff',
         }}
+        href={
+          link ||
+          `https://earn-frontend-v2.vercel.app/listings/jobs/${title
+            .split(' ')
+            .join('-')}`
+        }
+        isExternal
       >
         Apply
       </Link>
@@ -302,57 +327,56 @@ export const GrantsCard = ({
   return (
     <Flex w={{ base: '100%', md: '46.125rem' }} h={'3.9375rem'}>
       <Image
-        mr={'1.375rem'}
-        rounded={'md'}
-        src={logo ?? '/assets/home/placeholder/ph3.png'}
         w={'3.9375rem'}
         h={'3.9375rem'}
+        mr={'1.375rem'}
         alt={''}
+        rounded={'md'}
+        src={logo ?? '/assets/home/placeholder/ph3.png'}
       />
-      <Flex direction={'column'} justifyContent={'space-between'}>
-        <Text fontWeight={'600'} color={'#334155'} fontSize={'1rem'}>
+      <Flex justify={'space-between'} direction={'column'}>
+        <Text color={'#334155'} fontSize={'1rem'} fontWeight={'600'}>
           {title}
         </Text>
         <Text
-          fontWeight={'400'}
           color={'#64748B'}
           fontSize={{ md: '0.875rem', base: '0.7688rem' }}
+          fontWeight={'400'}
         >
           {parse(
             description?.startsWith('"')
-              ? JSON.parse(description || "")?.slice(0, 100)
+              ? JSON.parse(description || '')?.slice(0, 100)
               : (description ?? '')?.slice(0, 100)
           )}
         </Text>
-        <Flex alignItems={'center'}>
+        <Flex align={'center'}>
           <Image
-            mr={'0.1969rem'}
-            h={'0.875rem'}
             w={'0.875rem'}
+            h={'0.875rem'}
+            mr={'0.1969rem'}
             alt=""
             src="/assets/icons/dollar.svg"
           />
-          <Text color={'#64748B'} fontSize={'0.75rem'} mr={'0.6875rem'}>
+          <Text mr={'0.6875rem'} color={'#64748B'} fontSize={'0.75rem'}>
             {min.toLocaleString()} - {max.toLocaleString()}
           </Text>
         </Flex>
       </Flex>
       <Link
         ml={'auto'}
-        href={
-          `https://earn-frontend-v2.vercel.app/listings/grants/` +
-          title.split(' ').join('-')
-        }
+        href={`https://earn-frontend-v2.vercel.app/listings/grants/${title
+          .split(' ')
+          .join('-')}`}
         isExternal
       >
         <Button
+          display={{ base: 'none', md: 'block' }}
           ml={'auto'}
-          py={'0.5rem'}
           px={'1.5rem'}
+          py={'0.5rem'}
           color={'#94A3B8'}
           bg={'transparent'}
           border={'0.0625rem solid #94A3B8'}
-          display={{ base: 'none', md: 'block' }}
         >
           Apply
         </Button>
@@ -361,7 +385,7 @@ export const GrantsCard = ({
   );
 };
 
-type categoryAssetsType = {
+type CategoryAssetsType = {
   [key: string]: {
     bg: string;
     desc: string;
@@ -375,7 +399,7 @@ export const CategoryBanner = ({ type }: { type: string }) => {
 
   const { talentInfo, setTalentInfo } = TalentStore();
   const [loading, setLoading] = useState(false);
-  let categoryAssets: categoryAssetsType = {
+  const categoryAssets: CategoryAssetsType = {
     Design: {
       bg: `/assets/category_assets/bg/design.png`,
       desc: 'If delighting users with eye-catching designs is your jam, you should check out the earning opportunities below.',
@@ -418,7 +442,7 @@ export const CategoryBanner = ({ type }: { type: string }) => {
   const updateTalent = async () => {
     const talent = await findTalentPubkey(publicKey?.toBase58() as string);
     if (!talent) {
-      return;
+      return null;
     }
     return setTalentInfo(talent.data);
   };
@@ -426,40 +450,41 @@ export const CategoryBanner = ({ type }: { type: string }) => {
     <>
       {isOpen && <EarningModal isOpen={isOpen} onClose={onClose} />}
       <Flex
-        p={'1.5rem'}
-        rounded={'lg'}
-        backgroundSize={'contain'}
+        direction={{ md: 'row', base: 'column' }}
         w={{ md: '46.0625rem', base: '24.125rem' }}
         h={{ md: '7.375rem', base: 'fit-content' }}
-        flexDirection={{ md: 'row', base: 'column' }}
         mt={'1.5625rem'}
-        bg={`url('${categoryAssets[type].bg}')`}
+        p={'1.5rem'}
+        bg={`url('${categoryAssets[type]?.bg}')`}
+        bgSize={'contain'}
+        rounded={'lg'}
       >
         <Center
-          mr={'1.0625rem'}
-          bg={categoryAssets[type].color}
           w={'3.6875rem'}
           h={'3.6875rem'}
+          mr={'1.0625rem'}
+          bg={categoryAssets[type]?.color}
           rounded={'md'}
         >
-          <Image src={categoryAssets[type].icon} />
+          <Image alt="Category icon" src={categoryAssets[type]?.icon} />
         </Center>
         <Box w={{ md: '60%', base: '100%' }} mt={{ base: '1rem', md: '0' }}>
-          <Text fontWeight={'700'} fontFamily={'Domine'}>
+          <Text fontFamily={'Domine'} fontWeight={'700'}>
             {type}
           </Text>
-          <Text fontSize={'0.875rem'} color={'#64748B'}>
-            {categoryAssets[type].desc}
+          <Text color={'#64748B'} fontSize={'0.875rem'}>
+            {categoryAssets[type]?.desc}
           </Text>
         </Box>
         <Button
+          mt={{ base: '1rem', md: '' }}
           ml={{ base: '', md: 'auto' }}
           my={{ base: '', md: 'auto' }}
-          mt={{ base: '1rem', md: '' }}
           px={'1rem'}
-          fontWeight={'300'}
-          border={'0.0625rem solid #CBD5E1'}
           color={'#94A3B8'}
+          fontWeight={'300'}
+          bg={'white'}
+          border={'0.0625rem solid #CBD5E1'}
           isLoading={loading}
           leftIcon={
             JSON.parse(talentInfo?.notifications ?? '[]').includes(type) ? (
@@ -468,11 +493,9 @@ export const CategoryBanner = ({ type }: { type: string }) => {
               <BellIcon />
             )
           }
-          bg={'white'}
-          variant="solid"
           onClick={async () => {
             if (!userInfo?.talent) {
-              return onOpen();
+              onOpen();
             }
             if (
               JSON.parse(talentInfo?.notifications as string).includes(type)
@@ -480,14 +503,16 @@ export const CategoryBanner = ({ type }: { type: string }) => {
               setLoading(true);
               const notification: string[] = [];
 
-              JSON.parse(talentInfo?.notifications as string).map((e: any) => {
-                if (e !== type) {
-                  notification.push(e);
+              JSON.parse(talentInfo?.notifications as string).forEach(
+                (e: any) => {
+                  if (e !== type) {
+                    notification.push(e);
+                  }
                 }
-              });
+              );
               await updateNotification(talentInfo?.id as string, notification);
               await updateTalent();
-              return setLoading(false);
+              setLoading(false);
             }
             setLoading(true);
             await updateNotification(talentInfo?.id as string, [
@@ -497,6 +522,7 @@ export const CategoryBanner = ({ type }: { type: string }) => {
             await updateTalent();
             setLoading(false);
           }}
+          variant="solid"
         >
           Notify Me
         </Button>
@@ -504,11 +530,4 @@ export const CategoryBanner = ({ type }: { type: string }) => {
       </Flex>
     </>
   );
-};
-
-const textLimiter = (text: string, len: number) => {
-  if (text.length > len) {
-    return text.slice(0, len) + '...';
-  }
-  return text;
 };

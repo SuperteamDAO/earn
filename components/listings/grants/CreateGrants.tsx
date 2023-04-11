@@ -1,8 +1,9 @@
+import type { Dispatch, SetStateAction } from 'react';
+import React from 'react';
+
+import type { MultiSelectOptions } from '../../../constants';
+import type { GrantsBasicType } from '../../../interface/listings';
 import Description from '../description';
-import dynamic from 'next/dynamic';
-import React, { Dispatch, SetStateAction } from 'react';
-import { MultiSelectOptions } from '../../../constants';
-import { GrantsBasicType } from '../../../interface/listings';
 import { CreateGrantsBasic } from './CreateGrantsBasic';
 import { CreateGrantsPayment } from './CreateGrantsPayments';
 
@@ -36,7 +37,6 @@ export const CreateGrants = ({
   createDraft,
   setSlug,
 }: Props) => {
-  2;
   return (
     <>
       {steps === 2 && (

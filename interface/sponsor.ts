@@ -1,4 +1,4 @@
-import { sponsorType } from './types';
+import type { SponsorTypes } from './types';
 
 interface SponsorType {
   id?: string;
@@ -11,7 +11,7 @@ interface SponsorType {
   twitter: string;
   bio: string;
   verified: boolean;
-  type: sponsorType;
+  type: SponsorTypes;
   email: string;
   username: string;
 }

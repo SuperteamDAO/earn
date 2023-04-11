@@ -1,4 +1,4 @@
-import { ChevronDownIcon, DeleteIcon } from '@chakra-ui/icons';
+import { ChevronDownIcon } from '@chakra-ui/icons';
 import {
   Button,
   Flex,
@@ -16,26 +16,20 @@ import {
   VStack,
 } from '@chakra-ui/react';
 import axios from 'axios';
-import { Dispatch, SetStateAction, useState } from 'react';
+import type { Dispatch, SetStateAction } from 'react';
+import { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import toast from 'react-hot-toast';
-import { tokenList, PrizeList, MultiSelectOptions } from '../../../constants';
-import {
-  GrantsBasicType,
-  GrantsType,
-  PrizeListType,
-} from '../../../interface/listings';
-import { PrizeLabels } from '../../../interface/types';
+
+import type { MultiSelectOptions } from '../../../constants';
+import { tokenList } from '../../../constants';
+import type { GrantsBasicType, GrantsType } from '../../../interface/listings';
 import { SponsorStore } from '../../../store/sponsor';
 import { createGrants } from '../../../utils/functions';
 import { genrateuuid } from '../../../utils/helpers';
 
-interface PrizeList {
-  label: string;
-  placeHolder: number;
-}
 interface Props {
-  setSteps: Dispatch<SetStateAction<number>>;
+  setSteps?: Dispatch<SetStateAction<number>>;
   editorData: string | undefined;
   mainSkills: MultiSelectOptions[];
   subSkills: MultiSelectOptions[];
@@ -45,7 +39,6 @@ interface Props {
   setSlug: Dispatch<SetStateAction<string>>;
 }
 export const CreateGrantsPayment = ({
-  setSteps,
   editorData,
   mainSkills,
   subSkills,
@@ -65,7 +58,7 @@ export const CreateGrantsPayment = ({
   const [loading, setLoading] = useState<boolean>(false);
   return (
     <>
-      <VStack pb={10} color={'gray.500'} pt={7} align={'start'} w={'2xl'}>
+      <VStack align={'start'} w={'2xl'} pt={7} pb={10} color={'gray.500'}>
         <form
           onSubmit={handleSubmit(async (e) => {
             if (Number(e.max_sal) < Number(e.min_sal)) {
@@ -75,12 +68,11 @@ export const CreateGrantsPayment = ({
             }
 
             setLoading(true);
-            console.log(e);
             const info: GrantsType = {
               id: genrateuuid(),
               active: true,
               link: grantsBasic?.link ?? '',
-              token: tokenList[tokenIndex as number].mintAddress,
+              token: tokenList[tokenIndex as number]?.mintAddress || '',
               orgId: currentSponsor?.orgId ?? '',
               maxSalary: Number(e.max_sal),
               minSalary: Number(e.min_sal),
@@ -96,7 +88,7 @@ export const CreateGrantsPayment = ({
               await axios.post('/api/updateSearch');
               onOpen();
               setSlug(
-                ('/grants/' + grantsBasic?.title.split(' ').join('-')) as string
+                `/grants/${grantsBasic?.title.split(' ').join('-')}` as string
               );
               setLoading(false);
             } else {
@@ -110,17 +102,16 @@ export const CreateGrantsPayment = ({
             <Menu>
               <MenuButton
                 as={Button}
-                rightIcon={<ChevronDownIcon />}
-                w="100%"
-                h="100%"
-                fontSize="1rem"
-                height={'2.6rem'}
-                fontWeight={500}
-                color="gray.400"
-                bg="transparent"
-                textAlign="start"
                 overflow="hidden"
+                w="100%"
+                h={'2.6rem'}
+                color="gray.400"
+                fontSize="1rem"
+                fontWeight={500}
+                textAlign="start"
+                bg="transparent"
                 border={'1px solid #cbd5e1'}
+                rightIcon={<ChevronDownIcon />}
               >
                 {tokenIndex === undefined ? (
                   'Select'
@@ -128,21 +119,21 @@ export const CreateGrantsPayment = ({
                   <HStack>
                     <Image
                       w={'1.6rem'}
+                      alt={tokenList[tokenIndex as number]?.tokenName}
                       rounded={'full'}
                       src={tokenList[tokenIndex as number]?.icon}
-                      alt={tokenList[tokenIndex as number]?.tokenName}
                     />
                     <Text>{tokenList[tokenIndex as number]?.tokenName}</Text>
                   </HStack>
                 )}
               </MenuButton>
               <MenuList
+                overflow="scroll"
                 w="40rem"
+                maxH="15rem"
+                color="gray.400"
                 fontSize="1rem"
                 fontWeight={500}
-                color="gray.400"
-                maxHeight="15rem"
-                overflow="scroll"
               >
                 {tokenList.map((token, index) => {
                   return (
@@ -156,9 +147,9 @@ export const CreateGrantsPayment = ({
                         <HStack>
                           <Image
                             w={'1.6rem'}
+                            alt={token.tokenName}
                             rounded={'full'}
                             src={token.icon}
-                            alt={token.tokenName}
                           />
                           <Text>{token.tokenName}</Text>
                         </HStack>
@@ -174,8 +165,8 @@ export const CreateGrantsPayment = ({
               <Flex>
                 <FormLabel
                   color={'gray.500'}
-                  fontWeight={600}
                   fontSize={'15px'}
+                  fontWeight={600}
                   htmlFor={'min_sal'}
                 >
                   Minimum Grants (USD)
@@ -184,8 +175,8 @@ export const CreateGrantsPayment = ({
 
               <Input
                 id="min_sal"
-                type={'number'}
                 placeholder="100,000"
+                type={'number'}
                 {...register('min_sal')}
               />
               <FormErrorMessage>
@@ -196,8 +187,8 @@ export const CreateGrantsPayment = ({
               <Flex>
                 <FormLabel
                   color={'gray.500'}
-                  fontWeight={600}
                   fontSize={'15px'}
+                  fontWeight={600}
                   htmlFor={'max_sal'}
                 >
                   Maximum Grants (USD)
@@ -218,25 +209,25 @@ export const CreateGrantsPayment = ({
           <VStack gap={6} mt={10}>
             <Button
               w="100%"
-              bg={'#6562FF'}
               color={'white'}
-              _hover={{ bg: '#6562FF' }}
               fontSize="1rem"
               fontWeight={600}
-              type={'submit'}
-              isLoading={loading}
+              bg={'#6562FF'}
+              _hover={{ bg: '#6562FF' }}
               disabled={loading}
+              isLoading={loading}
+              type={'submit'}
             >
               Finish the Listing
             </Button>
             <Button
               w="100%"
+              color="gray.500"
               fontSize="1rem"
               fontWeight={600}
-              color="gray.500"
+              bg="transparent"
               border="1px solid"
               borderColor="gray.200"
-              bg="transparent"
             >
               Save as Drafts
             </Button>

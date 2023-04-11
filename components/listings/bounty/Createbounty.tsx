@@ -1,10 +1,13 @@
-import dynamic from 'next/dynamic';
-import React, { Dispatch, SetStateAction, useState } from 'react';
-import { MultiSelectOptions } from '../../../constants';
+import type { Dispatch, SetStateAction } from 'react';
+import React from 'react';
+
+import type { MultiSelectOptions } from '../../../constants';
+import Description from '../description';
 import { CreatebountyBasic } from './CreateBountyBasic';
 import { CreatebountyPayment } from './CreateBountyPayments';
-import Description from '../description';
-import Builder, { Ques } from './questions/builder';
+import type { Ques } from './questions/builder';
+import Builder from './questions/builder';
+
 export interface BountyBasicType {
   title: string;
   deadline: string;

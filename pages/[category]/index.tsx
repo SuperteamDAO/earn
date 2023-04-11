@@ -1,42 +1,15 @@
-import {
-  Box,
-  Button,
-  Flex,
-  Text,
-  Image,
-  Center,
-  Link,
-  VStack,
-  useMediaQuery,
-  useDisclosure,
-} from '@chakra-ui/react';
-import type { GetServerSideProps, NextPage } from 'next';
-import NavHome from '../../components/home/NavHome';
-import moment from 'moment';
-import { BellIcon } from '@chakra-ui/icons';
-import parse from 'html-react-parser';
-//components
-import Banner from '../../components/home/Banner';
-import SideBar from '../../components/home/SideBar';
-
-import { dehydrate, QueryClient, useQuery } from '@tanstack/react-query';
-import {
-  fetchAll,
-  fetchBasicInfo,
-  findTalentPubkey,
-  updateNotification,
-} from '../../utils/functions';
-import { MultiSelectOptions } from '../../constants';
-import { useRouter } from 'next/router';
-import { useEffect, useState } from 'react';
-import { type } from 'os';
-import { userStore } from '../../store/user';
-import { CreateProfileModal } from '../../components/modals/createProfile';
-import { TalentStore } from '../../store/talent';
-import toast, { Toaster } from 'react-hot-toast';
-import { TiTick } from 'react-icons/ti';
+/* eslint-disable no-nested-ternary */
+import { Box, Flex, Text, useMediaQuery, VStack } from '@chakra-ui/react';
 import { useWallet } from '@solana/wallet-adapter-react';
-import { BountyStatus } from '../../interface/types';
+import { dehydrate, QueryClient, useQuery } from '@tanstack/react-query';
+import type { GetServerSideProps, NextPage } from 'next';
+import { useRouter } from 'next/router';
+import { useEffect } from 'react';
+
+// components
+import Banner from '../../components/home/Banner';
+import NavHome from '../../components/home/NavHome';
+import SideBar from '../../components/home/SideBar';
 import {
   BountiesCard,
   CategoryBanner,
@@ -44,6 +17,10 @@ import {
   JobsCard,
   ListingSection,
 } from '../../components/misc/listingsCard';
+import type { BountyStatus } from '../../interface/types';
+import { TalentStore } from '../../store/talent';
+import { userStore } from '../../store/user';
+import { fetchAll, fetchBasicInfo } from '../../utils/functions';
 
 const Index: NextPage = () => {
   const router = useRouter();
@@ -66,7 +43,7 @@ const Index: NextPage = () => {
   const [isLessThan768px] = useMediaQuery('(max-width: 768px)');
 
   useEffect(() => {
-    let html = document.querySelector('html');
+    const html = document.querySelector('html');
     try {
       if (isLessThan768px) {
         html!.style.fontSize = '100%';
@@ -93,16 +70,16 @@ const Index: NextPage = () => {
     <>
       {!isLessThan768px && <NavHome />}
       <Flex
+        justify={'center'}
         w={'100%'}
         h={'max-content'}
         minH={'100vh'}
-        bg={'white'}
         pt={'3.5rem'}
-        justifyContent={'center'}
+        bg={'white'}
       >
         {router.asPath.includes('search') ? (
           <Box>
-            <Flex w={['full', 'full', '50rem', '50rem']} gap={1}>
+            <Flex gap={1} w={['full', 'full', '50rem', '50rem']}>
               <Text color={'#64748B'}>
                 Found{' '}
                 {(listings.data?.bounty.length as number) +
@@ -110,9 +87,9 @@ const Index: NextPage = () => {
                   (listings.data?.grants.length as number)}{' '}
                 opportunities matching{' '}
               </Text>
-              <Text color={'#1E293B'}>{"'" + router.query.search + "'"}</Text>
+              <Text color={'#1E293B'}>{`'${router.query.search}'`}</Text>
             </Flex>
-            <VStack mt={'2rem'} gap={5}>
+            <VStack gap={5} mt={'2rem'}>
               {listings.data?.bounty?.map((bounty) => {
                 return (
                   <BountiesCard
@@ -132,7 +109,7 @@ const Index: NextPage = () => {
               {listings.data?.jobs?.map((job) => {
                 return (
                   <JobsCard
-                    orgName={job?.sponsorInfo?.name} 
+                    orgName={job?.sponsorInfo?.name}
                     logo={job?.sponsorInfo?.logo}
                     description={job?.jobs?.description}
                     max={job?.jobs?.maxSalary}
@@ -141,7 +118,7 @@ const Index: NextPage = () => {
                     minEq={job?.jobs?.minEq}
                     link={job?.jobs?.link}
                     key={job?.jobs?.id}
-                    skills={JSON.parse(job?.jobs?.skills || "[]")}
+                    skills={JSON.parse(job?.jobs?.skills || '[]')}
                     title={job?.jobs?.title}
                   />
                 );
@@ -167,10 +144,10 @@ const Index: NextPage = () => {
               userInfo?.talent ? (
                 <>
                   <Text
-                    fontFamily={'Domine'}
-                    fontWeight={700}
-                    fontSize={'26px'}
                     color={'#1E293B'}
+                    fontFamily={'Domine'}
+                    fontSize={'26px'}
+                    fontWeight={700}
                   >
                     Welcome back,{talentInfo?.username}
                   </Text>
@@ -224,7 +201,7 @@ const Index: NextPage = () => {
                 emoji="/assets/home/emojis/job.png"
               >
                 {listings.data?.jobs?.map((job) => {
-                  console.log("hello123", job);
+                  console.log('hello123', job);
                   return (
                     <JobsCard
                       logo={job?.sponsorInfo?.logo}
@@ -236,7 +213,7 @@ const Index: NextPage = () => {
                       orgName={job?.sponsorInfo?.name}
                       link={job?.jobs?.link}
                       key={job?.jobs?.id}
-                      skills={JSON.parse(job?.jobs?.skills || "[]")}
+                      skills={JSON.parse(job?.jobs?.skills || '[]')}
                       title={job?.jobs?.title}
                     />
                   );

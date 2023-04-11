@@ -8,7 +8,6 @@ import {
   InputRightElement,
   Modal,
   ModalContent,
-  ModalHeader,
   ModalOverlay,
   Text,
   useClipboard,
@@ -16,6 +15,7 @@ import {
 } from '@chakra-ui/react';
 import { useRouter } from 'next/router';
 import React from 'react';
+
 interface Props {
   onClose: () => void;
   isOpen: boolean;
@@ -23,34 +23,34 @@ interface Props {
 }
 export const SuccessListings = ({ isOpen, onClose, slug }: Props) => {
   const { hasCopied, onCopy } = useClipboard(
-    'http://localhost:3000/listings' + slug
+    `http://localhost:3000/listings${slug}`
   );
   const router = useRouter();
   return (
     <>
       <Modal isOpen={isOpen} onClose={onClose}>
         <ModalOverlay />
-        <ModalContent py={5} h={'max'}>
+        <ModalContent h={'max'} py={5}>
           <VStack gap={4} px={10}>
             <Box>
-              <Image w={14} src={'/assets/icons/cong.svg'} alt={'Cong Svg'} />
+              <Image w={14} alt={'Cong Svg'} src={'/assets/icons/cong.svg'} />
             </Box>
-            <Text color={'gray.700'} fontWeight={600} fontFamily={'Inter'}>
+            <Text color={'gray.700'} fontFamily={'Inter'} fontWeight={600}>
               You Have Successfully Created A Listing
             </Text>
             <InputGroup mt={5}>
               <Input
-                fontSize="1rem"
-                color="gray.400"
-                textOverflow="ellipsis"
                 overflow="hidden"
-                whiteSpace="nowrap"
-                focusBorderColor="#CFD2D7"
+                color="gray.400"
+                fontSize="1rem"
                 fontWeight={500}
-                value={'http://localhost:3000/listings' + slug}
+                whiteSpace="nowrap"
+                textOverflow="ellipsis"
+                focusBorderColor="#CFD2D7"
                 isReadOnly
+                value={`http://localhost:3000/listings${slug}`}
               />
-              <InputRightElement h="100%" marginRight="1rem">
+              <InputRightElement h="100%" mr="1rem">
                 {hasCopied ? (
                   <CheckIcon h="1.3rem" w="1.3rem" color="gray.200" />
                 ) : (
@@ -67,25 +67,25 @@ export const SuccessListings = ({ isOpen, onClose, slug }: Props) => {
             <VStack w={'full'}>
               <Button
                 w="100%"
-                bg={'#6562FF'}
                 color={'white'}
                 fontSize="1rem"
                 fontWeight={600}
+                bg={'#6562FF'}
                 _hover={{ bg: '#6562FF' }}
                 onClick={() => {
-                  router.push(`/listings` + slug);
+                  router.push(`/listings${slug}`);
                 }}
               >
                 Continue with Listings
               </Button>
               <Button
                 w="100%"
+                color="gray.500"
                 fontSize="1rem"
                 fontWeight={600}
-                color="gray.500"
+                bg="transparent"
                 border="1px solid"
                 borderColor="gray.200"
-                bg="transparent"
                 onClick={() => {
                   router.push('/dashboard/listings');
                 }}

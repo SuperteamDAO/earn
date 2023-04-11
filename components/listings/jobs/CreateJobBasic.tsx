@@ -13,13 +13,12 @@ import {
   VStack,
 } from '@chakra-ui/react';
 import moment from 'moment';
-import React, { Dispatch, SetStateAction, useState } from 'react';
-import { useForm } from 'react-hook-form';
-import ReactSelect from 'react-select';
-import makeAnimated from 'react-select/animated';
-import { MainSkills, MultiSelectOptions, SubSkills } from '../../../constants';
-import { JobBasicsType } from '../../../interface/listings';
-import { JobType } from '../../../interface/types';
+import type { Dispatch, SetStateAction } from 'react';
+import React, { useState } from 'react';
+
+import type { MultiSelectOptions } from '../../../constants';
+import type { JobBasicsType } from '../../../interface/listings';
+import type { JobType } from '../../../interface/types';
 import { SkillSelect } from '../../misc/SkillSelect';
 
 interface Props {
@@ -64,83 +63,83 @@ export const CreateJobBasic = ({
   const date = moment().format('YYYY-MM-DD');
   return (
     <>
-      <VStack py={7} align={'start'} w={'2xl'}>
-        <FormControl w="full" isRequired isInvalid={errorState.title}>
+      <VStack align={'start'} w={'2xl'} py={7}>
+        <FormControl w="full" isInvalid={errorState.title} isRequired>
           <Flex>
             <FormLabel
               color={'gray.500'}
-              fontWeight={600}
               fontSize={'15px'}
+              fontWeight={600}
               htmlFor={'title'}
             >
               Opportunity Title
             </FormLabel>
             <Tooltip
-              placement="right-end"
-              fontSize="0.9rem"
-              padding="0.7rem"
-              bg="#6562FF"
+              w="max"
+              p="0.7rem"
               color="white"
+              fontSize="0.9rem"
               fontWeight={600}
+              bg="#6562FF"
               borderRadius="0.5rem"
               hasArrow
-              w="max"
               label={`Use a short title to describe the opportunity`}
+              placement="right-end"
             >
               <Image
                 mt={-2}
-                src={'/assets/icons/info-icon.svg'}
                 alt={'Info Icon'}
+                src={'/assets/icons/info-icon.svg'}
               />
             </Tooltip>
           </Flex>
 
           <Input
             id="title"
-            placeholder="Develop a new landing page"
-            value={jobBasics?.title}
             onChange={(e) => {
               setJobBasic({
                 ...(jobBasics as JobBasicsType),
                 title: e.target.value,
               });
             }}
+            placeholder="Develop a new landing page"
+            value={jobBasics?.title}
           />
           <FormErrorMessage></FormErrorMessage>
         </FormControl>
-        <FormControl my={5} isRequired isInvalid={errorState.type}>
+        <FormControl my={5} isInvalid={errorState.type} isRequired>
           <FormLabel
             color={'gray.500'}
-            fontWeight={600}
             fontSize={'15px'}
+            fontWeight={600}
             htmlFor={'title'}
           >
             Job Type
           </FormLabel>
           <Select
-            value={jobBasics?.type}
-            placeholder={'Job Type'}
             color={'gray.700'}
-            defaultValue={'fulltime'}
             _placeholder={{
               color: 'gray.400',
             }}
+            defaultValue={'fulltime'}
             onChange={(e) => {
               setJobBasic({
                 ...(jobBasics as JobBasicsType),
                 type: e.target.value as JobType,
               });
             }}
+            placeholder={'Job Type'}
+            value={jobBasics?.type}
           >
             <option value="fulltime">Full Time</option>
             <option value="internship">Intership</option>
             <option value="parttime">Part Time</option>
           </Select>
-          <FormControl my={5} isRequired isInvalid={errorState.link}>
+          <FormControl my={5} isInvalid={errorState.link} isRequired>
             <FormLabel
               color={'gray.500'}
-              fontWeight={600}
               fontSize={'15px'}
+              fontWeight={600}
               htmlFor={'application_link'}
             >
               Application Link
@@ -148,32 +147,32 @@ export const CreateJobBasic = ({
 
             <InputGroup>
               <InputLeftElement
-                pointerEvents="none"
                 h="100%"
-                marginLeft="0.5rem"
+                ml="0.5rem"
+                pointerEvents="none"
                 // eslint-disable-next-line react/no-children-prop
                 children={
-                  <Flex w="2rem" h="2rem" align="center" justify="center">
+                  <Flex align="center" justify="center" w="2rem" h="2rem">
                     <Image
-                      src={'/assets/icons/gray-link.svg'}
                       alt="Link Icon"
+                      src={'/assets/icons/gray-link.svg'}
                     />
                   </Flex>
                 }
               />
               <Input
-                padding="0 4rem"
+                p="0 4rem"
                 fontSize="1rem"
-                focusBorderColor="#CFD2D7"
                 fontWeight={500}
-                value={jobBasics?.link}
-                placeholder="Where are you collecting applications for this work"
+                focusBorderColor="#CFD2D7"
                 onChange={(e) => {
                   setJobBasic({
                     ...(jobBasics as JobBasicsType),
                     link: e.target.value,
                   });
                 }}
+                placeholder="Where are you collecting applications for this work"
+                value={jobBasics?.link}
               />
             </InputGroup>
           </FormControl>
@@ -186,68 +185,68 @@ export const CreateJobBasic = ({
           skills={skills}
           subSkills={subSkills}
         />
-        <FormControl isRequired isInvalid={errorState.deadline}>
+        <FormControl isInvalid={errorState.deadline} isRequired>
           <Flex align={'center'} justify={'start'}>
             <FormLabel
               color={'gray.500'}
-              fontWeight={600}
               fontSize={'15px'}
+              fontWeight={600}
               htmlFor={'deadline'}
             >
               Deadline
             </FormLabel>
             <Tooltip
-              placement="right-end"
-              fontSize="0.9rem"
-              padding="0.7rem"
-              bg="#6562FF"
+              w="max"
+              p="0.7rem"
               color="white"
+              fontSize="0.9rem"
               fontWeight={600}
+              bg="#6562FF"
               borderRadius="0.5rem"
               hasArrow
-              w="max"
               label={`Select the deadline date for accepting submissions`}
+              placement="right-end"
             >
               <Image
                 mt={-2}
-                src={'/assets/icons/info-icon.svg'}
                 alt={'Info Icon'}
+                src={'/assets/icons/info-icon.svg'}
               />
             </Tooltip>
           </Flex>
           <Input
             w={'full'}
-            id="deadline"
-            type={'datetime-local'}
-            placeholder="deadline"
-            min={date + 'T00:00'}
             color={'gray.500'}
-            value={jobBasics?.deadline}
+            id="deadline"
+            min={`${date}T00:00`}
             onChange={(e) => {
               setJobBasic({
                 ...(jobBasics as JobBasicsType),
                 deadline: e.target.value,
               });
             }}
+            placeholder="deadline"
+            type={'datetime-local'}
+            value={jobBasics?.deadline}
           />
           <FormErrorMessage></FormErrorMessage>
         </FormControl>
         <VStack gap={6} w={'full'} pt={10}>
           <Button
             w="100%"
-            bg={'#6562FF'}
             color={'white'}
             fontSize="1rem"
             fontWeight={600}
+            bg={'#6562FF'}
             _hover={{ bg: '#6562FF' }}
             onClick={() => {
               setErrorState({
-                deadline: jobBasics?.deadline ? false : true,
-                skills: skills.length !== 0 ? false : true,
-                subSkills: subSkills.length !== 0 ? false : true,
-                title: jobBasics?.title ? false : true,
-                link: jobBasics?.link ? false : true,
-                type: jobBasics?.type ? false : true,
+                deadline: !jobBasics?.deadline,
+                skills: skills.length === 0,
+                subSkills: subSkills.length === 0,
+                title: !jobBasics?.title,
+                link: !jobBasics?.link,
+                type: !jobBasics?.type,
               });
 
               if (
@@ -266,12 +265,12 @@ export const CreateJobBasic = ({
           </Button>
           <Button
             w="100%"
+            color="gray.500"
             fontSize="1rem"
             fontWeight={600}
-            color="gray.500"
+            bg="transparent"
             border="1px solid"
             borderColor="gray.200"
-            bg="transparent"
             isLoading={draftLoading}
             onClick={() => {
               createDraft('nothing');

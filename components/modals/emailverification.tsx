@@ -18,9 +18,11 @@ import {
 import { useRouter } from 'next/router';
 import { useState } from 'react';
 import toast, { Toaster } from 'react-hot-toast';
-import { SponsorType } from '../../interface/sponsor';
+
+import type { SponsorType } from '../../interface/sponsor';
 import { userStore } from '../../store/user';
 import { createSponsor, UpdateUser } from '../../utils/functions';
+
 interface Props {
   onClose: () => void;
   isOpen: boolean;
@@ -47,16 +49,16 @@ export const Emailverification = ({
   return (
     <Modal isOpen={isOpen} onClose={onClose}>
       <ModalOverlay />
-      <ModalContent py={10} h={'max'}>
+      <ModalContent h={'max'} py={10}>
         <ModalHeader>
           {success ? (
             ''
           ) : (
             <Text
-              textAlign={'center'}
               color={'gray.700'}
-              fontWeight={600}
               fontFamily={'Inter'}
+              fontWeight={600}
+              textAlign={'center'}
             >
               Please Confirm Your Email
             </Text>
@@ -66,25 +68,25 @@ export const Emailverification = ({
         {success ? (
           <ModalBody>
             <VStack>
-              <Image src={'/assets/icons/green-tick.svg'} alt={'green tick'} />
+              <Image alt={'green tick'} src={'/assets/icons/green-tick.svg'} />
               <Text
-                fontFamily={'Inter'}
-                textAlign={'center'}
-                fontWeight={600}
-                color={'gray.600'}
                 pb={3}
+                color={'gray.600'}
+                fontFamily={'Inter'}
+                fontWeight={600}
+                textAlign={'center'}
               >
                 Success
               </Text>
               <Button
+                w={'full'}
+                mt={10}
+                color={'white'}
+                bg={'#6562FF'}
+                _hover={{ bg: '#6562FF' }}
                 onClick={() => {
                   router.push('/dashboard/team');
                 }}
-                w={'full'}
-                bg={'#6562FF'}
-                _hover={{ bg: '#6562FF' }}
-                color={'white'}
-                mt={10}
               >
                 Continue
               </Button>
@@ -94,32 +96,32 @@ export const Emailverification = ({
           <ModalBody>
             <VStack gap={3}>
               <Flex
+                align="center"
+                justify="center"
                 w="100px"
                 h="100px"
-                borderRadius="100%"
-                bg="gray.50"
-                justify="center"
-                align="center"
                 mt={4}
+                bg="gray.50"
+                borderRadius="100%"
               >
                 <EmailIcon color={'gray.400'} w="24px" h="30px"></EmailIcon>
               </Flex>
               <Text
-                fontFamily={'Inter'}
-                textAlign={'center'}
-                fontWeight={600}
                 color={'gray.600'}
+                fontFamily={'Inter'}
+                fontWeight={600}
+                textAlign={'center'}
               >
                 Enter the OTP sent on {email}
               </Text>
               <Box mt={3}>
                 <PinInput
+                  manageFocus
+                  mask
                   onComplete={(e) => {
                     setXpin(e);
                   }}
                   type="alphanumeric"
-                  mask
-                  manageFocus
                 >
                   <PinInputField mx={2} />
                   <PinInputField mx={2} />
@@ -130,8 +132,13 @@ export const Emailverification = ({
                 </PinInput>
               </Box>
               <Button
-                isLoading={loading}
+                w={'full'}
+                mt={10}
+                color={'white'}
+                bg={'#6562FF'}
+                _hover={{ bg: '#6562FF' }}
                 isDisabled={loading}
+                isLoading={loading}
                 onClick={async () => {
                   if (
                     totp.current === Number(xpin) ||
@@ -152,11 +159,6 @@ export const Emailverification = ({
                     toast.error('Wrong OTP');
                   }
                 }}
-                w={'full'}
-                bg={'#6562FF'}
-                _hover={{ bg: '#6562FF' }}
-                color={'white'}
-                mt={10}
               >
                 Verify
               </Button>

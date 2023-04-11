@@ -2,16 +2,14 @@
 import {
   Box,
   Flex,
+  Image,
   Modal,
   ModalContent,
   ModalOverlay,
   Text,
-  Image,
 } from '@chakra-ui/react';
-import {
-  useWallet,
-  Wallet as SolanaWallet,
-} from '@solana/wallet-adapter-react';
+import type { Wallet as SolanaWallet } from '@solana/wallet-adapter-react';
+import { useWallet } from '@solana/wallet-adapter-react';
 import { useEffect } from 'react';
 
 interface Props {
@@ -35,19 +33,19 @@ export const ConnectWalletModal = ({
     <>
       <Modal isOpen={isOpen} onClose={onClose}>
         <ModalOverlay />
-        <ModalContent h={'max'} w={'22rem'}>
+        <ModalContent w={'22rem'} h={'max'}>
           <Flex
-            padding="2.5rem 2.2rem"
-            flexFlow="column"
             align="center"
             justify="center"
-            w="22rem"
-            bg="white"
-            boxShadow="0px 2px 4px rgba(56, 77, 110, 0.06)"
-            borderRadius="1.6rem"
             gap="1rem"
+            w="22rem"
+            p="2.5rem 2.2rem"
+            bg="white"
+            borderRadius="1.6rem"
+            shadow="0px 2px 4px rgba(56, 77, 110, 0.06)"
+            flexFlow="column"
           >
-            <Box h="2rem" w="13rem" alignSelf="start">
+            <Box alignSelf="start" w="13rem" h="2rem">
               <img
                 src="/assets/logo/logo.png"
                 width="100%"
@@ -57,20 +55,20 @@ export const ConnectWalletModal = ({
             </Box>
 
             <Text
+              pb="1rem"
+              color="gray.400"
               fontSize="1rem"
               fontWeight={500}
-              color="gray.400"
-              paddingBottom="1rem"
               borderBottom="1px solid #E2E8EF"
             >
               Connect your wallet to continue to your dashboard
             </Text>
             <Flex
-              flexFlow="column"
               align="start"
               justify="center"
-              w="100%"
               gap="1rem"
+              w="100%"
+              flexFlow="column"
             >
               {/* <WalletMultiButton /> */}
               {wallets.map((wallet: SolanaWallet, index: number) => {
@@ -78,38 +76,38 @@ export const ConnectWalletModal = ({
                   <>
                     <Flex
                       key={index}
-                      h="2.5rem"
                       align="center"
                       w="100%"
+                      h="2.5rem"
+                      p="0 1.5rem"
                       bg="gray.50"
                       borderRadius="1rem"
-                      cursor="pointer"
                       _hover={{
                         bg: 'gray.100',
                       }}
-                      padding="0 1.5rem"
+                      cursor="pointer"
                       onClick={onConnectWallet.bind(null, wallet)}
                     >
-                      <Flex gap="1rem" align="center">
+                      <Flex align="center" gap="1rem">
                         <Box
-                          display={'flex'}
-                          justifyContent={'center'}
                           alignItems={'center'}
+                          justifyContent={'center'}
+                          display={'flex'}
                           w="2rem"
                           h="2rem"
                         >
                           <Image
-                            width="70%"
-                            height="70%"
-                            src={wallet.adapter.icon ?? ''}
+                            w="70%"
+                            h="70%"
                             alt={`${wallet.adapter.name} Icon`}
+                            src={wallet.adapter.icon ?? ''}
                           />
                         </Box>
                         <Text
-                          fontSize="1.1rem"
                           ml={2}
-                          fontWeight={600}
                           color="gray.500"
+                          fontSize="1.1rem"
+                          fontWeight={600}
                         >
                           {wallet.adapter.name ?? ''}
                         </Text>

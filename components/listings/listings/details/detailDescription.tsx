@@ -1,9 +1,11 @@
 import { Box, Button, Flex, HStack, Text, VStack } from '@chakra-ui/react';
+import parse from 'html-react-parser';
 import React, { useState } from 'react';
 import { BiDownArrowAlt, BiUpArrowAlt } from 'react-icons/bi';
-import { MultiSelectOptions, skillSubSkillMap } from '../../../../constants';
+
+import type { MultiSelectOptions } from '../../../../constants';
 import { SkillColor } from '../../../../utils/constants';
-import parse from 'html-react-parser';
+
 interface Props {
   skills: MultiSelectOptions[];
   description: string;
@@ -14,31 +16,31 @@ export const DetailDescription = ({ skills, description }: Props) => {
 
   return (
     <>
-      <VStack w={'full'} rounded={'xl'} p={5} bg={'white'}>
+      <VStack w={'full'} p={5} bg={'white'} rounded={'xl'}>
         <Flex
-          w={'full'}
-          flexDir={['column', 'column', 'row', 'row']}
-          gap={3}
           justify={['center', 'center', 'space-between', 'space-between']}
+          direction={['column', 'column', 'row', 'row']}
+          gap={3}
+          w={'full'}
         >
           <Text color={'#94A3B8'} fontWeight={500}>
             Skills Needed
           </Text>
-          <HStack gap={3} flexWrap={'wrap'}>
+          <HStack flexWrap={'wrap'} gap={3}>
             {skills.length <= 5
               ? skills?.map((e) => {
                   return (
                     <Box
-                      bg={SkillColor[e.label as any] + '1A'}
                       key={e.value}
+                      m={'0px !important'}
                       px={4}
                       py={1}
+                      bg={`${SkillColor[e.label as any]}1A`}
                       rounded={'md'}
-                      m={'0px !important'}
                     >
                       <Text
-                        fontSize={'0.8rem'}
                         color={SkillColor[e.label as any]}
+                        fontSize={'0.8rem'}
                       >
                         {e.label}
                       </Text>
@@ -48,15 +50,15 @@ export const DetailDescription = ({ skills, description }: Props) => {
               : skills.slice(0, 4).map((e) => {
                   return (
                     <Box
-                      bg={SkillColor[e.label as any] + '1A'}
                       key={e.value}
                       px={4}
                       py={1}
+                      bg={`${SkillColor[e.label as any]}1A`}
                       rounded={'md'}
                     >
                       <Text
-                        fontSize={'0.8rem'}
                         color={SkillColor[e.label as any]}
+                        fontSize={'0.8rem'}
                       >
                         {e.label}
                       </Text>
@@ -65,51 +67,52 @@ export const DetailDescription = ({ skills, description }: Props) => {
                 })}
           </HStack>
         </Flex>
-        <Flex w={'full'} position={'relative'} flexDir={'column'}>
+        <Flex pos={'relative'} direction={'column'} w={'full'}>
           <Flex
-            id="reset-des"
-            h={show ? 'full' : description.length > 100 ? '21.5rem' : 'max'}
+            direction={'column'}
             overflow={'hidden'}
-            flexDir={'column'}
-            mt={10}
             w={'full'}
+            // eslint-disable-next-line no-nested-ternary
+            h={show ? 'full' : description.length > 100 ? '21.5rem' : 'max'}
+            mt={10}
             pb={8}
             px={5}
+            id="reset-des"
           >
             {parse(
               description.startsWith('"')
-                ? JSON.parse(description || "")
+                ? JSON.parse(description || '')
                 : description ?? ''
             )}
           </Flex>
           {description.length > 100 && (
             <Box
-              h={'50%'}
-              position={'absolute'}
+              pos={'absolute'}
               bottom={0}
-              display={'flex'}
-              justifyContent={'center'}
               alignItems={'start'}
+              justifyContent={'center'}
+              display={'flex'}
               w={'full'}
-              transform={'matrix(1, 0, 0, -1, 0, 0);'}
+              h={'50%'}
               bg={
                 show
                   ? 'transparent'
                   : 'linear-gradient(180deg, #FFFFFF 0%, rgba(255, 255, 255, 0.57) 100%)'
               }
+              transform={'matrix(1, 0, 0, -1, 0, 0);'}
             >
               <Button
+                w={'12rem'}
+                mt={-3}
                 color={'#94A3B8'}
                 fontSize={'1.1rem'}
-                w={'12rem'}
+                bg={'#FFFFFF'}
+                shadow={'0px 4px 4px rgba(0, 0, 0, 0.06)'}
+                transform={'matrix(1, 0, 0, -1, 0, 0);'}
                 onClick={() => {
                   setShow(!show);
                 }}
-                transform={'matrix(1, 0, 0, -1, 0, 0);'}
-                boxShadow={'0px 4px 4px rgba(0, 0, 0, 0.06)'}
-                bg={'#FFFFFF'}
                 rounded={'2xl'}
-                mt={-3}
               >
                 {show ? (
                   <>

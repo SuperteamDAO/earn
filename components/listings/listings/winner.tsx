@@ -1,7 +1,5 @@
-import React from 'react'
+import React from 'react';
 
 export const WinnerCard = () => {
-  return (
-    <div>WinnerCard</div>
-  )
-}
+  return <div>WinnerCard</div>;
+};

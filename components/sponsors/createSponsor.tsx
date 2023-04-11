@@ -1,3 +1,4 @@
+import { ChevronDownIcon } from '@chakra-ui/icons';
 import {
   Box,
   Button,
@@ -10,33 +11,29 @@ import {
   InputLeftElement,
   Menu,
   MenuButton,
-  MenuItem,
-  MenuList,
   Text,
 } from '@chakra-ui/react';
 import React from 'react';
 import { useForm } from 'react-hook-form';
-import { ChevronDownIcon } from '@chakra-ui/icons';
 
 export const CreateSponsors = () => {
   const {
     handleSubmit,
-    register,
-    formState: { errors, isSubmitting },
+    formState: { errors },
   } = useForm();
   const onSubmit = () => {};
   return (
     <>
       <form onSubmit={handleSubmit(onSubmit)}>
-        <Flex w="100%" justify="space-between" gap="2rem">
+        <Flex justify="space-between" gap="2rem" w="100%">
           <Box w="50%">
             <FormControl isRequired>
               <Text
+                mb="0.5rem"
                 color="gray.400"
                 fontSize="1.4rem"
-                textAlign="start"
                 fontWeight={600}
-                marginBottom="0.5rem"
+                textAlign="start"
               >
                 Sponsor name
               </Text>
@@ -46,7 +43,6 @@ export const CreateSponsors = () => {
                 fontWeight={500}
                 focusBorderColor="#CFD2D7"
                 placeholder="Company name"
-                onChange={(e) => {}}
               />
               {/* {errors.name && (
                 <FormErrorMessage fontSize="1.1rem">
@@ -58,11 +54,11 @@ export const CreateSponsors = () => {
           <Box w="50%">
             <FormControl>
               <Text
+                mb="0.5rem"
                 color="gray.400"
                 fontSize="1.4rem"
-                textAlign="start"
                 fontWeight={600}
-                marginBottom="0.5rem"
+                textAlign="start"
               >
                 Company URL
               </Text>
@@ -70,10 +66,9 @@ export const CreateSponsors = () => {
                 h="4.3rem"
                 // disabled={uploading}
                 fontSize="1.5rem"
-                focusBorderColor="#CFD2D7"
                 fontWeight={500}
+                focusBorderColor="#CFD2D7"
                 placeholder="Enter your website"
-                onChange={(e) => {}}
               />
               {/* {errors.website && (
                 <FormErrorMessage fontSize="1.1rem">
@@ -86,19 +81,19 @@ export const CreateSponsors = () => {
 
         <FormControl as={Box} alignSelf="start">
           <Text
-            fontWeight={600}
-            fontSize="1.4rem"
-            textAlign="start"
+            mb="0.5rem"
             color="gray.400"
-            marginBottom="0.5rem"
+            fontSize="1.4rem"
+            fontWeight={600}
+            textAlign="start"
           >
             Add your logo
           </Text>
           <Flex align="center" justify="center" gap="2rem" w="30%">
             <Flex
-              w="5.5rem"
-              h="5.5rem"
-              borderRadius="50%"
+              pos="relative"
+              align="center"
+              justify="center"
               // border={
               //   companyDetails.logo
               //     ? '2px transparent'
@@ -106,10 +101,10 @@ export const CreateSponsors = () => {
               //     ? '2px dashed #FF8585'
               //     : '2px dashed #E2E8EF'
               // }
-              position="relative"
+              w="5.5rem"
+              h="5.5rem"
               bg="#F7FAFC"
-              align="center"
-              justify="center"
+              borderRadius="50%"
               style={{
                 // backgroundImage: imageBlob && `url(${imageBlob})`,
                 backgroundSize: 'cover',
@@ -164,9 +159,9 @@ export const CreateSponsors = () => {
             <Button
               w="8.7rem"
               h="3.2rem"
+              color="gray.400"
               fontSize="1.3rem"
               fontWeight={500}
-              color="gray.400"
               onClick={() => {
                 const inputElem = document.getElementById('icon-button-logo');
                 inputElem?.click();
@@ -181,24 +176,23 @@ export const CreateSponsors = () => {
         </FormControl>
 
         <Box w="100%">
-          <FormControl isInvalid={errors.email ? true : false}>
+          <FormControl isInvalid={!!errors.email}>
             <Text
+              mb="0.5rem"
               color="gray.400"
               fontSize="1.4rem"
-              textAlign="start"
               fontWeight={600}
-              marginBottom="0.5rem"
+              textAlign="start"
             >
               Email
             </Text>
             <Input
               h="4.3rem"
               fontSize="1.5rem"
-              focusBorderColor="#CFD2D7"
               fontWeight={500}
+              focusBorderColor="#CFD2D7"
               placeholder="Work email"
               type="email"
-              onChange={(e) => {}}
             />
             {/* {companyDetails.email && (
               <FormErrorMessage fontSize="1.1rem">
@@ -208,30 +202,30 @@ export const CreateSponsors = () => {
           </FormControl>
         </Box>
 
-        <Flex w="100%" justify="space-between" gap="2rem">
-          <FormControl w="50%" isInvalid={errors.industry ? true : false}>
+        <Flex justify="space-between" gap="2rem" w="100%">
+          <FormControl w="50%" isInvalid={!!errors.industry}>
             <Text
+              mb="0.5rem"
               color="gray.400"
               fontSize="1.4rem"
-              textAlign="start"
               fontWeight={600}
-              marginBottom="0.5rem"
+              textAlign="start"
             >
               Industry
             </Text>
             <Menu>
               <MenuButton
-                border={
-                  errors.industry ? '2px solid #FF8585' : '2px solid #e2e8f0'
-                }
                 as={Button}
-                rightIcon={<ChevronDownIcon />}
                 w="100%"
                 h="4.3rem"
                 fontSize="1.5rem"
                 fontWeight={500}
-                // color={companyDetails.industry ? 'gray.700' : '#aab4c0'}
                 bg="transparent"
+                border={
+                  errors.industry ? '2px solid #FF8585' : '2px solid #e2e8f0'
+                }
+                // color={companyDetails.industry ? 'gray.700' : '#aab4c0'}
+                rightIcon={<ChevronDownIcon />}
               >
                 {/* {(companyDetails && companyDetails.industry) ||
                   'Pick an industry'} */}
@@ -261,27 +255,27 @@ export const CreateSponsors = () => {
             )} */}
           </FormControl>
           <Box w="50%">
-            <FormControl isInvalid={errors.twitter ? true : false}>
+            <FormControl isInvalid={!!errors.twitter}>
               <Text
+                mb="0.5rem"
                 color="gray.400"
                 fontSize="1.4rem"
-                textAlign="start"
                 fontWeight={600}
-                marginBottom="0.5rem"
+                textAlign="start"
               >
                 Twitter
               </Text>
               <InputGroup>
                 <InputLeftElement
-                  pointerEvents="none"
                   h="100%"
-                  marginLeft="0.5rem"
+                  ml="0.5rem"
+                  pointerEvents="none"
                   // eslint-disable-next-line react/no-children-prop
                   children={
-                    <Flex w="2rem" h="2rem" align="center" justify="center">
+                    <Flex align="center" justify="center" w="2rem" h="2rem">
                       <Image
-                        src={'/assets/logo/twitter.svg'}
                         alt="Twitter Icon"
+                        src={'/assets/logo/twitter.svg'}
                       />
                     </Flex>
                   }
@@ -289,12 +283,11 @@ export const CreateSponsors = () => {
                 <Input
                   // disabled={uploading}
                   h="4.3rem"
-                  padding="0 4rem"
+                  p="0 4rem"
                   fontSize="1.5rem"
-                  focusBorderColor="#CFD2D7"
                   fontWeight={500}
+                  focusBorderColor="#CFD2D7"
                   placeholder="@yourtwitter"
-                  onChange={(e) => {}}
                 />
               </InputGroup>
               {/* {errors.twitter && (
@@ -307,24 +300,23 @@ export const CreateSponsors = () => {
         </Flex>
 
         <Box w="100%">
-          <FormControl isInvalid={errors.bio ? true : false}>
+          <FormControl isInvalid={!!errors.bio}>
             <Text
+              mb="0.5rem"
               color="gray.400"
               fontSize="1.4rem"
-              textAlign="start"
               fontWeight={600}
-              marginBottom="0.5rem"
+              textAlign="start"
             >
               Company Short bio
             </Text>
             <Input
-              maxLength={160}
               h="4.3rem"
               fontSize="1.5rem"
-              focusBorderColor="#CFD2D7"
               fontWeight={500}
+              focusBorderColor="#CFD2D7"
+              maxLength={160}
               placeholder="One sentence that describes your project"
-              onChange={(e) => {}}
             />
             {errors.bio && (
               <FormErrorMessage fontSize="1.1rem">{}</FormErrorMessage>
@@ -333,11 +325,11 @@ export const CreateSponsors = () => {
         </Box>
         <Button
           w="100%"
-          variant="primary"
+          h="5rem"
           fontSize="1.5rem"
           fontWeight={600}
-          h="5rem"
           onClick={onSubmit}
+          variant="primary"
         >
           Continue
         </Button>

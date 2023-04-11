@@ -1,51 +1,44 @@
 import {
+  Avatar,
   Box,
   Button,
   Flex,
   Image,
   Text,
-  VStack,
-  Avatar,
   useDisclosure,
+  VStack,
 } from '@chakra-ui/react';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { useRouter } from 'next/router';
 import React from 'react';
 import toast from 'react-hot-toast';
 import { AiFillHeart } from 'react-icons/ai';
-import { Talent } from '../../../../interface/talent';
+
 import { userStore } from '../../../../store/user';
 import { addLike, findSubmission } from '../../../../utils/functions';
 import { CreateProfileModal } from '../../../modals/createProfile';
-import TalentBio from '../../../TalentBio';
 import { Comments } from '../comments';
 
-let Chip = ({ icon, label, value }: any) => {
+const Chip = ({ icon, label, value }: any) => {
   return (
     <Flex>
       <Box
+        alignItems={'center'}
+        justifyContent={'center'}
         w={'2rem'}
         h={'2rem'}
+        mr={'0.725rem'}
+        p={'0.4rem'}
         bg={'#F6EBFF'}
         borderRadius="full"
-        mr={'0.725rem'}
-        justifyContent={'center'}
-        alignItems={'center'}
-        p={'0.4rem'}
       >
-        <Image
-          objectFit="contain"
-          width={'100%'}
-          height={'100%'}
-          alt=""
-          src={icon}
-        />
+        <Image w={'100%'} h={'100%'} objectFit="contain" alt="" src={icon} />
       </Box>
       <Box>
-        <Text fontWeight={'400'} fontSize={'0.5813rem'} color={'gray.400'}>
+        <Text color={'gray.400'} fontSize={'0.5813rem'} fontWeight={'400'}>
           {label}
         </Text>
-        <Text fontWeight={'400'} fontSize={'0.775rem'}>
+        <Text fontSize={'0.775rem'} fontWeight={'400'}>
           {value}
         </Text>
       </Box>
@@ -71,7 +64,7 @@ export const SubmissionPage = () => {
       toast.success('Like Added');
     },
   });
-  let likes =
+  const likes =
     SubmissionInfo.data?.likes !== JSON.stringify([])
       ? JSON.parse(SubmissionInfo.data?.likes ?? '[]')
       : [];
@@ -80,34 +73,34 @@ export const SubmissionPage = () => {
       {isOpen && <CreateProfileModal isOpen={isOpen} onClose={onClose} />}
 
       <VStack
-        maxW={'7xl'}
-        mx={'auto'}
         align={['center', 'center', 'start', 'start']}
-        gap={4}
-        flexDir={['column-reverse', 'column-reverse', 'row', 'row']}
         justify={['center', 'center', 'space-between', 'space-between']}
+        flexDir={['column-reverse', 'column-reverse', 'row', 'row']}
+        gap={4}
+        maxW={'7xl'}
         mt={10}
+        mx={'auto'}
       >
         <VStack gap={8} w={['22rem', '22rem', 'full', 'full']} mt={3}>
-          <VStack rounded={'md'} w={'full'} h={'40rem'} bg={'white'}>
-            <Flex w={'full'} justify={'space-between'} mt={5} px={8}>
+          <VStack w={'full'} h={'40rem'} bg={'white'} rounded={'md'}>
+            <Flex justify={'space-between'} w={'full'} mt={5} px={8}>
               <Text color={'black'} fontSize={'22px'} fontWeight={600}>
                 {SubmissionInfo.data?.Talent?.firstname}
                 {'  '}
                 {SubmissionInfo.data?.Talent?.lastname}’s Submission
               </Text>
               <Button
-                variant={'unstyled'}
-                border={'1px solid #CBD5E1'}
-                w={14}
-                display={'flex'}
+                zIndex={10}
                 alignItems={'center'}
                 gap={2}
-                zIndex={10}
+                display={'flex'}
+                w={14}
+                border={'1px solid #CBD5E1'}
                 onClick={() => {
                   if (!userInfo?.id) return;
                   likeMutation.mutate();
                 }}
+                variant={'unstyled'}
               >
                 <AiFillHeart
                   color={
@@ -120,13 +113,13 @@ export const SubmissionPage = () => {
               </Button>
             </Flex>
             <Image
-              src={SubmissionInfo.data?.image}
               w={'full'}
               h={'30rem'}
               p={7}
-              rounded={'2rem'}
-              alt={'submission'}
               objectFit={'cover'}
+              alt={'submission'}
+              rounded={'2rem'}
+              src={SubmissionInfo.data?.image}
             />
           </VStack>
           <Comments
@@ -135,38 +128,38 @@ export const SubmissionPage = () => {
           />
         </VStack>
         <Box
-          px={'1.5625rem'}
-          py={'1.125rem'}
-          borderRadius={'0.6875rem'}
-          bg={'white'}
           w={'24.4375rem'}
           minH={'21.375rem'}
+          px={'1.5625rem'}
+          py={'1.125rem'}
+          bg={'white'}
+          borderRadius={'0.6875rem'}
         >
           <Flex align={'center'}>
             <Avatar
               name="Dan Abrahmov"
-              src={SubmissionInfo.data?.Talent?.avatar as any}
               size="lg"
+              src={SubmissionInfo.data?.Talent?.avatar as any}
             />
             <Box ml={'21'}>
-              <Text fontWeight={'600'} fontSize={'1.25rem'}>
+              <Text fontSize={'1.25rem'} fontWeight={'600'}>
                 {SubmissionInfo.data?.Talent?.firstname}
                 {SubmissionInfo.data?.Talent?.lastname}
               </Text>
-              <Text fontWeight={'600'} fontSize={'1rem'} color={'gray.400'}>
+              <Text color={'gray.400'} fontSize={'1rem'} fontWeight={'600'}>
                 @{SubmissionInfo.data?.Talent?.username}
               </Text>
             </Box>
           </Flex>
           <Text
             mt={'0.625rem'}
-            fontWeight={'400'}
-            fontSize={'1rem'}
             color={'gray.400'}
+            fontSize={'1rem'}
+            fontWeight={'400'}
           >
             {SubmissionInfo.data?.Talent?.bio}
           </Text>
-          <Flex justifyContent={'space-between'} mt={'2.1875rem'}>
+          <Flex justify={'space-between'} mt={'2.1875rem'}>
             <Chip
               icon={'/assets/talent/eyes.png'}
               label={'Interested In'}
@@ -178,16 +171,16 @@ export const SubmissionPage = () => {
               value={SubmissionInfo.data?.Talent?.currentEmployer}
             />
           </Flex>
-          <Button color={'white'} bg={'#6562FF'} w={'full'} mt={'1.575rem'}>
+          <Button w={'full'} mt={'1.575rem'} color={'white'} bg={'#6562FF'}>
             Get in touch
           </Button>
-          <Flex mt={'32px'} justifyContent={'space-between'}>
+          <Flex justify={'space-between'} mt={'32px'}>
             <Box w={'22px'} h={'22px'}>
               <a href={SubmissionInfo.data?.Talent?.twitter}>
                 <Image
+                  w={'100%'}
+                  h={'100%'}
                   objectFit="contain"
-                  width={'100%'}
-                  height={'100%'}
                   alt=""
                   src={'/assets/talent/twitter.png'}
                 />
@@ -196,9 +189,9 @@ export const SubmissionPage = () => {
             <Box w={'22px'} h={'22px'}>
               <a href={SubmissionInfo.data?.Talent?.linkedin}>
                 <Image
+                  w={'100%'}
+                  h={'100%'}
                   objectFit="contain"
-                  width={'100%'}
-                  height={'100%'}
                   alt=""
                   src={'/assets/talent/linkedIn.png'}
                 />
@@ -207,9 +200,9 @@ export const SubmissionPage = () => {
             <Box w={'22px'} h={'22px'}>
               <a href={SubmissionInfo.data?.Talent?.github}>
                 <Image
+                  w={'100%'}
+                  h={'100%'}
                   objectFit="contain"
-                  width={'100%'}
-                  height={'100%'}
                   alt=""
                   src={'/assets/talent/github.png'}
                 />
@@ -218,9 +211,9 @@ export const SubmissionPage = () => {
             <Box w={'22px'} h={'22px'}>
               <a href={SubmissionInfo.data?.Talent?.website}>
                 <Image
+                  w={'100%'}
+                  h={'100%'}
                   objectFit="contain"
-                  width={'100%'}
-                  height={'100%'}
                   alt=""
                   src={'/assets/talent/site.png'}
                 />

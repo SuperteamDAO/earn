@@ -1,8 +1,9 @@
-import { create } from 'zustand';
-import { User } from '../interface/user';
 import produce from 'immer';
 import { mountStoreDevtool } from 'simple-zustand-devtools';
-import { SponsorType } from '../interface/sponsor';
+import { create } from 'zustand';
+
+import type { User } from '../interface/user';
+
 interface UserState {
   userInfo: User | null;
   setUserInfo: (user: User) => void;
@@ -13,6 +14,7 @@ export const userStore = create<UserState>((set) => ({
   setUserInfo: (user: User): void =>
     set(
       produce((state: UserState) => {
+        // eslint-disable-next-line no-param-reassign
         state.userInfo = user;
       })
     ),

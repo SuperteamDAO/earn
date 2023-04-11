@@ -1,5 +1,7 @@
 import { Box, Flex, Image, Text } from '@chakra-ui/react';
-import React, { Dispatch, SetStateAction } from 'react';
+import type { Dispatch, SetStateAction } from 'react';
+import React from 'react';
+
 interface Props {
   currentStep: number;
   thisStep: number;
@@ -10,39 +12,39 @@ interface Props {
 export const Steps = ({ currentStep, thisStep, label, setStep }: Props) => {
   const handleChange = () => {
     if (currentStep > thisStep) {
-      //@ts-ignore
+      // @ts-ignore
       setStep(thisStep);
     }
   };
   return (
     <>
       <Box
-        display={'flex'}
-        justifyContent={'center'}
+        pos="relative"
         alignItems={'center'}
+        justifyContent={'center'}
         flexDir={'column'}
-        onClick={handleChange}
-        cursor={'pointer'}
-        position="relative"
+        display={'flex'}
         h={'6rem'}
+        cursor={'pointer'}
+        onClick={handleChange}
       >
         <Flex
+          align={'center'}
+          justify="center"
           w="2.3rem"
           h="2.3rem"
-          borderRadius="50%"
-          bg={currentStep >= thisStep ? '#6562FF' : 'transparent'}
           color="white"
-          justify="center"
-          align={'center'}
+          bg={currentStep >= thisStep ? '#6562FF' : 'transparent'}
           border={currentStep === thisStep ? 'none' : '1px solid #94A3B8'}
+          borderRadius="50%"
         >
           {currentStep > thisStep ? (
-            <Image src={'/assets/icons/white-tick.svg'} alt="Tick icon" />
+            <Image alt="Tick icon" src={'/assets/icons/white-tick.svg'} />
           ) : (
             <Flex>
               <Text
-                color={currentStep === thisStep ? 'white' : '#94A3B8'}
                 h="100%"
+                color={currentStep === thisStep ? 'white' : '#94A3B8'}
                 fontSize="1rem"
                 textAlign="center"
               >
@@ -52,14 +54,14 @@ export const Steps = ({ currentStep, thisStep, label, setStep }: Props) => {
           )}
         </Flex>
         <Text
-          fontSize="1rem"
+          pos="absolute"
           bottom={0}
-          w={'max-content'}
-          display={'flex'}
-          justifyContent={'center'}
           alignItems={'center'}
-          position="absolute"
+          justifyContent={'center'}
+          display={'flex'}
+          w={'max-content'}
           color={currentStep === thisStep ? '#1E293B' : '#CBD5E1'}
+          fontSize="1rem"
           fontWeight={600}
         >
           {label}
@@ -77,29 +79,29 @@ export const VerticalStep = ({
 }: Props) => {
   return (
     <Flex
-      cursor={'pointer'}
+      pos="relative"
       align={'center'}
-      justifyContent={'center'}
+      justify={'center'}
       gap={3}
-      position="relative"
+      cursor={'pointer'}
     >
       <Flex
+        align={'center'}
+        justify="center"
         w="2.3rem"
         h="2.3rem"
-        borderRadius="50%"
-        bg={currentStep >= thisStep ? '#6562FF' : 'transparent'}
         color="white"
-        justify="center"
-        align={'center'}
+        bg={currentStep >= thisStep ? '#6562FF' : 'transparent'}
         border={currentStep === thisStep ? 'none' : '1px solid #94A3B8'}
+        borderRadius="50%"
       >
         {currentStep > thisStep ? (
-          <Image src={'/assets/icons/white-tick.svg'} alt="Tick icon" />
+          <Image alt="Tick icon" src={'/assets/icons/white-tick.svg'} />
         ) : (
           <Flex>
             <Text
-              color={currentStep === thisStep ? 'white' : '#94A3B8'}
               h="100%"
+              color={currentStep === thisStep ? 'white' : '#94A3B8'}
               fontSize="1rem"
               textAlign="center"
             >
@@ -108,11 +110,11 @@ export const VerticalStep = ({
           </Flex>
         )}
       </Flex>
-      <Flex flexDir={'column'}>
-        <Text fontSize="1.3rem" color={'#1E293B'} fontWeight={600}>
+      <Flex direction={'column'}>
+        <Text color={'#1E293B'} fontSize="1.3rem" fontWeight={600}>
           {label}
         </Text>
-        <Text fontSize="1rem" color={'#94A3B8'} fontWeight={500}>
+        <Text color={'#94A3B8'} fontSize="1rem" fontWeight={500}>
           {sublabel}
         </Text>
       </Flex>

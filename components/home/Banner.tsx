@@ -1,26 +1,35 @@
-import { Avatar, AvatarGroup, Box, Button, Flex, Text, useMediaQuery } from '@chakra-ui/react';
+import {
+  Avatar,
+  AvatarGroup,
+  Box,
+  Button,
+  Flex,
+  Text,
+  useMediaQuery,
+} from '@chakra-ui/react';
 import { useRouter } from 'next/router';
-let slate = '#1E293B';
 
-function Desktop_Banner() {
+const slate = '#1E293B';
+
+function DesktopBanner() {
   const router = useRouter();
   return (
     <Box
-      px={'2.625rem'}
-      py={'2.125rem'}
       w={'46.0625rem'}
       h={'14.75rem'}
-      rounded={'md'}
       mt={'24px'}
+      px={'2.625rem'}
+      py={'2.125rem'}
       bgImage="url('/assets/home/display/money_banner.png')"
       bgSize={'contain'}
+      rounded={'md'}
     >
       <Text
-        lineHeight={'1.875rem'}
         color={slate}
         fontFamily={'Domine'}
-        fontWeight={'700'}
         fontSize={'1.625rem'}
+        fontWeight={'700'}
+        lineHeight={'1.875rem'}
       >
         Unlock Your Earning <br />
         Potential on Solana
@@ -29,20 +38,20 @@ function Desktop_Banner() {
         Explore bounties, grants, and job opportunities for developers and
         non-technical talent alike
       </Text>
-      <Flex mt={'1.5625rem'} alignItems={'center'} >
+      <Flex align={'center'} mt={'1.5625rem'}>
         <Button
+          px={'2.25rem'}
+          py={'0.75rem'}
+          color={'white'}
+          fontSize={'0.875rem'}
+          bg={'#6366F1'}
           onClick={() => {
             router.push('/new');
           }}
-          bg={'#6366F1'}
-          color={'white'}
-          fontSize={'0.875rem'}
-          px={'2.25rem'}
-          py={'0.75rem'}
         >
           Sign Up
         </Button>
-        <AvatarGroup size="sm" ml={'2.875rem'} max={3}>
+        <AvatarGroup ml={'2.875rem'} max={3} size="sm">
           <Avatar name="Ryan Florence" src="https://bit.ly/ryan-florence" />
           <Avatar name="Segun Adebayo" src="https://bit.ly/sage-adebayo" />
           <Avatar name="Kent Dodds" src="https://bit.ly/kent-c-dodds" />
@@ -55,53 +64,51 @@ function Desktop_Banner() {
   );
 }
 
-function Mobile_Banner() {
+function MobileBanner() {
   const router = useRouter();
   return (
     <Flex
-      flexDirection={"column"}
-      justifyContent={"end"}
+      justify={'end'}
+      direction={'column'}
+      w={'24.125rem'}
+      h={'23.25rem'}
+      mt={'24px'}
       px={'2rem'}
       py={'1.5rem'}
-      w={'24.125rem'}
-      h={"23.25rem"}
-      rounded={'md'}
-      mt={'24px'}
-      bgSize={'contain'}
       bgImage="url('/assets/home/display/mob_money_banner.png')"
-
+      bgSize={'contain'}
+      rounded={'md'}
     >
       <Text
-        lineHeight={'1.875rem'}
         color={slate}
         fontFamily={'Domine'}
-        fontWeight={'700'}
         fontSize={'1.5rem'}
-
+        fontWeight={'700'}
+        lineHeight={'1.875rem'}
       >
         Unlock Your Earning <br />
         Potential on Solana
       </Text>
-      <Text fontSize={".875rem"} w={'100%'} mt={'0.4375rem'} color={slate}>
+      <Text w={'100%'} mt={'0.4375rem'} color={slate} fontSize={'.875rem'}>
         Explore bounties, grants, and job opportunities for developers and
         non-technical talent alike
       </Text>
-      <Flex mt={'1.5625rem'} alignItems={'center'} flexDir={"column"} >
+      <Flex align={'center'} direction={'column'} mt={'1.5625rem'}>
         <Button
-          w={"100%"}
+          w={'100%'}
+          px={'2.25rem'}
+          py={'0.75rem'}
+          color={'white'}
+          fontSize={'0.875rem'}
+          bg={'#6366F1'}
           onClick={() => {
             router.push('/new');
           }}
-          bg={'#6366F1'}
-          color={'white'}
-          fontSize={'0.875rem'}
-          px={'2.25rem'}
-          py={'0.75rem'}
         >
           Sign Up
         </Button>
-        <Flex alignItems={"center"} mt={"1rem"}>
-          <AvatarGroup size="sm" ml={'2.875rem'} max={3}>
+        <Flex align={'center'} mt={'1rem'}>
+          <AvatarGroup ml={'2.875rem'} max={3} size="sm">
             <Avatar name="Ryan Florence" src="https://bit.ly/ryan-florence" />
             <Avatar name="Segun Adebayo" src="https://bit.ly/sage-adebayo" />
             <Avatar name="Kent Dodds" src="https://bit.ly/kent-c-dodds" />
@@ -117,7 +124,5 @@ function Mobile_Banner() {
 
 export default function Banner() {
   const [isLessThan768px] = useMediaQuery('(max-width: 768px)');
-  return (
-    (!isLessThan768px) ? <Desktop_Banner /> : <Mobile_Banner />
-  )
+  return !isLessThan768px ? <DesktopBanner /> : <MobileBanner />;
 }

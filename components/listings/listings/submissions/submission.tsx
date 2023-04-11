@@ -1,8 +1,9 @@
 import { Flex, Image, Text, VStack } from '@chakra-ui/react';
 import moment from 'moment';
 import React from 'react';
-import { SubmissionType } from '../../../../interface/listings';
-import { Talent } from '../../../../interface/talent';
+
+import type { SubmissionType } from '../../../../interface/listings';
+import type { Talent } from '../../../../interface/talent';
 import { SubmissionCard } from './submissionCard';
 
 interface Props {
@@ -13,25 +14,25 @@ export const Submission = ({ submissions, endTime }: Props) => {
   return (
     <>
       <VStack
-        justify={'center'}
         align={['center', 'center', 'start', 'start']}
-        mt={10}
+        justify={'center'}
         w={'full'}
+        mt={10}
       >
         {Number(moment(endTime).format('x')) > Date.now() ? (
           <>
             <Flex gap={3} ml={5}>
-              <Text fontWeight={600} fontSize={'1.2rem'} color={'#1E293B'}>
+              <Text color={'#1E293B'} fontSize={'1.2rem'} fontWeight={600}>
                 {submissions.length}
               </Text>
-              <Text fontWeight={600} fontSize={'1.2rem'} color={'#94A3B8'}>
+              <Text color={'#94A3B8'} fontSize={'1.2rem'} fontWeight={600}>
                 Submissions
               </Text>
             </Flex>
             <Flex
-              flexWrap={'wrap'}
-              gap={10}
               justify={['center', 'center', 'start', 'start']}
+              wrap={'wrap'}
+              gap={10}
               mt={10}
             >
               {submissions?.map((el) => {
@@ -52,17 +53,17 @@ export const Submission = ({ submissions, endTime }: Props) => {
         ) : (
           <>
             <VStack
-              h={'25rem'}
-              gap={5}
               align={'center'}
               justify={'center'}
+              gap={5}
               w={'full'}
+              h={'25rem'}
             >
-              <Image src={'/assets/icons/submission.svg'} alt={'submission'} />
+              <Image alt={'submission'} src={'/assets/icons/submission.svg'} />
               <Text
                 color={'gray.800'}
-                fontSize={'1.5rem'}
                 fontFamily={'Inter'}
+                fontSize={'1.5rem'}
                 fontWeight={600}
               >
                 Submissions are not public

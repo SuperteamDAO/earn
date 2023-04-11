@@ -1,38 +1,36 @@
-import React, { useEffect, useState } from 'react';
+/* eslint-disable no-nested-ternary */
+import { ChevronDownIcon, Search2Icon } from '@chakra-ui/icons';
 import {
-  Input,
   Box,
-  Image,
-  Flex,
-  Center,
   Button,
+  Center,
+  Divider,
+  Flex,
+  HStack,
+  Image,
+  Input,
   Menu,
   MenuButton,
-  MenuList,
   MenuItem,
-  useDisclosure,
+  MenuList,
   Text,
-  HStack,
-  Divider,
+  useDisclosure,
 } from '@chakra-ui/react';
+import type { Wallet as SolanaWallet } from '@solana/wallet-adapter-react';
+import { useWallet } from '@solana/wallet-adapter-react';
+import Avatar from 'boring-avatars';
 import { useRouter } from 'next/router';
-import { ChevronDownIcon, Search2Icon } from '@chakra-ui/icons';
-import { ConnectWalletModal } from '../modals/connectWalletModal';
-import {
-  useWallet,
-  Wallet as SolanaWallet,
-} from '@solana/wallet-adapter-react';
+import React, { useEffect, useState } from 'react';
 import toast from 'react-hot-toast';
-import { userStore } from '../../store/user';
+import { MdOutlineKeyboardArrowDown } from 'react-icons/md';
+
 import { TalentStore } from '../../store/talent';
-import { SponsorStore } from '../../store/sponsor';
+import { userStore } from '../../store/user';
 import { createUser, findTalentPubkey } from '../../utils/functions';
 import { truncatedPublicKey } from '../../utils/helpers';
-import { MdOutlineKeyboardArrowDown } from 'react-icons/md';
-import Avatar from 'boring-avatars';
+import { ConnectWalletModal } from '../modals/connectWalletModal';
 
 function NavHome() {
-  const [selected, setselected] = useState('All Opportunties');
   const router = useRouter();
   const [search, setSearch] = useState<string>('');
 
@@ -40,14 +38,17 @@ function NavHome() {
 
   const { setUserInfo, userInfo } = userStore();
   const { setTalentInfo, talentInfo } = TalentStore();
-  const { currentSponsor, setCurrentSponsor } = SponsorStore();
 
-  const { connected, publicKey, wallet, connect, select, wallets } =
-    useWallet();
+  const { connected, publicKey, wallet, select } = useWallet();
+  const findTalent = async () => {
+    const talent = await findTalentPubkey(publicKey?.toBase58() as string);
+    if (!talent) {
+      return null;
+    }
+    return setTalentInfo(talent.data);
+  };
   useEffect(() => {
     const makeUser = async () => {
-      console.log(publicKey, connected);
-
       if (publicKey && connected) {
         const res = await createUser(publicKey.toBase58() as string);
         setUserInfo(res.data);
@@ -63,21 +64,12 @@ function NavHome() {
     };
     makeUser();
   }, [publicKey, connected]);
-  const findTalent = async () => {
-    const talent = await findTalentPubkey(publicKey?.toBase58() as string);
-    if (!talent) {
-      return;
-    }
-    return setTalentInfo(talent.data);
-  };
-  const onConnectWallet = async (wallet: SolanaWallet) => {
+  const onConnectWallet = async (solanaWallet: SolanaWallet) => {
     try {
       // await connect();
 
-      select(wallet.adapter.name);
+      select(solanaWallet.adapter.name);
     } catch (e) {
-      console.log(e, '--');
-
       toast.error('Wallet not found');
     }
   };
@@ -90,13 +82,15 @@ function NavHome() {
   const handleKeyDown = (event: any) => {
     if (event.key === 'Enter') {
       event.preventDefault();
-      router.replace(
-        router.asPath.includes('?')
-          ? router.query.search
-            ? router.asPath.split('?')[0] + '?search=' + search
-            : router.asPath + '&search=' + search
-          : router.asPath + '?search=' + search
-      );
+      let path = `${router.asPath}?search=${search}`;
+      if (router.asPath.includes('?')) {
+        if (router.query.search) {
+          path = `${router.asPath.split('?')[0]}?search=${search}`;
+        } else {
+          path = `${router.asPath}&search=${search}`;
+        }
+      }
+      router.replace(path);
     }
   };
 
@@ -104,6 +98,7 @@ function NavHome() {
     if (!search) return;
     document.addEventListener('keydown', handleKeyDown);
 
+    // eslint-disable-next-line consistent-return
     return () => {
       document.removeEventListener('keydown', handleKeyDown);
     };
@@ -119,59 +114,58 @@ function NavHome() {
         />
       )}
       <Flex
+        align={'center'}
         h={'3rem'}
+        mx={'auto'}
         px={'1.25rem'}
         bg={'FFFFFF'}
-        alignItems={'center'}
-        mx={'auto'}
       >
         <Image
+          h={'1.0437rem'}
+          objectFit={'contain'}
+          alt={'logo'}
           onClick={() => {
             router.push('/');
           }}
-          h={'1.0437rem'}
-          alt={'logo'}
-          objectFit={'contain'}
           src={'/assets/logo/logo.png'}
         />
         <Flex align={'center'} gap={2}>
           <Input
+            w={'10.75rem'}
+            h={'2rem'}
+            ml={'3.125rem'}
             onChange={(e) => {
               setSearch(e.target.value);
             }}
             placeholder="Search"
-            w={'10.75rem'}
-            h={'2rem'}
-            ml={'3.125rem'}
           />
           <Button
-            onClick={() => {
-              router.replace(
-                router.asPath.includes('?')
-                  ? router.query.search
-                    ? router.asPath.split('?')[0] + '?search=' + search
-                    : router.asPath + '&search=' + search
-                  : router.asPath + '?search=' + search
-              );
-            }}
-            bg={'#6366F1'}
             color={'white'}
-            isDisabled={search.length == 0}
+            bg={'#6366F1'}
+            isDisabled={search.length === 0}
+            onClick={() => {
+              let path = `${router.asPath}?search=${search}`;
+              if (router.asPath.includes('?')) {
+                if (router.query.search) {
+                  path = `${router.asPath.split('?')[0]}?search=${search}`;
+                } else {
+                  path = `${router.asPath}&search=${search}`;
+                }
+              }
+              router.replace(path);
+            }}
             size={'sm'}
           >
             <Search2Icon />
           </Button>
         </Flex>
-        <Flex h={'full'} columnGap={'1.5625rem'} ml={'1.25rem'}>
+        <Flex columnGap={'1.5625rem'} h={'full'} ml={'1.25rem'}>
           {['All Opportunties', 'Bounties', 'Jobs'].map((elm) => {
-            console.log(router.query.category);
-
             return (
               <Center
-                cursor={'pointer'}
-                fontSize={'0.75rem'}
-                h={'full'}
                 key={elm}
+                h={'full'}
+                fontSize={'0.75rem'}
                 borderBottom={
                   router.asPath !== '/'
                     ? router.query.category
@@ -185,13 +179,14 @@ function NavHome() {
                       : ''
                     : ''
                 }
+                cursor={'pointer'}
               >
                 <Menu>
                   <MenuButton
+                    as={Button}
                     px={'0.3125rem'}
                     fontSize={'0.75rem'}
                     bg={'transparent'}
-                    as={Button}
                     rightIcon={<ChevronDownIcon />}
                   >
                     {elm}
@@ -208,28 +203,24 @@ function NavHome() {
                     ].map((option) => {
                       return (
                         <MenuItem
+                          key={option}
                           onClick={() => {
-                            if (option != 'All Opportunties') {
+                            if (option !== 'All Opportunties') {
                               if (elm === 'All Opportunties') {
                                 router.replace(`/all/${option.toLowerCase()}`);
-                                setselected(option);
                                 return;
                               }
                               router.replace(
                                 `/${elm.toLowerCase()}/${option.toLowerCase()}`
                               );
-                              setselected(elm);
                             } else {
                               if (elm === 'All Opportunties') {
                                 router.replace(`/`);
-                                setselected(elm);
                                 return;
                               }
                               router.replace(`/${elm.toLowerCase()}`);
-                              setselected(elm);
                             }
                           }}
-                          key={option}
                         >
                           {option}
                         </MenuItem>
@@ -241,47 +232,47 @@ function NavHome() {
             );
           })}
           <Center
-            fontWeight={'600'}
-            cursor={'pointer'}
+            h={'min-content'}
+            my={'auto'}
+            px={'0.3rem'}
+            py={'0.65rem'}
             fontSize={'0.75rem'}
-            height={'min-content'}
+            fontWeight={'600'}
             _hover={{
               bg: 'gray.100',
             }}
-            px={'0.3rem'}
-            py={'0.65rem'}
-            my={'auto'}
-            rounded={'md'}
+            cursor={'pointer'}
             onClick={() => {
               router.replace(`/grants`);
             }}
+            rounded={'md'}
           >
             Grants
           </Center>
         </Flex>
 
-        <Flex ml={'auto'} columnGap={'1.5625rem'} alignItems={'center'}>
+        <Flex align={'center'} columnGap={'1.5625rem'} ml={'auto'}>
           {!connected ? (
             <>
               <Center
+                h={'full'}
+                fontSize={'0.75rem'}
+                cursor={'pointer'}
                 onClick={() => {
                   onOpen();
                 }}
-                cursor={'pointer'}
-                fontSize={'0.75rem'}
-                h={'full'}
               >
                 Login
               </Center>
               <Button
-                rounded={'md'}
-                bg={'#6366F1'}
+                h={'2rem'}
                 color={'white'}
                 fontSize={'0.75rem'}
-                h={'2rem'}
+                bg={'#6366F1'}
                 onClick={() => {
                   router.push('/new');
                 }}
+                rounded={'md'}
               >
                 Sign Up
               </Button>
@@ -291,11 +282,11 @@ function NavHome() {
               {userInfo?.sponsor && (
                 <Button
                   w="100%"
+                  color="#6562FF"
                   fontSize="0.9rem"
                   fontWeight={600}
-                  color="#6562FF"
-                  border="1px solid #6562FF"
                   bg="transparent"
+                  border="1px solid #6562FF"
                   onClick={() => {
                     router.push('/listings/create');
                   }}
@@ -304,8 +295,8 @@ function NavHome() {
                 </Button>
               )}
               <Divider
-                borderColor={'gray.300'}
                 h={12}
+                borderColor={'gray.300'}
                 orientation={'vertical'}
               />
 
@@ -316,11 +307,11 @@ function NavHome() {
                       variant="marble"
                       colors={['#92A1C6', '#F0AB3D', '#C271B4']}
                     />
-                    <Flex gap={5} justify={'space-between'} align={'center'}>
+                    <Flex align={'center'} justify={'space-between'} gap={5}>
                       <Text
                         color={'gray.600'}
-                        fontWeight={600}
                         fontFamily={'Inter'}
+                        fontWeight={600}
                       >
                         {truncatedPublicKey(publicKey?.toString() as string, 7)}
                       </Text>
@@ -333,7 +324,7 @@ function NavHome() {
                     isDisabled={!talentInfo?.username}
                     onClick={() => router.push(`/t/${talentInfo?.username}`)}
                   >
-                    <Text fontSize="0.9rem" color="gray.600">
+                    <Text color="gray.600" fontSize="0.9rem">
                       View Profile
                     </Text>
                   </MenuItem>
@@ -343,7 +334,7 @@ function NavHome() {
                         router.push('/dashboard/team');
                       }}
                     >
-                      <Text fontSize="0.9rem" color="gray.600">
+                      <Text color="gray.600" fontSize="0.9rem">
                         Dashboard
                       </Text>
                     </MenuItem>
@@ -353,7 +344,7 @@ function NavHome() {
                       onDisconnectWallet();
                     }}
                   >
-                    <Text fontSize="0.9rem" color="gray.600">
+                    <Text color="gray.600" fontSize="0.9rem">
                       Disconnect
                     </Text>
                   </MenuItem>
