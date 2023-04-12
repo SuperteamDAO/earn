@@ -1,5 +1,5 @@
 /* eslint-disable no-nested-ternary */
-import { ChevronDownIcon, Search2Icon } from '@chakra-ui/icons';
+import { ChevronDownIcon } from '@chakra-ui/icons';
 import {
   Box,
   Button,
@@ -9,6 +9,7 @@ import {
   HStack,
   Image,
   Input,
+  InputGroup,
   Menu,
   MenuButton,
   MenuItem,
@@ -20,7 +21,7 @@ import type { Wallet as SolanaWallet } from '@solana/wallet-adapter-react';
 import { useWallet } from '@solana/wallet-adapter-react';
 import Avatar from 'boring-avatars';
 import { useRouter } from 'next/router';
-import React, { useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import toast from 'react-hot-toast';
 import { MdOutlineKeyboardArrowDown } from 'react-icons/md';
 
@@ -104,6 +105,21 @@ function NavHome() {
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [search]);
+  const categoryMap = [
+    {
+      name: 'All Opportunties',
+      route: 'all',
+    },
+    {
+      name: 'Bounties',
+      route: 'bounties',
+    },
+    {
+      name: 'Jobs',
+      route: 'jobs',
+    },
+  ];
+
   return (
     <Box bg={'FFFFFF'}>
       {(isOpen || !connected) && (
@@ -115,10 +131,13 @@ function NavHome() {
       )}
       <Flex
         align={'center'}
+        gap={5}
         h={'3rem'}
         mx={'auto'}
         px={'1.25rem'}
-        bg={'FFFFFF'}
+        bg="white"
+        borderBottom={'1px solid'}
+        borderBottomColor={'blackAlpha.200'}
       >
         <Image
           h={'1.0437rem'}
@@ -129,67 +148,62 @@ function NavHome() {
           }}
           src={'/assets/logo/logo.png'}
         />
-        <Flex align={'center'} gap={2}>
-          <Input
-            w={'10.75rem'}
-            h={'2rem'}
-            ml={'3.125rem'}
-            onChange={(e) => {
-              setSearch(e.target.value);
-            }}
-            placeholder="Search"
-          />
-          <Button
-            color={'white'}
-            bg={'#6366F1'}
-            isDisabled={search.length === 0}
-            onClick={() => {
-              let path = `${router.asPath}?search=${search}`;
-              if (router.asPath.includes('?')) {
-                if (router.query.search) {
-                  path = `${router.asPath.split('?')[0]}?search=${search}`;
-                } else {
-                  path = `${router.asPath}&search=${search}`;
-                }
-              }
-              router.replace(path);
-            }}
-            size={'sm'}
-          >
-            <Search2Icon />
-          </Button>
-        </Flex>
+        <HStack align={'center'} gap={2}>
+          <InputGroup size={'sm'}>
+            <Input
+              fontSize={'sm'}
+              borderRadius={4}
+              onChange={(e) => {
+                setSearch(e.target.value);
+              }}
+              placeholder="Search"
+            />
+          </InputGroup>
+        </HStack>
         <Flex columnGap={'1.5625rem'} h={'full'} ml={'1.25rem'}>
-          {['All Opportunties', 'Bounties', 'Jobs'].map((elm) => {
+          {categoryMap.map((elm) => {
             return (
               <Center
-                key={elm}
+                key={elm.name}
                 h={'full'}
                 fontSize={'0.75rem'}
-                borderBottom={
-                  router.asPath !== '/'
-                    ? router.query.category
-                      ? router.query.category === elm.toLowerCase()
-                        ? '0.0625rem solid #6366F1'
-                        : ''
-                      : router.asPath === '/' ||
-                        (router.asPath.startsWith('/?') &&
-                          elm === 'All Opportunties')
-                      ? '0.0625rem solid #6366F1'
-                      : ''
-                    : ''
+                borderBottom={'1px solid'}
+                borderBottomColor={
+                  router?.query?.category === elm?.route
+                    ? 'brand.purple'
+                    : !router?.query?.category &&
+                      elm?.route === 'all' &&
+                      router?.pathname !== '/grants'
+                    ? 'brand.purple'
+                    : 'transparent'
                 }
+                _hover={{
+                  borderBottom: '1px solid',
+                  borderBottomColor: 'brand.purple',
+                }}
                 cursor={'pointer'}
               >
                 <Menu>
                   <MenuButton
                     as={Button}
                     px={'0.3125rem'}
+                    color={
+                      router?.query?.category === elm?.route
+                        ? 'black'
+                        : !router?.query?.category &&
+                          elm?.route === 'all' &&
+                          router.pathname !== '/grants'
+                        ? 'black'
+                        : 'gray.500'
+                    }
                     fontSize={'0.75rem'}
                     bg={'transparent'}
+                    _hover={{
+                      bg: 'transparent',
+                    }}
                     rightIcon={<ChevronDownIcon />}
                   >
-                    {elm}
+                    {elm.name}
                   </MenuButton>
                   <MenuList zIndex={'500'}>
                     {[
@@ -206,19 +220,19 @@ function NavHome() {
                           key={option}
                           onClick={() => {
                             if (option !== 'All Opportunties') {
-                              if (elm === 'All Opportunties') {
+                              if (elm.name === 'All Opportunties') {
                                 router.replace(`/all/${option.toLowerCase()}`);
                                 return;
                               }
                               router.replace(
-                                `/${elm.toLowerCase()}/${option.toLowerCase()}`
+                                `/${elm.name.toLowerCase()}/${option.toLowerCase()}`
                               );
                             } else {
-                              if (elm === 'All Opportunties') {
+                              if (elm.name === 'All Opportunties') {
                                 router.replace(`/`);
                                 return;
                               }
-                              router.replace(`/${elm.toLowerCase()}`);
+                              router.replace(`/${elm.name.toLowerCase()}`);
                             }
                           }}
                         >
@@ -232,14 +246,19 @@ function NavHome() {
             );
           })}
           <Center
-            h={'min-content'}
+            h={'full'}
             my={'auto'}
             px={'0.3rem'}
             py={'0.65rem'}
-            fontSize={'0.75rem'}
+            color={router?.pathname === '/grants' ? 'black' : 'gray.500'}
+            fontSize={'xs'}
             fontWeight={'600'}
             _hover={{
-              bg: 'gray.100',
+              bg: 'transparent',
+              borderBottom: '1px solid',
+              borderBottomColor: 'brand.purple',
+              borderBottomLeftRadius: 0,
+              borderBottomRightRadius: 0,
             }}
             cursor={'pointer'}
             onClick={() => {
@@ -251,12 +270,12 @@ function NavHome() {
           </Center>
         </Flex>
 
-        <Flex align={'center'} columnGap={'1.5625rem'} ml={'auto'}>
+        <Flex align={'center'} columnGap={10} ml={'auto'}>
           {!connected ? (
             <>
               <Center
                 h={'full'}
-                fontSize={'0.75rem'}
+                fontSize={'xs'}
                 cursor={'pointer'}
                 onClick={() => {
                   onOpen();
@@ -267,8 +286,11 @@ function NavHome() {
               <Button
                 h={'2rem'}
                 color={'white'}
-                fontSize={'0.75rem'}
-                bg={'#6366F1'}
+                fontSize={'xs'}
+                bg={'brand.purple'}
+                _hover={{
+                  bg: 'brand.purple',
+                }}
                 onClick={() => {
                   router.push('/new');
                 }}
@@ -282,11 +304,11 @@ function NavHome() {
               {userInfo?.sponsor && (
                 <Button
                   w="100%"
-                  color="#6562FF"
+                  color="brand.purple"
                   fontSize="0.9rem"
                   fontWeight={600}
                   bg="transparent"
-                  border="1px solid #6562FF"
+                  border="1px solid brand.purple"
                   onClick={() => {
                     router.push('/listings/create');
                   }}

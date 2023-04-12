@@ -10,7 +10,9 @@ const config: ThemeConfig = {
 };
 
 const theme = extendTheme({
-  colors: {},
+  colors: {
+    'brand.purple': '#6366F1',
+  },
   config,
   styles,
   components: {
