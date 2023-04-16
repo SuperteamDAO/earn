@@ -153,6 +153,9 @@ function NavHome() {
             <Input
               fontSize={'sm'}
               borderRadius={4}
+              _hover={{
+                borderColor: 'brand.purple',
+              }}
               onChange={(e) => {
                 setSearch(e.target.value);
               }}
@@ -285,20 +288,29 @@ function NavHome() {
         <Flex align={'center'} columnGap={10} ml={'auto'}>
           {!connected ? (
             <>
-              <Center
-                h={'full'}
+              <Button
+                h={'2rem'}
+                color={'gray.500'}
                 fontSize={'xs'}
+                fontWeight={700}
+                bg="transparent"
+                _hover={{
+                  bg: 'brand.purple',
+                  color: 'white',
+                }}
                 cursor={'pointer'}
                 onClick={() => {
                   onOpen();
                 }}
+                rounded={'md'}
               >
                 Login
-              </Center>
+              </Button>
               <Button
                 h={'2rem'}
                 color={'white'}
                 fontSize={'xs'}
+                fontWeight={700}
                 bg={'brand.purple'}
                 _hover={{
                   bg: 'brand.purple',
