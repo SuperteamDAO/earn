@@ -70,26 +70,26 @@ function MobileBanner() {
     <Flex
       justify={'end'}
       direction={'column'}
-      w={'24.125rem'}
-      h={'23.25rem'}
+      w={'21rem'}
+      h={'23rem'}
       mt={'24px'}
+      mx={'auto'}
       px={'2rem'}
-      py={'1.5rem'}
+      py={'1rem'}
       bgImage="url('/assets/home/display/mob_money_banner.png')"
-      bgSize={'contain'}
+      bgSize={'cover'}
       rounded={'md'}
     >
       <Text
         color={slate}
         fontFamily={'Domine'}
-        fontSize={'1.5rem'}
+        fontSize={'2xl'}
         fontWeight={'700'}
-        lineHeight={'1.875rem'}
       >
         Unlock Your Earning <br />
         Potential on Solana
       </Text>
-      <Text w={'100%'} mt={'0.4375rem'} color={slate} fontSize={'.875rem'}>
+      <Text w={'100%'} mt={'xs'} color={slate} fontSize={'sm'}>
         Explore bounties, grants, and job opportunities for developers and
         non-technical talent alike
       </Text>
@@ -99,7 +99,7 @@ function MobileBanner() {
           px={'2.25rem'}
           py={'0.75rem'}
           color={'white'}
-          fontSize={'0.875rem'}
+          fontSize={'sm'}
           bg={'#6366F1'}
           onClick={() => {
             router.push('/new');
@@ -107,7 +107,7 @@ function MobileBanner() {
         >
           Sign Up
         </Button>
-        <Flex align={'center'} mt={'1rem'}>
+        <Flex align={'center'} mt={5}>
           <AvatarGroup ml={'2.875rem'} max={3} size="sm">
             <Avatar name="Ryan Florence" src="https://bit.ly/ryan-florence" />
             <Avatar name="Segun Adebayo" src="https://bit.ly/sage-adebayo" />

@@ -100,15 +100,15 @@ const Home: NextPage = () => {
                 {listings.data?.bounty?.map((bounty) => {
                   return (
                     <BountiesCard
-                      slug={bounty.bounty.slug as string}
-                      status={bounty.bounty?.status as BountyStatus}
-                      amount={bounty.bounty?.amount}
-                      key={bounty.bounty?.id}
-                      description={bounty.bounty?.description}
-                      due={bounty.bounty?.deadline}
-                      title={bounty.bounty?.title}
-                      logo={bounty.sponsorInfo?.logo}
-                      token={bounty.bounty?.token}
+                      slug={bounty?.bounty.slug as string}
+                      status={bounty?.bounty?.status as BountyStatus}
+                      amount={bounty?.bounty?.amount}
+                      key={bounty?.bounty?.id}
+                      sponsor={bounty?.sponsorInfo?.name}
+                      due={bounty?.bounty?.deadline}
+                      title={bounty?.bounty?.title}
+                      logo={bounty?.sponsorInfo?.logo}
+                      token={bounty?.bounty?.token}
                     />
                   );
                 })}
@@ -133,12 +133,12 @@ const Home: NextPage = () => {
                 {listings.data?.grants?.map((grant) => {
                   return (
                     <GrantsCard
-                      description={grant.grants.description}
-                      logo={grant.sponsorInfo.logo}
-                      key={grant.grants.id}
-                      max={grant.grants.maxSalary}
-                      title={grant.grants.title}
-                      min={grant.grants.minSalary}
+                      sponsor={grant?.sponsorInfo?.name}
+                      logo={grant?.sponsorInfo?.logo}
+                      key={grant?.grants?.id}
+                      max={grant?.grants?.maxSalary}
+                      title={grant?.grants?.title}
+                      min={grant?.grants?.minSalary}
                     />
                   );
                 })}
@@ -195,15 +195,15 @@ const Home: NextPage = () => {
                 {listings.data?.bounty?.map((bounty) => {
                   return (
                     <BountiesCard
-                      slug={bounty.bounty.slug as string}
-                      status={bounty.bounty?.status as BountyStatus}
-                      amount={bounty.bounty?.amount}
-                      key={bounty.bounty?.id}
-                      description={bounty.bounty?.description}
-                      due={bounty.bounty?.deadline}
-                      title={bounty.bounty?.title}
-                      logo={bounty.sponsorInfo?.logo}
-                      token={bounty.bounty?.token}
+                      slug={bounty?.bounty.slug as string}
+                      status={bounty?.bounty?.status as BountyStatus}
+                      amount={bounty?.bounty?.amount}
+                      key={bounty?.bounty?.id}
+                      sponsor={bounty?.sponsorInfo?.name}
+                      due={bounty?.bounty?.deadline}
+                      title={bounty?.bounty?.title}
+                      logo={bounty?.sponsorInfo?.logo}
+                      token={bounty?.bounty?.token}
                     />
                   );
                 })}
@@ -240,12 +240,12 @@ const Home: NextPage = () => {
                 {listings.data?.grants?.map((grant) => {
                   return (
                     <GrantsCard
-                      description={grant.grants.description}
-                      logo={grant.sponsorInfo.logo}
-                      key={grant.grants.id}
-                      max={grant.grants.maxSalary}
-                      title={grant.grants.title}
-                      min={grant.grants.minSalary}
+                      sponsor={grant?.sponsorInfo?.name}
+                      logo={grant?.sponsorInfo?.logo}
+                      key={grant?.grants?.id}
+                      max={grant?.grants?.maxSalary}
+                      title={grant?.grants?.title}
+                      min={grant?.grants?.minSalary}
                     />
                   );
                 })}
