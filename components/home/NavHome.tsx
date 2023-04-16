@@ -197,8 +197,20 @@ function NavHome() {
                         : 'gray.500'
                     }
                     fontSize={'0.75rem'}
+                    fontWeight={
+                      router?.query?.category === elm?.route
+                        ? 500
+                        : !router?.query?.category &&
+                          elm?.route === 'all' &&
+                          router.pathname !== '/grants'
+                        ? 500
+                        : 400
+                    }
                     bg={'transparent'}
                     _hover={{
+                      bg: 'transparent',
+                    }}
+                    _active={{
                       bg: 'transparent',
                     }}
                     rightIcon={<ChevronDownIcon />}
