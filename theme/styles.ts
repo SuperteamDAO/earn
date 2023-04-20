@@ -11,5 +11,8 @@ export const styles = {
       bg: '#F7FAFC',
       fontFamily: 'Inter',
     },
+    width: {
+      HomeCard: '4100rem',
+    },
   }),
 };

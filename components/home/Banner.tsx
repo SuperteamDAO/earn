@@ -15,13 +15,12 @@ function DesktopBanner() {
   const router = useRouter();
   return (
     <Box
-      w={'46.0625rem'}
-      h={'14.75rem'}
-      mt={'24px'}
-      px={'2.625rem'}
-      py={'2.125rem'}
+      w={'100%'}
+      h={72}
+      mx={'auto'}
+      p={10}
       bgImage="url('/assets/home/display/money_banner.png')"
-      bgSize={'contain'}
+      bgSize={'cover'}
       rounded={'md'}
     >
       <Text
@@ -70,12 +69,11 @@ function MobileBanner() {
     <Flex
       justify={'end'}
       direction={'column'}
-      w={'21rem'}
-      h={'23rem'}
-      mt={'24px'}
+      w={'95%'}
+      h={'96'}
       mx={'auto'}
-      px={'2rem'}
-      py={'1rem'}
+      px={10}
+      py={3}
       bgImage="url('/assets/home/display/mob_money_banner.png')"
       bgSize={'cover'}
       rounded={'md'}
@@ -83,13 +81,13 @@ function MobileBanner() {
       <Text
         color={slate}
         fontFamily={'Domine'}
-        fontSize={'2xl'}
+        fontSize={'xl'}
         fontWeight={'700'}
       >
         Unlock Your Earning <br />
         Potential on Solana
       </Text>
-      <Text w={'100%'} mt={'xs'} color={slate} fontSize={'sm'}>
+      <Text w={'100%'} mt={'0.4375rem'} color={slate} fontSize={'sm'}>
         Explore bounties, grants, and job opportunities for developers and
         non-technical talent alike
       </Text>

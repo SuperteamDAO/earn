@@ -53,15 +53,15 @@ export const ListingSection = ({
             : 'none'
           : 'block'
       }
-      w={{ md: '46.0625rem', base: '100%' }}
+      w={{ md: '46.0625rem', base: '95%' }}
       mt={'1rem'}
       mb={'2.8125rem'}
       mx={'auto'}
     >
       <Flex
         align={'center'}
-        mb={'0.875rem'}
-        pb={'0.75rem'}
+        mb={5}
+        pb={3}
         borderBottom={'0.0625rem solid #E2E8F0'}
       >
         <Image
@@ -81,7 +81,7 @@ export const ListingSection = ({
         <Text mx={'0.625rem'} color={'#CBD5E1'} fontSize={'x-small'}>
           |
         </Text>
-        <Text color={'#64748B'} fontSize={{ base: 12, md: 14 }}>
+        <Text color={'gray.400'} fontSize={{ base: 12, md: 14 }}>
           {sub}
         </Text>
       </Flex>
@@ -121,13 +121,8 @@ export const BountiesCard = ({
   sponsor,
 }: BountyProps) => {
   return (
-    <Flex
-      align={'center'}
-      justify={'space-between'}
-      w={{ base: '100%', md: '46.125rem' }}
-      h={'3.9375rem'}
-    >
-      <Flex align={'start'}>
+    <>
+      <Flex w={'100%'} h={12}>
         <Image
           w={'3.9375rem'}
           h={'3.9375rem'}
@@ -198,7 +193,7 @@ export const BountiesCard = ({
             : 'View'
           : 'Apply'}
       </Link>
-    </Flex>
+    </>
   );
 };
 interface JobsProps {
@@ -451,9 +446,10 @@ export const CategoryBanner = ({ type }: { type: string }) => {
       {isOpen && <EarningModal isOpen={isOpen} onClose={onClose} />}
       <Flex
         direction={{ md: 'row', base: 'column' }}
-        w={{ md: '46.0625rem', base: '24.125rem' }}
+        w={{ md: '80%', base: '95%' }}
         h={{ md: '7.375rem', base: 'fit-content' }}
         mt={'1.5625rem'}
+        mx={'auto'}
         p={'1.5rem'}
         bg={`url('${categoryAssets[type]?.bg}')`}
         bgSize={'cover'}

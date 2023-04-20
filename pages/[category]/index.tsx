@@ -68,7 +68,7 @@ const Index: NextPage = () => {
   ];
   return (
     <>
-      {!isLessThan768px && <NavHome />}
+      <NavHome />
       <Flex
         justify={'center'}
         w={'100%'}
