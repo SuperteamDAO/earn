@@ -210,7 +210,7 @@ function NavHome() {
                             elm?.route === 'all' &&
                             router.pathname !== '/grants'
                           ? 'black'
-                          : 'gray.500'
+                          : 'brand.slate.500'
                       }
                       fontSize="sm"
                       fontWeight={
@@ -280,7 +280,9 @@ function NavHome() {
               my={'auto'}
               px={'0.3rem'}
               py={'0.65rem'}
-              color={router?.pathname === '/grants' ? 'black' : 'gray.500'}
+              color={
+                router?.pathname === '/grants' ? 'black' : 'brand.slate.500'
+              }
               fontSize={'xs'}
               fontWeight={'600'}
               _hover={{
@@ -305,7 +307,7 @@ function NavHome() {
               <>
                 <Button
                   h={'2rem'}
-                  color={'gray.500'}
+                  color={'brand.slate.500'}
                   fontSize={'xs'}
                   fontWeight={700}
                   bg="transparent"
@@ -313,27 +315,27 @@ function NavHome() {
                     bg: 'brand.purple',
                     color: 'white',
                   }}
-                  cursor={'pointer'}
+                  cursor="pointer"
                   onClick={() => {
                     onOpen();
                   }}
-                  rounded={'md'}
+                  rounded="md"
                 >
                   Login
                 </Button>
                 <Button
-                  h={'2rem'}
-                  color={'white'}
-                  fontSize={'xs'}
+                  h="2rem"
+                  color="white"
+                  fontSize="xs"
                   fontWeight={700}
-                  bg={'brand.purple'}
+                  bg="brand.purple"
                   _hover={{
                     bg: 'brand.purple',
                   }}
                   onClick={() => {
                     router.push('/new');
                   }}
-                  rounded={'md'}
+                  rounded="md"
                 >
                   Sign Up
                 </Button>
@@ -357,8 +359,8 @@ function NavHome() {
                 )}
                 <Divider
                   h={12}
-                  borderColor={'gray.300'}
-                  orientation={'vertical'}
+                  borderColor="brand.slate.300"
+                  orientation="vertical"
                 />
 
                 <Menu>
@@ -368,10 +370,10 @@ function NavHome() {
                         variant="marble"
                         colors={['#92A1C6', '#F0AB3D', '#C271B4']}
                       />
-                      <Flex align={'center'} justify={'space-between'} gap={5}>
+                      <Flex align="center" justify="space-between" gap={5}>
                         <Text
-                          color={'gray.600'}
-                          fontFamily={'Inter'}
+                          color="brand.slate.600"
+                          fontFamily="Inter"
                           fontWeight={600}
                         >
                           {truncatedPublicKey(
@@ -383,12 +385,12 @@ function NavHome() {
                       </Flex>
                     </HStack>
                   </MenuButton>
-                  <MenuList w={'15rem'}>
+                  <MenuList w="15rem">
                     <MenuItem
                       isDisabled={!talentInfo?.username}
                       onClick={() => router.push(`/t/${talentInfo?.username}`)}
                     >
-                      <Text color="gray.600" fontSize="0.9rem">
+                      <Text color="brand.slate.600" fontSize="0.9rem">
                         View Profile
                       </Text>
                     </MenuItem>
@@ -398,7 +400,7 @@ function NavHome() {
                           router.push('/dashboard/team');
                         }}
                       >
-                        <Text color="gray.600" fontSize="0.9rem">
+                        <Text color="brand.slate.600" fontSize="0.9rem">
                           Dashboard
                         </Text>
                       </MenuItem>
@@ -408,7 +410,7 @@ function NavHome() {
                         onDisconnectWallet();
                       }}
                     >
-                      <Text color="gray.600" fontSize="0.9rem">
+                      <Text color="brand.slate.600" fontSize="0.9rem">
                         Disconnect
                       </Text>
                     </MenuItem>
@@ -437,7 +439,7 @@ function NavHome() {
           />
           <Button
             h={'2rem'}
-            color={'gray.500'}
+            color={'brand.slate.500'}
             fontSize={'xs'}
             fontWeight={700}
             bg="transparent"

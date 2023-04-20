@@ -9,7 +9,7 @@ import {
 } from '@chakra-ui/react';
 import { useRouter } from 'next/router';
 
-const slate = '#1E293B';
+// const slate = '#1E293B';
 
 function DesktopBanner() {
   const router = useRouter();
@@ -24,7 +24,7 @@ function DesktopBanner() {
       rounded={'md'}
     >
       <Text
-        color={slate}
+        color={'brand.slate.800'}
         fontFamily={'Domine'}
         fontSize={'1.625rem'}
         fontWeight={'700'}
@@ -33,7 +33,7 @@ function DesktopBanner() {
         Unlock Your Earning <br />
         Potential on Solana
       </Text>
-      <Text w={'60%'} mt={'0.4375rem'} color={slate}>
+      <Text w={'60%'} mt={'0.4375rem'} color={'brand.slate.800'}>
         Explore bounties, grants, and job opportunities for developers and
         non-technical talent alike
       </Text>
@@ -79,7 +79,7 @@ function MobileBanner() {
       rounded={'md'}
     >
       <Text
-        color={slate}
+        color={'brand.slate.800'}
         fontFamily={'Domine'}
         fontSize={'xl'}
         fontWeight={'700'}
@@ -87,7 +87,12 @@ function MobileBanner() {
         Unlock Your Earning <br />
         Potential on Solana
       </Text>
-      <Text w={'100%'} mt={'0.4375rem'} color={slate} fontSize={'sm'}>
+      <Text
+        w={'100%'}
+        mt={'0.4375rem'}
+        color={'brand.slate.800'}
+        fontSize={'sm'}
+      >
         Explore bounties, grants, and job opportunities for developers and
         non-technical talent alike
       </Text>

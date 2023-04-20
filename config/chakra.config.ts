@@ -12,6 +12,18 @@ const config: ThemeConfig = {
 const theme = extendTheme({
   colors: {
     'brand.purple': '#6366F1',
+    'brand.slate.100': '#f1f5f9',
+    'brand.slate.200': '#e2e8f0',
+    'brand.slate.300': '#cbd5e1',
+    'brand.slate.400': '#94a3b8',
+    'brand.slate.500': '#64748b',
+    'brand.slate.600': '#475569',
+    'brand.slate.700': '#334155',
+    'brand.slate.800': '#1e293b',
+    'brand.slate.900': '#0f172a',
+  },
+  size: {
+    card: '41.0625rem',
   },
   config,
   styles,
