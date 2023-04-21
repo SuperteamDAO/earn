@@ -52,7 +52,7 @@ export const ListingSection = ({
             : 'none'
           : 'block'
       }
-      w={{ md: '46.0625rem', base: '95%' }}
+      w={{ md: 'brand.120', base: '95%' }}
       mt={'1rem'}
       mb={'2.8125rem'}
       mx={'auto'}
@@ -124,7 +124,7 @@ export const BountiesCard = ({
       <Flex
         align="center"
         justify="space-between"
-        w={{ base: '100%', md: '46.125rem' }}
+        w={{ base: '100%', md: 'brand.120' }}
         h={16}
       >
         <Flex w="80%" h={16}>
@@ -142,14 +142,14 @@ export const BountiesCard = ({
             </Text>
             <Text
               w={'full'}
-              color={'brand.slate.800'}
+              color={'brand.slate.400'}
               fontSize={{ md: 'sm', base: 'xs' }}
               fontWeight={'400'}
               noOfLines={1}
             >
               {sponsor}
             </Text>
-            <Flex align={'center'} gap={2}>
+            <Flex align={'center'} gap={3}>
               <Image
                 w={4}
                 h={4}
@@ -234,7 +234,7 @@ export const JobsCard = ({
     <Flex
       align="center"
       justify="space-between"
-      w={{ base: '100%', md: '46.125rem' }}
+      w={{ base: '100%', md: 'brand.120' }}
       h={'3.9375rem'}
     >
       <Flex justify="start">
@@ -333,7 +333,7 @@ export const GrantsCard = ({ title, logo, max, min, sponsor }: GrantsProps) => {
     <Flex
       align="center"
       justify="space-between"
-      w={{ base: '100%', md: '46.125rem' }}
+      w={{ base: '100%', md: 'brand.120' }}
       h={14}
     >
       <Flex justify="start">
@@ -454,7 +454,7 @@ export const CategoryBanner = ({ type }: { type: string }) => {
       {isOpen && <EarningModal isOpen={isOpen} onClose={onClose} />}
       <Flex
         direction={{ md: 'row', base: 'column' }}
-        w={{ md: '46.0625rem', base: '95%' }}
+        w={{ md: 'brand.120', base: '95%' }}
         h={{ md: '7.375rem', base: 'fit-content' }}
         mt={6}
         mx={'auto'}

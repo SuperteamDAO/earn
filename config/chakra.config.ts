@@ -22,9 +22,13 @@ const theme = extendTheme({
     'brand.slate.800': '#1e293b',
     'brand.slate.900': '#0f172a',
   },
-  size: {
-    card: '41.0625rem',
+  space: {
+    brand: {
+      85: '21rem',
+      120: '46.0625rem',
+    },
   },
+
   config,
   styles,
   components: {
