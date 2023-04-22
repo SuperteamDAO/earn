@@ -72,7 +72,7 @@ const Home: NextPage = () => {
   ];
   return (
     <>
-      {!isLessThan768px && <NavHome />}
+      <NavHome />
       <Flex
         justify={'center'}
         w={'100%'}
@@ -87,28 +87,30 @@ const Home: NextPage = () => {
           ) : (
             <Box>
               <Flex gap={1} w={['full', 'full', '50rem', '50rem']}>
-                <Text color={'#64748B'}>
+                <Text color={'brand.slate.400'}>
                   Found{' '}
                   {(listings.data?.bounty.length as number) +
                     (listings.data?.jobs.length as number) +
                     (listings.data?.grants.length as number)}{' '}
                   opportunities matching{' '}
                 </Text>
-                <Text color={'#1E293B'}>{`'${router.query.search}'`}</Text>
+                <Text
+                  color={'brand.slate.700'}
+                >{`'${router.query.search}'`}</Text>
               </Flex>
-              <VStack gap={5} mt={'2rem'}>
+              <VStack gap={5} mt={8}>
                 {listings.data?.bounty?.map((bounty) => {
                   return (
                     <BountiesCard
-                      slug={bounty.bounty.slug as string}
-                      status={bounty.bounty?.status as BountyStatus}
-                      amount={bounty.bounty?.amount}
-                      key={bounty.bounty?.id}
-                      description={bounty.bounty?.description}
-                      due={bounty.bounty?.deadline}
-                      title={bounty.bounty?.title}
-                      logo={bounty.sponsorInfo?.logo}
-                      token={bounty.bounty?.token}
+                      slug={bounty?.bounty.slug as string}
+                      status={bounty?.bounty?.status as BountyStatus}
+                      amount={bounty?.bounty?.amount}
+                      key={bounty?.bounty?.id}
+                      sponsor={bounty?.sponsorInfo?.name}
+                      due={bounty?.bounty?.deadline}
+                      title={bounty?.bounty?.title}
+                      logo={bounty?.sponsorInfo?.logo}
+                      token={bounty?.bounty?.token}
                     />
                   );
                 })}
@@ -133,12 +135,12 @@ const Home: NextPage = () => {
                 {listings.data?.grants?.map((grant) => {
                   return (
                     <GrantsCard
-                      description={grant.grants.description}
-                      logo={grant.sponsorInfo.logo}
-                      key={grant.grants.id}
-                      max={grant.grants.maxSalary}
-                      title={grant.grants.title}
-                      min={grant.grants.minSalary}
+                      sponsor={grant?.sponsorInfo?.name}
+                      logo={grant?.sponsorInfo?.logo}
+                      key={grant?.grants?.id}
+                      max={grant?.grants?.maxSalary}
+                      title={grant?.grants?.title}
+                      min={grant?.grants?.minSalary}
                     />
                   );
                 })}
@@ -151,18 +153,18 @@ const Home: NextPage = () => {
               <>
                 <HStack gap={1}>
                   <Text
-                    color={'#1E293B'}
+                    color={'brand.slate.800'}
                     fontFamily={'Domine'}
-                    fontSize={'26px'}
+                    fontSize={7}
                     fontWeight={700}
                   >
                     Welcome back,
                   </Text>
 
                   <Text
-                    color={'#1E293B'}
+                    color={'brand.slate.800'}
                     fontFamily={'Domine'}
-                    fontSize={'26px'}
+                    fontSize={7}
                     fontWeight={700}
                   >
                     {talentInfo?.firstname ?? 'Anon'}
@@ -185,7 +187,7 @@ const Home: NextPage = () => {
                 }
               />
             )}
-            <Box mt={'2rem'}>
+            <Box mt={8}>
               <ListingSection
                 type="bounties"
                 title="Active Bounties"
@@ -195,15 +197,15 @@ const Home: NextPage = () => {
                 {listings.data?.bounty?.map((bounty) => {
                   return (
                     <BountiesCard
-                      slug={bounty.bounty.slug as string}
-                      status={bounty.bounty?.status as BountyStatus}
-                      amount={bounty.bounty?.amount}
-                      key={bounty.bounty?.id}
-                      description={bounty.bounty?.description}
-                      due={bounty.bounty?.deadline}
-                      title={bounty.bounty?.title}
-                      logo={bounty.sponsorInfo?.logo}
-                      token={bounty.bounty?.token}
+                      slug={bounty?.bounty.slug as string}
+                      status={bounty?.bounty?.status as BountyStatus}
+                      amount={bounty?.bounty?.amount}
+                      key={bounty?.bounty?.id}
+                      sponsor={bounty?.sponsorInfo?.name}
+                      due={bounty?.bounty?.deadline}
+                      title={bounty?.bounty?.title}
+                      logo={bounty?.sponsorInfo?.logo}
+                      token={bounty?.bounty?.token}
                     />
                   );
                 })}
@@ -240,12 +242,12 @@ const Home: NextPage = () => {
                 {listings.data?.grants?.map((grant) => {
                   return (
                     <GrantsCard
-                      description={grant.grants.description}
-                      logo={grant.sponsorInfo.logo}
-                      key={grant.grants.id}
-                      max={grant.grants.maxSalary}
-                      title={grant.grants.title}
-                      min={grant.grants.minSalary}
+                      sponsor={grant?.sponsorInfo?.name}
+                      logo={grant?.sponsorInfo?.logo}
+                      key={grant?.grants?.id}
+                      max={grant?.grants?.maxSalary}
+                      title={grant?.grants?.title}
+                      min={grant?.grants?.minSalary}
                     />
                   );
                 })}
@@ -257,7 +259,7 @@ const Home: NextPage = () => {
           <SideBar
             total={listingBasic.data?.total ?? 0}
             listings={listingBasic.data?.count ?? 0}
-            jobs={listings.data?.jobs}
+            jobs={listings.data?.jobs.slice(0, 10)}
           />
         )}
       </Flex>
