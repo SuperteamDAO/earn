@@ -79,7 +79,7 @@ function MobileBanner() {
       rounded={'md'}
     >
       <Text
-        color={'brand.slate.800'}
+        color={'brand.slate.500'}
         fontFamily={'Domine'}
         fontSize={'xl'}
         fontWeight={'700'}
