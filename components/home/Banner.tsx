@@ -33,7 +33,7 @@ function DesktopBanner() {
         Unlock Your Earning <br />
         Potential on Solana
       </Text>
-      <Text w={'60%'} mt={'0.4375rem'} color={'brand.slate.800'}>
+      <Text w={'60%'} mt={'0.4375rem'} color={'brand.slate.500'}>
         Explore bounties, grants, and job opportunities for developers and
         non-technical talent alike
       </Text>
