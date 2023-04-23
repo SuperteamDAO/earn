@@ -22,6 +22,7 @@
     "@fontsource/domine": "^4.5.10",
     "@fontsource/inter": "^4.5.15",
     "@lottiefiles/react-lottie-player": "^3.5.3",
+    "@prisma/client": "4.13.0",
     "@project-serum/anchor": "^0.26.0",
     "@solana-mobile/wallet-adapter-mobile": "^1.0.0",
     "@solana/spl-token": "^0.3.7",
@@ -105,6 +106,8 @@
     "eslint-plugin-unused-imports": "^2.0.0",
     "lint-staged": "^13.2.1",
     "prettier": "^2.8.3",
+    "prettier-plugin-prisma": "^4.12.0",
+    "prisma": "^4.13.0",
     "typescript": "4.9.4"
   }
 }
