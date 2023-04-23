@@ -43,7 +43,7 @@ export const SubmissionCard = ({ image, id, winner, talent, likes }: Props) => {
       >
         <Image
           w={'full'}
-          h={'21rem'}
+          h={80}
           objectFit={'cover'}
           alt={'card'}
           src={image ?? '/assets/random/submission-card.svg'}

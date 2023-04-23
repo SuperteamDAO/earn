@@ -52,6 +52,7 @@
     "crypto-js": "^4.1.1",
     "degen": "^0.0.121",
     "framer-motion": "^8.5.2",
+    "hamburger-react": "^2.5.0",
     "html-react-parser": "^3.0.12",
     "husky": "^8.0.3",
     "immer": "^9.0.19",

@@ -9,23 +9,22 @@ import {
 } from '@chakra-ui/react';
 import { useRouter } from 'next/router';
 
-const slate = '#1E293B';
+// const slate = '#1E293B';
 
 function DesktopBanner() {
   const router = useRouter();
   return (
     <Box
-      w={'46.0625rem'}
-      h={'14.75rem'}
-      mt={'24px'}
-      px={'2.625rem'}
-      py={'2.125rem'}
+      w={'100%'}
+      h={72}
+      mx={'auto'}
+      p={10}
       bgImage="url('/assets/home/display/money_banner.png')"
-      bgSize={'contain'}
+      bgSize={'cover'}
       rounded={'md'}
     >
       <Text
-        color={slate}
+        color={'brand.slate.800'}
         fontFamily={'Domine'}
         fontSize={'1.625rem'}
         fontWeight={'700'}
@@ -34,7 +33,7 @@ function DesktopBanner() {
         Unlock Your Earning <br />
         Potential on Solana
       </Text>
-      <Text w={'60%'} mt={'0.4375rem'} color={slate}>
+      <Text w={'60%'} mt={'0.4375rem'} color={'brand.slate.500'}>
         Explore bounties, grants, and job opportunities for developers and
         non-technical talent alike
       </Text>
@@ -70,26 +69,30 @@ function MobileBanner() {
     <Flex
       justify={'end'}
       direction={'column'}
-      w={'24.125rem'}
-      h={'23.25rem'}
-      mt={'24px'}
-      px={'2rem'}
-      py={'1.5rem'}
+      w={'95%'}
+      h={'96'}
+      mx={'auto'}
+      px={10}
+      py={3}
       bgImage="url('/assets/home/display/mob_money_banner.png')"
-      bgSize={'contain'}
+      bgSize={'cover'}
       rounded={'md'}
     >
       <Text
-        color={slate}
+        color={'brand.slate.500'}
         fontFamily={'Domine'}
-        fontSize={'1.5rem'}
+        fontSize={'xl'}
         fontWeight={'700'}
-        lineHeight={'1.875rem'}
       >
         Unlock Your Earning <br />
         Potential on Solana
       </Text>
-      <Text w={'100%'} mt={'0.4375rem'} color={slate} fontSize={'.875rem'}>
+      <Text
+        w={'100%'}
+        mt={'0.4375rem'}
+        color={'brand.slate.800'}
+        fontSize={'sm'}
+      >
         Explore bounties, grants, and job opportunities for developers and
         non-technical talent alike
       </Text>
@@ -99,7 +102,7 @@ function MobileBanner() {
           px={'2.25rem'}
           py={'0.75rem'}
           color={'white'}
-          fontSize={'0.875rem'}
+          fontSize={'sm'}
           bg={'#6366F1'}
           onClick={() => {
             router.push('/new');
@@ -107,7 +110,7 @@ function MobileBanner() {
         >
           Sign Up
         </Button>
-        <Flex align={'center'} mt={'1rem'}>
+        <Flex align={'center'} mt={5}>
           <AvatarGroup ml={'2.875rem'} max={3} size="sm">
             <Avatar name="Ryan Florence" src="https://bit.ly/ryan-florence" />
             <Avatar name="Segun Adebayo" src="https://bit.ly/sage-adebayo" />

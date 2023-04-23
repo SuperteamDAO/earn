@@ -464,7 +464,7 @@ export const fetchAll = async (
       });
       const active: { bounty: Bounties; sponsorInfo: SponsorType }[] = [];
       const inActive: { bounty: Bounties; sponsorInfo: SponsorType }[] = [];
-      bounties.map((a) => {
+      bounties.forEach((a) => {
         if (a.bounty.active) {
           return active.push(a);
         }
@@ -472,8 +472,8 @@ export const fetchAll = async (
       });
       active.sort((a, b) => {
         return (
-          parseInt(moment(a.bounty.deadline).format('x'), 10) -
-          parseInt(moment(b.bounty.deadline).format('x'), 10)
+          parseInt(moment(b.bounty.deadline).format('x'), 10) -
+          parseInt(moment(a.bounty.deadline).format('x'), 10)
         );
       });
       return {
@@ -503,10 +503,8 @@ export const fetchAll = async (
     ]);
     const active: { bounty: Bounties; sponsorInfo: SponsorType }[] = [];
     const inActive: { bounty: Bounties; sponsorInfo: SponsorType }[] = [];
-    bounties?.map((a) => {
-      console.log(a.bounty.active);
-
-      if (a.bounty.active) {
+    bounties?.forEach((a) => {
+      if (moment(a.bounty.deadline).format('x') > moment().format('x')) {
         return active.push(a);
       }
       return inActive.push(a);

@@ -18,8 +18,7 @@ import { useState } from 'react';
 import { Toaster } from 'react-hot-toast';
 import { TiTick } from 'react-icons/ti';
 
-import type { MultiSelectOptions } from '../../constants';
-import { tokenList } from '../../constants';
+import { type MultiSelectOptions, tokenList } from '../../constants';
 import type { BountyStatus } from '../../interface/types';
 import { TalentStore } from '../../store/talent';
 import { userStore } from '../../store/user';
@@ -53,15 +52,15 @@ export const ListingSection = ({
             : 'none'
           : 'block'
       }
-      w={{ md: '46.0625rem', base: '100%' }}
+      w={{ md: 'brand.120', base: '95%' }}
       mt={'1rem'}
       mb={'2.8125rem'}
       mx={'auto'}
     >
       <Flex
         align={'center'}
-        mb={'0.875rem'}
-        pb={'0.75rem'}
+        mb={5}
+        pb={3}
         borderBottom={'0.0625rem solid #E2E8F0'}
       >
         <Image
@@ -73,15 +72,15 @@ export const ListingSection = ({
         />
         <Text
           color={'#334155'}
-          fontSize={{ base: '14px', md: '16px' }}
+          fontSize={{ base: 14, md: 16 }}
           fontWeight={'600'}
         >
           {title}
         </Text>
-        <Text mx={'0.625rem'} color={'#CBD5E1'}>
+        <Text mx={3} color={'brand.slate.300'} fontSize={'xxs'}>
           |
         </Text>
-        <Text color={'#64748B'} fontSize={{ base: '12px', md: '14px' }}>
+        <Text color={'brand.slate.400'} fontSize={{ base: 12, md: 14 }}>
           {sub}
         </Text>
       </Flex>
@@ -101,100 +100,110 @@ const textLimiter = (text: string, len: number) => {
 
 interface BountyProps {
   title: string;
-  description: string;
   amount: string;
   due: string;
   logo: string;
   status: BountyStatus;
   token: string;
   slug: string;
+  sponsor: string;
 }
+
 export const BountiesCard = ({
   amount,
-  description,
   due,
   status,
   logo,
   title,
   token,
   slug,
+  sponsor,
 }: BountyProps) => {
   return (
-    <Flex w={{ base: '100%', md: '46.125rem' }} h={'3.9375rem'}>
-      <Image
-        w={'3.9375rem'}
-        h={'3.9375rem'}
-        mr={'1.375rem'}
-        alt={''}
-        rounded={'md'}
-        src={logo ?? '/assets/home/placeholder/ph1.png'}
-      />
-      <Flex justify={'space-between'} direction={'column'} w={'full'}>
-        <Text color={'#334155'} fontSize={'1rem'} fontWeight={'600'}>
-          {textLimiter(title, 30)}
-        </Text>
-        <Text
-          w={'full'}
-          color={'#64748B'}
-          fontSize={{ md: '0.875rem', base: '0.7688rem' }}
-          fontWeight={'400'}
-          noOfLines={1}
-        >
-          {parse(
-            description?.startsWith('"')
-              ? JSON.parse(description || '')?.slice(0, 100)
-              : (description ?? '')?.slice(0, 100)
-          )}
-        </Text>
-        <Flex align={'center'}>
-          <Image
-            w={'0.8125rem'}
-            h={'0.8125rem'}
-            mr={'0.1969rem'}
-            alt=""
-            rounded={'full'}
-            src={
-              tokenList.find((ele) => {
-                return ele.mintAddress === token;
-              })?.icon
-            }
-          />
-
-          <Text color={'#334155'} fontSize={'0.8125rem'} fontWeight={'600'}>
-            {amount}
-          </Text>
-          <Text mx={'0.5rem'} color={'#CBD5E1'} fontSize={'0.75rem'}>
-            |
-          </Text>
-          <Text color={'#64748B'} fontSize={'0.75rem'}>
-            {moment(due).fromNow().includes('ago')
-              ? `Closed ${moment(due).fromNow()}`
-              : `Closing ${moment(due).fromNow()}`}
-          </Text>
-        </Flex>
-      </Flex>
-      <Link
-        ml={'auto'}
-        href={`https://earn-frontend-v2.vercel.app/listings/bounties/${slug}`}
-        isExternal
+    <>
+      <Flex
+        align="center"
+        justify="space-between"
+        w={{ base: '100%', md: 'brand.120' }}
+        h={16}
       >
-        <Button
-          display={{ base: 'none', md: 'block' }}
-          ml={'auto'}
-          px={'1.5rem'}
-          py={'0.5rem'}
-          color={'#94A3B8'}
-          bg={'transparent'}
-          border={'0.0625rem solid #94A3B8'}
+        <Flex w="80%" h={16}>
+          <Image
+            w={16}
+            h={16}
+            mr={5}
+            alt={'company logo'}
+            rounded={5}
+            src={logo ?? '/assets/home/placeholder/ph1.png'}
+          />
+          <Flex justify={'space-between'} direction={'column'} w={'full'}>
+            <Text color="brand.slate.700" fontSize="sm" fontWeight={600}>
+              {textLimiter(title, 40)}
+            </Text>
+            <Text
+              w={'full'}
+              color={'brand.slate.400'}
+              fontSize={{ md: 'sm', base: 'xs' }}
+              fontWeight={'400'}
+              noOfLines={1}
+            >
+              {sponsor}
+            </Text>
+            <Flex align={'center'} gap={3}>
+              <Image
+                w={4}
+                h={4}
+                alt="token"
+                rounded="full"
+                src={
+                  tokenList.find((ele) => {
+                    return ele.mintAddress === token;
+                  })?.icon
+                }
+              />
+
+              <Text
+                color={'brand.slate.700'}
+                fontSize={'sm'}
+                fontWeight={'600'}
+              >
+                {amount}
+              </Text>
+              <Text color={'brand.slate.300'} fontSize={'sm'}>
+                |
+              </Text>
+              <Text color={'brand.slate.500'} fontSize={'sm'}>
+                {moment(due).fromNow().includes('ago')
+                  ? `Closed ${moment(due).fromNow()}`
+                  : `Closing ${moment(due).fromNow()}`}
+              </Text>
+            </Flex>
+          </Flex>
+        </Flex>
+        <Link
+          w={24}
+          py={2}
+          color={'brand.slate.400'}
+          textAlign="center"
+          border="1px solid"
+          borderColor="brand.slate.400"
+          borderRadius={4}
+          _hover={{
+            textDecoration: 'none',
+            bg: 'brand.slate.400',
+            color: 'white',
+          }}
+          href={`https://earn-frontend-v2.vercel.app/listings/bounties/${slug}`}
+          isExternal
         >
           {Number(moment(due).format('x')) < Date.now()
             ? status === 'close'
               ? 'View'
               : 'View'
             : 'Apply'}
-        </Button>
-      </Link>
-    </Flex>
+        </Link>
+      </Flex>
+    </>
   );
 };
 interface JobsProps {
@@ -225,26 +234,26 @@ export const JobsCard = ({
     <Flex
       align="center"
       justify="space-between"
-      w={{ base: '100%', md: '46.125rem' }}
+      w={{ base: '100%', md: 'brand.120' }}
       h={'3.9375rem'}
     >
       <Flex justify="start">
         <Image
-          w={'3.9375rem'}
-          h={'3.9375rem'}
-          mr={'1.375rem'}
-          alt={''}
-          rounded={'md'}
+          w={16}
+          h={16}
+          mr={5}
+          alt={'company logo'}
+          rounded={5}
           src={logo ?? '/assets/home/placeholder/ph2.png'}
         />
         <Flex justify={'space-between'} direction={'column'}>
-          <Text color={'#334155'} fontSize={'1rem'} fontWeight={'600'}>
+          <Text color="brand.slate.700" fontSize="sm" fontWeight="600">
             {title}
           </Text>
           <Text
-            color={'#64748B'}
-            fontSize={{ md: '0.875rem', base: '0.7688rem' }}
-            fontWeight={'400'}
+            color="brand.slate.400"
+            fontSize={{ md: 'sm', base: 'xs' }}
+            fontWeight={400}
           >
             {description
               ? parse(
@@ -256,7 +265,7 @@ export const JobsCard = ({
           </Text>
           <Flex align={'center'}>
             {!!min && !!max && (
-              <Text mr={'0.6875rem'} color={'#64748B'} fontSize={'0.75rem'}>
+              <Text mr={3} color={'brand.slate.500'} fontSize={'sm'}>
                 <Text as="span" fontWeight="700">
                   ${' '}
                 </Text>
@@ -264,7 +273,7 @@ export const JobsCard = ({
               </Text>
             )}
             {!!minEq && !!maxEq && (
-              <Text mr={'0.6875rem'} color={'#64748B'} fontSize={'0.75rem'}>
+              <Text mr={3} color={'brand.slate.500'} fontSize={'sm'}>
                 {minEq.toLocaleString()}% - {maxEq.toLocaleString()}% Equity
               </Text>
             )}
@@ -274,9 +283,9 @@ export const JobsCard = ({
                   <Text
                     key={''}
                     display={{ base: 'none', md: 'block' }}
-                    mr={'0.6875rem'}
-                    color={'#64748B'}
-                    fontSize={'0.75rem'}
+                    mr={3}
+                    color={'brand.slate.500'}
+                    fontSize="sm"
                   >
                     {e.label}
                   </Text>
@@ -286,15 +295,17 @@ export const JobsCard = ({
         </Flex>
       </Flex>
       <Link
-        px={'1.5rem'}
-        py={'0.5rem'}
-        color={'#94A3B8'}
-        border={'0.0625rem solid #94A3B8'}
-        borderRadius="4px"
+        w={24}
+        py={2}
+        color={'brand.slate.400'}
+        textAlign="center"
+        border="1px solid"
+        borderColor={'brand.slate.400'}
+        borderRadius={4}
         _hover={{
           textDecoration: 'none',
-          bg: '#94A3B8',
-          color: '#ffffff',
+          bg: 'brand.slate.400',
+          color: 'white',
         }}
         href={
           link ||
@@ -312,74 +323,66 @@ export const JobsCard = ({
 
 interface GrantsProps {
   title: string;
-  description: string;
+  sponsor: string;
   logo: string;
   max: number;
   min: number;
 }
-export const GrantsCard = ({
-  description,
-  title,
-  logo,
-  max,
-  min,
-}: GrantsProps) => {
+export const GrantsCard = ({ title, logo, max, min, sponsor }: GrantsProps) => {
   return (
-    <Flex w={{ base: '100%', md: '46.125rem' }} h={'3.9375rem'}>
-      <Image
-        w={'3.9375rem'}
-        h={'3.9375rem'}
-        mr={'1.375rem'}
-        alt={''}
-        rounded={'md'}
-        src={logo ?? '/assets/home/placeholder/ph3.png'}
-      />
-      <Flex justify={'space-between'} direction={'column'}>
-        <Text color={'#334155'} fontSize={'1rem'} fontWeight={'600'}>
-          {title}
-        </Text>
-        <Text
-          color={'#64748B'}
-          fontSize={{ md: '0.875rem', base: '0.7688rem' }}
-          fontWeight={'400'}
-        >
-          {parse(
-            description?.startsWith('"')
-              ? JSON.parse(description || '')?.slice(0, 100)
-              : (description ?? '')?.slice(0, 100)
-          )}
-        </Text>
-        <Flex align={'center'}>
-          <Image
-            w={'0.875rem'}
-            h={'0.875rem'}
-            mr={'0.1969rem'}
-            alt=""
-            src="/assets/icons/dollar.svg"
-          />
-          <Text mr={'0.6875rem'} color={'#64748B'} fontSize={'0.75rem'}>
-            {min.toLocaleString()} - {max.toLocaleString()}
+    <Flex
+      align="center"
+      justify="space-between"
+      w={{ base: '100%', md: 'brand.120' }}
+      h={14}
+    >
+      <Flex justify="start">
+        <Image
+          w={16}
+          h={16}
+          mr={5}
+          alt={'company logo'}
+          rounded={5}
+          src={logo ?? '/assets/home/placeholder/ph3.png'}
+        />
+        <Flex justify="space-between" direction="column">
+          <Text color="brand.slate.700" fontSize="sm" fontWeight="600">
+            {title}
           </Text>
+          <Text
+            color="brand.slate.400"
+            fontSize={{ md: 'sm', base: 'xs' }}
+            fontWeight="400"
+          >
+            {sponsor}
+          </Text>
+          <Flex align={'center'}>
+            <Image w={3} h={3} alt="" src="/assets/icons/dollar.svg" />
+            <Text mr={3} color={'brand.slate.500'} fontSize={'sm'}>
+              {min.toLocaleString()} - {max.toLocaleString()}
+            </Text>
+          </Flex>
         </Flex>
       </Flex>
       <Link
-        ml={'auto'}
+        w={24}
+        py={2}
+        color={'brand.slate.400'}
+        textAlign="center"
+        border="1px solid"
+        borderColor={'brand.slate.400'}
+        borderRadius={4}
+        _hover={{
+          textDecoration: 'none',
+          bg: 'brand.slate.400',
+          color: 'white',
+        }}
         href={`https://earn-frontend-v2.vercel.app/listings/grants/${title
           .split(' ')
           .join('-')}`}
         isExternal
       >
-        <Button
-          display={{ base: 'none', md: 'block' }}
-          ml={'auto'}
-          px={'1.5rem'}
-          py={'0.5rem'}
-          color={'#94A3B8'}
-          bg={'transparent'}
-          border={'0.0625rem solid #94A3B8'}
-        >
-          Apply
-        </Button>
+        Apply
       </Link>
     </Flex>
   );
@@ -451,40 +454,42 @@ export const CategoryBanner = ({ type }: { type: string }) => {
       {isOpen && <EarningModal isOpen={isOpen} onClose={onClose} />}
       <Flex
         direction={{ md: 'row', base: 'column' }}
-        w={{ md: '46.0625rem', base: '24.125rem' }}
+        w={{ md: 'brand.120', base: '95%' }}
         h={{ md: '7.375rem', base: 'fit-content' }}
-        mt={'1.5625rem'}
-        p={'1.5rem'}
+        mt={6}
+        mx={'auto'}
+        p={6}
         bg={`url('${categoryAssets[type]?.bg}')`}
-        bgSize={'contain'}
-        rounded={'lg'}
+        bgSize={'cover'}
+        rounded={10}
       >
         <Center
-          w={'3.6875rem'}
-          h={'3.6875rem'}
-          mr={'1.0625rem'}
+          w={14}
+          h={14}
+          mr={3}
           bg={categoryAssets[type]?.color}
           rounded={'md'}
         >
           <Image alt="Category icon" src={categoryAssets[type]?.icon} />
         </Center>
-        <Box w={{ md: '60%', base: '100%' }} mt={{ base: '1rem', md: '0' }}>
+        <Box w={{ md: '60%', base: '100%' }} mt={{ base: 4, md: '0' }}>
           <Text fontFamily={'Domine'} fontWeight={'700'}>
             {type}
           </Text>
-          <Text color={'#64748B'} fontSize={'0.875rem'}>
+          <Text color={'brand.slate.500'} fontSize={'small'}>
             {categoryAssets[type]?.desc}
           </Text>
         </Box>
         <Button
-          mt={{ base: '1rem', md: '' }}
+          mt={{ base: 4, md: '' }}
           ml={{ base: '', md: 'auto' }}
           my={{ base: '', md: 'auto' }}
-          px={'1rem'}
-          color={'#94A3B8'}
+          px={4}
+          color={'brand.slate.400'}
           fontWeight={'300'}
           bg={'white'}
-          border={'0.0625rem solid #CBD5E1'}
+          border={'1px solid'}
+          borderColor={'brand.slate.500'}
           isLoading={loading}
           leftIcon={
             JSON.parse(talentInfo?.notifications ?? '[]').includes(type) ? (

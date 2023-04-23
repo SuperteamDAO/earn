@@ -69,43 +69,38 @@ const Step = ({
 const GettingStarted = () => {
   return (
     <Box>
-      <Text mb={'1.5rem'} color={'#94A3B8'}>
+      <Text mb={'1.5rem'} color={'gray.400'} fontWeight={500}>
         GETTING STARTED
       </Text>
       <Flex h={'12.5rem'}>
-        <VStack
-          pos={'relative'}
-          justifyContent={'space-between'}
-          h={'100%'}
-          mr={'0.8125rem'}
-        >
+        <VStack pos={'relative'} justifyContent={'space-between'} h={'100%'}>
           <Step number={1} isComplete={true} />
           <Step number={2} isComplete={false} />
           <Step number={3} isComplete={false} />
           <Flex pos={'absolute'} w={'0.0625rem'} h={'90%'} bg={'#CBD5E1'} />
         </VStack>
         <VStack pos={'relative'} justifyContent={'space-between'} h={'100%'}>
-          <Box>
-            <Text color={'black'} fontSize={'0.875rem'}>
+          <Box ml={'0.8125rem'}>
+            <Text color={'black'} fontSize={'md'} fontWeight={500}>
               Create your account
             </Text>
-            <Text color={'#64748B'} fontSize={'0.8125rem'}>
+            <Text color={'gray.500'} fontSize={'md'} fontWeight={500}>
               and get personalized notifications
             </Text>
           </Box>
-          <Box>
-            <Text color={'black'} fontSize={'0.875rem'}>
+          <Box ml={'0.8125rem'}>
+            <Text color={'black'} fontSize={'md'} fontWeight={500}>
               Complete your profile
             </Text>
-            <Text color={'#64748B'} fontSize={'0.8125rem'}>
+            <Text color={'gray.500'} fontSize={'md'} fontWeight={500}>
               and get seen by hiring managers
             </Text>
           </Box>
-          <Box>
-            <Text color={'black'} fontSize={'0.875rem'}>
+          <Box ml={'0.8125rem'}>
+            <Text color={'black'} fontSize={'md'} fontWeight={500}>
               Win a bounty
             </Text>
-            <Text color={'#64748B'} fontSize={'0.8125rem'}>
+            <Text color={'gray.500'} fontSize={'md'} fontWeight={500}>
               and get your Proof-of-Work NFT
             </Text>
           </Box>
@@ -137,13 +132,20 @@ const TotalStats = ({
           mr={'0.5rem'}
           mb={'auto'}
           alt=""
-          src="assets/icons/lite-purple-dollar.svg"
+          src="/assets/icons/lite-purple-dollar.svg"
         />
         <Box>
-          <Text color={'black'} fontSize={'0.875rem'} fontWeight={'600'}>
-            ${listings.toLocaleString()} USD
+          <Text color={'black'} fontSize={'sm'} fontWeight={'600'}>
+            ${listings.toLocaleString()}{' '}
+            <span
+              style={{
+                color: '#64748B',
+              }}
+            >
+              USD
+            </span>
           </Text>
-          <Text color={'#64748B'} fontSize={'0.75rem'} fontWeight={'400'}>
+          <Text color={'gray.500'} fontSize={'xs'} fontWeight={'400'}>
             Total Value Listed
           </Text>
         </Box>
@@ -154,14 +156,14 @@ const TotalStats = ({
           h={'25x'}
           mr={'0.5rem'}
           mb={'auto'}
-          alt=""
-          src="assets/icons/lite-purple-suitcase.svg"
+          alt="suitcase"
+          src="/assets/icons/lite-purple-suitcase.svg"
         />
         <Box>
-          <Text color={'black'} fontSize={'0.875rem'} fontWeight={'600'}>
+          <Text color={'black'} fontSize={'sm'} fontWeight={'600'}>
             {total}
           </Text>
-          <Text color={'#64748B'} fontSize={'0.75rem'} fontWeight={'400'}>
+          <Text color={'gray.500'} fontSize={'xs'} fontWeight={'400'}>
             Listed Opportunities
           </Text>
         </Box>
@@ -178,7 +180,7 @@ interface EarnerProps {
 }
 const Earner = ({ amount, name, avatar, work }: EarnerProps) => {
   return (
-    <Flex align={'center'} w={'100%'} my={1}>
+    <Flex align={'center'} w={'100%'} my={2}>
       {avatar !== '' ? (
         <Image
           w={'2.125rem'}
@@ -200,16 +202,18 @@ const Earner = ({ amount, name, avatar, work }: EarnerProps) => {
       )}
 
       <Box>
-        <Text color={'black'} fontSize={'0.8125rem'} fontWeight={'500'}>
+        <Text color={'black'} fontSize={'md'} fontWeight={500}>
           {name}
         </Text>
-        <Text color={'#64748B'} fontSize={'0.8125rem'}>
+        <Text color={'#64748B'} fontSize={'sm'} fontWeight={500}>
           {work?.slice(0, 20)}
         </Text>
       </Box>
-      <Flex columnGap={'0.3125rem'} ml={'auto'}>
-        <Image alt="" src="/assets/landingsponsor/icons/usdc.svg" />
-        <Text>${amount.toLocaleString()}</Text>
+      <Flex columnGap={1} ml={'auto'}>
+        <Image alt="usdc icon" src="/assets/landingsponsor/icons/usdc.svg" />
+        <Text color={'gray.600'} fontSize={'md'} fontWeight={500}>
+          ${amount.toLocaleString()}
+        </Text>
       </Flex>
     </Flex>
   );
@@ -233,10 +237,10 @@ const RecentEarners = () => {
   };
   return (
     <Box>
-      <Text mb={'1.5rem'} color={'#94A3B8'}>
+      <Text mb={'1.5rem'} color={'gray.400'} fontWeight={500}>
         TOP EARNERS
       </Text>
-      <VStack rowGap={'1.8125rem'}>
+      <VStack rowGap={2}>
         <Slider {...settings}>
           {talent.data?.map((t) => {
             return (
@@ -283,8 +287,8 @@ const Hiring = ({ logo, title, location, type }: HiringProps) => {
             {title}
           </Text>
         </Link>
-        <Text color={'#64748B'} fontSize={'0.8125rem'}>
-          {location}, {type}
+        <Text color={'gray.500'} fontSize={'md'} noOfLines={1}>
+          {location ? `${location},` : ''} {type}
         </Text>
       </Box>
     </Flex>
