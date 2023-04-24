@@ -13,21 +13,20 @@ import type { GetServerSideProps, NextPage } from 'next';
 import { useRouter } from 'next/router';
 import { useEffect } from 'react';
 
-// components
-import Banner from '../components/home/Banner';
-import NavHome from '../components/home/NavHome';
-import SideBar from '../components/home/SideBar';
-import SearchLoading from '../components/Loading/searchLoading';
+import Header from '@/components/Header/Header';
+import Banner from '@/components/home/Banner';
+import SideBar from '@/components/home/SideBar';
+import SearchLoading from '@/components/Loading/searchLoading';
 import {
   BountiesCard,
   CategoryBanner,
   GrantsCard,
   JobsCard,
   ListingSection,
-} from '../components/misc/listingsCard';
-import type { BountyStatus } from '../interface/types';
-import { TalentStore } from '../store/talent';
-import { fetchAll, fetchBasicInfo } from '../utils/functions';
+} from '@/components/misc/listingsCard';
+import type { BountyStatus } from '@/interface/types';
+import { TalentStore } from '@/store/talent';
+import { fetchAll, fetchBasicInfo } from '@/utils/functions';
 
 const Home: NextPage = () => {
   const router = useRouter();
@@ -72,7 +71,7 @@ const Home: NextPage = () => {
   ];
   return (
     <>
-      <NavHome />
+      <Header />
       <Flex
         justify={'center'}
         w={'100%'}

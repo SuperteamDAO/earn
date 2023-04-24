@@ -27,8 +27,8 @@ import type { SponsorType } from '../../interface/sponsor';
 import { ConnectWallet } from '../../layouts/connectWallet';
 import { generateOtp } from '../../utils/functions';
 import {
-  genrateCode,
-  genrateCodeLast,
+  generateCode,
+  generateCodeLast,
   genrateNanoid,
   genrateuuid,
 } from '../../utils/helpers';
@@ -119,8 +119,10 @@ const CreateSponsor = () => {
                       );
                       console.log(a);
 
-                      const code = genrateCode(publicKey?.toBase58() as string);
-                      const codeLast = genrateCodeLast(
+                      const code = generateCode(
+                        publicKey?.toBase58() as string
+                      );
+                      const codeLast = generateCodeLast(
                         publicKey?.toBase58() as string
                       );
                       setOtp({

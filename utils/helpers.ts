@@ -17,7 +17,7 @@ export const genrateuuid = () => {
   return id;
 };
 
-export const genrateCode = (seed: string) => {
+export const generateCode = (seed: string) => {
   const time = Date.now();
   const message = Math.floor(time / 5000);
   const decoder = new base32.Encoder({ type: 'crockford', lc: true });
@@ -26,10 +26,14 @@ export const genrateCode = (seed: string) => {
     decoder.write(seed).finalize()
   );
   // eslint-disable-next-line no-bitwise
-  const code = hash?.words[0]! & 0x7fffffff;
-  return code % 1000000;
+  let code = hash?.words[0]! & 0x7fffffff;
+  code %= 1000000;
+  if (code < 100000) {
+    code += 100000;
+  }
+  return code;
 };
-export const genrateCodeLast = (seed: String) => {
+export const generateCodeLast = (seed: String) => {
   const time = Date.now() - 5000;
   const message = Math.floor(time / 5000);
   const decoder = new base32.Encoder({ type: 'crockford', lc: true });
@@ -38,6 +42,10 @@ export const genrateCodeLast = (seed: String) => {
     decoder.write(seed).finalize()
   );
   // eslint-disable-next-line no-bitwise
-  const code = hash?.words[0]! & 0x7fffffff;
-  return code % 1000000;
+  let code = hash?.words[0]! & 0x7fffffff;
+  code %= 1000000;
+  if (code < 100000) {
+    code += 100000;
+  }
+  return code;
 };

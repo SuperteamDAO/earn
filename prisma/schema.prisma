@@ -1,0 +1,311 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider     = "mysql"
+  url          = env("DATABASE_URL")
+  relationMode = "prisma"
+}
+
+model Bounties {
+  id            String                 @id @map("_id")
+  title         String
+  description   String                 @default(dbgenerated("(_utf8mb4\\'\\')")) @db.Text
+  skills        String                 @db.VarChar(2000)
+  slug          String
+  subSkills     String                 @db.VarChar(2000)
+  deadline      String
+  source        Bounties_source        @default(native)
+  amount        String
+  token         String
+  status        Bounties_status        @default(open)
+  sponsorStatus Bounties_sponsorStatus @default(Unassigned)
+  active        Boolean
+  private       Boolean
+  featured      Boolean
+  prizeList     Json
+  bugBounty     Boolean                @default(false)
+  showTop       Boolean                @default(false)
+  orgId         String
+  eligibility   String                 @default("")
+  sourceId      String                 @default("") @db.VarChar(500)
+  sourceName    String                 @default("") @db.VarChar(500)
+
+  @@index([orgId])
+}
+
+model Comment {
+  id        String @id @map("_id")
+  message   String @db.VarChar(1000)
+  talentId  String
+  refId     String
+  timeStamp String
+
+  @@index([talentId])
+}
+
+model Drafts {
+  id        String      @id @map("_id")
+  orgId     String
+  basic     String?     @db.VarChar(2000)
+  questions String?     @db.VarChar(3000)
+  payments  String?     @db.VarChar(2000)
+  type      Drafts_type
+
+  @@index([orgId])
+}
+
+model Emails {
+  id        String      @id @map("_id")
+  email     String
+  type      Emails_type
+  timestamp DateTime    @default(now())
+}
+
+model Grants {
+  id          String        @id @map("_id")
+  title       String
+  description String        @default(dbgenerated("(_utf8mb4\\'\\')")) @db.Text
+  skills      String        @db.VarChar(2000)
+  subSkills   String        @db.VarChar(2000)
+  source      Grants_source
+  contact     String
+  token       String
+  active      Boolean
+  orgId       String
+  maxSalary   Float
+  minSalary   Float
+  link        String        @db.VarChar(500)
+  sourceId    String        @default("") @db.VarChar(500)
+  sourceName  String        @default("") @db.VarChar(500)
+
+  @@index([orgId])
+}
+
+model Jobs {
+  id          String       @id @map("_id")
+  title       String
+  description String       @default(dbgenerated("(_utf8mb4\\'\\')")) @db.Text
+  skills      String       @db.VarChar(2000)
+  subskills   String       @db.VarChar(2000)
+  deadline    String
+  source      Jobs_source
+  active      Boolean
+  private     Boolean
+  featured    Boolean
+  experience  String
+  jobType     Jobs_jobType
+  maxSalary   Float
+  minSalary   Float
+  maxEq       Float
+  minEq       Float
+  location    String       @db.VarChar(1000)
+  orgId       String
+  timezone    String       @default("") @db.VarChar(1000)
+  link        String
+  sourceId    String       @default("") @db.VarChar(500)
+  sourceName  String       @default("") @db.VarChar(500)
+
+  @@index([orgId])
+}
+
+model Otp {
+  id        String   @id @map("_id")
+  email     String
+  otp       Int
+  timestamp DateTime @default(now())
+}
+
+model Questions {
+  id         String @id @map("_id")
+  bountiesId String @unique
+  questions  String @db.VarChar(3000)
+
+  @@index([bountiesId])
+}
+
+model Sponsors {
+  id        String        @id @default("uuid()") @map("_id")
+  username  String
+  orgId     String
+  publickey String
+  name      String
+  logo      String
+  url       String
+  industry  String
+  twitter   String
+  bio       String        @db.VarChar(2000)
+  verified  Boolean
+  type      Sponsors_type @default(Admin)
+  email     String
+
+  @@index([publickey])
+}
+
+model Submission {
+  id         String @id @map("_id")
+  likes      String
+  link       String
+  image      String
+  talent     String
+  questions  String @db.VarChar(5000)
+  bountiesId String @default("")
+
+  @@index([bountiesId])
+  @@index([talent])
+}
+
+model Subscribe {
+  id         String @id @map("_id")
+  talentId   String
+  bountiesId String
+
+  @@index([bountiesId])
+  @@index([talentId])
+}
+
+model Talent {
+  id               String  @id @map("_id")
+  username         String  @unique
+  firstname        String
+  lastname         String
+  email            String
+  skills           String  @db.VarChar(2000)
+  subskills        String  @db.VarChar(2000)
+  avatar           String
+  interests        String
+  bio              String  @db.VarChar(1000)
+  twitter          String? @default("")
+  github           String? @default("")
+  linkedin         String? @default("")
+  website          String? @default("")
+  telegram         String? @default("")
+  community        String
+  verified         Boolean
+  experience       String
+  superteamLevel   String
+  location         String
+  cryptoExperience String
+  workPrefernce    String
+  currentEmployer  String
+  publickey        String
+  pow              String  @db.VarChar(1000)
+  notifications    String  @default("[]")
+  private          Boolean @default(false)
+  tve              Int     @default(0)
+}
+
+model Template {
+  id             Int           @id @default(autoincrement()) @map("_id")
+  title          String
+  preview        String
+  configurations String        @db.VarChar(2000)
+  Emoji          String
+  Type           Template_Type
+  description    String
+  useByName      String
+  useByImage     String
+}
+
+model User {
+  id         Int      @id @default(autoincrement())
+  publicKey  String   @unique
+  email      String   @unique
+  photo      String?
+  firstName  String?
+  lastName   String?
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+  isVerified Boolean  @default(false)
+
+  @@index([email, publicKey])
+}
+
+model Winner {
+  id         String       @id @map("_id")
+  bountiesId String
+  payoutTx   String?
+  prize      Winner_prize
+  talentId   String
+
+  @@index([bountiesId])
+  @@index([talentId])
+}
+
+enum Emails_type {
+  welcomeTalent
+  welcomeSponsor
+  feedback
+  newListing
+  deadline
+  submissionReceived
+  winner
+  winnerNotification
+  comment
+  like
+  otp
+}
+
+enum Winner_prize {
+  first
+  second
+  third
+  forth
+  fifth
+}
+
+enum Drafts_type {
+  Bounties
+  Jobs
+  Grants
+}
+
+enum Grants_source {
+  native
+  manual
+  import
+}
+
+enum Template_Type {
+  Bounties
+  Jobs
+  Grants
+}
+
+enum Jobs_source {
+  native
+  manual
+  import
+}
+
+enum Bounties_source {
+  native
+  manual
+  import
+}
+
+enum Bounties_status {
+  open
+  review
+  close
+}
+
+enum Bounties_sponsorStatus {
+  Unassigned
+  Assigned
+}
+
+enum Jobs_jobType {
+  parttime
+  fulltime
+  internship
+}
+
+enum Sponsors_type {
+  Admin
+  Member
+}

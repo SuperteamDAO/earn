@@ -56,7 +56,11 @@ import { ConnectWallet } from '../../layouts/connectWallet';
 // layouts
 import { userStore } from '../../store/user';
 import { generateOtp } from '../../utils/functions';
-import { genrateCode, genrateCodeLast, genrateuuid } from '../../utils/helpers';
+import {
+  generateCode,
+  generateCodeLast,
+  genrateuuid,
+} from '../../utils/helpers';
 import { uploadToCloudinary } from '../../utils/upload';
 
 interface AboutYouType {
@@ -1168,8 +1172,8 @@ const VerifyEmail = ({ setStep }: { setStep: () => void }) => {
     updateState({ email });
     await generateOtp(publicKey?.toBase58() as string, email);
 
-    const code = genrateCode(publicKey?.toBase58() as string);
-    const codeLast = genrateCodeLast(publicKey?.toBase58() as string);
+    const code = generateCode(publicKey?.toBase58() as string);
+    const codeLast = generateCodeLast(publicKey?.toBase58() as string);
     setOtp({
       current: code,
       last: codeLast,
@@ -1260,7 +1264,7 @@ const OtpScreen = ({ setStep }: { setStep: () => void }) => {
     const a = await generateOtp(publicKey?.toBase58() as string, email);
     console.log(a);
 
-    const code = genrateCode(publicKey?.toBase58() as string);
+    const code = generateCode(publicKey?.toBase58() as string);
     setOtpStore(code);
   };
 
