@@ -7373,9 +7373,9 @@ pretty-format@^27.0.2:
     ansi-styles "^5.0.0"
     react-is "^17.0.1"
 
-prisma@^4.13.0:
+prisma@4.13.0:
   version "4.13.0"
-  resolved "https://registry.npmjs.org/prisma/-/prisma-4.13.0.tgz"
+  resolved "https://registry.yarnpkg.com/prisma/-/prisma-4.13.0.tgz#0b83f40acf50cd47d7463a135c4e9b275713e602"
   integrity sha512-L9mqjnSmvWIRCYJ9mQkwCtj4+JDYYTdhoyo8hlsHNDXaZLh/b4hR0IoKIBbTKxZuyHQzLopb/+0Rvb69uGV7uA==
   dependencies:
     "@prisma/engines" "4.13.0"

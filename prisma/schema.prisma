@@ -212,10 +212,17 @@ model Template {
 }
 
 model User {
-  id        String  @id @map("_id")
-  publickey String  @unique
-  talent    Boolean
-  sponsor   Boolean
+  id         Int      @id @default(autoincrement())
+  publicKey  String   @unique
+  email      String   @unique
+  photo      String?
+  firstName  String?
+  lastName   String?
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+  isVerified Boolean  @default(false)
+
+  @@index([email, publicKey])
 }
 
 model Winner {
