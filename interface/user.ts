@@ -1,10 +1,11 @@
-import type { SponsorType } from './sponsor';
-
 interface User {
-  id: string;
-  publickey: string;
-  talent: boolean;
-  sponsor: boolean;
-  sponsors?: SponsorType[];
+  id?: number;
+  publicKey?: string;
+  firstName?: string;
+  lastName?: string;
+  email?: string;
+  isVerified?: boolean;
+  createdAt?: string;
+  updatedAt?: string;
 }
 export type { User };

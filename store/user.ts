@@ -2,7 +2,7 @@ import produce from 'immer';
 import { mountStoreDevtool } from 'simple-zustand-devtools';
 import { create } from 'zustand';
 
-import type { User } from '../interface/user';
+import type { User } from '@/interface/user';
 
 interface UserState {
   userInfo: User | null;
