@@ -9,8 +9,8 @@ import { userStore } from '@/store/user';
 
 function UserInfo() {
   const { isOpen, onOpen, onClose } = useDisclosure();
-  const { connected, publicKey, wallet, wallets, select } = useWallet();
-  const { setUserInfo } = userStore();
+  const { connected, publicKey, wallets, select } = useWallet();
+  const { setUserInfo, userInfo } = userStore();
 
   useEffect(() => {
     const makeUser = async () => {
@@ -37,12 +37,12 @@ function UserInfo() {
     }
   };
 
-  const onDisconnectWallet = async () => {
-    if (wallet == null) {
-      return;
-    }
-    await wallet.adapter.disconnect();
-  };
+  // const onDisconnectWallet = async () => {
+  //   if (wallet == null) {
+  //     return;
+  //   }
+  //   await wallet.adapter.disconnect();
+  // };
 
   return (
     <>
@@ -52,8 +52,8 @@ function UserInfo() {
           onConnectWallet={onConnectWallet}
           isOpen={isOpen}
           onClose={onClose}
-          isNewUser={isNewUser}
-          userPublicKey={userPublicKey}
+          userInfo={userInfo}
+          setUserInfo={setUserInfo}
         />
       )}
       <Button

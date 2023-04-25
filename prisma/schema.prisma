@@ -212,9 +212,10 @@ model Template {
 }
 
 model User {
-  id         Int      @id @default(autoincrement())
+  id         String   @id @default(uuid())
   publicKey  String   @unique
   email      String   @unique
+  username   String   @unique
   photo      String?
   firstName  String?
   lastName   String?
@@ -222,7 +223,7 @@ model User {
   updatedAt  DateTime @updatedAt
   isVerified Boolean  @default(false)
 
-  @@index([email, publicKey])
+  @@index([email, publicKey, username])
 }
 
 model Winner {

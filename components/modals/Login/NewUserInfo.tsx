@@ -5,23 +5,21 @@ import {
   FormLabel,
   HStack,
   Input,
-  PinInput,
-  PinInputField,
   Stack,
   Text,
 } from '@chakra-ui/react';
 import axios from 'axios';
-import { useRouter } from 'next/router';
 import type { FormEvent } from 'react';
 import { useState } from 'react';
 
-import { userStore } from '@/store/user';
-import { generateOtp } from '@/utils/functions';
+import type { User } from '@/interface/user';
 import { generateCode, generateCodeLast } from '@/utils/helpers';
 
 interface Props {
-  userPublicKey: string;
-  onClose: () => void;
+  userInfo: User | null;
+  setUserInfo: (userInfo: User) => void;
+  setStep: (step: number) => void;
+  setOtp: (otp: { current: number; last: number }) => void;
 }
 
 interface Info {
@@ -30,33 +28,24 @@ interface Info {
   email?: string;
 }
 
-function NewUserInfo({ userPublicKey, onClose }: Props) {
-  const router = useRouter();
-  const { setUserInfo } = userStore();
-  const [showVerifyOTP, setShowVerifyOTP] = useState(false);
-  const [pin, setPin] = useState('');
+const validateEmail = (email: string) => {
+  if (!email) {
+    return false;
+  }
+  if (!/^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,4}$/i.test(email)) {
+    return false;
+  }
+  return true;
+};
+
+function NewUserInfo({ setUserInfo, userInfo, setStep, setOtp }: Props) {
   const [userDetails, setUserDetails] = useState({
-    firstName: '',
-    lastName: '',
-    email: 'tksumanth1994@gmail.com',
+    firstName: userInfo?.firstName ?? '',
+    lastName: userInfo?.lastName ?? '',
+    email: userInfo?.email ?? '',
   });
-  const [sendOTPLoading, setSendOTPLoading] = useState(false);
-  const [newUser, setNewUser] = useState({
-    id: '',
-    publicKey: '',
-    email: '',
-    firstName: '',
-    lastName: '',
-    isVerified: '',
-    createdAt: '',
-    updatedAt: '',
-  });
-  const [otp, setOtp] = useState({
-    current: 0,
-    last: 0,
-  });
-  const [verifyOTPLoading, setVerifyOTPLoading] = useState(false);
-  const [verificationError, setVerificationError] = useState('');
+  const [loading, setLoading] = useState(false);
+  const [errorMessage, setErrorMessage] = useState('');
 
   const setInfo = (info: Info) => {
     setUserDetails({
@@ -68,104 +57,60 @@ function NewUserInfo({ userPublicKey, onClose }: Props) {
   const sendOTP = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     try {
-      setSendOTPLoading(true);
-      await generateOtp(userPublicKey, userDetails?.email);
-      const newUserDetails = await axios.post('/api/user/create', {
-        publicKey: userPublicKey,
-        email: userDetails?.email,
-        firstName: userDetails?.firstName,
-        lastName: userDetails?.lastName,
-      });
-      setNewUser(newUserDetails?.data);
-      setUserInfo(newUserDetails?.data);
-      const code = generateCode(userPublicKey);
-      const codeLast = generateCodeLast(userPublicKey);
-      setOtp({
-        current: code,
-        last: codeLast,
-      });
-      setShowVerifyOTP(true);
-      setSendOTPLoading(false);
-    } catch (error) {
-      setSendOTPLoading(false);
-    }
-  };
-
-  const verifyOTP = async (e: FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
-    try {
-      setVerifyOTPLoading(true);
-      setVerificationError('');
-      if (otp.current === Number(pin) || otp.last === Number(pin)) {
-        const userUpdtedDetails = await axios.post('/api/user/update', {
-          id: newUser?.id,
-          isVerified: true,
-        });
-        setUserInfo(userUpdtedDetails?.data);
-        router.push('/new');
-        onClose();
+      if (
+        !userDetails?.firstName ||
+        !userDetails?.lastName ||
+        !userDetails?.email
+      ) {
+        setErrorMessage('Please fill all the fields');
+      } else if (!validateEmail(userDetails?.email)) {
+        setErrorMessage('Please enter a valid email address');
       } else {
-        setVerificationError('Incorrect OTP. Please try again.');
+        setErrorMessage('');
+        setLoading(true);
+        console.log('1');
+        const emailDetails = await axios.post('/api/otp/send', {
+          publicKey: userInfo?.publicKey,
+          email: userDetails?.email,
+        });
+        console.log(
+          'file: NewUserInfo.tsx:76 ~ sendOTP ~ emailDetails:',
+          emailDetails
+        );
+        console.log('hi2');
+        const newUserDetails = await axios.post('/api/user/create', {
+          publicKey: userInfo?.publicKey,
+          email: userDetails?.email,
+          firstName: userDetails?.firstName,
+          lastName: userDetails?.lastName,
+        });
+        console.log('hi4', newUserDetails);
+        setUserInfo(newUserDetails?.data);
+        console.log('hi5');
+        const code = generateCode(userInfo?.publicKey);
+        console.log('hi6', code);
+        const codeLast = generateCodeLast(userInfo?.publicKey);
+        console.log('hi7', code);
+        setOtp({
+          current: code,
+          last: codeLast,
+        });
+        console.log('hi8');
+        setLoading(false);
+        console.log('hi9');
+        setStep(3);
+        console.log('hi10');
       }
-      setVerifyOTPLoading(false);
     } catch (error) {
-      setVerificationError('Incorrect OTP. Please try again.');
-      setVerifyOTPLoading(false);
+      console.log('file: NewUserInfo.tsx:101 ~ sendOTP ~ error:', error);
+      setLoading(false);
     }
   };
-
-  if (showVerifyOTP) {
-    return (
-      <Box>
-        <Text mb={4} color="brand.slate.500" fontSize="lg" textAlign="center">
-          OTP sent to {userDetails?.email}
-        </Text>
-        <Stack spacing={4}>
-          <form onSubmit={(e) => verifyOTP(e)}>
-            <FormControl mb={4} id="email" isRequired>
-              <FormLabel color="brand.slate.500">Enter OTP</FormLabel>
-              <PinInput
-                focusBorderColor="brand.purple"
-                manageFocus
-                mask
-                onComplete={(e) => {
-                  setPin(e);
-                }}
-                type="alphanumeric"
-              >
-                <PinInputField mr={2} />
-                <PinInputField mr={2} />
-                <PinInputField mr={2} />
-                <PinInputField mr={2} />
-                <PinInputField mr={2} />
-                <PinInputField />
-              </PinInput>
-            </FormControl>
-            <Stack pt={2} spacing={10}>
-              <Button
-                isLoading={!!verifyOTPLoading}
-                loadingText="Creating..."
-                type="submit"
-                variant="solid"
-              >
-                Create Account
-              </Button>
-            </Stack>
-          </form>
-          {!!verificationError && (
-            <Text mb={4} color="red" textAlign="center">
-              {verificationError}
-            </Text>
-          )}
-        </Stack>
-      </Box>
-    );
-  }
 
   return (
     <Box>
       <Text mb={4} color="brand.slate.500" fontSize="lg" textAlign="center">
-        Let&apos;s get you started!
+        Welcome, let&apos;s get you started!
       </Text>
       <Stack spacing={4}>
         <form onSubmit={(e) => sendOTP(e)}>
@@ -201,7 +146,7 @@ function NewUserInfo({ userPublicKey, onClose }: Props) {
           </FormControl>
           <Stack pt={2} spacing={10}>
             <Button
-              isLoading={!!sendOTPLoading}
+              isLoading={!!loading}
               loadingText="Verifying..."
               type="submit"
               variant="solid"
@@ -210,6 +155,11 @@ function NewUserInfo({ userPublicKey, onClose }: Props) {
             </Button>
           </Stack>
         </form>
+        {!!errorMessage && (
+          <Text mb={4} color="red" textAlign="center">
+            {errorMessage}
+          </Text>
+        )}
       </Stack>
     </Box>
   );
