@@ -36,11 +36,9 @@ export const Login = ({
   userInfo,
   setUserInfo,
   wallets,
-  initialStep,
+  initialStep = 1,
 }: Props) => {
-  const [step, setStep] = useState(
-    initialStep ?? (!userInfo || !userInfo?.publicKey) ? 1 : 2
-  );
+  const [step, setStep] = useState(initialStep);
   const [otp, setOtp] = useState({
     current: 0,
     last: 0,

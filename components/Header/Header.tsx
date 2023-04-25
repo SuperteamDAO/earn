@@ -275,9 +275,10 @@ export default function WithSubnavigation() {
         </Flex>
 
         <Stack
+          align="center"
           justify={'flex-end'}
           direction={'row'}
-          flex={{ base: 1, md: 0 }}
+          flex={{ base: 1, md: 1 }}
           spacing={4}
         >
           <UserInfo />
