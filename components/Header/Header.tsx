@@ -1,9 +1,4 @@
-import {
-  ChevronDownIcon,
-  ChevronRightIcon,
-  CloseIcon,
-  HamburgerIcon,
-} from '@chakra-ui/icons';
+import { ChevronDownIcon, CloseIcon, HamburgerIcon } from '@chakra-ui/icons';
 import {
   Box,
   Collapse,
@@ -20,91 +15,142 @@ import {
   useColorModeValue,
   useDisclosure,
 } from '@chakra-ui/react';
-import router from 'next/router';
+import { useRouter } from 'next/router';
 
+import Search from './Search';
 import UserInfo from './UserInfo';
 
 interface NavItem {
   label: string;
-  subLabel?: string;
   children?: Array<NavItem>;
   href?: string;
 }
 
 const NAV_ITEMS: Array<NavItem> = [
   {
-    label: 'Inspiration',
+    label: 'All Opportunties',
     children: [
       {
-        label: 'Explore Design Work',
-        subLabel: 'Trending Design to inspire you',
-        href: '#',
+        label: 'All Opportunties',
+        href: '/',
       },
       {
-        label: 'New & Noteworthy',
-        subLabel: 'Up-and-coming Designers',
-        href: '#',
+        label: 'Design',
+        href: '/all/design',
+      },
+      {
+        label: 'Growth',
+        href: '/all/growth',
+      },
+      {
+        label: 'Content',
+        href: '/all/content',
+      },
+      {
+        label: 'Frontend',
+        href: '/all/frontend',
+      },
+      {
+        label: 'Backend',
+        href: '/all/backend',
+      },
+      {
+        label: 'Blockchain',
+        href: '/all/blockchain',
       },
     ],
   },
   {
-    label: 'Find Work',
+    label: 'Bounties',
     children: [
       {
-        label: 'Job Board',
-        subLabel: 'Find your dream design job',
-        href: '#',
+        label: 'All Bounties',
+        href: '/bounties',
       },
       {
-        label: 'Freelance Projects',
-        subLabel: 'An exclusive list for contract work',
-        href: '#',
+        label: 'Design',
+        href: '/bounties/design',
+      },
+      {
+        label: 'Growth',
+        href: '/bounties/growth',
+      },
+      {
+        label: 'Content',
+        href: '/bounties/content',
+      },
+      {
+        label: 'Frontend',
+        href: '/bounties/frontend',
+      },
+      {
+        label: 'Backend',
+        href: '/bounties/backend',
+      },
+      {
+        label: 'Blockchain',
+        href: '/bounties/blockchain',
       },
     ],
   },
   {
-    label: 'Learn Design',
-    href: '#',
+    label: 'Jobs',
+    children: [
+      {
+        label: 'All Jobs',
+        href: '/jobs',
+      },
+      {
+        label: 'Design',
+        href: '/jobs/design',
+      },
+      {
+        label: 'Growth',
+        href: '/jobs/growth',
+      },
+      {
+        label: 'Content',
+        href: '/jobs/content',
+      },
+      {
+        label: 'Frontend',
+        href: '/jobs/frontend',
+      },
+      {
+        label: 'Backend',
+        href: '/jobs/backend',
+      },
+      {
+        label: 'Blockchain',
+        href: '/jobs/blockchain',
+      },
+    ],
   },
   {
-    label: 'Hire Designers',
-    href: '#',
+    label: 'Grants',
+    href: '/grants',
   },
 ];
 
-const DesktopSubNav = ({ label, href, subLabel }: NavItem) => {
+const DesktopSubNav = ({ label, href }: NavItem) => {
   return (
     <Link
       display={'block'}
-      p={2}
-      _hover={{ bg: useColorModeValue('pink.50', 'gray.900') }}
+      mt={0}
+      px={4}
+      py={2}
+      _hover={{ bg: 'brand.slate.100' }}
       href={href}
       role={'group'}
-      rounded={'md'}
     >
-      <Stack align={'center'} direction={'row'}>
-        <Box>
-          <Text
-            fontWeight={500}
-            _groupHover={{ color: 'pink.400' }}
-            transition={'all .3s ease'}
-          >
-            {label}
-          </Text>
-          <Text fontSize={'sm'}>{subLabel}</Text>
-        </Box>
-        <Flex
-          align={'center'}
-          justify={'flex-end'}
-          flex={1}
-          opacity={0}
-          _groupHover={{ opacity: '100%', transform: 'translateX(0)' }}
-          transform={'translateX(-10px)'}
-          transition={'all .3s ease'}
-        >
-          <Icon as={ChevronRightIcon} w={5} h={5} color={'pink.400'} />
-        </Flex>
-      </Stack>
+      <Text
+        color="slate.gray.500"
+        fontSize="sm"
+        _groupHover={{ color: 'brand.purple' }}
+        transition={'all .3s ease'}
+      >
+        {label}
+      </Text>
     </Link>
   );
 };
@@ -176,64 +222,78 @@ const MobileNav = () => {
   );
 };
 
-const DesktopNav = () => {
-  const linkColor = useColorModeValue('gray.600', 'gray.200');
-  const linkHoverColor = useColorModeValue('gray.800', 'white');
-  const popoverContentBgColor = useColorModeValue('white', 'gray.800');
+const DesktopNav = ({ pathname }: { pathname: string }) => {
+  const newNavItems = NAV_ITEMS.map((navItem) => ({
+    ...navItem,
+    allPaths: navItem.children
+      ? navItem.children.map((child) => child.href)
+      : [],
+  }));
 
   return (
-    <Stack direction={'row'} spacing={4}>
-      {NAV_ITEMS.map((navItem) => (
-        <Box key={navItem.label}>
-          <Popover placement={'bottom-start'} trigger={'hover'}>
-            <PopoverTrigger>
-              <Link
-                p={2}
-                color={linkColor}
-                fontSize={'sm'}
-                fontWeight={500}
-                _hover={{
-                  textDecoration: 'none',
-                  color: linkHoverColor,
-                }}
-                href={navItem.href ?? '#'}
-              >
-                {navItem.label}
-              </Link>
-            </PopoverTrigger>
+    <Stack direction={'row'} h="full" spacing={8}>
+      {newNavItems.map((navItem) => {
+        const isCurrent =
+          navItem.href === pathname || navItem.allPaths.includes(pathname);
+        return (
+          <Box key={navItem.label}>
+            <Popover placement={'bottom-start'} trigger={'hover'}>
+              <PopoverTrigger>
+                <Link
+                  alignItems="center"
+                  display="flex"
+                  h="full"
+                  py={2}
+                  color={isCurrent ? 'brand.slate.800' : 'brand.slate.500'}
+                  fontSize={'sm'}
+                  fontWeight={isCurrent ? 500 : 400}
+                  borderBottom="1px solid"
+                  borderBottomColor={isCurrent ? 'brand.purple' : 'transparent'}
+                  _hover={{
+                    textDecoration: 'none',
+                    color: 'brand.slate.800',
+                  }}
+                  href={navItem.href ?? '#'}
+                >
+                  {navItem.label}{' '}
+                  {navItem.children && <ChevronDownIcon ml={1} />}
+                </Link>
+              </PopoverTrigger>
 
-            {navItem.children && (
-              <PopoverContent
-                minW={'sm'}
-                p={4}
-                bg={popoverContentBgColor}
-                border={0}
-                shadow={'xl'}
-                rounded={'xl'}
-              >
-                <Stack>
+              {navItem.children && (
+                <PopoverContent
+                  w={'full'}
+                  minW={48}
+                  bg={'white'}
+                  border={'1px solid'}
+                  borderColor={'brand.slate.100'}
+                  shadow={'xl'}
+                  roundedBottom={'md'}
+                  roundedTop={'none'}
+                >
                   {navItem.children.map((child) => (
                     <DesktopSubNav key={child.label} {...child} />
                   ))}
-                </Stack>
-              </PopoverContent>
-            )}
-          </Popover>
-        </Box>
-      ))}
+                </PopoverContent>
+              )}
+            </Popover>
+          </Box>
+        );
+      })}
     </Stack>
   );
 };
 
 export default function WithSubnavigation() {
   const { isOpen, onToggle } = useDisclosure();
+  const router = useRouter();
 
   return (
     <Box>
       <Flex
-        align={'center'}
-        px={{ base: 6 }}
-        py={{ base: 2 }}
+        align={'stretch'}
+        px={{ base: 4, md: 6 }}
+        py={{ base: 2, md: 0 }}
         color="brand.slate.500"
         bg="white"
         borderBottom="1px solid"
@@ -253,11 +313,7 @@ export default function WithSubnavigation() {
             variant={'ghost'}
           />
         </Flex>
-        <Flex
-          align="center"
-          justify={{ base: 'center', md: 'start' }}
-          flex={{ base: 1 }}
-        >
+        <Flex align="center" justify={{ base: 'center', md: 'start' }}>
           <Image
             h={5}
             cursor="pointer"
@@ -268,9 +324,22 @@ export default function WithSubnavigation() {
             }}
             src={'/assets/logo/new-logo.svg'}
           />
+          <Flex
+            align="center"
+            display={{ base: 'none', md: 'flex' }}
+            h="full"
+            ml={10}
+          >
+            <Search />
+          </Flex>
 
-          <Flex display={{ base: 'none', md: 'flex' }} ml={10}>
-            <DesktopNav />
+          <Flex
+            align="center"
+            display={{ base: 'none', md: 'flex' }}
+            h="full"
+            ml={10}
+          >
+            <DesktopNav pathname={router?.pathname} />
           </Flex>
         </Flex>
 
@@ -279,6 +348,7 @@ export default function WithSubnavigation() {
           justify={'flex-end'}
           direction={'row'}
           flex={{ base: 1, md: 1 }}
+          py={{ base: 0, md: 2 }}
           spacing={4}
         >
           <UserInfo />

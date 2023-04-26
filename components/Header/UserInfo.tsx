@@ -73,7 +73,13 @@ function UserInfo() {
       )}
       {connected ? (
         <>
-          <Button px={4} fontSize="xs" size="sm" variant="ghost">
+          <Button
+            display={{ base: 'none', md: 'block' }}
+            px={4}
+            fontSize="xs"
+            size="sm"
+            variant="ghost"
+          >
             Create a Listing
           </Button>
           <Menu>
@@ -84,7 +90,7 @@ function UserInfo() {
                   size={32}
                   variant="marble"
                 />
-                <Box ml={2}>
+                <Box display={{ base: 'none', md: 'block' }} ml={2}>
                   <Text color="brand.slate.800" fontSize="sm">
                     {`${userInfo?.firstName} ${userInfo?.lastName}`}
                   </Text>
@@ -129,11 +135,12 @@ function UserInfo() {
               onOpen();
             }}
             size="sm"
-            variant="ghost"
+            variant={{ base: 'solid', md: 'ghost' }}
           >
             Login
           </Button>
           <Button
+            display={{ base: 'none', md: 'block' }}
             px={4}
             fontSize="xs"
             onClick={() => {
