@@ -7,6 +7,9 @@ export default async function user(req: NextApiRequest, res: NextApiResponse) {
   try {
     const result = await prisma.userSponsors.findMany({
       where: { userId },
+      orderBy: {
+        updatedAt: 'asc',
+      },
       include: { sponsor: true },
     });
     res.status(200).json(result);

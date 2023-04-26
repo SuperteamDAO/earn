@@ -10,18 +10,13 @@ import { findBouties } from '../../../../../utils/functions';
 
 const defalutSponsor: SponsorType = {
   bio: '',
-  email: '',
   industry: '',
   logo: '',
   name: 'default',
-  publickey: '',
   twitter: '',
-  type: 'Admin',
   url: '',
   username: '',
-  verified: false,
   id: '',
-  orgId: '',
 };
 
 const Sumbissions = () => {

@@ -102,7 +102,7 @@ interface BountyProps {
   title: string;
   amount: string;
   due: string;
-  logo: string;
+  logo?: string;
   status: BountyStatus;
   token: string;
   slug: string;
@@ -214,7 +214,7 @@ interface JobsProps {
   maxEq: number;
   minEq: number;
   skills: MultiSelectOptions[];
-  logo: string;
+  logo?: string;
   orgName: string;
   link?: string;
 }
@@ -324,7 +324,7 @@ export const JobsCard = ({
 interface GrantsProps {
   title: string;
   sponsor: string;
-  logo: string;
+  logo?: string;
   max: number;
   min: number;
 }
