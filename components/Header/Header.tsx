@@ -3,7 +3,6 @@ import {
   Box,
   Collapse,
   Flex,
-  Icon,
   IconButton,
   Image,
   Link,
@@ -157,7 +156,6 @@ const DesktopSubNav = ({ label, href }: NavItem) => {
 
 const MobileNavItem = ({ label, children, href }: NavItem) => {
   const { isOpen, onToggle } = useDisclosure();
-
   return (
     <Stack onClick={children && onToggle} spacing={4}>
       <Flex
@@ -170,17 +168,14 @@ const MobileNavItem = ({ label, children, href }: NavItem) => {
         }}
         href={href ?? '#'}
       >
-        <Text
-          color={useColorModeValue('gray.600', 'gray.200')}
-          fontWeight={600}
-        >
+        <Text color={'brand.slate.500'} fontSize="sm" fontWeight={400}>
           {label}
         </Text>
         {children && (
-          <Icon
-            as={ChevronDownIcon}
+          <ChevronDownIcon
             w={6}
             h={6}
+            color={'brand.slate.500'}
             transform={isOpen ? 'rotate(180deg)' : ''}
             transition={'all .25s ease-in-out'}
           />
@@ -198,7 +193,14 @@ const MobileNavItem = ({ label, children, href }: NavItem) => {
         >
           {children &&
             children.map((child) => (
-              <Link key={child.label} py={2} href={child.href}>
+              <Link
+                key={child.label}
+                mt={0}
+                py={1}
+                color={'brand.slate.800'}
+                fontSize="sm"
+                href={child.href}
+              >
                 {child.label}
               </Link>
             ))}
@@ -208,22 +210,22 @@ const MobileNavItem = ({ label, children, href }: NavItem) => {
   );
 };
 
-const MobileNav = () => {
-  return (
-    <Stack
-      display={{ md: 'none' }}
-      p={4}
-      bg={useColorModeValue('white', 'gray.800')}
-    >
-      {NAV_ITEMS.map((navItem) => (
-        <MobileNavItem key={navItem.label} {...navItem} />
-      ))}
-    </Stack>
-  );
-};
+const MobileNav = () => (
+  <Stack
+    display={{ md: 'none' }}
+    p={4}
+    bg={'white'}
+    borderBottom={'1px solid'}
+    borderBottomColor={'blackAlpha.200'}
+  >
+    {NAV_ITEMS.map((navItem) => (
+      <MobileNavItem key={navItem.label} {...navItem} />
+    ))}
+  </Stack>
+);
 
 const DesktopNav = ({ pathname }: { pathname: string }) => {
-  const newNavItems = NAV_ITEMS.map((navItem) => ({
+  const navItems = NAV_ITEMS.map((navItem) => ({
     ...navItem,
     allPaths: navItem.children
       ? navItem.children.map((child) => child.href)
@@ -232,7 +234,7 @@ const DesktopNav = ({ pathname }: { pathname: string }) => {
 
   return (
     <Stack direction={'row'} h="full" spacing={8}>
-      {newNavItems.map((navItem) => {
+      {navItems.map((navItem) => {
         const isCurrent =
           navItem.href === pathname || navItem.allPaths.includes(pathname);
         return (
@@ -266,7 +268,7 @@ const DesktopNav = ({ pathname }: { pathname: string }) => {
                   minW={48}
                   bg={'white'}
                   border={'1px solid'}
-                  borderColor={'brand.slate.100'}
+                  borderColor={'blackAlpha.200'}
                   shadow={'xl'}
                   roundedBottom={'md'}
                   roundedTop={'none'}
