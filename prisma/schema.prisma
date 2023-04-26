@@ -129,21 +129,19 @@ model Questions {
 }
 
 model Sponsors {
-  id        String        @id @default("uuid()") @map("_id")
-  username  String
-  orgId     String
-  publickey String
-  name      String
-  logo      String
-  url       String
-  industry  String
-  twitter   String
-  bio       String        @db.VarChar(2000)
-  verified  Boolean
-  type      Sponsors_type @default(Admin)
-  email     String
+  id           String         @id @default(uuid())
+  name         String         @unique
+  username     String         @unique
+  logo         String?
+  url          String?
+  industry     String
+  twitter      String?
+  bio          String?
+  createdAt    DateTime       @default(now())
+  updatedAt    DateTime       @updatedAt
+  UserSponsors UserSponsors[]
 
-  @@index([publickey])
+  @@index([id, username])
 }
 
 model Submission {
@@ -212,18 +210,33 @@ model Template {
 }
 
 model User {
-  id         String   @id @default(uuid())
-  publicKey  String   @unique
-  email      String   @unique
-  username   String   @unique
-  photo      String?
-  firstName  String?
-  lastName   String?
-  createdAt  DateTime @default(now())
-  updatedAt  DateTime @updatedAt
-  isVerified Boolean  @default(false)
+  id           String         @id @default(uuid())
+  publicKey    String         @unique
+  email        String         @unique
+  username     String         @unique
+  photo        String?
+  firstName    String?
+  lastName     String?
+  createdAt    DateTime       @default(now())
+  updatedAt    DateTime       @updatedAt
+  isVerified   Boolean        @default(false)
+  UserSponsors UserSponsors[]
 
   @@index([email, publicKey, username])
+}
+
+model UserSponsors {
+  userId    String
+  user      User     @relation(fields: [userId], references: [id])
+  sponsorId String
+  sponsor   Sponsors @relation(fields: [sponsorId], references: [id])
+  role      String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@id([userId, sponsorId])
+  @@index([userId, sponsorId])
+  @@index([sponsorId])
 }
 
 model Winner {
