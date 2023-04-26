@@ -23,7 +23,7 @@ export const DetailDescription = ({ skills, description }: Props) => {
           gap={3}
           w={'full'}
         >
-          <Text color={'#94A3B8'} fontWeight={500}>
+          <Text color={'brand.slate.400'} fontWeight={500}>
             Skills Needed
           </Text>
           <HStack flexWrap={'wrap'} gap={3}>
@@ -38,10 +38,7 @@ export const DetailDescription = ({ skills, description }: Props) => {
                       bg={`${SkillColor[e.label as any]}1A`}
                       rounded={'md'}
                     >
-                      <Text
-                        color={SkillColor[e.label as any]}
-                        fontSize={'0.8rem'}
-                      >
+                      <Text color={SkillColor[e.label as any]} fontSize={'sm'}>
                         {e.label}
                       </Text>
                     </Box>
@@ -56,10 +53,7 @@ export const DetailDescription = ({ skills, description }: Props) => {
                       bg={`${SkillColor[e.label as any]}1A`}
                       rounded={'md'}
                     >
-                      <Text
-                        color={SkillColor[e.label as any]}
-                        fontSize={'0.8rem'}
-                      >
+                      <Text color={SkillColor[e.label as any]} fontSize={'sm'}>
                         {e.label}
                       </Text>
                     </Box>
@@ -97,16 +91,16 @@ export const DetailDescription = ({ skills, description }: Props) => {
               bg={
                 show
                   ? 'transparent'
-                  : 'linear-gradient(180deg, #FFFFFF 0%, rgba(255, 255, 255, 0.57) 100%)'
+                  : 'linear-gradient(180deg, white 0%, rgba(255, 255, 255, 0.57) 100%)'
               }
               transform={'matrix(1, 0, 0, -1, 0, 0);'}
             >
               <Button
                 w={'12rem'}
                 mt={-3}
-                color={'#94A3B8'}
-                fontSize={'1.1rem'}
-                bg={'#FFFFFF'}
+                color={'brand.slate.400'}
+                fontSize={'md'}
+                bg={'white'}
                 shadow={'0px 4px 4px rgba(0, 0, 0, 0.06)'}
                 transform={'matrix(1, 0, 0, -1, 0, 0);'}
                 onClick={() => {
@@ -116,12 +110,12 @@ export const DetailDescription = ({ skills, description }: Props) => {
               >
                 {show ? (
                   <>
-                    <BiUpArrowAlt fontSize={'1.3rem'} />
+                    <BiUpArrowAlt fontSize={'md'} />
                     <Text mx={3}>Read Less</Text>
                   </>
                 ) : (
                   <>
-                    <BiDownArrowAlt fontSize={'1.3rem'} />
+                    <BiDownArrowAlt fontSize={'md'} />
                     <Text mx={3}>Read More</Text>
                   </>
                 )}

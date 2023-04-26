@@ -176,7 +176,12 @@ function NavHome() {
               />
             </InputGroup>
           </HStack>
-          <Flex columnGap="1.5625rem" h="full" ml="1.25rem">
+          <Flex
+            columnGap="1.5625rem"
+            display={router.asPath.includes('listings') ? 'none' : 'flex'}
+            h="full"
+            ml="1.25rem"
+          >
             {categoryMap.map((elm) => {
               return (
                 <Center

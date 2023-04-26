@@ -21,6 +21,7 @@ const theme = extendTheme({
     'brand.slate.700': '#334155',
     'brand.slate.800': '#1e293b',
     'brand.slate.900': '#0f172a',
+    'brand.charcoal.700': '#334254',
   },
   space: {
     brand: {
