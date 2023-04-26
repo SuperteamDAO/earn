@@ -13,7 +13,6 @@ import type { GetServerSideProps, NextPage } from 'next';
 import { useRouter } from 'next/router';
 import { useEffect } from 'react';
 
-import Header from '@/components/Header/Header';
 import Banner from '@/components/home/Banner';
 import SideBar from '@/components/home/SideBar';
 import SearchLoading from '@/components/Loading/searchLoading';
@@ -25,6 +24,8 @@ import {
   ListingSection,
 } from '@/components/misc/listingsCard';
 import type { BountyStatus } from '@/interface/types';
+import { Default } from '@/layouts/Default';
+import { Meta } from '@/layouts/Meta';
 import { TalentStore } from '@/store/talent';
 import { fetchAll, fetchBasicInfo } from '@/utils/functions';
 
@@ -70,8 +71,14 @@ const Home: NextPage = () => {
     'Contract Development',
   ];
   return (
-    <>
-      <Header />
+    <Default
+      meta={
+        <Meta
+          title="Superteam Earn"
+          description="Every Solana opportunity in one place!"
+        />
+      }
+    >
       <Flex
         justify={'center'}
         w={'100%'}
@@ -262,7 +269,7 @@ const Home: NextPage = () => {
           />
         )}
       </Flex>
-    </>
+    </Default>
   );
 };
 export const getServerSideProps: GetServerSideProps = async (context) => {
