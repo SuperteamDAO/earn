@@ -1,573 +1,365 @@
-/* eslint-disable no-nested-ternary */
-import { ChevronDownIcon } from '@chakra-ui/icons';
+import { ChevronDownIcon, CloseIcon, HamburgerIcon } from '@chakra-ui/icons';
 import {
   Box,
-  Button,
-  Center,
-  Divider,
-  Drawer,
-  DrawerCloseButton,
-  DrawerContent,
-  DrawerHeader,
+  Collapse,
   Flex,
-  HStack,
+  IconButton,
   Image,
-  Input,
-  InputGroup,
-  Menu,
-  MenuButton,
-  MenuItem,
-  MenuList,
+  Link,
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+  Stack,
   Text,
-  useBreakpointValue,
+  useColorModeValue,
   useDisclosure,
-  VStack,
 } from '@chakra-ui/react';
-import type { Wallet as SolanaWallet } from '@solana/wallet-adapter-react';
-import { useWallet } from '@solana/wallet-adapter-react';
-import axios from 'axios';
-import Avatar from 'boring-avatars';
-import Hamburger from 'hamburger-react';
 import { useRouter } from 'next/router';
-import { useEffect, useState } from 'react';
-import toast from 'react-hot-toast';
-import { MdOutlineKeyboardArrowDown } from 'react-icons/md';
 
-// import { ConnectWalletModal } from '../modals/connectWalletModal';
-import { Login } from '@/components/modals/Login/Login';
+import Search from './Search';
+import UserInfo from './UserInfo';
 
-import { userStore } from '../../store/user';
-import { truncatedPublicKey } from '../../utils/helpers';
+interface NavItem {
+  label: string;
+  children?: Array<NavItem>;
+  href?: string;
+}
 
-function Header() {
-  const router = useRouter();
-  const [search, setSearch] = useState<string>('');
-  const [userPublicKey, setUserPublicKey] = useState('');
-  const [isNewUser, setIsNewUser] = useState(false);
+const NAV_ITEMS: Array<NavItem> = [
+  {
+    label: 'All Opportunties',
+    children: [
+      {
+        label: 'All Opportunties',
+        href: '/',
+      },
+      {
+        label: 'Design',
+        href: '/all/design',
+      },
+      {
+        label: 'Growth',
+        href: '/all/growth',
+      },
+      {
+        label: 'Content',
+        href: '/all/content',
+      },
+      {
+        label: 'Frontend',
+        href: '/all/frontend',
+      },
+      {
+        label: 'Backend',
+        href: '/all/backend',
+      },
+      {
+        label: 'Blockchain',
+        href: '/all/blockchain',
+      },
+    ],
+  },
+  {
+    label: 'Bounties',
+    children: [
+      {
+        label: 'All Bounties',
+        href: '/bounties',
+      },
+      {
+        label: 'Design',
+        href: '/bounties/design',
+      },
+      {
+        label: 'Growth',
+        href: '/bounties/growth',
+      },
+      {
+        label: 'Content',
+        href: '/bounties/content',
+      },
+      {
+        label: 'Frontend',
+        href: '/bounties/frontend',
+      },
+      {
+        label: 'Backend',
+        href: '/bounties/backend',
+      },
+      {
+        label: 'Blockchain',
+        href: '/bounties/blockchain',
+      },
+    ],
+  },
+  {
+    label: 'Jobs',
+    children: [
+      {
+        label: 'All Jobs',
+        href: '/jobs',
+      },
+      {
+        label: 'Design',
+        href: '/jobs/design',
+      },
+      {
+        label: 'Growth',
+        href: '/jobs/growth',
+      },
+      {
+        label: 'Content',
+        href: '/jobs/content',
+      },
+      {
+        label: 'Frontend',
+        href: '/jobs/frontend',
+      },
+      {
+        label: 'Backend',
+        href: '/jobs/backend',
+      },
+      {
+        label: 'Blockchain',
+        href: '/jobs/blockchain',
+      },
+    ],
+  },
+  {
+    label: 'Grants',
+    href: '/grants',
+  },
+];
 
-  const { isOpen, onOpen, onClose } = useDisclosure();
-
-  const { setUserInfo, userInfo } = userStore();
-
-  const { connected, publicKey, wallet, wallets, select } = useWallet();
-  useEffect(() => {
-    const makeUser = async () => {
-      if (publicKey && connected) {
-        const publicKeyString = publicKey.toBase58() as string;
-        setUserPublicKey(publicKeyString);
-        const userDetails = await axios.post('/api/user', {
-          publicKey: publicKeyString,
-        });
-        if (!userDetails.data) {
-          setIsNewUser(true);
-        } else {
-          setUserInfo(userDetails.data);
-          onClose();
-        }
-
-        // const res = await createUser(publicKey.toBase58() as string);
-        // setUserInfo(res?.data);
-        // if (res?.data?.talent) {
-        //   await findTalent();
-        //   return;
-        // }
-        // if (!res?.data?.sponsor) {
-        //   router.push('/new');
-        // }
-      }
-    };
-    makeUser();
-  }, [publicKey, connected]);
-  const onConnectWallet = async (solanaWallet: SolanaWallet) => {
-    try {
-      // await connect();
-
-      select(solanaWallet.adapter.name);
-    } catch (e) {
-      toast.error('Wallet not found');
-    }
-  };
-  const onDisconnectWallet = async () => {
-    if (wallet == null) {
-      return;
-    }
-    await wallet.adapter.disconnect();
-  };
-  const handleKeyDown = (event: any) => {
-    if (event.key === 'Enter') {
-      event.preventDefault();
-      let path = `${router.asPath}?search=${search}`;
-      if (router.asPath.includes('?')) {
-        if (router.query.search) {
-          path = `${router.asPath.split('?')[0]}?search=${search}`;
-        } else {
-          path = `${router.asPath}&search=${search}`;
-        }
-      }
-      router.replace(path);
-    }
-  };
-
-  useEffect(() => {
-    if (!search) return;
-    document.addEventListener('keydown', handleKeyDown);
-
-    // eslint-disable-next-line consistent-return
-    return () => {
-      document.removeEventListener('keydown', handleKeyDown);
-    };
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [search]);
-  const categoryMap = [
-    {
-      name: 'All Opportunties',
-      route: 'all',
-    },
-    {
-      name: 'Bounties',
-      route: 'bounties',
-    },
-    {
-      name: 'Jobs',
-      route: 'jobs',
-    },
-  ];
-  const isSmallerThan768 = useBreakpointValue({ base: true, md: false });
-  const {
-    isOpen: navisOpen,
-    onClose: navonClose,
-    onToggle: navonToggle,
-  } = useDisclosure();
+const DesktopSubNav = ({ label, href }: NavItem) => {
   return (
-    <Box bg={'FFFFFF'}>
-      {!!isOpen && (
-        <Login
-          wallets={wallets}
-          onConnectWallet={onConnectWallet}
-          isOpen={isOpen}
-          onClose={onClose}
-          isNewUser={isNewUser}
-          userPublicKey={userPublicKey}
-        />
-      )}
-      {!isSmallerThan768 ? (
-        <Flex
-          align="center"
-          gap={5}
-          h="3rem"
-          mx="auto"
-          px="1.25rem"
-          bg="white"
-          borderBottom={'1px solid'}
-          borderBottomColor={'blackAlpha.200'}
+    <Link
+      display={'block'}
+      mt={0}
+      px={4}
+      py={2}
+      _hover={{ bg: 'brand.slate.100' }}
+      href={href}
+      role={'group'}
+    >
+      <Text
+        color="slate.gray.500"
+        fontSize="sm"
+        _groupHover={{ color: 'brand.purple' }}
+        transition={'all .3s ease'}
+      >
+        {label}
+      </Text>
+    </Link>
+  );
+};
+
+const MobileNavItem = ({ label, children, href }: NavItem) => {
+  const { isOpen, onToggle } = useDisclosure();
+  return (
+    <Stack onClick={children && onToggle} spacing={4}>
+      <Flex
+        as={Link}
+        align={'center'}
+        justify={'space-between'}
+        py={2}
+        _hover={{
+          textDecoration: 'none',
+        }}
+        href={href ?? '#'}
+      >
+        <Text color={'brand.slate.500'} fontSize="sm" fontWeight={400}>
+          {label}
+        </Text>
+        {children && (
+          <ChevronDownIcon
+            w={6}
+            h={6}
+            color={'brand.slate.500'}
+            transform={isOpen ? 'rotate(180deg)' : ''}
+            transition={'all .25s ease-in-out'}
+          />
+        )}
+      </Flex>
+
+      <Collapse animateOpacity in={isOpen} style={{ marginTop: '0!important' }}>
+        <Stack
+          align={'start'}
+          mt={2}
+          pl={4}
+          borderStyle={'solid'}
+          borderColor={useColorModeValue('gray.200', 'gray.700')}
+          borderLeft={1}
         >
+          {children &&
+            children.map((child) => (
+              <Link
+                key={child.label}
+                mt={0}
+                py={1}
+                color={'brand.slate.800'}
+                fontSize="sm"
+                href={child.href}
+              >
+                {child.label}
+              </Link>
+            ))}
+        </Stack>
+      </Collapse>
+    </Stack>
+  );
+};
+
+const MobileNav = () => (
+  <Stack
+    display={{ md: 'none' }}
+    p={4}
+    bg={'white'}
+    borderBottom={'1px solid'}
+    borderBottomColor={'blackAlpha.200'}
+  >
+    {NAV_ITEMS.map((navItem) => (
+      <MobileNavItem key={navItem.label} {...navItem} />
+    ))}
+  </Stack>
+);
+
+const DesktopNav = ({ pathname }: { pathname: string }) => {
+  const navItems = NAV_ITEMS.map((navItem) => ({
+    ...navItem,
+    allPaths: navItem.children
+      ? navItem.children.map((child) => child.href)
+      : [],
+  }));
+
+  return (
+    <Stack direction={'row'} h="full" spacing={8}>
+      {navItems.map((navItem) => {
+        const isCurrent =
+          navItem.href === pathname || navItem.allPaths.includes(pathname);
+        return (
+          <Box key={navItem.label}>
+            <Popover placement={'bottom-start'} trigger={'hover'}>
+              <PopoverTrigger>
+                <Link
+                  alignItems="center"
+                  display="flex"
+                  h="full"
+                  py={2}
+                  color={isCurrent ? 'brand.slate.800' : 'brand.slate.500'}
+                  fontSize={'sm'}
+                  fontWeight={isCurrent ? 500 : 400}
+                  borderBottom="1px solid"
+                  borderBottomColor={isCurrent ? 'brand.purple' : 'transparent'}
+                  _hover={{
+                    textDecoration: 'none',
+                    color: 'brand.slate.800',
+                  }}
+                  href={navItem.href ?? '#'}
+                >
+                  {navItem.label}{' '}
+                  {navItem.children && <ChevronDownIcon ml={1} />}
+                </Link>
+              </PopoverTrigger>
+
+              {navItem.children && (
+                <PopoverContent
+                  w={'full'}
+                  minW={48}
+                  bg={'white'}
+                  border={'1px solid'}
+                  borderColor={'blackAlpha.200'}
+                  shadow={'xl'}
+                  roundedBottom={'md'}
+                  roundedTop={'none'}
+                >
+                  {navItem.children.map((child) => (
+                    <DesktopSubNav key={child.label} {...child} />
+                  ))}
+                </PopoverContent>
+              )}
+            </Popover>
+          </Box>
+        );
+      })}
+    </Stack>
+  );
+};
+
+export default function WithSubnavigation() {
+  const { isOpen, onToggle } = useDisclosure();
+  const router = useRouter();
+
+  return (
+    <Box>
+      <Flex
+        align={'stretch'}
+        px={{ base: 4, md: 6 }}
+        py={{ base: 2, md: 0 }}
+        color="brand.slate.500"
+        bg="white"
+        borderBottom="1px solid"
+        borderBottomColor="blackAlpha.200"
+      >
+        <Flex
+          flex={{ base: 1, md: 'auto' }}
+          display={{ base: 'flex', md: 'none' }}
+          ml={{ base: -2 }}
+        >
+          <IconButton
+            aria-label={'Toggle Navigation'}
+            icon={
+              isOpen ? <CloseIcon w={3} h={3} /> : <HamburgerIcon w={5} h={5} />
+            }
+            onClick={onToggle}
+            variant={'ghost'}
+          />
+        </Flex>
+        <Flex align="center" justify={{ base: 'center', md: 'start' }}>
           <Image
-            h="1.0437rem"
+            h={5}
+            cursor="pointer"
             objectFit={'contain'}
-            alt={'logo'}
+            alt={'Superteam Earn'}
             onClick={() => {
               router.push('/');
             }}
             src={'/assets/logo/new-logo.svg'}
           />
-          <HStack align="center" gap={2}>
-            <InputGroup size="sm">
-              <Input
-                fontSize="sm"
-                borderRadius={4}
-                _hover={{
-                  borderColor: 'brand.purple',
-                }}
-                onChange={(e) => {
-                  setSearch(e.target.value);
-                }}
-                placeholder="Search"
-              />
-            </InputGroup>
-          </HStack>
-          <Flex columnGap={4} h="full" ml={4}>
-            {categoryMap.map((elm) => {
-              return (
-                <Center
-                  key={elm.name}
-                  h="full"
-                  fontSize="sm"
-                  borderBottom="1px solid"
-                  borderBottomColor={
-                    router?.query?.category === elm?.route
-                      ? 'brand.purple'
-                      : !router?.query?.category &&
-                        elm?.route === 'all' &&
-                        router?.pathname !== '/grants'
-                      ? 'brand.purple'
-                      : 'transparent'
-                  }
-                  _hover={{
-                    borderBottom: '1px solid',
-                    borderBottomColor: 'brand.purple',
-                  }}
-                  cursor="pointer"
-                >
-                  <Menu>
-                    <MenuButton
-                      as={Button}
-                      px="0.3125rem"
-                      color={
-                        router?.query?.category === elm?.route
-                          ? 'black'
-                          : !router?.query?.category &&
-                            elm?.route === 'all' &&
-                            router.pathname !== '/grants'
-                          ? 'black'
-                          : 'brand.slate.500'
-                      }
-                      fontSize="sm"
-                      fontWeight={
-                        router?.query?.category === elm?.route
-                          ? 500
-                          : !router?.query?.category &&
-                            elm?.route === 'all' &&
-                            router.pathname !== '/grants'
-                          ? 500
-                          : 400
-                      }
-                      bg="transparent"
-                      _hover={{
-                        bg: 'transparent',
-                      }}
-                      _active={{
-                        bg: 'transparent',
-                      }}
-                      rightIcon={<ChevronDownIcon />}
-                    >
-                      {elm.name}
-                    </MenuButton>
-                    <MenuList zIndex="500">
-                      {[
-                        'All Opportunties',
-                        'Design',
-                        'Growth',
-                        'Content',
-                        'Frontend',
-                        'Backend',
-                        'Blockchain',
-                      ].map((option) => {
-                        return (
-                          <MenuItem
-                            key={option}
-                            onClick={() => {
-                              if (option !== 'All Opportunties') {
-                                if (elm.name === 'All Opportunties') {
-                                  router.replace(
-                                    `/all/${option.toLowerCase()}`
-                                  );
-                                  return;
-                                }
-                                router.replace(
-                                  `/${elm.name.toLowerCase()}/${option.toLowerCase()}`
-                                );
-                              } else {
-                                if (elm.name === 'All Opportunties') {
-                                  router.replace(`/`);
-                                  return;
-                                }
-                                router.replace(`/${elm.name.toLowerCase()}`);
-                              }
-                            }}
-                          >
-                            {option}
-                          </MenuItem>
-                        );
-                      })}
-                    </MenuList>
-                  </Menu>
-                </Center>
-              );
-            })}
-            <Center
-              h={'full'}
-              my={'auto'}
-              px={'0.3rem'}
-              py={'0.65rem'}
-              color={
-                router?.pathname === '/grants' ? 'black' : 'brand.slate.500'
-              }
-              fontSize={'xs'}
-              fontWeight={'600'}
-              _hover={{
-                bg: 'transparent',
-                borderBottom: '1px solid',
-                borderBottomColor: 'brand.purple',
-                borderBottomLeftRadius: 0,
-                borderBottomRightRadius: 0,
-              }}
-              cursor={'pointer'}
-              onClick={() => {
-                router.replace(`/grants`);
-              }}
-              rounded={'md'}
-            >
-              Grants
-            </Center>
+          <Flex
+            align="center"
+            display={{ base: 'none', md: 'flex' }}
+            h="full"
+            ml={10}
+          >
+            <Search />
           </Flex>
 
-          <Flex align={'center'} columnGap={4} ml={'auto'}>
-            {!connected ? (
-              <>
-                <Button
-                  px={4}
-                  fontSize="xs"
-                  onClick={() => {
-                    onOpen();
-                  }}
-                  size="sm"
-                  variant="ghost"
-                >
-                  Login
-                </Button>
-                <Button
-                  px={4}
-                  fontSize="xs"
-                  onClick={() => {
-                    onOpen();
-                  }}
-                  size="sm"
-                  variant="solid"
-                >
-                  Sign Up
-                </Button>
-              </>
-            ) : (
-              <HStack gap={2}>
-                {userInfo?.sponsor && (
-                  <Button
-                    w="100%"
-                    color="brand.purple"
-                    fontSize="0.9rem"
-                    fontWeight={600}
-                    bg="transparent"
-                    border="1px solid brand.purple"
-                    onClick={() => {
-                      router.push('/listings/create');
-                    }}
-                  >
-                    Create a Listing
-                  </Button>
-                )}
-                <Divider
-                  h={12}
-                  borderColor="brand.slate.300"
-                  orientation="vertical"
-                />
-
-                <Menu>
-                  <MenuButton>
-                    <HStack>
-                      <Avatar
-                        variant="marble"
-                        colors={['#92A1C6', '#F0AB3D', '#C271B4']}
-                      />
-                      <Flex align="center" justify="space-between" gap={5}>
-                        <Text
-                          color="brand.slate.600"
-                          fontFamily="Inter"
-                          fontWeight={600}
-                        >
-                          {truncatedPublicKey(
-                            publicKey?.toString() as string,
-                            7
-                          )}
-                        </Text>
-                        <MdOutlineKeyboardArrowDown />
-                      </Flex>
-                    </HStack>
-                  </MenuButton>
-                  <MenuList w="15rem">
-                    <MenuItem onClick={() => router.push(`/t/${userInfo?.id}`)}>
-                      <Text color="brand.slate.600" fontSize="0.9rem">
-                        View Profile
-                      </Text>
-                    </MenuItem>
-                    {userInfo?.sponsor && (
-                      <MenuItem
-                        onClick={() => {
-                          router.push('/dashboard/team');
-                        }}
-                      >
-                        <Text color="brand.slate.600" fontSize="0.9rem">
-                          Dashboard
-                        </Text>
-                      </MenuItem>
-                    )}
-                    <MenuItem
-                      onClick={() => {
-                        onDisconnectWallet();
-                      }}
-                    >
-                      <Text color="brand.slate.600" fontSize="0.9rem">
-                        Disconnect
-                      </Text>
-                    </MenuItem>
-                  </MenuList>
-                </Menu>
-              </HStack>
-            )}
+          <Flex
+            align="center"
+            display={{ base: 'none', md: 'flex' }}
+            h="full"
+            ml={10}
+          >
+            <DesktopNav pathname={router?.pathname} />
           </Flex>
         </Flex>
-      ) : (
-        <Flex
-          align={'center'}
-          justify={'space-between'}
-          px={5}
-          bg={'white'}
-          borderBottom={'1px solid'}
-          borderBottomColor={'blackAlpha.200'}
+
+        <Stack
+          align="center"
+          justify={'flex-end'}
+          direction={'row'}
+          flex={{ base: 1, md: 1 }}
+          py={{ base: 0, md: 2 }}
+          spacing={4}
         >
-          <Hamburger color="#94A3B8" toggle={navonToggle} />
-          <Image
-            alt={'logo'}
-            onClick={() => {
-              router.push(`/`);
-            }}
-            src="/assets/logo/new-logo.svg"
-          />
-          <Button
-            h={'2rem'}
-            color={'brand.slate.500'}
-            fontSize={'xs'}
-            fontWeight={700}
-            bg="transparent"
-            _hover={{
-              bg: 'brand.purple',
-              color: 'white',
-            }}
-            cursor={'pointer'}
-            onClick={() => {
-              onOpen();
-            }}
-            rounded={'md'}
-          >
-            Login
-          </Button>
-          <Drawer
-            autoFocus={false}
-            isOpen={navisOpen}
-            onClose={navonClose}
-            onOverlayClick={navonClose}
-            placement="left"
-            returnFocusOnClose={false}
-            size="full"
-          >
-            <DrawerContent overflow={'scroll'} h={'full'} pb={10}>
-              <DrawerHeader display={'flex'}>
-                <DrawerCloseButton />
-                <Box
-                  onClick={() => {
-                    router.push(`/`);
-                  }}
-                >
-                  <Image alt={'logo'} src="/assets/logo/new-logo.svg" />
-                </Box>
-              </DrawerHeader>
-              {categoryMap.map((elm) => {
-                return (
-                  <Center
-                    key={elm.name}
-                    alignItems={'start'}
-                    flexDir={'column'}
-                    gap={5}
-                    h={'full'}
-                    mt={6}
-                    px={10}
-                    fontSize={'sm'}
-                    cursor={'pointer'}
-                  >
-                    <VStack>
-                      <Text
-                        color={'black'}
-                        fontSize={'lg'}
-                        fontWeight={600}
-                        bg={'transparent'}
-                        _hover={{
-                          bg: 'transparent',
-                        }}
-                        _active={{
-                          bg: 'transparent',
-                        }}
-                      >
-                        {' '}
-                        {elm.name}
-                      </Text>
-                    </VStack>
-                    <VStack align={'start'} px={5}>
-                      {[
-                        'All Opportunties',
-                        'Design',
-                        'Growth',
-                        'Content',
-                        'Frontend',
-                        'Backend',
-                        'Blockchain',
-                      ].map((option) => {
-                        return (
-                          <Button
-                            key={option}
-                            fontWeight={400}
-                            onClick={() => {
-                              if (option !== 'All Opportunties') {
-                                if (elm.name === 'All Opportunties') {
-                                  router.replace(
-                                    `/all/${option.toLowerCase()}`
-                                  );
-                                  navonClose();
-                                  return;
-                                }
-                                router.replace(
-                                  `/${elm.name.toLowerCase()}/${option.toLowerCase()}`
-                                );
-                                navonClose();
-                              } else {
-                                if (elm.name === 'All Opportunties') {
-                                  router.replace(`/`);
-                                  navonClose();
-                                  return;
-                                }
-                                router.replace(`/${elm.name.toLowerCase()}`);
-                                navonClose();
-                              }
-                            }}
-                            variant={'unstyled'}
-                          >
-                            {option}
-                          </Button>
-                        );
-                      })}
-                    </VStack>
-                  </Center>
-                );
-              })}
-              <Text
-                mt={5}
-                px={10}
-                color={'black'}
-                fontSize={'lg'}
-                fontWeight={500}
-                bg={'transparent'}
-                _hover={{
-                  bg: 'transparent',
-                }}
-                _active={{
-                  bg: 'transparent',
-                }}
-              >
-                Grants
-              </Text>
-            </DrawerContent>
-          </Drawer>
-        </Flex>
-      )}
+          <UserInfo />
+        </Stack>
+      </Flex>
+
+      <Collapse animateOpacity in={isOpen}>
+        <MobileNav />
+      </Collapse>
     </Box>
   );
 }
-
-export default Header;

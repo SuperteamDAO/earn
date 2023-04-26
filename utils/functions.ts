@@ -54,7 +54,7 @@ export const UpdateUser = async (id: string, update: any) => {
 };
 
 export const generateOtp = async (
-  publicKey: string,
+  publicKey: string | undefined,
   email: string
 ): Promise<
   | any

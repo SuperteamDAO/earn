@@ -17,7 +17,7 @@ export const genrateuuid = () => {
   return id;
 };
 
-export const generateCode = (seed: string) => {
+export const generateCode = (seed: string | undefined) => {
   const time = Date.now();
   const message = Math.floor(time / 5000);
   const decoder = new base32.Encoder({ type: 'crockford', lc: true });
@@ -33,7 +33,7 @@ export const generateCode = (seed: string) => {
   }
   return code;
 };
-export const generateCodeLast = (seed: String) => {
+export const generateCodeLast = (seed: String | undefined) => {
   const time = Date.now() - 5000;
   const message = Math.floor(time / 5000);
   const decoder = new base32.Encoder({ type: 'crockford', lc: true });
