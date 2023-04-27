@@ -3,11 +3,10 @@ import type { NextApiRequest, NextApiResponse } from 'next';
 import { prisma } from '@/prisma';
 
 export default async function user(req: NextApiRequest, res: NextApiResponse) {
-  const { publicKey } = req.body;
   try {
     const result = await prisma.user.findUnique({
       where: {
-        publicKey,
+        ...req.body,
       },
     });
     res.status(200).json(result);

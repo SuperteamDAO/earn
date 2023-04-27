@@ -1,34 +1,27 @@
-import { AddIcon } from '@chakra-ui/icons';
+import { SearchIcon } from '@chakra-ui/icons';
 import { Alert, AlertIcon, Button } from '@chakra-ui/react';
-import axios from 'axios';
 import { useRouter } from 'next/router';
 import { useState } from 'react';
 
-import { SponsorStore } from '@/store/sponsor';
 import { userStore } from '@/store/user';
 
-function SponsorButton() {
+function TalentButton() {
   const router = useRouter();
-  const { setCurrentSponsor } = SponsorStore();
   const { userInfo } = userStore();
   const [isLoading, setIsLoading] = useState(false);
   const [showMessage, setShowMessage] = useState(false);
 
-  const checkSponsor = async () => {
+  const checkTalent = async () => {
     if (!userInfo || !userInfo?.id) {
       setShowMessage(true);
     } else {
       setShowMessage(false);
       setIsLoading(true);
       try {
-        const sponsors = await axios.post('/api/userSponsors', {
-          userId: userInfo.id,
-        });
-        if (sponsors?.data?.length) {
-          setCurrentSponsor(sponsors?.data[0]?.sponsor);
-          router.push('/new/listing');
+        if (!userInfo?.isTalentFilled) {
+          router.push('/new/talent');
         } else {
-          router.push('/new/sponsor');
+          router.push('/');
         }
       } catch (error) {
         setIsLoading(false);
@@ -52,14 +45,14 @@ function SponsorButton() {
         bg={'#6562FF'}
         _hover={{ bg: '#6562FF' }}
         isLoading={!!isLoading}
-        leftIcon={<AddIcon />}
+        leftIcon={<SearchIcon />}
         loadingText="Redirecting..."
-        onClick={() => checkSponsor()}
+        onClick={() => checkTalent()}
       >
-        List your Opportunity
+        Search for Opportunities
       </Button>
     </>
   );
 }
 
-export default SponsorButton;
+export default TalentButton;

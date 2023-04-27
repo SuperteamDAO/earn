@@ -41,7 +41,7 @@ export const SkillSelect = ({
     <>
       <FormControl my={6} isRequired>
         <Flex align={'center'} justify={'start'}>
-          <FormLabel color={'gray.400'} htmlFor={'skills'}>
+          <FormLabel color={'brand.slate.500'} htmlFor={'skills'}>
             Skills
           </FormLabel>
           <Tooltip
@@ -65,9 +65,11 @@ export const SkillSelect = ({
         </Flex>
         <ReactSelect
           styles={{
-            control: (baseStyles) => ({
+            control: (baseStyles, state) => ({
               ...baseStyles,
               border: errorSkill ? '2px solid red' : baseStyles.border,
+              backgroundColor: 'brand.slate.500',
+              borderColor: state.isFocused ? 'brand.purple' : 'brand.slate.300',
             }),
           }}
           closeMenuOnSelect={false}
@@ -85,7 +87,7 @@ export const SkillSelect = ({
       </FormControl>
       <FormControl my={6}>
         <Flex align={'center'} justify={'start'}>
-          <FormLabel color={'gray.400'} htmlFor={'skills'}>
+          <FormLabel color={'brand.slate.500'} htmlFor={'skills'}>
             Sub Skills
           </FormLabel>
           <Tooltip
@@ -109,9 +111,11 @@ export const SkillSelect = ({
         </Flex>
         <ReactSelect
           styles={{
-            control: (baseStyles) => ({
+            control: (baseStyles, state) => ({
               ...baseStyles,
               border: errorSubSkill ? '2px solid red' : baseStyles.border,
+              backgroundColor: 'brand.slate.500',
+              borderColor: state.isFocused ? 'brand.purple' : 'brand.slate.300',
             }),
           }}
           closeMenuOnSelect={false}

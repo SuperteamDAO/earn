@@ -58,6 +58,15 @@ const theme = extendTheme({
             bg: 'brand.purple.light',
           },
         },
+        outline: {
+          color: 'brand.purple',
+          bg: 'transparent',
+          borderColor: 'brand.purple',
+          _hover: {
+            color: 'white',
+            bg: 'brand.purple',
+          },
+        },
         ghost: {
           color: 'brand.slate.500',
           bg: 'transparent',

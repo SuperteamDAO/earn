@@ -533,8 +533,7 @@ export const ListingTypeQueryMap = {
 };
 
 export const CountryList: string[] = [
-  'United States',
-  'Canada',
+  'India',
   'Afghanistan',
   'Albania',
   'Algeria',
@@ -572,6 +571,7 @@ export const CountryList: string[] = [
   'Burundi',
   'Cambodia',
   'Cameroon',
+  'Canada',
   'Cape Verde',
   'Cayman Islands',
   'Central African Republic',
@@ -631,7 +631,6 @@ export const CountryList: string[] = [
   'Hong Kong',
   'Hungary',
   'Iceland',
-  'India',
   'Indonesia',
   'Iran (Islamic Republic of)',
   'Iraq',
@@ -756,6 +755,7 @@ export const CountryList: string[] = [
   'Ukraine',
   'United Arab Emirates',
   'United Kingdom',
+  'United States',
   'United States minor outlying islands',
   'Uruguay',
   'Uzbekistan',
