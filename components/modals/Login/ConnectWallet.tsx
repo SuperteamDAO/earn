@@ -1,5 +1,6 @@
-import { Box, Flex, Image, Text } from '@chakra-ui/react';
+import { Box, Flex, Image, Spinner, Text } from '@chakra-ui/react';
 import type { Wallet } from '@solana/wallet-adapter-react';
+import { useState } from 'react';
 
 type ConnectWalletProps = {
   wallets: Wallet[];
@@ -10,49 +11,63 @@ export default function ConnectWallet({
   wallets,
   onConnectWallet,
 }: ConnectWalletProps) {
+  const [loadingWallet, setLoadingWallet] = useState('');
+
+  const connect = (wallet: Wallet) => {
+    setLoadingWallet(wallet?.adapter?.name);
+    onConnectWallet(wallet);
+  };
+
   return (
     <Box>
       <Text mb={4} color="brand.slate.500" fontSize="lg" textAlign="center">
         Connect Wallet
       </Text>
-      {wallets.map((wallet, index) => (
-        <Box
-          key={index}
-          mb={1}
-          px={3}
-          py={1}
-          color="brand.slate.500"
-          border="1px solid"
-          borderColor="brand.slate.100"
-          borderRadius="md"
-          _hover={{
-            bg: 'brand.purple',
-            color: 'white',
-          }}
-          cursor="pointer"
-          onClick={onConnectWallet.bind(null, wallet)}
-        >
-          <Flex align="center" gap={4} w="100%">
-            <Box
-              alignItems={'center'}
-              justifyContent={'center'}
-              display={'flex'}
-              w="2rem"
-              h="2rem"
-            >
-              <Image
-                w="70%"
-                h="70%"
-                alt={`${wallet?.adapter?.name} Icon`}
-                src={wallet?.adapter?.icon ?? ''}
-              />
-            </Box>
-            <Text ml={2} fontWeight={700}>
-              {wallet?.adapter?.name ?? ''}
-            </Text>
-          </Flex>
-        </Box>
-      ))}
+      {wallets.map((wallet, index) => {
+        const isLoading = loadingWallet === wallet?.adapter?.name;
+        return (
+          <Box
+            key={index}
+            mb={1}
+            px={3}
+            py={1}
+            color={isLoading ? 'brand.slate.300' : 'brand.slate.500'}
+            bg={isLoading ? 'brand.slate.100' : 'white'}
+            border="1px solid"
+            borderColor="brand.slate.100"
+            borderRadius="md"
+            _hover={{
+              bg: isLoading ? 'brand.slate.100' : 'brand.purple',
+              color: isLoading ? 'brand.slate.300' : 'white',
+            }}
+            cursor={isLoading ? 'default' : 'pointer'}
+            onClick={() => connect(wallet)}
+          >
+            <Flex align="center" gap={4} w="100%">
+              <Box
+                alignItems={'center'}
+                justifyContent={'center'}
+                display={'flex'}
+                w="2rem"
+                h="2rem"
+              >
+                <Image
+                  w="70%"
+                  h="70%"
+                  alt={`${wallet?.adapter?.name} Icon`}
+                  src={wallet?.adapter?.icon ?? ''}
+                />
+              </Box>
+              <Flex align="center" gap={2}>
+                <Text ml={2} fontWeight={700}>
+                  {wallet?.adapter?.name ?? ''}
+                </Text>
+                {isLoading && <Spinner color="brand.slate.500" size="xs" />}
+              </Flex>
+            </Flex>
+          </Box>
+        );
+      })}
     </Box>
   );
 }

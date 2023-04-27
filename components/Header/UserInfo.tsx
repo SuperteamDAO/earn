@@ -91,9 +91,15 @@ function UserInfo() {
                   variant="marble"
                 />
                 <Box display={{ base: 'none', md: 'block' }} ml={2}>
-                  <Text color="brand.slate.800" fontSize="sm">
-                    {`${userInfo?.firstName} ${userInfo?.lastName}`}
-                  </Text>
+                  {!userInfo?.firstName ? (
+                    <Text color="brand.slate.800" fontSize="sm">
+                      New User
+                    </Text>
+                  ) : (
+                    <Text color="brand.slate.800" fontSize="sm">
+                      {userInfo?.firstName}
+                    </Text>
+                  )}
                   <Text color="brand.slate.500" fontSize="xs">
                     {userInfo?.publicKey?.substring(0, 4)}
                     ....
