@@ -1,4 +1,5 @@
 import { Box, Center, Flex, Image, Link, Text, VStack } from '@chakra-ui/react';
+import { useWallet } from '@solana/wallet-adapter-react';
 import { useQuery } from '@tanstack/react-query';
 import Avatar from 'boring-avatars';
 import Slider from 'react-slick';
@@ -202,17 +203,20 @@ const Earner = ({ amount, name, avatar, work }: EarnerProps) => {
       )}
 
       <Box>
-        <Text color={'black'} fontSize={'md'} fontWeight={500}>
+        <Text color={'black'} fontSize={'sm'} fontWeight={500}>
           {name}
         </Text>
-        <Text color={'#64748B'} fontSize={'sm'} fontWeight={500}>
+        <Text color={'gray.400'} fontSize={'xs'} fontWeight={500}>
           {work?.slice(0, 20)}
         </Text>
       </Box>
       <Flex columnGap={1} ml={'auto'}>
         <Image alt="usdc icon" src="/assets/landingsponsor/icons/usdc.svg" />
-        <Text color={'gray.600'} fontSize={'md'} fontWeight={500}>
+        <Text color={'gray.600'} fontSize={'sm'} fontWeight={500}>
           ${amount.toLocaleString()}
+        </Text>
+        <Text color={'gray.400'} fontSize={'sm'} fontWeight={500}>
+          USDC
         </Text>
       </Flex>
     </Flex>
@@ -233,10 +237,10 @@ const RecentEarners = () => {
     vertical: true,
     verticalSwiping: true,
     autoplay: true,
-    autoplaySpeed: 200,
+    autoplaySpeed: 100,
   };
   return (
-    <Box>
+    <Box w={'100%'}>
       <Text mb={'1.5rem'} color={'gray.400'} fontWeight={500}>
         TOP EARNERS
       </Text>
@@ -326,52 +330,53 @@ const HiringNow = ({ jobs }: HiringNowProps) => {
   );
 };
 
-const Featuring = () => {
-  return (
-    <Flex align={'center'} w={'100%'}>
-      <Image
-        w={'2.125rem'}
-        h={'2.125rem'}
-        mr={'1.0625rem'}
-        alt=""
-        rounded={'full'}
-        src="https://bit.ly/kent-c-dodds"
-      />
-      <Box>
-        <Text color={'black'} fontSize={'0.8125rem'} fontWeight={'500'}>
-          Madhur Dixit
-        </Text>
-        <Text color={'#64748B'} fontSize={'0.8125rem'}>
-          won Underdog Smart...
-        </Text>
-      </Box>
-      <Flex columnGap={'0.3125rem'} ml={'auto'}>
-        <Text color={'#3B82F6'} fontSize={'0.875rem'}>
-          View
-        </Text>
-      </Flex>
-    </Flex>
-  );
-};
+// const Featuring = () => {
+//   return (
+//     <Flex align={'center'} w={'100%'}>
+//       <Image
+//         w={'2.125rem'}
+//         h={'2.125rem'}
+//         mr={'1.0625rem'}
+//         alt=""
+//         rounded={'full'}
+//         src="https://bit.ly/kent-c-dodds"
+//       />
+//       <Box>
+//         <Text color={'black'} fontSize={'0.8125rem'} fontWeight={'500'}>
+//           Madhur Dixit
+//         </Text>
+//         <Text color={'#64748B'} fontSize={'0.8125rem'}>
+//           won Underdog Smart...
+//         </Text>
+//       </Box>
+//       <Flex columnGap={'0.3125rem'} ml={'auto'}>
+//         <Text color={'#3B82F6'} fontSize={'0.875rem'}>
+//           View
+//         </Text>
+//       </Flex>
+//     </Flex>
+//   );
+// };
 
-const Featured = () => {
-  return (
-    <Box>
-      <Text mb={'1.5rem'} color={'#94A3B8'}>
-        FEATURED
-      </Text>
-      <VStack rowGap={'1.8125rem'}>
-        <Featuring />
-        <Featuring />
-        <Featuring />
-        <Featuring />
-        <Featuring />
-      </VStack>
-    </Box>
-  );
-};
+// const Featured = () => {
+//   return (
+//     <Box>
+//       <Text mb={'1.5rem'} color={'#94A3B8'}>
+//         FEATURED
+//       </Text>
+//       <VStack rowGap={'1.8125rem'}>
+//         <Featuring />
+//         <Featuring />
+//         <Featuring />
+//         <Featuring />
+//         <Featuring />
+//       </VStack>
+//     </Box>
+//   );
+// };
 
 const SideBar = ({ jobs, listings, total }: SideBarProps) => {
+  const { connected } = useWallet();
   return (
     <Flex
       direction={'column'}
@@ -380,15 +385,16 @@ const SideBar = ({ jobs, listings, total }: SideBarProps) => {
       ml={'1.5rem'}
       pt={'1.5rem'}
       pl={'1.25rem'}
-      borderLeft={'0.0625rem solid #F1F5F9'}
+      borderLeft={'0.0625rem solid'}
+      borderLeftColor={'gray.200'}
     >
-      <GettingStarted />
-      <TotalStats total={listings} listings={total} />
       {/* <AlphaAccess /> */}
+      {connected && <GettingStarted />}
+      <TotalStats total={listings} listings={total} />
       {/* <Filter title={'FILTER BY INDUSTRY'} entries={['Gaming', 'Payments', 'Consumer', 'Infrastructure', 'DAOs']} /> */}
       <RecentEarners />
       <HiringNow jobs={jobs} />
-      <Featured />
+      {/* <Featured /> */}
     </Flex>
   );
 };

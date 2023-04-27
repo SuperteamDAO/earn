@@ -5,6 +5,7 @@ import {
   Button,
   Center,
   Flex,
+  HStack,
   Image,
   Link,
   Text,
@@ -57,33 +58,61 @@ export const ListingSection = ({
       mb={'2.8125rem'}
       mx={'auto'}
     >
-      <Flex
-        align={'center'}
-        mb={5}
-        pb={3}
-        borderBottom={'0.0625rem solid #E2E8F0'}
+      <HStack
+        align="center"
+        justify="space-between"
+        mb={4}
+        py={3}
+        borderBottom="2px solid"
+        borderBottomColor="#E2E8F0"
       >
-        <Image
-          w={'1.4375rem'}
-          h={'1.4375rem'}
-          mr={'0.75rem'}
-          alt=""
-          src={emoji}
-        />
-        <Text
-          color={'#334155'}
-          fontSize={{ base: 14, md: 16 }}
-          fontWeight={'600'}
-        >
-          {title}
-        </Text>
-        <Text mx={3} color={'brand.slate.300'} fontSize={'xxs'}>
-          |
-        </Text>
-        <Text color={'brand.slate.400'} fontSize={{ base: 12, md: 14 }}>
-          {sub}
-        </Text>
-      </Flex>
+        <Flex align={'center'}>
+          <Image
+            w={'1.4375rem'}
+            h={'1.4375rem'}
+            mr={'0.75rem'}
+            alt="emoji"
+            src={emoji}
+          />
+          <Text
+            color={'#334155'}
+            fontSize={{ base: 14, md: 16 }}
+            fontWeight={'600'}
+          >
+            {title}
+          </Text>
+          <Text mx={3} color={'brand.slate.300'} fontSize={'xxs'}>
+            |
+          </Text>
+          <Text color={'brand.slate.400'} fontSize={{ base: 12, md: 14 }}>
+            {sub}
+          </Text>
+        </Flex>
+        <Flex>
+          <Link
+            display={
+              router.query.category
+                ? router.query.category === (type as string) ||
+                  router.query.category === 'all'
+                  ? 'none'
+                  : 'block'
+                : 'block'
+            }
+            px={3}
+            py={1}
+            color="brand.slate.500"
+            _hover={{
+              textDecoration: 'none',
+              bg: 'brand.purple',
+              color: 'white',
+            }}
+            href={`/${type}`}
+            rounded={5}
+          >
+            View All
+          </Link>
+        </Flex>
+      </HStack>
       <Flex direction={'column'} rowGap={'2.625rem'}>
         {children}
       </Flex>
@@ -121,88 +150,96 @@ export const BountiesCard = ({
 }: BountyProps) => {
   return (
     <>
-      <Flex
-        align="center"
-        justify="space-between"
-        w={{ base: '100%', md: 'brand.120' }}
-        h={16}
+      <Link
+        _hover={{
+          textDecoration: 'none',
+        }}
+        href={`https://earn-frontend-v2.vercel.app/listings/bounties/${slug}`}
+        isExternal
       >
-        <Flex w="80%" h={16}>
-          <Image
-            w={16}
-            h={16}
-            mr={5}
-            alt={'company logo'}
-            rounded={5}
-            src={logo ?? '/assets/home/placeholder/ph1.png'}
-          />
-          <Flex justify={'space-between'} direction={'column'} w={'full'}>
-            <Text color="brand.slate.700" fontSize="sm" fontWeight={600}>
-              {textLimiter(title, 40)}
-            </Text>
-            <Text
-              w={'full'}
-              color={'brand.slate.400'}
-              fontSize={{ md: 'sm', base: 'xs' }}
-              fontWeight={'400'}
-              noOfLines={1}
-            >
-              {sponsor}
-            </Text>
-            <Flex align={'center'} gap={3}>
-              <Image
-                w={4}
-                h={4}
-                alt="token"
-                rounded="full"
-                src={
-                  tokenList.find((ele) => {
-                    return ele.mintAddress === token;
-                  })?.icon
-                }
-              />
-
+        <Flex
+          align="center"
+          justify="space-between"
+          w={{ base: '100%', md: 'brand.120' }}
+          h={16}
+        >
+          <Flex w="80%" h={16}>
+            <Image
+              w={16}
+              h={16}
+              mr={5}
+              alt={'company logo'}
+              rounded={5}
+              src={logo ?? '/assets/home/placeholder/ph1.png'}
+            />
+            <Flex justify={'space-between'} direction={'column'} w={'full'}>
+              <Text color="brand.slate.700" fontSize="sm" fontWeight={600}>
+                {textLimiter(title, 40)}
+              </Text>
               <Text
-                color={'brand.slate.700'}
-                fontSize={'sm'}
-                fontWeight={'600'}
+                w={'full'}
+                color={'brand.slate.400'}
+                fontSize={{ md: 'sm', base: 'xs' }}
+                fontWeight={'400'}
+                noOfLines={1}
               >
-                {amount}
+                {sponsor}
               </Text>
-              <Text color={'brand.slate.300'} fontSize={'sm'}>
-                |
-              </Text>
-              <Text color={'brand.slate.500'} fontSize={'sm'}>
-                {moment(due).fromNow().includes('ago')
-                  ? `Closed ${moment(due).fromNow()}`
-                  : `Closing ${moment(due).fromNow()}`}
-              </Text>
+              <Flex align={'center'} gap={3}>
+                <Image
+                  w={4}
+                  h={4}
+                  alt="token"
+                  rounded="full"
+                  src={
+                    tokenList.find((ele) => {
+                      return ele.mintAddress === token;
+                    })?.icon
+                  }
+                />
+
+                <Text
+                  color={'brand.slate.700'}
+                  fontSize={'sm'}
+                  fontWeight={'600'}
+                >
+                  {amount}
+                </Text>
+                <Text color={'brand.slate.300'} fontSize={'sm'}>
+                  |
+                </Text>
+                <Text color={'brand.slate.500'} fontSize={'sm'}>
+                  {moment(due).fromNow().includes('ago')
+                    ? `Closed ${moment(due).fromNow()}`
+                    : `Closing ${moment(due).fromNow()}`}
+                </Text>
+              </Flex>
             </Flex>
           </Flex>
+          <Link
+            w={24}
+            py={2}
+            color={'brand.slate.400'}
+            textAlign="center"
+            border="1px solid"
+            borderColor="brand.slate.400"
+            borderRadius={4}
+            _hover={{
+              textDecoration: 'none',
+              bg: 'brand.slate.400',
+              color: 'white',
+            }}
+            href={`https://earn-frontend-v2.vercel.app/listings/bounties/${slug}`}
+            isExternal
+          >
+            {Number(moment(due).format('x')) < Date.now()
+              ? status === 'close'
+                ? 'View'
+                : 'View'
+              : 'Apply'}
+          </Link>
         </Flex>
-        <Link
-          w={24}
-          py={2}
-          color={'brand.slate.400'}
-          textAlign="center"
-          border="1px solid"
-          borderColor="brand.slate.400"
-          borderRadius={4}
-          _hover={{
-            textDecoration: 'none',
-            bg: 'brand.slate.400',
-            color: 'white',
-          }}
-          href={`https://earn-frontend-v2.vercel.app/listings/bounties/${slug}`}
-          isExternal
-        >
-          {Number(moment(due).format('x')) < Date.now()
-            ? status === 'close'
-              ? 'View'
-              : 'View'
-            : 'Apply'}
-        </Link>
-      </Flex>
+      </Link>
     </>
   );
 };
@@ -454,7 +491,7 @@ export const CategoryBanner = ({ type }: { type: string }) => {
       {isOpen && <EarningModal isOpen={isOpen} onClose={onClose} />}
       <Flex
         direction={{ md: 'row', base: 'column' }}
-        w={{ md: 'brand.120', base: '95%' }}
+        w={{ md: 'brand.120', base: '100%' }}
         h={{ md: '7.375rem', base: 'fit-content' }}
         mt={6}
         mx={'auto'}

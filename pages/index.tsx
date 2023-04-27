@@ -1,6 +1,7 @@
 /* eslint-disable no-nested-ternary */
 import {
   Box,
+  Container,
   Flex,
   HStack,
   Text,
@@ -79,196 +80,199 @@ const Home: NextPage = () => {
         />
       }
     >
-      <Flex
-        justify={'center'}
-        w={'100%'}
-        h={'max-content'}
-        minH={'100vh'}
-        pt={'3.5rem'}
-        bg={'white'}
-      >
-        {router.asPath.includes('search') ? (
-          router.query.search && listings.isLoading ? (
-            <SearchLoading />
-          ) : (
-            <Box>
-              <Flex gap={1} w={['full', 'full', '50rem', '50rem']}>
-                <Text color={'brand.slate.400'}>
-                  Found{' '}
-                  {(listings.data?.bounty.length as number) +
-                    (listings.data?.jobs.length as number) +
-                    (listings.data?.grants.length as number)}{' '}
-                  opportunities matching{' '}
-                </Text>
-                <Text
-                  color={'brand.slate.700'}
-                >{`'${router.query.search}'`}</Text>
-              </Flex>
-              <VStack gap={5} mt={8}>
-                {listings.data?.bounty?.map((bounty) => {
-                  return (
-                    <BountiesCard
-                      slug={bounty?.bounty.slug as string}
-                      status={bounty?.bounty?.status as BountyStatus}
-                      amount={bounty?.bounty?.amount}
-                      key={bounty?.bounty?.id}
-                      sponsor={bounty?.sponsorInfo?.name}
-                      due={bounty?.bounty?.deadline}
-                      title={bounty?.bounty?.title}
-                      logo={bounty?.sponsorInfo?.logo}
-                      token={bounty?.bounty?.token}
-                    />
-                  );
-                })}
+      <Container maxW={'7xl'} mx="auto">
+        <HStack align="start" mt={10}>
+          <Flex>
+            {router.asPath.includes('search') ? (
+              router.query.search && listings.isLoading ? (
+                <SearchLoading />
+              ) : (
+                <Box>
+                  <Flex gap={1} w={['full', 'full', '50rem', '50rem']}>
+                    <Text color={'brand.slate.400'}>
+                      Found{' '}
+                      {(listings.data?.bounty.length as number) +
+                        (listings.data?.jobs.length as number) +
+                        (listings.data?.grants.length as number)}{' '}
+                      opportunities matching{' '}
+                    </Text>
+                    <Text
+                      color={'brand.slate.700'}
+                    >{`'${router.query.search}'`}</Text>
+                  </Flex>
+                  <VStack gap={5} mt={8}>
+                    {listings.data?.bounty?.map((bounty) => {
+                      return (
+                        <BountiesCard
+                          slug={bounty?.bounty.slug as string}
+                          status={bounty?.bounty?.status as BountyStatus}
+                          amount={bounty?.bounty?.amount}
+                          key={bounty?.bounty?.id}
+                          sponsor={bounty?.sponsorInfo?.name}
+                          due={bounty?.bounty?.deadline}
+                          title={bounty?.bounty?.title}
+                          logo={bounty?.sponsorInfo?.logo}
+                          token={bounty?.bounty?.token}
+                        />
+                      );
+                    })}
 
-                {listings.data?.jobs?.map((job) => {
-                  return (
-                    <JobsCard
-                      logo={job?.sponsorInfo?.logo}
-                      description={job?.jobs?.description}
-                      max={job?.jobs?.maxSalary}
-                      min={job?.jobs?.minSalary}
-                      maxEq={job?.jobs?.maxEq}
-                      minEq={job?.jobs?.minEq}
-                      orgName={job?.sponsorInfo?.name}
-                      key={job?.jobs?.id}
-                      skills={JSON.parse(job?.jobs?.skills || '[]')}
-                      title={job?.jobs?.title}
-                    />
-                  );
-                })}
-
-                {listings.data?.grants?.map((grant) => {
-                  return (
-                    <GrantsCard
-                      sponsor={grant?.sponsorInfo?.name}
-                      logo={grant?.sponsorInfo?.logo}
-                      key={grant?.grants?.id}
-                      max={grant?.grants?.maxSalary}
-                      title={grant?.grants?.title}
-                      min={grant?.grants?.minSalary}
-                    />
-                  );
-                })}
-              </VStack>
-            </Box>
-          )
-        ) : (
-          <Box>
-            {connected ? (
-              <>
-                <HStack gap={1}>
-                  <Text
-                    color={'brand.slate.800'}
-                    fontFamily={'Domine'}
-                    fontSize={7}
-                    fontWeight={700}
-                  >
-                    Welcome back,
-                  </Text>
-
-                  <Text
-                    color={'brand.slate.800'}
-                    fontFamily={'Domine'}
-                    fontSize={7}
-                    fontWeight={700}
-                  >
-                    {talentInfo?.firstname ?? 'Anon'}
-                  </Text>
-                </HStack>
-              </>
+                    {listings.data?.grants?.map((grant) => {
+                      return (
+                        <GrantsCard
+                          sponsor={grant?.sponsorInfo?.name}
+                          logo={grant?.sponsorInfo?.logo}
+                          key={grant?.grants?.id}
+                          max={grant?.grants?.maxSalary}
+                          title={grant?.grants?.title}
+                          min={grant?.grants?.minSalary}
+                        />
+                      );
+                    })}
+                    {listings.data?.jobs?.map((job) => {
+                      return (
+                        <JobsCard
+                          logo={job?.sponsorInfo?.logo}
+                          description={job?.jobs?.description}
+                          max={job?.jobs?.maxSalary}
+                          min={job?.jobs?.minSalary}
+                          maxEq={job?.jobs?.maxEq}
+                          minEq={job?.jobs?.minEq}
+                          orgName={job?.sponsorInfo?.name}
+                          key={job?.jobs?.id}
+                          skills={JSON.parse(job?.jobs?.skills || '[]')}
+                          title={job?.jobs?.title}
+                        />
+                      );
+                    })}
+                  </VStack>
+                </Box>
+              )
             ) : (
-              <>
-                <Banner />
-              </>
+              <Box>
+                {connected ? (
+                  <>
+                    <HStack gap={1}>
+                      <Text
+                        color={'brand.slate.800'}
+                        fontFamily={'Domine'}
+                        fontSize={7}
+                        fontWeight={700}
+                      >
+                        Welcome back,
+                      </Text>
+
+                      <Text
+                        color={'brand.slate.800'}
+                        fontFamily={'Domine'}
+                        fontSize={7}
+                        fontWeight={700}
+                      >
+                        {talentInfo?.firstname ?? 'Anon'}
+                      </Text>
+                    </HStack>
+                  </>
+                ) : (
+                  <>
+                    <Banner />
+                  </>
+                )}
+                {router.asPath.includes('filter') && (
+                  <CategoryBanner
+                    type={
+                      listingsType.find((type) =>
+                        type
+                          .toLocaleLowerCase()
+                          .includes(router.query.filter as string)
+                      ) as string
+                    }
+                  />
+                )}
+
+                <Box mt={8}>
+                  <ListingSection
+                    type="bounties"
+                    title="Active Bounties"
+                    sub="Bite sized tasks for freelancers"
+                    emoji="/assets/home/emojis/moneyman.png"
+                  >
+                    {listings.data?.bounty?.map((bounty) => {
+                      return (
+                        <BountiesCard
+                          slug={bounty?.bounty.slug as string}
+                          status={bounty?.bounty?.status as BountyStatus}
+                          amount={bounty?.bounty?.amount}
+                          key={bounty?.bounty?.id}
+                          sponsor={bounty?.sponsorInfo?.name}
+                          due={bounty?.bounty?.deadline}
+                          title={bounty?.bounty?.title}
+                          logo={bounty?.sponsorInfo?.logo}
+                          token={bounty?.bounty?.token}
+                        />
+                      );
+                    })}
+                  </ListingSection>
+
+                  <ListingSection
+                    type="grants"
+                    title="Grants"
+                    sub="Equity-free funding opportunities for builders"
+                    emoji="/assets/home/emojis/grants.png"
+                  >
+                    {listings.data?.grants?.map((grant) => {
+                      return (
+                        <GrantsCard
+                          sponsor={grant?.sponsorInfo?.name}
+                          logo={grant?.sponsorInfo?.logo}
+                          key={grant?.grants?.id}
+                          max={grant?.grants?.maxSalary}
+                          title={grant?.grants?.title}
+                          min={grant?.grants?.minSalary}
+                        />
+                      );
+                    })}
+                  </ListingSection>
+                  <ListingSection
+                    type="jobs"
+                    title="Jobs"
+                    sub="Join a high-growth team"
+                    emoji="/assets/home/emojis/job.png"
+                  >
+                    {listings.data?.jobs?.slice(0, 10).map((job) => {
+                      return (
+                        <JobsCard
+                          logo={job?.sponsorInfo?.logo}
+                          description={job?.jobs?.description}
+                          max={job?.jobs?.maxSalary}
+                          min={job?.jobs?.minSalary}
+                          maxEq={job?.jobs?.maxEq}
+                          minEq={job?.jobs?.minEq}
+                          orgName={job?.sponsorInfo?.name}
+                          key={job?.jobs?.id}
+                          skills={JSON.parse(job?.jobs?.skills || '[]')}
+                          title={job?.jobs?.title}
+                        />
+                      );
+                    })}
+                  </ListingSection>
+                </Box>
+              </Box>
             )}
-            {router.asPath.includes('filter') && (
-              <CategoryBanner
-                type={
-                  listingsType.find((type) =>
-                    type
-                      .toLocaleLowerCase()
-                      .includes(router.query.filter as string)
-                  ) as string
-                }
-              />
-            )}
-            <Box mt={8}>
-              <ListingSection
-                type="bounties"
-                title="Active Bounties"
-                sub="Bite sized tasks for freelancers"
-                emoji="/assets/home/emojis/moneyman.png"
-              >
-                {listings.data?.bounty?.map((bounty) => {
-                  return (
-                    <BountiesCard
-                      slug={bounty?.bounty.slug as string}
-                      status={bounty?.bounty?.status as BountyStatus}
-                      amount={bounty?.bounty?.amount}
-                      key={bounty?.bounty?.id}
-                      sponsor={bounty?.sponsorInfo?.name}
-                      due={bounty?.bounty?.deadline}
-                      title={bounty?.bounty?.title}
-                      logo={bounty?.sponsorInfo?.logo}
-                      token={bounty?.bounty?.token}
-                    />
-                  );
-                })}
-              </ListingSection>
-              <ListingSection
-                type="jobs"
-                title="Jobs"
-                sub="Join a high-growth team"
-                emoji="/assets/home/emojis/job.png"
-              >
-                {listings.data?.jobs?.slice(0, 10).map((job) => {
-                  return (
-                    <JobsCard
-                      logo={job?.sponsorInfo?.logo}
-                      description={job?.jobs?.description}
-                      max={job?.jobs?.maxSalary}
-                      min={job?.jobs?.minSalary}
-                      maxEq={job?.jobs?.maxEq}
-                      minEq={job?.jobs?.minEq}
-                      orgName={job?.sponsorInfo?.name}
-                      key={job?.jobs?.id}
-                      skills={JSON.parse(job?.jobs?.skills || '[]')}
-                      title={job?.jobs?.title}
-                    />
-                  );
-                })}
-              </ListingSection>
-              <ListingSection
-                type="grants"
-                title="Grants"
-                sub="Equity-free funding opportunities for builders"
-                emoji="/assets/home/emojis/grants.png"
-              >
-                {listings.data?.grants?.map((grant) => {
-                  return (
-                    <GrantsCard
-                      sponsor={grant?.sponsorInfo?.name}
-                      logo={grant?.sponsorInfo?.logo}
-                      key={grant?.grants?.id}
-                      max={grant?.grants?.maxSalary}
-                      title={grant?.grants?.title}
-                      min={grant?.grants?.minSalary}
-                    />
-                  );
-                })}
-              </ListingSection>
-            </Box>
-          </Box>
-        )}
-        {!isLessThan768px && (
-          <SideBar
-            total={listingBasic.data?.total ?? 0}
-            listings={listingBasic.data?.count ?? 0}
-            jobs={listings.data?.jobs.slice(0, 10)}
-          />
-        )}
-      </Flex>
+          </Flex>
+          <Flex
+            display={{
+              base: 'none',
+              lg: 'flex',
+            }}
+          >
+            <SideBar
+              total={listingBasic.data?.total ?? 0}
+              listings={listingBasic.data?.count ?? 0}
+              jobs={listings.data?.jobs.slice(0, 10)}
+            />
+          </Flex>
+        </HStack>
+      </Container>
     </Default>
   );
 };
