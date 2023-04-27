@@ -66,7 +66,7 @@ const Grants = () => {
               display={'flex'}
               w={12}
               h={12}
-              bg={'#9EFFAE2B'}
+              bg={'green.50'}
               rounded={'full'}
             >
               <Image
@@ -76,7 +76,7 @@ const Grants = () => {
               />
             </Box>
             <VStack align={'start'}>
-              <Text color={'#000000'} fontSize={'1.25rem'} fontWeight={500}>
+              <Text color={'white'} fontSize={'lg'} fontWeight={500}>
                 ${listingInfo.data?.listing.minSalary.toLocaleString()} - $
                 {listingInfo.data?.listing.maxSalary.toLocaleString()}
               </Text>
@@ -87,7 +87,7 @@ const Grants = () => {
           </HStack>
 
           <Box w={'full'} px={10}>
-            <Button w={'full'} h={12} color={'white'} bg={'#6562FF'}>
+            <Button w={'full'} h={12} color={'white'} bg={'brand.purple'}>
               <Link href={listingInfo.data?.listing.contact} isExternal>
                 Submit Now
               </Link>
