@@ -210,19 +210,38 @@ model Template {
 }
 
 model User {
-  id             String         @id @default(uuid())
-  publicKey      String         @unique
-  email          String         @unique
-  username       String         @unique
-  photo          String?
-  firstName      String?
-  lastName       String?
-  createdAt      DateTime       @default(now())
-  updatedAt      DateTime       @updatedAt
-  isVerified     Boolean        @default(false)
-  role           SuperRole      @default(USER)
-  isTalentFilled Boolean        @default(false)
-  UserSponsors   UserSponsors[]
+  id               String         @id @default(uuid())
+  publicKey        String         @unique
+  email            String         @unique
+  username         String         @unique
+  photo            String?
+  firstName        String?
+  lastName         String?
+  createdAt        DateTime       @default(now())
+  updatedAt        DateTime       @updatedAt
+  isVerified       Boolean        @default(false)
+  role             SuperRole      @default(USER)
+  isTalentFilled   Boolean        @default(false)
+  skills           String?
+  subskills        String?
+  interests        String?
+  bio              String?
+  twitter          String?
+  github           String?
+  linkedin         String?
+  website          String?
+  telegram         String?
+  community        String?
+  experience       String?
+  superteamLevel   String?
+  location         String?
+  cryptoExperience String?
+  workPrefernce    String?
+  currentEmployer  String?
+  pow              String?        @db.VarChar(2000)
+  notifications    String?
+  private          Boolean        @default(false)
+  UserSponsors     UserSponsors[]
 
   @@index([email, publicKey, username])
 }

@@ -40,9 +40,8 @@ export const SkillSelect = ({
       <FormControl my={6} isRequired>
         <Flex align={'center'} justify={'start'}>
           <FormLabel
-            color={'gray.500'}
-            fontSize={'15px'}
-            fontWeight={600}
+            color={'brand.slate.500'}
+            fontWeight={500}
             htmlFor={'skills'}
           >
             Skills Needed
@@ -51,9 +50,9 @@ export const SkillSelect = ({
             w="max"
             p="0.7rem"
             color="white"
-            fontSize="0.9rem"
-            fontWeight={600}
-            bg="#6562FF"
+            fontSize="sm"
+            fontWeight={500}
+            bg="brand.purple"
             borderRadius="0.5rem"
             hasArrow
             label={`Select all that apply`}
@@ -68,9 +67,11 @@ export const SkillSelect = ({
         </Flex>
         <ReactSelect
           styles={{
-            control: (baseStyles) => ({
+            control: (baseStyles, state) => ({
               ...baseStyles,
               border: errorSkill ? '2px solid red' : baseStyles.border,
+              backgroundColor: 'brand.slate.500',
+              borderColor: state.isFocused ? 'brand.purple' : 'brand.slate.300',
             }),
           }}
           closeMenuOnSelect={false}
@@ -88,9 +89,8 @@ export const SkillSelect = ({
       <FormControl my={6}>
         <Flex align={'center'} justify={'start'}>
           <FormLabel
-            color={'gray.500'}
-            fontSize={'15px'}
-            fontWeight={600}
+            color={'brand.slate.500'}
+            fontWeight={500}
             htmlFor={'skills'}
           >
             Sub Skills Needed
@@ -99,9 +99,9 @@ export const SkillSelect = ({
             w="max"
             p="0.7rem"
             color="white"
-            fontSize="0.9rem"
-            fontWeight={600}
-            bg="#6562FF"
+            fontSize="sm"
+            fontWeight={500}
+            bg="brand.purple"
             borderRadius="0.5rem"
             hasArrow
             label={`Select all that apply`}
@@ -116,9 +116,11 @@ export const SkillSelect = ({
         </Flex>
         <ReactSelect
           styles={{
-            control: (baseStyles) => ({
+            control: (baseStyles, state) => ({
               ...baseStyles,
               border: errorSubSkill ? '2px solid red' : baseStyles.border,
+              backgroundColor: 'brand.slate.500',
+              borderColor: state.isFocused ? 'brand.purple' : 'brand.slate.300',
             }),
           }}
           closeMenuOnSelect={false}
