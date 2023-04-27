@@ -54,7 +54,7 @@ const Jobs = () => {
         <Flex
           direction={'column'}
           gap={5}
-          w={'30rem'}
+          w={['88%', '88%', '30rem', '30rem']}
           h={'15rem'}
           bg={'white'}
           rounded={'md'}
@@ -66,7 +66,7 @@ const Jobs = () => {
               display={'flex'}
               w={12}
               h={12}
-              bg={'#9EFFAE2B'}
+              bg={'green.50'}
               rounded={'full'}
             >
               <Image
@@ -76,7 +76,7 @@ const Jobs = () => {
               />
             </Box>
             <VStack align={'start'}>
-              <Text color={'#000000'} fontSize={'1.25rem'} fontWeight={500}>
+              <Text color={'black'} fontSize={'lg'} fontWeight={500}>
                 {listingInfo.data?.listing.minSalary !==
                 listingInfo.data?.listing.maxSalary ? (
                   <>
@@ -94,10 +94,10 @@ const Jobs = () => {
           </HStack>
           <HStack justify={'space-between'} w={'full'} px={10}>
             <VStack align={'start'}>
-              <Text color={'black'} fontSize={'1.25rem'} fontWeight={500}>
+              <Text color={'black'} fontSize={'lg'} fontWeight={500}>
                 {listingInfo.data?.listing.location}
               </Text>
-              <Text color={'gray.500'} fontSize={'1rem'} fontWeight={500}>
+              <Text color={'gray.500'} fontSize={'md'} fontWeight={500}>
                 Location
               </Text>
             </VStack>
@@ -116,7 +116,7 @@ const Jobs = () => {
             </VStack>
           </HStack>
           <Box w={'full'} px={10}>
-            <Button w={'full'} h={12} color={'white'} bg={'#6562FF'}>
+            <Button w={'full'} h={12} color={'white'} bg={'brand.purple'}>
               <Link href={listingInfo.data?.listing.link} isExternal>
                 Submit Now
               </Link>

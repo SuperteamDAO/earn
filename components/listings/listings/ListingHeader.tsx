@@ -17,6 +17,8 @@ import toast from 'react-hot-toast';
 import { BsBell } from 'react-icons/bs';
 import { TbBellRinging } from 'react-icons/tb';
 
+import NavHome from '@/components/home/NavHome';
+
 import type { SubscribeType } from '../../../interface/listings';
 import type { SponsorType } from '../../../interface/sponsor';
 import { TalentStore } from '../../../store/talent';
@@ -27,7 +29,6 @@ import {
 } from '../../../utils/functions';
 import { genrateuuid } from '../../../utils/helpers';
 import { CreateProfileModal } from '../../modals/createProfile';
-import { Navbar } from '../../navbar/navbar';
 
 type Eligibility = 'premission' | 'premission-less';
 
@@ -74,7 +75,7 @@ export const ListingHeader = ({
   return (
     <>
       {isOpen && <CreateProfileModal isOpen={isOpen} onClose={onClose} />}
-      <Navbar />
+      <NavHome />
       <VStack bg={'white'}>
         <VStack
           align="start"
@@ -83,9 +84,9 @@ export const ListingHeader = ({
           gap={5}
           w={'full'}
           maxW={'7xl'}
-          h={'14rem'}
+          // h={'14rem'}
           mx={'auto'}
-          pt={24}
+          py={10}
         >
           <HStack align="start" px={[3, 3, 0, 0]}>
             <Image
@@ -98,9 +99,9 @@ export const ListingHeader = ({
             />
             <VStack align={'start'}>
               <Heading
-                color={'#334254'}
+                color={'brand.charcoal.700'}
                 fontFamily={'Inter'}
-                fontSize={'1.3rem'}
+                fontSize={'lg'}
                 fontWeight={700}
               >
                 {title}
@@ -114,9 +115,9 @@ export const ListingHeader = ({
                     <Text
                       px={3}
                       py={1}
-                      color={'#16A368'}
-                      fontSize={'0.75rem'}
-                      bg={'#16A36821'}
+                      color={'green.600'}
+                      fontSize={'sm'}
+                      bg={'green.100'}
                       rounded={'full'}
                     >
                       Submission Open
@@ -125,9 +126,9 @@ export const ListingHeader = ({
                     <Text
                       px={3}
                       py={1}
-                      color={'#A35A16'}
-                      fontSize={'0.75rem'}
-                      bg={'#A3731621'}
+                      color={'orange.600'}
+                      fontSize={'sm'}
+                      bg={'orange.100'}
                       rounded={'full'}
                     >
                       In Review
@@ -137,9 +138,9 @@ export const ListingHeader = ({
                   <Text
                     px={3}
                     py={1}
-                    color={'#16A368'}
-                    fontSize={'0.75rem'}
-                    bg={'#16A36821'}
+                    color={'green.600'}
+                    fontSize={'sm'}
+                    bg={'green.100'}
                     rounded={'full'}
                   >
                     Open
@@ -168,7 +169,7 @@ export const ListingHeader = ({
                   </Button>
                 ) : (
                   <Button
-                    bg="#F7FAFC"
+                    bg="gray.50"
                     isLoading={subMutation.isLoading}
                     onClick={() => {
                       if (!userInfo?.talent) {
@@ -214,13 +215,13 @@ export const ListingHeader = ({
                   })}
                 </HStack>
                 <VStack align={'start'}>
-                  <Text color={'#000000'} fontSize={'1rem'} fontWeight={500}>
+                  <Text color={'#000000'} fontSize={'md'} fontWeight={500}>
                     {sub?.length ?? 0}
                   </Text>
                   <Text
                     mt={'0px !important'}
                     color={'gray.500'}
-                    fontSize={'1rem'}
+                    fontSize={'md'}
                     fontWeight={500}
                   >
                     People Interested
@@ -232,13 +233,24 @@ export const ListingHeader = ({
         </VStack>
         <HStack w="full" maxW={'7xl'} h={'max'} px={[3, 3, 0, 0]}>
           <Button
-            color={router.asPath.includes('submission') ? '#94A3B8' : '#1E293B'}
+            color={
+              router.asPath.includes('submission')
+                ? 'brand.slate.400'
+                : 'brand.slate.800'
+            }
             borderBottom={
-              !router.asPath.includes('submission') ? '3px solid #6562FF' : '0'
+              !router.asPath.includes('submission') ? '3px solid ' : '0'
+            }
+            borderBottomColor={
+              !router.asPath.includes('submission')
+                ? 'brand.purple'
+                : 'transparent'
             }
             onClick={() => {
               if (!tabs) return;
-              router.push(`/listings/bounties/${title.split(' ').join('-')}`);
+              router.push(
+                `/listings/bounties/${title.split(' ').join('-').toLowerCase()}`
+              );
             }}
             rounded={0}
             variant={'ghost'}
@@ -247,9 +259,14 @@ export const ListingHeader = ({
           </Button>
           {tabs && eligibility === 'premission-less' && (
             <Button
-              color={router.query.subid ? '#1E293B' : '#94A3B8'}
+              color={router.query.subid ? 'brand.slate.800' : 'brand.slate.400'}
               borderBottom={
-                router.asPath.includes('submission') ? '3px solid #6562FF' : '0'
+                router.asPath.includes('submission') ? '3px solid' : '0'
+              }
+              borderBottomColor={
+                router.asPath.includes('submission')
+                  ? 'brand.purple'
+                  : 'transparent'
               }
               onClick={() => {
                 router.push(`${router.asPath}/submission`);
