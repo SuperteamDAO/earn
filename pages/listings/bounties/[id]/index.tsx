@@ -10,6 +10,9 @@ import type { GetServerSideProps } from 'next';
 import { useRouter } from 'next/router';
 import toast from 'react-hot-toast';
 
+import { Default } from '@/layouts/Default';
+import { Meta } from '@/layouts/Meta';
+
 import { Comments } from '../../../../components/listings/listings/comments';
 import { DetailDescription } from '../../../../components/listings/listings/details/detailDescription';
 import { DetailSideCard } from '../../../../components/listings/listings/details/detailSideCard';
@@ -98,70 +101,79 @@ const Bounties = () => {
 
   return (
     <>
-      {submissionSuccisOpen && (
-        <SubmissionSuccess
-          eligibility={listingInfo.data?.listing.eligibility as string}
-          isOpen={submissionSuccisOpen}
-          onClose={submissionSucconClose}
-        />
-      )}
-      {isOpen && <CreateProfileModal isOpen={isOpen} onClose={onClose} />}
-      <ListingHeader
-        eligibility={listingInfo.data?.listing.eligibility as any}
-        endTime={listingInfo.data?.listing.deadline ?? ''}
-        sub={listingInfo.data?.listing.subscribe}
-        id={listingInfo.data?.listing.id as string}
-        tabs={true}
-        title={listingInfo.data?.listing?.title ?? ''}
-        sponsor={
-          listingInfo.data?.sponsor
-            ? (listingInfo.data?.sponsor as SponsorType)
-            : defalutSponsor
+      <Default
+        meta={
+          <Meta
+            title="Superteam Earn"
+            description="Every Solana opportunity in one place!"
+          />
         }
-      />
-
-      <HStack
-        align={['center', 'center', 'start', 'start']}
-        justify={['center', 'center', 'space-between', 'space-between']}
-        flexDir={['column-reverse', 'column-reverse', 'row', 'row']}
-        gap={4}
-        maxW={'7xl'}
-        mx={'auto'}
       >
-        <VStack gap={8} w={['22rem', '22rem', 'full', 'full']} mt={10}>
-          <DetailDescription
-            skills={
-              JSON.parse(listingInfo.data?.listing.skills as string) ?? []
-            }
-            description={
-              (listingInfo.data?.listing.description as string) ?? ''
-            }
+        {submissionSuccisOpen && (
+          <SubmissionSuccess
+            eligibility={listingInfo.data?.listing.eligibility as string}
+            isOpen={submissionSuccisOpen}
+            onClose={submissionSucconClose}
           />
-          <Comments
-            refId={listingInfo.data?.listing.id ?? ''}
-            onOpen={onOpen}
-          />
-        </VStack>
-        <DetailSideCard
-          token={listingInfo.data?.listing.token as string}
-          eligibility={listingInfo.data?.listing.eligibility as string}
-          questions={
-            listingInfo.data?.listing.Questions?.questions ??
-            JSON.stringify('[]')
+        )}
+        {isOpen && <CreateProfileModal isOpen={isOpen} onClose={onClose} />}
+        <ListingHeader
+          eligibility={listingInfo.data?.listing.eligibility as any}
+          endTime={listingInfo.data?.listing.deadline ?? ''}
+          sub={listingInfo.data?.listing.subscribe}
+          id={listingInfo.data?.listing.id as string}
+          tabs={true}
+          title={listingInfo.data?.listing?.title ?? ''}
+          sponsor={
+            listingInfo.data?.sponsor
+              ? (listingInfo.data?.sponsor as SponsorType)
+              : defalutSponsor
           }
-          submissionisOpen={submissionisOpen}
-          submissiononClose={submissiononClose}
-          submissiononOpen={submissiononOpen}
-          submissionNumber={listingInfo.data?.listing.submission?.length ?? 0}
-          SubmssionMutation={SubmssionMutation}
-          endingTime={listingInfo.data?.listing.deadline ?? ''}
-          onOpen={onOpen}
-          prizeList={
-            (listingInfo.data?.listing.prizeList as PrizeListType) ?? {}
-          }
-          total={parseInt(listingInfo.data?.listing.amount as string, 10)}
         />
-      </HStack>
+
+        <HStack
+          align={['center', 'center', 'start', 'start']}
+          justify={['center', 'center', 'space-between', 'space-between']}
+          flexDir={['column-reverse', 'column-reverse', 'row', 'row']}
+          gap={4}
+          maxW={'7xl'}
+          mx={'auto'}
+        >
+          <VStack gap={8} w={['22rem', '22rem', 'full', 'full']} mt={10}>
+            <DetailDescription
+              skills={
+                JSON.parse(listingInfo.data?.listing.skills as string) ?? []
+              }
+              description={
+                (listingInfo.data?.listing.description as string) ?? ''
+              }
+            />
+            <Comments
+              refId={listingInfo.data?.listing.id ?? ''}
+              onOpen={onOpen}
+            />
+          </VStack>
+          <DetailSideCard
+            token={listingInfo.data?.listing.token as string}
+            eligibility={listingInfo.data?.listing.eligibility as string}
+            questions={
+              listingInfo.data?.listing.Questions?.questions ??
+              JSON.stringify('[]')
+            }
+            submissionisOpen={submissionisOpen}
+            submissiononClose={submissiononClose}
+            submissiononOpen={submissiononOpen}
+            submissionNumber={listingInfo.data?.listing.submission?.length ?? 0}
+            SubmssionMutation={SubmssionMutation}
+            endingTime={listingInfo.data?.listing.deadline ?? ''}
+            onOpen={onOpen}
+            prizeList={
+              (listingInfo.data?.listing.prizeList as PrizeListType) ?? {}
+            }
+            total={parseInt(listingInfo.data?.listing.amount as string, 10)}
+          />
+        </HStack>
+      </Default>
     </>
   );
 };

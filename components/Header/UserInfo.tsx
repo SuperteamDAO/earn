@@ -146,7 +146,7 @@ function UserInfo() {
       ) : (
         <>
           <Button
-            px={4}
+            px={5}
             fontSize="xs"
             onClick={() => {
               onOpen();

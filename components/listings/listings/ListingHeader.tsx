@@ -17,8 +17,6 @@ import toast from 'react-hot-toast';
 import { BsBell } from 'react-icons/bs';
 import { TbBellRinging } from 'react-icons/tb';
 
-import NavHome from '@/components/home/NavHome';
-
 import type { SubscribeType } from '../../../interface/listings';
 import type { SponsorType } from '../../../interface/sponsor';
 import { TalentStore } from '../../../store/talent';
@@ -75,7 +73,6 @@ export const ListingHeader = ({
   return (
     <>
       {isOpen && <CreateProfileModal isOpen={isOpen} onClose={onClose} />}
-      <NavHome />
       <VStack bg={'white'}>
         <VStack
           align="start"
