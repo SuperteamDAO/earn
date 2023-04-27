@@ -81,8 +81,8 @@ const Home: NextPage = () => {
       }
     >
       <Container maxW={'7xl'} mx="auto">
-        <HStack align="start" mt={10}>
-          <Flex>
+        <HStack align="start" justify="space-between" mt={10}>
+          <Flex w="full">
             {router.asPath.includes('search') ? (
               router.query.search && listings.isLoading ? (
                 <SearchLoading />
@@ -149,14 +149,14 @@ const Home: NextPage = () => {
                 </Box>
               )
             ) : (
-              <Box>
+              <Box w={'100%'}>
                 {connected ? (
                   <>
-                    <HStack gap={1}>
+                    <HStack gap={1} w={'100%'} ml={5}>
                       <Text
                         color={'brand.slate.800'}
                         fontFamily={'Domine'}
-                        fontSize={7}
+                        fontSize={24}
                         fontWeight={700}
                       >
                         Welcome back,
@@ -165,7 +165,7 @@ const Home: NextPage = () => {
                       <Text
                         color={'brand.slate.800'}
                         fontFamily={'Domine'}
-                        fontSize={7}
+                        fontSize={24}
                         fontWeight={700}
                       >
                         {talentInfo?.firstname ?? 'Anon'}
@@ -189,7 +189,7 @@ const Home: NextPage = () => {
                   />
                 )}
 
-                <Box mt={8}>
+                <Box w={'100%'} mt={8}>
                   <ListingSection
                     type="bounties"
                     title="Active Bounties"
