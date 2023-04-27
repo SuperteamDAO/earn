@@ -291,7 +291,7 @@ export default function WithSubnavigation() {
   const router = useRouter();
 
   return (
-    <Box pos="sticky" top={0}>
+    <Box pos="sticky" zIndex="sticky" top={0}>
       <Flex
         align={'stretch'}
         px={{ base: 4, md: 6 }}
