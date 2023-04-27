@@ -10,5 +10,6 @@ interface User {
   updatedAt?: string;
   talent?: boolean;
   sponsor?: boolean;
+  isTalentFilled?: boolean;
 }
 export type { User };

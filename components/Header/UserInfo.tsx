@@ -57,6 +57,7 @@ function UserInfo() {
       return;
     }
     await wallet.adapter.disconnect();
+    setUserInfo({});
   };
 
   return (
