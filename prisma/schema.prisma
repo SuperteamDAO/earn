@@ -220,6 +220,7 @@ model User {
   createdAt    DateTime       @default(now())
   updatedAt    DateTime       @updatedAt
   isVerified   Boolean        @default(false)
+  role         SuperRole      @default(USER)
   UserSponsors UserSponsors[]
 
   @@index([email, publicKey, username])
@@ -230,13 +231,23 @@ model UserSponsors {
   user      User     @relation(fields: [userId], references: [id])
   sponsorId String
   sponsor   Sponsors @relation(fields: [sponsorId], references: [id])
-  role      String
+  role      Role     @default(MEMBER)
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
   @@id([userId, sponsorId])
   @@index([userId, sponsorId])
   @@index([sponsorId])
+}
+
+enum Role {
+  ADMIN
+  MEMBER
+}
+
+enum SuperRole {
+  GOD
+  USER
 }
 
 model Winner {
