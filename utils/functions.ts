@@ -179,7 +179,7 @@ export const createBounty = async (
       description: bounties.description,
       sponsorStatus: bounties.sponsorStatus,
       featured: bounties.featured,
-      orgId: sponsor.orgId,
+      orgId: sponsor.id,
       skills: bounties.skills,
       subSkills: bounties.subSkills,
       prizeList: bounties.prizeList,

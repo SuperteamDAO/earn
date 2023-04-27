@@ -3,8 +3,6 @@ import type { Dispatch, SetStateAction } from 'react';
 import React from 'react';
 
 import { Steps } from '../components/misc/steps';
-import { Navbar } from '../components/navbar/navbar';
-import type { SponsorType } from '../interface/sponsor';
 
 interface StepsList {
   label: string;
@@ -17,19 +15,12 @@ interface Props {
   currentStep: number;
   stepList: StepsList[];
   setStep: Dispatch<SetStateAction<number>>;
-  sponsors?: SponsorType[];
 }
-const FormLayout = ({
-  children,
-  currentStep,
-  stepList,
-  setStep,
-  sponsors,
-}: Props) => {
+
+const FormLayout = ({ children, currentStep, stepList, setStep }: Props) => {
   return (
     <>
       <VStack bg={currentStep !== 1 ? 'white' : '#F6FAFD'}>
-        <Navbar sponsors={sponsors} />
         <VStack gap={10} w={'80%'}>
           <VStack mt={20}>
             <Heading

@@ -261,7 +261,7 @@ const RecentEarners = () => {
 
 interface HiringProps {
   title: string;
-  logo: string;
+  logo?: string;
   location: string;
   type: string;
 }

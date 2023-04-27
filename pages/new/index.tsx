@@ -1,21 +1,29 @@
+import { SearchIcon } from '@chakra-ui/icons';
 import { Box, Button, Flex, Image, Text } from '@chakra-ui/react';
 import { useWallet } from '@solana/wallet-adapter-react';
 import { useRouter } from 'next/router';
 import React from 'react';
 
-import { Navbar } from '../../components/navbar/navbar';
-import { ConnectWallet } from '../../layouts/connectWallet';
+import SponsorButton from '@/components/ProfileSetup/SponsorButton';
+import { Default } from '@/layouts/Default';
+import { Meta } from '@/layouts/Meta';
 
 const Index = () => {
   const { connected } = useWallet();
   const router = useRouter();
   return (
-    <>
+    <Default
+      meta={
+        <Meta
+          title="Superteam Earn"
+          description="Every Solana opportunity in one place!"
+        />
+      }
+    >
       {!connected ? (
-        <ConnectWallet />
+        <Text>Please Sign up</Text>
       ) : (
         <>
-          <Navbar />
           <Box
             pos={'relative'}
             justifyContent={'center'}
@@ -25,7 +33,6 @@ const Index = () => {
           >
             <Box
               pos={'absolute'}
-              top={10}
               w={'full'}
               h={'20rem'}
               bgImage={`url(/assets/bg/newbanner.svg)`}
@@ -112,19 +119,7 @@ const Index = () => {
                       </Text>
                     </Flex>
                   </Box>
-                  <Button
-                    w={'full'}
-                    h={12}
-                    color={'white'}
-                    fontSize={'0.9rem'}
-                    bg={'#6562FF'}
-                    _hover={{ bg: '#6562FF' }}
-                    onClick={() => {
-                      router.push('/listings/create');
-                    }}
-                  >
-                    List Your Opportunity
-                  </Button>
+                  <SponsorButton />
                 </Box>
               </Flex>
 
@@ -207,11 +202,12 @@ const Index = () => {
                     fontSize={'0.9rem'}
                     bg={'#6562FF'}
                     _hover={{ bg: '#6562FF' }}
+                    leftIcon={<SearchIcon />}
                     onClick={() => {
                       router.push('/new/talent');
                     }}
                   >
-                    Get to work
+                    Search for Opportunities
                   </Button>
                 </Box>
               </Flex>
@@ -219,7 +215,7 @@ const Index = () => {
           </Box>
         </>
       )}
-    </>
+    </Default>
   );
 };
 

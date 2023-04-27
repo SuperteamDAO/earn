@@ -168,7 +168,7 @@ function Drafts() {
   const { currentSponsor } = SponsorStore();
 
   const SponsorData = tanQuery({
-    queryKey: ['listing', currentSponsor?.orgId || ''],
+    queryKey: ['listing', currentSponsor?.id || ''],
     queryFn: ({ queryKey }) => findSponsorDrafts(queryKey[1] || ''),
   });
 

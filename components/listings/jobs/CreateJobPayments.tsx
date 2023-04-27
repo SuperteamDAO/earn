@@ -87,7 +87,7 @@ export const CreateJobPayments = ({
       minEq: Number(payment?.min_eq),
       maxSalary: Number(payment?.max_sal),
       minSalary: Number(payment?.min_sal),
-      orgId: currentSponsor?.orgId ?? '',
+      orgId: currentSponsor?.id ?? '',
       skills: JSON.stringify(mainSkills),
       source: 'native',
       subskills: JSON.stringify(subSkills),
