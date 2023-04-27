@@ -81,7 +81,6 @@ export const ListingHeader = ({
           gap={5}
           w={'full'}
           maxW={'7xl'}
-          // h={'14rem'}
           mx={'auto'}
           py={10}
         >
