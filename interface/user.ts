@@ -10,6 +10,7 @@ interface User {
   updatedAt?: string;
   talent?: boolean;
   sponsor?: boolean;
+  superteamLevel?: string;
   isTalentFilled?: boolean;
   bio?: string;
   location?: string;

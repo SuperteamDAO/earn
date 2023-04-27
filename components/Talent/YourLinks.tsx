@@ -342,6 +342,7 @@ function YourLinks({ success, useFormStore }: Props) {
         pow,
         ...socials,
         superteamLevel: 'Lurker',
+        isTalentFilled: true,
       });
       console.log(
         'file: YourLinks.tsx:338 ~ YourLinks ~ updatedUser:',
