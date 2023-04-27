@@ -11,5 +11,22 @@ interface User {
   talent?: boolean;
   sponsor?: boolean;
   isTalentFilled?: boolean;
+  bio?: string;
+  location?: string;
+  photo?: string;
+  experience?: string;
+  cryptoExperience?: string;
+  currentEmployer?: string;
+  community?: string;
+  interests?: string;
+  skills?: string;
+  subskills?: string;
+  workPrefernce?: string;
+  twitter?: string;
+  github?: string;
+  linkedin?: string;
+  website?: string;
+  telegram?: string;
+  pow?: string;
 }
 export type { User };

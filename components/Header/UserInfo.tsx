@@ -2,6 +2,7 @@ import {
   Box,
   Button,
   Flex,
+  Image,
   Menu,
   MenuButton,
   MenuDivider,
@@ -86,11 +87,20 @@ function UserInfo() {
           <Menu>
             <MenuButton minW={0} cursor={'pointer'} rounded={'full'}>
               <Flex align="center">
-                <Avatar
-                  colors={['#92A1C6', '#F0AB3D', '#C271B4']}
-                  size={32}
-                  variant="marble"
-                />
+                {userInfo?.photo ? (
+                  <Image
+                    boxSize="32px"
+                    borderRadius="full"
+                    alt={`${userInfo?.firstName} ${userInfo?.lastName}`}
+                    src={userInfo?.photo}
+                  />
+                ) : (
+                  <Avatar
+                    colors={['#92A1C6', '#F0AB3D', '#C271B4']}
+                    size={32}
+                    variant="marble"
+                  />
+                )}
                 <Box display={{ base: 'none', md: 'block' }} ml={2}>
                   {!userInfo?.firstName ? (
                     <Text color="brand.slate.800" fontSize="sm">

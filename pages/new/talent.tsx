@@ -94,7 +94,7 @@ const StepsCon = ({ setSuccess }: { setSuccess: () => void }) => {
     },
     {
       title: 'Tell Us About Your Work',
-      subTitle: 'The more you tell us, the better we can match you',
+      subTitle: 'The more you tell us, the better we can match you!',
     },
     {
       title: 'Socials & Proof of Work',
@@ -184,7 +184,6 @@ const SuccessScreen = () => {
       </Center>
     );
   }
-  console.log(form);
 
   return (
     <Box
