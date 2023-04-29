@@ -4,13 +4,14 @@
   "private": true,
   "scripts": {
     "dev": "NODE_ENV=development next dev",
-    "build": "next build",
+    "build": "prisma generate && next build",
     "start": "NODE_ENV=production next start",
     "lint": "next lint",
     "format": "next lint --fix && prettier '**/*.{json,yaml}' --write --ignore-path .gitignore",
     "check-types": "tsc --noEmit --pretty",
     "prepare": "husky install",
-    "postbuild": "next-sitemap"
+    "postbuild": "next-sitemap",
+    "postinstall": "prisma generate"
   },
   "dependencies": {
     "@bomdi/codebox": "^2.0.0",
