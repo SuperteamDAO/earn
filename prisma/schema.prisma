@@ -12,30 +12,33 @@ datasource db {
 }
 
 model Bounties {
-  id            String                 @id @map("_id")
+  id            String          @id @default(uuid())
   title         String
-  description   String                 @default(dbgenerated("(_utf8mb4\\'\\')")) @db.Text
-  skills        String                 @db.VarChar(2000)
   slug          String
-  subSkills     String                 @db.VarChar(2000)
-  deadline      String
-  source        Bounties_source        @default(native)
-  amount        String
+  description   String?
+  skills        String?
+  subSkills     String?
+  deadline      DateTime
+  eligibility   Json?
+  status        Bounties_status @default(OPEN)
+  isActive      Boolean         @default(true)
+  isPublished   Boolean         @default(false)
+  isFeatured    Boolean         @default(false)
   token         String
-  status        Bounties_status        @default(open)
-  sponsorStatus Bounties_sponsorStatus @default(Unassigned)
-  active        Boolean
-  private       Boolean
-  featured      Boolean
-  prizeList     Json
-  bugBounty     Boolean                @default(false)
-  showTop       Boolean                @default(false)
-  orgId         String
-  eligibility   String                 @default("")
-  sourceId      String                 @default("") @db.VarChar(500)
-  sourceName    String                 @default("") @db.VarChar(500)
+  rewardAmount  Int?
+  rewards       Json?
+  sponsorId     String
+  sponsor       Sponsors        @relation(fields: [sponsorId], references: [id])
+  pocId         String
+  poc           User            @relation(fields: [pocId], references: [id])
+  source        Bounties_source @default(NATIVE)
+  sourceDetails Json?
+  createdAt     DateTime        @default(now())
+  updatedAt     DateTime        @updatedAt
 
-  @@index([orgId])
+  @@index([id, slug])
+  @@index([sponsorId])
+  @@index([pocId])
 }
 
 model Comment {
@@ -140,6 +143,7 @@ model Sponsors {
   createdAt    DateTime       @default(now())
   updatedAt    DateTime       @updatedAt
   UserSponsors UserSponsors[]
+  Bounties     Bounties[]
 
   @@index([id, username])
 }
@@ -242,6 +246,7 @@ model User {
   notifications    String?
   private          Boolean        @default(false)
   UserSponsors     UserSponsors[]
+  Bounties         Bounties[]
 
   @@index([email, publicKey, username])
 }
@@ -328,15 +333,14 @@ enum Jobs_source {
 }
 
 enum Bounties_source {
-  native
-  manual
-  import
+  NATIVE
+  IMPORT
 }
 
 enum Bounties_status {
-  open
-  review
-  close
+  OPEN
+  REVIEW
+  CLOSED
 }
 
 enum Bounties_sponsorStatus {
