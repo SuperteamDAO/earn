@@ -38,7 +38,7 @@ const defalutSponsor: SponsorType = {
   name: 'default',
   twitter: '',
   url: '',
-  username: '',
+  slug: '',
   id: '',
 };
 

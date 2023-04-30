@@ -19,7 +19,7 @@ export default async function user(req: NextApiRequest, res: NextApiResponse) {
     console.log('file: update.ts:19 ~ user ~ error:', error);
     res.status(403).json({
       error,
-      message: `Error occured while updating user ${id}.`,
+      message: `Error occurred while updating user ${id}.`,
     });
   }
 }

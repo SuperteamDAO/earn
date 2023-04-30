@@ -1,6 +1,6 @@
 interface SponsorType {
   id?: string;
-  username: string;
+  slug: string;
   name: string;
   logo?: string;
   url?: string;

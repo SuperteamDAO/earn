@@ -17,7 +17,7 @@ export default async function user(req: NextApiRequest, res: NextApiResponse) {
     console.log('file: create.ts:29 ~ user ~ error:', error);
     res.status(403).json({
       error,
-      message: 'Error occured while adding a new sponsor.',
+      message: 'Error occurred while adding a new sponsor.',
     });
   }
 }

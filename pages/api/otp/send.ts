@@ -23,7 +23,7 @@ export default async function send(req: NextApiRequest, res: NextApiResponse) {
   } catch (error) {
     res.status(403).json({
       error,
-      message: 'Error occured while adding a new user.',
+      message: 'Error occurred while adding a new user.',
     });
   }
 }
