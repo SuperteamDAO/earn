@@ -29,6 +29,7 @@ import { Default } from '@/layouts/Default';
 import { Meta } from '@/layouts/Meta';
 import { TalentStore } from '@/store/talent';
 import { fetchAll, fetchBasicInfo } from '@/utils/functions';
+import { Mixpanel } from '@/utils/mixpanel';
 
 const Home: NextPage = () => {
   const router = useRouter();
@@ -49,6 +50,7 @@ const Home: NextPage = () => {
 
   useEffect(() => {
     const html = document.querySelector('html');
+    Mixpanel.track('home_page_load');
     try {
       if (isLessThan768px) {
         html!.style.fontSize = '100%';

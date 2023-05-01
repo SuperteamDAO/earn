@@ -19,6 +19,8 @@ import { useState } from 'react';
 import { Toaster } from 'react-hot-toast';
 import { TiTick } from 'react-icons/ti';
 
+import { Mixpanel } from '@/utils/mixpanel';
+
 import { type MultiSelectOptions, tokenList } from '../../constants';
 import type { BountyStatus } from '../../interface/types';
 import { TalentStore } from '../../store/talent';
@@ -156,6 +158,11 @@ export const BountiesCard = ({
         }}
         href={`https://earn-frontend-v2.vercel.app/listings/bounties/${slug}`}
         isExternal
+        onClick={() => {
+          Mixpanel.track('Bounty Clicked', {
+            'Bounty Title': title,
+          });
+        }}
       >
         <Flex
           align="center"
@@ -268,93 +275,116 @@ export const JobsCard = ({
   link,
 }: JobsProps) => {
   return (
-    <Flex
-      align="center"
-      justify="space-between"
-      w={{ base: '100%', md: 'brand.120' }}
-      h={'3.9375rem'}
+    <Link
+      _hover={{
+        textDecoration: 'none',
+      }}
+      href={
+        link ||
+        `https://earn-frontend-v2.vercel.app/listings/jobs/${title
+          .split(' ')
+          .join('-')}`
+      }
+      isExternal
+      onClick={() => {
+        Mixpanel.track('job_clicked', {
+          'Job Title': title,
+        });
+      }}
     >
-      <Flex justify="start">
-        <Image
-          w={16}
-          h={16}
-          mr={5}
-          alt={'company logo'}
-          rounded={5}
-          src={logo ?? '/assets/home/placeholder/ph2.png'}
-        />
-        <Flex justify={'space-between'} direction={'column'}>
-          <Text color="brand.slate.700" fontSize="sm" fontWeight="600">
-            {title}
-          </Text>
-          <Text
-            color="brand.slate.400"
-            fontSize={{ md: 'sm', base: 'xs' }}
-            fontWeight={400}
-          >
-            {description
-              ? parse(
-                  description?.startsWith('"')
-                    ? JSON.parse(description || '')?.slice(0, 100)
-                    : (description ?? '')?.slice(0, 100)
-                )
-              : orgName}
-          </Text>
-          <Flex align={'center'}>
-            {!!min && !!max && (
-              <Text mr={3} color={'brand.slate.500'} fontSize={'sm'}>
-                <Text as="span" fontWeight="700">
-                  ${' '}
-                </Text>
-                {min.toLocaleString()} - {max.toLocaleString()}
-              </Text>
-            )}
-            {!!minEq && !!maxEq && (
-              <Text mr={3} color={'brand.slate.500'} fontSize={'sm'}>
-                {minEq.toLocaleString()}% - {maxEq.toLocaleString()}% Equity
-              </Text>
-            )}
-            {skills?.length &&
-              skills.slice(0, 3).map((e) => {
-                return (
-                  <Text
-                    key={''}
-                    display={{ base: 'none', md: 'block' }}
-                    mr={3}
-                    color={'brand.slate.500'}
-                    fontSize="sm"
-                  >
-                    {e.label}
+      <Flex
+        align="center"
+        justify="space-between"
+        w={{ base: '100%', md: 'brand.120' }}
+        h={'3.9375rem'}
+      >
+        <Flex justify="start">
+          <Image
+            w={16}
+            h={16}
+            mr={5}
+            alt={'company logo'}
+            rounded={5}
+            src={logo ?? '/assets/home/placeholder/ph2.png'}
+          />
+          <Flex justify={'space-between'} direction={'column'}>
+            <Text color="brand.slate.700" fontSize="sm" fontWeight="600">
+              {title}
+            </Text>
+            <Text
+              color="brand.slate.400"
+              fontSize={{ md: 'sm', base: 'xs' }}
+              fontWeight={400}
+            >
+              {description
+                ? parse(
+                    description?.startsWith('"')
+                      ? JSON.parse(description || '')?.slice(0, 100)
+                      : (description ?? '')?.slice(0, 100)
+                  )
+                : orgName}
+            </Text>
+            <Flex align={'center'}>
+              {!!min && !!max && (
+                <Text mr={3} color={'brand.slate.500'} fontSize={'sm'}>
+                  <Text as="span" fontWeight="700">
+                    ${' '}
                   </Text>
-                );
-              })}
+                  {min.toLocaleString()} - {max.toLocaleString()}
+                </Text>
+              )}
+              {!!minEq && !!maxEq && (
+                <Text mr={3} color={'brand.slate.500'} fontSize={'sm'}>
+                  {minEq.toLocaleString()}% - {maxEq.toLocaleString()}% Equity
+                </Text>
+              )}
+              {skills?.length &&
+                skills.slice(0, 3).map((e) => {
+                  return (
+                    <Text
+                      key={''}
+                      display={{ base: 'none', md: 'block' }}
+                      mr={3}
+                      color={'brand.slate.500'}
+                      fontSize="sm"
+                    >
+                      {e.label}
+                    </Text>
+                  );
+                })}
+            </Flex>
           </Flex>
         </Flex>
+        <Link
+          w={24}
+          py={2}
+          color={'brand.slate.400'}
+          textAlign="center"
+          border="1px solid"
+          borderColor={'brand.slate.400'}
+          borderRadius={4}
+          _hover={{
+            textDecoration: 'none',
+            bg: 'brand.slate.400',
+            color: 'white',
+          }}
+          href={
+            link ||
+            `https://earn-frontend-v2.vercel.app/listings/jobs/${title
+              .split(' ')
+              .join('-')}`
+          }
+          isExternal
+          onClick={() => {
+            Mixpanel.track('job_clicked', {
+              'Job Title': title,
+            });
+          }}
+        >
+          Apply
+        </Link>
       </Flex>
-      <Link
-        w={24}
-        py={2}
-        color={'brand.slate.400'}
-        textAlign="center"
-        border="1px solid"
-        borderColor={'brand.slate.400'}
-        borderRadius={4}
-        _hover={{
-          textDecoration: 'none',
-          bg: 'brand.slate.400',
-          color: 'white',
-        }}
-        href={
-          link ||
-          `https://earn-frontend-v2.vercel.app/listings/jobs/${title
-            .split(' ')
-            .join('-')}`
-        }
-        isExternal
-      >
-        Apply
-      </Link>
-    </Flex>
+    </Link>
   );
 };
 
@@ -367,61 +397,81 @@ interface GrantsProps {
 }
 export const GrantsCard = ({ title, logo, max, min, sponsor }: GrantsProps) => {
   return (
-    <Flex
-      align="center"
-      justify="space-between"
-      w={{ base: '100%', md: 'brand.120' }}
-      h={14}
+    <Link
+      _hover={{
+        textDecoration: 'none',
+      }}
+      href={`https://earn-frontend-v2.vercel.app/listings/grants/${title
+        .split(' ')
+        .join('-')}`}
+      isExternal
+      onClick={() => {
+        Mixpanel.track('grant_clicked', {
+          'Grant Title': title,
+        });
+      }}
     >
-      <Flex justify="start">
-        <Image
-          w={16}
-          h={16}
-          mr={5}
-          alt={'company logo'}
-          rounded={5}
-          src={logo ?? '/assets/home/placeholder/ph3.png'}
-        />
-        <Flex justify="space-between" direction="column">
-          <Text color="brand.slate.700" fontSize="sm" fontWeight="600">
-            {title}
-          </Text>
-          <Text
-            color="brand.slate.400"
-            fontSize={{ md: 'sm', base: 'xs' }}
-            fontWeight="400"
-          >
-            {sponsor}
-          </Text>
-          <Flex align={'center'}>
-            <Image w={3} h={3} alt="" src="/assets/icons/dollar.svg" />
-            <Text mr={3} color={'brand.slate.500'} fontSize={'sm'}>
-              {min.toLocaleString()} - {max.toLocaleString()}
+      <Flex
+        align="center"
+        justify="space-between"
+        w={{ base: '100%', md: 'brand.120' }}
+        h={14}
+      >
+        <Flex justify="start">
+          <Image
+            w={16}
+            h={16}
+            mr={5}
+            alt={'company logo'}
+            rounded={5}
+            src={logo ?? '/assets/home/placeholder/ph3.png'}
+          />
+          <Flex justify="space-between" direction="column">
+            <Text color="brand.slate.700" fontSize="sm" fontWeight="600">
+              {title}
             </Text>
+            <Text
+              color="brand.slate.400"
+              fontSize={{ md: 'sm', base: 'xs' }}
+              fontWeight="400"
+            >
+              {sponsor}
+            </Text>
+            <Flex align={'center'}>
+              <Image w={3} h={3} alt="" src="/assets/icons/dollar.svg" />
+              <Text mr={3} color={'brand.slate.500'} fontSize={'sm'}>
+                {min.toLocaleString()} - {max.toLocaleString()}
+              </Text>
+            </Flex>
           </Flex>
         </Flex>
+        <Link
+          w={24}
+          py={2}
+          color={'brand.slate.400'}
+          textAlign="center"
+          border="1px solid"
+          borderColor={'brand.slate.400'}
+          borderRadius={4}
+          _hover={{
+            textDecoration: 'none',
+            bg: 'brand.slate.400',
+            color: 'white',
+          }}
+          href={`https://earn-frontend-v2.vercel.app/listings/grants/${title
+            .split(' ')
+            .join('-')}`}
+          isExternal
+          onClick={() => {
+            Mixpanel.track('grant_clicked', {
+              'Grant Title': title,
+            });
+          }}
+        >
+          Apply
+        </Link>
       </Flex>
-      <Link
-        w={24}
-        py={2}
-        color={'brand.slate.400'}
-        textAlign="center"
-        border="1px solid"
-        borderColor={'brand.slate.400'}
-        borderRadius={4}
-        _hover={{
-          textDecoration: 'none',
-          bg: 'brand.slate.400',
-          color: 'white',
-        }}
-        href={`https://earn-frontend-v2.vercel.app/listings/grants/${title
-          .split(' ')
-          .join('-')}`}
-        isExternal
-      >
-        Apply
-      </Link>
-    </Flex>
+    </Link>
   );
 };
 
@@ -562,6 +612,10 @@ export const CategoryBanner = ({ type }: { type: string }) => {
               type,
             ]);
             await updateTalent();
+            Mixpanel.track('notification_added', {
+              category: type,
+              name: `${talentInfo?.firstname} ${talentInfo?.lastname}`,
+            });
             setLoading(false);
           }}
           variant="solid"
