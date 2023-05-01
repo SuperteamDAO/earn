@@ -68,6 +68,8 @@ model Submission {
   user               User         @relation(fields: [userId], references: [id])
   listingType        ListingsType @default(BOUNTY)
   listingId          String
+  isWinner           Boolean      @default(false)
+  winnerPosition     String?
 
   @@index([id, listingId])
   @@index([userId])
