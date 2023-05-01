@@ -25,13 +25,8 @@ function BountyDetails({ slug }: BountyDetailsProps) {
     const getBounty = async () => {
       try {
         const bountyDetails = await axios.get(`/api/bounties/${slug}`);
-        console.log(
-          'file: index.tsx:25 ~ getBounty ~ bountyDetails.data:',
-          bountyDetails.data
-        );
         setBounty(bountyDetails.data);
       } catch (e) {
-        console.log('file: index.tsx:20 ~ getBounty ~ e:', e);
         setError(true);
       }
       setIsLoading(false);
@@ -55,7 +50,6 @@ function BountyDetails({ slug }: BountyDetailsProps) {
       <ListingHeader
         id={bounty?.id}
         status={bounty?.status}
-        eligibility={bounty?.eligibility}
         deadline={bounty?.deadline}
         title={bounty?.title ?? ''}
         sponsor={bounty?.sponsor}
@@ -78,8 +72,9 @@ function BountyDetails({ slug }: BountyDetailsProps) {
           <Comments refId={bounty?.id ?? ''} refType="BOUNTY" />
         </VStack>
         <DetailSideCard
+          id={bounty?.id || ''}
           token={bounty?.token as string}
-          eligibility={bounty?.eligibility as string}
+          eligibility={bounty?.eligibility}
           endingTime={bounty?.deadline ?? ''}
           prizeList={bounty?.rewards}
           total={parseInt(bounty?.rewardAmount || '0', 10)}

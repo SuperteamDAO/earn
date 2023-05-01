@@ -13,17 +13,22 @@ import {
   Th,
   Thead,
   Tr,
+  useDisclosure,
   VStack,
 } from '@chakra-ui/react';
 import type { UseMutationResult } from '@tanstack/react-query';
 import moment from 'moment';
+import { useState } from 'react';
 import Countdown from 'react-countdown';
 
 import { VerticalStep } from '@/components/misc/steps';
+import { SubmissionModal } from '@/components/modals/submissionModalBounty';
 import { tokenList } from '@/constants/index';
-import type { Rewards } from '@/interface/bounty';
+import type { Eligibility, Rewards } from '@/interface/bounty';
+import { userStore } from '@/store/user';
 
 interface Props {
+  id: string;
   total?: number;
   prizeList?: Partial<Rewards>;
   onOpen?: () => void;
@@ -43,23 +48,42 @@ interface Props {
     unknown
   >;
   questions?: string;
-  eligibility?: string;
+  eligibility?: Eligibility[];
 }
 function DetailSideCard({
+  id,
   total,
   prizeList,
   endingTime,
   submissionNumber = 0,
   token,
+  eligibility,
 }: Props) {
-  // const { userInfo } = userStore();
+  const { userInfo } = userStore();
+  const { isOpen, onOpen, onClose } = useDisclosure();
+  const [isSubmitted, setIsSubmitted] = useState(false);
   let submissionStatus = 0;
   if (Number(moment(endingTime).format('x')) < Date.now()) {
     submissionStatus = 1;
   }
 
+  const handleSubmit = () => {
+    if (userInfo?.id) {
+      onOpen();
+    }
+  };
+
   return (
     <>
+      {isOpen && (
+        <SubmissionModal
+          id={id}
+          eligibility={eligibility || []}
+          onClose={onClose}
+          isOpen={isOpen}
+          setIsSubmitted={setIsSubmitted}
+        />
+      )}
       <VStack gap={2} pt={10}>
         <VStack
           justify={'center'}
@@ -314,14 +338,29 @@ function DetailSideCard({
               </Flex>
             </Flex>
           </Flex>
-          <Button
-            w={'90%'}
-            color={'white'}
-            bg={'#6562FF'}
-            _hover={{ bg: '#6562FF' }}
-          >
-            Submit Now
-          </Button>
+          <Box w="full" px={5}>
+            {isSubmitted ? (
+              <Button
+                w="full"
+                bg="green"
+                pointerEvents={'none'}
+                isDisabled={true}
+                size="lg"
+                variant="solid"
+              >
+                Already Submitted!
+              </Button>
+            ) : (
+              <Button
+                w="full"
+                onClick={() => handleSubmit()}
+                size="lg"
+                variant="solid"
+              >
+                Submit Now
+              </Button>
+            )}
+          </Box>
         </VStack>
         <VStack
           align={'start'}

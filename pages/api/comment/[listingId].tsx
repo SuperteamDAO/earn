@@ -34,7 +34,7 @@ export default async function comment(
     });
     res.status(200).json(result);
   } catch (error) {
-    res.status(403).json({
+    res.status(400).json({
       error,
       message: `Error occurred while fetching bounty with listingId=${listingId}.`,
     });

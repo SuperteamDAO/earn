@@ -43,19 +43,34 @@ model Bounties {
 }
 
 model Comment {
-  id          String   @id @default(uuid())
-  message     String   @db.VarChar(1000)
+  id          String       @id @default(uuid())
+  message     String       @db.VarChar(1000)
   authorId    String
-  author      User     @relation(fields: [authorId], references: [id])
-  listingType String
+  author      User         @relation(fields: [authorId], references: [id])
+  listingType ListingsType @default(BOUNTY)
   listingId   String
-  isActive    Boolean  @default(true)
-  isArchived  Boolean  @default(false)
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
+  isActive    Boolean      @default(true)
+  isArchived  Boolean      @default(false)
+  createdAt   DateTime     @default(now())
+  updatedAt   DateTime     @updatedAt
 
   @@index([id, listingId])
   @@index([authorId])
+}
+
+model Submission {
+  id                 String       @id @default(uuid())
+  link               String?
+  tweet              String?
+  eligibilityAnswers Json?
+  likes              Int          @default(0)
+  userId             String
+  user               User         @relation(fields: [userId], references: [id])
+  listingType        ListingsType @default(BOUNTY)
+  listingId          String
+
+  @@index([id, listingId])
+  @@index([userId])
 }
 
 model Otp {
@@ -117,6 +132,7 @@ model User {
   UserSponsors     UserSponsors[]
   poc              Bounties[]     @relation("poc")
   Comment          Comment[]
+  Submission       Submission[]
 
   @@index([email, publicKey, username])
 }
@@ -154,4 +170,9 @@ enum Bounties_status {
   OPEN
   REVIEW
   CLOSED
+}
+
+enum ListingsType {
+  BOUNTY
+  JOB
 }

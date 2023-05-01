@@ -1,10 +1,11 @@
+import type { QuestionType } from '@/components/listings/bounty/questions/builder';
 import type { SponsorType } from '@/interface/sponsor';
 import type { User } from '@/interface/user';
 
 interface Eligibility {
-  q1?: string;
-  q2?: string;
-  q3?: string;
+  order: number;
+  question: string;
+  type?: QuestionType;
 }
 
 interface Rewards {
@@ -23,7 +24,7 @@ interface Bounty {
   skills?: string;
   subSkills?: string;
   deadline?: string;
-  eligibility?: Eligibility;
+  eligibility?: Eligibility[];
   status?: 'OPEN' | 'REVIEW' | 'CLOSED';
   isActive?: boolean;
   isPublished?: string;

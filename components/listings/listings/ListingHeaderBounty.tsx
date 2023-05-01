@@ -13,7 +13,6 @@ import { useRouter } from 'next/router';
 import React from 'react';
 import { TbBellRinging } from 'react-icons/tb';
 
-import type { Eligibility } from '@/interface/bounty';
 import type { SponsorType } from '@/interface/sponsor';
 import type { User } from '@/interface/user';
 
@@ -21,7 +20,6 @@ interface Bounty {
   id: string | undefined;
   title: string;
   deadline?: string;
-  eligibility?: Eligibility;
   status?: 'OPEN' | 'REVIEW' | 'CLOSED';
   isActive?: boolean;
   isPublished?: string;
