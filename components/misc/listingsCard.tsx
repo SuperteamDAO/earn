@@ -154,8 +154,7 @@ export const BountiesCard = ({
         _hover={{
           textDecoration: 'none',
         }}
-        href={`https://earn-frontend-v2.vercel.app/listings/bounties/${slug}`}
-        isExternal
+        href={`/bounties/${slug}`}
       >
         <Flex
           align="center"
@@ -229,8 +228,7 @@ export const BountiesCard = ({
               bg: 'brand.slate.400',
               color: 'white',
             }}
-            href={`https://earn-frontend-v2.vercel.app/listings/bounties/${slug}`}
-            isExternal
+            href={`/bounties/${slug}`}
           >
             {Number(moment(due).format('x')) < Date.now()
               ? status === 'close'
