@@ -18,27 +18,44 @@ model Bounties {
   description   String?         @db.VarChar(10000)
   skills        String?
   subSkills     String?
-  deadline      DateTime
+  deadline      DateTime?
   eligibility   Json?
   status        Bounties_status @default(OPEN)
-  isActive      Boolean         @default(true)
-  isPublished   Boolean         @default(false)
-  isFeatured    Boolean         @default(false)
   token         String
   rewardAmount  Int?
   rewards       Json?
   sponsorId     String
   sponsor       Sponsors        @relation(fields: [sponsorId], references: [id])
   pocId         String
-  poc           User            @relation(fields: [pocId], references: [id])
+  poc           User            @relation("poc", fields: [pocId], references: [id])
   source        Bounties_source @default(NATIVE)
   sourceDetails Json?
+  isPublished   Boolean         @default(false)
+  isFeatured    Boolean         @default(false)
+  isActive      Boolean         @default(true)
+  isArchived    Boolean         @default(false)
   createdAt     DateTime        @default(now())
   updatedAt     DateTime        @updatedAt
 
   @@index([id, slug])
   @@index([sponsorId])
   @@index([pocId])
+}
+
+model Comment {
+  id          String   @id @default(uuid())
+  message     String   @db.VarChar(1000)
+  authorId    String
+  author      User     @relation(fields: [authorId], references: [id])
+  listingType String
+  listingId   String
+  isActive    Boolean  @default(true)
+  isArchived  Boolean  @default(false)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@index([id, listingId])
+  @@index([authorId])
 }
 
 model Otp {
@@ -98,7 +115,8 @@ model User {
   notifications    String?
   private          Boolean        @default(false)
   UserSponsors     UserSponsors[]
-  Bounties         Bounties[]
+  poc              Bounties[]     @relation("poc")
+  Comment          Comment[]
 
   @@index([email, publicKey, username])
 }

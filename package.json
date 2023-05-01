@@ -52,6 +52,7 @@
     "chakra-ui-steps": "^2.0.4",
     "cloudinary": "^1.33.0",
     "crypto-js": "^4.1.1",
+    "dayjs": "^1.11.7",
     "degen": "^0.0.121",
     "framer-motion": "^8.5.2",
     "hamburger-react": "^2.5.0",

@@ -5,7 +5,7 @@ import moment from 'moment';
 import toast from 'react-hot-toast';
 import { v4 as uuidV4 } from 'uuid';
 
-import type { Comments } from '../interface/comments';
+import type { Comment } from '../interface/comments';
 import type {
   Bounties,
   DraftType,
@@ -237,7 +237,7 @@ export const createGrants = async (grants: GrantsType) => {
   }
 };
 
-export const createComment = async (comment: Comments) => {
+export const createComment = async (comment: Comment) => {
   const { data, status } = await axios.post(`${BACKEND_URL}/comment/create`, {
     ...comment,
   });

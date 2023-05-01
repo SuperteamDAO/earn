@@ -6,9 +6,10 @@ export default async function user(req: NextApiRequest, res: NextApiResponse) {
   const params = req.query;
   const slug = params.slug as string;
   try {
-    const result = await prisma.bounties.findUnique({
+    const result = await prisma.bounties.findFirst({
       where: {
         slug,
+        isActive: true,
       },
       include: { sponsor: true, poc: true },
     });
