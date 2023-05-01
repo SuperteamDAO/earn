@@ -8,15 +8,6 @@ export default async function submission(
 ) {
   const { userId, listingId, listingType, link, tweet, eligibilityAnswers } =
     req.body;
-  console.log(
-    'file: create.tsx:10 ~ userId, listingId, listingType, link, tweet, eligibilityAnswers:',
-    userId,
-    listingId,
-    listingType,
-    link,
-    tweet,
-    eligibilityAnswers
-  );
   try {
     const result = await prisma.submission.create({
       data: {
@@ -25,12 +16,11 @@ export default async function submission(
         listingType,
         link: link || '',
         tweet: tweet || '',
-        eligibilityAnswers: eligibilityAnswers || null,
+        eligibilityAnswers: eligibilityAnswers || undefined,
       },
     });
     res.status(200).json(result);
   } catch (error) {
-    console.log('file: create.tsx:24 ~ error:', error);
     res.status(400).json({
       error,
       message: 'Error occurred while adding a new submission.',
