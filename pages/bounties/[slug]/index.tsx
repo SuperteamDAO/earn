@@ -5,6 +5,7 @@ import { useEffect, useState } from 'react';
 
 import { Comments } from '@/components/listings/listings/comments';
 import DetailDescription from '@/components/listings/listings/details/detailDescriptionBounty';
+import DetailSideCard from '@/components/listings/listings/details/detailSideCardBounty';
 import ListingHeader from '@/components/listings/listings/ListingHeaderBounty';
 import type { Bounty } from '@/interface/bounty';
 import { Default } from '@/layouts/Default';
@@ -76,20 +77,13 @@ function BountyDetails({ slug }: BountyDetailsProps) {
           />
           <Comments refId={bounty?.id ?? ''} refType="BOUNTY" />
         </VStack>
-        {/* <DetailSideCard
+        <DetailSideCard
           token={bounty?.token as string}
           eligibility={bounty?.eligibility as string}
-          questions={bounty?.Questions?.questions ?? JSON.stringify('[]')}
-          submissionisOpen={submissionisOpen}
-          submissiononClose={submissiononClose}
-          submissiononOpen={submissiononOpen}
-          submissionNumber={bounty?.submission?.length ?? 0}
-          SubmssionMutation={SubmssionMutation}
           endingTime={bounty?.deadline ?? ''}
-          onOpen={onOpen}
-          prizeList={(bounty?.prizeList as PrizeListType) ?? {}}
-          total={parseInt(bounty?.amount as string, 10)}
-        /> */}
+          prizeList={bounty?.rewards}
+          total={parseInt(bounty?.rewardAmount || '0', 10)}
+        />
       </HStack>
     </Default>
   );

@@ -7,6 +7,14 @@ interface Eligibility {
   q3?: string;
 }
 
+interface Rewards {
+  first: number;
+  second?: number;
+  third?: number;
+  forth?: number;
+  fifth?: number;
+}
+
 interface Bounty {
   id: string;
   title: string;
@@ -22,7 +30,7 @@ interface Bounty {
   isFeatured?: string;
   token?: string;
   rewardAmount?: string;
-  rewards?: string;
+  rewards?: Rewards;
   sponsorId?: string;
   sponsor?: SponsorType;
   pocId?: string;
@@ -31,4 +39,4 @@ interface Bounty {
   sourceDetails?: string;
 }
 
-export type { Bounty, Eligibility };
+export type { Bounty, Eligibility, Rewards };
