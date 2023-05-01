@@ -7,8 +7,8 @@ export default async function comment(
   res: NextApiResponse
 ) {
   const params = req.query;
-  console.log('file: [listingId].tsx:10 ~ params:', params);
   const listingId = params.listingId as string;
+  const skip = params.skip ? parseInt(params.skip as string, 10) : 0;
   try {
     const result = await prisma.comment.findMany({
       where: {
@@ -19,8 +19,8 @@ export default async function comment(
       orderBy: {
         updatedAt: 'desc',
       },
-      skip: 0,
-      take: 10,
+      skip: skip ?? 0,
+      take: 30,
       include: {
         author: {
           select: {

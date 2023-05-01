@@ -47,6 +47,7 @@ export const Comments = ({ refId, refType }: Props) => {
       });
       setComments([newCommentData.data, ...comments]);
       setNewComment('');
+      setNewCommentLoading(false);
     } catch (e) {
       setNewCommentError(true);
       setNewCommentLoading(false);
@@ -54,13 +55,14 @@ export const Comments = ({ refId, refType }: Props) => {
   };
 
   const getComments = async (skip = 0) => {
+    setIsLoading(true);
     try {
       const commentsData = await axios.get(`/api/comment/${refId}`, {
         params: {
           skip,
         },
       });
-      setComments(commentsData.data);
+      setComments([...comments, ...commentsData.data]);
     } catch (e) {
       setError(true);
     }
@@ -72,7 +74,7 @@ export const Comments = ({ refId, refType }: Props) => {
     getComments();
   }, []);
 
-  if (isLoading) return <Box>Loading...</Box>;
+  if (isLoading && !comments?.length) return <Box>Loading...</Box>;
 
   if (error) return <Box>Error! Please try again or contact support</Box>;
 
@@ -158,6 +160,21 @@ export const Comments = ({ refId, refType }: Props) => {
             </HStack>
           );
         })}
+        {comments.length % 30 === 0 && (
+          <Flex justify="center" w="full">
+            <Button
+              isDisabled={!!isLoading}
+              isLoading={!!isLoading}
+              loadingText="Fetching Comments..."
+              onClick={() => getComments(comments.length)}
+              rounded="md"
+              size="sm"
+              variant="ghost"
+            >
+              Show More Comments
+            </Button>
+          </Flex>
+        )}
       </VStack>
     </>
   );
