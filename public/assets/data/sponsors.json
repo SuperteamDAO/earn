@@ -1,0 +1,1505 @@
+[
+  {
+    "name": "01 Exchange",
+    "slug": "01-exchange",
+    "url": "https://01.xyz/",
+    "industry": "DeFi",
+    "twitter": "https://twitter.com/01_exchange",
+    "bio": "Secure, trustless & powerful crypto exchange",
+    "logo": "https://res.cloudinary.com/dgvnuwspr/image/upload/v1679901440/sponsors/recVOcPGeakzlflOx.png"
+  },
+  {
+    "name": "Akash Network",
+    "slug": "akash-network",
+    "url": "https://akash.network/",
+    "industry": "Infrastructure",
+    "twitter": "https://twitter.com/akashnet_",
+    "bio": "A decentralized peer-to-peer marketplace for cloud compute",
+    "logo": "https://res.cloudinary.com/dgvnuwspr/image/upload/v1679901437/sponsors/rec52KKdkVAC5VYnN.png"
+  },
+  {
+    "name": "Alchemy",
+    "slug": "alchemy",
+    "url": "https://www.alchemy.com/",
+    "industry": "Infrastructure",
+    "twitter": "https://twitter.com/AlchemyPlatform",
+    "bio": "A set of web3 developer tools built for various chains.",
+    "logo": "https://res.cloudinary.com/dgvnuwspr/image/upload/v1679901439/sponsors/recLnmWoQnhaFm8OH.jpg"
+  },
+  {
+    "name": "Aldrin",
+    "slug": "aldrin",
+    "url": "https://aldrin.com/",
+    "industry": "DeFi",
+    "twitter": "https://twitter.com/Aldrin_Exchange",
+    "bio": "Aldrin’s mission is to simplify DeFi and create powerful tools to help all traders succeed, leading to more equality.",
+    "logo": "https://res.cloudinary.com/dgvnuwspr/image/upload/v1679901437/sponsors/reczWcFpJgiAcwcX1.jpg"
+  },
+  {
+    "name": "Amulet",
+    "slug": "amulet",
+    "url": "http://amulet.org/",
+    "industry": "DeFi",
+    "twitter": "https://twitter.com/AmuletProtocol",
+    "bio": "Building a vision of simple, reliable cover for everyone in Web3",
+    "logo": "https://res.cloudinary.com/dgvnuwspr/image/upload/v1679901435/sponsors/recAqOWvBJn58KH1v.jpg"
+  },
+  {
+    "name": "Apollo",
+    "slug": "apollo",
+    "url": "https://www.apollofirst.xyz/",
+    "industry": "Infrastructure",
+    "twitter": "https://twitter.com/Apollo1HQ",
+    "bio": "Web3 Payments & Loyalty Infrastructure",
+    "logo": "https://res.cloudinary.com/dgvnuwspr/image/upload/v1679901425/sponsors/recU0QADBWwSjag2S.jpg"
+  },
+  {
+    "name": "Arweave",
+    "slug": "arweave",
+    "url": "https://www.arweave.org/",
+    "industry": "Infrastructure",
+    "twitter": "https://twitter.com/arweaveteam",
+    "bio": "A permanent, decentralised information storage network",
+    "logo": "https://res.cloudinary.com/dgvnuwspr/image/upload/v1679901437/sponsors/recv00J7kKnKnQaGa.jpg"
+  },
+  {
+    "name": "Atani",
+    "slug": "atani",
+    "url": "https://atani.com",
+    "industry": "Wallets and Payments",
+    "twitter": "https://twitter.com/Atani_Official",
+    "bio": "One Platform, all things Crypto",
+    "logo": "https://res.cloudinary.com/dgvnuwspr/image/upload/v1679901429/sponsors/recLoC2t2w2qDcZWr.png"
+  },
+  {
+    "name": "Atlantis",
+    "slug": "atlantis",
+    "url": "https://www.atlantians.world/",
+    "industry": "Infrastructure",
+    "twitter": "https://twitter.com/IrthuSuresh",
+    "bio": "Atlantis is a social network fighting climate threats.",
+    "logo": ""
+  },
+  {
+    "name": "Audius",
+    "slug": "audius",
+    "url": "https://audius.co/",
+    "industry": "Consumer dApps",
+    "twitter": "https://twitter.com/AudiusProject",
+    "bio": "Audius is a fully decentralized music platform. Own the masters & the platform.",
+    "logo": "https://res.cloudinary.com/dgvnuwspr/image/upload/v1679901437/sponsors/rec9AGe0Vgxx4tSg7.jpg"
+  },
+  {
+    "name": "Aurory",
+    "slug": "aurory",
+    "url": "https://aurory.io/",
+    "industry": "Gaming",
+    "twitter": "https://twitter.com/AuroryProject",
+    "bio": "Aurory is a free-to-play, tactical, turn-based JRPG built on the Solana blockchain.",
+    "logo": "https://res.cloudinary.com/dgvnuwspr/image/upload/v1679901435/sponsors/reckwYFQZoZECByko.jpg"
+  },
+  {
+    "name": "Backpack",
+    "slug": "backpack",
+    "url": "https://www.backpack.app/",
+    "industry": "Wallets and Payments",
+    "twitter": "https://twitter.com/xNFT_Backpack",
+    "bio": "The home for your xNFTs",
+    "logo": "https://res.cloudinary.com/dgvnuwspr/image/upload/v1679901428/sponsors/recmSjkev4DHrEmey.jpg"
+  },
+  {
+    "name": "BetDex",
+    "slug": "betdex",
+    "url": "https://www.betdex.com/",
+    "industry": "Consumer dApps",
+    "twitter": "https://twitter.com/BetDEXLabs",
+    "bio": "Web3 Sports Betting Exchange",
+    "logo": "https://res.cloudinary.com/dgvnuwspr/image/upload/v1680671720/sponsors/recGMeQn8fjUi0xR9.png"
+  },
+  {
+    "name": "Biconomy",
+    "slug": "biconomy",
+    "url": "https://www.biconomy.io/",
+    "industry": "Infrastructure",
+    "twitter": "https://twitter.com/biconomy",
+    "bio": "Making web3 frictionless & mainstream! Simplifying 100+ dApp partners via powerful APIs",
+    "logo": "https://res.cloudinary.com/dgvnuwspr/image/upload/v1679901429/sponsors/recEquv8oFifoimin.png"
+  },
+  {
+    "name": "Blocksmith Labs",
+    "slug": "blocksmith-labs",
+    "url": "https://www.blocksmithlabs.io/",
+    "industry": "NFTs",
+    "twitter": "https://twitter.com/BlocksmithLabs",
+    "bio": "A team of experienced engineers aiming to solve real problems on Solana, whilst providing utility to our holders. Building a community of builders.",
+    "logo": "https://res.cloudinary.com/dgvnuwspr/image/upload/v1679901439/sponsors/recG8TSpdAfLjGeyA.png"
+  },
+  {
+    "name": "Blockstars",
+    "slug": "blockstars",
+    "url": "https://blockstars.gg/",
+    "industry": "Gaming",
+    "twitter": "https://twitter.com/blockstarsgame",
+    "bio": "The world's first music management simulation game on the blockchain.",
+    "logo": "https://res.cloudinary.com/dgvnuwspr/image/upload/v1679901438/sponsors/recQLxwvnHJsHWm5E.jpg"
+  },
+  {
+    "name": "Bonfida",
+    "slug": "bonfida",
+    "url": "https://bonfida.org/",
+    "industry": "Infrastructure",
+    "twitter": "https://twitter.com/bonfida",
+    "bio": "Delivering blockchain solutions",
+    "logo": "https://res.cloudinary.com/dgvnuwspr/image/upload/v1679901440/sponsors/recARe5jR9gMyaz6v.png"
+  },
+  {
+    "name": "Bridgesplit",
+    "slug": "bridgesplit",
+    "url": "https://www.bridgesplit.com",
+    "industry": "Infrastructure",
+    "twitter": "https://twitter.com/bridgesplit",
+    "bio": "Unlock liquidity for collectibles, real-world assets, and more with Bridgesplit’s network of composable financial primitives",
+    "logo": "https://res.cloudinary.com/dgvnuwspr/image/upload/v1679901437/sponsors/recZSXUlThpsfJbcH.jpg"
+  },
+  {
+    "name": "Caddi formerly Lazy Trade",
+    "slug": "caddi-formerly-lazy-trade",
+    "url": "https://www.lazytrade.io",
+    "industry": "DeFi",
+    "twitter": "https://twitter.com/Lazytrade_io",
+    "bio": "Caddi is the crypto super-app for users with a fragmented portfolio of exchanges and wallets",
+    "logo": "https://res.cloudinary.com/dgvnuwspr/image/upload/v1679901424/sponsors/recNq6O4WqWlsYGmy.png"
+  },
+  {
+    "name": "Castle Finance",
+    "slug": "castle-finance",
+    "url": "https://www.castle.finance/",
+    "industry": "DAOs,DeFi",
+    "twitter": "https://twitter.com/CastleFinance",
+    "bio": "Provides the safest way to earn yield for DAOs and their communities",
+    "logo": "https://res.cloudinary.com/dgvnuwspr/image/upload/v1679901430/sponsors/rectQkRkqo8S3rSHf.jpg"
+  },
+  {
+    "name": "Chainlink",
+    "slug": "chainlink",
+    "url": "https://chain.link/",
+    "industry": "Infrastructure",
+    "twitter": "https://twitter.com/chainlink",
+    "bio": "Oracle network for powering trust-minimized applications across Web2 and Web3",
+    "logo": "https://res.cloudinary.com/dgvnuwspr/image/upload/v1679901440/sponsors/recbGlS3cTrITgo0h.jpg"
+  },
+  {
+    "name": "Coin98",
+    "slug": "coin98",
+    "url": "https://coin98.com/",
+    "industry": "DeFi",
+    "twitter": "https://twitter.com/coin98_wallet",
+    "bio": "All In One DeFi Platform\nTo swap, stake, borrow, lend, invest and earn with crypto at ease",
+    "logo": "https://res.cloudinary.com/dgvnuwspr/image/upload/v1679901429/sponsors/rec8f1CRPfP9BZ2jV.png"
+  },
+  {
+    "name": "CoinDCX",
+    "slug": "coindcx",
+    "url": "https://coindcx.com/",
+    "industry": "DeFi",
+    "twitter": "https://twitter.com/coindcx",
+    "bio": "India's most valued Crypto Investment App",
+    "logo": "https://res.cloudinary.com/dgvnuwspr/image/upload/v1679901429/sponsors/rechgxpWM9YXktuIl.png"
+  },
+  {
+    "name": "Comet",
+    "slug": "comet",
+    "url": "https://www.withcomet.com/",
+    "industry": "Infrastructure",
+    "twitter": "https://twitter.com/joincomet",
+    "bio": "Our vision is to enable frictionless community building for creative projects.",
+    "logo": "https://res.cloudinary.com/dgvnuwspr/image/upload/v1679901428/sponsors/recx8jJOou0iZB3lb.png"
+  },
+  {
+    "name": "Convergence",
+    "slug": "convergence",
+    "url": "https://www.convergence.so/",
+    "industry": "DeFi",
+    "twitter": "https://twitter.com/convergencerfq",
+    "bio": "On chain liquidity coordination protocol",
+    "logo": "https://res.cloudinary.com/dgvnuwspr/image/upload/v1679901431/sponsors/recO9pOJhtCx4fe5A.png"
+  },
+  {
+    "name": "Credix",
+    "slug": "credix",
+    "url": "https://credix.finance/",
+    "industry": "DeFi",
+    "twitter": "https://twitter.com/Credix_finance",
+    "bio": "Credit investing made global. Building the future of global credit markets.",
+    "logo": "https://res.cloudinary.com/dgvnuwspr/image/upload/v1679901439/sponsors/recCzFBPdIMFmfdv5.png"
+  },
+  {
+    "name": "CropBytes",
+    "slug": "cropbytes",
+    "url": "https://www.cropbytes.com/",
+    "industry": "Gaming",
+    "twitter": "https://twitter.com/CropBytes",
+    "bio": "CropBytes is a cryptocurrency game based on the mechanics of real-world economics.",
+    "logo": "https://res.cloudinary.com/dgvnuwspr/image/upload/v1679901427/sponsors/recowncQPoClBtrxh.jpg"
+  },
+  {
+    "name": "Crowdpad",
+    "slug": "crowdpad",
+    "url": "https://www.crowdpad.io",
+    "industry": "Consumer dApps",
+    "twitter": "https://twitter.com/crowdpadcrew",
+    "bio": "A tokenized community building tool made for the everyday creator",
+    "logo": "https://res.cloudinary.com/dgvnuwspr/image/upload/v1679901439/sponsors/recFzC7SL8VOnjOQn.png"
+  },
+  {
+    "name": "Cykura",
+    "slug": "cykura",
+    "url": "https://cykura.io/",
+    "industry": "DeFi",
+    "twitter": "https://twitter.com/cykurafi",
+    "bio": "Pioneering concentrated liquidity on Solana",
+    "logo": "https://res.cloudinary.com/dgvnuwspr/image/upload/v1679901435/sponsors/rec3jbrNNlDowjI74.png"
+  },
+  {
+    "name": "DAOLens",
+    "slug": "daolens",
+    "url": "https://www.daolens.com/",
+    "industry": "DAOs",
+    "twitter": "https://twitter.com/DaoLens",
+    "bio": "Help DAOs effectively onboard, activate and manage their contributors",
+    "logo": "https://res.cloudinary.com/dgvnuwspr/image/upload/v1679901431/sponsors/rec3n5t1OdLAB5Q9l.jpg"
+  },
+  {
+    "name": "Datawisp",
+    "slug": "datawisp",
+    "url": "https://www.datawisp.io/",
+    "industry": "Infrastructure",
+    "twitter": "https://twitter.com/datawisp",
+    "bio": "A no code tool for data analytics and insights",
+    "logo": "https://res.cloudinary.com/dgvnuwspr/image/upload/v1679901428/sponsors/recxDtDz1Q7IiDZ11.png"
+  },
+  {
+    "name": "de_plan",
+    "slug": "de_plan",
+    "url": "https://proto-geo.webflow.io/",
+    "industry": "DAOs",
+    "twitter": "https://twitter.com/de_planDAO",
+    "bio": "We're buidling tools that bridge Web3 - IRL.",
+    "logo": "https://res.cloudinary.com/dgvnuwspr/image/upload/v1679901428/sponsors/rec1fQZTK0BL3pTYa.png"
+  },
+  {
+    "name": "de_plan DAO",
+    "slug": "de_plan-dao",
+    "url": "https://proto-geo.webflow.io/",
+    "industry": "DAOs",
+    "twitter": "https://twitter.com/de_planDAO",
+    "bio": "We're building tools that bridge Web3 <> IRL",
+    "logo": "https://res.cloudinary.com/dgvnuwspr/image/upload/v1679901429/sponsors/recRzuboKi5p6uMmB.png"
+  },
+  {
+    "name": "Dean's List DAO",
+    "slug": "dean's-list-dao",
+    "url": "https://deanslist-website.vercel.app/",
+    "industry": "DAOs",
+    "twitter": "https://twitter.com/deanslistDAO",
+    "bio": "A Service DAO for Web3 power users providing feedback sessions.",
+    "logo": "https://res.cloudinary.com/dgvnuwspr/image/upload/v1679901428/sponsors/recmxmxGggQikfH31.jpg"
+  },
+  {
+    "name": "DeFi Land",
+    "slug": "defi-land",
+    "url": "https://defiland.app/",
+    "industry": "DeFi",
+    "twitter": "https://twitter.com/DeFi_Land",
+    "bio": "DeFi, Gaming, NFTs and Metaverse reimagined in a new and all-in-one game",
+    "logo": "https://res.cloudinary.com/dgvnuwspr/image/upload/v1679901437/sponsors/rec58Daaye6okoAIk.jpg"
+  },
+  {
+    "name": "defiOS",
+    "slug": "defios",
+    "url": "https://www.defi-os.com/",
+    "industry": "Infrastructure",
+    "twitter": "https://twitter.com/defiOSofficial",
+    "bio": "Making Open Source Sustainable for all",
+    "logo": "https://res.cloudinary.com/dgvnuwspr/image/upload/v1679901430/sponsors/recVIprrLdzjZco4D.jpg"
+  },
+  {
+    "name": "Dework",
+    "slug": "dework",
+    "url": "https://app.dework.xyz/",
+    "industry": "DAOs",
+    "twitter": "https://twitter.com/deworkxyz",
+    "bio": "Web3-native Trello + web3-native Fiverr - Productivity Management for the Contributor economy",
+    "logo": "https://res.cloudinary.com/dgvnuwspr/image/upload/v1679901436/sponsors/recKThi0noVhTVp69.png"
+  },
+  {
+    "name": "Dialect",
+    "slug": "dialect",
+    "url": "https://www.dialect.to/",
+    "industry": "Consumer dApps",
+    "twitter": "https://twitter.com/saydialect",
+    "bio": "Mobile wallet-to-wallet messaging, NFT Sticker Packs, and smart messages",
+    "logo": "https://res.cloudinary.com/dgvnuwspr/image/upload/v1679901429/sponsors/recsika8Z0QIBaE6L.jpg"
+  },
+  {
+    "name": "Dispatch",
+    "slug": "dispatch",
+    "url": "https://dispatch.xyz/",
+    "industry": "Consumer dApps",
+    "twitter": "https://twitter.com/dispatchxyz",
+    "bio": "On-chain messaging and analytics platform for web3 projects",
+    "logo": "https://res.cloudinary.com/dgvnuwspr/image/upload/v1679901438/sponsors/recyqR1dWC1bKZ5Ca.jpg"
+  },
+  {
+    "name": "Drift",
+    "slug": "drift",
+    "url": "https://www.drift.trade/",
+    "industry": "DeFi",
+    "twitter": "https://twitter.com/DriftProtocol",
+    "bio": "Drift brings on-chain, cross-margined perpetual swaps to Solana",
+    "logo": "https://res.cloudinary.com/dgvnuwspr/image/upload/v1679901437/sponsors/recCXjrXEgyHo4FVw.jpg"
+  },
+  {
+    "name": "Drift Protocol",
+    "slug": "drift-protocol",
+    "url": "https://www.drift.trade/",
+    "industry": "DeFi",
+    "twitter": "https://twitter.com/DriftProtocol",
+    "bio": "Drift brings on-chain, cross-margined perpetual swaps to Solana",
+    "logo": "https://res.cloudinary.com/dgvnuwspr/image/upload/v1679901437/sponsors/recGiLrdh3qjf29pm.png"
+  },
+  {
+    "name": "Dynamic",
+    "slug": "dynamic",
+    "url": "https://www.dynamic.xyz/",
+    "industry": "Wallets and Payments",
+    "twitter": "https://twitter.com/dynamic_xyz",
+    "bio": "A beautiful, smart and dynamic wallet login flow that just works",
+    "logo": "https://res.cloudinary.com/dgvnuwspr/image/upload/v1679901436/sponsors/recHErPysvVN3JYu7.png"
+  },
+  {
+    "name": "Eclipse",
+    "slug": "eclipse",
+    "url": "https://www.eclipse.builders/",
+    "industry": "Infrastructure",
+    "twitter": "https://twitter.com/EclipseFND",
+    "bio": "The first customizable modular rollups, using the Solana VM.",
+    "logo": "https://res.cloudinary.com/dgvnuwspr/image/upload/v1679901429/sponsors/recvFHNZ5cyGiAt5w.jpg"
+  },
+  {
+    "name": "Elusiv",
+    "slug": "elusiv",
+    "url": "https://twitter.com/elusivprivacy",
+    "industry": "Infrastructure",
+    "twitter": "https://twitter.com/elusivprivacy",
+    "bio": "Web3’s universal encryption layer for a secure decentralized world.",
+    "logo": "https://res.cloudinary.com/dgvnuwspr/image/upload/v1679901428/sponsors/reciXyK0jtBK0ZmYk.svg"
+  },
+  {
+    "name": "Evernew",
+    "slug": "evernew",
+    "url": "https://www.evernewcap.com/",
+    "industry": "DeFi",
+    "twitter": "https://twitter.com/EvernewCapital/",
+    "bio": "Investing in the blockchain multiverse.",
+    "logo": "https://res.cloudinary.com/dgvnuwspr/image/upload/v1679901443/sponsors/recHE5gLez7rQyLya.jpg"
+  },
+  {
+    "name": "Filecoin",
+    "slug": "filecoin",
+    "url": "https://filecoin.io/",
+    "industry": "Infrastructure",
+    "twitter": "https://twitter.com/Filecoin",
+    "bio": "Filecoin is a decentralized storage network designed to store humanity's most important information.",
+    "logo": "https://res.cloudinary.com/dgvnuwspr/image/upload/v1679901429/sponsors/rece2tHt7pw81ln44.png"
+  },
+  {
+    "name": "Fluidity",
+    "slug": "fluidity",
+    "url": "https://www.fluidity.money/",
+    "industry": "DeFi",
+    "twitter": "https://twitter.com/fluiditymoney",
+    "bio": "Fluidity is super powering cryptocurrencies so that they reward you yield when you use them.",
+    "logo": "https://res.cloudinary.com/dgvnuwspr/image/upload/v1679901429/sponsors/rechv2uFf0IrVKWOx.png"
+  },
+  {
+    "name": "Fractal",
+    "slug": "fractal",
+    "url": "https://www.fractal.is/",
+    "industry": "Gaming",
+    "twitter": "https://twitter.com/fractalwagmi",
+    "bio": "the best web3 games",
+    "logo": "https://res.cloudinary.com/dgvnuwspr/image/upload/v1679901439/sponsors/recViZDzqh18qvLmm.png"
+  },
+  {
+    "name": "FRAKT",
+    "slug": "frakt",
+    "url": "https://frakt.xyz/",
+    "industry": "NFTs",
+    "twitter": "https://twitter.com/frakt_hq",
+    "bio": "NFT lending on Solana",
+    "logo": "https://res.cloudinary.com/dgvnuwspr/image/upload/v1679901429/sponsors/recik2gGXztM4HdjL.png"
+  },
+  {
+    "name": "Friktion",
+    "slug": "friktion",
+    "url": "https://friktion.finance",
+    "industry": "DeFi",
+    "twitter": "https://twitter.com/friktion_labs",
+    "bio": "Your destination for smarter and safer returns on crypto",
+    "logo": "https://res.cloudinary.com/dgvnuwspr/image/upload/v1679901434/sponsors/recjjlfJRu5vqS7KL.png"
+  },
+  {
+    "name": "Frontier",
+    "slug": "frontier",
+    "url": "https://frontier.xyz/",
+    "industry": "DeFi",
+    "twitter": "https://twitter.com/FrontierDotXYZ",
+    "bio": "The easiest way to track, send, store, invest in 4000+ assets at a place.",
+    "logo": "https://res.cloudinary.com/dgvnuwspr/image/upload/v1679901436/sponsors/recgdowgvmqriEKC2.png"
+  },
+  {
+    "name": "Gari",
+    "slug": "gari",
+    "url": "https://gari.network/",
+    "industry": "Consumer dApps",
+    "twitter": "https://twitter.com/GariToken",
+    "bio": "Unleashing Creator Economy through Creator Cuts",
+    "logo": "https://res.cloudinary.com/dgvnuwspr/image/upload/v1679901440/sponsors/rec9NuVkFul4ytF9N.jpg"
+  },
+  {
+    "name": "GARI Developer DAO",
+    "slug": "gari-developer-dao",
+    "url": "https://twitter.com/GariDevDAO",
+    "industry": "DAOs",
+    "twitter": "https://twitter.com/GariDevDAO",
+    "bio": "Active contributooor for Work2Earn economy",
+    "logo": "https://res.cloudinary.com/dgvnuwspr/image/upload/v1679901430/sponsors/rec09xOlnXJZtSgG8.jpg"
+  },
+  {
+    "name": "gem.xyz",
+    "slug": "gem.xyz",
+    "url": "https://www.gem.xyz/",
+    "industry": "NFTs",
+    "twitter": "https://twitter.com/gemxyz",
+    "bio": "Building a marketplace-first aggregator focused on NFTs",
+    "logo": "https://res.cloudinary.com/dgvnuwspr/image/upload/v1679901437/sponsors/recEwWkduJC5Y8EwT.png"
+  },
+  {
+    "name": "Glow",
+    "slug": "glow",
+    "url": "https://glow.app",
+    "industry": "Wallets and Payments",
+    "twitter": "https://twitter.com/glowwallet",
+    "bio": "Your new favorite Solana wallet.",
+    "logo": "https://res.cloudinary.com/dgvnuwspr/image/upload/v1679901438/sponsors/recO9VW5rAJwB8V3F.png"
+  },
+  {
+    "name": "Grape Protocol",
+    "slug": "grape-protocol",
+    "url": "https://grapes.network/",
+    "industry": "Infrastructure,DAOs",
+    "twitter": "https://twitter.com/grapeprotocol",
+    "bio": "Decentralized Social Networking on Solana.",
+    "logo": "https://res.cloudinary.com/dgvnuwspr/image/upload/v1679901439/sponsors/recK96fk11Q6I6Kun.png"
+  },
+  {
+    "name": "Grizzlyfi",
+    "slug": "grizzlyfi",
+    "url": "https://www.grizzly.fi/",
+    "industry": "DeFi",
+    "twitter": "https://twitter.com/GrizzlyFi",
+    "bio": "The most intuitive Liquidity Mining platform.",
+    "logo": "https://res.cloudinary.com/dgvnuwspr/image/upload/v1679901440/sponsors/rectOYmk79QiX0dDF.png"
+  },
+  {
+    "name": "Hedge",
+    "slug": "hedge",
+    "url": "https://www.hedge.so/",
+    "industry": "DeFi",
+    "twitter": "https://twitter.com/HedgeLabs",
+    "bio": "Never sell your SOL - 0% interest loans on Solana.",
+    "logo": "https://res.cloudinary.com/dgvnuwspr/image/upload/v1679901439/sponsors/recKi4Pye2vbLyQJX.png"
+  },
+  {
+    "name": "Hedgehog Markets",
+    "slug": "hedgehog-markets",
+    "url": "https://hedgehog.markets/",
+    "industry": "DeFi",
+    "twitter": "https://twitter.com/HedgehogMarket",
+    "bio": "A P2P Prediction Market",
+    "logo": "https://res.cloudinary.com/dgvnuwspr/image/upload/v1679901437/sponsors/reckU7VsZeiNvz0NL.jpg"
+  },
+  {
+    "name": "Heir Company",
+    "slug": "heir-company",
+    "url": "https://www.heir.app/",
+    "industry": "Gaming",
+    "twitter": "https://twitter.com/Heir_Company",
+    "bio": "Jumping the Web2 to Web3 gap by transforming sports fans to owners",
+    "logo": "https://res.cloudinary.com/dgvnuwspr/image/upload/v1679901438/sponsors/recXG427UE7nYCYWs.png"
+  },
+  {
+    "name": "Helius",
+    "slug": "helius",
+    "url": "https://helius.xyz",
+    "industry": "Infrastructure",
+    "twitter": "https://twitter.com/heliuslabs",
+    "bio": "Developer infrastructure for building rich crypto experiences — fast.",
+    "logo": "https://res.cloudinary.com/dgvnuwspr/image/upload/v1679901435/sponsors/recQgqaoIegEHws4V.png"
+  },
+  {
+    "name": "Hive Mapper",
+    "slug": "hive-mapper",
+    "url": "https://hivemapper.com",
+    "industry": "Infrastructure",
+    "twitter": "https://twitter.com/Hivemapper",
+    "bio": "A blockchain-based global map & crypto miner dashcam for decentralized mapping.",
+    "logo": "https://res.cloudinary.com/dgvnuwspr/image/upload/v1679901436/sponsors/recWe3QrRMyWwftFa.png"
+  },
+  {
+    "name": "Honey Finance",
+    "slug": "honey-finance",
+    "url": "https://honey.finance/",
+    "industry": "DeFi",
+    "twitter": "https://twitter.com/honeydefi",
+    "bio": "Honey is empowering NFT collectors with simple financial tools to participate in multichain DeFi",
+    "logo": "https://res.cloudinary.com/dgvnuwspr/image/upload/v1679901429/sponsors/rec0fKaeQKh8SPiR0.jpg"
+  },
+  {
+    "name": "Hubble Protocol",
+    "slug": "hubble-protocol",
+    "url": "https://hubbleprotocol.io/",
+    "industry": "DeFi",
+    "twitter": "https://twitter.com/hubbleprotocol",
+    "bio": "Supercharging Liquidity on Solana",
+    "logo": "https://res.cloudinary.com/dgvnuwspr/image/upload/v1679901436/sponsors/rec7Xdn1gMmYdpWmJ.png"
+  },
+  {
+    "name": "HXRO Network",
+    "slug": "hxro-network",
+    "url": "https://hxro.com/",
+    "industry": "DeFi",
+    "twitter": "https://twitter.com/HxroNetwork",
+    "bio": "A distributed liquidity layer for derivatives trading and betting applications",
+    "logo": ""
+  },
+  {
+    "name": "HydraSwap",
+    "slug": "hydraswap",
+    "url": "https://hydraswap.io/",
+    "industry": "DeFi",
+    "twitter": "https://twitter.com/HydraSwap_io",
+    "bio": "Hydraswap is building a next-gen DEX powered by a superior AMM focused on Liquidity Providers.",
+    "logo": "https://res.cloudinary.com/dgvnuwspr/image/upload/v1679901437/sponsors/recCjpStArRwwmMW8.png"
+  },
+  {
+    "name": "Hyperspace",
+    "slug": "hyperspace",
+    "url": "https://hyperspace.xyz/",
+    "industry": "NFTs",
+    "twitter": "https://twitter.com/hyperspacexyz",
+    "bio": "Solana's best NFT marketplace.\n\nSave money sweeping floors by buying across all marketplaces at once.",
+    "logo": "https://res.cloudinary.com/dgvnuwspr/image/upload/v1679901431/sponsors/rec6zeQtiyoEDuvsC.png"
+  },
+  {
+    "name": "Incento",
+    "slug": "incento",
+    "url": "https://incento.io/",
+    "industry": "DeFi",
+    "twitter": "https://twitter.com/IncentoHQ",
+    "bio": "",
+    "logo": "https://res.cloudinary.com/dgvnuwspr/image/upload/v1679901429/sponsors/recsSj1hDGFsDIvxd.png"
+  },
+  {
+    "name": "IndiGG",
+    "slug": "indigg",
+    "url": "https://www.typeform.com/explore/?utm_source=typeform.com&utm_medium=typeform&utm_content=typeform-incorrectURL&utm_campaign=viral_expt",
+    "industry": "Gaming",
+    "twitter": "https://twitter.com/YGGIndia",
+    "bio": " IndiGG provides you with an opportunity to earn an income while playing video games daily, completely free of cost.",
+    "logo": "https://res.cloudinary.com/dgvnuwspr/image/upload/v1679901440/sponsors/reczy5qmtwkbjMGNl.png"
+  },
+  {
+    "name": "Jet Protocol",
+    "slug": "jet-protocol",
+    "url": "https://www.jetprotocol.io/",
+    "industry": "DeFi",
+    "twitter": "https://twitter.com/JetProtocol",
+    "bio": "A borrowing and lending protocol built",
+    "logo": "https://res.cloudinary.com/dgvnuwspr/image/upload/v1679901438/sponsors/recUsTS9PRbZYq8w8.jpg"
+  },
+  {
+    "name": "JitoSol",
+    "slug": "jitosol",
+    "url": "https://www.jito.network/",
+    "industry": "DeFi",
+    "twitter": "https://twitter.com/jito_sol",
+    "bio": "MEV powered staking rewards",
+    "logo": "https://res.cloudinary.com/dgvnuwspr/image/upload/v1679901428/sponsors/recQY9dKvtJBcBM9e.jpg"
+  },
+  {
+    "name": "Jump",
+    "slug": "jump",
+    "url": "https://jumpcrypto.com/",
+    "industry": "Infrastructure",
+    "twitter": "https://twitter.com/jump_",
+    "bio": "We're builders, partners and traders who take a long-term view of crypto's prospects and operate to unlock the full potential of open, community-driven networks",
+    "logo": "https://res.cloudinary.com/dgvnuwspr/image/upload/v1679901431/sponsors/recAvUYtbbu9sk6F7.jpg"
+  },
+  {
+    "name": "Katana",
+    "slug": "katana",
+    "url": "https://app.katana.so/",
+    "industry": "DeFi",
+    "twitter": "https://twitter.com/katana_hq?lang=en",
+    "bio": "Earn the best risk-adjusted yields on your crypto",
+    "logo": "https://res.cloudinary.com/dgvnuwspr/image/upload/v1679901430/sponsors/recVuHmyhtEtHD1E8.jpg"
+  },
+  {
+    "name": "KOALAS",
+    "slug": "koalas",
+    "url": "https://koalasnft.xyz/",
+    "industry": "NFTs",
+    "twitter": "https://twitter.com/koalasnft_",
+    "bio": "A bunch of cute koalas on Solana. We here to built with the community. 🌴",
+    "logo": "https://res.cloudinary.com/dgvnuwspr/image/upload/v1679924707/sponsors/recGTofRgClCzElRK.png"
+  },
+  {
+    "name": "LamportDAO",
+    "slug": "lamportdao",
+    "url": "https://discord.gg/nENhqwsG",
+    "industry": "Infrastructure",
+    "twitter": "https://twitter.com/LamportDAO",
+    "bio": "A DAO focused on the Solana developer community",
+    "logo": "https://res.cloudinary.com/dgvnuwspr/image/upload/v1679901429/sponsors/recY1MMd8qn65SGYE.jpg"
+  },
+  {
+    "name": "Larix",
+    "slug": "larix",
+    "url": "https://projectlarix.com/",
+    "industry": "DeFi",
+    "twitter": "https://twitter.com/ProjectLarix",
+    "bio": "The first metaverse-based finance protocol on Solana",
+    "logo": "https://res.cloudinary.com/dgvnuwspr/image/upload/v1679901429/sponsors/recnqWc3f7pu5vPRB.png"
+  },
+  {
+    "name": "Lazy Trade",
+    "slug": "lazy-trade",
+    "url": "https://www.caddi.fi/",
+    "industry": "DeFi",
+    "twitter": "https://twitter.com/LazyTrade_io",
+    "bio": "Frictionless CeFi & DeFi trading from any webpage",
+    "logo": "https://res.cloudinary.com/dgvnuwspr/image/upload/v1679901433/sponsors/recdmDWc1mP2Ersy6.png"
+  },
+  {
+    "name": "Lido For Solana",
+    "slug": "lido-for-solana",
+    "url": "https://lido.fi/",
+    "industry": "DeFi",
+    "twitter": "https://twitter.com/lidofinance",
+    "bio": "A Lido-DAO governed liquid staking protocol for the Solana blockchain",
+    "logo": "https://res.cloudinary.com/dgvnuwspr/image/upload/v1679901430/sponsors/recPaYTFjcH6P8myk.jpg"
+  },
+  {
+    "name": "Lifinity",
+    "slug": "lifinity",
+    "url": "https://lifinity.io/",
+    "industry": "DeFi",
+    "twitter": "https://twitter.com/Lifinity_io",
+    "bio": "A DEX built on Solana powered by a proactive market making algorithm and a swap aggregation engine.",
+    "logo": "https://res.cloudinary.com/dgvnuwspr/image/upload/v1679901428/sponsors/recTevWljn3VPatTr.jpg"
+  },
+  {
+    "name": "Little Unsual",
+    "slug": "little-unsual",
+    "url": "https://twitter.com/littleunusualHQ",
+    "industry": "DAOs",
+    "twitter": "https://twitter.com/littleunusualHQ",
+    "bio": "We make the usual a little unusual. A new world media agency powered by  @superteamDAO",
+    "logo": "https://res.cloudinary.com/dgvnuwspr/image/upload/v1679901164/sponsors/recZftsqG1nl6wRtQ.jpg"
+  },
+  {
+    "name": "Luganodes",
+    "slug": "luganodes",
+    "url": "https://luganodes.com/",
+    "industry": "Infrastructure",
+    "twitter": "https://twitter.com/luganodes",
+    "bio": "Running validator nodes on Proof of Stake blockchains such as Polygon, NEAR, ETH 2.0",
+    "logo": "https://res.cloudinary.com/dgvnuwspr/image/upload/v1679901426/sponsors/reczUJ7kaLE4ucEnR.jpg"
+  },
+  {
+    "name": "Magic Eden",
+    "slug": "magic-eden",
+    "url": "https://magiceden.io/",
+    "industry": "NFTs",
+    "twitter": "https://twitter.com/MagicEden",
+    "bio": "Magic Eden is your destination to discover the best and latest NFT collections.",
+    "logo": "https://res.cloudinary.com/dgvnuwspr/image/upload/v1679901436/sponsors/recmK6Ynz8HMpa5Wk.png"
+  },
+  {
+    "name": "Mango Markets",
+    "slug": "mango-markets",
+    "url": "https://mango.markets/",
+    "industry": "DeFi",
+    "twitter": "https://twitter.com/mangomarkets",
+    "bio": "Decentralised, cross-margin trading up to 20x leverage with lightning speed and near-zero fees.",
+    "logo": "https://res.cloudinary.com/dgvnuwspr/image/upload/v1679901439/sponsors/recNmCIUXjg5jCSgq.jpg"
+  },
+  {
+    "name": "Maple Finance",
+    "slug": "maple-finance",
+    "url": "https://maple.finance/",
+    "industry": "DeFi",
+    "twitter": "https://twitter.com/maplefinance",
+    "bio": "Institutional capital marketplace built on the Solana blockchain",
+    "logo": "https://res.cloudinary.com/dgvnuwspr/image/upload/v1679901441/sponsors/recVVngoQvbpYePEM.jpg"
+  },
+  {
+    "name": "MarginFi",
+    "slug": "marginfi",
+    "url": "https://www.marginfi.com/",
+    "industry": "DeFi",
+    "twitter": "https://twitter.com/marginfi",
+    "bio": "Decentralized portfolio margining on Solana",
+    "logo": "https://res.cloudinary.com/dgvnuwspr/image/upload/v1679901439/sponsors/recawBS8A1Jp39lNs.jpg"
+  },
+  {
+    "name": "Marinade Finance",
+    "slug": "marinade-finance",
+    "url": "https://marinade.finance/",
+    "industry": "DeFi",
+    "twitter": "https://twitter.com/MarinadeFinance",
+    "bio": "The first non-custodial liquid staking protocol built on Solana",
+    "logo": "https://res.cloudinary.com/dgvnuwspr/image/upload/v1679901436/sponsors/reczQ88gH45pqXXQe.jpg"
+  },
+  {
+    "name": "Mesha",
+    "slug": "mesha",
+    "url": "https://www.mesha.club/",
+    "industry": "DAOs",
+    "twitter": "https://twitter.com/meshaclub",
+    "bio": "Building the financial stack for web3",
+    "logo": "https://res.cloudinary.com/dgvnuwspr/image/upload/v1679901438/sponsors/reclWBh8D5LPTyegN.jpg"
+  },
+  {
+    "name": "Metacrafters",
+    "slug": "metacrafters",
+    "url": "https://www.metacrafters.io/",
+    "industry": "Gaming",
+    "twitter": "https://twitter.com/metacraftersio",
+    "bio": "Part game, part learning platform",
+    "logo": "https://res.cloudinary.com/dgvnuwspr/image/upload/v1679901431/sponsors/recVtLSCJjKQBxa8d.jpg"
+  },
+  {
+    "name": "Metapass",
+    "slug": "metapass",
+    "url": "https://metapasshq.xyz",
+    "industry": "Consumer dApps",
+    "twitter": "https://twitter.com/metapasshq",
+    "bio": "An onchain ticketing platform that leverages NFTs",
+    "logo": "https://res.cloudinary.com/dgvnuwspr/image/upload/v1679901437/sponsors/recl2yItlKFPWYI55.png"
+  },
+  {
+    "name": "Metaplex",
+    "slug": "metaplex",
+    "url": "http://metaplex.com",
+    "industry": "NFTs",
+    "twitter": "https://twitter.com/metaplex",
+    "bio": "Building open-source tooling for creators, builders, devs, and degens.",
+    "logo": "https://res.cloudinary.com/dgvnuwspr/image/upload/v1679901438/sponsors/recxZRxzWiOaZrGI2.png"
+  },
+  {
+    "name": "Mochi.gg",
+    "slug": "mochi.gg",
+    "url": "https://mochi.gg/",
+    "industry": "Infrastructure",
+    "twitter": "https://twitter.com/mochi_gg_",
+    "bio": "Bring Web3 universe to your Discord server",
+    "logo": ""
+  },
+  {
+    "name": "MonkeDAO",
+    "slug": "monkedao",
+    "url": "https://monkedao.io/",
+    "industry": "NFTs",
+    "twitter": "https://twitter.com/MonkeDAO",
+    "bio": "The first NFT DAO on Solana",
+    "logo": "https://res.cloudinary.com/dgvnuwspr/image/upload/v1679901428/sponsors/recBwwopgvxg7t6DK.png"
+  },
+  {
+    "name": "Moonpay",
+    "slug": "moonpay",
+    "url": "https://www.moonpay.com/",
+    "industry": "Wallets and Payments",
+    "twitter": "https://twitter.com/moonpay",
+    "bio": "Building payments infrastructure for crypto. Our on-and-off-ramp suite of products provides a seamless experience for converting between fiat and crypto.",
+    "logo": "https://res.cloudinary.com/dgvnuwspr/image/upload/v1679901436/sponsors/recQ5Ld6CAxk6WS7S.png"
+  },
+  {
+    "name": "Motley DAO",
+    "slug": "motley-dao",
+    "url": "https://twitter.com/TheMotleyDAO",
+    "industry": "DAOs",
+    "twitter": "https://twitter.com/TheMotleyDAO",
+    "bio": "A decentralized Web3 incubator building super-applications on the Solana blockchain",
+    "logo": ""
+  },
+  {
+    "name": "Mudrex",
+    "slug": "mudrex",
+    "url": "https://mudrex.com/",
+    "industry": "DeFi",
+    "twitter": "https://twitter.com/officialmudrex",
+    "bio": "Autopilot your wealth creation",
+    "logo": "https://res.cloudinary.com/dgvnuwspr/image/upload/v1679901429/sponsors/recl2WzfIqwyRp8Jw.png"
+  },
+  {
+    "name": "Neon Labs",
+    "slug": "neon-labs",
+    "url": "https://neon-labs.org/",
+    "industry": "Infrastructure",
+    "twitter": "https://twitter.com/neonlabsorg",
+    "bio": "Neon enables dApp developers to use Ethereum tooling to scale and get access to Solana",
+    "logo": "https://res.cloudinary.com/dgvnuwspr/image/upload/v1679901430/sponsors/rect25YiUExPUARzp.png"
+  },
+  {
+    "name": "NiftyClick",
+    "slug": "niftyclick",
+    "url": "",
+    "industry": "NFTs",
+    "twitter": "https://twitter.com/niftyclickhq",
+    "bio": "Mint NFTs on Solana from your phone",
+    "logo": "https://res.cloudinary.com/dgvnuwspr/image/upload/v1679901428/sponsors/recAB1TQ8ljYH1ztY.jpg"
+  },
+  {
+    "name": "NOVA",
+    "slug": "nova",
+    "url": "https://novafinance.app/",
+    "industry": "DeFi",
+    "twitter": "https://twitter.com/NovaFinance_",
+    "bio": "Building programmable assets and automating investor strategies on Solana",
+    "logo": "https://res.cloudinary.com/dgvnuwspr/image/upload/v1679901439/sponsors/recXGuuTDVbxohVNj.png"
+  },
+  {
+    "name": "Nyan Heroes",
+    "slug": "nyan-heroes",
+    "url": "https://nyanheroes.com/",
+    "industry": "Gaming",
+    "twitter": "https://twitter.com/nyanheroes",
+    "bio": "Nyan Heroes is a F2P Play-And-Earn Battle Royale built on the Solana blockchain.",
+    "logo": "https://res.cloudinary.com/dgvnuwspr/image/upload/v1679901427/sponsors/rec3RX7tNilJDDTHM.jpg"
+  },
+  {
+    "name": "OpenBook",
+    "slug": "openbook",
+    "url": "https://openserum.io/",
+    "industry": "DeFi",
+    "twitter": "https://twitter.com/openbookdex",
+    "bio": "A fork of Serum v3 on a newly deployed program ID",
+    "logo": "https://res.cloudinary.com/dgvnuwspr/image/upload/v1679901428/sponsors/recyJCaR41MbOozYw.png"
+  },
+  {
+    "name": "Orbis",
+    "slug": "orbis",
+    "url": "https://orbis.club/",
+    "industry": "Consumer dApps",
+    "twitter": "https://twitter.com/OrbisClub",
+    "bio": "Making it easy to build fast & decentralized social experiences",
+    "logo": "https://res.cloudinary.com/dgvnuwspr/image/upload/v1679901429/sponsors/recjpFSR85unBNXFe.png"
+  },
+  {
+    "name": "Orca",
+    "slug": "orca",
+    "url": "https://orca.so",
+    "industry": "DeFi",
+    "twitter": "https://twitter.com/orca_so",
+    "bio": "Solana’s most user-friendly concentrated liquidity AMM.",
+    "logo": "https://res.cloudinary.com/dgvnuwspr/image/upload/v1679901440/sponsors/recVGT8KiDZrP6gaF.png"
+  },
+  {
+    "name": "Parcl",
+    "slug": "parcl",
+    "url": "https://www.parcl.co/",
+    "industry": "Consumer dApps",
+    "twitter": "https://twitter.com/parcl",
+    "bio": "Digital real estate protocol built on Solana",
+    "logo": "https://res.cloudinary.com/dgvnuwspr/image/upload/v1679901437/sponsors/recLR5REeXUZG74tJ.jpg"
+  },
+  {
+    "name": "Parrot.fi",
+    "slug": "parrot.fi",
+    "url": "https://parrot.fi/",
+    "industry": "DeFi",
+    "twitter": "https://twitter.com/gopartyparrot",
+    "bio": "Liquidity Network for Lending & Borrowing",
+    "logo": "https://res.cloudinary.com/dgvnuwspr/image/upload/v1679901429/sponsors/rec2RGHPPBxpAKNCv.png"
+  },
+  {
+    "name": "Phantasia Sports",
+    "slug": "phantasia-sports",
+    "url": "https://phantasia.app",
+    "industry": "Consumer dApps",
+    "twitter": "https://twitter.com/PhantasiaSports",
+    "bio": "The Future of Fantasy Football",
+    "logo": "https://res.cloudinary.com/dgvnuwspr/image/upload/v1679901436/sponsors/rec7bih9BSYuEKTHl.png"
+  },
+  {
+    "name": "Phantom",
+    "slug": "phantom",
+    "url": "https://phantom.app/",
+    "industry": "Wallets and Payments",
+    "twitter": "https://twitter.com/phantom",
+    "bio": "A friendly Solana wallet built for DeFi & NFTs.",
+    "logo": "https://res.cloudinary.com/dgvnuwspr/image/upload/v1679901436/sponsors/recnEFBxKa4VGIt4b.png"
+  },
+  {
+    "name": "Phoenix",
+    "slug": "phoenix",
+    "url": "https://www.youtube.com/watch?v=i1IKnWDecwA",
+    "industry": "Gaming",
+    "twitter": "https://twitter.com/phoenix",
+    "bio": "-",
+    "logo": "https://res.cloudinary.com/dgvnuwspr/image/upload/v1679901436/sponsors/recNuWkRKx2jwM7w7.png"
+  },
+  {
+    "name": "Pillow",
+    "slug": "pillow",
+    "url": "https://www.pillow.fund/",
+    "industry": "DeFi",
+    "twitter": "https://twitter.com/PillowFund",
+    "bio": "Save, earn and do more with crypto. Invest your USDC, BTC, ETH, etc. seamlessly.",
+    "logo": "https://res.cloudinary.com/dgvnuwspr/image/upload/v1679901429/sponsors/recHUOnAC7xZDb8F4.png"
+  },
+  {
+    "name": "Polkastarter",
+    "slug": "polkastarter",
+    "url": "https://polkastarter.com/",
+    "industry": "DeFi",
+    "twitter": "https://twitter.com/polkastarter",
+    "bio": "Empowering projects to launch decentralized and interoperable token pools and auctions.",
+    "logo": "https://res.cloudinary.com/dgvnuwspr/image/upload/v1679901431/sponsors/recqQLWRRuXvTRjoY.jpg"
+  },
+  {
+    "name": "Port Finance",
+    "slug": "port-finance",
+    "url": "https://www.port.finance/",
+    "industry": "DeFi",
+    "twitter": "https://twitter.com/port_finance",
+    "bio": "A suite of money market products built on Solana",
+    "logo": "https://res.cloudinary.com/dgvnuwspr/image/upload/v1679901438/sponsors/rec92XYgW4bP9pe6A.jpg"
+  },
+  {
+    "name": "Push Protocol",
+    "slug": "push-protocol",
+    "url": "https://push.org/",
+    "industry": "Infrastructure",
+    "twitter": "https://twitter.com/pushprotocol",
+    "bio": "Push Protocol is a web3 communication network, enabling cross-chain notifications and messaging for dapps, wallets, and services.",
+    "logo": ""
+  },
+  {
+    "name": "PYOR",
+    "slug": "pyor",
+    "url": "https://www.pyor.xyz/",
+    "industry": "Infrastructure",
+    "twitter": "https://twitter.com/PYOR_Edge",
+    "bio": "Enabling high fidelity insights and data in Web3",
+    "logo": "https://res.cloudinary.com/dgvnuwspr/image/upload/v1679901428/sponsors/recx5we4fjLugEJnl.png"
+  },
+  {
+    "name": "Pyth",
+    "slug": "pyth",
+    "url": "https://pyth.network",
+    "industry": "DeFi",
+    "twitter": "https://twitter.com/PythNetwork",
+    "bio": "Smarter data for smarter contracts.",
+    "logo": "https://res.cloudinary.com/dgvnuwspr/image/upload/v1679901439/sponsors/rece8KEEvBTh5KQTd.png"
+  },
+  {
+    "name": "QuillHash",
+    "slug": "quillhash",
+    "url": "https://www.quillhash.com/",
+    "industry": "DeFi",
+    "twitter": "https://twitter.com/QuillHash",
+    "bio": "Pioneer in developing enterprise-grade Blockchain solutions",
+    "logo": "https://res.cloudinary.com/dgvnuwspr/image/upload/v1679901431/sponsors/rec8sKyrwWr6C5FAU.jpg"
+  },
+  {
+    "name": "Raydium",
+    "slug": "raydium",
+    "url": "https://raydium.io/",
+    "industry": "DeFi",
+    "twitter": "https://twitter.com/RaydiumProtocol",
+    "bio": "An on-chain order book AMM powering the evolution of DeFi",
+    "logo": "https://res.cloudinary.com/dgvnuwspr/image/upload/v1679901430/sponsors/recsRvVayrSN8cS1G.png"
+  },
+  {
+    "name": "rCTF",
+    "slug": "rctf",
+    "url": "https://rctf.redpwn.net/",
+    "industry": "Infrastructure",
+    "twitter": "https://twitter.com/idekCTF",
+    "bio": "rCTF is redpwnCTF's CTF platform. It is developed and maintained by the redpwn CTF team.",
+    "logo": "https://res.cloudinary.com/dgvnuwspr/image/upload/v1679901428/sponsors/recUjxsumqo0NmIrU.png"
+  },
+  {
+    "name": "Rentii",
+    "slug": "rentii",
+    "url": "https://www.rentii.xyz",
+    "industry": "Consumer dApps",
+    "twitter": "https://twitter.com/rentii_nft",
+    "bio": "NFT renting marketplace",
+    "logo": "https://res.cloudinary.com/dgvnuwspr/image/upload/v1679901429/sponsors/rectfXPn1Wf9iYstr.png"
+  },
+  {
+    "name": "Saber",
+    "slug": "saber",
+    "url": "https://saber.so",
+    "industry": "DeFi",
+    "twitter": "https://twitter.com/Saber_HQ",
+    "bio": "The leading stableswap AMM on Solana",
+    "logo": "https://res.cloudinary.com/dgvnuwspr/image/upload/v1679901436/sponsors/recUPe5aPxG2kv2hw.png"
+  },
+  {
+    "name": "Samudai",
+    "slug": "samudai",
+    "url": "https://samudai.xyz",
+    "industry": "DAOs",
+    "twitter": "https://twitter.com/samudaixyz",
+    "bio": "Uniting the DAOverse",
+    "logo": "https://res.cloudinary.com/dgvnuwspr/image/upload/v1679901431/sponsors/reclgtZsNyBN6oQtA.jpg"
+  },
+  {
+    "name": "Saros Finance",
+    "slug": "saros-finance",
+    "url": "https://saros.finance/",
+    "industry": "DeFi",
+    "twitter": "https://twitter.com/Saros_Finance",
+    "bio": "A DeFi Super-Network Built on Solana",
+    "logo": "https://res.cloudinary.com/dgvnuwspr/image/upload/v1679901429/sponsors/recekjOozL7eSHuom.jpg"
+  },
+  {
+    "name": "Scream Society",
+    "slug": "scream-society",
+    "url": "https://discord.gg/cnEQu6gFnN",
+    "industry": "Infrastructure",
+    "twitter": "https://twitter.com/s_c_r_e_a_m_sol",
+    "bio": "Cryptos harbinger of love 💓 | The Good of Mankind | Environment | Spiritual Nirvana 🕸️ | Bettering the Solana experience",
+    "logo": "https://res.cloudinary.com/dgvnuwspr/image/upload/v1680664233/sponsors/rectLl0VFlttONsNK.jpg"
+  },
+  {
+    "name": "Seahorse",
+    "slug": "seahorse",
+    "url": "https://seahorse-lang.org/",
+    "industry": "Infrastructure",
+    "twitter": "https://twitter.com/seahorse_lang?s=20&t=Noquq4ooCfDeN2ia4ikvQA",
+    "bio": "Framework for developing Solana programs in Python",
+    "logo": "https://res.cloudinary.com/dgvnuwspr/image/upload/v1679901429/sponsors/rec8PEYC2xIaDKJBI.jpg"
+  },
+  {
+    "name": "Slope",
+    "slug": "slope",
+    "url": "https://slope.finance/#/",
+    "industry": "Wallets and Payments",
+    "twitter": "https://twitter.com/slope_finance",
+    "bio": "The easiest way to discover web3 applications",
+    "logo": "https://res.cloudinary.com/dgvnuwspr/image/upload/v1679901441/sponsors/recc0wdkcwdSzygo0.png"
+  },
+  {
+    "name": "Solana",
+    "slug": "solana",
+    "url": "https://solana.com/",
+    "industry": "Infrastructure",
+    "twitter": "https://twitter.com/solana",
+    "bio": "Solana is a blockchain built for mass adoption. Fast, composable, green, and globally distributed.",
+    "logo": "https://res.cloudinary.com/dgvnuwspr/image/upload/v1679901440/sponsors/rec4nwrZWqA3rOhKN.png"
+  },
+  {
+    "name": "Solana Cookbook",
+    "slug": "solana-cookbook",
+    "url": "https://solanacookbook.com/",
+    "industry": "Education",
+    "twitter": "https://twitter.com/SolanaCookbook",
+    "bio": "The Solana Cookbook is a developer resource that provides the essential concepts and recipes for building applications on Solana.",
+    "logo": "https://res.cloudinary.com/dgvnuwspr/image/upload/v1679901430/sponsors/recJHtWl9YNiLDXFa.png"
+  },
+  {
+    "name": "Solana Foundation",
+    "slug": "solana-foundation",
+    "url": "https://solana.org",
+    "industry": "Wallets and Payments",
+    "twitter": "https://twitter.com/solanafndn",
+    "bio": "Solana Foundation is a non-profit organization dedicated to the decentralization, growth, and security of the Solana network.",
+    "logo": "https://res.cloudinary.com/dgvnuwspr/image/upload/v1679901428/sponsors/recSebJYV9a42kj2v.jpg"
+  },
+  {
+    "name": "Solana Spaces",
+    "slug": "solana-spaces",
+    "url": "https://solanaspaces.com",
+    "industry": "Consumer dApps",
+    "twitter": "https://twitter.com/solanaspaces",
+    "bio": "IRL Solana Stores",
+    "logo": "https://res.cloudinary.com/dgvnuwspr/image/upload/v1679901432/sponsors/recozlaoq9rEWpVqe.png"
+  },
+  {
+    "name": "SolanaFM",
+    "slug": "solanafm",
+    "url": "https://solana.fm",
+    "industry": "Infrastructure",
+    "twitter": "https://twitter.com/solanafm",
+    "bio": "The easiest explorer in Solana.",
+    "logo": "https://res.cloudinary.com/dgvnuwspr/image/upload/v1679901436/sponsors/recPAA2UbP8ds0JZj.png"
+  },
+  {
+    "name": "SolDev",
+    "slug": "soldev",
+    "url": "https://soldev.app/",
+    "industry": "Education",
+    "twitter": "https://twitter.com/soldevapp",
+    "bio": "Solana’s Developer Site | A must-bookmark for building in Solana whether you’re new or an expert",
+    "logo": "https://res.cloudinary.com/dgvnuwspr/image/upload/v1679901429/sponsors/recojr0uKrrjQUwpE.png"
+  },
+  {
+    "name": "Solend",
+    "slug": "solend",
+    "url": "https://solend.fi",
+    "industry": "DeFi",
+    "twitter": "https://twitter.com/solendprotocol",
+    "bio": "Algorithmic, decentralized lending and borrowing protocol on Solana",
+    "logo": "https://res.cloudinary.com/dgvnuwspr/image/upload/v1679901438/sponsors/rec04GdJR4uIEX2LV.jpg"
+  },
+  {
+    "name": "SolRazr",
+    "slug": "solrazr",
+    "url": "https://solrazr.com/",
+    "industry": "Infrastructure",
+    "twitter": "https://twitter.com/Solrazr_App",
+    "bio": "SolRazr is the first decentralised developer ecosystem for Solana",
+    "logo": "https://res.cloudinary.com/dgvnuwspr/image/upload/v1679901429/sponsors/recCwphEJN8YuizOV.png"
+  },
+  {
+    "name": "Solsea",
+    "slug": "solsea",
+    "url": "https://solsea.io/",
+    "industry": "NFTs",
+    "twitter": "https://twitter.com/SolSeaNFT",
+    "bio": "The All-in-one Solana NFT Marketplace.",
+    "logo": "https://res.cloudinary.com/dgvnuwspr/image/upload/v1679901437/sponsors/recN3qntalfx0ddqc.png"
+  },
+  {
+    "name": "SolStore",
+    "slug": "solstore",
+    "url": "https://solstore.fun",
+    "industry": "Wallets and Payments",
+    "twitter": "https://twitter.com/solstoreapp",
+    "bio": "You see me",
+    "logo": "https://res.cloudinary.com/dgvnuwspr/image/upload/v1679901431/sponsors/recRF1Qwo3qhiKcHn.png"
+  },
+  {
+    "name": "Solvent.xyz",
+    "slug": "solvent.xyz",
+    "url": "https://solvent.xyz/",
+    "industry": "NFTs",
+    "twitter": "https://twitter.com/solventprotocol",
+    "bio": "Buy, sell or earn yield on your NFTs instantly using our liquidity platform built on Solana.",
+    "logo": "https://res.cloudinary.com/dgvnuwspr/image/upload/v1679901429/sponsors/recORtqps2TQozDdu.jpg"
+  },
+  {
+    "name": "SonarWatch",
+    "slug": "sonarwatch",
+    "url": "https://sonar.watch/",
+    "industry": "DeFi",
+    "twitter": "https://twitter.com/Sonarwatch",
+    "bio": "Your dashboard on Solana",
+    "logo": "https://res.cloudinary.com/dgvnuwspr/image/upload/v1679901434/sponsors/recN0hFKEwSAQRKQ6.png"
+  },
+  {
+    "name": "Soulcery",
+    "slug": "soulcery",
+    "url": "https://soulcery.xyz",
+    "industry": "Gaming",
+    "twitter": "https://twitter.com/SoulceryGames",
+    "bio": "Zero-code game engine powered by Solana. Quickly and easily create community-driven blockchain games and integrate NFTs into them.",
+    "logo": "https://res.cloudinary.com/dgvnuwspr/image/upload/v1679901429/sponsors/recjkVH8VxIy7rN0w.png"
+  },
+  {
+    "name": "Squads",
+    "slug": "squads",
+    "url": "https://squads.so/",
+    "industry": "DAOs",
+    "twitter": "https://twitter.com/squadsprotocol",
+    "bio": "The multisig standard you were looking for on Solana.",
+    "logo": "https://res.cloudinary.com/dgvnuwspr/image/upload/v1679901438/sponsors/recYiTLHNreTzC6pD.png"
+  },
+  {
+    "name": "Stader Labs",
+    "slug": "stader-labs",
+    "url": "https://staderlabs.com/",
+    "industry": "DeFi",
+    "twitter": "https://twitter.com/staderlabs",
+    "bio": "The All-in-one Solana NFT Marketplace.",
+    "logo": "https://res.cloudinary.com/dgvnuwspr/image/upload/v1679901439/sponsors/recYBaXdJVSz74y7Q.jpg"
+  },
+  {
+    "name": "Star Atlas",
+    "slug": "star-atlas",
+    "url": "https://staratlas.com/",
+    "industry": "Gaming",
+    "twitter": "https://twitter.com/staratlas",
+    "bio": "A grand strategy game of space exploration, territorial conquest, political domination, and more.",
+    "logo": "https://res.cloudinary.com/dgvnuwspr/image/upload/v1679901432/sponsors/rec94sFQbrNWQpI14.png"
+  },
+  {
+    "name": "Stardust",
+    "slug": "stardust",
+    "url": "https://www.stardust.gg/",
+    "industry": "Gaming",
+    "twitter": "https://twitter.com/stardust",
+    "bio": "Stardust is the easiest way to create and implement NFTs in your game.",
+    "logo": "https://res.cloudinary.com/dgvnuwspr/image/upload/v1679901435/sponsors/recrOevM1j40jXF5I.jpg"
+  },
+  {
+    "name": "StellarSOL",
+    "slug": "stellarsol",
+    "url": "https://stellarsol.app",
+    "industry": "Wallets and Payments",
+    "twitter": "https://twitter.com/StellarSOLApp",
+    "bio": "Pay with Solana anytime, anywhere.",
+    "logo": "https://res.cloudinary.com/dgvnuwspr/image/upload/v1679901437/sponsors/recofP5ROebcmFrns.jpg"
+  },
+  {
+    "name": "Step Finance",
+    "slug": "step-finance",
+    "url": "https://www.step.finance/",
+    "industry": "Infrastructure",
+    "twitter": "https://twitter.com/StepFinance_",
+    "bio": "Solana Portfolio and Data Insights Dashboard",
+    "logo": ""
+  },
+  {
+    "name": "StepN",
+    "slug": "stepn",
+    "url": "https://stepn.xyz",
+    "industry": "Consumer dApps",
+    "twitter": "https://twitter.com/Stepnofficial",
+    "bio": "STEPN is a web3 lifestyle app with social & game elements.",
+    "logo": "https://res.cloudinary.com/dgvnuwspr/image/upload/v1679901437/sponsors/recUsf9YxDT2u0zX8.jpg"
+  },
+  {
+    "name": "Streamflow Finance",
+    "slug": "streamflow-finance",
+    "url": "https://streamflow.finance/",
+    "industry": "Wallets and Payments",
+    "twitter": "https://twitter.com/streamflow_fi",
+    "bio": "Token distribution platform. Token vesting, stream payments, batch payments ✌ ",
+    "logo": "https://res.cloudinary.com/dgvnuwspr/image/upload/v1679901438/sponsors/recvxEf1l6ENpUb40.png"
+  },
+  {
+    "name": "Superteam",
+    "slug": "superteam",
+    "url": "https://superteam.fun/",
+    "industry": "Infrastructure",
+    "twitter": "https://twitter.com/SuperteamDAO",
+    "bio": "A network of individuals and companies building products in the Solana ecosystem",
+    "logo": "https://res.cloudinary.com/dgvnuwspr/image/upload/v1679901429/sponsors/rec05sLQOSZlpAial.png"
+  },
+  {
+    "name": "Superteam Germany",
+    "slug": "superteam-germany",
+    "url": "https://de.superteam.fun",
+    "industry": "DAOs",
+    "twitter": "https://twitter.com/SuperteamDE",
+    "bio": "The German Superteam.",
+    "logo": "https://res.cloudinary.com/dgvnuwspr/image/upload/v1680563012/sponsors/recDH2T4vsTezh3Je.png"
+  },
+  {
+    "name": "Swim Protocol",
+    "slug": "swim-protocol",
+    "url": "https://swim.io/",
+    "industry": "DeFi",
+    "twitter": "https://twitter.com/SwimProtocol",
+    "bio": "Enables cross-chain swaps by establishing liquidity pools of two or more tokens across multiple blockchains.",
+    "logo": "https://res.cloudinary.com/dgvnuwspr/image/upload/v1679901431/sponsors/recyUGBF8HhBVmV4D.jpg"
+  },
+  {
+    "name": "Switchboard",
+    "slug": "switchboard",
+    "url": "https://switchboard.xyz/",
+    "industry": "Infrastructure",
+    "twitter": "https://twitter.com/switchboardxyz",
+    "bio": "Permission-less, customizable, multi-chain oracle protocol for general-purpose data feeds & verifiable randomness!",
+    "logo": "https://res.cloudinary.com/dgvnuwspr/image/upload/v1679901429/sponsors/recDEGpTCtov0gb1Z.png"
+  },
+  {
+    "name": "Symmetry",
+    "slug": "symmetry",
+    "url": "https://symmetry.fi",
+    "industry": "Infrastructure",
+    "twitter": "https://twitter.com/symmetry_fi",
+    "bio": "On-chain asset management infrastructure",
+    "logo": "https://res.cloudinary.com/dgvnuwspr/image/upload/v1679901436/sponsors/recyR5dSySVkJZKYi.png"
+  },
+  {
+    "name": "Syndica",
+    "slug": "syndica",
+    "url": "https://syndica.io/",
+    "industry": "Infrastructure",
+    "twitter": "https://twitter.com/Syndica_io",
+    "bio": "Scalable infrastructure for Solana & Web3",
+    "logo": "https://res.cloudinary.com/dgvnuwspr/image/upload/v1679901437/sponsors/recAA6TrOX3ry4oxU.png"
+  },
+  {
+    "name": "Taki",
+    "slug": "taki",
+    "url": "https://taki.app/",
+    "industry": "Consumer dApps",
+    "twitter": "https://twitter.com/takiapp",
+    "bio": "Taki is a token-powered social network where you can earn a daily income by simply posting content and chatting with others.",
+    "logo": "https://res.cloudinary.com/dgvnuwspr/image/upload/v1679901429/sponsors/rec3vgdbXLRd3KCy1.png"
+  },
+  {
+    "name": "Teesta",
+    "slug": "teesta",
+    "url": "https://www.linkedin.com/in/deepak-jangra-a044a6109/?originalSubdomain=in",
+    "industry": "Consumer dApps",
+    "twitter": "",
+    "bio": "India's largest crypto trading firm with a turnover of $500 million",
+    "logo": "https://res.cloudinary.com/dgvnuwspr/image/upload/v1679901431/sponsors/recof17zknmVDEjnj.png"
+  },
+  {
+    "name": "Tensor",
+    "slug": "tensor",
+    "url": "https://www.tensor.trade/",
+    "industry": "NFTs",
+    "twitter": "https://twitter.com/tensor_hq",
+    "bio": "Tensor is building the fastest and most advanced trading platform for NFTs, backed by Placeholder, Solana Ventures, Alliance and Anatoly Yakovenko & Raj Gokal.",
+    "logo": ""
+  },
+  {
+    "name": "The Graph",
+    "slug": "the-graph",
+    "url": "https://thegraph.com/",
+    "industry": "Infrastructure",
+    "twitter": "https://twitter.com/graphprotocol",
+    "bio": "The Graph is a web3 protocol for indexing and querying blockchain data with GraphQL",
+    "logo": "https://res.cloudinary.com/dgvnuwspr/image/upload/v1679901434/sponsors/rec12kTblg0UHUvZI.png"
+  },
+  {
+    "name": "Timeswap",
+    "slug": "timeswap",
+    "url": "https://timeswap.io/",
+    "industry": "Infrastructure",
+    "twitter": "https://twitter.com/TimeswapLabs",
+    "bio": "Timeswap is the first fully permissionless, oracle-less, non-liquidatable, fixed maturity lending & borrowing protocol.",
+    "logo": "https://res.cloudinary.com/dgvnuwspr/image/upload/v1679901428/sponsors/recx66fAYTenkyHyJ.png"
+  },
+  {
+    "name": "Triton One",
+    "slug": "triton-one",
+    "url": "https://triton.one/",
+    "industry": "Infrastructure",
+    "twitter": "https://twitter.com/triton_one",
+    "bio": "Fast, reliable and scalable Solana RPC access",
+    "logo": "https://res.cloudinary.com/dgvnuwspr/image/upload/v1679901438/sponsors/recS11RgLuCLPfV3X.jpg"
+  },
+  {
+    "name": "Tulip Protocol",
+    "slug": "tulip-protocol",
+    "url": "https://tulip.garden/",
+    "industry": "DeFi",
+    "twitter": "https://twitter.com/TulipProtocol",
+    "bio": "Solana's Yield Aggregation Homestead",
+    "logo": "https://res.cloudinary.com/dgvnuwspr/image/upload/v1679901442/sponsors/recBxsKiLumUO5ZLi.png"
+  },
+  {
+    "name": "Underdog Protocol",
+    "slug": "underdog-protocol",
+    "url": "https://underdogprotocol.com/",
+    "industry": "NFTs",
+    "twitter": "https://twitter.com/tonyplasencia3",
+    "bio": "Gasless API to integrate your web2 workflows into web3 through reputation and NFTs",
+    "logo": "https://res.cloudinary.com/dgvnuwspr/image/upload/v1679901428/sponsors/recMGnj7KVnaj7jv6.jpg"
+  },
+  {
+    "name": "UXD Protocol",
+    "slug": "uxd-protocol",
+    "url": "https://uxd.fi/",
+    "industry": "DeFi",
+    "twitter": "https://twitter.com/UXDProtocol",
+    "bio": "Fully collateralized decentralized stablecoin backed by delta-neutral position using derivatives.",
+    "logo": "https://res.cloudinary.com/dgvnuwspr/image/upload/v1679901429/sponsors/recr6H6Ofpv0SsWSb.png"
+  },
+  {
+    "name": "Web3 Builders Alliance",
+    "slug": "web3-builders-alliance",
+    "url": "https://web3builders.dev/",
+    "industry": "Education",
+    "twitter": "https://twitter.com/ComeBuidlwithUs",
+    "bio": "A Dev House Built on Top of a Leading Web3 Training Institute.",
+    "logo": ""
+  },
+  {
+    "name": "Web3Auth",
+    "slug": "web3auth",
+    "url": "https://web3auth.io/",
+    "industry": "Infrastructure",
+    "twitter": "https://twitter.com/web3auth",
+    "bio": "Simple self-custodial auth infra for Web3 apps and wallets",
+    "logo": "https://res.cloudinary.com/dgvnuwspr/image/upload/v1679901435/sponsors/recaJXunrYiulT6dJ.png"
+  },
+  {
+    "name": "Webaverse",
+    "slug": "webaverse",
+    "url": "https://webaverse.com/",
+    "industry": "Gaming",
+    "twitter": "https://twitter.com/webaverse",
+    "bio": "Building an open source feature packed web-based game engine to manifest the best version of the Metaverse.",
+    "logo": "https://res.cloudinary.com/dgvnuwspr/image/upload/v1679901437/sponsors/recBpWyvOaEOm25sd.jpg"
+  },
+  {
+    "name": "Wordcel",
+    "slug": "wordcel",
+    "url": "https://wordcelclub.com",
+    "industry": "Consumer dApps",
+    "twitter": "https://twitter.com/wordcel_club",
+    "bio": "Building the Layer0 of Social Connections and Information Sharing on Solana",
+    "logo": "https://res.cloudinary.com/dgvnuwspr/image/upload/v1679901429/sponsors/rec3t0MA4fuyIUbjZ.png"
+  },
+  {
+    "name": "Worldcoin",
+    "slug": "worldcoin",
+    "url": "https://worldcoin.org/",
+    "industry": "DeFi",
+    "twitter": "https://twitter.com/worldcoin",
+    "bio": "Collectively owned global currency",
+    "logo": "https://res.cloudinary.com/dgvnuwspr/image/upload/v1679901431/sponsors/recnEH7rqkRloRNd9.jpg"
+  },
+  {
+    "name": "Wormhole",
+    "slug": "wormhole",
+    "url": "https://wormholenetwork.com/",
+    "industry": "Infrastructure",
+    "twitter": "https://twitter.com/wormholecrypto",
+    "bio": "Interoperability protocol powering the seamless transfer of value and information across 14 high value chains with just one integration",
+    "logo": "https://res.cloudinary.com/dgvnuwspr/image/upload/v1679901436/sponsors/reciOItz6SiapQEtK.png"
+  },
+  {
+    "name": "Zamp",
+    "slug": "zamp",
+    "url": "https://www.zampfi.com/",
+    "industry": "DeFi",
+    "twitter": "",
+    "bio": "Banking and payments for the crypto economy!",
+    "logo": "https://res.cloudinary.com/dgvnuwspr/image/upload/v1679901431/sponsors/rec5pmDzVnq4ZQKnI.png"
+  },
+  {
+    "name": "Zeta Markets",
+    "slug": "zeta-markets",
+    "url": "https://zeta.markets/",
+    "industry": "DeFi",
+    "twitter": "https://twitter.com/zetamarkets",
+    "bio": "A premier under-collateralized DeFi derivatives platform.",
+    "logo": "https://res.cloudinary.com/dgvnuwspr/image/upload/v1679901437/sponsors/recGE2y61gIXl9DSG.jpg"
+  }
+]
