@@ -1,4 +1,5 @@
 import {
+  Box,
   Button,
   Flex,
   HStack,
@@ -7,134 +8,174 @@ import {
   Textarea,
   VStack,
 } from '@chakra-ui/react';
-import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
-import { useState } from 'react';
-import toast from 'react-hot-toast';
+import axios from 'axios';
+import dayjs from 'dayjs';
+import relativeTime from 'dayjs/plugin/relativeTime';
+import { useRouter } from 'next/router';
+import { useEffect, useState } from 'react';
 import { GoCommentDiscussion } from 'react-icons/go';
 
-import { TalentStore } from '../../../store/talent';
+import type { Comment } from '@/interface/comments';
+
 import { userStore } from '../../../store/user';
-import { createComment, fetchComments } from '../../../utils/functions';
-import { genrateuuid } from '../../../utils/helpers';
+
+dayjs.extend(relativeTime);
 
 interface Props {
-  onOpen: () => void;
   refId: string;
+  refType: 'BOUNTY' | 'JOB';
 }
-export const Comments = ({ onOpen, refId }: Props) => {
-  const [message, setMessage] = useState<string>('');
-  const queryClient = useQueryClient();
+export const Comments = ({ refId, refType }: Props) => {
+  const router = useRouter();
   const { userInfo } = userStore();
+  const [isLoading, setIsLoading] = useState(true);
+  const [error, setError] = useState(false);
+  const [comments, setComments] = useState<Comment[]>([]);
+  const [newComment, setNewComment] = useState('');
+  const [newCommentLoading, setNewCommentLoading] = useState(false);
+  const [newCommentError, setNewCommentError] = useState(false);
 
-  const { talentInfo } = TalentStore();
-
-  const CommentsQuery = useQuery({
-    queryFn: ({ queryKey }) => fetchComments(queryKey[1] as string),
-    queryKey: ['comments', refId],
-  });
-  const commentMutation = useMutation({
-    mutationFn: createComment,
-    onSuccess: () => {
-      queryClient.invalidateQueries(['comments', refId]);
-      toast.success('commented');
-    },
-    onError: () => {
-      toast.success('Error occur while commenting');
-    },
-  });
-  const sortedComments = (CommentsQuery.data ?? []).sort(
-    (a: { timeStamp: string }, b: { timeStamp: string }) => {
-      return Number(b.timeStamp) - Number(a.timeStamp);
+  const addNewComment = async () => {
+    setNewCommentLoading(true);
+    setNewCommentError(false);
+    try {
+      const newCommentData = await axios.post(`/api/comment/create`, {
+        authorId: userInfo?.id,
+        message: newComment,
+        listingType: refType,
+        listingId: refId,
+      });
+      setComments([newCommentData.data, ...comments]);
+      setNewComment('');
+      setNewCommentLoading(false);
+    } catch (e) {
+      setNewCommentError(true);
+      setNewCommentLoading(false);
     }
-  );
+  };
+
+  const getComments = async (skip = 0) => {
+    setIsLoading(true);
+    try {
+      const commentsData = await axios.get(`/api/comment/${refId}`, {
+        params: {
+          skip,
+        },
+      });
+      setComments([...comments, ...commentsData.data]);
+    } catch (e) {
+      setError(true);
+    }
+    setIsLoading(false);
+  };
+
+  useEffect(() => {
+    if (!isLoading) return;
+    getComments();
+  }, []);
+
+  if (isLoading && !comments?.length) return <Box>Loading...</Box>;
+
+  if (error) return <Box>Error! Please try again or contact support</Box>;
+
   return (
-    <>
-      <VStack
-        align={'start'}
-        gap={3}
-        w={'full'}
-        pb={5}
-        bg={'#FFFFFF'}
-        rounded={'xl'}
-      >
-        <HStack w={'full'} pt={4} px={6}>
-          <GoCommentDiscussion fontWeight={600} fontSize={'1.5rem'} />
-          <HStack>
-            <Text color={'#64758B'} fontSize={'1.1rem'} fontWeight={600}>
-              {CommentsQuery.data?.length ?? 0}
-            </Text>
-            <Text color={'#64758B'} fontSize={'1.1rem'} fontWeight={400}>
-              Comments
-            </Text>
-          </HStack>
+    <VStack
+      align={'start'}
+      gap={3}
+      w={'full'}
+      pb={5}
+      bg={'#FFFFFF'}
+      rounded={'xl'}
+    >
+      <HStack w={'full'} pt={4} px={6}>
+        <GoCommentDiscussion fontWeight={600} fontSize={'1.5rem'} />
+        <HStack>
+          <Text color={'#64758B'} fontSize={'1.1rem'} fontWeight={600}>
+            {comments?.length ?? 0}
+          </Text>
+          <Text color={'#64758B'} fontSize={'1.1rem'} fontWeight={400}>
+            {comments?.length === 1 ? 'Comment' : 'Comments'}
+          </Text>
         </HStack>
+      </HStack>
+      {!!userInfo?.id && (
         <VStack w={'full'} px={6}>
           <Textarea
-            h={32}
-            border={'1px solid #E2E8EF'}
+            borderColor="brand.slate.300"
+            _placeholder={{
+              color: 'brand.slate.300',
+            }}
+            focusBorderColor="brand.purple"
             onChange={(e) => {
-              setMessage(e.target.value);
+              setNewComment(e.target.value);
             }}
             placeholder="Write a comment..."
-            value={message}
+            value={newComment}
           ></Textarea>
-
+          {!!newCommentError && (
+            <Text mt={4} color="red">
+              Error in adding your comment! Please try again!
+            </Text>
+          )}
           <Flex justify={'end'} w="full">
             <Button
-              color={'white'}
-              fontSize={'1rem'}
-              bg={'#6562FF'}
-              onClick={() => {
-                if (!userInfo || !userInfo.talent) {
-                  onOpen();
-                  return;
-                }
-
-                commentMutation.mutate({
-                  id: genrateuuid(),
-                  message,
-                  refId,
-                  talentId: talentInfo?.id ?? '',
-                  timeStamp: JSON.stringify(Date.now()),
-                });
-                setMessage('');
-              }}
+              isLoading={!!newCommentLoading}
+              loadingText="Adding..."
+              onClick={() => addNewComment()}
+              variant="solid"
             >
               Comment
             </Button>
           </Flex>
         </VStack>
-        {sortedComments?.map((el: any) => {
-          const date = new Date(Number(el.timeStamp));
-          return (
-            <HStack key={el.id} align={'start'} px={6}>
-              <Image
-                w={10}
-                h={10}
-                objectFit={'contain'}
-                alt={'profile image'}
-                rounded={'full'}
-                src={el.talent.avatar}
-              />
+      )}
+      {comments?.map((comment: any) => {
+        const date = dayjs(comment?.updatedAt).fromNow();
+        return (
+          <HStack key={comment.id} align={'start'} px={6}>
+            <Image
+              w={10}
+              h={10}
+              objectFit={'contain'}
+              alt={'profile image'}
+              rounded={'full'}
+              src={
+                comment?.author.photo ||
+                `${router.basePath}/assets/images/user-photo.png`
+              }
+            />
 
-              <VStack align={'start'}>
-                <HStack>
-                  <Text color={'#1E293B'} fontWeight={600}>
-                    {el.talent.username}
-                  </Text>
-                  <Text color={'#94A3B8'} fontWeight={500}>
-                    {date.toLocaleTimeString('en-US', {
-                      hour: '2-digit',
-                      minute: '2-digit',
-                    })}
-                  </Text>
-                </HStack>
-                <Text mt={'0px !important'}>{el.message}</Text>
-              </VStack>
-            </HStack>
-          );
-        })}
-      </VStack>
-    </>
+            <VStack align={'start'}>
+              <HStack>
+                <Text color="brand.slate.800" fontSize="sm" fontWeight={600}>
+                  {`${comment?.author?.firstName} ${comment?.author?.lastName}`}
+                </Text>
+                <Text color="brand.slate.500" fontSize="sm">
+                  {date}
+                </Text>
+              </HStack>
+              <Text mt={'0px !important'} color="brand.slate.800">
+                {comment?.message}
+              </Text>
+            </VStack>
+          </HStack>
+        );
+      })}
+      {comments.length % 30 === 0 && (
+        <Flex justify="center" w="full">
+          <Button
+            isDisabled={!!isLoading}
+            isLoading={!!isLoading}
+            loadingText="Fetching Comments..."
+            onClick={() => getComments(comments.length)}
+            rounded="md"
+            size="sm"
+            variant="ghost"
+          >
+            Show More Comments
+          </Button>
+        </Flex>
+      )}
+    </VStack>
   );
 };

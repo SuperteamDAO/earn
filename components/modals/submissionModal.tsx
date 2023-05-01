@@ -73,7 +73,6 @@ export const SubmissionModal = ({
                       <QuestionHandler
                         control={control}
                         register={register}
-                        index={e.id}
                         question={e.question}
                         type={e.type}
                         label={e.label ?? undefined}

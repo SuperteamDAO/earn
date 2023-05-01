@@ -38,7 +38,7 @@ const defalutSponsor: SponsorType = {
   name: 'default',
   twitter: '',
   url: '',
-  username: '',
+  slug: '',
   id: '',
 };
 
@@ -150,7 +150,7 @@ const Bounties = () => {
             />
             <Comments
               refId={listingInfo.data?.listing.id ?? ''}
-              onOpen={onOpen}
+              refType="BOUNTY"
             />
           </VStack>
           <DetailSideCard

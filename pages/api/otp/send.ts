@@ -21,9 +21,9 @@ export default async function send(req: NextApiRequest, res: NextApiResponse) {
     await sgMail.send(msg);
     res.status(200).json({ message: 'OTP sent successfully.' });
   } catch (error) {
-    res.status(403).json({
+    res.status(400).json({
       error,
-      message: 'Error occured while adding a new user.',
+      message: 'Error occurred while adding a new user.',
     });
   }
 }

@@ -94,7 +94,7 @@ const CreateSponsor = () => {
                   bio: e.bio,
                   industry: industries ?? '',
                   name: e.sponsorname,
-                  username: e.username,
+                  slug: e.slug,
                   logo: imageUrl ?? '',
                   twitter: e.twitterHandle ?? '',
                   url: e.sponsorurl ?? '',
@@ -134,7 +134,7 @@ const CreateSponsor = () => {
                     color={'brand.slate.500'}
                     fontSize={'15px'}
                     fontWeight={600}
-                    htmlFor={'username'}
+                    htmlFor={'slug'}
                   >
                     Company Username
                   </FormLabel>
@@ -143,12 +143,12 @@ const CreateSponsor = () => {
                     borderColor={'brand.slate.300'}
                     _placeholder={{ color: 'brand.slate.300' }}
                     focusBorderColor="brand.purple"
-                    id="username"
+                    id="slug"
                     placeholder="starkindustries"
-                    {...register('username')}
+                    {...register('slug')}
                   />
                   <FormErrorMessage>
-                    {errors.username ? <>{errors.username.message}</> : <></>}
+                    {errors.slug ? <>{errors.slug.message}</> : <></>}
                   </FormErrorMessage>
                 </FormControl>
               </HStack>

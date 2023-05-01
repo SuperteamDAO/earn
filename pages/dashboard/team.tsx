@@ -65,7 +65,7 @@ const TeamDashboard = () => {
   const createMember = async (name: string) => {
     const sponsor: SponsorType = {
       ...(currentSponsor as SponsorType),
-      username: name as string,
+      slug: name as string,
       id: genrateuuid(),
     };
     createMemberMutation.mutate(sponsor);
@@ -142,7 +142,7 @@ const TeamDashboard = () => {
                                 fontSize={'14px'}
                                 fontWeight="500"
                               >
-                                {el?.username}
+                                {el?.slug}
                               </Text>
                             </Flex>
                           </Td>

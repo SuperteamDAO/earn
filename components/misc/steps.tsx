@@ -77,13 +77,7 @@ export const VerticalStep = ({
   sublabel,
 }: Props) => {
   return (
-    <Flex
-      pos="relative"
-      align={'center'}
-      justify={'center'}
-      gap={3}
-      cursor={'pointer'}
-    >
+    <Flex pos="relative" align={'center'} justify={'center'} gap={3}>
       <Flex
         align={'center'}
         justify="center"
