@@ -9,17 +9,14 @@ import {
   VStack,
 } from '@chakra-ui/react';
 import axios from 'axios';
-import dayjs from 'dayjs';
-import relativeTime from 'dayjs/plugin/relativeTime';
 import { useRouter } from 'next/router';
 import { useEffect, useState } from 'react';
 import { GoCommentDiscussion } from 'react-icons/go';
 
 import type { Comment } from '@/interface/comments';
+import { dayjs } from '@/utils/dayjs';
 
 import { userStore } from '../../../store/user';
-
-dayjs.extend(relativeTime);
 
 interface Props {
   refId: string;

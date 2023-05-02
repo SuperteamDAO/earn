@@ -77,7 +77,7 @@ function BountyDetails({ slug }: BountyDetailsProps) {
           eligibility={bounty?.eligibility}
           endingTime={bounty?.deadline ?? ''}
           prizeList={bounty?.rewards}
-          total={parseInt(bounty?.rewardAmount || '0', 10)}
+          total={bounty?.rewardAmount || 0}
         />
       </HStack>
     </Default>
