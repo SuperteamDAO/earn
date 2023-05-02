@@ -16,7 +16,7 @@ import { TalentTVE } from '../../utils/functions';
 />;
 
 interface SideBarProps {
-  jobs:
+  jobs?:
     | {
         jobs: JobsType;
         sponsorInfo: SponsorType;

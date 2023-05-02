@@ -1,15 +1,17 @@
 import type { NextApiRequest, NextApiResponse } from 'next';
 
 import { prisma } from '@/prisma';
+import { dayjs } from '@/utils/dayjs';
 
 export default async function user(_req: NextApiRequest, res: NextApiResponse) {
-  // const params = req.query;
-  // console.log('file: index.ts:7 ~ user ~ params:', params);
   try {
     const bounties = await prisma.bounties.findMany({
       where: {
         isActive: true,
         isArchived: false,
+        deadline: {
+          gte: dayjs().toISOString(),
+        },
       },
       take: 5,
       orderBy: {
@@ -25,7 +27,6 @@ export default async function user(_req: NextApiRequest, res: NextApiResponse) {
         },
       },
     });
-    console.log('file: index.ts:28 ~ user ~ bounties:', bounties);
 
     const grants = await prisma.grants.findMany({
       where: {
@@ -52,10 +53,8 @@ export default async function user(_req: NextApiRequest, res: NextApiResponse) {
         },
       },
     });
-    console.log('file: index.ts:48 ~ user ~ grants:', grants);
-    res.status(200).json({ bounties, grants });
+    res.status(200).json({ bounties, grants, jobs: [] });
   } catch (error) {
-    console.log('file: index.ts:58 ~ user ~ error:', error);
     res.status(400).json({
       error,
       message: 'Error occurred while fetching listings',

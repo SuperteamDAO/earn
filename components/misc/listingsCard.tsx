@@ -13,14 +13,15 @@ import {
 } from '@chakra-ui/react';
 import { useWallet } from '@solana/wallet-adapter-react';
 import parse from 'html-react-parser';
-import moment from 'moment';
 import { useRouter } from 'next/router';
 import { useState } from 'react';
 import { Toaster } from 'react-hot-toast';
 import { TiTick } from 'react-icons/ti';
 
+import type { BountyStatus } from '@/interface/bounty';
+import { dayjs } from '@/utils/dayjs';
+
 import { type MultiSelectOptions, tokenList } from '../../constants';
-import type { BountyStatus } from '../../interface/types';
 import { TalentStore } from '../../store/talent';
 import { userStore } from '../../store/user';
 import { findTalentPubkey, updateNotification } from '../../utils/functions';
@@ -129,25 +130,26 @@ const textLimiter = (text: string, len: number) => {
 
 interface BountyProps {
   title: string;
-  amount: string;
-  due: string;
+  rewardAmount?: number;
+  deadline?: string;
   logo?: string;
-  status: BountyStatus;
-  token: string;
+  status?: BountyStatus;
+  token?: string;
   slug: string;
-  sponsor: string;
+  sponsorName?: string;
 }
 
 export const BountiesCard = ({
-  amount,
-  due,
+  rewardAmount,
+  deadline,
   status,
   logo,
   title,
   token,
   slug,
-  sponsor,
+  sponsorName,
 }: BountyProps) => {
+  const router = useRouter();
   return (
     <>
       <Link
@@ -169,7 +171,7 @@ export const BountiesCard = ({
               mr={5}
               alt={'company logo'}
               rounded={5}
-              src={logo ?? '/assets/home/placeholder/ph1.png'}
+              src={logo ?? `${router.basePath}/assets/images/sponsor-logo.png`}
             />
             <Flex justify={'space-between'} direction={'column'} w={'full'}>
               <Text color="brand.slate.700" fontSize="sm" fontWeight={600}>
@@ -182,35 +184,38 @@ export const BountiesCard = ({
                 fontWeight={'400'}
                 noOfLines={1}
               >
-                {sponsor}
+                {sponsorName}
               </Text>
               <Flex align={'center'} gap={3}>
-                <Image
-                  w={4}
-                  h={4}
-                  alt="token"
-                  rounded="full"
-                  src={
-                    tokenList.find((ele) => {
-                      return ele.mintAddress === token;
-                    })?.icon
-                  }
-                />
+                <Flex align={'center'} justify="start">
+                  <Image
+                    w={4}
+                    h={4}
+                    mr={1}
+                    alt="token"
+                    rounded="full"
+                    src={
+                      tokenList.find((ele) => {
+                        return ele.tokenName === token;
+                      })?.icon
+                    }
+                  />
 
-                <Text
-                  color={'brand.slate.700'}
-                  fontSize={'sm'}
-                  fontWeight={'600'}
-                >
-                  {amount}
-                </Text>
+                  <Text
+                    color={'brand.slate.700'}
+                    fontSize={'sm'}
+                    fontWeight={'600'}
+                  >
+                    {rewardAmount}
+                  </Text>
+                </Flex>
                 <Text color={'brand.slate.300'} fontSize={'sm'}>
                   |
                 </Text>
                 <Text color={'brand.slate.500'} fontSize={'sm'}>
-                  {moment(due).fromNow().includes('ago')
-                    ? `Closed ${moment(due).fromNow()}`
-                    : `Closing ${moment(due).fromNow()}`}
+                  {dayjs().isBefore(deadline)
+                    ? `Closing ${dayjs(deadline).fromNow()}`
+                    : `Closed ${dayjs(deadline).fromNow()}`}
                 </Text>
               </Flex>
             </Flex>
@@ -230,8 +235,8 @@ export const BountiesCard = ({
             }}
             href={`/bounties/${slug}`}
           >
-            {Number(moment(due).format('x')) < Date.now()
-              ? status === 'close'
+            {dayjs().isAfter(deadline)
+              ? status === 'CLOSED'
                 ? 'View'
                 : 'View'
               : 'Apply'}
@@ -358,12 +363,19 @@ export const JobsCard = ({
 
 interface GrantsProps {
   title: string;
-  sponsor: string;
+  sponsorName?: string;
   logo?: string;
-  max: number;
-  min: number;
+  rewardAmount?: number;
+  token?: string;
 }
-export const GrantsCard = ({ title, logo, max, min, sponsor }: GrantsProps) => {
+export const GrantsCard = ({
+  title,
+  logo,
+  rewardAmount,
+  sponsorName,
+  token,
+}: GrantsProps) => {
+  const router = useRouter();
   return (
     <Flex
       align="center"
@@ -380,7 +392,7 @@ export const GrantsCard = ({ title, logo, max, min, sponsor }: GrantsProps) => {
           rounded={5}
           src={logo ?? '/assets/home/placeholder/ph3.png'}
         />
-        <Flex justify="space-between" direction="column">
+        <Flex justify="start" direction="column">
           <Text color="brand.slate.700" fontSize="sm" fontWeight="600">
             {title}
           </Text>
@@ -389,14 +401,28 @@ export const GrantsCard = ({ title, logo, max, min, sponsor }: GrantsProps) => {
             fontSize={{ md: 'sm', base: 'xs' }}
             fontWeight="400"
           >
-            {sponsor}
+            {sponsorName}
           </Text>
-          <Flex align={'center'}>
-            <Image w={3} h={3} alt="" src="/assets/icons/dollar.svg" />
-            <Text mr={3} color={'brand.slate.500'} fontSize={'sm'}>
-              {min.toLocaleString()} - {max.toLocaleString()}
-            </Text>
-          </Flex>
+          {!!token && (
+            <Flex align={'center'}>
+              <Image
+                w={4}
+                h={4}
+                mr={1}
+                alt="token"
+                rounded="full"
+                src={
+                  tokenList.find((e) => e.tokenName === token)?.icon ||
+                  `${router.basePath}/assets/icons/dollar.svg}`
+                }
+              />
+              {rewardAmount && (
+                <Text mr={3} color={'brand.slate.500'} fontSize={'sm'}>
+                  {rewardAmount.toLocaleString()}
+                </Text>
+              )}
+            </Flex>
+          )}
         </Flex>
       </Flex>
       <Link

@@ -43,7 +43,7 @@ export const tokenList = [
     icon: 'https://s2.coinmarketcap.com/static/img/coins/64x64/16116.png',
   },
   {
-    tokenName: 'USD Coin',
+    tokenName: 'USDC',
     mintAddress: 'EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v',
     address: 'EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v',
     icon: 'https://s2.coinmarketcap.com/static/img/coins/64x64/3408.png',
