@@ -8,6 +8,7 @@ import { Meta } from '@/layouts/Meta';
 function Port() {
   const [userId, setUserId] = useState('ab15dd8c-fad7-4c74-880b-6b334f8d2a39');
   const [sponsorsLoading, setSponsorsLoading] = useState(false);
+  const [bountiesLoading, setBountiesLoading] = useState(false);
 
   const portSponsors = async () => {
     setSponsorsLoading(true);
@@ -22,6 +23,21 @@ function Port() {
       setSponsorsLoading(false);
     }
   };
+
+  const portBounties = async () => {
+    setBountiesLoading(true);
+    try {
+      const bounties = await axios.post('/api/port/bounties', {
+        userId,
+      });
+      console.log('file: port.tsx:17 ~ portBounties ~ bounties:', bounties);
+      setBountiesLoading(false);
+    } catch (e) {
+      console.log('file: port.tsx:16 ~ portBounties ~ e:', e);
+      setBountiesLoading(false);
+    }
+  };
+
   return (
     <Default
       meta={
@@ -51,7 +67,14 @@ function Port() {
         >
           Port Sponsors
         </Button>
-        <Button w="full" mt={4} variant="solid">
+        <Button
+          w="full"
+          mt={4}
+          isLoading={!!bountiesLoading}
+          loadingText="Porting..."
+          onClick={() => portBounties()}
+          variant="solid"
+        >
           Port Bounties
         </Button>
       </Container>
