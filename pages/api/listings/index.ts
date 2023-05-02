@@ -26,9 +26,6 @@ export default async function user(req: NextApiRequest, res: NextApiResponse) {
           deadline: {
             gte: dayjs().toISOString(),
           },
-          skills: {
-            contains: 'prisma.io',
-          },
           ...skillsFilter,
         },
         take,
