@@ -59,27 +59,27 @@ model Comment {
 }
 
 model Grants {
-  id          String   @id @default(uuid())
-  title       String
-  slug        String   @unique
-  description String?  @db.VarChar(10000)
-  skills      String?
-  subSkills   String?
-  token       String?
-  maxSalary   Float?
-  minSalary   Float?
-  link        String?
-  source      Source   @default(NATIVE)
-  sponsorId   String
-  sponsor     Sponsors @relation(fields: [sponsorId], references: [id])
-  pocId       String
-  poc         User     @relation(fields: [pocId], references: [id])
-  isPublished Boolean  @default(false)
-  isFeatured  Boolean  @default(false)
-  isActive    Boolean  @default(true)
-  isArchived  Boolean  @default(false)
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
+  id               String   @id @default(uuid())
+  title            String
+  slug             String   @unique
+  description      String?  @db.VarChar(10000)
+  shortDescription String?  @db.VarChar(1000)
+  skills           String?
+  subSkills        String?
+  token            String?
+  rewardAmount     Int?
+  link             String?
+  source           Source   @default(NATIVE)
+  sponsorId        String
+  sponsor          Sponsors @relation(fields: [sponsorId], references: [id])
+  pocId            String
+  poc              User     @relation(fields: [pocId], references: [id])
+  isPublished      Boolean  @default(false)
+  isFeatured       Boolean  @default(false)
+  isActive         Boolean  @default(true)
+  isArchived       Boolean  @default(false)
+  createdAt        DateTime @default(now())
+  updatedAt        DateTime @updatedAt
 
   @@index([id, slug])
   @@index([pocId])
