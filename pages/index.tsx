@@ -9,7 +9,6 @@ import {
   VStack,
 } from '@chakra-ui/react';
 import { useWallet } from '@solana/wallet-adapter-react';
-import { useQuery } from '@tanstack/react-query';
 import axios from 'axios';
 import type { NextPage } from 'next';
 import { useRouter } from 'next/router';
@@ -30,12 +29,17 @@ import type { Job } from '@/interface/job';
 import { Default } from '@/layouts/Default';
 import { Meta } from '@/layouts/Meta';
 import { TalentStore } from '@/store/talent';
-import { fetchBasicInfo } from '@/utils/functions';
 
 interface Listings {
   bounties?: Bounty[];
   grants?: Grant[];
   jobs?: Job[];
+}
+
+interface TotalType {
+  total?: number;
+  count?: number;
+  totalInUSD?: number;
 }
 
 const Home: NextPage = () => {
@@ -48,12 +52,12 @@ const Home: NextPage = () => {
     grants: [],
     jobs: [],
   });
+  const [total, setTotal] = useState<TotalType>({});
 
   const getListings = async () => {
     setIsListingsLoading(true);
     try {
       const listingsData = await axios.get('/api/listings/');
-      console.log('file: index.tsx:17 ~ getListings ~ listings:', listingsData);
       setListings(listingsData.data);
       setIsListingsLoading(false);
     } catch (e) {
@@ -61,15 +65,20 @@ const Home: NextPage = () => {
     }
   };
 
+  const getTotalInfo = async () => {
+    try {
+      const aggregatesData = await axios.get('/api/total/');
+      setTotal(aggregatesData.data);
+    } catch (e) {
+      console.log('file: index.tsx:73 ~ getTotalInfo ~ e:', e);
+    }
+  };
+
   useEffect(() => {
     if (!isListingsLoading) return;
     getListings();
+    getTotalInfo();
   }, []);
-
-  const listingBasic = useQuery({
-    queryFn: () => fetchBasicInfo(),
-    queryKey: ['all', 'basic'],
-  });
 
   const [isLessThan1200px] = useMediaQuery('(max-width: 1200px)');
   const [isLessThan850px] = useMediaQuery('(max-width: 850px)');
@@ -294,8 +303,8 @@ const Home: NextPage = () => {
             }}
           >
             <SideBar
-              total={listingBasic.data?.total ?? 0}
-              listings={listingBasic.data?.count ?? 0}
+              total={total?.totalInUSD ?? 0}
+              listings={total?.count ?? 0}
               jobs={[]}
             />
           </Flex>

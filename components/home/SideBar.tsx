@@ -1,12 +1,11 @@
-import { Box, Center, Flex, Image, Link, Text, VStack } from '@chakra-ui/react';
-import { useWallet } from '@solana/wallet-adapter-react';
-import { useQuery } from '@tanstack/react-query';
+import { Box, Center, Flex, Image, Text, VStack } from '@chakra-ui/react';
+import axios from 'axios';
 import Avatar from 'boring-avatars';
+import { useState } from 'react';
 import Slider from 'react-slick';
 
 import type { JobsType } from '../../interface/listings';
 import type { SponsorType } from '../../interface/sponsor';
-import { TalentTVE } from '../../utils/functions';
 
 <Avatar
   size={40}
@@ -26,90 +25,90 @@ interface SideBarProps {
   listings: number;
 }
 
-const Step = ({
-  number,
-  isComplete,
-}: {
-  number: number;
-  isComplete: boolean;
-}) => {
-  if (isComplete) {
-    return (
-      <Center
-        zIndex={'200'}
-        w={'2.375rem'}
-        h={'2.375rem'}
-        bg={'#6366F1'}
-        rounded={'full'}
-      >
-        <Image
-          w={'1.25rem'}
-          h={'1.25rem'}
-          alt=""
-          src="/assets/icons/white-tick.svg"
-        />
-      </Center>
-    );
-  }
+// const Step = ({
+//   number,
+//   isComplete,
+// }: {
+//   number: number;
+//   isComplete: boolean;
+// }) => {
+//   if (isComplete) {
+//     return (
+//       <Center
+//         zIndex={'200'}
+//         w={'2.375rem'}
+//         h={'2.375rem'}
+//         bg={'#6366F1'}
+//         rounded={'full'}
+//       >
+//         <Image
+//           w={'1.25rem'}
+//           h={'1.25rem'}
+//           alt=""
+//           src="/assets/icons/white-tick.svg"
+//         />
+//       </Center>
+//     );
+//   }
 
-  return (
-    <Center
-      zIndex={'200'}
-      w={'2.375rem'}
-      h={'2.375rem'}
-      color={'#94A3B8'}
-      bg={'#FFFFFF'}
-      border={'0.0625rem solid #94A3B8'}
-      rounded={'full'}
-    >
-      {number}
-    </Center>
-  );
-};
+//   return (
+//     <Center
+//       zIndex={'200'}
+//       w={'2.375rem'}
+//       h={'2.375rem'}
+//       color={'#94A3B8'}
+//       bg={'#FFFFFF'}
+//       border={'0.0625rem solid #94A3B8'}
+//       rounded={'full'}
+//     >
+//       {number}
+//     </Center>
+//   );
+// };
 
-const GettingStarted = () => {
-  return (
-    <Box>
-      <Text mb={'1.5rem'} color={'gray.400'} fontWeight={500}>
-        GETTING STARTED
-      </Text>
-      <Flex h={'12.5rem'}>
-        <VStack pos={'relative'} justifyContent={'space-between'} h={'100%'}>
-          <Step number={1} isComplete={true} />
-          <Step number={2} isComplete={false} />
-          <Step number={3} isComplete={false} />
-          <Flex pos={'absolute'} w={'0.0625rem'} h={'90%'} bg={'#CBD5E1'} />
-        </VStack>
-        <VStack pos={'relative'} justifyContent={'space-between'} h={'100%'}>
-          <Box ml={'0.8125rem'}>
-            <Text color={'black'} fontSize={'md'} fontWeight={500}>
-              Create your account
-            </Text>
-            <Text color={'gray.500'} fontSize={'md'} fontWeight={500}>
-              and get personalized notifications
-            </Text>
-          </Box>
-          <Box ml={'0.8125rem'}>
-            <Text color={'black'} fontSize={'md'} fontWeight={500}>
-              Complete your profile
-            </Text>
-            <Text color={'gray.500'} fontSize={'md'} fontWeight={500}>
-              and get seen by hiring managers
-            </Text>
-          </Box>
-          <Box ml={'0.8125rem'}>
-            <Text color={'black'} fontSize={'md'} fontWeight={500}>
-              Win a bounty
-            </Text>
-            <Text color={'gray.500'} fontSize={'md'} fontWeight={500}>
-              and get your Proof-of-Work NFT
-            </Text>
-          </Box>
-        </VStack>
-      </Flex>
-    </Box>
-  );
-};
+// const GettingStarted = () => {
+//   return (
+//     <Box>
+//       <Text mb={'1.5rem'} color={'gray.400'} fontWeight={500}>
+//         GETTING STARTED
+//       </Text>
+//       <Flex h={'12.5rem'}>
+//         <VStack pos={'relative'} justifyContent={'space-between'} h={'100%'}>
+//           <Step number={1} isComplete={true} />
+//           <Step number={2} isComplete={false} />
+//           <Step number={3} isComplete={false} />
+//           <Flex pos={'absolute'} w={'0.0625rem'} h={'90%'} bg={'#CBD5E1'} />
+//         </VStack>
+//         <VStack pos={'relative'} justifyContent={'space-between'} h={'100%'}>
+//           <Box ml={'0.8125rem'}>
+//             <Text color={'black'} fontSize={'md'} fontWeight={500}>
+//               Create your account
+//             </Text>
+//             <Text color={'gray.500'} fontSize={'md'} fontWeight={500}>
+//               and get personalized notifications
+//             </Text>
+//           </Box>
+//           <Box ml={'0.8125rem'}>
+//             <Text color={'black'} fontSize={'md'} fontWeight={500}>
+//               Complete your profile
+//             </Text>
+//             <Text color={'gray.500'} fontSize={'md'} fontWeight={500}>
+//               and get seen by hiring managers
+//             </Text>
+//           </Box>
+//           <Box ml={'0.8125rem'}>
+//             <Text color={'black'} fontSize={'md'} fontWeight={500}>
+//               Win a bounty
+//             </Text>
+//             <Text color={'gray.500'} fontSize={'md'} fontWeight={500}>
+//               and get your Proof-of-Work NFT
+//             </Text>
+//           </Box>
+//         </VStack>
+//       </Flex>
+//     </Box>
+//   );
+// };
 
 const TotalStats = ({
   total,
@@ -224,10 +223,21 @@ const Earner = ({ amount, name, avatar, work }: EarnerProps) => {
 };
 
 const RecentEarners = () => {
-  const talent = useQuery({
-    queryKey: ['talent'],
-    queryFn: () => TalentTVE(),
-  });
+  const [talent, setTalent] = useState<any>({});
+  const getTalent = async () => {
+    try {
+      const talentData = await axios.get('/api/user/top');
+      console.log(
+        'file: SideBar.tsx:230 ~ getTalent ~ talentData:',
+        talentData
+      );
+      setTalent(talentData.data);
+    } catch (e) {
+      console.log('file: SideBar.tsx:234 ~ getTalent ~ e:', e);
+    }
+  };
+
+  getTalent();
 
   const settings = {
     dots: false,
@@ -246,7 +256,7 @@ const RecentEarners = () => {
       </Text>
       <VStack rowGap={2}>
         <Slider {...settings}>
-          {talent.data?.map((t) => {
+          {talent.data?.map((t: any) => {
             return (
               <Earner
                 amount={t.tve ?? 0}
@@ -263,72 +273,72 @@ const RecentEarners = () => {
   );
 };
 
-interface HiringProps {
-  title: string;
-  logo?: string;
-  location: string;
-  type: string;
-}
-const Hiring = ({ logo, title, location, type }: HiringProps) => {
-  return (
-    <Flex align={'center'} w={'100%'}>
-      <Image
-        w={'2.125rem'}
-        h={'2.125rem'}
-        mr={'1.0625rem'}
-        alt=""
-        rounded={'md'}
-        src={logo ?? '/assets/home/placeholder/ph2.png'}
-      />
-      <Box>
-        <Link
-          href={`https://earn-frontend-v2.vercel.app/listings/jobs/${title
-            .split(' ')
-            .join('-')}`}
-          isExternal
-        >
-          <Text color={'black'} fontSize={'0.8125rem'} fontWeight={'500'}>
-            {title}
-          </Text>
-        </Link>
-        <Text color={'gray.500'} fontSize={'md'} noOfLines={1}>
-          {location ? `${location},` : ''} {type}
-        </Text>
-      </Box>
-    </Flex>
-  );
-};
+// interface HiringProps {
+//   title: string;
+//   logo?: string;
+//   location: string;
+//   type: string;
+// }
+// const Hiring = ({ logo, title, location, type }: HiringProps) => {
+//   return (
+//     <Flex align={'center'} w={'100%'}>
+//       <Image
+//         w={'2.125rem'}
+//         h={'2.125rem'}
+//         mr={'1.0625rem'}
+//         alt=""
+//         rounded={'md'}
+//         src={logo ?? '/assets/home/placeholder/ph2.png'}
+//       />
+//       <Box>
+//         <Link
+//           href={`https://earn-frontend-v2.vercel.app/listings/jobs/${title
+//             .split(' ')
+//             .join('-')}`}
+//           isExternal
+//         >
+//           <Text color={'black'} fontSize={'0.8125rem'} fontWeight={'500'}>
+//             {title}
+//           </Text>
+//         </Link>
+//         <Text color={'gray.500'} fontSize={'md'} noOfLines={1}>
+//           {location ? `${location},` : ''} {type}
+//         </Text>
+//       </Box>
+//     </Flex>
+//   );
+// };
 
-interface HiringNowProps {
-  jobs:
-    | {
-        jobs: JobsType;
-        sponsorInfo: SponsorType;
-      }[]
-    | undefined;
-}
-const HiringNow = ({ jobs }: HiringNowProps) => {
-  return (
-    <Box>
-      <Text mb={'1.5rem'} color={'#94A3B8'}>
-        HIRING NOW
-      </Text>
-      <VStack rowGap={'1.8125rem'}>
-        {jobs?.map((job) => {
-          return (
-            <Hiring
-              type={job?.jobs?.jobType}
-              location={job?.jobs?.location}
-              key={job?.jobs?.id}
-              logo={job?.sponsorInfo?.logo}
-              title={job?.jobs?.title}
-            />
-          );
-        })}
-      </VStack>
-    </Box>
-  );
-};
+// interface HiringNowProps {
+//   jobs:
+//     | {
+//         jobs: JobsType;
+//         sponsorInfo: SponsorType;
+//       }[]
+//     | undefined;
+// }
+// const HiringNow = ({ jobs }: HiringNowProps) => {
+//   return (
+//     <Box>
+//       <Text mb={'1.5rem'} color={'#94A3B8'}>
+//         HIRING NOW
+//       </Text>
+//       <VStack rowGap={'1.8125rem'}>
+//         {jobs?.map((job) => {
+//           return (
+//             <Hiring
+//               type={job?.jobs?.jobType}
+//               location={job?.jobs?.location}
+//               key={job?.jobs?.id}
+//               logo={job?.sponsorInfo?.logo}
+//               title={job?.jobs?.title}
+//             />
+//           );
+//         })}
+//       </VStack>
+//     </Box>
+//   );
+// };
 
 // const Featuring = () => {
 //   return (
@@ -375,8 +385,8 @@ const HiringNow = ({ jobs }: HiringNowProps) => {
 //   );
 // };
 
-const SideBar = ({ jobs, listings, total }: SideBarProps) => {
-  const { connected } = useWallet();
+const SideBar = ({ listings, total }: SideBarProps) => {
+  // const { connected } = useWallet();
   return (
     <Flex
       direction={'column'}
@@ -389,11 +399,11 @@ const SideBar = ({ jobs, listings, total }: SideBarProps) => {
       borderLeftColor={'gray.200'}
     >
       {/* <AlphaAccess /> */}
-      {connected && <GettingStarted />}
+      {/* {connected && <GettingStarted />} */}
       <TotalStats total={listings} listings={total} />
       {/* <Filter title={'FILTER BY INDUSTRY'} entries={['Gaming', 'Payments', 'Consumer', 'Infrastructure', 'DAOs']} /> */}
       <RecentEarners />
-      <HiringNow jobs={jobs} />
+      {/* <HiringNow jobs={jobs} /> */}
       {/* <Featured /> */}
     </Flex>
   );
