@@ -12,30 +12,30 @@ datasource db {
 }
 
 model Bounties {
-  id            String          @id @default(uuid())
+  id            String    @id @default(uuid())
   title         String
-  slug          String          @unique
-  description   String?         @db.VarChar(10000)
+  slug          String    @unique
+  description   String?   @db.VarChar(10000)
   skills        String?
   subSkills     String?
   deadline      DateTime?
   eligibility   Json?
-  status        Bounties_status @default(OPEN)
+  status        status    @default(OPEN)
   token         String
   rewardAmount  Int?
   rewards       Json?
   sponsorId     String
-  sponsor       Sponsors        @relation(fields: [sponsorId], references: [id])
+  sponsor       Sponsors  @relation(fields: [sponsorId], references: [id])
   pocId         String
-  poc           User            @relation("poc", fields: [pocId], references: [id])
-  source        Bounties_source @default(NATIVE)
+  poc           User      @relation("poc", fields: [pocId], references: [id])
+  source        Source    @default(NATIVE)
   sourceDetails Json?
-  isPublished   Boolean         @default(false)
-  isFeatured    Boolean         @default(false)
-  isActive      Boolean         @default(true)
-  isArchived    Boolean         @default(false)
-  createdAt     DateTime        @default(now())
-  updatedAt     DateTime        @updatedAt
+  isPublished   Boolean   @default(false)
+  isFeatured    Boolean   @default(false)
+  isActive      Boolean   @default(true)
+  isArchived    Boolean   @default(false)
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
 
   @@index([id, slug])
   @@index([sponsorId])
@@ -43,32 +43,60 @@ model Bounties {
 }
 
 model Comment {
-  id          String       @id @default(uuid())
-  message     String       @db.VarChar(1000)
+  id          String      @id @default(uuid())
+  message     String      @db.VarChar(1000)
   authorId    String
-  author      User         @relation(fields: [authorId], references: [id])
-  listingType ListingsType @default(BOUNTY)
+  author      User        @relation(fields: [authorId], references: [id])
+  listingType ListingType @default(BOUNTY)
   listingId   String
-  isActive    Boolean      @default(true)
-  isArchived  Boolean      @default(false)
-  createdAt   DateTime     @default(now())
-  updatedAt   DateTime     @updatedAt
+  isActive    Boolean     @default(true)
+  isArchived  Boolean     @default(false)
+  createdAt   DateTime    @default(now())
+  updatedAt   DateTime    @updatedAt
 
   @@index([id, listingId])
   @@index([authorId])
 }
 
+model Grants {
+  id          String   @id @default(uuid())
+  title       String
+  slug        String   @unique
+  description String?  @db.VarChar(10000)
+  skills      String?
+  subSkills   String?
+  token       String?
+  maxSalary   Float?
+  minSalary   Float?
+  link        String?
+  source      Source   @default(NATIVE)
+  sponsorId   String
+  sponsor     Sponsors @relation(fields: [sponsorId], references: [id])
+  pocId       String
+  poc         User     @relation(fields: [pocId], references: [id])
+  isPublished Boolean  @default(false)
+  isFeatured  Boolean  @default(false)
+  isActive    Boolean  @default(true)
+  isArchived  Boolean  @default(false)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@index([id, slug])
+  @@index([pocId])
+  @@index([sponsorId])
+}
+
 model Submission {
-  id                 String       @id @default(uuid())
+  id                 String      @id @default(uuid())
   link               String?
   tweet              String?
   eligibilityAnswers Json?
-  likes              Int          @default(0)
+  likes              Int         @default(0)
   userId             String
-  user               User         @relation(fields: [userId], references: [id])
-  listingType        ListingsType @default(BOUNTY)
+  user               User        @relation(fields: [userId], references: [id])
+  listingType        ListingType @default(BOUNTY)
   listingId          String
-  isWinner           Boolean      @default(false)
+  isWinner           Boolean     @default(false)
   winnerPosition     String?
 
   @@index([id, listingId])
@@ -95,6 +123,7 @@ model Sponsors {
   updatedAt    DateTime       @updatedAt
   UserSponsors UserSponsors[]
   Bounties     Bounties[]
+  Grants       Grants[]
 
   @@index([id, slug])
 }
@@ -135,6 +164,7 @@ model User {
   poc              Bounties[]     @relation("poc")
   Comment          Comment[]
   Submission       Submission[]
+  Grants           Grants[]
 
   @@index([email, publicKey, username])
 }
@@ -163,18 +193,19 @@ enum SuperRole {
   USER
 }
 
-enum Bounties_source {
+enum Source {
   NATIVE
   IMPORT
 }
 
-enum Bounties_status {
+enum status {
   OPEN
   REVIEW
   CLOSED
 }
 
-enum ListingsType {
+enum ListingType {
   BOUNTY
   JOB
+  GRANT
 }
