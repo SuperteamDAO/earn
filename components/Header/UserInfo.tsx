@@ -15,12 +15,14 @@ import type { Wallet as SolanaWallet } from '@solana/wallet-adapter-react';
 import { useWallet } from '@solana/wallet-adapter-react';
 import axios from 'axios';
 import Avatar from 'boring-avatars';
+import { useRouter } from 'next/router';
 import { useEffect } from 'react';
 
 import { Login } from '@/components/modals/Login/Login';
 import { userStore } from '@/store/user';
 
 function UserInfo() {
+  const router = useRouter();
   const { isOpen, onOpen, onClose } = useDisclosure();
   const { connected, publicKey, wallet, wallets, select } = useWallet();
   const { setUserInfo, userInfo } = userStore();
@@ -114,11 +116,15 @@ function UserInfo() {
               </Flex>
             </MenuButton>
             <MenuList>
-              <MenuItem color="brand.slate.500" fontSize="sm" fontWeight={600}>
+              <MenuItem
+                color="brand.slate.500"
+                fontSize="sm"
+                fontWeight={600}
+                onClick={() => {
+                  router.push(`/t/${userInfo?.username}`);
+                }}
+              >
                 Profile
-              </MenuItem>
-              <MenuItem color="brand.slate.500" fontSize="sm" fontWeight={600}>
-                Dashboard
               </MenuItem>
               <MenuDivider />
               <MenuItem
