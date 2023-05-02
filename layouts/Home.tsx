@@ -70,7 +70,7 @@ function Home(props: IDefaultProps) {
       setShowSearch(false);
     }
 
-    if (router.asPath.includes('filter')) {
+    if (router?.query?.filter) {
       setShowCategoryBanner(true);
     } else {
       setShowCategoryBanner(false);
@@ -92,7 +92,7 @@ function Home(props: IDefaultProps) {
             w="full"
             pr={{ base: 0, md: 6 }}
             borderRight={{ base: 'none', md: '1px solid' }}
-            borderRightColor={'blackAlpha.200'}
+            borderRightColor={{ base: 'none', md: 'blackAlpha.200' }}
           >
             {showSearch ? (
               <SearchLoading />

@@ -55,6 +55,12 @@ export const tokenList = [
     icon: 'https://s2.coinmarketcap.com/static/img/coins/64x64/825.png',
   },
   {
+    tokenName: 'STEP',
+    mintAddress: '',
+    address: '',
+    icon: 'https://s2.coinmarketcap.com/static/img/coins/32x32/18069.png',
+  },
+  {
     tokenName: 'mSOL',
     mintAddress: 'mSoLzYCxHdYgdzU16g5QSh3i5K3z3KZK7ytfqcJm7So',
     address: 'mSoLzYCxHdYgdzU16g5QSh3i5K3z3KZK7ytfqcJm7So',

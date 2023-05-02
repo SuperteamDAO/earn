@@ -167,9 +167,18 @@ export const BountiesCard = ({
           src={logo ?? `${router.basePath}/assets/images/sponsor-logo.png`}
         />
         <Flex justify={'space-between'} direction={'column'} w={'full'}>
-          <Text color="brand.slate.700" fontSize="sm" fontWeight={600}>
+          <Link
+            color="brand.slate.700"
+            fontSize="sm"
+            fontWeight={600}
+            _hover={{
+              textDecoration: 'underline',
+            }}
+            cursor="pointer"
+            href={`/listings/bounties/${slug}`}
+          >
             {textLimiter(title, 40)}
-          </Text>
+          </Link>
           <Text
             w={'full'}
             color={'brand.slate.400'}
@@ -185,7 +194,7 @@ export const BountiesCard = ({
                 w={4}
                 h={4}
                 mr={1}
-                alt="token"
+                alt={token}
                 rounded="full"
                 src={
                   tokenList.find((ele) => {
@@ -226,7 +235,7 @@ export const BountiesCard = ({
           bg: 'brand.slate.400',
           color: 'white',
         }}
-        href={`/bounties/${slug}`}
+        href={`/listings/bounties/${slug}`}
       >
         {dayjs().isAfter(deadline)
           ? status === 'CLOSED'

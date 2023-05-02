@@ -1,6 +1,6 @@
 import { Box, useMediaQuery } from '@chakra-ui/react';
 import axios from 'axios';
-import type { NextPage } from 'next';
+import type { GetServerSideProps } from 'next';
 import { useEffect, useState } from 'react';
 
 import {
@@ -19,7 +19,11 @@ interface Listings {
   jobs?: Job[];
 }
 
-const CategoryHomePage: NextPage = () => {
+interface Props {
+  category: string;
+}
+
+function CategoryHomePage({ category }: Props) {
   const [isListingsLoading, setIsListingsLoading] = useState(true);
   const [listings, setListings] = useState<Listings>({
     bounties: [],
@@ -30,7 +34,12 @@ const CategoryHomePage: NextPage = () => {
   const getListings = async () => {
     setIsListingsLoading(true);
     try {
-      const listingsData = await axios.get('/api/listings/');
+      const listingsData = await axios.get('/api/listings/', {
+        params: {
+          category,
+          take: 30,
+        },
+      });
       setListings(listingsData.data);
       setIsListingsLoading(false);
     } catch (e) {
@@ -66,48 +75,52 @@ const CategoryHomePage: NextPage = () => {
   return (
     <Home>
       <Box w={'100%'} mt={8}>
-        <ListingSection
-          type="bounties"
-          title="Active Bounties"
-          sub="Bite sized tasks for freelancers"
-          emoji="/assets/home/emojis/moneyman.png"
-        >
-          {listings?.bounties?.map((bounty) => {
-            return (
-              <BountiesCard
-                slug={bounty.slug}
-                status={bounty?.status}
-                rewardAmount={bounty?.rewardAmount}
-                key={bounty?.id}
-                sponsorName={bounty?.sponsor?.name}
-                deadline={bounty?.deadline}
-                title={bounty?.title}
-                logo={bounty?.sponsor?.logo}
-                token={bounty?.token}
-              />
-            );
-          })}
-        </ListingSection>
+        {(!category || category === 'all' || category === 'bounties') && (
+          <ListingSection
+            type="bounties"
+            title="Active Bounties"
+            sub="Bite sized tasks for freelancers"
+            emoji="/assets/home/emojis/moneyman.png"
+          >
+            {listings?.bounties?.map((bounty) => {
+              return (
+                <BountiesCard
+                  slug={bounty.slug}
+                  status={bounty?.status}
+                  rewardAmount={bounty?.rewardAmount}
+                  key={bounty?.id}
+                  sponsorName={bounty?.sponsor?.name}
+                  deadline={bounty?.deadline}
+                  title={bounty?.title}
+                  logo={bounty?.sponsor?.logo}
+                  token={bounty?.token}
+                />
+              );
+            })}
+          </ListingSection>
+        )}
 
-        <ListingSection
-          type="grants"
-          title="Grants"
-          sub="Equity-free funding opportunities for builders"
-          emoji="/assets/home/emojis/grants.png"
-        >
-          {listings?.grants?.map((grant) => {
-            return (
-              <GrantsCard
-                sponsorName={grant?.sponsor?.name}
-                logo={grant?.sponsor?.logo}
-                key={grant?.id}
-                rewardAmount={grant?.rewardAmount}
-                token={grant?.token}
-                title={grant?.title}
-              />
-            );
-          })}
-        </ListingSection>
+        {(!category || category === 'all' || category === 'grants') && (
+          <ListingSection
+            type="grants"
+            title="Grants"
+            sub="Equity-free funding opportunities for builders"
+            emoji="/assets/home/emojis/grants.png"
+          >
+            {listings?.grants?.map((grant) => {
+              return (
+                <GrantsCard
+                  sponsorName={grant?.sponsor?.name}
+                  logo={grant?.sponsor?.logo}
+                  key={grant?.id}
+                  rewardAmount={grant?.rewardAmount}
+                  token={grant?.token}
+                  title={grant?.title}
+                />
+              );
+            })}
+          </ListingSection>
+        )}
         {/* <ListingSection
               type="jobs"
               title="Jobs"
@@ -134,6 +147,13 @@ const CategoryHomePage: NextPage = () => {
       </Box>
     </Home>
   );
+}
+
+export const getServerSideProps: GetServerSideProps = async (context) => {
+  const { category } = context.query;
+  return {
+    props: { category },
+  };
 };
 
 export default CategoryHomePage;
