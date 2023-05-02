@@ -1,8 +1,8 @@
 import { Box, Center, Flex, Image, Text, VStack } from '@chakra-ui/react';
-import axios from 'axios';
 import Avatar from 'boring-avatars';
-import { useState } from 'react';
 import Slider from 'react-slick';
+
+import type { User } from '@/interface/user';
 
 import type { JobsType } from '../../interface/listings';
 import type { SponsorType } from '../../interface/sponsor';
@@ -23,6 +23,7 @@ interface SideBarProps {
     | undefined;
   total: number;
   listings: number;
+  earners?: User[];
 }
 
 // const Step = ({
@@ -181,7 +182,7 @@ interface EarnerProps {
 const Earner = ({ amount, name, avatar, work }: EarnerProps) => {
   return (
     <Flex align={'center'} w={'100%'} my={2}>
-      {avatar !== '' ? (
+      {avatar ? (
         <Image
           w={'2.125rem'}
           h={'2.125rem'}
@@ -222,23 +223,7 @@ const Earner = ({ amount, name, avatar, work }: EarnerProps) => {
   );
 };
 
-const RecentEarners = () => {
-  const [talent, setTalent] = useState<any>({});
-  const getTalent = async () => {
-    try {
-      const talentData = await axios.get('/api/user/top');
-      console.log(
-        'file: SideBar.tsx:230 ~ getTalent ~ talentData:',
-        talentData
-      );
-      setTalent(talentData.data);
-    } catch (e) {
-      console.log('file: SideBar.tsx:234 ~ getTalent ~ e:', e);
-    }
-  };
-
-  getTalent();
-
+const RecentEarners = ({ earners }: { earners?: User[] }) => {
   const settings = {
     dots: false,
     infinite: true,
@@ -256,14 +241,14 @@ const RecentEarners = () => {
       </Text>
       <VStack rowGap={2}>
         <Slider {...settings}>
-          {talent.data?.map((t: any) => {
+          {earners?.map((t: any) => {
             return (
               <Earner
-                amount={t.tve ?? 0}
-                name={`${t.firstname} ${t.lastname}`}
-                avatar={t.avatar}
+                amount={t.totalEarnedInUSD ?? 0}
+                name={`${t.firstName} ${t.lastName}`}
+                avatar={t.photo}
                 key={t.id}
-                work={t.currentEmployer}
+                work={t.currentEmployer ?? ''}
               />
             );
           })}
@@ -385,24 +370,15 @@ const RecentEarners = () => {
 //   );
 // };
 
-const SideBar = ({ listings, total }: SideBarProps) => {
+const SideBar = ({ listings, total, earners }: SideBarProps) => {
   // const { connected } = useWallet();
   return (
-    <Flex
-      direction={'column'}
-      rowGap={'2.5rem'}
-      w={'22.125rem'}
-      ml={'1.5rem'}
-      pt={'1.5rem'}
-      pl={'1.25rem'}
-      borderLeft={'0.0625rem solid'}
-      borderLeftColor={'gray.200'}
-    >
+    <Flex direction={'column'} rowGap={'2.5rem'} w={'22.125rem'} pl={6}>
       {/* <AlphaAccess /> */}
       {/* {connected && <GettingStarted />} */}
       <TotalStats total={listings} listings={total} />
       {/* <Filter title={'FILTER BY INDUSTRY'} entries={['Gaming', 'Payments', 'Consumer', 'Infrastructure', 'DAOs']} /> */}
-      <RecentEarners />
+      <RecentEarners earners={earners} />
       {/* <HiringNow jobs={jobs} /> */}
       {/* <Featured /> */}
     </Flex>

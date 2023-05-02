@@ -38,6 +38,7 @@ export default async function user(_req: NextApiRequest, res: NextApiResponse) {
         updatedAt: 'desc',
       },
       select: {
+        id: true,
         title: true,
         slug: true,
         shortDescription: true,

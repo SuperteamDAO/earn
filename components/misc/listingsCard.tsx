@@ -151,99 +151,90 @@ export const BountiesCard = ({
 }: BountyProps) => {
   const router = useRouter();
   return (
-    <>
+    <Flex
+      align="center"
+      justify="space-between"
+      w={{ base: '100%', md: 'brand.120' }}
+      h={16}
+    >
+      <Flex w="80%" h={16}>
+        <Image
+          w={16}
+          h={16}
+          mr={5}
+          alt={'company logo'}
+          rounded={5}
+          src={logo ?? `${router.basePath}/assets/images/sponsor-logo.png`}
+        />
+        <Flex justify={'space-between'} direction={'column'} w={'full'}>
+          <Text color="brand.slate.700" fontSize="sm" fontWeight={600}>
+            {textLimiter(title, 40)}
+          </Text>
+          <Text
+            w={'full'}
+            color={'brand.slate.400'}
+            fontSize={{ md: 'sm', base: 'xs' }}
+            fontWeight={'400'}
+            noOfLines={1}
+          >
+            {sponsorName}
+          </Text>
+          <Flex align={'center'} gap={3}>
+            <Flex align={'center'} justify="start">
+              <Image
+                w={4}
+                h={4}
+                mr={1}
+                alt="token"
+                rounded="full"
+                src={
+                  tokenList.find((ele) => {
+                    return ele.tokenName === token;
+                  })?.icon
+                }
+              />
+
+              <Text
+                color={'brand.slate.700'}
+                fontSize={'sm'}
+                fontWeight={'600'}
+              >
+                {rewardAmount}
+              </Text>
+            </Flex>
+            <Text color={'brand.slate.300'} fontSize={'sm'}>
+              |
+            </Text>
+            <Text color={'brand.slate.500'} fontSize={'sm'}>
+              {dayjs().isBefore(deadline)
+                ? `Closing ${dayjs(deadline).fromNow()}`
+                : `Closed ${dayjs(deadline).fromNow()}`}
+            </Text>
+          </Flex>
+        </Flex>
+      </Flex>
       <Link
+        w={24}
+        py={2}
+        color={'brand.slate.400'}
+        textAlign="center"
+        border="1px solid"
+        borderColor="brand.slate.400"
+        borderRadius={4}
         _hover={{
           textDecoration: 'none',
+          bg: 'brand.slate.400',
+          color: 'white',
         }}
         href={`/bounties/${slug}`}
       >
-        <Flex
-          align="center"
-          justify="space-between"
-          w={{ base: '100%', md: 'brand.120' }}
-          h={16}
-        >
-          <Flex w="80%" h={16}>
-            <Image
-              w={16}
-              h={16}
-              mr={5}
-              alt={'company logo'}
-              rounded={5}
-              src={logo ?? `${router.basePath}/assets/images/sponsor-logo.png`}
-            />
-            <Flex justify={'space-between'} direction={'column'} w={'full'}>
-              <Text color="brand.slate.700" fontSize="sm" fontWeight={600}>
-                {textLimiter(title, 40)}
-              </Text>
-              <Text
-                w={'full'}
-                color={'brand.slate.400'}
-                fontSize={{ md: 'sm', base: 'xs' }}
-                fontWeight={'400'}
-                noOfLines={1}
-              >
-                {sponsorName}
-              </Text>
-              <Flex align={'center'} gap={3}>
-                <Flex align={'center'} justify="start">
-                  <Image
-                    w={4}
-                    h={4}
-                    mr={1}
-                    alt="token"
-                    rounded="full"
-                    src={
-                      tokenList.find((ele) => {
-                        return ele.tokenName === token;
-                      })?.icon
-                    }
-                  />
-
-                  <Text
-                    color={'brand.slate.700'}
-                    fontSize={'sm'}
-                    fontWeight={'600'}
-                  >
-                    {rewardAmount}
-                  </Text>
-                </Flex>
-                <Text color={'brand.slate.300'} fontSize={'sm'}>
-                  |
-                </Text>
-                <Text color={'brand.slate.500'} fontSize={'sm'}>
-                  {dayjs().isBefore(deadline)
-                    ? `Closing ${dayjs(deadline).fromNow()}`
-                    : `Closed ${dayjs(deadline).fromNow()}`}
-                </Text>
-              </Flex>
-            </Flex>
-          </Flex>
-          <Link
-            w={24}
-            py={2}
-            color={'brand.slate.400'}
-            textAlign="center"
-            border="1px solid"
-            borderColor="brand.slate.400"
-            borderRadius={4}
-            _hover={{
-              textDecoration: 'none',
-              bg: 'brand.slate.400',
-              color: 'white',
-            }}
-            href={`/bounties/${slug}`}
-          >
-            {dayjs().isAfter(deadline)
-              ? status === 'CLOSED'
-                ? 'View'
-                : 'View'
-              : 'Apply'}
-          </Link>
-        </Flex>
+        {dayjs().isAfter(deadline)
+          ? status === 'CLOSED'
+            ? 'View'
+            : 'View'
+          : 'Apply'}
       </Link>
-    </>
+    </Flex>
   );
 };
 interface JobsProps {

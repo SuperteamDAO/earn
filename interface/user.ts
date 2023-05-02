@@ -29,5 +29,6 @@ interface User {
   website?: string;
   telegram?: string;
   pow?: string;
+  totalEarnedInUSD?: number;
 }
 export type { User };
