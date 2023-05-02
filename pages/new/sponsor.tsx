@@ -13,7 +13,6 @@ import {
 import { useWallet } from '@solana/wallet-adapter-react';
 import axios from 'axios';
 import { MediaPicker } from 'degen';
-import { useRouter } from 'next/router';
 import { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import Select from 'react-select';
@@ -28,7 +27,6 @@ import type { SponsorType } from '../../interface/sponsor';
 import { uploadToCloudinary } from '../../utils/upload';
 
 const CreateSponsor = () => {
-  const router = useRouter();
   const animatedComponents = makeAnimated();
   const { connected } = useWallet();
   const { userInfo } = userStore();
@@ -50,7 +48,7 @@ const CreateSponsor = () => {
         ...sponsor,
         userId: userInfo?.id,
       });
-      router.push('/listings/create');
+      window.open('https://airtable.com/shrfcoy2kmVXIIv4V', '_blank');
     } catch (e) {
       setIsLoading(false);
       setHasError(true);

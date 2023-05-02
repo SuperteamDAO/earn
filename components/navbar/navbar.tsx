@@ -155,7 +155,10 @@ export const Navbar = ({ sponsors }: Props) => {
                     bg="transparent"
                     border="1px solid #6562FF"
                     onClick={() => {
-                      router.push('/listings/create');
+                      window.open(
+                        'https://airtable.com/shrfcoy2kmVXIIv4V',
+                        '_blank'
+                      );
                     }}
                   >
                     Create a Listing

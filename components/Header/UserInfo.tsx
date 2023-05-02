@@ -61,15 +61,6 @@ function UserInfo() {
     setUserInfo({});
   };
 
-  const createBounty = async () => {
-    try {
-      const bounty = await axios.post('/api/bounties/create');
-      console.log('file: UserInfo.tsx:67 ~ createBounty ~ bounty:', bounty);
-    } catch (e) {
-      console.log('file: UserInfo.tsx:68 ~ createBounty ~ e:', e);
-    }
-  };
-
   return (
     <>
       {!!isOpen && (
@@ -84,16 +75,6 @@ function UserInfo() {
       )}
       {connected ? (
         <>
-          <Button
-            display={{ base: 'none', md: 'block' }}
-            px={4}
-            fontSize="xs"
-            onClick={() => createBounty()}
-            size="sm"
-            variant="ghost"
-          >
-            Create a Listing
-          </Button>
           <Menu>
             <MenuButton minW={0} cursor={'pointer'} rounded={'full'}>
               <Flex align="center">
