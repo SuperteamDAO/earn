@@ -1,4 +1,3 @@
-/* eslint-disable no-nested-ternary */
 import { Box, useMediaQuery } from '@chakra-ui/react';
 import axios from 'axios';
 import type { NextPage } from 'next';

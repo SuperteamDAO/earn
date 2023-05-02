@@ -47,6 +47,7 @@ function Home(props: IDefaultProps) {
   const [sidebarInfo, setSidebarInfo] = useState<SidebarType>({});
 
   const getTotalInfo = async () => {
+    console.log('file: Home.tsx:59 ~ getTotalInfo ~ getTotalInfo:');
     setIsTotalLoading(true);
     try {
       const aggregatesData = await axios.get('/api/sidebar/');
@@ -86,11 +87,11 @@ function Home(props: IDefaultProps) {
       }
     >
       <Container maxW={'7xl'} mx="auto">
-        <HStack align="start" justify="space-between" mt={12}>
+        <HStack align="start" justify="space-between" mt={{ base: 6, md: 12 }}>
           <Flex
             w="full"
-            pr={6}
-            borderRight="1px solid"
+            pr={{ base: 0, md: 6 }}
+            borderRight={{ base: 'none', md: '1px solid' }}
             borderRightColor={'blackAlpha.200'}
           >
             {showSearch ? (
