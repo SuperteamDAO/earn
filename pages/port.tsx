@@ -9,6 +9,7 @@ function Port() {
   const [userId, setUserId] = useState('ab15dd8c-fad7-4c74-880b-6b334f8d2a39');
   const [sponsorsLoading, setSponsorsLoading] = useState(false);
   const [bountiesLoading, setBountiesLoading] = useState(false);
+  const [grantsLoading, setGrantsLoading] = useState(false);
 
   const portSponsors = async () => {
     setSponsorsLoading(true);
@@ -35,6 +36,20 @@ function Port() {
     } catch (e) {
       console.log('file: port.tsx:16 ~ portBounties ~ e:', e);
       setBountiesLoading(false);
+    }
+  };
+
+  const portGrants = async () => {
+    setGrantsLoading(true);
+    try {
+      const grants = await axios.post('/api/port/grants', {
+        userId,
+      });
+      console.log('file: port.tsx:17 ~ portGrants ~ grants:', grants);
+      setGrantsLoading(false);
+    } catch (e) {
+      console.log('file: port.tsx:16 ~ portBounties ~ e:', e);
+      setGrantsLoading(false);
     }
   };
 
@@ -76,6 +91,16 @@ function Port() {
           variant="solid"
         >
           Port Bounties
+        </Button>
+        <Button
+          w="full"
+          mt={4}
+          isLoading={!!grantsLoading}
+          loadingText="Porting..."
+          onClick={() => portGrants()}
+          variant="solid"
+        >
+          Port Grants
         </Button>
       </Container>
     </Default>
