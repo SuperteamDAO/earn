@@ -142,9 +142,7 @@ const TotalStats = ({
               style={{
                 color: '#64748B',
               }}
-            >
-              USD
-            </span>
+            ></span>
           </Text>
           <Text color={'gray.500'} fontSize={'xs'} fontWeight={'400'}>
             Total Value Listed

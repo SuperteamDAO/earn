@@ -20,9 +20,6 @@ export default function ConnectWallet({
 
   return (
     <Box>
-      <Text mb={4} color="brand.slate.500" fontSize="lg" textAlign="center">
-        Connect Wallet
-      </Text>
       {wallets.map((wallet, index) => {
         const isLoading = loadingWallet === wallet?.adapter?.name;
         return (
