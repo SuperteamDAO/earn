@@ -31,6 +31,8 @@ const theme = extendTheme({
     },
   },
   space: {
+    85: '21rem',
+    120: '46.0625rem',
     brand: {
       85: '21rem',
       120: '46.0625rem',

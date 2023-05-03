@@ -96,37 +96,36 @@ export const Comments = ({ refId, refType }: Props) => {
           </Text>
         </HStack>
       </HStack>
-      {!!userInfo?.id && (
-        <VStack w={'full'} px={6}>
-          <Textarea
-            borderColor="brand.slate.300"
-            _placeholder={{
-              color: 'brand.slate.300',
-            }}
-            focusBorderColor="brand.purple"
-            onChange={(e) => {
-              setNewComment(e.target.value);
-            }}
-            placeholder="Write a comment..."
-            value={newComment}
-          ></Textarea>
-          {!!newCommentError && (
-            <Text mt={4} color="red">
-              Error in adding your comment! Please try again!
-            </Text>
-          )}
-          <Flex justify={'end'} w="full">
-            <Button
-              isLoading={!!newCommentLoading}
-              loadingText="Adding..."
-              onClick={() => addNewComment()}
-              variant="solid"
-            >
-              Comment
-            </Button>
-          </Flex>
-        </VStack>
-      )}
+      <VStack w={'full'} px={6}>
+        <Textarea
+          borderColor="brand.slate.300"
+          _placeholder={{
+            color: 'brand.slate.300',
+          }}
+          focusBorderColor="brand.purple"
+          onChange={(e) => {
+            setNewComment(e.target.value);
+          }}
+          placeholder="Write a comment..."
+          value={newComment}
+        ></Textarea>
+        {!!newCommentError && (
+          <Text mt={4} color="red">
+            Error in adding your comment! Please try again!
+          </Text>
+        )}
+        <Flex justify={'end'} w="full">
+          <Button
+            isDisabled={!userInfo?.id}
+            isLoading={!!newCommentLoading}
+            loadingText="Adding..."
+            onClick={() => addNewComment()}
+            variant="solid"
+          >
+            Comment
+          </Button>
+        </Flex>
+      </VStack>
       {comments?.map((comment: any) => {
         const date = dayjs(comment?.updatedAt).fromNow();
         return (
@@ -159,7 +158,7 @@ export const Comments = ({ refId, refType }: Props) => {
           </HStack>
         );
       })}
-      {comments.length % 30 === 0 && (
+      {!!comments.length && comments.length % 30 === 0 && (
         <Flex justify="center" w="full">
           <Button
             isDisabled={!!isLoading}

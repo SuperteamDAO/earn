@@ -2,6 +2,7 @@
 import {
   Flex,
   Image,
+  Link,
   Modal,
   ModalBody,
   ModalCloseButton,
@@ -12,6 +13,7 @@ import {
   Text,
 } from '@chakra-ui/react';
 import type { Wallet } from '@solana/wallet-adapter-react';
+import { useRouter } from 'next/router';
 import { useEffect, useState } from 'react';
 
 import type { User } from '@/interface/user';
@@ -38,6 +40,7 @@ export const Login = ({
   wallets,
   initialStep = 1,
 }: Props) => {
+  const router = useRouter();
   const [step, setStep] = useState(initialStep);
   const [otp, setOtp] = useState({
     current: 0,
@@ -93,7 +96,22 @@ export const Login = ({
         <ModalFooter>
           <Text color="brand.slate.400" fontSize="xs" textAlign="center">
             By connecting your wallet & signing up, you agree to our{' '}
-            <b>Terms of Service</b> and our <b>Privacy Policy</b>.
+            <Link
+              fontWeight={700}
+              href={`${router.basePath}/terms-of-service.pdf`}
+              isExternal
+            >
+              Terms of Service
+            </Link>{' '}
+            and our{' '}
+            <Link
+              fontWeight={700}
+              href={`${router.basePath}/privacy-policy.pdf`}
+              isExternal
+            >
+              Privacy Policy
+            </Link>
+            .
           </Text>
         </ModalFooter>
       </ModalContent>

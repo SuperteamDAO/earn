@@ -48,6 +48,7 @@ const CreateSponsor = () => {
         ...sponsor,
         userId: userInfo?.id,
       });
+      setIsLoading(false);
       window.open('https://airtable.com/shrfcoy2kmVXIIv4V', '_blank');
     } catch (e) {
       setIsLoading(false);

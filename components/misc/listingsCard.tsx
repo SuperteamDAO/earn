@@ -55,7 +55,6 @@ export const ListingSection = ({
           : 'block'
       }
       w={{ md: 'brand.120', base: '95%' }}
-      mt={'1rem'}
       mb={'2.8125rem'}
       mx={'auto'}
     >
@@ -63,7 +62,7 @@ export const ListingSection = ({
         align="center"
         justify="space-between"
         mb={4}
-        py={3}
+        pb={3}
         borderBottom="2px solid"
         borderBottomColor="#E2E8F0"
       >
