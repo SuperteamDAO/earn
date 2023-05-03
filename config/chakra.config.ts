@@ -69,6 +69,16 @@ const theme = extendTheme({
             bg: 'brand.purple',
           },
         },
+        outlineSecondary: {
+          color: 'brand.slate.400',
+          bg: 'transparent',
+          border: '1px solid',
+          borderColor: 'brand.slate.400',
+          _hover: {
+            color: 'white',
+            bg: 'brand.slate.400',
+          },
+        },
         ghost: {
           color: 'brand.slate.500',
           bg: 'transparent',
