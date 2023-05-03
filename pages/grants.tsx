@@ -12,6 +12,7 @@ import {
 } from '@chakra-ui/react';
 import { dehydrate, QueryClient, useQuery } from '@tanstack/react-query';
 import type { GetServerSideProps } from 'next';
+import { getURL } from 'next/dist/shared/lib/utils';
 import React from 'react';
 
 import { Default } from '@/layouts/Default';
@@ -45,9 +46,7 @@ const GrantEntry = ({
           Upto $10K
         </Text>
         <Link
-          href={`https://earn-frontend-v2.vercel.app/listings/grants/${title
-            .split(' ')
-            .join('-')}`}
+          href={`${getURL()}/listings/grants/${title.split(' ').join('-')}`}
           isExternal
         >
           <Button

@@ -14,11 +14,13 @@ import axios from 'axios';
 import { useRouter } from 'next/router';
 import React, { useEffect, useState } from 'react';
 
-import { Navbar } from '../../components/navbar/navbar';
+import { Default } from '@/layouts/Default';
+import { Meta } from '@/layouts/Meta';
+
 import TalentBio from '../../components/TalentBio';
 import { CommunityImage } from '../../constants/index';
 
-const ProofWork = () => {
+export const ProofWork = () => {
   return (
     <Box
       w={'20.0225rem'}
@@ -109,7 +111,7 @@ const LinkPreview = ({ data }: { data: PowType }) => {
   );
 };
 
-const EduNft = () => {
+export const EduNft = () => {
   return (
     <Box
       w={'19.8344rem'}
@@ -173,14 +175,15 @@ const Interest = ({ label, icon }: { label: string; icon: string }) => {
   return (
     <Flex
       align={'center'}
-      columnGap={'0.8844rem'}
-      px={'0.5875rem'}
-      py={'0.1563rem'}
-      border={'1px solid #E2E8EF'}
+      gap={3}
+      px={2}
+      py={1}
+      border={'1px solid'}
+      borderColor={'gray.200'}
       borderRadius={'1rem'}
     >
-      <Box w={'0.7369rem'} h={'0.7369rem'}>
-        <Image w={'100%'} h={'100%'} alt="" src={icon} />
+      <Box>
+        <Image w={5} h={5} alt="emoji" src={icon} />
       </Box>
       <Text>{label}</Text>
     </Flex>
@@ -224,16 +227,8 @@ const SkillsAndInterests = ({ data }: { data: any }) => {
   const community = JSON.parse(data.community);
 
   return (
-    <Box
-      w={'20.4375rem'}
-      h={'max-content'}
-      pb={'1.9375rem'}
-      px={'1.5625rem'}
-      py={'0.625rem'}
-      bg={'white'}
-      borderRadius={'0.6875rem'}
-    >
-      <Box py={'0.6875rem'} borderBottom={'1px solid #F1F5F9'}>
+    <Box w={'80%'} h={'max-content'} p={4} bg={'white'} borderRadius={10}>
+      <Box py={2} borderBottom={'1px solid'} borderBottomColor={'gray.200'}>
         <Chip
           label="Location"
           value={data.location}
@@ -249,9 +244,10 @@ const SkillsAndInterests = ({ data }: { data: any }) => {
             return (
               <Badge
                 key={ele}
-                px={'0.625rem'}
-                py={'0.2813rem'}
+                px={2}
+                py={1}
                 colorScheme={colors[idx]?.toLocaleLowerCase()}
+                rounded={4}
               >
                 {ele.replaceAll('-Dev', '')}
               </Badge>
@@ -263,7 +259,7 @@ const SkillsAndInterests = ({ data }: { data: any }) => {
         <Text color={'gray.400'} fontWeight={'500'}>
           Interests
         </Text>
-        <Flex wrap={'wrap'} gap={'0.4375rem'} mt={'0.8125rem'}>
+        <Flex wrap={'wrap'} gap={2} mt={4}>
           {interests.map((ele: string) => {
             return (
               <Interest
@@ -275,34 +271,39 @@ const SkillsAndInterests = ({ data }: { data: any }) => {
           })}
         </Flex>
       </Box>
-      <Box mt={'1rem'}>
-        <Text color={'gray.400'} fontWeight={'500'}>
-          Communities
-        </Text>
-        <Flex wrap={'wrap'} gap={'0.4375rem'}>
-          {community.map((ele: string) => {
-            return <CommunityChip label={ele} key={ele} />;
-          })}
-        </Flex>
-      </Box>
+      {community.length > 0 && (
+        <Box mt={10}>
+          <Text color={'gray.400'} fontWeight={'500'}>
+            Communities
+          </Text>
+          <Flex wrap={'wrap'} gap={'0.4375rem'}>
+            {community.map((ele: string) => {
+              return <CommunityChip label={ele} key={ele} />;
+            })}
+          </Flex>
+        </Box>
+      )}
     </Box>
   );
 };
 
-const Nft = () => {
+const Nft = ({ wallet }: { wallet: string }) => {
   return (
     <Box
-      w={'20.4375rem'}
+      w={'80%'}
       h={'max-content'}
-      pb={'1.9375rem'}
-      px={'1.5625rem'}
-      py={'0.625rem'}
+      p={4}
       bg={'white'}
       borderRadius={'0.6875rem'}
     >
       <Text fontWeight={'500'}>Proof of Work NFT</Text>
       <Box w={'100%'} h={'auto'} pt={'1.3125rem'}>
-        <Image w={'100%'} h={'100%'} alt="" src={'/assets/nft.png'} />
+        <Image
+          w={'100%'}
+          h={'100%'}
+          alt=""
+          src={`https://searn-nft-dev.s3.ap-south-1.amazonaws.com/${wallet}.png`}
+        />
       </Box>
     </Box>
   );
@@ -344,8 +345,6 @@ function TalentProfile() {
     }
   }, [isSuccess]);
 
-  console.log(data);
-
   if (!isSuccess) {
     return (
       <Center w={'100%'} h={'100vh'} pt={'3rem'}>
@@ -362,58 +361,55 @@ function TalentProfile() {
 
   return (
     <>
-      <Navbar />
-      <Flex w={'100%'} h={'max-content'} pt={'3rem'}>
-        <VStack
-          rowGap={'1.125rem'}
-          minW={'23.875rem'}
-          minH={'100vh'}
-          py={'2.5rem'}
-          bgImage={'/assets/bg/talent-bg.png'}
-          bgSize={'cover '}
-          bgRepeat={'no-repeat'}
+      <Default
+        meta={
+          <Meta
+            title="Superteam Earn"
+            description="Every Solana opportunity in one place!"
+          />
+        }
+      >
+        <Flex
+          direction={['column', 'column', 'column', 'row']}
+          w={'100%'}
+          h={'max-content'}
         >
-          <TalentBio data={data?.data.data} />
-          <SkillsAndInterests data={data?.data.data} />
-          <Nft />
-        </VStack>
-        <Box w={'100%'} px={'23px'} py={'35px'} bg={'#F7FAFC'}>
-          <Box mb={'18.5px'} borderBottom={'1px solid #E2E8EF'}>
-            <Text mb={'1.0625rem'} fontSize={'17.94px'} fontWeight={'500'}>
-              Proof of Work
-            </Text>
+          <VStack
+            rowGap={4}
+            maxW={'25%'}
+            minH={'100vh'}
+            pt={5}
+            bgImage={'/assets/bg/talent-bg.png'}
+            bgSize={'cover '}
+            bgRepeat={'no-repeat'}
+          >
+            <TalentBio data={data?.data.data} />
+            <SkillsAndInterests data={data?.data.data} />
+            <Nft wallet={data?.data?.data.publickey} />
+          </VStack>
+          <Box
+            justifyContent={'center'}
+            display={'flex'}
+            w={'100%'}
+            px={'23px'}
+            py={'35px'}
+            bg={'#F7FAFC'}
+          >
+            {pow.length > 0 && (
+              <Box mb={'18.5px'} borderBottom={'1px solid #E2E8EF'}>
+                <Text mb={'1.0625rem'} fontSize={'17.94px'} fontWeight={'500'}>
+                  Other Proof Work
+                </Text>
+              </Box>
+            )}
+            <Flex wrap={'wrap'} gap={'1.1425rem'} mb={'44px'}>
+              {pow.map((ele, idx) => {
+                return <LinkPreview key={`${idx}lk`} data={ele} />;
+              })}
+            </Flex>
           </Box>
-          <Flex wrap={'wrap'} gap={'1.1425rem'} mb={'44px'}>
-            <ProofWork />
-            <ProofWork />
-            <ProofWork />
-            <ProofWork />
-            <ProofWork />
-          </Flex>
-          {pow.length > 0 && (
-            <Box mb={'18.5px'} borderBottom={'1px solid #E2E8EF'}>
-              <Text mb={'1.0625rem'} fontSize={'17.94px'} fontWeight={'500'}>
-                Other Proof Work
-              </Text>
-            </Box>
-          )}
-          <Flex wrap={'wrap'} gap={'1.1425rem'} mb={'44px'}>
-            {pow.map((ele, idx) => {
-              return <LinkPreview key={`${idx}lk`} data={ele} />;
-            })}
-          </Flex>
-          <Box mb={'18.5px'} borderBottom={'1px solid #E2E8EF'}>
-            <Text mb={'1.0625rem'} fontSize={'17.94px'} fontWeight={'500'}>
-              Educational NFTs
-            </Text>
-          </Box>
-          <Flex wrap={'wrap'} gap={'1.1425rem'} mb={'44px'}>
-            <EduNft />
-            <EduNft />
-            <EduNft />
-          </Flex>
-        </Box>
-      </Flex>
+        </Flex>
+      </Default>
     </>
   );
 }

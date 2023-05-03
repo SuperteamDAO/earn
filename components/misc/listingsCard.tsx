@@ -20,6 +20,7 @@ import { Toaster } from 'react-hot-toast';
 import { TiTick } from 'react-icons/ti';
 
 import { Mixpanel } from '@/utils/mixpanel';
+import { getURL } from '@/utils/validUrl';
 
 import { type MultiSelectOptions, tokenList } from '../../constants';
 import type { BountyStatus } from '../../interface/types';
@@ -156,7 +157,7 @@ export const BountiesCard = ({
         _hover={{
           textDecoration: 'none',
         }}
-        href={`https://earn-frontend-v2.vercel.app/listings/bounties/${slug}`}
+        href={`${getURL()}/listings/bounties/${slug}`}
         isExternal
         onClick={() => {
           Mixpanel.track('Bounty Clicked', {
@@ -236,7 +237,7 @@ export const BountiesCard = ({
               bg: 'brand.slate.400',
               color: 'white',
             }}
-            href={`https://earn-frontend-v2.vercel.app/listings/bounties/${slug}`}
+            href={`${getURL()}/listings/bounties/${slug}`}
             isExternal
           >
             {Number(moment(due).format('x')) < Date.now()
@@ -279,12 +280,7 @@ export const JobsCard = ({
       _hover={{
         textDecoration: 'none',
       }}
-      href={
-        link ||
-        `https://earn-frontend-v2.vercel.app/listings/jobs/${title
-          .split(' ')
-          .join('-')}`
-      }
+      href={link || `${getURL()}/listings/jobs/${title.split(' ').join('-')}`}
       isExternal
       onClick={() => {
         Mixpanel.track('job_clicked', {
@@ -353,36 +349,30 @@ export const JobsCard = ({
                   );
                 })}
             </Flex>
+
+            <Link
+              w={24}
+              py={2}
+              color={'brand.slate.400'}
+              textAlign="center"
+              border="1px solid"
+              borderColor={'brand.slate.400'}
+              borderRadius={4}
+              _hover={{
+                textDecoration: 'none',
+                bg: 'brand.slate.400',
+                color: 'white',
+              }}
+              href={
+                link ||
+                `${getURL()}/listings/jobs/${title.split(' ').join('-')}`
+              }
+              isExternal
+            >
+              Apply
+            </Link>
           </Flex>
         </Flex>
-        <Link
-          w={24}
-          py={2}
-          color={'brand.slate.400'}
-          textAlign="center"
-          border="1px solid"
-          borderColor={'brand.slate.400'}
-          borderRadius={4}
-          _hover={{
-            textDecoration: 'none',
-            bg: 'brand.slate.400',
-            color: 'white',
-          }}
-          href={
-            link ||
-            `https://earn-frontend-v2.vercel.app/listings/jobs/${title
-              .split(' ')
-              .join('-')}`
-          }
-          isExternal
-          onClick={() => {
-            Mixpanel.track('job_clicked', {
-              'Job Title': title,
-            });
-          }}
-        >
-          Apply
-        </Link>
       </Flex>
     </Link>
   );
@@ -395,15 +385,14 @@ interface GrantsProps {
   max: number;
   min: number;
 }
+
 export const GrantsCard = ({ title, logo, max, min, sponsor }: GrantsProps) => {
   return (
     <Link
       _hover={{
         textDecoration: 'none',
       }}
-      href={`https://earn-frontend-v2.vercel.app/listings/grants/${title
-        .split(' ')
-        .join('-')}`}
+      href={`${getURL()}/listings/grants/${title.split(' ').join('-')}`}
       isExternal
       onClick={() => {
         Mixpanel.track('grant_clicked', {
@@ -445,6 +434,7 @@ export const GrantsCard = ({ title, logo, max, min, sponsor }: GrantsProps) => {
             </Flex>
           </Flex>
         </Flex>
+
         <Link
           w={24}
           py={2}
@@ -458,15 +448,8 @@ export const GrantsCard = ({ title, logo, max, min, sponsor }: GrantsProps) => {
             bg: 'brand.slate.400',
             color: 'white',
           }}
-          href={`https://earn-frontend-v2.vercel.app/listings/grants/${title
-            .split(' ')
-            .join('-')}`}
+          href={`${getURL()}/listings/grants/${title.split(' ').join('-')}`}
           isExternal
-          onClick={() => {
-            Mixpanel.track('grant_clicked', {
-              'Grant Title': title,
-            });
-          }}
         >
           Apply
         </Link>

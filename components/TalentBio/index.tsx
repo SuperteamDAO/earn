@@ -78,33 +78,31 @@ function TalentBio({
 
   return (
     <Box
-      w={'20.4375rem'}
-      minH={'21.375rem'}
+      w={'80%'}
       px={'1.5625rem'}
       py={'1.125rem'}
       bg={'white'}
-      borderRadius={'0.6875rem'}
+      borderRadius={10}
     >
       <Flex align={'center'}>
-        <Avatar name="Dan Abrahmov" size="lg" src={data?.avatar} />
+        <Avatar
+          name={`${data?.firstname}${data?.lastname}`}
+          size="lg"
+          src={data?.avatar}
+        />
         <Box ml={'21'}>
-          <Text fontSize={'1.25rem'} fontWeight={'600'}>
+          <Text fontSize={'md'} fontWeight={'600'}>
             {data?.firstname} {data?.lastname}
           </Text>
-          <Text color={'gray.400'} fontSize={'1rem'} fontWeight={'600'}>
+          <Text color={'gray.400'} fontSize={'sm'} fontWeight={'600'}>
             @{data?.username}
           </Text>
         </Box>
       </Flex>
-      <Text
-        mt={'0.625rem'}
-        color={'gray.400'}
-        fontSize={'1rem'}
-        fontWeight={'400'}
-      >
+      <Text mt={4} color={'gray.400'} fontSize={'sm'} fontWeight={'400'}>
         {data?.bio}
       </Text>
-      <Flex justify={'space-between'} mt={'2.1875rem'}>
+      <Flex justify={'space-between'} mt={4}>
         <Chip
           icon={'/assets/talent/eyes.png'}
           label={'Interested In'}
@@ -136,8 +134,6 @@ function TalentBio({
           return (
             <Box
               key={ele.link}
-              w={'22px'}
-              h={'22px'}
               onClick={() => {
                 if (ele.link) {
                   window.location.href = ele.link;
@@ -145,8 +141,8 @@ function TalentBio({
               }}
             >
               <Image
-                w={'100%'}
-                h={'100%'}
+                w={6}
+                h={6}
                 opacity={!ele.link ? '0.3' : ''}
                 cursor={ele.link && 'pointer'}
                 objectFit="contain"

@@ -4,6 +4,8 @@ import { useQuery } from '@tanstack/react-query';
 import Avatar from 'boring-avatars';
 import Slider from 'react-slick';
 
+import { getURL } from '@/utils/validUrl';
+
 import type { JobsType } from '../../interface/listings';
 import type { SponsorType } from '../../interface/sponsor';
 import { TalentTVE } from '../../utils/functions';
@@ -282,9 +284,7 @@ const Hiring = ({ logo, title, location, type }: HiringProps) => {
       />
       <Box>
         <Link
-          href={`https://earn-frontend-v2.vercel.app/listings/jobs/${title
-            .split(' ')
-            .join('-')}`}
+          href={`${getURL()}/listings/jobs/${title.split(' ').join('-')}`}
           isExternal
         >
           <Text color={'black'} fontSize={'0.8125rem'} fontWeight={'500'}>
