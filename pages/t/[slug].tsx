@@ -2,6 +2,7 @@ import { ExternalLinkIcon } from '@chakra-ui/icons';
 import {
   Badge,
   Box,
+  Button,
   Center,
   Flex,
   Image,
@@ -288,6 +289,24 @@ const SkillsAndInterests = ({ data }: { data: any }) => {
 };
 
 const Nft = ({ wallet }: { wallet: string }) => {
+  const [generate, setGenrate] = useState(false);
+
+  useEffect(() => {
+    const fetch = async () => {
+      if (wallet) {
+        try {
+          await axios.post(
+            `https://searn-nft-dev.s3.ap-south-1.amazonaws.com/s.png`
+          );
+          setGenrate(false);
+        } catch (error) {
+          setGenrate(true);
+          console.log(error);
+        }
+      }
+    };
+    fetch();
+  }, []);
   return (
     <Box
       w={'80%'}
@@ -297,13 +316,29 @@ const Nft = ({ wallet }: { wallet: string }) => {
       borderRadius={'0.6875rem'}
     >
       <Text fontWeight={'500'}>Proof of Work NFT</Text>
-      <Box w={'100%'} h={'auto'} pt={'1.3125rem'}>
+      <Box
+        zIndex={100}
+        alignItems={'center'}
+        justifyContent={'center'}
+        display={'flex'}
+        w={'100%'}
+        h={'auto'}
+        pt={4}
+      >
         <Image
           w={'100%'}
           h={'100%'}
-          alt=""
-          src={`https://searn-nft-dev.s3.ap-south-1.amazonaws.com/${wallet}.png`}
+          alt="NFT"
+          filter={generate ? 'none' : 'blur(7px)'}
+          src={
+            generate
+              ? `https://searn-nft-dev.s3.ap-south-1.amazonaws.com/${wallet}.png`
+              : '/assets/nft.png'
+          }
         />
+        <Button pos={'absolute'} display={generate ? 'none' : 'block'}>
+          Claim NFT
+        </Button>
       </Box>
     </Box>
   );
@@ -370,16 +405,12 @@ function TalentProfile() {
           />
         }
       >
-        <Flex
-          direction={['column', 'column', 'column', 'row']}
-          w={'100%'}
-          h={'max-content'}
-        >
+        <Flex direction={['column', 'column', 'column', 'row']} w={'100%'}>
           <VStack
             rowGap={4}
-            maxW={'25%'}
+            maxW={['full', 'full', '40%', '25%']}
             minH={'100vh'}
-            pt={5}
+            py={8}
             bgImage={'/assets/bg/talent-bg.png'}
             bgSize={'cover '}
             bgRepeat={'no-repeat'}
