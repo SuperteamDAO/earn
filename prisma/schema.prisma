@@ -154,10 +154,11 @@ model User {
   totalEarnedInUSD Int            @default(0)
   isTalentFilled   Boolean        @default(false)
   skills           String?
-  subskills        String?
+  subSkills        String?
   interests        String?
   bio              String?
   twitter          String?
+  discord          String?
   github           String?
   linkedin         String?
   website          String?
