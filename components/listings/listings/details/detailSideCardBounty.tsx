@@ -119,6 +119,9 @@ function DetailSideCard({
             </Box>
             <Text color="color.slate.800" fontSize={'xl'} fontWeight={600}>
               {total?.toLocaleString() ?? 0}
+              <Text as="span" ml={1} color="brand.slate.300" fontWeight={400}>
+                {token}
+              </Text>
             </Text>
             <Text color={'brand.slate.300'} fontSize={'xl'} fontWeight={500}>
               Total Prizes
@@ -158,6 +161,14 @@ function DetailSideCard({
                           fontWeight={600}
                         >
                           {prizeList?.first}
+                          <Text
+                            as="span"
+                            ml={1}
+                            color="brand.slate.300"
+                            fontWeight={400}
+                          >
+                            {token}
+                          </Text>
                         </Text>
                       </Td>
                       <Td>
@@ -190,6 +201,14 @@ function DetailSideCard({
                           fontWeight={600}
                         >
                           {prizeList?.second}
+                          <Text
+                            as="span"
+                            ml={1}
+                            color="brand.slate.300"
+                            fontWeight={400}
+                          >
+                            {token}
+                          </Text>
                         </Text>
                       </Td>
                       <Td>
@@ -222,6 +241,14 @@ function DetailSideCard({
                           fontWeight={600}
                         >
                           {prizeList?.third}
+                          <Text
+                            as="span"
+                            ml={1}
+                            color="brand.slate.300"
+                            fontWeight={400}
+                          >
+                            {token}
+                          </Text>
                         </Text>
                       </Td>
                       <Td>
@@ -254,6 +281,14 @@ function DetailSideCard({
                           fontWeight={600}
                         >
                           {prizeList?.forth}
+                          <Text
+                            as="span"
+                            ml={1}
+                            color="brand.slate.300"
+                            fontWeight={400}
+                          >
+                            {token}
+                          </Text>
                         </Text>
                       </Td>
                       <Td>
@@ -286,6 +321,14 @@ function DetailSideCard({
                           fontWeight={600}
                         >
                           {prizeList?.fifth}
+                          <Text
+                            as="span"
+                            ml={1}
+                            color="brand.slate.300"
+                            fontWeight={400}
+                          >
+                            {token}
+                          </Text>
                         </Text>
                       </Td>
                       <Td>
@@ -329,7 +372,7 @@ function DetailSideCard({
                 />
                 <VStack align={'start'}>
                   <Text color={'#000000'} fontSize="1.3rem" fontWeight={500}>
-                    <Countdown date={endingTime} daysInHours />
+                    <Countdown date={endingTime} zeroPadDays={1} />
                   </Text>
                   <Text mt={'0px !important'} color={'#94A3B8'}>
                     Remaining

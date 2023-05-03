@@ -83,17 +83,17 @@ export const SubmissionModal = ({
     >
       <ModalOverlay></ModalOverlay>
       <ModalContent>
-        <ModalHeader>Bounty Submission</ModalHeader>
+        <ModalHeader color="brand.slate.800">Bounty Submission</ModalHeader>
         <ModalCloseButton />
-        <VStack align={'start'} gap={3} p={5}>
+        <VStack align={'start'} gap={3} pb={6} px={6}>
           <Box>
-            <Text mb={2} color={'brand.slate.500'} fontWeight={500}>
+            <Text mb={2} color={'brand.slate.500'} fontSize="sm">
               {isPermissioned
                 ? `This is a permissioned bounty - which means only the applicant that the sponsor will select will be eligible to work on this bounty`
                 : `We can't wait to see what you've created! Winners will receive
               prizes as well as instant admission to our DAO.`}
             </Text>
-            <Text color={'brand.slate.500'} fontWeight={500}>
+            <Text color={'brand.slate.500'} fontSize="sm">
               {!!isPermissioned &&
                 'Please note that bounties typically take ~5 days after the end date to be evaluated.'}
             </Text>
@@ -110,13 +110,13 @@ export const SubmissionModal = ({
                   <FormControl isRequired>
                     <FormLabel
                       mb={0}
-                      color={'brand.slate.500'}
+                      color={'brand.slate.800'}
                       fontWeight={600}
                       htmlFor={'applicationLink'}
                     >
                       Link to your submission
                     </FormLabel>
-                    <FormHelperText mt={0} mb={2}>
+                    <FormHelperText mt={0} mb={2} color="brand.slate.500">
                       We prefer Medium, Substack, Notion, etc., link for written
                       content, and Figma for design content.
                     </FormHelperText>
@@ -139,13 +139,13 @@ export const SubmissionModal = ({
                   <FormControl>
                     <FormLabel
                       mb={0}
-                      color={'brand.slate.500'}
+                      color={'brand.slate.800'}
                       fontWeight={600}
                       htmlFor={'tweetLink'}
                     >
                       Tweet Link
                     </FormLabel>
-                    <FormHelperText mt={0} mb={2}>
+                    <FormHelperText mt={0} mb={2} color="brand.slate.500">
                       We generally recommend tweeting out your work so that (1)
                       we can further share the best entries, and (2) its easier
                       for partner projects to discover you too! In case you
