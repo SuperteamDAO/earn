@@ -1,4 +1,4 @@
-import { Box, useMediaQuery } from '@chakra-ui/react';
+import { Box, Flex, useMediaQuery } from '@chakra-ui/react';
 import axios from 'axios';
 import type { NextPage } from 'next';
 import { useEffect, useState } from 'react';
@@ -8,6 +8,7 @@ import {
   GrantsCard,
   ListingSection,
 } from '@/components/misc/listingsCard';
+import Loading from '@/components/shared/Loading';
 import type { Bounty } from '@/interface/bounty';
 import type { Grant } from '@/interface/grant';
 import type { Job } from '@/interface/job';
@@ -72,21 +73,27 @@ const HomePage: NextPage = () => {
           sub="Bite sized tasks for freelancers"
           emoji="/assets/home/emojis/moneyman.png"
         >
-          {listings?.bounties?.map((bounty) => {
-            return (
-              <BountiesCard
-                slug={bounty.slug}
-                status={bounty?.status}
-                rewardAmount={bounty?.rewardAmount}
-                key={bounty?.id}
-                sponsorName={bounty?.sponsor?.name}
-                deadline={bounty?.deadline}
-                title={bounty?.title}
-                logo={bounty?.sponsor?.logo}
-                token={bounty?.token}
-              />
-            );
-          })}
+          {isListingsLoading ? (
+            <Flex align="center" justify="center" direction="column" minH={52}>
+              <Loading />
+            </Flex>
+          ) : (
+            listings?.bounties?.map((bounty) => {
+              return (
+                <BountiesCard
+                  slug={bounty.slug}
+                  status={bounty?.status}
+                  rewardAmount={bounty?.rewardAmount}
+                  key={bounty?.id}
+                  sponsorName={bounty?.sponsor?.name}
+                  deadline={bounty?.deadline}
+                  title={bounty?.title}
+                  logo={bounty?.sponsor?.logo}
+                  token={bounty?.token}
+                />
+              );
+            })
+          )}
         </ListingSection>
 
         <ListingSection
@@ -95,18 +102,24 @@ const HomePage: NextPage = () => {
           sub="Equity-free funding opportunities for builders"
           emoji="/assets/home/emojis/grants.png"
         >
-          {listings?.grants?.map((grant) => {
-            return (
-              <GrantsCard
-                sponsorName={grant?.sponsor?.name}
-                logo={grant?.sponsor?.logo}
-                key={grant?.id}
-                rewardAmount={grant?.rewardAmount}
-                token={grant?.token}
-                title={grant?.title}
-              />
-            );
-          })}
+          {isListingsLoading ? (
+            <Flex align="center" justify="center" direction="column" minH={52}>
+              <Loading />
+            </Flex>
+          ) : (
+            listings?.grants?.map((grant) => {
+              return (
+                <GrantsCard
+                  sponsorName={grant?.sponsor?.name}
+                  logo={grant?.sponsor?.logo}
+                  key={grant?.id}
+                  rewardAmount={grant?.rewardAmount}
+                  token={grant?.token}
+                  title={grant?.title}
+                />
+              );
+            })
+          )}
         </ListingSection>
         {/* <ListingSection
               type="jobs"
