@@ -20,6 +20,7 @@ export default async function user(req: NextApiRequest, res: NextApiResponse) {
     if (!category || category === 'all' || category === 'bounties') {
       const bounties = await prisma.bounties.findMany({
         where: {
+          isPublished: true,
           isActive: true,
           isArchived: false,
           status: 'OPEN',
@@ -48,6 +49,7 @@ export default async function user(req: NextApiRequest, res: NextApiResponse) {
     if (!category || category === 'all' || category === 'grants') {
       const grants = await prisma.grants.findMany({
         where: {
+          isPublished: true,
           isActive: true,
           isArchived: false,
           ...skillsFilter,

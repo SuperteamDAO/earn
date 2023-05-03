@@ -34,6 +34,8 @@ export default async function user(req: NextApiRequest, res: NextApiResponse) {
       },
     });
 
+    const superteamSponsor = sponsorsList.find((s) => s.slug === 'superteam');
+
     bountiesParsed.map(async (bounty: any, i: number) => {
       console.log('Adding ', i);
       const bountyDeadline = (bounty.deadline || '').split('/');
@@ -52,6 +54,8 @@ export default async function user(req: NextApiRequest, res: NextApiResponse) {
       const rewards: Rewards = {};
       if (bounty['prize-1']) {
         rewards.first = bounty['prize-1'];
+      } else {
+        rewards.first = bounty.rewardAmount || 0;
       }
       if (bounty['prize-2']) {
         rewards.second = bounty['prize-2'];
@@ -74,13 +78,16 @@ export default async function user(req: NextApiRequest, res: NextApiResponse) {
           description: bounty.description,
           skills: bounty.skills,
           deadline: deadlineDate,
-          isPublished: bounty.isPublished,
+          isPublished: !bounty.private,
           token: bounty.token,
           rewardAmount: bounty.rewardAmount,
           rewards: JSON.parse(JSON.stringify(rewards)),
-          sponsorId: sponsor ? sponsor.id : '',
+          sponsorId: sponsor ? sponsor.id : superteamSponsor?.id || '',
           pocId: userId,
           status: bounty.status,
+          isFeatured: false,
+          isActive: true,
+          isArchived: false,
         },
       });
       console.log('Successfully Added', i);
