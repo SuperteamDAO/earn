@@ -168,6 +168,7 @@ const CreateListing = () => {
         <Meta
           title="Create Listing | Superteam Earn"
           description="Every Solana opportunity in one place!"
+          canonical="/assets/logo/og.svg"
         />
       }
     >
