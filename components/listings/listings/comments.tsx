@@ -128,11 +128,6 @@ export const Comments = ({ refId, refType }: Props) => {
       </VStack>
       {comments?.map((comment: any) => {
         const date = dayjs(comment?.updatedAt).fromNow();
-        console.log(
-          'file: comments.tsx:132 ~ {comments?.map ~ date:',
-          comment?.updatedAt,
-          date
-        );
         return (
           <HStack key={comment.id} align={'start'} px={6}>
             <Image
