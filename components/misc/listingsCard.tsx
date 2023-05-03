@@ -160,7 +160,7 @@ export const BountiesCard = ({
         href={`${getURL()}/listings/bounties/${slug}`}
         isExternal
         onClick={() => {
-          Mixpanel.track('Bounty Clicked', {
+          Mixpanel.track('bounty_clicked', {
             'Bounty Title': title,
           });
         }}
