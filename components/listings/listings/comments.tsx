@@ -1,5 +1,4 @@
 import {
-  Box,
   Button,
   Flex,
   HStack,
@@ -9,17 +8,16 @@ import {
   VStack,
 } from '@chakra-ui/react';
 import axios from 'axios';
-import dayjs from 'dayjs';
-import relativeTime from 'dayjs/plugin/relativeTime';
 import { useRouter } from 'next/router';
 import { useEffect, useState } from 'react';
 import { GoCommentDiscussion } from 'react-icons/go';
 
+import ErrorInfo from '@/components/shared/ErrorInfo';
+import Loading from '@/components/shared/Loading';
 import type { Comment } from '@/interface/comments';
+import { dayjs } from '@/utils/dayjs';
 
 import { userStore } from '../../../store/user';
-
-dayjs.extend(relativeTime);
 
 interface Props {
   refId: string;
@@ -74,9 +72,9 @@ export const Comments = ({ refId, refType }: Props) => {
     getComments();
   }, []);
 
-  if (isLoading && !comments?.length) return <Box>Loading...</Box>;
+  if (isLoading && !comments?.length) return <Loading />;
 
-  if (error) return <Box>Error! Please try again or contact support</Box>;
+  if (error) return <ErrorInfo />;
 
   return (
     <VStack

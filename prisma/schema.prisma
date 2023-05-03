@@ -128,6 +128,17 @@ model Sponsors {
   @@index([id, slug])
 }
 
+model Total {
+  id         String   @id @default(uuid())
+  total      Int?
+  totalInUSD Int?
+  count      Int?
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+
+  @@index([id])
+}
+
 model User {
   id               String         @id @default(uuid())
   publicKey        String         @unique
@@ -140,6 +151,7 @@ model User {
   updatedAt        DateTime       @updatedAt
   isVerified       Boolean        @default(false)
   role             SuperRole      @default(USER)
+  totalEarnedInUSD Int            @default(0)
   isTalentFilled   Boolean        @default(false)
   skills           String?
   subskills        String?

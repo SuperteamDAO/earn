@@ -16,6 +16,8 @@ interface Rewards {
   fifth?: number;
 }
 
+type BountyStatus = 'OPEN' | 'REVIEW' | 'CLOSED';
+
 interface Bounty {
   id: string;
   title: string;
@@ -25,12 +27,12 @@ interface Bounty {
   subSkills?: string;
   deadline?: string;
   eligibility?: Eligibility[];
-  status?: 'OPEN' | 'REVIEW' | 'CLOSED';
+  status?: BountyStatus;
   isActive?: boolean;
   isPublished?: string;
   isFeatured?: string;
   token?: string;
-  rewardAmount?: string;
+  rewardAmount?: number;
   rewards?: Rewards;
   sponsorId?: string;
   sponsor?: SponsorType;
@@ -40,4 +42,4 @@ interface Bounty {
   sourceDetails?: string;
 }
 
-export type { Bounty, Eligibility, Rewards };
+export type { Bounty, BountyStatus, Eligibility, Rewards };

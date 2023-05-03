@@ -43,7 +43,7 @@ export const tokenList = [
     icon: 'https://s2.coinmarketcap.com/static/img/coins/64x64/16116.png',
   },
   {
-    tokenName: 'USD Coin',
+    tokenName: 'USDC',
     mintAddress: 'EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v',
     address: 'EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v',
     icon: 'https://s2.coinmarketcap.com/static/img/coins/64x64/3408.png',
@@ -53,6 +53,12 @@ export const tokenList = [
     mintAddress: 'Es9vMFrzaCERmJfrF4H2FYD4KCoNkY11McCe8BenwNYB',
     address: 'Es9vMFrzaCERmJfrF4H2FYD4KCoNkY11McCe8BenwNYB',
     icon: 'https://s2.coinmarketcap.com/static/img/coins/64x64/825.png',
+  },
+  {
+    tokenName: 'STEP',
+    mintAddress: '',
+    address: '',
+    icon: 'https://s2.coinmarketcap.com/static/img/coins/32x32/18069.png',
   },
   {
     tokenName: 'mSOL',
