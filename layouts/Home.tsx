@@ -87,7 +87,7 @@ function Home(props: IDefaultProps) {
       }
     >
       <Container maxW={'7xl'} mx="auto">
-        <HStack align="start" justify="space-between" mt={{ base: 6, md: 12 }}>
+        <HStack align="start" justify="space-between" my={{ base: 6, md: 12 }}>
           <Flex
             w="full"
             pr={{ base: 0, md: 6 }}
