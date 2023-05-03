@@ -65,6 +65,7 @@ export default async function user(req: NextApiRequest, res: NextApiResponse) {
           shortDescription: true,
           token: true,
           rewardAmount: true,
+          link: true,
           sponsor: {
             select: {
               id: true,

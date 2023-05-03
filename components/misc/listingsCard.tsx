@@ -89,27 +89,10 @@ export const ListingSection = ({
           </Text>
         </Flex>
         <Flex>
-          <Link
-            display={
-              router.query.category
-                ? router.query.category === (type as string) ||
-                  router.query.category === 'all'
-                  ? 'none'
-                  : 'block'
-                : 'block'
-            }
-            px={3}
-            py={1}
-            color="brand.slate.500"
-            _hover={{
-              textDecoration: 'none',
-              bg: 'brand.purple',
-              color: 'white',
-            }}
-            href={`/${type}`}
-            rounded={5}
-          >
-            View All
+          <Link href={`/${type}`}>
+            <Button color="brand.slate.400" size="sm" variant="ghost">
+              View All
+            </Button>
           </Link>
         </Flex>
       </HStack>
@@ -151,7 +134,7 @@ export const BountiesCard = ({
   const router = useRouter();
   return (
     <Flex
-      align="center"
+      align="start"
       justify="space-between"
       w={{ base: '100%', md: 'brand.120' }}
       h={16}
@@ -180,10 +163,8 @@ export const BountiesCard = ({
           </Link>
           <Text
             w={'full'}
-            color={'brand.slate.400'}
+            color={'brand.slate.500'}
             fontSize={{ md: 'sm', base: 'xs' }}
-            fontWeight={'400'}
-            noOfLines={1}
           >
             {sponsorName}
           </Text>
@@ -221,26 +202,14 @@ export const BountiesCard = ({
           </Flex>
         </Flex>
       </Flex>
-      <Link
-        w={24}
-        py={2}
-        color={'brand.slate.400'}
-        textAlign="center"
-        border="1px solid"
-        borderColor="brand.slate.400"
-        borderRadius={4}
-        _hover={{
-          textDecoration: 'none',
-          bg: 'brand.slate.400',
-          color: 'white',
-        }}
-        href={`/listings/bounties/${slug}`}
-      >
-        {dayjs().isAfter(deadline)
-          ? status === 'CLOSED'
-            ? 'View'
-            : 'View'
-          : 'Apply'}
+      <Link href={`/listings/bounties/${slug}`}>
+        <Button px={6} size="sm" variant="outlineSecondary">
+          {dayjs().isAfter(deadline)
+            ? status === 'CLOSED'
+              ? 'View'
+              : 'View'
+            : 'Apply'}
+        </Button>
       </Link>
     </Flex>
   );
@@ -366,6 +335,7 @@ interface GrantsProps {
   logo?: string;
   rewardAmount?: number;
   token?: string;
+  link?: string;
 }
 export const GrantsCard = ({
   title,
@@ -373,6 +343,7 @@ export const GrantsCard = ({
   rewardAmount,
   sponsorName,
   token,
+  link,
 }: GrantsProps) => {
   const router = useRouter();
   return (
@@ -424,25 +395,10 @@ export const GrantsCard = ({
           )}
         </Flex>
       </Flex>
-      <Link
-        w={24}
-        py={2}
-        color={'brand.slate.400'}
-        textAlign="center"
-        border="1px solid"
-        borderColor={'brand.slate.400'}
-        borderRadius={4}
-        _hover={{
-          textDecoration: 'none',
-          bg: 'brand.slate.400',
-          color: 'white',
-        }}
-        href={`https://earn-frontend-v2.vercel.app/listings/grants/${title
-          .split(' ')
-          .join('-')}`}
-        isExternal
-      >
-        Apply
+      <Link href={link ?? '#'} isExternal>
+        <Button px={6} size="sm" variant="outlineSecondary">
+          Apply
+        </Button>
       </Link>
     </Flex>
   );
