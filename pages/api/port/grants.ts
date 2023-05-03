@@ -43,6 +43,7 @@ export default async function user(req: NextApiRequest, res: NextApiResponse) {
           sponsorId: sponsor ? sponsor.id : '',
           pocId: userId,
           isFeatured: grant.isFeatured,
+          isPublished: true,
         },
       });
       console.log('Successfully Added', i);

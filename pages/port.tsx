@@ -7,9 +7,23 @@ import { Meta } from '@/layouts/Meta';
 
 function Port() {
   const [userId, setUserId] = useState('ab15dd8c-fad7-4c74-880b-6b334f8d2a39');
+  const [usersLoading, setUsersLoading] = useState(false);
   const [sponsorsLoading, setSponsorsLoading] = useState(false);
   const [bountiesLoading, setBountiesLoading] = useState(false);
   const [grantsLoading, setGrantsLoading] = useState(false);
+  const [totalLoading, setTotalLoading] = useState(false);
+
+  const portUsers = async () => {
+    setUsersLoading(true);
+    try {
+      const usersData = await axios.post('/api/port/users');
+      console.log('file: port.tsx:17 ~ portusersData ~ usersData:', usersData);
+      setUsersLoading(false);
+    } catch (e) {
+      console.log('file: port.tsx:16 ~ portusersData ~ e:', e);
+      setUsersLoading(false);
+    }
+  };
 
   const portSponsors = async () => {
     setSponsorsLoading(true);
@@ -53,6 +67,20 @@ function Port() {
     }
   };
 
+  const portTotal = async () => {
+    setTotalLoading(true);
+    try {
+      const totalData = await axios.post('/api/port/total', {
+        userId,
+      });
+      console.log('file: port.tsx:17 ~ porttotalData ~ totalData:', totalData);
+      setTotalLoading(false);
+    } catch (e) {
+      console.log('file: port.tsx:16 ~ portBounties ~ e:', e);
+      setTotalLoading(false);
+    }
+  };
+
   return (
     <Default
       meta={
@@ -72,6 +100,16 @@ function Port() {
           placeholder="Enter user id"
           value={userId}
         />
+        <Button
+          w="full"
+          mt={4}
+          isLoading={!!usersLoading}
+          loadingText="Porting..."
+          onClick={() => portUsers()}
+          variant="solid"
+        >
+          Port Users
+        </Button>
         <Button
           w="full"
           mt={4}
@@ -101,6 +139,16 @@ function Port() {
           variant="solid"
         >
           Port Grants
+        </Button>
+        <Button
+          w="full"
+          mt={4}
+          isLoading={!!totalLoading}
+          loadingText="Porting..."
+          onClick={() => portTotal()}
+          variant="solid"
+        >
+          Port Total
         </Button>
       </Container>
     </Default>
