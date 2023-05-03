@@ -123,12 +123,14 @@ function Home(props: IDefaultProps) {
               base: 'none',
               lg: 'flex',
             }}
+            marginInlineStart={'0 !important'}
           >
             <SideBar
               total={sidebarInfo?.totals?.totalInUSD ?? 0}
               listings={sidebarInfo?.totals?.count ?? 0}
               earners={sidebarInfo?.earners ?? []}
               jobs={[]}
+              userInfo={userInfo || {}}
             />
           </Flex>
         </HStack>
