@@ -54,7 +54,7 @@ export const ListingSection = ({
             : 'none'
           : 'block'
       }
-      w={{ md: 'brand.120', base: '95%' }}
+      w={{ md: '100%', base: '95%' }}
       mb={'2.8125rem'}
       mx={'auto'}
     >
