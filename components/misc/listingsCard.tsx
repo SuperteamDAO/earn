@@ -20,6 +20,8 @@ import { TiTick } from 'react-icons/ti';
 
 import type { BountyStatus } from '@/interface/bounty';
 import { dayjs } from '@/utils/dayjs';
+import { Mixpanel } from '@/utils/mixpanel';
+import { getURL } from '@/utils/validUrl';
 
 import { type MultiSelectOptions, tokenList } from '../../constants';
 import { TalentStore } from '../../store/talent';
@@ -89,7 +91,14 @@ export const ListingSection = ({
           </Text>
         </Flex>
         <Flex>
-          <Link href={`/${type}`}>
+          <Link
+            href={`/${type}`}
+            onClick={() => {
+              Mixpanel.track('view_all', {
+                type: title,
+              });
+            }}
+          >
             <Button color="brand.slate.400" size="sm" variant="ghost">
               View All
             </Button>
@@ -158,6 +167,12 @@ export const BountiesCard = ({
             }}
             cursor="pointer"
             href={`/listings/bounties/${slug}`}
+            onClick={() => {
+              Mixpanel.track('bounty_clicked', {
+                element: 'title',
+                'Bounty Title': title,
+              });
+            }}
           >
             {textLimiter(title, 40)}
           </Link>
@@ -202,7 +217,15 @@ export const BountiesCard = ({
           </Flex>
         </Flex>
       </Flex>
-      <Link href={`/listings/bounties/${slug}`}>
+      <Link
+        href={`/listings/bounties/${slug}`}
+        onClick={() => {
+          Mixpanel.track('bounty_clicked', {
+            element: 'button',
+            'Bounty Title': title,
+          });
+        }}
+      >
         <Button px={6} size="sm" variant="outlineSecondary">
           {dayjs().isAfter(deadline)
             ? status === 'CLOSED'
@@ -315,13 +338,14 @@ export const JobsCard = ({
           bg: 'brand.slate.400',
           color: 'white',
         }}
-        href={
-          link ||
-          `https://earn-frontend-v2.vercel.app/listings/jobs/${title
-            .split(' ')
-            .join('-')}`
-        }
+        href={link || `${getURL()}/listings/jobs/${title.split(' ').join('-')}`}
         isExternal
+        onClick={() => {
+          Mixpanel.track('job_clicked', {
+            element: 'button',
+            'Job Title': title,
+          });
+        }}
       >
         Apply
       </Link>
@@ -395,7 +419,16 @@ export const GrantsCard = ({
           )}
         </Flex>
       </Flex>
-      <Link href={link ?? '#'} isExternal>
+      <Link
+        href={link ?? '#'}
+        isExternal
+        onClick={() => {
+          Mixpanel.track('grant_clicked', {
+            element: 'button',
+            'Grant Title': title,
+          });
+        }}
+      >
         <Button px={6} size="sm" variant="outlineSecondary">
           Apply
         </Button>
@@ -542,6 +575,10 @@ export const CategoryBanner = ({ type }: { type: string }) => {
               type,
             ]);
             await updateTalent();
+            Mixpanel.track('notification_added', {
+              category: type,
+              name: `${talentInfo?.firstname} ${talentInfo?.lastname}`,
+            });
             setLoading(false);
           }}
           variant="solid"
