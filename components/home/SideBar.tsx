@@ -99,10 +99,7 @@ const GettingStarted = ({ userInfo }: GettingStartedProps) => {
       <Flex h={'12.5rem'}>
         <VStack pos={'relative'} justifyContent={'space-between'} h={'100%'}>
           <Step number={1} isComplete={!!userInfo?.id} />
-          <Step
-            number={2}
-            isComplete={!!userInfo?.id && !!userInfo?.isTalentFilled}
-          />
+
           <Step
             number={2}
             isComplete={!!userInfo?.id && !!userInfo?.isTalentFilled}
