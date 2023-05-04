@@ -17,10 +17,34 @@ export default async function user(req: NextApiRequest, res: NextApiResponse) {
       },
     });
     res.status(200).json(result);
-  } catch (error) {
-    res.status(400).json({
-      error,
-      message: 'Error occurred while adding a new user.',
-    });
+  } catch (error: any) {
+    if (error.code === 'P2002') {
+      try {
+        const currentUser = await prisma.user.findUnique({
+          where: {
+            email,
+          },
+          select: {
+            email: true,
+            publicKey: true,
+          },
+        });
+        res.status(400).json({
+          error,
+          user: currentUser,
+          message: 'Error occurred while adding a new user.',
+        });
+      } catch (err) {
+        res.status(400).json({
+          error: err,
+          message: 'Error occurred while adding a new user.',
+        });
+      }
+    } else {
+      res.status(400).json({
+        error,
+        message: 'Error occurred while adding a new user.',
+      });
+    }
   }
 }
