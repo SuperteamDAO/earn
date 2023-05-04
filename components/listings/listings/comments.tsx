@@ -1,31 +1,21 @@
-import {
-  Button,
-  Flex,
-  HStack,
-  Image,
-  Text,
-  Textarea,
-  VStack,
-} from '@chakra-ui/react';
+import { Button, Flex, HStack, Text, Textarea, VStack } from '@chakra-ui/react';
 import axios from 'axios';
-import { useRouter } from 'next/router';
 import { useEffect, useState } from 'react';
 import { GoCommentDiscussion } from 'react-icons/go';
 
 import LoginWrapper from '@/components/Header/LoginWrapper';
 import ErrorInfo from '@/components/shared/ErrorInfo';
 import Loading from '@/components/shared/Loading';
+import UserAvatar from '@/components/shared/UserAvatar';
 import type { Comment } from '@/interface/comments';
+import { userStore } from '@/store/user';
 import { dayjs } from '@/utils/dayjs';
-
-import { userStore } from '../../../store/user';
 
 interface Props {
   refId: string;
   refType: 'BOUNTY' | 'JOB';
 }
 export const Comments = ({ refId, refType }: Props) => {
-  const router = useRouter();
   const { userInfo } = userStore();
   const [triggerLogin, setTriggerLogin] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
@@ -137,17 +127,7 @@ export const Comments = ({ refId, refType }: Props) => {
         const date = dayjs(comment?.updatedAt).fromNow();
         return (
           <HStack key={comment.id} align={'start'} px={6}>
-            <Image
-              w={10}
-              h={10}
-              objectFit={'contain'}
-              alt={'profile image'}
-              rounded={'full'}
-              src={
-                comment?.author?.photo ||
-                `${router.basePath}/assets/images/user-photo.png`
-              }
-            />
+            <UserAvatar user={comment?.author} />
 
             <VStack align={'start'}>
               <HStack>

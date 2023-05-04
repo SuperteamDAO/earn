@@ -16,7 +16,6 @@ import {
   useDisclosure,
   VStack,
 } from '@chakra-ui/react';
-import type { UseMutationResult } from '@tanstack/react-query';
 import axios from 'axios';
 import moment from 'moment';
 import { useEffect, useState } from 'react';
@@ -35,20 +34,10 @@ interface Props {
   prizeList?: Partial<Rewards>;
   onOpen?: () => void;
   endingTime?: string;
-  submissionNumber?: number;
   submissionisOpen?: boolean;
   submissiononClose?: () => void;
   submissiononOpen?: () => void;
   token?: string;
-  SubmssionMutation?: UseMutationResult<
-    void,
-    any,
-    {
-      link: string;
-      questions: string;
-    },
-    unknown
-  >;
   questions?: string;
   eligibility?: Eligibility[];
 }
@@ -57,12 +46,14 @@ function DetailSideCard({
   total,
   prizeList,
   endingTime,
-  submissionNumber = 0,
   token,
   eligibility,
 }: Props) {
   const { userInfo } = userStore();
-  const [isUserSubmissionLoading, setIsUserSubmissionLoading] = useState(true);
+  const [isSubmissionNumberLoading, setIsSubmissionNumberLoading] =
+    useState(true);
+  const [submissionNumber, setSubmissionNumber] = useState(0);
+  const [isUserSubmissionLoading, setIsUserSubmissionLoading] = useState(false);
   const { isOpen, onOpen, onClose } = useDisclosure();
   const [triggerLogin, setTriggerLogin] = useState(false);
   const [isSubmitted, setIsSubmitted] = useState(false);
@@ -74,9 +65,11 @@ function DetailSideCard({
   const getUserSubmission = async () => {
     setIsUserSubmissionLoading(true);
     try {
-      const submissionDetails = await axios.get(
-        `/api/submission/${id}/${userInfo?.id}`
-      );
+      const submissionDetails = await axios.get(`/api/submission/${id}/user/`, {
+        params: {
+          userId: userInfo?.id,
+        },
+      });
       setIsSubmitted(!!submissionDetails?.data?.id);
       setIsUserSubmissionLoading(false);
     } catch (e) {
@@ -84,9 +77,27 @@ function DetailSideCard({
     }
   };
 
+  const getSubmissionsCount = async () => {
+    setIsSubmissionNumberLoading(true);
+    try {
+      const submissionCountDetails = await axios.get(
+        `/api/submission/${id}/count/`
+      );
+      setSubmissionNumber(submissionCountDetails?.data || 0);
+      setIsSubmissionNumberLoading(false);
+    } catch (e) {
+      setIsSubmissionNumberLoading(false);
+    }
+  };
+
   useEffect(() => {
-    if (!isUserSubmissionLoading || !userInfo?.id) return;
+    if (!userInfo?.id) return;
     getUserSubmission();
+  }, [userInfo?.id]);
+
+  useEffect(() => {
+    if (!isSubmissionNumberLoading) return;
+    getSubmissionsCount();
   }, []);
 
   const handleSubmit = () => {
@@ -105,6 +116,8 @@ function DetailSideCard({
           eligibility={eligibility || []}
           onClose={onClose}
           isOpen={isOpen}
+          submissionNumber={submissionNumber}
+          setSubmissionNumber={setSubmissionNumber}
           setIsSubmitted={setIsSubmitted}
         />
       )}
@@ -380,10 +393,14 @@ function DetailSideCard({
                   src={'/assets/icons/purple-suitcase.svg'}
                 />
                 <Text color={'#000000'} fontSize="1.3rem" fontWeight={500}>
-                  {submissionNumber}
+                  {isSubmissionNumberLoading
+                    ? '...'
+                    : submissionNumber.toLocaleString()}
                 </Text>
               </Flex>
-              <Text color={'#94A3B8'}>Submissions</Text>
+              <Text color={'#94A3B8'}>
+                {submissionNumber === 1 ? 'Submission' : 'Submissions'}
+              </Text>
             </Flex>
             <Flex
               align={'start'}
@@ -419,7 +436,7 @@ function DetailSideCard({
                 size="lg"
                 variant="solid"
               >
-                Already Submitted!
+                Submitted Successfully!
               </Button>
             ) : (
               <Button

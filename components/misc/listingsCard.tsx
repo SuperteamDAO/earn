@@ -144,9 +144,9 @@ export const BountiesCard = ({
           w={16}
           h={16}
           mr={5}
-          alt={'company logo'}
+          alt={sponsorName}
           rounded={5}
-          src={logo ?? `${router.basePath}/assets/images/sponsor-logo.png`}
+          src={logo || `${router.basePath}/assets/images/sponsor-logo.png`}
         />
         <Flex justify={'space-between'} direction={'column'} w={'full'}>
           <Link
@@ -252,7 +252,7 @@ export const JobsCard = ({
           mr={5}
           alt={'company logo'}
           rounded={5}
-          src={logo ?? '/assets/home/placeholder/ph2.png'}
+          src={logo || '/assets/home/placeholder/ph2.png'}
         />
         <Flex justify={'space-between'} direction={'column'}>
           <Text color="brand.slate.700" fontSize="sm" fontWeight="600">
@@ -360,7 +360,7 @@ export const GrantsCard = ({
           mr={5}
           alt={'company logo'}
           rounded={5}
-          src={logo ?? '/assets/home/placeholder/ph3.png'}
+          src={logo || '/assets/home/placeholder/ph3.png'}
         />
         <Flex justify="start" direction="column">
           <Text color="brand.slate.700" fontSize="sm" fontWeight="600">

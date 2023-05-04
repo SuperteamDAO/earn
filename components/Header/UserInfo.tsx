@@ -31,7 +31,7 @@ function UserInfo() {
     const makeUser = async () => {
       if (publicKey && connected) {
         const publicKeyString = publicKey.toBase58() as string;
-        const userDetails = await axios.post('/api/user', {
+        const userDetails = await axios.post('/api/user/', {
           publicKey: publicKeyString,
         });
         if (!userDetails.data) {
@@ -89,6 +89,7 @@ function UserInfo() {
                   />
                 ) : (
                   <Avatar
+                    name={`${userInfo?.firstName} ${userInfo?.lastName}`}
                     colors={['#92A1C6', '#F0AB3D', '#C271B4']}
                     size={32}
                     variant="marble"

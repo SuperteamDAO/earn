@@ -25,6 +25,9 @@ const theme = extendTheme({
         800: '#1e293b',
         900: '#0f172a',
       },
+      grey: {
+        50: '#F7FAFC',
+      },
       charcoal: {
         700: '#334254',
       },

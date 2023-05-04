@@ -8,7 +8,7 @@ export const styles = {
       text: 'Inter',
     },
     body: {
-      bg: 'white',
+      bg: 'brand.grey.50',
       fontFamily: 'Inter',
     },
     width: {

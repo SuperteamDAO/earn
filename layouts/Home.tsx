@@ -79,6 +79,7 @@ function Home(props: IDefaultProps) {
 
   return (
     <Default
+      className="bg-white"
       meta={
         <Meta
           title="Superteam Earn"

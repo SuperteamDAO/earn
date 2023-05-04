@@ -28,6 +28,8 @@ interface Props {
   onClose: () => void;
   eligibility: Eligibility[];
   setIsSubmitted: (arg0: boolean) => void;
+  setSubmissionNumber: (arg0: number) => void;
+  submissionNumber: number;
 }
 export const SubmissionModal = ({
   id,
@@ -35,8 +37,9 @@ export const SubmissionModal = ({
   onClose,
   eligibility,
   setIsSubmitted,
+  setSubmissionNumber,
+  submissionNumber,
 }: Props) => {
-  console.log('file: submissionModalBounty.tsx:37 ~ eligibility:', eligibility);
   const isPermissioned = eligibility && eligibility?.length > 0;
   const { userInfo } = userStore();
   const [isLoading, setIsLoading] = useState(false);
@@ -66,6 +69,7 @@ export const SubmissionModal = ({
           : null,
       });
       setIsSubmitted(true);
+      setSubmissionNumber(submissionNumber + 1);
       onClose();
     } catch (e) {
       setError('Sorry! Please try again or contact support.');
