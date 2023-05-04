@@ -17,7 +17,7 @@ import toast from 'react-hot-toast';
 import { BsBell } from 'react-icons/bs';
 import { TbBellRinging } from 'react-icons/tb';
 
-import NavHome from '@/components/home/NavHome';
+import { Mixpanel } from '@/utils/mixpanel';
 
 import type { SubscribeType } from '../../../interface/listings';
 import type { SponsorType } from '../../../interface/sponsor';
@@ -75,7 +75,6 @@ export const ListingHeader = ({
   return (
     <>
       {isOpen && <CreateProfileModal isOpen={isOpen} onClose={onClose} />}
-      <NavHome />
       <VStack bg={'white'}>
         <VStack
           align="start"
@@ -84,7 +83,6 @@ export const ListingHeader = ({
           gap={5}
           w={'full'}
           maxW={'7xl'}
-          // h={'14rem'}
           mx={'auto'}
           py={10}
         >
@@ -108,7 +106,7 @@ export const ListingHeader = ({
               </Heading>
               <HStack>
                 <Text color={'#94A3B8'}>
-                  by @{sponsor?.username} at {sponsor.name}
+                  by @{sponsor?.slug} at {sponsor.name}
                 </Text>
                 {endTime ? (
                   Number(moment(endTime).format('x')) > Date.now() ? (
@@ -158,6 +156,10 @@ export const ListingHeader = ({
                     bg="#F7FAFC"
                     isLoading={subDeleteMutation.isLoading}
                     onClick={() => {
+                      Mixpanel.track('notification_remove_listing', {
+                        title,
+                        name: `${talentInfo?.firstname} ${talentInfo?.lastname}`,
+                      });
                       subDeleteMutation.mutate(
                         sub?.filter(
                           (e) => e?.talentId === (talentInfo?.id as string)
@@ -175,10 +177,15 @@ export const ListingHeader = ({
                       if (!userInfo?.talent) {
                         onOpen();
                       }
+
                       subMutation.mutate({
                         bountiesId: id as string,
                         talentId: talentInfo?.id as string,
                         id: genrateuuid(),
+                      });
+                      Mixpanel.track('notification_added_listing', {
+                        title,
+                        name: `${talentInfo?.firstname} ${talentInfo?.lastname}`,
                       });
                     }}
                   >
@@ -249,7 +256,7 @@ export const ListingHeader = ({
             onClick={() => {
               if (!tabs) return;
               router.push(
-                `/listings/bounties/${title.split(' ').join('-').toLowerCase()}`
+                `/bounties/${title.split(' ').join('-').toLowerCase()}`
               );
             }}
             rounded={0}

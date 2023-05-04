@@ -1,6 +1,5 @@
 import { useDisclosure } from '@chakra-ui/react';
 import { useWallet } from '@solana/wallet-adapter-react';
-import { useQuery } from '@tanstack/react-query';
 import { useRouter } from 'next/router';
 import { useEffect, useState } from 'react';
 import toast, { Toaster } from 'react-hot-toast';
@@ -23,7 +22,7 @@ import { ConnectWallet } from '../../layouts/connectWallet';
 import FormLayout from '../../layouts/FormLayout';
 import { SponsorStore } from '../../store/sponsor';
 import { userStore } from '../../store/user';
-import { CreateDraft, findOneDraft, findSponsors } from '../../utils/functions';
+import { CreateDraft, findOneDraft } from '../../utils/functions';
 import { genrateuuid } from '../../utils/helpers';
 
 const CreateListing = () => {
@@ -56,21 +55,21 @@ const CreateListing = () => {
   // -- Grants
   const [grantBasic, setgrantsBasic] = useState<GrantsBasicType | undefined>();
   // -- wallet
-  const { connected, publicKey } = useWallet();
+  const { connected } = useWallet();
   // -- sponsor
   const { currentSponsor } = SponsorStore();
   const { userInfo } = userStore();
 
-  const sponsors = useQuery({
-    queryKey: ['sponsor', publicKey?.toBase58() ?? ''],
-    queryFn: ({ queryKey }) => findSponsors(queryKey[1] || ''),
-  });
+  // const sponsors = useQuery({
+  //   queryKey: ['sponsor', publicKey?.toBase58() ?? ''],
+  //   queryFn: ({ queryKey }) => findSponsors(queryKey[1] || ''),
+  // });
 
   const createDraft = async (payment: string) => {
     setDraftLoading(true);
     let draft: DraftType = {
       id: genrateuuid(),
-      orgId: currentSponsor?.orgId ?? '',
+      orgId: currentSponsor?.id ?? '',
       basic: '',
       payments: '',
       type: 'Bounties',
@@ -177,7 +176,6 @@ const CreateListing = () => {
     <>
       {connected ? (
         <FormLayout
-          sponsors={sponsors.data}
           setStep={setSteps}
           currentStep={steps}
           stepList={

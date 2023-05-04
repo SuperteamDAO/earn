@@ -1,11 +1,23 @@
-import { Box, Center, Flex, Image, Link, Text, VStack } from '@chakra-ui/react';
-import { useQuery } from '@tanstack/react-query';
+import {
+  Box,
+  Center,
+  Flex,
+  HStack,
+  Image,
+  Link,
+  Text,
+  VStack,
+} from '@chakra-ui/react';
 import Avatar from 'boring-avatars';
+import { useRouter } from 'next/router';
+import { useState } from 'react';
 import Slider from 'react-slick';
+
+import LoginWrapper from '@/components/Header/LoginWrapper';
+import type { User } from '@/interface/user';
 
 import type { JobsType } from '../../interface/listings';
 import type { SponsorType } from '../../interface/sponsor';
-import { TalentTVE } from '../../utils/functions';
 
 <Avatar
   size={40}
@@ -15,7 +27,7 @@ import { TalentTVE } from '../../utils/functions';
 />;
 
 interface SideBarProps {
-  jobs:
+  jobs?:
     | {
         jobs: JobsType;
         sponsorInfo: SponsorType;
@@ -23,6 +35,8 @@ interface SideBarProps {
     | undefined;
   total: number;
   listings: number;
+  earners?: User[];
+  userInfo?: User;
 }
 
 const Step = ({
@@ -66,40 +80,101 @@ const Step = ({
   );
 };
 
-const GettingStarted = () => {
+interface GettingStartedProps {
+  userInfo?: User;
+}
+
+const GettingStarted = ({ userInfo }: GettingStartedProps) => {
+  const router = useRouter();
+  const [triggerLogin, setTriggerLogin] = useState(false);
   return (
     <Box>
+      <LoginWrapper
+        triggerLogin={triggerLogin}
+        setTriggerLogin={setTriggerLogin}
+      />
       <Text mb={'1.5rem'} color={'gray.400'} fontWeight={500}>
         GETTING STARTED
       </Text>
-      <Flex h={'12.5rem'}>
+      <Flex h={'8.5rem'}>
         <VStack pos={'relative'} justifyContent={'space-between'} h={'100%'}>
-          <Step number={1} isComplete={true} />
-          <Step number={2} isComplete={false} />
-          <Step number={3} isComplete={false} />
+          <Step number={1} isComplete={!!userInfo?.id} />
+          {/* <Step
+            number={2}
+            isComplete={!!userInfo?.id && !!userInfo?.isTalentFilled}
+          /> */}
+          <Step
+            number={2}
+            isComplete={!!userInfo?.id && !!userInfo.totalEarnedInUSD}
+          />
           <Flex pos={'absolute'} w={'0.0625rem'} h={'90%'} bg={'#CBD5E1'} />
         </VStack>
         <VStack pos={'relative'} justifyContent={'space-between'} h={'100%'}>
           <Box ml={'0.8125rem'}>
-            <Text color={'black'} fontSize={'md'} fontWeight={500}>
-              Create your account
-            </Text>
+            {!userInfo?.id ? (
+              <Text
+                as="button"
+                color={'black'}
+                fontSize={'md'}
+                fontWeight={500}
+                _hover={{
+                  color: 'brand.purple',
+                }}
+                onClick={() => setTriggerLogin(true)}
+              >
+                Create your account
+              </Text>
+            ) : (
+              <Text color={'brand.purple'} fontSize={'md'} fontWeight={500}>
+                Create your account
+              </Text>
+            )}
             <Text color={'gray.500'} fontSize={'md'} fontWeight={500}>
               and get personalized notifications
             </Text>
           </Box>
-          <Box ml={'0.8125rem'}>
-            <Text color={'black'} fontSize={'md'} fontWeight={500}>
-              Complete your profile
-            </Text>
+          {/* <Box ml={'0.8125rem'}>
+            {!userInfo?.id || !userInfo?.isTalentFilled ? (
+              <Text
+                as="button"
+                color={'black'}
+                fontSize={'md'}
+                fontWeight={500}
+                _hover={{
+                  color: 'brand.purple',
+                }}
+                onClick={() => router.push(`/t/${userInfo?.username}`)}
+              >
+                Complete your profile
+              </Text>
+            ) : (
+              <Text color={'brand.purple'} fontSize={'md'} fontWeight={500}>
+                Complete your profile
+              </Text>
+            )}
             <Text color={'gray.500'} fontSize={'md'} fontWeight={500}>
               and get seen by hiring managers
             </Text>
-          </Box>
+          </Box> */}
           <Box ml={'0.8125rem'}>
-            <Text color={'black'} fontSize={'md'} fontWeight={500}>
-              Win a bounty
-            </Text>
+            {!userInfo?.id || !userInfo.totalEarnedInUSD ? (
+              <Text
+                as="button"
+                color={'black'}
+                fontSize={'md'}
+                fontWeight={500}
+                _hover={{
+                  color: 'brand.purple',
+                }}
+                onClick={() => router.push('/bounties')}
+              >
+                Win a bounty
+              </Text>
+            ) : (
+              <Text color={'brand.purple'} fontSize={'md'} fontWeight={500}>
+                Win a bounty
+              </Text>
+            )}
             <Text color={'gray.500'} fontSize={'md'} fontWeight={500}>
               and get your Proof-of-Work NFT
             </Text>
@@ -141,9 +216,7 @@ const TotalStats = ({
               style={{
                 color: '#64748B',
               }}
-            >
-              USD
-            </span>
+            ></span>
           </Text>
           <Text color={'gray.500'} fontSize={'xs'} fontWeight={'400'}>
             Total Value Listed
@@ -181,7 +254,7 @@ interface EarnerProps {
 const Earner = ({ amount, name, avatar, work }: EarnerProps) => {
   return (
     <Flex align={'center'} w={'100%'} my={2}>
-      {avatar !== '' ? (
+      {avatar ? (
         <Image
           w={'2.125rem'}
           h={'2.125rem'}
@@ -202,29 +275,27 @@ const Earner = ({ amount, name, avatar, work }: EarnerProps) => {
       )}
 
       <Box>
-        <Text color={'black'} fontSize={'md'} fontWeight={500}>
+        <Text color={'black'} fontSize={'sm'} fontWeight={500}>
           {name}
         </Text>
-        <Text color={'#64748B'} fontSize={'sm'} fontWeight={500}>
+        <Text color={'gray.400'} fontSize={'xs'} fontWeight={500}>
           {work?.slice(0, 20)}
         </Text>
       </Box>
       <Flex columnGap={1} ml={'auto'}>
         <Image alt="usdc icon" src="/assets/landingsponsor/icons/usdc.svg" />
-        <Text color={'gray.600'} fontSize={'md'} fontWeight={500}>
+        <Text color={'gray.600'} fontSize={'sm'} fontWeight={500}>
           ${amount.toLocaleString()}
+        </Text>
+        <Text color={'gray.400'} fontSize={'sm'} fontWeight={500}>
+          USDC
         </Text>
       </Flex>
     </Flex>
   );
 };
 
-const RecentEarners = () => {
-  const talent = useQuery({
-    queryKey: ['talent'],
-    queryFn: () => TalentTVE(),
-  });
-
+const RecentEarners = ({ earners }: { earners?: User[] }) => {
   const settings = {
     dots: false,
     infinite: true,
@@ -233,23 +304,23 @@ const RecentEarners = () => {
     vertical: true,
     verticalSwiping: true,
     autoplay: true,
-    autoplaySpeed: 200,
+    autoplaySpeed: 100,
   };
   return (
-    <Box>
+    <Box w={'100%'}>
       <Text mb={'1.5rem'} color={'gray.400'} fontWeight={500}>
         TOP EARNERS
       </Text>
       <VStack rowGap={2}>
         <Slider {...settings}>
-          {talent.data?.map((t) => {
+          {earners?.map((t: any) => {
             return (
               <Earner
-                amount={t.tve ?? 0}
-                name={`${t.firstname} ${t.lastname}`}
-                avatar={t.avatar}
+                amount={t.totalEarnedInUSD ?? 0}
+                name={`${t.firstName} ${t.lastName}`}
+                avatar={t.photo}
                 key={t.id}
-                work={t.currentEmployer}
+                work={t.currentEmployer ?? ''}
               />
             );
           })}
@@ -259,176 +330,179 @@ const RecentEarners = () => {
   );
 };
 
-interface HiringProps {
-  title: string;
-  logo: string;
-  location: string;
-  type: string;
-}
-const Hiring = ({ logo, title, location, type }: HiringProps) => {
-  return (
-    <Flex align={'center'} w={'100%'}>
-      <Image
-        w={'2.125rem'}
-        h={'2.125rem'}
-        mr={'1.0625rem'}
-        alt=""
-        rounded={'md'}
-        src={logo ?? '/assets/home/placeholder/ph2.png'}
-      />
-      <Box>
-        <Link
-          href={`https://earn-frontend-v2.vercel.app/listings/jobs/${title
-            .split(' ')
-            .join('-')}`}
-          isExternal
-        >
-          <Text color={'black'} fontSize={'0.8125rem'} fontWeight={'500'}>
-            {title}
-          </Text>
-        </Link>
-        <Text color={'gray.500'} fontSize={'md'} noOfLines={1}>
-          {location ? `${location},` : ''} {type}
-        </Text>
-      </Box>
-    </Flex>
-  );
-};
+// interface HiringProps {
+//   title: string;
+//   logo?: string;
+//   location: string;
+//   type: string;
+// }
+// const Hiring = ({ logo, title, location, type }: HiringProps) => {
+//   return (
+//     <Flex align={'center'} w={'100%'}>
+//       <Image
+//         w={'2.125rem'}
+//         h={'2.125rem'}
+//         mr={'1.0625rem'}
+//         alt=""
+//         rounded={'md'}
+//         src={logo ?? '/assets/home/placeholder/ph2.png'}
+//       />
+//       <Box>
+//         <Link
+//           href={`https://earn-frontend-v2.vercel.app/listings/jobs/${title
+//             .split(' ')
+//             .join('-')}`}
+//           isExternal
+//         >
+//           <Text color={'black'} fontSize={'0.8125rem'} fontWeight={'500'}>
+//             {title}
+//           </Text>
+//         </Link>
+//         <Text color={'gray.500'} fontSize={'md'} noOfLines={1}>
+//           {location ? `${location},` : ''} {type}
+//         </Text>
+//       </Box>
+//     </Flex>
+//   );
+// };
 
-interface HiringNowProps {
-  jobs:
-    | {
-        jobs: JobsType;
-        sponsorInfo: SponsorType;
-      }[]
-    | undefined;
-}
-const HiringNow = ({ jobs }: HiringNowProps) => {
-  return (
-    <Box>
-      <Text mb={'1.5rem'} color={'#94A3B8'}>
-        HIRING NOW
-      </Text>
-      <VStack rowGap={'1.8125rem'}>
-        {jobs?.map((job) => {
-          return (
-            <Hiring
-              type={job?.jobs?.jobType}
-              location={job?.jobs?.location}
-              key={job?.jobs?.id}
-              logo={job?.sponsorInfo?.logo}
-              title={job?.jobs?.title}
-            />
-          );
-        })}
-      </VStack>
-    </Box>
-  );
-};
+// interface HiringNowProps {
+//   jobs:
+//     | {
+//         jobs: JobsType;
+//         sponsorInfo: SponsorType;
+//       }[]
+//     | undefined;
+// }
+// const HiringNow = ({ jobs }: HiringNowProps) => {
+//   return (
+//     <Box>
+//       <Text mb={'1.5rem'} color={'#94A3B8'}>
+//         HIRING NOW
+//       </Text>
+//       <VStack rowGap={'1.8125rem'}>
+//         {jobs?.map((job) => {
+//           return (
+//             <Hiring
+//               type={job?.jobs?.jobType}
+//               location={job?.jobs?.location}
+//               key={job?.jobs?.id}
+//               logo={job?.sponsorInfo?.logo}
+//               title={job?.jobs?.title}
+//             />
+//           );
+//         })}
+//       </VStack>
+//     </Box>
+//   );
+// };
 
-const Featuring = () => {
-  return (
-    <Flex align={'center'} w={'100%'}>
-      <Image
-        w={'2.125rem'}
-        h={'2.125rem'}
-        mr={'1.0625rem'}
-        alt=""
-        rounded={'full'}
-        src="https://bit.ly/kent-c-dodds"
-      />
-      <Box>
-        <Text color={'black'} fontSize={'0.8125rem'} fontWeight={'500'}>
-          Madhur Dixit
-        </Text>
-        <Text color={'#64748B'} fontSize={'0.8125rem'}>
-          won Underdog Smart...
-        </Text>
-      </Box>
-      <Flex columnGap={'0.3125rem'} ml={'auto'}>
-        <Text color={'#3B82F6'} fontSize={'0.875rem'}>
-          View
-        </Text>
-      </Flex>
-    </Flex>
-  );
-};
+// const Featuring = () => {
+//   return (
+//     <Flex align={'center'} w={'100%'}>
+//       <Image
+//         w={'2.125rem'}
+//         h={'2.125rem'}
+//         mr={'1.0625rem'}
+//         alt=""
+//         rounded={'full'}
+//         src="https://bit.ly/kent-c-dodds"
+//       />
+//       <Box>
+//         <Text color={'black'} fontSize={'0.8125rem'} fontWeight={'500'}>
+//           Madhur Dixit
+//         </Text>
+//         <Text color={'#64748B'} fontSize={'0.8125rem'}>
+//           won Underdog Smart...
+//         </Text>
+//       </Box>
+//       <Flex columnGap={'0.3125rem'} ml={'auto'}>
+//         <Text color={'#3B82F6'} fontSize={'0.875rem'}>
+//           View
+//         </Text>
+//       </Flex>
+//     </Flex>
+//   );
+// };
 
-const Featured = () => {
-  return (
-    <Box>
-      <Text mb={'1.5rem'} color={'#94A3B8'}>
-        FEATURED
-      </Text>
-      <VStack rowGap={'1.8125rem'}>
-        <Featuring />
-        <Featuring />
-        <Featuring />
-        <Featuring />
-        <Featuring />
-      </VStack>
-    </Box>
-  );
-};
-
-const SideBar = ({ jobs, listings, total }: SideBarProps) => {
+// const Featured = () => {
+//   return (
+//     <Box>
+//       <Text mb={'1.5rem'} color={'#94A3B8'}>
+//         FEATURED
+//       </Text>
+//       <VStack rowGap={'1.8125rem'}>
+//         <Featuring />
+//         <Featuring />
+//         <Featuring />
+//         <Featuring />
+//         <Featuring />
+//       </VStack>
+//     </Box>
+//   );
+// };
+const AlphaAccess = () => {
   return (
     <Flex
       direction={'column'}
-      rowGap={'2.5rem'}
-      w={'22.125rem'}
-      ml={'1.5rem'}
-      pt={'1.5rem'}
-      pl={'1.25rem'}
-      borderLeft={'0.0625rem solid #F1F5F9'}
+      gap={1}
+      w={'full'}
+      h={'max-content'}
+      px={'1.5625rem'}
+      py={'0.875rem'}
+      bg={'#A839FF'}
+      rounded={'lg'}
     >
-      <GettingStarted />
+      <HStack>
+        <Image alt="alpha site" src="/assets/bg/alpha.svg" />
+      </HStack>
+      <Text mt={'auto'} color={'white'} fontSize={'1.25rem'} fontWeight={'600'}>
+        Want Early Access to Projects?
+      </Text>
+      <Text
+        mt={'0.5rem'}
+        color={'white'}
+        fontSize={'1rem'}
+        lineHeight={'1.1875rem'}
+      >
+        Get exclusive early access to the latest Solana projects and win product
+        feedback bounties, for free.
+      </Text>
+      <Link
+        mt={'1.5625rem'}
+        py={'0.8125rem'}
+        color={'brand.slate.800'}
+        fontWeight={'500'}
+        textAlign={'center'}
+        bg={'white'}
+        borderRadius={8}
+        _hover={{
+          bg: 'gray.100',
+        }}
+        href="https://www.alphasquad.fun/"
+        isExternal
+      >
+        Join the Alpha Squad
+      </Link>
+    </Flex>
+  );
+};
+const SideBar = ({ userInfo, listings, total, earners }: SideBarProps) => {
+  // const { connected } = useWallet();
+  return (
+    <Flex direction={'column'} rowGap={'2.5rem'} w={'22.125rem'} pl={6}>
+      <AlphaAccess />
+      <GettingStarted userInfo={userInfo} />
       <TotalStats total={listings} listings={total} />
-      {/* <AlphaAccess /> */}
       {/* <Filter title={'FILTER BY INDUSTRY'} entries={['Gaming', 'Payments', 'Consumer', 'Infrastructure', 'DAOs']} /> */}
-      <RecentEarners />
-      <HiringNow jobs={jobs} />
-      <Featured />
+      <RecentEarners earners={earners} />
+      {/* <HiringNow jobs={jobs} /> */}
+      {/* <Featured /> */}
     </Flex>
   );
 };
 
 export default SideBar;
-
-// const AlphaAccess = () => {
-//   return (
-//     <Flex
-//       direction={'column'}
-//       w={'22.125rem'}
-//       h={'14.25rem'}
-//       px={'1.5625rem'}
-//       py={'0.875rem'}
-//       bg={"url('/assets/home/display/grizzly.png')"}
-//       rounded={'lg'}
-//     >
-//       <Text mt={'auto'} color={'white'} fontSize={'1.25rem'} fontWeight={'600'}>
-//         Want Early Access to Projects?
-//       </Text>
-//       <Text
-//         mt={'0.5rem'}
-//         color={'white'}
-//         fontSize={'1rem'}
-//         lineHeight={'1.1875rem'}
-//       >
-//         Get exclusive early access to the latest Solana projects and win product
-//         feedback bounties, for free.
-//       </Text>
-//       <Button
-//         mt={'1.5625rem'}
-//         py={'0.8125rem'}
-//         fontWeight={'500'}
-//         bg={'#FFFFFF'}
-//       >
-//         Join the Alpha Squad
-//       </Button>
-//     </Flex>
-//   );
-// };
 
 // const FilterEntry = ({ label }: { label: string }) => {
 //   return (

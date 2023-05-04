@@ -73,7 +73,7 @@ export const CreateGrantsPayment = ({
               active: true,
               link: grantsBasic?.link ?? '',
               token: tokenList[tokenIndex as number]?.mintAddress || '',
-              orgId: currentSponsor?.orgId ?? '',
+              orgId: currentSponsor?.id ?? '',
               maxSalary: Number(e.max_sal),
               minSalary: Number(e.min_sal),
               contact: grantsBasic?.contact ?? '',

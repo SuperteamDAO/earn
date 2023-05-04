@@ -1,0 +1,266 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider     = "mysql"
+  url          = env("DATABASE_URL")
+  relationMode = "prisma"
+}
+
+model Jobs {
+  id            String   @id @default(uuid())
+  title         String
+  slug          String   @unique
+  description   String?  @db.VarChar(10000)
+  skills        String?
+  subskills     String?
+  deadline      String?
+  source        Source   @default(NATIVE)
+  active        Boolean  @default(true)
+  private       Boolean  @default(false)
+  featured      Boolean  @default(false)
+  experience    String?
+  jobType       JobType  @default(fulltime)
+  maxSalary     Float?
+  minSalary     Float?
+  maxEq         Float?
+  minEq         Float?
+  location      String?
+  sponsorId     String
+  sponsor       Sponsors @relation(fields: [sponsorId], references: [id])
+  timezone      String?
+  link          String?
+  sourceDetails Json?
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+
+  @@index([id])
+  @@index([sponsorId])
+}
+
+model Bounties {
+  id            String    @id @default(uuid())
+  title         String
+  slug          String    @unique
+  description   String?   @db.VarChar(10000)
+  skills        String?
+  subSkills     String?
+  deadline      DateTime?
+  eligibility   Json?
+  status        status    @default(OPEN)
+  token         String
+  rewardAmount  Int?
+  rewards       Json?
+  sponsorId     String
+  sponsor       Sponsors  @relation(fields: [sponsorId], references: [id])
+  pocId         String
+  poc           User      @relation("poc", fields: [pocId], references: [id])
+  source        Source    @default(NATIVE)
+  sourceDetails Json?
+  isPublished   Boolean   @default(false)
+  isFeatured    Boolean   @default(false)
+  isActive      Boolean   @default(true)
+  isArchived    Boolean   @default(false)
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+
+  @@index([id, slug])
+  @@index([sponsorId])
+  @@index([pocId])
+}
+
+model Comment {
+  id          String      @id @default(uuid())
+  message     String      @db.VarChar(1000)
+  authorId    String
+  author      User        @relation(fields: [authorId], references: [id])
+  listingType ListingType @default(BOUNTY)
+  listingId   String
+  isActive    Boolean     @default(true)
+  isArchived  Boolean     @default(false)
+  createdAt   DateTime    @default(now())
+  updatedAt   DateTime    @updatedAt
+
+  @@index([id, listingId])
+  @@index([authorId])
+}
+
+model Grants {
+  id               String   @id @default(uuid())
+  title            String
+  slug             String   @unique
+  description      String?  @db.VarChar(10000)
+  shortDescription String?  @db.VarChar(1000)
+  skills           String?
+  subSkills        String?
+  token            String?
+  rewardAmount     Int?
+  link             String?
+  source           Source   @default(NATIVE)
+  sponsorId        String
+  sponsor          Sponsors @relation(fields: [sponsorId], references: [id])
+  pocId            String
+  poc              User     @relation(fields: [pocId], references: [id])
+  isPublished      Boolean  @default(false)
+  isFeatured       Boolean  @default(false)
+  isActive         Boolean  @default(true)
+  isArchived       Boolean  @default(false)
+  createdAt        DateTime @default(now())
+  updatedAt        DateTime @updatedAt
+
+  @@index([id, slug])
+  @@index([pocId])
+  @@index([sponsorId])
+}
+
+model Submission {
+  id                 String      @id @default(uuid())
+  link               String?
+  tweet              String?
+  eligibilityAnswers Json?
+  likes              Int         @default(0)
+  userId             String
+  user               User        @relation(fields: [userId], references: [id])
+  listingType        ListingType @default(BOUNTY)
+  listingId          String
+  isWinner           Boolean     @default(false)
+  winnerPosition     String?
+  isActive           Boolean     @default(true)
+  isArchived         Boolean     @default(false)
+  createdAt          DateTime    @default(now())
+  updatedAt          DateTime    @updatedAt
+
+  @@index([id, listingId])
+  @@index([userId])
+}
+
+model Otp {
+  id        String   @id @map("_id")
+  email     String
+  otp       Int
+  timestamp DateTime @default(now())
+}
+
+model Sponsors {
+  id           String         @id @default(uuid())
+  name         String         @unique
+  slug         String         @unique
+  logo         String?
+  url          String?
+  industry     String
+  twitter      String?
+  bio          String?
+  createdAt    DateTime       @default(now())
+  updatedAt    DateTime       @updatedAt
+  UserSponsors UserSponsors[]
+  Bounties     Bounties[]
+  Grants       Grants[]
+  Jobs         Jobs[]
+
+  @@index([id, slug])
+}
+
+model Total {
+  id         String   @id @default(uuid())
+  total      Int?
+  totalInUSD Int?
+  count      Int?
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+
+  @@index([id])
+}
+
+model User {
+  id               String         @id @default(uuid())
+  publicKey        String         @unique
+  email            String         @unique
+  username         String         @unique
+  photo            String?
+  firstName        String?
+  lastName         String?
+  createdAt        DateTime       @default(now())
+  updatedAt        DateTime       @updatedAt
+  isVerified       Boolean        @default(false)
+  role             SuperRole      @default(USER)
+  totalEarnedInUSD Int            @default(0)
+  isTalentFilled   Boolean        @default(false)
+  skills           String?
+  subSkills        String?
+  interests        String?
+  bio              String?
+  twitter          String?
+  discord          String?
+  github           String?
+  linkedin         String?
+  website          String?
+  telegram         String?
+  community        String?
+  experience       String?
+  superteamLevel   String?
+  location         String?
+  cryptoExperience String?
+  workPrefernce    String?
+  currentEmployer  String?
+  pow              String?        @db.VarChar(2000)
+  notifications    String?
+  private          Boolean        @default(false)
+  UserSponsors     UserSponsors[]
+  poc              Bounties[]     @relation("poc")
+  Comment          Comment[]
+  Submission       Submission[]
+  Grants           Grants[]
+
+  @@index([email, publicKey, username])
+}
+
+model UserSponsors {
+  userId    String
+  user      User     @relation(fields: [userId], references: [id])
+  sponsorId String
+  sponsor   Sponsors @relation(fields: [sponsorId], references: [id])
+  role      Role     @default(MEMBER)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@id([userId, sponsorId])
+  @@index([userId, sponsorId])
+  @@index([sponsorId])
+}
+
+enum Role {
+  ADMIN
+  MEMBER
+}
+
+enum SuperRole {
+  GOD
+  USER
+}
+
+enum Source {
+  NATIVE
+  IMPORT
+}
+
+enum status {
+  OPEN
+  REVIEW
+  CLOSED
+}
+
+enum ListingType {
+  BOUNTY
+  JOB
+  GRANT
+}
+
+enum JobType {
+  parttime
+  fulltime
+  internship
+}

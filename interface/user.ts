@@ -1,10 +1,35 @@
-import type { SponsorType } from './sponsor';
-
 interface User {
-  id: string;
-  publickey: string;
-  talent: boolean;
-  sponsor: boolean;
-  sponsors?: SponsorType[];
+  id?: string;
+  publicKey?: string;
+  firstName?: string;
+  lastName?: string;
+  email?: string;
+  username?: string;
+  isVerified?: boolean;
+  createdAt?: string;
+  updatedAt?: string;
+  talent?: boolean;
+  sponsor?: boolean;
+  superteamLevel?: string;
+  isTalentFilled?: boolean;
+  bio?: string;
+  location?: string;
+  photo?: string;
+  experience?: string;
+  cryptoExperience?: string;
+  currentEmployer?: string;
+  community?: string;
+  interests?: string;
+  skills?: string;
+  subSkills?: string;
+  workPrefernce?: string;
+  discord?: string;
+  twitter?: string;
+  github?: string;
+  linkedin?: string;
+  website?: string;
+  telegram?: string;
+  pow?: string;
+  totalEarnedInUSD?: number;
 }
 export type { User };

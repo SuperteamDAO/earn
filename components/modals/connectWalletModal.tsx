@@ -71,51 +71,47 @@ export const ConnectWalletModal = ({
               flexFlow="column"
             >
               {/* <WalletMultiButton /> */}
-              {wallets.map((wallet: SolanaWallet, index: number) => {
-                return (
-                  <>
-                    <Flex
-                      key={index}
-                      align="center"
-                      w="100%"
-                      h="2.5rem"
-                      p="0 1.5rem"
-                      bg="gray.50"
-                      borderRadius="1rem"
-                      _hover={{
-                        bg: 'gray.100',
-                      }}
-                      cursor="pointer"
-                      onClick={onConnectWallet.bind(null, wallet)}
+              {wallets.map((wallet: SolanaWallet, index: number) => (
+                <Flex
+                  key={index}
+                  align="center"
+                  w="100%"
+                  h="2.5rem"
+                  p="0 1.5rem"
+                  bg="gray.50"
+                  borderRadius="1rem"
+                  _hover={{
+                    bg: 'gray.100',
+                  }}
+                  cursor="pointer"
+                  onClick={onConnectWallet.bind(null, wallet)}
+                >
+                  <Flex align="center" gap="1rem">
+                    <Box
+                      alignItems={'center'}
+                      justifyContent={'center'}
+                      display={'flex'}
+                      w="2rem"
+                      h="2rem"
                     >
-                      <Flex align="center" gap="1rem">
-                        <Box
-                          alignItems={'center'}
-                          justifyContent={'center'}
-                          display={'flex'}
-                          w="2rem"
-                          h="2rem"
-                        >
-                          <Image
-                            w="70%"
-                            h="70%"
-                            alt={`${wallet.adapter.name} Icon`}
-                            src={wallet.adapter.icon ?? ''}
-                          />
-                        </Box>
-                        <Text
-                          ml={2}
-                          color="gray.500"
-                          fontSize="1.1rem"
-                          fontWeight={600}
-                        >
-                          {wallet.adapter.name ?? ''}
-                        </Text>
-                      </Flex>
-                    </Flex>
-                  </>
-                );
-              })}
+                      <Image
+                        w="70%"
+                        h="70%"
+                        alt={`${wallet.adapter.name} Icon`}
+                        src={wallet.adapter.icon ?? ''}
+                      />
+                    </Box>
+                    <Text
+                      ml={2}
+                      color="gray.500"
+                      fontSize="1.1rem"
+                      fontWeight={600}
+                    >
+                      {wallet.adapter.name ?? ''}
+                    </Text>
+                  </Flex>
+                </Flex>
+              ))}
             </Flex>
           </Flex>
         </ModalContent>

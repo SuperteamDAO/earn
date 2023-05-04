@@ -907,7 +907,7 @@ function Listing() {
   const { currentSponsor } = SponsorStore();
 
   const listingData = tanQuery({
-    queryKey: ['listing', currentSponsor?.orgId || ''],
+    queryKey: ['listing', currentSponsor?.id || ''],
     queryFn: ({ queryKey }) => findSponsorListing(queryKey[1] || ''),
   });
 

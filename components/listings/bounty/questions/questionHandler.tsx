@@ -16,15 +16,13 @@ import type { QuestionType } from './builder';
 
 interface Props {
   question: string;
-  index: string;
   type: QuestionType;
-  options: string[];
+  options?: string[];
   label: string;
   register: UseFormRegister<FieldValues>;
-  control: Control<FieldValues, any>;
+  control?: Control<FieldValues, any>;
 }
 export const QuestionHandler = ({
-  index,
   question,
   type,
   options,
@@ -38,7 +36,12 @@ export const QuestionHandler = ({
         <FormLabel color={'gray.600 !important'} fontSize={'1.1rem'}>
           {question}
         </FormLabel>
-        <Input {...register(label)} />
+        <Input
+          borderColor={'brand.slate.300'}
+          _placeholder={{ color: 'brand.slate.300' }}
+          focusBorderColor="brand.purple"
+          {...register(label)}
+        />
       </>
     );
   }
@@ -48,7 +51,12 @@ export const QuestionHandler = ({
         <FormLabel color={'gray.600 !important'} fontSize={'1.1rem'}>
           {question}
         </FormLabel>
-        <Textarea {...register(label)} />
+        <Textarea
+          borderColor={'brand.slate.300'}
+          _placeholder={{ color: 'brand.slate.300' }}
+          focusBorderColor="brand.purple"
+          {...register(label)}
+        />
       </>
     );
   }
@@ -71,9 +79,9 @@ export const QuestionHandler = ({
           {question}
         </FormLabel>
         <Select {...register(label)}>
-          {options.map((e) => {
+          {options?.map((e, eIndex) => {
             return (
-              <option key={index} value={e}>
+              <option key={eIndex} value={e}>
                 {e}
               </option>
             );
@@ -85,7 +93,7 @@ export const QuestionHandler = ({
   if (type === 'multi-choice') {
     const animatedComponents = makeAnimated();
     const option: MultiSelectOptions[] = [];
-    options.forEach((e) => {
+    options?.forEach((e) => {
       option.push({ value: e, label: e });
     });
     return (

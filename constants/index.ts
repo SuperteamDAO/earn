@@ -43,7 +43,7 @@ export const tokenList = [
     icon: 'https://s2.coinmarketcap.com/static/img/coins/64x64/16116.png',
   },
   {
-    tokenName: 'USD Coin',
+    tokenName: 'USDC',
     mintAddress: 'EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v',
     address: 'EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v',
     icon: 'https://s2.coinmarketcap.com/static/img/coins/64x64/3408.png',
@@ -53,6 +53,12 @@ export const tokenList = [
     mintAddress: 'Es9vMFrzaCERmJfrF4H2FYD4KCoNkY11McCe8BenwNYB',
     address: 'Es9vMFrzaCERmJfrF4H2FYD4KCoNkY11McCe8BenwNYB',
     icon: 'https://s2.coinmarketcap.com/static/img/coins/64x64/825.png',
+  },
+  {
+    tokenName: 'STEP',
+    mintAddress: '',
+    address: '',
+    icon: 'https://s2.coinmarketcap.com/static/img/coins/32x32/18069.png',
   },
   {
     tokenName: 'mSOL',
@@ -533,8 +539,7 @@ export const ListingTypeQueryMap = {
 };
 
 export const CountryList: string[] = [
-  'United States',
-  'Canada',
+  'India',
   'Afghanistan',
   'Albania',
   'Algeria',
@@ -572,6 +577,7 @@ export const CountryList: string[] = [
   'Burundi',
   'Cambodia',
   'Cameroon',
+  'Canada',
   'Cape Verde',
   'Cayman Islands',
   'Central African Republic',
@@ -631,7 +637,6 @@ export const CountryList: string[] = [
   'Hong Kong',
   'Hungary',
   'Iceland',
-  'India',
   'Indonesia',
   'Iran (Islamic Republic of)',
   'Iraq',
@@ -756,6 +761,7 @@ export const CountryList: string[] = [
   'Ukraine',
   'United Arab Emirates',
   'United Kingdom',
+  'United States',
   'United States minor outlying islands',
   'Uruguay',
   'Uzbekistan',

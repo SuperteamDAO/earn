@@ -1,4 +1,3 @@
-import { DeleteIcon } from '@chakra-ui/icons';
 import {
   Box,
   Button,
@@ -20,56 +19,53 @@ import {
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import Avatar from 'boring-avatars';
 import { useForm } from 'react-hook-form';
-import toast, { Toaster } from 'react-hot-toast';
+import { Toaster } from 'react-hot-toast';
 
 import type { SponsorType } from '../../interface/sponsor';
 import DashboardLayout from '../../layouts/dashboardLayout';
 import { SponsorStore } from '../../store/sponsor';
-import { createSponsor, DeleteSponsor, findTeam } from '../../utils/functions';
+import { createSponsor, findTeam } from '../../utils/functions';
 import { genrateuuid } from '../../utils/helpers';
 
 const TeamDashboard = () => {
   const { currentSponsor } = SponsorStore();
   const queryClient = useQueryClient();
   const Team = useQuery({
-    queryKey: ['team', currentSponsor?.orgId],
+    queryKey: ['team', currentSponsor?.id],
     queryFn: ({ queryKey }) => findTeam(queryKey[1] as string),
   });
   const createMemberMutation = useMutation({
     mutationFn: createSponsor,
     onSuccess: () => {
-      queryClient.invalidateQueries(['team', currentSponsor?.orgId], {
+      queryClient.invalidateQueries(['team', currentSponsor?.id], {
         exact: true,
       });
     },
   });
 
-  const deleteMemberMutation = useMutation({
-    mutationFn: DeleteSponsor,
-    onSuccess: () => {
-      toast.success('Successfully Removed');
+  // const deleteMemberMutation = useMutation({
+  //   mutationFn: DeleteSponsor,
+  //   onSuccess: () => {
+  //     toast.success('Successfully Removed');
 
-      queryClient.invalidateQueries(['team', currentSponsor?.orgId], {
-        exact: true,
-      });
-    },
+  //     queryClient.invalidateQueries(['team', currentSponsor?.id], {
+  //       exact: true,
+  //     });
+  //   },
 
-    onError: () => {
-      toast.error('Error');
-    },
-  });
+  //   onError: () => {
+  //     toast.error('Error');
+  //   },
+  // });
   const {
     register,
     formState: { errors },
     handleSubmit,
   } = useForm();
-  const createMember = async (name: string, email: string, address: string) => {
+  const createMember = async (name: string) => {
     const sponsor: SponsorType = {
       ...(currentSponsor as SponsorType),
-      email: email as string,
-      username: name as string,
-      publickey: address as string,
-      type: 'Member',
+      slug: name as string,
       id: genrateuuid(),
     };
     createMemberMutation.mutate(sponsor);
@@ -146,20 +142,11 @@ const TeamDashboard = () => {
                                 fontSize={'14px'}
                                 fontWeight="500"
                               >
-                                {el?.username}
+                                {el?.slug}
                               </Text>
                             </Flex>
                           </Td>
-                          <Td>
-                            <Text
-                              color={'gray.500'}
-                              fontSize={'14px'}
-                              fontWeight="500"
-                            >
-                              {el.email}
-                            </Text>
-                          </Td>
-                          <Td>
+                          {/* <Td>
                             <Text
                               w={'4.5rem'}
                               p={2}
@@ -191,7 +178,7 @@ const TeamDashboard = () => {
                                 <DeleteIcon />
                               </Button>
                             )}
-                          </Td>
+                          </Td> */}
                         </Tr>
                       );
                     })}
@@ -205,14 +192,8 @@ const TeamDashboard = () => {
               </Text>
               <form
                 onSubmit={handleSubmit(async (e) => {
-                  Team.data.map(async (el: SponsorType) => {
-                    if (el.email === e.email) {
-                      return toast.error('Email Already Exists');
-                    }
-                    if (el.publickey === e.address) {
-                      return toast.error('Wallet address already exist');
-                    }
-                    await createMember(e.name, e.email, e.address);
+                  Team.data.map(async () => {
+                    await createMember(e.name);
                     return null;
                   });
                 })}

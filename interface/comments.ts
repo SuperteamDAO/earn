@@ -1,10 +1,10 @@
-import type { Talent } from './talent';
+import type { User } from '@/interface/user';
 
-export interface Comments {
+export interface Comment {
   id: string;
   message: string;
-  talentId: string;
-  timeStamp: string;
+  authorId: string;
+  author: User;
   refId: string;
-  talent?: Talent;
+  refType: 'BOUNTY' | 'JOB';
 }

@@ -5,7 +5,7 @@ import moment from 'moment';
 import toast from 'react-hot-toast';
 import { v4 as uuidV4 } from 'uuid';
 
-import type { Comments } from '../interface/comments';
+import type { Comment } from '../interface/comments';
 import type {
   Bounties,
   DraftType,
@@ -19,6 +19,7 @@ import type { SponsorType } from '../interface/sponsor';
 import type { Talent } from '../interface/talent';
 import { SponsorStore } from '../store/sponsor';
 import { client } from './algolia';
+import { Mixpanel } from './mixpanel';
 
 const BACKEND_URL = process.env.NEXT_PUBLIC_BACKEND_URL;
 
@@ -54,7 +55,7 @@ export const UpdateUser = async (id: string, update: any) => {
 };
 
 export const generateOtp = async (
-  publicKey: string,
+  publicKey: string | undefined,
   email: string
 ): Promise<
   | any
@@ -179,7 +180,7 @@ export const createBounty = async (
       description: bounties.description,
       sponsorStatus: bounties.sponsorStatus,
       featured: bounties.featured,
-      orgId: sponsor.orgId,
+      orgId: sponsor.id,
       skills: bounties.skills,
       subSkills: bounties.subSkills,
       prizeList: bounties.prizeList,
@@ -237,7 +238,7 @@ export const createGrants = async (grants: GrantsType) => {
   }
 };
 
-export const createComment = async (comment: Comments) => {
+export const createComment = async (comment: Comment) => {
   const { data, status } = await axios.post(`${BACKEND_URL}/comment/create`, {
     ...comment,
   });
@@ -476,6 +477,14 @@ export const fetchAll = async (
           parseInt(moment(a.bounty.deadline).format('x'), 10)
         );
       });
+      Mixpanel.track(search ? 'search_home_page' : 'filter_home_page', {
+        search: search || filter,
+      });
+      if (hits.length === 0) {
+        Mixpanel.track(
+          search ? '0_result_homepage_search' : '0_result_homepage_filter'
+        );
+      }
       return {
         bounty: search ? [...active, ...inActive] : [...active],
         grants,
@@ -515,6 +524,7 @@ export const fetchAll = async (
         parseInt(moment(b.bounty.deadline).format('x'), 10)
       );
     });
+
     return {
       bounty: [...active, ...inActive] as {
         bounty: Bounties;
