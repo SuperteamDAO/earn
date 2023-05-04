@@ -473,6 +473,7 @@ export const CategoryBanner = ({ type }: { type: string }) => {
         w={{ md: 'brand.120', base: '100%' }}
         h={{ md: '7.375rem', base: 'fit-content' }}
         mt={6}
+        mb={8}
         mx={'auto'}
         p={6}
         bg={`url('${categoryAssets[type]?.bg}')`}

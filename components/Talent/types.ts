@@ -17,6 +17,7 @@ export interface WorkType {
 }
 
 export interface LinksType {
+  discord: string;
   twitter: string;
   github: string;
   linkedin: string;
