@@ -96,15 +96,16 @@ const GettingStarted = ({ userInfo }: GettingStartedProps) => {
       <Text mb={'1.5rem'} color={'gray.400'} fontWeight={500}>
         GETTING STARTED
       </Text>
-      <Flex h={'8.5rem'}>
+      <Flex h={'12.5rem'}>
         <VStack pos={'relative'} justifyContent={'space-between'} h={'100%'}>
           <Step number={1} isComplete={!!userInfo?.id} />
-          {/* <Step
-            number={2}
-            isComplete={!!userInfo?.id && !!userInfo?.isTalentFilled}
-          /> */}
+
           <Step
             number={2}
+            isComplete={!!userInfo?.id && !!userInfo?.isTalentFilled}
+          />
+          <Step
+            number={3}
             isComplete={!!userInfo?.id && !!userInfo.totalEarnedInUSD}
           />
           <Flex pos={'absolute'} w={'0.0625rem'} h={'90%'} bg={'#CBD5E1'} />
@@ -133,7 +134,7 @@ const GettingStarted = ({ userInfo }: GettingStartedProps) => {
               and get personalized notifications
             </Text>
           </Box>
-          {/* <Box ml={'0.8125rem'}>
+          <Box ml={'0.8125rem'}>
             {!userInfo?.id || !userInfo?.isTalentFilled ? (
               <Text
                 as="button"
@@ -143,7 +144,7 @@ const GettingStarted = ({ userInfo }: GettingStartedProps) => {
                 _hover={{
                   color: 'brand.purple',
                 }}
-                onClick={() => router.push(`/t/${userInfo?.username}`)}
+                onClick={() => router.push(`/new/talent`)}
               >
                 Complete your profile
               </Text>
@@ -155,7 +156,7 @@ const GettingStarted = ({ userInfo }: GettingStartedProps) => {
             <Text color={'gray.500'} fontSize={'md'} fontWeight={500}>
               and get seen by hiring managers
             </Text>
-          </Box> */}
+          </Box>
           <Box ml={'0.8125rem'}>
             {!userInfo?.id || !userInfo.totalEarnedInUSD ? (
               <Text
@@ -491,11 +492,11 @@ const SideBar = ({ userInfo, listings, total, earners }: SideBarProps) => {
   // const { connected } = useWallet();
   return (
     <Flex direction={'column'} rowGap={'2.5rem'} w={'22.125rem'} pl={6}>
-      <AlphaAccess />
       <GettingStarted userInfo={userInfo} />
       <TotalStats total={listings} listings={total} />
       {/* <Filter title={'FILTER BY INDUSTRY'} entries={['Gaming', 'Payments', 'Consumer', 'Infrastructure', 'DAOs']} /> */}
       <RecentEarners earners={earners} />
+      <AlphaAccess />
       {/* <HiringNow jobs={jobs} /> */}
       {/* <Featured /> */}
     </Flex>
