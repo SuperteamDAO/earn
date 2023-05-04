@@ -90,6 +90,7 @@ function BountyDetails({ slug }: BountyDetailsProps) {
               endingTime={bounty?.deadline ?? ''}
               prizeList={bounty?.rewards}
               total={bounty?.rewardAmount || 0}
+              applicationLink={bounty?.applicationLink || ''}
             />
           </HStack>
         </>
