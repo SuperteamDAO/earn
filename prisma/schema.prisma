@@ -15,7 +15,7 @@ model Jobs {
   id            String   @id @default(uuid())
   title         String
   slug          String   @unique
-  description   String?  @db.VarChar(10000)
+  description   String?  @db.Text
   skills        String?
   subskills     String?
   deadline      String?
@@ -46,7 +46,7 @@ model Bounties {
   id            String    @id @default(uuid())
   title         String
   slug          String    @unique
-  description   String?   @db.VarChar(10000)
+  description   String?   @db.Text
   skills        String?
   subSkills     String?
   deadline      DateTime?
@@ -93,7 +93,7 @@ model Grants {
   id               String   @id @default(uuid())
   title            String
   slug             String   @unique
-  description      String?  @db.VarChar(10000)
+  description      String?  @db.Text
   shortDescription String?  @db.VarChar(1000)
   skills           String?
   subSkills        String?

@@ -21,9 +21,8 @@ import { TiTick } from 'react-icons/ti';
 import type { BountyStatus } from '@/interface/bounty';
 import { dayjs } from '@/utils/dayjs';
 import { Mixpanel } from '@/utils/mixpanel';
-import { getURL } from '@/utils/validUrl';
 
-import { type MultiSelectOptions, tokenList } from '../../constants';
+import { tokenList } from '../../constants';
 import { TalentStore } from '../../store/talent';
 import { userStore } from '../../store/user';
 import { findTalentPubkey, updateNotification } from '../../utils/functions';
@@ -239,15 +238,16 @@ export const BountiesCard = ({
 };
 interface JobsProps {
   title: string;
-  description: string;
-  max: number;
-  min: number;
-  maxEq: number;
-  minEq: number;
-  skills: MultiSelectOptions[];
+  description?: string;
+  max?: number;
+  min?: number;
+  maxEq?: number;
+  minEq?: number;
+  skills?: string;
   logo?: string;
   orgName: string;
   link?: string;
+  location?: string;
 }
 export const JobsCard = ({
   description,
@@ -255,11 +255,11 @@ export const JobsCard = ({
   min,
   maxEq,
   minEq,
-  skills,
   title,
   logo,
   orgName,
   link,
+  location,
 }: JobsProps) => {
   return (
     <Flex
@@ -308,20 +308,17 @@ export const JobsCard = ({
                 {minEq.toLocaleString()}% - {maxEq.toLocaleString()}% Equity
               </Text>
             )}
-            {skills?.length &&
-              skills.slice(0, 3).map((e) => {
-                return (
-                  <Text
-                    key={''}
-                    display={{ base: 'none', md: 'block' }}
-                    mr={3}
-                    color={'brand.slate.500'}
-                    fontSize="sm"
-                  >
-                    {e.label}
-                  </Text>
-                );
-              })}
+            {!!location && (
+              <Text
+                key={''}
+                display={{ base: 'none', md: 'block' }}
+                mr={3}
+                color={'brand.slate.500'}
+                fontSize="sm"
+              >
+                {location}
+              </Text>
+            )}
           </Flex>
         </Flex>
       </Flex>
@@ -338,7 +335,7 @@ export const JobsCard = ({
           bg: 'brand.slate.400',
           color: 'white',
         }}
-        href={link || `${getURL()}/listings/jobs/${title.split(' ').join('-')}`}
+        href={link}
         isExternal
         onClick={() => {
           Mixpanel.track('job_clicked', {

@@ -5,6 +5,7 @@ interface Job {
   id?: string;
   title?: string;
   slug?: string;
+  location?: string;
   description?: string;
   shortDescription?: string;
   skills?: string;
