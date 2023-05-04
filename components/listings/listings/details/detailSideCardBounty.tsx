@@ -17,8 +17,9 @@ import {
   VStack,
 } from '@chakra-ui/react';
 import type { UseMutationResult } from '@tanstack/react-query';
+import axios from 'axios';
 import moment from 'moment';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import Countdown from 'react-countdown';
 
 import LoginWrapper from '@/components/Header/LoginWrapper';
@@ -61,6 +62,7 @@ function DetailSideCard({
   eligibility,
 }: Props) {
   const { userInfo } = userStore();
+  const [isUserSubmissionLoading, setIsUserSubmissionLoading] = useState(true);
   const { isOpen, onOpen, onClose } = useDisclosure();
   const [triggerLogin, setTriggerLogin] = useState(false);
   const [isSubmitted, setIsSubmitted] = useState(false);
@@ -68,6 +70,24 @@ function DetailSideCard({
   if (Number(moment(endingTime).format('x')) < Date.now()) {
     submissionStatus = 1;
   }
+
+  const getUserSubmission = async () => {
+    setIsUserSubmissionLoading(true);
+    try {
+      const submissionDetails = await axios.get(
+        `/api/submission/${id}/${userInfo?.id}`
+      );
+      setIsSubmitted(!!submissionDetails?.data?.id);
+      setIsUserSubmissionLoading(false);
+    } catch (e) {
+      setIsUserSubmissionLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    if (!isUserSubmissionLoading || !userInfo?.id) return;
+    getUserSubmission();
+  }, []);
 
   const handleSubmit = () => {
     if (userInfo?.id) {
@@ -404,6 +424,8 @@ function DetailSideCard({
             ) : (
               <Button
                 w="full"
+                isLoading={isUserSubmissionLoading}
+                loadingText={'Checking Submission...'}
                 onClick={() => handleSubmit()}
                 size="lg"
                 variant="solid"

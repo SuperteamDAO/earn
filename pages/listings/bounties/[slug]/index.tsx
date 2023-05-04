@@ -22,17 +22,19 @@ function BountyDetails({ slug }: BountyDetailsProps) {
   const [error, setError] = useState(false);
   const [bounty, setBounty] = useState<Bounty | null>(null);
 
+  const getBounty = async () => {
+    setIsLoading(true);
+    try {
+      const bountyDetails = await axios.get(`/api/bounties/${slug}`);
+      setBounty(bountyDetails.data);
+    } catch (e) {
+      setError(true);
+    }
+    setIsLoading(false);
+  };
+
   useEffect(() => {
     if (!isLoading) return;
-    const getBounty = async () => {
-      try {
-        const bountyDetails = await axios.get(`/api/bounties/${slug}`);
-        setBounty(bountyDetails.data);
-      } catch (e) {
-        setError(true);
-      }
-      setIsLoading(false);
-    };
     getBounty();
   }, []);
 
@@ -47,7 +49,10 @@ function BountyDetails({ slug }: BountyDetailsProps) {
     >
       {isLoading && <LoadingSection />}
       {!isLoading && !!error && <ErrorSection />}
-      {!isLoading && !error && (
+      {!isLoading && !error && !bounty?.id && (
+        <ErrorSection message="Sorry! The bounty you are looking for is not available." />
+      )}
+      {!isLoading && !error && !!bounty?.id && (
         <>
           <ListingHeader
             id={bounty?.id}

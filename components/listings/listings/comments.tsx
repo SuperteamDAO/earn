@@ -144,7 +144,7 @@ export const Comments = ({ refId, refType }: Props) => {
               alt={'profile image'}
               rounded={'full'}
               src={
-                comment?.author.photo ||
+                comment?.author?.photo ||
                 `${router.basePath}/assets/images/user-photo.png`
               }
             />
