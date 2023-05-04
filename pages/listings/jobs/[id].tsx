@@ -34,6 +34,7 @@ const Jobs = () => {
           <Meta
             title="Superteam Earn"
             description="Every Solana opportunity in one place!"
+            canonical="/assets/logo/og.svg"
           />
         }
       >

@@ -15,6 +15,7 @@ import { useState } from 'react';
 
 import type { User } from '@/interface/user';
 import { userStore } from '@/store/user';
+import { Mixpanel } from '@/utils/mixpanel';
 
 interface Props {
   userInfo: User | null;
@@ -43,6 +44,7 @@ function NewUserInfo({ userInfo, onClose, otp }: Props) {
           isVerified: true,
         });
         setUserInfo(userUpdtedDetails?.data);
+        Mixpanel.track('new_user_created');
         router.push('/new');
         onClose();
       } else {

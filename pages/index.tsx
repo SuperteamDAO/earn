@@ -13,6 +13,7 @@ import type { Bounty } from '@/interface/bounty';
 import type { Grant } from '@/interface/grant';
 import type { Job } from '@/interface/job';
 import Home from '@/layouts/Home';
+import { Mixpanel } from '@/utils/mixpanel';
 
 interface Listings {
   bounties?: Bounty[];
@@ -50,6 +51,7 @@ const HomePage: NextPage = () => {
 
   useEffect(() => {
     const html = document.querySelector('html');
+    Mixpanel.track('home_page_load');
     try {
       if (isLessThan768px) {
         html!.style.fontSize = '100%';

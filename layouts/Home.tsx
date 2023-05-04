@@ -79,10 +79,12 @@ function Home(props: IDefaultProps) {
 
   return (
     <Default
+      className="bg-white"
       meta={
         <Meta
           title="Superteam Earn"
           description="Every Solana opportunity in one place!"
+          canonical="/assets/logo/og.svg"
         />
       }
     >
