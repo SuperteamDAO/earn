@@ -6,7 +6,7 @@ import { Default } from '@/layouts/Default';
 import { Meta } from '@/layouts/Meta';
 
 function Port() {
-  const [userId, setUserId] = useState('ab15dd8c-fad7-4c74-880b-6b334f8d2a39');
+  const [userId, setUserId] = useState('');
   const [usersLoading, setUsersLoading] = useState(false);
   const [sponsorsLoading, setSponsorsLoading] = useState(false);
   const [bountiesLoading, setBountiesLoading] = useState(false);
@@ -26,6 +26,11 @@ function Port() {
   };
 
   const portSponsors = async () => {
+    if (!userId) {
+      // eslint-disable-next-line no-alert
+      window.alert('Add User');
+      return;
+    }
     setSponsorsLoading(true);
     try {
       const sponsors = await axios.post('/api/port/sponsors', {
@@ -40,6 +45,11 @@ function Port() {
   };
 
   const portBounties = async () => {
+    if (!userId) {
+      // eslint-disable-next-line no-alert
+      window.alert('Add User');
+      return;
+    }
     setBountiesLoading(true);
     try {
       const bounties = await axios.post('/api/port/bounties', {
@@ -54,6 +64,11 @@ function Port() {
   };
 
   const portGrants = async () => {
+    if (!userId) {
+      // eslint-disable-next-line no-alert
+      window.alert('Add User');
+      return;
+    }
     setGrantsLoading(true);
     try {
       const grants = await axios.post('/api/port/grants', {
@@ -68,6 +83,11 @@ function Port() {
   };
 
   const portTotal = async () => {
+    if (!userId) {
+      // eslint-disable-next-line no-alert
+      window.alert('Add User');
+      return;
+    }
     setTotalLoading(true);
     try {
       const totalData = await axios.post('/api/port/total', {
