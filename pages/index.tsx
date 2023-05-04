@@ -140,6 +140,7 @@ const HomePage: NextPage = () => {
                 orgName={job?.sponsor?.name || ''}
                 skills={job?.skills || ''}
                 title={job?.title || ''}
+                link={job?.link || ''}
               />
             );
           })}
