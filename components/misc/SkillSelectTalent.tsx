@@ -79,7 +79,6 @@ export const SkillSelect = ({
           required={true}
           options={MainSkills}
           onChange={(e) => {
-            console.log(e);
             handleChange(e as any);
             setSkills(e as any);
           }}

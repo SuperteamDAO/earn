@@ -139,28 +139,26 @@ const AddProject = ({
   setpow: Dispatch<SetStateAction<string[]>>;
 }) => {
   const { register, handleSubmit } = useForm();
-  const [skillsError, setskillsError] = useState<boolean>(false);
-  const [linkError, setlinkError] = useState<boolean>(false);
+  const [skillsError, setSkillsError] = useState<boolean>(false);
+  const [linkError, setLinkError] = useState<boolean>(false);
 
-  const [skills, setskills] = useState<MultiSelectOptions[]>([]);
-  const [subskills, setsubskills] = useState<MultiSelectOptions[]>([]);
-
-  console.log(skills, subskills);
+  const [skills, setSkills] = useState<MultiSelectOptions[]>([]);
+  const [subSkills, setSubSkills] = useState<MultiSelectOptions[]>([]);
 
   const onSubmit = (data: any) => {
     let error = false;
 
     if (!isValidHttpUrl(data.link)) {
-      setlinkError(true);
+      setLinkError(true);
       error = true;
     } else {
-      setlinkError(false);
+      setLinkError(false);
     }
-    if (skills.length === 0 || subskills.length === 0) {
-      setskillsError(true);
+    if (skills.length === 0 || subSkills.length === 0) {
+      setSkillsError(true);
       error = true;
     } else {
-      setskillsError(false);
+      setSkillsError(false);
     }
 
     if (error) {
@@ -172,7 +170,7 @@ const AddProject = ({
       JSON.stringify({
         ...data,
         skills: skills.map((ele) => ele.value),
-        SubSkills: subskills.map((ele) => ele.value),
+        subSkills: subSkills.map((ele) => ele.value),
       }),
     ]);
     onClose();
@@ -215,9 +213,9 @@ const AddProject = ({
               </Box>
               <SkillSelect
                 skills={skills}
-                subSkills={subskills}
-                setSkills={setskills}
-                setSubSkills={setsubskills}
+                subSkills={subSkills}
+                setSkills={setSkills}
+                setSubSkills={setSubSkills}
               />
 
               <Box w={'full'} mb={'1.25rem'}>
@@ -333,7 +331,6 @@ function YourLinks({ success, useFormStore }: Props) {
     }
 
     updateState({ pow, ...socials });
-    console.log(form);
     setisLoading(true);
     try {
       const updatedUser = await axios.post('/api/user/update', {
@@ -344,10 +341,6 @@ function YourLinks({ success, useFormStore }: Props) {
         superteamLevel: 'Lurker',
         isTalentFilled: true,
       });
-      console.log(
-        'file: YourLinks.tsx:338 ~ YourLinks ~ updatedUser:',
-        updatedUser
-      );
       setUserInfo(updatedUser?.data);
       success();
     } catch (e) {

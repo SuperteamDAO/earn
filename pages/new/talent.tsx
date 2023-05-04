@@ -38,7 +38,7 @@ const useFormStore = create<UserStoreType>()((set) => ({
     community: '',
     interests: '',
     skills: '',
-    subskills: '',
+    subSkills: '',
     workPrefernce: '',
     twitter: '',
     github: '',
