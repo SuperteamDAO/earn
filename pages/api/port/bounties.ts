@@ -42,12 +42,7 @@ export default async function user(req: NextApiRequest, res: NextApiResponse) {
       const deadlineDate = bounty.deadline
         ? dayjs(
             new Date(
-              bountyDeadline[2],
-              bountyDeadline[1],
-              bountyDeadline[0],
-              18,
-              0,
-              0
+              `${bountyDeadline[2]}-${bountyDeadline[1]}-${bountyDeadline[0]} 18:00:00`
             )
           ).toISOString()
         : undefined;
