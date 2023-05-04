@@ -13,7 +13,6 @@ import {
 import { useWallet } from '@solana/wallet-adapter-react';
 import axios from 'axios';
 import { MediaPicker } from 'degen';
-import { useRouter } from 'next/router';
 import { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import Select from 'react-select';
@@ -28,7 +27,6 @@ import type { SponsorType } from '../../interface/sponsor';
 import { uploadToCloudinary } from '../../utils/upload';
 
 const CreateSponsor = () => {
-  const router = useRouter();
   const animatedComponents = makeAnimated();
   const { connected } = useWallet();
   const { userInfo } = userStore();
@@ -50,7 +48,8 @@ const CreateSponsor = () => {
         ...sponsor,
         userId: userInfo?.id,
       });
-      router.push('/listings/create');
+      setIsLoading(false);
+      window.open('https://airtable.com/shrfcoy2kmVXIIv4V', '_blank');
     } catch (e) {
       setIsLoading(false);
       setHasError(true);
@@ -95,7 +94,7 @@ const CreateSponsor = () => {
                   bio: e.bio,
                   industry: industries ?? '',
                   name: e.sponsorname,
-                  username: e.username,
+                  slug: e.slug,
                   logo: imageUrl ?? '',
                   twitter: e.twitterHandle ?? '',
                   url: e.sponsorurl ?? '',
@@ -135,7 +134,7 @@ const CreateSponsor = () => {
                     color={'brand.slate.500'}
                     fontSize={'15px'}
                     fontWeight={600}
-                    htmlFor={'username'}
+                    htmlFor={'slug'}
                   >
                     Company Username
                   </FormLabel>
@@ -144,12 +143,12 @@ const CreateSponsor = () => {
                     borderColor={'brand.slate.300'}
                     _placeholder={{ color: 'brand.slate.300' }}
                     focusBorderColor="brand.purple"
-                    id="username"
+                    id="slug"
                     placeholder="starkindustries"
-                    {...register('username')}
+                    {...register('slug')}
                   />
                   <FormErrorMessage>
-                    {errors.username ? <>{errors.username.message}</> : <></>}
+                    {errors.slug ? <>{errors.slug.message}</> : <></>}
                   </FormErrorMessage>
                 </FormControl>
               </HStack>

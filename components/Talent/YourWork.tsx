@@ -36,8 +36,8 @@ type Step1Props = {
 function YourWork({ setStep, useFormStore }: Step1Props) {
   const animatedComponents = makeAnimated();
 
-  const [skills, setskills] = useState<MultiSelectOptions[]>([]);
-  const [subskills, setsubskills] = useState<MultiSelectOptions[]>([]);
+  const [skills, setSkills] = useState<MultiSelectOptions[]>([]);
+  const [subSkills, setSubSkills] = useState<MultiSelectOptions[]>([]);
 
   const [DropDownValues, setDropDownValues] = useState({
     community: '',
@@ -47,7 +47,7 @@ function YourWork({ setStep, useFormStore }: Step1Props) {
   const { updateState } = useFormStore();
   const { form } = useFormStore();
 
-  const [post, setpost] = useState(false);
+  const [post, setPost] = useState(false);
 
   const { register, handleSubmit, watch } = useForm({
     defaultValues: {
@@ -60,10 +60,10 @@ function YourWork({ setStep, useFormStore }: Step1Props) {
   });
 
   const onSubmit = (data: any) => {
-    setpost(true);
+    setPost(true);
     if (
       skills.length === 0 ||
-      subskills.length === 0 ||
+      subSkills.length === 0 ||
       DropDownValues.interests.length === 0 ||
       DropDownValues.community.length === 0
     ) {
@@ -73,7 +73,7 @@ function YourWork({ setStep, useFormStore }: Step1Props) {
     updateState({
       ...data,
       skills: JSON.stringify(skills.map((ele) => ele.value)),
-      subskills: JSON.stringify(subskills.map((ele) => ele.value)),
+      subSkills: JSON.stringify(subSkills.map((ele) => ele.value)),
       ...DropDownValues,
     });
     setStep((i) => i + 1);
@@ -84,7 +84,7 @@ function YourWork({ setStep, useFormStore }: Step1Props) {
     try {
       if (form.skills.length > 2) {
         const skillsJson = JSON.parse(form.skills);
-        setskills((sk) => {
+        setSkills((sk) => {
           return [
             ...sk,
             ...skillsJson.map((ele: string) => {
@@ -96,12 +96,12 @@ function YourWork({ setStep, useFormStore }: Step1Props) {
           ];
         });
       }
-      if (form.subskills.length > 2) {
-        const subskillsJson = JSON.parse(form.subskills);
-        setsubskills((sk) => {
+      if (form.subSkills.length > 2) {
+        const subSkillsJson = JSON.parse(form.subSkills);
+        setSubSkills((sk) => {
           return [
             ...sk,
-            ...subskillsJson.map((ele: string) => {
+            ...subSkillsJson.map((ele: string) => {
               return {
                 label: ele,
                 value: ele,
@@ -282,11 +282,11 @@ function YourWork({ setStep, useFormStore }: Step1Props) {
           </Box>
           <SkillSelect
             errorSkill={post && skills.length === 0}
-            errorSubSkill={post && subskills.length === 0}
+            errorSubSkill={post && subSkills.length === 0}
             skills={skills}
-            subSkills={subskills}
-            setSkills={setskills}
-            setSubSkills={setsubskills}
+            subSkills={subSkills}
+            setSkills={setSkills}
+            setSubSkills={setSubSkills}
           />
           <Flex align={'center'} mb={'2.5rem'}>
             <Checkbox

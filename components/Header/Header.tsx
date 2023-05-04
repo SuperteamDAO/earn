@@ -16,7 +16,6 @@ import {
 } from '@chakra-ui/react';
 import { useRouter } from 'next/router';
 
-import Search from './Search';
 import UserInfo from './UserInfo';
 
 interface NavItem {
@@ -326,14 +325,14 @@ export default function WithSubnavigation() {
             }}
             src={'/assets/logo/new-logo.svg'}
           />
-          <Flex
+          {/* <Flex
             align="center"
             display={{ base: 'none', md: 'flex' }}
             h="full"
             ml={10}
           >
             <Search />
-          </Flex>
+          </Flex> */}
 
           <Flex
             align="center"

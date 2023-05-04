@@ -25,12 +25,17 @@ const theme = extendTheme({
         800: '#1e293b',
         900: '#0f172a',
       },
+      grey: {
+        50: '#F7FAFC',
+      },
       charcoal: {
         700: '#334254',
       },
     },
   },
   space: {
+    85: '21rem',
+    120: '46.0625rem',
     brand: {
       85: '21rem',
       120: '46.0625rem',
@@ -65,6 +70,16 @@ const theme = extendTheme({
           _hover: {
             color: 'white',
             bg: 'brand.purple',
+          },
+        },
+        outlineSecondary: {
+          color: 'brand.slate.400',
+          bg: 'transparent',
+          border: '1px solid',
+          borderColor: 'brand.slate.400',
+          _hover: {
+            color: 'white',
+            bg: 'brand.slate.400',
           },
         },
         ghost: {

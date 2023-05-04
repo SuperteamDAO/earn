@@ -1,14 +1,14 @@
-import { Box, Center, Flex, Image, Link, Text, VStack } from '@chakra-ui/react';
-import { useWallet } from '@solana/wallet-adapter-react';
-import { useQuery } from '@tanstack/react-query';
+import { Box, Center, Flex, Image, Text, VStack } from '@chakra-ui/react';
 import Avatar from 'boring-avatars';
+import { useRouter } from 'next/router';
+import { useState } from 'react';
 import Slider from 'react-slick';
 
-import { getURL } from '@/utils/validUrl';
+import LoginWrapper from '@/components/Header/LoginWrapper';
+import type { User } from '@/interface/user';
 
 import type { JobsType } from '../../interface/listings';
 import type { SponsorType } from '../../interface/sponsor';
-import { TalentTVE } from '../../utils/functions';
 
 <Avatar
   size={40}
@@ -18,7 +18,7 @@ import { TalentTVE } from '../../utils/functions';
 />;
 
 interface SideBarProps {
-  jobs:
+  jobs?:
     | {
         jobs: JobsType;
         sponsorInfo: SponsorType;
@@ -26,6 +26,8 @@ interface SideBarProps {
     | undefined;
   total: number;
   listings: number;
+  earners?: User[];
+  userInfo?: User;
 }
 
 const Step = ({
@@ -69,40 +71,101 @@ const Step = ({
   );
 };
 
-const GettingStarted = () => {
+interface GettingStartedProps {
+  userInfo?: User;
+}
+
+const GettingStarted = ({ userInfo }: GettingStartedProps) => {
+  const router = useRouter();
+  const [triggerLogin, setTriggerLogin] = useState(false);
   return (
     <Box>
+      <LoginWrapper
+        triggerLogin={triggerLogin}
+        setTriggerLogin={setTriggerLogin}
+      />
       <Text mb={'1.5rem'} color={'gray.400'} fontWeight={500}>
         GETTING STARTED
       </Text>
       <Flex h={'12.5rem'}>
         <VStack pos={'relative'} justifyContent={'space-between'} h={'100%'}>
-          <Step number={1} isComplete={true} />
-          <Step number={2} isComplete={false} />
-          <Step number={3} isComplete={false} />
+          <Step number={1} isComplete={!!userInfo?.id} />
+          <Step
+            number={2}
+            isComplete={!!userInfo?.id && !!userInfo?.isTalentFilled}
+          />
+          <Step
+            number={3}
+            isComplete={!!userInfo?.id && !!userInfo.totalEarnedInUSD}
+          />
           <Flex pos={'absolute'} w={'0.0625rem'} h={'90%'} bg={'#CBD5E1'} />
         </VStack>
         <VStack pos={'relative'} justifyContent={'space-between'} h={'100%'}>
           <Box ml={'0.8125rem'}>
-            <Text color={'black'} fontSize={'md'} fontWeight={500}>
-              Create your account
-            </Text>
+            {!userInfo?.id ? (
+              <Text
+                as="button"
+                color={'black'}
+                fontSize={'md'}
+                fontWeight={500}
+                _hover={{
+                  color: 'brand.purple',
+                }}
+                onClick={() => setTriggerLogin(true)}
+              >
+                Create your account
+              </Text>
+            ) : (
+              <Text color={'brand.purple'} fontSize={'md'} fontWeight={500}>
+                Create your account
+              </Text>
+            )}
             <Text color={'gray.500'} fontSize={'md'} fontWeight={500}>
               and get personalized notifications
             </Text>
           </Box>
           <Box ml={'0.8125rem'}>
-            <Text color={'black'} fontSize={'md'} fontWeight={500}>
-              Complete your profile
-            </Text>
+            {!userInfo?.id || !userInfo?.isTalentFilled ? (
+              <Text
+                as="button"
+                color={'black'}
+                fontSize={'md'}
+                fontWeight={500}
+                _hover={{
+                  color: 'brand.purple',
+                }}
+                onClick={() => router.push(`/t/${userInfo?.username}`)}
+              >
+                Complete your profile
+              </Text>
+            ) : (
+              <Text color={'brand.purple'} fontSize={'md'} fontWeight={500}>
+                Complete your profile
+              </Text>
+            )}
             <Text color={'gray.500'} fontSize={'md'} fontWeight={500}>
               and get seen by hiring managers
             </Text>
           </Box>
           <Box ml={'0.8125rem'}>
-            <Text color={'black'} fontSize={'md'} fontWeight={500}>
-              Win a bounty
-            </Text>
+            {!userInfo?.id || !userInfo.totalEarnedInUSD ? (
+              <Text
+                as="button"
+                color={'black'}
+                fontSize={'md'}
+                fontWeight={500}
+                _hover={{
+                  color: 'brand.purple',
+                }}
+                onClick={() => router.push('/bounties')}
+              >
+                Win a bounty
+              </Text>
+            ) : (
+              <Text color={'brand.purple'} fontSize={'md'} fontWeight={500}>
+                Win a bounty
+              </Text>
+            )}
             <Text color={'gray.500'} fontSize={'md'} fontWeight={500}>
               and get your Proof-of-Work NFT
             </Text>
@@ -144,9 +207,7 @@ const TotalStats = ({
               style={{
                 color: '#64748B',
               }}
-            >
-              USD
-            </span>
+            ></span>
           </Text>
           <Text color={'gray.500'} fontSize={'xs'} fontWeight={'400'}>
             Total Value Listed
@@ -184,7 +245,7 @@ interface EarnerProps {
 const Earner = ({ amount, name, avatar, work }: EarnerProps) => {
   return (
     <Flex align={'center'} w={'100%'} my={2}>
-      {avatar !== '' ? (
+      {avatar ? (
         <Image
           w={'2.125rem'}
           h={'2.125rem'}
@@ -225,12 +286,7 @@ const Earner = ({ amount, name, avatar, work }: EarnerProps) => {
   );
 };
 
-const RecentEarners = () => {
-  const talent = useQuery({
-    queryKey: ['talent'],
-    queryFn: () => TalentTVE(),
-  });
-
+const RecentEarners = ({ earners }: { earners?: User[] }) => {
   const settings = {
     dots: false,
     infinite: true,
@@ -248,14 +304,14 @@ const RecentEarners = () => {
       </Text>
       <VStack rowGap={2}>
         <Slider {...settings}>
-          {talent.data?.map((t) => {
+          {earners?.map((t: any) => {
             return (
               <Earner
-                amount={t.tve ?? 0}
-                name={`${t.firstname} ${t.lastname}`}
-                avatar={t.avatar}
+                amount={t.totalEarnedInUSD ?? 0}
+                name={`${t.firstName} ${t.lastName}`}
+                avatar={t.photo}
                 key={t.id}
-                work={t.currentEmployer}
+                work={t.currentEmployer ?? ''}
               />
             );
           })}
@@ -265,70 +321,72 @@ const RecentEarners = () => {
   );
 };
 
-interface HiringProps {
-  title: string;
-  logo?: string;
-  location: string;
-  type: string;
-}
-const Hiring = ({ logo, title, location, type }: HiringProps) => {
-  return (
-    <Flex align={'center'} w={'100%'}>
-      <Image
-        w={'2.125rem'}
-        h={'2.125rem'}
-        mr={'1.0625rem'}
-        alt=""
-        rounded={'md'}
-        src={logo ?? '/assets/home/placeholder/ph2.png'}
-      />
-      <Box>
-        <Link
-          href={`${getURL()}/listings/jobs/${title.split(' ').join('-')}`}
-          isExternal
-        >
-          <Text color={'black'} fontSize={'0.8125rem'} fontWeight={'500'}>
-            {title}
-          </Text>
-        </Link>
-        <Text color={'gray.500'} fontSize={'md'} noOfLines={1}>
-          {location ? `${location},` : ''} {type}
-        </Text>
-      </Box>
-    </Flex>
-  );
-};
+// interface HiringProps {
+//   title: string;
+//   logo?: string;
+//   location: string;
+//   type: string;
+// }
+// const Hiring = ({ logo, title, location, type }: HiringProps) => {
+//   return (
+//     <Flex align={'center'} w={'100%'}>
+//       <Image
+//         w={'2.125rem'}
+//         h={'2.125rem'}
+//         mr={'1.0625rem'}
+//         alt=""
+//         rounded={'md'}
+//         src={logo ?? '/assets/home/placeholder/ph2.png'}
+//       />
+//       <Box>
+//         <Link
+//           href={`https://earn-frontend-v2.vercel.app/listings/jobs/${title
+//             .split(' ')
+//             .join('-')}`}
+//           isExternal
+//         >
+//           <Text color={'black'} fontSize={'0.8125rem'} fontWeight={'500'}>
+//             {title}
+//           </Text>
+//         </Link>
+//         <Text color={'gray.500'} fontSize={'md'} noOfLines={1}>
+//           {location ? `${location},` : ''} {type}
+//         </Text>
+//       </Box>
+//     </Flex>
+//   );
+// };
 
-interface HiringNowProps {
-  jobs:
-    | {
-        jobs: JobsType;
-        sponsorInfo: SponsorType;
-      }[]
-    | undefined;
-}
-const HiringNow = ({ jobs }: HiringNowProps) => {
-  return (
-    <Box>
-      <Text mb={'1.5rem'} color={'#94A3B8'}>
-        HIRING NOW
-      </Text>
-      <VStack rowGap={'1.8125rem'}>
-        {jobs?.map((job) => {
-          return (
-            <Hiring
-              type={job?.jobs?.jobType}
-              location={job?.jobs?.location}
-              key={job?.jobs?.id}
-              logo={job?.sponsorInfo?.logo}
-              title={job?.jobs?.title}
-            />
-          );
-        })}
-      </VStack>
-    </Box>
-  );
-};
+// interface HiringNowProps {
+//   jobs:
+//     | {
+//         jobs: JobsType;
+//         sponsorInfo: SponsorType;
+//       }[]
+//     | undefined;
+// }
+// const HiringNow = ({ jobs }: HiringNowProps) => {
+//   return (
+//     <Box>
+//       <Text mb={'1.5rem'} color={'#94A3B8'}>
+//         HIRING NOW
+//       </Text>
+//       <VStack rowGap={'1.8125rem'}>
+//         {jobs?.map((job) => {
+//           return (
+//             <Hiring
+//               type={job?.jobs?.jobType}
+//               location={job?.jobs?.location}
+//               key={job?.jobs?.id}
+//               logo={job?.sponsorInfo?.logo}
+//               title={job?.jobs?.title}
+//             />
+//           );
+//         })}
+//       </VStack>
+//     </Box>
+//   );
+// };
 
 // const Featuring = () => {
 //   return (
@@ -375,25 +433,16 @@ const HiringNow = ({ jobs }: HiringNowProps) => {
 //   );
 // };
 
-const SideBar = ({ jobs, listings, total }: SideBarProps) => {
-  const { connected } = useWallet();
+const SideBar = ({ userInfo, listings, total, earners }: SideBarProps) => {
+  // const { connected } = useWallet();
   return (
-    <Flex
-      direction={'column'}
-      rowGap={'2.5rem'}
-      w={'22.125rem'}
-      ml={'1.5rem'}
-      pt={'1.5rem'}
-      pl={'1.25rem'}
-      borderLeft={'0.0625rem solid'}
-      borderLeftColor={'gray.200'}
-    >
+    <Flex direction={'column'} rowGap={'2.5rem'} w={'22.125rem'} pl={6}>
       {/* <AlphaAccess /> */}
-      {connected && <GettingStarted />}
+      <GettingStarted userInfo={userInfo} />
       <TotalStats total={listings} listings={total} />
       {/* <Filter title={'FILTER BY INDUSTRY'} entries={['Gaming', 'Payments', 'Consumer', 'Infrastructure', 'DAOs']} /> */}
-      <RecentEarners />
-      <HiringNow jobs={jobs} />
+      <RecentEarners earners={earners} />
+      {/* <HiringNow jobs={jobs} /> */}
       {/* <Featured /> */}
     </Flex>
   );

@@ -68,38 +68,25 @@ function NewUserInfo({ setUserInfo, userInfo, setStep, setOtp }: Props) {
       } else {
         setErrorMessage('');
         setLoading(true);
-        console.log('1');
-        const emailDetails = await axios.post('/api/otp/send', {
+        await axios.post('/api/otp/send', {
           publicKey: userInfo?.publicKey,
           email: userDetails?.email,
         });
-        console.log(
-          'file: NewUserInfo.tsx:76 ~ sendOTP ~ emailDetails:',
-          emailDetails
-        );
-        console.log('hi2');
         const newUserDetails = await axios.post('/api/user/create', {
           publicKey: userInfo?.publicKey,
           email: userDetails?.email,
           firstName: userDetails?.firstName,
           lastName: userDetails?.lastName,
         });
-        console.log('hi4', newUserDetails);
         setUserInfo(newUserDetails?.data);
-        console.log('hi5');
         const code = generateCode(userInfo?.publicKey);
-        console.log('hi6', code);
         const codeLast = generateCodeLast(userInfo?.publicKey);
-        console.log('hi7', code);
         setOtp({
           current: code,
           last: codeLast,
         });
-        console.log('hi8');
         setLoading(false);
-        console.log('hi9');
         setStep(3);
-        console.log('hi10');
       }
     } catch (error) {
       console.log('file: NewUserInfo.tsx:101 ~ sendOTP ~ error:', error);

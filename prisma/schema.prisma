@@ -12,105 +12,99 @@ datasource db {
 }
 
 model Bounties {
-  id            String                 @id @map("_id")
+  id            String    @id @default(uuid())
   title         String
-  description   String                 @default(dbgenerated("(_utf8mb4\\'\\')")) @db.Text
-  skills        String                 @db.VarChar(2000)
-  slug          String
-  subSkills     String                 @db.VarChar(2000)
-  deadline      String
-  source        Bounties_source        @default(native)
-  amount        String
+  slug          String    @unique
+  description   String?   @db.VarChar(10000)
+  skills        String?
+  subSkills     String?
+  deadline      DateTime?
+  eligibility   Json?
+  status        status    @default(OPEN)
   token         String
-  status        Bounties_status        @default(open)
-  sponsorStatus Bounties_sponsorStatus @default(Unassigned)
-  active        Boolean
-  private       Boolean
-  featured      Boolean
-  prizeList     Json
-  bugBounty     Boolean                @default(false)
-  showTop       Boolean                @default(false)
-  orgId         String
-  eligibility   String                 @default("")
-  sourceId      String                 @default("") @db.VarChar(500)
-  sourceName    String                 @default("") @db.VarChar(500)
+  rewardAmount  Int?
+  rewards       Json?
+  sponsorId     String
+  sponsor       Sponsors  @relation(fields: [sponsorId], references: [id])
+  pocId         String
+  poc           User      @relation("poc", fields: [pocId], references: [id])
+  source        Source    @default(NATIVE)
+  sourceDetails Json?
+  isPublished   Boolean   @default(false)
+  isFeatured    Boolean   @default(false)
+  isActive      Boolean   @default(true)
+  isArchived    Boolean   @default(false)
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
 
-  @@index([orgId])
+  @@index([id, slug])
+  @@index([sponsorId])
+  @@index([pocId])
 }
 
 model Comment {
-  id        String @id @map("_id")
-  message   String @db.VarChar(1000)
-  talentId  String
-  refId     String
-  timeStamp String
+  id          String      @id @default(uuid())
+  message     String      @db.VarChar(1000)
+  authorId    String
+  author      User        @relation(fields: [authorId], references: [id])
+  listingType ListingType @default(BOUNTY)
+  listingId   String
+  isActive    Boolean     @default(true)
+  isArchived  Boolean     @default(false)
+  createdAt   DateTime    @default(now())
+  updatedAt   DateTime    @updatedAt
 
-  @@index([talentId])
-}
-
-model Drafts {
-  id        String      @id @map("_id")
-  orgId     String
-  basic     String?     @db.VarChar(2000)
-  questions String?     @db.VarChar(3000)
-  payments  String?     @db.VarChar(2000)
-  type      Drafts_type
-
-  @@index([orgId])
-}
-
-model Emails {
-  id        String      @id @map("_id")
-  email     String
-  type      Emails_type
-  timestamp DateTime    @default(now())
+  @@index([id, listingId])
+  @@index([authorId])
 }
 
 model Grants {
-  id          String        @id @map("_id")
-  title       String
-  description String        @default(dbgenerated("(_utf8mb4\\'\\')")) @db.Text
-  skills      String        @db.VarChar(2000)
-  subSkills   String        @db.VarChar(2000)
-  source      Grants_source
-  contact     String
-  token       String
-  active      Boolean
-  orgId       String
-  maxSalary   Float
-  minSalary   Float
-  link        String        @db.VarChar(500)
-  sourceId    String        @default("") @db.VarChar(500)
-  sourceName  String        @default("") @db.VarChar(500)
+  id               String   @id @default(uuid())
+  title            String
+  slug             String   @unique
+  description      String?  @db.VarChar(10000)
+  shortDescription String?  @db.VarChar(1000)
+  skills           String?
+  subSkills        String?
+  token            String?
+  rewardAmount     Int?
+  link             String?
+  source           Source   @default(NATIVE)
+  sponsorId        String
+  sponsor          Sponsors @relation(fields: [sponsorId], references: [id])
+  pocId            String
+  poc              User     @relation(fields: [pocId], references: [id])
+  isPublished      Boolean  @default(false)
+  isFeatured       Boolean  @default(false)
+  isActive         Boolean  @default(true)
+  isArchived       Boolean  @default(false)
+  createdAt        DateTime @default(now())
+  updatedAt        DateTime @updatedAt
 
-  @@index([orgId])
+  @@index([id, slug])
+  @@index([pocId])
+  @@index([sponsorId])
 }
 
-model Jobs {
-  id          String       @id @map("_id")
-  title       String
-  description String       @default(dbgenerated("(_utf8mb4\\'\\')")) @db.Text
-  skills      String       @db.VarChar(2000)
-  subskills   String       @db.VarChar(2000)
-  deadline    String
-  source      Jobs_source
-  active      Boolean
-  private     Boolean
-  featured    Boolean
-  experience  String
-  jobType     Jobs_jobType
-  maxSalary   Float
-  minSalary   Float
-  maxEq       Float
-  minEq       Float
-  location    String       @db.VarChar(1000)
-  orgId       String
-  timezone    String       @default("") @db.VarChar(1000)
-  link        String
-  sourceId    String       @default("") @db.VarChar(500)
-  sourceName  String       @default("") @db.VarChar(500)
+model Submission {
+  id                 String      @id @default(uuid())
+  link               String?
+  tweet              String?
+  eligibilityAnswers Json?
+  likes              Int         @default(0)
+  userId             String
+  user               User        @relation(fields: [userId], references: [id])
+  listingType        ListingType @default(BOUNTY)
+  listingId          String
+  isWinner           Boolean     @default(false)
+  winnerPosition     String?
+  isActive           Boolean     @default(true)
+  isArchived         Boolean     @default(false)
+  createdAt          DateTime    @default(now())
+  updatedAt          DateTime    @updatedAt
 
-  @@index([orgId])
+  @@index([id, listingId])
+  @@index([userId])
 }
 
 model Otp {
@@ -120,18 +114,10 @@ model Otp {
   timestamp DateTime @default(now())
 }
 
-model Questions {
-  id         String @id @map("_id")
-  bountiesId String @unique
-  questions  String @db.VarChar(3000)
-
-  @@index([bountiesId])
-}
-
 model Sponsors {
   id           String         @id @default(uuid())
   name         String         @unique
-  username     String         @unique
+  slug         String         @unique
   logo         String?
   url          String?
   industry     String
@@ -140,73 +126,21 @@ model Sponsors {
   createdAt    DateTime       @default(now())
   updatedAt    DateTime       @updatedAt
   UserSponsors UserSponsors[]
+  Bounties     Bounties[]
+  Grants       Grants[]
 
-  @@index([id, username])
+  @@index([id, slug])
 }
 
-model Submission {
-  id         String @id @map("_id")
-  likes      String
-  link       String
-  image      String
-  talent     String
-  questions  String @db.VarChar(5000)
-  bountiesId String @default("")
+model Total {
+  id         String   @id @default(uuid())
+  total      Int?
+  totalInUSD Int?
+  count      Int?
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
 
-  @@index([bountiesId])
-  @@index([talent])
-}
-
-model Subscribe {
-  id         String @id @map("_id")
-  talentId   String
-  bountiesId String
-
-  @@index([bountiesId])
-  @@index([talentId])
-}
-
-model Talent {
-  id               String  @id @map("_id")
-  username         String  @unique
-  firstname        String
-  lastname         String
-  email            String
-  skills           String  @db.VarChar(2000)
-  subskills        String  @db.VarChar(2000)
-  avatar           String
-  interests        String
-  bio              String  @db.VarChar(1000)
-  twitter          String? @default("")
-  github           String? @default("")
-  linkedin         String? @default("")
-  website          String? @default("")
-  telegram         String? @default("")
-  community        String
-  verified         Boolean
-  experience       String
-  superteamLevel   String
-  location         String
-  cryptoExperience String
-  workPrefernce    String
-  currentEmployer  String
-  publickey        String
-  pow              String  @db.VarChar(1000)
-  notifications    String  @default("[]")
-  private          Boolean @default(false)
-  tve              Int     @default(0)
-}
-
-model Template {
-  id             Int           @id @default(autoincrement()) @map("_id")
-  title          String
-  preview        String
-  configurations String        @db.VarChar(2000)
-  Emoji          String
-  Type           Template_Type
-  description    String
-  useByName      String
-  useByImage     String
+  @@index([id])
 }
 
 model User {
@@ -221,12 +155,14 @@ model User {
   updatedAt        DateTime       @updatedAt
   isVerified       Boolean        @default(false)
   role             SuperRole      @default(USER)
+  totalEarnedInUSD Int            @default(0)
   isTalentFilled   Boolean        @default(false)
   skills           String?
-  subskills        String?
+  subSkills        String?
   interests        String?
   bio              String?
   twitter          String?
+  discord          String?
   github           String?
   linkedin         String?
   website          String?
@@ -242,6 +178,10 @@ model User {
   notifications    String?
   private          Boolean        @default(false)
   UserSponsors     UserSponsors[]
+  poc              Bounties[]     @relation("poc")
+  Comment          Comment[]
+  Submission       Submission[]
+  Grants           Grants[]
 
   @@index([email, publicKey, username])
 }
@@ -270,87 +210,19 @@ enum SuperRole {
   USER
 }
 
-model Winner {
-  id         String       @id @map("_id")
-  bountiesId String
-  payoutTx   String?
-  prize      Winner_prize
-  talentId   String
-
-  @@index([bountiesId])
-  @@index([talentId])
+enum Source {
+  NATIVE
+  IMPORT
 }
 
-enum Emails_type {
-  welcomeTalent
-  welcomeSponsor
-  feedback
-  newListing
-  deadline
-  submissionReceived
-  winner
-  winnerNotification
-  comment
-  like
-  otp
+enum status {
+  OPEN
+  REVIEW
+  CLOSED
 }
 
-enum Winner_prize {
-  first
-  second
-  third
-  forth
-  fifth
-}
-
-enum Drafts_type {
-  Bounties
-  Jobs
-  Grants
-}
-
-enum Grants_source {
-  native
-  manual
-  import
-}
-
-enum Template_Type {
-  Bounties
-  Jobs
-  Grants
-}
-
-enum Jobs_source {
-  native
-  manual
-  import
-}
-
-enum Bounties_source {
-  native
-  manual
-  import
-}
-
-enum Bounties_status {
-  open
-  review
-  close
-}
-
-enum Bounties_sponsorStatus {
-  Unassigned
-  Assigned
-}
-
-enum Jobs_jobType {
-  parttime
-  fulltime
-  internship
-}
-
-enum Sponsors_type {
-  Admin
-  Member
+enum ListingType {
+  BOUNTY
+  JOB
+  GRANT
 }

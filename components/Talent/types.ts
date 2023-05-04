@@ -12,11 +12,12 @@ export interface WorkType {
   community: string;
   interests: string;
   skills: string;
-  subskills: string;
+  subSkills: string;
   workPrefernce: string;
 }
 
 export interface LinksType {
+  discord: string;
   twitter: string;
   github: string;
   linkedin: string;

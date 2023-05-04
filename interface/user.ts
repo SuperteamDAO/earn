@@ -21,13 +21,15 @@ interface User {
   community?: string;
   interests?: string;
   skills?: string;
-  subskills?: string;
+  subSkills?: string;
   workPrefernce?: string;
+  discord?: string;
   twitter?: string;
   github?: string;
   linkedin?: string;
   website?: string;
   telegram?: string;
   pow?: string;
+  totalEarnedInUSD?: number;
 }
 export type { User };
