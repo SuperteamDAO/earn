@@ -98,6 +98,10 @@ model Submission {
   listingId          String
   isWinner           Boolean     @default(false)
   winnerPosition     String?
+  isActive           Boolean     @default(true)
+  isArchived         Boolean     @default(false)
+  createdAt          DateTime    @default(now())
+  updatedAt          DateTime    @updatedAt
 
   @@index([id, listingId])
   @@index([userId])

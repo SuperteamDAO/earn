@@ -12,6 +12,7 @@ import { useRouter } from 'next/router';
 import { useEffect, useState } from 'react';
 import { GoCommentDiscussion } from 'react-icons/go';
 
+import LoginWrapper from '@/components/Header/LoginWrapper';
 import ErrorInfo from '@/components/shared/ErrorInfo';
 import Loading from '@/components/shared/Loading';
 import type { Comment } from '@/interface/comments';
@@ -26,6 +27,7 @@ interface Props {
 export const Comments = ({ refId, refType }: Props) => {
   const router = useRouter();
   const { userInfo } = userStore();
+  const [triggerLogin, setTriggerLogin] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState(false);
   const [comments, setComments] = useState<Comment[]>([]);
@@ -85,6 +87,10 @@ export const Comments = ({ refId, refType }: Props) => {
       bg={'#FFFFFF'}
       rounded={'xl'}
     >
+      <LoginWrapper
+        triggerLogin={triggerLogin}
+        setTriggerLogin={setTriggerLogin}
+      />
       <HStack w={'full'} pt={4} px={6}>
         <GoCommentDiscussion fontWeight={600} fontSize={'1.5rem'} />
         <HStack>
@@ -116,10 +122,11 @@ export const Comments = ({ refId, refType }: Props) => {
         )}
         <Flex justify={'end'} w="full">
           <Button
-            isDisabled={!userInfo?.id}
             isLoading={!!newCommentLoading}
             loadingText="Adding..."
-            onClick={() => addNewComment()}
+            onClick={() =>
+              !userInfo?.id ? setTriggerLogin(true) : addNewComment()
+            }
             variant="solid"
           >
             Comment
@@ -137,7 +144,7 @@ export const Comments = ({ refId, refType }: Props) => {
               alt={'profile image'}
               rounded={'full'}
               src={
-                comment?.author.photo ||
+                comment?.author?.photo ||
                 `${router.basePath}/assets/images/user-photo.png`
               }
             />

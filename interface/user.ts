@@ -21,8 +21,9 @@ interface User {
   community?: string;
   interests?: string;
   skills?: string;
-  subskills?: string;
+  subSkills?: string;
   workPrefernce?: string;
+  discord?: string;
   twitter?: string;
   github?: string;
   linkedin?: string;
