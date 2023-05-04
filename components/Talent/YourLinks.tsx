@@ -33,28 +33,33 @@ import type { UserStoreType } from './types';
 
 const socials = [
   {
+    label: 'Discord',
+    placeHolder: 'TonyStark#7589',
+    icon: '/assets/talent/discord.png',
+  },
+  {
     label: 'Twitter',
-    placeHolder: 'https://twitter.com/SuperteamDAO',
+    placeHolder: 'https://twitter.com/TonyStark',
     icon: '/assets/talent/twitter.png',
   },
   {
     label: 'GitHub',
-    placeHolder: 'https://github.com/superteamDAO',
+    placeHolder: 'https://github.com/tonystark',
     icon: '/assets/talent/github.png',
   },
   {
     label: 'LinkedIn',
-    placeHolder: 'https://linkedin.com/in/superteamDAO',
+    placeHolder: 'https://linkedin.com/in/tony-stark',
     icon: '/assets/talent/link.png',
   },
   {
     label: 'Telegram',
-    placeHolder: 'https://t.me/SuperteamDAO',
+    placeHolder: 'https://t.me/tonystark',
     icon: '/assets/talent/telegram.png',
   },
   {
     label: 'Site',
-    placeHolder: 'https://superteam.fun',
+    placeHolder: 'https://starkindustries.com',
     icon: '/assets/talent/site.png',
   },
 ];
@@ -92,7 +97,7 @@ const SocialInput = ({
               w={'100%'}
               h={'100%'}
               objectFit="contain"
-              alt="Twitter"
+              alt={label}
               src={icon}
             />
           </Box>
@@ -105,6 +110,11 @@ const SocialInput = ({
             textAlign="left"
           >
             {label}
+            {label === 'Discord' && (
+              <Text as="sup" ml={1} color="red">
+                *
+              </Text>
+            )}
           </Text>
         </Flex>
       </Box>
@@ -275,6 +285,7 @@ function YourLinks({ success, useFormStore }: Props) {
   const { isOpen, onOpen, onClose } = useDisclosure();
   const { form } = useFormStore();
   const [pow, setpow] = useState<string[]>([]);
+  const [discordError, setDiscordError] = useState<boolean>(false);
   const [socialsError, setsocialsError] = useState<boolean>(false);
   const [urlError, seturlError] = useState<boolean>(false);
   const [isLoading, setisLoading] = useState<boolean>(false);
@@ -286,6 +297,7 @@ function YourLinks({ success, useFormStore }: Props) {
   const uploadProfile = async (
     // eslint-disable-next-line @typescript-eslint/no-shadow
     socials: {
+      discord: string;
       twitter: string;
       github: string;
       linkedin: string;
@@ -295,6 +307,12 @@ function YourLinks({ success, useFormStore }: Props) {
     // eslint-disable-next-line @typescript-eslint/no-shadow
     pow: string
   ) => {
+    if (!socials?.discord?.length) {
+      setDiscordError(true);
+      return;
+    }
+    setDiscordError(false);
+
     // atleast one URL
     if (
       socials.twitter.length === 0 &&
@@ -353,6 +371,7 @@ function YourLinks({ success, useFormStore }: Props) {
   const onSubmit = (data: any) => {
     uploadProfile(
       {
+        discord: data.Discord,
         twitter: data.Twitter,
         github: data.GitHub,
         linkedin: data.LinkedIn,
@@ -426,8 +445,13 @@ function YourLinks({ success, useFormStore }: Props) {
                 Please fill at least one social link to continue!
               </Text>
             )}
+            {discordError && (
+              <Text align="center" mb={'0.5rem'} color={'red'}>
+                Please fill your Discord username!
+              </Text>
+            )}
             {urlError && (
-              <Text mb={'0.5rem'} color={'red'}>
+              <Text align="center" mb={'0.5rem'} color={'red'}>
                 URL needs to contain &quot;http://&quot; prefix
               </Text>
             )}

@@ -40,6 +40,7 @@ const useFormStore = create<UserStoreType>()((set) => ({
     skills: '',
     subSkills: '',
     workPrefernce: '',
+    discord: '',
     twitter: '',
     github: '',
     linkedin: '',
