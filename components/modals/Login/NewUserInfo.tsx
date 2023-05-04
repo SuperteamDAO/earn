@@ -15,6 +15,7 @@ import { useState } from 'react';
 import type { User } from '@/interface/user';
 import { generateCode, generateCodeLast } from '@/utils/helpers';
 import { Mixpanel } from '@/utils/mixpanel';
+import { truncatePublicKey } from '@/utils/truncatePublicKey';
 
 interface Props {
   userInfo: User | null;
@@ -92,8 +93,23 @@ function NewUserInfo({ setUserInfo, userInfo, setStep, setOtp }: Props) {
         setLoading(false);
         setStep(3);
       }
-    } catch (error) {
-      console.log('file: NewUserInfo.tsx:101 ~ sendOTP ~ error:', error);
+    } catch (error: any) {
+      if (
+        error?.response?.data?.error?.code === 'P2002' &&
+        error?.response?.data?.user
+      ) {
+        setErrorMessage(
+          `User already exists for this email with another wallet (${truncatePublicKey(
+            error?.response?.data?.user?.publicKey
+          )}).`
+        );
+      } else {
+        setErrorMessage(
+          `Error occurred in creating user. Error Code:${
+            error?.response?.data?.error?.code || 'N/A'
+          }`
+        );
+      }
       setLoading(false);
     }
   };
