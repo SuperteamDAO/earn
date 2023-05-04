@@ -23,6 +23,7 @@ interface Bounty {
   title: string;
   slug: string;
   description?: string;
+  applicationLink?: string;
   skills?: string;
   subSkills?: string;
   deadline?: string;
