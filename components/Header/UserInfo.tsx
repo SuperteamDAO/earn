@@ -89,6 +89,7 @@ function UserInfo() {
                   />
                 ) : (
                   <Avatar
+                    name={`${userInfo?.firstName} ${userInfo?.lastName}`}
                     colors={['#92A1C6', '#F0AB3D', '#C271B4']}
                     size={32}
                     variant="marble"
