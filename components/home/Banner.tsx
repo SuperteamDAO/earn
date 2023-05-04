@@ -57,7 +57,7 @@ function DesktopBanner() {
           <Avatar name="Kent Dodds" src="https://bit.ly/kent-c-dodds" />
         </AvatarGroup>
         <Text ml={'0.6875rem'} fontSize={'0.875rem'}>
-          Join 1,239 others
+          Join 563+ others
         </Text>
       </Flex>
     </Box>
@@ -118,7 +118,7 @@ function MobileBanner() {
             <Avatar name="Kent Dodds" src="https://bit.ly/kent-c-dodds" />
           </AvatarGroup>
           <Text ml={'0.6875rem'} fontSize={'0.875rem'}>
-            Join 1,239 others
+            Join 563+ others
           </Text>
         </Flex>
       </Flex>
