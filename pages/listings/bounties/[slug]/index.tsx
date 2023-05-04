@@ -25,7 +25,7 @@ function BountyDetails({ slug }: BountyDetailsProps) {
   const getBounty = async () => {
     setIsLoading(true);
     try {
-      const bountyDetails = await axios.get(`/api/bounties/${slug}`);
+      const bountyDetails = await axios.get(`/api/bounties/${slug}/`);
       setBounty(bountyDetails.data);
     } catch (e) {
       setError(true);

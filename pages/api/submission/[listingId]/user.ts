@@ -7,7 +7,7 @@ export default async function submission(
   res: NextApiResponse
 ) {
   const params = req.query;
-  const listingId = params.bountyId as string;
+  const listingId = params.listingId as string;
   const userId = params.userId as string;
   try {
     const result = await prisma.submission.findFirst({

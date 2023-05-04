@@ -31,7 +31,7 @@ function UserInfo() {
     const makeUser = async () => {
       if (publicKey && connected) {
         const publicKeyString = publicKey.toBase58() as string;
-        const userDetails = await axios.post('/api/user', {
+        const userDetails = await axios.post('/api/user/', {
           publicKey: publicKeyString,
         });
         if (!userDetails.data) {
