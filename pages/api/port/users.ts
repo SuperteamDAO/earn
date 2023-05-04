@@ -29,6 +29,7 @@ export default async function userFunc(
         data: {
           publicKey: user.publicKey || undefined,
           email: user.email || undefined,
+          photo: user.photo || undefined,
           bio: user.bio || undefined,
           currentEmployer: user.currentEmployer || undefined,
           cryptoExperience: user.cryptoExperience || undefined,
