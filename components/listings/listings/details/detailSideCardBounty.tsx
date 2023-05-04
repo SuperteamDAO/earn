@@ -21,6 +21,7 @@ import moment from 'moment';
 import { useState } from 'react';
 import Countdown from 'react-countdown';
 
+import LoginWrapper from '@/components/Header/LoginWrapper';
 import { VerticalStep } from '@/components/misc/steps';
 import { SubmissionModal } from '@/components/modals/submissionModalBounty';
 import { tokenList } from '@/constants/index';
@@ -61,6 +62,7 @@ function DetailSideCard({
 }: Props) {
   const { userInfo } = userStore();
   const { isOpen, onOpen, onClose } = useDisclosure();
+  const [triggerLogin, setTriggerLogin] = useState(false);
   const [isSubmitted, setIsSubmitted] = useState(false);
   let submissionStatus = 0;
   if (Number(moment(endingTime).format('x')) < Date.now()) {
@@ -70,6 +72,8 @@ function DetailSideCard({
   const handleSubmit = () => {
     if (userInfo?.id) {
       onOpen();
+    } else {
+      setTriggerLogin(true);
     }
   };
 
@@ -84,11 +88,15 @@ function DetailSideCard({
           setIsSubmitted={setIsSubmitted}
         />
       )}
-      <VStack gap={2} pt={10}>
+      <LoginWrapper
+        triggerLogin={triggerLogin}
+        setTriggerLogin={setTriggerLogin}
+      />
+      <VStack gap={2} pt={10} marginInlineStart={'0 !important'}>
         <VStack
           justify={'center'}
           gap={0}
-          w={'22rem'}
+          minW={'22rem'}
           pb={5}
           bg={'#FFFFFF'}
           rounded={'xl'}
@@ -408,7 +416,7 @@ function DetailSideCard({
         <VStack
           align={'start'}
           justify={'center'}
-          w={'22rem'}
+          minW={'22rem'}
           mt={4}
           p={6}
           bg={'#FFFFFF'}
