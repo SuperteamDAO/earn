@@ -9,6 +9,7 @@ import {
   JobsCard,
   ListingSection,
 } from '@/components/misc/listingsCard';
+import EmptySection from '@/components/shared/EmptySection';
 import Loading from '@/components/shared/Loading';
 import type { Bounty } from '@/interface/bounty';
 import type { Grant } from '@/interface/grant';
@@ -86,7 +87,7 @@ function CategoryPage({ category, filter }: Props) {
             sub="Bite sized tasks for freelancers"
             emoji="/assets/home/emojis/moneyman.png"
           >
-            {isListingsLoading ? (
+            {isListingsLoading && (
               <Flex
                 align="center"
                 justify="center"
@@ -95,7 +96,12 @@ function CategoryPage({ category, filter }: Props) {
               >
                 <Loading />
               </Flex>
-            ) : (
+            )}
+            {!isListingsLoading && !listings?.bounties?.length && (
+              <EmptySection />
+            )}
+            {!isListingsLoading &&
+              listings?.bounties?.length &&
               listings?.bounties?.map((bounty) => {
                 return (
                   <BountiesCard
@@ -110,8 +116,7 @@ function CategoryPage({ category, filter }: Props) {
                     token={bounty?.token}
                   />
                 );
-              })
-            )}
+              })}
           </ListingSection>
         )}
 

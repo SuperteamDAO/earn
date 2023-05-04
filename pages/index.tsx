@@ -1,3 +1,4 @@
+/* eslint-disable no-nested-ternary */
 import { Box, Flex, useMediaQuery } from '@chakra-ui/react';
 import axios from 'axios';
 import type { NextPage } from 'next';
@@ -9,6 +10,7 @@ import {
   JobsCard,
   ListingSection,
 } from '@/components/misc/listingsCard';
+import EmptySection from '@/components/shared/EmptySection';
 import Loading from '@/components/shared/Loading';
 import type { Bounty } from '@/interface/bounty';
 import type { Grant } from '@/interface/grant';
@@ -76,11 +78,16 @@ const HomePage: NextPage = () => {
           sub="Bite sized tasks for freelancers"
           emoji="/assets/home/emojis/moneyman.png"
         >
-          {isListingsLoading ? (
+          {isListingsLoading && (
             <Flex align="center" justify="center" direction="column" minH={52}>
               <Loading />
             </Flex>
-          ) : (
+          )}
+          {!isListingsLoading && !listings?.bounties?.length && (
+            <EmptySection />
+          )}
+          {!isListingsLoading &&
+            listings?.bounties?.length &&
             listings?.bounties?.map((bounty) => {
               return (
                 <BountiesCard
@@ -95,8 +102,7 @@ const HomePage: NextPage = () => {
                   token={bounty?.token}
                 />
               );
-            })
-          )}
+            })}
         </ListingSection>
 
         <ListingSection
