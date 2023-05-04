@@ -26,6 +26,7 @@ import { useForm } from 'react-hook-form';
 
 import type { MultiSelectOptions } from '@/constants';
 import { userStore } from '@/store/user';
+import { isValidDiscordUsername } from '@/utils/validDiscordUsername';
 import { isValidHttpUrl } from '@/utils/validUrl';
 
 import { SkillSelect } from '../misc/SkillSelect';
@@ -307,7 +308,10 @@ function YourLinks({ success, useFormStore }: Props) {
     // eslint-disable-next-line @typescript-eslint/no-shadow
     pow: string
   ) => {
-    if (!socials?.discord?.length) {
+    if (
+      !socials?.discord?.length ||
+      !isValidDiscordUsername(socials?.discord)
+    ) {
       setDiscordError(true);
       return;
     }
@@ -447,7 +451,7 @@ function YourLinks({ success, useFormStore }: Props) {
             )}
             {discordError && (
               <Text align="center" mb={'0.5rem'} color={'red'}>
-                Please fill your Discord username!
+                Please fill your correct Discord username!
               </Text>
             )}
             {urlError && (
