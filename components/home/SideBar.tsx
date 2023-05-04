@@ -1,4 +1,13 @@
-import { Box, Center, Flex, Image, Text, VStack } from '@chakra-ui/react';
+import {
+  Box,
+  Center,
+  Flex,
+  HStack,
+  Image,
+  Link,
+  Text,
+  VStack,
+} from '@chakra-ui/react';
 import Avatar from 'boring-avatars';
 import { useRouter } from 'next/router';
 import { useState } from 'react';
@@ -87,15 +96,15 @@ const GettingStarted = ({ userInfo }: GettingStartedProps) => {
       <Text mb={'1.5rem'} color={'gray.400'} fontWeight={500}>
         GETTING STARTED
       </Text>
-      <Flex h={'12.5rem'}>
+      <Flex h={'8.5rem'}>
         <VStack pos={'relative'} justifyContent={'space-between'} h={'100%'}>
           <Step number={1} isComplete={!!userInfo?.id} />
-          <Step
+          {/* <Step
             number={2}
             isComplete={!!userInfo?.id && !!userInfo?.isTalentFilled}
-          />
+          /> */}
           <Step
-            number={3}
+            number={2}
             isComplete={!!userInfo?.id && !!userInfo.totalEarnedInUSD}
           />
           <Flex pos={'absolute'} w={'0.0625rem'} h={'90%'} bg={'#CBD5E1'} />
@@ -124,7 +133,7 @@ const GettingStarted = ({ userInfo }: GettingStartedProps) => {
               and get personalized notifications
             </Text>
           </Box>
-          <Box ml={'0.8125rem'}>
+          {/* <Box ml={'0.8125rem'}>
             {!userInfo?.id || !userInfo?.isTalentFilled ? (
               <Text
                 as="button"
@@ -146,7 +155,7 @@ const GettingStarted = ({ userInfo }: GettingStartedProps) => {
             <Text color={'gray.500'} fontSize={'md'} fontWeight={500}>
               and get seen by hiring managers
             </Text>
-          </Box>
+          </Box> */}
           <Box ml={'0.8125rem'}>
             {!userInfo?.id || !userInfo.totalEarnedInUSD ? (
               <Text
@@ -432,12 +441,57 @@ const RecentEarners = ({ earners }: { earners?: User[] }) => {
 //     </Box>
 //   );
 // };
-
+const AlphaAccess = () => {
+  return (
+    <Flex
+      direction={'column'}
+      gap={1}
+      w={'full'}
+      h={'max-content'}
+      px={'1.5625rem'}
+      py={'0.875rem'}
+      bg={'#A839FF'}
+      rounded={'lg'}
+    >
+      <HStack>
+        <Image alt="alpha site" src="/assets/bg/alpha.svg" />
+      </HStack>
+      <Text mt={'auto'} color={'white'} fontSize={'1.25rem'} fontWeight={'600'}>
+        Want Early Access to Projects?
+      </Text>
+      <Text
+        mt={'0.5rem'}
+        color={'white'}
+        fontSize={'1rem'}
+        lineHeight={'1.1875rem'}
+      >
+        Get exclusive early access to the latest Solana projects and win product
+        feedback bounties, for free.
+      </Text>
+      <Link
+        mt={'1.5625rem'}
+        py={'0.8125rem'}
+        color={'brand.slate.800'}
+        fontWeight={'500'}
+        textAlign={'center'}
+        bg={'white'}
+        borderRadius={8}
+        _hover={{
+          bg: 'gray.100',
+        }}
+        href="https://www.alphasquad.fun/"
+        isExternal
+      >
+        Join the Alpha Squad
+      </Link>
+    </Flex>
+  );
+};
 const SideBar = ({ userInfo, listings, total, earners }: SideBarProps) => {
   // const { connected } = useWallet();
   return (
     <Flex direction={'column'} rowGap={'2.5rem'} w={'22.125rem'} pl={6}>
-      {/* <AlphaAccess /> */}
+      <AlphaAccess />
       <GettingStarted userInfo={userInfo} />
       <TotalStats total={listings} listings={total} />
       {/* <Filter title={'FILTER BY INDUSTRY'} entries={['Gaming', 'Payments', 'Consumer', 'Infrastructure', 'DAOs']} /> */}
@@ -449,41 +503,6 @@ const SideBar = ({ userInfo, listings, total, earners }: SideBarProps) => {
 };
 
 export default SideBar;
-
-// const AlphaAccess = () => {
-//   return (
-//     <Flex
-//       direction={'column'}
-//       w={'22.125rem'}
-//       h={'14.25rem'}
-//       px={'1.5625rem'}
-//       py={'0.875rem'}
-//       bg={"url('/assets/home/display/grizzly.png')"}
-//       rounded={'lg'}
-//     >
-//       <Text mt={'auto'} color={'white'} fontSize={'1.25rem'} fontWeight={'600'}>
-//         Want Early Access to Projects?
-//       </Text>
-//       <Text
-//         mt={'0.5rem'}
-//         color={'white'}
-//         fontSize={'1rem'}
-//         lineHeight={'1.1875rem'}
-//       >
-//         Get exclusive early access to the latest Solana projects and win product
-//         feedback bounties, for free.
-//       </Text>
-//       <Button
-//         mt={'1.5625rem'}
-//         py={'0.8125rem'}
-//         fontWeight={'500'}
-//         bg={'#FFFFFF'}
-//       >
-//         Join the Alpha Squad
-//       </Button>
-//     </Flex>
-//   );
-// };
 
 // const FilterEntry = ({ label }: { label: string }) => {
 //   return (
