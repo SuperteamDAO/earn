@@ -62,7 +62,7 @@ function DetailSideCard({
   eligibility,
 }: Props) {
   const { userInfo } = userStore();
-  const [isUserSubmissionLoading, setIsUserSubmissionLoading] = useState(true);
+  const [isUserSubmissionLoading, setIsUserSubmissionLoading] = useState(false);
   const { isOpen, onOpen, onClose } = useDisclosure();
   const [triggerLogin, setTriggerLogin] = useState(false);
   const [isSubmitted, setIsSubmitted] = useState(false);
@@ -85,9 +85,9 @@ function DetailSideCard({
   };
 
   useEffect(() => {
-    if (!isUserSubmissionLoading || !userInfo?.id) return;
+    if (!userInfo?.id) return;
     getUserSubmission();
-  }, []);
+  }, [userInfo?.id]);
 
   const handleSubmit = () => {
     if (userInfo?.id) {
@@ -419,7 +419,7 @@ function DetailSideCard({
                 size="lg"
                 variant="solid"
               >
-                Already Submitted!
+                Submitted Successfully!
               </Button>
             ) : (
               <Button
