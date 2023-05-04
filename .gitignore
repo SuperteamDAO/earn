@@ -50,3 +50,4 @@ local
 
 
 ./public/assets/data
+./public/assets/data/*
