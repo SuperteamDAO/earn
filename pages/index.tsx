@@ -6,6 +6,7 @@ import { useEffect, useState } from 'react';
 import {
   BountiesCard,
   GrantsCard,
+  JobsCard,
   ListingSection,
 } from '@/components/misc/listingsCard';
 import Loading from '@/components/shared/Loading';
@@ -124,29 +125,25 @@ const HomePage: NextPage = () => {
             })
           )}
         </ListingSection>
-        {/* <ListingSection
-              type="jobs"
-              title="Jobs"
-              sub="Join a high-growth team"
-              emoji="/assets/home/emojis/job.png"
-            >
-              {listings?.jobs?.slice(0, 10).map((job) => {
-                return (
-                  <JobsCard
-                    logo={job?.sponsorInfo?.logo}
-                    description={job?.jobs?.description}
-                    max={job?.jobs?.maxSalary}
-                    min={job?.jobs?.minSalary}
-                    maxEq={job?.jobs?.maxEq}
-                    minEq={job?.jobs?.minEq}
-                    orgName={job?.sponsorInfo?.name}
-                    key={job?.jobs?.id}
-                    skills={JSON.parse(job?.jobs?.skills || '[]')}
-                    title={job?.jobs?.title}
-                  />
-                );
-              })}
-            </ListingSection> */}
+        <ListingSection
+          type="jobs"
+          title="Jobs"
+          sub="Join a high-growth team"
+          emoji="/assets/home/emojis/job.png"
+        >
+          {listings?.jobs?.map((job) => {
+            return (
+              <JobsCard
+                key={job?.id}
+                logo={job?.sponsor?.logo}
+                location={job?.location || ''}
+                orgName={job?.sponsor?.name || ''}
+                skills={job?.skills || ''}
+                title={job?.title || ''}
+              />
+            );
+          })}
+        </ListingSection>
       </Box>
     </Home>
   );

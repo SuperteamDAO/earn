@@ -247,7 +247,7 @@ const SuccessScreen = () => {
 };
 
 function Talent() {
-  const [currentPage, setcurrentPage] = useState('welcome');
+  const [currentPage, setcurrentPage] = useState('steps');
 
   return (
     <Default
