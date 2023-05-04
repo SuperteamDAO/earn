@@ -84,7 +84,14 @@ function Grants() {
     getGrants();
   }, []);
 
-  const colors = ['#D2FFF7', '#F1FFD2', '#D2DFFF', '#FFD8D2'];
+  const colors = [
+    '#D2F4FF',
+    '#F1FFD2',
+    '#D2DFFF',
+    '#FFD8D2',
+    '#D2FFDC',
+    '#D2FFF7',
+  ];
   return (
     <>
       <Default

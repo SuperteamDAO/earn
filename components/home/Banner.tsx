@@ -31,12 +31,12 @@ function DesktopBanner() {
         fontWeight={'700'}
         lineHeight={'1.875rem'}
       >
-        Unlock Your Earning <br />
-        Potential on Solana
+        Start Earning Crypto
+        <br /> by Contributing to Solana
       </Text>
       <Text w={'60%'} mt={'0.4375rem'} color={'brand.slate.500'}>
-        Explore bounties, grants, and job opportunities for developers and
-        non-technical talent alike
+        Explore bounties, grants, and jobs with high growth startups in the
+        Solana ecosystem.
       </Text>
       <Flex align={'center'} mt={'1.5625rem'}>
         <Button
@@ -57,7 +57,7 @@ function DesktopBanner() {
           <Avatar name="Kent Dodds" src="https://bit.ly/kent-c-dodds" />
         </AvatarGroup>
         <Text ml={'0.6875rem'} fontSize={'0.875rem'}>
-          Join 1,239 others
+          Join 563+ others
         </Text>
       </Flex>
     </Box>
@@ -118,7 +118,7 @@ function MobileBanner() {
             <Avatar name="Kent Dodds" src="https://bit.ly/kent-c-dodds" />
           </AvatarGroup>
           <Text ml={'0.6875rem'} fontSize={'0.875rem'}>
-            Join 1,239 others
+            Join 563+ others
           </Text>
         </Flex>
       </Flex>
