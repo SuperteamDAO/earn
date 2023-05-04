@@ -49,5 +49,4 @@ local
 .vercel
 
 
-./public/assets/data
-./public/assets/data/*
+/public/assets/data
