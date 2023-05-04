@@ -479,7 +479,7 @@ const AlphaAccess = () => {
         _hover={{
           bg: 'gray.100',
         }}
-        href=""
+        href="https://www.alphasquad.fun/"
         isExternal
       >
         Join the Alpha Squad
