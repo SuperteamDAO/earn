@@ -11,6 +11,37 @@ datasource db {
   relationMode = "prisma"
 }
 
+model Jobs {
+  id            String   @id @default(uuid())
+  title         String
+  slug          String   @unique
+  description   String?  @db.VarChar(10000)
+  skills        String?
+  subskills     String?
+  deadline      String?
+  source        Source   @default(NATIVE)
+  active        Boolean  @default(true)
+  private       Boolean  @default(false)
+  featured      Boolean  @default(false)
+  experience    String?
+  jobType       JobType  @default(fulltime)
+  maxSalary     Float?
+  minSalary     Float?
+  maxEq         Float?
+  minEq         Float?
+  location      String?
+  sponsorId     String
+  sponsor       Sponsors @relation(fields: [sponsorId], references: [id])
+  timezone      String?
+  link          String?
+  sourceDetails Json?
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+
+  @@index([id])
+  @@index([sponsorId])
+}
+
 model Bounties {
   id            String    @id @default(uuid())
   title         String
@@ -128,6 +159,7 @@ model Sponsors {
   UserSponsors UserSponsors[]
   Bounties     Bounties[]
   Grants       Grants[]
+  Jobs         Jobs[]
 
   @@index([id, slug])
 }
@@ -225,4 +257,10 @@ enum ListingType {
   BOUNTY
   JOB
   GRANT
+}
+
+enum JobType {
+  parttime
+  fulltime
+  internship
 }

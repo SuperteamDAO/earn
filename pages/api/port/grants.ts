@@ -19,7 +19,7 @@ export default async function user(req: NextApiRequest, res: NextApiResponse) {
     const grantsParsed = JSON.parse(grantsString as unknown as string);
 
     const sponsorsList = await prisma.sponsors.findMany({
-      take: 200,
+      take: 300,
       select: {
         id: true,
         slug: true,

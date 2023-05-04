@@ -9,9 +9,11 @@ function Port() {
   const [userId, setUserId] = useState('');
   const [usersLoading, setUsersLoading] = useState(false);
   const [sponsorsLoading, setSponsorsLoading] = useState(false);
+  const [newSponsorsLoading, setNewSponsorsLoading] = useState(false);
   const [bountiesLoading, setBountiesLoading] = useState(false);
   const [grantsLoading, setGrantsLoading] = useState(false);
   const [totalLoading, setTotalLoading] = useState(false);
+  const [jobsLoading, setJobsLoading] = useState(false);
 
   const portUsers = async () => {
     setUsersLoading(true);
@@ -41,6 +43,25 @@ function Port() {
     } catch (e) {
       console.log('file: port.tsx:16 ~ portSponsors ~ e:', e);
       setSponsorsLoading(false);
+    }
+  };
+
+  const portNewSponsors = async () => {
+    if (!userId) {
+      // eslint-disable-next-line no-alert
+      window.alert('Add User');
+      return;
+    }
+    setNewSponsorsLoading(true);
+    try {
+      const sponsors = await axios.post('/api/port/newSponsors', {
+        userId,
+      });
+      console.log('file: port.tsx:17 ~ portSponsors ~ sponsors:', sponsors);
+      setNewSponsorsLoading(false);
+    } catch (e) {
+      console.log('file: port.tsx:16 ~ portSponsors ~ e:', e);
+      setNewSponsorsLoading(false);
     }
   };
 
@@ -101,6 +122,18 @@ function Port() {
     }
   };
 
+  const portJobs = async () => {
+    setJobsLoading(true);
+    try {
+      const jobsData = await axios.post('/api/port/jobs');
+      console.log('file: port.tsx:17 ~ porttotalData ~ jobsData:', jobsData);
+      setJobsLoading(false);
+    } catch (e) {
+      console.log('file: port.tsx:16 ~ portBounties ~ e:', e);
+      setJobsLoading(false);
+    }
+  };
+
   return (
     <Default
       meta={
@@ -143,6 +176,16 @@ function Port() {
         <Button
           w="full"
           mt={4}
+          isLoading={!!newSponsorsLoading}
+          loadingText="Porting..."
+          onClick={() => portNewSponsors()}
+          variant="solid"
+        >
+          Port New Sponsors
+        </Button>
+        <Button
+          w="full"
+          mt={4}
           isLoading={!!bountiesLoading}
           loadingText="Porting..."
           onClick={() => portBounties()}
@@ -169,6 +212,16 @@ function Port() {
           variant="solid"
         >
           Port Total
+        </Button>
+        <Button
+          w="full"
+          mt={4}
+          isLoading={!!jobsLoading}
+          loadingText="Porting..."
+          onClick={() => portJobs()}
+          variant="solid"
+        >
+          Port Jobs
         </Button>
       </Container>
     </Default>
