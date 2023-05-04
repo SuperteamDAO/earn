@@ -408,7 +408,7 @@ function TalentProfile() {
         <Flex direction={['column', 'column', 'column', 'row']} w={'100%'}>
           <VStack
             rowGap={4}
-            maxW={['full', 'full', '40%', '25%']}
+            maxW={['full', 'full', '25%', '25%']}
             minH={'100vh'}
             py={8}
             bgImage={'/assets/bg/talent-bg.png'}
@@ -421,24 +421,43 @@ function TalentProfile() {
           </VStack>
           <Box
             justifyContent={'center'}
-            display={'flex'}
+            display={pow.length === 0 ? 'none' : 'flex'}
             w={'100%'}
             px={'23px'}
             py={'35px'}
             bg={'#F7FAFC'}
           >
             {pow.length > 0 && (
-              <Box mb={'18.5px'} borderBottom={'1px solid #E2E8EF'}>
-                <Text mb={'1.0625rem'} fontSize={'17.94px'} fontWeight={'500'}>
-                  Other Proof Work
-                </Text>
-              </Box>
+              <>
+                <Box mb={'18.5px'} borderBottom={'1px solid #E2E8EF'}>
+                  <Text
+                    mb={'1.0625rem'}
+                    fontSize={'17.94px'}
+                    fontWeight={'500'}
+                  >
+                    Other Proof Work
+                  </Text>
+                </Box>
+                <Flex wrap={'wrap'} gap={'1.1425rem'} mb={'44px'}>
+                  {pow.map((ele, idx) => {
+                    return <LinkPreview key={`${idx}lk`} data={ele} />;
+                  })}
+                </Flex>
+              </>
             )}
-            <Flex wrap={'wrap'} gap={'1.1425rem'} mb={'44px'}>
-              {pow.map((ele, idx) => {
-                return <LinkPreview key={`${idx}lk`} data={ele} />;
-              })}
-            </Flex>
+          </Box>
+          <Box
+            alignItems={'start'}
+            justifyContent={'center'}
+            display={pow.length !== 0 ? 'none' : 'flex'}
+            w={'100%'}
+            pt={'10rem'}
+          >
+            <Image
+              w={32}
+              alt={'talent empty'}
+              src="/assets/bg/talent-empty.svg"
+            />
           </Box>
         </Flex>
       </Default>

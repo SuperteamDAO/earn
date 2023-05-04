@@ -78,6 +78,37 @@ export default async function user(req: NextApiRequest, res: NextApiResponse) {
       });
       result.grants = grants;
     }
+
+    if (!category || category === 'all' || category === 'jobs') {
+      const jobs = await prisma.jobs.findMany({
+        where: {
+          private: false,
+          active: true,
+          ...skillsFilter,
+        },
+        take,
+        orderBy: {
+          updatedAt: 'desc',
+        },
+        select: {
+          id: true,
+          title: true,
+          slug: true,
+          link: true,
+          location: true,
+          skills: true,
+          sponsor: {
+            select: {
+              id: true,
+              name: true,
+              slug: true,
+              logo: true,
+            },
+          },
+        },
+      });
+      result.jobs = jobs;
+    }
     res.status(200).json(result);
   } catch (error) {
     res.status(400).json({

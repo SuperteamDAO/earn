@@ -23,7 +23,7 @@ import { dayjs } from '@/utils/dayjs';
 import { Mixpanel } from '@/utils/mixpanel';
 import { getURL } from '@/utils/validUrl';
 
-import { type MultiSelectOptions, tokenList } from '../../constants';
+import { tokenList } from '../../constants';
 import { TalentStore } from '../../store/talent';
 import { userStore } from '../../store/user';
 import { findTalentPubkey, updateNotification } from '../../utils/functions';
@@ -239,15 +239,16 @@ export const BountiesCard = ({
 };
 interface JobsProps {
   title: string;
-  description: string;
-  max: number;
-  min: number;
-  maxEq: number;
-  minEq: number;
-  skills: MultiSelectOptions[];
+  description?: string;
+  max?: number;
+  min?: number;
+  maxEq?: number;
+  minEq?: number;
+  skills?: string;
   logo?: string;
   orgName: string;
   link?: string;
+  location?: string;
 }
 export const JobsCard = ({
   description,
@@ -260,7 +261,9 @@ export const JobsCard = ({
   logo,
   orgName,
   link,
+  location,
 }: JobsProps) => {
+  console.log('file: listingsCard.tsx:266 ~ skills:', skills);
   return (
     <Flex
       align="center"
@@ -308,20 +311,39 @@ export const JobsCard = ({
                 {minEq.toLocaleString()}% - {maxEq.toLocaleString()}% Equity
               </Text>
             )}
-            {skills?.length &&
-              skills.slice(0, 3).map((e) => {
-                return (
-                  <Text
-                    key={''}
-                    display={{ base: 'none', md: 'block' }}
-                    mr={3}
-                    color={'brand.slate.500'}
-                    fontSize="sm"
-                  >
-                    {e.label}
-                  </Text>
-                );
-              })}
+            {!!skills && (
+              <Text
+                key={''}
+                display={{ base: 'none', md: 'block' }}
+                mr={3}
+                color={'brand.slate.500'}
+                fontSize="sm"
+              >
+                {skills}
+              </Text>
+            )}
+            {!!skills && !!location && (
+              <Text
+                key={''}
+                display={{ base: 'none', md: 'block' }}
+                mx={2}
+                color={'brand.slate.500'}
+                fontSize="sm"
+              >
+                ·
+              </Text>
+            )}
+            {!!location && (
+              <Text
+                key={''}
+                display={{ base: 'none', md: 'block' }}
+                mr={3}
+                color={'brand.slate.500'}
+                fontSize="sm"
+              >
+                {location}
+              </Text>
+            )}
           </Flex>
         </Flex>
       </Flex>

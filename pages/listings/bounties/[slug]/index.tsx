@@ -12,6 +12,7 @@ import LoadingSection from '@/components/shared/LoadingSection';
 import type { Bounty } from '@/interface/bounty';
 import { Default } from '@/layouts/Default';
 import { Meta } from '@/layouts/Meta';
+import { Mixpanel } from '@/utils/mixpanel';
 
 interface BountyDetailsProps {
   slug: string;
@@ -27,6 +28,9 @@ function BountyDetails({ slug }: BountyDetailsProps) {
     try {
       const bountyDetails = await axios.get(`/api/bounties/${slug}/`);
       setBounty(bountyDetails.data);
+      Mixpanel.track('bounty_page_load', {
+        title: slug,
+      });
     } catch (e) {
       setError(true);
     }

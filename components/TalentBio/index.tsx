@@ -95,7 +95,10 @@ function TalentBio({
             {data?.firstname} {data?.lastname}
           </Text>
           <Text color={'gray.400'} fontSize={'sm'} fontWeight={'600'}>
-            @{data?.username}
+            @
+            {data?.username.length > 15
+              ? `${data?.username.slice(0, 15)}...`
+              : data?.username}
           </Text>
         </Box>
       </Flex>

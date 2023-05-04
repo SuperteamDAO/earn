@@ -1,4 +1,13 @@
-import { Box, Center, Flex, Image, Text, VStack } from '@chakra-ui/react';
+import {
+  Box,
+  Center,
+  Flex,
+  HStack,
+  Image,
+  Link,
+  Text,
+  VStack,
+} from '@chakra-ui/react';
 import Avatar from 'boring-avatars';
 import { useRouter } from 'next/router';
 import { useState } from 'react';
@@ -90,6 +99,7 @@ const GettingStarted = ({ userInfo }: GettingStartedProps) => {
       <Flex h={'12.5rem'}>
         <VStack pos={'relative'} justifyContent={'space-between'} h={'100%'}>
           <Step number={1} isComplete={!!userInfo?.id} />
+
           <Step
             number={2}
             isComplete={!!userInfo?.id && !!userInfo?.isTalentFilled}
@@ -134,7 +144,7 @@ const GettingStarted = ({ userInfo }: GettingStartedProps) => {
                 _hover={{
                   color: 'brand.purple',
                 }}
-                onClick={() => router.push(`/t/${userInfo?.username}`)}
+                onClick={() => router.push(`/new/talent`)}
               >
                 Complete your profile
               </Text>
@@ -432,16 +442,61 @@ const RecentEarners = ({ earners }: { earners?: User[] }) => {
 //     </Box>
 //   );
 // };
-
+const AlphaAccess = () => {
+  return (
+    <Flex
+      direction={'column'}
+      gap={1}
+      w={'full'}
+      h={'max-content'}
+      px={'1.5625rem'}
+      py={'0.875rem'}
+      bg={'#A839FF'}
+      rounded={'lg'}
+    >
+      <HStack>
+        <Image alt="alpha site" src="/assets/bg/alpha.svg" />
+      </HStack>
+      <Text mt={'auto'} color={'white'} fontSize={'1.25rem'} fontWeight={'600'}>
+        Want Early Access to Projects?
+      </Text>
+      <Text
+        mt={'0.5rem'}
+        color={'white'}
+        fontSize={'1rem'}
+        lineHeight={'1.1875rem'}
+      >
+        Get exclusive early access to the latest Solana projects and win product
+        feedback bounties, for free.
+      </Text>
+      <Link
+        mt={'1.5625rem'}
+        py={'0.8125rem'}
+        color={'brand.slate.800'}
+        fontWeight={'500'}
+        textAlign={'center'}
+        bg={'white'}
+        borderRadius={8}
+        _hover={{
+          bg: 'gray.100',
+        }}
+        href="https://www.alphasquad.fun/"
+        isExternal
+      >
+        Join the Alpha Squad
+      </Link>
+    </Flex>
+  );
+};
 const SideBar = ({ userInfo, listings, total, earners }: SideBarProps) => {
   // const { connected } = useWallet();
   return (
     <Flex direction={'column'} rowGap={'2.5rem'} w={'22.125rem'} pl={6}>
-      {/* <AlphaAccess /> */}
       <GettingStarted userInfo={userInfo} />
       <TotalStats total={listings} listings={total} />
       {/* <Filter title={'FILTER BY INDUSTRY'} entries={['Gaming', 'Payments', 'Consumer', 'Infrastructure', 'DAOs']} /> */}
       <RecentEarners earners={earners} />
+      <AlphaAccess />
       {/* <HiringNow jobs={jobs} /> */}
       {/* <Featured /> */}
     </Flex>
@@ -449,41 +504,6 @@ const SideBar = ({ userInfo, listings, total, earners }: SideBarProps) => {
 };
 
 export default SideBar;
-
-// const AlphaAccess = () => {
-//   return (
-//     <Flex
-//       direction={'column'}
-//       w={'22.125rem'}
-//       h={'14.25rem'}
-//       px={'1.5625rem'}
-//       py={'0.875rem'}
-//       bg={"url('/assets/home/display/grizzly.png')"}
-//       rounded={'lg'}
-//     >
-//       <Text mt={'auto'} color={'white'} fontSize={'1.25rem'} fontWeight={'600'}>
-//         Want Early Access to Projects?
-//       </Text>
-//       <Text
-//         mt={'0.5rem'}
-//         color={'white'}
-//         fontSize={'1rem'}
-//         lineHeight={'1.1875rem'}
-//       >
-//         Get exclusive early access to the latest Solana projects and win product
-//         feedback bounties, for free.
-//       </Text>
-//       <Button
-//         mt={'1.5625rem'}
-//         py={'0.8125rem'}
-//         fontWeight={'500'}
-//         bg={'#FFFFFF'}
-//       >
-//         Join the Alpha Squad
-//       </Button>
-//     </Flex>
-//   );
-// };
 
 // const FilterEntry = ({ label }: { label: string }) => {
 //   return (
