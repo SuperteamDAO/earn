@@ -66,7 +66,7 @@ const HomePage: NextPage = () => {
   }, [isLessThan1200px, isLessThan850px, isLessThan768px]);
   return (
     <Home>
-      <Box w={'100%'} mt={8}>
+      <Box w={'100%'}>
         <ListingSection
           type="bounties"
           title="Active Bounties"
@@ -116,6 +116,7 @@ const HomePage: NextPage = () => {
                   rewardAmount={grant?.rewardAmount}
                   token={grant?.token}
                   title={grant?.title}
+                  link={grant?.link}
                 />
               );
             })

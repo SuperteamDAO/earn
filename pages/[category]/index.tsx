@@ -75,7 +75,7 @@ function CategoryHomePage({ category }: Props) {
   }, [isLessThan1200px, isLessThan850px, isLessThan768px]);
   return (
     <Home>
-      <Box w={'100%'} mt={8}>
+      <Box w={'100%'}>
         {(!category || category === 'all' || category === 'bounties') && (
           <ListingSection
             type="bounties"
@@ -138,6 +138,7 @@ function CategoryHomePage({ category }: Props) {
                     rewardAmount={grant?.rewardAmount}
                     token={grant?.token}
                     title={grant?.title}
+                    link={grant?.link}
                   />
                 );
               })

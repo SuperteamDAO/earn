@@ -17,6 +17,7 @@ function DesktopBanner() {
     <Box
       w={'100%'}
       h={72}
+      mb={8}
       mx={'auto'}
       p={10}
       bgImage="url('/assets/home/display/money_banner.png')"

@@ -31,6 +31,8 @@ const theme = extendTheme({
     },
   },
   space: {
+    85: '21rem',
+    120: '46.0625rem',
     brand: {
       85: '21rem',
       120: '46.0625rem',
@@ -65,6 +67,16 @@ const theme = extendTheme({
           _hover: {
             color: 'white',
             bg: 'brand.purple',
+          },
+        },
+        outlineSecondary: {
+          color: 'brand.slate.400',
+          bg: 'transparent',
+          border: '1px solid',
+          borderColor: 'brand.slate.400',
+          _hover: {
+            color: 'white',
+            bg: 'brand.slate.400',
           },
         },
         ghost: {

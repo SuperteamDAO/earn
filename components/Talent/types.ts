@@ -12,7 +12,7 @@ export interface WorkType {
   community: string;
   interests: string;
   skills: string;
-  subskills: string;
+  subSkills: string;
   workPrefernce: string;
 }
 

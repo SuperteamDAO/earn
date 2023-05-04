@@ -1,7 +1,10 @@
 import { Box, Center, Flex, Image, Text, VStack } from '@chakra-ui/react';
 import Avatar from 'boring-avatars';
+import { useRouter } from 'next/router';
+import { useState } from 'react';
 import Slider from 'react-slick';
 
+import LoginWrapper from '@/components/Header/LoginWrapper';
 import type { User } from '@/interface/user';
 
 import type { JobsType } from '../../interface/listings';
@@ -24,92 +27,154 @@ interface SideBarProps {
   total: number;
   listings: number;
   earners?: User[];
+  userInfo?: User;
 }
 
-// const Step = ({
-//   number,
-//   isComplete,
-// }: {
-//   number: number;
-//   isComplete: boolean;
-// }) => {
-//   if (isComplete) {
-//     return (
-//       <Center
-//         zIndex={'200'}
-//         w={'2.375rem'}
-//         h={'2.375rem'}
-//         bg={'#6366F1'}
-//         rounded={'full'}
-//       >
-//         <Image
-//           w={'1.25rem'}
-//           h={'1.25rem'}
-//           alt=""
-//           src="/assets/icons/white-tick.svg"
-//         />
-//       </Center>
-//     );
-//   }
+const Step = ({
+  number,
+  isComplete,
+}: {
+  number: number;
+  isComplete: boolean;
+}) => {
+  if (isComplete) {
+    return (
+      <Center
+        zIndex={'200'}
+        w={'2.375rem'}
+        h={'2.375rem'}
+        bg={'#6366F1'}
+        rounded={'full'}
+      >
+        <Image
+          w={'1.25rem'}
+          h={'1.25rem'}
+          alt=""
+          src="/assets/icons/white-tick.svg"
+        />
+      </Center>
+    );
+  }
 
-//   return (
-//     <Center
-//       zIndex={'200'}
-//       w={'2.375rem'}
-//       h={'2.375rem'}
-//       color={'#94A3B8'}
-//       bg={'#FFFFFF'}
-//       border={'0.0625rem solid #94A3B8'}
-//       rounded={'full'}
-//     >
-//       {number}
-//     </Center>
-//   );
-// };
+  return (
+    <Center
+      zIndex={'200'}
+      w={'2.375rem'}
+      h={'2.375rem'}
+      color={'#94A3B8'}
+      bg={'#FFFFFF'}
+      border={'0.0625rem solid #94A3B8'}
+      rounded={'full'}
+    >
+      {number}
+    </Center>
+  );
+};
 
-// const GettingStarted = () => {
-//   return (
-//     <Box>
-//       <Text mb={'1.5rem'} color={'gray.400'} fontWeight={500}>
-//         GETTING STARTED
-//       </Text>
-//       <Flex h={'12.5rem'}>
-//         <VStack pos={'relative'} justifyContent={'space-between'} h={'100%'}>
-//           <Step number={1} isComplete={true} />
-//           <Step number={2} isComplete={false} />
-//           <Step number={3} isComplete={false} />
-//           <Flex pos={'absolute'} w={'0.0625rem'} h={'90%'} bg={'#CBD5E1'} />
-//         </VStack>
-//         <VStack pos={'relative'} justifyContent={'space-between'} h={'100%'}>
-//           <Box ml={'0.8125rem'}>
-//             <Text color={'black'} fontSize={'md'} fontWeight={500}>
-//               Create your account
-//             </Text>
-//             <Text color={'gray.500'} fontSize={'md'} fontWeight={500}>
-//               and get personalized notifications
-//             </Text>
-//           </Box>
-//           <Box ml={'0.8125rem'}>
-//             <Text color={'black'} fontSize={'md'} fontWeight={500}>
-//               Complete your profile
-//             </Text>
-//             <Text color={'gray.500'} fontSize={'md'} fontWeight={500}>
-//               and get seen by hiring managers
-//             </Text>
-//           </Box>
-//           <Box ml={'0.8125rem'}>
-//             <Text color={'black'} fontSize={'md'} fontWeight={500}>
-//               Win a bounty
-//             </Text>
-//             <Text color={'gray.500'} fontSize={'md'} fontWeight={500}>
-//               and get your Proof-of-Work NFT
-//             </Text>
-//           </Box>
-//         </VStack>
-//       </Flex>
-//     </Box>
-//   );
-// };
+interface GettingStartedProps {
+  userInfo?: User;
+}
+
+const GettingStarted = ({ userInfo }: GettingStartedProps) => {
+  const router = useRouter();
+  const [triggerLogin, setTriggerLogin] = useState(false);
+  return (
+    <Box>
+      <LoginWrapper
+        triggerLogin={triggerLogin}
+        setTriggerLogin={setTriggerLogin}
+      />
+      <Text mb={'1.5rem'} color={'gray.400'} fontWeight={500}>
+        GETTING STARTED
+      </Text>
+      <Flex h={'12.5rem'}>
+        <VStack pos={'relative'} justifyContent={'space-between'} h={'100%'}>
+          <Step number={1} isComplete={!!userInfo?.id} />
+          <Step
+            number={2}
+            isComplete={!!userInfo?.id && !!userInfo?.isTalentFilled}
+          />
+          <Step
+            number={3}
+            isComplete={!!userInfo?.id && !!userInfo.totalEarnedInUSD}
+          />
+          <Flex pos={'absolute'} w={'0.0625rem'} h={'90%'} bg={'#CBD5E1'} />
+        </VStack>
+        <VStack pos={'relative'} justifyContent={'space-between'} h={'100%'}>
+          <Box ml={'0.8125rem'}>
+            {!userInfo?.id ? (
+              <Text
+                as="button"
+                color={'black'}
+                fontSize={'md'}
+                fontWeight={500}
+                _hover={{
+                  color: 'brand.purple',
+                }}
+                onClick={() => setTriggerLogin(true)}
+              >
+                Create your account
+              </Text>
+            ) : (
+              <Text color={'brand.purple'} fontSize={'md'} fontWeight={500}>
+                Create your account
+              </Text>
+            )}
+            <Text color={'gray.500'} fontSize={'md'} fontWeight={500}>
+              and get personalized notifications
+            </Text>
+          </Box>
+          <Box ml={'0.8125rem'}>
+            {!userInfo?.id || !userInfo?.isTalentFilled ? (
+              <Text
+                as="button"
+                color={'black'}
+                fontSize={'md'}
+                fontWeight={500}
+                _hover={{
+                  color: 'brand.purple',
+                }}
+                onClick={() => router.push(`/t/${userInfo?.username}`)}
+              >
+                Complete your profile
+              </Text>
+            ) : (
+              <Text color={'brand.purple'} fontSize={'md'} fontWeight={500}>
+                Complete your profile
+              </Text>
+            )}
+            <Text color={'gray.500'} fontSize={'md'} fontWeight={500}>
+              and get seen by hiring managers
+            </Text>
+          </Box>
+          <Box ml={'0.8125rem'}>
+            {!userInfo?.id || !userInfo.totalEarnedInUSD ? (
+              <Text
+                as="button"
+                color={'black'}
+                fontSize={'md'}
+                fontWeight={500}
+                _hover={{
+                  color: 'brand.purple',
+                }}
+                onClick={() => router.push('/bounties')}
+              >
+                Win a bounty
+              </Text>
+            ) : (
+              <Text color={'brand.purple'} fontSize={'md'} fontWeight={500}>
+                Win a bounty
+              </Text>
+            )}
+            <Text color={'gray.500'} fontSize={'md'} fontWeight={500}>
+              and get your Proof-of-Work NFT
+            </Text>
+          </Box>
+        </VStack>
+      </Flex>
+    </Box>
+  );
+};
 
 const TotalStats = ({
   total,
@@ -368,12 +433,12 @@ const RecentEarners = ({ earners }: { earners?: User[] }) => {
 //   );
 // };
 
-const SideBar = ({ listings, total, earners }: SideBarProps) => {
+const SideBar = ({ userInfo, listings, total, earners }: SideBarProps) => {
   // const { connected } = useWallet();
   return (
     <Flex direction={'column'} rowGap={'2.5rem'} w={'22.125rem'} pl={6}>
       {/* <AlphaAccess /> */}
-      {/* {connected && <GettingStarted />} */}
+      <GettingStarted userInfo={userInfo} />
       <TotalStats total={listings} listings={total} />
       {/* <Filter title={'FILTER BY INDUSTRY'} entries={['Gaming', 'Payments', 'Consumer', 'Infrastructure', 'DAOs']} /> */}
       <RecentEarners earners={earners} />
