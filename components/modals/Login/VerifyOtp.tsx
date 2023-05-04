@@ -63,7 +63,12 @@ function NewUserInfo({ userInfo, onClose, otp }: Props) {
         OTP sent to {userInfo?.email}
       </Text>
       <Stack spacing={4}>
-        <form onSubmit={(e) => verifyOTP(e)}>
+        <form
+          onSubmit={(e) => {
+            verifyOTP(e);
+            Mixpanel.track('new_user_created');
+          }}
+        >
           <FormControl mb={4} id="email" isRequired>
             <FormLabel color="brand.slate.500">Enter OTP</FormLabel>
             <PinInput

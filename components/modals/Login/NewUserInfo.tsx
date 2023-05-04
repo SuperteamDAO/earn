@@ -14,6 +14,7 @@ import { useState } from 'react';
 
 import type { User } from '@/interface/user';
 import { generateCode, generateCodeLast } from '@/utils/helpers';
+import { Mixpanel } from '@/utils/mixpanel';
 
 interface Props {
   userInfo: User | null;
@@ -70,6 +71,9 @@ function NewUserInfo({ setUserInfo, userInfo, setStep, setOtp }: Props) {
         setLoading(true);
         await axios.post('/api/otp/send', {
           publicKey: userInfo?.publicKey,
+          email: userDetails?.email,
+        });
+        Mixpanel.track('otp_sent', {
           email: userDetails?.email,
         });
         const newUserDetails = await axios.post('/api/user/create', {
