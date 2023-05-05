@@ -21,6 +21,7 @@ import { useForm } from 'react-hook-form';
 import { QuestionHandler } from '@/components/listings/bounty/questions/questionHandler';
 import type { Eligibility } from '@/interface/bounty';
 import { userStore } from '@/store/user';
+import { Mixpanel } from '@/utils/mixpanel';
 
 interface Props {
   id: string;
@@ -68,8 +69,13 @@ export const SubmissionModal = ({
           ? eligibilityAnswers
           : null,
       });
+      Mixpanel.track('bounty_submission', {
+        title: id,
+        user: userInfo?.username,
+      });
       setIsSubmitted(true);
       setSubmissionNumber(submissionNumber + 1);
+
       onClose();
     } catch (e) {
       setError('Sorry! Please try again or contact support.');
