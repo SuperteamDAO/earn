@@ -43,30 +43,31 @@ model Jobs {
 }
 
 model Bounties {
-  id            String    @id @default(uuid())
-  title         String
-  slug          String    @unique
-  description   String?   @db.Text
-  skills        String?
-  subSkills     String?
-  deadline      DateTime?
-  eligibility   Json?
-  status        status    @default(OPEN)
-  token         String
-  rewardAmount  Int?
-  rewards       Json?
-  sponsorId     String
-  sponsor       Sponsors  @relation(fields: [sponsorId], references: [id])
-  pocId         String
-  poc           User      @relation("poc", fields: [pocId], references: [id])
-  source        Source    @default(NATIVE)
-  sourceDetails Json?
-  isPublished   Boolean   @default(false)
-  isFeatured    Boolean   @default(false)
-  isActive      Boolean   @default(true)
-  isArchived    Boolean   @default(false)
-  createdAt     DateTime  @default(now())
-  updatedAt     DateTime  @updatedAt
+  id              String    @id @default(uuid())
+  title           String
+  slug            String    @unique
+  description     String?   @db.Text
+  skills          String?
+  subSkills       String?
+  deadline        DateTime?
+  eligibility     Json?
+  status          status    @default(OPEN)
+  token           String
+  rewardAmount    Int?
+  rewards         Json?
+  applicationLink String?
+  sponsorId       String
+  sponsor         Sponsors  @relation(fields: [sponsorId], references: [id])
+  pocId           String
+  poc             User      @relation("poc", fields: [pocId], references: [id])
+  source          Source    @default(NATIVE)
+  sourceDetails   Json?
+  isPublished     Boolean   @default(false)
+  isFeatured      Boolean   @default(false)
+  isActive        Boolean   @default(true)
+  isArchived      Boolean   @default(false)
+  createdAt       DateTime  @default(now())
+  updatedAt       DateTime  @updatedAt
 
   @@index([id, slug])
   @@index([sponsorId])

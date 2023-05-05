@@ -6,8 +6,10 @@ import { useEffect, useState } from 'react';
 import {
   BountiesCard,
   GrantsCard,
+  JobsCard,
   ListingSection,
 } from '@/components/misc/listingsCard';
+import EmptySection from '@/components/shared/EmptySection';
 import Loading from '@/components/shared/Loading';
 import type { Bounty } from '@/interface/bounty';
 import type { Grant } from '@/interface/grant';
@@ -83,7 +85,7 @@ function CategoryHomePage({ category }: Props) {
             sub="Bite sized tasks for freelancers"
             emoji="/assets/home/emojis/moneyman.png"
           >
-            {isListingsLoading ? (
+            {isListingsLoading && (
               <Flex
                 align="center"
                 justify="center"
@@ -92,7 +94,16 @@ function CategoryHomePage({ category }: Props) {
               >
                 <Loading />
               </Flex>
-            ) : (
+            )}
+            {!isListingsLoading && !listings?.bounties?.length && (
+              <Flex align="center" justify="center" mt={8}>
+                <EmptySection
+                  title="No bounties available!"
+                  message="Subscribe to notifications to get notified about new bounties."
+                />
+              </Flex>
+            )}
+            {!isListingsLoading &&
               listings?.bounties?.map((bounty) => {
                 return (
                   <BountiesCard
@@ -107,8 +118,7 @@ function CategoryHomePage({ category }: Props) {
                     token={bounty?.token}
                   />
                 );
-              })
-            )}
+              })}
           </ListingSection>
         )}
 
@@ -119,7 +129,7 @@ function CategoryHomePage({ category }: Props) {
             sub="Equity-free funding opportunities for builders"
             emoji="/assets/home/emojis/grants.png"
           >
-            {isListingsLoading ? (
+            {isListingsLoading && (
               <Flex
                 align="center"
                 justify="center"
@@ -128,7 +138,16 @@ function CategoryHomePage({ category }: Props) {
               >
                 <Loading />
               </Flex>
-            ) : (
+            )}
+            {!isListingsLoading && !listings?.grants?.length && (
+              <Flex align="center" justify="center" mt={8}>
+                <EmptySection
+                  title="No grants available!"
+                  message="Subscribe to notifications to get notified about new grants."
+                />
+              </Flex>
+            )}
+            {!isListingsLoading &&
               listings?.grants?.map((grant) => {
                 return (
                   <GrantsCard
@@ -141,33 +160,50 @@ function CategoryHomePage({ category }: Props) {
                     link={grant?.link}
                   />
                 );
-              })
-            )}
+              })}
           </ListingSection>
         )}
-        {/* <ListingSection
-              type="jobs"
-              title="Jobs"
-              sub="Join a high-growth team"
-              emoji="/assets/home/emojis/job.png"
-            >
-              {listings?.jobs?.slice(0, 10).map((job) => {
+        {(!category || category === 'all' || category === 'jobs') && (
+          <ListingSection
+            type="jobs"
+            title="Jobs"
+            sub="Join a high-growth team"
+            emoji="/assets/home/emojis/job.png"
+          >
+            {isListingsLoading && (
+              <Flex
+                align="center"
+                justify="center"
+                direction="column"
+                minH={52}
+              >
+                <Loading />
+              </Flex>
+            )}
+            {!isListingsLoading && !listings?.jobs?.length && (
+              <Flex align="center" justify="center" mt={8}>
+                <EmptySection
+                  title="No jobs available!"
+                  message="Subscribe to notifications to get notified about new jobs."
+                />
+              </Flex>
+            )}
+            {!isListingsLoading &&
+              listings?.jobs?.map((job) => {
                 return (
                   <JobsCard
-                    logo={job?.sponsorInfo?.logo}
-                    description={job?.jobs?.description}
-                    max={job?.jobs?.maxSalary}
-                    min={job?.jobs?.minSalary}
-                    maxEq={job?.jobs?.maxEq}
-                    minEq={job?.jobs?.minEq}
-                    orgName={job?.sponsorInfo?.name}
-                    key={job?.jobs?.id}
-                    skills={JSON.parse(job?.jobs?.skills || '[]')}
-                    title={job?.jobs?.title}
+                    key={job?.id}
+                    logo={job?.sponsor?.logo}
+                    location={job?.location || ''}
+                    orgName={job?.sponsor?.name || ''}
+                    skills={job?.skills || ''}
+                    title={job?.title || ''}
+                    link={job?.link || ''}
                   />
                 );
               })}
-            </ListingSection> */}
+          </ListingSection>
+        )}
       </Box>
     </Home>
   );

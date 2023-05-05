@@ -30,6 +30,7 @@ import { userStore } from '@/store/user';
 
 interface Props {
   id: string;
+  applicationLink?: string;
   total?: number;
   prizeList?: Partial<Rewards>;
   onOpen?: () => void;
@@ -48,6 +49,7 @@ function DetailSideCard({
   endingTime,
   token,
   eligibility,
+  applicationLink,
 }: Props) {
   const { userInfo } = userStore();
   const [isSubmissionNumberLoading, setIsSubmissionNumberLoading] =
@@ -101,6 +103,10 @@ function DetailSideCard({
   }, []);
 
   const handleSubmit = () => {
+    if (applicationLink) {
+      window.open(applicationLink, '_blank');
+      return;
+    }
     if (userInfo?.id) {
       onOpen();
     } else {

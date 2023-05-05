@@ -21,7 +21,6 @@ import { TiTick } from 'react-icons/ti';
 import type { BountyStatus } from '@/interface/bounty';
 import { dayjs } from '@/utils/dayjs';
 import { Mixpanel } from '@/utils/mixpanel';
-import { getURL } from '@/utils/validUrl';
 
 import { tokenList } from '../../constants';
 import { TalentStore } from '../../store/talent';
@@ -256,14 +255,12 @@ export const JobsCard = ({
   min,
   maxEq,
   minEq,
-  skills,
   title,
   logo,
   orgName,
   link,
   location,
 }: JobsProps) => {
-  console.log('file: listingsCard.tsx:266 ~ skills:', skills);
   return (
     <Flex
       align="center"
@@ -311,28 +308,6 @@ export const JobsCard = ({
                 {minEq.toLocaleString()}% - {maxEq.toLocaleString()}% Equity
               </Text>
             )}
-            {!!skills && (
-              <Text
-                key={''}
-                display={{ base: 'none', md: 'block' }}
-                mr={3}
-                color={'brand.slate.500'}
-                fontSize="sm"
-              >
-                {skills}
-              </Text>
-            )}
-            {!!skills && !!location && (
-              <Text
-                key={''}
-                display={{ base: 'none', md: 'block' }}
-                mx={2}
-                color={'brand.slate.500'}
-                fontSize="sm"
-              >
-                ·
-              </Text>
-            )}
             {!!location && (
               <Text
                 key={''}
@@ -360,7 +335,7 @@ export const JobsCard = ({
           bg: 'brand.slate.400',
           color: 'white',
         }}
-        href={link || `${getURL()}/listings/jobs/${title.split(' ').join('-')}`}
+        href={link}
         isExternal
         onClick={() => {
           Mixpanel.track('job_clicked', {

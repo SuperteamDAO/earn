@@ -60,7 +60,7 @@ const Meta = (props: IMetaProps) => {
           site_name: AppConfig.site_name,
           images: [
             {
-              url: 'https://grizz.superteam.fun/assets/images/site-image.png',
+              url: 'https://earn.superteam.fun/assets/logo/og.png',
               alt: props.title,
             },
           ],

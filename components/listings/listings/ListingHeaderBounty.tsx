@@ -6,6 +6,7 @@ import {
   IconButton,
   Image,
   Text,
+  useDisclosure,
   VStack,
 } from '@chakra-ui/react';
 import moment from 'moment';
@@ -13,6 +14,7 @@ import { useRouter } from 'next/router';
 import React from 'react';
 import { TbBellRinging } from 'react-icons/tb';
 
+import { EarningModal } from '@/components/modals/earningModal';
 import type { SponsorType } from '@/interface/sponsor';
 import type { User } from '@/interface/user';
 
@@ -31,12 +33,14 @@ interface Bounty {
 function ListingHeader({ title, status, deadline, sponsor, poc }: Bounty) {
   const router = useRouter();
   const sub: any[] = [];
+  const { isOpen, onClose, onOpen } = useDisclosure();
 
   const hasDeadlineEnded =
     parseInt(moment(deadline).format('x'), 10) < Date.now();
 
   return (
     <VStack bg={'white'}>
+      {isOpen && <EarningModal isOpen={isOpen} onClose={onClose} />}
       <VStack
         align="start"
         justify={['start', 'start', 'space-between', 'space-between']}
@@ -118,6 +122,7 @@ function ListingHeader({ title, status, deadline, sponsor, poc }: Bounty) {
               <IconButton
                 aria-label="Notify"
                 icon={<TbBellRinging />}
+                onClick={() => onOpen()}
                 variant="solid"
               />
             </HStack>
