@@ -42,7 +42,7 @@ function CategoryPage({ category, filter }: Props) {
         params: {
           category,
           filter,
-          take: category !== 'all' ? 30 : 5,
+          take: category !== 'all' ? 100 : 5,
         },
       });
       setListings(listingsData.data);

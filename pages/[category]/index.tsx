@@ -40,7 +40,7 @@ function CategoryHomePage({ category }: Props) {
       const listingsData = await axios.get('/api/listings/', {
         params: {
           category,
-          take: 30,
+          take: 100,
         },
       });
       setListings(listingsData.data);
