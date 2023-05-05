@@ -9,13 +9,13 @@ function ErrorSection({
   message?: string;
 }) {
   return (
-    <Flex align={'center'} justify="center" w="full" mt={8}>
+    <Flex align={'center'} justify="center" w="full">
       <Flex align={'center'} justify="center" direction={'column'}>
-        <AiOutlineInfoCircle fontSize={60} color="brand.slate.500" />
-        <Text mt={2} color="brand.slate.500" fontSize="lg" fontWeight={700}>
+        <AiOutlineInfoCircle fontSize={52} color="#94a3b8" />
+        <Text mt={2} color="brand.slate.400" fontSize="lg" fontWeight={700}>
           {title || 'Sorry! Nothing found'}
         </Text>
-        <Text mt={2} color="brand.slate.500">
+        <Text mt={2} color="brand.slate.300">
           {message || 'Something went wrong! Please try again!'}
         </Text>
       </Flex>

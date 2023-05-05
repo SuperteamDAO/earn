@@ -98,10 +98,14 @@ function CategoryPage({ category, filter }: Props) {
               </Flex>
             )}
             {!isListingsLoading && !listings?.bounties?.length && (
-              <EmptySection />
+              <Flex align="center" justify="center" mt={8}>
+                <EmptySection
+                  title="No bounties available!"
+                  message="Subscribe to notifications to get notified about new bounties."
+                />
+              </Flex>
             )}
             {!isListingsLoading &&
-              listings?.bounties?.length &&
               listings?.bounties?.map((bounty) => {
                 return (
                   <BountiesCard
@@ -127,7 +131,7 @@ function CategoryPage({ category, filter }: Props) {
             sub="Equity-free funding opportunities for builders"
             emoji="/assets/home/emojis/grants.png"
           >
-            {isListingsLoading ? (
+            {isListingsLoading && (
               <Flex
                 align="center"
                 justify="center"
@@ -136,7 +140,16 @@ function CategoryPage({ category, filter }: Props) {
               >
                 <Loading />
               </Flex>
-            ) : (
+            )}
+            {!isListingsLoading && !listings?.grants?.length && (
+              <Flex align="center" justify="center" mt={8}>
+                <EmptySection
+                  title="No grants available!"
+                  message="Subscribe to notifications to get notified about new grants."
+                />
+              </Flex>
+            )}
+            {!isListingsLoading &&
               listings?.grants?.map((grant) => {
                 return (
                   <GrantsCard
@@ -149,30 +162,50 @@ function CategoryPage({ category, filter }: Props) {
                     link={grant?.link}
                   />
                 );
-              })
-            )}
+              })}
           </ListingSection>
         )}
-        <ListingSection
-          type="jobs"
-          title="Jobs"
-          sub="Join a high-growth team"
-          emoji="/assets/home/emojis/job.png"
-        >
-          {listings?.jobs?.map((job) => {
-            return (
-              <JobsCard
-                key={job?.id}
-                logo={job?.sponsor?.logo}
-                location={job?.location || ''}
-                orgName={job?.sponsor?.name || ''}
-                skills={job?.skills || ''}
-                title={job?.title || ''}
-                link={job?.link || ''}
-              />
-            );
-          })}
-        </ListingSection>
+        {(!category || category === 'all' || category === 'jobs') && (
+          <ListingSection
+            type="jobs"
+            title="Jobs"
+            sub="Join a high-growth team"
+            emoji="/assets/home/emojis/job.png"
+          >
+            {isListingsLoading && (
+              <Flex
+                align="center"
+                justify="center"
+                direction="column"
+                minH={52}
+              >
+                <Loading />
+              </Flex>
+            )}
+            {!isListingsLoading && !listings?.jobs?.length && (
+              <Flex align="center" justify="center" mt={8}>
+                <EmptySection
+                  title="No jobs available!"
+                  message="Subscribe to notifications to get notified about new jobs."
+                />
+              </Flex>
+            )}
+            {!isListingsLoading &&
+              listings?.jobs?.map((job) => {
+                return (
+                  <JobsCard
+                    key={job?.id}
+                    logo={job?.sponsor?.logo}
+                    location={job?.location || ''}
+                    orgName={job?.sponsor?.name || ''}
+                    skills={job?.skills || ''}
+                    title={job?.title || ''}
+                    link={job?.link || ''}
+                  />
+                );
+              })}
+          </ListingSection>
+        )}
       </Box>
     </Home>
   );
