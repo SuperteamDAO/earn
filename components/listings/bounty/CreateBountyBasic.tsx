@@ -31,6 +31,7 @@ interface Props {
 }
 interface ErrorsBasic {
   title: boolean;
+  slug: boolean;
   deadline: boolean;
   eligibility: boolean;
   skills: boolean;
@@ -51,6 +52,7 @@ export const CreatebountyBasic = ({
     deadline: false,
     eligibility: false,
     title: false,
+    slug: false,
     subSkills: false,
     skills: false,
   });
@@ -59,7 +61,7 @@ export const CreatebountyBasic = ({
 
   return (
     <>
-      <VStack align={'start'} gap={3} w={'2xl'} pt={7}>
+      <VStack align={'start'} gap={3} w={'2xl'} pt={7} pb={12}>
         <FormControl w="full" isInvalid={errorState.title} isRequired>
           <Flex>
             <FormLabel
@@ -100,6 +102,51 @@ export const CreatebountyBasic = ({
             }}
             placeholder="Develop a new landing page"
             value={bountyBasic?.title}
+          />
+          <FormErrorMessage>
+            {/* {errors.title ? <>{errors.title.message}</> : <></>} */}
+          </FormErrorMessage>
+        </FormControl>
+        <FormControl w="full" isInvalid={errorState.slug} isRequired>
+          <Flex>
+            <FormLabel
+              color={'gray.500'}
+              fontSize={'15px'}
+              fontWeight={600}
+              htmlFor={'slug'}
+            >
+              Opportunity Slug
+            </FormLabel>
+            <Tooltip
+              w="max"
+              p="0.7rem"
+              color="white"
+              fontSize="0.9rem"
+              fontWeight={600}
+              bg="#6562FF"
+              borderRadius="0.5rem"
+              hasArrow
+              label={`Use a unique slug to open the opportunity`}
+              placement="right-end"
+            >
+              <Image
+                mt={-2}
+                alt={'Info Icon'}
+                src={'/assets/icons/info-icon.svg'}
+              />
+            </Tooltip>
+          </Flex>
+
+          <Input
+            id="slug"
+            onChange={(e) => {
+              setbountyBasic({
+                ...(bountyBasic as BountyBasicType),
+                slug: e.target.value,
+              });
+            }}
+            placeholder="develop-a-new-landing-page-1"
+            value={bountyBasic?.slug}
           />
           <FormErrorMessage>
             {/* {errors.title ? <>{errors.title.message}</> : <></>} */}
@@ -233,12 +280,14 @@ export const CreatebountyBasic = ({
                 skills: skills.length === 0,
                 subSkills: subSkills.length === 0,
                 title: !bountyBasic?.title,
+                slug: !bountyBasic?.slug,
               });
 
               if (
                 bountyBasic?.deadline &&
                 bountyBasic?.eligibility &&
                 bountyBasic?.title &&
+                bountyBasic?.slug &&
                 skills.length !== 0 &&
                 subSkills.length !== 0
               ) {

@@ -116,7 +116,7 @@ type Experience =
   | '10 Yrs+: Senior Professional';
 
 interface DraftType {
-  id: string;
+  id?: string;
   orgId: string;
   type: Listingtype;
   basic: string;

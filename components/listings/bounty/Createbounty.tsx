@@ -10,6 +10,7 @@ import Builder from './questions/builder';
 
 export interface BountyBasicType {
   title: string;
+  slug: string;
   deadline: string;
   eligibility: string;
 }
