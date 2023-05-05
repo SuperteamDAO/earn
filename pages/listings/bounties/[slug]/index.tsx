@@ -21,15 +21,16 @@ interface BountyDetailsProps {
 function BountyDetails({ slug }: BountyDetailsProps) {
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState(false);
-  const [bounty, setBounty] = useState<Bounty | null>(null);
 
+  const [bounty, setBounty] = useState<Bounty | null>(null);
   const getBounty = async () => {
     setIsLoading(true);
     try {
       const bountyDetails = await axios.get(`/api/bounties/${slug}/`);
       setBounty(bountyDetails.data);
+
       Mixpanel.track('bounty_page_load', {
-        title: slug,
+        'Bounty Title': bountyDetails.data.title,
       });
     } catch (e) {
       setError(true);
@@ -48,7 +49,6 @@ function BountyDetails({ slug }: BountyDetailsProps) {
         <Meta
           title={`${bounty?.title || 'Bounty'} | Superteam Earn`}
           description="Every Solana opportunity in one place!"
-          canonical="/assets/logo/og.svg"
         />
       }
     >
