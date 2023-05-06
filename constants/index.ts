@@ -49,6 +49,12 @@ export const tokenList = [
     icon: 'https://s2.coinmarketcap.com/static/img/coins/64x64/3408.png',
   },
   {
+    tokenName: 'ISC',
+    mintAddress: '',
+    address: '',
+    icon: 'https://res.cloudinary.com/dgvnuwspr/image/upload/v1683200072/sponsors/International%20Stable%20Currency.png',
+  },
+  {
     tokenName: 'USDT',
     mintAddress: 'Es9vMFrzaCERmJfrF4H2FYD4KCoNkY11McCe8BenwNYB',
     address: 'Es9vMFrzaCERmJfrF4H2FYD4KCoNkY11McCe8BenwNYB',
