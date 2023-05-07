@@ -98,7 +98,7 @@ const Grants = ({ slug }: GrantsDetailsProps) => {
               <Flex
                 direction={'column'}
                 gap={5}
-                w={'32rem'}
+                w={['20rem', '20rem', '32rem', '32rem']}
                 h={'10rem'}
                 bg={'white'}
                 rounded={'md'}

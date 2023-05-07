@@ -56,7 +56,7 @@ const GrantEntry = ({
             : ''}
         </Text>
         {!!link && (
-          <Link href={`/listings/grants/${slug}`} isExternal>
+          <Link href={`/listings/grants/${slug}`}>
             <Button variant="outline">Apply</Button>
           </Link>
         )}
