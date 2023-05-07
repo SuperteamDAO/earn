@@ -26,6 +26,7 @@ const GrantEntry = ({
   shortDescription = '',
   rewardAmount,
   token,
+  slug,
   link,
 }: {
   color: string;
@@ -35,6 +36,7 @@ const GrantEntry = ({
   rewardAmount?: number;
   token?: string;
   link?: string;
+  slug: string;
 }) => {
   return (
     <Box w={80}>
@@ -54,7 +56,7 @@ const GrantEntry = ({
             : ''}
         </Text>
         {!!link && (
-          <Link href={link} isExternal>
+          <Link href={`/listings/grants/${slug}`}>
             <Button variant="outline">Apply</Button>
           </Link>
         )}
@@ -163,6 +165,7 @@ function Grants() {
                           colors[Math.floor(Math.random() * colors.length)] ||
                           ''
                         }
+                        slug={grant.slug}
                         rewardAmount={grant?.rewardAmount}
                         token={grant?.token}
                         link={grant?.link}

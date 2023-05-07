@@ -39,6 +39,8 @@ const HomePage: NextPage = () => {
       setListings(listingsData.data);
       setIsListingsLoading(false);
     } catch (e) {
+      console.log(e);
+
       setIsListingsLoading(false);
     }
   };
