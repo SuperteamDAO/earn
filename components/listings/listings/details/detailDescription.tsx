@@ -83,9 +83,9 @@ export const DetailDescription = ({ skills, description }: Props) => {
             <Box
               pos={'absolute'}
               bottom={0}
-              alignItems={'start'}
+              alignItems={'center'}
               justifyContent={'center'}
-              display={show ? 'none !important' : 'flex'}
+              display={'flex'}
               w={'full'}
               h={show ? '0' : '50%'}
               bg={
@@ -96,7 +96,6 @@ export const DetailDescription = ({ skills, description }: Props) => {
               transform={'matrix(1, 0, 0, -1, 0, 0);'}
             >
               <Button
-                display={show ? 'none' : 'flex'}
                 w={'12rem'}
                 mt={-3}
                 color={'brand.slate.400'}

@@ -158,7 +158,6 @@ function CategoryHomePage({ category }: Props) {
                     rewardAmount={grant?.rewardAmount}
                     token={grant?.token}
                     title={grant?.title}
-                    link={grant?.link}
                   />
                 );
               })}

@@ -110,7 +110,7 @@ function Grants() {
           justify={'center'}
           direction={'column'}
           w={'100%'}
-          minH={'100vg'}
+          minH={'100vh'}
           bg={'#F5F5F5'}
         >
           <Image
