@@ -1,7 +1,7 @@
-import { SearchIcon } from '@chakra-ui/icons';
 import { Alert, AlertIcon, Button } from '@chakra-ui/react';
 import { useRouter } from 'next/router';
 import { useState } from 'react';
+import { FaUser } from 'react-icons/fa';
 
 import { userStore } from '@/store/user';
 
@@ -45,7 +45,7 @@ function TalentButton() {
         bg={'#6562FF'}
         _hover={{ bg: '#6562FF' }}
         isLoading={!!isLoading}
-        leftIcon={<SearchIcon />}
+        leftIcon={<FaUser />}
         loadingText="Redirecting..."
         onClick={() => checkTalent()}
       >

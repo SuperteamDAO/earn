@@ -424,7 +424,6 @@ interface GrantsProps {
   logo?: string;
   rewardAmount?: number;
   token?: string;
-  link?: string;
   slug: string;
 }
 export const GrantsCard = ({
@@ -433,7 +432,6 @@ export const GrantsCard = ({
   rewardAmount,
   sponsorName,
   token,
-  link,
   slug,
 }: GrantsProps) => {
   const router = useRouter();
@@ -512,7 +510,7 @@ export const GrantsCard = ({
             </Flex>
           </Flex>
           <Link
-            href={link ?? '#'}
+            href={`/listings/grants/${slug}` ?? '#'}
             isExternal
             onClick={() => {
               Mixpanel.track('grant_clicked', {

@@ -86,6 +86,7 @@ const Grants = ({ slug }: GrantsDetailsProps) => {
               flexDir={['column-reverse', 'column-reverse', 'row', 'row']}
               gap={4}
               maxW={'7xl'}
+              minH={'100vh'}
               mt={10}
               mx={'auto'}
             >
