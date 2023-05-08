@@ -337,7 +337,7 @@ export const skillSubSkillMap = {
       value: 'Social Media',
     },
   ],
-  other: [
+  Other: [
     {
       label: 'Data Analytics',
       value: 'Data Analytics',
@@ -789,7 +789,11 @@ export const CountryList: string[] = [
 export const CommunityList: string[] = [
   'LamportDAO',
   "Grape / Dean's List",
-  'Superteam',
+  'Superteam India',
+  'Superteam Mexico',
+  'Superteam Vietnam',
+  'Superteam Germany',
+  'Superteam Turkey',
   'SuperWomenDao',
   'DeveloperDAO',
   'Metacamp',
@@ -820,9 +824,9 @@ export const web3Exp = [
 
 export const workExp = [
   '0 Years',
-  '>2 Years',
+  '<2 Years',
   '2 to 5 Years',
   '5 to 9 Years',
-  '<9 Years',
+  '>9 Years',
 ];
 export const workType = ['Freelance', 'Fulltime', 'Internship'];

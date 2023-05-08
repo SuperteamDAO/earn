@@ -86,6 +86,7 @@ const Grants = ({ slug }: GrantsDetailsProps) => {
               flexDir={['column-reverse', 'column-reverse', 'row', 'row']}
               gap={4}
               maxW={'7xl'}
+              minH={'100vh'}
               mt={10}
               mx={'auto'}
             >
@@ -121,10 +122,10 @@ const Grants = ({ slug }: GrantsDetailsProps) => {
                   </Box>
                   <VStack align={'start'}>
                     <Text color={'gray.600'} fontSize={'lg'} fontWeight={500}>
-                      Upto ${(grants.rewardAmount || 0).toLocaleString()}`
+                      Upto ${(grants.rewardAmount || 0).toLocaleString()}
                     </Text>
                     <Text mt={'0px !important'} color={'gray.500'}>
-                      Check Size
+                      Per Grant
                     </Text>
                   </VStack>
                 </HStack>

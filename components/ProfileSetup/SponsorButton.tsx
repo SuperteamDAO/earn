@@ -1,8 +1,8 @@
-import { AddIcon } from '@chakra-ui/icons';
 import { Alert, AlertIcon, Button } from '@chakra-ui/react';
 import axios from 'axios';
 import { useRouter } from 'next/router';
 import { useState } from 'react';
+import { BsBriefcaseFill } from 'react-icons/bs';
 
 import { SponsorStore } from '@/store/sponsor';
 import { userStore } from '@/store/user';
@@ -52,11 +52,11 @@ function SponsorButton() {
         bg={'#6562FF'}
         _hover={{ bg: '#6562FF' }}
         isLoading={!!isLoading}
-        leftIcon={<AddIcon />}
+        leftIcon={<BsBriefcaseFill />}
         loadingText="Redirecting..."
         onClick={() => checkSponsor()}
       >
-        List your Opportunity
+        Make Your Sponsor Profile
       </Button>
     </>
   );
