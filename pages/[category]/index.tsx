@@ -151,6 +151,7 @@ function CategoryHomePage({ category }: Props) {
               listings?.grants?.map((grant) => {
                 return (
                   <GrantsCard
+                    slug={grant.slug}
                     sponsorName={grant?.sponsor?.name}
                     logo={grant?.sponsor?.logo}
                     key={grant?.id}

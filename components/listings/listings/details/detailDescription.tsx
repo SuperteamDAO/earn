@@ -85,17 +85,18 @@ export const DetailDescription = ({ skills, description }: Props) => {
               bottom={0}
               alignItems={'start'}
               justifyContent={'center'}
-              display={'flex'}
+              display={show ? 'none !important' : 'flex'}
               w={'full'}
-              h={'50%'}
+              h={show ? '0' : '50%'}
               bg={
                 show
-                  ? 'transparent'
+                  ? 'none'
                   : 'linear-gradient(180deg, white 0%, rgba(255, 255, 255, 0.57) 100%)'
               }
               transform={'matrix(1, 0, 0, -1, 0, 0);'}
             >
               <Button
+                display={show ? 'none' : 'flex'}
                 w={'12rem'}
                 mt={-3}
                 color={'brand.slate.400'}

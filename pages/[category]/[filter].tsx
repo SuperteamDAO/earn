@@ -156,6 +156,7 @@ function CategoryPage({ category, filter }: Props) {
                     sponsorName={grant?.sponsor?.name}
                     logo={grant?.sponsor?.logo}
                     key={grant?.id}
+                    slug={grant.slug}
                     rewardAmount={grant?.rewardAmount}
                     token={grant?.token}
                     title={grant?.title}

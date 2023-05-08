@@ -49,7 +49,7 @@ function TalentButton() {
         loadingText="Redirecting..."
         onClick={() => checkTalent()}
       >
-        Search for Opportunities
+        Make Your Talent Profile
       </Button>
     </>
   );

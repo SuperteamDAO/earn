@@ -97,11 +97,10 @@ export const SubmissionModal = ({
         <ModalCloseButton />
         <VStack align={'start'} gap={3} pb={6} px={6}>
           <Box>
-            <Text mb={2} color={'brand.slate.500'} fontSize="sm">
+            <Text mb={1} color={'brand.slate.500'} fontSize="sm">
               {isPermissioned
                 ? `This is a permissioned bounty - which means only the applicant that the sponsor will select will be eligible to work on this bounty`
-                : `We can't wait to see what you've created! Winners will receive
-              prizes as well as instant admission to our DAO.`}
+                : `We can't wait to see what you've created!`}
             </Text>
             <Text color={'brand.slate.500'} fontSize="sm">
               {!!isPermissioned &&
