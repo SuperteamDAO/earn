@@ -125,7 +125,7 @@ const Grants = ({ slug }: GrantsDetailsProps) => {
                       Upto ${(grants.rewardAmount || 0).toLocaleString()}
                     </Text>
                     <Text mt={'0px !important'} color={'gray.500'}>
-                      Check Size
+                      Per Grant
                     </Text>
                   </VStack>
                 </HStack>
