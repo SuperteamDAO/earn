@@ -122,7 +122,7 @@ const Grants = ({ slug }: GrantsDetailsProps) => {
                   </Box>
                   <VStack align={'start'}>
                     <Text color={'gray.600'} fontSize={'lg'} fontWeight={500}>
-                      Upto ${(grants.rewardAmount || 0).toLocaleString()}`
+                      Upto ${(grants.rewardAmount || 0).toLocaleString()}
                     </Text>
                     <Text mt={'0px !important'} color={'gray.500'}>
                       Check Size
