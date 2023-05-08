@@ -75,7 +75,8 @@ function DetailDescription({ skills, description }: Props) {
             justifyContent={'center'}
             display={'flex'}
             w={'full'}
-            h={'50%'}
+            h={show ? '0' : '50%'}
+            mx={'auto'}
             bg={
               show
                 ? 'transparent'

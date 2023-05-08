@@ -56,7 +56,7 @@ function SponsorButton() {
         loadingText="Redirecting..."
         onClick={() => checkSponsor()}
       >
-        List your Opportunity
+        Make Your Sponsor Profile
       </Button>
     </>
   );
