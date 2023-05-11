@@ -64,7 +64,7 @@ export const tokenList = [
     tokenName: 'STEP',
     mintAddress: '',
     address: '',
-    icon: 'https://s2.coinmarketcap.com/static/img/coins/32x32/18069.png',
+    icon: 'https://assets.coingecko.com/coins/images/14988/small/step.png?1619274762',
   },
   {
     tokenName: 'mSOL',
