@@ -95,7 +95,14 @@ export const SubmissionModal = ({
       <ModalContent>
         <ModalHeader color="brand.slate.800">Bounty Submission</ModalHeader>
         <ModalCloseButton />
-        <VStack align={'start'} gap={3} pb={6} px={6}>
+        <VStack
+          align={'start'}
+          gap={3}
+          overflow={'scroll'}
+          h={'50rem'}
+          pb={6}
+          px={6}
+        >
           <Box>
             <Text mb={1} color={'brand.slate.500'} fontSize="sm">
               {isPermissioned
