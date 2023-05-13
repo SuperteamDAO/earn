@@ -19,6 +19,7 @@ import type { UserStoreType } from '@/components/Talent/types';
 import WelcomeMessage from '@/components/Talent/WelcomeMessage';
 import YourLinks from '@/components/Talent/YourLinks';
 import YourWork from '@/components/Talent/YourWork';
+import type { User } from '@/interface/user';
 import { Default } from '@/layouts/Default';
 import { Meta } from '@/layouts/Meta';
 
@@ -210,7 +211,7 @@ const SuccessScreen = () => {
         </Text>
       </VStack>
       <HStack gap={'1.25rem'} w={'fit-content'} mt={'66px'} mx={'auto'}>
-        <TalentBio data={form} successPage={true} />
+        <TalentBio user={form as User} successPage={true} />
         <Flex
           align={'center'}
           direction={'column'}

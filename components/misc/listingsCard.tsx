@@ -425,16 +425,16 @@ interface GrantsProps {
   rewardAmount?: number;
   token?: string;
   slug: string;
+  short_description?: string;
 }
 export const GrantsCard = ({
   title,
   logo,
   rewardAmount,
   sponsorName,
-  token,
   slug,
+  short_description,
 }: GrantsProps) => {
-  const router = useRouter();
   const [isMobile] = useMediaQuery('(max-width: 768px)');
   return (
     <>
@@ -483,29 +483,15 @@ export const GrantsCard = ({
               >
                 {sponsorName}
               </Text>
-              {!!token && (
-                <Flex align={'center'}>
-                  <Image
-                    w={4}
-                    h={4}
-                    mr={1}
-                    alt="token"
-                    rounded="full"
-                    src={
-                      tokenList.find((e) => e.tokenName === token)?.icon ||
-                      `${router.basePath}/assets/icons/dollar.svg}`
-                    }
-                  />
-                  {rewardAmount && (
-                    <Text
-                      mr={3}
-                      color={'brand.slate.500'}
-                      fontSize={['xs', 'xs', 'sm', 'sm']}
-                    >
-                      {rewardAmount.toLocaleString()}
-                    </Text>
-                  )}
-                </Flex>
+
+              {rewardAmount && (
+                <Text
+                  mr={3}
+                  color={'brand.slate.500'}
+                  fontSize={['xs', 'xs', 'sm', 'sm']}
+                >
+                  {short_description}
+                </Text>
               )}
             </Flex>
           </Flex>
