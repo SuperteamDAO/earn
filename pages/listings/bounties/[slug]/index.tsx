@@ -66,6 +66,7 @@ function BountyDetails({ slug }: BountyDetailsProps) {
             title={bounty?.title ?? ''}
             sponsor={bounty?.sponsor}
             poc={bounty?.poc}
+            slug={bounty?.slug}
           />
           <HStack
             align={['center', 'center', 'start', 'start']}

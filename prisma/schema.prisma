@@ -123,7 +123,7 @@ model Submission {
   link               String?
   tweet              String?
   eligibilityAnswers Json?
-  likes              Int         @default(0)
+  likes              Json?       @default(dbgenerated("[]"))
   userId             String
   user               User        @relation(fields: [userId], references: [id])
   listingType        ListingType @default(BOUNTY)
