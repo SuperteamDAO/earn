@@ -99,7 +99,7 @@ export const SubmissionModal = ({
           align={'start'}
           gap={3}
           overflow={'scroll'}
-          h={'50rem'}
+          maxH={'50rem'}
           pb={6}
           px={6}
         >

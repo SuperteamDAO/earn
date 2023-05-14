@@ -447,6 +447,10 @@ function DetailSideCard({
             ) : (
               <Button
                 w="full"
+                _hover={{
+                  bg: 'brand.purple',
+                }}
+                isDisabled={Date.now() > Number(moment(endingTime).format('x'))}
                 isLoading={isUserSubmissionLoading}
                 loadingText={'Checking Submission...'}
                 onClick={() => handleSubmit()}
