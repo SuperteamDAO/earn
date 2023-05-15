@@ -16,8 +16,7 @@ model Jobs {
   title         String
   slug          String   @unique
   description   String?  @db.Text
-  skills        String?
-  subskills     String?
+  skills        Json?
   deadline      String?
   source        Source   @default(NATIVE)
   active        Boolean  @default(true)
@@ -47,8 +46,6 @@ model Bounties {
   title           String
   slug            String     @unique
   description     String?    @db.Text
-  skills          String?
-  subSkills       String?
   deadline        DateTime?
   eligibility     Json?
   status          status     @default(OPEN)
@@ -69,6 +66,7 @@ model Bounties {
   isArchived      Boolean    @default(false)
   createdAt       DateTime   @default(now())
   updatedAt       DateTime   @updatedAt
+  skills          Json?
 
   @@index([id, slug])
   @@index([sponsorId])
@@ -97,8 +95,7 @@ model Grants {
   slug             String   @unique
   description      String?  @db.Text
   shortDescription String?  @db.VarChar(1000)
-  skills           String?
-  subSkills        String?
+  skills           Json?
   token            String?
   rewardAmount     Int?
   link             String?
@@ -191,8 +188,7 @@ model User {
   role             SuperRole      @default(USER)
   totalEarnedInUSD Int            @default(0)
   isTalentFilled   Boolean        @default(false)
-  skills           String?
-  subSkills        String?
+  skills           Json?
   interests        String?
   bio              String?
   twitter          String?

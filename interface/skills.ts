@@ -56,4 +56,9 @@ type Skills = {
   main: MainSkills[];
   sub: SubSkills[];
 };
-export type { MainSkills, Skills, SubSkills };
+type SkillMap = {
+  mainskill: MainSkills;
+  color: string;
+};
+export { MainSkills, SubSkills };
+export type { SkillMap, Skills };
