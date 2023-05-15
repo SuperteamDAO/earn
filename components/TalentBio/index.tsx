@@ -124,7 +124,7 @@ function TalentBio({
           </Button>
         </a>
       ) : (
-        <a style={{ textDecoration: 'none' }} href={`mailto:${user.email}`}>
+        <a style={{ textDecoration: 'none' }} href={`mailto:${user?.email}`}>
           <Button w={'full'} mt={'1.575rem'} color={'white'} bg={'#6562FF'}>
             Get in Touch
           </Button>

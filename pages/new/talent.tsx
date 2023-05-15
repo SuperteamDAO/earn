@@ -25,7 +25,6 @@ import { Meta } from '@/layouts/Meta';
 
 import { Steps } from '../../components/misc/steps';
 import TalentBio from '../../components/TalentBio';
-// layouts
 
 const useFormStore = create<UserStoreType>()((set) => ({
   form: {
