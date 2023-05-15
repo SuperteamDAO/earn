@@ -60,12 +60,14 @@ function BountyDetails({ slug }: BountyDetailsProps) {
       {!isLoading && !error && !!bounty?.id && (
         <>
           <ListingHeader
+            type={bounty.type}
             id={bounty?.id}
             status={bounty?.status}
             deadline={bounty?.deadline}
             title={bounty?.title ?? ''}
             sponsor={bounty?.sponsor}
             poc={bounty?.poc}
+            slug={bounty?.slug}
           />
           <HStack
             align={['center', 'center', 'start', 'start']}

@@ -1,14 +1,17 @@
 /* eslint-disable no-nested-ternary */
 import {
   Box,
+  Flex,
   Heading,
   HStack,
   IconButton,
   Image,
+  Link,
   Text,
   useDisclosure,
   VStack,
 } from '@chakra-ui/react';
+import type { BountyType } from '@prisma/client';
 import moment from 'moment';
 import { useRouter } from 'next/router';
 import React from 'react';
@@ -28,9 +31,19 @@ interface Bounty {
   isFeatured?: string;
   sponsor?: SponsorType | undefined;
   poc?: User;
+  slug?: string;
+  type?: BountyType;
 }
 
-function ListingHeader({ title, status, deadline, sponsor, poc }: Bounty) {
+function ListingHeader({
+  title,
+  status,
+  deadline,
+  sponsor,
+  poc,
+  type,
+  slug,
+}: Bounty) {
   const router = useRouter();
   const sub: any[] = [];
   const { isOpen, onClose, onOpen } = useDisclosure();
@@ -171,6 +184,76 @@ function ListingHeader({ title, status, deadline, sponsor, poc }: Bounty) {
           </HStack>
         )}
       </VStack>
+      {router.asPath.includes('bounties') && (
+        <Flex
+          align={'center'}
+          w={'full'}
+          h={10}
+          borderTop={'1px solid'}
+          borderTopColor={'gray.300'}
+        >
+          <HStack
+            align="center"
+            justifyContent="start"
+            gap={10}
+            w={'full'}
+            maxW={'7xl'}
+            h={'full'}
+            mx={'auto'}
+            my={'auto'}
+            px={3}
+          >
+            <Link
+              alignItems="center"
+              justifyContent="center"
+              display="flex"
+              h={'full'}
+              color="gray.800"
+              fontWeight={500}
+              textDecoration="none"
+              borderBottom="2px solid"
+              borderBottomColor={
+                !router.asPath.includes('submission')
+                  ? 'brand.purple'
+                  : 'transparent'
+              }
+              _hover={{
+                textDecoration: 'none',
+                borderBottom: '2px solid',
+                borderBottomColor: 'brand.purple',
+              }}
+              href={`/listings/bounties/${slug}`}
+            >
+              Details
+            </Link>
+            {type !== 'permissioned' && (
+              <Link
+                alignItems="center"
+                justifyContent="center"
+                display="flex"
+                h={'full'}
+                color="gray.800"
+                fontWeight={500}
+                textDecoration="none"
+                borderBottom="2px solid"
+                borderBottomColor={
+                  router.asPath.includes('submission')
+                    ? 'brand.purple'
+                    : 'transparent'
+                }
+                _hover={{
+                  textDecoration: 'none',
+                  borderBottom: '2px solid',
+                  borderBottomColor: 'brand.purple',
+                }}
+                href={`/listings/bounties/${slug}/submission`}
+              >
+                Submissions
+              </Link>
+            )}
+          </HStack>
+        </Flex>
+      )}
     </VStack>
   );
 }
