@@ -4,6 +4,8 @@ import type { QuestionType } from '@/components/listings/bounty/questions/builde
 import type { SponsorType } from '@/interface/sponsor';
 import type { User } from '@/interface/user';
 
+import type { Skills } from './skills';
+
 interface Eligibility {
   order: number;
   question: string;
@@ -26,8 +28,7 @@ interface Bounty {
   slug: string;
   description?: string;
   applicationLink?: string;
-  skills?: string;
-  subSkills?: string;
+  skills?: Skills;
   deadline?: string;
   eligibility?: Eligibility[];
   status?: BountyStatus;

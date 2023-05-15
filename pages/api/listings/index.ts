@@ -14,7 +14,7 @@ export default async function user(req: NextApiRequest, res: NextApiResponse) {
     jobs: [],
   };
   const skillsFilter = filter
-    ? { skills: { contains: filter.split(',')[0] } }
+    ? { skills: { string_contains: filter.split(',')[0] } }
     : {};
   try {
     if (!category || category === 'all' || category === 'bounties') {
@@ -29,6 +29,7 @@ export default async function user(req: NextApiRequest, res: NextApiResponse) {
           },
           ...skillsFilter,
         },
+
         take,
         orderBy: {
           deadline: 'asc',
