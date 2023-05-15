@@ -20,7 +20,7 @@ export const Submissions = ({ submissions, endTime }: Props) => {
         minH={'100vh'}
         mt={10}
       >
-        {Number(moment(endTime).format('x')) > Date.now() ? (
+        {Number(moment(endTime).format('x')) < Date.now() ? (
           <>
             <VStack align={'start'} w={'full'} maxW={'7xl'} mx="auto">
               <Flex gap={3} ml={5}>

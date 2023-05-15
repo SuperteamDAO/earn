@@ -16,7 +16,7 @@ export default async function user(req: NextApiRequest, res: NextApiResponse) {
       include: { sponsor: true, poc: true },
     });
 
-    if (Number(moment(result?.deadline).format('x')) < Date.now()) {
+    if (Number(moment(result?.deadline).format('x')) > Date.now()) {
       res.status(200).json({
         bounty: result,
         submission: [],
