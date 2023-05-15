@@ -156,7 +156,7 @@ function CategoryHomePage({ category }: Props) {
                     logo={grant?.sponsor?.logo}
                     key={grant?.id}
                     rewardAmount={grant?.rewardAmount}
-                    token={grant?.token}
+                    short_description={grant?.shortDescription}
                     title={grant?.title}
                   />
                 );
