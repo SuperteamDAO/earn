@@ -211,7 +211,7 @@ const SuccessScreen = () => {
         </Text>
       </VStack>
       <HStack gap={'1.25rem'} w={'fit-content'} mt={'66px'} mx={'auto'}>
-        <TalentBio user={form as User} successPage={true} />
+        <TalentBio user={form as unknown as User} successPage={true} />
         <Flex
           align={'center'}
           direction={'column'}
