@@ -60,6 +60,7 @@ function BountyDetails({ slug }: BountyDetailsProps) {
       {!isLoading && !error && !!bounty?.id && (
         <>
           <ListingHeader
+            type={bounty.type}
             id={bounty?.id}
             status={bounty?.status}
             deadline={bounty?.deadline}

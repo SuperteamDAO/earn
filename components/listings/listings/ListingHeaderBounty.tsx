@@ -11,6 +11,7 @@ import {
   useDisclosure,
   VStack,
 } from '@chakra-ui/react';
+import type { BountyType } from '@prisma/client';
 import moment from 'moment';
 import { useRouter } from 'next/router';
 import React from 'react';
@@ -31,6 +32,7 @@ interface Bounty {
   sponsor?: SponsorType | undefined;
   poc?: User;
   slug?: string;
+  type?: BountyType;
 }
 
 function ListingHeader({
@@ -39,6 +41,7 @@ function ListingHeader({
   deadline,
   sponsor,
   poc,
+  type,
   slug,
 }: Bounty) {
   const router = useRouter();
@@ -219,33 +222,35 @@ function ListingHeader({
                 borderBottom: '2px solid',
                 borderBottomColor: 'brand.purple',
               }}
-              href={''}
+              href={`/listings/bounties/${slug}`}
             >
               Details
             </Link>
-            <Link
-              alignItems="center"
-              justifyContent="center"
-              display="flex"
-              h={'full'}
-              color="gray.800"
-              fontWeight={500}
-              textDecoration="none"
-              borderBottom="2px solid"
-              borderBottomColor={
-                router.asPath.includes('submission')
-                  ? 'brand.purple'
-                  : 'transparent'
-              }
-              _hover={{
-                textDecoration: 'none',
-                borderBottom: '2px solid',
-                borderBottomColor: 'brand.purple',
-              }}
-              href={`/listings/bounties/${slug}/submission`}
-            >
-              Submissions
-            </Link>
+            {type !== 'permissioned' && (
+              <Link
+                alignItems="center"
+                justifyContent="center"
+                display="flex"
+                h={'full'}
+                color="gray.800"
+                fontWeight={500}
+                textDecoration="none"
+                borderBottom="2px solid"
+                borderBottomColor={
+                  router.asPath.includes('submission')
+                    ? 'brand.purple'
+                    : 'transparent'
+                }
+                _hover={{
+                  textDecoration: 'none',
+                  borderBottom: '2px solid',
+                  borderBottomColor: 'brand.purple',
+                }}
+                href={`/listings/bounties/${slug}/submission`}
+              >
+                Submissions
+              </Link>
+            )}
           </HStack>
         </Flex>
       )}

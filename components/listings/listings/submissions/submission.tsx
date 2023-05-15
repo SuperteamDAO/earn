@@ -15,8 +15,9 @@ export const Submissions = ({ submissions, endTime }: Props) => {
     <>
       <VStack
         align={['center', 'center', 'start', 'start']}
-        justify={'center'}
+        justify={'start'}
         w={'full'}
+        minH={'100vh'}
         mt={10}
       >
         {Number(moment(endTime).format('x')) > Date.now() ? (

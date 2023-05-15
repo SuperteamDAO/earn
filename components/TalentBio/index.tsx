@@ -1,6 +1,5 @@
 import { Avatar, Box, Button, Flex, Image, Text } from '@chakra-ui/react';
-
-import type { User } from '@/interface/user';
+import type { User } from '@prisma/client';
 
 type ChipType = {
   icon: string;
@@ -88,7 +87,7 @@ function TalentBio({
         <Avatar
           name={`${user?.firstName}${user?.lastName}`}
           size="lg"
-          src={user?.photo}
+          src={user?.photo as string}
         />
         <Box ml={'21'}>
           <Text fontSize={'md'} fontWeight={'600'}>
@@ -147,7 +146,7 @@ function TalentBio({
                 w={6}
                 h={6}
                 opacity={!ele.link ? '0.3' : ''}
-                cursor={ele.link && 'pointer'}
+                cursor={ele.link! && 'pointer'}
                 objectFit="contain"
                 alt=""
                 filter={!ele.link ? 'grayscale(80%)' : ''}

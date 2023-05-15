@@ -1,3 +1,5 @@
+import type { BountyType } from '@prisma/client';
+
 import type { QuestionType } from '@/components/listings/bounty/questions/builder';
 import type { SponsorType } from '@/interface/sponsor';
 import type { User } from '@/interface/user';
@@ -41,6 +43,7 @@ interface Bounty {
   poc?: User;
   source?: string;
   sourceDetails?: string;
+  type: BountyType;
 }
 
 export type { Bounty, BountyStatus, Eligibility, Rewards };

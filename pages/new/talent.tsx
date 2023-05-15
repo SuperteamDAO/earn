@@ -11,6 +11,7 @@ import {
   Text,
   VStack,
 } from '@chakra-ui/react';
+import type { User } from '@prisma/client';
 import React, { Fragment, useState } from 'react';
 import { create } from 'zustand';
 
@@ -19,7 +20,6 @@ import type { UserStoreType } from '@/components/Talent/types';
 import WelcomeMessage from '@/components/Talent/WelcomeMessage';
 import YourLinks from '@/components/Talent/YourLinks';
 import YourWork from '@/components/Talent/YourWork';
-import type { User } from '@/interface/user';
 import { Default } from '@/layouts/Default';
 import { Meta } from '@/layouts/Meta';
 

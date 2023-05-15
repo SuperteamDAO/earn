@@ -4,9 +4,8 @@ import type { NextApiRequest, NextApiResponse } from 'next';
 import { prisma } from '@/prisma';
 
 export default async function user(req: NextApiRequest, res: NextApiResponse) {
-  const params = req.query;
-
-  const slug = params.slug as string;
+  const { submissionId, slug } = req.body;
+  console.log(submissionId, slug, '-------');
   try {
     const result = await prisma.bounties.findFirst({
       where: {
@@ -19,15 +18,14 @@ export default async function user(req: NextApiRequest, res: NextApiResponse) {
     if (Number(moment(result?.deadline).format('x')) < Date.now()) {
       res.status(200).json({
         bounty: result,
-        submission: [],
+        submission: null,
       });
       return;
     }
 
-    const submission = await prisma.submission.findMany({
+    const submission = await prisma.submission.findUnique({
       where: {
-        listingType: 'BOUNTY',
-        listingId: result?.id,
+        id: submissionId,
       },
       include: {
         user: true,
