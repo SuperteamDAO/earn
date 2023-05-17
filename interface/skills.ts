@@ -107,7 +107,7 @@ export const SkillList: {
       'Game Design',
       'Presentation Design',
     ],
-    variations: ['Desgin'],
+    variations: ['Design'],
   },
   {
     mainskill: 'Mobile',

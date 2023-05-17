@@ -2,7 +2,7 @@ import dayjs from 'dayjs';
 import relativeTime from 'dayjs/plugin/relativeTime';
 import type { NextApiRequest, NextApiResponse } from 'next';
 
-import type { Skills } from '@/interface/skills';
+import type { MainSkills, Skills } from '@/interface/skills';
 import { SkillList } from '@/interface/skills';
 import { prisma } from '@/prisma';
 
@@ -20,9 +20,22 @@ export default async function user(_req: NextApiRequest, res: NextApiResponse) {
       const skillNumber: string[] = [];
       element.skills?.split(',').forEach((skill) => {
         const skills = SkillList.find((e) => e.variations.includes(skill));
+        const subSkillCheck: MainSkills[] = [];
+        SkillList.forEach((el) => {
+          el.subskills.forEach((e) => {
+            if (e === skill && !skillNumber.includes(el.mainskill)) {
+              subSkillCheck.push(el.mainskill);
+            }
+          });
+        });
         if (skills && !skillNumber.includes(skills.mainskill)) {
           skillNumber.push(skills.mainskill);
+        } else if (skill && subSkillCheck.length > 0) {
+          subSkillCheck.forEach((e) => {
+            skillNumber.push(e);
+          });
         }
+
         newSkills.push({
           id: element.id,
           skill: skillNumber,
