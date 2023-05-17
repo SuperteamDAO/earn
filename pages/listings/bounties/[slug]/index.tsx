@@ -60,12 +60,14 @@ function BountyDetails({ slug }: BountyDetailsProps) {
       {!isLoading && !error && !!bounty?.id && (
         <>
           <ListingHeader
+            type={bounty.type}
             id={bounty?.id}
             status={bounty?.status}
             deadline={bounty?.deadline}
             title={bounty?.title ?? ''}
             sponsor={bounty?.sponsor}
             poc={bounty?.poc}
+            slug={bounty?.slug}
           />
           <HStack
             align={['center', 'center', 'start', 'start']}
@@ -78,14 +80,14 @@ function BountyDetails({ slug }: BountyDetailsProps) {
           >
             <VStack gap={8} w={['22rem', '22rem', 'full', 'full']} mt={10}>
               <DetailDescription
-                skills={bounty?.skills}
+                skills={bounty?.skills?.map((e) => e.skills)}
                 description={bounty?.description}
               />
               <Comments refId={bounty?.id ?? ''} refType="BOUNTY" />
             </VStack>
             <DetailSideCard
               id={bounty?.id || ''}
-              token={bounty?.token as string}
+              token={bounty?.token ?? ''}
               eligibility={bounty?.eligibility}
               endingTime={bounty?.deadline ?? ''}
               prizeList={bounty?.rewards}

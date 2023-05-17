@@ -11,6 +11,7 @@ import {
   Text,
   VStack,
 } from '@chakra-ui/react';
+import type { User } from '@prisma/client';
 import React, { Fragment, useState } from 'react';
 import { create } from 'zustand';
 
@@ -24,7 +25,6 @@ import { Meta } from '@/layouts/Meta';
 
 import { Steps } from '../../components/misc/steps';
 import TalentBio from '../../components/TalentBio';
-// layouts
 
 const useFormStore = create<UserStoreType>()((set) => ({
   form: {
@@ -210,7 +210,7 @@ const SuccessScreen = () => {
         </Text>
       </VStack>
       <HStack gap={'1.25rem'} w={'fit-content'} mt={'66px'} mx={'auto'}>
-        <TalentBio data={form} successPage={true} />
+        <TalentBio user={form as unknown as User} successPage={true} />
         <Flex
           align={'center'}
           direction={'column'}

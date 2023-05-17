@@ -158,8 +158,8 @@ function CategoryPage({ category, filter }: Props) {
                     key={grant?.id}
                     slug={grant.slug}
                     rewardAmount={grant?.rewardAmount}
-                    token={grant?.token}
                     title={grant?.title}
+                    short_description={grant?.shortDescription}
                   />
                 );
               })}

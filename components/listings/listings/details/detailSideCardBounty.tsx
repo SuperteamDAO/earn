@@ -501,7 +501,9 @@ function DetailSideCard({
           <VerticalStep
             currentStep={submissionStatus + 1}
             thisStep={3}
-            sublabel={`On ${moment(endingTime).format('Do MMM, YY')}`}
+            sublabel={`Around ${moment(endingTime)
+              .add(8, 'd')
+              .format('Do MMM, YY')}`}
             label={'Winner Announced'}
           />
         </VStack>

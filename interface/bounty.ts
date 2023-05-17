@@ -1,6 +1,10 @@
+import type { BountyType } from '@prisma/client';
+
 import type { QuestionType } from '@/components/listings/bounty/questions/builder';
 import type { SponsorType } from '@/interface/sponsor';
 import type { User } from '@/interface/user';
+
+import type { Skills } from './skills';
 
 interface Eligibility {
   order: number;
@@ -24,8 +28,8 @@ interface Bounty {
   slug: string;
   description?: string;
   applicationLink?: string;
-  skills?: string;
-  subSkills?: string;
+  skills?: Skills;
+  // newSkills?: Skills;
   deadline?: string;
   eligibility?: Eligibility[];
   status?: BountyStatus;
@@ -41,6 +45,7 @@ interface Bounty {
   poc?: User;
   source?: string;
   sourceDetails?: string;
+  type: BountyType;
 }
 
 export type { Bounty, BountyStatus, Eligibility, Rewards };

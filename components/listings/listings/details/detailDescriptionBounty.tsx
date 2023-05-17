@@ -3,17 +3,16 @@ import parse from 'html-react-parser';
 import React, { useState } from 'react';
 import { BiDownArrowAlt, BiUpArrowAlt } from 'react-icons/bi';
 
-import { SkillColor } from '@/utils/constants';
+import type { MainSkills } from '@/interface/skills';
+import { skillMap } from '@/utils/constants';
 
 interface Props {
-  skills?: string;
+  skills?: MainSkills[];
   description?: string;
 }
 
 function DetailDescription({ skills, description }: Props) {
   const [show, setShow] = useState<boolean>(false);
-
-  const skillsList = (skills || '').split(', ')?.splice(0, 5);
 
   return (
     <VStack w={'full'} p={5} bg={'white'} rounded={'xl'}>
@@ -28,16 +27,19 @@ function DetailDescription({ skills, description }: Props) {
           Skills Needed
         </Text>
         <HStack flexWrap={'wrap'} gap={3}>
-          {skillsList?.map((skill) => (
+          {skills?.map((skill) => (
             <Box
               key={skill}
               m={'0px !important'}
               px={4}
               py={1}
-              bg={`${SkillColor[skill as any]}1A`}
+              bg={`${skillMap.find((e) => e.mainskill === skill)?.color}1A`}
               rounded={'md'}
             >
-              <Text color={SkillColor[skill as any]} fontSize={'sm'}>
+              <Text
+                color={skillMap.find((e) => e.mainskill === skill)?.color}
+                fontSize={'sm'}
+              >
                 {skill}
               </Text>
             </Box>

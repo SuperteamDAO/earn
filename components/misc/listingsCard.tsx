@@ -425,16 +425,16 @@ interface GrantsProps {
   rewardAmount?: number;
   token?: string;
   slug: string;
+  short_description?: string;
 }
 export const GrantsCard = ({
   title,
   logo,
   rewardAmount,
   sponsorName,
-  token,
   slug,
+  short_description,
 }: GrantsProps) => {
-  const router = useRouter();
   const [isMobile] = useMediaQuery('(max-width: 768px)');
   return (
     <>
@@ -483,29 +483,15 @@ export const GrantsCard = ({
               >
                 {sponsorName}
               </Text>
-              {!!token && (
-                <Flex align={'center'}>
-                  <Image
-                    w={4}
-                    h={4}
-                    mr={1}
-                    alt="token"
-                    rounded="full"
-                    src={
-                      tokenList.find((e) => e.tokenName === token)?.icon ||
-                      `${router.basePath}/assets/icons/dollar.svg}`
-                    }
-                  />
-                  {rewardAmount && (
-                    <Text
-                      mr={3}
-                      color={'brand.slate.500'}
-                      fontSize={['xs', 'xs', 'sm', 'sm']}
-                    >
-                      {rewardAmount.toLocaleString()}
-                    </Text>
-                  )}
-                </Flex>
+
+              {rewardAmount && (
+                <Text
+                  mr={3}
+                  color={'brand.slate.500'}
+                  fontSize={['xs', 'xs', 'sm', 'sm']}
+                >
+                  {short_description}
+                </Text>
               )}
             </Flex>
           </Flex>
@@ -544,6 +530,8 @@ type CategoryAssetsType = {
 };
 
 export const CategoryBanner = ({ type }: { type: string }) => {
+  console.log(type, '--type');
+
   const { userInfo } = userStore();
 
   const { talentInfo, setTalentInfo } = TalentStore();
@@ -567,13 +555,13 @@ export const CategoryBanner = ({ type }: { type: string }) => {
       color: '#FEB8A8',
       icon: '/assets/category_assets/icon/content.png',
     },
-    'Frontend Development': {
+    Frontend: {
       bg: `/assets/category_assets/bg/frontend.png`,
       desc: 'If you are a pixel-perfectionist who creates interfaces that users love, check out the earning opportunities below.',
       color: '#FEA8EB',
       icon: '/assets/category_assets/icon/frontend.png',
     },
-    'Backend Development': {
+    Backend: {
       bg: `/assets/category_assets/bg/backend.png`,
       desc: 'Opportunities to build high-performance databases, on and off-chain. ',
       color: '#FEEBA8',
