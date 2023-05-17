@@ -15,6 +15,8 @@ function Port() {
   const [totalLoading, setTotalLoading] = useState(false);
   const [jobsLoading, setJobsLoading] = useState(false);
   const [schemaLoading, setschemaLoading] = useState(false);
+  const [updategrantloading, setUpdateGrantLoading] = useState(false);
+  const [updateuserloading, setUpdateUserLoading] = useState(false);
 
   const portUsers = async () => {
     setUsersLoading(true);
@@ -148,6 +150,34 @@ function Port() {
       setschemaLoading(false);
     }
   };
+  const updateSchemaGrant = async () => {
+    setUpdateGrantLoading(true);
+    try {
+      const schemaData = await axios.get('/api/port/newGrant');
+      console.log(
+        'file: port.tsx:17 ~ porttotalData ~ schemaData:',
+        schemaData.data
+      );
+      setUpdateGrantLoading(false);
+    } catch (e) {
+      console.log('file: port.tsx:16 ~ portBounties ~ e:', e);
+      setUpdateGrantLoading(false);
+    }
+  };
+  const updateSchemaUser = async () => {
+    setUpdateUserLoading(true);
+    try {
+      const schemaData = await axios.get('/api/port/newUser');
+      console.log(
+        'file: port.tsx:17 ~ porttotalData ~ schemaData:',
+        schemaData.data
+      );
+      setUpdateUserLoading(false);
+    } catch (e) {
+      console.log('file: port.tsx:16 ~ portBounties ~ e:', e);
+      setUpdateGrantLoading(false);
+    }
+  };
 
   return (
     <Default
@@ -246,7 +276,27 @@ function Port() {
           onClick={() => updateSchema()}
           variant="solid"
         >
-          Port New Schema
+          Port New Schema Bounty
+        </Button>
+        <Button
+          w="full"
+          mt={4}
+          isLoading={!!updategrantloading}
+          loadingText="Porting..."
+          onClick={() => updateSchemaGrant()}
+          variant="solid"
+        >
+          Port New Schema Grant
+        </Button>
+        <Button
+          w="full"
+          mt={4}
+          isLoading={!!updateuserloading}
+          loadingText="Porting..."
+          onClick={() => updateSchemaUser()}
+          variant="solid"
+        >
+          Port New Schema User
         </Button>
       </Container>
     </Default>

@@ -100,6 +100,7 @@ model Grants {
   shortDescription String?  @db.VarChar(1000)
   skills           String?
   subSkills        String?
+  newSkills        Json?
   token            String?
   rewardAmount     Int?
   link             String?
@@ -194,6 +195,7 @@ model User {
   isTalentFilled   Boolean        @default(false)
   skills           String?
   subSkills        String?
+  newSkills        Json?
   interests        String?
   bio              String?
   twitter          String?
