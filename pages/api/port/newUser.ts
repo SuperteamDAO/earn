@@ -66,28 +66,6 @@ export default async function user(_req: NextApiRequest, res: NextApiResponse) {
           skill: skillNumber,
         });
       }
-      element.skills?.split(',').forEach((skill) => {
-        const skills = SkillList.find((e) => e.variations.includes(skill));
-        const subSkillCheck: MainSkills[] = [];
-        SkillList.forEach((el) => {
-          el.subskills.forEach((e) => {
-            if (e === skill && !skillNumber.includes(el.mainskill)) {
-              subSkillCheck.push(el.mainskill);
-            }
-          });
-        });
-        if (skills && !skillNumber.includes(skills.mainskill)) {
-          skillNumber.push(skills.mainskill);
-        } else if (skill && subSkillCheck.length > 0) {
-          subSkillCheck.forEach((e) => {
-            skillNumber.push(e);
-          });
-        }
-      });
-      newSkills.push({
-        id: element.id,
-        skill: skillNumber,
-      });
 
       // eslint-disable-next-line @typescript-eslint/no-shadow
       newSkills.forEach((element) => {
