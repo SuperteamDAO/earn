@@ -14,6 +14,7 @@ function Port() {
   const [grantsLoading, setGrantsLoading] = useState(false);
   const [totalLoading, setTotalLoading] = useState(false);
   const [jobsLoading, setJobsLoading] = useState(false);
+  const [schemaLoading, setschemaLoading] = useState(false);
 
   const portUsers = async () => {
     setUsersLoading(true);
@@ -133,6 +134,20 @@ function Port() {
       setJobsLoading(false);
     }
   };
+  const updateSchema = async () => {
+    setschemaLoading(true);
+    try {
+      const schemaData = await axios.get('/api/port/newBounty');
+      console.log(
+        'file: port.tsx:17 ~ porttotalData ~ schemaData:',
+        schemaData.data
+      );
+      setschemaLoading(false);
+    } catch (e) {
+      console.log('file: port.tsx:16 ~ portBounties ~ e:', e);
+      setschemaLoading(false);
+    }
+  };
 
   return (
     <Default
@@ -222,6 +237,16 @@ function Port() {
           variant="solid"
         >
           Port Jobs
+        </Button>
+        <Button
+          w="full"
+          mt={4}
+          isLoading={!!schemaLoading}
+          loadingText="Porting..."
+          onClick={() => updateSchema()}
+          variant="solid"
+        >
+          Port New Schema
         </Button>
       </Container>
     </Default>
