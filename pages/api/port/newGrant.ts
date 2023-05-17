@@ -35,11 +35,10 @@ export default async function user(_req: NextApiRequest, res: NextApiResponse) {
             skillNumber.push(e);
           });
         }
-
-        newSkills.push({
-          id: element.id,
-          skill: skillNumber,
-        });
+      });
+      newSkills.push({
+        id: element.id,
+        skill: skillNumber,
       });
 
       // eslint-disable-next-line @typescript-eslint/no-shadow
