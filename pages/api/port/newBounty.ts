@@ -10,11 +10,7 @@ dayjs.extend(relativeTime);
 
 export default async function user(_req: NextApiRequest, res: NextApiResponse) {
   try {
-    const bounties = await prisma.bounties.findMany({
-      where: {
-        status: 'OPEN',
-      },
-    });
+    const bounties = await prisma.bounties.findMany({});
     const updateData: {
       id: string;
       newSkills: Skills;
