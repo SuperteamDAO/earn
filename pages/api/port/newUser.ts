@@ -58,17 +58,17 @@ export default async function user(_req: NextApiRequest, res: NextApiResponse) {
       });
     });
 
-    // updateData.forEach(async (element, i) => {
-    //   await prisma.user.update({
-    //     data: {
-    //       newSkills: element.newSkills,
-    //     },
-    //     where: {
-    //       id: element.id,
-    //     },
-    //   });
-    //   console.log('Successfully udpate', i);
-    // });
+    updateData.forEach(async (element, i) => {
+      await prisma.user.update({
+        data: {
+          newSkills: element.newSkills,
+        },
+        where: {
+          id: element.id,
+        },
+      });
+      console.log('Successfully udpate', i);
+    });
     res.status(200).json(updateData);
   } catch (error) {
     console.log('file: create.ts:29 ~ user ~ error:', error);
