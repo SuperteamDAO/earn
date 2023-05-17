@@ -16,7 +16,7 @@ import { useRouter } from 'next/router';
 import { Default } from '@/layouts/Default';
 import { Meta } from '@/layouts/Meta';
 
-import { DetailDescription } from '../../../components/listings/listings/details/detailDescription';
+import DetailDescription from '../../../components/listings/listings/details/detailDescription';
 import { ListingHeader } from '../../../components/listings/listings/ListingHeader';
 import type { SponsorType } from '../../../interface/sponsor';
 import { findJobs } from '../../../utils/functions';
@@ -55,9 +55,7 @@ const Jobs = () => {
         >
           <HStack w={['22rem', '22rem', 'full', 'full']}>
             <DetailDescription
-              skills={
-                JSON.parse(listingInfo.data?.listing.skills as string) ?? []
-              }
+              skills={[]}
               description={
                 (listingInfo.data?.listing.description as string) ?? ''
               }

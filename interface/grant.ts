@@ -1,14 +1,15 @@
 import type { SponsorType } from '@/interface/sponsor';
 import type { User } from '@/interface/user';
 
+import type { Skills } from './skills';
+
 interface Grant {
   id: string;
   title: string;
   slug: string;
   description?: string;
   shortDescription?: string;
-  skills?: string;
-  subSkills?: string;
+  skills?: Skills;
   token?: string;
   rewardAmount?: number;
   link?: string;

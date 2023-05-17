@@ -4,7 +4,7 @@ import React, { useState } from 'react';
 import { BiDownArrowAlt, BiUpArrowAlt } from 'react-icons/bi';
 
 import type { MainSkills } from '@/interface/skills';
-import { SkillColor } from '@/utils/constants';
+import { skillMap } from '@/utils/constants';
 
 interface Props {
   skills?: MainSkills[];
@@ -33,10 +33,13 @@ function DetailDescription({ skills, description }: Props) {
               m={'0px !important'}
               px={4}
               py={1}
-              bg={`${SkillColor[skill as any]}1A`}
+              bg={`${skillMap.find((e) => e.mainskill === skill)?.color}1A`}
               rounded={'md'}
             >
-              <Text color={SkillColor[skill as any]} fontSize={'sm'}>
+              <Text
+                color={skillMap.find((e) => e.mainskill === skill)?.color}
+                fontSize={'sm'}
+              >
                 {skill}
               </Text>
             </Box>

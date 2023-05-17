@@ -1,64 +1,156 @@
-enum MainSkills {
-  'Frontend',
-  'Backend',
-  'Blockchain',
-  'Design',
-  'Growth',
-  'Content',
-  'Community',
-  'Other',
-  'Mobile',
-  'Fullstack',
-}
-enum SubSkills {
-  'Javascript',
-  'PHP',
-  'Python',
-  'Java',
-  'C++',
-  'C',
-  'Ruby',
-  'Go',
-  'MySQL',
-  'Postgres',
-  'Redux',
-  'MongoDB',
-  'React',
-  'Angular',
-  'Vue',
-  'Android',
-  'iOS',
-  'Rust',
-  'Solidity',
-  'Sway',
-  'Move',
-  'Flutter',
-  'ReactNative',
-  'Data Analytics',
-  'Operations',
-  'Admin',
-  'Community Manager',
-  'Discord Moderator',
-  'Research',
-  'Writing',
-  'Video',
-  'Social Media',
-  'Business Development',
-  'Digital Marketing',
-  'Marketing',
-  'UI/UX Design',
-  'Graphic Design',
-  'Illustration',
-  'Game Design',
-  'Presentation Design',
-}
+type MainSkills =
+  | 'Frontend'
+  | 'Backend'
+  | 'Blockchain'
+  | 'Design'
+  | 'Growth'
+  | 'Content'
+  | 'Community'
+  | 'Other'
+  | 'Mobile'
+  | 'Fullstack';
+
+type SubSkillsType =
+  | 'Javascript'
+  | 'PHP'
+  | 'Python'
+  | 'Java'
+  | 'C++'
+  | 'C'
+  | 'Ruby'
+  | 'Go'
+  | 'MySQL'
+  | 'Postgres'
+  | 'Redux'
+  | 'MongoDB'
+  | 'React'
+  | 'Angular'
+  | 'Android'
+  | 'Vue'
+  | 'iOS'
+  | 'Rust'
+  | 'Solidity'
+  | 'Sway'
+  | 'Move'
+  | 'Flutter'
+  | 'ReactNative'
+  | 'Data Analytics'
+  | 'Operations'
+  | 'Admin'
+  | 'Community Manager'
+  | 'Discord Moderator'
+  | 'Research'
+  | 'Writing'
+  | 'Video'
+  | 'Social Media'
+  | 'Business Development'
+  | 'Digital Marketing'
+  | 'Marketing'
+  | 'UI/UX Design'
+  | 'Graphic Design'
+  | 'Illustration'
+  | 'Game Design'
+  | 'Presentation Design'
+  | 'CPP';
+
 type Skills = {
-  main: MainSkills[];
-  sub: SubSkills[];
-};
+  skills: MainSkills;
+  subskills: SubSkillsType[];
+}[];
 type SkillMap = {
   mainskill: MainSkills;
   color: string;
 };
-export { MainSkills, SubSkills };
-export type { SkillMap, Skills };
+
+export type { MainSkills, SkillMap, Skills };
+
+export const SkillList: {
+  mainskill: MainSkills;
+  subskills: SubSkillsType[];
+  variations: string[];
+}[] = [
+  {
+    mainskill: 'Frontend',
+    subskills: ['React', 'Angular', 'Vue', 'Redux'],
+    variations: ['Frontend', 'Front-End Dev', 'FrontEnd Dev', 'Frontend Dev'],
+  },
+  {
+    mainskill: 'Backend',
+    subskills: [
+      'Javascript',
+      'PHP',
+      'Python',
+      'Java',
+      'C++',
+      'C',
+      'Ruby',
+      'Go',
+      'MySQL',
+      'Postgres',
+      'MongoDB',
+      'React',
+      'Angular',
+      'Vue',
+      'Redux',
+    ],
+    variations: ['Backend', 'Back-End Dev', 'BackEnd Dev', 'Backend Dev'],
+  },
+  {
+    mainskill: 'Design',
+    subskills: [
+      'UI/UX Design',
+      'Graphic Design',
+      'Illustration',
+      'Game Design',
+      'Presentation Design',
+    ],
+    variations: ['Desgin'],
+  },
+  {
+    mainskill: 'Mobile',
+    subskills: ['Android', 'iOS', 'Flutter', 'ReactNative'],
+    variations: ['Mobile Engineer', 'Mobile Dev', 'Mobile Developer'],
+  },
+  {
+    mainskill: 'Fullstack',
+    subskills: [
+      'Javascript',
+      'PHP',
+      'Python',
+      'Java',
+      'C++',
+      'C',
+      'Ruby',
+      'Go',
+      'MySQL',
+      'Postgres',
+      'MongoDB',
+    ],
+    variations: ['Fullstack', 'FullStack', 'FullStack Dev', 'Fullstack Dev'],
+  },
+  {
+    mainskill: 'Blockchain',
+    subskills: ['Rust', 'Solidity', 'Sway', 'Move'],
+    variations: ['Blockchain', 'Blockchain Dev', 'Blockchain Developer'],
+  },
+  {
+    mainskill: 'Content',
+    subskills: ['Research', 'Writing', 'Video', 'Social Media'],
+    variations: ['Content', 'Content Creation'],
+  },
+  {
+    mainskill: 'Growth',
+    subskills: ['Business Development', 'Digital Marketing', 'Marketing'],
+    variations: ['Growth'],
+  },
+  {
+    mainskill: 'Community',
+    subskills: ['Community Manager', 'Discord Moderator'],
+    variations: ['Community'],
+  },
+  {
+    mainskill: 'Other',
+    subskills: ['Data Analytics', 'Operations', 'Admin'],
+    variations: ['other', 'Other'],
+  },
+];

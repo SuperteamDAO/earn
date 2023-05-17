@@ -12,7 +12,7 @@ import axios from 'axios';
 import type { GetServerSideProps } from 'next';
 import React, { useEffect, useState } from 'react';
 
-import { DetailDescription } from '@/components/listings/listings/details/detailDescription';
+import DetailDescription from '@/components/listings/listings/details/detailDescription';
 import { ListingHeader } from '@/components/listings/listings/ListingHeader';
 import ErrorSection from '@/components/shared/EmptySection';
 import LoadingSection from '@/components/shared/LoadingSection';
@@ -92,7 +92,7 @@ const Grants = ({ slug }: GrantsDetailsProps) => {
             >
               <HStack w={['22rem', '22rem', 'full', 'full']}>
                 <DetailDescription
-                  skills={[]}
+                  skills={grants?.skills?.map((e) => e.skills)}
                   description={(grants?.description as string) ?? ''}
                 />
               </HStack>

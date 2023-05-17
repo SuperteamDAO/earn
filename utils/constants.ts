@@ -1,4 +1,4 @@
-import { type SkillMap, MainSkills } from '@/interface/skills';
+import { type SkillMap } from '@/interface/skills';
 
 export const CountryList: string[] = [
   'India',
@@ -256,43 +256,43 @@ export const SkillColor: any = {
 
 export const skillMap: SkillMap[] = [
   {
-    mainskill: MainSkills.Growth,
+    mainskill: 'Growth',
     color: '#16A368',
   },
   {
-    mainskill: MainSkills.Frontend,
+    mainskill: 'Frontend',
     color: '#3E8BFF',
   },
   {
-    mainskill: MainSkills.Backend,
+    mainskill: 'Backend',
     color: '#FF833E',
   },
   {
-    mainskill: MainSkills.Blockchain,
+    mainskill: 'Blockchain',
     color: '#FF3EC9',
   },
   {
-    mainskill: MainSkills.Design,
+    mainskill: 'Design',
     color: '#7E51FF',
   },
   {
-    mainskill: MainSkills.Content,
+    mainskill: 'Content',
     color: '#5EA8BF',
   },
   {
-    mainskill: MainSkills.Community,
+    mainskill: 'Community',
     color: '#F5C723',
   },
   {
-    mainskill: MainSkills.Mobile,
+    mainskill: 'Mobile',
     color: '#7E51FF',
   },
   {
-    mainskill: MainSkills.Fullstack,
+    mainskill: 'Fullstack',
     color: '#16A368',
   },
   {
-    mainskill: MainSkills.Other,
+    mainskill: 'Other',
     color: '#64758B',
   },
 ];

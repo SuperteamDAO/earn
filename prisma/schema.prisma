@@ -16,7 +16,8 @@ model Jobs {
   title         String
   slug          String   @unique
   description   String?  @db.Text
-  skills        Json?
+  skills        String?
+  subskills     String?
   deadline      String?
   source        Source   @default(NATIVE)
   active        Boolean  @default(true)
@@ -46,15 +47,16 @@ model Bounties {
   title           String
   slug            String     @unique
   description     String?    @db.Text
+  skills          Json?
   deadline        DateTime?
   eligibility     Json?
   status          status     @default(OPEN)
+  type            BountyType @default(open)
   token           String
   rewardAmount    Int?
   rewards         Json?
   applicationLink String?
   sponsorId       String
-  type            BountyType @default(open)
   sponsor         Sponsors   @relation(fields: [sponsorId], references: [id])
   pocId           String
   poc             User       @relation("poc", fields: [pocId], references: [id])
@@ -66,7 +68,6 @@ model Bounties {
   isArchived      Boolean    @default(false)
   createdAt       DateTime   @default(now())
   updatedAt       DateTime   @updatedAt
-  skills          Json?
 
   @@index([id, slug])
   @@index([sponsorId])
@@ -121,7 +122,7 @@ model Submission {
   link               String?
   tweet              String?
   eligibilityAnswers Json?
-  likes              Int?        @default(0)
+  likes              Int         @default(0)
   userId             String
   user               User        @relation(fields: [userId], references: [id])
   listingType        ListingType @default(BOUNTY)
@@ -251,6 +252,11 @@ enum status {
   CLOSED
 }
 
+enum BountyType {
+  permissioned
+  open
+}
+
 enum ListingType {
   BOUNTY
   JOB
@@ -261,9 +267,4 @@ enum JobType {
   parttime
   fulltime
   internship
-}
-
-enum BountyType {
-  permissioned
-  open
 }
