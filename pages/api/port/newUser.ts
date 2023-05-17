@@ -19,6 +19,53 @@ export default async function user(_req: NextApiRequest, res: NextApiResponse) {
     users.forEach((element) => {
       const newSkills: { id: string; skill: string[] }[] = [];
       const skillNumber: string[] = [];
+      if (element.skills?.startsWith('[')) {
+        JSON.parse(element.skills!)?.forEach((skill: any) => {
+          const skills = SkillList.find((e) => e.variations.includes(skill));
+          const subSkillCheck: MainSkills[] = [];
+          SkillList.forEach((el) => {
+            el.subskills.forEach((e) => {
+              if (e === skill && !skillNumber.includes(el.mainskill)) {
+                subSkillCheck.push(el.mainskill);
+              }
+            });
+          });
+          if (skills && !skillNumber.includes(skills.mainskill)) {
+            skillNumber.push(skills.mainskill);
+          } else if (skill && subSkillCheck.length > 0) {
+            subSkillCheck.forEach((e) => {
+              skillNumber.push(e);
+            });
+          }
+        });
+        newSkills.push({
+          id: element.id,
+          skill: skillNumber,
+        });
+      } else {
+        element.skills?.split(',').forEach((skill) => {
+          const skills = SkillList.find((e) => e.variations.includes(skill));
+          const subSkillCheck: MainSkills[] = [];
+          SkillList.forEach((el) => {
+            el.subskills.forEach((e) => {
+              if (e === skill && !skillNumber.includes(el.mainskill)) {
+                subSkillCheck.push(el.mainskill);
+              }
+            });
+          });
+          if (skills && !skillNumber.includes(skills.mainskill)) {
+            skillNumber.push(skills.mainskill);
+          } else if (skill && subSkillCheck.length > 0) {
+            subSkillCheck.forEach((e) => {
+              skillNumber.push(e);
+            });
+          }
+        });
+        newSkills.push({
+          id: element.id,
+          skill: skillNumber,
+        });
+      }
       element.skills?.split(',').forEach((skill) => {
         const skills = SkillList.find((e) => e.variations.includes(skill));
         const subSkillCheck: MainSkills[] = [];
