@@ -28,15 +28,6 @@ interface SidebarType {
   earners?: User[];
 }
 
-const listingsType = [
-  'Design',
-  'Growth',
-  'Content',
-  'Frontend Development',
-  'Backend Development',
-  'Contract Development',
-];
-
 function Home(props: IDefaultProps) {
   const router = useRouter();
   const { userInfo } = userStore();
@@ -76,7 +67,18 @@ function Home(props: IDefaultProps) {
       setShowCategoryBanner(false);
     }
   }, [router.asPath, router.query]);
-
+  const Skills = [
+    'Frontend',
+    'Backend',
+    'Blockchain',
+    'Design',
+    'Growth',
+    'Content',
+    'Community',
+    'Other',
+    'Mobile',
+    'Fullstack',
+  ];
   return (
     <Default
       className="bg-white"
@@ -108,10 +110,10 @@ function Home(props: IDefaultProps) {
                 {showCategoryBanner && (
                   <CategoryBanner
                     type={
-                      listingsType.find((type) =>
-                        type
-                          .toLocaleLowerCase()
-                          .includes(router.query.filter as string)
+                      Skills.find(
+                        (type) =>
+                          type.toLocaleLowerCase() ===
+                          router?.query?.filter?.toString().toLocaleLowerCase()
                       ) as string
                     }
                   />

@@ -87,7 +87,7 @@ function BountyDetails({ slug }: BountyDetailsProps) {
             </VStack>
             <DetailSideCard
               id={bounty?.id || ''}
-              token={bounty?.token as string}
+              token={bounty?.token ?? ''}
               eligibility={bounty?.eligibility}
               endingTime={bounty?.deadline ?? ''}
               prizeList={bounty?.rewards}
