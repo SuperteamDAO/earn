@@ -34,7 +34,7 @@ const NavItem = ({ icon, link, isActive, children, ...rest }: NavItemProps) => {
     <Link
       as={NextLink}
       _focus={{ boxShadow: 'none' }}
-      href={`/dashboard/${link}`}
+      href={`/dashboard${link}`}
       style={{ textDecoration: 'none' }}
     >
       <Flex
@@ -73,7 +73,7 @@ const SidebarContent = ({ ...rest }: BoxProps) => {
   const currentPath = router.route?.split('/dashboard')[1] || '';
   return (
     <Box
-      w={{ base: 0, md: 72 }}
+      w={{ base: 0, md: 80 }}
       h="full"
       pt={8}
       pb={80}
@@ -82,9 +82,9 @@ const SidebarContent = ({ ...rest }: BoxProps) => {
       borderRightColor={'blackAlpha.200'}
       {...rest}
     >
-      <Flex align="center" justify="space-between" pb={2} px={6}>
+      <Box pb={6} px={6}>
         <SelectSponsor />
-      </Flex>
+      </Box>
       <Flex align="center" justify="space-between" pb={2} px={6}>
         <Button
           w="full"

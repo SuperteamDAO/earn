@@ -211,8 +211,8 @@ model User {
   pow              String?        @db.VarChar(2000)
   notifications    String?
   private          Boolean        @default(false)
-  currentSponsorId String
-  currentSponsor   Sponsors       @relation(fields: [currentSponsorId], references: [id])
+  currentSponsorId String?
+  currentSponsor   Sponsors?      @relation(fields: [currentSponsorId], references: [id])
   UserSponsors     UserSponsors[]
   poc              Bounties[]     @relation("poc")
   Comment          Comment[]
