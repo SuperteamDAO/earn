@@ -121,8 +121,8 @@ export default function SimpleSidebar({ children }: { children: ReactNode }) {
     >
       {!userInfo?.id ? (
         <ErrorSection
-          title="You are not signed in!"
-          message="Please sign in to access the dashboard."
+          title="You are not logged in!"
+          message="Please log in to access the dashboard."
         />
       ) : (
         <Flex justify="start">
