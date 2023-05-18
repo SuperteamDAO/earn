@@ -1,6 +1,11 @@
-import { SearchIcon } from '@chakra-ui/icons';
+import {
+  ChevronLeftIcon,
+  ChevronRightIcon,
+  SearchIcon,
+} from '@chakra-ui/icons';
 import {
   Box,
+  Button,
   Flex,
   Input,
   InputGroup,
@@ -8,30 +13,36 @@ import {
   Text,
 } from '@chakra-ui/react';
 import axios from 'axios';
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 
 import type { Bounty } from '@/interface/bounty';
 import Sidebar from '@/layouts/Sidebar';
 import { userStore } from '@/store/user';
 import { dayjs } from '@/utils/dayjs';
 
+const debounce = require('lodash.debounce');
+
 function Bounties() {
   const { userInfo } = userStore();
+  const [totalBounties, setTotalBounties] = useState(0);
   const [bounties, setBounties] = useState<Bounty[]>([]);
   const [isBountiesLoading, setIsBountiesLoading] = useState(true);
   const [searchText, setSearchText] = useState('');
   const [skip, setSkip] = useState(0);
-  console.log('file: index.tsx:24 ~ Bounties ~ setSkip:', setSkip);
   const length = 15;
+
+  const debouncedSetSearchText = useRef(debounce(setSearchText, 300)).current;
+
+  useEffect(() => {
+    return () => {
+      debouncedSetSearchText.cancel();
+    };
+  }, [debouncedSetSearchText]);
 
   const getBounties = async () => {
     setIsBountiesLoading(true);
-    console.log(
-      'file: index.tsx:35 ~ getBounties ~ userInfo?.currentSponsorId:',
-      userInfo?.currentSponsorId
-    );
     try {
-      const bountiesList = await axios.get('/api/bounties', {
+      const bountiesList = await axios.get('/api/bounties/', {
         params: {
           sponsorId: userInfo?.currentSponsorId,
           searchText,
@@ -39,14 +50,10 @@ function Bounties() {
           take: length,
         },
       });
-      console.log(
-        'file: index.tsx:17 ~ getBounties ~ bountiesList:',
-        bountiesList
-      );
-      setBounties(bountiesList.data);
+      setTotalBounties(bountiesList.data.total);
+      setBounties(bountiesList.data.data);
       setIsBountiesLoading(false);
     } catch (error) {
-      console.log('file: index.tsx:15 ~ getBounties ~ error:', error);
       setIsBountiesLoading(false);
     }
   };
@@ -55,7 +62,7 @@ function Bounties() {
     if (userInfo?.currentSponsorId) {
       getBounties();
     }
-  }, [userInfo?.currentSponsorId]);
+  }, [userInfo?.currentSponsorId, skip, searchText]);
 
   return (
     <Sidebar>
@@ -68,7 +75,7 @@ function Bounties() {
               color: 'brand.slate.400',
             }}
             focusBorderColor="brand.purple"
-            onChange={(e) => setSearchText(e.target.value)}
+            onChange={(e) => debouncedSetSearchText(e.target.value)}
             placeholder="Search bounties..."
             type="text"
           />
@@ -109,7 +116,7 @@ function Bounties() {
           bounties.map((bounty) => {
             const deadline = bounty?.deadline
               ? dayjs(bounty.deadline).fromNow()
-              : 'No deadline';
+              : '-';
             return (
               <Flex
                 key={bounty.id}
@@ -129,6 +136,41 @@ function Bounties() {
             );
           })}
       </Box>
+      <Flex align="center" justify="end" mt={6}>
+        <Text mr={4} color="brand.slate.400" fontSize="sm">
+          <Text as="span" fontWeight={700}>
+            {skip + 1}
+          </Text>{' '}
+          -{' '}
+          <Text as="span" fontWeight={700}>
+            {Math.min(skip + length, totalBounties)}
+          </Text>{' '}
+          of{' '}
+          <Text as="span" fontWeight={700}>
+            {totalBounties}
+          </Text>{' '}
+          Bounties
+        </Text>
+        <Button
+          mr={4}
+          isDisabled={skip <= 0}
+          leftIcon={<ChevronLeftIcon w={5} h={5} />}
+          onClick={() => (skip >= length ? setSkip(skip - length) : setSkip(0))}
+          size="sm"
+          variant="outline"
+        >
+          Previous
+        </Button>
+        <Button
+          isDisabled={skip > 0 && skip % length !== 0}
+          onClick={() => skip % length === 0 && setSkip(skip + length)}
+          rightIcon={<ChevronRightIcon w={5} h={5} />}
+          size="sm"
+          variant="outline"
+        >
+          Next
+        </Button>
+      </Flex>
     </Sidebar>
   );
 }

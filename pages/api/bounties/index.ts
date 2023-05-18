@@ -10,28 +10,31 @@ export default async function bounties(
   const sponsorId = params.sponsorId as string;
   console.log('file: index.ts:11 ~ sponsorId:', sponsorId);
   const searchText = params.searchText as string;
-  const skip = params.take ? parseInt(params.take as string, 10) : 0;
+  const skip = params.take ? parseInt(params.skip as string, 10) : 0;
   const take = params.take ? parseInt(params.take as string, 10) : 15;
+  console.log('file: index.ts:14 ~ skip:', skip, take);
   const whereSearch = searchText
     ? {
-        name: {
+        title: {
           contains: searchText,
         },
       }
     : {};
   try {
-    const result = await prisma.bounties.findMany({
+    const countQuery = {
       where: {
         isActive: true,
         isArchived: false,
         sponsorId,
         ...whereSearch,
       },
-      skip,
-      take,
-      orderBy: {
-        deadline: 'desc',
-      },
+    };
+    const total = await prisma.bounties.count(countQuery);
+    const result = await prisma.bounties.findMany({
+      ...countQuery,
+      skip: skip ?? 0,
+      take: take ?? 15,
+      orderBy: [{ deadline: 'desc' }, { id: 'desc' }],
       select: {
         id: true,
         title: true,
@@ -40,18 +43,12 @@ export default async function bounties(
         deadline: true,
         isPublished: true,
         rewardAmount: true,
-        sponsor: {
-          select: {
-            id: true,
-            name: true,
-            slug: true,
-            logo: true,
-          },
-        },
       },
     });
-    res.status(200).json(result);
+    console.log('file: index.ts:58 ~ result:', result.length);
+    res.status(200).json({ total, data: result });
   } catch (err) {
+    console.log('file: index.ts:51 ~ err:', err);
     res.status(400).json({ err: 'Error occurred while fetching bounties.' });
   }
 }
