@@ -1,3 +1,5 @@
+import type { SponsorType } from '@/interface/sponsor';
+
 interface User {
   id?: string;
   publicKey?: string;
@@ -31,5 +33,7 @@ interface User {
   telegram?: string;
   pow?: string;
   totalEarnedInUSD?: number;
+  currentSponsorId?: string;
+  currentSponsor?: SponsorType;
 }
 export type { User };

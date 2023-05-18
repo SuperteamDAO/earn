@@ -8,6 +8,7 @@ import React from 'react';
 import type { IconType } from 'react-icons';
 import { AiFillFire } from 'react-icons/ai';
 
+import SelectSponsor from '@/components/SelectSponsor/SelectSponsor';
 import ErrorSection from '@/components/shared/ErrorSection';
 import { Default } from '@/layouts/Default';
 import { Meta } from '@/layouts/Meta';
@@ -82,6 +83,9 @@ const SidebarContent = ({ ...rest }: BoxProps) => {
       {...rest}
     >
       <Flex align="center" justify="space-between" pb={2} px={6}>
+        <SelectSponsor />
+      </Flex>
+      <Flex align="center" justify="space-between" pb={2} px={6}>
         <Button
           w="full"
           fontSize="sm"
@@ -127,9 +131,16 @@ export default function SimpleSidebar({ children }: { children: ReactNode }) {
       ) : (
         <Flex justify="start">
           <SidebarContent display={{ base: 'none', md: 'block' }} />
-          <Box w="full" px={6} py={8} bg="brand.grey.50">
-            {children}
-          </Box>
+          {!userInfo?.currentSponsor?.id ? (
+            <ErrorSection
+              title="No Sponsor selected!"
+              message="Please select a sponsor from the sidebar to continue."
+            />
+          ) : (
+            <Box w="full" px={6} py={8} bg="brand.grey.50">
+              {children}
+            </Box>
+          )}
         </Flex>
       )}
     </Default>
