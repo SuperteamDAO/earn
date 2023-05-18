@@ -1,57 +1,51 @@
+import { AddIcon } from '@chakra-ui/icons';
 import type { BoxProps, FlexProps } from '@chakra-ui/react';
-import {
-  Box,
-  Flex,
-  Icon,
-  Link,
-  Text,
-  useColorModeValue,
-} from '@chakra-ui/react';
+import { Box, Button, Flex, Icon, Link } from '@chakra-ui/react';
+import NextLink from 'next/link';
+import { useRouter } from 'next/router';
 import type { ReactNode, ReactText } from 'react';
 import React from 'react';
 import type { IconType } from 'react-icons';
-import {
-  FiCompass,
-  FiHome,
-  FiSettings,
-  FiStar,
-  FiTrendingUp,
-} from 'react-icons/fi';
+import { AiFillFire } from 'react-icons/ai';
 
+import ErrorSection from '@/components/shared/ErrorSection';
 import { Default } from '@/layouts/Default';
 import { Meta } from '@/layouts/Meta';
+import { userStore } from '@/store/user';
 
 interface LinkItemProps {
   name: string;
+  link: string;
   icon: IconType;
 }
 const LinkItems: Array<LinkItemProps> = [
-  { name: 'Home', icon: FiHome },
-  { name: 'Trending', icon: FiTrendingUp },
-  { name: 'Explore', icon: FiCompass },
-  { name: 'Favourites', icon: FiStar },
-  { name: 'Settings', icon: FiSettings },
+  { name: 'My Listings', link: '/listings', icon: AiFillFire },
 ];
 
 interface NavItemProps extends FlexProps {
   icon: IconType;
+  link: string;
+  isActive: boolean;
   children: ReactText;
 }
-const NavItem = ({ icon, children, ...rest }: NavItemProps) => {
+const NavItem = ({ icon, link, isActive, children, ...rest }: NavItemProps) => {
   return (
     <Link
+      as={NextLink}
       _focus={{ boxShadow: 'none' }}
-      href="#"
+      href={`/dashboard/${link}`}
       style={{ textDecoration: 'none' }}
     >
       <Flex
         align="center"
-        mx="4"
-        p="4"
-        borderRadius="lg"
+        my={4}
+        px={6}
+        py={3}
+        color={isActive ? 'brand.purple' : 'brand.slate.500'}
+        bg={isActive ? 'brand.slate.100' : 'transparent'}
         _hover={{
-          bg: 'cyan.400',
-          color: 'white',
+          bg: 'brand.slate.100',
+          color: 'brand.purple',
         }}
         cursor="pointer"
         role="group"
@@ -63,7 +57,7 @@ const NavItem = ({ icon, children, ...rest }: NavItemProps) => {
             mr="4"
             fontSize="16"
             _groupHover={{
-              color: 'white',
+              color: 'brand.purple',
             }}
           />
         )}
@@ -74,23 +68,36 @@ const NavItem = ({ icon, children, ...rest }: NavItemProps) => {
 };
 
 const SidebarContent = ({ ...rest }: BoxProps) => {
+  const router = useRouter();
+  const currentPath = router.route?.split('/dashboard')[1] || '';
   return (
     <Box
-      pos="fixed"
-      w={{ base: 'full', md: 60 }}
+      w={{ base: 0, md: 72 }}
       h="full"
-      bg={useColorModeValue('white', 'gray.900')}
-      borderRight="1px"
-      borderRightColor={useColorModeValue('gray.200', 'gray.700')}
+      pt={8}
+      pb={80}
+      bg="white"
+      borderRight={'1px solid'}
+      borderRightColor={'blackAlpha.200'}
       {...rest}
     >
-      <Flex align="center" justify="space-between" h="20" mx="8">
-        <Text fontFamily="monospace" fontSize="2xl" fontWeight="bold">
-          Logo
-        </Text>
+      <Flex align="center" justify="space-between" pb={2} px={6}>
+        <Button
+          w="full"
+          fontSize="sm"
+          leftIcon={<AddIcon w={3} h={3} />}
+          variant="solid"
+        >
+          Create Listing
+        </Button>
       </Flex>
       {LinkItems.map((link) => (
-        <NavItem key={link.name} icon={link.icon}>
+        <NavItem
+          key={link.name}
+          icon={link.icon}
+          link={link.link}
+          isActive={currentPath === link.link}
+        >
           {link.name}
         </NavItem>
       ))}
@@ -99,6 +106,8 @@ const SidebarContent = ({ ...rest }: BoxProps) => {
 };
 
 export default function SimpleSidebar({ children }: { children: ReactNode }) {
+  const { userInfo } = userStore();
+
   return (
     <Default
       className="bg-white"
@@ -110,12 +119,19 @@ export default function SimpleSidebar({ children }: { children: ReactNode }) {
         />
       }
     >
-      <Box minH="100vh" bg={useColorModeValue('gray.100', 'gray.900')}>
-        <SidebarContent display={{ base: 'none', md: 'block' }} />
-        <Box ml={{ base: 0, md: 60 }} p="4">
-          {children}
-        </Box>
-      </Box>
+      {!userInfo?.id ? (
+        <ErrorSection
+          title="You are not signed in!"
+          message="Please sign in to access the dashboard."
+        />
+      ) : (
+        <Flex justify="start">
+          <SidebarContent display={{ base: 'none', md: 'block' }} />
+          <Box w="full" px={6} py={8} bg="brand.grey.50">
+            {children}
+          </Box>
+        </Flex>
+      )}
     </Default>
   );
 }
