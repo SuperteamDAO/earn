@@ -6,7 +6,7 @@ import { useRouter } from 'next/router';
 import type { ReactNode, ReactText } from 'react';
 import React from 'react';
 import type { IconType } from 'react-icons';
-import { AiFillFire } from 'react-icons/ai';
+import { AiFillFire, AiOutlineUsergroupAdd } from 'react-icons/ai';
 
 import SelectSponsor from '@/components/SelectSponsor/SelectSponsor';
 import ErrorSection from '@/components/shared/ErrorSection';
@@ -20,7 +20,8 @@ interface LinkItemProps {
   icon: IconType;
 }
 const LinkItems: Array<LinkItemProps> = [
-  { name: 'My Listings', link: '/listings', icon: AiFillFire },
+  { name: 'Bounties', link: '/bounties', icon: AiFillFire },
+  { name: 'Members', link: '/members', icon: AiOutlineUsergroupAdd },
 ];
 
 interface NavItemProps extends FlexProps {
@@ -29,6 +30,7 @@ interface NavItemProps extends FlexProps {
   isActive: boolean;
   children: ReactText;
 }
+
 const NavItem = ({ icon, link, isActive, children, ...rest }: NavItemProps) => {
   return (
     <Link
@@ -39,7 +41,7 @@ const NavItem = ({ icon, link, isActive, children, ...rest }: NavItemProps) => {
     >
       <Flex
         align="center"
-        my={4}
+        mb={2}
         px={6}
         py={3}
         color={isActive ? 'brand.purple' : 'brand.slate.500'}
@@ -85,7 +87,7 @@ const SidebarContent = ({ ...rest }: BoxProps) => {
       <Box pb={6} px={6}>
         <SelectSponsor />
       </Box>
-      <Flex align="center" justify="space-between" pb={2} px={6}>
+      <Flex align="center" justify="space-between" pb={6} px={6}>
         <Button
           w="full"
           fontSize="sm"
