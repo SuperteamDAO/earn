@@ -8,11 +8,9 @@ export default async function bounties(
 ) {
   const params = req.query;
   const sponsorId = params.sponsorId as string;
-  console.log('file: index.ts:11 ~ sponsorId:', sponsorId);
   const searchText = params.searchText as string;
   const skip = params.take ? parseInt(params.skip as string, 10) : 0;
   const take = params.take ? parseInt(params.take as string, 10) : 15;
-  console.log('file: index.ts:14 ~ skip:', skip, take);
   const whereSearch = searchText
     ? {
         title: {
@@ -45,10 +43,8 @@ export default async function bounties(
         rewardAmount: true,
       },
     });
-    console.log('file: index.ts:58 ~ result:', result.length);
     res.status(200).json({ total, data: result });
   } catch (err) {
-    console.log('file: index.ts:51 ~ err:', err);
     res.status(400).json({ err: 'Error occurred while fetching bounties.' });
   }
 }
