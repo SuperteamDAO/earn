@@ -530,6 +530,8 @@ type CategoryAssetsType = {
 };
 
 export const CategoryBanner = ({ type }: { type: string }) => {
+  console.log(type, '--type');
+
   const { userInfo } = userStore();
 
   const { talentInfo, setTalentInfo } = TalentStore();
@@ -553,13 +555,13 @@ export const CategoryBanner = ({ type }: { type: string }) => {
       color: '#FEB8A8',
       icon: '/assets/category_assets/icon/content.png',
     },
-    'Frontend Development': {
+    Frontend: {
       bg: `/assets/category_assets/bg/frontend.png`,
       desc: 'If you are a pixel-perfectionist who creates interfaces that users love, check out the earning opportunities below.',
       color: '#FEA8EB',
       icon: '/assets/category_assets/icon/frontend.png',
     },
-    'Backend Development': {
+    Backend: {
       bg: `/assets/category_assets/bg/backend.png`,
       desc: 'Opportunities to build high-performance databases, on and off-chain. ',
       color: '#FEEBA8',

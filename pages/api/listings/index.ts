@@ -14,7 +14,12 @@ export default async function user(req: NextApiRequest, res: NextApiResponse) {
     jobs: [],
   };
   const skillsFilter = filter
-    ? { skills: { array_contains: filter.split(',')[0] } }
+    ? {
+        skills: {
+          path: '$[*].skills',
+          array_contains: filter.split(',')[0],
+        },
+      }
     : {};
   const skillsFilterJobs = filter
     ? { skills: { contains: filter.split(',')[0] } }
@@ -32,7 +37,6 @@ export default async function user(req: NextApiRequest, res: NextApiResponse) {
           },
           ...skillsFilter,
         },
-
         take,
         orderBy: {
           deadline: 'asc',
@@ -115,6 +119,8 @@ export default async function user(req: NextApiRequest, res: NextApiResponse) {
     }
     res.status(200).json(result);
   } catch (error) {
+    console.log(error);
+
     res.status(400).json({
       error,
       message: 'Error occurred while fetching listings',

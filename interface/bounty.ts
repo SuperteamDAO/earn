@@ -29,6 +29,7 @@ interface Bounty {
   description?: string;
   applicationLink?: string;
   skills?: Skills;
+  // newSkills?: Skills;
   deadline?: string;
   eligibility?: Eligibility[];
   status?: BountyStatus;
