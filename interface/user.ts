@@ -10,6 +10,7 @@ interface User {
   isVerified?: boolean;
   createdAt?: string;
   updatedAt?: string;
+  role?: string;
   talent?: boolean;
   sponsor?: boolean;
   superteamLevel?: string;
