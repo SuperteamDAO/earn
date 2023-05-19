@@ -62,7 +62,7 @@ type SkillMap = {
   color: string;
 };
 
-export type { MainSkills, SkillMap, Skills };
+export type { MainSkills, SkillMap, Skills, SubSkillsType };
 
 export const SkillList: {
   mainskill: MainSkills;

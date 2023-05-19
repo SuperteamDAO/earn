@@ -135,24 +135,24 @@ export const tokenList = [
 ];
 export const MainSkills: MultiSelectOptions[] = [
   {
-    label: 'Front-End Dev',
-    value: 'Front-End-Dev',
+    label: 'Frontend',
+    value: 'Frontend',
   },
   {
-    label: 'Back-End Dev',
-    value: 'Back-End-Dev',
+    label: 'Backend',
+    value: 'Backend',
   },
   {
-    label: 'Blockchain Dev',
-    value: 'Blockchain-Dev',
+    label: 'Blockchain',
+    value: 'Blockchain',
   },
   {
-    label: 'Fullstack Dev',
-    value: 'Fullstack-Dev',
+    label: 'Fullstack',
+    value: 'Fullstack',
   },
   {
-    label: 'Mobile Engineer',
-    value: 'Mobile-Engineer',
+    label: 'Mobile',
+    value: 'Mobile',
   },
   {
     label: 'Design',
@@ -177,7 +177,7 @@ export const MainSkills: MultiSelectOptions[] = [
 ];
 
 export const skillSubSkillMap = {
-  'Front-End-Dev': [
+  Frontend: [
     {
       label: 'React',
       value: 'React',
@@ -195,7 +195,7 @@ export const skillSubSkillMap = {
       value: 'Redux',
     },
   ],
-  'Back-End-Dev': [
+  Backend: [
     {
       label: 'Javascript',
       value: 'Javascript',
@@ -241,7 +241,7 @@ export const skillSubSkillMap = {
       value: 'MongoDB',
     },
   ],
-  'Blockchain-Dev': [
+  Blockchain: [
     {
       label: 'Rust',
       value: 'Rust',
@@ -255,7 +255,7 @@ export const skillSubSkillMap = {
       value: 'Move',
     },
   ],
-  'Mobile-Engineer': [
+  Mobile: [
     {
       label: 'Android',
       value: 'Android',
@@ -347,7 +347,68 @@ export const skillSubSkillMap = {
       value: 'Operations',
     },
   ],
-  'Fullstack-Dev': [],
+  Fullstack: [
+    {
+      label: 'Javascript',
+      value: 'Javascript',
+    },
+    {
+      label: 'PHP',
+      value: 'PHP',
+    },
+    {
+      label: 'Python',
+      value: 'Python',
+    },
+    {
+      label: 'Java',
+      value: 'Java',
+    },
+    {
+      label: 'C++',
+      value: 'C++',
+    },
+    {
+      label: 'C',
+      value: 'C',
+    },
+    {
+      label: 'Ruby',
+      value: 'Ruby',
+    },
+    {
+      label: 'Go',
+      value: 'Go',
+    },
+    {
+      label: 'MySQL',
+      value: 'MySQL',
+    },
+    {
+      label: 'Postgres',
+      value: 'Postgres',
+    },
+    {
+      label: 'MongoDB',
+      value: 'MongoDB',
+    },
+    {
+      label: 'React',
+      value: 'React',
+    },
+    {
+      label: 'Angular',
+      value: 'Angular',
+    },
+    {
+      label: 'Vue',
+      value: 'Vue',
+    },
+    {
+      label: 'Redux',
+      value: 'Redux',
+    },
+  ],
 };
 export const SubSkills: MultiSelectOptions[] = [
   {

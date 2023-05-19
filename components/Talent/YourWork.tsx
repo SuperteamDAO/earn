@@ -11,7 +11,7 @@ import {
   Tooltip,
 } from '@chakra-ui/react';
 import type { Dispatch, SetStateAction } from 'react';
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import ReactSelect from 'react-select';
 import makeAnimated from 'react-select/animated';
@@ -25,6 +25,8 @@ import {
   workExp,
   workType,
 } from '@/constants';
+import type { SubSkillsType } from '@/interface/skills';
+import { SkillList } from '@/interface/skills';
 
 import type { UserStoreType } from './types';
 
@@ -72,7 +74,26 @@ function YourWork({ setStep, useFormStore }: Step1Props) {
     // totdo
     updateState({
       ...data,
-      skills: JSON.stringify(skills.map((ele) => ele.value)),
+      skills: skills.map((mainskill) => {
+        const main = SkillList.find(
+          (skill) => skill.mainskill === mainskill.value
+        );
+        const sub: SubSkillsType[] = [];
+
+        subSkills.forEach((subskill) => {
+          if (
+            main &&
+            main.subskills.includes(subskill.value as SubSkillsType)
+          ) {
+            sub.push(subskill.value as SubSkillsType);
+          }
+        });
+
+        return {
+          mainskill: main?.mainskill ?? '',
+          subskills: sub ?? [],
+        };
+      }),
       subSkills: JSON.stringify(subSkills.map((ele) => ele.value)),
       ...DropDownValues,
     });
@@ -80,40 +101,40 @@ function YourWork({ setStep, useFormStore }: Step1Props) {
     return true;
   };
 
-  useEffect(() => {
-    try {
-      if (form.skills.length > 2) {
-        const skillsJson = JSON.parse(form.skills);
-        setSkills((sk) => {
-          return [
-            ...sk,
-            ...skillsJson.map((ele: string) => {
-              return {
-                label: ele,
-                value: ele,
-              };
-            }),
-          ];
-        });
-      }
-      if (form.subSkills.length > 2) {
-        const subSkillsJson = JSON.parse(form.subSkills);
-        setSubSkills((sk) => {
-          return [
-            ...sk,
-            ...subSkillsJson.map((ele: string) => {
-              return {
-                label: ele,
-                value: ele,
-              };
-            }),
-          ];
-        });
-      }
-    } catch (error) {
-      console.log('file: talent.tsx:395 ~ useEffect ~ error:', error);
-    }
-  }, []);
+  // useEffect(() => {
+  //   try {
+  //     if (form.skills.length > 2) {
+  //       const skillsJson = JSON.parse(form.skills);
+  //       setSkills((sk) => {
+  //         return [
+  //           ...sk,
+  //           ...skillsJson.map((ele: string) => {
+  //             return {
+  //               label: ele,
+  //               value: ele,
+  //             };
+  //           }),
+  //         ];
+  //       });
+  //     }
+  //     if (form.subSkills.length > 2) {
+  //       const subSkillsJson = JSON.parse(form.subSkills);
+  //       setSubSkills((sk) => {
+  //         return [
+  //           ...sk,
+  //           ...subSkillsJson.map((ele: string) => {
+  //             return {
+  //               label: ele,
+  //               value: ele,
+  //             };
+  //           }),
+  //         ];
+  //       });
+  //     }
+  //   } catch (error) {
+  //     console.log('file: talent.tsx:395 ~ useEffect ~ error:', error);
+  //   }
+  // }, []);
 
   return (
     <Box w={'full'}>

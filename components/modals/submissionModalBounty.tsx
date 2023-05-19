@@ -31,6 +31,7 @@ interface Props {
   setIsSubmitted: (arg0: boolean) => void;
   setSubmissionNumber: (arg0: number) => void;
   submissionNumber: number;
+  bountytitle: string;
 }
 export const SubmissionModal = ({
   id,
@@ -40,6 +41,7 @@ export const SubmissionModal = ({
   setIsSubmitted,
   setSubmissionNumber,
   submissionNumber,
+  bountytitle,
 }: Props) => {
   const isPermissioned = eligibility && eligibility?.length > 0;
   const { userInfo } = userStore();
@@ -70,7 +72,7 @@ export const SubmissionModal = ({
           : null,
       });
       Mixpanel.track('bounty_submission', {
-        title: id,
+        title: bountytitle,
         user: userInfo?.username,
       });
       setIsSubmitted(true);

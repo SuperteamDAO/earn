@@ -41,6 +41,7 @@ interface Props {
   token?: string;
   questions?: string;
   eligibility?: Eligibility[];
+  bountytitle: string;
 }
 function DetailSideCard({
   id,
@@ -50,6 +51,7 @@ function DetailSideCard({
   token,
   eligibility,
   applicationLink,
+  bountytitle,
 }: Props) {
   const { userInfo } = userStore();
   const [isSubmissionNumberLoading, setIsSubmissionNumberLoading] =
@@ -125,6 +127,7 @@ function DetailSideCard({
           submissionNumber={submissionNumber}
           setSubmissionNumber={setSubmissionNumber}
           setIsSubmitted={setIsSubmitted}
+          bountytitle={bountytitle}
         />
       )}
       <LoginWrapper

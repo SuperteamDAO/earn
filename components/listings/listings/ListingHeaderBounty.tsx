@@ -190,7 +190,7 @@ function ListingHeader({
           w={'full'}
           h={10}
           borderTop={'1px solid'}
-          borderTopColor={'gray.300'}
+          borderTopColor={'gray.100'}
         >
           <HStack
             align="center"

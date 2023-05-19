@@ -144,6 +144,7 @@ function UserInfo() {
       ) : (
         <>
           <Button
+            display={{ base: 'none', md: 'block' }}
             px={5}
             fontSize="xs"
             onClick={() => {

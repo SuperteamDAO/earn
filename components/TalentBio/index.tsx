@@ -49,9 +49,11 @@ const Chip = ({ icon, label, value }: ChipType) => {
 function TalentBio({
   user,
   successPage,
+  w,
 }: {
   user: User;
   successPage: boolean;
+  w?: string;
 }) {
   const socialLinks = [
     {
@@ -77,7 +79,7 @@ function TalentBio({
 
   return (
     <Box
-      w={'80%'}
+      w={w ?? '80%'}
       px={'1.5625rem'}
       py={'1.125rem'}
       bg={'white'}

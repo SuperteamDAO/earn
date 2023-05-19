@@ -1,3 +1,5 @@
+import type { Skills } from '@/interface/skills';
+
 export interface AboutYouType {
   bio: string;
   username: string;
@@ -11,7 +13,7 @@ export interface WorkType {
   currentEmployer: string;
   community: string;
   interests: string;
-  skills: string;
+  skills: Skills;
   subSkills: string;
   workPrefernce: string;
 }
