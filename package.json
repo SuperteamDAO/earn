@@ -59,6 +59,7 @@
     "html-react-parser": "^3.0.12",
     "husky": "^8.0.3",
     "immer": "^9.0.19",
+    "lodash.debounce": "^4.0.8",
     "mixpanel-browser": "^2.47.0",
     "moment": "^2.29.4",
     "nanoid": "^4.0.2",

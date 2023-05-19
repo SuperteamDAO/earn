@@ -127,6 +127,18 @@ function UserInfo() {
               >
                 Profile
               </MenuItem>
+              {(userInfo?.role === 'GOD' || !!userInfo?.currentSponsorId) && (
+                <MenuItem
+                  color="brand.slate.500"
+                  fontSize="sm"
+                  fontWeight={600}
+                  onClick={() => {
+                    router.push('/dashboard/bounties');
+                  }}
+                >
+                  Sponsor Dashboard
+                </MenuItem>
+              )}
               <MenuDivider />
               <MenuItem
                 color="red.500"
