@@ -1,10 +1,21 @@
 import { ExternalLinkIcon, LockIcon } from '@chakra-ui/icons';
-import { Box, Button, Flex, Image, Text, VStack } from '@chakra-ui/react';
+import {
+  Box,
+  Button,
+  Flex,
+  Grid,
+  GridItem,
+  Image,
+  Text,
+  VStack,
+} from '@chakra-ui/react';
 import type { User } from '@prisma/client';
 import axios from 'axios';
 import type { GetServerSideProps } from 'next';
 import React, { useEffect, useState } from 'react';
 
+import ErrorSection from '@/components/shared/EmptySection';
+import LoadingSection from '@/components/shared/LoadingSection';
 import TalentBio from '@/components/TalentBio';
 import { Default } from '@/layouts/Default';
 import { Meta } from '@/layouts/Meta';
@@ -104,30 +115,54 @@ export const ProofWork = () => {
 //   );
 // };
 
-export const EduNft = () => {
+export const EduNft = ({ nfts }: { nfts: NFT[] }) => {
   return (
-    <Box
-      w={'19.8344rem'}
-      pt={'1.3125rem'}
-      bg={'white'}
-      borderRadius={'0.1875rem'}
-    >
-      <Image
-        w={'16.5263rem'}
-        h={'6.6869rem'}
-        mx={'auto'}
-        alt="Image"
-        src="/assets/bg/success-bg.png"
-      />
-      <Box
-        mt={'24px'}
-        px={'1rem'}
-        py={'0.5625rem'}
-        borderTop={'1px solid #F1F5F9'}
-      >
-        <Text color={'gray.400'}>Rockstar</Text>
-      </Box>
-    </Box>
+    <>
+      {nfts && nfts.length > 0 && (
+        <Grid w={'90%'}>
+          <Box mt="32px" borderBottom={''}>
+            <Text fontSize={'xl'} fontWeight={500}>
+              Education NFTs
+            </Text>
+          </Box>
+          <Box my={6}>
+            <Grid
+              gap={6}
+              templateColumns={{
+                sm: 'repeat(1, 1fr)',
+                md: 'repeat(2, 1fr)',
+              }}
+            >
+              {nfts.map((item, key) => (
+                <GridItem key={key} mb="20px" colSpan={1}>
+                  <Flex
+                    justify="space-between"
+                    direction="column"
+                    h="100%"
+                    py={10}
+                    bg="gray.100"
+                  >
+                    <Flex
+                      align="center"
+                      justify="center"
+                      overflow="hidden"
+                      w="60%"
+                      h="100%"
+                      mx={'auto'}
+                    >
+                      <img src={item.imageUrl} alt={item.collectionName} />
+                    </Flex>
+                  </Flex>
+                  <Text mt="4px" color="gray.500" fontSize="14px">
+                    {item.collectionName} - {item.description}
+                  </Text>
+                </GridItem>
+              ))}
+            </Grid>
+          </Box>
+        </Grid>
+      )}
+    </>
   );
 };
 
@@ -345,37 +380,82 @@ const Nft = ({
     </Box>
   );
 };
-
+type NFT = {
+  collectionName: string;
+  collectionAddress: string;
+  description: string;
+  name: string;
+  imageUrl: string;
+  creators: any[];
+};
 function TalentProfile({ slug }: TalentProps) {
   const [talent, setTalent] = useState<User>();
+  const [isloading, setIsloading] = useState<boolean>(false);
+  const [error, setError] = useState(false);
+  const [nfts, setNFTs] = useState<NFT[]>();
+  const getNFTs = async (wallet: string) => {
+    const data = {
+      jsonrpc: '2.0',
+      id: 1,
+      method: 'qn_fetchNFTs',
+      params: {
+        wallet,
+        omitFields: ['provenance', 'traits'],
+        page: 1,
+        perPage: 40,
+      },
+    };
 
+    const url = process.env.NEXT_PUBLIC_NFT_API as string;
+
+    const result = await fetch(url, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        Accept: 'application/json',
+      },
+      body: JSON.stringify(data),
+    });
+
+    return result.json();
+  };
+
+  const fetchNFTs = async (address: string) => {
+    // eslint-disable-next-line @typescript-eslint/no-shadow
+    const nfts: any = await getNFTs(address);
+    const resultNfts = nfts.result.assets.filter((item: NFT) => {
+      return (
+        item.collectionAddress ===
+        'C9G3cZMXjoydy1KrSbEfLw5NNyuK3Lmc33WEgTCtKWuV'
+      );
+    });
+
+    setNFTs(resultNfts);
+  };
   useEffect(() => {
     const fetch = async () => {
-      const res = await axios.post(`/api/user`, {
-        username: slug,
-      });
-      console.log(res);
+      try {
+        setIsloading(true);
 
-      if (res) {
-        setTalent(res?.data);
+        const res = await axios.post(`/api/user`, {
+          username: slug,
+        });
+
+        if (res) {
+          setTalent(res?.data);
+          setError(false);
+          setIsloading(false);
+          fetchNFTs(res?.data?.publicKey as string);
+        }
+        // eslint-disable-next-line @typescript-eslint/no-shadow
+      } catch (error) {
+        console.log(error);
+        setError(true);
+        setIsloading(false);
       }
     };
     fetch();
   }, []);
-
-  // if (!isSuccess) {
-  //   return (
-  //     <Center w={'100%'} h={'100vh'} pt={'3rem'}>
-  //       <Spinner
-  //         color="blue.500"
-  //         emptyColor="gray.200"
-  //         size="xl"
-  //         speed="0.65s"
-  //         thickness="4px"
-  //       />
-  //     </Center>
-  //   );
-  // }
 
   return (
     <>
@@ -388,32 +468,38 @@ function TalentProfile({ slug }: TalentProps) {
           />
         }
       >
-        <Flex direction={['column', 'column', 'column', 'row']} w={'100%'}>
-          <VStack
-            rowGap={4}
-            maxW={['full', 'full', '25%', '25%']}
-            minH={'100vh'}
-            py={8}
-            bgImage={'/assets/bg/talent-bg.png'}
-            bgSize={'cover '}
-            bgRepeat={'no-repeat'}
-          >
-            <TalentBio user={talent as User} successPage={false} />
-            {/* <SkillsAndInterests data={data?.data.data} /> */}
-            <Nft
-              totalEarned={talent?.totalEarnedInUSD ?? 0}
-              wallet={talent?.publicKey as string}
-            />
-          </VStack>
-          <Box
-            justifyContent={'center'}
-            display={talent?.pow?.length === 0 ? 'none' : 'flex'}
-            w={'100%'}
-            px={'23px'}
-            py={'35px'}
-            bg={'#F7FAFC'}
-          >
-            {/* {talent?.pow?.length > 0 && (
+        {isloading && <LoadingSection />}
+        {!isloading && !!error && <ErrorSection />}
+        {!isloading && !error && !talent?.id && (
+          <ErrorSection message="Sorry! The bounty you are looking for is not available." />
+        )}
+        {!isloading && !error && !!talent?.id && (
+          <Flex direction={['column', 'column', 'column', 'row']} w={'100%'}>
+            <VStack
+              rowGap={4}
+              maxW={['full', 'full', '25%', '25%']}
+              minH={'100vh'}
+              py={8}
+              bgImage={'/assets/bg/talent-bg.png'}
+              bgSize={'cover '}
+              bgRepeat={'no-repeat'}
+            >
+              <TalentBio user={talent as User} successPage={false} />
+              {/* <SkillsAndInterests data={data?.data.data} /> */}
+              <Nft
+                totalEarned={talent?.totalEarnedInUSD ?? 0}
+                wallet={talent?.publicKey as string}
+              />
+            </VStack>
+            <Box
+              justifyContent={'center'}
+              display={talent?.pow?.length === 0 ? 'none' : 'flex'}
+              w={'100%'}
+              px={'23px'}
+              py={'35px'}
+              bg={'#F7FAFC'}
+            >
+              {/* {talent?.pow?.length > 0 && (
               <>
                 <Box mb={'18.5px'} borderBottom={'1px solid #E2E8EF'}>
                   <Text
@@ -431,21 +517,24 @@ function TalentProfile({ slug }: TalentProps) {
                 </Flex>
               </>
             )} */}
-          </Box>
-          <Box
-            alignItems={'start'}
-            justifyContent={'center'}
-            display={talent?.pow?.length !== 0 ? 'none' : 'flex'}
-            w={'100%'}
-            pt={'10rem'}
-          >
-            <Image
-              w={32}
-              alt={'talent empty'}
-              src="/assets/bg/talent-empty.svg"
-            />
-          </Box>
-        </Flex>
+              <EduNft nfts={nfts ?? []} />
+            </Box>
+
+            <Box
+              alignItems={'start'}
+              justifyContent={'center'}
+              display={talent?.pow?.length !== 0 ? 'none' : 'flex'}
+              w={'100%'}
+              pt={'10rem'}
+            >
+              <Image
+                w={32}
+                alt={'talent empty'}
+                src="/assets/bg/talent-empty.svg"
+              />
+            </Box>
+          </Flex>
+        )}
       </Default>
     </>
   );
