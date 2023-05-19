@@ -5,15 +5,12 @@ import { prisma } from '@/prisma';
 export default async function user(req: NextApiRequest, res: NextApiResponse) {
   const { id, ...updateAttributes } = req.body;
   try {
-    const result = await prisma.user.update({
+    const result = await prisma.submission.update({
       where: {
         id,
       },
       data: {
         ...updateAttributes,
-      },
-      include: {
-        currentSponsor: true,
       },
     });
     res.status(200).json(result);
