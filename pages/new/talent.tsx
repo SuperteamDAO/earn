@@ -46,6 +46,7 @@ const useFormStore = create<UserStoreType>()((set) => ({
     website: '',
     telegram: '',
     pow: '',
+    private: false,
   },
   otp: undefined,
   setOtp: (data) => {
