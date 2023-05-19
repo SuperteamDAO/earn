@@ -122,6 +122,7 @@ model Submission {
   link               String?
   tweet              String?
   eligibilityAnswers Json?
+  likes              Int?
   like               Json?
   userId             String
   user               User        @relation(fields: [userId], references: [id])
