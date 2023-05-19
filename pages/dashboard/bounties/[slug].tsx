@@ -36,12 +36,14 @@ import {
 import axios from 'axios';
 import Avatar from 'boring-avatars';
 import type { GetServerSideProps } from 'next';
+import { useRouter } from 'next/router';
 import { useEffect, useState } from 'react';
 
 import LoadingSection from '@/components/shared/LoadingSection';
 import type { Bounty } from '@/interface/bounty';
 import type { SubmissionWithUser } from '@/interface/submission';
 import Sidebar from '@/layouts/Sidebar';
+import { userStore } from '@/store/user';
 import { truncatePublicKey } from '@/utils/truncatePublicKey';
 
 interface Props {
@@ -49,6 +51,8 @@ interface Props {
 }
 
 function BountySubmissions({ slug }: Props) {
+  const router = useRouter();
+  const { userInfo } = userStore();
   const { isOpen, onOpen, onClose } = useDisclosure();
   const [user, setUser] = useState<any>(null);
   const [bounty, setBounty] = useState<Bounty | null>(null);
@@ -84,6 +88,9 @@ function BountySubmissions({ slug }: Props) {
     try {
       const bountyDetails = await axios.get(`/api/bounties/${slug}/`);
       setBounty(bountyDetails.data);
+      if (bountyDetails.data.sponsorId !== userInfo?.currentSponsorId) {
+        router.push('/dashboard/bounties');
+      }
       getSubmissions(bountyDetails.data.id);
       setRewards(Object.keys(bountyDetails.data.rewards || {}));
     } catch (e) {
@@ -92,8 +99,10 @@ function BountySubmissions({ slug }: Props) {
   };
 
   useEffect(() => {
-    getBounty();
-  }, []);
+    if (userInfo?.currentSponsorId) {
+      getBounty();
+    }
+  }, [userInfo?.currentSponsorId]);
 
   useEffect(() => {
     getSubmissions();
@@ -472,7 +481,10 @@ function BountySubmissions({ slug }: Props) {
               Previous
             </Button>
             <Button
-              isDisabled={skip > 0 && skip % length !== 0}
+              isDisabled={
+                totalSubmissions < skip + length ||
+                (skip > 0 && skip % length !== 0)
+              }
               onClick={() => skip % length === 0 && setSkip(skip + length)}
               rightIcon={<ChevronRightIcon w={5} h={5} />}
               size="sm"
