@@ -16,6 +16,7 @@ export interface WorkType {
   skills: Skills;
   subSkills: string;
   workPrefernce: string;
+  private: boolean;
 }
 
 export interface LinksType {

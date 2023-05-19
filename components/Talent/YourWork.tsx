@@ -58,6 +58,7 @@ function YourWork({ setStep, useFormStore }: Step1Props) {
       currentEmployer: form.currentEmployer,
       community: form.community,
       workPrefernce: form.workPrefernce,
+      private: form.private,
     },
   });
 
@@ -310,16 +311,18 @@ function YourWork({ setStep, useFormStore }: Step1Props) {
             setSubSkills={setSubSkills}
           />
           <Flex align={'center'} mb={'2.5rem'}>
-            <Checkbox
-              mr={1}
-              color="brand.slate.500"
-              fontWeight={500}
-              colorScheme="purple"
-              required={false}
-              size="md"
-            >
-              Keep my info private
-            </Checkbox>
+            <FormControl>
+              <Checkbox
+                mr={1}
+                color="brand.slate.500"
+                fontWeight={500}
+                colorScheme="purple"
+                size="md"
+                {...register('private', { required: true })}
+              >
+                Keep my info private
+              </Checkbox>
+            </FormControl>
             <Tooltip
               w="max"
               p="0.7rem"

@@ -131,7 +131,17 @@ const Grants = ({ slug }: GrantsDetailsProps) => {
                 </HStack>
 
                 <Box w={'full'} px={10}>
-                  <Button w={'full'} h={12} color={'white'} bg={'brand.purple'}>
+                  <Button
+                    w={'full'}
+                    h={12}
+                    color={'white'}
+                    bg={'brand.purple'}
+                    onClick={() => {
+                      Mixpanel.track('grant_submit_click', {
+                        'Grant Title': grants?.title,
+                      });
+                    }}
+                  >
                     <Link href={grants?.link} isExternal>
                       Submit Now
                     </Link>
