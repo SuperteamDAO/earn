@@ -1,8 +1,7 @@
-import { Button, Flex, Image, Text, VStack } from '@chakra-ui/react';
+import { Flex, Image, Text, VStack } from '@chakra-ui/react';
 import type { User } from '@prisma/client';
 import { useRouter } from 'next/router';
 import React from 'react';
-import { AiFillHeart } from 'react-icons/ai';
 
 import TalentBio from '@/components/TalentBio';
 
@@ -29,10 +28,9 @@ export const SubmissionPage = ({ user }: Props) => {
           <Flex justify={'space-between'} w={'full'} mt={5} px={8}>
             <Text color={'black'} fontSize={'22px'} fontWeight={600}>
               {user?.firstName}
-              {'  '}
-              {user.firstName}’s Submission
+              {user?.firstName}’s Submission
             </Text>
-            <Button
+            {/* <Button
               zIndex={10}
               alignItems={'center'}
               gap={2}
@@ -42,8 +40,8 @@ export const SubmissionPage = ({ user }: Props) => {
               variant={'unstyled'}
             >
               <AiFillHeart />
-              {/* {likes?.length} */}
-            </Button>
+              {likes?.length}
+            </Button> */}
           </Flex>
           <Image
             w={'full'}

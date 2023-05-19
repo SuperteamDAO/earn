@@ -1,4 +1,5 @@
-import { Box, Flex, Image, Spinner, Text } from '@chakra-ui/react';
+import { InfoOutlineIcon } from '@chakra-ui/icons';
+import { Box, Flex, Image, Spinner, Text, Tooltip } from '@chakra-ui/react';
 import type { Wallet } from '@solana/wallet-adapter-react';
 import { useState } from 'react';
 
@@ -20,6 +21,24 @@ export default function ConnectWallet({
 
   return (
     <Box>
+      <Flex
+        align="center"
+        justify="center"
+        mb={4}
+        color="brand.slate.500"
+        fontSize="md"
+        textAlign="center"
+      >
+        Connect your Primary Wallet
+        <Tooltip
+          color="brand.slate.700"
+          bg="brand.slate.200"
+          label="Connect your primary wallet where you can receive the prize money. Don't use burner wallets."
+          placement="bottom"
+        >
+          <InfoOutlineIcon ml={1} w={4} h={4} />
+        </Tooltip>
+      </Flex>
       {wallets.map((wallet, index) => {
         const isLoading = loadingWallet === wallet?.adapter?.name;
         return (

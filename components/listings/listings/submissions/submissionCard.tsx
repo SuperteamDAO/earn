@@ -1,8 +1,10 @@
 import { Box, Button, HStack, Image, Text, VStack } from '@chakra-ui/react';
 import type { User } from '@prisma/client';
+import axios from 'axios';
 import { useRouter } from 'next/router';
-import React from 'react';
-import { Toaster } from 'react-hot-toast';
+import type { Dispatch, SetStateAction } from 'react';
+import React, { useState } from 'react';
+import { toast, Toaster } from 'react-hot-toast';
 import { AiFillHeart } from 'react-icons/ai';
 
 import { userStore } from '../../../../store/user';
@@ -11,12 +13,44 @@ interface Props {
   image: string;
   winner: boolean;
   talent: User;
-  likes?: string[];
+  likes?: {
+    id: string;
+    date: number;
+  }[];
   id: string;
+  setUpdate: Dispatch<SetStateAction<boolean>>;
 }
-export const SubmissionCard = ({ id, winner, talent, likes }: Props) => {
+export const SubmissionCard = ({
+  id,
+  winner,
+  talent,
+  likes,
+  setUpdate,
+}: Props) => {
   const { userInfo } = userStore();
   const router = useRouter();
+  const [isLoading, setIsLoading] = useState<boolean>(false);
+  const handleLike = async () => {
+    try {
+      setIsLoading(true);
+      await axios.post('/api/submission/like', {
+        submissionId: id,
+        userId: userInfo?.id,
+      });
+      if (likes?.find((e) => e.id === (userInfo?.id as string))) {
+        toast.success('Liked removed from submission');
+      } else {
+        toast.success('Liked submission');
+      }
+      setIsLoading(false);
+      setUpdate((prev: boolean) => !prev);
+    } catch (error) {
+      setIsLoading(false);
+      console.log(error);
+
+      toast.error('Error while liking submission');
+    }
+  };
   return (
     <>
       <VStack
@@ -71,14 +105,16 @@ export const SubmissionCard = ({ id, winner, talent, likes }: Props) => {
             display={'flex'}
             w={14}
             border={'1px solid #CBD5E1'}
+            isLoading={isLoading}
             onClick={() => {
-              // if (!userInfo?.id) return;
+              if (!userInfo?.id) return;
+              handleLike();
             }}
             variant={'unstyled'}
           >
             <AiFillHeart
               color={
-                likes?.indexOf(userInfo?.id as string) === -1
+                !likes?.find((e) => e.id === (userInfo?.id as string))
                   ? '#94A3B8'
                   : '#FF005C'
               }
