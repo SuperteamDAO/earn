@@ -15,6 +15,7 @@ import axios from 'axios';
 import { MediaPicker } from 'degen';
 import { useState } from 'react';
 import { useForm } from 'react-hook-form';
+import { toast, Toaster } from 'react-hot-toast';
 import Select from 'react-select';
 import makeAnimated from 'react-select/animated';
 
@@ -49,7 +50,8 @@ const CreateSponsor = () => {
         userId: userInfo?.id,
       });
       setIsLoading(false);
-      window.open('https://airtable.com/shrfcoy2kmVXIIv4V', '_blank');
+      toast.success('Sponsor created!');
+      // window.open('https://airtable.com/shrfcoy2kmVXIIv4V', '_blank');
     } catch (e) {
       setIsLoading(false);
       setHasError(true);
@@ -210,7 +212,14 @@ const CreateSponsor = () => {
                   fontSize={'15px'}
                   fontWeight={600}
                 >
-                  Company Logo
+                  Company Logo{' '}
+                  <span
+                    style={{
+                      color: 'red',
+                    }}
+                  >
+                    *
+                  </span>
                 </Heading>
                 <HStack gap={5}>
                   <MediaPicker
@@ -280,6 +289,7 @@ const CreateSponsor = () => {
                   </FormErrorMessage>
                 </FormControl>
               </Box>
+              <Toaster />
               <Box mt={8}>
                 {hasError && (
                   <Text align="center" mb={4} color="red">
@@ -290,6 +300,7 @@ const CreateSponsor = () => {
                 )}
                 <Button
                   w="full"
+                  isDisabled={imageUrl === ''}
                   isLoading={!!isLoading}
                   loadingText="Creating..."
                   size="lg"

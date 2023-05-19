@@ -226,7 +226,7 @@ export const BountiesCard = ({
 
                   <Text
                     color={'brand.slate.700'}
-                    fontSize={['xs', 'xs', 'sm', 'sm']}
+                    fontSize={['x-small', 'xs', 'sm', 'sm']}
                     fontWeight={'600'}
                   >
                     {rewardAmount}
@@ -234,13 +234,13 @@ export const BountiesCard = ({
                 </Flex>
                 <Text
                   color={'brand.slate.300'}
-                  fontSize={['xs', 'xs', 'sm', 'sm']}
+                  fontSize={['xx-small', 'xs', 'sm', 'sm']}
                 >
                   |
                 </Text>
                 <Text
                   color={'brand.slate.500'}
-                  fontSize={['xs', 'xs', 'sm', 'sm']}
+                  fontSize={['x-small', 'xs', 'sm', 'sm']}
                 >
                   {dayjs().isBefore(deadline)
                     ? `Closing ${dayjs(deadline).fromNow()}`
@@ -261,7 +261,7 @@ export const BountiesCard = ({
             <Button
               h={isMobile ? 7 : 9}
               px={6}
-              fontSize={['xs', 'xs', 'sm', 'sm']}
+              fontSize={['xx-small', 'xs', 'sm', 'sm']}
               variant="outlineSecondary"
             >
               {dayjs().isAfter(deadline)
@@ -567,6 +567,13 @@ export const CategoryBanner = ({ type }: { type: string }) => {
       color: '#FEEBA8',
       icon: '/assets/category_assets/icon/backend.png',
     },
+    Fullstack: {
+      bg: `/assets/category_assets/bg/backend.png`,
+      desc: 'Unlock opportunities in crafting comprehensive solutions by seamlessly integrating user-friendly interfaces and robust databases, both on and off-chain',
+      color: '#FEEBA8',
+      icon: '/assets/category_assets/icon/backend.png',
+    },
+
     Blockchain: {
       bg: `/assets/category_assets/bg/contract.png`,
       desc: 'If you can write insightful essays, make stunning videos, or create killer memes, the opportunities below are calling your name.',

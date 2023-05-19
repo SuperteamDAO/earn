@@ -7,7 +7,7 @@ export default async function user(req: NextApiRequest, res: NextApiResponse) {
   const params = req.query;
   const category = params.category as string;
   const filter = params.filter as string;
-  const take = params.take ? parseInt(params.take as string, 10) : 5;
+  const take = params.take ? parseInt(params.take as string, 10) : 10;
   const result: any = {
     bounties: [],
     grants: [],
