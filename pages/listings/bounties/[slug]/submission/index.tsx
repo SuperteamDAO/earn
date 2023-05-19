@@ -17,6 +17,7 @@ const SubmissionPage = ({ slug }: { slug: string }) => {
   const [submission, setSubmission] = useState<SubmissionWithUser[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState(false);
+  const [update, setUpdate] = useState(false);
 
   const getBounty = async () => {
     setIsLoading(true);
@@ -35,9 +36,9 @@ const SubmissionPage = ({ slug }: { slug: string }) => {
   };
 
   useEffect(() => {
-    if (!isLoading) return;
+    // if (!isLoading) return;
     getBounty();
-  }, []);
+  }, [update]);
   return (
     <>
       <Default
@@ -65,6 +66,7 @@ const SubmissionPage = ({ slug }: { slug: string }) => {
               slug={bounty?.slug}
             />
             <Submissions
+              setUpdate={setUpdate}
               submissions={submission}
               endTime={bounty.deadline as string}
             />

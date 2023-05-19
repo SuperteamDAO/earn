@@ -122,7 +122,7 @@ model Submission {
   link               String?
   tweet              String?
   eligibilityAnswers Json?
-  likes              Int         @default(0)
+  like               Json?
   userId             String
   user               User        @relation(fields: [userId], references: [id])
   listingType        ListingType @default(BOUNTY)
@@ -160,6 +160,8 @@ model Sponsors {
   Bounties     Bounties[]
   Grants       Grants[]
   Jobs         Jobs[]
+  isActive     Boolean        @default(true)
+  isArchived   Boolean        @default(false)
 
   @@index([id, slug])
 }
@@ -204,6 +206,7 @@ model User {
   location         String?
   cryptoExperience String?
   workPrefernce    String?
+  currentSponsorId String?
   currentEmployer  String?
   pow              String?        @db.VarChar(2000)
   notifications    String?
