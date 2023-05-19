@@ -8,6 +8,9 @@ export default async function user(req: NextApiRequest, res: NextApiResponse) {
       where: {
         ...req.body,
       },
+      include: {
+        currentSponsor: true,
+      },
     });
     res.status(200).json(result);
   } catch (err) {

@@ -7,7 +7,6 @@ import {
   Image,
   Link,
   Popover,
-  PopoverContent,
   PopoverTrigger,
   Stack,
   Text,
@@ -34,124 +33,58 @@ const NAV_ITEMS: Array<NavItem> = [
       },
       {
         label: 'Design',
-        href: '/all/design',
+        href: '/all/Design/',
       },
       {
         label: 'Growth',
-        href: '/all/growth',
+        href: '/all/Growth/',
       },
       {
         label: 'Content',
-        href: '/all/content',
+        href: '/all/Content/',
       },
       {
         label: 'Frontend',
-        href: '/all/frontend',
+        href: '/all/Frontend/',
+      },
+      {
+        label: 'Fullstack',
+        href: '/all/Fullstack/',
       },
       {
         label: 'Backend',
-        href: '/all/backend',
+        href: '/all/Backend/',
       },
       {
         label: 'Blockchain',
-        href: '/all/blockchain',
+        href: '/all/Blockchain/',
       },
     ],
-  },
-  {
-    label: 'Bounties',
-    children: [
-      {
-        label: 'All Bounties',
-        href: '/bounties',
-      },
-      {
-        label: 'Design',
-        href: '/bounties/design',
-      },
-      {
-        label: 'Growth',
-        href: '/bounties/growth',
-      },
-      {
-        label: 'Content',
-        href: '/bounties/content',
-      },
-      {
-        label: 'Frontend',
-        href: '/bounties/frontend',
-      },
-      {
-        label: 'Backend',
-        href: '/bounties/backend',
-      },
-      {
-        label: 'Blockchain',
-        href: '/bounties/blockchain',
-      },
-    ],
-  },
-  {
-    label: 'Jobs',
-    children: [
-      {
-        label: 'All Jobs',
-        href: '/jobs',
-      },
-      {
-        label: 'Design',
-        href: '/jobs/design',
-      },
-      {
-        label: 'Growth',
-        href: '/jobs/growth',
-      },
-      {
-        label: 'Content',
-        href: '/jobs/content',
-      },
-      {
-        label: 'Frontend',
-        href: '/jobs/frontend',
-      },
-      {
-        label: 'Backend',
-        href: '/jobs/backend',
-      },
-      {
-        label: 'Blockchain',
-        href: '/jobs/blockchain',
-      },
-    ],
-  },
-  {
-    label: 'Grants',
-    href: '/grants',
   },
 ];
 
-const DesktopSubNav = ({ label, href }: NavItem) => {
-  return (
-    <Link
-      display={'block'}
-      mt={0}
-      px={4}
-      py={2}
-      _hover={{ bg: 'brand.slate.100' }}
-      href={href}
-      role={'group'}
-    >
-      <Text
-        color="slate.gray.500"
-        fontSize="sm"
-        _groupHover={{ color: 'brand.purple' }}
-        transition={'all .3s ease'}
-      >
-        {label}
-      </Text>
-    </Link>
-  );
-};
+// const DesktopSubNav = ({ label, href }: NavItem) => {
+//   return (
+//     <Link
+//       display={'block'}
+//       mt={0}
+//       px={4}
+//       py={2}
+//       _hover={{ bg: 'brand.slate.100' }}
+//       href={href}
+//       role={'group'}
+//     >
+//       <Text
+//         color="slate.gray.500"
+//         fontSize="sm"
+//         _groupHover={{ color: 'brand.purple' }}
+//         transition={'all .3s ease'}
+//       >
+//         {label}
+//       </Text>
+//     </Link>
+//   );
+// };
 
 const MobileNavItem = ({ label, children, href }: NavItem) => {
   const { isOpen, onToggle } = useDisclosure();
@@ -223,19 +156,13 @@ const MobileNav = () => (
   </Stack>
 );
 
-const DesktopNav = ({ pathname }: { pathname: string }) => {
-  const navItems = NAV_ITEMS.map((navItem) => ({
-    ...navItem,
-    allPaths: navItem.children
-      ? navItem.children.map((child) => child.href)
-      : [],
-  }));
+const DesktopNav = () => {
+  const router = useRouter();
 
   return (
     <Stack direction={'row'} h="full" spacing={8}>
-      {navItems.map((navItem) => {
-        const isCurrent =
-          navItem.href === pathname || navItem.allPaths.includes(pathname);
+      {NAV_ITEMS[0]?.children?.map((navItem) => {
+        const isCurrent = `${navItem.href}` === router.asPath;
         return (
           <Box key={navItem.label}>
             <Popover placement={'bottom-start'} trigger={'hover'}>
@@ -256,27 +183,9 @@ const DesktopNav = ({ pathname }: { pathname: string }) => {
                   }}
                   href={navItem.href ?? '#'}
                 >
-                  {navItem.label}{' '}
-                  {navItem.children && <ChevronDownIcon ml={1} />}
+                  {navItem.label}
                 </Link>
               </PopoverTrigger>
-
-              {navItem.children && (
-                <PopoverContent
-                  w={'full'}
-                  minW={48}
-                  bg={'white'}
-                  border={'1px solid'}
-                  borderColor={'blackAlpha.200'}
-                  shadow={'xl'}
-                  roundedBottom={'md'}
-                  roundedTop={'none'}
-                >
-                  {navItem.children.map((child) => (
-                    <DesktopSubNav key={child.label} {...child} />
-                  ))}
-                </PopoverContent>
-              )}
             </Popover>
           </Box>
         );
@@ -340,7 +249,7 @@ export default function WithSubnavigation() {
             h="full"
             ml={10}
           >
-            <DesktopNav pathname={router?.pathname} />
+            <DesktopNav />
           </Flex>
         </Flex>
 

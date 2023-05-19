@@ -62,20 +62,20 @@ export const EarningModal = ({ isOpen, onClose }: Props) => {
           </Box>
           <VStack align={'start'} gap={2} mt={5}>
             <Text
-              color={'#000000'}
+              color={'black'}
               fontFamily={'Domine'}
-              fontSize={'24px'}
+              fontSize={'2xl'}
               fontWeight={700}
+              textAlign={'center'}
             >
-              Get personalized
-              <br />
-              earning opportunities <br /> in your inbox
+              Get personalized earning opportunities in your inbox
             </Text>
             <Text
-              color={'#64748B'}
+              color={'gray.500'}
               fontFamily={'Inter'}
-              fontSize={'14px'}
+              fontSize={'sm'}
               fontWeight={400}
+              textAlign={'center'}
             >
               It takes less than a minute, but might lead to the bounty or job
               that changes your life.

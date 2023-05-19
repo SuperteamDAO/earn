@@ -1,4 +1,5 @@
 import { Avatar, Box, Button, Flex, Image, Text } from '@chakra-ui/react';
+import type { User } from '@prisma/client';
 
 type ChipType = {
   icon: string;
@@ -7,7 +8,7 @@ type ChipType = {
 };
 
 const overFlowText = (limit: number, text: string) => {
-  if (text.length >= limit) {
+  if (text?.length >= limit) {
     return `${text.slice(0, limit - 3)}...`;
   }
   return text;
@@ -46,39 +47,39 @@ const Chip = ({ icon, label, value }: ChipType) => {
 };
 
 function TalentBio({
-  data,
+  user,
   successPage,
+  w,
 }: {
-  data: any;
-  successPage?: boolean;
+  user: User;
+  successPage: boolean;
+  w?: string;
 }) {
-  console.log(data);
-
   const socialLinks = [
     {
       icon: '/assets/talent/twitter.png',
-      link: data.twitter,
+      link: user?.twitter,
     },
 
     {
       icon: '/assets/talent/link.png',
-      link: data.linkedin,
+      link: user?.linkedin,
     },
 
     {
       icon: '/assets/talent/github.png',
-      link: data.github,
+      link: user?.github,
     },
 
     {
       icon: '/assets/talent/site.png',
-      link: data.website,
+      link: user?.website,
     },
   ];
 
   return (
     <Box
-      w={'80%'}
+      w={w ?? '80%'}
       px={'1.5625rem'}
       py={'1.125rem'}
       bg={'white'}
@@ -86,46 +87,46 @@ function TalentBio({
     >
       <Flex align={'center'}>
         <Avatar
-          name={`${data?.firstname}${data?.lastname}`}
+          name={`${user?.firstName}${user?.lastName}`}
           size="lg"
-          src={data?.avatar}
+          src={user?.photo as string}
         />
         <Box ml={'21'}>
           <Text fontSize={'md'} fontWeight={'600'}>
-            {data?.firstname} {data?.lastname}
+            {user?.firstName} {user?.lastName}
           </Text>
           <Text color={'gray.400'} fontSize={'sm'} fontWeight={'600'}>
             @
-            {data?.username.length > 15
-              ? `${data?.username.slice(0, 15)}...`
-              : data?.username}
+            {user?.username?.length! > 15
+              ? `${user?.username?.slice(0, 15)}...`
+              : user?.username}
           </Text>
         </Box>
       </Flex>
       <Text mt={4} color={'gray.400'} fontSize={'sm'} fontWeight={'400'}>
-        {data?.bio}
+        {user?.bio}
       </Text>
       <Flex justify={'space-between'} mt={4}>
         <Chip
           icon={'/assets/talent/eyes.png'}
           label={'Interested In'}
-          value={data?.workPrefernce}
+          value={user?.workPrefernce as string}
         />
         <Chip
           icon={'/assets/talent/cap.png'}
           label={'Works At'}
-          value={data?.currentEmployer}
+          value={user?.currentEmployer as string}
         />
       </Flex>
 
       {successPage ? (
-        <a style={{ textDecoration: 'none' }} href={`/t/${data?.username}`}>
+        <a style={{ textDecoration: 'none' }} href={`/t/${user?.username}`}>
           <Button w={'full'} mt={'1.575rem'} color={'white'} bg={'#6562FF'}>
             View Your Profile
           </Button>
         </a>
       ) : (
-        <a style={{ textDecoration: 'none' }} href={`mailto:${data.email}`}>
+        <a style={{ textDecoration: 'none' }} href={`mailto:${user?.email}`}>
           <Button w={'full'} mt={'1.575rem'} color={'white'} bg={'#6562FF'}>
             Get in Touch
           </Button>
@@ -147,7 +148,7 @@ function TalentBio({
                 w={6}
                 h={6}
                 opacity={!ele.link ? '0.3' : ''}
-                cursor={ele.link && 'pointer'}
+                cursor={ele.link! && 'pointer'}
                 objectFit="contain"
                 alt=""
                 filter={!ele.link ? 'grayscale(80%)' : ''}

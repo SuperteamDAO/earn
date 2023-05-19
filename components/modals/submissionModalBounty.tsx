@@ -21,6 +21,7 @@ import { useForm } from 'react-hook-form';
 import { QuestionHandler } from '@/components/listings/bounty/questions/questionHandler';
 import type { Eligibility } from '@/interface/bounty';
 import { userStore } from '@/store/user';
+import { Mixpanel } from '@/utils/mixpanel';
 
 interface Props {
   id: string;
@@ -30,6 +31,7 @@ interface Props {
   setIsSubmitted: (arg0: boolean) => void;
   setSubmissionNumber: (arg0: number) => void;
   submissionNumber: number;
+  bountytitle: string;
 }
 export const SubmissionModal = ({
   id,
@@ -39,6 +41,7 @@ export const SubmissionModal = ({
   setIsSubmitted,
   setSubmissionNumber,
   submissionNumber,
+  bountytitle,
 }: Props) => {
   const isPermissioned = eligibility && eligibility?.length > 0;
   const { userInfo } = userStore();
@@ -68,8 +71,13 @@ export const SubmissionModal = ({
           ? eligibilityAnswers
           : null,
       });
+      Mixpanel.track('bounty_submission', {
+        title: bountytitle,
+        user: userInfo?.username,
+      });
       setIsSubmitted(true);
       setSubmissionNumber(submissionNumber + 1);
+
       onClose();
     } catch (e) {
       setError('Sorry! Please try again or contact support.');
@@ -89,13 +97,19 @@ export const SubmissionModal = ({
       <ModalContent>
         <ModalHeader color="brand.slate.800">Bounty Submission</ModalHeader>
         <ModalCloseButton />
-        <VStack align={'start'} gap={3} pb={6} px={6}>
+        <VStack
+          align={'start'}
+          gap={3}
+          overflow={'scroll'}
+          maxH={'50rem'}
+          pb={6}
+          px={6}
+        >
           <Box>
-            <Text mb={2} color={'brand.slate.500'} fontSize="sm">
+            <Text mb={1} color={'brand.slate.500'} fontSize="sm">
               {isPermissioned
                 ? `This is a permissioned bounty - which means only the applicant that the sponsor will select will be eligible to work on this bounty`
-                : `We can't wait to see what you've created! Winners will receive
-              prizes as well as instant admission to our DAO.`}
+                : `We can't wait to see what you've created!`}
             </Text>
             <Text color={'brand.slate.500'} fontSize="sm">
               {!!isPermissioned &&

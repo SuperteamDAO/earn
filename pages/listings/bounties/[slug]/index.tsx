@@ -21,15 +21,16 @@ interface BountyDetailsProps {
 function BountyDetails({ slug }: BountyDetailsProps) {
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState(false);
-  const [bounty, setBounty] = useState<Bounty | null>(null);
 
+  const [bounty, setBounty] = useState<Bounty | null>(null);
   const getBounty = async () => {
     setIsLoading(true);
     try {
       const bountyDetails = await axios.get(`/api/bounties/${slug}/`);
       setBounty(bountyDetails.data);
+
       Mixpanel.track('bounty_page_load', {
-        title: slug,
+        'Bounty Title': bountyDetails.data.title,
       });
     } catch (e) {
       setError(true);
@@ -48,7 +49,6 @@ function BountyDetails({ slug }: BountyDetailsProps) {
         <Meta
           title={`${bounty?.title || 'Bounty'} | Superteam Earn`}
           description="Every Solana opportunity in one place!"
-          canonical="/assets/logo/og.svg"
         />
       }
     >
@@ -60,12 +60,14 @@ function BountyDetails({ slug }: BountyDetailsProps) {
       {!isLoading && !error && !!bounty?.id && (
         <>
           <ListingHeader
+            type={bounty.type}
             id={bounty?.id}
             status={bounty?.status}
             deadline={bounty?.deadline}
             title={bounty?.title ?? ''}
             sponsor={bounty?.sponsor}
             poc={bounty?.poc}
+            slug={bounty?.slug}
           />
           <HStack
             align={['center', 'center', 'start', 'start']}
@@ -78,14 +80,15 @@ function BountyDetails({ slug }: BountyDetailsProps) {
           >
             <VStack gap={8} w={['22rem', '22rem', 'full', 'full']} mt={10}>
               <DetailDescription
-                skills={bounty?.skills}
+                skills={bounty?.skills?.map((e) => e.skills)}
                 description={bounty?.description}
               />
               <Comments refId={bounty?.id ?? ''} refType="BOUNTY" />
             </VStack>
             <DetailSideCard
+              bountytitle={bounty.title ?? ''}
               id={bounty?.id || ''}
-              token={bounty?.token as string}
+              token={bounty?.token ?? ''}
               eligibility={bounty?.eligibility}
               endingTime={bounty?.deadline ?? ''}
               prizeList={bounty?.rewards}

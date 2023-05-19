@@ -1,3 +1,5 @@
+import { type SkillMap } from '@/interface/skills';
+
 export const CountryList: string[] = [
   'India',
   'Afghanistan',
@@ -251,3 +253,46 @@ export const SkillColor: any = {
   'Fullstack Dev': '#16A368',
   'Mobile Engineer': '#7E51FF',
 };
+
+export const skillMap: SkillMap[] = [
+  {
+    mainskill: 'Growth',
+    color: '#16A368',
+  },
+  {
+    mainskill: 'Frontend',
+    color: '#3E8BFF',
+  },
+  {
+    mainskill: 'Backend',
+    color: '#FF833E',
+  },
+  {
+    mainskill: 'Blockchain',
+    color: '#FF3EC9',
+  },
+  {
+    mainskill: 'Design',
+    color: '#7E51FF',
+  },
+  {
+    mainskill: 'Content',
+    color: '#5EA8BF',
+  },
+  {
+    mainskill: 'Community',
+    color: '#F5C723',
+  },
+  {
+    mainskill: 'Mobile',
+    color: '#7E51FF',
+  },
+  {
+    mainskill: 'Fullstack',
+    color: '#16A368',
+  },
+  {
+    mainskill: 'Other',
+    color: '#64758B',
+  },
+];

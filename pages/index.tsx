@@ -39,6 +39,8 @@ const HomePage: NextPage = () => {
       setListings(listingsData.data);
       setIsListingsLoading(false);
     } catch (e) {
+      console.log(e);
+
       setIsListingsLoading(false);
     }
   };
@@ -135,10 +137,10 @@ const HomePage: NextPage = () => {
                   sponsorName={grant?.sponsor?.name}
                   logo={grant?.sponsor?.logo}
                   key={grant?.id}
+                  slug={grant.slug}
                   rewardAmount={grant?.rewardAmount}
-                  token={grant?.token}
                   title={grant?.title}
-                  link={grant?.link}
+                  short_description={grant?.shortDescription}
                 />
               );
             })}

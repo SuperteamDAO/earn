@@ -41,6 +41,7 @@ interface Props {
   token?: string;
   questions?: string;
   eligibility?: Eligibility[];
+  bountytitle: string;
 }
 function DetailSideCard({
   id,
@@ -50,6 +51,7 @@ function DetailSideCard({
   token,
   eligibility,
   applicationLink,
+  bountytitle,
 }: Props) {
   const { userInfo } = userStore();
   const [isSubmissionNumberLoading, setIsSubmissionNumberLoading] =
@@ -125,6 +127,7 @@ function DetailSideCard({
           submissionNumber={submissionNumber}
           setSubmissionNumber={setSubmissionNumber}
           setIsSubmitted={setIsSubmitted}
+          bountytitle={bountytitle}
         />
       )}
       <LoginWrapper
@@ -447,6 +450,10 @@ function DetailSideCard({
             ) : (
               <Button
                 w="full"
+                _hover={{
+                  bg: 'brand.purple',
+                }}
+                isDisabled={Date.now() > Number(moment(endingTime).format('x'))}
                 isLoading={isUserSubmissionLoading}
                 loadingText={'Checking Submission...'}
                 onClick={() => handleSubmit()}
@@ -497,7 +504,9 @@ function DetailSideCard({
           <VerticalStep
             currentStep={submissionStatus + 1}
             thisStep={3}
-            sublabel={`On ${moment(endingTime).format('Do MMM, YY')}`}
+            sublabel={`Around ${moment(endingTime)
+              .add(8, 'd')
+              .format('Do MMM, YY')}`}
             label={'Winner Announced'}
           />
         </VStack>

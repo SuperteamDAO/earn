@@ -10,6 +10,7 @@ import {
   Link,
   Text,
   useDisclosure,
+  useMediaQuery,
 } from '@chakra-ui/react';
 import { useWallet } from '@solana/wallet-adapter-react';
 import parse from 'html-react-parser';
@@ -55,9 +56,9 @@ export const ListingSection = ({
             : 'none'
           : 'block'
       }
-      w={{ md: '100%', base: '95%' }}
-      mb={'2.8125rem'}
+      w={{ md: '100%', base: '98%' }}
       mx={'auto'}
+      my={10}
     >
       <HStack
         align="center"
@@ -82,10 +83,19 @@ export const ListingSection = ({
           >
             {title}
           </Text>
-          <Text mx={3} color={'brand.slate.300'} fontSize={'xxs'}>
+          <Text
+            display={['none', 'none', 'block', 'block']}
+            mx={3}
+            color={'brand.slate.300'}
+            fontSize={'xxs'}
+          >
             |
           </Text>
-          <Text color={'brand.slate.400'} fontSize={{ base: 12, md: 14 }}>
+          <Text
+            display={['none', 'none', 'block', 'block']}
+            color={'brand.slate.400'}
+            fontSize={{ base: 12, md: 14 }}
+          >
             {sub}
           </Text>
         </Flex>
@@ -140,100 +150,130 @@ export const BountiesCard = ({
   sponsorName,
 }: BountyProps) => {
   const router = useRouter();
+  const [isMobile] = useMediaQuery('(max-width: 768px)');
   return (
-    <Flex
-      align="start"
-      justify="space-between"
-      w={{ base: '100%', md: 'brand.120' }}
-      h={16}
-    >
-      <Flex w="80%" h={16}>
-        <Image
-          w={16}
-          h={16}
-          mr={5}
-          alt={sponsorName}
-          rounded={5}
-          src={logo || `${router.basePath}/assets/images/sponsor-logo.png`}
-        />
-        <Flex justify={'space-between'} direction={'column'} w={'full'}>
-          <Link
-            color="brand.slate.700"
-            fontSize="sm"
-            fontWeight={600}
-            _hover={{
-              textDecoration: 'underline',
-            }}
-            cursor="pointer"
-            href={`/listings/bounties/${slug}`}
-            onClick={() => {
-              Mixpanel.track('bounty_clicked', {
-                element: 'title',
-                'Bounty Title': title,
-              });
-            }}
-          >
-            {textLimiter(title, 40)}
-          </Link>
-          <Text
-            w={'full'}
-            color={'brand.slate.500'}
-            fontSize={{ md: 'sm', base: 'xs' }}
-          >
-            {sponsorName}
-          </Text>
-          <Flex align={'center'} gap={3}>
-            <Flex align={'center'} justify="start">
-              <Image
-                w={4}
-                h={4}
-                mr={1}
-                alt={token}
-                rounded="full"
-                src={
-                  tokenList.find((ele) => {
-                    return ele.tokenName === token;
-                  })?.icon
-                }
-              />
-
-              <Text
-                color={'brand.slate.700'}
-                fontSize={'sm'}
-                fontWeight={'600'}
-              >
-                {rewardAmount}
-              </Text>
-            </Flex>
-            <Text color={'brand.slate.300'} fontSize={'sm'}>
-              |
-            </Text>
-            <Text color={'brand.slate.500'} fontSize={'sm'}>
-              {dayjs().isBefore(deadline)
-                ? `Closing ${dayjs(deadline).fromNow()}`
-                : `Closed ${dayjs(deadline).fromNow()}`}
-            </Text>
-          </Flex>
-        </Flex>
-      </Flex>
+    <>
       <Link
+        p={2}
+        borderRadius={5}
+        _hover={{
+          textDecoration: 'none',
+          bg: 'gray.100',
+        }}
         href={`/listings/bounties/${slug}`}
         onClick={() => {
           Mixpanel.track('bounty_clicked', {
-            element: 'button',
+            element: 'title',
             'Bounty Title': title,
           });
         }}
       >
-        <Button px={6} size="sm" variant="outlineSecondary">
-          {dayjs().isAfter(deadline)
-            ? status === 'CLOSED'
-              ? 'View'
-              : 'View'
-            : 'Apply'}
-        </Button>
+        <Flex
+          align="start"
+          justify="space-between"
+          w={{ base: '100%', md: 'brand.120' }}
+          h={16}
+        >
+          <Flex w="100%" h={16}>
+            <Image
+              w={16}
+              h={16}
+              mr={5}
+              alt={sponsorName}
+              rounded={5}
+              src={logo || `${router.basePath}/assets/images/sponsor-logo.png`}
+            />
+            <Flex justify={'space-between'} direction={'column'} w={'full'}>
+              <Link
+                color="brand.slate.700"
+                fontSize={['xs', 'xs', 'sm', 'sm']}
+                fontWeight={600}
+                _hover={{
+                  textDecoration: 'underline',
+                }}
+                cursor="pointer"
+                href={`/listings/bounties/${slug}`}
+                onClick={() => {
+                  Mixpanel.track('bounty_clicked', {
+                    element: 'title',
+                    'Bounty Title': title,
+                  });
+                }}
+              >
+                {isMobile ? textLimiter(title, 20) : textLimiter(title, 40)}
+              </Link>
+              <Text
+                w={'full'}
+                color={'brand.slate.500'}
+                fontSize={{ md: 'sm', base: 'xs' }}
+              >
+                {sponsorName}
+              </Text>
+              <Flex align={'center'} gap={isMobile ? 1 : 3}>
+                <Flex align={'center'} justify="start">
+                  <Image
+                    w={4}
+                    h={4}
+                    mr={1}
+                    alt={token}
+                    rounded="full"
+                    src={
+                      tokenList.find((ele) => {
+                        return ele.tokenName === token;
+                      })?.icon
+                    }
+                  />
+
+                  <Text
+                    color={'brand.slate.700'}
+                    fontSize={['x-small', 'xs', 'sm', 'sm']}
+                    fontWeight={'600'}
+                  >
+                    {rewardAmount}
+                  </Text>
+                </Flex>
+                <Text
+                  color={'brand.slate.300'}
+                  fontSize={['xx-small', 'xs', 'sm', 'sm']}
+                >
+                  |
+                </Text>
+                <Text
+                  color={'brand.slate.500'}
+                  fontSize={['x-small', 'xs', 'sm', 'sm']}
+                >
+                  {dayjs().isBefore(deadline)
+                    ? `Closing ${dayjs(deadline).fromNow()}`
+                    : `Closed ${dayjs(deadline).fromNow()}`}
+                </Text>
+              </Flex>
+            </Flex>
+          </Flex>
+          <Link
+            href={`/listings/bounties/${slug}`}
+            onClick={() => {
+              Mixpanel.track('bounty_clicked', {
+                element: 'button',
+                'Bounty Title': title,
+              });
+            }}
+          >
+            <Button
+              h={isMobile ? 7 : 9}
+              px={6}
+              fontSize={['xx-small', 'xs', 'sm', 'sm']}
+              variant="outlineSecondary"
+            >
+              {dayjs().isAfter(deadline)
+                ? status === 'CLOSED'
+                  ? 'View'
+                  : 'View'
+                : 'Apply'}
+            </Button>
+          </Link>
+        </Flex>
       </Link>
-    </Flex>
+    </>
   );
 };
 interface JobsProps {
@@ -261,92 +301,120 @@ export const JobsCard = ({
   link,
   location,
 }: JobsProps) => {
+  const [isMobile] = useMediaQuery('(max-width: 768px)');
   return (
-    <Flex
-      align="center"
-      justify="space-between"
-      w={{ base: '100%', md: 'brand.120' }}
-      h={'3.9375rem'}
-    >
-      <Flex justify="start">
-        <Image
-          w={16}
-          h={16}
-          mr={5}
-          alt={'company logo'}
-          rounded={5}
-          src={logo || '/assets/home/placeholder/ph2.png'}
-        />
-        <Flex justify={'space-between'} direction={'column'}>
-          <Text color="brand.slate.700" fontSize="sm" fontWeight="600">
-            {title}
-          </Text>
-          <Text
-            color="brand.slate.400"
-            fontSize={{ md: 'sm', base: 'xs' }}
-            fontWeight={400}
-          >
-            {description
-              ? parse(
-                  description?.startsWith('"')
-                    ? JSON.parse(description || '')?.slice(0, 100)
-                    : (description ?? '')?.slice(0, 100)
-                )
-              : orgName}
-          </Text>
-          <Flex align={'center'}>
-            {!!min && !!max && (
-              <Text mr={3} color={'brand.slate.500'} fontSize={'sm'}>
-                <Text as="span" fontWeight="700">
-                  ${' '}
-                </Text>
-                {min.toLocaleString()} - {max.toLocaleString()}
-              </Text>
-            )}
-            {!!minEq && !!maxEq && (
-              <Text mr={3} color={'brand.slate.500'} fontSize={'sm'}>
-                {minEq.toLocaleString()}% - {maxEq.toLocaleString()}% Equity
-              </Text>
-            )}
-            {!!location && (
-              <Text
-                key={''}
-                display={{ base: 'none', md: 'block' }}
-                mr={3}
-                color={'brand.slate.500'}
-                fontSize="sm"
-              >
-                {location}
-              </Text>
-            )}
-          </Flex>
-        </Flex>
-      </Flex>
+    <>
       <Link
-        w={24}
-        py={2}
-        color={'brand.slate.400'}
-        textAlign="center"
-        border="1px solid"
-        borderColor={'brand.slate.400'}
-        borderRadius={4}
+        p={2}
+        borderRadius={5}
         _hover={{
           textDecoration: 'none',
-          bg: 'brand.slate.400',
-          color: 'white',
+          bg: 'gray.100',
         }}
         href={link}
         isExternal
         onClick={() => {
-          Mixpanel.track('job_clicked', {
-            element: 'button',
+          Mixpanel.track('bounty_clicked', {
+            element: 'title',
             'Job Title': title,
           });
         }}
       >
-        Apply
+        <Flex
+          align="start"
+          justify="space-between"
+          w={{ base: '100%', md: 'brand.120' }}
+          h={16}
+        >
+          <Flex justify="start">
+            <Image
+              w={16}
+              h={16}
+              mr={5}
+              alt={'company logo'}
+              rounded={5}
+              src={logo || '/assets/home/placeholder/ph2.png'}
+            />
+            <Flex justify={'space-between'} direction={'column'}>
+              <Text
+                color="brand.slate.700"
+                fontSize={['xs', 'xs', 'sm', 'sm']}
+                fontWeight="600"
+              >
+                {isMobile ? textLimiter(title, 20) : textLimiter(title, 40)}
+              </Text>
+              <Text
+                color="brand.slate.400"
+                fontSize={['xs', 'xs', 'sm', 'sm']}
+                fontWeight={400}
+              >
+                {description
+                  ? parse(
+                      description?.startsWith('"')
+                        ? JSON.parse(description || '')?.slice(0, 100)
+                        : (description ?? '')?.slice(0, 100)
+                    )
+                  : orgName}
+              </Text>
+              <Flex align={'center'}>
+                {!!min && !!max && (
+                  <Text
+                    mr={3}
+                    color={'brand.slate.500'}
+                    fontSize={['xs', 'xs', 'sm', 'sm']}
+                  >
+                    <Text as="span" fontWeight="700">
+                      ${' '}
+                    </Text>
+                    {min.toLocaleString()} - {max.toLocaleString()}
+                  </Text>
+                )}
+                {!!minEq && !!maxEq && (
+                  <Text
+                    mr={3}
+                    color={'brand.slate.500'}
+                    fontSize={['xs', 'xs', 'sm', 'sm']}
+                  >
+                    {minEq.toLocaleString()}% - {maxEq.toLocaleString()}% Equity
+                  </Text>
+                )}
+                {!!location && (
+                  <Text
+                    key={''}
+                    display={{ base: 'none', md: 'block' }}
+                    mr={3}
+                    color={'brand.slate.500'}
+                    fontSize={['xs', 'xs', 'sm', 'sm']}
+                  >
+                    {location}
+                  </Text>
+                )}
+              </Flex>
+            </Flex>
+          </Flex>
+
+          <Link
+            href={link ?? '#'}
+            isExternal
+            onClick={() => {
+              Mixpanel.track('job_clicked', {
+                element: 'button',
+                'Job Title': title,
+              });
+            }}
+          >
+            <Button
+              h={isMobile ? 7 : 9}
+              px={6}
+              fontSize={['xs', 'xs', 'sm', 'sm']}
+              variant="outlineSecondary"
+            >
+              Apply
+            </Button>
+          </Link>
+        </Flex>
       </Link>
-    </Flex>
+    </>
   );
 };
 
@@ -356,81 +424,99 @@ interface GrantsProps {
   logo?: string;
   rewardAmount?: number;
   token?: string;
-  link?: string;
+  slug: string;
+  short_description?: string;
 }
 export const GrantsCard = ({
   title,
   logo,
   rewardAmount,
   sponsorName,
-  token,
-  link,
+  slug,
+  short_description,
 }: GrantsProps) => {
-  const router = useRouter();
+  const [isMobile] = useMediaQuery('(max-width: 768px)');
   return (
-    <Flex
-      align="center"
-      justify="space-between"
-      w={{ base: '100%', md: 'brand.120' }}
-      h={14}
-    >
-      <Flex justify="start">
-        <Image
-          w={16}
-          h={16}
-          mr={5}
-          alt={'company logo'}
-          rounded={5}
-          src={logo || '/assets/home/placeholder/ph3.png'}
-        />
-        <Flex justify="start" direction="column">
-          <Text color="brand.slate.700" fontSize="sm" fontWeight="600">
-            {title}
-          </Text>
-          <Text
-            color="brand.slate.400"
-            fontSize={{ md: 'sm', base: 'xs' }}
-            fontWeight="400"
-          >
-            {sponsorName}
-          </Text>
-          {!!token && (
-            <Flex align={'center'}>
-              <Image
-                w={4}
-                h={4}
-                mr={1}
-                alt="token"
-                rounded="full"
-                src={
-                  tokenList.find((e) => e.tokenName === token)?.icon ||
-                  `${router.basePath}/assets/icons/dollar.svg}`
-                }
-              />
-              {rewardAmount && (
-                <Text mr={3} color={'brand.slate.500'} fontSize={'sm'}>
-                  {rewardAmount.toLocaleString()}
-                </Text>
-              )}
-            </Flex>
-          )}
-        </Flex>
-      </Flex>
+    <>
       <Link
-        href={link ?? '#'}
-        isExternal
+        p={2}
+        borderRadius={5}
+        _hover={{
+          textDecoration: 'none',
+          bg: 'gray.100',
+        }}
+        href={`/listings/grants/${slug}`}
         onClick={() => {
           Mixpanel.track('grant_clicked', {
-            element: 'button',
+            element: 'title',
             'Grant Title': title,
           });
         }}
       >
-        <Button px={6} size="sm" variant="outlineSecondary">
-          Apply
-        </Button>
+        <Flex
+          align="start"
+          justify="space-between"
+          w={{ base: '100%', md: 'brand.120' }}
+          h={16}
+        >
+          <Flex justify="start" h={16}>
+            <Image
+              w={16}
+              h={16}
+              mr={5}
+              alt={'company logo'}
+              rounded={5}
+              src={logo || '/assets/home/placeholder/ph3.png'}
+            />
+            <Flex justify="start" direction="column">
+              <Text
+                color="brand.slate.700"
+                fontSize={['xs', 'xs', 'sm', 'sm']}
+                fontWeight="600"
+              >
+                {isMobile ? textLimiter(title, 20) : textLimiter(title, 40)}
+              </Text>
+              <Text
+                color="brand.slate.400"
+                fontSize={['xs', 'xs', 'sm', 'sm']}
+                fontWeight="400"
+              >
+                {sponsorName}
+              </Text>
+
+              {rewardAmount && (
+                <Text
+                  mr={3}
+                  color={'brand.slate.500'}
+                  fontSize={['xs', 'xs', 'sm', 'sm']}
+                >
+                  {short_description}
+                </Text>
+              )}
+            </Flex>
+          </Flex>
+          <Link
+            href={`/listings/grants/${slug}` ?? '#'}
+            isExternal
+            onClick={() => {
+              Mixpanel.track('grant_clicked', {
+                element: 'button',
+                'Grant Title': title,
+              });
+            }}
+          >
+            <Button
+              h={isMobile ? 7 : 9}
+              px={6}
+              fontSize={['xs', 'xs', 'sm', 'sm']}
+              variant="outlineSecondary"
+            >
+              Apply
+            </Button>
+          </Link>
+        </Flex>
       </Link>
-    </Flex>
+    </>
   );
 };
 
@@ -444,6 +530,8 @@ type CategoryAssetsType = {
 };
 
 export const CategoryBanner = ({ type }: { type: string }) => {
+  console.log(type, '--type');
+
   const { userInfo } = userStore();
 
   const { talentInfo, setTalentInfo } = TalentStore();
@@ -467,18 +555,25 @@ export const CategoryBanner = ({ type }: { type: string }) => {
       color: '#FEB8A8',
       icon: '/assets/category_assets/icon/content.png',
     },
-    'Frontend Development': {
+    Frontend: {
       bg: `/assets/category_assets/bg/frontend.png`,
       desc: 'If you are a pixel-perfectionist who creates interfaces that users love, check out the earning opportunities below.',
       color: '#FEA8EB',
       icon: '/assets/category_assets/icon/frontend.png',
     },
-    'Backend Development': {
+    Backend: {
       bg: `/assets/category_assets/bg/backend.png`,
       desc: 'Opportunities to build high-performance databases, on and off-chain. ',
       color: '#FEEBA8',
       icon: '/assets/category_assets/icon/backend.png',
     },
+    Fullstack: {
+      bg: `/assets/category_assets/bg/backend.png`,
+      desc: 'Unlock opportunities in crafting comprehensive solutions by seamlessly integrating user-friendly interfaces and robust databases, both on and off-chain',
+      color: '#FEEBA8',
+      icon: '/assets/category_assets/icon/backend.png',
+    },
+
     Blockchain: {
       bg: `/assets/category_assets/bg/contract.png`,
       desc: 'If you can write insightful essays, make stunning videos, or create killer memes, the opportunities below are calling your name.',

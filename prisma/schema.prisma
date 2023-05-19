@@ -43,31 +43,31 @@ model Jobs {
 }
 
 model Bounties {
-  id              String    @id @default(uuid())
+  id              String     @id @default(uuid())
   title           String
-  slug            String    @unique
-  description     String?   @db.Text
-  skills          String?
-  subSkills       String?
+  slug            String     @unique
+  description     String?    @db.Text
+  skills          Json?
   deadline        DateTime?
   eligibility     Json?
-  status          status    @default(OPEN)
+  status          status     @default(OPEN)
+  type            BountyType @default(open)
   token           String
   rewardAmount    Int?
   rewards         Json?
   applicationLink String?
   sponsorId       String
-  sponsor         Sponsors  @relation(fields: [sponsorId], references: [id])
+  sponsor         Sponsors   @relation(fields: [sponsorId], references: [id])
   pocId           String
-  poc             User      @relation("poc", fields: [pocId], references: [id])
-  source          Source    @default(NATIVE)
+  poc             User       @relation("poc", fields: [pocId], references: [id])
+  source          Source     @default(NATIVE)
   sourceDetails   Json?
-  isPublished     Boolean   @default(false)
-  isFeatured      Boolean   @default(false)
-  isActive        Boolean   @default(true)
-  isArchived      Boolean   @default(false)
-  createdAt       DateTime  @default(now())
-  updatedAt       DateTime  @updatedAt
+  isPublished     Boolean    @default(false)
+  isFeatured      Boolean    @default(false)
+  isActive        Boolean    @default(true)
+  isArchived      Boolean    @default(false)
+  createdAt       DateTime   @default(now())
+  updatedAt       DateTime   @updatedAt
 
   @@index([id, slug])
   @@index([sponsorId])
@@ -96,8 +96,7 @@ model Grants {
   slug             String   @unique
   description      String?  @db.Text
   shortDescription String?  @db.VarChar(1000)
-  skills           String?
-  subSkills        String?
+  skills           Json?
   token            String?
   rewardAmount     Int?
   link             String?
@@ -155,12 +154,15 @@ model Sponsors {
   industry     String
   twitter      String?
   bio          String?
+  isActive     Boolean        @default(true)
+  isArchived   Boolean        @default(false)
   createdAt    DateTime       @default(now())
   updatedAt    DateTime       @updatedAt
   UserSponsors UserSponsors[]
   Bounties     Bounties[]
   Grants       Grants[]
   Jobs         Jobs[]
+  User         User[]
 
   @@index([id, slug])
 }
@@ -190,8 +192,7 @@ model User {
   role             SuperRole      @default(USER)
   totalEarnedInUSD Int            @default(0)
   isTalentFilled   Boolean        @default(false)
-  skills           String?
-  subSkills        String?
+  skills           Json?
   interests        String?
   bio              String?
   twitter          String?
@@ -210,6 +211,8 @@ model User {
   pow              String?        @db.VarChar(2000)
   notifications    String?
   private          Boolean        @default(false)
+  currentSponsorId String?
+  currentSponsor   Sponsors?      @relation(fields: [currentSponsorId], references: [id])
   UserSponsors     UserSponsors[]
   poc              Bounties[]     @relation("poc")
   Comment          Comment[]
@@ -217,6 +220,7 @@ model User {
   Grants           Grants[]
 
   @@index([email, publicKey, username])
+  @@index([currentSponsorId])
 }
 
 model UserSponsors {
@@ -252,6 +256,11 @@ enum status {
   OPEN
   REVIEW
   CLOSED
+}
+
+enum BountyType {
+  permissioned
+  open
 }
 
 enum ListingType {

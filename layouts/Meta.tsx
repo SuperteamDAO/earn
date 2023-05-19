@@ -8,6 +8,7 @@ type IMetaProps = {
   title: string;
   description: string;
   canonical?: string;
+  og?: string;
 };
 
 const Meta = (props: IMetaProps) => {
@@ -60,7 +61,7 @@ const Meta = (props: IMetaProps) => {
           site_name: AppConfig.site_name,
           images: [
             {
-              url: 'https://earn.superteam.fun/assets/logo/og.png',
+              url: props.og ?? 'https://earn.superteam.fun/assets/logo/og.png',
               alt: props.title,
             },
           ],

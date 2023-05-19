@@ -4,7 +4,6 @@ import { prisma } from '@/prisma';
 
 export default async function user(req: NextApiRequest, res: NextApiResponse) {
   const { id, ...updateAttributes } = req.body;
-  console.log('file: update.ts:7 ~ user ~ updateAttributes:', updateAttributes);
   try {
     const result = await prisma.user.update({
       where: {
@@ -13,10 +12,12 @@ export default async function user(req: NextApiRequest, res: NextApiResponse) {
       data: {
         ...updateAttributes,
       },
+      include: {
+        currentSponsor: true,
+      },
     });
     res.status(200).json(result);
   } catch (error) {
-    console.log('file: update.ts:19 ~ user ~ error:', error);
     res.status(400).json({
       error,
       message: `Error occurred while updating user ${id}.`,

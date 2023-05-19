@@ -3,7 +3,6 @@ import {
   Box,
   Button,
   Center,
-  Flex,
   Heading,
   HStack,
   Image,
@@ -11,6 +10,7 @@ import {
   Text,
   VStack,
 } from '@chakra-ui/react';
+import type { User } from '@prisma/client';
 import React, { Fragment, useState } from 'react';
 import { create } from 'zustand';
 
@@ -24,7 +24,6 @@ import { Meta } from '@/layouts/Meta';
 
 import { Steps } from '../../components/misc/steps';
 import TalentBio from '../../components/TalentBio';
-// layouts
 
 const useFormStore = create<UserStoreType>()((set) => ({
   form: {
@@ -37,7 +36,7 @@ const useFormStore = create<UserStoreType>()((set) => ({
     currentEmployer: '',
     community: '',
     interests: '',
-    skills: '',
+    skills: [],
     subSkills: '',
     workPrefernce: '',
     discord: '',
@@ -209,29 +208,25 @@ const SuccessScreen = () => {
           Have a look at your profile or start earning
         </Text>
       </VStack>
-      <HStack gap={'1.25rem'} w={'fit-content'} mt={'66px'} mx={'auto'}>
-        <TalentBio data={form} successPage={true} />
-        <Flex
-          align={'center'}
-          direction={'column'}
-          w={'34.375rem'}
-          h={'21.375rem'}
-          pt={'33px'}
-          bg={'white'}
-          borderRadius={'0.6875rem'}
-        >
-          <Center w={'30.6875rem'} h={'206px'} mx={'auto'} bg={'#E0F2FF'}>
-            <Image
-              w={'26.875rem'}
-              h={'12.875rem'}
-              alt={''}
-              src="/assets/talent/fake-tasks.png"
-            />
-          </Center>
+      <HStack
+        align={'start'}
+        justifyContent={'center'}
+        gap={10}
+        w={'fit-content'}
+        mt={10}
+        mx={'auto'}
+      >
+        <Box w={'full'}>
+          <TalentBio
+            user={form as unknown as User}
+            successPage={true}
+            w={'90%'}
+          />
+        </Box>
+        <VStack maxW={'35rem'} h={'full'} p={5} bg="white" rounded={'lg'}>
+          <Image alt="final" src="/assets/talent/fake-tasks.png" />
           <Button
-            w={'31.0625rem'}
-            h="50px"
-            mt={'1.8125rem'}
+            w="full"
             color={'white'}
             bg={'rgb(101, 98, 255)'}
             onClick={() => {
@@ -240,14 +235,16 @@ const SuccessScreen = () => {
           >
             Start Earning
           </Button>
-        </Flex>
+        </VStack>
       </HStack>
     </Box>
   );
 };
 
 function Talent() {
-  const [currentPage, setcurrentPage] = useState('steps');
+  const [currentPage, setcurrentPage] = useState<
+    'welcome' | 'steps' | 'success'
+  >('steps');
 
   return (
     <Default

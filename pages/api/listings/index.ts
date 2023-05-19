@@ -7,13 +7,21 @@ export default async function user(req: NextApiRequest, res: NextApiResponse) {
   const params = req.query;
   const category = params.category as string;
   const filter = params.filter as string;
-  const take = params.take ? parseInt(params.take as string, 10) : 5;
+  const take = params.take ? parseInt(params.take as string, 10) : 10;
   const result: any = {
     bounties: [],
     grants: [],
     jobs: [],
   };
   const skillsFilter = filter
+    ? {
+        skills: {
+          path: '$[*].skills',
+          array_contains: filter.split(',')[0],
+        },
+      }
+    : {};
+  const skillsFilterJobs = filter
     ? { skills: { contains: filter.split(',')[0] } }
     : {};
   try {
@@ -84,7 +92,7 @@ export default async function user(req: NextApiRequest, res: NextApiResponse) {
         where: {
           private: false,
           active: true,
-          ...skillsFilter,
+          ...skillsFilterJobs,
         },
         take,
         orderBy: {
@@ -111,6 +119,8 @@ export default async function user(req: NextApiRequest, res: NextApiResponse) {
     }
     res.status(200).json(result);
   } catch (error) {
+    console.log(error);
+
     res.status(400).json({
       error,
       message: 'Error occurred while fetching listings',

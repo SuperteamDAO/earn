@@ -66,7 +66,7 @@ export const SubmissionModal = ({
                 });
               })}
             >
-              <VStack gap={4} my={5}>
+              <VStack gap={4} overflow={'scroll'} h={'20rem'} my={5}>
                 {questionsArr.map((e) => {
                   return (
                     <FormControl key={e.id} isRequired>

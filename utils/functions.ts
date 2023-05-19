@@ -5,6 +5,8 @@ import moment from 'moment';
 import toast from 'react-hot-toast';
 import { v4 as uuidV4 } from 'uuid';
 
+import type { Grant } from '@/interface/grant';
+
 import type { Comment } from '../interface/comments';
 import type {
   Bounties,
@@ -338,20 +340,17 @@ export const findJobs = async (slug: string): Promise<FindJobsReturn> => {
     return null;
   }
 };
-type FindGrantsReturn = {
-  listing: GrantsType;
-  sponsor: SponsorType;
-} | null;
-export const findGrants = async (slug: string): Promise<FindGrantsReturn> => {
+
+export const findGrants = async (slug: string): Promise<Grant | null> => {
   if (!slug) return null;
   try {
-    const { data, status } = await axios.get(
-      `${BACKEND_URL}/listings/grants/find/${slug}`
-    );
+    const { data, status } = await axios.get(`/api/grants/${slug}`);
     if (status !== 200) {
       return null;
     }
-    return data.data;
+    console.log(data);
+
+    return data;
   } catch (error) {
     console.log(error);
     return null;
