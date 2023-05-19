@@ -394,7 +394,7 @@ function DetailSideCard({
           </VStack>
           <Flex justify={'space-between'} w={'full'} px={5}>
             <Flex align={'start'} justify={'center'} direction={'column'}>
-              <Flex align={'center'} justify={'center'} gap={1}>
+              <Flex align={'center'} justify={'center'} gap={2}>
                 <Image
                   w={'1.4rem'}
                   mt={-1}
