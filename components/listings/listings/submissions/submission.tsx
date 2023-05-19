@@ -1,5 +1,6 @@
 import { Flex, Image, Text, VStack } from '@chakra-ui/react';
 import moment from 'moment';
+import type { Dispatch, SetStateAction } from 'react';
 import React from 'react';
 
 import type { SubmissionWithUser } from '@/interface/submission';
@@ -9,8 +10,9 @@ import { SubmissionCard } from './submissionCard';
 interface Props {
   submissions: SubmissionWithUser[];
   endTime: string;
+  setUpdate: Dispatch<SetStateAction<boolean>>;
 }
-export const Submissions = ({ submissions, endTime }: Props) => {
+export const Submissions = ({ submissions, endTime, setUpdate }: Props) => {
   return (
     <>
       <VStack
@@ -41,11 +43,17 @@ export const Submissions = ({ submissions, endTime }: Props) => {
                   return (
                     <SubmissionCard
                       id={el.id}
-                      likes={[]}
+                      likes={
+                        (el.like as unknown as {
+                          id: string;
+                          date: number;
+                        }[]) ?? []
+                      }
                       talent={el.user}
                       key={el.id}
                       winner={false}
                       image={''}
+                      setUpdate={setUpdate}
                     />
                   );
                 })}

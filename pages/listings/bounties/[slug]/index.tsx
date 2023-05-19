@@ -80,7 +80,7 @@ function BountyDetails({ slug }: BountyDetailsProps) {
           >
             <VStack gap={8} w={['22rem', '22rem', 'full', 'full']} mt={10}>
               <DetailDescription
-                skills={bounty?.skills?.map((e) => e.skills)}
+                skills={bounty?.skills?.map((e) => e.skills) ?? []}
                 description={bounty?.description}
               />
               <Comments refId={bounty?.id ?? ''} refType="BOUNTY" />
