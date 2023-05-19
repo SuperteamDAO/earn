@@ -71,15 +71,10 @@ function BountySubmissions({ slug }: Props) {
           },
         }
       );
-      console.log(
-        'file: [slug].tsx:22 ~ getsubmission ~ submissionsDetails:',
-        submissionsDetails
-      );
       setTotalSubmissions(submissionsDetails.data.total);
       setSubmissions(submissionsDetails.data.data);
       setIsBountyLoading(false);
     } catch (e) {
-      console.log(e);
       setIsBountyLoading(false);
     }
   };
@@ -88,15 +83,10 @@ function BountySubmissions({ slug }: Props) {
     setIsBountyLoading(true);
     try {
       const bountyDetails = await axios.get(`/api/bounties/${slug}/`);
-      console.log(
-        'file: [slug].tsx:22 ~ getBounty ~ bountyDetails:',
-        bountyDetails
-      );
       setBounty(bountyDetails.data);
       getSubmissions(bountyDetails.data.id);
       setRewards(Object.keys(bountyDetails.data.rewards || {}));
     } catch (e) {
-      console.log(e);
       setIsBountyLoading(false);
     }
   };
@@ -125,6 +115,18 @@ function BountySubmissions({ slug }: Props) {
         return 'orange';
       default:
         return 'gray';
+    }
+  };
+
+  const selectWinner = async (position: string, id: string) => {
+    try {
+      await axios.post(`/api/submission/update/`, {
+        id,
+        isWinner: !!position,
+        winnerPosition: position || null,
+      });
+    } catch (e) {
+      console.log('file: [slug].tsx:136 ~ selectWinner ~ e:', e);
     }
   };
 
@@ -415,7 +417,17 @@ function BountySubmissions({ slug }: Props) {
                         </Link>
                       </Td>
                       <Td>
-                        <Select placeholder="Select Winner">
+                        <Select
+                          defaultValue={
+                            submission?.isWinner
+                              ? submission?.winnerPosition || ''
+                              : ''
+                          }
+                          onChange={(e) =>
+                            selectWinner(e.target.value, submission?.id)
+                          }
+                        >
+                          <option value={''}>Select Winner</option>
                           {rewards.map((reward) => (
                             <option key={reward} value={reward}>
                               {reward}
