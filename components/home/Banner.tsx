@@ -82,12 +82,21 @@ function DesktopBanner() {
             Sign Up
           </Button>
           <AvatarGroup ml={'2.875rem'} max={3} size="sm">
-            <Avatar name="Ryan Florence" src="https://bit.ly/ryan-florence" />
-            <Avatar name="Segun Adebayo" src="https://bit.ly/sage-adebayo" />
-            <Avatar name="Kent Dodds" src="https://bit.ly/kent-c-dodds" />
+            <Avatar
+              name="Anoushk"
+              src="https://res.cloudinary.com/dgvnuwspr/image/upload/v1683132586/People%20DPs/recA3Sa7t1loYvDHo.jpg"
+            />
+            <Avatar
+              name="Ujjwal"
+              src="https://res.cloudinary.com/dgvnuwspr/image/upload/v1683135404/People%20DPs/rec4XUFtbh6upVYpA.jpg"
+            />
+            <Avatar
+              name="Yash"
+              src="https://res.cloudinary.com/dgvnuwspr/image/upload/v1683135395/People%20DPs/recb4gDjdKoFDAyo7.png"
+            />
           </AvatarGroup>
           <Text ml={'0.6875rem'} fontSize={'0.875rem'}>
-            Join 563+ others
+            Join 673+ others
           </Text>
         </Flex>
       </Box>

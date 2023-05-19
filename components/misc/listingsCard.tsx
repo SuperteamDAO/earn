@@ -99,7 +99,7 @@ export const ListingSection = ({
             {sub}
           </Text>
         </Flex>
-        <Flex>
+        <Flex display={router?.query?.category !== type ? 'block' : 'none'}>
           <Link
             href={`/${type}`}
             onClick={() => {
