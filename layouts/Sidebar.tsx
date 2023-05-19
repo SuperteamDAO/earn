@@ -10,6 +10,7 @@ import { AiFillFire, AiOutlineUsergroupAdd } from 'react-icons/ai';
 
 import SelectSponsor from '@/components/SelectSponsor/SelectSponsor';
 import LoadingSection from '@/components/shared/LoadingSection';
+import Banner from '@/components/sidebar/Banner';
 import { Default } from '@/layouts/Default';
 import { Meta } from '@/layouts/Meta';
 import { userStore } from '@/store/user';
@@ -134,6 +135,7 @@ export default function SimpleSidebar({ children }: { children: ReactNode }) {
             <LoadingSection />
           ) : (
             <Box w="full" px={6} py={8} bg="brand.grey.50">
+              <Banner />
               {children}
             </Box>
           )}
