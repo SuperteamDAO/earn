@@ -472,7 +472,10 @@ function BountySubmissions({ slug }: Props) {
               Previous
             </Button>
             <Button
-              isDisabled={skip > 0 && skip % length !== 0}
+              isDisabled={
+                totalSubmissions < skip + length ||
+                (skip > 0 && skip % length !== 0)
+              }
               onClick={() => skip % length === 0 && setSkip(skip + length)}
               rightIcon={<ChevronRightIcon w={5} h={5} />}
               size="sm"

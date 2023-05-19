@@ -9,7 +9,7 @@ import type { IconType } from 'react-icons';
 import { AiFillFire, AiOutlineUsergroupAdd } from 'react-icons/ai';
 
 import SelectSponsor from '@/components/SelectSponsor/SelectSponsor';
-import ErrorSection from '@/components/shared/ErrorSection';
+import LoadingSection from '@/components/shared/LoadingSection';
 import { Default } from '@/layouts/Default';
 import { Meta } from '@/layouts/Meta';
 import { userStore } from '@/store/user';
@@ -126,18 +126,12 @@ export default function SimpleSidebar({ children }: { children: ReactNode }) {
       }
     >
       {!userInfo?.id ? (
-        <ErrorSection
-          title="You are not logged in!"
-          message="Please log in to access the dashboard."
-        />
+        <LoadingSection />
       ) : (
         <Flex justify="start">
           <SidebarContent display={{ base: 'none', md: 'block' }} />
           {!userInfo?.currentSponsor?.id ? (
-            <ErrorSection
-              title="No Sponsor selected!"
-              message="Please select a sponsor from the sidebar to continue."
-            />
+            <LoadingSection />
           ) : (
             <Box w="full" px={6} py={8} bg="brand.grey.50">
               {children}
