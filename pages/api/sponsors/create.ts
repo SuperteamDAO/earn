@@ -23,6 +23,14 @@ export default async function user(req: NextApiRequest, res: NextApiResponse) {
         role: 'ADMIN',
       },
     });
+    await prisma.user.update({
+      where: {
+        id: userId,
+      },
+      data: {
+        currentSponsorId: result.id,
+      },
+    });
     res.status(200).json(result);
   } catch (error) {
     console.log('file: create.ts:29 ~ user ~ error:', error);
