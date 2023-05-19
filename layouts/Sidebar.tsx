@@ -72,7 +72,7 @@ const NavItem = ({ icon, link, isActive, children, ...rest }: NavItemProps) => {
 
 const SidebarContent = ({ ...rest }: BoxProps) => {
   const router = useRouter();
-  const currentPath = router.route?.split('/dashboard')[1] || '';
+  const currentPath = `/${router.route?.split('/')[2]}` || '';
   return (
     <Box
       w={{ base: 0, md: 80 }}

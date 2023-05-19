@@ -38,6 +38,7 @@ export default async function bounties(
         title: true,
         slug: true,
         token: true,
+        status: true,
         deadline: true,
         isPublished: true,
         rewardAmount: true,
