@@ -39,6 +39,7 @@ import type { GetServerSideProps } from 'next';
 import { useRouter } from 'next/router';
 import { useEffect, useState } from 'react';
 
+import ErrorSection from '@/components/shared/ErrorSection';
 import LoadingSection from '@/components/shared/LoadingSection';
 import type { Bounty } from '@/interface/bounty';
 import type { SubmissionWithUser } from '@/interface/submission';
@@ -105,7 +106,9 @@ function BountySubmissions({ slug }: Props) {
   }, [userInfo?.currentSponsorId]);
 
   useEffect(() => {
-    getSubmissions();
+    if (userInfo?.currentSponsorId && !isBountyLoading) {
+      getSubmissions();
+    }
   }, [skip]);
 
   const bountyStatus =
@@ -292,167 +295,179 @@ function BountySubmissions({ slug }: Props) {
               </Text>
             </Text>
           </Flex>
-          <TableContainer>
-            <Table variant="simple">
-              <Thead>
-                <Tr bg="brand.slate.100">
-                  <Th
-                    color="brand.slate.400"
-                    fontSize="sm"
-                    fontWeight={500}
-                    textTransform={'capitalize'}
-                  >
-                    User
-                  </Th>
-                  <Th
-                    pl={0}
-                    color="brand.slate.400"
-                    fontSize="sm"
-                    fontWeight={500}
-                    textAlign="center"
-                    textTransform={'capitalize'}
-                  >
-                    Type
-                  </Th>
-                  <Th
-                    pl={0}
-                    color="brand.slate.400"
-                    fontSize="sm"
-                    fontWeight={500}
-                    textTransform={'capitalize'}
-                  >
-                    Link
-                  </Th>
-                  <Th
-                    pl={0}
-                    color="brand.slate.400"
-                    fontSize="sm"
-                    fontWeight={500}
-                    textTransform={'capitalize'}
-                  >
-                    Tweet
-                  </Th>
-                  <Th
-                    pl={0}
-                    color="brand.slate.400"
-                    fontSize="sm"
-                    fontWeight={500}
-                    textTransform={'capitalize'}
-                  >
-                    Winner
-                  </Th>
-                  <Th
-                    pl={0}
-                    color="brand.slate.400"
-                    fontSize="sm"
-                    fontWeight={500}
-                    textTransform={'capitalize'}
-                  >
-                    Payment
-                  </Th>
-                </Tr>
-              </Thead>
-              <Tbody>
-                {submissions.map((submission) => {
-                  return (
-                    <Tr key={submission?.id} bg="white">
-                      <Td>
-                        <Flex
-                          align="center"
-                          p={1}
-                          bg="transparent"
-                          borderRadius="md"
-                          _hover={{
-                            backgroundColor: 'brand.slate.100',
-                          }}
-                          cursor="pointer"
-                          onClick={() => {
-                            setUser(submission?.user);
-                            onOpen();
-                          }}
-                        >
-                          {submission?.user?.photo ? (
-                            <Image
-                              boxSize="32px"
-                              borderRadius="full"
-                              alt={`${submission?.user?.firstName} ${submission?.user?.lastName}`}
-                              src={submission?.user?.photo}
-                            />
-                          ) : (
-                            <Avatar
-                              name={`${submission?.user?.firstName} ${submission?.user?.lastName}`}
-                              colors={['#92A1C6', '#F0AB3D', '#C271B4']}
-                              size={32}
-                              variant="marble"
-                            />
-                          )}
-                          <Box display={{ base: 'none', md: 'block' }} ml={2}>
-                            <Text color="brand.slate.800" fontSize="sm">
-                              {`${submission?.user?.firstName} ${submission?.user?.lastName}`}
-                            </Text>
-                            <Text color="brand.slate.500" fontSize="xs">
-                              {submission?.user?.email}
-                            </Text>
-                          </Box>
-                        </Flex>
-                      </Td>
-                      <Td textAlign="center">
-                        <Tag textTransform={'uppercase'}>
-                          {submission?.user?.superteamLevel || '-'}
-                        </Tag>
-                      </Td>
-                      <Td pl={0} textAlign="center">
-                        <Link
-                          color="brand.purple"
-                          href={submission?.link || '#'}
-                          isExternal
-                        >
-                          {submission?.link && <LinkIcon w={3} h={3} mr={1} />}
-                          {submission?.link && submission?.link?.length >= 20
-                            ? `${submission?.link?.slice(0, 20)}...`
-                            : submission?.link || '-'}
-                        </Link>
-                      </Td>
-                      <Td pl={0} textAlign="center">
-                        <Link
-                          color="brand.purple"
-                          href={submission?.tweet || '#'}
-                          isExternal
-                        >
-                          {submission?.tweet && <LinkIcon w={3} h={3} mr={1} />}
-                          {submission?.tweet && submission?.tweet?.length >= 20
-                            ? `${submission?.tweet?.slice(0, 20)}...`
-                            : submission?.tweet || '-'}
-                        </Link>
-                      </Td>
-                      <Td>
-                        <Select
-                          defaultValue={
-                            submission?.isWinner
-                              ? submission?.winnerPosition || ''
-                              : ''
-                          }
-                          onChange={(e) =>
-                            selectWinner(e.target.value, submission?.id)
-                          }
-                        >
-                          <option value={''}>Select Winner</option>
-                          {rewards.map((reward) => (
-                            <option key={reward} value={reward}>
-                              {reward}
-                            </option>
-                          ))}
-                        </Select>
-                      </Td>
-                      <Td>
-                        <Tag>-</Tag>
-                      </Td>
-                    </Tr>
-                  );
-                })}
-              </Tbody>
-            </Table>
-          </TableContainer>
+          {!submissions?.length ? (
+            <ErrorSection
+              title="No submissions found!"
+              message="View your bounty submissions here once they are submitted"
+            />
+          ) : (
+            <TableContainer>
+              <Table variant="simple">
+                <Thead>
+                  <Tr bg="brand.slate.100">
+                    <Th
+                      color="brand.slate.400"
+                      fontSize="sm"
+                      fontWeight={500}
+                      textTransform={'capitalize'}
+                    >
+                      User
+                    </Th>
+                    <Th
+                      pl={0}
+                      color="brand.slate.400"
+                      fontSize="sm"
+                      fontWeight={500}
+                      textAlign="center"
+                      textTransform={'capitalize'}
+                    >
+                      Type
+                    </Th>
+                    <Th
+                      pl={0}
+                      color="brand.slate.400"
+                      fontSize="sm"
+                      fontWeight={500}
+                      textTransform={'capitalize'}
+                    >
+                      Link
+                    </Th>
+                    <Th
+                      pl={0}
+                      color="brand.slate.400"
+                      fontSize="sm"
+                      fontWeight={500}
+                      textTransform={'capitalize'}
+                    >
+                      Tweet
+                    </Th>
+                    <Th
+                      pl={0}
+                      color="brand.slate.400"
+                      fontSize="sm"
+                      fontWeight={500}
+                      textTransform={'capitalize'}
+                    >
+                      Winner
+                    </Th>
+                    <Th
+                      pl={0}
+                      color="brand.slate.400"
+                      fontSize="sm"
+                      fontWeight={500}
+                      textTransform={'capitalize'}
+                    >
+                      Payment
+                    </Th>
+                  </Tr>
+                </Thead>
+                <Tbody>
+                  {submissions.map((submission) => {
+                    return (
+                      <Tr key={submission?.id} bg="white">
+                        <Td>
+                          <Flex
+                            align="center"
+                            p={1}
+                            bg="transparent"
+                            borderRadius="md"
+                            _hover={{
+                              backgroundColor: 'brand.slate.100',
+                            }}
+                            cursor="pointer"
+                            onClick={() => {
+                              setUser(submission?.user);
+                              onOpen();
+                            }}
+                          >
+                            {submission?.user?.photo ? (
+                              <Image
+                                boxSize="32px"
+                                borderRadius="full"
+                                alt={`${submission?.user?.firstName} ${submission?.user?.lastName}`}
+                                src={submission?.user?.photo}
+                              />
+                            ) : (
+                              <Avatar
+                                name={`${submission?.user?.firstName} ${submission?.user?.lastName}`}
+                                colors={['#92A1C6', '#F0AB3D', '#C271B4']}
+                                size={32}
+                                variant="marble"
+                              />
+                            )}
+                            <Box display={{ base: 'none', md: 'block' }} ml={2}>
+                              <Text color="brand.slate.800" fontSize="sm">
+                                {`${submission?.user?.firstName} ${submission?.user?.lastName}`}
+                              </Text>
+                              <Text color="brand.slate.500" fontSize="xs">
+                                {submission?.user?.email}
+                              </Text>
+                            </Box>
+                          </Flex>
+                        </Td>
+                        <Td textAlign="center">
+                          <Tag textTransform={'uppercase'}>
+                            {submission?.user?.superteamLevel || '-'}
+                          </Tag>
+                        </Td>
+                        <Td pl={0} textAlign="center">
+                          <Link
+                            color="brand.purple"
+                            href={submission?.link || '#'}
+                            isExternal
+                          >
+                            {submission?.link && (
+                              <LinkIcon w={3} h={3} mr={1} />
+                            )}
+                            {submission?.link && submission?.link?.length >= 20
+                              ? `${submission?.link?.slice(0, 20)}...`
+                              : submission?.link || '-'}
+                          </Link>
+                        </Td>
+                        <Td pl={0} textAlign="center">
+                          <Link
+                            color="brand.purple"
+                            href={submission?.tweet || '#'}
+                            isExternal
+                          >
+                            {submission?.tweet && (
+                              <LinkIcon w={3} h={3} mr={1} />
+                            )}
+                            {submission?.tweet &&
+                            submission?.tweet?.length >= 20
+                              ? `${submission?.tweet?.slice(0, 20)}...`
+                              : submission?.tweet || '-'}
+                          </Link>
+                        </Td>
+                        <Td>
+                          <Select
+                            defaultValue={
+                              submission?.isWinner
+                                ? submission?.winnerPosition || ''
+                                : ''
+                            }
+                            onChange={(e) =>
+                              selectWinner(e.target.value, submission?.id)
+                            }
+                          >
+                            <option value={''}>Select Winner</option>
+                            {rewards.map((reward) => (
+                              <option key={reward} value={reward}>
+                                {reward}
+                              </option>
+                            ))}
+                          </Select>
+                        </Td>
+                        <Td>
+                          <Tag>-</Tag>
+                        </Td>
+                      </Tr>
+                    );
+                  })}
+                </Tbody>
+              </Table>
+            </TableContainer>
+          )}
           <Flex align="center" justify="end" mt={6}>
             <Text mr={4} color="brand.slate.400" fontSize="sm">
               <Text as="span" fontWeight={700}>

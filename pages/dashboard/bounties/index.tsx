@@ -28,6 +28,8 @@ import { useEffect, useRef, useState } from 'react';
 import { AiOutlineOrderedList } from 'react-icons/ai';
 import { FiMoreVertical } from 'react-icons/fi';
 
+import ErrorSection from '@/components/shared/ErrorSection';
+import LoadingSection from '@/components/shared/LoadingSection';
 import { tokenList } from '@/constants/index';
 import type { Bounty } from '@/interface/bounty';
 import Sidebar from '@/layouts/Sidebar';
@@ -143,7 +145,15 @@ function Bounties() {
           </Text>
           <Text w="40"></Text>
         </Flex>
+        {isBountiesLoading && <LoadingSection />}
+        {!isBountiesLoading && !bounties?.length && (
+          <ErrorSection
+            title="No bounties found!"
+            message="Create new bounty from the sidebar"
+          />
+        )}
         {!isBountiesLoading &&
+          bounties?.length &&
           bounties.map((bounty) => {
             const deadlineFromNow = bounty?.deadline
               ? dayjs(bounty.deadline).fromNow()
