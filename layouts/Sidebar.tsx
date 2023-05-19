@@ -1,12 +1,11 @@
-import { AddIcon } from '@chakra-ui/icons';
 import type { BoxProps, FlexProps } from '@chakra-ui/react';
-import { Box, Button, Flex, Icon, Link } from '@chakra-ui/react';
+import { Box, Flex, Icon, Link } from '@chakra-ui/react';
 import NextLink from 'next/link';
 import { useRouter } from 'next/router';
 import type { ReactNode, ReactText } from 'react';
 import React from 'react';
 import type { IconType } from 'react-icons';
-import { AiFillFire, AiOutlineUsergroupAdd } from 'react-icons/ai';
+import { AiFillFire } from 'react-icons/ai';
 
 import SelectSponsor from '@/components/SelectSponsor/SelectSponsor';
 import LoadingSection from '@/components/shared/LoadingSection';
@@ -22,7 +21,7 @@ interface LinkItemProps {
 }
 const LinkItems: Array<LinkItemProps> = [
   { name: 'Bounties', link: '/bounties', icon: AiFillFire },
-  { name: 'Members', link: '/members', icon: AiOutlineUsergroupAdd },
+  // { name: 'Members', link: '/members', icon: AiOutlineUsergroupAdd },
 ];
 
 interface NavItemProps extends FlexProps {
@@ -88,16 +87,17 @@ const SidebarContent = ({ ...rest }: BoxProps) => {
       <Box pb={6} px={6}>
         <SelectSponsor />
       </Box>
-      <Flex align="center" justify="space-between" pb={6} px={6}>
+      {/* <Flex align="center" justify="space-between" pb={6} px={6}>
         <Button
           w="full"
           fontSize="sm"
+          isDisabled
           leftIcon={<AddIcon w={3} h={3} />}
           variant="solid"
         >
           Create Listing
         </Button>
-      </Flex>
+      </Flex> */}
       {LinkItems.map((link) => (
         <NavItem
           key={link.name}
