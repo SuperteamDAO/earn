@@ -1,4 +1,9 @@
-import { ChevronLeftIcon, ChevronRightIcon, LinkIcon } from '@chakra-ui/icons';
+import {
+  ChevronLeftIcon,
+  ChevronRightIcon,
+  CopyIcon,
+  LinkIcon,
+} from '@chakra-ui/icons';
 import {
   Box,
   Breadcrumb,
@@ -8,6 +13,13 @@ import {
   Flex,
   Image,
   Link,
+  Modal,
+  ModalBody,
+  ModalCloseButton,
+  ModalContent,
+  ModalFooter,
+  ModalHeader,
+  ModalOverlay,
   Select,
   Table,
   TableContainer,
@@ -17,7 +29,9 @@ import {
   Text,
   Th,
   Thead,
+  Tooltip,
   Tr,
+  useDisclosure,
 } from '@chakra-ui/react';
 import axios from 'axios';
 import Avatar from 'boring-avatars';
@@ -28,12 +42,15 @@ import LoadingSection from '@/components/shared/LoadingSection';
 import type { Bounty } from '@/interface/bounty';
 import type { SubmissionWithUser } from '@/interface/submission';
 import Sidebar from '@/layouts/Sidebar';
+import { truncatePublicKey } from '@/utils/truncatePublicKey';
 
 interface Props {
   slug: string;
 }
 
 function BountySubmissions({ slug }: Props) {
+  const { isOpen, onOpen, onClose } = useDisclosure();
+  const [user, setUser] = useState<any>(null);
   const [bounty, setBounty] = useState<Bounty | null>(null);
   const [totalSubmissions, setTotalSubmissions] = useState(0);
   const [submissions, setSubmissions] = useState<SubmissionWithUser[]>([]);
@@ -113,6 +130,118 @@ function BountySubmissions({ slug }: Props) {
 
   return (
     <Sidebar>
+      <Modal isOpen={isOpen} onClose={onClose}>
+        <ModalOverlay />
+        <ModalContent>
+          <ModalHeader>
+            <Flex align="center" bg="transparent">
+              {user?.photo ? (
+                <Image
+                  boxSize="32px"
+                  borderRadius="full"
+                  alt={`${user?.firstName} ${user?.lastName}`}
+                  src={user?.photo}
+                />
+              ) : (
+                <Avatar
+                  name={`${user?.firstName} ${user?.lastName}`}
+                  colors={['#92A1C6', '#F0AB3D', '#C271B4']}
+                  size={32}
+                  variant="marble"
+                />
+              )}
+              <Box display={{ base: 'none', md: 'block' }} ml={2}>
+                <Text color="brand.slate.800" fontSize="sm">
+                  {`${user?.firstName} ${user?.lastName}`}
+                </Text>
+                <Text color="brand.slate.500" fontSize="xs" fontWeight={400}>
+                  {user?.email}
+                </Text>
+              </Box>
+            </Flex>
+          </ModalHeader>
+          <ModalCloseButton />
+          <ModalBody>
+            <Flex align="start" justify="start" gap={2} mb={4}>
+              <Text w={20} color="brand.slate.400">
+                Bio:
+              </Text>
+              <Text color="brand.purple">{user?.bio || '-'}</Text>
+            </Flex>
+            <Flex align="center" justify="start" gap={2} mb={4}>
+              <Text w={20} color="brand.slate.400">
+                Wallet:
+              </Text>
+              <Text color="brand.purple">
+                {truncatePublicKey(user?.publicKey)}
+                <Tooltip label="Copy Wallet ID" placement="right">
+                  <CopyIcon
+                    cursor="pointer"
+                    ml={1}
+                    onClick={() =>
+                      navigator.clipboard.writeText(user?.publicKey)
+                    }
+                  />
+                </Tooltip>
+              </Text>
+            </Flex>
+            <Flex align="center" justify="start" gap={2} mb={4}>
+              <Text w={20} color="brand.slate.400">
+                Discord:
+              </Text>
+              <Text color="brand.purple">{user?.discord || '-'}</Text>
+            </Flex>
+            <Flex align="center" justify="start" gap={2} mb={4}>
+              <Text w={20} color="brand.slate.400">
+                Twitter:
+              </Text>
+              <Link color="brand.purple" href={user?.twitter} isExternal>
+                {user?.twitter || '-'}
+              </Link>
+            </Flex>
+            <Flex align="center" justify="start" gap={2} mb={4}>
+              <Text w={20} color="brand.slate.400">
+                LinkedIn:
+              </Text>
+              <Link color="brand.purple" href={user?.linkedin} isExternal>
+                {user?.linkedin
+                  ? `${user?.linkedin?.slice(0, 25)}${
+                      user?.linkedin?.length >= 25 && '...'
+                    }` || '-'
+                  : '-'}
+              </Link>
+            </Flex>
+            <Flex align="center" justify="start" gap={2} mb={4}>
+              <Text w={20} color="brand.slate.400">
+                GitHub:
+              </Text>
+              <Link color="brand.purple" href={user?.github} isExternal>
+                {user?.github || '-'}
+              </Link>
+            </Flex>
+            <Flex align="center" justify="start" gap={2} mb={4}>
+              <Text w={20} color="brand.slate.400">
+                Website:
+              </Text>
+              <Link color="brand.purple" href={user?.website} isExternal>
+                {user?.website || '-'}
+              </Link>
+            </Flex>
+          </ModalBody>
+
+          <ModalFooter>
+            <Button
+              onClick={() => {
+                onClose();
+                setUser(null);
+              }}
+              variant="solid"
+            >
+              Close
+            </Button>
+          </ModalFooter>
+        </ModalContent>
+      </Modal>
       {isBountyLoading ? (
         <LoadingSection />
       ) : (
@@ -217,7 +346,20 @@ function BountySubmissions({ slug }: Props) {
                   return (
                     <Tr key={submission?.id} bg="white">
                       <Td>
-                        <Flex align="center">
+                        <Flex
+                          align="center"
+                          p={1}
+                          bg="transparent"
+                          borderRadius="md"
+                          _hover={{
+                            backgroundColor: 'brand.slate.100',
+                          }}
+                          cursor="pointer"
+                          onClick={() => {
+                            setUser(submission?.user);
+                            onOpen();
+                          }}
+                        >
                           {submission?.user?.photo ? (
                             <Image
                               boxSize="32px"
@@ -255,8 +397,8 @@ function BountySubmissions({ slug }: Props) {
                           isExternal
                         >
                           {submission?.link && <LinkIcon w={3} h={3} mr={1} />}
-                          {submission?.link && submission?.link?.length >= 25
-                            ? `${submission?.link?.slice(0, 25)}...`
+                          {submission?.link && submission?.link?.length >= 20
+                            ? `${submission?.link?.slice(0, 20)}...`
                             : submission?.link || '-'}
                         </Link>
                       </Td>
@@ -267,8 +409,8 @@ function BountySubmissions({ slug }: Props) {
                           isExternal
                         >
                           {submission?.tweet && <LinkIcon w={3} h={3} mr={1} />}
-                          {submission?.tweet && submission?.tweet?.length >= 25
-                            ? `${submission?.tweet?.slice(0, 25)}...`
+                          {submission?.tweet && submission?.tweet?.length >= 20
+                            ? `${submission?.tweet?.slice(0, 20)}...`
                             : submission?.tweet || '-'}
                         </Link>
                       </Td>
