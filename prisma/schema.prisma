@@ -207,8 +207,8 @@ model User {
   location         String?
   cryptoExperience String?
   workPrefernce    String?
-  currentSponsorId String?
   currentEmployer  String?
+  currentSponsorId String?
   pow              String?        @db.VarChar(2000)
   notifications    String?
   private          Boolean        @default(false)
