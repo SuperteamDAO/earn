@@ -73,7 +73,7 @@ export const Login = ({
             />
           </Flex>
         </ModalHeader>
-        {step === 1 && <ModalCloseButton />}
+        <ModalCloseButton />
         <ModalBody>
           {step === 1 && (
             <ConnectWallet

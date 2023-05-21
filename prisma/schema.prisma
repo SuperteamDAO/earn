@@ -122,7 +122,8 @@ model Submission {
   link               String?
   tweet              String?
   eligibilityAnswers Json?
-  likes              Int         @default(0)
+  likes              Int?
+  like               Json?
   userId             String
   user               User        @relation(fields: [userId], references: [id])
   listingType        ListingType @default(BOUNTY)
@@ -208,10 +209,10 @@ model User {
   cryptoExperience String?
   workPrefernce    String?
   currentEmployer  String?
+  currentSponsorId String?
   pow              String?        @db.VarChar(2000)
   notifications    String?
   private          Boolean        @default(false)
-  currentSponsorId String?
   currentSponsor   Sponsors?      @relation(fields: [currentSponsorId], references: [id])
   UserSponsors     UserSponsors[]
   poc              Bounties[]     @relation("poc")
