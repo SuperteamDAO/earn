@@ -32,7 +32,7 @@ interface Props {
   setQuestions: Dispatch<SetStateAction<Ques[]>>;
   questions: Ques[];
 }
-export const Createbounty = ({
+export const CreateBounty = ({
   steps,
   editorData,
   setEditorData,

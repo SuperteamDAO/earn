@@ -19,9 +19,9 @@ interface Props {
 
 const FormLayout = ({ children, currentStep, stepList, setStep }: Props) => {
   return (
-    <VStack mb={12} bg={currentStep !== 1 ? 'white' : '#F6FAFD'}>
-      <VStack gap={10} w={'80%'}>
-        <VStack mt={20}>
+    <VStack mb={12}>
+      <VStack gap={6} w={'80%'}>
+        <VStack>
           <Heading
             color={'#334254'}
             fontFamily={'Inter'}

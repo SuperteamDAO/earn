@@ -48,6 +48,7 @@ export const CreatebountyBasic = ({
   createDraft,
   draftLoading,
 }: Props) => {
+  console.log('file: CreateBountyBasic.tsx:51 ~ bountyBasic:', bountyBasic);
   const [errorState, setErrorState] = useState<ErrorsBasic>({
     deadline: false,
     eligibility: false,
@@ -310,7 +311,7 @@ export const CreatebountyBasic = ({
               createDraft('nothing');
             }}
           >
-            Save as Drafts
+            Save as Draft
           </Button>
         </VStack>
       </VStack>

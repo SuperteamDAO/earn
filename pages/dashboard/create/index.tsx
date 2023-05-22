@@ -5,7 +5,7 @@ import { useEffect, useState } from 'react';
 import { Toaster } from 'react-hot-toast';
 
 import type { BountyBasicType } from '@/components/listings/bounty/Createbounty';
-import { Createbounty } from '@/components/listings/bounty/Createbounty';
+import { CreateBounty } from '@/components/listings/bounty/Createbounty';
 import type { Ques } from '@/components/listings/bounty/questions/builder';
 import { CreateGrants } from '@/components/listings/grants/CreateGrants';
 import { CreateJob } from '@/components/listings/jobs/CreateJob';
@@ -18,9 +18,8 @@ import type {
   GrantsBasicType,
   JobBasicsType,
 } from '@/interface/listings';
-import { Default } from '@/layouts/Default';
 import FormLayout from '@/layouts/FormLayout';
-import { Meta } from '@/layouts/Meta';
+import Sidebar from '@/layouts/Sidebar';
 import { SponsorStore } from '@/store/sponsor';
 import { userStore } from '@/store/user';
 import { findOneDraft } from '@/utils/functions';
@@ -180,15 +179,7 @@ const CreateListing = () => {
   }, [router.query.draft]);
 
   return (
-    <Default
-      meta={
-        <Meta
-          title="Create Listing | Superteam Earn"
-          description="Every Solana opportunity in one place!"
-          canonical="/assets/logo/og.svg"
-        />
-      }
-    >
+    <Sidebar>
       {!userInfo?.id || userInfo?.role !== 'GOD' ? (
         <ErrorSection
           title="Access is Forbidden!"
@@ -199,7 +190,7 @@ const CreateListing = () => {
           setStep={setSteps}
           currentStep={steps}
           stepList={
-            router.query.type !== 'bounties'
+            listingType !== 'BOUNTY'
               ? [
                   {
                     label: 'Template',
@@ -274,7 +265,7 @@ const CreateListing = () => {
             <Template setSteps={setSteps} setListingType={setListingType} />
           )}
           {steps > 1 && listingType === 'BOUNTY' && (
-            <Createbounty
+            <CreateBounty
               questions={questions}
               setQuestions={setQuestions}
               setSlug={setSlug}
@@ -331,7 +322,7 @@ const CreateListing = () => {
           <Toaster />
         </FormLayout>
       )}
-    </Default>
+    </Sidebar>
   );
 };
 

@@ -1,5 +1,6 @@
+import { AddIcon } from '@chakra-ui/icons';
 import type { BoxProps, FlexProps } from '@chakra-ui/react';
-import { Box, Flex, Icon, Link } from '@chakra-ui/react';
+import { Box, Button, Flex, Icon, Link } from '@chakra-ui/react';
 import NextLink from 'next/link';
 import { useRouter } from 'next/router';
 import type { ReactNode, ReactText } from 'react';
@@ -87,17 +88,18 @@ const SidebarContent = ({ ...rest }: BoxProps) => {
       <Box pb={6} px={6}>
         <SelectSponsor />
       </Box>
-      {/* <Flex align="center" justify="space-between" pb={6} px={6}>
-        <Button
-          w="full"
-          fontSize="sm"
-          isDisabled
-          leftIcon={<AddIcon w={3} h={3} />}
-          variant="solid"
-        >
-          Create Listing
-        </Button>
-      </Flex> */}
+      <Flex align="center" justify="space-between" pb={6} px={6}>
+        <NextLink href="/dashboard/create" passHref>
+          <Button
+            w="full"
+            fontSize="sm"
+            leftIcon={<AddIcon w={3} h={3} />}
+            variant="solid"
+          >
+            Create Listing
+          </Button>
+        </NextLink>
+      </Flex>
       {LinkItems.map((link) => (
         <NavItem
           key={link.name}
