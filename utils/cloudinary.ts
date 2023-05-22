@@ -8,7 +8,6 @@ cloudinary.config({
 });
 
 export const signUpload = async () => {
-  console.log('cloudinary', cloudinary.config());
   const timestamp = Math.round(Date.now() / 1000);
   const params = {
     timestamp,
@@ -27,8 +26,14 @@ export const csvUpload = async (
 ) => {
   const result = await cloudinary.uploader.upload(file.content!, {
     public_id: `${fileName}.csv`,
-    asset_folder: 'earn-v2-submissions',
+    folder: 'earn-v2-submissions',
     resource_type: 'raw',
+    type: 'private',
+    access_type: 'anonymous',
+    start: new Date().toISOString(),
+    end: new Date(
+      new Date().setTime(new Date().getTime() + 60 * 1000)
+    ).toISOString(),
     tags: [listingId],
     cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
     api_key: process.env.CLOUDINARY_API_KEY,

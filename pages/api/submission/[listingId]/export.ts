@@ -78,9 +78,7 @@ export default async function submission(
     res.status(200).json({
       url: cloudinaryDetails?.secure_url || cloudinaryDetails?.url,
     });
-    // res.status(200).json({url : 'https://www.google.com'});
   } catch (error) {
-    console.log('file: export.ts:91 ~ error:', error);
     res.status(400).json({
       error,
       message: `Error occurred while exporting submissions of listing=${listingId}.`,
