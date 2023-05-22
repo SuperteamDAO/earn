@@ -6,6 +6,7 @@ import {
   Grid,
   GridItem,
   Image,
+  Link,
   Text,
   VStack,
 } from '@chakra-ui/react';
@@ -69,51 +70,44 @@ export const ProofWork = () => {
   );
 };
 
-// const LinkPreview = ({ data }: { data: PowType }) => {
-//   const [imgUrl, setimgUrl] = useState('/assets/bg/banner.png');
-
-//   try {
-//     (async () => {
-//       const res = await axios.post(
-//         `https://earn-backend-v2-production.up.railway.app/api/v1/submission/ogimage`,
-//         {
-//           url: data.link,
-//         }
-//       );
-//       if (res) {
-//         if (res?.data?.data?.ogImage?.url) {
-//           setimgUrl(res?.data?.data?.ogImage?.url);
-//         }
-//       }
-//     })();
-//   } catch (error) {
-//     console.log('file: [slug].tsx:84 ~ LinkPreview ~ error:', error);
-//   }
-
-//   return (
-//     <Box
-//       w={'14.75rem'}
-//       h={'11.5rem'}
-//       bg={'white'}
-//       borderRadius={'0.1875rem'}
-//       cursor={'pointer'}
-//       onClick={() => {
-//         window.location.href = data?.link;
-//       }}
-//     >
-//       <Image
-//         w={'100%'}
-//         h={'8.875rem'}
-//         objectFit={'contain'}
-//         alt=""
-//         src={imgUrl}
-//       />
-//       <Box px={'1rem'} py={'0.5625rem'}>
-//         <Text color={'gray.400'}>{data.title}</Text>
-//       </Box>
-//     </Box>
-//   );
-// };
+const LinkPreview = ({
+  data,
+}: {
+  data: {
+    title: string;
+    link: string;
+    description: string;
+  };
+}) => {
+  return (
+    <>
+      <Link href={data?.link} isExternal>
+        <Box
+          w={'14.75rem'}
+          h={'11.5rem'}
+          bg={'white'}
+          borderRadius={'0.1875rem'}
+          cursor={'pointer'}
+        >
+          <Image
+            w={'100%'}
+            h={'8.875rem'}
+            objectFit={'contain'}
+            alt=""
+            src={
+              data.link.includes('github')
+                ? '/assets/otherpow/github.svg'
+                : '/assets/otherpow/link.svg'
+            }
+          />
+          <Box px={'1rem'} py={'0.5625rem'}>
+            <Text color={'gray.400'}>{data.title}</Text>
+          </Box>
+        </Box>
+      </Link>
+    </>
+  );
+};
 
 export const EduNft = ({ nfts }: { nfts: NFT[] }) => {
   return (
@@ -322,24 +316,6 @@ const Nft = ({
   wallet: string;
   totalEarned: number;
 }) => {
-  const [generate, setGenrate] = useState(false);
-
-  useEffect(() => {
-    const fetch = async () => {
-      if (wallet) {
-        try {
-          await axios.post(
-            `https://searn-nft-dev.s3.ap-south-1.amazonaws.com/s.png`
-          );
-          setGenrate(false);
-        } catch (error) {
-          setGenrate(true);
-          console.log(error);
-        }
-      }
-    };
-    fetch();
-  }, []);
   return (
     <Box
       w={'80%'}
@@ -362,16 +338,16 @@ const Nft = ({
           w={'100%'}
           h={'100%'}
           alt="NFT"
-          filter={generate ? 'none' : 'blur(7px)'}
+          filter={totalEarned !== 0 ? 'none' : 'blur(7px)'}
           src={
-            generate
+            totalEarned !== 0
               ? `https://searn-nft-dev.s3.ap-south-1.amazonaws.com/${wallet}.png`
               : '/assets/nft.png'
           }
         />
         <Button
           pos={'absolute'}
-          display={generate ? 'none' : 'block'}
+          display={totalEarned !== 0 ? 'none' : 'block'}
           leftIcon={<LockIcon />}
         >
           {totalEarned === 0 ? 'Locked' : 'Claim NFT'}
@@ -445,6 +421,8 @@ function TalentProfile({ slug }: TalentProps) {
           setTalent(res?.data);
           setError(false);
           setIsloading(false);
+          // console.log(JSON.parse(JSON.parse(res?.data?.pow)[0]));
+
           fetchNFTs(res?.data?.publicKey as string);
         }
         // eslint-disable-next-line @typescript-eslint/no-shadow
@@ -477,7 +455,7 @@ function TalentProfile({ slug }: TalentProps) {
           <Flex direction={['column', 'column', 'column', 'row']} w={'100%'}>
             <VStack
               rowGap={4}
-              maxW={['full', 'full', '25%', '25%']}
+              maxW={['full', 'full', 'full', 'full']}
               minH={'100vh'}
               py={8}
               bgImage={'/assets/bg/talent-bg.png'}
@@ -492,31 +470,48 @@ function TalentProfile({ slug }: TalentProps) {
               />
             </VStack>
             <Box
-              justifyContent={'center'}
-              display={talent?.pow?.length === 0 ? 'none' : 'flex'}
-              w={'100%'}
+              alignItems={'start'}
+              justifyContent={'start'}
+              flexDir={'column'}
+              gap={5}
+              display={'flex'}
+              w={'full'}
               px={'23px'}
               py={'35px'}
               bg={'#F7FAFC'}
             >
-              {/* {talent?.pow?.length > 0 && (
-              <>
-                <Box mb={'18.5px'} borderBottom={'1px solid #E2E8EF'}>
-                  <Text
-                    mb={'1.0625rem'}
-                    fontSize={'17.94px'}
-                    fontWeight={'500'}
+              {talent?.pow?.length! > 0 && talent.pow?.startsWith('[') && (
+                <>
+                  <Box
+                    w="full"
+                    h="max"
+                    pb={3}
+                    borderBottom={'1px solid'}
+                    borderBottomColor={'gray.200'}
                   >
-                    Other Proof Work
-                  </Text>
-                </Box>
-                <Flex wrap={'wrap'} gap={'1.1425rem'} mb={'44px'}>
-                  {pow.map((ele, idx) => {
-                    return <LinkPreview key={`${idx}lk`} data={ele} />;
-                  })}
-                </Flex>
-              </>
-            )} */}
+                    <Text fontSize="md" fontWeight={'500'}>
+                      Other Proof Work
+                    </Text>
+                  </Box>
+                  <Flex align="start" wrap={'wrap'} gap={10}>
+                    {JSON.parse(talent?.pow!).map(
+                      (ele: string, idx: number) => {
+                        const { title, link, description } = JSON.parse(ele);
+                        return (
+                          <LinkPreview
+                            key={`${idx}lk`}
+                            data={{
+                              description,
+                              link,
+                              title,
+                            }}
+                          />
+                        );
+                      }
+                    )}
+                  </Flex>
+                </>
+              )}
               <EduNft nfts={nfts ?? []} />
             </Box>
 

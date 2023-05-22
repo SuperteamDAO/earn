@@ -8,6 +8,7 @@ import {
   Text,
   VStack,
 } from '@chakra-ui/react';
+import { useWallet } from '@solana/wallet-adapter-react';
 import Avatar from 'boring-avatars';
 import { useRouter } from 'next/router';
 import { useState } from 'react';
@@ -87,6 +88,7 @@ interface GettingStartedProps {
 const GettingStarted = ({ userInfo }: GettingStartedProps) => {
   const router = useRouter();
   const [triggerLogin, setTriggerLogin] = useState(false);
+  const { publicKey } = useWallet();
   return (
     <Box>
       <LoginWrapper
@@ -144,7 +146,11 @@ const GettingStarted = ({ userInfo }: GettingStartedProps) => {
                 _hover={{
                   color: 'brand.purple',
                 }}
-                onClick={() => router.push(`/new/talent`)}
+                onClick={() => {
+                  if (userInfo && publicKey) {
+                    router.push(`/new/talent`);
+                  }
+                }}
               >
                 Complete your profile
               </Text>
