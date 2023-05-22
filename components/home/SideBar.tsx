@@ -8,7 +8,6 @@ import {
   Text,
   VStack,
 } from '@chakra-ui/react';
-import { useWallet } from '@solana/wallet-adapter-react';
 import Avatar from 'boring-avatars';
 import { useRouter } from 'next/router';
 import { useState } from 'react';
@@ -88,7 +87,6 @@ interface GettingStartedProps {
 const GettingStarted = ({ userInfo }: GettingStartedProps) => {
   const router = useRouter();
   const [triggerLogin, setTriggerLogin] = useState(false);
-  const { publicKey } = useWallet();
   return (
     <Box>
       <LoginWrapper
@@ -147,8 +145,10 @@ const GettingStarted = ({ userInfo }: GettingStartedProps) => {
                   color: 'brand.purple',
                 }}
                 onClick={() => {
-                  if (userInfo && publicKey) {
+                  if (userInfo?.id) {
                     router.push(`/new/talent`);
+                  } else {
+                    setTriggerLogin(true);
                   }
                 }}
               >
@@ -173,7 +173,13 @@ const GettingStarted = ({ userInfo }: GettingStartedProps) => {
                 _hover={{
                   color: 'brand.purple',
                 }}
-                onClick={() => router.push('/bounties')}
+                onClick={() => {
+                  if (userInfo?.id) {
+                    router.push('/bounties');
+                  } else {
+                    setTriggerLogin(true);
+                  }
+                }}
               >
                 Win a bounty
               </Text>
