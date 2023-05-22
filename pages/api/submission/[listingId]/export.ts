@@ -3,7 +3,7 @@ import type { NextApiRequest, NextApiResponse } from 'next';
 import { prisma } from '@/prisma';
 import { csvUpload, str2ab } from '@/utils/cloudinary';
 
-const Parser = require('@json2csv/plainjs');
+const { Parser } = require('@json2csv/plainjs');
 
 export default async function submission(
   req: NextApiRequest,
