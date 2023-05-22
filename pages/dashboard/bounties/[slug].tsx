@@ -302,7 +302,7 @@ function BountySubmissions({ slug }: Props) {
               {bountyStatus}
             </Tag>
           </Flex>
-          <Flex justify="space-between" mb={4}>
+          <Flex align="center" justify="space-between" mb={6}>
             <Text color="brand.slate.500">
               {totalSubmissions}{' '}
               <Text as="span" color="brand.slate.400">
