@@ -355,14 +355,17 @@ function YourLinks({ success, useFormStore }: Props) {
     updateState({ pow, ...socials });
     setisLoading(true);
     try {
-      const updatedUser = await axios.post('/api/user/update', {
+      const updateOptions = {
         id: userInfo?.id,
         ...form,
         pow,
         ...socials,
         superteamLevel: 'Lurker',
         isTalentFilled: true,
-      });
+      };
+      // eslint-disable-next-line unused-imports/no-unused-vars
+      const { subSkills, ...finalOptions } = updateOptions;
+      const updatedUser = await axios.post('/api/user/update', finalOptions);
       setUserInfo(updatedUser?.data);
       success();
     } catch (e) {
