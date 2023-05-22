@@ -90,7 +90,10 @@ const Sumbissions = ({ slug, subid }: BountyDetailsProps) => {
               mb={10}
               mx={'auto'}
             >
-              <SubmissionPage user={submission?.user as User} />
+              <SubmissionPage
+                user={submission?.user as User}
+                link={submission?.link as string}
+              />
             </HStack>
           </>
         )}
