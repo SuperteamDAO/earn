@@ -26,7 +26,7 @@ export const csvUpload = async (
 ) => {
   const result = await cloudinary.uploader.upload(file.content!, {
     public_id: `${fileName}.csv`,
-    folder: 'earn-v2-submissions',
+    folder: process.env.CLOUDINARY_SUBMISSIONS_FOLDER,
     resource_type: 'raw',
     type: 'private',
     access_type: 'anonymous',
