@@ -59,6 +59,7 @@ function BountySubmissions({ slug }: Props) {
   const [bounty, setBounty] = useState<Bounty | null>(null);
   const [totalSubmissions, setTotalSubmissions] = useState(0);
   const [submissions, setSubmissions] = useState<SubmissionWithUser[]>([]);
+  const [isExporting, setIsExporting] = useState(false);
   const [rewards, setRewards] = useState<string[]>([]);
   const [isBountyLoading, setIsBountyLoading] = useState(true);
   const [skip, setSkip] = useState(0);
@@ -139,6 +140,20 @@ function BountySubmissions({ slug }: Props) {
       });
     } catch (e) {
       console.log('file: [slug].tsx:136 ~ selectWinner ~ e:', e);
+    }
+  };
+
+  const exportSubmissionsCsv = async () => {
+    setIsExporting(true);
+    try {
+      const exportURL = await axios.get(
+        `/api/submission/${bounty?.id}/export/`
+      );
+      const url = exportURL?.data?.url || '';
+      window.open(url, '_blank');
+      setIsExporting(false);
+    } catch (e) {
+      setIsExporting(false);
     }
   };
 
@@ -287,13 +302,21 @@ function BountySubmissions({ slug }: Props) {
               {bountyStatus}
             </Tag>
           </Flex>
-          <Flex justify="start" mb={4}>
+          <Flex justify="space-between" mb={4}>
             <Text color="brand.slate.500">
               {totalSubmissions}{' '}
               <Text as="span" color="brand.slate.400">
                 Submissions
               </Text>
             </Text>
+            <Button
+              isLoading={isExporting}
+              loadingText={'Exporting...'}
+              onClick={() => exportSubmissionsCsv()}
+              variant={'solid'}
+            >
+              Export Submissions CSV
+            </Button>
           </Flex>
           {!submissions?.length ? (
             <ErrorSection

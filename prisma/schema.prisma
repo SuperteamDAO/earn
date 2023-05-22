@@ -1,6 +1,3 @@
-// This is your Prisma schema file,
-// learn more about it in the docs: https://pris.ly/d/prisma-schema
-
 generator client {
   provider = "prisma-client-js"
 }
@@ -31,12 +28,12 @@ model Jobs {
   minEq         Float?
   location      String?
   sponsorId     String
-  sponsor       Sponsors @relation(fields: [sponsorId], references: [id])
   timezone      String?
   link          String?
   sourceDetails Json?
   createdAt     DateTime @default(now())
   updatedAt     DateTime @updatedAt
+  sponsor       Sponsors @relation(fields: [sponsorId], references: [id])
 
   @@index([id])
   @@index([sponsorId])
@@ -47,19 +44,14 @@ model Bounties {
   title           String
   slug            String     @unique
   description     String?    @db.Text
-  skills          Json?
   deadline        DateTime?
   eligibility     Json?
   status          status     @default(OPEN)
-  type            BountyType @default(open)
   token           String
   rewardAmount    Int?
   rewards         Json?
-  applicationLink String?
   sponsorId       String
-  sponsor         Sponsors   @relation(fields: [sponsorId], references: [id])
   pocId           String
-  poc             User       @relation("poc", fields: [pocId], references: [id])
   source          Source     @default(NATIVE)
   sourceDetails   Json?
   isPublished     Boolean    @default(false)
@@ -68,6 +60,11 @@ model Bounties {
   isArchived      Boolean    @default(false)
   createdAt       DateTime   @default(now())
   updatedAt       DateTime   @updatedAt
+  applicationLink String?
+  skills          Json?
+  type            BountyType @default(open)
+  sponsor         Sponsors   @relation(fields: [sponsorId], references: [id])
+  poc             User       @relation("poc", fields: [pocId], references: [id])
 
   @@index([id, slug])
   @@index([sponsorId])
@@ -78,13 +75,13 @@ model Comment {
   id          String      @id @default(uuid())
   message     String      @db.VarChar(1000)
   authorId    String
-  author      User        @relation(fields: [authorId], references: [id])
   listingType ListingType @default(BOUNTY)
   listingId   String
   isActive    Boolean     @default(true)
   isArchived  Boolean     @default(false)
   createdAt   DateTime    @default(now())
   updatedAt   DateTime    @updatedAt
+  author      User        @relation(fields: [authorId], references: [id])
 
   @@index([id, listingId])
   @@index([authorId])
@@ -96,21 +93,21 @@ model Grants {
   slug             String   @unique
   description      String?  @db.Text
   shortDescription String?  @db.VarChar(1000)
-  skills           Json?
   token            String?
   rewardAmount     Int?
   link             String?
   source           Source   @default(NATIVE)
   sponsorId        String
-  sponsor          Sponsors @relation(fields: [sponsorId], references: [id])
   pocId            String
-  poc              User     @relation(fields: [pocId], references: [id])
   isPublished      Boolean  @default(false)
   isFeatured       Boolean  @default(false)
   isActive         Boolean  @default(true)
   isArchived       Boolean  @default(false)
   createdAt        DateTime @default(now())
   updatedAt        DateTime @updatedAt
+  skills           Json?
+  sponsor          Sponsors @relation(fields: [sponsorId], references: [id])
+  poc              User     @relation(fields: [pocId], references: [id])
 
   @@index([id, slug])
   @@index([pocId])
@@ -122,10 +119,7 @@ model Submission {
   link               String?
   tweet              String?
   eligibilityAnswers Json?
-  likes              Int?
-  like               Json?
   userId             String
-  user               User        @relation(fields: [userId], references: [id])
   listingType        ListingType @default(BOUNTY)
   listingId          String
   isWinner           Boolean     @default(false)
@@ -134,6 +128,9 @@ model Submission {
   isArchived         Boolean     @default(false)
   createdAt          DateTime    @default(now())
   updatedAt          DateTime    @updatedAt
+  like               Json?
+  likes              Int?
+  user               User        @relation(fields: [userId], references: [id])
 
   @@index([id, listingId])
   @@index([userId])
@@ -155,10 +152,10 @@ model Sponsors {
   industry     String
   twitter      String?
   bio          String?
-  isActive     Boolean        @default(true)
-  isArchived   Boolean        @default(false)
   createdAt    DateTime       @default(now())
   updatedAt    DateTime       @updatedAt
+  isArchived   Boolean        @default(false)
+  isActive     Boolean        @default(true)
   UserSponsors UserSponsors[]
   Bounties     Bounties[]
   Grants       Grants[]
@@ -193,7 +190,6 @@ model User {
   role             SuperRole      @default(USER)
   totalEarnedInUSD Int            @default(0)
   isTalentFilled   Boolean        @default(false)
-  skills           Json?
   interests        String?
   bio              String?
   twitter          String?
@@ -209,10 +205,11 @@ model User {
   cryptoExperience String?
   workPrefernce    String?
   currentEmployer  String?
-  currentSponsorId String?
   pow              String?        @db.VarChar(2000)
   notifications    String?
   private          Boolean        @default(false)
+  skills           Json?
+  currentSponsorId String?
   currentSponsor   Sponsors?      @relation(fields: [currentSponsorId], references: [id])
   UserSponsors     UserSponsors[]
   poc              Bounties[]     @relation("poc")
@@ -226,12 +223,12 @@ model User {
 
 model UserSponsors {
   userId    String
-  user      User     @relation(fields: [userId], references: [id])
   sponsorId String
-  sponsor   Sponsors @relation(fields: [sponsorId], references: [id])
   role      Role     @default(MEMBER)
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
+  user      User     @relation(fields: [userId], references: [id])
+  sponsor   Sponsors @relation(fields: [sponsorId], references: [id])
 
   @@id([userId, sponsorId])
   @@index([userId, sponsorId])
