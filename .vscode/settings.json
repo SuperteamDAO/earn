@@ -24,5 +24,6 @@
   "[prisma]": {
     "editor.defaultFormatter": "Prisma.prisma"
   },
-  "prettier.ignorePath": ".gitignore" // Don't run prettier for files listed in .gitignore
+  "prettier.ignorePath": ".gitignore",
+  "cSpell.words": ["CLOUDINARY"] // Don't run prettier for files listed in .gitignore
 }

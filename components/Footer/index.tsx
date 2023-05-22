@@ -21,7 +21,7 @@ export const Footer = ({ style }: Props) => (
   >
     <Flex align="start" justify="space-evenly" gap="1.875rem">
       <Flex align="start" gap="1.25rem" w="40%" flexFlow="column">
-        <img src="/assets/logo/logo.png" alt="Icon" />
+        <img src="/assets/logo/new-logo.svg" alt="Logo" />
 
         <Text color="gray.400" fontSize="1.0625rem" fontWeight={400}>
           Superteam Earn is where Solana founders find world class talent for
