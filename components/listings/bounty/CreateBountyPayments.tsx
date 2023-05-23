@@ -39,7 +39,7 @@ interface Props {
   subSkills: MultiSelectOptions[];
   onOpen: () => void;
   draftLoading: boolean;
-  createDraft: (payment: string) => void;
+  createDraft: () => void;
   setSlug: Dispatch<SetStateAction<string>>;
   questions: Ques[];
 }
@@ -351,12 +351,7 @@ export const CreatebountyPayment = ({
             borderColor="gray.200"
             isLoading={draftLoading}
             onClick={() => {
-              createDraft(
-                JSON.stringify({
-                  prizevalues,
-                  token: tokenList[tokenIndex as number]?.mintAddress,
-                })
-              );
+              createDraft();
             }}
           >
             Save as Drafts

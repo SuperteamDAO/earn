@@ -31,7 +31,7 @@ interface Props {
   mainSkills: MultiSelectOptions[];
   subSkills: MultiSelectOptions[];
   onOpen: () => void;
-  createDraft: (payment: string) => void;
+  createDraft: () => void;
   setSlug: Dispatch<SetStateAction<string>>;
   draftLoading: boolean;
 }
@@ -423,13 +423,7 @@ export const CreateJobPayments = ({
             borderColor="gray.200"
             isLoading={draftLoading}
             onClick={() => {
-              createDraft(
-                JSON.stringify({
-                  payment,
-                  location,
-                  timeZone,
-                })
-              );
+              createDraft();
             }}
           >
             Save as Drafts

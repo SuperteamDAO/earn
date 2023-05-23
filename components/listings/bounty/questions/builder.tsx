@@ -9,7 +9,7 @@ import { QuestionCard } from './questionCard';
 interface Props {
   setSteps: Dispatch<SetStateAction<number>>;
   draftLoading: boolean;
-  createDraft: (payment: string) => void;
+  createDraft: () => void;
   questions: Ques[];
   setQuestions: Dispatch<SetStateAction<Ques[]>>;
 }
@@ -169,7 +169,7 @@ const Builder = ({
             borderColor="gray.200"
             isLoading={draftLoading}
             onClick={() => {
-              createDraft('nothing');
+              createDraft();
             }}
           >
             Save as Drafts

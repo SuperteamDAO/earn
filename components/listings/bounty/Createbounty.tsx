@@ -27,7 +27,7 @@ interface Props {
   onOpen: () => void;
   bountybasic: BountyBasicType | undefined;
   setBountyBasic: Dispatch<SetStateAction<BountyBasicType | undefined>>;
-  createDraft: (payment: string) => void;
+  createDraft: () => void;
   draftLoading: boolean;
   setSlug: Dispatch<SetStateAction<string>>;
   setQuestions: Dispatch<SetStateAction<Ques[]>>;
@@ -75,6 +75,7 @@ export const CreateBounty = ({
           editorData={editorData}
           setSteps={setSteps}
           setEditorData={setEditorData}
+          draftLoading={draftLoading}
         />
       )}
       {steps === 4 && (

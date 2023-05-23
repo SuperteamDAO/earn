@@ -29,7 +29,7 @@ interface Props {
   skills: MultiSelectOptions[];
   jobBasics: JobBasicsType | undefined;
   setJobBasic: Dispatch<SetStateAction<JobBasicsType | undefined>>;
-  createDraft: (payment: string) => void;
+  createDraft: () => void;
   draftLoading: boolean;
 }
 interface ErrorsBasic {
@@ -273,7 +273,7 @@ export const CreateJobBasic = ({
             borderColor="gray.200"
             isLoading={draftLoading}
             onClick={() => {
-              createDraft('nothing');
+              createDraft();
             }}
           >
             Save as Drafts

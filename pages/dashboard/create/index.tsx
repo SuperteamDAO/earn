@@ -64,6 +64,10 @@ const CreateListing = () => {
       ...draft,
       skills: mergeSkills({ skills: mainSkills, subSkills: subSkill }),
       ...bountybasic,
+      deadline: bountybasic?.deadline
+        ? new Date(bountybasic?.deadline).toISOString()
+        : '',
+      description: editorData || '',
     };
     // description: JSON.stringify(editorData),
     // question: JSON.stringify(questions),

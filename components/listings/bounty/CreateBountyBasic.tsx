@@ -16,6 +16,7 @@ import type { Dispatch, SetStateAction } from 'react';
 import { useState } from 'react';
 
 import { SkillSelect } from '@/components/misc/SkillSelect';
+import { dayjs } from '@/utils/dayjs';
 
 import type { MultiSelectOptions } from '../../../constants';
 import type { BountyBasicType } from './Createbounty';
@@ -28,7 +29,7 @@ interface Props {
   setSubSkills: Dispatch<SetStateAction<MultiSelectOptions[]>>;
   subSkills: MultiSelectOptions[];
   skills: MultiSelectOptions[];
-  createDraft: (payment: string) => void;
+  createDraft: () => void;
   draftLoading: boolean;
 }
 interface ErrorsBasic {
@@ -65,7 +66,7 @@ export const CreatebountyBasic = ({
     skills: false,
   });
 
-  const date = new Date().toISOString();
+  const date = dayjs().format('YYYY-MM-DD');
 
   const validateSlug = async () => {
     setIsValidatingSlug(true);
@@ -312,11 +313,11 @@ export const CreatebountyBasic = ({
             }}
             focusBorderColor="brand.purple"
             id="deadline"
-            min={date}
+            min={`${date}T00:00`}
             onChange={(e) => {
               setbountyBasic({
                 ...(bountyBasic as BountyBasicType),
-                deadline: new Date(e.target.value).toISOString(),
+                deadline: e.target.value,
               });
             }}
             placeholder="deadline"
@@ -361,10 +362,10 @@ export const CreatebountyBasic = ({
           </Button>
           <Button
             w="100%"
-            isDisabled={!bountyBasic}
+            isDisabled={!bountyBasic?.title || !bountyBasic?.slug}
             isLoading={draftLoading}
             onClick={() => {
-              createDraft('nothing');
+              createDraft();
             }}
             variant="outline"
           >
