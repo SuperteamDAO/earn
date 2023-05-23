@@ -32,7 +32,7 @@ interface Bounty {
   sponsor?: SponsorType | undefined;
   poc?: User;
   slug?: string;
-  type?: BountyType;
+  type?: BountyType | string;
 }
 
 function ListingHeader({

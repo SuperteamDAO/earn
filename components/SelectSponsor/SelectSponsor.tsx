@@ -164,6 +164,7 @@ function SelectSponsor() {
           '&:hover': {
             borderColor: '#6366F1',
           },
+          minHeight: '46px',
         }),
         dropdownIndicator: (base) => ({
           ...base,

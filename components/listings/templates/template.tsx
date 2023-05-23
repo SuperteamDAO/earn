@@ -1,14 +1,13 @@
 import { AddIcon } from '@chakra-ui/icons';
 import { Box, Flex, Text, VStack } from '@chakra-ui/react';
-import { useRouter } from 'next/router';
 import type { Dispatch, SetStateAction } from 'react';
 import React from 'react';
 
 interface Props {
   setSteps: Dispatch<SetStateAction<number>>;
+  setListingType: Dispatch<SetStateAction<string>>;
 }
-const Template = ({ setSteps }: Props) => {
-  const router = useRouter();
+const Template = ({ setSteps, setListingType }: Props) => {
   return (
     <>
       <VStack align={'start'} gap={8} w="full">
@@ -37,8 +36,8 @@ const Template = ({ setSteps }: Props) => {
               border={'1px solid #cbd5e1'}
               cursor={'pointer'}
               onClick={() => {
+                setListingType('BOUNTY');
                 setSteps(2);
-                router.replace('/listings/create?type=bounties');
               }}
             >
               <AddIcon color="gray.500" mb="1rem" />
@@ -48,7 +47,7 @@ const Template = ({ setSteps }: Props) => {
             </Box>
           </Flex>
         </VStack>
-        <VStack align="start" w={'full'}>
+        {/* <VStack align="start" w={'full'}>
           <Flex align="center" justify="center" gap="2rem" w="full" mb="2rem">
             <Text color="gray.600" fontSize="1.3rem" fontWeight={600}>
               Jobs
@@ -73,8 +72,8 @@ const Template = ({ setSteps }: Props) => {
               border={'1px solid #cbd5e1'}
               cursor={'pointer'}
               onClick={() => {
+                setListingType('JOB');
                 setSteps(2);
-                router.replace('/listings/create?type=jobs');
               }}
             >
               <AddIcon color="gray.500" mb="1rem" />
@@ -109,8 +108,8 @@ const Template = ({ setSteps }: Props) => {
               border={'1px solid #cbd5e1'}
               cursor={'pointer'}
               onClick={() => {
+                setListingType('GRANT');
                 setSteps(2);
-                router.replace('/listings/create?type=grants');
               }}
             >
               <AddIcon color="gray.500" mb="1rem" />
@@ -119,7 +118,7 @@ const Template = ({ setSteps }: Props) => {
               </Text>
             </Box>
           </Flex>
-        </VStack>
+        </VStack> */}
       </VStack>
     </>
   );

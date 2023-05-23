@@ -36,6 +36,7 @@ import {
 import axios from 'axios';
 import Avatar from 'boring-avatars';
 import type { GetServerSideProps } from 'next';
+import NextLink from 'next/link';
 import { useRouter } from 'next/router';
 import { useEffect, useState } from 'react';
 
@@ -278,15 +279,14 @@ function BountySubmissions({ slug }: Props) {
           <Box mb={4}>
             <Breadcrumb color="brand.slate.400">
               <BreadcrumbItem>
-                <BreadcrumbLink
-                  color="brand.slate.400"
-                  href="/dashboard/bounties"
-                >
-                  <Flex align="center">
-                    <ChevronLeftIcon mr={1} w={6} h={6} />
-                    Bounties
-                  </Flex>
-                </BreadcrumbLink>
+                <NextLink href="/dashboard/bounties" passHref>
+                  <BreadcrumbLink color="brand.slate.400">
+                    <Flex align="center">
+                      <ChevronLeftIcon mr={1} w={6} h={6} />
+                      Bounties
+                    </Flex>
+                  </BreadcrumbLink>
+                </NextLink>
               </BreadcrumbItem>
 
               <BreadcrumbItem>

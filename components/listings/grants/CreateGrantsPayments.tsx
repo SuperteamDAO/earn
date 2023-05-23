@@ -35,7 +35,7 @@ interface Props {
   subSkills: MultiSelectOptions[];
   grantsBasic: GrantsBasicType | undefined;
   onOpen: () => void;
-  createDraft: (payment: string) => void;
+  createDraft: () => void;
   setSlug: Dispatch<SetStateAction<string>>;
 }
 export const CreateGrantsPayment = ({
