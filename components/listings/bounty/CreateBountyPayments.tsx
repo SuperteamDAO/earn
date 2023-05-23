@@ -194,7 +194,7 @@ export const CreatebountyPayment = ({
       id: genrateuuid(),
       bountiesId: bountyId,
       questions:
-        bountyBasic?.eligibility === 'premission'
+        bountyBasic?.type === 'premission'
           ? JSON.stringify([...defaultQuestionPremission, ...questions])
           : JSON.stringify([...defaultQuestionPremissionLess]),
     });

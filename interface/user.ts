@@ -15,7 +15,6 @@ interface User {
   sponsor?: boolean;
   superteamLevel?: string;
   isTalentFilled?: boolean;
-  role?: string;
   bio?: string;
   location?: string;
   photo?: string;

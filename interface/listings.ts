@@ -1,3 +1,5 @@
+import type { SkillsProp } from '@/interface/skills';
+
 import type { Talent } from './talent';
 import type {
   JobType,
@@ -117,10 +119,11 @@ type Experience =
 
 interface DraftType {
   id?: string;
-  orgId: string;
-  type: Listingtype;
-  basic: string;
-  payments: string;
+  sponsorId?: string;
+  type?: Listingtype;
+  skills?: SkillsProp[];
+  basic?: string;
+  payments?: string;
   question?: string;
 }
 interface SubmissionType {

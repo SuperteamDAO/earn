@@ -129,13 +129,13 @@ const textLimiter = (text: string, len: number) => {
 };
 
 interface BountyProps {
-  title: string;
+  title?: string;
   rewardAmount?: number;
   deadline?: string;
   logo?: string;
   status?: BountyStatus;
   token?: string;
-  slug: string;
+  slug?: string;
   sponsorName?: string;
 }
 
@@ -144,9 +144,9 @@ export const BountiesCard = ({
   deadline,
   status,
   logo,
-  title,
+  title = '',
   token,
-  slug,
+  slug = '',
   sponsorName,
 }: BountyProps) => {
   const router = useRouter();

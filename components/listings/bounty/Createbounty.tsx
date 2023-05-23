@@ -1,3 +1,4 @@
+import type { BountyType } from '@prisma/client';
 import type { Dispatch, SetStateAction } from 'react';
 import React from 'react';
 
@@ -12,7 +13,7 @@ export interface BountyBasicType {
   title: string;
   slug: string;
   deadline: string;
-  eligibility: string;
+  type: BountyType | string;
 }
 interface Props {
   steps: number;

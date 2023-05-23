@@ -7,15 +7,17 @@ import {
   Image,
   Input,
   Select,
+  Text,
   Tooltip,
   VStack,
 } from '@chakra-ui/react';
-import moment from 'moment';
+import axios from 'axios';
 import type { Dispatch, SetStateAction } from 'react';
 import { useState } from 'react';
 
+import { SkillSelect } from '@/components/misc/SkillSelect';
+
 import type { MultiSelectOptions } from '../../../constants';
-import { SkillSelect } from '../../misc/SkillSelect';
 import type { BountyBasicType } from './Createbounty';
 
 interface Props {
@@ -33,7 +35,7 @@ interface ErrorsBasic {
   title: boolean;
   slug: boolean;
   deadline: boolean;
-  eligibility: boolean;
+  type: boolean;
   skills: boolean;
   subSkills: boolean;
 }
@@ -48,17 +50,38 @@ export const CreatebountyBasic = ({
   createDraft,
   draftLoading,
 }: Props) => {
-  console.log('file: CreateBountyBasic.tsx:51 ~ bountyBasic:', bountyBasic);
+  const [defaultSlug, setDefaultSlug] = useState<string>(
+    bountyBasic?.slug || ''
+  );
+  const [isValidatingSlug, setIsValidatingSlug] = useState<boolean>(false);
+  const [validatingSlugMessage, setValidatingSlugMessage] =
+    useState<string>('Validate Slug');
   const [errorState, setErrorState] = useState<ErrorsBasic>({
     deadline: false,
-    eligibility: false,
+    type: false,
     title: false,
     slug: false,
     subSkills: false,
     skills: false,
   });
 
-  const date = moment().format('YYYY-MM-DD');
+  const date = new Date().toISOString();
+
+  const validateSlug = async () => {
+    setIsValidatingSlug(true);
+    try {
+      const res = await axios.get(`/api/bounties/${defaultSlug}/`);
+      if (res.data) {
+        setValidatingSlugMessage('🔴 Slug already exists!');
+      } else {
+        setValidatingSlugMessage('🟢 Slug is good to go!');
+      }
+      setIsValidatingSlug(false);
+    } catch (e) {
+      setValidatingSlugMessage('🟢 Slug is good to go!');
+      setIsValidatingSlug(false);
+    }
+  };
 
   return (
     <>
@@ -66,12 +89,12 @@ export const CreatebountyBasic = ({
         <FormControl w="full" isInvalid={errorState.title} isRequired>
           <Flex>
             <FormLabel
-              color={'gray.500'}
+              color={'brand.slate.500'}
               fontSize={'15px'}
               fontWeight={600}
               htmlFor={'title'}
             >
-              Opportunity Title
+              Listing Title
             </FormLabel>
             <Tooltip
               w="max"
@@ -82,7 +105,7 @@ export const CreatebountyBasic = ({
               bg="#6562FF"
               borderRadius="0.5rem"
               hasArrow
-              label={`Use a short title to describe the opportunity`}
+              label={`Use a short title to describe the Listing`}
               placement="right-end"
             >
               <Image
@@ -94,12 +117,24 @@ export const CreatebountyBasic = ({
           </Flex>
 
           <Input
+            borderColor="brand.slate.300"
+            _placeholder={{
+              color: 'brand.slate.300',
+            }}
+            focusBorderColor="brand.purple"
             id="title"
             onChange={(e) => {
+              const slug = (e.target.value || '')
+                .toLowerCase()
+                .replaceAll(' ', '-')
+                .replace(/[^A-Za-z0-9-]/g, '');
+              setDefaultSlug(slug);
               setbountyBasic({
                 ...(bountyBasic as BountyBasicType),
                 title: e.target.value,
+                slug,
               });
+              setValidatingSlugMessage('Validate Slug');
             }}
             placeholder="Develop a new landing page"
             value={bountyBasic?.title}
@@ -111,12 +146,12 @@ export const CreatebountyBasic = ({
         <FormControl w="full" isInvalid={errorState.slug} isRequired>
           <Flex>
             <FormLabel
-              color={'gray.500'}
+              color={'brand.slate.500'}
               fontSize={'15px'}
               fontWeight={600}
               htmlFor={'slug'}
             >
-              Opportunity Slug
+              Listing Slug
             </FormLabel>
             <Tooltip
               w="max"
@@ -127,7 +162,7 @@ export const CreatebountyBasic = ({
               bg="#6562FF"
               borderRadius="0.5rem"
               hasArrow
-              label={`Use a unique slug to open the opportunity`}
+              label={`Use a unique slug to open the Listing`}
               placement="right-end"
             >
               <Image
@@ -139,34 +174,115 @@ export const CreatebountyBasic = ({
           </Flex>
 
           <Input
+            borderColor="brand.slate.300"
+            _placeholder={{
+              color: 'brand.slate.300',
+            }}
+            focusBorderColor="brand.purple"
             id="slug"
             onChange={(e) => {
+              setDefaultSlug(e.target.value || '');
               setbountyBasic({
                 ...(bountyBasic as BountyBasicType),
                 slug: e.target.value,
               });
+              setValidatingSlugMessage('Validate Slug');
             }}
             placeholder="develop-a-new-landing-page-1"
-            value={bountyBasic?.slug}
+            value={defaultSlug}
           />
+          <Flex justify="end">
+            <Text
+              color="brand.slate.400"
+              fontSize="xs"
+              fontWeight={500}
+              _hover={{
+                color: bountyBasic?.slug ? 'brand.purple' : 'brand.slate.400',
+              }}
+              cursor={bountyBasic?.slug ? 'pointer' : 'not-allowed'}
+              onClick={() => validateSlug()}
+            >
+              {isValidatingSlug ? 'Validating...' : validatingSlugMessage}
+            </Text>
+          </Flex>
           <FormErrorMessage>
             {/* {errors.title ? <>{errors.title.message}</> : <></>} */}
           </FormErrorMessage>
         </FormControl>
-        <FormControl
-          w="full"
-          mb={5}
-          isInvalid={errorState.eligibility}
-          isRequired
-        >
+        <FormControl w="full" mb={5} isInvalid={errorState.type} isRequired>
           <Flex>
             <FormLabel
-              color={'gray.500'}
+              color={'brand.slate.500'}
               fontSize={'15px'}
               fontWeight={600}
               htmlFor={'eligility'}
             >
               Listing Type
+            </FormLabel>
+            <Tooltip
+              w="max"
+              p="0.7rem"
+              color="white"
+              fontSize="0.9rem"
+              fontWeight={600}
+              bg="#6562FF"
+              borderRadius="0.5rem"
+              hasArrow
+              label={`Choose which type of Listing you want to create`}
+              placement="right-end"
+            >
+              <Image
+                mt={-2}
+                alt={'Info Icon'}
+                src={'/assets/icons/info-icon.svg'}
+              />
+            </Tooltip>
+          </Flex>
+
+          <Select
+            borderColor="brand.slate.300"
+            _placeholder={{
+              color: 'brand.slate.300',
+            }}
+            focusBorderColor="brand.purple"
+            onChange={(e) => {
+              setbountyBasic({
+                ...(bountyBasic as BountyBasicType),
+                type: e.target.value,
+              });
+            }}
+            placeholder="Choose the type of bounty"
+            value={bountyBasic?.type}
+          >
+            <option value="open">
+              Permissionless Bounty - anyone can apply
+            </option>
+            <option value="permissioned">
+              Permissioned Bounty - only selected people can work on the bounty
+            </option>
+          </Select>
+          <FormErrorMessage>
+            {/* {errors.type ? <>{errors.type.message}</> : <></>} */}
+          </FormErrorMessage>
+        </FormControl>
+
+        <SkillSelect
+          errorSkill={errorState.skills}
+          errorSubSkill={errorState.subSkills}
+          setSkills={setSkills}
+          setSubSkills={setSubSkills}
+          skills={skills}
+          subSkills={subSkills}
+        />
+        <FormControl isInvalid={errorState.deadline} isRequired>
+          <Flex align={'center'} justify={'start'}>
+            <FormLabel
+              color={'brand.slate.500'}
+              fontSize={'15px'}
+              fontWeight={600}
+              htmlFor={'deadline'}
+            >
+              Deadline
             </FormLabel>
             <Tooltip
               w="max"
@@ -187,75 +303,20 @@ export const CreatebountyBasic = ({
               />
             </Tooltip>
           </Flex>
-
-          <Select
-            onChange={(e) => {
-              setbountyBasic({
-                ...(bountyBasic as BountyBasicType),
-                eligibility: e.target.value,
-              });
-            }}
-            placeholder="Choose the type of bounty"
-            value={bountyBasic?.eligibility}
-          >
-            <option value="premission-less">
-              Permissionless Bounty - anyone can apply
-            </option>
-            <option value="premission">
-              Permissioned Bounty - only selected people can work on the bounty
-            </option>
-          </Select>
-          <FormErrorMessage>
-            {/* {errors.eligibility ? <>{errors.eligibility.message}</> : <></>} */}
-          </FormErrorMessage>
-        </FormControl>
-
-        <SkillSelect
-          errorSkill={errorState.skills}
-          errorSubSkill={errorState.subSkills}
-          setSkills={setSkills}
-          setSubSkills={setSubSkills}
-          skills={skills}
-          subSkills={subSkills}
-        />
-        <FormControl isInvalid={errorState.deadline} isRequired>
-          <Flex align={'center'} justify={'start'}>
-            <FormLabel
-              color={'gray.500'}
-              fontSize={'15px'}
-              fontWeight={600}
-              htmlFor={'deadline'}
-            >
-              Deadline
-            </FormLabel>
-            <Tooltip
-              w="max"
-              p="0.7rem"
-              color="white"
-              fontSize="0.9rem"
-              fontWeight={600}
-              bg="#6562FF"
-              borderRadius="0.5rem"
-              hasArrow
-              label={`Who will respond to questions about the opportunity from your team?`}
-              placement="right-end"
-            >
-              <Image
-                mt={-2}
-                alt={'Info Icon'}
-                src={'/assets/icons/info-icon.svg'}
-              />
-            </Tooltip>
-          </Flex>
           <Input
             w={'full'}
-            color={'gray.500'}
+            color={'brand.slate.500'}
+            borderColor="brand.slate.300"
+            _placeholder={{
+              color: 'brand.slate.300',
+            }}
+            focusBorderColor="brand.purple"
             id="deadline"
-            min={`${date}T00:00`}
+            min={date}
             onChange={(e) => {
               setbountyBasic({
                 ...(bountyBasic as BountyBasicType),
-                deadline: e.target.value,
+                deadline: new Date(e.target.value).toISOString(),
               });
             }}
             placeholder="deadline"
@@ -277,7 +338,7 @@ export const CreatebountyBasic = ({
             onClick={() => {
               setErrorState({
                 deadline: !bountyBasic?.deadline,
-                eligibility: !bountyBasic?.eligibility,
+                type: !bountyBasic?.type,
                 skills: skills.length === 0,
                 subSkills: subSkills.length === 0,
                 title: !bountyBasic?.title,
@@ -286,7 +347,7 @@ export const CreatebountyBasic = ({
 
               if (
                 bountyBasic?.deadline &&
-                bountyBasic?.eligibility &&
+                bountyBasic?.type &&
                 bountyBasic?.title &&
                 bountyBasic?.slug &&
                 skills.length !== 0 &&
@@ -300,16 +361,12 @@ export const CreatebountyBasic = ({
           </Button>
           <Button
             w="100%"
-            color="gray.500"
-            fontSize="1rem"
-            fontWeight={600}
-            bg="transparent"
-            border="1px solid"
-            borderColor="gray.200"
+            isDisabled={!bountyBasic}
             isLoading={draftLoading}
             onClick={() => {
               createDraft('nothing');
             }}
+            variant="outline"
           >
             Save as Draft
           </Button>

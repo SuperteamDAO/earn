@@ -13,16 +13,13 @@ import Template from '@/components/listings/templates/template';
 import { SuccessListings } from '@/components/modals/successListings';
 import ErrorSection from '@/components/shared/ErrorSection';
 import type { MultiSelectOptions } from '@/constants';
-import type {
-  DraftType,
-  GrantsBasicType,
-  JobBasicsType,
-} from '@/interface/listings';
+import type { Bounty } from '@/interface/bounty';
+import type { GrantsBasicType, JobBasicsType } from '@/interface/listings';
 import FormLayout from '@/layouts/FormLayout';
 import Sidebar from '@/layouts/Sidebar';
-import { SponsorStore } from '@/store/sponsor';
 import { userStore } from '@/store/user';
 import { findOneDraft } from '@/utils/functions';
+import { mergeSkills } from '@/utils/skills';
 
 const CreateListing = () => {
   const router = useRouter();
@@ -55,74 +52,32 @@ const CreateListing = () => {
   const [bountybasic, setBountyBasic] = useState<BountyBasicType | undefined>();
   // -- Grants
   const [grantBasic, setgrantsBasic] = useState<GrantsBasicType | undefined>();
-  // -- sponsor
-  const { currentSponsor } = SponsorStore();
 
-  const createDraft = async (payment: string) => {
+  const createDraft = async () => {
     setDraftLoading(true);
-    let api = '/api/bounties/create';
-    let draft: DraftType = {
-      orgId: currentSponsor?.id ?? '',
-      basic: '',
-      payments: '',
-      type: 'Bounties',
+    const api = '/api/bounties/create/';
+    let draft: Bounty = {
+      sponsorId: userInfo?.currentSponsor?.id ?? '',
+      pocId: userInfo?.id ?? '',
     };
-    if (listingType === 'JOB') {
-      draft = {
-        ...draft,
-        basic: JSON.stringify({
-          skills: mainSkills,
-          subSkill,
-          description: JSON.stringify(editorData),
-          ...jobBasics,
-        }),
-        type: 'Jobs',
-        payments: payment,
-      };
-      api = '/api/jobs/create';
-    } else if (listingType === 'BOUNTY') {
-      draft = {
-        ...draft,
-        basic: JSON.stringify({
-          skills: mainSkills,
-          subSkill,
-          description: JSON.stringify(editorData),
-          ...bountybasic,
-        }),
-        type: 'Bounties',
-        payments: payment,
-        question: JSON.stringify(questions),
-      };
-    } else if (listingType === 'GRANT') {
-      draft = {
-        ...draft,
-        basic: JSON.stringify({
-          skills: mainSkills,
-          subSkill,
-          description: JSON.stringify(editorData),
-          ...grantBasic,
-        }),
-        type: 'Grants',
-        payments: payment,
-      };
-      api = '/api/grants/create';
-    }
+    draft = {
+      ...draft,
+      skills: mergeSkills({ skills: mainSkills, subSkills: subSkill }),
+      ...bountybasic,
+    };
+    // description: JSON.stringify(editorData),
+    // question: JSON.stringify(questions),
     console.log('file: index.tsx:110 ~ createDraft ~ draft:', draft);
     try {
       const newDraft = await axios.post(api, {
         ...draft,
         isPublished: false,
       });
+      router.push('/dashboard/bounties');
       console.log('file: index.tsx:115 ~ createDraft ~ newDraft:', newDraft);
     } catch (e) {
       console.log('file: index.tsx:117 ~ createDraft ~ e:', e);
     }
-    // const res = await CreateDraft(draft);
-    // if (res) {
-    //   toast.success('Draft Saved');
-    // } else {
-    //   toast.error('Error');
-    // }
     setDraftLoading(false);
   };
 
@@ -142,7 +97,7 @@ const CreateListing = () => {
               setEditorData(JSON.parse(data.description));
               setBountyBasic({
                 deadline: data.deadline ?? '',
-                eligibility: data.eligibility ?? '',
+                type: data.type ?? '',
                 title: data.title ?? '',
                 slug: data.slug ?? '',
               });
@@ -202,7 +157,7 @@ const CreateListing = () => {
                   {
                     label: 'Basics',
                     number: 2,
-                    mainHead: 'Create a listing',
+                    mainHead: 'Create a Listing',
                     description: `Now let's learn a bit more about the work you need completed`,
                   },
                   {
@@ -231,7 +186,7 @@ const CreateListing = () => {
                   {
                     label: 'Basics',
                     number: 2,
-                    mainHead: 'Create a listing',
+                    mainHead: 'Create a Listing',
                     description: `Now let's learn a bit more about the work you need completed`,
                   },
                   {

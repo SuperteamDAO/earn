@@ -459,7 +459,7 @@ const Description = ({
             if (
               router.query.type === 'bounties' &&
               bountyBasics &&
-              bountyBasics.eligibility === 'premission-less'
+              bountyBasics.type === 'open'
             ) {
               setSteps(5);
               return;
