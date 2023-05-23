@@ -134,18 +134,26 @@ export const CreatebountyPayment = ({
         <ModalContent>
           <ModalHeader>Confirm Publish?</ModalHeader>
           <ModalCloseButton />
-          <ModalBody>Body</ModalBody>
+          <ModalBody>
+            <Text>
+              Creating this Listing will publish it for everyone to see. Make
+              sure your Listing is ready before you publish.
+            </Text>
+          </ModalBody>
 
           <ModalFooter>
+            <Button mr={4} onClick={confirmOnClose} variant="ghost">
+              Close
+            </Button>
             <Button
               mr={3}
               colorScheme="blue"
+              disabled={isListingPublishing}
+              isLoading={isListingPublishing}
+              loadingText="Publishing..."
               onClick={() => createAndPublishListing()}
             >
               Create & Publish
-            </Button>
-            <Button onClick={confirmOnClose} variant="ghost">
-              Close
             </Button>
           </ModalFooter>
         </ModalContent>

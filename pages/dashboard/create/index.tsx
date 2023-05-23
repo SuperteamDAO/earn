@@ -57,9 +57,6 @@ const CreateListing = () => {
     useState<boolean>(false);
 
   const createAndPublishListing = async () => {
-    console.log(
-      'file: index.tsx:59 ~ createAndPublishListing ~ createAndPublishListing:'
-    );
     setIsListingPublishing(true);
     try {
       const bounty: Bounty = {
@@ -79,10 +76,6 @@ const CreateListing = () => {
         isPublished: true,
       };
       const result = await axios.post('/api/bounties/create/', bounty);
-      console.log(
-        'file: index.tsx:82 ~ createAndPublishListing ~ result:',
-        result
-      );
       setSlug(`/bounties/${result?.data?.slug}/`);
       onOpen();
       setIsListingPublishing(false);
@@ -112,16 +105,14 @@ const CreateListing = () => {
         type: q.type,
       })),
     };
-    console.log('file: index.tsx:110 ~ createDraft ~ draft:', draft);
     try {
-      const newDraft = await axios.post(api, {
+      await axios.post(api, {
         ...draft,
         isPublished: false,
       });
       router.push('/dashboard/bounties');
-      console.log('file: index.tsx:115 ~ createDraft ~ newDraft:', newDraft);
     } catch (e) {
-      console.log('file: index.tsx:117 ~ createDraft ~ e:', e);
+      setDraftLoading(false);
     }
     setDraftLoading(false);
   };
@@ -131,11 +122,8 @@ const CreateListing = () => {
       if (router.query.draft) {
         try {
           const res = await findOneDraft(router.query.draft as string);
-          console.log(res);
-
           if (res) {
             if ((res.data.type as string).toLowerCase() === 'bounties') {
-              console.log(JSON.parse(res.data.basic));
               const data = JSON.parse(res.data.basic);
               setSubSkill(data.subSkill);
               setMainSkills(data.skills);
