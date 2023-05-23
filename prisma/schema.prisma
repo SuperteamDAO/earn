@@ -47,7 +47,7 @@ model Bounties {
   deadline        DateTime?
   eligibility     Json?
   status          status     @default(OPEN)
-  token           String
+  token           String?
   rewardAmount    Int?
   rewards         Json?
   sponsorId       String

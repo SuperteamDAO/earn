@@ -23,9 +23,9 @@ interface Rewards {
 type BountyStatus = 'OPEN' | 'REVIEW' | 'CLOSED';
 
 interface Bounty {
-  id: string;
-  title: string;
-  slug: string;
+  id?: string;
+  title?: string;
+  slug?: string;
   description?: string;
   applicationLink?: string;
   skills?: Skills;
@@ -34,8 +34,9 @@ interface Bounty {
   eligibility?: Eligibility[];
   status?: BountyStatus;
   isActive?: boolean;
-  isPublished?: string;
-  isFeatured?: string;
+  isArchived?: boolean;
+  isPublished?: boolean;
+  isFeatured?: boolean;
   token?: string;
   rewardAmount?: number;
   rewards?: Rewards;
@@ -45,7 +46,7 @@ interface Bounty {
   poc?: User;
   source?: string;
   sourceDetails?: string;
-  type: BountyType;
+  type?: BountyType | string;
 }
 
 export type { Bounty, BountyStatus, Eligibility, Rewards };

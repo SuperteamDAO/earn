@@ -23,6 +23,7 @@ import {
   Tooltip,
 } from '@chakra-ui/react';
 import axios from 'axios';
+import NextLink from 'next/link';
 import { useRouter } from 'next/router';
 import { useEffect, useRef, useState } from 'react';
 import { AiOutlineOrderedList } from 'react-icons/ai';
@@ -251,14 +252,14 @@ function Bounties() {
                       >
                         View Bounty
                       </MenuItem>
-                      <MenuItem
-                        icon={<AiOutlineOrderedList />}
-                        onClick={() =>
-                          router.push(`/dashboard/bounties/${bounty.slug}`)
-                        }
+                      <NextLink
+                        href={`/dashboard/bounties/${bounty.slug}`}
+                        passHref
                       >
-                        View Submissions
-                      </MenuItem>
+                        <MenuItem icon={<AiOutlineOrderedList />}>
+                          View Submissions
+                        </MenuItem>
+                      </NextLink>
                       {/* <MenuItem icon={<AiOutlineEdit />}>Edit Bounty</MenuItem> */}
                     </MenuList>
                   </Menu>

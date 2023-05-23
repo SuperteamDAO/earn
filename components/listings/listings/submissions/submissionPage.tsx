@@ -1,7 +1,9 @@
-import { Flex, Image, Text, VStack } from '@chakra-ui/react';
+import { Flex, HStack, Image, Link, Text, VStack } from '@chakra-ui/react';
 import type { User } from '@prisma/client';
+import axios from 'axios';
 import { useRouter } from 'next/router';
-import React from 'react';
+import React, { useEffect, useState } from 'react';
+import type { Metadata } from 'unfurl.js/dist/types';
 
 import TalentBio from '@/components/TalentBio';
 
@@ -9,10 +11,23 @@ import { Comments } from '../comments';
 
 interface Props {
   user: User;
+  link: string;
 }
-export const SubmissionPage = ({ user }: Props) => {
+export const SubmissionPage = ({ user, link }: Props) => {
   const router = useRouter();
+  const [image, setImage] = useState<string>('/assets/bg/og.svg');
 
+  useEffect(() => {
+    const fetchImage = async () => {
+      if (link) {
+        const { data } = (await axios.post('/api/og', {
+          url: link,
+        })) as { data: Metadata };
+        setImage(data.open_graph.images![0]?.url ?? '/assets/bg/og.svg');
+      }
+    };
+    fetchImage();
+  }, []);
   return (
     <VStack
       align={['center', 'center', 'start', 'start']}
@@ -27,7 +42,6 @@ export const SubmissionPage = ({ user }: Props) => {
         <VStack w={'full'} h={'40rem'} bg={'white'} rounded={'md'}>
           <Flex justify={'space-between'} w={'full'} mt={5} px={8}>
             <Text color={'black'} fontSize={'22px'} fontWeight={600}>
-              {user?.firstName}
               {user?.firstName}’s Submission
             </Text>
             {/* <Button
@@ -50,8 +64,21 @@ export const SubmissionPage = ({ user }: Props) => {
             objectFit={'cover'}
             alt={'submission'}
             rounded={'2rem'}
-            src={'/assets/bg/og.svg'}
+            src={image}
           />
+          <HStack w="full" px={7}>
+            <Link
+              px={5}
+              py={2}
+              border="1px solid"
+              borderColor={'gray.400'}
+              borderRadius={5}
+              href={link}
+              isExternal
+            >
+              Visit Link
+            </Link>
+          </HStack>
         </VStack>
         <Comments
           refId={(router.query.subid as string) ?? ''}

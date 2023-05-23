@@ -101,7 +101,7 @@ const LinkPreview = ({
             }
           />
           <Box px={'1rem'} py={'0.5625rem'}>
-            <Text color={'gray.400'}>{data.title}</Text>
+            <Text color={'gray.600'}>{data.title}</Text>
           </Box>
         </Box>
       </Link>
