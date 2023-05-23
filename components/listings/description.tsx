@@ -190,7 +190,7 @@ const Description = ({
             </Tooltip>
           </Flex>
         </Flex>
-        <VStack w={'3xl'} h={'50rem !impotant'} minH={'50rem'} mx={'auto'}>
+        <VStack w={'3xl'} mb={8} mx={'auto'}>
           <Flex
             align={'center'}
             justify={'start'}
@@ -475,7 +475,7 @@ const Description = ({
             </div>
           </Box>
         </VStack>
-        <VStack gap={6} w={'2xl'} h={'10rem'} my={7}>
+        <VStack gap={6} w={'full'} my={7}>
           <Button
             w="100%"
             color={'white'}

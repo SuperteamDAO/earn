@@ -53,6 +53,44 @@ const CreateListing = () => {
   // -- Grants
   const [grantBasic, setgrantsBasic] = useState<GrantsBasicType | undefined>();
 
+  const [isListingPublishing, setIsListingPublishing] =
+    useState<boolean>(false);
+
+  const createAndPublishListing = async () => {
+    console.log(
+      'file: index.tsx:59 ~ createAndPublishListing ~ createAndPublishListing:'
+    );
+    setIsListingPublishing(true);
+    try {
+      const bounty: Bounty = {
+        sponsorId: userInfo?.currentSponsor?.id ?? '',
+        pocId: userInfo?.id ?? '',
+        skills: mergeSkills({ skills: mainSkills, subSkills: subSkill }),
+        ...bountybasic,
+        deadline: bountybasic?.deadline
+          ? new Date(bountybasic?.deadline).toISOString()
+          : '',
+        description: editorData || '',
+        eligibility: (questions || []).map((q) => ({
+          question: q.question,
+          order: q.order,
+          type: q.type,
+        })),
+        isPublished: true,
+      };
+      const result = await axios.post('/api/bounties/create/', bounty);
+      console.log(
+        'file: index.tsx:82 ~ createAndPublishListing ~ result:',
+        result
+      );
+      setSlug(`/bounties/${result?.data?.slug}/`);
+      onOpen();
+      setIsListingPublishing(false);
+    } catch (e) {
+      setIsListingPublishing(false);
+    }
+  };
+
   const createDraft = async () => {
     setDraftLoading(true);
     const api = '/api/bounties/create/';
@@ -68,9 +106,12 @@ const CreateListing = () => {
         ? new Date(bountybasic?.deadline).toISOString()
         : '',
       description: editorData || '',
+      eligibility: (questions || []).map((q) => ({
+        question: q.question,
+        order: q.order,
+        type: q.type,
+      })),
     };
-    // description: JSON.stringify(editorData),
-    // question: JSON.stringify(questions),
     console.log('file: index.tsx:110 ~ createDraft ~ draft:', draft);
     try {
       const newDraft = await axios.post(api, {
@@ -225,6 +266,8 @@ const CreateListing = () => {
           )}
           {steps > 1 && listingType === 'BOUNTY' && (
             <CreateBounty
+              createAndPublishListing={createAndPublishListing}
+              isListingPublishing={isListingPublishing}
               questions={questions}
               setQuestions={setQuestions}
               setSlug={setSlug}

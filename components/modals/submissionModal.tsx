@@ -69,13 +69,13 @@ export const SubmissionModal = ({
               <VStack gap={4} overflow={'scroll'} h={'20rem'} my={5}>
                 {questionsArr.map((e) => {
                   return (
-                    <FormControl key={e.id} isRequired>
+                    <FormControl key={e.order} isRequired>
                       <QuestionHandler
                         control={control}
                         register={register}
                         question={e.question}
                         type={e.type}
-                        label={e.label ?? undefined}
+                        label={e.label}
                         options={e.options ?? []}
                       />
                     </FormControl>
