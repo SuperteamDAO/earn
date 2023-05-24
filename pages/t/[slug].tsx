@@ -1,5 +1,6 @@
 import { ExternalLinkIcon, LockIcon } from '@chakra-ui/icons';
 import {
+  Badge,
   Box,
   Button,
   Flex,
@@ -18,8 +19,10 @@ import React, { useEffect, useState } from 'react';
 import ErrorSection from '@/components/shared/EmptySection';
 import LoadingSection from '@/components/shared/LoadingSection';
 import TalentBio from '@/components/TalentBio';
+import type { Skills } from '@/interface/skills';
 import { Default } from '@/layouts/Default';
 import { Meta } from '@/layouts/Meta';
+import { skillMap } from '@/utils/constants';
 
 interface TalentProps {
   slug: string;
@@ -160,38 +163,38 @@ export const EduNft = ({ nfts }: { nfts: NFT[] }) => {
   );
 };
 
-// type ChipType = {
-//   icon: string;
-//   label: string;
-//   value: string;
-// };
+type ChipType = {
+  icon: string;
+  label: string;
+  value: string;
+};
 
-// const Chip = ({ icon, label, value }: ChipType) => {
-//   return (
-//     <Flex>
-//       <Box
-//         alignItems={'center'}
-//         justifyContent={'center'}
-//         w={'2rem'}
-//         h={'2rem'}
-//         mr={'0.725rem'}
-//         p={'0.4rem'}
-//         bg={'#F6EBFF'}
-//         borderRadius="full"
-//       >
-//         <Image w={'100%'} h={'100%'} objectFit="contain" alt="" src={icon} />
-//       </Box>
-//       <Box>
-//         <Text color={'gray.400'} fontSize={'0.5813rem'} fontWeight={'400'}>
-//           {label}
-//         </Text>
-//         <Text fontSize={'0.775rem'} fontWeight={'400'}>
-//           {value}
-//         </Text>
-//       </Box>
-//     </Flex>
-//   );
-// };
+const Chip = ({ icon, label, value }: ChipType) => {
+  return (
+    <Flex>
+      <Box
+        alignItems={'center'}
+        justifyContent={'center'}
+        w={'2rem'}
+        h={'2rem'}
+        mr={'0.725rem'}
+        p={'0.4rem'}
+        bg={'#F6EBFF'}
+        borderRadius="full"
+      >
+        <Image w={'100%'} h={'100%'} objectFit="contain" alt="" src={icon} />
+      </Box>
+      <Box>
+        <Text color={'gray.400'} fontSize={'0.5813rem'} fontWeight={'400'}>
+          {label}
+        </Text>
+        <Text fontSize={'0.775rem'} fontWeight={'400'}>
+          {value}
+        </Text>
+      </Box>
+    </Flex>
+  );
+};
 
 // const Interest = ({ label, icon }: { label: string; icon: string }) => {
 //   return (
@@ -243,71 +246,68 @@ export const EduNft = ({ nfts }: { nfts: NFT[] }) => {
 //   );
 // };
 
-// const SkillsAndInterests = ({ data }: { data: any }) => {
-//   const skills = JSON.parse(data.skills);
-//   const interests = JSON.parse(data.interests);
-//   const community = JSON.parse(data.community);
-
-//   return (
-//     <Box w={'80%'} h={'max-content'} p={4} bg={'white'} borderRadius={10}>
-//       <Box py={2} borderBottom={'1px solid'} borderBottomColor={'gray.200'}>
-//         <Chip
-//           label="Location"
-//           value={data.location}
-//           icon="/assets/talent/site.png"
-//         />
-//       </Box>
-//       <Box mt={'1rem'}>
-//         <Text color={'gray.400'} fontWeight={'500'}>
-//           Skills
-//         </Text>
-//         <Flex wrap={'wrap'} gap={'0.4375rem'} mt={'0.8125rem'}>
-//           {skills.map((ele: string, idx: number) => {
-//             return (
-//               <Badge
-//                 key={ele}
-//                 px={2}
-//                 py={1}
-//                 colorScheme={colors[idx]?.toLocaleLowerCase()}
-//                 rounded={4}
-//               >
-//                 {ele.replaceAll('-Dev', '')}
-//               </Badge>
-//             );
-//           })}
-//         </Flex>
-//       </Box>
-//       <Box mt={'1rem'}>
-//         <Text color={'gray.400'} fontWeight={'500'}>
-//           Interests
-//         </Text>
-//         <Flex wrap={'wrap'} gap={2} mt={4}>
-//           {interests.map((ele: string) => {
-//             return (
-//               <Interest
-//                 key={ele}
-//                 label={ele}
-//                 icon={`/assets/interests/${ele}.png`}
-//               />
-//             );
-//           })}
-//         </Flex>
-//       </Box>
-//       {community.length > 0 && (
-//         <Box mt={10}>
-//           <Text color={'gray.400'} fontWeight={'500'}>
-//             Communities
-//           </Text>
-//           <Flex wrap={'wrap'} gap={'0.4375rem'}>
-//             {community.map((ele: string) => {
-//               return <CommunityChip label={ele} key={ele} />;
-//             })}
-//           </Flex>
-//         </Box>
-//       )}
-//     </Box>
-//   );
-// };
+const SkillsAndInterests = ({
+  location,
+  skills,
+  interests,
+}: {
+  location: string;
+  skills: Skills;
+  interests: string[];
+}) => {
+  return (
+    <>
+      <Box w={'80%'} h={'max-content'} p={4} bg={'white'} borderRadius={10}>
+        <Chip
+          label="Location"
+          value={location}
+          icon="/assets/talent/site.png"
+        />
+        <Box mt={'1rem'}>
+          <Text color={'gray.400'} fontWeight={'500'}>
+            Skills
+          </Text>
+          <Flex wrap={'wrap'} gap={'0.4375rem'} mt={'0.8125rem'}>
+            {skills.map((ele, idx: number) => {
+              return (
+                <>
+                  <Badge
+                    key={idx}
+                    px={2}
+                    py={1}
+                    color={
+                      skillMap.find((item) => item.mainskill === ele.skills)
+                        ?.color
+                    }
+                    bg={`${
+                      skillMap.find((item) => item.mainskill === ele.skills)
+                        ?.color
+                    }1A`}
+                    rounded={4}
+                  >
+                    {ele.skills}
+                  </Badge>
+                </>
+              );
+            })}
+          </Flex>
+        </Box>
+        {interests.length > 0 && (
+          <Box mt={'1rem'}>
+            <Text color={'gray.400'} fontWeight={'500'}>
+              Interests
+            </Text>
+            <Flex wrap={'wrap'} gap={2} mt={4}>
+              {interests.map((ele: string) => {
+                return <>{ele}</>;
+              })}
+            </Flex>
+          </Box>
+        )}
+      </Box>
+    </>
+  );
+};
 
 const Nft = ({
   wallet,
@@ -463,7 +463,15 @@ function TalentProfile({ slug }: TalentProps) {
               bgRepeat={'no-repeat'}
             >
               <TalentBio user={talent as User} successPage={false} />
-              {/* <SkillsAndInterests data={data?.data.data} /> */}
+              <SkillsAndInterests
+                location={talent?.location as string}
+                skills={talent?.skills as Skills}
+                interests={
+                  talent?.interests?.startsWith('[')
+                    ? JSON.parse(talent?.interests!)
+                    : []
+                }
+              />
               <Nft
                 totalEarned={talent?.totalEarnedInUSD ?? 0}
                 wallet={talent?.publicKey as string}
