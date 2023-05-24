@@ -70,13 +70,6 @@ function NewUserInfo({ setUserInfo, userInfo, setStep, setOtp }: Props) {
       } else {
         setErrorMessage('');
         setLoading(true);
-        await axios.post('/api/otp/send', {
-          publicKey: userInfo?.publicKey,
-          email: userDetails?.email,
-        });
-        Mixpanel.track('otp_sent', {
-          email: userDetails?.email,
-        });
         const newUserDetails = await axios.post('/api/user/create', {
           publicKey: userInfo?.publicKey,
           email: userDetails?.email,
@@ -84,6 +77,13 @@ function NewUserInfo({ setUserInfo, userInfo, setStep, setOtp }: Props) {
           lastName: userDetails?.lastName,
         });
         setUserInfo(newUserDetails?.data);
+        await axios.post('/api/otp/send', {
+          publicKey: userInfo?.publicKey,
+          email: userDetails?.email,
+        });
+        Mixpanel.track('otp_sent', {
+          email: userDetails?.email,
+        });
         const code = generateCode(userInfo?.publicKey);
         const codeLast = generateCodeLast(userInfo?.publicKey);
         setOtp({
