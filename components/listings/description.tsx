@@ -17,6 +17,7 @@ import {
 import { Color } from '@tiptap/extension-color';
 import Link from '@tiptap/extension-link';
 import ListItem from '@tiptap/extension-list-item';
+import Placeholder from '@tiptap/extension-placeholder';
 import TextStyle from '@tiptap/extension-text-style';
 import Underline from '@tiptap/extension-underline';
 import { EditorContent, useEditor } from '@tiptap/react';
@@ -101,6 +102,10 @@ const Description = ({
       Link.configure({
         openOnClick: false,
       }),
+      Placeholder.configure({
+        placeholder: 'Give more details about the Listing...',
+        showOnlyWhenEditable: false,
+      }),
       StarterKit.configure({
         bulletList: {
           keepMarks: true,
@@ -115,7 +120,6 @@ const Description = ({
     // eslint-disable-next-line @typescript-eslint/no-shadow
     onUpdate: ({ editor }) => {
       const html = editor.getHTML();
-      console.log('file: description.tsx:118 ~ html:', html);
       setEditorData(html);
     },
     editorProps: {
@@ -139,7 +143,6 @@ const Description = ({
       onClose();
       return;
     }
-    console.log(url);
 
     // update link
     editor
