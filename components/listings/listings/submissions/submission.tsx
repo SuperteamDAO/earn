@@ -75,9 +75,11 @@ export const Submissions = ({ submissions, endTime, setUpdate }: Props) => {
                 fontFamily={'Inter'}
                 fontSize={'1.5rem'}
                 fontWeight={600}
+                textAlign="center"
               >
-                Submissions are not public until the submission deadline has
-                closed. Check back soon!
+                Submissions are not public until the submission deadline
+                <br />
+                has closed. Check back soon!
               </Text>
             </VStack>
           </>

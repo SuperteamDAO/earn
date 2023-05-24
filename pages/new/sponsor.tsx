@@ -68,7 +68,19 @@ const CreateSponsor = () => {
       }
     >
       {!connected ? (
-        <Text>Please sign up first!</Text>
+        <>
+          <Box
+            alignItems={'center'}
+            justifyContent={'center'}
+            display={'flex'}
+            w={'full'}
+            minH={'100vh'}
+          >
+            <Text color={'gray.600'} fontSize={'xl'} fontWeight={500}>
+              Please sign up first!
+            </Text>
+          </Box>
+        </>
       ) : (
         <VStack w="full" pt={8} pb={24}>
           <VStack>
