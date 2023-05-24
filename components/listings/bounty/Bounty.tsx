@@ -66,7 +66,7 @@ function CreateListing({ bounty, isEditMode = false }: Props) {
     slug: isEditMode ? bounty?.slug || undefined : undefined,
     deadline:
       isEditMode && bounty?.deadline
-        ? new Date(bounty?.deadline).toISOString() || undefined
+        ? new Date(bounty?.deadline).toISOString().slice(0, 16) || undefined
         : undefined,
     type: isEditMode ? bounty?.type || undefined : undefined,
   });
