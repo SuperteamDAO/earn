@@ -17,6 +17,7 @@ import {
   InputRightElement,
   Menu,
   MenuButton,
+  MenuDivider,
   MenuItem,
   MenuList,
   Modal,
@@ -42,7 +43,7 @@ import axios from 'axios';
 import NextLink from 'next/link';
 import { useRouter } from 'next/router';
 import { useEffect, useRef, useState } from 'react';
-import { AiOutlineOrderedList } from 'react-icons/ai';
+import { AiOutlineEdit, AiOutlineOrderedList } from 'react-icons/ai';
 import { FiMoreVertical } from 'react-icons/fi';
 
 import ErrorSection from '@/components/shared/ErrorSection';
@@ -435,6 +436,16 @@ function Bounties() {
                           >
                             View Bounty
                           </MenuItem>
+                          <MenuDivider />
+                          <NextLink
+                            href={`/dashboard/edit/${currentBounty.slug}`}
+                            passHref
+                          >
+                            <MenuItem icon={<AiOutlineEdit />}>
+                              Edit Bounty
+                            </MenuItem>
+                          </NextLink>
+                          <MenuDivider />
                           <NextLink
                             href={`/dashboard/bounties/${currentBounty.slug}`}
                             passHref
