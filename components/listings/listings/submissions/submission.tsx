@@ -1,7 +1,7 @@
 import { Flex, Image, Text, VStack } from '@chakra-ui/react';
 import moment from 'moment';
 import type { Dispatch, SetStateAction } from 'react';
-import React, { useEffect } from 'react';
+import React from 'react';
 
 import type { SubmissionWithUser } from '@/interface/submission';
 
@@ -13,7 +13,6 @@ interface Props {
   setUpdate: Dispatch<SetStateAction<boolean>>;
 }
 export const Submissions = ({ submissions, endTime, setUpdate }: Props) => {
-  useEffect(() => {}, []);
   return (
     <>
       <VStack
@@ -76,8 +75,11 @@ export const Submissions = ({ submissions, endTime, setUpdate }: Props) => {
                 fontFamily={'Inter'}
                 fontSize={'1.5rem'}
                 fontWeight={600}
+                textAlign="center"
               >
-                Submissions are not public
+                Submissions are not public until the submission deadline
+                <br />
+                has closed. Check back soon!
               </Text>
             </VStack>
           </>
