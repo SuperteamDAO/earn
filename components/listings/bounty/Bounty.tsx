@@ -125,7 +125,10 @@ function CreateListing({ bounty, isEditMode = false }: Props) {
 
   const createDraft = async () => {
     setDraftLoading(true);
-    const api = '/api/bounties/create/';
+    let api = '/api/bounties/create/';
+    if (isEditMode) {
+      api = `/api/bounties/update/${bounty?.id}/`;
+    }
     let draft: Bounty = {
       sponsorId: userInfo?.currentSponsor?.id ?? '',
       pocId: userInfo?.id ?? '',
@@ -154,7 +157,6 @@ function CreateListing({ bounty, isEditMode = false }: Props) {
     } catch (e) {
       setDraftLoading(false);
     }
-    setDraftLoading(false);
   };
 
   useEffect(() => {

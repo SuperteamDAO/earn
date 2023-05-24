@@ -480,7 +480,7 @@ const Description = ({
             </div>
           </Box>
         </VStack>
-        <VStack gap={6} w={'full'} my={7}>
+        <VStack gap={4} w={'full'} pt={10}>
           <Button
             w="100%"
             onClick={() => {
