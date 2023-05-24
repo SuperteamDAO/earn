@@ -6,7 +6,10 @@ import { Toaster } from 'react-hot-toast';
 
 import type { BountyBasicType } from '@/components/listings/bounty/Createbounty';
 import { CreateBounty } from '@/components/listings/bounty/Createbounty';
-import type { Ques } from '@/components/listings/bounty/questions/builder';
+import type {
+  Ques,
+  QuestionType,
+} from '@/components/listings/bounty/questions/builder';
 import { CreateGrants } from '@/components/listings/grants/CreateGrants';
 import { CreateJob } from '@/components/listings/jobs/CreateJob';
 import Template from '@/components/listings/templates/template';
@@ -58,7 +61,17 @@ function CreateListing({ bounty, isEditMode = false }: Props) {
     type: 'fulltime',
   });
 
-  const [questions, setQuestions] = useState<Ques[]>([]);
+  const [questions, setQuestions] = useState<Ques[]>(
+    isEditMode
+      ? (bounty?.eligibility || [])?.map((e) => ({
+          order: e.order,
+          question: e.question,
+          type: e.type as QuestionType,
+          delete: true,
+          label: e.question,
+        }))
+      : []
+  );
 
   // - Bounty
   const [bountybasic, setBountyBasic] = useState<BountyBasicType | undefined>({
