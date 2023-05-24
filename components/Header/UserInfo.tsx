@@ -159,6 +159,21 @@ function UserInfo() {
             display={{ base: 'none', md: 'block' }}
             px={5}
             fontSize="xs"
+            _hover={{
+              bg: 'none',
+            }}
+            onClick={() => {
+              router.push('/sponsor');
+            }}
+            size="sm"
+            variant={'unstyled'}
+          >
+            Create A Bounty
+          </Button>
+          <Button
+            display={{ base: 'none', md: 'block' }}
+            px={5}
+            fontSize="xs"
             onClick={() => {
               onOpen();
             }}

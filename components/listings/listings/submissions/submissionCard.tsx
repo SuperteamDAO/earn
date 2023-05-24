@@ -60,6 +60,7 @@ export const SubmissionCard = ({
         h={'18rem'}
         p={5}
         bg={'white'}
+        cursor={'pointer'}
         onClick={() => {
           router.push(`${router.asPath.split('?')[0]}/${id}`);
         }}
@@ -106,7 +107,8 @@ export const SubmissionCard = ({
             w={14}
             border={'1px solid #CBD5E1'}
             isLoading={isLoading}
-            onClick={() => {
+            onClick={(e) => {
+              e.stopPropagation();
               if (!userInfo?.id) return;
               handleLike();
             }}
