@@ -469,6 +469,16 @@ function DetailSideCard({
             )}
           </Box>
         </VStack>
+        <VStack align="start" w={'22rem'} p={4} bg="white">
+          <Text mb={1} color="gray.500" fontSize={'lg'} fontWeight={600}>
+            ELIGIBILITY
+          </Text>
+          <Text color={'gray.500'} fontSize={'md'} fontWeight={400}>
+            Lorem ipsum dolor sit amet consectetur adipisicing elit. Facilis
+            labore enim repellat fuga cumque ipsa repudiandae pariatur nesciunt
+            quis esse?
+          </Text>
+        </VStack>
         <VStack
           align={'start'}
           justify={'center'}
