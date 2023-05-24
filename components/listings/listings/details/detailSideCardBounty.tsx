@@ -25,6 +25,7 @@ import Countdown from 'react-countdown';
 import LoginWrapper from '@/components/Header/LoginWrapper';
 import { VerticalStep } from '@/components/misc/steps';
 import { SubmissionModal } from '@/components/modals/submissionModalBounty';
+import WarningModal from '@/components/shared/WarningModal';
 import { tokenList } from '@/constants/index';
 import type { Eligibility, Rewards } from '@/interface/bounty';
 import { userStore } from '@/store/user';
@@ -62,6 +63,11 @@ function DetailSideCard({
   const [submissionNumber, setSubmissionNumber] = useState(0);
   const [isUserSubmissionLoading, setIsUserSubmissionLoading] = useState(false);
   const { isOpen, onOpen, onClose } = useDisclosure();
+  const {
+    isOpen: warningIsOpen,
+    onOpen: warningOnOpen,
+    onClose: warningOnClose,
+  } = useDisclosure();
   const [triggerLogin, setTriggerLogin] = useState(false);
   const [isSubmitted, setIsSubmitted] = useState(false);
   let submissionStatus = 0;
@@ -112,10 +118,12 @@ function DetailSideCard({
       window.open(applicationLink, '_blank');
       return;
     }
-    if (userInfo?.id) {
-      onOpen();
-    } else {
+    if (!userInfo?.id) {
       setTriggerLogin(true);
+    } else if (!userInfo?.isTalentFilled) {
+      warningOnOpen();
+    } else {
+      onOpen();
     }
   };
 
@@ -132,6 +140,18 @@ function DetailSideCard({
           setSubmissionNumber={setSubmissionNumber}
           setIsSubmitted={setIsSubmitted}
           bountytitle={bountytitle}
+        />
+      )}
+      {warningIsOpen && (
+        <WarningModal
+          isOpen={warningIsOpen}
+          onClose={warningOnClose}
+          title={'Complete your profile'}
+          bodyText={
+            'Please complete your profile before submitting to a bounty.'
+          }
+          primaryCtaText={'Complete Profile'}
+          primaryCtaLink={'/new/talent'}
         />
       )}
       <LoginWrapper
