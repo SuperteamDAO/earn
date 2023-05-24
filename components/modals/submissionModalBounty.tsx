@@ -14,6 +14,7 @@ import {
   Text,
   VStack,
 } from '@chakra-ui/react';
+import type { BountyType } from '@prisma/client';
 import axios from 'axios';
 import { useState } from 'react';
 import { useForm } from 'react-hook-form';
@@ -32,6 +33,7 @@ interface Props {
   setSubmissionNumber: (arg0: number) => void;
   submissionNumber: number;
   bountytitle: string;
+  type?: BountyType | string;
 }
 export const SubmissionModal = ({
   id,
@@ -42,8 +44,10 @@ export const SubmissionModal = ({
   setSubmissionNumber,
   submissionNumber,
   bountytitle,
+  type,
 }: Props) => {
-  const isPermissioned = eligibility && eligibility?.length > 0;
+  const isPermissioned =
+    type === 'permissioned' && eligibility && eligibility?.length > 0;
   const { userInfo } = userStore();
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState('');

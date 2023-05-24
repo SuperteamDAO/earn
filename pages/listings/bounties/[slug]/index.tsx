@@ -90,6 +90,7 @@ function BountyDetails({ slug }: BountyDetailsProps) {
               id={bounty?.id || ''}
               token={bounty?.token ?? ''}
               eligibility={bounty?.eligibility}
+              type={bounty?.type}
               endingTime={bounty?.deadline ?? ''}
               prizeList={bounty?.rewards}
               total={bounty?.rewardAmount || 0}

@@ -16,6 +16,7 @@ import {
   useDisclosure,
   VStack,
 } from '@chakra-ui/react';
+import type { BountyType } from '@prisma/client';
 import axios from 'axios';
 import moment from 'moment';
 import { useEffect, useState } from 'react';
@@ -41,6 +42,7 @@ interface Props {
   token?: string;
   questions?: string;
   eligibility?: Eligibility[];
+  type?: BountyType | string;
   bountytitle: string;
 }
 function DetailSideCard({
@@ -52,6 +54,7 @@ function DetailSideCard({
   eligibility,
   applicationLink,
   bountytitle,
+  type,
 }: Props) {
   const { userInfo } = userStore();
   const [isSubmissionNumberLoading, setIsSubmissionNumberLoading] =
@@ -121,6 +124,7 @@ function DetailSideCard({
       {isOpen && (
         <SubmissionModal
           id={id}
+          type={type}
           eligibility={eligibility || []}
           onClose={onClose}
           isOpen={isOpen}
