@@ -3,6 +3,7 @@ import type { GetServerSideProps } from 'next';
 import { useRouter } from 'next/router';
 import { useEffect, useState } from 'react';
 
+import CreateListing from '@/components/listings/bounty/Bounty';
 import LoadingSection from '@/components/shared/LoadingSection';
 import type { Bounty } from '@/interface/bounty';
 import Sidebar from '@/layouts/Sidebar';
@@ -16,7 +17,7 @@ function EditBounty({ slug }: Props) {
   const router = useRouter();
   const { userInfo } = userStore();
   const [isBountyLoading, setIsBountyLoading] = useState(true);
-  const [bounty, setBounty] = useState<Bounty | null>(null);
+  const [bounty, setBounty] = useState<Bounty | undefined>();
 
   const getBounty = async () => {
     setIsBountyLoading(true);
@@ -41,7 +42,11 @@ function EditBounty({ slug }: Props) {
 
   return (
     <Sidebar>
-      {isBountyLoading ? <LoadingSection /> : <div>Hello {bounty?.slug}</div>}
+      {isBountyLoading ? (
+        <LoadingSection />
+      ) : (
+        <CreateListing bounty={bounty} isEditMode />
+      )}
     </Sidebar>
   );
 }

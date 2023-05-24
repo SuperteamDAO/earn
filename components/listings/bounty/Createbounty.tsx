@@ -10,10 +10,10 @@ import type { Ques } from './questions/builder';
 import Builder from './questions/builder';
 
 export interface BountyBasicType {
-  title: string;
-  slug: string;
-  deadline: string;
-  type: BountyType | string;
+  title?: string;
+  slug?: string;
+  deadline?: string;
+  type?: BountyType | string;
 }
 interface Props {
   steps: number;
