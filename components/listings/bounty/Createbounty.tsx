@@ -34,6 +34,7 @@ interface Props {
   questions: Ques[];
   createAndPublishListing: () => void;
   isListingPublishing: boolean;
+  setBountyPayment: Dispatch<SetStateAction<any | undefined>>;
 }
 export const CreateBounty = ({
   steps,
@@ -54,6 +55,7 @@ export const CreateBounty = ({
   setQuestions,
   createAndPublishListing,
   isListingPublishing,
+  setBountyPayment,
 }: Props) => {
   // handles the info from basic form
 
@@ -96,6 +98,7 @@ export const CreateBounty = ({
         <CreatebountyPayment
           createAndPublishListing={createAndPublishListing}
           isListingPublishing={isListingPublishing}
+          setBountyPayment={setBountyPayment}
           setSlug={setSlug}
           questions={questions}
           draftLoading={draftLoading}
