@@ -26,8 +26,9 @@ import type { Dispatch, SetStateAction } from 'react';
 import { useEffect, useState } from 'react';
 import { Toaster } from 'react-hot-toast';
 
-import type { MultiSelectOptions } from '../../../constants';
-import { PrizeList, tokenList } from '../../../constants';
+import type { MultiSelectOptions } from '@/constants';
+import { PrizeList, tokenList } from '@/constants';
+
 import type { BountyBasicType } from './Createbounty';
 import type { Ques } from './questions/builder';
 
@@ -35,6 +36,7 @@ interface PrizeListInterface {
   value: string;
   label: string;
   placeHolder: number;
+  defaultValue?: number;
 }
 interface Props {
   bountyBasic: BountyBasicType | undefined;
@@ -48,6 +50,7 @@ interface Props {
   questions: Ques[];
   createAndPublishListing: () => void;
   isListingPublishing: boolean;
+  bountyPayment: any;
   setBountyPayment: Dispatch<SetStateAction<any | undefined>>;
 }
 export const CreatebountyPayment = ({
@@ -55,6 +58,7 @@ export const CreatebountyPayment = ({
   draftLoading,
   createAndPublishListing,
   isListingPublishing,
+  bountyPayment,
   setBountyPayment,
 }: Props) => {
   const {
@@ -63,23 +67,42 @@ export const CreatebountyPayment = ({
     onClose: confirmOnClose,
   } = useDisclosure();
   // handles which token is selected
-  const [tokenIndex, setTokenIndex] = useState<number>(0);
-  const [tokenName, setTokenName] = useState(
-    tokenList ? tokenList[0]?.tokenSymbol || '' : ''
+  const defaultTokenIndex = tokenList?.findIndex(
+    (t) => t.tokenSymbol === bountyPayment.token
   );
-  const [totalReward, setTotalReward] = useState<number | undefined>();
+  const [tokenName, setTokenName] = useState(
+    defaultTokenIndex >= 0
+      ? tokenList[defaultTokenIndex]?.tokenSymbol
+      : tokenList[0]?.tokenSymbol || ''
+  );
+  const [tokenIndex, setTokenIndex] = useState<number>(
+    defaultTokenIndex >= 0 ? defaultTokenIndex : 0
+  );
+  const [totalReward, setTotalReward] = useState<number | undefined>(
+    bountyPayment?.rewardAmount || undefined
+  );
 
   // stores the state for prize
-  const [prizevalues, setPrizevalues] = useState<any>({});
+  const [prizevalues, setPrizevalues] = useState<any>(
+    bountyPayment?.rewards || {}
+  );
 
   // handles the UI for prize
-  const [prizes, setPrizes] = useState<PrizeListInterface[]>([
-    {
-      value: 'first',
-      label: 'first prize',
-      placeHolder: 2500,
-    },
-  ]);
+  const prizesList = Object.keys(bountyPayment?.rewards || [])?.map((r) => ({
+    value: r,
+    label: `${r} prize`,
+    placeHolder: bountyPayment?.rewards[r],
+    defaultValue: bountyPayment?.rewards[r],
+  }));
+  const [prizes, setPrizes] = useState<PrizeListInterface[]>(
+    prizesList || [
+      {
+        value: 'first',
+        label: 'first prize',
+        placeHolder: 2500,
+      },
+    ]
+  );
 
   useEffect(() => {
     setBountyPayment({
@@ -282,6 +305,7 @@ export const CreatebountyPayment = ({
                     _placeholder={{
                       color: 'brand.slate.300',
                     }}
+                    defaultValue={el.defaultValue}
                     focusBorderColor="brand.purple"
                     onChange={(e) => {
                       setPrizevalues({

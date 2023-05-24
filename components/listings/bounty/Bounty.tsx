@@ -39,8 +39,8 @@ function CreateListing({ bounty, isEditMode = false }: Props) {
     isEditMode ? bounty?.description : undefined
   );
 
-  const skillsInfo = isEditMode ? splitSkills(bounty?.skills || []) : undefined;
   //
+  const skillsInfo = isEditMode ? splitSkills(bounty?.skills || []) : undefined;
   const [mainSkills, setMainSkills] = useState<MultiSelectOptions[]>(
     isEditMode ? skillsInfo?.skills || [] : []
   );
@@ -71,9 +71,9 @@ function CreateListing({ bounty, isEditMode = false }: Props) {
     type: isEditMode ? bounty?.type || undefined : undefined,
   });
   const [bountyPayment, setBountyPayment] = useState({
-    rewardAmount: 0,
-    token: undefined,
-    rewards: undefined,
+    rewardAmount: isEditMode ? bounty?.rewardAmount || 0 : 0,
+    token: isEditMode ? bounty?.token : undefined,
+    rewards: isEditMode ? bounty?.rewards || undefined : undefined,
   });
   // -- Grants
   const [grantBasic, setgrantsBasic] = useState<GrantsBasicType | undefined>();
@@ -283,6 +283,7 @@ function CreateListing({ bounty, isEditMode = false }: Props) {
             <CreateBounty
               createAndPublishListing={createAndPublishListing}
               isListingPublishing={isListingPublishing}
+              bountyPayment={bountyPayment}
               setBountyPayment={setBountyPayment}
               questions={questions}
               setQuestions={setQuestions}
