@@ -1,3 +1,5 @@
+import type { SkillsProp } from '@/interface/skills';
+
 import type { Talent } from './talent';
 import type {
   JobType,
@@ -116,11 +118,12 @@ type Experience =
   | '10 Yrs+: Senior Professional';
 
 interface DraftType {
-  id: string;
-  orgId: string;
-  type: Listingtype;
-  basic: string;
-  payments: string;
+  id?: string;
+  sponsorId?: string;
+  type?: Listingtype;
+  skills?: SkillsProp[];
+  basic?: string;
+  payments?: string;
   question?: string;
 }
 interface SubmissionType {

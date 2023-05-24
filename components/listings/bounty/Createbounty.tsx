@@ -1,3 +1,4 @@
+import type { BountyType } from '@prisma/client';
 import type { Dispatch, SetStateAction } from 'react';
 import React from 'react';
 
@@ -10,8 +11,9 @@ import Builder from './questions/builder';
 
 export interface BountyBasicType {
   title: string;
+  slug: string;
   deadline: string;
-  eligibility: string;
+  type: BountyType | string;
 }
 interface Props {
   steps: number;
@@ -25,13 +27,16 @@ interface Props {
   onOpen: () => void;
   bountybasic: BountyBasicType | undefined;
   setBountyBasic: Dispatch<SetStateAction<BountyBasicType | undefined>>;
-  createDraft: (payment: string) => void;
+  createDraft: () => void;
   draftLoading: boolean;
   setSlug: Dispatch<SetStateAction<string>>;
   setQuestions: Dispatch<SetStateAction<Ques[]>>;
   questions: Ques[];
+  createAndPublishListing: () => void;
+  isListingPublishing: boolean;
+  setBountyPayment: Dispatch<SetStateAction<any | undefined>>;
 }
-export const Createbounty = ({
+export const CreateBounty = ({
   steps,
   editorData,
   setEditorData,
@@ -48,6 +53,9 @@ export const Createbounty = ({
   setSlug,
   questions,
   setQuestions,
+  createAndPublishListing,
+  isListingPublishing,
+  setBountyPayment,
 }: Props) => {
   // handles the info from basic form
 
@@ -73,6 +81,7 @@ export const Createbounty = ({
           editorData={editorData}
           setSteps={setSteps}
           setEditorData={setEditorData}
+          draftLoading={draftLoading}
         />
       )}
       {steps === 4 && (
@@ -87,6 +96,9 @@ export const Createbounty = ({
 
       {steps === 5 && (
         <CreatebountyPayment
+          createAndPublishListing={createAndPublishListing}
+          isListingPublishing={isListingPublishing}
+          setBountyPayment={setBountyPayment}
           setSlug={setSlug}
           questions={questions}
           draftLoading={draftLoading}

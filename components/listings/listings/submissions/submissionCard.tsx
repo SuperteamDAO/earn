@@ -3,14 +3,14 @@ import type { User } from '@prisma/client';
 import axios from 'axios';
 import { useRouter } from 'next/router';
 import type { Dispatch, SetStateAction } from 'react';
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { toast, Toaster } from 'react-hot-toast';
 import { AiFillHeart } from 'react-icons/ai';
+import type { Metadata } from 'unfurl.js/dist/types';
 
 import { userStore } from '../../../../store/user';
 
 interface Props {
-  image: string;
   winner: boolean;
   talent: User;
   likes?: {
@@ -19,6 +19,7 @@ interface Props {
   }[];
   id: string;
   setUpdate: Dispatch<SetStateAction<boolean>>;
+  link: string;
 }
 export const SubmissionCard = ({
   id,
@@ -26,10 +27,12 @@ export const SubmissionCard = ({
   talent,
   likes,
   setUpdate,
+  link,
 }: Props) => {
   const { userInfo } = userStore();
   const router = useRouter();
   const [isLoading, setIsLoading] = useState<boolean>(false);
+  const [image, setImage] = useState<string>('/assets/bg/og.svg');
   const handleLike = async () => {
     try {
       setIsLoading(true);
@@ -51,6 +54,18 @@ export const SubmissionCard = ({
       toast.error('Error while liking submission');
     }
   };
+  useEffect(() => {
+    const fetchImage = async () => {
+      if (link) {
+        const { data } = (await axios.post('/api/og', {
+          url: link,
+        })) as { data: Metadata };
+        console.log(data.open_graph.images![0]?.url);
+        setImage(data.open_graph.images![0]?.url ?? '/assets/bg/og.svg');
+      }
+    };
+    fetchImage();
+  }, []);
   return (
     <>
       <VStack
@@ -66,13 +81,7 @@ export const SubmissionCard = ({
         }}
         rounded={'lg'}
       >
-        <Image
-          w={'full'}
-          h={80}
-          objectFit={'cover'}
-          alt={'card'}
-          src={'/assets/bg/og.svg'}
-        />
+        <Image w={'full'} h={80} objectFit={'cover'} alt={'card'} src={image} />
         <HStack align={'center'} justify={'space-between'} w={'full'}>
           <VStack align={'start'}>
             <Text color={'#000000'} fontSize={'1.1rem'} fontWeight={600}>

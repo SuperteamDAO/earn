@@ -107,7 +107,7 @@ function CategoryHomePage({ category }: Props) {
               listings?.bounties?.map((bounty) => {
                 return (
                   <BountiesCard
-                    slug={bounty.slug}
+                    slug={bounty?.slug}
                     status={bounty?.status}
                     rewardAmount={bounty?.rewardAmount}
                     key={bounty?.id}

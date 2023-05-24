@@ -6,7 +6,7 @@ import { useRouter } from 'next/router';
 import type { ReactNode, ReactText } from 'react';
 import React from 'react';
 import type { IconType } from 'react-icons';
-import { AiFillFire, AiOutlineUsergroupAdd } from 'react-icons/ai';
+import { AiFillFire } from 'react-icons/ai';
 
 import SelectSponsor from '@/components/SelectSponsor/SelectSponsor';
 import LoadingSection from '@/components/shared/LoadingSection';
@@ -22,7 +22,7 @@ interface LinkItemProps {
 }
 const LinkItems: Array<LinkItemProps> = [
   { name: 'Bounties', link: '/bounties', icon: AiFillFire },
-  { name: 'Members', link: '/members', icon: AiOutlineUsergroupAdd },
+  // { name: 'Members', link: '/members', icon: AiOutlineUsergroupAdd },
 ];
 
 interface NavItemProps extends FlexProps {
@@ -89,14 +89,16 @@ const SidebarContent = ({ ...rest }: BoxProps) => {
         <SelectSponsor />
       </Box>
       <Flex align="center" justify="space-between" pb={6} px={6}>
-        <Button
-          w="full"
-          fontSize="sm"
-          leftIcon={<AddIcon w={3} h={3} />}
-          variant="solid"
-        >
-          Create Listing
-        </Button>
+        <NextLink href="/dashboard/create" passHref>
+          <Button
+            w="full"
+            fontSize="sm"
+            leftIcon={<AddIcon w={3} h={3} />}
+            variant="solid"
+          >
+            Create Listing
+          </Button>
+        </NextLink>
       </Flex>
       {LinkItems.map((link) => (
         <NavItem

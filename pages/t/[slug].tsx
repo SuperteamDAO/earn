@@ -1,13 +1,28 @@
 import { ExternalLinkIcon, LockIcon } from '@chakra-ui/icons';
-import { Box, Button, Flex, Image, Text, VStack } from '@chakra-ui/react';
+import {
+  Badge,
+  Box,
+  Button,
+  Flex,
+  Grid,
+  GridItem,
+  Image,
+  Link,
+  Text,
+  VStack,
+} from '@chakra-ui/react';
 import type { User } from '@prisma/client';
 import axios from 'axios';
 import type { GetServerSideProps } from 'next';
 import React, { useEffect, useState } from 'react';
 
+import ErrorSection from '@/components/shared/EmptySection';
+import LoadingSection from '@/components/shared/LoadingSection';
 import TalentBio from '@/components/TalentBio';
+import type { Skills } from '@/interface/skills';
 import { Default } from '@/layouts/Default';
 import { Meta } from '@/layouts/Meta';
+import { skillMap } from '@/utils/constants';
 
 interface TalentProps {
   slug: string;
@@ -58,111 +73,128 @@ export const ProofWork = () => {
   );
 };
 
-// const LinkPreview = ({ data }: { data: PowType }) => {
-//   const [imgUrl, setimgUrl] = useState('/assets/bg/banner.png');
-
-//   try {
-//     (async () => {
-//       const res = await axios.post(
-//         `https://earn-backend-v2-production.up.railway.app/api/v1/submission/ogimage`,
-//         {
-//           url: data.link,
-//         }
-//       );
-//       if (res) {
-//         if (res?.data?.data?.ogImage?.url) {
-//           setimgUrl(res?.data?.data?.ogImage?.url);
-//         }
-//       }
-//     })();
-//   } catch (error) {
-//     console.log('file: [slug].tsx:84 ~ LinkPreview ~ error:', error);
-//   }
-
-//   return (
-//     <Box
-//       w={'14.75rem'}
-//       h={'11.5rem'}
-//       bg={'white'}
-//       borderRadius={'0.1875rem'}
-//       cursor={'pointer'}
-//       onClick={() => {
-//         window.location.href = data?.link;
-//       }}
-//     >
-//       <Image
-//         w={'100%'}
-//         h={'8.875rem'}
-//         objectFit={'contain'}
-//         alt=""
-//         src={imgUrl}
-//       />
-//       <Box px={'1rem'} py={'0.5625rem'}>
-//         <Text color={'gray.400'}>{data.title}</Text>
-//       </Box>
-//     </Box>
-//   );
-// };
-
-export const EduNft = () => {
+const LinkPreview = ({
+  data,
+}: {
+  data: {
+    title: string;
+    link: string;
+    description: string;
+  };
+}) => {
   return (
-    <Box
-      w={'19.8344rem'}
-      pt={'1.3125rem'}
-      bg={'white'}
-      borderRadius={'0.1875rem'}
-    >
-      <Image
-        w={'16.5263rem'}
-        h={'6.6869rem'}
-        mx={'auto'}
-        alt="Image"
-        src="/assets/bg/success-bg.png"
-      />
-      <Box
-        mt={'24px'}
-        px={'1rem'}
-        py={'0.5625rem'}
-        borderTop={'1px solid #F1F5F9'}
-      >
-        <Text color={'gray.400'}>Rockstar</Text>
-      </Box>
-    </Box>
+    <>
+      <Link href={data?.link} isExternal>
+        <Box
+          w={'14.75rem'}
+          h={'11.5rem'}
+          bg={'white'}
+          borderRadius={'0.1875rem'}
+          cursor={'pointer'}
+        >
+          <Image
+            w={'100%'}
+            h={'8.875rem'}
+            objectFit={'contain'}
+            alt=""
+            src={
+              data.link.includes('github')
+                ? '/assets/otherpow/github.svg'
+                : '/assets/otherpow/link.svg'
+            }
+          />
+          <Box px={'1rem'} py={'0.5625rem'}>
+            <Text color={'gray.600'}>{data.title}</Text>
+          </Box>
+        </Box>
+      </Link>
+    </>
   );
 };
 
-// type ChipType = {
-//   icon: string;
-//   label: string;
-//   value: string;
-// };
+export const EduNft = ({ nfts }: { nfts: NFT[] }) => {
+  return (
+    <>
+      {nfts && nfts.length > 0 && (
+        <Grid w={'90%'}>
+          <Box mt="32px" borderBottom={''}>
+            <Text fontSize={'xl'} fontWeight={500}>
+              Education NFTs
+            </Text>
+          </Box>
+          <Box my={6}>
+            <Grid
+              gap={6}
+              templateColumns={{
+                sm: 'repeat(1, 1fr)',
+                md: 'repeat(2, 1fr)',
+              }}
+            >
+              {nfts.map((item, key) => (
+                <GridItem key={key} mb="20px" colSpan={1}>
+                  <Flex
+                    justify="space-between"
+                    direction="column"
+                    h="100%"
+                    py={10}
+                    bg="gray.100"
+                  >
+                    <Flex
+                      align="center"
+                      justify="center"
+                      overflow="hidden"
+                      w="60%"
+                      h="100%"
+                      mx={'auto'}
+                    >
+                      <img src={item.imageUrl} alt={item.collectionName} />
+                    </Flex>
+                  </Flex>
+                  <Text mt="4px" color="gray.500" fontSize="14px">
+                    {item.collectionName} - {item.description}
+                  </Text>
+                </GridItem>
+              ))}
+            </Grid>
+          </Box>
+        </Grid>
+      )}
+    </>
+  );
+};
 
-// const Chip = ({ icon, label, value }: ChipType) => {
-//   return (
-//     <Flex>
-//       <Box
-//         alignItems={'center'}
-//         justifyContent={'center'}
-//         w={'2rem'}
-//         h={'2rem'}
-//         mr={'0.725rem'}
-//         p={'0.4rem'}
-//         bg={'#F6EBFF'}
-//         borderRadius="full"
-//       >
-//         <Image w={'100%'} h={'100%'} objectFit="contain" alt="" src={icon} />
-//       </Box>
-//       <Box>
-//         <Text color={'gray.400'} fontSize={'0.5813rem'} fontWeight={'400'}>
-//           {label}
-//         </Text>
-//         <Text fontSize={'0.775rem'} fontWeight={'400'}>
-//           {value}
-//         </Text>
-//       </Box>
-//     </Flex>
-//   );
-// };
+type ChipType = {
+  icon: string;
+  label: string;
+  value: string;
+};
+
+const Chip = ({ icon, label, value }: ChipType) => {
+  return (
+    <Flex>
+      <Box
+        alignItems={'center'}
+        justifyContent={'center'}
+        w={'2rem'}
+        h={'2rem'}
+        mr={'0.725rem'}
+        p={'0.4rem'}
+        bg={'#F6EBFF'}
+        borderRadius="full"
+      >
+        <Image w={'100%'} h={'100%'} objectFit="contain" alt="" src={icon} />
+      </Box>
+      <Box>
+        <Text color={'gray.400'} fontSize={'0.5813rem'} fontWeight={'400'}>
+          {label}
+        </Text>
+        <Text fontSize={'0.775rem'} fontWeight={'400'}>
+          {value}
+        </Text>
+      </Box>
+    </Flex>
+  );
+};
 
 // const Interest = ({ label, icon }: { label: string; icon: string }) => {
 //   return (
@@ -214,71 +246,68 @@ export const EduNft = () => {
 //   );
 // };
 
-// const SkillsAndInterests = ({ data }: { data: any }) => {
-//   const skills = JSON.parse(data.skills);
-//   const interests = JSON.parse(data.interests);
-//   const community = JSON.parse(data.community);
-
-//   return (
-//     <Box w={'80%'} h={'max-content'} p={4} bg={'white'} borderRadius={10}>
-//       <Box py={2} borderBottom={'1px solid'} borderBottomColor={'gray.200'}>
-//         <Chip
-//           label="Location"
-//           value={data.location}
-//           icon="/assets/talent/site.png"
-//         />
-//       </Box>
-//       <Box mt={'1rem'}>
-//         <Text color={'gray.400'} fontWeight={'500'}>
-//           Skills
-//         </Text>
-//         <Flex wrap={'wrap'} gap={'0.4375rem'} mt={'0.8125rem'}>
-//           {skills.map((ele: string, idx: number) => {
-//             return (
-//               <Badge
-//                 key={ele}
-//                 px={2}
-//                 py={1}
-//                 colorScheme={colors[idx]?.toLocaleLowerCase()}
-//                 rounded={4}
-//               >
-//                 {ele.replaceAll('-Dev', '')}
-//               </Badge>
-//             );
-//           })}
-//         </Flex>
-//       </Box>
-//       <Box mt={'1rem'}>
-//         <Text color={'gray.400'} fontWeight={'500'}>
-//           Interests
-//         </Text>
-//         <Flex wrap={'wrap'} gap={2} mt={4}>
-//           {interests.map((ele: string) => {
-//             return (
-//               <Interest
-//                 key={ele}
-//                 label={ele}
-//                 icon={`/assets/interests/${ele}.png`}
-//               />
-//             );
-//           })}
-//         </Flex>
-//       </Box>
-//       {community.length > 0 && (
-//         <Box mt={10}>
-//           <Text color={'gray.400'} fontWeight={'500'}>
-//             Communities
-//           </Text>
-//           <Flex wrap={'wrap'} gap={'0.4375rem'}>
-//             {community.map((ele: string) => {
-//               return <CommunityChip label={ele} key={ele} />;
-//             })}
-//           </Flex>
-//         </Box>
-//       )}
-//     </Box>
-//   );
-// };
+const SkillsAndInterests = ({
+  location,
+  skills,
+  interests,
+}: {
+  location: string;
+  skills: Skills;
+  interests: string[];
+}) => {
+  return (
+    <>
+      <Box w={'80%'} h={'max-content'} p={4} bg={'white'} borderRadius={10}>
+        <Chip
+          label="Location"
+          value={location}
+          icon="/assets/talent/site.png"
+        />
+        <Box mt={'1rem'}>
+          <Text color={'gray.400'} fontWeight={'500'}>
+            Skills
+          </Text>
+          <Flex wrap={'wrap'} gap={'0.4375rem'} mt={'0.8125rem'}>
+            {skills.map((ele, idx: number) => {
+              return (
+                <>
+                  <Badge
+                    key={idx}
+                    px={2}
+                    py={1}
+                    color={
+                      skillMap.find((item) => item.mainskill === ele.skills)
+                        ?.color
+                    }
+                    bg={`${
+                      skillMap.find((item) => item.mainskill === ele.skills)
+                        ?.color
+                    }1A`}
+                    rounded={4}
+                  >
+                    {ele.skills}
+                  </Badge>
+                </>
+              );
+            })}
+          </Flex>
+        </Box>
+        {interests.length > 0 && (
+          <Box mt={'1rem'}>
+            <Text color={'gray.400'} fontWeight={'500'}>
+              Interests
+            </Text>
+            <Flex wrap={'wrap'} gap={2} mt={4}>
+              {interests.map((ele: string) => {
+                return <>{ele}</>;
+              })}
+            </Flex>
+          </Box>
+        )}
+      </Box>
+    </>
+  );
+};
 
 const Nft = ({
   wallet,
@@ -287,24 +316,6 @@ const Nft = ({
   wallet: string;
   totalEarned: number;
 }) => {
-  const [generate, setGenrate] = useState(false);
-
-  useEffect(() => {
-    const fetch = async () => {
-      if (wallet) {
-        try {
-          await axios.post(
-            `https://searn-nft-dev.s3.ap-south-1.amazonaws.com/s.png`
-          );
-          setGenrate(false);
-        } catch (error) {
-          setGenrate(true);
-          console.log(error);
-        }
-      }
-    };
-    fetch();
-  }, []);
   return (
     <Box
       w={'80%'}
@@ -327,16 +338,16 @@ const Nft = ({
           w={'100%'}
           h={'100%'}
           alt="NFT"
-          filter={generate ? 'none' : 'blur(7px)'}
+          filter={totalEarned !== 0 ? 'none' : 'blur(7px)'}
           src={
-            generate
+            totalEarned !== 0
               ? `https://searn-nft-dev.s3.ap-south-1.amazonaws.com/${wallet}.png`
               : '/assets/nft.png'
           }
         />
         <Button
           pos={'absolute'}
-          display={generate ? 'none' : 'block'}
+          display={totalEarned !== 0 ? 'none' : 'block'}
           leftIcon={<LockIcon />}
         >
           {totalEarned === 0 ? 'Locked' : 'Claim NFT'}
@@ -345,37 +356,84 @@ const Nft = ({
     </Box>
   );
 };
-
+type NFT = {
+  collectionName: string;
+  collectionAddress: string;
+  description: string;
+  name: string;
+  imageUrl: string;
+  creators: any[];
+};
 function TalentProfile({ slug }: TalentProps) {
   const [talent, setTalent] = useState<User>();
+  const [isloading, setIsloading] = useState<boolean>(false);
+  const [error, setError] = useState(false);
+  const [nfts, setNFTs] = useState<NFT[]>();
+  const getNFTs = async (wallet: string) => {
+    const data = {
+      jsonrpc: '2.0',
+      id: 1,
+      method: 'qn_fetchNFTs',
+      params: {
+        wallet,
+        omitFields: ['provenance', 'traits'],
+        page: 1,
+        perPage: 40,
+      },
+    };
 
+    const url = process.env.NEXT_PUBLIC_NFT_API as string;
+
+    const result = await fetch(url, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        Accept: 'application/json',
+      },
+      body: JSON.stringify(data),
+    });
+
+    return result.json();
+  };
+
+  const fetchNFTs = async (address: string) => {
+    // eslint-disable-next-line @typescript-eslint/no-shadow
+    const nfts: any = await getNFTs(address);
+    const resultNfts = nfts.result.assets.filter((item: NFT) => {
+      return (
+        item.collectionAddress ===
+        'C9G3cZMXjoydy1KrSbEfLw5NNyuK3Lmc33WEgTCtKWuV'
+      );
+    });
+
+    setNFTs(resultNfts);
+  };
   useEffect(() => {
     const fetch = async () => {
-      const res = await axios.post(`/api/user`, {
-        username: slug,
-      });
-      console.log(res);
+      try {
+        setIsloading(true);
 
-      if (res) {
-        setTalent(res?.data);
+        const res = await axios.post(`/api/user`, {
+          username: slug,
+        });
+
+        if (res) {
+          setTalent(res?.data);
+          setError(false);
+          setIsloading(false);
+          // console.log(JSON.parse(JSON.parse(res?.data?.pow)[0]));
+
+          fetchNFTs(res?.data?.publicKey as string);
+        }
+        // eslint-disable-next-line @typescript-eslint/no-shadow
+      } catch (error) {
+        console.log(error);
+        setError(true);
+        setIsloading(false);
       }
     };
     fetch();
   }, []);
-
-  // if (!isSuccess) {
-  //   return (
-  //     <Center w={'100%'} h={'100vh'} pt={'3rem'}>
-  //       <Spinner
-  //         color="blue.500"
-  //         emptyColor="gray.200"
-  //         size="xl"
-  //         speed="0.65s"
-  //         thickness="4px"
-  //       />
-  //     </Center>
-  //   );
-  // }
 
   return (
     <>
@@ -388,64 +446,98 @@ function TalentProfile({ slug }: TalentProps) {
           />
         }
       >
-        <Flex direction={['column', 'column', 'column', 'row']} w={'100%'}>
-          <VStack
-            rowGap={4}
-            maxW={['full', 'full', '25%', '25%']}
-            minH={'100vh'}
-            py={8}
-            bgImage={'/assets/bg/talent-bg.png'}
-            bgSize={'cover '}
-            bgRepeat={'no-repeat'}
-          >
-            <TalentBio user={talent as User} successPage={false} />
-            {/* <SkillsAndInterests data={data?.data.data} /> */}
-            <Nft
-              totalEarned={talent?.totalEarnedInUSD ?? 0}
-              wallet={talent?.publicKey as string}
-            />
-          </VStack>
-          <Box
-            justifyContent={'center'}
-            display={talent?.pow?.length === 0 ? 'none' : 'flex'}
-            w={'100%'}
-            px={'23px'}
-            py={'35px'}
-            bg={'#F7FAFC'}
-          >
-            {/* {talent?.pow?.length > 0 && (
-              <>
-                <Box mb={'18.5px'} borderBottom={'1px solid #E2E8EF'}>
-                  <Text
-                    mb={'1.0625rem'}
-                    fontSize={'17.94px'}
-                    fontWeight={'500'}
+        {isloading && <LoadingSection />}
+        {!isloading && !!error && <ErrorSection />}
+        {!isloading && !error && !talent?.id && (
+          <ErrorSection message="Sorry! The bounty you are looking for is not available." />
+        )}
+        {!isloading && !error && !!talent?.id && (
+          <Flex direction={['column', 'column', 'column', 'row']} w={'100%'}>
+            <VStack
+              rowGap={4}
+              maxW={['full', 'full', 'full', 'full']}
+              minH={'100vh'}
+              py={8}
+              bgImage={'/assets/bg/talent-bg.png'}
+              bgSize={'cover '}
+              bgRepeat={'no-repeat'}
+            >
+              <TalentBio user={talent as User} successPage={false} />
+              <SkillsAndInterests
+                location={talent?.location as string}
+                skills={talent?.skills as Skills}
+                interests={
+                  talent?.interests?.startsWith('[')
+                    ? JSON.parse(talent?.interests!)
+                    : []
+                }
+              />
+              <Nft
+                totalEarned={talent?.totalEarnedInUSD ?? 0}
+                wallet={talent?.publicKey as string}
+              />
+            </VStack>
+            <Box
+              alignItems={'start'}
+              justifyContent={'start'}
+              flexDir={'column'}
+              gap={5}
+              display={'flex'}
+              w={'full'}
+              px={'23px'}
+              py={'35px'}
+              bg={'#F7FAFC'}
+            >
+              {talent?.pow?.length! > 0 && talent.pow?.startsWith('[') && (
+                <>
+                  <Box
+                    w="full"
+                    h="max"
+                    pb={3}
+                    borderBottom={'1px solid'}
+                    borderBottomColor={'gray.200'}
                   >
-                    Other Proof Work
-                  </Text>
-                </Box>
-                <Flex wrap={'wrap'} gap={'1.1425rem'} mb={'44px'}>
-                  {pow.map((ele, idx) => {
-                    return <LinkPreview key={`${idx}lk`} data={ele} />;
-                  })}
-                </Flex>
-              </>
-            )} */}
-          </Box>
-          <Box
-            alignItems={'start'}
-            justifyContent={'center'}
-            display={talent?.pow?.length !== 0 ? 'none' : 'flex'}
-            w={'100%'}
-            pt={'10rem'}
-          >
-            <Image
-              w={32}
-              alt={'talent empty'}
-              src="/assets/bg/talent-empty.svg"
-            />
-          </Box>
-        </Flex>
+                    <Text fontSize="md" fontWeight={'500'}>
+                      Other Proof Work
+                    </Text>
+                  </Box>
+                  <Flex align="start" wrap={'wrap'} gap={10}>
+                    {JSON.parse(talent?.pow!).map(
+                      (ele: string, idx: number) => {
+                        const { title, link, description } = JSON.parse(ele);
+                        return (
+                          <LinkPreview
+                            key={`${idx}lk`}
+                            data={{
+                              description,
+                              link,
+                              title,
+                            }}
+                          />
+                        );
+                      }
+                    )}
+                  </Flex>
+                </>
+              )}
+              <EduNft nfts={nfts ?? []} />
+            </Box>
+
+            <Box
+              alignItems={'start'}
+              justifyContent={'center'}
+              display={talent?.pow?.length !== 0 ? 'none' : 'flex'}
+              w={'100%'}
+              pt={'10rem'}
+            >
+              <Image
+                w={32}
+                alt={'talent empty'}
+                src="/assets/bg/talent-empty.svg"
+              />
+            </Box>
+          </Flex>
+        )}
       </Default>
     </>
   );

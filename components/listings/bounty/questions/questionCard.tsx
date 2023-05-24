@@ -1,11 +1,5 @@
 /* tslint:disable */
-import {
-  AddIcon,
-  ChevronDownIcon,
-  ChevronUpIcon,
-  CloseIcon,
-  DeleteIcon,
-} from '@chakra-ui/icons';
+import { AddIcon, CloseIcon } from '@chakra-ui/icons';
 import {
   Button,
   FormControl,
@@ -13,14 +7,13 @@ import {
   FormLabel,
   HStack,
   Input,
-  Select,
   Text,
   VStack,
 } from '@chakra-ui/react';
 import type { Dispatch, SetStateAction } from 'react';
 import { useState } from 'react';
 
-import type { Ques, QuestionType } from './builder';
+import type { Ques } from './builder';
 
 interface Props {
   setQuestions: Dispatch<SetStateAction<Ques[]>>;
@@ -30,7 +23,7 @@ interface Props {
   errorState: ErrorState[];
 }
 type ErrorState = {
-  id: string;
+  order: number;
   errMessage: string;
 };
 export const QuestionCard = ({
@@ -40,11 +33,12 @@ export const QuestionCard = ({
   index,
   errorState,
 }: Props) => {
+  console.log('file: questionCard.tsx:36 ~ questions:', questions);
   const [option, setOption] = useState<string>('');
   const handleChangeQuestion = (newq: string) => {
     setQuestions((prev) => {
       return prev.map((q) => {
-        if (q.id === curentQuestion.id) {
+        if (q.order === curentQuestion.order) {
           return {
             ...q,
             question: newq,
@@ -55,25 +49,27 @@ export const QuestionCard = ({
       });
     });
   };
-  const handleChangeType = (newType: QuestionType) => {
-    setQuestions((prev) => {
-      return prev.map((q) => {
-        if (q.id === curentQuestion.id) {
-          return {
-            ...q,
-            type: newType,
-          };
-        }
-        return q;
-      });
-    });
-  };
+  // const handleChangeType = (newType: QuestionType) => {
+  //   setQuestions((prev) => {
+  //     return prev.map((q) => {
+  //       if (q.order === curentQuestion.order) {
+  //         return {
+  //           ...q,
+  //           type: newType,
+  //         };
+  //       }
+  //       return q;
+  //     });
+  //   });
+  // };
   return (
     <>
       <VStack align={'start'} w={'full'}>
         <FormControl
           w={'full'}
-          isInvalid={!!errorState.filter((e) => e.id === curentQuestion.id)[0]}
+          isInvalid={
+            !!errorState.filter((e) => e.order === curentQuestion.order)[0]
+          }
         >
           <FormLabel color={'gray.500'}>
             <Text color={'gray.500'} fontSize={'0.88rem'} fontWeight={600}>
@@ -81,9 +77,11 @@ export const QuestionCard = ({
             </Text>
           </FormLabel>
           <Input
+            borderColor="brand.slate.300"
             _placeholder={{
-              color: 'gray.400',
+              color: 'brand.slate.300',
             }}
+            focusBorderColor="brand.purple"
             onChange={(e) => {
               handleChangeQuestion(e.target.value);
             }}
@@ -91,17 +89,19 @@ export const QuestionCard = ({
             value={curentQuestion.question}
           />
           <FormErrorMessage>
-            {errorState?.filter((e) => e?.id === curentQuestion.id)[0] &&
-              errorState?.filter((e) => e?.id === curentQuestion.id)[0]
+            {errorState?.filter((e) => e?.order === curentQuestion.order)[0] &&
+              errorState?.filter((e) => e?.order === curentQuestion.order)[0]
                 ?.errMessage}
           </FormErrorMessage>
         </FormControl>
-        <HStack justify={'space-between'} w={'full'}>
+        {/* <HStack justify={'space-between'} w={'full'}>
           <Select
             w={'10rem'}
+            borderColor="brand.slate.300"
             _placeholder={{
-              color: 'gray.400',
+              color: 'brand.slate.300',
             }}
+            focusBorderColor="brand.purple"
             onChange={(e) => {
               handleChangeType(e.target.value as QuestionType);
             }}
@@ -168,7 +168,7 @@ export const QuestionCard = ({
               </Button>
             )}
           </HStack>
-        </HStack>
+        </HStack> */}
         {(curentQuestion.type === 'single-choice' ||
           curentQuestion.type === 'multi-choice') && (
           <>
@@ -203,7 +203,7 @@ export const QuestionCard = ({
                       onClick={() => {
                         setQuestions((prev) => {
                           return prev.map((q) => {
-                            if (q.id === curentQuestion.id) {
+                            if (q.order === curentQuestion.order) {
                               return {
                                 ...q,
                                 options: q.options?.filter(
@@ -225,7 +225,9 @@ export const QuestionCard = ({
               <HStack w={'full'}>
                 <FormControl
                   isInvalid={
-                    !!errorState.filter((e) => e.id === curentQuestion.id)[0]
+                    !!errorState.filter(
+                      (e) => e.order === curentQuestion.order
+                    )[0]
                   }
                 >
                   <Input
@@ -243,7 +245,7 @@ export const QuestionCard = ({
                     if (option.length === 0) return;
                     setQuestions((prev) => {
                       return prev.map((q) => {
-                        if (q.id === curentQuestion.id) {
+                        if (q.order === curentQuestion.order) {
                           return {
                             ...q,
                             options: [...(q.options as string[]), option],

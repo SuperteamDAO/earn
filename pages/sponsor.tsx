@@ -623,7 +623,9 @@ const Sponsor = () => {
         p="0.625rem"
         bg={navbarBg ? 'white' : 'transparent'}
       >
-        <img src="/assets/logo/new-logo.svg" alt="Icon" />
+        <Box minW={'0.8125rem'} h="0.8125rem">
+          <img src="/assets/logo/new-logo.svg" alt="Logo" />
+        </Box>
 
         <Flex
           gap="1.875rem"

@@ -19,7 +19,7 @@ interface Props {
   subSkills: MultiSelectOptions[];
   setSubSkills: Dispatch<SetStateAction<MultiSelectOptions[]>>;
   onOpen: () => void;
-  createDraft: (payment: string) => void;
+  createDraft: () => void;
   setSlug: Dispatch<SetStateAction<string>>;
 }
 export const CreateGrants = ({

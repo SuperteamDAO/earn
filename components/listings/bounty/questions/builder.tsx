@@ -3,13 +3,12 @@ import type { Dispatch, SetStateAction } from 'react';
 import React, { useState } from 'react';
 import toast, { Toaster } from 'react-hot-toast';
 
-import { genrateuuid } from '../../../../utils/helpers';
 import { QuestionCard } from './questionCard';
 
 interface Props {
   setSteps: Dispatch<SetStateAction<number>>;
   draftLoading: boolean;
-  createDraft: (payment: string) => void;
+  createDraft: () => void;
   questions: Ques[];
   setQuestions: Dispatch<SetStateAction<Ques[]>>;
 }
@@ -21,15 +20,15 @@ export type QuestionType =
   | 'multi-choice'
   | 'url';
 export interface Ques {
-  id: string;
+  order: number;
   question: string;
   type: QuestionType;
-  delete: boolean;
+  delete?: boolean;
   options?: string[];
   label: string;
 }
 type ErrorState = {
-  id: string;
+  order: number;
   errMessage: string;
 };
 const Builder = ({
@@ -78,11 +77,9 @@ const Builder = ({
             setQuestions([
               ...questions,
               {
-                id: genrateuuid(),
+                order: (questions?.length || 0) + 1,
                 question: '',
                 type: 'text',
-                options: [],
-                delete: true,
                 label: '',
               },
             ]);
@@ -116,7 +113,7 @@ const Builder = ({
                     setError([
                       ...error,
                       {
-                        id: e.id,
+                        order: e.order,
                         errMessage:
                           'Please add at least one more option for this question',
                       },
@@ -128,7 +125,7 @@ const Builder = ({
                     setError([
                       ...error,
                       {
-                        id: e.id,
+                        order: e.order,
                         errMessage:
                           'Please add at least one more option for this question',
                       },
@@ -144,7 +141,7 @@ const Builder = ({
                   setError([
                     ...error,
                     {
-                      id: e.id,
+                      order: e.order,
                       errMessage: 'Add question',
                     },
                   ]);
@@ -169,7 +166,7 @@ const Builder = ({
             borderColor="gray.200"
             isLoading={draftLoading}
             onClick={() => {
-              createDraft('nothing');
+              createDraft();
             }}
           >
             Save as Drafts

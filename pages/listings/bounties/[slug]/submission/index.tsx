@@ -26,7 +26,7 @@ const SubmissionPage = ({ slug }: { slug: string }) => {
       setBounty(bountyDetails.data.bounty);
       setSubmission(bountyDetails.data.submission);
 
-      Mixpanel.track('bounty_submission_page_load', {
+      Mixpanel.track('bounty_submission_individual_page_load', {
         'Bounty Title': bountyDetails.data.title,
       });
     } catch (e) {

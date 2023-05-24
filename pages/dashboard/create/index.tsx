@@ -1,37 +1,35 @@
 import { useDisclosure } from '@chakra-ui/react';
-import { useWallet } from '@solana/wallet-adapter-react';
+import axios from 'axios';
 import { useRouter } from 'next/router';
 import { useEffect, useState } from 'react';
-import toast, { Toaster } from 'react-hot-toast';
+import { Toaster } from 'react-hot-toast';
 
-import type { BountyBasicType } from '../../components/listings/bounty/Createbounty';
-import { Createbounty } from '../../components/listings/bounty/Createbounty';
-import type { Ques } from '../../components/listings/bounty/questions/builder';
-import { CreateGrants } from '../../components/listings/grants/CreateGrants';
-import { CreateJob } from '../../components/listings/jobs/CreateJob';
-import Template from '../../components/listings/templates/template';
-import { CreateSponsorModel } from '../../components/modals/createSponsor';
-import { SuccessListings } from '../../components/modals/successListings';
-import type { MultiSelectOptions } from '../../constants';
-import type {
-  DraftType,
-  GrantsBasicType,
-  JobBasicsType,
-} from '../../interface/listings';
-import { ConnectWallet } from '../../layouts/connectWallet';
-import FormLayout from '../../layouts/FormLayout';
-import { SponsorStore } from '../../store/sponsor';
-import { userStore } from '../../store/user';
-import { CreateDraft, findOneDraft } from '../../utils/functions';
-import { genrateuuid } from '../../utils/helpers';
+import type { BountyBasicType } from '@/components/listings/bounty/Createbounty';
+import { CreateBounty } from '@/components/listings/bounty/Createbounty';
+import type { Ques } from '@/components/listings/bounty/questions/builder';
+import { CreateGrants } from '@/components/listings/grants/CreateGrants';
+import { CreateJob } from '@/components/listings/jobs/CreateJob';
+import Template from '@/components/listings/templates/template';
+import { SuccessListings } from '@/components/modals/successListings';
+import ErrorSection from '@/components/shared/ErrorSection';
+import type { MultiSelectOptions } from '@/constants';
+import type { Bounty } from '@/interface/bounty';
+import type { GrantsBasicType, JobBasicsType } from '@/interface/listings';
+import FormLayout from '@/layouts/FormLayout';
+import Sidebar from '@/layouts/Sidebar';
+import { userStore } from '@/store/user';
+import { findOneDraft } from '@/utils/functions';
+import { mergeSkills } from '@/utils/skills';
 
 const CreateListing = () => {
+  const router = useRouter();
+  const { userInfo } = userStore();
   // Templates - 1
   // Basic Info - 2
   // Description - 3
   // payment form - 4
   const [steps, setSteps] = useState<number>(1);
-  const router = useRouter();
+  const [listingType, setListingType] = useState('BOUNTY');
   const [draftLoading, setDraftLoading] = useState<boolean>(false);
   const [editorData, setEditorData] = useState<string | undefined>();
   //
@@ -52,71 +50,76 @@ const CreateListing = () => {
 
   // - Bounty
   const [bountybasic, setBountyBasic] = useState<BountyBasicType | undefined>();
+  const [bountyPayment, setBountyPayment] = useState({
+    rewardAmount: 0,
+    token: undefined,
+    rewards: undefined,
+  });
   // -- Grants
   const [grantBasic, setgrantsBasic] = useState<GrantsBasicType | undefined>();
-  // -- wallet
-  const { connected } = useWallet();
-  // -- sponsor
-  const { currentSponsor } = SponsorStore();
-  const { userInfo } = userStore();
 
-  // const sponsors = useQuery({
-  //   queryKey: ['sponsor', publicKey?.toBase58() ?? ''],
-  //   queryFn: ({ queryKey }) => findSponsors(queryKey[1] || ''),
-  // });
+  const [isListingPublishing, setIsListingPublishing] =
+    useState<boolean>(false);
 
-  const createDraft = async (payment: string) => {
-    setDraftLoading(true);
-    let draft: DraftType = {
-      id: genrateuuid(),
-      orgId: currentSponsor?.id ?? '',
-      basic: '',
-      payments: '',
-      type: 'Bounties',
-    };
-    if (router.query.type === 'jobs') {
-      draft = {
-        ...draft,
-        basic: JSON.stringify({
-          skills: mainSkills,
-          subSkill,
-          description: JSON.stringify(editorData),
-          ...jobBasics,
-        }),
-        type: 'Jobs',
-        payments: payment,
+  const createAndPublishListing = async () => {
+    setIsListingPublishing(true);
+    try {
+      const bounty: Bounty = {
+        sponsorId: userInfo?.currentSponsor?.id ?? '',
+        pocId: userInfo?.id ?? '',
+        skills: mergeSkills({ skills: mainSkills, subSkills: subSkill }),
+        ...bountybasic,
+        deadline: bountybasic?.deadline
+          ? new Date(bountybasic?.deadline).toISOString()
+          : undefined,
+        description: editorData || '',
+        eligibility: (questions || []).map((q) => ({
+          question: q.question,
+          order: q.order,
+          type: q.type,
+        })),
+        ...bountyPayment,
+        isPublished: true,
       };
-    } else if (router.query.type === 'bounties') {
-      draft = {
-        ...draft,
-        basic: JSON.stringify({
-          skills: mainSkills,
-          subSkill,
-          description: JSON.stringify(editorData),
-          ...bountybasic,
-        }),
-        type: 'Bounties',
-        payments: payment,
-        question: JSON.stringify(questions),
-      };
-    } else if (router.query.type === 'grants') {
-      draft = {
-        ...draft,
-        basic: JSON.stringify({
-          skills: mainSkills,
-          subSkill,
-          description: JSON.stringify(editorData),
-          ...grantBasic,
-        }),
-        type: 'Grants',
-        payments: payment,
-      };
+      const result = await axios.post('/api/bounties/create/', bounty);
+      setSlug(`/bounties/${result?.data?.slug}/`);
+      onOpen();
+      setIsListingPublishing(false);
+    } catch (e) {
+      setIsListingPublishing(false);
     }
-    const res = await CreateDraft(draft);
-    if (res) {
-      toast.success('Draft Saved');
-    } else {
-      toast.error('Error');
+  };
+
+  const createDraft = async () => {
+    setDraftLoading(true);
+    const api = '/api/bounties/create/';
+    let draft: Bounty = {
+      sponsorId: userInfo?.currentSponsor?.id ?? '',
+      pocId: userInfo?.id ?? '',
+    };
+    draft = {
+      ...draft,
+      skills: mergeSkills({ skills: mainSkills, subSkills: subSkill }),
+      ...bountybasic,
+      deadline: bountybasic?.deadline
+        ? new Date(bountybasic?.deadline).toISOString()
+        : undefined,
+      description: editorData || '',
+      eligibility: (questions || []).map((q) => ({
+        question: q.question,
+        order: q.order,
+        type: q.type,
+      })),
+      ...bountyPayment,
+    };
+    try {
+      await axios.post(api, {
+        ...draft,
+        isPublished: false,
+      });
+      router.push('/dashboard/bounties');
+    } catch (e) {
+      setDraftLoading(false);
     }
     setDraftLoading(false);
   };
@@ -126,19 +129,17 @@ const CreateListing = () => {
       if (router.query.draft) {
         try {
           const res = await findOneDraft(router.query.draft as string);
-          console.log(res);
-
           if (res) {
             if ((res.data.type as string).toLowerCase() === 'bounties') {
-              console.log(JSON.parse(res.data.basic));
               const data = JSON.parse(res.data.basic);
               setSubSkill(data.subSkill);
               setMainSkills(data.skills);
               setEditorData(JSON.parse(data.description));
               setBountyBasic({
                 deadline: data.deadline ?? '',
-                eligibility: data.eligibility ?? '',
+                type: data.type ?? '',
                 title: data.title ?? '',
+                slug: data.slug ?? '',
               });
             } else if ((res.data.type as string).toLowerCase() === 'jobs') {
               const data = JSON.parse(res.data.basic);
@@ -173,25 +174,30 @@ const CreateListing = () => {
   }, [router.query.draft]);
 
   return (
-    <>
-      {connected ? (
+    <Sidebar>
+      {!userInfo?.id || userInfo?.role !== 'GOD' ? (
+        <ErrorSection
+          title="Access is Forbidden!"
+          message="Please contact support to access this section."
+        />
+      ) : (
         <FormLayout
           setStep={setSteps}
           currentStep={steps}
           stepList={
-            router.query.type !== 'bounties'
+            listingType !== 'BOUNTY'
               ? [
                   {
                     label: 'Template',
                     number: 1,
-                    mainHead: 'Create Your Opportunity Listing',
+                    mainHead: 'List your Opportunity',
                     description:
                       'To save time, check out our ready made templates below. If you already have a listing elsewhere, use "Start from Scratch" and copy/paste your text.',
                   },
                   {
                     label: 'Basics',
                     number: 2,
-                    mainHead: 'Create a listing',
+                    mainHead: 'Create a Listing',
                     description: `Now let's learn a bit more about the work you need completed`,
                   },
                   {
@@ -213,14 +219,14 @@ const CreateListing = () => {
                   {
                     label: 'Template',
                     number: 1,
-                    mainHead: 'Create Your Opportunity Listing',
+                    mainHead: 'List your Opportunity',
                     description:
                       'To save time, check out our ready made templates below. If you already have a listing elsewhere, use "Start from Scratch" and copy/paste your text.',
                   },
                   {
                     label: 'Basics',
                     number: 2,
-                    mainHead: 'Create a listing',
+                    mainHead: 'Create a Listing',
                     description: `Now let's learn a bit more about the work you need completed`,
                   },
                   {
@@ -247,15 +253,17 @@ const CreateListing = () => {
                 ]
           }
         >
-          {!userInfo?.sponsor && (
-            <CreateSponsorModel isOpen={true} onClose={() => {}} />
-          )}
           {isOpen && (
             <SuccessListings slug={slug} isOpen={isOpen} onClose={() => {}} />
           )}
-          {steps === 1 && <Template setSteps={setSteps} />}
-          {router.query.type && router.query.type === 'bounties' && (
-            <Createbounty
+          {steps === 1 && (
+            <Template setSteps={setSteps} setListingType={setListingType} />
+          )}
+          {steps > 1 && listingType === 'BOUNTY' && (
+            <CreateBounty
+              createAndPublishListing={createAndPublishListing}
+              isListingPublishing={isListingPublishing}
+              setBountyPayment={setBountyPayment}
               questions={questions}
               setQuestions={setQuestions}
               setSlug={setSlug}
@@ -274,7 +282,7 @@ const CreateListing = () => {
               steps={steps}
             />
           )}
-          {router.query.type && router.query.type === 'jobs' && (
+          {steps > 1 && listingType === 'JOB' && (
             <CreateJob
               setSlug={setSlug}
               draftLoading={draftLoading}
@@ -292,7 +300,7 @@ const CreateListing = () => {
               onOpen={onOpen}
             />
           )}
-          {router.query.type && router.query.type === 'grants' && (
+          {steps > 1 && listingType === 'GRANT' && (
             <CreateGrants
               createDraft={createDraft}
               onOpen={onOpen}
@@ -311,10 +319,8 @@ const CreateListing = () => {
           )}
           <Toaster />
         </FormLayout>
-      ) : (
-        <ConnectWallet />
       )}
-    </>
+    </Sidebar>
   );
 };
 

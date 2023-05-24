@@ -144,7 +144,13 @@ const GettingStarted = ({ userInfo }: GettingStartedProps) => {
                 _hover={{
                   color: 'brand.purple',
                 }}
-                onClick={() => router.push(`/new/talent`)}
+                onClick={() => {
+                  if (userInfo?.id) {
+                    router.push(`/new/talent`);
+                  } else {
+                    setTriggerLogin(true);
+                  }
+                }}
               >
                 Complete your profile
               </Text>
@@ -167,7 +173,13 @@ const GettingStarted = ({ userInfo }: GettingStartedProps) => {
                 _hover={{
                   color: 'brand.purple',
                 }}
-                onClick={() => router.push('/bounties')}
+                onClick={() => {
+                  if (userInfo?.id) {
+                    router.push('/bounties');
+                  } else {
+                    setTriggerLogin(true);
+                  }
+                }}
               >
                 Win a bounty
               </Text>

@@ -118,16 +118,18 @@ function UserInfo() {
               </Flex>
             </MenuButton>
             <MenuList>
-              <MenuItem
-                color="brand.slate.500"
-                fontSize="sm"
-                fontWeight={600}
-                onClick={() => {
-                  router.push(`/t/${userInfo?.username}`);
-                }}
-              >
-                Profile
-              </MenuItem>
+              {userInfo?.isTalentFilled && (
+                <MenuItem
+                  color="brand.slate.500"
+                  fontSize="sm"
+                  fontWeight={600}
+                  onClick={() => {
+                    router.push(`/t/${userInfo?.username}`);
+                  }}
+                >
+                  Profile
+                </MenuItem>
+              )}
               {(userInfo?.role === 'GOD' || !!userInfo?.currentSponsorId) && (
                 <MenuItem
                   color="brand.slate.500"
