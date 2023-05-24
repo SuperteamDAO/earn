@@ -1,4 +1,4 @@
-import { ChevronDownIcon, DeleteIcon } from '@chakra-ui/icons';
+import { AddIcon, ChevronDownIcon, DeleteIcon } from '@chakra-ui/icons';
 import {
   Button,
   Flex,
@@ -97,13 +97,15 @@ export const CreatebountyPayment = ({
     defaultValue: bountyPayment?.rewards[r],
   }));
   const [prizes, setPrizes] = useState<PrizeListInterface[]>(
-    prizesList || [
-      {
-        value: 'first',
-        label: 'first prize',
-        placeHolder: 2500,
-      },
-    ]
+    prizesList?.length
+      ? prizesList
+      : [
+          {
+            value: 'first',
+            label: 'first prize',
+            placeHolder: 2500,
+          },
+        ]
   );
 
   useEffect(() => {
@@ -254,7 +256,7 @@ export const CreatebountyPayment = ({
             type="number"
           />
         </FormControl>
-        <VStack gap={2} w={'full'} mt={5} mb={8}>
+        <VStack gap={4} w={'full'} mt={5} mb={8}>
           {prizes.map((el, index) => {
             return (
               <FormControl key={el.label}>
@@ -291,6 +293,7 @@ export const CreatebountyPayment = ({
           <Button
             w="full"
             isDisabled={prizes.length === 5 && true}
+            leftIcon={<AddIcon />}
             onClick={() => {
               setPrizes([
                 ...prizes,
@@ -301,13 +304,13 @@ export const CreatebountyPayment = ({
                 },
               ]);
             }}
-            variant="outline"
+            variant="ghost"
           >
             Add Prize
           </Button>
         </VStack>
         <Toaster />
-        <VStack gap={4} w={'full'} mt={10}>
+        <VStack gap={4} w={'full'} pt={10}>
           {!isEditMode && (
             <Button
               w="100%"

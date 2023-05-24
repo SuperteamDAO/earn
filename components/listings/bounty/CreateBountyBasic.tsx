@@ -330,7 +330,7 @@ export const CreatebountyBasic = ({
             {/* {errors.deadline ? <>{errors.deadline.message}</> : <></>} */}
           </FormErrorMessage>
         </FormControl>
-        <VStack gap={6} w={'full'} pt={10}>
+        <VStack gap={4} w={'full'} pt={10}>
           <Button
             w="100%"
             onClick={() => {
