@@ -438,7 +438,7 @@ function Bounties() {
                           </MenuItem>
                           <MenuDivider />
                           <NextLink
-                            href={`/dashboard/edit/${currentBounty.slug}`}
+                            href={`/dashboard/bounties/${currentBounty.slug}/edit/`}
                             passHref
                           >
                             <MenuItem icon={<AiOutlineEdit />}>
@@ -447,7 +447,7 @@ function Bounties() {
                           </NextLink>
                           <MenuDivider />
                           <NextLink
-                            href={`/dashboard/bounties/${currentBounty.slug}`}
+                            href={`/dashboard/bounties/${currentBounty.slug}/submissions/`}
                             passHref
                           >
                             <MenuItem icon={<AiOutlineOrderedList />}>
