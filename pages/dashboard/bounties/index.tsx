@@ -17,6 +17,7 @@ import {
   InputRightElement,
   Menu,
   MenuButton,
+  MenuDivider,
   MenuItem,
   MenuList,
   Modal,
@@ -42,7 +43,7 @@ import axios from 'axios';
 import NextLink from 'next/link';
 import { useRouter } from 'next/router';
 import { useEffect, useRef, useState } from 'react';
-import { AiOutlineOrderedList } from 'react-icons/ai';
+import { AiOutlineEdit, AiOutlineOrderedList } from 'react-icons/ai';
 import { FiMoreVertical } from 'react-icons/fi';
 
 import ErrorSection from '@/components/shared/ErrorSection';
@@ -244,75 +245,74 @@ function Bounties() {
           </InputRightElement>
         </InputGroup>
       </Flex>
-      <TableContainer mb={8}>
-        <Table
-          border="1px solid"
-          borderColor={'blackAlpha.200'}
-          variant="simple"
-        >
-          <Thead>
-            <Tr bg="white">
-              <Th
-                maxW={96}
-                color="brand.slate.400"
-                fontSize="sm"
-                fontWeight={500}
-                textTransform={'capitalize'}
-              >
-                Bounty Name
-              </Th>
-              <Th
-                align="center"
-                color="brand.slate.400"
-                fontSize="sm"
-                fontWeight={500}
-                textAlign="center"
-                textTransform={'capitalize'}
-              >
-                Deadline
-              </Th>
-              <Th
-                color="brand.slate.400"
-                fontSize="sm"
-                fontWeight={500}
-                textTransform={'capitalize'}
-              >
-                Prize
-              </Th>
-              <Th
-                color="brand.slate.400"
-                fontSize="sm"
-                fontWeight={500}
-                textAlign="center"
-                textTransform={'capitalize'}
-              >
-                Status
-              </Th>
-              <Th
-                color="brand.slate.400"
-                fontSize="sm"
-                fontWeight={500}
-                textTransform={'capitalize'}
-              />
-              <Th
-                color="brand.slate.400"
-                fontSize="sm"
-                fontWeight={500}
-                textTransform={'capitalize'}
-              />
-            </Tr>
-          </Thead>
-          <Tbody>
-            {isBountiesLoading && <LoadingSection />}
-            {!isBountiesLoading && !bounties?.length && (
-              <ErrorSection
-                title="No bounties found!"
-                message="Create new bounty from the sidebar"
-              />
-            )}
-            {!isBountiesLoading &&
-              bounties?.length &&
-              bounties.map((currentBounty) => {
+      {isBountiesLoading && <LoadingSection />}
+      {!isBountiesLoading && !bounties?.length && (
+        <ErrorSection
+          title="No bounties found!"
+          message="Create new bounty from the sidebar"
+        />
+      )}
+      {!isBountiesLoading && bounties?.length && (
+        <TableContainer mb={8}>
+          <Table
+            border="1px solid"
+            borderColor={'blackAlpha.200'}
+            variant="simple"
+          >
+            <Thead>
+              <Tr bg="white">
+                <Th
+                  maxW={96}
+                  color="brand.slate.400"
+                  fontSize="sm"
+                  fontWeight={500}
+                  textTransform={'capitalize'}
+                >
+                  Bounty Name
+                </Th>
+                <Th
+                  align="center"
+                  color="brand.slate.400"
+                  fontSize="sm"
+                  fontWeight={500}
+                  textAlign="center"
+                  textTransform={'capitalize'}
+                >
+                  Deadline
+                </Th>
+                <Th
+                  color="brand.slate.400"
+                  fontSize="sm"
+                  fontWeight={500}
+                  textTransform={'capitalize'}
+                >
+                  Prize
+                </Th>
+                <Th
+                  color="brand.slate.400"
+                  fontSize="sm"
+                  fontWeight={500}
+                  textAlign="center"
+                  textTransform={'capitalize'}
+                >
+                  Status
+                </Th>
+                <Th
+                  color="brand.slate.400"
+                  fontSize="sm"
+                  fontWeight={500}
+                  textTransform={'capitalize'}
+                />
+                <Th
+                  color="brand.slate.400"
+                  fontSize="sm"
+                  fontWeight={500}
+                  textTransform={'capitalize'}
+                />
+              </Tr>
+            </Thead>
+            <Tbody w="full">
+              {bounties.map((currentBounty) => {
                 const deadlineFromNow = currentBounty?.deadline
                   ? dayjs(currentBounty.deadline).fromNow()
                   : '-';
@@ -435,8 +435,18 @@ function Bounties() {
                           >
                             View Bounty
                           </MenuItem>
+                          <MenuDivider />
                           <NextLink
-                            href={`/dashboard/bounties/${currentBounty.slug}`}
+                            href={`/dashboard/bounties/${currentBounty.slug}/edit/`}
+                            passHref
+                          >
+                            <MenuItem icon={<AiOutlineEdit />}>
+                              Edit Bounty
+                            </MenuItem>
+                          </NextLink>
+                          <MenuDivider />
+                          <NextLink
+                            href={`/dashboard/bounties/${currentBounty.slug}/submissions/`}
                             passHref
                           >
                             <MenuItem icon={<AiOutlineOrderedList />}>
@@ -450,9 +460,10 @@ function Bounties() {
                   </Tr>
                 );
               })}
-          </Tbody>
-        </Table>
-      </TableContainer>
+            </Tbody>
+          </Table>
+        </TableContainer>
+      )}
       <Flex align="center" justify="end" mt={6}>
         <Text mr={4} color="brand.slate.400" fontSize="sm">
           <Text as="span" fontWeight={700}>

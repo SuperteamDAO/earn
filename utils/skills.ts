@@ -4,15 +4,15 @@ import { SkillList } from '@/interface/skills';
 
 interface Props {
   skills: MultiSelectOptions[];
-  subSkills: MultiSelectOptions[];
+  subskills: MultiSelectOptions[];
 }
 
-export const mergeSkills = ({ skills = [], subSkills = [] }: Props): Skills => {
+export const mergeSkills = ({ skills = [], subskills = [] }: Props): Skills => {
   return skills.map((mainskill) => {
     const main = SkillList.find((skill) => skill.mainskill === mainskill.value);
     const sub: SubSkillsType[] = [];
 
-    subSkills.forEach((subskill) => {
+    subskills.forEach((subskill) => {
       if (main && main.subskills.includes(subskill.value as SubSkillsType)) {
         sub.push(subskill.value as SubSkillsType);
       }
@@ -23,4 +23,21 @@ export const mergeSkills = ({ skills = [], subSkills = [] }: Props): Skills => {
       subskills: sub ?? [],
     };
   });
+};
+
+export const splitSkills = (skills: Skills): Props => {
+  return {
+    skills: skills?.map((skill) => ({
+      value: skill.skills,
+      label: skill.skills,
+    })),
+    subskills: skills
+      ?.map((skill) => {
+        return skill?.subskills?.map((subskill) => ({
+          value: subskill,
+          label: subskill,
+        }));
+      })
+      ?.flat(),
+  };
 };

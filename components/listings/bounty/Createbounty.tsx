@@ -10,10 +10,10 @@ import type { Ques } from './questions/builder';
 import Builder from './questions/builder';
 
 export interface BountyBasicType {
-  title: string;
-  slug: string;
-  deadline: string;
-  type: BountyType | string;
+  title?: string;
+  slug?: string;
+  deadline?: string;
+  type?: BountyType | string;
 }
 interface Props {
   steps: number;
@@ -34,7 +34,9 @@ interface Props {
   questions: Ques[];
   createAndPublishListing: () => void;
   isListingPublishing: boolean;
+  bountyPayment: any;
   setBountyPayment: Dispatch<SetStateAction<any | undefined>>;
+  isEditMode: boolean;
 }
 export const CreateBounty = ({
   steps,
@@ -55,7 +57,9 @@ export const CreateBounty = ({
   setQuestions,
   createAndPublishListing,
   isListingPublishing,
+  bountyPayment,
   setBountyPayment,
+  isEditMode,
 }: Props) => {
   // handles the info from basic form
 
@@ -63,6 +67,7 @@ export const CreateBounty = ({
     <>
       {steps === 2 && (
         <CreatebountyBasic
+          isEditMode={isEditMode}
           draftLoading={draftLoading}
           createDraft={createDraft}
           skills={mainSkills}
@@ -76,6 +81,7 @@ export const CreateBounty = ({
       )}
       {steps === 3 && (
         <Description
+          isEditMode={isEditMode}
           bountyBasics={bountybasic}
           createDraft={createDraft}
           editorData={editorData}
@@ -86,6 +92,7 @@ export const CreateBounty = ({
       )}
       {steps === 4 && (
         <Builder
+          isEditMode={isEditMode}
           setSteps={setSteps}
           draftLoading={draftLoading}
           createDraft={createDraft}
@@ -96,8 +103,10 @@ export const CreateBounty = ({
 
       {steps === 5 && (
         <CreatebountyPayment
+          isEditMode={isEditMode}
           createAndPublishListing={createAndPublishListing}
           isListingPublishing={isListingPublishing}
+          bountyPayment={bountyPayment}
           setBountyPayment={setBountyPayment}
           setSlug={setSlug}
           questions={questions}
