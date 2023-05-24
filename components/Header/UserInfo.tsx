@@ -158,7 +158,7 @@ function UserInfo() {
         </>
       ) : (
         <>
-          <HStack gap={1}>
+          <HStack gap={2}>
             <HStack gap={0}>
               <Button
                 display={{ base: 'none', md: 'block' }}
