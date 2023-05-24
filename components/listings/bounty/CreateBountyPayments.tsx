@@ -52,6 +52,7 @@ interface Props {
   isListingPublishing: boolean;
   bountyPayment: any;
   setBountyPayment: Dispatch<SetStateAction<any | undefined>>;
+  isEditMode: boolean;
 }
 export const CreatebountyPayment = ({
   createDraft,
@@ -60,6 +61,7 @@ export const CreatebountyPayment = ({
   isListingPublishing,
   bountyPayment,
   setBountyPayment,
+  isEditMode,
 }: Props) => {
   const {
     isOpen: confirmIsOpen,
@@ -123,45 +125,6 @@ export const CreatebountyPayment = ({
     setPrizes(temp);
   };
 
-  // const onSubmit = async () => {
-  //   setLoading(true);
-  //   const Prizevalues = Object.values(prizevalues as Object);
-  //   if (Prizevalues.length <= 0) {
-  //     toast.error('Please add atleast one prize');
-  //     return;
-  //   }
-
-  //   let Prizes: Partial<PrizeListType> = Object();
-  //   prizes.forEach((_el, index: number) => {
-  //     const Prize: any = {};
-  //     if (!PrizeLabels[index]) {
-  //       Prize[PrizeLabels[index]!] = Prizevalues[index];
-  //     }
-  //     Prizes = {
-  //       ...Prizes,
-  //       ...Prize,
-  //     };
-  //   });
-  //   const bountyId = genrateuuid();
-  //   const questionsRes = await createQuestions({
-  //     id: genrateuuid(),
-  //     bountiesId: bountyId,
-  //     questions:
-  //       bountyBasic?.type === 'premission'
-  //         ? JSON.stringify([...defaultQuestionPremission, ...questions])
-  //         : JSON.stringify([...defaultQuestionPremissionLess]),
-  //   });
-
-  //   if (questionsRes) {
-  //     await axios.post('/api/updateSearch');
-  //     onOpen();
-  //     setSlug(`/bounties/${bountyBasic?.title.split(' ').join('-')}` as string);
-  //     setLoading(false);
-  //   } else {
-  //     toast.error('Error creating bounty, please try again later.');
-  //     setLoading(false);
-  //   }
-  // };
   return (
     <>
       <Modal isOpen={confirmIsOpen} onClose={confirmOnClose}>
@@ -345,33 +308,26 @@ export const CreatebountyPayment = ({
         </VStack>
         <Toaster />
         <VStack gap={4} w={'full'} mt={10}>
+          {!isEditMode && (
+            <Button
+              w="100%"
+              disabled={isListingPublishing}
+              isLoading={isListingPublishing}
+              onClick={confirmOnOpen}
+              variant={'solid'}
+            >
+              Create & Publish Listing
+            </Button>
+          )}
           <Button
             w="100%"
-            color={'white'}
-            fontSize="1rem"
-            fontWeight={600}
-            bg={'#6562FF'}
-            _hover={{ bg: '#6562FF' }}
-            disabled={isListingPublishing}
-            isLoading={isListingPublishing}
-            onClick={confirmOnOpen}
-          >
-            Create & Publish Listing
-          </Button>
-          <Button
-            w="100%"
-            color="gray.500"
-            fontSize="1rem"
-            fontWeight={600}
-            bg="transparent"
-            border="1px solid"
-            borderColor="gray.200"
             isLoading={draftLoading}
             onClick={() => {
               createDraft();
             }}
+            variant={isEditMode ? 'solid' : 'outline'}
           >
-            Save as Draft
+            {isEditMode ? 'Update' : 'Save as Draft'}
           </Button>
         </VStack>
       </VStack>

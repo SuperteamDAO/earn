@@ -83,6 +83,7 @@ interface Props {
   createDraft: () => void;
   bountyBasics?: BountyBasicType;
   draftLoading?: boolean;
+  isEditMode?: boolean;
 }
 const Description = ({
   editorData,
@@ -91,6 +92,7 @@ const Description = ({
   createDraft,
   bountyBasics,
   draftLoading,
+  isEditMode,
 }: Props) => {
   const [url, setUrl] = useState<string>('');
   const { isOpen, onClose, onOpen } = useDisclosure();
@@ -481,11 +483,6 @@ const Description = ({
         <VStack gap={6} w={'full'} my={7}>
           <Button
             w="100%"
-            color={'white'}
-            fontSize="1rem"
-            fontWeight={600}
-            bg={'#6562FF'}
-            _hover={{ bg: '#6562FF' }}
             onClick={() => {
               if (bountyBasics?.type === 'open') {
                 setSteps(5);
@@ -493,6 +490,7 @@ const Description = ({
               }
               setSteps(4);
             }}
+            variant="solid"
           >
             Continue
           </Button>
@@ -503,7 +501,7 @@ const Description = ({
             onClick={() => createDraft()}
             variant="outline"
           >
-            Save as Draft
+            {isEditMode ? 'Update' : 'Save as Draft'}
           </Button>
         </VStack>
       </Box>

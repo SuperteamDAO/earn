@@ -36,6 +36,7 @@ interface Props {
   isListingPublishing: boolean;
   bountyPayment: any;
   setBountyPayment: Dispatch<SetStateAction<any | undefined>>;
+  isEditMode: boolean;
 }
 export const CreateBounty = ({
   steps,
@@ -58,6 +59,7 @@ export const CreateBounty = ({
   isListingPublishing,
   bountyPayment,
   setBountyPayment,
+  isEditMode,
 }: Props) => {
   // handles the info from basic form
 
@@ -65,6 +67,7 @@ export const CreateBounty = ({
     <>
       {steps === 2 && (
         <CreatebountyBasic
+          isEditMode={isEditMode}
           draftLoading={draftLoading}
           createDraft={createDraft}
           skills={mainSkills}
@@ -78,6 +81,7 @@ export const CreateBounty = ({
       )}
       {steps === 3 && (
         <Description
+          isEditMode={isEditMode}
           bountyBasics={bountybasic}
           createDraft={createDraft}
           editorData={editorData}
@@ -88,6 +92,7 @@ export const CreateBounty = ({
       )}
       {steps === 4 && (
         <Builder
+          isEditMode={isEditMode}
           setSteps={setSteps}
           draftLoading={draftLoading}
           createDraft={createDraft}
@@ -98,6 +103,7 @@ export const CreateBounty = ({
 
       {steps === 5 && (
         <CreatebountyPayment
+          isEditMode={isEditMode}
           createAndPublishListing={createAndPublishListing}
           isListingPublishing={isListingPublishing}
           bountyPayment={bountyPayment}

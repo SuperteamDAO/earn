@@ -135,7 +135,7 @@ function CreateListing({ bounty, isEditMode = false }: Props) {
     try {
       await axios.post(api, {
         ...draft,
-        isPublished: false,
+        isPublished: isEditMode ? bounty?.isPublished : false,
       });
       router.push('/dashboard/bounties');
     } catch (e) {
@@ -301,6 +301,7 @@ function CreateListing({ bounty, isEditMode = false }: Props) {
               setEditorData={setEditorData}
               setSteps={setSteps}
               steps={steps}
+              isEditMode={isEditMode}
             />
           )}
           {steps > 1 && listingType === 'JOB' && (
