@@ -218,7 +218,7 @@ export const SubmissionModal = ({
               type="submit"
               variant="solid"
             >
-              {!isPermissioned ? 'Submit' : 'Apply Now'}
+              {!isPermissioned ? 'Submit' : 'Apply'}
             </Button>
           </form>
         </VStack>

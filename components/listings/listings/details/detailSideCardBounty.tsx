@@ -464,7 +464,7 @@ function DetailSideCard({
                 size="lg"
                 variant="solid"
               >
-                Submit Now
+                {type === 'permissioned' ? 'Apply Now' : 'Submit Now'}
               </Button>
             )}
           </Box>
