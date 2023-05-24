@@ -20,10 +20,15 @@ export const SubmissionPage = ({ user, link }: Props) => {
   useEffect(() => {
     const fetchImage = async () => {
       if (link) {
-        const { data } = (await axios.post('/api/og', {
-          url: link,
-        })) as { data: Metadata };
-        setImage(data.open_graph.images![0]?.url ?? '/assets/bg/og.svg');
+        try {
+          const { data } = (await axios.post('/api/og', {
+            url: link,
+          })) as { data: Metadata };
+          setImage(data.open_graph.images![0]?.url ?? '/assets/bg/og.svg');
+        } catch (error) {
+          console.log(error);
+          setImage('/assets/bg/og.svg');
+        }
       }
     };
     fetchImage();

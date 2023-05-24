@@ -2,6 +2,7 @@ import {
   Box,
   Button,
   Flex,
+  HStack,
   Image,
   Menu,
   MenuButton,
@@ -157,30 +158,44 @@ function UserInfo() {
         </>
       ) : (
         <>
-          <Button
-            display={{ base: 'none', md: 'block' }}
-            px={5}
-            fontSize="xs"
-            onClick={() => {
-              onOpen();
-            }}
-            size="sm"
-            variant={{ base: 'solid', md: 'ghost' }}
-          >
-            Login
-          </Button>
-          <Button
-            display={{ base: 'none', md: 'block' }}
-            px={4}
-            fontSize="xs"
-            onClick={() => {
-              onOpen();
-            }}
-            size="sm"
-            variant="solid"
-          >
-            Sign Up
-          </Button>
+          <HStack gap={2}>
+            <HStack gap={0}>
+              <Button
+                display={{ base: 'none', md: 'block' }}
+                fontSize="xs"
+                onClick={() => {
+                  router.push('/sponsor');
+                }}
+                size="sm"
+                variant={{ base: 'solid', md: 'ghost' }}
+              >
+                Create A Bounty
+              </Button>
+              <Button
+                display={{ base: 'none', md: 'block' }}
+                fontSize="xs"
+                onClick={() => {
+                  onOpen();
+                }}
+                size="sm"
+                variant={{ base: 'solid', md: 'ghost' }}
+              >
+                Login
+              </Button>
+            </HStack>
+            <Button
+              display={{ base: 'none', md: 'block' }}
+              px={4}
+              fontSize="xs"
+              onClick={() => {
+                onOpen();
+              }}
+              size="sm"
+              variant="solid"
+            >
+              Sign Up
+            </Button>
+          </HStack>
         </>
       )}
     </>

@@ -24,7 +24,7 @@ export default async function submission(
     }[];
     console.log(result?.like, resLikes, 'up');
 
-    if (resLikes.length > 0) {
+    if (resLikes?.length > 0) {
       console.log(resLikes, '--resLikes');
       const like = resLikes.find((e) => e?.id === userId);
       console.log(like, '--like');
