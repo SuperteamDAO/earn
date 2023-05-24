@@ -6,6 +6,7 @@ import {
   Menu,
   MenuButton,
   MenuDivider,
+  MenuGroup,
   MenuItem,
   MenuList,
   Text,
@@ -140,6 +141,29 @@ function UserInfo() {
                 >
                   Sponsor Dashboard
                 </MenuItem>
+              )}
+              {userInfo?.role === 'GOD' && (
+                <>
+                  <MenuDivider />
+                  <MenuGroup
+                    ml={3}
+                    color="brand.slate.700"
+                    fontSize="xs"
+                    fontWeight={700}
+                    title="God Mode"
+                  >
+                    <MenuItem
+                      color="brand.slate.500"
+                      fontSize="sm"
+                      fontWeight={600}
+                      onClick={() => {
+                        router.push('/new/sponsor');
+                      }}
+                    >
+                      Create New Sponsor
+                    </MenuItem>
+                  </MenuGroup>
+                </>
               )}
               <MenuDivider />
               <MenuItem
