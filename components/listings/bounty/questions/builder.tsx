@@ -11,6 +11,7 @@ interface Props {
   createDraft: () => void;
   questions: Ques[];
   setQuestions: Dispatch<SetStateAction<Ques[]>>;
+  isEditMode: boolean;
 }
 export type QuestionType =
   | 'text'
@@ -37,6 +38,7 @@ const Builder = ({
   draftLoading,
   questions,
   setQuestions,
+  isEditMode,
 }: Props) => {
   const [error, setError] = useState<ErrorState[]>([]);
   return (
@@ -91,11 +93,6 @@ const Builder = ({
         <VStack gap={6} w={'full'} pt={10}>
           <Button
             w="100%"
-            color={'white'}
-            fontSize="1rem"
-            fontWeight={600}
-            bg={'#6562FF'}
-            _hover={{ bg: '#6562FF' }}
             onClick={() => {
               if (questions.length === 0) {
                 toast.error('Add minimun of one question');
@@ -153,23 +150,19 @@ const Builder = ({
                 setSteps(5);
               }
             }}
+            variant="solid"
           >
             Continue
           </Button>
           <Button
             w="100%"
-            color="gray.500"
-            fontSize="1rem"
-            fontWeight={600}
-            bg="transparent"
-            border="1px solid"
-            borderColor="gray.200"
             isLoading={draftLoading}
             onClick={() => {
               createDraft();
             }}
+            variant="outline"
           >
-            Save as Drafts
+            {isEditMode ? 'Update' : 'Save as Draft'}
           </Button>
         </VStack>
       </VStack>

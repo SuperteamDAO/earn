@@ -31,6 +31,7 @@ interface Props {
   skills: MultiSelectOptions[];
   createDraft: () => void;
   draftLoading: boolean;
+  isEditMode: boolean;
 }
 interface ErrorsBasic {
   title: boolean;
@@ -50,6 +51,7 @@ export const CreatebountyBasic = ({
   bountyBasic,
   createDraft,
   draftLoading,
+  isEditMode,
 }: Props) => {
   const [defaultSlug, setDefaultSlug] = useState<string>(
     bountyBasic?.slug || ''
@@ -331,11 +333,6 @@ export const CreatebountyBasic = ({
         <VStack gap={6} w={'full'} pt={10}>
           <Button
             w="100%"
-            color={'white'}
-            fontSize="1rem"
-            fontWeight={600}
-            bg={'#6562FF'}
-            _hover={{ bg: '#6562FF' }}
             onClick={() => {
               setErrorState({
                 deadline: !bountyBasic?.deadline,
@@ -357,6 +354,7 @@ export const CreatebountyBasic = ({
                 setSteps(3);
               }
             }}
+            variant="solid"
           >
             Continue
           </Button>
@@ -369,7 +367,7 @@ export const CreatebountyBasic = ({
             }}
             variant="outline"
           >
-            Save as Draft
+            {isEditMode ? 'Update' : 'Save as Draft'}
           </Button>
         </VStack>
       </VStack>
