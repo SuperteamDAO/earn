@@ -50,6 +50,11 @@ const CreateListing = () => {
 
   // - Bounty
   const [bountybasic, setBountyBasic] = useState<BountyBasicType | undefined>();
+  const [bountyPayment, setBountyPayment] = useState({
+    rewardAmount: 0,
+    token: undefined,
+    rewards: undefined,
+  });
   // -- Grants
   const [grantBasic, setgrantsBasic] = useState<GrantsBasicType | undefined>();
 
@@ -66,13 +71,14 @@ const CreateListing = () => {
         ...bountybasic,
         deadline: bountybasic?.deadline
           ? new Date(bountybasic?.deadline).toISOString()
-          : '',
+          : undefined,
         description: editorData || '',
         eligibility: (questions || []).map((q) => ({
           question: q.question,
           order: q.order,
           type: q.type,
         })),
+        ...bountyPayment,
         isPublished: true,
       };
       const result = await axios.post('/api/bounties/create/', bounty);
@@ -97,13 +103,14 @@ const CreateListing = () => {
       ...bountybasic,
       deadline: bountybasic?.deadline
         ? new Date(bountybasic?.deadline).toISOString()
-        : '',
+        : undefined,
       description: editorData || '',
       eligibility: (questions || []).map((q) => ({
         question: q.question,
         order: q.order,
         type: q.type,
       })),
+      ...bountyPayment,
     };
     try {
       await axios.post(api, {
@@ -256,6 +263,7 @@ const CreateListing = () => {
             <CreateBounty
               createAndPublishListing={createAndPublishListing}
               isListingPublishing={isListingPublishing}
+              setBountyPayment={setBountyPayment}
               questions={questions}
               setQuestions={setQuestions}
               setSlug={setSlug}

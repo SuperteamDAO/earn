@@ -23,7 +23,7 @@ import {
   VStack,
 } from '@chakra-ui/react';
 import type { Dispatch, SetStateAction } from 'react';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Toaster } from 'react-hot-toast';
 
 import type { MultiSelectOptions } from '../../../constants';
@@ -32,6 +32,7 @@ import type { BountyBasicType } from './Createbounty';
 import type { Ques } from './questions/builder';
 
 interface PrizeListInterface {
+  value: string;
   label: string;
   placeHolder: number;
 }
@@ -47,12 +48,14 @@ interface Props {
   questions: Ques[];
   createAndPublishListing: () => void;
   isListingPublishing: boolean;
+  setBountyPayment: Dispatch<SetStateAction<any | undefined>>;
 }
 export const CreatebountyPayment = ({
   createDraft,
   draftLoading,
   createAndPublishListing,
   isListingPublishing,
+  setBountyPayment,
 }: Props) => {
   const {
     isOpen: confirmIsOpen,
@@ -62,20 +65,29 @@ export const CreatebountyPayment = ({
   // handles which token is selected
   const [tokenIndex, setTokenIndex] = useState<number>(0);
   const [tokenName, setTokenName] = useState(
-    tokenList ? tokenList[0]?.tokenName || '' : ''
+    tokenList ? tokenList[0]?.tokenSymbol || '' : ''
   );
   const [totalReward, setTotalReward] = useState<number | undefined>();
 
   // stores the state for prize
-  const [prizevalues, setPrizevalues] = useState<Object>({});
+  const [prizevalues, setPrizevalues] = useState<any>({});
 
   // handles the UI for prize
   const [prizes, setPrizes] = useState<PrizeListInterface[]>([
     {
-      label: 'First prize',
+      value: 'first',
+      label: 'first prize',
       placeHolder: 2500,
     },
   ]);
+
+  useEffect(() => {
+    setBountyPayment({
+      rewardAmount: totalReward,
+      token: tokenName,
+      rewards: prizevalues,
+    });
+  }, [prizevalues, totalReward, tokenName]);
 
   const handleButtonClick = () => {
     const temp: PrizeListInterface[] = prizes.filter((_el, index) => {
@@ -211,7 +223,7 @@ export const CreatebountyPayment = ({
                       key={token.mintAddress}
                       onClick={() => {
                         setTokenIndex(index);
-                        setTokenName(token?.tokenName);
+                        setTokenName(token?.tokenSymbol);
                       }}
                     >
                       <HStack>
@@ -256,18 +268,25 @@ export const CreatebountyPayment = ({
             type="number"
           />
         </FormControl>
-        <VStack gap={2} w={'full'} mt={5}>
+        <VStack gap={2} w={'full'} mt={5} mb={8}>
           {prizes.map((el, index) => {
             return (
               <FormControl key={el.label}>
-                <FormLabel color={'gray.500'}>{el.label}</FormLabel>
+                <FormLabel color={'gray.500'} textTransform="capitalize">
+                  {el.label}
+                </FormLabel>
                 <Flex gap={3}>
                   <Input
-                    color="gray.700"
+                    color="brand.slate.500"
+                    borderColor="brand.slate.300"
+                    _placeholder={{
+                      color: 'brand.slate.300',
+                    }}
+                    focusBorderColor="brand.purple"
                     onChange={(e) => {
                       setPrizevalues({
                         ...(prizevalues as Object),
-                        [el.label]: e.target.value,
+                        [el.value]: parseInt(e.target.value, 10),
                       });
                     }}
                     placeholder={JSON.stringify(el.placeHolder)}
@@ -284,24 +303,24 @@ export const CreatebountyPayment = ({
           })}
           <Button
             w="full"
-            bg={'transparent'}
-            border={'1px solid #e2e8f0'}
             isDisabled={prizes.length === 5 && true}
             onClick={() => {
               setPrizes([
                 ...prizes,
                 {
+                  value: PrizeList[prizes.length] || 'first',
                   label: `${PrizeList[prizes.length]} prize`,
                   placeHolder: (5 - prizes.length) * 500,
                 },
               ]);
             }}
+            variant="outline"
           >
             Add Prize
           </Button>
         </VStack>
         <Toaster />
-        <VStack gap={6} w={'full'} mt={10}>
+        <VStack gap={4} w={'full'} mt={10}>
           <Button
             w="100%"
             color={'white'}
