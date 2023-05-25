@@ -6,6 +6,7 @@ import {
   Box,
   Button,
   FormControl,
+  FormErrorMessage,
   FormLabel,
   Input,
   Modal,
@@ -40,8 +41,10 @@ function InviteMembers({ isOpen, onClose }: Props) {
   const [email, setEmail] = useState<string>();
   const [isInviting, setIsInviting] = useState(false);
   const [isInviteSuccess, setIsInviteSuccess] = useState(false);
+  const [isInviteError, setIsInviteError] = useState(false);
 
   const handleInput = (emailString: string) => {
+    setIsInviteError(false);
     const isEmail = validateEmail(emailString);
     if (isEmail) {
       setEmail(emailString);
@@ -50,6 +53,7 @@ function InviteMembers({ isOpen, onClose }: Props) {
 
   const sendInvites = async () => {
     setIsInviting(true);
+    setIsInviteError(false);
     try {
       await axios.post('/api/members/invite', {
         email,
@@ -58,6 +62,7 @@ function InviteMembers({ isOpen, onClose }: Props) {
       setIsInviteSuccess(true);
       setIsInviting(false);
     } catch (e) {
+      setIsInviteError(true);
       setIsInviting(false);
     }
   };
@@ -91,7 +96,7 @@ function InviteMembers({ isOpen, onClose }: Props) {
         ) : (
           <>
             <ModalBody>
-              <FormControl>
+              <FormControl isInvalid={isInviteError}>
                 <FormLabel mb={0}>Add Email Address</FormLabel>
                 <Input
                   color="brand.slate.500"
@@ -103,6 +108,9 @@ function InviteMembers({ isOpen, onClose }: Props) {
                   onChange={(e) => handleInput(e.target.value)}
                   type="email"
                 />
+                <FormErrorMessage>
+                  Sorry! Error occurred while sending invite.
+                </FormErrorMessage>
               </FormControl>
             </ModalBody>
             <ModalFooter>
