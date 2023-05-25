@@ -216,6 +216,7 @@ model User {
   Comment          Comment[]
   Submission       Submission[]
   Grants           Grants[]
+  UserInvites      UserInvites[]
 
   @@index([email, publicKey, username])
   @@index([currentSponsorId])
@@ -233,6 +234,18 @@ model UserSponsors {
   @@id([userId, sponsorId])
   @@index([userId, sponsorId])
   @@index([sponsorId])
+}
+
+model UserInvites {
+  id        String   @id @default(uuid())
+  email     String   @unique
+  senderId  String
+  sender    User     @relation(fields: [senderId], references: [id])
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([id])
+  @@index([senderId])
 }
 
 enum Role {

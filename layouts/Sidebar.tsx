@@ -6,7 +6,7 @@ import { useRouter } from 'next/router';
 import type { ReactNode, ReactText } from 'react';
 import React from 'react';
 import type { IconType } from 'react-icons';
-import { AiFillFire } from 'react-icons/ai';
+import { AiFillFire, AiOutlineUsergroupAdd } from 'react-icons/ai';
 
 import SelectSponsor from '@/components/SelectSponsor/SelectSponsor';
 import LoadingSection from '@/components/shared/LoadingSection';
@@ -20,9 +20,10 @@ interface LinkItemProps {
   link: string;
   icon: IconType;
 }
+
 const LinkItems: Array<LinkItemProps> = [
   { name: 'Bounties', link: '/bounties', icon: AiFillFire },
-  // { name: 'Members', link: '/members', icon: AiOutlineUsergroupAdd },
+  { name: 'Members', link: '/members', icon: AiOutlineUsergroupAdd },
 ];
 
 interface NavItemProps extends FlexProps {
@@ -103,8 +104,8 @@ const SidebarContent = ({ ...rest }: BoxProps) => {
       {LinkItems.map((link) => (
         <NavItem
           key={link.name}
-          icon={link.icon}
           link={link.link}
+          icon={link.icon}
           isActive={currentPath === link.link}
         >
           {link.name}
