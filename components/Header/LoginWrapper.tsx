@@ -10,9 +10,14 @@ import { userStore } from '@/store/user';
 interface LoginProps {
   triggerLogin: boolean;
   setTriggerLogin: (arg0: boolean) => void;
+  emailInvite?: string;
 }
 
-function LoginWrapper({ triggerLogin, setTriggerLogin }: LoginProps) {
+function LoginWrapper({
+  triggerLogin,
+  setTriggerLogin,
+  emailInvite,
+}: LoginProps) {
   const { isOpen, onOpen, onClose } = useDisclosure();
   const { connected, publicKey, wallets, select } = useWallet();
   const { setUserInfo, userInfo } = userStore();
@@ -56,6 +61,7 @@ function LoginWrapper({ triggerLogin, setTriggerLogin }: LoginProps) {
     <>
       {!!isOpen && (
         <Login
+          emailInvite={emailInvite}
           wallets={wallets}
           onConnectWallet={onConnectWallet}
           isOpen={isOpen}

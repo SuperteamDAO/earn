@@ -30,6 +30,7 @@ interface Props {
   setUserInfo: (userInfo: User) => void;
   wallets: Wallet[];
   initialStep?: number;
+  emailInvite?: string;
 }
 export const Login = ({
   isOpen,
@@ -39,6 +40,7 @@ export const Login = ({
   setUserInfo,
   wallets,
   initialStep = 1,
+  emailInvite,
 }: Props) => {
   const router = useRouter();
   const [step, setStep] = useState(initialStep);
@@ -83,6 +85,7 @@ export const Login = ({
           )}
           {step === 2 && (
             <NewUserInfo
+              emailInvite={emailInvite}
               userInfo={userInfo}
               setUserInfo={setUserInfo}
               setStep={setStep}
