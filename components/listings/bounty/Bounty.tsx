@@ -210,7 +210,8 @@ function CreateListing({ bounty, isEditMode = false }: Props) {
 
   return (
     <>
-      {!userInfo?.id || userInfo?.role !== 'GOD' ? (
+      {!userInfo?.id ||
+      !(userInfo?.role === 'GOD' || !!userInfo?.currentSponsorId) ? (
         <ErrorSection
           title="Access is Forbidden!"
           message="Please contact support to access this section."
