@@ -21,9 +21,6 @@ export default async function userFunc(
       //          skills
       const skillsParsed = JSON.parse(user.skills || '{}');
       const skills = Object.keys(skillsParsed);
-      const subSkills = skills.reduce((t: any, cc: any) => {
-        return [...t, ...skillsParsed[cc]];
-      }, []);
 
       await prisma.user.create({
         data: {
@@ -51,7 +48,6 @@ export default async function userFunc(
           isVerified: !!user.email,
           isTalentFilled: true,
           skills: skills.join(','),
-          subSkills: subSkills.join(','),
         },
       });
       console.log('Successfully Added', i);
