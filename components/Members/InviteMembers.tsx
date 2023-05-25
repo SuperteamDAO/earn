@@ -16,6 +16,10 @@ import {
   ModalFooter,
   ModalHeader,
   ModalOverlay,
+  Radio,
+  RadioGroup,
+  Stack,
+  Text,
 } from '@chakra-ui/react';
 import axios from 'axios';
 import { useState } from 'react';
@@ -39,6 +43,7 @@ const validateEmail = (email: string) => {
 function InviteMembers({ isOpen, onClose }: Props) {
   const { userInfo } = userStore();
   const [email, setEmail] = useState<string>();
+  const [memberType, setMemberType] = useState<'MEMBER' | 'ADMIN'>('MEMBER');
   const [isInviting, setIsInviting] = useState(false);
   const [isInviteSuccess, setIsInviteSuccess] = useState(false);
   const [isInviteError, setIsInviteError] = useState(false);
@@ -59,6 +64,7 @@ function InviteMembers({ isOpen, onClose }: Props) {
         email,
         userId: userInfo?.id,
         sponsorId: userInfo?.currentSponsorId,
+        memberType,
       });
       setIsInviteSuccess(true);
       setIsInviting(false);
@@ -77,7 +83,16 @@ function InviteMembers({ isOpen, onClose }: Props) {
         {isInviteSuccess ? (
           <>
             <ModalBody>
-              <Alert borderRadius="md" status="success" variant="subtle">
+              <Alert
+                alignItems="center"
+                justifyContent="center"
+                flexDir="column"
+                py={8}
+                textAlign="center"
+                borderRadius="md"
+                status="success"
+                variant="subtle"
+              >
                 <AlertIcon boxSize="40px" mr={4} />
                 <Box>
                   <AlertTitle>Sent Invite!</AlertTitle>
@@ -113,6 +128,48 @@ function InviteMembers({ isOpen, onClose }: Props) {
                   Sorry! Error occurred while sending invite.
                 </FormErrorMessage>
               </FormControl>
+              <Stack pt={4}>
+                <FormLabel mb={0}>Member Type</FormLabel>
+                <RadioGroup defaultValue={memberType}>
+                  <Radio
+                    _hover={{ bg: 'brand.slate.100' }}
+                    colorScheme="purple"
+                    name="memberType"
+                    onClick={() => setMemberType('MEMBER')}
+                    size="md"
+                    value="MEMBER"
+                  >
+                    <Box ml={2}>
+                      <Text fontSize="sm" fontWeight={700}>
+                        Member
+                      </Text>
+                      <Text fontSize="sm">
+                        Members can manage bounties, jobs & grants, can assign
+                        winners and make payments.
+                      </Text>
+                    </Box>
+                  </Radio>
+                  <Radio
+                    mt={2}
+                    _hover={{ bg: 'brand.slate.100' }}
+                    colorScheme="purple"
+                    name="memberType"
+                    onClick={() => setMemberType('ADMIN')}
+                    size="md"
+                    value="ADMIN"
+                  >
+                    <Box ml={2}>
+                      <Text fontSize="sm" fontWeight={700}>
+                        Admin
+                      </Text>
+                      <Text fontSize="sm">
+                        Admin have all Member privileges, and they can manage
+                        all members.
+                      </Text>
+                    </Box>
+                  </Radio>
+                </RadioGroup>
+              </Stack>
             </ModalBody>
             <ModalFooter>
               <Button mr={4} onClick={onClose} variant="ghost">

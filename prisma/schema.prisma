@@ -237,13 +237,14 @@ model UserSponsors {
 }
 
 model UserInvites {
-  id        String   @id @default(uuid())
-  email     String   @unique
-  senderId  String
-  sponsorId String
-  sender    User     @relation(fields: [senderId], references: [id])
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  id         String   @id @default(uuid())
+  email      String   @unique
+  senderId   String
+  sponsorId  String
+  memberType Role     @default(MEMBER)
+  sender     User     @relation(fields: [senderId], references: [id])
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
 
   @@index([id])
   @@index([senderId])
