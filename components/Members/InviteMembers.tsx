@@ -58,6 +58,7 @@ function InviteMembers({ isOpen, onClose }: Props) {
       await axios.post('/api/members/invite', {
         email,
         userId: userInfo?.id,
+        sponsorId: userInfo?.currentSponsorId,
       });
       setIsInviteSuccess(true);
       setIsInviting(false);

@@ -8,7 +8,7 @@ export default async function sendInvites(
   req: NextApiRequest,
   res: NextApiResponse
 ) {
-  const { email, userId } = req.body;
+  const { email, userId, sponsorId } = req.body;
   try {
     const user = await prisma.user.findUnique({
       where: {
@@ -32,6 +32,7 @@ export default async function sendInvites(
       data: {
         email,
         senderId: userId,
+        sponsorId,
       },
     });
 
