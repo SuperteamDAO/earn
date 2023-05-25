@@ -36,10 +36,10 @@ export default async function sendInvites(
     });
 
     const msg = {
-      to: result.email,
+      to: email,
       from: {
-        name: `${user?.firstName} ${user?.lastName} invited you to join Superteam Earn`,
-        email: user?.email as string,
+        name: 'Kash from Superteam',
+        email: process.env.SENDGRID_EMAIL as string,
       },
       templateId: process.env.SENDGRID_INVITE_SPONSOR as string,
       dynamicTemplateData: {
