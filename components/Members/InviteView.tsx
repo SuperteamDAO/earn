@@ -10,18 +10,24 @@ interface Props {
 
 function InviteView({ invite }: Props) {
   const [triggerLogin, setTriggerLogin] = useState(false);
+  const [isError, setIsError] = useState(false);
 
-  const { setUserInfo } = userStore();
+  const { setUserInfo, userInfo } = userStore();
 
   const handleSubmit = () => {
-    setUserInfo({ email: invite?.email });
-    setTriggerLogin(true);
+    if (userInfo?.id) {
+      setIsError(true);
+    } else {
+      setUserInfo({ email: invite?.email });
+      setTriggerLogin(true);
+    }
   };
 
   return (
     <Container maxW={'3xl'}>
       <LoginWrapper
         emailInvite={invite?.email}
+        currentSponsorId={invite?.sponsorId}
         triggerLogin={triggerLogin}
         setTriggerLogin={setTriggerLogin}
       />
@@ -63,6 +69,13 @@ function InviteView({ invite }: Props) {
             Accept Invite
           </Button>
         </Stack>
+        {isError && (
+          <Text pt={2} color={'red'}>
+            You are already logged in!
+            <br />
+            Please log out and then click on the invite link.
+          </Text>
+        )}
       </Stack>
     </Container>
   );

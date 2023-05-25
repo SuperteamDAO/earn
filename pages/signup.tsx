@@ -7,19 +7,15 @@ import ErrorSection from '@/components/shared/ErrorSection';
 import LoadingSection from '@/components/shared/LoadingSection';
 import { Default } from '@/layouts/Default';
 import { Meta } from '@/layouts/Meta';
-import { userStore } from '@/store/user';
 
 interface Props {
   invite: string;
 }
 
 function SignUp({ invite }: Props) {
-  const { userInfo } = userStore();
   const [isLoading, setIsLoading] = useState(true);
   const [isError, setIsError] = useState(false);
   const [inviteInfo, setInviteInfo] = useState<any>();
-  const isUserPresent =
-    !!userInfo?.isTalentFilled || !!userInfo?.currentSponsorId;
 
   const getInvite = async () => {
     setIsLoading(true);
@@ -60,22 +56,14 @@ function SignUp({ invite }: Props) {
         />
       }
     >
-      {!!isUserPresent && (
-        <ErrorSection
-          title="Already Signed In!"
-          message="Please log out and then click on the invite link."
-        />
-      )}
-      {!isUserPresent && isLoading && <LoadingSection />}
-      {!isUserPresent && !isLoading && isError && (
+      {isLoading && <LoadingSection />}
+      {!isLoading && isError && (
         <ErrorSection
           title="Invalid Invite!"
           message="You invite is either invalid or expired. Please try again."
         />
       )}
-      {!isUserPresent && !isLoading && !isError && (
-        <InviteView invite={inviteInfo} />
-      )}
+      {!isLoading && !isError && <InviteView invite={inviteInfo} />}
     </Default>
   );
 }

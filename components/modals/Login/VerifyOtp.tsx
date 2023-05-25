@@ -20,13 +20,21 @@ import { Mixpanel } from '@/utils/mixpanel';
 interface Props {
   userInfo: User | null;
   onClose: () => void;
+  emailInvite?: string;
+  currentSponsorId?: string;
   otp: {
     current: number;
     last: number;
   };
 }
 
-function NewUserInfo({ userInfo, onClose, otp }: Props) {
+function NewUserInfo({
+  userInfo,
+  onClose,
+  emailInvite,
+  currentSponsorId,
+  otp,
+}: Props) {
   const router = useRouter();
   const { setUserInfo } = userStore();
   const [pin, setPin] = useState('');
@@ -41,11 +49,12 @@ function NewUserInfo({ userInfo, onClose, otp }: Props) {
       if (otp.current === Number(pin) || otp.last === Number(pin)) {
         const userUpdtedDetails = await axios.post('/api/user/update', {
           id: userInfo?.id,
+          currentSponsorId,
           isVerified: true,
         });
         setUserInfo(userUpdtedDetails?.data);
         Mixpanel.track('new_user_created');
-        router.push('/new');
+        router.push(emailInvite ? '/dashboard/bounties' : '/new');
         onClose();
       } else {
         setVerificationError('Incorrect OTP. Please try again.');

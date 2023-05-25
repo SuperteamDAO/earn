@@ -11,12 +11,14 @@ interface LoginProps {
   triggerLogin: boolean;
   setTriggerLogin: (arg0: boolean) => void;
   emailInvite?: string;
+  currentSponsorId?: string;
 }
 
 function LoginWrapper({
   triggerLogin,
   setTriggerLogin,
   emailInvite,
+  currentSponsorId,
 }: LoginProps) {
   const { isOpen, onOpen, onClose } = useDisclosure();
   const { connected, publicKey, wallets, select } = useWallet();
@@ -61,6 +63,7 @@ function LoginWrapper({
     <>
       {!!isOpen && (
         <Login
+          currentSponsorId={currentSponsorId}
           emailInvite={emailInvite}
           wallets={wallets}
           onConnectWallet={onConnectWallet}

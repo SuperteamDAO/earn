@@ -46,7 +46,7 @@ export default async function sendInvites(
       dynamicTemplateData: {
         sponsorName: user?.currentSponsor?.name,
         senderName: `${user?.firstName} ${user?.lastName}`,
-        link: `${getURL()}/signup?invite=${result.id}`,
+        link: `${getURL()}signup?invite=${result.id}`,
       },
     };
     await sgMail.send(msg);
