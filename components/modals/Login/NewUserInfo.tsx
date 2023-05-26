@@ -67,6 +67,25 @@ function NewUserInfo({
     });
   };
 
+  const sendOTPEmail = async (user: User) => {
+    setUserInfo({ ...userInfo, ...user });
+    await axios.post('/api/otp/send', {
+      publicKey: userInfo?.publicKey,
+      email: userDetails?.email,
+    });
+    Mixpanel.track('otp_sent', {
+      email: userDetails?.email,
+    });
+    const code = generateCode(userInfo?.publicKey);
+    const codeLast = generateCodeLast(userInfo?.publicKey);
+    setOtp({
+      current: code,
+      last: codeLast,
+    });
+    setLoading(false);
+    setStep(3);
+  };
+
   const sendOTP = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     try {
@@ -87,33 +106,22 @@ function NewUserInfo({
           firstName: userDetails?.firstName,
           lastName: userDetails?.lastName,
         });
-        setUserInfo(newUserDetails?.data);
-        await axios.post('/api/otp/send', {
-          publicKey: userInfo?.publicKey,
-          email: userDetails?.email,
-        });
-        Mixpanel.track('otp_sent', {
-          email: userDetails?.email,
-        });
-        const code = generateCode(userInfo?.publicKey);
-        const codeLast = generateCodeLast(userInfo?.publicKey);
-        setOtp({
-          current: code,
-          last: codeLast,
-        });
-        setLoading(false);
-        setStep(3);
+        sendOTPEmail(newUserDetails?.data);
       }
     } catch (error: any) {
       if (
         error?.response?.data?.error?.code === 'P2002' &&
         error?.response?.data?.user
       ) {
-        setErrorMessage(
-          `User already exists for this email with another wallet (${truncatePublicKey(
-            error?.response?.data?.user?.publicKey
-          )}).`
-        );
+        if (error?.response?.data?.user?.publicKey === userInfo?.publicKey) {
+          sendOTPEmail(error?.response?.data?.user);
+        } else {
+          setErrorMessage(
+            `User already exists for this email with another wallet (${truncatePublicKey(
+              error?.response?.data?.user?.publicKey
+            )}).`
+          );
+        }
       } else {
         setErrorMessage(
           `Error occurred in creating user. Error Code:${
@@ -137,6 +145,7 @@ function NewUserInfo({
               <FormControl id="firstName" isRequired>
                 <FormLabel color="brand.slate.500">First Name</FormLabel>
                 <Input
+                  defaultValue={userDetails?.firstName}
                   focusBorderColor="brand.purple"
                   onChange={(e) => setInfo({ firstName: e.target.value })}
                   type="text"
@@ -147,6 +156,7 @@ function NewUserInfo({
               <FormControl id="lastName" isRequired>
                 <FormLabel color="brand.slate.500">Last Name</FormLabel>
                 <Input
+                  defaultValue={userDetails?.lastName}
                   focusBorderColor="brand.purple"
                   onChange={(e) => setInfo({ lastName: e.target.value })}
                   type="text"
