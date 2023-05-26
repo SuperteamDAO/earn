@@ -43,7 +43,7 @@ const validateEmail = (email: string) => {
 function InviteMembers({ isOpen, onClose }: Props) {
   const { userInfo } = userStore();
   const [email, setEmail] = useState<string>();
-  const [memberType, setMemberType] = useState<'MEMBER' | 'ADMIN'>('MEMBER');
+  const [memberType, setMemberType] = useState<string>('MEMBER');
   const [isInviting, setIsInviting] = useState(false);
   const [isInviteSuccess, setIsInviteSuccess] = useState(false);
   const [isInviteError, setIsInviteError] = useState(false);
@@ -60,7 +60,7 @@ function InviteMembers({ isOpen, onClose }: Props) {
     setIsInviting(true);
     setIsInviteError(false);
     try {
-      await axios.post('/api/members/invite', {
+      await axios.post('/api/members/invite/', {
         email,
         userId: userInfo?.id,
         sponsorId: userInfo?.currentSponsorId,
@@ -130,12 +130,14 @@ function InviteMembers({ isOpen, onClose }: Props) {
               </FormControl>
               <Stack pt={4}>
                 <FormLabel mb={0}>Member Type</FormLabel>
-                <RadioGroup defaultValue={memberType}>
+                <RadioGroup
+                  defaultValue={memberType}
+                  onChange={(value) => setMemberType(value)}
+                >
                   <Radio
                     _hover={{ bg: 'brand.slate.100' }}
                     colorScheme="purple"
                     name="memberType"
-                    onClick={() => setMemberType('MEMBER')}
                     size="md"
                     value="MEMBER"
                   >
@@ -154,7 +156,6 @@ function InviteMembers({ isOpen, onClose }: Props) {
                     _hover={{ bg: 'brand.slate.100' }}
                     colorScheme="purple"
                     name="memberType"
-                    onClick={() => setMemberType('ADMIN')}
                     size="md"
                     value="ADMIN"
                   >

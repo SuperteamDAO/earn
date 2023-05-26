@@ -184,15 +184,13 @@ export const BountiesCard = ({
               src={logo || `${router.basePath}/assets/images/sponsor-logo.png`}
             />
             <Flex justify={'space-between'} direction={'column'} w={'full'}>
-              <Link
+              <Text
                 color="brand.slate.700"
                 fontSize={['xs', 'xs', 'sm', 'sm']}
                 fontWeight={600}
                 _hover={{
                   textDecoration: 'underline',
                 }}
-                cursor="pointer"
-                href={`/listings/bounties/${slug}`}
                 onClick={() => {
                   Mixpanel.track('bounty_clicked', {
                     element: 'title',
@@ -201,7 +199,7 @@ export const BountiesCard = ({
                 }}
               >
                 {isMobile ? textLimiter(title, 20) : textLimiter(title, 40)}
-              </Link>
+              </Text>
               <Text
                 w={'full'}
                 color={'brand.slate.500'}
@@ -249,28 +247,18 @@ export const BountiesCard = ({
               </Flex>
             </Flex>
           </Flex>
-          <Link
-            href={`/listings/bounties/${slug}`}
-            onClick={() => {
-              Mixpanel.track('bounty_clicked', {
-                element: 'button',
-                'Bounty Title': title,
-              });
-            }}
+          <Button
+            h={isMobile ? 7 : 9}
+            px={6}
+            fontSize={['xx-small', 'xs', 'sm', 'sm']}
+            variant="outlineSecondary"
           >
-            <Button
-              h={isMobile ? 7 : 9}
-              px={6}
-              fontSize={['xx-small', 'xs', 'sm', 'sm']}
-              variant="outlineSecondary"
-            >
-              {dayjs().isAfter(deadline)
-                ? status === 'CLOSED'
-                  ? 'View'
-                  : 'View'
-                : 'Apply'}
-            </Button>
-          </Link>
+            {dayjs().isAfter(deadline)
+              ? status === 'CLOSED'
+                ? 'View'
+                : 'View'
+              : 'Apply'}
+          </Button>
         </Flex>
       </Link>
     </>
@@ -303,118 +291,105 @@ export const JobsCard = ({
 }: JobsProps) => {
   const [isMobile] = useMediaQuery('(max-width: 768px)');
   return (
-    <>
-      <Link
-        p={2}
-        borderRadius={5}
-        _hover={{
-          textDecoration: 'none',
-          bg: 'gray.100',
-        }}
-        href={link}
-        isExternal
-        onClick={() => {
-          Mixpanel.track('bounty_clicked', {
-            element: 'title',
-            'Job Title': title,
-          });
-        }}
+    <Link
+      p={2}
+      borderRadius={5}
+      _hover={{
+        textDecoration: 'none',
+        bg: 'gray.100',
+      }}
+      href={link}
+      isExternal
+      onClick={() => {
+        Mixpanel.track('job_clicked', {
+          element: 'title',
+          'Job Title': title,
+        });
+      }}
+    >
+      <Flex
+        align="start"
+        justify="space-between"
+        w={{ base: '100%', md: 'brand.120' }}
+        h={16}
       >
-        <Flex
-          align="start"
-          justify="space-between"
-          w={{ base: '100%', md: 'brand.120' }}
-          h={16}
-        >
-          <Flex justify="start">
-            <Image
-              w={16}
-              h={16}
-              mr={5}
-              alt={'company logo'}
-              rounded={5}
-              src={logo || '/assets/home/placeholder/ph2.png'}
-            />
-            <Flex justify={'space-between'} direction={'column'}>
-              <Text
-                color="brand.slate.700"
-                fontSize={['xs', 'xs', 'sm', 'sm']}
-                fontWeight="600"
-              >
-                {isMobile ? textLimiter(title, 20) : textLimiter(title, 40)}
-              </Text>
-              <Text
-                color="brand.slate.400"
-                fontSize={['xs', 'xs', 'sm', 'sm']}
-                fontWeight={400}
-              >
-                {description
-                  ? parse(
-                      description?.startsWith('"')
-                        ? JSON.parse(description || '')?.slice(0, 100)
-                        : (description ?? '')?.slice(0, 100)
-                    )
-                  : orgName}
-              </Text>
-              <Flex align={'center'}>
-                {!!min && !!max && (
-                  <Text
-                    mr={3}
-                    color={'brand.slate.500'}
-                    fontSize={['xs', 'xs', 'sm', 'sm']}
-                  >
-                    <Text as="span" fontWeight="700">
-                      ${' '}
-                    </Text>
-                    {min.toLocaleString()} - {max.toLocaleString()}
+        <Flex justify="start">
+          <Image
+            w={16}
+            h={16}
+            mr={5}
+            alt={'company logo'}
+            rounded={5}
+            src={logo || '/assets/home/placeholder/ph2.png'}
+          />
+          <Flex justify={'space-between'} direction={'column'}>
+            <Text
+              color="brand.slate.700"
+              fontSize={['xs', 'xs', 'sm', 'sm']}
+              fontWeight="600"
+            >
+              {isMobile ? textLimiter(title, 20) : textLimiter(title, 40)}
+            </Text>
+            <Text
+              color="brand.slate.400"
+              fontSize={['xs', 'xs', 'sm', 'sm']}
+              fontWeight={400}
+            >
+              {description
+                ? parse(
+                    description?.startsWith('"')
+                      ? JSON.parse(description || '')?.slice(0, 100)
+                      : (description ?? '')?.slice(0, 100)
+                  )
+                : orgName}
+            </Text>
+            <Flex align={'center'}>
+              {!!min && !!max && (
+                <Text
+                  mr={3}
+                  color={'brand.slate.500'}
+                  fontSize={['xs', 'xs', 'sm', 'sm']}
+                >
+                  <Text as="span" fontWeight="700">
+                    ${' '}
                   </Text>
-                )}
-                {!!minEq && !!maxEq && (
-                  <Text
-                    mr={3}
-                    color={'brand.slate.500'}
-                    fontSize={['xs', 'xs', 'sm', 'sm']}
-                  >
-                    {minEq.toLocaleString()}% - {maxEq.toLocaleString()}% Equity
-                  </Text>
-                )}
-                {!!location && (
-                  <Text
-                    key={''}
-                    display={{ base: 'none', md: 'block' }}
-                    mr={3}
-                    color={'brand.slate.500'}
-                    fontSize={['xs', 'xs', 'sm', 'sm']}
-                  >
-                    {location}
-                  </Text>
-                )}
-              </Flex>
+                  {min.toLocaleString()} - {max.toLocaleString()}
+                </Text>
+              )}
+              {!!minEq && !!maxEq && (
+                <Text
+                  mr={3}
+                  color={'brand.slate.500'}
+                  fontSize={['xs', 'xs', 'sm', 'sm']}
+                >
+                  {minEq.toLocaleString()}% - {maxEq.toLocaleString()}% Equity
+                </Text>
+              )}
+              {!!location && (
+                <Text
+                  key={''}
+                  display={{ base: 'none', md: 'block' }}
+                  mr={3}
+                  color={'brand.slate.500'}
+                  fontSize={['xs', 'xs', 'sm', 'sm']}
+                >
+                  {location}
+                </Text>
+              )}
             </Flex>
           </Flex>
-
-          <Link
-            href={link ?? '#'}
-            isExternal
-            onClick={() => {
-              Mixpanel.track('job_clicked', {
-                element: 'button',
-                'Job Title': title,
-              });
-            }}
-          >
-            <Button
-              h={isMobile ? 7 : 9}
-              px={6}
-              fontSize={['xs', 'xs', 'sm', 'sm']}
-              variant="outlineSecondary"
-            >
-              Apply
-            </Button>
-          </Link>
         </Flex>
-      </Link>
-    </>
+
+        <Button
+          h={isMobile ? 7 : 9}
+          px={6}
+          fontSize={['xs', 'xs', 'sm', 'sm']}
+          variant="outlineSecondary"
+        >
+          Apply
+        </Button>
+      </Flex>
+    </Link>
   );
 };
 
@@ -495,25 +470,15 @@ export const GrantsCard = ({
               )}
             </Flex>
           </Flex>
-          <Link
-            href={`/listings/grants/${slug}` ?? '#'}
-            isExternal
-            onClick={() => {
-              Mixpanel.track('grant_clicked', {
-                element: 'button',
-                'Grant Title': title,
-              });
-            }}
+
+          <Button
+            h={isMobile ? 7 : 9}
+            px={6}
+            fontSize={['xs', 'xs', 'sm', 'sm']}
+            variant="outlineSecondary"
           >
-            <Button
-              h={isMobile ? 7 : 9}
-              px={6}
-              fontSize={['xs', 'xs', 'sm', 'sm']}
-              variant="outlineSecondary"
-            >
-              Apply
-            </Button>
-          </Link>
+            Apply
+          </Button>
         </Flex>
       </Link>
     </>
