@@ -16,7 +16,7 @@ import { MediaPicker } from 'degen';
 import { useRouter } from 'next/router';
 import { useState } from 'react';
 import { useForm } from 'react-hook-form';
-import { toast, Toaster } from 'react-hot-toast';
+import { Toaster } from 'react-hot-toast';
 import Select from 'react-select';
 import makeAnimated from 'react-select/animated';
 
@@ -52,10 +52,9 @@ const CreateSponsor = () => {
         ...sponsor,
         userId: userInfo?.id,
       });
-      setIsLoading(false);
-      toast.success('Sponsor created!');
       router.push('/dashboard/bounties');
-      // window.open('https://airtable.com/shrfcoy2kmVXIIv4V', '_blank');
+      // setIsLoading(false);
+      // toast.success('Sponsor created!');
     } catch (e: any) {
       console.log('file: sponsor.tsx:60 ~ createNewSponsor ~ e:', e);
       if (e?.response?.data?.error?.code === 'P2002') {
