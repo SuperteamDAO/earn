@@ -22,6 +22,11 @@ interface Props {
   setUserInfo: (userInfo: User) => void;
   setStep: (step: number) => void;
   setOtp: (otp: { current: number; last: number }) => void;
+  inviteInfo?: {
+    emailInvite?: string;
+    currentSponsorId?: string;
+    memberType?: 'MEMBER' | 'ADMIN';
+  };
 }
 
 interface Info {
@@ -40,11 +45,17 @@ const validateEmail = (email: string) => {
   return true;
 };
 
-function NewUserInfo({ setUserInfo, userInfo, setStep, setOtp }: Props) {
+function NewUserInfo({
+  setUserInfo,
+  userInfo,
+  setStep,
+  setOtp,
+  inviteInfo,
+}: Props) {
   const [userDetails, setUserDetails] = useState({
     firstName: userInfo?.firstName ?? '',
     lastName: userInfo?.lastName ?? '',
-    email: userInfo?.email ?? '',
+    email: inviteInfo?.emailInvite ?? userInfo?.email ?? '',
   });
   const [loading, setLoading] = useState(false);
   const [errorMessage, setErrorMessage] = useState('');
@@ -146,7 +157,14 @@ function NewUserInfo({ setUserInfo, userInfo, setStep, setOtp }: Props) {
           <FormControl mb={4} id="email" isRequired>
             <FormLabel color="brand.slate.500">Email address</FormLabel>
             <Input
+              _readOnly={{
+                bg: 'brand.slate.200',
+                color: 'brand.slate.500',
+                cursor: 'not-allowed',
+              }}
+              defaultValue={userDetails?.email}
               focusBorderColor="brand.purple"
+              isReadOnly={!!inviteInfo?.emailInvite}
               onChange={(e) => setInfo({ email: e.target.value })}
               type="email"
             />
