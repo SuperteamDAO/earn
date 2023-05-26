@@ -26,6 +26,7 @@ export default async function user(req: NextApiRequest, res: NextApiResponse) {
             email,
           },
           select: {
+            id: true,
             email: true,
             publicKey: true,
           },
