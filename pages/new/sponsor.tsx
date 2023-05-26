@@ -16,7 +16,7 @@ import { MediaPicker } from 'degen';
 import { useRouter } from 'next/router';
 import { useState } from 'react';
 import { useForm } from 'react-hook-form';
-import { toast, Toaster } from 'react-hot-toast';
+import { Toaster } from 'react-hot-toast';
 import Select from 'react-select';
 import makeAnimated from 'react-select/animated';
 
@@ -42,6 +42,7 @@ const CreateSponsor = () => {
   const [industries, setIndustries] = useState<string>();
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [hasError, setHasError] = useState<boolean>(false);
+  const [errorMessage, setErrorMessage] = useState<string>('');
 
   const createNewSponsor = async (sponsor: SponsorType) => {
     setIsLoading(true);
@@ -51,11 +52,14 @@ const CreateSponsor = () => {
         ...sponsor,
         userId: userInfo?.id,
       });
-      setIsLoading(false);
-      toast.success('Sponsor created!');
       router.push('/dashboard/bounties');
-      // window.open('https://airtable.com/shrfcoy2kmVXIIv4V', '_blank');
-    } catch (e) {
+      // setIsLoading(false);
+      // toast.success('Sponsor created!');
+    } catch (e: any) {
+      console.log('file: sponsor.tsx:60 ~ createNewSponsor ~ e:', e);
+      if (e?.response?.data?.error?.code === 'P2002') {
+        setErrorMessage('Sorry! Sponsor name or username already exists.');
+      }
       setIsLoading(false);
       setHasError(true);
     }
@@ -308,9 +312,10 @@ const CreateSponsor = () => {
               <Box mt={8}>
                 {hasError && (
                   <Text align="center" mb={4} color="red">
-                    Sorry! An error occurred while creating your company!
+                    {errorMessage ||
+                      'Sorry! An error occurred while creating your company!'}
                     <br />
-                    Please try again or contact support!
+                    Please update the details & try again or contact support!
                   </Text>
                 )}
                 <Button
