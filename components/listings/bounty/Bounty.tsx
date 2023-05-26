@@ -20,6 +20,7 @@ import type { Bounty } from '@/interface/bounty';
 import type { GrantsBasicType, JobBasicsType } from '@/interface/listings';
 import FormLayout from '@/layouts/FormLayout';
 import { userStore } from '@/store/user';
+import { dayjs } from '@/utils/dayjs';
 import { findOneDraft } from '@/utils/functions';
 import { mergeSkills, splitSkills } from '@/utils/skills';
 
@@ -79,7 +80,7 @@ function CreateListing({ bounty, isEditMode = false }: Props) {
     slug: isEditMode ? bounty?.slug || undefined : undefined,
     deadline:
       isEditMode && bounty?.deadline
-        ? new Date(bounty?.deadline).toISOString().slice(0, 16) || undefined
+        ? dayjs(bounty?.deadline).format('YYYY-MM-DDTHH:mm') || undefined
         : undefined,
     type: isEditMode ? bounty?.type || undefined : undefined,
   });
