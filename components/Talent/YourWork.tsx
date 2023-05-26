@@ -58,7 +58,7 @@ function YourWork({ setStep, useFormStore }: Step1Props) {
       currentEmployer: form.currentEmployer,
       community: form.community,
       workPrefernce: form.workPrefernce,
-      private: form.private,
+      private: form.private || false,
     },
   });
 
@@ -72,7 +72,6 @@ function YourWork({ setStep, useFormStore }: Step1Props) {
     ) {
       return false;
     }
-    // totdo
     updateState({
       ...data,
       skills: skills.map((mainskill) => {
@@ -101,41 +100,6 @@ function YourWork({ setStep, useFormStore }: Step1Props) {
     setStep((i) => i + 1);
     return true;
   };
-
-  // useEffect(() => {
-  //   try {
-  //     if (form.skills.length > 2) {
-  //       const skillsJson = JSON.parse(form.skills);
-  //       setSkills((sk) => {
-  //         return [
-  //           ...sk,
-  //           ...skillsJson.map((ele: string) => {
-  //             return {
-  //               label: ele,
-  //               value: ele,
-  //             };
-  //           }),
-  //         ];
-  //       });
-  //     }
-  //     if (form.subSkills.length > 2) {
-  //       const subSkillsJson = JSON.parse(form.subSkills);
-  //       setSubSkills((sk) => {
-  //         return [
-  //           ...sk,
-  //           ...subSkillsJson.map((ele: string) => {
-  //             return {
-  //               label: ele,
-  //               value: ele,
-  //             };
-  //           }),
-  //         ];
-  //       });
-  //     }
-  //   } catch (error) {
-  //     console.log('file: talent.tsx:395 ~ useEffect ~ error:', error);
-  //   }
-  // }, []);
 
   return (
     <Box w={'full'}>
@@ -318,7 +282,7 @@ function YourWork({ setStep, useFormStore }: Step1Props) {
                 fontWeight={500}
                 colorScheme="purple"
                 size="md"
-                {...register('private', { required: true })}
+                {...register('private')}
               >
                 Keep my info private
               </Checkbox>
