@@ -56,7 +56,6 @@ const CreateSponsor = () => {
       // setIsLoading(false);
       // toast.success('Sponsor created!');
     } catch (e: any) {
-      console.log('file: sponsor.tsx:60 ~ createNewSponsor ~ e:', e);
       if (e?.response?.data?.error?.code === 'P2002') {
         setErrorMessage('Sorry! Sponsor name or username already exists.');
       }

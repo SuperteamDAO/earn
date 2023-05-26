@@ -285,7 +285,7 @@ export const CreatebountyBasic = ({
               fontWeight={600}
               htmlFor={'deadline'}
             >
-              Deadline
+              Deadline (in {Intl.DateTimeFormat().resolvedOptions().timeZone})
             </FormLabel>
             <Tooltip
               w="max"
