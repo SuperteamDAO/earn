@@ -50,7 +50,7 @@ function SignUp({ invite }: Props) {
     <Default
       meta={
         <Meta
-          title="Signup | Superteam Earn"
+          title="Accept Invite | Superteam Earn"
           description="Every Solana opportunity in one place!"
           canonical="/assets/logo/og.svg"
         />

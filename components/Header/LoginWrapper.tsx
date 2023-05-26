@@ -5,6 +5,7 @@ import axios from 'axios';
 import { useEffect } from 'react';
 
 import { Login } from '@/components/modals/Login/Login';
+import type { User } from '@/interface/user';
 import { userStore } from '@/store/user';
 
 interface LoginProps {
@@ -15,12 +16,14 @@ interface LoginProps {
     currentSponsorId?: string;
     memberType?: 'MEMBER' | 'ADMIN';
   };
+  acceptUser?: (user: User) => void;
 }
 
 function LoginWrapper({
   triggerLogin,
   setTriggerLogin,
   inviteInfo,
+  acceptUser,
 }: LoginProps) {
   const { isOpen, onOpen, onClose } = useDisclosure();
   const { connected, publicKey, wallets, select } = useWallet();
@@ -39,6 +42,9 @@ function LoginWrapper({
           setUserInfo(userDetails.data);
         } else {
           setUserInfo(userDetails.data);
+          if (inviteInfo?.emailInvite && acceptUser) {
+            acceptUser(userDetails.data);
+          }
           onClose();
         }
       }

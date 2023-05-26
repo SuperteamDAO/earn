@@ -238,7 +238,7 @@ model UserSponsors {
 
 model UserInvites {
   id         String   @id @default(uuid())
-  email      String   @unique
+  email      String
   senderId   String
   sponsorId  String
   memberType Role     @default(MEMBER)
