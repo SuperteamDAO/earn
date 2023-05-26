@@ -30,8 +30,11 @@ interface Props {
   setUserInfo: (userInfo: User) => void;
   wallets: Wallet[];
   initialStep?: number;
-  emailInvite?: string;
-  currentSponsorId?: string;
+  inviteInfo?: {
+    emailInvite?: string;
+    currentSponsorId?: string;
+    memberType?: 'MEMBER' | 'ADMIN';
+  };
 }
 export const Login = ({
   isOpen,
@@ -41,8 +44,7 @@ export const Login = ({
   setUserInfo,
   wallets,
   initialStep = 1,
-  emailInvite,
-  currentSponsorId,
+  inviteInfo,
 }: Props) => {
   const router = useRouter();
   const [step, setStep] = useState(initialStep);
@@ -87,7 +89,7 @@ export const Login = ({
           )}
           {step === 2 && (
             <NewUserInfo
-              emailInvite={emailInvite}
+              inviteInfo={inviteInfo}
               userInfo={userInfo}
               setUserInfo={setUserInfo}
               setStep={setStep}
@@ -96,8 +98,7 @@ export const Login = ({
           )}
           {step === 3 && (
             <VerifyOtp
-              currentSponsorId={currentSponsorId}
-              emailInvite={emailInvite}
+              inviteInfo={inviteInfo}
               userInfo={userInfo}
               onClose={onClose}
               otp={otp}

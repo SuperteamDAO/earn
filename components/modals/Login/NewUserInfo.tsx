@@ -22,7 +22,11 @@ interface Props {
   setUserInfo: (userInfo: User) => void;
   setStep: (step: number) => void;
   setOtp: (otp: { current: number; last: number }) => void;
-  emailInvite?: string;
+  inviteInfo?: {
+    emailInvite?: string;
+    currentSponsorId?: string;
+    memberType?: 'MEMBER' | 'ADMIN';
+  };
 }
 
 interface Info {
@@ -46,12 +50,12 @@ function NewUserInfo({
   userInfo,
   setStep,
   setOtp,
-  emailInvite,
+  inviteInfo,
 }: Props) {
   const [userDetails, setUserDetails] = useState({
     firstName: userInfo?.firstName ?? '',
     lastName: userInfo?.lastName ?? '',
-    email: emailInvite ?? userInfo?.email ?? '',
+    email: inviteInfo?.emailInvite ?? userInfo?.email ?? '',
   });
   const [loading, setLoading] = useState(false);
   const [errorMessage, setErrorMessage] = useState('');
@@ -160,7 +164,7 @@ function NewUserInfo({
               }}
               defaultValue={userDetails?.email}
               focusBorderColor="brand.purple"
-              isReadOnly={!!emailInvite}
+              isReadOnly={!!inviteInfo?.emailInvite}
               onChange={(e) => setInfo({ email: e.target.value })}
               type="email"
             />

@@ -26,8 +26,11 @@ function InviteView({ invite }: Props) {
   return (
     <Container maxW={'3xl'}>
       <LoginWrapper
-        emailInvite={invite?.email}
-        currentSponsorId={invite?.sponsorId}
+        inviteInfo={{
+          emailInvite: invite?.email,
+          currentSponsorId: invite?.sponsorId,
+          memberType: invite?.memberType,
+        }}
         triggerLogin={triggerLogin}
         setTriggerLogin={setTriggerLogin}
       />

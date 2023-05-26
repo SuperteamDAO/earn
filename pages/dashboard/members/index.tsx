@@ -96,9 +96,13 @@ const Index = () => {
             <SearchIcon color="brand.slate.400" />
           </InputRightElement>
         </InputGroup>
-        <Button leftIcon={<AddIcon />} onClick={onOpen} variant="solid">
-          Invite Members
-        </Button>
+        {(userInfo?.role === 'GOD' ||
+          (userInfo?.UserSponsors?.length &&
+            userInfo?.UserSponsors[0]?.role === 'ADMIN')) && (
+          <Button leftIcon={<AddIcon />} onClick={onOpen} variant="solid">
+            Invite Members
+          </Button>
+        )}
       </Flex>
       {isMembersLoading && <LoadingSection />}
       {!isMembersLoading && !members?.length && (

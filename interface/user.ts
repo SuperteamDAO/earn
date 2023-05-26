@@ -1,4 +1,5 @@
 import type { SponsorType } from '@/interface/sponsor';
+import type { UserSponsor } from '@/interface/userSponsor';
 
 interface User {
   id?: string;
@@ -36,5 +37,6 @@ interface User {
   totalEarnedInUSD?: number;
   currentSponsorId?: string;
   currentSponsor?: SponsorType;
+  UserSponsors?: UserSponsor[];
 }
 export type { User };

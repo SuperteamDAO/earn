@@ -10,15 +10,17 @@ import { userStore } from '@/store/user';
 interface LoginProps {
   triggerLogin: boolean;
   setTriggerLogin: (arg0: boolean) => void;
-  emailInvite?: string;
-  currentSponsorId?: string;
+  inviteInfo?: {
+    emailInvite?: string;
+    currentSponsorId?: string;
+    memberType?: 'MEMBER' | 'ADMIN';
+  };
 }
 
 function LoginWrapper({
   triggerLogin,
   setTriggerLogin,
-  emailInvite,
-  currentSponsorId,
+  inviteInfo,
 }: LoginProps) {
   const { isOpen, onOpen, onClose } = useDisclosure();
   const { connected, publicKey, wallets, select } = useWallet();
@@ -63,8 +65,7 @@ function LoginWrapper({
     <>
       {!!isOpen && (
         <Login
-          currentSponsorId={currentSponsorId}
-          emailInvite={emailInvite}
+          inviteInfo={inviteInfo}
           wallets={wallets}
           onConnectWallet={onConnectWallet}
           isOpen={isOpen}
