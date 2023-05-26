@@ -54,7 +54,11 @@ export const Login = ({
   });
 
   useEffect(() => {
-    if (userInfo?.publicKey && !userInfo?.email && step !== 2) {
+    if (
+      userInfo?.publicKey &&
+      (!userInfo?.email || !userInfo?.isVerified) &&
+      step !== 2
+    ) {
       setStep(2);
     }
   }, [userInfo]);
