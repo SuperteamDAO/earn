@@ -906,4 +906,9 @@ export const workExp = [
   '5 to 9 Years',
   '>9 Years',
 ];
-export const workType = ['Freelance', 'Fulltime', 'Internship'];
+export const workType = [
+  'Not looking for Work',
+  'Freelance',
+  'Fulltime',
+  'Internship',
+];
