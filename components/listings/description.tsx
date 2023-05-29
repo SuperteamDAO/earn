@@ -45,14 +45,13 @@ import type { BountyBasicType } from './bounty/Createbounty';
 const LinkModal = ({
   isOpen,
   onClose,
-  setUrl,
   setLink,
 }: {
   isOpen: boolean;
   onClose: () => void;
-  setUrl: Dispatch<SetStateAction<string>>;
-  setLink: () => void;
+  setLink: (link: string) => void;
 }) => {
+  const [linkUrl, setLinkUrl] = useState<string>('');
   return (
     <>
       <Modal isOpen={isOpen} onClose={onClose}>
@@ -60,14 +59,16 @@ const LinkModal = ({
         <ModalContent>
           <ModalBody my={5}>
             <Input
-              onChange={(e) => {
-                setUrl(e.target.value);
-              }}
+              onChange={(e) => setLinkUrl(e.target.value)}
               placeholder="add a link"
             />
             <HStack justify={'end'} w={'full'} mt={5}>
-              <Button onClick={setLink}>Submit</Button>
-              <Button onClick={onClose}>Cancel</Button>
+              <Button mr={4} onClick={onClose} variant="ghost">
+                Cancel
+              </Button>
+              <Button onClick={() => setLink(linkUrl)} variant="solid">
+                Submit
+              </Button>
             </HStack>
           </ModalBody>
         </ModalContent>
@@ -94,7 +95,6 @@ const Description = ({
   draftLoading,
   isEditMode,
 }: Props) => {
-  const [url, setUrl] = useState<string>('');
   const { isOpen, onClose, onOpen } = useDisclosure();
   const editor = useEditor({
     extensions: [
@@ -133,37 +133,36 @@ const Description = ({
     content: editorData,
   });
 
-  const setLink = useCallback(() => {
-    // cancelled
-    if (url === null) {
-      return;
-    }
+  const setLink = useCallback(
+    (url: string) => {
+      // cancelled
+      if (url === null) {
+        return;
+      }
 
-    // empty
-    if (url === '') {
-      editor?.chain().focus().extendMarkRange('link').unsetLink().run();
+      // empty
+      if (url === '') {
+        editor?.chain().focus().extendMarkRange('link').unsetLink().run();
+        onClose();
+        return;
+      }
+
+      // update link
+      editor
+        ?.chain()
+        .focus()
+        .extendMarkRange('link')
+        .setLink({ href: url })
+        .run();
       onClose();
-      return;
-    }
+    },
+    [editor]
+  );
 
-    // update link
-    editor
-      ?.chain()
-      .focus()
-      .extendMarkRange('link')
-      .setLink({ href: url })
-      .run();
-    onClose();
-  }, [editor]);
   return (
     <>
       {isOpen && (
-        <LinkModal
-          setLink={setLink}
-          isOpen={isOpen}
-          onClose={onClose}
-          setUrl={setUrl}
-        />
+        <LinkModal setLink={setLink} isOpen={isOpen} onClose={onClose} />
       )}
       <Box>
         <Flex justify="start" w="full" mb={4}>
