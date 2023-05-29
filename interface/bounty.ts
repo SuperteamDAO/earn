@@ -27,6 +27,7 @@ interface Bounty {
   title?: string;
   slug?: string;
   description?: string;
+  requirements?: string;
   applicationLink?: string;
   skills?: Skills;
   // newSkills?: Skills;
