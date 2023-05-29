@@ -1,5 +1,4 @@
 import { Box, Button, HStack, Image, Text, VStack } from '@chakra-ui/react';
-import type { User } from '@prisma/client';
 import axios from 'axios';
 import { useRouter } from 'next/router';
 import type { Dispatch, SetStateAction } from 'react';
@@ -8,16 +7,18 @@ import { toast, Toaster } from 'react-hot-toast';
 import { AiFillHeart } from 'react-icons/ai';
 import type { Metadata } from 'unfurl.js/dist/types';
 
+import type { User } from '@/interface/user';
+
 import { userStore } from '../../../../store/user';
 
 interface Props {
   winner: boolean;
-  talent: User;
+  talent: User | undefined;
   likes?: {
     id: string;
     date: number;
   }[];
-  id: string;
+  id: string | undefined;
   setUpdate: Dispatch<SetStateAction<boolean>>;
   link: string;
 }
@@ -99,14 +100,16 @@ export const SubmissionCard = ({
                 alt={'profile'}
                 rounded={'full'}
                 src={
-                  talent.photo ? talent.photo : '/assets/randompeople/nft4.png'
+                  talent?.photo
+                    ? talent?.photo
+                    : '/assets/randompeople/nft4.png'
                 }
               />
               <Text color={'gray.400'}>
                 by @
-                {talent.username.length < 12
-                  ? talent.username
-                  : `${talent.username.slice(0, 12)}...`}
+                {talent?.username && talent?.username?.length < 12
+                  ? talent?.username
+                  : `${talent?.username?.slice(0, 12)}...`}
               </Text>
             </HStack>
           </VStack>

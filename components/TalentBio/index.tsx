@@ -1,5 +1,6 @@
 import { Avatar, Box, Button, Flex, Image, Text } from '@chakra-ui/react';
-import type { User } from '@prisma/client';
+
+import type { User } from '@/interface/user';
 
 type ChipType = {
   icon: string;
@@ -107,7 +108,7 @@ function TalentBio({
         {user?.bio}
       </Text>
       <Flex justify={'space-between'} mt={4}>
-        {!user.private && (
+        {!user?.private && (
           <Chip
             icon={'/assets/talent/eyes.png'}
             label={'Interested In'}
