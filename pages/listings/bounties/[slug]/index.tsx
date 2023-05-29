@@ -95,6 +95,7 @@ function BountyDetails({ slug }: BountyDetailsProps) {
               prizeList={bounty?.rewards}
               total={bounty?.rewardAmount || 0}
               applicationLink={bounty?.applicationLink || ''}
+              requirements={bounty?.requirements}
             />
           </HStack>
         </>

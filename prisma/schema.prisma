@@ -44,6 +44,7 @@ model Bounties {
   title           String
   slug            String     @unique
   description     String?    @db.Text
+  requirements    String?    @db.Text
   deadline        DateTime?
   eligibility     Json?
   status          status     @default(OPEN)

@@ -45,6 +45,7 @@ interface Props {
   eligibility?: Eligibility[];
   type?: BountyType | string;
   bountytitle: string;
+  requirements?: string;
 }
 function DetailSideCard({
   id,
@@ -55,6 +56,7 @@ function DetailSideCard({
   eligibility,
   applicationLink,
   bountytitle,
+  requirements,
   type,
 }: Props) {
   const { userInfo } = userStore();
@@ -489,6 +491,16 @@ function DetailSideCard({
             )}
           </Box>
         </VStack>
+        {requirements && (
+          <VStack align="start" w={'22rem'} p={4} bg="white" rounded={'xl'}>
+            <Text mb={1} color="gray.500" fontSize={'lg'} fontWeight={600}>
+              ELIGIBILITY
+            </Text>
+            <Text color={'gray.500'} fontSize={'md'} fontWeight={400}>
+              {requirements}
+            </Text>
+          </VStack>
+        )}
         <VStack
           align={'start'}
           justify={'center'}
