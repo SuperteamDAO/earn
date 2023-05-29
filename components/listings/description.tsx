@@ -85,6 +85,8 @@ interface Props {
   bountyBasics?: BountyBasicType;
   draftLoading?: boolean;
   isEditMode?: boolean;
+  setBountyRequirements?: Dispatch<SetStateAction<any | undefined>>;
+  bountyRequirements?: string | undefined;
 }
 const Description = ({
   editorData,
@@ -94,6 +96,8 @@ const Description = ({
   bountyBasics,
   draftLoading,
   isEditMode,
+  bountyRequirements,
+  setBountyRequirements,
 }: Props) => {
   const { isOpen, onClose, onOpen } = useDisclosure();
   const editor = useEditor({
@@ -165,7 +169,54 @@ const Description = ({
         <LinkModal setLink={setLink} isOpen={isOpen} onClose={onClose} />
       )}
       <Box>
-        <Flex justify="start" w="full" mb={4}>
+        <Box mb={8}>
+          <Flex justify="start" w="full">
+            <Flex>
+              <FormLabel
+                color={'brand.slate.500'}
+                fontSize={'15px'}
+                fontWeight={600}
+              >
+                Eligibility Requirements
+              </FormLabel>
+              <Tooltip
+                w="max"
+                p="0.7rem"
+                color="white"
+                fontSize="0.9rem"
+                fontWeight={600}
+                bg="#6562FF"
+                borderRadius="0.5rem"
+                hasArrow
+                label={`Add here if you have any specific eligibility requirements for the Listing.`}
+                placement="right-end"
+              >
+                <Image
+                  mt={-2}
+                  alt={'Info Icon'}
+                  src={'/assets/icons/info-icon.svg'}
+                />
+              </Tooltip>
+            </Flex>
+          </Flex>
+          <Input
+            w={'full'}
+            color={'brand.slate.500'}
+            borderColor="brand.slate.300"
+            _placeholder={{
+              color: 'brand.slate.300',
+            }}
+            focusBorderColor="brand.purple"
+            id="bountyRequirements"
+            onChange={(e) =>
+              setBountyRequirements && setBountyRequirements(e.target.value)
+            }
+            placeholder="Add Eligibility Requirements"
+            type={'text'}
+            value={bountyRequirements}
+          />
+        </Box>
+        <Flex justify="start" w="full">
           <Flex>
             <FormLabel
               color={'brand.slate.500'}

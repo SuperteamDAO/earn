@@ -37,6 +37,8 @@ interface Props {
   bountyPayment: any;
   setBountyPayment: Dispatch<SetStateAction<any | undefined>>;
   isEditMode: boolean;
+  setBountyRequirements?: Dispatch<SetStateAction<any | undefined>>;
+  bountyRequirements?: string | undefined;
 }
 export const CreateBounty = ({
   steps,
@@ -60,6 +62,8 @@ export const CreateBounty = ({
   bountyPayment,
   setBountyPayment,
   isEditMode,
+  bountyRequirements,
+  setBountyRequirements,
 }: Props) => {
   // handles the info from basic form
 
@@ -81,6 +85,8 @@ export const CreateBounty = ({
       )}
       {steps === 3 && (
         <Description
+          setBountyRequirements={setBountyRequirements}
+          bountyRequirements={bountyRequirements}
           isEditMode={isEditMode}
           bountyBasics={bountybasic}
           createDraft={createDraft}

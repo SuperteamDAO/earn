@@ -39,6 +39,9 @@ function CreateListing({ bounty, isEditMode = false }: Props) {
   const [steps, setSteps] = useState<number>(isEditMode ? 2 : 1);
   const [listingType, setListingType] = useState('BOUNTY');
   const [draftLoading, setDraftLoading] = useState<boolean>(false);
+  const [bountyRequirements, setBountyRequirements] = useState<
+    string | undefined
+  >(isEditMode ? bounty?.requirements : undefined);
   const [editorData, setEditorData] = useState<string | undefined>(
     isEditMode ? bounty?.description : undefined
   );
@@ -112,6 +115,7 @@ function CreateListing({ bounty, isEditMode = false }: Props) {
           order: q.order,
           type: q.type,
         })),
+        requirements: bountyRequirements,
         ...bountyPayment,
         isPublished: true,
       };
@@ -147,6 +151,7 @@ function CreateListing({ bounty, isEditMode = false }: Props) {
         order: q.order,
         type: q.type,
       })),
+      requirements: bountyRequirements,
       ...bountyPayment,
     };
     try {
@@ -298,6 +303,8 @@ function CreateListing({ bounty, isEditMode = false }: Props) {
           )}
           {steps > 1 && listingType === 'BOUNTY' && (
             <CreateBounty
+              setBountyRequirements={setBountyRequirements}
+              bountyRequirements={bountyRequirements}
               createAndPublishListing={createAndPublishListing}
               isListingPublishing={isListingPublishing}
               bountyPayment={bountyPayment}
