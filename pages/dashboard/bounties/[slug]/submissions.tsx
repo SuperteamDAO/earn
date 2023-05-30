@@ -132,10 +132,10 @@ function BountySubmissions({ slug }: Props) {
       });
       const submissionIndex = submissions.findIndex((s) => s.id === id);
       if (submissionIndex >= 0) {
-        const updatedSubmission: SubmissionWithUser | undefined = {
-          ...submissions[submissionIndex],
+        const updatedSubmission: SubmissionWithUser = {
+          ...(submissions[submissionIndex] as SubmissionWithUser),
           isWinner: !!position,
-          winnerPosition: position || undefined,
+          winnerPosition: position || null,
         };
         const newSubmissions = [...submissions];
         newSubmissions[submissionIndex] = updatedSubmission;
@@ -515,7 +515,7 @@ function BountySubmissions({ slug }: Props) {
                         </Text>
                         <Link
                           color="brand.slate.700"
-                          href={selectedSubmission?.user?.twitter}
+                          href={selectedSubmission?.user?.twitter || undefined}
                           isExternal
                         >
                           {selectedSubmission?.user?.twitter || '-'}
@@ -533,7 +533,7 @@ function BountySubmissions({ slug }: Props) {
                         </Text>
                         <Link
                           color="brand.slate.700"
-                          href={selectedSubmission?.user?.linkedin}
+                          href={selectedSubmission?.user?.linkedin || undefined}
                           isExternal
                         >
                           {selectedSubmission?.user?.linkedin
@@ -559,7 +559,7 @@ function BountySubmissions({ slug }: Props) {
                         </Text>
                         <Link
                           color="brand.slate.700"
-                          href={selectedSubmission?.user?.github}
+                          href={selectedSubmission?.user?.github || undefined}
                           isExternal
                         >
                           {selectedSubmission?.user?.github || '-'}
@@ -577,7 +577,7 @@ function BountySubmissions({ slug }: Props) {
                         </Text>
                         <Link
                           color="brand.slate.700"
-                          href={selectedSubmission?.user?.website}
+                          href={selectedSubmission?.user?.website || undefined}
                           isExternal
                         >
                           {selectedSubmission?.user?.website || '-'}
