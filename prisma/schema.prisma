@@ -72,6 +72,30 @@ model Bounties {
   @@index([pocId])
 }
 
+model BountiesTemplates {
+  id                  String     @id @default(uuid())
+  templateTitle       String
+  templateDescription String?    @db.Text
+  title               String?
+  slug                String?
+  description         String?    @db.Text
+  requirements        String?    @db.Text
+  deadline            DateTime?
+  eligibility         Json?
+  token               String?
+  rewardAmount        Int?
+  rewards             Json?
+  isFeatured          Boolean    @default(false)
+  isActive            Boolean    @default(true)
+  isArchived          Boolean    @default(false)
+  createdAt           DateTime   @default(now())
+  updatedAt           DateTime   @updatedAt
+  skills              Json?
+  type                BountyType @default(open)
+
+  @@index([id])
+}
+
 model Comment {
   id          String      @id @default(uuid())
   message     String      @db.VarChar(1000)
