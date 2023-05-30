@@ -1,12 +1,3 @@
-// import type { Prisma } from '@prisma/client';
-
-// type SubmissionWithUser = Prisma.SubmissionGetPayload<{
-//   include: {
-//     user: true;
-//   };
-// }>;
-// export type { SubmissionWithUser };
-
 import type { ListingType, User } from '@prisma/client';
 
 interface SubmissionWithUser {
