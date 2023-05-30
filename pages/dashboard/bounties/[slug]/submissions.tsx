@@ -13,25 +13,12 @@ import {
   Flex,
   Image,
   Link,
-  Modal,
-  ModalBody,
-  ModalCloseButton,
-  ModalContent,
-  ModalFooter,
-  ModalHeader,
-  ModalOverlay,
   Select,
-  Table,
-  TableContainer,
+  Spinner,
   Tag,
-  Tbody,
-  Td,
+  TagLabel,
   Text,
-  Th,
-  Thead,
   Tooltip,
-  Tr,
-  useDisclosure,
 } from '@chakra-ui/react';
 import axios from 'axios';
 import Avatar from 'boring-avatars';
@@ -55,11 +42,12 @@ interface Props {
 function BountySubmissions({ slug }: Props) {
   const router = useRouter();
   const { userInfo } = userStore();
-  const { isOpen, onOpen, onClose } = useDisclosure();
-  const [user, setUser] = useState<any>(null);
   const [bounty, setBounty] = useState<Bounty | null>(null);
   const [totalSubmissions, setTotalSubmissions] = useState(0);
   const [submissions, setSubmissions] = useState<SubmissionWithUser[]>([]);
+  const [selectedSubmission, setSelectedSubmission] =
+    useState<SubmissionWithUser>();
+  const [isSelectingWinner, setIsSelectingWinner] = useState(false);
   const [isExporting, setIsExporting] = useState(false);
   const [rewards, setRewards] = useState<string[]>([]);
   const [isBountyLoading, setIsBountyLoading] = useState(true);
@@ -80,6 +68,7 @@ function BountySubmissions({ slug }: Props) {
       );
       setTotalSubmissions(submissionsDetails.data.total);
       setSubmissions(submissionsDetails.data.data);
+      setSelectedSubmission(submissionsDetails.data.data[0]);
       setIsBountyLoading(false);
     } catch (e) {
       setIsBountyLoading(false);
@@ -132,15 +121,31 @@ function BountySubmissions({ slug }: Props) {
     }
   };
 
-  const selectWinner = async (position: string, id: string) => {
+  const selectWinner = async (position: string, id: string | undefined) => {
+    if (!id) return;
+    setIsSelectingWinner(true);
     try {
       await axios.post(`/api/submission/update/`, {
         id,
         isWinner: !!position,
         winnerPosition: position || null,
       });
+      const submissionIndex = submissions.findIndex((s) => s.id === id);
+      if (submissionIndex >= 0) {
+        const updatedSubmission: SubmissionWithUser = {
+          ...(submissions[submissionIndex] as SubmissionWithUser),
+          isWinner: !!position,
+          winnerPosition: position || null,
+        };
+        const newSubmissions = [...submissions];
+        newSubmissions[submissionIndex] = updatedSubmission;
+        setSubmissions(newSubmissions);
+        setSelectedSubmission(updatedSubmission);
+      }
+      setIsSelectingWinner(false);
     } catch (e) {
       console.log('file: [slug].tsx:136 ~ selectWinner ~ e:', e);
+      setIsSelectingWinner(false);
     }
   };
 
@@ -160,118 +165,6 @@ function BountySubmissions({ slug }: Props) {
 
   return (
     <Sidebar>
-      <Modal isOpen={isOpen} onClose={onClose}>
-        <ModalOverlay />
-        <ModalContent>
-          <ModalHeader>
-            <Flex align="center" bg="transparent">
-              {user?.photo ? (
-                <Image
-                  boxSize="32px"
-                  borderRadius="full"
-                  alt={`${user?.firstName} ${user?.lastName}`}
-                  src={user?.photo}
-                />
-              ) : (
-                <Avatar
-                  name={`${user?.firstName} ${user?.lastName}`}
-                  colors={['#92A1C6', '#F0AB3D', '#C271B4']}
-                  size={32}
-                  variant="marble"
-                />
-              )}
-              <Box display={{ base: 'none', md: 'block' }} ml={2}>
-                <Text color="brand.slate.800" fontSize="sm">
-                  {`${user?.firstName} ${user?.lastName}`}
-                </Text>
-                <Text color="brand.slate.500" fontSize="xs" fontWeight={400}>
-                  {user?.email}
-                </Text>
-              </Box>
-            </Flex>
-          </ModalHeader>
-          <ModalCloseButton />
-          <ModalBody>
-            <Flex align="start" justify="start" gap={2} mb={4}>
-              <Text w={20} color="brand.slate.400">
-                Bio:
-              </Text>
-              <Text color="brand.purple">{user?.bio || '-'}</Text>
-            </Flex>
-            <Flex align="center" justify="start" gap={2} mb={4}>
-              <Text w={20} color="brand.slate.400">
-                Wallet:
-              </Text>
-              <Text color="brand.purple">
-                {truncatePublicKey(user?.publicKey)}
-                <Tooltip label="Copy Wallet ID" placement="right">
-                  <CopyIcon
-                    cursor="pointer"
-                    ml={1}
-                    onClick={() =>
-                      navigator.clipboard.writeText(user?.publicKey)
-                    }
-                  />
-                </Tooltip>
-              </Text>
-            </Flex>
-            <Flex align="center" justify="start" gap={2} mb={4}>
-              <Text w={20} color="brand.slate.400">
-                Discord:
-              </Text>
-              <Text color="brand.purple">{user?.discord || '-'}</Text>
-            </Flex>
-            <Flex align="center" justify="start" gap={2} mb={4}>
-              <Text w={20} color="brand.slate.400">
-                Twitter:
-              </Text>
-              <Link color="brand.purple" href={user?.twitter} isExternal>
-                {user?.twitter || '-'}
-              </Link>
-            </Flex>
-            <Flex align="center" justify="start" gap={2} mb={4}>
-              <Text w={20} color="brand.slate.400">
-                LinkedIn:
-              </Text>
-              <Link color="brand.purple" href={user?.linkedin} isExternal>
-                {user?.linkedin
-                  ? `${user?.linkedin?.slice(0, 25)}${
-                      user?.linkedin?.length >= 25 && '...'
-                    }` || '-'
-                  : '-'}
-              </Link>
-            </Flex>
-            <Flex align="center" justify="start" gap={2} mb={4}>
-              <Text w={20} color="brand.slate.400">
-                GitHub:
-              </Text>
-              <Link color="brand.purple" href={user?.github} isExternal>
-                {user?.github || '-'}
-              </Link>
-            </Flex>
-            <Flex align="center" justify="start" gap={2} mb={4}>
-              <Text w={20} color="brand.slate.400">
-                Website:
-              </Text>
-              <Link color="brand.purple" href={user?.website} isExternal>
-                {user?.website || '-'}
-              </Link>
-            </Flex>
-          </ModalBody>
-
-          <ModalFooter>
-            <Button
-              onClick={() => {
-                onClose();
-                setUser(null);
-              }}
-              variant="solid"
-            >
-              Close
-            </Button>
-          </ModalFooter>
-        </ModalContent>
-      </Modal>
       {isBountyLoading ? (
         <LoadingSection />
       ) : (
@@ -294,15 +187,20 @@ function BountySubmissions({ slug }: Props) {
               </BreadcrumbItem>
             </Breadcrumb>
           </Box>
-          <Flex justify="space-between" mb={4}>
+          <Flex justify="start" gap={2} mb={4}>
             <Text color="brand.slate.500" fontSize="lg" fontWeight="700">
               {bounty?.title}
             </Text>
-            <Tag color={'white'} bg={getBgColor(bountyStatus)} variant="solid">
+            <Tag
+              color={'white'}
+              bg={getBgColor(bountyStatus)}
+              size="sm"
+              variant="solid"
+            >
               {bountyStatus}
             </Tag>
           </Flex>
-          <Flex align="center" justify="space-between" mb={6}>
+          <Flex align="center" justify="space-between" mb={4}>
             <Text color="brand.slate.500">
               {totalSubmissions}{' '}
               <Text as="span" color="brand.slate.400">
@@ -324,175 +222,386 @@ function BountySubmissions({ slug }: Props) {
               message="View your bounty submissions here once they are submitted"
             />
           ) : (
-            <TableContainer>
-              <Table variant="simple">
-                <Thead>
-                  <Tr bg="brand.slate.100">
-                    <Th
-                      color="brand.slate.400"
-                      fontSize="sm"
-                      fontWeight={500}
-                      textTransform={'capitalize'}
-                    >
-                      User
-                    </Th>
-                    <Th
-                      pl={0}
-                      color="brand.slate.400"
-                      fontSize="sm"
-                      fontWeight={500}
-                      textAlign="center"
-                      textTransform={'capitalize'}
-                    >
-                      Type
-                    </Th>
-                    <Th
-                      pl={0}
-                      color="brand.slate.400"
-                      fontSize="sm"
-                      fontWeight={500}
-                      textTransform={'capitalize'}
-                    >
-                      Link
-                    </Th>
-                    <Th
-                      pl={0}
-                      color="brand.slate.400"
-                      fontSize="sm"
-                      fontWeight={500}
-                      textTransform={'capitalize'}
-                    >
-                      Tweet
-                    </Th>
-                    <Th
-                      pl={0}
-                      color="brand.slate.400"
-                      fontSize="sm"
-                      fontWeight={500}
-                      textTransform={'capitalize'}
-                    >
-                      Winner
-                    </Th>
-                    <Th
-                      pl={0}
-                      color="brand.slate.400"
-                      fontSize="sm"
-                      fontWeight={500}
-                      textTransform={'capitalize'}
-                    >
-                      Payment
-                    </Th>
-                  </Tr>
-                </Thead>
-                <Tbody>
-                  {submissions.map((submission) => {
+            <Flex align={'start'} bg="white">
+              <Flex flex="1 1 auto" minW={{ base: 'none', md: 96 }}>
+                <Box
+                  w="full"
+                  bg="white"
+                  border="1px solid"
+                  borderColor={'blackAlpha.200'}
+                  roundedLeft="xl"
+                >
+                  {submissions.map((submission, submissionIndex) => {
                     return (
-                      <Tr key={submission?.id} bg="white">
-                        <Td>
-                          <Flex
-                            align="center"
-                            p={1}
-                            bg="transparent"
-                            borderRadius="md"
-                            _hover={{
-                              backgroundColor: 'brand.slate.100',
-                            }}
-                            cursor="pointer"
-                            onClick={() => {
-                              setUser(submission?.user);
-                              onOpen();
-                            }}
-                          >
-                            {submission?.user?.photo ? (
-                              <Image
-                                boxSize="32px"
-                                borderRadius="full"
-                                alt={`${submission?.user?.firstName} ${submission?.user?.lastName}`}
-                                src={submission?.user?.photo}
-                              />
-                            ) : (
-                              <Avatar
-                                name={`${submission?.user?.firstName} ${submission?.user?.lastName}`}
-                                colors={['#92A1C6', '#F0AB3D', '#C271B4']}
-                                size={32}
-                                variant="marble"
-                              />
-                            )}
-                            <Box display={{ base: 'none', md: 'block' }} ml={2}>
-                              <Text color="brand.slate.800" fontSize="sm">
-                                {`${submission?.user?.firstName} ${submission?.user?.lastName}`}
-                              </Text>
-                              <Text color="brand.slate.500" fontSize="xs">
-                                {submission?.user?.email}
-                              </Text>
-                            </Box>
-                          </Flex>
-                        </Td>
-                        <Td textAlign="center">
-                          <Tag textTransform={'uppercase'}>
-                            {submission?.user?.superteamLevel || '-'}
+                      <Flex
+                        key={submission?.id}
+                        align={'center'}
+                        justify={'space-between'}
+                        gap={4}
+                        px={4}
+                        py={3}
+                        bg={
+                          selectedSubmission?.user?.id === submission?.user?.id
+                            ? 'brand.slate.100'
+                            : 'transparent'
+                        }
+                        borderBottom={
+                          submissionIndex < submissions.length - 1
+                            ? '1px solid'
+                            : 'none'
+                        }
+                        borderBottomColor="blackAlpha.200"
+                        _hover={{
+                          backgroundColor: 'brand.slate.100',
+                        }}
+                        cursor="pointer"
+                        onClick={() => {
+                          setSelectedSubmission(submission);
+                        }}
+                      >
+                        <Flex align="center">
+                          {submission?.user?.photo ? (
+                            <Image
+                              boxSize="32px"
+                              borderRadius="full"
+                              alt={`${submission?.user?.firstName} ${submission?.user?.lastName}`}
+                              src={submission?.user?.photo}
+                            />
+                          ) : (
+                            <Avatar
+                              name={`${submission?.user?.firstName} ${submission?.user?.lastName}`}
+                              colors={['#92A1C6', '#F0AB3D', '#C271B4']}
+                              size={32}
+                              variant="marble"
+                            />
+                          )}
+                          <Box display={{ base: 'none', md: 'block' }} ml={2}>
+                            <Text color="brand.slate.800" fontSize="sm">
+                              {`${submission?.user?.firstName} ${submission?.user?.lastName}`}
+                            </Text>
+                            <Text color="brand.slate.500" fontSize="xs">
+                              {submission?.user?.email}
+                            </Text>
+                          </Box>
+                        </Flex>
+                        {submission?.isWinner && submission?.winnerPosition && (
+                          <Tag colorScheme="green">
+                            <TagLabel>
+                              🏆: {submission?.winnerPosition || 'Winner'}
+                            </TagLabel>
                           </Tag>
-                        </Td>
-                        <Td pl={0} textAlign="center">
-                          <Link
-                            color="brand.purple"
-                            href={submission?.link || '#'}
-                            isExternal
-                          >
-                            {submission?.link && (
-                              <LinkIcon w={3} h={3} mr={1} />
-                            )}
-                            {submission?.link && submission?.link?.length >= 20
-                              ? `${submission?.link?.slice(0, 20)}...`
-                              : submission?.link || '-'}
-                          </Link>
-                        </Td>
-                        <Td pl={0} textAlign="center">
-                          <Link
-                            color="brand.purple"
-                            href={submission?.tweet || '#'}
-                            isExternal
-                          >
-                            {submission?.tweet && (
-                              <LinkIcon w={3} h={3} mr={1} />
-                            )}
-                            {submission?.tweet &&
-                            submission?.tweet?.length >= 20
-                              ? `${submission?.tweet?.slice(0, 20)}...`
-                              : submission?.tweet || '-'}
-                          </Link>
-                        </Td>
-                        <Td>
-                          <Select
-                            defaultValue={
-                              submission?.isWinner
-                                ? submission?.winnerPosition || ''
-                                : ''
-                            }
-                            onChange={(e) =>
-                              selectWinner(e.target.value, submission?.id)
-                            }
-                          >
-                            <option value={''}>Select Winner</option>
-                            {rewards.map((reward) => (
-                              <option key={reward} value={reward}>
-                                {reward}
-                              </option>
-                            ))}
-                          </Select>
-                        </Td>
-                        <Td>
-                          <Tag>-</Tag>
-                        </Td>
-                      </Tr>
+                        )}
+                      </Flex>
                     );
                   })}
-                </Tbody>
-              </Table>
-            </TableContainer>
+                </Box>
+              </Flex>
+              <Flex flex="4 1 auto">
+                <Box
+                  w="full"
+                  bg="white"
+                  border="1px solid"
+                  borderColor="blackAlpha.200"
+                  roundedRight="xl"
+                >
+                  <Flex
+                    align="center"
+                    justify={'space-between'}
+                    w="full"
+                    px={4}
+                    py={3}
+                    borderBottom="1px solid"
+                    borderBottomColor="blackAlpha.200"
+                  >
+                    <Flex align="center">
+                      {selectedSubmission?.user?.photo ? (
+                        <Image
+                          boxSize="32px"
+                          borderRadius="full"
+                          alt={`${selectedSubmission?.user?.firstName} ${selectedSubmission?.user?.lastName}`}
+                          src={selectedSubmission?.user?.photo}
+                        />
+                      ) : (
+                        <Avatar
+                          name={`${selectedSubmission?.user?.firstName} ${selectedSubmission?.user?.lastName}`}
+                          colors={['#92A1C6', '#F0AB3D', '#C271B4']}
+                          size={32}
+                          variant="marble"
+                        />
+                      )}
+                      <Box display={{ base: 'none', md: 'block' }} ml={2}>
+                        <Text color="brand.slate.800" fontSize="sm">
+                          {`${selectedSubmission?.user?.firstName} ${selectedSubmission?.user?.lastName}`}
+                        </Text>
+                        <Text color="brand.slate.500" fontSize="xs">
+                          {selectedSubmission?.user?.email}
+                        </Text>
+                      </Box>
+                    </Flex>
+                    <Flex align="center" justify={'flex-end'} gap={2}>
+                      {isSelectingWinner && (
+                        <Spinner color="brand.slate.400" size="sm" />
+                      )}
+                      <Select
+                        maxW={48}
+                        borderColor="brand.slate.300"
+                        _placeholder={{
+                          color: 'brand.slate.300',
+                        }}
+                        focusBorderColor="brand.purple"
+                        onChange={(e) =>
+                          selectWinner(e.target.value, selectedSubmission?.id)
+                        }
+                        value={
+                          selectedSubmission?.isWinner
+                            ? selectedSubmission?.winnerPosition || ''
+                            : ''
+                        }
+                      >
+                        <option value={''}>Select Winner</option>
+                        {rewards.map((reward) => (
+                          <option key={reward} value={reward}>
+                            {reward}
+                          </option>
+                        ))}
+                      </Select>
+                    </Flex>
+                  </Flex>
+                  <Box w="full" px={4} py={5}>
+                    {bounty?.type === 'open' && (
+                      <>
+                        <Box mb={4}>
+                          <Text
+                            mb={1}
+                            color="brand.slate.400"
+                            fontSize="xs"
+                            fontWeight={600}
+                            textTransform={'uppercase'}
+                          >
+                            Main Submission
+                          </Text>
+                          <Link
+                            color="brand.purple"
+                            wordBreak={'break-all'}
+                            href={selectedSubmission?.link || '#'}
+                            isExternal
+                          >
+                            {selectedSubmission?.link && (
+                              <LinkIcon w={4} h={4} mr={2} />
+                            )}
+                            {selectedSubmission?.link || '-'}
+                          </Link>
+                        </Box>
+                        <Box mb={4}>
+                          <Text
+                            mb={1}
+                            color="brand.slate.400"
+                            fontSize="xs"
+                            fontWeight={600}
+                            textTransform={'uppercase'}
+                          >
+                            Tweet Link
+                          </Text>
+                          <Link
+                            color="brand.purple"
+                            wordBreak={'break-all'}
+                            href={selectedSubmission?.tweet || '#'}
+                            isExternal
+                          >
+                            {selectedSubmission?.tweet && (
+                              <LinkIcon w={4} h={4} mr={2} />
+                            )}
+                            {selectedSubmission?.tweet || '-'}
+                          </Link>
+                        </Box>
+                      </>
+                    )}
+                    {bounty?.type === 'permissioned' &&
+                      selectedSubmission?.eligibilityAnswers?.map(
+                        (answer: any, answerIndex: number) => (
+                          <Box key={answerIndex} mb={4}>
+                            <Text
+                              mb={1}
+                              color="brand.slate.400"
+                              fontSize="xs"
+                              fontWeight={600}
+                              textTransform={'uppercase'}
+                            >
+                              {answer.question}
+                            </Text>
+                            <Text
+                              color="brand.slate.700"
+                              wordBreak={'break-all'}
+                            >
+                              {answer.answer || '-'}
+                            </Text>
+                          </Box>
+                        )
+                      )}
+                    <Box mb={4}>
+                      <Text
+                        mb={2}
+                        color="brand.slate.400"
+                        fontSize="xs"
+                        fontWeight={600}
+                        textTransform={'uppercase'}
+                      >
+                        User Profile
+                      </Text>
+                      <Flex
+                        align="start"
+                        justify="start"
+                        gap={2}
+                        mb={4}
+                        fontSize="sm"
+                      >
+                        <Text w={20} color="brand.slate.400">
+                          Bio:
+                        </Text>
+                        <Text color="brand.slate.700">
+                          {selectedSubmission?.user?.bio || '-'}
+                        </Text>
+                      </Flex>
+                      <Flex
+                        align="center"
+                        justify="start"
+                        gap={2}
+                        mb={4}
+                        fontSize="sm"
+                      >
+                        <Text w={20} color="brand.slate.400">
+                          Wallet:
+                        </Text>
+                        <Text color="brand.slate.700">
+                          {truncatePublicKey(
+                            selectedSubmission?.user?.publicKey
+                          )}
+                          <Tooltip label="Copy Wallet ID" placement="right">
+                            <CopyIcon
+                              cursor="pointer"
+                              ml={1}
+                              onClick={() =>
+                                navigator.clipboard.writeText(
+                                  selectedSubmission?.user?.publicKey || ''
+                                )
+                              }
+                            />
+                          </Tooltip>
+                        </Text>
+                      </Flex>
+                      <Flex
+                        align="center"
+                        justify="start"
+                        gap={2}
+                        mb={4}
+                        fontSize="sm"
+                      >
+                        <Text w={20} color="brand.slate.400">
+                          Discord:
+                        </Text>
+                        <Text color="brand.slate.700">
+                          {selectedSubmission?.user?.discord || '-'}
+                        </Text>
+                      </Flex>
+                      <Flex
+                        align="center"
+                        justify="start"
+                        gap={2}
+                        mb={4}
+                        fontSize="sm"
+                      >
+                        <Text w={20} color="brand.slate.400">
+                          Twitter:
+                        </Text>
+                        <Link
+                          color="brand.slate.700"
+                          href={selectedSubmission?.user?.twitter || undefined}
+                          isExternal
+                        >
+                          {selectedSubmission?.user?.twitter || '-'}
+                        </Link>
+                      </Flex>
+                      <Flex
+                        align="center"
+                        justify="start"
+                        gap={2}
+                        mb={4}
+                        fontSize="sm"
+                      >
+                        <Text w={20} color="brand.slate.400">
+                          LinkedIn:
+                        </Text>
+                        <Link
+                          color="brand.slate.700"
+                          href={selectedSubmission?.user?.linkedin || undefined}
+                          isExternal
+                        >
+                          {selectedSubmission?.user?.linkedin
+                            ? `${selectedSubmission?.user?.linkedin?.slice(
+                                0,
+                                25
+                              )}${
+                                selectedSubmission?.user?.linkedin?.length >=
+                                  25 && '...'
+                              }` || '-'
+                            : '-'}
+                        </Link>
+                      </Flex>
+                      <Flex
+                        align="center"
+                        justify="start"
+                        gap={2}
+                        mb={4}
+                        fontSize="sm"
+                      >
+                        <Text w={20} color="brand.slate.400">
+                          GitHub:
+                        </Text>
+                        <Link
+                          color="brand.slate.700"
+                          href={selectedSubmission?.user?.github || undefined}
+                          isExternal
+                        >
+                          {selectedSubmission?.user?.github || '-'}
+                        </Link>
+                      </Flex>
+                      <Flex
+                        align="center"
+                        justify="start"
+                        gap={2}
+                        mb={4}
+                        fontSize="sm"
+                      >
+                        <Text w={20} color="brand.slate.400">
+                          Website:
+                        </Text>
+                        <Link
+                          color="brand.slate.700"
+                          href={selectedSubmission?.user?.website || undefined}
+                          isExternal
+                        >
+                          {selectedSubmission?.user?.website || '-'}
+                        </Link>
+                      </Flex>
+                    </Box>
+                  </Box>
+                </Box>
+              </Flex>
+            </Flex>
           )}
-          <Flex align="center" justify="end" mt={6}>
-            <Text mr={4} color="brand.slate.400" fontSize="sm">
+          <Flex align="center" justify="start" gap={4} mt={4}>
+            <Button
+              isDisabled={skip <= 0}
+              leftIcon={<ChevronLeftIcon w={5} h={5} />}
+              onClick={() =>
+                skip >= length ? setSkip(skip - length) : setSkip(0)
+              }
+              size="sm"
+              variant="outline"
+            >
+              Previous
+            </Button>
+            <Text color="brand.slate.400" fontSize="sm">
               <Text as="span" fontWeight={700}>
                 {skip + 1}
               </Text>{' '}
@@ -506,18 +615,6 @@ function BountySubmissions({ slug }: Props) {
               </Text>{' '}
               Bounties
             </Text>
-            <Button
-              mr={4}
-              isDisabled={skip <= 0}
-              leftIcon={<ChevronLeftIcon w={5} h={5} />}
-              onClick={() =>
-                skip >= length ? setSkip(skip - length) : setSkip(0)
-              }
-              size="sm"
-              variant="outline"
-            >
-              Previous
-            </Button>
             <Button
               isDisabled={
                 totalSubmissions < skip + length ||
