@@ -1,11 +1,11 @@
 import { Flex, HStack, Image, Link, Text, VStack } from '@chakra-ui/react';
+import type { User } from '@prisma/client';
 import axios from 'axios';
 import { useRouter } from 'next/router';
 import React, { useEffect, useState } from 'react';
 import type { Metadata } from 'unfurl.js/dist/types';
 
 import TalentBio from '@/components/TalentBio';
-import type { User } from '@/interface/user';
 
 import { Comments } from '../comments';
 

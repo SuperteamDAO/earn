@@ -1,4 +1,5 @@
 import { Box, Button, HStack, Image, Text, VStack } from '@chakra-ui/react';
+import type { User } from '@prisma/client';
 import axios from 'axios';
 import { useRouter } from 'next/router';
 import type { Dispatch, SetStateAction } from 'react';
@@ -7,18 +8,16 @@ import { toast, Toaster } from 'react-hot-toast';
 import { AiFillHeart } from 'react-icons/ai';
 import type { Metadata } from 'unfurl.js/dist/types';
 
-import type { User } from '@/interface/user';
-
 import { userStore } from '../../../../store/user';
 
 interface Props {
   winner: boolean;
-  talent: User | undefined;
+  talent: User;
   likes?: {
     id: string;
     date: number;
   }[];
-  id: string | undefined;
+  id: string;
   setUpdate: Dispatch<SetStateAction<boolean>>;
   link: string;
 }

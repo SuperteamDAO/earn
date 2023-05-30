@@ -1,6 +1,5 @@
 import { Avatar, Box, Button, Flex, Image, Text } from '@chakra-ui/react';
-
-import type { User } from '@/interface/user';
+import type { User } from '@prisma/client';
 
 type ChipType = {
   icon: string;

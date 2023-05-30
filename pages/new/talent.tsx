@@ -10,7 +10,7 @@ import {
   Text,
   VStack,
 } from '@chakra-ui/react';
-import type { User } from '@/interface/user';
+import type { User } from '@prisma/client';
 import React, { Fragment, useState } from 'react';
 import { create } from 'zustand';
 
