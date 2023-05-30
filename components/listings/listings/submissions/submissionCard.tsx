@@ -99,14 +99,16 @@ export const SubmissionCard = ({
                 alt={'profile'}
                 rounded={'full'}
                 src={
-                  talent.photo ? talent.photo : '/assets/randompeople/nft4.png'
+                  talent?.photo
+                    ? talent?.photo
+                    : '/assets/randompeople/nft4.png'
                 }
               />
               <Text color={'gray.400'}>
                 by @
-                {talent.username.length < 12
-                  ? talent.username
-                  : `${talent.username.slice(0, 12)}...`}
+                {talent?.username && talent?.username?.length < 12
+                  ? talent?.username
+                  : `${talent?.username?.slice(0, 12)}...`}
               </Text>
             </HStack>
           </VStack>

@@ -10,6 +10,7 @@ import {
   ModalBody,
   ModalContent,
   ModalOverlay,
+  Text,
   Tooltip,
   useDisclosure,
   VStack,
@@ -208,6 +209,7 @@ const Description = ({
             }}
             focusBorderColor="brand.purple"
             id="bountyRequirements"
+            maxLength={220}
             onChange={(e) =>
               setBountyRequirements && setBountyRequirements(e.target.value)
             }
@@ -215,6 +217,17 @@ const Description = ({
             type={'text'}
             value={bountyRequirements}
           />
+          <Text
+            color={
+              (bountyRequirements?.length || 0) > 200
+                ? 'red'
+                : 'brand.slate.400'
+            }
+            fontSize={'xs'}
+            textAlign="right"
+          >
+            {220 - (bountyRequirements?.length || 0)} characters left
+          </Text>
         </Box>
         <Flex justify="start" w="full">
           <Flex>
