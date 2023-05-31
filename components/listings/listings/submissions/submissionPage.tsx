@@ -1,4 +1,12 @@
-import { Flex, HStack, Image, Link, Text, VStack } from '@chakra-ui/react';
+import {
+  Button,
+  Flex,
+  HStack,
+  Image,
+  Link,
+  Text,
+  VStack,
+} from '@chakra-ui/react';
 import type { User } from '@prisma/client';
 import axios from 'axios';
 import { useRouter } from 'next/router';
@@ -72,17 +80,18 @@ export const SubmissionPage = ({ user, link }: Props) => {
             src={image}
           />
           <HStack w="full" px={7}>
-            <Link
-              px={5}
-              py={2}
-              border="1px solid"
-              borderColor={'gray.400'}
-              borderRadius={5}
+            <Button
+              as={Link}
+              w="full"
+              _hover={{
+                textDecoration: 'none',
+              }}
               href={link}
               isExternal
+              variant="solid"
             >
               Visit Link
-            </Link>
+            </Button>
           </HStack>
         </VStack>
         <Comments
