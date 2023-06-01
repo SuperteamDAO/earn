@@ -34,6 +34,16 @@ export default async function bounties(
       take: take ?? 15,
       orderBy: [{ deadline: 'desc' }, { id: 'desc' }],
       select: {
+        _count: {
+          select: {
+            Submission: {
+              where: {
+                isActive: true,
+                isArchived: false,
+              },
+            },
+          },
+        },
         id: true,
         title: true,
         slug: true,
