@@ -49,7 +49,7 @@ import { FiMoreVertical } from 'react-icons/fi';
 import ErrorSection from '@/components/shared/ErrorSection';
 import LoadingSection from '@/components/shared/LoadingSection';
 import { tokenList } from '@/constants/index';
-import type { Bounty } from '@/interface/bounty';
+import type { BountyWithSubmissions } from '@/interface/bounty';
 import Sidebar from '@/layouts/Sidebar';
 import { userStore } from '@/store/user';
 import { dayjs } from '@/utils/dayjs';
@@ -70,8 +70,8 @@ function Bounties() {
   } = useDisclosure();
   const { userInfo } = userStore();
   const [totalBounties, setTotalBounties] = useState(0);
-  const [bounties, setBounties] = useState<Bounty[]>([]);
-  const [bounty, setBounty] = useState<Bounty>({});
+  const [bounties, setBounties] = useState<BountyWithSubmissions[]>([]);
+  const [bounty, setBounty] = useState<BountyWithSubmissions>({});
   const [isChangingStatus, setIsChangingStatus] = useState(false);
   const [isBountiesLoading, setIsBountiesLoading] = useState(true);
   const [searchText, setSearchText] = useState('');
@@ -122,7 +122,7 @@ function Bounties() {
     }
   };
 
-  const handlePublish = async (publishedBounty: Bounty) => {
+  const handlePublish = async (publishedBounty: BountyWithSubmissions) => {
     console.log(
       'file: index.tsx:105 ~ handlePublish ~ bounty:',
       publishedBounty
@@ -131,7 +131,7 @@ function Bounties() {
     publishOnOpen();
   };
 
-  const handleUnpublish = async (unpublishedBounty: Bounty) => {
+  const handleUnpublish = async (unpublishedBounty: BountyWithSubmissions) => {
     console.log(
       'file: index.tsx:105 ~ handleUnpublish ~ bounty:',
       unpublishedBounty
@@ -271,6 +271,16 @@ function Bounties() {
                   Bounty Name
                 </Th>
                 <Th
+                  align="right"
+                  color="brand.slate.400"
+                  fontSize="sm"
+                  fontWeight={500}
+                  textAlign="right"
+                  textTransform={'capitalize'}
+                >
+                  Submissions
+                </Th>
+                <Th
                   align="center"
                   color="brand.slate.400"
                   fontSize="sm"
@@ -330,11 +340,19 @@ function Bounties() {
                   <Tr key={currentBounty?.id} bg="white">
                     <Td
                       maxW={96}
-                      color="brand.slate.600"
-                      fontWeight={700}
+                      color="brand.slate.700"
+                      fontWeight={500}
                       whiteSpace="normal"
                     >
                       {currentBounty.title}
+                    </Td>
+                    <Td align="right">
+                      <Text textAlign={'right'}>
+                        {
+                          // eslint-disable-next-line no-underscore-dangle
+                          currentBounty?._count?.Submission || 0
+                        }
+                      </Text>
                     </Td>
                     <Td align="center">
                       <Flex align={'center'} justify="center">
