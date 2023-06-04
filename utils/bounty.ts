@@ -1,4 +1,4 @@
-import type { BountyWithSubmissions } from '@/interface/bounty';
+import type { Bounty, BountyWithSubmissions } from '@/interface/bounty';
 import { dayjs } from '@/utils/dayjs';
 
 export const getDeadlineFromNow = (deadline: string | undefined) =>
@@ -19,7 +19,11 @@ export const getBountyDraftStatus = (
   return 'DRAFT';
 };
 
-export const getBountyProgress = (bounty: BountyWithSubmissions) => {
+export const getBountyProgress = (
+  bounty: Bounty | BountyWithSubmissions | null
+) => {
+  if (!bounty) return '-';
+  const rewardsLength = Object.keys(bounty?.rewards || {})?.length || 0;
   const bountyStatus = getBountyDraftStatus(
     bounty?.status,
     bounty?.isPublished
@@ -27,11 +31,20 @@ export const getBountyProgress = (bounty: BountyWithSubmissions) => {
   if (bountyStatus !== 'PUBLISHED') return '';
   const hasDeadlinePassed = isDeadlineOver(bounty?.deadline || '');
   if (!hasDeadlinePassed) return 'IN PROGRESS';
-  if (bounty?.areWinnersPublished && bounty?.arePaymentsCompleted)
+  if (
+    bounty?.totalWinnersSelected === rewardsLength &&
+    bounty?.totalPaymentsMade === rewardsLength
+  )
     return 'COMPLETED';
-  if (bounty?.areWinnersPublished && !bounty?.arePaymentsCompleted)
+  if (
+    bounty?.totalWinnersSelected === rewardsLength &&
+    bounty?.totalPaymentsMade !== rewardsLength
+  )
     return 'WINNERS PUBLISHED - PAYMENTS PENDING';
-  if (!bounty?.areWinnersPublished && bounty?.arePaymentsCompleted)
+  if (
+    bounty?.totalWinnersSelected !== rewardsLength &&
+    bounty?.totalPaymentsMade !== rewardsLength
+  )
     return 'PAYMENTS COMPLETED';
   // add status - winners selected - WINNERS SELECTED
   return 'IN REVIEW';

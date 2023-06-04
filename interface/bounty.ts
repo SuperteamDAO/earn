@@ -48,8 +48,8 @@ interface Bounty {
   source?: string;
   sourceDetails?: string;
   type?: BountyType | string;
-  areWinnersPublished?: boolean;
-  arePaymentsCompleted?: boolean;
+  totalWinnersSelected?: number;
+  totalPaymentsMade?: number;
 }
 
 interface BountyWithSubmissions extends Bounty {

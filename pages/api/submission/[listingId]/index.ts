@@ -18,7 +18,15 @@ export default async function submission(
         isArchived: false,
       },
     };
+    const winnersQuery = {
+      ...countQuery,
+      where: {
+        ...countQuery.where,
+        isWinner: true,
+      },
+    };
     const total = await prisma.submission.count(countQuery);
+    const winnersSelected = await prisma.submission.count(winnersQuery);
     const result = await prisma.submission.findMany({
       ...countQuery,
       skip: skip ?? 0,
@@ -29,7 +37,7 @@ export default async function submission(
       },
     });
 
-    res.status(200).json({ total, data: result });
+    res.status(200).json({ total, winnersSelected, data: result });
   } catch (error) {
     res.status(400).json({
       error,

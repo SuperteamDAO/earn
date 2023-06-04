@@ -41,33 +41,35 @@ model Jobs {
 }
 
 model Bounties {
-  id              String       @id @default(uuid())
-  title           String
-  slug            String       @unique
-  description     String?      @db.Text
-  requirements    String?      @db.Text
-  deadline        DateTime?
-  eligibility     Json?
-  status          status       @default(OPEN)
-  token           String?
-  rewardAmount    Int?
-  rewards         Json?
-  sponsorId       String
-  pocId           String
-  source          Source       @default(NATIVE)
-  sourceDetails   Json?
-  isPublished     Boolean      @default(false)
-  isFeatured      Boolean      @default(false)
-  isActive        Boolean      @default(true)
-  isArchived      Boolean      @default(false)
-  createdAt       DateTime     @default(now())
-  updatedAt       DateTime     @updatedAt
-  applicationLink String?
-  skills          Json?
-  type            BountyType   @default(open)
-  sponsor         Sponsors     @relation(fields: [sponsorId], references: [id])
-  poc             User         @relation("poc", fields: [pocId], references: [id])
-  Submission      Submission[]
+  id                   String       @id @default(uuid())
+  title                String
+  slug                 String       @unique
+  description          String?      @db.Text
+  requirements         String?      @db.Text
+  deadline             DateTime?
+  eligibility          Json?
+  status               status       @default(OPEN)
+  token                String?
+  rewardAmount         Int?
+  rewards              Json?
+  sponsorId            String
+  pocId                String
+  source               Source       @default(NATIVE)
+  sourceDetails        Json?
+  isPublished          Boolean      @default(false)
+  isFeatured           Boolean      @default(false)
+  isActive             Boolean      @default(true)
+  isArchived           Boolean      @default(false)
+  createdAt            DateTime     @default(now())
+  updatedAt            DateTime     @updatedAt
+  applicationLink      String?
+  skills               Json?
+  totalWinnersSelected Int?         @default(0)
+  totalPaymentsMade    Int?         @default(0)
+  type                 BountyType   @default(open)
+  sponsor              Sponsors     @relation(fields: [sponsorId], references: [id])
+  poc                  User         @relation("poc", fields: [pocId], references: [id])
+  Submission           Submission[]
 
   @@index([id, slug])
   @@index([sponsorId])
@@ -128,6 +130,8 @@ model Submission {
   listing            Bounties    @relation(fields: [listingId], references: [id])
   isWinner           Boolean     @default(false)
   winnerPosition     String?
+  isPaid             Boolean     @default(false)
+  paymentDetails     Json?
   isActive           Boolean     @default(true)
   isArchived         Boolean     @default(false)
   createdAt          DateTime    @default(now())

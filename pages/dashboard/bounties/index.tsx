@@ -101,6 +101,7 @@ function Bounties() {
           searchText,
           skip,
           take: length,
+          showSubmissionDetails: true,
         },
       });
       setTotalBounties(bountiesList.data.total);

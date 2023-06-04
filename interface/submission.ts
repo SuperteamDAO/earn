@@ -10,6 +10,8 @@ interface SubmissionWithUser {
   listingId: string;
   isWinner: boolean;
   winnerPosition?: string | null;
+  isPaid: boolean;
+  paymentDetails?: any;
   isActive: boolean;
   isArchived: boolean;
   createdAt: string;
