@@ -1,5 +1,7 @@
 import type { ListingType, User } from '@prisma/client';
 
+import type { Rewards } from '@/interface/bounty';
+
 interface SubmissionWithUser {
   id: string;
   link?: string;
@@ -9,7 +11,7 @@ interface SubmissionWithUser {
   listingType: ListingType;
   listingId: string;
   isWinner: boolean;
-  winnerPosition?: string | null;
+  winnerPosition?: keyof Rewards;
   isPaid: boolean;
   paymentDetails?: any;
   isActive: boolean;

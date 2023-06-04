@@ -34,7 +34,7 @@ import { useEffect, useState } from 'react';
 import ErrorSection from '@/components/shared/ErrorSection';
 import LoadingSection from '@/components/shared/LoadingSection';
 import PublishResults from '@/components/submissions/PublishResults';
-import type { Bounty } from '@/interface/bounty';
+import type { Bounty, Rewards } from '@/interface/bounty';
 import type { SubmissionWithUser } from '@/interface/submission';
 import Sidebar from '@/layouts/Sidebar';
 import { userStore } from '@/store/user';
@@ -57,6 +57,7 @@ function BountySubmissions({ slug }: Props) {
   const [bounty, setBounty] = useState<Bounty | null>(null);
   const [totalSubmissions, setTotalSubmissions] = useState(0);
   const [totalWinners, setTotalWinners] = useState(0);
+  const [totalPaymentsMade, setTotalPaymentsMade] = useState(0);
   const [submissions, setSubmissions] = useState<SubmissionWithUser[]>([]);
   const [selectedSubmission, setSelectedSubmission] =
     useState<SubmissionWithUser>();
@@ -81,6 +82,7 @@ function BountySubmissions({ slug }: Props) {
       );
       setTotalSubmissions(submissionsDetails.data.total);
       setTotalWinners(submissionsDetails.data.winnersSelected || 0);
+      setTotalPaymentsMade(submissionsDetails.data.paymentsMade || 0);
       setSubmissions(submissionsDetails.data.data);
       setSelectedSubmission(submissionsDetails.data.data[0]);
       setIsBountyLoading(false);
@@ -140,7 +142,7 @@ function BountySubmissions({ slug }: Props) {
         const updatedSubmission: SubmissionWithUser = {
           ...(submissions[submissionIndex] as SubmissionWithUser),
           isWinner: !!position,
-          winnerPosition: position || null,
+          winnerPosition: (position as keyof Rewards) || undefined,
         };
         const newSubmissions = [...submissions];
         newSubmissions[submissionIndex] = updatedSubmission;
@@ -187,7 +189,9 @@ function BountySubmissions({ slug }: Props) {
               isOpen={isOpen}
               onClose={onClose}
               totalWinners={totalWinners}
-              rewards={rewards}
+              totalPaymentsMade={totalPaymentsMade}
+              rewards={Object.keys(bounty?.rewards || {})}
+              bountyId={bounty?.id}
             />
           )}
           <Box mb={4}>
@@ -382,7 +386,11 @@ function BountySubmissions({ slug }: Props) {
                       {selectedSubmission?.isWinner &&
                         selectedSubmission?.winnerPosition && (
                           <Button mr={4} size="sm" variant="solid">
-                            Pay {bounty?.token} {bounty?.rewards?.first}
+                            Pay {bounty?.token}{' '}
+                            {!!bounty?.rewards &&
+                              bounty?.rewards[
+                                selectedSubmission?.winnerPosition as keyof Rewards
+                              ]}
                           </Button>
                         )}
                       {isSelectingWinner && (

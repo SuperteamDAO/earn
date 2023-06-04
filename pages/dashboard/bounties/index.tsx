@@ -385,6 +385,7 @@ function Bounties() {
                         <Tag
                           color={'white'}
                           bg={getBgColor(bountyStatus)}
+                          wordBreak={'break-all'}
                           variant="solid"
                         >
                           {bountyStatus}
@@ -397,6 +398,7 @@ function Bounties() {
                           <Tag
                             color={'white'}
                             bg={getBgColor(bountyProgress)}
+                            wordBreak={'break-all'}
                             variant="solid"
                           >
                             {bountyProgress}

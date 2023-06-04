@@ -31,22 +31,21 @@ export const getBountyProgress = (
   if (bountyStatus !== 'PUBLISHED') return '';
   const hasDeadlinePassed = isDeadlineOver(bounty?.deadline || '');
   if (!hasDeadlinePassed) return 'IN PROGRESS';
+  if (bounty?.isWinnersAnnounced && bounty?.totalPaymentsMade === rewardsLength)
+    return 'COMPLETED';
+  if (bounty?.isWinnersAnnounced && bounty?.totalPaymentsMade !== rewardsLength)
+    return 'PUBLISHED - PAYMENTS PENDING';
   if (
+    !bounty?.isWinnersAnnounced &&
     bounty?.totalWinnersSelected === rewardsLength &&
     bounty?.totalPaymentsMade === rewardsLength
   )
-    return 'COMPLETED';
-  if (
-    bounty?.totalWinnersSelected === rewardsLength &&
-    bounty?.totalPaymentsMade !== rewardsLength
-  )
-    return 'WINNERS PUBLISHED - PAYMENTS PENDING';
-  if (
-    bounty?.totalWinnersSelected !== rewardsLength &&
-    bounty?.totalPaymentsMade !== rewardsLength
-  )
     return 'PAYMENTS COMPLETED';
-  // add status - winners selected - WINNERS SELECTED
+  if (
+    !bounty?.isWinnersAnnounced &&
+    bounty?.totalWinnersSelected === rewardsLength
+  )
+    return 'WINNERS SELECTED';
   return 'IN REVIEW';
 };
 
@@ -55,6 +54,12 @@ export const getBgColor = (status: string) => {
     case 'PUBLISHED':
     case 'COMPLETED':
       return 'green';
+    case 'PUBLISHED - PAYMENTS PENDING':
+      return 'green.400';
+    case 'PAYMENTS COMPLETED':
+      return 'green.500';
+    case 'WINNERS SELECTED':
+      return 'green.300';
     case 'DRAFT':
       return 'orange';
     case 'IN REVIEW':

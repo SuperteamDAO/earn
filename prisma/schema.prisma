@@ -66,6 +66,7 @@ model Bounties {
   skills               Json?
   totalWinnersSelected Int?         @default(0)
   totalPaymentsMade    Int?         @default(0)
+  isWinnersAnnounced   Boolean      @default(false)
   type                 BountyType   @default(open)
   sponsor              Sponsors     @relation(fields: [sponsorId], references: [id])
   poc                  User         @relation("poc", fields: [pocId], references: [id])

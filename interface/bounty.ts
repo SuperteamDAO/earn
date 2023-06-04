@@ -50,6 +50,7 @@ interface Bounty {
   type?: BountyType | string;
   totalWinnersSelected?: number;
   totalPaymentsMade?: number;
+  isWinnersAnnounced?: boolean;
 }
 
 interface BountyWithSubmissions extends Bounty {
