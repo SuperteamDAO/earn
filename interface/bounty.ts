@@ -50,4 +50,16 @@ interface Bounty {
   type?: BountyType | string;
 }
 
-export type { Bounty, BountyStatus, Eligibility, Rewards };
+interface BountyWithSubmissions extends Bounty {
+  _count?: {
+    Submission?: number;
+  };
+}
+
+export type {
+  Bounty,
+  BountyStatus,
+  BountyWithSubmissions,
+  Eligibility,
+  Rewards,
+};

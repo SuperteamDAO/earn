@@ -86,7 +86,14 @@ export const SubmissionCard = ({
         }}
         rounded={'lg'}
       >
-        <Image w={'full'} h={80} objectFit={'cover'} alt={'card'} src={image} />
+        <Image
+          w={'full'}
+          h={'full'}
+          maxH={44}
+          objectFit={'cover'}
+          alt={'card'}
+          src={image}
+        />
         <HStack align={'center'} justify={'space-between'} w={'full'}>
           <VStack align={'start'}>
             <Text color={'#000000'} fontSize={'1.1rem'} fontWeight={600}>
