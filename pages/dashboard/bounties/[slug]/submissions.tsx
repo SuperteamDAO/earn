@@ -1,7 +1,10 @@
 import {
+  BellIcon,
   ChevronLeftIcon,
   ChevronRightIcon,
   CopyIcon,
+  DownloadIcon,
+  ExternalLinkIcon,
   LinkIcon,
 } from '@chakra-ui/icons';
 import {
@@ -207,14 +210,27 @@ function BountySubmissions({ slug }: Props) {
                 Submissions
               </Text>
             </Text>
-            <Button
-              isLoading={isExporting}
-              loadingText={'Exporting...'}
-              onClick={() => exportSubmissionsCsv()}
-              variant={'solid'}
-            >
-              Export Submissions CSV
-            </Button>
+            <Flex align="center" justify="flex-end">
+              <Button
+                isLoading={isExporting}
+                leftIcon={<DownloadIcon />}
+                loadingText={'Exporting...'}
+                onClick={() => exportSubmissionsCsv()}
+                variant={'outline'}
+              >
+                Export CSV
+              </Button>
+              <Button
+                ml={4}
+                isLoading={isExporting}
+                leftIcon={<BellIcon />}
+                loadingText={'Exporting...'}
+                onClick={() => exportSubmissionsCsv()}
+                variant={'solid'}
+              >
+                Publish Winners
+              </Button>
+            </Flex>
           </Flex>
           {!submissions?.length ? (
             <ErrorSection
@@ -582,6 +598,27 @@ function BountySubmissions({ slug }: Props) {
                         >
                           {selectedSubmission?.user?.website || '-'}
                         </Link>
+                      </Flex>
+                      <Flex
+                        align="center"
+                        justify="start"
+                        gap={2}
+                        mb={4}
+                        fontSize="sm"
+                      >
+                        <Button
+                          onClick={() =>
+                            window.open(
+                              `${router.basePath}/t/${selectedSubmission?.user?.username}/`,
+                              '_ blank'
+                            )
+                          }
+                          rightIcon={<ExternalLinkIcon />}
+                          size="sm"
+                          variant="outline"
+                        >
+                          View Talent Profile
+                        </Button>
                       </Flex>
                     </Box>
                   </Box>

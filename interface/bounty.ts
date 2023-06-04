@@ -48,6 +48,8 @@ interface Bounty {
   source?: string;
   sourceDetails?: string;
   type?: BountyType | string;
+  areWinnersPublished?: boolean;
+  arePaymentsCompleted?: boolean;
 }
 
 interface BountyWithSubmissions extends Bounty {
