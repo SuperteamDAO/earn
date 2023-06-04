@@ -43,6 +43,7 @@ import {
   getBountyDraftStatus,
   getBountyProgress,
 } from '@/utils/bounty';
+import { sortRank } from '@/utils/rank';
 import { truncatePublicKey } from '@/utils/truncatePublicKey';
 
 interface Props {
@@ -97,7 +98,8 @@ function BountySubmissions({ slug }: Props) {
         router.push('/dashboard/bounties');
       }
       getSubmissions(bountyDetails.data.id);
-      setRewards(Object.keys(bountyDetails.data.rewards || {}));
+      const ranks = sortRank(Object.keys(bountyDetails.data.rewards || {}));
+      setRewards(ranks);
     } catch (e) {
       setIsBountyLoading(false);
     }
@@ -126,13 +128,15 @@ function BountySubmissions({ slug }: Props) {
     if (!id) return;
     setIsSelectingWinner(true);
     try {
-      await axios.post(`/api/submission/update/`, {
+      await axios.post(`/api/submission/toggleWinner/`, {
         id,
         isWinner: !!position,
         winnerPosition: position || null,
       });
       const submissionIndex = submissions.findIndex((s) => s.id === id);
       if (submissionIndex >= 0) {
+        const oldRank: string =
+          submissions[submissionIndex]?.winnerPosition || '';
         const updatedSubmission: SubmissionWithUser = {
           ...(submissions[submissionIndex] as SubmissionWithUser),
           isWinner: !!position,
@@ -144,13 +148,16 @@ function BountySubmissions({ slug }: Props) {
         setSelectedSubmission(updatedSubmission);
         if (!position) {
           setTotalWinners(totalWinners - 1);
+          const ranks = sortRank([...new Set([...rewards, oldRank])]);
+          setRewards(ranks);
         } else {
           setTotalWinners(totalWinners + 1);
+          const ranks = rewards.filter((r) => r !== position);
+          setRewards(ranks);
         }
       }
       setIsSelectingWinner(false);
     } catch (e) {
-      console.log('file: [slug].tsx:136 ~ selectWinner ~ e:', e);
       setIsSelectingWinner(false);
     }
   };
@@ -383,6 +390,7 @@ function BountySubmissions({ slug }: Props) {
                       )}
                       <Select
                         maxW={48}
+                        textTransform="capitalize"
                         borderColor="brand.slate.300"
                         _placeholder={{
                           color: 'brand.slate.300',
@@ -398,6 +406,15 @@ function BountySubmissions({ slug }: Props) {
                         }
                       >
                         <option value={''}>Select Winner</option>
+                        {selectedSubmission?.isWinner &&
+                          rewards.length <
+                            Object.keys(bounty?.rewards || {})?.length && (
+                            <option
+                              value={selectedSubmission?.winnerPosition || ''}
+                            >
+                              {selectedSubmission?.winnerPosition}
+                            </option>
+                          )}
                         {rewards.map((reward) => (
                           <option key={reward} value={reward}>
                             {reward}
