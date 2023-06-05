@@ -13,7 +13,7 @@ interface Eligibility {
 }
 
 interface Rewards {
-  first: number;
+  first?: number;
   second?: number;
   third?: number;
   forth?: number;

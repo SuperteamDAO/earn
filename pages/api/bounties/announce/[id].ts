@@ -1,5 +1,6 @@
 import type { NextApiRequest, NextApiResponse } from 'next';
 
+import type { Rewards } from '@/interface/bounty';
 import { prisma } from '@/prisma';
 
 export default async function announce(
@@ -26,8 +27,8 @@ export default async function announce(
       });
       return;
     }
-    const rewards = Object.keys(bounty?.rewards || {})?.length || 0;
-    if (!!rewards && bounty?.totalWinnersSelected !== rewards) {
+    const totalRewards = Object.keys(bounty?.rewards || {})?.length || 0;
+    if (!!totalRewards && bounty?.totalWinnersSelected !== totalRewards) {
       res.status(400).json({
         message: 'Please select all winners before publishing the results.',
       });
@@ -41,12 +42,47 @@ export default async function announce(
         isWinnersAnnounced: true,
       },
     });
+    const rewards: Rewards = (bounty?.rewards || {}) as Rewards;
+    const winners = await prisma.submission.findMany({
+      where: {
+        listingId: id,
+        isWinner: true,
+        isActive: true,
+        isArchived: false,
+      },
+      take: 100,
+      include: {
+        user: true,
+      },
+    });
+
+    const promises = [];
+    let currentIndex = 0;
+
+    while (currentIndex < winners?.length) {
+      const amount: number = winners[currentIndex]?.winnerPosition
+        ? rewards[winners[currentIndex]?.winnerPosition as keyof Rewards] || 0
+        : 0;
+      // TODO: convert amount to USD if token is not USDC, USDT, USD, DAI, or UST
+      const amountWhere = {
+        where: {
+          id: winners[currentIndex]?.userId,
+        },
+        data: {
+          totalEarnedInUSD: {
+            increment: amount,
+          },
+        },
+      };
+      promises.push(prisma.user.update(amountWhere));
+      currentIndex += 1;
+    }
+    await Promise.all(promises);
     res.status(200).json(result);
   } catch (error) {
-    console.log('file: update.ts:21 ~ error:', error);
     res.status(400).json({
       error,
-      message: `Error occurred while updating bounty with id=${id}.`,
+      message: `Error occurred while announcing bounty with id=${id}.`,
     });
   }
 }

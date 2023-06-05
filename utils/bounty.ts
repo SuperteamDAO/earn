@@ -34,7 +34,7 @@ export const getBountyProgress = (
   if (bounty?.isWinnersAnnounced && bounty?.totalPaymentsMade === rewardsLength)
     return 'COMPLETED';
   if (bounty?.isWinnersAnnounced && bounty?.totalPaymentsMade !== rewardsLength)
-    return 'PUBLISHED - PAYMENTS PENDING';
+    return 'ANNOUNCED - PAYMENTS PENDING';
   if (
     !bounty?.isWinnersAnnounced &&
     bounty?.totalWinnersSelected === rewardsLength &&
@@ -54,7 +54,7 @@ export const getBgColor = (status: string) => {
     case 'PUBLISHED':
     case 'COMPLETED':
       return 'green';
-    case 'PUBLISHED - PAYMENTS PENDING':
+    case 'ANNOUNCED - PAYMENTS PENDING':
       return 'green.400';
     case 'PAYMENTS COMPLETED':
       return 'green.500';
