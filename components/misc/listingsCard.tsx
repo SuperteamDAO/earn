@@ -101,7 +101,11 @@ export const ListingSection = ({
         </Flex>
         <Flex display={router?.query?.category !== type ? 'block' : 'none'}>
           <Link
-            href={`/${type}`}
+            href={
+              router?.query?.filter
+                ? `/${type}/${router?.query?.filter}/`
+                : `/${type}/`
+            }
             onClick={() => {
               Mixpanel.track('view_all', {
                 type: title,
