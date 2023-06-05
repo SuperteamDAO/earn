@@ -66,6 +66,7 @@ const SubmissionPage = ({ slug }: { slug: string }) => {
               slug={bounty?.slug}
             />
             <Submissions
+              bounty={bounty}
               setUpdate={setUpdate}
               submissions={submission}
               endTime={bounty.deadline as string}

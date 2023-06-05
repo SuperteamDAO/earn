@@ -13,6 +13,7 @@ import { userStore } from '../../../../store/user';
 
 interface Props {
   winner: boolean;
+  winnerPosition?: string;
   talent: User;
   likes?: {
     id: string;
@@ -23,6 +24,7 @@ interface Props {
   link: string;
 }
 export const SubmissionCard = ({
+  winnerPosition,
   id,
   winner,
   talent,
@@ -170,9 +172,9 @@ export const SubmissionCard = ({
             color={'#D26F12'}
             fontWeight={600}
             lineHeight={8}
-            letterSpacing={'0.195rem'}
+            textTransform={'uppercase'}
           >
-            WINNER
+            🏆 {winnerPosition}
           </Text>
         </Box>
       </VStack>
