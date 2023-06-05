@@ -3,16 +3,23 @@ import moment from 'moment';
 import type { Dispatch, SetStateAction } from 'react';
 import React from 'react';
 
+import type { Bounty } from '@/interface/bounty';
 import type { SubmissionWithUser } from '@/interface/submission';
 
 import { SubmissionCard } from './submissionCard';
 
 interface Props {
+  bounty: Bounty;
   submissions: SubmissionWithUser[];
   endTime: string;
   setUpdate: Dispatch<SetStateAction<boolean>>;
 }
-export const Submissions = ({ submissions, endTime, setUpdate }: Props) => {
+export const Submissions = ({
+  bounty,
+  submissions,
+  endTime,
+  setUpdate,
+}: Props) => {
   return (
     <>
       <VStack
@@ -51,9 +58,10 @@ export const Submissions = ({ submissions, endTime, setUpdate }: Props) => {
                       }
                       talent={el.user}
                       key={el.id}
-                      winner={false}
+                      winner={!!bounty?.isWinnersAnnounced && !!el.isWinner}
                       link={el.link ?? ''}
                       setUpdate={setUpdate}
+                      winnerPosition={el.winnerPosition}
                     />
                   );
                 })}

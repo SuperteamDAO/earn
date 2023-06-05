@@ -110,7 +110,6 @@ function CategoryPage({ category, filter }: Props) {
                 return (
                   <BountiesCard
                     slug={bounty?.slug}
-                    status={bounty?.status}
                     rewardAmount={bounty?.rewardAmount}
                     key={bounty?.id}
                     sponsorName={bounty?.sponsor?.name}
@@ -118,6 +117,7 @@ function CategoryPage({ category, filter }: Props) {
                     title={bounty?.title}
                     logo={bounty?.sponsor?.logo}
                     token={bounty?.token}
+                    type={bounty?.type}
                   />
                 );
               })}

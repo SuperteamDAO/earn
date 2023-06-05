@@ -52,7 +52,13 @@ import { tokenList } from '@/constants/index';
 import type { BountyWithSubmissions } from '@/interface/bounty';
 import Sidebar from '@/layouts/Sidebar';
 import { userStore } from '@/store/user';
-import { dayjs } from '@/utils/dayjs';
+import {
+  formatDeadline,
+  getBgColor,
+  getBountyDraftStatus,
+  getBountyProgress,
+  getDeadlineFromNow,
+} from '@/utils/bounty';
 
 const debounce = require('lodash.debounce');
 
@@ -95,6 +101,7 @@ function Bounties() {
           searchText,
           skip,
           take: length,
+          showSubmissionDetails: true,
         },
       });
       setTotalBounties(bountiesList.data.total);
@@ -111,31 +118,12 @@ function Bounties() {
     }
   }, [userInfo?.currentSponsorId, skip, searchText]);
 
-  const getBgColor = (status: String) => {
-    switch (status) {
-      case 'PUBLISHED':
-        return 'green';
-      case 'DRAFT':
-        return 'orange';
-      default:
-        return 'gray';
-    }
-  };
-
   const handlePublish = async (publishedBounty: BountyWithSubmissions) => {
-    console.log(
-      'file: index.tsx:105 ~ handlePublish ~ bounty:',
-      publishedBounty
-    );
     setBounty(publishedBounty);
     publishOnOpen();
   };
 
   const handleUnpublish = async (unpublishedBounty: BountyWithSubmissions) => {
-    console.log(
-      'file: index.tsx:105 ~ handleUnpublish ~ bounty:',
-      unpublishedBounty
-    );
     setBounty(unpublishedBounty);
     unpublishOnOpen();
   };
@@ -146,13 +134,8 @@ function Bounties() {
       const result = await axios.post(`/api/bounties/update/${bounty.id}/`, {
         isPublished: status,
       });
-      console.log('file: index.tsx:147 ~ changeBountyStatus ~ result:', result);
       const changedBountyIndex = bounties.findIndex(
         (b) => b.id === result.data.id
-      );
-      console.log(
-        'file: index.tsx:150 ~ changeBountyStatus ~ changedBountyIndex:',
-        changedBountyIndex
       );
       const newBounties = bounties.map((b, index) =>
         changedBountyIndex === index
@@ -165,7 +148,6 @@ function Bounties() {
       setIsChangingStatus(false);
     } catch (e) {
       setIsChangingStatus(false);
-      console.log('file: index.tsx:149 ~ changeBountyStatus ~ e:', e);
     }
   };
 
@@ -288,7 +270,7 @@ function Bounties() {
                   textAlign="center"
                   textTransform={'capitalize'}
                 >
-                  Deadline
+                  Deadline ↓
                 </Th>
                 <Th
                   color="brand.slate.400"
@@ -305,37 +287,32 @@ function Bounties() {
                   textAlign="center"
                   textTransform={'capitalize'}
                 >
-                  Status
+                  Draft
                 </Th>
                 <Th
                   color="brand.slate.400"
                   fontSize="sm"
                   fontWeight={500}
+                  textAlign="center"
                   textTransform={'capitalize'}
-                />
-                <Th
-                  color="brand.slate.400"
-                  fontSize="sm"
-                  fontWeight={500}
-                  textTransform={'capitalize'}
-                />
+                >
+                  Status
+                </Th>
+                <Th pl={0} />
+                <Th pl={0} />
               </Tr>
             </Thead>
             <Tbody w="full">
               {bounties.map((currentBounty) => {
-                const deadlineFromNow = currentBounty?.deadline
-                  ? dayjs(currentBounty.deadline).fromNow()
-                  : '-';
-                const deadline = currentBounty?.deadline
-                  ? dayjs(currentBounty.deadline).format('MMM D, YYYY HH:mm')
-                  : '-';
-                const bountyStatus =
-                  // eslint-disable-next-line no-nested-ternary
-                  currentBounty.status === 'OPEN'
-                    ? currentBounty.isPublished
-                      ? 'PUBLISHED'
-                      : 'DRAFT'
-                    : 'CLOSED';
+                const deadlineFromNow = getDeadlineFromNow(
+                  currentBounty?.deadline
+                );
+                const deadline = formatDeadline(currentBounty?.deadline);
+                const bountyStatus = getBountyDraftStatus(
+                  currentBounty?.status,
+                  currentBounty?.isPublished
+                );
+                const bountyProgress = getBountyProgress(currentBounty);
                 return (
                   <Tr key={currentBounty?.id} bg="white">
                     <Td
@@ -343,8 +320,16 @@ function Bounties() {
                       color="brand.slate.700"
                       fontWeight={500}
                       whiteSpace="normal"
+                      wordBreak={'break-word'}
                     >
-                      {currentBounty.title}
+                      <NextLink
+                        href={`/dashboard/bounties/${currentBounty.slug}/submissions/`}
+                        passHref
+                      >
+                        <Text as="a" _hover={{ textDecoration: 'underline' }}>
+                          {currentBounty.title}
+                        </Text>
+                      </NextLink>
                     </Td>
                     <Td align="right">
                       <Text textAlign={'right'}>
@@ -400,13 +385,30 @@ function Bounties() {
                         <Tag
                           color={'white'}
                           bg={getBgColor(bountyStatus)}
+                          wordBreak={'break-all'}
                           variant="solid"
                         >
                           {bountyStatus}
                         </Tag>
                       </Flex>
                     </Td>
-                    <Td>
+                    <Td align="center">
+                      <Flex align="center" justify={'center'}>
+                        {bountyProgress ? (
+                          <Tag
+                            color={'white'}
+                            bg={getBgColor(bountyProgress)}
+                            wordBreak={'break-all'}
+                            variant="solid"
+                          >
+                            {bountyProgress}
+                          </Tag>
+                        ) : (
+                          '-'
+                        )}
+                      </Flex>
+                    </Td>
+                    <Td pl={0}>
                       {currentBounty.status === 'OPEN' &&
                         currentBounty.isPublished && (
                           <Button
@@ -432,7 +434,7 @@ function Bounties() {
                           </Button>
                         )}
                     </Td>
-                    <Td>
+                    <Td pl={0}>
                       <Menu>
                         <MenuButton
                           as={IconButton}
