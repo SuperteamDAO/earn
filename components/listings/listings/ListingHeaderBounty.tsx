@@ -103,7 +103,7 @@ function ListingHeader({
                   Closed
                 </Text>
               )}
-              {hasDeadlineEnded && status === 'OPEN' && (
+              {!isWinnersAnnounced && hasDeadlineEnded && status === 'OPEN' && (
                 <Text
                   px={3}
                   py={1}
