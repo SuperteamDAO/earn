@@ -1,7 +1,10 @@
 import {
+  BellIcon,
   ChevronLeftIcon,
   ChevronRightIcon,
   CopyIcon,
+  DownloadIcon,
+  ExternalLinkIcon,
   LinkIcon,
 } from '@chakra-ui/icons';
 import {
@@ -19,6 +22,7 @@ import {
   TagLabel,
   Text,
   Tooltip,
+  useDisclosure,
 } from '@chakra-ui/react';
 import axios from 'axios';
 import Avatar from 'boring-avatars';
@@ -29,10 +33,17 @@ import { useEffect, useState } from 'react';
 
 import ErrorSection from '@/components/shared/ErrorSection';
 import LoadingSection from '@/components/shared/LoadingSection';
-import type { Bounty } from '@/interface/bounty';
+import PublishResults from '@/components/submissions/PublishResults';
+import type { Bounty, Rewards } from '@/interface/bounty';
 import type { SubmissionWithUser } from '@/interface/submission';
 import Sidebar from '@/layouts/Sidebar';
 import { userStore } from '@/store/user';
+import {
+  getBgColor,
+  getBountyDraftStatus,
+  getBountyProgress,
+} from '@/utils/bounty';
+import { sortRank } from '@/utils/rank';
 import { truncatePublicKey } from '@/utils/truncatePublicKey';
 
 interface Props {
@@ -41,9 +52,12 @@ interface Props {
 
 function BountySubmissions({ slug }: Props) {
   const router = useRouter();
+  const { isOpen, onOpen, onClose } = useDisclosure();
   const { userInfo } = userStore();
   const [bounty, setBounty] = useState<Bounty | null>(null);
   const [totalSubmissions, setTotalSubmissions] = useState(0);
+  const [totalWinners, setTotalWinners] = useState(0);
+  const [totalPaymentsMade, setTotalPaymentsMade] = useState(0);
   const [submissions, setSubmissions] = useState<SubmissionWithUser[]>([]);
   const [selectedSubmission, setSelectedSubmission] =
     useState<SubmissionWithUser>();
@@ -67,6 +81,8 @@ function BountySubmissions({ slug }: Props) {
         }
       );
       setTotalSubmissions(submissionsDetails.data.total);
+      setTotalWinners(submissionsDetails.data.winnersSelected || 0);
+      setTotalPaymentsMade(submissionsDetails.data.paymentsMade || 0);
       setSubmissions(submissionsDetails.data.data);
       setSelectedSubmission(submissionsDetails.data.data[0]);
       setIsBountyLoading(false);
@@ -84,7 +100,8 @@ function BountySubmissions({ slug }: Props) {
         router.push('/dashboard/bounties');
       }
       getSubmissions(bountyDetails.data.id);
-      setRewards(Object.keys(bountyDetails.data.rewards || {}));
+      const ranks = sortRank(Object.keys(bountyDetails.data.rewards || {}));
+      setRewards(ranks);
     } catch (e) {
       setIsBountyLoading(false);
     }
@@ -102,49 +119,47 @@ function BountySubmissions({ slug }: Props) {
     }
   }, [skip]);
 
-  const bountyStatus =
-    // eslint-disable-next-line no-nested-ternary
-    bounty?.status === 'OPEN'
-      ? bounty?.isPublished
-        ? 'PUBLISHED'
-        : 'DRAFT'
-      : 'CLOSED';
+  const bountyStatus = getBountyDraftStatus(
+    bounty?.status,
+    bounty?.isPublished
+  );
 
-  const getBgColor = (status: String) => {
-    switch (status) {
-      case 'PUBLISHED':
-        return 'green';
-      case 'DRAFT':
-        return 'orange';
-      default:
-        return 'gray';
-    }
-  };
+  const bountyProgress = getBountyProgress(bounty);
 
   const selectWinner = async (position: string, id: string | undefined) => {
     if (!id) return;
     setIsSelectingWinner(true);
     try {
-      await axios.post(`/api/submission/update/`, {
+      await axios.post(`/api/submission/toggleWinner/`, {
         id,
         isWinner: !!position,
         winnerPosition: position || null,
       });
       const submissionIndex = submissions.findIndex((s) => s.id === id);
       if (submissionIndex >= 0) {
+        const oldRank: string =
+          submissions[submissionIndex]?.winnerPosition || '';
         const updatedSubmission: SubmissionWithUser = {
           ...(submissions[submissionIndex] as SubmissionWithUser),
           isWinner: !!position,
-          winnerPosition: position || null,
+          winnerPosition: (position as keyof Rewards) || undefined,
         };
         const newSubmissions = [...submissions];
         newSubmissions[submissionIndex] = updatedSubmission;
         setSubmissions(newSubmissions);
         setSelectedSubmission(updatedSubmission);
+        if (!position) {
+          setTotalWinners(totalWinners - 1);
+          const ranks = sortRank([...new Set([...rewards, oldRank])]);
+          setRewards(ranks);
+        } else {
+          setTotalWinners(totalWinners + 1);
+          const ranks = rewards.filter((r) => r !== position);
+          setRewards(ranks);
+        }
       }
       setIsSelectingWinner(false);
     } catch (e) {
-      console.log('file: [slug].tsx:136 ~ selectWinner ~ e:', e);
       setIsSelectingWinner(false);
     }
   };
@@ -169,6 +184,16 @@ function BountySubmissions({ slug }: Props) {
         <LoadingSection />
       ) : (
         <>
+          {isOpen && (
+            <PublishResults
+              isOpen={isOpen}
+              onClose={onClose}
+              totalWinners={totalWinners}
+              totalPaymentsMade={totalPaymentsMade}
+              rewards={Object.keys(bounty?.rewards || {})}
+              bountyId={bounty?.id}
+            />
+          )}
           <Box mb={4}>
             <Breadcrumb color="brand.slate.400">
               <BreadcrumbItem>
@@ -199,6 +224,14 @@ function BountySubmissions({ slug }: Props) {
             >
               {bountyStatus}
             </Tag>
+            <Tag
+              color={'white'}
+              bg={getBgColor(bountyProgress)}
+              size="sm"
+              variant="solid"
+            >
+              {bountyProgress}
+            </Tag>
           </Flex>
           <Flex align="center" justify="space-between" mb={4}>
             <Text color="brand.slate.500">
@@ -207,14 +240,25 @@ function BountySubmissions({ slug }: Props) {
                 Submissions
               </Text>
             </Text>
-            <Button
-              isLoading={isExporting}
-              loadingText={'Exporting...'}
-              onClick={() => exportSubmissionsCsv()}
-              variant={'solid'}
-            >
-              Export Submissions CSV
-            </Button>
+            <Flex align="center" justify="flex-end">
+              <Button
+                isLoading={isExporting}
+                leftIcon={<DownloadIcon />}
+                loadingText={'Exporting...'}
+                onClick={() => exportSubmissionsCsv()}
+                variant={'outline'}
+              >
+                Export CSV
+              </Button>
+              <Button
+                ml={4}
+                leftIcon={<BellIcon />}
+                onClick={onOpen}
+                variant={'solid'}
+              >
+                Publish Results
+              </Button>
+            </Flex>
           </Flex>
           {!submissions?.length ? (
             <ErrorSection
@@ -338,12 +382,23 @@ function BountySubmissions({ slug }: Props) {
                         </Text>
                       </Box>
                     </Flex>
-                    <Flex align="center" justify={'flex-end'} gap={2}>
+                    <Flex align="center" justify={'flex-end'} gap={2} w="full">
+                      {selectedSubmission?.isWinner &&
+                        selectedSubmission?.winnerPosition && (
+                          <Button mr={4} size="sm" variant="solid">
+                            Pay {bounty?.token}{' '}
+                            {!!bounty?.rewards &&
+                              bounty?.rewards[
+                                selectedSubmission?.winnerPosition as keyof Rewards
+                              ]}
+                          </Button>
+                        )}
                       {isSelectingWinner && (
                         <Spinner color="brand.slate.400" size="sm" />
                       )}
                       <Select
                         maxW={48}
+                        textTransform="capitalize"
                         borderColor="brand.slate.300"
                         _placeholder={{
                           color: 'brand.slate.300',
@@ -359,6 +414,15 @@ function BountySubmissions({ slug }: Props) {
                         }
                       >
                         <option value={''}>Select Winner</option>
+                        {selectedSubmission?.isWinner &&
+                          rewards.length <
+                            Object.keys(bounty?.rewards || {})?.length && (
+                            <option
+                              value={selectedSubmission?.winnerPosition || ''}
+                            >
+                              {selectedSubmission?.winnerPosition}
+                            </option>
+                          )}
                         {rewards.map((reward) => (
                           <option key={reward} value={reward}>
                             {reward}
@@ -582,6 +646,27 @@ function BountySubmissions({ slug }: Props) {
                         >
                           {selectedSubmission?.user?.website || '-'}
                         </Link>
+                      </Flex>
+                      <Flex
+                        align="center"
+                        justify="start"
+                        gap={2}
+                        mb={4}
+                        fontSize="sm"
+                      >
+                        <Button
+                          onClick={() =>
+                            window.open(
+                              `${router.basePath}/t/${selectedSubmission?.user?.username}/`,
+                              '_ blank'
+                            )
+                          }
+                          rightIcon={<ExternalLinkIcon />}
+                          size="sm"
+                          variant="outline"
+                        >
+                          View Full Profile
+                        </Button>
                       </Flex>
                     </Box>
                   </Box>

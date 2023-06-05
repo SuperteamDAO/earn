@@ -3,6 +3,7 @@ import axios from 'axios';
 import type { GetServerSideProps } from 'next';
 import { useEffect, useState } from 'react';
 
+import BountyWinners from '@/components/listings/bounty/BountyWinners';
 import { Comments } from '@/components/listings/listings/comments';
 import DetailDescription from '@/components/listings/listings/details/detailDescriptionBounty';
 import DetailSideCard from '@/components/listings/listings/details/detailSideCardBounty';
@@ -69,6 +70,7 @@ function BountyDetails({ slug }: BountyDetailsProps) {
             poc={bounty?.poc}
             slug={bounty?.slug}
           />
+          {bounty?.isWinnersAnnounced && <BountyWinners bounty={bounty} />}
           <HStack
             align={['center', 'center', 'start', 'start']}
             justify={['center', 'center', 'space-between', 'space-between']}

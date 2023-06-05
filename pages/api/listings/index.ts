@@ -25,7 +25,7 @@ export default async function user(req: NextApiRequest, res: NextApiResponse) {
     ? { skills: { contains: filter.split(',')[0] } }
     : {};
   try {
-    if (!category || category === 'all' || category === 'bounties') {
+    if (!category || category === 'all') {
       const bounties = await prisma.bounties.findMany({
         where: {
           isPublished: true,
@@ -52,6 +52,42 @@ export default async function user(req: NextApiRequest, res: NextApiResponse) {
         },
       });
       result.bounties = bounties;
+    } else if (category === 'bounties') {
+      const bounties = await prisma.bounties.findMany({
+        where: {
+          isPublished: true,
+          isActive: true,
+          isArchived: false,
+          status: 'OPEN',
+          deadline: {
+            gte: dayjs().subtract(1, 'month').toISOString(),
+          },
+          ...skillsFilter,
+        },
+        take,
+        orderBy: {
+          deadline: 'desc',
+        },
+        include: {
+          sponsor: {
+            select: {
+              name: true,
+              slug: true,
+              logo: true,
+            },
+          },
+        },
+      });
+      const splitIndex = bounties.findIndex((bounty) =>
+        dayjs().isAfter(dayjs(bounty?.deadline))
+      );
+      if (splitIndex >= 0) {
+        const bountiesOpen = bounties.slice(0, splitIndex).reverse();
+        const bountiesClosed = bounties.slice(splitIndex);
+        result.bounties = [...bountiesOpen, ...bountiesClosed];
+      } else {
+        result.bounties = bounties;
+      }
     }
 
     if (!category || category === 'all' || category === 'grants') {

@@ -1,6 +1,7 @@
 import { Box, Button, HStack, Image, Text, VStack } from '@chakra-ui/react';
 import type { User } from '@prisma/client';
 import axios from 'axios';
+import Avatar from 'boring-avatars';
 import { useRouter } from 'next/router';
 import type { Dispatch, SetStateAction } from 'react';
 import React, { useEffect, useState } from 'react';
@@ -12,6 +13,7 @@ import { userStore } from '../../../../store/user';
 
 interface Props {
   winner: boolean;
+  winnerPosition?: string;
   talent: User;
   likes?: {
     id: string;
@@ -22,6 +24,7 @@ interface Props {
   link: string;
 }
 export const SubmissionCard = ({
+  winnerPosition,
   id,
   winner,
   talent,
@@ -99,18 +102,23 @@ export const SubmissionCard = ({
               {talent?.firstName}
             </Text>
             <HStack>
-              <Image
-                w={5}
-                h={5}
-                objectFit={'cover'}
-                alt={'profile'}
-                rounded={'full'}
-                src={
-                  talent?.photo
-                    ? talent?.photo
-                    : '/assets/randompeople/nft4.png'
-                }
-              />
+              {talent?.photo ? (
+                <Image
+                  w={5}
+                  h={5}
+                  borderRadius="full"
+                  alt={`${talent?.firstName} ${talent?.lastName}`}
+                  rounded={'full'}
+                  src={talent?.photo || undefined}
+                />
+              ) : (
+                <Avatar
+                  name={`${talent?.firstName} ${talent?.lastName}`}
+                  colors={['#92A1C6', '#F0AB3D', '#C271B4']}
+                  size={20}
+                  variant="marble"
+                />
+              )}
               <Text color={'gray.400'}>
                 by @
                 {talent?.username && talent?.username?.length < 12
@@ -164,9 +172,9 @@ export const SubmissionCard = ({
             color={'#D26F12'}
             fontWeight={600}
             lineHeight={8}
-            letterSpacing={'0.195rem'}
+            textTransform={'uppercase'}
           >
-            WINNER
+            🏆 {winnerPosition}
           </Text>
         </Box>
       </VStack>

@@ -30,7 +30,16 @@ export default async function user(req: NextApiRequest, res: NextApiResponse) {
         listingId: result?.id,
       },
       include: {
-        user: true,
+        user: {
+          select: {
+            id: true,
+            firstName: true,
+            lastName: true,
+            email: true,
+            photo: true,
+            username: true,
+          },
+        },
       },
     });
     res.status(200).json({
