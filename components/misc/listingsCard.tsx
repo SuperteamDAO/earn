@@ -12,6 +12,7 @@ import {
   useDisclosure,
   useMediaQuery,
 } from '@chakra-ui/react';
+import type { BountyType } from '@prisma/client';
 import { useWallet } from '@solana/wallet-adapter-react';
 import parse from 'html-react-parser';
 import { useRouter } from 'next/router';
@@ -141,12 +142,13 @@ interface BountyProps {
   token?: string;
   slug?: string;
   sponsorName?: string;
+  type?: BountyType | string;
 }
 
 export const BountiesCard = ({
   rewardAmount,
   deadline,
-  status,
+  type,
   logo,
   title = '',
   token,
@@ -252,16 +254,17 @@ export const BountiesCard = ({
             </Flex>
           </Flex>
           <Button
+            minW={24}
             h={isMobile ? 7 : 9}
             px={6}
             fontSize={['xx-small', 'xs', 'sm', 'sm']}
             variant="outlineSecondary"
           >
             {dayjs().isAfter(deadline)
-              ? status === 'CLOSED'
-                ? 'View'
-                : 'View'
-              : 'Apply'}
+              ? 'View'
+              : type === 'permissioned'
+              ? 'Apply'
+              : 'Submit'}
           </Button>
         </Flex>
       </Link>
@@ -385,6 +388,7 @@ export const JobsCard = ({
         </Flex>
 
         <Button
+          minW={24}
           h={isMobile ? 7 : 9}
           px={6}
           fontSize={['xs', 'xs', 'sm', 'sm']}
@@ -476,6 +480,7 @@ export const GrantsCard = ({
           </Flex>
 
           <Button
+            minW={24}
             h={isMobile ? 7 : 9}
             px={6}
             fontSize={['xs', 'xs', 'sm', 'sm']}

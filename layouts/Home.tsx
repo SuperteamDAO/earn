@@ -38,7 +38,6 @@ function Home(props: IDefaultProps) {
   const [sidebarInfo, setSidebarInfo] = useState<SidebarType>({});
 
   const getTotalInfo = async () => {
-    console.log('file: Home.tsx:59 ~ getTotalInfo ~ getTotalInfo:');
     setIsTotalLoading(true);
     try {
       const aggregatesData = await axios.get('/api/sidebar/');
