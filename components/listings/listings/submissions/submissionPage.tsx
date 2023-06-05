@@ -1,4 +1,5 @@
 import {
+  Box,
   Button,
   Flex,
   HStack,
@@ -14,14 +15,18 @@ import React, { useEffect, useState } from 'react';
 import type { Metadata } from 'unfurl.js/dist/types';
 
 import TalentBio from '@/components/TalentBio';
+import type { Bounty } from '@/interface/bounty';
+import type { SubmissionWithUser } from '@/interface/submission';
 
 import { Comments } from '../comments';
 
 interface Props {
+  bounty: Bounty;
+  submission?: SubmissionWithUser;
   user: User;
   link: string;
 }
-export const SubmissionPage = ({ user, link }: Props) => {
+export const SubmissionPage = ({ bounty, submission, user, link }: Props) => {
   const router = useRouter();
   const [image, setImage] = useState<string>('/assets/bg/og.svg');
 
@@ -52,10 +57,25 @@ export const SubmissionPage = ({ user, link }: Props) => {
       mx={'auto'}
     >
       <VStack gap={8} w={'full'} mt={3}>
+        {bounty?.isWinnersAnnounced && submission?.isWinner && (
+          <Box
+            w="full"
+            px={4}
+            py={2}
+            color={'#D26F12'}
+            textAlign={'center'}
+            bg={'#FFE6B6'}
+            rounded="md"
+          >
+            <Text fontWeight={700} textTransform={'uppercase'}>
+              🏆 WINNER: {submission?.winnerPosition} 🏆
+            </Text>
+          </Box>
+        )}
         <VStack w={'full'} h={'40rem'} bg={'white'} rounded={'md'}>
           <Flex justify={'space-between'} w={'full'} mt={5} px={8}>
             <Text color={'black'} fontSize={'22px'} fontWeight={600}>
-              {user?.firstName}’s Submission
+              {user?.firstName}&apos;s Submission
             </Text>
             {/* <Button
               zIndex={10}
