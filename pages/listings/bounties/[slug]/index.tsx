@@ -69,6 +69,7 @@ function BountyDetails({ slug }: BountyDetailsProps) {
             sponsor={bounty?.sponsor}
             poc={bounty?.poc}
             slug={bounty?.slug}
+            isWinnersAnnounced={bounty?.isWinnersAnnounced}
           />
           {bounty?.isWinnersAnnounced && <BountyWinners bounty={bounty} />}
           <HStack

@@ -12,7 +12,6 @@ import {
   VStack,
 } from '@chakra-ui/react';
 import type { BountyType } from '@prisma/client';
-import moment from 'moment';
 import { useRouter } from 'next/router';
 import React from 'react';
 import { TbBellRinging } from 'react-icons/tb';
@@ -20,6 +19,7 @@ import { TbBellRinging } from 'react-icons/tb';
 import { EarningModal } from '@/components/modals/earningModal';
 import type { SponsorType } from '@/interface/sponsor';
 import type { User } from '@/interface/user';
+import { dayjs } from '@/utils/dayjs';
 
 interface Bounty {
   id: string | undefined;
@@ -33,6 +33,7 @@ interface Bounty {
   poc?: User;
   slug?: string;
   type?: BountyType | string;
+  isWinnersAnnounced?: boolean;
 }
 
 function ListingHeader({
@@ -43,13 +44,13 @@ function ListingHeader({
   poc,
   type,
   slug,
+  isWinnersAnnounced,
 }: Bounty) {
   const router = useRouter();
   const sub: any[] = [];
   const { isOpen, onClose, onOpen } = useDisclosure();
 
-  const hasDeadlineEnded =
-    parseInt(moment(deadline).format('x'), 10) < Date.now();
+  const hasDeadlineEnded = dayjs().isAfter(deadline);
 
   return (
     <VStack bg={'white'}>
@@ -89,7 +90,8 @@ function ListingHeader({
               <Text color={'#94A3B8'}>
                 by {poc?.firstName} at {sponsor?.name}
               </Text>
-              {status === 'CLOSED' && (
+              {(status === 'CLOSED' ||
+                (status === 'OPEN' && isWinnersAnnounced)) && (
                 <Text
                   px={3}
                   py={1}
@@ -101,8 +103,7 @@ function ListingHeader({
                   Closed
                 </Text>
               )}
-              {(status === 'REVIEW' ||
-                (hasDeadlineEnded && status === 'OPEN')) && (
+              {!isWinnersAnnounced && hasDeadlineEnded && status === 'OPEN' && (
                 <Text
                   px={3}
                   py={1}

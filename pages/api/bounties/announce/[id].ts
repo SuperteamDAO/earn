@@ -2,6 +2,8 @@ import type { NextApiRequest, NextApiResponse } from 'next';
 
 import type { Rewards } from '@/interface/bounty';
 import { prisma } from '@/prisma';
+import sgMail from '@/utils/sendgrid';
+import { getURL } from '@/utils/validUrl';
 
 export default async function announce(
   req: NextApiRequest,
@@ -78,6 +80,44 @@ export default async function announce(
       currentIndex += 1;
     }
     await Promise.all(promises);
+
+    const submissions = await prisma.submission.findMany({
+      where: {
+        listingId: id,
+        isActive: true,
+        isArchived: false,
+      },
+      take: 500,
+      include: {
+        user: true,
+      },
+    });
+    const allSubmissionUsers = submissions?.map((submission) => ({
+      email: submission?.user?.email || '',
+      name: submission?.user?.firstName || '',
+    }));
+
+    const promises2 = [];
+    let currentIndex2 = 0;
+
+    while (currentIndex2 < allSubmissionUsers?.length) {
+      const msg = {
+        to: allSubmissionUsers[currentIndex2]?.email,
+        from: {
+          name: 'Kash from Superteam',
+          email: process.env.SENDGRID_EMAIL as string,
+        },
+        templateId: process.env.SENDGRID_ANNOUNCE_WINNERS as string,
+        dynamicTemplateData: {
+          name: allSubmissionUsers[currentIndex2]?.name,
+          bounty_name: bounty?.title || '',
+          link: `${getURL()}listings/bounties/${bounty?.slug || ''}/`,
+        },
+      };
+      promises2.push(sgMail.send(msg));
+      currentIndex2 += 1;
+    }
+    await Promise.all(promises2);
     res.status(200).json(result);
   } catch (error) {
     res.status(400).json({
