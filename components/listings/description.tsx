@@ -10,6 +10,7 @@ import {
   ModalBody,
   ModalContent,
   ModalOverlay,
+  Text,
   Tooltip,
   useDisclosure,
   VStack,
@@ -45,14 +46,13 @@ import type { BountyBasicType } from './bounty/Createbounty';
 const LinkModal = ({
   isOpen,
   onClose,
-  setUrl,
   setLink,
 }: {
   isOpen: boolean;
   onClose: () => void;
-  setUrl: Dispatch<SetStateAction<string>>;
-  setLink: () => void;
+  setLink: (link: string) => void;
 }) => {
+  const [linkUrl, setLinkUrl] = useState<string>('');
   return (
     <>
       <Modal isOpen={isOpen} onClose={onClose}>
@@ -60,14 +60,16 @@ const LinkModal = ({
         <ModalContent>
           <ModalBody my={5}>
             <Input
-              onChange={(e) => {
-                setUrl(e.target.value);
-              }}
+              onChange={(e) => setLinkUrl(e.target.value)}
               placeholder="add a link"
             />
             <HStack justify={'end'} w={'full'} mt={5}>
-              <Button onClick={setLink}>Submit</Button>
-              <Button onClick={onClose}>Cancel</Button>
+              <Button mr={4} onClick={onClose} variant="ghost">
+                Cancel
+              </Button>
+              <Button onClick={() => setLink(linkUrl)} variant="solid">
+                Submit
+              </Button>
             </HStack>
           </ModalBody>
         </ModalContent>
@@ -84,6 +86,8 @@ interface Props {
   bountyBasics?: BountyBasicType;
   draftLoading?: boolean;
   isEditMode?: boolean;
+  setBountyRequirements?: Dispatch<SetStateAction<any | undefined>>;
+  bountyRequirements?: string | undefined;
 }
 const Description = ({
   editorData,
@@ -93,8 +97,9 @@ const Description = ({
   bountyBasics,
   draftLoading,
   isEditMode,
+  bountyRequirements,
+  setBountyRequirements,
 }: Props) => {
-  const [url, setUrl] = useState<string>('');
   const { isOpen, onClose, onOpen } = useDisclosure();
   const editor = useEditor({
     extensions: [
@@ -133,40 +138,98 @@ const Description = ({
     content: editorData,
   });
 
-  const setLink = useCallback(() => {
-    // cancelled
-    if (url === null) {
-      return;
-    }
+  const setLink = useCallback(
+    (url: string) => {
+      // cancelled
+      if (url === null) {
+        return;
+      }
 
-    // empty
-    if (url === '') {
-      editor?.chain().focus().extendMarkRange('link').unsetLink().run();
+      // empty
+      if (url === '') {
+        editor?.chain().focus().extendMarkRange('link').unsetLink().run();
+        onClose();
+        return;
+      }
+
+      // update link
+      editor
+        ?.chain()
+        .focus()
+        .extendMarkRange('link')
+        .setLink({ href: url })
+        .run();
       onClose();
-      return;
-    }
+    },
+    [editor]
+  );
 
-    // update link
-    editor
-      ?.chain()
-      .focus()
-      .extendMarkRange('link')
-      .setLink({ href: url })
-      .run();
-    onClose();
-  }, [editor]);
   return (
     <>
       {isOpen && (
-        <LinkModal
-          setLink={setLink}
-          isOpen={isOpen}
-          onClose={onClose}
-          setUrl={setUrl}
-        />
+        <LinkModal setLink={setLink} isOpen={isOpen} onClose={onClose} />
       )}
       <Box>
-        <Flex justify="start" w="full" mb={4}>
+        <Box mb={8}>
+          <Flex justify="start" w="full">
+            <Flex>
+              <FormLabel
+                color={'brand.slate.500'}
+                fontSize={'15px'}
+                fontWeight={600}
+              >
+                Eligibility Requirements
+              </FormLabel>
+              <Tooltip
+                w="max"
+                p="0.7rem"
+                color="white"
+                fontSize="0.9rem"
+                fontWeight={600}
+                bg="#6562FF"
+                borderRadius="0.5rem"
+                hasArrow
+                label={`Add here if you have any specific eligibility requirements for the Listing.`}
+                placement="right-end"
+              >
+                <Image
+                  mt={-2}
+                  alt={'Info Icon'}
+                  src={'/assets/icons/info-icon.svg'}
+                />
+              </Tooltip>
+            </Flex>
+          </Flex>
+          <Input
+            w={'full'}
+            color={'brand.slate.500'}
+            borderColor="brand.slate.300"
+            _placeholder={{
+              color: 'brand.slate.300',
+            }}
+            focusBorderColor="brand.purple"
+            id="bountyRequirements"
+            maxLength={220}
+            onChange={(e) =>
+              setBountyRequirements && setBountyRequirements(e.target.value)
+            }
+            placeholder="Add Eligibility Requirements"
+            type={'text'}
+            value={bountyRequirements}
+          />
+          <Text
+            color={
+              (bountyRequirements?.length || 0) > 200
+                ? 'red'
+                : 'brand.slate.400'
+            }
+            fontSize={'xs'}
+            textAlign="right"
+          >
+            {220 - (bountyRequirements?.length || 0)} characters left
+          </Text>
+        </Box>
+        <Flex justify="start" w="full">
           <Flex>
             <FormLabel
               color={'brand.slate.500'}

@@ -38,5 +38,6 @@ interface User {
   currentSponsorId?: string;
   currentSponsor?: SponsorType;
   UserSponsors?: UserSponsor[];
+  private?: boolean;
 }
 export type { User };

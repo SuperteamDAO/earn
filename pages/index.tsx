@@ -98,7 +98,6 @@ const HomePage: NextPage = () => {
               return (
                 <BountiesCard
                   slug={bounty.slug}
-                  status={bounty?.status}
                   rewardAmount={bounty?.rewardAmount}
                   key={bounty?.id}
                   sponsorName={bounty?.sponsor?.name}
@@ -106,6 +105,7 @@ const HomePage: NextPage = () => {
                   title={bounty?.title}
                   logo={bounty?.sponsor?.logo}
                   token={bounty?.token}
+                  type={bounty?.type}
                 />
               );
             })}

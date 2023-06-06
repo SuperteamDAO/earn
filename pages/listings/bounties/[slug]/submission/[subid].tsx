@@ -91,6 +91,8 @@ const Sumbissions = ({ slug, subid }: BountyDetailsProps) => {
               mx={'auto'}
             >
               <SubmissionPage
+                bounty={bounty}
+                submission={submission || undefined}
                 user={submission?.user as User}
                 link={submission?.link as string}
               />
