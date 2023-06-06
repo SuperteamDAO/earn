@@ -107,7 +107,7 @@ function TalentBio({
         {user?.bio}
       </Text>
       <Flex justify={'space-between'} mt={4}>
-        {!user.private && (
+        {!user?.private && (
           <Chip
             icon={'/assets/talent/eyes.png'}
             label={'Interested In'}

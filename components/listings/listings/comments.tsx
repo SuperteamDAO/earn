@@ -45,6 +45,12 @@ export const Comments = ({ refId, refType }: Props) => {
         listingType: refType,
         listingId: refId,
       });
+      if (refType === 'BOUNTY') {
+        await axios.post(`/api/email/manual/comment`, {
+          id: refId,
+          userId: userInfo?.id,
+        });
+      }
       setComments([newCommentData.data, ...comments]);
       setNewComment('');
       setNewCommentLoading(false);

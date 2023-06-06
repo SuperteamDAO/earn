@@ -75,6 +75,10 @@ export const SubmissionModal = ({
           ? eligibilityAnswers
           : null,
       });
+      await axios.post(`/api/email/manual/submission`, {
+        listingId: id,
+        userId: userInfo?.id,
+      });
       Mixpanel.track('bounty_submission', {
         title: bountytitle,
         user: userInfo?.username,
