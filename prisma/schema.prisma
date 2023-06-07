@@ -90,6 +90,8 @@ model BountiesTemplates {
   token               String?
   rewardAmount        Int?
   rewards             Json?
+  color               String?
+  emoji               String?
   isFeatured          Boolean    @default(false)
   isActive            Boolean    @default(true)
   isArchived          Boolean    @default(false)
