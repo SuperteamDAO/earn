@@ -268,26 +268,24 @@ const SkillsAndInterests = ({
             Skills
           </Text>
           <Flex wrap={'wrap'} gap={'0.4375rem'} mt={'0.8125rem'}>
-            {skills.map((ele, idx: number) => {
+            {skills.map((ele) => {
               return (
-                <>
-                  <Badge
-                    key={idx}
-                    px={2}
-                    py={1}
-                    color={
-                      skillMap.find((item) => item.mainskill === ele.skills)
-                        ?.color
-                    }
-                    bg={`${
-                      skillMap.find((item) => item.mainskill === ele.skills)
-                        ?.color
-                    }1A`}
-                    rounded={4}
-                  >
-                    {ele.skills}
-                  </Badge>
-                </>
+                <Badge
+                  key={ele?.skills}
+                  px={2}
+                  py={1}
+                  color={
+                    skillMap.find((item) => item.mainskill === ele.skills)
+                      ?.color
+                  }
+                  bg={`${
+                    skillMap.find((item) => item.mainskill === ele.skills)
+                      ?.color
+                  }1A`}
+                  rounded={4}
+                >
+                  {ele.skills}
+                </Badge>
               );
             })}
           </Flex>
@@ -298,9 +296,7 @@ const SkillsAndInterests = ({
               Interests
             </Text>
             <Flex wrap={'wrap'} gap={2} mt={4}>
-              {interests.map((ele: string) => {
-                return <>{ele}</>;
-              })}
+              {(interests || []).join(', ')}
             </Flex>
           </Box>
         )}

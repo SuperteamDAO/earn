@@ -62,7 +62,7 @@ export default async function submission(
         'User Skills':
           skills?.map((skill: any) => skill.skills)?.join(', ') || '',
         'User Current Employer': item.user.currentEmployer || '',
-        'User Work Preference': item.user.private
+        'User Work Preference': item.user?.private
           ? ''
           : item.user.workPrefernce || '',
         'Submission Link': item.link || '',
