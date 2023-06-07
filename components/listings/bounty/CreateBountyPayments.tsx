@@ -68,6 +68,7 @@ export const CreatebountyPayment = ({
     onOpen: confirmOnOpen,
     onClose: confirmOnClose,
   } = useDisclosure();
+  const [isRewardError, setIsRewardError] = useState<boolean>(false);
   // handles which token is selected
   const defaultTokenIndex = tokenList?.findIndex(
     (t) => t.tokenSymbol === bountyPayment.token
@@ -125,6 +126,19 @@ export const CreatebountyPayment = ({
     });
 
     setPrizes(temp);
+  };
+
+  const handleSubmit = (isEdit?: boolean) => {
+    const rewardAmount = (prizes || [])
+      .map((p) => p.defaultValue || 0)
+      .reduce((a, b) => a + b, 0);
+    if (!totalReward || totalReward < rewardAmount) {
+      setIsRewardError(true);
+    } else {
+      setIsRewardError(false);
+      if (isEdit) createDraft();
+      else confirmOnOpen();
+    }
   };
 
   return (
@@ -309,6 +323,12 @@ export const CreatebountyPayment = ({
             Add Prize
           </Button>
         </VStack>
+        {isRewardError && (
+          <Text w="full" color="red" textAlign={'center'}>
+            Sorry! Total reward amount should be equal or greater than the sum
+            of all prizes.
+          </Text>
+        )}
         <Toaster />
         <VStack gap={4} w={'full'} pt={10}>
           {!isEditMode && (
@@ -316,7 +336,7 @@ export const CreatebountyPayment = ({
               w="100%"
               disabled={isListingPublishing}
               isLoading={isListingPublishing}
-              onClick={confirmOnOpen}
+              onClick={() => handleSubmit()}
               variant={'solid'}
             >
               Create & Publish Listing
@@ -325,9 +345,7 @@ export const CreatebountyPayment = ({
           <Button
             w="100%"
             isLoading={draftLoading}
-            onClick={() => {
-              createDraft();
-            }}
+            onClick={() => handleSubmit(isEditMode)}
             variant={isEditMode ? 'solid' : 'outline'}
           >
             {isEditMode ? 'Update' : 'Save as Draft'}
