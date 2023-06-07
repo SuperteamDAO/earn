@@ -26,6 +26,7 @@
     "@lottiefiles/react-lottie-player": "^3.5.3",
     "@prisma/client": "4.13.0",
     "@project-serum/anchor": "^0.26.0",
+    "@sendgrid/client": "^7.7.0",
     "@sendgrid/mail": "^7.7.0",
     "@solana-mobile/wallet-adapter-mobile": "^1.0.0",
     "@solana/spl-token": "^0.3.7",

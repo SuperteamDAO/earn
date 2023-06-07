@@ -18,7 +18,7 @@ import { useWallet } from '@solana/wallet-adapter-react';
 import axios from 'axios';
 import Avatar from 'boring-avatars';
 import { useRouter } from 'next/router';
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 
 import { Login } from '@/components/modals/Login/Login';
 import { userStore } from '@/store/user';
@@ -28,6 +28,7 @@ function UserInfo() {
   const { isOpen, onOpen, onClose } = useDisclosure();
   const { connected, publicKey, wallet, wallets, select } = useWallet();
   const { setUserInfo, userInfo } = userStore();
+  const [initialStep, setInitialStep] = useState<number>(0);
 
   useEffect(() => {
     const makeUser = async () => {
@@ -75,10 +76,41 @@ function UserInfo() {
           onClose={onClose}
           userInfo={userInfo}
           setUserInfo={setUserInfo}
+          initialStep={initialStep}
         />
       )}
       {connected ? (
         <>
+          {userInfo && !userInfo.isVerified && (
+            <Button
+              display={{ base: 'none', md: 'block' }}
+              fontSize="xs"
+              onClick={() => {
+                setInitialStep(2);
+                onOpen();
+              }}
+              size="sm"
+              variant={{ base: 'solid', md: 'ghost' }}
+            >
+              Verify your Email
+            </Button>
+          )}
+          {userInfo &&
+            !userInfo.currentSponsorId &&
+            !userInfo.isTalentFilled &&
+            userInfo.isVerified && (
+              <Button
+                display={{ base: 'none', md: 'block' }}
+                fontSize="xs"
+                onClick={() => {
+                  router.push('/');
+                }}
+                size="sm"
+                variant={{ base: 'solid', md: 'ghost' }}
+              >
+                Complete your Profile
+              </Button>
+            )}
           <Menu>
             <MenuButton minW={0} cursor={'pointer'} rounded={'full'}>
               <Flex align="center">
