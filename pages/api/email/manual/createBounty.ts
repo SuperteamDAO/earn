@@ -1,5 +1,6 @@
 import type { MailDataRequired } from '@sendgrid/mail';
 import type { NextApiRequest, NextApiResponse } from 'next';
+import { getURL } from 'next/dist/shared/lib/utils';
 
 import type { Skills } from '@/interface/skills';
 import { prisma } from '@/prisma';
@@ -52,7 +53,11 @@ export default async function handler(
         email: process.env.SENDGRID_EMAIL as string,
       },
       templateId: process.env.SENDGRID_INVITE_SPONSOR as string,
-      dynamicTemplateData: {},
+      dynamicTemplateData: {
+        link: `${getURL()}/listings/bounties/${listing.slug}/submission/${
+          listing.id
+        }`,
+      },
     };
     await sgMail.send(msg);
     res.status(200).json({ message: 'OTP sent successfully.' });

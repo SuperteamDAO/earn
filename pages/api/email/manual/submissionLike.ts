@@ -8,7 +8,7 @@ export default async function handler(
   req: NextApiRequest,
   res: NextApiResponse
 ) {
-  const { id, userId } = req.body;
+  const { id } = req.body;
   try {
     const submission = await prisma.submission.findUnique({
       where: {
@@ -20,11 +20,6 @@ export default async function handler(
       },
     });
 
-    const user = await prisma.user.findUnique({
-      where: {
-        id: userId,
-      },
-    });
     const msg = {
       to: submission?.user.email,
       from: {
@@ -33,7 +28,7 @@ export default async function handler(
       },
       templateId: process.env.SENDGRID_LIKE_TEMPLATE as string,
       dynamicTemplateData: {
-        name: user?.firstName,
+        name: submission?.user.firstName,
         bounty_name: submission?.listing.title,
         link: `${getURL()}/listings/bounties/${
           submission?.listing.slug
