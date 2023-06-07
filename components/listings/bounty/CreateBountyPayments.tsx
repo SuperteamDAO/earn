@@ -126,12 +126,17 @@ export const CreatebountyPayment = ({
     });
 
     setPrizes(temp);
+    const newTemp: any = {};
+    temp?.forEach((t) => {
+      newTemp[t.value] = t.defaultValue || 0;
+    });
+    setPrizevalues(newTemp);
   };
 
   const handleSubmit = (isEdit?: boolean) => {
-    const rewardAmount = (prizes || [])
-      .map((p) => p.defaultValue || 0)
-      .reduce((a, b) => a + b, 0);
+    const rewardAmount: number = (
+      (Object.values(prizevalues) || []) as number[]
+    ).reduce((a, b) => a + b, 0);
     if (!totalReward || totalReward < rewardAmount) {
       setIsRewardError(true);
     } else {
