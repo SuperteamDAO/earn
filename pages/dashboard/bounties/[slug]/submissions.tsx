@@ -43,6 +43,7 @@ import {
   getBountyDraftStatus,
   getBountyProgress,
 } from '@/utils/bounty';
+import { dayjs } from '@/utils/dayjs';
 import { sortRank } from '@/utils/rank';
 import { truncatePublicKey } from '@/utils/truncatePublicKey';
 
@@ -192,6 +193,7 @@ function BountySubmissions({ slug }: Props) {
               totalPaymentsMade={totalPaymentsMade}
               rewards={Object.keys(bounty?.rewards || {})}
               bountyId={bounty?.id}
+              isDeadlinePassed={dayjs().isAfter(bounty?.deadline)}
             />
           )}
           <Box mb={4}>
