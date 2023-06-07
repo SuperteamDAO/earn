@@ -698,7 +698,7 @@ function BountySubmissions({ slug }: Props) {
               <Text as="span" fontWeight={700}>
                 {totalSubmissions}
               </Text>{' '}
-              Bounties
+              Submissions
             </Text>
             <Button
               isDisabled={
