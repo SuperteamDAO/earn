@@ -13,7 +13,7 @@ interface Eligibility {
 }
 
 interface Rewards {
-  first: number;
+  first?: number;
   second?: number;
   third?: number;
   forth?: number;
@@ -48,6 +48,21 @@ interface Bounty {
   source?: string;
   sourceDetails?: string;
   type?: BountyType | string;
+  totalWinnersSelected?: number;
+  totalPaymentsMade?: number;
+  isWinnersAnnounced?: boolean;
 }
 
-export type { Bounty, BountyStatus, Eligibility, Rewards };
+interface BountyWithSubmissions extends Bounty {
+  _count?: {
+    Submission?: number;
+  };
+}
+
+export type {
+  Bounty,
+  BountyStatus,
+  BountyWithSubmissions,
+  Eligibility,
+  Rewards,
+};

@@ -46,17 +46,7 @@ function SelectSponsor() {
         },
       })
       .then((response) => {
-        const currentSponsor =
-          !inputValue && userInfo?.currentSponsor?.id
-            ? [
-                {
-                  value: userInfo?.currentSponsor?.id,
-                  label: userInfo?.currentSponsor?.name,
-                  sponsor: userInfo?.currentSponsor,
-                },
-              ]
-            : [];
-        const options = [...currentSponsor, ...(response?.data || [])];
+        const options = [...(response?.data || [])];
         callback(options);
       });
   };

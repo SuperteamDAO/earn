@@ -1,4 +1,5 @@
-import { Button, HStack, Image, Text, VStack } from '@chakra-ui/react';
+import { DeleteIcon } from '@chakra-ui/icons';
+import { Button, Flex, HStack, Image, Text, VStack } from '@chakra-ui/react';
 import type { Dispatch, SetStateAction } from 'react';
 import React, { useState } from 'react';
 import toast, { Toaster } from 'react-hot-toast';
@@ -41,6 +42,13 @@ const Builder = ({
   isEditMode,
 }: Props) => {
   const [error, setError] = useState<ErrorState[]>([]);
+
+  const handleDelete = () => {
+    const temp = questions.filter(
+      (_el, index) => index !== questions.length - 1
+    );
+    setQuestions(temp);
+  };
   return (
     <>
       <VStack align={'start'} gap={3} w={'2xl'} pt={7}>
@@ -59,7 +67,7 @@ const Builder = ({
         </HStack>
         {questions.map((question, index) => {
           return (
-            <>
+            <Flex key={index} align="end" justify="space-end" w="full">
               <QuestionCard
                 errorState={error}
                 index={index}
@@ -67,7 +75,12 @@ const Builder = ({
                 curentQuestion={question}
                 setQuestions={setQuestions}
               />
-            </>
+              {index === questions.length - 1 && (
+                <Button ml={4} onClick={() => handleDelete()}>
+                  <DeleteIcon />
+                </Button>
+              )}
+            </Flex>
           );
         })}
         <Button
