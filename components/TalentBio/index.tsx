@@ -136,10 +136,10 @@ function TalentBio({
       )}
 
       <Flex justify={'space-between'} mt={'32px'}>
-        {socialLinks.map((ele) => {
+        {socialLinks.map((ele, eleIndex) => {
           return (
             <Box
-              key={ele.link}
+              key={eleIndex}
               onClick={() => {
                 if (ele.link) {
                   window.location.href = ele.link;
