@@ -13,6 +13,13 @@ export default async function bounties(
         isArchived: false,
       },
       take: 20,
+      include: {
+        Bounties: {
+          select: {
+            sponsor: true,
+          },
+        },
+      },
     });
     res.status(200).json(result);
   } catch (err) {

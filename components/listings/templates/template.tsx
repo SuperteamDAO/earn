@@ -1,14 +1,29 @@
 import { AddIcon } from '@chakra-ui/icons';
-import { Box, Button, Flex, Text, VStack } from '@chakra-ui/react';
+import { Box, Button, Flex, Image, Text, VStack } from '@chakra-ui/react';
 import axios from 'axios';
 import type { Dispatch, SetStateAction } from 'react';
 import React, { useEffect, useState } from 'react';
 
+import type { BountyBasicType } from '@/components/listings/bounty/Createbounty';
+import type { MultiSelectOptions } from '@/constants';
+import { splitSkills } from '@/utils/skills';
+
 interface Props {
   setSteps: Dispatch<SetStateAction<number>>;
   setListingType: Dispatch<SetStateAction<string>>;
+  setEditorData: Dispatch<SetStateAction<string | undefined>>;
+  setMainSkills: Dispatch<SetStateAction<MultiSelectOptions[]>>;
+  setSubSkills: Dispatch<SetStateAction<MultiSelectOptions[]>>;
+  setBountyBasic: Dispatch<SetStateAction<BountyBasicType | undefined>>;
 }
-const Template = ({ setSteps, setListingType }: Props) => {
+const Template = ({
+  setSteps,
+  setListingType,
+  setEditorData,
+  setMainSkills,
+  setSubSkills,
+  setBountyBasic,
+}: Props) => {
   const [bountiesTemplates, setBountiesTemplates] = useState([]);
   const [isBountiesTemplatesLoading, setIsBountiesTemplatesLoading] =
     useState(false);
@@ -17,10 +32,6 @@ const Template = ({ setSteps, setListingType }: Props) => {
     setIsBountiesTemplatesLoading(true);
     try {
       const templates: any = await axios.get('/api/bounties/templates/');
-      console.log(
-        'file: template.tsx:19 ~ getBountyTemplates ~ templates:',
-        templates
-      );
       setBountiesTemplates(templates?.data || []);
       setIsBountiesTemplatesLoading(false);
     } catch (e) {
@@ -35,10 +46,23 @@ const Template = ({ setSteps, setListingType }: Props) => {
   }, []);
 
   const createTemplate = (templateId: string) => {
-    console.log(
-      'file: template.tsx:38 ~ useTemplate ~ templateId:',
-      templateId
-    );
+    const template: any = bountiesTemplates.find((t: any) => {
+      return t?.id === templateId;
+    });
+    setListingType('BOUNTY');
+    setBountyBasic({
+      title: template?.title || undefined,
+      slug: template?.slug
+        ? `${template?.slug}-${Math.floor(1000 + Math.random() * 9000)}`
+        : undefined,
+      type: template?.type || 'open',
+      templateId: template?.id || undefined,
+    });
+    setEditorData(template?.description || '');
+    const skillsInfo = splitSkills(template?.skills || []);
+    setMainSkills(skillsInfo?.skills || []);
+    setSubSkills(skillsInfo?.subskills || []);
+    setSteps(2);
   };
 
   return (
@@ -64,7 +88,7 @@ const Template = ({ setSteps, setListingType }: Props) => {
               flexDir={'column'}
               display={'flex'}
               w={'15rem'}
-              h={'15rem'}
+              h={'17rem'}
               bg={'white'}
               border={'1px solid #cbd5e1'}
               cursor={'pointer'}
@@ -78,40 +102,106 @@ const Template = ({ setSteps, setListingType }: Props) => {
                 Start from Scratch
               </Text>
             </Box>
-            {bountiesTemplates.map((template: any) => (
-              <Box key={template.id} w={'15rem'} h={'15rem'} bg={'white'}>
-                <Flex
-                  align="center"
-                  justify="center"
-                  h="45%"
-                  fontSize="3xl"
-                  bg={template.color || 'white'}
-                >
-                  {template?.emoji}
-                </Flex>
-                <Flex
-                  align="start"
-                  justify={'space-between'}
-                  direction={'column'}
-                  h="55%"
-                  px={6}
-                  py={4}
-                  bg="white"
-                >
-                  <Text color={'brand.slate.700'} fontWeight={500}>
-                    {template?.templateTitle}
-                  </Text>
-                  <Button
-                    w="full"
-                    onClick={() => createTemplate(template?.id)}
-                    size="sm"
-                    variant="solid"
+            {bountiesTemplates.map((template: any) => {
+              const sponsors: any = [
+                ...new Set(template?.Bounties?.map((b: any) => b.sponsor)),
+              ];
+              return (
+                <Box key={template.id} w={'15rem'} h={'17rem'} bg={'white'}>
+                  <Flex
+                    align="center"
+                    justify="center"
+                    h="45%"
+                    fontSize="3xl"
+                    bg={template.color || 'white'}
                   >
-                    Use Template
-                  </Button>
-                </Flex>
-              </Box>
-            ))}
+                    {template?.emoji}
+                  </Flex>
+                  <Flex
+                    align="start"
+                    justify={'space-between'}
+                    direction={'column'}
+                    h="55%"
+                    px={6}
+                    py={4}
+                    bg="white"
+                  >
+                    <Box>
+                      <Text color={'brand.slate.700'} fontWeight={500}>
+                        {template?.templateTitle}
+                      </Text>
+                      {sponsors?.length > 0 ? (
+                        <Flex align="center" justify={'start'} mt={1}>
+                          <Flex align="center" justify={'start'} mr={6}>
+                            {sponsors.length >= 1 && (
+                              <Image
+                                boxSize="24px"
+                                border="1px solid white"
+                                borderRadius="full"
+                                alt={sponsors[0]?.name}
+                                src={sponsors[0]?.logo}
+                              />
+                            )}
+                            {sponsors.length >= 2 && (
+                              <Image
+                                boxSize="24px"
+                                ml={-3}
+                                border="1px solid white"
+                                borderRadius="full"
+                                alt={sponsors[1]?.name}
+                                src={sponsors[1]?.logo}
+                              />
+                            )}
+                            {sponsors.length >= 3 && (
+                              <Image
+                                boxSize="24px"
+                                ml={-3}
+                                border="1px solid white"
+                                borderRadius="full"
+                                alt={sponsors[2]?.name}
+                                src={sponsors[2]?.logo}
+                              />
+                            )}
+                          </Flex>
+                          <Text
+                            color="brand.slate.400"
+                            fontSize="xs"
+                            wordBreak={'break-word'}
+                          >
+                            Used by{' '}
+                            {sponsors.length >= 1 && (
+                              <Text as="span">{sponsors[0]?.name}</Text>
+                            )}
+                            {sponsors.length >= 2 && (
+                              <Text as="span">
+                                {sponsors.length > 2 ? ',' : ' &'}{' '}
+                                {sponsors[1]?.name}
+                              </Text>
+                            )}
+                            {sponsors.length >= 3 && (
+                              <Text as="span"> & {sponsors[2]?.name}</Text>
+                            )}
+                          </Text>
+                        </Flex>
+                      ) : (
+                        <Text color="brand.slate.400" fontSize="sm">
+                          {template?.templateDescription ||
+                            `Pre-fill info with "${template?.templateTitle}" template`}
+                        </Text>
+                      )}
+                    </Box>
+                    <Button
+                      w="full"
+                      onClick={() => createTemplate(template?.id)}
+                      size="sm"
+                      variant="solid"
+                    >
+                      Use Template
+                    </Button>
+                  </Flex>
+                </Box>
+              );
+            })}
           </Flex>
         </VStack>
         {/* <VStack align="start" w={'full'}>
@@ -134,7 +224,7 @@ const Template = ({ setSteps, setListingType }: Props) => {
               flexDir={'column'}
               display={'flex'}
               w={'15rem'}
-              h={'15rem'}
+              h={'17rem'}
               bg={'white'}
               border={'1px solid #cbd5e1'}
               cursor={'pointer'}
@@ -170,7 +260,7 @@ const Template = ({ setSteps, setListingType }: Props) => {
               flexDir={'column'}
               display={'flex'}
               w={'15rem'}
-              h={'15rem'}
+              h={'17rem'}
               bg={'white'}
               border={'1px solid #cbd5e1'}
               cursor={'pointer'}
