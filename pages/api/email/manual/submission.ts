@@ -49,8 +49,7 @@ export default async function handler(
     };
     await sgMail.send(msg);
     await sgMail.send(msg1);
-    res.status(200).json({ message: 'Success.' });
-    return res.status(200).send({ clientRes: 'Hello' });
+    return res.status(200).json({ message: 'Ok' });
   } catch (error) {
     console.log(error);
     return res.status(500).json({ error: 'Something went wrong.' });

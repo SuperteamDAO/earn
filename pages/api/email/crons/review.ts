@@ -21,7 +21,7 @@ export default async function handler(
       },
     });
     const bountiesWithDeadline = bounties.filter((bounty) => {
-      return dayjs(bounty.deadline).isSame(dayjs().add(2, 'day'));
+      return dayjs(bounty.deadline).isSame(dayjs().subtract(1, 'day'));
     });
 
     bountiesWithDeadline.forEach(async (bounty) => {
@@ -51,10 +51,10 @@ export default async function handler(
             name: 'Kash from Superteam',
             email: process.env.SENDGRID_EMAIL as string,
           },
-          templateId: process.env.SENDGRID_DEADLINE as string,
+          templateId: process.env.SENDGRID_REVIEW as string,
           dynamicTemplateData: {
             name: bounty.title,
-            link: `${process.env.NEXT_PUBLIC_URL}/listings/bounties/${bounty.slug}/submission/${bounty.id}`,
+            link: `${process.env.NEXT_PUBLIC_URL}/listings/bounties/${bounty.slug}`,
           },
         };
         await sgMail.send(msg);
