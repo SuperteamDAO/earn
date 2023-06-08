@@ -43,6 +43,7 @@ import {
   getBountyDraftStatus,
   getBountyProgress,
 } from '@/utils/bounty';
+import { dayjs } from '@/utils/dayjs';
 import { sortRank } from '@/utils/rank';
 import { truncatePublicKey } from '@/utils/truncatePublicKey';
 
@@ -178,6 +179,18 @@ function BountySubmissions({ slug }: Props) {
     }
   };
 
+  const getURLSanitized = (url: string) => {
+    if (!url || url === '-' || url === '#') return url;
+    if (
+      !url.includes('https://') &&
+      !url.includes('http://') &&
+      !url.includes('www')
+    ) {
+      return `https://${url}`;
+    }
+    return url;
+  };
+
   return (
     <Sidebar>
       {isBountyLoading ? (
@@ -192,6 +205,7 @@ function BountySubmissions({ slug }: Props) {
               totalPaymentsMade={totalPaymentsMade}
               rewards={Object.keys(bounty?.rewards || {})}
               bountyId={bounty?.id}
+              isDeadlinePassed={dayjs().isAfter(bounty?.deadline)}
             />
           )}
           <Box mb={4}>
@@ -447,13 +461,17 @@ function BountySubmissions({ slug }: Props) {
                           <Link
                             color="brand.purple"
                             wordBreak={'break-all'}
-                            href={selectedSubmission?.link || '#'}
+                            href={getURLSanitized(
+                              selectedSubmission?.link || '#'
+                            )}
                             isExternal
                           >
                             {selectedSubmission?.link && (
                               <LinkIcon w={4} h={4} mr={2} />
                             )}
-                            {selectedSubmission?.link || '-'}
+                            {selectedSubmission?.link
+                              ? getURLSanitized(selectedSubmission?.link)
+                              : '-'}
                           </Link>
                         </Box>
                         <Box mb={4}>
@@ -469,13 +487,17 @@ function BountySubmissions({ slug }: Props) {
                           <Link
                             color="brand.purple"
                             wordBreak={'break-all'}
-                            href={selectedSubmission?.tweet || '#'}
+                            href={getURLSanitized(
+                              selectedSubmission?.tweet || '#'
+                            )}
                             isExternal
                           >
                             {selectedSubmission?.tweet && (
                               <LinkIcon w={4} h={4} mr={2} />
                             )}
-                            {selectedSubmission?.tweet || '-'}
+                            {selectedSubmission?.tweet
+                              ? getURLSanitized(selectedSubmission?.tweet)
+                              : '-'}
                           </Link>
                         </Box>
                       </>
@@ -698,7 +720,7 @@ function BountySubmissions({ slug }: Props) {
               <Text as="span" fontWeight={700}>
                 {totalSubmissions}
               </Text>{' '}
-              Bounties
+              Submissions
             </Text>
             <Button
               isDisabled={

@@ -28,7 +28,7 @@ function UserInfo() {
   const { isOpen, onOpen, onClose } = useDisclosure();
   const { connected, publicKey, wallet, wallets, select } = useWallet();
   const { setUserInfo, userInfo } = userStore();
-  const [initialStep, setInitialStep] = useState<number>(0);
+  const [initialStep, setInitialStep] = useState<number>(1);
 
   useEffect(() => {
     const makeUser = async () => {

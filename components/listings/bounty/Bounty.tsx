@@ -1,7 +1,7 @@
 import { useDisclosure } from '@chakra-ui/react';
 import axios from 'axios';
 import { useRouter } from 'next/router';
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import { Toaster } from 'react-hot-toast';
 
 import type { BountyBasicType } from '@/components/listings/bounty/Createbounty';
@@ -21,7 +21,6 @@ import type { GrantsBasicType, JobBasicsType } from '@/interface/listings';
 import FormLayout from '@/layouts/FormLayout';
 import { userStore } from '@/store/user';
 import { dayjs } from '@/utils/dayjs';
-import { findOneDraft } from '@/utils/functions';
 import { mergeSkills, splitSkills } from '@/utils/skills';
 
 interface Props {
@@ -86,6 +85,7 @@ function CreateListing({ bounty, isEditMode = false }: Props) {
         ? dayjs(bounty?.deadline).format('YYYY-MM-DDTHH:mm') || undefined
         : undefined,
     type: isEditMode ? bounty?.type || undefined : undefined,
+    templateId: isEditMode ? bounty?.templateId || undefined : undefined,
   });
   const [bountyPayment, setBountyPayment] = useState({
     rewardAmount: isEditMode ? bounty?.rewardAmount || 0 : 0,
@@ -164,55 +164,6 @@ function CreateListing({ bounty, isEditMode = false }: Props) {
       setDraftLoading(false);
     }
   };
-
-  useEffect(() => {
-    const fetch = async () => {
-      if (router.query.draft) {
-        try {
-          const res = await findOneDraft(router.query.draft as string);
-          if (res) {
-            if ((res.data.type as string).toLowerCase() === 'bounties') {
-              const data = JSON.parse(res.data.basic);
-              setSubSkill(data.subSkill);
-              setMainSkills(data.skills);
-              setEditorData(JSON.parse(data.description));
-              setBountyBasic({
-                deadline: data.deadline ?? '',
-                type: data.type ?? '',
-                title: data.title ?? '',
-                slug: data.slug ?? '',
-              });
-            } else if ((res.data.type as string).toLowerCase() === 'jobs') {
-              const data = JSON.parse(res.data.basic);
-              setSubSkill(data.subSkill);
-              setMainSkills(data.skills);
-              setEditorData(JSON.parse(data.description));
-              setJobBasics({
-                deadline: data.deadline ?? '',
-                link: data.link ?? '',
-                title: data.title ?? '',
-                type: data.type ?? 'fulltime',
-              });
-            } else if ((res.data.type as string).toLowerCase() === 'grants') {
-              const data = JSON.parse(res.data.basic);
-              setSubSkill(data.subSkill);
-              setMainSkills(data.skills);
-              setEditorData(JSON.parse(data.description));
-              setgrantsBasic({
-                contact: data.contact,
-                title: data.title,
-                link: data.link,
-              });
-            }
-            setSteps(2);
-          }
-        } catch (error) {
-          console.log(error);
-        }
-      }
-    };
-    fetch();
-  }, [router.query.draft]);
 
   return (
     <>
@@ -299,7 +250,14 @@ function CreateListing({ bounty, isEditMode = false }: Props) {
             <SuccessListings slug={slug} isOpen={isOpen} onClose={() => {}} />
           )}
           {steps === 1 && (
-            <Template setSteps={setSteps} setListingType={setListingType} />
+            <Template
+              setSteps={setSteps}
+              setListingType={setListingType}
+              setEditorData={setEditorData}
+              setSubSkills={setSubSkill}
+              setMainSkills={setMainSkills}
+              setBountyBasic={setBountyBasic}
+            />
           )}
           {steps > 1 && listingType === 'BOUNTY' && (
             <CreateBounty

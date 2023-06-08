@@ -28,6 +28,7 @@ import { Toaster } from 'react-hot-toast';
 
 import type { MultiSelectOptions } from '@/constants';
 import { PrizeList, tokenList } from '@/constants';
+import { sortRank } from '@/utils/rank';
 
 import type { BountyBasicType } from './Createbounty';
 import type { Ques } from './questions/builder';
@@ -68,6 +69,7 @@ export const CreatebountyPayment = ({
     onOpen: confirmOnOpen,
     onClose: confirmOnClose,
   } = useDisclosure();
+  const [isRewardError, setIsRewardError] = useState<boolean>(false);
   // handles which token is selected
   const defaultTokenIndex = tokenList?.findIndex(
     (t) => t.tokenSymbol === bountyPayment.token
@@ -90,12 +92,14 @@ export const CreatebountyPayment = ({
   );
 
   // handles the UI for prize
-  const prizesList = Object.keys(bountyPayment?.rewards || [])?.map((r) => ({
-    value: r,
-    label: `${r} prize`,
-    placeHolder: bountyPayment?.rewards[r],
-    defaultValue: bountyPayment?.rewards[r],
-  }));
+  const prizesList = sortRank(Object.keys(bountyPayment?.rewards || []))?.map(
+    (r) => ({
+      value: r,
+      label: `${r} prize`,
+      placeHolder: bountyPayment?.rewards[r],
+      defaultValue: bountyPayment?.rewards[r],
+    })
+  );
   const [prizes, setPrizes] = useState<PrizeListInterface[]>(
     prizesList?.length
       ? prizesList
@@ -125,6 +129,24 @@ export const CreatebountyPayment = ({
     });
 
     setPrizes(temp);
+    const newTemp: any = {};
+    temp?.forEach((t) => {
+      newTemp[t.value] = t.defaultValue || 0;
+    });
+    setPrizevalues(newTemp);
+  };
+
+  const handleSubmit = (isEdit?: boolean) => {
+    const rewardAmount: number = (
+      (Object.values(prizevalues) || []) as number[]
+    ).reduce((a, b) => a + b, 0);
+    if (!totalReward || totalReward !== rewardAmount) {
+      setIsRewardError(true);
+    } else {
+      setIsRewardError(false);
+      if (isEdit) createDraft();
+      else confirmOnOpen();
+    }
   };
 
   return (
@@ -309,6 +331,11 @@ export const CreatebountyPayment = ({
             Add Prize
           </Button>
         </VStack>
+        {isRewardError && (
+          <Text w="full" color="red" textAlign={'center'}>
+            Sorry! Total reward amount should be equal to the sum of all prizes.
+          </Text>
+        )}
         <Toaster />
         <VStack gap={4} w={'full'} pt={10}>
           {!isEditMode && (
@@ -316,7 +343,7 @@ export const CreatebountyPayment = ({
               w="100%"
               disabled={isListingPublishing}
               isLoading={isListingPublishing}
-              onClick={confirmOnOpen}
+              onClick={() => handleSubmit()}
               variant={'solid'}
             >
               Create & Publish Listing
@@ -325,9 +352,7 @@ export const CreatebountyPayment = ({
           <Button
             w="100%"
             isLoading={draftLoading}
-            onClick={() => {
-              createDraft();
-            }}
+            onClick={() => handleSubmit(isEditMode)}
             variant={isEditMode ? 'solid' : 'outline'}
           >
             {isEditMode ? 'Update' : 'Save as Draft'}

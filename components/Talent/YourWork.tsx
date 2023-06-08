@@ -90,7 +90,7 @@ function YourWork({ setStep, useFormStore }: Step1Props) {
         });
 
         return {
-          mainskill: main?.mainskill ?? '',
+          skills: main?.mainskill ?? '',
           subskills: sub ?? [],
         };
       }),

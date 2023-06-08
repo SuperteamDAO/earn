@@ -25,6 +25,7 @@ interface Props {
   totalPaymentsMade: number;
   rewards: any;
   bountyId: string | undefined;
+  isDeadlinePassed?: boolean;
 }
 
 function PublishResults({
@@ -34,6 +35,7 @@ function PublishResults({
   totalPaymentsMade,
   rewards,
   bountyId,
+  isDeadlinePassed,
 }: Props) {
   const router = useRouter();
   const [isPublishingResults, setIsPublishingResults] = useState(false);
@@ -47,7 +49,11 @@ function PublishResults({
     | undefined = 'warning';
   let alertTitle = '';
   let alertDescription = '';
-  if (rewards?.length && totalWinners !== rewards?.length) {
+  if (!isDeadlinePassed) {
+    alertType = 'error';
+    alertTitle = 'Bounty still in progress!';
+    alertDescription = `Bounty needs to close before you can publish results.`;
+  } else if (rewards?.length && totalWinners !== rewards?.length) {
     const remainingWinners = (rewards?.length || 0) - totalWinners;
     alertType = 'error';
     alertTitle = 'Select All Winners!';
@@ -118,7 +124,8 @@ function PublishResults({
           )}
           {!isWinnersAnnounced &&
             rewards?.length &&
-            totalWinners === rewards?.length && (
+            totalWinners === rewards?.length &&
+            alertType !== 'error' && (
               <Text mb={4}>
                 Publishing the results of this bounty will make the results
                 public for everyone to see!
@@ -144,7 +151,10 @@ function PublishResults({
               </Button>
               <Button
                 ml={4}
-                isDisabled={rewards?.length && totalWinners !== rewards?.length}
+                isDisabled={
+                  (rewards?.length && totalWinners !== rewards?.length) ||
+                  alertType === 'error'
+                }
                 isLoading={isPublishingResults}
                 loadingText={'Publishing...'}
                 onClick={() => publishResults()}

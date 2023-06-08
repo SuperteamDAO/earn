@@ -117,6 +117,10 @@ function AboutYou({ setStep, useFormStore }: Step1Props) {
                 setImageUrl(a);
                 setuploadLoading(false);
               }}
+              onReset={() => {
+                setImageUrl('');
+                setuploadLoading(false);
+              }}
               compact
               label="Choose or drag and drop media"
             />
