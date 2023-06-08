@@ -4,12 +4,13 @@ import { prisma } from '@/prisma';
 
 export default async function user(req: NextApiRequest, res: NextApiResponse) {
   try {
+    const { id, notification } = req.body;
     const result = await prisma.user.update({
       where: {
-        id: req.body.id,
+        id: id as string,
       },
       data: {
-        notifications: req.body.notifications,
+        notifications: notification,
       },
     });
     res.status(200).json(result);

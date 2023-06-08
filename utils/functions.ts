@@ -565,7 +565,7 @@ export const updateNotification = async (
   notification: Notifications[]
 ) => {
   try {
-    const { data, status } = await axios.post(`/api/updateNotification`, {
+    const { data, status } = await axios.post(`/api/user/updateNotification`, {
       id,
       notification,
     });
