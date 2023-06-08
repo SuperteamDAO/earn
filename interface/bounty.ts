@@ -51,6 +51,7 @@ interface Bounty {
   totalWinnersSelected?: number;
   totalPaymentsMade?: number;
   isWinnersAnnounced?: boolean;
+  templateId?: string;
 }
 
 interface BountyWithSubmissions extends Bounty {
