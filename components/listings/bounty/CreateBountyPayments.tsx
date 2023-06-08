@@ -140,6 +140,11 @@ export const CreatebountyPayment = ({
     const rewardAmount: number = (
       (Object.values(prizevalues) || []) as number[]
     ).reduce((a, b) => a + b, 0);
+    setBountyPayment({
+      rewardAmount: totalReward,
+      token: tokenName,
+      rewards: prizevalues,
+    });
     if (!totalReward || totalReward !== rewardAmount) {
       setIsRewardError(true);
     } else {
