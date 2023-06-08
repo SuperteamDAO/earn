@@ -1,13 +1,46 @@
 import { AddIcon } from '@chakra-ui/icons';
-import { Box, Flex, Text, VStack } from '@chakra-ui/react';
+import { Box, Button, Flex, Text, VStack } from '@chakra-ui/react';
+import axios from 'axios';
 import type { Dispatch, SetStateAction } from 'react';
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 
 interface Props {
   setSteps: Dispatch<SetStateAction<number>>;
   setListingType: Dispatch<SetStateAction<string>>;
 }
 const Template = ({ setSteps, setListingType }: Props) => {
+  const [bountiesTemplates, setBountiesTemplates] = useState([]);
+  const [isBountiesTemplatesLoading, setIsBountiesTemplatesLoading] =
+    useState(false);
+
+  const getBountyTemplates = async () => {
+    setIsBountiesTemplatesLoading(true);
+    try {
+      const templates: any = await axios.get('/api/bounties/templates/');
+      console.log(
+        'file: template.tsx:19 ~ getBountyTemplates ~ templates:',
+        templates
+      );
+      setBountiesTemplates(templates?.data || []);
+      setIsBountiesTemplatesLoading(false);
+    } catch (e) {
+      setIsBountiesTemplatesLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    if (!isBountiesTemplatesLoading) {
+      getBountyTemplates();
+    }
+  }, []);
+
+  const createTemplate = (templateId: string) => {
+    console.log(
+      'file: template.tsx:38 ~ useTemplate ~ templateId:',
+      templateId
+    );
+  };
+
   return (
     <>
       <VStack align={'start'} gap={8} w="full">
@@ -24,7 +57,7 @@ const Template = ({ setSteps, setListingType }: Props) => {
               }}
             />
           </Flex>
-          <Flex>
+          <Flex wrap={'wrap'} gap={6}>
             <Box
               alignItems={'center'}
               justifyContent={'center'}
@@ -45,6 +78,40 @@ const Template = ({ setSteps, setListingType }: Props) => {
                 Start from Scratch
               </Text>
             </Box>
+            {bountiesTemplates.map((template: any) => (
+              <Box key={template.id} w={'15rem'} h={'15rem'} bg={'white'}>
+                <Flex
+                  align="center"
+                  justify="center"
+                  h="45%"
+                  fontSize="3xl"
+                  bg={template.color || 'white'}
+                >
+                  {template?.emoji}
+                </Flex>
+                <Flex
+                  align="start"
+                  justify={'space-between'}
+                  direction={'column'}
+                  h="55%"
+                  px={6}
+                  py={4}
+                  bg="white"
+                >
+                  <Text color={'brand.slate.700'} fontWeight={500}>
+                    {template?.templateTitle}
+                  </Text>
+                  <Button
+                    w="full"
+                    onClick={() => createTemplate(template?.id)}
+                    size="sm"
+                    variant="solid"
+                  >
+                    Use Template
+                  </Button>
+                </Flex>
+              </Box>
+            ))}
           </Flex>
         </VStack>
         {/* <VStack align="start" w={'full'}>
