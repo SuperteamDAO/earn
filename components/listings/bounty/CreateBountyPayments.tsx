@@ -28,6 +28,7 @@ import { Toaster } from 'react-hot-toast';
 
 import type { MultiSelectOptions } from '@/constants';
 import { PrizeList, tokenList } from '@/constants';
+import { sortRank } from '@/utils/rank';
 
 import type { BountyBasicType } from './Createbounty';
 import type { Ques } from './questions/builder';
@@ -91,12 +92,14 @@ export const CreatebountyPayment = ({
   );
 
   // handles the UI for prize
-  const prizesList = Object.keys(bountyPayment?.rewards || [])?.map((r) => ({
-    value: r,
-    label: `${r} prize`,
-    placeHolder: bountyPayment?.rewards[r],
-    defaultValue: bountyPayment?.rewards[r],
-  }));
+  const prizesList = sortRank(Object.keys(bountyPayment?.rewards || []))?.map(
+    (r) => ({
+      value: r,
+      label: `${r} prize`,
+      placeHolder: bountyPayment?.rewards[r],
+      defaultValue: bountyPayment?.rewards[r],
+    })
+  );
   const [prizes, setPrizes] = useState<PrizeListInterface[]>(
     prizesList?.length
       ? prizesList
@@ -137,7 +140,7 @@ export const CreatebountyPayment = ({
     const rewardAmount: number = (
       (Object.values(prizevalues) || []) as number[]
     ).reduce((a, b) => a + b, 0);
-    if (!totalReward || totalReward < rewardAmount) {
+    if (!totalReward || totalReward !== rewardAmount) {
       setIsRewardError(true);
     } else {
       setIsRewardError(false);
@@ -330,8 +333,7 @@ export const CreatebountyPayment = ({
         </VStack>
         {isRewardError && (
           <Text w="full" color="red" textAlign={'center'}>
-            Sorry! Total reward amount should be equal or greater than the sum
-            of all prizes.
+            Sorry! Total reward amount should be equal to the sum of all prizes.
           </Text>
         )}
         <Toaster />
