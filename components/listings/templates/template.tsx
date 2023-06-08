@@ -88,7 +88,7 @@ const Template = ({
               flexDir={'column'}
               display={'flex'}
               w={'15rem'}
-              h={'17rem'}
+              h={'16rem'}
               bg={'white'}
               border={'1px solid #cbd5e1'}
               cursor={'pointer'}
@@ -107,7 +107,7 @@ const Template = ({
                 ...new Set(template?.Bounties?.map((b: any) => b.sponsor)),
               ];
               return (
-                <Box key={template.id} w={'15rem'} h={'17rem'} bg={'white'}>
+                <Box key={template.id} w={'15rem'} h={'16rem'} bg={'white'}>
                   <Flex
                     align="center"
                     justify="center"
@@ -224,7 +224,7 @@ const Template = ({
               flexDir={'column'}
               display={'flex'}
               w={'15rem'}
-              h={'17rem'}
+              h={'16rem'}
               bg={'white'}
               border={'1px solid #cbd5e1'}
               cursor={'pointer'}
@@ -260,7 +260,7 @@ const Template = ({
               flexDir={'column'}
               display={'flex'}
               w={'15rem'}
-              h={'17rem'}
+              h={'16rem'}
               bg={'white'}
               border={'1px solid #cbd5e1'}
               cursor={'pointer'}
