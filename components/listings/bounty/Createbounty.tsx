@@ -14,6 +14,7 @@ export interface BountyBasicType {
   slug?: string;
   deadline?: string;
   type?: BountyType | string;
+  templateId?: string;
 }
 interface Props {
   steps: number;
