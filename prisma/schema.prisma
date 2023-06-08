@@ -216,7 +216,7 @@ model User {
   workPrefernce    String?
   currentEmployer  String?
   pow              String?        @db.VarChar(2000)
-  notifications    String?
+  notifications    Json?          @default("[]")
   private          Boolean        @default(false)
   skills           Json?
   currentSponsorId String?

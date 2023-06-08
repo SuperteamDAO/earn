@@ -6,6 +6,7 @@ import toast from 'react-hot-toast';
 import { v4 as uuidV4 } from 'uuid';
 
 import type { Grant } from '@/interface/grant';
+import type { Notifications } from '@/interface/user';
 
 import type { Comment } from '../interface/comments';
 import type {
@@ -561,15 +562,13 @@ export const AllGrants = async (): Promise<
 
 export const updateNotification = async (
   id: string,
-  notification: string[]
+  notification: Notifications[]
 ) => {
   try {
-    const { data, status } = await axios.post(
-      `${BACKEND_URL}/talent/notification/update/${id}`,
-      {
-        notification,
-      }
-    );
+    const { data, status } = await axios.post(`/api/updateNotification`, {
+      id,
+      notification,
+    });
     if (status !== 200) {
       return null;
     }

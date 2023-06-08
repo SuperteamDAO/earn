@@ -21,6 +21,7 @@ import { Toaster } from 'react-hot-toast';
 import { TiTick } from 'react-icons/ti';
 
 import type { BountyStatus } from '@/interface/bounty';
+import type { Notifications } from '@/interface/user';
 import { dayjs } from '@/utils/dayjs';
 import { Mixpanel } from '@/utils/mixpanel';
 
@@ -608,37 +609,39 @@ export const CategoryBanner = ({ type }: { type: string }) => {
           borderColor={'brand.slate.500'}
           isLoading={loading}
           leftIcon={
-            JSON.parse(talentInfo?.notifications ?? '[]').includes(type) ? (
+            userInfo?.notifications?.find((e) => e.label === type) ? (
               <TiTick />
             ) : (
               <BellIcon />
             )
           }
           onClick={async () => {
-            if (!userInfo?.talent) {
+            if (!userInfo?.isTalentFilled) {
               onOpen();
             }
-            if (
-              JSON.parse(talentInfo?.notifications as string).includes(type)
-            ) {
+            if (userInfo?.notifications?.find((e) => e.label === type)) {
               setLoading(true);
-              const notification: string[] = [];
+              const notification: Notifications[] = [];
 
-              JSON.parse(talentInfo?.notifications as string).forEach(
-                (e: any) => {
-                  if (e !== type) {
-                    notification.push(e);
-                  }
+              userInfo?.notifications?.forEach((e) => {
+                if (e.label !== type) {
+                  notification.push({
+                    label: e.label,
+                    timestamp: Date.now(),
+                  });
                 }
-              );
+              });
               await updateNotification(talentInfo?.id as string, notification);
               await updateTalent();
               setLoading(false);
             }
             setLoading(true);
-            await updateNotification(talentInfo?.id as string, [
-              ...JSON.parse(talentInfo?.notifications as string),
-              type,
+            await updateNotification(userInfo?.id as string, [
+              ...(userInfo?.notifications as Notifications[]),
+              {
+                label: type,
+                timestamp: Date.now(),
+              },
             ]);
             await updateTalent();
             Mixpanel.track('notification_added', {
