@@ -1,6 +1,5 @@
 import type { MailDataRequired } from '@sendgrid/mail';
 import type { NextApiRequest, NextApiResponse } from 'next';
-import { getURL } from 'next/dist/shared/lib/utils';
 
 import type { Skills } from '@/interface/skills';
 import { prisma } from '@/prisma';
@@ -60,9 +59,7 @@ export default async function handler(
         templateId: process.env.SENDGRID_INVITE_SPONSOR as string,
         dynamicTemplateData: {
           name: e.name,
-          link: `${getURL()}/listings/bounties/${listing.slug}/submission/${
-            listing.id
-          }`,
+          link: `https://earn.superteam.com/listings/bounties/${listing.slug}/submission/${listing.id}`,
         },
       };
       await sgMail.send(msg);

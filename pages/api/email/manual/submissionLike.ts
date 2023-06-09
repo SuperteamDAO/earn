@@ -2,7 +2,6 @@ import type { NextApiRequest, NextApiResponse } from 'next';
 
 import { prisma } from '@/prisma';
 import sgMail from '@/utils/sendgrid';
-import { getURL } from '@/utils/validUrl';
 
 export default async function handler(
   req: NextApiRequest,
@@ -30,9 +29,7 @@ export default async function handler(
       dynamicTemplateData: {
         name: submission?.user.firstName,
         bounty_name: submission?.listing.title,
-        link: `${getURL()}/listings/bounties/${
-          submission?.listing.slug
-        }/submission/${submission?.listing.id}`,
+        link: `https://earn.superteam.com/listings/bounties/${submission?.listing.slug}/submission/${submission?.listing.id}`,
       },
     };
     await sgMail.send(msg);

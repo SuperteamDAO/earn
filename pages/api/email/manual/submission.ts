@@ -1,5 +1,4 @@
 import type { NextApiRequest, NextApiResponse } from 'next';
-import { getURL } from 'next/dist/shared/lib/utils';
 
 import { prisma } from '@/prisma';
 import sgMail from '@/utils/sendgrid';
@@ -31,7 +30,6 @@ export default async function handler(
       dynamicTemplateData: {
         name: user?.firstName,
         bounty_name: listing?.title,
-        link: `${getURL()}`,
       },
     };
     const msg1 = {
@@ -44,7 +42,6 @@ export default async function handler(
       dynamicTemplateData: {
         name: user?.firstName,
         bounty_name: listing?.title,
-        link: `${getURL()}`,
       },
     };
     await sgMail.send(msg);

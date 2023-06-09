@@ -2,7 +2,6 @@ import type { NextApiRequest, NextApiResponse } from 'next';
 
 import { prisma } from '@/prisma';
 import sgMail from '@/utils/sendgrid';
-import { getURL } from '@/utils/validUrl';
 
 export default async function handler(
   req: NextApiRequest,
@@ -29,6 +28,7 @@ export default async function handler(
         },
       },
     });
+
     const user = await prisma.user.findUnique({
       where: {
         id: userId,
@@ -46,7 +46,7 @@ export default async function handler(
         name: listings?.sponsor.UserSponsors[0]?.user.firstName,
         bounty_name: listings?.title,
         personName: user?.firstName,
-        link: `${getURL()}/listings/bounties/${listings?.slug}`,
+        link: `https://earn.superteam.com/listings/bounties/${listings?.slug}`,
       },
     };
     await sgMail.send(msg);

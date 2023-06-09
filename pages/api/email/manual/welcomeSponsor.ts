@@ -1,7 +1,6 @@
 import type { NextApiRequest, NextApiResponse } from 'next';
 
 import sgMail from '@/utils/sendgrid';
-import { getURL } from '@/utils/validUrl';
 
 export default async function handler(
   req: NextApiRequest,
@@ -18,7 +17,7 @@ export default async function handler(
       templateId: process.env.SENDGRID_WELCOME_SPONSOR as string,
       dynamicTemplateData: {
         name,
-        link: getURL(),
+        link: 'https://earn.superteam.com',
       },
     };
     await sgMail.send(msg);
