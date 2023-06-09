@@ -365,8 +365,8 @@ function YourLinks({ success, useFormStore }: Props) {
       };
       // eslint-disable-next-line unused-imports/no-unused-vars
       const { subSkills, ...finalOptions } = updateOptions;
-      const updatedUser = await axios.post('/api/user/update', finalOptions);
-      await axios.post('api/email/manual/welcomeTalent', {
+      const updatedUser = await axios.post('/api/user/update/', finalOptions);
+      await axios.post('/api/email/manual/welcomeTalent/', {
         email: userInfo?.email,
         name: userInfo?.firstName,
       });
