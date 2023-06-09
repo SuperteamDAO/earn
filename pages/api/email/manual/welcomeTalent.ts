@@ -1,38 +1,27 @@
 import type { NextApiRequest, NextApiResponse } from 'next';
 
-import { prisma } from '@/prisma';
 import sgMail from '@/utils/sendgrid';
 
 export default async function handler(
   req: NextApiRequest,
   res: NextApiResponse
 ) {
-  const { id } = req.body;
+  const { email, name } = req.body;
   try {
-    const submission = await prisma.submission.findUnique({
-      where: {
-        id,
-      },
-      include: {
-        user: true,
-        listing: true,
-      },
-    });
-
     const msg = {
-      to: submission?.user.email,
+      to: email,
       from: {
         name: 'Kash from Superteam',
         email: process.env.SENDGRID_EMAIL as string,
       },
-      templateId: process.env.SENDGRID_LIKE_TEMPLATE as string,
+      templateId: process.env.SENDGRID_WELCOME_TALENT as string,
       dynamicTemplateData: {
-        name: submission?.user.firstName,
-        bounty_name: submission?.listing.title,
-        link: `https://earn.superteam.com/listings/bounties/${submission?.listing.slug}/submission/${submission?.listing.id}`,
+        name,
+        link: 'https://earn.superteam.com',
       },
     };
     await sgMail.send(msg);
+
     return res.status(200).json({ message: 'Ok' });
   } catch (error) {
     console.log(error);

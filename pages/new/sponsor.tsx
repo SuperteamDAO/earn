@@ -52,6 +52,10 @@ const CreateSponsor = () => {
         ...sponsor,
         userId: userInfo?.id,
       });
+      await axios.post(`/api/email/manual/welcomeSponsor`, {
+        email: userInfo?.email,
+        name: userInfo?.firstName,
+      });
       router.push('/dashboard/bounties');
       // setIsLoading(false);
       // toast.success('Sponsor created!');

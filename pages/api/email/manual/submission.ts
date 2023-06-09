@@ -1,5 +1,4 @@
 import type { NextApiRequest, NextApiResponse } from 'next';
-import { getURL } from 'next/dist/shared/lib/utils';
 
 import { prisma } from '@/prisma';
 import sgMail from '@/utils/sendgrid';
@@ -31,7 +30,6 @@ export default async function handler(
       dynamicTemplateData: {
         name: user?.firstName,
         bounty_name: listing?.title,
-        link: `${getURL()}`,
       },
     };
     const msg1 = {
@@ -44,13 +42,11 @@ export default async function handler(
       dynamicTemplateData: {
         name: user?.firstName,
         bounty_name: listing?.title,
-        link: `${getURL()}`,
       },
     };
     await sgMail.send(msg);
     await sgMail.send(msg1);
-    res.status(200).json({ message: 'Success.' });
-    return res.status(200).send({ clientRes: 'Hello' });
+    return res.status(200).json({ message: 'Ok' });
   } catch (error) {
     console.log(error);
     return res.status(500).json({ error: 'Something went wrong.' });
