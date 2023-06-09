@@ -188,7 +188,7 @@ function DetailSideCard({
                 alt={'green doller'}
                 rounded={'full'}
                 src={
-                  tokenList.filter((e) => e?.tokenName === token)[0]?.icon ??
+                  tokenList.filter((e) => e?.tokenSymbol === token)[0]?.icon ??
                   '/assets/icons/green-doller.svg'
                 }
               />

@@ -369,7 +369,7 @@ function Bounties() {
                           rounded={'full'}
                           src={
                             tokenList.filter(
-                              (e) => e?.tokenName === currentBounty.token
+                              (e) => e?.tokenSymbol === currentBounty.token
                             )[0]?.icon ?? '/assets/icons/green-doller.svg'
                           }
                         />
