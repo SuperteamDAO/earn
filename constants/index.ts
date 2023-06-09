@@ -37,18 +37,18 @@ export const IndustryList: MultiSelectOptions[] = [
 
 export const tokenList = [
   {
-    tokenName: 'Solana (SOL)',
-    tokenSymbol: 'SOL',
-    mintAddress: 'sadfasdf', // need to change it
-    address: 'dsafasdf', // need to change
-    icon: 'https://s2.coinmarketcap.com/static/img/coins/64x64/16116.png',
-  },
-  {
     tokenName: 'USDC',
     tokenSymbol: 'USDC',
     mintAddress: 'EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v',
     address: 'EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v',
     icon: 'https://s2.coinmarketcap.com/static/img/coins/64x64/3408.png',
+  },
+  {
+    tokenName: 'Solana (SOL)',
+    tokenSymbol: 'SOL',
+    mintAddress: 'sadfasdf', // need to change it
+    address: 'dsafasdf', // need to change
+    icon: 'https://s2.coinmarketcap.com/static/img/coins/64x64/16116.png',
   },
   {
     tokenName: 'ISC',
