@@ -6,6 +6,7 @@ interface SubmissionWithUser {
   id: string;
   link?: string;
   tweet?: string;
+  otherInfo?: string;
   eligibilityAnswers?: any;
   userId: string;
   listingType: ListingType;

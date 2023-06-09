@@ -6,8 +6,15 @@ export default async function submission(
   req: NextApiRequest,
   res: NextApiResponse
 ) {
-  const { userId, listingId, listingType, link, tweet, eligibilityAnswers } =
-    req.body;
+  const {
+    userId,
+    listingId,
+    listingType,
+    link,
+    tweet,
+    otherInfo,
+    eligibilityAnswers,
+  } = req.body;
   try {
     const result = await prisma.submission.create({
       data: {
@@ -16,6 +23,7 @@ export default async function submission(
         listingType,
         link: link || '',
         tweet: tweet || '',
+        otherInfo: otherInfo || '',
         eligibilityAnswers: eligibilityAnswers || undefined,
       },
     });

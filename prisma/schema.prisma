@@ -154,6 +154,7 @@ model Submission {
   id                 String      @id @default(uuid())
   link               String?
   tweet              String?
+  otherInfo          String?
   eligibilityAnswers Json?
   userId             String
   listingType        ListingType @default(BOUNTY)
