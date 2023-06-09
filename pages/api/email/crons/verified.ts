@@ -1,29 +1,35 @@
+import dayjs from 'dayjs';
 import type { NextApiRequest, NextApiResponse } from 'next';
 
+import { prisma } from '@/prisma';
 import sgMail from '@/utils/sendgrid';
 
 export default async function handler(
-  req: NextApiRequest,
+  _req: NextApiRequest,
   res: NextApiResponse
 ) {
-  const { email, name } = req.body;
+  await prisma.user.findMany({
+    where: {
+      createdAt: {
+        gte: dayjs().subtract(1, 'month').toISOString(),
+      },
+    },
+  });
   try {
     const msg = {
-      to: email,
+      to: '',
       from: {
         name: 'Kash from Superteam',
         email: process.env.SENDGRID_EMAIL as string,
       },
-      templateId: process.env.SENDGRID_WELCOME_SPONSOR as string,
-      dynamicTemplateData: {
-        name,
-        link: 'https://earn.superteam.fun',
-      },
+      templateId: process.env.SENDGRID_REVIEW as string,
+      dynamicTemplateData: {},
     };
     await sgMail.send(msg);
+
     return res.status(200).json({ message: 'Ok' });
-  } catch (error) {
-    console.log(error);
+  } catch (e) {
+    console.log(e);
     return res.status(500).json({ error: 'Something went wrong.' });
   }
 }

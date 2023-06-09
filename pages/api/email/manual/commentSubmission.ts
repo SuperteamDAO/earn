@@ -7,28 +7,32 @@ export default async function handler(
   req: NextApiRequest,
   res: NextApiResponse
 ) {
-  const { id, userId } = req.body;
+  const { userId, submissionId } = req.body;
   try {
-    const listings = await prisma.bounties.findUnique({
+    const submission = await prisma.submission.findUnique({
       where: {
-        id,
+        id: submissionId,
       },
       include: {
-        sponsor: {
+        user: true,
+        listing: {
           include: {
-            UserSponsors: {
-              where: {
-                role: 'ADMIN',
-              },
+            sponsor: {
               include: {
-                user: true,
+                UserSponsors: {
+                  where: {
+                    role: 'ADMIN',
+                  },
+                  include: {
+                    user: true,
+                  },
+                },
               },
             },
           },
         },
       },
     });
-
     const user = await prisma.user.findUnique({
       where: {
         id: userId,
@@ -36,17 +40,17 @@ export default async function handler(
     });
 
     const msg = {
-      to: listings?.sponsor.UserSponsors[0]?.user.email,
+      to: submission?.listing.sponsor.UserSponsors[0]?.user.email,
       from: {
         name: 'Kash from Superteam',
         email: process.env.SENDGRID_EMAIL as string,
       },
-      templateId: process.env.SENDGRID_COMMENT_SPONSOR as string,
+      templateId: process.env.SENDGRID_COMMENT_TEMPLATE as string,
       dynamicTemplateData: {
-        name: listings?.sponsor.UserSponsors[0]?.user.firstName,
-        bountyName: listings?.title,
+        name: submission?.listing.sponsor.UserSponsors[0]?.user.firstName,
+        bounty_name: submission?.listing.title,
         personName: user?.firstName,
-        link: `https://https://earn.superteam.fun/listings/bounties/${listings?.slug}`,
+        link: `https://https://earn.superteam.fun/listings/bounties/${submission?.listing.slug}`,
       },
     };
     await sgMail.send(msg);

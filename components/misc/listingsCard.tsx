@@ -609,6 +609,22 @@ export const CategoryBanner = ({ type }: { type: string }) => {
             if (!userInfo?.isTalentFilled) {
               onOpen();
             }
+            if (userInfo?.notifications === null) {
+              setLoading(true);
+              console.log('here', userInfo?.id);
+              await updateNotification(userInfo?.id as string, [
+                {
+                  label: type,
+                  timestamp: Date.now(),
+                },
+              ]);
+              Mixpanel.track('notification_added', {
+                category: type,
+                name: `${talentInfo?.firstname} ${talentInfo?.lastname}`,
+              });
+              setLoading(false);
+              return toast.success("You've been subscribed to this category");
+            }
             if (userInfo?.notifications?.find((e) => e.label === type)) {
               setLoading(true);
               const notification: Notifications[] = [];
@@ -621,7 +637,7 @@ export const CategoryBanner = ({ type }: { type: string }) => {
                   });
                 }
               });
-              await updateNotification(talentInfo?.id as string, notification);
+              await updateNotification(userInfo?.id as string, notification);
               setLoading(false);
               return toast.success(
                 "You've been unsubscribed from this category"

@@ -39,7 +39,7 @@ interface User {
   website?: string;
   telegram?: string;
   pow?: string;
-  notifications?: Notifications[];
+  notifications?: Notifications[] | null;
   totalEarnedInUSD?: number;
   currentSponsorId?: string;
   currentSponsor?: SponsorType;
