@@ -59,7 +59,7 @@ export default async function handler(
         templateId: process.env.SENDGRID_INVITE_SPONSOR as string,
         dynamicTemplateData: {
           name: e.name,
-          link: `https://earn.superteam.com/listings/bounties/${listing.slug}/submission/${listing.id}`,
+          link: `https://https://earn.superteam.fun/listings/bounties/${listing.slug}/submission/${listing.id}`,
         },
       };
       await sgMail.send(msg);

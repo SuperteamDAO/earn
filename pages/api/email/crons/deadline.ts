@@ -54,7 +54,7 @@ export default async function handler(
           templateId: process.env.SENDGRID_DEADLINE as string,
           dynamicTemplateData: {
             name: bounty.title,
-            link: `${process.env.NEXT_PUBLIC_URL}/listings/bounties/${bounty.slug}/submission/${bounty.id}`,
+            link: `https://earn.superteam.fun/listings/bounties/${bounty.slug}/submission/${bounty.id}`,
           },
         };
         await sgMail.send(msg);

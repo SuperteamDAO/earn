@@ -17,7 +17,7 @@ export default async function handler(
       templateId: process.env.SENDGRID_WELCOME_TALENT as string,
       dynamicTemplateData: {
         name,
-        link: 'https://earn.superteam.com',
+        link: 'https://earn.superteam.fun',
       },
     };
     await sgMail.send(msg);

@@ -46,7 +46,7 @@ export default async function handler(
         name: listings?.sponsor.UserSponsors[0]?.user.firstName,
         bounty_name: listings?.title,
         personName: user?.firstName,
-        link: `https://earn.superteam.com/listings/bounties/${listings?.slug}`,
+        link: `https://https://earn.superteam.fun/listings/bounties/${listings?.slug}`,
       },
     };
     await sgMail.send(msg);
