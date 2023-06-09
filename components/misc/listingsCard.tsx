@@ -223,7 +223,7 @@ export const BountiesCard = ({
                     rounded="full"
                     src={
                       tokenList.find((ele) => {
-                        return ele.tokenName === token;
+                        return ele.tokenSymbol === token;
                       })?.icon
                     }
                   />
