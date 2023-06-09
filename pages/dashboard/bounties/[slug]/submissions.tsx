@@ -526,6 +526,20 @@ function BountySubmissions({ slug }: Props) {
                       )}
                     <Box mb={4}>
                       <Text
+                        mb={1}
+                        color="brand.slate.400"
+                        fontSize="xs"
+                        fontWeight={600}
+                        textTransform={'uppercase'}
+                      >
+                        Anything Else
+                      </Text>
+                      <Text color="brand.slate.700" wordBreak={'break-all'}>
+                        {selectedSubmission?.otherInfo || '-'}
+                      </Text>
+                    </Box>
+                    <Box mb={4}>
+                      <Text
                         mb={2}
                         color="brand.slate.400"
                         fontSize="xs"
