@@ -73,6 +73,7 @@ model Bounties {
   sponsor              Sponsors           @relation(fields: [sponsorId], references: [id])
   poc                  User               @relation("poc", fields: [pocId], references: [id])
   Submission           Submission[]
+  SubscribeBounty      SubscribeBounty[]
 
   @@index([id, slug])
   @@index([sponsorId])
@@ -218,19 +219,19 @@ model Total {
 }
 
 model User {
-  id               String         @id @default(uuid())
-  publicKey        String         @unique
-  email            String         @unique
-  username         String         @unique
+  id               String            @id @default(uuid())
+  publicKey        String            @unique
+  email            String            @unique
+  username         String            @unique
   photo            String?
   firstName        String?
   lastName         String?
-  createdAt        DateTime       @default(now())
-  updatedAt        DateTime       @updatedAt
-  isVerified       Boolean        @default(false)
-  role             SuperRole      @default(USER)
-  totalEarnedInUSD Int            @default(0)
-  isTalentFilled   Boolean        @default(false)
+  createdAt        DateTime          @default(now())
+  updatedAt        DateTime          @updatedAt
+  isVerified       Boolean           @default(false)
+  role             SuperRole         @default(USER)
+  totalEarnedInUSD Int               @default(0)
+  isTalentFilled   Boolean           @default(false)
   interests        String?
   bio              String?
   twitter          String?
@@ -246,18 +247,19 @@ model User {
   cryptoExperience String?
   workPrefernce    String?
   currentEmployer  String?
-  pow              String?        @db.VarChar(2000)
+  pow              String?           @db.VarChar(2000)
   notifications    Json?
-  private          Boolean        @default(false)
+  private          Boolean           @default(false)
   skills           Json?
   currentSponsorId String?
-  currentSponsor   Sponsors?      @relation(fields: [currentSponsorId], references: [id])
+  currentSponsor   Sponsors?         @relation(fields: [currentSponsorId], references: [id])
   UserSponsors     UserSponsors[]
-  poc              Bounties[]     @relation("poc")
+  poc              Bounties[]        @relation("poc")
   Comment          Comment[]
   Submission       Submission[]
   Grants           Grants[]
   UserInvites      UserInvites[]
+  SubscribeBounty  SubscribeBounty[]
 
   @@index([email, publicKey, username])
   @@index([currentSponsorId])
@@ -289,6 +291,39 @@ model UserInvites {
 
   @@index([id])
   @@index([senderId])
+}
+
+model emailLogs {
+  id        String    @id @default(uuid())
+  email     String?
+  type      EmailType
+  bountyId  String?
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+}
+
+model SubscribeBounty {
+  id         String    @id @default(uuid())
+  userId     String
+  bountyId   String
+  isArchived Boolean   @default(false)
+  createdAt  DateTime  @default(now())
+  updatedAt  DateTime  @updatedAt
+  User       User      @relation(fields: [userId], references: [id])
+  Bounties   Bounties? @relation(fields: [bountyId], references: [id])
+
+  @@index([bountyId])
+  @@index([userId])
+}
+
+enum EmailType {
+  BOUNTY_REVIEW
+  BOUNTY_DEADLINE
+  BOUNTY_CLOSE_DEADLINE
+  NO_VERIFICATION
+  NO_ACTIVITY
+  NO_REVIEW_SPONSOR_1
+  NO_REVIEW_SPONSOR_2
 }
 
 enum Role {

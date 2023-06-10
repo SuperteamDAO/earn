@@ -16,17 +16,13 @@ export default async function handler(
         isArchived: false,
         status: 'OPEN',
         deadline: {
-          gte: dayjs().add(1, 'day').toISOString(),
+          gte: dayjs().add(7, 'day').toISOString(),
         },
       },
     });
     const bountiesWithDeadline = bounties.filter((bounty) => {
-      console.log(
-        bounty.deadline?.toISOString().split('T')[0],
-        dayjs().add(2, 'day').toISOString().split('T')[0]
-      );
       return dayjs(bounty.deadline?.toISOString().split('T')[0]).isSame(
-        dayjs().add(2, 'day').toISOString().split('T')[0]
+        dayjs().add(7, 'day').toISOString().split('T')[0]
       );
     });
 
@@ -34,7 +30,7 @@ export default async function handler(
       const checkLogs = await prisma.emailLogs.findFirst({
         where: {
           bountyId: bounty.id,
-          type: 'BOUNTY_CLOSE_DEADLINE',
+          type: 'BOUNTY_DEADLINE',
         },
       });
 
@@ -68,7 +64,7 @@ export default async function handler(
             name: 'Kash from Superteam',
             email: process.env.SENDGRID_EMAIL as string,
           },
-          templateId: process.env.SENDGRID_DEADLINE as string,
+          templateId: process.env.SENDGRID_DEADLINE_WEEK as string,
           dynamicTemplateData: {
             name: bounty.title,
             link: `https://earn.superteam.fun/listings/bounties/${bounty.slug}`,
@@ -77,9 +73,10 @@ export default async function handler(
         await sgMail.send(msg);
         emailsSent.push(e.email);
       });
+
       await prisma.emailLogs.create({
         data: {
-          type: 'BOUNTY_CLOSE_DEADLINE',
+          type: 'BOUNTY_DEADLINE',
           bountyId: bounty.id,
         },
       });

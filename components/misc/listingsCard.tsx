@@ -599,7 +599,7 @@ export const CategoryBanner = ({ type }: { type: string }) => {
           borderColor={'brand.slate.500'}
           isLoading={loading}
           leftIcon={
-            userInfo?.notifications?.find((e) => e.label === type) ? (
+            userInfo?.notifications?.find((e) => e?.label === type) ? (
               <TiTick />
             ) : (
               <BellIcon />
@@ -608,13 +608,13 @@ export const CategoryBanner = ({ type }: { type: string }) => {
           onClick={async () => {
             if (!userInfo?.isTalentFilled) {
               onOpen();
+              return;
             }
             if (userInfo?.notifications === null) {
               setLoading(true);
-              console.log('here', userInfo?.id);
               await updateNotification(userInfo?.id as string, [
                 {
-                  label: type,
+                  label: type ?? '',
                   timestamp: Date.now(),
                 },
               ]);
@@ -623,8 +623,10 @@ export const CategoryBanner = ({ type }: { type: string }) => {
                 name: `${talentInfo?.firstname} ${talentInfo?.lastname}`,
               });
               setLoading(false);
-              return toast.success("You've been subscribed to this category");
+              toast.success("You've been subscribed to this category");
+              return;
             }
+
             if (userInfo?.notifications?.find((e) => e.label === type)) {
               setLoading(true);
               const notification: Notifications[] = [];
@@ -639,9 +641,8 @@ export const CategoryBanner = ({ type }: { type: string }) => {
               });
               await updateNotification(userInfo?.id as string, notification);
               setLoading(false);
-              return toast.success(
-                "You've been unsubscribed from this category"
-              );
+              toast.success("You've been unsubscribed from this category");
+              return;
             }
 
             setLoading(true);
@@ -657,7 +658,7 @@ export const CategoryBanner = ({ type }: { type: string }) => {
               name: `${talentInfo?.firstname} ${talentInfo?.lastname}`,
             });
             setLoading(false);
-            return toast.success("You've been subscribed to this category");
+            toast.success("You've been subscribed to this category");
           }}
           variant="solid"
         >
