@@ -16,15 +16,32 @@ export default async function handler(
         isArchived: false,
         status: 'OPEN',
         deadline: {
-          gte: dayjs().subtract(1, 'month').toISOString(),
+          lte: dayjs().toISOString(),
         },
       },
     });
+
     const bountiesWithDeadline = bounties.filter((bounty) => {
-      return dayjs(bounty.deadline).isSame(dayjs().subtract(1, 'day'));
+      console.log(
+        bounty.deadline?.toISOString().split('T')[0],
+        dayjs().toISOString().split('T')[0]
+      );
+      return dayjs(bounty.deadline?.toISOString().split('T')[0]).isSame(
+        dayjs().toISOString().split('T')[0]
+      );
     });
 
     bountiesWithDeadline.forEach(async (bounty) => {
+      const checkLogs = await prisma.emailLogs.findFirst({
+        where: {
+          bountyId: bounty.id,
+          type: 'BOUNTY_REVIEW',
+        },
+      });
+
+      if (checkLogs) {
+        return;
+      }
       const submissions = await prisma.submission.findMany({
         where: {
           listingId: bounty.id,
@@ -33,36 +50,44 @@ export default async function handler(
           user: true,
         },
       });
-      const emailsSent: string[] = [];
       const emails = submissions.map((submission) => {
         return {
           email: submission.user.email,
           name: submission.user.firstName,
         };
       });
+      console.log(emails);
 
+      const emailsSent: string[] = [];
       emails.forEach(async (e) => {
         if (emailsSent.includes(e.email)) {
           return;
         }
         const msg = {
-          to: e.email,
+          to: 'dhruvrajsinghsolanki161@gmail.com',
           from: {
             name: 'Kash from Superteam',
             email: process.env.SENDGRID_EMAIL as string,
           },
-          templateId: process.env.SENDGRID_REVIEW as string,
+          templateId: process.env.SENDGRID_DEADLINE as string,
           dynamicTemplateData: {
-            name: bounty.title,
-            link: `${process.env.NEXT_PUBLIC_URL}/listings/bounties/${bounty.slug}`,
+            bountyName: bounty.title,
+            name: e.name,
+            link: `https://earn.superteam.fun/listings/bounties/${bounty.slug}`,
           },
         };
         await sgMail.send(msg);
         emailsSent.push(e.email);
       });
+      await prisma.emailLogs.create({
+        data: {
+          type: 'BOUNTY_REVIEW',
+          bountyId: bounty.id,
+        },
+      });
     });
 
-    return res.status(200).json({ message: 'Ok' });
+    return res.status(200).json({ message: 'Ok', bountiesWithDeadline });
   } catch (e) {
     console.log(e);
     return res.status(500).json({ error: 'Something went wrong.' });
