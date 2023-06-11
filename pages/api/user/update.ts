@@ -17,13 +17,7 @@ export default async function user(req: NextApiRequest, res: NextApiResponse) {
         currentSponsor: true,
       },
     });
-  } catch (error) {
-    res.status(400).json({
-      error,
-      message: `Error occurred while updating user ${id}.`,
-    });
-  }
-  try {
+
     if (addUserSponsor && updateAttributes?.currentSponsorId) {
       await prisma.userSponsors.create({
         data: {
@@ -33,8 +27,11 @@ export default async function user(req: NextApiRequest, res: NextApiResponse) {
         },
       });
     }
+    res.status(200).json(result);
   } catch (e) {
     console.log('file: update.ts:29 ~ user ~ e:', e);
+    res.status(400).json({
+      message: `Error occurred while updating user ${id}.`,
+    });
   }
-  res.status(200).json(result);
 }
