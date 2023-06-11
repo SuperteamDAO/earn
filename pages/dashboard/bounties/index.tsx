@@ -134,6 +134,7 @@ function Bounties() {
       const result = await axios.post(`/api/bounties/update/${bounty.id}/`, {
         isPublished: status,
       });
+
       const changedBountyIndex = bounties.findIndex(
         (b) => b.id === result.data.id
       );

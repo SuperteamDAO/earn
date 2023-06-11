@@ -50,10 +50,12 @@ export default async function handler(
         name: submission?.listing.sponsor.UserSponsors[0]?.user.firstName,
         bounty_name: submission?.listing.title,
         personName: user?.firstName,
-        link: `https://https://earn.superteam.fun/listings/bounties/${submission?.listing.slug}`,
+        link: `https://earn.superteam.fun/listings/bounties/${submission?.listing.slug}`,
       },
     };
-    await sgMail.send(msg);
+    console.log(submission?.listing.sponsor.UserSponsors[0]?.user.email);
+    const sub = await sgMail.send(msg);
+    console.log(sub);
     return res.status(200).json({ message: 'Ok' });
   } catch (error) {
     console.log(error);

@@ -76,7 +76,7 @@ export const SubmissionModal = ({
           ? eligibilityAnswers
           : null,
       });
-      await axios.post(`/api/email/manual/submission/`, {
+      await axios.post(`/api/email/manual/submission`, {
         listingId: id,
         userId: userInfo?.id,
       });

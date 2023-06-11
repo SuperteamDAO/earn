@@ -33,7 +33,8 @@ export default async function handler(
           link: `https://earn.superteam.fun`,
         },
       };
-      await sgMail.send(msg);
+      const ress = await sgMail.send(msg);
+      console.log(ress);
     });
 
     return res.status(200).json({ message: 'Ok' });

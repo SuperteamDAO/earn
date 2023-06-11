@@ -38,28 +38,27 @@ export default async function handler(
         return;
       }
 
-      const submissions = await prisma.submission.findMany({
+      const subscribe = await prisma.subscribeBounty.findMany({
         where: {
-          listingId: bounty.id,
+          bountyId: bounty.id,
         },
         include: {
-          user: true,
+          User: true,
         },
       });
-      const emails = submissions.map((submission) => {
+      const emails = subscribe.map((sub) => {
         return {
-          email: submission.user.email,
-          name: submission.user.firstName,
+          email: sub.User.email,
+          name: sub.User.firstName,
         };
       });
-
       const emailsSent: string[] = [];
       emails.forEach(async (e) => {
         if (emailsSent.includes(e.email)) {
           return;
         }
         const msg = {
-          to: 'dhruvrajsinghsolanki161@gmail.com',
+          to: e.email,
           from: {
             name: 'Kash from Superteam',
             email: process.env.SENDGRID_EMAIL as string,
