@@ -10,6 +10,7 @@ import {
   Text,
   useMediaQuery,
 } from '@chakra-ui/react';
+import { useRouter } from 'next/router';
 import { useEffect, useState } from 'react';
 
 import { Footer } from '../components/Footer';
@@ -46,7 +47,7 @@ const Orbis = '/assets/landingsponsor/sponsors/orbis.png';
 const Sponsor = () => {
   const [isLargerThan12800px] = useMediaQuery('(min-width: 80rem)');
   const [isLessThan600px] = useMediaQuery('(max-width: 600px)');
-
+  const router = useRouter();
   const [navbarBg, setNavbarBg] = useState<boolean>(false);
   const [videoPopup, setVideoPopup] = useState<boolean>(false);
 
@@ -151,9 +152,11 @@ const Sponsor = () => {
             zIndex={2}
             w="12.5rem"
             h="3.125rem"
-            color="bg.100"
+            color="#6562FF"
             fontSize="1.125rem"
+            bg={'white'}
             borderRadius="0.625rem"
+            _hover={{ bg: 'white', color: '#6562FF' }}
             onClick={() => {
               window.location.href = '/new/sponsor';
             }}
@@ -623,7 +626,13 @@ const Sponsor = () => {
         p="0.625rem"
         bg={navbarBg ? 'white' : 'transparent'}
       >
-        <Box minW={'0.8125rem'} h="0.8125rem">
+        <Box
+          minW={'0.8125rem'}
+          h="0.8125rem"
+          onClick={() => {
+            router.push('/');
+          }}
+        >
           <img src="/assets/logo/new-logo.svg" alt="Logo" />
         </Box>
 
@@ -636,19 +645,8 @@ const Sponsor = () => {
           <Link href="https://earn.superteam.fun/dashboard/company/findtalent">
             Directory
           </Link>
-          <Link href="https://earn.superteam.fun/opportunities/category/bounties">
-            Bounties
-          </Link>
-          <Link
-            href="#demo"
-            onClick={() => {
-              window.scrollTo({
-                top: document.body.scrollHeight,
-                left: 0,
-                behavior: 'smooth',
-              });
-            }}
-          >
+          <Link href="https://earn.superteam.fun/bounties">Bounties</Link>
+          <Link href="https://airtable.com/shrmOAXpF2vhONYqe">
             Get a Bounty Strategy Session
           </Link>
         </Flex>
