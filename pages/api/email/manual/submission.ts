@@ -32,22 +32,21 @@ export default async function handler(
         id: userId as string,
       },
     });
-    console.log(user, listing);
-    // const msg = {
-    //   to: user?.email,
-    //   from: {
-    //     name: 'Kash from Superteam',
-    //     email: process.env.SENDGRID_EMAIL as string,
-    //   },
-    //   templateId: process.env.SENDGRID_SUBMISSION_USER_TEMPLATE as string,
-    //   dynamicTemplateData: {
-    //     name: user?.firstName,
-    //     bounty_name: listing?.title,
-    //   },
-    // };
-    // await sgMail.send(msg);
+    const msg = {
+      to: user?.email,
+      from: {
+        name: 'Kash from Superteam',
+        email: process.env.SENDGRID_EMAIL as string,
+      },
+      templateId: process.env.SENDGRID_SUBMISSION_USER_TEMPLATE as string,
+      dynamicTemplateData: {
+        name: user?.firstName,
+        bounty_name: listing?.title,
+      },
+    };
+    await sgMail.send(msg);
     const msg1: MailDataRequired = {
-      to: 'dhruvrajsinghsolanki161@gmail.com',
+      to: listing?.sponsor.UserSponsors[0]?.user.email,
       from: {
         name: 'Kash from Superteam',
         email: process.env.SENDGRID_EMAIL as string,
@@ -56,7 +55,7 @@ export default async function handler(
       dynamicTemplateData: {
         name: listing?.sponsor.UserSponsors[0]?.user.firstName,
         bounty_name: listing?.title,
-        link: `https://earn.superteam.fun/dashboard/bounties/${listing?.slug}/submissions/`,
+        link: `https://earn.superteam.fun/dashboard/bounties/${listing?.slug}/submissions`,
       },
     };
     const a = await sgMail.send(msg1);

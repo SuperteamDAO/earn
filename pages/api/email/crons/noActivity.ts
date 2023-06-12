@@ -9,7 +9,7 @@ export default async function handler(
   res: NextApiResponse
 ) {
   try {
-    console.log(dayjs().subtract(2, 'day').toISOString());
+    console.log('cron trigger');
     const user = await prisma.user.findMany({
       where: {
         createdAt: {
@@ -21,8 +21,18 @@ export default async function handler(
     });
 
     user.forEach(async (e) => {
+      const logCheck = await prisma.emailLogs.findFirst({
+        where: {
+          type: 'NO_ACTIVITY',
+          email: e.email,
+        },
+      });
+      if (logCheck) {
+        console.log('Already sent email', e.email);
+        return;
+      }
       const msg = {
-        to: e.email,
+        to: 'dhruvrajsinghsolanki161@gmail.com',
         from: {
           name: 'Kash from Superteam',
           email: process.env.SENDGRID_EMAIL as string,
@@ -33,10 +43,17 @@ export default async function handler(
           link: `https://earn.superteam.fun`,
         },
       };
-      const ress = await sgMail.send(msg);
-      console.log(ress);
+      const [ress] = await sgMail.send(msg);
+      console.log(e.email, ress.statusCode);
+      if (ress.statusCode === 202) {
+        await prisma.emailLogs.create({
+          data: {
+            type: 'NO_ACTIVITY',
+            email: e.email,
+          },
+        });
+      }
     });
-
     return res.status(200).json({ message: 'Ok' });
   } catch (e) {
     console.log(e);

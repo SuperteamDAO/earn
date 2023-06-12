@@ -1,0 +1,12 @@
+{
+  "crons": [
+    {
+      "path": "/api/email/crons/noActivity",
+      "schedule": "* * * * *"
+    },
+    {
+      "path": "api/email/crons/noVerified",
+      "schedule": "* * * * *"
+    }
+  ]
+}

@@ -40,22 +40,22 @@ export default async function handler(
     });
 
     const msg = {
-      to: submission?.listing.sponsor.UserSponsors[0]?.user.email,
+      to: submission?.user.email as string,
       from: {
         name: 'Kash from Superteam',
         email: process.env.SENDGRID_EMAIL as string,
       },
       templateId: process.env.SENDGRID_COMMENT_TEMPLATE as string,
       dynamicTemplateData: {
-        name: submission?.listing.sponsor.UserSponsors[0]?.user.firstName,
+        name: submission?.user.firstName,
         bounty_name: submission?.listing.title,
         personName: user?.firstName,
-        link: `https://earn.superteam.fun/listings/bounties/${submission?.listing.slug}`,
+        link: `https://earn.superteam.fun/listings/bounties/${submission?.listing.slug}/submission/${submission?.id}`,
       },
     };
-    console.log(submission?.listing.sponsor.UserSponsors[0]?.user.email);
+    console.log(msg);
     const sub = await sgMail.send(msg);
-    console.log(sub);
+    console.log(sub, '----');
     return res.status(200).json({ message: 'Ok' });
   } catch (error) {
     console.log(error);

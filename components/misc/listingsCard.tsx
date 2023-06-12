@@ -505,7 +505,6 @@ type CategoryAssetsType = {
 
 export const CategoryBanner = ({ type }: { type: string }) => {
   const { userInfo } = userStore();
-
   const { talentInfo } = TalentStore();
   const [loading, setLoading] = useState(false);
   const categoryAssets: CategoryAssetsType = {
@@ -623,6 +622,7 @@ export const CategoryBanner = ({ type }: { type: string }) => {
                 name: `${talentInfo?.firstname} ${talentInfo?.lastname}`,
               });
               setLoading(false);
+
               toast.success("You've been subscribed to this category");
               return;
             }
