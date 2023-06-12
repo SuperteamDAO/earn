@@ -50,30 +50,43 @@ export default async function handler(
           user: true,
         },
       });
+
       const emails = submissions.map((submission) => {
         return {
           email: submission.user.email,
           name: submission.user.firstName,
         };
       });
-      console.log(emails);
-
+      const subscribe = await prisma.subscribeBounty.findMany({
+        where: {
+          bountyId: bounty.id,
+        },
+        include: {
+          User: true,
+        },
+      });
+      const subEmail = subscribe.map((sub) => {
+        return {
+          email: sub.User.email,
+          name: sub.User.firstName,
+        };
+      });
       const emailsSent: string[] = [];
-      emails.forEach(async (e) => {
+      [...emails, ...subEmail].forEach(async (e) => {
         if (emailsSent.includes(e.email)) {
           return;
         }
         const msg = {
-          to: 'dhruvrajsinghsolanki161@gmail.com',
+          to: e.email,
           from: {
             name: 'Kash from Superteam',
             email: process.env.SENDGRID_EMAIL as string,
           },
-          templateId: process.env.SENDGRID_DEADLINE as string,
+          templateId: process.env.SENDGRID_BOUNTY_REVIEW as string,
           dynamicTemplateData: {
             bountyName: bounty.title,
             name: e.name,
-            link: `https://earn.superteam.fun/listings/bounties/${bounty.slug}`,
+            link: `https://earn.superteam.fun/listings/bounties/${bounty.slug}/submission`,
           },
         };
         await sgMail.send(msg);

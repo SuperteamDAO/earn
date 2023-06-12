@@ -18,6 +18,16 @@ export default async function handler(
       },
     });
     user.forEach(async (e) => {
+      const logCheck = await prisma.emailLogs.findFirst({
+        where: {
+          type: 'NO_VERIFICATION',
+          email: e.email,
+        },
+      });
+      if (logCheck) {
+        console.log('Already sent email', e.email);
+        return;
+      }
       const msg = {
         to: e.email,
         from: {
@@ -30,10 +40,19 @@ export default async function handler(
           link: `https://earn.superteam.fun`,
         },
       };
-      await sgMail.send(msg);
+      const [ress] = await sgMail.send(msg);
+      console.log(e.email, ress.statusCode);
+      if (ress.statusCode === 202) {
+        await prisma.emailLogs.create({
+          data: {
+            type: 'NO_ACTIVITY',
+            email: e.email,
+          },
+        });
+      }
     });
 
-    return res.status(200).json({ message: 'Ok' });
+    return res.status(200).json({ message: 'Ok', user });
   } catch (e) {
     console.log(e);
     return res.status(500).json({ error: 'Something went wrong.' });

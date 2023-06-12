@@ -7,7 +7,7 @@ export default async function handler(
   req: NextApiRequest,
   res: NextApiResponse
 ) {
-  const { id, userId } = req.body;
+  const { id } = req.body;
   try {
     const listings = await prisma.bounties.findUnique({
       where: {
@@ -29,12 +29,6 @@ export default async function handler(
       },
     });
 
-    const user = await prisma.user.findUnique({
-      where: {
-        id: userId,
-      },
-    });
-
     const msg = {
       to: listings?.sponsor.UserSponsors[0]?.user.email,
       from: {
@@ -45,8 +39,7 @@ export default async function handler(
       dynamicTemplateData: {
         name: listings?.sponsor.UserSponsors[0]?.user.firstName,
         bountyName: listings?.title,
-        personName: user?.firstName,
-        link: `https://https://earn.superteam.fun/listings/bounties/${listings?.slug}`,
+        link: `https://earn.superteam.fun/listings/bounties/${listings?.slug}`,
       },
     };
     await sgMail.send(msg);

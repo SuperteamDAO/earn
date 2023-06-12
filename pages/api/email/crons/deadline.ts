@@ -21,10 +21,6 @@ export default async function handler(
       },
     });
     const bountiesWithDeadline = bounties.filter((bounty) => {
-      console.log(
-        bounty.deadline?.toISOString().split('T')[0],
-        dayjs().add(2, 'day').toISOString().split('T')[0]
-      );
       return dayjs(bounty.deadline?.toISOString().split('T')[0]).isSame(
         dayjs().add(2, 'day').toISOString().split('T')[0]
       );
@@ -42,28 +38,28 @@ export default async function handler(
         return;
       }
 
-      const submissions = await prisma.submission.findMany({
+      const subscribe = await prisma.subscribeBounty.findMany({
         where: {
-          listingId: bounty.id,
+          bountyId: bounty.id,
         },
         include: {
-          user: true,
+          User: true,
         },
       });
-      const emails = submissions.map((submission) => {
+
+      const subEmail = subscribe.map((sub) => {
         return {
-          email: submission.user.email,
-          name: submission.user.firstName,
+          email: sub.User.email,
+          name: sub.User.firstName,
         };
       });
-
       const emailsSent: string[] = [];
-      emails.forEach(async (e) => {
+      subEmail.forEach(async (e) => {
         if (emailsSent.includes(e.email)) {
           return;
         }
         const msg = {
-          to: 'dhruvrajsinghsolanki161@gmail.com',
+          to: e.email,
           from: {
             name: 'Kash from Superteam',
             email: process.env.SENDGRID_EMAIL as string,
@@ -85,7 +81,7 @@ export default async function handler(
       });
     });
 
-    return res.status(200).json({ message: 'Ok', bountiesWithDeadline });
+    return res.status(200).json({ message: 'Ok' });
   } catch (e) {
     console.log(e);
     return res.status(500).json({ error: 'Something went wrong.' });
