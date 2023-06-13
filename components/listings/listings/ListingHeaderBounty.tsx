@@ -1,6 +1,5 @@
 /* eslint-disable no-nested-ternary */
 import {
-  Box,
   Flex,
   Heading,
   HStack,
@@ -11,14 +10,17 @@ import {
   useDisclosure,
   VStack,
 } from '@chakra-ui/react';
-import type { BountyType } from '@prisma/client';
+import type { BountyType, SubscribeBounty } from '@prisma/client';
+import axios from 'axios';
 import { useRouter } from 'next/router';
-import React from 'react';
-import { TbBellRinging } from 'react-icons/tb';
+import React, { useEffect, useState } from 'react';
+import { toast, Toaster } from 'react-hot-toast';
+import { TbBell, TbBellRinging } from 'react-icons/tb';
 
 import { EarningModal } from '@/components/modals/earningModal';
 import type { SponsorType } from '@/interface/sponsor';
 import type { User } from '@/interface/user';
+import { userStore } from '@/store/user';
 import { dayjs } from '@/utils/dayjs';
 
 interface Bounty {
@@ -45,12 +47,65 @@ function ListingHeader({
   type,
   slug,
   isWinnersAnnounced,
+  id,
 }: Bounty) {
   const router = useRouter();
-  const sub: any[] = [];
   const { isOpen, onClose, onOpen } = useDisclosure();
-
+  const { userInfo } = userStore();
   const hasDeadlineEnded = dayjs().isAfter(deadline);
+  const [update, setUpdate] = useState<boolean>(false);
+  const [sub, setSub] = useState<
+    (SubscribeBounty & {
+      User: User | null;
+    })[]
+  >([]);
+  const handleSubscribe = async () => {
+    if (!userInfo?.isTalentFilled) {
+      onOpen();
+      return;
+    }
+
+    try {
+      const res = await axios.post('/api/bounties/subscribe/subscribe', {
+        userId: userInfo?.id,
+        bountyId: id,
+      });
+      console.log(res);
+      setUpdate((prev) => !prev);
+      toast.success('Subscribe to bounty');
+    } catch (error) {
+      console.log(error);
+      toast.error('Error');
+    }
+  };
+  const handleUnSubscribe = async (idSub: string) => {
+    if (!userInfo?.isTalentFilled) {
+      onOpen();
+      return;
+    }
+
+    try {
+      const res = await axios.post('/api/bounties/subscribe/unSubscribe', {
+        id: idSub,
+      });
+      console.log(res);
+      setUpdate((prev) => !prev);
+      toast.success('Unsubscribe to bounty');
+    } catch (error) {
+      console.log(error);
+      toast.error('Error');
+    }
+  };
+
+  useEffect(() => {
+    const fetchUser = async () => {
+      const { data } = await axios.post('/api/bounties/subscribe/get', {
+        listingId: id,
+      });
+      setSub(data);
+    };
+    fetchUser();
+  }, [update]);
 
   return (
     <VStack bg={'white'}>
@@ -135,13 +190,28 @@ function ListingHeader({
             <HStack align="start" px={[3, 3, 0, 0]}>
               <IconButton
                 aria-label="Notify"
-                icon={<TbBellRinging />}
-                onClick={() => onOpen()}
+                icon={
+                  sub.find((e) => e.userId === userInfo?.id) ? (
+                    <TbBellRinging />
+                  ) : (
+                    <TbBell />
+                  )
+                }
+                onClick={() => {
+                  if (sub.find((e) => e.userId === userInfo?.id)) {
+                    handleUnSubscribe(
+                      sub.find((e) => e.userId === userInfo?.id)?.id as string
+                    );
+
+                    return;
+                  }
+                  handleSubscribe();
+                }}
                 variant="solid"
               />
             </HStack>
             <HStack>
-              <HStack
+              {/* <HStack
                 pos={'relative'}
                 align={'center'}
                 justify={'center'}
@@ -160,14 +230,14 @@ function ListingHeader({
                         w={8}
                         h={8}
                         objectFit={'contain'}
-                        alt={e.Talent?.username}
+                        alt={e.User?.firstName}
                         rounded={'full'}
-                        src={e.Talent?.avatar}
+                        src={e.User?.photo}
                       />
                     </Box>
                   );
                 })}
-              </HStack>
+              </HStack> */}
               <VStack align={'start'}>
                 <Text color={'#000000'} fontSize={'md'} fontWeight={500}>
                   {sub?.length ?? 0}
@@ -185,6 +255,7 @@ function ListingHeader({
           </HStack>
         )}
       </VStack>
+      <Toaster />
       {router.asPath.includes('bounties') && (
         <Flex
           align={'center'}

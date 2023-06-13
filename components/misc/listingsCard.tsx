@@ -13,21 +13,21 @@ import {
   useMediaQuery,
 } from '@chakra-ui/react';
 import type { BountyType } from '@prisma/client';
-import { useWallet } from '@solana/wallet-adapter-react';
 import parse from 'html-react-parser';
 import { useRouter } from 'next/router';
 import { useState } from 'react';
-import { Toaster } from 'react-hot-toast';
+import { toast, Toaster } from 'react-hot-toast';
 import { TiTick } from 'react-icons/ti';
 
 import type { BountyStatus } from '@/interface/bounty';
+import type { Notifications } from '@/interface/user';
 import { dayjs } from '@/utils/dayjs';
 import { Mixpanel } from '@/utils/mixpanel';
 
 import { tokenList } from '../../constants';
 import { TalentStore } from '../../store/talent';
 import { userStore } from '../../store/user';
-import { findTalentPubkey, updateNotification } from '../../utils/functions';
+import { updateNotification } from '../../utils/functions';
 import { EarningModal } from '../modals/earningModal';
 
 type ListingSectionProps = {
@@ -223,7 +223,7 @@ export const BountiesCard = ({
                     rounded="full"
                     src={
                       tokenList.find((ele) => {
-                        return ele.tokenName === token;
+                        return ele.tokenSymbol === token;
                       })?.icon
                     }
                   />
@@ -504,11 +504,8 @@ type CategoryAssetsType = {
 };
 
 export const CategoryBanner = ({ type }: { type: string }) => {
-  console.log(type, '--type');
-
   const { userInfo } = userStore();
-
-  const { talentInfo, setTalentInfo } = TalentStore();
+  const { talentInfo } = TalentStore();
   const [loading, setLoading] = useState(false);
   const categoryAssets: CategoryAssetsType = {
     Design: {
@@ -555,15 +552,8 @@ export const CategoryBanner = ({ type }: { type: string }) => {
       icon: '/assets/category_assets/icon/contract.png',
     },
   };
-  const { publicKey } = useWallet();
   const { isOpen, onClose, onOpen } = useDisclosure();
-  const updateTalent = async () => {
-    const talent = await findTalentPubkey(publicKey?.toBase58() as string);
-    if (!talent) {
-      return null;
-    }
-    return setTalentInfo(talent.data);
-  };
+
   return (
     <>
       {isOpen && <EarningModal isOpen={isOpen} onClose={onClose} />}
@@ -608,44 +598,67 @@ export const CategoryBanner = ({ type }: { type: string }) => {
           borderColor={'brand.slate.500'}
           isLoading={loading}
           leftIcon={
-            JSON.parse(talentInfo?.notifications ?? '[]').includes(type) ? (
+            userInfo?.notifications?.find((e) => e?.label === type) ? (
               <TiTick />
             ) : (
               <BellIcon />
             )
           }
           onClick={async () => {
-            if (!userInfo?.talent) {
+            if (!userInfo?.isTalentFilled) {
               onOpen();
+              return;
             }
-            if (
-              JSON.parse(talentInfo?.notifications as string).includes(type)
-            ) {
+            if (userInfo?.notifications === null) {
               setLoading(true);
-              const notification: string[] = [];
-
-              JSON.parse(talentInfo?.notifications as string).forEach(
-                (e: any) => {
-                  if (e !== type) {
-                    notification.push(e);
-                  }
-                }
-              );
-              await updateNotification(talentInfo?.id as string, notification);
-              await updateTalent();
+              await updateNotification(userInfo?.id as string, [
+                {
+                  label: type ?? '',
+                  timestamp: Date.now(),
+                },
+              ]);
+              Mixpanel.track('notification_added', {
+                category: type,
+                name: `${talentInfo?.firstname} ${talentInfo?.lastname}`,
+              });
               setLoading(false);
+
+              toast.success("You've been subscribed to this category");
+              return;
             }
+
+            if (userInfo?.notifications?.find((e) => e.label === type)) {
+              setLoading(true);
+              const notification: Notifications[] = [];
+
+              userInfo?.notifications?.forEach((e) => {
+                if (e.label !== type) {
+                  notification.push({
+                    label: e.label,
+                    timestamp: Date.now(),
+                  });
+                }
+              });
+              await updateNotification(userInfo?.id as string, notification);
+              setLoading(false);
+              toast.success("You've been unsubscribed from this category");
+              return;
+            }
+
             setLoading(true);
-            await updateNotification(talentInfo?.id as string, [
-              ...JSON.parse(talentInfo?.notifications as string),
-              type,
+            await updateNotification(userInfo?.id as string, [
+              ...(userInfo?.notifications as Notifications[]),
+              {
+                label: type,
+                timestamp: Date.now(),
+              },
             ]);
-            await updateTalent();
             Mixpanel.track('notification_added', {
               category: type,
               name: `${talentInfo?.firstname} ${talentInfo?.lastname}`,
             });
             setLoading(false);
+            toast.success("You've been subscribed to this category");
           }}
           variant="solid"
         >

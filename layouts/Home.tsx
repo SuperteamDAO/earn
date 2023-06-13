@@ -133,7 +133,7 @@ function Home(props: IDefaultProps) {
               listings={sidebarInfo?.totals?.count ?? 0}
               earners={sidebarInfo?.earners ?? []}
               jobs={[]}
-              userInfo={userInfo || {}}
+              userInfo={userInfo! || {}}
             />
           </Flex>
         </HStack>

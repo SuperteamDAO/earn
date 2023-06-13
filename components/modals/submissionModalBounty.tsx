@@ -60,17 +60,18 @@ export const SubmissionModal = ({
   const submitSubmissions = async (data: any) => {
     setIsLoading(true);
     try {
-      const { applicationLink, tweetLink, ...answers } = data;
+      const { applicationLink, tweetLink, otherInfo, ...answers } = data;
       const eligibilityAnswers = eligibility.map((q) => ({
         question: q.question,
         answer: answers[`eligibility-${q.order}`],
       }));
-      await axios.post('/api/submission/create', {
+      await axios.post('/api/submission/create/', {
         userId: userInfo?.id,
         listingId: id,
         listingType: 'BOUNTY',
         link: applicationLink || '',
         tweet: tweetLink || '',
+        otherInfo: otherInfo || '',
         eligibilityAnswers: eligibilityAnswers.length
           ? eligibilityAnswers
           : null,
@@ -208,6 +209,31 @@ export const SubmissionModal = ({
                   );
                 })
               )}
+              <FormControl>
+                <FormLabel
+                  mb={0}
+                  color={'brand.slate.800'}
+                  fontWeight={600}
+                  htmlFor={'tweetLink'}
+                >
+                  Anything Else?
+                </FormLabel>
+                <FormHelperText mt={0} mb={2} color="brand.slate.500">
+                  If you have any other links or information you&apos;d like to
+                  share with us, please add them here!
+                </FormHelperText>
+                <Input
+                  borderColor={'brand.slate.300'}
+                  _placeholder={{ color: 'brand.slate.300' }}
+                  focusBorderColor="brand.purple"
+                  id="otherInfo"
+                  placeholder="Add info or link"
+                  {...register('otherInfo')}
+                />
+                <FormErrorMessage>
+                  {errors.otherInfo ? <>{errors.otherInfo.message}</> : <></>}
+                </FormErrorMessage>
+              </FormControl>
             </VStack>
             {!!error && (
               <Text align="center" mb={2} color="red">

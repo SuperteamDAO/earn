@@ -1,6 +1,11 @@
 import type { SponsorType } from '@/interface/sponsor';
 import type { UserSponsor } from '@/interface/userSponsor';
 
+interface Notifications {
+  label: string;
+  timestamp: number;
+}
+
 interface User {
   id?: string;
   publicKey?: string;
@@ -34,10 +39,11 @@ interface User {
   website?: string;
   telegram?: string;
   pow?: string;
+  notifications?: Notifications[] | null;
   totalEarnedInUSD?: number;
   currentSponsorId?: string;
   currentSponsor?: SponsorType;
   UserSponsors?: UserSponsor[];
   private?: boolean;
 }
-export type { User };
+export type { Notifications, User };

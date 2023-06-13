@@ -7,15 +7,35 @@ export default async function handler(
   req: NextApiRequest,
   res: NextApiResponse
 ) {
-  const { id } = req.body;
+  const { userId, submissionId } = req.body;
   try {
     const submission = await prisma.submission.findUnique({
       where: {
-        id,
+        id: submissionId,
       },
       include: {
         user: true,
-        listing: true,
+        listing: {
+          include: {
+            sponsor: {
+              include: {
+                UserSponsors: {
+                  where: {
+                    role: 'ADMIN',
+                  },
+                  include: {
+                    user: true,
+                  },
+                },
+              },
+            },
+          },
+        },
+      },
+    });
+    const user = await prisma.user.findUnique({
+      where: {
+        id: userId,
       },
     });
 
@@ -25,15 +45,17 @@ export default async function handler(
         name: 'Kash from Superteam',
         email: process.env.SENDGRID_EMAIL as string,
       },
-      templateId: process.env.SENDGRID_LIKE_TEMPLATE as string,
+      templateId: process.env.SENDGRID_COMMENT_TEMPLATE as string,
       dynamicTemplateData: {
         name: submission?.user.firstName,
         bounty_name: submission?.listing.title,
+        personName: user?.firstName,
         link: `https://earn.superteam.fun/listings/bounties/${submission?.listing.slug}/submission/${submission?.id}`,
       },
     };
-
-    await sgMail.send(msg);
+    console.log(msg);
+    const sub = await sgMail.send(msg);
+    console.log(sub, '----');
     return res.status(200).json({ message: 'Ok' });
   } catch (error) {
     console.log(error);

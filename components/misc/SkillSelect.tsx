@@ -24,9 +24,13 @@ export const SkillSelect = ({
   setSubSkills,
 }: Props) => {
   const animatedComponents = makeAnimated();
-  const [subSkillOptions, setSubSkillOptions] = useState<MultiSelectOptions[]>(
-    []
-  );
+  const tempSubSkills: MultiSelectOptions[] = [];
+  (skills || []).forEach((s) => {
+    // @ts-ignore
+    tempSubSkills.push(...(skillSubSkillMap[s.value as any] as any));
+  });
+  const [subSkillOptions, setSubSkillOptions] =
+    useState<MultiSelectOptions[]>(tempSubSkills);
   const handleChange = (e: MultiSelectOptions[]) => {
     const sub: MultiSelectOptions[] = [];
     e.forEach((op) => {

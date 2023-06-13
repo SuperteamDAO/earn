@@ -23,40 +23,52 @@ export default async function handler(
 
     const skills = listing.skills as Skills;
     const search: any[] = [];
-    skills.forEach((skill) => {
+    skills.forEach(async (skill) => {
       search.push({
-        path: '$[*].skills',
-        array_contains: skill.skills,
+        notifications: {
+          path: '$[*].label',
+          array_contains: skill.skills,
+        },
+      });
+
+      const users = await prisma.user.findMany({
+        where: {
+          OR: search,
+        },
+      });
+      const email: {
+        email: string;
+        name: string;
+      }[] = users.map((user) => {
+        return {
+          email: user.email,
+          name: user.firstName as string,
+        };
+      });
+      const emailsSent: string[] = [];
+      email.map(async (e) => {
+        if (emailsSent.includes(e.email)) {
+          return;
+        }
+
+        const msg: MailDataRequired = {
+          to: e.email,
+          from: {
+            name: 'Kash from Superteam',
+            email: process.env.SENDGRID_EMAIL as string,
+          },
+          templateId: process.env.SENDGRID_BOUNTY_CREATE as string,
+          dynamicTemplateData: {
+            name: e.name,
+            link: `https://earn.superteam.fun/listings/bounties/${listing.slug}`,
+          },
+        };
+        await sgMail.send(msg);
+        console.log(e.email);
+        emailsSent.push(e.email);
       });
     });
-    const users = await prisma.user.findMany({
-      where: {
-        AND: search,
-      },
-    });
-
-    const email: {
-      email: string;
-      name: string;
-    }[] = users.map((user) => {
-      return {
-        email: user.email,
-        name: user.firstName as string,
-      };
-    });
-
-    const msg: MailDataRequired = {
-      bcc: email,
-      from: {
-        name: 'Kash from Superteam',
-        email: process.env.SENDGRID_EMAIL as string,
-      },
-      templateId: process.env.SENDGRID_INVITE_SPONSOR as string,
-      dynamicTemplateData: {},
-    };
-    await sgMail.send(msg);
-    res.status(200).json({ message: 'OTP sent successfully.' });
-    return res.status(200).send({ clientRes: 'Hello' });
+    return res.status(200).json({ message: 'Ok' });
   } catch (error) {
     console.log(error);
     return res.status(500).json({ error: 'Something went wrong.' });

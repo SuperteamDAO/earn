@@ -103,7 +103,7 @@ function UserInfo() {
                 display={{ base: 'none', md: 'block' }}
                 fontSize="xs"
                 onClick={() => {
-                  router.push('/');
+                  router.push('/new');
                 }}
                 size="sm"
                 variant={{ base: 'solid', md: 'ghost' }}
