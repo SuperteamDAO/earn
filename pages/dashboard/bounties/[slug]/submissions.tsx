@@ -24,6 +24,10 @@ import {
   Tooltip,
   useDisclosure,
 } from '@chakra-ui/react';
+import type NodeWallet from '@project-serum/anchor/dist/cjs/nodewallet';
+import { useAnchorWallet } from '@solana/wallet-adapter-react';
+import type { TransactionInstruction } from '@solana/web3.js';
+import { PublicKey, Transaction } from '@solana/web3.js';
 import axios from 'axios';
 import Avatar from 'boring-avatars';
 import type { GetServerSideProps } from 'next';
@@ -34,6 +38,7 @@ import { useEffect, useState } from 'react';
 import ErrorSection from '@/components/shared/ErrorSection';
 import LoadingSection from '@/components/shared/LoadingSection';
 import PublishResults from '@/components/submissions/PublishResults';
+import { tokenList } from '@/constants';
 import type { Bounty, Rewards } from '@/interface/bounty';
 import type { SubmissionWithUser } from '@/interface/submission';
 import Sidebar from '@/layouts/Sidebar';
@@ -43,6 +48,11 @@ import {
   getBountyDraftStatus,
   getBountyProgress,
 } from '@/utils/bounty';
+import {
+  connection,
+  createPaymentSOL,
+  createPaymentSPL,
+} from '@/utils/contract/contract';
 import { dayjs } from '@/utils/dayjs';
 import { sortRank } from '@/utils/rank';
 import { truncatePublicKey } from '@/utils/truncatePublicKey';
@@ -67,6 +77,7 @@ function BountySubmissions({ slug }: Props) {
   const [rewards, setRewards] = useState<string[]>([]);
   const [isBountyLoading, setIsBountyLoading] = useState(true);
   const [skip, setSkip] = useState(0);
+  const anchorWallet = useAnchorWallet();
   const length = 15;
 
   const getSubmissions = async (id?: string) => {
@@ -191,6 +202,54 @@ function BountySubmissions({ slug }: Props) {
     return url;
   };
 
+  const handlePayout = async (
+    token: string,
+    amount: number,
+    reciver: PublicKey,
+    power: number,
+    tokenAddress?: string
+  ) => {
+    try {
+      if (token === 'SOL') {
+        const ix = await createPaymentSOL(
+          anchorWallet as NodeWallet,
+          reciver,
+          amount,
+          JSON.stringify(Math.floor(Math.random() * 1000000000))
+        );
+        const tx = new Transaction();
+        tx.add(ix);
+        const { blockhash } = await connection.getLatestBlockhash();
+        tx.recentBlockhash = blockhash;
+        tx.feePayer = (anchorWallet as NodeWallet).publicKey;
+        const signTx = await anchorWallet?.signTransaction(tx);
+        const sig = await connection.sendRawTransaction(signTx!.serialize());
+        return sig;
+      }
+      const [ix, ix2] = await createPaymentSPL(
+        anchorWallet as NodeWallet,
+        reciver,
+        (amount * 10 ** power) as number,
+        new PublicKey(tokenAddress as string),
+        JSON.stringify(Math.floor(Math.random() * 10000))
+      );
+      const tx = new Transaction();
+      tx.add(ix2 as TransactionInstruction);
+      tx.add(ix as TransactionInstruction);
+      const { blockhash } = await connection.getLatestBlockhash();
+      tx.recentBlockhash = blockhash;
+      tx.feePayer = (anchorWallet as NodeWallet).publicKey;
+      const signTx = await anchorWallet?.signTransaction(tx);
+      const sig = await connection.sendRawTransaction(signTx!.serialize(), {
+        skipPreflight: false,
+      });
+
+      return sig;
+    } catch (error) {
+      console.log(error);
+      return null;
+    }
+  };
   return (
     <Sidebar>
       {isBountyLoading ? (
@@ -399,7 +458,29 @@ function BountySubmissions({ slug }: Props) {
                     <Flex align="center" justify={'flex-end'} gap={2} w="full">
                       {selectedSubmission?.isWinner &&
                         selectedSubmission?.winnerPosition && (
-                          <Button mr={4} size="sm" variant="solid">
+                          <Button
+                            mr={4}
+                            onClick={async () => {
+                              const sig = await handlePayout(
+                                bounty?.token as string,
+                                bounty?.rewards![
+                                  selectedSubmission?.winnerPosition as keyof Rewards
+                                ] as number,
+                                new PublicKey(
+                                  selectedSubmission.user.publicKey
+                                ),
+                                tokenList.find(
+                                  (e) => e.tokenSymbol === bounty?.token
+                                )?.decimals as number,
+                                tokenList.find(
+                                  (e) => e.tokenSymbol === bounty?.token
+                                )?.mintAddress as string
+                              );
+                              console.log(sig);
+                            }}
+                            size="sm"
+                            variant="solid"
+                          >
                             Pay {bounty?.token}{' '}
                             {!!bounty?.rewards &&
                               bounty?.rewards[
