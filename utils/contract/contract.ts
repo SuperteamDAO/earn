@@ -8,8 +8,8 @@ import { LAMPORTS_PER_SOL, PublicKey } from '@solana/web3.js';
 
 import { type EarnReloaded, IDL } from './program';
 
-const PROGRAM_ID = '9X22YWBVvXwiAB2GNDxWU2EmDsUrsXwmkG1e4zJUt7We';
-const RPC_URL = 'https://api.devnet.solana.com';
+const PROGRAM_ID = process.env.NEXT_PUBLIC_PAYMENT_PROGRAM_ID || '';
+const RPC_URL = process.env.NEXT_PUBLIC_PAYMENT_RPC_URL || '';
 
 export const connection = new anchor.web3.Connection(RPC_URL, 'confirmed');
 
