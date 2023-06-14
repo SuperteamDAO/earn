@@ -2,6 +2,7 @@ import type { NextApiRequest, NextApiResponse } from 'next';
 
 import type { Rewards } from '@/interface/bounty';
 import { prisma } from '@/prisma';
+import { dayjs } from '@/utils/dayjs';
 import sgMail from '@/utils/sendgrid';
 import { getURL } from '@/utils/validUrl';
 
@@ -36,12 +37,16 @@ export default async function announce(
       });
       return;
     }
+    const deadline = dayjs().isAfter(bounty?.deadline)
+      ? bounty?.deadline
+      : dayjs().subtract(2, 'minute').toISOString();
     const result = await prisma.bounties.update({
       where: {
         id,
       },
       data: {
         isWinnersAnnounced: true,
+        deadline,
       },
     });
     const rewards: Rewards = (bounty?.rewards || {}) as Rewards;
@@ -63,7 +68,9 @@ export default async function announce(
 
     while (currentIndex < winners?.length) {
       const amount: number = winners[currentIndex]?.winnerPosition
-        ? rewards[winners[currentIndex]?.winnerPosition as keyof Rewards] || 0
+        ? Math.ceil(
+            rewards[winners[currentIndex]?.winnerPosition as keyof Rewards] || 0
+          )
         : 0;
       // TODO: convert amount to USD if token is not USDC, USDT, USD, DAI, or UST
       const amountWhere = {
