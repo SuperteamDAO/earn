@@ -15,7 +15,6 @@ import {
   Text,
 } from '@chakra-ui/react';
 import axios from 'axios';
-import { useRouter } from 'next/router';
 import { useEffect, useState } from 'react';
 
 interface Props {
@@ -26,6 +25,7 @@ interface Props {
   rewards: any;
   bountyId: string | undefined;
   isDeadlinePassed?: boolean;
+  hasWinnersAnnounced?: boolean;
 }
 
 function PublishResults({
@@ -36,10 +36,11 @@ function PublishResults({
   rewards,
   bountyId,
   isDeadlinePassed,
+  hasWinnersAnnounced = false,
 }: Props) {
-  const router = useRouter();
   const [isPublishingResults, setIsPublishingResults] = useState(false);
-  const [isWinnersAnnounced, setIsWinnersAnnounced] = useState(false);
+  const [isWinnersAnnounced, setIsWinnersAnnounced] =
+    useState(hasWinnersAnnounced);
   let alertType:
     | 'loading'
     | 'info'
@@ -60,7 +61,7 @@ function PublishResults({
     const remainingPayments = (rewards?.length || 0) - totalPaymentsMade;
     alertType = 'warning';
     alertTitle = 'Pay All Winners!';
-    alertDescription = `You can publish results without paying, but we recommend you pay all winners before publishing results. You still have to pay ${remainingPayments} more ${
+    alertDescription = `Don't forget to pay your winners after publishing results. You have to pay to ${remainingPayments} ${
       remainingPayments === 1 ? 'winner' : 'winners'
     }.`;
   }
@@ -80,7 +81,7 @@ function PublishResults({
   useEffect(() => {
     if (!isWinnersAnnounced) return;
     const timer = setTimeout(() => {
-      router.push('/dashboard/bounties');
+      onClose();
     }, 1500);
     // eslint-disable-next-line consistent-return
     return () => clearTimeout(timer);
@@ -113,7 +114,7 @@ function PublishResults({
                 <br />
                 <br />
                 <Text as="span" color="brand.slate.500" fontSize="sm">
-                  Redirecting...
+                  Closing...
                 </Text>
               </AlertDescription>
             </Alert>

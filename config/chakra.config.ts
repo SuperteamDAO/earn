@@ -62,6 +62,12 @@ const theme = extendTheme({
             color: 'white',
             bg: 'brand.purple.light',
           },
+          _disabled: {
+            _hover: {
+              color: 'white',
+              bg: 'brand.purple !important',
+            },
+          },
         },
         outline: {
           color: 'brand.purple',
@@ -70,6 +76,13 @@ const theme = extendTheme({
           _hover: {
             color: 'white',
             bg: 'brand.purple',
+          },
+          _disabled: {
+            _hover: {
+              color: 'brand.purple',
+              bg: 'transparent !important',
+              borderColor: 'brand.purple',
+            },
           },
         },
         outlineSecondary: {
@@ -81,6 +94,13 @@ const theme = extendTheme({
             color: 'white',
             bg: 'brand.slate.400',
           },
+          _disabled: {
+            _hover: {
+              color: 'brand.slate.400',
+              bg: 'transparent !important',
+              borderColor: 'brand.slate.400',
+            },
+          },
         },
         ghost: {
           color: 'brand.slate.500',
@@ -88,6 +108,12 @@ const theme = extendTheme({
           _hover: {
             color: 'white',
             bg: 'brand.purple',
+          },
+          _disabled: {
+            _hover: {
+              color: 'brand.slate.500',
+              bg: 'transparent !important',
+            },
           },
         },
       },
