@@ -1,4 +1,4 @@
-export type ContractType = {
+export type EarnReloaded = {
   version: '0.1.0';
   name: 'earn_reloaded';
   instructions: [
@@ -66,11 +66,61 @@ export type ContractType = {
           type: 'u64';
         }
       ];
+    },
+    {
+      name: 'payoutSol';
+      docs: ['Payout Sol Function'];
+      accounts: [
+        {
+          name: 'authority';
+          isMut: true;
+          isSigner: true;
+        },
+        {
+          name: 'payoutAccount';
+          isMut: true;
+          isSigner: false;
+        },
+        {
+          name: 'receiverAccount';
+          isMut: true;
+          isSigner: false;
+        },
+        {
+          name: 'systemProgram';
+          isMut: false;
+          isSigner: false;
+        },
+        {
+          name: 'tokenProgram';
+          isMut: false;
+          isSigner: false;
+        },
+        {
+          name: 'rent';
+          isMut: false;
+          isSigner: false;
+        }
+      ];
+      args: [
+        {
+          name: 'id';
+          type: 'string';
+        },
+        {
+          name: 'receiver';
+          type: 'publicKey';
+        },
+        {
+          name: 'amount';
+          type: 'u64';
+        }
+      ];
     }
   ];
   accounts: [
     {
-      name: 'PayoutDetails';
+      name: 'payoutDetails';
       type: {
         kind: 'struct';
         fields: [
@@ -78,6 +128,30 @@ export type ContractType = {
             name: 'token';
             type: 'publicKey';
           },
+          {
+            name: 'receiver';
+            type: 'publicKey';
+          },
+          {
+            name: 'amount';
+            type: 'u64';
+          },
+          {
+            name: 'id';
+            type: 'u64';
+          },
+          {
+            name: 'bump';
+            type: 'u8';
+          }
+        ];
+      };
+    },
+    {
+      name: 'payoutSolDetails';
+      type: {
+        kind: 'struct';
+        fields: [
           {
             name: 'receiver';
             type: 'publicKey';
@@ -107,7 +181,7 @@ export type ContractType = {
   ];
 };
 
-export const Contract: ContractType = {
+export const IDL: EarnReloaded = {
   version: '0.1.0',
   name: 'earn_reloaded',
   instructions: [
@@ -176,10 +250,60 @@ export const Contract: ContractType = {
         },
       ],
     },
+    {
+      name: 'payoutSol',
+      docs: ['Payout Sol Function'],
+      accounts: [
+        {
+          name: 'authority',
+          isMut: true,
+          isSigner: true,
+        },
+        {
+          name: 'payoutAccount',
+          isMut: true,
+          isSigner: false,
+        },
+        {
+          name: 'receiverAccount',
+          isMut: true,
+          isSigner: false,
+        },
+        {
+          name: 'systemProgram',
+          isMut: false,
+          isSigner: false,
+        },
+        {
+          name: 'tokenProgram',
+          isMut: false,
+          isSigner: false,
+        },
+        {
+          name: 'rent',
+          isMut: false,
+          isSigner: false,
+        },
+      ],
+      args: [
+        {
+          name: 'id',
+          type: 'string',
+        },
+        {
+          name: 'receiver',
+          type: 'publicKey',
+        },
+        {
+          name: 'amount',
+          type: 'u64',
+        },
+      ],
+    },
   ],
   accounts: [
     {
-      name: 'PayoutDetails',
+      name: 'payoutDetails',
       type: {
         kind: 'struct',
         fields: [
@@ -187,6 +311,30 @@ export const Contract: ContractType = {
             name: 'token',
             type: 'publicKey',
           },
+          {
+            name: 'receiver',
+            type: 'publicKey',
+          },
+          {
+            name: 'amount',
+            type: 'u64',
+          },
+          {
+            name: 'id',
+            type: 'u64',
+          },
+          {
+            name: 'bump',
+            type: 'u8',
+          },
+        ],
+      },
+    },
+    {
+      name: 'payoutSolDetails',
+      type: {
+        kind: 'struct',
+        fields: [
           {
             name: 'receiver',
             type: 'publicKey',
