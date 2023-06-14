@@ -299,6 +299,7 @@ function BountySubmissions({ slug }: Props) {
               rewards={Object.keys(bounty?.rewards || {})}
               bountyId={bounty?.id}
               isDeadlinePassed={dayjs().isAfter(bounty?.deadline)}
+              hasWinnersAnnounced={bounty?.isWinnersAnnounced}
             />
           )}
           <Box mb={4}>
@@ -493,31 +494,40 @@ function BountySubmissions({ slug }: Props) {
                       {selectedSubmission?.isWinner &&
                         selectedSubmission?.winnerPosition &&
                         !selectedSubmission?.isPaid && (
-                          <Button
-                            mr={4}
-                            isLoading={isPaying}
-                            loadingText={'Paying...'}
-                            onClick={async () =>
-                              handlePayout({
-                                id: selectedSubmission?.id as string,
-                                token: bounty?.token as string,
-                                amount: bounty?.rewards![
-                                  selectedSubmission?.winnerPosition as keyof Rewards
-                                ] as number,
-                                receiver: new PublicKey(
-                                  selectedSubmission.user.publicKey
-                                ),
-                              })
-                            }
-                            size="sm"
-                            variant="solid"
+                          <Tooltip
+                            bg={'brand.purple'}
+                            hasArrow={true}
+                            isDisabled={!!bounty?.isWinnersAnnounced}
+                            label="You have to publish results before you can pay out rewards!"
+                            placement="top"
                           >
-                            Pay {bounty?.token}{' '}
-                            {!!bounty?.rewards &&
-                              bounty?.rewards[
-                                selectedSubmission?.winnerPosition as keyof Rewards
-                              ]}
-                          </Button>
+                            <Button
+                              mr={4}
+                              isDisabled={!bounty?.isWinnersAnnounced}
+                              isLoading={isPaying}
+                              loadingText={'Paying...'}
+                              onClick={async () =>
+                                handlePayout({
+                                  id: selectedSubmission?.id as string,
+                                  token: bounty?.token as string,
+                                  amount: bounty?.rewards![
+                                    selectedSubmission?.winnerPosition as keyof Rewards
+                                  ] as number,
+                                  receiver: new PublicKey(
+                                    selectedSubmission.user.publicKey
+                                  ),
+                                })
+                              }
+                              size="sm"
+                              variant="solid"
+                            >
+                              Pay {bounty?.token}{' '}
+                              {!!bounty?.rewards &&
+                                bounty?.rewards[
+                                  selectedSubmission?.winnerPosition as keyof Rewards
+                                ]}
+                            </Button>
+                          </Tooltip>
                         )}
                       {selectedSubmission?.isWinner &&
                         selectedSubmission?.winnerPosition &&
