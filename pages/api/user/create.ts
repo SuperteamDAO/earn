@@ -1,11 +1,13 @@
 import type { NextApiRequest, NextApiResponse } from 'next';
-import { generateUsername } from 'unique-username-generator';
+import { generateFromEmail, generateUsername } from 'unique-username-generator';
 
 import { prisma } from '@/prisma';
 
 export default async function user(req: NextApiRequest, res: NextApiResponse) {
   const { publicKey, email, firstName, lastName } = req.body;
-  const username = generateUsername('-', 4, 24);
+  const username = email
+    ? generateFromEmail(email, 4)
+    : generateUsername('-', 4, 24);
   try {
     const result = await prisma.user.create({
       data: {

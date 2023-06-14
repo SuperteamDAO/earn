@@ -39,9 +39,11 @@ export const tokenList = [
   {
     tokenName: 'USDC',
     tokenSymbol: 'USDC',
-    mintAddress: 'EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v',
+    // mintAddress: 'EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v',
+    mintAddress: '2NQR6nwhq5ejvp2ptHSWzKWapzJNuCdoUxFw7cUikrkz',
     address: 'EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v',
     icon: 'https://s2.coinmarketcap.com/static/img/coins/64x64/3408.png',
+    decimals: 6,
   },
   {
     tokenName: 'Solana (SOL)',
@@ -49,6 +51,7 @@ export const tokenList = [
     mintAddress: 'sadfasdf', // need to change it
     address: 'dsafasdf', // need to change
     icon: 'https://s2.coinmarketcap.com/static/img/coins/64x64/16116.png',
+    decimals: 9,
   },
   {
     tokenName: 'ISC',
@@ -63,6 +66,7 @@ export const tokenList = [
     mintAddress: 'Es9vMFrzaCERmJfrF4H2FYD4KCoNkY11McCe8BenwNYB',
     address: 'Es9vMFrzaCERmJfrF4H2FYD4KCoNkY11McCe8BenwNYB',
     icon: 'https://s2.coinmarketcap.com/static/img/coins/64x64/825.png',
+    decimals: 6,
   },
   {
     tokenName: 'STEP',
@@ -70,6 +74,7 @@ export const tokenList = [
     mintAddress: '',
     address: '',
     icon: 'https://assets.coingecko.com/coins/images/14988/small/step.png?1619274762',
+    decimals: 6,
   },
   {
     tokenName: 'mSOL',
@@ -77,6 +82,7 @@ export const tokenList = [
     mintAddress: 'mSoLzYCxHdYgdzU16g5QSh3i5K3z3KZK7ytfqcJm7So',
     address: 'mSoLzYCxHdYgdzU16g5QSh3i5K3z3KZK7ytfqcJm7So',
     icon: 'https://s2.coinmarketcap.com/static/img/coins/64x64/11461.png',
+    decimals: 9,
   },
   {
     tokenName: 'UXD Stablecoin (UXD)',
@@ -84,6 +90,7 @@ export const tokenList = [
     mintAddress: '7kbnvuGBxxj8AG9qp8Scn56muWGaRaFqxg1FsRp3PaFT',
     address: '7kbnvuGBxxj8AG9qp8Scn56muWGaRaFqxg1FsRp3PaFT',
     icon: 'https://s2.coinmarketcap.com/static/img/coins/64x64/17535.png',
+    decimals: 6,
   },
   {
     tokenName: 'Raydium (RAY)',

@@ -24,6 +24,10 @@ import {
   Tooltip,
   useDisclosure,
 } from '@chakra-ui/react';
+import type NodeWallet from '@project-serum/anchor/dist/cjs/nodewallet';
+import { useAnchorWallet } from '@solana/wallet-adapter-react';
+import type { TransactionInstruction } from '@solana/web3.js';
+import { PublicKey, Transaction } from '@solana/web3.js';
 import axios from 'axios';
 import Avatar from 'boring-avatars';
 import type { GetServerSideProps } from 'next';
@@ -34,6 +38,7 @@ import { useEffect, useState } from 'react';
 import ErrorSection from '@/components/shared/ErrorSection';
 import LoadingSection from '@/components/shared/LoadingSection';
 import PublishResults from '@/components/submissions/PublishResults';
+import { tokenList } from '@/constants';
 import type { Bounty, Rewards } from '@/interface/bounty';
 import type { SubmissionWithUser } from '@/interface/submission';
 import Sidebar from '@/layouts/Sidebar';
@@ -43,6 +48,11 @@ import {
   getBountyDraftStatus,
   getBountyProgress,
 } from '@/utils/bounty';
+import {
+  connection,
+  createPaymentSOL,
+  createPaymentSPL,
+} from '@/utils/contract/contract';
 import { dayjs } from '@/utils/dayjs';
 import { sortRank } from '@/utils/rank';
 import { truncatePublicKey } from '@/utils/truncatePublicKey';
@@ -63,10 +73,12 @@ function BountySubmissions({ slug }: Props) {
   const [selectedSubmission, setSelectedSubmission] =
     useState<SubmissionWithUser>();
   const [isSelectingWinner, setIsSelectingWinner] = useState(false);
+  const [isPaying, setIsPaying] = useState(false);
   const [isExporting, setIsExporting] = useState(false);
   const [rewards, setRewards] = useState<string[]>([]);
   const [isBountyLoading, setIsBountyLoading] = useState(true);
   const [skip, setSkip] = useState(0);
+  const anchorWallet = useAnchorWallet();
   const length = 15;
 
   const getSubmissions = async (id?: string) => {
@@ -189,6 +201,86 @@ function BountySubmissions({ slug }: Props) {
       return `https://${url}`;
     }
     return url;
+  };
+
+  const handlePayout = async ({
+    id,
+    token,
+    amount,
+    receiver,
+  }: {
+    id: string;
+    token: string;
+    amount: number;
+    receiver: PublicKey;
+  }) => {
+    setIsPaying(true);
+    let sig = '';
+    try {
+      const power = tokenList.find((e) => e.tokenSymbol === token)
+        ?.decimals as number;
+      const tokenAddress = tokenList.find((e) => e.tokenSymbol === token)
+        ?.mintAddress as string;
+      if (token === 'SOL') {
+        const ix = await createPaymentSOL(
+          anchorWallet as NodeWallet,
+          receiver,
+          amount,
+          JSON.stringify(Math.floor(Math.random() * 1000000000))
+        );
+        const tx = new Transaction();
+        tx.add(ix);
+        const { blockhash } = await connection.getLatestBlockhash();
+        tx.recentBlockhash = blockhash;
+        tx.feePayer = (anchorWallet as NodeWallet).publicKey;
+        const signTx = await anchorWallet?.signTransaction(tx);
+        sig = await connection.sendRawTransaction(signTx!.serialize());
+      } else {
+        const [ix, ix2] = await createPaymentSPL(
+          anchorWallet as NodeWallet,
+          receiver,
+          (amount * 10 ** power) as number,
+          new PublicKey(tokenAddress as string),
+          JSON.stringify(Math.floor(Math.random() * 10000))
+        );
+        const tx = new Transaction();
+        tx.add(ix2 as TransactionInstruction);
+        tx.add(ix as TransactionInstruction);
+        const { blockhash } = await connection.getLatestBlockhash();
+        tx.recentBlockhash = blockhash;
+        tx.feePayer = (anchorWallet as NodeWallet).publicKey;
+        const signTx = await anchorWallet?.signTransaction(tx);
+        sig = await connection.sendRawTransaction(signTx!.serialize(), {
+          skipPreflight: false,
+        });
+      }
+      if (sig) {
+        await axios.post(`/api/submission/addPayment/`, {
+          id,
+          isPaid: true,
+          paymentDetails: {
+            txId: sig,
+          },
+        });
+        const submissionIndex = submissions.findIndex((s) => s.id === id);
+        if (submissionIndex >= 0) {
+          const updatedSubmission: SubmissionWithUser = {
+            ...(submissions[submissionIndex] as SubmissionWithUser),
+            isPaid: true,
+            paymentDetails: {
+              txId: sig,
+            },
+          };
+          const newSubmissions = [...submissions];
+          newSubmissions[submissionIndex] = updatedSubmission;
+          setSubmissions(newSubmissions);
+          setSelectedSubmission(updatedSubmission);
+        }
+      }
+      setIsPaying(false);
+    } catch (error) {
+      setIsPaying(false);
+    }
   };
 
   return (
@@ -398,13 +490,50 @@ function BountySubmissions({ slug }: Props) {
                     </Flex>
                     <Flex align="center" justify={'flex-end'} gap={2} w="full">
                       {selectedSubmission?.isWinner &&
-                        selectedSubmission?.winnerPosition && (
-                          <Button mr={4} size="sm" variant="solid">
+                        selectedSubmission?.winnerPosition &&
+                        !selectedSubmission?.isPaid && (
+                          <Button
+                            mr={4}
+                            isLoading={isPaying}
+                            loadingText={'Paying...'}
+                            onClick={async () =>
+                              handlePayout({
+                                id: selectedSubmission?.id as string,
+                                token: bounty?.token as string,
+                                amount: bounty?.rewards![
+                                  selectedSubmission?.winnerPosition as keyof Rewards
+                                ] as number,
+                                receiver: new PublicKey(
+                                  selectedSubmission.user.publicKey
+                                ),
+                              })
+                            }
+                            size="sm"
+                            variant="solid"
+                          >
                             Pay {bounty?.token}{' '}
                             {!!bounty?.rewards &&
                               bounty?.rewards[
                                 selectedSubmission?.winnerPosition as keyof Rewards
                               ]}
+                          </Button>
+                        )}
+                      {selectedSubmission?.isWinner &&
+                        selectedSubmission?.winnerPosition &&
+                        selectedSubmission?.isPaid && (
+                          <Button
+                            mr={4}
+                            onClick={() => {
+                              window.open(
+                                `https://solscan.io/tx/${selectedSubmission?.paymentDetails?.txId}?cluster=${process.env.NEXT_PUBLIC_PAYMENT_CLUSTER}`,
+                                '_blank'
+                              );
+                            }}
+                            rightIcon={<ExternalLinkIcon />}
+                            size="sm"
+                            variant="ghost"
+                          >
+                            View Payment Txn
                           </Button>
                         )}
                       {isSelectingWinner && (
