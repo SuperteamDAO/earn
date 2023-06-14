@@ -136,7 +136,7 @@ export const CreatebountyPayment = ({
     setPrizevalues(newTemp);
   };
 
-  const handleSubmit = (isEdit?: boolean) => {
+  const handleSubmit = (isEdit?: boolean, mode?: string) => {
     const rewardAmount: number = (
       (Object.values(prizevalues) || []) as number[]
     ).reduce((a, b) => a + b, 0);
@@ -149,7 +149,7 @@ export const CreatebountyPayment = ({
       setIsRewardError(true);
     } else {
       setIsRewardError(false);
-      if (isEdit) createDraft();
+      if (isEdit || mode === 'DRAFT') createDraft();
       else confirmOnOpen();
     }
   };
@@ -357,7 +357,7 @@ export const CreatebountyPayment = ({
           <Button
             w="100%"
             isLoading={draftLoading}
-            onClick={() => handleSubmit(isEditMode)}
+            onClick={() => handleSubmit(isEditMode, 'DRAFT')}
             variant={isEditMode ? 'solid' : 'outline'}
           >
             {isEditMode ? 'Update' : 'Save as Draft'}

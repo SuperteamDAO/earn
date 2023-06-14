@@ -36,6 +36,7 @@ interface Bounty {
   slug?: string;
   type?: BountyType | string;
   isWinnersAnnounced?: boolean;
+  isTemplate?: boolean;
 }
 
 function ListingHeader({
@@ -48,6 +49,7 @@ function ListingHeader({
   slug,
   isWinnersAnnounced,
   id,
+  isTemplate,
 }: Bounty) {
   const router = useRouter();
   const { isOpen, onClose, onOpen } = useDisclosure();
@@ -141,51 +143,55 @@ function ListingHeader({
             >
               {title}
             </Heading>
-            <HStack>
-              <Text color={'#94A3B8'}>
-                by {poc?.firstName} at {sponsor?.name}
-              </Text>
-              {(status === 'CLOSED' ||
-                (status === 'OPEN' && isWinnersAnnounced)) && (
-                <Text
-                  px={3}
-                  py={1}
-                  color={'orange.600'}
-                  fontSize={'sm'}
-                  bg={'orange.100'}
-                  rounded={'full'}
-                >
-                  Closed
+            {!isTemplate && (
+              <HStack>
+                <Text color={'#94A3B8'}>
+                  by {poc?.firstName} at {sponsor?.name}
                 </Text>
-              )}
-              {!isWinnersAnnounced && hasDeadlineEnded && status === 'OPEN' && (
-                <Text
-                  px={3}
-                  py={1}
-                  color={'orange.600'}
-                  fontSize={'sm'}
-                  bg={'orange.100'}
-                  rounded={'full'}
-                >
-                  In Review
-                </Text>
-              )}
-              {!hasDeadlineEnded && status === 'OPEN' && (
-                <Text
-                  px={3}
-                  py={1}
-                  color={'green.600'}
-                  fontSize={'sm'}
-                  bg={'green.100'}
-                  rounded={'full'}
-                >
-                  Open
-                </Text>
-              )}
-            </HStack>
+                {(status === 'CLOSED' ||
+                  (status === 'OPEN' && isWinnersAnnounced)) && (
+                  <Text
+                    px={3}
+                    py={1}
+                    color={'orange.600'}
+                    fontSize={'sm'}
+                    bg={'orange.100'}
+                    rounded={'full'}
+                  >
+                    Closed
+                  </Text>
+                )}
+                {!isWinnersAnnounced &&
+                  hasDeadlineEnded &&
+                  status === 'OPEN' && (
+                    <Text
+                      px={3}
+                      py={1}
+                      color={'orange.600'}
+                      fontSize={'sm'}
+                      bg={'orange.100'}
+                      rounded={'full'}
+                    >
+                      In Review
+                    </Text>
+                  )}
+                {!hasDeadlineEnded && status === 'OPEN' && (
+                  <Text
+                    px={3}
+                    py={1}
+                    color={'green.600'}
+                    fontSize={'sm'}
+                    bg={'green.100'}
+                    rounded={'full'}
+                  >
+                    Open
+                  </Text>
+                )}
+              </HStack>
+            )}
           </VStack>
         </HStack>
-        {router.asPath.includes('bounties') && (
+        {router.asPath.includes('bounties') && !isTemplate && (
           <HStack>
             <HStack align="start" px={[3, 3, 0, 0]}>
               <IconButton
@@ -256,7 +262,7 @@ function ListingHeader({
         )}
       </VStack>
       <Toaster />
-      {router.asPath.includes('bounties') && (
+      {router.asPath.includes('bounties') && !isTemplate && (
         <Flex
           align={'center'}
           w={'full'}
