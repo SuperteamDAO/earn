@@ -498,7 +498,7 @@ function BountySubmissions({ slug }: Props) {
                             bg={'brand.purple'}
                             hasArrow={true}
                             isDisabled={!!bounty?.isWinnersAnnounced}
-                            label="You have to publish results before you can pay out rewards!"
+                            label="You have to publish the results before you can pay out rewards!"
                             placement="top"
                           >
                             <Button
