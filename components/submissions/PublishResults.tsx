@@ -49,11 +49,7 @@ function PublishResults({
     | undefined = 'warning';
   let alertTitle = '';
   let alertDescription = '';
-  if (!isDeadlinePassed) {
-    alertType = 'error';
-    alertTitle = 'Bounty still in progress!';
-    alertDescription = `Bounty needs to close before you can publish results.`;
-  } else if (rewards?.length && totalWinners !== rewards?.length) {
+  if (rewards?.length && totalWinners !== rewards?.length) {
     const remainingWinners = (rewards?.length || 0) - totalWinners;
     alertType = 'error';
     alertTitle = 'Select All Winners!';
@@ -142,6 +138,21 @@ function PublishResults({
               </Box>
             </Alert>
           )}
+          {!isWinnersAnnounced &&
+            rewards?.length &&
+            totalWinners === rewards?.length &&
+            !isDeadlinePassed && (
+              <Alert mt={4} status="error">
+                <AlertIcon boxSize={8} />
+                <Box>
+                  <AlertTitle>Bounty still in progress!</AlertTitle>
+                  <AlertDescription>
+                    If you publish the results before the deadline has passed,
+                    the bounty will get closed.
+                  </AlertDescription>
+                </Box>
+              </Alert>
+            )}
         </ModalBody>
         <ModalFooter>
           {!isWinnersAnnounced && (

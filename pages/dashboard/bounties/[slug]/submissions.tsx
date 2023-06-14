@@ -275,6 +275,7 @@ function BountySubmissions({ slug }: Props) {
           newSubmissions[submissionIndex] = updatedSubmission;
           setSubmissions(newSubmissions);
           setSelectedSubmission(updatedSubmission);
+          setTotalPaymentsMade(totalPaymentsMade + 1);
         }
       }
       setIsPaying(false);

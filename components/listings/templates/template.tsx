@@ -1,4 +1,4 @@
-import { AddIcon } from '@chakra-ui/icons';
+import { AddIcon, ViewIcon } from '@chakra-ui/icons';
 import { Box, Button, Flex, Image, Text, VStack } from '@chakra-ui/react';
 import axios from 'axios';
 import type { Dispatch, SetStateAction } from 'react';
@@ -7,6 +7,7 @@ import React, { useEffect, useState } from 'react';
 import type { BountyBasicType } from '@/components/listings/bounty/Createbounty';
 import type { MultiSelectOptions } from '@/constants';
 import { splitSkills } from '@/utils/skills';
+import { getURL } from '@/utils/validUrl';
 
 interface Props {
   setSteps: Dispatch<SetStateAction<number>>;
@@ -122,7 +123,7 @@ const Template = ({
                     justify={'space-between'}
                     direction={'column'}
                     h="55%"
-                    px={6}
+                    px={4}
                     py={4}
                     bg="white"
                   >
@@ -190,14 +191,35 @@ const Template = ({
                         </Text>
                       )}
                     </Box>
-                    <Button
+                    <Flex
+                      align="center"
+                      justify={'space-between'}
+                      gap={4}
                       w="full"
-                      onClick={() => createTemplate(template?.id)}
-                      size="sm"
-                      variant="solid"
                     >
-                      Use Template
-                    </Button>
+                      <Button
+                        w="full"
+                        leftIcon={<ViewIcon />}
+                        onClick={() => {
+                          window.open(
+                            `${getURL()}templates/bounties/${template?.slug}`,
+                            '_blank'
+                          );
+                        }}
+                        size="sm"
+                        variant="ghost"
+                      >
+                        Preview
+                      </Button>
+                      <Button
+                        w="full"
+                        onClick={() => createTemplate(template?.id)}
+                        size="sm"
+                        variant="solid"
+                      >
+                        Use
+                      </Button>
+                    </Flex>
                   </Flex>
                 </Box>
               );
