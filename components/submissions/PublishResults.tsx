@@ -79,9 +79,9 @@ function PublishResults({
   };
 
   useEffect(() => {
-    if (!isWinnersAnnounced) return;
+    if (!isWinnersAnnounced || hasWinnersAnnounced) return;
     const timer = setTimeout(() => {
-      onClose();
+      window.location.reload();
     }, 1500);
     // eslint-disable-next-line consistent-return
     return () => clearTimeout(timer);
@@ -113,9 +113,11 @@ function PublishResults({
                 results on the Bounty&apos;s page.
                 <br />
                 <br />
-                <Text as="span" color="brand.slate.500" fontSize="sm">
-                  Closing...
-                </Text>
+                {!hasWinnersAnnounced && (
+                  <Text as="span" color="brand.slate.500" fontSize="sm">
+                    Refreshing...
+                  </Text>
+                )}
               </AlertDescription>
             </Alert>
           )}

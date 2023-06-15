@@ -46,6 +46,7 @@ interface Props {
   type?: BountyType | string;
   bountytitle: string;
   requirements?: string;
+  isWinnersAnnounced?: boolean;
 }
 function DetailSideCard({
   id,
@@ -58,6 +59,7 @@ function DetailSideCard({
   bountytitle,
   requirements,
   type,
+  isWinnersAnnounced = false,
 }: Props) {
   const { userInfo } = userStore();
   const [isSubmissionNumberLoading, setIsSubmissionNumberLoading] =
@@ -75,6 +77,9 @@ function DetailSideCard({
   let submissionStatus = 0;
   if (Number(moment(endingTime).format('x')) < Date.now()) {
     submissionStatus = 1;
+  }
+  if (isWinnersAnnounced) {
+    submissionStatus = 3;
   }
 
   const getUserSubmission = async () => {
@@ -540,9 +545,13 @@ function DetailSideCard({
           <VerticalStep
             currentStep={submissionStatus + 1}
             thisStep={3}
-            sublabel={`Around ${moment(endingTime)
-              .add(8, 'd')
-              .format('Do MMM, YY')}`}
+            sublabel={
+              isWinnersAnnounced
+                ? 'Congratulations!'
+                : `Around ${moment(endingTime)
+                    .add(8, 'd')
+                    .format('Do MMM, YY')}`
+            }
             label={'Winner Announced'}
           />
         </VStack>

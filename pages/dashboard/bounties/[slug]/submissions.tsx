@@ -550,39 +550,48 @@ function BountySubmissions({ slug }: Props) {
                       {isSelectingWinner && (
                         <Spinner color="brand.slate.400" size="sm" />
                       )}
-                      <Select
-                        maxW={48}
-                        textTransform="capitalize"
-                        borderColor="brand.slate.300"
-                        _placeholder={{
-                          color: 'brand.slate.300',
-                        }}
-                        focusBorderColor="brand.purple"
-                        onChange={(e) =>
-                          selectWinner(e.target.value, selectedSubmission?.id)
-                        }
-                        value={
-                          selectedSubmission?.isWinner
-                            ? selectedSubmission?.winnerPosition || ''
-                            : ''
-                        }
+                      <Tooltip
+                        bg={'brand.purple'}
+                        hasArrow={true}
+                        isDisabled={!bounty?.isWinnersAnnounced}
+                        label="You cannot change the winners once the results are published!"
+                        placement="top"
                       >
-                        <option value={''}>Select Winner</option>
-                        {selectedSubmission?.isWinner &&
-                          rewards.length <
-                            Object.keys(bounty?.rewards || {})?.length && (
-                            <option
-                              value={selectedSubmission?.winnerPosition || ''}
-                            >
-                              {selectedSubmission?.winnerPosition}
+                        <Select
+                          maxW={48}
+                          textTransform="capitalize"
+                          borderColor="brand.slate.300"
+                          _placeholder={{
+                            color: 'brand.slate.300',
+                          }}
+                          focusBorderColor="brand.purple"
+                          isDisabled={!!bounty?.isWinnersAnnounced}
+                          onChange={(e) =>
+                            selectWinner(e.target.value, selectedSubmission?.id)
+                          }
+                          value={
+                            selectedSubmission?.isWinner
+                              ? selectedSubmission?.winnerPosition || ''
+                              : ''
+                          }
+                        >
+                          <option value={''}>Select Winner</option>
+                          {selectedSubmission?.isWinner &&
+                            rewards.length <
+                              Object.keys(bounty?.rewards || {})?.length && (
+                              <option
+                                value={selectedSubmission?.winnerPosition || ''}
+                              >
+                                {selectedSubmission?.winnerPosition}
+                              </option>
+                            )}
+                          {rewards.map((reward) => (
+                            <option key={reward} value={reward}>
+                              {reward}
                             </option>
-                          )}
-                        {rewards.map((reward) => (
-                          <option key={reward} value={reward}>
-                            {reward}
-                          </option>
-                        ))}
-                      </Select>
+                          ))}
+                        </Select>
+                      </Tooltip>
                     </Flex>
                   </Flex>
                   <Box w="full" px={4} py={5}>
