@@ -37,6 +37,8 @@ const CreateSponsor = () => {
     handleSubmit,
     register,
     formState: { errors },
+    watch,
+    getValues,
   } = useForm();
   const [imageUrl, setImageUrl] = useState<string>('');
   const [industries, setIndustries] = useState<string>();
@@ -45,6 +47,10 @@ const CreateSponsor = () => {
   const [errorMessage, setErrorMessage] = useState<string>('');
 
   const createNewSponsor = async (sponsor: SponsorType) => {
+    if (getValues('bio').length > 180) {
+      setErrorMessage('Company short bio length exceeded the limit');
+      return;
+    }
     setIsLoading(true);
     setHasError(false);
     try {
@@ -303,9 +309,21 @@ const CreateSponsor = () => {
                     _placeholder={{ color: 'brand.slate.300' }}
                     focusBorderColor="brand.purple"
                     id="bio"
-                    placeholder="What does your company do?"
+                    maxLength={180}
                     {...register('bio')}
+                    placeholder="What does your company do?"
                   />
+                  <Text
+                    color={
+                      (watch('bio')?.length || 0) > 160
+                        ? 'red'
+                        : 'brand.slate.400'
+                    }
+                    fontSize={'xs'}
+                    textAlign="right"
+                  >
+                    {180 - (watch('bio')?.length || 0)} characters left
+                  </Text>
                   <FormErrorMessage>
                     {errors.bio ? <>{errors.bio.message}</> : <></>}
                   </FormErrorMessage>
