@@ -39,8 +39,7 @@ export const tokenList = [
   {
     tokenName: 'USDC',
     tokenSymbol: 'USDC',
-    // mintAddress: 'EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v',
-    mintAddress: '2NQR6nwhq5ejvp2ptHSWzKWapzJNuCdoUxFw7cUikrkz',
+    mintAddress: 'EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v',
     address: 'EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v',
     icon: 'https://s2.coinmarketcap.com/static/img/coins/64x64/3408.png',
     decimals: 6,
@@ -48,8 +47,8 @@ export const tokenList = [
   {
     tokenName: 'Solana (SOL)',
     tokenSymbol: 'SOL',
-    mintAddress: 'sadfasdf', // need to change it
-    address: 'dsafasdf', // need to change
+    mintAddress: '', // need to change it
+    address: '', // need to change
     icon: 'https://s2.coinmarketcap.com/static/img/coins/64x64/16116.png',
     decimals: 9,
   },

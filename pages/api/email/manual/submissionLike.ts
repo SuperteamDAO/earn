@@ -29,7 +29,7 @@ export default async function handler(
       dynamicTemplateData: {
         name: submission?.user.firstName,
         bounty_name: submission?.listing.title,
-        link: `https://earn.superteam.fun/listings/bounties/${submission?.listing.slug}/submission/${submission?.id}`,
+        link: `https://earn.superteam.fun/listings/bounties/${submission?.listing.slug}/submission/${submission?.id}/?utm_source=superteamearn&utm_medium=email&utm_campaign=submissionliked`,
       },
     };
 

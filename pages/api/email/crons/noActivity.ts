@@ -40,7 +40,7 @@ export default async function handler(
         templateId: process.env.SENDGRID_NO_VERIFIED as string,
         dynamicTemplateData: {
           name: e.firstName,
-          link: `https://earn.superteam.fun`,
+          link: `https://earn.superteam.fun/?utm_source=superteamearn&utm_medium=email&utm_campaign=makeprofile`,
         },
       };
       const [ress] = await sgMail.send(msg);
