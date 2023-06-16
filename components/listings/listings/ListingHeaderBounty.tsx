@@ -74,7 +74,7 @@ function ListingHeader({
       });
       console.log(res);
       setUpdate((prev) => !prev);
-      toast.success('Subscribe to bounty');
+      toast.success('Subscribed to bounty');
     } catch (error) {
       console.log(error);
       toast.error('Error');
