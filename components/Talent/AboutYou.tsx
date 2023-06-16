@@ -135,9 +135,19 @@ function AboutYou({ setStep, useFormStore }: Step1Props) {
               }}
               focusBorderColor="brand.purple"
               id={'bio'}
+              maxLength={180}
               placeholder="Here is a sample placeholder"
               {...register('bio', { required: true })}
             />
+            <Text
+              color={
+                (watch('bio')?.length || 0) > 160 ? 'red' : 'brand.slate.400'
+              }
+              fontSize={'xs'}
+              textAlign="right"
+            >
+              {180 - (watch('bio')?.length || 0)} characters left
+            </Text>
           </Box>
           <Button
             w={'full'}
