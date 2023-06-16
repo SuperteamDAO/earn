@@ -662,7 +662,9 @@ export const CategoryBanner = ({ type }: { type: string }) => {
           }}
           variant="solid"
         >
-          Notify Me
+          {userInfo?.notifications?.find((e) => e.label === type)
+            ? 'Subscribed'
+            : 'Notify Me'}
         </Button>
         <Toaster />
       </Flex>
