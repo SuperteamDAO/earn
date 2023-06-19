@@ -244,7 +244,9 @@ function BountySubmissions({ slug }: Props) {
           JSON.stringify(Math.floor(Math.random() * 10000))
         );
         const tx = new Transaction();
-        tx.add(ix2 as TransactionInstruction);
+        if (ix2) {
+          tx.add(ix2 as TransactionInstruction);
+        }
         tx.add(ix as TransactionInstruction);
         const { blockhash } = await connection.getLatestBlockhash();
         tx.recentBlockhash = blockhash;
