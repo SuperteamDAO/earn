@@ -26,7 +26,6 @@ import { useForm } from 'react-hook-form';
 
 import type { MultiSelectOptions } from '@/constants';
 import { userStore } from '@/store/user';
-import { isValidDiscordUsername } from '@/utils/validDiscordUsername';
 import { isValidHttpUrl } from '@/utils/validUrl';
 
 import { SkillSelect } from '../misc/SkillSelect';
@@ -286,7 +285,6 @@ function YourLinks({ success, useFormStore }: Props) {
   const { isOpen, onOpen, onClose } = useDisclosure();
   const { form } = useFormStore();
   const [pow, setpow] = useState<string[]>([]);
-  const [discordError, setDiscordError] = useState<boolean>(false);
   const [socialsError, setsocialsError] = useState<boolean>(false);
   const [urlError, seturlError] = useState<boolean>(false);
   const [isLoading, setisLoading] = useState<boolean>(false);
@@ -308,15 +306,6 @@ function YourLinks({ success, useFormStore }: Props) {
     // eslint-disable-next-line @typescript-eslint/no-shadow
     pow: string
   ) => {
-    if (
-      !socials?.discord?.length ||
-      !isValidDiscordUsername(socials?.discord)
-    ) {
-      setDiscordError(true);
-      return;
-    }
-    setDiscordError(false);
-
     // atleast one URL
     if (
       socials.twitter.length === 0 &&
@@ -459,11 +448,7 @@ function YourLinks({ success, useFormStore }: Props) {
                 Please fill at least one social link to continue!
               </Text>
             )}
-            {discordError && (
-              <Text align="center" mb={'0.5rem'} color={'red'}>
-                Please fill your correct Discord username!
-              </Text>
-            )}
+
             {urlError && (
               <Text align="center" mb={'0.5rem'} color={'red'}>
                 URL needs to contain &quot;http://&quot; prefix
