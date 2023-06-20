@@ -282,6 +282,7 @@ function BountySubmissions({ slug }: Props) {
       }
       setIsPaying(false);
     } catch (error) {
+      console.log(error);
       setIsPaying(false);
     }
   };

@@ -118,7 +118,9 @@ export default async function announce(
         dynamicTemplateData: {
           name: allSubmissionUsers[currentIndex2]?.name,
           bounty_name: bounty?.title || '',
-          link: `${getURL()}listings/bounties/${bounty?.slug || ''}/`,
+          link: `${getURL()}listings/bounties/${
+            bounty?.slug || ''
+          }/?utm_source=superteamearn&utm_medium=email&utm_campaign=winnerannouncement`,
         },
       };
       promises2.push(sgMail.send(msg));
