@@ -126,7 +126,7 @@ function ListingHeader({
           <Image
             w={'4rem'}
             h={'4rem'}
-            objectFit={'cover'}
+            objectFit={'contain'}
             alt={'phantom'}
             rounded={'md'}
             src={
