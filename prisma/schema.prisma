@@ -53,6 +53,7 @@ model Bounties {
   rewardAmount         Int?
   rewards              Json?
   sponsorId            String
+  region               Regions            @default(GLOBAL)
   pocId                String
   source               Source             @default(NATIVE)
   sourceDetails        Json?
@@ -362,4 +363,14 @@ enum JobType {
   parttime
   fulltime
   internship
+}
+
+enum Regions {
+  GLOBAL
+  INDIA
+  VIETNAM
+  GERMANY
+  TURKEY
+  MEXICO
+  UK
 }

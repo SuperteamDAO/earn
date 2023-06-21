@@ -1,4 +1,4 @@
-import type { BountyType } from '@prisma/client';
+import type { BountyType, Regions } from '@prisma/client';
 
 import type { QuestionType } from '@/components/listings/bounty/questions/builder';
 import type { SponsorType } from '@/interface/sponsor';
@@ -30,7 +30,6 @@ interface Bounty {
   requirements?: string;
   applicationLink?: string;
   skills?: Skills;
-  // newSkills?: Skills;
   deadline?: string;
   eligibility?: Eligibility[];
   status?: BountyStatus;
@@ -49,6 +48,7 @@ interface Bounty {
   sourceDetails?: string;
   type?: BountyType | string;
   totalWinnersSelected?: number;
+  region?: Regions;
   totalPaymentsMade?: number;
   isWinnersAnnounced?: boolean;
   templateId?: string;
