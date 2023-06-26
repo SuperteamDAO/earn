@@ -1,5 +1,5 @@
 import { HStack } from '@chakra-ui/react';
-import type { User } from '@prisma/client';
+import { type User, Regions } from '@prisma/client';
 import axios from 'axios';
 import type { GetServerSideProps } from 'next';
 import React, { useEffect, useState } from 'react';
@@ -72,6 +72,7 @@ const Sumbissions = ({ slug, subid }: BountyDetailsProps) => {
         {!isLoading && !error && !!bounty?.id && (
           <>
             <ListingHeader
+              region={(bounty?.region as Regions) || Regions.GLOBAL}
               id={bounty?.id}
               status={bounty?.status}
               deadline={bounty?.deadline}

@@ -1,4 +1,5 @@
 import { HStack, VStack } from '@chakra-ui/react';
+import { Regions } from '@prisma/client';
 import axios from 'axios';
 import type { GetServerSideProps } from 'next';
 import { useEffect, useState } from 'react';
@@ -69,6 +70,7 @@ function BountyDetails({ slug }: BountyDetailsProps) {
             sponsor={bounty?.sponsor}
             poc={bounty?.poc}
             slug={bounty?.slug}
+            region={bounty?.region || Regions.GLOBAL}
             isWinnersAnnounced={bounty?.isWinnersAnnounced}
           />
           {bounty?.isWinnersAnnounced && <BountyWinners bounty={bounty} />}

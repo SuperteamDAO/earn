@@ -288,13 +288,34 @@ export const CreatebountyBasic = ({
         {userInfo?.role === 'GOD' && (
           <>
             <FormControl w="full" mb={5}>
-              <FormLabel
-                color={'brand.slate.500'}
-                fontSize={'15px'}
-                fontWeight={600}
-              >
-                Select Region
-              </FormLabel>
+              <Flex>
+                <FormLabel
+                  color={'brand.slate.500'}
+                  fontSize={'15px'}
+                  fontWeight={600}
+                >
+                  Listing Geography
+                </FormLabel>
+                <Tooltip
+                  w="max"
+                  p="0.7rem"
+                  color="white"
+                  fontSize="0.9rem"
+                  fontWeight={600}
+                  bg="#6562FF"
+                  borderRadius="0.5rem"
+                  hasArrow
+                  label={`Select the Superteam region this listing will be available and relevant to. The geography selected here will determine which Superteam Geography page it shows up on. If the listing is open to all, please select global; otherwise, please select the specific country`}
+                  placement="right-end"
+                >
+                  <Image
+                    mt={-2}
+                    alt={'Info Icon'}
+                    src={'/assets/icons/info-icon.svg'}
+                  />
+                </Tooltip>
+              </Flex>
+
               <Select
                 onChange={(e) => {
                   setRegions(e.target.value as Regions);
