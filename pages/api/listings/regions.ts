@@ -1,4 +1,4 @@
-import type { Regions } from '@prisma/client';
+import { Regions } from '@prisma/client';
 import type { NextApiRequest, NextApiResponse } from 'next';
 
 import { prisma } from '@/prisma';
@@ -9,6 +9,7 @@ export default async function user(req: NextApiRequest, res: NextApiResponse) {
   const category = params.category as string;
   const filter = params.filter as string;
   const region = params.region as string;
+  console.log(region.toUpperCase() === Regions.GERMANY, '----region');
   const take = params.take ? parseInt(params.take as string, 10) : 10;
   const result: any = {
     bounties: [],
@@ -34,14 +35,20 @@ export default async function user(req: NextApiRequest, res: NextApiResponse) {
           isActive: true,
           isArchived: false,
           status: 'OPEN',
-          region: region.toUpperCase() as Regions,
+          OR: [
+            {
+              region: region.toUpperCase() as Regions,
+            },
+            {
+              region: Regions.GLOBAL,
+            },
+          ],
           deadline: {
             gte: dayjs().toISOString(),
           },
           ...skillsFilter,
         },
         take,
-
         orderBy: {
           deadline: 'asc',
         },
@@ -55,6 +62,7 @@ export default async function user(req: NextApiRequest, res: NextApiResponse) {
           },
         },
       });
+
       result.bounties = bounties;
     } else if (category === 'bounties') {
       const bounties = await prisma.bounties.findMany({
@@ -63,7 +71,14 @@ export default async function user(req: NextApiRequest, res: NextApiResponse) {
           isActive: true,
           isArchived: false,
           status: 'OPEN',
-          region: region.toUpperCase() as Regions,
+          OR: [
+            {
+              region: region.toUpperCase() as Regions,
+            },
+            {
+              region: Regions.GLOBAL,
+            },
+          ],
           deadline: {
             gte: dayjs().subtract(1, 'month').toISOString(),
           },

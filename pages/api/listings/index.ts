@@ -1,3 +1,4 @@
+import { Regions } from '@prisma/client';
 import type { NextApiRequest, NextApiResponse } from 'next';
 
 import { prisma } from '@/prisma';
@@ -32,6 +33,7 @@ export default async function user(req: NextApiRequest, res: NextApiResponse) {
           isActive: true,
           isArchived: false,
           status: 'OPEN',
+          region: Regions.GLOBAL,
           deadline: {
             gte: dayjs().toISOString(),
           },
@@ -59,6 +61,7 @@ export default async function user(req: NextApiRequest, res: NextApiResponse) {
           isActive: true,
           isArchived: false,
           status: 'OPEN',
+          region: Regions.GLOBAL,
           deadline: {
             gte: dayjs().subtract(1, 'month').toISOString(),
           },

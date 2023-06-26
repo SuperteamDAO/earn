@@ -1,4 +1,5 @@
 import { useDisclosure } from '@chakra-ui/react';
+import { Regions } from '@prisma/client';
 import axios from 'axios';
 import { useRouter } from 'next/router';
 import { useState } from 'react';
@@ -44,7 +45,9 @@ function CreateListing({ bounty, isEditMode = false }: Props) {
   const [editorData, setEditorData] = useState<string | undefined>(
     isEditMode ? bounty?.description : undefined
   );
-
+  const [regions, setRegions] = useState<Regions>(
+    isEditMode ? bounty?.region || Regions.GLOBAL : Regions.GLOBAL
+  );
   //
   const skillsInfo = isEditMode ? splitSkills(bounty?.skills || []) : undefined;
   const [mainSkills, setMainSkills] = useState<MultiSelectOptions[]>(
@@ -155,6 +158,7 @@ function CreateListing({ bounty, isEditMode = false }: Props) {
         order: q.order,
         type: q.type,
       })),
+      region: regions,
       requirements: bountyRequirements,
       ...bountyPayment,
     };
@@ -270,6 +274,8 @@ function CreateListing({ bounty, isEditMode = false }: Props) {
           )}
           {steps > 1 && listingType === 'BOUNTY' && (
             <CreateBounty
+              regions={regions}
+              setRegions={setRegions}
               setBountyRequirements={setBountyRequirements}
               bountyRequirements={bountyRequirements}
               createAndPublishListing={createAndPublishListing}

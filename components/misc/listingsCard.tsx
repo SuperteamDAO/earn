@@ -510,25 +510,25 @@ export const CategoryBanner = ({ type }: { type: string }) => {
   const categoryAssets: CategoryAssetsType = {
     Design: {
       bg: `/assets/category_assets/bg/design.png`,
-      desc: 'If delighting users with eye-catching designs is your jam, you should check out the earning opportunities below.',
       color: '#FEFBA8',
+      desc: 'If delighting users with eye-catching designs is your jam, you should check out the earning opportunities below.',
       icon: '/assets/category_assets/icon/design.png',
     },
     Growth: {
       bg: `/assets/category_assets/bg/growth.png`,
-      desc: 'If you’re a master of campaigns, building relationships, or data-driven strategy, we have earning opportunities for you.',
       color: '#BFA8FE',
+      desc: 'If you’re a master of campaigns, building relationships, or data-driven strategy, we have earning opportunities for you.',
       icon: '/assets/category_assets/icon/growth.png',
     },
     Content: {
       bg: `/assets/category_assets/bg/content.png`,
-      desc: 'If you can write insightful essays, make stunning videos, or create killer memes, the opportunities below are calling your name.',
       color: '#FEB8A8',
+      desc: 'If you can write insightful essays, make stunning videos, or create killer memes, the opportunities below are calling your name.',
       icon: '/assets/category_assets/icon/content.png',
     },
     Frontend: {
-      bg: `/assets/category_assets/bg/frontend.png`,
       desc: 'If you are a pixel-perfectionist who creates interfaces that users love, check out the earning opportunities below.',
+      bg: `/assets/category_assets/bg/frontend.png`,
       color: '#FEA8EB',
       icon: '/assets/category_assets/icon/frontend.png',
     },
@@ -540,8 +540,8 @@ export const CategoryBanner = ({ type }: { type: string }) => {
     },
     Fullstack: {
       bg: `/assets/category_assets/bg/backend.png`,
-      desc: 'Unlock opportunities in crafting comprehensive solutions by seamlessly integrating user-friendly interfaces and robust databases, both on and off-chain',
       color: '#FEEBA8',
+      desc: 'Unlock opportunities in crafting comprehensive solutions by seamlessly integrating user-friendly interfaces and robust databases, both on and off-chain',
       icon: '/assets/category_assets/icon/backend.png',
     },
 

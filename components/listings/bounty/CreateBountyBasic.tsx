@@ -11,11 +11,13 @@ import {
   Tooltip,
   VStack,
 } from '@chakra-ui/react';
+import { Regions } from '@prisma/client';
 import axios from 'axios';
 import type { Dispatch, SetStateAction } from 'react';
 import { useState } from 'react';
 
 import { SkillSelect } from '@/components/misc/SkillSelect';
+import { userStore } from '@/store/user';
 import { dayjs } from '@/utils/dayjs';
 
 import type { MultiSelectOptions } from '../../../constants';
@@ -32,6 +34,8 @@ interface Props {
   createDraft: () => void;
   draftLoading: boolean;
   isEditMode: boolean;
+  regions: Regions;
+  setRegions: Dispatch<SetStateAction<Regions>>;
 }
 interface ErrorsBasic {
   title: boolean;
@@ -52,13 +56,17 @@ export const CreatebountyBasic = ({
   createDraft,
   draftLoading,
   isEditMode,
+  regions,
+  setRegions,
 }: Props) => {
   const [defaultSlug, setDefaultSlug] = useState<string>(
     bountyBasic?.slug || ''
   );
+  const { userInfo } = userStore();
   const [isValidatingSlug, setIsValidatingSlug] = useState<boolean>(false);
   const [validatingSlugMessage, setValidatingSlugMessage] =
     useState<string>('Validate Slug');
+
   const [errorState, setErrorState] = useState<ErrorsBasic>({
     deadline: false,
     type: false,
@@ -277,6 +285,32 @@ export const CreatebountyBasic = ({
           skills={skills}
           subSkills={subSkills}
         />
+        {userInfo?.role === 'GOD' && (
+          <>
+            <FormControl w="full" mb={5}>
+              <FormLabel
+                color={'brand.slate.500'}
+                fontSize={'15px'}
+                fontWeight={600}
+              >
+                Select Region
+              </FormLabel>
+              <Select
+                onChange={(e) => {
+                  setRegions(e.target.value as Regions);
+                }}
+                value={regions}
+              >
+                <option value={Regions.GLOBAL}>Global</option>
+                <option value={Regions.INDIA}>India</option>
+                <option value={Regions.GERMANY}>Germany</option>
+                <option value={Regions.MEXICO}>Mexico</option>
+                <option value={Regions.TURKEY}>Turkey</option>
+                <option value={Regions.UK}>UK</option>
+              </Select>
+            </FormControl>
+          </>
+        )}
         <FormControl isInvalid={errorState.deadline} isRequired>
           <Flex align={'center'} justify={'start'}>
             <FormLabel
