@@ -10,7 +10,7 @@ import {
   useDisclosure,
   VStack,
 } from '@chakra-ui/react';
-import type { BountyType, SubscribeBounty } from '@prisma/client';
+import type { BountyType, Regions, SubscribeBounty } from '@prisma/client';
 import axios from 'axios';
 import { useRouter } from 'next/router';
 import React, { useEffect, useState } from 'react';
@@ -37,6 +37,7 @@ interface Bounty {
   type?: BountyType | string;
   isWinnersAnnounced?: boolean;
   isTemplate?: boolean;
+  region: Regions;
 }
 
 function ListingHeader({
@@ -50,6 +51,7 @@ function ListingHeader({
   isWinnersAnnounced,
   id,
   isTemplate,
+  region,
 }: Bounty) {
   const router = useRouter();
   const { isOpen, onClose, onOpen } = useDisclosure();
@@ -135,14 +137,27 @@ function ListingHeader({
             }
           />
           <VStack align={'start'}>
-            <Heading
-              color={'brand.charcoal.700'}
-              fontFamily={'Inter'}
-              fontSize={'lg'}
-              fontWeight={700}
-            >
-              {title}
-            </Heading>
+            <HStack>
+              <Heading
+                color={'brand.charcoal.700'}
+                fontFamily={'Inter'}
+                fontSize={'lg'}
+                fontWeight={700}
+              >
+                {title}
+              </Heading>
+              <Flex
+                px={3}
+                py={1}
+                color={'green.600'}
+                fontSize={'sm'}
+                fontWeight={600}
+                bg={'green.100'}
+                borderRadius={'full'}
+              >
+                {region}
+              </Flex>
+            </HStack>
             {!isTemplate && (
               <HStack>
                 <Text color={'#94A3B8'}>

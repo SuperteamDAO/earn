@@ -1,3 +1,4 @@
+import { Regions } from '@prisma/client';
 import axios from 'axios';
 import type { GetServerSideProps } from 'next';
 import React, { useEffect, useState } from 'react';
@@ -58,6 +59,7 @@ const SubmissionPage = ({ slug }: { slug: string }) => {
           <>
             <ListingHeader
               id={bounty?.id}
+              region={bounty?.region || Regions.GLOBAL}
               status={bounty?.status}
               deadline={bounty?.deadline}
               title={bounty?.title ?? ''}

@@ -1,4 +1,5 @@
 import { useDisclosure } from '@chakra-ui/react';
+import { Regions } from '@prisma/client';
 import axios from 'axios';
 import { useRouter } from 'next/router';
 import { useState } from 'react';
@@ -44,7 +45,9 @@ function CreateListing({ bounty, isEditMode = false }: Props) {
   const [editorData, setEditorData] = useState<string | undefined>(
     isEditMode ? bounty?.description : undefined
   );
-
+  const [regions, setRegions] = useState<Regions>(
+    isEditMode ? bounty?.region || Regions.GLOBAL : Regions.GLOBAL
+  );
   //
   const skillsInfo = isEditMode ? splitSkills(bounty?.skills || []) : undefined;
   const [mainSkills, setMainSkills] = useState<MultiSelectOptions[]>(
@@ -120,9 +123,9 @@ function CreateListing({ bounty, isEditMode = false }: Props) {
         isPublished: true,
       };
       const result = await axios.post('/api/bounties/create/', newBounty);
-      await axios.post('/api/email/manual/createBounty', {
-        id: result?.data?.id,
-      });
+      // await axios.post('/api/email/manual/createBounty', {
+      //   id: result?.data?.id,
+      // });
       console.log(result?.data.id);
       setSlug(`/bounties/${result?.data?.slug}/`);
       onOpen();
@@ -155,6 +158,7 @@ function CreateListing({ bounty, isEditMode = false }: Props) {
         order: q.order,
         type: q.type,
       })),
+      region: regions,
       requirements: bountyRequirements,
       ...bountyPayment,
     };
@@ -163,11 +167,11 @@ function CreateListing({ bounty, isEditMode = false }: Props) {
         ...draft,
         isPublished: isEditMode ? bounty?.isPublished : false,
       });
-      if (isEditMode) {
-        await axios.post('/api/email/manual/bountyUpdate', {
-          id: bounty?.id,
-        });
-      }
+      // if (isEditMode) {
+      //   await axios.post('/api/email/manual/bountyUpdate', {
+      //     id: bounty?.id,
+      //   });
+      // }
       router.push('/dashboard/bounties');
     } catch (e) {
       setDraftLoading(false);
@@ -270,6 +274,8 @@ function CreateListing({ bounty, isEditMode = false }: Props) {
           )}
           {steps > 1 && listingType === 'BOUNTY' && (
             <CreateBounty
+              regions={regions}
+              setRegions={setRegions}
               setBountyRequirements={setBountyRequirements}
               bountyRequirements={bountyRequirements}
               createAndPublishListing={createAndPublishListing}
