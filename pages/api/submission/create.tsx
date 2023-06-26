@@ -29,6 +29,7 @@ export default async function submission(
     });
     res.status(200).json(result);
   } catch (error) {
+    console.log(error);
     res.status(400).json({
       error,
       message: 'Error occurred while adding a new submission.',
