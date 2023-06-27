@@ -327,6 +327,7 @@ export const CreatebountyBasic = ({
                 <option value={Regions.GERMANY}>Germany</option>
                 <option value={Regions.MEXICO}>Mexico</option>
                 <option value={Regions.TURKEY}>Turkey</option>
+                <option value={Regions.VIETNAM}>Vietnam</option>
                 <option value={Regions.UK}>UK</option>
               </Select>
             </FormControl>

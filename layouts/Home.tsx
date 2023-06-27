@@ -240,9 +240,9 @@ function Home(props: IDefaultProps) {
                                 String(router.query.slug).toLowerCase()
                             )?.region
                           }{' '}
-                          earnings page - find the most relevant bounties,
-                          grants and jobs to earn in global standards and gain
-                          membership in the most exclusive Solana community of{' '}
+                          earnings page — use these opportunities to earn in
+                          global standards and gain membership in the most
+                          exclusive Solana community of{' '}
                           {
                             Superteams.find(
                               (e) =>
@@ -250,6 +250,7 @@ function Home(props: IDefaultProps) {
                                 String(router.query.slug).toLowerCase()
                             )?.region
                           }
+                          !
                         </Text>
                       </Box>
 

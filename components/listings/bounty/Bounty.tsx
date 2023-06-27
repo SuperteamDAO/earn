@@ -113,6 +113,7 @@ function CreateListing({ bounty, isEditMode = false }: Props) {
           ? new Date(bountybasic?.deadline).toISOString()
           : undefined,
         description: editorData || '',
+        region: regions,
         eligibility: (questions || []).map((q) => ({
           question: q.question,
           order: q.order,

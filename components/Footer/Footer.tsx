@@ -198,6 +198,16 @@ export default function LargeWithNewsletter() {
             >
               Vietnam
             </Link>
+            <Link
+              color="brand.slate.500"
+              _hover={{
+                color: 'brand.slate.800',
+              }}
+              href={`${getURL()}regions/uk`}
+              isExternal
+            >
+              Uk
+            </Link>
           </Stack>
           <Stack align={'flex-start'}>
             <ListHeader>Superteam Productions</ListHeader>
