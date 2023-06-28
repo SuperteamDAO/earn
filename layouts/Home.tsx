@@ -126,7 +126,7 @@ function Home(props: IDefaultProps) {
     },
     {
       name: 'Superteam Vietnam',
-      bg: `/assets/category_assets/bg/blockchain.png`,
+      bg: `/assets/category_assets/bg/backend.png`,
       color: '#A8FEA8',
       icons: '/assets/superteams/vietnam.png',
       region: 'Vietnam',
@@ -219,7 +219,7 @@ function Home(props: IDefaultProps) {
                         />
                       </Center>
                       <Box
-                        w={{ md: '60%', base: '100%' }}
+                        w={{ md: '80%', base: '100%' }}
                         mt={{ base: 4, md: '0' }}
                       >
                         <Text fontFamily={'Domine'} fontWeight={'700'}>

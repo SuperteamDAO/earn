@@ -136,7 +136,7 @@ export const Footer = ({ style }: Props) => (
           href={`${getURL()}regions/uk`}
           isExternal
         >
-          Uk
+          UK
         </Link>
       </Stack>{' '}
       <Flex align="start" gap="0.625rem" flexFlow="column">

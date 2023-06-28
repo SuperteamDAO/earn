@@ -206,7 +206,7 @@ export default function LargeWithNewsletter() {
               href={`${getURL()}regions/uk`}
               isExternal
             >
-              Uk
+              UK
             </Link>
           </Stack>
           <Stack align={'flex-start'}>
