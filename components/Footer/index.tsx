@@ -1,6 +1,9 @@
 /* eslint-disable @next/next/no-img-element */
-import { Flex, Link, Text } from '@chakra-ui/react';
+import { Flex, Link, Stack, Text } from '@chakra-ui/react';
 import Image from 'next/image';
+import type { ReactNode } from 'react';
+
+import { getURL } from '@/utils/validUrl';
 
 const TwitterIcon = '/assets/talent/twitter.svg';
 const BookmarkIcon = '/assets/landingsponsor/icons/bookmark.svg';
@@ -8,6 +11,13 @@ const DiscordIcon = '/assets/landingsponsor/icons/discord.svg';
 
 type Props = {
   style?: any;
+};
+const ListHeader = ({ children }: { children: ReactNode }) => {
+  return (
+    <Text mb={2} color={'brand.slate.500'} fontSize={'lg'} fontWeight={'700'}>
+      {children}
+    </Text>
+  );
 };
 export const Footer = ({ style }: Props) => (
   <footer
@@ -66,38 +76,69 @@ export const Footer = ({ style }: Props) => (
           </a>
         </Flex>
       </Flex>
-
-      <Flex align="start" gap="0.625rem" flexFlow="column">
-        <Text mb="1.25rem" color="#4D4D4D" fontSize="1.125rem" fontWeight={700}>
-          All Superteams
-        </Text>
-        <Link mr="4" href="https://superteam.fun" isExternal>
-          <Text color="gray.400" fontSize="1.0625rem" fontWeight={400}>
-            India
-          </Text>
+      <Stack align={'flex-start'}>
+        <ListHeader>All Superteams</ListHeader>
+        <Link
+          color="brand.slate.500"
+          _hover={{
+            color: 'brand.slate.800',
+          }}
+          href={`${getURL()}regions/india`}
+          isExternal
+        >
+          India
         </Link>
-        <Link mr="4" href="https://vn.superteam.fun" isExternal>
-          <Text color="gray.400" fontSize="1.0625rem" fontWeight={400}>
-            Vietnam
-          </Text>
+        <Link
+          color="brand.slate.500"
+          _hover={{
+            color: 'brand.slate.800',
+          }}
+          href={`${getURL()}regions/germany`}
+          isExternal
+        >
+          Germany
         </Link>
-        <Link mr="4" href="https://tr.superteam.fun" isExternal>
-          <Text color="gray.400" fontSize="1.0625rem" fontWeight={400}>
-            Turkey
-          </Text>
+        <Link
+          color="brand.slate.500"
+          _hover={{
+            color: 'brand.slate.800',
+          }}
+          href={`${getURL()}regions/mexico`}
+          isExternal
+        >
+          Mexico
         </Link>
-        <Link mr="4" href="https://de.superteam.fun" isExternal>
-          <Text color="gray.400" fontSize="1.0625rem" fontWeight={400}>
-            Germany
-          </Text>
+        <Link
+          color="brand.slate.500"
+          _hover={{
+            color: 'brand.slate.800',
+          }}
+          href={`${getURL()}regions/turkey`}
+          isExternal
+        >
+          Turkey
         </Link>
-        <Link mr="4" href="https://mx.superteam.fun" isExternal>
-          <Text color="gray.400" fontSize="1.0625rem" fontWeight={400}>
-            Mexico
-          </Text>
+        <Link
+          color="brand.slate.500"
+          _hover={{
+            color: 'brand.slate.800',
+          }}
+          href={`${getURL()}regions/vietnam`}
+          isExternal
+        >
+          Vietnam
         </Link>
-      </Flex>
-
+        <Link
+          color="brand.slate.500"
+          _hover={{
+            color: 'brand.slate.800',
+          }}
+          href={`${getURL()}regions/uk`}
+          isExternal
+        >
+          Uk
+        </Link>
+      </Stack>{' '}
       <Flex align="start" gap="0.625rem" flexFlow="column">
         <Text mb="1.25rem" color="#4D4D4D" fontSize="1.125rem" fontWeight={700}>
           Superteam Productions
