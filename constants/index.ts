@@ -877,6 +877,8 @@ export const CommunityList: string[] = [
   'Superteam Vietnam',
   'Superteam Germany',
   'Superteam Turkey',
+  'Superteam UK',
+  'Superteam UAE',
   'SuperWomenDao',
   'DeveloperDAO',
   'Metacamp',
