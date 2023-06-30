@@ -1,4 +1,5 @@
 import { HStack, VStack } from '@chakra-ui/react';
+import { Regions } from '@prisma/client';
 import axios from 'axios';
 import type { GetServerSideProps } from 'next';
 import { useEffect, useState } from 'react';
@@ -59,6 +60,7 @@ function BountyDetails({ slug }: BountyDetailsProps) {
         <>
           <ListingHeader
             type={bounty?.type}
+            region={(bounty?.region as Regions) || Regions.GLOBAL}
             id={bounty?.id}
             status={bounty?.status}
             deadline={bounty?.deadline}

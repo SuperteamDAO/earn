@@ -1,8 +1,17 @@
-import { Box, Container, Flex, HStack } from '@chakra-ui/react';
+import {
+  Box,
+  Center,
+  Container,
+  Flex,
+  HStack,
+  Image,
+  Text,
+} from '@chakra-ui/react';
 import axios from 'axios';
 import { useRouter } from 'next/router';
 import type { ReactNode } from 'react';
 import React, { useEffect, useState } from 'react';
+import { Toaster } from 'react-hot-toast';
 
 import Banner from '@/components/home/Banner';
 import SideBar from '@/components/home/SideBar';
@@ -78,6 +87,51 @@ function Home(props: IDefaultProps) {
     'Mobile',
     'Fullstack',
   ];
+  const Superteams = [
+    {
+      name: 'Superteam Germany',
+      bg: `/assets/category_assets/bg/content.png`,
+      color: '#FEB8A8',
+      icons: '/assets/superteams/germany.jpg',
+      region: 'Germany',
+    },
+    {
+      name: 'Superteam UK',
+      bg: `/assets/category_assets/bg/growth.png`,
+      color: '#BFA8FE',
+      icons: '/assets/superteams/uk.png',
+      region: 'UK',
+    },
+    {
+      name: 'Superteam India',
+      bg: `/assets/category_assets/bg/design.png`,
+      color: '#FEFBA8',
+      icons: '/assets/superteams/india.jpg',
+      region: 'India',
+    },
+    {
+      name: 'Superteam Mexico',
+
+      bg: `/assets/category_assets/bg/frontend.png`,
+      color: '#FEA8EB',
+      icons: '/assets/superteams/mexico.jpg',
+      region: 'Mexico',
+    },
+    {
+      name: 'Superteam Turkey',
+      bg: `/assets/category_assets/bg/backend.png`,
+      color: '#FEEBA8',
+      icons: '/assets/superteams/turkey.jpg',
+      region: 'Turkey',
+    },
+    {
+      name: 'Superteam Vietnam',
+      bg: `/assets/category_assets/bg/backend.png`,
+      color: '#A8FEA8',
+      icons: '/assets/superteams/vietnam.png',
+      region: 'Vietnam',
+    },
+  ];
   return (
     <Default
       className="bg-white"
@@ -105,7 +159,9 @@ function Home(props: IDefaultProps) {
               <SearchLoading />
             ) : (
               <Box w="full">
-                {!userInfo?.id && <Banner />}
+                {!userInfo?.id && !router.asPath.includes('regions') && (
+                  <Banner />
+                )}
                 {showCategoryBanner && (
                   <CategoryBanner
                     type={
@@ -116,6 +172,91 @@ function Home(props: IDefaultProps) {
                       ) as string
                     }
                   />
+                )}
+                {router.asPath.includes('regions') && (
+                  <>
+                    <Flex
+                      direction={{ md: 'row', base: 'column' }}
+                      w={{ md: 'brand.120', base: '100%' }}
+                      h={{ md: '7.375rem', base: 'fit-content' }}
+                      mt={6}
+                      mb={8}
+                      mx={'auto'}
+                      p={6}
+                      bg={`url(${
+                        Superteams.find(
+                          (e) =>
+                            e.region.toLowerCase() ===
+                            String(router.query.slug).toLowerCase()
+                        )?.bg
+                      })`}
+                      bgSize={'cover'}
+                      rounded={10}
+                    >
+                      <Center
+                        w={14}
+                        h={14}
+                        mr={3}
+                        bg={
+                          Superteams.find(
+                            (e) =>
+                              e.region.toLowerCase() ===
+                              String(router.query.slug).toLowerCase()
+                          )?.color
+                        }
+                        rounded={'md'}
+                      >
+                        <Image
+                          borderRadius={'5px'}
+                          alt="Category icon"
+                          src={
+                            Superteams.find(
+                              (e) =>
+                                e.region.toLowerCase() ===
+                                String(router.query.slug).toLowerCase()
+                            )?.icons
+                          }
+                        />
+                      </Center>
+                      <Box
+                        w={{ md: '80%', base: '100%' }}
+                        mt={{ base: 4, md: '0' }}
+                      >
+                        <Text fontFamily={'Domine'} fontWeight={'700'}>
+                          {
+                            Superteams.find(
+                              (e) =>
+                                e.region.toLowerCase() ===
+                                String(router.query.slug).toLowerCase()
+                            )?.name
+                          }
+                        </Text>
+                        <Text color={'brand.slate.500'} fontSize={'small'}>
+                          Welcome to Superteam{' '}
+                          {
+                            Superteams.find(
+                              (e) =>
+                                e.region.toLowerCase() ===
+                                String(router.query.slug).toLowerCase()
+                            )?.region
+                          }{' '}
+                          earnings page — use these opportunities to earn in
+                          global standards and gain membership in the most
+                          exclusive Solana community of{' '}
+                          {
+                            Superteams.find(
+                              (e) =>
+                                e.region.toLowerCase() ===
+                                String(router.query.slug).toLowerCase()
+                            )?.region
+                          }
+                          !
+                        </Text>
+                      </Box>
+
+                      <Toaster />
+                    </Flex>
+                  </>
                 )}
                 {props.children}
               </Box>

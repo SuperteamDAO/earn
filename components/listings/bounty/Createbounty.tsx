@@ -1,4 +1,4 @@
-import type { BountyType } from '@prisma/client';
+import type { BountyType, Regions } from '@prisma/client';
 import type { Dispatch, SetStateAction } from 'react';
 import React from 'react';
 
@@ -40,6 +40,8 @@ interface Props {
   isEditMode: boolean;
   setBountyRequirements?: Dispatch<SetStateAction<any | undefined>>;
   bountyRequirements?: string | undefined;
+  regions: Regions;
+  setRegions: Dispatch<SetStateAction<Regions>>;
 }
 export const CreateBounty = ({
   steps,
@@ -65,6 +67,8 @@ export const CreateBounty = ({
   isEditMode,
   bountyRequirements,
   setBountyRequirements,
+  regions,
+  setRegions,
 }: Props) => {
   // handles the info from basic form
 
@@ -72,6 +76,8 @@ export const CreateBounty = ({
     <>
       {steps === 2 && (
         <CreatebountyBasic
+          regions={regions}
+          setRegions={setRegions}
           isEditMode={isEditMode}
           draftLoading={draftLoading}
           createDraft={createDraft}

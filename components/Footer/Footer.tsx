@@ -11,6 +11,8 @@ import {
 } from '@chakra-ui/react';
 import type { ReactNode } from 'react';
 
+import { getURL } from '@/utils/validUrl';
+
 const Logo = (props: any) => {
   return (
     <Image
@@ -151,7 +153,7 @@ export default function LargeWithNewsletter() {
               _hover={{
                 color: 'brand.slate.800',
               }}
-              href="https://superteam.fun"
+              href={`${getURL()}regions/india`}
               isExternal
             >
               India
@@ -161,7 +163,7 @@ export default function LargeWithNewsletter() {
               _hover={{
                 color: 'brand.slate.800',
               }}
-              href="https://de.superteam.fun"
+              href={`${getURL()}regions/germany`}
               isExternal
             >
               Germany
@@ -171,7 +173,7 @@ export default function LargeWithNewsletter() {
               _hover={{
                 color: 'brand.slate.800',
               }}
-              href="https://mx.superteam.fun"
+              href={`${getURL()}regions/mexico`}
               isExternal
             >
               Mexico
@@ -181,7 +183,7 @@ export default function LargeWithNewsletter() {
               _hover={{
                 color: 'brand.slate.800',
               }}
-              href="https://tr.superteam.fun"
+              href={`${getURL()}regions/turkey`}
               isExternal
             >
               Turkey
@@ -191,10 +193,20 @@ export default function LargeWithNewsletter() {
               _hover={{
                 color: 'brand.slate.800',
               }}
-              href="https://vn.superteam.fun"
+              href={`${getURL()}regions/vietnam`}
               isExternal
             >
               Vietnam
+            </Link>
+            <Link
+              color="brand.slate.500"
+              _hover={{
+                color: 'brand.slate.800',
+              }}
+              href={`${getURL()}regions/uk`}
+              isExternal
+            >
+              UK
             </Link>
           </Stack>
           <Stack align={'flex-start'}>
