@@ -49,9 +49,9 @@ export default async function user(req: NextApiRequest, res: NextApiResponse) {
           ...skillsFilter,
         },
         take,
-        orderBy: {
-          deadline: 'asc',
-        },
+        // orderBy: {
+        //   deadline: 'asc',
+        // },
         include: {
           sponsor: {
             select: {
@@ -63,7 +63,12 @@ export default async function user(req: NextApiRequest, res: NextApiResponse) {
         },
       });
 
-      result.bounties = bounties;
+      const sortedData = bounties
+        .sort((a, b) => {
+          return dayjs(a.deadline).diff(dayjs(b.deadline));
+        })
+        .slice(0, take);
+      result.bounties = sortedData;
     } else if (category === 'bounties') {
       const bounties = await prisma.bounties.findMany({
         where: {
@@ -85,9 +90,9 @@ export default async function user(req: NextApiRequest, res: NextApiResponse) {
           ...skillsFilter,
         },
         take,
-        orderBy: {
-          deadline: 'desc',
-        },
+        // orderBy: {
+        //   deadline: 'desc',
+        // },
         include: {
           sponsor: {
             select: {
@@ -98,15 +103,19 @@ export default async function user(req: NextApiRequest, res: NextApiResponse) {
           },
         },
       });
-      const splitIndex = bounties.findIndex((bounty) =>
+      const sortedData = bounties.sort((a, b) => {
+        return dayjs(b.deadline).diff(dayjs(a.deadline));
+      });
+      const splitIndex = sortedData.findIndex((bounty) =>
         dayjs().isAfter(dayjs(bounty?.deadline))
       );
       if (splitIndex >= 0) {
-        const bountiesOpen = bounties.slice(0, splitIndex).reverse();
-        const bountiesClosed = bounties.slice(splitIndex);
+        const bountiesOpen = sortedData.slice(0, splitIndex).reverse();
+        const bountiesClosed = sortedData.slice(splitIndex);
+
         result.bounties = [...bountiesOpen, ...bountiesClosed];
       } else {
-        result.bounties = bounties;
+        result.bounties = sortedData.slice(0, take);
       }
     }
 
