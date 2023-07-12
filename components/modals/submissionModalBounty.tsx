@@ -55,6 +55,7 @@ export const SubmissionModal = ({
     register,
     handleSubmit,
     formState: { errors },
+    watch,
   } = useForm();
 
   const submitSubmissions = async (data: any) => {
@@ -227,9 +228,21 @@ export const SubmissionModal = ({
                   _placeholder={{ color: 'brand.slate.300' }}
                   focusBorderColor="brand.purple"
                   id="otherInfo"
+                  maxLength={220}
                   placeholder="Add info or link"
                   {...register('otherInfo')}
                 />
+                <Text
+                  color={
+                    (watch('otherInfo')?.length || 0) > 200
+                      ? 'red'
+                      : 'brand.slate.400'
+                  }
+                  fontSize={'xs'}
+                  textAlign="right"
+                >
+                  {220 - (watch('otherInfo')?.length || 0)} characters left
+                </Text>
                 <FormErrorMessage>
                   {errors.otherInfo ? <>{errors.otherInfo.message}</> : <></>}
                 </FormErrorMessage>
