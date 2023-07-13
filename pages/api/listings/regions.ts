@@ -9,7 +9,6 @@ export default async function user(req: NextApiRequest, res: NextApiResponse) {
   const category = params.category as string;
   const filter = params.filter as string;
   const region = params.region as string;
-  console.log(region.toUpperCase() === Regions.GERMANY, '----region');
   const take = params.take ? parseInt(params.take as string, 10) : 10;
   const result: any = {
     bounties: [],
@@ -28,30 +27,23 @@ export default async function user(req: NextApiRequest, res: NextApiResponse) {
     ? { skills: { contains: filter.split(',')[0] } }
     : {};
   try {
+    console.log(region, region.toUpperCase() === Regions.MEXICO);
     if (!category || category === 'all') {
+      console.log('this2');
       const bounties = await prisma.bounties.findMany({
         where: {
           isPublished: true,
           isActive: true,
           isArchived: false,
           status: 'OPEN',
-          OR: [
-            {
-              region: region.toUpperCase() as Regions,
-            },
-            {
-              region: Regions.GLOBAL,
-            },
-          ],
+          region: {
+            in: [region.toUpperCase() as Regions, Regions.GLOBAL],
+          },
           deadline: {
             gte: dayjs().toISOString(),
           },
           ...skillsFilter,
         },
-        take,
-        // orderBy: {
-        //   deadline: 'asc',
-        // },
         include: {
           sponsor: {
             select: {
@@ -76,14 +68,9 @@ export default async function user(req: NextApiRequest, res: NextApiResponse) {
           isActive: true,
           isArchived: false,
           status: 'OPEN',
-          OR: [
-            {
-              region: region.toUpperCase() as Regions,
-            },
-            {
-              region: Regions.GLOBAL,
-            },
-          ],
+          region: {
+            in: [region.toUpperCase() as Regions, Regions.GLOBAL],
+          },
           deadline: {
             gte: dayjs().subtract(1, 'month').toISOString(),
           },
@@ -103,6 +90,7 @@ export default async function user(req: NextApiRequest, res: NextApiResponse) {
           },
         },
       });
+      console.log('this');
       const sortedData = bounties.sort((a, b) => {
         return dayjs(b.deadline).diff(dayjs(a.deadline));
       });
@@ -127,7 +115,6 @@ export default async function user(req: NextApiRequest, res: NextApiResponse) {
           isArchived: false,
           ...skillsFilter,
         },
-        take,
         orderBy: {
           updatedAt: 'desc',
         },

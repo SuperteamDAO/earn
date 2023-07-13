@@ -33,7 +33,17 @@ export default async function user(req: NextApiRequest, res: NextApiResponse) {
           isActive: true,
           isArchived: false,
           status: 'OPEN',
-          region: Regions.GLOBAL,
+          region: {
+            in: [
+              Regions.GLOBAL,
+              Regions.GERMANY,
+              Regions.INDIA,
+              Regions.MEXICO,
+              Regions.VIETNAM,
+              Regions.UK,
+              Regions.TURKEY,
+            ],
+          },
           deadline: {
             gte: dayjs().toISOString(),
           },
@@ -66,7 +76,17 @@ export default async function user(req: NextApiRequest, res: NextApiResponse) {
           isActive: true,
           isArchived: false,
           status: 'OPEN',
-          region: Regions.GLOBAL,
+          region: {
+            in: [
+              Regions.GLOBAL,
+              Regions.GERMANY,
+              Regions.INDIA,
+              Regions.MEXICO,
+              Regions.VIETNAM,
+              Regions.UK,
+              Regions.TURKEY,
+            ],
+          },
           deadline: {
             gte: dayjs().subtract(1, 'month').toISOString(),
           },
