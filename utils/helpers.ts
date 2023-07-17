@@ -17,8 +17,7 @@ export const genrateuuid = () => {
   return id;
 };
 
-export const generateCode = (seed: string | undefined) => {
-  const time = Date.now();
+export const generateCode = (seed: string | undefined, time: number) => {
   const message = Math.floor(time / 5000);
   const decoder = new base32.Encoder({ type: 'crockford', lc: true });
   const hash = Crypto.HmacSHA1(
@@ -33,9 +32,9 @@ export const generateCode = (seed: string | undefined) => {
   }
   return code;
 };
-export const generateCodeLast = (seed: String | undefined) => {
-  const time = Date.now() - 5000;
-  const message = Math.floor(time / 5000);
+export const generateCodeLast = (seed: string | undefined, time: number) => {
+  const pastTime = time - 5000;
+  const message = Math.floor(pastTime / 5000);
   const decoder = new base32.Encoder({ type: 'crockford', lc: true });
   const hash = Crypto.HmacSHA1(
     message.toString(),
