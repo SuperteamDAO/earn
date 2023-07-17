@@ -15,12 +15,11 @@ import {
 import type { BountyType } from '@prisma/client';
 import parse from 'html-react-parser';
 import { useRouter } from 'next/router';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { toast, Toaster } from 'react-hot-toast';
 import { TiTick } from 'react-icons/ti';
 
 import type { BountyStatus } from '@/interface/bounty';
-import type { Notifications } from '@/interface/user';
 import { dayjs } from '@/utils/dayjs';
 import { Mixpanel } from '@/utils/mixpanel';
 
@@ -507,6 +506,16 @@ export const CategoryBanner = ({ type }: { type: string }) => {
   const { userInfo } = userStore();
   const { talentInfo } = TalentStore();
   const [loading, setLoading] = useState(false);
+  const [isSubscribed, setIsSubscribed] = useState<boolean>(false);
+
+  const { isOpen, onClose, onOpen } = useDisclosure();
+
+  useEffect(() => {
+    setIsSubscribed(
+      userInfo?.notifications?.some((e) => e.label === type) || false
+    );
+  }, [userInfo, type]);
+
   const categoryAssets: CategoryAssetsType = {
     Design: {
       bg: `/assets/category_assets/bg/design.png`,
@@ -552,7 +561,44 @@ export const CategoryBanner = ({ type }: { type: string }) => {
       icon: '/assets/category_assets/icon/contract.png',
     },
   };
-  const { isOpen, onClose, onOpen } = useDisclosure();
+
+  const handleNotification = async () => {
+    setLoading(true);
+
+    let updatedNotifications = [...(userInfo?.notifications ?? [])];
+    let subscriptionMessage = '';
+    let eventName = '';
+
+    if (!userInfo?.isTalentFilled) {
+      onOpen();
+      setLoading(false);
+      return;
+    }
+
+    if (isSubscribed) {
+      updatedNotifications = updatedNotifications.filter(
+        (e) => e.label !== type
+      );
+      subscriptionMessage = "You've been unsubscribed from this category";
+      eventName = 'notification_removed';
+      setIsSubscribed(false);
+    } else {
+      updatedNotifications.push({ label: type, timestamp: Date.now() });
+      subscriptionMessage = "You've been subscribed to this category";
+      eventName = 'notification_added';
+      setIsSubscribed(true);
+    }
+
+    await updateNotification(userInfo?.id as string, updatedNotifications);
+
+    Mixpanel.track(eventName, {
+      category: type,
+      name: `${talentInfo?.firstname} ${talentInfo?.lastname}`,
+    });
+
+    setLoading(false);
+    toast.success(subscriptionMessage);
+  };
 
   return (
     <>
@@ -597,74 +643,11 @@ export const CategoryBanner = ({ type }: { type: string }) => {
           border={'1px solid'}
           borderColor={'brand.slate.500'}
           isLoading={loading}
-          leftIcon={
-            userInfo?.notifications?.find((e) => e?.label === type) ? (
-              <TiTick />
-            ) : (
-              <BellIcon />
-            )
-          }
-          onClick={async () => {
-            if (!userInfo?.isTalentFilled) {
-              onOpen();
-              return;
-            }
-            if (userInfo?.notifications === null) {
-              setLoading(true);
-              await updateNotification(userInfo?.id as string, [
-                {
-                  label: type ?? '',
-                  timestamp: Date.now(),
-                },
-              ]);
-              Mixpanel.track('notification_added', {
-                category: type,
-                name: `${talentInfo?.firstname} ${talentInfo?.lastname}`,
-              });
-              setLoading(false);
-
-              toast.success("You've been subscribed to this category");
-              return;
-            }
-
-            if (userInfo?.notifications?.find((e) => e.label === type)) {
-              setLoading(true);
-              const notification: Notifications[] = [];
-
-              userInfo?.notifications?.forEach((e) => {
-                if (e.label !== type) {
-                  notification.push({
-                    label: e.label,
-                    timestamp: Date.now(),
-                  });
-                }
-              });
-              await updateNotification(userInfo?.id as string, notification);
-              setLoading(false);
-              toast.success("You've been unsubscribed from this category");
-              return;
-            }
-
-            setLoading(true);
-            await updateNotification(userInfo?.id as string, [
-              ...(userInfo?.notifications as Notifications[]),
-              {
-                label: type,
-                timestamp: Date.now(),
-              },
-            ]);
-            Mixpanel.track('notification_added', {
-              category: type,
-              name: `${talentInfo?.firstname} ${talentInfo?.lastname}`,
-            });
-            setLoading(false);
-            toast.success("You've been subscribed to this category");
-          }}
+          leftIcon={isSubscribed ? <TiTick /> : <BellIcon />}
+          onClick={handleNotification}
           variant="solid"
         >
-          {userInfo?.notifications?.find((e) => e.label === type)
-            ? 'Subscribed'
-            : 'Notify Me'}
+          {isSubscribed ? 'Subscribed' : 'Notify Me'}
         </Button>
         <Toaster />
       </Flex>
