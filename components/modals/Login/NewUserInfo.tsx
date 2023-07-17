@@ -69,15 +69,16 @@ function NewUserInfo({
 
   const sendOTPEmail = async (user: User) => {
     setUserInfo({ ...userInfo, ...user });
-    await axios.post('/api/otp/send', {
+    const response = await axios.post('/api/otp/send', {
       publicKey: userInfo?.publicKey,
       email: userDetails?.email,
     });
+    const serverTime = response.data.time;
     Mixpanel.track('otp_sent', {
       email: userDetails?.email,
     });
-    const code = generateCode(userInfo?.publicKey);
-    const codeLast = generateCodeLast(userInfo?.publicKey);
+    const code = generateCode(userInfo?.publicKey, serverTime);
+    const codeLast = generateCodeLast(userInfo?.publicKey, serverTime);
     setOtp({
       current: code,
       last: codeLast,

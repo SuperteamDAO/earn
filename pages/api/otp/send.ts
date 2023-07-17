@@ -6,7 +6,8 @@ import sgMail from '@/utils/sendgrid';
 export default async function send(req: NextApiRequest, res: NextApiResponse) {
   const { publicKey, email } = req.body;
   try {
-    const code = generateCode(publicKey as string);
+    const serverTime = Date.now();
+    const code = generateCode(publicKey as string, serverTime);
     const msg = {
       to: email,
       from: {
@@ -19,7 +20,9 @@ export default async function send(req: NextApiRequest, res: NextApiResponse) {
       },
     };
     await sgMail.send(msg);
-    res.status(200).json({ message: 'OTP sent successfully.' });
+    res
+      .status(200)
+      .json({ message: 'OTP sent successfully.', time: serverTime });
   } catch (error) {
     res.status(400).json({
       error,
