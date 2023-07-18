@@ -265,11 +265,10 @@ export const CreatebountyBasic = ({
             placeholder="Choose the type of bounty"
             value={bountyBasic?.type}
           >
-            <option value="open">
-              Permissionless Bounty - anyone can apply
-            </option>
+            <option value="open">Open Bounty - anyone can apply</option>
             <option value="permissioned">
-              Permissioned Bounty - only selected people can work on the bounty
+              Application Based Bounty - only the people selected by you can
+              work on the bounty
             </option>
           </Select>
           <FormErrorMessage>
