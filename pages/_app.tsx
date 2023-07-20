@@ -27,8 +27,6 @@ import type { AppProps } from 'next/app';
 import { Router } from 'next/router';
 import NProgress from 'nprogress';
 
-import Snackbar from '@/components/Header/Snackbar';
-
 import theme from '../config/chakra.config';
 import { Wallet } from '../context/connectWalletContext';
 
@@ -44,10 +42,7 @@ function MyApp({ Component, pageProps }: AppProps) {
           <QueryClientProvider client={queryClient}>
             <Hydrate state={pageProps.dehydratedState}>
               <ReactQueryDevtools initialIsOpen={false} />
-              <>
-                <Snackbar />
-                <Component {...pageProps} />
-              </>
+              <Component {...pageProps} />
             </Hydrate>
           </QueryClientProvider>
         </Wallet>
