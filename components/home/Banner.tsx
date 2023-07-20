@@ -10,6 +10,8 @@ import {
 } from '@chakra-ui/react';
 import type { Wallet as SolanaWallet } from '@solana/wallet-adapter-react';
 import { useWallet } from '@solana/wallet-adapter-react';
+import axios from 'axios';
+import React, { useEffect, useState } from 'react';
 
 import { userStore } from '@/store/user';
 import { Mixpanel } from '@/utils/mixpanel';
@@ -22,6 +24,15 @@ function DesktopBanner() {
   const { isOpen, onOpen, onClose } = useDisclosure();
   const { wallets, select } = useWallet();
   const { setUserInfo, userInfo } = userStore();
+
+  const [usersCount, setUsersCount] = useState(null);
+
+  useEffect(() => {
+    axios
+      .get('/api/user/count')
+      .then((response) => setUsersCount(response.data.totalUsers))
+      .catch((error) => console.error('Error:', error));
+  }, []);
 
   const onConnectWallet = async (solanaWallet: SolanaWallet) => {
     try {
@@ -96,7 +107,7 @@ function DesktopBanner() {
             />
           </AvatarGroup>
           <Text ml={'0.6875rem'} fontSize={'0.875rem'}>
-            Join 673+ others
+            Join {usersCount}+ others
           </Text>
         </Flex>
       </Box>
