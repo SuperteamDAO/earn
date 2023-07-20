@@ -59,7 +59,7 @@ export const Comments = ({ refId, refType }: Props) => {
           });
         }
       }
-      setComments([newCommentData.data, ...comments]);
+      setComments((prevComments) => [newCommentData.data, ...prevComments]);
       setNewComment('');
       setNewCommentLoading(false);
     } catch (e) {
