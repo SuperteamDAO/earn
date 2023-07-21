@@ -134,6 +134,23 @@ function DetailSideCard({
     }
   };
 
+  const countDownRenderer = ({
+    days,
+    hours,
+    minutes,
+    seconds,
+  }: {
+    days: number;
+    hours: number;
+    minutes: number;
+    seconds: number;
+  }) => {
+    if (days > 0) {
+      return <span>{`${days}d:${hours}h:${minutes}m`}</span>;
+    }
+    return <span>{`${hours}h:${minutes}m:${seconds}s`}</span>;
+  };
+
   return (
     <>
       {isOpen && (
@@ -457,7 +474,11 @@ function DetailSideCard({
                 />
                 <VStack align={'start'}>
                   <Text color={'#000000'} fontSize="1.3rem" fontWeight={500}>
-                    <Countdown date={endingTime} zeroPadDays={1} />
+                    <Countdown
+                      date={endingTime}
+                      renderer={countDownRenderer}
+                      zeroPadDays={1}
+                    />
                   </Text>
                   <Text mt={'0px !important'} color={'#94A3B8'}>
                     Remaining
