@@ -17,9 +17,10 @@ import { Mixpanel } from '@/utils/mixpanel';
 
 interface BountyDetailsProps {
   slug: string;
+  bounty: Bounty | null;
 }
 
-function BountyDetails({ slug }: BountyDetailsProps) {
+function BountyDetails({ slug, bounty: initialBounty }: BountyDetailsProps) {
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState(false);
 
@@ -48,10 +49,12 @@ function BountyDetails({ slug }: BountyDetailsProps) {
     <Default
       meta={
         <head>
-          <title>{`${bounty?.title || 'Bounty'} | Superteam Earn`}</title>
+          <title>{`${
+            initialBounty?.title || 'Bounty'
+          } | Superteam Earn`}</title>
           <meta
             property="og:image"
-            content={`https://earn-frontend-v2-git-feat-og-image-superteam-earn.vercel.app/api/ognew/?title=${bounty?.title}&reward=${bounty?.rewardAmount}&type=${bounty?.type}`}
+            content={`https://earn-frontend-v2-git-feat-og-image-superteam-earn.vercel.app/api/ognew/?title=${initialBounty?.title}&reward=${initialBounty?.rewardAmount}&type=${initialBounty?.type}`}
           />
         </head>
       }
@@ -114,8 +117,23 @@ function BountyDetails({ slug }: BountyDetailsProps) {
 
 export const getServerSideProps: GetServerSideProps = async (context) => {
   const { slug } = context.query;
+
+  let bountyData;
+  try {
+    const bountyDetails = await axios.get(
+      `https://beta.earn.superteam.fun/api/bounties/${slug}/`
+    );
+    bountyData = bountyDetails.data;
+  } catch (e) {
+    console.error(e);
+    bountyData = null;
+  }
+
   return {
-    props: { slug },
+    props: {
+      slug,
+      bounty: bountyData,
+    },
   };
 };
 
