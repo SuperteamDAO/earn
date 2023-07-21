@@ -25,25 +25,23 @@ export default async function handler(request: NextRequest) {
     ]);
 
     const hasTitle = searchParams.has('title');
-    const title = hasTitle
-      ? searchParams.get('title')?.slice(0, 100)
-      : 'My default title';
+    const title = hasTitle ? searchParams.get('title')?.slice(0, 100) : null;
 
     const hasLogo = searchParams.has('logo');
     const logo = hasLogo ? searchParams.get('logo')?.slice(0, 100) : sponsorImg;
 
     const hasType = searchParams.has('type');
-    const type = hasType ? searchParams.get('type')?.slice(0, 100) : 'type';
+    const type = hasType ? searchParams.get('type')?.slice(0, 100) : null;
 
     const hasReward = searchParams.has('reward');
     const reward = hasReward
       ? `$${searchParams.get('reward')?.slice(0, 100)} USDC`
-      : '$1000 USDC';
+      : null;
 
     const hasSponsor = searchParams.has('sponsor');
     const sponsor = hasSponsor
       ? searchParams.get('sponsor')?.slice(0, 100)
-      : 'sponsor';
+      : null;
 
     return new ImageResponse(
       (
@@ -97,18 +95,20 @@ export default async function handler(request: NextRequest) {
                   width="64px"
                   height="64px"
                 />
-                <div
-                  style={{
-                    fontSize: 36,
-                    fontStyle: 'normal',
-                    color: '#94A3B8',
-                    lineHeight: 1.4,
-                    whiteSpace: 'pre-wrap',
-                    marginLeft: 16,
-                  }}
-                >
-                  {sponsor}
-                </div>
+                {sponsor && (
+                  <div
+                    style={{
+                      fontSize: 36,
+                      fontStyle: 'normal',
+                      color: '#94A3B8',
+                      lineHeight: 1.4,
+                      whiteSpace: 'pre-wrap',
+                      marginLeft: 16,
+                    }}
+                  >
+                    {sponsor}
+                  </div>
+                )}
               </div>
 
               <svg
@@ -154,18 +154,20 @@ export default async function handler(request: NextRequest) {
                 />
               </svg>
             </div>
-            <div
-              style={{
-                fontSize: 48,
-                fontStyle: 'normal',
-                color: 'black',
-                lineHeight: 1.4,
-                whiteSpace: 'pre-wrap',
-                fontFamily: '"Inter"',
-              }}
-            >
-              {title}
-            </div>
+            {title && (
+              <div
+                style={{
+                  fontSize: 48,
+                  fontStyle: 'normal',
+                  color: 'black',
+                  lineHeight: 1.4,
+                  whiteSpace: 'pre-wrap',
+                  fontFamily: '"Inter"',
+                }}
+              >
+                {title}
+              </div>
+            )}
             <div
               style={{
                 display: 'flex',
@@ -201,7 +203,7 @@ export default async function handler(request: NextRequest) {
                     padding: '12px 60px',
                   }}
                 >
-                  {type?.toUpperCase()}
+                  type && {type?.toUpperCase()}
                 </div>
                 <div
                   style={{
@@ -243,7 +245,7 @@ export default async function handler(request: NextRequest) {
                       marginLeft: 20,
                     }}
                   >
-                    {reward}
+                    reward && {reward}
                   </div>
                 </div>
               </div>
