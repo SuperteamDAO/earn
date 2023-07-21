@@ -49,7 +49,10 @@ function BountyDetails({ slug }: BountyDetailsProps) {
       meta={
         <head>
           <title>{`${bounty?.title || 'Bounty'} | Superteam Earn`}</title>
-          <meta property="og:image" />
+          <meta
+            property="og:image"
+            content={`https://earn-frontend-v2-git-feat-og-image-superteam-earn.vercel.app/api/ognew/?title=${bounty?.title}&reward=${bounty?.rewardAmount}&type=${bounty?.type}`}
+          />
         </head>
       }
     >
