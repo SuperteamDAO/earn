@@ -106,9 +106,11 @@ function DesktopBanner() {
               src="https://res.cloudinary.com/dgvnuwspr/image/upload/v1683135395/People%20DPs/recb4gDjdKoFDAyo7.png"
             />
           </AvatarGroup>
-          <Text ml={'0.6875rem'} fontSize={'0.875rem'}>
-            Join {usersCount}+ others
-          </Text>
+          {usersCount && (
+            <Text ml={'0.6875rem'} fontSize={'0.875rem'}>
+              Join {usersCount}+ others
+            </Text>
+          )}
         </Flex>
       </Box>
     </>
@@ -209,9 +211,11 @@ function MobileBanner() {
               src="https://res.cloudinary.com/dgvnuwspr/image/upload/v1683135395/People%20DPs/recb4gDjdKoFDAyo7.png"
             />
           </AvatarGroup>
-          <Text ml={'0.6875rem'} fontSize={'0.875rem'}>
-            Join {usersCount}+ others
-          </Text>
+          {usersCount && (
+            <Text ml={'0.6875rem'} fontSize={'0.875rem'}>
+              Join {usersCount}+ others
+            </Text>
+          )}
         </Flex>
       </Flex>
     </>

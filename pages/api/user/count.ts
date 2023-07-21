@@ -8,13 +8,18 @@ export default async function getUsersCount(
 ) {
   if (req.method === 'GET') {
     try {
-      const usersCount = await prisma.user.count();
+      const usersCount = await prisma.user.count({
+        where: {
+          isVerified: true,
+        },
+      });
+
       res.status(200).json({ totalUsers: usersCount });
     } catch (error: any) {
       console.error('Error:', error);
       res
         .status(500)
-        .json({ error: 'Failed to get the total number of users.' });
+        .json({ error: 'Failed to get the total number of verified users.' });
     }
   } else {
     res
