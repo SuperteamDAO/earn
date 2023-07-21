@@ -191,20 +191,22 @@ export default async function handler(request: NextRequest) {
                   justifyItems: 'center',
                 }}
               >
-                <div
-                  style={{
-                    fontSize: 20,
-                    fontStyle: 'normal',
-                    color: '#A788FF',
-                    lineHeight: 1.4,
-                    whiteSpace: 'pre-wrap',
-                    backgroundColor: '#e9e9ff',
-                    borderRadius: '35px',
-                    padding: '12px 60px',
-                  }}
-                >
-                  type && {type?.toUpperCase()}
-                </div>
+                {type && (
+                  <div
+                    style={{
+                      fontSize: 20,
+                      fontStyle: 'normal',
+                      color: '#A788FF',
+                      lineHeight: 1.4,
+                      whiteSpace: 'pre-wrap',
+                      backgroundColor: '#e9e9ff',
+                      borderRadius: '35px',
+                      padding: '12px 60px',
+                    }}
+                  >
+                    {type?.toUpperCase()}
+                  </div>
+                )}
                 <div
                   style={{
                     display: 'flex',
@@ -234,19 +236,21 @@ export default async function handler(request: NextRequest) {
                       fill="white"
                     />
                   </svg>
-                  <div
-                    style={{
-                      fontSize: 32,
-                      fontStyle: 'normal',
-                      color: '#334254',
-                      lineHeight: 1.4,
-                      whiteSpace: 'pre-wrap',
-                      fontFamily: '"Inter"',
-                      marginLeft: 20,
-                    }}
-                  >
-                    reward && {reward}
-                  </div>
+                  {reward && (
+                    <div
+                      style={{
+                        fontSize: 32,
+                        fontStyle: 'normal',
+                        color: '#334254',
+                        lineHeight: 1.4,
+                        whiteSpace: 'pre-wrap',
+                        fontFamily: '"Inter"',
+                        marginLeft: 20,
+                      }}
+                    >
+                      {reward}
+                    </div>
+                  )}
                 </div>
               </div>
             </div>
