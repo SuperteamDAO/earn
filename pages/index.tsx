@@ -1,13 +1,5 @@
 /* eslint-disable no-nested-ternary */
-import {
-  Box,
-  Flex,
-  Tab,
-  TabList,
-  Tabs,
-  Text,
-  useMediaQuery,
-} from '@chakra-ui/react';
+import { Box, Flex, useMediaQuery } from '@chakra-ui/react';
 import axios from 'axios';
 import type { NextPage } from 'next';
 import { useEffect, useState } from 'react';
@@ -82,31 +74,12 @@ const HomePage: NextPage = () => {
   return (
     <Home>
       <Box w={'100%'}>
-        <Box>
-          <Flex align={'center'}>
-            <Text
-              color={'#334155'}
-              fontSize={{ base: 14, md: 16 }}
-              fontWeight={'600'}
-            >
-              Bounties
-            </Text>
-            <Text
-              display={['none', 'none', 'block', 'block']}
-              mx={3}
-              color={'brand.slate.300'}
-              fontSize={'xxs'}
-            >
-              |
-            </Text>
-            <Tabs>
-              <TabList>
-                <Tab>OPEN</Tab>
-                <Tab>IN REVIEW</Tab>
-                <Tab>ANNOUNCED</Tab>
-              </TabList>
-            </Tabs>
-          </Flex>
+        <ListingSection
+          type="bounties"
+          title="Active Bounties"
+          sub="Bite sized tasks for freelancers"
+          emoji="/assets/home/emojis/moneyman.png"
+        >
           {isListingsLoading && (
             <Flex align="center" justify="center" direction="column" minH={52}>
               <Loading />
@@ -120,25 +93,23 @@ const HomePage: NextPage = () => {
               />
             </Flex>
           )}
-          <Flex direction={'column'} rowGap={'2.625rem'}>
-            {!isListingsLoading &&
-              listings?.bounties?.map((bounty) => {
-                return (
-                  <BountiesCard
-                    slug={bounty.slug}
-                    rewardAmount={bounty?.rewardAmount}
-                    key={bounty?.id}
-                    sponsorName={bounty?.sponsor?.name}
-                    deadline={bounty?.deadline}
-                    title={bounty?.title}
-                    logo={bounty?.sponsor?.logo}
-                    token={bounty?.token}
-                    type={bounty?.type}
-                  />
-                );
-              })}
-          </Flex>
-        </Box>
+          {!isListingsLoading &&
+            listings?.bounties?.map((bounty) => {
+              return (
+                <BountiesCard
+                  slug={bounty.slug}
+                  rewardAmount={bounty?.rewardAmount}
+                  key={bounty?.id}
+                  sponsorName={bounty?.sponsor?.name}
+                  deadline={bounty?.deadline}
+                  title={bounty?.title}
+                  logo={bounty?.sponsor?.logo}
+                  token={bounty?.token}
+                  type={bounty?.type}
+                />
+              );
+            })}
+        </ListingSection>
 
         <ListingSection
           type="grants"
