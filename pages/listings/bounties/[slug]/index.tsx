@@ -2,6 +2,7 @@ import { HStack, VStack } from '@chakra-ui/react';
 import { Regions } from '@prisma/client';
 import axios from 'axios';
 import type { GetServerSideProps } from 'next';
+import Head from 'next/head';
 import { useEffect, useState } from 'react';
 
 import BountyWinners from '@/components/listings/bounty/BountyWinners';
@@ -48,17 +49,17 @@ function BountyDetails({ slug, bounty: initialBounty }: BountyDetailsProps) {
   return (
     <Default
       meta={
-        <head>
+        <Head>
           <title>{`${
             initialBounty?.title || 'Bounty'
           } | Superteam Earn`}</title>
           <meta
             property="og:image"
-            content={`https://earn-frontend-v2-git-feat-og-image-superteam-earn.vercel.app/api/ognew/?title=${initialBounty?.title}&reward=${initialBounty?.rewardAmount}&type=${initialBounty?.type}&sponsor=${initialBounty?.sponsor?.name}`}
+            content={`https://earn-frontend-v2-git-feat-og-image-superteam-earn.vercel.app/api/ognew/?title=${initialBounty?.title}&reward=${initialBounty?.rewardAmount}&type=${initialBounty?.type}&sponsor=${initialBounty?.sponsor?.name}&logo=${initialBounty?.sponsor?.logo}`}
           />
           <meta
             property="twitter:image"
-            content={`https://earn-frontend-v2-git-feat-og-image-superteam-earn.vercel.app/api/ognew/?title=${initialBounty?.title}&reward=${initialBounty?.rewardAmount}&type=${initialBounty?.type}&sponsor=${initialBounty?.sponsor?.name}`}
+            content={`https://earn-frontend-v2-git-feat-og-image-superteam-earn.vercel.app/api/ognew/?title=${initialBounty?.title}&reward=${initialBounty?.rewardAmount}&type=${initialBounty?.type}&sponsor=${initialBounty?.sponsor?.name}&logo=${initialBounty?.sponsor?.logo}`}
           />
           <meta charSet="UTF-8" key="charset" />
           <meta
@@ -66,7 +67,7 @@ function BountyDetails({ slug, bounty: initialBounty }: BountyDetailsProps) {
             content="width=device-width,initial-scale=1"
             key="viewport"
           />
-        </head>
+        </Head>
       }
     >
       {isLoading && <LoadingSection />}
