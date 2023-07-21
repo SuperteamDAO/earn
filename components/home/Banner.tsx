@@ -10,6 +10,8 @@ import {
 } from '@chakra-ui/react';
 import type { Wallet as SolanaWallet } from '@solana/wallet-adapter-react';
 import { useWallet } from '@solana/wallet-adapter-react';
+import axios from 'axios';
+import React, { useEffect, useState } from 'react';
 
 import { userStore } from '@/store/user';
 import { Mixpanel } from '@/utils/mixpanel';
@@ -22,6 +24,15 @@ function DesktopBanner() {
   const { isOpen, onOpen, onClose } = useDisclosure();
   const { wallets, select } = useWallet();
   const { setUserInfo, userInfo } = userStore();
+
+  const [usersCount, setUsersCount] = useState(null);
+
+  useEffect(() => {
+    axios
+      .get('/api/user/count')
+      .then((response) => setUsersCount(response.data.totalUsers))
+      .catch((error) => console.error('Error:', error));
+  }, []);
 
   const onConnectWallet = async (solanaWallet: SolanaWallet) => {
     try {
@@ -95,9 +106,11 @@ function DesktopBanner() {
               src="https://res.cloudinary.com/dgvnuwspr/image/upload/v1683135395/People%20DPs/recb4gDjdKoFDAyo7.png"
             />
           </AvatarGroup>
-          <Text ml={'0.6875rem'} fontSize={'0.875rem'}>
-            Join 673+ others
-          </Text>
+          {usersCount && (
+            <Text ml={'0.6875rem'} fontSize={'0.875rem'}>
+              Join {usersCount}+ others
+            </Text>
+          )}
         </Flex>
       </Box>
     </>
@@ -108,6 +121,15 @@ function MobileBanner() {
   const { isOpen, onClose } = useDisclosure();
   const { wallets, select } = useWallet();
   const { setUserInfo, userInfo } = userStore();
+
+  const [usersCount, setUsersCount] = useState(null);
+
+  useEffect(() => {
+    axios
+      .get('/api/user/count')
+      .then((response) => setUsersCount(response.data.totalUsers))
+      .catch((error) => console.error('Error:', error));
+  }, []);
 
   const onConnectWallet = async (solanaWallet: SolanaWallet) => {
     try {
@@ -176,13 +198,24 @@ function MobileBanner() {
         </Flex>
         <Flex align={'center'} mt={5}>
           <AvatarGroup ml={'2.875rem'} max={3} size="sm">
-            <Avatar name="Ryan Florence" src="https://bit.ly/ryan-florence" />
-            <Avatar name="Segun Adebayo" src="https://bit.ly/sage-adebayo" />
-            <Avatar name="Kent Dodds" src="https://bit.ly/kent-c-dodds" />
+            <Avatar
+              name="Anoushk"
+              src="https://res.cloudinary.com/dgvnuwspr/image/upload/v1683132586/People%20DPs/recA3Sa7t1loYvDHo.jpg"
+            />
+            <Avatar
+              name="Ujjwal"
+              src="https://res.cloudinary.com/dgvnuwspr/image/upload/v1683135404/People%20DPs/rec4XUFtbh6upVYpA.jpg"
+            />
+            <Avatar
+              name="Yash"
+              src="https://res.cloudinary.com/dgvnuwspr/image/upload/v1683135395/People%20DPs/recb4gDjdKoFDAyo7.png"
+            />
           </AvatarGroup>
-          <Text ml={'0.6875rem'} fontSize={'0.875rem'}>
-            Join 563+ others
-          </Text>
+          {usersCount && (
+            <Text ml={'0.6875rem'} fontSize={'0.875rem'}>
+              Join {usersCount}+ others
+            </Text>
+          )}
         </Flex>
       </Flex>
     </>

@@ -883,6 +883,7 @@ export const CommunityList: string[] = [
   'DeveloperDAO',
   'Metacamp',
   '10K Designers',
+  'Other',
 ];
 
 export const CommunityImage: { [key in string]: string } = {

@@ -12,6 +12,7 @@ import {
   Text,
   useColorModeValue,
   useDisclosure,
+  useMediaQuery,
 } from '@chakra-ui/react';
 import { useRouter } from 'next/router';
 
@@ -197,9 +198,18 @@ const DesktopNav = () => {
 export default function WithSubnavigation() {
   const { isOpen, onToggle } = useDisclosure();
   const router = useRouter();
+  const [isLessThan600] = useMediaQuery('(max-width: 600px)');
 
   return (
     <Box pos="sticky" zIndex="sticky" top={0}>
+      {isLessThan600 && (
+        <Box w="full" p={3} color="white" bgColor="brand.purple">
+          <Text fontSize="xs" textAlign="center">
+            Note: Superteam Earn is not fully supported on mobile yet. Use
+            laptop / desktop for a better experience!
+          </Text>
+        </Box>
+      )}
       <Flex
         align={'stretch'}
         px={{ base: 4, md: 6 }}

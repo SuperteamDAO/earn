@@ -476,7 +476,9 @@ function DetailSideCard({
                 size="lg"
                 variant="solid"
               >
-                Submitted Successfully!
+                {type === 'permissioned'
+                  ? 'Applied Successfully'
+                  : 'Submitted Successfully'}
               </Button>
             ) : (
               <Button

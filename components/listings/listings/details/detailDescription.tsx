@@ -1,4 +1,5 @@
 import { Box, Button, Flex, HStack, Text, VStack } from '@chakra-ui/react';
+import type { HTMLReactParserOptions } from 'html-react-parser';
 import parse from 'html-react-parser';
 import React, { useState } from 'react';
 import { BiDownArrowAlt, BiUpArrowAlt } from 'react-icons/bi';
@@ -13,6 +14,15 @@ interface Props {
 
 function DetailDescription({ skills, description }: Props) {
   const [show, setShow] = useState<boolean>(false);
+
+  const options: HTMLReactParserOptions = {
+    replace: ({ name, children, attribs }: any) => {
+      if (name === 'p' && (!children || children.length === 0)) {
+        return <br />;
+      }
+      return { name, children, attribs };
+    },
+  };
 
   return (
     <VStack w={'full'} p={5} bg={'white'} rounded={'xl'}>
@@ -66,7 +76,8 @@ function DetailDescription({ skills, description }: Props) {
           {parse(
             description?.startsWith('"')
               ? JSON.parse(description || '')
-              : description ?? ''
+              : description ?? '',
+            options
           )}
         </Flex>
         {description && description?.length > 100 && (
