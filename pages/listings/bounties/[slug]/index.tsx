@@ -13,7 +13,6 @@ import ErrorSection from '@/components/shared/ErrorSection';
 import LoadingSection from '@/components/shared/LoadingSection';
 import type { Bounty } from '@/interface/bounty';
 import { Default } from '@/layouts/Default';
-import { Meta } from '@/layouts/Meta';
 import { Mixpanel } from '@/utils/mixpanel';
 
 interface BountyDetailsProps {
@@ -48,10 +47,10 @@ function BountyDetails({ slug }: BountyDetailsProps) {
   return (
     <Default
       meta={
-        <Meta
-          title={`${bounty?.title || 'Bounty'} | Superteam Earn`}
-          description="Every Solana opportunity in one place!"
-        />
+        <head>
+          <title>{`${bounty?.title || 'Bounty'} | Superteam Earn`}</title>
+          <meta property="og:image" />
+        </head>
       }
     >
       {isLoading && <LoadingSection />}
