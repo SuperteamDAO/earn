@@ -47,7 +47,8 @@ export default async function handler(request: NextRequest) {
       (
         <div
           style={{
-            backgroundImage: 'url(http://localhost:3000/assets/bg/og-bg.png)',
+            backgroundImage:
+              'url(https://earn-frontend-v2-git-feat-og-image-superteam-earn.vercel.app/assets/bg/og-bg.png)',
             backgroundSize: 'cover',
             backgroundPosition: 'center',
             backgroundRepeat: 'no-repeat',
