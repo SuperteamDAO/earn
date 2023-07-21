@@ -1,1 +1,1 @@
-Allow: /api/og/*
+Allow: /api/ognew
