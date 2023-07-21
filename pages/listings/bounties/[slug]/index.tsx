@@ -54,7 +54,7 @@ function BountyDetails({ slug, bounty: initialBounty }: BountyDetailsProps) {
           } | Superteam Earn`}</title>
           <meta
             property="og:image"
-            content={`https://earn-frontend-v2-git-feat-og-image-superteam-earn.vercel.app/api/ognew/?title=${initialBounty?.title}&reward=${initialBounty?.rewardAmount}&type=${initialBounty?.type}`}
+            content={`https://earn-frontend-v2-git-feat-og-image-superteam-earn.vercel.app/api/ognew/?title=${initialBounty?.title}&reward=${initialBounty?.rewardAmount}&type=${initialBounty?.type}&sponsor=${initialBounty?.sponsor?.name}`}
           />
         </head>
       }

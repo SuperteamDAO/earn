@@ -11,11 +11,18 @@ const fontDataP = fetchAsset(
   new URL('../../public/Inter-SemiBold.woff', import.meta.url)
 );
 
+const sponsorImageP = fetchAsset(
+  new URL('../../public/assets/images/sponsor-logo.png', import.meta.url)
+);
+
 export default async function handler(request: NextRequest) {
   try {
     const { searchParams } = new URL(request.url);
 
-    const [fontData] = await Promise.all([fontDataP]);
+    const [fontData, sponsorImg] = await Promise.all([
+      fontDataP,
+      sponsorImageP,
+    ]);
 
     const hasTitle = searchParams.has('title');
     const title = hasTitle
@@ -23,7 +30,7 @@ export default async function handler(request: NextRequest) {
       : 'My default title';
 
     const hasLogo = searchParams.has('logo');
-    const logo = hasLogo ? searchParams.get('logo')?.slice(0, 100) : 'logo';
+    const logo = hasLogo ? searchParams.get('logo')?.slice(0, 100) : sponsorImg;
 
     const hasType = searchParams.has('type');
     const type = hasType ? searchParams.get('type')?.slice(0, 100) : 'type';
@@ -32,6 +39,11 @@ export default async function handler(request: NextRequest) {
     const reward = hasReward
       ? `$${searchParams.get('reward')?.slice(0, 100)} USDC`
       : '$1000 USDC';
+
+    const hasSponsor = searchParams.has('sponsor');
+    const sponsor = hasSponsor
+      ? searchParams.get('sponsor')?.slice(0, 100)
+      : 'sponsor';
 
     return new ImageResponse(
       (
@@ -69,14 +81,34 @@ export default async function handler(request: NextRequest) {
             >
               <div
                 style={{
-                  fontSize: 24,
-                  fontStyle: 'normal',
-                  color: 'black',
-                  lineHeight: 1.4,
-                  whiteSpace: 'pre-wrap',
+                  display: 'flex',
+                  height: '100%',
+                  alignItems: 'center',
                 }}
               >
-                {logo}
+                <img
+                  style={{
+                    width: '64px',
+                    height: '64px',
+                    objectFit: 'contain',
+                  }}
+                  alt="logo"
+                  src={logo as string}
+                  width="64px"
+                  height="64px"
+                />
+                <div
+                  style={{
+                    fontSize: 36,
+                    fontStyle: 'normal',
+                    color: '#94A3B8',
+                    lineHeight: 1.4,
+                    whiteSpace: 'pre-wrap',
+                    marginLeft: 16,
+                  }}
+                >
+                  {sponsor}
+                </div>
               </div>
 
               <svg
@@ -169,7 +201,7 @@ export default async function handler(request: NextRequest) {
                     padding: '12px 60px',
                   }}
                 >
-                  {type}
+                  {type?.toUpperCase()}
                 </div>
                 <div
                   style={{
