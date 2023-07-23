@@ -35,6 +35,7 @@ type ListingSectionProps = {
   sub: string;
   emoji: string;
   type: 'bounties' | 'jobs' | 'grants';
+  url?: string;
 };
 
 export const ListingSection = ({
@@ -43,6 +44,7 @@ export const ListingSection = ({
   sub,
   emoji,
   type,
+  url,
 }: ListingSectionProps) => {
   const router = useRouter();
 
@@ -102,9 +104,10 @@ export const ListingSection = ({
         <Flex display={router?.query?.category !== type ? 'block' : 'none'}>
           <Link
             href={
-              router?.query?.filter
+              url ||
+              (router?.query?.filter
                 ? `/${type}/${router?.query?.filter}/`
-                : `/${type}/`
+                : `/${type}/`)
             }
             onClick={() => {
               Mixpanel.track('view_all', {
