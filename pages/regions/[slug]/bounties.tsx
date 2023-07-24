@@ -72,7 +72,7 @@ function AllBountybyCountry({ slug }: Props) {
       <Box w={'100%'}>
         <ListingSection
           type="bounties"
-          title="Active Bounties"
+          title="Bounties"
           sub="Bite sized tasks for freelancers"
           emoji="/assets/home/emojis/moneyman.png"
         >

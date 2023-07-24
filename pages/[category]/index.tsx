@@ -81,7 +81,7 @@ function CategoryHomePage({ category }: Props) {
         {(!category || category === 'all' || category === 'bounties') && (
           <ListingSection
             type="bounties"
-            title="Active Bounties"
+            title="Bounties"
             sub="Bite sized tasks for freelancers"
             emoji="/assets/home/emojis/moneyman.png"
           >
