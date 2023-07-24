@@ -216,6 +216,10 @@ export const skillSubSkillMap = {
       label: 'Redux',
       value: 'Redux',
     },
+    {
+      label: 'Other',
+      value: 'Other',
+    },
   ],
   Backend: [
     {
@@ -262,6 +266,10 @@ export const skillSubSkillMap = {
       label: 'MongoDB',
       value: 'MongoDB',
     },
+    {
+      label: 'Other',
+      value: 'Other',
+    },
   ],
   Blockchain: [
     {
@@ -275,6 +283,10 @@ export const skillSubSkillMap = {
     {
       label: 'Move',
       value: 'Move',
+    },
+    {
+      label: 'Other',
+      value: 'Other',
     },
   ],
   Mobile: [
@@ -293,6 +305,10 @@ export const skillSubSkillMap = {
     {
       label: 'React Native',
       value: 'React Native',
+    },
+    {
+      label: 'Other',
+      value: 'Other',
     },
   ],
   Design: [
@@ -316,6 +332,10 @@ export const skillSubSkillMap = {
       label: 'Presentation Design',
       value: 'Presentation Design',
     },
+    {
+      label: 'Other',
+      value: 'Other',
+    },
   ],
   Community: [
     {
@@ -325,6 +345,10 @@ export const skillSubSkillMap = {
     {
       label: 'Discord Moderator',
       value: 'Discord Moderator',
+    },
+    {
+      label: 'Other',
+      value: 'Other',
     },
   ],
   Growth: [
@@ -339,6 +363,10 @@ export const skillSubSkillMap = {
     {
       label: 'Marketing',
       value: 'Marketing',
+    },
+    {
+      label: 'Other',
+      value: 'Other',
     },
   ],
   Content: [
@@ -357,6 +385,10 @@ export const skillSubSkillMap = {
     {
       label: 'Social Media',
       value: 'Social Media',
+    },
+    {
+      label: 'Other',
+      value: 'Other',
     },
   ],
   Other: [
@@ -429,6 +461,10 @@ export const skillSubSkillMap = {
     {
       label: 'Redux',
       value: 'Redux',
+    },
+    {
+      label: 'Other',
+      value: 'Other',
     },
   ],
 };
@@ -584,6 +620,10 @@ export const SubSkills: MultiSelectOptions[] = [
   {
     label: 'React Native',
     value: 'React Native',
+  },
+  {
+    label: 'Other',
+    value: 'Other',
   },
 ];
 export const ExperienceList: Experience[] = [
