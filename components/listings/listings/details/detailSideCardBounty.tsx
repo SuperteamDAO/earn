@@ -134,6 +134,23 @@ function DetailSideCard({
     }
   };
 
+  const countDownRenderer = ({
+    days,
+    hours,
+    minutes,
+    seconds,
+  }: {
+    days: number;
+    hours: number;
+    minutes: number;
+    seconds: number;
+  }) => {
+    if (days > 0) {
+      return <span>{`${days}d:${hours}h:${minutes}m`}</span>;
+    }
+    return <span>{`${hours}h:${minutes}m:${seconds}s`}</span>;
+  };
+
   return (
     <>
       {isOpen && (
@@ -457,7 +474,11 @@ function DetailSideCard({
                 />
                 <VStack align={'start'}>
                   <Text color={'#000000'} fontSize="1.3rem" fontWeight={500}>
-                    <Countdown date={endingTime} zeroPadDays={1} />
+                    <Countdown
+                      date={endingTime}
+                      renderer={countDownRenderer}
+                      zeroPadDays={1}
+                    />
                   </Text>
                   <Text mt={'0px !important'} color={'#94A3B8'}>
                     Remaining
@@ -508,6 +529,29 @@ function DetailSideCard({
             </Text>
           </VStack>
         )}
+        <VStack
+          align={'start'}
+          justify={'center'}
+          w={'22rem'}
+          mt={4}
+          p={6}
+          bg={'#FFFFFF'}
+          rounded={'xl'}
+        >
+          <Text h="100%" color={'#94A3B8'} fontSize="1rem" textAlign="center">
+            TYPE
+          </Text>
+          <Text color={'#64768b'} fontSize="1.1rem" fontWeight={500}>
+            {type === 'permissioned'
+              ? 'Application-based Bounty'
+              : 'Open Bounty'}
+          </Text>
+          <Text color={'#94A3B8'} fontSize="1rem" fontWeight={500}>
+            {type === 'permissioned'
+              ? "Don't start working just yet! Apply first, and then you'll be notified if you're selected to work on this bounty."
+              : 'This is an open competition bounty! Anyone can start working and submit their work before the deadline!'}
+          </Text>
+        </VStack>
         <VStack
           align={'start'}
           justify={'center'}

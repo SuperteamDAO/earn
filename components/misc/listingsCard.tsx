@@ -1,5 +1,5 @@
 /* eslint-disable no-nested-ternary */
-import { BellIcon } from '@chakra-ui/icons';
+import { ArrowForwardIcon, BellIcon } from '@chakra-ui/icons';
 import {
   Box,
   Button,
@@ -35,6 +35,7 @@ type ListingSectionProps = {
   sub: string;
   emoji: string;
   type: 'bounties' | 'jobs' | 'grants';
+  url?: string;
 };
 
 export const ListingSection = ({
@@ -43,6 +44,7 @@ export const ListingSection = ({
   sub,
   emoji,
   type,
+  url,
 }: ListingSectionProps) => {
   const router = useRouter();
 
@@ -102,9 +104,10 @@ export const ListingSection = ({
         <Flex display={router?.query?.category !== type ? 'block' : 'none'}>
           <Link
             href={
-              router?.query?.filter
+              url ||
+              (router?.query?.filter
                 ? `/${type}/${router?.query?.filter}/`
-                : `/${type}/`
+                : `/${type}/`)
             }
             onClick={() => {
               Mixpanel.track('view_all', {
@@ -120,6 +123,34 @@ export const ListingSection = ({
       </HStack>
       <Flex direction={'column'} rowGap={'2.625rem'}>
         {children}
+      </Flex>
+      <Flex display={router?.query?.category !== type ? 'block' : 'none'}>
+        <Link
+          href={
+            url ||
+            (router?.query?.filter
+              ? `/${type}/${router?.query?.filter}/`
+              : `/${type}/`)
+          }
+          onClick={() => {
+            Mixpanel.track('view_all', {
+              type: title,
+            });
+          }}
+        >
+          <Button
+            w="100%"
+            my={8}
+            py={5}
+            color="brand.slate.400"
+            borderColor="brand.slate.300"
+            rightIcon={<ArrowForwardIcon />}
+            size="sm"
+            variant="outline"
+          >
+            View All
+          </Button>
+        </Link>
       </Flex>
     </Box>
   );
