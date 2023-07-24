@@ -1,4 +1,5 @@
 /* eslint-disable no-nested-ternary */
+import { ArrowForwardIcon } from '@chakra-ui/icons';
 import {
   Box,
   Button,
@@ -309,6 +310,27 @@ const HomePage: NextPage = () => {
           </HStack>
 
           {tabs.map((tab) => tab.id === activeTab && tab.content)}
+          <Link
+            href={'/bounties'}
+            onClick={() => {
+              Mixpanel.track('view_all', {
+                type: title,
+              });
+            }}
+          >
+            <Button
+              w="100%"
+              mt={3}
+              py={5}
+              color="brand.slate.400"
+              borderColor="brand.slate.300"
+              rightIcon={<ArrowForwardIcon />}
+              size="sm"
+              variant="outline"
+            >
+              View All
+            </Button>
+          </Link>
         </Box>
 
         <ListingSection
