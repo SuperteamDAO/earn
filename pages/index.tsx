@@ -1,6 +1,15 @@
 /* eslint-disable no-nested-ternary */
-import { Box, Flex, useMediaQuery } from '@chakra-ui/react';
+import {
+  Box,
+  Flex,
+  HStack,
+  Image,
+  Text,
+  useMediaQuery,
+} from '@chakra-ui/react';
+import { css } from '@emotion/react';
 import axios from 'axios';
+import dayjs from 'dayjs';
 import type { NextPage } from 'next';
 import { useEffect, useState } from 'react';
 
@@ -24,8 +33,17 @@ interface Listings {
   jobs?: Job[];
 }
 
+interface TabProps {
+  id: string;
+  title: string;
+  content: JSX.Element;
+}
+
 const HomePage: NextPage = () => {
   const [isListingsLoading, setIsListingsLoading] = useState(true);
+  const [bounties, setBounties] = useState<{ bounties: Bounty[] }>({
+    bounties: [],
+  });
   const [listings, setListings] = useState<Listings>({
     bounties: [],
     grants: [],
@@ -36,7 +54,15 @@ const HomePage: NextPage = () => {
     setIsListingsLoading(true);
     try {
       const listingsData = await axios.get('/api/listings/');
+      const bountyData = await axios.get('/api/listings/', {
+        params: {
+          category: 'bounties',
+          take: 100,
+        },
+      });
+
       setListings(listingsData.data);
+      setBounties(bountyData.data);
       setIsListingsLoading(false);
     } catch (e) {
       console.log(e);
@@ -50,9 +76,133 @@ const HomePage: NextPage = () => {
     getListings();
   }, []);
 
+  const tabs: TabProps[] = [
+    {
+      id: 'tab1',
+      title: 'OPEN',
+      content: (
+        <Flex direction={'column'} rowGap={'2.625rem'}>
+          {isListingsLoading && (
+            <Flex align="center" justify="center" direction="column" minH={52}>
+              <Loading />
+            </Flex>
+          )}
+          {!isListingsLoading && !bounties?.bounties?.length && (
+            <Flex align="center" justify="center" mt={8}>
+              <EmptySection
+                title="No bounties available!"
+                message="Subscribe to notifications to get notified about new bounties."
+              />
+            </Flex>
+          )}
+          {!isListingsLoading &&
+            bounties?.bounties
+              ?.filter(
+                (bounty) =>
+                  bounty.status === 'OPEN' && !dayjs().isAfter(bounty.deadline)
+              )
+              .slice(0, 10)
+              .map((bounty) => {
+                return (
+                  <BountiesCard
+                    slug={bounty.slug}
+                    rewardAmount={bounty?.rewardAmount}
+                    key={bounty?.id}
+                    sponsorName={bounty?.sponsor?.name}
+                    deadline={bounty?.deadline}
+                    title={bounty?.title}
+                    logo={bounty?.sponsor?.logo}
+                    token={bounty?.token}
+                    type={bounty?.type}
+                  />
+                );
+              })}
+        </Flex>
+      ),
+    },
+    {
+      id: 'tab2',
+      title: 'IN REVIEW',
+      content: (
+        <Flex direction={'column'} rowGap={'2.625rem'}>
+          {isListingsLoading && (
+            <Flex align="center" justify="center" direction="column" minH={52}>
+              <Loading />
+            </Flex>
+          )}
+          {!isListingsLoading && !bounties?.bounties?.length && (
+            <Flex align="center" justify="center" mt={8}>
+              <EmptySection
+                title="No bounties available!"
+                message="Subscribe to notifications to get notified about new bounties."
+              />
+            </Flex>
+          )}
+          {!isListingsLoading &&
+            bounties?.bounties
+              ?.filter(
+                (bounty) =>
+                  !bounty.isWinnersAnnounced &&
+                  dayjs().isAfter(bounty.deadline) &&
+                  bounty.status === 'OPEN'
+              )
+              .slice(0, 10)
+              .map((bounty) => {
+                return (
+                  <BountiesCard
+                    slug={bounty.slug}
+                    rewardAmount={bounty?.rewardAmount}
+                    key={bounty?.id}
+                    sponsorName={bounty?.sponsor?.name}
+                    deadline={bounty?.deadline}
+                    title={bounty?.title}
+                    logo={bounty?.sponsor?.logo}
+                    token={bounty?.token}
+                    type={bounty?.type}
+                  />
+                );
+              })}
+        </Flex>
+      ),
+    },
+    {
+      id: 'tab3',
+      title: 'ANNOUNCED',
+      content: (
+        <Flex direction={'column'} rowGap={'2.625rem'}>
+          {!isListingsLoading &&
+            bounties?.bounties
+              ?.filter(
+                (bounty) =>
+                  bounty.status === 'CLOSED' ||
+                  (bounty.isWinnersAnnounced && bounty.status === 'OPEN')
+              )
+              .slice(0, 10)
+              .map((bounty) => {
+                return (
+                  <BountiesCard
+                    slug={bounty.slug}
+                    rewardAmount={bounty?.rewardAmount}
+                    key={bounty?.id}
+                    sponsorName={bounty?.sponsor?.name}
+                    deadline={bounty?.deadline}
+                    title={bounty?.title}
+                    logo={bounty?.sponsor?.logo}
+                    token={bounty?.token}
+                    type={bounty?.type}
+                  />
+                );
+              })}
+        </Flex>
+      ),
+    },
+  ];
+
   const [isLessThan1200px] = useMediaQuery('(max-width: 1200px)');
   const [isLessThan850px] = useMediaQuery('(max-width: 850px)');
   const [isLessThan768px] = useMediaQuery('(max-width: 768px)');
+
+  const [activeTab, setActiveTab] = useState<string>(tabs[0]!.id);
 
   useEffect(() => {
     const html = document.querySelector('html');
@@ -74,42 +224,72 @@ const HomePage: NextPage = () => {
   return (
     <Home>
       <Box w={'100%'}>
-        <ListingSection
-          type="bounties"
-          title="Active Bounties"
-          sub="Bite sized tasks for freelancers"
-          emoji="/assets/home/emojis/moneyman.png"
+        <HStack
+          align="center"
+          justify="space-between"
+          mb={4}
+          pb={3}
+          borderBottom="2px solid"
+          borderBottomColor="#E2E8F0"
         >
-          {isListingsLoading && (
-            <Flex align="center" justify="center" direction="column" minH={52}>
-              <Loading />
-            </Flex>
-          )}
-          {!isListingsLoading && !listings?.bounties?.length && (
-            <Flex align="center" justify="center" mt={8}>
-              <EmptySection
-                title="No bounties available!"
-                message="Subscribe to notifications to get notified about new bounties."
-              />
-            </Flex>
-          )}
-          {!isListingsLoading &&
-            listings?.bounties?.map((bounty) => {
-              return (
-                <BountiesCard
-                  slug={bounty.slug}
-                  rewardAmount={bounty?.rewardAmount}
-                  key={bounty?.id}
-                  sponsorName={bounty?.sponsor?.name}
-                  deadline={bounty?.deadline}
-                  title={bounty?.title}
-                  logo={bounty?.sponsor?.logo}
-                  token={bounty?.token}
-                  type={bounty?.type}
-                />
-              );
-            })}
-        </ListingSection>
+          <Flex align={'center'}>
+            <Image
+              w={'1.4375rem'}
+              h={'1.4375rem'}
+              mr={'0.75rem'}
+              alt="emoji"
+              src={'/assets/home/emojis/moneyman.png'}
+            />
+            <Text
+              color={'#334155'}
+              fontSize={{ base: 14, md: 16 }}
+              fontWeight={'600'}
+            >
+              Bounties
+            </Text>
+            <Text
+              display={['none', 'none', 'block', 'block']}
+              mx={3}
+              color={'brand.slate.300'}
+              fontSize={'xxs'}
+            >
+              |
+            </Text>
+
+            {tabs.map((tab, index) => (
+              <Box
+                key={index}
+                as="span"
+                pos="relative"
+                alignItems="center"
+                display="inline-flex"
+                p={2}
+                color="#475668"
+                fontSize="14px"
+                cursor="pointer"
+                css={
+                  tab.id === activeTab
+                    ? css`
+                        &::after {
+                          content: '';
+                          position: absolute;
+                          right: 0;
+                          bottom: -13px;
+                          left: 0;
+                          height: 2px;
+                          background-color: #6366f1;
+                        }
+                      `
+                    : null
+                }
+                onClick={() => setActiveTab(tab.id)}
+              >
+                {tab.title}
+              </Box>
+            ))}
+          </Flex>
+        </HStack>
+        {tabs.map((tab) => tab.id === activeTab && tab.content)}
 
         <ListingSection
           type="grants"
