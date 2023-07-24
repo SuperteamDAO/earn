@@ -320,7 +320,7 @@ const HomePage: NextPage = () => {
           >
             <Button
               w="100%"
-              mt={3}
+              my={8}
               py={5}
               color="brand.slate.400"
               borderColor="brand.slate.300"
