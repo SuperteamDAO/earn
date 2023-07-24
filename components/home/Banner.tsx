@@ -25,7 +25,7 @@ function DesktopBanner() {
   const { wallets, select } = useWallet();
   const { setUserInfo, userInfo } = userStore();
 
-  const [usersCount, setUsersCount] = useState(null);
+  const [usersCount, setUsersCount] = useState<number | null>(null);
 
   useEffect(() => {
     axios
@@ -106,9 +106,9 @@ function DesktopBanner() {
               src="https://res.cloudinary.com/dgvnuwspr/image/upload/v1683135395/People%20DPs/recb4gDjdKoFDAyo7.png"
             />
           </AvatarGroup>
-          {usersCount && (
+          {usersCount !== null && (
             <Text ml={'0.6875rem'} fontSize={'0.875rem'}>
-              Join {usersCount}+ others
+              Join {usersCount.toLocaleString()}+ others
             </Text>
           )}
         </Flex>
@@ -122,7 +122,7 @@ function MobileBanner() {
   const { wallets, select } = useWallet();
   const { setUserInfo, userInfo } = userStore();
 
-  const [usersCount, setUsersCount] = useState(null);
+  const [usersCount, setUsersCount] = useState<number | null>(null);
 
   useEffect(() => {
     axios
@@ -211,9 +211,9 @@ function MobileBanner() {
               src="https://res.cloudinary.com/dgvnuwspr/image/upload/v1683135395/People%20DPs/recb4gDjdKoFDAyo7.png"
             />
           </AvatarGroup>
-          {usersCount && (
+          {usersCount !== null && (
             <Text ml={'0.6875rem'} fontSize={'0.875rem'}>
-              Join {usersCount}+ others
+              Join {usersCount.toLocaleString()}+ others
             </Text>
           )}
         </Flex>
