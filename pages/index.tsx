@@ -1,9 +1,11 @@
 /* eslint-disable no-nested-ternary */
 import {
   Box,
+  Button,
   Flex,
   HStack,
   Image,
+  Link,
   Text,
   useMediaQuery,
 } from '@chakra-ui/react';
@@ -11,6 +13,7 @@ import { css } from '@emotion/react';
 import axios from 'axios';
 import dayjs from 'dayjs';
 import type { NextPage } from 'next';
+import { title } from 'process';
 import { useEffect, useState } from 'react';
 
 import {
@@ -224,72 +227,89 @@ const HomePage: NextPage = () => {
   return (
     <Home>
       <Box w={'100%'}>
-        <HStack
-          align="center"
-          justify="space-between"
-          mb={4}
-          pb={3}
-          borderBottom="2px solid"
-          borderBottomColor="#E2E8F0"
-        >
-          <Flex align={'center'}>
-            <Image
-              w={'1.4375rem'}
-              h={'1.4375rem'}
-              mr={'0.75rem'}
-              alt="emoji"
-              src={'/assets/home/emojis/moneyman.png'}
-            />
-            <Text
-              color={'#334155'}
-              fontSize={{ base: 14, md: 16 }}
-              fontWeight={'600'}
-            >
-              Bounties
-            </Text>
-            <Text
-              display={['none', 'none', 'block', 'block']}
-              mx={3}
-              color={'brand.slate.300'}
-              fontSize={'xxs'}
-            >
-              |
-            </Text>
-
-            {tabs.map((tab, index) => (
-              <Box
-                key={index}
-                as="span"
-                pos="relative"
-                alignItems="center"
-                display="inline-flex"
-                p={2}
-                color="#475668"
-                fontSize="14px"
-                cursor="pointer"
-                css={
-                  tab.id === activeTab
-                    ? css`
-                        &::after {
-                          content: '';
-                          position: absolute;
-                          right: 0;
-                          bottom: -13px;
-                          left: 0;
-                          height: 2px;
-                          background-color: #6366f1;
-                        }
-                      `
-                    : null
-                }
-                onClick={() => setActiveTab(tab.id)}
+        <Box my={10}>
+          <HStack
+            align="center"
+            justify="space-between"
+            mb={4}
+            pb={3}
+            borderBottom="2px solid"
+            borderBottomColor="#E2E8F0"
+          >
+            <Flex align={'center'}>
+              <Image
+                w={'1.4375rem'}
+                h={'1.4375rem'}
+                mr={'0.75rem'}
+                alt="emoji"
+                src={'/assets/home/emojis/moneyman.png'}
+              />
+              <Text
+                color={'#334155'}
+                fontSize={{ base: 14, md: 16 }}
+                fontWeight={'600'}
               >
-                {tab.title}
-              </Box>
-            ))}
-          </Flex>
-        </HStack>
-        {tabs.map((tab) => tab.id === activeTab && tab.content)}
+                Bounties
+              </Text>
+              <Text
+                display={['none', 'none', 'block', 'block']}
+                mx={3}
+                color={'brand.slate.300'}
+                fontSize={'xxs'}
+              >
+                |
+              </Text>
+
+              {tabs.map((tab, index) => (
+                <Box
+                  key={index}
+                  as="span"
+                  pos="relative"
+                  alignItems="center"
+                  display="inline-flex"
+                  p={2}
+                  color="#475668"
+                  fontSize="14px"
+                  cursor="pointer"
+                  css={
+                    tab.id === activeTab
+                      ? css`
+                          &::after {
+                            content: '';
+                            position: absolute;
+                            right: 0;
+                            bottom: -13px;
+                            left: 0;
+                            height: 2px;
+                            background-color: #6366f1;
+                          }
+                        `
+                      : null
+                  }
+                  onClick={() => setActiveTab(tab.id)}
+                >
+                  {tab.title}
+                </Box>
+              ))}
+            </Flex>
+            <Flex>
+              <Link
+                href={'/bounties'}
+                onClick={() => {
+                  Mixpanel.track('view_all', {
+                    type: title,
+                  });
+                }}
+              >
+                <Button color="brand.slate.400" size="sm" variant="ghost">
+                  View All
+                </Button>
+              </Link>
+            </Flex>
+          </HStack>
+
+          {tabs.map((tab) => tab.id === activeTab && tab.content)}
+        </Box>
 
         <ListingSection
           type="grants"
