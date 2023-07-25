@@ -12,13 +12,12 @@ import {
 } from '@chakra-ui/react';
 import { css } from '@emotion/react';
 import axios from 'axios';
-import dayjs from 'dayjs';
 import type { NextPage } from 'next';
 import { title } from 'process';
 import { useEffect, useState } from 'react';
 
+import { BountyTabs } from '@/components/listings/bounty/Tabs';
 import {
-  BountiesCard,
   GrantsCard,
   JobsCard,
   ListingSection,
@@ -35,12 +34,6 @@ interface Listings {
   bounties?: Bounty[];
   grants?: Grant[];
   jobs?: Job[];
-}
-
-interface TabProps {
-  id: string;
-  title: string;
-  content: JSX.Element;
 }
 
 const HomePage: NextPage = () => {
@@ -61,7 +54,7 @@ const HomePage: NextPage = () => {
       const bountyData = await axios.get('/api/listings/', {
         params: {
           category: 'bounties',
-          take: 100,
+          take: 10,
         },
       });
 
@@ -80,131 +73,11 @@ const HomePage: NextPage = () => {
     getListings();
   }, []);
 
-  const tabs: TabProps[] = [
-    {
-      id: 'tab1',
-      title: 'OPEN',
-      content: (
-        <Flex direction={'column'} rowGap={'2.625rem'}>
-          {isListingsLoading && (
-            <Flex align="center" justify="center" direction="column" minH={52}>
-              <Loading />
-            </Flex>
-          )}
-          {!isListingsLoading && !bounties?.bounties?.length && (
-            <Flex align="center" justify="center" mt={8}>
-              <EmptySection
-                title="No bounties available!"
-                message="Subscribe to notifications to get notified about new bounties."
-              />
-            </Flex>
-          )}
-          {!isListingsLoading &&
-            bounties?.bounties
-              ?.filter(
-                (bounty) =>
-                  bounty.status === 'OPEN' && !dayjs().isAfter(bounty.deadline)
-              )
-              .slice(0, 10)
-              .map((bounty) => {
-                return (
-                  <BountiesCard
-                    slug={bounty.slug}
-                    rewardAmount={bounty?.rewardAmount}
-                    key={bounty?.id}
-                    sponsorName={bounty?.sponsor?.name}
-                    deadline={bounty?.deadline}
-                    title={bounty?.title}
-                    logo={bounty?.sponsor?.logo}
-                    token={bounty?.token}
-                    type={bounty?.type}
-                  />
-                );
-              })}
-        </Flex>
-      ),
-    },
-    {
-      id: 'tab2',
-      title: 'IN REVIEW',
-      content: (
-        <Flex direction={'column'} rowGap={'2.625rem'}>
-          {isListingsLoading && (
-            <Flex align="center" justify="center" direction="column" minH={52}>
-              <Loading />
-            </Flex>
-          )}
-          {!isListingsLoading && !bounties?.bounties?.length && (
-            <Flex align="center" justify="center" mt={8}>
-              <EmptySection
-                title="No bounties available!"
-                message="Subscribe to notifications to get notified about new bounties."
-              />
-            </Flex>
-          )}
-          {!isListingsLoading &&
-            bounties?.bounties
-              ?.filter(
-                (bounty) =>
-                  !bounty.isWinnersAnnounced &&
-                  dayjs().isAfter(bounty.deadline) &&
-                  bounty.status === 'OPEN'
-              )
-              .slice(0, 10)
-              .map((bounty) => {
-                return (
-                  <BountiesCard
-                    slug={bounty.slug}
-                    rewardAmount={bounty?.rewardAmount}
-                    key={bounty?.id}
-                    sponsorName={bounty?.sponsor?.name}
-                    deadline={bounty?.deadline}
-                    title={bounty?.title}
-                    logo={bounty?.sponsor?.logo}
-                    token={bounty?.token}
-                    type={bounty?.type}
-                  />
-                );
-              })}
-        </Flex>
-      ),
-    },
-    {
-      id: 'tab3',
-      title: 'ANNOUNCED',
-      content: (
-        <Flex direction={'column'} rowGap={'2.625rem'}>
-          {!isListingsLoading &&
-            bounties?.bounties
-              ?.filter(
-                (bounty) =>
-                  bounty.status === 'CLOSED' ||
-                  (bounty.isWinnersAnnounced && bounty.status === 'OPEN')
-              )
-              .slice(0, 10)
-              .map((bounty) => {
-                return (
-                  <BountiesCard
-                    slug={bounty.slug}
-                    rewardAmount={bounty?.rewardAmount}
-                    key={bounty?.id}
-                    sponsorName={bounty?.sponsor?.name}
-                    deadline={bounty?.deadline}
-                    title={bounty?.title}
-                    logo={bounty?.sponsor?.logo}
-                    token={bounty?.token}
-                    type={bounty?.type}
-                  />
-                );
-              })}
-        </Flex>
-      ),
-    },
-  ];
-
   const [isLessThan1200px] = useMediaQuery('(max-width: 1200px)');
   const [isLessThan850px] = useMediaQuery('(max-width: 850px)');
   const [isLessThan768px] = useMediaQuery('(max-width: 768px)');
+
+  const tabs = BountyTabs({ isListingsLoading, bounties });
 
   const [activeTab, setActiveTab] = useState<string>(tabs[0]!.id);
 
