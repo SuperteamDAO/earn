@@ -24,6 +24,7 @@ export default async function grants(
         token: true,
         rewardAmount: true,
         link: true,
+        logo: true,
         sponsor: {
           select: {
             id: true,
