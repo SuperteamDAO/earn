@@ -82,6 +82,7 @@
     "react-icons": "^4.7.1",
     "react-select": "^5.7.0",
     "react-slick": "^0.29.0",
+    "resend": "^0.17.1",
     "sass": "^1.57.1",
     "simple-zustand-devtools": "^1.1.0",
     "slick-carousel": "^1.8.1",
