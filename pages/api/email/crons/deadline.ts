@@ -1,13 +1,12 @@
+import { verifySignature } from '@upstash/qstash/nextjs';
 import dayjs from 'dayjs';
 import type { NextApiRequest, NextApiResponse } from 'next';
 
+import { DeadlineEmailTemplate } from '@/components/emails/deadline';
 import { prisma } from '@/prisma';
-import sgMail from '@/utils/sendgrid';
+import resendMail from '@/utils/resend';
 
-export default async function handler(
-  _req: NextApiRequest,
-  res: NextApiResponse
-) {
+async function handler(_req: NextApiRequest, res: NextApiResponse) {
   try {
     const bounties = await prisma.bounties.findMany({
       where: {
@@ -58,19 +57,14 @@ export default async function handler(
         if (emailsSent.includes(e.email)) {
           return;
         }
-        const msg = {
-          to: e.email,
-          from: {
-            name: 'Kash from Superteam',
-            email: process.env.SENDGRID_EMAIL as string,
-          },
-          templateId: process.env.SENDGRID_DEADLINE as string,
-          dynamicTemplateData: {
-            name: bounty.title,
-            link: `https://earn.superteam.fun/listings/bounties/${bounty.slug}`,
-          },
-        };
-        await sgMail.send(msg);
+        await resendMail.emails.send({
+          from: `Kash from Superteam <${process.env.SENDGRID_EMAIL}>`,
+          to: [e.email],
+          subject: 'Upcoming Bounty Close',
+          react: DeadlineEmailTemplate({
+            name: e.name!,
+          }),
+        });
         emailsSent.push(e.email);
       });
       await prisma.emailLogs.create({
@@ -87,3 +81,11 @@ export default async function handler(
     return res.status(500).json({ error: 'Something went wrong.' });
   }
 }
+
+export default verifySignature(handler);
+
+export const config = {
+  api: {
+    bodyParser: false,
+  },
+};
