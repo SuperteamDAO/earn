@@ -1022,6 +1022,11 @@
   dependencies:
     "@jridgewell/trace-mapping" "0.3.9"
 
+"@deno/shim-crypto@~0.3.0":
+  version "0.3.1"
+  resolved "https://registry.yarnpkg.com/@deno/shim-crypto/-/shim-crypto-0.3.1.tgz#416155b2b6f9ad728f80ebcb422c803efc1023c2"
+  integrity sha512-ed4pNnfur6UbASEgF34gVxR9p7Mc3qF+Ygbmjiil8ws5IhNFhPDFy5vE5hQAUA9JmVsSxXPcVLM5Rf8LOZqQ5Q==
+
 "@emotion/babel-plugin@^11.10.6":
   version "11.10.6"
   resolved "https://registry.npmjs.org/@emotion/babel-plugin/-/babel-plugin-11.10.6.tgz"
@@ -3125,6 +3130,13 @@
   dependencies:
     "@typescript-eslint/types" "5.58.0"
     eslint-visitor-keys "^3.3.0"
+
+"@upstash/qstash@^0.3.6":
+  version "0.3.6"
+  resolved "https://registry.yarnpkg.com/@upstash/qstash/-/qstash-0.3.6.tgz#1407f6f6fc1785d21497d31cbaf0a771946fa59c"
+  integrity sha512-NKN4jbPhB5lfHoSIaU7AuQ3F+yGS20e/FBRiUuPetcKoi354wHhKj9AJFfkFT5SSeLq0XEsXRNynm8gqCS4HjQ==
+  dependencies:
+    "@deno/shim-crypto" "~0.3.0"
 
 "@upstash/redis@^1.20.2":
   version "1.20.2"
