@@ -1,4 +1,5 @@
 /* eslint-disable no-nested-ternary */
+import { InfoOutlineIcon } from '@chakra-ui/icons';
 import {
   Flex,
   Heading,
@@ -7,6 +8,7 @@ import {
   Image,
   Link,
   Text,
+  Tooltip,
   useDisclosure,
   VStack,
 } from '@chakra-ui/react';
@@ -124,7 +126,7 @@ function ListingHeader({
         mx={'auto'}
         py={10}
       >
-        <HStack align="start" px={[3, 3, 0, 0]}>
+        <HStack align="center" px={[3, 3, 0, 0]}>
           <Image
             w={'4rem'}
             h={'4rem'}
@@ -141,39 +143,27 @@ function ListingHeader({
               <Heading
                 color={'brand.charcoal.700'}
                 fontFamily={'Inter'}
-                fontSize={'lg'}
+                fontSize={'xl'}
                 fontWeight={700}
               >
                 {title}
               </Heading>
               <Flex
-                px={3}
-                py={1}
-                color={'green.600'}
-                fontSize={'sm'}
-                fontWeight={600}
+                fontSize={'xs'}
+                fontWeight={500}
                 bg={'green.100'}
                 borderRadius={'full'}
               >
-                {region}
-              </Flex>
-            </HStack>
-            {!isTemplate && (
-              <HStack>
-                <Text color={'#94A3B8'}>
-                  by {poc?.firstName} at {sponsor?.name}
-                </Text>
                 {(status === 'CLOSED' ||
                   (status === 'OPEN' && isWinnersAnnounced)) && (
                   <Text
                     px={3}
                     py={1}
                     color={'orange.600'}
-                    fontSize={'sm'}
                     bg={'orange.100'}
                     rounded={'full'}
                   >
-                    Closed
+                    Submissions Closed
                   </Text>
                 )}
                 {!isWinnersAnnounced &&
@@ -183,11 +173,10 @@ function ListingHeader({
                       px={3}
                       py={1}
                       color={'orange.600'}
-                      fontSize={'sm'}
                       bg={'orange.100'}
                       rounded={'full'}
                     >
-                      In Review
+                      Submissions In Review
                     </Text>
                   )}
                 {!hasDeadlineEnded && status === 'OPEN' && (
@@ -195,13 +184,57 @@ function ListingHeader({
                     px={3}
                     py={1}
                     color={'green.600'}
-                    fontSize={'sm'}
                     bg={'green.100'}
                     rounded={'full'}
                   >
-                    Open
+                    Submissions Open
                   </Text>
                 )}
+              </Flex>
+            </HStack>
+            {!isTemplate && (
+              <HStack>
+                <Text color={'#94A3B8'} fontWeight={500}>
+                  by {poc?.firstName} at {sponsor?.name}
+                </Text>
+                <Text color={'#E2E8EF'} fontWeight={500}>
+                  |
+                </Text>
+                <Flex align={'center'} gap={1}>
+                  <Text color={'#94A3B8'}>
+                    {type === 'permissioned'
+                      ? 'Application-based Bounty'
+                      : 'Open Bounty'}
+                  </Text>
+                  <Tooltip
+                    px={4}
+                    py={2}
+                    color={'#94A3B8'}
+                    fontFamily={'Inter'}
+                    fontSize="sm"
+                    bg="white"
+                    borderRadius={'lg'}
+                    label={
+                      type === 'permissioned'
+                        ? "Don't start working just yet! Apply first, and then you'll be notified if you're selected to work on this bounty."
+                        : 'This is an open competition bounty! Anyone can start working and submit their work before the deadline!'
+                    }
+                    placement="right"
+                  >
+                    <InfoOutlineIcon boxSize={4} color={'#94A3B8'} mr={3} />
+                  </Tooltip>
+                </Flex>
+                <Text
+                  px={2}
+                  py={1}
+                  color={'#0800A5'}
+                  fontSize={'xs'}
+                  fontWeight={500}
+                  bg="#EBEAFF"
+                  rounded={'full'}
+                >
+                  {region}
+                </Text>
               </HStack>
             )}
           </VStack>
