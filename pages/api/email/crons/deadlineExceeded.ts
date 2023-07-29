@@ -20,6 +20,23 @@ async function handler(_req: NextApiRequest, res: NextApiResponse) {
         deadline: {
           lt: dayjs().toISOString(),
         },
+        isWinnersAnnounced: false,
+      },
+      include: {
+        sponsor: {
+          select: {
+            UserSponsors: {
+              select: {
+                user: {
+                  select: {
+                    email: true,
+                    firstName: true,
+                  },
+                },
+              },
+            },
+          },
+        },
       },
     });
 
@@ -36,47 +53,31 @@ async function handler(_req: NextApiRequest, res: NextApiResponse) {
           return;
         }
 
-        const subscribe = await prisma.subscribeBounty.findMany({
-          where: {
+        const sponsorEmail = bounty.sponsor?.UserSponsors[0]?.user?.email;
+        const sponsorFirstName =
+          bounty.sponsor?.UserSponsors[0]?.user?.firstName;
+
+        if (!sponsorEmail || !sponsorFirstName) {
+          return;
+        }
+
+        await resendMail.emails.send({
+          from: `Kash from Superteam <${process.env.SENDGRID_EMAIL}>`,
+          to: [sponsorEmail],
+          bcc: ['pratik.dholani1@gmail.com'],
+          subject: 'Bounty Deadline Exceeded',
+          react: DeadlineSponsorEmailTemplate({
+            name: sponsorFirstName,
+            bountyName: bounty.title,
+          }),
+        });
+
+        await prisma.emailLogs.create({
+          data: {
+            type: 'BOUNTY_DEADLINE',
             bountyId: bounty.id,
           },
-          include: {
-            User: true,
-          },
         });
-
-        const subEmail = subscribe.map((sub) => {
-          return {
-            email: sub.User.email,
-            name: sub.User.firstName,
-          };
-        });
-
-        const emailsSent: string[] = [];
-        await Promise.all(
-          subEmail.map(async (e) => {
-            if (emailsSent.includes(e.email) || !e.email) {
-              return;
-            }
-            await resendMail.emails.send({
-              from: `Kash from Superteam <${process.env.SENDGRID_EMAIL}>`,
-              to: [e.email],
-              subject: 'Bounty Deadline Exceeded',
-              react: DeadlineSponsorEmailTemplate({
-                name: e.name!,
-                bountyName: bounty.title,
-              }),
-            });
-            emailsSent.push(e.email);
-
-            await prisma.emailLogs.create({
-              data: {
-                type: 'BOUNTY_DEADLINE',
-                bountyId: bounty.id,
-              },
-            });
-          })
-        );
       })
     );
 
