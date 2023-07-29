@@ -3,7 +3,7 @@ import dayjs from 'dayjs';
 import utc from 'dayjs/plugin/utc';
 import type { NextApiRequest, NextApiResponse } from 'next';
 
-import { DeadlineEmailTemplate } from '@/components/emails/deadlineTemplate';
+import { DeadlineSponsorEmailTemplate } from '@/components/emails/deadlineSponsorTemplate';
 import { prisma } from '@/prisma';
 import resendMail from '@/utils/resend';
 
@@ -18,22 +18,17 @@ async function handler(_req: NextApiRequest, res: NextApiResponse) {
         isArchived: false,
         status: 'OPEN',
         deadline: {
-          gte: dayjs().add(1, 'day').toISOString(),
+          lt: dayjs().toISOString(),
         },
       },
     });
-    const bountiesWithDeadline = bounties.filter((bounty) => {
-      return dayjs
-        .utc(bounty.deadline?.toISOString().split('T')[0])
-        .isSame(dayjs.utc().add(3, 'day').toISOString().split('T')[0]);
-    });
 
     await Promise.all(
-      bountiesWithDeadline.map(async (bounty) => {
+      bounties.map(async (bounty) => {
         const checkLogs = await prisma.emailLogs.findFirst({
           where: {
             bountyId: bounty.id,
-            type: 'BOUNTY_CLOSE_DEADLINE',
+            type: 'BOUNTY_DEADLINE',
           },
         });
 
@@ -56,6 +51,7 @@ async function handler(_req: NextApiRequest, res: NextApiResponse) {
             name: sub.User.firstName,
           };
         });
+
         const emailsSent: string[] = [];
         await Promise.all(
           subEmail.map(async (e) => {
@@ -65,16 +61,17 @@ async function handler(_req: NextApiRequest, res: NextApiResponse) {
             await resendMail.emails.send({
               from: `Kash from Superteam <${process.env.SENDGRID_EMAIL}>`,
               to: [e.email],
-              subject: 'Upcoming Bounty Close',
-              react: DeadlineEmailTemplate({
+              subject: 'Bounty Deadline Exceeded',
+              react: DeadlineSponsorEmailTemplate({
                 name: e.name!,
+                bountyName: bounty.title,
               }),
             });
             emailsSent.push(e.email);
 
             await prisma.emailLogs.create({
               data: {
-                type: 'BOUNTY_CLOSE_DEADLINE',
+                type: 'BOUNTY_DEADLINE',
                 bountyId: bounty.id,
               },
             });

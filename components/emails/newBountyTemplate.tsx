@@ -1,6 +1,12 @@
 import React from 'react';
 
-export const NewBountyEmailTemplate = ({ name }: { name: string }) => {
+export const NewBountyEmailTemplate = ({
+  name,
+  link,
+}: {
+  name: string;
+  link: string;
+}) => {
   return (
     <div>
       <p>Hey there {name},</p>
@@ -10,6 +16,7 @@ export const NewBountyEmailTemplate = ({ name }: { name: string }) => {
       </p>
       <p>Go Secure the Bag</p>
       <p>The Superteam Earn Crew 🦸‍♀️🦸‍♂️</p>
+      <a href={link}>Link</a>
     </div>
   );
 };
