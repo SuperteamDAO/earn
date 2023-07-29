@@ -5,15 +5,10 @@ import type { NextApiRequest, NextApiResponse } from 'next';
 
 import { DeadlineExceededWeekEmailTemplate } from '@/components/emails/deadlineExceededWeekTemplate';
 import { prisma } from '@/prisma';
+import { rateLimitedPromiseAll } from '@/utils/rateLimitedPromises';
 import resendMail from '@/utils/resend';
 
 dayjs.extend(utc);
-
-const delay = (ms: number): Promise<void> => {
-  return new Promise((resolve) => {
-    setTimeout(() => resolve(), ms);
-  });
-};
 
 async function handler(_req: NextApiRequest, res: NextApiResponse) {
   try {
@@ -84,11 +79,14 @@ async function handler(_req: NextApiRequest, res: NextApiResponse) {
           bountyId: bounty.id,
         },
       });
-      await delay(100);
       return bounty.id;
     });
 
-    const emailResults = await Promise.all(emailPromises);
+    const emailResults = await rateLimitedPromiseAll(
+      emailPromises,
+      10,
+      (emailPromise) => emailPromise
+    );
 
     const sentBountyIds = emailResults.filter(
       (sentBountyId) => sentBountyId !== null
