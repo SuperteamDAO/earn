@@ -132,6 +132,7 @@ model Grants {
   description      String?  @db.Text
   shortDescription String?  @db.VarChar(1000)
   token            String?
+  logo             String?
   rewardAmount     Int?
   link             String?
   source           Source   @default(NATIVE)
