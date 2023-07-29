@@ -5,6 +5,7 @@ import type { NextApiRequest, NextApiResponse } from 'next';
 
 import { DeadlineEmailTemplate } from '@/components/emails/deadlineTemplate';
 import { prisma } from '@/prisma';
+import { rateLimitedPromiseAll } from '@/utils/rateLimitedPromises';
 import resendMail from '@/utils/resend';
 
 dayjs.extend(utc);
@@ -56,29 +57,27 @@ async function handler(_req: NextApiRequest, res: NextApiResponse) {
         };
       });
       const emailsSent: string[] = [];
-      await Promise.all(
-        subEmail.map(async (e) => {
-          if (emailsSent.includes(e.email) || !e.email) {
-            return;
-          }
-          await resendMail.emails.send({
-            from: `Kash from Superteam <${process.env.SENDGRID_EMAIL}>`,
-            to: [e.email],
-            subject: 'Upcoming Bounty Close',
-            react: DeadlineEmailTemplate({
-              name: e.name!,
-            }),
-          });
-          emailsSent.push(e.email);
+      await rateLimitedPromiseAll(subEmail, 10, async (e) => {
+        if (emailsSent.includes(e.email) || !e.email) {
+          return;
+        }
+        await resendMail.emails.send({
+          from: `Kash from Superteam <${process.env.SENDGRID_EMAIL}>`,
+          to: [e.email],
+          subject: 'Upcoming Bounty Close',
+          react: DeadlineEmailTemplate({
+            name: e.name!,
+          }),
+        });
+        emailsSent.push(e.email);
 
-          await prisma.emailLogs.create({
-            data: {
-              type: 'BOUNTY_CLOSE_DEADLINE',
-              bountyId: bounty.id,
-            },
-          });
-        })
-      );
+        await prisma.emailLogs.create({
+          data: {
+            type: 'BOUNTY_CLOSE_DEADLINE',
+            bountyId: bounty.id,
+          },
+        });
+      });
     });
 
     const emailResults = await Promise.all(emailPromises);

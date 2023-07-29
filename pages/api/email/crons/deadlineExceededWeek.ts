@@ -84,7 +84,7 @@ async function handler(_req: NextApiRequest, res: NextApiResponse) {
 
     const emailResults = await rateLimitedPromiseAll(
       emailPromises,
-      10,
+      9,
       (emailPromise) => emailPromise
     );
 

@@ -141,7 +141,7 @@ export default async function announce(
       ...allSubscribedUsersWithType,
     ];
 
-    await rateLimitedPromiseAll(allUsers, 10, async (user) => {
+    await rateLimitedPromiseAll(allUsers, 9, async (user) => {
       const template = winnersAnnouncedEmailTemplate({
         name: user.name,
         bountyName: bounty?.title || '',

@@ -3,6 +3,7 @@ import type { NextApiRequest, NextApiResponse } from 'next';
 import { NewBountyEmailTemplate } from '@/components/emails/newBountyTemplate';
 import type { Skills } from '@/interface/skills';
 import { prisma } from '@/prisma';
+import { rateLimitedPromiseAll } from '@/utils/rateLimitedPromises';
 import resendMail from '@/utils/resend';
 
 export default async function handler(
@@ -50,7 +51,7 @@ export default async function handler(
 
     const emailsSent: string[] = [];
 
-    email.forEach(async (e) => {
+    await rateLimitedPromiseAll(email, 9, async (e) => {
       if (emailsSent.includes(e.email)) {
         return;
       }
