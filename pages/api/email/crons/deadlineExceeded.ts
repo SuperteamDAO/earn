@@ -9,6 +9,12 @@ import resendMail from '@/utils/resend';
 
 dayjs.extend(utc);
 
+const delay = (ms: number): Promise<void> => {
+  return new Promise((resolve) => {
+    setTimeout(() => resolve(), ms);
+  });
+};
+
 async function handler(_req: NextApiRequest, res: NextApiResponse) {
   try {
     const bounties = await prisma.bounties.findMany({
@@ -40,46 +46,55 @@ async function handler(_req: NextApiRequest, res: NextApiResponse) {
       },
     });
 
-    await Promise.all(
-      bounties.map(async (bounty) => {
-        const checkLogs = await prisma.emailLogs.findFirst({
-          where: {
-            bountyId: bounty.id,
-            type: 'BOUNTY_DEADLINE_WEEK',
-          },
-        });
+    const emailPromises = bounties.map(async (bounty) => {
+      const checkLogs = await prisma.emailLogs.findFirst({
+        where: {
+          bountyId: bounty.id,
+          type: 'BOUNTY_DEADLINE',
+        },
+      });
 
-        if (checkLogs) {
-          return;
-        }
+      if (checkLogs) {
+        return null;
+      }
 
-        const sponsorEmail = bounty.sponsor?.UserSponsors[0]?.user?.email;
-        const sponsorFirstName =
-          bounty.sponsor?.UserSponsors[0]?.user?.firstName;
+      const sponsorEmail = bounty.sponsor?.UserSponsors[0]?.user?.email;
+      const sponsorFirstName = bounty.sponsor?.UserSponsors[0]?.user?.firstName;
 
-        if (!sponsorEmail || !sponsorFirstName) {
-          return;
-        }
+      if (!sponsorEmail || !sponsorFirstName) {
+        return null;
+      }
 
-        await resendMail.emails.send({
-          from: `Kash from Superteam <${process.env.SENDGRID_EMAIL}>`,
-          to: [sponsorEmail],
-          bcc: ['pratik.dholani1@gmail.com'],
-          subject: 'Bounty Deadline Exceeded',
-          react: DeadlineSponsorEmailTemplate({
-            name: sponsorFirstName,
-            bountyName: bounty.title,
-          }),
-        });
+      await resendMail.emails.send({
+        from: `Kash from Superteam <${process.env.SENDGRID_EMAIL}>`,
+        to: ['delivered@resend.dev'],
+        bcc: ['abhiakumar2002@gmail.com'],
+        subject: 'Bounty Deadline Exceeded',
+        react: DeadlineSponsorEmailTemplate({
+          name: sponsorFirstName,
+          bountyName: bounty.title,
+        }),
+      });
 
-        await prisma.emailLogs.create({
-          data: {
-            type: 'BOUNTY_DEADLINE',
-            bountyId: bounty.id,
-          },
-        });
-      })
+      await prisma.emailLogs.create({
+        data: {
+          type: 'BOUNTY_DEADLINE',
+          bountyId: bounty.id,
+        },
+      });
+      await delay(100);
+      return bounty.id;
+    });
+
+    const emailResults = await Promise.all(emailPromises);
+
+    const sentBountyIds = emailResults.filter(
+      (sentBountyId) => sentBountyId !== null
     );
+
+    if (sentBountyIds.length > 0) {
+      console.log('Sent emails for bounties:', sentBountyIds);
+    }
 
     return res.status(200).json({ message: 'Ok' });
   } catch (e) {
