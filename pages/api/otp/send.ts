@@ -1,6 +1,6 @@
 import type { NextApiRequest, NextApiResponse } from 'next';
 
-import { OTPEmailTemplate } from '@/components/emails/otpTemplate';
+import { OTPTemplate } from '@/components/emails/otpTemplate';
 import { generateCode } from '@/utils/helpers';
 import resendMail from '@/utils/resend';
 
@@ -13,7 +13,7 @@ export default async function send(req: NextApiRequest, res: NextApiResponse) {
       from: `Kash from Superteam <${process.env.SENDGRID_EMAIL}>`,
       to: [email],
       subject: 'Welcome!',
-      react: OTPEmailTemplate({ code }),
+      react: OTPTemplate({ code }),
     });
     res
       .status(200)

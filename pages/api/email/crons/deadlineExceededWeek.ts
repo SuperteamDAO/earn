@@ -3,7 +3,7 @@ import dayjs from 'dayjs';
 import utc from 'dayjs/plugin/utc';
 import type { NextApiRequest, NextApiResponse } from 'next';
 
-import { DeadlineExceededWeekEmailTemplate } from '@/components/emails/deadlineExceededWeekTemplate';
+import { DeadlineExceededbyWeekTemplate } from '@/components/emails/deadlineExceededbyWeekTemplate';
 import { prisma } from '@/prisma';
 import { rateLimitedPromiseAll } from '@/utils/rateLimitedPromises';
 import resendMail from '@/utils/resend';
@@ -67,7 +67,7 @@ async function handler(_req: NextApiRequest, res: NextApiResponse) {
         to: ['delivered@resend.dev'],
         bcc: ['abhiakumar2002@gmail.com'],
         subject: 'Bounty Deadline Exceeded by a Week',
-        react: DeadlineExceededWeekEmailTemplate({
+        react: DeadlineExceededbyWeekTemplate({
           name: sponsorFirstName,
           bountyName: bounty.title,
         }),

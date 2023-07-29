@@ -1,6 +1,6 @@
 import type { NextApiRequest, NextApiResponse } from 'next';
 
-import { WelcomeTalentEmailTemplate } from '@/components/emails/welcomeTalentTemplate';
+import { WelcomeTalentTemplate } from '@/components/emails/welcomeTalentTemplate';
 import resendMail from '@/utils/resend';
 
 export default async function handler(
@@ -13,7 +13,7 @@ export default async function handler(
       from: `Kash from Superteam <${process.env.SENDGRID_EMAIL}>`,
       to: [email],
       subject: 'Welcome!',
-      react: WelcomeTalentEmailTemplate({ name }),
+      react: WelcomeTalentTemplate({ name }),
     });
 
     return res.status(200).json({ message: 'Ok' });

@@ -1,6 +1,6 @@
 import React from 'react';
 
-export const OTPEmailTemplate = ({ code }: { code: number }) => {
+export const OTPTemplate = ({ code }: { code: number }) => {
   return (
     <div>
       <p>

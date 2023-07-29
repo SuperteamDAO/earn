@@ -1,6 +1,6 @@
 import React from 'react';
 
-export const DeadlineSponsorEmailTemplate = ({
+export const DeadlineSponsorTemplate = ({
   name,
   bountyName,
 }: {

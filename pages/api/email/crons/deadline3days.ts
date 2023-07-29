@@ -3,7 +3,7 @@ import dayjs from 'dayjs';
 import utc from 'dayjs/plugin/utc';
 import type { NextApiRequest, NextApiResponse } from 'next';
 
-import { DeadlineEmailTemplate } from '@/components/emails/deadlineTemplate';
+import { DeadlineThreeDaysTemplate } from '@/components/emails/deadline3dayTemplate';
 import { prisma } from '@/prisma';
 import { rateLimitedPromiseAll } from '@/utils/rateLimitedPromises';
 import resendMail from '@/utils/resend';
@@ -65,7 +65,7 @@ async function handler(_req: NextApiRequest, res: NextApiResponse) {
           from: `Kash from Superteam <${process.env.SENDGRID_EMAIL}>`,
           to: [e.email],
           subject: 'Upcoming Bounty Close',
-          react: DeadlineEmailTemplate({
+          react: DeadlineThreeDaysTemplate({
             name: e.name!,
           }),
         });

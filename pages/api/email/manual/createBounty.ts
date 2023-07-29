@@ -1,6 +1,6 @@
 import type { NextApiRequest, NextApiResponse } from 'next';
 
-import { NewBountyEmailTemplate } from '@/components/emails/newBountyTemplate';
+import { NewBountyTemplate } from '@/components/emails/newBountyTemplate';
 import type { Skills } from '@/interface/skills';
 import { prisma } from '@/prisma';
 import { rateLimitedPromiseAll } from '@/utils/rateLimitedPromises';
@@ -60,7 +60,7 @@ export default async function handler(
         from: `Kash from Superteam <${process.env.SENDGRID_EMAIL}>`,
         to: [e.email],
         subject: 'New Bounty Created',
-        react: NewBountyEmailTemplate({
+        react: NewBountyTemplate({
           name: listing.title,
           link: `https://earn.superteam.fun/listings/bounties/${listing.slug}`,
         }),

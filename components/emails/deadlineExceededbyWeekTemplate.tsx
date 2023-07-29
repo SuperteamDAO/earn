@@ -1,6 +1,6 @@
 import React from 'react';
 
-export const DeadlineExceededWeekEmailTemplate = ({
+export const DeadlineExceededbyWeekTemplate = ({
   name,
   bountyName,
 }: {

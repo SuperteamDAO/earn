@@ -1,7 +1,7 @@
 import type { NextApiRequest, NextApiResponse } from 'next';
 
-import { submissionSponsorEmailTemplate } from '@/components/emails/submissionSponsorTemplate';
-import { submissionEmailTemplate } from '@/components/emails/submissionTemplate';
+import { SubmissionSponsorTemplate } from '@/components/emails/submissionSponsorTemplate';
+import { SubmissionTemplate } from '@/components/emails/submissionTemplate';
 import { prisma } from '@/prisma';
 import resendMail from '@/utils/resend';
 
@@ -37,7 +37,7 @@ export default async function handler(
         from: `Kash from Superteam <${process.env.SENDGRID_EMAIL}>`,
         to: [user?.email],
         subject: 'Submission Confirmation',
-        react: submissionEmailTemplate({
+        react: SubmissionTemplate({
           name: user?.firstName,
           bountyName: listing?.title,
         }),
@@ -54,7 +54,7 @@ export default async function handler(
         from: `Kash from Superteam <${process.env.SENDGRID_EMAIL}>`,
         to: [listing?.sponsor.UserSponsors[0]?.user.email],
         subject: 'New Submission',
-        react: submissionSponsorEmailTemplate({
+        react: SubmissionSponsorTemplate({
           name: listing?.sponsor.UserSponsors[0]?.user.firstName,
           bountyName: listing?.title,
         }),

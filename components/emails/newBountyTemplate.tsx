@@ -1,6 +1,6 @@
 import React from 'react';
 
-export const NewBountyEmailTemplate = ({
+export const NewBountyTemplate = ({
   name,
   link,
 }: {

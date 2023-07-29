@@ -1,6 +1,6 @@
 import type { NextApiRequest, NextApiResponse } from 'next';
 
-import { winnersAnnouncedEmailTemplate } from '@/components/emails/winnersAnnouncedTemplate';
+import { WinnersAnnouncedTemplate } from '@/components/emails/winnersAnnouncedTemplate';
 import type { Rewards } from '@/interface/bounty';
 import { prisma } from '@/prisma';
 import { dayjs } from '@/utils/dayjs';
@@ -142,7 +142,7 @@ export default async function announce(
     ];
 
     await rateLimitedPromiseAll(allUsers, 9, async (user) => {
-      const template = winnersAnnouncedEmailTemplate({
+      const template = WinnersAnnouncedTemplate({
         name: user.name,
         bountyName: bounty?.title || '',
         link: `${getURL()}listings/bounties/${

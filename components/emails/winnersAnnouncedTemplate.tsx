@@ -1,6 +1,6 @@
 import React from 'react';
 
-export const winnersAnnouncedEmailTemplate = ({
+export const WinnersAnnouncedTemplate = ({
   name,
   bountyName,
   link,

@@ -1,6 +1,6 @@
 import React from 'react';
 
-export const WelcomeSponsorEmailTemplate = () => {
+export const WelcomeSponsorTemplate = () => {
   return (
     <div>
       <p>Welcome to Superteam Earn!</p>

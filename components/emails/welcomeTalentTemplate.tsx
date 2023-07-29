@@ -1,6 +1,6 @@
 import React from 'react';
 
-export const WelcomeTalentEmailTemplate = ({ name }: { name: string }) => {
+export const WelcomeTalentTemplate = ({ name }: { name: string }) => {
   return (
     <div>
       <p>Hey there {name},</p>

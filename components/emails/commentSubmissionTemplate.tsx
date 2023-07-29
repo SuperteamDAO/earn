@@ -1,6 +1,6 @@
 import React from 'react';
 
-export const CommentSubmissionEmailTemplate = ({
+export const CommentSubmissionTemplate = ({
   name,
   bountyName,
   personName,

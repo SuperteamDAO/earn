@@ -1,6 +1,6 @@
 import type { NextApiRequest, NextApiResponse } from 'next';
 
-import { CommentSubmissionEmailTemplate } from '@/components/emails/commentSubmissionTemplate';
+import { CommentSubmissionTemplate } from '@/components/emails/commentSubmissionTemplate';
 import { prisma } from '@/prisma';
 import resendMail from '@/utils/resend';
 
@@ -44,7 +44,7 @@ export default async function handler(
       from: `Kash from Superteam <${process.env.SENDGRID_EMAIL}>`,
       to: [submission?.user.email as string],
       subject: 'New Comment on Your Submission',
-      react: CommentSubmissionEmailTemplate({
+      react: CommentSubmissionTemplate({
         name: submission?.user.firstName as string,
         bountyName: submission?.listing.title as string,
         personName: user?.firstName as string,

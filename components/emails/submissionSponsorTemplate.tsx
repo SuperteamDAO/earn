@@ -1,6 +1,6 @@
 import React from 'react';
 
-export const submissionSponsorEmailTemplate = ({
+export const SubmissionSponsorTemplate = ({
   name,
   bountyName,
 }: {
