@@ -9,6 +9,12 @@ import resendMail from '@/utils/resend';
 
 dayjs.extend(utc);
 
+const delay = (ms: number): Promise<void> => {
+  return new Promise((resolve) => {
+    setTimeout(() => resolve(), ms);
+  });
+};
+
 async function handler(_req: NextApiRequest, res: NextApiResponse) {
   try {
     const sevenDaysAgo = dayjs().subtract(7, 'day').toISOString();
@@ -78,12 +84,14 @@ async function handler(_req: NextApiRequest, res: NextApiResponse) {
           bountyId: bounty.id,
         },
       });
-
+      await delay(100);
       return bounty.id;
     });
 
-    const sentBountyIds = (await Promise.all(emailPromises)).filter(
-      (id) => id !== null
+    const emailResults = await Promise.all(emailPromises);
+
+    const sentBountyIds = emailResults.filter(
+      (sentBountyId) => sentBountyId !== null
     );
 
     if (sentBountyIds.length > 0) {
