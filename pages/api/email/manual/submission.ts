@@ -1,15 +1,15 @@
-import type { MailDataRequired } from '@sendgrid/mail';
 import type { NextApiRequest, NextApiResponse } from 'next';
 
+import { submissionSponsorEmailTemplate } from '@/components/emails/submissionSponsorTemplate';
+import { submissionEmailTemplate } from '@/components/emails/submissionTemplate';
 import { prisma } from '@/prisma';
-import sgMail from '@/utils/sendgrid';
+import resendMail from '@/utils/resend';
 
 export default async function handler(
   req: NextApiRequest,
   res: NextApiResponse
 ) {
   const { listingId, userId } = req.body;
-  console.log(listingId, userId, '-------------------');
   try {
     const listing = await prisma.bounties.findFirst({
       where: {
@@ -32,37 +32,40 @@ export default async function handler(
         id: userId as string,
       },
     });
-    const msg = {
-      to: user?.email,
-      from: {
-        name: 'Kash from Superteam',
-        email: process.env.SENDGRID_EMAIL as string,
-      },
-      templateId: process.env.SENDGRID_SUBMISSION_USER_TEMPLATE as string,
-      dynamicTemplateData: {
-        name: user?.firstName,
-        bounty_name: listing?.title,
-      },
-    };
-    await sgMail.send(msg);
-    const msg1: MailDataRequired = {
-      to: listing?.sponsor.UserSponsors[0]?.user.email,
-      from: {
-        name: 'Kash from Superteam',
-        email: process.env.SENDGRID_EMAIL as string,
-      },
-      templateId: process.env.SENDGRID_SUBMISSION_SPONSOR_TEMPLATE as string,
-      dynamicTemplateData: {
-        name: listing?.sponsor.UserSponsors[0]?.user.firstName,
-        bounty_name: listing?.title,
-        link: `https://earn.superteam.fun/dashboard/bounties/${listing?.slug}/submissions`,
-      },
-    };
-    const a = await sgMail.send(msg1);
-    console.log(a, msg1);
+    if (user?.email && user?.firstName && listing?.title) {
+      await resendMail.emails.send({
+        from: `Kash from Superteam <${process.env.SENDGRID_EMAIL}>`,
+        to: [user?.email],
+        subject: 'Submission Confirmation',
+        react: submissionEmailTemplate({
+          name: user?.firstName,
+          bountyName: listing?.title,
+        }),
+      });
+    }
+
+    if (
+      user?.email &&
+      listing?.sponsor.UserSponsors[0]?.user.email &&
+      listing?.title &&
+      listing?.sponsor.UserSponsors[0]?.user.firstName
+    ) {
+      await resendMail.emails.send({
+        from: `Kash from Superteam <${process.env.SENDGRID_EMAIL}>`,
+        to: [listing?.sponsor.UserSponsors[0]?.user.email],
+        subject: 'New Submission',
+        react: submissionSponsorEmailTemplate({
+          name: listing?.sponsor.UserSponsors[0]?.user.firstName,
+          bountyName: listing?.title,
+        }),
+      });
+    }
+
     return res.status(200).json({ message: 'Ok' });
-  } catch (error) {
+  } catch (error: any) {
     console.log(error);
-    return res.status(500).json({ error: 'Something went wrong.' });
+    return res
+      .status(500)
+      .json({ error: `Something went wrong. ${error.message}` });
   }
 }

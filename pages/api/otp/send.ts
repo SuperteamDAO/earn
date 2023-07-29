@@ -1,25 +1,20 @@
 import type { NextApiRequest, NextApiResponse } from 'next';
 
+import { OTPEmailTemplate } from '@/components/emails/otpTemplate';
 import { generateCode } from '@/utils/helpers';
-import sgMail from '@/utils/sendgrid';
+import resendMail from '@/utils/resend';
 
 export default async function send(req: NextApiRequest, res: NextApiResponse) {
   const { publicKey, email } = req.body;
   try {
     const serverTime = Date.now();
     const code = generateCode(publicKey as string, serverTime);
-    const msg = {
-      to: email,
-      from: {
-        name: 'Kash from Superteam',
-        email: process.env.SENDGRID_EMAIL as string,
-      },
-      templateId: process.env.SENDGRID_VERIFICATION_SPONSOR as string,
-      dynamicTemplateData: {
-        totp: JSON.stringify(code),
-      },
-    };
-    await sgMail.send(msg);
+    await resendMail.emails.send({
+      from: `Kash from Superteam <${process.env.SENDGRID_EMAIL}>`,
+      to: [email],
+      subject: 'Welcome!',
+      react: OTPEmailTemplate({ code }),
+    });
     res
       .status(200)
       .json({ message: 'OTP sent successfully.', time: serverTime });

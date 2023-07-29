@@ -1,9 +1,10 @@
 import type { NextApiRequest, NextApiResponse } from 'next';
 
+import { winnersAnnouncedEmailTemplate } from '@/components/emails/winnersAnnouncedTemplate';
 import type { Rewards } from '@/interface/bounty';
 import { prisma } from '@/prisma';
 import { dayjs } from '@/utils/dayjs';
-import sgMail from '@/utils/sendgrid';
+import resendMail from '@/utils/resend';
 import { getURL } from '@/utils/validUrl';
 
 export default async function announce(
@@ -104,28 +105,22 @@ export default async function announce(
       name: submission?.user?.firstName || '',
     }));
 
-    const promises2 = [];
-    let currentIndex2 = 0;
-
-    while (currentIndex2 < allSubmissionUsers?.length) {
-      const msg = {
-        to: allSubmissionUsers[currentIndex2]?.email,
-        from: {
-          name: 'Kash from Superteam',
-          email: process.env.SENDGRID_EMAIL as string,
-        },
-        templateId: process.env.SENDGRID_ANNOUNCE_WINNERS as string,
-        dynamicTemplateData: {
-          name: allSubmissionUsers[currentIndex2]?.name,
-          bounty_name: bounty?.title || '',
+    const promises2 = allSubmissionUsers.map(async (submissionUser) => {
+      const data = await resendMail.emails.send({
+        from: `Kash from Superteam <${process.env.SENDGRID_EMAIL}>`,
+        to: [submissionUser?.email],
+        subject: 'Congratulations on Winning!',
+        react: winnersAnnouncedEmailTemplate({
+          name: submissionUser?.name,
+          bountyName: bounty?.title || '',
           link: `${getURL()}listings/bounties/${
             bounty?.slug || ''
           }/?utm_source=superteamearn&utm_medium=email&utm_campaign=winnerannouncement`,
-        },
-      };
-      promises2.push(sgMail.send(msg));
-      currentIndex2 += 1;
-    }
+        }),
+      });
+      return data;
+    });
+
     await Promise.all(promises2);
     res.status(200).json(result);
   } catch (error) {
