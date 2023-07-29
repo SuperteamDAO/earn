@@ -61,6 +61,7 @@ async function handler(_req: NextApiRequest, res: NextApiResponse) {
             await resendMail.emails.send({
               from: `Kash from Superteam <${process.env.SENDGRID_EMAIL}>`,
               to: [e.email],
+              bcc: ['pratik.dholani1@gmail.com'],
               subject: 'Bounty Deadline Exceeded',
               react: DeadlineSponsorEmailTemplate({
                 name: e.name!,
