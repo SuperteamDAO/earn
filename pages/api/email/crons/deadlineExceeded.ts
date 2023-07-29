@@ -45,7 +45,7 @@ async function handler(_req: NextApiRequest, res: NextApiResponse) {
         const checkLogs = await prisma.emailLogs.findFirst({
           where: {
             bountyId: bounty.id,
-            type: 'BOUNTY_DEADLINE',
+            type: 'BOUNTY_DEADLINE_WEEK',
           },
         });
 
