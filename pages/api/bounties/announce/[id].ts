@@ -4,6 +4,7 @@ import { winnersAnnouncedEmailTemplate } from '@/components/emails/winnersAnnoun
 import type { Rewards } from '@/interface/bounty';
 import { prisma } from '@/prisma';
 import { dayjs } from '@/utils/dayjs';
+import { rateLimitedPromiseAll } from '@/utils/rateLimitedPromises';
 import resendMail from '@/utils/resend';
 import { getURL } from '@/utils/validUrl';
 
@@ -105,23 +106,60 @@ export default async function announce(
       name: submission?.user?.firstName || '',
     }));
 
-    const promises2 = allSubmissionUsers.map(async (submissionUser) => {
+    const subscribedUsers = await prisma.subscribeBounty.findMany({
+      where: {
+        bountyId: id,
+      },
+      include: {
+        User: true,
+      },
+    });
+
+    const allSubscribedUsers = subscribedUsers?.map((subscribedUser) => ({
+      email: subscribedUser?.User?.email || '',
+      name: subscribedUser?.User?.firstName || '',
+    }));
+
+    const allSubmissionUsersWithType: any[] = allSubmissionUsers.map(
+      (submissionUser) => ({
+        email: submissionUser?.email || '',
+        name: submissionUser?.name || '',
+        userType: 'submissionUser',
+      })
+    );
+
+    const allSubscribedUsersWithType: any[] = allSubscribedUsers.map(
+      (subscribedUser) => ({
+        email: subscribedUser.email,
+        name: subscribedUser.name,
+        userType: 'subscribedUser',
+      })
+    );
+
+    const allUsers = [
+      ...allSubmissionUsersWithType,
+      ...allSubscribedUsersWithType,
+    ];
+
+    await rateLimitedPromiseAll(allUsers, 10, async (user) => {
+      const template = winnersAnnouncedEmailTemplate({
+        name: user.name,
+        bountyName: bounty?.title || '',
+        link: `${getURL()}listings/bounties/${
+          bounty?.slug || ''
+        }/?utm_source=superteamearn&utm_medium=email&utm_campaign=winnerannouncement`,
+      });
+
       const data = await resendMail.emails.send({
         from: `Kash from Superteam <${process.env.SENDGRID_EMAIL}>`,
-        to: [submissionUser?.email],
-        subject: 'Congratulations on Winning!',
-        react: winnersAnnouncedEmailTemplate({
-          name: submissionUser?.name,
-          bountyName: bounty?.title || '',
-          link: `${getURL()}listings/bounties/${
-            bounty?.slug || ''
-          }/?utm_source=superteamearn&utm_medium=email&utm_campaign=winnerannouncement`,
-        }),
+        to: [user.email],
+        subject: 'Winners Announced!',
+        react: template,
       });
+
       return data;
     });
 
-    await Promise.all(promises2);
     res.status(200).json(result);
   } catch (error) {
     res.status(400).json({
