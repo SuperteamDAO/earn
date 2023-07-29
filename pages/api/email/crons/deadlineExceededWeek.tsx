@@ -3,7 +3,7 @@ import dayjs from 'dayjs';
 import utc from 'dayjs/plugin/utc';
 import type { NextApiRequest, NextApiResponse } from 'next';
 
-import { DeadlineSponsorEmailTemplate } from '@/components/emails/deadlineSponsorTemplate';
+import { DeadlineExceededWeekEmailTemplate } from '@/components/emails/deadlineExceededWeekTemplate';
 import { prisma } from '@/prisma';
 import resendMail from '@/utils/resend';
 
@@ -11,6 +11,8 @@ dayjs.extend(utc);
 
 async function handler(_req: NextApiRequest, res: NextApiResponse) {
   try {
+    const sevenDaysAgo = dayjs().subtract(7, 'day').toISOString();
+
     const bounties = await prisma.bounties.findMany({
       where: {
         isPublished: true,
@@ -18,7 +20,7 @@ async function handler(_req: NextApiRequest, res: NextApiResponse) {
         isArchived: false,
         status: 'OPEN',
         deadline: {
-          lt: dayjs().toISOString(),
+          lt: sevenDaysAgo,
         },
         isWinnersAnnounced: false,
       },
@@ -45,7 +47,7 @@ async function handler(_req: NextApiRequest, res: NextApiResponse) {
         const checkLogs = await prisma.emailLogs.findFirst({
           where: {
             bountyId: bounty.id,
-            type: 'BOUNTY_DEADLINE_WEEK',
+            type: 'BOUNTY_DEADLINE',
           },
         });
 
@@ -66,7 +68,7 @@ async function handler(_req: NextApiRequest, res: NextApiResponse) {
           to: [sponsorEmail],
           bcc: ['pratik.dholani1@gmail.com'],
           subject: 'Bounty Deadline Exceeded',
-          react: DeadlineSponsorEmailTemplate({
+          react: DeadlineExceededWeekEmailTemplate({
             name: sponsorFirstName,
             bountyName: bounty.title,
           }),
