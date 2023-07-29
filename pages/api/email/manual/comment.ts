@@ -1,7 +1,8 @@
 import type { NextApiRequest, NextApiResponse } from 'next';
 
+import { CommentSponsorTemplate } from '@/components/emails/commentSponsorTemplate';
 import { prisma } from '@/prisma';
-import sgMail from '@/utils/sendgrid';
+import resendMail from '@/utils/resend';
 
 export default async function handler(
   req: NextApiRequest,
@@ -29,20 +30,22 @@ export default async function handler(
       },
     });
 
-    const msg = {
-      to: listings?.sponsor.UserSponsors[0]?.user.email,
-      from: {
-        name: 'Kash from Superteam',
-        email: process.env.SENDGRID_EMAIL as string,
-      },
-      templateId: process.env.SENDGRID_COMMENT_SPONSOR as string,
-      dynamicTemplateData: {
-        name: listings?.sponsor.UserSponsors[0]?.user.firstName,
+    const sponsorAdmin = listings?.sponsor.UserSponsors[0]?.user;
+
+    if (!sponsorAdmin) {
+      return res.status(400).json({ error: 'Sponsor admin not found.' });
+    }
+
+    await resendMail.emails.send({
+      from: `Kash from Superteam <${process.env.SENDGRID_EMAIL}>`,
+      to: [sponsorAdmin.email],
+      subject: 'New Sponsor Comment',
+      react: CommentSponsorTemplate({
+        name: sponsorAdmin.firstName!,
         bountyName: listings?.title,
         link: `https://earn.superteam.fun/listings/bounties/${listings?.slug}`,
-      },
-    };
-    await sgMail.send(msg);
+      }),
+    });
     return res.status(200).json({ message: 'Ok' });
   } catch (error) {
     console.log(error);

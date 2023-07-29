@@ -4,10 +4,12 @@ export const CommentSubmissionEmailTemplate = ({
   name,
   bountyName,
   personName,
+  link,
 }: {
   name: string;
   bountyName: string;
   personName: string;
+  link: string;
 }) => {
   return (
     <div>
@@ -16,6 +18,7 @@ export const CommentSubmissionEmailTemplate = ({
         {personName} left a new comment on your {bountyName}. Click on the link
         to see what they said
       </p>
+      <a href={link}>Link</a>
     </div>
   );
 };

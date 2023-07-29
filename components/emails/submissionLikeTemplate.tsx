@@ -1,6 +1,6 @@
 import React from 'react';
 
-export const CommentSponsorTemplate = ({
+export const SubmissionLikeTemplate = ({
   name,
   bountyName,
   link,

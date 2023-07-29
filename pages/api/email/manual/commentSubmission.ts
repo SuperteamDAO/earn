@@ -1,7 +1,8 @@
 import type { NextApiRequest, NextApiResponse } from 'next';
 
+import { CommentSubmissionEmailTemplate } from '@/components/emails/commentSubmissionTemplate';
 import { prisma } from '@/prisma';
-import sgMail from '@/utils/sendgrid';
+import resendMail from '@/utils/resend';
 
 export default async function handler(
   req: NextApiRequest,
@@ -39,23 +40,18 @@ export default async function handler(
       },
     });
 
-    const msg = {
-      to: submission?.user.email as string,
-      from: {
-        name: 'Kash from Superteam',
-        email: process.env.SENDGRID_EMAIL as string,
-      },
-      templateId: process.env.SENDGRID_COMMENT_TEMPLATE as string,
-      dynamicTemplateData: {
-        name: submission?.user.firstName,
-        bounty_name: submission?.listing.title,
-        personName: user?.firstName,
+    await resendMail.emails.send({
+      from: `Kash from Superteam <${process.env.SENDGRID_EMAIL}>`,
+      to: [submission?.user.email as string],
+      subject: 'New Comment on Your Submission',
+      react: CommentSubmissionEmailTemplate({
+        name: submission?.user.firstName as string,
+        bountyName: submission?.listing.title as string,
+        personName: user?.firstName as string,
         link: `https://earn.superteam.fun/listings/bounties/${submission?.listing.slug}/submission/${submission?.id}`,
-      },
-    };
-    console.log(msg);
-    const sub = await sgMail.send(msg);
-    console.log(sub, '----');
+      }),
+    });
+
     return res.status(200).json({ message: 'Ok' });
   } catch (error) {
     console.log(error);
