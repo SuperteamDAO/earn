@@ -25,7 +25,7 @@ async function handler(_req: NextApiRequest, res: NextApiResponse) {
     const bountiesWithDeadline = bounties.filter((bounty) => {
       return dayjs
         .utc(bounty.deadline?.toISOString().split('T')[0])
-        .isSame(dayjs.utc().add(2, 'day').toISOString().split('T')[0]);
+        .isSame(dayjs.utc().add(3, 'day').toISOString().split('T')[0]);
     });
 
     await Promise.all(
