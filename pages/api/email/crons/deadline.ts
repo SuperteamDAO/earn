@@ -28,60 +28,68 @@ async function handler(_req: NextApiRequest, res: NextApiResponse) {
         .isSame(dayjs.utc().add(3, 'day').toISOString().split('T')[0]);
     });
 
-    await Promise.all(
-      bountiesWithDeadline.map(async (bounty) => {
-        const checkLogs = await prisma.emailLogs.findFirst({
-          where: {
-            bountyId: bounty.id,
-            type: 'BOUNTY_CLOSE_DEADLINE',
-          },
-        });
+    const emailPromises = bountiesWithDeadline.map(async (bounty) => {
+      const checkLogs = await prisma.emailLogs.findFirst({
+        where: {
+          bountyId: bounty.id,
+          type: 'BOUNTY_CLOSE_DEADLINE',
+        },
+      });
 
-        if (checkLogs) {
-          return;
-        }
+      if (checkLogs) {
+        return;
+      }
 
-        const subscribe = await prisma.subscribeBounty.findMany({
-          where: {
-            bountyId: bounty.id,
-          },
-          include: {
-            User: true,
-          },
-        });
+      const subscribe = await prisma.subscribeBounty.findMany({
+        where: {
+          bountyId: bounty.id,
+        },
+        include: {
+          User: true,
+        },
+      });
 
-        const subEmail = subscribe.map((sub) => {
-          return {
-            email: sub.User.email,
-            name: sub.User.firstName,
-          };
-        });
-        const emailsSent: string[] = [];
-        await Promise.all(
-          subEmail.map(async (e) => {
-            if (emailsSent.includes(e.email) || !e.email) {
-              return;
-            }
-            await resendMail.emails.send({
-              from: `Kash from Superteam <${process.env.SENDGRID_EMAIL}>`,
-              to: [e.email],
-              subject: 'Upcoming Bounty Close',
-              react: DeadlineEmailTemplate({
-                name: e.name!,
-              }),
-            });
-            emailsSent.push(e.email);
+      const subEmail = subscribe.map((sub) => {
+        return {
+          email: sub.User.email,
+          name: sub.User.firstName,
+        };
+      });
+      const emailsSent: string[] = [];
+      await Promise.all(
+        subEmail.map(async (e) => {
+          if (emailsSent.includes(e.email) || !e.email) {
+            return;
+          }
+          await resendMail.emails.send({
+            from: `Kash from Superteam <${process.env.SENDGRID_EMAIL}>`,
+            to: [e.email],
+            subject: 'Upcoming Bounty Close',
+            react: DeadlineEmailTemplate({
+              name: e.name!,
+            }),
+          });
+          emailsSent.push(e.email);
 
-            await prisma.emailLogs.create({
-              data: {
-                type: 'BOUNTY_CLOSE_DEADLINE',
-                bountyId: bounty.id,
-              },
-            });
-          })
-        );
-      })
+          await prisma.emailLogs.create({
+            data: {
+              type: 'BOUNTY_CLOSE_DEADLINE',
+              bountyId: bounty.id,
+            },
+          });
+        })
+      );
+    });
+
+    const emailResults = await Promise.all(emailPromises);
+
+    const sentBountyIds = emailResults.filter(
+      (sentBountyId) => sentBountyId !== null
     );
+
+    if (sentBountyIds.length > 0) {
+      console.log('Sent emails for bounties:', sentBountyIds);
+    }
 
     return res.status(200).json({ message: 'Ok' });
   } catch (e) {
