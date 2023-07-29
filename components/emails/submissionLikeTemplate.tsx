@@ -13,8 +13,12 @@ export const SubmissionLikeTemplate = ({
     <div>
       <p>Hey there {name},</p>
       <p>
-        The {bountyName} listing added by your company just received a comment -
-        check it out by clicking the link below.
+        Woah! People are really digging your work on the {bountyName} bounty.
+        Keep it up!
+      </p>
+      <p>
+        Check out the other submissions here and spread some love to the other
+        participants!
       </p>
       <a href={link}>Link</a>
     </div>
