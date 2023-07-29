@@ -1,14 +1,22 @@
 import React from 'react';
 
-export const CommentSponsorTemplate = ({ name }: { name: string }) => {
+export const CommentSponsorTemplate = ({
+  name,
+  bountyName,
+  link,
+}: {
+  name: string;
+  bountyName: string;
+  link: string;
+}) => {
   return (
     <div>
       <p>Hey there {name},</p>
       <p>
-        Friendly reminder that the bounty you were interested in will close in 2
-        days. Go secure the bag
+        The {bountyName} listing added by your company just received a comment -
+        check it out by clicking the link below.
       </p>
-      <p>The Superteam Earn Crew 🦸‍♀️🦸‍♂️</p>
+      <a href={link}>Link</a>
     </div>
   );
 };
