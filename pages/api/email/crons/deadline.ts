@@ -1,10 +1,13 @@
 import { verifySignature } from '@upstash/qstash/nextjs';
 import dayjs from 'dayjs';
+import utc from 'dayjs/plugin/utc';
 import type { NextApiRequest, NextApiResponse } from 'next';
 
-import { DeadlineEmailTemplate } from '@/components/emails/deadline';
+import { DeadlineEmailTemplate } from '@/components/emails/deadlineTemplate';
 import { prisma } from '@/prisma';
 import resendMail from '@/utils/resend';
+
+dayjs.extend(utc);
 
 async function handler(_req: NextApiRequest, res: NextApiResponse) {
   try {
@@ -20,65 +23,72 @@ async function handler(_req: NextApiRequest, res: NextApiResponse) {
       },
     });
     const bountiesWithDeadline = bounties.filter((bounty) => {
-      return dayjs(bounty.deadline?.toISOString().split('T')[0]).isSame(
-        dayjs().add(2, 'day').toISOString().split('T')[0]
-      );
+      return dayjs
+        .utc(bounty.deadline?.toISOString().split('T')[0])
+        .isSame(dayjs.utc().add(2, 'day').toISOString().split('T')[0]);
     });
 
-    bountiesWithDeadline.forEach(async (bounty) => {
-      const checkLogs = await prisma.emailLogs.findFirst({
-        where: {
-          bountyId: bounty.id,
-          type: 'BOUNTY_CLOSE_DEADLINE',
-        },
-      });
+    await Promise.all(
+      bountiesWithDeadline.map(async (bounty) => {
+        const checkLogs = await prisma.emailLogs.findFirst({
+          where: {
+            bountyId: bounty.id,
+            type: 'BOUNTY_CLOSE_DEADLINE',
+          },
+        });
 
-      if (checkLogs) {
-        return;
-      }
-
-      const subscribe = await prisma.subscribeBounty.findMany({
-        where: {
-          bountyId: bounty.id,
-        },
-        include: {
-          User: true,
-        },
-      });
-
-      const subEmail = subscribe.map((sub) => {
-        return {
-          email: sub.User.email,
-          name: sub.User.firstName,
-        };
-      });
-      const emailsSent: string[] = [];
-      subEmail.forEach(async (e) => {
-        if (emailsSent.includes(e.email)) {
+        if (checkLogs) {
           return;
         }
-        await resendMail.emails.send({
-          from: `Kash from Superteam <${process.env.SENDGRID_EMAIL}>`,
-          to: [e.email],
-          subject: 'Upcoming Bounty Close',
-          react: DeadlineEmailTemplate({
-            name: e.name!,
-          }),
+
+        const subscribe = await prisma.subscribeBounty.findMany({
+          where: {
+            bountyId: bounty.id,
+          },
+          include: {
+            User: true,
+          },
         });
-        emailsSent.push(e.email);
-      });
-      await prisma.emailLogs.create({
-        data: {
-          type: 'BOUNTY_CLOSE_DEADLINE',
-          bountyId: bounty.id,
-        },
-      });
-    });
+
+        const subEmail = subscribe.map((sub) => {
+          return {
+            email: sub.User.email,
+            name: sub.User.firstName,
+          };
+        });
+        const emailsSent: string[] = [];
+        await Promise.all(
+          subEmail.map(async (e) => {
+            if (emailsSent.includes(e.email) || !e.email) {
+              return;
+            }
+            await resendMail.emails.send({
+              from: `Kash from Superteam <${process.env.SENDGRID_EMAIL}>`,
+              to: [e.email],
+              subject: 'Upcoming Bounty Close',
+              react: DeadlineEmailTemplate({
+                name: e.name!,
+              }),
+            });
+            emailsSent.push(e.email);
+
+            await prisma.emailLogs.create({
+              data: {
+                type: 'BOUNTY_CLOSE_DEADLINE',
+                bountyId: bounty.id,
+              },
+            });
+          })
+        );
+      })
+    );
 
     return res.status(200).json({ message: 'Ok' });
   } catch (e) {
-    console.log(e);
-    return res.status(500).json({ error: 'Something went wrong.' });
+    console.error(e);
+    return res
+      .status(500)
+      .json({ error: 'Something went wrong. Check server logs for details.' });
   }
 }
 
