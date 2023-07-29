@@ -28,6 +28,7 @@ const GrantEntry = ({
   token,
   slug,
   link,
+  logo,
 }: {
   color: string;
   icon: string;
@@ -37,12 +38,24 @@ const GrantEntry = ({
   token?: string;
   link?: string;
   slug: string;
+  logo?: string;
 }) => {
   return (
     <Box w={80}>
-      <Center w={80} h={52} mb={5} bg={color}>
-        <Image w={16} alt="" src={icon} />
-      </Center>
+      {logo ? (
+        <Image
+          w={'320px'}
+          h={'180px'}
+          mb={5}
+          objectFit={'cover'}
+          alt=""
+          src={logo}
+        />
+      ) : (
+        <Center w={'320px'} h={'180px'} mb={5} bg={color}>
+          <Image w={16} alt="" src={icon} />
+        </Center>
+      )}
       <Text mb={'4px'} fontSize={'md'} fontWeight={'600'}>
         {title}
       </Text>
@@ -173,6 +186,7 @@ function Grants() {
                           grant?.sponsor?.logo ??
                           '/assets/home/placeholder/ph5.png'
                         }
+                        logo={grant?.logo}
                       />
                     </WrapItem>
                   );

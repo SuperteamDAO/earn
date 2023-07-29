@@ -7,6 +7,7 @@ interface Grant {
   id: string;
   title: string;
   slug: string;
+  logo?: string;
   description?: string;
   shortDescription?: string;
   skills?: Skills;
