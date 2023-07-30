@@ -64,7 +64,7 @@ async function handler(_req: NextApiRequest, res: NextApiResponse) {
         await resendMail.emails.send({
           from: `Kash from Superteam <${process.env.SENDGRID_EMAIL}>`,
           to: [e.email],
-          subject: 'Upcoming Bounty Close',
+          subject: 'Upcoming Bounty Deadline',
           react: DeadlineThreeDaysTemplate({
             name: e.name!,
           }),
