@@ -1,3 +1,4 @@
+import { verifySignature } from '@upstash/qstash/nextjs';
 import dayjs from 'dayjs';
 import utc from 'dayjs/plugin/utc';
 import type { NextApiRequest, NextApiResponse } from 'next';
@@ -15,10 +16,7 @@ type Notifications = {
   timestamp: string;
 }[];
 
-export default async function handler(
-  _req: NextApiRequest,
-  res: NextApiResponse
-) {
+async function handler(_req: NextApiRequest, res: NextApiResponse) {
   try {
     const users = (
       await prisma.user.findMany({
@@ -100,3 +98,11 @@ export default async function handler(
     res.status(500).json({ error: err.message });
   }
 }
+
+export default verifySignature(handler);
+
+export const config = {
+  api: {
+    bodyParser: false,
+  },
+};
