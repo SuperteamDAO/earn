@@ -59,10 +59,10 @@ export default async function handler(
       await resendMail.emails.send({
         from: `Kash from Superteam <${process.env.SENDGRID_EMAIL}>`,
         to: [e.email],
-        subject: 'New Bounty Created',
+        subject: 'Here’s a New Listing You’d Be Interested In..',
         react: NewBountyTemplate({
           name: listing.title,
-          link: `https://earn.superteam.fun/listings/bounties/${listing.slug}`,
+          link: `https://earn.superteam.fun/listings/bounties/${listing.slug}/?utm_source=superteamearn&utm_medium=email&utm_campaign=notifications`,
         }),
       });
 

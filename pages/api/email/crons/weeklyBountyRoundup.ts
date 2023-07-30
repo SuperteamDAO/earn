@@ -38,6 +38,9 @@ async function handler(_req: NextApiRequest, res: NextApiResponse) {
           gte: dayjs().add(1, 'day').toISOString(),
         },
       },
+      include: {
+        sponsor: true,
+      },
     });
 
     const userBounties = users
@@ -70,6 +73,8 @@ async function handler(_req: NextApiRequest, res: NextApiResponse) {
           bounties: matchingBounties.map((bounty) => ({
             title: bounty.title,
             rewardAmount: bounty.rewardAmount,
+            sponsor: bounty.sponsor.name,
+            slug: bounty.slug,
           })),
         };
       })
@@ -80,8 +85,7 @@ async function handler(_req: NextApiRequest, res: NextApiResponse) {
         await resendMail.emails.send({
           from: `Kash from Superteam <${process.env.SENDGRID_EMAIL}>`,
           to: [user?.email!],
-          bcc: ['abhiakumar2002@gmail.com'],
-          subject: 'Weekly Roundup',
+          subject: 'Your Weekly Bounty Roundup Is Here!',
           react: WeeklyRoundupTemplate({
             name: user?.name!,
             bounties: user?.bounties,
@@ -92,7 +96,7 @@ async function handler(_req: NextApiRequest, res: NextApiResponse) {
       }
     });
 
-    res.status(200).json({ message: 'Emails sent' });
+    res.status(200).json(userBounties);
   } catch (err: any) {
     console.log(err.message);
     res.status(500).json({ error: err.message });

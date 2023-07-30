@@ -11,12 +11,14 @@ export const CommentSponsorTemplate = ({
 }) => {
   return (
     <div>
-      <p>Hey there {name},</p>
+      <p>Hey {name},</p>
       <p>
-        The {bountyName} listing added by your company just received a comment -
-        check it out by clicking the link below.
+        The “{bountyName}” listing added by your company just received a comment
+        &mdash; check it out by clicking the link below:&nbsp;
       </p>
-      <a href={link}>Link</a>
+      <strong>
+        <a href={link}>Link</a>
+      </strong>
     </div>
   );
 };

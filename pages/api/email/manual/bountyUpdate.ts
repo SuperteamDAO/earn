@@ -45,7 +45,7 @@ export default async function handler(
         dynamicTemplateData: {
           name: e.name,
           bountyName: notifyPeople[0]?.Bounties?.title,
-          link: `https://earn.superteam.fun/listings/bounties/${notifyPeople[0]?.Bounties?.slug}`,
+          link: `https://earn.superteam.fun/listings/bounties/${notifyPeople[0]?.Bounties?.slug}/?utm_source=superteamearn&utm_medium=email&utm_campaign=notifications`,
         },
       };
       await sgMail.send(msg);

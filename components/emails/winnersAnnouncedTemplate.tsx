@@ -11,9 +11,14 @@ export const WinnersAnnouncedTemplate = ({
 }) => {
   return (
     <div>
-      <p>Hey there {name},</p>
-      <p>The winners for the bounty {bountyName} have been announced!</p>
-      <a href={link}>Link</a>
+      <p>Hey {name},</p>
+      <p>
+        The winners for the bounty {bountyName} have been announced! Check them
+        out by clicking on the link below:&nbsp;
+      </p>
+      <strong>
+        <a href={link}>Link</a>
+      </strong>
     </div>
   );
 };

@@ -5,20 +5,16 @@ export const WelcomeTalentTemplate = ({ name }: { name: string }) => {
     <div>
       <p>Hey there {name},</p>
       <p>
-        Congrats on joining the Talent Network - we&apos;re hyped to have you on
-        board! 🎉
+        Congrats on joining the Talent Network on Superteam Earn &mdash;
+        we&apos;re hyped to have you on board! 🎉&nbsp;
       </p>
       <p>
-        Congrats on joining the Talent Network - we&apos;re hyped to have you on
-        board! 🎉
+        We hope Earn can help you grow your wallet balance and expand your proof
+        of work.&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
       </p>
-      <p>
-        We’re still in beta, so if you ever have a question, ideas, or funny
-        memes, don&apos;t hesitate to reply to this email. I read every message
-        😊
-      </p>
+      <p>Wish you all the best!</p>
       <p>Best,</p>
-      <p>Kash and the Superteam Earn Crew 🦸‍♀️🦸‍♂️</p>
+      <p>The&nbsp;Superteam Earn Crew 🦸&zwj;♀️🦸&zwj;♂️</p>
     </div>
   );
 };

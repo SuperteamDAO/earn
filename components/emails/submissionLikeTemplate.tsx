@@ -11,16 +11,18 @@ export const SubmissionLikeTemplate = ({
 }) => {
   return (
     <div>
-      <p>Hey there {name},</p>
+      <p>Hey {name},</p>
       <p>
-        Woah! People are really digging your work on the {bountyName} bounty.
-        Keep it up!
+        People are really digging your work on the {bountyName} bounty. Keep it
+        up!
       </p>
       <p>
         Check out the other submissions here and spread some love to the other
         participants!
       </p>
-      <a href={link}>Link</a>
+      <strong>
+        <a href={link}>Link</a>
+      </strong>
     </div>
   );
 };

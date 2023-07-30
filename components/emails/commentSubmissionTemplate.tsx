@@ -13,12 +13,14 @@ export const CommentSubmissionTemplate = ({
 }) => {
   return (
     <div>
-      <p>Hey there {name},</p>
+      <p>Hey&nbsp;{name},</p>
       <p>
-        {personName} left a new comment on your {bountyName}. Click on the link
-        to see what they said
+        {personName} left a new comment on your submission to the ”{bountyName}”
+        listing. Click on the link below to see what they said:&nbsp;
       </p>
-      <a href={link}>Link</a>
+      <strong>
+        <a href={link}>Link</a>
+      </strong>
     </div>
   );
 };

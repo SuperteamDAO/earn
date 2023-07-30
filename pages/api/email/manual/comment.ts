@@ -39,11 +39,11 @@ export default async function handler(
     await resendMail.emails.send({
       from: `Kash from Superteam <${process.env.SENDGRID_EMAIL}>`,
       to: [sponsorAdmin.email],
-      subject: 'New Sponsor Comment',
+      subject: 'Comment Received on Your Superteam Earn Listing',
       react: CommentSponsorTemplate({
         name: sponsorAdmin.firstName!,
         bountyName: listings?.title,
-        link: `https://earn.superteam.fun/listings/bounties/${listings?.slug}`,
+        link: `https://earn.superteam.fun/listings/bounties/${listings?.slug}/?utm_source=superteamearn&utm_medium=email&utm_campaign=notifications`,
       }),
     });
     return res.status(200).json({ message: 'Ok' });

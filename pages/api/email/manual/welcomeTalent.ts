@@ -12,7 +12,7 @@ export default async function handler(
     await resendMail.emails.send({
       from: `Kash from Superteam <${process.env.SENDGRID_EMAIL}>`,
       to: [email],
-      subject: 'Welcome!',
+      subject: 'Welcome to Superteam Earn!',
       react: WelcomeTalentTemplate({ name }),
     });
 

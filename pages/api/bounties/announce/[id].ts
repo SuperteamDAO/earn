@@ -153,7 +153,7 @@ export default async function announce(
       const data = await resendMail.emails.send({
         from: `Kash from Superteam <${process.env.SENDGRID_EMAIL}>`,
         to: [user.email],
-        subject: 'Winners Announced!',
+        subject: 'Bounty Winners Announced!',
         react: template,
       });
 

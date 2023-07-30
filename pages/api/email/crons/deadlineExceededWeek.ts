@@ -66,10 +66,13 @@ async function handler(_req: NextApiRequest, res: NextApiResponse) {
         from: `Kash from Superteam <${process.env.SENDGRID_EMAIL}>`,
         to: [sponsorEmail],
         bcc: ['pratik.dholani1@gmail.com'],
-        subject: 'Bounty Deadline Exceeded by a Week',
+        subject: 'Winner Announcement for Your Earn Bounty Is Due!',
         react: DeadlineExceededbyWeekTemplate({
           name: sponsorFirstName,
           bountyName: bounty.title,
+          link: `https://earn.superteam.fun/listings/bounties/${
+            bounty?.slug || ''
+          }/?utm_source=superteamearn&utm_medium=email&utm_campaign=notifications`,
         }),
       });
 

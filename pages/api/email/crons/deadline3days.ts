@@ -64,9 +64,13 @@ async function handler(_req: NextApiRequest, res: NextApiResponse) {
         await resendMail.emails.send({
           from: `Kash from Superteam <${process.env.SENDGRID_EMAIL}>`,
           to: [e.email],
-          subject: 'Upcoming Bounty Deadline',
+          subject: 'This Bounty Is Expiring Soon!',
           react: DeadlineThreeDaysTemplate({
             name: e.name!,
+            bountyName: bounty.title,
+            link: `https://earn.superteam.fun/listings/bounties/${
+              bounty?.slug || ''
+            }/?utm_source=superteamearn&utm_medium=email&utm_campaign=notifications`,
           }),
         });
         emailsSent.push(e.email);
