@@ -63,7 +63,7 @@ async function handler(_req: NextApiRequest, res: NextApiResponse) {
       await resendMail.emails.send({
         from: `Kash from Superteam <${process.env.SENDGRID_EMAIL}>`,
         to: [sponsorEmail],
-        bcc: ['pratik.dholani1@gmail.com'],
+        bcc: ['pratikd.earnings@gmail.com'],
         subject: 'Your Earn Listing Is Ready to Be Reviewed',
         react: DeadlineSponsorTemplate({
           name: sponsorFirstName,
