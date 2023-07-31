@@ -2,6 +2,7 @@ import { HStack, VStack } from '@chakra-ui/react';
 import { Regions } from '@prisma/client';
 import axios from 'axios';
 import type { GetServerSideProps } from 'next';
+import Head from 'next/head';
 import { useEffect, useState } from 'react';
 
 import BountyWinners from '@/components/listings/bounty/BountyWinners';
@@ -13,14 +14,14 @@ import ErrorSection from '@/components/shared/ErrorSection';
 import LoadingSection from '@/components/shared/LoadingSection';
 import type { Bounty } from '@/interface/bounty';
 import { Default } from '@/layouts/Default';
-import { Meta } from '@/layouts/Meta';
 import { Mixpanel } from '@/utils/mixpanel';
 
 interface BountyDetailsProps {
   slug: string;
+  bounty: Bounty | null;
 }
 
-function BountyDetails({ slug }: BountyDetailsProps) {
+function BountyDetails({ slug, bounty: initialBounty }: BountyDetailsProps) {
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState(false);
 
@@ -48,10 +49,44 @@ function BountyDetails({ slug }: BountyDetailsProps) {
   return (
     <Default
       meta={
-        <Meta
-          title={`${bounty?.title || 'Bounty'} | Superteam Earn`}
-          description="Every Solana opportunity in one place!"
-        />
+        <Head>
+          <title>{`${
+            initialBounty?.title || 'Bounty'
+          } | Superteam Earn`}</title>
+          <meta
+            property="og:title"
+            content={`${initialBounty?.title || 'Bounty'} | Superteam Earn`}
+          />
+          <meta
+            property="og:image"
+            content={`https://earn-frontend-v2-git-feat-og-image-superteam-earn.vercel.app/api/ognew/?title=${initialBounty?.title}&reward=${initialBounty?.rewardAmount}&type=${initialBounty?.type}&sponsor=${initialBounty?.sponsor?.name}&logo=${initialBounty?.sponsor?.logo}`}
+          />
+          <meta
+            name="twitter:title"
+            content={`${initialBounty?.title || 'Bounty'} | Superteam Earn`}
+          />
+          <meta
+            name="twitter:image"
+            content={`https://earn-frontend-v2-git-feat-og-image-superteam-earn.vercel.app/api/ognew/?title=${initialBounty?.title}&reward=${initialBounty?.rewardAmount}&type=${initialBounty?.type}&sponsor=${initialBounty?.sponsor?.name}&logo=${initialBounty?.sponsor?.logo}`}
+          />
+          <meta name="twitter:card" content="summary_large_image" />
+
+          <meta
+            name="viewport"
+            content="width=device-width,initial-scale=1"
+            key="viewport"
+          />
+          <meta property="og:image:width" content="1200" />
+          <meta property="og:image:height" content="630" />
+          <meta property="og:image:alt" content="Superteam Bounty" />
+          <meta name="twitter:card" content="summary_large_image" />
+          <meta charSet="UTF-8" key="charset" />
+          <meta
+            name="viewport"
+            content="width=device-width,initial-scale=1"
+            key="viewport"
+          />
+        </Head>
       }
     >
       {isLoading && <LoadingSection />}
@@ -112,8 +147,23 @@ function BountyDetails({ slug }: BountyDetailsProps) {
 
 export const getServerSideProps: GetServerSideProps = async (context) => {
   const { slug } = context.query;
+
+  let bountyData;
+  try {
+    const bountyDetails = await axios.get(
+      `https://beta.earn.superteam.fun/api/bounties/${slug}/`
+    );
+    bountyData = bountyDetails.data;
+  } catch (e) {
+    console.error(e);
+    bountyData = null;
+  }
+
   return {
-    props: { slug },
+    props: {
+      slug,
+      bounty: bountyData,
+    },
   };
 };
 
