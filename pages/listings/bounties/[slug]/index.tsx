@@ -62,11 +62,6 @@ function BountyDetails({ slug, bounty: initialBounty }: BountyDetailsProps) {
             content={`https://earn-frontend-v2-git-feat-og-image-superteam-earn.vercel.app/api/ognew/?title=${initialBounty?.title}&reward=${initialBounty?.rewardAmount}&type=${initialBounty?.type}&sponsor=${initialBounty?.sponsor?.name}&logo=${initialBounty?.sponsor?.logo}`}
           />
           <meta
-            property="twitter:image"
-            content={`https://earn-frontend-v2-git-feat-og-image-superteam-earn.vercel.app/api/ognew/?title=${initialBounty?.title}&reward=${initialBounty?.rewardAmount}&type=${initialBounty?.type}&sponsor=${initialBounty?.sponsor?.name}&logo=${initialBounty?.sponsor?.logo}`}
-          />
-
-          <meta
             name="twitter:title"
             content={`${initialBounty?.title || 'Bounty'} | Superteam Earn`}
           />
@@ -76,7 +71,6 @@ function BountyDetails({ slug, bounty: initialBounty }: BountyDetailsProps) {
           />
           <meta name="twitter:card" content="summary_large_image" />
 
-          <meta charSet="UTF-8" key="charset" />
           <meta
             name="viewport"
             content="width=device-width,initial-scale=1"
