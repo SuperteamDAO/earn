@@ -6,7 +6,6 @@ import { prisma } from '@/prisma';
 import { dayjs } from '@/utils/dayjs';
 import { rateLimitedPromiseAll } from '@/utils/rateLimitedPromises';
 import resendMail from '@/utils/resend';
-import { getURL } from '@/utils/validUrl';
 
 export default async function announce(
   req: NextApiRequest,
@@ -145,7 +144,7 @@ export default async function announce(
       const template = WinnersAnnouncedTemplate({
         name: user.name,
         bountyName: bounty?.title || '',
-        link: `${getURL()}listings/bounties/${
+        link: `https://earn.superteam.fun/listings/bounties/${
           bounty?.slug || ''
         }/?utm_source=superteamearn&utm_medium=email&utm_campaign=winnerannouncement`,
       });

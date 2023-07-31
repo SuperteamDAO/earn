@@ -57,7 +57,7 @@ export default async function handler(
         react: SubmissionSponsorTemplate({
           name: listing?.sponsor.UserSponsors[0]?.user.firstName,
           bountyName: listing?.title,
-          link: `https://earn.superteam.fun/listings/bounties/${listing?.slug}/?utm_source=superteamearn&utm_medium=email&utm_campaign=notifications`,
+          link: `https://earn.superteam.fun/dashboard/bounties/${listing?.slug}/submissions/?utm_source=superteamearn&utm_medium=email&utm_campaign=notifications`,
         }),
       });
     }
