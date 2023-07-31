@@ -375,4 +375,7 @@ enum Regions {
   TURKEY
   MEXICO
   UK
+  UAE
+  NIGERIA
+  ISRAEL
 }

@@ -138,6 +138,36 @@ export const Footer = ({ style }: Props) => (
         >
           UK
         </Link>
+        <Link
+          color="brand.slate.500"
+          _hover={{
+            color: 'brand.slate.800',
+          }}
+          href={`${getURL()}regions/uae`}
+          isExternal
+        >
+          UAE
+        </Link>
+        <Link
+          color="brand.slate.500"
+          _hover={{
+            color: 'brand.slate.800',
+          }}
+          href={`${getURL()}regions/nigeria`}
+          isExternal
+        >
+          Nigeria
+        </Link>
+        <Link
+          color="brand.slate.500"
+          _hover={{
+            color: 'brand.slate.800',
+          }}
+          href={`${getURL()}regions/israel`}
+          isExternal
+        >
+          Israel
+        </Link>
       </Stack>{' '}
       <Flex align="start" gap="0.625rem" flexFlow="column">
         <Text mb="1.25rem" color="#4D4D4D" fontSize="1.125rem" fontWeight={700}>

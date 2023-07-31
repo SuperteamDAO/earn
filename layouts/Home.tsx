@@ -126,10 +126,31 @@ function Home(props: IDefaultProps) {
     },
     {
       name: 'Superteam Vietnam',
-      bg: `/assets/category_assets/bg/backend.png`,
+      bg: `/assets/category_assets/bg/content.png`,
       color: '#A8FEA8',
       icons: '/assets/superteams/vietnam.png',
       region: 'Vietnam',
+    },
+    {
+      name: 'Superteam UAE',
+      bg: `/assets/category_assets/bg/growth.png`,
+      color: '#A8FEA8',
+      icons: '/assets/superteams/uae.png',
+      region: 'UAE',
+    },
+    {
+      name: 'Superteam Nigeria',
+      bg: `/assets/category_assets/bg/design.png`,
+      color: '#F5A8ED',
+      icons: '/assets/superteams/nigeria.jpeg',
+      region: 'Nigeria',
+    },
+    {
+      name: 'Superteam Israel',
+      bg: `/assets/category_assets/bg/frontend.png`,
+      color: '#A8FEA8',
+      icons: '/assets/superteams/israel.jpeg',
+      region: 'Israel',
     },
   ];
   return (

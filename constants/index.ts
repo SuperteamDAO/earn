@@ -919,6 +919,8 @@ export const CommunityList: string[] = [
   'Superteam Turkey',
   'Superteam UK',
   'Superteam UAE',
+  'Superteam Nigeria',
+  'Superteam Israel',
   'SuperWomenDao',
   'DeveloperDAO',
   'Metacamp',

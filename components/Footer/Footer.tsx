@@ -208,6 +208,36 @@ export default function LargeWithNewsletter() {
             >
               UK
             </Link>
+            <Link
+              color="brand.slate.500"
+              _hover={{
+                color: 'brand.slate.800',
+              }}
+              href={`${getURL()}regions/uae`}
+              isExternal
+            >
+              UAE
+            </Link>
+            <Link
+              color="brand.slate.500"
+              _hover={{
+                color: 'brand.slate.800',
+              }}
+              href={`${getURL()}regions/nigeria`}
+              isExternal
+            >
+              Nigeria
+            </Link>
+            <Link
+              color="brand.slate.500"
+              _hover={{
+                color: 'brand.slate.800',
+              }}
+              href={`${getURL()}regions/israel`}
+              isExternal
+            >
+              Israel
+            </Link>
           </Stack>
           <Stack align={'flex-start'}>
             <ListHeader>Superteam Productions</ListHeader>
