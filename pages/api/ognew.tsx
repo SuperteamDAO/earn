@@ -30,9 +30,6 @@ export default async function handler(request: NextRequest) {
     const hasLogo = searchParams.has('logo');
     const logo = hasLogo ? searchParams.get('logo')?.slice(0, 100) : sponsorImg;
 
-    const hasType = searchParams.has('type');
-    const type = hasType ? searchParams.get('type')?.slice(0, 100) : null;
-
     const hasReward = searchParams.has('reward');
     const reward = hasReward
       ? `$${searchParams.get('reward')?.slice(0, 100)} USDC`
@@ -192,22 +189,20 @@ export default async function handler(request: NextRequest) {
                   justifyItems: 'center',
                 }}
               >
-                {type && (
-                  <div
-                    style={{
-                      fontSize: 20,
-                      fontStyle: 'normal',
-                      color: '#A788FF',
-                      lineHeight: 1.4,
-                      whiteSpace: 'pre-wrap',
-                      backgroundColor: '#e9e9ff',
-                      borderRadius: '35px',
-                      padding: '12px 60px',
-                    }}
-                  >
-                    {type?.toUpperCase()}
-                  </div>
-                )}
+                <div
+                  style={{
+                    fontSize: 20,
+                    fontStyle: 'normal',
+                    color: '#A788FF',
+                    lineHeight: 1.4,
+                    whiteSpace: 'pre-wrap',
+                    backgroundColor: '#e9e9ff',
+                    borderRadius: '35px',
+                    padding: '12px 60px',
+                  }}
+                >
+                  Bounty
+                </div>
                 <div
                   style={{
                     display: 'flex',
