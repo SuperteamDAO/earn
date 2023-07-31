@@ -232,8 +232,8 @@ export default async function handler(request: NextRequest) {
                   {icon && (
                     <img
                       style={{
-                        width: '64px',
-                        height: '64px',
+                        width: '48px',
+                        height: '48px',
                         objectFit: 'contain',
                       }}
                       alt="token"
@@ -251,7 +251,7 @@ export default async function handler(request: NextRequest) {
                         lineHeight: 1.4,
                         whiteSpace: 'pre-wrap',
                         fontFamily: '"Inter"',
-                        // marginLeft: 10,
+                        marginLeft: 10,
                       }}
                     >
                       {reward}
