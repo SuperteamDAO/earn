@@ -23,20 +23,25 @@ export default async function handler(
     }
 
     const skills = listing.skills as Skills;
-    const search: any[] = [];
-    skills.forEach(async (skill) => {
-      search.push({
-        notifications: {
-          path: '$[*].label',
-          array_contains: skill,
-        },
-      });
-    });
 
-    const users = await prisma.user.findMany({
-      where: {
-        OR: search,
-      },
+    const users = (
+      await prisma.user.findMany({
+        where: {
+          isVerified: true,
+          isTalentFilled: true,
+        },
+      })
+    ).filter((user) => {
+      if (!user.notifications) return false;
+
+      const userNotifications =
+        typeof user.notifications === 'string'
+          ? JSON.parse(user.notifications)
+          : user.notifications;
+
+      return userNotifications.some((notification: { label: string }) =>
+        skills.some((skill) => skill.skills === notification.label)
+      );
     });
 
     const email: {
@@ -61,7 +66,7 @@ export default async function handler(
         to: [e.email],
         subject: 'Here’s a New Listing You’d Be Interested In..',
         react: NewBountyTemplate({
-          name: listing.title,
+          name: e.name,
           link: `https://earn.superteam.fun/listings/bounties/${listing.slug}/?utm_source=superteamearn&utm_medium=email&utm_campaign=notifications`,
         }),
       });
