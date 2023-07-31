@@ -1,3 +1,5 @@
+/* eslint-disable no-nested-ternary */
+
 import { ImageResponse } from '@vercel/og';
 import type { NextRequest } from 'next/server';
 
@@ -27,7 +29,12 @@ export default async function handler(request: NextRequest) {
     ]);
 
     const hasTitle = searchParams.has('title');
-    const title = hasTitle ? searchParams.get('title')?.slice(0, 100) : null;
+    const paramTitle = searchParams.get('title');
+    const title = hasTitle
+      ? paramTitle && paramTitle.length > 97
+        ? `${paramTitle.slice(0, 97)}...`
+        : paramTitle
+      : null;
 
     const hasLogo = searchParams.has('logo');
     const logo = hasLogo ? searchParams.get('logo')?.slice(0, 100) : sponsorImg;
@@ -222,17 +229,19 @@ export default async function handler(request: NextRequest) {
                     alignItems: 'center',
                   }}
                 >
-                  <img
-                    style={{
-                      width: '64px',
-                      height: '64px',
-                      objectFit: 'contain',
-                    }}
-                    alt="logo"
-                    src={icon as string}
-                    width="64px"
-                    height="64px"
-                  />
+                  {icon && (
+                    <img
+                      style={{
+                        width: '64px',
+                        height: '64px',
+                        objectFit: 'contain',
+                      }}
+                      alt="token"
+                      src={icon as string}
+                      width="64px"
+                      height="64px"
+                    />
+                  )}
                   {reward && (
                     <div
                       style={{
@@ -242,7 +251,7 @@ export default async function handler(request: NextRequest) {
                         lineHeight: 1.4,
                         whiteSpace: 'pre-wrap',
                         fontFamily: '"Inter"',
-                        marginLeft: 20,
+                        // marginLeft: 10,
                       }}
                     >
                       {reward}
