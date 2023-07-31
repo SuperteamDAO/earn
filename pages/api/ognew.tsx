@@ -1,6 +1,8 @@
 import { ImageResponse } from '@vercel/og';
 import type { NextRequest } from 'next/server';
 
+import { tokenList } from '@/constants';
+
 export const config = {
   runtime: 'experimental-edge',
 };
@@ -32,13 +34,23 @@ export default async function handler(request: NextRequest) {
 
     const hasReward = searchParams.has('reward');
     const reward = hasReward
-      ? `$${searchParams.get('reward')?.slice(0, 100)} USDC`
+      ? `$${searchParams.get('reward')?.slice(0, 100)}`
       : null;
 
     const hasSponsor = searchParams.has('sponsor');
     const sponsor = hasSponsor
       ? searchParams.get('sponsor')?.slice(0, 100)
       : null;
+
+    const hasToken = searchParams.has('token');
+    const token = hasToken ? searchParams.get('token')?.slice(0, 100) : null;
+
+    const getTokenIcon = (symbol: any, tokens: any[]): string | undefined => {
+      const itoken = tokens.find((t) => t.tokenSymbol === symbol);
+      return itoken?.icon;
+    };
+
+    const icon = getTokenIcon(token, tokenList);
 
     return new ImageResponse(
       (
@@ -210,28 +222,17 @@ export default async function handler(request: NextRequest) {
                     alignItems: 'center',
                   }}
                 >
-                  <svg
-                    width="47"
-                    height="48"
-                    viewBox="0 0 47 48"
-                    fill="none"
-                    xmlns="http://www.w3.org/2000/svg"
-                  >
-                    <path
-                      d="M23.5 47.5C36.523 47.5 47 37.023 47 24C47 10.977 36.523 0.5 23.5 0.5C10.477 0.5 0 10.977 0 24C0 37.023 10.477 47.5 23.5 47.5Z"
-                      fill="#2775CA"
-                    />
-                    <path
-                      d="M29.9621 27.7181C29.9621 24.2911 27.9058 23.1161 23.7933 22.6266C20.8558 22.2349 20.2683 21.4516 20.2683 20.0806C20.2683 18.7096 21.2476 17.8286 23.2058 17.8286C24.9683 17.8286 25.9476 18.4161 26.4371 19.8849C26.5351 20.1786 26.8288 20.3744 27.1226 20.3744H28.6891C29.0808 20.3744 29.3746 20.0806 29.3746 19.6891V19.5911C28.9828 17.4369 27.2203 15.7724 24.9683 15.5766V13.2266C24.9683 12.8349 24.6746 12.5411 24.1851 12.4431H22.7163C22.3246 12.4431 22.0308 12.7369 21.9328 13.2266V15.4786C18.9953 15.8704 17.1351 17.8286 17.1351 20.2766C17.1351 23.5079 19.0933 24.7806 23.2058 25.2704C25.9476 25.7599 26.8288 26.3474 26.8288 27.9141C26.8288 29.4809 25.4578 30.5579 23.5976 30.5579C21.0516 30.5579 20.1703 29.4806 19.8766 28.0119C19.7788 27.6204 19.4851 27.4244 19.1913 27.4244H17.5266C17.1351 27.4244 16.8413 27.7181 16.8413 28.1099V28.2079C17.2328 30.6556 18.7996 32.4181 22.0308 32.9079V35.2579C22.0308 35.6494 22.3246 35.9431 22.8141 36.0411H24.2828C24.6746 36.0411 24.9683 35.7474 25.0663 35.2579V32.9079C28.0038 32.4181 29.9621 30.3619 29.9621 27.7181Z"
-                      fill="white"
-                    />
-                    <path
-                      fill-rule="evenodd"
-                      clip-rule="evenodd"
-                      d="M9.79121 19.2001C6.95147 26.7398 10.8682 35.2585 18.5057 38C18.7995 38.196 19.0932 38.5876 19.0932 38.8813V40.2523C19.0932 40.448 19.0932 40.546 18.9952 40.6438C18.8975 41.0355 18.5057 41.2313 18.114 41.0355C12.6307 39.273 8.42022 35.0625 6.65772 29.5793C3.72022 20.2773 8.81197 10.3876 18.114 7.45005C18.212 7.35229 18.4077 7.35229 18.5057 7.35229C18.8975 7.45005 19.0932 7.7438 19.0932 8.13555V9.5063C19.0932 9.99604 18.8975 10.2898 18.5057 10.4855C14.4912 11.9543 11.26 15.0876 9.79121 19.2001ZM28.0048 7.84347C28.1025 7.45172 28.4943 7.25597 28.886 7.45172C34.2713 9.21422 38.5798 13.4247 40.3423 19.006C43.2798 28.308 38.188 38.1977 28.886 41.1352C28.788 41.233 28.5923 41.233 28.4943 41.233C28.1025 41.1352 27.9068 40.8415 27.9068 40.4497V39.079C27.9068 38.5892 28.1025 38.2955 28.4943 38.0997C32.5088 36.631 35.74 33.4977 37.2088 29.3852C40.0485 21.8455 36.1318 13.3267 28.4943 10.5852C28.2005 10.3892 27.9068 9.99771 27.9068 9.60597V8.23521C27.9068 8.03922 27.9068 7.94146 28.0048 7.84347Z"
-                      fill="white"
-                    />
-                  </svg>
+                  <img
+                    style={{
+                      width: '64px',
+                      height: '64px',
+                      objectFit: 'contain',
+                    }}
+                    alt="logo"
+                    src={icon as string}
+                    width="64px"
+                    height="64px"
+                  />
                   {reward && (
                     <div
                       style={{
@@ -245,6 +246,21 @@ export default async function handler(request: NextRequest) {
                       }}
                     >
                       {reward}
+                    </div>
+                  )}
+                  {token && (
+                    <div
+                      style={{
+                        fontSize: 32,
+                        fontStyle: 'normal',
+                        color: '#334254',
+                        lineHeight: 1.4,
+                        whiteSpace: 'pre-wrap',
+                        fontFamily: '"Inter"',
+                        marginLeft: 10,
+                      }}
+                    >
+                      {token}
                     </div>
                   )}
                 </div>
