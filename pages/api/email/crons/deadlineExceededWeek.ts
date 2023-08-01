@@ -26,20 +26,7 @@ async function handler(_req: NextApiRequest, res: NextApiResponse) {
         isWinnersAnnounced: false,
       },
       include: {
-        sponsor: {
-          select: {
-            UserSponsors: {
-              select: {
-                user: {
-                  select: {
-                    email: true,
-                    firstName: true,
-                  },
-                },
-              },
-            },
-          },
-        },
+        poc: true,
       },
     });
 
@@ -55,20 +42,20 @@ async function handler(_req: NextApiRequest, res: NextApiResponse) {
         return null;
       }
 
-      const sponsorEmail = bounty.sponsor?.UserSponsors[0]?.user?.email;
-      const sponsorFirstName = bounty.sponsor?.UserSponsors[0]?.user?.firstName;
+      const pocEmail = bounty.poc?.email;
+      const pocFirstName = bounty.poc?.firstName;
 
-      if (!sponsorEmail || !sponsorFirstName) {
+      if (!pocEmail || !pocFirstName) {
         return null;
       }
 
       await resendMail.emails.send({
         from: `Kash from Superteam <${process.env.SENDGRID_EMAIL}>`,
-        to: [sponsorEmail],
+        to: [pocEmail],
         bcc: ['pratikd.earnings@gmail.com'],
         subject: 'Winner Announcement for Your Earn Bounty Is Due!',
         react: DeadlineExceededbyWeekTemplate({
-          name: sponsorFirstName,
+          name: pocFirstName,
           bountyName: bounty.title,
           link: `https://earn.superteam.fun/listings/bounties/${
             bounty?.slug || ''

@@ -24,20 +24,7 @@ async function handler(_req: NextApiRequest, res: NextApiResponse) {
         isWinnersAnnounced: false,
       },
       include: {
-        sponsor: {
-          select: {
-            UserSponsors: {
-              select: {
-                user: {
-                  select: {
-                    email: true,
-                    firstName: true,
-                  },
-                },
-              },
-            },
-          },
-        },
+        poc: true,
       },
     });
 
@@ -53,20 +40,20 @@ async function handler(_req: NextApiRequest, res: NextApiResponse) {
         return null;
       }
 
-      const sponsorEmail = bounty.sponsor?.UserSponsors[0]?.user?.email;
-      const sponsorFirstName = bounty.sponsor?.UserSponsors[0]?.user?.firstName;
+      const pocUserEmail = bounty.poc?.email;
+      const pocUserFirstName = bounty.poc?.firstName;
 
-      if (!sponsorEmail || !sponsorFirstName) {
+      if (!pocUserEmail || !pocUserFirstName) {
         return null;
       }
 
       await resendMail.emails.send({
         from: `Kash from Superteam <${process.env.SENDGRID_EMAIL}>`,
-        to: [sponsorEmail],
+        to: [pocUserEmail],
         bcc: ['pratikd.earnings@gmail.com'],
         subject: 'Your Earn Listing Is Ready to Be Reviewed',
         react: DeadlineSponsorTemplate({
-          name: sponsorFirstName,
+          name: pocUserFirstName,
           bountyName: bounty.title,
           link: `https://earn.superteam.fun/listings/bounties/${
             bounty?.slug || ''

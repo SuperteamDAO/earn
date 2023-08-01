@@ -16,22 +16,7 @@ export default async function handler(
       },
       include: {
         user: true,
-        listing: {
-          include: {
-            sponsor: {
-              include: {
-                UserSponsors: {
-                  where: {
-                    role: 'ADMIN',
-                  },
-                  include: {
-                    user: true,
-                  },
-                },
-              },
-            },
-          },
-        },
+        listing: true,
       },
     });
     const user = await prisma.user.findUnique({

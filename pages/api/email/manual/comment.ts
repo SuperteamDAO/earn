@@ -15,33 +15,22 @@ export default async function handler(
         id,
       },
       include: {
-        sponsor: {
-          include: {
-            UserSponsors: {
-              where: {
-                role: 'ADMIN',
-              },
-              include: {
-                user: true,
-              },
-            },
-          },
-        },
+        poc: true,
       },
     });
 
-    const sponsorAdmin = listings?.sponsor.UserSponsors[0]?.user;
+    const pocUser = listings?.poc;
 
-    if (!sponsorAdmin) {
-      return res.status(400).json({ error: 'Sponsor admin not found.' });
+    if (!pocUser) {
+      return res.status(400).json({ error: 'POC user not found.' });
     }
 
     await resendMail.emails.send({
       from: `Kash from Superteam <${process.env.SENDGRID_EMAIL}>`,
-      to: [sponsorAdmin.email],
+      to: [pocUser.email],
       subject: 'Comment Received on Your Superteam Earn Listing',
       react: CommentSponsorTemplate({
-        name: sponsorAdmin.firstName!,
+        name: pocUser.firstName!,
         bountyName: listings?.title,
         link: `https://earn.superteam.fun/listings/bounties/${listings?.slug}/?utm_source=superteamearn&utm_medium=email&utm_campaign=notifications`,
       }),

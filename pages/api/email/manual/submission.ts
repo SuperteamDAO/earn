@@ -16,15 +16,7 @@ export default async function handler(
         id: listingId as string,
       },
       include: {
-        sponsor: {
-          include: {
-            UserSponsors: {
-              include: {
-                user: true,
-              },
-            },
-          },
-        },
+        poc: true,
       },
     });
     const user = await prisma.user.findFirst({
@@ -44,18 +36,15 @@ export default async function handler(
       });
     }
 
-    if (
-      user?.email &&
-      listing?.sponsor.UserSponsors[0]?.user.email &&
-      listing?.title &&
-      listing?.sponsor.UserSponsors[0]?.user.firstName
-    ) {
+    const pocUser = listing?.poc;
+
+    if (user?.email && pocUser?.email && listing?.title && pocUser?.firstName) {
       await resendMail.emails.send({
         from: `Kash from Superteam <${process.env.SENDGRID_EMAIL}>`,
-        to: [listing?.sponsor.UserSponsors[0]?.user.email],
+        to: [pocUser?.email],
         subject: 'New Bounty Submission Received',
         react: SubmissionSponsorTemplate({
-          name: listing?.sponsor.UserSponsors[0]?.user.firstName,
+          name: pocUser?.firstName,
           bountyName: listing?.title,
           link: `https://earn.superteam.fun/dashboard/bounties/${listing?.slug}/submissions/?utm_source=superteamearn&utm_medium=email&utm_campaign=notifications`,
         }),
