@@ -1,33 +1,40 @@
 import React from 'react';
 
+import { styles } from './styles';
+
+interface TemplateProps {
+  name: string;
+  bountyName: string;
+  link: string;
+}
+
 export const DeadlineSponsorTemplate = ({
   name,
   bountyName,
   link,
-}: {
-  name: string;
-  bountyName: string;
-  link: string;
-}) => {
+}: TemplateProps) => {
   return (
-    <div>
-      <p>Hey {name},</p>
-      <p>
-        The deadline for the &quot;{bountyName}&quot;&nbsp;bounty&nbsp;you had
-        listed has expired. Please review the submissions and announce the
+    <div style={styles.container}>
+      <p style={styles.text}>Hey {name},</p>
+      <p style={styles.textWithMargin}>
+        The deadline for the <strong>{bountyName}</strong>&nbsp;bounty&nbsp;you
+        had listed has expired. Please review the submissions and announce the
         winners on Superteam Earn&nbsp;soon!
       </p>
-      <p>Click the link below to review&nbsp;the submissions:&nbsp;</p>
-      <p>
-        <span style={{ textDecoration: 'underline', color: '#0000ff' }}>
-          <a href={link}>
-            <strong>Link</strong>
-          </a>
-        </span>
+      <p style={styles.textWithMargin}>
+        <a href={link} style={styles.link}>
+          Click here
+        </a>
+        to review&nbsp;the submissions:&nbsp;
+      </p>
+      <p style={styles.textWithMargin}>
+        <a href={link} style={styles.link}>
+          Link
+        </a>
         &nbsp;
       </p>
-      <p>Best,</p>
-      <p>The Superteam Earn Crew 🦸&zwj;♀️🦸&zwj;♂️</p>
+      <p style={styles.textWithMargin}>Best,</p>
+      <p style={styles.text}>The Superteam Earn Crew 🦸&zwj;♀️🦸&zwj;♂️</p>
     </div>
   );
 };

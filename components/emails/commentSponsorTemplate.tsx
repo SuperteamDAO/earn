@@ -1,5 +1,7 @@
 import React from 'react';
 
+import { styles } from './styles';
+
 interface TemplateProps {
   name: string;
   bountyName: string;
@@ -12,28 +14,17 @@ export const CommentSponsorTemplate = ({
   link,
 }: TemplateProps) => {
   return (
-    <div
-      style={{
-        fontFamily: 'Arial, sans-serif',
-        color: '#333',
-        margin: '0 auto',
-        padding: '20px',
-      }}
-    >
-      <p style={{ fontSize: '14px', lineHeight: '20px' }}>Hey {name},</p>
-      <p style={{ fontSize: '14px', lineHeight: '20px', margin: '10px 0' }}>
+    <div style={styles.container}>
+      <p style={styles.text}>Hey {name},</p>
+      <p style={styles.textWithMargin}>
         The <strong>{bountyName}</strong> listing added by your company just
         received a comment &mdash;{' '}
-        <a href={link} style={{ color: '#007BFF', textDecoration: 'none' }}>
+        <a href={link} style={styles.link}>
           check it out
         </a>
       </p>
-      <p style={{ fontSize: '14px', marginBottom: '10px', lineHeight: '20px' }}>
-        Best,&nbsp;
-      </p>
-      <p style={{ fontSize: '14px', lineHeight: '20px' }}>
-        The Superteam Earn Crew 🦸&zwj;♀️🦸&zwj;♂️
-      </p>
+      <p style={styles.textWithMargin}>Best,&nbsp;</p>
+      <p style={styles.text}>The Superteam Earn Crew 🦸&zwj;♀️🦸&zwj;♂️</p>
     </div>
   );
 };

@@ -1,26 +1,32 @@
 import React from 'react';
 
+import { styles } from './styles';
+
+interface SubmissionProps {
+  name: string;
+  bountyName: string;
+  personName: string;
+  link: string;
+}
+
 export const CommentSubmissionTemplate = ({
   name,
   bountyName,
   personName,
   link,
-}: {
-  name: string;
-  bountyName: string;
-  personName: string;
-  link: string;
-}) => {
+}: SubmissionProps) => {
   return (
-    <div>
-      <p>Hey&nbsp;{name},</p>
-      <p>
-        {personName} left a new comment on your submission to the ”{bountyName}”
-        listing. Click on the link below to see what they said:&nbsp;
+    <div style={styles.container}>
+      <p style={styles.text}>Hey&nbsp;{name},</p>
+      <p style={styles.textWithMargin}>
+        {personName} left a new comment on your submission to the
+        <strong>{bountyName}</strong> listing.
+        <a href={link} style={styles.link}>
+          See what they said.
+        </a>{' '}
       </p>
-      <strong>
-        <a href={link}>Link</a>
-      </strong>
+      <p style={styles.text}>Best,&nbsp;</p>
+      <p style={styles.text}>The Superteam Earn Crew 🦸&zwj;♀️🦸&zwj;♂️</p>
     </div>
   );
 };

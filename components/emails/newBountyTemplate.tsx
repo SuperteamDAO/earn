@@ -1,31 +1,30 @@
 import React from 'react';
 
-export const NewBountyTemplate = ({
-  name,
-  link,
-}: {
+import { styles } from './styles';
+
+interface NewBountyProps {
   name: string;
   link: string;
-}) => {
+}
+
+export const NewBountyTemplate = ({ name, link }: NewBountyProps) => {
   return (
-    <div>
-      <p>Hey {name},</p>
-      <p>
+    <div style={styles.container}>
+      <p style={styles.text}>Hey {name},</p>
+      <p style={styles.textWithMargin}>
         Good news &mdash; a new&nbsp;listing has just arrived with your name on
         it. It&apos;s like finding a $20 bill in your pocket, but way more
         exciting! 💰
       </p>
-      <p>Check out the link below to know more:&nbsp;</p>
-      <p>
-        <span style={{ textDecoration: 'underline', color: '#0000ff' }}>
-          <a href={link}>
-            <strong>Link</strong>
-          </a>
-        </span>
+      <p style={styles.textWithMargin}>
+        <a href={link} style={styles.link}>
+          Click here
+        </a>
+        to learn more about the bounty.
       </p>
-      <p>Best,&nbsp;</p>
-      <p>The Superteam Earn Crew 🦸&zwj;♀️🦸&zwj;♂️</p>
-      <p>&nbsp;</p>
+      <p style={styles.textWithMargin}>Best,&nbsp;</p>
+      <p style={styles.text}>The Superteam Earn Crew 🦸&zwj;♀️🦸&zwj;♂️</p>
+      <p style={styles.text}>&nbsp;</p>
     </div>
   );
 };
