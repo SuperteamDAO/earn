@@ -12,6 +12,7 @@ dayjs.extend(utc);
 
 async function handler(_req: NextApiRequest, res: NextApiResponse) {
   try {
+    const currentTime = dayjs.utc();
     const bounties = await prisma.bounties.findMany({
       where: {
         isPublished: true,
@@ -19,7 +20,8 @@ async function handler(_req: NextApiRequest, res: NextApiResponse) {
         isArchived: false,
         status: 'OPEN',
         deadline: {
-          lt: dayjs().toISOString(),
+          lt: currentTime.toISOString(),
+          gte: currentTime.subtract(1, 'day').toISOString(),
         },
         isWinnersAnnounced: false,
       },

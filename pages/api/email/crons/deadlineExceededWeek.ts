@@ -13,6 +13,7 @@ dayjs.extend(utc);
 async function handler(_req: NextApiRequest, res: NextApiResponse) {
   try {
     const sevenDaysAgo = dayjs().subtract(7, 'day').toISOString();
+    const nineDaysAgo = dayjs().subtract(9, 'day').toISOString();
 
     const bounties = await prisma.bounties.findMany({
       where: {
@@ -22,6 +23,7 @@ async function handler(_req: NextApiRequest, res: NextApiResponse) {
         status: 'OPEN',
         deadline: {
           lt: sevenDaysAgo,
+          gte: nineDaysAgo,
         },
         isWinnersAnnounced: false,
       },
