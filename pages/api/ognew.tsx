@@ -41,7 +41,9 @@ export default async function handler(request: NextRequest) {
 
     const hasReward = searchParams.has('reward');
     const reward = hasReward
-      ? `$${searchParams.get('reward')?.slice(0, 100)}`
+      ? Number(searchParams.get('reward')).toLocaleString(undefined, {
+          maximumFractionDigits: 2,
+        })
       : null;
 
     const hasSponsor = searchParams.has('sponsor');
@@ -252,9 +254,10 @@ export default async function handler(request: NextRequest) {
                         whiteSpace: 'pre-wrap',
                         fontFamily: '"Inter"',
                         marginLeft: 10,
+                        display: 'flex',
                       }}
                     >
-                      {reward}
+                      ${reward}
                     </div>
                   )}
                   {token && (
