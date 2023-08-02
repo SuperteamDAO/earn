@@ -25,13 +25,7 @@ export const DeadlineSponsorTemplate = ({
         <a href={link} style={styles.link}>
           Click here
         </a>
-        to review&nbsp;the submissions:&nbsp;
-      </p>
-      <p style={styles.textWithMargin}>
-        <a href={link} style={styles.link}>
-          Link
-        </a>
-        &nbsp;
+        to review&nbsp;the submissions. &nbsp;
       </p>
       <p style={styles.textWithMargin}>Best,</p>
       <p style={styles.text}>The Superteam Earn Crew 🦸&zwj;♀️🦸&zwj;♂️</p>
