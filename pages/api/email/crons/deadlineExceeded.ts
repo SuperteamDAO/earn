@@ -57,9 +57,9 @@ async function handler(_req: NextApiRequest, res: NextApiResponse) {
         react: DeadlineSponsorTemplate({
           name: pocUserFirstName,
           bountyName: bounty.title,
-          link: `https://earn.superteam.fun/listings/bounties/${
+          link: `https://earn.superteam.fun/dashboard/bounties/${
             bounty?.slug || ''
-          }/?utm_source=superteamearn&utm_medium=email&utm_campaign=notifications`,
+          }/submissions/?utm_source=superteamearn&utm_medium=email&utm_campaign=notifications`,
         }),
       });
 

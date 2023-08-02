@@ -22,7 +22,7 @@ export const DeadlineThreeDaysTemplate = ({
         indicated&nbsp;interest in will close in 3 days!{' '}
         <a href={link} style={styles.link}>
           Click here
-        </a>
+        </a>{' '}
         to take another look.
       </p>
       <p style={styles.textWithMargin}>Best,&nbsp;</p>

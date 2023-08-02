@@ -19,7 +19,7 @@ export const NewBountyTemplate = ({ name, link }: NewBountyProps) => {
       <p style={styles.textWithMargin}>
         <a href={link} style={styles.link}>
           Click here
-        </a>
+        </a>{' '}
         to learn more about the bounty.
       </p>
       <p style={styles.textWithMargin}>Best,&nbsp;</p>

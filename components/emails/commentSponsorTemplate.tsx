@@ -20,7 +20,7 @@ export const CommentSponsorTemplate = ({
         The <strong>{bountyName}</strong> listing added by your company just
         received a comment &mdash;{' '}
         <a href={link} style={styles.link}>
-          check it out
+          check it out!
         </a>
       </p>
       <p style={styles.textWithMargin}>Best,&nbsp;</p>

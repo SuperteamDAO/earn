@@ -22,7 +22,7 @@ export const WinnersAnnouncedTemplate = ({
         <p style={styles.text}>
           <a href={link} style={styles.link}>
             Click here
-          </a>
+          </a>{' '}
           to see who claimed the top spots.
         </p>
       </p>

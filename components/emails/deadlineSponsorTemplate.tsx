@@ -24,7 +24,7 @@ export const DeadlineSponsorTemplate = ({
       <p style={styles.textWithMargin}>
         <a href={link} style={styles.link}>
           Click here
-        </a>
+        </a>{' '}
         to review&nbsp;the submissions. &nbsp;
       </p>
       <p style={styles.textWithMargin}>Best,</p>
