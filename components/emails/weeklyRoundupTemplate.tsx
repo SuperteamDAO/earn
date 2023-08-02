@@ -30,7 +30,7 @@ export const WeeklyRoundupTemplate = ({ name, bounties }: TemplateProps) => {
               }/?utm_source=superteamearn&utm_medium=email&utm_campaign=notifications`}
               style={styles.link}
             >
-              {bounty.title} by - {bounty.sponsor} ($
+              {bounty.title} by {bounty.sponsor} ($
               {bounty.rewardAmount ?? 'Not specified'})
             </a>
           </li>

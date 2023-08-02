@@ -21,10 +21,10 @@ export const WinnersAnnouncedTemplate = ({
         announced!{' '}
         <p style={styles.text}>
           <a href={link} style={styles.link}>
-            Visit here
-          </a>{' '}
+            Click here
+          </a>
+          to see who claimed the top spots.
         </p>
-        to see who claimed the top spots.
       </p>
       <p style={styles.text}>Best,&nbsp;</p>
       <p style={styles.text}>The Superteam Earn Crew 🦸&zwj;♀️🦸&zwj;♂️</p>

@@ -20,7 +20,7 @@ export const SubmissionSponsorTemplate = ({
         Your listing <strong>{bountyName}</strong> just received a submission on
         Superteam Earn! &mdash;{' '}
         <a href={link} style={styles.link}>
-          check it out.
+          check it out!
         </a>
       </p>
       <p style={styles.textWithMargin}>Best,&nbsp;</p>
