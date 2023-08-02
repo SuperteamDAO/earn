@@ -1,9 +1,10 @@
-import type { MailDataRequired } from '@sendgrid/mail';
 import type { NextApiRequest, NextApiResponse } from 'next';
 
+import { NewBountyTemplate } from '@/components/emails/newBountyTemplate';
 import type { Skills } from '@/interface/skills';
 import { prisma } from '@/prisma';
-import sgMail from '@/utils/sendgrid';
+import { rateLimitedPromiseAll } from '@/utils/rateLimitedPromises';
+import resendMail from '@/utils/resend';
 
 export default async function handler(
   req: NextApiRequest,
@@ -22,52 +23,58 @@ export default async function handler(
     }
 
     const skills = listing.skills as Skills;
-    const search: any[] = [];
-    skills.forEach(async (skill) => {
-      search.push({
-        notifications: {
-          path: '$[*].label',
-          array_contains: skill.skills,
-        },
-      });
 
-      const users = await prisma.user.findMany({
+    const users = (
+      await prisma.user.findMany({
         where: {
-          OR: search,
+          isVerified: true,
+          isTalentFilled: true,
         },
-      });
-      const email: {
-        email: string;
-        name: string;
-      }[] = users.map((user) => {
-        return {
-          email: user.email,
-          name: user.firstName as string,
-        };
-      });
-      const emailsSent: string[] = [];
-      email.map(async (e) => {
-        if (emailsSent.includes(e.email)) {
-          return;
-        }
+      })
+    ).filter((user) => {
+      if (!user.notifications) return false;
 
-        const msg: MailDataRequired = {
-          to: e.email,
-          from: {
-            name: 'Kash from Superteam',
-            email: process.env.SENDGRID_EMAIL as string,
-          },
-          templateId: process.env.SENDGRID_BOUNTY_CREATE as string,
-          dynamicTemplateData: {
-            name: e.name,
-            link: `https://earn.superteam.fun/listings/bounties/${listing.slug}`,
-          },
-        };
-        await sgMail.send(msg);
-        console.log(e.email);
-        emailsSent.push(e.email);
-      });
+      const userNotifications =
+        typeof user.notifications === 'string'
+          ? JSON.parse(user.notifications)
+          : user.notifications;
+
+      return userNotifications.some((notification: { label: string }) =>
+        skills.some((skill) => skill.skills === notification.label)
+      );
     });
+
+    const email: {
+      email: string;
+      name: string;
+    }[] = users.map((user) => {
+      return {
+        email: user.email,
+        name: user.firstName as string,
+      };
+    });
+
+    const emailsSent: string[] = [];
+
+    await rateLimitedPromiseAll(email, 9, async (e) => {
+      if (emailsSent.includes(e.email)) {
+        return;
+      }
+
+      await resendMail.emails.send({
+        from: `Kash from Superteam <${process.env.SENDGRID_EMAIL}>`,
+        to: [e.email],
+        subject: 'Here’s a New Listing You’d Be Interested In..',
+        react: NewBountyTemplate({
+          name: e.name,
+          link: `https://earn.superteam.fun/listings/bounties/${listing.slug}/?utm_source=superteamearn&utm_medium=email&utm_campaign=notifications`,
+        }),
+      });
+
+      console.log(e.email);
+      emailsSent.push(e.email);
+    });
+
     return res.status(200).json({ message: 'Ok' });
   } catch (error) {
     console.log(error);

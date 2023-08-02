@@ -1,7 +1,8 @@
 import type { NextApiRequest, NextApiResponse } from 'next';
 
+import { SubmissionLikeTemplate } from '@/components/emails/submissionLikeTemplate';
 import { prisma } from '@/prisma';
-import sgMail from '@/utils/sendgrid';
+import resendMail from '@/utils/resend';
 
 export default async function handler(
   req: NextApiRequest,
@@ -19,21 +20,17 @@ export default async function handler(
       },
     });
 
-    const msg = {
-      to: submission?.user.email as string,
-      from: {
-        name: 'Kash from Superteam',
-        email: process.env.SENDGRID_EMAIL as string,
-      },
-      templateId: process.env.SENDGRID_LIKE_TEMPLATE as string,
-      dynamicTemplateData: {
-        name: submission?.user.firstName,
-        bounty_name: submission?.listing.title,
-        link: `https://earn.superteam.fun/listings/bounties/${submission?.listing.slug}/?utm_source=superteamearn&utm_medium=email&utm_campaign=submissionliked`,
-      },
-    };
+    await resendMail.emails.send({
+      from: `Kash from Superteam <${process.env.SENDGRID_EMAIL}>`,
+      to: [submission?.user.email as string],
+      subject: 'People Love Your Superteam Earn Submission!',
+      react: SubmissionLikeTemplate({
+        name: submission?.user.firstName as string,
+        bountyName: submission?.listing.title as string,
+        link: `https://earn.superteam.fun/listings/bounties/${submission?.listing.slug}/submissions/?utm_source=superteamearn&utm_medium=email&utm_campaign=notifications`,
+      }),
+    });
 
-    await sgMail.send(msg);
     return res.status(200).json({ message: 'Ok' });
   } catch (error) {
     console.log(error);

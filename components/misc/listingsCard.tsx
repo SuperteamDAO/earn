@@ -587,7 +587,7 @@ export const CategoryBanner = ({ type }: { type: string }) => {
 
     Blockchain: {
       bg: `/assets/category_assets/bg/contract.png`,
-      desc: 'If you can write insightful essays, make stunning videos, or create killer memes, the opportunities below are calling your name.',
+      desc: 'If you can write complex code that can communicate with chains, these opportunities are made just for you.',
       color: '#A8FEC0',
       icon: '/assets/category_assets/icon/contract.png',
     },

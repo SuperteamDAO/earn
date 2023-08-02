@@ -1,26 +1,21 @@
 import type { NextApiRequest, NextApiResponse } from 'next';
 
-import sgMail from '@/utils/sendgrid';
+import { WelcomeSponsorTemplate } from '@/components/emails/welcomeSponsorTemplate';
+import resendMail from '@/utils/resend';
 
 export default async function handler(
   req: NextApiRequest,
   res: NextApiResponse
 ) {
-  const { email, name } = req.body;
+  const { email } = req.body;
   try {
-    const msg = {
-      to: email,
-      from: {
-        name: 'Kash from Superteam',
-        email: process.env.SENDGRID_EMAIL as string,
-      },
-      templateId: process.env.SENDGRID_WELCOME_SPONSOR as string,
-      dynamicTemplateData: {
-        name,
-        link: 'https://earn.superteam.fun',
-      },
-    };
-    await sgMail.send(msg);
+    await resendMail.emails.send({
+      from: `Kash from Superteam <${process.env.SENDGRID_EMAIL}>`,
+      to: [email],
+      subject: 'Welcome!',
+      react: WelcomeSponsorTemplate(),
+    });
+
     return res.status(200).json({ message: 'Ok' });
   } catch (error) {
     console.log(error);

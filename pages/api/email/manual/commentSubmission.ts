@@ -1,7 +1,8 @@
 import type { NextApiRequest, NextApiResponse } from 'next';
 
+import { CommentSubmissionTemplate } from '@/components/emails/commentSubmissionTemplate';
 import { prisma } from '@/prisma';
-import sgMail from '@/utils/sendgrid';
+import resendMail from '@/utils/resend';
 
 export default async function handler(
   req: NextApiRequest,
@@ -15,22 +16,7 @@ export default async function handler(
       },
       include: {
         user: true,
-        listing: {
-          include: {
-            sponsor: {
-              include: {
-                UserSponsors: {
-                  where: {
-                    role: 'ADMIN',
-                  },
-                  include: {
-                    user: true,
-                  },
-                },
-              },
-            },
-          },
-        },
+        listing: true,
       },
     });
     const user = await prisma.user.findUnique({
@@ -39,23 +25,18 @@ export default async function handler(
       },
     });
 
-    const msg = {
-      to: submission?.user.email as string,
-      from: {
-        name: 'Kash from Superteam',
-        email: process.env.SENDGRID_EMAIL as string,
-      },
-      templateId: process.env.SENDGRID_COMMENT_TEMPLATE as string,
-      dynamicTemplateData: {
-        name: submission?.user.firstName,
-        bounty_name: submission?.listing.title,
-        personName: user?.firstName,
-        link: `https://earn.superteam.fun/listings/bounties/${submission?.listing.slug}/submission/${submission?.id}`,
-      },
-    };
-    console.log(msg);
-    const sub = await sgMail.send(msg);
-    console.log(sub, '----');
+    await resendMail.emails.send({
+      from: `Kash from Superteam <${process.env.SENDGRID_EMAIL}>`,
+      to: [submission?.user.email as string],
+      subject: 'Comment Received on Your Superteam Earn Submission',
+      react: CommentSubmissionTemplate({
+        name: submission?.user.firstName as string,
+        bountyName: submission?.listing.title as string,
+        personName: user?.firstName as string,
+        link: `https://earn.superteam.fun/listings/bounties/${submission?.listing.slug}/submission/${submission?.id}/?utm_source=superteamearn&utm_medium=email&utm_campaign=notifications`,
+      }),
+    });
+
     return res.status(200).json({ message: 'Ok' });
   } catch (error) {
     console.log(error);

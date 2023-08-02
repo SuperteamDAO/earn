@@ -115,7 +115,7 @@ export const BountyTabs = ({
     },
     {
       id: 'tab3',
-      title: 'ANNOUNCED',
+      title: 'COMPLETED',
       content: (
         <Flex direction={'column'} rowGap={'2.625rem'}>
           {isListingsLoading ? (
