@@ -66,7 +66,7 @@ export default async function handler(request: NextRequest) {
         <div
           style={{
             backgroundImage:
-              'url(https://beta.earn.superteam.fun/assets/bg/og-bg.png)',
+              'url(https://earn.superteam.fun/assets/bg/og-bg.png)',
             backgroundSize: 'cover',
             backgroundPosition: 'center',
             backgroundRepeat: 'no-repeat',
