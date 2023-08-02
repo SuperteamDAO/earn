@@ -21,7 +21,7 @@ export const SubmissionLikeTemplate = ({
         bounty. Keep it up!
       </p>
       <p style={styles.textWithMargin}>
-        Check out the other submissions here and spread some love to the other
+        Check out the other submissions and spread some love to the other
         participants!
       </p>
       <a href={link} style={styles.link}>
