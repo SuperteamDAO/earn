@@ -1,7 +1,8 @@
 import type { NextApiRequest, NextApiResponse } from 'next';
 
+import { InviteMemberTemplate } from '@/components/emails/inviteMemberTemplate';
 import { prisma } from '@/prisma';
-import sgMail from '@/utils/sendgrid';
+import resendMail from '@/utils/resend';
 import { getURL } from '@/utils/validUrl';
 
 export default async function sendInvites(
@@ -37,20 +38,17 @@ export default async function sendInvites(
       },
     });
 
-    const msg = {
-      to: email,
-      from: {
-        name: 'Kash from Superteam',
-        email: process.env.SENDGRID_EMAIL as string,
-      },
-      templateId: process.env.SENDGRID_INVITE_SPONSOR as string,
-      dynamicTemplateData: {
-        sponsorName: user?.currentSponsor?.name,
-        senderName: `${user?.firstName} ${user?.lastName}`,
+    await resendMail.emails.send({
+      from: `Kash from Superteam <${process.env.SENDGRID_EMAIL}>`,
+      to: [email],
+      subject: `${user?.firstName} has invited you to join ${user?.currentSponsor?.name}'s profile on Superteam Earn`,
+      react: InviteMemberTemplate({
+        sponsorName: user?.currentSponsor?.name || '',
+        senderName: `${user?.firstName} ${user?.lastName}` || '',
         link: `${getURL()}signup?invite=${result.id}`,
-      },
-    };
-    await sgMail.send(msg);
+      }),
+    });
+
     res.status(200).json({ message: 'OTP sent successfully.' });
   } catch (error) {
     console.log('file: invite.ts:54 ~ error:', error);
