@@ -15,10 +15,10 @@ export const styles = {
     margin: '10px 0',
   },
   link: {
+    fontSize: '14px',
     color: '#007BFF',
   },
   list: {
-    listStyle: 'none',
     paddingLeft: 0,
   },
 };
