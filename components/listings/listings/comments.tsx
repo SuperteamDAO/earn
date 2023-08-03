@@ -173,7 +173,7 @@ export const Comments = ({ refId, refType }: Props) => {
           const date = dayjs(comment?.updatedAt).fromNow();
           return (
             <HStack key={comment.id} align={'start'} px={6}>
-              <Flex>
+              <Flex minW="32px" minH="32px">
                 <UserAvatar user={comment?.author} />
               </Flex>
 
