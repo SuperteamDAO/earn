@@ -15,7 +15,7 @@ export const WinnersAnnouncedTemplate = ({
 }: TemplateProps) => {
   return (
     <div style={styles.container}>
-      <p style={styles.text}>Hey {name},</p>
+      <p style={styles.greetings}>Hey {name},</p>
       <p style={styles.textWithMargin}>
         The winners for the bounty <strong>{bountyName}</strong> have been
         announced!{' '}

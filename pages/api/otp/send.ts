@@ -12,7 +12,7 @@ export default async function send(req: NextApiRequest, res: NextApiResponse) {
     await resendMail.emails.send({
       from: `Kash from Superteam <${process.env.SENDGRID_EMAIL}>`,
       to: [email],
-      subject: 'OTP Verification for Superteam Earn !',
+      subject: 'OTP Verification for Superteam Earn',
       react: OTPTemplate({ code }),
     });
     res

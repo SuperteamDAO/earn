@@ -17,7 +17,7 @@ export const CommentSubmissionTemplate = ({
 }: SubmissionProps) => {
   return (
     <div style={styles.container}>
-      <p style={styles.text}>Hey&nbsp;{name},</p>
+      <p style={styles.greetings}>Hey&nbsp;{name},</p>
       <p style={styles.textWithMargin}>
         {personName} left a new comment on your submission to the
         <strong>{bountyName}</strong> listing.
@@ -25,7 +25,7 @@ export const CommentSubmissionTemplate = ({
           See what they said.
         </a>{' '}
       </p>
-      <p style={styles.text}>Best,&nbsp;</p>
+      <p style={styles.salutation}>Best,&nbsp;</p>
       <p style={styles.text}>The Superteam Earn Crew 🦸&zwj;♀️🦸&zwj;♂️</p>
     </div>
   );

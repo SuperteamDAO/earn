@@ -17,7 +17,7 @@ interface TemplateProps {
 export const WeeklyRoundupTemplate = ({ name, bounties }: TemplateProps) => {
   return (
     <div style={styles.container}>
-      <p style={styles.text}>Hey there, {name}!</p>
+      <p style={styles.greetings}>Hey there, {name}!</p>
       <p style={styles.textWithMargin}>
         Here&apos;s a curated round-up of all live bounties, made just for you!
       </p>
@@ -36,7 +36,7 @@ export const WeeklyRoundupTemplate = ({ name, bounties }: TemplateProps) => {
           </li>
         ))}
       </ol>
-      <p style={styles.textWithMargin}>Go Secure the Bag,</p>
+      <p style={styles.salutation}>Go Secure the Bag,</p>
       <p style={styles.text}>The Superteam Earn Crew 🦸‍♀️🦸‍♂️</p>
     </div>
   );
