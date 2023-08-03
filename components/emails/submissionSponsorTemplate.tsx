@@ -15,7 +15,7 @@ export const SubmissionSponsorTemplate = ({
 }: TemplateProps) => {
   return (
     <div style={styles.container}>
-      <p style={styles.text}>Hey {name},</p>
+      <p style={styles.greetings}>Hey {name},</p>
       <p style={styles.textWithMargin}>
         Your listing <strong>{bountyName}</strong> just received a submission on
         Superteam Earn! &mdash;{' '}
@@ -23,7 +23,7 @@ export const SubmissionSponsorTemplate = ({
           check it out!
         </a>
       </p>
-      <p style={styles.textWithMargin}>Best,&nbsp;</p>
+      <p style={styles.salutation}>Best,&nbsp;</p>
       <p style={styles.text}>The Superteam Earn Crew 🦸&zwj;♀️🦸&zwj;♂️</p>
     </div>
   );

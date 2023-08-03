@@ -15,7 +15,7 @@ export const SubmissionLikeTemplate = ({
 }: TemplateProps) => {
   return (
     <div style={styles.container}>
-      <p style={styles.text}>Hey {name},</p>
+      <p style={styles.greetings}>Hey {name},</p>
       <p style={styles.textWithMargin}>
         People are really digging your work on the <strong>{bountyName}</strong>{' '}
         bounty. Keep it up!

@@ -15,7 +15,7 @@ export const DeadlineExceededbyWeekTemplate = ({
 }: TemplateProps) => {
   return (
     <div style={styles.container}>
-      <p style={styles.text}>Hey {name},</p>
+      <p style={styles.greetings}>Hey {name},</p>
       <p style={styles.textWithMargin}>
         The deadline for the <strong>{bountyName}</strong> bounty expired a week
         ago. The participants of the bounty would be expecting the results to be
@@ -27,7 +27,7 @@ export const DeadlineExceededbyWeekTemplate = ({
         </a>{' '}
         to review the submissions.
       </p>
-      <p style={styles.textWithMargin}>Best,</p>
+      <p style={styles.salutation}>Best,</p>
       <p style={styles.text}>The Superteam Earn Crew 🦸&zwj;♀️🦸&zwj;♂️</p>
     </div>
   );

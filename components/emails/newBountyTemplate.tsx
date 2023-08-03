@@ -10,7 +10,7 @@ interface NewBountyProps {
 export const NewBountyTemplate = ({ name, link }: NewBountyProps) => {
   return (
     <div style={styles.container}>
-      <p style={styles.text}>Hey {name},</p>
+      <p style={styles.greetings}>Hey {name},</p>
       <p style={styles.textWithMargin}>
         Good news &mdash; a new&nbsp;listing has just arrived with your name on
         it. It&apos;s like finding a $20 bill in your pocket, but way more
@@ -22,7 +22,7 @@ export const NewBountyTemplate = ({ name, link }: NewBountyProps) => {
         </a>{' '}
         to learn more about the bounty.
       </p>
-      <p style={styles.textWithMargin}>Best,&nbsp;</p>
+      <p style={styles.salutation}>Best,&nbsp;</p>
       <p style={styles.text}>The Superteam Earn Crew 🦸&zwj;♀️🦸&zwj;♂️</p>
       <p style={styles.text}>&nbsp;</p>
     </div>

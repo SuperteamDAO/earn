@@ -1,7 +1,7 @@
 import React from 'react';
 
-import { SubmissionLikeTemplate } from '@/components/emails/submissionLikeTemplate';
+import { SubmissionTemplate } from '@/components/emails/submissionTemplate';
 
 export default function New() {
-  return <SubmissionLikeTemplate bountyName="hello" link="hello" name="hii" />;
+  return <SubmissionTemplate bountyName="hello" name="hii" />;
 }
