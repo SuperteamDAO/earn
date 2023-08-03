@@ -26,7 +26,7 @@ export default async function handler(
     });
     if (user?.email && user?.firstName && listing?.title) {
       await resendMail.emails.send({
-        from: `Kash from Superteam <${process.env.SENDGRID_EMAIL}>`,
+        from: `Kash from Superteam <${process.env.RESEND_EMAIL}>`,
         to: [user?.email],
         subject: 'Submission Received!',
         react: SubmissionTemplate({
@@ -40,7 +40,7 @@ export default async function handler(
 
     if (user?.email && pocUser?.email && listing?.title && pocUser?.firstName) {
       await resendMail.emails.send({
-        from: `Kash from Superteam <${process.env.SENDGRID_EMAIL}>`,
+        from: `Kash from Superteam <${process.env.RESEND_EMAIL}>`,
         to: [pocUser?.email],
         subject: 'New Bounty Submission Received',
         react: SubmissionSponsorTemplate({

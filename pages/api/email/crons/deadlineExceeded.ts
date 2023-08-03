@@ -50,7 +50,7 @@ async function handler(_req: NextApiRequest, res: NextApiResponse) {
       }
 
       await resendMail.emails.send({
-        from: `Kash from Superteam <${process.env.SENDGRID_EMAIL}>`,
+        from: `Kash from Superteam <${process.env.RESEND_EMAIL}>`,
         to: [pocUserEmail],
         bcc: ['pratikd.earnings@gmail.com'],
         subject: 'Your Earn Listing Is Ready to Be Reviewed',

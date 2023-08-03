@@ -83,7 +83,7 @@ async function handler(_req: NextApiRequest, res: NextApiResponse) {
     await rateLimitedPromiseAll(userBounties, 9, async (user) => {
       try {
         await resendMail.emails.send({
-          from: `Kash from Superteam <${process.env.SENDGRID_EMAIL}>`,
+          from: `Kash from Superteam <${process.env.RESEND_EMAIL}>`,
           to: [user?.email!],
           subject: 'Your Weekly Bounty Roundup Is Here!',
           react: WeeklyRoundupTemplate({

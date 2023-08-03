@@ -62,7 +62,7 @@ async function handler(_req: NextApiRequest, res: NextApiResponse) {
           return;
         }
         await resendMail.emails.send({
-          from: `Kash from Superteam <${process.env.SENDGRID_EMAIL}>`,
+          from: `Kash from Superteam <${process.env.RESEND_EMAIL}>`,
           to: [e.email],
           subject: 'This Bounty Is Expiring Soon!',
           react: DeadlineThreeDaysTemplate({

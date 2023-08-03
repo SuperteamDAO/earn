@@ -62,7 +62,7 @@ export default async function handler(
       }
 
       await resendMail.emails.send({
-        from: `Kash from Superteam <${process.env.SENDGRID_EMAIL}>`,
+        from: `Kash from Superteam <${process.env.RESEND_EMAIL}>`,
         to: [e.email],
         subject: 'Here’s a New Listing You’d Be Interested In..',
         react: NewBountyTemplate({

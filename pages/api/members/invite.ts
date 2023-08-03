@@ -39,7 +39,7 @@ export default async function sendInvites(
     });
 
     await resendMail.emails.send({
-      from: `Kash from Superteam <${process.env.SENDGRID_EMAIL}>`,
+      from: `Kash from Superteam <${process.env.RESEND_EMAIL}>`,
       to: [email],
       subject: `${user?.firstName} has invited you to join ${user?.currentSponsor?.name}'s profile on Superteam Earn`,
       react: InviteMemberTemplate({
