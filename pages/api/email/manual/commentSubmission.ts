@@ -26,7 +26,7 @@ export default async function handler(
     });
 
     await resendMail.emails.send({
-      from: `Kash from Superteam <${process.env.SENDGRID_EMAIL}>`,
+      from: `Kash from Superteam <${process.env.RESEND_EMAIL}>`,
       to: [submission?.user.email as string],
       subject: 'Comment Received on Your Superteam Earn Submission',
       react: CommentSubmissionTemplate({

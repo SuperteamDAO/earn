@@ -10,7 +10,7 @@ export default async function send(req: NextApiRequest, res: NextApiResponse) {
     const serverTime = Date.now();
     const code = generateCode(publicKey as string, serverTime);
     await resendMail.emails.send({
-      from: `Kash from Superteam <${process.env.SENDGRID_EMAIL}>`,
+      from: `Kash from Superteam <${process.env.RESEND_EMAIL}>`,
       to: [email],
       subject: 'OTP Verification for Superteam Earn',
       react: OTPTemplate({ code }),

@@ -10,7 +10,7 @@ export default async function handler(
   const { email, name } = req.body;
   try {
     await resendMail.emails.send({
-      from: `Kash from Superteam <${process.env.SENDGRID_EMAIL}>`,
+      from: `Kash from Superteam <${process.env.RESEND_EMAIL}>`,
       to: [email],
       subject: 'Welcome to Superteam Earn!',
       react: WelcomeTalentTemplate({ name }),
