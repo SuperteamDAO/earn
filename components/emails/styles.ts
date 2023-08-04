@@ -28,7 +28,5 @@ export const styles = {
     lineHeight: '20px',
     marginBottom: '16px',
   },
-  list: {
-    paddingLeft: 0,
-  },
+  list: {},
 };
