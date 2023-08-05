@@ -2,7 +2,7 @@ const defaultRanks = [
   'first',
   'second',
   'third',
-  'forth',
+  'fourth',
   'fifth',
   'sixth',
   'seventh',
