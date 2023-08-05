@@ -227,7 +227,7 @@ export const DetailSideCard = ({
                       </Td>
                     </Tr>
                   )}
-                  {prizeList.forth && (
+                  {prizeList.fourth && (
                     <Tr>
                       <Td>
                         <Flex
@@ -249,12 +249,12 @@ export const DetailSideCard = ({
                           fontSize={'1.1rem'}
                           fontWeight={600}
                         >
-                          {prizeList.forth}
+                          {prizeList.fourth}
                         </Text>
                       </Td>
                       <Td>
                         <Text color={'#CBD5E1'} fontWeight={500}>
-                          Forth Prize
+                          Fourth Prize
                         </Text>
                       </Td>
                     </Tr>

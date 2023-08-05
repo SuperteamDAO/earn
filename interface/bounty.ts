@@ -16,7 +16,7 @@ interface Rewards {
   first?: number;
   second?: number;
   third?: number;
-  forth?: number;
+  fourth?: number;
   fifth?: number;
 }
 
