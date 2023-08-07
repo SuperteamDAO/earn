@@ -223,7 +223,7 @@ export const ListingHeader = ({
                 </HStack>
                 <VStack align={'start'}>
                   <Text color={'#000000'} fontSize={'md'} fontWeight={500}>
-                    {sub?.length ?? 0}
+                    {sub?.length ? sub.length + 1 : 1}
                   </Text>
                   <Text
                     mt={'0px !important'}
@@ -231,7 +231,10 @@ export const ListingHeader = ({
                     fontSize={'md'}
                     fontWeight={500}
                   >
-                    People Interested
+                    {(sub?.length ? sub.length + 1 : 1) === 1
+                      ? 'Person'
+                      : 'People'}{' '}
+                    Interested
                   </Text>
                 </VStack>
               </HStack>

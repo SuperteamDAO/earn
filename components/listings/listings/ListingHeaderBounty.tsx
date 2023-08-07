@@ -302,7 +302,10 @@ function ListingHeader({
                   fontSize={'md'}
                   fontWeight={500}
                 >
-                  People Interested
+                  {(sub?.length ? sub.length + 1 : 1) === 1
+                    ? 'Person'
+                    : 'People'}{' '}
+                  Interested
                 </Text>
               </VStack>
             </HStack>
