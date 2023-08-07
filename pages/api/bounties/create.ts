@@ -12,6 +12,9 @@ export default async function bounty(
   try {
     const result = await prisma.bounties.create({
       data,
+      include: {
+        sponsor: true,
+      },
     });
     res.status(200).json(result);
     const zapierWebhookUrl =
