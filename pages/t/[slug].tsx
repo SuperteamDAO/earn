@@ -451,7 +451,8 @@ function TalentProfile({ slug }: TalentProps) {
           <Flex direction={['column', 'column', 'column', 'row']} w={'100%'}>
             <VStack
               rowGap={4}
-              maxW={['full', 'full', 'full', 'full']}
+              w={'100%'}
+              maxW="600px"
               minH={'100vh'}
               py={8}
               bgImage={'/assets/bg/talent-bg.png'}
@@ -494,7 +495,7 @@ function TalentProfile({ slug }: TalentProps) {
                     borderBottomColor={'gray.200'}
                   >
                     <Text fontSize="md" fontWeight={'500'}>
-                      Other Proof Work
+                      Other Proof of Work
                     </Text>
                   </Box>
                   <Flex align="start" wrap={'wrap'} gap={10}>

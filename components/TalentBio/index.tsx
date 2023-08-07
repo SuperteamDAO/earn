@@ -85,23 +85,29 @@ function TalentBio({
       bg={'white'}
       borderRadius={10}
     >
-      <Flex align={'center'}>
-        <Avatar
-          name={`${user?.firstName}${user?.lastName}`}
-          size="lg"
-          src={user?.photo as string}
-        />
-        <Box ml={'21'}>
-          <Text fontSize={'md'} fontWeight={'600'}>
-            {user?.firstName} {user?.lastName}
-          </Text>
-          <Text color={'gray.400'} fontSize={'sm'} fontWeight={'600'}>
-            @
-            {user?.username?.length! > 15
-              ? `${user?.username?.slice(0, 15)}...`
-              : user?.username}
-          </Text>
-        </Box>
+      <Flex align={'center'} justify="space-between">
+        <Flex align={'center'}>
+          <Avatar
+            name={`${user?.firstName}${user?.lastName}`}
+            size="lg"
+            src={user?.photo as string}
+          />
+          <Box ml={'12px'}>
+            <Text fontSize={'md'} fontWeight={'600'}>
+              {user?.firstName} {user?.lastName}
+            </Text>
+            <Text color={'gray.400'} fontSize={'sm'} fontWeight={'600'}>
+              @
+              {user?.username?.length! > 15
+                ? `${user?.username?.slice(0, 15)}...`
+                : user?.username}
+            </Text>
+          </Box>
+        </Flex>
+
+        <Button color={'#6562FF'} size={'sm'} variant={'ghost'}>
+          Edit Profile
+        </Button>
       </Flex>
       <Text mt={4} color={'gray.400'} fontSize={'sm'} fontWeight={'400'}>
         {user?.bio}
