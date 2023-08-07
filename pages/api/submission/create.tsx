@@ -29,6 +29,7 @@ export default async function submission(
       },
       include: {
         user: true,
+        listing: true,
       },
     });
 
