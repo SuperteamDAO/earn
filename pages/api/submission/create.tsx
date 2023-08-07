@@ -33,7 +33,7 @@ export default async function submission(
     });
 
     const zapierWebhookUrl =
-      'https://hooks.zapier.com/hooks/catch/16134659/31px39m/';
+      'https://hooks.zapier.com/hooks/catch/11122522/31vq2h9/';
     await axios.post(zapierWebhookUrl, result);
 
     res.status(200).json(result);
