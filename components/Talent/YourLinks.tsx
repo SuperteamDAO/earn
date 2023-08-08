@@ -66,12 +66,12 @@ export const socials = [
 const AddProject = ({
   isOpen,
   onClose,
-  setpow,
+  setPow,
 }: {
   isOpen: boolean;
   onClose: () => void;
   pow: string[];
-  setpow: Dispatch<SetStateAction<string[]>>;
+  setPow: Dispatch<SetStateAction<string[]>>;
 }) => {
   const { register, handleSubmit } = useForm();
   const [skillsError, setSkillsError] = useState<boolean>(false);
@@ -100,7 +100,7 @@ const AddProject = ({
       return false;
     }
 
-    setpow((elm) => [
+    setPow((elm) => [
       ...elm,
       JSON.stringify({
         ...data,
@@ -209,7 +209,7 @@ interface Props {
 function YourLinks({ success, useFormStore }: Props) {
   const { isOpen, onOpen, onClose } = useDisclosure();
   const { form } = useFormStore();
-  const [pow, setpow] = useState<string[]>([]);
+  const [pow, setPow] = useState<string[]>([]);
   const [socialsError, setsocialsError] = useState<boolean>(false);
   const [urlError, seturlError] = useState<boolean>(false);
   const [isLoading, setisLoading] = useState<boolean>(false);
@@ -345,7 +345,7 @@ function YourLinks({ success, useFormStore }: Props) {
                       {/* <EditIcon onClick={() => { setselectedProject(idx) }} cursor={"pointer"} fontSize={"0.8rem"} /> */}
                       <DeleteIcon
                         onClick={() => {
-                          setpow((elem) => {
+                          setPow((elem) => {
                             return [...elem.filter((_ele, id) => idx !== id)];
                           });
                         }}
@@ -395,7 +395,7 @@ function YourLinks({ success, useFormStore }: Props) {
       </Box>
       <AddProject
         key={`${pow.length}project`}
-        {...{ isOpen, onClose, pow, setpow }}
+        {...{ isOpen, onClose, pow, setPow }}
       />
     </>
   );

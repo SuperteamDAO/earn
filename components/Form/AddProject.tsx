@@ -15,7 +15,7 @@ import {
   Textarea,
 } from '@chakra-ui/react';
 import type { Dispatch, SetStateAction } from 'react';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useForm } from 'react-hook-form';
 
 import type { MultiSelectOptions } from '@/constants';
@@ -23,22 +23,64 @@ import { isValidHttpUrl } from '@/utils/validUrl';
 
 import { SkillSelect } from '../misc/SkillSelect';
 
+type AddProjectProps = {
+  isOpen: boolean;
+  onClose: () => void;
+  pow: any[];
+  setPow: Dispatch<SetStateAction<string[]>>;
+  selectedProject: number | null;
+  setSelectedProject: (selectedProject: number | null) => void;
+};
+
 export const AddProject = ({
   isOpen,
   onClose,
+  pow,
   setPow,
-}: {
-  isOpen: boolean;
-  onClose: () => void;
-  pow: string[];
-  setPow: Dispatch<SetStateAction<string[]>>;
-}) => {
-  const { register, handleSubmit } = useForm();
+  selectedProject,
+  setSelectedProject,
+}: AddProjectProps) => {
+  const { register, handleSubmit, setValue } = useForm<{
+    title: string;
+    description: string;
+    link: string;
+    skills: MultiSelectOptions[];
+    subSkills: MultiSelectOptions[];
+  }>();
+
   const [skillsError, setSkillsError] = useState<boolean>(false);
   const [linkError, setLinkError] = useState<boolean>(false);
 
   const [skills, setSkills] = useState<MultiSelectOptions[]>([]);
   const [subSkills, setSubSkills] = useState<MultiSelectOptions[]>([]);
+
+  const projectToEdit = selectedProject !== null ? pow[selectedProject] : null;
+
+  useEffect(() => {
+    if (projectToEdit) {
+      const parsedProject = JSON.parse(projectToEdit);
+      setValue('title', parsedProject.title);
+      setValue('description', parsedProject.description);
+      setValue('link', parsedProject.link);
+      if (parsedProject.skills) {
+        setSkills(
+          parsedProject.skills.map((value: string) => ({ label: value, value }))
+        );
+      } else {
+        setSkills([]);
+      }
+      if (parsedProject.subSkills) {
+        setSubSkills(
+          parsedProject.subSkills.map((value: string) => ({
+            label: value,
+            value,
+          }))
+        );
+      } else {
+        setSubSkills([]);
+      }
+    }
+  }, [projectToEdit, setValue]);
 
   const onSubmit = (data: any) => {
     let error = false;
@@ -49,6 +91,7 @@ export const AddProject = ({
     } else {
       setLinkError(false);
     }
+
     if (skills.length === 0 || subSkills.length === 0) {
       setSkillsError(true);
       error = true;
@@ -60,14 +103,23 @@ export const AddProject = ({
       return false;
     }
 
-    setPow((elm) => [
-      ...elm,
-      JSON.stringify({
-        ...data,
-        skills: skills.map((ele) => ele.value),
-        subSkills: subSkills.map((ele) => ele.value),
-      }),
-    ]);
+    const projectData = JSON.stringify({
+      ...data,
+      skills: skills.map((ele) => ele.value),
+      subSkills: subSkills.map((ele) => ele.value),
+    });
+
+    if (selectedProject !== null) {
+      setPow((prevPow) => {
+        const updatedPow = [...prevPow];
+        updatedPow[selectedProject] = projectData;
+        return updatedPow;
+      });
+      setSelectedProject(null);
+    } else {
+      setPow((prevPow) => [...prevPow, projectData]);
+    }
+
     onClose();
     return null;
   };

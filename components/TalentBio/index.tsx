@@ -1,5 +1,6 @@
 import { Avatar, Box, Button, Flex, Image, Text } from '@chakra-ui/react';
 import type { User } from '@prisma/client';
+import { useRouter } from 'next/router';
 
 import { userStore } from '@/store/user';
 
@@ -58,6 +59,11 @@ function TalentBio({
   w?: string;
 }) {
   const { userInfo } = userStore();
+  const router = useRouter();
+
+  const handleEditProfileClick = () => {
+    router.push(`/t/${user?.username}/edit`);
+  };
   const socialLinks = [
     {
       icon: '/assets/talent/twitter.png',
@@ -108,7 +114,12 @@ function TalentBio({
           </Box>
         </Flex>
         {userInfo?.id === user?.id && (
-          <Button color={'#6562FF'} size={'sm'} variant={'ghost'}>
+          <Button
+            color={'#6562FF'}
+            onClick={handleEditProfileClick}
+            size={'sm'}
+            variant={'ghost'}
+          >
             Edit Profile
           </Button>
         )}
