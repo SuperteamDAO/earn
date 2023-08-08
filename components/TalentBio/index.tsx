@@ -1,6 +1,8 @@
 import { Avatar, Box, Button, Flex, Image, Text } from '@chakra-ui/react';
 import type { User } from '@prisma/client';
 
+import { userStore } from '@/store/user';
+
 type ChipType = {
   icon: string;
   label: string;
@@ -55,6 +57,7 @@ function TalentBio({
   successPage: boolean;
   w?: string;
 }) {
+  const { userInfo } = userStore();
   const socialLinks = [
     {
       icon: '/assets/talent/twitter.png',
@@ -104,10 +107,11 @@ function TalentBio({
             </Text>
           </Box>
         </Flex>
-
-        <Button color={'#6562FF'} size={'sm'} variant={'ghost'}>
-          Edit Profile
-        </Button>
+        {userInfo?.id === user?.id && (
+          <Button color={'#6562FF'} size={'sm'} variant={'ghost'}>
+            Edit Profile
+          </Button>
+        )}
       </Flex>
       <Text mt={4} color={'gray.400'} fontSize={'sm'} fontWeight={'400'}>
         {user?.bio}

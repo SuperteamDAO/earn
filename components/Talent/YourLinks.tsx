@@ -6,7 +6,6 @@ import {
   Flex,
   FormControl,
   FormLabel,
-  Image,
   Input,
   InputGroup,
   InputLeftElement,
@@ -21,17 +20,17 @@ import {
 import axios from 'axios';
 import type { Dispatch, SetStateAction } from 'react';
 import { useState } from 'react';
-import type { FieldValues, UseFormRegister } from 'react-hook-form';
 import { useForm } from 'react-hook-form';
 
 import type { MultiSelectOptions } from '@/constants';
 import { userStore } from '@/store/user';
 import { isValidHttpUrl } from '@/utils/validUrl';
 
+import { SocialInput } from '../Form/SocialInput';
 import { SkillSelect } from '../misc/SkillSelect';
 import type { UserStoreType } from './types';
 
-const socials = [
+export const socials = [
   {
     label: 'Discord',
     placeHolder: 'TonyStark#7589',
@@ -58,85 +57,11 @@ const socials = [
     icon: '/assets/talent/telegram.png',
   },
   {
-    label: 'Site',
+    label: 'Website',
     placeHolder: 'https://starkindustries.com',
     icon: '/assets/talent/site.png',
   },
 ];
-
-type TypeSocialInput = {
-  label: string;
-  placeHolder: string;
-  icon: string;
-  register: UseFormRegister<FieldValues>;
-};
-
-const SocialInput = ({
-  label,
-  placeHolder,
-  icon,
-  register,
-}: TypeSocialInput) => {
-  return (
-    <Flex align="center" justify="center" direction="row" mb={'1.25rem'}>
-      <Box
-        w="30%"
-        h="2.6875rem"
-        pl={{
-          sm: '5px',
-          md: '20px',
-        }}
-        border="1px solid"
-        borderColor={'brand.slate.300'}
-        borderRight="none"
-        borderLeftRadius={'md'}
-      >
-        <Flex align="center" justify="start" w={'100%'} h={'100%'}>
-          <Box w={'1rem'}>
-            <Image
-              w={'100%'}
-              h={'100%'}
-              objectFit="contain"
-              alt={label}
-              src={icon}
-            />
-          </Box>
-          <Text
-            h="4.3rem"
-            pl="10px"
-            fontSize="0.875rem"
-            fontWeight={500}
-            lineHeight="4.3rem"
-            textAlign="left"
-          >
-            {label}
-            {label === 'Discord' && (
-              <Text as="sup" ml={1} color="red">
-                *
-              </Text>
-            )}
-          </Text>
-        </Flex>
-      </Box>
-      <Input
-        w="70%"
-        h="2.6875rem"
-        color={'gray.800'}
-        fontSize="0.875rem"
-        fontWeight={500}
-        borderColor={'brand.slate.300'}
-        borderLeftRadius="0"
-        _placeholder={{
-          color: 'brand.slate.300',
-        }}
-        focusBorderColor="brand.purple"
-        placeholder={placeHolder}
-        title={label}
-        {...register(label)}
-      />
-    </Flex>
-  );
-};
 
 const AddProject = ({
   isOpen,
@@ -376,7 +301,7 @@ function YourLinks({ success, useFormStore }: Props) {
         github: data.GitHub,
         linkedin: data.LinkedIn,
         telegram: data.Telegram,
-        website: data.Site,
+        website: data.Website,
       },
       JSON.stringify(pow)
     );
