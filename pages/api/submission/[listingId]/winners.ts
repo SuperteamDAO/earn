@@ -1,3 +1,4 @@
+import axios from 'axios';
 import type { NextApiRequest, NextApiResponse } from 'next';
 
 import { prisma } from '@/prisma';
@@ -22,6 +23,10 @@ export default async function submission(
         user: true,
       },
     });
+
+    const zapierEndpoint =
+      'https://hooks.zapier.com/hooks/catch/11122522/31vi5g7/';
+    await axios.post(zapierEndpoint, result);
 
     res.status(200).json(result);
   } catch (error) {
