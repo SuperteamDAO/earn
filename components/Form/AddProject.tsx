@@ -40,7 +40,7 @@ export const AddProject = ({
   selectedProject,
   setSelectedProject,
 }: AddProjectProps) => {
-  const { register, handleSubmit, setValue } = useForm<{
+  const { register, handleSubmit, setValue, watch } = useForm<{
     title: string;
     description: string;
     link: string;
@@ -154,9 +154,22 @@ export const AddProject = ({
                     color: 'brand.slate.300',
                   }}
                   focusBorderColor="brand.purple"
+                  id={'description'}
+                  maxLength={180}
                   placeholder="About the Project"
                   {...register('description', { required: true })}
                 />
+                <Text
+                  color={
+                    (watch('description')?.length || 0) > 160
+                      ? 'red'
+                      : 'brand.slate.400'
+                  }
+                  fontSize={'xs'}
+                  textAlign="right"
+                >
+                  {180 - (watch('description')?.length || 0)} characters left
+                </Text>
               </Box>
               <SkillSelect
                 skills={skills}
@@ -191,7 +204,8 @@ export const AddProject = ({
                 )}
                 {linkError && (
                   <Text color={'red'}>
-                    Link URL needs to contain &quot;http://&quot; prefix
+                    Link URL needs to contain &quot;http://&quot; or
+                    &quot;https://&quot; prefix
                   </Text>
                 )}
               </Box>

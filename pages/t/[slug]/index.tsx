@@ -87,7 +87,7 @@ const LinkPreview = ({
       <Link href={data?.link} isExternal>
         <Box
           w={'14.75rem'}
-          h={'11.5rem'}
+          // h={'11.5rem'}
           bg={'white'}
           borderRadius={'0.1875rem'}
           cursor={'pointer'}

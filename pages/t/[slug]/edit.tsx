@@ -3,6 +3,7 @@ import {
   Box,
   Button,
   Center,
+  Checkbox,
   Flex,
   FormControl,
   FormLabel,
@@ -62,6 +63,7 @@ type FormData = {
   currentEmployer?: string;
   pow?: string;
   skills?: any;
+  private: boolean;
 };
 
 const socialLinkFields = [
@@ -270,7 +272,7 @@ export default function EditProfilePage() {
       });
       setTimeout(() => {
         router.push(`/t/${userInfo?.username}`);
-      }, 1500);
+      }, 500);
     } catch (error: any) {
       console.log('Failed to update profile');
     }
@@ -503,10 +505,10 @@ export default function EditProfilePage() {
                         py={'0.5rem'}
                         color={'brand.slate.500'}
                         border={'1px solid gray'}
-                        borderColor={'gray.200'}
+                        borderColor="brand.slate.300"
                         rounded={'md'}
                       >
-                        <Text w={'full'} fontSize={'0.8rem'}>
+                        <Text w={'full'} color={'gray.800'} fontSize={'0.8rem'}>
                           {data.title}
                         </Text>
                         <Center columnGap={'0.8rem'}>
@@ -552,6 +554,19 @@ export default function EditProfilePage() {
                   setSkills={setSkills}
                   setSubSkills={setSubSkills}
                 />
+
+                <Checkbox
+                  mr={1}
+                  color="brand.slate.500"
+                  fontWeight={500}
+                  colorScheme="purple"
+                  size="md"
+                  {...register('private')}
+                  mb={8}
+                >
+                  Keep my info private
+                </Checkbox>
+                <br />
 
                 <Button mb={12} type="submit">
                   Update Profile

@@ -179,7 +179,8 @@ const AddProject = ({
                 )}
                 {linkError && (
                   <Text color={'red'}>
-                    Link URL needs to contain &quot;http://&quot; prefix
+                    Link URL needs to contain &quot;http://&quot; or
+                    &quot;https://&quot; prefix
                   </Text>
                 )}
               </Box>
@@ -335,10 +336,10 @@ function YourLinks({ success, useFormStore }: Props) {
                     py={'0.5rem'}
                     color={'brand.slate.500'}
                     border={'1px solid gray'}
-                    borderColor={'gray.200'}
+                    borderColor="brand.slate.300"
                     rounded={'md'}
                   >
-                    <Text w={'full'} fontSize={'0.8rem'}>
+                    <Text w={'full'} color={'gray.800'} fontSize={'0.8rem'}>
                       {data.title}
                     </Text>
                     <Center columnGap={'0.8rem'}>
