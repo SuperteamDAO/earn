@@ -75,6 +75,17 @@ const socialLinkFields = [
 ];
 
 const keysToOmit = [
+  'id',
+  'publicKey',
+  'email',
+  'createdAt',
+  'isVerified',
+  'role',
+  'totalEarnedInUSD',
+  'isTalentFilled',
+  'superteamLevel',
+  'notifications',
+  'currentSponsorId',
   'UserSponsors',
   'currentSponsor',
   'poc',
@@ -83,7 +94,6 @@ const keysToOmit = [
   'Grants',
   'UserInvites',
   'SubscribeBounty',
-  'notifications',
 ];
 
 const parseSkillsAndSubskills = (skillsObject: any) => {
