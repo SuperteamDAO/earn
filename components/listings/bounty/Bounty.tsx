@@ -82,7 +82,6 @@ function CreateListing({ bounty, isEditMode = false }: Props) {
   // - Bounty
   const [bountybasic, setBountyBasic] = useState<BountyBasicType | undefined>({
     title: isEditMode ? bounty?.title || undefined : undefined,
-    slug: isEditMode ? bounty?.slug || undefined : undefined,
     deadline:
       isEditMode && bounty?.deadline
         ? dayjs(bounty?.deadline).format('YYYY-MM-DDTHH:mm') || undefined
@@ -285,7 +284,6 @@ function CreateListing({ bounty, isEditMode = false }: Props) {
               setBountyPayment={setBountyPayment}
               questions={questions}
               setQuestions={setQuestions}
-              setSlug={setSlug}
               draftLoading={draftLoading}
               createDraft={createDraft}
               bountybasic={bountybasic}
