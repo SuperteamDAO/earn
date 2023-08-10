@@ -274,8 +274,8 @@ const Earner = ({ amount, name, avatar, bounty, slug }: EarnerProps) => {
         <Flex align={'center'} w={'100%'} my={2}>
           {avatar ? (
             <Image
-              w={'2.125rem'}
-              h={'2.125rem'}
+              w={'2.3rem'}
+              h={'2.3rem'}
               mr={'1.0625rem'}
               alt=""
               rounded={'full'}
