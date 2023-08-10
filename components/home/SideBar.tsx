@@ -269,7 +269,7 @@ interface EarnerProps {
 }
 const Earner = ({ amount, name, avatar, bounty, slug }: EarnerProps) => {
   return (
-    <NextLink href={`${getURL()}bounties/${slug}`}>
+    <NextLink href={`${getURL()}listings/bounties/${slug}`}>
       <a style={{ textDecoration: 'none', display: 'block' }}>
         <Flex align={'center'} w={'100%'} my={2}>
           {avatar ? (
@@ -297,7 +297,7 @@ const Earner = ({ amount, name, avatar, bounty, slug }: EarnerProps) => {
               {name}
             </Text>
             <Text color={'gray.400'} fontSize={'xs'} fontWeight={500}>
-              {bounty?.slice(0, 20)}
+              won {bounty?.slice(0, 15)}...
             </Text>
           </Box>
           <Flex columnGap={1} ml={'auto'}>
