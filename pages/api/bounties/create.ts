@@ -62,8 +62,7 @@ export default async function handler(
       },
     });
     res.status(200).json(result);
-    const zapierWebhookUrl =
-      'https://hooks.zapier.com/hooks/catch/11122522/31vi5g7/';
+    const zapierWebhookUrl = process.env.ZAPIER_BOUNTY_WEBHOOK!;
     await axios.post(zapierWebhookUrl, result);
   } catch (error) {
     console.log('file: create.ts:31 ~ user ~ error:', error);

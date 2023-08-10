@@ -24,8 +24,7 @@ export default async function submission(
       },
     });
 
-    const zapierEndpoint =
-      'https://hooks.zapier.com/hooks/catch/11122522/31vi5g7/';
+    const zapierEndpoint = process.env.ZAPIER_SUBMISSION_WEBHOOK!;
     await axios.post(zapierEndpoint, result);
 
     res.status(200).json(result);
