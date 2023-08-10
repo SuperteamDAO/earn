@@ -9,12 +9,14 @@ import {
   VStack,
 } from '@chakra-ui/react';
 import Avatar from 'boring-avatars';
+import NextLink from 'next/link';
 import { useRouter } from 'next/router';
 import { useState } from 'react';
 import Slider from 'react-slick';
 
 import LoginWrapper from '@/components/Header/LoginWrapper';
 import type { User } from '@/interface/user';
+import { getURL } from '@/utils/validUrl';
 
 import type { JobsType } from '../../interface/listings';
 import type { SponsorType } from '../../interface/sponsor';
@@ -262,49 +264,57 @@ interface EarnerProps {
   name: string;
   avatar?: string;
   amount: number;
-  work?: string;
+  bounty?: string;
+  slug: string;
 }
-const Earner = ({ amount, name, avatar, work }: EarnerProps) => {
+const Earner = ({ amount, name, avatar, bounty, slug }: EarnerProps) => {
   return (
-    <Flex align={'center'} w={'100%'} my={2}>
-      {avatar ? (
-        <Image
-          w={'2.125rem'}
-          h={'2.125rem'}
-          mr={'1.0625rem'}
-          alt=""
-          rounded={'full'}
-          src={avatar}
-        />
-      ) : (
-        <Center mr={'1.0625rem'}>
-          <Avatar
-            size={40}
-            name={name}
-            variant="marble"
-            colors={['#da4c65', '#5e25c2', '#d433ab', '#2e53af', '#ceea94']}
-          />
-        </Center>
-      )}
+    <NextLink href={`${getURL()}bounties/${slug}`}>
+      <a style={{ textDecoration: 'none', display: 'block' }}>
+        <Flex align={'center'} w={'100%'} my={2}>
+          {avatar ? (
+            <Image
+              w={'2.125rem'}
+              h={'2.125rem'}
+              mr={'1.0625rem'}
+              alt=""
+              rounded={'full'}
+              src={avatar}
+            />
+          ) : (
+            <Center mr={'1.0625rem'}>
+              <Avatar
+                size={40}
+                name={name}
+                variant="marble"
+                colors={['#da4c65', '#5e25c2', '#d433ab', '#2e53af', '#ceea94']}
+              />
+            </Center>
+          )}
 
-      <Box>
-        <Text color={'black'} fontSize={'sm'} fontWeight={500}>
-          {name}
-        </Text>
-        <Text color={'gray.400'} fontSize={'xs'} fontWeight={500}>
-          {work?.slice(0, 20)}
-        </Text>
-      </Box>
-      <Flex columnGap={1} ml={'auto'}>
-        <Image alt="usdc icon" src="/assets/landingsponsor/icons/usdc.svg" />
-        <Text color={'gray.600'} fontSize={'sm'} fontWeight={500}>
-          ${amount.toLocaleString()}
-        </Text>
-        <Text color={'gray.400'} fontSize={'sm'} fontWeight={500}>
-          USDC
-        </Text>
-      </Flex>
-    </Flex>
+          <Box>
+            <Text color={'black'} fontSize={'sm'} fontWeight={500}>
+              {name}
+            </Text>
+            <Text color={'gray.400'} fontSize={'xs'} fontWeight={500}>
+              {bounty?.slice(0, 20)}
+            </Text>
+          </Box>
+          <Flex columnGap={1} ml={'auto'}>
+            <Image
+              alt="usdc icon"
+              src="/assets/landingsponsor/icons/usdc.svg"
+            />
+            <Text color={'gray.600'} fontSize={'sm'} fontWeight={500}>
+              ${amount.toLocaleString()}
+            </Text>
+            <Text color={'gray.400'} fontSize={'sm'} fontWeight={500}>
+              USDC
+            </Text>
+          </Flex>
+        </Flex>
+      </a>
+    </NextLink>
   );
 };
 
@@ -322,18 +332,19 @@ const RecentEarners = ({ earners }: { earners?: User[] }) => {
   return (
     <Box w={'100%'}>
       <Text mb={'1.5rem'} color={'gray.400'} fontWeight={500}>
-        TOP EARNERS
+        RECENT EARNERS
       </Text>
       <VStack rowGap={2}>
         <Slider {...settings}>
           {earners?.map((t: any) => {
             return (
               <Earner
-                amount={t.totalEarnedInUSD ?? 0}
+                amount={t.reward ?? 0}
                 name={`${t.firstName} ${t.lastName}`}
                 avatar={t.photo}
                 key={t.id}
-                work={t.currentEmployer ?? ''}
+                bounty={t.title ?? ''}
+                slug={t.slug}
               />
             );
           })}
