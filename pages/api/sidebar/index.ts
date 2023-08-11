@@ -25,9 +25,11 @@ export default async function user(_req: NextApiRequest, res: NextApiResponse) {
             slug: true,
             title: true,
             rewards: true,
+            token: true,
           },
         },
       },
+      take: 15,
     });
 
     const earners = winningSubmissions.map((submission) => {
@@ -39,6 +41,7 @@ export default async function user(_req: NextApiRequest, res: NextApiResponse) {
         slug: submission.listing.slug,
         title: submission.listing.title,
         reward: rewards[submission.winnerPosition as keyof Rewards],
+        rewardToken: submission.listing.token,
         photo: submission.user.photo,
       };
     });

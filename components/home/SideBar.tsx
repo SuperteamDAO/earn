@@ -15,6 +15,7 @@ import { useState } from 'react';
 import Slider from 'react-slick';
 
 import LoginWrapper from '@/components/Header/LoginWrapper';
+import { tokenList } from '@/constants';
 import type { User } from '@/interface/user';
 import { getURL } from '@/utils/validUrl';
 
@@ -266,8 +267,14 @@ interface EarnerProps {
   amount: number;
   bounty?: string;
   slug: string;
+  token?: string;
 }
-const Earner = ({ amount, name, avatar, bounty, slug }: EarnerProps) => {
+const Earner = ({ amount, name, avatar, bounty, slug, token }: EarnerProps) => {
+  const tokenObj = tokenList.find((t) => t.tokenSymbol === token);
+  console.log(tokenObj);
+  const tokenIcon = tokenObj
+    ? tokenObj.icon
+    : '/assets/landingsponsor/icons/usdc.svg';
   return (
     <NextLink href={`${getURL()}listings/bounties/${slug}`}>
       <a style={{ textDecoration: 'none', display: 'block' }}>
@@ -300,11 +307,8 @@ const Earner = ({ amount, name, avatar, bounty, slug }: EarnerProps) => {
               won {bounty?.slice(0, 15)}...
             </Text>
           </Box>
-          <Flex columnGap={1} ml={'auto'}>
-            <Image
-              alt="usdc icon"
-              src="/assets/landingsponsor/icons/usdc.svg"
-            />
+          <Flex align={'center'} columnGap={1} ml={'auto'}>
+            <Image w={5} h={5} alt={`${token} icon`} src={tokenIcon} />
             <Text color={'gray.600'} fontSize={'sm'} fontWeight={500}>
               ${amount.toLocaleString()}
             </Text>
@@ -340,6 +344,7 @@ const RecentEarners = ({ earners }: { earners?: User[] }) => {
             return (
               <Earner
                 amount={t.reward ?? 0}
+                token={t.rewardToken}
                 name={`${t.firstName} ${t.lastName}`}
                 avatar={t.photo}
                 key={t.id}
