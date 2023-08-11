@@ -1,3 +1,4 @@
+import axios from 'axios';
 import type { NextApiRequest, NextApiResponse } from 'next';
 
 import { prisma } from '@/prisma';
@@ -16,6 +17,8 @@ export default async function bounty(
       },
       data,
     });
+    const zapierWebhookUrl = process.env.ZAPIER_BOUNTY_WEBHOOK!;
+    await axios.post(zapierWebhookUrl, result);
     res.status(200).json(result);
   } catch (error) {
     console.log('file: update.ts:21 ~ error:', error);

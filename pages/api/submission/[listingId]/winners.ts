@@ -1,4 +1,3 @@
-import axios from 'axios';
 import type { NextApiRequest, NextApiResponse } from 'next';
 
 import { prisma } from '@/prisma';
@@ -23,9 +22,6 @@ export default async function submission(
         user: true,
       },
     });
-
-    const zapierEndpoint = process.env.ZAPIER_SUBMISSION_WEBHOOK!;
-    await axios.post(zapierEndpoint, result);
 
     res.status(200).json(result);
   } catch (error) {

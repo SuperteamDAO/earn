@@ -202,11 +202,11 @@ const GettingStarted = ({ userInfo }: GettingStartedProps) => {
 };
 
 const TotalStats = ({
-  total,
-  listings,
+  bountyCount,
+  TVL,
 }: {
-  total: number;
-  listings: number;
+  bountyCount: number;
+  TVL: number;
 }) => {
   return (
     <Flex
@@ -227,7 +227,7 @@ const TotalStats = ({
         />
         <Box>
           <Text color={'black'} fontSize={'sm'} fontWeight={'600'}>
-            ${listings.toLocaleString()}{' '}
+            ${TVL.toLocaleString()}{' '}
             <span
               style={{
                 color: '#64748B',
@@ -250,10 +250,10 @@ const TotalStats = ({
         />
         <Box>
           <Text color={'black'} fontSize={'sm'} fontWeight={'600'}>
-            {total}
+            {bountyCount}
           </Text>
           <Text color={'gray.500'} fontSize={'xs'} fontWeight={'400'}>
-            Listed Opportunities
+            Opportunities Listed
           </Text>
         </Box>
       </Flex>
@@ -326,12 +326,12 @@ const RecentEarners = ({ earners }: { earners?: User[] }) => {
   const settings = {
     dots: false,
     infinite: true,
-    slidesToShow: 6,
+    slidesToShow: 5,
     slidesToScroll: 1,
     vertical: true,
     verticalSwiping: true,
     autoplay: true,
-    autoplaySpeed: 100,
+    autoplaySpeed: 1000,
   };
   return (
     <Box w={'100%'}>
@@ -521,7 +521,7 @@ const SideBar = ({ userInfo, listings, total, earners }: SideBarProps) => {
   return (
     <Flex direction={'column'} rowGap={'2.5rem'} w={'22.125rem'} pl={6}>
       <GettingStarted userInfo={userInfo} />
-      <TotalStats total={listings} listings={total} />
+      <TotalStats bountyCount={listings} TVL={total} />
       {/* <Filter title={'FILTER BY INDUSTRY'} entries={['Gaming', 'Payments', 'Consumer', 'Infrastructure', 'DAOs']} /> */}
       <RecentEarners earners={earners} />
       <AlphaAccess />
