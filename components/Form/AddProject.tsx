@@ -176,6 +176,8 @@ export const AddProject = ({
                 subSkills={subSkills}
                 setSkills={setSkills}
                 setSubSkills={setSubSkills}
+                skillLabel="Skills Used"
+                subSkillLabel="Sub Skills Used"
               />
 
               <Box w={'full'} mb={'1.25rem'}>

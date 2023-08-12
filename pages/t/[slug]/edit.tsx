@@ -14,6 +14,7 @@ import {
   useToast,
 } from '@chakra-ui/react';
 import axios from 'axios';
+import { MediaPicker } from 'degen';
 import { useRouter } from 'next/router';
 import React, { useEffect, useState } from 'react';
 import { useForm } from 'react-hook-form';
@@ -40,6 +41,7 @@ import { SkillList } from '@/interface/skills';
 import { Default } from '@/layouts/Default';
 import { Meta } from '@/layouts/Meta';
 import { userStore } from '@/store/user';
+import { uploadToCloudinary } from '@/utils/upload';
 import { isUsernameAvailable } from '@/utils/username';
 
 type FormData = {
@@ -117,6 +119,11 @@ export default function EditProfilePage() {
   const [userNameValid, setUserNameValid] = useState(true);
   const [discordError, setDiscordError] = useState(false);
   const [socialError, setSocialError] = useState(false);
+  const [isAnySocialUrlInvalid, setAnySocialUrlInvalid] = useState(false);
+  const [uploading, setUploading] = useState(false);
+  const [photoUrl, setPhotoUrl] = useState<string | null>(null);
+  const [isPhotoLoading, setIsPhotoLoading] = useState(true);
+
   const router = useRouter();
 
   const [pow, setPow] = useState<any[]>([]);
@@ -138,6 +145,8 @@ export default function EditProfilePage() {
   const [skills, setSkills] = useState<MultiSelectOptions[]>([]);
   const [subSkills, setSubSkills] = useState<MultiSelectOptions[]>([]);
   const toast = useToast();
+
+  const privateValue = watch('private', userInfo?.private);
 
   useEffect(() => {
     if (userInfo) {
@@ -178,6 +187,10 @@ export default function EditProfilePage() {
         setValue('location', userInfo.location);
       }
 
+      if (userInfo.private) {
+        setValue('private', userInfo.private);
+      }
+
       if (userInfo.pow) {
         const powData = JSON.parse(userInfo.pow);
         setPow(Array.isArray(powData) ? powData : [powData]);
@@ -188,6 +201,12 @@ export default function EditProfilePage() {
           parseSkillsAndSubskills(userInfo.skills);
         setSkills(parsedSkills);
         setSubSkills(parsedSubSkills);
+      }
+
+      if (userInfo?.photo) {
+        setValue('photo', userInfo.photo);
+        setPhotoUrl(userInfo.photo);
+        setIsPhotoLoading(false);
       }
     }
   }, [userInfo, setValue]);
@@ -216,6 +235,10 @@ export default function EditProfilePage() {
       setSocialError(filledSocialLinksCount < 1);
 
       if (filledSocialLinksCount < 1) {
+        return;
+      }
+
+      if (isAnySocialUrlInvalid) {
         return;
       }
 
@@ -271,6 +294,7 @@ export default function EditProfilePage() {
         id: userInfo?.id,
         ...finalUpdatedData,
       });
+      console.log(finalUpdatedData);
       setUserInfo(response.data);
       console.log('Profile updated successfully!');
       toast({
@@ -281,7 +305,7 @@ export default function EditProfilePage() {
         isClosable: true,
       });
       setTimeout(() => {
-        router.push(`/t/${userInfo?.username}`);
+        router.push(`/t/${data.username}`);
       }, 500);
     } catch (error: any) {
       console.log('Failed to update profile');
@@ -309,6 +333,63 @@ export default function EditProfilePage() {
                 <Text mt={12} mb={5} fontSize="xl">
                   Personal Info
                 </Text>
+
+                {/* eslint-disable no-nested-ternary */}
+
+                {isPhotoLoading ? (
+                  <></>
+                ) : photoUrl ? (
+                  <>
+                    <FormLabel
+                      mb={'0'}
+                      pb={'0'}
+                      color={'brand.slate.500'}
+                      requiredIndicator={<></>}
+                    >
+                      Profile Picture
+                    </FormLabel>
+                    <MediaPicker
+                      defaultValue={{ url: photoUrl, type: 'image' }}
+                      onChange={async (e) => {
+                        setUploading(true);
+                        const a = await uploadToCloudinary(e);
+                        setValue('photo', a);
+                        setUploading(false);
+                      }}
+                      onReset={() => {
+                        setValue('photo', '');
+                        setUploading(false);
+                      }}
+                      compact
+                      label="Choose or drag and drop media"
+                    />
+                  </>
+                ) : (
+                  <>
+                    <FormLabel
+                      mb={'0'}
+                      pb={'0'}
+                      color={'brand.slate.500'}
+                      requiredIndicator={<></>}
+                    >
+                      Profile Picture
+                    </FormLabel>
+                    <MediaPicker
+                      onChange={async (e) => {
+                        setUploading(true);
+                        const a = await uploadToCloudinary(e);
+                        setValue('photo', a);
+                        setUploading(false);
+                      }}
+                      onReset={() => {
+                        setValue('photo', '');
+                        setUploading(false);
+                      }}
+                      compact
+                      label="Choose or drag and drop media"
+                    />
+                  </>
+                )}
                 <InputField
                   label="Username"
                   placeholder="Username"
@@ -380,6 +461,12 @@ export default function EditProfilePage() {
                           ? discordError
                           : false
                       }
+                      watch={watch}
+                      onUrlValidation={(isValid) => {
+                        if (!isValid) {
+                          setAnySocialUrlInvalid(true);
+                        }
+                      }}
                     />
                   );
                 })}
@@ -563,22 +650,27 @@ export default function EditProfilePage() {
                   subSkills={subSkills}
                   setSkills={setSkills}
                   setSubSkills={setSubSkills}
+                  skillLabel="Your Skills"
+                  subSkillLabel="Sub Skills"
                 />
 
                 <Checkbox
                   mr={1}
+                  mb={8}
                   color="brand.slate.500"
                   fontWeight={500}
                   colorScheme="purple"
+                  isChecked={privateValue}
+                  onChange={(e) => {
+                    setValue('private', e.target.checked);
+                  }}
                   size="md"
-                  {...register('private')}
-                  mb={8}
                 >
                   Keep my info private
                 </Checkbox>
                 <br />
 
-                <Button mb={12} type="submit">
+                <Button mb={12} isLoading={uploading} type="submit">
                   Update Profile
                 </Button>
               </FormControl>

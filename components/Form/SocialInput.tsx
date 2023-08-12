@@ -1,5 +1,6 @@
 import { Box, Flex, Image, Input, Text } from '@chakra-ui/react';
 import { useEffect, useState } from 'react';
+import type { UseFormRegister } from 'react-hook-form';
 
 import { isValidHttpUrl } from '@/utils/validUrl';
 
@@ -7,10 +8,12 @@ type TypeSocialInput = {
   label: string;
   placeHolder: string;
   icon: string;
-  register: any;
-  name?: string;
+  register: UseFormRegister<any>;
+  name: string;
   discordError?: boolean;
   onInputChange?: (value: string) => void;
+  watch: (name: string, defaultValue?: string) => string;
+  onUrlValidation?: (isValid: boolean) => void;
 };
 
 export const SocialInput = ({
@@ -21,8 +24,16 @@ export const SocialInput = ({
   name,
   discordError,
   onInputChange,
+  watch,
+  onUrlValidation,
 }: TypeSocialInput) => {
   const [isUrlValid, setIsUrlValid] = useState(true);
+
+  useEffect(() => {
+    if (onUrlValidation) {
+      onUrlValidation(isUrlValid);
+    }
+  }, [isUrlValid]);
 
   const handleInputChange = (value: string) => {
     if (onInputChange) {
@@ -36,9 +47,10 @@ export const SocialInput = ({
     }
   };
 
+  const value = watch(name, '');
+
   useEffect(() => {
-    if (name && label.toLowerCase() !== 'discord') {
-      const value = register(name)?.value || '';
+    if (label.toLowerCase() !== 'discord') {
       if (typeof value === 'string') {
         setIsUrlValid(isValidHttpUrl(value));
       }
@@ -101,16 +113,10 @@ export const SocialInput = ({
           focusBorderColor="brand.purple"
           placeholder={placeHolder}
           title={label}
-          {...(name ? register(name) : register(label))}
-          onBlur={(e) => {
-            handleInputBlur(e.target.value);
-          }}
-          onChange={(e) => {
-            handleInputChange(e.target.value);
-            if (register.onChange) {
-              register.onChange(e);
-            }
-          }}
+          {...register(name, {
+            onChange: (e) => handleInputChange(e.target.value),
+            onBlur: (e) => handleInputBlur(e.target.value),
+          })}
         />
       </Flex>
       {!isUrlValid && (

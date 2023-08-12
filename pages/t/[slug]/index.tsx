@@ -82,6 +82,10 @@ const LinkPreview = ({
     description: string;
   };
 }) => {
+  const truncatedTitle =
+    data.title.length > 30
+      ? `${data.title.substring(0, 30 - 3)}...`
+      : data.title;
   return (
     <>
       <Link href={data?.link} isExternal>
@@ -104,7 +108,7 @@ const LinkPreview = ({
             }
           />
           <Box px={'1rem'} py={'0.5625rem'}>
-            <Text color={'gray.600'}>{data.title}</Text>
+            <Text color={'gray.600'}>{truncatedTitle}</Text>
           </Box>
         </Box>
       </Link>
