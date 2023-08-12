@@ -170,9 +170,9 @@ function DetailSideCard({
         <WarningModal
           isOpen={warningIsOpen}
           onClose={warningOnClose}
-          title={'Complete your profile'}
+          videoEmbed
           bodyText={
-            'Please complete your profile before submitting to a bounty.'
+            "Before you continue, you'll need to create a Superteam Profile. It'll take less than 53 seconds, but comes with a bunch of benefits."
           }
           primaryCtaText={'Complete Profile'}
           primaryCtaLink={'/new/talent'}

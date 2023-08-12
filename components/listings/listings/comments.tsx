@@ -108,9 +108,9 @@ export const Comments = ({ refId, refType }: Props) => {
         <WarningModal
           isOpen={isOpen}
           onClose={onClose}
-          title={'Complete your profile'}
+          videoEmbed
           bodyText={
-            'Please complete your profile before commenting on the bounty.'
+            "Before you continue, you'll need to create a Superteam Profile. It'll take less than 53 seconds, but comes with a bunch of benefits."
           }
           primaryCtaText={'Complete Profile'}
           primaryCtaLink={'/new/talent'}
