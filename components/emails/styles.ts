@@ -35,7 +35,7 @@ export const styles = {
     marginTop: '16px',
   },
   unsubscribeLink: {
-    fontSize: '14px',
+    fontSize: '12px',
     color: '#007BFF',
   },
 };
