@@ -5,6 +5,7 @@ import type { NextApiRequest, NextApiResponse } from 'next';
 
 import { DeadlineSponsorTemplate } from '@/components/emails/deadlineSponsorTemplate';
 import { prisma } from '@/prisma';
+import { getUnsubEmails } from '@/utils/airtable';
 import { rateLimitedPromiseAll } from '@/utils/rateLimitedPromises';
 import resendMail from '@/utils/resend';
 
@@ -12,6 +13,7 @@ dayjs.extend(utc);
 
 async function handler(_req: NextApiRequest, res: NextApiResponse) {
   try {
+    const unsubscribedEmails = await getUnsubEmails();
     const currentTime = dayjs.utc();
     const bounties = await prisma.bounties.findMany({
       where: {
@@ -45,7 +47,11 @@ async function handler(_req: NextApiRequest, res: NextApiResponse) {
       const pocUserEmail = bounty.poc?.email;
       const pocUserFirstName = bounty.poc?.firstName;
 
-      if (!pocUserEmail || !pocUserFirstName) {
+      if (
+        !pocUserEmail ||
+        !pocUserFirstName ||
+        unsubscribedEmails.includes(pocUserEmail)
+      ) {
         return null;
       }
 

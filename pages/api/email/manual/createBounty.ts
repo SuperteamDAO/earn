@@ -3,6 +3,7 @@ import type { NextApiRequest, NextApiResponse } from 'next';
 import { NewBountyTemplate } from '@/components/emails/newBountyTemplate';
 import type { Skills } from '@/interface/skills';
 import { prisma } from '@/prisma';
+import { getUnsubEmails } from '@/utils/airtable';
 import { rateLimitedPromiseAll } from '@/utils/rateLimitedPromises';
 import resendMail from '@/utils/resend';
 
@@ -12,6 +13,7 @@ export default async function handler(
 ) {
   const { id } = req.body;
   try {
+    const unsubscribedEmails = await getUnsubEmails();
     const listing = await prisma.bounties.findUnique({
       where: {
         id,
@@ -32,7 +34,8 @@ export default async function handler(
         },
       })
     ).filter((user) => {
-      if (!user.notifications) return false;
+      if (!user.notifications || unsubscribedEmails.includes(user.email))
+        return false;
 
       const userNotifications =
         typeof user.notifications === 'string'

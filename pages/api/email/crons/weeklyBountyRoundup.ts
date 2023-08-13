@@ -6,6 +6,7 @@ import type { NextApiRequest, NextApiResponse } from 'next';
 import { WeeklyRoundupTemplate } from '@/components/emails/weeklyRoundupTemplate';
 import type { MainSkills, Skills } from '@/interface/skills';
 import { prisma } from '@/prisma';
+import { getUnsubEmails } from '@/utils/airtable';
 import { rateLimitedPromiseAll } from '@/utils/rateLimitedPromises';
 import resendMail from '@/utils/resend';
 
@@ -17,6 +18,7 @@ type Notifications = {
 }[];
 
 async function handler(_req: NextApiRequest, res: NextApiResponse) {
+  const unsubscribedEmails = await getUnsubEmails();
   try {
     const users = (
       await prisma.user.findMany({
@@ -82,6 +84,9 @@ async function handler(_req: NextApiRequest, res: NextApiResponse) {
 
     await rateLimitedPromiseAll(userBounties, 9, async (user) => {
       try {
+        if (unsubscribedEmails.includes(user?.email!)) {
+          return;
+        }
         await resendMail.emails.send({
           from: `Kash from Superteam <${process.env.RESEND_EMAIL}>`,
           to: [user?.email!],

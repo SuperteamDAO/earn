@@ -5,6 +5,7 @@ import type { NextApiRequest, NextApiResponse } from 'next';
 
 import { DeadlineExceededbyWeekTemplate } from '@/components/emails/deadlineExceededbyWeekTemplate';
 import { prisma } from '@/prisma';
+import { getUnsubEmails } from '@/utils/airtable';
 import { rateLimitedPromiseAll } from '@/utils/rateLimitedPromises';
 import resendMail from '@/utils/resend';
 
@@ -12,6 +13,8 @@ dayjs.extend(utc);
 
 async function handler(_req: NextApiRequest, res: NextApiResponse) {
   try {
+    const unsubscribedEmails = await getUnsubEmails();
+
     const sevenDaysAgo = dayjs().subtract(7, 'day').toISOString();
     const nineDaysAgo = dayjs().subtract(9, 'day').toISOString();
 
@@ -47,7 +50,7 @@ async function handler(_req: NextApiRequest, res: NextApiResponse) {
       const pocEmail = bounty.poc?.email;
       const pocFirstName = bounty.poc?.firstName;
 
-      if (!pocEmail || !pocFirstName) {
+      if (!pocEmail || !pocFirstName || unsubscribedEmails.includes(pocEmail)) {
         return null;
       }
 

@@ -2,6 +2,7 @@ import type { NextApiRequest, NextApiResponse } from 'next';
 
 import { SubmissionLikeTemplate } from '@/components/emails/submissionLikeTemplate';
 import { prisma } from '@/prisma';
+import { getUnsubEmails } from '@/utils/airtable';
 import resendMail from '@/utils/resend';
 
 export default async function handler(
@@ -10,6 +11,7 @@ export default async function handler(
 ) {
   const { id } = req.body;
   try {
+    const unsubscribedEmails = await getUnsubEmails();
     const submission = await prisma.submission.findUnique({
       where: {
         id,
@@ -20,16 +22,21 @@ export default async function handler(
       },
     });
 
-    await resendMail.emails.send({
-      from: `Kash from Superteam <${process.env.RESEND_EMAIL}>`,
-      to: [submission?.user.email as string],
-      subject: 'People Love Your Superteam Earn Submission!',
-      react: SubmissionLikeTemplate({
-        name: submission?.user.firstName as string,
-        bountyName: submission?.listing.title as string,
-        link: `https://earn.superteam.fun/listings/bounties/${submission?.listing.slug}/submissions/?utm_source=superteamearn&utm_medium=email&utm_campaign=notifications`,
-      }),
-    });
+    if (
+      submission &&
+      !unsubscribedEmails.includes(submission.user.email as string)
+    ) {
+      await resendMail.emails.send({
+        from: `Kash from Superteam <${process.env.RESEND_EMAIL}>`,
+        to: [submission?.user.email as string],
+        subject: 'People Love Your Superteam Earn Submission!',
+        react: SubmissionLikeTemplate({
+          name: submission?.user.firstName as string,
+          bountyName: submission?.listing.title as string,
+          link: `https://earn.superteam.fun/listings/bounties/${submission?.listing.slug}/submissions/?utm_source=superteamearn&utm_medium=email&utm_campaign=notifications`,
+        }),
+      });
+    }
 
     return res.status(200).json({ message: 'Ok' });
   } catch (error) {
