@@ -30,12 +30,12 @@ export const styles = {
   },
   list: {},
   unsubscribe: {
-    fontSize: '12px',
+    fontSize: '11px',
     lineHeight: '20px',
     marginTop: '16px',
   },
   unsubscribeLink: {
-    fontSize: '12px',
+    fontSize: '11px',
     color: '#007BFF',
   },
 };
