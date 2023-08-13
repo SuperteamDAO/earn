@@ -27,12 +27,7 @@ export default async function handler(
       },
     });
 
-    if (
-      user?.email &&
-      user?.firstName &&
-      listing?.title &&
-      !unsubscribedEmails.includes(user.email)
-    ) {
+    if (user?.email && user?.firstName && listing?.title) {
       await resendMail.emails.send({
         from: `Kash from Superteam <${process.env.RESEND_EMAIL}>`,
         to: [user?.email],
