@@ -20,6 +20,8 @@ interface Props {
   primaryCtaText?: string;
   primaryCtaLink?: string;
   videoEmbed?: boolean;
+  children?: React.ReactNode;
+  isTitleCentered?: boolean;
 }
 
 function WarningModal({
@@ -30,12 +32,16 @@ function WarningModal({
   primaryCtaText,
   primaryCtaLink,
   videoEmbed,
+  children,
+  isTitleCentered,
 }: Props) {
   return (
     <Modal isOpen={isOpen} onClose={onClose} size={'sm'}>
       <ModalOverlay />
       <ModalContent>
-        <ModalHeader>{title}</ModalHeader>
+        <ModalHeader textAlign={isTitleCentered ? 'center' : 'left'}>
+          {title}
+        </ModalHeader>
         <ModalCloseButton />
         <ModalBody>
           {videoEmbed && (
@@ -51,17 +57,16 @@ function WarningModal({
               />
             </AspectRatio>
           )}
+          {children}
           <Text fontSize="15px" textAlign={'center'}>
             {bodyText}
           </Text>
         </ModalBody>
 
         <Flex justify={'space-between'} pt={2} pb={8} px={8}>
-          <Button onClick={onClose} variant="ghost">
-            Close
-          </Button>
           <Button
             as={Link}
+            w={'100%'}
             _hover={{ textDecoration: 'none' }}
             colorScheme="blue"
             href={primaryCtaLink}
