@@ -4,7 +4,6 @@ import { prisma } from '@/prisma';
 
 export default async function user(req: NextApiRequest, res: NextApiResponse) {
   const { submissionId, slug } = req.body;
-  console.log(submissionId, slug, '-------');
   try {
     const result = await prisma.bounties.findFirst({
       where: {
