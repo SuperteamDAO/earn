@@ -53,9 +53,6 @@ const Template = ({
     setListingType('BOUNTY');
     setBountyBasic({
       title: template?.title || undefined,
-      slug: template?.slug
-        ? `${template?.slug}-${Math.floor(1000 + Math.random() * 9000)}`
-        : undefined,
       type: template?.type || 'open',
       templateId: template?.id || undefined,
     });

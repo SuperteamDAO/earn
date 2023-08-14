@@ -38,6 +38,16 @@ export const WeeklyRoundupTemplate = ({ name, bounties }: TemplateProps) => {
       </ol>
       <p style={styles.salutation}>Go Secure the Bag,</p>
       <p style={styles.text}>The Superteam Earn Crew 🦸‍♀️🦸‍♂️</p>
+      <p style={styles.unsubscribe}>
+        Click{' '}
+        <a
+          href="https://airtable.com/appqA0tn8zKv3WJg9/shrsil6vncuj35nHn"
+          style={styles.unsubscribeLink}
+        >
+          here
+        </a>{' '}
+        to unsubscribe from all emails from Superteam Earn.
+      </p>
     </div>
   );
 };

@@ -47,7 +47,6 @@ interface Props {
   onOpen: () => void;
   draftLoading: boolean;
   createDraft: () => void;
-  setSlug: Dispatch<SetStateAction<string>>;
   questions: Ques[];
   createAndPublishListing: () => void;
   isListingPublishing: boolean;

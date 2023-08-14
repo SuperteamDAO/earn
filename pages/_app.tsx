@@ -16,7 +16,17 @@ import '@fontsource/domine/500.css';
 import '@fontsource/domine/600.css';
 import '@fontsource/domine/700.css';
 
-import { ChakraProvider } from '@chakra-ui/react';
+import { CheckCircleIcon } from '@chakra-ui/icons';
+import {
+  Box,
+  ChakraProvider,
+  Flex,
+  Icon,
+  Image,
+  List,
+  ListItem,
+  useDisclosure,
+} from '@chakra-ui/react';
 import {
   Hydrate,
   QueryClient,
@@ -26,6 +36,10 @@ import { ReactQueryDevtools } from '@tanstack/react-query-devtools';
 import type { AppProps } from 'next/app';
 import { Router } from 'next/router';
 import NProgress from 'nprogress';
+import { useEffect } from 'react';
+
+import WarningModal from '@/components/shared/WarningModal';
+import { userStore } from '@/store/user';
 
 import theme from '../config/chakra.config';
 import { Wallet } from '../context/connectWalletContext';
@@ -35,6 +49,19 @@ function MyApp({ Component, pageProps }: AppProps) {
   Router.events.on('routeChangeStart', () => NProgress.start());
   Router.events.on('routeChangeComplete', () => NProgress.done());
   Router.events.on('routeChangeError', () => NProgress.done());
+  const { userInfo } = userStore();
+  const { isOpen, onOpen, onClose } = useDisclosure();
+
+  useEffect(() => {
+    if (userInfo && (!userInfo.isTalentFilled || !userInfo.isVerified)) {
+      const timeoutId = setTimeout(() => {
+        onOpen();
+      }, 5000);
+      return () => clearTimeout(timeoutId);
+    }
+    return () => {};
+  }, [userInfo, onOpen]);
+
   return (
     <>
       <ChakraProvider theme={theme}>
@@ -42,6 +69,49 @@ function MyApp({ Component, pageProps }: AppProps) {
           <QueryClientProvider client={queryClient}>
             <Hydrate state={pageProps.dehydratedState}>
               <ReactQueryDevtools initialIsOpen={false} />
+              <WarningModal
+                isOpen={isOpen}
+                onClose={onClose}
+                title="Create a Profile on ST Earn"
+                primaryCtaText="Complete Profile"
+                primaryCtaLink="/new/talent"
+                isTitleCentered
+              >
+                <Image
+                  mb={8}
+                  alt="complete profile"
+                  src="/assets/talent/completeprofile.png"
+                />
+                <List spacing={2}>
+                  <ListItem>
+                    <Flex align="start">
+                      <Icon as={CheckCircleIcon} mt={1} color="#6562FF" />
+                      <Box pl={2}>
+                        Receive personalized email alerts for new bounties
+                        relevant to you
+                      </Box>
+                    </Flex>
+                  </ListItem>
+                  <ListItem>
+                    <Flex align="start">
+                      <Icon as={CheckCircleIcon} mt={1} color="#6562FF" />
+                      <Box pl={2}>
+                        Get discovered by global companies for full-time or
+                        contract work
+                      </Box>
+                    </Flex>
+                  </ListItem>
+                  <ListItem>
+                    <Flex align="start">
+                      <Icon as={CheckCircleIcon} mt={1} color="#6562FF" />
+                      <Box pl={2}>
+                        Build proof-of-work and show off your skills in one
+                        place.
+                      </Box>
+                    </Flex>
+                  </ListItem>
+                </List>
+              </WarningModal>
               <Component {...pageProps} />
             </Hydrate>
           </QueryClientProvider>

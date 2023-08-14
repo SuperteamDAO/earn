@@ -3,6 +3,7 @@ import type { NextApiRequest, NextApiResponse } from 'next';
 import { WinnersAnnouncedTemplate } from '@/components/emails/winnersAnnouncedTemplate';
 import type { Rewards } from '@/interface/bounty';
 import { prisma } from '@/prisma';
+import { getUnsubEmails } from '@/utils/airtable';
 import { dayjs } from '@/utils/dayjs';
 import { rateLimitedPromiseAll } from '@/utils/rateLimitedPromises';
 import resendMail from '@/utils/resend';
@@ -14,6 +15,7 @@ export default async function announce(
   const params = req.query;
   const id = params.id as string;
   try {
+    const unsubscribedEmails = await getUnsubEmails();
     const bounty = await prisma.bounties.findFirst({
       where: {
         id,
@@ -141,6 +143,8 @@ export default async function announce(
     ];
 
     await rateLimitedPromiseAll(allUsers, 9, async (user) => {
+      if (unsubscribedEmails.includes(user.email)) return;
+
       const template = WinnersAnnouncedTemplate({
         name: user.name,
         bountyName: bounty?.title || '',
@@ -149,14 +153,12 @@ export default async function announce(
         }/?utm_source=superteamearn&utm_medium=email&utm_campaign=winnerannouncement`,
       });
 
-      const data = await resendMail.emails.send({
+      await resendMail.emails.send({
         from: `Kash from Superteam <${process.env.RESEND_EMAIL}>`,
         to: [user.email],
         subject: 'Bounty Winners Announced!',
         react: template,
       });
-
-      return data;
     });
 
     res.status(200).json(result);

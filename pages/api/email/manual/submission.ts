@@ -3,6 +3,7 @@ import type { NextApiRequest, NextApiResponse } from 'next';
 import { SubmissionSponsorTemplate } from '@/components/emails/submissionSponsorTemplate';
 import { SubmissionTemplate } from '@/components/emails/submissionTemplate';
 import { prisma } from '@/prisma';
+import { getUnsubEmails } from '@/utils/airtable';
 import resendMail from '@/utils/resend';
 
 export default async function handler(
@@ -11,6 +12,7 @@ export default async function handler(
 ) {
   const { listingId, userId } = req.body;
   try {
+    const unsubscribedEmails = await getUnsubEmails();
     const listing = await prisma.bounties.findFirst({
       where: {
         id: listingId as string,
@@ -24,6 +26,7 @@ export default async function handler(
         id: userId as string,
       },
     });
+
     if (user?.email && user?.firstName && listing?.title) {
       await resendMail.emails.send({
         from: `Kash from Superteam <${process.env.RESEND_EMAIL}>`,
@@ -38,7 +41,13 @@ export default async function handler(
 
     const pocUser = listing?.poc;
 
-    if (user?.email && pocUser?.email && listing?.title && pocUser?.firstName) {
+    if (
+      user?.email &&
+      pocUser?.email &&
+      listing?.title &&
+      pocUser?.firstName &&
+      !unsubscribedEmails.includes(pocUser.email)
+    ) {
       await resendMail.emails.send({
         from: `Kash from Superteam <${process.env.RESEND_EMAIL}>`,
         to: [pocUser?.email],

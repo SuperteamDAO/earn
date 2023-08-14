@@ -1,29 +1,50 @@
 import type { NextApiRequest, NextApiResponse } from 'next';
 
+import type { Rewards } from '@/interface/bounty';
 import { prisma } from '@/prisma';
 
 export default async function user(_req: NextApiRequest, res: NextApiResponse) {
   try {
     const totals = await prisma.total.findFirst();
-    const earners = await prisma.user.findMany({
+    console.log(totals);
+    const winningSubmissions = await prisma.submission.findMany({
       where: {
-        totalEarnedInUSD: {
-          gt: 0,
+        isWinner: true,
+      },
+      select: {
+        winnerPosition: true,
+        user: {
+          select: {
+            username: true,
+            photo: true,
+            firstName: true,
+            lastName: true,
+          },
+        },
+        listing: {
+          select: {
+            slug: true,
+            title: true,
+            rewards: true,
+            token: true,
+          },
         },
       },
-      orderBy: {
-        totalEarnedInUSD: 'desc',
-      },
-      take: 10,
-      select: {
-        id: true,
-        firstName: true,
-        lastName: true,
-        username: true,
-        totalEarnedInUSD: true,
-        photo: true,
-        currentEmployer: true,
-      },
+      take: 15,
+    });
+
+    const earners = winningSubmissions.map((submission) => {
+      const rewards = submission.listing.rewards as Rewards;
+      return {
+        username: submission.user.username,
+        firstName: submission.user.firstName,
+        lastName: submission.user.lastName,
+        slug: submission.listing.slug,
+        title: submission.listing.title,
+        reward: rewards[submission.winnerPosition as keyof Rewards],
+        rewardToken: submission.listing.token,
+        photo: submission.user.photo,
+      };
     });
     res.status(200).json({ totals, earners });
   } catch (error) {

@@ -1,3 +1,4 @@
+import axios from 'axios';
 import type { NextApiRequest, NextApiResponse } from 'next';
 
 import { prisma } from '@/prisma';
@@ -14,6 +15,8 @@ export default async function user(req: NextApiRequest, res: NextApiResponse) {
         winnerPosition,
       },
     });
+    const zapierWebhookUrl = process.env.ZAPIER_SUBMISSION_WEBHOOK!;
+    await axios.post(zapierWebhookUrl, result);
     const bountyId = result.listingId;
     const updatedBounty = {
       totalWinnersSelected: {},

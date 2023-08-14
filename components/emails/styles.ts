@@ -29,4 +29,13 @@ export const styles = {
     marginBottom: '16px',
   },
   list: {},
+  unsubscribe: {
+    fontSize: '11px',
+    lineHeight: '20px',
+    marginTop: '16px',
+  },
+  unsubscribeLink: {
+    fontSize: '11px',
+    color: '#007BFF',
+  },
 };

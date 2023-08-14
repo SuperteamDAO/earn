@@ -9,12 +9,15 @@ import {
   VStack,
 } from '@chakra-ui/react';
 import Avatar from 'boring-avatars';
+import NextLink from 'next/link';
 import { useRouter } from 'next/router';
 import { useState } from 'react';
 import Slider from 'react-slick';
 
 import LoginWrapper from '@/components/Header/LoginWrapper';
+import { tokenList } from '@/constants';
 import type { User } from '@/interface/user';
+import { getURL } from '@/utils/validUrl';
 
 import type { JobsType } from '../../interface/listings';
 import type { SponsorType } from '../../interface/sponsor';
@@ -199,11 +202,11 @@ const GettingStarted = ({ userInfo }: GettingStartedProps) => {
 };
 
 const TotalStats = ({
-  total,
-  listings,
+  bountyCount,
+  TVL,
 }: {
-  total: number;
-  listings: number;
+  bountyCount: number;
+  TVL: number;
 }) => {
   return (
     <Flex
@@ -224,7 +227,7 @@ const TotalStats = ({
         />
         <Box>
           <Text color={'black'} fontSize={'sm'} fontWeight={'600'}>
-            ${listings.toLocaleString()}{' '}
+            ${TVL.toLocaleString()}{' '}
             <span
               style={{
                 color: '#64748B',
@@ -247,10 +250,10 @@ const TotalStats = ({
         />
         <Box>
           <Text color={'black'} fontSize={'sm'} fontWeight={'600'}>
-            {total}
+            {bountyCount}
           </Text>
           <Text color={'gray.500'} fontSize={'xs'} fontWeight={'400'}>
-            Listed Opportunities
+            Opportunities Listed
           </Text>
         </Box>
       </Flex>
@@ -262,49 +265,60 @@ interface EarnerProps {
   name: string;
   avatar?: string;
   amount: number;
-  work?: string;
+  bounty?: string;
+  slug: string;
+  token?: string;
 }
-const Earner = ({ amount, name, avatar, work }: EarnerProps) => {
+const Earner = ({ amount, name, avatar, bounty, slug, token }: EarnerProps) => {
+  const tokenObj = tokenList.find((t) => t.tokenSymbol === token);
+  console.log(tokenObj);
+  const tokenIcon = tokenObj
+    ? tokenObj.icon
+    : '/assets/landingsponsor/icons/usdc.svg';
   return (
-    <Flex align={'center'} w={'100%'} my={2}>
-      {avatar ? (
-        <Image
-          w={'2.125rem'}
-          h={'2.125rem'}
-          mr={'1.0625rem'}
-          alt=""
-          rounded={'full'}
-          src={avatar}
-        />
-      ) : (
-        <Center mr={'1.0625rem'}>
-          <Avatar
-            size={40}
-            name={name}
-            variant="marble"
-            colors={['#da4c65', '#5e25c2', '#d433ab', '#2e53af', '#ceea94']}
-          />
-        </Center>
-      )}
+    <NextLink href={`${getURL()}listings/bounties/${slug}`}>
+      <a style={{ textDecoration: 'none', display: 'block' }}>
+        <Flex align={'center'} w={'100%'} my={2}>
+          {avatar ? (
+            <Image
+              w={'2.3rem'}
+              h={'2.3rem'}
+              mr={'1.0625rem'}
+              alt=""
+              rounded={'full'}
+              src={avatar}
+            />
+          ) : (
+            <Center mr={'1.0625rem'}>
+              <Avatar
+                size={40}
+                name={name}
+                variant="marble"
+                colors={['#da4c65', '#5e25c2', '#d433ab', '#2e53af', '#ceea94']}
+              />
+            </Center>
+          )}
 
-      <Box>
-        <Text color={'black'} fontSize={'sm'} fontWeight={500}>
-          {name}
-        </Text>
-        <Text color={'gray.400'} fontSize={'xs'} fontWeight={500}>
-          {work?.slice(0, 20)}
-        </Text>
-      </Box>
-      <Flex columnGap={1} ml={'auto'}>
-        <Image alt="usdc icon" src="/assets/landingsponsor/icons/usdc.svg" />
-        <Text color={'gray.600'} fontSize={'sm'} fontWeight={500}>
-          ${amount.toLocaleString()}
-        </Text>
-        <Text color={'gray.400'} fontSize={'sm'} fontWeight={500}>
-          USDC
-        </Text>
-      </Flex>
-    </Flex>
+          <Box>
+            <Text color={'black'} fontSize={'sm'} fontWeight={500}>
+              {name}
+            </Text>
+            <Text color={'gray.400'} fontSize={'xs'} fontWeight={500}>
+              won {bounty?.slice(0, 15)}...
+            </Text>
+          </Box>
+          <Flex align={'center'} columnGap={1} ml={'auto'}>
+            <Image w={5} h={5} alt={`${token} icon`} src={tokenIcon} />
+            <Text color={'gray.600'} fontSize={'sm'} fontWeight={500}>
+              ${amount.toLocaleString()}
+            </Text>
+            <Text color={'gray.400'} fontSize={'sm'} fontWeight={500}>
+              USDC
+            </Text>
+          </Flex>
+        </Flex>
+      </a>
+    </NextLink>
   );
 };
 
@@ -312,28 +326,30 @@ const RecentEarners = ({ earners }: { earners?: User[] }) => {
   const settings = {
     dots: false,
     infinite: true,
-    slidesToShow: 6,
+    slidesToShow: 5,
     slidesToScroll: 1,
     vertical: true,
     verticalSwiping: true,
     autoplay: true,
-    autoplaySpeed: 100,
+    autoplaySpeed: 1000,
   };
   return (
     <Box w={'100%'}>
       <Text mb={'1.5rem'} color={'gray.400'} fontWeight={500}>
-        TOP EARNERS
+        RECENT EARNERS
       </Text>
       <VStack rowGap={2}>
         <Slider {...settings}>
           {earners?.map((t: any) => {
             return (
               <Earner
-                amount={t.totalEarnedInUSD ?? 0}
+                amount={t.reward ?? 0}
+                token={t.rewardToken}
                 name={`${t.firstName} ${t.lastName}`}
                 avatar={t.photo}
                 key={t.id}
-                work={t.currentEmployer ?? ''}
+                bounty={t.title ?? ''}
+                slug={t.slug}
               />
             );
           })}
@@ -505,7 +521,7 @@ const SideBar = ({ userInfo, listings, total, earners }: SideBarProps) => {
   return (
     <Flex direction={'column'} rowGap={'2.5rem'} w={'22.125rem'} pl={6}>
       <GettingStarted userInfo={userInfo} />
-      <TotalStats total={listings} listings={total} />
+      <TotalStats bountyCount={listings} TVL={total} />
       {/* <Filter title={'FILTER BY INDUSTRY'} entries={['Gaming', 'Payments', 'Consumer', 'Infrastructure', 'DAOs']} /> */}
       <RecentEarners earners={earners} />
       <AlphaAccess />

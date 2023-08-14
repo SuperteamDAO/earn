@@ -13,6 +13,23 @@ export default async function user(req: NextApiRequest, res: NextApiResponse) {
       },
       include: { sponsor: true, poc: true },
     });
+
+    res.status(200).json(result);
+
+    // const submissionsCount = await prisma.submission.count({
+    //   where: {
+    //     listing: {
+    //       slug,
+    //       isActive: true,
+    //     },
+    //   },
+    // });
+
+    // res.status(200).json({
+    //   ...result,
+    //   submissionsCount,
+    // });
+
     res.status(200).json(result);
   } catch (error) {
     res.status(400).json({

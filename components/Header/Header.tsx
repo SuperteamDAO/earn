@@ -202,6 +202,7 @@ export default function WithSubnavigation() {
 
   return (
     <Box pos="sticky" zIndex="sticky" top={0}>
+      {/* <BountySnackbar /> */}
       {isLessThan600 && (
         <Box w="full" p={3} color="white" bgColor="brand.purple">
           <Text fontSize="xs" textAlign="center">

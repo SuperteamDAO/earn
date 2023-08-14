@@ -31,7 +31,7 @@ import { isValidHttpUrl } from '@/utils/validUrl';
 import { SkillSelect } from '../misc/SkillSelect';
 import type { UserStoreType } from './types';
 
-const socials = [
+export const socials = [
   {
     label: 'Discord',
     placeHolder: 'TonyStark#7589',
@@ -58,7 +58,7 @@ const socials = [
     icon: '/assets/talent/telegram.png',
   },
   {
-    label: 'Site',
+    label: 'Website',
     placeHolder: 'https://starkindustries.com',
     icon: '/assets/talent/site.png',
   },
@@ -141,12 +141,12 @@ const SocialInput = ({
 const AddProject = ({
   isOpen,
   onClose,
-  setpow,
+  setPow,
 }: {
   isOpen: boolean;
   onClose: () => void;
   pow: string[];
-  setpow: Dispatch<SetStateAction<string[]>>;
+  setPow: Dispatch<SetStateAction<string[]>>;
 }) => {
   const { register, handleSubmit } = useForm();
   const [skillsError, setSkillsError] = useState<boolean>(false);
@@ -175,7 +175,7 @@ const AddProject = ({
       return false;
     }
 
-    setpow((elm) => [
+    setPow((elm) => [
       ...elm,
       JSON.stringify({
         ...data,
@@ -254,7 +254,8 @@ const AddProject = ({
                 )}
                 {linkError && (
                   <Text color={'red'}>
-                    Link URL needs to contain &quot;http://&quot; prefix
+                    Link URL needs to contain &quot;http://&quot; or
+                    &quot;https://&quot; prefix
                   </Text>
                 )}
               </Box>
@@ -284,7 +285,7 @@ interface Props {
 function YourLinks({ success, useFormStore }: Props) {
   const { isOpen, onOpen, onClose } = useDisclosure();
   const { form } = useFormStore();
-  const [pow, setpow] = useState<string[]>([]);
+  const [pow, setPow] = useState<string[]>([]);
   const [socialsError, setsocialsError] = useState<boolean>(false);
   const [urlError, seturlError] = useState<boolean>(false);
   const [isLoading, setisLoading] = useState<boolean>(false);
@@ -376,7 +377,7 @@ function YourLinks({ success, useFormStore }: Props) {
         github: data.GitHub,
         linkedin: data.LinkedIn,
         telegram: data.Telegram,
-        website: data.Site,
+        website: data.Website,
       },
       JSON.stringify(pow)
     );
@@ -410,17 +411,17 @@ function YourLinks({ success, useFormStore }: Props) {
                     py={'0.5rem'}
                     color={'brand.slate.500'}
                     border={'1px solid gray'}
-                    borderColor={'gray.200'}
+                    borderColor="brand.slate.300"
                     rounded={'md'}
                   >
-                    <Text w={'full'} fontSize={'0.8rem'}>
+                    <Text w={'full'} color={'gray.800'} fontSize={'0.8rem'}>
                       {data.title}
                     </Text>
                     <Center columnGap={'0.8rem'}>
                       {/* <EditIcon onClick={() => { setselectedProject(idx) }} cursor={"pointer"} fontSize={"0.8rem"} /> */}
                       <DeleteIcon
                         onClick={() => {
-                          setpow((elem) => {
+                          setPow((elem) => {
                             return [...elem.filter((_ele, id) => idx !== id)];
                           });
                         }}
@@ -470,7 +471,7 @@ function YourLinks({ success, useFormStore }: Props) {
       </Box>
       <AddProject
         key={`${pow.length}project`}
-        {...{ isOpen, onClose, pow, setpow }}
+        {...{ isOpen, onClose, pow, setPow }}
       />
     </>
   );

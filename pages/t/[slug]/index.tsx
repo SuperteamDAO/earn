@@ -82,12 +82,16 @@ const LinkPreview = ({
     description: string;
   };
 }) => {
+  const truncatedTitle =
+    data.title.length > 30
+      ? `${data.title.substring(0, 30 - 3)}...`
+      : data.title;
   return (
     <>
       <Link href={data?.link} isExternal>
         <Box
           w={'14.75rem'}
-          h={'11.5rem'}
+          // h={'11.5rem'}
           bg={'white'}
           borderRadius={'0.1875rem'}
           cursor={'pointer'}
@@ -104,7 +108,7 @@ const LinkPreview = ({
             }
           />
           <Box px={'1rem'} py={'0.5625rem'}>
-            <Text color={'gray.600'}>{data.title}</Text>
+            <Text color={'gray.600'}>{truncatedTitle}</Text>
           </Box>
         </Box>
       </Link>
@@ -451,7 +455,8 @@ function TalentProfile({ slug }: TalentProps) {
           <Flex direction={['column', 'column', 'column', 'row']} w={'100%'}>
             <VStack
               rowGap={4}
-              maxW={['full', 'full', 'full', 'full']}
+              w={'100%'}
+              maxW="600px"
               minH={'100vh'}
               py={8}
               bgImage={'/assets/bg/talent-bg.png'}
@@ -494,7 +499,7 @@ function TalentProfile({ slug }: TalentProps) {
                     borderBottomColor={'gray.200'}
                   >
                     <Text fontSize="md" fontWeight={'500'}>
-                      Other Proof Work
+                      Other Proof of Work
                     </Text>
                   </Box>
                   <Flex align="start" wrap={'wrap'} gap={10}>

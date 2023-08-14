@@ -5,6 +5,7 @@ import type { NextApiRequest, NextApiResponse } from 'next';
 
 import { DeadlineThreeDaysTemplate } from '@/components/emails/deadline3dayTemplate';
 import { prisma } from '@/prisma';
+import { getUnsubEmails } from '@/utils/airtable';
 import { rateLimitedPromiseAll } from '@/utils/rateLimitedPromises';
 import resendMail from '@/utils/resend';
 
@@ -12,6 +13,7 @@ dayjs.extend(utc);
 
 async function handler(_req: NextApiRequest, res: NextApiResponse) {
   try {
+    const unsubscribedEmails = await getUnsubEmails();
     const bounties = await prisma.bounties.findMany({
       where: {
         isPublished: true,
@@ -58,7 +60,11 @@ async function handler(_req: NextApiRequest, res: NextApiResponse) {
       });
       const emailsSent: string[] = [];
       await rateLimitedPromiseAll(subEmail, 10, async (e) => {
-        if (emailsSent.includes(e.email) || !e.email) {
+        if (
+          emailsSent.includes(e.email) ||
+          !e.email ||
+          unsubscribedEmails.includes(e.email)
+        ) {
           return;
         }
         await resendMail.emails.send({

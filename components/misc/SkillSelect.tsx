@@ -14,6 +14,8 @@ interface Props {
   setSubSkills: Dispatch<SetStateAction<MultiSelectOptions[]>>;
   errorSkill?: boolean;
   errorSubSkill?: boolean;
+  skillLabel?: string;
+  subSkillLabel?: string;
 }
 export const SkillSelect = ({
   skills,
@@ -22,6 +24,8 @@ export const SkillSelect = ({
   errorSubSkill,
   setSkills,
   setSubSkills,
+  skillLabel = 'Skills Needed',
+  subSkillLabel = 'Sub Skills Needed',
 }: Props) => {
   const animatedComponents = makeAnimated();
   const tempSubSkills: MultiSelectOptions[] = [];
@@ -48,7 +52,7 @@ export const SkillSelect = ({
             fontWeight={500}
             htmlFor={'skills'}
           >
-            Skills Needed
+            {skillLabel}
           </FormLabel>
           <Tooltip
             w="max"
@@ -97,7 +101,7 @@ export const SkillSelect = ({
             fontWeight={500}
             htmlFor={'skills'}
           >
-            Sub Skills Needed
+            {subSkillLabel}
           </FormLabel>
           <Tooltip
             w="max"

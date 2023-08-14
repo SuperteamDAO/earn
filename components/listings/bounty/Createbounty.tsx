@@ -11,7 +11,6 @@ import Builder from './questions/builder';
 
 export interface BountyBasicType {
   title?: string;
-  slug?: string;
   deadline?: string;
   type?: BountyType | string;
   templateId?: string;
@@ -30,7 +29,6 @@ interface Props {
   setBountyBasic: Dispatch<SetStateAction<BountyBasicType | undefined>>;
   createDraft: () => void;
   draftLoading: boolean;
-  setSlug: Dispatch<SetStateAction<string>>;
   setQuestions: Dispatch<SetStateAction<Ques[]>>;
   questions: Ques[];
   createAndPublishListing: () => void;
@@ -57,7 +55,6 @@ export const CreateBounty = ({
   setBountyBasic,
   draftLoading,
   createDraft,
-  setSlug,
   questions,
   setQuestions,
   createAndPublishListing,
@@ -121,7 +118,6 @@ export const CreateBounty = ({
           isListingPublishing={isListingPublishing}
           bountyPayment={bountyPayment}
           setBountyPayment={setBountyPayment}
-          setSlug={setSlug}
           questions={questions}
           draftLoading={draftLoading}
           createDraft={createDraft}

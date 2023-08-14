@@ -1,5 +1,8 @@
 import { Avatar, Box, Button, Flex, Image, Text } from '@chakra-ui/react';
 import type { User } from '@prisma/client';
+import { useRouter } from 'next/router';
+
+import { userStore } from '@/store/user';
 
 type ChipType = {
   icon: string;
@@ -55,6 +58,12 @@ function TalentBio({
   successPage: boolean;
   w?: string;
 }) {
+  const { userInfo } = userStore();
+  const router = useRouter();
+
+  const handleEditProfileClick = () => {
+    router.push(`/t/${user?.username}/edit`);
+  };
   const socialLinks = [
     {
       icon: '/assets/talent/twitter.png',
@@ -85,23 +94,35 @@ function TalentBio({
       bg={'white'}
       borderRadius={10}
     >
-      <Flex align={'center'}>
-        <Avatar
-          name={`${user?.firstName}${user?.lastName}`}
-          size="lg"
-          src={user?.photo as string}
-        />
-        <Box ml={'21'}>
-          <Text fontSize={'md'} fontWeight={'600'}>
-            {user?.firstName} {user?.lastName}
-          </Text>
-          <Text color={'gray.400'} fontSize={'sm'} fontWeight={'600'}>
-            @
-            {user?.username?.length! > 15
-              ? `${user?.username?.slice(0, 15)}...`
-              : user?.username}
-          </Text>
-        </Box>
+      <Flex align={'center'} justify="space-between">
+        <Flex align={'center'}>
+          <Avatar
+            name={`${user?.firstName}${user?.lastName}`}
+            size="lg"
+            src={user?.photo as string}
+          />
+          <Box ml={'12px'}>
+            <Text fontSize={'md'} fontWeight={'600'}>
+              {user?.firstName} {user?.lastName}
+            </Text>
+            <Text color={'gray.400'} fontSize={'sm'} fontWeight={'600'}>
+              @
+              {user?.username?.length! > 15
+                ? `${user?.username?.slice(0, 15)}...`
+                : user?.username}
+            </Text>
+          </Box>
+        </Flex>
+        {userInfo?.id === user?.id && (
+          <Button
+            color={'#6562FF'}
+            onClick={handleEditProfileClick}
+            size={'sm'}
+            variant={'ghost'}
+          >
+            Edit Profile
+          </Button>
+        )}
       </Flex>
       <Text mt={4} color={'gray.400'} fontSize={'sm'} fontWeight={'400'}>
         {user?.bio}
