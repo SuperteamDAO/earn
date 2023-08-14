@@ -43,7 +43,11 @@ export const SocialInput = ({
 
   const handleInputBlur = (value: string) => {
     if (label.toLowerCase() !== 'discord') {
-      setIsUrlValid(isValidHttpUrl(value));
+      const isValid = isValidHttpUrl(value);
+      setIsUrlValid(isValid);
+      if (onUrlValidation) {
+        onUrlValidation(isValid);
+      }
     }
   };
 

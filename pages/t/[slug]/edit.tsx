@@ -16,7 +16,7 @@ import {
 import axios from 'axios';
 import { MediaPicker } from 'degen';
 import { useRouter } from 'next/router';
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import ReactSelect from 'react-select';
 import makeAnimated from 'react-select/animated';
@@ -148,6 +148,18 @@ export default function EditProfilePage() {
 
   const privateValue = watch('private', userInfo?.private);
 
+  const socialLinksValidityRef = useRef<{ [key: string]: boolean }>({});
+
+  const handleUrlValidation = (isValid: boolean, field: keyof FormData) => {
+    socialLinksValidityRef.current[field] = isValid;
+
+    const allUrlsValid = socialLinkFields.every(
+      (f) => socialLinksValidityRef.current[f as keyof FormData]
+    );
+
+    setAnySocialUrlInvalid(!allUrlsValid);
+  };
+
   useEffect(() => {
     if (userInfo) {
       editableFields.forEach((field) => {
@@ -217,6 +229,13 @@ export default function EditProfilePage() {
         const avl = await isUsernameAvailable(data.username);
         if (!avl) {
           setUserNameValid(false);
+          toast({
+            title: 'Username Error.',
+            description: 'This username is not available.',
+            status: 'error',
+            duration: 5000,
+            isClosable: true,
+          });
           return;
         }
       }
@@ -224,6 +243,13 @@ export default function EditProfilePage() {
 
       if (!data.discord) {
         setDiscordError(true);
+        toast({
+          title: 'Discord Error.',
+          description: 'Discord field is required.',
+          status: 'error',
+          duration: 5000,
+          isClosable: true,
+        });
         return;
       }
       setDiscordError(false);
@@ -235,10 +261,24 @@ export default function EditProfilePage() {
       setSocialError(filledSocialLinksCount < 1);
 
       if (filledSocialLinksCount < 1) {
+        toast({
+          title: 'Social Links Error.',
+          description: 'At least one social link is required.',
+          status: 'error',
+          duration: 5000,
+          isClosable: true,
+        });
         return;
       }
 
       if (isAnySocialUrlInvalid) {
+        toast({
+          title: 'Social URLs Error.',
+          description: 'One or more social URLs are invalid.',
+          status: 'error',
+          duration: 5000,
+          isClosable: true,
+        });
         return;
       }
 
@@ -308,6 +348,14 @@ export default function EditProfilePage() {
         router.push(`/t/${data.username}`);
       }, 500);
     } catch (error: any) {
+      toast({
+        title: 'Failed to update profile.',
+        description:
+          'There might be a field with invalid input. Please rectify and then click on "Update"',
+        status: 'error',
+        duration: 5000,
+        isClosable: true,
+      });
       console.log('Failed to update profile');
     }
   };
@@ -463,9 +511,10 @@ export default function EditProfilePage() {
                       }
                       watch={watch}
                       onUrlValidation={(isValid) => {
-                        if (!isValid) {
-                          setAnySocialUrlInvalid(true);
-                        }
+                        handleUrlValidation(
+                          isValid,
+                          sc.label.toLowerCase() as keyof FormData
+                        );
                       }}
                     />
                   );
