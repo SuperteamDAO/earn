@@ -11,22 +11,24 @@ export default async function user(req: NextApiRequest, res: NextApiResponse) {
         slug,
         isActive: true,
       },
-      include: { sponsor: true, poc: true, Submission: true },
+      include: { sponsor: true, poc: true },
     });
 
-    const submissionsCount = await prisma.submission.count({
-      where: {
-        listing: {
-          slug,
-          isActive: true,
-        },
-      },
-    });
+    res.status(200).json(result);
 
-    res.status(200).json({
-      ...result,
-      submissionsCount,
-    });
+    // const submissionsCount = await prisma.submission.count({
+    //   where: {
+    //     listing: {
+    //       slug,
+    //       isActive: true,
+    //     },
+    //   },
+    // });
+
+    // res.status(200).json({
+    //   ...result,
+    //   submissionsCount,
+    // });
 
     res.status(200).json(result);
   } catch (error) {

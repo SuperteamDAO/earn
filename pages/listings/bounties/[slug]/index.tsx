@@ -24,6 +24,7 @@ interface BountyDetailsProps {
 function BountyDetails({ slug, bounty: initialBounty }: BountyDetailsProps) {
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState(false);
+  // const [bountySnackbar, setBountySnackbar] = useAtom(bountySnackbarAtom);
 
   const [bounty, setBounty] = useState<Bounty | null>(null);
   const getBounty = async () => {
@@ -31,6 +32,7 @@ function BountyDetails({ slug, bounty: initialBounty }: BountyDetailsProps) {
     try {
       const bountyDetails = await axios.get(`/api/bounties/${slug}/`);
       setBounty(bountyDetails.data);
+      console.log(bountyDetails.data);
 
       Mixpanel.track('bounty_page_load', {
         'Bounty Title': bountyDetails.data.title,
