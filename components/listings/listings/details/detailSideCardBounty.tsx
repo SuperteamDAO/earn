@@ -540,7 +540,7 @@ function DetailSideCard({
               ? 'Application-based Bounty'
               : 'Open Bounty'}
           </Text>
-          <Text color={'#94A3B8'} fontSize="1rem" fontWeight={500}>
+          <Text color={'#94A3B8'} fontSize="1rem" fontWeight={400}>
             {type === 'permissioned'
               ? "Don't start working just yet! Apply first, and then you'll be notified if you're selected to work on this bounty."
               : 'This is an open competition bounty! Anyone can start working and submit their work before the deadline!'}
@@ -578,11 +578,11 @@ function DetailSideCard({
             </Text>
             <Text>
               <Link
-                as="span"
                 color={'#64768b'}
                 fontSize="1rem"
                 fontWeight={500}
                 href={pocSocials}
+                isExternal
               >
                 Reach out
                 <ExternalLinkIcon color={'#64768b'} mb={1} as="span" mx={1} />

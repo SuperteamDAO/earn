@@ -294,7 +294,7 @@ export const CreatebountyBasic = ({
               });
               setIsUrlValid(true);
             }}
-            placeholder="https://twitter.com/elonmusks"
+            placeholder="https://twitter.com/elonmusk"
             value={bountyBasic?.pocSocials}
           />
           <FormErrorMessage>
@@ -378,7 +378,6 @@ export const CreatebountyBasic = ({
                 bountyBasic?.title &&
                 skills.length !== 0 &&
                 subSkills.length !== 0 &&
-                bountyBasic?.deadline &&
                 bountyBasic?.pocSocials &&
                 isUrlValid
               ) {
