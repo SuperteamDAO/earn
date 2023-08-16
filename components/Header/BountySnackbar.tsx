@@ -38,6 +38,14 @@ export const BountySnackbar = () => {
         return "🤑 Mo' Money, Fewer Problems: Higher than average total bounty reward!";
       }
 
+      if (submissionCount === 0) {
+        return '🔥 High chance of winning: No submissions have been made for this bounty yet!';
+      }
+
+      if (submissionCount === 1) {
+        return '🔥 High chance of winning: Only 1 submission has been made for this bounty yet!';
+      }
+
       if (submissionCount < 10) {
         return `🔥 High chance of winning: Only ${submissionCount} submissions have been made for this bounty yet!`;
       }

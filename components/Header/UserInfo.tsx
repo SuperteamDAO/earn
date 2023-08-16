@@ -148,7 +148,7 @@ function UserInfo() {
       const timer = setTimeout(() => {
         onPopupOpen();
         sessionStorage.setItem('earnPopupShown', 'true');
-      }, 1000);
+      }, 15000);
 
       return () => clearTimeout(timer);
     }
