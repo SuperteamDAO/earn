@@ -1,3 +1,4 @@
+import { verifySignature } from '@upstash/qstash/nextjs';
 import axios from 'axios';
 import type { NextApiRequest, NextApiResponse } from 'next';
 
@@ -50,10 +51,7 @@ async function fetchCryptoPrices() {
   }
 }
 
-export default async function handler(
-  req: NextApiRequest,
-  res: NextApiResponse
-) {
+async function handler(req: NextApiRequest, res: NextApiResponse) {
   if (req.method !== 'GET') {
     return res.status(405).end(); // Method not allowed
   }
@@ -106,3 +104,11 @@ export default async function handler(
     });
   }
 }
+
+export default verifySignature(handler);
+
+export const config = {
+  api: {
+    bodyParser: false,
+  },
+};
