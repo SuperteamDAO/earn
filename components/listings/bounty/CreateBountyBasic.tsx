@@ -7,6 +7,7 @@ import {
   Image,
   Input,
   Select,
+  Text,
   Tooltip,
   VStack,
 } from '@chakra-ui/react';
@@ -17,6 +18,7 @@ import { useState } from 'react';
 import { SkillSelect } from '@/components/misc/SkillSelect';
 import { userStore } from '@/store/user';
 import { dayjs } from '@/utils/dayjs';
+import { isValidHttpUrl } from '@/utils/validUrl';
 
 import type { MultiSelectOptions } from '../../../constants';
 import type { BountyBasicType } from './Createbounty';
@@ -41,6 +43,7 @@ interface ErrorsBasic {
   type: boolean;
   skills: boolean;
   subSkills: boolean;
+  pocSocials: boolean;
 }
 export const CreatebountyBasic = ({
   setbountyBasic,
@@ -64,7 +67,10 @@ export const CreatebountyBasic = ({
     title: false,
     subSkills: false,
     skills: false,
+    pocSocials: false,
   });
+
+  const [isUrlValid, setIsUrlValid] = useState(true);
 
   const date = dayjs().format('YYYY-MM-DD');
 
@@ -236,6 +242,70 @@ export const CreatebountyBasic = ({
             </FormControl>
           </>
         )}
+        <FormControl
+          w="full"
+          isInvalid={errorState.pocSocials || !isUrlValid}
+          isRequired
+        >
+          <Flex>
+            <FormLabel
+              color={'brand.slate.500'}
+              fontSize={'15px'}
+              fontWeight={600}
+              htmlFor={'pocSocials'}
+            >
+              Point of Contact
+            </FormLabel>
+            <Tooltip
+              w="max"
+              p="0.7rem"
+              color="white"
+              fontSize="0.9rem"
+              fontWeight={600}
+              bg="#6562FF"
+              borderRadius="0.5rem"
+              hasArrow
+              label={`Provide the social media handle of the contact person for this listing.`}
+              placement="right-end"
+            >
+              <Image
+                mt={-2}
+                alt={'Info Icon'}
+                src={'/assets/icons/info-icon.svg'}
+              />
+            </Tooltip>
+          </Flex>
+
+          <Input
+            borderColor="brand.slate.300"
+            _placeholder={{
+              color: 'brand.slate.300',
+            }}
+            focusBorderColor="brand.purple"
+            id="pocSocials"
+            onBlur={(e) => {
+              const url = e.target.value;
+              setIsUrlValid(isValidHttpUrl(url));
+            }}
+            onChange={(e) => {
+              setbountyBasic({
+                ...(bountyBasic as BountyBasicType),
+                pocSocials: e.target.value,
+              });
+              setIsUrlValid(true);
+            }}
+            placeholder="Develop a new landing page"
+            value={bountyBasic?.pocSocials}
+          />
+          <FormErrorMessage>
+            {/* {errors.title ? <>{errors.title.message}</> : <></>} */}
+          </FormErrorMessage>
+          {!isUrlValid && (
+            <Text color={'red'}>
+              URL needs to contain &quot;https://&quot; prefix
+            </Text>
+          )}
+        </FormControl>
         <FormControl isInvalid={errorState.deadline} isRequired>
           <Flex align={'center'} justify={'start'}>
             <FormLabel
@@ -299,6 +369,7 @@ export const CreatebountyBasic = ({
                 skills: skills.length === 0,
                 subSkills: subSkills.length === 0,
                 title: !bountyBasic?.title,
+                pocSocials: !bountyBasic?.pocSocials,
               });
 
               if (
@@ -306,7 +377,10 @@ export const CreatebountyBasic = ({
                 bountyBasic?.type &&
                 bountyBasic?.title &&
                 skills.length !== 0 &&
-                subSkills.length !== 0
+                subSkills.length !== 0 &&
+                bountyBasic?.deadline &&
+                bountyBasic?.pocSocials &&
+                isUrlValid
               ) {
                 setSteps(3);
               }

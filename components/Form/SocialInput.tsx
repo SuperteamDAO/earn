@@ -125,8 +125,7 @@ export const SocialInput = ({
       </Flex>
       {!isUrlValid && (
         <Text color={'red'}>
-          Link URL needs to contain &quot;http://&quot; or &quot;https://&quot;
-          prefix
+          Link URL needs to contain &quot;https://&quot; prefix
         </Text>
       )}
       {discordError && label.toLowerCase() === 'discord' && (

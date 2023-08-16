@@ -254,8 +254,7 @@ const AddProject = ({
                 )}
                 {linkError && (
                   <Text color={'red'}>
-                    Link URL needs to contain &quot;http://&quot; or
-                    &quot;https://&quot; prefix
+                    Link URL needs to contain &quot;https://&quot; prefix
                   </Text>
                 )}
               </Box>
@@ -452,7 +451,7 @@ function YourLinks({ success, useFormStore }: Props) {
 
             {urlError && (
               <Text align="center" mb={'0.5rem'} color={'red'}>
-                URL needs to contain &quot;http://&quot; prefix
+                Link URL needs to contain &quot;https://&quot; prefix
               </Text>
             )}
             <Button

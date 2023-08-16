@@ -42,6 +42,7 @@ interface Bounty {
   rewards?: Rewards;
   sponsorId?: string;
   sponsor?: SponsorType;
+  pocSocials?: string;
   pocId?: string;
   poc?: User;
   source?: string;

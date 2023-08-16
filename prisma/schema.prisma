@@ -73,6 +73,7 @@ model Bounties {
   type                 BountyType         @default(open)
   sponsor              Sponsors           @relation(fields: [sponsorId], references: [id])
   poc                  User               @relation("poc", fields: [pocId], references: [id])
+  pocSocials           String?
   Submission           Submission[]
   SubscribeBounty      SubscribeBounty[]
 

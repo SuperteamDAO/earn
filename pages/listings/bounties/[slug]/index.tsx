@@ -15,6 +15,7 @@ import ListingHeader from '@/components/listings/listings/ListingHeaderBounty';
 import ErrorSection from '@/components/shared/ErrorSection';
 import type { Bounty } from '@/interface/bounty';
 import { Default } from '@/layouts/Default';
+import { getURL } from '@/utils/validUrl';
 
 interface BountyDetailsProps {
   bounty: Bounty | null;
@@ -134,6 +135,7 @@ function BountyDetails({ bounty: initialBounty }: BountyDetailsProps) {
               applicationLink={bounty?.applicationLink || ''}
               requirements={bounty?.requirements}
               isWinnersAnnounced={bounty?.isWinnersAnnounced}
+              pocSocials={bounty?.pocSocials}
             />
           </HStack>
         </>
@@ -147,9 +149,7 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
 
   let bountyData;
   try {
-    const bountyDetails = await axios.get(
-      `https://earn.superteam.fun/api/bounties/${slug}/`
-    );
+    const bountyDetails = await axios.get(`${getURL()}api/bounties/${slug}`);
     bountyData = bountyDetails.data;
   } catch (e) {
     console.error(e);

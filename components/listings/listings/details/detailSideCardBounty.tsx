@@ -1,3 +1,4 @@
+import { ExternalLinkIcon } from '@chakra-ui/icons';
 import {
   Box,
   Button,
@@ -5,6 +6,7 @@ import {
   Flex,
   HStack,
   Image,
+  Link,
   Table,
   TableContainer,
   Tbody,
@@ -47,6 +49,7 @@ interface Props {
   bountytitle: string;
   requirements?: string;
   isWinnersAnnounced?: boolean;
+  pocSocials?: string;
 }
 function DetailSideCard({
   id,
@@ -59,6 +62,7 @@ function DetailSideCard({
   bountytitle,
   requirements,
   type,
+  pocSocials,
   isWinnersAnnounced = false,
 }: Props) {
   const { userInfo } = userStore();
@@ -519,16 +523,6 @@ function DetailSideCard({
             )}
           </Box>
         </VStack>
-        {requirements && (
-          <VStack align="start" w={'22rem'} p={4} bg="white" rounded={'xl'}>
-            <Text mb={1} color="gray.500" fontSize={'lg'} fontWeight={600}>
-              ELIGIBILITY
-            </Text>
-            <Text color={'gray.500'} fontSize={'md'} fontWeight={400}>
-              {requirements}
-            </Text>
-          </VStack>
-        )}
         <VStack
           align={'start'}
           justify={'center'}
@@ -550,6 +544,44 @@ function DetailSideCard({
             {type === 'permissioned'
               ? "Don't start working just yet! Apply first, and then you'll be notified if you're selected to work on this bounty."
               : 'This is an open competition bounty! Anyone can start working and submit their work before the deadline!'}
+          </Text>
+        </VStack>
+        {requirements && (
+          <VStack align="start" w={'22rem'} p={4} bg="white" rounded={'xl'}>
+            <Text mb={1} color="gray.500" fontSize={'lg'} fontWeight={600}>
+              ELIGIBILITY
+            </Text>
+            <Text color={'gray.500'} fontSize={'md'} fontWeight={400}>
+              {requirements}
+            </Text>
+          </VStack>
+        )}
+        <VStack
+          align={'start'}
+          justify={'center'}
+          w={'22rem'}
+          mt={4}
+          p={6}
+          bg={'#FFFFFF'}
+          rounded={'xl'}
+        >
+          <Text h="100%" color={'#94A3B8'} fontSize="1rem" textAlign="center">
+            CONTACT
+          </Text>
+          <Text>
+            <Link
+              as="span"
+              color={'#64768b'}
+              fontSize="1rem"
+              fontWeight={500}
+              href={pocSocials}
+            >
+              Reach out
+              <ExternalLinkIcon color={'#64768b'} mb={1} as="span" mx={1} />
+            </Link>
+            <Text as="span" color={'#94A3B8'} fontSize="1rem" fontWeight={400}>
+              if you have any questions about this listing
+            </Text>
           </Text>
         </VStack>
         <VStack
