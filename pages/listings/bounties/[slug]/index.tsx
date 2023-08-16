@@ -1,52 +1,55 @@
 import { HStack, VStack } from '@chakra-ui/react';
 import { Regions } from '@prisma/client';
 import axios from 'axios';
+import { useAtom } from 'jotai';
 import type { GetServerSideProps } from 'next';
 import Head from 'next/head';
 import { useEffect, useState } from 'react';
 
+import { bountySnackbarAtom } from '@/components/Header/BountySnackbar';
 import BountyWinners from '@/components/listings/bounty/BountyWinners';
 import { Comments } from '@/components/listings/listings/comments';
 import DetailDescription from '@/components/listings/listings/details/detailDescriptionBounty';
 import DetailSideCard from '@/components/listings/listings/details/detailSideCardBounty';
 import ListingHeader from '@/components/listings/listings/ListingHeaderBounty';
 import ErrorSection from '@/components/shared/ErrorSection';
-import LoadingSection from '@/components/shared/LoadingSection';
 import type { Bounty } from '@/interface/bounty';
 import { Default } from '@/layouts/Default';
-import { Mixpanel } from '@/utils/mixpanel';
 
 interface BountyDetailsProps {
-  slug: string;
   bounty: Bounty | null;
 }
 
-function BountyDetails({ slug, bounty: initialBounty }: BountyDetailsProps) {
-  const [isLoading, setIsLoading] = useState(true);
-  const [error, setError] = useState(false);
-  // const [bountySnackbar, setBountySnackbar] = useAtom(bountySnackbarAtom);
+function BountyDetails({ bounty: initialBounty }: BountyDetailsProps) {
+  const [, setBountySnackbar] = useAtom(bountySnackbarAtom);
 
-  const [bounty, setBounty] = useState<Bounty | null>(null);
-  const getBounty = async () => {
-    setIsLoading(true);
+  const [bounty] = useState<typeof initialBounty>(initialBounty);
+  const [submissionNumber, setSubmissionNumber] = useState<number>(0);
+
+  const getSubmissionsCount = async () => {
     try {
-      const bountyDetails = await axios.get(`/api/bounties/${slug}/`);
-      setBounty(bountyDetails.data);
-      console.log(bountyDetails.data);
-
-      Mixpanel.track('bounty_page_load', {
-        'Bounty Title': bountyDetails.data.title,
-      });
+      const submissionCountDetails = await axios.get(
+        `/api/submission/${bounty?.id}/count/`
+      );
+      setSubmissionNumber(submissionCountDetails?.data || 0);
     } catch (e) {
-      setError(true);
+      console.error(e);
     }
-    setIsLoading(false);
   };
 
   useEffect(() => {
-    if (!isLoading) return;
-    getBounty();
-  }, []);
+    const fetchSubmissions = async () => {
+      await getSubmissionsCount();
+      if (bounty) {
+        setBountySnackbar({
+          submissionCount: submissionNumber,
+          deadline: bounty?.deadline,
+          rewardAmount: bounty?.rewardAmount,
+        });
+      }
+    };
+    fetchSubmissions();
+  }, [bounty, submissionNumber]);
 
   return (
     <Default
@@ -72,16 +75,9 @@ function BountyDetails({ slug, bounty: initialBounty }: BountyDetailsProps) {
             content={`https://earn.superteam.fun/api/ognew/?title=${initialBounty?.title}&reward=${initialBounty?.rewardAmount}&token=${initialBounty?.token}&sponsor=${initialBounty?.sponsor?.name}&logo=${initialBounty?.sponsor?.logo}`}
           />
           <meta name="twitter:card" content="summary_large_image" />
-
-          <meta
-            name="viewport"
-            content="width=device-width,initial-scale=1"
-            key="viewport"
-          />
           <meta property="og:image:width" content="1200" />
           <meta property="og:image:height" content="630" />
           <meta property="og:image:alt" content="Superteam Bounty" />
-          <meta name="twitter:card" content="summary_large_image" />
           <meta charSet="UTF-8" key="charset" />
           <meta
             name="viewport"
@@ -91,12 +87,11 @@ function BountyDetails({ slug, bounty: initialBounty }: BountyDetailsProps) {
         </Head>
       }
     >
-      {isLoading && <LoadingSection />}
-      {!isLoading && !!error && <ErrorSection />}
-      {!isLoading && !error && !bounty?.id && (
+      {bounty === null && <ErrorSection />}
+      {bounty !== null && !bounty?.id && (
         <ErrorSection message="Sorry! The bounty you are looking for is not available." />
       )}
-      {!isLoading && !error && !!bounty?.id && (
+      {bounty !== null && !!bounty?.id && (
         <>
           <ListingHeader
             type={bounty?.type}
@@ -163,7 +158,6 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
 
   return {
     props: {
-      slug,
       bounty: bountyData,
     },
   };

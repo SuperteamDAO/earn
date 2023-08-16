@@ -11,9 +11,10 @@ export default async function user(req: NextApiRequest, res: NextApiResponse) {
         slug,
         isActive: true,
       },
-      include: { sponsor: true, poc: true },
+      include: { sponsor: true, poc: true, Submission: true },
     });
-    res.status(200).json(result);
+
+    res.status(200).json({ result });
   } catch (error) {
     res.status(400).json({
       error,
