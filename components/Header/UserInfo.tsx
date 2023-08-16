@@ -90,7 +90,7 @@ function UserInfo() {
     }
 
     const handleButtonClick = () => {
-      if (!userInfo?.isTalentFilled) {
+      if (userInfo && userInfo.isVerified && !userInfo?.isTalentFilled) {
         router.push('/new/talent');
       } else {
         handleOpenModal();
@@ -101,7 +101,7 @@ function UserInfo() {
       <Modal isOpen={isPopupOpen} onClose={onPopupClose} size="xl">
         <ModalOverlay />
         <ModalContent>
-          <ModalHeader mt={3} mb={-2} fontSize="xl" textAlign={'center'}>
+          <ModalHeader mt={3} mb={-2} textAlign={'center'}>
             Create A Profile on Earn
           </ModalHeader>
           <ModalCloseButton mt={3} />
@@ -148,7 +148,7 @@ function UserInfo() {
       const timer = setTimeout(() => {
         onPopupOpen();
         sessionStorage.setItem('earnPopupShown', 'true');
-      }, 5000);
+      }, 1000);
 
       return () => clearTimeout(timer);
     }

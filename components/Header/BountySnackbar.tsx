@@ -50,8 +50,8 @@ export const BountySnackbar = () => {
 
   if (showSnackbar && bountySnackbar && message) {
     return (
-      <Box w="full" color="white" bgColor="brand.purple">
-        <Text p={3} fontSize="xs" textAlign="center">
+      <Box w="full" color="white" bgColor="#B869D3">
+        <Text p={3} fontSize="sm" fontWeight={500} textAlign="center">
           {message}
         </Text>
       </Box>
