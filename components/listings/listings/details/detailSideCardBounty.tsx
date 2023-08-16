@@ -547,8 +547,15 @@ function DetailSideCard({
           </Text>
         </VStack>
         {requirements && (
-          <VStack align="start" w={'22rem'} p={4} bg="white" rounded={'xl'}>
-            <Text mb={1} color="gray.500" fontSize={'lg'} fontWeight={600}>
+          <VStack
+            align="start"
+            w={'22rem'}
+            mt={4}
+            p={6}
+            bg="white"
+            rounded={'xl'}
+          >
+            <Text h="100%" color={'#94A3B8'} fontSize="1rem" textAlign="center">
               ELIGIBILITY
             </Text>
             <Text color={'gray.500'} fontSize={'md'} fontWeight={400}>
@@ -556,34 +563,41 @@ function DetailSideCard({
             </Text>
           </VStack>
         )}
-        <VStack
-          align={'start'}
-          justify={'center'}
-          w={'22rem'}
-          mt={4}
-          p={6}
-          bg={'#FFFFFF'}
-          rounded={'xl'}
-        >
-          <Text h="100%" color={'#94A3B8'} fontSize="1rem" textAlign="center">
-            CONTACT
-          </Text>
-          <Text>
-            <Link
-              as="span"
-              color={'#64768b'}
-              fontSize="1rem"
-              fontWeight={500}
-              href={pocSocials}
-            >
-              Reach out
-              <ExternalLinkIcon color={'#64768b'} mb={1} as="span" mx={1} />
-            </Link>
-            <Text as="span" color={'#94A3B8'} fontSize="1rem" fontWeight={400}>
-              if you have any questions about this listing
+        {pocSocials && (
+          <VStack
+            align={'start'}
+            justify={'center'}
+            w={'22rem'}
+            mt={4}
+            p={6}
+            bg={'#FFFFFF'}
+            rounded={'xl'}
+          >
+            <Text h="100%" color={'#94A3B8'} fontSize="1rem" textAlign="center">
+              CONTACT
             </Text>
-          </Text>
-        </VStack>
+            <Text>
+              <Link
+                as="span"
+                color={'#64768b'}
+                fontSize="1rem"
+                fontWeight={500}
+                href={pocSocials}
+              >
+                Reach out
+                <ExternalLinkIcon color={'#64768b'} mb={1} as="span" mx={1} />
+              </Link>
+              <Text
+                as="span"
+                color={'#94A3B8'}
+                fontSize="1rem"
+                fontWeight={400}
+              >
+                if you have any questions about this listing
+              </Text>
+            </Text>
+          </VStack>
+        )}
         <VStack
           align={'start'}
           justify={'center'}

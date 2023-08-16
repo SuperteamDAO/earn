@@ -158,6 +158,7 @@ function CreateListing({ bounty, isEditMode = false }: Props) {
         order: q.order,
         type: q.type,
       })),
+      pocSocials: bountybasic?.pocSocials,
       region: regions,
       requirements: bountyRequirements,
       ...bountyPayment,

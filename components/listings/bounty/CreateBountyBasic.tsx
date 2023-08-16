@@ -265,7 +265,7 @@ export const CreatebountyBasic = ({
               bg="#6562FF"
               borderRadius="0.5rem"
               hasArrow
-              label={`Provide the social media handle of the contact person for this listing.`}
+              label={`Please add a social link of the person people reach out to in case they have questions about this listing.`}
               placement="right-end"
             >
               <Image
@@ -294,7 +294,7 @@ export const CreatebountyBasic = ({
               });
               setIsUrlValid(true);
             }}
-            placeholder="Develop a new landing page"
+            placeholder="https://twitter.com/elonmusks"
             value={bountyBasic?.pocSocials}
           />
           <FormErrorMessage>
