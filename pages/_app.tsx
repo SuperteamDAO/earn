@@ -16,17 +16,7 @@ import '@fontsource/domine/500.css';
 import '@fontsource/domine/600.css';
 import '@fontsource/domine/700.css';
 
-import { CheckCircleIcon } from '@chakra-ui/icons';
-import {
-  Box,
-  ChakraProvider,
-  Flex,
-  Icon,
-  Image,
-  List,
-  ListItem,
-  useDisclosure,
-} from '@chakra-ui/react';
+import { ChakraProvider } from '@chakra-ui/react';
 import {
   Hydrate,
   QueryClient,
@@ -36,10 +26,6 @@ import { ReactQueryDevtools } from '@tanstack/react-query-devtools';
 import type { AppProps } from 'next/app';
 import { Router } from 'next/router';
 import NProgress from 'nprogress';
-import { useEffect } from 'react';
-
-import WarningModal from '@/components/shared/WarningModal';
-import { userStore } from '@/store/user';
 
 import theme from '../config/chakra.config';
 import { Wallet } from '../context/connectWalletContext';
@@ -49,18 +35,18 @@ function MyApp({ Component, pageProps }: AppProps) {
   Router.events.on('routeChangeStart', () => NProgress.start());
   Router.events.on('routeChangeComplete', () => NProgress.done());
   Router.events.on('routeChangeError', () => NProgress.done());
-  const { userInfo } = userStore();
-  const { isOpen, onOpen, onClose } = useDisclosure();
+  // const { userInfo } = userStore();
+  // const { isOpen, onOpen, onClose } = useDisclosure();
 
-  useEffect(() => {
-    if (userInfo && (!userInfo.isTalentFilled || !userInfo.isVerified)) {
-      const timeoutId = setTimeout(() => {
-        onOpen();
-      }, 5000);
-      return () => clearTimeout(timeoutId);
-    }
-    return () => {};
-  }, [userInfo, onOpen]);
+  // useEffect(() => {
+  //   if (!userInfo || !userInfo.isTalentFilled || !userInfo.isVerified) {
+  //     const timeoutId = setTimeout(() => {
+  //       onOpen();
+  //     }, 5000);
+  //     return () => clearTimeout(timeoutId);
+  //   }
+  //   return () => {};
+  // }, [userInfo, onOpen]);
 
   return (
     <>
@@ -69,7 +55,7 @@ function MyApp({ Component, pageProps }: AppProps) {
           <QueryClientProvider client={queryClient}>
             <Hydrate state={pageProps.dehydratedState}>
               <ReactQueryDevtools initialIsOpen={false} />
-              <WarningModal
+              {/* <WarningModal
                 isOpen={isOpen}
                 onClose={onClose}
                 title="Create a Profile on ST Earn"
@@ -111,7 +97,7 @@ function MyApp({ Component, pageProps }: AppProps) {
                     </Flex>
                   </ListItem>
                 </List>
-              </WarningModal>
+              </WarningModal> */}
               <Component {...pageProps} />
             </Hydrate>
           </QueryClientProvider>
