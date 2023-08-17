@@ -10,6 +10,7 @@ import {
   Text,
   useMediaQuery,
 } from '@chakra-ui/react';
+import axios from 'axios';
 import { useRouter } from 'next/router';
 import { useEffect, useState } from 'react';
 
@@ -44,12 +45,18 @@ const Dialect = '/assets/landingsponsor/sponsors/dialect.png';
 const Spaces = '/assets/landingsponsor/sponsors/spaces.png';
 const Orbis = '/assets/landingsponsor/sponsors/orbis.png';
 
+type Totals = {
+  count: number;
+  totalInUSD: number;
+};
+
 const Sponsor = () => {
   const [isLargerThan12800px] = useMediaQuery('(min-width: 80rem)');
   const [isLessThan600px] = useMediaQuery('(max-width: 600px)');
   const router = useRouter();
   const [navbarBg, setNavbarBg] = useState<boolean>(false);
   const [videoPopup, setVideoPopup] = useState<boolean>(false);
+  const [totals, setTotals] = useState<Totals | null>(null);
 
   const changeBackground = () => {
     if (window.scrollY >= 80) {
@@ -58,6 +65,20 @@ const Sponsor = () => {
       setNavbarBg(true);
     }
   };
+
+  useEffect(() => {
+    const fetchTotals = async () => {
+      try {
+        const response = await axios.get('/api/listings/stats');
+        setTotals(response.data);
+        console.log(totals);
+      } catch (err) {
+        console.log(err);
+      }
+    };
+
+    fetchTotals();
+  }, []);
 
   useEffect(() => {
     const html = document.querySelector('html');
@@ -352,6 +373,11 @@ const Sponsor = () => {
   }
 
   function Sec2() {
+    const formatNumber = (num: number) => {
+      if (num >= 1000000) return `${(num / 1000000).toFixed(0)}M`;
+      if (num >= 1000) return `${(num / 1000).toFixed(0)}K`;
+      return num.toString();
+    };
     return (
       <Flex
         align="center"
@@ -381,7 +407,7 @@ const Sponsor = () => {
           </Box>
           <Box>
             <Text color="gray.800" fontSize="1.5rem" fontWeight={700}>
-              $13m+
+              ${formatNumber(totals?.totalInUSD ?? 0)}+
             </Text>
             <Text color="gray.500" fontSize="1.25rem" fontWeight={600}>
               Total Value Listed
@@ -395,7 +421,7 @@ const Sponsor = () => {
           </Box>
           <Box>
             <Text color="gray.800" fontSize="1.5rem" fontWeight={700}>
-              560+
+              {totals?.count}+
             </Text>
             <Text color="gray.500" fontSize="1.25rem" fontWeight={600}>
               Earning Opportunities

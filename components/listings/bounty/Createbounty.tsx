@@ -14,6 +14,7 @@ export interface BountyBasicType {
   deadline?: string;
   type?: BountyType | string;
   templateId?: string;
+  pocSocials?: string;
 }
 interface Props {
   steps: number;

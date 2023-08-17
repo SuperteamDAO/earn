@@ -88,6 +88,7 @@ function CreateListing({ bounty, isEditMode = false }: Props) {
         : undefined,
     type: isEditMode ? bounty?.type || undefined : undefined,
     templateId: isEditMode ? bounty?.templateId || undefined : undefined,
+    pocSocials: isEditMode ? bounty?.pocSocials || undefined : undefined,
   });
   const [bountyPayment, setBountyPayment] = useState({
     rewardAmount: isEditMode ? bounty?.rewardAmount || 0 : 0,
@@ -112,6 +113,7 @@ function CreateListing({ bounty, isEditMode = false }: Props) {
           ? new Date(bountybasic?.deadline).toISOString()
           : undefined,
         description: editorData || '',
+        pocSocials: bountybasic?.pocSocials,
         region: regions,
         eligibility: (questions || []).map((q) => ({
           question: q.question,
@@ -158,6 +160,7 @@ function CreateListing({ bounty, isEditMode = false }: Props) {
         order: q.order,
         type: q.type,
       })),
+      pocSocials: bountybasic?.pocSocials,
       region: regions,
       requirements: bountyRequirements,
       ...bountyPayment,

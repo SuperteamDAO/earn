@@ -16,6 +16,7 @@ import {
 } from '@chakra-ui/react';
 import { useRouter } from 'next/router';
 
+import { BountySnackbar } from './BountySnackbar';
 import UserInfo from './UserInfo';
 
 interface NavItem {
@@ -202,7 +203,6 @@ export default function WithSubnavigation() {
 
   return (
     <Box pos="sticky" zIndex="sticky" top={0}>
-      {/* <BountySnackbar /> */}
       {isLessThan600 && (
         <Box w="full" p={3} color="white" bgColor="brand.purple">
           <Text fontSize="xs" textAlign="center">
@@ -211,6 +211,7 @@ export default function WithSubnavigation() {
           </Text>
         </Box>
       )}
+      <BountySnackbar />
       <Flex
         align={'stretch'}
         px={{ base: 4, md: 6 }}

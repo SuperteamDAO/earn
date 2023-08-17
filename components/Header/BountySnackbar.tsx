@@ -1,23 +1,66 @@
 import { Box, Text } from '@chakra-ui/react';
-import { atom } from 'jotai';
+import dayjs from 'dayjs';
+import { atom, useAtom } from 'jotai';
 import { useRouter } from 'next/router';
 
-export const bountySnackbarAtom = atom(null);
+type BountySnackbarType = {
+  submissionCount: number;
+  deadline: string | undefined;
+  rewardAmount: number | undefined;
+};
+
+export const bountySnackbarAtom = atom<BountySnackbarType | null>(null);
 
 export const BountySnackbar = () => {
   const router = useRouter();
-  // const [bountySnackbar, setBountySnackbar] = useAtom(bountySnackbarAtom);
+  const [bountySnackbar] = useAtom(bountySnackbarAtom);
 
   const { pathname } = router;
 
   const showSnackbar = /^\/listings\/bounties\/[^/]+$/.test(pathname);
 
-  if (showSnackbar) {
+  const getMessage = () => {
+    if (bountySnackbar) {
+      const { submissionCount, deadline, rewardAmount } = bountySnackbar;
+
+      if (deadline && dayjs(deadline).isBefore(dayjs())) {
+        return null;
+      }
+
+      if (deadline) {
+        const daysToDeadline = dayjs(deadline).diff(dayjs(), 'day');
+        if (daysToDeadline < 3) {
+          return '🕛 Expiring Soon: Submit while you still have the chance!';
+        }
+      }
+
+      if (rewardAmount && rewardAmount > 1000) {
+        return "🤑 Mo' Money, Fewer Problems: Higher than average total bounty reward!";
+      }
+
+      if (submissionCount === 0) {
+        return '🔥 High chance of winning: No submissions have been made for this bounty yet!';
+      }
+
+      if (submissionCount === 1) {
+        return '🔥 High chance of winning: Only 1 submission has been made for this bounty yet!';
+      }
+
+      if (submissionCount < 10) {
+        return `🔥 High chance of winning: Only ${submissionCount} submissions have been made for this bounty yet!`;
+      }
+    }
+
+    return null;
+  };
+
+  const message = getMessage();
+
+  if (showSnackbar && bountySnackbar && message) {
     return (
-      <Box w="full" p={3} color="white" bgColor="brand.purple">
-        <Text fontSize="xs" textAlign="center">
-          Note: Superteam Earn is not fully supported on mobile yet. Use laptop
-          / desktop for a better experience!
+      <Box w="full" color="white" bgColor="#B869D3">
+        <Text p={3} fontSize="sm" fontWeight={500} textAlign="center">
+          {message}
         </Text>
       </Box>
     );
