@@ -503,7 +503,9 @@ export const GrantsCard = ({
                   color={'brand.slate.500'}
                   fontSize={['xs', 'xs', 'sm', 'sm']}
                 >
-                  {short_description}
+                  {isMobile && short_description
+                    ? textLimiter(short_description, 30)
+                    : short_description}
                 </Text>
               )}
             </Flex>
@@ -659,7 +661,7 @@ export const CategoryBanner = ({ type }: { type: string }) => {
           <Text fontFamily={'Domine'} fontWeight={'700'}>
             {type}
           </Text>
-          <Text color={'brand.slate.500'} fontSize={'small'}>
+          <Text mb={6} color={'brand.slate.500'} fontSize={'small'}>
             {categoryAssets[type]?.desc}
           </Text>
         </Box>

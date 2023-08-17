@@ -156,8 +156,9 @@ function MobileBanner() {
         w={'95%'}
         h={'96'}
         mx={'auto'}
+        pt={3}
+        pb={12}
         px={10}
-        py={3}
         bgImage="url('/assets/home/display/mob_money_banner.png')"
         bgSize={'cover'}
         rounded={'md'}
@@ -167,6 +168,7 @@ function MobileBanner() {
           fontFamily={'Domine'}
           fontSize={'xl'}
           fontWeight={'700'}
+          textAlign={'center'}
         >
           Unlock Your Earning <br />
           Potential on Solana
@@ -176,28 +178,13 @@ function MobileBanner() {
           mt={'0.4375rem'}
           color={'brand.slate.800'}
           fontSize={'sm'}
+          textAlign={'center'}
         >
           Explore bounties, grants, and job opportunities for developers and
           non-technical talent alike
         </Text>
-        <Flex align={'center'} direction={'column'}>
-          {/* <Button
-            w={'100%'}
-            px={'2.25rem'}
-            py={'0.75rem'}
-            color={'white'}
-            fontSize={'sm'}
-            bg={'#6366F1'}
-            onClick={() => {
-              Mixpanel.track('sign_up_clicked');
-              onOpen();
-            }}
-          >
-            Sign Up
-          </Button> */}
-        </Flex>
-        <Flex align={'center'} mt={5}>
-          <AvatarGroup ml={'2.875rem'} max={3} size="sm">
+        <Flex align={'center'} justify={'center'} mt={5}>
+          <AvatarGroup max={3} size="sm">
             <Avatar
               name="Anoushk"
               src="https://res.cloudinary.com/dgvnuwspr/image/upload/v1683132586/People%20DPs/recA3Sa7t1loYvDHo.jpg"

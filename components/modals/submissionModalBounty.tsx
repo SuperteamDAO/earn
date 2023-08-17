@@ -101,6 +101,7 @@ export const SubmissionModal = ({
       isCentered
       isOpen={isOpen}
       onClose={onClose}
+      scrollBehavior={'inside'}
       size={'xl'}
     >
       <ModalOverlay></ModalOverlay>

@@ -143,7 +143,6 @@ function UserInfo() {
     if (sessionStorage.getItem('earnPopupShown')) {
       return () => {};
     }
-
     if (
       !userInfo ||
       !userInfo.isVerified ||
@@ -153,10 +152,8 @@ function UserInfo() {
         onPopupOpen();
         sessionStorage.setItem('earnPopupShown', 'true');
       }, 15000);
-
       return () => clearTimeout(timer);
     }
-
     return () => {};
   }, [userInfo, onPopupOpen]);
 
