@@ -1,4 +1,5 @@
 import {
+  AspectRatio,
   Box,
   Button,
   Flex,
@@ -10,6 +11,13 @@ import {
   MenuGroup,
   MenuItem,
   MenuList,
+  Modal,
+  ModalBody,
+  ModalCloseButton,
+  ModalContent,
+  ModalFooter,
+  ModalHeader,
+  ModalOverlay,
   Text,
   useDisclosure,
 } from '@chakra-ui/react';
@@ -26,11 +34,11 @@ import { userStore } from '@/store/user';
 function UserInfo() {
   const router = useRouter();
   const { isOpen, onOpen, onClose } = useDisclosure();
-  // const {
-  //   isOpen: isPopupOpen,
-  //   onOpen: onPopupOpen,
-  //   onClose: onPopupClose,
-  // } = useDisclosure();
+  const {
+    isOpen: isPopupOpen,
+    onOpen: onPopupOpen,
+    onClose: onPopupClose,
+  } = useDisclosure();
   const { connected, publicKey, wallet, wallets, select } = useWallet();
   const { setUserInfo, userInfo } = userStore();
   const [initialStep, setInitialStep] = useState<number>(1);
@@ -63,90 +71,94 @@ function UserInfo() {
     }
   };
 
-  // const handleOpenModal = () => {
-  //   onPopupClose();
+  const handleOpenModal = () => {
+    onPopupClose();
 
-  //   setTimeout(() => {
-  //     onOpen();
-  //   }, 100);
-  // };
+    setTimeout(() => {
+      onOpen();
+    }, 100);
+  };
 
-  // const KashPopup = () => {
-  //   let btnText = 'Create Profile';
-  //   if (!userInfo) {
-  //     btnText = 'Create Profile';
-  //   } else if (!userInfo.isVerified) {
-  //     btnText = 'Verify Your Profile';
-  //   } else if (!userInfo.isTalentFilled) {
-  //     btnText = 'Complete Your Profile';
-  //   }
+  const KashPopup = () => {
+    let btnText = 'Create Profile';
+    if (!userInfo) {
+      btnText = 'Create Profile';
+    } else if (!userInfo.isVerified) {
+      btnText = 'Verify Your Profile';
+    } else if (!userInfo.isTalentFilled) {
+      btnText = 'Complete Your Profile';
+    }
 
-  //   const handleButtonClick = () => {
-  //     if (userInfo && userInfo.isVerified && !userInfo?.isTalentFilled) {
-  //       router.push('/new/talent');
-  //     } else {
-  //       handleOpenModal();
-  //     }
-  //   };
+    const handleButtonClick = () => {
+      if (userInfo && userInfo.isVerified && !userInfo?.isTalentFilled) {
+        router.push('/new/talent');
+      } else {
+        handleOpenModal();
+      }
+    };
 
-  //   return (
-  //     <Modal isOpen={isPopupOpen} onClose={onPopupClose} size="xl">
-  //       <ModalOverlay />
-  //       <ModalContent>
-  //         <ModalHeader mt={3} mb={-2} textAlign={'center'}>
-  //           Create A Profile on Earn
-  //         </ModalHeader>
-  //         <ModalCloseButton mt={3} />
-  //         <ModalBody>
-  //           <Text mb={4} textAlign={'center'}>
-  //             Before you continue, you&apos;ll need to create a Superteam
-  //             Profile. It&apos;ll take less than 53 seconds, but comes with a
-  //             bunch of benefits!
-  //           </Text>
-  //           <AspectRatio mb={2} borderRadius={3} ratio={16 / 9}>
-  //             <iframe
-  //               src="https://fast.wistia.net/embed/iframe/3rbdvj2tgz"
-  //               allowTransparency={true}
-  //               className="wistia_embed"
-  //               name="wistia_embed"
-  //               allowFullScreen
-  //               width="100%"
-  //               height="100%"
-  //             />
-  //           </AspectRatio>
-  //         </ModalBody>
-  //         <ModalFooter>
-  //           <Button
-  //             w={'100%'}
-  //             mb={3}
-  //             _hover={{ textDecoration: 'none' }}
-  //             colorScheme="blue"
-  //             onClick={handleButtonClick}
-  //           >
-  //             {btnText}
-  //           </Button>
-  //         </ModalFooter>
-  //       </ModalContent>
-  //     </Modal>
-  //   );
-  // };
+    return (
+      <Modal isOpen={isPopupOpen} onClose={onPopupClose} size="xl">
+        <ModalOverlay />
+        <ModalContent>
+          <ModalHeader mt={3} mb={-2} textAlign={'center'}>
+            Create A Profile on Earn
+          </ModalHeader>
+          <ModalCloseButton mt={3} />
+          <ModalBody>
+            <Text mb={4} textAlign={'center'}>
+              Before you continue, you&apos;ll need to create a Superteam
+              Profile. It&apos;ll take less than 53 seconds, but comes with a
+              bunch of benefits!
+            </Text>
+            <AspectRatio mb={2} borderRadius={3} ratio={16 / 9}>
+              <iframe
+                src="https://fast.wistia.net/embed/iframe/3rbdvj2tgz"
+                allowTransparency={true}
+                className="wistia_embed"
+                name="wistia_embed"
+                allowFullScreen
+                width="100%"
+                height="100%"
+              />
+            </AspectRatio>
+          </ModalBody>
+          <ModalFooter>
+            <Button
+              w={'100%'}
+              mb={3}
+              _hover={{ textDecoration: 'none' }}
+              colorScheme="blue"
+              onClick={handleButtonClick}
+            >
+              {btnText}
+            </Button>
+          </ModalFooter>
+        </ModalContent>
+      </Modal>
+    );
+  };
 
-  // useEffect(() => {
-  //   if (sessionStorage.getItem('earnPopupShown')) {
-  //     return () => {};
-  //   }
+  useEffect(() => {
+    if (sessionStorage.getItem('earnPopupShown')) {
+      return () => {};
+    }
 
-  //   if (!userInfo || !userInfo.isVerified || !userInfo.isTalentFilled) {
-  //     const timer = setTimeout(() => {
-  //       onPopupOpen();
-  //       sessionStorage.setItem('earnPopupShown', 'true');
-  //     }, 15000);
+    if (
+      !userInfo ||
+      !userInfo.isVerified ||
+      (!userInfo.isTalentFilled && !userInfo.currentSponsor)
+    ) {
+      const timer = setTimeout(() => {
+        onPopupOpen();
+        sessionStorage.setItem('earnPopupShown', 'true');
+      }, 15000);
 
-  //     return () => clearTimeout(timer);
-  //   }
+      return () => clearTimeout(timer);
+    }
 
-  //   return () => {};
-  // }, [userInfo, onPopupOpen]);
+    return () => {};
+  }, [userInfo, onPopupOpen]);
 
   const onDisconnectWallet = async () => {
     if (wallet == null) {
@@ -158,7 +170,7 @@ function UserInfo() {
 
   return (
     <>
-      {/* <KashPopup /> */}
+      <KashPopup />
       {!!isOpen && (
         <Login
           wallets={wallets}
