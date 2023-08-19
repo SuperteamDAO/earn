@@ -1910,7 +1910,7 @@
   dependencies:
     "@solana/wallet-adapter-react" "^0.15.34"
 
-"@solana/wallet-adapter-base@^0.9.17", "@solana/wallet-adapter-base@^0.9.18", "@solana/wallet-adapter-base@^0.9.23":
+"@solana/wallet-adapter-base@^0.9.17", "@solana/wallet-adapter-base@^0.9.23":
   version "0.9.23"
   resolved "https://registry.yarnpkg.com/@solana/wallet-adapter-base/-/wallet-adapter-base-0.9.23.tgz#3b17c28afd44e173f44f658bf9700fd637e12a11"
   integrity sha512-apqMuYwFp1jFi55NxDfvXUX2x1T0Zh07MxhZ/nCCTGys5raSfYUh82zen2BLv8BSDj/JxZ2P/s7jrQZGrX8uAw==
@@ -2105,7 +2105,7 @@
   dependencies:
     "@solana/wallet-adapter-base" "^0.9.23"
 
-"@solana/wallet-adapter-react-ui@^0.9.22":
+"@solana/wallet-adapter-react-ui@^0.9.33":
   version "0.9.33"
   resolved "https://registry.yarnpkg.com/@solana/wallet-adapter-react-ui/-/wallet-adapter-react-ui-0.9.33.tgz#30ad1638f700a47386ff709d5e855fc792b32e25"
   integrity sha512-Wf2yAYpmzxWE3f8IMNed7wz+JALEwY2eIKcDtviLhvs/MXHw74fXA0mLzf5GB3EgHZq5zgWZI4kdYGTT8/yY1w==
@@ -2114,7 +2114,7 @@
     "@solana/wallet-adapter-base-ui" "^0.1.1"
     "@solana/wallet-adapter-react" "^0.15.34"
 
-"@solana/wallet-adapter-react@^0.15.24", "@solana/wallet-adapter-react@^0.15.34":
+"@solana/wallet-adapter-react@^0.15.34":
   version "0.15.34"
   resolved "https://registry.yarnpkg.com/@solana/wallet-adapter-react/-/wallet-adapter-react-0.15.34.tgz#40b8260f52f46063a1a12b4e2767e3ecc9ae3726"
   integrity sha512-HuJyDQ7KxEM2D0Zx2kGTGZlPxVZztAX1N1Hd7WaBeRJGT0NUPHJJFo9q7Wg0rH1BRBtMUQfQyiVc2lF+om+Z9w==
@@ -2249,7 +2249,7 @@
     "@jnwng/walletconnect-solana" "^0.2.0"
     "@solana/wallet-adapter-base" "^0.9.23"
 
-"@solana/wallet-adapter-wallets@^0.19.5":
+"@solana/wallet-adapter-wallets@^0.19.20":
   version "0.19.20"
   resolved "https://registry.yarnpkg.com/@solana/wallet-adapter-wallets/-/wallet-adapter-wallets-0.19.20.tgz#25bbbbf2349f9c8ee169de1db34c74900f0e8a35"
   integrity sha512-bE7tS6UykCSiWmudo8DYe/mZV0HoyqI+XifIjPaY/BNSgXQ3u1cwbqvqcLURuixBRnOka7FE6VuT90PhRsosqA==
