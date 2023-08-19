@@ -9,7 +9,6 @@ import {
   Select,
   VStack,
 } from '@chakra-ui/react';
-import axios from 'axios';
 import type { Dispatch, SetStateAction } from 'react';
 import { useState } from 'react';
 import { useForm } from 'react-hook-form';
@@ -101,7 +100,6 @@ export const CreateJobPayments = ({
     console.log(res);
 
     if (res && res.data.code === 201) {
-      await axios.post('/api/updateSearch');
       onOpen();
       setSlug(`/jobs/${jobBasics?.title.split(' ').join('-')}` as string);
       setLoading(false);

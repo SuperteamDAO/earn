@@ -15,7 +15,6 @@ import {
   Text,
   VStack,
 } from '@chakra-ui/react';
-import axios from 'axios';
 import type { Dispatch, SetStateAction } from 'react';
 import { useState } from 'react';
 import { useForm } from 'react-hook-form';
@@ -85,7 +84,6 @@ export const CreateGrantsPayment = ({
             };
             const res = await createGrants(info);
             if (res && res.data.code === 201) {
-              await axios.post('/api/updateSearch');
               onOpen();
               setSlug(
                 `/grants/${grantsBasic?.title.split(' ').join('-')}` as string
