@@ -118,7 +118,7 @@ function DesktopBanner() {
 }
 
 function MobileBanner() {
-  const { isOpen, onClose } = useDisclosure();
+  const { isOpen, onOpen, onClose } = useDisclosure();
   const { wallets, select } = useWallet();
   const { setUserInfo, userInfo } = userStore();
 
@@ -157,7 +157,7 @@ function MobileBanner() {
         h={'96'}
         mx={'auto'}
         pt={3}
-        pb={12}
+        pb={6}
         px={10}
         bgImage="url('/assets/home/display/mob_money_banner.png')"
         bgSize={'cover'}
@@ -183,6 +183,21 @@ function MobileBanner() {
           Explore bounties, grants, and job opportunities for developers and
           non-technical talent alike
         </Text>
+        <Button
+          mt={'1rem'}
+          px={'2.25rem'}
+          py={'0.75rem'}
+          color={'white'}
+          fontSize={'0.875rem'}
+          bg={'#6366F1'}
+          onClick={() => {
+            Mixpanel.track('sign_up_clicked');
+            onOpen();
+          }}
+          size="sm"
+        >
+          Sign Up
+        </Button>
         <Flex align={'center'} justify={'center'} mt={5}>
           <AvatarGroup max={3} size="sm">
             <Avatar
