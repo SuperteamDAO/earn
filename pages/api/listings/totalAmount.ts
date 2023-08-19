@@ -51,10 +51,7 @@ async function fetchCryptoPrices() {
   }
 }
 
-async function handler(req: NextApiRequest, res: NextApiResponse) {
-  if (req.method !== 'GET') {
-    return res.status(405).end(); // Method not allowed
-  }
+async function handler(_req: NextApiRequest, res: NextApiResponse) {
   try {
     const bountiesCount = await prisma.bounties.count({
       where: {
