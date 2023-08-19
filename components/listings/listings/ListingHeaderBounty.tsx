@@ -7,6 +7,12 @@ import {
   IconButton,
   Image,
   Link,
+  Popover,
+  PopoverArrow,
+  PopoverBody,
+  PopoverCloseButton,
+  PopoverContent,
+  PopoverTrigger,
   Text,
   Tooltip,
   useDisclosure,
@@ -130,7 +136,7 @@ function ListingHeader({
           <Image
             w={'4rem'}
             h={'4rem'}
-            objectFit={'contain'}
+            objectFit={'cover'}
             alt={'phantom'}
             rounded={'md'}
             src={
@@ -143,12 +149,13 @@ function ListingHeader({
               <Heading
                 color={'brand.charcoal.700'}
                 fontFamily={'Inter'}
-                fontSize={'xl'}
-                fontWeight={700}
+                fontSize={{ base: 'lg', md: 'xl' }}
+                fontWeight={{ base: 600, md: 700 }}
               >
                 {title}
               </Heading>
               <Flex
+                display={{ base: 'none', md: 'flex' }}
                 fontSize={'xs'}
                 fontWeight={500}
                 bg={'green.100'}
@@ -200,7 +207,11 @@ function ListingHeader({
                 <Text color={'#E2E8EF'} fontWeight={500}>
                   |
                 </Text>
-                <Flex align={'center'} gap={1}>
+                <Flex
+                  align={'center'}
+                  gap={1}
+                  display={{ base: 'none', md: 'flex' }}
+                >
                   <Text color={'#94A3B8'}>
                     {type === 'permissioned'
                       ? 'Application-based Bounty'
@@ -239,6 +250,72 @@ function ListingHeader({
             )}
           </VStack>
         </HStack>
+        <Flex gap={3}>
+          <Flex
+            display={{ base: 'flex', md: 'none' }}
+            ml={3}
+            fontSize={'xs'}
+            fontWeight={500}
+            bg={'green.100'}
+            rounded={'full'}
+          >
+            {(status === 'CLOSED' ||
+              (status === 'OPEN' && isWinnersAnnounced)) && (
+              <Text
+                px={3}
+                py={1}
+                color={'orange.600'}
+                bg={'orange.100'}
+                rounded={'full'}
+              >
+                Submissions Closed
+              </Text>
+            )}
+            {!isWinnersAnnounced && hasDeadlineEnded && status === 'OPEN' && (
+              <Text
+                px={3}
+                py={1}
+                color={'orange.600'}
+                bg={'orange.100'}
+                rounded={'full'}
+              >
+                In Review
+              </Text>
+            )}
+            {!hasDeadlineEnded && status === 'OPEN' && (
+              <Text
+                px={3}
+                py={1}
+                color={'green.600'}
+                bg={'green.100'}
+                rounded={'full'}
+              >
+                Submissions Open
+              </Text>
+            )}
+          </Flex>
+          <Flex align={'center'} gap={1} display={{ base: 'flex', md: 'none' }}>
+            <Text color={'#94A3B8'} fontSize="sm">
+              {type === 'permissioned'
+                ? 'Application-based Bounty'
+                : 'Open Bounty'}
+            </Text>
+            <Popover>
+              <PopoverTrigger>
+                <InfoOutlineIcon boxSize={4} color={'#94A3B8'} mr={3} />
+              </PopoverTrigger>
+              <PopoverContent>
+                <PopoverArrow />
+                <PopoverCloseButton />
+                <PopoverBody>
+                  {type === 'permissioned'
+                    ? "Don't start working just yet! Apply first, and then you'll be notified if you're selected to work on this bounty."
+                    : 'This is an open competition bounty! Anyone can start working and submit their work before the deadline!'}
+                </PopoverBody>
+              </PopoverContent>
+            </Popover>
+          </Flex>
+        </Flex>
         {router.asPath.includes('bounties') && !isTemplate && (
           <HStack>
             <HStack align="start" px={[3, 3, 0, 0]}>
@@ -265,33 +342,6 @@ function ListingHeader({
               />
             </HStack>
             <HStack>
-              {/* <HStack
-                pos={'relative'}
-                align={'center'}
-                justify={'center'}
-                display={sub?.length! === 0 ? 'none' : 'flex'}
-                w={'3rem'}
-              >
-                {sub?.slice(0, 3).map((e, index) => {
-                  return (
-                    <Box
-                      key={e.id}
-                      pos={'absolute'}
-                      left={index}
-                      marginInlineStart={1}
-                    >
-                      <Image
-                        w={8}
-                        h={8}
-                        objectFit={'contain'}
-                        alt={e.User?.firstName}
-                        rounded={'full'}
-                        src={e.User?.photo}
-                      />
-                    </Box>
-                  );
-                })}
-              </HStack> */}
               <VStack align={'start'}>
                 <Text color={'#000000'} fontSize={'md'} fontWeight={500}>
                   {sub?.length ? sub.length + 1 : 1}

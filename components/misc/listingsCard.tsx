@@ -233,8 +233,14 @@ export const BountiesCard = ({
                     'Bounty Title': title,
                   });
                 }}
+                style={{
+                  display: '-webkit-box',
+                  WebkitLineClamp: 1,
+                  WebkitBoxOrient: 'vertical',
+                  overflow: 'hidden',
+                }}
               >
-                {isMobile ? textLimiter(title, 20) : textLimiter(title, 40)}
+                {title}
               </Text>
               <Text
                 w={'full'}
@@ -486,8 +492,14 @@ export const GrantsCard = ({
                 color="brand.slate.700"
                 fontSize={['xs', 'xs', 'sm', 'sm']}
                 fontWeight="600"
+                style={{
+                  display: '-webkit-box',
+                  WebkitLineClamp: 1,
+                  WebkitBoxOrient: 'vertical',
+                  overflow: 'hidden',
+                }}
               >
-                {isMobile ? textLimiter(title, 20) : textLimiter(title, 40)}
+                {title}
               </Text>
               <Text
                 color="brand.slate.400"
@@ -501,7 +513,17 @@ export const GrantsCard = ({
                 <Text
                   mr={3}
                   color={'brand.slate.500'}
-                  fontSize={['xs', 'xs', 'sm', 'sm']}
+                  fontSize={['10px', '10px', 'sm', 'sm']}
+                  style={
+                    isMobile
+                      ? {
+                          display: '-webkit-box',
+                          WebkitLineClamp: 2,
+                          WebkitBoxOrient: 'vertical',
+                          overflow: 'hidden',
+                        }
+                      : undefined
+                  }
                 >
                   {short_description}
                 </Text>
@@ -659,7 +681,7 @@ export const CategoryBanner = ({ type }: { type: string }) => {
           <Text fontFamily={'Domine'} fontWeight={'700'}>
             {type}
           </Text>
-          <Text color={'brand.slate.500'} fontSize={'small'}>
+          <Text mb={6} color={'brand.slate.500'} fontSize={'small'}>
             {categoryAssets[type]?.desc}
           </Text>
         </Box>

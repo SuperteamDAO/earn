@@ -112,6 +112,7 @@ const HomePage: NextPage = () => {
           >
             <Flex align={'center'}>
               <Image
+                display={{ md: 'block', base: 'none' }}
                 w={'1.4375rem'}
                 h={'1.4375rem'}
                 mr={'0.75rem'}
@@ -119,6 +120,7 @@ const HomePage: NextPage = () => {
                 src={'/assets/home/emojis/moneyman.png'}
               />
               <Text
+                pr={2}
                 color={'#334155'}
                 fontSize={{ base: 14, md: 16 }}
                 fontWeight={'600'}
@@ -143,7 +145,7 @@ const HomePage: NextPage = () => {
                   display="inline-flex"
                   p={2}
                   color="#475668"
-                  fontSize="14px"
+                  fontSize={{ lg: '14px', base: '11px' }}
                   cursor="pointer"
                   css={
                     tab.id === activeTab
@@ -175,7 +177,11 @@ const HomePage: NextPage = () => {
                   });
                 }}
               >
-                <Button color="brand.slate.400" size="sm" variant="ghost">
+                <Button
+                  color="brand.slate.400"
+                  size={{ base: 'xs', md: 'sm' }}
+                  variant="ghost"
+                >
                   View All
                 </Button>
               </Link>

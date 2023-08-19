@@ -76,7 +76,12 @@ export const SocialInput = ({
           borderRight="none"
           borderLeftRadius={'md'}
         >
-          <Flex align="center" justify="start" w={'100%'} h={'100%'}>
+          <Flex
+            align="center"
+            justify={{ base: 'center', md: 'start' }}
+            w={'100%'}
+            h={'100%'}
+          >
             <Box w={'1rem'}>
               <Image
                 w={'100%'}
@@ -88,8 +93,8 @@ export const SocialInput = ({
             </Box>
             <Text
               h="4.3rem"
-              pl="10px"
-              fontSize="0.875rem"
+              pl={{ base: '4px', md: '10px' }}
+              fontSize={{ base: '0.7rem', md: '0.875rem' }}
               fontWeight={500}
               lineHeight="4.3rem"
               textAlign="left"

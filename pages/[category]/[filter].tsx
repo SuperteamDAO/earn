@@ -4,7 +4,6 @@ import {
   Button,
   Flex,
   HStack,
-  Image,
   Link,
   Text,
   useMediaQuery,
@@ -119,14 +118,15 @@ function CategoryPage({ category, filter }: Props) {
               borderBottomColor="#E2E8F0"
             >
               <Flex align={'center'}>
-                <Image
+                {/* <Image
                   w={'1.4375rem'}
                   h={'1.4375rem'}
                   mr={'0.75rem'}
                   alt="emoji"
                   src={'/assets/home/emojis/moneyman.png'}
-                />
+                /> */}
                 <Text
+                  mr={2}
                   color={'#334155'}
                   fontSize={{ base: 14, md: 16 }}
                   fontWeight={'600'}
@@ -151,7 +151,7 @@ function CategoryPage({ category, filter }: Props) {
                     display="inline-flex"
                     p={2}
                     color="#475668"
-                    fontSize="14px"
+                    fontSize={{ lg: '14px', base: '11px' }}
                     cursor="pointer"
                     css={
                       tab.id === activeTab
@@ -183,7 +183,11 @@ function CategoryPage({ category, filter }: Props) {
                     });
                   }}
                 >
-                  <Button color="brand.slate.400" size="sm" variant="ghost">
+                  <Button
+                    color="brand.slate.400"
+                    size={{ base: 'xs', md: 'sm' }}
+                    variant="ghost"
+                  >
                     View All
                   </Button>
                 </Link>
