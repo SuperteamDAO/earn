@@ -56,6 +56,7 @@ export const SubmissionModal = ({
     handleSubmit,
     formState: { errors },
     watch,
+    reset,
   } = useForm();
 
   const submitSubmissions = async (data: any) => {
@@ -85,6 +86,7 @@ export const SubmissionModal = ({
         title: bountytitle,
         user: userInfo?.username,
       });
+      reset();
       setIsSubmitted(true);
       setSubmissionNumber(submissionNumber + 1);
 
