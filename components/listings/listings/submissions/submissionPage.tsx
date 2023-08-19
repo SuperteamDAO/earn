@@ -6,6 +6,7 @@ import {
   Image,
   Link,
   Text,
+  useMediaQuery,
   VStack,
 } from '@chakra-ui/react';
 import type { User } from '@prisma/client';
@@ -29,6 +30,7 @@ interface Props {
 export const SubmissionPage = ({ bounty, submission, user, link }: Props) => {
   const router = useRouter();
   const [image, setImage] = useState<string>('/assets/bg/og.svg');
+  const [isMobile] = useMediaQuery('(max-width: 768px)');
 
   useEffect(() => {
     const fetchImage = async () => {
@@ -50,16 +52,17 @@ export const SubmissionPage = ({ bounty, submission, user, link }: Props) => {
     <VStack
       align={['center', 'center', 'start', 'start']}
       justify={['center', 'center', 'space-between', 'space-between']}
-      flexDir={['column-reverse', 'column-reverse', 'row', 'row']}
+      flexDir={['column', 'column', 'row', 'row']}
       gap={4}
       w="full"
       maxW={'7xl'}
       mx={'auto'}
     >
-      <VStack gap={8} w={'full'} mt={3}>
+      <VStack gap={3} w={'full'} mt={3}>
         {bounty?.isWinnersAnnounced && submission?.isWinner && (
           <Box
             w="full"
+            mt={4}
             px={4}
             py={2}
             color={'#D26F12'}
@@ -72,23 +75,16 @@ export const SubmissionPage = ({ bounty, submission, user, link }: Props) => {
             </Text>
           </Box>
         )}
-        <VStack w={'full'} h={'40rem'} bg={'white'} rounded={'md'}>
+        <VStack
+          w={'full'}
+          h={{ base: 'auto', md: '40rem' }}
+          bg={'white'}
+          rounded={'md'}
+        >
           <Flex justify={'space-between'} w={'full'} mt={5} px={8}>
             <Text color={'black'} fontSize={'22px'} fontWeight={600}>
               {user?.firstName}&apos;s Submission
             </Text>
-            {/* <Button
-              zIndex={10}
-              alignItems={'center'}
-              gap={2}
-              display={'flex'}
-              w={14}
-              border={'1px solid #CBD5E1'}
-              variant={'unstyled'}
-            >
-              <AiFillHeart />
-              {likes?.length}
-            </Button> */}
           </Flex>
           <Image
             w={'full'}
@@ -103,6 +99,7 @@ export const SubmissionPage = ({ bounty, submission, user, link }: Props) => {
             <Button
               as={Link}
               w="full"
+              mb={6}
               _hover={{
                 textDecoration: 'none',
               }}
@@ -113,15 +110,23 @@ export const SubmissionPage = ({ bounty, submission, user, link }: Props) => {
               Visit Link
             </Button>
           </HStack>
+          {isMobile && (
+            <VStack w={'30rem'} mt={12}>
+              <TalentBio successPage={false} user={user} />
+            </VStack>
+          )}
         </VStack>
+
         <Comments
           refId={(router.query.subid as string) ?? ''}
           refType="BOUNTY"
         />
       </VStack>
-      <VStack w={['100%', '100%', '36rem', '36rem']}>
-        <TalentBio successPage={false} user={user} />
-      </VStack>
+      {!isMobile && (
+        <VStack w={['100%', '100%', '36rem', '36rem']}>
+          <TalentBio successPage={false} user={user} />
+        </VStack>
+      )}
     </VStack>
   );
 };

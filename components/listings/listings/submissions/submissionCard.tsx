@@ -82,7 +82,7 @@ export const SubmissionCard = ({
       <VStack
         pos={'relative'}
         overflow={'hidden'}
-        w={'18rem'}
+        w={{ base: 'full', md: '18rem' }}
         h={'18rem'}
         p={5}
         bg={'white'}

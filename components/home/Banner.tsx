@@ -198,8 +198,8 @@ function MobileBanner() {
         >
           Sign Up
         </Button>
-        <Flex align={'center'} justify={'center'} mt={5}>
-          <AvatarGroup max={3} size="sm">
+        <Flex align={'center'} justify={'center'} mt={2}>
+          <AvatarGroup max={3} size="xs">
             <Avatar
               name="Anoushk"
               src="https://res.cloudinary.com/dgvnuwspr/image/upload/v1683132586/People%20DPs/recA3Sa7t1loYvDHo.jpg"
@@ -214,7 +214,7 @@ function MobileBanner() {
             />
           </AvatarGroup>
           {usersCount !== null && (
-            <Text ml={'0.6875rem'} fontSize={'0.875rem'}>
+            <Text ml={'0.2rem'} fontSize={'0.8rem'}>
               Join {usersCount.toLocaleString()}+ others
             </Text>
           )}
