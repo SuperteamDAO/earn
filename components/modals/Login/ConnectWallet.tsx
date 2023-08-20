@@ -1,6 +1,7 @@
 import { InfoOutlineIcon } from '@chakra-ui/icons';
 import { Box, Flex, Image, Spinner, Text, Tooltip } from '@chakra-ui/react';
 import type { Wallet } from '@solana/wallet-adapter-react';
+import { WalletMultiButton } from '@solana/wallet-adapter-react-ui';
 import { useState } from 'react';
 
 type ConnectWalletProps = {
@@ -39,6 +40,7 @@ export default function ConnectWallet({
           <InfoOutlineIcon ml={1} w={4} h={4} />
         </Tooltip>
       </Flex>
+      <WalletMultiButton />
       {wallets.map((wallet, index) => {
         const isLoading = loadingWallet === wallet?.adapter?.name;
         return (
