@@ -342,7 +342,7 @@ export default function UserInfo({ isMobile }: UserInfoProps) {
           <HStack flexDir={{ base: 'column', md: 'row' }} gap={2}>
             <HStack gap={0} w={{ base: '100%', md: 'auto' }}>
               <Button
-                display={isMobile ? 'none' : 'flex'}
+                display={isMobile ? 'none' : { base: 'none', md: 'block' }}
                 fontSize="xs"
                 onClick={() => {
                   router.push('/sponsor');
