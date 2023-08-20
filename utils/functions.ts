@@ -1,7 +1,5 @@
 /* eslint-disable no-nested-ternary */
-import { Redis } from '@upstash/redis';
 import axios from 'axios';
-import moment from 'moment';
 import toast from 'react-hot-toast';
 import { v4 as uuidV4 } from 'uuid';
 
@@ -21,15 +19,8 @@ import type {
 import type { SponsorType } from '../interface/sponsor';
 import type { Talent } from '../interface/talent';
 import { SponsorStore } from '../store/sponsor';
-import { client } from './algolia';
-import { Mixpanel } from './mixpanel';
 
 const BACKEND_URL = process.env.NEXT_PUBLIC_BACKEND_URL;
-
-export const redis = new Redis({
-  url: process.env.NEXT_PUBLIC_REDIS_URL,
-  token: process.env.NEXT_PUBLIC_REDIS_TOKEN,
-});
 
 export const createUser = async (publickey: string) => {
   const id = uuidV4();
@@ -414,134 +405,6 @@ export const createQuestions = async (questions: {
   }
 };
 
-export const fetchAll = async (
-  search: string | undefined,
-  filter: string | undefined
-): Promise<{
-  grants: {
-    grants: GrantsType;
-    sponsorInfo: SponsorType;
-  }[];
-  jobs: { jobs: JobsType; sponsorInfo: SponsorType }[];
-  bounty: { bounty: Bounties; sponsorInfo: SponsorType }[];
-} | null> => {
-  try {
-    if (search || filter) {
-      const index = client.initIndex('listings');
-      const jobs: { jobs: JobsType; sponsorInfo: SponsorType }[] = [];
-      const bounties: { bounty: Bounties; sponsorInfo: SponsorType }[] = [];
-      const grants: {
-        grants: GrantsType;
-        sponsorInfo: SponsorType;
-      }[] = [];
-      const { hits }: { hits: any } = await index.search(
-        search
-          ? filter
-            ? ((filter + search) as string)
-            : (search as string)
-          : (filter as string),
-        {}
-      );
-
-      hits.forEach((hit: any) => {
-        if (hit.jobs as any) {
-          console.log(hit.jobs.description);
-
-          jobs.push({
-            jobs: hit.jobs,
-            sponsorInfo: hit.sponsorInfo,
-          });
-        } else if (hit.bounty) {
-          bounties.push({
-            bounty: hit.bounty,
-            sponsorInfo: hit.sponsorInfo,
-          });
-        } else if (hit.grants) {
-          grants.push({
-            grants: hit.grants,
-            sponsorInfo: hit.sponsorInfo,
-          });
-        }
-      });
-      const active: { bounty: Bounties; sponsorInfo: SponsorType }[] = [];
-      const inActive: { bounty: Bounties; sponsorInfo: SponsorType }[] = [];
-      bounties.forEach((a) => {
-        if (a.bounty.active) {
-          return active.push(a);
-        }
-        return inActive.push(a);
-      });
-      active.sort((a, b) => {
-        return (
-          parseInt(moment(b.bounty.deadline).format('x'), 10) -
-          parseInt(moment(a.bounty.deadline).format('x'), 10)
-        );
-      });
-      Mixpanel.track(search ? 'search_home_page' : 'filter_home_page', {
-        search: search || filter,
-      });
-      if (hits.length === 0) {
-        Mixpanel.track(
-          search ? '0_result_homepage_search' : '0_result_homepage_filter'
-        );
-      }
-      return {
-        bounty: search ? [...active, ...inActive] : [...active],
-        grants,
-        jobs,
-      };
-    }
-    const bountyPromise: Promise<
-      { bounty: Bounties; sponsorInfo: SponsorType }[] | null
-    > = redis.get('bounties');
-    const jobsPromise: Promise<
-      { jobs: JobsType; sponsorInfo: SponsorType }[] | null
-    > = redis.get('jobs');
-    const grantsPromise: Promise<
-      | {
-          grants: GrantsType;
-          sponsorInfo: SponsorType;
-        }[]
-      | null
-    > = redis.get('grants');
-
-    const [bounties, jobs, grants] = await Promise.all([
-      bountyPromise,
-      jobsPromise,
-      grantsPromise,
-    ]);
-    const active: { bounty: Bounties; sponsorInfo: SponsorType }[] = [];
-    const inActive: { bounty: Bounties; sponsorInfo: SponsorType }[] = [];
-    bounties?.forEach((a) => {
-      if (moment(a.bounty.deadline).format('x') > moment().format('x')) {
-        return active.push(a);
-      }
-      return inActive.push(a);
-    });
-    active.sort((a, b) => {
-      return (
-        parseInt(moment(a.bounty.deadline).format('x'), 10) -
-        parseInt(moment(b.bounty.deadline).format('x'), 10)
-      );
-    });
-
-    return {
-      bounty: [...active, ...inActive] as {
-        bounty: Bounties;
-        sponsorInfo: SponsorType;
-      }[],
-      grants: grants as {
-        grants: GrantsType;
-        sponsorInfo: SponsorType;
-      }[],
-      jobs: jobs as { jobs: JobsType; sponsorInfo: SponsorType }[],
-    };
-  } catch (error) {
-    console.log(error, 'error');
-    return null;
-  }
-};
-
 export const AllGrants = async (): Promise<
   | {
       grants: GrantsType;
@@ -573,23 +436,6 @@ export const updateNotification = async (
       return null;
     }
     return data.data;
-  } catch (error) {
-    console.log(error);
-    return null;
-  }
-};
-
-export const fetchBasicInfo = async (): Promise<{
-  total: number;
-  count: number;
-} | null> => {
-  try {
-    const res = (await redis.get('basicInfo')) as {
-      total: number;
-      count: number;
-    };
-
-    return res;
   } catch (error) {
     console.log(error);
     return null;

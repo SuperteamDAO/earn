@@ -15,6 +15,12 @@ import {
   SolletWalletAdapter,
 } from '@solana/wallet-adapter-wallets';
 import { clusterApiUrl } from '@solana/web3.js';
+import {
+  createDefaultAddressSelector,
+  createDefaultAuthorizationResultCache,
+  createDefaultWalletNotFoundHandler,
+  SolanaMobileWalletAdapter,
+} from '@solana-mobile/wallet-adapter-mobile';
 import type { FC } from 'react';
 import React, { useMemo } from 'react';
 
@@ -31,6 +37,17 @@ export const Wallet: FC<Props> = ({ children }: Props) => {
 
   const wallets = useMemo(
     () => [
+      new SolanaMobileWalletAdapter({
+        addressSelector: createDefaultAddressSelector(),
+        appIdentity: {
+          name: 'Superteam Earn',
+          uri: 'https://earn.superteam.fun',
+          icon: '/favicon.ico',
+        },
+        authorizationResultCache: createDefaultAuthorizationResultCache(),
+        cluster: WalletAdapterNetwork.Mainnet,
+        onWalletNotFound: createDefaultWalletNotFoundHandler(),
+      }),
       new BackpackWalletAdapter(),
       new PhantomWalletAdapter(),
       new SolflareWalletAdapter({ network }),

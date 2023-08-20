@@ -31,7 +31,7 @@ interface Props {
   };
 }
 
-function NewUserInfo({ userInfo, onClose, inviteInfo, otp }: Props) {
+function VerifyOTP({ userInfo, onClose, inviteInfo, otp }: Props) {
   const router = useRouter();
   const { setUserInfo } = userStore();
   const [pin, setPin] = useState('');
@@ -117,4 +117,4 @@ function NewUserInfo({ userInfo, onClose, inviteInfo, otp }: Props) {
   );
 }
 
-export default NewUserInfo;
+export default VerifyOTP;

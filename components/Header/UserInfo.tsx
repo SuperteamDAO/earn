@@ -31,7 +31,11 @@ import { useEffect, useState } from 'react';
 import { Login } from '@/components/modals/Login/Login';
 import { userStore } from '@/store/user';
 
-function UserInfo() {
+interface UserInfoProps {
+  isMobile?: boolean;
+}
+
+export default function UserInfo({ isMobile }: UserInfoProps) {
   const router = useRouter();
   const { isOpen, onOpen, onClose } = useDisclosure();
   const {
@@ -165,6 +169,10 @@ function UserInfo() {
     setUserInfo({});
   };
 
+  const displayValue = isMobile
+    ? { base: 'block', md: 'none' }
+    : { base: 'none', md: 'block' };
+
   return (
     <>
       <KashPopup />
@@ -183,7 +191,7 @@ function UserInfo() {
         <>
           {userInfo && !userInfo.isVerified && (
             <Button
-              display={{ base: 'none', md: 'block' }}
+              display={displayValue}
               fontSize="xs"
               onClick={() => {
                 setInitialStep(2);
@@ -200,7 +208,7 @@ function UserInfo() {
             !userInfo.isTalentFilled &&
             userInfo.isVerified && (
               <Button
-                display={{ base: 'none', md: 'block' }}
+                display={displayValue}
                 fontSize="xs"
                 onClick={() => {
                   router.push('/new');
@@ -212,7 +220,12 @@ function UserInfo() {
               </Button>
             )}
           <Menu>
-            <MenuButton minW={0} cursor={'pointer'} rounded={'full'}>
+            <MenuButton
+              display={isMobile ? 'none' : 'flex'}
+              minW={0}
+              cursor={'pointer'}
+              rounded={'full'}
+            >
               <Flex align="center">
                 {userInfo?.photo ? (
                   <Image
@@ -229,7 +242,7 @@ function UserInfo() {
                     variant="marble"
                   />
                 )}
-                <Box display={{ base: 'none', md: 'block' }} ml={2}>
+                <Box display={displayValue} ml={2}>
                   {!userInfo?.firstName ? (
                     <Text color="brand.slate.800" fontSize="sm">
                       New User
@@ -326,10 +339,10 @@ function UserInfo() {
         </>
       ) : (
         <>
-          <HStack gap={2}>
-            <HStack gap={0}>
+          <HStack flexDir={{ base: 'column', md: 'row' }} gap={2}>
+            <HStack gap={0} w={{ base: '100%', md: 'auto' }}>
               <Button
-                display={{ base: 'none', md: 'block' }}
+                display={isMobile ? 'none' : { base: 'none', md: 'block' }}
                 fontSize="xs"
                 onClick={() => {
                   router.push('/sponsor');
@@ -340,7 +353,8 @@ function UserInfo() {
                 Create A Bounty
               </Button>
               <Button
-                display={{ base: 'none', md: 'block' }}
+                display={displayValue}
+                w={{ base: '100%', md: 'auto' }}
                 fontSize="xs"
                 onClick={() => {
                   onOpen();
@@ -352,7 +366,8 @@ function UserInfo() {
               </Button>
             </HStack>
             <Button
-              display={{ base: 'none', md: 'block' }}
+              display={displayValue}
+              w={{ base: '100%' }}
               px={4}
               fontSize="xs"
               onClick={() => {
@@ -369,5 +384,3 @@ function UserInfo() {
     </>
   );
 }
-
-export default UserInfo;

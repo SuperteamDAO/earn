@@ -83,8 +83,8 @@ function NewUserInfo({
       current: code,
       last: codeLast,
     });
-    setLoading(false);
     setStep(3);
+    setLoading(false);
   };
 
   const sendOTP = async (e: FormEvent<HTMLFormElement>) => {
