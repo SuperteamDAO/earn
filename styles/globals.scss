@@ -2,6 +2,19 @@
   font-family: 'Inter';
 }
 
+.wallet-adapter-button.wallet-adapter-button-trigger {
+  width: 150% !important;
+  background-color: #6366F1;
+  font-size: 1rem !important;
+  color: white !important;
+  // border: 1px solid !important;
+  border-color: #f1f5f9 !important;
+  margin-left: auto !important;
+  margin-right: auto !important;
+}
+
+
+
 .bg-white {
   background-color: #fff;
 }
@@ -133,3 +146,4 @@ pre {
     opacity: 0;
   }
 }
+
