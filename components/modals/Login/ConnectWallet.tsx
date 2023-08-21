@@ -59,6 +59,7 @@ export default function ConnectWallet({
           justify={'center'}
           w="100%"
           mb={1}
+          my={9}
           px={3}
           py={1}
           color={'white'}
