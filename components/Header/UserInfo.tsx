@@ -20,6 +20,7 @@ import {
   ModalOverlay,
   Text,
   useDisclosure,
+  useMediaQuery,
 } from '@chakra-ui/react';
 import type { Wallet as SolanaWallet } from '@solana/wallet-adapter-react';
 import { useWallet } from '@solana/wallet-adapter-react';
@@ -46,6 +47,7 @@ export default function UserInfo({ isMobile }: UserInfoProps) {
   const { connected, publicKey, wallet, wallets, select } = useWallet();
   const { setUserInfo, userInfo } = userStore();
   const [initialStep, setInitialStep] = useState<number>(1);
+  const [isLessthan768] = useMediaQuery('(max-width: 768px)');
 
   useEffect(() => {
     const makeUser = async () => {
@@ -288,19 +290,20 @@ export default function UserInfo({ isMobile }: UserInfoProps) {
                   Edit Profile
                 </MenuItem>
               )}
-              {(userInfo?.role === 'GOD' || !!userInfo?.currentSponsorId) && (
-                <MenuItem
-                  color="brand.slate.500"
-                  fontSize="sm"
-                  fontWeight={600}
-                  onClick={() => {
-                    router.push('/dashboard/bounties');
-                  }}
-                >
-                  Sponsor Dashboard
-                </MenuItem>
-              )}
-              {userInfo?.role === 'GOD' && (
+              {!isLessthan768 &&
+                (userInfo?.role === 'GOD' || !!userInfo?.currentSponsorId) && (
+                  <MenuItem
+                    color="brand.slate.500"
+                    fontSize="sm"
+                    fontWeight={600}
+                    onClick={() => {
+                      router.push('/dashboard/bounties');
+                    }}
+                  >
+                    Sponsor Dashboard
+                  </MenuItem>
+                )}
+              {!isLessthan768 && userInfo?.role === 'GOD' && (
                 <>
                   <MenuDivider />
                   <MenuGroup
