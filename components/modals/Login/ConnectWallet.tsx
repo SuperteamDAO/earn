@@ -23,6 +23,15 @@ export default function ConnectWallet({
     onConnectWallet(wallet);
   };
 
+  const handleClick = () => {
+    const button = document.querySelector(
+      '.wallet-adapter-button.wallet-adapter-button-trigger'
+    );
+    if (button instanceof HTMLElement) {
+      button.click();
+    }
+  };
+
   return (
     <Box>
       <Flex
@@ -34,8 +43,8 @@ export default function ConnectWallet({
         textAlign="center"
       >
         {isAndroidDevice
-          ? 'Connect your Primary Wallet'
-          : 'Connect your Wallet'}
+          ? 'Connect your Wallet'
+          : 'Connect your Primary Wallet'}
         <Tooltip
           color="brand.slate.700"
           bg="brand.slate.200"
@@ -46,7 +55,22 @@ export default function ConnectWallet({
         </Tooltip>
       </Flex>
       {isAndroidDevice ? (
-        <WalletMultiButton />
+        <Flex
+          justify={'center'}
+          w="100%"
+          mb={1}
+          my={9}
+          px={3}
+          py={1}
+          color={'white'}
+          bg={'brand.purple'}
+          border="1px solid"
+          borderColor="brand.slate.100"
+          borderRadius="md"
+          onClick={handleClick}
+        >
+          <WalletMultiButton />
+        </Flex>
       ) : (
         wallets.map((wallet, index) => {
           const isLoading = loadingWallet === wallet?.adapter?.name;

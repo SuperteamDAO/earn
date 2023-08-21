@@ -72,7 +72,7 @@ export const Login = ({
       onClose={onClose}
     >
       <ModalOverlay />
-      <ModalContent w={'22rem'} h={'max'} minH="md">
+      <ModalContent w={'22rem'} h={'max'}>
         <ModalHeader>
           <Flex justify="center">
             <Image
