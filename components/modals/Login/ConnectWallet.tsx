@@ -4,7 +4,7 @@ import type { Wallet } from '@solana/wallet-adapter-react';
 import { WalletMultiButton } from '@solana/wallet-adapter-react-ui';
 import { useState } from 'react';
 
-import { useIsMobile } from '@/hooks/useIsMobile';
+import { isAndroid } from '@/utils/isAndroid';
 
 type ConnectWalletProps = {
   wallets: Wallet[];
@@ -16,7 +16,7 @@ export default function ConnectWallet({
   onConnectWallet,
 }: ConnectWalletProps) {
   const [loadingWallet, setLoadingWallet] = useState('');
-  const isMobile = useIsMobile();
+  const isAndroidDevice = isAndroid();
 
   const connect = (wallet: Wallet) => {
     setLoadingWallet(wallet?.adapter?.name);
@@ -33,7 +33,9 @@ export default function ConnectWallet({
         fontSize="md"
         textAlign="center"
       >
-        {isMobile ? 'Connect your Primary Wallet' : 'Connect your Wallet'}
+        {isAndroidDevice
+          ? 'Connect your Primary Wallet'
+          : 'Connect your Wallet'}
         <Tooltip
           color="brand.slate.700"
           bg="brand.slate.200"
@@ -43,7 +45,7 @@ export default function ConnectWallet({
           <InfoOutlineIcon ml={1} w={4} h={4} />
         </Tooltip>
       </Flex>
-      {isMobile ? (
+      {isAndroidDevice ? (
         <WalletMultiButton />
       ) : (
         wallets.map((wallet, index) => {
