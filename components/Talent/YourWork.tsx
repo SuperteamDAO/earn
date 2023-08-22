@@ -105,7 +105,13 @@ function YourWork({ setStep, useFormStore }: Step1Props) {
     <Box w={'full'}>
       <form style={{ width: '100%' }} onSubmit={handleSubmit(onSubmit)}>
         <FormControl w="full" mb={5} isRequired>
-          <Flex gap={'1.25rem'} w={'full'} mb={'1.25rem'} outline={'0.3125rem'}>
+          <Flex
+            direction={{ base: 'column', md: 'row' }}
+            gap={'1.25rem'}
+            w={'full'}
+            mb={'1.25rem'}
+            outline={'0.3125rem'}
+          >
             <Box w={'full'}>
               <FormLabel color={'brand.slate.500'}>
                 How familiar are you with Web3?

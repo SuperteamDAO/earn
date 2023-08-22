@@ -104,12 +104,12 @@ const StepsCon = ({ setSuccess }: { setSuccess: () => void }) => {
   ];
 
   return (
-    <VStack gap={4} w={'xl'}>
+    <VStack gap={4} w={{ base: 'auto', md: 'xl' }} px={4}>
       <VStack mt={8}>
         <Heading
           color={'#334254'}
           fontFamily={'Inter'}
-          fontSize={'24px'}
+          fontSize={{ base: '18px', md: '24px' }}
           fontWeight={700}
         >
           {TitleArray[currentStep - 1]?.title}
@@ -117,14 +117,14 @@ const StepsCon = ({ setSuccess }: { setSuccess: () => void }) => {
         <Text
           color={'#94A3B8'}
           fontFamily={'Inter'}
-          fontSize={'20px'}
+          fontSize={{ base: '16px', md: '20px' }}
           fontWeight={500}
           textAlign={'center'}
         >
           {TitleArray[currentStep - 1]?.subTitle}
         </Text>
       </VStack>
-      <HStack w="100%">
+      <HStack w="100%" px={{ base: 4, md: 0 }}>
         {stepList.map((step, stepIndex) => {
           return (
             <Fragment key={stepIndex}>
@@ -198,13 +198,19 @@ const SuccessScreen = () => {
     >
       <VStack>
         <Image w={'40px'} h={'40px'} alt={''} src="/assets/icons/success.png" />
-        <Text color={'white'} fontSize={'1.8125rem'} fontWeight={'700'}>
+        <Text
+          color={'white'}
+          fontSize={{ base: '1.25rem', md: '1.8125rem' }}
+          fontWeight={'700'}
+          textAlign={'center'}
+        >
           Your Earn Profile is Ready!
         </Text>
         <Text
           color={'rgba(255, 255, 255, 0.53)'}
-          fontSize={'29px'}
+          fontSize={{ base: '18px', md: '28px' }}
           fontWeight={'500'}
+          textAlign={'center'}
         >
           Have a look at your profile or start earning
         </Text>
@@ -212,19 +218,28 @@ const SuccessScreen = () => {
       <HStack
         align={'start'}
         justifyContent={'center'}
+        flexDir={{ base: 'column', md: 'row' }}
         gap={10}
         w={'fit-content'}
         mt={10}
         mx={'auto'}
       >
-        <Box w={'full'}>
+        <Box w={'full'} p={{ base: 4, md: 0 }}>
           <TalentBio
             user={form as unknown as User}
             successPage={true}
-            w={'90%'}
+            w={{ md: '90%' }}
           />
         </Box>
-        <VStack maxW={'35rem'} h={'full'} p={5} bg="white" rounded={'lg'}>
+        <VStack
+          maxW={'35rem'}
+          h={'full'}
+          mb={12}
+          mx={{ base: 4, md: 0 }}
+          p={5}
+          bg="white"
+          rounded={'lg'}
+        >
           <Image alt="final" src="/assets/talent/fake-tasks.png" />
           <Button
             w="full"

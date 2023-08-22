@@ -42,17 +42,17 @@ export default function ConnectWallet({
         fontSize="md"
         textAlign="center"
       >
-        {isAndroidDevice
-          ? 'Connect your Wallet'
-          : 'Connect your Primary Wallet'}
-        <Tooltip
-          color="brand.slate.700"
-          bg="brand.slate.200"
-          label="Connect your primary wallet where you can receive the prize money. Don't use burner wallets."
-          placement="bottom"
-        >
-          <InfoOutlineIcon ml={1} w={4} h={4} />
-        </Tooltip>
+        {isAndroidDevice ? 'First Things First' : 'Connect your Primary Wallet'}
+        {!isAndroidDevice ? (
+          <Tooltip
+            color="brand.slate.700"
+            bg="brand.slate.200"
+            label="Connect your primary wallet where you can receive the prize money. Don't use burner wallets."
+            placement="bottom"
+          >
+            <InfoOutlineIcon ml={1} w={4} h={4} />
+          </Tooltip>
+        ) : null}
       </Flex>
       {isAndroidDevice ? (
         <Flex

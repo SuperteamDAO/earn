@@ -157,7 +157,7 @@ export default function UserInfo({ isMobile }: UserInfoProps) {
       const timer = setTimeout(() => {
         onPopupOpen();
         sessionStorage.setItem('earnPopupShown', 'true');
-      }, 15000);
+      }, 30000);
       return () => clearTimeout(timer);
     }
     return () => {};

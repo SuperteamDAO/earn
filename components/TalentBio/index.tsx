@@ -56,7 +56,7 @@ function TalentBio({
 }: {
   user: User;
   successPage: boolean;
-  w?: string;
+  w?: any;
 }) {
   const { userInfo } = userStore();
   const router = useRouter();

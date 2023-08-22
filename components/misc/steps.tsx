@@ -61,7 +61,7 @@ export const Steps = ({ currentStep, thisStep, label, setStep }: Props) => {
         display={'flex'}
         w={'max-content'}
         color={currentStep === thisStep ? 'brand.purple' : 'brand.slate.500'}
-        fontSize="1rem"
+        fontSize={{ base: '0.9rem', md: '1rem' }}
         fontWeight={600}
       >
         {label}
