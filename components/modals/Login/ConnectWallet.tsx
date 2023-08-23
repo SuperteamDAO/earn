@@ -5,6 +5,7 @@ import { WalletMultiButton } from '@solana/wallet-adapter-react-ui';
 import { useState } from 'react';
 
 import { isAndroid } from '@/utils/isAndroid';
+import { isIOS } from '@/utils/isIOS';
 
 type ConnectWalletProps = {
   wallets: Wallet[];
@@ -17,6 +18,14 @@ export default function ConnectWallet({
 }: ConnectWalletProps) {
   const [loadingWallet, setLoadingWallet] = useState('');
   const isAndroidDevice = isAndroid();
+  const isIOSDevice = isIOS();
+
+  const validWalletNames = ['Phantom', 'Solflare', 'Glow'];
+  const filteredWallets = isIOSDevice
+    ? wallets.filter((wallet) =>
+        validWalletNames.includes(wallet?.adapter?.name ?? '')
+      )
+    : wallets;
 
   const connect = (wallet: Wallet) => {
     setLoadingWallet(wallet?.adapter?.name);
@@ -72,7 +81,7 @@ export default function ConnectWallet({
           <WalletMultiButton />
         </Flex>
       ) : (
-        wallets.map((wallet, index) => {
+        filteredWallets.map((wallet, index) => {
           const isLoading = loadingWallet === wallet?.adapter?.name;
           return (
             <Box

@@ -279,7 +279,7 @@ export default function WithSubnavigation() {
       </Flex>
 
       <Collapse animateOpacity in={isOpen}>
-        <Flex direction="column" w="96%" mt={4} mx={'auto'}>
+        <Flex direction="column" w="96%" mx={'auto'}>
           <UserInfo isMobile={true} />
         </Flex>
         <MobileNav />

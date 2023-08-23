@@ -86,9 +86,9 @@ export default function UserInfo({ isMobile }: UserInfoProps) {
   };
 
   const KashPopup = () => {
-    let btnText = 'Create Profile';
+    let btnText = 'Claim Your Free Profile';
     if (!userInfo) {
-      btnText = 'Create Profile';
+      btnText = 'Claim Your Free Profile';
     } else if (!userInfo.isVerified) {
       btnText = 'Verify Your Profile';
     } else if (!userInfo.isTalentFilled) {
@@ -108,14 +108,13 @@ export default function UserInfo({ isMobile }: UserInfoProps) {
         <ModalOverlay />
         <ModalContent>
           <ModalHeader mt={3} mb={-2} textAlign={'center'}>
-            Create A Profile on Earn
+            Don&apos;t Miss a Chance to Earn
           </ModalHeader>
           <ModalCloseButton mt={3} />
           <ModalBody>
             <Text mb={4} textAlign={'center'}>
-              Before you continue, you&apos;ll need to create a Superteam
-              Profile. It&apos;ll take less than 53 seconds, but comes with a
-              bunch of benefits!
+              If you want to get the full value out of Superteam Earn,
+              you&apos;ll need to claim your profile. It only takes ~53 seconds.
             </Text>
             <AspectRatio mb={2} borderRadius={3} ratio={16 / 9}>
               <iframe
