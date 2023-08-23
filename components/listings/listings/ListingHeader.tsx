@@ -221,7 +221,7 @@ export const ListingHeader = ({
                     );
                   })}
                 </HStack>
-                <VStack align={'start'}>
+                <VStack align={'start'} gap={0}>
                   <Text color={'#000000'} fontSize={'md'} fontWeight={500}>
                     {sub?.length ? sub.length + 1 : 1}
                   </Text>

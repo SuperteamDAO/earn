@@ -77,7 +77,7 @@ export const CreatebountyBasic = ({
   return (
     <>
       <VStack align={'start'} gap={3} w={'2xl'} pt={7} pb={12}>
-        <FormControl w="full" isInvalid={errorState.title} isRequired>
+        <FormControl w="full" mb={5} isInvalid={errorState.title} isRequired>
           <Flex>
             <FormLabel
               color={'brand.slate.500'}
@@ -244,6 +244,7 @@ export const CreatebountyBasic = ({
         )}
         <FormControl
           w="full"
+          mb={5}
           isInvalid={errorState.pocSocials || !isUrlValid}
           isRequired
         >
