@@ -2,6 +2,35 @@
   font-family: 'Inter';
 }
 
+.wallet-adapter-button.wallet-adapter-button-trigger {
+  width: 100% !important;
+  background-color: #6366F1;
+  font-size: 1rem !important;
+  color: white !important;
+  // border: 1px solid !important;
+  border-color: #f1f5f9 !important;
+  margin-left: auto !important;
+  margin-right: auto !important;
+}
+
+.wallet-adapter-button.wallet-adapter-button-trigger:hover,
+.wallet-adapter-button.wallet-adapter-button-trigger:active {
+  background-color: #6366F1;
+}
+
+.wallet-adapter-button.wallet-adapter-button-trigger:not([disabled]):hover {
+  background-color: #6366F1;
+}
+
+.wallet-adapter-button-end-icon,
+.wallet-adapter-button-start-icon,
+.wallet-adapter-button-end-icon img,
+.wallet-adapter-button-start-icon img {
+    display: none !important;
+}
+
+
+
 .bg-white {
   background-color: #fff;
 }
@@ -133,3 +162,4 @@ pre {
     opacity: 0;
   }
 }
+

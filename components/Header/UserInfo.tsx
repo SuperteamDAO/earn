@@ -20,6 +20,7 @@ import {
   ModalOverlay,
   Text,
   useDisclosure,
+  useMediaQuery,
 } from '@chakra-ui/react';
 import type { Wallet as SolanaWallet } from '@solana/wallet-adapter-react';
 import { useWallet } from '@solana/wallet-adapter-react';
@@ -31,7 +32,11 @@ import { useEffect, useState } from 'react';
 import { Login } from '@/components/modals/Login/Login';
 import { userStore } from '@/store/user';
 
-function UserInfo() {
+interface UserInfoProps {
+  isMobile?: boolean;
+}
+
+export default function UserInfo({ isMobile }: UserInfoProps) {
   const router = useRouter();
   const { isOpen, onOpen, onClose } = useDisclosure();
   const {
@@ -42,6 +47,7 @@ function UserInfo() {
   const { connected, publicKey, wallet, wallets, select } = useWallet();
   const { setUserInfo, userInfo } = userStore();
   const [initialStep, setInitialStep] = useState<number>(1);
+  const [isLessthan768] = useMediaQuery('(max-width: 768px)');
 
   useEffect(() => {
     const makeUser = async () => {
@@ -80,9 +86,9 @@ function UserInfo() {
   };
 
   const KashPopup = () => {
-    let btnText = 'Create Profile';
+    let btnText = 'Claim Your Free Profile';
     if (!userInfo) {
-      btnText = 'Create Profile';
+      btnText = 'Claim Your Free Profile';
     } else if (!userInfo.isVerified) {
       btnText = 'Verify Your Profile';
     } else if (!userInfo.isTalentFilled) {
@@ -102,14 +108,13 @@ function UserInfo() {
         <ModalOverlay />
         <ModalContent>
           <ModalHeader mt={3} mb={-2} textAlign={'center'}>
-            Create A Profile on Earn
+            Don&apos;t Miss a Chance to Earn
           </ModalHeader>
           <ModalCloseButton mt={3} />
           <ModalBody>
             <Text mb={4} textAlign={'center'}>
-              Before you continue, you&apos;ll need to create a Superteam
-              Profile. It&apos;ll take less than 53 seconds, but comes with a
-              bunch of benefits!
+              If you want to get the full value out of Superteam Earn,
+              you&apos;ll need to claim your profile. It only takes ~53 seconds.
             </Text>
             <AspectRatio mb={2} borderRadius={3} ratio={16 / 9}>
               <iframe
@@ -151,7 +156,7 @@ function UserInfo() {
       const timer = setTimeout(() => {
         onPopupOpen();
         sessionStorage.setItem('earnPopupShown', 'true');
-      }, 15000);
+      }, 30000);
       return () => clearTimeout(timer);
     }
     return () => {};
@@ -164,6 +169,10 @@ function UserInfo() {
     await wallet.adapter.disconnect();
     setUserInfo({});
   };
+
+  const displayValue = isMobile
+    ? { base: 'block', md: 'none' }
+    : { base: 'none', md: 'block' };
 
   return (
     <>
@@ -183,7 +192,7 @@ function UserInfo() {
         <>
           {userInfo && !userInfo.isVerified && (
             <Button
-              display={{ base: 'none', md: 'block' }}
+              display={displayValue}
               fontSize="xs"
               onClick={() => {
                 setInitialStep(2);
@@ -200,7 +209,7 @@ function UserInfo() {
             !userInfo.isTalentFilled &&
             userInfo.isVerified && (
               <Button
-                display={{ base: 'none', md: 'block' }}
+                display={displayValue}
                 fontSize="xs"
                 onClick={() => {
                   router.push('/new');
@@ -212,7 +221,12 @@ function UserInfo() {
               </Button>
             )}
           <Menu>
-            <MenuButton minW={0} cursor={'pointer'} rounded={'full'}>
+            <MenuButton
+              display={isMobile ? 'none' : 'flex'}
+              minW={0}
+              cursor={'pointer'}
+              rounded={'full'}
+            >
               <Flex align="center">
                 {userInfo?.photo ? (
                   <Image
@@ -229,7 +243,7 @@ function UserInfo() {
                     variant="marble"
                   />
                 )}
-                <Box display={{ base: 'none', md: 'block' }} ml={2}>
+                <Box display={displayValue} ml={2}>
                   {!userInfo?.firstName ? (
                     <Text color="brand.slate.800" fontSize="sm">
                       New User
@@ -275,19 +289,20 @@ function UserInfo() {
                   Edit Profile
                 </MenuItem>
               )}
-              {(userInfo?.role === 'GOD' || !!userInfo?.currentSponsorId) && (
-                <MenuItem
-                  color="brand.slate.500"
-                  fontSize="sm"
-                  fontWeight={600}
-                  onClick={() => {
-                    router.push('/dashboard/bounties');
-                  }}
-                >
-                  Sponsor Dashboard
-                </MenuItem>
-              )}
-              {userInfo?.role === 'GOD' && (
+              {!isLessthan768 &&
+                (userInfo?.role === 'GOD' || !!userInfo?.currentSponsorId) && (
+                  <MenuItem
+                    color="brand.slate.500"
+                    fontSize="sm"
+                    fontWeight={600}
+                    onClick={() => {
+                      router.push('/dashboard/bounties');
+                    }}
+                  >
+                    Sponsor Dashboard
+                  </MenuItem>
+                )}
+              {!isLessthan768 && userInfo?.role === 'GOD' && (
                 <>
                   <MenuDivider />
                   <MenuGroup
@@ -326,10 +341,10 @@ function UserInfo() {
         </>
       ) : (
         <>
-          <HStack gap={2}>
-            <HStack gap={0}>
+          <HStack flexDir={{ base: 'column', md: 'row' }} gap={2}>
+            <HStack gap={0} w={{ base: '100%', md: 'auto' }}>
               <Button
-                display={{ base: 'none', md: 'block' }}
+                display={isMobile ? 'none' : { base: 'none', md: 'block' }}
                 fontSize="xs"
                 onClick={() => {
                   router.push('/sponsor');
@@ -340,7 +355,8 @@ function UserInfo() {
                 Create A Bounty
               </Button>
               <Button
-                display={{ base: 'none', md: 'block' }}
+                display={displayValue}
+                w={{ base: '100%', md: 'auto' }}
                 fontSize="xs"
                 onClick={() => {
                   onOpen();
@@ -352,7 +368,8 @@ function UserInfo() {
               </Button>
             </HStack>
             <Button
-              display={{ base: 'none', md: 'block' }}
+              display={displayValue}
+              w={{ base: '100%' }}
               px={4}
               fontSize="xs"
               onClick={() => {
@@ -369,5 +386,3 @@ function UserInfo() {
     </>
   );
 }
-
-export default UserInfo;

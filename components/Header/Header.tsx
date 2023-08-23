@@ -277,10 +277,14 @@ export default function WithSubnavigation() {
           <UserInfo />
         </Stack>
       </Flex>
-
-      <Collapse animateOpacity in={isOpen}>
-        <MobileNav />
-      </Collapse>
+      <Box bg="white">
+        <Collapse animateOpacity in={isOpen}>
+          <Flex direction="column" w="96%" mx={'auto'}>
+            <UserInfo isMobile={true} />
+          </Flex>
+          <MobileNav />
+        </Collapse>
+      </Box>
     </Box>
   );
 }

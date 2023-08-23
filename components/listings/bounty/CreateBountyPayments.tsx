@@ -341,7 +341,7 @@ export const CreatebountyPayment = ({
           </Text>
         )}
         <Toaster />
-        <VStack gap={4} w={'full'} pt={10}>
+        <VStack gap={4} w={'full'} pt={4}>
           {!isEditMode && (
             <Button
               w="100%"
