@@ -13,7 +13,8 @@ import type { ReactNode } from 'react';
 import React, { useEffect, useState } from 'react';
 import { Toaster } from 'react-hot-toast';
 
-import Banner from '@/components/home/Banner';
+import LoginWrapper from '@/components/Header/LoginWrapper';
+import HomeBanner from '@/components/home/Banner';
 import SideBar from '@/components/home/SideBar';
 import SearchLoading from '@/components/Loading/searchLoading';
 import { CategoryBanner } from '@/components/misc/listingsCard';
@@ -43,6 +44,7 @@ function Home(props: IDefaultProps) {
   const [isTotalLoading, setIsTotalLoading] = useState(true);
   const [showSearch, setShowSearch] = useState(false);
   const [showCategoryBanner, setShowCategoryBanner] = useState(false);
+  const [triggerLogin, setTriggerLogin] = useState(false);
 
   const [sidebarInfo, setSidebarInfo] = useState<SidebarType>({});
 
@@ -176,12 +178,16 @@ function Home(props: IDefaultProps) {
             borderRight={{ base: 'none', md: '1px solid' }}
             borderRightColor={{ base: 'none', md: 'blackAlpha.200' }}
           >
+            <LoginWrapper
+              triggerLogin={triggerLogin}
+              setTriggerLogin={setTriggerLogin}
+            />
             {showSearch ? (
               <SearchLoading />
             ) : (
               <Box w="full">
                 {!userInfo?.id && !router.asPath.includes('regions') && (
-                  <Banner />
+                  <HomeBanner setTriggerLogin={setTriggerLogin} />
                 )}
                 {showCategoryBanner && (
                   <CategoryBanner

@@ -65,29 +65,6 @@ const NAV_ITEMS: Array<NavItem> = [
   },
 ];
 
-// const DesktopSubNav = ({ label, href }: NavItem) => {
-//   return (
-//     <Link
-//       display={'block'}
-//       mt={0}
-//       px={4}
-//       py={2}
-//       _hover={{ bg: 'brand.slate.100' }}
-//       href={href}
-//       role={'group'}
-//     >
-//       <Text
-//         color="slate.gray.500"
-//         fontSize="sm"
-//         _groupHover={{ color: 'brand.purple' }}
-//         transition={'all .3s ease'}
-//       >
-//         {label}
-//       </Text>
-//     </Link>
-//   );
-// };
-
 const MobileNavItem = ({ label, children, href }: NavItem) => {
   const { isOpen, onToggle } = useDisclosure();
   return (
@@ -279,7 +256,7 @@ export default function WithSubnavigation() {
       </Flex>
       <Box bg="white">
         <Collapse animateOpacity in={isOpen}>
-          <Flex direction="column" w="96%" mx={'auto'}>
+          <Flex direction="column" w="96%" mt={5} mx={'auto'}>
             <UserInfo isMobile={true} />
           </Flex>
           <MobileNav />
