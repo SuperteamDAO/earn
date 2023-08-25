@@ -170,7 +170,7 @@ model Submission {
   paymentDetails     Json?
   isActive           Boolean     @default(true)
   isArchived         Boolean     @default(false)
-  createdAt          DateTime //update to @default(now()) later
+  createdAt          DateTime    @default(now())
   updatedAt          DateTime    @updatedAt
   like               Json?
   likes              Int?
@@ -277,7 +277,7 @@ model PoW {
   skills      Json?
   subSkills   Json?
   link        String
-  createdAt   DateTime @default(now())
+  createdAt   DateTime //update to @default(now()) later
   user        User     @relation(fields: [userId], references: [id])
 
   @@index([userId])
