@@ -152,6 +152,10 @@ function Bounties() {
     }
   };
 
+  const handleViewSubmissions = (slug: string | undefined) => {
+    router.push(`/dashboard/bounties/${slug}/submissions/`);
+  };
+
   return (
     <Sidebar>
       <Modal isOpen={publishIsOpen} onClose={publishOnClose}>
@@ -414,12 +418,14 @@ function Bounties() {
                         currentBounty.isPublished && (
                           <Button
                             w="full"
-                            leftIcon={<ViewOffIcon />}
-                            onClick={() => handleUnpublish(currentBounty)}
+                            leftIcon={<AiOutlineOrderedList />}
+                            onClick={() =>
+                              handleViewSubmissions(currentBounty.slug)
+                            }
                             size="sm"
                             variant="outline"
                           >
-                            Unpublish
+                            Submissions
                           </Button>
                         )}
                       {currentBounty.status === 'OPEN' &&
@@ -466,15 +472,12 @@ function Bounties() {
                             </MenuItem>
                           </NextLink>
                           <MenuDivider />
-                          <NextLink
-                            href={`/dashboard/bounties/${currentBounty.slug}/submissions/`}
-                            passHref
+                          <MenuItem
+                            icon={<ViewOffIcon />}
+                            onClick={() => handleUnpublish(currentBounty)}
                           >
-                            <MenuItem icon={<AiOutlineOrderedList />}>
-                              View Submissions
-                            </MenuItem>
-                          </NextLink>
-                          {/* <MenuItem icon={<AiOutlineEdit />}>Edit Bounty</MenuItem> */}
+                            Unpublish
+                          </MenuItem>
                         </MenuList>
                       </Menu>
                     </Td>
