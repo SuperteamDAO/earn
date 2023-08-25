@@ -263,9 +263,24 @@ model User {
   Grants           Grants[]
   UserInvites      UserInvites[]
   SubscribeBounty  SubscribeBounty[]
+  PoW              PoW[]
 
   @@index([email, publicKey, username])
   @@index([currentSponsorId])
+}
+
+model PoW {
+  id          String   @id @default(uuid())
+  userId      String
+  title       String
+  description String   @db.Text
+  skills      Json?
+  subSkills   Json?
+  link        String
+  createdAt   DateTime //update to @default(now()) later
+  user        User     @relation(fields: [userId], references: [id])
+
+  @@index([userId])
 }
 
 model UserSponsors {
