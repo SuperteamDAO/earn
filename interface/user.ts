@@ -1,6 +1,8 @@
 import type { SponsorType } from '@/interface/sponsor';
 import type { UserSponsor } from '@/interface/userSponsor';
 
+import type { PoW } from './pow';
+
 interface Notifications {
   label: string;
   timestamp: number;
@@ -44,6 +46,7 @@ interface User {
   currentSponsorId?: string;
   currentSponsor?: SponsorType;
   UserSponsors?: UserSponsor[];
+  PoW?: PoW[];
   private?: boolean;
 }
 export type { Notifications, User };

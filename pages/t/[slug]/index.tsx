@@ -19,6 +19,7 @@ import React, { useEffect, useState } from 'react';
 import ErrorSection from '@/components/shared/EmptySection';
 import LoadingSection from '@/components/shared/LoadingSection';
 import TalentBio from '@/components/TalentBio';
+import type { PoW } from '@/interface/pow';
 import type { Skills } from '@/interface/skills';
 import { Default } from '@/layouts/Default';
 import { Meta } from '@/layouts/Meta';
@@ -200,56 +201,6 @@ const Chip = ({ icon, label, value }: ChipType) => {
   );
 };
 
-// const Interest = ({ label, icon }: { label: string; icon: string }) => {
-//   return (
-//     <Flex
-//       align={'center'}
-//       gap={3}
-//       px={2}
-//       py={1}
-//       border={'1px solid'}
-//       borderColor={'gray.200'}
-//       borderRadius={'1rem'}
-//     >
-//       <Box>
-//         <Image w={5} h={5} alt="emoji" src={icon} />
-//       </Box>
-//       <Text>{label}</Text>
-//     </Flex>
-//   );
-// };
-
-// const colors = ['Red', 'Orange', 'Yellow', 'Green', 'Blue', 'Indigo', 'Violet'];
-
-// const CommunityChip = ({ label }: { label: string }) => {
-//   return (
-//     <Flex
-//       w={'fit-content'}
-//       mt={'0.8125rem'}
-//       px={'0.375rem'}
-//       py={'5.1px'}
-//       border={'0.6px solid #E2E8EF'}
-//       borderRadius={'0.3563rem'}
-//     >
-//       <Box
-//         overflow={'hidden'}
-//         w={'1.5625rem'}
-//         h={'1.5625rem'}
-//         mr={'0.6312rem'}
-//         borderRadius={'full'}
-//       >
-//         <Image w={'100%'} h={'100%'} alt="" src={CommunityImage[label]} />
-//       </Box>
-//       <Box>
-//         <Text fontSize={'0.625rem'}>{label}</Text>
-//         <Text color={'gray.400'} fontSize={'0.5rem'}>
-//           Member
-//         </Text>
-//       </Box>
-//     </Flex>
-//   );
-// };
-
 const SkillsAndInterests = ({
   location,
   skills,
@@ -369,6 +320,23 @@ function TalentProfile({ slug }: TalentProps) {
   const [isloading, setIsloading] = useState<boolean>(false);
   const [error, setError] = useState(false);
   const [nfts, setNFTs] = useState<NFT[]>();
+  const [pow, setPow] = useState<PoW[]>([]);
+
+  useEffect(() => {
+    const fetchPoW = async () => {
+      const response = await axios.get('/api/pow/get', {
+        params: {
+          userId: talent?.id,
+        },
+      });
+      setPow(response.data);
+    };
+
+    if (talent?.id) {
+      fetchPoW();
+    }
+  }, [talent?.id]);
+
   const getNFTs = async (wallet: string) => {
     const data = {
       jsonrpc: '2.0',
@@ -489,7 +457,7 @@ function TalentProfile({ slug }: TalentProps) {
               py={'35px'}
               bg={'#F7FAFC'}
             >
-              {talent?.pow?.length! > 0 && talent.pow?.startsWith('[') && (
+              {pow?.length! > 0 && (
                 <>
                   <Box
                     w="full"
@@ -503,31 +471,28 @@ function TalentProfile({ slug }: TalentProps) {
                     </Text>
                   </Box>
                   <Flex align="start" wrap={'wrap'} gap={10}>
-                    {JSON.parse(talent?.pow!).map(
-                      (ele: string, idx: number) => {
-                        const { title, link, description } = JSON.parse(ele);
-                        return (
-                          <LinkPreview
-                            key={`${idx}lk`}
-                            data={{
-                              description,
-                              link,
-                              title,
-                            }}
-                          />
-                        );
-                      }
-                    )}
+                    {pow!.map((ele) => {
+                      const { title, link, description } = ele;
+                      return (
+                        <LinkPreview
+                          key={`${ele.id}lk`}
+                          data={{
+                            description,
+                            link,
+                            title,
+                          }}
+                        />
+                      );
+                    })}
                   </Flex>
                 </>
               )}
               <EduNft nfts={nfts ?? []} />
             </Box>
-
             <Box
               alignItems={'start'}
               justifyContent={'center'}
-              display={talent?.pow?.length !== 0 ? 'none' : 'flex'}
+              display={pow?.length !== 0 ? 'none' : 'flex'}
               w={'100%'}
               pt={'10rem'}
             >

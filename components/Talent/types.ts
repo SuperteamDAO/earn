@@ -1,3 +1,4 @@
+import type { PoW } from '@/interface/pow';
 import type { Skills } from '@/interface/skills';
 
 export interface AboutYouType {
@@ -26,7 +27,7 @@ export interface LinksType {
   linkedin: string;
   website: string;
   telegram: string;
-  pow: string;
+  pow: PoW[];
 }
 
 export interface UserStoreType {
