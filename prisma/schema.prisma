@@ -277,7 +277,7 @@ model PoW {
   skills      Json?
   subSkills   Json?
   link        String
-  createdAt   DateTime //update to @default(now()) later
+  createdAt   DateTime @default(now())
   user        User     @relation(fields: [userId], references: [id])
 
   @@index([userId])

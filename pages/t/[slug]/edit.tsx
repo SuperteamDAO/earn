@@ -36,6 +36,7 @@ import {
   workExp,
   workType,
 } from '@/constants';
+import type { PoW } from '@/interface/pow';
 import type { SubSkillsType } from '@/interface/skills';
 import { SkillList } from '@/interface/skills';
 import { Default } from '@/layouts/Default';
@@ -66,6 +67,7 @@ type FormData = {
   pow?: string;
   skills?: any;
   private: boolean;
+  PoW?: PoW[];
 };
 
 const socialLinkFields = [
@@ -126,7 +128,7 @@ export default function EditProfilePage() {
 
   const router = useRouter();
 
-  const [pow, setPow] = useState<any[]>([]);
+  const [pow, setPow] = useState<PoW[]>([]);
   const [selectedProject, setSelectedProject] = useState<number | null>(null);
 
   const { isOpen, onOpen, onClose } = useDisclosure();
@@ -203,11 +205,6 @@ export default function EditProfilePage() {
         setValue('private', userInfo.private);
       }
 
-      if (userInfo.pow) {
-        const powData = JSON.parse(userInfo.pow);
-        setPow(Array.isArray(powData) ? powData : [powData]);
-      }
-
       if (userInfo?.skills && Array.isArray(userInfo.skills)) {
         const { skills: parsedSkills, subSkills: parsedSubSkills } =
           parseSkillsAndSubskills(userInfo.skills);
@@ -222,6 +219,21 @@ export default function EditProfilePage() {
       }
     }
   }, [userInfo, setValue]);
+
+  useEffect(() => {
+    const fetchPoW = async () => {
+      const response = await axios.get('/api/pow/get', {
+        params: {
+          userId: userInfo?.id,
+        },
+      });
+      setPow(response.data);
+    };
+
+    if (userInfo?.id) {
+      fetchPoW();
+    }
+  }, [userInfo?.id]);
 
   const onSubmit = async (data: FormData) => {
     try {
@@ -314,7 +326,6 @@ export default function EditProfilePage() {
         ...data,
         interests: interestsJSON,
         community: communityJSON,
-        pow: JSON.stringify(pow),
         skills: combinedSkills,
       };
 
@@ -334,7 +345,12 @@ export default function EditProfilePage() {
         id: userInfo?.id,
         ...finalUpdatedData,
       });
-      console.log(finalUpdatedData);
+
+      await axios.post('/api/pow/create', {
+        userId: userInfo?.id,
+        pows: pow,
+      });
+
       setUserInfo(response.data);
       console.log('Profile updated successfully!');
       toast({
@@ -639,11 +655,10 @@ export default function EditProfilePage() {
 
                 <FormLabel color={'brand.slate.500'}>Proof of Work</FormLabel>
                 <Box>
-                  {pow.map((ele, idx) => {
-                    const data = JSON.parse(ele);
+                  {pow.map((data, idx) => {
                     return (
                       <Flex
-                        key={data.title}
+                        key={data.id}
                         align={'center'}
                         mt="2"
                         mb={'1.5'}
@@ -668,11 +683,9 @@ export default function EditProfilePage() {
                           />
                           <DeleteIcon
                             onClick={() => {
-                              setPow((elem) => {
-                                return [
-                                  ...elem.filter((_ele, id) => idx !== id),
-                                ];
-                              });
+                              setPow((prevPow) =>
+                                prevPow.filter((_ele, id) => idx !== id)
+                              );
                             }}
                             cursor={'pointer'}
                             fontSize={'0.8rem'}

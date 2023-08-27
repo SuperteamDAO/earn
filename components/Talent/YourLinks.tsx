@@ -1,21 +1,13 @@
-import { AddIcon, DeleteIcon, LinkIcon } from '@chakra-ui/icons';
+import { AddIcon, DeleteIcon, EditIcon } from '@chakra-ui/icons';
 import {
   Box,
   Button,
   Center,
   Flex,
   FormControl,
-  FormLabel,
   Image,
   Input,
-  InputGroup,
-  InputLeftElement,
-  Modal,
-  ModalBody,
-  ModalContent,
-  ModalOverlay,
   Text,
-  Textarea,
   useDisclosure,
 } from '@chakra-ui/react';
 import axios from 'axios';
@@ -24,11 +16,11 @@ import { useState } from 'react';
 import type { FieldValues, UseFormRegister } from 'react-hook-form';
 import { useForm } from 'react-hook-form';
 
-import type { MultiSelectOptions } from '@/constants';
+import type { PoW } from '@/interface/pow';
 import { userStore } from '@/store/user';
 import { isValidHttpUrl } from '@/utils/validUrl';
 
-import { SkillSelect } from '../misc/SkillSelect';
+import { AddProject } from '../Form/AddProject';
 import type { UserStoreType } from './types';
 
 export const socials = [
@@ -143,143 +135,6 @@ const SocialInput = ({
   );
 };
 
-const AddProject = ({
-  isOpen,
-  onClose,
-  setPow,
-}: {
-  isOpen: boolean;
-  onClose: () => void;
-  pow: string[];
-  setPow: Dispatch<SetStateAction<string[]>>;
-}) => {
-  const { register, handleSubmit } = useForm();
-  const [skillsError, setSkillsError] = useState<boolean>(false);
-  const [linkError, setLinkError] = useState<boolean>(false);
-
-  const [skills, setSkills] = useState<MultiSelectOptions[]>([]);
-  const [subSkills, setSubSkills] = useState<MultiSelectOptions[]>([]);
-
-  const onSubmit = (data: any) => {
-    let error = false;
-
-    if (!isValidHttpUrl(data.link)) {
-      setLinkError(true);
-      error = true;
-    } else {
-      setLinkError(false);
-    }
-    if (skills.length === 0 || subSkills.length === 0) {
-      setSkillsError(true);
-      error = true;
-    } else {
-      setSkillsError(false);
-    }
-
-    if (error) {
-      return false;
-    }
-
-    setPow((elm) => [
-      ...elm,
-      JSON.stringify({
-        ...data,
-        skills: skills.map((ele) => ele.value),
-        subSkills: subSkills.map((ele) => ele.value),
-      }),
-    ]);
-    onClose();
-    return null;
-  };
-
-  return (
-    <Modal isOpen={isOpen} onClose={onClose}>
-      <ModalOverlay />
-      <ModalContent maxW={'607px'} py={'1.4375rem'}>
-        <ModalBody>
-          <form onSubmit={handleSubmit(onSubmit)}>
-            <FormControl isRequired>
-              <Box w={'full'} mb={'1.25rem'}>
-                <FormLabel color={'brand.slate.500'}>Project Title</FormLabel>
-                <Input
-                  borderColor="brand.slate.300"
-                  _placeholder={{
-                    color: 'brand.slate.300',
-                  }}
-                  focusBorderColor="brand.purple"
-                  id="title"
-                  placeholder="Project Title"
-                  {...register('title', { required: true })}
-                />
-              </Box>
-              <Box w={'full'} mb={'1.25rem'}>
-                <FormLabel color={'brand.slate.500'}>
-                  Describe Your Work
-                </FormLabel>
-                <Textarea
-                  borderColor="brand.slate.300"
-                  _placeholder={{
-                    color: 'brand.slate.300',
-                  }}
-                  focusBorderColor="brand.purple"
-                  placeholder="About the Project"
-                  {...register('description', { required: true })}
-                />
-              </Box>
-              <SkillSelect
-                skills={skills}
-                subSkills={subSkills}
-                setSkills={setSkills}
-                setSubSkills={setSubSkills}
-              />
-
-              <Box w={'full'} mb={'1.25rem'}>
-                <FormLabel color={'brand.slate.500'}>Link</FormLabel>
-                <InputGroup _placeholder={{ color: 'gray.500' }}>
-                  <InputLeftElement
-                    _placeholder={{ color: 'gray.500' }}
-                    pointerEvents="none"
-                    // eslint-disable-next-line react/no-children-prop
-                    children={<LinkIcon color="gray.300" />}
-                  />
-                  <Input
-                    borderColor="brand.slate.300"
-                    _placeholder={{
-                      color: 'brand.slate.300',
-                    }}
-                    focusBorderColor="brand.purple"
-                    placeholder="https://example.com"
-                    {...register('link', { required: true })}
-                  />
-                </InputGroup>
-              </Box>
-              <Box w={'full'} mb={'1.25rem'}>
-                {skillsError && (
-                  <Text color={'red'}>Please add Skills and Sub Skills</Text>
-                )}
-                {linkError && (
-                  <Text color={'red'}>
-                    Link URL needs to contain &quot;https://&quot; prefix
-                  </Text>
-                )}
-              </Box>
-              <Button
-                w={'full'}
-                h="50px"
-                color={'white'}
-                bg={'rgb(101, 98, 255)'}
-                type="submit"
-              >
-                Add Project
-              </Button>
-            </FormControl>
-          </form>
-        </ModalBody>
-      </ModalContent>
-    </Modal>
-  );
-};
-
 interface Props {
   setStep?: Dispatch<SetStateAction<number>>;
   success: () => void;
@@ -289,10 +144,11 @@ interface Props {
 function YourLinks({ success, useFormStore }: Props) {
   const { isOpen, onOpen, onClose } = useDisclosure();
   const { form } = useFormStore();
-  const [pow, setPow] = useState<string[]>([]);
+  const [pow, setPow] = useState<PoW[]>([]);
   const [socialsError, setsocialsError] = useState<boolean>(false);
   const [urlError, seturlError] = useState<boolean>(false);
   const [isLoading, setisLoading] = useState<boolean>(false);
+  const [selectedProject, setSelectedProject] = useState<number | null>(null);
 
   const { updateState } = useFormStore();
 
@@ -309,7 +165,7 @@ function YourLinks({ success, useFormStore }: Props) {
       website: string;
     },
     // eslint-disable-next-line @typescript-eslint/no-shadow
-    pow: string
+    pow: PoW[]
   ) => {
     // atleast one URL
     if (
@@ -349,16 +205,21 @@ function YourLinks({ success, useFormStore }: Props) {
     updateState({ pow, ...socials });
     setisLoading(true);
     try {
+      await axios.post('/api/pow/create', {
+        userId: userInfo?.id,
+        pows: pow,
+      });
+
       const updateOptions = {
         id: userInfo?.id,
         ...form,
-        pow,
         ...socials,
         superteamLevel: 'Lurker',
         isTalentFilled: true,
       };
       // eslint-disable-next-line unused-imports/no-unused-vars
       const { subSkills, ...finalOptions } = updateOptions;
+
       const updatedUser = await axios.post('/api/user/update/', finalOptions);
       await axios.post('/api/email/manual/welcomeTalent/', {
         email: userInfo?.email,
@@ -383,7 +244,7 @@ function YourLinks({ success, useFormStore }: Props) {
         telegram: data.Telegram,
         website: data.Website,
       },
-      JSON.stringify(pow)
+      pow
     );
   };
   return (
@@ -403,39 +264,43 @@ function YourLinks({ success, useFormStore }: Props) {
               Adding more PoW increases your chance of getting work
             </Text>
             <Box>
-              {pow.map((ele, idx) => {
-                const data = JSON.parse(ele);
-                return (
-                  <Flex
-                    key={data.title}
-                    align={'center'}
-                    mt="2"
-                    mb={'1.5'}
-                    px={'1rem'}
-                    py={'0.5rem'}
-                    color={'brand.slate.500'}
-                    border={'1px solid gray'}
-                    borderColor="brand.slate.300"
-                    rounded={'md'}
-                  >
-                    <Text w={'full'} color={'gray.800'} fontSize={'0.8rem'}>
-                      {data.title}
-                    </Text>
-                    <Center columnGap={'0.8rem'}>
-                      {/* <EditIcon onClick={() => { setselectedProject(idx) }} cursor={"pointer"} fontSize={"0.8rem"} /> */}
-                      <DeleteIcon
-                        onClick={() => {
-                          setPow((elem) => {
-                            return [...elem.filter((_ele, id) => idx !== id)];
-                          });
-                        }}
-                        cursor={'pointer'}
-                        fontSize={'0.8rem'}
-                      />
-                    </Center>
-                  </Flex>
-                );
-              })}
+              {pow.map((data, idx) => (
+                <Flex
+                  key={data.id}
+                  align={'center'}
+                  mt="2"
+                  mb={'1.5'}
+                  px={'1rem'}
+                  py={'0.5rem'}
+                  color={'brand.slate.500'}
+                  border={'1px solid gray'}
+                  borderColor="brand.slate.300"
+                  rounded={'md'}
+                >
+                  <Text w={'full'} color={'gray.800'} fontSize={'0.8rem'}>
+                    {data.title}
+                  </Text>
+                  <Center columnGap={'0.8rem'}>
+                    <EditIcon
+                      onClick={() => {
+                        setSelectedProject(idx);
+                        onOpen();
+                      }}
+                      cursor={'pointer'}
+                      fontSize={'0.8rem'}
+                    />
+                    <DeleteIcon
+                      onClick={() => {
+                        setPow((prevPow) =>
+                          prevPow.filter((_ele, id) => idx !== id)
+                        );
+                      }}
+                      cursor={'pointer'}
+                      fontSize={'0.8rem'}
+                    />
+                  </Center>
+                </Flex>
+              ))}
             </Box>
             <Button
               w={'full'}
@@ -475,7 +340,14 @@ function YourLinks({ success, useFormStore }: Props) {
       </Box>
       <AddProject
         key={`${pow.length}project`}
-        {...{ isOpen, onClose, pow, setPow }}
+        {...{
+          isOpen,
+          onClose,
+          pow,
+          setPow,
+          selectedProject,
+          setSelectedProject,
+        }}
       />
     </>
   );

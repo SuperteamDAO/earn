@@ -19,6 +19,7 @@ import { useEffect, useState } from 'react';
 import { useForm } from 'react-hook-form';
 
 import type { MultiSelectOptions } from '@/constants';
+import type { PoW } from '@/interface/pow';
 import { isValidHttpUrl } from '@/utils/validUrl';
 
 import { SkillSelect } from '../misc/SkillSelect';
@@ -26,10 +27,10 @@ import { SkillSelect } from '../misc/SkillSelect';
 type AddProjectProps = {
   isOpen: boolean;
   onClose: () => void;
-  pow: any[];
-  setPow: Dispatch<SetStateAction<string[]>>;
-  selectedProject: number | null;
-  setSelectedProject: (selectedProject: number | null) => void;
+  pow: PoW[];
+  setPow: Dispatch<SetStateAction<PoW[]>>;
+  selectedProject?: number | null;
+  setSelectedProject?: (selectedProject: number | null) => void;
 };
 
 export const AddProject = ({
@@ -50,37 +51,37 @@ export const AddProject = ({
 
   const [skillsError, setSkillsError] = useState<boolean>(false);
   const [linkError, setLinkError] = useState<boolean>(false);
-
   const [skills, setSkills] = useState<MultiSelectOptions[]>([]);
   const [subSkills, setSubSkills] = useState<MultiSelectOptions[]>([]);
 
-  const projectToEdit = selectedProject !== null ? pow[selectedProject] : null;
+  const projectToEdit =
+    selectedProject !== null ? pow[selectedProject as number] : null;
 
   useEffect(() => {
-    if (projectToEdit) {
-      const parsedProject = JSON.parse(projectToEdit);
-      setValue('title', parsedProject.title);
-      setValue('description', parsedProject.description);
-      setValue('link', parsedProject.link);
-      if (parsedProject.skills) {
-        setSkills(
-          parsedProject.skills.map((value: string) => ({ label: value, value }))
-        );
-      } else {
-        setSkills([]);
+    if (!isOpen) {
+      setValue('title', '');
+      setValue('description', '');
+      setValue('link', '');
+      setSkills([]);
+      setSubSkills([]);
+      if (setSelectedProject) {
+        setSelectedProject(null);
       }
-      if (parsedProject.subSkills) {
-        setSubSkills(
-          parsedProject.subSkills.map((value: string) => ({
-            label: value,
-            value,
-          }))
-        );
-      } else {
-        setSubSkills([]);
-      }
+    } else if (projectToEdit && setSelectedProject) {
+      setValue('title', projectToEdit.title);
+      setValue('description', projectToEdit.description);
+      setValue('link', projectToEdit.link);
+      setSkills(
+        projectToEdit.skills.map((value: string) => ({ label: value, value }))
+      );
+      setSubSkills(
+        projectToEdit.subSkills.map((value: string) => ({
+          label: value,
+          value,
+        }))
+      );
     }
-  }, [projectToEdit, setValue]);
+  }, [isOpen, projectToEdit, setValue, setSelectedProject]);
 
   const onSubmit = (data: any) => {
     let error = false;
@@ -103,16 +104,21 @@ export const AddProject = ({
       return false;
     }
 
-    const projectData = JSON.stringify({
-      ...data,
+    const projectData: PoW = {
+      title: data.title,
+      description: data.description,
+      link: data.link,
       skills: skills.map((ele) => ele.value),
       subSkills: subSkills.map((ele) => ele.value),
-    });
+    };
 
-    if (selectedProject !== null) {
+    if (selectedProject !== null && setSelectedProject) {
       setPow((prevPow) => {
         const updatedPow = [...prevPow];
-        updatedPow[selectedProject] = projectData;
+        updatedPow[selectedProject as number] = {
+          ...updatedPow[selectedProject as number],
+          ...projectData,
+        };
         return updatedPow;
       });
       setSelectedProject(null);
