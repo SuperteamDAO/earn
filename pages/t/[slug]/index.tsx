@@ -457,7 +457,7 @@ function TalentProfile({ slug }: TalentProps) {
               py={'35px'}
               bg={'#F7FAFC'}
             >
-              {pow?.length! > 0 && (
+              {pow?.length > 0 && (
                 <>
                   <Box
                     w="full"
@@ -471,7 +471,7 @@ function TalentProfile({ slug }: TalentProps) {
                     </Text>
                   </Box>
                   <Flex align="start" wrap={'wrap'} gap={10}>
-                    {pow!.map((ele) => {
+                    {pow.map((ele) => {
                       const { title, link, description } = ele;
                       return (
                         <LinkPreview

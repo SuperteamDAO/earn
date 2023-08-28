@@ -106,7 +106,7 @@ function YourWork({ setStep, useFormStore }: Step1Props) {
       <form style={{ width: '100%' }} onSubmit={handleSubmit(onSubmit)}>
         <FormControl w="full" mb={5} isRequired>
           <Flex
-            direction={{ base: 'column', md: 'row' }}
+            direction={'column'}
             gap={'1.25rem'}
             w={'full'}
             mb={'1.25rem'}

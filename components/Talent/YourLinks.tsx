@@ -202,7 +202,7 @@ function YourLinks({ success, useFormStore }: Props) {
       return;
     }
 
-    updateState({ pow, ...socials });
+    updateState({ ...socials });
     setisLoading(true);
     try {
       await axios.post('/api/pow/create', {
