@@ -471,13 +471,20 @@ function Bounties() {
                               Edit Bounty
                             </MenuItem>
                           </NextLink>
-                          <MenuDivider />
-                          <MenuItem
-                            icon={<ViewOffIcon />}
-                            onClick={() => handleUnpublish(currentBounty)}
-                          >
-                            Unpublish
-                          </MenuItem>
+                          {!(
+                            currentBounty.status === 'OPEN' &&
+                            !currentBounty.isPublished
+                          ) && (
+                            <>
+                              <MenuDivider />
+                              <MenuItem
+                                icon={<ViewOffIcon />}
+                                onClick={() => handleUnpublish(currentBounty)}
+                              >
+                                Unpublish
+                              </MenuItem>
+                            </>
+                          )}
                         </MenuList>
                       </Menu>
                     </Td>
