@@ -322,6 +322,8 @@ export default function EditProfilePage() {
         };
       });
 
+      console.log(combinedSkills);
+
       const updatedData = {
         ...data,
         interests: interestsJSON,
