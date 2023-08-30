@@ -1,3 +1,5 @@
+import type { PoW } from './pow';
+
 export interface Talent {
   id: string;
   publickey: string;
@@ -26,4 +28,5 @@ export interface Talent {
   twitter?: string;
   website?: string;
   notifications?: string;
+  PoW?: PoW[];
 }

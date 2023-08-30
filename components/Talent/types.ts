@@ -26,7 +26,6 @@ export interface LinksType {
   linkedin: string;
   website: string;
   telegram: string;
-  pow: string;
 }
 
 export interface UserStoreType {

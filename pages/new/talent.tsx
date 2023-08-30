@@ -45,7 +45,6 @@ const useFormStore = create<UserStoreType>()((set) => ({
     linkedin: '',
     website: '',
     telegram: '',
-    pow: '',
     private: false,
   },
   otp: undefined,
