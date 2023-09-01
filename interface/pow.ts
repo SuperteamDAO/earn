@@ -7,4 +7,5 @@ export interface PoW {
   subSkills: string[];
   link: string;
   createdAt?: string;
+  updatedAt?: string;
 }

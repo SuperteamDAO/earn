@@ -1,0 +1,198 @@
+import { ArrowForwardIcon } from '@chakra-ui/icons';
+import {
+  Avatar,
+  Box,
+  Button,
+  Flex,
+  Image,
+  LinkBox,
+  LinkOverlay,
+  Text,
+} from '@chakra-ui/react';
+import axios from 'axios';
+import React, { useEffect, useState } from 'react';
+import toast from 'react-hot-toast';
+import { AiFillHeart } from 'react-icons/ai';
+
+import { tokenList } from '@/constants';
+import { PrizeListMap } from '@/interface/listings';
+import type { SubmissionWithUser } from '@/interface/submission';
+import type { User } from '@/interface/user';
+import { userStore } from '@/store/user';
+import { timeAgoShort } from '@/utils/timeAgo';
+import { getURL } from '@/utils/validUrl';
+
+import OgImageViewer from '../misc/ogImageViewer';
+
+export default function SubmissionCard({
+  talent,
+  sub,
+}: {
+  talent: User;
+  sub: SubmissionWithUser;
+}) {
+  const { userInfo } = userStore();
+  const [isLoading, setIsLoading] = useState<boolean>(false);
+  const [isLiked, setIsLiked] = useState<boolean>(
+    !!sub?.like?.find((e: any) => e.id === userInfo?.id)
+  );
+  const [totalLikes, setTotalLikes] = useState<number>(sub?.like?.length ?? 0);
+
+  const handleLike = async () => {
+    try {
+      setIsLoading(true);
+      await axios.post('/api/submission/like', {
+        submissionId: sub?.id,
+        userId: userInfo?.id,
+      });
+      if (isLiked) {
+        setIsLiked(false);
+        setTotalLikes((prevLikes) => Math.max(prevLikes - 1, 0));
+        toast.success('Like removed from submission');
+      } else {
+        setIsLiked(true);
+        setTotalLikes((prevLikes) => prevLikes + 1);
+        await axios.post(`/api/email/manual/submissionLike`, {
+          id: sub?.id,
+          userId: userInfo?.id,
+        });
+        toast.success('Liked submission');
+      }
+      setIsLoading(false);
+    } catch (error) {
+      setIsLoading(false);
+      console.log(error);
+      toast.error('Error while liking submission');
+    }
+  };
+
+  useEffect(() => {
+    setIsLiked(!!sub?.like?.find((e: any) => e.id === userInfo?.id));
+  }, [sub.like, userInfo?.id]);
+
+  return (
+    <Box my={'16'}>
+      <Flex justify={'space-between'}>
+        <Flex>
+          <Avatar
+            name={`${talent?.firstName}${talent?.lastName}`}
+            size={'xs'}
+            src={talent?.photo as string}
+          />
+          <Text color={'brand.slate.400'} fontWeight={500}>
+            <Text as={'span'} ml={2} color={'brand.slate.900'} fontWeight={600}>
+              {talent?.firstName} {talent?.lastName}
+            </Text>{' '}
+            {sub?.isWinner ? (
+              <Text as={'span'}>won a bounty</Text>
+            ) : (
+              <Text as={'span'}>submitted to a bounty</Text>
+            )}
+          </Text>
+        </Flex>
+        <Text color={'brand.slate.400'} fontSize={'sm'} fontWeight={500}>
+          {timeAgoShort(sub?.createdAt)}
+        </Text>
+      </Flex>
+      <Box
+        mt={4}
+        borderWidth={'1px'}
+        borderColor={'brand.slate.200'}
+        borderRadius={'6'}
+        shadow={'0px 4px 4px 0px rgba(0, 0, 0, 0.01)'}
+      >
+        {sub?.isWinner ? (
+          <Flex
+            justify={'center'}
+            direction={'column'}
+            w="full"
+            h="350px"
+            bg={'#7E51FF'}
+            borderTopRadius={6}
+          >
+            <Image mx={'auto'} src={'/assets/icons/celebration.png'} />
+            <Flex align="center" justify={'center'} gap={4} w="100%" mt={4}>
+              <Image
+                w={'16'}
+                h={'16'}
+                alt={`${sub?.listing?.token} icon`}
+                src={
+                  tokenList.find(
+                    (token) => token.tokenSymbol === sub?.listing?.token
+                  )?.icon || ''
+                }
+              />
+              <Text color="white" fontSize={'5xl'} fontWeight={600}>
+                {sub?.winnerPosition
+                  ? `$${sub?.listing?.rewards?.[sub?.winnerPosition]}`
+                  : 'N/A'}{' '}
+                {sub?.listing?.token}
+              </Text>
+            </Flex>
+            <Text
+              w="fit-content"
+              mx="auto"
+              my={4}
+              px={4}
+              py={2}
+              color="white"
+              fontSize="lg"
+              fontWeight={500}
+              bg={'rgba(85, 54, 171, 0.54)'}
+              borderRadius={'full'}
+            >
+              {PrizeListMap[
+                sub?.winnerPosition as keyof typeof PrizeListMap
+              ].toUpperCase()}
+            </Text>
+          </Flex>
+        ) : (
+          <OgImageViewer
+            externalUrl={sub?.link ?? ''}
+            w="full"
+            h="350px"
+            objectFit="cover"
+            borderTopRadius={6}
+          />
+        )}
+        <Flex align={'center'} justify={'space-between'} px={6} py={6}>
+          <Flex align={'center'} gap={3}>
+            <Avatar size={'xs'} src={sub?.listing?.sponsor?.logo} />
+            <Text color={'brand.slate.500'} fontWeight={600}>
+              {sub?.listing?.title}
+            </Text>
+          </Flex>
+          <LinkBox alignItems={'center'} gap={2} display="flex">
+            <LinkOverlay
+              href={`${getURL()}listings/bounties/${
+                sub?.listing?.slug
+              }/submission/${sub?.id}`}
+            >
+              <Text as="span" color={'#6366F1'} fontWeight={600}>
+                View Submission
+              </Text>
+            </LinkOverlay>
+            <ArrowForwardIcon color={'#6366F1'} />
+          </LinkBox>
+        </Flex>
+      </Box>
+      <Button
+        zIndex={10}
+        alignItems={'center'}
+        gap={2}
+        display={'flex'}
+        w={14}
+        isLoading={isLoading}
+        onClick={(e) => {
+          e.stopPropagation();
+          if (!userInfo?.id) return;
+          handleLike();
+        }}
+        variant={'unstyled'}
+      >
+        <AiFillHeart color={!isLiked ? '#94A3B8' : '#FF005C'} />
+        {totalLikes}
+      </Button>
+    </Box>
+  );
+}
