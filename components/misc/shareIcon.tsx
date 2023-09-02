@@ -3,5 +3,5 @@ import React from 'react';
 import { BiSolidShare } from 'react-icons/bi';
 
 export default function ShareIcon() {
-  return <Icon as={BiSolidShare} ml={-3} />;
+  return <Icon as={BiSolidShare} ml={{ base: 0, md: -3 }} />;
 }

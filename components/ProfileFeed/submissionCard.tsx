@@ -8,6 +8,7 @@ import {
   LinkBox,
   LinkOverlay,
   Text,
+  useBreakpointValue,
 } from '@chakra-ui/react';
 import axios from 'axios';
 import React, { useEffect, useState } from 'react';
@@ -70,16 +71,22 @@ export default function SubmissionCard({
     setIsLiked(!!sub?.like?.find((e: any) => e.id === userInfo?.id));
   }, [sub.like, userInfo?.id]);
 
+  const breakpoint = useBreakpointValue({ base: 'base', md: 'md' });
+
   return (
     <Box my={'16'}>
-      <Flex justify={'space-between'}>
-        <Flex>
+      <Flex align="center" justify={'space-between'}>
+        <Flex align="center">
           <Avatar
             name={`${talent?.firstName}${talent?.lastName}`}
             size={'xs'}
             src={talent?.photo as string}
           />
-          <Text color={'brand.slate.400'} fontWeight={500}>
+          <Text
+            color={'brand.slate.400'}
+            fontSize={{ base: 'xs', md: 'md' }}
+            fontWeight={500}
+          >
             <Text as={'span'} ml={2} color={'brand.slate.900'} fontWeight={600}>
               {talent?.firstName} {talent?.lastName}
             </Text>{' '}
@@ -90,8 +97,12 @@ export default function SubmissionCard({
             )}
           </Text>
         </Flex>
-        <Text color={'brand.slate.400'} fontSize={'sm'} fontWeight={500}>
-          {timeAgoShort(sub?.createdAt)}
+        <Text
+          color={'brand.slate.400'}
+          fontSize={{ base: 'xs', md: 'sm' }}
+          fontWeight={500}
+        >
+          {timeAgoShort(sub?.createdAt)} {breakpoint === 'md' && ' ago'}
         </Text>
       </Flex>
       <Box
@@ -106,21 +117,27 @@ export default function SubmissionCard({
             justify={'center'}
             direction={'column'}
             w="full"
-            h="350px"
+            h={{ base: '200px', md: '350px' }}
             bg={'#7E51FF'}
             borderTopRadius={6}
           >
             <Image
-              w={'80px'}
-              h={'80px'}
+              w={{ base: '36px', md: '80px' }}
+              h={{ base: '36px', md: '80px' }}
               mx={'auto'}
               alt="winner"
               src={'/assets/icons/celebration.png'}
             />
-            <Flex align="center" justify={'center'} gap={4} w="100%" mt={4}>
+            <Flex
+              align="center"
+              justify={'center'}
+              gap={{ base: '1', md: '4' }}
+              w="100%"
+              mt={4}
+            >
               <Image
-                w={'16'}
-                h={'16'}
+                w={{ base: '8', md: '16' }}
+                h={{ base: '8', md: '16' }}
                 alt={`${sub?.listing?.token} icon`}
                 src={
                   tokenList.find(
@@ -128,7 +145,11 @@ export default function SubmissionCard({
                   )?.icon || ''
                 }
               />
-              <Text color="white" fontSize={'5xl'} fontWeight={600}>
+              <Text
+                color="white"
+                fontSize={{ base: '2xl', md: '5xl' }}
+                fontWeight={600}
+              >
                 {sub?.winnerPosition
                   ? `$${sub?.listing?.rewards?.[sub?.winnerPosition]}`
                   : 'N/A'}{' '}
@@ -142,7 +163,7 @@ export default function SubmissionCard({
               px={4}
               py={2}
               color="white"
-              fontSize="lg"
+              fontSize={{ base: 'xs', md: 'lg' }}
               fontWeight={500}
               bg={'rgba(85, 54, 171, 0.54)'}
               borderRadius={'full'}
@@ -156,15 +177,24 @@ export default function SubmissionCard({
           <OgImageViewer
             externalUrl={sub?.link ?? ''}
             w="full"
-            h="350px"
+            h={{ base: '200px', md: '350px' }}
             objectFit="cover"
             borderTopRadius={6}
           />
         )}
-        <Flex align={'center'} justify={'space-between'} px={6} py={6}>
+        <Flex
+          align={'center'}
+          justify={'space-between'}
+          px={{ base: '3', md: '6' }}
+          py={{ base: '4', md: '6' }}
+        >
           <Flex align={'center'} gap={3}>
             <Avatar size={'xs'} src={sub?.listing?.sponsor?.logo} />
-            <Text color={'brand.slate.500'} fontWeight={600}>
+            <Text
+              color={'brand.slate.500'}
+              fontSize={{ base: 'sm', md: 'md' }}
+              fontWeight={600}
+            >
               {sub?.listing?.title}
             </Text>
           </Flex>
@@ -174,7 +204,12 @@ export default function SubmissionCard({
                 sub?.listing?.slug
               }/submission/${sub?.id}`}
             >
-              <Text as="span" color={'#6366F1'} fontWeight={600}>
+              <Text
+                as="span"
+                color={'#6366F1'}
+                fontSize={{ base: 'sm', md: 'md' }}
+                fontWeight={600}
+              >
                 View Submission
               </Text>
             </LinkOverlay>

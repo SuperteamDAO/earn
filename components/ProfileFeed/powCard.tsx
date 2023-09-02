@@ -6,6 +6,7 @@ import {
   LinkBox,
   LinkOverlay,
   Text,
+  useBreakpointValue,
 } from '@chakra-ui/react';
 import React from 'react';
 
@@ -16,27 +17,41 @@ import { timeAgoShort } from '@/utils/timeAgo';
 import OgImageViewer from '../misc/ogImageViewer';
 
 export default function PowCard({ talent, pow }: { talent: User; pow: PoW }) {
+  const breakpoint = useBreakpointValue({ base: 'base', md: 'md' });
+
   return (
     <Box my={'16'}>
-      <Flex justify={'space-between'}>
-        <Flex>
+      <Flex align="center" justify={'space-between'}>
+        <Flex align="center">
           <Avatar
             name={`${talent?.firstName}${talent?.lastName}`}
             size={'xs'}
             src={talent?.photo as string}
           />
-          <Text color={'brand.slate.400'} fontWeight={500}>
+          <Text
+            color={'brand.slate.400'}
+            fontSize={{ base: 'xs', md: 'md' }}
+            fontWeight={500}
+          >
             <Text as={'span'} ml={2} color={'brand.slate.900'} fontWeight={600}>
               {talent?.firstName} {talent?.lastName}
             </Text>{' '}
             added a proof of work
           </Text>
         </Flex>
-        <Text color={'brand.slate.400'} fontSize={'sm'} fontWeight={500}>
-          {timeAgoShort(pow?.createdAt || '')}
+        <Text
+          color={'brand.slate.400'}
+          fontSize={{ base: 'xs', md: 'sm' }}
+          fontWeight={500}
+        >
+          {timeAgoShort(pow?.createdAt || '')} {breakpoint === 'md' && ' ago'}
         </Text>
       </Flex>
-      <Text mt={4} color={'brand.slate.500'}>
+      <Text
+        mt={{ base: 2, md: 4 }}
+        color={'brand.slate.500'}
+        fontSize={{ base: 'sm', md: 'md' }}
+      >
         {pow?.description}
       </Text>
       <Box
@@ -49,19 +64,33 @@ export default function PowCard({ talent, pow }: { talent: User; pow: PoW }) {
         <OgImageViewer
           externalUrl={pow?.link ?? ''}
           w="full"
-          h="350px"
+          h={{ base: '200px', md: '350px' }}
           objectFit="cover"
           borderTopRadius={6}
         />
-        <Flex align={'center'} justify={'space-between'} px={6} py={6}>
+        <Flex
+          align={'center'}
+          justify={'space-between'}
+          px={{ base: '3', md: '6' }}
+          py={{ base: '4', md: '6' }}
+        >
           <Flex align={'center'} gap={3}>
-            <Text color={'brand.slate.500'} fontWeight={600}>
+            <Text
+              color={'brand.slate.500'}
+              fontSize={{ base: 'sm', md: 'md' }}
+              fontWeight={600}
+            >
               {pow?.title}
             </Text>
           </Flex>
           <LinkBox alignItems={'center'} gap={2} display="flex">
             <LinkOverlay href={pow.link}>
-              <Text as="span" color={'#6366F1'} fontWeight={600}>
+              <Text
+                as="span"
+                color={'#6366F1'}
+                fontSize={{ base: 'sm', md: 'md' }}
+                fontWeight={600}
+              >
                 View Work
               </Text>
             </LinkOverlay>

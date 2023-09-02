@@ -1,4 +1,4 @@
-import type { ImageProps } from '@chakra-ui/react';
+import type { ImageProps, ResponsiveValue } from '@chakra-ui/react';
 import { Image, Skeleton } from '@chakra-ui/react';
 import axios from 'axios';
 import React, { useEffect, useState } from 'react';
@@ -6,8 +6,8 @@ import type { Metadata } from 'unfurl.js/dist/types';
 
 interface Props {
   externalUrl: string;
-  w?: string | number;
-  h?: string | number;
+  w?: ResponsiveValue<string | number>;
+  h?: ResponsiveValue<string | number>;
   objectFit?: ImageProps['objectFit'];
   borderTopRadius?: string | number;
 }

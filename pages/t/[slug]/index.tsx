@@ -14,6 +14,7 @@ import {
   IconButton,
   Image,
   Text,
+  useBreakpointValue,
   useDisclosure,
 } from '@chakra-ui/react';
 import axios from 'axios';
@@ -151,6 +152,45 @@ function TalentProfile({ slug }: TalentProps) {
     return combinedAndSortedFeed.filter((item) => item.type === 'pow');
   }, [activeTab, combinedAndSortedFeed]);
 
+  const isMD = useBreakpointValue({ base: false, md: true });
+
+  const renderButton = (
+    icon: JSX.Element,
+    text: string,
+    onClickHandler: () => void,
+    outline: boolean = false
+  ) => {
+    if (isMD) {
+      return (
+        <Button
+          color={outline ? 'brand.slate.500' : '#6366F1'}
+          fontSize="sm"
+          fontWeight={500}
+          bg={outline ? 'white' : '#EDE9FE'}
+          borderColor={outline ? 'brand.slate.400' : '#EDE9FE'}
+          leftIcon={icon}
+          onClick={onClickHandler}
+          variant={outline ? 'outline' : 'solid'}
+        >
+          {text}
+        </Button>
+      );
+    }
+    return (
+      <IconButton
+        color={outline ? 'brand.slate.500' : '#6366F1'}
+        fontSize="sm"
+        fontWeight={500}
+        bg={outline ? 'white' : '#EDE9FE'}
+        borderColor={outline ? 'brand.slate.400' : '#EDE9FE'}
+        aria-label={text}
+        icon={icon}
+        onClick={onClickHandler}
+        variant={outline ? 'outline' : 'solid'}
+      />
+    );
+  };
+
   return (
     <>
       <Default
@@ -171,7 +211,7 @@ function TalentProfile({ slug }: TalentProps) {
           <Box bg="white">
             <Box
               w="100%"
-              h={'30vh'}
+              h={{ base: '100px', md: '30vh' }}
               bgImage={`/assets/bg/profile-cover/${bgImages[randomIndex]}`}
               bgSize={'cover'}
               bgRepeat={'no-repeat'}
@@ -179,71 +219,53 @@ function TalentProfile({ slug }: TalentProps) {
             />
             <Box
               pos={'relative'}
-              top={-40}
-              w={'700px'}
+              top={{ base: '0', md: '-40' }}
+              maxW={'700px'}
               mx="auto"
-              p={7}
+              px={{ base: '4', md: '7' }}
+              py={7}
               bg="white"
               borderRadius={'20px'}
             >
               <Flex justify={'space-between'}>
                 <Box>
                   <Avatar
-                    w={'80px'}
-                    h={'80px'}
+                    w={{ base: '60px', md: '80px' }}
+                    h={{ base: '60px', md: '80px' }}
                     name={`${talent?.firstName}${talent?.lastName}`}
                     src={talent?.photo as string}
                   />
                   <Text
                     mt={6}
                     color={'brand.slate.900'}
-                    fontSize={'xl'}
+                    fontSize={{ base: 'lg', md: 'xl' }}
                     fontWeight={'600'}
                   >
                     {talent?.firstName} {talent?.lastName}
                   </Text>
-                  <Text color={'brand.slate.500'} fontWeight={'600'}>
+                  <Text
+                    color={'brand.slate.500'}
+                    fontSize={{ base: 'md', md: 'md' }}
+                    fontWeight={'600'}
+                  >
                     @{talent?.username}
                   </Text>
                 </Box>
-                <Flex direction={'column'} gap={3} w="160px">
-                  {userInfo?.id === talent?.id ? (
-                    <Button
-                      color={'#6366F1'}
-                      fontSize={'sm'}
-                      fontWeight={500}
-                      bg={'#EDE9FE'}
-                      leftIcon={<EditIcon />}
-                      onClick={handleEditProfileClick}
-                    >
-                      Edit Profile
-                    </Button>
-                  ) : (
-                    <Button
-                      color={'#6366F1'}
-                      fontSize={'sm'}
-                      fontWeight={500}
-                      bg={'#EDE9FE'}
-                      leftIcon={<EmailIcon />}
-                      onClick={() => {
+                <Flex
+                  direction={{ base: 'row', md: 'column' }}
+                  gap={3}
+                  w={{ base: 'auto', md: '160px' }}
+                >
+                  {userInfo?.id === talent?.id
+                    ? renderButton(
+                        <EditIcon />,
+                        'Edit Profile',
+                        handleEditProfileClick
+                      )
+                    : renderButton(<EmailIcon />, 'Reach Out', () => {
                         window.location.href = `mailto:${talent?.email}`;
-                      }}
-                    >
-                      Reach Out
-                    </Button>
-                  )}
-                  <Button
-                    color={'brand.slate.500'}
-                    fontSize={'sm'}
-                    fontWeight={500}
-                    bg="white"
-                    borderColor={'brand.slate.400'}
-                    leftIcon={<ShareIcon />}
-                    onClick={onOpen}
-                    variant={'outline'}
-                  >
-                    Share
-                  </Button>
+                      })}
+                  {renderButton(<ShareIcon />, 'Share', onOpen, true)}
                 </Flex>
               </Flex>
               <ShareProfile
@@ -252,7 +274,10 @@ function TalentProfile({ slug }: TalentProps) {
                 onClose={onClose}
               />
               <Divider my={8} />
-              <Flex gap={100}>
+              <Flex
+                direction={{ base: 'column', md: 'row' }}
+                gap={{ base: '12', md: '100' }}
+              >
                 <Box w="50%">
                   <Text mb={4} color={'brand.slate.900'} fontWeight={500}>
                     Details
@@ -278,7 +303,7 @@ function TalentProfile({ slug }: TalentProps) {
                     </Text>
                   </Text>
                 </Box>
-                <Box w="50%">
+                <Box w={{ base: '100%', md: '50%' }}>
                   <Text color={'brand.slate.900'} fontWeight={500}>
                     Skills
                   </Text>
@@ -358,8 +383,11 @@ function TalentProfile({ slug }: TalentProps) {
                 </Box>
               </Flex>
               <Divider my={8} />
-              <Flex gap={100}>
-                <Flex gap={6} w="50%">
+              <Flex
+                direction={{ base: 'column', md: 'row' }}
+                gap={{ base: '12', md: '100' }}
+              >
+                <Flex gap={6} w={{ base: '100%', md: '50%' }}>
                   {socialLinks.map((ele, eleIndex) => {
                     return (
                       <Box
@@ -384,7 +412,10 @@ function TalentProfile({ slug }: TalentProps) {
                     );
                   })}
                 </Flex>
-                <Flex gap={6} w="50%">
+                <Flex
+                  gap={{ base: '8', md: '6' }}
+                  w={{ base: '100%', md: '50%' }}
+                >
                   <Flex direction={'column'}>
                     <Text fontWeight={600}>${talent?.totalEarnedInUSD}</Text>
                     <Text color={'brand.slate.500'} fontWeight={500}>
@@ -405,8 +436,12 @@ function TalentProfile({ slug }: TalentProps) {
                   </Flex>
                 </Flex>
               </Flex>
-              <Box mt={'16'}>
-                <Flex align={'center'} justify={'space-between'}>
+              <Box mt={{ base: '12', md: '16' }}>
+                <Flex
+                  align={{ base: 'right', md: 'center' }}
+                  justify={'space-between'}
+                  direction={{ base: 'column', md: 'row' }}
+                >
                   <Flex align="center" gap={3}>
                     <Text color={'brand.slate.900'} fontWeight={500}>
                       Proof of Work
@@ -422,7 +457,11 @@ function TalentProfile({ slug }: TalentProps) {
                       +ADD
                     </Button>
                   </Flex>
-                  <Flex gap={4}>
+                  <Flex
+                    justify={{ base: 'space-between', md: 'flex-end' }}
+                    gap={6}
+                    mt={{ base: '12', md: '0' }}
+                  >
                     <Text
                       color={
                         activeTab === 'activity'
@@ -452,23 +491,79 @@ function TalentProfile({ slug }: TalentProps) {
               </Box>
               <Divider my={4} />
               <Box>
-                {filteredFeed.map((item, index) => {
-                  if (item.type === 'submission') {
-                    return (
-                      <SubmissionCard
-                        key={index}
-                        sub={item as SubmissionWithUser}
-                        talent={talent}
-                      />
-                    );
-                  }
-                  if (item.type === 'pow') {
-                    return (
-                      <PowCard key={index} pow={item as PoW} talent={talent} />
-                    );
-                  }
-                  return null;
-                })}
+                {filteredFeed.length === 0 ? (
+                  <>
+                    <Image
+                      w={32}
+                      mt={32}
+                      mx="auto"
+                      alt={'talent empty'}
+                      src="/assets/bg/talent-empty.svg"
+                    />
+                    <Text
+                      w="200px"
+                      mt={5}
+                      mx="auto"
+                      color={'brand.slate.400'}
+                      fontWeight={500}
+                      textAlign={'center'}
+                    >
+                      {userInfo?.id === talent?.id
+                        ? 'Add some proof of work to build your profile'
+                        : 'Nothing to see here yet ...'}
+                    </Text>
+                    {userInfo?.id === talent?.id ? (
+                      <Button
+                        display="block"
+                        w="200px"
+                        mt={5}
+                        mx="auto"
+                        onClick={onOpenPow}
+                      >
+                        Add
+                      </Button>
+                    ) : (
+                      <Box mt={5} />
+                    )}
+
+                    <Button
+                      display="block"
+                      w="200px"
+                      mt={2}
+                      mx="auto"
+                      color={'brand.slate.500'}
+                      fontWeight={500}
+                      bg="white"
+                      borderColor={'brand.slate.400'}
+                      onClick={() => router.push('/')}
+                      variant={'outline'}
+                    >
+                      Browse Bounties
+                    </Button>
+                  </>
+                ) : (
+                  filteredFeed.map((item, index) => {
+                    if (item.type === 'submission') {
+                      return (
+                        <SubmissionCard
+                          key={index}
+                          sub={item as SubmissionWithUser}
+                          talent={talent}
+                        />
+                      );
+                    }
+                    if (item.type === 'pow') {
+                      return (
+                        <PowCard
+                          key={index}
+                          pow={item as PoW}
+                          talent={talent}
+                        />
+                      );
+                    }
+                    return null;
+                  })
+                )}
               </Box>
             </Box>
           </Box>
