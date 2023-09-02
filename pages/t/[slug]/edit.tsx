@@ -346,7 +346,7 @@ export default function EditProfilePage() {
         ...finalUpdatedData,
       });
 
-      await axios.post('/api/pow/create', {
+      await axios.post('/api/pow/edit', {
         userId: userInfo?.id,
         pows: pow,
       });
