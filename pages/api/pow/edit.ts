@@ -74,10 +74,17 @@ export default async function handler(
       ]);
 
       return res.status(200).json(results);
-    } catch (error) {
-      return res.status(500).json({
-        error,
-      });
+    } catch (error: any) {
+      if (error.code) {
+        return res.status(500).json({
+          error: {
+            code: error.code,
+            message: error.message,
+            meta: error.meta,
+          },
+        });
+      }
+      return res.status(500).json({ error });
     }
   } else {
     return res.status(405).end();
