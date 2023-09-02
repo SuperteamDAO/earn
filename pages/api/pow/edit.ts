@@ -52,13 +52,18 @@ export default async function handler(
     dataArray.forEach((data) => {
       if (!data) {
         errors.push('One of the data entries is undefined or null.');
-      } else if (data.id) {
-        updateData.push({
-          where: { id: data.id },
-          data: { ...data, userId },
-        });
       } else {
-        createData.push({ ...data, userId });
+        const sanitizedData = { ...data };
+        delete sanitizedData.userId;
+
+        if (data.id) {
+          updateData.push({
+            where: { id: data.id },
+            data: { ...sanitizedData, userId },
+          });
+        } else {
+          createData.push({ ...sanitizedData, userId });
+        }
       }
     });
 
