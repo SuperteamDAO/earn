@@ -18,6 +18,17 @@ export default async function handler(
       });
     }
 
+    if (
+      !userId ||
+      typeof userId !== 'string' ||
+      userId.trim() === '' ||
+      userId.includes('*')
+    ) {
+      return res.status(400).json({
+        error: 'Invalid or missing "userId".',
+      });
+    }
+
     const dataArray = Array.isArray(pows) ? pows : [pows];
     const createData: any[] = [];
     const updateData: any[] = [];
