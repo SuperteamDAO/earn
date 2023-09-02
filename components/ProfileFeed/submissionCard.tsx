@@ -110,7 +110,13 @@ export default function SubmissionCard({
             bg={'#7E51FF'}
             borderTopRadius={6}
           >
-            <Image mx={'auto'} src={'/assets/icons/celebration.png'} />
+            <Image
+              w={'80px'}
+              h={'80px'}
+              mx={'auto'}
+              alt="winner"
+              src={'/assets/icons/celebration.png'}
+            />
             <Flex align="center" justify={'center'} gap={4} w="100%" mt={4}>
               <Image
                 w={'16'}

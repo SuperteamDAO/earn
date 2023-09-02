@@ -1,9 +1,17 @@
 import {
+  ChevronDownIcon,
+  ChevronUpIcon,
+  EditIcon,
+  EmailIcon,
+} from '@chakra-ui/icons';
+import {
   Avatar,
   Box,
   Button,
+  Collapse,
   Divider,
   Flex,
+  IconButton,
   Image,
   Text,
   useDisclosure,
@@ -14,6 +22,8 @@ import { useRouter } from 'next/router';
 import React, { useEffect, useMemo, useState } from 'react';
 
 import { AddProject } from '@/components/Form/AddProject';
+import ShareIcon from '@/components/misc/shareIcon';
+import { ShareProfile } from '@/components/modals/shareProfile';
 import PowCard from '@/components/ProfileFeed/powCard';
 import SubmissionCard from '@/components/ProfileFeed/submissionCard';
 import ErrorSection from '@/components/shared/EmptySection';
@@ -36,7 +46,24 @@ function TalentProfile({ slug }: TalentProps) {
   const [activeTab, setActiveTab] = useState<'activity' | 'projects'>(
     'activity'
   );
+  const [randomIndex, setRandomIndex] = useState<number>(0);
+  const [showSubskills, setShowSubskills] = useState<Record<number, boolean>>(
+    {}
+  );
+
+  const handleToggleSubskills = (index: number) => {
+    setShowSubskills({
+      ...showSubskills,
+      [index]: !showSubskills[index],
+    });
+  };
   const { userInfo } = userStore();
+
+  const {
+    isOpen: isOpenPow,
+    onOpen: onOpenPow,
+    onClose: onClosePow,
+  } = useDisclosure();
 
   const { isOpen, onOpen, onClose } = useDisclosure();
 
@@ -52,7 +79,6 @@ function TalentProfile({ slug }: TalentProps) {
           setTalent(res?.data);
           setError(false);
           setIsloading(false);
-          console.log(res?.data);
         }
       } catch (err) {
         console.log(err);
@@ -61,6 +87,12 @@ function TalentProfile({ slug }: TalentProps) {
       }
     };
     fetch();
+  }, []);
+
+  const bgImages = ['1.png', '2.png', '3.png', '4.png', '5.png'];
+
+  useEffect(() => {
+    setRandomIndex(Math.floor(Math.random() * bgImages.length));
   }, []);
 
   const socialLinks = [
@@ -140,11 +172,11 @@ function TalentProfile({ slug }: TalentProps) {
             <Box
               w="100%"
               h={'30vh'}
-              bgImage={'/assets/bg/profile-cover.png'}
+              bgImage={`/assets/bg/profile-cover/${bgImages[randomIndex]}`}
               bgSize={'cover'}
               bgRepeat={'no-repeat'}
               objectFit={'cover'}
-            ></Box>
+            />
             <Box
               pos={'relative'}
               top={-40}
@@ -181,6 +213,7 @@ function TalentProfile({ slug }: TalentProps) {
                       fontSize={'sm'}
                       fontWeight={500}
                       bg={'#EDE9FE'}
+                      leftIcon={<EditIcon />}
                       onClick={handleEditProfileClick}
                     >
                       Edit Profile
@@ -191,6 +224,10 @@ function TalentProfile({ slug }: TalentProps) {
                       fontSize={'sm'}
                       fontWeight={500}
                       bg={'#EDE9FE'}
+                      leftIcon={<EmailIcon />}
+                      onClick={() => {
+                        window.location.href = `mailto:${talent?.email}`;
+                      }}
                     >
                       Reach Out
                     </Button>
@@ -201,13 +238,20 @@ function TalentProfile({ slug }: TalentProps) {
                     fontWeight={500}
                     bg="white"
                     borderColor={'brand.slate.400'}
+                    leftIcon={<ShareIcon />}
+                    onClick={onOpen}
                     variant={'outline'}
                   >
                     Share
                   </Button>
                 </Flex>
               </Flex>
-              <Divider my={4} />
+              <ShareProfile
+                username={talent?.username as string}
+                isOpen={isOpen}
+                onClose={onClose}
+              />
+              <Divider my={8} />
               <Flex gap={100}>
                 <Box w="50%">
                   <Text mb={4} color={'brand.slate.900'} fontWeight={500}>
@@ -249,24 +293,62 @@ function TalentProfile({ slug }: TalentProps) {
                           >
                             {skillItem.skills.toUpperCase()}
                           </Text>
-                          <Flex wrap={'wrap'} gap={4} mt={2}>
-                            {skillItem.subskills.map(
-                              (subskill: string, subIndex: number) => (
-                                <Box
-                                  key={subIndex}
-                                  px={'12px'}
-                                  py={'4px'}
-                                  color={'#64739C'}
-                                  fontSize={'sm'}
-                                  fontWeight={500}
-                                  borderRadius={'4px'}
-                                  bgColor={'#EFF1F5'}
-                                >
-                                  {subskill}
-                                </Box>
-                              )
+                          <Flex align="center">
+                            <Flex wrap={'wrap'} gap={2} mt={2}>
+                              {skillItem.subskills
+                                .slice(0, 3)
+                                .map((subskill: string, subIndex: number) => (
+                                  <Box
+                                    key={subIndex}
+                                    px={'12px'}
+                                    py={'4px'}
+                                    color={'#64739C'}
+                                    fontSize={'sm'}
+                                    fontWeight={500}
+                                    borderRadius={'4px'}
+                                    bgColor={'#EFF1F5'}
+                                  >
+                                    {subskill}
+                                  </Box>
+                                ))}
+                            </Flex>
+                            {skillItem.subskills.length > 3 && (
+                              <IconButton
+                                aria-label="Toggle subskills"
+                                icon={
+                                  showSubskills[index] ? (
+                                    <ChevronUpIcon />
+                                  ) : (
+                                    <ChevronDownIcon />
+                                  )
+                                }
+                                onClick={() => handleToggleSubskills(index)}
+                                size="sm"
+                                variant={'unstyled'}
+                              />
                             )}
                           </Flex>
+
+                          <Collapse in={showSubskills[index] ?? false}>
+                            <Flex wrap={'wrap'} gap={2} mt={2}>
+                              {skillItem.subskills
+                                .slice(3)
+                                .map((subskill: string, subIndex: number) => (
+                                  <Box
+                                    key={subIndex}
+                                    px={'12px'}
+                                    py={'4px'}
+                                    color={'#64739C'}
+                                    fontSize={'sm'}
+                                    fontWeight={500}
+                                    borderRadius={'4px'}
+                                    bgColor={'#EFF1F5'}
+                                  >
+                                    {subskill}
+                                  </Box>
+                                ))}
+                            </Flex>
+                          </Collapse>
                         </Box>
                       ) : null;
                     })
@@ -275,7 +357,7 @@ function TalentProfile({ slug }: TalentProps) {
                   )}
                 </Box>
               </Flex>
-              <Divider my={4} />
+              <Divider my={8} />
               <Flex gap={100}>
                 <Flex gap={6} w="50%">
                   {socialLinks.map((ele, eleIndex) => {
@@ -333,7 +415,7 @@ function TalentProfile({ slug }: TalentProps) {
                       color={'brand.slate.400'}
                       fontSize="sm"
                       fontWeight={600}
-                      onClick={onOpen}
+                      onClick={onOpenPow}
                       size="xs"
                       variant={'ghost'}
                     >
@@ -393,8 +475,8 @@ function TalentProfile({ slug }: TalentProps) {
         )}
         <AddProject
           {...{
-            isOpen,
-            onClose,
+            isOpen: isOpenPow,
+            onClose: onClosePow,
             upload: true,
           }}
         />
