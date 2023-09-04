@@ -15,12 +15,14 @@ import {
 } from '@chakra-ui/react';
 import React from 'react';
 
+import { userStore } from '@/store/user';
 import { getURL } from '@/utils/validUrl';
 
 interface Props {
   onClose: () => void;
   isOpen: boolean;
   username: string;
+  id: string;
 }
 
 interface SocialPlatform {
@@ -29,9 +31,15 @@ interface SocialPlatform {
   share: (url: string, message: string) => void;
 }
 
-export const ShareProfile = ({ isOpen, onClose, username }: Props) => {
-  const profileUrl = `${getURL()}t/${username}`;
-  const { hasCopied, onCopy } = useClipboard(profileUrl);
+export const ShareProfile = ({ isOpen, onClose, username, id }: Props) => {
+  const { hasCopied, onCopy } = useClipboard(`${getURL()}t/${username}`);
+
+  const { userInfo } = userStore();
+
+  const shareMessage =
+    id === userInfo?.id
+      ? 'Check out my profile on Superteam Earn!'
+      : 'Check out this profile on Superteam Earn!';
 
   const socialPlatforms: SocialPlatform[] = [
     {
@@ -91,8 +99,8 @@ export const ShareProfile = ({ isOpen, onClose, username }: Props) => {
             Share Profile
           </Text>
           <Text mt={3} color={'brand.slate.500'} fontSize="lg" fontWeight={500}>
-            With your friends or on social media to drive more people to your
-            work
+            With your friends or on social media to showcase your proof of work,
+            all in one place
           </Text>
         </Box>
         <Divider mt={2} mb={4} borderColor={'brand.slate.200'} />
@@ -139,9 +147,7 @@ export const ShareProfile = ({ isOpen, onClose, username }: Props) => {
                 h="42px"
                 cursor="pointer"
                 alt={name}
-                onClick={() =>
-                  share(profileUrl, `Check out my profile on Superteam Earn!`)
-                }
+                onClick={() => share(`${getURL()}t/${username}`, shareMessage)}
                 src={icon}
               />
             ))}

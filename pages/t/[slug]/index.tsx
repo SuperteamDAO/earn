@@ -272,6 +272,7 @@ function TalentProfile({ slug }: TalentProps) {
                 username={talent?.username as string}
                 isOpen={isOpen}
                 onClose={onClose}
+                id={talent?.id}
               />
               <Divider my={8} />
               <Flex
@@ -284,7 +285,7 @@ function TalentProfile({ slug }: TalentProps) {
                   </Text>
                   {talent?.workPrefernce !== 'Not looking for Work' && (
                     <Text mt={3} color={'brand.slate.400'}>
-                      Interested in{' '}
+                      Looking for{' '}
                       <Text as={'span'} color={'brand.slate.500'}>
                         {talent?.workPrefernce}
                       </Text>
@@ -419,19 +420,19 @@ function TalentProfile({ slug }: TalentProps) {
                   <Flex direction={'column'}>
                     <Text fontWeight={600}>${talent?.totalEarnedInUSD}</Text>
                     <Text color={'brand.slate.500'} fontWeight={500}>
-                      Total Earned
+                      Earned
                     </Text>
                   </Flex>
                   <Flex direction={'column'}>
                     <Text fontWeight={600}>{talent?.Submission?.length}</Text>
                     <Text color={'brand.slate.500'} fontWeight={500}>
-                      Participated
+                      Submissions
                     </Text>
                   </Flex>
                   <Flex direction={'column'}>
                     <Text fontWeight={600}>{winnerCount}</Text>
                     <Text color={'brand.slate.500'} fontWeight={500}>
-                      Won
+                      Bounties Won
                     </Text>
                   </Flex>
                 </Flex>
@@ -446,16 +447,18 @@ function TalentProfile({ slug }: TalentProps) {
                     <Text color={'brand.slate.900'} fontWeight={500}>
                       Proof of Work
                     </Text>
-                    <Button
-                      color={'brand.slate.400'}
-                      fontSize="sm"
-                      fontWeight={600}
-                      onClick={onOpenPow}
-                      size="xs"
-                      variant={'ghost'}
-                    >
-                      +ADD
-                    </Button>
+                    {userInfo?.id === talent?.id && (
+                      <Button
+                        color={'brand.slate.400'}
+                        fontSize="sm"
+                        fontWeight={600}
+                        onClick={onOpenPow}
+                        size="xs"
+                        variant={'ghost'}
+                      >
+                        +ADD
+                      </Button>
+                    )}
                   </Flex>
                   <Flex
                     justify={{ base: 'space-between', md: 'flex-end' }}
