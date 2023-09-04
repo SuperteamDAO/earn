@@ -46,41 +46,46 @@ const correctSkills = (
   return correctedSkills;
 };
 
-export default async function user(req: NextApiRequest, res: NextApiResponse) {
-  const { id, addUserSponsor, memberType, skills, ...updateAttributes } =
-    req.body;
-  let result;
-  const correctedSkills = skills ? correctSkills(skills) : [];
+export default async function correctAllSkills(
+  _req: NextApiRequest,
+  res: NextApiResponse
+) {
+  let updatedCount = 0;
+
   try {
-    const updatedData = {
-      ...updateAttributes,
-      skills: correctedSkills,
-    };
+    const allUsers = await prisma.user.findMany();
 
-    result = await prisma.user.update({
-      where: {
-        id,
-      },
-      data: updatedData,
-      include: {
-        currentSponsor: true,
-      },
-    });
+    // eslint-disable-next-line no-restricted-syntax
+    for (const user of allUsers) {
+      const { id, skills: untypedSkills } = user;
 
-    if (addUserSponsor && updateAttributes?.currentSponsorId) {
-      await prisma.userSponsors.create({
-        data: {
-          userId: id,
-          sponsorId: updateAttributes?.currentSponsorId,
-          role: memberType,
-        },
-      });
+      // Cast or convert skills to the expected type here
+      const skills: { skills: MainSkills; subskills: SubSkillsType[] }[] =
+        typeof untypedSkills === 'string'
+          ? JSON.parse(untypedSkills)
+          : untypedSkills;
+
+      const correctedSkillsArray = skills ? correctSkills(skills) : [];
+
+      if (JSON.stringify(skills) !== JSON.stringify(correctedSkillsArray)) {
+        // eslint-disable-next-line no-plusplus
+        updatedCount++;
+        // eslint-disable-next-line no-await-in-loop
+        await prisma.user.update({
+          where: { id },
+          data: { skills: correctedSkillsArray },
+        });
+      }
     }
-    res.status(200).json(result);
+
+    return res.status(200).json({
+      message: 'Skills correction complete.',
+      updatedUsers: updatedCount,
+    });
   } catch (e) {
-    console.log('file: update.ts:29 ~ user ~ e:', e);
-    res.status(400).json({
-      message: `Error occurred while updating user ${id}.`,
+    console.error('Error in correctAllSkills:', e);
+    return res.status(500).json({
+      message: 'An error occurred while correcting skills for all users.',
     });
   }
 }
