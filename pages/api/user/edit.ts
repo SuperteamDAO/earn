@@ -22,15 +22,15 @@ const correctSkills = (
   >;
 
   skillObjArray.forEach((skillObj) => {
+    if (!skillMap[skillObj.skills]) {
+      skillMap[skillObj.skills] = [];
+    }
     skillObj.subskills.forEach((subskill) => {
       const correctMainSkill = SkillList.find((s) =>
         s.subskills.includes(subskill)
       );
 
       if (correctMainSkill) {
-        if (!skillMap[correctMainSkill.mainskill]) {
-          skillMap[correctMainSkill.mainskill] = [];
-        }
         skillMap[correctMainSkill.mainskill].push(subskill);
       }
     });

@@ -22,15 +22,15 @@ const correctSkills = (
   >;
 
   skillObjArray.forEach((skillObj) => {
+    if (!skillMap[skillObj.skills]) {
+      skillMap[skillObj.skills] = [];
+    }
     skillObj.subskills.forEach((subskill) => {
       const correctMainSkill = SkillList.find((s) =>
         s.subskills.includes(subskill)
       );
 
       if (correctMainSkill) {
-        if (!skillMap[correctMainSkill.mainskill]) {
-          skillMap[correctMainSkill.mainskill] = [];
-        }
         skillMap[correctMainSkill.mainskill].push(subskill);
       }
     });
@@ -58,8 +58,6 @@ export default async function correctAllSkills(
     // eslint-disable-next-line no-restricted-syntax
     for (const user of allUsers) {
       const { id, skills: untypedSkills } = user;
-
-      // Cast or convert skills to the expected type here
       const skills: { skills: MainSkills; subskills: SubSkillsType[] }[] =
         typeof untypedSkills === 'string'
           ? JSON.parse(untypedSkills)
