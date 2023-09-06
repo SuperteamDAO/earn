@@ -1,5 +1,6 @@
 import type { SkillsProp } from '@/interface/skills';
 
+import type { SponsorType } from './sponsor';
 import type { Talent } from './talent';
 import type {
   JobType,
@@ -51,6 +52,8 @@ interface Bounties {
   submission?: SubmissionType[];
   subscribe?: SubscribeType[];
   Questions?: Questions;
+  sponsor?: SponsorType;
+  rewards?: Partial<PrizeListType>;
 }
 
 type BountyStatus = 'open' | 'review' | 'close';

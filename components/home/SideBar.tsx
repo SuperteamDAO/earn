@@ -479,14 +479,20 @@ const AlphaAccess = () => {
       h={'max-content'}
       px={'1.5625rem'}
       py={'0.875rem'}
-      bg={'#A839FF'}
+      bg={'#000'}
       rounded={'lg'}
     >
       <HStack>
-        <Image alt="alpha site" src="/assets/bg/alpha.svg" />
+        <Image
+          w="42px"
+          h="42px"
+          ml={-2}
+          alt="solana"
+          src="https://s2.coinmarketcap.com/static/img/coins/128x128/16116.png"
+        />
       </HStack>
-      <Text mt={'auto'} color={'white'} fontSize={'1.25rem'} fontWeight={'600'}>
-        Want Early Access to Projects?
+      <Text mt={1} color={'white'} fontSize={'xl'} fontWeight={'600'}>
+        Build a Solana dApp and compete for $1,000,000+
       </Text>
       <Text
         mt={'0.5rem'}
@@ -494,24 +500,25 @@ const AlphaAccess = () => {
         fontSize={'1rem'}
         lineHeight={'1.1875rem'}
       >
-        Get exclusive early access to the latest Solana projects and win product
-        feedback bounties, for free.
+        Register for the Q3 Solana global hackathon and build your prize-winning
+        project! Deadline for project submissions is October 15th, 2023.
       </Text>
       <Link
         mt={'1.5625rem'}
+        mb={2}
         py={'0.8125rem'}
         color={'brand.slate.800'}
         fontWeight={'500'}
         textAlign={'center'}
-        bg={'white'}
+        bg={'#14F195'}
         borderRadius={8}
         _hover={{
           bg: 'gray.100',
         }}
-        href="https://www.alphasquad.fun/"
+        href="https://solana.com/hyperdrive"
         isExternal
       >
-        Join the Alpha Squad
+        Register Now
       </Link>
     </Flex>
   );

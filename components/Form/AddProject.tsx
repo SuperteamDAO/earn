@@ -14,12 +14,14 @@ import {
   Text,
   Textarea,
 } from '@chakra-ui/react';
+import axios from 'axios';
 import type { Dispatch, SetStateAction } from 'react';
 import { useEffect, useState } from 'react';
 import { useForm } from 'react-hook-form';
 
 import type { MultiSelectOptions } from '@/constants';
 import type { PoW } from '@/interface/pow';
+import { userStore } from '@/store/user';
 import { isValidHttpUrl } from '@/utils/validUrl';
 
 import { SkillSelect } from '../misc/SkillSelect';
@@ -27,10 +29,12 @@ import { SkillSelect } from '../misc/SkillSelect';
 type AddProjectProps = {
   isOpen: boolean;
   onClose: () => void;
-  pow: PoW[];
-  setPow: Dispatch<SetStateAction<PoW[]>>;
+  pow?: PoW[];
+  setPow?: Dispatch<SetStateAction<PoW[]>>;
   selectedProject?: number | null;
   setSelectedProject?: (selectedProject: number | null) => void;
+  upload?: boolean;
+  onNewPow?: (newPow: PoW) => void;
 };
 
 export const AddProject = ({
@@ -40,6 +44,8 @@ export const AddProject = ({
   setPow,
   selectedProject,
   setSelectedProject,
+  upload,
+  onNewPow,
 }: AddProjectProps) => {
   const { register, handleSubmit, setValue, watch } = useForm<{
     title: string;
@@ -53,9 +59,10 @@ export const AddProject = ({
   const [linkError, setLinkError] = useState<boolean>(false);
   const [skills, setSkills] = useState<MultiSelectOptions[]>([]);
   const [subSkills, setSubSkills] = useState<MultiSelectOptions[]>([]);
+  const { userInfo } = userStore();
 
   const projectToEdit =
-    selectedProject !== null ? pow[selectedProject as number] : null;
+    selectedProject !== null && pow ? pow[selectedProject as number] : null;
 
   useEffect(() => {
     if (!isOpen) {
@@ -83,7 +90,7 @@ export const AddProject = ({
     }
   }, [isOpen, projectToEdit, setValue, setSelectedProject]);
 
-  const onSubmit = (data: any) => {
+  const onSubmit = async (data: any): Promise<void> => {
     let error = false;
 
     if (!isValidHttpUrl(data.link)) {
@@ -101,7 +108,7 @@ export const AddProject = ({
     }
 
     if (error) {
-      return false;
+      return;
     }
 
     const projectData: PoW = {
@@ -112,22 +119,36 @@ export const AddProject = ({
       subSkills: subSkills.map((ele) => ele.value),
     };
 
-    if (selectedProject !== null && setSelectedProject) {
-      setPow((prevPow) => {
-        const updatedPow = [...prevPow];
-        updatedPow[selectedProject as number] = {
-          ...updatedPow[selectedProject as number],
-          ...projectData,
-        };
-        return updatedPow;
-      });
-      setSelectedProject(null);
-    } else {
-      setPow((prevPow) => [...prevPow, projectData]);
+    if (upload) {
+      try {
+        await axios.post('/api/pow/create', {
+          userId: userInfo?.id,
+          pows: [projectData],
+        });
+        if (onNewPow) {
+          onNewPow(projectData);
+        }
+      } catch (e) {
+        console.error('Error posting to DB:', e);
+        return;
+      }
+    } else if (setPow && setSelectedProject !== undefined) {
+      if (selectedProject !== null) {
+        setPow((prevPow) => {
+          const updatedPow = [...prevPow!];
+          updatedPow[selectedProject as number] = {
+            ...updatedPow[selectedProject as number],
+            ...projectData,
+          };
+          return updatedPow;
+        });
+        setSelectedProject(null);
+      } else {
+        setPow((prevPow) => [...prevPow!, projectData]);
+      }
     }
 
     onClose();
-    return null;
   };
 
   return (

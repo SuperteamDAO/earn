@@ -41,7 +41,7 @@ export const tokenList = [
     tokenSymbol: 'USDC',
     mintAddress: 'EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v',
     address: 'EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v',
-    icon: 'https://s2.coinmarketcap.com/static/img/coins/64x64/3408.png',
+    icon: 'https://s2.coinmarketcap.com/static/img/coins/128x128/3408.png',
     decimals: 6,
   },
   {

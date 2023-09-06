@@ -216,6 +216,8 @@ export default function EditProfilePage() {
         setValue('photo', userInfo.photo);
         setPhotoUrl(userInfo.photo);
         setIsPhotoLoading(false);
+      } else {
+        setIsPhotoLoading(false);
       }
     }
   }, [userInfo, setValue]);
@@ -352,7 +354,6 @@ export default function EditProfilePage() {
       });
 
       setUserInfo(response.data);
-      console.log('Profile updated successfully!');
       toast({
         title: 'Profile updated.',
         description: 'Your profile has been updated successfully!',
@@ -372,7 +373,6 @@ export default function EditProfilePage() {
         duration: 5000,
         isClosable: true,
       });
-      console.log('Failed to update profile');
     }
   };
 

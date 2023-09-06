@@ -33,7 +33,7 @@ type SubSkillsType =
   | 'Sway'
   | 'Move'
   | 'Flutter'
-  | 'ReactNative'
+  | 'React Native'
   | 'Data Analytics'
   | 'Operations'
   | 'Admin'
@@ -114,7 +114,7 @@ export const SkillList: {
   },
   {
     mainskill: 'Mobile',
-    subskills: ['Android', 'iOS', 'Flutter', 'ReactNative'],
+    subskills: ['Android', 'iOS', 'Flutter', 'React Native'],
     variations: ['Mobile Engineer', 'Mobile Dev', 'Mobile Developer'],
   },
   {

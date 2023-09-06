@@ -123,7 +123,7 @@ function YourWork({ setStep, useFormStore }: Step1Props) {
                 }
                 borderColor="brand.slate.300"
                 _placeholder={{
-                  color: 'brand.slate.300',
+                  color: 'brand.slate.400',
                 }}
                 focusBorderColor="brand.purple"
                 id="cryptoExperience"
@@ -145,7 +145,7 @@ function YourWork({ setStep, useFormStore }: Step1Props) {
                 color={watch().experience.length === 0 ? 'brand.slate.300' : ''}
                 borderColor="brand.slate.300"
                 _placeholder={{
-                  color: 'brand.slate.300',
+                  color: 'brand.slate.400',
                 }}
                 focusBorderColor="brand.purple"
                 id="experience"
@@ -170,7 +170,7 @@ function YourWork({ setStep, useFormStore }: Step1Props) {
               }
               borderColor="brand.slate.300"
               _placeholder={{
-                color: 'brand.slate.300',
+                color: 'brand.slate.400',
               }}
               focusBorderColor="brand.purple"
               id="workPrefernce"
@@ -192,7 +192,7 @@ function YourWork({ setStep, useFormStore }: Step1Props) {
               color={'gray.800'}
               borderColor="brand.slate.300"
               _placeholder={{
-                color: 'brand.slate.300',
+                color: 'brand.slate.400',
               }}
               focusBorderColor="brand.purple"
               id="currentEmployer"

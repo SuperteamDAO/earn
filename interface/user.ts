@@ -2,6 +2,7 @@ import type { SponsorType } from '@/interface/sponsor';
 import type { UserSponsor } from '@/interface/userSponsor';
 
 import type { PoW } from './pow';
+import type { SubmissionWithUser } from './submission';
 
 interface Notifications {
   label: string;
@@ -48,5 +49,6 @@ interface User {
   UserSponsors?: UserSponsor[];
   PoW?: PoW[];
   private?: boolean;
+  Submission?: SubmissionWithUser[];
 }
 export type { Notifications, User };
