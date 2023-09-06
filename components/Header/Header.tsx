@@ -13,6 +13,7 @@ import {
   useColorModeValue,
   useDisclosure,
 } from '@chakra-ui/react';
+import NextLink from 'next/link';
 import { useRouter } from 'next/router';
 
 import { BountySnackbar } from './BountySnackbar';
@@ -69,7 +70,7 @@ const MobileNavItem = ({ label, children, href }: NavItem) => {
   return (
     <Stack onClick={children && onToggle} spacing={4}>
       <Flex
-        as={Link}
+        as={NextLink}
         align={'center'}
         justify={'space-between'}
         py={2}
@@ -105,6 +106,7 @@ const MobileNavItem = ({ label, children, href }: NavItem) => {
             children.map((child) => (
               <Link
                 key={child.label}
+                as={NextLink}
                 mt={0}
                 py={1}
                 color={'brand.slate.800'}
@@ -147,6 +149,7 @@ const DesktopNav = () => {
             <Popover placement={'bottom-start'} trigger={'hover'}>
               <PopoverTrigger>
                 <Link
+                  as={NextLink}
                   alignItems="center"
                   display="flex"
                   h="full"
