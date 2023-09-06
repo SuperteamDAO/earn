@@ -231,20 +231,20 @@ export const SubmissionModal = ({
                   _placeholder={{ color: 'brand.slate.300' }}
                   focusBorderColor="brand.purple"
                   id="otherInfo"
-                  maxLength={220}
+                  maxLength={180}
                   placeholder="Add info or link"
                   {...register('otherInfo')}
                 />
                 <Text
                   color={
-                    (watch('otherInfo')?.length || 0) > 200
+                    (watch('otherInfo')?.length || 0) > 160
                       ? 'red'
                       : 'brand.slate.400'
                   }
                   fontSize={'xs'}
                   textAlign="right"
                 >
-                  {220 - (watch('otherInfo')?.length || 0)} characters left
+                  {180 - (watch('otherInfo')?.length || 0)} characters left
                 </Text>
                 <FormErrorMessage>
                   {errors.otherInfo ? <>{errors.otherInfo.message}</> : <></>}
