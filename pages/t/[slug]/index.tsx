@@ -1,3 +1,4 @@
+/* eslint-disable no-nested-ternary */
 import {
   ChevronDownIcon,
   ChevronUpIcon,
@@ -168,6 +169,40 @@ function TalentProfile({ slug }: TalentProps) {
 
   const isMD = useBreakpointValue({ base: false, md: true });
 
+  const getWorkPreferenceText = (workPrefernce?: string): string | null => {
+    if (!workPrefernce || workPrefernce === 'Not looking for Work') {
+      return null;
+    }
+    const fullTimePatterns = [
+      'Passively looking for fulltime positions',
+      'Actively looking for fulltime positions',
+      'Fulltime',
+    ];
+    const freelancePatterns = [
+      'Passively looking for freelance work',
+      'Actively looking for freelance work',
+      'Freelance',
+    ];
+    const internshipPatterns = [
+      'Actively looking for internships',
+      'Internship',
+    ];
+
+    if (fullTimePatterns.includes(workPrefernce)) {
+      return 'Fulltime Roles';
+    }
+    if (freelancePatterns.includes(workPrefernce)) {
+      return 'Freelance Opportunities';
+    }
+    if (internshipPatterns.includes(workPrefernce)) {
+      return 'Internship Opportunities';
+    }
+
+    return workPrefernce;
+  };
+
+  const workPreferenceText = getWorkPreferenceText(talent?.workPrefernce);
+
   const renderButton = (
     icon: JSX.Element,
     text: string,
@@ -190,6 +225,7 @@ function TalentProfile({ slug }: TalentProps) {
         </Button>
       );
     }
+
     return (
       <IconButton
         color={outline ? 'brand.slate.500' : '#6366F1'}
@@ -258,14 +294,16 @@ function TalentProfile({ slug }: TalentProps) {
                     {talent?.firstName} {talent?.lastName}
                   </Text>
                   <Text
-                    overflow="hidden"
                     color={'brand.slate.500'}
                     fontSize={{ base: 'md', md: 'md' }}
                     fontWeight={'600'}
-                    whiteSpace="nowrap"
-                    textOverflow="ellipsis"
                   >
-                    @{talent?.username}
+                    @
+                    {isMD
+                      ? talent?.username
+                      : talent?.username?.length && talent?.username.length > 24
+                      ? `${talent?.username.slice(0, 24)}...`
+                      : talent?.username}
                   </Text>
                 </Box>
                 <Flex
@@ -300,11 +338,11 @@ function TalentProfile({ slug }: TalentProps) {
                   <Text mb={4} color={'brand.slate.900'} fontWeight={500}>
                     Details
                   </Text>
-                  {talent?.workPrefernce !== 'Not looking for Work' && (
+                  {workPreferenceText && (
                     <Text mt={3} color={'brand.slate.400'}>
                       Looking for{' '}
                       <Text as={'span'} color={'brand.slate.500'}>
-                        {talent?.workPrefernce}
+                        {workPreferenceText}
                       </Text>
                     </Text>
                   )}
@@ -443,7 +481,9 @@ function TalentProfile({ slug }: TalentProps) {
                   <Flex direction={'column'}>
                     <Text fontWeight={600}>{talent?.Submission?.length}</Text>
                     <Text color={'brand.slate.500'} fontWeight={500}>
-                      Submissions
+                      {talent?.Submission?.length === 1
+                        ? 'Submission'
+                        : 'Submissions'}
                     </Text>
                   </Flex>
                   <Flex direction={'column'}>

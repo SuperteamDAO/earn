@@ -12,9 +12,20 @@ interface Props {
   borderTopRadius?: string | number;
 }
 
+const getRandomFallbackImage = (): string => {
+  const fallbackImages = [
+    '/assets/fallback/og1.jpeg',
+    '/assets/fallback/og2.jpeg',
+    '/assets/fallback/og3.jpeg',
+  ];
+
+  const randomIndex = Math.floor(Math.random() * fallbackImages.length);
+  return fallbackImages[randomIndex]!;
+};
+
 const OgImageViewer: React.FC<Props> = ({ externalUrl, ...props }) => {
   const [ogImageUrl, setOgImageUrl] = useState<string | null>(null);
-  const fallbackImage = '/assets/fallback/profilefeed.png';
+  const fallbackImage = getRandomFallbackImage();
 
   useEffect(() => {
     const fetchImage = async () => {
