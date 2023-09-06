@@ -67,17 +67,6 @@ export const ShareProfile = ({ isOpen, onClose, username, id }: Props) => {
       },
     },
     {
-      name: 'Discord',
-      icon: '/assets/icons/socials/Discord.png',
-      share: (url, message) => {
-        const encodedUrl = encodeURIComponent(url);
-        window.open(
-          `https://discord.com/share?text=${message}&url=${encodedUrl}`,
-          '_blank'
-        );
-      },
-    },
-    {
       name: 'WhatsApp',
       icon: '/assets/icons/socials/WhatsApp.png',
       share: (url, message) => {

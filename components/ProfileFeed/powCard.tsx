@@ -36,7 +36,7 @@ export default function PowCard({ talent, pow }: { talent: User; pow: PoW }) {
             <Text as={'span'} ml={2} color={'brand.slate.900'} fontWeight={600}>
               {talent?.firstName} {talent?.lastName}
             </Text>{' '}
-            added a proof of work
+            added a personal project
           </Text>
         </Flex>
         <Text
@@ -83,7 +83,12 @@ export default function PowCard({ talent, pow }: { talent: User; pow: PoW }) {
               {pow?.title}
             </Text>
           </Flex>
-          <LinkBox alignItems={'center'} gap={2} display="flex">
+          <LinkBox
+            alignItems={'center'}
+            gap={2}
+            display="flex"
+            whiteSpace={'nowrap'}
+          >
             <LinkOverlay href={pow.link}>
               <Text
                 as="span"
@@ -91,7 +96,7 @@ export default function PowCard({ talent, pow }: { talent: User; pow: PoW }) {
                 fontSize={{ base: 'sm', md: 'md' }}
                 fontWeight={600}
               >
-                View Work
+                View Project
               </Text>
             </LinkOverlay>
             <ArrowForwardIcon color={'#6366F1'} />

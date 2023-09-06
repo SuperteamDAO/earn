@@ -14,6 +14,7 @@ import axios from 'axios';
 import React, { useEffect, useState } from 'react';
 import toast from 'react-hot-toast';
 import { AiFillHeart } from 'react-icons/ai';
+import { BiComment } from 'react-icons/bi';
 
 import { tokenList } from '@/constants';
 import { PrizeListMap } from '@/interface/listings';
@@ -198,7 +199,12 @@ export default function SubmissionCard({
               {sub?.listing?.title}
             </Text>
           </Flex>
-          <LinkBox alignItems={'center'} gap={2} display="flex">
+          <LinkBox
+            alignItems={'center'}
+            gap={2}
+            display="flex"
+            whiteSpace={'nowrap'}
+          >
             <LinkOverlay
               href={`${getURL()}listings/bounties/${
                 sub?.listing?.slug
@@ -217,23 +223,39 @@ export default function SubmissionCard({
           </LinkBox>
         </Flex>
       </Box>
-      <Button
-        zIndex={10}
-        alignItems={'center'}
-        gap={2}
-        display={'flex'}
-        w={14}
-        isLoading={isLoading}
-        onClick={(e) => {
-          e.stopPropagation();
-          if (!userInfo?.id) return;
-          handleLike();
-        }}
-        variant={'unstyled'}
-      >
-        <AiFillHeart color={!isLiked ? '#94A3B8' : '#FF005C'} />
-        {totalLikes}
-      </Button>
+      <Flex align={'center'}>
+        <Button
+          zIndex={10}
+          alignItems={'center'}
+          gap={1}
+          display={'flex'}
+          w={14}
+          isLoading={isLoading}
+          onClick={(e) => {
+            e.stopPropagation();
+            if (!userInfo?.id) return;
+            handleLike();
+          }}
+          variant={'unstyled'}
+        >
+          <AiFillHeart color={!isLiked ? '#94A3B8' : '#FF005C'} />
+          {totalLikes}
+        </Button>
+        <BiComment
+          color={'#94A3B8'}
+          style={{
+            transform: 'scaleX(-1)',
+            marginTop: '2px',
+            cursor: 'pointer',
+          }}
+          onClick={() => {
+            const submissionUrl = `${getURL()}listings/bounties/${
+              sub?.listing?.slug
+            }/submission/${sub?.id}`;
+            window.location.href = submissionUrl;
+          }}
+        />
+      </Flex>
     </Box>
   );
 }

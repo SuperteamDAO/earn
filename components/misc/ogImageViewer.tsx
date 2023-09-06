@@ -1,7 +1,7 @@
 import type { ImageProps, ResponsiveValue } from '@chakra-ui/react';
 import { Image, Skeleton } from '@chakra-ui/react';
 import axios from 'axios';
-import React, { useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import type { Metadata } from 'unfurl.js/dist/types';
 
 interface Props {
@@ -37,10 +37,19 @@ const OgImageViewer: React.FC<Props> = ({ externalUrl, ...props }) => {
     fetchImage();
   }, [externalUrl]);
 
+  const handleImageError = useCallback(() => {
+    setOgImageUrl(fallbackImage);
+  }, [fallbackImage]);
+
   return (
     <div>
       {ogImageUrl ? (
-        <Image alt="OG Image" src={ogImageUrl} {...props} />
+        <Image
+          alt="OG Image"
+          onError={handleImageError}
+          src={ogImageUrl}
+          {...props}
+        />
       ) : (
         <Skeleton {...props} />
       )}

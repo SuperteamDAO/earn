@@ -34,6 +34,7 @@ type AddProjectProps = {
   selectedProject?: number | null;
   setSelectedProject?: (selectedProject: number | null) => void;
   upload?: boolean;
+  onNewPow?: (newPow: PoW) => void;
 };
 
 export const AddProject = ({
@@ -44,6 +45,7 @@ export const AddProject = ({
   selectedProject,
   setSelectedProject,
   upload,
+  onNewPow,
 }: AddProjectProps) => {
   const { register, handleSubmit, setValue, watch } = useForm<{
     title: string;
@@ -123,6 +125,9 @@ export const AddProject = ({
           userId: userInfo?.id,
           pows: [projectData],
         });
+        if (onNewPow) {
+          onNewPow(projectData);
+        }
       } catch (e) {
         console.error('Error posting to DB:', e);
         return;

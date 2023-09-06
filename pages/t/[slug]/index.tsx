@@ -152,6 +152,20 @@ function TalentProfile({ slug }: TalentProps) {
     return combinedAndSortedFeed.filter((item) => item.type === 'pow');
   }, [activeTab, combinedAndSortedFeed]);
 
+  const addNewPow = (newPow: PoW) => {
+    setTalent((prevTalent) => {
+      if (!prevTalent) {
+        return prevTalent;
+      }
+      const currentTime = new Date().toISOString();
+      const previousPows = prevTalent.PoW ?? [];
+      return {
+        ...prevTalent,
+        PoW: [{ ...newPow, createdAt: currentTime }, ...previousPows],
+      };
+    });
+  };
+
   const isMD = useBreakpointValue({ base: false, md: true });
 
   const renderButton = (
@@ -244,9 +258,12 @@ function TalentProfile({ slug }: TalentProps) {
                     {talent?.firstName} {talent?.lastName}
                   </Text>
                   <Text
+                    overflow="hidden"
                     color={'brand.slate.500'}
                     fontSize={{ base: 'md', md: 'md' }}
                     fontWeight={'600'}
+                    whiteSpace="nowrap"
+                    textOverflow="ellipsis"
                   >
                     @{talent?.username}
                   </Text>
@@ -279,7 +296,7 @@ function TalentProfile({ slug }: TalentProps) {
                 direction={{ base: 'column', md: 'row' }}
                 gap={{ base: '12', md: '100' }}
               >
-                <Box w="50%">
+                <Box w={{ base: '100%', md: '50%' }}>
                   <Text mb={4} color={'brand.slate.900'} fontWeight={500}>
                     Details
                   </Text>
@@ -395,7 +412,7 @@ function TalentProfile({ slug }: TalentProps) {
                         key={eleIndex}
                         onClick={() => {
                           if (ele.link) {
-                            window.location.href = ele.link;
+                            window.open(ele.link, '_blank');
                           }
                         }}
                       >
@@ -432,7 +449,7 @@ function TalentProfile({ slug }: TalentProps) {
                   <Flex direction={'column'}>
                     <Text fontWeight={600}>{winnerCount}</Text>
                     <Text color={'brand.slate.500'} fontWeight={500}>
-                      Bounties Won
+                      Won
                     </Text>
                   </Flex>
                 </Flex>
@@ -576,6 +593,7 @@ function TalentProfile({ slug }: TalentProps) {
             isOpen: isOpenPow,
             onClose: onClosePow,
             upload: true,
+            onNewPow: addNewPow,
           }}
         />
       </Default>
