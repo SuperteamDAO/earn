@@ -69,29 +69,29 @@ const MobileNavItem = ({ label, children, href }: NavItem) => {
   const { isOpen, onToggle } = useDisclosure();
   return (
     <Stack onClick={children && onToggle} spacing={4}>
-      <Flex
-        as={NextLink}
-        align={'center'}
-        justify={'space-between'}
-        py={2}
-        _hover={{
-          textDecoration: 'none',
-        }}
-        href={href ?? '#'}
-      >
-        <Text color={'brand.slate.500'} fontSize="sm" fontWeight={400}>
-          {label}
-        </Text>
-        {children && (
-          <ChevronDownIcon
-            w={6}
-            h={6}
-            color={'brand.slate.500'}
-            transform={isOpen ? 'rotate(180deg)' : ''}
-            transition={'all .25s ease-in-out'}
-          />
-        )}
-      </Flex>
+      <NextLink href={href ?? '#'}>
+        <Flex
+          align={'center'}
+          justify={'space-between'}
+          py={2}
+          _hover={{
+            textDecoration: 'none',
+          }}
+        >
+          <Text color={'brand.slate.500'} fontSize="sm" fontWeight={400}>
+            {label}
+          </Text>
+          {children && (
+            <ChevronDownIcon
+              w={6}
+              h={6}
+              color={'brand.slate.500'}
+              transform={isOpen ? 'rotate(180deg)' : ''}
+              transition={'all .25s ease-in-out'}
+            />
+          )}
+        </Flex>
+      </NextLink>
 
       <Collapse animateOpacity in={isOpen} style={{ marginTop: '0!important' }}>
         <Stack
