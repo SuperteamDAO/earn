@@ -530,7 +530,7 @@ const AlphaAccess = () => {
         _hover={{
           bg: 'gray.100',
         }}
-        href="https://solana.com/hyperdrive"
+        href="https://airtable.com/appLR0lPsX7j0M5nC/shrHiv2mOMSefEk09"
         isExternal
       >
         Register Now
