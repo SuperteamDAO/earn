@@ -491,12 +491,27 @@ const AlphaAccess = () => {
           src="https://s2.coinmarketcap.com/static/img/coins/128x128/16116.png"
         />
       </HStack>
-      <Text mt={1} color={'white'} fontSize={'xl'} fontWeight={'600'}>
+      <HStack>
+        <Image
+          h={'6'}
+          mt={1}
+          mb={2}
+          alt={'hyperdrive'}
+          src={'/assets/icons/hyperdrive.svg'}
+        />
+      </HStack>
+      <Text
+        mt={1}
+        color={'white'}
+        fontSize={'lg'}
+        fontWeight={'600'}
+        lineHeight={'6'}
+      >
         Build a Solana dApp and compete for $1,000,000+
       </Text>
       <Text
         mt={'0.5rem'}
-        color={'white'}
+        color={'brand.slate.200'}
         fontSize={'1rem'}
         lineHeight={'1.1875rem'}
       >

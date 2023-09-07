@@ -174,7 +174,15 @@ export const Comments = ({ refId, refType }: Props) => {
           const date = dayjs(comment?.updatedAt).fromNow();
           return (
             <HStack key={comment.id} align={'start'} px={6}>
-              <Flex minW="32px" minH="32px">
+              <Flex
+                minW="32px"
+                minH="32px"
+                cursor={'pointer'}
+                onClick={() => {
+                  const url = `${getURL()}t/${comment?.author?.username}`;
+                  window.open(url, '_blank', 'noopener,noreferrer');
+                }}
+              >
                 <UserAvatar user={comment?.author} />
               </Flex>
 
