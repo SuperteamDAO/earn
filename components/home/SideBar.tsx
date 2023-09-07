@@ -497,7 +497,7 @@ const AlphaAccess = () => {
           mt={1}
           mb={2}
           alt={'hyperdrive'}
-          src={'/assets/icons/hyperdrive.svg'}
+          src={'/assets/icons/hyperdrive.png'}
         />
       </HStack>
       <Text
