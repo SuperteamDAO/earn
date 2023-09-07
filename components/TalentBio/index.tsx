@@ -3,6 +3,7 @@ import type { User } from '@prisma/client';
 import { useRouter } from 'next/router';
 
 import { userStore } from '@/store/user';
+import { getURL } from '@/utils/validUrl';
 
 type ChipType = {
   icon: string;
@@ -102,10 +103,27 @@ function TalentBio({
             src={user?.photo as string}
           />
           <Box ml={'12px'}>
-            <Text fontSize={'md'} fontWeight={'600'}>
+            <Text
+              fontSize={'md'}
+              fontWeight={'600'}
+              cursor={'pointer'}
+              onClick={() => {
+                const url = `${getURL()}t/${user?.username}`;
+                window.open(url, '_blank', 'noopener,noreferrer');
+              }}
+            >
               {user?.firstName} {user?.lastName}
             </Text>
-            <Text color={'gray.400'} fontSize={'sm'} fontWeight={'600'}>
+            <Text
+              color={'gray.400'}
+              fontSize={'sm'}
+              fontWeight={'600'}
+              cursor="pointer"
+              onClick={() => {
+                const url = `${getURL()}t/${user?.username}`;
+                window.open(url, '_blank', 'noopener,noreferrer');
+              }}
+            >
               @
               {user?.username?.length! > 15
                 ? `${user?.username?.slice(0, 15)}...`

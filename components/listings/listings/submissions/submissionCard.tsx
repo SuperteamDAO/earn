@@ -77,6 +77,12 @@ export const SubmissionCard = ({
     };
     fetchImage();
   }, []);
+
+  const navigateToTalentProfile = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    router.push(`/t/${talent?.username}`);
+  };
+
   return (
     <>
       <VStack
@@ -102,7 +108,12 @@ export const SubmissionCard = ({
         />
         <HStack align={'center'} justify={'space-between'} w={'full'}>
           <VStack align={'start'}>
-            <Text color={'#000000'} fontSize={'1.1rem'} fontWeight={600}>
+            <Text
+              color={'#000000'}
+              fontSize={'1.1rem'}
+              fontWeight={600}
+              onClick={navigateToTalentProfile}
+            >
               {talent?.firstName}
             </Text>
             <HStack>

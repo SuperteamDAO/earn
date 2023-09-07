@@ -20,6 +20,7 @@ import WarningModal from '@/components/shared/WarningModal';
 import type { Comment } from '@/interface/comments';
 import { userStore } from '@/store/user';
 import { dayjs } from '@/utils/dayjs';
+import { getURL } from '@/utils/validUrl';
 
 interface Props {
   refId: string;
@@ -173,13 +174,30 @@ export const Comments = ({ refId, refType }: Props) => {
           const date = dayjs(comment?.updatedAt).fromNow();
           return (
             <HStack key={comment.id} align={'start'} px={6}>
-              <Flex minW="32px" minH="32px">
+              <Flex
+                minW="32px"
+                minH="32px"
+                cursor={'pointer'}
+                onClick={() => {
+                  const url = `${getURL()}t/${comment?.author?.username}`;
+                  window.open(url, '_blank', 'noopener,noreferrer');
+                }}
+              >
                 <UserAvatar user={comment?.author} />
               </Flex>
 
               <VStack align={'start'}>
                 <HStack>
-                  <Text color="brand.slate.800" fontSize="sm" fontWeight={600}>
+                  <Text
+                    color="brand.slate.800"
+                    fontSize="sm"
+                    fontWeight={600}
+                    cursor={'pointer'}
+                    onClick={() => {
+                      const url = `${getURL()}t/${comment?.author?.username}`;
+                      window.open(url, '_blank', 'noopener,noreferrer');
+                    }}
+                  >
                     {`${comment?.author?.firstName} ${comment?.author?.lastName}`}
                   </Text>
                   <Text color="brand.slate.500" fontSize="sm">

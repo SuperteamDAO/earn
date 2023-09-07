@@ -64,7 +64,7 @@ function AboutYou({ setStep, useFormStore }: Step1Props) {
               color={'gray.800'}
               borderColor="brand.slate.300"
               _placeholder={{
-                color: 'brand.slate.300',
+                color: 'brand.slate.400',
               }}
               focusBorderColor="brand.purple"
               id="username"
@@ -85,7 +85,7 @@ function AboutYou({ setStep, useFormStore }: Step1Props) {
               color={watch().location.length === 0 ? 'brand.slate.300' : ''}
               borderColor="brand.slate.300"
               _placeholder={{
-                color: 'brand.slate.300',
+                color: 'brand.slate.400',
               }}
               focusBorderColor="brand.purple"
               id={'location'}
@@ -131,7 +131,7 @@ function AboutYou({ setStep, useFormStore }: Step1Props) {
             <Textarea
               borderColor="brand.slate.300"
               _placeholder={{
-                color: 'brand.slate.300',
+                color: 'brand.slate.400',
               }}
               focusBorderColor="brand.purple"
               id={'bio'}
