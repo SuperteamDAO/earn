@@ -1,11 +1,11 @@
 import { ChevronDownIcon, CloseIcon, HamburgerIcon } from '@chakra-ui/icons';
 import {
   Box,
+  Center,
   Collapse,
   Flex,
   IconButton,
   Image,
-  Link,
   Popover,
   PopoverTrigger,
   Stack,
@@ -104,17 +104,15 @@ const MobileNavItem = ({ label, children, href }: NavItem) => {
         >
           {children &&
             children.map((child) => (
-              <Link
+              <Box
                 key={child.label}
-                as={NextLink}
                 mt={0}
                 py={1}
                 color={'brand.slate.800'}
                 fontSize="sm"
-                href={child.href}
               >
-                {child.label}
-              </Link>
+                <NextLink href={child.href ?? '#'}>{child.label}</NextLink>
+              </Box>
             ))}
         </Stack>
       </Collapse>
@@ -148,10 +146,7 @@ const DesktopNav = () => {
           <Box key={navItem.label}>
             <Popover placement={'bottom-start'} trigger={'hover'}>
               <PopoverTrigger>
-                <Link
-                  as={NextLink}
-                  alignItems="center"
-                  display="flex"
+                <Center
                   h="full"
                   py={2}
                   color={isCurrent ? 'brand.slate.800' : 'brand.slate.500'}
@@ -163,10 +158,11 @@ const DesktopNav = () => {
                     textDecoration: 'none',
                     color: 'brand.slate.800',
                   }}
-                  href={navItem.href ?? '#'}
                 >
-                  {navItem.label}
-                </Link>
+                  <NextLink href={navItem.href ?? '#'}>
+                    {navItem.label}
+                  </NextLink>
+                </Center>
               </PopoverTrigger>
             </Popover>
           </Box>
