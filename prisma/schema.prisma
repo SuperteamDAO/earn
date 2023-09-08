@@ -76,6 +76,7 @@ model Bounties {
   pocSocials           String?
   Submission           Submission[]
   SubscribeBounty      SubscribeBounty[]
+  hackathonprize       Boolean            @default(false)
 
   @@index([id, slug])
   @@index([sponsorId])
