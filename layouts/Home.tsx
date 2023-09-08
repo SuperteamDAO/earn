@@ -186,9 +186,11 @@ function Home(props: IDefaultProps) {
               <SearchLoading />
             ) : (
               <Box w="full">
-                {!userInfo?.id && !router.asPath.includes('regions') && (
-                  <HomeBanner setTriggerLogin={setTriggerLogin} />
-                )}
+                {!userInfo?.id &&
+                  !router.asPath.includes('regions') &&
+                  !router.asPath.includes('Hyperdrive') && (
+                    <HomeBanner setTriggerLogin={setTriggerLogin} />
+                  )}
                 {showCategoryBanner && (
                   <CategoryBanner
                     type={

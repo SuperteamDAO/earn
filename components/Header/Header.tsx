@@ -60,6 +60,10 @@ const NAV_ITEMS: Array<NavItem> = [
         label: 'Blockchain',
         href: '/all/Blockchain/',
       },
+      {
+        label: 'Hyperdrive',
+        href: '/all/Hyperdrive/',
+      },
     ],
   },
 ];
