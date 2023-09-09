@@ -61,7 +61,7 @@ const NAV_ITEMS: Array<NavItem> = [
         href: '/all/Blockchain/',
       },
       {
-        label: 'Hyperdrive',
+        label: 'HYPERDRIVE',
         href: '/all/Hyperdrive/',
       },
     ],

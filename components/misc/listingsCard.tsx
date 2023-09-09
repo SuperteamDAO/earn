@@ -562,6 +562,7 @@ export const CategoryBanner = ({ type }: { type: string }) => {
   const [isSubscribed, setIsSubscribed] = useState<boolean>(false);
 
   const { isOpen, onClose, onOpen } = useDisclosure();
+  const router = useRouter();
 
   useEffect(() => {
     setIsSubscribed(
@@ -608,6 +609,12 @@ export const CategoryBanner = ({ type }: { type: string }) => {
     },
 
     Blockchain: {
+      bg: `/assets/category_assets/bg/contract.png`,
+      desc: 'If you can write complex code that can communicate with chains, these opportunities are made just for you.',
+      color: '#A8FEC0',
+      icon: '/assets/category_assets/icon/contract.png',
+    },
+    Hyperdrive: {
       bg: `/assets/category_assets/bg/contract.png`,
       desc: 'If you can write complex code that can communicate with chains, these opportunities are made just for you.',
       color: '#A8FEC0',
@@ -664,7 +671,11 @@ export const CategoryBanner = ({ type }: { type: string }) => {
         mb={8}
         mx={'auto'}
         p={6}
-        bg={`url('${categoryAssets[type]?.bg}')`}
+        bg={`url('${
+          router.asPath.includes('Hyperdrive')
+            ? categoryAssets.Hyperdrive?.bg
+            : categoryAssets[type]?.bg
+        }')`}
         bgSize={'cover'}
         rounded={10}
       >
@@ -672,36 +683,53 @@ export const CategoryBanner = ({ type }: { type: string }) => {
           w={14}
           h={14}
           mr={3}
-          bg={categoryAssets[type]?.color}
+          bg={
+            router.asPath.includes('Hyperdrive')
+              ? categoryAssets.Blockchain?.color
+              : categoryAssets[type]?.color
+          }
           rounded={'md'}
         >
-          <Image alt="Category icon" src={categoryAssets[type]?.icon} />
+          <Image
+            alt="Category icon"
+            src={
+              router.asPath.includes('Hyperdrive')
+                ? categoryAssets.Blockchain?.icon
+                : categoryAssets[type]?.icon
+            }
+          />
         </Center>
         <Box w={{ md: '60%', base: '100%' }} mt={{ base: 4, md: '0' }}>
           <Text fontFamily={'Domine'} fontWeight={'700'}>
-            {type}
+            {router.asPath.includes('Hyperdrive')
+              ? 'Hyperdrive Side Tracks & Local Prizes'
+              : type}
           </Text>
           <Text mb={6} color={'brand.slate.500'} fontSize={'small'}>
-            {categoryAssets[type]?.desc}
+            {router.asPath.includes('Hyperdrive')
+              ? 'Discover and apply to additional Hyperdrive prizes. Increase your chances of winning something at the online global hackathon!'
+              : categoryAssets[type]?.desc}
           </Text>
         </Box>
-        <Button
-          mt={{ base: 4, md: '' }}
-          ml={{ base: '', md: 'auto' }}
-          my={{ base: '', md: 'auto' }}
-          px={4}
-          color={'brand.slate.400'}
-          fontWeight={'300'}
-          bg={'white'}
-          border={'1px solid'}
-          borderColor={'brand.slate.500'}
-          isLoading={loading}
-          leftIcon={isSubscribed ? <TiTick /> : <BellIcon />}
-          onClick={handleNotification}
-          variant="solid"
-        >
-          {isSubscribed ? 'Subscribed' : 'Notify Me'}
-        </Button>
+        {!router.asPath.includes('Hyperdrive') && (
+          <Button
+            mt={{ base: 4, md: '' }}
+            ml={{ base: '', md: 'auto' }}
+            my={{ base: '', md: 'auto' }}
+            px={4}
+            color={'brand.slate.400'}
+            fontWeight={'300'}
+            bg={'white'}
+            border={'1px solid'}
+            borderColor={'brand.slate.500'}
+            isLoading={loading}
+            leftIcon={isSubscribed ? <TiTick /> : <BellIcon />}
+            onClick={handleNotification}
+            variant="solid"
+          >
+            {isSubscribed ? 'Subscribed' : 'Notify Me'}
+          </Button>
+        )}
         <Toaster />
       </Flex>
     </>
