@@ -115,7 +115,15 @@ const MobileNavItem = ({ label, children, href }: NavItem) => {
                 fontSize="sm"
                 href={child.href}
               >
-                {child.label}
+                {child.label === 'HYPERDRIVE' ? (
+                  <Image
+                    w={100}
+                    src="/assets/category_assets/icon/Hyperdrive.png"
+                  />
+                ) : (
+                  child.label
+                )}
+                {/* {child.label} */}
               </Link>
             ))}
         </Stack>
@@ -166,7 +174,14 @@ const DesktopNav = () => {
                   }}
                   href={navItem.href ?? '#'}
                 >
-                  {navItem.label}
+                  {navItem.label === 'HYPERDRIVE' ? (
+                    <Image
+                      w={100}
+                      src="/assets/category_assets/icon/Hyperdrive.png"
+                    />
+                  ) : (
+                    navItem.label
+                  )}
                 </Link>
               </PopoverTrigger>
             </Popover>

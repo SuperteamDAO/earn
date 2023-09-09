@@ -705,7 +705,12 @@ export const CategoryBanner = ({ type }: { type: string }) => {
               ? 'Hyperdrive Side Tracks & Local Prizes'
               : type}
           </Text>
-          <Text mb={6} color={'brand.slate.500'} fontSize={'small'}>
+          <Text
+            w={['full', 'full', 'full', '130%', 'full']}
+            mb={6}
+            color={'brand.slate.500'}
+            fontSize={'small'}
+          >
             {router.asPath.includes('Hyperdrive')
               ? 'Discover and apply to additional Hyperdrive prizes. Increase your chances of winning something at the online global hackathon!'
               : categoryAssets[type]?.desc}
