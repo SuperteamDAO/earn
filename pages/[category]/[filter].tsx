@@ -153,7 +153,9 @@ function CategoryPage({ category, filter }: Props) {
                     fontSize={{ base: 14, md: 16 }}
                     fontWeight={'600'}
                   >
-                    Bounties
+                    {router.asPath.includes('Hyperdrive')
+                      ? 'Prizes'
+                      : 'Bounties'}
                   </Text>
                   <Text
                     display={['none', 'none', 'block', 'block']}

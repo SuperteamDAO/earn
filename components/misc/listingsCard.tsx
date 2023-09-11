@@ -618,7 +618,7 @@ export const CategoryBanner = ({ type }: { type: string }) => {
       bg: `/assets/category_assets/bg/contract.png`,
       desc: 'If you can write complex code that can communicate with chains, these opportunities are made just for you.',
       color: '#A8FEC0',
-      icon: '/assets/category_assets/icon/contract.png',
+      icon: '/assets/category_assets/icon/solana_logo_green.svg',
     },
   };
 
@@ -685,7 +685,7 @@ export const CategoryBanner = ({ type }: { type: string }) => {
           mr={3}
           bg={
             router.asPath.includes('Hyperdrive')
-              ? categoryAssets.Blockchain?.color
+              ? 'black'
               : categoryAssets[type]?.color
           }
           rounded={'md'}
@@ -694,9 +694,12 @@ export const CategoryBanner = ({ type }: { type: string }) => {
             alt="Category icon"
             src={
               router.asPath.includes('Hyperdrive')
-                ? categoryAssets.Blockchain?.icon
+                ? categoryAssets.Hyperdrive?.icon
                 : categoryAssets[type]?.icon
             }
+            style={{
+              scale: router.asPath.includes('Hyperdrive') ? '3' : '1',
+            }}
           />
         </Center>
         <Box w={{ md: '60%', base: '100%' }} mt={{ base: 4, md: '0' }}>
@@ -706,7 +709,7 @@ export const CategoryBanner = ({ type }: { type: string }) => {
               : type}
           </Text>
           <Text
-            w={['full', 'full', 'full', '130%', 'full']}
+            w={['full', 'full', 'full', '130%', '130%']}
             mb={6}
             color={'brand.slate.500'}
             fontSize={'small'}
