@@ -49,6 +49,7 @@ interface Props {
   bountytitle: string;
   requirements?: string;
   isWinnersAnnounced?: boolean;
+  hackathonPrize?: boolean;
   pocSocials?: string;
 }
 function DetailSideCard({
@@ -63,6 +64,7 @@ function DetailSideCard({
   requirements,
   type,
   pocSocials,
+  hackathonPrize,
   isWinnersAnnounced = false,
 }: Props) {
   const { userInfo } = userStore();
@@ -523,29 +525,31 @@ function DetailSideCard({
             )}
           </Box>
         </VStack>
-        <VStack
-          align={'start'}
-          justify={'center'}
-          w={'22rem'}
-          mt={4}
-          p={6}
-          bg={'#FFFFFF'}
-          rounded={'xl'}
-        >
-          <Text h="100%" color={'#94A3B8'} fontSize="1rem" textAlign="center">
-            TYPE
-          </Text>
-          <Text color={'#64768b'} fontSize="1.1rem" fontWeight={500}>
-            {type === 'permissioned'
-              ? 'Application-based Bounty'
-              : 'Open Bounty'}
-          </Text>
-          <Text color={'#94A3B8'} fontSize="1rem" fontWeight={400}>
-            {type === 'permissioned'
-              ? "Don't start working just yet! Apply first, and then you'll be notified if you're selected to work on this bounty."
-              : 'This is an open competition bounty! Anyone can start working and submit their work before the deadline!'}
-          </Text>
-        </VStack>
+        {!hackathonPrize && (
+          <VStack
+            align={'start'}
+            justify={'center'}
+            w={'22rem'}
+            mt={4}
+            p={6}
+            bg={'#FFFFFF'}
+            rounded={'xl'}
+          >
+            <Text h="100%" color={'#94A3B8'} fontSize="1rem" textAlign="center">
+              TYPE
+            </Text>
+            <Text color={'#64768b'} fontSize="1.1rem" fontWeight={500}>
+              {type === 'permissioned'
+                ? 'Application-based Bounty'
+                : 'Open Bounty'}
+            </Text>
+            <Text color={'#94A3B8'} fontSize="1rem" fontWeight={400}>
+              {type === 'permissioned'
+                ? "Don't start working just yet! Apply first, and then you'll be notified if you're selected to work on this bounty."
+                : 'This is an open competition bounty! Anyone can start working and submit their work before the deadline!'}
+            </Text>
+          </VStack>
+        )}
         {requirements && (
           <VStack
             align="start"

@@ -3045,9 +3045,7 @@
     eslint-visitor-keys "^3.3.0"
 
 "@upstash/qstash@^0.3.6":
-  version "0.3.6"
-  resolved "https://registry.npmjs.org/@upstash/qstash/-/qstash-0.3.6.tgz"
-  integrity sha512-NKN4jbPhB5lfHoSIaU7AuQ3F+yGS20e/FBRiUuPetcKoi354wHhKj9AJFfkFT5SSeLq0XEsXRNynm8gqCS4HjQ==
+  version "v0.3.6"
   dependencies:
     "@deno/shim-crypto" "~0.3.0"
 
