@@ -60,6 +60,10 @@ const NAV_ITEMS: Array<NavItem> = [
         label: 'Blockchain',
         href: '/all/Blockchain/',
       },
+      {
+        label: 'HYPERDRIVE',
+        href: '/all/Hyperdrive/',
+      },
     ],
   },
 ];
@@ -111,7 +115,15 @@ const MobileNavItem = ({ label, children, href }: NavItem) => {
                 fontSize="sm"
                 href={child.href}
               >
-                {child.label}
+                {child.label === 'HYPERDRIVE' ? (
+                  <Image
+                    w={100}
+                    src="/assets/category_assets/icon/Hyperdrive.svg"
+                  />
+                ) : (
+                  child.label
+                )}
+                {/* {child.label} */}
               </Link>
             ))}
         </Stack>
@@ -162,7 +174,16 @@ const DesktopNav = () => {
                   }}
                   href={navItem.href ?? '#'}
                 >
-                  {navItem.label}
+                  {navItem.label === 'HYPERDRIVE' ? (
+                    <Image
+                      src="/assets/category_assets/icon/Hyperdrive.svg"
+                      style={{
+                        scale: '1.1',
+                      }}
+                    />
+                  ) : (
+                    navItem.label
+                  )}
                 </Link>
               </PopoverTrigger>
             </Popover>

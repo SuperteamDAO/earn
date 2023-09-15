@@ -31,6 +31,7 @@ export default async function user(req: NextApiRequest, res: NextApiResponse) {
         where: {
           isPublished: true,
           isActive: true,
+          hackathonprize: false,
           isArchived: false,
           status: 'OPEN',
           region: {
@@ -77,6 +78,61 @@ export default async function user(req: NextApiRequest, res: NextApiResponse) {
         where: {
           isPublished: true,
           isActive: true,
+          hackathonprize: false,
+          isArchived: false,
+          status: 'OPEN',
+          region: {
+            in: [
+              Regions.GLOBAL,
+              Regions.GERMANY,
+              Regions.INDIA,
+              Regions.MEXICO,
+              Regions.VIETNAM,
+              Regions.UK,
+              Regions.TURKEY,
+              Regions.UAE,
+              Regions.NIGERIA,
+              Regions.ISRAEL,
+            ],
+          },
+          deadline: {
+            gte: dayjs().subtract(1, 'month').toISOString(),
+          },
+          ...skillsFilter,
+        },
+        // orderBy: {
+        //   deadline: 'desc',
+        // },
+        include: {
+          sponsor: {
+            select: {
+              name: true,
+              slug: true,
+              logo: true,
+            },
+          },
+        },
+      });
+      const sortedData = bounties.sort((a, b) => {
+        return dayjs(b.deadline).diff(dayjs(a.deadline));
+      });
+      const splitIndex = sortedData.findIndex((bounty) =>
+        dayjs().isAfter(dayjs(bounty?.deadline))
+      );
+      if (splitIndex >= 0) {
+        const bountiesOpen = sortedData.slice(0, splitIndex).reverse();
+        const bountiesClosed = sortedData.slice(splitIndex);
+
+        result.bounties = [...bountiesOpen, ...bountiesClosed];
+      } else {
+        result.bounties = sortedData.slice(0, take);
+      }
+    } else if (category === 'hyperdrive') {
+      const bounties = await prisma.bounties.findMany({
+        where: {
+          isPublished: true,
+          isActive: true,
+          hackathonprize: true,
           isArchived: false,
           status: 'OPEN',
           region: {
