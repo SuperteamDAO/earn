@@ -163,18 +163,18 @@ function ListingHeader({
                 bg={'green.100'}
                 borderRadius={'full'}
               >
-                {status === 'CLOSED' ||
-                  (status === 'OPEN' && isWinnersAnnounced && (
-                    <Text
-                      px={3}
-                      py={1}
-                      color={'orange.600'}
-                      bg={'orange.100'}
-                      rounded={'full'}
-                    >
-                      Submissions Closed
-                    </Text>
-                  ))}
+                {(status === 'CLOSED' ||
+                  (status === 'OPEN' && isWinnersAnnounced)) && (
+                  <Text
+                    px={3}
+                    py={1}
+                    color={'orange.600'}
+                    bg={'orange.100'}
+                    rounded={'full'}
+                  >
+                    Submissions Closed
+                  </Text>
+                )}
                 {!isWinnersAnnounced &&
                   hasDeadlineEnded &&
                   status === 'OPEN' && (

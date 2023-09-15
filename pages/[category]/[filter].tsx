@@ -41,7 +41,6 @@ interface Props {
 }
 
 function CategoryPage({ category, filter }: Props) {
-  console.log('CATEGORY IS', category, filter);
   const router = useRouter();
   const [isListingsLoading, setIsListingsLoading] = useState(true);
   const [bounties, setBounties] = useState<{ bounties: Bounty[] }>({
@@ -54,7 +53,6 @@ function CategoryPage({ category, filter }: Props) {
   });
 
   const getListings = async () => {
-    console.log('FILTER IS', filter);
     setIsListingsLoading(true);
     try {
       const listingsData = await axios.get(
@@ -91,7 +89,6 @@ function CategoryPage({ category, filter }: Props) {
               },
             }
       );
-      console.log('LISTINGS DATA IS', listingsData);
       setListings(listingsData.data);
       setBounties(bountyData.data);
       setIsListingsLoading(false);
@@ -117,7 +114,6 @@ function CategoryPage({ category, filter }: Props) {
 
   useEffect(() => {
     const html = document.querySelector('html');
-    console.log('ACTIVE TAB IS', activeTab);
     try {
       if (isLessThan768px) {
         html!.style.fontSize = '100%';

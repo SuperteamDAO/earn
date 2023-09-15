@@ -617,7 +617,7 @@ export const CategoryBanner = ({ type }: { type: string }) => {
     Hyperdrive: {
       bg: `/assets/category_assets/bg/contract.png`,
       desc: 'If you can write complex code that can communicate with chains, these opportunities are made just for you.',
-      color: '#A8FEC0',
+      color: '#000',
       icon: '/assets/category_assets/icon/solana_logo_green.svg',
     },
   };
@@ -671,11 +671,7 @@ export const CategoryBanner = ({ type }: { type: string }) => {
         mb={8}
         mx={'auto'}
         p={6}
-        bg={`url('${
-          router.asPath.includes('Hyperdrive')
-            ? categoryAssets.Hyperdrive?.bg
-            : categoryAssets[type]?.bg
-        }')`}
+        bg={`url('${categoryAssets[type]?.bg}')`}
         bgSize={'cover'}
         rounded={10}
       >
@@ -683,40 +679,24 @@ export const CategoryBanner = ({ type }: { type: string }) => {
           w={14}
           h={14}
           mr={3}
-          bg={
-            router.asPath.includes('Hyperdrive')
-              ? 'black'
-              : categoryAssets[type]?.color
-          }
+          bg={categoryAssets[type]?.color}
           rounded={'md'}
         >
-          <Image
-            alt="Category icon"
-            src={
-              router.asPath.includes('Hyperdrive')
-                ? categoryAssets.Hyperdrive?.icon
-                : categoryAssets[type]?.icon
-            }
-            style={{
-              scale: router.asPath.includes('Hyperdrive') ? '3' : '1',
-            }}
-          />
+          <Image h="18" alt="Category icon" src={categoryAssets[type]?.icon} />
         </Center>
         <Box w={{ md: '60%', base: '100%' }} mt={{ base: 4, md: '0' }}>
           <Text fontFamily={'Domine'} fontWeight={'700'}>
-            {router.asPath.includes('Hyperdrive')
-              ? 'Hyperdrive Side Tracks & Local Prizes'
-              : type}
+            {type}
           </Text>
           <Text
-            w={['full', 'full', 'full', '130%', '130%']}
             mb={6}
-            color={'brand.slate.500'}
-            fontSize={'small'}
+            color="brand.slate.500"
+            fontSize="small"
+            {...(type === 'Hyperdrive'
+              ? { w: ['full', 'full', 'full', '130%', '130%'] }
+              : {})}
           >
-            {router.asPath.includes('Hyperdrive')
-              ? 'Discover and apply to additional Hyperdrive prizes. Increase your chances of winning something at the online global hackathon!'
-              : categoryAssets[type]?.desc}
+            {categoryAssets[type]?.desc}
           </Text>
         </Box>
         {!router.asPath.includes('Hyperdrive') && (
