@@ -2893,6 +2893,11 @@
   dependencies:
     "@types/node" "*"
 
+"@types/cookie@^0.4.1":
+  version "0.4.1"
+  resolved "https://registry.yarnpkg.com/@types/cookie/-/cookie-0.4.1.tgz#bfd02c1f2224567676c1545199f87c3a861d878d"
+  integrity sha512-XW/Aa8APYr6jSVVA1y/DEIZX0/GMKLEVekNG727R8cs56ahETkRAy/3DR7+fJyh7oUgGwNQaRfXCun0+KbWY7Q==
+
 "@types/crypto-js@^4.1.1":
   version "4.1.1"
   resolved "https://registry.yarnpkg.com/@types/crypto-js/-/crypto-js-4.1.1.tgz#602859584cecc91894eb23a4892f38cfa927890d"
@@ -2961,6 +2966,11 @@
   version "12.20.55"
   resolved "https://registry.yarnpkg.com/@types/node/-/node-12.20.55.tgz#c329cbd434c42164f846b909bd6f85b5537f6240"
   integrity sha512-J8xLz7q2OFulZ2cyGTLE1TbbZcjpno7FaN6zdJNrgAdrJ+DZzh/uFR6YrTb4C+nXakvud8Q4+rbhoIWlYQbUFQ==
+
+"@types/node@^16.10.2":
+  version "16.18.50"
+  resolved "https://registry.yarnpkg.com/@types/node/-/node-16.18.50.tgz#93003cf0251a2ecd26dad6dc757168d648519805"
+  integrity sha512-OiDU5xRgYTJ203v4cprTs0RwOCd5c5Zjv+K5P8KSqfiCsB1W3LcamTUMcnQarpq5kOYbhHfSOgIEJvdPyb5xyw==
 
 "@types/nprogress@^0.2.0":
   version "0.2.0"
@@ -4404,6 +4414,20 @@ convert-source-map@^1.5.0:
   version "1.9.0"
   resolved "https://registry.yarnpkg.com/convert-source-map/-/convert-source-map-1.9.0.tgz#7faae62353fb4213366d0ca98358d22e8368b05f"
   integrity sha512-ASFBup0Mz1uyiIjANan1jzLQami9z1PoYSZCiiYW2FczPbenXc45FZdBZLzOT+r6+iciuEModtmCti+hjaAk0A==
+
+cookie@^0.4.0:
+  version "0.4.2"
+  resolved "https://registry.yarnpkg.com/cookie/-/cookie-0.4.2.tgz#0e41f24de5ecf317947c82fc789e06a884824432"
+  integrity sha512-aSWTXFzaKWkvHO1Ny/s+ePFpvKsPnjc551iI41v3ny/ow6tBG5Vd+FuqGNhh1LxOmVzOlGUriIlOaokOvhaStA==
+
+cookies-next@^4.0.0:
+  version "4.0.0"
+  resolved "https://registry.yarnpkg.com/cookies-next/-/cookies-next-4.0.0.tgz#36d5c0d5899cf729a2580fd065071bdfa13783ca"
+  integrity sha512-3TyzeltFCGgdOlVOVTPClSq+YV9ZCdOyA3aHRZv9f5aSgg7EyI4NSvXFOCgzT/xIxeHR4Rz8/z5Tdo9oPqaVpA==
+  dependencies:
+    "@types/cookie" "^0.4.1"
+    "@types/node" "^16.10.2"
+    cookie "^0.4.0"
 
 copy-anything@^3.0.2:
   version "3.0.5"
@@ -6374,6 +6398,11 @@ jayson@^4.1.0:
     json-stringify-safe "^5.0.1"
     uuid "^8.3.2"
     ws "^7.4.5"
+
+jose@^4.14.6:
+  version "4.14.6"
+  resolved "https://registry.yarnpkg.com/jose/-/jose-4.14.6.tgz#94dca1d04a0ad8c6bff0998cdb51220d473cc3af"
+  integrity sha512-EqJPEUlZD0/CSUMubKtMaYUOtWe91tZXTWMJZoKSbLk+KtdhNdcvppH8lA9XwVu2V4Ailvsj0GBZJ2ZwDjfesQ==
 
 jotai@^2.3.1:
   version "2.3.1"
