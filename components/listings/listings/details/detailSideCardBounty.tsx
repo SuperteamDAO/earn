@@ -629,7 +629,7 @@ function DetailSideCard({
             currentStep={submissionStatus + 1}
             thisStep={2}
             label={'Submissions Review'}
-            sublabel={'Bounty is being assessed'}
+            sublabel={'Submissions being assessed'}
           />
           <Divider
             h={10}

@@ -616,7 +616,7 @@ export const CategoryBanner = ({ type }: { type: string }) => {
     },
     Hyperdrive: {
       bg: `/assets/category_assets/bg/contract.png`,
-      desc: 'If you can write complex code that can communicate with chains, these opportunities are made just for you.',
+      desc: 'Discover and apply to additional Hyperdrive prizes. Increase your chances of winning something at the online global hackathon!',
       color: '#000',
       icon: '/assets/category_assets/icon/solana_logo_green.svg',
     },
@@ -686,7 +686,9 @@ export const CategoryBanner = ({ type }: { type: string }) => {
         </Center>
         <Box w={{ md: '60%', base: '100%' }} mt={{ base: 4, md: '0' }}>
           <Text fontFamily={'Domine'} fontWeight={'700'}>
-            {type}
+            {type === 'Hyperdrive'
+              ? 'Hyperdrive Side Tracks & Local Prizes'
+              : type}
           </Text>
           <Text
             mb={6}

@@ -246,7 +246,11 @@ function TalentProfile({ slug }: TalentProps) {
       <Default
         meta={
           <Meta
-            title="Superteam Earn"
+            title={
+              talent?.firstName && talent?.lastName
+                ? `${talent?.firstName} ${talent?.lastName}`
+                : 'Superteam Earn'
+            }
             description="Every Solana opportunity in one place!"
             canonical="/assets/logo/og.svg"
           />
@@ -318,7 +322,14 @@ function TalentProfile({ slug }: TalentProps) {
                         handleEditProfileClick
                       )
                     : renderButton(<EmailIcon />, 'Reach Out', () => {
-                        window.location.href = `mailto:${talent?.email}`;
+                        const email = encodeURIComponent(talent?.email || '');
+                        const subject = encodeURIComponent(
+                          'Saw Your ST Earn Profile!'
+                        );
+                        const bcc = encodeURIComponent(
+                          'hello@superteamearn.com'
+                        );
+                        window.location.href = `mailto:${email}?subject=${subject}&bcc=${bcc}`;
                       })}
                   {renderButton(<ShareIcon />, 'Share', onOpen, true)}
                 </Flex>

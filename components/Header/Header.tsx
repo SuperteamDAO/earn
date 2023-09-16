@@ -177,9 +177,9 @@ const DesktopNav = () => {
                   {navItem.label === 'HYPERDRIVE' ? (
                     <Image
                       src="/assets/category_assets/icon/Hyperdrive.svg"
-                      style={{
-                        scale: '1.1',
-                      }}
+                      // style={{
+                      //   scale: '1.1',
+                      // }}
                     />
                   ) : (
                     navItem.label
