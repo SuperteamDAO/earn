@@ -44,6 +44,7 @@ interface Bounty {
   slug?: string;
   type?: BountyType | string;
   isWinnersAnnounced?: boolean;
+  hackathonPrize?: boolean;
   isTemplate?: boolean;
   region: Regions;
 }
@@ -59,6 +60,7 @@ function ListingHeader({
   isWinnersAnnounced,
   id,
   isTemplate,
+  hackathonPrize,
   region,
 }: Bounty) {
   const router = useRouter();
@@ -213,27 +215,31 @@ function ListingHeader({
                   display={{ base: 'none', md: 'flex' }}
                 >
                   <Text color={'#94A3B8'}>
-                    {type === 'permissioned'
+                    {hackathonPrize
+                      ? 'Hackathon Prize'
+                      : type === 'permissioned'
                       ? 'Application-based Bounty'
                       : 'Open Bounty'}
                   </Text>
-                  <Tooltip
-                    px={4}
-                    py={2}
-                    color={'#94A3B8'}
-                    fontFamily={'Inter'}
-                    fontSize="sm"
-                    bg="white"
-                    borderRadius={'lg'}
-                    label={
-                      type === 'permissioned'
-                        ? "Don't start working just yet! Apply first, and then you'll be notified if you're selected to work on this bounty."
-                        : 'This is an open competition bounty! Anyone can start working and submit their work before the deadline!'
-                    }
-                    placement="right"
-                  >
-                    <InfoOutlineIcon boxSize={4} color={'#94A3B8'} mr={3} />
-                  </Tooltip>
+                  {!hackathonPrize && (
+                    <Tooltip
+                      px={4}
+                      py={2}
+                      color={'#94A3B8'}
+                      fontFamily={'Inter'}
+                      fontSize="sm"
+                      bg="white"
+                      borderRadius={'lg'}
+                      label={
+                        type === 'permissioned'
+                          ? "Don't start working just yet! Apply first, and then you'll be notified if you're selected to work on this bounty."
+                          : 'This is an open competition bounty! Anyone can start working and submit their work before the deadline!'
+                      }
+                      placement="right"
+                    >
+                      <InfoOutlineIcon boxSize={4} color={'#94A3B8'} mr={3} />
+                    </Tooltip>
+                  )}
                 </Flex>
                 <Text
                   px={2}

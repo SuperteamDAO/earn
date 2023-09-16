@@ -105,6 +105,7 @@ function BountyDetails({ bounty: initialBounty }: BountyDetailsProps) {
             slug={bounty?.slug}
             region={bounty?.region || Regions.GLOBAL}
             isWinnersAnnounced={bounty?.isWinnersAnnounced}
+            hackathonPrize={bounty?.hackathonprize}
           />
           {bounty?.isWinnersAnnounced && <BountyWinners bounty={bounty} />}
           <HStack
@@ -136,6 +137,7 @@ function BountyDetails({ bounty: initialBounty }: BountyDetailsProps) {
               requirements={bounty?.requirements}
               isWinnersAnnounced={bounty?.isWinnersAnnounced}
               pocSocials={bounty?.pocSocials}
+              hackathonPrize={bounty?.hackathonprize}
             />
           </HStack>
         </>

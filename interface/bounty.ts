@@ -53,6 +53,7 @@ interface Bounty {
   totalPaymentsMade?: number;
   isWinnersAnnounced?: boolean;
   templateId?: string;
+  hackathonprize?: boolean;
 }
 
 interface BountyWithSubmissions extends Bounty {

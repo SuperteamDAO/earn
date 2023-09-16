@@ -1,5 +1,4 @@
 import {
-  AspectRatio,
   Box,
   Button,
   Flex,
@@ -11,13 +10,6 @@ import {
   MenuGroup,
   MenuItem,
   MenuList,
-  Modal,
-  ModalBody,
-  ModalCloseButton,
-  ModalContent,
-  ModalFooter,
-  ModalHeader,
-  ModalOverlay,
   Text,
   useDisclosure,
   useMediaQuery,
@@ -39,11 +31,6 @@ interface UserInfoProps {
 export default function UserInfo({ isMobile }: UserInfoProps) {
   const router = useRouter();
   const { isOpen, onOpen, onClose } = useDisclosure();
-  const {
-    isOpen: isPopupOpen,
-    onOpen: onPopupOpen,
-    onClose: onPopupClose,
-  } = useDisclosure();
   const { connected, publicKey, wallet, wallets, select } = useWallet();
   const { setUserInfo, userInfo } = userStore();
   const [initialStep, setInitialStep] = useState<number>(1);
@@ -77,91 +64,6 @@ export default function UserInfo({ isMobile }: UserInfoProps) {
     }
   };
 
-  const handleOpenModal = () => {
-    onPopupClose();
-
-    setTimeout(() => {
-      onOpen();
-    }, 100);
-  };
-
-  const KashPopup = () => {
-    let btnText = 'Claim Your Free Profile';
-    if (!userInfo) {
-      btnText = 'Claim Your Free Profile';
-    } else if (!userInfo.isVerified) {
-      btnText = 'Verify Your Profile';
-    } else if (!userInfo.isTalentFilled) {
-      btnText = 'Complete Your Profile';
-    }
-
-    const handleButtonClick = () => {
-      if (userInfo && userInfo.isVerified && !userInfo?.isTalentFilled) {
-        router.push('/new/talent');
-      } else {
-        handleOpenModal();
-      }
-    };
-
-    return (
-      <Modal isOpen={isPopupOpen} onClose={onPopupClose} size="xl">
-        <ModalOverlay />
-        <ModalContent>
-          <ModalHeader mt={3} mb={-2} textAlign={'center'}>
-            Don&apos;t Miss a Chance to Earn
-          </ModalHeader>
-          <ModalCloseButton mt={3} />
-          <ModalBody>
-            <Text mb={4} textAlign={'center'}>
-              If you want to get the full value out of Superteam Earn,
-              you&apos;ll need to claim your profile. It only takes ~53 seconds.
-            </Text>
-            <AspectRatio mb={2} borderRadius={3} ratio={16 / 9}>
-              <iframe
-                src="https://fast.wistia.net/embed/iframe/3rbdvj2tgz"
-                allowTransparency={true}
-                className="wistia_embed"
-                name="wistia_embed"
-                allowFullScreen
-                width="100%"
-                height="100%"
-              />
-            </AspectRatio>
-          </ModalBody>
-          <ModalFooter>
-            <Button
-              w={'100%'}
-              mb={3}
-              _hover={{ textDecoration: 'none' }}
-              colorScheme="blue"
-              onClick={handleButtonClick}
-            >
-              {btnText}
-            </Button>
-          </ModalFooter>
-        </ModalContent>
-      </Modal>
-    );
-  };
-
-  useEffect(() => {
-    if (sessionStorage.getItem('earnPopupShown')) {
-      return () => {};
-    }
-    if (
-      !userInfo ||
-      !userInfo.isVerified ||
-      (!userInfo.isTalentFilled && !userInfo.currentSponsor)
-    ) {
-      const timer = setTimeout(() => {
-        onPopupOpen();
-        sessionStorage.setItem('earnPopupShown', 'true');
-      }, 30000);
-      return () => clearTimeout(timer);
-    }
-    return () => {};
-  }, [userInfo, onPopupOpen]);
-
   const onDisconnectWallet = async () => {
     if (wallet == null) {
       return;
@@ -176,7 +78,6 @@ export default function UserInfo({ isMobile }: UserInfoProps) {
 
   return (
     <>
-      <KashPopup />
       {!!isOpen && (
         <Login
           wallets={wallets}
