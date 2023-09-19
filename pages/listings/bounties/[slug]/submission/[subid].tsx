@@ -78,7 +78,6 @@ const Sumbissions = ({ slug, subid }: BountyDetailsProps) => {
               deadline={bounty?.deadline}
               title={bounty?.title ?? ''}
               sponsor={bounty?.sponsor as SponsorType}
-              poc={bounty?.poc}
               slug={bounty?.slug}
               type={bounty?.type}
               isWinnersAnnounced={bounty?.isWinnersAnnounced}

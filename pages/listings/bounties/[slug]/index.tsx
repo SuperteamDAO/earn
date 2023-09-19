@@ -101,7 +101,6 @@ function BountyDetails({ bounty: initialBounty }: BountyDetailsProps) {
             deadline={bounty?.deadline}
             title={bounty?.title ?? ''}
             sponsor={bounty?.sponsor}
-            poc={bounty?.poc}
             slug={bounty?.slug}
             region={bounty?.region || Regions.GLOBAL}
             isWinnersAnnounced={bounty?.isWinnersAnnounced}
