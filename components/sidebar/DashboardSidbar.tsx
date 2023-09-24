@@ -1,5 +1,4 @@
-import { Box, Flex, Select, Text } from '@chakra-ui/react';
-import Image from 'next/image';
+import { Box, Flex, Image, Select, Text } from '@chakra-ui/react';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
 import React from 'react';
@@ -71,11 +70,11 @@ export const DashboardSidbar = ({ sponsors }: Props) => {
                   }}
                 >
                   <Image
-                    src={icon}
-                    alt="Sidebar icon"
-                    width="100%"
-                    height="100%"
                     className="img"
+                    w="100%"
+                    h="100%"
+                    alt="Sidebar icon"
+                    src={icon}
                   />
                 </Box>
               </Flex>
