@@ -66,7 +66,6 @@ function BountyDetails({ slug }: BountyDetailsProps) {
             deadline={bounty?.deadline}
             title={bounty?.title ?? ''}
             sponsor={bounty?.sponsor}
-            poc={bounty?.poc}
             slug={bounty?.slug}
             isWinnersAnnounced={bounty?.isWinnersAnnounced}
             isTemplate={true}

@@ -1,6 +1,5 @@
 /* eslint-disable @next/next/no-img-element */
-import { Flex, Link, Stack, Text } from '@chakra-ui/react';
-import Image from 'next/image';
+import { Flex, Image, Link, Stack, Text } from '@chakra-ui/react';
 import type { ReactNode } from 'react';
 
 import { getURL } from '@/utils/validUrl';
@@ -51,7 +50,7 @@ export const Footer = ({ style }: Props) => (
             rel="noreferrer"
             style={{ cursor: 'pointer' }}
           >
-            <Image src={DiscordIcon} alt="Discord" width="25px" height="25px" />
+            <Image w="25px" h="25px" alt="Discord" src={DiscordIcon} />
           </a>
           <a
             href="https://twitter.com/superteamearn"
@@ -59,7 +58,7 @@ export const Footer = ({ style }: Props) => (
             rel="noreferrer"
             style={{ cursor: 'pointer' }}
           >
-            <Image src={TwitterIcon} alt="Discord" width="25px" height="25px" />
+            <Image w="25px" h="25px" alt="Discord" src={TwitterIcon} />
           </a>
           <a
             href="https://superteam.substack.com/"
@@ -67,12 +66,7 @@ export const Footer = ({ style }: Props) => (
             rel="noreferrer"
             style={{ cursor: 'pointer' }}
           >
-            <Image
-              src={BookmarkIcon}
-              alt="Discord"
-              width="25px"
-              height="25px"
-            />
+            <Image w="25px" h="25px" alt="Discord" src={BookmarkIcon} />
           </a>
         </Flex>
       </Flex>

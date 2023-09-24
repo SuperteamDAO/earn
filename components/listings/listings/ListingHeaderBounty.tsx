@@ -54,7 +54,6 @@ function ListingHeader({
   status,
   deadline,
   sponsor,
-  poc,
   type,
   slug,
   isWinnersAnnounced,
@@ -204,7 +203,7 @@ function ListingHeader({
             {!isTemplate && (
               <HStack>
                 <Text color={'#94A3B8'} fontWeight={500}>
-                  by {poc?.firstName} at {sponsor?.name}
+                  by {sponsor?.name}
                 </Text>
                 <Text color={'#E2E8EF'} fontWeight={500}>
                   |
