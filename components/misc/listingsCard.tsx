@@ -601,13 +601,6 @@ export const CategoryBanner = ({ type }: { type: string }) => {
       color: '#FEEBA8',
       icon: '/assets/category_assets/icon/backend.png',
     },
-    Fullstack: {
-      bg: `/assets/category_assets/bg/backend.png`,
-      color: '#FEEBA8',
-      desc: 'Unlock opportunities in crafting comprehensive solutions by seamlessly integrating user-friendly interfaces and robust databases, both on and off-chain',
-      icon: '/assets/category_assets/icon/backend.png',
-    },
-
     Blockchain: {
       bg: `/assets/category_assets/bg/contract.png`,
       desc: 'If you can write complex code that can communicate with chains, these opportunities are made just for you.',

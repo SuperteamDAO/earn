@@ -250,7 +250,6 @@ export const SkillColor: any = {
   'Back-End Dev': '#FF833E',
   'Front-End Dev': '#3E8BFF',
   'Blockchain Dev': '#FF3EC9',
-  'Fullstack Dev': '#16A368',
   'Mobile Engineer': '#7E51FF',
 };
 
@@ -286,10 +285,6 @@ export const skillMap: SkillMap[] = [
   {
     mainskill: 'Mobile',
     color: '#7E51FF',
-  },
-  {
-    mainskill: 'Fullstack',
-    color: '#16A368',
   },
   {
     mainskill: 'Other',

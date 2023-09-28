@@ -27,7 +27,6 @@ export type Skill =
   | 'Front-End Dev'
   | 'Back-End Dev'
   | 'Blockchain Dev'
-  | 'Fullstack Dev'
   | 'Mobile Engineer'
   | 'Design'
   | 'Community'
@@ -39,7 +38,6 @@ export const SkillList: Skill[] = [
   'Back-End Dev',
   'Blockchain Dev',
   'Front-End Dev',
-  'Fullstack Dev',
   'Mobile Engineer',
   'Design',
   'Growth',
@@ -75,20 +73,4 @@ export const TalentSkillMap: { [key in Skill]: string[] } = {
   Community: ['Community Manager', 'Discord Moderator'],
   Other: ['Data Analytics', 'Operations', 'Admin'],
   'Mobile Engineer': ['Android', 'iOS', 'Flutter', 'React Native'],
-  'Fullstack Dev': [
-    'Javascript',
-    'PHP',
-    'Python',
-    'Java',
-    'C++',
-    'C',
-    'Ruby',
-    'Go',
-    'MySQL',
-    'Postgres',
-    'MongoDB',
-    'React',
-    'Angular',
-    'Vue',
-  ],
 };

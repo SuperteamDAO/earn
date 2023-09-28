@@ -87,7 +87,6 @@ function Home(props: IDefaultProps) {
     'Community',
     'Other',
     'Mobile',
-    'Fullstack',
     'Hyperdrive',
   ];
   const Superteams = [
