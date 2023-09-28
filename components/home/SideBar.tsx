@@ -271,7 +271,6 @@ interface EarnerProps {
 }
 const Earner = ({ amount, name, avatar, bounty, slug, token }: EarnerProps) => {
   const tokenObj = tokenList.find((t) => t.tokenSymbol === token);
-  console.log(tokenObj);
   const tokenIcon = tokenObj
     ? tokenObj.icon
     : '/assets/landingsponsor/icons/usdc.svg';
