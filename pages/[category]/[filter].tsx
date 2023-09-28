@@ -68,7 +68,7 @@ function CategoryPage({ category, filter }: Props) {
           : {
               params: {
                 category: 'hyperdrive',
-                take: category !== 'all' ? 100 : 1000,
+                take: category !== 'all' ? 100 : 100,
               },
             }
       );
@@ -79,7 +79,7 @@ function CategoryPage({ category, filter }: Props) {
               params: {
                 category: 'bounties',
                 filter: filter === 'Hyperdrive' ? 'All Opportunities' : filter,
-                take: 10,
+                take: filter === 'Hyperdrive' ? 100 : 10,
               },
             }
           : {
@@ -106,7 +106,11 @@ function CategoryPage({ category, filter }: Props) {
   const [isLessThan850px] = useMediaQuery('(max-width: 850px)');
   const [isLessThan768px] = useMediaQuery('(max-width: 768px)');
 
-  const tabs = BountyTabs({ isListingsLoading, bounties });
+  const tabs = BountyTabs({
+    isListingsLoading,
+    bounties,
+    take: filter === 'Hyperdrive' ? 100 : 10,
+  });
 
   const [activeTab, setActiveTab] = useState<string>(
     tabs[0]!.id === 'Hyperdrive' ? 'All Opportunities' : tabs[0]!.id

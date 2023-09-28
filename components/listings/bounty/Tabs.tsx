@@ -16,11 +16,13 @@ interface TabProps {
 interface BountyTabsProps {
   isListingsLoading: boolean;
   bounties: { bounties: Bounty[] };
+  take?: number;
 }
 
 export const BountyTabs = ({
   isListingsLoading,
   bounties,
+  take = 10,
 }: BountyTabsProps) => {
   const tabs: TabProps[] = [
     {
@@ -41,7 +43,7 @@ export const BountyTabs = ({
                 (bounty) =>
                   bounty.status === 'OPEN' && !dayjs().isAfter(bounty.deadline)
               )
-              .slice(0, 10)
+              .slice(0, take)
               .map((bounty) => (
                 <BountiesCard
                   slug={bounty.slug}
