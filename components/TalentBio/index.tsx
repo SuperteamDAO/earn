@@ -87,6 +87,13 @@ function TalentBio({
     },
   ];
 
+  const createMailtoLink = () => {
+    const email = encodeURIComponent(user?.email || '');
+    const subject = encodeURIComponent('Saw Your ST Earn Profile!');
+    const bcc = encodeURIComponent('hello@superteamearn.com');
+    return `mailto:${email}?subject=${subject}&bcc=${bcc}`;
+  };
+
   return (
     <Box
       w={w ?? '80%'}
@@ -167,7 +174,7 @@ function TalentBio({
           </Button>
         </a>
       ) : (
-        <a style={{ textDecoration: 'none' }} href={`mailto:${user?.email}`}>
+        <a style={{ textDecoration: 'none' }} href={createMailtoLink()}>
           <Button w={'full'} mt={'1.575rem'} color={'white'} bg={'#6562FF'}>
             Get in Touch
           </Button>
