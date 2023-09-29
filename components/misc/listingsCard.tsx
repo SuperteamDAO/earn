@@ -190,7 +190,8 @@ export const BountiesCard = ({
   return (
     <>
       <Link
-        p={2}
+        px={3}
+        py={4}
         borderRadius={5}
         _hover={{
           textDecoration: 'none',
@@ -208,7 +209,6 @@ export const BountiesCard = ({
           align="start"
           justify="space-between"
           w={{ base: '100%', md: 'brand.120' }}
-          h={16}
         >
           <Flex w="100%" h={16}>
             <Image
