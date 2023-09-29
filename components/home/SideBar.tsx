@@ -527,7 +527,7 @@ const AlphaAccess = () => {
         _hover={{
           bg: 'gray.100',
         }}
-        href="https://airtable.com/appLR0lPsX7j0M5nC/shrHiv2mOMSefEk09"
+        href="https://hyperdrive.superteam.fun/?utm_source=superteamearn&utm_medium=hyperdrive&utm_campaign=homepage"
         isExternal
       >
         Register Now
