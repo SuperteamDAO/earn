@@ -422,7 +422,7 @@ const AlphaAccess = () => {
         fontWeight={'600'}
         lineHeight={'6'}
       >
-        Build a Solana dApp and compete for $1,000,000+
+        Want to showcase your Hyperdrive project with Superteam?
       </Text>
       <Text
         mt={'0.5rem'}
@@ -430,8 +430,8 @@ const AlphaAccess = () => {
         fontSize={'1rem'}
         lineHeight={'1.1875rem'}
       >
-        Register for the Q3 Solana global hackathon and build your prize-winning
-        project! Deadline for project submissions is October 15th, 2023.
+        Make use of Superteam&apos;s distribution and get better visibility for
+        your project by adding your project to our Hyperdrive project directory.
       </Text>
       <Link
         mt={'1.5625rem'}
@@ -448,7 +448,7 @@ const AlphaAccess = () => {
         href="https://hyperdrive.superteam.fun/?utm_source=superteamearn&utm_medium=hyperdrive&utm_campaign=homepage"
         isExternal
       >
-        Register Now
+        Showcase Your Project
       </Link>
     </Flex>
   );
