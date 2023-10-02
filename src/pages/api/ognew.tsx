@@ -12,11 +12,11 @@ export const config = {
 const fetchAsset = (url: URL) => fetch(url).then((res) => res.arrayBuffer());
 
 const fontDataP = fetchAsset(
-  new URL('../../public/Inter-SemiBold.woff', import.meta.url)
+  new URL('../../../public/Inter-SemiBold.woff', import.meta.url)
 );
 
 const sponsorImageP = fetchAsset(
-  new URL('../../public/assets/images/sponsor-logo.png', import.meta.url)
+  new URL('../../../public/assets/images/sponsor-logo.png', import.meta.url)
 );
 
 export default async function handler(request: NextRequest) {
