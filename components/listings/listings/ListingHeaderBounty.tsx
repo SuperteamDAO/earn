@@ -15,7 +15,6 @@ import {
   PopoverTrigger,
   Text,
   Tooltip,
-  useBreakpointValue,
   useDisclosure,
   VStack,
 } from '@chakra-ui/react';
@@ -27,7 +26,6 @@ import { toast, Toaster } from 'react-hot-toast';
 import { TbBell, TbBellRinging } from 'react-icons/tb';
 
 import { EarningModal } from '@/components/modals/earningModal';
-import { tokenList } from '@/constants';
 import type { SponsorType } from '@/interface/sponsor';
 import type { User } from '@/interface/user';
 import { userStore } from '@/store/user';
@@ -49,8 +47,6 @@ interface Bounty {
   hackathonPrize?: boolean;
   isTemplate?: boolean;
   region: Regions;
-  totalPrize?: number;
-  rewardToken?: string;
 }
 
 function ListingHeader({
@@ -65,8 +61,6 @@ function ListingHeader({
   isTemplate,
   hackathonPrize,
   region,
-  totalPrize,
-  rewardToken,
 }: Bounty) {
   const router = useRouter();
   const { isOpen, onClose, onOpen } = useDisclosure();
@@ -78,7 +72,6 @@ function ListingHeader({
       User: User | null;
     })[]
   >([]);
-  const isLessThan768 = useBreakpointValue({ base: true, md: false });
   const handleSubscribe = async () => {
     if (!userInfo?.isTalentFilled) {
       onOpen();
@@ -328,26 +321,6 @@ function ListingHeader({
             </Popover>
           </Flex>
         </Flex>
-        {isLessThan768 && (
-          <HStack gap={1} ml={3}>
-            <Image
-              w={6}
-              h="auto"
-              alt={'green doller'}
-              rounded={'full'}
-              src={
-                tokenList.filter((e) => e?.tokenSymbol === rewardToken)[0]
-                  ?.icon ?? '/assets/icons/green-doller.svg'
-              }
-            />
-            <Text fontSize={'xl'} fontWeight={600}>
-              {totalPrize?.toLocaleString() ?? 0}
-            </Text>
-            <Text color={'brand.slate.500'} fontSize={'xl'} fontWeight={500}>
-              {rewardToken}
-            </Text>
-          </HStack>
-        )}
         {router.asPath.includes('bounties') && !isTemplate && (
           <HStack>
             <HStack align="start" px={[3, 3, 0, 0]}>

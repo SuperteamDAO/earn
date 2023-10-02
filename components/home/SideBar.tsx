@@ -290,7 +290,8 @@ const Earner = ({ amount, name, avatar, bounty, slug, token }: EarnerProps) => {
 
         <Box>
           <Text color={'black'} fontSize={'sm'} fontWeight={500}>
-            {name}
+            {name?.length > 25 ? `${name?.slice(0, 18)}...` : name}
+            {/* {name} */}
           </Text>
           <Text color={'gray.400'} fontSize={'xs'} fontWeight={500}>
             won {bounty?.slice(0, 15)}...
@@ -357,7 +358,7 @@ const RecentEarners = ({ earners }: { earners?: User[] }) => {
       <Text mb={4} color={'gray.400'} fontWeight={500}>
         RECENT EARNERS
       </Text>
-      <VStack rowGap={2}>
+      <VStack>
         <Box
           ref={marqueeRef}
           overflowY="hidden"

@@ -206,7 +206,7 @@ export const BountiesCard = ({
         }}
       >
         <Flex
-          align="start"
+          align="center"
           justify="space-between"
           w={{ base: '100%', md: 'brand.120' }}
         >
