@@ -13,11 +13,10 @@
 
 ## Table of Contents
 
-- [Installation](#installation)
 - [Getting Started](#getting-started)
 - [Contributing](#contributing)
 
-### Installation
+### Getting Started
 
 1. Clone the repository:
 ```bash
