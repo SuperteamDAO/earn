@@ -1,5 +1,5 @@
 <div align="center">
-  <img src="/public/assets/logo/newlogo.png" width="140px" height="auto" />
+  <img src="/public/assets/logo/newlogo.png" width="140px" height="auto" style="margin-top: 20px;" />
   <h1>Superteam Earn</h1>
   <p>
     <strong>Unlock your earning potential in web3</strong>
