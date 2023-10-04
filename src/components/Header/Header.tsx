@@ -49,10 +49,6 @@ const NAV_ITEMS: Array<NavItem> = [
         href: '/all/Frontend/',
       },
       {
-        label: 'Fullstack',
-        href: '/all/Fullstack/',
-      },
-      {
         label: 'Backend',
         href: '/all/Backend/',
       },

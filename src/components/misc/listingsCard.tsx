@@ -190,7 +190,8 @@ export const BountiesCard = ({
   return (
     <>
       <Link
-        p={2}
+        px={3}
+        py={4}
         borderRadius={5}
         _hover={{
           textDecoration: 'none',
@@ -205,10 +206,9 @@ export const BountiesCard = ({
         }}
       >
         <Flex
-          align="start"
+          align="center"
           justify="space-between"
           w={{ base: '100%', md: 'brand.120' }}
-          h={16}
         >
           <Flex w="100%" h={16}>
             <Image
@@ -601,13 +601,6 @@ export const CategoryBanner = ({ type }: { type: string }) => {
       color: '#FEEBA8',
       icon: '/assets/category_assets/icon/backend.png',
     },
-    Fullstack: {
-      bg: `/assets/category_assets/bg/backend.png`,
-      color: '#FEEBA8',
-      desc: 'Unlock opportunities in crafting comprehensive solutions by seamlessly integrating user-friendly interfaces and robust databases, both on and off-chain',
-      icon: '/assets/category_assets/icon/backend.png',
-    },
-
     Blockchain: {
       bg: `/assets/category_assets/bg/contract.png`,
       desc: 'If you can write complex code that can communicate with chains, these opportunities are made just for you.',

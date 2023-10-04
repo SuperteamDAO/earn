@@ -266,16 +266,6 @@ export default function LargeWithNewsletter() {
               _hover={{
                 color: 'brand.slate.800',
               }}
-              href="https://superteam.fun/instagrants"
-              isExternal
-            >
-              Grants
-            </Link>
-            <Link
-              color="brand.slate.500"
-              _hover={{
-                color: 'brand.slate.800',
-              }}
               href="https://www.youtube.com/@superteampodcast"
               isExternal
             >

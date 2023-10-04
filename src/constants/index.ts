@@ -169,10 +169,6 @@ export const MainSkills: MultiSelectOptions[] = [
     value: 'Blockchain',
   },
   {
-    label: 'Fullstack',
-    value: 'Fullstack',
-  },
-  {
     label: 'Mobile',
     value: 'Mobile',
   },
@@ -399,72 +395,6 @@ export const skillSubSkillMap = {
     {
       label: 'Operations',
       value: 'Operations',
-    },
-  ],
-  Fullstack: [
-    {
-      label: 'Javascript',
-      value: 'Javascript',
-    },
-    {
-      label: 'PHP',
-      value: 'PHP',
-    },
-    {
-      label: 'Python',
-      value: 'Python',
-    },
-    {
-      label: 'Java',
-      value: 'Java',
-    },
-    {
-      label: 'C++',
-      value: 'C++',
-    },
-    {
-      label: 'C',
-      value: 'C',
-    },
-    {
-      label: 'Ruby',
-      value: 'Ruby',
-    },
-    {
-      label: 'Go',
-      value: 'Go',
-    },
-    {
-      label: 'MySQL',
-      value: 'MySQL',
-    },
-    {
-      label: 'Postgres',
-      value: 'Postgres',
-    },
-    {
-      label: 'MongoDB',
-      value: 'MongoDB',
-    },
-    {
-      label: 'React',
-      value: 'React',
-    },
-    {
-      label: 'Angular',
-      value: 'Angular',
-    },
-    {
-      label: 'Vue',
-      value: 'Vue',
-    },
-    {
-      label: 'Redux',
-      value: 'Redux',
-    },
-    {
-      label: 'Other',
-      value: 'Other',
     },
   ],
 };

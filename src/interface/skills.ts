@@ -7,8 +7,7 @@ type MainSkills =
   | 'Content'
   | 'Community'
   | 'Other'
-  | 'Mobile'
-  | 'Fullstack';
+  | 'Mobile';
 
 type SubSkillsType =
   | 'Javascript'
@@ -94,10 +93,6 @@ export const SkillList: {
       'MySQL',
       'Postgres',
       'MongoDB',
-      'React',
-      'Angular',
-      'Vue',
-      'Redux',
     ],
     variations: ['Backend', 'Back-End Dev', 'BackEnd Dev', 'Backend Dev'],
   },
@@ -116,23 +111,6 @@ export const SkillList: {
     mainskill: 'Mobile',
     subskills: ['Android', 'iOS', 'Flutter', 'React Native'],
     variations: ['Mobile Engineer', 'Mobile Dev', 'Mobile Developer'],
-  },
-  {
-    mainskill: 'Fullstack',
-    subskills: [
-      'Javascript',
-      'PHP',
-      'Python',
-      'Java',
-      'C++',
-      'C',
-      'Ruby',
-      'Go',
-      'MySQL',
-      'Postgres',
-      'MongoDB',
-    ],
-    variations: ['Fullstack', 'FullStack', 'FullStack Dev', 'Fullstack Dev'],
   },
   {
     mainskill: 'Blockchain',

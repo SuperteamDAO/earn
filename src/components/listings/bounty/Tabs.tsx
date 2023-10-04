@@ -29,7 +29,7 @@ export const BountyTabs = ({
       id: 'tab1',
       title: 'OPEN',
       content: (
-        <Flex direction={'column'} rowGap={'2.625rem'}>
+        <Flex direction={'column'} rowGap={1}>
           {isListingsLoading ? (
             <Flex align="center" justify="center" direction="column" minH={52}>
               <Loading />
