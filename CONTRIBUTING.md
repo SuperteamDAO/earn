@@ -1,8 +1,8 @@
-# Contributing to [Earn]
+# Contributing to Earn
 
 Whether you're looking to raise an issue, fix a bug, or add a feature, we're thrilled you're here to improve the project. This document outlines how to become a contributor to this project.
 
-## Table of Contents
+### Table of Contents
 
 1. [Code of Conduct](#code-of-conduct)
 2. [How to Contribute](#how-to-contribute)
@@ -10,11 +10,11 @@ Whether you're looking to raise an issue, fix a bug, or add a feature, we're thr
 4. [Style Guidelines](#style-guidelines)
 5. [Review Process](#review-process)
 
-## Code of Conduct
+### Code of Conduct
 
 We expect all contributors to act professionally and respectfully, and we expect our social channels to be a safe and enjoyable environment for all.
 
-## How to Contribute
+### How to Contribute
 
 1. **Update your fork:** Before you make any changes, make sure your fork is up to date with the main branch.
     ```bash
@@ -36,17 +36,17 @@ We expect all contributors to act professionally and respectfully, and we expect
     ```
 6. **Create a pull request:** Go to your fork on GitHub and click the 'Compare & pull request' button next to your new branch to create a new pull request.
 
-## Pull Requests
+### Pull Requests
 
 - The pull request should be related to an issue. If an issue doesn't exist for your contribution, create one.
 - The pull request should have a descriptive title and any necessary explanations in the comments.
 - Make sure your pull request is based on the latest commits to avoid conflicts.
 
-## Style Guidelines
+### Style Guidelines
 
 - Please adhere to the existing coding style.
 - Write your code in TypeScript and follow best practices.
 
-## Review Process
+### Review Process
 - A maintainer will review the pull request and provide feedback or merge it.
 - If changes are required, make them and push them to the same branch, and the pull request will automatically update.
