@@ -1,6 +1,7 @@
 <div align="center">
-  <img src="/public/assets/logo/newlogo.png" width="140px" height="auto" style="margin-top: 20px;" />
-  <h1>Superteam Earn</h1>
+  <br/>
+  <img src="/public/assets/logo/newlogo.png" width="140px" height="auto"/>
+  <h2>SUPERTEAM EARN</h2>
   <p>
     <strong>Unlock your earning potential in web3</strong>
   </p>
@@ -11,12 +12,13 @@
   [![Follow](https://img.shields.io/twitter/follow/superteamearn.svg?style=social)](https://twitter.com/superteamearn)
 </div>
 
-## Table of Contents
+### Table of Contents
 
 - [Getting Started](#getting-started)
 - [Contributing](#contributing)
 
-### Getting Started
+
+#### Getting Started
 
 1. Clone the repository:
 ```bash
@@ -38,5 +40,5 @@ yarn install
 yarn dev
 ```
 
-### Contributing
+#### Contributing
 We welcome contributions from everyone! Check out the [CONTRIBUTING.md](CONTRIBUTING.md) for guidelines on how to proceed.
