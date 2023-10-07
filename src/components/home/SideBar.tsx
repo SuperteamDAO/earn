@@ -423,7 +423,7 @@ const AlphaAccess = () => {
         fontWeight={'600'}
         lineHeight={'6'}
       >
-        Want to showcase your Hyperdrive project with Superteam?
+        Want to increase your chances of winning $$ at the hackathon?
       </Text>
       <Text
         mt={'0.5rem'}
@@ -431,8 +431,8 @@ const AlphaAccess = () => {
         fontSize={'1rem'}
         lineHeight={'1.1875rem'}
       >
-        Make use of Superteam&apos;s distribution and get better visibility for
-        your project by adding your project to our Hyperdrive project directory.
+        Check out Earn&apos;s Hyperdrive page for side tracks worth over
+        $180,000! Click the link below and submit your project soon:
       </Text>
       <Link
         mt={'1.5625rem'}
@@ -446,7 +446,7 @@ const AlphaAccess = () => {
         _hover={{
           bg: 'gray.100',
         }}
-        href="https://hyperdrive.superteam.fun/?utm_source=superteamearn&utm_medium=hyperdrive&utm_campaign=homepage"
+        href="https://earn.superteam.fun/all/Hyperdrive/?utm_source=superteamearn&utm_medium=hyperdrive&utm_campaign=banner"
         isExternal
       >
         Showcase Your Project
