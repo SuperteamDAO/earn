@@ -307,7 +307,7 @@ export const CreatebountyPayment = ({
                       color: 'brand.slate.300',
                     }}
                     focusBorderColor="brand.purple"
-                    onChange={(e) => handleInputChange(e, el.value)}
+                    onBlur={(e) => handleInputChange(e, el.value)}
                     placeholder={JSON.stringify(el.placeHolder)}
                     type={'number'}
                     value={prizevalues[el.value]}
