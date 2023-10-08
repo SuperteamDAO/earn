@@ -23,7 +23,7 @@ import {
   VStack,
 } from '@chakra-ui/react';
 import type { Dispatch, SetStateAction } from 'react';
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import { Toaster } from 'react-hot-toast';
 
 import type { MultiSelectOptions } from '@/constants';
@@ -111,13 +111,13 @@ export const CreatebountyPayment = ({
         ]
   );
 
-  useEffect(() => {
-    setBountyPayment({
-      rewardAmount: totalReward,
-      token: tokenName,
-      rewards: prizevalues,
-    });
-  }, [prizevalues, totalReward, tokenName]);
+  // useEffect(() => {
+  //   setBountyPayment({
+  //     rewardAmount: totalReward,
+  //     token: tokenName,
+  //     rewards: prizevalues,
+  //   });
+  // }, [prizevalues, totalReward, tokenName]);
 
   const handleButtonClick = () => {
     const temp: PrizeListInterface[] = prizes.filter((_el, index) => {
