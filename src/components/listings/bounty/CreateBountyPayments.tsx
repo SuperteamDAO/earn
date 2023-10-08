@@ -157,12 +157,9 @@ export const CreatebountyPayment = ({
     e: React.ChangeEvent<HTMLInputElement>,
     prizeName: string
   ) => {
-    // const inputValue = parseInt(e.target.value, 10);
-    setPrizevalues((prevPrizeValues: any) => {
-      return {
-        ...prevPrizeValues,
-        [prizeName]: e.target.valueAsNumber,
-      };
+    setPrizevalues({
+      ...prizevalues,
+      [prizeName]: e.target.valueAsNumber,
     });
   };
 
@@ -313,7 +310,7 @@ export const CreatebountyPayment = ({
                     onChange={(e) => handleInputChange(e, el.value)}
                     placeholder={JSON.stringify(el.placeHolder)}
                     type={'number'}
-                    value={prizevalues[el.value] || ''}
+                    value={prizevalues[el.value]}
                   />
                   {index === prizes.length - 1 && (
                     <Button onClick={() => handleButtonClick()}>
