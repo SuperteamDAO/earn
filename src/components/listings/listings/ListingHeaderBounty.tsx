@@ -121,7 +121,7 @@ function ListingHeader({
   }, [update]);
 
   return (
-    <VStack bg={'white'}>
+    <VStack p={{ base: '2', md: '6' }} bg={'white'}>
       {isOpen && <EarningModal isOpen={isOpen} onClose={onClose} />}
       <VStack
         align="start"
@@ -161,6 +161,7 @@ function ListingHeader({
                 fontWeight={500}
                 bg={'green.100'}
                 borderRadius={'full'}
+                whiteSpace={'nowrap'}
               >
                 {(status === 'CLOSED' ||
                   (status === 'OPEN' && isWinnersAnnounced)) && (
@@ -346,7 +347,7 @@ function ListingHeader({
                 variant="solid"
               />
             </HStack>
-            <HStack>
+            <HStack whiteSpace={'nowrap'}>
               <VStack align={'start'} gap={0}>
                 <Text color={'#000000'} fontSize={'md'} fontWeight={500}>
                   {sub?.length ? sub.length + 1 : 1}

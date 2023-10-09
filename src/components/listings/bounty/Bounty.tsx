@@ -27,9 +27,10 @@ import { mergeSkills, splitSkills } from '@/utils/skills';
 interface Props {
   bounty?: Bounty;
   isEditMode?: boolean;
+  type: 'open' | 'permissioned';
 }
 
-function CreateListing({ bounty, isEditMode = false }: Props) {
+function CreateListing({ bounty, isEditMode = false, type }: Props) {
   const router = useRouter();
   const { userInfo } = userStore();
   // Templates - 1
@@ -86,7 +87,6 @@ function CreateListing({ bounty, isEditMode = false }: Props) {
       isEditMode && bounty?.deadline
         ? dayjs(bounty?.deadline).format('YYYY-MM-DDTHH:mm') || undefined
         : undefined,
-    type: isEditMode ? bounty?.type || undefined : undefined,
     templateId: isEditMode ? bounty?.templateId || undefined : undefined,
     pocSocials: isEditMode ? bounty?.pocSocials || undefined : undefined,
   });
@@ -113,6 +113,7 @@ function CreateListing({ bounty, isEditMode = false }: Props) {
           ? new Date(bountybasic?.deadline).toISOString()
           : undefined,
         description: editorData || '',
+        type,
         pocSocials: bountybasic?.pocSocials,
         region: regions,
         eligibility: (questions || []).map((q) => ({
@@ -277,6 +278,7 @@ function CreateListing({ bounty, isEditMode = false }: Props) {
           )}
           {steps > 1 && listingType === 'BOUNTY' && (
             <CreateBounty
+              type={type}
               regions={regions}
               setRegions={setRegions}
               setBountyRequirements={setBountyRequirements}

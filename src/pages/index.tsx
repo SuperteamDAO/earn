@@ -1,15 +1,6 @@
 /* eslint-disable no-nested-ternary */
 import { ArrowForwardIcon } from '@chakra-ui/icons';
-import {
-  Box,
-  Button,
-  Flex,
-  HStack,
-  Image,
-  Link,
-  Text,
-  useMediaQuery,
-} from '@chakra-ui/react';
+import { Box, Button, Flex, HStack, Image, Link, Text } from '@chakra-ui/react';
 import { css } from '@emotion/react';
 import axios from 'axios';
 import type { NextPage } from 'next';
@@ -73,31 +64,13 @@ const HomePage: NextPage = () => {
     getListings();
   }, []);
 
-  const [isLessThan1200px] = useMediaQuery('(max-width: 1200px)');
-  const [isLessThan850px] = useMediaQuery('(max-width: 850px)');
-  const [isLessThan768px] = useMediaQuery('(max-width: 768px)');
-
   const tabs = BountyTabs({ isListingsLoading, bounties });
 
   const [activeTab, setActiveTab] = useState<string>(tabs[0]!.id);
 
   useEffect(() => {
-    const html = document.querySelector('html');
     Mixpanel.track('home_page_load');
-    try {
-      if (isLessThan768px) {
-        html!.style.fontSize = '100%';
-      } else if (isLessThan850px) {
-        html!.style.fontSize = '60%';
-      } else if (isLessThan1200px) {
-        html!.style.fontSize = '70%';
-      } else {
-        html!.style.fontSize = '100%';
-      }
-    } catch (error) {
-      console.log(error);
-    }
-  }, [isLessThan1200px, isLessThan850px, isLessThan768px]);
+  }, []);
   return (
     <Home>
       <Box w={'100%'}>

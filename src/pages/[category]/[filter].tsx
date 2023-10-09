@@ -1,13 +1,5 @@
 import { ArrowForwardIcon } from '@chakra-ui/icons';
-import {
-  Box,
-  Button,
-  Flex,
-  HStack,
-  Link,
-  Text,
-  useMediaQuery,
-} from '@chakra-ui/react';
+import { Box, Button, Flex, HStack, Link, Text } from '@chakra-ui/react';
 import { css } from '@emotion/react';
 import axios from 'axios';
 import type { GetServerSideProps } from 'next';
@@ -102,10 +94,6 @@ function CategoryPage({ category, filter }: Props) {
     getListings();
   }, []);
 
-  const [isLessThan1200px] = useMediaQuery('(max-width: 1200px)');
-  const [isLessThan850px] = useMediaQuery('(max-width: 850px)');
-  const [isLessThan768px] = useMediaQuery('(max-width: 768px)');
-
   const tabs = BountyTabs({
     isListingsLoading,
     bounties,
@@ -115,23 +103,6 @@ function CategoryPage({ category, filter }: Props) {
   const [activeTab, setActiveTab] = useState<string>(
     tabs[0]!.id === 'Hyperdrive' ? 'All Opportunities' : tabs[0]!.id
   );
-
-  useEffect(() => {
-    const html = document.querySelector('html');
-    try {
-      if (isLessThan768px) {
-        html!.style.fontSize = '100%';
-      } else if (isLessThan850px) {
-        html!.style.fontSize = '60%';
-      } else if (isLessThan1200px) {
-        html!.style.fontSize = '70%';
-      } else {
-        html!.style.fontSize = '100%';
-      }
-    } catch (error) {
-      console.log(error);
-    }
-  }, [isLessThan1200px, isLessThan850px, isLessThan768px]);
   return (
     <Home>
       <Box w={'100%'}>

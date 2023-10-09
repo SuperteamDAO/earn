@@ -19,11 +19,11 @@ import { useEffect, useState } from 'react';
 import { toast, Toaster } from 'react-hot-toast';
 import { TiTick } from 'react-icons/ti';
 
+import { tokenList } from '@/constants';
 import type { BountyStatus } from '@/interface/bounty';
 import { dayjs } from '@/utils/dayjs';
 import { Mixpanel } from '@/utils/mixpanel';
 
-import { tokenList } from '../../constants';
 import { TalentStore } from '../../store/talent';
 import { userStore } from '../../store/user';
 import { updateNotification } from '../../utils/functions';
@@ -121,7 +121,7 @@ export const ListingSection = ({
           </Link>
         </Flex>
       </HStack>
-      <Flex direction={'column'} rowGap={'2.625rem'}>
+      <Flex direction={'column'} rowGap={'1'}>
         {children}
       </Flex>
       <Flex display={router?.query?.category !== type ? 'block' : 'none'}>
@@ -222,7 +222,7 @@ export const BountiesCard = ({
             <Flex justify={'space-between'} direction={'column'} w={'full'}>
               <Text
                 color="brand.slate.700"
-                fontSize={['xs', 'xs', 'sm', 'sm']}
+                fontSize={['xs', 'xs', 'md', 'md']}
                 fontWeight={600}
                 _hover={{
                   textDecoration: 'underline',
@@ -250,28 +250,26 @@ export const BountiesCard = ({
                 {sponsorName}
               </Text>
               <Flex align={'center'} gap={isMobile ? 1 : 3}>
-                <Flex align={'center'} justify="start">
+                <>
                   <Image
-                    w={4}
-                    h={4}
-                    mr={1}
-                    alt={token}
-                    rounded="full"
+                    h="4"
+                    ml={type === 'open' ? -0.5 : 0}
+                    alt={type}
                     src={
-                      tokenList.find((ele) => {
-                        return ele.tokenSymbol === token;
-                      })?.icon
+                      type === 'open'
+                        ? '/assets/icons/bolt.svg'
+                        : '/assets/icons/briefcase.svg'
                     }
                   />
-
                   <Text
-                    color={'brand.slate.700'}
-                    fontSize={['x-small', 'xs', 'sm', 'sm']}
-                    fontWeight={'600'}
+                    ml={type === 'open' ? '-3' : '-2.5'}
+                    color="gray.500"
+                    fontSize="xs"
+                    fontWeight={500}
                   >
-                    {rewardAmount}
+                    {type === 'open' ? 'Bounty' : 'Project'}
                   </Text>
-                </Flex>
+                </>
                 <Text
                   color={'brand.slate.300'}
                   fontSize={['xx-small', 'xs', 'sm', 'sm']}
@@ -289,19 +287,36 @@ export const BountiesCard = ({
               </Flex>
             </Flex>
           </Flex>
-          <Button
-            minW={24}
-            h={isMobile ? 7 : 9}
-            px={6}
-            fontSize={['xx-small', 'xs', 'sm', 'sm']}
-            variant="outlineSecondary"
-          >
-            {dayjs().isAfter(deadline)
-              ? 'View'
-              : type === 'permissioned'
-              ? 'Apply'
-              : 'Submit'}
-          </Button>
+          <Flex align={'center'} justify="start" mr={3}>
+            <Image
+              w={4}
+              h={4}
+              mr={1}
+              alt={token}
+              rounded="full"
+              src={
+                tokenList.find((ele) => {
+                  return ele.tokenSymbol === token;
+                })?.icon
+              }
+            />
+            <Flex align="baseline" gap={1}>
+              <Text
+                color={'brand.slate.600'}
+                fontSize={['xs', 'xs', 'md', 'md']}
+                fontWeight={'600'}
+              >
+                {rewardAmount?.toLocaleString()}
+              </Text>
+              <Text
+                color={'gray.400'}
+                fontSize={['xs', 'xs', 'md', 'md']}
+                fontWeight={500}
+              >
+                {token}
+              </Text>
+            </Flex>
+          </Flex>
         </Flex>
       </Link>
     </>
@@ -577,35 +592,17 @@ export const CategoryBanner = ({ type }: { type: string }) => {
       desc: 'If delighting users with eye-catching designs is your jam, you should check out the earning opportunities below.',
       icon: '/assets/category_assets/icon/design.png',
     },
-    Growth: {
-      bg: `/assets/category_assets/bg/growth.png`,
-      color: '#BFA8FE',
-      desc: 'If you’re a master of campaigns, building relationships, or data-driven strategy, we have earning opportunities for you.',
-      icon: '/assets/category_assets/icon/growth.png',
-    },
     Content: {
       bg: `/assets/category_assets/bg/content.png`,
       color: '#FEB8A8',
       desc: 'If you can write insightful essays, make stunning videos, or create killer memes, the opportunities below are calling your name.',
       icon: '/assets/category_assets/icon/content.png',
     },
-    Frontend: {
+    Development: {
       desc: 'If you are a pixel-perfectionist who creates interfaces that users love, check out the earning opportunities below.',
       bg: `/assets/category_assets/bg/frontend.png`,
       color: '#FEA8EB',
       icon: '/assets/category_assets/icon/frontend.png',
-    },
-    Backend: {
-      bg: `/assets/category_assets/bg/backend.png`,
-      desc: 'Opportunities to build high-performance databases, on and off-chain. ',
-      color: '#FEEBA8',
-      icon: '/assets/category_assets/icon/backend.png',
-    },
-    Blockchain: {
-      bg: `/assets/category_assets/bg/contract.png`,
-      desc: 'If you can write complex code that can communicate with chains, these opportunities are made just for you.',
-      color: '#A8FEC0',
-      icon: '/assets/category_assets/icon/contract.png',
     },
     Hyperdrive: {
       bg: `/assets/category_assets/bg/contract.png`,

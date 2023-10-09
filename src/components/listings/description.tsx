@@ -41,8 +41,6 @@ import {
   MdOutlineHorizontalRule,
 } from 'react-icons/md';
 
-import type { BountyBasicType } from './bounty/Createbounty';
-
 const LinkModal = ({
   isOpen,
   onClose,
@@ -83,22 +81,22 @@ interface Props {
   editorData: string | undefined;
   setSteps: Dispatch<SetStateAction<number>>;
   createDraft: () => void;
-  bountyBasics?: BountyBasicType;
   draftLoading?: boolean;
   isEditMode?: boolean;
   setBountyRequirements?: Dispatch<SetStateAction<any | undefined>>;
   bountyRequirements?: string | undefined;
+  type?: 'open' | 'permissioned';
 }
 const Description = ({
   editorData,
   setEditorData,
   setSteps,
   createDraft,
-  bountyBasics,
   draftLoading,
   isEditMode,
   bountyRequirements,
   setBountyRequirements,
+  type,
 }: Props) => {
   const { isOpen, onClose, onOpen } = useDisclosure();
   const editor = useEditor({
@@ -547,7 +545,7 @@ const Description = ({
           <Button
             w="100%"
             onClick={() => {
-              if (bountyBasics?.type === 'open') {
+              if (type === 'open') {
                 setSteps(5);
                 return;
               }

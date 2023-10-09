@@ -40,7 +40,6 @@ interface Props {
 interface ErrorsBasic {
   title: boolean;
   deadline: boolean;
-  type: boolean;
   skills: boolean;
   subSkills: boolean;
   pocSocials: boolean;
@@ -63,7 +62,6 @@ export const CreatebountyBasic = ({
 
   const [errorState, setErrorState] = useState<ErrorsBasic>({
     deadline: false,
-    type: false,
     title: false,
     subSkills: false,
     skills: false,
@@ -125,61 +123,6 @@ export const CreatebountyBasic = ({
           />
           <FormErrorMessage>
             {/* {errors.title ? <>{errors.title.message}</> : <></>} */}
-          </FormErrorMessage>
-        </FormControl>
-        <FormControl w="full" mb={5} isInvalid={errorState.type} isRequired>
-          <Flex>
-            <FormLabel
-              color={'brand.slate.500'}
-              fontSize={'15px'}
-              fontWeight={600}
-              htmlFor={'eligility'}
-            >
-              Listing Type
-            </FormLabel>
-            <Tooltip
-              w="max"
-              p="0.7rem"
-              color="white"
-              fontSize="0.9rem"
-              fontWeight={600}
-              bg="#6562FF"
-              borderRadius="0.5rem"
-              hasArrow
-              label={`Choose which type of Listing you want to create`}
-              placement="right-end"
-            >
-              <Image
-                mt={-2}
-                alt={'Info Icon'}
-                src={'/assets/icons/info-icon.svg'}
-              />
-            </Tooltip>
-          </Flex>
-
-          <Select
-            borderColor="brand.slate.300"
-            _placeholder={{
-              color: 'brand.slate.300',
-            }}
-            focusBorderColor="brand.purple"
-            onChange={(e) => {
-              setbountyBasic({
-                ...(bountyBasic as BountyBasicType),
-                type: e.target.value,
-              });
-            }}
-            placeholder="Choose the type of bounty"
-            value={bountyBasic?.type}
-          >
-            <option value="open">Open Bounty - anyone can apply</option>
-            <option value="permissioned">
-              Application Based Bounty - only the people selected by you can
-              work on the bounty
-            </option>
-          </Select>
-          <FormErrorMessage>
-            {/* {errors.type ? <>{errors.type.message}</> : <></>} */}
           </FormErrorMessage>
         </FormControl>
 
@@ -366,7 +309,6 @@ export const CreatebountyBasic = ({
             onClick={() => {
               setErrorState({
                 deadline: !bountyBasic?.deadline,
-                type: !bountyBasic?.type,
                 skills: skills.length === 0,
                 subSkills: subSkills.length === 0,
                 title: !bountyBasic?.title,
@@ -375,7 +317,6 @@ export const CreatebountyBasic = ({
 
               if (
                 bountyBasic?.deadline &&
-                bountyBasic?.type &&
                 bountyBasic?.title &&
                 skills.length !== 0 &&
                 subSkills.length !== 0 &&

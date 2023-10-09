@@ -81,19 +81,6 @@ const Sponsor = () => {
   }, []);
 
   useEffect(() => {
-    const html = document.querySelector('html');
-    try {
-      if (isLessThan600px) {
-        html!.style.fontSize = '60%';
-      } else {
-        html!.style.fontSize = '100%';
-      }
-    } catch (error) {
-      console.log(error);
-    }
-  }, [isLessThan600px]);
-
-  useEffect(() => {
     changeBackground();
     // adding the event when scroll change background
     window.addEventListener('scroll', changeBackground);

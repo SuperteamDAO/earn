@@ -29,32 +29,16 @@ const NAV_ITEMS: Array<NavItem> = [
     label: 'All Opportunities',
     children: [
       {
-        label: 'All Opportunities',
-        href: '/',
+        label: 'Content',
+        href: '/all/Content/',
       },
       {
         label: 'Design',
         href: '/all/Design/',
       },
       {
-        label: 'Growth',
-        href: '/all/Growth/',
-      },
-      {
-        label: 'Content',
-        href: '/all/Content/',
-      },
-      {
-        label: 'Frontend',
-        href: '/all/Frontend/',
-      },
-      {
-        label: 'Backend',
-        href: '/all/Backend/',
-      },
-      {
-        label: 'Blockchain',
-        href: '/all/Blockchain/',
+        label: 'Development',
+        href: '/all/Development/',
       },
       {
         label: 'HYPERDRIVE',
@@ -198,7 +182,6 @@ export default function WithSubnavigation() {
     <Box pos="sticky" zIndex="sticky" top={0}>
       <BountySnackbar />
       <Flex
-        align={'stretch'}
         px={{ base: 4, md: 6 }}
         py={{ base: 2, md: 0 }}
         color="brand.slate.500"
@@ -206,60 +189,66 @@ export default function WithSubnavigation() {
         borderBottom="1px solid"
         borderBottomColor="blackAlpha.200"
       >
-        <Flex
-          flex={{ base: 1, md: 'auto' }}
-          display={{ base: 'flex', md: 'none' }}
-          ml={{ base: -2 }}
-        >
-          <IconButton
-            aria-label={'Toggle Navigation'}
-            icon={
-              isOpen ? <CloseIcon w={3} h={3} /> : <HamburgerIcon w={5} h={5} />
-            }
-            onClick={onToggle}
-            variant={'ghost'}
-          />
-        </Flex>
-        <Flex align="center" justify={{ base: 'center', md: 'start' }}>
-          <Image
-            h={5}
-            cursor="pointer"
-            objectFit={'contain'}
-            alt={'Superteam Earn'}
-            onClick={() => {
-              router.push('/');
-            }}
-            src={'/assets/logo/new-logo.svg'}
-          />
-          {/* <Flex
-            align="center"
-            display={{ base: 'none', md: 'flex' }}
-            h="full"
-            ml={10}
+        <Flex justify={'space-between'} w="100%" maxW="7xl" mx="auto">
+          <Flex
+            flex={{ base: 1, md: 'auto' }}
+            display={{ base: 'flex', md: 'none' }}
+            ml={{ base: -2 }}
           >
-            <Search />
-          </Flex> */}
-
+            <IconButton
+              aria-label={'Toggle Navigation'}
+              icon={
+                isOpen ? (
+                  <CloseIcon w={3} h={3} />
+                ) : (
+                  <HamburgerIcon w={5} h={5} />
+                )
+              }
+              onClick={onToggle}
+              variant={'ghost'}
+            />
+          </Flex>
           <Flex
             align="center"
+            justify={{ base: 'center', md: 'start' }}
+            gap={4}
+          >
+            <Image
+              h={5}
+              mr={5}
+              cursor="pointer"
+              objectFit={'contain'}
+              alt={'Superteam Earn'}
+              onClick={() => {
+                router.push('/');
+              }}
+              src={'/assets/logo/new-logo.svg'}
+            />
+            <Text>Bounties</Text>
+            <Text>Projects</Text>
+          </Flex>
+          <Flex
+            align="center"
+            justify={'center'}
+            flexGrow={1}
             display={{ base: 'none', md: 'flex' }}
             h="full"
             ml={10}
           >
             <DesktopNav />
           </Flex>
-        </Flex>
 
-        <Stack
-          align="center"
-          justify={'flex-end'}
-          direction={'row'}
-          flex={{ base: 1, md: 1 }}
-          py={{ base: 0, md: 2 }}
-          spacing={4}
-        >
-          <UserInfo />
-        </Stack>
+          <Stack
+            align="center"
+            justify={'flex-end'}
+            direction={'row'}
+            flex={{ base: 1, md: 1 }}
+            py={{ base: 0, md: 2 }}
+            spacing={4}
+          >
+            <UserInfo />
+          </Stack>
+        </Flex>
       </Flex>
       <Box bg="white">
         <Collapse animateOpacity in={isOpen}>

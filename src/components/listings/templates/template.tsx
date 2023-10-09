@@ -53,7 +53,6 @@ const Template = ({
     setListingType('BOUNTY');
     setBountyBasic({
       title: template?.title || undefined,
-      type: template?.type || 'open',
       templateId: template?.id || undefined,
     });
     setEditorData(template?.description || '');

@@ -1,4 +1,4 @@
-import { HStack, VStack } from '@chakra-ui/react';
+import { Box, HStack, VStack } from '@chakra-ui/react';
 import { Regions } from '@prisma/client';
 import axios from 'axios';
 import { useAtom } from 'jotai';
@@ -46,6 +46,7 @@ function BountyDetails({ bounty: initialBounty }: BountyDetailsProps) {
           submissionCount: submissionNumber,
           deadline: bounty?.deadline,
           rewardAmount: bounty?.rewardAmount,
+          type: bounty?.type,
         });
       }
     };
@@ -88,59 +89,63 @@ function BountyDetails({ bounty: initialBounty }: BountyDetailsProps) {
         </Head>
       }
     >
-      {bounty === null && <ErrorSection />}
-      {bounty !== null && !bounty?.id && (
-        <ErrorSection message="Sorry! The bounty you are looking for is not available." />
-      )}
-      {bounty !== null && !!bounty?.id && (
+      <Box>
         <>
-          <ListingHeader
-            type={bounty?.type}
-            id={bounty?.id}
-            status={bounty?.status}
-            deadline={bounty?.deadline}
-            title={bounty?.title ?? ''}
-            sponsor={bounty?.sponsor}
-            slug={bounty?.slug}
-            region={bounty?.region || Regions.GLOBAL}
-            isWinnersAnnounced={bounty?.isWinnersAnnounced}
-            hackathonPrize={bounty?.hackathonprize}
-          />
-          {bounty?.isWinnersAnnounced && <BountyWinners bounty={bounty} />}
-          <HStack
-            align={['center', 'center', 'start', 'start']}
-            justify={['center', 'center', 'space-between', 'space-between']}
-            flexDir={['column-reverse', 'column-reverse', 'row', 'row']}
-            gap={4}
-            maxW={'7xl'}
-            mb={10}
-            mx={'auto'}
-          >
-            <VStack gap={8} w={['22rem', '22rem', 'full', 'full']} mt={10}>
-              <DetailDescription
-                skills={bounty?.skills?.map((e) => e.skills) ?? []}
-                description={bounty?.description}
+          {bounty === null && <ErrorSection />}
+          {bounty !== null && !bounty?.id && (
+            <ErrorSection message="Sorry! The bounty you are looking for is not available." />
+          )}
+          {bounty !== null && !!bounty?.id && (
+            <>
+              <ListingHeader
+                type={bounty?.type}
+                id={bounty?.id}
+                status={bounty?.status}
+                deadline={bounty?.deadline}
+                title={bounty?.title ?? ''}
+                sponsor={bounty?.sponsor}
+                slug={bounty?.slug}
+                region={bounty?.region || Regions.GLOBAL}
+                isWinnersAnnounced={bounty?.isWinnersAnnounced}
+                hackathonPrize={bounty?.hackathonprize}
               />
-              <Comments refId={bounty?.id ?? ''} refType="BOUNTY" />
-            </VStack>
-            <DetailSideCard
-              bountytitle={bounty.title ?? ''}
-              id={bounty?.id || ''}
-              token={bounty?.token ?? ''}
-              eligibility={bounty?.eligibility}
-              type={bounty?.type}
-              endingTime={bounty?.deadline ?? ''}
-              prizeList={bounty?.rewards}
-              total={bounty?.rewardAmount || 0}
-              applicationLink={bounty?.applicationLink || ''}
-              requirements={bounty?.requirements}
-              isWinnersAnnounced={bounty?.isWinnersAnnounced}
-              pocSocials={bounty?.pocSocials}
-              hackathonPrize={bounty?.hackathonprize}
-            />
-          </HStack>
+              {bounty?.isWinnersAnnounced && <BountyWinners bounty={bounty} />}
+              <HStack
+                align={['center', 'center', 'start', 'start']}
+                justify={['center', 'center', 'space-between', 'space-between']}
+                flexDir={['column-reverse', 'column-reverse', 'row', 'row']}
+                gap={4}
+                maxW={'7xl'}
+                mb={10}
+                mx={'auto'}
+              >
+                <VStack gap={8} w={['22rem', '22rem', 'full', 'full']} mt={10}>
+                  <DetailDescription
+                    skills={bounty?.skills?.map((e) => e.skills) ?? []}
+                    description={bounty?.description}
+                  />
+                  <Comments refId={bounty?.id ?? ''} refType="BOUNTY" />
+                </VStack>
+                <DetailSideCard
+                  bountytitle={bounty.title ?? ''}
+                  id={bounty?.id || ''}
+                  token={bounty?.token ?? ''}
+                  eligibility={bounty?.eligibility}
+                  type={bounty?.type}
+                  endingTime={bounty?.deadline ?? ''}
+                  prizeList={bounty?.rewards}
+                  total={bounty?.rewardAmount || 0}
+                  applicationLink={bounty?.applicationLink || ''}
+                  requirements={bounty?.requirements}
+                  isWinnersAnnounced={bounty?.isWinnersAnnounced}
+                  pocSocials={bounty?.pocSocials}
+                  hackathonPrize={bounty?.hackathonprize}
+                />
+              </HStack>
+            </>
+          )}
         </>
-      )}
+      </Box>
     </Default>
   );
 }

@@ -1,4 +1,4 @@
-import { Box, Flex, useMediaQuery } from '@chakra-ui/react';
+import { Box, Flex } from '@chakra-ui/react';
 import axios from 'axios';
 import type { GetServerSideProps } from 'next';
 import React, { useEffect, useState } from 'react';
@@ -15,7 +15,6 @@ import type { Bounty } from '@/interface/bounty';
 import type { Grant } from '@/interface/grant';
 import type { Job } from '@/interface/job';
 import Home from '@/layouts/Home';
-import { Mixpanel } from '@/utils/mixpanel';
 
 interface Listings {
   bounties?: Bounty[];
@@ -50,27 +49,6 @@ const RegionsPage = ({ slug }: { slug: string }) => {
     getListings();
   }, []);
 
-  const [isLessThan1200px] = useMediaQuery('(max-width: 1200px)');
-  const [isLessThan850px] = useMediaQuery('(max-width: 850px)');
-  const [isLessThan768px] = useMediaQuery('(max-width: 768px)');
-
-  useEffect(() => {
-    const html = document.querySelector('html');
-    Mixpanel.track('home_page_load');
-    try {
-      if (isLessThan768px) {
-        html!.style.fontSize = '100%';
-      } else if (isLessThan850px) {
-        html!.style.fontSize = '60%';
-      } else if (isLessThan1200px) {
-        html!.style.fontSize = '70%';
-      } else {
-        html!.style.fontSize = '100%';
-      }
-    } catch (error) {
-      console.log(error);
-    }
-  }, [isLessThan1200px, isLessThan850px, isLessThan768px]);
   return (
     <>
       <Home>

@@ -72,7 +72,7 @@ export const BountyTabs = ({
       id: 'tab2',
       title: 'IN REVIEW',
       content: (
-        <Flex direction={'column'} rowGap={'2.625rem'}>
+        <Flex direction={'column'} rowGap={'1'}>
           {isListingsLoading ? (
             <Flex align="center" justify="center" direction="column" minH={52}>
               <Loading />
@@ -119,7 +119,7 @@ export const BountyTabs = ({
       id: 'tab3',
       title: 'COMPLETED',
       content: (
-        <Flex direction={'column'} rowGap={'2.625rem'}>
+        <Flex direction={'column'} rowGap={'1'}>
           {isListingsLoading ? (
             <Flex align="center" justify="center" direction="column" minH={52}>
               <Loading />

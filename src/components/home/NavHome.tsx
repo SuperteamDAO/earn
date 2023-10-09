@@ -239,36 +239,12 @@ function NavHome() {
                       {elm.name}
                     </MenuButton>
                     <MenuList zIndex="500">
-                      {[
-                        'All Opportunties',
-                        'Design',
-                        'Growth',
-                        'Content',
-                        'Frontend',
-                        'Backend',
-                        'Blockchain',
-                      ].map((option) => {
+                      {['Content', 'Design', 'Development'].map((option) => {
                         return (
                           <MenuItem
                             key={option}
                             onClick={() => {
-                              if (option !== 'All Opportunties') {
-                                if (elm.name === 'All Opportunties') {
-                                  router.replace(
-                                    `/all/${option.toLowerCase()}`
-                                  );
-                                  return;
-                                }
-                                router.replace(
-                                  `/${elm.name.toLowerCase()}/${option.toLowerCase()}`
-                                );
-                              } else {
-                                if (elm.name === 'All Opportunties') {
-                                  router.replace(`/`);
-                                  return;
-                                }
-                                router.replace(`/${elm.name.toLowerCase()}`);
-                              }
+                              router.replace(`/${elm.name.toLowerCase()}`);
                             }}
                           >
                             {option}
@@ -511,41 +487,14 @@ function NavHome() {
                       </Text>
                     </VStack>
                     <VStack align={'start'} px={5}>
-                      {[
-                        'All Opportunties',
-                        'Design',
-                        'Growth',
-                        'Content',
-                        'Frontend',
-                        'Backend',
-                        'Blockchain',
-                      ].map((option) => {
+                      {['Content', 'Design', 'Development'].map((option) => {
                         return (
                           <Button
                             key={option}
                             fontWeight={400}
                             onClick={() => {
-                              if (option !== 'All Opportunties') {
-                                if (elm.name === 'All Opportunties') {
-                                  router.replace(
-                                    `/all/${option.toLowerCase()}`
-                                  );
-                                  navonClose();
-                                  return;
-                                }
-                                router.replace(
-                                  `/${elm.name.toLowerCase()}/${option.toLowerCase()}`
-                                );
-                                navonClose();
-                              } else {
-                                if (elm.name === 'All Opportunties') {
-                                  router.replace(`/`);
-                                  navonClose();
-                                  return;
-                                }
-                                router.replace(`/${elm.name.toLowerCase()}`);
-                                navonClose();
-                              }
+                              router.replace(`/${elm.name.toLowerCase()}`);
+                              navonClose();
                             }}
                             variant={'unstyled'}
                           >

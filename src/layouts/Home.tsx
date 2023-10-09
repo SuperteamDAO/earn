@@ -77,18 +77,7 @@ function Home(props: IDefaultProps) {
       setShowCategoryBanner(false);
     }
   }, [router.asPath, router.query]);
-  const Skills = [
-    'Frontend',
-    'Backend',
-    'Blockchain',
-    'Design',
-    'Growth',
-    'Content',
-    'Community',
-    'Other',
-    'Mobile',
-    'Hyperdrive',
-  ];
+  const Skills = ['Development', 'Design', 'Content', 'Hyperdrive'];
   const Superteams = [
     {
       name: 'Superteam Germany',
