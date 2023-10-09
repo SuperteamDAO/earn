@@ -449,7 +449,7 @@ const AlphaAccess = () => {
         href="https://earn.superteam.fun/all/Hyperdrive/?utm_source=superteamearn&utm_medium=hyperdrive&utm_campaign=banner"
         isExternal
       >
-        Showcase Your Project
+        Submit Your Project
       </Link>
     </Flex>
   );
