@@ -15,7 +15,7 @@ import axios from 'axios';
 import { MediaPicker } from 'degen';
 import { useRouter } from 'next/router';
 import { useState } from 'react';
-import { useForm } from 'react-hook-form';
+import { useForm,Controller } from 'react-hook-form';
 import { Toaster } from 'react-hot-toast';
 import Select from 'react-select';
 import makeAnimated from 'react-select/animated';
@@ -38,6 +38,7 @@ const CreateSponsor = () => {
     register,
     formState: { errors },
     watch,
+    control,
     getValues,
   } = useForm();
   const [imageUrl, setImageUrl] = useState<string>('');
@@ -309,21 +310,28 @@ const CreateSponsor = () => {
                     _placeholder={{ color: 'brand.slate.300' }}
                     focusBorderColor="brand.purple"
                     id="bio"
-                    maxLength={180}
+                    maxLength={161}
                     {...register('bio')}
                     placeholder="What does your company do?"
                   />
-                  <Text
-                    color={
-                      (watch('bio')?.length || 0) > 160
-                        ? 'red'
-                        : 'brand.slate.400'
-                    }
-                    fontSize={'xs'}
-                    textAlign="right"
-                  >
-                    {180 - (watch('bio')?.length || 0)} characters left
-                  </Text>
+            
+                      <Controller
+      name="bio"
+      control={control}
+      defaultValue=""
+      render={() => (
+        <>
+   
+         
+          {watch('bio')?.length > 160 ? (
+            <Text color="red" fontSize="xs" textAlign="right">
+              Character limit exceeded. Please reduce the text
+            </Text>
+          ) : null}
+        </>
+      )}
+    />
+
                   <FormErrorMessage>
                     {errors.bio ? <>{errors.bio.message}</> : <></>}
                   </FormErrorMessage>
@@ -360,3 +368,4 @@ const CreateSponsor = () => {
 };
 
 export default CreateSponsor;
+
