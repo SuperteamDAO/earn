@@ -151,7 +151,7 @@ const NavLink = ({
     h: 'full',
     py: 2,
     fontSize: 'sm',
-    borderBottom: '1px solid',
+    borderBottom: isActive ? '1px solid' : 'none',
     _hover: {
       textDecoration: 'none',
       color: 'brand.slate.600',
