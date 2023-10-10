@@ -208,10 +208,10 @@ export const BountiesCard = ({
           justify="space-between"
           w={{ base: '100%', md: 'brand.120' }}
         >
-          <Flex w="100%" h={16}>
+          <Flex w="100%" h={isMobile ? 14 : 16}>
             <Image
-              w={16}
-              h={16}
+              w={isMobile ? 14 : 16}
+              h={isMobile ? 14 : 16}
               mr={isMobile ? 3 : 5}
               alt={sponsorName}
               rounded={5}
@@ -342,7 +342,8 @@ export const GrantsCard = ({
   return (
     <>
       <Link
-        p={2}
+        px={isMobile ? 1 : 4}
+        py={4}
         borderRadius={5}
         _hover={{
           textDecoration: 'none',
@@ -357,25 +358,27 @@ export const GrantsCard = ({
         }}
       >
         <Flex
-          align="start"
+          align="center"
           justify="space-between"
           w={{ base: '100%', md: 'brand.120' }}
-          h={16}
         >
-          <Flex justify="start" h={16}>
+          <Flex justify="start" h={isMobile ? 14 : 16}>
             <Image
-              w={16}
-              h={16}
-              mr={5}
+              w={isMobile ? 14 : 16}
+              h={isMobile ? 14 : 16}
+              mr={isMobile ? 3 : 5}
               alt={'company logo'}
               rounded={5}
               src={logo || '/assets/home/placeholder/ph3.png'}
             />
-            <Flex justify="start" direction="column">
+            <Flex justify={'space-between'} direction={'column'} w={'full'}>
               <Text
                 color="brand.slate.700"
-                fontSize={['xs', 'xs', 'sm', 'sm']}
+                fontSize={['xs', 'xs', 'md', 'md']}
                 fontWeight="600"
+                _hover={{
+                  textDecoration: 'underline',
+                }}
                 style={{
                   display: '-webkit-box',
                   WebkitLineClamp: 1,
@@ -386,8 +389,8 @@ export const GrantsCard = ({
                 {title}
               </Text>
               <Text
-                color="brand.slate.400"
-                fontSize={['xs', 'xs', 'sm', 'sm']}
+                color="brand.slate.500"
+                fontSize={{ md: 'sm', base: 'xs' }}
                 fontWeight="400"
               >
                 {sponsorName}
