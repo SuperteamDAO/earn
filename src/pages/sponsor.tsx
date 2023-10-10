@@ -14,7 +14,7 @@ import axios from 'axios';
 import { useRouter } from 'next/router';
 import { useEffect, useState } from 'react';
 
-import { Footer } from '../components/Footer';
+import Footer from '../components/Footer/Footer';
 
 // Images
 const SponsorPage = '/assets/landingsponsor/displays/sponsorpage.png';

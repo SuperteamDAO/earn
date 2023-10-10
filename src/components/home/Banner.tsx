@@ -41,9 +41,9 @@ export default function HomeBanner({ setTriggerLogin }: BannerProps) {
       >
         <Text
           color="white"
-          fontSize={'3xl'}
+          fontSize={'28px'}
           fontWeight={'700'}
-          lineHeight={'1.875rem'}
+          lineHeight={'2.2rem'}
         >
           Unlock your crypto
           <br /> earning potential

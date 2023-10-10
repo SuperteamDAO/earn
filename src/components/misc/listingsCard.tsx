@@ -188,7 +188,7 @@ export const BountiesCard = ({
   return (
     <>
       <Link
-        px={3}
+        px={isMobile ? 1 : 4}
         py={4}
         borderRadius={5}
         _hover={{
@@ -212,7 +212,7 @@ export const BountiesCard = ({
             <Image
               w={16}
               h={16}
-              mr={5}
+              mr={isMobile ? 3 : 5}
               alt={sponsorName}
               rounded={5}
               src={logo || `${router.basePath}/assets/images/sponsor-logo.png`}
@@ -260,7 +260,7 @@ export const BountiesCard = ({
                     }
                   />
                   <Text
-                    ml={type === 'open' ? '-3' : '-2.5'}
+                    ml={isMobile ? '-1' : type === 'open' ? '-3' : '-2.5'}
                     color="gray.500"
                     fontSize="xs"
                     fontWeight={500}
