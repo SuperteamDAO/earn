@@ -19,14 +19,38 @@ export default async function user(req: NextApiRequest, res: NextApiResponse) {
     bounties: [],
     grants: [],
   };
-  const skillsFilter = filter
-    ? {
+  const filterToSkillsMap: Record<string, string[]> = {
+    Development: ['Frontend', 'Backend', 'Blockchain'],
+    Design: ['Design'],
+    Content: ['Content'],
+    Frontend: ['Frontend'],
+    Backend: ['Backend'],
+    Blockchain: ['Blockchain'],
+  };
+
+  const skillsToFilter = filterToSkillsMap[filter] || [];
+
+  let skillsFilter = {};
+  if (skillsToFilter.length > 0) {
+    if (filter === 'Development') {
+      skillsFilter = {
+        OR: skillsToFilter.map((skill) => ({
+          skills: {
+            path: '$[*].skills',
+            array_contains: [skill],
+          },
+        })),
+      };
+    } else {
+      skillsFilter = {
         skills: {
           path: '$[*].skills',
-          array_contains: filter.split(',')[0],
+          array_contains: skillsToFilter,
         },
-      }
-    : {};
+      };
+    }
+  }
+
   try {
     if (!category || category === 'all') {
       const bounties = await prisma.bounties.findMany({

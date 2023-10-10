@@ -41,7 +41,7 @@ function AllBountiesPage() {
   }, []);
 
   return (
-    <Home>
+    <Home type="home">
       <Box w={'100%'}>
         <ListingSection
           type="bounties"

@@ -1,9 +1,13 @@
 import { Box, Flex } from '@chakra-ui/react';
 import axios from 'axios';
-import type { GetServerSideProps } from 'next';
+import type { NextPageContext } from 'next';
 import { useEffect, useState } from 'react';
 
-import { BountiesCard, ListingSection } from '@/components/misc/listingsCard';
+import {
+  BountiesCard,
+  GrantsCard,
+  ListingSection,
+} from '@/components/misc/listingsCard';
 import EmptySection from '@/components/shared/EmptySection';
 import Loading from '@/components/shared/Loading';
 import type { Bounty } from '@/interface/bounty';
@@ -15,11 +19,7 @@ interface Listings {
   grants?: Grant[];
 }
 
-interface Props {
-  slug: string;
-}
-
-function AllBountybyCountry({ slug }: Props) {
+function ListingCategoryPage({ slug }: { slug: string }) {
   const [isListingsLoading, setIsListingsLoading] = useState(true);
   const [listings, setListings] = useState<Listings>({
     bounties: [],
@@ -28,10 +28,12 @@ function AllBountybyCountry({ slug }: Props) {
 
   const getListings = async () => {
     setIsListingsLoading(true);
+    const params =
+      slug === 'Hyperdrive'
+        ? { category: 'hyperdrive' }
+        : { category: 'all', take: 100, filter: slug };
     try {
-      const listingsData = await axios.get(
-        `/api/listings/regions/?region=${slug}`
-      );
+      const listingsData = await axios.get('/api/listings/', { params });
       setListings(listingsData.data);
       setIsListingsLoading(false);
     } catch (e) {
@@ -45,13 +47,14 @@ function AllBountybyCountry({ slug }: Props) {
   }, []);
 
   return (
-    <Home type="region">
+    <Home type="category">
       <Box w={'100%'}>
         <ListingSection
           type="bounties"
-          title="Bounties"
+          title={`${slug} Gigs`}
           sub="Bite sized tasks for freelancers"
           emoji="/assets/home/emojis/moneyman.png"
+          all
         >
           {isListingsLoading && (
             <Flex align="center" justify="center" direction="column" minH={52}>
@@ -83,20 +86,60 @@ function AllBountybyCountry({ slug }: Props) {
               );
             })}
         </ListingSection>
+        <ListingSection
+          type="grants"
+          title={`${slug} Grants`}
+          sub="Equity-free funding opportunities for builders"
+          emoji="/assets/home/emojis/grants.png"
+          all
+        >
+          {isListingsLoading && (
+            <Flex align="center" justify="center" direction="column" minH={52}>
+              <Loading />
+            </Flex>
+          )}
+          {!isListingsLoading && !listings?.grants?.length && (
+            <Flex align="center" justify="center" mt={8}>
+              <EmptySection
+                title="No grants available!"
+                message="Subscribe to notifications to get notified about new grants."
+              />
+            </Flex>
+          )}
+          {!isListingsLoading &&
+            listings?.grants?.map((grant) => {
+              return (
+                <GrantsCard
+                  sponsorName={grant?.sponsor?.name}
+                  logo={grant?.sponsor?.logo}
+                  key={grant?.id}
+                  slug={grant.slug}
+                  rewardAmount={grant?.rewardAmount}
+                  title={grant?.title}
+                  short_description={grant?.shortDescription}
+                />
+              );
+            })}
+        </ListingSection>
       </Box>
     </Home>
   );
 }
 
-export const getServerSideProps: GetServerSideProps = async (context) => {
-  if (!context.params) {
-    return { props: {} };
+export async function getServerSideProps(context: NextPageContext) {
+  const { slug } = context.query;
+
+  const validCategories = ['Design', 'Content', 'Development', 'Hyperdrive'];
+
+  if (!validCategories.includes(slug as string)) {
+    return {
+      notFound: true,
+    };
   }
-  const { slug } = context.params;
 
   return {
     props: { slug },
   };
-};
+}
 
-export default AllBountybyCountry;
+export default ListingCategoryPage;

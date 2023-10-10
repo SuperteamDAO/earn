@@ -12,7 +12,7 @@ interface Listings {
   bounties?: Bounty[];
 }
 
-function AllBountiesPage() {
+function AllListingsPage() {
   const [isListingsLoading, setIsListingsLoading] = useState(true);
   const [listings, setListings] = useState<Listings>({
     bounties: [],
@@ -25,7 +25,6 @@ function AllBountiesPage() {
         params: {
           category: 'bounties',
           take: 100,
-          type: 'open',
         },
       });
       setListings(listingsData.data);
@@ -45,7 +44,7 @@ function AllBountiesPage() {
       <Box w={'100%'}>
         <ListingSection
           type="bounties"
-          title="Bounties"
+          title="Freelance Gigs"
           sub="Bite sized tasks for freelancers"
           emoji="/assets/home/emojis/moneyman.png"
           all
@@ -85,4 +84,4 @@ function AllBountiesPage() {
   );
 }
 
-export default AllBountiesPage;
+export default AllListingsPage;

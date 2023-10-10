@@ -57,9 +57,9 @@ export default function HomeBanner({ setTriggerLogin }: BannerProps) {
           <Button
             px={'2.25rem'}
             py={'0.75rem'}
-            color={'white'}
+            color={'#3223A0'}
             fontSize={'0.875rem'}
-            bg={'#6366F1'}
+            bg={'white'}
             onClick={() => {
               Mixpanel.track('sign_up_clicked');
               handleSubmit();

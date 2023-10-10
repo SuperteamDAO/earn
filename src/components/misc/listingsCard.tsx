@@ -526,7 +526,6 @@ export const CategoryBanner = ({ type }: { type: string }) => {
         direction={{ md: 'row', base: 'column' }}
         w={{ md: 'brand.120', base: '100%' }}
         h={{ md: '7.375rem', base: 'fit-content' }}
-        mt={6}
         mb={8}
         mx={'auto'}
         p={6}

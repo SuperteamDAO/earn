@@ -1,6 +1,6 @@
 import { Box, Flex } from '@chakra-ui/react';
 import axios from 'axios';
-import type { GetServerSideProps } from 'next';
+import type { NextPageContext } from 'next';
 import React, { useEffect, useState } from 'react';
 
 import {
@@ -10,6 +10,7 @@ import {
 } from '@/components/misc/listingsCard';
 import EmptySection from '@/components/shared/EmptySection';
 import Loading from '@/components/shared/Loading';
+import { Superteams } from '@/constants/Superteam';
 import type { Bounty } from '@/interface/bounty';
 import type { Grant } from '@/interface/grant';
 import Home from '@/layouts/Home';
@@ -47,7 +48,7 @@ const RegionsPage = ({ slug }: { slug: string }) => {
 
   return (
     <>
-      <Home>
+      <Home type="region">
         <Box w={'100%'}>
           <ListingSection
             type="bounties"
@@ -97,6 +98,7 @@ const RegionsPage = ({ slug }: { slug: string }) => {
             title="Grants"
             sub="Equity-free funding opportunities for builders"
             emoji="/assets/home/emojis/grants.png"
+            all
           >
             {isListingsLoading && (
               <Flex
@@ -136,12 +138,23 @@ const RegionsPage = ({ slug }: { slug: string }) => {
     </>
   );
 };
-export const getServerSideProps: GetServerSideProps = async (context) => {
+
+export async function getServerSideProps(context: NextPageContext) {
   const { slug } = context.query;
+
+  const validRegion = Superteams.some(
+    (team) => team.region.toLowerCase() === (slug as string).toLowerCase()
+  );
+
+  if (!validRegion) {
+    return {
+      notFound: true,
+    };
+  }
+
   return {
-    props: {
-      slug,
-    },
+    props: { slug },
   };
-};
+}
+
 export default RegionsPage;

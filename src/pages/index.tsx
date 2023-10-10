@@ -65,7 +65,7 @@ const HomePage: NextPage = () => {
     Mixpanel.track('home_page_load');
   }, []);
   return (
-    <Home>
+    <Home type="home">
       <Box w={'100%'}>
         <Box my={10}>
           <HStack
@@ -91,7 +91,7 @@ const HomePage: NextPage = () => {
                 fontSize={{ base: 14, md: 16 }}
                 fontWeight={'600'}
               >
-                Bounties
+                Freelance Gigs
               </Text>
               <Text
                 display={['none', 'none', 'block', 'block']}
@@ -136,7 +136,7 @@ const HomePage: NextPage = () => {
             </Flex>
             <Flex>
               <Link
-                href={'/bounties'}
+                href={'/all'}
                 onClick={() => {
                   Mixpanel.track('view_all', {
                     type: title,
@@ -156,7 +156,7 @@ const HomePage: NextPage = () => {
 
           {tabs.map((tab) => tab.id === activeTab && tab.content)}
           <Link
-            href={'/bounties'}
+            href={'/all'}
             onClick={() => {
               Mixpanel.track('view_all', {
                 type: title,

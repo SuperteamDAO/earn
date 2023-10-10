@@ -98,12 +98,12 @@ const MobileNavItem = ({ label, children, href }: NavItem) => {
                 {child.label === 'HYPERDRIVE' ? (
                   <Image
                     w={100}
+                    alt="Hyperdrive Hackathon"
                     src="/assets/category_assets/icon/Hyperdrive.svg"
                   />
                 ) : (
                   child.label
                 )}
-                {/* {child.label} */}
               </Link>
             ))}
         </Stack>
@@ -156,10 +156,8 @@ const DesktopNav = () => {
                 >
                   {navItem.label === 'HYPERDRIVE' ? (
                     <Image
+                      alt="Hyperdrive Hackathon"
                       src="/assets/category_assets/icon/Hyperdrive.svg"
-                      // style={{
-                      //   scale: '1.1',
-                      // }}
                     />
                   ) : (
                     navItem.label
