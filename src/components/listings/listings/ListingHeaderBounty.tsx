@@ -1,5 +1,4 @@
 /* eslint-disable no-nested-ternary */
-import { InfoOutlineIcon } from '@chakra-ui/icons';
 import {
   Flex,
   Heading,
@@ -7,12 +6,6 @@ import {
   IconButton,
   Image,
   Link,
-  Popover,
-  PopoverArrow,
-  PopoverBody,
-  PopoverCloseButton,
-  PopoverContent,
-  PopoverTrigger,
   Text,
   Tooltip,
   useDisclosure,
@@ -214,32 +207,40 @@ function ListingHeader({
                   gap={1}
                   display={{ base: 'none', md: 'flex' }}
                 >
-                  <Text color={'#94A3B8'}>
-                    {hackathonPrize
-                      ? 'Hackathon Prize'
-                      : type === 'permissioned'
-                      ? 'Application-based Bounty'
-                      : 'Open Bounty'}
+                  <Text color={'gray.400'} fontWeight={500}>
+                    {hackathonPrize ? (
+                      'Hackathon Prize'
+                    ) : (
+                      <Tooltip
+                        px={4}
+                        py={2}
+                        fontFamily={'Inter'}
+                        fontSize="sm"
+                        bg="white"
+                        borderRadius={'lg'}
+                        label={
+                          type === 'permissioned'
+                            ? 'Projects are like short-term freelance gigs that you can apply for. If and when selected as the winner, you can begin executing the scope of work mentioned in this listing.'
+                            : 'This is an open competition bounty! Anyone can start working and submit their work before the deadline!'
+                        }
+                      >
+                        <Flex>
+                          <Image
+                            h="4"
+                            mt={1}
+                            mr={1}
+                            alt={type}
+                            src={
+                              type === 'permissioned'
+                                ? '/assets/icons/briefcase.svg'
+                                : '/assets/icons/bolt.svg'
+                            }
+                          />
+                          {type === 'permissioned' ? 'Project' : 'Bounty'}
+                        </Flex>
+                      </Tooltip>
+                    )}
                   </Text>
-                  {!hackathonPrize && (
-                    <Tooltip
-                      px={4}
-                      py={2}
-                      color={'#94A3B8'}
-                      fontFamily={'Inter'}
-                      fontSize="sm"
-                      bg="white"
-                      borderRadius={'lg'}
-                      label={
-                        type === 'permissioned'
-                          ? "Don't start working just yet! Apply first, and then you'll be notified if you're selected to work on this bounty."
-                          : 'This is an open competition bounty! Anyone can start working and submit their work before the deadline!'
-                      }
-                      placement="right"
-                    >
-                      <InfoOutlineIcon boxSize={4} color={'#94A3B8'} mr={3} />
-                    </Tooltip>
-                  )}
                 </Flex>
                 <Text
                   px={2}
@@ -301,25 +302,37 @@ function ListingHeader({
             )}
           </Flex>
           <Flex align={'center'} gap={1} display={{ base: 'flex', md: 'none' }}>
-            <Text color={'#94A3B8'} fontSize="sm">
-              {type === 'permissioned'
-                ? 'Application-based Bounty'
-                : 'Open Bounty'}
-            </Text>
-            <Popover>
-              <PopoverTrigger>
-                <InfoOutlineIcon boxSize={4} color={'#94A3B8'} mr={3} />
-              </PopoverTrigger>
-              <PopoverContent>
-                <PopoverArrow />
-                <PopoverCloseButton />
-                <PopoverBody>
-                  {type === 'permissioned'
-                    ? "Don't start working just yet! Apply first, and then you'll be notified if you're selected to work on this bounty."
-                    : 'This is an open competition bounty! Anyone can start working and submit their work before the deadline!'}
-                </PopoverBody>
-              </PopoverContent>
-            </Popover>
+            <Tooltip
+              px={4}
+              py={2}
+              color={'#94A3B8'}
+              fontFamily={'Inter'}
+              fontSize="sm"
+              bg="white"
+              borderRadius={'lg'}
+              label={
+                type === 'permissioned'
+                  ? 'Projects are like short-term freelance gigs that you can apply for. If and when selected as the winner, you can begin executing the scope of work mentioned in this listing.'
+                  : 'This is an open competition bounty! Anyone can start working and submit their work before the deadline!'
+              }
+            >
+              <Flex>
+                <Image
+                  h="4"
+                  mt={1}
+                  mr={1}
+                  alt={type}
+                  src={
+                    type === 'permissioned'
+                      ? '/assets/icons/briefcase.svg'
+                      : '/assets/icons/bolt.svg'
+                  }
+                />
+                <Text color="gray.400" fontWeight={500}>
+                  {type === 'permissioned' ? 'Project' : 'Bounty'}
+                </Text>
+              </Flex>
+            </Tooltip>
           </Flex>
         </Flex>
         {router.asPath.includes('bounties') && !isTemplate && (

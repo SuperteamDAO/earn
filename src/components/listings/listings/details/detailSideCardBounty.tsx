@@ -1,4 +1,4 @@
-import { ExternalLinkIcon } from '@chakra-ui/icons';
+import { ExternalLinkIcon, WarningIcon } from '@chakra-ui/icons';
 import {
   Box,
   Button,
@@ -71,6 +71,7 @@ function DetailSideCard({
   const [isSubmissionNumberLoading, setIsSubmissionNumberLoading] =
     useState(true);
   const [submissionNumber, setSubmissionNumber] = useState(0);
+  const [submissionRange, setSubmissionRange] = useState('');
   const [isUserSubmissionLoading, setIsUserSubmissionLoading] = useState(false);
   const { isOpen, onOpen, onClose } = useDisclosure();
   const {
@@ -109,7 +110,19 @@ function DetailSideCard({
       const submissionCountDetails = await axios.get(
         `/api/submission/${id}/count/`
       );
-      setSubmissionNumber(submissionCountDetails?.data || 0);
+      const count = submissionCountDetails?.data || 0;
+      setSubmissionNumber(count);
+      if (count >= 0 && count <= 10) {
+        setSubmissionRange('0-10');
+      } else if (count > 10 && count <= 25) {
+        setSubmissionRange('10-25');
+      } else if (count > 25 && count <= 50) {
+        setSubmissionRange('25-50');
+      } else if (count > 50 && count <= 100) {
+        setSubmissionRange('50-100');
+      } else if (count > 100) {
+        setSubmissionRange('100+');
+      }
       setIsSubmissionNumberLoading(false);
     } catch (e) {
       setIsSubmissionNumberLoading(false);
@@ -156,6 +169,16 @@ function DetailSideCard({
     }
     return <span>{`${hours}h:${minutes}m:${seconds}s`}</span>;
   };
+
+  type PrizeKey = keyof Rewards;
+
+  const prizeMapping = [
+    { key: 'first' as PrizeKey, label: '1st', description: 'First Prize' },
+    { key: 'second' as PrizeKey, label: '2nd', description: 'Second Prize' },
+    { key: 'third' as PrizeKey, label: '3rd', description: 'Third Prize' },
+    { key: 'fourth' as PrizeKey, label: '4th', description: 'Fourth Prize' },
+    { key: 'fifth' as PrizeKey, label: '5th', description: 'Fifth Prize' },
+  ];
 
   return (
     <>
@@ -204,15 +227,11 @@ function DetailSideCard({
             px={'1.5rem'}
             borderBottom={'1px solid #E2E8EF'}
           >
-            <Box
-              alignItems={'center'}
-              justifyContent={'center'}
-              display={'flex'}
-              rounded={'full'}
-            >
+            <Flex align="center">
               <Image
-                w={8}
+                w={7}
                 h="auto"
+                mr={2}
                 alt={'green doller'}
                 rounded={'full'}
                 src={
@@ -220,232 +239,85 @@ function DetailSideCard({
                   '/assets/icons/green-doller.svg'
                 }
               />
-            </Box>
-            <Text color="color.slate.800" fontSize={'xl'} fontWeight={600}>
-              {total?.toLocaleString() ?? 0}
-              <Text as="span" ml={1} color="brand.slate.300" fontWeight={400}>
-                {token}
+              <Text color="color.slate.800" fontSize={'2xl'} fontWeight={500}>
+                {total?.toLocaleString() ?? 0}
+                <Text
+                  as="span"
+                  ml={1}
+                  color="brand.slate.400"
+                  fontSize="lg"
+                  fontWeight={400}
+                >
+                  {token}
+                </Text>
               </Text>
-            </Text>
-            <Text color={'brand.slate.300'} fontSize={'xl'} fontWeight={500}>
-              Total Prizes
-            </Text>
+            </Flex>
+            {type === 'open' && (
+              <Text color={'brand.slate.300'} fontSize={'lg'} fontWeight={400}>
+                Total Prizes
+              </Text>
+            )}
           </HStack>
-          <VStack w={'full'} borderBottom={'1px solid #E2E8EF'}>
-            <TableContainer w={'full'}>
-              <Table mt={-8} variant={'unstyled'}>
-                <Thead>
-                  <Tr>
-                    <Th></Th>
-                    <Th></Th>
-                    <Th> </Th>
-                  </Tr>
-                </Thead>
-                <Tbody>
-                  {prizeList?.first && (
+          {type === 'open' && (
+            <VStack w={'full'} borderBottom={'1px solid #E2E8EF'}>
+              <TableContainer w={'full'}>
+                <Table mt={-8} variant={'unstyled'}>
+                  <Thead>
                     <Tr>
-                      <Td>
-                        <Flex
-                          align={'center'}
-                          justify={'center'}
-                          w={8}
-                          h={8}
-                          p={1.5}
-                          fontSize={'0.7rem'}
-                          bg={'#C6C6C62B'}
-                          rounded={'full'}
-                        >
-                          1st
-                        </Flex>
-                      </Td>
-                      <Td>
-                        <Text
-                          color={'#64758B'}
-                          fontSize={'1.1rem'}
-                          fontWeight={600}
-                        >
-                          {prizeList?.first}
-                          <Text
-                            as="span"
-                            ml={1}
-                            color="brand.slate.300"
-                            fontWeight={400}
-                          >
-                            {token}
-                          </Text>
-                        </Text>
-                      </Td>
-                      <Td>
-                        <Text color={'#CBD5E1'} fontWeight={500}>
-                          First Prize
-                        </Text>
-                      </Td>
+                      <Th></Th>
+                      <Th></Th>
+                      <Th> </Th>
                     </Tr>
-                  )}
-                  {prizeList?.second && (
-                    <Tr>
-                      <Td>
-                        <Flex
-                          align={'center'}
-                          justify={'center'}
-                          w={8}
-                          h={8}
-                          p={1.5}
-                          fontSize={'0.7rem'}
-                          bg={'#C6C6C62B'}
-                          rounded={'full'}
-                        >
-                          2nd
-                        </Flex>
-                      </Td>
-                      <Td>
-                        <Text
-                          color={'#64758B'}
-                          fontSize={'1.1rem'}
-                          fontWeight={600}
-                        >
-                          {prizeList?.second}
-                          <Text
-                            as="span"
-                            ml={1}
-                            color="brand.slate.300"
-                            fontWeight={400}
-                          >
-                            {token}
-                          </Text>
-                        </Text>
-                      </Td>
-                      <Td>
-                        <Text color={'#CBD5E1'} fontWeight={500}>
-                          Second Prize
-                        </Text>
-                      </Td>
-                    </Tr>
-                  )}
-                  {prizeList?.third && (
-                    <Tr>
-                      <Td>
-                        <Flex
-                          align={'center'}
-                          justify={'center'}
-                          w={8}
-                          h={8}
-                          p={1.5}
-                          fontSize={'0.7rem'}
-                          bg={'#C6C6C62B'}
-                          rounded={'full'}
-                        >
-                          3rd
-                        </Flex>
-                      </Td>
-                      <Td>
-                        <Text
-                          color={'#64758B'}
-                          fontSize={'1.1rem'}
-                          fontWeight={600}
-                        >
-                          {prizeList?.third}
-                          <Text
-                            as="span"
-                            ml={1}
-                            color="brand.slate.300"
-                            fontWeight={400}
-                          >
-                            {token}
-                          </Text>
-                        </Text>
-                      </Td>
-                      <Td>
-                        <Text color={'#CBD5E1'} fontWeight={500}>
-                          Third Prize
-                        </Text>
-                      </Td>
-                    </Tr>
-                  )}
-                  {prizeList?.fourth && (
-                    <Tr>
-                      <Td>
-                        <Flex
-                          align={'center'}
-                          justify={'center'}
-                          w={8}
-                          h={8}
-                          p={1.5}
-                          fontSize={'0.7rem'}
-                          bg={'#C6C6C62B'}
-                          rounded={'full'}
-                        >
-                          4th
-                        </Flex>
-                      </Td>
-                      <Td>
-                        <Text
-                          color={'#64758B'}
-                          fontSize={'1.1rem'}
-                          fontWeight={600}
-                        >
-                          {prizeList?.fourth}
-                          <Text
-                            as="span"
-                            ml={1}
-                            color="brand.slate.300"
-                            fontWeight={400}
-                          >
-                            {token}
-                          </Text>
-                        </Text>
-                      </Td>
-                      <Td>
-                        <Text color={'#CBD5E1'} fontWeight={500}>
-                          Fourth Prize
-                        </Text>
-                      </Td>
-                    </Tr>
-                  )}
-                  {prizeList?.fifth && (
-                    <Tr>
-                      <Td>
-                        <Flex
-                          align={'center'}
-                          justify={'center'}
-                          w={8}
-                          h={8}
-                          p={1.5}
-                          fontSize={'0.7rem'}
-                          bg={'#C6C6C62B'}
-                          rounded={'full'}
-                        >
-                          5th
-                        </Flex>
-                      </Td>
-                      <Td>
-                        <Text
-                          color={'#64758B'}
-                          fontSize={'1.1rem'}
-                          fontWeight={600}
-                        >
-                          {prizeList?.fifth}
-                          <Text
-                            as="span"
-                            ml={1}
-                            color="brand.slate.300"
-                            fontWeight={400}
-                          >
-                            {token}
-                          </Text>
-                        </Text>
-                      </Td>
-                      <Td>
-                        <Text color={'#CBD5E1'} fontWeight={500}>
-                          Fifth Prize
-                        </Text>
-                      </Td>
-                    </Tr>
-                  )}
-                </Tbody>
-              </Table>
-            </TableContainer>
-          </VStack>
+                  </Thead>
+                  <Tbody>
+                    {prizeMapping.map(
+                      (prize, index) =>
+                        prizeList?.[prize.key] && (
+                          <Tr key={index}>
+                            <Td>
+                              <Flex
+                                align={'center'}
+                                justify={'center'}
+                                w={8}
+                                h={8}
+                                p={1.5}
+                                fontSize={'0.7rem'}
+                                bg={'#C6C6C62B'}
+                                rounded={'full'}
+                              >
+                                {prize.label}
+                              </Flex>
+                            </Td>
+                            <Td>
+                              <Text
+                                color={'#64758B'}
+                                fontSize={'1.1rem'}
+                                fontWeight={600}
+                              >
+                                {prizeList[prize.key]}
+                                <Text
+                                  as="span"
+                                  ml={1}
+                                  color="brand.slate.300"
+                                  fontWeight={400}
+                                >
+                                  {token}
+                                </Text>
+                              </Text>
+                            </Td>
+                            <Td>
+                              <Text color={'#CBD5E1'} fontWeight={500}>
+                                {prize.description}
+                              </Text>
+                            </Td>
+                          </Tr>
+                        )
+                    )}
+                  </Tbody>
+                </Table>
+              </TableContainer>
+            </VStack>
+          )}
           <Flex justify={'space-between'} w={'full'} px={5}>
             <Flex align={'start'} justify={'center'} direction={'column'}>
               <Flex align={'center'} justify={'center'} gap={2}>
@@ -456,9 +328,12 @@ function DetailSideCard({
                   src={'/assets/icons/purple-suitcase.svg'}
                 />
                 <Text color={'#000000'} fontSize="1.3rem" fontWeight={500}>
+                  {/* eslint-disable-next-line no-nested-ternary */}
                   {isSubmissionNumberLoading
                     ? '...'
-                    : submissionNumber.toLocaleString()}
+                    : type === 'open'
+                    ? submissionNumber.toLocaleString()
+                    : submissionRange}
                 </Text>
               </Flex>
               <Text color={'#94A3B8'}>
@@ -523,6 +398,15 @@ function DetailSideCard({
                 {type === 'permissioned' ? 'Apply Now' : 'Submit Now'}
               </Button>
             )}
+            {type === 'permissioned' && (
+              <Flex gap="2" w="20rem" p="3" bg={'#62F6FF10'}>
+                <WarningIcon color="#1A7F86" />
+                <Text color="#1A7F86" fontSize={'xs'} fontWeight={500}>
+                  Don&apos;t start working just yet! Apply first, and then begin
+                  working only once you&apos;ve been hired for the project.
+                </Text>
+              </Flex>
+            )}
           </Box>
         </VStack>
         {!hackathonPrize && (
@@ -539,9 +423,7 @@ function DetailSideCard({
               TYPE
             </Text>
             <Text color={'#64768b'} fontSize="1.1rem" fontWeight={500}>
-              {type === 'permissioned'
-                ? 'Application-based Bounty'
-                : 'Open Bounty'}
+              {type === 'permissioned' ? 'Project' : 'Bounty'}
             </Text>
             <Text color={'#94A3B8'} fontSize="1rem" fontWeight={400}>
               {type === 'permissioned'
