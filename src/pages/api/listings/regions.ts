@@ -13,7 +13,6 @@ export default async function user(req: NextApiRequest, res: NextApiResponse) {
   const result: any = {
     bounties: [],
     grants: [],
-    jobs: [],
   };
   const skillsFilter = filter
     ? {
@@ -22,9 +21,6 @@ export default async function user(req: NextApiRequest, res: NextApiResponse) {
           array_contains: filter.split(',')[0],
         },
       }
-    : {};
-  const skillsFilterJobs = filter
-    ? { skills: { contains: filter.split(',')[0] } }
     : {};
   try {
     console.log(region, region.toUpperCase() === Regions.MEXICO);
@@ -139,36 +135,6 @@ export default async function user(req: NextApiRequest, res: NextApiResponse) {
       result.grants = grants;
     }
 
-    if (!category || category === 'all' || category === 'jobs') {
-      const jobs = await prisma.jobs.findMany({
-        where: {
-          private: false,
-          active: true,
-          ...skillsFilterJobs,
-        },
-        take,
-        orderBy: {
-          updatedAt: 'desc',
-        },
-        select: {
-          id: true,
-          title: true,
-          slug: true,
-          link: true,
-          location: true,
-          skills: true,
-          sponsor: {
-            select: {
-              id: true,
-              name: true,
-              slug: true,
-              logo: true,
-            },
-          },
-        },
-      });
-      result.jobs = jobs;
-    }
     res.status(200).json(result);
   } catch (error) {
     console.log(error);

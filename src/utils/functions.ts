@@ -11,7 +11,6 @@ import type {
   Bounties,
   DraftType,
   GrantsType,
-  JobsType,
   SubmissionType,
   SubscribeType,
 } from '../interface/listings';
@@ -207,18 +206,6 @@ export const findBouties = async (slug: string): Promise<FindBoutiesReturn> => {
   return data.data;
 };
 
-export const createJob = async (jobs: JobsType) => {
-  try {
-    const res = await axios.post(`${BACKEND_URL}/listings/job/create`, {
-      ...jobs,
-    });
-    return res;
-  } catch (error) {
-    console.log(error);
-
-    return null;
-  }
-};
 export const createGrants = async (grants: GrantsType) => {
   try {
     const res = await axios.post(`${BACKEND_URL}/listings/grants/create`, {
@@ -309,26 +296,6 @@ export const findSubmission = async (id: string) => {
   } catch (error) {
     console.log(error);
 
-    return null;
-  }
-};
-
-type FindJobsReturn = {
-  listing: JobsType;
-  sponsor: SponsorType;
-} | null;
-export const findJobs = async (slug: string): Promise<FindJobsReturn> => {
-  if (!slug) return null;
-  try {
-    const { data, status } = await axios.get(
-      `${BACKEND_URL}/listings/jobs/find/${slug}`
-    );
-    if (status !== 200) {
-      return null;
-    }
-    return data.data;
-  } catch (error) {
-    console.log(error);
     return null;
   }
 };

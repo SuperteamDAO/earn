@@ -49,7 +49,7 @@ export default function HomeBanner({ setTriggerLogin }: BannerProps) {
           <br /> earning potential
         </Text>
         <Text mt={'4'} color={'white'} fontSize={'lg'}>
-          Explore bounties, grants, and job opportunities for
+          Explore bounties, projects, and grant opportunities for
           <br />
           developers and non-technical talent alike
         </Text>

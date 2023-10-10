@@ -8,23 +8,17 @@ import { title } from 'process';
 import { useEffect, useState } from 'react';
 
 import { BountyTabs } from '@/components/listings/bounty/Tabs';
-import {
-  GrantsCard,
-  JobsCard,
-  ListingSection,
-} from '@/components/misc/listingsCard';
+import { GrantsCard, ListingSection } from '@/components/misc/listingsCard';
 import EmptySection from '@/components/shared/EmptySection';
 import Loading from '@/components/shared/Loading';
 import type { Bounty } from '@/interface/bounty';
 import type { Grant } from '@/interface/grant';
-import type { Job } from '@/interface/job';
 import Home from '@/layouts/Home';
 import { Mixpanel } from '@/utils/mixpanel';
 
 interface Listings {
   bounties?: Bounty[];
   grants?: Grant[];
-  jobs?: Job[];
 }
 
 interface Props {
@@ -41,7 +35,6 @@ function CategoryPage({ category, filter }: Props) {
   const [listings, setListings] = useState<Listings>({
     bounties: [],
     grants: [],
-    jobs: [],
   });
 
   const getListings = async () => {
@@ -300,48 +293,6 @@ function CategoryPage({ category, filter }: Props) {
                       rewardAmount={grant?.rewardAmount}
                       title={grant?.title}
                       short_description={grant?.shortDescription}
-                    />
-                  );
-                })}
-            </ListingSection>
-          )}
-        {(!category || category === 'all' || category === 'jobs') &&
-          !router.asPath.includes('Hyperdrive') && (
-            <ListingSection
-              type="jobs"
-              title="Jobs"
-              sub="Join a high-growth team"
-              emoji="/assets/home/emojis/job.png"
-            >
-              {isListingsLoading && (
-                <Flex
-                  align="center"
-                  justify="center"
-                  direction="column"
-                  minH={52}
-                >
-                  <Loading />
-                </Flex>
-              )}
-              {!isListingsLoading && !listings?.jobs?.length && (
-                <Flex align="center" justify="center" mt={8}>
-                  <EmptySection
-                    title="No jobs available!"
-                    message="Subscribe to notifications to get notified about new jobs."
-                  />
-                </Flex>
-              )}
-              {!isListingsLoading &&
-                listings?.jobs?.map((job) => {
-                  return (
-                    <JobsCard
-                      key={job?.id}
-                      logo={job?.sponsor?.logo}
-                      location={job?.location || ''}
-                      orgName={job?.sponsor?.name || ''}
-                      skills={job?.skills || ''}
-                      title={job?.title || ''}
-                      link={job?.link || ''}
                     />
                   );
                 })}

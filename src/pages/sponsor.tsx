@@ -225,7 +225,7 @@ const Sponsor = () => {
               Create Listings
             </Text>
             <Text color="gray.700" fontSize="2.75rem" fontWeight={700}>
-              Outsource Work as Bounties, Jobs & Grants
+              Outsource Work as Bounties, Projects & Grants
             </Text>
             <Text color="gray.500" fontSize="1.5rem" fontWeight={400}>
               Superteam Earn helps Solana founders save time and outsource all
@@ -549,7 +549,7 @@ const Sponsor = () => {
             fontWeight={400}
             textAlign="start"
           >
-            Whether you have a bounty, a grant, or a full-time job that you need
+            Whether you have a bounty, a project, or a grant that you need
             filled, we&apos;re here to help (for free!)
           </Text>
 

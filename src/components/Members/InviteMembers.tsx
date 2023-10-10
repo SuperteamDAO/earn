@@ -146,7 +146,7 @@ function InviteMembers({ isOpen, onClose }: Props) {
                         Member
                       </Text>
                       <Text fontSize="sm">
-                        Members can manage bounties, jobs & grants, can assign
+                        Members can manage bounties & projects, can assign
                         winners and make payments.
                       </Text>
                     </Box>

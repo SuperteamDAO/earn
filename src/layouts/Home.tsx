@@ -291,7 +291,6 @@ function Home(props: IDefaultProps) {
               total={sidebarInfo?.totals?.totalInUSD ?? 0}
               listings={sidebarInfo?.totals?.count ?? 0}
               earners={sidebarInfo?.earners ?? []}
-              jobs={[]}
               userInfo={userInfo! || {}}
             />
           </Flex>

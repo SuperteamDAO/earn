@@ -13,7 +13,6 @@ import {
   useMediaQuery,
 } from '@chakra-ui/react';
 import type { BountyType } from '@prisma/client';
-import parse from 'html-react-parser';
 import { useRouter } from 'next/router';
 import { useEffect, useState } from 'react';
 import { toast, Toaster } from 'react-hot-toast';
@@ -34,8 +33,9 @@ type ListingSectionProps = {
   title: string;
   sub: string;
   emoji: string;
-  type: 'bounties' | 'jobs' | 'grants';
+  type: 'bounties' | 'grants';
   url?: string;
+  all?: boolean;
 };
 
 export const ListingSection = ({
@@ -45,6 +45,7 @@ export const ListingSection = ({
   emoji,
   type,
   url,
+  all,
 }: ListingSectionProps) => {
   const router = useRouter();
 
@@ -101,7 +102,9 @@ export const ListingSection = ({
             {sub}
           </Text>
         </Flex>
-        <Flex display={router?.query?.category !== type ? 'block' : 'none'}>
+        <Flex
+          display={!all && router?.query?.category !== type ? 'block' : 'none'}
+        >
           <Link
             href={
               url ||
@@ -124,7 +127,9 @@ export const ListingSection = ({
       <Flex direction={'column'} rowGap={'1'}>
         {children}
       </Flex>
-      <Flex display={router?.query?.category !== type ? 'block' : 'none'}>
+      <Flex
+        display={!all && router?.query?.category !== type ? 'block' : 'none'}
+      >
         <Link
           href={
             url ||
@@ -154,13 +159,6 @@ export const ListingSection = ({
       </Flex>
     </Box>
   );
-};
-
-const textLimiter = (text: string, len: number) => {
-  if (text.length > len) {
-    return `${text.slice(0, len)}...`;
-  }
-  return text;
 };
 
 interface BountyProps {
@@ -320,135 +318,6 @@ export const BountiesCard = ({
         </Flex>
       </Link>
     </>
-  );
-};
-interface JobsProps {
-  title: string;
-  description?: string;
-  max?: number;
-  min?: number;
-  maxEq?: number;
-  minEq?: number;
-  skills?: string;
-  logo?: string;
-  orgName: string;
-  link?: string;
-  location?: string;
-}
-export const JobsCard = ({
-  description,
-  max,
-  min,
-  maxEq,
-  minEq,
-  title,
-  logo,
-  orgName,
-  link,
-  location,
-}: JobsProps) => {
-  const [isMobile] = useMediaQuery('(max-width: 768px)');
-  return (
-    <Link
-      p={2}
-      borderRadius={5}
-      _hover={{
-        textDecoration: 'none',
-        bg: 'gray.100',
-      }}
-      href={link}
-      isExternal
-      onClick={() => {
-        Mixpanel.track('job_clicked', {
-          element: 'title',
-          'Job Title': title,
-        });
-      }}
-    >
-      <Flex
-        align="start"
-        justify="space-between"
-        w={{ base: '100%', md: 'brand.120' }}
-        h={16}
-      >
-        <Flex justify="start">
-          <Image
-            w={16}
-            h={16}
-            mr={5}
-            alt={'company logo'}
-            rounded={5}
-            src={logo || '/assets/home/placeholder/ph2.png'}
-          />
-          <Flex justify={'space-between'} direction={'column'}>
-            <Text
-              color="brand.slate.700"
-              fontSize={['xs', 'xs', 'sm', 'sm']}
-              fontWeight="600"
-            >
-              {isMobile ? textLimiter(title, 20) : textLimiter(title, 40)}
-            </Text>
-            <Text
-              color="brand.slate.400"
-              fontSize={['xs', 'xs', 'sm', 'sm']}
-              fontWeight={400}
-            >
-              {description
-                ? parse(
-                    description?.startsWith('"')
-                      ? JSON.parse(description || '')?.slice(0, 100)
-                      : (description ?? '')?.slice(0, 100)
-                  )
-                : orgName}
-            </Text>
-            <Flex align={'center'}>
-              {!!min && !!max && (
-                <Text
-                  mr={3}
-                  color={'brand.slate.500'}
-                  fontSize={['xs', 'xs', 'sm', 'sm']}
-                >
-                  <Text as="span" fontWeight="700">
-                    ${' '}
-                  </Text>
-                  {min.toLocaleString()} - {max.toLocaleString()}
-                </Text>
-              )}
-              {!!minEq && !!maxEq && (
-                <Text
-                  mr={3}
-                  color={'brand.slate.500'}
-                  fontSize={['xs', 'xs', 'sm', 'sm']}
-                >
-                  {minEq.toLocaleString()}% - {maxEq.toLocaleString()}% Equity
-                </Text>
-              )}
-              {!!location && (
-                <Text
-                  key={''}
-                  display={{ base: 'none', md: 'block' }}
-                  mr={3}
-                  color={'brand.slate.500'}
-                  fontSize={['xs', 'xs', 'sm', 'sm']}
-                >
-                  {location}
-                </Text>
-              )}
-            </Flex>
-          </Flex>
-        </Flex>
-
-        <Button
-          minW={24}
-          h={isMobile ? 7 : 9}
-          px={6}
-          fontSize={['xs', 'xs', 'sm', 'sm']}
-          variant="outlineSecondary"
-        >
-          Apply
-        </Button>
-      </Flex>
-    </Link>
   );
 };
 

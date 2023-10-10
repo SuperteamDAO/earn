@@ -1,3 +1,4 @@
+import type { BountyType, Prisma } from '@prisma/client';
 import { Regions } from '@prisma/client';
 import type { NextApiRequest, NextApiResponse } from 'next';
 
@@ -8,12 +9,15 @@ export default async function user(req: NextApiRequest, res: NextApiResponse) {
   const params = req.query;
   const category = params.category as string;
   const filter = params.filter as string;
+  const type = params.type as
+    | Prisma.EnumBountyTypeFilter
+    | BountyType
+    | undefined;
   const take = params.take ? parseInt(params.take as string, 10) : 10;
   console.log(take, '----server---');
   const result: any = {
     bounties: [],
     grants: [],
-    jobs: [],
   };
   const skillsFilter = filter
     ? {
@@ -22,9 +26,6 @@ export default async function user(req: NextApiRequest, res: NextApiResponse) {
           array_contains: filter.split(',')[0],
         },
       }
-    : {};
-  const skillsFilterJobs = filter
-    ? { skills: { contains: filter.split(',')[0] } }
     : {};
   try {
     if (!category || category === 'all') {
@@ -82,6 +83,7 @@ export default async function user(req: NextApiRequest, res: NextApiResponse) {
           hackathonprize: false,
           isArchived: false,
           status: 'OPEN',
+          type,
           region: {
             in: [
               Regions.GLOBAL,
@@ -217,36 +219,6 @@ export default async function user(req: NextApiRequest, res: NextApiResponse) {
       result.grants = grants;
     }
 
-    if (!category || category === 'all' || category === 'jobs') {
-      const jobs = await prisma.jobs.findMany({
-        where: {
-          private: false,
-          active: true,
-          ...skillsFilterJobs,
-        },
-        take,
-        orderBy: {
-          updatedAt: 'desc',
-        },
-        select: {
-          id: true,
-          title: true,
-          slug: true,
-          link: true,
-          location: true,
-          skills: true,
-          sponsor: {
-            select: {
-              id: true,
-              name: true,
-              slug: true,
-              logo: true,
-            },
-          },
-        },
-      });
-      result.jobs = jobs;
-    }
     res.status(200).json(result);
   } catch (error) {
     console.log(error);

@@ -12,13 +12,12 @@ import type {
   QuestionType,
 } from '@/components/listings/bounty/questions/builder';
 import { CreateGrants } from '@/components/listings/grants/CreateGrants';
-import { CreateJob } from '@/components/listings/jobs/CreateJob';
 import Template from '@/components/listings/templates/template';
 import { SuccessListings } from '@/components/modals/successListings';
 import ErrorSection from '@/components/shared/ErrorSection';
 import type { MultiSelectOptions } from '@/constants';
 import type { Bounty } from '@/interface/bounty';
-import type { GrantsBasicType, JobBasicsType } from '@/interface/listings';
+import type { GrantsBasicType } from '@/interface/listings';
 import FormLayout from '@/layouts/FormLayout';
 import { userStore } from '@/store/user';
 import { dayjs } from '@/utils/dayjs';
@@ -60,13 +59,6 @@ function CreateListing({ bounty, isEditMode = false, type }: Props) {
   const [slug, setSlug] = useState<string>('');
   //
   const { isOpen, onOpen } = useDisclosure();
-  // -- Jobs
-  const [jobBasics, setJobBasics] = useState<JobBasicsType | undefined>({
-    deadline: '',
-    link: '',
-    title: '',
-    type: 'fulltime',
-  });
 
   const [questions, setQuestions] = useState<Ques[]>(
     isEditMode
@@ -303,24 +295,6 @@ function CreateListing({ bounty, isEditMode = false, type }: Props) {
               setSteps={setSteps}
               steps={steps}
               isEditMode={isEditMode}
-            />
-          )}
-          {steps > 1 && listingType === 'JOB' && (
-            <CreateJob
-              setSlug={setSlug}
-              draftLoading={draftLoading}
-              createDraft={createDraft}
-              setJobBasic={setJobBasics}
-              jobBasics={jobBasics}
-              setSubSkills={setSubSkill}
-              subSkills={subSkill}
-              setMainSkills={setMainSkills}
-              mainSkills={mainSkills}
-              editorData={editorData}
-              setEditorData={setEditorData}
-              setSteps={setSteps}
-              steps={steps}
-              onOpen={onOpen}
             />
           )}
           {steps > 1 && listingType === 'GRANT' && (
