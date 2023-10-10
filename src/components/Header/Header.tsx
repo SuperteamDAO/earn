@@ -1,4 +1,5 @@
 import { ChevronDownIcon, CloseIcon, HamburgerIcon } from '@chakra-ui/icons';
+import type { LinkProps } from '@chakra-ui/react';
 import {
   Box,
   Collapse,
@@ -25,6 +26,8 @@ interface NavItem {
 }
 
 const NAV_ITEMS: Array<NavItem> = [
+  { label: 'Bounties', href: '/bounties' },
+  { label: 'Projects', href: '/projects' },
   {
     label: 'All Opportunities',
     children: [
@@ -56,13 +59,13 @@ const MobileNavItem = ({ label, children, href }: NavItem) => {
         as={Link}
         align={'center'}
         justify={'space-between'}
-        py={2}
+        pt={4}
         _hover={{
           textDecoration: 'none',
         }}
         href={href ?? '#'}
       >
-        <Text color={'brand.slate.500'} fontSize="sm" fontWeight={400}>
+        <Text color={'brand.slate.500'} fontSize="md" fontWeight={400}>
           {label}
         </Text>
         {children && (
@@ -79,7 +82,6 @@ const MobileNavItem = ({ label, children, href }: NavItem) => {
       <Collapse animateOpacity in={isOpen} style={{ marginTop: '0!important' }}>
         <Stack
           align={'start'}
-          mt={2}
           pl={4}
           borderStyle={'solid'}
           borderColor={useColorModeValue('gray.200', 'gray.700')}
@@ -90,9 +92,9 @@ const MobileNavItem = ({ label, children, href }: NavItem) => {
               <Link
                 key={child.label}
                 mt={0}
-                py={1}
-                color={'brand.slate.800'}
-                fontSize="sm"
+                pb={2}
+                color={'gray.500'}
+                fontSize="md"
                 href={child.href}
               >
                 {child.label === 'HYPERDRIVE' ? (
@@ -114,7 +116,7 @@ const MobileNavItem = ({ label, children, href }: NavItem) => {
 
 const MobileNav = () => (
   <Stack
-    display={{ md: 'none' }}
+    display={{ lg: 'none' }}
     p={4}
     bg={'white'}
     borderBottom={'1px solid'}
@@ -123,46 +125,73 @@ const MobileNav = () => (
     {NAV_ITEMS.map((navItem) => (
       <MobileNavItem key={navItem.label} {...navItem} />
     ))}
-    {/* <UserInfo /> */}
   </Stack>
 );
+
+interface NavLinkProps extends LinkProps {
+  href: string;
+  label: string | JSX.Element;
+  isActive: boolean;
+  isCategory?: boolean;
+}
+
+const NavLink = ({
+  href,
+  label,
+  isActive,
+  isCategory = false,
+  ...props
+}: NavLinkProps) => {
+  const styles = {
+    color: isActive ? 'brand.slate.600' : 'brand.slate.500',
+    fontWeight: isCategory ? 400 : 500,
+    borderBottomColor: isActive ? 'brand.purple' : 'transparent',
+    alignItems: 'center',
+    display: 'flex',
+    h: 'full',
+    py: 2,
+    fontSize: 'sm',
+    borderBottom: '1px solid',
+    _hover: {
+      textDecoration: 'none',
+      color: 'brand.slate.600',
+    },
+    ...props,
+  };
+
+  return (
+    <Link href={href} {...styles}>
+      {typeof label === 'string' ? <Text fontSize="sm">{label}</Text> : label}
+    </Link>
+  );
+};
 
 const DesktopNav = () => {
   const router = useRouter();
 
   return (
-    <Stack direction={'row'} h="full" spacing={8}>
-      {NAV_ITEMS[0]?.children?.map((navItem) => {
+    <Stack direction={'row'} h="full" spacing={7}>
+      {NAV_ITEMS[2]?.children?.map((navItem) => {
         const isCurrent = `${navItem.href}` === router.asPath;
         return (
           <Box key={navItem.label}>
             <Popover placement={'bottom-start'} trigger={'hover'}>
               <PopoverTrigger>
-                <Link
-                  alignItems="center"
-                  display="flex"
-                  h="full"
-                  py={2}
-                  color={isCurrent ? 'brand.slate.800' : 'brand.slate.500'}
-                  fontSize={'sm'}
-                  fontWeight={isCurrent ? 500 : 400}
-                  borderBottom="1px solid"
-                  borderBottomColor={isCurrent ? 'brand.purple' : 'transparent'}
-                  _hover={{
-                    textDecoration: 'none',
-                    color: 'brand.slate.800',
-                  }}
+                <NavLink
                   href={navItem.href ?? '#'}
-                >
-                  {navItem.label === 'HYPERDRIVE' ? (
-                    <Image
-                      alt="Hyperdrive Hackathon"
-                      src="/assets/category_assets/icon/Hyperdrive.svg"
-                    />
-                  ) : (
-                    navItem.label
-                  )}
-                </Link>
+                  label={
+                    navItem.label === 'HYPERDRIVE' ? (
+                      <Image
+                        alt="Hyperdrive Hackathon"
+                        src="/assets/category_assets/icon/Hyperdrive.svg"
+                      />
+                    ) : (
+                      navItem.label
+                    )
+                  }
+                  isActive={isCurrent}
+                  isCategory={true}
+                />
               </PopoverTrigger>
             </Popover>
           </Box>
@@ -180,8 +209,8 @@ export default function WithSubnavigation() {
     <Box pos="sticky" zIndex="sticky" top={0}>
       <BountySnackbar />
       <Flex
-        px={{ base: 4, md: 6 }}
-        py={{ base: 2, md: 0 }}
+        px={{ base: 4, lg: 6 }}
+        py={{ base: 2, lg: 0 }}
         color="brand.slate.500"
         bg="white"
         borderBottom="1px solid"
@@ -189,8 +218,8 @@ export default function WithSubnavigation() {
       >
         <Flex justify={'space-between'} w="100%" maxW="7xl" mx="auto">
           <Flex
-            flex={{ base: 1, md: 'auto' }}
-            display={{ base: 'flex', md: 'none' }}
+            flex={{ base: 1, lg: 'auto' }}
+            display={{ base: 'flex', lg: 'none' }}
             ml={{ base: -2 }}
           >
             <IconButton
@@ -208,8 +237,8 @@ export default function WithSubnavigation() {
           </Flex>
           <Flex
             align="center"
-            justify={{ base: 'center', md: 'start' }}
-            gap={4}
+            justify={{ base: 'center', lg: 'start' }}
+            gap={6}
           >
             <Image
               h={5}
@@ -222,14 +251,25 @@ export default function WithSubnavigation() {
               }}
               src={'/assets/logo/new-logo.svg'}
             />
-            <Text>Bounties</Text>
-            <Text>Projects</Text>
+            <NavLink
+              display={{ base: 'none', lg: 'flex' }}
+              href="/bounties"
+              label="Bounties"
+              isActive={router.asPath === '/bounties/'}
+            />
+
+            <NavLink
+              display={{ base: 'none', lg: 'flex' }}
+              href="/projects"
+              label="Projects"
+              isActive={router.asPath === '/projects/'}
+            />
           </Flex>
           <Flex
             align="center"
             justify={'center'}
             flexGrow={1}
-            display={{ base: 'none', md: 'flex' }}
+            display={{ base: 'none', lg: 'flex' }}
             h="full"
             ml={10}
           >
@@ -240,8 +280,8 @@ export default function WithSubnavigation() {
             align="center"
             justify={'flex-end'}
             direction={'row'}
-            flex={{ base: 1, md: 1 }}
-            py={{ base: 0, md: 2 }}
+            flex={{ base: 1, lg: 1 }}
+            py={{ base: 0, lg: 2 }}
             spacing={4}
           >
             <UserInfo />
