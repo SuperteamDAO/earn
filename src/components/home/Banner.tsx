@@ -31,7 +31,6 @@ export default function HomeBanner({ setTriggerLogin }: BannerProps) {
     <>
       <Box
         w={'100%'}
-        h={72}
         mb={8}
         mx={'auto'}
         p={10}
