@@ -153,19 +153,6 @@ export const CreatebountyPayment = ({
     }
   };
 
-  const handleInputChange = (
-    e: React.ChangeEvent<HTMLInputElement>,
-    prizeName: string
-  ) => {
-    const inputValue = parseInt(e.target.value, 10);
-    setPrizevalues((prevPrizeValues: any) => {
-      return {
-        ...prevPrizeValues,
-        [prizeName]: inputValue,
-      };
-    });
-  };
-
   return (
     <>
       <Modal isOpen={confirmIsOpen} onClose={confirmOnClose}>
@@ -309,11 +296,16 @@ export const CreatebountyPayment = ({
                     _placeholder={{
                       color: 'brand.slate.300',
                     }}
+                    defaultValue={el.defaultValue}
                     focusBorderColor="brand.purple"
-                    onChange={(e) => handleInputChange(e, el.value)}
+                    onChange={(e) => {
+                      setPrizevalues({
+                        ...(prizevalues as Object),
+                        [el.value]: parseInt(e.target.value, 10),
+                      });
+                    }}
                     placeholder={JSON.stringify(el.placeHolder)}
                     type={'number'}
-                    value={prizevalues[el.value] || ''}
                   />
                   {index === prizes.length - 1 && (
                     <Button onClick={() => handleButtonClick()}>
