@@ -23,7 +23,7 @@ import {
   VStack,
 } from '@chakra-ui/react';
 import type { Dispatch, SetStateAction } from 'react';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Toaster } from 'react-hot-toast';
 
 import type { MultiSelectOptions } from '@/constants';
@@ -111,13 +111,13 @@ export const CreatebountyPayment = ({
         ]
   );
 
-  // useEffect(() => {
-  //   setBountyPayment({
-  //     rewardAmount: totalReward,
-  //     token: tokenName,
-  //     rewards: prizevalues,
-  //   });
-  // }, [prizevalues, totalReward, tokenName]);
+  useEffect(() => {
+    setBountyPayment({
+      rewardAmount: totalReward,
+      token: tokenName,
+      rewards: prizevalues,
+    });
+  }, [prizevalues, totalReward, tokenName]);
 
   const handleButtonClick = () => {
     const temp: PrizeListInterface[] = prizes.filter((_el, index) => {
@@ -151,19 +151,6 @@ export const CreatebountyPayment = ({
       if (isEdit || mode === 'DRAFT') createDraft();
       else confirmOnOpen();
     }
-  };
-
-  const handleInputChange = (
-    e: React.ChangeEvent<HTMLInputElement>,
-    prizeName: string
-  ) => {
-    // const inputValue = parseInt(e.target.value, 10);
-    setPrizevalues((prevPrizeValues: any) => {
-      return {
-        ...prevPrizeValues,
-        [prizeName]: e.target.valueAsNumber,
-      };
-    });
   };
 
   return (
@@ -309,11 +296,16 @@ export const CreatebountyPayment = ({
                     _placeholder={{
                       color: 'brand.slate.300',
                     }}
+                    defaultValue={el.defaultValue}
                     focusBorderColor="brand.purple"
-                    onChange={(e) => handleInputChange(e, el.value)}
+                    onChange={(e) => {
+                      setPrizevalues({
+                        ...(prizevalues as Object),
+                        [el.value]: parseInt(e.target.value, 10),
+                      });
+                    }}
                     placeholder={JSON.stringify(el.placeHolder)}
                     type={'number'}
-                    value={prizevalues[el.value] || ''}
                   />
                   {index === prizes.length - 1 && (
                     <Button onClick={() => handleButtonClick()}>
