@@ -170,47 +170,50 @@ export const Comments = ({ refId, refType }: Props) => {
             </Button>
           </Flex>
         </VStack>
-        {comments?.slice().reverse().map((comment: any) => {
-          const date = dayjs(comment?.updatedAt).fromNow();
-          return (
-            <HStack key={comment.id} align={'start'} px={6}>
-              <Flex
-                minW="32px"
-                minH="32px"
-                cursor={'pointer'}
-                onClick={() => {
-                  const url = `${getURL()}t/${comment?.author?.username}`;
-                  window.open(url, '_blank', 'noopener,noreferrer');
-                }}
-              >
-                <UserAvatar user={comment?.author} />
-              </Flex>
+        {comments
+          ?.slice()
+          .reverse()
+          .map((comment: any) => {
+            const date = dayjs(comment?.updatedAt).fromNow();
+            return (
+              <HStack key={comment.id} align={'start'} px={6}>
+                <Flex
+                  minW="32px"
+                  minH="32px"
+                  cursor={'pointer'}
+                  onClick={() => {
+                    const url = `${getURL()}t/${comment?.author?.username}`;
+                    window.open(url, '_blank', 'noopener,noreferrer');
+                  }}
+                >
+                  <UserAvatar user={comment?.author} />
+                </Flex>
 
-              <VStack align={'start'}>
-                <HStack>
-                  <Text
-                    color="brand.slate.800"
-                    fontSize="sm"
-                    fontWeight={600}
-                    cursor={'pointer'}
-                    onClick={() => {
-                      const url = `${getURL()}t/${comment?.author?.username}`;
-                      window.open(url, '_blank', 'noopener,noreferrer');
-                    }}
-                  >
-                    {`${comment?.author?.firstName} ${comment?.author?.lastName}`}
+                <VStack align={'start'}>
+                  <HStack>
+                    <Text
+                      color="brand.slate.800"
+                      fontSize="sm"
+                      fontWeight={600}
+                      cursor={'pointer'}
+                      onClick={() => {
+                        const url = `${getURL()}t/${comment?.author?.username}`;
+                        window.open(url, '_blank', 'noopener,noreferrer');
+                      }}
+                    >
+                      {`${comment?.author?.firstName} ${comment?.author?.lastName}`}
+                    </Text>
+                    <Text color="brand.slate.500" fontSize="sm">
+                      {date}
+                    </Text>
+                  </HStack>
+                  <Text mt={'0px !important'} color="brand.slate.800">
+                    {comment?.message}
                   </Text>
-                  <Text color="brand.slate.500" fontSize="sm">
-                    {date}
-                  </Text>
-                </HStack>
-                <Text mt={'0px !important'} color="brand.slate.800">
-                  {comment?.message}
-                </Text>
-              </VStack>
-            </HStack>
-          );
-        })}
+                </VStack>
+              </HStack>
+            );
+          })}
         {!!comments.length && comments.length % 30 === 0 && (
           <Flex justify="center" w="full">
             <Button
