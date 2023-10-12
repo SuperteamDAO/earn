@@ -46,11 +46,17 @@ export const SubmissionCard = ({
       if (likes?.find((e) => e.id === (userInfo?.id as string))) {
         toast.success('Liked removed from submission');
       } else {
-        await axios.post(`/api/email/manual/submissionLike`, {
-          id,
-          userId: userInfo?.id,
-        });
-        toast.success('Liked submission');
+        toast.promise(
+          axios.post(`/api/email/manual/submissionLike`, {
+            id,
+            userId: userInfo?.id,
+          }),
+          {
+            loading: 'Liking Submission...',
+            success: 'Submission Liked!',
+            error: 'Failed to like the submission',
+          }
+        );
       }
       setIsLoading(false);
       setUpdate((prev: boolean) => !prev);
@@ -157,6 +163,7 @@ export const SubmissionCard = ({
               if (!userInfo?.id) return;
               handleLike();
             }}
+            type="button"
             variant={'unstyled'}
           >
             <AiFillHeart
