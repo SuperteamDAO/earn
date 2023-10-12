@@ -170,7 +170,7 @@ export const Comments = ({ refId, refType }: Props) => {
             </Button>
           </Flex>
         </VStack>
-        {comments?.map((comment: any) => {
+        {comments?.slice().reverse().map((comment: any) => {
           const date = dayjs(comment?.updatedAt).fromNow();
           return (
             <HStack key={comment.id} align={'start'} px={6}>
