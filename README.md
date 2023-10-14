@@ -33,12 +33,20 @@ cd earn
 3. Install the dependencies: 
 ```bash
 yarn install
+yarn add @prisma/client
+yarn postinstall
 ```
+4. Create a `.env` or `.env.local` file inside the /earn folder. Include all the required environment variables. 
+> Note: `env.local.example` is a dummy file; actual environment variables must not be stored in it.
 
-4. Run the development server
+5. Run the development server
 ```bash
 yarn dev
 ```
 
 #### Contributing
 We welcome contributions from everyone! Check out the [CONTRIBUTING.md](CONTRIBUTING.md) for guidelines on how to proceed.
+
+#### Connect with Us
+
+And don't hesitate to reach out to [Pratik](https://twitter.com/pratikdholani) or [Abhishek](https://twitter.com/abhwshek) if you have any questions, doubts, or suggestions!
