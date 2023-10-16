@@ -277,7 +277,7 @@ export const BountiesCard = ({
                   |
                 </Text>
                 <Text
-                  color={'brand.slate.500'}
+                  color={'gray.500'}
                   fontSize={['x-small', 'xs', 'xs', 'xs']}
                 >
                   {applicationType === 'rolling'

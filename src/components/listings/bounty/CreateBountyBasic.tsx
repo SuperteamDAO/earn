@@ -80,6 +80,13 @@ export const CreatebountyBasic = ({
   const date = dayjs().format('YYYY-MM-DD');
   const thirtyDaysFromNow = dayjs().add(30, 'day').format('YYYY-MM-DDTHH:mm');
 
+  const hasBasicInfo =
+    bountyBasic?.title &&
+    skills.length !== 0 &&
+    subSkills.length !== 0 &&
+    bountyBasic?.pocSocials &&
+    isUrlValid;
+
   return (
     <>
       <VStack align={'start'} gap={3} w={'2xl'} pt={7} pb={12}>
@@ -291,6 +298,7 @@ export const CreatebountyBasic = ({
         )}
         {bountyBasic?.applicationType !== 'rolling' && (
           <FormControl
+            mb={5}
             isInvalid={errorState.deadline}
             isRequired={
               bountyBasic?.applicationType
@@ -351,6 +359,42 @@ export const CreatebountyBasic = ({
             </FormErrorMessage>
           </FormControl>
         )}
+        {type === 'permissioned' && (
+          <FormControl
+            w="full"
+            mb={5}
+            isInvalid={errorState.timeToComplete}
+            isRequired={type === 'permissioned'}
+          >
+            <Flex>
+              <FormLabel
+                color={'brand.slate.500'}
+                fontSize={'15px'}
+                fontWeight={600}
+              >
+                Estimated Time to Complete
+              </FormLabel>
+            </Flex>
+
+            <Select
+              _placeholder={{
+                color: 'brand.slate.300',
+              }}
+              onChange={(e) => {
+                setbountyBasic({
+                  ...(bountyBasic as BountyBasicType),
+                  timeToComplete: e.target.value,
+                });
+              }}
+              placeholder="Select time to complete"
+              value={bountyBasic?.timeToComplete}
+            >
+              <option value="1-2 weeks">1-2 weeks</option>
+              <option value="2-4 weeks">2-4 weeks</option>
+              <option value="1-2 months">1-2 months</option>
+            </Select>
+          </FormControl>
+        )}
         <VStack gap={4} w={'full'} pt={10}>
           <Button
             w="100%"
@@ -365,27 +409,24 @@ export const CreatebountyBasic = ({
                 title: !bountyBasic?.title,
                 pocSocials: !bountyBasic?.pocSocials,
                 applicationType: !bountyBasic?.applicationType,
-                timeToComplete: !bountyBasic?.timeToComplete,
+                timeToComplete:
+                  type === 'permissioned'
+                    ? !bountyBasic?.timeToComplete
+                    : false,
               });
 
-              if (
-                bountyBasic?.deadline &&
-                bountyBasic?.title &&
-                skills.length !== 0 &&
-                subSkills.length !== 0 &&
-                bountyBasic?.pocSocials &&
-                isUrlValid
-              ) {
+              if (hasBasicInfo && bountyBasic?.deadline) {
                 setSteps(3);
-              } else if (
-                bountyBasic?.applicationType === 'rolling' &&
-                bountyBasic?.title &&
-                skills.length !== 0 &&
-                subSkills.length !== 0 &&
-                bountyBasic?.pocSocials &&
-                isUrlValid
+              }
+              if (
+                type === 'permissioned' &&
+                hasBasicInfo &&
+                bountyBasic?.timeToComplete
               ) {
-                if (!bountyBasic?.deadline) {
+                if (
+                  bountyBasic?.applicationType === 'rolling' &&
+                  !bountyBasic?.deadline
+                ) {
                   setbountyBasic({
                     ...(bountyBasic as BountyBasicType),
                     deadline: thirtyDaysFromNow,

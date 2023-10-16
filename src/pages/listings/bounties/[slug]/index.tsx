@@ -141,6 +141,7 @@ function BountyDetails({ bounty: initialBounty }: BountyDetailsProps) {
                   pocSocials={bounty?.pocSocials}
                   hackathonPrize={bounty?.hackathonprize}
                   applicationType={bounty?.applicationType}
+                  timeToComplete={bounty?.timeToComplete}
                 />
               </HStack>
             </>

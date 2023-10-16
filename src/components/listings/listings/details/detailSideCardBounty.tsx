@@ -1,3 +1,4 @@
+/* eslint-disable no-nested-ternary */
 import { ExternalLinkIcon, WarningIcon } from '@chakra-ui/icons';
 import {
   Box,
@@ -52,6 +53,7 @@ interface Props {
   hackathonPrize?: boolean;
   pocSocials?: string;
   applicationType?: 'fixed' | 'rolling';
+  timeToComplete?: string;
 }
 function DetailSideCard({
   id,
@@ -68,6 +70,7 @@ function DetailSideCard({
   hackathonPrize,
   isWinnersAnnounced = false,
   applicationType,
+  timeToComplete,
 }: Props) {
   const { userInfo } = userStore();
   const [isSubmissionNumberLoading, setIsSubmissionNumberLoading] =
@@ -330,7 +333,6 @@ function DetailSideCard({
                   src={'/assets/icons/purple-suitcase.svg'}
                 />
                 <Text color={'#000000'} fontSize="1.3rem" fontWeight={500}>
-                  {/* eslint-disable-next-line no-nested-ternary */}
                   {isSubmissionNumberLoading
                     ? '...'
                     : type === 'open'
@@ -339,9 +341,16 @@ function DetailSideCard({
                 </Text>
               </Flex>
               <Text color={'#94A3B8'}>
-                {submissionNumber === 1 ? 'Submission' : 'Submissions'}
+                {type === 'open'
+                  ? submissionNumber === 1
+                    ? 'Submission'
+                    : 'Submissions'
+                  : submissionNumber === 1
+                  ? 'Application'
+                  : 'Applications'}
               </Text>
             </Flex>
+
             <Flex
               align={'start'}
               justify={'center'}
@@ -355,7 +364,7 @@ function DetailSideCard({
                   alt={'suit case'}
                   src={'/assets/icons/purple-timer.svg'}
                 />
-                <VStack align={'start'}>
+                <VStack align={'start'} gap={0}>
                   <Text color={'#000000'} fontSize="1.3rem" fontWeight={500}>
                     {applicationType === 'fixed' ? (
                       <Countdown
@@ -367,14 +376,23 @@ function DetailSideCard({
                       'Rolling'
                     )}
                   </Text>
-                  <Text mt={'0px !important'} color={'#94A3B8'}>
+                  <Text color={'#94A3B8'}>
                     {applicationType === 'fixed' ? 'Remaining' : 'Deadline'}
                   </Text>
                 </VStack>
               </Flex>
             </Flex>
           </Flex>
+
           <Box w="full" px={5}>
+            {type === 'permissioned' && (
+              <Flex align={'start'} direction={'column'} my={4}>
+                <Text color={'#000000'} fontSize="1.3rem" fontWeight={500}>
+                  {timeToComplete}
+                </Text>
+                <Text color={'#94A3B8'}>Time to Complete</Text>
+              </Flex>
+            )}
             {isSubmitted ? (
               <Button
                 w="full"
@@ -405,7 +423,7 @@ function DetailSideCard({
               </Button>
             )}
             {type === 'permissioned' && (
-              <Flex gap="2" w="20rem" p="3" bg={'#62F6FF10'}>
+              <Flex gap="2" w="20rem" mt={4} p="3" bg={'#62F6FF10'}>
                 <WarningIcon color="#1A7F86" />
                 <Text color="#1A7F86" fontSize={'xs'} fontWeight={500}>
                   Don&apos;t start working just yet! Apply first, and then begin
