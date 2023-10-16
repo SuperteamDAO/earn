@@ -266,6 +266,7 @@ function CreateListing({ bounty, isEditMode = false, type }: Props) {
               setSubSkills={setSubSkill}
               setMainSkills={setMainSkills}
               setBountyBasic={setBountyBasic}
+              type={type}
             />
           )}
           {steps > 1 && listingType === 'BOUNTY' && (

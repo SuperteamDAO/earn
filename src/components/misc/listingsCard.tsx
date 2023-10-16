@@ -276,7 +276,7 @@ export const BountiesCard = ({
                 </Text>
                 <Text
                   color={'brand.slate.500'}
-                  fontSize={['x-small', 'xs', 'sm', 'sm']}
+                  fontSize={['x-small', 'xs', 'xs', 'xs']}
                 >
                   {dayjs().isBefore(deadline)
                     ? `Closing ${dayjs(deadline).fromNow()}`

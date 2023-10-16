@@ -16,6 +16,7 @@ interface Props {
   setMainSkills: Dispatch<SetStateAction<MultiSelectOptions[]>>;
   setSubSkills: Dispatch<SetStateAction<MultiSelectOptions[]>>;
   setBountyBasic: Dispatch<SetStateAction<BountyBasicType | undefined>>;
+  type: 'open' | 'permissioned';
 }
 const Template = ({
   setSteps,
@@ -24,6 +25,7 @@ const Template = ({
   setMainSkills,
   setSubSkills,
   setBountyBasic,
+  type,
 }: Props) => {
   const [bountiesTemplates, setBountiesTemplates] = useState([]);
   const [isBountiesTemplatesLoading, setIsBountiesTemplatesLoading] =
@@ -32,7 +34,9 @@ const Template = ({
   const getBountyTemplates = async () => {
     setIsBountiesTemplatesLoading(true);
     try {
-      const templates: any = await axios.get('/api/bounties/templates/');
+      const templates: any = await axios.get('/api/bounties/templates/', {
+        params: { type },
+      });
       setBountiesTemplates(templates?.data || []);
       setIsBountiesTemplatesLoading(false);
     } catch (e) {
