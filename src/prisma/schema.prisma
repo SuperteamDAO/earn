@@ -64,6 +64,7 @@ model Bounties {
   createdAt            DateTime           @default(now())
   updatedAt            DateTime           @updatedAt
   applicationLink      String?
+  applicationType      ApplicationType    @default(fixed)
   skills               Json?
   totalWinnersSelected Int?               @default(0)
   totalPaymentsMade    Int?               @default(0)
@@ -76,6 +77,7 @@ model Bounties {
   pocSocials           String?
   Submission           Submission[]
   SubscribeBounty      SubscribeBounty[]
+  timeToComplete       String?
   hackathonprize       Boolean            @default(false)
 
   @@index([id, slug])
@@ -360,6 +362,11 @@ enum SuperRole {
 enum Source {
   NATIVE
   IMPORT
+}
+
+enum ApplicationType {
+  rolling
+  fixed
 }
 
 enum status {

@@ -55,6 +55,7 @@ export const BountyTabs = ({
                   logo={bounty?.sponsor?.logo}
                   token={bounty?.token}
                   type={bounty?.type}
+                  applicationType={bounty.applicationType}
                 />
               ))
           ) : (
@@ -102,6 +103,7 @@ export const BountyTabs = ({
                   logo={bounty?.sponsor?.logo}
                   token={bounty?.token}
                   type={bounty?.type}
+                  applicationType={bounty.applicationType}
                 />
               ))
           ) : (
@@ -147,6 +149,7 @@ export const BountyTabs = ({
                   logo={bounty?.sponsor?.logo}
                   token={bounty?.token}
                   type={bounty?.type}
+                  applicationType={bounty.applicationType}
                 />
               ))
           ) : (

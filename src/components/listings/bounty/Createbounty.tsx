@@ -14,6 +14,8 @@ export interface BountyBasicType {
   deadline?: string;
   templateId?: string;
   pocSocials?: string;
+  applicationType?: 'fixed' | 'rolling';
+  timeToComplete?: string;
 }
 interface Props {
   steps: number;
@@ -87,6 +89,7 @@ export const CreateBounty = ({
           bountyBasic={bountybasic}
           setSteps={setSteps}
           setbountyBasic={setBountyBasic}
+          type={type}
         />
       )}
       {steps === 3 && (

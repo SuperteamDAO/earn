@@ -81,6 +81,10 @@ function CreateListing({ bounty, isEditMode = false, type }: Props) {
         : undefined,
     templateId: isEditMode ? bounty?.templateId || undefined : undefined,
     pocSocials: isEditMode ? bounty?.pocSocials || undefined : undefined,
+    applicationType: isEditMode ? bounty?.applicationType || 'fixed' : 'fixed',
+    timeToComplete: isEditMode
+      ? bounty?.timeToComplete || undefined
+      : undefined,
   });
   const [bountyPayment, setBountyPayment] = useState({
     rewardAmount: isEditMode ? bounty?.rewardAmount || 0 : 0,

@@ -11,7 +11,7 @@
     "check-types": "tsc --noEmit --pretty",
     "prepare": "husky install",
     "postbuild": "next-sitemap",
-    "postinstall": "prisma generate"
+    "postinstall": "cd src && prisma generate"
   },
   "dependencies": {
     "@bomdi/codebox": "^2.0.0",

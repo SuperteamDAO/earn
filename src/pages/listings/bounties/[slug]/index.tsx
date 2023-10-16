@@ -140,6 +140,7 @@ function BountyDetails({ bounty: initialBounty }: BountyDetailsProps) {
                   isWinnersAnnounced={bounty?.isWinnersAnnounced}
                   pocSocials={bounty?.pocSocials}
                   hackathonPrize={bounty?.hackathonprize}
+                  applicationType={bounty?.applicationType}
                 />
               </HStack>
             </>

@@ -82,6 +82,7 @@ function ListingCategoryPage({ slug }: { slug: string }) {
                   logo={bounty?.sponsor?.logo}
                   token={bounty?.token}
                   type={bounty?.type}
+                  applicationType={bounty?.applicationType}
                 />
               );
             })}

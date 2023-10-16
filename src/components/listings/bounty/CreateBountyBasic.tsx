@@ -36,6 +36,8 @@ interface Props {
   isEditMode: boolean;
   regions: Regions;
   setRegions: Dispatch<SetStateAction<Regions>>;
+  type: 'open' | 'permissioned';
+  timeToComplete?: string;
 }
 interface ErrorsBasic {
   title: boolean;
@@ -43,6 +45,8 @@ interface ErrorsBasic {
   skills: boolean;
   subSkills: boolean;
   pocSocials: boolean;
+  applicationType: boolean;
+  timeToComplete: boolean;
 }
 export const CreatebountyBasic = ({
   setbountyBasic,
@@ -57,6 +61,7 @@ export const CreatebountyBasic = ({
   isEditMode,
   regions,
   setRegions,
+  type,
 }: Props) => {
   const { userInfo } = userStore();
 
@@ -66,11 +71,14 @@ export const CreatebountyBasic = ({
     subSkills: false,
     skills: false,
     pocSocials: false,
+    applicationType: false,
+    timeToComplete: false,
   });
 
   const [isUrlValid, setIsUrlValid] = useState(true);
 
   const date = dayjs().format('YYYY-MM-DD');
+  const thirtyDaysFromNow = dayjs().add(30, 'day').format('YYYY-MM-DDTHH:mm');
 
   return (
     <>
@@ -250,69 +258,114 @@ export const CreatebountyBasic = ({
             </Text>
           )}
         </FormControl>
-        <FormControl isInvalid={errorState.deadline} isRequired>
-          <Flex align={'center'} justify={'start'}>
-            <FormLabel
+        {type === 'permissioned' && (
+          <FormControl
+            w="full"
+            mb={5}
+            isInvalid={errorState.applicationType}
+            isRequired={type === 'permissioned'}
+          >
+            <Flex>
+              <FormLabel
+                color={'brand.slate.500'}
+                fontSize={'15px'}
+                fontWeight={600}
+              >
+                Application Type
+              </FormLabel>
+            </Flex>
+
+            <Select
+              onChange={(e) => {
+                setbountyBasic({
+                  ...(bountyBasic as BountyBasicType),
+                  applicationType: e.target.value as 'fixed' | 'rolling',
+                });
+              }}
+              value={bountyBasic?.applicationType}
+            >
+              <option value="fixed">Fixed Deadline</option>
+              <option value="rolling">Rolling Deadline</option>
+            </Select>
+          </FormControl>
+        )}
+        {bountyBasic?.applicationType !== 'rolling' && (
+          <FormControl
+            isInvalid={errorState.deadline}
+            isRequired={
+              bountyBasic?.applicationType
+                ? bountyBasic.applicationType === 'fixed'
+                : true
+            }
+          >
+            <Flex align={'center'} justify={'start'}>
+              <FormLabel
+                color={'brand.slate.500'}
+                fontSize={'15px'}
+                fontWeight={600}
+                htmlFor={'deadline'}
+              >
+                Deadline (in {Intl.DateTimeFormat().resolvedOptions().timeZone})
+              </FormLabel>
+              <Tooltip
+                w="max"
+                p="0.7rem"
+                color="white"
+                fontSize="0.9rem"
+                fontWeight={600}
+                bg="#6562FF"
+                borderRadius="0.5rem"
+                hasArrow
+                label={`Select the deadline date for accepting submissions`}
+                placement="right-end"
+              >
+                <Image
+                  mt={-2}
+                  alt={'Info Icon'}
+                  src={'/assets/icons/info-icon.svg'}
+                />
+              </Tooltip>
+            </Flex>
+            <Input
+              w={'full'}
               color={'brand.slate.500'}
-              fontSize={'15px'}
-              fontWeight={600}
-              htmlFor={'deadline'}
-            >
-              Deadline (in {Intl.DateTimeFormat().resolvedOptions().timeZone})
-            </FormLabel>
-            <Tooltip
-              w="max"
-              p="0.7rem"
-              color="white"
-              fontSize="0.9rem"
-              fontWeight={600}
-              bg="#6562FF"
-              borderRadius="0.5rem"
-              hasArrow
-              label={`Select the deadline date for accepting submissions`}
-              placement="right-end"
-            >
-              <Image
-                mt={-2}
-                alt={'Info Icon'}
-                src={'/assets/icons/info-icon.svg'}
-              />
-            </Tooltip>
-          </Flex>
-          <Input
-            w={'full'}
-            color={'brand.slate.500'}
-            borderColor="brand.slate.300"
-            _placeholder={{
-              color: 'brand.slate.300',
-            }}
-            focusBorderColor="brand.purple"
-            id="deadline"
-            min={`${date}T00:00`}
-            onChange={(e) => {
-              setbountyBasic({
-                ...(bountyBasic as BountyBasicType),
-                deadline: e.target.value,
-              });
-            }}
-            placeholder="deadline"
-            type={'datetime-local'}
-            value={bountyBasic?.deadline}
-          />
-          <FormErrorMessage>
-            {/* {errors.deadline ? <>{errors.deadline.message}</> : <></>} */}
-          </FormErrorMessage>
-        </FormControl>
+              borderColor="brand.slate.300"
+              _placeholder={{
+                color: 'brand.slate.300',
+              }}
+              focusBorderColor="brand.purple"
+              id="deadline"
+              min={`${date}T00:00`}
+              onChange={(e) => {
+                setbountyBasic({
+                  ...(bountyBasic as BountyBasicType),
+                  deadline: e.target.value,
+                });
+              }}
+              placeholder="deadline"
+              type={'datetime-local'}
+              value={bountyBasic?.deadline}
+            />
+            <FormErrorMessage>
+              {/* {errors.deadline ? <>{errors.deadline.message}</> : <></>} */}
+            </FormErrorMessage>
+          </FormControl>
+        )}
         <VStack gap={4} w={'full'} pt={10}>
           <Button
             w="100%"
             onClick={() => {
               setErrorState({
-                deadline: !bountyBasic?.deadline,
+                deadline:
+                  bountyBasic?.applicationType === 'fixed'
+                    ? !bountyBasic?.deadline
+                    : false,
                 skills: skills.length === 0,
                 subSkills: subSkills.length === 0,
                 title: !bountyBasic?.title,
                 pocSocials: !bountyBasic?.pocSocials,
+                applicationType: !bountyBasic?.applicationType,
+                timeToComplete: !bountyBasic?.timeToComplete,
               });
 
               if (
@@ -323,6 +376,21 @@ export const CreatebountyBasic = ({
                 bountyBasic?.pocSocials &&
                 isUrlValid
               ) {
+                setSteps(3);
+              } else if (
+                bountyBasic?.applicationType === 'rolling' &&
+                bountyBasic?.title &&
+                skills.length !== 0 &&
+                subSkills.length !== 0 &&
+                bountyBasic?.pocSocials &&
+                isUrlValid
+              ) {
+                if (!bountyBasic?.deadline) {
+                  setbountyBasic({
+                    ...(bountyBasic as BountyBasicType),
+                    deadline: thirtyDaysFromNow,
+                  });
+                }
                 setSteps(3);
               }
             }}

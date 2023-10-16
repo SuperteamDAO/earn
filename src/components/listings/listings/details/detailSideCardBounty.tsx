@@ -51,6 +51,7 @@ interface Props {
   isWinnersAnnounced?: boolean;
   hackathonPrize?: boolean;
   pocSocials?: string;
+  applicationType?: 'fixed' | 'rolling';
 }
 function DetailSideCard({
   id,
@@ -66,6 +67,7 @@ function DetailSideCard({
   pocSocials,
   hackathonPrize,
   isWinnersAnnounced = false,
+  applicationType,
 }: Props) {
   const { userInfo } = userStore();
   const [isSubmissionNumberLoading, setIsSubmissionNumberLoading] =
@@ -355,14 +357,18 @@ function DetailSideCard({
                 />
                 <VStack align={'start'}>
                   <Text color={'#000000'} fontSize="1.3rem" fontWeight={500}>
-                    <Countdown
-                      date={endingTime}
-                      renderer={countDownRenderer}
-                      zeroPadDays={1}
-                    />
+                    {applicationType === 'fixed' ? (
+                      <Countdown
+                        date={endingTime}
+                        renderer={countDownRenderer}
+                        zeroPadDays={1}
+                      />
+                    ) : (
+                      'Rolling'
+                    )}
                   </Text>
                   <Text mt={'0px !important'} color={'#94A3B8'}>
-                    Remaining
+                    {applicationType === 'fixed' ? 'Remaining' : 'Deadline'}
                   </Text>
                 </VStack>
               </Flex>

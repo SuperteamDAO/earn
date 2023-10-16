@@ -79,6 +79,7 @@ function AllBountybyCountry({ slug }: Props) {
                   logo={bounty?.sponsor?.logo}
                   token={bounty?.token}
                   type={bounty?.type}
+                  applicationType={bounty?.applicationType}
                 />
               );
             })}

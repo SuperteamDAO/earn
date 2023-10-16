@@ -76,6 +76,7 @@ function AllBountiesPage() {
                   logo={bounty?.sponsor?.logo}
                   token={bounty?.token}
                   type={bounty?.type}
+                  applicationType={bounty.applicationType}
                 />
               );
             })}

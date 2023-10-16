@@ -48,11 +48,13 @@ interface Bounty {
   source?: string;
   sourceDetails?: string;
   type?: BountyType | string;
+  applicationType?: 'fixed' | 'rolling';
   totalWinnersSelected?: number;
   region?: Regions;
   totalPaymentsMade?: number;
   isWinnersAnnounced?: boolean;
   templateId?: string;
+  timeToComplete?: string;
   hackathonprize?: boolean;
 }
 

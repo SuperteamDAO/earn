@@ -171,6 +171,7 @@ interface BountyProps {
   slug?: string;
   sponsorName?: string;
   type?: BountyType | string;
+  applicationType?: 'fixed' | 'rolling';
 }
 
 export const BountiesCard = ({
@@ -182,6 +183,7 @@ export const BountiesCard = ({
   token,
   slug = '',
   sponsorName,
+  applicationType,
 }: BountyProps) => {
   const router = useRouter();
   const [isMobile] = useMediaQuery('(max-width: 768px)');
@@ -278,7 +280,9 @@ export const BountiesCard = ({
                   color={'brand.slate.500'}
                   fontSize={['x-small', 'xs', 'xs', 'xs']}
                 >
-                  {dayjs().isBefore(deadline)
+                  {applicationType === 'rolling'
+                    ? 'Rolling Deadline'
+                    : dayjs().isBefore(dayjs(deadline))
                     ? `Closing ${dayjs(deadline).fromNow()}`
                     : `Closed ${dayjs(deadline).fromNow()}`}
                 </Text>
