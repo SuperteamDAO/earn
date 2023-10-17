@@ -16,7 +16,7 @@ import Template from '@/components/listings/templates/template';
 import { SuccessListings } from '@/components/modals/successListings';
 import ErrorSection from '@/components/shared/ErrorSection';
 import type { MultiSelectOptions } from '@/constants';
-import type { Bounty } from '@/interface/bounty';
+import type { Bounty, References } from '@/interface/bounty';
 import type { GrantsBasicType } from '@/interface/listings';
 import FormLayout from '@/layouts/FormLayout';
 import { userStore } from '@/store/user';
@@ -72,6 +72,15 @@ function CreateListing({ bounty, isEditMode = false, type }: Props) {
       : []
   );
 
+  const [references, setReferences] = useState<References[]>(
+    isEditMode
+      ? (bounty?.references || [])?.map((e) => ({
+          order: e.order,
+          link: e.link,
+        }))
+      : []
+  );
+
   // - Bounty
   const [bountybasic, setBountyBasic] = useState<BountyBasicType | undefined>({
     title: isEditMode ? bounty?.title || undefined : undefined,
@@ -117,6 +126,10 @@ function CreateListing({ bounty, isEditMode = false, type }: Props) {
           order: q.order,
           type: q.type,
         })),
+        references: (references || []).map((r) => ({
+          link: r.link,
+          order: r.order,
+        })),
         requirements: bountyRequirements,
         ...bountyPayment,
         isPublished: true,
@@ -156,6 +169,10 @@ function CreateListing({ bounty, isEditMode = false, type }: Props) {
         question: q.question,
         order: q.order,
         type: q.type,
+      })),
+      references: (references || []).map((r) => ({
+        link: r.link,
+        order: r.order,
       })),
       pocSocials: bountybasic?.pocSocials,
       region: regions,
@@ -286,6 +303,8 @@ function CreateListing({ bounty, isEditMode = false, type }: Props) {
               setBountyPayment={setBountyPayment}
               questions={questions}
               setQuestions={setQuestions}
+              references={references}
+              setReferences={setReferences}
               draftLoading={draftLoading}
               createDraft={createDraft}
               bountybasic={bountybasic}

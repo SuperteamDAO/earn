@@ -2,6 +2,8 @@ import type { Regions } from '@prisma/client';
 import type { Dispatch, SetStateAction } from 'react';
 import React from 'react';
 
+import type { References } from '@/interface/bounty';
+
 import type { MultiSelectOptions } from '../../../constants';
 import Description from '../description';
 import { CreatebountyBasic } from './CreateBountyBasic';
@@ -33,6 +35,8 @@ interface Props {
   draftLoading: boolean;
   setQuestions: Dispatch<SetStateAction<Ques[]>>;
   questions: Ques[];
+  references: References[];
+  setReferences: Dispatch<SetStateAction<References[]>>;
   createAndPublishListing: () => void;
   isListingPublishing: boolean;
   bountyPayment: any;
@@ -70,6 +74,8 @@ export const CreateBounty = ({
   regions,
   setRegions,
   type,
+  references,
+  setReferences,
 }: Props) => {
   // handles the info from basic form
 
@@ -103,6 +109,8 @@ export const CreateBounty = ({
           setSteps={setSteps}
           setEditorData={setEditorData}
           draftLoading={draftLoading}
+          references={references}
+          setReferences={setReferences}
         />
       )}
       {steps === 4 && (

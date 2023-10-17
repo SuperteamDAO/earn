@@ -48,6 +48,7 @@ model Bounties {
   requirements         String?            @db.Text
   deadline             DateTime?
   eligibility          Json?
+  references           Json?
   status               status             @default(OPEN)
   token                String?
   rewardAmount         Int?

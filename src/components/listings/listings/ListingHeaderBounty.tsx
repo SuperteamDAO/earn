@@ -19,6 +19,7 @@ import { toast, Toaster } from 'react-hot-toast';
 import { TbBell, TbBellRinging } from 'react-icons/tb';
 
 import { EarningModal } from '@/components/modals/earningModal';
+import type { References } from '@/interface/bounty';
 import type { SponsorType } from '@/interface/sponsor';
 import type { User } from '@/interface/user';
 import { userStore } from '@/store/user';
@@ -40,6 +41,7 @@ interface Bounty {
   hackathonPrize?: boolean;
   isTemplate?: boolean;
   region: Regions;
+  references?: References[];
 }
 
 function ListingHeader({
@@ -54,6 +56,7 @@ function ListingHeader({
   isTemplate,
   hackathonPrize,
   region,
+  references,
 }: Bounty) {
   const router = useRouter();
   const { isOpen, onClose, onOpen } = useDisclosure();
@@ -411,7 +414,8 @@ function ListingHeader({
               textDecoration="none"
               borderBottom="2px solid"
               borderBottomColor={
-                !router.asPath.includes('submission')
+                !router.asPath.includes('submission') &&
+                !router.asPath.includes('references')
                   ? 'brand.purple'
                   : 'transparent'
               }
@@ -447,6 +451,31 @@ function ListingHeader({
                 href={`/listings/bounties/${slug}/submission`}
               >
                 Submissions
+              </Link>
+            )}
+            {type === 'permissioned' && references && (
+              <Link
+                alignItems="center"
+                justifyContent="center"
+                display="flex"
+                h={'full'}
+                color="gray.800"
+                fontWeight={500}
+                textDecoration="none"
+                borderBottom="2px solid"
+                borderBottomColor={
+                  router.asPath.includes('references')
+                    ? 'brand.purple'
+                    : 'transparent'
+                }
+                _hover={{
+                  textDecoration: 'none',
+                  borderBottom: '2px solid',
+                  borderBottomColor: 'brand.purple',
+                }}
+                href={`/listings/bounties/${slug}/references`}
+              >
+                References
               </Link>
             )}
           </HStack>

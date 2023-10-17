@@ -1,17 +1,12 @@
-import { Box, HStack, VStack } from '@chakra-ui/react';
+import { Box, Grid, HStack, Text } from '@chakra-ui/react';
 import { Regions } from '@prisma/client';
 import axios from 'axios';
-import { useAtom } from 'jotai';
 import type { GetServerSideProps } from 'next';
 import Head from 'next/head';
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 
-import { bountySnackbarAtom } from '@/components/Header/BountySnackbar';
-import BountyWinners from '@/components/listings/bounty/BountyWinners';
-import { Comments } from '@/components/listings/listings/comments';
-import DetailDescription from '@/components/listings/listings/details/detailDescriptionBounty';
-import DetailSideCard from '@/components/listings/listings/details/detailSideCardBounty';
 import ListingHeader from '@/components/listings/listings/ListingHeaderBounty';
+import OgImageViewer from '@/components/misc/ogImageViewer';
 import ErrorSection from '@/components/shared/ErrorSection';
 import type { Bounty } from '@/interface/bounty';
 import { Default } from '@/layouts/Default';
@@ -21,43 +16,28 @@ interface BountyDetailsProps {
   bounty: Bounty | null;
 }
 
+const ReferenceCard = ({ link }: { link: string }) => {
+  return (
+    <Box w="100%" cursor="pointer" onClick={() => window.open(link, '_blank')}>
+      <OgImageViewer
+        externalUrl={link}
+        w={{ base: '100%', md: '400px' }}
+        h={{ base: '200px', md: '350px' }}
+        objectFit="cover"
+        borderRadius={6}
+      />
+    </Box>
+  );
+};
+
 function BountyDetails({ bounty: initialBounty }: BountyDetailsProps) {
-  const [, setBountySnackbar] = useAtom(bountySnackbarAtom);
-
   const [bounty] = useState<typeof initialBounty>(initialBounty);
-  const [submissionNumber, setSubmissionNumber] = useState<number>(0);
-
-  const getSubmissionsCount = async () => {
-    try {
-      const submissionCountDetails = await axios.get(
-        `/api/submission/${bounty?.id}/count/`
-      );
-      setSubmissionNumber(submissionCountDetails?.data || 0);
-    } catch (e) {
-      console.error(e);
-    }
-  };
-
-  useEffect(() => {
-    const fetchSubmissions = async () => {
-      await getSubmissionsCount();
-      if (bounty) {
-        setBountySnackbar({
-          submissionCount: submissionNumber,
-          deadline: bounty?.deadline,
-          rewardAmount: bounty?.rewardAmount,
-          type: bounty?.type,
-        });
-      }
-    };
-    fetchSubmissions();
-  }, [bounty, submissionNumber]);
 
   return (
     <Default
       meta={
         <Head>
-          <title>{`${
+          <title>{`References | ${
             initialBounty?.title || 'Bounty'
           } | Superteam Earn`}</title>
           <meta
@@ -110,41 +90,50 @@ function BountyDetails({ bounty: initialBounty }: BountyDetailsProps) {
                 hackathonPrize={bounty?.hackathonprize}
                 references={bounty?.references}
               />
-              {bounty?.isWinnersAnnounced && <BountyWinners bounty={bounty} />}
-              <HStack
-                align={['center', 'center', 'start', 'start']}
-                justify={['center', 'center', 'space-between', 'space-between']}
-                flexDir={['column-reverse', 'column-reverse', 'row', 'row']}
-                gap={4}
-                maxW={'7xl'}
-                mb={10}
-                mx={'auto'}
-              >
-                <VStack gap={8} w={['22rem', '22rem', 'full', 'full']} mt={10}>
-                  <DetailDescription
-                    skills={bounty?.skills?.map((e) => e.skills) ?? []}
-                    description={bounty?.description}
-                  />
-                  <Comments refId={bounty?.id ?? ''} refType="BOUNTY" />
-                </VStack>
-                <DetailSideCard
-                  bountytitle={bounty.title ?? ''}
-                  id={bounty?.id || ''}
-                  token={bounty?.token ?? ''}
-                  eligibility={bounty?.eligibility}
-                  type={bounty?.type}
-                  endingTime={bounty?.deadline ?? ''}
-                  prizeList={bounty?.rewards}
-                  total={bounty?.rewardAmount || 0}
-                  applicationLink={bounty?.applicationLink || ''}
-                  requirements={bounty?.requirements}
-                  isWinnersAnnounced={bounty?.isWinnersAnnounced}
-                  pocSocials={bounty?.pocSocials}
-                  hackathonPrize={bounty?.hackathonprize}
-                  applicationType={bounty?.applicationType}
-                  timeToComplete={bounty?.timeToComplete}
-                />
-              </HStack>
+              <Box mx={4}>
+                <HStack
+                  align={['center', 'center', 'start', 'start']}
+                  justify={[
+                    'center',
+                    'center',
+                    'space-between',
+                    'space-between',
+                  ]}
+                  flexDir={['column', 'column', 'row', 'row']}
+                  gap={4}
+                  maxW={'7xl'}
+                  mt={6}
+                  mb={10}
+                  mx={'auto'}
+                  p={{ base: '2', md: '6' }}
+                  bg="white"
+                  rounded="lg"
+                >
+                  <Box w="full" mx={4}>
+                    <Text
+                      mt={2}
+                      mb={6}
+                      color="gray.500"
+                      fontSize="xl"
+                      fontWeight={600}
+                    >
+                      References
+                    </Text>
+                    <Grid
+                      gap={4}
+                      templateColumns={{
+                        base: 'repeat(1, 1fr)',
+                        md: 'repeat(2, 1fr)',
+                        lg: 'repeat(3, 1fr)',
+                      }}
+                    >
+                      {bounty.references?.map((reference, i) => (
+                        <ReferenceCard link={reference.link} key={i} />
+                      ))}
+                    </Grid>
+                  </Box>
+                </HStack>
+              </Box>
             </>
           )}
         </>

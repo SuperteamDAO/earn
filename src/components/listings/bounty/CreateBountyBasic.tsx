@@ -58,7 +58,6 @@ export const CreatebountyBasic = ({
   bountyBasic,
   createDraft,
   draftLoading,
-  isEditMode,
   regions,
   setRegions,
   type,
@@ -448,7 +447,7 @@ export const CreatebountyBasic = ({
             }}
             variant="outline"
           >
-            {isEditMode ? 'Update' : 'Save as Draft'}
+            Save as Draft
           </Button>
         </VStack>
       </VStack>

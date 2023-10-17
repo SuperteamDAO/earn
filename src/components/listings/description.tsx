@@ -1,3 +1,4 @@
+import { DeleteIcon } from '@chakra-ui/icons';
 import {
   Box,
   Button,
@@ -40,6 +41,10 @@ import {
   MdOutlineFormatUnderlined,
   MdOutlineHorizontalRule,
 } from 'react-icons/md';
+
+import type { References } from '@/interface/bounty';
+
+import { ReferenceCard } from './bounty/reference-input';
 
 const LinkModal = ({
   isOpen,
@@ -86,6 +91,8 @@ interface Props {
   setBountyRequirements?: Dispatch<SetStateAction<any | undefined>>;
   bountyRequirements?: string | undefined;
   type?: 'open' | 'permissioned';
+  references?: References[];
+  setReferences?: Dispatch<SetStateAction<References[]>>;
 }
 const Description = ({
   editorData,
@@ -93,12 +100,14 @@ const Description = ({
   setSteps,
   createDraft,
   draftLoading,
-  isEditMode,
   bountyRequirements,
   setBountyRequirements,
+  references,
+  setReferences,
   type,
 }: Props) => {
   const { isOpen, onClose, onOpen } = useDisclosure();
+  const [referenceError, setReferenceError] = useState<boolean>(false);
   const editor = useEditor({
     extensions: [
       Underline,
@@ -161,6 +170,15 @@ const Description = ({
     },
     [editor]
   );
+
+  const handleDeleteReference = () => {
+    if (references && setReferences) {
+      const temp = references.filter(
+        (_el, index) => index !== references.length - 1
+      );
+      setReferences(temp);
+    }
+  };
 
   return (
     <>
@@ -529,7 +547,7 @@ const Description = ({
             </Button>
           </Flex>
 
-          <Box w={'full'} h={'full'}>
+          <Box w={'full'} h={'full'} mb={16}>
             <div style={{ height: '100% !important' }} className="reset">
               <EditorContent
                 id="reset-des"
@@ -540,11 +558,55 @@ const Description = ({
               />
             </div>
           </Box>
+          {type === 'permissioned' && (
+            <>
+              {setReferences &&
+                references?.map((reference, index) => {
+                  return (
+                    <Flex key={index} align="end" justify="space-end" w="full">
+                      <ReferenceCard
+                        setReferenceError={setReferenceError}
+                        index={index}
+                        curentReference={reference}
+                        setReferences={setReferences}
+                      />
+                      {index === references.length - 1 && (
+                        <Button ml={4} onClick={() => handleDeleteReference()}>
+                          <DeleteIcon />
+                        </Button>
+                      )}
+                    </Flex>
+                  );
+                })}
+              {references && setReferences && references.length < 6 && (
+                <Button
+                  w={'full'}
+                  h={12}
+                  color={'#64758B'}
+                  bg={'#F1F5F9'}
+                  onClick={() => {
+                    setReferences([
+                      ...references,
+                      {
+                        order: (references?.length || 0) + 1,
+                        link: '',
+                      },
+                    ]);
+                  }}
+                >
+                  + Add Reference
+                </Button>
+              )}
+            </>
+          )}
         </VStack>
         <VStack gap={4} w={'full'} pt={10}>
           <Button
             w="100%"
             onClick={() => {
+              if (referenceError) {
+                return;
+              }
               if (type === 'open') {
                 setSteps(5);
                 return;
@@ -562,7 +624,7 @@ const Description = ({
             onClick={() => createDraft()}
             variant="outline"
           >
-            {isEditMode ? 'Update' : 'Save as Draft'}
+            Save as Draft
           </Button>
         </VStack>
       </Box>

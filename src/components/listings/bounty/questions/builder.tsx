@@ -39,7 +39,6 @@ const Builder = ({
   draftLoading,
   questions,
   setQuestions,
-  isEditMode,
 }: Props) => {
   const [error, setError] = useState<ErrorState[]>([]);
 
@@ -175,7 +174,7 @@ const Builder = ({
             }}
             variant="outline"
           >
-            {isEditMode ? 'Update' : 'Save as Draft'}
+            Save as Draft
           </Button>
         </VStack>
       </VStack>
