@@ -388,9 +388,11 @@ export const CreatebountyBasic = ({
               placeholder="Select time to complete"
               value={bountyBasic?.timeToComplete}
             >
-              <option value="1-2 weeks">1-2 weeks</option>
-              <option value="2-4 weeks">2-4 weeks</option>
-              <option value="1-2 months">1-2 months</option>
+              <option value="<1 Week">{'<1 Week'}</option>
+              <option value="1-2 Weeks">1-2 Weeks</option>
+              <option value="2-4 Weeks">2-4 Weeks</option>
+              <option value="4-8 Weeks">4-8 Weeks</option>
+              <option value=">8 Week">{'>8 Weeks'}</option>
             </Select>
           </FormControl>
         )}
