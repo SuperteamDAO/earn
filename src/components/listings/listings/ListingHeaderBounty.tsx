@@ -117,7 +117,7 @@ function ListingHeader({
   }, [update]);
 
   return (
-    <VStack p={{ base: '2', md: '6' }} bg={'white'}>
+    <VStack px={{ base: '2', md: '6' }} bg={'white'}>
       {isOpen && <EarningModal isOpen={isOpen} onClose={onClose} />}
       <VStack
         align="start"

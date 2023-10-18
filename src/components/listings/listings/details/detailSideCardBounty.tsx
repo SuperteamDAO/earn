@@ -508,55 +508,57 @@ function DetailSideCard({
             </Text>
           </VStack>
         )}
-        <VStack
-          align={'start'}
-          justify={'center'}
-          minW={'22rem'}
-          mt={4}
-          p={6}
-          bg={'#FFFFFF'}
-          rounded={'xl'}
-        >
-          <VerticalStep
-            sublabel={'Give your best shot!'}
-            currentStep={submissionStatus + 1}
-            thisStep={1}
-            label={'Submissions Open'}
-          />
+        {type !== 'permissioned' && (
+          <VStack
+            align={'start'}
+            justify={'center'}
+            minW={'22rem'}
+            mt={4}
+            p={6}
+            bg={'#FFFFFF'}
+            rounded={'xl'}
+          >
+            <VerticalStep
+              sublabel={'Give your best shot!'}
+              currentStep={submissionStatus + 1}
+              thisStep={1}
+              label={'Submissions Open'}
+            />
 
-          <Divider
-            h={10}
-            border={'2px'}
-            borderColor={'#6562FF'}
-            transform={'translate(1rem)'}
-            orientation="vertical"
-          />
-          <VerticalStep
-            currentStep={submissionStatus + 1}
-            thisStep={2}
-            label={'Submissions Review'}
-            sublabel={'Submissions being assessed'}
-          />
-          <Divider
-            h={10}
-            border={'2px'}
-            borderColor={'#CBD5E1'}
-            transform={'translate(1rem)'}
-            orientation="vertical"
-          />
-          <VerticalStep
-            currentStep={submissionStatus + 1}
-            thisStep={3}
-            sublabel={
-              isWinnersAnnounced
-                ? 'Congratulations!'
-                : `Around ${moment(endingTime)
-                    .add(8, 'd')
-                    .format('Do MMM, YY')}`
-            }
-            label={'Winner Announced'}
-          />
-        </VStack>
+            <Divider
+              h={10}
+              border={'2px'}
+              borderColor={'#6562FF'}
+              transform={'translate(1rem)'}
+              orientation="vertical"
+            />
+            <VerticalStep
+              currentStep={submissionStatus + 1}
+              thisStep={2}
+              label={'Submissions Review'}
+              sublabel={'Submissions being assessed'}
+            />
+            <Divider
+              h={10}
+              border={'2px'}
+              borderColor={'#CBD5E1'}
+              transform={'translate(1rem)'}
+              orientation="vertical"
+            />
+            <VerticalStep
+              currentStep={submissionStatus + 1}
+              thisStep={3}
+              sublabel={
+                isWinnersAnnounced
+                  ? 'Congratulations!'
+                  : `Around ${moment(endingTime)
+                      .add(8, 'd')
+                      .format('Do MMM, YY')}`
+              }
+              label={'Winner Announced'}
+            />
+          </VStack>
+        )}
       </VStack>
     </>
   );
