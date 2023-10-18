@@ -145,7 +145,7 @@ export const SubmissionModal = ({
                       fontWeight={600}
                       htmlFor={'applicationLink'}
                     >
-                      Link to your submission
+                      Make sure this link is accessible by everyone!
                     </FormLabel>
                     <FormHelperText mt={0} mb={2} color="brand.slate.500">
                       We prefer Medium, Substack, Notion, etc., link for written

@@ -264,7 +264,7 @@ export const BountiesCard = ({
                   <Text
                     ml={isMobile ? '-1' : type === 'open' ? '-3' : '-2.5'}
                     color="gray.500"
-                    fontSize="xs"
+                    fontSize={['x-small', 'xs', 'xs', 'xs']}
                     fontWeight={500}
                   >
                     {type === 'open' ? 'Bounty' : 'Project'}
@@ -394,7 +394,7 @@ export const GrantsCard = ({
               </Text>
               <Text
                 color="brand.slate.500"
-                fontSize={{ md: 'sm', base: 'xs' }}
+                fontSize={['xs', 'xs', 'sm', 'sm']}
                 fontWeight="400"
               >
                 {sponsorName}
@@ -409,7 +409,7 @@ export const GrantsCard = ({
                     isMobile
                       ? {
                           display: '-webkit-box',
-                          WebkitLineClamp: 2,
+                          WebkitLineClamp: 1,
                           WebkitBoxOrient: 'vertical',
                           overflow: 'hidden',
                         }
