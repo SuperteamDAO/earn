@@ -44,17 +44,21 @@ export const SubmissionModal = ({
       <Modal isOpen={isOpen} onClose={onClose} size={'xl'}>
         <ModalOverlay></ModalOverlay>
         <ModalContent>
-          <ModalHeader>Bounty Submission</ModalHeader>
+          <ModalHeader>
+            {eligibility !== 'permission-less'
+              ? 'Submit Your Application'
+              : 'Bounty Submission'}
+          </ModalHeader>
           <VStack align={'start'} gap={3} p={5}>
             <Text color={'gray.500'} fontSize={'1rem'} fontWeight={500}>
-              {eligibility !== 'premission-less'
-                ? `This is a permissioned bounty - which means only the applicant that the sponsor will select will be eligible to work on this bounty`
+              {eligibility !== 'permission-less'
+                ? `Don't start working just yet! Apply first, and then begin working only once you've been hired for the project by the sponsor.`
                 : `We can't wait to see what you've created! Winners will receive
               prizes as well as instant admission to our DAO.`}
             </Text>
             <Text color={'gray.500'} fontSize={'1rem'} fontWeight={500}>
-              {eligibility !== 'premission-less'
-                ? 'Please shill your best work/profile in the application link field below, and do your best to answer any custom questions added by the sponsor. We will send you an email once the applicant has been selected by the sponsor. All the best!'
+              {eligibility !== 'permission-less'
+                ? 'Please note that the sponsor might contact you to assess fit before picking the winner.'
                 : 'Please note that bounties typically take ~5 days after the end date to be evaluated.'}
             </Text>
             <form
@@ -90,7 +94,7 @@ export const SubmissionModal = ({
                 isLoading={SubmssionMutation.isLoading}
                 type="submit"
               >
-                {eligibility === 'premission-less' ? 'Submit' : 'Apply Now'}
+                {eligibility === 'permission-less' ? 'Submit' : 'Apply'}
               </Button>
             </form>
           </VStack>

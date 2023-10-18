@@ -45,7 +45,11 @@ function EditBounty({ slug }: Props) {
       {isBountyLoading ? (
         <LoadingSection />
       ) : (
-        <CreateListing bounty={bounty} isEditMode />
+        <CreateListing
+          bounty={bounty}
+          isEditMode
+          type={bounty?.type as 'permissioned' | 'open'}
+        />
       )}
     </Sidebar>
   );

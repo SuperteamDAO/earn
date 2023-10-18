@@ -2,13 +2,7 @@ import type { SkillsProp } from '@/interface/skills';
 
 import type { SponsorType } from './sponsor';
 import type { Talent } from './talent';
-import type {
-  JobType,
-  Listingtype,
-  Prize,
-  Source,
-  SponsorStatus,
-} from './types';
+import type { Listingtype, Prize, Source, SponsorStatus } from './types';
 
 type PrizeListType = {
   [key in Prize]: string;
@@ -64,33 +58,6 @@ interface Winner {
   publickey: string;
   bountiesId: string;
   prize: Prize;
-}
-interface JobBasicsType {
-  title: string;
-  type: JobType;
-  link: string;
-  deadline: string;
-}
-interface JobsType {
-  active: boolean;
-  deadline: string;
-  description: string;
-  experience: string;
-  featured: boolean;
-  jobType: JobType;
-  location: string;
-  maxEq: number;
-  maxSalary: number;
-  minEq: number;
-  minSalary: number;
-  orgId: string;
-  skills: string;
-  link: string;
-  source: Source;
-  title: string;
-  subskills: string;
-  id: string;
-  timezone: string;
 }
 
 interface GrantsBasicType {
@@ -153,8 +120,6 @@ export type {
   Experience,
   GrantsBasicType,
   GrantsType,
-  JobBasicsType,
-  JobsType,
   PrizeListType,
   SubmissionType,
   SubscribeType,

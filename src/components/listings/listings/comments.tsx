@@ -24,7 +24,7 @@ import { getURL } from '@/utils/validUrl';
 
 interface Props {
   refId: string;
-  refType: 'BOUNTY' | 'JOB';
+  refType: 'BOUNTY';
 }
 export const Comments = ({ refId, refType }: Props) => {
   const { userInfo } = userStore();

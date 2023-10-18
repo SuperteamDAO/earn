@@ -7,6 +7,7 @@ type BountySnackbarType = {
   submissionCount: number;
   deadline: string | undefined;
   rewardAmount: number | undefined;
+  type: string | undefined;
 };
 
 export const bountySnackbarAtom = atom<BountySnackbarType | null>(null);
@@ -21,33 +22,50 @@ export const BountySnackbar = () => {
 
   const getMessage = () => {
     if (bountySnackbar) {
-      const { submissionCount, deadline, rewardAmount } = bountySnackbar;
+      const { submissionCount, deadline, rewardAmount, type } = bountySnackbar;
 
       if (deadline && dayjs(deadline).isBefore(dayjs())) {
         return null;
       }
 
-      if (deadline) {
-        const daysToDeadline = dayjs(deadline).diff(dayjs(), 'day');
-        if (daysToDeadline < 3) {
-          return '🕛 Expiring Soon: Submit while you still have the chance!';
+      if (type === 'open') {
+        if (deadline) {
+          const daysToDeadline = dayjs(deadline).diff(dayjs(), 'day');
+          if (daysToDeadline < 3) {
+            return '🕛 Expiring Soon: Submit while you still have the chance!';
+          }
         }
-      }
 
-      if (rewardAmount && rewardAmount > 1000) {
-        return "🤑 Mo' Money, Fewer Problems: Higher than average total bounty reward!";
-      }
+        if (rewardAmount && rewardAmount > 1000) {
+          return "🤑 Mo' Money, Fewer Problems: Higher than average total bounty reward!";
+        }
 
-      if (submissionCount === 0) {
-        return '🔥 High chance of winning: No submissions have been made for this bounty yet!';
-      }
+        if (submissionCount === 0) {
+          return '🔥 High chance of winning: No submissions have been made for this bounty yet!';
+        }
 
-      if (submissionCount === 1) {
-        return '🔥 High chance of winning: Only 1 submission has been made for this bounty yet!';
-      }
+        if (submissionCount === 1) {
+          return '🔥 High chance of winning: Only 1 submission has been made for this bounty yet!';
+        }
 
-      if (submissionCount < 10) {
-        return `🔥 High chance of winning: Only ${submissionCount} submissions have been made for this bounty yet!`;
+        if (submissionCount < 10) {
+          return `🔥 High chance of winning: Only ${submissionCount} submissions have been made for this bounty yet!`;
+        }
+      } else if (type === 'permissioned') {
+        if (deadline) {
+          const daysToDeadline = dayjs(deadline).diff(dayjs(), 'day');
+          if (daysToDeadline < 3) {
+            return '🕛 Expiring Soon: Apply while you still have the chance!';
+          }
+        }
+
+        if (submissionCount < 10) {
+          return '🔥 The Odds Are in Your Favour! Not too many applications yet';
+        }
+
+        if (rewardAmount && rewardAmount > 1500) {
+          return "🤑 Mo' Money, Fewer Problems: Higher than average total project reward";
+        }
       }
     }
 

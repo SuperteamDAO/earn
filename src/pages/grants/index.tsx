@@ -141,6 +141,7 @@ function Grants() {
             gap={4}
             mt={{ base: 12, md: 24 }}
             mb={12}
+            px={4}
           >
             <Text
               fontFamily={'Domine'}
@@ -150,9 +151,9 @@ function Grants() {
               Need funds to build out your idea?
             </Text>
             <Text
-              px={{ base: 0, md: 96 }}
+              maxW={'680px'}
               color="brand.slate.500"
-              fontSize={[20, 20, 24, 24]}
+              fontSize={[16, 16, 24, 24]}
               fontWeight={'400'}
               textAlign={'center'}
             >

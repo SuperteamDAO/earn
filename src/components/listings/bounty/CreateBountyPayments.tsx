@@ -359,7 +359,7 @@ export const CreatebountyPayment = ({
             onClick={() => handleSubmit(isEditMode, 'DRAFT')}
             variant={isEditMode ? 'solid' : 'outline'}
           >
-            {isEditMode ? 'Update' : 'Save as Draft'}
+            Save as Draft
           </Button>
         </VStack>
       </VStack>

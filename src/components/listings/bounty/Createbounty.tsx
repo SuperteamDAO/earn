@@ -1,6 +1,8 @@
-import type { BountyType, Regions } from '@prisma/client';
+import type { Regions } from '@prisma/client';
 import type { Dispatch, SetStateAction } from 'react';
 import React from 'react';
+
+import type { References } from '@/interface/bounty';
 
 import type { MultiSelectOptions } from '../../../constants';
 import Description from '../description';
@@ -12,9 +14,10 @@ import Builder from './questions/builder';
 export interface BountyBasicType {
   title?: string;
   deadline?: string;
-  type?: BountyType | string;
   templateId?: string;
   pocSocials?: string;
+  applicationType?: 'fixed' | 'rolling';
+  timeToComplete?: string;
 }
 interface Props {
   steps: number;
@@ -32,6 +35,8 @@ interface Props {
   draftLoading: boolean;
   setQuestions: Dispatch<SetStateAction<Ques[]>>;
   questions: Ques[];
+  references: References[];
+  setReferences: Dispatch<SetStateAction<References[]>>;
   createAndPublishListing: () => void;
   isListingPublishing: boolean;
   bountyPayment: any;
@@ -41,6 +46,7 @@ interface Props {
   bountyRequirements?: string | undefined;
   regions: Regions;
   setRegions: Dispatch<SetStateAction<Regions>>;
+  type: 'open' | 'permissioned';
 }
 export const CreateBounty = ({
   steps,
@@ -67,6 +73,9 @@ export const CreateBounty = ({
   setBountyRequirements,
   regions,
   setRegions,
+  type,
+  references,
+  setReferences,
 }: Props) => {
   // handles the info from basic form
 
@@ -86,19 +95,22 @@ export const CreateBounty = ({
           bountyBasic={bountybasic}
           setSteps={setSteps}
           setbountyBasic={setBountyBasic}
+          type={type}
         />
       )}
       {steps === 3 && (
         <Description
+          type={type}
           setBountyRequirements={setBountyRequirements}
           bountyRequirements={bountyRequirements}
           isEditMode={isEditMode}
-          bountyBasics={bountybasic}
           createDraft={createDraft}
           editorData={editorData}
           setSteps={setSteps}
           setEditorData={setEditorData}
           draftLoading={draftLoading}
+          references={references}
+          setReferences={setReferences}
         />
       )}
       {steps === 4 && (

@@ -77,8 +77,8 @@ export const EarningModal = ({ isOpen, onClose }: Props) => {
               fontWeight={400}
               textAlign={'center'}
             >
-              It takes less than a minute, but might lead to the bounty or job
-              that changes your life.
+              It takes less than a minute, but might lead to the bounty or
+              project that changes your life.
             </Text>
             <Button
               w={'full'}

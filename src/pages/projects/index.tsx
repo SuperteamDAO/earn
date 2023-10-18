@@ -1,37 +1,33 @@
 import { Box, Flex } from '@chakra-ui/react';
 import axios from 'axios';
-import type { GetServerSideProps } from 'next';
 import { useEffect, useState } from 'react';
 
 import { BountiesCard, ListingSection } from '@/components/misc/listingsCard';
 import EmptySection from '@/components/shared/EmptySection';
 import Loading from '@/components/shared/Loading';
 import type { Bounty } from '@/interface/bounty';
-import type { Grant } from '@/interface/grant';
 import Home from '@/layouts/Home';
 
 interface Listings {
   bounties?: Bounty[];
-  grants?: Grant[];
 }
 
-interface Props {
-  slug: string;
-}
-
-function AllBountybyCountry({ slug }: Props) {
+function AllBountiesPage() {
   const [isListingsLoading, setIsListingsLoading] = useState(true);
   const [listings, setListings] = useState<Listings>({
     bounties: [],
-    grants: [],
   });
 
   const getListings = async () => {
     setIsListingsLoading(true);
     try {
-      const listingsData = await axios.get(
-        `/api/listings/regions/?region=${slug}`
-      );
+      const listingsData = await axios.get('/api/listings/', {
+        params: {
+          category: 'bounties',
+          take: 100,
+          type: 'permissioned',
+        },
+      });
       setListings(listingsData.data);
       setIsListingsLoading(false);
     } catch (e) {
@@ -45,13 +41,14 @@ function AllBountybyCountry({ slug }: Props) {
   }, []);
 
   return (
-    <Home type="region">
+    <Home type="home">
       <Box w={'100%'}>
         <ListingSection
           type="bounties"
-          title="Bounties"
+          title="Projects"
           sub="Bite sized tasks for freelancers"
           emoji="/assets/home/emojis/moneyman.png"
+          all
         >
           {isListingsLoading && (
             <Flex align="center" justify="center" direction="column" minH={52}>
@@ -79,7 +76,7 @@ function AllBountybyCountry({ slug }: Props) {
                   logo={bounty?.sponsor?.logo}
                   token={bounty?.token}
                   type={bounty?.type}
-                  applicationType={bounty?.applicationType}
+                  applicationType={bounty.applicationType}
                 />
               );
             })}
@@ -89,15 +86,4 @@ function AllBountybyCountry({ slug }: Props) {
   );
 }
 
-export const getServerSideProps: GetServerSideProps = async (context) => {
-  if (!context.params) {
-    return { props: {} };
-  }
-  const { slug } = context.params;
-
-  return {
-    props: { slug },
-  };
-};
-
-export default AllBountybyCountry;
+export default AllBountiesPage;
