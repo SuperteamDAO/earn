@@ -547,7 +547,7 @@ const Description = ({
             </Button>
           </Flex>
 
-          <Box w={'full'} h={'full'} mb={16}>
+          <Box w={'full'} h={'full'} mb={10}>
             <div style={{ height: '100% !important' }} className="reset">
               <EditorContent
                 id="reset-des"
@@ -560,6 +560,29 @@ const Description = ({
           </Box>
           {type === 'permissioned' && (
             <>
+              <Flex
+                align={'start'}
+                justify={'start'}
+                direction={'column'}
+                w="100%"
+                mb={3}
+              >
+                <Text
+                  color={'brand.slate.500'}
+                  fontSize={'15px'}
+                  fontWeight={600}
+                >
+                  Deliverable References
+                </Text>
+                <Text
+                  mt={'0px !important'}
+                  color={'#94A3B8'}
+                  fontSize={'0.88rem'}
+                >
+                  Add links of other projects/websites as references for the
+                  kind of deliverables you are looking for.
+                </Text>
+              </Flex>
               {setReferences &&
                 references?.map((reference, index) => {
                   return (
@@ -582,6 +605,7 @@ const Description = ({
                 <Button
                   w={'full'}
                   h={12}
+                  mt={2}
                   color={'#64758B'}
                   bg={'#F1F5F9'}
                   onClick={() => {
@@ -600,7 +624,7 @@ const Description = ({
             </>
           )}
         </VStack>
-        <VStack gap={4} w={'full'} pt={10}>
+        <VStack gap={4} w={'full'} mt={16}>
           <Button
             w="100%"
             onClick={() => {

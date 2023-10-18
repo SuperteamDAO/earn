@@ -396,7 +396,7 @@ export const CreatebountyBasic = ({
             </Select>
           </FormControl>
         )}
-        <VStack gap={4} w={'full'} pt={10}>
+        <VStack gap={4} w={'full'} mt={6}>
           <Button
             w="100%"
             onClick={() => {

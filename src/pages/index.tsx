@@ -4,7 +4,6 @@ import { Box, Button, Flex, HStack, Image, Link, Text } from '@chakra-ui/react';
 import { css } from '@emotion/react';
 import axios from 'axios';
 import type { NextPage } from 'next';
-import { title } from 'process';
 import { useEffect, useState } from 'react';
 
 import { BountyTabs } from '@/components/listings/bounty/Tabs';
@@ -88,7 +87,7 @@ const HomePage: NextPage = () => {
               <Text
                 pr={2}
                 color={'#334155'}
-                fontSize={{ base: 14, md: 16 }}
+                fontSize={['13', '14', '16', '16']}
                 fontWeight={'600'}
               >
                 Freelance Gigs
@@ -111,7 +110,7 @@ const HomePage: NextPage = () => {
                   display="inline-flex"
                   p={2}
                   color="#475668"
-                  fontSize={{ lg: '14px', base: '11px' }}
+                  fontSize={['x-small', '11', '14', '14']}
                   cursor="pointer"
                   css={
                     tab.id === activeTab
@@ -138,14 +137,13 @@ const HomePage: NextPage = () => {
               <Link
                 href={'/all'}
                 onClick={() => {
-                  Mixpanel.track('view_all', {
-                    type: title,
-                  });
+                  Mixpanel.track('view_all', {});
                 }}
               >
                 <Button
                   color="brand.slate.400"
-                  size={{ base: 'xs', md: 'sm' }}
+                  fontSize={['x-small', 'sm', 'sm', 'sm']}
+                  size={{ base: 'x-small', md: 'sm' }}
                   variant="ghost"
                 >
                   View All
@@ -158,9 +156,7 @@ const HomePage: NextPage = () => {
           <Link
             href={'/all'}
             onClick={() => {
-              Mixpanel.track('view_all', {
-                type: title,
-              });
+              Mixpanel.track('view_all', {});
             }}
           >
             <Button

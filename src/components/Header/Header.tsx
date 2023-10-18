@@ -29,7 +29,7 @@ const NAV_ITEMS: Array<NavItem> = [
   { label: 'Bounties', href: '/bounties' },
   { label: 'Projects', href: '/projects' },
   {
-    label: 'All Opportunities',
+    label: 'Browse Categories',
     children: [
       {
         label: 'Content',
