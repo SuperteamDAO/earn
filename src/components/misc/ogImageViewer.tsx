@@ -57,6 +57,7 @@ const OgImageViewer: React.FC<Props> = ({ externalUrl, ...props }) => {
     <div>
       {ogImageUrl ? (
         <Image
+          bgPosition={'center'}
           alt="OG Image"
           onError={handleImageError}
           src={ogImageUrl}

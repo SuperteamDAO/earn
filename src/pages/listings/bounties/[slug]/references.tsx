@@ -18,11 +18,18 @@ interface BountyDetailsProps {
 
 const ReferenceCard = ({ link }: { link: string }) => {
   return (
-    <Box w="100%" cursor="pointer" onClick={() => window.open(link, '_blank')}>
+    <Box
+      w="100%"
+      borderWidth="2px"
+      borderColor={'gray.200'}
+      borderRadius={8}
+      cursor="pointer"
+      onClick={() => window.open(link, '_blank')}
+    >
       <OgImageViewer
         externalUrl={link}
         w={{ base: '100%', md: '400px' }}
-        h={{ base: '200px', md: '350px' }}
+        h={{ base: '200px', md: '280px' }}
         objectFit="cover"
         borderRadius={6}
       />

@@ -38,6 +38,7 @@ interface Props {
   setRegions: Dispatch<SetStateAction<Regions>>;
   type: 'open' | 'permissioned';
   timeToComplete?: string;
+  bountyDraftStatus?: string;
 }
 interface ErrorsBasic {
   title: boolean;
@@ -61,6 +62,7 @@ export const CreatebountyBasic = ({
   regions,
   setRegions,
   type,
+  bountyDraftStatus,
 }: Props) => {
   const { userInfo } = userStore();
 
@@ -449,7 +451,7 @@ export const CreatebountyBasic = ({
             }}
             variant="outline"
           >
-            Save as Draft
+            {bountyDraftStatus === 'DRAFT' ? 'Save Draft' : 'Update Bounty'}
           </Button>
         </VStack>
       </VStack>

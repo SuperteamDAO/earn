@@ -20,6 +20,7 @@ import type { Bounty, References } from '@/interface/bounty';
 import type { GrantsBasicType } from '@/interface/listings';
 import FormLayout from '@/layouts/FormLayout';
 import { userStore } from '@/store/user';
+import { getBountyDraftStatus } from '@/utils/bounty';
 import { dayjs } from '@/utils/dayjs';
 import { mergeSkills, splitSkills } from '@/utils/skills';
 
@@ -48,7 +49,6 @@ function CreateListing({ bounty, isEditMode = false, type }: Props) {
   const [regions, setRegions] = useState<Regions>(
     isEditMode ? bounty?.region || Regions.GLOBAL : Regions.GLOBAL
   );
-  //
   const skillsInfo = isEditMode ? splitSkills(bounty?.skills || []) : undefined;
   const [mainSkills, setMainSkills] = useState<MultiSelectOptions[]>(
     isEditMode ? skillsInfo?.skills || [] : []
@@ -57,7 +57,7 @@ function CreateListing({ bounty, isEditMode = false, type }: Props) {
     isEditMode ? skillsInfo?.subskills || [] : []
   );
   const [slug, setSlug] = useState<string>('');
-  //
+
   const { isOpen, onOpen } = useDisclosure();
 
   const [questions, setQuestions] = useState<Ques[]>(
@@ -195,6 +195,11 @@ function CreateListing({ bounty, isEditMode = false, type }: Props) {
     }
   };
 
+  const bountyDraftStatus = getBountyDraftStatus(
+    bounty?.status,
+    bounty?.isPublished
+  );
+
   return (
     <>
       {!userInfo?.id ||
@@ -319,6 +324,7 @@ function CreateListing({ bounty, isEditMode = false, type }: Props) {
               setSteps={setSteps}
               steps={steps}
               isEditMode={isEditMode}
+              bountyDraftStatus={bountyDraftStatus}
             />
           )}
           {steps > 1 && listingType === 'GRANT' && (

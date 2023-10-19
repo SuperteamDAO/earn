@@ -93,6 +93,7 @@ interface Props {
   type?: 'open' | 'permissioned';
   references?: References[];
   setReferences?: Dispatch<SetStateAction<References[]>>;
+  bountyDraftStatus?: string;
 }
 const Description = ({
   editorData,
@@ -105,6 +106,7 @@ const Description = ({
   references,
   setReferences,
   type,
+  bountyDraftStatus,
 }: Props) => {
   const { isOpen, onClose, onOpen } = useDisclosure();
   const [referenceError, setReferenceError] = useState<boolean>(false);
@@ -648,7 +650,7 @@ const Description = ({
             onClick={() => createDraft()}
             variant="outline"
           >
-            Save as Draft
+            {bountyDraftStatus === 'DRAFT' ? 'Save Draft' : 'Update Bounty'}
           </Button>
         </VStack>
       </Box>
