@@ -52,10 +52,11 @@ const RegionsPage = ({ slug }: { slug: string }) => {
         <Box w={'100%'}>
           <ListingSection
             type="bounties"
-            title="Bounties"
+            title="Freelance Gigs"
             sub="Bite sized tasks for freelancers"
             emoji="/assets/home/emojis/moneyman.png"
             url={`/regions/${slug}/bounties`}
+            all
           >
             {isListingsLoading && (
               <Flex

@@ -46,7 +46,7 @@ function AllBountiesPage() {
         <ListingSection
           type="bounties"
           title="Bounties"
-          sub="Bite sized tasks for freelancers"
+          sub="Competitive tasks where the best submissions win"
           emoji="/assets/home/emojis/moneyman.png"
           all
         >

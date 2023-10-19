@@ -1,4 +1,12 @@
-import { Avatar, AvatarGroup, Box, Button, Flex, Text } from '@chakra-ui/react';
+import {
+  Avatar,
+  AvatarGroup,
+  Box,
+  Button,
+  Flex,
+  Text,
+  useMediaQuery,
+} from '@chakra-ui/react';
 import axios from 'axios';
 import React, { useEffect, useState } from 'react';
 
@@ -9,8 +17,23 @@ interface BannerProps {
   setTriggerLogin: (arg0: boolean) => void;
 }
 
+const avatars = [
+  {
+    name: 'Anoushk',
+    src: 'https://res.cloudinary.com/dgvnuwspr/image/upload/v1683132586/People%20DPs/recA3Sa7t1loYvDHo.jpg',
+  },
+  {
+    name: 'Ujjwal',
+    src: 'https://res.cloudinary.com/dgvnuwspr/image/upload/v1683135404/People%20DPs/rec4XUFtbh6upVYpA.jpg',
+  },
+  {
+    name: 'Yash',
+    src: 'https://res.cloudinary.com/dgvnuwspr/image/upload/v1683135395/People%20DPs/recb4gDjdKoFDAyo7.png',
+  },
+];
+
 export default function HomeBanner({ setTriggerLogin }: BannerProps) {
-  // const [isLessThan768px] = useMediaQuery('(max-width: 768px)');
+  const [isLessThan768px] = useMediaQuery('(max-width: 768px)');
 
   const [usersCount, setUsersCount] = useState<number | null>(null);
   const { userInfo } = userStore();
@@ -31,11 +54,18 @@ export default function HomeBanner({ setTriggerLogin }: BannerProps) {
     <>
       <Box
         w={'100%'}
+        h={isLessThan768px ? '55vh' : 'auto'}
+        maxH={'500px'}
         mb={8}
         mx={'auto'}
-        p={10}
-        bgImage="url('/assets/home/display/banner.png')"
+        p={{ base: '6', md: '10' }}
+        bgImage={
+          isLessThan768px
+            ? "url('/assets/home/display/banner-mobile.png')"
+            : "url('/assets/home/display/banner.png')"
+        }
         bgSize={'cover'}
+        bgPosition={'center'}
         rounded={'md'}
       >
         <Text
@@ -47,13 +77,23 @@ export default function HomeBanner({ setTriggerLogin }: BannerProps) {
           Unlock your crypto
           <br /> earning potential
         </Text>
-        <Text mt={'4'} color={'white'} fontSize={'lg'}>
-          Explore bounties, projects, and grant opportunities for
-          <br />
-          developers and non-technical talent alike
+        <Text
+          maxW={{ base: '100%', md: '460px' }}
+          mt={isLessThan768px ? '2' : '4'}
+          color={'white'}
+          fontSize={{ base: 'sm', md: 'lg' }}
+        >
+          Explore bounties, projects, and grant opportunities for developers and
+          non-technical talent alike
         </Text>
-        <Flex align={'center'} mt={'1.5625rem'}>
+        <Flex
+          align={'start'}
+          direction={isLessThan768px ? 'column' : 'row'}
+          gap={isLessThan768px ? '3' : '4'}
+          mt={'4'}
+        >
           <Button
+            w={isLessThan768px ? '100%' : 'auto'}
             px={'2.25rem'}
             py={'0.75rem'}
             color={'#3223A0'}
@@ -66,28 +106,24 @@ export default function HomeBanner({ setTriggerLogin }: BannerProps) {
           >
             Sign Up
           </Button>
-          <AvatarGroup ml={'2.875rem'} max={3} size="sm">
-            <Avatar
-              borderWidth={'0.8px'}
-              name="Anoushk"
-              src="https://res.cloudinary.com/dgvnuwspr/image/upload/v1683132586/People%20DPs/recA3Sa7t1loYvDHo.jpg"
-            />
-            <Avatar
-              borderWidth={'0.8px'}
-              name="Ujjwal"
-              src="https://res.cloudinary.com/dgvnuwspr/image/upload/v1683135404/People%20DPs/rec4XUFtbh6upVYpA.jpg"
-            />
-            <Avatar
-              borderWidth={'0.8px'}
-              name="Yash"
-              src="https://res.cloudinary.com/dgvnuwspr/image/upload/v1683135395/People%20DPs/recb4gDjdKoFDAyo7.png"
-            />
-          </AvatarGroup>
-          {usersCount !== null && (
-            <Text ml={'0.6875rem'} color="white" fontSize={'0.875rem'}>
-              Join {usersCount.toLocaleString()}+ others
-            </Text>
-          )}
+          <Flex align="center">
+            <AvatarGroup max={3} size="sm">
+              {avatars.map((avatar, index) => (
+                <Avatar
+                  key={index}
+                  borderWidth={'1px'}
+                  borderColor={'#49139c'}
+                  name={avatar.name}
+                  src={avatar.src}
+                />
+              ))}
+            </AvatarGroup>
+            {usersCount !== null && (
+              <Text ml={'0.6875rem'} color="white" fontSize={'0.875rem'}>
+                Join {usersCount.toLocaleString()}+ others
+              </Text>
+            )}
+          </Flex>
         </Flex>
       </Box>
     </>
