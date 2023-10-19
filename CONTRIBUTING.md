@@ -25,16 +25,21 @@ We expect all contributors to act professionally and respectfully, and we expect
     git checkout -b my-new-feature
     ```
 3. **Make your changes:** Make the necessary changes to the code or documentation.
-4. **Commit your changes:** Once you've made your changes, commit them.
+4. **Check for Lint Errors:** To maintain code quality, run the linting process.
+    ```bash
+    yarn lint
+    ```
+> **Note:** If errors occur, run `yarn format` to fix and remove lint errors before committing.
+5. **Commit your changes:** Once you've made your changes, commit them.
     ```bash
     git add .
     git commit -m "Add some feature"
     ```
-5. **Push your changes:** Push the changes to your new branch on your fork.
+6. **Push your changes:** Push the changes to your new branch on your fork.
     ```bash
     git push origin my-new-feature
     ```
-6. **Create a pull request:** Go to your fork on GitHub and click the 'Compare & pull request' button next to your new branch to create a new pull request.
+7. **Create a pull request:** Go to your fork on GitHub and click the 'Compare & pull request' button next to your new branch to create a new pull request.
 
 ### Pull Requests
 
