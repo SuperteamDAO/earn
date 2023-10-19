@@ -80,6 +80,7 @@ model Bounties {
   SubscribeBounty      SubscribeBounty[]
   timeToComplete       String?
   hackathonprize       Boolean            @default(false)
+  winners              Json?
 
   @@index([id, slug])
   @@index([sponsorId])

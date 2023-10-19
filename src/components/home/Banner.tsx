@@ -87,7 +87,7 @@ export default function HomeBanner({ setTriggerLogin }: BannerProps) {
           non-technical talent alike
         </Text>
         <Flex
-          align={'start'}
+          align={isLessThan768px ? 'start' : 'center'}
           direction={isLessThan768px ? 'column' : 'row'}
           gap={isLessThan768px ? '3' : '4'}
           mt={'4'}
