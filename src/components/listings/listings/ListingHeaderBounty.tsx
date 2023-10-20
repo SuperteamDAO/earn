@@ -217,13 +217,14 @@ function ListingHeader({
                       <Tooltip
                         px={4}
                         py={2}
+                        color="brand.slate.500"
                         fontFamily={'Inter'}
                         fontSize="sm"
                         bg="white"
                         borderRadius={'lg'}
                         label={
                           type === 'permissioned'
-                            ? 'Projects are like short-term freelance gigs that you can apply for. If and when selected as the winner, you can begin executing the scope of work mentioned in this listing.'
+                            ? 'A Project is a short-term gig where sponsors solicit applications from multiple people, and select the best one to work on the Project.'
                             : 'This is an open competition bounty! Anyone can start working and submit their work before the deadline!'
                         }
                       >

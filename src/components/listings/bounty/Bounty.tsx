@@ -195,10 +195,14 @@ function CreateListing({ bounty, isEditMode = false, type }: Props) {
     }
   };
 
+  const newBounty = bounty?.id === undefined;
+
   const bountyDraftStatus = getBountyDraftStatus(
     bounty?.status,
     bounty?.isPublished
   );
+
+  const isNewOrDraft = bountyDraftStatus === 'DRAFT' || newBounty === true;
 
   return (
     <>
@@ -324,7 +328,7 @@ function CreateListing({ bounty, isEditMode = false, type }: Props) {
               setSteps={setSteps}
               steps={steps}
               isEditMode={isEditMode}
-              bountyDraftStatus={bountyDraftStatus}
+              isNewOrDraft={isNewOrDraft}
             />
           )}
           {steps > 1 && listingType === 'GRANT' && (

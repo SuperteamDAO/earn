@@ -47,7 +47,7 @@ interface Props {
   regions: Regions;
   setRegions: Dispatch<SetStateAction<Regions>>;
   type: 'open' | 'permissioned';
-  bountyDraftStatus?: string;
+  isNewOrDraft?: boolean;
 }
 export const CreateBounty = ({
   steps,
@@ -77,7 +77,7 @@ export const CreateBounty = ({
   type,
   references,
   setReferences,
-  bountyDraftStatus,
+  isNewOrDraft,
 }: Props) => {
   // handles the info from basic form
 
@@ -98,7 +98,7 @@ export const CreateBounty = ({
           setSteps={setSteps}
           setbountyBasic={setBountyBasic}
           type={type}
-          bountyDraftStatus={bountyDraftStatus}
+          isNewOrDraft={isNewOrDraft}
         />
       )}
       {steps === 3 && (
@@ -114,7 +114,7 @@ export const CreateBounty = ({
           draftLoading={draftLoading}
           references={references}
           setReferences={setReferences}
-          bountyDraftStatus={bountyDraftStatus}
+          isNewOrDraft={isNewOrDraft}
         />
       )}
       {steps === 4 && (
@@ -125,7 +125,7 @@ export const CreateBounty = ({
           createDraft={createDraft}
           setQuestions={setQuestions}
           questions={questions}
-          bountyDraftStatus={bountyDraftStatus}
+          isNewOrDraft={isNewOrDraft}
         />
       )}
 
@@ -144,7 +144,7 @@ export const CreateBounty = ({
           mainSkills={mainSkills}
           bountyBasic={bountybasic}
           editorData={editorData}
-          bountyDraftStatus={bountyDraftStatus}
+          isNewOrDraft={isNewOrDraft}
         />
       )}
     </>

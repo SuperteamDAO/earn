@@ -13,7 +13,7 @@ interface Props {
   questions: Ques[];
   setQuestions: Dispatch<SetStateAction<Ques[]>>;
   isEditMode: boolean;
-  bountyDraftStatus?: string;
+  isNewOrDraft?: boolean;
 }
 export type QuestionType =
   | 'text'
@@ -40,7 +40,7 @@ const Builder = ({
   draftLoading,
   questions,
   setQuestions,
-  bountyDraftStatus,
+  isNewOrDraft,
 }: Props) => {
   const [error, setError] = useState<ErrorState[]>([]);
 
@@ -176,7 +176,7 @@ const Builder = ({
             }}
             variant="outline"
           >
-            {bountyDraftStatus === 'DRAFT' ? 'Save Draft' : 'Update Bounty'}
+            {isNewOrDraft ? 'Save Draft' : 'Update Bounty'}
           </Button>
         </VStack>
       </VStack>
