@@ -12,6 +12,11 @@ interface Eligibility {
   type?: QuestionType;
 }
 
+interface References {
+  order: number;
+  link: string;
+}
+
 interface Rewards {
   first?: number;
   second?: number;
@@ -32,6 +37,7 @@ interface Bounty {
   skills?: Skills;
   deadline?: string;
   eligibility?: Eligibility[];
+  references?: References[];
   status?: BountyStatus;
   isActive?: boolean;
   isArchived?: boolean;
@@ -48,11 +54,13 @@ interface Bounty {
   source?: string;
   sourceDetails?: string;
   type?: BountyType | string;
+  applicationType?: 'fixed' | 'rolling';
   totalWinnersSelected?: number;
   region?: Regions;
   totalPaymentsMade?: number;
   isWinnersAnnounced?: boolean;
   templateId?: string;
+  timeToComplete?: string;
   hackathonprize?: boolean;
 }
 
@@ -67,5 +75,6 @@ export type {
   BountyStatus,
   BountyWithSubmissions,
   Eligibility,
+  References,
   Rewards,
 };

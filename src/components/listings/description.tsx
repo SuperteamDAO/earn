@@ -1,3 +1,4 @@
+import { DeleteIcon } from '@chakra-ui/icons';
 import {
   Box,
   Button,
@@ -41,7 +42,9 @@ import {
   MdOutlineHorizontalRule,
 } from 'react-icons/md';
 
-import type { BountyBasicType } from './bounty/Createbounty';
+import type { References } from '@/interface/bounty';
+
+import { ReferenceCard } from './bounty/reference-input';
 
 const LinkModal = ({
   isOpen,
@@ -83,24 +86,30 @@ interface Props {
   editorData: string | undefined;
   setSteps: Dispatch<SetStateAction<number>>;
   createDraft: () => void;
-  bountyBasics?: BountyBasicType;
   draftLoading?: boolean;
   isEditMode?: boolean;
   setBountyRequirements?: Dispatch<SetStateAction<any | undefined>>;
   bountyRequirements?: string | undefined;
+  type?: 'open' | 'permissioned';
+  references?: References[];
+  setReferences?: Dispatch<SetStateAction<References[]>>;
+  isNewOrDraft?: boolean;
 }
 const Description = ({
   editorData,
   setEditorData,
   setSteps,
   createDraft,
-  bountyBasics,
   draftLoading,
-  isEditMode,
   bountyRequirements,
   setBountyRequirements,
+  references,
+  setReferences,
+  type,
+  isNewOrDraft,
 }: Props) => {
   const { isOpen, onClose, onOpen } = useDisclosure();
+  const [referenceError, setReferenceError] = useState<boolean>(false);
   const editor = useEditor({
     extensions: [
       Underline,
@@ -163,6 +172,15 @@ const Description = ({
     },
     [editor]
   );
+
+  const handleDeleteReference = () => {
+    if (references && setReferences) {
+      const temp = references.filter(
+        (_el, index) => index !== references.length - 1
+      );
+      setReferences(temp);
+    }
+  };
 
   return (
     <>
@@ -531,7 +549,7 @@ const Description = ({
             </Button>
           </Flex>
 
-          <Box w={'full'} h={'full'}>
+          <Box w={'full'} h={'full'} mb={10}>
             <div style={{ height: '100% !important' }} className="reset">
               <EditorContent
                 id="reset-des"
@@ -542,12 +560,80 @@ const Description = ({
               />
             </div>
           </Box>
+          {type === 'permissioned' && (
+            <>
+              <Flex
+                align={'start'}
+                justify={'start'}
+                direction={'column'}
+                w="100%"
+                mb={3}
+              >
+                <Text
+                  color={'brand.slate.500'}
+                  fontSize={'15px'}
+                  fontWeight={600}
+                >
+                  Deliverable References
+                </Text>
+                <Text
+                  mt={'0px !important'}
+                  color={'#94A3B8'}
+                  fontSize={'0.88rem'}
+                >
+                  Add links of other projects/websites as references for the
+                  kind of deliverables you are looking for.
+                </Text>
+              </Flex>
+              {setReferences &&
+                references?.map((reference, index) => {
+                  return (
+                    <Flex key={index} align="end" justify="space-end" w="full">
+                      <ReferenceCard
+                        setReferenceError={setReferenceError}
+                        index={index}
+                        curentReference={reference}
+                        setReferences={setReferences}
+                      />
+                      {index === references.length - 1 && (
+                        <Button ml={4} onClick={() => handleDeleteReference()}>
+                          <DeleteIcon />
+                        </Button>
+                      )}
+                    </Flex>
+                  );
+                })}
+              {references && setReferences && references.length < 6 && (
+                <Button
+                  w={'full'}
+                  h={12}
+                  mt={2}
+                  color={'#64758B'}
+                  bg={'#F1F5F9'}
+                  onClick={() => {
+                    setReferences([
+                      ...references,
+                      {
+                        order: (references?.length || 0) + 1,
+                        link: '',
+                      },
+                    ]);
+                  }}
+                >
+                  + Add Reference
+                </Button>
+              )}
+            </>
+          )}
         </VStack>
-        <VStack gap={4} w={'full'} pt={10}>
+        <VStack gap={4} w={'full'} mt={16}>
           <Button
             w="100%"
             onClick={() => {
-              if (bountyBasics?.type === 'open') {
+              if (referenceError) {
+                return;
+              }
+              if (type === 'open') {
                 setSteps(5);
                 return;
               }
@@ -564,7 +650,7 @@ const Description = ({
             onClick={() => createDraft()}
             variant="outline"
           >
-            {isEditMode ? 'Update' : 'Save as Draft'}
+            {isNewOrDraft ? 'Save Draft' : 'Update Bounty'}
           </Button>
         </VStack>
       </Box>

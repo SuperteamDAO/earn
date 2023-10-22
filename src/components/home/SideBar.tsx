@@ -18,16 +18,7 @@ import { tokenList } from '@/constants';
 import type { User } from '@/interface/user';
 import { getURL } from '@/utils/validUrl';
 
-import type { JobsType } from '../../interface/listings';
-import type { SponsorType } from '../../interface/sponsor';
-
 interface SideBarProps {
-  jobs?:
-    | {
-        jobs: JobsType;
-        sponsorInfo: SponsorType;
-      }[]
-    | undefined;
   total: number;
   listings: number;
   earners?: User[];

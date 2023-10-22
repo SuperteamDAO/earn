@@ -43,7 +43,7 @@ export const SubmissionSuccess = ({ isOpen, onClose, eligibility }: Props) => {
               fontWeight={500}
               textAlign={'center'}
             >
-              {eligibility === 'premission-less'
+              {eligibility === 'permission-less'
                 ? 'Thanks for the submission! The sponsors will review your listing submission and choose a winner soon - we will notify you as soon as they do so!'
                 : 'Thanks for the submission! The sponsors will review your application and announce a winner soon - we will notify you as soon as they do so!'}
             </Text>

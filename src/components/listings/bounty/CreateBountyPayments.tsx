@@ -53,6 +53,7 @@ interface Props {
   bountyPayment: any;
   setBountyPayment: Dispatch<SetStateAction<any | undefined>>;
   isEditMode: boolean;
+  isNewOrDraft?: boolean;
 }
 export const CreatebountyPayment = ({
   createDraft,
@@ -62,6 +63,7 @@ export const CreatebountyPayment = ({
   bountyPayment,
   setBountyPayment,
   isEditMode,
+  isNewOrDraft,
 }: Props) => {
   const {
     isOpen: confirmIsOpen,
@@ -359,7 +361,7 @@ export const CreatebountyPayment = ({
             onClick={() => handleSubmit(isEditMode, 'DRAFT')}
             variant={isEditMode ? 'solid' : 'outline'}
           >
-            {isEditMode ? 'Update' : 'Save as Draft'}
+            {isNewOrDraft ? 'Save Draft' : 'Update Bounty'}
           </Button>
         </VStack>
       </VStack>

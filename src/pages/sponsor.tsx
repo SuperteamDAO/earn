@@ -14,7 +14,7 @@ import axios from 'axios';
 import { useRouter } from 'next/router';
 import { useEffect, useState } from 'react';
 
-import { Footer } from '../components/Footer';
+import Footer from '../components/Footer/Footer';
 
 // Images
 const SponsorPage = '/assets/landingsponsor/displays/sponsorpage.png';
@@ -79,19 +79,6 @@ const Sponsor = () => {
 
     fetchTotals();
   }, []);
-
-  useEffect(() => {
-    const html = document.querySelector('html');
-    try {
-      if (isLessThan600px) {
-        html!.style.fontSize = '60%';
-      } else {
-        html!.style.fontSize = '100%';
-      }
-    } catch (error) {
-      console.log(error);
-    }
-  }, [isLessThan600px]);
 
   useEffect(() => {
     changeBackground();
@@ -238,7 +225,7 @@ const Sponsor = () => {
               Create Listings
             </Text>
             <Text color="gray.700" fontSize="2.75rem" fontWeight={700}>
-              Outsource Work as Bounties, Jobs & Grants
+              Outsource Work as Bounties, Projects & Grants
             </Text>
             <Text color="gray.500" fontSize="1.5rem" fontWeight={400}>
               Superteam Earn helps Solana founders save time and outsource all
@@ -562,7 +549,7 @@ const Sponsor = () => {
             fontWeight={400}
             textAlign="start"
           >
-            Whether you have a bounty, a grant, or a full-time job that you need
+            Whether you have a bounty, a project, or a grant that you need
             filled, we&apos;re here to help (for free!)
           </Text>
 

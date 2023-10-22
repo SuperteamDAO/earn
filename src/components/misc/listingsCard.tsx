@@ -13,17 +13,16 @@ import {
   useMediaQuery,
 } from '@chakra-ui/react';
 import type { BountyType } from '@prisma/client';
-import parse from 'html-react-parser';
 import { useRouter } from 'next/router';
 import { useEffect, useState } from 'react';
 import { toast, Toaster } from 'react-hot-toast';
 import { TiTick } from 'react-icons/ti';
 
+import { tokenList } from '@/constants';
 import type { BountyStatus } from '@/interface/bounty';
 import { dayjs } from '@/utils/dayjs';
 import { Mixpanel } from '@/utils/mixpanel';
 
-import { tokenList } from '../../constants';
 import { TalentStore } from '../../store/talent';
 import { userStore } from '../../store/user';
 import { updateNotification } from '../../utils/functions';
@@ -34,8 +33,9 @@ type ListingSectionProps = {
   title: string;
   sub: string;
   emoji: string;
-  type: 'bounties' | 'jobs' | 'grants';
+  type: 'bounties' | 'grants';
   url?: string;
+  all?: boolean;
 };
 
 export const ListingSection = ({
@@ -45,6 +45,7 @@ export const ListingSection = ({
   emoji,
   type,
   url,
+  all,
 }: ListingSectionProps) => {
   const router = useRouter();
 
@@ -101,7 +102,9 @@ export const ListingSection = ({
             {sub}
           </Text>
         </Flex>
-        <Flex display={router?.query?.category !== type ? 'block' : 'none'}>
+        <Flex
+          display={!all && router?.query?.category !== type ? 'block' : 'none'}
+        >
           <Link
             href={
               url ||
@@ -121,10 +124,12 @@ export const ListingSection = ({
           </Link>
         </Flex>
       </HStack>
-      <Flex direction={'column'} rowGap={'2.625rem'}>
+      <Flex direction={'column'} rowGap={'1'}>
         {children}
       </Flex>
-      <Flex display={router?.query?.category !== type ? 'block' : 'none'}>
+      <Flex
+        display={!all && router?.query?.category !== type ? 'block' : 'none'}
+      >
         <Link
           href={
             url ||
@@ -156,13 +161,6 @@ export const ListingSection = ({
   );
 };
 
-const textLimiter = (text: string, len: number) => {
-  if (text.length > len) {
-    return `${text.slice(0, len)}...`;
-  }
-  return text;
-};
-
 interface BountyProps {
   title?: string;
   rewardAmount?: number;
@@ -173,6 +171,7 @@ interface BountyProps {
   slug?: string;
   sponsorName?: string;
   type?: BountyType | string;
+  applicationType?: 'fixed' | 'rolling';
 }
 
 export const BountiesCard = ({
@@ -184,13 +183,14 @@ export const BountiesCard = ({
   token,
   slug = '',
   sponsorName,
+  applicationType,
 }: BountyProps) => {
   const router = useRouter();
   const [isMobile] = useMediaQuery('(max-width: 768px)');
   return (
     <>
       <Link
-        px={3}
+        px={isMobile ? 1 : 4}
         py={4}
         borderRadius={5}
         _hover={{
@@ -210,11 +210,11 @@ export const BountiesCard = ({
           justify="space-between"
           w={{ base: '100%', md: 'brand.120' }}
         >
-          <Flex w="100%" h={16}>
+          <Flex w="100%" h={isMobile ? 14 : 16}>
             <Image
-              w={16}
-              h={16}
-              mr={5}
+              w={isMobile ? 14 : 16}
+              h={isMobile ? 14 : 16}
+              mr={isMobile ? 3 : 5}
               alt={sponsorName}
               rounded={5}
               src={logo || `${router.basePath}/assets/images/sponsor-logo.png`}
@@ -222,7 +222,7 @@ export const BountiesCard = ({
             <Flex justify={'space-between'} direction={'column'} w={'full'}>
               <Text
                 color="brand.slate.700"
-                fontSize={['xs', 'xs', 'sm', 'sm']}
+                fontSize={['xs', 'xs', 'md', 'md']}
                 fontWeight={600}
                 _hover={{
                   textDecoration: 'underline',
@@ -250,28 +250,26 @@ export const BountiesCard = ({
                 {sponsorName}
               </Text>
               <Flex align={'center'} gap={isMobile ? 1 : 3}>
-                <Flex align={'center'} justify="start">
+                <>
                   <Image
-                    w={4}
-                    h={4}
-                    mr={1}
-                    alt={token}
-                    rounded="full"
+                    h="4"
+                    ml={type === 'open' ? -0.5 : 0}
+                    alt={type}
                     src={
-                      tokenList.find((ele) => {
-                        return ele.tokenSymbol === token;
-                      })?.icon
+                      type === 'open'
+                        ? '/assets/icons/bolt.svg'
+                        : '/assets/icons/briefcase.svg'
                     }
                   />
-
                   <Text
-                    color={'brand.slate.700'}
-                    fontSize={['x-small', 'xs', 'sm', 'sm']}
-                    fontWeight={'600'}
+                    ml={isMobile ? '-1' : type === 'open' ? '-3' : '-2.5'}
+                    color="gray.500"
+                    fontSize={['x-small', 'xs', 'xs', 'xs']}
+                    fontWeight={500}
                   >
-                    {rewardAmount}
+                    {type === 'open' ? 'Bounty' : 'Project'}
                   </Text>
-                </Flex>
+                </>
                 <Text
                   color={'brand.slate.300'}
                   fontSize={['xx-small', 'xs', 'sm', 'sm']}
@@ -279,161 +277,51 @@ export const BountiesCard = ({
                   |
                 </Text>
                 <Text
-                  color={'brand.slate.500'}
-                  fontSize={['x-small', 'xs', 'sm', 'sm']}
+                  color={'gray.500'}
+                  fontSize={['x-small', 'xs', 'xs', 'xs']}
                 >
-                  {dayjs().isBefore(deadline)
+                  {applicationType === 'rolling'
+                    ? 'Rolling Deadline'
+                    : dayjs().isBefore(dayjs(deadline))
                     ? `Closing ${dayjs(deadline).fromNow()}`
                     : `Closed ${dayjs(deadline).fromNow()}`}
                 </Text>
               </Flex>
             </Flex>
           </Flex>
-          <Button
-            minW={24}
-            h={isMobile ? 7 : 9}
-            px={6}
-            fontSize={['xx-small', 'xs', 'sm', 'sm']}
-            variant="outlineSecondary"
-          >
-            {dayjs().isAfter(deadline)
-              ? 'View'
-              : type === 'permissioned'
-              ? 'Apply'
-              : 'Submit'}
-          </Button>
-        </Flex>
-      </Link>
-    </>
-  );
-};
-interface JobsProps {
-  title: string;
-  description?: string;
-  max?: number;
-  min?: number;
-  maxEq?: number;
-  minEq?: number;
-  skills?: string;
-  logo?: string;
-  orgName: string;
-  link?: string;
-  location?: string;
-}
-export const JobsCard = ({
-  description,
-  max,
-  min,
-  maxEq,
-  minEq,
-  title,
-  logo,
-  orgName,
-  link,
-  location,
-}: JobsProps) => {
-  const [isMobile] = useMediaQuery('(max-width: 768px)');
-  return (
-    <Link
-      p={2}
-      borderRadius={5}
-      _hover={{
-        textDecoration: 'none',
-        bg: 'gray.100',
-      }}
-      href={link}
-      isExternal
-      onClick={() => {
-        Mixpanel.track('job_clicked', {
-          element: 'title',
-          'Job Title': title,
-        });
-      }}
-    >
-      <Flex
-        align="start"
-        justify="space-between"
-        w={{ base: '100%', md: 'brand.120' }}
-        h={16}
-      >
-        <Flex justify="start">
-          <Image
-            w={16}
-            h={16}
-            mr={5}
-            alt={'company logo'}
-            rounded={5}
-            src={logo || '/assets/home/placeholder/ph2.png'}
-          />
-          <Flex justify={'space-between'} direction={'column'}>
-            <Text
-              color="brand.slate.700"
-              fontSize={['xs', 'xs', 'sm', 'sm']}
-              fontWeight="600"
-            >
-              {isMobile ? textLimiter(title, 20) : textLimiter(title, 40)}
-            </Text>
-            <Text
-              color="brand.slate.400"
-              fontSize={['xs', 'xs', 'sm', 'sm']}
-              fontWeight={400}
-            >
-              {description
-                ? parse(
-                    description?.startsWith('"')
-                      ? JSON.parse(description || '')?.slice(0, 100)
-                      : (description ?? '')?.slice(0, 100)
-                  )
-                : orgName}
-            </Text>
-            <Flex align={'center'}>
-              {!!min && !!max && (
-                <Text
-                  mr={3}
-                  color={'brand.slate.500'}
-                  fontSize={['xs', 'xs', 'sm', 'sm']}
-                >
-                  <Text as="span" fontWeight="700">
-                    ${' '}
-                  </Text>
-                  {min.toLocaleString()} - {max.toLocaleString()}
-                </Text>
-              )}
-              {!!minEq && !!maxEq && (
-                <Text
-                  mr={3}
-                  color={'brand.slate.500'}
-                  fontSize={['xs', 'xs', 'sm', 'sm']}
-                >
-                  {minEq.toLocaleString()}% - {maxEq.toLocaleString()}% Equity
-                </Text>
-              )}
-              {!!location && (
-                <Text
-                  key={''}
-                  display={{ base: 'none', md: 'block' }}
-                  mr={3}
-                  color={'brand.slate.500'}
-                  fontSize={['xs', 'xs', 'sm', 'sm']}
-                >
-                  {location}
-                </Text>
-              )}
+          <Flex align={'center'} justify="start" mr={3}>
+            <Image
+              w={4}
+              h={4}
+              mr={1}
+              alt={token}
+              rounded="full"
+              src={
+                tokenList.find((ele) => {
+                  return ele.tokenSymbol === token;
+                })?.icon
+              }
+            />
+            <Flex align="baseline" gap={1}>
+              <Text
+                color={'brand.slate.600'}
+                fontSize={['xs', 'xs', 'md', 'md']}
+                fontWeight={'600'}
+              >
+                {rewardAmount?.toLocaleString()}
+              </Text>
+              <Text
+                color={'gray.400'}
+                fontSize={['xs', 'xs', 'md', 'md']}
+                fontWeight={500}
+              >
+                {token}
+              </Text>
             </Flex>
           </Flex>
         </Flex>
-
-        <Button
-          minW={24}
-          h={isMobile ? 7 : 9}
-          px={6}
-          fontSize={['xs', 'xs', 'sm', 'sm']}
-          variant="outlineSecondary"
-        >
-          Apply
-        </Button>
-      </Flex>
-    </Link>
+      </Link>
+    </>
   );
 };
 
@@ -458,7 +346,8 @@ export const GrantsCard = ({
   return (
     <>
       <Link
-        p={2}
+        px={isMobile ? 1 : 4}
+        py={4}
         borderRadius={5}
         _hover={{
           textDecoration: 'none',
@@ -473,25 +362,27 @@ export const GrantsCard = ({
         }}
       >
         <Flex
-          align="start"
+          align="center"
           justify="space-between"
           w={{ base: '100%', md: 'brand.120' }}
-          h={16}
         >
-          <Flex justify="start" h={16}>
+          <Flex justify="start" h={isMobile ? 14 : 16}>
             <Image
-              w={16}
-              h={16}
-              mr={5}
+              w={isMobile ? 14 : 16}
+              h={isMobile ? 14 : 16}
+              mr={isMobile ? 3 : 5}
               alt={'company logo'}
               rounded={5}
               src={logo || '/assets/home/placeholder/ph3.png'}
             />
-            <Flex justify="start" direction="column">
+            <Flex justify={'space-between'} direction={'column'} w={'full'}>
               <Text
                 color="brand.slate.700"
-                fontSize={['xs', 'xs', 'sm', 'sm']}
+                fontSize={['xs', 'xs', 'md', 'md']}
                 fontWeight="600"
+                _hover={{
+                  textDecoration: 'underline',
+                }}
                 style={{
                   display: '-webkit-box',
                   WebkitLineClamp: 1,
@@ -502,7 +393,7 @@ export const GrantsCard = ({
                 {title}
               </Text>
               <Text
-                color="brand.slate.400"
+                color="brand.slate.500"
                 fontSize={['xs', 'xs', 'sm', 'sm']}
                 fontWeight="400"
               >
@@ -518,7 +409,7 @@ export const GrantsCard = ({
                     isMobile
                       ? {
                           display: '-webkit-box',
-                          WebkitLineClamp: 2,
+                          WebkitLineClamp: 1,
                           WebkitBoxOrient: 'vertical',
                           overflow: 'hidden',
                         }
@@ -577,35 +468,17 @@ export const CategoryBanner = ({ type }: { type: string }) => {
       desc: 'If delighting users with eye-catching designs is your jam, you should check out the earning opportunities below.',
       icon: '/assets/category_assets/icon/design.png',
     },
-    Growth: {
-      bg: `/assets/category_assets/bg/growth.png`,
-      color: '#BFA8FE',
-      desc: 'If you’re a master of campaigns, building relationships, or data-driven strategy, we have earning opportunities for you.',
-      icon: '/assets/category_assets/icon/growth.png',
-    },
     Content: {
       bg: `/assets/category_assets/bg/content.png`,
       color: '#FEB8A8',
       desc: 'If you can write insightful essays, make stunning videos, or create killer memes, the opportunities below are calling your name.',
       icon: '/assets/category_assets/icon/content.png',
     },
-    Frontend: {
+    Development: {
       desc: 'If you are a pixel-perfectionist who creates interfaces that users love, check out the earning opportunities below.',
       bg: `/assets/category_assets/bg/frontend.png`,
       color: '#FEA8EB',
       icon: '/assets/category_assets/icon/frontend.png',
-    },
-    Backend: {
-      bg: `/assets/category_assets/bg/backend.png`,
-      desc: 'Opportunities to build high-performance databases, on and off-chain. ',
-      color: '#FEEBA8',
-      icon: '/assets/category_assets/icon/backend.png',
-    },
-    Blockchain: {
-      bg: `/assets/category_assets/bg/contract.png`,
-      desc: 'If you can write complex code that can communicate with chains, these opportunities are made just for you.',
-      color: '#A8FEC0',
-      icon: '/assets/category_assets/icon/contract.png',
     },
     Hyperdrive: {
       bg: `/assets/category_assets/bg/contract.png`,
@@ -660,7 +533,6 @@ export const CategoryBanner = ({ type }: { type: string }) => {
         direction={{ md: 'row', base: 'column' }}
         w={{ md: 'brand.120', base: '100%' }}
         h={{ md: '7.375rem', base: 'fit-content' }}
-        mt={6}
         mb={8}
         mx={'auto'}
         p={6}

@@ -70,8 +70,8 @@ const Index = () => {
                 fontSize={'0.9rem'}
                 fontWeight={400}
               >
-                List a bounty, job, or grant for your Solana project and find
-                your next contributor..
+                List a bounty, or grant for your project and find your next
+                contributor..
               </Text>
               <Box flexDir={'column'} gap={5} display={'flex'} my={6}>
                 <Flex align={'center'} gap={2}>

@@ -1,39 +1,23 @@
 /* eslint-disable no-nested-ternary */
 import { ArrowForwardIcon } from '@chakra-ui/icons';
-import {
-  Box,
-  Button,
-  Flex,
-  HStack,
-  Image,
-  Link,
-  Text,
-  useMediaQuery,
-} from '@chakra-ui/react';
+import { Box, Button, Flex, HStack, Image, Link, Text } from '@chakra-ui/react';
 import { css } from '@emotion/react';
 import axios from 'axios';
 import type { NextPage } from 'next';
-import { title } from 'process';
 import { useEffect, useState } from 'react';
 
 import { BountyTabs } from '@/components/listings/bounty/Tabs';
-import {
-  GrantsCard,
-  JobsCard,
-  ListingSection,
-} from '@/components/misc/listingsCard';
+import { GrantsCard, ListingSection } from '@/components/misc/listingsCard';
 import EmptySection from '@/components/shared/EmptySection';
 import Loading from '@/components/shared/Loading';
 import type { Bounty } from '@/interface/bounty';
 import type { Grant } from '@/interface/grant';
-import type { Job } from '@/interface/job';
 import Home from '@/layouts/Home';
 import { Mixpanel } from '@/utils/mixpanel';
 
 interface Listings {
   bounties?: Bounty[];
   grants?: Grant[];
-  jobs?: Job[];
 }
 
 const HomePage: NextPage = () => {
@@ -44,7 +28,6 @@ const HomePage: NextPage = () => {
   const [listings, setListings] = useState<Listings>({
     bounties: [],
     grants: [],
-    jobs: [],
   });
 
   const getListings = async () => {
@@ -73,33 +56,15 @@ const HomePage: NextPage = () => {
     getListings();
   }, []);
 
-  const [isLessThan1200px] = useMediaQuery('(max-width: 1200px)');
-  const [isLessThan850px] = useMediaQuery('(max-width: 850px)');
-  const [isLessThan768px] = useMediaQuery('(max-width: 768px)');
-
   const tabs = BountyTabs({ isListingsLoading, bounties });
 
   const [activeTab, setActiveTab] = useState<string>(tabs[0]!.id);
 
   useEffect(() => {
-    const html = document.querySelector('html');
     Mixpanel.track('home_page_load');
-    try {
-      if (isLessThan768px) {
-        html!.style.fontSize = '100%';
-      } else if (isLessThan850px) {
-        html!.style.fontSize = '60%';
-      } else if (isLessThan1200px) {
-        html!.style.fontSize = '70%';
-      } else {
-        html!.style.fontSize = '100%';
-      }
-    } catch (error) {
-      console.log(error);
-    }
-  }, [isLessThan1200px, isLessThan850px, isLessThan768px]);
+  }, []);
   return (
-    <Home>
+    <Home type="home">
       <Box w={'100%'}>
         <Box my={10}>
           <HStack
@@ -122,10 +87,10 @@ const HomePage: NextPage = () => {
               <Text
                 pr={2}
                 color={'#334155'}
-                fontSize={{ base: 14, md: 16 }}
+                fontSize={['13', '14', '16', '16']}
                 fontWeight={'600'}
               >
-                Bounties
+                Freelance Gigs
               </Text>
               <Text
                 display={['none', 'none', 'block', 'block']}
@@ -145,7 +110,7 @@ const HomePage: NextPage = () => {
                   display="inline-flex"
                   p={2}
                   color="#475668"
-                  fontSize={{ lg: '14px', base: '11px' }}
+                  fontSize={['x-small', '11', '14', '14']}
                   cursor="pointer"
                   css={
                     tab.id === activeTab
@@ -170,17 +135,18 @@ const HomePage: NextPage = () => {
             </Flex>
             <Flex>
               <Link
-                href={'/bounties'}
+                href={'/all'}
                 onClick={() => {
-                  Mixpanel.track('view_all', {
-                    type: title,
-                  });
+                  Mixpanel.track('view_all', {});
                 }}
               >
                 <Button
+                  px={2}
+                  py={1}
                   color="brand.slate.400"
-                  size={{ base: 'xs', md: 'sm' }}
-                  variant="ghost"
+                  fontSize={['x-small', 'sm', 'sm', 'sm']}
+                  size={{ base: 'x-small', md: 'sm' }}
+                  variant={'ghost'}
                 >
                   View All
                 </Button>
@@ -190,11 +156,9 @@ const HomePage: NextPage = () => {
 
           {tabs.map((tab) => tab.id === activeTab && tab.content)}
           <Link
-            href={'/bounties'}
+            href={'/all'}
             onClick={() => {
-              Mixpanel.track('view_all', {
-                type: title,
-              });
+              Mixpanel.track('view_all', {});
             }}
           >
             <Button
@@ -242,40 +206,6 @@ const HomePage: NextPage = () => {
                   rewardAmount={grant?.rewardAmount}
                   title={grant?.title}
                   short_description={grant?.shortDescription}
-                />
-              );
-            })}
-        </ListingSection>
-        <ListingSection
-          type="jobs"
-          title="Jobs"
-          sub="Join a high-growth team"
-          emoji="/assets/home/emojis/job.png"
-        >
-          {isListingsLoading && (
-            <Flex align="center" justify="center" direction="column" minH={52}>
-              <Loading />
-            </Flex>
-          )}
-          {!isListingsLoading && !listings?.jobs?.length && (
-            <Flex align="center" justify="center" mt={8}>
-              <EmptySection
-                title="No jobs available!"
-                message="Subscribe to notifications to get notified about new jobs."
-              />
-            </Flex>
-          )}
-          {!isListingsLoading &&
-            listings?.jobs?.map((job) => {
-              return (
-                <JobsCard
-                  key={job?.id}
-                  logo={job?.sponsor?.logo}
-                  location={job?.location || ''}
-                  orgName={job?.sponsor?.name || ''}
-                  skills={job?.skills || ''}
-                  title={job?.title || ''}
-                  link={job?.link || ''}
                 />
               );
             })}
