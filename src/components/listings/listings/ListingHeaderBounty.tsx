@@ -225,7 +225,7 @@ function ListingHeader({
                         label={
                           type === 'permissioned'
                             ? 'A Project is a short-term gig where sponsors solicit applications from multiple people, and select the best one to work on the Project.'
-                            : 'This is an open competition bounty! Anyone can start working and submit their work before the deadline!'
+                            : 'Bounties are open for anyone to participate in and submit their work (as long as they meet the eligibility requirements mentioned below). The best submissions win!'
                         }
                       >
                         <Flex>

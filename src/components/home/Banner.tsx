@@ -54,7 +54,7 @@ export default function HomeBanner({ setTriggerLogin }: BannerProps) {
     <>
       <Box
         w={'100%'}
-        h={isLessThan768px ? '55vh' : 'auto'}
+        h={isLessThan768px ? '96' : 'auto'}
         maxH={'500px'}
         mb={8}
         mx={'auto'}
@@ -87,10 +87,10 @@ export default function HomeBanner({ setTriggerLogin }: BannerProps) {
           non-technical talent alike
         </Text>
         <Flex
-          align={isLessThan768px ? 'start' : 'center'}
+          align={'center'}
           direction={isLessThan768px ? 'column' : 'row'}
           gap={isLessThan768px ? '3' : '4'}
-          mt={'4'}
+          mt={isLessThan768px ? '24' : '4'}
         >
           <Button
             w={isLessThan768px ? '100%' : 'auto'}

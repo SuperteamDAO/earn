@@ -34,7 +34,7 @@ interface LinkItemProps {
 }
 
 const LinkItems: Array<LinkItemProps> = [
-  { name: 'Bounties', link: '/bounties', icon: AiFillFire },
+  { name: 'Listings', link: '/bounties', icon: AiFillFire },
   { name: 'Members', link: '/members', icon: AiOutlineUsergroupAdd },
 ];
 

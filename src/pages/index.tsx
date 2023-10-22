@@ -141,10 +141,12 @@ const HomePage: NextPage = () => {
                 }}
               >
                 <Button
+                  px={2}
+                  py={1}
                   color="brand.slate.400"
                   fontSize={['x-small', 'sm', 'sm', 'sm']}
                   size={{ base: 'x-small', md: 'sm' }}
-                  variant="ghost"
+                  variant={'ghost'}
                 >
                   View All
                 </Button>
