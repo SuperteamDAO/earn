@@ -475,10 +475,10 @@ export const CategoryBanner = ({ type }: { type: string }) => {
       icon: '/assets/category_assets/icon/content.png',
     },
     Development: {
-      desc: 'If you are a pixel-perfectionist who creates interfaces that users love, check out the earning opportunities below.',
+      desc: "If building robust applications and scalable solutions is your forte, don't miss out on the earning opportunities listed below",
       bg: `/assets/category_assets/bg/frontend.png`,
       color: '#FEA8EB',
-      icon: '/assets/category_assets/icon/frontend.png',
+      icon: '/assets/category_assets/icon/backend.png',
     },
     Hyperdrive: {
       bg: `/assets/category_assets/bg/contract.png`,
