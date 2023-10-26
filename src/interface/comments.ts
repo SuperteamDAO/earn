@@ -6,5 +6,5 @@ export interface Comment {
   authorId: string;
   author: User;
   refId: string;
-  refType: 'BOUNTY' | 'JOB';
+  refType: 'BOUNTY';
 }

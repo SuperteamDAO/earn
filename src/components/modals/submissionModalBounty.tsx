@@ -108,7 +108,9 @@ export const SubmissionModal = ({
     >
       <ModalOverlay></ModalOverlay>
       <ModalContent>
-        <ModalHeader color="brand.slate.800">Bounty Submission</ModalHeader>
+        <ModalHeader color="brand.slate.800">
+          {isPermissioned ? 'Submit Your Application' : 'Bounty Submission'}
+        </ModalHeader>
         <ModalCloseButton />
         <VStack
           align={'start'}
@@ -121,12 +123,12 @@ export const SubmissionModal = ({
           <Box>
             <Text mb={1} color={'brand.slate.500'} fontSize="sm">
               {isPermissioned
-                ? `This is a permissioned bounty - which means only the applicant that the sponsor will select will be eligible to work on this bounty`
+                ? "Don't start working just yet! Apply first, and then begin working only once you've been hired for the project by the sponsor."
                 : `We can't wait to see what you've created!`}
             </Text>
             <Text color={'brand.slate.500'} fontSize="sm">
               {!!isPermissioned &&
-                'Please note that bounties typically take ~5 days after the end date to be evaluated.'}
+                'Please note that the sponsor might contact you to assess fit before picking the winner.'}
             </Text>
           </Box>
           <form
@@ -148,8 +150,7 @@ export const SubmissionModal = ({
                       Link to your submission
                     </FormLabel>
                     <FormHelperText mt={0} mb={2} color="brand.slate.500">
-                      We prefer Medium, Substack, Notion, etc., link for written
-                      content, and Figma for design content.
+                      Make sure this link is accessible by everyone!
                     </FormHelperText>
                     <Input
                       borderColor={'brand.slate.300'}

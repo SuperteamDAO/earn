@@ -30,7 +30,7 @@ import {
 import { genrateuuid } from '../../../utils/helpers';
 import { CreateProfileModal } from '../../modals/createProfile';
 
-type Eligibility = 'premission' | 'premission-less';
+type Eligibility = 'permission' | 'permission-less';
 
 interface Props {
   sponsor: SponsorType;
@@ -267,7 +267,7 @@ export const ListingHeader = ({
           >
             Details
           </Button>
-          {tabs && eligibility === 'premission-less' && (
+          {tabs && eligibility === 'permission-less' && (
             <Button
               color={router.query.subid ? 'brand.slate.800' : 'brand.slate.400'}
               borderBottom={

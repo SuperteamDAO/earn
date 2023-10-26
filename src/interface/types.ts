@@ -1,6 +1,4 @@
-export type Listingtype = 'Bounties' | 'Jobs' | 'Grants';
-
-export type JobType = 'parttime' | 'fulltime' | 'intership';
+export type Listingtype = 'Bounties' | 'Grants';
 
 export type Source = 'native' | 'manual';
 

@@ -12,24 +12,25 @@ import type {
   QuestionType,
 } from '@/components/listings/bounty/questions/builder';
 import { CreateGrants } from '@/components/listings/grants/CreateGrants';
-import { CreateJob } from '@/components/listings/jobs/CreateJob';
 import Template from '@/components/listings/templates/template';
 import { SuccessListings } from '@/components/modals/successListings';
 import ErrorSection from '@/components/shared/ErrorSection';
 import type { MultiSelectOptions } from '@/constants';
-import type { Bounty } from '@/interface/bounty';
-import type { GrantsBasicType, JobBasicsType } from '@/interface/listings';
+import type { Bounty, References } from '@/interface/bounty';
+import type { GrantsBasicType } from '@/interface/listings';
 import FormLayout from '@/layouts/FormLayout';
 import { userStore } from '@/store/user';
+import { getBountyDraftStatus } from '@/utils/bounty';
 import { dayjs } from '@/utils/dayjs';
 import { mergeSkills, splitSkills } from '@/utils/skills';
 
 interface Props {
   bounty?: Bounty;
   isEditMode?: boolean;
+  type: 'open' | 'permissioned';
 }
 
-function CreateListing({ bounty, isEditMode = false }: Props) {
+function CreateListing({ bounty, isEditMode = false, type }: Props) {
   const router = useRouter();
   const { userInfo } = userStore();
   // Templates - 1
@@ -48,7 +49,6 @@ function CreateListing({ bounty, isEditMode = false }: Props) {
   const [regions, setRegions] = useState<Regions>(
     isEditMode ? bounty?.region || Regions.GLOBAL : Regions.GLOBAL
   );
-  //
   const skillsInfo = isEditMode ? splitSkills(bounty?.skills || []) : undefined;
   const [mainSkills, setMainSkills] = useState<MultiSelectOptions[]>(
     isEditMode ? skillsInfo?.skills || [] : []
@@ -57,15 +57,8 @@ function CreateListing({ bounty, isEditMode = false }: Props) {
     isEditMode ? skillsInfo?.subskills || [] : []
   );
   const [slug, setSlug] = useState<string>('');
-  //
+
   const { isOpen, onOpen } = useDisclosure();
-  // -- Jobs
-  const [jobBasics, setJobBasics] = useState<JobBasicsType | undefined>({
-    deadline: '',
-    link: '',
-    title: '',
-    type: 'fulltime',
-  });
 
   const [questions, setQuestions] = useState<Ques[]>(
     isEditMode
@@ -79,6 +72,15 @@ function CreateListing({ bounty, isEditMode = false }: Props) {
       : []
   );
 
+  const [references, setReferences] = useState<References[]>(
+    isEditMode
+      ? (bounty?.references || [])?.map((e) => ({
+          order: e.order,
+          link: e.link,
+        }))
+      : []
+  );
+
   // - Bounty
   const [bountybasic, setBountyBasic] = useState<BountyBasicType | undefined>({
     title: isEditMode ? bounty?.title || undefined : undefined,
@@ -86,9 +88,12 @@ function CreateListing({ bounty, isEditMode = false }: Props) {
       isEditMode && bounty?.deadline
         ? dayjs(bounty?.deadline).format('YYYY-MM-DDTHH:mm') || undefined
         : undefined,
-    type: isEditMode ? bounty?.type || undefined : undefined,
     templateId: isEditMode ? bounty?.templateId || undefined : undefined,
     pocSocials: isEditMode ? bounty?.pocSocials || undefined : undefined,
+    applicationType: isEditMode ? bounty?.applicationType || 'fixed' : 'fixed',
+    timeToComplete: isEditMode
+      ? bounty?.timeToComplete || undefined
+      : undefined,
   });
   const [bountyPayment, setBountyPayment] = useState({
     rewardAmount: isEditMode ? bounty?.rewardAmount || 0 : 0,
@@ -113,12 +118,17 @@ function CreateListing({ bounty, isEditMode = false }: Props) {
           ? new Date(bountybasic?.deadline).toISOString()
           : undefined,
         description: editorData || '',
+        type,
         pocSocials: bountybasic?.pocSocials,
         region: regions,
         eligibility: (questions || []).map((q) => ({
           question: q.question,
           order: q.order,
           type: q.type,
+        })),
+        references: (references || []).map((r) => ({
+          link: r.link,
+          order: r.order,
         })),
         requirements: bountyRequirements,
         ...bountyPayment,
@@ -160,6 +170,10 @@ function CreateListing({ bounty, isEditMode = false }: Props) {
         order: q.order,
         type: q.type,
       })),
+      references: (references || []).map((r) => ({
+        link: r.link,
+        order: r.order,
+      })),
       pocSocials: bountybasic?.pocSocials,
       region: regions,
       requirements: bountyRequirements,
@@ -180,6 +194,15 @@ function CreateListing({ bounty, isEditMode = false }: Props) {
       setDraftLoading(false);
     }
   };
+
+  const newBounty = bounty?.id === undefined;
+
+  const bountyDraftStatus = getBountyDraftStatus(
+    bounty?.status,
+    bounty?.isPublished
+  );
+
+  const isNewOrDraft = bountyDraftStatus === 'DRAFT' || newBounty === true;
 
   return (
     <>
@@ -273,10 +296,12 @@ function CreateListing({ bounty, isEditMode = false }: Props) {
               setSubSkills={setSubSkill}
               setMainSkills={setMainSkills}
               setBountyBasic={setBountyBasic}
+              type={type}
             />
           )}
           {steps > 1 && listingType === 'BOUNTY' && (
             <CreateBounty
+              type={type}
               regions={regions}
               setRegions={setRegions}
               setBountyRequirements={setBountyRequirements}
@@ -287,6 +312,8 @@ function CreateListing({ bounty, isEditMode = false }: Props) {
               setBountyPayment={setBountyPayment}
               questions={questions}
               setQuestions={setQuestions}
+              references={references}
+              setReferences={setReferences}
               draftLoading={draftLoading}
               createDraft={createDraft}
               bountybasic={bountybasic}
@@ -301,24 +328,7 @@ function CreateListing({ bounty, isEditMode = false }: Props) {
               setSteps={setSteps}
               steps={steps}
               isEditMode={isEditMode}
-            />
-          )}
-          {steps > 1 && listingType === 'JOB' && (
-            <CreateJob
-              setSlug={setSlug}
-              draftLoading={draftLoading}
-              createDraft={createDraft}
-              setJobBasic={setJobBasics}
-              jobBasics={jobBasics}
-              setSubSkills={setSubSkill}
-              subSkills={subSkill}
-              setMainSkills={setMainSkills}
-              mainSkills={mainSkills}
-              editorData={editorData}
-              setEditorData={setEditorData}
-              setSteps={setSteps}
-              steps={steps}
-              onOpen={onOpen}
+              isNewOrDraft={isNewOrDraft}
             />
           )}
           {steps > 1 && listingType === 'GRANT' && (

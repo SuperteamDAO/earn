@@ -16,6 +16,7 @@ interface Props {
   setMainSkills: Dispatch<SetStateAction<MultiSelectOptions[]>>;
   setSubSkills: Dispatch<SetStateAction<MultiSelectOptions[]>>;
   setBountyBasic: Dispatch<SetStateAction<BountyBasicType | undefined>>;
+  type: 'open' | 'permissioned';
 }
 const Template = ({
   setSteps,
@@ -24,6 +25,7 @@ const Template = ({
   setMainSkills,
   setSubSkills,
   setBountyBasic,
+  type,
 }: Props) => {
   const [bountiesTemplates, setBountiesTemplates] = useState([]);
   const [isBountiesTemplatesLoading, setIsBountiesTemplatesLoading] =
@@ -32,7 +34,9 @@ const Template = ({
   const getBountyTemplates = async () => {
     setIsBountiesTemplatesLoading(true);
     try {
-      const templates: any = await axios.get('/api/bounties/templates/');
+      const templates: any = await axios.get('/api/bounties/templates/', {
+        params: { type },
+      });
       setBountiesTemplates(templates?.data || []);
       setIsBountiesTemplatesLoading(false);
     } catch (e) {
@@ -53,7 +57,6 @@ const Template = ({
     setListingType('BOUNTY');
     setBountyBasic({
       title: template?.title || undefined,
-      type: template?.type || 'open',
       templateId: template?.id || undefined,
     });
     setEditorData(template?.description || '');
@@ -223,78 +226,6 @@ const Template = ({
             })}
           </Flex>
         </VStack>
-        {/* <VStack align="start" w={'full'}>
-          <Flex align="center" justify="center" gap="2rem" w="full" mb="2rem">
-            <Text color="gray.600" fontSize="1.3rem" fontWeight={600}>
-              Jobs
-            </Text>
-            <hr
-              style={{
-                width: '100%',
-                outline: '1px solid #CBD5E1',
-                border: 'none',
-              }}
-            />
-          </Flex>
-          <Flex>
-            <Box
-              alignItems={'center'}
-              justifyContent={'center'}
-              flexDir={'column'}
-              display={'flex'}
-              w={'15rem'}
-              h={'16rem'}
-              bg={'white'}
-              border={'1px solid #cbd5e1'}
-              cursor={'pointer'}
-              onClick={() => {
-                setListingType('JOB');
-                setSteps(2);
-              }}
-            >
-              <AddIcon color="gray.500" mb="1rem" />
-              <Text color="gray.500" fontSize="1rem" fontWeight={500}>
-                Start from Scratch
-              </Text>
-            </Box>
-          </Flex>
-        </VStack>
-        <VStack align="start" w={'full'}>
-          <Flex align="center" justify="center" gap="2rem" w="full" mb="2rem">
-            <Text color="gray.600" fontSize="1.3rem" fontWeight={600}>
-              Grants
-            </Text>
-            <hr
-              style={{
-                width: '100%',
-                outline: '1px solid #CBD5E1',
-                border: 'none',
-              }}
-            />
-          </Flex>
-          <Flex>
-            <Box
-              alignItems={'center'}
-              justifyContent={'center'}
-              flexDir={'column'}
-              display={'flex'}
-              w={'15rem'}
-              h={'16rem'}
-              bg={'white'}
-              border={'1px solid #cbd5e1'}
-              cursor={'pointer'}
-              onClick={() => {
-                setListingType('GRANT');
-                setSteps(2);
-              }}
-            >
-              <AddIcon color="gray.500" mb="1rem" />
-              <Text color="gray.500" fontSize="1rem" fontWeight={500}>
-                Start from Scratch
-              </Text>
-            </Box>
-          </Flex>
-        </VStack> */}
       </VStack>
     </>
   );

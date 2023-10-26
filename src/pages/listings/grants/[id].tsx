@@ -77,7 +77,7 @@ const Grants = ({ slug }: GrantsDetailsProps) => {
               id={grants?.id}
               title={grants?.title ?? ''}
               sponsor={grants?.sponsor as SponsorType}
-              eligibility="premission-less"
+              eligibility="permission-less"
               tabs={false}
             />
             <HStack

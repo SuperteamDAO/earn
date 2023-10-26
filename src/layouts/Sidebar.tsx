@@ -1,6 +1,18 @@
-import { AddIcon } from '@chakra-ui/icons';
+import { AddIcon, ChevronDownIcon } from '@chakra-ui/icons';
 import type { BoxProps, FlexProps } from '@chakra-ui/react';
-import { Box, Button, Flex, Icon, Link } from '@chakra-ui/react';
+import {
+  Box,
+  Button,
+  Flex,
+  Icon,
+  Image,
+  Link,
+  Menu,
+  MenuButton,
+  MenuItem,
+  MenuList,
+  Text,
+} from '@chakra-ui/react';
 import NextLink from 'next/link';
 import { useRouter } from 'next/router';
 import type { ReactNode, ReactText } from 'react';
@@ -22,7 +34,7 @@ interface LinkItemProps {
 }
 
 const LinkItems: Array<LinkItemProps> = [
-  { name: 'Bounties', link: '/bounties', icon: AiFillFire },
+  { name: 'Listings', link: '/bounties', icon: AiFillFire },
   { name: 'Members', link: '/members', icon: AiOutlineUsergroupAdd },
 ];
 
@@ -90,16 +102,47 @@ const SidebarContent = ({ ...rest }: BoxProps) => {
         <SelectSponsor />
       </Box>
       <Flex align="center" justify="space-between" pb={6} px={6}>
-        <NextLink href="/dashboard/create" passHref>
-          <Button
+        <Menu>
+          <MenuButton
+            as={Button}
             w="full"
             fontSize="sm"
             leftIcon={<AddIcon w={3} h={3} />}
             variant="solid"
           >
-            Create Listing
-          </Button>
-        </NextLink>
+            Create Listing <ChevronDownIcon w={3} h={3} />
+          </MenuButton>
+          <MenuList>
+            <NextLink href="/dashboard/create-bounty">
+              <MenuItem>
+                <Image
+                  h={5}
+                  mr={3}
+                  ml={1}
+                  alt="new bounty"
+                  src={'/assets/icons/bolt.svg'}
+                />{' '}
+                <Text color="brand.slate.500" fontWeight={500}>
+                  New Bounty
+                </Text>
+              </MenuItem>
+            </NextLink>
+            <NextLink href="/dashboard/create-project">
+              <MenuItem>
+                <Image
+                  h={5}
+                  mr={3}
+                  ml={1}
+                  alt="new project"
+                  src={'/assets/icons/briefcase.svg'}
+                />{' '}
+                <Text color="brand.slate.500" fontWeight={500}>
+                  New Project
+                </Text>
+              </MenuItem>
+            </NextLink>
+          </MenuList>
+        </Menu>
       </Flex>
       {LinkItems.map((link) => (
         <NavItem
