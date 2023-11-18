@@ -1,13 +1,4 @@
-import {
-  Box,
-  Center,
-  Flex,
-  HStack,
-  Image,
-  Link,
-  Text,
-  VStack,
-} from '@chakra-ui/react';
+import { Box, Center, Flex, Image, Text, VStack } from '@chakra-ui/react';
 import Avatar from 'boring-avatars';
 import NextLink from 'next/link';
 import { useRouter } from 'next/router';
@@ -377,81 +368,12 @@ const RecentEarners = ({ earners }: { earners?: User[] }) => {
   );
 };
 
-const AlphaAccess = () => {
-  return (
-    <Flex
-      direction={'column'}
-      gap={1}
-      w={'full'}
-      h={'max-content'}
-      px={'1.5625rem'}
-      py={'0.875rem'}
-      bg={'#000'}
-      rounded={'lg'}
-    >
-      <HStack>
-        <Image
-          w="42px"
-          h="42px"
-          ml={-2}
-          alt="solana"
-          src="https://s2.coinmarketcap.com/static/img/coins/128x128/16116.png"
-        />
-      </HStack>
-      <HStack>
-        <Image
-          h={'6'}
-          mt={1}
-          mb={2}
-          alt={'hyperdrive'}
-          src={'/assets/icons/hyperdrive.png'}
-        />
-      </HStack>
-      <Text
-        mt={1}
-        color={'white'}
-        fontSize={'lg'}
-        fontWeight={'600'}
-        lineHeight={'6'}
-      >
-        Want to increase your chances of winning $$ at the hackathon?
-      </Text>
-      <Text
-        mt={'0.5rem'}
-        color={'brand.slate.200'}
-        fontSize={'1rem'}
-        lineHeight={'1.1875rem'}
-      >
-        Check out Earn&apos;s Hyperdrive page for side tracks worth over
-        $180,000! Click the link below and submit your project soon:
-      </Text>
-      <Link
-        mt={'1.5625rem'}
-        mb={2}
-        py={'0.8125rem'}
-        color={'brand.slate.800'}
-        fontWeight={'500'}
-        textAlign={'center'}
-        bg={'#14F195'}
-        borderRadius={8}
-        _hover={{
-          bg: 'gray.100',
-        }}
-        href="https://earn.superteam.fun/all/Hyperdrive/?utm_source=superteamearn&utm_medium=hyperdrive&utm_campaign=banner"
-        isExternal
-      >
-        Submit Your Project
-      </Link>
-    </Flex>
-  );
-};
 const SideBar = ({ userInfo, listings, total, earners }: SideBarProps) => {
   return (
     <Flex direction={'column'} rowGap={'2.5rem'} w={'22.125rem'} pl={6}>
       <GettingStarted userInfo={userInfo} />
       <TotalStats bountyCount={listings} TVL={total} />
       <RecentEarners earners={earners} />
-      <AlphaAccess />
     </Flex>
   );
 };
