@@ -245,7 +245,13 @@ export const SubmissionModal = ({
                   fontSize={'xs'}
                   textAlign="right"
                 >
-                  {180 - (watch('otherInfo')?.length || 0)} characters left
+                  {180 - (watch('otherInfo')?.length || 0) === 0 ? (
+                    <p>Character limit exceeded. Please reduce the text</p>
+                  ) : (
+                    <p>
+                      {180 - (watch('otherInfo')?.length || 0)} characters left
+                    </p>
+                  )}
                 </Text>
                 <FormErrorMessage>
                   {errors.otherInfo ? <>{errors.otherInfo.message}</> : <></>}
