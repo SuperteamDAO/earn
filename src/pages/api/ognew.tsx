@@ -225,7 +225,7 @@ export default async function handler(request: NextRequest) {
                       padding: '12px 60px',
                     }}
                   >
-                    {type}
+                    {type === 'permissioned' ? 'Project' : 'Bounty'}
                   </div>
                 )}
                 <div
