@@ -349,7 +349,9 @@ function Bounties() {
                       <Text textAlign={'right'}>
                         {
                           // eslint-disable-next-line no-underscore-dangle
-                          currentBounty?.type !== 'permissioned' ? 'Bounty' : 'Project'
+                          currentBounty?.type !== 'permissioned'
+                            ? 'Bounty'
+                            : 'Project'
                         }
                       </Text>
                     </Td>
