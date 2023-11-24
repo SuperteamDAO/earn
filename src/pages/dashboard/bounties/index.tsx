@@ -224,7 +224,7 @@ function Bounties() {
             }}
             focusBorderColor="brand.purple"
             onChange={(e) => debouncedSetSearchText(e.target.value)}
-            placeholder="Search bounties..."
+            placeholder="Search listing..."
             type="text"
           />
           <InputRightElement pointerEvents="none">
@@ -255,7 +255,16 @@ function Bounties() {
                   fontWeight={500}
                   textTransform={'capitalize'}
                 >
-                  Bounty Name
+                  Listing Name
+                </Th>
+                <Th
+                  maxW={96}
+                  color="brand.slate.400"
+                  fontSize="sm"
+                  fontWeight={500}
+                  textTransform={'capitalize'}
+                >
+                  Type
                 </Th>
                 <Th
                   align="right"
@@ -335,6 +344,14 @@ function Bounties() {
                           {currentBounty.title}
                         </Text>
                       </NextLink>
+                    </Td>
+                    <Td align="right">
+                      <Text textAlign={'right'}>
+                        {
+                          // eslint-disable-next-line no-underscore-dangle
+                          currentBounty?.type !== 'permissioned' ? 'Bounty' : 'Project'
+                        }
+                      </Text>
                     </Td>
                     <Td align="right">
                       <Text textAlign={'right'}>
@@ -508,7 +525,7 @@ function Bounties() {
           <Text as="span" fontWeight={700}>
             {totalBounties}
           </Text>{' '}
-          Bounties
+          Listings
         </Text>
         <Button
           mr={4}
