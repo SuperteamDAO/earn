@@ -46,8 +46,7 @@ export const SubmissionModal = ({
   bountytitle,
   type,
 }: Props) => {
-  const isPermissioned =
-    type === 'permissioned' && eligibility && eligibility?.length > 0;
+  const isPermissioned = type === 'permissioned';
   const { userInfo } = userStore();
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState('');

@@ -6,6 +6,7 @@ import React, { useEffect, useState } from 'react';
 
 import type { BountyBasicType } from '@/components/listings/bounty/Createbounty';
 import type { MultiSelectOptions } from '@/constants';
+import { getBountyTypeLabel } from '@/utils/bounty';
 import { splitSkills } from '@/utils/skills';
 import { getURL } from '@/utils/validUrl';
 
@@ -72,7 +73,7 @@ const Template = ({
         <VStack align="start" w={'full'}>
           <Flex align="center" justify="center" gap="2rem" w="full" mb="2rem">
             <Text color="gray.600" fontSize="1.3rem" fontWeight={600}>
-              Bounty
+              {getBountyTypeLabel(type)}
             </Text>
             <hr
               style={{

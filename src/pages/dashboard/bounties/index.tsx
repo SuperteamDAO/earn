@@ -57,6 +57,7 @@ import {
   getBgColor,
   getBountyDraftStatus,
   getBountyProgress,
+  getBountyTypeLabel,
   getDeadlineFromNow,
 } from '@/utils/bounty';
 
@@ -318,8 +319,9 @@ function Bounties() {
             </Thead>
             <Tbody w="full">
               {bounties.map((currentBounty) => {
-                const bountyType =
-                  currentBounty?.type !== 'permissioned' ? 'Bounty' : 'Project';
+                const bountyType = getBountyTypeLabel(
+                  currentBounty?.type ?? 'open'
+                );
                 const deadlineFromNow = getDeadlineFromNow(
                   currentBounty?.deadline
                 );
