@@ -46,6 +46,7 @@ export default async function bounties(
         },
         id: true,
         title: true,
+        type: true,
         slug: true,
         token: true,
         status: true,

@@ -258,7 +258,7 @@ function Bounties() {
                   Listing Name
                 </Th>
                 <Th
-                  maxW={96}
+                  align="center"
                   color="brand.slate.400"
                   fontSize="sm"
                   fontWeight={500}
@@ -318,6 +318,8 @@ function Bounties() {
             </Thead>
             <Tbody w="full">
               {bounties.map((currentBounty) => {
+                const bountyType =
+                  currentBounty?.type !== 'permissioned' ? 'Bounty' : 'Project';
                 const deadlineFromNow = getDeadlineFromNow(
                   currentBounty?.deadline
                 );
@@ -345,15 +347,8 @@ function Bounties() {
                         </Text>
                       </NextLink>
                     </Td>
-                    <Td align="right">
-                      <Text textAlign={'right'}>
-                        {
-                          // eslint-disable-next-line no-underscore-dangle
-                          currentBounty?.type !== 'permissioned'
-                            ? 'Bounty'
-                            : 'Project'
-                        }
-                      </Text>
+                    <Td align="left">
+                      <Text textAlign={'left'}>{bountyType}</Text>
                     </Td>
                     <Td align="right">
                       <Text textAlign={'right'}>
@@ -479,7 +474,7 @@ function Bounties() {
                               )
                             }
                           >
-                            View Bounty
+                            View {bountyType}
                           </MenuItem>
                           <MenuDivider />
                           <NextLink
@@ -487,7 +482,7 @@ function Bounties() {
                             passHref
                           >
                             <MenuItem icon={<AiOutlineEdit />}>
-                              Edit Bounty
+                              Edit {bountyType}
                             </MenuItem>
                           </NextLink>
                           {!(
