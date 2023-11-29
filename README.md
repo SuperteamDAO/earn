@@ -38,7 +38,7 @@ yarn add @prisma/client
 yarn postinstall
 ```
 
-4. Create a `.env` or `.env.local` file inside the `/earn` folder. Include all the required environment variables(if required). 
+4. Create a `.env` or `.env.local` file inside the `/root` folder. Include all the required environment variables(if required). 
 
 > **Note:** `env.local.example` is a dummy file; actual environment variables must not be stored in it.
 
