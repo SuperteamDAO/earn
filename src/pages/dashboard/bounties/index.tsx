@@ -57,6 +57,7 @@ import {
   getBgColor,
   getBountyDraftStatus,
   getBountyProgress,
+  getBountyTypeLabel,
   getDeadlineFromNow,
 } from '@/utils/bounty';
 
@@ -224,7 +225,7 @@ function Bounties() {
             }}
             focusBorderColor="brand.purple"
             onChange={(e) => debouncedSetSearchText(e.target.value)}
-            placeholder="Search bounties..."
+            placeholder="Search listing..."
             type="text"
           />
           <InputRightElement pointerEvents="none">
@@ -255,7 +256,16 @@ function Bounties() {
                   fontWeight={500}
                   textTransform={'capitalize'}
                 >
-                  Bounty Name
+                  Listing Name
+                </Th>
+                <Th
+                  align="center"
+                  color="brand.slate.400"
+                  fontSize="sm"
+                  fontWeight={500}
+                  textTransform={'capitalize'}
+                >
+                  Type
                 </Th>
                 <Th
                   align="right"
@@ -309,6 +319,9 @@ function Bounties() {
             </Thead>
             <Tbody w="full">
               {bounties.map((currentBounty) => {
+                const bountyType = getBountyTypeLabel(
+                  currentBounty?.type ?? 'open'
+                );
                 const deadlineFromNow = getDeadlineFromNow(
                   currentBounty?.deadline
                 );
@@ -335,6 +348,9 @@ function Bounties() {
                           {currentBounty.title}
                         </Text>
                       </NextLink>
+                    </Td>
+                    <Td align="left">
+                      <Text textAlign={'left'}>{bountyType}</Text>
                     </Td>
                     <Td align="right">
                       <Text textAlign={'right'}>
@@ -460,7 +476,7 @@ function Bounties() {
                               )
                             }
                           >
-                            View Bounty
+                            View {bountyType}
                           </MenuItem>
                           <MenuDivider />
                           <NextLink
@@ -468,7 +484,7 @@ function Bounties() {
                             passHref
                           >
                             <MenuItem icon={<AiOutlineEdit />}>
-                              Edit Bounty
+                              Edit {bountyType}
                             </MenuItem>
                           </NextLink>
                           {!(
@@ -508,7 +524,7 @@ function Bounties() {
           <Text as="span" fontWeight={700}>
             {totalBounties}
           </Text>{' '}
-          Bounties
+          Listings
         </Text>
         <Button
           mr={4}
