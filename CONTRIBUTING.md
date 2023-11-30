@@ -46,8 +46,8 @@ We expect all contributors to act professionally and respectfully, and we expect
 
 ### Style Guidelines
 
-- Please adhere to the existing coding style.
-- Write your code in TypeScript and follow best practices.
+- Adhere to the existing coding style.
+- Write your code in TypeScript, ensuring it follows best practices.
 
 ### Review Process
 - A maintainer will review the pull request and provide feedback or merge it.
