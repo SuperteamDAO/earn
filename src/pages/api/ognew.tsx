@@ -36,6 +36,8 @@ export default async function handler(request: NextRequest) {
         : paramTitle
       : null;
 
+    const type = searchParams.get('type');
+
     const hasLogo = searchParams.has('logo');
     const logo = hasLogo ? searchParams.get('logo')?.slice(0, 100) : sponsorImg;
 
@@ -210,20 +212,22 @@ export default async function handler(request: NextRequest) {
                   justifyItems: 'center',
                 }}
               >
-                <div
-                  style={{
-                    fontSize: 20,
-                    fontStyle: 'normal',
-                    color: '#A788FF',
-                    lineHeight: 1.4,
-                    whiteSpace: 'pre-wrap',
-                    backgroundColor: '#e9e9ff',
-                    borderRadius: '35px',
-                    padding: '12px 60px',
-                  }}
-                >
-                  Bounty
-                </div>
+                {title && (
+                  <div
+                    style={{
+                      fontSize: 20,
+                      fontStyle: 'normal',
+                      color: '#A788FF',
+                      lineHeight: 1.4,
+                      whiteSpace: 'pre-wrap',
+                      backgroundColor: '#e9e9ff',
+                      borderRadius: '35px',
+                      padding: '12px 60px',
+                    }}
+                  >
+                    {type === 'permissioned' ? 'Project' : 'Bounty'}
+                  </div>
+                )}
                 <div
                   style={{
                     display: 'flex',
