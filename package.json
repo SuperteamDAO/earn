@@ -73,6 +73,7 @@
     "next-sitemap": "^4.0.7",
     "nprogress": "^0.2.0",
     "open-graph-scraper": "^5.1.1",
+    "posthog-js": "^1.93.5",
     "react": "18.2.0",
     "react-confetti": "^6.1.0",
     "react-countdown": "^2.3.5",
