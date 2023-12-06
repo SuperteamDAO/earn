@@ -228,16 +228,6 @@ export default function LargeWithNewsletter() {
             >
               Nigeria
             </Link>
-            <Link
-              color="brand.slate.500"
-              _hover={{
-                color: 'brand.slate.800',
-              }}
-              href={`${getURL()}regions/israel`}
-              isExternal
-            >
-              Israel
-            </Link>
           </Stack>
           <Stack align={'flex-start'}>
             <ListHeader>Superteam Productions</ListHeader>

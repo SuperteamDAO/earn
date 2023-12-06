@@ -166,7 +166,7 @@ const GettingStarted = ({ userInfo }: GettingStartedProps) => {
               </Text>
             )}
             <Text color={'gray.500'} fontSize={'md'} fontWeight={500}>
-              and get your Proof-of-Work NFT
+              and build proof of work
             </Text>
           </Box>
         </VStack>

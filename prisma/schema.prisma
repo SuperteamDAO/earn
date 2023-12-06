@@ -404,5 +404,4 @@ enum Regions {
   UK
   UAE
   NIGERIA
-  ISRAEL
 }
