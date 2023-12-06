@@ -87,7 +87,12 @@ const GettingStarted = ({ userInfo }: GettingStartedProps) => {
           />
           <Flex pos={'absolute'} w={'0.0625rem'} h={'90%'} bg={'#CBD5E1'} />
         </VStack>
-        <VStack pos={'relative'} justifyContent={'space-between'} h={'100%'}>
+        <VStack
+          pos={'relative'}
+          alignItems={'flex-start'}
+          justifyContent={'space-between'}
+          h={'100%'}
+        >
           <Box ml={'0.8125rem'}>
             {!userInfo?.id ? (
               <Text
@@ -137,7 +142,7 @@ const GettingStarted = ({ userInfo }: GettingStartedProps) => {
               </Text>
             )}
             <Text color={'gray.500'} fontSize={'md'} fontWeight={500}>
-              and get seen by hiring managers
+              and participate on Earn
             </Text>
           </Box>
           <Box ml={'0.8125rem'}>
@@ -166,7 +171,7 @@ const GettingStarted = ({ userInfo }: GettingStartedProps) => {
               </Text>
             )}
             <Text color={'gray.500'} fontSize={'md'} fontWeight={500}>
-              and build proof of work
+              and build proof-of-work
             </Text>
           </Box>
         </VStack>
@@ -209,7 +214,7 @@ const TotalStats = ({
             ></span>
           </Text>
           <Text color={'gray.500'} fontSize={'xs'} fontWeight={'400'}>
-            Total Value Listed
+            Total Value Earned
           </Text>
         </Box>
       </Flex>
