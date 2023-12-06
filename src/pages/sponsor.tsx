@@ -228,7 +228,7 @@ const Sponsor = () => {
               Outsource Work as Bounties, Projects & Grants
             </Text>
             <Text color="gray.500" fontSize="1.5rem" fontWeight={400}>
-              Superteam Earn helps Crypto founders save time and outsource all
+              Superteam Earn helps crypto founders save time and outsource all
               kinds of work and eat glass fast.
             </Text>
           </Flex>

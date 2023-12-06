@@ -873,7 +873,7 @@ export const CommunityImage: { [key in string]: string } = {
 };
 
 export const web3Exp = [
-  'New to Crypto',
+  'New to crypto',
   'Occasionally contributing',
   'Contributing regularly',
 ];
