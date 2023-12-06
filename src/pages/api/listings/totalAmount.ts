@@ -4,25 +4,26 @@ import type { NextApiRequest, NextApiResponse } from 'next';
 
 import { prisma } from '@/prisma';
 
+const abbreviations = {
+  SOL: 'solana',
+  ISC: 'international-stable-currency',
+  USDT: 'tether',
+  STEP: 'step-finance',
+  mSOL: 'marinade-staked-sol',
+  UXD: 'uxd-stablecoin',
+  RAY: 'raydium',
+  SBR: 'saber',
+  SLND: 'solend',
+  C98: 'coin98',
+  SRM: 'serum',
+  DUST: 'dust-protocol',
+  wSOL: 'wrapped-solana',
+  FIDA: 'bonfida',
+  ORCA: 'orca',
+  HXRO: 'hxro',
+};
+
 function matchAbbreviations(data: any) {
-  const abbreviations = {
-    SOL: 'solana',
-    ISC: 'international-stable-currency',
-    USDT: 'tether',
-    STEP: 'step-finance',
-    mSOL: 'marinade-staked-sol',
-    UXD: 'uxd-stablecoin',
-    RAY: 'raydium',
-    SBR: 'saber',
-    SLND: 'solend',
-    C98: 'coin98',
-    SRM: 'serum',
-    DUST: 'dust-protocol',
-    wSOL: 'wrapped-solana',
-    FIDA: 'bonfida',
-    ORCA: 'orca',
-    HXRO: 'hxro',
-  };
   const matchedData: { [key: string]: any } = {};
   Object.entries(abbreviations).forEach(([abbr, name]) => {
     if (data[name]) {
@@ -33,12 +34,13 @@ function matchAbbreviations(data: any) {
 }
 
 async function fetchCryptoPrices() {
+  const cryptos = Object.values(abbreviations).join(',');
   try {
     const response = await axios.get(
       'https://api.coingecko.com/api/v3/simple/price',
       {
         params: {
-          ids: 'solana,international-stable-currency,tether,step-finance,marinade-staked-sol,uxd-stablecoin,raydium,saber,solend,coin98,serum,dust-protocol,wrapped-solana,bonfida,orca,hxro',
+          ids: cryptos,
           vs_currencies: 'USD',
         },
       }
@@ -68,7 +70,21 @@ async function handler(_req: NextApiRequest, res: NextApiResponse) {
 
     const bounties = await prisma.bounties.findMany({
       where: {
-        isPublished: true,
+        OR: [
+          {
+            status: 'CLOSED',
+          },
+          {
+            AND: [
+              {
+                status: 'OPEN',
+              },
+              {
+                isWinnersAnnounced: true,
+              },
+            ],
+          },
+        ],
       },
       select: {
         rewardAmount: true,
@@ -91,7 +107,7 @@ async function handler(_req: NextApiRequest, res: NextApiResponse) {
     });
 
     return res.status(200).json({
-      'Total Value Listed': roundedTotalRewardAmount,
+      'Total Value Earned': roundedTotalRewardAmount,
       'Total Bounties Listed': bountiesCount,
     });
   } catch (error) {
