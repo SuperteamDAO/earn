@@ -12,7 +12,7 @@ const Index = () => {
       meta={
         <Meta
           title="Superteam Earn"
-          description="Every Solana opportunity in one place!"
+          description="Every Crypto opportunity in one place!"
           canonical="/assets/logo/og.svg"
         />
       }
@@ -170,7 +170,7 @@ const Index = () => {
                     fontSize={'0.9rem'}
                     fontWeight={400}
                   >
-                    Start contributing to top Solana projects
+                    Start contributing to top Crypto projects
                   </Text>
                 </Flex>
                 <Flex align={'center'} gap={2}>

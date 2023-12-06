@@ -88,7 +88,7 @@ function DashboardHeader() {
             lineHeight={'1.0625rem'}
           >
             Learn more about being a sponsor and accessing the best talent in
-            Solana
+            Crypto
           </Text>
         </Box>
         <Button

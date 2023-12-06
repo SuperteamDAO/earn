@@ -90,7 +90,7 @@ const StepsCon = ({ setSuccess }: { setSuccess: () => void }) => {
     {
       title: 'Create Your Profile',
       subTitle:
-        "If you're ready to start contributing to Solana, you're in the right place.",
+        "If you're ready to start contributing to Crypto, you're in the right place.",
     },
     {
       title: 'Tell Us About Your Work',
@@ -266,7 +266,7 @@ function Talent() {
       meta={
         <Meta
           title="New Talent | Superteam Earn"
-          description="Every Solana opportunity in one place!"
+          description="Every Crypto opportunity in one place!"
           canonical="/assets/logo/og.svg"
         />
       }

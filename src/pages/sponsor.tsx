@@ -152,7 +152,7 @@ const Sponsor = () => {
         ></Box>
 
         <Text zIndex={2} color="white" fontSize="3rem" fontWeight={700}>
-          The Talent Layer for Solana
+          The Talent Layer for Crypto
         </Text>
 
         <Flex pos="relative" justify="center" gap="2.5rem" w="100%">
@@ -228,7 +228,7 @@ const Sponsor = () => {
               Outsource Work as Bounties, Projects & Grants
             </Text>
             <Text color="gray.500" fontSize="1.5rem" fontWeight={400}>
-              Superteam Earn helps Solana founders save time and outsource all
+              Superteam Earn helps Crypto founders save time and outsource all
               kinds of work and eat glass fast.
             </Text>
           </Flex>
@@ -470,7 +470,7 @@ const Sponsor = () => {
               fontSize="2.75rem"
               fontWeight={600}
             >
-              Leverage the Talent Layer of Solana in Minutes
+              Leverage the Talent Layer of Crypto in Minutes
             </Text>
             <Text
               maxW="37.5rem"
@@ -540,7 +540,7 @@ const Sponsor = () => {
             lineHeight="3.75rem"
             textAlign="start"
           >
-            Where Top Solana Founders Meet Top Global Talent
+            Where Top Crypto Founders Meet Top Global Talent
           </Text>
           <Text
             w="100%"

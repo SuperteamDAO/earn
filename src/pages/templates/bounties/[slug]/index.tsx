@@ -47,7 +47,7 @@ function BountyDetails({ slug }: BountyDetailsProps) {
       meta={
         <Meta
           title={`${bounty?.title || 'Bounty'} | Superteam Earn`}
-          description="Every Solana opportunity in one place!"
+          description="Every Crypto opportunity in one place!"
         />
       }
     >

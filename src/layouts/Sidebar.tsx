@@ -167,7 +167,7 @@ export default function SimpleSidebar({ children }: { children: ReactNode }) {
       meta={
         <Meta
           title="Dashboard | Superteam Earn"
-          description="Every Solana opportunity in one place!"
+          description="Every Crypto opportunity in one place!"
           canonical="/assets/logo/og.svg"
         />
       }

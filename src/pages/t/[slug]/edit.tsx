@@ -382,7 +382,7 @@ export default function EditProfilePage() {
         meta={
           <Meta
             title="Superteam Earn"
-            description="Every Solana opportunity in one place!"
+            description="Every Crypto opportunity in one place!"
             canonical="/assets/logo/og.svg"
           />
         }

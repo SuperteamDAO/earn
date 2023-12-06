@@ -51,7 +51,7 @@ function SignUp({ invite }: Props) {
       meta={
         <Meta
           title="Accept Invite | Superteam Earn"
-          description="Every Solana opportunity in one place!"
+          description="Every Crypto opportunity in one place!"
           canonical="/assets/logo/og.svg"
         />
       }
