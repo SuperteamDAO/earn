@@ -78,8 +78,8 @@ const CreateSponsor = () => {
       meta={
         <Meta
           title="Create Sponsor | Superteam Earn"
-          description="Every crypto opportunity in one place!"
-          canonical="/assets/logo/og.svg"
+          description="Every Solana opportunity in one place!"
+          canonical="https://earn.superteam.fun/new/sponsor/"
         />
       }
     >
