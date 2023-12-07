@@ -1,25 +1,25 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   eslint: {
-    dirs: ["."],
+    dirs: ['.'],
   },
   poweredByHeader: false,
   trailingSlash: true,
   reactStrictMode: true,
   swcMinify: true,
   images: {
-    domains: ["res.cloudinary.com"],
+    domains: ['res.cloudinary.com'],
   },
   async headers() {
     const headers = [];
 
-    if (process.env.NEXT_PUBLIC_VERCEL_ENV === "preview") {
+    if (process.env.NEXT_PUBLIC_VERCEL_ENV === 'preview') {
       headers.push({
-        source: "/:path*",
+        source: '/:path*',
         headers: [
           {
-            key: "X-Robots-Tag",
-            value: "noindex",
+            key: 'X-Robots-Tag',
+            value: 'noindex',
           },
         ],
       });
@@ -28,5 +28,4 @@ const nextConfig = {
     return headers;
   },
 };
-
 module.exports = nextConfig;
