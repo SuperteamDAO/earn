@@ -259,8 +259,8 @@ export const SubmissionModal = ({
             </VStack>
             {!!error && (
               <Text align="center" mb={2} color="red">
-                Sorry! Error occurred while submitting application. <br />
-                Please try again or contact support.
+                Sorry! An error occurred while submitting. <br />
+                Please try again or contact us at hello@superteamearn.com
               </Text>
             )}
             <Button

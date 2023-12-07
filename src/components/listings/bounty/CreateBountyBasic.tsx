@@ -13,7 +13,7 @@ import {
 } from '@chakra-ui/react';
 import { Regions } from '@prisma/client';
 import type { Dispatch, SetStateAction } from 'react';
-import { useState } from 'react';
+import { useMemo, useState } from 'react';
 
 import { SkillSelect } from '@/components/misc/SkillSelect';
 import { userStore } from '@/store/user';
@@ -46,7 +46,6 @@ interface ErrorsBasic {
   skills: boolean;
   subSkills: boolean;
   pocSocials: boolean;
-  applicationType: boolean;
   timeToComplete: boolean;
 }
 export const CreatebountyBasic = ({
@@ -72,7 +71,6 @@ export const CreatebountyBasic = ({
     subSkills: false,
     skills: false,
     pocSocials: false,
-    applicationType: false,
     timeToComplete: false,
   });
 
@@ -87,6 +85,20 @@ export const CreatebountyBasic = ({
     subSkills.length !== 0 &&
     bountyBasic?.pocSocials &&
     isUrlValid;
+
+  const timeToCompleteOptions = [
+    { value: '<1 Week', label: '<1 Week' },
+    { value: '1-2 Weeks', label: '1-2 Weeks' },
+    { value: '2-4 Weeks', label: '2-4 Weeks' },
+    { value: '4-8 Weeks', label: '4-8 Weeks' },
+    { value: '>8 Weeks', label: '>8 Weeks' },
+  ];
+
+  const isTimeToCompleteValid = useMemo(() => {
+    return timeToCompleteOptions.some(
+      (option) => option.value === bountyBasic?.timeToComplete
+    );
+  }, [bountyBasic?.timeToComplete, timeToCompleteOptions]);
 
   return (
     <>
@@ -266,12 +278,7 @@ export const CreatebountyBasic = ({
           )}
         </FormControl>
         {type === 'permissioned' && (
-          <FormControl
-            w="full"
-            mb={5}
-            isInvalid={errorState.applicationType}
-            isRequired={type === 'permissioned'}
-          >
+          <FormControl w="full" mb={5} isRequired={type === 'permissioned'}>
             <Flex>
               <FormLabel
                 color={'brand.slate.500'}
@@ -283,6 +290,7 @@ export const CreatebountyBasic = ({
             </Flex>
 
             <Select
+              defaultValue={'fixed'}
               onChange={(e) => {
                 setbountyBasic({
                   ...(bountyBasic as BountyBasicType),
@@ -387,13 +395,13 @@ export const CreatebountyBasic = ({
                 });
               }}
               placeholder="Select time to complete"
-              value={bountyBasic?.timeToComplete}
+              value={bountyBasic?.timeToComplete || ''}
             >
-              <option value="<1 Week">{'<1 Week'}</option>
-              <option value="1-2 Weeks">1-2 Weeks</option>
-              <option value="2-4 Weeks">2-4 Weeks</option>
-              <option value="4-8 Weeks">4-8 Weeks</option>
-              <option value=">8 Week">{'>8 Weeks'}</option>
+              {timeToCompleteOptions.map((option) => (
+                <option key={option.value} value={option.value}>
+                  {option.label}
+                </option>
+              ))}
             </Select>
           </FormControl>
         )}
@@ -410,12 +418,12 @@ export const CreatebountyBasic = ({
                 subSkills: subSkills.length === 0,
                 title: !bountyBasic?.title,
                 pocSocials: !bountyBasic?.pocSocials,
-                applicationType: !bountyBasic?.applicationType,
                 timeToComplete:
-                  type === 'permissioned'
-                    ? !bountyBasic?.timeToComplete
-                    : false,
+                  type === 'permissioned' ? !isTimeToCompleteValid : false,
               });
+              if (type === 'permissioned' && !isTimeToCompleteValid) {
+                return;
+              }
 
               if (hasBasicInfo && bountyBasic?.deadline) {
                 setSteps(3);

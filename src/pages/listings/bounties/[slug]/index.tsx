@@ -144,6 +144,7 @@ function BountyDetails({ bounty: initialBounty }: BountyDetailsProps) {
                   applicationType={bounty?.applicationType}
                   timeToComplete={bounty?.timeToComplete}
                   isPublished={bounty?.isPublished}
+                  status={bounty?.status}
                 />
               </HStack>
             </>

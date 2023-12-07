@@ -257,7 +257,10 @@ function ListingHeader({
                   label={
                     region === 'GLOBAL'
                       ? 'This listing is open to everyone in the world!'
-                      : `You need to be a resident of ${region} to participate in this bounty`
+                      : `You need to be a resident of ${
+                          region.charAt(0).toUpperCase() +
+                          region.slice(1).toLowerCase()
+                        } to participate in this bounty`
                   }
                 >
                   <Text

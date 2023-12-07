@@ -92,7 +92,11 @@ export default function SubmissionCard({
               {talent?.firstName} {talent?.lastName}
             </Text>{' '}
             {sub?.isWinner ? (
-              <Text as={'span'}>won a bounty</Text>
+              <Text as={'span'}>
+                {sub?.listing?.type === 'open'
+                  ? 'won a bounty'
+                  : 'got selected for a project'}
+              </Text>
             ) : (
               <Text as={'span'}>submitted to a bounty</Text>
             )}

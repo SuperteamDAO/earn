@@ -49,6 +49,7 @@ interface Bounties {
   sponsor?: SponsorType;
   rewards?: Partial<PrizeListType>;
   isWinnersAnnounced?: boolean;
+  type?: 'open' | 'permissioned';
 }
 
 type BountyStatus = 'open' | 'review' | 'close';
