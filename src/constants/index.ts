@@ -849,7 +849,6 @@ export const CommunityList: string[] = [
   'Superteam UK',
   'Superteam UAE',
   'Superteam Nigeria',
-  'Superteam Israel',
   'SuperWomenDao',
   'DeveloperDAO',
   'Metacamp',
@@ -874,7 +873,7 @@ export const CommunityImage: { [key in string]: string } = {
 };
 
 export const web3Exp = [
-  'New to Crypto',
+  'New to crypto',
   'Occasionally contributing',
   'Contributing regularly',
 ];

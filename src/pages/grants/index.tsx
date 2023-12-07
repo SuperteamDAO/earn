@@ -157,7 +157,7 @@ function Grants() {
               fontWeight={'400'}
               textAlign={'center'}
             >
-              Discover the complete list of Solana grants available to support
+              Discover the complete list of crypto grants available to support
               your project.
             </Text>
             <Text color={'brand.slate.400'} fontSize={'md'}>

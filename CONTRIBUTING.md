@@ -25,11 +25,13 @@ We expect all contributors to act professionally and respectfully, and we expect
     git checkout -b my-new-feature
     ```
 3. **Make your changes:** Make the necessary changes to the code or documentation.
+
 4. **Commit your changes:** Once you've made your changes, commit them.
     ```bash
     git add .
     git commit -m "Add some feature"
     ```
+> **Note:** If errors occur, run `yarn format` to fix and remove lint errors prior to pushing changes.
 5. **Push your changes:** Push the changes to your new branch on your fork.
     ```bash
     git push origin my-new-feature
@@ -44,8 +46,8 @@ We expect all contributors to act professionally and respectfully, and we expect
 
 ### Style Guidelines
 
-- Please adhere to the existing coding style.
-- Write your code in TypeScript and follow best practices.
+- Adhere to the existing coding style.
+- Write your code in TypeScript, ensuring it follows best practices.
 
 ### Review Process
 - A maintainer will review the pull request and provide feedback or merge it.

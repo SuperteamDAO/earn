@@ -16,6 +16,7 @@
 
 - [Getting Started](#getting-started)
 - [Contributing](#contributing)
+- [Get In Touch](#get-in-touch)
 
 
 #### Getting Started
@@ -33,12 +34,22 @@ cd earn
 3. Install the dependencies: 
 ```bash
 yarn install
+yarn add @prisma/client
+yarn postinstall
 ```
 
-4. Run the development server
+4. Create a `.env` or `.env.local` file inside the root folder and include all the required environment variables. 
+
+> **Note:** `env.local.example` is a template file; actual environment variables should not be stored in it.
+
+5. Run the development server
 ```bash
 yarn dev
 ```
 
 #### Contributing
-We welcome contributions from everyone! Check out the [CONTRIBUTING.md](CONTRIBUTING.md) for guidelines on how to proceed.
+We welcome contributions from everyone! Whether it's submitting an issue, a pull request, or suggesting new ideas, your input is highly valued. Check out the [CONTRIBUTING.md](CONTRIBUTING.md) for guidelines on how to proceed.
+
+#### Get in Touch
+Please feel free to reach out to [Pratik](https://twitter.com/pratikdholani) or [Abhishek](https://twitter.com/abhwshek) if you have any questions, doubts, or suggestions!
+

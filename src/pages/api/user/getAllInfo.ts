@@ -10,7 +10,20 @@ export default async function getAllUsers(
     const user = await prisma.user.findUnique({
       where: { ...req.body },
       include: {
-        Submission: { include: { listing: { include: { sponsor: true } } } },
+        Submission: {
+          where: {
+            listing: {
+              isWinnersAnnounced: true,
+            },
+          },
+          include: {
+            listing: {
+              include: {
+                sponsor: true,
+              },
+            },
+          },
+        },
         PoW: true,
       },
     });

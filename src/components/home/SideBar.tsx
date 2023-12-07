@@ -87,7 +87,12 @@ const GettingStarted = ({ userInfo }: GettingStartedProps) => {
           />
           <Flex pos={'absolute'} w={'0.0625rem'} h={'90%'} bg={'#CBD5E1'} />
         </VStack>
-        <VStack pos={'relative'} justifyContent={'space-between'} h={'100%'}>
+        <VStack
+          pos={'relative'}
+          alignItems={'flex-start'}
+          justifyContent={'space-between'}
+          h={'100%'}
+        >
           <Box ml={'0.8125rem'}>
             {!userInfo?.id ? (
               <Text
@@ -137,7 +142,7 @@ const GettingStarted = ({ userInfo }: GettingStartedProps) => {
               </Text>
             )}
             <Text color={'gray.500'} fontSize={'md'} fontWeight={500}>
-              and get seen by hiring managers
+              and participate on Earn
             </Text>
           </Box>
           <Box ml={'0.8125rem'}>
@@ -166,7 +171,7 @@ const GettingStarted = ({ userInfo }: GettingStartedProps) => {
               </Text>
             )}
             <Text color={'gray.500'} fontSize={'md'} fontWeight={500}>
-              and get your Proof-of-Work NFT
+              and build proof-of-work
             </Text>
           </Box>
         </VStack>
@@ -177,10 +182,10 @@ const GettingStarted = ({ userInfo }: GettingStartedProps) => {
 
 const TotalStats = ({
   bountyCount,
-  TVL,
+  TVE,
 }: {
   bountyCount: number;
-  TVL: number;
+  TVE: number;
 }) => {
   return (
     <Flex
@@ -201,7 +206,7 @@ const TotalStats = ({
         />
         <Box>
           <Text color={'black'} fontSize={'sm'} fontWeight={'600'}>
-            ${TVL.toLocaleString()}{' '}
+            ${TVE.toLocaleString()}{' '}
             <span
               style={{
                 color: '#64748B',
@@ -209,7 +214,7 @@ const TotalStats = ({
             ></span>
           </Text>
           <Text color={'gray.500'} fontSize={'xs'} fontWeight={'400'}>
-            Total Value Listed
+            Total Value Earned
           </Text>
         </Box>
       </Flex>
@@ -240,16 +245,23 @@ interface EarnerProps {
   avatar?: string;
   amount: number;
   bounty?: string;
-  slug: string;
   token?: string;
+  username: string;
 }
-const Earner = ({ amount, name, avatar, bounty, slug, token }: EarnerProps) => {
+const Earner = ({
+  amount,
+  name,
+  avatar,
+  bounty,
+  token,
+  username,
+}: EarnerProps) => {
   const tokenObj = tokenList.find((t) => t.tokenSymbol === token);
   const tokenIcon = tokenObj
     ? tokenObj.icon
     : '/assets/landingsponsor/icons/usdc.svg';
   return (
-    <NextLink href={`${getURL()}listings/bounties/${slug}`}>
+    <NextLink href={`${getURL()}t/${username}`}>
       <Flex align={'center'} w={'100%'} my={4}>
         {avatar ? (
           <Image
@@ -273,10 +285,9 @@ const Earner = ({ amount, name, avatar, bounty, slug, token }: EarnerProps) => {
         <Box>
           <Text color={'black'} fontSize={'sm'} fontWeight={500}>
             {name?.length > 25 ? `${name?.slice(0, 18)}...` : name}
-            {/* {name} */}
           </Text>
           <Text color={'gray.400'} fontSize={'xs'} fontWeight={500}>
-            won {bounty?.slice(0, 15)}...
+            {bounty?.slice(0, 20)}...
           </Text>
         </Box>
         <Flex align={'center'} columnGap={1} ml={'auto'}>
@@ -295,45 +306,35 @@ const Earner = ({ amount, name, avatar, bounty, slug, token }: EarnerProps) => {
 
 const RecentEarners = ({ earners }: { earners?: User[] }) => {
   const marqueeRef = useRef<HTMLDivElement>(null);
+  const animationFrameRef = useRef<number | null>(null);
   const [isPaused, setIsPaused] = useState(false);
-  let timeoutId: number | undefined;
 
-  useEffect(() => {
+  const multipliedEarners = earners ? [...earners, ...earners, ...earners] : [];
+
+  const animate = () => {
     const marquee = marqueeRef.current;
-    let lastScrollTop = 0;
-
-    const animate = () => {
-      if (marquee && !isPaused) {
-        if (marquee.scrollTop === lastScrollTop && marquee.scrollTop !== 0) {
-          marquee.scrollTop = 1;
-        }
-        lastScrollTop = marquee.scrollTop;
+    if (marquee && !isPaused) {
+      if (marquee.scrollHeight - marquee.scrollTop <= marquee.clientHeight) {
+        marquee.scrollTop -= marquee.scrollHeight / 3;
+      } else {
         marquee.scrollTop += 1;
       }
-      timeoutId = window.setTimeout(animate, 20);
-    };
-
-    const handleMouseToggle = () => {
-      setIsPaused(!isPaused);
-    };
-
-    if (marquee) {
-      marquee.addEventListener('mouseenter', handleMouseToggle);
-      marquee.addEventListener('mouseleave', handleMouseToggle);
     }
+    animationFrameRef.current = requestAnimationFrame(animate);
+  };
 
-    animate();
+  useEffect(() => {
+    animationFrameRef.current = requestAnimationFrame(animate);
 
     return () => {
-      if (timeoutId !== undefined) {
-        window.clearTimeout(timeoutId);
-      }
-      if (marquee) {
-        marquee.removeEventListener('mouseenter', handleMouseToggle);
-        marquee.removeEventListener('mouseleave', handleMouseToggle);
+      if (animationFrameRef.current) {
+        cancelAnimationFrame(animationFrameRef.current);
       }
     };
   }, [isPaused]);
+
+  const handleMouseEnter = () => setIsPaused(true);
+  const handleMouseLeave = () => setIsPaused(false);
 
   return (
     <Box w={'100%'}>
@@ -345,23 +346,20 @@ const RecentEarners = ({ earners }: { earners?: User[] }) => {
           ref={marqueeRef}
           overflowY="hidden"
           h="300px"
-          css={{
-            animation: `marquee 1s linear infinite`,
-          }}
+          onMouseEnter={handleMouseEnter}
+          onMouseLeave={handleMouseLeave}
         >
-          {(earners ? [...earners, ...earners] : []).map(
-            (t: any, index: number) => (
-              <Earner
-                amount={t.reward ?? 0}
-                token={t.rewardToken}
-                name={`${t.firstName} ${t.lastName}`}
-                avatar={t.photo}
-                key={`${t.id}-${index}`}
-                bounty={t.title ?? ''}
-                slug={t.slug}
-              />
-            )
-          )}
+          {multipliedEarners.map((t: any, index: number) => (
+            <Earner
+              amount={t.reward ?? 0}
+              token={t.rewardToken}
+              name={`${t.firstName} ${t.lastName}`}
+              username={t.username}
+              avatar={t.photo}
+              key={`${t.id}-${index}`}
+              bounty={t.title ?? ''}
+            />
+          ))}
         </Box>
       </VStack>
     </Box>
@@ -372,7 +370,7 @@ const SideBar = ({ userInfo, listings, total, earners }: SideBarProps) => {
   return (
     <Flex direction={'column'} rowGap={'2.5rem'} w={'22.125rem'} pl={6}>
       <GettingStarted userInfo={userInfo} />
-      <TotalStats bountyCount={listings} TVL={total} />
+      <TotalStats bountyCount={listings} TVE={total} />
       <RecentEarners earners={earners} />
     </Flex>
   );

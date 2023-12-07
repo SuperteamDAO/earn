@@ -54,6 +54,7 @@ interface Props {
   pocSocials?: string;
   applicationType?: 'fixed' | 'rolling';
   timeToComplete?: string;
+  isPublished?: boolean;
 }
 function DetailSideCard({
   id,
@@ -71,6 +72,7 @@ function DetailSideCard({
   isWinnersAnnounced = false,
   applicationType,
   timeToComplete,
+  isPublished,
 }: Props) {
   const { userInfo } = userStore();
   const [isSubmissionNumberLoading, setIsSubmissionNumberLoading] =
@@ -412,6 +414,7 @@ function DetailSideCard({
                 _hover={{
                   bg: 'brand.purple',
                 }}
+                disabled={isPublished}
                 isDisabled={Date.now() > Number(moment(endingTime).format('x'))}
                 isLoading={isUserSubmissionLoading}
                 loadingText={'Checking Submission...'}

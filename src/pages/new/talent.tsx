@@ -90,7 +90,7 @@ const StepsCon = ({ setSuccess }: { setSuccess: () => void }) => {
     {
       title: 'Create Your Profile',
       subTitle:
-        "If you're ready to start contributing to Solana, you're in the right place.",
+        "If you're ready to start contributing to crypto projects, you're in the right place.",
     },
     {
       title: 'Tell Us About Your Work',

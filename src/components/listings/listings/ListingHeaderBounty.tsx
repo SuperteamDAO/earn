@@ -246,17 +246,32 @@ function ListingHeader({
                     )}
                   </Text>
                 </Flex>
-                <Text
-                  px={2}
-                  py={1}
-                  color={'#0800A5'}
-                  fontSize={'xs'}
-                  fontWeight={500}
-                  bg="#EBEAFF"
-                  rounded={'full'}
+                <Tooltip
+                  px={4}
+                  py={2}
+                  color="brand.slate.500"
+                  fontFamily={'Inter'}
+                  fontSize="sm"
+                  bg="white"
+                  borderRadius={'lg'}
+                  label={
+                    region === 'GLOBAL'
+                      ? 'This listing is open to everyone in the world!'
+                      : `You need to be a resident of ${region} to participate in this bounty`
+                  }
                 >
-                  {region}
-                </Text>
+                  <Text
+                    px={2}
+                    py={1}
+                    color={'#0800A5'}
+                    fontSize={'xs'}
+                    fontWeight={500}
+                    bg="#EBEAFF"
+                    rounded={'full'}
+                  >
+                    {region}
+                  </Text>
+                </Tooltip>
               </HStack>
             )}
           </VStack>

@@ -170,7 +170,7 @@ const Index = () => {
                     fontSize={'0.9rem'}
                     fontWeight={400}
                   >
-                    Start contributing to top Solana projects
+                    Start contributing to top crypto projects
                   </Text>
                 </Flex>
                 <Flex align={'center'} gap={2}>
