@@ -13,7 +13,7 @@ const Index = () => {
         <Meta
           title="Superteam Earn"
           description="Every Solana opportunity in one place!"
-          canonical="/assets/logo/og.svg"
+          canonical="https://earn.superteam.fun/new/"
         />
       }
     >
