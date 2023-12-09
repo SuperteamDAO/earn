@@ -23,7 +23,7 @@ import { PostHogProvider } from 'posthog-js/react';
 
 import theme from '../config/chakra.config';
 import { Wallet } from '../context/connectWalletContext';
-
+// importing localFont from a local file as Google imported fonts do not enable font-feature-settings. Reference: https://github.com/vercel/next.js/discussions/52456
 const fontSans = localFont({
   src: [
     {
@@ -71,6 +71,7 @@ const fontMono = JetBrains_Mono({
   weight: ['400', '600'],
 });
 
+// Chakra / Next/font don't play well in config.ts file for the theme. So we extend the theme here. (only the fonts)
 const extendThemeWithNextFonts = {
   ...theme,
   fonts: {
@@ -98,6 +99,7 @@ function MyApp({ Component, pageProps }: AppProps) {
   return (
     <>
       <style jsx global>
+        {/* making the fonts available throughout the app via CSS variables */}
         {`
           :root {
             --font-sans: ${fontSans.style.fontFamily};
