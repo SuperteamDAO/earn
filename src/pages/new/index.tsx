@@ -22,7 +22,7 @@ const Index = () => {
         justifyContent={'center'}
         display={'flex'}
         h={'100vh'}
-        fontFamily="Inter"
+        fontFamily="var(--font-sans)"
       >
         <Box
           pos={'absolute'}

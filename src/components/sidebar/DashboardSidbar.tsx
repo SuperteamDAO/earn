@@ -106,7 +106,7 @@ export const DashboardSidbar = ({ sponsors }: Props) => {
         h="100%"
         mt={10}
         pt={5}
-        fontFamily="Inter"
+        fontFamily="var(--font-sans)"
         bg="white"
         borderRight={{
           lg: '1px solid #F1F5F9',

@@ -550,7 +550,7 @@ export const CategoryBanner = ({ type }: { type: string }) => {
           <Image h="18" alt="Category icon" src={categoryAssets[type]?.icon} />
         </Center>
         <Box w={{ md: '60%', base: '100%' }} mt={{ base: 4, md: '0' }}>
-          <Text fontFamily={'Domine'} fontWeight={'700'}>
+          <Text fontFamily={'var(--font-serif)'} fontWeight={'700'}>
             {type === 'Hyperdrive'
               ? 'Hyperdrive Side Tracks & Local Prizes'
               : type}

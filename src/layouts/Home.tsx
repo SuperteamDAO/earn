@@ -135,7 +135,7 @@ function Home({ children, type }: HomeProps) {
                     <Box w={{ md: '80%', base: '100%' }}>
                       <Text
                         mt={{ base: 4, md: '0' }}
-                        fontFamily={'Domine'}
+                        fontFamily={'var(--font-serif)'}
                         fontWeight={'700'}
                       >
                         {matchedTeam.name}

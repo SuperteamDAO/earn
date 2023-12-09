@@ -4,17 +4,6 @@ import 'slick-carousel/slick/slick-theme.css';
 import 'degen/styles';
 import 'nprogress/nprogress.css';
 import '../styles/globals.scss';
-// Fonts
-import '@fontsource/inter/';
-import '@fontsource/inter/400.css';
-import '@fontsource/inter/500.css';
-import '@fontsource/inter/600.css';
-import '@fontsource/inter/700.css';
-// import "@fontsource/domine/"
-import '@fontsource/domine/400.css';
-import '@fontsource/domine/500.css';
-import '@fontsource/domine/600.css';
-import '@fontsource/domine/700.css';
 
 import { ChakraProvider } from '@chakra-ui/react';
 import {
@@ -24,6 +13,9 @@ import {
 } from '@tanstack/react-query';
 import { ReactQueryDevtools } from '@tanstack/react-query-devtools';
 import type { AppProps } from 'next/app';
+// Fonts
+import { Domine, JetBrains_Mono } from 'next/font/google';
+import localFont from 'next/font/local';
 import { Router } from 'next/router';
 import NProgress from 'nprogress';
 import posthog from 'posthog-js';
@@ -31,6 +23,53 @@ import { PostHogProvider } from 'posthog-js/react';
 
 import theme from '../config/chakra.config';
 import { Wallet } from '../context/connectWalletContext';
+
+const fontSans = localFont({
+  src: [
+    {
+      path: '../../public/assets/fonts/inter/inter-subset.woff2',
+      style: 'normal',
+    },
+    {
+      path: '../../public/assets/fonts/inter/inter-subset.woff2',
+      style: 'italic',
+    },
+  ],
+  display: 'swap',
+  preload: true,
+  adjustFontFallback: 'Arial',
+  declarations: [
+    {
+      prop: 'font-feature-settings',
+      value:
+        '"dlig", "liga", "calt", "tnum", "zero", "ss08", "cv10", "cv06", "cv08"',
+    },
+  ],
+});
+
+const fontSerif = Domine({
+  subsets: ['latin'],
+  display: 'swap',
+  adjustFontFallback: true,
+  preload: true,
+  fallback: ['Times New Roman'],
+});
+
+const fontMono = JetBrains_Mono({
+  subsets: ['latin'],
+  display: 'swap',
+  adjustFontFallback: true,
+  preload: false,
+  fallback: ['Courier New'],
+});
+
+const extendThemeWithNextFonts = {
+  ...theme,
+  fonts: {
+    heading: fontSans.style.fontFamily,
+    body: fontSans.style.fontFamily,
+  },
+};
 
 if (typeof window !== 'undefined') {
   posthog.init(process.env.NEXT_PUBLIC_POSTHOG_KEY!, {
@@ -50,7 +89,16 @@ function MyApp({ Component, pageProps }: AppProps) {
 
   return (
     <>
-      <ChakraProvider theme={theme}>
+      <style jsx global>
+        {`
+          :root {
+            --font-sans: ${fontSans.style.fontFamily};
+            --font-serif: ${fontSerif.style.fontFamily};
+            --font-mono: ${fontMono.style.fontFamily};
+          }
+        `}
+      </style>
+      <ChakraProvider theme={extendThemeWithNextFonts}>
         <Wallet>
           <QueryClientProvider client={queryClient}>
             <Hydrate state={pageProps.dehydratedState}>

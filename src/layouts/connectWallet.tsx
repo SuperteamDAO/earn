@@ -29,7 +29,7 @@ export const ConnectWallet = () => {
         w="100%"
         h="110vh"
         mt={'0'}
-        fontFamily="Inter"
+        fontFamily="var(--font-sans)"
         bgImage={`url('/assets/bg/banner.png')`}
         bgSize="cover"
         bgRepeat="no-repeat"
