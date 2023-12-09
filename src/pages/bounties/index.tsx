@@ -1,5 +1,6 @@
 import { Box, Flex } from '@chakra-ui/react';
 import axios from 'axios';
+import dayjs from 'dayjs';
 import { useEffect, useState } from 'react';
 
 import { BountiesCard, ListingSection } from '@/components/misc/listingsCard';
@@ -17,6 +18,7 @@ function AllBountiesPage() {
   const [listings, setListings] = useState<Listings>({
     bounties: [],
   });
+  const date = dayjs().subtract(2, 'months').toISOString();
 
   const getListings = async () => {
     setIsListingsLoading(true);
@@ -26,6 +28,7 @@ function AllBountiesPage() {
           category: 'bounties',
           take: 100,
           type: 'open',
+          deadline: date,
         },
       });
       setListings(listingsData.data);

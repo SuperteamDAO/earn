@@ -24,6 +24,8 @@ import type { Eligibility } from '@/interface/bounty';
 import { userStore } from '@/store/user';
 import { Mixpanel } from '@/utils/mixpanel';
 
+import { AutoResizeTextarea } from '../shared/autosize-textarea';
+
 interface Props {
   id: string;
   isOpen: boolean;
@@ -54,7 +56,6 @@ export const SubmissionModal = ({
     register,
     handleSubmit,
     formState: { errors },
-    watch,
     reset,
   } = useForm();
 
@@ -226,32 +227,14 @@ export const SubmissionModal = ({
                   If you have any other links or information you&apos;d like to
                   share with us, please add them here!
                 </FormHelperText>
-                <Input
+                <AutoResizeTextarea
                   borderColor={'brand.slate.300'}
                   _placeholder={{ color: 'brand.slate.300' }}
                   focusBorderColor="brand.purple"
                   id="otherInfo"
-                  maxLength={180}
                   placeholder="Add info or link"
                   {...register('otherInfo')}
                 />
-                <Text
-                  color={
-                    (watch('otherInfo')?.length || 0) > 160
-                      ? 'red'
-                      : 'brand.slate.400'
-                  }
-                  fontSize={'xs'}
-                  textAlign="right"
-                >
-                  {180 - (watch('otherInfo')?.length || 0) === 0 ? (
-                    <p>Character limit exceeded. Please reduce the text</p>
-                  ) : (
-                    <p>
-                      {180 - (watch('otherInfo')?.length || 0)} characters left
-                    </p>
-                  )}
-                </Text>
                 <FormErrorMessage>
                   {errors.otherInfo ? <>{errors.otherInfo.message}</> : <></>}
                 </FormErrorMessage>

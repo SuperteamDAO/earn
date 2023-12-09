@@ -163,7 +163,7 @@ model Submission {
   id                 String      @id @default(uuid())
   link               String?
   tweet              String?
-  otherInfo          String?
+  otherInfo          String?     @db.VarChar(1000)
   eligibilityAnswers Json?
   userId             String
   listingType        ListingType @default(BOUNTY)
@@ -404,4 +404,5 @@ enum Regions {
   UK
   UAE
   NIGERIA
+  ISRAEL
 }

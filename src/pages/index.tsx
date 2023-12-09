@@ -3,6 +3,7 @@ import { ArrowForwardIcon } from '@chakra-ui/icons';
 import { Box, Button, Flex, HStack, Image, Link, Text } from '@chakra-ui/react';
 import { css } from '@emotion/react';
 import axios from 'axios';
+import dayjs from 'dayjs';
 import type { NextPage } from 'next';
 import { useEffect, useState } from 'react';
 
@@ -30,6 +31,8 @@ const HomePage: NextPage = () => {
     grants: [],
   });
 
+  const date = dayjs().subtract(1, 'month').toISOString();
+
   const getListings = async () => {
     setIsListingsLoading(true);
     try {
@@ -38,6 +41,7 @@ const HomePage: NextPage = () => {
         params: {
           category: 'bounties',
           take: 10,
+          deadline: date,
         },
       });
 
