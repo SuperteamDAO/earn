@@ -571,10 +571,6 @@ const Sponsor = () => {
             lineHeight="1.15em"
             letterSpacing={'-0.04em'}
             textAlign="start"
-            css={{
-              fontFeatureSettings:
-                '"dlig", "liga", "calt", "tnum", "zero", "ss08", "cv10", "cv06", "cv08"',
-            }}
           >
             Where Top Crypto Founders Meet Top Global Talent
           </Text>
