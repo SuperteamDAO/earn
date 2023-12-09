@@ -44,6 +44,12 @@ const fontSans = localFont({
       value:
         '"dlig", "liga", "calt", "tnum", "zero", "ss08", "cv10", "cv06", "cv08"',
     },
+    {
+      prop: 'unicode-range',
+      value:
+        'U+0020-007F, U+2000-206F, U+2070-209F, U+20A0-20CF, U+2100-214F, U+2200-22FF, U+FB00-FB4F, U+2190-21BB',
+    },
+    { prop: 'font-synthesis', value: 'none' },
   ],
 });
 
@@ -53,6 +59,7 @@ const fontSerif = Domine({
   adjustFontFallback: true,
   preload: true,
   fallback: ['Times New Roman'],
+  weight: ['700'],
 });
 
 const fontMono = JetBrains_Mono({
@@ -61,6 +68,7 @@ const fontMono = JetBrains_Mono({
   adjustFontFallback: true,
   preload: false,
   fallback: ['Courier New'],
+  weight: ['400', '600'],
 });
 
 const extendThemeWithNextFonts = {
