@@ -9,6 +9,7 @@ const nextConfig = {
   swcMinify: true,
   images: {
     domains: ['res.cloudinary.com'],
+    formats: ['image/avif', 'image/webp'],
   },
   async headers() {
     const headers = [];
