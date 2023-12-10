@@ -24,6 +24,15 @@ import { getBountyDraftStatus } from '@/utils/bounty';
 import { dayjs } from '@/utils/dayjs';
 import { mergeSkills, splitSkills } from '@/utils/skills';
 
+// Pre-fill the bounty description dialog box with headings
+const preFilledHeadings = `
+# About the Bounty & Scope
+## Rewards
+## Judging Criteria
+## Submission Requirements
+## Resources
+`;
+
 interface Props {
   bounty?: Bounty;
   isEditMode?: boolean;
@@ -44,7 +53,7 @@ function CreateListing({ bounty, isEditMode = false, type }: Props) {
     string | undefined
   >(isEditMode ? bounty?.requirements : undefined);
   const [editorData, setEditorData] = useState<string | undefined>(
-    isEditMode ? bounty?.description : undefined
+    isEditMode ? bounty?.description : preFilledHeadings
   );
   const [regions, setRegions] = useState<Regions>(
     isEditMode ? bounty?.region || Regions.GLOBAL : Regions.GLOBAL
@@ -193,7 +202,7 @@ function CreateListing({ bounty, isEditMode = false, type }: Props) {
     } catch (e) {
       setDraftLoading(false);
     }
-  };
+  }
 
   const newBounty = bounty?.id === undefined;
 
@@ -224,7 +233,7 @@ function CreateListing({ bounty, isEditMode = false, type }: Props) {
                     number: 1,
                     mainHead: 'List your Opportunity',
                     description:
-                      'To save time, check out our ready made templates below. If you already have a listing elsewhere, use "Start from Scratch" and copy/paste your text.',
+                      'To save time, check out our ready-made templates below. If you already have a listing elsewhere, use "Start from Scratch" and copy/paste your text.',
                   },
                   {
                     label: 'Basics',
@@ -253,7 +262,7 @@ function CreateListing({ bounty, isEditMode = false, type }: Props) {
                     number: 1,
                     mainHead: 'List your Opportunity',
                     description:
-                      'To save time, check out our ready made templates below. If you already have a listing elsewhere, use "Start from Scratch" and copy/paste your text.',
+                      'To save time, check out our ready-made templates below. If you already have a listing elsewhere, use "Start from Scratch" and copy/paste your text.',
                   },
                   {
                     label: 'Basics',
