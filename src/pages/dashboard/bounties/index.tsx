@@ -43,7 +43,11 @@ import axios from 'axios';
 import NextLink from 'next/link';
 import { useRouter } from 'next/router';
 import { useEffect, useRef, useState } from 'react';
-import { AiOutlineEdit, AiOutlineOrderedList } from 'react-icons/ai';
+import {
+  AiOutlineDelete,
+  AiOutlineEdit,
+  AiOutlineOrderedList,
+} from 'react-icons/ai';
 import { FiMoreVertical } from 'react-icons/fi';
 
 import ErrorSection from '@/components/shared/ErrorSection';
@@ -154,6 +158,16 @@ function Bounties() {
 
   const handleViewSubmissions = (slug: string | undefined) => {
     router.push(`/dashboard/bounties/${slug}/submissions/`);
+  };
+
+  const handleDeleteDraft = async (deleteBounty: BountyWithSubmissions) => {
+    try {
+      await axios.post(`/api/bounties/delete/${deleteBounty.id}`);
+      const update = bounties.filter((x) => x.id === deleteBounty.id);
+      setBounties(update);
+    } catch (e) {
+      console.log(e);
+    }
   };
 
   return (
@@ -471,6 +485,15 @@ function Bounties() {
                               Edit Bounty
                             </MenuItem>
                           </NextLink>
+                          {bountyStatus === 'DRAFT' && (
+                            <MenuItem
+                              color={'red'}
+                              icon={<AiOutlineDelete color="red" />}
+                              onClick={() => handleDeleteDraft(currentBounty)}
+                            >
+                              Delete Draft Bounty
+                            </MenuItem>
+                          )}
                           {!(
                             currentBounty.status === 'OPEN' &&
                             !currentBounty.isPublished
