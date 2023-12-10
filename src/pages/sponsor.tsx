@@ -5,51 +5,58 @@ import {
   Button,
   Flex,
   Grid,
-  Image,
   Link,
   Text,
   useMediaQuery,
 } from '@chakra-ui/react';
 import axios from 'axios';
+import type { ImageProps } from 'next/image';
+import Image from 'next/image';
 import { useRouter } from 'next/router';
 import { useEffect, useState } from 'react';
 
+import DialectDisplay from '@/public/assets/landingsponsor/displays/chatwithdialect.png';
+import DifferentListingsDisplay from '@/public/assets/landingsponsor/displays/differentlistings.png';
+import FindAnySkillsDisplay from '@/public/assets/landingsponsor/displays/findanyskill.png';
+import OnchainEarningsDisplay from '@/public/assets/landingsponsor/displays/onchainearnings.png';
+import PrivateListingsDisplay from '@/public/assets/landingsponsor/displays/privatelistings.png';
+import SPLTokenDisplay from '@/public/assets/landingsponsor/displays/spltokens.png';
+import SponsorHeroDisplay from '@/public/assets/landingsponsor/displays/sponsorhero.png';
+// Import images
+import SponsorPage from '@/public/assets/landingsponsor/displays/sponsorpage.png';
+import TalentDirectoryDisplay from '@/public/assets/landingsponsor/displays/talentdirectory.png';
+import TemplateDisplay from '@/public/assets/landingsponsor/displays/template.png';
+import FireIcon from '@/public/assets/landingsponsor/icons/fire.png';
+import MoneyIcon from '@/public/assets/landingsponsor/icons/money.png';
+import ProfileIcon from '@/public/assets/landingsponsor/icons/profile.png';
+import ZapIcon from '@/public/assets/landingsponsor/icons/zap.png';
+import Dialect from '@/public/assets/landingsponsor/sponsors/dialect.png';
+// Sponsor Logos
+import Foundation from '@/public/assets/landingsponsor/sponsors/foundation.png';
+import Orbis from '@/public/assets/landingsponsor/sponsors/orbis.png';
+import Pyth from '@/public/assets/landingsponsor/sponsors/pyth.png';
+import Spaces from '@/public/assets/landingsponsor/sponsors/spaces.png';
+import StreamFlow from '@/public/assets/landingsponsor/sponsors/streamflow.png';
+import Wormhole from '@/public/assets/landingsponsor/sponsors/wormhole.png';
+import Kash from '@/public/assets/randompeople/kash.png';
+
 import Footer from '../components/Footer/Footer';
-
-// Images
-const SponsorPage = '/assets/landingsponsor/displays/sponsorpage.png';
-const FireIcon = '/assets/landingsponsor/icons/fire.png';
-const ZapIcon = '/assets/landingsponsor/icons/zap.png';
-const MoneyIcon = '/assets/landingsponsor/icons/money.png';
-const ProfileIcon = '/assets/landingsponsor/icons/profile.png';
-const TalentDirectoryDisplay =
-  '/assets/landingsponsor/displays/talentdirectory.png';
-const FindAnySkillsDisplay = '/assets/landingsponsor/displays/findanyskill.png';
-const DialectDisplay = '/assets/landingsponsor/displays/chatwithdialect.png';
-const OnchainEarningsDisplay =
-  '/assets/landingsponsor/displays/onchainearnings.png';
-const SPLTokenDisplay = '/assets/landingsponsor/displays/spltokens.png';
-const TemplateDisplay = '/assets/landingsponsor/displays/template.png';
-const DifferentListingsDisplay =
-  '/assets/landingsponsor/displays/differentlistings.png';
-const PrivateListingsDisplay =
-  '/assets/landingsponsor/displays/privatelistings.png';
-const SponsorHeroDisplay = '/assets/landingsponsor/displays/sponsorhero.png';
-
-// Sponsor Logs
-const Foundation = '/assets/landingsponsor/sponsors/foundation.png';
-const Pyth = '/assets/landingsponsor/sponsors/pyth.png';
-const StreamFlow = '/assets/landingsponsor/sponsors/streamflow.png';
-const Wormhole = '/assets/landingsponsor/sponsors/wormhole.png';
-const Dialect = '/assets/landingsponsor/sponsors/dialect.png';
-const Spaces = '/assets/landingsponsor/sponsors/spaces.png';
-const Orbis = '/assets/landingsponsor/sponsors/orbis.png';
 
 type Totals = {
   count: number;
   totalInUSD: number;
 };
 
+interface HighQualityImageProps extends ImageProps {
+  alt: string; // Making 'alt' explicitly required
+}
+
+const HighQualityImage: React.FC<HighQualityImageProps> = ({
+  alt,
+  ...props
+}) => {
+  return <Image alt={alt} {...props} quality={95} />;
+};
 const Sponsor = () => {
   const [isLargerThan12800px] = useMediaQuery('(min-width: 80rem)');
   const [isLessThan600px] = useMediaQuery('(max-width: 600px)');
@@ -173,11 +180,19 @@ const Sponsor = () => {
             Get Started
           </Button>
           <Flex align="center" gap="1.25rem" fontSize="1rem" fontWeight={700}>
-            <Box zIndex={2} minW="2.3125rem" h="2.3125rem" borderRadius="50%">
-              <img
-                src="/assets/randompeople/kash.png"
-                style={{ width: '100%', height: '100%' }}
-                alt="Kash"
+            <Box
+              pos="relative"
+              zIndex={2}
+              overflow="hidden"
+              minW="2.3125rem"
+              h="2.3125rem"
+              borderRadius="50%"
+            >
+              <HighQualityImage
+                src={Kash}
+                alt="KashHeader"
+                placeholder="blur"
+                fill={true}
               />
             </Box>
 
@@ -233,13 +248,13 @@ const Sponsor = () => {
             </Text>
           </Flex>
           {isLargerThan12800px ? (
-            <Box zIndex={2}>
-              <img
+            <Box pos="relative" zIndex={2}>
+              <HighQualityImage
                 src={DifferentListingsDisplay}
                 alt="Image"
-                width="100%"
-                height="100%"
                 style={{ zIndex: '2', objectFit: 'contain' }}
+                placeholder="blur"
+                fill={true}
               />
             </Box>
           ) : null}
@@ -264,18 +279,27 @@ const Sponsor = () => {
           gap="2.5rem"
           w="100%"
         >
-          <Box w="18.75rem">
-            <img src={TemplateDisplay} alt="Image" width="" height="100%" />
+          <Box pos="relative" w="18.75rem">
+            <HighQualityImage
+              src={TemplateDisplay}
+              alt="Image"
+              fill={true}
+              style={{ objectFit: 'contain' }}
+            />
+          </Box>
+          <Box pos={'relative'} w="18.75rem">
+            <HighQualityImage
+              src={SPLTokenDisplay}
+              alt="Image"
+              fill={true}
+              style={{ objectFit: 'scale-down' }}
+            />
           </Box>
           <Box w="18.75rem">
-            <img src={SPLTokenDisplay} alt="Image" width="" height="100%" />
-          </Box>
-          <Box w="18.75rem">
-            <img
+            <HighQualityImage
               src={PrivateListingsDisplay}
               alt="Image"
-              width=""
-              height="100%"
+              placeholder="blur"
             />
           </Box>
         </Flex>
@@ -300,12 +324,11 @@ const Sponsor = () => {
         <Flex pos="relative" gap="6.25rem">
           {isLargerThan12800px ? (
             <Box zIndex="2" w={'60%'}>
-              <img
+              <HighQualityImage
                 src={TalentDirectoryDisplay}
                 alt="Image"
-                width="100%"
-                height="100%"
                 style={{ zIndex: '2', objectFit: 'contain' }}
+                placeholder="blur"
               />
             </Box>
           ) : null}
@@ -336,22 +359,24 @@ const Sponsor = () => {
 
         <Flex zIndex={2} justify="space-between" wrap="wrap" w="100%">
           <Box w="30%">
-            <img
+            <HighQualityImage
               src={FindAnySkillsDisplay}
               alt="Image"
-              width=""
-              height="100%"
+              placeholder="blur"
             />
           </Box>
           <Box w="30%">
-            <img src={DialectDisplay} alt="Image" width="" height="100%" />
+            <HighQualityImage
+              src={DialectDisplay}
+              alt="Image"
+              placeholder="blur"
+            />
           </Box>
           <Box w="30%">
-            <img
+            <HighQualityImage
               src={OnchainEarningsDisplay}
               alt="Image"
-              width=""
-              height="100%"
+              placeholder="blur"
             />
           </Box>
         </Flex>
@@ -376,7 +401,13 @@ const Sponsor = () => {
       >
         <Flex align="center" gap="1.25rem">
           <Box w="3.75rem" h="3.75rem">
-            <Image w="100%" h="100%" alt="Icon" src={ProfileIcon} />
+            <HighQualityImage
+              // width="100%"
+              // height="100%"
+              alt="Icon"
+              src={ProfileIcon}
+              placeholder="blur"
+            />
           </Box>
           <Box>
             <Text color="gray.800" fontSize="1.5rem" fontWeight={700}>
@@ -390,7 +421,13 @@ const Sponsor = () => {
 
         <Flex align="center" gap="0.625rem">
           <Box w="3.75rem" h="3.75rem">
-            <Image w="100%" h="100%" alt="Icon" src={MoneyIcon} />
+            <HighQualityImage
+              // w="100%"
+              // h="100%"
+              alt="Icon"
+              src={MoneyIcon}
+              placeholder="blur"
+            />
           </Box>
           <Box>
             <Text color="gray.800" fontSize="1.5rem" fontWeight={700}>
@@ -404,7 +441,13 @@ const Sponsor = () => {
 
         <Flex align="center" gap="0.625rem">
           <Box w="3.75rem" h="3.75rem">
-            <Image w="100%" h="100%" alt="Icon" src={ZapIcon} />
+            <HighQualityImage
+              // w="100%"
+              // h="100%"
+              alt="Icon"
+              src={ZapIcon}
+              placeholder="blur"
+            />
           </Box>
           <Box>
             <Text color="gray.800" fontSize="1.5rem" fontWeight={700}>
@@ -418,7 +461,13 @@ const Sponsor = () => {
 
         <Flex align="center" gap="0.625rem">
           <Box w="3.75rem" h="3.75rem">
-            <Image w="100%" h="100%" alt="Icon" src={FireIcon} />
+            <HighQualityImage
+              // w="100%"
+              // h="100%"
+              alt="Icon"
+              src={FireIcon}
+              placeholder="blur"
+            />
           </Box>
           <Box>
             <Text color="gray.800" fontSize="1.5rem" fontWeight={700}>
@@ -452,13 +501,48 @@ const Sponsor = () => {
           h="7.5rem"
           mb="3.125rem"
         >
-          <img src={Spaces} alt="Spaces" style={{ height: '15%' }} />
-          <img src={Dialect} alt="Dialect" style={{ height: '18%' }} />
-          <img src={Wormhole} alt="Wormhole" style={{ height: '20%' }} />
-          <img src={Orbis} alt="Orbis" style={{ height: '20%' }} />
-          <img src={Pyth} alt="Pyth" style={{ height: '20%' }} />
-          <img src={Foundation} alt="Foundation" style={{ height: '15%' }} />
-          <img src={StreamFlow} alt="StreamFlow" style={{ height: '20%' }} />
+          <HighQualityImage
+            height={18}
+            src={Spaces}
+            alt="Spaces"
+            unoptimized={true}
+          />
+          <HighQualityImage
+            src={Dialect}
+            alt="Dialect"
+            height={21.6}
+            unoptimized={true}
+          />
+          <HighQualityImage
+            src={Wormhole}
+            alt="Wormhole"
+            height={24}
+            unoptimized={true}
+          />
+          <HighQualityImage
+            src={Orbis}
+            alt="Orbis"
+            height={24}
+            unoptimized={true}
+          />
+          <HighQualityImage
+            src={Pyth}
+            alt="Pyth"
+            height={24}
+            unoptimized={true}
+          />
+          <HighQualityImage
+            src={Foundation}
+            alt="Foundation"
+            height={18}
+            unoptimized={true}
+          />
+          <HighQualityImage
+            src={StreamFlow}
+            alt="StreamFlow"
+            height={24}
+            unoptimized={true}
+          />
         </Flex>
 
         <Flex align="center" justify="end" wrap="wrap" gap="1.25rem" w="100%">
@@ -503,12 +587,12 @@ const Sponsor = () => {
           </Flex>
 
           <Box w="37.5rem">
-            <Image
-              w={'100%'}
-              h={'100%'}
-              objectFit="contain"
+            <HighQualityImage
+              // w={'100%'}
+              // h={'100%'}
               alt="Image"
               src={SponsorPage}
+              placeholder="blur"
             />
           </Box>
         </Flex>
@@ -570,10 +654,11 @@ const Sponsor = () => {
             </Button>
             <Flex align="center" gap="0.5rem" fontSize="1rem" fontWeight={700}>
               <Box minW="2.3125rem" h="2.3125rem" borderRadius="50%">
-                <img
-                  src="/assets/randompeople/kash.png"
+                <HighQualityImage
+                  src={Kash}
                   style={{ width: '100%', height: '100%' }}
                   alt="Kash"
+                  placeholder="blur"
                 />
               </Box>
 
@@ -612,10 +697,10 @@ const Sponsor = () => {
             w="60%"
             maxW="90rem"
           >
-            <Image
-              w={'100%'}
-              h={'100%'}
-              objectFit="contain"
+            <HighQualityImage
+              // w={'100%'}
+              // h={'100%'}
+              style={{ objectFit: 'contain' }}
               alt="Image"
               id={'sponsor-hero'}
               src={SponsorHeroDisplay}
