@@ -50,12 +50,12 @@ type Totals = {
 interface HighQualityImageProps extends ImageProps {
   alt: string; // Making 'alt' explicitly required
 }
-
+// sets a default quality here, instead of having to specify it in every instance — default set by nextjs images is 75
 const HighQualityImage: React.FC<HighQualityImageProps> = ({
   alt,
   ...props
 }) => {
-  return <Image alt={alt} {...props} quality={95} />;
+  return <Image alt={alt} {...props} quality={90} />;
 };
 const Sponsor = () => {
   const [isLargerThan12800px] = useMediaQuery('(min-width: 80rem)');
@@ -190,9 +190,11 @@ const Sponsor = () => {
             >
               <HighQualityImage
                 src={Kash}
-                alt="KashHeader"
+                alt="Kash Dhanda Profile Picture"
                 placeholder="blur"
                 fill={true}
+                style={{ objectFit: 'contain' }}
+                sizes="10vw"
               />
             </Box>
 
@@ -251,10 +253,10 @@ const Sponsor = () => {
             <Box pos="relative" zIndex={2}>
               <HighQualityImage
                 src={DifferentListingsDisplay}
-                alt="Image"
+                alt="Screenshot of opportunities listed on superteam earn — Web3Auth's Rust Developer job with a salary range of $100k-$200k, Amulet's UI/UX review for 2500 USDC, Port finance' Bug Bounty for $1M USDC"
                 style={{ zIndex: '2', objectFit: 'contain' }}
                 placeholder="blur"
-                fill={true}
+                sizes="50vw"
               />
             </Box>
           ) : null}
@@ -282,24 +284,23 @@ const Sponsor = () => {
           <Box pos="relative" w="18.75rem">
             <HighQualityImage
               src={TemplateDisplay}
-              alt="Image"
-              fill={true}
-              style={{ objectFit: 'contain' }}
+              alt="Not sure where to start? Our templates will guide you"
+              sizes="33vw"
             />
           </Box>
           <Box pos={'relative'} w="18.75rem">
             <HighQualityImage
               src={SPLTokenDisplay}
-              alt="Image"
-              fill={true}
-              style={{ objectFit: 'scale-down' }}
+              alt="Pay using stablecoins or SPL tokens"
+              sizes="33vw"
             />
           </Box>
           <Box w="18.75rem">
             <HighQualityImage
               src={PrivateListingsDisplay}
-              alt="Image"
+              alt="Directly invoice talent via Superteam Earn"
               placeholder="blur"
+              sizes="33vw"
             />
           </Box>
         </Flex>
@@ -326,9 +327,10 @@ const Sponsor = () => {
             <Box zIndex="2" w={'60%'}>
               <HighQualityImage
                 src={TalentDirectoryDisplay}
-                alt="Image"
+                alt="Search and fitler to identify and reach talent on superteam earn"
                 style={{ zIndex: '2', objectFit: 'contain' }}
                 placeholder="blur"
+                sizes="50vw"
               />
             </Box>
           ) : null}
@@ -361,22 +363,25 @@ const Sponsor = () => {
           <Box w="30%">
             <HighQualityImage
               src={FindAnySkillsDisplay}
-              alt="Image"
+              alt="Find any skill you need on superteam earn. Highlighted in the image: Back-End Dev, Design, Smart Contract Dev, Front-End Dev, Community/Growth"
               placeholder="blur"
+              sizes="30vw"
             />
           </Box>
           <Box w="30%">
             <HighQualityImage
               src={DialectDisplay}
-              alt="Image"
+              alt="Connect without middlemen — get in touch with any talent"
               placeholder="blur"
+              sizes="30vw"
             />
           </Box>
           <Box w="30%">
             <HighQualityImage
               src={OnchainEarningsDisplay}
-              alt="Image"
+              alt="On-Chain proof of work — View verified earnings"
               placeholder="blur"
+              sizes="30vw"
             />
           </Box>
         </Flex>
@@ -402,11 +407,11 @@ const Sponsor = () => {
         <Flex align="center" gap="1.25rem">
           <Box w="3.75rem" h="3.75rem">
             <HighQualityImage
-              // width="100%"
-              // height="100%"
-              alt="Icon"
+              alt="Silhouette of a Person — Avatar"
               src={ProfileIcon}
               placeholder="blur"
+              sizes="10vw"
+              style={{ objectFit: 'contain' }}
             />
           </Box>
           <Box>
@@ -422,11 +427,11 @@ const Sponsor = () => {
         <Flex align="center" gap="0.625rem">
           <Box w="3.75rem" h="3.75rem">
             <HighQualityImage
-              // w="100%"
-              // h="100%"
-              alt="Icon"
+              alt="Illustration of money"
               src={MoneyIcon}
               placeholder="blur"
+              sizes="10vw"
+              style={{ objectFit: 'contain' }}
             />
           </Box>
           <Box>
@@ -442,11 +447,11 @@ const Sponsor = () => {
         <Flex align="center" gap="0.625rem">
           <Box w="3.75rem" h="3.75rem">
             <HighQualityImage
-              // w="100%"
-              // h="100%"
-              alt="Icon"
+              alt="Illustration of a Lightning"
               src={ZapIcon}
               placeholder="blur"
+              style={{ objectFit: 'contain' }}
+              sizes="10vw"
             />
           </Box>
           <Box>
@@ -462,11 +467,11 @@ const Sponsor = () => {
         <Flex align="center" gap="0.625rem">
           <Box w="3.75rem" h="3.75rem">
             <HighQualityImage
-              // w="100%"
-              // h="100%"
-              alt="Icon"
+              alt="Illustration of fire"
               src={FireIcon}
               placeholder="blur"
+              sizes="10vw"
+              style={{ objectFit: 'contain' }}
             />
           </Box>
           <Box>
@@ -504,42 +509,42 @@ const Sponsor = () => {
           <HighQualityImage
             height={18}
             src={Spaces}
-            alt="Spaces"
+            alt="Spaces Logo"
             unoptimized={true}
           />
           <HighQualityImage
             src={Dialect}
-            alt="Dialect"
+            alt="Dialect Logo"
             height={21.6}
             unoptimized={true}
           />
           <HighQualityImage
             src={Wormhole}
-            alt="Wormhole"
+            alt="Wormhole Logo"
             height={24}
             unoptimized={true}
           />
           <HighQualityImage
             src={Orbis}
-            alt="Orbis"
+            alt="Orbis  Logo"
             height={24}
             unoptimized={true}
           />
           <HighQualityImage
             src={Pyth}
-            alt="Pyth"
+            alt="Pyth Logo"
             height={24}
             unoptimized={true}
           />
           <HighQualityImage
             src={Foundation}
-            alt="Foundation"
+            alt="Foundation Logo"
             height={18}
             unoptimized={true}
           />
           <HighQualityImage
             src={StreamFlow}
-            alt="StreamFlow"
+            alt="StreamFlow Logo"
             height={24}
             unoptimized={true}
           />
@@ -588,11 +593,10 @@ const Sponsor = () => {
 
           <Box w="37.5rem">
             <HighQualityImage
-              // w={'100%'}
-              // h={'100%'}
-              alt="Image"
+              alt="Screenshot of a Superteam Earn — showing different bounties, and jobs listed"
               src={SponsorPage}
               placeholder="blur"
+              sizes="50vw"
             />
           </Box>
         </Flex>
@@ -698,12 +702,11 @@ const Sponsor = () => {
             maxW="90rem"
           >
             <HighQualityImage
-              // w={'100%'}
-              // h={'100%'}
               style={{ objectFit: 'contain' }}
-              alt="Image"
+              alt="Illustration of bounties being posted and applications being submitted"
               id={'sponsor-hero'}
               src={SponsorHeroDisplay}
+              sizes="50vw"
             />
           </Box>
         ) : null}
@@ -731,7 +734,7 @@ const Sponsor = () => {
             router.push('/');
           }}
         >
-          <img src="/assets/logo/new-logo.svg" alt="Logo" />
+          <img src="/assets/logo/new-logo.svg" alt="Superteam Earn Logo" />
         </Box>
 
         <Flex
