@@ -98,8 +98,8 @@ function MyApp({ Component, pageProps }: AppProps) {
 
   return (
     <>
+      {/* making the typefaces available through css varaibles */}
       <style jsx global>
-        {/* making the fonts available throughout the app via CSS variables */}
         {`
           :root {
             --font-sans: ${fontSans.style.fontFamily};
