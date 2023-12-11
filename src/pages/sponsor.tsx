@@ -76,7 +76,7 @@ const Sponsor = () => {
   useEffect(() => {
     const fetchTotals = async () => {
       try {
-        const response = await axios.get('/api/listings/stats');
+        const response = await axios.get('/api/listings/stats/');
         setTotals(response.data);
         console.log(totals);
       } catch (err) {
@@ -195,6 +195,8 @@ const Sponsor = () => {
                 fill={true}
                 style={{ objectFit: 'contain' }}
                 sizes="10vw"
+                priority={true}
+                loading="eager"
               />
             </Box>
 
@@ -293,6 +295,7 @@ const Sponsor = () => {
               src={SPLTokenDisplay}
               alt="Pay using stablecoins or SPL tokens"
               sizes="33vw"
+              priority={true}
             />
           </Box>
           <Box w="18.75rem">
@@ -301,6 +304,7 @@ const Sponsor = () => {
               alt="Directly invoice talent via Superteam Earn"
               placeholder="blur"
               sizes="33vw"
+              priority={true}
             />
           </Box>
         </Flex>
@@ -511,42 +515,56 @@ const Sponsor = () => {
             src={Spaces}
             alt="Spaces Logo"
             unoptimized={true}
+            priority={true}
+            loading="eager"
           />
           <HighQualityImage
             src={Dialect}
             alt="Dialect Logo"
             height={21.6}
             unoptimized={true}
+            priority={true}
+            loading="eager"
           />
           <HighQualityImage
             src={Wormhole}
             alt="Wormhole Logo"
             height={24}
             unoptimized={true}
+            priority={true}
+            loading="eager"
           />
           <HighQualityImage
             src={Orbis}
             alt="Orbis  Logo"
             height={24}
             unoptimized={true}
+            priority={true}
+            loading="eager"
           />
           <HighQualityImage
             src={Pyth}
             alt="Pyth Logo"
             height={24}
             unoptimized={true}
+            priority={true}
+            loading="eager"
           />
           <HighQualityImage
             src={Foundation}
             alt="Foundation Logo"
             height={18}
             unoptimized={true}
+            priority={true}
+            loading="eager"
           />
           <HighQualityImage
             src={StreamFlow}
             alt="StreamFlow Logo"
             height={24}
             unoptimized={true}
+            priority={true}
+            loading="eager"
           />
         </Flex>
 
@@ -593,7 +611,7 @@ const Sponsor = () => {
 
           <Box w="37.5rem">
             <HighQualityImage
-              alt="Screenshot of a Superteam Earn — showing different bounties, and jobs listed"
+              alt="Screenshot of Superteam Earn's webpage — showing different bounties, and jobs listed"
               src={SponsorPage}
               placeholder="blur"
               sizes="50vw"
@@ -707,6 +725,8 @@ const Sponsor = () => {
               id={'sponsor-hero'}
               src={SponsorHeroDisplay}
               sizes="50vw"
+              priority={true}
+              loading="eager"
             />
           </Box>
         ) : null}
