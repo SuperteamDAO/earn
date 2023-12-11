@@ -98,7 +98,6 @@ function MyApp({ Component, pageProps }: AppProps) {
 
   return (
     <>
-      {/* making the typefaces available through css varaibles */}
       <style jsx global>
         {`
           :root {
