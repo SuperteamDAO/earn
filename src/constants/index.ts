@@ -47,16 +47,16 @@ export const tokenList = [
   {
     tokenName: 'Solana (SOL)',
     tokenSymbol: 'SOL',
-    mintAddress: '', // need to change it
-    address: '', // need to change
+    mintAddress: 'So11111111111111111111111111111111111111111',
+    address: 'So11111111111111111111111111111111111111111',
     icon: 'https://s2.coinmarketcap.com/static/img/coins/64x64/16116.png',
     decimals: 9,
   },
   {
     tokenName: 'ISC',
     tokenSymbol: 'ISC',
-    mintAddress: '',
-    address: '',
+    mintAddress: 'J9BcrQfX4p9D1bvLzRNCbMDv8f44a9LFdeqNE4Yk2WMD',
+    address: 'J9BcrQfX4p9D1bvLzRNCbMDv8f44a9LFdeqNE4Yk2WMD',
     icon: 'https://res.cloudinary.com/dgvnuwspr/image/upload/v1683200072/sponsors/International%20Stable%20Currency.png',
   },
   {
@@ -70,8 +70,8 @@ export const tokenList = [
   {
     tokenName: 'STEP',
     tokenSymbol: 'STEP',
-    mintAddress: '',
-    address: '',
+    mintAddress: 'StepAscQoEioFxxWGnh2sLBDFp9d8rvKz2Yp39iDpyT',
+    address: 'StepAscQoEioFxxWGnh2sLBDFp9d8rvKz2Yp39iDpyT',
     icon: 'https://assets.coingecko.com/coins/images/14988/small/step.png?1619274762',
     decimals: 6,
   },

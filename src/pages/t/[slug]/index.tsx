@@ -120,7 +120,9 @@ function TalentProfile({ slug }: TalentProps) {
   ];
 
   const winnerCount =
-    talent?.Submission?.filter((sub) => sub.isWinner).length ?? 0;
+    talent?.Submission?.filter(
+      (sub) => sub.isWinner && sub?.listing?.isWinnersAnnounced
+    ).length ?? 0;
 
   const router = useRouter();
 

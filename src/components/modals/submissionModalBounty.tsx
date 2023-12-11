@@ -57,6 +57,7 @@ export const SubmissionModal = ({
     handleSubmit,
     formState: { errors },
     reset,
+    watch,
   } = useForm();
 
   const submitSubmissions = async (data: any) => {
@@ -159,7 +160,29 @@ export const SubmissionModal = ({
                       id="applicationLink"
                       placeholder="Add a link"
                       {...register('applicationLink')}
+                      maxLength={500}
                     />
+                    <Text
+                      color={
+                        (watch('applicationLink')?.length || 0) > 400
+                          ? 'red'
+                          : 'brand.slate.400'
+                      }
+                      fontSize={'xs'}
+                      textAlign="right"
+                    >
+                      {watch('applicationLink')?.length > 300 &&
+                        (500 - (watch('applicationLink')?.length || 0) === 0 ? (
+                          <p>
+                            Character limit exceeded. Please reduce the text
+                          </p>
+                        ) : (
+                          <p>
+                            {500 - (watch('applicationLink')?.length || 0)}{' '}
+                            characters left
+                          </p>
+                        ))}
+                    </Text>
                     <FormErrorMessage>
                       {errors.applicationLink ? (
                         <>{errors.applicationLink.message}</>
@@ -190,7 +213,29 @@ export const SubmissionModal = ({
                       id="tweetLink"
                       placeholder="Add a tweet's link"
                       {...register('tweetLink')}
+                      maxLength={500}
                     />
+                    <Text
+                      color={
+                        (watch('tweetLink')?.length || 0) > 400
+                          ? 'red'
+                          : 'brand.slate.400'
+                      }
+                      fontSize={'xs'}
+                      textAlign="right"
+                    >
+                      {watch('tweetLink')?.length > 300 &&
+                        (500 - (watch('tweetLink')?.length || 0) === 0 ? (
+                          <p>
+                            Character limit exceeded. Please reduce the text
+                          </p>
+                        ) : (
+                          <p>
+                            {500 - (watch('tweetLink')?.length || 0)} characters
+                            left
+                          </p>
+                        ))}
+                    </Text>
                     <FormErrorMessage>
                       {errors.tweetLink ? (
                         <>{errors.tweetLink.message}</>
@@ -234,7 +279,28 @@ export const SubmissionModal = ({
                   id="otherInfo"
                   placeholder="Add info or link"
                   {...register('otherInfo')}
+                  maxLength={2000}
                 />
+                <Text
+                  color={
+                    (watch('otherInfo')?.length || 0) > 1900
+                      ? 'red'
+                      : 'brand.slate.400'
+                  }
+                  fontSize={'xs'}
+                  textAlign="right"
+                >
+                  {watch('otherInfo')?.length > 1800 &&
+                    (2000 - (watch('otherInfo')?.length || 0) === 0 ? (
+                      <p>Character limit exceeded. Please reduce the text</p>
+                    ) : (
+                      <p>
+                        {2000 - (watch('otherInfo')?.length || 0)} characters
+                        left
+                      </p>
+                    ))}
+                </Text>
+
                 <FormErrorMessage>
                   {errors.otherInfo ? <>{errors.otherInfo.message}</> : <></>}
                 </FormErrorMessage>
