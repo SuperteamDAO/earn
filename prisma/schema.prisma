@@ -163,7 +163,7 @@ model Submission {
   id                 String      @id @default(uuid())
   link               String?     @db.VarChar(500)
   tweet              String?     @db.VarChar(500)
-  otherInfo          String?     @db.VarChar(1000)
+  otherInfo          String?     @db.VarChar(2000)
   eligibilityAnswers Json?
   userId             String
   listingType        ListingType @default(BOUNTY)
