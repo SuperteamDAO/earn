@@ -503,27 +503,6 @@ function Bounties() {
                           >
                             View {bountyType}
                           </MenuItem>
-                          <MenuDivider />
-                          <NextLink
-                            href={`/dashboard/bounties/${currentBounty.slug}/edit/`}
-                            passHref
-                          >
-                            <MenuItem icon={<AiOutlineEdit />}>
-                              Edit Bounty
-                            </MenuItem>
-                          </NextLink>
-                          {bountyStatus === 'DRAFT' && (
-                            <>
-                              <MenuDivider />
-                              <MenuItem
-                                color={'red'}
-                                icon={<AiOutlineDelete color="red" />}
-                                onClick={() => handleDeleteDraft(currentBounty)}
-                              >
-                                Delete Draft Bounty
-                              </MenuItem>
-                            </>
-                          )}
                           {!isListingIncomplete && (
                             <>
                               <MenuDivider />
@@ -535,6 +514,18 @@ function Bounties() {
                                   Edit {bountyType}
                                 </MenuItem>
                               </NextLink>
+                            </>
+                          )}
+                          {bountyStatus === 'DRAFT' && (
+                            <>
+                              <MenuDivider />
+                              <MenuItem
+                                color={'red'}
+                                icon={<AiOutlineDelete color="red" />}
+                                onClick={() => handleDeleteDraft(currentBounty)}
+                              >
+                                Delete Draft Bounty
+                              </MenuItem>
                             </>
                           )}
                           {!(
