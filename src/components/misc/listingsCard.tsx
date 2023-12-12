@@ -217,7 +217,14 @@ export const BountiesCard = ({
               mr={isMobile ? 3 : 5}
               alt={sponsorName}
               rounded={5}
-              src={logo || `${router.basePath}/assets/images/sponsor-logo.png`}
+              src={
+                logo
+                  ? logo.replace(
+                      '/upload/',
+                      '/upload/c_scale,w_64,h_64,f_auto/'
+                    )
+                  : `${router.basePath}/assets/images/sponsor-logo.png`
+              }
             />
             <Flex justify={'space-between'} direction={'column'} w={'full'}>
               <Text
@@ -373,7 +380,14 @@ export const GrantsCard = ({
               mr={isMobile ? 3 : 5}
               alt={'company logo'}
               rounded={5}
-              src={logo || '/assets/home/placeholder/ph3.png'}
+              src={
+                logo
+                  ? logo.replace(
+                      '/upload/',
+                      '/upload/c_scale,w_64,h_64,f_auto/'
+                    )
+                  : `assets/home/placeholder/ph3.png`
+              }
             />
             <Flex justify={'space-between'} direction={'column'} w={'full'}>
               <Text
@@ -550,7 +564,7 @@ export const CategoryBanner = ({ type }: { type: string }) => {
           <Image h="18" alt="Category icon" src={categoryAssets[type]?.icon} />
         </Center>
         <Box w={{ md: '60%', base: '100%' }} mt={{ base: 4, md: '0' }}>
-          <Text fontFamily={'Domine'} fontWeight={'700'}>
+          <Text fontFamily={'var(--font-serif)'} fontWeight={'700'}>
             {type === 'Hyperdrive'
               ? 'Hyperdrive Side Tracks & Local Prizes'
               : type}

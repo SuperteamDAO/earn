@@ -107,7 +107,7 @@ const StepsCon = ({ setSuccess }: { setSuccess: () => void }) => {
       <VStack mt={8}>
         <Heading
           color={'#334254'}
-          fontFamily={'Inter'}
+          fontFamily={'var(--font-sans)'}
           fontSize={{ base: '18px', md: '24px' }}
           fontWeight={700}
         >
@@ -115,7 +115,7 @@ const StepsCon = ({ setSuccess }: { setSuccess: () => void }) => {
         </Heading>
         <Text
           color={'#94A3B8'}
-          fontFamily={'Inter'}
+          fontFamily={'var(--font-sans)'}
           fontSize={{ base: '16px', md: '20px' }}
           fontWeight={500}
           textAlign={'center'}

@@ -102,7 +102,7 @@ const CreateSponsor = () => {
           <VStack>
             <Heading
               color={'gray.700'}
-              fontFamily={'Inter'}
+              fontFamily={'var(--font-sans)'}
               fontSize={'24px'}
               fontWeight={700}
             >
@@ -110,7 +110,7 @@ const CreateSponsor = () => {
             </Heading>
             <Text
               color={'gray.400'}
-              fontFamily={'Inter'}
+              fontFamily={'var(--font-sans)'}
               fontSize={'20px'}
               fontWeight={500}
             >

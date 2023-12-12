@@ -180,7 +180,7 @@ export const Navbar = ({ sponsors }: Props) => {
                       <Flex align={'center'} justify={'space-between'} gap={5}>
                         <Text
                           color={'gray.600'}
-                          fontFamily={'Inter'}
+                          fontFamily={'var(--font-sans)'}
                           fontWeight={600}
                         >
                           {truncatedPublicKey(

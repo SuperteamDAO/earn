@@ -145,7 +145,7 @@ function ListingHeader({
             <HStack>
               <Heading
                 color={'brand.charcoal.700'}
-                fontFamily={'Inter'}
+                fontFamily={'var(--font-sans)'}
                 fontSize={{ base: 'lg', md: 'xl' }}
                 fontWeight={{ base: 600, md: 700 }}
               >
@@ -218,7 +218,7 @@ function ListingHeader({
                         px={4}
                         py={2}
                         color="brand.slate.500"
-                        fontFamily={'Inter'}
+                        fontFamily={'var(--font-sans)'}
                         fontSize="sm"
                         bg="white"
                         borderRadius={'lg'}
@@ -328,7 +328,7 @@ function ListingHeader({
               px={4}
               py={2}
               color={'#94A3B8'}
-              fontFamily={'Inter'}
+              fontFamily={'var(--font-sans)'}
               fontSize="sm"
               bg="white"
               borderRadius={'lg'}

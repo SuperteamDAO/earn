@@ -269,7 +269,10 @@ const Earner = ({
             mr={'1.0625rem'}
             alt=""
             rounded={'full'}
-            src={avatar}
+            src={avatar.replace(
+              '/upload/',
+              '/upload/c_scale,w_32,h_32,f_auto/'
+            )}
           />
         ) : (
           <Center mr={'1.0625rem'}>

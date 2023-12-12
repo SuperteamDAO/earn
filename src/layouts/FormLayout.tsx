@@ -24,7 +24,7 @@ const FormLayout = ({ children, currentStep, stepList, setStep }: Props) => {
         <VStack>
           <Heading
             color={'#334254'}
-            fontFamily={'Inter'}
+            fontFamily={'var(--font-sans)'}
             fontSize={'24px'}
             fontWeight={700}
           >
@@ -32,7 +32,7 @@ const FormLayout = ({ children, currentStep, stepList, setStep }: Props) => {
           </Heading>
           <Text
             color={'#94A3B8'}
-            fontFamily={'Inter'}
+            fontFamily={'var(--font-sans)'}
             fontSize={'20px'}
             fontWeight={500}
             textAlign={'center'}

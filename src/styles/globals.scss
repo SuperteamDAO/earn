@@ -1,10 +1,10 @@
-* {
-  font-family: 'Inter';
+body {
+  font-family: var(--font-sans);
 }
 
 .wallet-adapter-button.wallet-adapter-button-trigger {
   width: 100% !important;
-  background-color: #6366F1;
+  background-color: #6366f1;
   font-size: 1rem !important;
   color: white !important;
   // border: 1px solid !important;
@@ -15,21 +15,19 @@
 
 .wallet-adapter-button.wallet-adapter-button-trigger:hover,
 .wallet-adapter-button.wallet-adapter-button-trigger:active {
-  background-color: #6366F1;
+  background-color: #6366f1;
 }
 
 .wallet-adapter-button.wallet-adapter-button-trigger:not([disabled]):hover {
-  background-color: #6366F1;
+  background-color: #6366f1;
 }
 
 .wallet-adapter-button-end-icon,
 .wallet-adapter-button-start-icon,
 .wallet-adapter-button-end-icon img,
 .wallet-adapter-button-start-icon img {
-    display: none !important;
+  display: none !important;
 }
-
-
 
 .bg-white {
   background-color: #fff;
@@ -82,7 +80,7 @@ code {
 pre {
   background: #0d0d0d;
   color: #fff;
-  font-family: 'JetBrainsMono', monospace;
+  font-family: var(--font-mono), monospace;
   padding: 0.75rem 1rem;
   border-radius: 0.5rem;
 
@@ -108,11 +106,10 @@ pre {
   border: 1px solid #d2d2d2 !important;
   padding: 1rem 2rem;
   &::-moz-focus-inner {
-    border: 'none';
-    outline: 'none !important';
+    border: "none";
+    outline: "none !important";
   }
 }
-
 
 //earn-loader-css
 
@@ -124,7 +121,7 @@ pre {
 }
 .earn-loader div {
   position: absolute;
-  border: 4px solid #6366F1;
+  border: 4px solid #6366f1;
   opacity: 1;
   border-radius: 50%;
   animation: earn-loader 1s cubic-bezier(0, 0.2, 0.8, 1) infinite;
@@ -162,4 +159,3 @@ pre {
     opacity: 0;
   }
 }
-
