@@ -5,51 +5,58 @@ import {
   Button,
   Flex,
   Grid,
-  Image,
   Link,
   Text,
   useMediaQuery,
 } from '@chakra-ui/react';
 import axios from 'axios';
+import type { ImageProps } from 'next/image';
+import Image from 'next/image';
 import { useRouter } from 'next/router';
 import { useEffect, useState } from 'react';
 
+import DialectDisplay from '@/public/assets/landingsponsor/displays/chatwithdialect.png';
+import DifferentListingsDisplay from '@/public/assets/landingsponsor/displays/differentlistings.png';
+import FindAnySkillsDisplay from '@/public/assets/landingsponsor/displays/findanyskill.png';
+import OnchainEarningsDisplay from '@/public/assets/landingsponsor/displays/onchainearnings.png';
+import PrivateListingsDisplay from '@/public/assets/landingsponsor/displays/privatelistings.png';
+import SPLTokenDisplay from '@/public/assets/landingsponsor/displays/spltokens.png';
+import SponsorHeroDisplay from '@/public/assets/landingsponsor/displays/sponsorhero.png';
+// Import images
+import SponsorPage from '@/public/assets/landingsponsor/displays/sponsorpage.png';
+import TalentDirectoryDisplay from '@/public/assets/landingsponsor/displays/talentdirectory.png';
+import TemplateDisplay from '@/public/assets/landingsponsor/displays/template.png';
+import FireIcon from '@/public/assets/landingsponsor/icons/fire.png';
+import MoneyIcon from '@/public/assets/landingsponsor/icons/money.png';
+import ProfileIcon from '@/public/assets/landingsponsor/icons/profile.png';
+import ZapIcon from '@/public/assets/landingsponsor/icons/zap.png';
+import Dialect from '@/public/assets/landingsponsor/sponsors/dialect.png';
+// Sponsor Logos
+import Foundation from '@/public/assets/landingsponsor/sponsors/foundation.png';
+import Orbis from '@/public/assets/landingsponsor/sponsors/orbis.png';
+import Pyth from '@/public/assets/landingsponsor/sponsors/pyth.png';
+import Spaces from '@/public/assets/landingsponsor/sponsors/spaces.png';
+import StreamFlow from '@/public/assets/landingsponsor/sponsors/streamflow.png';
+import Wormhole from '@/public/assets/landingsponsor/sponsors/wormhole.png';
+import Kash from '@/public/assets/randompeople/kash.png';
+
 import Footer from '../components/Footer/Footer';
-
-// Images
-const SponsorPage = '/assets/landingsponsor/displays/sponsorpage.png';
-const FireIcon = '/assets/landingsponsor/icons/fire.png';
-const ZapIcon = '/assets/landingsponsor/icons/zap.png';
-const MoneyIcon = '/assets/landingsponsor/icons/money.png';
-const ProfileIcon = '/assets/landingsponsor/icons/profile.png';
-const TalentDirectoryDisplay =
-  '/assets/landingsponsor/displays/talentdirectory.png';
-const FindAnySkillsDisplay = '/assets/landingsponsor/displays/findanyskill.png';
-const DialectDisplay = '/assets/landingsponsor/displays/chatwithdialect.png';
-const OnchainEarningsDisplay =
-  '/assets/landingsponsor/displays/onchainearnings.png';
-const SPLTokenDisplay = '/assets/landingsponsor/displays/spltokens.png';
-const TemplateDisplay = '/assets/landingsponsor/displays/template.png';
-const DifferentListingsDisplay =
-  '/assets/landingsponsor/displays/differentlistings.png';
-const PrivateListingsDisplay =
-  '/assets/landingsponsor/displays/privatelistings.png';
-const SponsorHeroDisplay = '/assets/landingsponsor/displays/sponsorhero.png';
-
-// Sponsor Logs
-const Foundation = '/assets/landingsponsor/sponsors/foundation.png';
-const Pyth = '/assets/landingsponsor/sponsors/pyth.png';
-const StreamFlow = '/assets/landingsponsor/sponsors/streamflow.png';
-const Wormhole = '/assets/landingsponsor/sponsors/wormhole.png';
-const Dialect = '/assets/landingsponsor/sponsors/dialect.png';
-const Spaces = '/assets/landingsponsor/sponsors/spaces.png';
-const Orbis = '/assets/landingsponsor/sponsors/orbis.png';
 
 type Totals = {
   count: number;
   totalInUSD: number;
 };
 
+interface HighQualityImageProps extends ImageProps {
+  alt: string; // Making 'alt' explicitly required
+}
+// sets a default quality here, instead of having to specify it in every instance — default set by nextjs images is 75
+const HighQualityImage: React.FC<HighQualityImageProps> = ({
+  alt,
+  ...props
+}) => {
+  return <Image alt={alt} {...props} quality={90} />;
+};
 const Sponsor = () => {
   const [isLargerThan12800px] = useMediaQuery('(min-width: 80rem)');
   const [isLessThan600px] = useMediaQuery('(max-width: 600px)');
@@ -69,7 +76,7 @@ const Sponsor = () => {
   useEffect(() => {
     const fetchTotals = async () => {
       try {
-        const response = await axios.get('/api/listings/stats');
+        const response = await axios.get('/api/listings/stats/');
         setTotals(response.data);
         console.log(totals);
       } catch (err) {
@@ -180,11 +187,23 @@ const Sponsor = () => {
             Get Started
           </Button>
           <Flex align="center" gap="1.25rem" fontSize="1rem" fontWeight={700}>
-            <Box zIndex={2} minW="2.3125rem" h="2.3125rem" borderRadius="50%">
-              <img
-                src="/assets/randompeople/kash.png"
-                style={{ width: '100%', height: '100%' }}
-                alt="Kash"
+            <Box
+              pos="relative"
+              zIndex={2}
+              overflow="hidden"
+              minW="2.3125rem"
+              h="2.3125rem"
+              borderRadius="50%"
+            >
+              <HighQualityImage
+                src={Kash}
+                alt="Kash Dhanda Profile Picture"
+                placeholder="blur"
+                fill={true}
+                style={{ objectFit: 'contain' }}
+                sizes="10vw"
+                priority={true}
+                loading="eager"
               />
             </Box>
 
@@ -249,13 +268,13 @@ const Sponsor = () => {
             </Text>
           </Flex>
           {isLargerThan12800px ? (
-            <Box zIndex={2}>
-              <img
+            <Box pos="relative" zIndex={2}>
+              <HighQualityImage
                 src={DifferentListingsDisplay}
-                alt="Image"
-                width="100%"
-                height="100%"
+                alt="Screenshot of opportunities listed on superteam earn — Web3Auth's Rust Developer job with a salary range of $100k-$200k, Amulet's UI/UX review for 2500 USDC, Port finance' Bug Bounty for $1M USDC"
                 style={{ zIndex: '2', objectFit: 'contain' }}
+                placeholder="blur"
+                sizes="50vw"
               />
             </Box>
           ) : null}
@@ -280,18 +299,28 @@ const Sponsor = () => {
           gap="2.5rem"
           w="100%"
         >
-          <Box w="18.75rem">
-            <img src={TemplateDisplay} alt="Image" width="" height="100%" />
+          <Box pos="relative" w="18.75rem">
+            <HighQualityImage
+              src={TemplateDisplay}
+              alt="Not sure where to start? Our templates will guide you"
+              sizes="33vw"
+            />
+          </Box>
+          <Box pos={'relative'} w="18.75rem">
+            <HighQualityImage
+              src={SPLTokenDisplay}
+              alt="Pay using stablecoins or SPL tokens"
+              sizes="33vw"
+              priority={true}
+            />
           </Box>
           <Box w="18.75rem">
-            <img src={SPLTokenDisplay} alt="Image" width="" height="100%" />
-          </Box>
-          <Box w="18.75rem">
-            <img
+            <HighQualityImage
               src={PrivateListingsDisplay}
-              alt="Image"
-              width=""
-              height="100%"
+              alt="Directly invoice talent via Superteam Earn"
+              placeholder="blur"
+              sizes="33vw"
+              priority={true}
             />
           </Box>
         </Flex>
@@ -316,12 +345,12 @@ const Sponsor = () => {
         <Flex pos="relative" gap="6.25rem">
           {isLargerThan12800px ? (
             <Box zIndex="2" w={'60%'}>
-              <img
+              <HighQualityImage
                 src={TalentDirectoryDisplay}
-                alt="Image"
-                width="100%"
-                height="100%"
+                alt="Search and fitler to identify and reach talent on superteam earn"
                 style={{ zIndex: '2', objectFit: 'contain' }}
+                placeholder="blur"
+                sizes="50vw"
               />
             </Box>
           ) : null}
@@ -361,22 +390,27 @@ const Sponsor = () => {
 
         <Flex zIndex={2} justify="space-between" wrap="wrap" w="100%">
           <Box w="30%">
-            <img
+            <HighQualityImage
               src={FindAnySkillsDisplay}
-              alt="Image"
-              width=""
-              height="100%"
+              alt="Find any skill you need on superteam earn. Highlighted in the image: Back-End Dev, Design, Smart Contract Dev, Front-End Dev, Community/Growth"
+              placeholder="blur"
+              sizes="30vw"
             />
           </Box>
           <Box w="30%">
-            <img src={DialectDisplay} alt="Image" width="" height="100%" />
+            <HighQualityImage
+              src={DialectDisplay}
+              alt="Connect without middlemen — get in touch with any talent"
+              placeholder="blur"
+              sizes="30vw"
+            />
           </Box>
           <Box w="30%">
-            <img
+            <HighQualityImage
               src={OnchainEarningsDisplay}
-              alt="Image"
-              width=""
-              height="100%"
+              alt="On-Chain proof of work — View verified earnings"
+              placeholder="blur"
+              sizes="30vw"
             />
           </Box>
         </Flex>
@@ -401,7 +435,13 @@ const Sponsor = () => {
       >
         <Flex align="center" gap="1.25rem">
           <Box w="3.75rem" h="3.75rem">
-            <Image w="100%" h="100%" alt="Icon" src={ProfileIcon} />
+            <HighQualityImage
+              alt="Silhouette of a Person — Avatar"
+              src={ProfileIcon}
+              placeholder="blur"
+              sizes="10vw"
+              style={{ objectFit: 'contain' }}
+            />
           </Box>
           <Box>
             <Text color="gray.800" fontSize="1.5rem" fontWeight={700}>
@@ -415,7 +455,13 @@ const Sponsor = () => {
 
         <Flex align="center" gap="0.625rem">
           <Box w="3.75rem" h="3.75rem">
-            <Image w="100%" h="100%" alt="Icon" src={MoneyIcon} />
+            <HighQualityImage
+              alt="Illustration of money"
+              src={MoneyIcon}
+              placeholder="blur"
+              sizes="10vw"
+              style={{ objectFit: 'contain' }}
+            />
           </Box>
           <Box>
             <Text color="gray.800" fontSize="1.5rem" fontWeight={700}>
@@ -429,7 +475,13 @@ const Sponsor = () => {
 
         <Flex align="center" gap="0.625rem">
           <Box w="3.75rem" h="3.75rem">
-            <Image w="100%" h="100%" alt="Icon" src={ZapIcon} />
+            <HighQualityImage
+              alt="Illustration of a Lightning"
+              src={ZapIcon}
+              placeholder="blur"
+              style={{ objectFit: 'contain' }}
+              sizes="10vw"
+            />
           </Box>
           <Box>
             <Text color="gray.800" fontSize="1.5rem" fontWeight={700}>
@@ -443,7 +495,13 @@ const Sponsor = () => {
 
         <Flex align="center" gap="0.625rem">
           <Box w="3.75rem" h="3.75rem">
-            <Image w="100%" h="100%" alt="Icon" src={FireIcon} />
+            <HighQualityImage
+              alt="Illustration of fire"
+              src={FireIcon}
+              placeholder="blur"
+              sizes="10vw"
+              style={{ objectFit: 'contain' }}
+            />
           </Box>
           <Box>
             <Text color="gray.800" fontSize="1.5rem" fontWeight={700}>
@@ -477,13 +535,62 @@ const Sponsor = () => {
           h="7.5rem"
           mb="3.125rem"
         >
-          <img src={Spaces} alt="Spaces" style={{ height: '15%' }} />
-          <img src={Dialect} alt="Dialect" style={{ height: '18%' }} />
-          <img src={Wormhole} alt="Wormhole" style={{ height: '20%' }} />
-          <img src={Orbis} alt="Orbis" style={{ height: '20%' }} />
-          <img src={Pyth} alt="Pyth" style={{ height: '20%' }} />
-          <img src={Foundation} alt="Foundation" style={{ height: '15%' }} />
-          <img src={StreamFlow} alt="StreamFlow" style={{ height: '20%' }} />
+          <HighQualityImage
+            height={18}
+            src={Spaces}
+            alt="Spaces Logo"
+            unoptimized={true}
+            priority={true}
+            loading="eager"
+          />
+          <HighQualityImage
+            src={Dialect}
+            alt="Dialect Logo"
+            height={21.6}
+            unoptimized={true}
+            priority={true}
+            loading="eager"
+          />
+          <HighQualityImage
+            src={Wormhole}
+            alt="Wormhole Logo"
+            height={24}
+            unoptimized={true}
+            priority={true}
+            loading="eager"
+          />
+          <HighQualityImage
+            src={Orbis}
+            alt="Orbis  Logo"
+            height={24}
+            unoptimized={true}
+            priority={true}
+            loading="eager"
+          />
+          <HighQualityImage
+            src={Pyth}
+            alt="Pyth Logo"
+            height={24}
+            unoptimized={true}
+            priority={true}
+            loading="eager"
+          />
+          <HighQualityImage
+            src={Foundation}
+            alt="Foundation Logo"
+            height={18}
+            unoptimized={true}
+            priority={true}
+            loading="eager"
+          />
+          <HighQualityImage
+            src={StreamFlow}
+            alt="StreamFlow Logo"
+            height={24}
+            unoptimized={true}
+            priority={true}
+            loading="eager"
+          />
         </Flex>
 
         <Flex align="center" justify="end" wrap="wrap" gap="1.25rem" w="100%">
@@ -533,12 +640,11 @@ const Sponsor = () => {
           </Flex>
 
           <Box w="37.5rem">
-            <Image
-              w={'100%'}
-              h={'100%'}
-              objectFit="contain"
-              alt="Image"
+            <HighQualityImage
+              alt="Screenshot of Superteam Earn's webpage — showing different bounties, and jobs listed"
               src={SponsorPage}
+              placeholder="blur"
+              sizes="50vw"
             />
           </Box>
         </Flex>
@@ -605,10 +711,11 @@ const Sponsor = () => {
             </Button>
             <Flex align="center" gap="0.5rem" fontSize="1rem" fontWeight={700}>
               <Box minW="2.3125rem" h="2.3125rem" borderRadius="50%">
-                <img
-                  src="/assets/randompeople/kash.png"
+                <HighQualityImage
+                  src={Kash}
                   style={{ width: '100%', height: '100%' }}
                   alt="Kash"
+                  placeholder="blur"
                 />
               </Box>
 
@@ -647,13 +754,14 @@ const Sponsor = () => {
             w="60%"
             maxW="90rem"
           >
-            <Image
-              w={'100%'}
-              h={'100%'}
-              objectFit="contain"
-              alt="Image"
+            <HighQualityImage
+              style={{ objectFit: 'contain' }}
+              alt="Illustration of bounties being posted and applications being submitted"
               id={'sponsor-hero'}
               src={SponsorHeroDisplay}
+              sizes="50vw"
+              priority={true}
+              loading="eager"
             />
           </Box>
         ) : null}
@@ -681,7 +789,7 @@ const Sponsor = () => {
             router.push('/');
           }}
         >
-          <img src="/assets/logo/new-logo.svg" alt="Logo" />
+          <img src="/assets/logo/new-logo.svg" alt="Superteam Earn Logo" />
         </Box>
 
         <Flex
