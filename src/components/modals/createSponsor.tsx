@@ -22,7 +22,11 @@ export const CreateSponsorModel = ({ isOpen, onClose }: Props) => {
         <ModalOverlay />
         <ModalContent h={'max'} py={5}>
           <ModalHeader>
-            <Text color={'gray.700'} fontFamily={'Inter'} fontWeight={600}>
+            <Text
+              color={'gray.700'}
+              fontFamily={'var(--font-sans)'}
+              fontWeight={600}
+            >
               Create a Sponsor account to access the listing
             </Text>
 

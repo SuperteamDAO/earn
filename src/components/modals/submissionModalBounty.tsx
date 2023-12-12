@@ -24,6 +24,8 @@ import type { Eligibility } from '@/interface/bounty';
 import { userStore } from '@/store/user';
 import { Mixpanel } from '@/utils/mixpanel';
 
+import { AutoResizeTextarea } from '../shared/autosize-textarea';
+
 interface Props {
   id: string;
   isOpen: boolean;
@@ -46,8 +48,7 @@ export const SubmissionModal = ({
   bountytitle,
   type,
 }: Props) => {
-  const isPermissioned =
-    type === 'permissioned' && eligibility && eligibility?.length > 0;
+  const isPermissioned = type === 'permissioned';
   const { userInfo } = userStore();
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState('');
@@ -55,8 +56,8 @@ export const SubmissionModal = ({
     register,
     handleSubmit,
     formState: { errors },
-    watch,
     reset,
+    watch,
   } = useForm();
 
   const submitSubmissions = async (data: any) => {
@@ -159,7 +160,29 @@ export const SubmissionModal = ({
                       id="applicationLink"
                       placeholder="Add a link"
                       {...register('applicationLink')}
+                      maxLength={500}
                     />
+                    <Text
+                      color={
+                        (watch('applicationLink')?.length || 0) > 400
+                          ? 'red'
+                          : 'brand.slate.400'
+                      }
+                      fontSize={'xs'}
+                      textAlign="right"
+                    >
+                      {watch('applicationLink')?.length > 300 &&
+                        (500 - (watch('applicationLink')?.length || 0) === 0 ? (
+                          <p>
+                            Character limit exceeded. Please reduce the text
+                          </p>
+                        ) : (
+                          <p>
+                            {500 - (watch('applicationLink')?.length || 0)}{' '}
+                            characters left
+                          </p>
+                        ))}
+                    </Text>
                     <FormErrorMessage>
                       {errors.applicationLink ? (
                         <>{errors.applicationLink.message}</>
@@ -190,7 +213,29 @@ export const SubmissionModal = ({
                       id="tweetLink"
                       placeholder="Add a tweet's link"
                       {...register('tweetLink')}
+                      maxLength={500}
                     />
+                    <Text
+                      color={
+                        (watch('tweetLink')?.length || 0) > 400
+                          ? 'red'
+                          : 'brand.slate.400'
+                      }
+                      fontSize={'xs'}
+                      textAlign="right"
+                    >
+                      {watch('tweetLink')?.length > 300 &&
+                        (500 - (watch('tweetLink')?.length || 0) === 0 ? (
+                          <p>
+                            Character limit exceeded. Please reduce the text
+                          </p>
+                        ) : (
+                          <p>
+                            {500 - (watch('tweetLink')?.length || 0)} characters
+                            left
+                          </p>
+                        ))}
+                    </Text>
                     <FormErrorMessage>
                       {errors.tweetLink ? (
                         <>{errors.tweetLink.message}</>
@@ -227,32 +272,35 @@ export const SubmissionModal = ({
                   If you have any other links or information you&apos;d like to
                   share with us, please add them here!
                 </FormHelperText>
-                <Input
+                <AutoResizeTextarea
                   borderColor={'brand.slate.300'}
                   _placeholder={{ color: 'brand.slate.300' }}
                   focusBorderColor="brand.purple"
                   id="otherInfo"
-                  maxLength={180}
                   placeholder="Add info or link"
                   {...register('otherInfo')}
+                  maxLength={2000}
                 />
                 <Text
                   color={
-                    (watch('otherInfo')?.length || 0) > 160
+                    (watch('otherInfo')?.length || 0) > 1900
                       ? 'red'
                       : 'brand.slate.400'
                   }
                   fontSize={'xs'}
                   textAlign="right"
                 >
-                  {180 - (watch('otherInfo')?.length || 0) === 0 ? (
-                    <p>Character limit exceeded. Please reduce the text</p>
-                  ) : (
-                    <p>
-                      {180 - (watch('otherInfo')?.length || 0)} characters left
-                    </p>
-                  )}
+                  {watch('otherInfo')?.length > 1800 &&
+                    (2000 - (watch('otherInfo')?.length || 0) === 0 ? (
+                      <p>Character limit exceeded. Please reduce the text</p>
+                    ) : (
+                      <p>
+                        {2000 - (watch('otherInfo')?.length || 0)} characters
+                        left
+                      </p>
+                    ))}
                 </Text>
+
                 <FormErrorMessage>
                   {errors.otherInfo ? <>{errors.otherInfo.message}</> : <></>}
                 </FormErrorMessage>
@@ -260,8 +308,8 @@ export const SubmissionModal = ({
             </VStack>
             {!!error && (
               <Text align="center" mb={2} color="red">
-                Sorry! Error occurred which submitting application. <br />
-                Please try again or contact support.
+                Sorry! An error occurred while submitting. <br />
+                Please try again or contact us at hello@superteamearn.com
               </Text>
             )}
             <Button

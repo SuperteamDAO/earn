@@ -56,7 +56,7 @@ export const Emailverification = ({
           ) : (
             <Text
               color={'gray.700'}
-              fontFamily={'Inter'}
+              fontFamily={'var(--font-sans)'}
               fontWeight={600}
               textAlign={'center'}
             >
@@ -72,7 +72,7 @@ export const Emailverification = ({
               <Text
                 pb={3}
                 color={'gray.600'}
-                fontFamily={'Inter'}
+                fontFamily={'var(--font-sans)'}
                 fontWeight={600}
                 textAlign={'center'}
               >
@@ -108,7 +108,7 @@ export const Emailverification = ({
               </Flex>
               <Text
                 color={'gray.600'}
-                fontFamily={'Inter'}
+                fontFamily={'var(--font-sans)'}
                 fontWeight={600}
                 textAlign={'center'}
               >

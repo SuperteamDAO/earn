@@ -32,6 +32,7 @@ import WarningModal from '@/components/shared/WarningModal';
 import { tokenList } from '@/constants/index';
 import type { Eligibility, Rewards } from '@/interface/bounty';
 import { userStore } from '@/store/user';
+import { getBountyDraftStatus } from '@/utils/bounty';
 
 interface Props {
   id: string;
@@ -54,6 +55,8 @@ interface Props {
   pocSocials?: string;
   applicationType?: 'fixed' | 'rolling';
   timeToComplete?: string;
+  isPublished?: boolean;
+  status?: string;
 }
 function DetailSideCard({
   id,
@@ -71,6 +74,8 @@ function DetailSideCard({
   isWinnersAnnounced = false,
   applicationType,
   timeToComplete,
+  isPublished,
+  status,
 }: Props) {
   const { userInfo } = userStore();
   const [isSubmissionNumberLoading, setIsSubmissionNumberLoading] =
@@ -184,6 +189,8 @@ function DetailSideCard({
     { key: 'fourth' as PrizeKey, label: '4th', description: 'Fourth Prize' },
     { key: 'fifth' as PrizeKey, label: '5th', description: 'Fifth Prize' },
   ];
+
+  const bountyDraftStatus = getBountyDraftStatus(status, isPublished);
 
   return (
     <>
@@ -412,7 +419,10 @@ function DetailSideCard({
                 _hover={{
                   bg: 'brand.purple',
                 }}
-                isDisabled={Date.now() > Number(moment(endingTime).format('x'))}
+                isDisabled={
+                  bountyDraftStatus === 'DRAFT' ||
+                  Date.now() > Number(moment(endingTime).format('x'))
+                }
                 isLoading={isUserSubmissionLoading}
                 loadingText={'Checking Submission...'}
                 onClick={() => handleSubmit()}

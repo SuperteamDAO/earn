@@ -79,7 +79,7 @@ const CreateSponsor = () => {
         <Meta
           title="Create Sponsor | Superteam Earn"
           description="Every Solana opportunity in one place!"
-          canonical="/assets/logo/og.svg"
+          canonical="https://earn.superteam.fun/new/sponsor/"
         />
       }
     >
@@ -102,7 +102,7 @@ const CreateSponsor = () => {
           <VStack>
             <Heading
               color={'gray.700'}
-              fontFamily={'Inter'}
+              fontFamily={'var(--font-sans)'}
               fontSize={'24px'}
               fontWeight={700}
             >
@@ -110,7 +110,7 @@ const CreateSponsor = () => {
             </Heading>
             <Text
               color={'gray.400'}
-              fontFamily={'Inter'}
+              fontFamily={'var(--font-sans)'}
               fontSize={'20px'}
               fontWeight={500}
             >

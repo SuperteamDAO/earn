@@ -52,7 +52,7 @@ function SignUp({ invite }: Props) {
         <Meta
           title="Accept Invite | Superteam Earn"
           description="Every Solana opportunity in one place!"
-          canonical="/assets/logo/og.svg"
+          canonical="https://earn.superteam.fun"
         />
       }
     >

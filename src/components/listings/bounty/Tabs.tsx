@@ -36,12 +36,16 @@ export const BountyTabs = ({
             </Flex>
           ) : bounties?.bounties?.filter(
               (bounty) =>
-                bounty.status === 'OPEN' && !dayjs().isAfter(bounty.deadline)
+                bounty.status === 'OPEN' &&
+                !dayjs().isAfter(bounty.deadline) &&
+                !bounty.isWinnersAnnounced
             ).length ? (
             bounties.bounties
               .filter(
                 (bounty) =>
-                  bounty.status === 'OPEN' && !dayjs().isAfter(bounty.deadline)
+                  bounty.status === 'OPEN' &&
+                  !dayjs().isAfter(bounty.deadline) &&
+                  !bounty.isWinnersAnnounced
               )
               .slice(0, take)
               .map((bounty) => (

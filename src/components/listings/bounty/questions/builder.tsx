@@ -1,4 +1,3 @@
-import { DeleteIcon } from '@chakra-ui/icons';
 import { Button, Flex, HStack, Image, Text, VStack } from '@chakra-ui/react';
 import type { Dispatch, SetStateAction } from 'react';
 import React, { useState } from 'react';
@@ -44,12 +43,10 @@ const Builder = ({
 }: Props) => {
   const [error, setError] = useState<ErrorState[]>([]);
 
-  const handleDelete = () => {
-    const temp = questions.filter(
-      (_el, index) => index !== questions.length - 1
-    );
-    setQuestions(temp);
+  const handleDelete = (index: number) => {
+    setQuestions(questions.filter((_, i) => i !== index));
   };
+
   return (
     <>
       <VStack align={'start'} gap={3} w={'2xl'} pt={7}>
@@ -75,12 +72,8 @@ const Builder = ({
                 questions={questions}
                 curentQuestion={question}
                 setQuestions={setQuestions}
+                handleDelete={() => handleDelete(index)}
               />
-              {index === questions.length - 1 && (
-                <Button ml={4} onClick={() => handleDelete()}>
-                  <DeleteIcon />
-                </Button>
-              )}
             </Flex>
           );
         })}

@@ -87,7 +87,7 @@ export default function LargeWithNewsletter() {
               <Logo color={'brand.slate.500'} />
             </Box>
             <Text color="brand.slate.500">
-              Superteam Earn is where Solana founders find world class talent
+              Superteam Earn is where crypto founders find world class talent
               for their projects. Post bounties, meet your next team member &
               get things done fast. <br />
               <br />© 2023 Superteam. All rights reserved.
@@ -100,12 +100,12 @@ export default function LargeWithNewsletter() {
                 <svg
                   width="17"
                   height="14"
-                  viewBox="0 0 17 14"
+                  viewBox="0 0 24 24"
                   fill="none"
                   xmlns="http://www.w3.org/2000/svg"
                 >
                   <path
-                    d="M16.0834 1.55091C15.492 1.81299 14.8566 1.99008 14.1886 2.07012C14.8778 1.65772 15.3935 1.00866 15.6393 0.244034C14.9918 0.628651 14.2831 0.89938 13.544 1.04445C13.0471 0.513813 12.3888 0.162098 11.6714 0.0439113C10.9541 -0.0742757 10.2178 0.0476778 9.57684 0.390838C8.93589 0.733998 8.42618 1.27916 8.12682 1.9417C7.82746 2.60423 7.75521 3.34706 7.92129 4.05487C6.60924 3.98899 5.3257 3.64796 4.15397 3.05392C2.98224 2.45988 1.94851 1.62611 1.11988 0.6067C0.836542 1.09545 0.673625 1.66212 0.673625 2.26562C0.673309 2.8089 0.807098 3.34387 1.06312 3.82305C1.31915 4.30223 1.68949 4.71081 2.14129 5.01253C1.61732 4.99586 1.10491 4.85428 0.646708 4.59957V4.64207C0.646656 5.40406 0.910232 6.14259 1.39271 6.73236C1.87519 7.32213 2.54686 7.72682 3.29375 7.87774C2.80768 8.00929 2.29807 8.02867 1.80342 7.93441C2.01414 8.59005 2.42462 9.16338 2.97739 9.57415C3.53015 9.98491 4.19753 10.2125 4.88608 10.2252C3.71722 11.1427 2.27367 11.6405 0.787667 11.6383C0.524437 11.6384 0.261429 11.623 0 11.5922C1.50838 12.5621 3.26424 13.0768 5.0575 13.0748C11.1279 13.0748 14.4465 8.04703 14.4465 3.68653C14.4465 3.54487 14.4429 3.40178 14.4365 3.26012C15.082 2.79331 15.6392 2.21525 16.082 1.55303L16.0834 1.55091V1.55091Z"
+                    d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"
                     fill="currentColor"
                   />
                 </svg>
@@ -227,16 +227,6 @@ export default function LargeWithNewsletter() {
               isExternal
             >
               Nigeria
-            </Link>
-            <Link
-              color="brand.slate.500"
-              _hover={{
-                color: 'brand.slate.800',
-              }}
-              href={`${getURL()}regions/israel`}
-              isExternal
-            >
-              Israel
             </Link>
           </Stack>
           <Stack align={'flex-start'}>

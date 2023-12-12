@@ -114,7 +114,7 @@ function Grants() {
           <Meta
             title="Superteam Earn"
             description="Every Solana opportunity in one place!"
-            canonical="/assets/logo/og.svg"
+            canonical="https://earn.superteam.fun/grants/"
           />
         }
       >
@@ -144,7 +144,7 @@ function Grants() {
             px={4}
           >
             <Text
-              fontFamily={'Domine'}
+              fontFamily={'var(--font-serif)'}
               fontSize={[20, 20, 40, 40]}
               fontWeight={700}
             >
@@ -157,7 +157,7 @@ function Grants() {
               fontWeight={'400'}
               textAlign={'center'}
             >
-              Discover the complete list of Solana grants available to support
+              Discover the complete list of crypto grants available to support
               your project.
             </Text>
             <Text color={'brand.slate.400'} fontSize={'md'}>
