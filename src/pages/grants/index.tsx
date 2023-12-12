@@ -144,7 +144,7 @@ function Grants() {
             px={4}
           >
             <Text
-              fontFamily={'Domine'}
+              fontFamily={'var(--font-serif)'}
               fontSize={[20, 20, 40, 40]}
               fontWeight={700}
             >

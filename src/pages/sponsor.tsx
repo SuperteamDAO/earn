@@ -93,7 +93,7 @@ const Sponsor = () => {
         zIndex="100"
         w="100vw"
         h="100vh"
-        fontFamily="Inter"
+        fontFamily="var(--font-sans)"
         bg="rgba(191, 203, 220, 0.67)"
         onClick={() => setVideoPopup(false)}
         placeContent="center"
@@ -151,7 +151,14 @@ const Sponsor = () => {
           filter="blur(31.25rem)"
         ></Box>
 
-        <Text zIndex={2} color="white" fontSize="3rem" fontWeight={700}>
+        <Text
+          zIndex={2}
+          color="white"
+          fontSize="3rem"
+          fontWeight={600}
+          lineHeight={'1em'}
+          letterSpacing={'-0.035em'}
+        >
           The Talent Layer for Crypto
         </Text>
 
@@ -224,10 +231,19 @@ const Sponsor = () => {
             <Text color="#56A4D0" fontSize="1.375rem" fontWeight={700}>
               Create Listings
             </Text>
-            <Text color="gray.700" fontSize="2.75rem" fontWeight={700}>
+            <Text
+              color="gray.700"
+              fontSize="2.75rem"
+              fontWeight={500}
+              lineHeight={'1em'}
+              letterSpacing={'-0.035em'}
+              css={{
+                textWrap: 'balance',
+              }}
+            >
               Outsource Work as Bounties, Projects & Grants
             </Text>
-            <Text color="gray.500" fontSize="1.5rem" fontWeight={400}>
+            <Text color="gray.500" fontSize="1.25rem" fontWeight={400}>
               Superteam Earn helps crypto founders save time and outsource all
               kinds of work and eat glass fast.
             </Text>
@@ -324,10 +340,19 @@ const Sponsor = () => {
             <Text color="#A956D0" fontSize="1.375rem" fontWeight={700}>
               DIRECTORY
             </Text>
-            <Text color="gray.700" fontSize="2.75rem" fontWeight={700}>
+            <Text
+              color="gray.700"
+              fontSize="2.75rem"
+              fontWeight={500}
+              lineHeight={'1em'}
+              letterSpacing={'-0.035em'}
+              css={{
+                textWrap: 'balance',
+              }}
+            >
               Identify and Reach Out to Top Talent
             </Text>
-            <Text color="gray.500" fontSize="1.5rem" fontWeight={400}>
+            <Text color="gray.500" fontSize="1.25rem" fontWeight={400}>
               Our Talent Directory captures verified on-chain earnings to
               separate the real workers from the posers.
             </Text>
@@ -464,18 +489,23 @@ const Sponsor = () => {
         <Flex align="center" justify="end" wrap="wrap" gap="1.25rem" w="100%">
           <Flex flex="1" gap="1.875rem" minW="25rem" flexFlow="column">
             <Text
-              maxW="50rem"
+              maxW="31ch"
               mt="1.25rem"
               color="gray.700"
               fontSize="2.75rem"
-              fontWeight={600}
+              fontWeight={500}
+              lineHeight={'1em'}
+              letterSpacing={'-0.025em'}
+              css={{
+                textWrap: 'balance',
+              }}
             >
               Leverage the Talent Layer of Crypto in Minutes
             </Text>
             <Text
               maxW="37.5rem"
               color="gray.500"
-              fontSize="1.5rem"
+              fontSize="1.25rem"
               fontWeight={400}
             >
               Have critical work your team needs completed? Superteam Earn will
@@ -535,9 +565,11 @@ const Sponsor = () => {
         >
           <Text
             color="gray.700"
-            fontSize="3rem"
-            fontWeight={700}
-            lineHeight="3.75rem"
+            fontFamily="var(--font-sans)"
+            fontSize="3.9rem"
+            fontWeight={'light'}
+            lineHeight="1.15em"
+            letterSpacing={'-0.04em'}
             textAlign="start"
           >
             Where Top Crypto Founders Meet Top Global Talent
@@ -545,9 +577,12 @@ const Sponsor = () => {
           <Text
             w="100%"
             color="gray.500"
-            fontSize="1.5rem"
+            fontSize="1.3rem"
             fontWeight={400}
             textAlign="start"
+            css={{
+              textWrap: 'pretty',
+            }}
           >
             Whether you have a bounty, a project, or a grant that you need
             filled, we&apos;re here to help (for free!)
@@ -683,7 +718,7 @@ const Sponsor = () => {
       <Flex
         overflow="hidden"
         w="100vw"
-        fontFamily="Inter"
+        fontFamily="var(--font-sans)"
         flexFlow="column"
         placeItems="center"
       >
