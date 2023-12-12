@@ -34,9 +34,6 @@ export default async function bountyDelete(
       },
     });
 
-    const zapierWebhookUrl = process.env.ZAPIER_BOUNTY_WEBHOOK!;
-    await axios.post(zapierWebhookUrl, { deleteBounty });
-
     return res.status(200).json({
       message: `Draft Bounty with id=${id} deleted successfully.`,
     });

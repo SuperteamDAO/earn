@@ -485,6 +485,7 @@ function Bounties() {
                               Edit Bounty
                             </MenuItem>
                           </NextLink>
+                          {bountyStatus === 'DRAFT' && <MenuDivider />}
                           {bountyStatus === 'DRAFT' && (
                             <MenuItem
                               color={'red'}
