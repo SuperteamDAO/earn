@@ -35,7 +35,11 @@ export const SuccessListings = ({ isOpen, onClose, slug }: Props) => {
             <Box>
               <Image w={14} alt={'Cong Svg'} src={'/assets/icons/cong.svg'} />
             </Box>
-            <Text color={'gray.700'} fontFamily={'Inter'} fontWeight={600}>
+            <Text
+              color={'gray.700'}
+              fontFamily={'var(--font-sans)'}
+              fontWeight={600}
+            >
               You Have Successfully Created A Listing
             </Text>
             <InputGroup mt={5}>

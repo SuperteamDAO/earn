@@ -80,7 +80,7 @@ export const Submissions = ({
               <Image alt={'submission'} src={'/assets/icons/submission.svg'} />
               <Text
                 color={'gray.800'}
-                fontFamily={'Inter'}
+                fontFamily={'var(--font-sans)'}
                 fontSize={'1.5rem'}
                 fontWeight={600}
                 textAlign="center"

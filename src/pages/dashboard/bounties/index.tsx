@@ -1,6 +1,7 @@
 import {
   ChevronLeftIcon,
   ChevronRightIcon,
+  EditIcon,
   ExternalLinkIcon,
   InfoOutlineIcon,
   SearchIcon,
@@ -57,6 +58,7 @@ import {
   getBgColor,
   getBountyDraftStatus,
   getBountyProgress,
+  getBountyTypeLabel,
   getDeadlineFromNow,
 } from '@/utils/bounty';
 
@@ -224,7 +226,7 @@ function Bounties() {
             }}
             focusBorderColor="brand.purple"
             onChange={(e) => debouncedSetSearchText(e.target.value)}
-            placeholder="Search bounties..."
+            placeholder="Search listing..."
             type="text"
           />
           <InputRightElement pointerEvents="none">
@@ -255,7 +257,16 @@ function Bounties() {
                   fontWeight={500}
                   textTransform={'capitalize'}
                 >
-                  Bounty Name
+                  Listing Name
+                </Th>
+                <Th
+                  align="center"
+                  color="brand.slate.400"
+                  fontSize="sm"
+                  fontWeight={500}
+                  textTransform={'capitalize'}
+                >
+                  Type
                 </Th>
                 <Th
                   align="right"
@@ -309,6 +320,9 @@ function Bounties() {
             </Thead>
             <Tbody w="full">
               {bounties.map((currentBounty) => {
+                const bountyType = getBountyTypeLabel(
+                  currentBounty?.type ?? 'open'
+                );
                 const deadlineFromNow = getDeadlineFromNow(
                   currentBounty?.deadline
                 );
@@ -318,6 +332,8 @@ function Bounties() {
                   currentBounty?.isPublished
                 );
                 const bountyProgress = getBountyProgress(currentBounty);
+                const isListingIncomplete =
+                  Object.keys(currentBounty?.rewards || {}).length === 0;
                 return (
                   <Tr key={currentBounty?.id} bg="white">
                     <Td
@@ -335,6 +351,9 @@ function Bounties() {
                           {currentBounty.title}
                         </Text>
                       </NextLink>
+                    </Td>
+                    <Td align="left">
+                      <Text textAlign={'left'}>{bountyType}</Text>
                     </Td>
                     <Td align="right">
                       <Text textAlign={'right'}>
@@ -370,7 +389,7 @@ function Bounties() {
                           w={5}
                           h="auto"
                           mr={2}
-                          alt={'green doller'}
+                          alt={'green dollar'}
                           rounded={'full'}
                           src={
                             tokenList.filter(
@@ -432,12 +451,20 @@ function Bounties() {
                         !currentBounty.isPublished && (
                           <Button
                             w="full"
-                            leftIcon={<ViewIcon />}
-                            onClick={() => handlePublish(currentBounty)}
+                            leftIcon={
+                              isListingIncomplete ? <EditIcon /> : <ViewIcon />
+                            }
+                            onClick={() => {
+                              if (isListingIncomplete) {
+                                window.location.href = `/dashboard/bounties/${currentBounty.slug}/edit/`;
+                              } else {
+                                handlePublish(currentBounty);
+                              }
+                            }}
                             size="sm"
                             variant="outline"
                           >
-                            Publish
+                            {isListingIncomplete ? 'Edit Draft' : 'Publish'}
                           </Button>
                         )}
                     </Td>
@@ -460,17 +487,21 @@ function Bounties() {
                               )
                             }
                           >
-                            View Bounty
+                            View {bountyType}
                           </MenuItem>
-                          <MenuDivider />
-                          <NextLink
-                            href={`/dashboard/bounties/${currentBounty.slug}/edit/`}
-                            passHref
-                          >
-                            <MenuItem icon={<AiOutlineEdit />}>
-                              Edit Bounty
-                            </MenuItem>
-                          </NextLink>
+                          {!isListingIncomplete && (
+                            <>
+                              <MenuDivider />
+                              <NextLink
+                                href={`/dashboard/bounties/${currentBounty.slug}/edit/`}
+                                passHref
+                              >
+                                <MenuItem icon={<AiOutlineEdit />}>
+                                  Edit {bountyType}
+                                </MenuItem>
+                              </NextLink>
+                            </>
+                          )}
                           {!(
                             currentBounty.status === 'OPEN' &&
                             !currentBounty.isPublished
@@ -508,7 +539,7 @@ function Bounties() {
           <Text as="span" fontWeight={700}>
             {totalBounties}
           </Text>{' '}
-          Bounties
+          Listings
         </Text>
         <Button
           mr={4}

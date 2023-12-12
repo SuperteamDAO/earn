@@ -56,11 +56,4 @@ export const Superteams = [
     icons: '/assets/superteams/nigeria.png',
     region: 'Nigeria',
   },
-  {
-    name: 'Superteam Israel',
-    bg: `/assets/category_assets/bg/frontend.png`,
-    color: '#A8FEA8',
-    icons: '/assets/superteams/israel.png',
-    region: 'Israel',
-  },
 ];

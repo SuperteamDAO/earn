@@ -91,8 +91,12 @@ export default function SubmissionCard({
             <Text as={'span'} ml={2} color={'brand.slate.900'} fontWeight={600}>
               {talent?.firstName} {talent?.lastName}
             </Text>{' '}
-            {sub?.isWinner ? (
-              <Text as={'span'}>won a bounty</Text>
+            {sub?.isWinner && sub?.listing?.isWinnersAnnounced ? (
+              <Text as={'span'}>
+                {sub?.listing?.type === 'open'
+                  ? 'won a bounty'
+                  : 'got selected for a project'}
+              </Text>
             ) : (
               <Text as={'span'}>submitted to a bounty</Text>
             )}
@@ -113,7 +117,7 @@ export default function SubmissionCard({
         borderRadius={'6'}
         shadow={'0px 4px 4px 0px rgba(0, 0, 0, 0.01)'}
       >
-        {sub?.isWinner ? (
+        {sub?.isWinner && sub?.listing?.isWinnersAnnounced ? (
           <Flex
             justify={'center'}
             direction={'column'}

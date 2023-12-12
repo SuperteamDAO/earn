@@ -2,7 +2,6 @@ import {
   Checkbox,
   FormLabel,
   HStack,
-  Input,
   Select,
   Textarea,
 } from '@chakra-ui/react';
@@ -10,6 +9,8 @@ import type { Control, FieldValues, UseFormRegister } from 'react-hook-form';
 import { Controller } from 'react-hook-form';
 import ReactSelect from 'react-select';
 import makeAnimated from 'react-select/animated';
+
+import { AutoResizeTextarea } from '@/components/shared/autosize-textarea';
 
 import type { MultiSelectOptions } from '../../../../constants';
 import type { QuestionType } from './builder';
@@ -36,7 +37,7 @@ export const QuestionHandler = ({
         <FormLabel color={'gray.600 !important'} fontSize={'1.1rem'}>
           {question}
         </FormLabel>
-        <Input
+        <AutoResizeTextarea
           borderColor={'brand.slate.300'}
           _placeholder={{ color: 'brand.slate.300' }}
           focusBorderColor="brand.purple"

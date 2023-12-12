@@ -14,6 +14,7 @@ export default async function user(req: NextApiRequest, res: NextApiResponse) {
     | BountyType
     | undefined;
   const take = params.take ? parseInt(params.take as string, 10) : 10;
+  const deadline = params.deadline as string;
   console.log(take, '----server---');
   const result: any = {
     bounties: [],
@@ -71,7 +72,6 @@ export default async function user(req: NextApiRequest, res: NextApiResponse) {
               Regions.TURKEY,
               Regions.UAE,
               Regions.NIGERIA,
-              Regions.ISRAEL,
             ],
           },
           deadline: {
@@ -119,11 +119,10 @@ export default async function user(req: NextApiRequest, res: NextApiResponse) {
               Regions.TURKEY,
               Regions.UAE,
               Regions.NIGERIA,
-              Regions.ISRAEL,
             ],
           },
           deadline: {
-            gte: dayjs().subtract(1, 'month').toISOString(),
+            gte: deadline,
           },
           ...skillsFilter,
         },
@@ -173,7 +172,6 @@ export default async function user(req: NextApiRequest, res: NextApiResponse) {
               Regions.TURKEY,
               Regions.UAE,
               Regions.NIGERIA,
-              Regions.ISRAEL,
             ],
           },
           deadline: {

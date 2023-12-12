@@ -63,7 +63,7 @@ export const EarningModal = ({ isOpen, onClose }: Props) => {
           <VStack align={'start'} gap={2} mt={5}>
             <Text
               color={'black'}
-              fontFamily={'Domine'}
+              fontFamily={'var(--font-serif)'}
               fontSize={'2xl'}
               fontWeight={700}
               textAlign={'center'}
@@ -72,7 +72,7 @@ export const EarningModal = ({ isOpen, onClose }: Props) => {
             </Text>
             <Text
               color={'gray.500'}
-              fontFamily={'Inter'}
+              fontFamily={'var(--font-sans)'}
               fontSize={'sm'}
               fontWeight={400}
               textAlign={'center'}

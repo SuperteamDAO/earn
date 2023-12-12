@@ -60,7 +60,7 @@ const Sumbissions = ({ slug, subid }: BountyDetailsProps) => {
         meta={
           <Meta
             title={`${bounty?.title || 'Bounty'} | Superteam Earn`}
-            description="Every Solana opportunity in one place!"
+            description="Every crypto opportunity in one place!"
           />
         }
       >

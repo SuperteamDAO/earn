@@ -145,7 +145,7 @@ function ListingHeader({
             <HStack>
               <Heading
                 color={'brand.charcoal.700'}
-                fontFamily={'Inter'}
+                fontFamily={'var(--font-sans)'}
                 fontSize={{ base: 'lg', md: 'xl' }}
                 fontWeight={{ base: 600, md: 700 }}
               >
@@ -218,7 +218,7 @@ function ListingHeader({
                         px={4}
                         py={2}
                         color="brand.slate.500"
-                        fontFamily={'Inter'}
+                        fontFamily={'var(--font-sans)'}
                         fontSize="sm"
                         bg="white"
                         borderRadius={'lg'}
@@ -246,17 +246,35 @@ function ListingHeader({
                     )}
                   </Text>
                 </Flex>
-                <Text
-                  px={2}
-                  py={1}
-                  color={'#0800A5'}
-                  fontSize={'xs'}
-                  fontWeight={500}
-                  bg="#EBEAFF"
-                  rounded={'full'}
+                <Tooltip
+                  px={4}
+                  py={2}
+                  color="brand.slate.500"
+                  fontFamily={'Inter'}
+                  fontSize="sm"
+                  bg="white"
+                  borderRadius={'lg'}
+                  label={
+                    region === 'GLOBAL'
+                      ? 'This listing is open to everyone in the world!'
+                      : `You need to be a resident of ${
+                          region.charAt(0).toUpperCase() +
+                          region.slice(1).toLowerCase()
+                        } to participate in this bounty`
+                  }
                 >
-                  {region}
-                </Text>
+                  <Text
+                    px={2}
+                    py={1}
+                    color={'#0800A5'}
+                    fontSize={'xs'}
+                    fontWeight={500}
+                    bg="#EBEAFF"
+                    rounded={'full'}
+                  >
+                    {region}
+                  </Text>
+                </Tooltip>
               </HStack>
             )}
           </VStack>
@@ -310,7 +328,7 @@ function ListingHeader({
               px={4}
               py={2}
               color={'#94A3B8'}
-              fontFamily={'Inter'}
+              fontFamily={'var(--font-sans)'}
               fontSize="sm"
               bg="white"
               borderRadius={'lg'}

@@ -90,7 +90,7 @@ const StepsCon = ({ setSuccess }: { setSuccess: () => void }) => {
     {
       title: 'Create Your Profile',
       subTitle:
-        "If you're ready to start contributing to Solana, you're in the right place.",
+        "If you're ready to start contributing to crypto projects, you're in the right place.",
     },
     {
       title: 'Tell Us About Your Work',
@@ -107,7 +107,7 @@ const StepsCon = ({ setSuccess }: { setSuccess: () => void }) => {
       <VStack mt={8}>
         <Heading
           color={'#334254'}
-          fontFamily={'Inter'}
+          fontFamily={'var(--font-sans)'}
           fontSize={{ base: '18px', md: '24px' }}
           fontWeight={700}
         >
@@ -115,7 +115,7 @@ const StepsCon = ({ setSuccess }: { setSuccess: () => void }) => {
         </Heading>
         <Text
           color={'#94A3B8'}
-          fontFamily={'Inter'}
+          fontFamily={'var(--font-sans)'}
           fontSize={{ base: '16px', md: '20px' }}
           fontWeight={500}
           textAlign={'center'}
@@ -267,7 +267,7 @@ function Talent() {
         <Meta
           title="New Talent | Superteam Earn"
           description="Every Solana opportunity in one place!"
-          canonical="/assets/logo/og.svg"
+          canonical="https://earn.superteam.fun/new/talent/"
         />
       }
     >

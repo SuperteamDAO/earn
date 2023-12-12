@@ -159,6 +159,7 @@ function CreateListing({ bounty, isEditMode = false, type }: Props) {
     };
     draft = {
       ...draft,
+      type,
       skills: mergeSkills({ skills: mainSkills, subskills: subSkill }),
       ...bountybasic,
       deadline: bountybasic?.deadline

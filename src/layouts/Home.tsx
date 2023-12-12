@@ -75,7 +75,7 @@ function Home({ children, type }: HomeProps) {
         <Meta
           title="Superteam Earn"
           description="Every Solana opportunity in one place!"
-          canonical="/assets/logo/og.svg"
+          canonical="https://earn.superteam.fun"
         />
       }
     >
@@ -135,7 +135,7 @@ function Home({ children, type }: HomeProps) {
                     <Box w={{ md: '80%', base: '100%' }}>
                       <Text
                         mt={{ base: 4, md: '0' }}
-                        fontFamily={'Domine'}
+                        fontFamily={'var(--font-serif)'}
                         fontWeight={'700'}
                       >
                         {matchedTeam.name}

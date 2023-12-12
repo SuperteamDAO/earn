@@ -8,6 +8,7 @@ import {
   useMediaQuery,
 } from '@chakra-ui/react';
 import axios from 'axios';
+import { unstable_getImgProps as getImgProps } from 'next/image';
 import React, { useEffect, useState } from 'react';
 
 import { userStore } from '@/store/user';
@@ -20,20 +21,45 @@ interface BannerProps {
 const avatars = [
   {
     name: 'Anoushk',
-    src: 'https://res.cloudinary.com/dgvnuwspr/image/upload/v1683132586/People%20DPs/recA3Sa7t1loYvDHo.jpg',
+    src: 'https://res.cloudinary.com/dgvnuwspr/image/upload/c_scale,w_30,h_30,f_auto/v1683132586/People%20DPs/recA3Sa7t1loYvDHo.jpg',
   },
   {
     name: 'Ujjwal',
-    src: 'https://res.cloudinary.com/dgvnuwspr/image/upload/v1683135404/People%20DPs/rec4XUFtbh6upVYpA.jpg',
+    src: 'https://res.cloudinary.com/dgvnuwspr/image/upload/c_scale,w_30,h_30,f_auto/v1683135404/People%20DPs/rec4XUFtbh6upVYpA.jpg',
   },
   {
     name: 'Yash',
-    src: 'https://res.cloudinary.com/dgvnuwspr/image/upload/v1683135395/People%20DPs/recb4gDjdKoFDAyo7.png',
+    src: 'https://res.cloudinary.com/dgvnuwspr/image/upload/c_scale,w_30,h_30,f_auto/v1683135395/People%20DPs/recb4gDjdKoFDAyo7.png',
   },
 ];
 
 export default function HomeBanner({ setTriggerLogin }: BannerProps) {
   const [isLessThan768px] = useMediaQuery('(max-width: 768px)');
+
+  // Define image properties for each image
+  const desktopProps = {
+    alt: 'Desktop Banner',
+    width: 1474,
+    height: 472,
+    quality: 90,
+    formats: ['avif', 'webp'],
+  };
+  const mobileProps = {
+    alt: 'Mobile Banner',
+    width: 393,
+    height: 487,
+    quality: 96,
+    formats: ['avif', 'webp'],
+  };
+
+  const desktopImage = getImgProps({
+    ...desktopProps,
+    src: '/assets/home/display/banner.png',
+  });
+  const mobileImage = getImgProps({
+    ...mobileProps,
+    src: '/assets/home/display/banner-mobile.png',
+  });
 
   const [usersCount, setUsersCount] = useState<number | null>(null);
   const { userInfo } = userStore();
@@ -61,8 +87,8 @@ export default function HomeBanner({ setTriggerLogin }: BannerProps) {
         p={{ base: '6', md: '10' }}
         bgImage={
           isLessThan768px
-            ? "url('/assets/home/display/banner-mobile.png')"
-            : "url('/assets/home/display/banner.png')"
+            ? `url(${mobileImage.props.src})`
+            : `url(${desktopImage.props.src})`
         }
         bgSize={'cover'}
         bgPosition={'center'}
