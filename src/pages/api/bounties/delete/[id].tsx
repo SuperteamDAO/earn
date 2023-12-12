@@ -1,4 +1,3 @@
-import axios from 'axios';
 import type { NextApiRequest, NextApiResponse } from 'next';
 
 import { prisma } from '@/prisma';
