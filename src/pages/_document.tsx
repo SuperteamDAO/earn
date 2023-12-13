@@ -4,7 +4,19 @@ import Script from 'next/script';
 export default function Document() {
   return (
     <Html lang="en">
-      <Head />
+      <Head>
+        <link
+          rel="preconnect"
+          href="https://res.cloudinary.com"
+          crossOrigin="anonymous"
+        />
+
+        <link
+          rel="preconnect"
+          href="https://fonts.googleapis.com"
+          crossOrigin="anonymous"
+        />
+      </Head>
       <body>
         <Main />
         <NextScript />
@@ -14,7 +26,7 @@ export default function Document() {
         />
         <Script
           id="gtag-init"
-          strategy="afterInteractive"
+          strategy="worker"
           dangerouslySetInnerHTML={{
             __html: `
             window.dataLayer = window.dataLayer || [];
