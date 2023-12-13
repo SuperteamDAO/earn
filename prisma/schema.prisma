@@ -161,9 +161,9 @@ model Grants {
 
 model Submission {
   id                 String      @id @default(uuid())
-  link               String?
-  tweet              String?
-  otherInfo          String?
+  link               String?     @db.VarChar(500)
+  tweet              String?     @db.VarChar(500)
+  otherInfo          String?     @db.VarChar(2000)
   eligibilityAnswers Json?
   userId             String
   listingType        ListingType @default(BOUNTY)

@@ -19,6 +19,11 @@ export const getBountyDraftStatus = (
   return 'DRAFT';
 };
 
+export const getBountyTypeLabel = (type: string) => {
+  if (type === 'permissioned') return 'Project';
+  return 'Bounty';
+};
+
 export const getBountyProgress = (
   bounty: Bounty | BountyWithSubmissions | null
 ) => {

@@ -288,7 +288,7 @@ export default async function handler(request: NextRequest) {
       {
         width: 1200,
         height: 630,
-        fonts: [{ name: 'Inter', data: fontData, style: 'normal' }],
+        fonts: [{ name: 'var(--font-sans)', data: fontData, style: 'normal' }],
       }
     );
   } catch (e: any) {

@@ -74,7 +74,11 @@ function BountyWinners({ bounty }: Props) {
             {submissions.map((submission) => (
               <NextLink
                 key={submission.id}
-                href={`/listings/bounties/${bounty?.slug}/submission/${submission?.id}/`}
+                href={
+                  bounty?.type === 'open'
+                    ? `/listings/bounties/${bounty?.slug}/submission/${submission?.id}/`
+                    : `/t/${submission?.user?.username}`
+                }
                 passHref
               >
                 <Flex

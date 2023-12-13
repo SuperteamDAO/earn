@@ -87,7 +87,7 @@ export default function LargeWithNewsletter() {
               <Logo color={'brand.slate.500'} />
             </Box>
             <Text color="brand.slate.500">
-              Superteam Earn is where Solana founders find world class talent
+              Superteam Earn is where crypto founders find world class talent
               for their projects. Post bounties, meet your next team member &
               get things done fast. <br />
               <br />© 2023 Superteam. All rights reserved.
@@ -227,16 +227,6 @@ export default function LargeWithNewsletter() {
               isExternal
             >
               Nigeria
-            </Link>
-            <Link
-              color="brand.slate.500"
-              _hover={{
-                color: 'brand.slate.800',
-              }}
-              href={`${getURL()}regions/israel`}
-              isExternal
-            >
-              Israel
             </Link>
           </Stack>
           <Stack align={'flex-start'}>

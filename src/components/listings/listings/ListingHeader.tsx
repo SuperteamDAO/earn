@@ -98,7 +98,7 @@ export const ListingHeader = ({
             <VStack align={'start'}>
               <Heading
                 color={'brand.charcoal.700'}
-                fontFamily={'Inter'}
+                fontFamily={'var(--font-sans)'}
                 fontSize={'lg'}
                 fontWeight={700}
               >

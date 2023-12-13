@@ -15,7 +15,7 @@ function WelcomeMessage({ setStep }: { setStep: () => void }) {
         <VStack>
           <Heading
             color={'#334254'}
-            fontFamily={'Inter'}
+            fontFamily={'var(--font-sans)'}
             fontSize={'1.5rem'}
             fontWeight={700}
           >
@@ -23,7 +23,7 @@ function WelcomeMessage({ setStep }: { setStep: () => void }) {
           </Heading>
           <Text
             color={'gray.400'}
-            fontFamily={'Inter'}
+            fontFamily={'var(--font-sans)'}
             fontSize={'1.25rem'}
             fontWeight={500}
             textAlign={'center'}
