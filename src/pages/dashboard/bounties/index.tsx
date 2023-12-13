@@ -165,7 +165,7 @@ function Bounties() {
   const handleDeleteDraft = async (deleteBounty: BountyWithSubmissions) => {
     try {
       await axios.post(`/api/bounties/delete/${deleteBounty.id}`);
-      const update = bounties.filter((x) => x.id === deleteBounty.id);
+      const update = bounties.filter((x) => x.id !== deleteBounty.id);
       setBounties(update);
     } catch (e) {
       console.log(e);
