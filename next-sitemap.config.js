@@ -6,7 +6,7 @@ module.exports = {
     policies: [
       {
         userAgent: '*',
-        disallow: ['/signup', '/dashboard', '/new/sponsor'],
+        disallow: ['/signup', '/dashboard', '/new/sponsor', '/t/*/edit'],
       },
     ],
   },
