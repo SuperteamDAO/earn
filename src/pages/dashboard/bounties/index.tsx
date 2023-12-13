@@ -80,6 +80,11 @@ function Bounties() {
     onOpen: unpublishOnOpen,
     onClose: unpublishOnClose,
   } = useDisclosure();
+  const {
+    isOpen: deleteDraftIsOpen,
+    onOpen: deleteDraftOnOpen,
+    onClose: deleteDraftOnClose,
+  } = useDisclosure();
   const { userInfo } = userStore();
   const [totalBounties, setTotalBounties] = useState(0);
   const [bounties, setBounties] = useState<BountyWithSubmissions[]>([]);
@@ -162,14 +167,21 @@ function Bounties() {
     router.push(`/dashboard/bounties/${slug}/submissions/`);
   };
 
-  const handleDeleteDraft = async (deleteBounty: BountyWithSubmissions) => {
+  const deleteSelectedDraft = async () => {
     try {
-      await axios.post(`/api/bounties/delete/${deleteBounty.id}`);
-      const update = bounties.filter((x) => x.id !== deleteBounty.id);
+      await axios.post(`/api/bounties/delete/${bounty.id}`);
+      const update = bounties.filter((x) => x.id !== bounty.id);
       setBounties(update);
     } catch (e) {
       console.log(e);
+    } finally {
+      deleteDraftOnClose();
     }
+  };
+
+  const handleDeleteDraft = async (deleteBounty: BountyWithSubmissions) => {
+    setBounty(deleteBounty);
+    deleteDraftOnOpen();
   };
 
   return (
@@ -226,6 +238,33 @@ function Bounties() {
               variant="solid"
             >
               Unpublish
+            </Button>
+          </ModalFooter>
+        </ModalContent>
+      </Modal>
+      <Modal isOpen={deleteDraftIsOpen} onClose={deleteDraftOnClose}>
+        <ModalOverlay />
+        <ModalContent>
+          <ModalHeader>Delete Draft?</ModalHeader>
+          <ModalCloseButton />
+          <ModalBody>
+            <Text color="brand.slate.500">
+              Are you sure you want to delete the selected draft?
+            </Text>
+          </ModalBody>
+
+          <ModalFooter>
+            <Button mr={4} onClick={deleteDraftOnClose} variant="ghost">
+              Close
+            </Button>
+            <Button
+              isLoading={isChangingStatus}
+              leftIcon={<AiOutlineDelete />}
+              loadingText="Deleting..."
+              onClick={deleteSelectedDraft}
+              variant="solid"
+            >
+              Confirm
             </Button>
           </ModalFooter>
         </ModalContent>
@@ -524,7 +563,7 @@ function Bounties() {
                                 icon={<AiOutlineDelete color="red" />}
                                 onClick={() => handleDeleteDraft(currentBounty)}
                               >
-                                Drop {bountyType}
+                                Delete Draft
                               </MenuItem>
                             </>
                           )}
