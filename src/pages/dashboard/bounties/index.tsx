@@ -524,7 +524,7 @@ function Bounties() {
                                 icon={<AiOutlineDelete color="red" />}
                                 onClick={() => handleDeleteDraft(currentBounty)}
                               >
-                                Delete Draft Bounty
+                                Drop {bountyType}
                               </MenuItem>
                             </>
                           )}
