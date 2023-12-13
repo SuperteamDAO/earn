@@ -14,6 +14,7 @@ import { Superteams } from '@/constants/Superteam';
 import type { Bounty } from '@/interface/bounty';
 import type { Grant } from '@/interface/grant';
 import Home from '@/layouts/Home';
+import { Meta } from '@/layouts/Meta';
 
 interface Listings {
   bounties?: Bounty[];
@@ -46,9 +47,19 @@ const RegionsPage = ({ slug }: { slug: string }) => {
     getListings();
   }, []);
 
+  const formattedSlug =
+    slug === 'uk' || slug === 'uae'
+      ? slug.toUpperCase()
+      : slug.charAt(0).toUpperCase() + slug.slice(1);
+
   return (
     <>
       <Home type="region">
+        <Meta
+          title={`Welcome to Superteam Earn ${formattedSlug} | Discover Bounties and Grants`}
+          description={`Welcome to Superteam ${formattedSlug}'s page — Discover bounties and grants and become a part of the global crypto community`}
+          canonical={`https://earn.superteam.fun/regions/${slug}/`}
+        ></Meta>
         <Box w={'100%'}>
           <ListingSection
             type="bounties"
