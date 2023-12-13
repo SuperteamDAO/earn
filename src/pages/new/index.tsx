@@ -11,8 +11,8 @@ const Index = () => {
     <Default
       meta={
         <Meta
-          title="Superteam Earn"
-          description="Every Solana opportunity in one place!"
+          title="Make Your Profile | Earn on Superteam | Connect with Crypto Talent"
+          description="Join Superteam to engage with top talent and discover bounties and grants for your crypto projects."
           canonical="https://earn.superteam.fun/new/"
         />
       }
