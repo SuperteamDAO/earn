@@ -468,7 +468,7 @@ const Sponsor = () => {
               ${formatNumber(totals?.totalInUSD ?? 0)}+
             </Text>
             <Text color="gray.500" fontSize="1.25rem" fontWeight={600}>
-              Total Value Listed
+              Total Value Earned
             </Text>
           </Box>
         </Flex>

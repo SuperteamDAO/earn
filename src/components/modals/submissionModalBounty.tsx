@@ -254,6 +254,7 @@ export const SubmissionModal = ({
                         question={e?.question}
                         type={e?.type ?? 'text'}
                         label={`eligibility-${e?.order}`}
+                        watch={watch}
                       />
                     </FormControl>
                   );

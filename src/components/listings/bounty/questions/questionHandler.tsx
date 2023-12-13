@@ -3,6 +3,7 @@ import {
   FormLabel,
   HStack,
   Select,
+  Text,
   Textarea,
 } from '@chakra-ui/react';
 import type { Control, FieldValues, UseFormRegister } from 'react-hook-form';
@@ -22,6 +23,7 @@ interface Props {
   label: string;
   register: UseFormRegister<FieldValues>;
   control?: Control<FieldValues, any>;
+  watch?: any;
 }
 export const QuestionHandler = ({
   question,
@@ -30,6 +32,7 @@ export const QuestionHandler = ({
   register,
   label,
   control,
+  watch,
 }: Props) => {
   if (type === 'text') {
     return (
@@ -41,8 +44,21 @@ export const QuestionHandler = ({
           borderColor={'brand.slate.300'}
           _placeholder={{ color: 'brand.slate.300' }}
           focusBorderColor="brand.purple"
+          maxLength={3000}
           {...register(label)}
         />
+        <Text
+          color={(watch(label)?.length || 0) > 2900 ? 'red' : 'brand.slate.400'}
+          fontSize={'xs'}
+          textAlign="right"
+        >
+          {watch(label)?.length > 2500 &&
+            (3000 - (watch(label)?.length || 0) === 0 ? (
+              <p>Character limit exceeded. Please reduce the text</p>
+            ) : (
+              <p>{3000 - (watch(label)?.length || 0)} characters left</p>
+            ))}
+        </Text>
       </>
     );
   }
