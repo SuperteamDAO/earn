@@ -10,6 +10,8 @@ export const styles = {
     body: {
       bg: 'brand.grey.50',
       fontFamily: 'var(--font-sans)',
+      fontFeatureSettings:
+        '"dlig", "liga", "calt", "tnum", "zero", "ss08", "cv10", "cv06", "cv08"',
     },
     width: {
       HomeCard: '4100rem',
