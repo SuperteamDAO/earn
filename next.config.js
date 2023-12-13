@@ -1,5 +1,18 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
+  experimental: {
+    optimizePackageImports: [
+      '@chakra-ui/react',
+      '@chakra-ui/icons',
+      '@emotion/react',
+      'react-hot-toast',
+      'react-icons/ti',
+      'react-icons/ai',
+      '@solana/wallet-adapter-react',
+      '@solana/wallet-adapter-base',
+      '@solana/web3.js',
+    ],
+  },
   eslint: {
     dirs: ['.'],
   },
