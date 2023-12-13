@@ -2,7 +2,6 @@ import 'slick-carousel/slick/slick.css';
 import 'slick-carousel/slick/slick-theme.css';
 // Styles
 import 'degen/styles';
-import 'nprogress/nprogress.css';
 import '../styles/globals.scss';
 
 import { ChakraProvider } from '@chakra-ui/react';
@@ -16,13 +15,12 @@ import type { AppProps } from 'next/app';
 // Fonts
 import { Domine, JetBrains_Mono } from 'next/font/google';
 import localFont from 'next/font/local';
-import { Router } from 'next/router';
-import NProgress from 'nprogress';
-import posthog from 'posthog-js';
-import { PostHogProvider } from 'posthog-js/react';
 
+// import posthog from 'posthog-js';
+// import { PostHogProvider } from 'posthog-js/react';
 import theme from '../config/chakra.config';
 import { Wallet } from '../context/connectWalletContext';
+
 // importing localFont from a local file as Google imported fonts do not enable font-feature-settings. Reference: https://github.com/vercel/next.js/discussions/52456
 const fontSans = localFont({
   src: [
@@ -81,21 +79,18 @@ const extendThemeWithNextFonts = {
   },
 };
 
-if (typeof window !== 'undefined') {
-  posthog.init(process.env.NEXT_PUBLIC_POSTHOG_KEY!, {
-    api_host: process.env.NEXT_PUBLIC_POSTHOG_HOST || 'https://app.posthog.com',
-    // eslint-disable-next-line @typescript-eslint/no-shadow
-    loaded: (posthog) => {
-      if (process.env.NODE_ENV === 'development') posthog.debug();
-    },
-  });
-}
+// if (typeof window !== 'undefined') {
+//   posthog.init(process.env.NEXT_PUBLIC_POSTHOG_KEY!, {
+//     api_host: process.env.NEXT_PUBLIC_POSTHOG_HOST || 'https://app.posthog.com',
+//     // eslint-disable-next-line @typescript-eslint/no-shadow
+//     loaded: (posthog) => {
+//       if (process.env.NODE_ENV === 'development') posthog.debug();
+//     },
+//   });
+// }
 
 function MyApp({ Component, pageProps }: AppProps) {
   const queryClient = new QueryClient();
-  Router.events.on('routeChangeStart', () => NProgress.start());
-  Router.events.on('routeChangeComplete', () => NProgress.done());
-  Router.events.on('routeChangeError', () => NProgress.done());
 
   return (
     <>
@@ -112,10 +107,8 @@ function MyApp({ Component, pageProps }: AppProps) {
         <Wallet>
           <QueryClientProvider client={queryClient}>
             <Hydrate state={pageProps.dehydratedState}>
-              <PostHogProvider client={posthog}>
-                <ReactQueryDevtools initialIsOpen={false} />
-                <Component {...pageProps} />
-              </PostHogProvider>
+              <ReactQueryDevtools initialIsOpen={false} />
+              <Component {...pageProps} />
             </Hydrate>
           </QueryClientProvider>
         </Wallet>
