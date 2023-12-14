@@ -73,8 +73,8 @@ function Home({ children, type }: HomeProps) {
       className="bg-white"
       meta={
         <Meta
-          title="Superteam Earn"
-          description="Every Solana opportunity in one place!"
+          title="Superteam Earn |  Bounties, Grants, and Jobs in Crypto"
+          description="Explore the latest bounties on Superteam Earn, offering opportunities in the crypto space across Design, Development, and Content."
           canonical="https://earn.superteam.fun"
         />
       }

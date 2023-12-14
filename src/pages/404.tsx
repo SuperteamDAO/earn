@@ -8,7 +8,10 @@ export default function Custom404() {
     <>
       <Default
         meta={
-          <Meta title="Superteam Earn" description="404 - Page Not Found" />
+          <Meta
+            title="Superteam Earn | Page Not Found"
+            description="404 - Page Not Found"
+          />
         }
       >
         <VStack
