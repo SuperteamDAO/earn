@@ -57,9 +57,23 @@ function BountyDetails({ bounty: initialBounty }: BountyDetailsProps) {
     <Default
       meta={
         <Head>
-          <title>{`${
-            initialBounty?.title || 'Bounty'
-          } | Superteam Earn`}</title>
+          <title>{`Superteam Earn Bounty | ${
+            initialBounty?.title || 'Apply'
+          } by ${initialBounty?.sponsor?.name}`}</title>
+          <meta
+            name="description"
+            content={`Bounty on Superteam Earn | ${
+              initialBounty?.sponsor?.name
+            } is seeking freelancers and builders ${
+              initialBounty?.title
+                ? `to work on ${initialBounty.title}`
+                : '| Apply Here'
+            }`}
+          />
+          <link
+            rel="canonical"
+            href={`http://earn.superteam.fun/listings/bounties/${bounty?.slug}/`}
+          />
           <meta
             property="og:title"
             content={`${initialBounty?.title || 'Bounty'} | Superteam Earn`}

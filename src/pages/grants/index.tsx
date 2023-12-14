@@ -112,8 +112,8 @@ function Grants() {
       <Default
         meta={
           <Meta
-            title="Superteam Earn"
-            description="Every Solana opportunity in one place!"
+            title="Superteam Earn | Grants"
+            description="Discover Solana Grants for Development, Art, Content, and more to fund your ideas"
             canonical="https://earn.superteam.fun/grants/"
           />
         }

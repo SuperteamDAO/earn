@@ -8,6 +8,7 @@ import EmptySection from '@/components/shared/EmptySection';
 import Loading from '@/components/shared/Loading';
 import type { Bounty } from '@/interface/bounty';
 import Home from '@/layouts/Home';
+import { Meta } from '@/layouts/Meta';
 
 interface Listings {
   bounties?: Bounty[];
@@ -45,6 +46,12 @@ function AllBountiesPage() {
 
   return (
     <Home type="home">
+      <Meta
+        title="Superteam Earn | Discover Bounties and Grants in Crypto for Design, Development, and Content"
+        description="Explore the latest bounties on Superteam Earn, offering opportunities in the crypto space across Design, Development, and Content."
+        canonical="https://earn.superteam.fun/bounties/"
+      />
+
       <Box w={'100%'}>
         <ListingSection
           type="bounties"
