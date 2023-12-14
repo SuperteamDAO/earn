@@ -54,7 +54,7 @@ export const QuestionHandler = ({
         >
           {watch(label)?.length > 2500 &&
             (3000 - (watch(label)?.length || 0) === 0 ? (
-              <p>Character limit exceeded. Please reduce the text</p>
+              <p>Character limit reached</p>
             ) : (
               <p>{3000 - (watch(label)?.length || 0)} characters left</p>
             ))}
