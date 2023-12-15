@@ -5,6 +5,12 @@ import {
   Flex,
   HStack,
   Image,
+  Modal,
+  ModalBody,
+  ModalCloseButton,
+  ModalContent,
+  ModalHeader,
+  ModalOverlay,
   Table,
   TableContainer,
   Tbody,
@@ -18,6 +24,7 @@ import {
 import { useWallet } from '@solana/wallet-adapter-react';
 import type { UseMutationResult } from '@tanstack/react-query';
 import moment from 'moment';
+import { useState } from 'react';
 import Countdown from 'react-countdown';
 
 import { tokenList } from '../../../../constants';
@@ -64,11 +71,23 @@ export const DetailSideCard = ({
 }: Props) => {
   const { userInfo } = userStore();
   const { connected } = useWallet();
+  const [isFeedbackPopupOpen, setIsFeedbackPopupOpen] = useState(false);
   let submissionStatus = 0;
   if (Number(moment(endingTime).format('x')) < Date.now()) {
     submissionStatus = 1;
   }
-
+  const handleFeedbackButtonClick = () => {
+    setIsFeedbackPopupOpen(true);
+  };
+  const handleSubmit = () => {
+    if (!userInfo?.talent || !connected) {
+      onOpen();
+      return;
+    }
+    console.log(questions);
+    submissiononOpen();
+    handleFeedbackButtonClick();
+  };
   return (
     <>
       {submissionisOpen && (
@@ -339,17 +358,37 @@ export const DetailSideCard = ({
             color={'white'}
             bg={'#6562FF'}
             _hover={{ bg: '#6562FF' }}
-            onClick={() => {
-              if (!userInfo?.talent || !connected) {
-                onOpen();
-                return;
-              }
-              console.log(questions);
-              submissiononOpen();
-            }}
+            onClick={handleSubmit}
           >
             Submit Now
           </Button>
+          <Modal
+            isOpen={isFeedbackPopupOpen}
+            onClose={() => setIsFeedbackPopupOpen(false)}
+          >
+            <ModalOverlay />
+            <ModalContent>
+              <ModalHeader>Help Us Improve Superteam Earn</ModalHeader>
+              <ModalCloseButton />
+              <ModalBody>
+                <Text>
+                  We&aposd love to know about your experience with Earn, and how
+                  we can improve!
+                </Text>
+                <Button
+                  colorScheme="blue"
+                  onClick={() =>
+                    window.open(
+                      'https://airtable.com/app59bjxK4v1M4SEU/shrNNnUArMlpK5bj9',
+                      '_blank'
+                    )
+                  }
+                >
+                  Send Feedback
+                </Button>
+              </ModalBody>
+            </ModalContent>
+          </Modal>
         </VStack>
         <VStack
           align={'start'}
