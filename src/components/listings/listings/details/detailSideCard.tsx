@@ -84,9 +84,9 @@ export const DetailSideCard = ({
       onOpen();
       return;
     }
+    handleFeedbackButtonClick();
     console.log(questions);
     submissiononOpen();
-    handleFeedbackButtonClick();
   };
   return (
     <>
