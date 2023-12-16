@@ -7,7 +7,10 @@ import { Toaster } from 'react-hot-toast';
 
 import type { BountyBasicType } from '@/components/listings/bounty/Createbounty';
 import { CreateBounty } from '@/components/listings/bounty/Createbounty';
-import type { Ques, QuestionType } from '@/components/listings/bounty/questions/builder';
+import type {
+  Ques,
+  QuestionType,
+} from '@/components/listings/bounty/questions/builder';
 import { CreateGrants } from '@/components/listings/grants/CreateGrants';
 import Template from '@/components/listings/templates/template';
 import { SuccessListings } from '@/components/modals/successListings';
@@ -46,9 +49,9 @@ function CreateListing({ bounty, isEditMode = false, type }: Props) {
   const [steps, setSteps] = useState<number>(isEditMode ? 2 : 1);
   const [listingType, setListingType] = useState('BOUNTY');
   const [draftLoading, setDraftLoading] = useState<boolean>(false);
-  const [bountyRequirements, setBountyRequirements] = useState<string | undefined>(
-    isEditMode ? bounty?.requirements : undefined
-  );
+  const [bountyRequirements, setBountyRequirements] = useState<
+    string | undefined
+  >(isEditMode ? bounty?.requirements : undefined);
   const [editorData, setEditorData] = useState<string | undefined>(
     isEditMode ? bounty?.description : preFilledHeadings
   );
@@ -69,30 +72,31 @@ function CreateListing({ bounty, isEditMode = false, type }: Props) {
   const [questions, setQuestions] = useState<Ques[]>(
     isEditMode
       ? (bounty?.eligibility || [])?.map((e) => ({
-        order: e.order,
-        question: e.question,
-        type: e.type as QuestionType,
-        delete: true,
-        label: e.question,
-      }))
+          order: e.order,
+          question: e.question,
+          type: e.type as QuestionType,
+          delete: true,
+          label: e.question,
+        }))
       : []
   );
 
   const [references, setReferences] = useState<References[]>(
     isEditMode
       ? (bounty?.references || [])?.map((e) => ({
-        order: e.order,
-        link: e.link,
-      }))
+          order: e.order,
+          link: e.link,
+        }))
       : []
   );
 
   // - Bounty
   const [bountybasic, setBountyBasic] = useState<BountyBasicType | undefined>({
     title: isEditMode ? bounty?.title || undefined : undefined,
-    deadline: isEditMode && bounty?.deadline
-      ? dayjs(bounty?.deadline).format('YYYY-MM-DDTHH:mm') || undefined
-      : undefined,
+    deadline:
+      isEditMode && bounty?.deadline
+        ? dayjs(bounty?.deadline).format('YYYY-MM-DDTHH:mm') || undefined
+        : undefined,
     templateId: isEditMode ? bounty?.templateId || undefined : undefined,
     pocSocials: isEditMode ? bounty?.pocSocials || undefined : undefined,
     applicationType: isEditMode ? bounty?.applicationType || 'fixed' : 'fixed',
@@ -108,7 +112,8 @@ function CreateListing({ bounty, isEditMode = false, type }: Props) {
   // -- Grants
   const [grantBasic, setgrantsBasic] = useState<GrantsBasicType | undefined>();
 
-  const [isListingPublishing, setIsListingPublishing] = useState<boolean>(false);
+  const [isListingPublishing, setIsListingPublishing] =
+    useState<boolean>(false);
 
   const createAndPublishListing = async () => {
     setIsListingPublishing(true);
@@ -224,70 +229,70 @@ function CreateListing({ bounty, isEditMode = false, type }: Props) {
           stepList={
             listingType !== 'BOUNTY'
               ? [
-                {
-                  label: 'Template',
-                  number: 1,
-                  mainHead: 'List your Opportunity',
-                  description:
-                    'To save time, check out our ready-made templates below. If you already have a listing elsewhere, use "Start from Scratch" and copy/paste your text.',
-                },
-                {
-                  label: 'Basics',
-                  number: 2,
-                  mainHead: 'Create a Listing',
-                  description: `Now let's learn a bit more about the work you need completed`,
-                },
-                {
-                  label: 'Description',
-                  number: 3,
-                  mainHead: 'Tell us some more',
-                  description:
-                    'Add more details about the opportunity, submission requirements, reward(s) details, and resources',
-                },
-                {
-                  label: 'Reward',
-                  number: 4,
-                  mainHead: 'Add the reward amount',
-                  description:
-                    'Decide the compensation amount for your listing',
-                },
-              ]
+                  {
+                    label: 'Template',
+                    number: 1,
+                    mainHead: 'List your Opportunity',
+                    description:
+                      'To save time, check out our ready-made templates below. If you already have a listing elsewhere, use "Start from Scratch" and copy/paste your text.',
+                  },
+                  {
+                    label: 'Basics',
+                    number: 2,
+                    mainHead: 'Create a Listing',
+                    description: `Now let's learn a bit more about the work you need completed`,
+                  },
+                  {
+                    label: 'Description',
+                    number: 3,
+                    mainHead: 'Tell us some more',
+                    description:
+                      'Add more details about the opportunity, submission requirements, reward(s) details, and resources',
+                  },
+                  {
+                    label: 'Reward',
+                    number: 4,
+                    mainHead: 'Add the reward amount',
+                    description:
+                      'Decide the compensation amount for your listing',
+                  },
+                ]
               : [
-                {
-                  label: 'Template',
-                  number: 1,
-                  mainHead: 'List your Opportunity',
-                  description:
-                    'To save time, check out our ready-made templates below. If you already have a listing elsewhere, use "Start from Scratch" and copy/paste your text.',
-                },
-                {
-                  label: 'Basics',
-                  number: 2,
-                  mainHead: 'Create a Listing',
-                  description: `Now let's learn a bit more about the work you need completed`,
-                },
-                {
-                  label: 'Description',
-                  number: 3,
-                  mainHead: 'Tell us some more',
-                  description:
-                    'Add more details about the opportunity, submission requirements, reward(s) details, and resources',
-                },
-                {
-                  label: 'Questions',
-                  number: 4,
-                  mainHead: 'Enter your questions',
-                  description:
-                    'What would you like to know about your applicants?',
-                },
-                {
-                  label: 'Reward',
-                  number: 5,
-                  mainHead: 'Add the reward amount',
-                  description:
-                    'Decide the compensation amount for your listing',
-                },
-              ]
+                  {
+                    label: 'Template',
+                    number: 1,
+                    mainHead: 'List your Opportunity',
+                    description:
+                      'To save time, check out our ready-made templates below. If you already have a listing elsewhere, use "Start from Scratch" and copy/paste your text.',
+                  },
+                  {
+                    label: 'Basics',
+                    number: 2,
+                    mainHead: 'Create a Listing',
+                    description: `Now let's learn a bit more about the work you need completed`,
+                  },
+                  {
+                    label: 'Description',
+                    number: 3,
+                    mainHead: 'Tell us some more',
+                    description:
+                      'Add more details about the opportunity, submission requirements, reward(s) details, and resources',
+                  },
+                  {
+                    label: 'Questions',
+                    number: 4,
+                    mainHead: 'Enter your questions',
+                    description:
+                      'What would you like to know about your applicants?',
+                  },
+                  {
+                    label: 'Reward',
+                    number: 5,
+                    mainHead: 'Add the reward amount',
+                    description:
+                      'Decide the compensation amount for your listing',
+                  },
+                ]
           }
         >
           {isOpen && (
