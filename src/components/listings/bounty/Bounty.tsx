@@ -203,7 +203,7 @@ function CreateListing({ bounty, isEditMode = false, type }: Props) {
     } catch (e) {
       setDraftLoading(false);
     }
-  }
+  };
 
   const newBounty = bounty?.id === undefined;
 
