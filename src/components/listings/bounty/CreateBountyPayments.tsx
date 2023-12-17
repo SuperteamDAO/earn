@@ -23,7 +23,7 @@ import {
   VStack,
 } from '@chakra-ui/react';
 import type { Dispatch, SetStateAction } from 'react';
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import { Toaster } from 'react-hot-toast';
 
 import type { MultiSelectOptions } from '@/constants';
@@ -113,13 +113,45 @@ export const CreatebountyPayment = ({
         ]
   );
 
-  useEffect(() => {
-    setBountyPayment({
-      rewardAmount: totalReward,
-      token: tokenName,
-      rewards: prizevalues,
-    });
-  }, [prizevalues, totalReward, tokenName]);
+  // useEffect(() => {
+  //   setBountyPayment({
+  //     rewardAmount: totalReward,
+  //     token: tokenName,
+  //     rewards: prizevalues,
+  //   });
+  // }, [prizevalues, totalReward, tokenName]);
+
+  const handleTokenChange = (tokenSymbol: string, index: number) => {
+    setTokenName(tokenSymbol);
+    setTokenIndex(index);
+    setBountyPayment((prev: any) => ({
+      ...prev,
+      token: tokenSymbol,
+    }));
+  };
+
+  const handleTotalRewardChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const newTotalReward = parseInt(e.target.value, 10);
+    setTotalReward(newTotalReward);
+    setBountyPayment((prev: any) => ({
+      ...prev,
+      rewardAmount: newTotalReward,
+    }));
+  };
+
+  const handlePrizeValueChange = (prizeName: string, value: number) => {
+    setPrizevalues((prev: any) => ({
+      ...prev,
+      [prizeName]: value,
+    }));
+    setBountyPayment((prev: any) => ({
+      ...prev,
+      rewards: {
+        ...prev.rewards,
+        [prizeName]: value,
+      },
+    }));
+  };
 
   const handleButtonClick = () => {
     const temp: PrizeListInterface[] = prizes.filter((_el, index) => {
@@ -237,10 +269,9 @@ export const CreatebountyPayment = ({
                   <>
                     <MenuItem
                       key={token.mintAddress}
-                      onClick={() => {
-                        setTokenIndex(index);
-                        setTokenName(token?.tokenSymbol);
-                      }}
+                      onClick={() =>
+                        handleTokenChange(token.tokenSymbol, index)
+                      }
                     >
                       <HStack>
                         <Image
@@ -277,9 +308,7 @@ export const CreatebountyPayment = ({
             }}
             defaultValue={totalReward}
             focusBorderColor="brand.purple"
-            onChange={(e) => {
-              setTotalReward(parseInt(e.target.value, 10));
-            }}
+            onChange={handleTotalRewardChange}
             placeholder="4,000"
             type="number"
           />
@@ -300,12 +329,12 @@ export const CreatebountyPayment = ({
                     }}
                     defaultValue={el.defaultValue}
                     focusBorderColor="brand.purple"
-                    onChange={(e) => {
-                      setPrizevalues({
-                        ...(prizevalues as Object),
-                        [el.value]: parseInt(e.target.value, 10),
-                      });
-                    }}
+                    onChange={(e) =>
+                      handlePrizeValueChange(
+                        el.value,
+                        parseInt(e.target.value, 10)
+                      )
+                    }
                     placeholder={JSON.stringify(el.placeHolder)}
                     type={'number'}
                   />
