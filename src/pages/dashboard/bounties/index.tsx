@@ -249,7 +249,12 @@ function Bounties() {
           <ModalCloseButton />
           <ModalBody>
             <Text color="brand.slate.500">
-              Are you sure you want to delete the selected draft?
+              Are you sure you want to delete this draft listing?
+            </Text>
+            <br />
+            <Text color="brand.slate.500">
+              Note: If this was previously a published listing, all submissions
+              or applications received for this listing will also be deleted.
             </Text>
           </ModalBody>
 
