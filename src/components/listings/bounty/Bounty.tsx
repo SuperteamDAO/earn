@@ -26,12 +26,14 @@ import { mergeSkills, splitSkills } from '@/utils/skills';
 
 // Pre-fill the bounty description dialog box with headings
 const preFilledHeadings = [
-  '## About the Bounty & Scope',
-  '## Rewards',
-  '## Judging Criteria',
-  '## Submission Requirements',
-  '## Resources',
-].join('\n');
+  'About the Bounty & Scope',
+  'Rewards',
+  'Judging Criteria',
+  'Submission Requirements',
+  'Resources'
+]
+  .map((heading) => `# ${heading}`)
+  .join('\n');
 
 interface Props {
   bounty?: Bounty;
