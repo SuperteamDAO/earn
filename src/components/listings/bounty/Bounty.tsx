@@ -31,9 +31,7 @@ const preFilledHeadings = [
   'Judging Criteria',
   'Submission Requirements',
   'Resources'
-]
-  .map((heading) => `<h2>${heading}</h2>`)
-  .join('\n');
+].map((heading) => `<h2>${heading}</h2>`).join('\n');
 
 interface Props {
   bounty?: Bounty;
