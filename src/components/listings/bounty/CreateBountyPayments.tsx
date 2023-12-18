@@ -113,14 +113,6 @@ export const CreatebountyPayment = ({
         ]
   );
 
-  // useEffect(() => {
-  //   setBountyPayment({
-  //     rewardAmount: totalReward,
-  //     token: tokenName,
-  //     rewards: prizevalues,
-  //   });
-  // }, [prizevalues, totalReward, tokenName]);
-
   const handleTokenChange = (tokenSymbol: string, index: number) => {
     setTokenName(tokenSymbol);
     setTokenIndex(index);
@@ -153,20 +145,23 @@ export const CreatebountyPayment = ({
     }));
   };
 
-  const handleButtonClick = () => {
-    const temp: PrizeListInterface[] = prizes.filter((_el, index) => {
-      if (index !== prizes.length - 1) {
-        return true;
-      }
-      return false;
+  const handlePrizeDelete = (prizeToDelete: string) => {
+    setPrizes((prev) => prev.filter((prize) => prize.value !== prizeToDelete));
+
+    setPrizevalues((prev: any) => {
+      const updated = { ...prev };
+      delete updated[prizeToDelete];
+      return updated;
     });
 
-    setPrizes(temp);
-    const newTemp: any = {};
-    temp?.forEach((t) => {
-      newTemp[t.value] = t.defaultValue || 0;
+    setBountyPayment((prev: any) => {
+      const updatedRewards = { ...prev.rewards };
+      delete updatedRewards[prizeToDelete];
+      return {
+        ...prev,
+        rewards: updatedRewards,
+      };
     });
-    setPrizevalues(newTemp);
   };
 
   const handleSubmit = (isEdit?: boolean, mode?: string) => {
@@ -314,9 +309,9 @@ export const CreatebountyPayment = ({
           />
         </FormControl>
         <VStack gap={4} w={'full'} mt={5} mb={8}>
-          {prizes.map((el, index) => {
+          {prizes.map((el) => {
             return (
-              <FormControl key={el.label}>
+              <FormControl key={el.value}>
                 <FormLabel color={'gray.500'} textTransform="capitalize">
                   {el.label}
                 </FormLabel>
@@ -338,8 +333,8 @@ export const CreatebountyPayment = ({
                     placeholder={JSON.stringify(el.placeHolder)}
                     type={'number'}
                   />
-                  {index === prizes.length - 1 && (
-                    <Button onClick={() => handleButtonClick()}>
+                  {prizes.length > 1 && (
+                    <Button onClick={() => handlePrizeDelete(el.value)}>
                       <DeleteIcon />
                     </Button>
                   )}
