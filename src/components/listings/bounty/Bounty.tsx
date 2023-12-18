@@ -33,7 +33,7 @@ const preFilledHeadings = [
   'Resources'
 ]
   .map((heading) => `<h2>${heading}</h2>`)
-  .join('\n');  
+  .join('\n');
 
 interface Props {
   bounty?: Bounty;
