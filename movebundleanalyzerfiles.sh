@@ -1,4 +1,4 @@
 #!/bin/bash
 
-# Move the next bundle analysis files to the public directory
-mv ./.next/analyze/*.html ./public/
+# Move the bundle analysis files to the public directory
+mv ./.next/analyze/* ./public/analyze/

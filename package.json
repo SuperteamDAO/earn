@@ -10,7 +10,7 @@
     "format": "next lint --fix && prettier '**/*.{json,yaml}' --write --ignore-path .gitignore",
     "check-types": "tsc --noEmit --pretty",
     "prepare": "husky install",
-    "postbuild": "next-sitemap",
+    "postbuild": "next-sitemap && ./movebundleanalyzerfiles.sh",
     "postinstall": "prisma generate"
   },
   "dependencies": {
