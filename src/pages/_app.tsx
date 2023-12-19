@@ -12,20 +12,15 @@ import {
 } from '@tanstack/react-query';
 import { ReactQueryDevtools } from '@tanstack/react-query-devtools';
 import type { AppProps } from 'next/app';
-import dynamic from 'next/dynamic';
 // Fonts
 import { Domine, JetBrains_Mono } from 'next/font/google';
 import localFont from 'next/font/local';
-import posthog from 'posthog-js';
+import { useEffect, useState } from 'react';
 
+// import posthog from 'posthog-js';
+// import { PostHogProvider } from 'posthog-js/react';
 import theme from '../config/chakra.config';
-
-const WalletWithNoSSR = dynamic(
-  () => import('../context/connectWalletContext').then((mod) => mod.Wallet),
-  {
-    ssr: false,
-  }
-);
+import { Wallet } from '../context/connectWalletContext';
 
 // importing localFont from a local file as Google imported fonts do not enable font-feature-settings. Reference: https://github.com/vercel/next.js/discussions/52456
 const fontSans = localFont({
@@ -85,17 +80,23 @@ const extendThemeWithNextFonts = {
   },
 };
 
-if (typeof window !== 'undefined') {
-  posthog.init(process.env.NEXT_PUBLIC_POSTHOG_KEY!, {
-    api_host: process.env.NEXT_PUBLIC_POSTHOG_HOST || 'https://app.posthog.com',
-    // eslint-disable-next-line @typescript-eslint/no-shadow
-    loaded: (posthog) => {
-      if (process.env.NODE_ENV === 'development') posthog.debug();
-    },
-  });
-}
+// if (typeof window !== 'undefined') {
+//   posthog.init(process.env.NEXT_PUBLIC_POSTHOG_KEY!, {
+//     api_host: process.env.NEXT_PUBLIC_POSTHOG_HOST || 'https://app.posthog.com',
+//     // eslint-disable-next-line @typescript-eslint/no-shadow
+//     loaded: (posthog) => {
+//       if (process.env.NODE_ENV === 'development') posthog.debug();
+//     },
+//   });
+// }
 
 function MyApp({ Component, pageProps }: AppProps) {
+  const [isWalletLoaded, setIsWalletLoaded] = useState(false);
+
+  useEffect(() => {
+    setIsWalletLoaded(true);
+  }, []);
+
   const queryClient = new QueryClient();
 
   return (
@@ -110,14 +111,23 @@ function MyApp({ Component, pageProps }: AppProps) {
         `}
       </style>
       <ChakraProvider theme={extendThemeWithNextFonts}>
-        <WalletWithNoSSR>
+        {isWalletLoaded ? (
+          <Wallet>
+            <QueryClientProvider client={queryClient}>
+              <Hydrate state={pageProps.dehydratedState}>
+                <ReactQueryDevtools initialIsOpen={false} />
+                <Component {...pageProps} />
+              </Hydrate>
+            </QueryClientProvider>
+          </Wallet>
+        ) : (
           <QueryClientProvider client={queryClient}>
             <Hydrate state={pageProps.dehydratedState}>
               <ReactQueryDevtools initialIsOpen={false} />
               <Component {...pageProps} />
             </Hydrate>
           </QueryClientProvider>
-        </WalletWithNoSSR>
+        )}
       </ChakraProvider>
     </>
   );
