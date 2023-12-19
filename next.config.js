@@ -2,18 +2,6 @@
 const nextConfig = {
   experimental: {
     nextScriptWorkers: true,
-    optimizePackageImports: [
-      '@chakra-ui/icons',
-      '@solana-mobile/wallet-adapter-mobile',
-      '@solana/wallet-adapter-base',
-      '@solana/wallet-adapter-react',
-      '@solana/wallet-adapter-react-ui',
-      '@solana/wallet-adapter-wallets',
-      '@solana/web3.js',
-      'mixpanel-browser',
-      'next-seo',
-      'next-sitemap',
-    ],
   },
   eslint: {
     dirs: ['.'],
@@ -44,4 +32,11 @@ const nextConfig = {
     return headers;
   },
 };
-module.exports = nextConfig;
+
+const withBundleAnalyzer = require('@next/bundle-analyzer')({
+  enabled:
+    process.env.NEXT_PUBLIC_VERCEL_ENV === 'preview' ||
+    process.env.ANALYZE === 'true',
+});
+
+module.exports = withBundleAnalyzer(nextConfig);
