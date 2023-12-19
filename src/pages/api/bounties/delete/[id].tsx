@@ -27,9 +27,12 @@ export default async function bountyDelete(
         .json({ messsage: 'Only draft bounties can be deleted' });
     }
 
-    await prisma.bounties.delete({
+    await prisma.bounties.update({
       where: {
         id,
+      },
+      data: {
+        isActive: false,
       },
     });
 
