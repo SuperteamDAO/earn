@@ -12,13 +12,20 @@ import {
 } from '@tanstack/react-query';
 import { ReactQueryDevtools } from '@tanstack/react-query-devtools';
 import type { AppProps } from 'next/app';
+import dynamic from 'next/dynamic';
 // Fonts
 import { Domine, JetBrains_Mono } from 'next/font/google';
 import localFont from 'next/font/local';
 import posthog from 'posthog-js';
 
 import theme from '../config/chakra.config';
-import { Wallet } from '../context/connectWalletContext';
+
+const WalletWithNoSSR = dynamic(
+  () => import('../context/connectWalletContext').then((mod) => mod.Wallet),
+  {
+    ssr: false,
+  }
+);
 
 // importing localFont from a local file as Google imported fonts do not enable font-feature-settings. Reference: https://github.com/vercel/next.js/discussions/52456
 const fontSans = localFont({
@@ -103,14 +110,14 @@ function MyApp({ Component, pageProps }: AppProps) {
         `}
       </style>
       <ChakraProvider theme={extendThemeWithNextFonts}>
-        <Wallet>
+        <WalletWithNoSSR>
           <QueryClientProvider client={queryClient}>
             <Hydrate state={pageProps.dehydratedState}>
               <ReactQueryDevtools initialIsOpen={false} />
               <Component {...pageProps} />
             </Hydrate>
           </QueryClientProvider>
-        </Wallet>
+        </WalletWithNoSSR>
       </ChakraProvider>
     </>
   );
