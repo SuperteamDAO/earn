@@ -3,9 +3,9 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "dev": "NODE_ENV=development next dev",
+    "dev": "set NODE_ENV=development && next dev",
     "build": "prisma generate && next build",
-    "start": "NODE_ENV=production next start",
+    "start": "set NODE_ENV=production && next start",
     "lint": "next lint",
     "format": "next lint --fix && prettier '**/*.{json,yaml}' --write --ignore-path .gitignore",
     "check-types": "tsc --noEmit --pretty",
