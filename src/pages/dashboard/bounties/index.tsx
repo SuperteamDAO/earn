@@ -295,8 +295,8 @@ function Bounties() {
       {isBountiesLoading && <LoadingSection />}
       {!isBountiesLoading && !bounties?.length && (
         <ErrorSection
-          title="No bounties found!"
-          message="Create new bounty from the sidebar"
+          title="No listings found!"
+          message="Create a new listing from the sidebar"
         />
       )}
       {!isBountiesLoading && bounties?.length && (

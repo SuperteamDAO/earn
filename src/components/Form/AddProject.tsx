@@ -22,7 +22,6 @@ import { useForm } from 'react-hook-form';
 import type { MultiSelectOptions } from '@/constants';
 import type { PoW } from '@/interface/pow';
 import { userStore } from '@/store/user';
-import { isValidHttpUrl } from '@/utils/validUrl';
 
 import { SkillSelect } from '../misc/SkillSelect';
 
@@ -56,7 +55,6 @@ export const AddProject = ({
   }>();
 
   const [skillsError, setSkillsError] = useState<boolean>(false);
-  const [linkError, setLinkError] = useState<boolean>(false);
   const [skills, setSkills] = useState<MultiSelectOptions[]>([]);
   const [subSkills, setSubSkills] = useState<MultiSelectOptions[]>([]);
   const { userInfo } = userStore();
@@ -92,13 +90,6 @@ export const AddProject = ({
 
   const onSubmit = async (data: any): Promise<void> => {
     let error = false;
-
-    if (!isValidHttpUrl(data.link)) {
-      setLinkError(true);
-      error = true;
-    } else {
-      setLinkError(false);
-    }
 
     if (skills.length === 0 || subSkills.length === 0) {
       setSkillsError(true);
@@ -230,11 +221,6 @@ export const AddProject = ({
               <Box w={'full'} mb={'1.25rem'}>
                 {skillsError && (
                   <Text color={'red'}>Please add Skills and Sub Skills</Text>
-                )}
-                {linkError && (
-                  <Text color={'red'}>
-                    Link URL needs to contain &quot;https://&quot; prefix
-                  </Text>
                 )}
               </Box>
               <Button

@@ -18,7 +18,6 @@ import { useForm } from 'react-hook-form';
 
 import type { PoW } from '@/interface/pow';
 import { userStore } from '@/store/user';
-import { isValidHttpUrl } from '@/utils/validUrl';
 
 import { AddProject } from '../Form/AddProject';
 import type { UserStoreType } from './types';
@@ -146,7 +145,6 @@ function YourLinks({ success, useFormStore }: Props) {
   const { form } = useFormStore();
   const [pow, setPow] = useState<PoW[]>([]);
   const [socialsError, setsocialsError] = useState<boolean>(false);
-  const [urlError, seturlError] = useState<boolean>(false);
   const [isLoading, setisLoading] = useState<boolean>(false);
   const [selectedProject, setSelectedProject] = useState<number | null>(null);
 
@@ -179,28 +177,6 @@ function YourLinks({ success, useFormStore }: Props) {
       return;
     }
     setsocialsError(false);
-
-    // Valid URL
-    if (!isValidHttpUrl(socials.twitter)) {
-      seturlError(true);
-      return;
-    }
-    if (!isValidHttpUrl(socials.github)) {
-      seturlError(true);
-      return;
-    }
-    if (!isValidHttpUrl(socials.linkedin)) {
-      seturlError(true);
-      return;
-    }
-    if (!isValidHttpUrl(socials.telegram)) {
-      seturlError(true);
-      return;
-    }
-    if (!isValidHttpUrl(socials.website)) {
-      seturlError(true);
-      return;
-    }
 
     updateState({ ...socials });
     setisLoading(true);
@@ -316,12 +292,6 @@ function YourLinks({ success, useFormStore }: Props) {
             {socialsError && (
               <Text align="center" mb={'0.5rem'} color={'red'}>
                 Please fill at least one social link to continue!
-              </Text>
-            )}
-
-            {urlError && (
-              <Text align="center" mb={'0.5rem'} color={'red'}>
-                Link URL needs to contain &quot;https://&quot; prefix
               </Text>
             )}
             <Button
