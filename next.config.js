@@ -1,5 +1,16 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
+  experimental: {
+    optimizePackageImports: [
+      '@solana-mobile/wallet-adapter-mobile',
+      '@solana/spl-token',
+      '@solana/wallet-adapter-base',
+      '@solana/wallet-adapter-react',
+      '@solana/wallet-adapter-react-ui',
+      '@solana/wallet-adapter-wallets',
+      '@solana/web3.js',
+    ],
+  },
   eslint: {
     dirs: ['.'],
   },

@@ -66,7 +66,7 @@
     "mixpanel-browser": "^2.47.0",
     "moment": "^2.29.4",
     "nanoid": "^4.0.2",
-    "next": "13.5",
+    "next": "^14",
     "next-seo": "^6.0.0",
     "next-sitemap": "^4.0.7",
     "nprogress": "^0.2.0",
