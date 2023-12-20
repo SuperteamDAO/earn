@@ -173,9 +173,7 @@ export const SubmissionModal = ({
                     >
                       {watch('applicationLink')?.length > 300 &&
                         (500 - (watch('applicationLink')?.length || 0) === 0 ? (
-                          <p>
-                            Character limit exceeded. Please reduce the text
-                          </p>
+                          <p>Character limit reached</p>
                         ) : (
                           <p>
                             {500 - (watch('applicationLink')?.length || 0)}{' '}
@@ -226,9 +224,7 @@ export const SubmissionModal = ({
                     >
                       {watch('tweetLink')?.length > 300 &&
                         (500 - (watch('tweetLink')?.length || 0) === 0 ? (
-                          <p>
-                            Character limit exceeded. Please reduce the text
-                          </p>
+                          <p>Character limit reached</p>
                         ) : (
                           <p>
                             {500 - (watch('tweetLink')?.length || 0)} characters
@@ -254,6 +250,7 @@ export const SubmissionModal = ({
                         question={e?.question}
                         type={e?.type ?? 'text'}
                         label={`eligibility-${e?.order}`}
+                        watch={watch}
                       />
                     </FormControl>
                   );
@@ -292,7 +289,7 @@ export const SubmissionModal = ({
                 >
                   {watch('otherInfo')?.length > 1800 &&
                     (2000 - (watch('otherInfo')?.length || 0) === 0 ? (
-                      <p>Character limit exceeded. Please reduce the text</p>
+                      <p>Character limit reached</p>
                     ) : (
                       <p>
                         {2000 - (watch('otherInfo')?.length || 0)} characters

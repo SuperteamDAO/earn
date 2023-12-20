@@ -37,12 +37,12 @@ const fontSans = localFont({
   ],
   display: 'swap',
   preload: true,
+  weight: '100 900',
   adjustFontFallback: 'Arial',
   declarations: [
     {
       prop: 'font-feature-settings',
-      value:
-        '"dlig", "liga", "calt", "tnum", "zero", "ss08", "cv10", "cv06", "cv08"',
+      value: "'tnum'",
     },
     {
       prop: 'unicode-range',
@@ -59,7 +59,7 @@ const fontSerif = Domine({
   adjustFontFallback: true,
   preload: true,
   fallback: ['Times New Roman'],
-  weight: ['700'],
+  weight: 'variable',
 });
 
 const fontMono = JetBrains_Mono({
@@ -68,7 +68,7 @@ const fontMono = JetBrains_Mono({
   adjustFontFallback: true,
   preload: false,
   fallback: ['Courier New'],
-  weight: ['400', '600'],
+  weight: 'variable',
 });
 
 // Chakra / Next/font don't play well in config.ts file for the theme. So we extend the theme here. (only the fonts)

@@ -447,7 +447,7 @@ function ListingHeader({
             >
               Details
             </Link>
-            {type !== 'permissioned' && (
+            {type !== 'permissioned' && hasDeadlineEnded && (
               <Link
                 alignItems="center"
                 justifyContent="center"
@@ -472,31 +472,33 @@ function ListingHeader({
                 Submissions
               </Link>
             )}
-            {type === 'permissioned' && references && (
-              <Link
-                alignItems="center"
-                justifyContent="center"
-                display="flex"
-                h={'full'}
-                color="gray.800"
-                fontWeight={500}
-                textDecoration="none"
-                borderBottom="2px solid"
-                borderBottomColor={
-                  router.asPath.includes('references')
-                    ? 'brand.purple'
-                    : 'transparent'
-                }
-                _hover={{
-                  textDecoration: 'none',
-                  borderBottom: '2px solid',
-                  borderBottomColor: 'brand.purple',
-                }}
-                href={`/listings/bounties/${slug}/references`}
-              >
-                References
-              </Link>
-            )}
+            {type === 'permissioned' &&
+              references &&
+              references?.length > 0 && (
+                <Link
+                  alignItems="center"
+                  justifyContent="center"
+                  display="flex"
+                  h={'full'}
+                  color="gray.800"
+                  fontWeight={500}
+                  textDecoration="none"
+                  borderBottom="2px solid"
+                  borderBottomColor={
+                    router.asPath.includes('references')
+                      ? 'brand.purple'
+                      : 'transparent'
+                  }
+                  _hover={{
+                    textDecoration: 'none',
+                    borderBottom: '2px solid',
+                    borderBottomColor: 'brand.purple',
+                  }}
+                  href={`/listings/bounties/${slug}/references`}
+                >
+                  References
+                </Link>
+              )}
           </HStack>
         </Flex>
       )}

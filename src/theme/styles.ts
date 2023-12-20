@@ -10,6 +10,7 @@ export const styles = {
     body: {
       bg: 'brand.grey.50',
       fontFamily: 'var(--font-sans)',
+      fontFeatureSettings: '"tnum"',
     },
     width: {
       HomeCard: '4100rem',

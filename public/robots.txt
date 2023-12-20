@@ -1,9 +1,0 @@
-# *
-User-agent: *
-Allow: /
-
-# Host
-Host: https://earn-frontend-v2.vercel.app/
-
-# Sitemaps
-Sitemap: https://earn-frontend-v2.vercel.app/sitemap.xml

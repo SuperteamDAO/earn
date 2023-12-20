@@ -44,7 +44,11 @@ import axios from 'axios';
 import NextLink from 'next/link';
 import { useRouter } from 'next/router';
 import { useEffect, useRef, useState } from 'react';
-import { AiOutlineEdit, AiOutlineOrderedList } from 'react-icons/ai';
+import {
+  AiOutlineDelete,
+  AiOutlineEdit,
+  AiOutlineOrderedList,
+} from 'react-icons/ai';
 import { FiMoreVertical } from 'react-icons/fi';
 
 import ErrorSection from '@/components/shared/ErrorSection';
@@ -75,6 +79,11 @@ function Bounties() {
     isOpen: unpublishIsOpen,
     onOpen: unpublishOnOpen,
     onClose: unpublishOnClose,
+  } = useDisclosure();
+  const {
+    isOpen: deleteDraftIsOpen,
+    onOpen: deleteDraftOnOpen,
+    onClose: deleteDraftOnClose,
   } = useDisclosure();
   const { userInfo } = userStore();
   const [totalBounties, setTotalBounties] = useState(0);
@@ -158,6 +167,23 @@ function Bounties() {
     router.push(`/dashboard/bounties/${slug}/submissions/`);
   };
 
+  const deleteSelectedDraft = async () => {
+    try {
+      await axios.post(`/api/bounties/delete/${bounty.id}`);
+      const update = bounties.filter((x) => x.id !== bounty.id);
+      setBounties(update);
+    } catch (e) {
+      console.log(e);
+    } finally {
+      deleteDraftOnClose();
+    }
+  };
+
+  const handleDeleteDraft = async (deleteBounty: BountyWithSubmissions) => {
+    setBounty(deleteBounty);
+    deleteDraftOnOpen();
+  };
+
   return (
     <Sidebar>
       <Modal isOpen={publishIsOpen} onClose={publishOnClose}>
@@ -212,6 +238,38 @@ function Bounties() {
               variant="solid"
             >
               Unpublish
+            </Button>
+          </ModalFooter>
+        </ModalContent>
+      </Modal>
+      <Modal isOpen={deleteDraftIsOpen} onClose={deleteDraftOnClose}>
+        <ModalOverlay />
+        <ModalContent>
+          <ModalHeader>Delete Draft?</ModalHeader>
+          <ModalCloseButton />
+          <ModalBody>
+            <Text color="brand.slate.500">
+              Are you sure you want to delete this draft listing?
+            </Text>
+            <br />
+            <Text color="brand.slate.500">
+              Note: If this was previously a published listing, all submissions
+              or applications received for this listing will also be deleted.
+            </Text>
+          </ModalBody>
+
+          <ModalFooter>
+            <Button mr={4} onClick={deleteDraftOnClose} variant="ghost">
+              Close
+            </Button>
+            <Button
+              isLoading={isChangingStatus}
+              leftIcon={<AiOutlineDelete />}
+              loadingText="Deleting..."
+              onClick={deleteSelectedDraft}
+              variant="solid"
+            >
+              Confirm
             </Button>
           </ModalFooter>
         </ModalContent>
@@ -500,6 +558,18 @@ function Bounties() {
                                   Edit {bountyType}
                                 </MenuItem>
                               </NextLink>
+                            </>
+                          )}
+                          {bountyStatus === 'DRAFT' && (
+                            <>
+                              <MenuDivider />
+                              <MenuItem
+                                color={'red'}
+                                icon={<AiOutlineDelete color="red" />}
+                                onClick={() => handleDeleteDraft(currentBounty)}
+                              >
+                                Delete Draft
+                              </MenuItem>
                             </>
                           )}
                           {!(

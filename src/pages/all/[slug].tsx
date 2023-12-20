@@ -13,11 +13,14 @@ import Loading from '@/components/shared/Loading';
 import type { Bounty } from '@/interface/bounty';
 import type { Grant } from '@/interface/grant';
 import Home from '@/layouts/Home';
+import { Meta } from '@/layouts/Meta';
 
 interface Listings {
   bounties?: Bounty[];
   grants?: Grant[];
 }
+
+type SlugKeys = 'Design' | 'Content' | 'Development' | 'Hyperdrive';
 
 function ListingCategoryPage({ slug }: { slug: string }) {
   const [isListingsLoading, setIsListingsLoading] = useState(true);
@@ -46,8 +49,27 @@ function ListingCategoryPage({ slug }: { slug: string }) {
     getListings();
   }, []);
 
+  const titlesForSlugs: { [key in SlugKeys]: string } = {
+    Design: 'Superteam Earn | Design Bounties and Grants',
+    Content: 'Superteam Earn | Content Bounties and Grants',
+    Development: 'Superteam Earn | Development Bounties and Grants',
+    Hyperdrive: 'Superteam Earn | Apply to Hyperdrive global Solana Hackathon',
+  };
+
+  const titleKey = slug as SlugKeys;
+  const title = titlesForSlugs[titleKey] || 'Superteam Earn'; // Default title if slug not found
+  const formattedSlug =
+    slug === 'Hyperdrive' ? slug.toUpperCase() : slug.toLowerCase();
+  const metaDescription = `Find the latest ${formattedSlug} bounties and grants for freelancers and builders in the crypto space on Superteam Earn.`;
+  const canonicalURL = `https://earn.superteam.fun/all/${slug}/`;
+
   return (
     <Home type="category">
+      <Meta
+        title={title}
+        description={metaDescription}
+        canonical={canonicalURL}
+      />
       <Box w={'100%'}>
         <ListingSection
           type="bounties"
