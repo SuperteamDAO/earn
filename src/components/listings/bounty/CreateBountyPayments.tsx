@@ -18,6 +18,8 @@ import {
   ModalFooter,
   ModalHeader,
   ModalOverlay,
+  NumberInput,
+  NumberInputField,
   Text,
   useDisclosure,
   VStack,
@@ -292,23 +294,26 @@ export const CreatebountyPayment = ({
                   {el.label}
                 </FormLabel>
                 <Flex gap={3}>
-                  <Input
+                  <NumberInput
                     color="brand.slate.500"
-                    borderColor="brand.slate.300"
-                    _placeholder={{
-                      color: 'brand.slate.300',
-                    }}
                     defaultValue={el.defaultValue}
                     focusBorderColor="brand.purple"
-                    onChange={(e) => {
+                    onChange={(valueString) => {
+                      const value = parseInt(valueString, 10);
                       setPrizevalues({
                         ...(prizevalues as Object),
-                        [el.value]: parseInt(e.target.value, 10),
+                        [el.value]: value,
                       });
                     }}
-                    placeholder={JSON.stringify(el.placeHolder)}
-                    type={'number'}
-                  />
+                  >
+                    <NumberInputField
+                      borderColor="brand.slate.300"
+                      _placeholder={{
+                        color: 'brand.slate.300',
+                      }}
+                      placeholder={JSON.stringify(el.placeHolder)}
+                    />
+                  </NumberInput>
                   {index === prizes.length - 1 && (
                     <Button onClick={() => handleButtonClick()}>
                       <DeleteIcon />
