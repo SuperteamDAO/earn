@@ -42,8 +42,7 @@ const fontSans = localFont({
   declarations: [
     {
       prop: 'font-feature-settings',
-      value:
-        '"dlig", "liga", "calt", "tnum", "zero", "ss08", "cv10", "cv06", "cv08"',
+      value: "'tnum'",
     },
     {
       prop: 'unicode-range',
