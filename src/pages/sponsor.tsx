@@ -9,6 +9,7 @@ import {
   Text,
   useMediaQuery,
 } from '@chakra-ui/react';
+import Head from 'next/head';
 import type { ImageProps } from 'next/image';
 import Image from 'next/image';
 import { useEffect, useState } from 'react';
@@ -659,118 +660,134 @@ const Sponsor = () => {
 
   function Hero() {
     return (
-      <Flex
-        align="center"
-        justify="start"
-        overflow="hidden"
-        w="80%"
-        mt="9.375rem"
-        mb={isLargerThan12800px ? '12.5rem' : '5rem'}
-      >
+      <>
+        <Head>
+          <title>
+            Find Top Talent for Your Crypto Projects on Superteam Earn
+          </title>
+          <meta
+            name="description"
+            content="Seeking top talent for your crypto project? Superteam Earn connects you with experts for Bounties, Projects, and Grants in the crypto space."
+          />
+        </Head>
         <Flex
           align="center"
-          justify={isLargerThan12800px ? 'start' : 'center'}
-          gap="1.875rem"
-          w={isLargerThan12800px ? '45%' : '100%'}
-          flexFlow="column"
+          justify="start"
+          overflow="hidden"
+          w="80%"
+          mt="9.375rem"
+          mb={isLargerThan12800px ? '12.5rem' : '5rem'}
         >
-          <Text
-            color="gray.700"
-            fontFamily="var(--font-sans)"
-            fontSize="3.9rem"
-            fontWeight={'light'}
-            lineHeight="1.15em"
-            letterSpacing={'-0.04em'}
-            textAlign="start"
+          <Flex
+            align="center"
+            justify={isLargerThan12800px ? 'start' : 'center'}
+            gap="1.875rem"
+            w={isLargerThan12800px ? '45%' : '100%'}
+            flexFlow="column"
           >
-            Where Top Crypto Founders Meet Top Global Talent
-          </Text>
-          <Text
-            w="100%"
-            color="gray.500"
-            fontSize="1.3rem"
-            fontWeight={400}
-            textAlign="start"
-            css={{
-              textWrap: 'pretty',
-            }}
-          >
-            Whether you have a bounty, a project, or a grant that you need
-            filled, we&apos;re here to help (for free!)
-          </Text>
-
-          <Flex justify="start" gap="2rem" w="100%">
-            <Button
-              w="12.5rem"
-              h="3.125rem"
-              color={'white'}
-              fontSize="1.125rem"
-              bg={'#6562FF'}
-              borderRadius="0.625rem"
-              onClick={() => {
-                window.location.href = '/new/sponsor';
-              }}
-              variant={'solid'}
+            <Text
+              color="gray.700"
+              fontFamily="var(--font-sans)"
+              fontSize="3.9rem"
+              fontWeight={'light'}
+              lineHeight="1.15em"
+              letterSpacing={'-0.04em'}
+              textAlign="start"
             >
-              Get Started
-            </Button>
-            <Flex align="center" gap="0.5rem" fontSize="1rem" fontWeight={700}>
-              <Box minW="2.3125rem" h="2.3125rem" borderRadius="50%">
-                <HighQualityImage
-                  src={Kash}
-                  style={{ width: '100%', height: '100%' }}
-                  alt="Kash"
-                  placeholder="blur"
-                />
-              </Box>
+              Where Top Crypto Founders Meet Top Global Talent
+            </Text>
+            <Text
+              w="100%"
+              color="gray.500"
+              fontSize="1.3rem"
+              fontWeight={400}
+              textAlign="start"
+              css={{
+                textWrap: 'pretty',
+              }}
+            >
+              Whether you have a bounty, a project, or a grant that you need
+              filled, we&apos;re here to help (for free!)
+            </Text>
 
-              <Link
-                _hover={{ textDecoration: 'none' }}
-                href="https://airtable.com/shrmOAXpF2vhONYqe"
-                isExternal
+            <Flex justify="start" gap="2rem" w="100%">
+              <Button
+                w="12.5rem"
+                h="3.125rem"
+                color={'white'}
+                fontSize="1.125rem"
+                bg={'#6562FF'}
+                borderRadius="0.625rem"
+                onClick={() => {
+                  window.location.href = '/new/sponsor';
+                }}
+                variant={'solid'}
               >
-                <Text
-                  p="0.125rem"
-                  color="gray.500"
-                  fontSize="0.9rem"
-                  fontWeight={700}
-                  lineHeight="1.25rem"
-                  borderColor="gray.400"
-                  borderBottom="0.0625rem dashed"
-                  cursor="pointer"
+                Get Started
+              </Button>
+              <Flex
+                align="center"
+                gap="0.5rem"
+                fontSize="1rem"
+                fontWeight={700}
+              >
+                <Box minW="2.3125rem" h="2.3125rem" borderRadius="50%">
+                  <HighQualityImage
+                    src={Kash}
+                    style={{ width: '100%', height: '100%' }}
+                    alt="Kash"
+                    placeholder="blur"
+                  />
+                </Box>
+
+                <Link
+                  _hover={{ textDecoration: 'none' }}
+                  href="https://airtable.com/shrmOAXpF2vhONYqe"
+                  isExternal
                 >
-                  Get a Bounty Strategy Session
-                </Text>
-              </Link>
+                  <Text
+                    p="0.125rem"
+                    color="gray.500"
+                    fontSize="0.9rem"
+                    fontWeight={700}
+                    lineHeight="1.25rem"
+                    borderColor="gray.400"
+                    borderBottom="0.0625rem dashed"
+                    cursor="pointer"
+                  >
+                    Get a Bounty Strategy Session
+                  </Text>
+                </Link>
+              </Flex>
             </Flex>
           </Flex>
-        </Flex>
 
-        {isLargerThan12800px ? (
-          <Box
-            pos="absolute"
-            top={{
-              base: '-400px',
-              lg: '-500px',
-              xl: '-180px',
-              '2xl': '-500px',
-            }}
-            right="-10%"
-            w="60%"
-            maxW="90rem"
-          >
-            <HighQualityImage
-              style={{ objectFit: 'contain' }}
-              alt="Illustration of bounties being posted and applications being submitted"
-              id={'sponsor-hero'}
-              src={SponsorHeroDisplay}
-              sizes="50vw"
-              priority={true}
-              loading="eager"
-            />
-          </Box>
-        ) : null}
-      </Flex>
+          {isLargerThan12800px ? (
+            <Box
+              pos="absolute"
+              top={{
+                base: '-400px',
+                lg: '-500px',
+                xl: '-180px',
+                '2xl': '-500px',
+              }}
+              right="-10%"
+              w="60%"
+              maxW="90rem"
+            >
+              <HighQualityImage
+                style={{ objectFit: 'contain' }}
+                alt="Illustration of bounties being posted and applications being submitted"
+                id={'sponsor-hero'}
+                src={SponsorHeroDisplay}
+                sizes="50vw"
+                priority={true}
+                loading="eager"
+              />
+            </Box>
+          ) : null}
+        </Flex>
+      </>
     );
   }
 

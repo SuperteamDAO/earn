@@ -1,11 +1,17 @@
 import { InfoOutlineIcon } from '@chakra-ui/icons';
 import { Box, Flex, Image, Spinner, Text, Tooltip } from '@chakra-ui/react';
 import type { Wallet } from '@solana/wallet-adapter-react';
-import { WalletMultiButton } from '@solana/wallet-adapter-react-ui';
+import dynamic from 'next/dynamic';
 import { useState } from 'react';
 
 import { isAndroid } from '@/utils/isAndroid';
 import { isIOS } from '@/utils/isIOS';
+
+const WalletMultiButtonDynamic = dynamic(
+  async () =>
+    (await import('@solana/wallet-adapter-react-ui')).WalletMultiButton,
+  { ssr: false }
+);
 
 type ConnectWalletProps = {
   wallets: Wallet[];
@@ -78,7 +84,7 @@ export default function ConnectWallet({
           borderRadius="md"
           onClick={handleClick}
         >
-          <WalletMultiButton />
+          <WalletMultiButtonDynamic />
         </Flex>
       ) : (
         filteredWallets.map((wallet, index) => {
