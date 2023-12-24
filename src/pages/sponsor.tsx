@@ -815,9 +815,6 @@ const Sponsor = () => {
           fontSize={!isLessThan600px ? '0.8125rem' : '0.4rem'}
           fontWeight="400"
         >
-          <Link href="https://earn.superteam.fun/dashboard/company/findtalent">
-            Directory
-          </Link>
           <Link href="https://earn.superteam.fun/bounties">Bounties</Link>
           <Link href="https://airtable.com/shrmOAXpF2vhONYqe">
             Get a Bounty Strategy Session
