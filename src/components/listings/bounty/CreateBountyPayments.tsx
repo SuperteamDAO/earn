@@ -280,7 +280,7 @@ export const CreatebountyPayment = ({
             </MenuList>
           </Menu>
         </FormControl>
-        <FormControl w="full" isRequired>
+        <FormControl w="full" mt={5} isRequired>
           <Flex>
             <FormLabel
               color={'brand.slate.500'}
@@ -311,13 +311,14 @@ export const CreatebountyPayment = ({
           />
         </FormControl>
         <VStack gap={4} w={'full'} mt={5} mb={8}>
-          {prizes.map((el) => (
+          {prizes.map((el, index) => (
             <FormControl key={el.value}>
               <FormLabel color={'gray.500'} textTransform="capitalize">
                 {el.label}
               </FormLabel>
               <Flex gap={3}>
                 <NumberInput
+                  w={'100%'}
                   color="brand.slate.500"
                   defaultValue={el.defaultValue}
                   focusBorderColor="brand.purple"
@@ -333,7 +334,7 @@ export const CreatebountyPayment = ({
                     placeholder={JSON.stringify(el.placeHolder)}
                   />
                 </NumberInput>
-                {prizes.length > 1 && (
+                {index === prizes.length - 1 && prizes.length > 1 && (
                   <Button onClick={() => handlePrizeDelete(el.value)}>
                     <DeleteIcon />
                   </Button>
