@@ -56,6 +56,7 @@ interface Props {
   setBountyPayment: Dispatch<SetStateAction<any | undefined>>;
   isEditMode: boolean;
   isNewOrDraft?: boolean;
+  type: 'open' | 'permissioned';
 }
 export const CreatebountyPayment = ({
   createDraft,
@@ -66,6 +67,7 @@ export const CreatebountyPayment = ({
   setBountyPayment,
   isEditMode,
   isNewOrDraft,
+  type,
 }: Props) => {
   const {
     isOpen: confirmIsOpen,
@@ -145,16 +147,27 @@ export const CreatebountyPayment = ({
   };
 
   const handleSubmit = (isEdit?: boolean, mode?: string) => {
-    const totalPrizes = Object.values(bountyPayment.rewards)
-      .map((reward) => reward as number)
-      .reduce((a, b) => a + b, 0);
-
-    if (!totalPrizes || bountyPayment.rewardAmount !== totalPrizes) {
-      setIsRewardError(true);
-    } else {
-      setIsRewardError(false);
+    if (type === 'permissioned') {
+      setBountyPayment((prev: any) => ({
+        ...prev,
+        rewards: { first: prev.rewardAmount },
+      }));
       if (isEdit || mode === 'DRAFT') createDraft();
       else confirmOnOpen();
+    }
+
+    if (type === 'open') {
+      const totalPrizes = Object.values(bountyPayment.rewards)
+        .map((reward) => reward as number)
+        .reduce((a, b) => a + b, 0);
+
+      if (!totalPrizes || bountyPayment.rewardAmount !== totalPrizes) {
+        setIsRewardError(true);
+      } else {
+        setIsRewardError(false);
+        if (isEdit || mode === 'DRAFT') createDraft();
+        else confirmOnOpen();
+      }
     }
   };
 
@@ -288,7 +301,7 @@ export const CreatebountyPayment = ({
               fontWeight={600}
               htmlFor={'slug'}
             >
-              Total Reward Amount (in{' '}
+              Total {type === 'open' ? 'Reward Amount' : 'Compensation'} (in{' '}
               {
                 tokenList.find(
                   (token) => token.tokenSymbol === bountyPayment.token
@@ -310,57 +323,62 @@ export const CreatebountyPayment = ({
             value={bountyPayment.rewardAmount || ''}
           />
         </FormControl>
-        <VStack gap={4} w={'full'} mt={5} mb={8}>
-          {prizes.map((el, index) => (
-            <FormControl key={el.value}>
-              <FormLabel color={'gray.500'} textTransform="capitalize">
-                {el.label}
-              </FormLabel>
-              <Flex gap={3}>
-                <NumberInput
-                  w={'100%'}
-                  color="brand.slate.500"
-                  defaultValue={el.defaultValue}
-                  focusBorderColor="brand.purple"
-                  onChange={(valueString) =>
-                    handlePrizeValueChange(el.value, parseInt(valueString, 10))
-                  }
-                >
-                  <NumberInputField
-                    borderColor="brand.slate.300"
-                    _placeholder={{
-                      color: 'brand.slate.300',
-                    }}
-                    placeholder={JSON.stringify(el.placeHolder)}
-                  />
-                </NumberInput>
-                {index === prizes.length - 1 && prizes.length > 1 && (
-                  <Button onClick={() => handlePrizeDelete(el.value)}>
-                    <DeleteIcon />
-                  </Button>
-                )}
-              </Flex>
-            </FormControl>
-          ))}
-          <Button
-            w="full"
-            isDisabled={prizes.length === 5 && true}
-            leftIcon={<AddIcon />}
-            onClick={() => {
-              setPrizes([
-                ...prizes,
-                {
-                  value: PrizeList[prizes.length] || 'first',
-                  label: `${PrizeList[prizes.length]} prize`,
-                  placeHolder: (5 - prizes.length) * 500,
-                },
-              ]);
-            }}
-            variant="ghost"
-          >
-            Add Prize
-          </Button>
-        </VStack>
+        {type === 'open' && (
+          <VStack gap={4} w={'full'} mt={5} mb={8}>
+            {prizes.map((el, index) => (
+              <FormControl key={el.value}>
+                <FormLabel color={'gray.500'} textTransform="capitalize">
+                  {el.label}
+                </FormLabel>
+                <Flex gap={3}>
+                  <NumberInput
+                    w={'100%'}
+                    color="brand.slate.500"
+                    defaultValue={el.defaultValue}
+                    focusBorderColor="brand.purple"
+                    onChange={(valueString) =>
+                      handlePrizeValueChange(
+                        el.value,
+                        parseInt(valueString, 10)
+                      )
+                    }
+                  >
+                    <NumberInputField
+                      borderColor="brand.slate.300"
+                      _placeholder={{
+                        color: 'brand.slate.300',
+                      }}
+                      placeholder={JSON.stringify(el.placeHolder)}
+                    />
+                  </NumberInput>
+                  {index === prizes.length - 1 && prizes.length > 1 && (
+                    <Button onClick={() => handlePrizeDelete(el.value)}>
+                      <DeleteIcon />
+                    </Button>
+                  )}
+                </Flex>
+              </FormControl>
+            ))}
+            <Button
+              w="full"
+              isDisabled={prizes.length === 5 && true}
+              leftIcon={<AddIcon />}
+              onClick={() => {
+                setPrizes([
+                  ...prizes,
+                  {
+                    value: PrizeList[prizes.length] || 'first',
+                    label: `${PrizeList[prizes.length]} prize`,
+                    placeHolder: (5 - prizes.length) * 500,
+                  },
+                ]);
+              }}
+              variant="ghost"
+            >
+              Add Prize
+            </Button>
+          </VStack>
+        )}
         {isRewardError && (
           <Text w="full" color="red" textAlign={'center'}>
             Sorry! Total reward amount should be equal to the sum of all prizes.
