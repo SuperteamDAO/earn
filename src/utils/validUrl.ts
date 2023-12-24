@@ -1,16 +1,3 @@
-export const isValidHttpUrl = (string: string) => {
-  if (string.length === 0) {
-    return true;
-  }
-  let url;
-  try {
-    url = new URL(string);
-  } catch (_) {
-    return false;
-  }
-  return url.protocol === 'https:';
-};
-
 export const getURL = () => {
   let url =
     process?.env?.NEXT_PUBLIC_SITE_URL ?? // Set this to your site URL in production env.

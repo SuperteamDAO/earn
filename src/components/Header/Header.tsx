@@ -240,17 +240,20 @@ export default function WithSubnavigation() {
             justify={{ base: 'center', lg: 'start' }}
             gap={6}
           >
-            <Image
-              h={5}
-              mr={5}
-              cursor="pointer"
-              objectFit={'contain'}
-              alt={'Superteam Earn'}
-              onClick={() => {
-                router.push('/');
-              }}
-              src={'/assets/logo/new-logo.svg'}
-            />
+            <Link display={{ base: 'none', lg: 'flex' }} href="/">
+              <Image
+                h={5}
+                mr={5}
+                cursor="pointer"
+                objectFit={'contain'}
+                alt={'Superteam Earn'}
+                onClick={() => {
+                  router.push('/');
+                }}
+                src={'/assets/logo/new-logo.svg'}
+              />
+            </Link>
+
             <NavLink
               display={{ base: 'none', lg: 'flex' }}
               href="/bounties"
