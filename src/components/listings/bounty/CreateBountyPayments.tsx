@@ -25,7 +25,7 @@ import {
   VStack,
 } from '@chakra-ui/react';
 import type { Dispatch, SetStateAction } from 'react';
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import { Toaster } from 'react-hot-toast';
 
 import type { MultiSelectOptions } from '@/constants';
@@ -73,26 +73,6 @@ export const CreatebountyPayment = ({
     onClose: confirmOnClose,
   } = useDisclosure();
   const [isRewardError, setIsRewardError] = useState<boolean>(false);
-  // handles which token is selected
-  const defaultTokenIndex = tokenList?.findIndex(
-    (t) => t.tokenSymbol === bountyPayment.token
-  );
-  const [tokenName, setTokenName] = useState(
-    defaultTokenIndex >= 0
-      ? tokenList[defaultTokenIndex]?.tokenSymbol
-      : tokenList[0]?.tokenSymbol || ''
-  );
-  const [tokenIndex, setTokenIndex] = useState<number>(
-    defaultTokenIndex >= 0 ? defaultTokenIndex : 0
-  );
-  const [totalReward, setTotalReward] = useState<number | undefined>(
-    bountyPayment?.rewardAmount || undefined
-  );
-
-  // stores the state for prize
-  const [prizevalues, setPrizevalues] = useState<any>(
-    bountyPayment?.rewards || {}
-  );
 
   // handles the UI for prize
   const prizesList = sortRank(Object.keys(bountyPayment?.rewards || []))?.map(
@@ -115,40 +95,61 @@ export const CreatebountyPayment = ({
         ]
   );
 
-  useEffect(() => {
-    setBountyPayment({
-      rewardAmount: totalReward,
-      token: tokenName,
-      rewards: prizevalues,
-    });
-  }, [prizevalues, totalReward, tokenName]);
+  const handleTokenChange = (tokenSymbol: string) => {
+    setBountyPayment((prev: any) => ({
+      ...prev,
+      token: tokenSymbol,
+    }));
+  };
 
-  const handleButtonClick = () => {
-    const temp: PrizeListInterface[] = prizes.filter((_el, index) => {
-      if (index !== prizes.length - 1) {
-        return true;
-      }
-      return false;
-    });
+  const handleTotalRewardChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const newTotalReward = parseInt(e.target.value, 10) || 0;
+    setBountyPayment((prev: any) => ({
+      ...prev,
+      rewardAmount: newTotalReward,
+    }));
+  };
 
-    setPrizes(temp);
-    const newTemp: any = {};
-    temp?.forEach((t) => {
-      newTemp[t.value] = t.defaultValue || 0;
+  const handlePrizeValueChange = (prizeName: string, value: number) => {
+    setBountyPayment((prev: any) => ({
+      ...prev,
+      rewards: {
+        ...prev.rewards,
+        [prizeName]: value,
+      },
+    }));
+  };
+
+  function getPrizeLabels(pri: PrizeListInterface[]): PrizeListInterface[] {
+    const labels = ['first', 'second', 'third', 'fourth', 'fifth'];
+    return pri.map((prize, index) => ({
+      ...prize,
+      label: `${labels[index]} prize`,
+    }));
+  }
+
+  const handlePrizeDelete = (prizeToDelete: string) => {
+    const updatedPrizes = prizes.filter(
+      (prize) => prize.value !== prizeToDelete
+    );
+    setPrizes(getPrizeLabels(updatedPrizes));
+
+    setBountyPayment((prev: any) => {
+      const updatedRewards = { ...prev.rewards };
+      delete updatedRewards[prizeToDelete];
+      return {
+        ...prev,
+        rewards: updatedRewards,
+      };
     });
-    setPrizevalues(newTemp);
   };
 
   const handleSubmit = (isEdit?: boolean, mode?: string) => {
-    const rewardAmount: number = (
-      (Object.values(prizevalues) || []) as number[]
-    ).reduce((a, b) => a + b, 0);
-    setBountyPayment({
-      rewardAmount: totalReward,
-      token: tokenName,
-      rewards: prizevalues,
-    });
-    if (!totalReward || totalReward !== rewardAmount) {
+    const totalPrizes = Object.values(bountyPayment.rewards)
+      .map((reward) => reward as number)
+      .reduce((a, b) => a + b, 0);
+
+    if (!totalPrizes || bountyPayment.rewardAmount !== totalPrizes) {
       setIsRewardError(true);
     } else {
       setIsRewardError(false);
@@ -212,17 +213,39 @@ export const CreatebountyPayment = ({
               border={'1px solid #cbd5e1'}
               rightIcon={<ChevronDownIcon />}
             >
-              {tokenIndex === undefined ? (
-                'Select'
+              {bountyPayment.token ? (
+                <HStack>
+                  <Image
+                    w={'1.6rem'}
+                    alt={
+                      tokenList.find(
+                        (token) => token.tokenSymbol === bountyPayment.token
+                      )?.tokenName
+                    }
+                    rounded={'full'}
+                    src={
+                      tokenList.find(
+                        (token) => token.tokenSymbol === bountyPayment.token
+                      )?.icon
+                    }
+                  />
+                  <Text>
+                    {
+                      tokenList.find(
+                        (token) => token.tokenSymbol === bountyPayment.token
+                      )?.tokenName
+                    }
+                  </Text>
+                </HStack>
               ) : (
                 <HStack>
                   <Image
                     w={'1.6rem'}
-                    alt={tokenList[tokenIndex as number]?.tokenName}
+                    alt={tokenList[0]?.tokenName}
                     rounded={'full'}
-                    src={tokenList[tokenIndex as number]?.icon}
+                    src={tokenList[0]?.icon}
                   />
-                  <Text>{tokenList[tokenIndex as number]?.tokenName}</Text>
+                  <Text>{tokenList[0]?.tokenName}</Text>
                 </HStack>
               )}
             </MenuButton>
@@ -234,15 +257,12 @@ export const CreatebountyPayment = ({
               fontSize="1rem"
               fontWeight={500}
             >
-              {tokenList.map((token, index) => {
+              {tokenList.map((token) => {
                 return (
                   <>
                     <MenuItem
                       key={token.mintAddress}
-                      onClick={() => {
-                        setTokenIndex(index);
-                        setTokenName(token?.tokenSymbol);
-                      }}
+                      onClick={() => handleTokenChange(token.tokenSymbol)}
                     >
                       <HStack>
                         <Image
@@ -260,7 +280,7 @@ export const CreatebountyPayment = ({
             </MenuList>
           </Menu>
         </FormControl>
-        <FormControl w="full" isRequired>
+        <FormControl w="full" mt={5} isRequired>
           <Flex>
             <FormLabel
               color={'brand.slate.500'}
@@ -268,7 +288,13 @@ export const CreatebountyPayment = ({
               fontWeight={600}
               htmlFor={'slug'}
             >
-              Total Reward Amount (in {tokenName})
+              Total Reward Amount (in{' '}
+              {
+                tokenList.find(
+                  (token) => token.tokenSymbol === bountyPayment.token
+                )?.tokenName
+              }
+              )
             </FormLabel>
           </Flex>
 
@@ -277,13 +303,11 @@ export const CreatebountyPayment = ({
             _placeholder={{
               color: 'brand.slate.300',
             }}
-            defaultValue={totalReward}
             focusBorderColor="brand.purple"
-            onChange={(e) => {
-              setTotalReward(parseInt(e.target.value, 10));
-            }}
+            onChange={handleTotalRewardChange}
             placeholder="4,000"
             type="number"
+            value={bountyPayment.rewardAmount || ''}
           />
         </FormControl>
         <VStack gap={4} w={'full'} mt={5} mb={8}>
