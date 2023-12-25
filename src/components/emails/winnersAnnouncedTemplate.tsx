@@ -17,7 +17,7 @@ export const WinnersAnnouncedTemplate = ({
     <div style={styles.container}>
       <p style={styles.greetings}>Hey {name},</p>
       <p style={styles.textWithMargin}>
-        The winners for the bounty <strong>{bountyName}</strong> have been
+        The winners for the <strong>{bountyName}</strong> listing have been
         announced!{' '}
         <p style={styles.text}>
           <a href={link} style={styles.link}>
@@ -26,8 +26,8 @@ export const WinnersAnnouncedTemplate = ({
           to see who claimed the top spots.
         </p>
       </p>
-      <p style={styles.text}>Best,&nbsp;</p>
-      <p style={styles.text}>The Superteam Earn Crew 🦸&zwj;♀️🦸&zwj;♂️</p>
+      <p style={styles.text}>Best,</p>
+      <p style={styles.text}>Superteam Earn</p>
       <p style={styles.unsubscribe}>
         Click{' '}
         <a

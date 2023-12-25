@@ -18,11 +18,11 @@ export const SubmissionTemplate = ({ name, bountyName }: SubmissionProps) => {
       </p>
       <p style={styles.textWithMargin}>
         Once the deadline passes, you&rsquo;ll be able to see all the other
-        submissions on the bounty page. We&rsquo;ll then send you an email once
-        the winners (hopefully including you!) are announced!
+        submissions on the listing page. We&rsquo;ll then send you an email once
+        the winners (hopefully including you) are announced!
       </p>
-      <p style={styles.salutation}>Best,&nbsp;</p>
-      <p style={styles.text}>The Superteam Earn Crew 🦸&zwj;♀️🦸&zwj;♂️</p>
+      <p style={styles.salutation}>Best,</p>
+      <p style={styles.text}>Superteam Earn</p>
     </div>
   );
 };

@@ -23,8 +23,8 @@ export const SubmissionSponsorTemplate = ({
           check it out!
         </a>
       </p>
-      <p style={styles.salutation}>Best,&nbsp;</p>
-      <p style={styles.text}>The Superteam Earn Crew 🦸&zwj;♀️🦸&zwj;♂️</p>
+      <p style={styles.salutation}>Best,</p>
+      <p style={styles.text}>Superteam Earn</p>
       <p style={styles.unsubscribe}>
         Click{' '}
         <a

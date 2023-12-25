@@ -17,18 +17,18 @@ export const SubmissionLikeTemplate = ({
     <div style={styles.container}>
       <p style={styles.greetings}>Hey {name},</p>
       <p style={styles.textWithMargin}>
-        People are really digging your work on the <strong>{bountyName}</strong>{' '}
-        bounty. Keep it up!
+        People are digging your work on the <strong>{bountyName}</strong>{' '}
+        listing. Keep it up!
       </p>
       <p style={styles.textWithMargin}>
         Check out the other submissions and spread some love to the other
         participants!
       </p>
       <a href={link} style={styles.link}>
-        View Submissions
+        View Other Submissions
       </a>
       <p style={styles.salutation}>Best,</p>
-      <p style={styles.text}>The Superteam Earn Crew 🦸&zwj;♀️🦸&zwj;♂️</p>
+      <p style={styles.text}>Superteam Earn</p>
       <p style={styles.unsubscribe}>
         Click{' '}
         <a
