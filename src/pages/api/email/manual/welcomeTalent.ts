@@ -7,13 +7,13 @@ export default async function handler(
   req: NextApiRequest,
   res: NextApiResponse
 ) {
-  const { email, name } = req.body;
+  const { email } = req.body;
   try {
     await resendMail.emails.send({
       from: `Kash from Superteam <${process.env.RESEND_EMAIL}>`,
       to: [email],
       subject: 'Welcome to Superteam Earn!',
-      react: WelcomeTalentTemplate({ name }),
+      react: WelcomeTalentTemplate(),
     });
 
     return res.status(200).json({ message: 'Ok' });

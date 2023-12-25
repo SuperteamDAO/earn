@@ -2,10 +2,9 @@ import React from 'react';
 
 import { styles } from './styles';
 
-export const WelcomeTalentTemplate = ({ name }: { name: string }) => {
+export const WelcomeTalentTemplate = () => {
   return (
     <div style={styles.container}>
-      <p style={styles.greetings}>Hey there {name},</p>
       <p style={styles.textWithMargin}>
         OK let&apos;s get this out of the way.
       </p>

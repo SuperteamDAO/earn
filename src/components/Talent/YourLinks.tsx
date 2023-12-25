@@ -199,7 +199,6 @@ function YourLinks({ success, useFormStore }: Props) {
       const updatedUser = await axios.post('/api/user/update/', finalOptions);
       await axios.post('/api/email/manual/welcomeTalent/', {
         email: userInfo?.email,
-        name: userInfo?.firstName,
       });
       setUserInfo(updatedUser?.data);
       success();
