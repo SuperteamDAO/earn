@@ -81,6 +81,8 @@ function BountySubmissions({ slug }: Props) {
   const anchorWallet = useAnchorWallet();
   const length = 15;
 
+  const [usedPositions, setUsedPositions] = useState<string[]>([]);
+
   const getBounty = async () => {
     setIsBountyLoading(true);
     try {
@@ -92,6 +94,12 @@ function BountySubmissions({ slug }: Props) {
         router.push('/dashboard/bounties');
       }
       const submissionsData = bountyDetails.data.Submission || [];
+      const usedPos = submissionsData
+        .filter((s: any) => s.isWinner)
+        .map((s: any) => s.winnerPosition);
+
+      setUsedPositions(usedPos);
+
       setSubmissions(submissionsData);
       setSelectedSubmission(submissionsData[0]);
       setTotalSubmissions(submissionsData.length);
@@ -128,10 +136,22 @@ function BountySubmissions({ slug }: Props) {
         isWinner: !!position,
         winnerPosition: position || null,
       });
+
       const submissionIndex = submissions.findIndex((s) => s.id === id);
       if (submissionIndex >= 0) {
         const oldRank: string =
           submissions[submissionIndex]?.winnerPosition || '';
+
+        let newUsedPositions = [...usedPositions];
+        if (oldRank && oldRank !== position) {
+          newUsedPositions = newUsedPositions.filter((pos) => pos !== oldRank);
+        }
+
+        if (position && !newUsedPositions.includes(position)) {
+          newUsedPositions.push(position);
+        }
+        setUsedPositions(newUsedPositions);
+
         const updatedSubmission: SubmissionWithUser = {
           ...(submissions[submissionIndex] as SubmissionWithUser),
           isWinner: !!position,
@@ -141,15 +161,7 @@ function BountySubmissions({ slug }: Props) {
         newSubmissions[submissionIndex] = updatedSubmission;
         setSubmissions(newSubmissions);
         setSelectedSubmission(updatedSubmission);
-        if (!position) {
-          setTotalWinners(totalWinners - 1);
-          const ranks = sortRank([...new Set([...rewards, oldRank])]);
-          setRewards(ranks);
-        } else {
-          setTotalWinners(totalWinners + 1);
-          const ranks = rewards.filter((r) => r !== position);
-          setRewards(ranks);
-        }
+        setTotalWinners(newUsedPositions.length);
       }
       setIsSelectingWinner(false);
     } catch (e) {
@@ -544,9 +556,7 @@ function BountySubmissions({ slug }: Props) {
                           maxW={48}
                           textTransform="capitalize"
                           borderColor="brand.slate.300"
-                          _placeholder={{
-                            color: 'brand.slate.300',
-                          }}
+                          _placeholder={{ color: 'brand.slate.300' }}
                           focusBorderColor="brand.purple"
                           isDisabled={!!bounty?.isWinnersAnnounced}
                           onChange={(e) =>
@@ -554,25 +564,23 @@ function BountySubmissions({ slug }: Props) {
                           }
                           value={
                             selectedSubmission?.isWinner
-                              ? selectedSubmission?.winnerPosition || ''
+                              ? selectedSubmission.winnerPosition || ''
                               : ''
                           }
                         >
                           <option value={''}>Select Winner</option>
-                          {selectedSubmission?.isWinner &&
-                            rewards.length <
-                              Object.keys(bounty?.rewards || {})?.length && (
-                              <option
-                                value={selectedSubmission?.winnerPosition || ''}
-                              >
-                                {selectedSubmission?.winnerPosition}
-                              </option>
-                            )}
-                          {rewards.map((reward) => (
-                            <option key={reward} value={reward}>
-                              {reward}
-                            </option>
-                          ))}
+                          {rewards.map((reward) => {
+                            const isRewardUsed = usedPositions.includes(reward);
+                            const isCurrentSubmissionReward =
+                              selectedSubmission?.winnerPosition === reward;
+                            return (
+                              (!isRewardUsed || isCurrentSubmissionReward) && (
+                                <option key={reward} value={reward}>
+                                  {reward}
+                                </option>
+                              )
+                            );
+                          })}
                         </Select>
                       </Tooltip>
                     </Flex>
