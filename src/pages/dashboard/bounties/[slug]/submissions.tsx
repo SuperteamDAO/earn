@@ -81,40 +81,26 @@ function BountySubmissions({ slug }: Props) {
   const anchorWallet = useAnchorWallet();
   const length = 15;
 
-  const getSubmissions = async (id?: string) => {
-    setIsBountyLoading(true);
-    try {
-      const submissionsDetails = await axios.get(
-        `/api/submission/${id || bounty?.id}/`,
-        {
-          params: {
-            skip,
-            take: length,
-          },
-        }
-      );
-      setTotalSubmissions(submissionsDetails.data.total);
-      setTotalWinners(submissionsDetails.data.winnersSelected || 0);
-      setTotalPaymentsMade(submissionsDetails.data.paymentsMade || 0);
-      setSubmissions(submissionsDetails.data.data);
-      setSelectedSubmission(submissionsDetails.data.data[0]);
-      setIsBountyLoading(false);
-    } catch (e) {
-      setIsBountyLoading(false);
-    }
-  };
-
   const getBounty = async () => {
     setIsBountyLoading(true);
     try {
-      const bountyDetails = await axios.get(`/api/bounties/${slug}/`);
+      const bountyDetails = await axios.get(
+        `/api/bounties/${slug}/submissions`
+      );
       setBounty(bountyDetails.data);
       if (bountyDetails.data.sponsorId !== userInfo?.currentSponsorId) {
         router.push('/dashboard/bounties');
       }
-      getSubmissions(bountyDetails.data.id);
+      const submissionsData = bountyDetails.data.Submission || [];
+      setSubmissions(submissionsData);
+      setSelectedSubmission(submissionsData[0]);
+      setTotalSubmissions(submissionsData.length);
+      setTotalWinners(bountyDetails.data.winnersSelected || 0);
+      setTotalPaymentsMade(bountyDetails.data.paymentsMade || 0);
+
       const ranks = sortRank(Object.keys(bountyDetails.data.rewards || {}));
       setRewards(ranks);
+      setIsBountyLoading(false);
     } catch (e) {
       setIsBountyLoading(false);
     }
@@ -125,12 +111,6 @@ function BountySubmissions({ slug }: Props) {
       getBounty();
     }
   }, [userInfo?.currentSponsorId]);
-
-  useEffect(() => {
-    if (userInfo?.currentSponsorId && !isBountyLoading) {
-      getSubmissions();
-    }
-  }, [skip]);
 
   const bountyStatus = getBountyDraftStatus(
     bounty?.status,
