@@ -15,7 +15,7 @@ import { CreateGrants } from '@/components/listings/grants/CreateGrants';
 import Template from '@/components/listings/templates/template';
 import { SuccessListings } from '@/components/modals/successListings';
 import ErrorSection from '@/components/shared/ErrorSection';
-import type { MultiSelectOptions } from '@/constants';
+import { type MultiSelectOptions, tokenList } from '@/constants';
 import type { Bounty, References } from '@/interface/bounty';
 import type { GrantsBasicType } from '@/interface/listings';
 import FormLayout from '@/layouts/FormLayout';
@@ -97,7 +97,7 @@ function CreateListing({ bounty, isEditMode = false, type }: Props) {
   });
   const [bountyPayment, setBountyPayment] = useState({
     rewardAmount: isEditMode ? bounty?.rewardAmount || 0 : 0,
-    token: isEditMode ? bounty?.token : undefined,
+    token: isEditMode ? bounty?.token : tokenList[0]?.tokenSymbol,
     rewards: isEditMode ? bounty?.rewards || undefined : undefined,
   });
   // -- Grants

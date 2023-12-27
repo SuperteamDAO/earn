@@ -145,6 +145,7 @@ export const CreateBounty = ({
           bountyBasic={bountybasic}
           editorData={editorData}
           isNewOrDraft={isNewOrDraft}
+          type={type}
         />
       )}
     </>
