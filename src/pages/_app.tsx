@@ -1,6 +1,5 @@
 // Styles
 import 'degen/styles';
-import 'nprogress/nprogress.css';
 import '../styles/globals.scss';
 
 import { ChakraProvider } from '@chakra-ui/react';
@@ -8,8 +7,6 @@ import type { AppProps } from 'next/app';
 // Fonts
 import { Domine, JetBrains_Mono } from 'next/font/google';
 import localFont from 'next/font/local';
-import { Router } from 'next/router';
-import NProgress from 'nprogress';
 import posthog from 'posthog-js';
 import { PostHogProvider } from 'posthog-js/react';
 
@@ -83,10 +80,6 @@ if (typeof window !== 'undefined') {
 }
 
 function MyApp({ Component, pageProps }: AppProps) {
-  Router.events.on('routeChangeStart', () => NProgress.start());
-  Router.events.on('routeChangeComplete', () => NProgress.done());
-  Router.events.on('routeChangeError', () => NProgress.done());
-
   return (
     <>
       <style jsx global>
