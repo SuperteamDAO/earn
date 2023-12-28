@@ -33,7 +33,6 @@ interface Props {
   setIsSubmitted: (arg0: boolean) => void;
   setSubmissionNumber: (arg0: number) => void;
   submissionNumber: number;
-  bountytitle: string;
   type?: BountyType | string;
 }
 export const SubmissionModal = ({
@@ -44,7 +43,6 @@ export const SubmissionModal = ({
   setIsSubmitted,
   setSubmissionNumber,
   submissionNumber,
-  bountytitle,
   type,
 }: Props) => {
   const isPermissioned = type === 'permissioned';
@@ -84,7 +82,6 @@ export const SubmissionModal = ({
       });
 
       reset();
-      console.log(bountytitle);
       setIsSubmitted(true);
       setSubmissionNumber(submissionNumber + 1);
 

@@ -134,7 +134,6 @@ function CreateListing({ bounty, isEditMode = false, type }: Props) {
       await axios.post('/api/email/manual/createBounty', {
         id: result?.data?.id,
       });
-      console.log(result?.data.id);
       setSlug(`/bounties/${result?.data?.slug}/`);
       onOpen();
       setIsListingPublishing(false);

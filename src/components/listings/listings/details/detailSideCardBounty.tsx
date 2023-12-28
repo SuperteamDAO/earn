@@ -48,7 +48,6 @@ interface Props {
   questions?: string;
   eligibility?: Eligibility[];
   type?: BountyType | string;
-  bountytitle: string;
   requirements?: string;
   isWinnersAnnounced?: boolean;
   hackathonPrize?: boolean;
@@ -66,7 +65,6 @@ function DetailSideCard({
   token,
   eligibility,
   applicationLink,
-  bountytitle,
   requirements,
   type,
   pocSocials,
@@ -204,7 +202,6 @@ function DetailSideCard({
           submissionNumber={submissionNumber}
           setSubmissionNumber={setSubmissionNumber}
           setIsSubmitted={setIsSubmitted}
-          bountytitle={bountytitle}
         />
       )}
       {warningIsOpen && (

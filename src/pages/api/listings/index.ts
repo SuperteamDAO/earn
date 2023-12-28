@@ -15,7 +15,6 @@ export default async function user(req: NextApiRequest, res: NextApiResponse) {
     | undefined;
   const take = params.take ? parseInt(params.take as string, 10) : 10;
   const deadline = params.deadline as string;
-  console.log(take, '----server---');
   const result: any = {
     bounties: [],
     grants: [],

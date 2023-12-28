@@ -45,10 +45,6 @@ function BountyWinners({ bounty }: Props) {
   if (isBountyLoading || !submissions.length) {
     return null;
   }
-  console.log(
-    'file: BountyWinners.tsx:34 ~ BountyWinners ~ submissions:',
-    submissions
-  );
 
   return (
     <Box maxW={'7xl'} mt={10} mx={'auto'}>

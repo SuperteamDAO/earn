@@ -28,7 +28,6 @@ export default async function comment(
     });
     res.status(200).json(result);
   } catch (error) {
-    console.log('file: create.ts:31 ~ comment ~ error:', error);
     res.status(400).json({
       error,
       message: 'Error occurred while adding a new comment.',

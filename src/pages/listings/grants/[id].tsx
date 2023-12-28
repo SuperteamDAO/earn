@@ -27,7 +27,6 @@ interface GrantsDetailsProps {
 
 const Grants = ({ slug }: GrantsDetailsProps) => {
   const [grants, setGrants] = useState<Grant | null>(null);
-  console.log(slug);
 
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState(false);
@@ -36,7 +35,6 @@ const Grants = ({ slug }: GrantsDetailsProps) => {
     setIsLoading(true);
     try {
       const grantsDetails = await axios.get(`/api/grants/${slug}/`);
-      console.log(grantsDetails.data);
 
       setGrants(grantsDetails.data);
     } catch (e) {
