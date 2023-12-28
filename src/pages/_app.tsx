@@ -1,6 +1,3 @@
-import 'slick-carousel/slick/slick.css';
-import 'slick-carousel/slick/slick-theme.css';
-// Styles
 import 'degen/styles';
 import 'nprogress/nprogress.css';
 import '../styles/globals.scss';
