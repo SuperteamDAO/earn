@@ -163,11 +163,11 @@ const GettingStarted = ({ userInfo }: GettingStartedProps) => {
                   }
                 }}
               >
-                Win a bounty
+                Win a bounty or project
               </Text>
             ) : (
               <Text color={'brand.purple'} fontSize={'md'} fontWeight={500}>
-                Win a bounty
+                Win a bounty or project
               </Text>
             )}
             <Text color={'gray.500'} fontSize={'md'} fontWeight={500}>

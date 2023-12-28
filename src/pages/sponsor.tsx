@@ -229,7 +229,7 @@ const Sponsor = () => {
                 borderBottom="0.0625rem dashed"
                 cursor="pointer"
               >
-                Get a Bounty Strategy Session
+                Get Help For Adding Your Listing
               </Text>
             </Link>
           </Flex>
@@ -515,7 +515,7 @@ const Sponsor = () => {
               20+
             </Text>
             <Text color="gray.500" fontSize="1.25rem" fontWeight={600}>
-              Submissions Per Bounty
+              Submissions Per Listing
             </Text>
           </Box>
         </Flex>
@@ -756,7 +756,7 @@ const Sponsor = () => {
                     borderBottom="0.0625rem dashed"
                     cursor="pointer"
                   >
-                    Get a Bounty Strategy Session
+                    Get Help For Adding Your Listing
                   </Text>
                 </Link>
               </Flex>
@@ -816,9 +816,9 @@ const Sponsor = () => {
           fontSize={!isLessThan600px ? '0.8125rem' : '0.4rem'}
           fontWeight="400"
         >
-          <Link href="https://earn.superteam.fun/bounties">Bounties</Link>
+          <Link href="https://earn.superteam.fun/bounties">Listings</Link>
           <Link href="https://airtable.com/shrmOAXpF2vhONYqe">
-            Get a Bounty Strategy Session
+            Get Help For Adding Your Listing
           </Link>
         </Flex>
 

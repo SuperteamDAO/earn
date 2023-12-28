@@ -176,12 +176,13 @@ export const CreatebountyPayment = ({
       <Modal isOpen={confirmIsOpen} onClose={confirmOnClose}>
         <ModalOverlay />
         <ModalContent>
-          <ModalHeader>Confirm Publish?</ModalHeader>
+          <ModalHeader>Confirm Publishing?</ModalHeader>
           <ModalCloseButton />
           <ModalBody>
             <Text>
-              Creating this Listing will publish it for everyone to see. Make
-              sure your Listing is ready before you publish.
+              Publishing this listing means it will show up on the homepage for
+              all visitors. Make sure the details in your listing are correct
+              before you publish.
             </Text>
           </ModalBody>
 
@@ -197,7 +198,7 @@ export const CreatebountyPayment = ({
               loadingText="Publishing..."
               onClick={() => createAndPublishListing()}
             >
-              Create & Publish
+              Publish
             </Button>
           </ModalFooter>
         </ModalContent>

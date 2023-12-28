@@ -253,7 +253,7 @@ export default function UserInfo({ isMobile }: UserInfoProps) {
                 size="sm"
                 variant={{ base: 'solid', md: 'ghost' }}
               >
-                Create A Bounty
+                Create A Listing
               </Button>
               <Button
                 display={displayValue}
