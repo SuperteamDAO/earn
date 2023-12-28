@@ -9,7 +9,6 @@ import {
   Text,
   useMediaQuery,
 } from '@chakra-ui/react';
-import axios from 'axios';
 import Head from 'next/head';
 import type { ImageProps } from 'next/image';
 import Image from 'next/image';
@@ -73,17 +72,25 @@ const Sponsor = () => {
     }
   };
 
-  useEffect(() => {
-    const fetchTotals = async () => {
-      try {
-        const response = await axios.get('/api/listings/stats/');
-        setTotals(response.data);
-        console.log(totals);
-      } catch (err) {
-        console.log(err);
-      }
-    };
+  const fetchTotals = async () => {
+    try {
+      // Using Next.js's fetch with time-based revalidation for 6 hours (21600 seconds)
+      const response = await fetch('/api/listings/stats/', {
+        next: { revalidate: 21600 },
+      });
 
+      if (!response.ok) {
+        throw new Error('Failed to fetch data');
+      }
+
+      const data = await response.json();
+      setTotals(data);
+    } catch (err) {
+      console.log(err);
+    }
+  };
+
+  useEffect(() => {
     fetchTotals();
   }, []);
 
