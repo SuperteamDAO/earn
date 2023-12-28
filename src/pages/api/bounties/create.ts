@@ -47,7 +47,6 @@ export default async function handler(
   res: NextApiResponse
 ) {
   const { title, ...data } = req.body;
-  console.log('file: create.ts:10 ~ data:', data);
   try {
     const slug = await generateUniqueSlug(title);
     const finalData = {

@@ -23,9 +23,7 @@ export default async function user(req: NextApiRequest, res: NextApiResponse) {
       }
     : {};
   try {
-    console.log(region, region.toUpperCase() === Regions.MEXICO);
     if (!category || category === 'all') {
-      console.log('this2');
       const bounties = await prisma.bounties.findMany({
         where: {
           isPublished: true,
@@ -86,7 +84,6 @@ export default async function user(req: NextApiRequest, res: NextApiResponse) {
           },
         },
       });
-      console.log('this');
       const sortedData = bounties.sort((a, b) => {
         return dayjs(b.deadline).diff(dayjs(a.deadline));
       });

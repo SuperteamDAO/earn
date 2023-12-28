@@ -69,7 +69,6 @@ const Builder = ({
               <QuestionCard
                 errorState={error}
                 index={index}
-                questions={questions}
                 curentQuestion={question}
                 setQuestions={setQuestions}
                 handleDelete={() => handleDelete(index)}

@@ -74,7 +74,6 @@ export default async function handler(
         }),
       });
 
-      console.log(e.email);
       emailsSent.push(e.email);
     });
 

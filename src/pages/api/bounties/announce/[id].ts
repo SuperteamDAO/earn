@@ -4,6 +4,7 @@ import { WinnersAnnouncedTemplate } from '@/components/emails/winnersAnnouncedTe
 import type { Rewards } from '@/interface/bounty';
 import { prisma } from '@/prisma';
 import { getUnsubEmails } from '@/utils/airtable';
+import { getBountyTypeLabel } from '@/utils/bounty';
 import { dayjs } from '@/utils/dayjs';
 import { rateLimitedPromiseAll } from '@/utils/rateLimitedPromises';
 import resendMail from '@/utils/resend';
@@ -142,6 +143,8 @@ export default async function announce(
       ...allSubscribedUsersWithType,
     ];
 
+    const listingType = getBountyTypeLabel(bounty?.type);
+
     await rateLimitedPromiseAll(allUsers, 9, async (user) => {
       if (unsubscribedEmails.includes(user.email)) return;
 
@@ -156,7 +159,7 @@ export default async function announce(
       await resendMail.emails.send({
         from: `Kash from Superteam <${process.env.RESEND_EMAIL}>`,
         to: [user.email],
-        subject: 'Bounty Winners Announced!',
+        subject: `${listingType} Winners Announced!`,
         react: template,
       });
     });

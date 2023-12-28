@@ -19,7 +19,6 @@ import type { Ques } from './builder';
 interface Props {
   setQuestions: Dispatch<SetStateAction<Ques[]>>;
   curentQuestion: Ques;
-  questions: Ques[];
   index: number;
   errorState: ErrorState[];
   handleDelete: (index: number) => void;
@@ -31,12 +30,10 @@ type ErrorState = {
 export const QuestionCard = ({
   setQuestions,
   curentQuestion,
-  questions,
   index,
   errorState,
   handleDelete,
 }: Props) => {
-  console.log('file: questionCard.tsx:36 ~ questions:', questions);
   const [option, setOption] = useState<string>('');
   const handleChangeQuestion = (newq: string) => {
     setQuestions((prev) => {

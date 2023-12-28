@@ -22,7 +22,6 @@ import { useForm } from 'react-hook-form';
 import { QuestionHandler } from '@/components/listings/bounty/questions/questionHandler';
 import type { Eligibility } from '@/interface/bounty';
 import { userStore } from '@/store/user';
-import { Mixpanel } from '@/utils/mixpanel';
 
 import { AutoResizeTextarea } from '../shared/autosize-textarea';
 
@@ -34,7 +33,6 @@ interface Props {
   setIsSubmitted: (arg0: boolean) => void;
   setSubmissionNumber: (arg0: number) => void;
   submissionNumber: number;
-  bountytitle: string;
   type?: BountyType | string;
 }
 export const SubmissionModal = ({
@@ -45,7 +43,6 @@ export const SubmissionModal = ({
   setIsSubmitted,
   setSubmissionNumber,
   submissionNumber,
-  bountytitle,
   type,
 }: Props) => {
   const isPermissioned = type === 'permissioned';
@@ -83,10 +80,7 @@ export const SubmissionModal = ({
         listingId: id,
         userId: userInfo?.id,
       });
-      Mixpanel.track('bounty_submission', {
-        title: bountytitle,
-        user: userInfo?.username,
-      });
+
       reset();
       setIsSubmitted(true);
       setSubmissionNumber(submissionNumber + 1);
