@@ -15,18 +15,17 @@ export const InviteMemberTemplate = ({
 }: TemplateProps) => {
   return (
     <div style={styles.container}>
-      <p style={styles.greetings}>
-        You have been invited to join <strong>{sponsorName}</strong> {''}
-        by {senderName}!
-      </p>
+      <p style={styles.greetings}>Hello,</p>
       <p style={styles.textWithMargin}>
+        You have been invited by {senderName} to join{' '}
+        <strong>{sponsorName}</strong> {''} on Superteam Earn!
         <a href={link} style={styles.link}>
           Click here
         </a>{' '}
-        to get added as a team member of {sponsorName} on Superteam Earn
+        to be added as a {sponsorName} team member.
       </p>
-      <p style={styles.salutation}>Best,&nbsp;</p>
-      <p style={styles.text}>The Superteam Earn Crew 🦸&zwj;♀️🦸&zwj;♂️</p>
+      <p style={styles.salutation}>Best,</p>
+      <p style={styles.text}>Superteam Earn</p>
     </div>
   );
 };

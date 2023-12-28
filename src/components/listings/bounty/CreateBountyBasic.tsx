@@ -18,7 +18,6 @@ import { useMemo, useState } from 'react';
 import { SkillSelect } from '@/components/misc/SkillSelect';
 import { userStore } from '@/store/user';
 import { dayjs } from '@/utils/dayjs';
-import { isValidHttpUrl } from '@/utils/validUrl';
 
 import type { MultiSelectOptions } from '../../../constants';
 import type { BountyBasicType } from './Createbounty';
@@ -254,10 +253,6 @@ export const CreatebountyBasic = ({
             }}
             focusBorderColor="brand.purple"
             id="pocSocials"
-            onBlur={(e) => {
-              const url = e.target.value;
-              setIsUrlValid(isValidHttpUrl(url));
-            }}
             onChange={(e) => {
               setbountyBasic({
                 ...(bountyBasic as BountyBasicType),

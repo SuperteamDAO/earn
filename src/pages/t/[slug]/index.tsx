@@ -466,7 +466,12 @@ function TalentProfile({ slug }: TalentProps) {
                         key={eleIndex}
                         onClick={() => {
                           if (ele.link) {
-                            window.open(ele.link, '_blank');
+                            const formattedLink =
+                              ele.link.startsWith('http://') ||
+                              ele.link.startsWith('https://')
+                                ? ele.link
+                                : `https://${ele.link}`;
+                            window.open(formattedLink, '_blank');
                           }
                         }}
                       >

@@ -15,16 +15,16 @@ export const CommentSponsorTemplate = ({
 }: TemplateProps) => {
   return (
     <div style={styles.container}>
-      <p style={styles.greetings}>Hey {name},</p>
+      <p style={styles.greetings}>Hello {name},</p>
       <p style={styles.textWithMargin}>
-        The <strong>{bountyName}</strong> listing added by your company just
-        received a comment &mdash;{' '}
+        Your listing <strong>{bountyName}</strong> just received a comment
+        &mdash;{' '}
         <a href={link} style={styles.link}>
           check it out!
         </a>
       </p>
-      <p style={styles.salutation}>Best,&nbsp;</p>
-      <p style={styles.text}>The Superteam Earn Crew 🦸&zwj;♀️🦸&zwj;♂️</p>
+      <p style={styles.salutation}>Best,</p>
+      <p style={styles.text}>Superteam Earn</p>
       <p style={styles.unsubscribe}>
         Click{' '}
         <a

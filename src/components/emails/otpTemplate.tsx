@@ -10,8 +10,8 @@ export const OTPTemplate = ({ code }: { code: number }) => {
         Your one-time password for verifying your email on Superteam Earn is{' '}
         <strong>{code}</strong>.&nbsp;
       </p>
-      <p style={styles.salutation}>Best,&nbsp;</p>
-      <p style={styles.text}>The Superteam Earn Crew 🦸&zwj;♀️🦸&zwj;♂️</p>
+      <p style={styles.salutation}>Best,</p>
+      <p style={styles.text}>Superteam Earn</p>
     </div>
   );
 };

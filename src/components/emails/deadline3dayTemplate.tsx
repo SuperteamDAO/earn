@@ -17,7 +17,7 @@ export const DeadlineThreeDaysTemplate = ({
     <div style={styles.container}>
       <p style={styles.greetings}>Hey {name},</p>
       <p style={styles.textWithMargin}>
-        Friendly reminder that the bounty &quot;
+        Friendly reminder that the listing &quot;
         <span style={{ fontWeight: 400 }}>{bountyName}&quot;</span>you&nbsp;had
         indicated&nbsp;interest in will close in 3 days!{' '}
         <a href={link} style={styles.link}>
@@ -25,8 +25,8 @@ export const DeadlineThreeDaysTemplate = ({
         </a>{' '}
         to take another look.
       </p>
-      <p style={styles.salutation}>Best,&nbsp;</p>
-      <p style={styles.text}>The Superteam Earn Crew 🦸&zwj;♀️🦸&zwj;♂️</p>
+      <p style={styles.salutation}>Best,</p>
+      <p style={styles.text}>Superteam Earn</p>
       <p style={styles.unsubscribe}>
         Click{' '}
         <a

@@ -1,8 +1,5 @@
 import { Box, Flex, Image, Input, Text } from '@chakra-ui/react';
-import { useEffect, useState } from 'react';
 import type { UseFormRegister } from 'react-hook-form';
-
-import { isValidHttpUrl } from '@/utils/validUrl';
 
 type TypeSocialInput = {
   label: string;
@@ -24,42 +21,12 @@ export const SocialInput = ({
   name,
   discordError,
   onInputChange,
-  watch,
-  onUrlValidation,
 }: TypeSocialInput) => {
-  const [isUrlValid, setIsUrlValid] = useState(true);
-
-  useEffect(() => {
-    if (onUrlValidation) {
-      onUrlValidation(isUrlValid);
-    }
-  }, [isUrlValid]);
-
   const handleInputChange = (value: string) => {
     if (onInputChange) {
       onInputChange(value);
     }
   };
-
-  const handleInputBlur = (value: string) => {
-    if (label.toLowerCase() !== 'discord') {
-      const isValid = isValidHttpUrl(value);
-      setIsUrlValid(isValid);
-      if (onUrlValidation) {
-        onUrlValidation(isValid);
-      }
-    }
-  };
-
-  const value = watch(name, '');
-
-  useEffect(() => {
-    if (label.toLowerCase() !== 'discord') {
-      if (typeof value === 'string') {
-        setIsUrlValid(isValidHttpUrl(value));
-      }
-    }
-  }, [name, label, register]);
 
   return (
     <Box mb={'1.25rem'}>
@@ -124,15 +91,9 @@ export const SocialInput = ({
           title={label}
           {...register(name, {
             onChange: (e) => handleInputChange(e.target.value),
-            onBlur: (e) => handleInputBlur(e.target.value),
           })}
         />
       </Flex>
-      {!isUrlValid && (
-        <Text color={'red'}>
-          Link URL needs to contain &quot;https://&quot; prefix
-        </Text>
-      )}
       {discordError && label.toLowerCase() === 'discord' && (
         <Text color={'red'}>Discord is required</Text>
       )}

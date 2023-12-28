@@ -17,16 +17,16 @@ export const CommentSubmissionTemplate = ({
 }: SubmissionProps) => {
   return (
     <div style={styles.container}>
-      <p style={styles.greetings}>Hey&nbsp;{name},</p>
+      <p style={styles.greetings}>Hello&nbsp;{name},</p>
       <p style={styles.textWithMargin}>
-        {personName} left a new comment on your submission to the
+        {personName} just left a new comment on your submission to the
         <strong>{bountyName}</strong> listing.
         <a href={link} style={styles.link}>
-          See what they said.
+          Click here to see what they said!
         </a>{' '}
       </p>
-      <p style={styles.salutation}>Best,&nbsp;</p>
-      <p style={styles.text}>The Superteam Earn Crew 🦸&zwj;♀️🦸&zwj;♂️</p>
+      <p style={styles.salutation}>Best,</p>
+      <p style={styles.text}>Superteam Earn</p>
       <p style={styles.unsubscribe}>
         Click{' '}
         <a

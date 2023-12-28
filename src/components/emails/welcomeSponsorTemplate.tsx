@@ -7,9 +7,9 @@ export const WelcomeSponsorTemplate = () => {
     <div style={styles.container}>
       <p style={styles.text}>Welcome to Superteam Earn!</p>
       <p style={styles.textWithMargin}>
-        Thank you for signing up. Earn is the premier talent-matching platform,
-        favored by over 100 leading crypto projects &mdash; we are excited to
-        have you as one of them!
+        Thank you for signing up. Earn is the premier talent-matching platform
+        in crypto, favored by hundreds of leading companies and thousands of
+        verified crypto-focused talent.
       </p>
       <p style={styles.textWithMargin}>
         If you need any help related to setting up your listing on Earn,
@@ -19,7 +19,8 @@ export const WelcomeSponsorTemplate = () => {
         </a>{' '}
         on Telegram.&nbsp;
       </p>
-      <p style={styles.text}>&nbsp;</p>
+      <p style={styles.salutation}>Best,</p>
+      <p style={styles.text}>Superteam Earn</p>
     </div>
   );
 };

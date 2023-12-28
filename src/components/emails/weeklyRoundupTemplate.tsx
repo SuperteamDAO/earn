@@ -19,7 +19,8 @@ export const WeeklyRoundupTemplate = ({ name, bounties }: TemplateProps) => {
     <div style={styles.container}>
       <p style={styles.greetings}>Hey there, {name}!</p>
       <p style={styles.textWithMargin}>
-        Here&apos;s a curated round-up of all live bounties, made just for you!
+        Here&apos;s a weekly round-up of all live listings, curated just for
+        you:
       </p>
       <ol style={styles.list}>
         {bounties?.map((bounty, i) => (
@@ -36,8 +37,8 @@ export const WeeklyRoundupTemplate = ({ name, bounties }: TemplateProps) => {
           </li>
         ))}
       </ol>
-      <p style={styles.salutation}>Go Secure the Bag,</p>
-      <p style={styles.text}>The Superteam Earn Crew 🦸‍♀️🦸‍♂️</p>
+      <p style={styles.salutation}>Best,</p>
+      <p style={styles.text}>Superteam Earn</p>
       <p style={styles.unsubscribe}>
         Click{' '}
         <a

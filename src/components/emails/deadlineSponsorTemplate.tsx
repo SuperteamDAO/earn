@@ -17,9 +17,9 @@ export const DeadlineSponsorTemplate = ({
     <div style={styles.container}>
       <p style={styles.greetings}>Hey {name},</p>
       <p style={styles.textWithMargin}>
-        The deadline for the <strong>{bountyName}</strong>&nbsp;bounty&nbsp;you
-        had listed has expired. Please review the submissions and announce the
-        winners on Superteam Earn&nbsp;soon!
+        The deadline for your listing <strong>{bountyName}</strong>
+        &nbsp; has expired. Please review the submissions and announce the
+        winners on Superteam Earn&nbsp;within 5 to 7 days.
       </p>
       <p style={styles.textWithMargin}>
         <a href={link} style={styles.link}>
@@ -28,7 +28,7 @@ export const DeadlineSponsorTemplate = ({
         to review&nbsp;the submissions. &nbsp;
       </p>
       <p style={styles.salutation}>Best,</p>
-      <p style={styles.text}>The Superteam Earn Crew 🦸&zwj;♀️🦸&zwj;♂️</p>
+      <p style={styles.text}>Superteam Earn</p>
       <p style={styles.unsubscribe}>
         Click{' '}
         <a

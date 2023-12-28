@@ -17,9 +17,9 @@ export const DeadlineExceededbyWeekTemplate = ({
     <div style={styles.container}>
       <p style={styles.greetings}>Hey {name},</p>
       <p style={styles.textWithMargin}>
-        The deadline for the <strong>{bountyName}</strong> bounty expired a week
-        ago. The participants of the bounty would be expecting the results to be
-        out soon — request you to publish the winners on Earn shortly!
+        It has been a week since the <strong>{bountyName}</strong> listing
+        expired. The participants would be expecting the results to be out soon
+        — request you to publish the winners on Earn shortly!
       </p>
       <p style={styles.textWithMargin}>
         <a href={link} style={styles.link}>
@@ -28,7 +28,7 @@ export const DeadlineExceededbyWeekTemplate = ({
         to review the submissions.
       </p>
       <p style={styles.salutation}>Best,</p>
-      <p style={styles.text}>The Superteam Earn Crew 🦸&zwj;♀️🦸&zwj;♂️</p>
+      <p style={styles.text}>Superteam Earn</p>
       <p style={styles.unsubscribe}>
         Click{' '}
         <a
