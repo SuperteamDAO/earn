@@ -12,7 +12,6 @@ import type { Bounty } from '@/interface/bounty';
 import type { SubmissionWithUser } from '@/interface/submission';
 import { Default } from '@/layouts/Default';
 import { Meta } from '@/layouts/Meta';
-import { Mixpanel } from '@/utils/mixpanel';
 
 import type { SponsorType } from '../../../../../interface/sponsor';
 
@@ -40,10 +39,6 @@ const Sumbissions = ({ slug, subid }: BountyDetailsProps) => {
 
       setBounty(bountyDetails.data.bounty);
       setSubmission(bountyDetails.data.submission);
-
-      Mixpanel.track('bounty_submission_page_load', {
-        'Bounty Title': bountyDetails.data.title,
-      });
     } catch (e) {
       setError(true);
     }

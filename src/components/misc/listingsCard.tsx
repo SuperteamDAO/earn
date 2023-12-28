@@ -23,9 +23,7 @@ import { tokenList } from '@/constants';
 import type { BountyStatus } from '@/interface/bounty';
 import type { Notifications } from '@/interface/user';
 import { dayjs } from '@/utils/dayjs';
-import { Mixpanel } from '@/utils/mixpanel';
 
-import { TalentStore } from '../../store/talent';
 import { userStore } from '../../store/user';
 import { EarningModal } from '../modals/earningModal';
 
@@ -113,11 +111,6 @@ export const ListingSection = ({
                 ? `/${type}/${router?.query?.filter}/`
                 : `/${type}/`)
             }
-            onClick={() => {
-              Mixpanel.track('view_all', {
-                type: title,
-              });
-            }}
           >
             <Button color="brand.slate.400" size="sm" variant="ghost">
               View All
@@ -138,11 +131,6 @@ export const ListingSection = ({
               ? `/${type}/${router?.query?.filter}/`
               : `/${type}/`)
           }
-          onClick={() => {
-            Mixpanel.track('view_all', {
-              type: title,
-            });
-          }}
         >
           <Button
             w="100%"
@@ -199,12 +187,6 @@ export const BountiesCard = ({
           bg: 'gray.100',
         }}
         href={`/listings/bounties/${slug}`}
-        onClick={() => {
-          Mixpanel.track('bounty_clicked', {
-            element: 'title',
-            'Bounty Title': title,
-          });
-        }}
       >
         <Flex
           align="center"
@@ -234,12 +216,6 @@ export const BountiesCard = ({
                 fontWeight={600}
                 _hover={{
                   textDecoration: 'underline',
-                }}
-                onClick={() => {
-                  Mixpanel.track('bounty_clicked', {
-                    element: 'title',
-                    'Bounty Title': title,
-                  });
                 }}
                 style={{
                   display: '-webkit-box',
@@ -362,12 +338,6 @@ export const GrantsCard = ({
           bg: 'gray.100',
         }}
         href={`/listings/grants/${slug}`}
-        onClick={() => {
-          Mixpanel.track('grant_clicked', {
-            element: 'title',
-            'Grant Title': title,
-          });
-        }}
       >
         <Flex
           align="center"
@@ -463,7 +433,7 @@ type CategoryAssetsType = {
 
 export const CategoryBanner = ({ type }: { type: string }) => {
   const { userInfo } = userStore();
-  const { talentInfo } = TalentStore();
+
   const [loading, setLoading] = useState(false);
   const [isSubscribed, setIsSubscribed] = useState<boolean>(false);
 
@@ -530,7 +500,6 @@ export const CategoryBanner = ({ type }: { type: string }) => {
 
     let updatedNotifications = [...(userInfo?.notifications ?? [])];
     let subscriptionMessage = '';
-    let eventName = '';
 
     if (!userInfo?.isTalentFilled) {
       onOpen();
@@ -543,21 +512,14 @@ export const CategoryBanner = ({ type }: { type: string }) => {
         (e) => e.label !== type
       );
       subscriptionMessage = "You've been unsubscribed from this category";
-      eventName = 'notification_removed';
       setIsSubscribed(false);
     } else {
       updatedNotifications.push({ label: type, timestamp: Date.now() });
       subscriptionMessage = "You've been subscribed to this category";
-      eventName = 'notification_added';
       setIsSubscribed(true);
     }
 
     await updateNotification(userInfo?.id as string, updatedNotifications);
-
-    Mixpanel.track(eventName, {
-      category: type,
-      name: `${talentInfo?.firstname} ${talentInfo?.lastname}`,
-    });
 
     setLoading(false);
     toast.success(subscriptionMessage);
