@@ -11,9 +11,7 @@
     "check-types": "tsc --noEmit --pretty",
     "prepare": "husky install",
     "postbuild": "next-sitemap",
-    "postinstall": "prisma generate",
-    "knip": "knip",
-    "find-deadcode": "ts-prune"
+    "postinstall": "prisma generate"
   },
   "dependencies": {
     "@bomdi/codebox": "^2.0.0",
@@ -105,12 +103,10 @@
     "eslint-plugin-simple-import-sort": "^9.0.0",
     "eslint-plugin-testing-library": "^5.9.1",
     "eslint-plugin-unused-imports": "^2.0.0",
-    "knip": "^3.9.0",
     "lint-staged": "^13.2.1",
     "prettier": "^2.8.3",
     "prettier-plugin-prisma": "^4.12.0",
     "prisma": "4.13.0",
-    "ts-prune": "^0.10.3",
     "typescript": "4.9.4"
   }
 }
