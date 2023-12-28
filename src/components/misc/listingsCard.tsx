@@ -13,6 +13,7 @@ import {
   useMediaQuery,
 } from '@chakra-ui/react';
 import type { BountyType } from '@prisma/client';
+import axios from 'axios';
 import { useRouter } from 'next/router';
 import { useEffect, useState } from 'react';
 import { toast, Toaster } from 'react-hot-toast';
@@ -20,10 +21,10 @@ import { TiTick } from 'react-icons/ti';
 
 import { tokenList } from '@/constants';
 import type { BountyStatus } from '@/interface/bounty';
+import type { Notifications } from '@/interface/user';
 import { dayjs } from '@/utils/dayjs';
 
 import { userStore } from '../../store/user';
-import { updateNotification } from '../../utils/functions';
 import { EarningModal } from '../modals/earningModal';
 
 type ListingSectionProps = {
@@ -470,6 +471,28 @@ export const CategoryBanner = ({ type }: { type: string }) => {
       color: '#000',
       icon: '/assets/category_assets/icon/solana_logo_green.svg',
     },
+  };
+
+  const updateNotification = async (
+    id: string,
+    notification: Notifications[]
+  ) => {
+    try {
+      const { data, status } = await axios.post(
+        `/api/user/updateNotification`,
+        {
+          id,
+          notification,
+        }
+      );
+      if (status !== 200) {
+        return null;
+      }
+      return data.data;
+    } catch (error) {
+      console.log(error);
+      return null;
+    }
   };
 
   const handleNotification = async () => {

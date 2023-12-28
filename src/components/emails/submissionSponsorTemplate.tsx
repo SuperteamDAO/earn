@@ -18,7 +18,7 @@ export const SubmissionSponsorTemplate = ({
       <p style={styles.greetings}>Hey {name},</p>
       <p style={styles.textWithMargin}>
         Your listing <strong>{bountyName}</strong> just received a submission on
-        Superteam Earn! &mdash;{' '}
+        Superteam Earn &mdash;{' '}
         <a href={link} style={styles.link}>
           check it out!
         </a>

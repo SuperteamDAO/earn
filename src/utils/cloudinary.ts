@@ -7,18 +7,6 @@ cloudinary.config({
   api_secret: process.env.CLOUDINARY_API_SECRET,
 });
 
-export const signUpload = async () => {
-  const timestamp = Math.round(Date.now() / 1000);
-  const params = {
-    timestamp,
-  };
-  const signature = await cloudinary.utils.api_sign_request(
-    params,
-    process.env.CLOUDINARY_API_SECRET
-  );
-  return { timestamp, signature };
-};
-
 export const csvUpload = async (
   file: any,
   fileName: string,

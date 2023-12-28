@@ -7,7 +7,7 @@ export const getDeadlineFromNow = (deadline: string | undefined) =>
 export const formatDeadline = (deadline: string | undefined) =>
   deadline ? dayjs(deadline).format('MMM D, YYYY HH:mm') : '-';
 
-export const isDeadlineOver = (deadline: string | undefined) =>
+const isDeadlineOver = (deadline: string | undefined) =>
   deadline ? dayjs().isAfter(dayjs(deadline)) : false;
 
 export const getBountyDraftStatus = (

@@ -13,7 +13,7 @@ const RPC_URL = process.env.NEXT_PUBLIC_PAYMENT_RPC_URL || '';
 
 export const connection = new anchor.web3.Connection(RPC_URL, 'confirmed');
 
-export const getProvider = (wallet: anchor.Wallet) => {
+const getProvider = (wallet: anchor.Wallet) => {
   const opts = {
     preflightCommitment: 'processed' as anchor.web3.ConfirmOptions,
   };
@@ -26,7 +26,7 @@ export const getProvider = (wallet: anchor.Wallet) => {
   return provider;
 };
 
-export const anchorProgram = (wallet: anchor.Wallet) => {
+const anchorProgram = (wallet: anchor.Wallet) => {
   const provider = getProvider(wallet);
   const idl = IDL as anchor.Idl;
   const program = new anchor.Program(
