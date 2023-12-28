@@ -57,17 +57,12 @@ type Skills = {
   subskills: SubSkillsType[];
 }[];
 
-interface SkillsProp {
-  mainskill: MainSkills;
-  subskills: SubSkillsType[];
-}
-
 type SkillMap = {
   mainskill: MainSkills;
   color: string;
 };
 
-export type { MainSkills, SkillMap, Skills, SkillsProp, SubSkillsType };
+export type { MainSkills, SkillMap, Skills, SubSkillsType };
 
 export const SkillList: {
   mainskill: MainSkills;

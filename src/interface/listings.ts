@@ -1,8 +1,9 @@
-import type { SkillsProp } from '@/interface/skills';
-
 import type { SponsorType } from './sponsor';
 import type { Talent } from './talent';
-import type { Listingtype, Prize, Source, SponsorStatus } from './types';
+
+type SponsorStatus = 'Unassigned' | 'Assigned';
+type Source = 'native' | 'manual';
+type Prize = 'first' | 'second' | 'third' | 'fourth' | 'fifth';
 
 type PrizeListType = {
   [key in Prize]: string;
@@ -62,42 +63,6 @@ interface Winner {
   prize: Prize;
 }
 
-interface GrantsBasicType {
-  title: string;
-  contact: string;
-  link: string;
-}
-interface GrantsType {
-  id: string;
-  title: string;
-  link: string;
-  description: string;
-  skills: string;
-  subSkills: String;
-  source: Source;
-  contact: string;
-  token: string;
-  active: boolean;
-  orgId: string;
-  maxSalary: number;
-  minSalary: number;
-}
-type Experience =
-  | '0 Yrs: Fresher/Graduate '
-  | '0-1 Yrs: Some Experience Required'
-  | '1-5 Yrs: Early Career Professional'
-  | '5-10 Yrs: Mid Career Professional'
-  | '10 Yrs+: Senior Professional';
-
-interface DraftType {
-  id?: string;
-  sponsorId?: string;
-  type?: Listingtype;
-  skills?: SkillsProp[];
-  basic?: string;
-  payments?: string;
-  question?: string;
-}
 interface SubmissionType {
   id: string;
   image: string;
@@ -116,14 +81,4 @@ interface SubscribeType {
   Talent?: Talent;
 }
 
-export type {
-  Bounties,
-  DraftType,
-  Experience,
-  GrantsBasicType,
-  GrantsType,
-  PrizeListType,
-  SubmissionType,
-  SubscribeType,
-  Winner,
-};
+export type { Bounties };

@@ -1,21 +1,6 @@
 // @ts-ignore
 import base32 from 'base32.js';
 import Crypto from 'crypto-js';
-import { nanoid } from 'nanoid';
-import { v4 as uuidV4 } from 'uuid';
-
-export const truncatedPublicKey = (publicKey: string, length: number = 5) => {
-  if (!publicKey) return null;
-  return publicKey?.replace(publicKey.slice(length, 44 - length), '...');
-};
-export const genrateNanoid = () => {
-  const id = nanoid();
-  return id;
-};
-export const genrateuuid = () => {
-  const id = uuidV4();
-  return id;
-};
 
 export const generateCode = (seed: string | undefined, time: number) => {
   const message = Math.floor(time / 5000);

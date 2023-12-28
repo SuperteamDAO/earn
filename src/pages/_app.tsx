@@ -1,17 +1,9 @@
-import 'slick-carousel/slick/slick.css';
-import 'slick-carousel/slick/slick-theme.css';
 // Styles
 import 'degen/styles';
 import 'nprogress/nprogress.css';
 import '../styles/globals.scss';
 
 import { ChakraProvider } from '@chakra-ui/react';
-import {
-  Hydrate,
-  QueryClient,
-  QueryClientProvider,
-} from '@tanstack/react-query';
-import { ReactQueryDevtools } from '@tanstack/react-query-devtools';
 import type { AppProps } from 'next/app';
 // Fonts
 import { Domine, JetBrains_Mono } from 'next/font/google';
@@ -91,7 +83,6 @@ if (typeof window !== 'undefined') {
 }
 
 function MyApp({ Component, pageProps }: AppProps) {
-  const queryClient = new QueryClient();
   Router.events.on('routeChangeStart', () => NProgress.start());
   Router.events.on('routeChangeComplete', () => NProgress.done());
   Router.events.on('routeChangeError', () => NProgress.done());
@@ -109,14 +100,9 @@ function MyApp({ Component, pageProps }: AppProps) {
       </style>
       <ChakraProvider theme={extendThemeWithNextFonts}>
         <Wallet>
-          <QueryClientProvider client={queryClient}>
-            <Hydrate state={pageProps.dehydratedState}>
-              <PostHogProvider client={posthog}>
-                <ReactQueryDevtools initialIsOpen={false} />
-                <Component {...pageProps} />
-              </PostHogProvider>
-            </Hydrate>
-          </QueryClientProvider>
+          <PostHogProvider client={posthog}>
+            <Component {...pageProps} />
+          </PostHogProvider>
         </Wallet>
       </ChakraProvider>
     </>

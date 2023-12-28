@@ -73,7 +73,6 @@ const Grants = ({ slug }: GrantsDetailsProps) => {
         {!isLoading && !error && !!grants?.id && (
           <>
             <ListingHeader
-              id={grants?.id}
               title={grants?.title ?? ''}
               sponsor={grants?.sponsor as SponsorType}
               eligibility="permission-less"
