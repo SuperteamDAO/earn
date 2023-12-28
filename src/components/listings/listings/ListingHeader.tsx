@@ -1,6 +1,5 @@
 /* eslint-disable no-nested-ternary */
 import {
-  Box,
   Button,
   Heading,
   HStack,
@@ -9,25 +8,11 @@ import {
   useDisclosure,
   VStack,
 } from '@chakra-ui/react';
-import { useMutation, useQueryClient } from '@tanstack/react-query';
 import moment from 'moment';
 import { useRouter } from 'next/router';
 import React from 'react';
-import toast from 'react-hot-toast';
-import { BsBell } from 'react-icons/bs';
-import { TbBellRinging } from 'react-icons/tb';
 
-import { Mixpanel } from '@/utils/mixpanel';
-
-import type { SubscribeType } from '../../../interface/listings';
 import type { SponsorType } from '../../../interface/sponsor';
-import { TalentStore } from '../../../store/talent';
-import { userStore } from '../../../store/user';
-import {
-  createSubscription,
-  removeSubscription,
-} from '../../../utils/functions';
-import { genrateuuid } from '../../../utils/helpers';
 import { CreateProfileModal } from '../../modals/createProfile';
 
 type Eligibility = 'permission' | 'permission-less';
@@ -36,8 +21,6 @@ interface Props {
   sponsor: SponsorType;
   title: string;
   tabs: boolean;
-  id?: string;
-  sub?: SubscribeType[];
   endTime?: string;
   eligibility: Eligibility;
 }
@@ -45,33 +28,11 @@ export const ListingHeader = ({
   sponsor,
   title,
   tabs,
-  id,
-  sub,
   endTime,
   eligibility,
 }: Props) => {
   const router = useRouter();
-  const queryClient = useQueryClient();
-
-  const { userInfo } = userStore();
-  const { talentInfo } = TalentStore();
-  const { isOpen, onClose, onOpen } = useDisclosure();
-  const subMutation = useMutation({
-    mutationFn: createSubscription,
-    mutationKey: ['subscribe'],
-    onSuccess: () => {
-      queryClient.invalidateQueries(['bounties', router.query.id ?? '']);
-      toast.success('Alerts For Bounty Is Active');
-    },
-  });
-  const subDeleteMutation = useMutation({
-    mutationFn: removeSubscription,
-    mutationKey: ['subscribe', 'delete'],
-    onSuccess: () => {
-      queryClient.invalidateQueries(['bounties', router.query.id ?? '']);
-      toast.success('Alerts For Bounty Is Active');
-    },
-  });
+  const { isOpen, onClose } = useDisclosure();
   return (
     <>
       {isOpen && <CreateProfileModal isOpen={isOpen} onClose={onClose} />}
@@ -147,99 +108,6 @@ export const ListingHeader = ({
               </HStack>
             </VStack>
           </HStack>
-          {router.asPath.includes('bounties') && (
-            <HStack>
-              <HStack align="start" px={[3, 3, 0, 0]}>
-                {sub?.filter((e) => e.talentId === (talentInfo?.id as string))
-                  ?.length! > 0 ? (
-                  <Button
-                    bg="#F7FAFC"
-                    isLoading={subDeleteMutation.isLoading}
-                    onClick={() => {
-                      Mixpanel.track('notification_remove_listing', {
-                        title,
-                        name: `${talentInfo?.firstname} ${talentInfo?.lastname}`,
-                      });
-                      subDeleteMutation.mutate(
-                        sub?.filter(
-                          (e) => e?.talentId === (talentInfo?.id as string)
-                        )[0]?.id as string
-                      );
-                    }}
-                  >
-                    <TbBellRinging color="rgb(107 114 128)" />
-                  </Button>
-                ) : (
-                  <Button
-                    bg="gray.50"
-                    isLoading={subMutation.isLoading}
-                    onClick={() => {
-                      if (!userInfo?.talent) {
-                        onOpen();
-                      }
-
-                      subMutation.mutate({
-                        bountiesId: id as string,
-                        talentId: talentInfo?.id as string,
-                        id: genrateuuid(),
-                      });
-                      Mixpanel.track('notification_added_listing', {
-                        title,
-                        name: `${talentInfo?.firstname} ${talentInfo?.lastname}`,
-                      });
-                    }}
-                  >
-                    <BsBell color="rgb(107 114 128)" />
-                  </Button>
-                )}
-              </HStack>
-              <HStack>
-                <HStack
-                  pos={'relative'}
-                  align={'center'}
-                  justify={'center'}
-                  display={sub?.length! === 0 ? 'none' : 'flex'}
-                  w={'3rem'}
-                >
-                  {sub?.slice(0, 3).map((e, index) => {
-                    return (
-                      <Box
-                        key={e.id}
-                        pos={'absolute'}
-                        left={index}
-                        marginInlineStart={1}
-                      >
-                        <Image
-                          w={8}
-                          h={8}
-                          objectFit={'contain'}
-                          alt={e.Talent?.username}
-                          rounded={'full'}
-                          src={e.Talent?.avatar}
-                        />
-                      </Box>
-                    );
-                  })}
-                </HStack>
-                <VStack align={'start'} gap={0}>
-                  <Text color={'#000000'} fontSize={'md'} fontWeight={500}>
-                    {sub?.length ? sub.length + 1 : 1}
-                  </Text>
-                  <Text
-                    mt={'0px !important'}
-                    color={'gray.500'}
-                    fontSize={'md'}
-                    fontWeight={500}
-                  >
-                    {(sub?.length ? sub.length + 1 : 1) === 1
-                      ? 'Person'
-                      : 'People'}{' '}
-                    Interested
-                  </Text>
-                </VStack>
-              </HStack>
-            </HStack>
-          )}
         </VStack>
         <HStack w="full" maxW={'7xl'} h={'max'} px={[3, 3, 0, 0]}>
           <Button

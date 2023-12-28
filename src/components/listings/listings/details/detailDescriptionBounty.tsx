@@ -3,8 +3,8 @@ import type { HTMLReactParserOptions } from 'html-react-parser';
 import parse from 'html-react-parser';
 import React from 'react';
 
+import { skillMap } from '@/constants';
 import type { MainSkills } from '@/interface/skills';
-import { skillMap } from '@/utils/constants';
 
 interface Props {
   skills?: MainSkills[];

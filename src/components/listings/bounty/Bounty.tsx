@@ -11,13 +11,11 @@ import type {
   Ques,
   QuestionType,
 } from '@/components/listings/bounty/questions/builder';
-import { CreateGrants } from '@/components/listings/grants/CreateGrants';
 import Template from '@/components/listings/templates/template';
 import { SuccessListings } from '@/components/modals/successListings';
 import ErrorSection from '@/components/shared/ErrorSection';
 import { type MultiSelectOptions, tokenList } from '@/constants';
 import type { Bounty, References } from '@/interface/bounty';
-import type { GrantsBasicType } from '@/interface/listings';
 import FormLayout from '@/layouts/FormLayout';
 import { userStore } from '@/store/user';
 import { getBountyDraftStatus } from '@/utils/bounty';
@@ -100,8 +98,6 @@ function CreateListing({ bounty, isEditMode = false, type }: Props) {
     token: isEditMode ? bounty?.token : tokenList[0]?.tokenSymbol,
     rewards: isEditMode ? bounty?.rewards || undefined : undefined,
   });
-  // -- Grants
-  const [grantBasic, setgrantsBasic] = useState<GrantsBasicType | undefined>();
 
   const [isListingPublishing, setIsListingPublishing] =
     useState<boolean>(false);
@@ -330,23 +326,6 @@ function CreateListing({ bounty, isEditMode = false, type }: Props) {
               steps={steps}
               isEditMode={isEditMode}
               isNewOrDraft={isNewOrDraft}
-            />
-          )}
-          {steps > 1 && listingType === 'GRANT' && (
-            <CreateGrants
-              createDraft={createDraft}
-              onOpen={onOpen}
-              setSlug={setSlug}
-              grantBasic={grantBasic}
-              setGrantBasic={setgrantsBasic}
-              setSubSkills={setSubSkill}
-              subSkills={subSkill}
-              setMainSkills={setMainSkills}
-              mainSkills={mainSkills}
-              editorData={editorData}
-              setEditorData={setEditorData}
-              setSteps={setSteps}
-              steps={steps}
             />
           )}
           <Toaster />

@@ -1,13 +1,13 @@
 import type { Skills } from '@/interface/skills';
 
-export interface AboutYouType {
+interface AboutYouType {
   bio: string;
   username: string;
   location: string;
   photo: string;
 }
 
-export interface WorkType {
+interface WorkType {
   experience: string;
   cryptoExperience: string;
   currentEmployer: string;
@@ -19,7 +19,7 @@ export interface WorkType {
   private: boolean;
 }
 
-export interface LinksType {
+interface LinksType {
   discord: string;
   twitter: string;
   github: string;
