@@ -69,7 +69,6 @@
     "next": "13.5",
     "next-seo": "^6.0.0",
     "next-sitemap": "^4.0.7",
-    "nprogress": "^0.2.0",
     "open-graph-scraper": "^5.1.1",
     "posthog-js": "^1.93.5",
     "react": "18.2.0",
@@ -96,7 +95,6 @@
   "devDependencies": {
     "@types/mixpanel-browser": "^2.38.1",
     "@types/node": "18.11.18",
-    "@types/nprogress": "^0.2.0",
     "@types/react": "18.0.15",
     "@types/react-dom": "18.0.6",
     "@types/react-slick": "^0.23.10",

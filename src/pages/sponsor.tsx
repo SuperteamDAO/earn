@@ -13,7 +13,6 @@ import axios from 'axios';
 import Head from 'next/head';
 import type { ImageProps } from 'next/image';
 import Image from 'next/image';
-import { useRouter } from 'next/router';
 import { useEffect, useState } from 'react';
 
 import DialectDisplay from '@/public/assets/landingsponsor/displays/chatwithdialect.png';
@@ -61,7 +60,7 @@ const HighQualityImage: React.FC<HighQualityImageProps> = ({
 const Sponsor = () => {
   const [isLargerThan12800px] = useMediaQuery('(min-width: 80rem)');
   const [isLessThan600px] = useMediaQuery('(max-width: 600px)');
-  const router = useRouter();
+
   const [navbarBg, setNavbarBg] = useState<boolean>(false);
   const [videoPopup, setVideoPopup] = useState<boolean>(false);
   const [totals, setTotals] = useState<Totals | null>(null);
@@ -799,16 +798,11 @@ const Sponsor = () => {
         p="0.625rem"
         bg={navbarBg ? 'white' : 'transparent'}
       >
-        <Box
-          minW={'0.8125rem'}
-          h="0.8125rem"
-          onClick={() => {
-            router.push('/');
-          }}
-        >
-          <img src="/assets/logo/new-logo.svg" alt="Superteam Earn Logo" />
-        </Box>
-
+        <Link href="/">
+          <Box minW={'0.8125rem'} h="0.8125rem">
+            <img src="/assets/logo/new-logo.svg" alt="Superteam Earn Logo" />
+          </Box>
+        </Link>
         <Flex
           gap="1.875rem"
           color="gray.500"
