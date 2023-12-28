@@ -6,6 +6,8 @@ import 'nprogress/nprogress.css';
 import '../styles/globals.scss';
 
 import { ChakraProvider } from '@chakra-ui/react';
+// @ts-ignore
+import { GoogleTagManager } from '@next/third-parties/google';
 import {
   Hydrate,
   QueryClient,
@@ -17,12 +19,14 @@ import type { AppProps } from 'next/app';
 import { Domine, JetBrains_Mono } from 'next/font/google';
 import localFont from 'next/font/local';
 import { Router } from 'next/router';
+import Script from 'next/script';
 import NProgress from 'nprogress';
 import posthog from 'posthog-js';
 import { PostHogProvider } from 'posthog-js/react';
 
 import theme from '../config/chakra.config';
 import { Wallet } from '../context/connectWalletContext';
+
 // importing localFont from a local file as Google imported fonts do not enable font-feature-settings. Reference: https://github.com/vercel/next.js/discussions/52456
 const fontSans = localFont({
   src: [
@@ -80,16 +84,6 @@ const extendThemeWithNextFonts = {
   },
 };
 
-if (typeof window !== 'undefined') {
-  posthog.init(process.env.NEXT_PUBLIC_POSTHOG_KEY!, {
-    api_host: process.env.NEXT_PUBLIC_POSTHOG_HOST || 'https://app.posthog.com',
-    // eslint-disable-next-line @typescript-eslint/no-shadow
-    loaded: (posthog) => {
-      if (process.env.NODE_ENV === 'development') posthog.debug();
-    },
-  });
-}
-
 function MyApp({ Component, pageProps }: AppProps) {
   const queryClient = new QueryClient();
   Router.events.on('routeChangeStart', () => NProgress.start());
@@ -119,6 +113,27 @@ function MyApp({ Component, pageProps }: AppProps) {
           </QueryClientProvider>
         </Wallet>
       </ChakraProvider>
+      <GoogleTagManager gtmId={process.env.NEXT_PUBLIC_GA_TRACKING_ID} />
+      <Script
+        id="posthog-init"
+        dangerouslySetInnerHTML={{
+          __html: `
+            if (typeof window !== 'undefined') {
+              posthog.init('${process.env.NEXT_PUBLIC_POSTHOG_KEY}', {
+                api_host: '${
+                  process.env.NEXT_PUBLIC_POSTHOG_HOST ||
+                  'https://app.posthog.com'
+                }',
+                loaded: (posthog) => {
+                  if (process.env.NODE_ENV === 'development') {
+                    posthog.debug();
+                  }
+                }
+              });
+            }
+          `,
+        }}
+      />
     </>
   );
 }
