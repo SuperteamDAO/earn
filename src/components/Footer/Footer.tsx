@@ -87,9 +87,9 @@ export default function LargeWithNewsletter() {
               <Logo color={'brand.slate.500'} />
             </Box>
             <Text color="brand.slate.500">
-              Superteam Earn is where crypto founders find world class talent
-              for their projects. Post bounties, meet your next team member &
-              get things done fast. <br />
+              Superteam Earn is where crypto founders meet world-class talent.
+              Distribute your work to crypto-native talent, meet your next team
+              member & get things done fast. <br />
               <br />© 2023 Superteam. All rights reserved.
             </Text>
             <Stack direction={'row'} spacing={6}>
