@@ -63,7 +63,6 @@
     "immer": "^9.0.19",
     "jotai": "^2.3.1",
     "lodash.debounce": "^4.0.8",
-    "mixpanel-browser": "^2.47.0",
     "moment": "^2.29.4",
     "nanoid": "^4.0.2",
     "next": "13.5",
@@ -94,7 +93,6 @@
     "zustand": "^4.3.2"
   },
   "devDependencies": {
-    "@types/mixpanel-browser": "^2.38.1",
     "@types/node": "18.11.18",
     "@types/nprogress": "^0.2.0",
     "@types/react": "18.0.15",

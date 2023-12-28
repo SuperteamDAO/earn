@@ -17,8 +17,6 @@ import toast from 'react-hot-toast';
 import { BsBell } from 'react-icons/bs';
 import { TbBellRinging } from 'react-icons/tb';
 
-import { Mixpanel } from '@/utils/mixpanel';
-
 import type { SubscribeType } from '../../../interface/listings';
 import type { SponsorType } from '../../../interface/sponsor';
 import { TalentStore } from '../../../store/talent';
@@ -156,10 +154,6 @@ export const ListingHeader = ({
                     bg="#F7FAFC"
                     isLoading={subDeleteMutation.isLoading}
                     onClick={() => {
-                      Mixpanel.track('notification_remove_listing', {
-                        title,
-                        name: `${talentInfo?.firstname} ${talentInfo?.lastname}`,
-                      });
                       subDeleteMutation.mutate(
                         sub?.filter(
                           (e) => e?.talentId === (talentInfo?.id as string)
@@ -182,10 +176,6 @@ export const ListingHeader = ({
                         bountiesId: id as string,
                         talentId: talentInfo?.id as string,
                         id: genrateuuid(),
-                      });
-                      Mixpanel.track('notification_added_listing', {
-                        title,
-                        name: `${talentInfo?.firstname} ${talentInfo?.lastname}`,
                       });
                     }}
                   >

@@ -14,7 +14,6 @@ import Loading from '@/components/shared/Loading';
 import type { Bounty } from '@/interface/bounty';
 import type { Grant } from '@/interface/grant';
 import Home from '@/layouts/Home';
-import { Mixpanel } from '@/utils/mixpanel';
 
 interface Listings {
   bounties?: Bounty[];
@@ -64,9 +63,6 @@ const HomePage: NextPage = () => {
 
   const [activeTab, setActiveTab] = useState<string>(tabs[0]!.id);
 
-  useEffect(() => {
-    Mixpanel.track('home_page_load');
-  }, []);
   return (
     <Home type="home">
       <Box w={'100%'}>
@@ -138,12 +134,7 @@ const HomePage: NextPage = () => {
               ))}
             </Flex>
             <Flex>
-              <Link
-                href={'/all'}
-                onClick={() => {
-                  Mixpanel.track('view_all', {});
-                }}
-              >
+              <Link href={'/all'}>
                 <Button
                   px={2}
                   py={1}
@@ -159,12 +150,7 @@ const HomePage: NextPage = () => {
           </HStack>
 
           {tabs.map((tab) => tab.id === activeTab && tab.content)}
-          <Link
-            href={'/all'}
-            onClick={() => {
-              Mixpanel.track('view_all', {});
-            }}
-          >
+          <Link href={'/all'}>
             <Button
               w="100%"
               my={8}

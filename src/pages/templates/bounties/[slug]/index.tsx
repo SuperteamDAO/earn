@@ -11,7 +11,6 @@ import ErrorSection from '@/components/shared/ErrorSection';
 import LoadingSection from '@/components/shared/LoadingSection';
 import { Default } from '@/layouts/Default';
 import { Meta } from '@/layouts/Meta';
-import { Mixpanel } from '@/utils/mixpanel';
 
 interface BountyDetailsProps {
   slug: string;
@@ -27,10 +26,6 @@ function BountyDetails({ slug }: BountyDetailsProps) {
     try {
       const bountyDetails = await axios.get(`/api/bountiesTemplates/${slug}/`);
       setBounty(bountyDetails.data);
-
-      Mixpanel.track('bounty_template_page_load', {
-        'Template Title': bountyDetails.data.title,
-      });
     } catch (e) {
       setError(true);
     }
