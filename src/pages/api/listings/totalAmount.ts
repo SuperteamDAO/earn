@@ -70,21 +70,7 @@ async function handler(_req: NextApiRequest, res: NextApiResponse) {
 
     const bounties = await prisma.bounties.findMany({
       where: {
-        OR: [
-          {
-            status: 'CLOSED',
-          },
-          {
-            AND: [
-              {
-                status: 'OPEN',
-              },
-              {
-                isWinnersAnnounced: true,
-              },
-            ],
-          },
-        ],
+        isWinnersAnnounced: true,
       },
       select: {
         rewardAmount: true,
