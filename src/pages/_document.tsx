@@ -26,6 +26,17 @@ export default function Document() {
           `,
           }}
         />
+        <Script
+          id="posthog-init"
+          strategy="afterInteractive"
+          dangerouslySetInnerHTML={{
+            __html: `
+      if (typeof window !== 'undefined' && !window.location.host.includes('127.0.0.1') && !window.location.host.includes('localhost')) {
+        posthog.init('${process.env.NEXT_PUBLIC_POSTHOG_KEY}', { api_host: '${process.env.NEXT_PUBLIC_POSTHOG_HOST}' });
+      }
+    `,
+          }}
+        />
       </body>
     </Html>
   );
