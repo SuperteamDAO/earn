@@ -126,7 +126,7 @@ function PublishResults({
             totalWinners === rewards?.length &&
             alertType !== 'error' && (
               <Text mb={4}>
-                Publishing the results of this bounty will make the results
+                Publishing the results of this listing will make the results
                 public for everyone to see!
                 <br />
                 YOU CAN&apos;T GO BACK ONCE YOU PUBLISH THE RESULTS!
@@ -148,10 +148,10 @@ function PublishResults({
               <Alert mt={4} status="error">
                 <AlertIcon boxSize={8} />
                 <Box>
-                  <AlertTitle>Bounty still in progress!</AlertTitle>
+                  <AlertTitle>Listing still in progress!</AlertTitle>
                   <AlertDescription>
-                    If you publish the results before the deadline has passed,
-                    the bounty will get closed.
+                    If you publish the results before the deadline, the listing
+                    will close since the winner(s) will have been announced.
                   </AlertDescription>
                 </Box>
               </Alert>

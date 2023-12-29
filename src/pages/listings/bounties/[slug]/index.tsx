@@ -142,7 +142,6 @@ function BountyDetails({ bounty: initialBounty }: BountyDetailsProps) {
                   <Comments refId={bounty?.id ?? ''} refType="BOUNTY" />
                 </VStack>
                 <DetailSideCard
-                  bountytitle={bounty.title ?? ''}
                   id={bounty?.id || ''}
                   token={bounty?.token ?? ''}
                   eligibility={bounty?.eligibility}

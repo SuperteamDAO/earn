@@ -22,25 +22,19 @@ export default async function submission(
       id: string;
       date: number;
     }[];
-    console.log(result?.like, resLikes, 'up');
 
     if (resLikes?.length > 0) {
-      console.log(resLikes, '--resLikes');
       const like = resLikes.find((e) => e?.id === userId);
-      console.log(like, '--like');
 
       if (like) {
         const temp: any[] = [];
         resLikes.forEach((e) => {
-          console.log(e, '--e');
-
           if (e.id !== userId) {
             temp.push(e);
           }
         });
         newLikes = temp;
       } else {
-        console.log('--t');
         newLikes = [
           ...resLikes,
           {
@@ -50,7 +44,6 @@ export default async function submission(
         ];
       }
     } else {
-      console.log('new');
       newLikes = [
         {
           id: userId,

@@ -4,8 +4,8 @@ import parse from 'html-react-parser';
 import React, { useState } from 'react';
 import { BiDownArrowAlt, BiUpArrowAlt } from 'react-icons/bi';
 
+import { skillMap } from '@/constants';
 import type { MainSkills } from '@/interface/skills';
-import { skillMap } from '@/utils/constants';
 
 interface Props {
   skills?: MainSkills[];

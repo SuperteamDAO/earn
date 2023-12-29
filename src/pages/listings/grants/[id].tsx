@@ -20,7 +20,6 @@ import type { Grant } from '@/interface/grant';
 import type { SponsorType } from '@/interface/sponsor';
 import { Default } from '@/layouts/Default';
 import { Meta } from '@/layouts/Meta';
-import { Mixpanel } from '@/utils/mixpanel';
 
 interface GrantsDetailsProps {
   slug: string;
@@ -28,7 +27,6 @@ interface GrantsDetailsProps {
 
 const Grants = ({ slug }: GrantsDetailsProps) => {
   const [grants, setGrants] = useState<Grant | null>(null);
-  console.log(slug);
 
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState(false);
@@ -37,13 +35,8 @@ const Grants = ({ slug }: GrantsDetailsProps) => {
     setIsLoading(true);
     try {
       const grantsDetails = await axios.get(`/api/grants/${slug}/`);
-      console.log(grantsDetails.data);
 
       setGrants(grantsDetails.data);
-
-      Mixpanel.track('grant_page_load', {
-        'Grant Title': grantsDetails.data.title,
-      });
     } catch (e) {
       setError(true);
     }
@@ -73,7 +66,6 @@ const Grants = ({ slug }: GrantsDetailsProps) => {
         {!isLoading && !error && !!grants?.id && (
           <>
             <ListingHeader
-              id={grants?.id}
               title={grants?.title ?? ''}
               sponsor={grants?.sponsor as SponsorType}
               eligibility="permission-less"
@@ -138,11 +130,6 @@ const Grants = ({ slug }: GrantsDetailsProps) => {
                     }}
                     href={grants?.link}
                     isExternal
-                    onClick={() => {
-                      Mixpanel.track('grant_submit_click', {
-                        'Grant Title': grants?.title,
-                      });
-                    }}
                     size="lg"
                     variant="solid"
                   >

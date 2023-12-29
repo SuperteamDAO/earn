@@ -12,7 +12,6 @@ import { unstable_getImgProps as getImgProps } from 'next/image';
 import React, { useEffect, useState } from 'react';
 
 import { userStore } from '@/store/user';
-import { Mixpanel } from '@/utils/mixpanel';
 
 interface BannerProps {
   setTriggerLogin: (arg0: boolean) => void;
@@ -126,7 +125,6 @@ export default function HomeBanner({ setTriggerLogin }: BannerProps) {
             fontSize={'0.875rem'}
             bg={'white'}
             onClick={() => {
-              Mixpanel.track('sign_up_clicked');
               handleSubmit();
             }}
           >

@@ -9,7 +9,6 @@ export default async function user(req: NextApiRequest, res: NextApiResponse) {
       id: string;
       notification: Prisma.InputJsonArray | undefined;
     };
-    console.log(notification?.length! > 0 ? notification : undefined);
     const result = await prisma.user.update({
       where: {
         id: id as string,

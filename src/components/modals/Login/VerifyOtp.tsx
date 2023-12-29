@@ -15,7 +15,6 @@ import { useState } from 'react';
 
 import type { User } from '@/interface/user';
 import { userStore } from '@/store/user';
-import { Mixpanel } from '@/utils/mixpanel';
 
 interface Props {
   userInfo: User | null;
@@ -52,7 +51,7 @@ function VerifyOTP({ userInfo, onClose, inviteInfo, otp }: Props) {
           memberType: inviteInfo?.memberType,
         });
         setUserInfo(userUpdtedDetails?.data);
-        Mixpanel.track('new_user_created');
+
         router.push(inviteInfo?.emailInvite ? '/dashboard/bounties' : '/new');
         onClose();
       } else {
@@ -74,7 +73,6 @@ function VerifyOTP({ userInfo, onClose, inviteInfo, otp }: Props) {
         <form
           onSubmit={(e) => {
             verifyOTP(e);
-            Mixpanel.track('new_user_created');
           }}
         >
           <FormControl mb={4} id="email" isRequired>

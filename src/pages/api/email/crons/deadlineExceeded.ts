@@ -78,20 +78,11 @@ async function handler(_req: NextApiRequest, res: NextApiResponse) {
       return bounty.id;
     });
 
-    const emailResults = await rateLimitedPromiseAll(
+    await rateLimitedPromiseAll(
       emailPromises,
       9,
       (emailPromise) => emailPromise
     );
-
-    const sentBountyIds = emailResults.filter(
-      (sentBountyId) => sentBountyId !== null
-    );
-
-    if (sentBountyIds.length > 0) {
-      console.log('Sent emails for bounties:', sentBountyIds);
-    }
-
     return res.status(200).json({ message: 'Ok' });
   } catch (e) {
     console.error(e);

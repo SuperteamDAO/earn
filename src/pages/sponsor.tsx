@@ -9,11 +9,9 @@ import {
   Text,
   useMediaQuery,
 } from '@chakra-ui/react';
-import axios from 'axios';
 import Head from 'next/head';
 import type { ImageProps } from 'next/image';
 import Image from 'next/image';
-import { useRouter } from 'next/router';
 import { useEffect, useState } from 'react';
 
 import DialectDisplay from '@/public/assets/landingsponsor/displays/chatwithdialect.png';
@@ -61,7 +59,7 @@ const HighQualityImage: React.FC<HighQualityImageProps> = ({
 const Sponsor = () => {
   const [isLargerThan12800px] = useMediaQuery('(min-width: 80rem)');
   const [isLessThan600px] = useMediaQuery('(max-width: 600px)');
-  const router = useRouter();
+
   const [navbarBg, setNavbarBg] = useState<boolean>(false);
   const [videoPopup, setVideoPopup] = useState<boolean>(false);
   const [totals, setTotals] = useState<Totals | null>(null);
@@ -74,17 +72,25 @@ const Sponsor = () => {
     }
   };
 
-  useEffect(() => {
-    const fetchTotals = async () => {
-      try {
-        const response = await axios.get('/api/listings/stats/');
-        setTotals(response.data);
-        console.log(totals);
-      } catch (err) {
-        console.log(err);
-      }
-    };
+  const fetchTotals = async () => {
+    try {
+      // Using Next.js's fetch with time-based revalidation for 6 hours (21600 seconds)
+      const response = await fetch('/api/listings/stats/', {
+        next: { revalidate: 21600 },
+      });
 
+      if (!response.ok) {
+        throw new Error('Failed to fetch data');
+      }
+
+      const data = await response.json();
+      setTotals(data);
+    } catch (err) {
+      console.log(err);
+    }
+  };
+
+  useEffect(() => {
     fetchTotals();
   }, []);
 
@@ -223,7 +229,7 @@ const Sponsor = () => {
                 borderBottom="0.0625rem dashed"
                 cursor="pointer"
               >
-                Get a Bounty Strategy Session
+                Get Help For Adding Your Listing
               </Text>
             </Link>
           </Flex>
@@ -509,7 +515,7 @@ const Sponsor = () => {
               20+
             </Text>
             <Text color="gray.500" fontSize="1.25rem" fontWeight={600}>
-              Submissions Per Bounty
+              Submissions Per Listing
             </Text>
           </Box>
         </Flex>
@@ -750,7 +756,7 @@ const Sponsor = () => {
                     borderBottom="0.0625rem dashed"
                     cursor="pointer"
                   >
-                    Get a Bounty Strategy Session
+                    Get Help For Adding Your Listing
                   </Text>
                 </Link>
               </Flex>
@@ -799,25 +805,20 @@ const Sponsor = () => {
         p="0.625rem"
         bg={navbarBg ? 'white' : 'transparent'}
       >
-        <Box
-          minW={'0.8125rem'}
-          h="0.8125rem"
-          onClick={() => {
-            router.push('/');
-          }}
-        >
-          <img src="/assets/logo/new-logo.svg" alt="Superteam Earn Logo" />
-        </Box>
-
+        <Link href="/">
+          <Box minW={'0.8125rem'} h="0.8125rem">
+            <img src="/assets/logo/new-logo.svg" alt="Superteam Earn Logo" />
+          </Box>
+        </Link>
         <Flex
           gap="1.875rem"
           color="gray.500"
           fontSize={!isLessThan600px ? '0.8125rem' : '0.4rem'}
           fontWeight="400"
         >
-          <Link href="https://earn.superteam.fun/bounties">Bounties</Link>
+          <Link href="https://earn.superteam.fun/bounties">Listings</Link>
           <Link href="https://airtable.com/shrmOAXpF2vhONYqe">
-            Get a Bounty Strategy Session
+            Get Help For Adding Your Listing
           </Link>
         </Flex>
 

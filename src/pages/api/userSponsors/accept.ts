@@ -7,14 +7,12 @@ export default async function accept(
   res: NextApiResponse
 ) {
   const { inviteId, userId = '' } = req.body;
-  console.log('file: accept.ts:10 ~ inviteId:', inviteId);
   try {
     const userInvite = await prisma.userInvites.findUnique({
       where: {
         id: inviteId,
       },
     });
-    console.log('file: accept.ts:17 ~ userInvite:', userInvite);
     await prisma.userSponsors.create({
       data: {
         userId,

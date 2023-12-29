@@ -48,7 +48,6 @@ interface Props {
   questions?: string;
   eligibility?: Eligibility[];
   type?: BountyType | string;
-  bountytitle: string;
   requirements?: string;
   isWinnersAnnounced?: boolean;
   hackathonPrize?: boolean;
@@ -66,7 +65,6 @@ function DetailSideCard({
   token,
   eligibility,
   applicationLink,
-  bountytitle,
   requirements,
   type,
   pocSocials,
@@ -204,7 +202,6 @@ function DetailSideCard({
           submissionNumber={submissionNumber}
           setSubmissionNumber={setSubmissionNumber}
           setIsSubmitted={setIsSubmitted}
-          bountytitle={bountytitle}
         />
       )}
       {warningIsOpen && (
@@ -461,7 +458,7 @@ function DetailSideCard({
             </Text>
             <Text color={'#94A3B8'} fontSize="1rem" fontWeight={400}>
               {type === 'permissioned'
-                ? "Don't start working just yet! Apply first, and then you'll be notified if you're selected to work on this bounty."
+                ? "Don't start working just yet! Apply first, and then you'll be notified if you're selected to work on this Project."
                 : 'This is an open competition bounty! Anyone can start working and submit their work before the deadline!'}
             </Text>
           </VStack>

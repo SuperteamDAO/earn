@@ -11,7 +11,6 @@ import type { Bounty } from '@/interface/bounty';
 import type { SubmissionWithUser } from '@/interface/submission';
 import { Default } from '@/layouts/Default';
 import { Meta } from '@/layouts/Meta';
-import { Mixpanel } from '@/utils/mixpanel';
 
 const SubmissionPage = ({ slug }: { slug: string }) => {
   const [bounty, setBounty] = useState<Bounty | null>(null);
@@ -26,10 +25,6 @@ const SubmissionPage = ({ slug }: { slug: string }) => {
       const bountyDetails = await axios.get(`/api/bounties/submission/${slug}`);
       setBounty(bountyDetails.data.bounty);
       setSubmission(bountyDetails.data.submission);
-
-      Mixpanel.track('bounty_submission_individual_page_load', {
-        'Bounty Title': bountyDetails.data.title,
-      });
     } catch (e) {
       setError(true);
     }

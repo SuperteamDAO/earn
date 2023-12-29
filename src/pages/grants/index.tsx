@@ -86,7 +86,6 @@ function Grants() {
     setIsLoading(true);
     try {
       const grantsData = await axios.get('/api/grants');
-      console.log('file: grants.tsx:74 ~ getGrants ~ grantsData:', grantsData);
       setGrants(grantsData.data);
     } catch (e) {
       setError(true);

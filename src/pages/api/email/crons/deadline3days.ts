@@ -90,15 +90,7 @@ async function handler(_req: NextApiRequest, res: NextApiResponse) {
       });
     });
 
-    const emailResults = await Promise.all(emailPromises);
-
-    const sentBountyIds = emailResults.filter(
-      (sentBountyId) => sentBountyId !== null
-    );
-
-    if (sentBountyIds.length > 0) {
-      console.log('Sent emails for bounties:', sentBountyIds);
-    }
+    await Promise.all(emailPromises);
 
     return res.status(200).json({ message: 'Ok' });
   } catch (e) {

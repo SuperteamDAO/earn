@@ -14,7 +14,6 @@ import { useState } from 'react';
 
 import type { User } from '@/interface/user';
 import { generateCode, generateCodeLast } from '@/utils/helpers';
-import { Mixpanel } from '@/utils/mixpanel';
 import { truncatePublicKey } from '@/utils/truncatePublicKey';
 
 interface Props {
@@ -74,9 +73,7 @@ function NewUserInfo({
       email: userDetails?.email,
     });
     const serverTime = response.data.time;
-    Mixpanel.track('otp_sent', {
-      email: userDetails?.email,
-    });
+
     const code = generateCode(userInfo?.publicKey, serverTime);
     const codeLast = generateCodeLast(userInfo?.publicKey, serverTime);
     setOtp({

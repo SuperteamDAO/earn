@@ -13,7 +13,7 @@ export const WelcomeTalentTemplate = () => {
         I just wanted to say hey and let you know that I&apos;m a real person
       </p>
       <p style={styles.text}>
-        I&apos;m Kash, and I&apos;m a Core Contributor over at
+        I&apos;m Kash, and I&apos;m a Core Contributor over at{' '}
         <a href="https://superteam.fun" style={styles.link}>
           Superteam
         </a>

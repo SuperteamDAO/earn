@@ -14,7 +14,7 @@ export const NewBountyTemplate = ({ name, link }: NewBountyProps) => {
       <p style={styles.textWithMargin}>
         Good news &mdash; a new&nbsp;listing has just arrived with your name on
         it. It&apos;s like finding extra money in your pocket, but way more
-        exciting! 💰
+        exciting!
       </p>
       <p style={styles.textWithMargin}>
         <a href={link} style={styles.link}>

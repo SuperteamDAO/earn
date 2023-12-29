@@ -75,11 +75,10 @@ function ListingHeader({
     }
 
     try {
-      const res = await axios.post('/api/bounties/subscribe/subscribe', {
+      await axios.post('/api/bounties/subscribe/subscribe', {
         userId: userInfo?.id,
         bountyId: id,
       });
-      console.log(res);
       setUpdate((prev) => !prev);
       toast.success('Subscribed to bounty');
     } catch (error) {
@@ -94,10 +93,9 @@ function ListingHeader({
     }
 
     try {
-      const res = await axios.post('/api/bounties/subscribe/unSubscribe', {
+      await axios.post('/api/bounties/subscribe/unSubscribe', {
         id: idSub,
       });
-      console.log(res);
       setUpdate((prev) => !prev);
       toast.success('Unsubscribe to bounty');
     } catch (error) {

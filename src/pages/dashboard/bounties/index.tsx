@@ -189,12 +189,12 @@ function Bounties() {
       <Modal isOpen={publishIsOpen} onClose={publishOnClose}>
         <ModalOverlay />
         <ModalContent>
-          <ModalHeader>Publish Bounty?</ModalHeader>
+          <ModalHeader>Publish Listing?</ModalHeader>
           <ModalCloseButton />
           <ModalBody>
             <Text color="brand.slate.500">
-              All talent will be able to see this bounty once published. Are you
-              sure you want to publish?
+              This listing will become active and will show up on the homepage
+              once published. Are you sure you want to publish this listing?
             </Text>
           </ModalBody>
 
@@ -217,12 +217,12 @@ function Bounties() {
       <Modal isOpen={unpublishIsOpen} onClose={unpublishOnClose}>
         <ModalOverlay />
         <ModalContent>
-          <ModalHeader>Unpublish Bounty?</ModalHeader>
+          <ModalHeader>Unpublish Listing?</ModalHeader>
           <ModalCloseButton />
           <ModalBody>
             <Text color="brand.slate.500">
-              No talent will be able to see this bounty once unpublished. Are
-              you sure you want to unpublish?
+              This listing will be hidden from the homepage once unpublished.
+              Are you sure you want to unpublish this listing?
             </Text>
           </ModalBody>
 
