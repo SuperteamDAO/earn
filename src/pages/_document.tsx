@@ -35,7 +35,6 @@ export default function Document() {
           href="https://res.cloudinary.com"
           crossOrigin="anonymous"
         />
-        {/* Add other head tags here */}
       </Head>
       <body>
         <Main />
