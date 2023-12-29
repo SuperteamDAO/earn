@@ -108,5 +108,10 @@
     "prettier-plugin-prisma": "^4.12.0",
     "prisma": "4.13.0",
     "typescript": "4.9.4"
-  }
+  },
+  "browserslist": [
+    "last 3 Chrome versions",
+    "last 2 Firefox versions",
+    "last 2 Safari versions"
+  ]
 }
