@@ -5,41 +5,21 @@ import '../styles/globals.scss';
 import { ChakraProvider } from '@chakra-ui/react';
 import type { AppProps } from 'next/app';
 // Fonts
-import { Domine, JetBrains_Mono } from 'next/font/google';
-import localFont from 'next/font/local';
+import { Domine, Inter, JetBrains_Mono } from 'next/font/google';
 import posthog from 'posthog-js';
 import { PostHogProvider } from 'posthog-js/react';
 
 import theme from '../config/chakra.config';
 import { Wallet } from '../context/connectWalletContext';
 // importing localFont from a local file as Google imported fonts do not enable font-feature-settings. Reference: https://github.com/vercel/next.js/discussions/52456
-const fontSans = localFont({
-  src: [
-    {
-      path: '../../public/assets/fonts/inter/inter-subset.woff2',
-      style: 'normal',
-    },
-    {
-      path: '../../public/assets/fonts/inter/inter-subset.woff2',
-      style: 'italic',
-    },
-  ],
+
+const fontSans = Inter({
+  subsets: ['latin'],
   display: 'swap',
+  adjustFontFallback: true,
   preload: true,
-  weight: '100 900',
-  adjustFontFallback: 'Arial',
-  declarations: [
-    {
-      prop: 'font-feature-settings',
-      value: "'tnum'",
-    },
-    {
-      prop: 'unicode-range',
-      value:
-        'U+0020-007F, U+2000-206F, U+2070-209F, U+20A0-20CF, U+2100-214F, U+2200-22FF, U+FB00-FB4F, U+2190-21BB',
-    },
-    { prop: 'font-synthesis', value: 'none' },
-  ],
+  fallback: ['Arial'],
+  weight: 'variable',
 });
 
 const fontSerif = Domine({
