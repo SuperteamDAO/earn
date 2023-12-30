@@ -3,9 +3,9 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "dev": "NODE_ENV=development next dev",
+    "dev": "cross-env NODE_ENV=development next dev",
     "build": "prisma generate && next build",
-    "start": "NODE_ENV=production next start",
+    "start": "cross-env NODE_ENV=production next start",
     "lint": "next lint",
     "format": "next lint --fix && prettier '**/*.{json,yaml}' --write --ignore-path .gitignore",
     "check-types": "tsc --noEmit --pretty",
@@ -39,7 +39,6 @@
     "@tiptap/pm": "^2.0.0-beta.220",
     "@tiptap/react": "^2.0.0-beta.220",
     "@tiptap/starter-kit": "^2.0.0-beta.220",
-    "@types/crypto-js": "^4.1.1",
     "@upstash/qstash": "^2.3.0",
     "@vercel/og": "^0.5.9",
     "airtable": "^0.12.1",
@@ -80,11 +79,13 @@
     "zustand": "^4.3.2"
   },
   "devDependencies": {
+    "@types/crypto-js": "^4.2.1",
     "@types/node": "18.11.18",
     "@types/react": "18.0.15",
     "@types/react-dom": "18.0.6",
     "@typescript-eslint/eslint-plugin": "^5.48.2",
     "@typescript-eslint/parser": "^5.58.0",
+    "cross-env": "^7.0.3",
     "eslint": "^8.32.0",
     "eslint-config-airbnb-base": "^15.0.0",
     "eslint-config-airbnb-typescript": "^17.0.0",
