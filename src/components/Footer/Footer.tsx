@@ -90,7 +90,7 @@ export default function LargeWithNewsletter() {
               Superteam Earn is where crypto founders meet world-class talent.
               Distribute your work to crypto-native talent, meet your next team
               member & get things done fast. <br />
-              <br />© 2023 Superteam. All rights reserved.
+              <br />© 2024 Superteam. All rights reserved.
             </Text>
             <Stack direction={'row'} spacing={6}>
               <SocialButton
