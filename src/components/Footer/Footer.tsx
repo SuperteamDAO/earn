@@ -19,6 +19,7 @@ const getCurrentYear = () => {
 
 const Logo = (props: any) => {
   return (
+  <Link display={{ base: 'none', lg: 'flex' }} href="/">
     <Image
       h={8}
       cursor="pointer"
@@ -27,6 +28,7 @@ const Logo = (props: any) => {
       src={'/assets/logo/new-logo.svg'}
       {...props}
     />
+  </Link>
   );
 };
 
