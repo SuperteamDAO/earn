@@ -19,7 +19,6 @@ const getCurrentYear = () => {
 
 const Logo = (props: any) => {
   return (
-  <Link display={{ base: 'none', lg: 'flex' }} href="/">
     <Image
       h={8}
       cursor="pointer"
@@ -28,7 +27,6 @@ const Logo = (props: any) => {
       src={'/assets/logo/new-logo.svg'}
       {...props}
     />
-  </Link>
   );
 };
 
@@ -90,7 +88,9 @@ export default function LargeWithNewsletter() {
         >
           <Stack mr={{ base: 0, md: 32 }} spacing={6}>
             <Box>
+              <Link href="/" _hover={{ textDecoration: 'none' }}>
               <Logo color={'brand.slate.500'} />
+              </Link>
             </Box>
             <Text color="brand.slate.500">
               Superteam Earn is where crypto founders meet world-class talent.
