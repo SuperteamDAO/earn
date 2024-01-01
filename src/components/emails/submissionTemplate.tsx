@@ -21,8 +21,11 @@ export const SubmissionTemplate = ({ name, bountyName }: SubmissionProps) => {
         submissions on the listing page. We&rsquo;ll then send you an email once
         the winners (hopefully including you) are announced!
       </p>
-      <p style={styles.salutation}>Best,</p>
-      <p style={styles.text}>Superteam Earn</p>
+      <p style={styles.salutation}>
+        Best,
+        <br />
+        Superteam Earn
+      </p>
       <p style={styles.unsubscribe}>
         Click{' '}
         <a

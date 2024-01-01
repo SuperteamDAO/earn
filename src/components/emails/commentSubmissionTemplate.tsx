@@ -25,8 +25,11 @@ export const CommentSubmissionTemplate = ({
           Click here to see what they said!
         </a>{' '}
       </p>
-      <p style={styles.salutation}>Best,</p>
-      <p style={styles.text}>Superteam Earn</p>
+      <p style={styles.salutation}>
+        Best,
+        <br />
+        Superteam Earn
+      </p>
       <p style={styles.unsubscribe}>
         Click{' '}
         <a

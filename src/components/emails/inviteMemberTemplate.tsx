@@ -24,8 +24,11 @@ export const InviteMemberTemplate = ({
         </a>{' '}
         to be added as a {sponsorName} team member.
       </p>
-      <p style={styles.salutation}>Best,</p>
-      <p style={styles.text}>Superteam Earn</p>
+      <p style={styles.salutation}>
+        Best,
+        <br />
+        Superteam Earn
+      </p>
     </div>
   );
 };

@@ -22,8 +22,11 @@ export const NewBountyTemplate = ({ name, link }: NewBountyProps) => {
         </a>{' '}
         to learn more about this listing.
       </p>
-      <p style={styles.salutation}>Best,</p>
-      <p style={styles.text}>Superteam Earn</p>
+      <p style={styles.salutation}>
+        Best,
+        <br />
+        Superteam Earn
+      </p>
       <p style={styles.text}>&nbsp;</p>
       <p style={styles.unsubscribe}>
         Click{' '}

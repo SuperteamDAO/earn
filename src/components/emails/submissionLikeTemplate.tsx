@@ -27,8 +27,11 @@ export const SubmissionLikeTemplate = ({
       <a href={link} style={styles.link}>
         View Other Submissions
       </a>
-      <p style={styles.salutation}>Best,</p>
-      <p style={styles.text}>Superteam Earn</p>
+      <p style={styles.salutation}>
+        Best,
+        <br />
+        Superteam Earn
+      </p>
       <p style={styles.unsubscribe}>
         Click{' '}
         <a
