@@ -44,8 +44,19 @@ export function Banner() {
             color="brand.slate.300"
             fontSize="sm"
             fontWeight={400}
-            href={userInfo?.currentSponsor?.url}
+            href="#"
             isExternal
+            onClick={(e) => {
+              e.preventDefault();
+              const url = userInfo?.currentSponsor?.url;
+              if (url) {
+                const formattedLink =
+                  url.startsWith('http://') || url.startsWith('https://')
+                    ? url
+                    : `https://${url}`;
+                window.open(formattedLink, '_blank');
+              }
+            }}
           >
             {userInfo?.currentSponsor?.url}
           </Link>
