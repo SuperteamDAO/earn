@@ -9,11 +9,11 @@ import { useEffect, useState } from 'react';
 
 import { BountyTabs } from '@/components/listings/bounty/Tabs';
 import { GrantsCard, ListingSection } from '@/components/misc/listingsCard';
-import EmptySection from '@/components/shared/EmptySection';
-import Loading from '@/components/shared/Loading';
+import { EmptySection } from '@/components/shared/EmptySection';
+import { Loading } from '@/components/shared/Loading';
 import type { Bounty } from '@/interface/bounty';
 import type { Grant } from '@/interface/grant';
-import Home from '@/layouts/Home';
+import { Home } from '@/layouts/Home';
 
 interface Listings {
   bounties?: Bounty[];

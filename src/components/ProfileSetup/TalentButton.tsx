@@ -5,7 +5,7 @@ import { FaUser } from 'react-icons/fa';
 
 import { userStore } from '@/store/user';
 
-function TalentButton() {
+export function TalentButton() {
   const router = useRouter();
   const { userInfo } = userStore();
   const [isLoading, setIsLoading] = useState(false);
@@ -54,5 +54,3 @@ function TalentButton() {
     </>
   );
 }
-
-export default TalentButton;

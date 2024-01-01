@@ -24,9 +24,9 @@ import { userStore } from '@/store/user';
 import { timeAgoShort } from '@/utils/timeAgo';
 import { getURL } from '@/utils/validUrl';
 
-import OgImageViewer from '../misc/ogImageViewer';
+import { OgImageViewer } from '../misc/ogImageViewer';
 
-export default function SubmissionCard({
+export function SubmissionCard({
   talent,
   sub,
 }: {

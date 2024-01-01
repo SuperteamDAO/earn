@@ -3,7 +3,7 @@ import Avatar from 'boring-avatars';
 
 import { userStore } from '@/store/user';
 
-function Banner() {
+export function Banner() {
   const { userInfo } = userStore();
 
   if (!userInfo?.currentSponsorId) return null;
@@ -54,5 +54,3 @@ function Banner() {
     </Box>
   );
 }
-
-export default Banner;

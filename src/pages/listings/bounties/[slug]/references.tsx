@@ -5,9 +5,9 @@ import type { GetServerSideProps } from 'next';
 import Head from 'next/head';
 import { useState } from 'react';
 
-import ListingHeader from '@/components/listings/listings/ListingHeaderBounty';
-import OgImageViewer from '@/components/misc/ogImageViewer';
-import ErrorSection from '@/components/shared/ErrorSection';
+import { ListingHeader } from '@/components/listings/listings/ListingHeaderBounty';
+import { OgImageViewer } from '@/components/misc/ogImageViewer';
+import { ErrorSection } from '@/components/shared/ErrorSection';
 import type { Bounty } from '@/interface/bounty';
 import { Default } from '@/layouts/Default';
 import { getURL } from '@/utils/validUrl';

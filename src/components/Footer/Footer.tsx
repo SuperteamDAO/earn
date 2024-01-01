@@ -69,7 +69,7 @@ const ListHeader = ({ children }: { children: ReactNode }) => {
   );
 };
 
-export default function LargeWithNewsletter() {
+export const Footer = () => {
   return (
     <Box
       color={'brand.slate.500'}
@@ -266,4 +266,4 @@ export default function LargeWithNewsletter() {
       </Container>
     </Box>
   );
-}
+};

@@ -28,7 +28,7 @@ interface UserInfoProps {
   isMobile?: boolean;
 }
 
-export default function UserInfo({ isMobile }: UserInfoProps) {
+export function UserInfo({ isMobile }: UserInfoProps) {
   const router = useRouter();
   const { isOpen, onOpen, onClose } = useDisclosure();
   const { connected, publicKey, wallet, wallets, select } = useWallet();

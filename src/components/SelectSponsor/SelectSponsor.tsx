@@ -18,7 +18,7 @@ interface SponsorOption {
   sponsor: SponsorOptionType;
 }
 
-function SelectSponsor() {
+export function SelectSponsor() {
   const { setUserInfo, userInfo } = userStore();
   const [selectedSponsor, setSelectedSponsor] = useState<SponsorOption | null>(
     null
@@ -179,5 +179,3 @@ function SelectSponsor() {
     />
   );
 }
-
-export default SelectSponsor;

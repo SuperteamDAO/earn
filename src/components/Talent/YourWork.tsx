@@ -35,7 +35,7 @@ type Step1Props = {
   useFormStore: () => UserStoreType;
 };
 
-function YourWork({ setStep, useFormStore }: Step1Props) {
+export function YourWork({ setStep, useFormStore }: Step1Props) {
   const animatedComponents = makeAnimated();
 
   const [skills, setSkills] = useState<MultiSelectOptions[]>([]);
@@ -322,5 +322,3 @@ function YourWork({ setStep, useFormStore }: Step1Props) {
     </Box>
   );
 }
-
-export default YourWork;

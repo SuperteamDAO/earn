@@ -51,11 +51,11 @@ import {
 } from 'react-icons/ai';
 import { FiMoreVertical } from 'react-icons/fi';
 
-import ErrorSection from '@/components/shared/ErrorSection';
-import LoadingSection from '@/components/shared/LoadingSection';
+import { ErrorSection } from '@/components/shared/ErrorSection';
+import { LoadingSection } from '@/components/shared/LoadingSection';
 import { tokenList } from '@/constants/index';
 import type { BountyWithSubmissions } from '@/interface/bounty';
-import Sidebar from '@/layouts/Sidebar';
+import { Sidebar } from '@/layouts/Sidebar';
 import { userStore } from '@/store/user';
 import {
   formatDeadline,

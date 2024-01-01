@@ -44,7 +44,7 @@ const validateEmail = (email: string) => {
   return true;
 };
 
-function NewUserInfo({
+export function NewUserInfo({
   setUserInfo,
   userInfo,
   setStep,
@@ -197,5 +197,3 @@ function NewUserInfo({
     </Box>
   );
 }
-
-export default NewUserInfo;

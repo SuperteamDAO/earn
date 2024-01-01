@@ -33,7 +33,7 @@ type ErrorState = {
   order: number;
   errMessage: string;
 };
-const Builder = ({
+export const Builder = ({
   setSteps,
   createDraft,
   draftLoading,
@@ -175,5 +175,3 @@ const Builder = ({
     </>
   );
 };
-
-export default Builder;

@@ -1,8 +1,8 @@
 import { Flex, Text } from '@chakra-ui/react';
 
-import Loading from './Loading';
+import { Loading } from './Loading';
 
-function LoadingSection() {
+export function LoadingSection() {
   return (
     <Flex align={'center'} justify="center" w="full" minH={'92vh'}>
       <Flex align={'center'} justify="center" direction={'column'}>
@@ -14,5 +14,3 @@ function LoadingSection() {
     </Flex>
   );
 }
-
-export default LoadingSection;

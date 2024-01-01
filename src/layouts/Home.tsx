@@ -13,9 +13,9 @@ import type { ReactNode } from 'react';
 import React, { useEffect, useState } from 'react';
 import { Toaster } from 'react-hot-toast';
 
-import LoginWrapper from '@/components/Header/LoginWrapper';
-import HomeBanner from '@/components/home/Banner';
-import SideBar from '@/components/home/SideBar';
+import { LoginWrapper } from '@/components/Header/LoginWrapper';
+import { HomeBanner } from '@/components/home/Banner';
+import { SideBar } from '@/components/home/SideBar';
 import { CategoryBanner } from '@/components/misc/listingsCard';
 import { Superteams } from '@/constants/Superteam';
 import type { User } from '@/interface/user';
@@ -38,7 +38,7 @@ interface SidebarType {
   earners?: User[];
 }
 
-function Home({ children, type }: HomeProps) {
+export function Home({ children, type }: HomeProps) {
   const router = useRouter();
   const { userInfo } = userStore();
   const [isTotalLoading, setIsTotalLoading] = useState(true);
@@ -174,5 +174,3 @@ function Home({ children, type }: HomeProps) {
     </Default>
   );
 }
-
-export default Home;

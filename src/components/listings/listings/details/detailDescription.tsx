@@ -12,7 +12,7 @@ interface Props {
   description?: string;
 }
 
-function DetailDescription({ skills, description }: Props) {
+export function DetailDescription({ skills, description }: Props) {
   const [show, setShow] = useState<boolean>(false);
 
   const options: HTMLReactParserOptions = {
@@ -128,5 +128,3 @@ function DetailDescription({ skills, description }: Props) {
     </VStack>
   );
 }
-
-export default DetailDescription;

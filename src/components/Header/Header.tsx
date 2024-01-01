@@ -17,7 +17,7 @@ import {
 import { useRouter } from 'next/router';
 
 import { BountySnackbar } from './BountySnackbar';
-import UserInfo from './UserInfo';
+import { UserInfo } from './UserInfo';
 
 interface NavItem {
   label: string;
@@ -201,7 +201,7 @@ const DesktopNav = () => {
   );
 };
 
-export default function WithSubnavigation() {
+export const Header = () => {
   const { isOpen, onToggle } = useDisclosure();
   const router = useRouter();
 
@@ -301,4 +301,4 @@ export default function WithSubnavigation() {
       </Box>
     </Box>
   );
-}
+};

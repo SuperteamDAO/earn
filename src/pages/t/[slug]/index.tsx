@@ -24,12 +24,12 @@ import { useRouter } from 'next/router';
 import React, { useEffect, useMemo, useState } from 'react';
 
 import { AddProject } from '@/components/Form/AddProject';
-import ShareIcon from '@/components/misc/shareIcon';
+import { ShareIcon } from '@/components/misc/shareIcon';
 import { ShareProfile } from '@/components/modals/shareProfile';
-import PowCard from '@/components/ProfileFeed/powCard';
-import SubmissionCard from '@/components/ProfileFeed/submissionCard';
-import ErrorSection from '@/components/shared/EmptySection';
-import LoadingSection from '@/components/shared/LoadingSection';
+import { PowCard } from '@/components/ProfileFeed/powCard';
+import { SubmissionCard } from '@/components/ProfileFeed/submissionCard';
+import { EmptySection } from '@/components/shared/EmptySection';
+import { LoadingSection } from '@/components/shared/LoadingSection';
 import type { PoW } from '@/interface/pow';
 import type { SubmissionWithUser } from '@/interface/submission';
 import type { User } from '@/interface/user';
@@ -262,9 +262,9 @@ function TalentProfile({ slug }: TalentProps) {
         }
       >
         {isloading && <LoadingSection />}
-        {!isloading && !!error && <ErrorSection />}
+        {!isloading && !!error && <EmptySection />}
         {!isloading && !error && !talent?.id && (
-          <ErrorSection message="Sorry! The profile you are looking for is not available." />
+          <EmptySection message="Sorry! The profile you are looking for is not available." />
         )}
         {!isloading && !error && !!talent?.id && (
           <Box bg="white">

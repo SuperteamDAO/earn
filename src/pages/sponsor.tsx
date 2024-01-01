@@ -39,7 +39,7 @@ import StreamFlow from '@/public/assets/landingsponsor/sponsors/streamflow.png';
 import Wormhole from '@/public/assets/landingsponsor/sponsors/wormhole.png';
 import Kash from '@/public/assets/randompeople/kash.png';
 
-import Footer from '../components/Footer/Footer';
+import { Footer } from '../components/Footer/Footer';
 
 type Totals = {
   count: number;

@@ -40,7 +40,7 @@ const validateEmail = (email: string) => {
     );
 };
 
-function InviteMembers({ isOpen, onClose }: Props) {
+export function InviteMembers({ isOpen, onClose }: Props) {
   const { userInfo } = userStore();
   const [email, setEmail] = useState<string>();
   const [memberType, setMemberType] = useState<string>('MEMBER');
@@ -193,5 +193,3 @@ function InviteMembers({ isOpen, onClose }: Props) {
     </Modal>
   );
 }
-
-export default InviteMembers;
