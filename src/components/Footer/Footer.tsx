@@ -13,6 +13,10 @@ import type { ReactNode } from 'react';
 
 import { getURL } from '@/utils/validUrl';
 
+const getCurrentYear = () => {
+  return new Date().getFullYear();
+};
+
 const Logo = (props: any) => {
   return (
     <Image
@@ -90,7 +94,7 @@ export const Footer = () => {
               Superteam Earn is where crypto founders meet world-class talent.
               Distribute your work to crypto-native talent, meet your next team
               member & get things done fast. <br />
-              <br />© 2023 Superteam. All rights reserved.
+              <br />© {getCurrentYear()} Superteam. All rights reserved.
             </Text>
             <Stack direction={'row'} spacing={6}>
               <SocialButton

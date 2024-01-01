@@ -34,8 +34,6 @@ cd earn
 3. Install the dependencies: 
 ```bash
 yarn install
-yarn add @prisma/client
-yarn postinstall
 ```
 
 4. Create a `.env` or `.env.local` file inside the root folder and include all the required environment variables. 
