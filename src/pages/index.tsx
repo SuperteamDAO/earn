@@ -15,18 +15,12 @@ import type { Bounty } from '@/interface/bounty';
 import type { Grant } from '@/interface/grant';
 import { Home } from '@/layouts/Home';
 
-interface Listings {
-  bounties?: Bounty[];
-  grants?: Grant[];
-}
-
 const HomePage: NextPage = () => {
   const [isListingsLoading, setIsListingsLoading] = useState(true);
   const [bounties, setBounties] = useState<{ bounties: Bounty[] }>({
     bounties: [],
   });
-  const [listings, setListings] = useState<Listings>({
-    bounties: [],
+  const [grants, setGrants] = useState<{ grants: Grant[] }>({
     grants: [],
   });
 
@@ -35,7 +29,11 @@ const HomePage: NextPage = () => {
   const getListings = async () => {
     setIsListingsLoading(true);
     try {
-      const listingsData = await axios.get('/api/listings/');
+      const grantsData = await axios.get('/api/listings/', {
+        params: {
+          category: 'grants',
+        },
+      });
       const bountyData = await axios.get('/api/listings/', {
         params: {
           category: 'bounties',
@@ -44,7 +42,7 @@ const HomePage: NextPage = () => {
         },
       });
 
-      setListings(listingsData.data);
+      setGrants(grantsData.data);
       setBounties(bountyData.data);
       setIsListingsLoading(false);
     } catch (e) {
@@ -177,7 +175,7 @@ const HomePage: NextPage = () => {
               <Loading />
             </Flex>
           )}
-          {!isListingsLoading && !listings?.grants?.length && (
+          {!isListingsLoading && !grants?.grants?.length && (
             <Flex align="center" justify="center" mt={8}>
               <EmptySection
                 title="No grants available!"
@@ -186,7 +184,7 @@ const HomePage: NextPage = () => {
             </Flex>
           )}
           {!isListingsLoading &&
-            listings?.grants?.map((grant) => {
+            grants?.grants?.map((grant) => {
               return (
                 <GrantsCard
                   sponsorName={grant?.sponsor?.name}

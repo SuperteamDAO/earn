@@ -47,6 +47,7 @@ function BountyDetails({ bounty: initialBounty }: BountyDetailsProps) {
           deadline: bounty?.deadline,
           rewardAmount: bounty?.rewardAmount,
           type: bounty?.type,
+          isPublished: bounty?.isPublished,
         });
       }
     };
