@@ -26,7 +26,7 @@ interface Step1Props {
   useFormStore: () => UserStoreType;
 }
 
-function AboutYou({ setStep, useFormStore }: Step1Props) {
+export function AboutYou({ setStep, useFormStore }: Step1Props) {
   const [imageUrl, setImageUrl] = useState<string>('');
   const [uploadLoading, setuploadLoading] = useState<boolean>(false);
   const [userNameValid, setuserNameValid] = useState(true);
@@ -165,5 +165,3 @@ function AboutYou({ setStep, useFormStore }: Step1Props) {
     </Box>
   );
 }
-
-export default AboutYou;

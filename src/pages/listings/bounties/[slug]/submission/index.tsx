@@ -3,10 +3,10 @@ import axios from 'axios';
 import type { GetServerSideProps } from 'next';
 import React, { useEffect, useState } from 'react';
 
-import ListingHeader from '@/components/listings/listings/ListingHeaderBounty';
+import { ListingHeader } from '@/components/listings/listings/ListingHeaderBounty';
 import { Submissions } from '@/components/listings/listings/submissions/submission';
-import ErrorSection from '@/components/shared/EmptySection';
-import LoadingSection from '@/components/shared/LoadingSection';
+import { EmptySection } from '@/components/shared/EmptySection';
+import { LoadingSection } from '@/components/shared/LoadingSection';
 import type { Bounty } from '@/interface/bounty';
 import type { SubmissionWithUser } from '@/interface/submission';
 import { Default } from '@/layouts/Default';
@@ -46,9 +46,9 @@ const SubmissionPage = ({ slug }: { slug: string }) => {
         }
       >
         {isLoading && <LoadingSection />}
-        {!isLoading && !!error && <ErrorSection />}
+        {!isLoading && !!error && <EmptySection />}
         {!isLoading && !error && !bounty?.id && (
-          <ErrorSection message="Sorry! The bounty you are looking for is not available." />
+          <EmptySection message="Sorry! The bounty you are looking for is not available." />
         )}
         {!isLoading && !error && !!bounty?.id && (
           <>

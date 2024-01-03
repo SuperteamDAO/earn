@@ -1,8 +1,8 @@
 import { Box, Flex, Image, Text } from '@chakra-ui/react';
 import React from 'react';
 
-import SponsorButton from '@/components/ProfileSetup/SponsorButton';
-import TalentButton from '@/components/ProfileSetup/TalentButton';
+import { SponsorButton } from '@/components/ProfileSetup/SponsorButton';
+import { TalentButton } from '@/components/ProfileSetup/TalentButton';
 import { Default } from '@/layouts/Default';
 import { Meta } from '@/layouts/Meta';
 

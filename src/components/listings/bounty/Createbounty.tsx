@@ -5,11 +5,11 @@ import React from 'react';
 import type { References } from '@/interface/bounty';
 
 import type { MultiSelectOptions } from '../../../constants';
-import Description from '../description';
+import { Description } from '../description';
 import { CreatebountyBasic } from './CreateBountyBasic';
 import { CreatebountyPayment } from './CreateBountyPayments';
 import type { Ques } from './questions/builder';
-import Builder from './questions/builder';
+import { Builder } from './questions/builder';
 
 export interface BountyBasicType {
   title?: string;

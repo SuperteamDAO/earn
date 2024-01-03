@@ -24,7 +24,7 @@ const getRandomFallbackImage = (): string => {
   return fallbackImages[randomIndex]!;
 };
 
-const OgImageViewer: React.FC<Props> = ({ externalUrl, ...props }) => {
+export const OgImageViewer: React.FC<Props> = ({ externalUrl, ...props }) => {
   const [ogImageUrl, setOgImageUrl] = useState<string | null>(null);
   const fallbackImage = getRandomFallbackImage();
 
@@ -69,5 +69,3 @@ const OgImageViewer: React.FC<Props> = ({ externalUrl, ...props }) => {
     </div>
   );
 };
-
-export default OgImageViewer;

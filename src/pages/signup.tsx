@@ -2,9 +2,9 @@ import axios from 'axios';
 import type { GetServerSideProps } from 'next';
 import { useEffect, useState } from 'react';
 
-import InviteView from '@/components/Members/InviteView';
-import ErrorSection from '@/components/shared/ErrorSection';
-import LoadingSection from '@/components/shared/LoadingSection';
+import { InviteView } from '@/components/Members/InviteView';
+import { ErrorSection } from '@/components/shared/ErrorSection';
+import { LoadingSection } from '@/components/shared/LoadingSection';
 import { Default } from '@/layouts/Default';
 import { Meta } from '@/layouts/Meta';
 

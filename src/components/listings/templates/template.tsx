@@ -19,7 +19,7 @@ interface Props {
   setBountyBasic: Dispatch<SetStateAction<BountyBasicType | undefined>>;
   type: 'open' | 'permissioned';
 }
-const Template = ({
+export const Template = ({
   setSteps,
   setListingType,
   setEditorData,
@@ -231,5 +231,3 @@ const Template = ({
     </>
   );
 };
-
-export default Template;

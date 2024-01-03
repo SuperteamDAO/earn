@@ -12,7 +12,7 @@ type ConnectWalletProps = {
   onConnectWallet: (wallet: Wallet) => Promise<void>;
 };
 
-export default function ConnectWallet({
+export function ConnectWallet({
   wallets,
   onConnectWallet,
 }: ConnectWalletProps) {

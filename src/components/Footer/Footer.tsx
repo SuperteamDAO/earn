@@ -73,7 +73,7 @@ const ListHeader = ({ children }: { children: ReactNode }) => {
   );
 };
 
-export default function LargeWithNewsletter() {
+export const Footer = () => {
   return (
     <Box
       color={'brand.slate.500'}
@@ -232,6 +232,16 @@ export default function LargeWithNewsletter() {
             >
               Nigeria
             </Link>
+            <Link
+              color="brand.slate.500"
+              _hover={{
+                color: 'brand.slate.800',
+              }}
+              href={`${getURL()}regions/brazil`}
+              isExternal
+            >
+              Brazil
+            </Link>
           </Stack>
           <Stack align={'flex-start'}>
             <ListHeader>Superteam Productions</ListHeader>
@@ -270,4 +280,4 @@ export default function LargeWithNewsletter() {
       </Container>
     </Box>
   );
-}
+};

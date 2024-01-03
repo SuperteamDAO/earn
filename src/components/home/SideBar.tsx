@@ -4,7 +4,7 @@ import NextLink from 'next/link';
 import { useRouter } from 'next/router';
 import { useEffect, useRef, useState } from 'react';
 
-import LoginWrapper from '@/components/Header/LoginWrapper';
+import { LoginWrapper } from '@/components/Header/LoginWrapper';
 import { tokenList } from '@/constants';
 import type { User } from '@/interface/user';
 import { getURL } from '@/utils/validUrl';
@@ -271,7 +271,7 @@ const Earner = ({
             rounded={'full'}
             src={avatar.replace(
               '/upload/',
-              '/upload/c_scale,w_32,h_32,f_auto/'
+              '/upload/c_scale,w_64,h_64,f_auto/'
             )}
           />
         ) : (
@@ -369,7 +369,12 @@ const RecentEarners = ({ earners }: { earners?: User[] }) => {
   );
 };
 
-const SideBar = ({ userInfo, listings, total, earners }: SideBarProps) => {
+export const SideBar = ({
+  userInfo,
+  listings,
+  total,
+  earners,
+}: SideBarProps) => {
   return (
     <Flex direction={'column'} rowGap={'2.5rem'} w={'22.125rem'} pl={6}>
       <GettingStarted userInfo={userInfo} />
@@ -378,5 +383,3 @@ const SideBar = ({ userInfo, listings, total, earners }: SideBarProps) => {
     </Flex>
   );
 };
-
-export default SideBar;

@@ -95,7 +95,8 @@ interface Props {
   setReferences?: Dispatch<SetStateAction<References[]>>;
   isNewOrDraft?: boolean;
 }
-const Description = ({
+
+export const Description = ({
   editorData,
   setEditorData,
   setSteps,
@@ -657,4 +658,3 @@ const Description = ({
     </>
   );
 };
-export default Description;

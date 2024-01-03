@@ -17,7 +17,7 @@ import {
 import { useRouter } from 'next/router';
 
 import { BountySnackbar } from './BountySnackbar';
-import UserInfo from './UserInfo';
+import { UserInfo } from './UserInfo';
 
 interface NavItem {
   label: string;
@@ -97,15 +97,15 @@ const MobileNavItem = ({ label, children, href }: NavItem) => {
                 fontSize="md"
                 href={child.href}
               >
-                {child.label === 'HYPERDRIVE' ? (
+                {/* {child.label === 'HYPERDRIVE' ? (
                   <Image
                     w={100}
                     alt="Hyperdrive Hackathon"
                     src="/assets/category_assets/icon/Hyperdrive.svg"
                   />
-                ) : (
-                  child.label
-                )}
+                ) : ( */}
+                {child.label}
+                {/* )} */}
               </Link>
             ))}
         </Stack>
@@ -180,14 +180,14 @@ const DesktopNav = () => {
                 <NavLink
                   href={navItem.href ?? '#'}
                   label={
-                    navItem.label === 'HYPERDRIVE' ? (
-                      <Image
-                        alt="Hyperdrive Hackathon"
-                        src="/assets/category_assets/icon/Hyperdrive.svg"
-                      />
-                    ) : (
-                      navItem.label
-                    )
+                    // navItem.label === 'HYPERDRIVE' ? (
+                    //   <Image
+                    //     alt="Hyperdrive Hackathon"
+                    //     src="/assets/category_assets/icon/Hyperdrive.svg"
+                    //   />
+                    // ) : (
+                    navItem.label
+                    // )
                   }
                   isActive={isCurrent}
                   isCategory={true}
@@ -201,7 +201,7 @@ const DesktopNav = () => {
   );
 };
 
-export default function WithSubnavigation() {
+export const Header = () => {
   const { isOpen, onToggle } = useDisclosure();
   const router = useRouter();
 
@@ -278,6 +278,14 @@ export default function WithSubnavigation() {
           >
             <DesktopNav />
           </Flex>
+          <Link display={{ base: 'flex', lg: 'none' }} href="/">
+            <Image
+              h={5}
+              my="auto"
+              alt={'Superteam Earn'}
+              src="/assets/logo/new-logo.svg"
+            />
+          </Link>
 
           <Stack
             align="center"
@@ -293,7 +301,7 @@ export default function WithSubnavigation() {
       </Flex>
       <Box bg="white">
         <Collapse animateOpacity in={isOpen}>
-          <Flex direction="column" w="96%" mt={5} mx={'auto'}>
+          <Flex direction="column" w="96%" mx={'auto'}>
             <UserInfo isMobile={true} />
           </Flex>
           <MobileNav />
@@ -301,4 +309,4 @@ export default function WithSubnavigation() {
       </Box>
     </Box>
   );
-}
+};

@@ -44,7 +44,7 @@ interface Bounty {
   references?: References[];
 }
 
-function ListingHeader({
+export function ListingHeader({
   title,
   status,
   deadline,
@@ -503,5 +503,3 @@ function ListingHeader({
     </VStack>
   );
 }
-
-export default ListingHeader;

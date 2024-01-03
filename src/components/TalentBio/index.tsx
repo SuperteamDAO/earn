@@ -50,7 +50,7 @@ const Chip = ({ icon, label, value }: ChipType) => {
   );
 };
 
-function TalentBio({
+export function TalentBio({
   user,
   successPage,
   w,
@@ -209,5 +209,3 @@ function TalentBio({
     </Box>
   );
 }
-
-export default TalentBio;

@@ -19,7 +19,7 @@ interface Props {
   primaryCtaLink?: string;
 }
 
-function WarningModal({
+export function WarningModal({
   isOpen,
   onClose,
   title,
@@ -51,5 +51,3 @@ function WarningModal({
     </Modal>
   );
 }
-
-export default WarningModal;
