@@ -381,10 +381,14 @@ function Bounties() {
                 const bountyType = getBountyTypeLabel(
                   currentBounty?.type ?? 'open'
                 );
-                const deadlineFromNow = getDeadlineFromNow(
-                  currentBounty?.deadline
-                );
-                const deadline = formatDeadline(currentBounty?.deadline);
+                const deadlineFromNow =
+                  currentBounty.type === 'open'
+                    ? getDeadlineFromNow(currentBounty?.deadline)
+                    : 'Rolling';
+                const deadline =
+                  currentBounty.type === 'open'
+                    ? formatDeadline(currentBounty?.deadline)
+                    : 'This Project will expire once its winner has been selected';
                 const bountyStatus = getBountyDraftStatus(
                   currentBounty?.status,
                   currentBounty?.isPublished

@@ -133,6 +133,7 @@ export function UserInfo({ isMobile }: UserInfoProps) {
                   <Image
                     boxSize="32px"
                     borderRadius="full"
+                    objectFit={'cover'}
                     alt={`${userInfo?.firstName} ${userInfo?.lastName}`}
                     src={userInfo?.photo}
                   />
