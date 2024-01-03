@@ -271,7 +271,7 @@ const Earner = ({
             rounded={'full'}
             src={avatar.replace(
               '/upload/',
-              '/upload/c_scale,w_32,h_32,f_auto/'
+              '/upload/c_scale,w_64,h_64,f_auto/'
             )}
           />
         ) : (
