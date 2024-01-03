@@ -232,6 +232,16 @@ export const Footer = () => {
             >
               Nigeria
             </Link>
+            <Link
+              color="brand.slate.500"
+              _hover={{
+                color: 'brand.slate.800',
+              }}
+              href={`${getURL()}regions/brazil`}
+              isExternal
+            >
+              Brazil
+            </Link>
           </Stack>
           <Stack align={'flex-start'}>
             <ListHeader>Superteam Productions</ListHeader>

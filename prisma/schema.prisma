@@ -405,4 +405,5 @@ enum Regions {
   UAE
   NIGERIA
   ISRAEL
+  BRAZIL
 }
