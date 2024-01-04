@@ -19,8 +19,11 @@ export const WelcomeSponsorTemplate = () => {
         </a>{' '}
         on Telegram.&nbsp;
       </p>
-      <p style={styles.salutation}>Best,</p>
-      <p style={styles.text}>Superteam Earn</p>
+      <p style={styles.salutation}>
+        Best,
+        <br />
+        Superteam Earn
+      </p>
     </div>
   );
 };

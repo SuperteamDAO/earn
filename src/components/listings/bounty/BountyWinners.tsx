@@ -12,7 +12,7 @@ interface Props {
   bounty: Bounty;
 }
 
-function BountyWinners({ bounty }: Props) {
+export function BountyWinners({ bounty }: Props) {
   const [isBountyLoading, setIsBountyLoading] = useState(true);
   const [submissions, setSubmissions] = useState<SubmissionWithUser[]>([]);
 
@@ -140,5 +140,3 @@ function BountyWinners({ bounty }: Props) {
     </Box>
   );
 }
-
-export default BountyWinners;

@@ -56,4 +56,11 @@ export const Superteams = [
     icons: '/assets/superteams/nigeria.png',
     region: 'Nigeria',
   },
+  {
+    name: 'Superteam Brazil',
+    bg: `/assets/category_assets/bg/frontend.png`,
+    color: '#FEEBA8',
+    icons: '/assets/superteams/brazil.png',
+    region: 'Brazil',
+  },
 ];

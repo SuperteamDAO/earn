@@ -27,8 +27,11 @@ export const DeadlineSponsorTemplate = ({
         </a>{' '}
         to review&nbsp;the submissions. &nbsp;
       </p>
-      <p style={styles.salutation}>Best,</p>
-      <p style={styles.text}>Superteam Earn</p>
+      <p style={styles.salutation}>
+        Best,
+        <br />
+        Superteam Earn
+      </p>
       <p style={styles.unsubscribe}>
         Click{' '}
         <a

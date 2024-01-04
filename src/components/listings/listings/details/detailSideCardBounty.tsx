@@ -25,10 +25,10 @@ import moment from 'moment';
 import { useEffect, useState } from 'react';
 import Countdown from 'react-countdown';
 
-import LoginWrapper from '@/components/Header/LoginWrapper';
+import { LoginWrapper } from '@/components/Header/LoginWrapper';
 import { VerticalStep } from '@/components/misc/steps';
 import { SubmissionModal } from '@/components/modals/submissionModalBounty';
-import WarningModal from '@/components/shared/WarningModal';
+import { WarningModal } from '@/components/shared/WarningModal';
 import { tokenList } from '@/constants/index';
 import type { Eligibility, Rewards } from '@/interface/bounty';
 import { userStore } from '@/store/user';
@@ -57,7 +57,7 @@ interface Props {
   isPublished?: boolean;
   status?: string;
 }
-function DetailSideCard({
+export function DetailSideCardBounty({
   id,
   total,
   prizeList,
@@ -570,5 +570,3 @@ function DetailSideCard({
     </>
   );
 }
-
-export default DetailSideCard;

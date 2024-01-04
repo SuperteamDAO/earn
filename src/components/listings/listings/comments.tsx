@@ -12,11 +12,11 @@ import { useRouter } from 'next/router';
 import { useEffect, useState } from 'react';
 import { GoCommentDiscussion } from 'react-icons/go';
 
-import LoginWrapper from '@/components/Header/LoginWrapper';
-import ErrorInfo from '@/components/shared/ErrorInfo';
-import Loading from '@/components/shared/Loading';
-import UserAvatar from '@/components/shared/UserAvatar';
-import WarningModal from '@/components/shared/WarningModal';
+import { LoginWrapper } from '@/components/Header/LoginWrapper';
+import { ErrorInfo } from '@/components/shared/ErrorInfo';
+import { Loading } from '@/components/shared/Loading';
+import { UserAvatar } from '@/components/shared/UserAvatar';
+import { WarningModal } from '@/components/shared/WarningModal';
 import type { Comment } from '@/interface/comments';
 import { userStore } from '@/store/user';
 import { dayjs } from '@/utils/dayjs';

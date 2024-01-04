@@ -5,9 +5,9 @@ import type { GetServerSideProps } from 'next';
 import Head from 'next/head';
 import { useState } from 'react';
 
-import ListingHeader from '@/components/listings/listings/ListingHeaderBounty';
-import OgImageViewer from '@/components/misc/ogImageViewer';
-import ErrorSection from '@/components/shared/ErrorSection';
+import { ListingHeader } from '@/components/listings/listings/ListingHeaderBounty';
+import { OgImageViewer } from '@/components/misc/ogImageViewer';
+import { ErrorSection } from '@/components/shared/ErrorSection';
 import type { Bounty } from '@/interface/bounty';
 import { Default } from '@/layouts/Default';
 import { getURL } from '@/utils/validUrl';
@@ -53,7 +53,7 @@ function BountyDetails({ bounty: initialBounty }: BountyDetailsProps) {
           />
           <meta
             property="og:image"
-            content={`https://earn.superteam.fun/api/ognew/?title=${initialBounty?.title}&reward=${initialBounty?.rewardAmount}&token=${initialBounty?.token}&sponsor=${initialBounty?.sponsor?.name}&logo=${initialBounty?.sponsor?.logo}&type=${initialBounty?.type}`}
+            content={`https://earn.superteam.fun/api/bounty-og/?title=${initialBounty?.title}&reward=${initialBounty?.rewardAmount}&token=${initialBounty?.token}&sponsor=${initialBounty?.sponsor?.name}&logo=${initialBounty?.sponsor?.logo}&type=${initialBounty?.type}`}
           />
           <meta
             name="twitter:title"
@@ -61,7 +61,7 @@ function BountyDetails({ bounty: initialBounty }: BountyDetailsProps) {
           />
           <meta
             name="twitter:image"
-            content={`https://earn.superteam.fun/api/ognew/?title=${initialBounty?.title}&reward=${initialBounty?.rewardAmount}&token=${initialBounty?.token}&sponsor=${initialBounty?.sponsor?.name}&logo=${initialBounty?.sponsor?.logo}&type=${initialBounty?.type}`}
+            content={`https://earn.superteam.fun/api/bounty-og/?title=${initialBounty?.title}&reward=${initialBounty?.rewardAmount}&token=${initialBounty?.token}&sponsor=${initialBounty?.sponsor?.name}&logo=${initialBounty?.sponsor?.logo}&type=${initialBounty?.type}`}
           />
           <meta name="twitter:card" content="summary_large_image" />
           <meta property="og:image:width" content="1200" />

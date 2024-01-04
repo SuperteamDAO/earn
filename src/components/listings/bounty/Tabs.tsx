@@ -3,8 +3,8 @@ import { Flex } from '@chakra-ui/react';
 import dayjs from 'dayjs';
 
 import { BountiesCard } from '@/components/misc/listingsCard';
-import EmptySection from '@/components/shared/EmptySection';
-import Loading from '@/components/shared/Loading';
+import { EmptySection } from '@/components/shared/EmptySection';
+import { Loading } from '@/components/shared/Loading';
 import type { Bounty } from '@/interface/bounty';
 
 interface TabProps {

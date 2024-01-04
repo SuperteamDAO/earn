@@ -8,6 +8,7 @@ type BountySnackbarType = {
   deadline: string | undefined;
   rewardAmount: number | undefined;
   type: string | undefined;
+  isPublished: boolean | undefined;
 };
 
 export const bountySnackbarAtom = atom<BountySnackbarType | null>(null);
@@ -20,63 +21,59 @@ export const BountySnackbar = () => {
 
   const showSnackbar = /^\/listings\/bounties\/[^/]+$/.test(pathname);
 
-  const getMessage = () => {
-    if (bountySnackbar) {
-      const { submissionCount, deadline, rewardAmount, type } = bountySnackbar;
+  if (!bountySnackbar) return null;
 
-      if (deadline && dayjs(deadline).isBefore(dayjs())) {
-        return null;
-      }
+  const { submissionCount, deadline, rewardAmount, type, isPublished } =
+    bountySnackbar;
 
-      if (type === 'open') {
-        if (deadline) {
-          const daysToDeadline = dayjs(deadline).diff(dayjs(), 'day');
-          if (daysToDeadline < 3) {
-            return '🕛 Expiring Soon: Submit while you still have the chance!';
-          }
-        }
+  const isExpired = deadline && dayjs(deadline).isBefore(dayjs());
 
-        if (rewardAmount && rewardAmount > 1000) {
-          return "🤑 Mo' Money, Fewer Problems: Higher than average total bounty reward!";
-        }
+  const getBackgroundColor = () => {
+    if (!isPublished) return '#DC4830';
+    if (isExpired) return '#6A6A6A';
+    return '#B869D3';
+  };
 
-        if (submissionCount === 0) {
-          return '🔥 High chance of winning: No submissions have been made for this bounty yet!';
-        }
+  const getSnackbarMessage = (): string | null => {
+    const daysToDeadline = deadline
+      ? dayjs(deadline).diff(dayjs(), 'day')
+      : null;
 
-        if (submissionCount === 1) {
-          return '🔥 High chance of winning: Only 1 submission has been made for this bounty yet!';
-        }
-
-        if (submissionCount < 10) {
-          return `🔥 High chance of winning: Only ${submissionCount} submissions have been made for this bounty yet!`;
-        }
-      } else if (type === 'permissioned') {
-        if (deadline) {
-          const daysToDeadline = dayjs(deadline).diff(dayjs(), 'day');
-          if (daysToDeadline < 3) {
-            return '🕛 Expiring Soon: Apply while you still have the chance!';
-          }
-        }
-
-        if (submissionCount < 10) {
-          return '🔥 The Odds Are in Your Favour! Not too many applications yet';
-        }
-
-        if (rewardAmount && rewardAmount > 1500) {
-          return "🤑 Mo' Money, Fewer Problems: Higher than average total project reward";
-        }
-      }
-    }
+    if (!isPublished)
+      return 'This Listing Is Inactive Right Now. Check Out Other Listings on Our Homepage!';
+    if (isExpired)
+      return 'The Deadline for This Listing Has Passed. Check Out Other Listings on the Homepage!';
+    if (daysToDeadline && daysToDeadline < 3)
+      return `🕛 Expiring Soon: ${
+        type === 'open' ? 'Submit' : 'Apply'
+      } while you still have the chance!`;
+    if (
+      rewardAmount &&
+      ((type === 'open' && rewardAmount > 1000) ||
+        (type === 'permissioned' && rewardAmount > 1500))
+    )
+      return `🤑 Mo' Money, Fewer Problems: Higher than average total ${
+        type === 'open' ? 'bounty' : 'project'
+      } reward`;
+    if (
+      (type === 'open' && submissionCount <= 1) ||
+      (type === 'permissioned' && submissionCount < 10)
+    )
+      return type === 'open'
+        ? `🔥 High chance of winning: Only ${
+            submissionCount || 'no'
+          } submission(s) have been made for this bounty yet!`
+        : '🔥 The Odds Are in Your Favour! Not too many applications yet';
 
     return null;
   };
 
-  const message = getMessage();
+  const message = getSnackbarMessage();
+  const bgColor = getBackgroundColor();
 
   if (showSnackbar && bountySnackbar && message) {
     return (
-      <Box w="full" color="white" bgColor="#B869D3">
+      <Box w="full" color="white" bgColor={bgColor}>
         <Text p={3} fontSize="sm" fontWeight={500} textAlign="center">
           {message}
         </Text>

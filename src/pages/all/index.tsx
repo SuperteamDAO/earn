@@ -3,10 +3,10 @@ import axios from 'axios';
 import { useEffect, useState } from 'react';
 
 import { BountiesCard, ListingSection } from '@/components/misc/listingsCard';
-import EmptySection from '@/components/shared/EmptySection';
-import Loading from '@/components/shared/Loading';
+import { EmptySection } from '@/components/shared/EmptySection';
+import { Loading } from '@/components/shared/Loading';
 import type { Bounty } from '@/interface/bounty';
-import Home from '@/layouts/Home';
+import { Home } from '@/layouts/Home';
 
 interface Listings {
   bounties?: Bounty[];

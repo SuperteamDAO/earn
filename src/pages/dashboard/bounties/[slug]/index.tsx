@@ -1,6 +1,6 @@
 import type { GetServerSideProps } from 'next';
 
-import Sidebar from '@/layouts/Sidebar';
+import { Sidebar } from '@/layouts/Sidebar';
 
 interface Props {
   slug: string;

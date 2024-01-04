@@ -204,7 +204,7 @@ export const BountiesCard = ({
                 logo
                   ? logo.replace(
                       '/upload/',
-                      '/upload/c_scale,w_64,h_64,f_auto/'
+                      '/upload/c_scale,w_128,h_128,f_auto/'
                     )
                   : `${router.basePath}/assets/images/sponsor-logo.png`
               }
@@ -355,7 +355,7 @@ export const GrantsCard = ({
                 logo
                   ? logo.replace(
                       '/upload/',
-                      '/upload/c_scale,w_64,h_64,f_auto/'
+                      '/upload/c_scale,w_128,h_128,f_auto/'
                     )
                   : `assets/home/placeholder/ph3.png`
               }
