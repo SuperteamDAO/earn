@@ -5,8 +5,7 @@
     "next/core-web-vitals", // Needed to avoid warning in next.js build: 'The Next.js plugin was not detected in your ESLint configuration'
     "plugin:prettier/recommended",
     "plugin:react/recommended",
-    "plugin:react-hooks/recommended",
-    "plugin:jsx-a11y/recommended"
+    "plugin:react-hooks/recommended"
   ],
   "parser": "@typescript-eslint/parser",
   "rules": {
@@ -28,8 +27,7 @@
         "simple-import-sort",
         "chakra-ui",
         "react",
-        "react-hooks",
-        "jsx-a11y"
+        "react-hooks"
       ],
       "extends": [
         "airbnb-typescript",
