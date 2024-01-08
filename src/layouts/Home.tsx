@@ -9,6 +9,7 @@ import {
 } from '@chakra-ui/react';
 import axios from 'axios';
 import { useRouter } from 'next/router';
+import { useSession } from 'next-auth/react';
 import type { ReactNode } from 'react';
 import React, { useEffect, useState } from 'react';
 import { Toaster } from 'react-hot-toast';
@@ -68,6 +69,8 @@ export function Home({ children, type }: HomeProps) {
     (e) => e.region.toLowerCase() === String(router.query.slug).toLowerCase()
   );
 
+  const { data: session } = useSession();
+
   return (
     <Default
       className="bg-white"
@@ -92,7 +95,7 @@ export function Home({ children, type }: HomeProps) {
               setTriggerLogin={setTriggerLogin}
             />
             <Box w="full">
-              {!userInfo?.id && (
+              {!session?.user?.email && (
                 <HomeBanner setTriggerLogin={setTriggerLogin} />
               )}
               {type === 'category' && (

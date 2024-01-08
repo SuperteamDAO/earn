@@ -50,17 +50,17 @@ const extendThemeWithNextFonts = {
   },
 };
 
-if (typeof window !== 'undefined') {
-  posthog.init(process.env.NEXT_PUBLIC_POSTHOG_KEY!, {
-    api_host: process.env.NEXT_PUBLIC_POSTHOG_HOST || 'https://app.posthog.com',
-    // eslint-disable-next-line @typescript-eslint/no-shadow
-    loaded: (posthog) => {
-      if (process.env.NODE_ENV === 'development') posthog.debug();
-    },
-  });
-}
+// if (typeof window !== 'undefined') {
+//   posthog.init(process.env.NEXT_PUBLIC_POSTHOG_KEY!, {
+//     api_host: process.env.NEXT_PUBLIC_POSTHOG_HOST || 'https://app.posthog.com',
+//     // eslint-disable-next-line @typescript-eslint/no-shadow
+//     loaded: (posthog) => {
+//       if (process.env.NODE_ENV === 'development') posthog.debug();
+//     },
+//   });
+// }
 
-function MyApp({ Component, pageProps }: AppProps) {
+function MyApp({ Component, pageProps: { session, ...pageProps } }: AppProps) {
   return (
     <>
       <style jsx global>
@@ -73,7 +73,7 @@ function MyApp({ Component, pageProps }: AppProps) {
         `}
       </style>
       <ChakraProvider theme={extendThemeWithNextFonts}>
-        <SessionProvider session={pageProps.session}>
+        <SessionProvider session={session}>
           <Wallet>
             <PostHogProvider client={posthog}>
               <Component {...pageProps} />

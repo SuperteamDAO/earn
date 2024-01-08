@@ -5,7 +5,7 @@ import React, { useEffect } from 'react';
 export default function Email() {
   const { data: session } = useSession();
   useEffect(() => {
-    console.log(session);
+    // console.log(session);
   }, [session]);
   if (session) {
     return <Button onClick={() => signOut()}>Sign Out</Button>;

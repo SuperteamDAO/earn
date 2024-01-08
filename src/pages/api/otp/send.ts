@@ -5,10 +5,10 @@ import { generateCode } from '@/utils/helpers';
 import resendMail from '@/utils/resend';
 
 export default async function send(req: NextApiRequest, res: NextApiResponse) {
-  const { publicKey, email } = req.body;
+  const { seed, email } = req.body;
   try {
     const serverTime = Date.now();
-    const code = generateCode(publicKey as string, serverTime);
+    const code = generateCode(seed as string, serverTime);
     await resendMail.emails.send({
       from: `Kash from Superteam <${process.env.RESEND_EMAIL}>`,
       to: [email],

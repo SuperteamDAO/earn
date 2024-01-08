@@ -32,11 +32,12 @@ export const authOptions: NextAuthOptions = {
   },
   callbacks: {
     async jwt({ token, user }) {
-      console.log(token, user);
       return { ...token, ...user };
     },
     async session({ session, token }) {
-      console.log(session, token);
+      session.user.photo = token.photo;
+      session.user.firstName = token.firstName;
+      session.user.lastName = token.lastName;
       session.user.isSponsor = !!token.currentSponsorId;
       return session;
     },

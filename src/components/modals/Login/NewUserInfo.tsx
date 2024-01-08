@@ -9,12 +9,12 @@ import {
   Text,
 } from '@chakra-ui/react';
 import axios from 'axios';
+import { randomUUID } from 'crypto';
 import type { FormEvent } from 'react';
 import { useState } from 'react';
 
 import type { User } from '@/interface/user';
 import { generateCode, generateCodeLast } from '@/utils/helpers';
-import { truncatePublicKey } from '@/utils/truncatePublicKey';
 
 interface Props {
   userInfo: User | null;
@@ -68,14 +68,15 @@ export function NewUserInfo({
 
   const sendOTPEmail = async (user: User) => {
     setUserInfo({ ...userInfo, ...user });
+    const uuid = randomUUID();
     const response = await axios.post('/api/otp/send', {
-      publicKey: userInfo?.publicKey,
+      seed: uuid,
       email: userDetails?.email,
     });
     const serverTime = response.data.time;
 
-    const code = generateCode(userInfo?.publicKey, serverTime);
-    const codeLast = generateCodeLast(userInfo?.publicKey, serverTime);
+    const code = generateCode(uuid, serverTime);
+    const codeLast = generateCodeLast(uuid, serverTime);
     setOtp({
       current: code,
       last: codeLast,
@@ -99,7 +100,6 @@ export function NewUserInfo({
         setErrorMessage('');
         setLoading(true);
         const newUserDetails = await axios.post('/api/user/create', {
-          publicKey: userInfo?.publicKey,
           email: userDetails?.email,
           firstName: userDetails?.firstName,
           lastName: userDetails?.lastName,
@@ -111,15 +111,7 @@ export function NewUserInfo({
         error?.response?.data?.error?.code === 'P2002' &&
         error?.response?.data?.user
       ) {
-        if (error?.response?.data?.user?.publicKey === userInfo?.publicKey) {
-          sendOTPEmail(error?.response?.data?.user);
-        } else {
-          setErrorMessage(
-            `User already exists for this email with another wallet (${truncatePublicKey(
-              error?.response?.data?.user?.publicKey
-            )}).`
-          );
-        }
+        setErrorMessage('User already exists for this email');
       } else {
         setErrorMessage(
           `Error occurred in creating user. Error Code:${

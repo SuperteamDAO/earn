@@ -10,10 +10,10 @@ import {
   Text,
   VStack,
 } from '@chakra-ui/react';
-import { useWallet } from '@solana/wallet-adapter-react';
 import axios from 'axios';
 import { MediaPicker } from 'degen';
 import { useRouter } from 'next/router';
+import { useSession } from 'next-auth/react';
 import { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { Toaster } from 'react-hot-toast';
@@ -31,8 +31,8 @@ import { uploadToCloudinary } from '../../utils/upload';
 const CreateSponsor = () => {
   const router = useRouter();
   const animatedComponents = makeAnimated();
-  const { connected } = useWallet();
   const { userInfo } = userStore();
+  const { data: session } = useSession();
   const {
     handleSubmit,
     register,
@@ -83,7 +83,7 @@ const CreateSponsor = () => {
         />
       }
     >
-      {!connected ? (
+      {!session ? (
         <>
           <Box
             alignItems={'center'}

@@ -12,23 +12,20 @@ import {
   ModalOverlay,
   Text,
 } from '@chakra-ui/react';
-import type { Wallet } from '@solana/wallet-adapter-react';
 import { useRouter } from 'next/router';
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 
 import type { User } from '@/interface/user';
 
-import { ConnectWallet } from './ConnectWallet';
 import { NewUserInfo } from './NewUserInfo';
+import { SignIn } from './SignIn';
 import { VerifyOTP } from './VerifyOtp';
 
 interface Props {
   isOpen: boolean;
   onClose: () => void;
-  onConnectWallet: (wallet: Wallet) => Promise<void>;
   userInfo: User | null;
   setUserInfo: (userInfo: User) => void;
-  wallets: Wallet[];
   initialStep?: number;
   inviteInfo?: {
     emailInvite?: string;
@@ -39,10 +36,8 @@ interface Props {
 export const Login = ({
   isOpen,
   onClose,
-  onConnectWallet,
   userInfo,
   setUserInfo,
-  wallets,
   initialStep = 1,
   inviteInfo,
 }: Props) => {
@@ -52,16 +47,6 @@ export const Login = ({
     current: 0,
     last: 0,
   });
-
-  useEffect(() => {
-    if (
-      userInfo?.publicKey &&
-      (!userInfo?.email || !userInfo?.isVerified) &&
-      step !== 2
-    ) {
-      setStep(2);
-    }
-  }, [userInfo]);
 
   return (
     <Modal
@@ -85,12 +70,7 @@ export const Login = ({
         </ModalHeader>
         <ModalCloseButton />
         <ModalBody>
-          {step === 1 && (
-            <ConnectWallet
-              wallets={wallets}
-              onConnectWallet={onConnectWallet}
-            />
-          )}
+          {step === 1 && <SignIn />}
           {step === 2 && (
             <NewUserInfo
               inviteInfo={inviteInfo}

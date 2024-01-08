@@ -14,11 +14,9 @@ import {
   useDisclosure,
   useMediaQuery,
 } from '@chakra-ui/react';
-import type { Wallet as SolanaWallet } from '@solana/wallet-adapter-react';
-import { useWallet } from '@solana/wallet-adapter-react';
-import axios from 'axios';
 import Avatar from 'boring-avatars';
 import { useRouter } from 'next/router';
+import { signOut, useSession } from 'next-auth/react';
 import { useEffect, useState } from 'react';
 
 import { Login } from '@/components/modals/Login/Login';
@@ -31,57 +29,25 @@ interface UserInfoProps {
 export function UserInfo({ isMobile }: UserInfoProps) {
   const router = useRouter();
   const { isOpen, onOpen, onClose } = useDisclosure();
-  const { connected, publicKey, wallet, wallets, select } = useWallet();
+
   const { setUserInfo, userInfo } = userStore();
   const [initialStep, setInitialStep] = useState<number>(1);
   const [isLessthan768] = useMediaQuery('(max-width: 768px)');
-
-  useEffect(() => {
-    const makeUser = async () => {
-      if (publicKey && connected) {
-        const publicKeyString = publicKey.toBase58() as string;
-        const userDetails = await axios.post('/api/user/', {
-          publicKey: publicKeyString,
-        });
-        if (!userDetails.data) {
-          setUserInfo({ publicKey: publicKeyString });
-        } else if (!userDetails.data.isVerified) {
-          setUserInfo(userDetails.data);
-        } else {
-          setUserInfo(userDetails.data);
-          onClose();
-        }
-      }
-    };
-    makeUser();
-  }, [publicKey, connected]);
-
-  const onConnectWallet = async (solanaWallet: SolanaWallet) => {
-    try {
-      select(solanaWallet.adapter.name);
-    } catch (e) {
-      console.log('Wallet not found');
-    }
-  };
-
-  const onDisconnectWallet = async () => {
-    if (wallet == null) {
-      return;
-    }
-    await wallet.adapter.disconnect();
-    setUserInfo({});
-  };
 
   const displayValue = isMobile
     ? { base: 'block', md: 'none' }
     : { base: 'none', md: 'block' };
 
+  const { data: session } = useSession();
+
+  useEffect(() => {
+    console.log(session);
+  }, []);
+
   return (
     <>
       {!!isOpen && (
         <Login
-          wallets={wallets}
-          onConnectWallet={onConnectWallet}
           isOpen={isOpen}
           onClose={onClose}
           userInfo={userInfo}
@@ -89,7 +55,7 @@ export function UserInfo({ isMobile }: UserInfoProps) {
           initialStep={initialStep}
         />
       )}
-      {connected ? (
+      {session ? (
         <>
           {userInfo && !userInfo.isVerified && (
             <Button
@@ -129,38 +95,38 @@ export function UserInfo({ isMobile }: UserInfoProps) {
               rounded={'full'}
             >
               <Flex align="center">
-                {userInfo?.photo ? (
+                {session?.user?.photo ? (
                   <Image
                     boxSize="32px"
                     borderRadius="full"
                     objectFit={'cover'}
-                    alt={`${userInfo?.firstName} ${userInfo?.lastName}`}
-                    src={userInfo?.photo}
+                    alt={`${session?.user?.firstName} ${session?.user?.lastName}`}
+                    src={session?.user?.photo}
                   />
                 ) : (
                   <Avatar
-                    name={`${userInfo?.firstName} ${userInfo?.lastName}`}
+                    name={`${session?.user?.firstName} ${session?.user?.lastName}`}
                     colors={['#92A1C6', '#F0AB3D', '#C271B4']}
                     size={32}
                     variant="marble"
                   />
                 )}
                 <Box display={displayValue} ml={2}>
-                  {!userInfo?.firstName ? (
+                  {!session?.user?.firstName ? (
                     <Text color="brand.slate.800" fontSize="sm">
                       New User
                     </Text>
                   ) : (
                     <Text color="brand.slate.800" fontSize="sm">
-                      {userInfo?.firstName}
+                      {session?.user?.firstName}
                     </Text>
                   )}
                   <Text color="brand.slate.500" fontSize="xs">
-                    {userInfo?.publicKey?.substring(0, 4)}
+                    {session.user?.email?.substring(0, 4)}
                     ....
-                    {userInfo?.publicKey?.substring(
-                      userInfo.publicKey.length - 4,
-                      userInfo?.publicKey?.length
+                    {session.user?.email?.substring(
+                      session.user.email.length - 4,
+                      session.user?.email?.length
                     )}
                   </Text>
                 </Box>
@@ -173,7 +139,7 @@ export function UserInfo({ isMobile }: UserInfoProps) {
                   fontSize="sm"
                   fontWeight={600}
                   onClick={() => {
-                    router.push(`/t/${userInfo?.username}`);
+                    router.push(`/t/${session?.user?.username}`);
                   }}
                 >
                   Profile
@@ -185,7 +151,7 @@ export function UserInfo({ isMobile }: UserInfoProps) {
                   fontSize="sm"
                   fontWeight={600}
                   onClick={() => {
-                    router.push(`/t/${userInfo?.username}/edit`);
+                    router.push(`/t/${session?.user?.username}/edit`);
                   }}
                 >
                   Edit Profile
@@ -232,9 +198,7 @@ export function UserInfo({ isMobile }: UserInfoProps) {
                 color="red.500"
                 fontSize="sm"
                 fontWeight={600}
-                onClick={() => {
-                  onDisconnectWallet();
-                }}
+                onClick={() => signOut()}
               >
                 Logout
               </MenuItem>
