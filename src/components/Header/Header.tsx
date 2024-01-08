@@ -14,6 +14,7 @@ import {
   useColorModeValue,
   useDisclosure,
 } from '@chakra-ui/react';
+import NextLink from 'next/link';
 import { useRouter } from 'next/router';
 
 import { BountySnackbar } from './BountySnackbar';
@@ -91,6 +92,7 @@ const MobileNavItem = ({ label, children, href }: NavItem) => {
             children.map((child) => (
               <Link
                 key={child.label}
+                as={NextLink}
                 mt={0}
                 pb={2}
                 color={'gray.500'}
@@ -160,7 +162,7 @@ const NavLink = ({
   };
 
   return (
-    <Link href={href} {...styles}>
+    <Link as={NextLink} href={href} {...styles}>
       {typeof label === 'string' ? <Text fontSize="sm">{label}</Text> : label}
     </Link>
   );
@@ -240,7 +242,7 @@ export const Header = () => {
             justify={{ base: 'center', lg: 'start' }}
             gap={6}
           >
-            <Link display={{ base: 'none', lg: 'flex' }} href="/">
+            <Link as={NextLink} display={{ base: 'none', lg: 'flex' }} href="/">
               <Image
                 h={5}
                 mr={5}
@@ -278,7 +280,7 @@ export const Header = () => {
           >
             <DesktopNav />
           </Flex>
-          <Link display={{ base: 'flex', lg: 'none' }} href="/">
+          <Link as={NextLink} display={{ base: 'flex', lg: 'none' }} href="/">
             <Image
               h={5}
               my="auto"

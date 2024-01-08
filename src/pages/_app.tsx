@@ -6,6 +6,7 @@ import { ChakraProvider } from '@chakra-ui/react';
 import type { AppProps } from 'next/app';
 // Fonts
 import { Domine, Inter, JetBrains_Mono } from 'next/font/google';
+import { useRouter } from 'next/router';
 import { SessionProvider } from 'next-auth/react';
 import posthog from 'posthog-js';
 import { PostHogProvider } from 'posthog-js/react';
@@ -50,17 +51,19 @@ const extendThemeWithNextFonts = {
   },
 };
 
-// if (typeof window !== 'undefined') {
-//   posthog.init(process.env.NEXT_PUBLIC_POSTHOG_KEY!, {
-//     api_host: process.env.NEXT_PUBLIC_POSTHOG_HOST || 'https://app.posthog.com',
-//     // eslint-disable-next-line @typescript-eslint/no-shadow
-//     loaded: (posthog) => {
-//       if (process.env.NODE_ENV === 'development') posthog.debug();
-//     },
-//   });
-// }
+if (typeof window !== 'undefined' && process.env.NODE_ENV !== 'development') {
+  posthog.init(process.env.NEXT_PUBLIC_POSTHOG_KEY!, {
+    api_host: process.env.NEXT_PUBLIC_POSTHOG_HOST || 'https://app.posthog.com',
+    // eslint-disable-next-line @typescript-eslint/no-shadow
+    loaded: (posthog) => {
+      if (process.env.NODE_ENV === 'development') posthog.debug();
+    },
+  });
+}
 
 function MyApp({ Component, pageProps: { session, ...pageProps } }: AppProps) {
+  const router = useRouter();
+
   return (
     <>
       <style jsx global>
@@ -76,7 +79,7 @@ function MyApp({ Component, pageProps: { session, ...pageProps } }: AppProps) {
         <SessionProvider session={session}>
           <Wallet>
             <PostHogProvider client={posthog}>
-              <Component {...pageProps} />
+              <Component {...pageProps} key={router.asPath} />
             </PostHogProvider>
           </Wallet>
         </SessionProvider>
