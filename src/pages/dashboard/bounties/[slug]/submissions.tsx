@@ -501,7 +501,13 @@ function BountySubmissions({ slug }: Props) {
                               isDisabled={!bounty?.isWinnersAnnounced}
                               isLoading={isPaying}
                               loadingText={'Paying...'}
-                              onClick={async () =>
+                              onClick={async () => {
+                                if (!selectedSubmission?.user.publicKey) {
+                                  console.error(
+                                    'Public key is null, cannot proceed with payment'
+                                  );
+                                  return;
+                                }
                                 handlePayout({
                                   id: selectedSubmission?.id as string,
                                   token: bounty?.token as string,
@@ -511,8 +517,8 @@ function BountySubmissions({ slug }: Props) {
                                   receiver: new PublicKey(
                                     selectedSubmission.user.publicKey
                                   ),
-                                })
-                              }
+                                });
+                              }}
                               size="sm"
                               variant="solid"
                             >
@@ -702,33 +708,35 @@ function BountySubmissions({ slug }: Props) {
                           {selectedSubmission?.user?.bio || '-'}
                         </Text>
                       </Flex>
-                      <Flex
-                        align="center"
-                        justify="start"
-                        gap={2}
-                        mb={4}
-                        fontSize="sm"
-                      >
-                        <Text w={20} color="brand.slate.400">
-                          Wallet:
-                        </Text>
-                        <Text color="brand.slate.700">
-                          {truncatePublicKey(
-                            selectedSubmission?.user?.publicKey
-                          )}
-                          <Tooltip label="Copy Wallet ID" placement="right">
-                            <CopyIcon
-                              cursor="pointer"
-                              ml={1}
-                              onClick={() =>
-                                navigator.clipboard.writeText(
-                                  selectedSubmission?.user?.publicKey || ''
-                                )
-                              }
-                            />
-                          </Tooltip>
-                        </Text>
-                      </Flex>
+                      {selectedSubmission?.user?.publicKey && (
+                        <Flex
+                          align="center"
+                          justify="start"
+                          gap={2}
+                          mb={4}
+                          fontSize="sm"
+                        >
+                          <Text w={20} color="brand.slate.400">
+                            Wallet:
+                          </Text>
+                          <Text color="brand.slate.700">
+                            {truncatePublicKey(
+                              selectedSubmission?.user?.publicKey
+                            )}
+                            <Tooltip label="Copy Wallet ID" placement="right">
+                              <CopyIcon
+                                cursor="pointer"
+                                ml={1}
+                                onClick={() =>
+                                  navigator.clipboard.writeText(
+                                    selectedSubmission?.user?.publicKey || ''
+                                  )
+                                }
+                              />
+                            </Tooltip>
+                          </Text>
+                        </Flex>
+                      )}
                       <Flex
                         align="center"
                         justify="start"

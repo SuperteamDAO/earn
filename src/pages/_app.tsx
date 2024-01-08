@@ -6,6 +6,7 @@ import { ChakraProvider } from '@chakra-ui/react';
 import type { AppProps } from 'next/app';
 // Fonts
 import { Domine, Inter, JetBrains_Mono } from 'next/font/google';
+import { SessionProvider } from 'next-auth/react';
 import posthog from 'posthog-js';
 import { PostHogProvider } from 'posthog-js/react';
 
@@ -72,11 +73,13 @@ function MyApp({ Component, pageProps }: AppProps) {
         `}
       </style>
       <ChakraProvider theme={extendThemeWithNextFonts}>
-        <Wallet>
-          <PostHogProvider client={posthog}>
-            <Component {...pageProps} />
-          </PostHogProvider>
-        </Wallet>
+        <SessionProvider session={pageProps.session}>
+          <Wallet>
+            <PostHogProvider client={posthog}>
+              <Component {...pageProps} />
+            </PostHogProvider>
+          </Wallet>
+        </SessionProvider>
       </ChakraProvider>
     </>
   );
