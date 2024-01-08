@@ -12,7 +12,6 @@ import posthog from 'posthog-js';
 import { PostHogProvider } from 'posthog-js/react';
 
 import theme from '../config/chakra.config';
-import { Wallet } from '../context/connectWalletContext';
 // importing localFont from a local file as Google imported fonts do not enable font-feature-settings. Reference: https://github.com/vercel/next.js/discussions/52456
 
 const fontSans = Inter({
@@ -77,11 +76,9 @@ function MyApp({ Component, pageProps: { session, ...pageProps } }: AppProps) {
       </style>
       <ChakraProvider theme={extendThemeWithNextFonts}>
         <SessionProvider session={session}>
-          <Wallet>
-            <PostHogProvider client={posthog}>
-              <Component {...pageProps} key={router.asPath} />
-            </PostHogProvider>
-          </Wallet>
+          <PostHogProvider client={posthog}>
+            <Component {...pageProps} key={router.asPath} />
+          </PostHogProvider>
         </SessionProvider>
       </ChakraProvider>
     </>

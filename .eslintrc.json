@@ -3,7 +3,10 @@
   "extends": [
     "airbnb-base",
     "next/core-web-vitals", // Needed to avoid warning in next.js build: 'The Next.js plugin was not detected in your ESLint configuration'
-    "plugin:prettier/recommended"
+    "plugin:prettier/recommended",
+    "plugin:react/recommended",
+    "plugin:react-hooks/recommended",
+    "plugin:jsx-a11y/recommended"
   ],
   "parser": "@typescript-eslint/parser",
   "rules": {
@@ -23,7 +26,10 @@
         "@typescript-eslint",
         "unused-imports",
         "simple-import-sort",
-        "chakra-ui"
+        "chakra-ui",
+        "react",
+        "react-hooks",
+        "jsx-a11y"
       ],
       "extends": [
         "airbnb-typescript",
