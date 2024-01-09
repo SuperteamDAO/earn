@@ -1,5 +1,4 @@
 import {
-  Box,
   Button,
   Flex,
   HStack,
@@ -111,7 +110,7 @@ export function UserInfo({ isMobile }: UserInfoProps) {
                     variant="marble"
                   />
                 )}
-                <Box display={displayValue} ml={2}>
+                <Flex display={displayValue} ml={2}>
                   {!session?.user?.firstName ? (
                     <Text color="brand.slate.800" fontSize="sm">
                       New User
@@ -122,14 +121,14 @@ export function UserInfo({ isMobile }: UserInfoProps) {
                     </Text>
                   )}
                   <Text color="brand.slate.500" fontSize="xs">
-                    {session.user?.email?.substring(0, 4)}
-                    ....
+                    {session.user?.email?.substring(0, 6)}
+                    ...
                     {session.user?.email?.substring(
-                      session.user.email.length - 4,
+                      session.user.email.length - 6,
                       session.user?.email?.length
                     )}
                   </Text>
-                </Box>
+                </Flex>
               </Flex>
             </MenuButton>
             <MenuList>
