@@ -9,6 +9,7 @@ import {
   Text,
   VisuallyHidden,
 } from '@chakra-ui/react';
+import NextLink from 'next/link';
 import type { ReactNode } from 'react';
 
 import { getURL } from '@/utils/validUrl';
@@ -153,6 +154,7 @@ export const Footer = () => {
           <Stack align={'flex-start'}>
             <ListHeader>All Superteams</ListHeader>
             <Link
+              as={NextLink}
               color="brand.slate.500"
               _hover={{
                 color: 'brand.slate.800',
@@ -163,6 +165,7 @@ export const Footer = () => {
               India
             </Link>
             <Link
+              as={NextLink}
               color="brand.slate.500"
               _hover={{
                 color: 'brand.slate.800',
@@ -173,6 +176,7 @@ export const Footer = () => {
               Germany
             </Link>
             <Link
+              as={NextLink}
               color="brand.slate.500"
               _hover={{
                 color: 'brand.slate.800',
@@ -183,6 +187,7 @@ export const Footer = () => {
               Mexico
             </Link>
             <Link
+              as={NextLink}
               color="brand.slate.500"
               _hover={{
                 color: 'brand.slate.800',
@@ -193,6 +198,7 @@ export const Footer = () => {
               Turkey
             </Link>
             <Link
+              as={NextLink}
               color="brand.slate.500"
               _hover={{
                 color: 'brand.slate.800',
@@ -203,6 +209,7 @@ export const Footer = () => {
               Vietnam
             </Link>
             <Link
+              as={NextLink}
               color="brand.slate.500"
               _hover={{
                 color: 'brand.slate.800',
@@ -213,6 +220,7 @@ export const Footer = () => {
               UK
             </Link>
             <Link
+              as={NextLink}
               color="brand.slate.500"
               _hover={{
                 color: 'brand.slate.800',
@@ -223,6 +231,7 @@ export const Footer = () => {
               UAE
             </Link>
             <Link
+              as={NextLink}
               color="brand.slate.500"
               _hover={{
                 color: 'brand.slate.800',
@@ -233,6 +242,7 @@ export const Footer = () => {
               Nigeria
             </Link>
             <Link
+              as={NextLink}
               color="brand.slate.500"
               _hover={{
                 color: 'brand.slate.800',
@@ -246,6 +256,7 @@ export const Footer = () => {
           <Stack align={'flex-start'}>
             <ListHeader>Superteam Productions</ListHeader>
             <Link
+              as={NextLink}
               color="brand.slate.500"
               _hover={{
                 color: 'brand.slate.800',
@@ -256,6 +267,7 @@ export const Footer = () => {
               Build
             </Link>
             <Link
+              as={NextLink}
               color="brand.slate.500"
               _hover={{
                 color: 'brand.slate.800',
@@ -266,6 +278,7 @@ export const Footer = () => {
               Media
             </Link>
             <Link
+              as={NextLink}
               color="brand.slate.500"
               _hover={{
                 color: 'brand.slate.800',

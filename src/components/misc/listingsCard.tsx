@@ -14,6 +14,7 @@ import {
 } from '@chakra-ui/react';
 import type { BountyType } from '@prisma/client';
 import axios from 'axios';
+import NextLink from 'next/link';
 import { useRouter } from 'next/router';
 import { useEffect, useState } from 'react';
 import { toast, Toaster } from 'react-hot-toast';
@@ -105,6 +106,7 @@ export const ListingSection = ({
           display={!all && router?.query?.category !== type ? 'block' : 'none'}
         >
           <Link
+            as={NextLink}
             href={
               url ||
               (router?.query?.filter
@@ -125,6 +127,7 @@ export const ListingSection = ({
         display={!all && router?.query?.category !== type ? 'block' : 'none'}
       >
         <Link
+          as={NextLink}
           href={
             url ||
             (router?.query?.filter
@@ -179,6 +182,7 @@ export const BountiesCard = ({
   return (
     <>
       <Link
+        as={NextLink}
         px={isMobile ? 1 : 4}
         py={4}
         borderRadius={5}
@@ -330,6 +334,7 @@ export const GrantsCard = ({
   return (
     <>
       <Link
+        as={NextLink}
         px={isMobile ? 1 : 4}
         py={4}
         borderRadius={5}

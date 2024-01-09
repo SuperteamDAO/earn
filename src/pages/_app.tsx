@@ -3,13 +3,17 @@ import 'degen/styles';
 import '../styles/globals.scss';
 
 import { ChakraProvider } from '@chakra-ui/react';
+import axios from 'axios';
 import type { AppProps } from 'next/app';
 // Fonts
 import { Domine, Inter, JetBrains_Mono } from 'next/font/google';
 import { useRouter } from 'next/router';
-import { SessionProvider } from 'next-auth/react';
+import { SessionProvider, useSession } from 'next-auth/react';
 import posthog from 'posthog-js';
 import { PostHogProvider } from 'posthog-js/react';
+import { useEffect } from 'react';
+
+import { userStore } from '@/store/user';
 
 import theme from '../config/chakra.config';
 // importing localFont from a local file as Google imported fonts do not enable font-feature-settings. Reference: https://github.com/vercel/next.js/discussions/52456
@@ -60,9 +64,38 @@ if (typeof window !== 'undefined' && process.env.NODE_ENV !== 'development') {
   });
 }
 
-function MyApp({ Component, pageProps: { session, ...pageProps } }: AppProps) {
+function MyApp({ Component, pageProps }: any) {
+  const { data: session, status } = useSession();
   const router = useRouter();
+  const { setUserInfo } = userStore();
 
+  useEffect(() => {
+    console.log(session);
+  }, [session]);
+
+  useEffect(() => {
+    const fetchUserInfo = async () => {
+      if (status === 'authenticated' && session?.user?.email) {
+        try {
+          const res = await axios.get('/api/user', {
+            headers: {
+              Authorization: `Bearer ${session.token}`,
+            },
+          });
+          setUserInfo(res.data);
+        } catch (error) {
+          console.error('Failed to fetch user info:', error);
+        }
+      }
+    };
+
+    fetchUserInfo();
+  }, [session, status]);
+
+  return <Component {...pageProps} key={router.asPath} />;
+}
+
+function App({ Component, pageProps: { session, ...pageProps } }: AppProps) {
   return (
     <>
       <style jsx global>
@@ -77,7 +110,7 @@ function MyApp({ Component, pageProps: { session, ...pageProps } }: AppProps) {
       <ChakraProvider theme={extendThemeWithNextFonts}>
         <SessionProvider session={session}>
           <PostHogProvider client={posthog}>
-            <Component {...pageProps} key={router.asPath} />
+            <MyApp Component={Component} pageProps={pageProps} />
           </PostHogProvider>
         </SessionProvider>
       </ChakraProvider>
@@ -85,4 +118,4 @@ function MyApp({ Component, pageProps: { session, ...pageProps } }: AppProps) {
   );
 }
 
-export default MyApp;
+export default App;

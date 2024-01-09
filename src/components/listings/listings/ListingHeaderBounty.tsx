@@ -13,6 +13,7 @@ import {
 } from '@chakra-ui/react';
 import type { BountyType, Regions, SubscribeBounty } from '@prisma/client';
 import axios from 'axios';
+import NextLink from 'next/link';
 import { useRouter } from 'next/router';
 import React, { useEffect, useState } from 'react';
 import { toast, Toaster } from 'react-hot-toast';
@@ -422,6 +423,7 @@ export function ListingHeader({
             px={3}
           >
             <Link
+              as={NextLink}
               alignItems="center"
               justifyContent="center"
               display="flex"
@@ -447,6 +449,7 @@ export function ListingHeader({
             </Link>
             {type !== 'permissioned' && hasDeadlineEnded && (
               <Link
+                as={NextLink}
                 alignItems="center"
                 justifyContent="center"
                 display="flex"
@@ -474,6 +477,7 @@ export function ListingHeader({
               references &&
               references?.length > 0 && (
                 <Link
+                  as={NextLink}
                   alignItems="center"
                   justifyContent="center"
                   display="flex"

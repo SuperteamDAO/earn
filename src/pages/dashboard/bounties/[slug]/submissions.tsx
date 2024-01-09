@@ -605,6 +605,7 @@ function BountySubmissions({ slug }: Props) {
                             Main Submission
                           </Text>
                           <Link
+                            as={NextLink}
                             color="brand.purple"
                             wordBreak={'break-all'}
                             href={getURLSanitized(
@@ -631,6 +632,7 @@ function BountySubmissions({ slug }: Props) {
                             Tweet Link
                           </Text>
                           <Link
+                            as={NextLink}
                             color="brand.purple"
                             wordBreak={'break-all'}
                             href={getURLSanitized(
@@ -762,6 +764,7 @@ function BountySubmissions({ slug }: Props) {
                           Twitter:
                         </Text>
                         <Link
+                          as={NextLink}
                           color="brand.slate.700"
                           href={selectedSubmission?.user?.twitter || undefined}
                           isExternal
@@ -780,6 +783,7 @@ function BountySubmissions({ slug }: Props) {
                           LinkedIn:
                         </Text>
                         <Link
+                          as={NextLink}
                           color="brand.slate.700"
                           href={selectedSubmission?.user?.linkedin || undefined}
                           isExternal
@@ -806,6 +810,7 @@ function BountySubmissions({ slug }: Props) {
                           GitHub:
                         </Text>
                         <Link
+                          as={NextLink}
                           color="brand.slate.700"
                           href={selectedSubmission?.user?.github || undefined}
                           isExternal
@@ -824,6 +829,7 @@ function BountySubmissions({ slug }: Props) {
                           Website:
                         </Text>
                         <Link
+                          as={NextLink}
                           color="brand.slate.700"
                           href={selectedSubmission?.user?.website || undefined}
                           isExternal

@@ -138,7 +138,7 @@ export function UserInfo({ isMobile }: UserInfoProps) {
                   fontSize="sm"
                   fontWeight={600}
                   onClick={() => {
-                    router.push(`/t/${session?.user?.username}`);
+                    router.push(`/t/${userInfo?.username}`);
                   }}
                 >
                   Profile

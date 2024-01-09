@@ -11,6 +11,7 @@ import {
   WrapItem,
 } from '@chakra-ui/react';
 import axios from 'axios';
+import NextLink from 'next/link';
 import React, { useEffect, useState } from 'react';
 
 import { ErrorInfo } from '@/components/shared/ErrorInfo';
@@ -69,7 +70,7 @@ const GrantEntry = ({
             : ''}
         </Text>
         {!!link && (
-          <Link href={`/listings/grants/${slug}`}>
+          <Link as={NextLink} href={`/listings/grants/${slug}`}>
             <Button variant="outline">Apply</Button>
           </Link>
         )}

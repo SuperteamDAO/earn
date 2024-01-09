@@ -1,39 +1,39 @@
 import type { NextApiRequest, NextApiResponse } from 'next';
+import { getToken } from 'next-auth/jwt';
 
 import { prisma } from '@/prisma';
 
-export default async function user(req: NextApiRequest, res: NextApiResponse) {
+export default async function handler(
+  req: NextApiRequest,
+  res: NextApiResponse
+) {
   try {
-    const currentSponsorUser = await prisma.user.findUnique({
-      where: {
-        ...req.body,
-      },
-      select: {
-        id: true,
-        currentSponsorId: true,
-      },
-    });
-    const where = currentSponsorUser?.currentSponsorId
-      ? {
-          UserSponsors: {
-            where: {
-              sponsorId: currentSponsorUser?.currentSponsorId,
-            },
-          },
-        }
-      : {};
+    const token = await getToken({ req, secret: process.env.SECRET });
+
+    if (!token) {
+      return res.status(401).json({ error: 'Unauthorized' });
+    }
+
+    const userEmail = token.email;
+
+    if (!userEmail) {
+      return res.status(400).json({ error: 'Invalid token' });
+    }
+
     const result = await prisma.user.findUnique({
       where: {
-        ...req.body,
+        email: userEmail,
       },
       include: {
         currentSponsor: true,
-        ...where,
       },
     });
-    res.status(200).json(result);
+
+    return res.status(200).json(result);
   } catch (err) {
     console.log(err);
-    res.status(400).json({ err: 'Error occurred while adding a new food.' });
+    return res
+      .status(500)
+      .json({ err: 'Error occurred while processing the request.' });
   }
 }

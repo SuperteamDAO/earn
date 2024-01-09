@@ -12,6 +12,7 @@ import {
 import Head from 'next/head';
 import type { ImageProps } from 'next/image';
 import Image from 'next/image';
+import NextLink from 'next/link';
 import { useEffect, useState } from 'react';
 
 import DialectDisplay from '@/public/assets/landingsponsor/displays/chatwithdialect.png';
@@ -215,6 +216,7 @@ const Sponsor = () => {
             </Box>
 
             <Link
+              as={NextLink}
               _hover={{ textDecoration: 'none' }}
               href="https://airtable.com/shrmOAXpF2vhONYqe"
               isExternal
@@ -742,6 +744,7 @@ const Sponsor = () => {
                 </Box>
 
                 <Link
+                  as={NextLink}
                   _hover={{ textDecoration: 'none' }}
                   href="https://airtable.com/shrmOAXpF2vhONYqe"
                   isExternal
@@ -805,7 +808,7 @@ const Sponsor = () => {
         p="0.625rem"
         bg={navbarBg ? 'white' : 'transparent'}
       >
-        <Link href="/">
+        <Link as={NextLink} href="/">
           <Box minW={'0.8125rem'} h="0.8125rem">
             <img src="/assets/logo/new-logo.svg" alt="Superteam Earn Logo" />
           </Box>
@@ -816,8 +819,10 @@ const Sponsor = () => {
           fontSize={!isLessThan600px ? '0.8125rem' : '0.4rem'}
           fontWeight="400"
         >
-          <Link href="https://earn.superteam.fun/bounties">Listings</Link>
-          <Link href="https://airtable.com/shrmOAXpF2vhONYqe">
+          <Link as={NextLink} href="https://earn.superteam.fun/bounties">
+            Listings
+          </Link>
+          <Link as={NextLink} href="https://airtable.com/shrmOAXpF2vhONYqe">
             Get Help For Adding Your Listing
           </Link>
         </Flex>

@@ -12,6 +12,7 @@ import {
   ModalOverlay,
   Text,
 } from '@chakra-ui/react';
+import NextLink from 'next/link';
 import { useRouter } from 'next/router';
 import { useState } from 'react';
 
@@ -93,6 +94,7 @@ export const Login = ({
           <Text color="brand.slate.400" fontSize="xs" textAlign="center">
             By connecting your wallet & signing up, you agree to our{' '}
             <Link
+              as={NextLink}
               fontWeight={700}
               href={`${router.basePath}/terms-of-service.pdf`}
               isExternal
@@ -101,6 +103,7 @@ export const Login = ({
             </Link>{' '}
             and our{' '}
             <Link
+              as={NextLink}
               fontWeight={700}
               href={`${router.basePath}/privacy-policy.pdf`}
               isExternal

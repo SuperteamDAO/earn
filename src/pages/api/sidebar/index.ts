@@ -6,7 +6,6 @@ import { prisma } from '@/prisma';
 export default async function user(_req: NextApiRequest, res: NextApiResponse) {
   try {
     const totals = await prisma.total.findFirst();
-    console.log(totals);
     const winningSubmissions = await prisma.submission.findMany({
       where: {
         isWinner: true,

@@ -31,14 +31,15 @@ export const authOptions: NextAuthOptions = {
     strategy: 'jwt',
   },
   callbacks: {
-    async jwt({ token, user }) {
-      return { ...token, ...user };
+    async jwt({ token, user, account }) {
+      return { ...token, ...user, ...account };
     },
     async session({ session, token }) {
       session.user.photo = token.photo;
       session.user.firstName = token.firstName;
       session.user.lastName = token.lastName;
       session.user.isSponsor = !!token.currentSponsorId;
+      session.token = token.access_token;
       return session;
     },
   },
