@@ -25,12 +25,13 @@ import {
   useDisclosure,
 } from '@chakra-ui/react';
 import type NodeWallet from '@project-serum/anchor/dist/cjs/nodewallet';
-import { useAnchorWallet } from '@solana/wallet-adapter-react';
+import { useAnchorWallet, useWallet } from '@solana/wallet-adapter-react';
 import type { TransactionInstruction } from '@solana/web3.js';
 import { PublicKey, Transaction } from '@solana/web3.js';
 import axios from 'axios';
 import Avatar from 'boring-avatars';
 import type { GetServerSideProps } from 'next';
+import dynamic from 'next/dynamic';
 import NextLink from 'next/link';
 import { useRouter } from 'next/router';
 import { useEffect, useState } from 'react';
@@ -82,6 +83,14 @@ function BountySubmissions({ slug }: Props) {
   const length = 15;
 
   const [usedPositions, setUsedPositions] = useState<string[]>([]);
+
+  const DynamicWalletMultiButton = dynamic(
+    async () =>
+      (await import('@solana/wallet-adapter-react-ui')).WalletMultiButton,
+    { ssr: false }
+  );
+
+  const { connected } = useWallet();
 
   const getBounty = async () => {
     setIsBountyLoading(true);
@@ -488,7 +497,8 @@ function BountySubmissions({ slug }: Props) {
                     <Flex align="center" justify={'flex-end'} gap={2} w="full">
                       {selectedSubmission?.isWinner &&
                         selectedSubmission?.winnerPosition &&
-                        !selectedSubmission?.isPaid && (
+                        !selectedSubmission?.isPaid &&
+                        (connected ? (
                           <Tooltip
                             bg={'brand.purple'}
                             hasArrow={true}
@@ -529,7 +539,9 @@ function BountySubmissions({ slug }: Props) {
                                 ]}
                             </Button>
                           </Tooltip>
-                        )}
+                        ) : (
+                          <DynamicWalletMultiButton />
+                        ))}
                       {selectedSubmission?.isWinner &&
                         selectedSubmission?.winnerPosition &&
                         selectedSubmission?.isPaid && (

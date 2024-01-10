@@ -5,7 +5,6 @@ import { css } from '@emotion/react';
 import axios from 'axios';
 import dayjs from 'dayjs';
 import type { NextPage } from 'next';
-import dynamic from 'next/dynamic';
 import NextLink from 'next/link';
 import { useEffect, useState } from 'react';
 
@@ -25,12 +24,6 @@ const HomePage: NextPage = () => {
   const [grants, setGrants] = useState<{ grants: Grant[] }>({
     grants: [],
   });
-
-  const DynamicWalletMultiButton = dynamic(
-    async () =>
-      (await import('@solana/wallet-adapter-react-ui')).WalletMultiButton,
-    { ssr: false }
-  );
 
   const date = dayjs().subtract(1, 'month').toISOString();
 
@@ -72,8 +65,6 @@ const HomePage: NextPage = () => {
   return (
     <Home type="home">
       <Box w={'100%'}>
-        <DynamicWalletMultiButton style={{ backgroundColor: '#9945FF' }} />
-
         <Box my={10}>
           <HStack
             align="center"
