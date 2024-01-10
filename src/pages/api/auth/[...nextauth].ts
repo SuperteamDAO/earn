@@ -61,7 +61,6 @@ export const authOptions: NextAuthOptions = {
       session.user.photo = token.photo;
       session.user.firstName = token.firstName;
       session.user.lastName = token.lastName;
-      session.user.isSponsor = !!token.currentSponsorId;
       session.token = token.access_token;
       return session;
     },

@@ -5,7 +5,6 @@ declare module 'next-auth' {
     token: any;
     user: User & {
       id: any;
-      isSponsor: boolean;
       firstName: any;
       lastName: any;
       photo: any;
