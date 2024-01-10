@@ -23,7 +23,6 @@ async function handler(_req: NextApiRequest, res: NextApiResponse) {
     const users = (
       await prisma.user.findMany({
         where: {
-          isVerified: true,
           isTalentFilled: true,
         },
       })

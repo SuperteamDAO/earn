@@ -22,10 +22,10 @@ export function InviteView({ invite }: Props) {
 
   const acceptUser = async (user: User) => {
     setIsAccepting(true);
-    if (user?.id && user?.isVerified && user?.email !== invite?.email) {
+    if (user?.id && user?.email !== invite?.email) {
       setIsWalletError(true);
       setIsAccepting(false);
-    } else if (user?.id && user?.isVerified && user?.email === invite?.email) {
+    } else if (user?.id && user?.email === invite?.email) {
       try {
         await axios.post('/api/userSponsors/accept/', {
           inviteId: invite?.id,

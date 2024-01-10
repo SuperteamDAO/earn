@@ -10,7 +10,7 @@ export default async function getUsersCount(
     try {
       const usersCount = await prisma.user.count({
         where: {
-          isVerified: true,
+          isTalentFilled: true,
         },
       });
 

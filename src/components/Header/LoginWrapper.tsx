@@ -24,7 +24,7 @@ export function LoginWrapper({
   acceptUser,
 }: LoginProps) {
   const { isOpen, onOpen, onClose } = useDisclosure();
-  const { setUserInfo, userInfo } = userStore();
+  const { userInfo } = userStore();
 
   useEffect(() => {
     const makeUser = async () => {
@@ -43,17 +43,5 @@ export function LoginWrapper({
     }
   }, [triggerLogin]);
 
-  return (
-    <>
-      {!!isOpen && (
-        <Login
-          inviteInfo={inviteInfo}
-          isOpen={isOpen}
-          onClose={onClose}
-          userInfo={userInfo}
-          setUserInfo={setUserInfo}
-        />
-      )}
-    </>
-  );
+  return <>{!!isOpen && <Login isOpen={isOpen} onClose={onClose} />}</>;
 }

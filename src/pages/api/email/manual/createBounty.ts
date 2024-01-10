@@ -29,7 +29,6 @@ export default async function handler(
     const users = (
       await prisma.user.findMany({
         where: {
-          isVerified: true,
           isTalentFilled: true,
         },
       })

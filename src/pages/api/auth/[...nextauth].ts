@@ -24,7 +24,6 @@ export const authOptions: NextAuthOptions = {
           lastName: profile.family_name,
           email: profile.email,
           emailVerified: profile.emailVerified,
-          isVerified: true,
         } as any;
       },
     }),

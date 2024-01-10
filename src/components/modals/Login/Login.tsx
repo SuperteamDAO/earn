@@ -14,40 +14,35 @@ import {
 } from '@chakra-ui/react';
 import NextLink from 'next/link';
 import { useRouter } from 'next/router';
-import { useState } from 'react';
 
-import type { User } from '@/interface/user';
-
-import { NewUserInfo } from './NewUserInfo';
 import { SignIn } from './SignIn';
-import { VerifyOTP } from './VerifyOtp';
 
 interface Props {
   isOpen: boolean;
   onClose: () => void;
-  userInfo: User | null;
-  setUserInfo: (userInfo: User) => void;
-  initialStep?: number;
-  inviteInfo?: {
-    emailInvite?: string;
-    currentSponsorId?: string;
-    memberType?: 'MEMBER' | 'ADMIN';
-  };
+  // userInfo: User | null;
+  // setUserInfo: (userInfo: User) => void;
+  // initialStep?: number;
+  // inviteInfo?: {
+  //   emailInvite?: string;
+  //   currentSponsorId?: string;
+  //   memberType?: 'MEMBER' | 'ADMIN';
+  // };
 }
 export const Login = ({
   isOpen,
   onClose,
-  userInfo,
-  setUserInfo,
-  initialStep = 1,
-  inviteInfo,
-}: Props) => {
+}: // userInfo,
+// setUserInfo,
+// initialStep = 1,
+// inviteInfo,
+Props) => {
   const router = useRouter();
-  const [step, setStep] = useState(initialStep);
-  const [otp, setOtp] = useState({
-    current: 0,
-    last: 0,
-  });
+  // const [step, setStep] = useState(initialStep);
+  // const [otp, setOtp] = useState({
+  //   current: 0,
+  //   last: 0,
+  // });
 
   return (
     <Modal
@@ -71,8 +66,10 @@ export const Login = ({
         </ModalHeader>
         <ModalCloseButton />
         <ModalBody>
-          {step === 1 && <SignIn />}
-          {step === 2 && (
+          {/* {step === 1 &&  */}
+          <SignIn />
+          {/* } */}
+          {/* {step === 2 && (
             <NewUserInfo
               inviteInfo={inviteInfo}
               userInfo={userInfo}
@@ -80,15 +77,15 @@ export const Login = ({
               setStep={setStep}
               setOtp={setOtp}
             />
-          )}
-          {step === 3 && (
+          )} */}
+          {/* {step === 3 && (
             <VerifyOTP
               inviteInfo={inviteInfo}
               userInfo={userInfo}
               onClose={onClose}
               otp={otp}
             />
-          )}
+          )} */}
         </ModalBody>
         <ModalFooter>
           <Text color="brand.slate.400" fontSize="xs" textAlign="center">

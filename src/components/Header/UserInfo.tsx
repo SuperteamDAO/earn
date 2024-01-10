@@ -16,7 +16,7 @@ import {
 import Avatar from 'boring-avatars';
 import { useRouter } from 'next/router';
 import { signOut, useSession } from 'next-auth/react';
-import { useEffect, useState } from 'react';
+import { useEffect } from 'react';
 
 import { Login } from '@/components/modals/Login/Login';
 import { userStore } from '@/store/user';
@@ -29,8 +29,8 @@ export function UserInfo({ isMobile }: UserInfoProps) {
   const router = useRouter();
   const { isOpen, onOpen, onClose } = useDisclosure();
 
-  const { setUserInfo, userInfo } = userStore();
-  const [initialStep, setInitialStep] = useState<number>(1);
+  const { userInfo } = userStore();
+  // const [initialStep, setInitialStep] = useState<number>(1);
   const [isLessthan768] = useMediaQuery('(max-width: 768px)');
 
   const displayValue = isMobile
@@ -49,31 +49,16 @@ export function UserInfo({ isMobile }: UserInfoProps) {
         <Login
           isOpen={isOpen}
           onClose={onClose}
-          userInfo={userInfo}
-          setUserInfo={setUserInfo}
-          initialStep={initialStep}
+          // userInfo={userInfo}
+          // setUserInfo={setUserInfo}
+          // initialStep={initialStep}
         />
       )}
       {session ? (
         <>
-          {userInfo && !userInfo.isVerified && (
-            <Button
-              display={displayValue}
-              fontSize="xs"
-              onClick={() => {
-                setInitialStep(2);
-                onOpen();
-              }}
-              size="sm"
-              variant={{ base: 'solid', md: 'ghost' }}
-            >
-              Verify your Email
-            </Button>
-          )}
           {userInfo &&
             !userInfo.currentSponsorId &&
-            !userInfo.isTalentFilled &&
-            userInfo.isVerified && (
+            !userInfo.isTalentFilled && (
               <Button
                 display={displayValue}
                 fontSize="xs"

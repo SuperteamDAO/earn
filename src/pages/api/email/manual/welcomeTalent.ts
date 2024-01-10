@@ -14,7 +14,7 @@ export default async function handler(
     return res.status(401).json({ error: 'Unauthorized' });
   }
 
-  const userEmail = token.id;
+  const userEmail = token.email;
 
   if (!userEmail) {
     return res.status(400).json({ error: 'Invalid token' });
