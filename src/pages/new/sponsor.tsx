@@ -22,7 +22,6 @@ import makeAnimated from 'react-select/animated';
 
 import { Default } from '@/layouts/Default';
 import { Meta } from '@/layouts/Meta';
-import { userStore } from '@/store/user';
 
 import { IndustryList } from '../../constants';
 import type { SponsorType } from '../../interface/sponsor';
@@ -31,7 +30,6 @@ import { uploadToCloudinary } from '../../utils/upload';
 const CreateSponsor = () => {
   const router = useRouter();
   const animatedComponents = makeAnimated();
-  const { userInfo } = userStore();
   const { data: session } = useSession();
   const {
     handleSubmit,
@@ -56,12 +54,8 @@ const CreateSponsor = () => {
     try {
       await axios.post('/api/sponsors/create', {
         ...sponsor,
-        userId: userInfo?.id,
       });
-      await axios.post(`/api/email/manual/welcomeSponsor`, {
-        email: userInfo?.email,
-        name: userInfo?.firstName,
-      });
+      await axios.post(`/api/email/manual/welcomeSponsor`);
       router.push('/dashboard/bounties');
       // setIsLoading(false);
       // toast.success('Sponsor created!');

@@ -1,5 +1,6 @@
 import axios from 'axios';
 import type { NextApiRequest, NextApiResponse } from 'next';
+import { getToken } from 'next-auth/jwt';
 
 import { prisma } from '@/prisma';
 
@@ -7,15 +8,44 @@ export default async function handler(
   req: NextApiRequest,
   res: NextApiResponse
 ) {
+  const token = await getToken({ req });
+
+  if (!token) {
+    return res.status(401).json({ error: 'Unauthorized' });
+  }
+
+  const userId = token.id;
+
+  if (!userId) {
+    return res.status(400).json({ error: 'Invalid token' });
+  }
+
+  const user = await prisma.user.findUnique({
+    where: {
+      id: userId as string,
+    },
+  });
+
+  if (!user) {
+    return res.status(400).json({ error: 'Unauthorized' });
+  }
+
   const { id, isWinner, winnerPosition } = req.body;
   try {
     const currentSubmission = await prisma.submission.findUnique({
       where: { id },
+      include: { listing: true },
     });
 
     if (!currentSubmission) {
       return res.status(404).json({
         message: `Submission with ID ${id} not found.`,
+      });
+    }
+
+    if (user.currentSponsorId !== currentSubmission.listing.sponsorId) {
+      return res.status(403).json({
+        message: 'Unauthorized',
       });
     }
 

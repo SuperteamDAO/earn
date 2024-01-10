@@ -1,5 +1,6 @@
 import axios from 'axios';
 import type { NextApiRequest, NextApiResponse } from 'next';
+import { getToken } from 'next-auth/jwt';
 import slugify from 'slugify';
 
 import { prisma } from '@/prisma';
@@ -46,10 +47,35 @@ export default async function handler(
   req: NextApiRequest,
   res: NextApiResponse
 ) {
+  const token = await getToken({ req });
+
+  if (!token) {
+    return res.status(401).json({ error: 'Unauthorized' });
+  }
+
+  const userId = token.id;
+
+  if (!userId) {
+    return res.status(400).json({ error: 'Invalid token' });
+  }
+
+  const user = await prisma.user.findUnique({
+    where: {
+      id: userId as string,
+    },
+  });
+
+  if (!user || !user.currentSponsorId) {
+    return res
+      .status(403)
+      .json({ error: 'User does not have a current sponsor.' });
+  }
+
   const { title, ...data } = req.body;
   try {
     const slug = await generateUniqueSlug(title);
     const finalData = {
+      sponsorId: user.currentSponsorId,
       title,
       slug,
       ...data,
@@ -60,12 +86,12 @@ export default async function handler(
         sponsor: true,
       },
     });
-    res.status(200).json(result);
     const zapierWebhookUrl = process.env.ZAPIER_BOUNTY_WEBHOOK!;
     await axios.post(zapierWebhookUrl, result);
+    return res.status(200).json(result);
   } catch (error) {
     console.log('file: create.ts:31 ~ user ~ error:', error);
-    res.status(400).json({
+    return res.status(400).json({
       error,
       message: 'Error occurred while adding a new bounty.',
     });

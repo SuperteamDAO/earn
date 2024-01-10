@@ -29,7 +29,6 @@ export function InviteView({ invite }: Props) {
       try {
         await axios.post('/api/userSponsors/accept/', {
           inviteId: invite?.id,
-          userId: user?.id,
         });
         router.push('/dashboard/bounties');
       } catch (e) {

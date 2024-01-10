@@ -21,7 +21,6 @@ import { useForm } from 'react-hook-form';
 
 import type { MultiSelectOptions } from '@/constants';
 import type { PoW } from '@/interface/pow';
-import { userStore } from '@/store/user';
 
 import { SkillSelect } from '../misc/SkillSelect';
 
@@ -57,7 +56,6 @@ export const AddProject = ({
   const [skillsError, setSkillsError] = useState<boolean>(false);
   const [skills, setSkills] = useState<MultiSelectOptions[]>([]);
   const [subSkills, setSubSkills] = useState<MultiSelectOptions[]>([]);
-  const { userInfo } = userStore();
 
   const projectToEdit =
     selectedProject !== null && pow ? pow[selectedProject as number] : null;
@@ -113,7 +111,6 @@ export const AddProject = ({
     if (upload) {
       try {
         await axios.post('/api/pow/create', {
-          userId: userInfo?.id,
           pows: [projectData],
         });
         if (onNewPow) {

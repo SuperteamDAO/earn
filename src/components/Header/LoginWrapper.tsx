@@ -1,4 +1,5 @@
 import { useDisclosure } from '@chakra-ui/react';
+import axios from 'axios';
 import { useEffect } from 'react';
 
 import { Login } from '@/components/modals/Login/Login';
@@ -20,9 +21,20 @@ export function LoginWrapper({
   triggerLogin,
   setTriggerLogin,
   inviteInfo,
+  acceptUser,
 }: LoginProps) {
   const { isOpen, onOpen, onClose } = useDisclosure();
   const { setUserInfo, userInfo } = userStore();
+
+  useEffect(() => {
+    const makeUser = async () => {
+      const userDetails = await axios.post('/api/user/');
+      if (inviteInfo?.emailInvite && acceptUser) {
+        acceptUser(userDetails.data);
+      }
+    };
+    makeUser();
+  }, []);
 
   useEffect(() => {
     if (triggerLogin && !userInfo?.id) {

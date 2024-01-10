@@ -1,4 +1,5 @@
 import type { NextApiRequest, NextApiResponse } from 'next';
+import { getToken } from 'next-auth/jwt';
 
 import { CommentSubmissionTemplate } from '@/components/emails/commentSubmissionTemplate';
 import { prisma } from '@/prisma';
@@ -9,7 +10,19 @@ export default async function handler(
   req: NextApiRequest,
   res: NextApiResponse
 ) {
-  const { userId, submissionId } = req.body;
+  const token = await getToken({ req });
+
+  if (!token) {
+    return res.status(401).json({ error: 'Unauthorized' });
+  }
+
+  const userId = token.id;
+
+  if (!userId) {
+    return res.status(400).json({ error: 'Invalid token' });
+  }
+
+  const { submissionId } = req.body;
   try {
     const unsubscribedEmails = await getUnsubEmails();
     const submission = await prisma.submission.findUnique({
@@ -23,7 +36,7 @@ export default async function handler(
     });
     const user = await prisma.user.findUnique({
       where: {
-        id: userId,
+        id: userId as string,
       },
     });
 

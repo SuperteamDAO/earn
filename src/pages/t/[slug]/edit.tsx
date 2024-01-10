@@ -42,8 +42,8 @@ import { SkillList } from '@/interface/skills';
 import { Default } from '@/layouts/Default';
 import { Meta } from '@/layouts/Meta';
 import { userStore } from '@/store/user';
+import { isUsernameAvailable } from '@/utils/isUsernameAvailable';
 import { uploadToCloudinary } from '@/utils/upload';
-import { isUsernameAvailable } from '@/utils/username';
 
 type FormData = {
   username: string;
@@ -344,12 +344,10 @@ export default function EditProfilePage() {
       }, {} as Partial<FormData>);
 
       const response = await axios.post('/api/user/edit', {
-        id: userInfo?.id,
         ...finalUpdatedData,
       });
 
       await axios.post('/api/pow/edit', {
-        userId: userInfo?.id,
         pows: pow,
       });
 
@@ -375,6 +373,14 @@ export default function EditProfilePage() {
       });
     }
   };
+
+  const { slug } = router.query;
+
+  useEffect(() => {
+    if (userInfo && slug !== userInfo?.username) {
+      router.push(`/t/${slug}`);
+    }
+  }, [slug, router, userInfo]);
 
   return (
     <>

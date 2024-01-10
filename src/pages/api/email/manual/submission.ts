@@ -1,4 +1,5 @@
 import type { NextApiRequest, NextApiResponse } from 'next';
+import { getToken } from 'next-auth/jwt';
 
 import { SubmissionSponsorTemplate } from '@/components/emails/submissionSponsorTemplate';
 import { SubmissionTemplate } from '@/components/emails/submissionTemplate';
@@ -10,7 +11,19 @@ export default async function handler(
   req: NextApiRequest,
   res: NextApiResponse
 ) {
-  const { listingId, userId } = req.body;
+  const token = await getToken({ req });
+
+  if (!token) {
+    return res.status(401).json({ error: 'Unauthorized' });
+  }
+
+  const userId = token.id;
+
+  if (!userId) {
+    return res.status(400).json({ error: 'Invalid token' });
+  }
+
+  const { listingId } = req.body;
   try {
     const unsubscribedEmails = await getUnsubEmails();
     const listing = await prisma.bounties.findFirst({

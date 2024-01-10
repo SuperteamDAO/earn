@@ -41,7 +41,6 @@ export const SubmissionCard = ({
       setIsLoading(true);
       await axios.post('/api/submission/like', {
         submissionId: id,
-        userId: userInfo?.id,
       });
       if (likes?.find((e) => e.id === (userInfo?.id as string))) {
         toast.success('Liked removed from submission');
@@ -49,7 +48,6 @@ export const SubmissionCard = ({
         toast.promise(
           axios.post(`/api/email/manual/submissionLike`, {
             id,
-            userId: userInfo?.id,
           }),
           {
             loading: 'Liking Submission...',

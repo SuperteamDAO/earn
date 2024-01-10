@@ -25,8 +25,6 @@ import axios from 'axios';
 import { useState } from 'react';
 import { AiOutlineSend } from 'react-icons/ai';
 
-import { userStore } from '@/store/user';
-
 interface Props {
   isOpen: boolean;
   onClose: () => void;
@@ -41,7 +39,6 @@ const validateEmail = (email: string) => {
 };
 
 export function InviteMembers({ isOpen, onClose }: Props) {
-  const { userInfo } = userStore();
   const [email, setEmail] = useState<string>();
   const [memberType, setMemberType] = useState<string>('MEMBER');
   const [isInviting, setIsInviting] = useState(false);
@@ -62,8 +59,6 @@ export function InviteMembers({ isOpen, onClose }: Props) {
     try {
       await axios.post('/api/members/invite/', {
         email,
-        userId: userInfo?.id,
-        sponsorId: userInfo?.currentSponsorId,
         memberType,
       });
       setIsInviteSuccess(true);

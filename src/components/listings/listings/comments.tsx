@@ -42,7 +42,6 @@ export const Comments = ({ refId, refType }: Props) => {
     setNewCommentError(false);
     try {
       const newCommentData = await axios.post(`/api/comment/create`, {
-        authorId: userInfo?.id,
         message: newComment,
         listingType: refType,
         listingId: refId,
@@ -50,13 +49,11 @@ export const Comments = ({ refId, refType }: Props) => {
       if (refType === 'BOUNTY') {
         if (router.asPath.includes('submission')) {
           await axios.post(`/api/email/manual/commentSubmission`, {
-            userId: userInfo?.id,
             submissionId: router.query.subid,
           });
         } else {
           await axios.post(`/api/email/manual/comment`, {
             id: refId,
-            userId: userInfo?.id,
           });
         }
       }

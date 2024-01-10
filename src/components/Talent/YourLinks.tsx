@@ -150,7 +150,7 @@ export function YourLinks({ success, useFormStore }: Props) {
 
   const { updateState } = useFormStore();
 
-  const { setUserInfo, userInfo } = userStore();
+  const { setUserInfo } = userStore();
 
   const uploadProfile = async (
     // eslint-disable-next-line @typescript-eslint/no-shadow
@@ -182,12 +182,10 @@ export function YourLinks({ success, useFormStore }: Props) {
     setisLoading(true);
     try {
       await axios.post('/api/pow/create', {
-        userId: userInfo?.id,
         pows: pow,
       });
 
       const updateOptions = {
-        id: userInfo?.id,
         ...form,
         ...socials,
         superteamLevel: 'Lurker',
@@ -197,9 +195,7 @@ export function YourLinks({ success, useFormStore }: Props) {
       const { subSkills, ...finalOptions } = updateOptions;
 
       const updatedUser = await axios.post('/api/user/update/', finalOptions);
-      await axios.post('/api/email/manual/welcomeTalent/', {
-        email: userInfo?.email,
-      });
+      await axios.post('/api/email/manual/welcomeTalent/');
       setUserInfo(updatedUser?.data);
       success();
     } catch (e) {

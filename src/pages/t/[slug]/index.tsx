@@ -43,7 +43,7 @@ interface TalentProps {
 
 function TalentProfile({ slug }: TalentProps) {
   const [talent, setTalent] = useState<User>();
-  const [isloading, setIsloading] = useState<boolean>(false);
+  const [isloading, setIsloading] = useState<boolean>(true);
   const [error, setError] = useState(false);
   const [activeTab, setActiveTab] = useState<'activity' | 'projects'>(
     'activity'

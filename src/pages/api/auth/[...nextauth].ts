@@ -35,6 +35,7 @@ export const authOptions: NextAuthOptions = {
       return { ...token, ...user, ...account };
     },
     async session({ session, token }) {
+      session.user.id = token.id;
       session.user.photo = token.photo;
       session.user.firstName = token.firstName;
       session.user.lastName = token.lastName;

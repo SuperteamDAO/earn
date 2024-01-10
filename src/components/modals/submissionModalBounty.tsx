@@ -21,7 +21,6 @@ import { useForm } from 'react-hook-form';
 
 import { QuestionHandler } from '@/components/listings/bounty/questions/questionHandler';
 import type { Eligibility } from '@/interface/bounty';
-import { userStore } from '@/store/user';
 
 import { AutoResizeTextarea } from '../shared/autosize-textarea';
 
@@ -46,7 +45,6 @@ export const SubmissionModal = ({
   type,
 }: Props) => {
   const isPermissioned = type === 'permissioned';
-  const { userInfo } = userStore();
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState('');
   const {
@@ -66,7 +64,6 @@ export const SubmissionModal = ({
         answer: answers[`eligibility-${q.order}`],
       }));
       await axios.post('/api/submission/create/', {
-        userId: userInfo?.id,
         listingId: id,
         listingType: 'BOUNTY',
         link: applicationLink || '',
@@ -78,7 +75,6 @@ export const SubmissionModal = ({
       });
       await axios.post(`/api/email/manual/submission`, {
         listingId: id,
-        userId: userInfo?.id,
       });
 
       reset();

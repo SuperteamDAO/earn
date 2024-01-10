@@ -77,11 +77,7 @@ function MyApp({ Component, pageProps }: any) {
     const fetchUserInfo = async () => {
       if (status === 'authenticated' && session?.user?.email) {
         try {
-          const res = await axios.get('/api/user', {
-            headers: {
-              Authorization: `Bearer ${session.token}`,
-            },
-          });
+          const res = await axios.get('/api/user');
           setUserInfo(res.data);
         } catch (error) {
           console.error('Failed to fetch user info:', error);

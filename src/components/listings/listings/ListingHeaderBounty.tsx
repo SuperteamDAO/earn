@@ -77,7 +77,6 @@ export function ListingHeader({
 
     try {
       await axios.post('/api/bounties/subscribe/subscribe', {
-        userId: userInfo?.id,
         bountyId: id,
       });
       setUpdate((prev) => !prev);

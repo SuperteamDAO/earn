@@ -158,20 +158,22 @@ export function UserInfo({ isMobile }: UserInfoProps) {
               )}
               {!isLessthan768 &&
                 (userInfo?.role === 'GOD' || !!userInfo?.currentSponsorId) && (
-                  <MenuItem
-                    color="brand.slate.500"
-                    fontSize="sm"
-                    fontWeight={600}
-                    onClick={() => {
-                      router.push('/dashboard/bounties');
-                    }}
-                  >
-                    Sponsor Dashboard
-                  </MenuItem>
+                  <>
+                    <MenuItem
+                      color="brand.slate.500"
+                      fontSize="sm"
+                      fontWeight={600}
+                      onClick={() => {
+                        router.push('/dashboard/bounties');
+                      }}
+                    >
+                      Sponsor Dashboard
+                    </MenuItem>
+                    <MenuDivider />
+                  </>
                 )}
               {!isLessthan768 && userInfo?.role === 'GOD' && (
                 <>
-                  <MenuDivider />
                   <MenuGroup
                     ml={3}
                     color="brand.slate.700"
@@ -190,9 +192,9 @@ export function UserInfo({ isMobile }: UserInfoProps) {
                       Create New Sponsor
                     </MenuItem>
                   </MenuGroup>
+                  <MenuDivider />
                 </>
               )}
-              <MenuDivider />
               <MenuItem
                 color="red.500"
                 fontSize="sm"

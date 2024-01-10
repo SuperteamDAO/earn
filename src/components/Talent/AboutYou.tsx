@@ -16,8 +16,8 @@ import { useForm } from 'react-hook-form';
 
 import { CountryList } from '@/constants';
 import { userStore } from '@/store/user';
+import { isUsernameAvailable } from '@/utils/isUsernameAvailable';
 import { uploadToCloudinary } from '@/utils/upload';
-import { isUsernameAvailable } from '@/utils/username';
 
 import type { UserStoreType } from './types';
 

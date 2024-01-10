@@ -1,4 +1,5 @@
 import type { NextApiRequest, NextApiResponse } from 'next';
+import { getToken } from 'next-auth/jwt';
 
 import {
   type MainSkills,
@@ -50,12 +51,20 @@ export default async function handle(
   req: NextApiRequest,
   res: NextApiResponse
 ) {
-  // eslint-disable-next-line
-  const { id, email, publicKey, skills, ...data } = req.body;
+  const token = await getToken({ req });
+
+  if (!token) {
+    return res.status(401).json({ error: 'Unauthorized' });
+  }
+
+  const { id } = token;
 
   if (!id) {
-    return res.status(400).json({ error: 'User ID is required.' });
+    return res.status(400).json({ error: 'Invalid token' });
   }
+
+  // eslint-disable-next-line
+  const { email, publicKey, skills, ...data } = req.body;
 
   const correctedSkills = correctSkills(skills);
 
@@ -66,7 +75,7 @@ export default async function handle(
     };
 
     const updatedUser = await prisma.user.update({
-      where: { id },
+      where: { id: id as string },
       data: updatedData,
       select: {
         email: true,

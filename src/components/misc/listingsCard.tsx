@@ -478,15 +478,11 @@ export const CategoryBanner = ({ type }: { type: string }) => {
     },
   };
 
-  const updateNotification = async (
-    id: string,
-    notification: Notifications[]
-  ) => {
+  const updateNotification = async (notification: Notifications[]) => {
     try {
       const { data, status } = await axios.post(
         `/api/user/updateNotification`,
         {
-          id,
           notification,
         }
       );
@@ -524,7 +520,7 @@ export const CategoryBanner = ({ type }: { type: string }) => {
       setIsSubscribed(true);
     }
 
-    await updateNotification(userInfo?.id as string, updatedNotifications);
+    await updateNotification(updatedNotifications);
 
     setLoading(false);
     toast.success(subscriptionMessage);

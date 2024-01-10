@@ -1,4 +1,5 @@
 import type { NextApiRequest, NextApiResponse } from 'next';
+import { getToken } from 'next-auth/jwt';
 
 import { WinnersAnnouncedTemplate } from '@/components/emails/winnersAnnouncedTemplate';
 import type { Rewards } from '@/interface/bounty';
@@ -16,30 +17,61 @@ export default async function announce(
   const params = req.query;
   const id = params.id as string;
   try {
-    const unsubscribedEmails = await getUnsubEmails();
-    const bounty = await prisma.bounties.findFirst({
+    const token = await getToken({ req });
+
+    if (!token) {
+      return res.status(401).json({ error: 'Unauthorized' });
+    }
+
+    const userId = token.id;
+
+    if (!userId) {
+      return res.status(400).json({ error: 'Invalid token' });
+    }
+
+    const user = await prisma.user.findUnique({
       where: {
-        id,
+        id: userId as string,
       },
     });
+
+    const bounty = await prisma.bounties.findUnique({
+      where: { id },
+    });
+
+    if (
+      !user ||
+      !user.currentSponsorId ||
+      bounty?.sponsorId !== user.currentSponsorId
+    ) {
+      return res
+        .status(403)
+        .json({ error: 'User does not have a current sponsor.' });
+    }
+
+    if (!bounty) {
+      return res
+        .status(404)
+        .json({ message: `Bounty with id=${id} not found.` });
+    }
+
+    const unsubscribedEmails = await getUnsubEmails();
+
     if (bounty?.isWinnersAnnounced) {
-      res.status(400).json({
+      return res.status(400).json({
         message: `Winners already announced for bounty with id=${id}.`,
       });
-      return;
     }
     if (!bounty?.isActive) {
-      res.status(400).json({
+      return res.status(400).json({
         message: `Bounty with id=${id} is not active.`,
       });
-      return;
     }
     const totalRewards = Object.keys(bounty?.rewards || {})?.length || 0;
     if (!!totalRewards && bounty?.totalWinnersSelected !== totalRewards) {
-      res.status(400).json({
+      return res.status(400).json({
         message: 'Please select all winners before publishing the results.',
       });
-      return;
     }
     const deadline = dayjs().isAfter(bounty?.deadline)
       ? bounty?.deadline
@@ -145,11 +177,11 @@ export default async function announce(
 
     const listingType = getBountyTypeLabel(bounty?.type);
 
-    await rateLimitedPromiseAll(allUsers, 9, async (user) => {
-      if (unsubscribedEmails.includes(user.email)) return;
+    await rateLimitedPromiseAll(allUsers, 9, async (e) => {
+      if (unsubscribedEmails.includes(e.email)) return;
 
       const template = WinnersAnnouncedTemplate({
-        name: user.name,
+        name: e.name,
         bountyName: bounty?.title || '',
         link: `https://earn.superteam.fun/listings/bounties/${
           bounty?.slug || ''
@@ -164,9 +196,9 @@ export default async function announce(
       });
     });
 
-    res.status(200).json(result);
+    return res.status(200).json(result);
   } catch (error) {
-    res.status(400).json({
+    return res.status(400).json({
       error,
       message: `Error occurred while announcing bounty with id=${id}.`,
     });

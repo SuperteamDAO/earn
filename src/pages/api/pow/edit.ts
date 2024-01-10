@@ -1,4 +1,5 @@
 import type { NextApiRequest, NextApiResponse } from 'next';
+import { getToken } from 'next-auth/jwt';
 
 import { prisma } from '@/prisma';
 
@@ -21,16 +22,19 @@ export default async function handler(
     return res.status(405).end();
   }
 
-  const { userId, pows } = req.body as { userId: string; pows: PoW[] };
+  const { pows } = req.body as { pows: PoW[] };
   const errors: string[] = [];
 
-  if (
-    !userId ||
-    typeof userId !== 'string' ||
-    userId.trim() === '' ||
-    userId.includes('*')
-  ) {
-    return res.status(400).json({ error: 'Invalid or missing "userId".' });
+  const token = await getToken({ req });
+
+  if (!token) {
+    return res.status(401).json({ error: 'Unauthorized' });
+  }
+
+  const userId = token.id;
+
+  if (!userId) {
+    return res.status(400).json({ error: 'Invalid token' });
   }
 
   if (!pows) {

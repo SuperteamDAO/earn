@@ -106,7 +106,6 @@ export function CreateListing({ bounty, isEditMode = false, type }: Props) {
     setIsListingPublishing(true);
     try {
       const newBounty: Bounty = {
-        sponsorId: userInfo?.currentSponsor?.id ?? '',
         pocId: userInfo?.id ?? '',
         skills: mergeSkills({ skills: mainSkills, subskills: subSkill }),
         ...bountybasic,
@@ -149,7 +148,6 @@ export function CreateListing({ bounty, isEditMode = false, type }: Props) {
       api = `/api/bounties/update/${bounty?.id}/`;
     }
     let draft: Bounty = {
-      sponsorId: userInfo?.currentSponsor?.id ?? '',
       pocId: userInfo?.id ?? '',
     };
     draft = {

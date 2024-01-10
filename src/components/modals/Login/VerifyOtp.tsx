@@ -44,7 +44,6 @@ export function VerifyOTP({ userInfo, onClose, inviteInfo, otp }: Props) {
       setVerificationError('');
       if (otp.current === Number(pin) || otp.last === Number(pin)) {
         const userUpdtedDetails = await axios.post('/api/user/update', {
-          id: userInfo?.id,
           currentSponsorId: inviteInfo?.currentSponsorId,
           isVerified: true,
           addUserSponsor: !!inviteInfo?.emailInvite,

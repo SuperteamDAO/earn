@@ -1,4 +1,5 @@
 import type { NextApiRequest, NextApiResponse } from 'next';
+import { getToken } from 'next-auth/jwt';
 
 import {
   type MainSkills,
@@ -47,8 +48,19 @@ const correctSkills = (
 };
 
 export default async function user(req: NextApiRequest, res: NextApiResponse) {
-  const { id, addUserSponsor, memberType, skills, ...updateAttributes } =
-    req.body;
+  const token = await getToken({ req });
+
+  if (!token) {
+    return res.status(401).json({ error: 'Unauthorized' });
+  }
+
+  const userId = token.id;
+
+  if (!userId) {
+    return res.status(400).json({ error: 'Invalid token' });
+  }
+
+  const { addUserSponsor, memberType, skills, ...updateAttributes } = req.body;
   let result;
   const correctedSkills = skills ? correctSkills(skills) : [];
   try {
@@ -59,7 +71,7 @@ export default async function user(req: NextApiRequest, res: NextApiResponse) {
 
     result = await prisma.user.update({
       where: {
-        id,
+        id: userId as string,
       },
       data: updatedData,
       include: {
@@ -70,17 +82,17 @@ export default async function user(req: NextApiRequest, res: NextApiResponse) {
     if (addUserSponsor && updateAttributes?.currentSponsorId) {
       await prisma.userSponsors.create({
         data: {
-          userId: id,
+          userId: userId as string,
           sponsorId: updateAttributes?.currentSponsorId,
           role: memberType,
         },
       });
     }
-    res.status(200).json(result);
+    return res.status(200).json(result);
   } catch (e) {
-    console.log('file: update.ts:29 ~ user ~ e:', e);
-    res.status(400).json({
-      message: `Error occurred while updating user ${id}.`,
+    console.log('file: update.ts:93 ~ user ~ e:', e);
+    return res.status(400).json({
+      message: `Error occurred while updating user ${userId}.`,
     });
   }
 }

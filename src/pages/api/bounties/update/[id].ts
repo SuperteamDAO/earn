@@ -1,5 +1,6 @@
 import axios from 'axios';
 import type { NextApiRequest, NextApiResponse } from 'next';
+import { getToken } from 'next-auth/jwt';
 
 import { DeadlineExtendedTemplate } from '@/components/emails/deadlineExtendedTemplate';
 import { prisma } from '@/prisma';
@@ -16,13 +17,42 @@ export default async function bounty(
   const updatedData = req.body;
 
   try {
+    const token = await getToken({ req });
+
+    if (!token) {
+      return res.status(401).json({ error: 'Unauthorized' });
+    }
+
+    const userId = token.id;
+
+    if (!userId) {
+      return res.status(400).json({ error: 'Invalid token' });
+    }
+
+    const user = await prisma.user.findUnique({
+      where: {
+        id: userId as string,
+      },
+    });
+
     const currentBounty = await prisma.bounties.findUnique({
       where: { id },
     });
 
+    if (
+      !user ||
+      !user.currentSponsorId ||
+      currentBounty?.sponsorId !== user.currentSponsorId
+    ) {
+      return res
+        .status(403)
+        .json({ error: 'User does not have a current sponsor.' });
+    }
+
     if (!currentBounty) {
-      res.status(404).json({ message: `Bounty with id=${id} not found.` });
-      return;
+      return res
+        .status(404)
+        .json({ message: `Bounty with id=${id} not found.` });
     }
 
     const unsubscribedEmails = await getUnsubEmails();
@@ -94,9 +124,9 @@ export default async function bounty(
     const zapierWebhookUrl = process.env.ZAPIER_BOUNTY_WEBHOOK!;
     await axios.post(zapierWebhookUrl, result);
 
-    res.status(200).json(result);
+    return res.status(200).json(result);
   } catch (error) {
-    res.status(400).json({
+    return res.status(400).json({
       error,
       message: `Error occurred while updating bounty with id=${id}.`,
     });
