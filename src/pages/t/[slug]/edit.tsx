@@ -343,15 +343,18 @@ export default function EditProfilePage() {
         return acc;
       }, {} as Partial<FormData>);
 
+      console.log('pre: ', userInfo);
+
       const response = await axios.post('/api/user/edit', {
         ...finalUpdatedData,
       });
+
+      setUserInfo({ ...userInfo, ...response.data });
 
       await axios.post('/api/pow/edit', {
         pows: pow,
       });
 
-      setUserInfo(response.data);
       toast({
         title: 'Profile updated.',
         description: 'Your profile has been updated successfully!',
