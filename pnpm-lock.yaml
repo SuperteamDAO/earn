@@ -136,13 +136,16 @@ dependencies:
     version: 13.5.6(@babel/core@7.23.7)(react-dom@18.2.0)(react@18.2.0)(sass@1.57.1)
   next-auth:
     specifier: ^4.24.5
-    version: 4.24.5(next@13.5.6)(react-dom@18.2.0)(react@18.2.0)
+    version: 4.24.5(next@13.5.6)(nodemailer@6.9.8)(react-dom@18.2.0)(react@18.2.0)
   next-seo:
     specifier: ^6.0.0
     version: 6.0.0(next@13.5.6)(react-dom@18.2.0)(react@18.2.0)
   next-sitemap:
     specifier: ^4.0.7
     version: 4.0.7(@next/env@14.0.4)(next@13.5.6)
+  nodemailer:
+    specifier: ^6.9.8
+    version: 6.9.8
   posthog-js:
     specifier: ^1.93.5
     version: 1.93.5
@@ -4320,7 +4323,7 @@ packages:
       next-auth: ^4
     dependencies:
       "@prisma/client": 5.6.0(prisma@5.6.0)
-      next-auth: 4.24.5(next@13.5.6)(react-dom@18.2.0)(react@18.2.0)
+      next-auth: 4.24.5(next@13.5.6)(nodemailer@6.9.8)(react-dom@18.2.0)(react@18.2.0)
     dev: false
 
   /@next/env@13.5.6:
@@ -15590,7 +15593,7 @@ packages:
     dev: false
     optional: true
 
-  /next-auth@4.24.5(next@13.5.6)(react-dom@18.2.0)(react@18.2.0):
+  /next-auth@4.24.5(next@13.5.6)(nodemailer@6.9.8)(react-dom@18.2.0)(react@18.2.0):
     resolution:
       {
         integrity: sha512-3RafV3XbfIKk6rF6GlLE4/KxjTcuMCifqrmD+98ejFq73SRoj2rmzoca8u764977lH/Q7jo6Xu6yM+Re1Mz/Og==,
@@ -15609,6 +15612,7 @@ packages:
       cookie: 0.5.0
       jose: 4.15.4
       next: 13.5.6(@babel/core@7.23.7)(react-dom@18.2.0)(react@18.2.0)(sass@1.57.1)
+      nodemailer: 6.9.8
       oauth: 0.9.15
       openid-client: 5.6.4
       preact: 10.19.3
@@ -15808,6 +15812,14 @@ packages:
         integrity: sha512-LN4fydt9TqhZhThkZIVQnF9cwjU3qmUH9h78Mx/K7d3VvfRqqwthLwJEUOEL0QPZ0XQmNN7be5Ggit5+4dq3Bw==,
       }
     engines: { node: ">=0.12.0" }
+    dev: false
+
+  /nodemailer@6.9.8:
+    resolution:
+      {
+        integrity: sha512-cfrYUk16e67Ks051i4CntM9kshRYei1/o/Gi8K1d+R34OIs21xdFnW7Pt7EucmVKA0LKtqUGNcjMZ7ehjl49mQ==,
+      }
+    engines: { node: ">=6.0.0" }
     dev: false
 
   /nopt@7.2.0:

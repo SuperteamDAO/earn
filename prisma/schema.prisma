@@ -371,6 +371,14 @@ model SubscribeBounty {
   @@index([userId])
 }
 
+model VerificationToken {
+  identifier String
+  token      String   @unique
+  expires    DateTime
+
+  @@unique([identifier, token])
+}
+
 enum EmailType {
   BOUNTY_REVIEW
   BOUNTY_DEADLINE

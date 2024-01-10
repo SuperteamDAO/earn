@@ -3,9 +3,12 @@ import { PrismaAdapter } from '@next-auth/prisma-adapter';
 import type { NextAuthOptions } from 'next-auth';
 import NextAuth from 'next-auth';
 import type { Adapter } from 'next-auth/adapters';
+import EmailProvider from 'next-auth/providers/email';
 import GoogleProvider from 'next-auth/providers/google';
 
+import { MagicLinkTemplate } from '@/components/emails/magicLinkTemplate';
 import { prisma } from '@/prisma';
+import resendMail from '@/utils/resend';
 
 export const authOptions: NextAuthOptions = {
   adapter: PrismaAdapter(prisma) as Adapter,
@@ -23,6 +26,25 @@ export const authOptions: NextAuthOptions = {
           emailVerified: profile.emailVerified,
           isVerified: true,
         } as any;
+      },
+    }),
+    EmailProvider({
+      server: {
+        host: process.env.EMAIL_SERVER_HOST,
+        port: process.env.EMAIL_SERVER_PORT,
+        auth: {
+          user: process.env.EMAIL_SERVER_USER,
+          pass: process.env.RESEND_API_KEY,
+        },
+      },
+      from: process.env.RESEND_EMAIL,
+      sendVerificationRequest: async ({ identifier, url }) => {
+        await resendMail.emails.send({
+          from: `Kash from Superteam <${process.env.RESEND_EMAIL}>`,
+          to: [identifier],
+          subject: 'Log in to Superteam Earn',
+          react: MagicLinkTemplate({ loginUrl: url }),
+        });
       },
     }),
   ],

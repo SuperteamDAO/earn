@@ -1,19 +1,34 @@
-import { Box, Button, Flex } from '@chakra-ui/react';
+import { Box, Button, Flex, Input } from '@chakra-ui/react';
 import { signIn } from 'next-auth/react';
-import React from 'react';
+import React, { useState } from 'react';
 
 export const SignIn = () => {
+  const [email, setEmail] = useState('');
+
   return (
     <Box>
       <Flex
         align="center"
         justify="center"
+        direction={'column'}
+        gap={2}
         mb={4}
         color="brand.slate.500"
         fontSize="md"
         textAlign="center"
       >
-        <Button onClick={() => signIn('google')}>Sign in with Google</Button>
+        <Button w="100%" mt={4} onClick={() => signIn('google')}>
+          Sign in with Google
+        </Button>
+        <Input
+          mt={6}
+          onChange={(e) => setEmail(e.target.value)}
+          placeholder="Enter your email"
+          value={email}
+        />
+        <Button w="100%" onClick={() => signIn('email', { email })}>
+          Sign in with Email
+        </Button>
       </Flex>
     </Box>
   );
