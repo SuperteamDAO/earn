@@ -96,6 +96,7 @@ const RegionsPage = ({ slug }: { slug: string }) => {
                     token={bounty?.token}
                     type={bounty?.type}
                     applicationType={bounty.applicationType}
+                    isWinnersAnnounced={bounty?.isWinnersAnnounced}
                   />
                 );
               })}

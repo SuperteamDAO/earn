@@ -182,17 +182,19 @@ export function ListingHeader({
                       Submissions In Review
                     </Text>
                   )}
-                {!hasDeadlineEnded && status === 'OPEN' && (
-                  <Text
-                    px={3}
-                    py={1}
-                    color={'green.600'}
-                    bg={'green.100'}
-                    rounded={'full'}
-                  >
-                    Submissions Open
-                  </Text>
-                )}
+                {!hasDeadlineEnded &&
+                  !isWinnersAnnounced &&
+                  status === 'OPEN' && (
+                    <Text
+                      px={3}
+                      py={1}
+                      color={'green.600'}
+                      bg={'green.100'}
+                      rounded={'full'}
+                    >
+                      Submissions Open
+                    </Text>
+                  )}
               </Flex>
             </HStack>
             {!isTemplate && (
@@ -309,7 +311,7 @@ export function ListingHeader({
                 In Review
               </Text>
             )}
-            {!hasDeadlineEnded && status === 'OPEN' && (
+            {!hasDeadlineEnded && !isWinnersAnnounced && status === 'OPEN' && (
               <Text
                 px={3}
                 py={1}

@@ -89,6 +89,7 @@ function AllBountiesPage() {
                   token={bounty?.token}
                   type={bounty?.type}
                   applicationType={bounty.applicationType}
+                  isWinnersAnnounced={bounty?.isWinnersAnnounced}
                 />
               );
             })}
