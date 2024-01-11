@@ -68,20 +68,17 @@ if (typeof window !== 'undefined' && process.env.NODE_ENV !== 'development') {
 function MyApp({ Component, pageProps }: any) {
   const { data: session, status } = useSession();
   const router = useRouter();
-  const { setUserInfo } = userStore();
-
-  useEffect(() => {
-    console.log(session);
-  }, [session]);
+  const { setUserInfo, setIsLoggedIn } = userStore();
 
   useEffect(() => {
     const fetchUserInfo = async () => {
-      if (status === 'authenticated' && session?.user?.email) {
+      if (status === 'authenticated') {
         try {
           const res = await axios.get('/api/user');
+          setIsLoggedIn(true);
           setUserInfo(res.data);
         } catch (error) {
-          console.error('Failed to fetch user info:', error);
+          console.log('Failed to fetch user info:', error);
         }
       }
     };

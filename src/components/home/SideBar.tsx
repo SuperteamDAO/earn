@@ -1,4 +1,12 @@
-import { Box, Center, Flex, Image, Text, VStack } from '@chakra-ui/react';
+import {
+  Box,
+  Center,
+  Flex,
+  Image,
+  Skeleton,
+  Text,
+  VStack,
+} from '@chakra-ui/react';
 import Avatar from 'boring-avatars';
 import NextLink from 'next/link';
 import { useRouter } from 'next/router';
@@ -14,6 +22,7 @@ interface SideBarProps {
   listings: number;
   earners?: User[];
   userInfo?: User;
+  isTotalLoading: boolean;
 }
 
 const Step = ({
@@ -183,9 +192,11 @@ const GettingStarted = ({ userInfo }: GettingStartedProps) => {
 const TotalStats = ({
   bountyCount,
   TVE,
+  isTotalLoading,
 }: {
   bountyCount: number;
   TVE: number;
+  isTotalLoading: boolean;
 }) => {
   return (
     <Flex
@@ -206,12 +217,13 @@ const TotalStats = ({
         />
         <Box>
           <Text color={'black'} fontSize={'sm'} fontWeight={'600'}>
-            ${TVE.toLocaleString()}{' '}
-            <span
-              style={{
-                color: '#64748B',
-              }}
-            ></span>
+            {isTotalLoading ? (
+              <Skeleton w="54px" h="14px" />
+            ) : (
+              <Text color={'black'} fontSize={'sm'} fontWeight={'600'}>
+                ${TVE.toLocaleString()}
+              </Text>
+            )}{' '}
           </Text>
           <Text color={'gray.500'} fontSize={'xs'} fontWeight={'400'}>
             Total Value Earned
@@ -228,9 +240,13 @@ const TotalStats = ({
           src="/assets/icons/lite-purple-suitcase.svg"
         />
         <Box>
-          <Text color={'black'} fontSize={'sm'} fontWeight={'600'}>
-            {bountyCount}
-          </Text>
+          {isTotalLoading ? (
+            <Skeleton w="32px" h="14px" />
+          ) : (
+            <Text color={'black'} fontSize={'sm'} fontWeight={'600'}>
+              {bountyCount}
+            </Text>
+          )}
           <Text color={'gray.500'} fontSize={'xs'} fontWeight={'400'}>
             Opportunities Listed
           </Text>
@@ -369,16 +385,21 @@ const RecentEarners = ({ earners }: { earners?: User[] }) => {
   );
 };
 
-export const SideBar = ({
+export const HomeSideBar = ({
   userInfo,
   listings,
   total,
   earners,
+  isTotalLoading,
 }: SideBarProps) => {
   return (
     <Flex direction={'column'} rowGap={'2.5rem'} w={'22.125rem'} pl={6}>
       <GettingStarted userInfo={userInfo} />
-      <TotalStats bountyCount={listings} TVE={total} />
+      <TotalStats
+        isTotalLoading={isTotalLoading}
+        bountyCount={listings}
+        TVE={total}
+      />
       <RecentEarners earners={earners} />
     </Flex>
   );

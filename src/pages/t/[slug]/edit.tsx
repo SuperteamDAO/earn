@@ -343,8 +343,6 @@ export default function EditProfilePage() {
         return acc;
       }, {} as Partial<FormData>);
 
-      console.log('pre: ', userInfo);
-
       const response = await axios.post('/api/user/edit', {
         ...finalUpdatedData,
       });

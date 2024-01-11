@@ -9,14 +9,13 @@ import {
 } from '@chakra-ui/react';
 import axios from 'axios';
 import { useRouter } from 'next/router';
-import { useSession } from 'next-auth/react';
 import type { ReactNode } from 'react';
 import React, { useEffect, useState } from 'react';
 import { Toaster } from 'react-hot-toast';
 
 import { LoginWrapper } from '@/components/Header/LoginWrapper';
 import { HomeBanner } from '@/components/home/Banner';
-import { SideBar } from '@/components/home/SideBar';
+import { HomeSideBar } from '@/components/home/SideBar';
 import { CategoryBanner } from '@/components/misc/listingsCard';
 import { Superteams } from '@/constants/Superteam';
 import type { User } from '@/interface/user';
@@ -48,7 +47,6 @@ export function Home({ children, type }: HomeProps) {
   const [sidebarInfo, setSidebarInfo] = useState<SidebarType>({});
 
   const getTotalInfo = async () => {
-    setIsTotalLoading(true);
     try {
       const aggregatesData = await axios.get('/api/sidebar/');
       setSidebarInfo(aggregatesData.data);
@@ -59,7 +57,6 @@ export function Home({ children, type }: HomeProps) {
   };
 
   useEffect(() => {
-    if (!isTotalLoading) return;
     getTotalInfo();
   }, []);
 
@@ -68,8 +65,6 @@ export function Home({ children, type }: HomeProps) {
   const matchedTeam = Superteams.find(
     (e) => e.region.toLowerCase() === String(router.query.slug).toLowerCase()
   );
-
-  const { data: session } = useSession();
 
   return (
     <Default
@@ -95,9 +90,7 @@ export function Home({ children, type }: HomeProps) {
               setTriggerLogin={setTriggerLogin}
             />
             <Box w="full">
-              {!session?.user?.email && (
-                <HomeBanner setTriggerLogin={setTriggerLogin} />
-              )}
+              <HomeBanner setTriggerLogin={setTriggerLogin} />
               {type === 'category' && (
                 <CategoryBanner
                   type={
@@ -165,7 +158,8 @@ export function Home({ children, type }: HomeProps) {
             }}
             marginInlineStart={'0 !important'}
           >
-            <SideBar
+            <HomeSideBar
+              isTotalLoading={isTotalLoading}
               total={sidebarInfo?.totals?.totalInUSD ?? 0}
               listings={sidebarInfo?.totals?.count ?? 0}
               earners={sidebarInfo?.earners ?? []}

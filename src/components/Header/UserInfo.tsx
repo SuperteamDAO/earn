@@ -9,13 +9,15 @@ import {
   MenuGroup,
   MenuItem,
   MenuList,
+  SkeletonCircle,
+  SkeletonText,
   Text,
   useDisclosure,
   useMediaQuery,
 } from '@chakra-ui/react';
 import Avatar from 'boring-avatars';
 import { useRouter } from 'next/router';
-import { signOut, useSession } from 'next-auth/react';
+import { useSession } from 'next-auth/react';
 import { useEffect } from 'react';
 
 import { Login } from '@/components/modals/Login/Login';
@@ -29,31 +31,31 @@ export function UserInfo({ isMobile }: UserInfoProps) {
   const router = useRouter();
   const { isOpen, onOpen, onClose } = useDisclosure();
 
-  const { userInfo } = userStore();
-  // const [initialStep, setInitialStep] = useState<number>(1);
+  const { userInfo, logOut } = userStore();
   const [isLessthan768] = useMediaQuery('(max-width: 768px)');
 
   const displayValue = isMobile
     ? { base: 'block', md: 'none' }
     : { base: 'none', md: 'block' };
 
-  const { data: session } = useSession();
+  const { data: session, status } = useSession();
 
   useEffect(() => {
     console.log(session);
   }, []);
 
+  if (status === 'loading' && !session) {
+    return (
+      <Flex align={'center'} gap={2}>
+        <SkeletonCircle size="10" />
+        <SkeletonText display={displayValue} w={'80px'} noOfLines={2} />
+      </Flex>
+    );
+  }
+
   return (
     <>
-      {!!isOpen && (
-        <Login
-          isOpen={isOpen}
-          onClose={onClose}
-          // userInfo={userInfo}
-          // setUserInfo={setUserInfo}
-          // initialStep={initialStep}
-        />
-      )}
+      {!!isOpen && <Login isOpen={isOpen} onClose={onClose} />}
       {session ? (
         <>
           {userInfo &&
@@ -109,7 +111,7 @@ export function UserInfo({ isMobile }: UserInfoProps) {
                     {userInfo?.email?.substring(0, 6)}
                     ...
                     {userInfo?.email?.substring(
-                      session.user.email.length - 6,
+                      userInfo.email.length - 6,
                       userInfo?.email?.length
                     )}
                   </Text>
@@ -184,7 +186,7 @@ export function UserInfo({ isMobile }: UserInfoProps) {
                 color="red.500"
                 fontSize="sm"
                 fontWeight={600}
-                onClick={() => signOut()}
+                onClick={() => logOut()}
               >
                 Logout
               </MenuItem>

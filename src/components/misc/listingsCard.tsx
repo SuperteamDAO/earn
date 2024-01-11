@@ -9,6 +9,9 @@ import {
   HStack,
   Image,
   Link,
+  Skeleton,
+  SkeletonCircle,
+  SkeletonText,
   Text,
   useDisclosure,
   useMediaQuery,
@@ -167,6 +170,50 @@ interface BountyProps {
   applicationType?: 'fixed' | 'rolling';
   hasTabs?: boolean;
 }
+
+export const ListingsCardSkeleton = () => {
+  const [isMobile] = useMediaQuery('(max-width: 768px)');
+
+  return (
+    <Box px={isMobile ? 1 : 4} py={4} borderRadius={5}>
+      <Flex align={'center'} justify={'space-between'} w="100%">
+        <Flex w="100%" h={isMobile ? 14 : 16}>
+          <Skeleton
+            w={isMobile ? '4.2rem' : '4.6rem'}
+            h={isMobile ? 14 : 16}
+            mr={isMobile ? 3 : 5}
+            rounded={5}
+          />
+          <Flex justify={'space-between'} direction={'column'} w={'full'}>
+            <Skeleton w="60%" h="3.5" />
+            <Skeleton
+              w="130px"
+              h="3"
+              fontSize={{ md: 'sm', base: 'xs' }}
+              noOfLines={1}
+            />
+            <Flex gap={2}>
+              <SkeletonText
+                w="56px"
+                fontSize={{ md: 'sm', base: 'xs' }}
+                noOfLines={1}
+              />
+              <Skeleton
+                w="48px"
+                fontSize={{ md: 'sm', base: 'xs' }}
+                noOfLines={1}
+              />
+            </Flex>
+          </Flex>
+        </Flex>
+        <Flex align={'center'} gap={2}>
+          <SkeletonCircle size={'4'} />
+          <Skeleton w="54px" h="14px" noOfLines={1} />
+        </Flex>
+      </Flex>
+    </Box>
+  );
+};
 
 export const BountiesCard = ({
   rewardAmount,

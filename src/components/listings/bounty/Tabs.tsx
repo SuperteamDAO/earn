@@ -2,9 +2,11 @@
 import { Flex } from '@chakra-ui/react';
 import dayjs from 'dayjs';
 
-import { BountiesCard } from '@/components/misc/listingsCard';
+import {
+  BountiesCard,
+  ListingsCardSkeleton,
+} from '@/components/misc/listingsCard';
 import { EmptySection } from '@/components/shared/EmptySection';
-import { Loading } from '@/components/shared/Loading';
 import type { Bounty } from '@/interface/bounty';
 
 interface TabProps {
@@ -31,9 +33,9 @@ export const BountyTabs = ({
       content: (
         <Flex direction={'column'} rowGap={1}>
           {isListingsLoading ? (
-            <Flex align="center" justify="center" direction="column" minH={52}>
-              <Loading />
-            </Flex>
+            Array.from({ length: 8 }, (_, index) => (
+              <ListingsCardSkeleton key={index} />
+            ))
           ) : bounties?.bounties?.filter(
               (bounty) =>
                 bounty.status === 'OPEN' &&
@@ -80,9 +82,9 @@ export const BountyTabs = ({
       content: (
         <Flex direction={'column'} rowGap={'1'}>
           {isListingsLoading ? (
-            <Flex align="center" justify="center" direction="column" minH={52}>
-              <Loading />
-            </Flex>
+            Array.from({ length: 8 }, (_, index) => (
+              <ListingsCardSkeleton key={index} />
+            ))
           ) : bounties?.bounties?.filter(
               (bounty) =>
                 !bounty.isWinnersAnnounced &&
@@ -128,9 +130,9 @@ export const BountyTabs = ({
       content: (
         <Flex direction={'column'} rowGap={'1'}>
           {isListingsLoading ? (
-            <Flex align="center" justify="center" direction="column" minH={52}>
-              <Loading />
-            </Flex>
+            Array.from({ length: 8 }, (_, index) => (
+              <ListingsCardSkeleton key={index} />
+            ))
           ) : bounties?.bounties?.filter(
               (bounty) =>
                 bounty.status === 'CLOSED' ||

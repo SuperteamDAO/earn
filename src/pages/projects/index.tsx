@@ -3,9 +3,12 @@ import axios from 'axios';
 import dayjs from 'dayjs';
 import { useEffect, useState } from 'react';
 
-import { BountiesCard, ListingSection } from '@/components/misc/listingsCard';
+import {
+  BountiesCard,
+  ListingsCardSkeleton,
+  ListingSection,
+} from '@/components/misc/listingsCard';
 import { EmptySection } from '@/components/shared/EmptySection';
-import { Loading } from '@/components/shared/Loading';
 import type { Bounty } from '@/interface/bounty';
 import { Home } from '@/layouts/Home';
 import { Meta } from '@/layouts/Meta';
@@ -60,11 +63,10 @@ function AllBountiesPage() {
           emoji="/assets/home/emojis/moneyman.png"
           all
         >
-          {isListingsLoading && (
-            <Flex align="center" justify="center" direction="column" minH={52}>
-              <Loading />
-            </Flex>
-          )}
+          {isListingsLoading &&
+            Array.from({ length: 8 }, (_, index) => (
+              <ListingsCardSkeleton key={index} />
+            ))}
           {!isListingsLoading && !listings?.bounties?.length && (
             <Flex align="center" justify="center" mt={8}>
               <EmptySection

@@ -4,11 +4,13 @@ import {
   Box,
   Button,
   Flex,
+  Skeleton,
   Text,
   useMediaQuery,
 } from '@chakra-ui/react';
 import axios from 'axios';
 import { unstable_getImgProps as getImgProps } from 'next/image';
+import { useSession } from 'next-auth/react';
 import React, { useEffect, useState } from 'react';
 
 import { userStore } from '@/store/user';
@@ -75,81 +77,100 @@ export function HomeBanner({ setTriggerLogin }: BannerProps) {
       .then((response) => setUsersCount(response.data.totalUsers));
   }, []);
 
-  return (
-    <>
-      <Box
-        w={'100%'}
-        h={isLessThan768px ? '96' : 'auto'}
-        maxH={'500px'}
+  const { data: session, status } = useSession();
+
+  if (!session && status === 'loading') {
+    return (
+      <Skeleton
+        h={isLessThan768px ? '400' : '280'}
+        maxH="500px"
         mb={8}
         mx={'auto'}
         p={{ base: '6', md: '10' }}
-        bgImage={
-          isLessThan768px
-            ? `url(${mobileImage.props.src})`
-            : `url(${desktopImage.props.src})`
-        }
-        bgSize={'cover'}
-        bgPosition={'center'}
         rounded={'md'}
-      >
-        <Text
-          color="white"
-          fontSize={'28px'}
-          fontWeight={'700'}
-          lineHeight={'2.2rem'}
+      />
+    );
+  }
+
+  if (!session && status === 'unauthenticated') {
+    return (
+      <>
+        <Box
+          w={'100%'}
+          h={isLessThan768px ? '96' : 'auto'}
+          maxH={'500px'}
+          mb={8}
+          mx={'auto'}
+          p={{ base: '6', md: '10' }}
+          bgImage={
+            isLessThan768px
+              ? `url(${mobileImage.props.src})`
+              : `url(${desktopImage.props.src})`
+          }
+          bgSize={'cover'}
+          bgPosition={'center'}
+          rounded={'md'}
         >
-          Unlock your crypto
-          <br /> earning potential
-        </Text>
-        <Text
-          maxW={{ base: '100%', md: '460px' }}
-          mt={isLessThan768px ? '2' : '4'}
-          color={'white'}
-          fontSize={{ base: 'sm', md: 'lg' }}
-        >
-          Explore bounties, projects, and grant opportunities for developers and
-          non-technical talent alike
-        </Text>
-        <Flex
-          align={'center'}
-          direction={isLessThan768px ? 'column' : 'row'}
-          gap={isLessThan768px ? '3' : '4'}
-          mt={isLessThan768px ? '24' : '4'}
-        >
-          <Button
-            w={isLessThan768px ? '100%' : 'auto'}
-            px={'2.25rem'}
-            py={'0.75rem'}
-            color={'#3223A0'}
-            fontSize={'0.875rem'}
-            bg={'white'}
-            onClick={() => {
-              handleSubmit();
-            }}
+          <Text
+            color="white"
+            fontSize={'28px'}
+            fontWeight={'700'}
+            lineHeight={'2.2rem'}
           >
-            Sign Up
-          </Button>
-          <Flex align="center">
-            <AvatarGroup max={3} size="sm">
-              {avatars.map((avatar, index) => (
-                <Avatar
-                  key={index}
-                  borderWidth={'1px'}
-                  borderColor={'#49139c'}
-                  name={avatar.name}
-                  src={avatar.src}
-                />
-              ))}
-            </AvatarGroup>
-            {usersCount !== null && (
-              <Text ml={'0.6875rem'} color="white" fontSize={'0.875rem'}>
-                Join {usersCount.toLocaleString()}+ others
-              </Text>
-            )}
+            Unlock your crypto
+            <br /> earning potential
+          </Text>
+          <Text
+            maxW={{ base: '100%', md: '460px' }}
+            mt={isLessThan768px ? '2' : '4'}
+            color={'white'}
+            fontSize={{ base: 'sm', md: 'lg' }}
+          >
+            Explore bounties, projects, and grant opportunities for developers
+            and non-technical talent alike
+          </Text>
+          <Flex
+            align={'center'}
+            direction={isLessThan768px ? 'column' : 'row'}
+            gap={isLessThan768px ? '3' : '4'}
+            mt={isLessThan768px ? '24' : '4'}
+          >
+            <Button
+              w={isLessThan768px ? '100%' : 'auto'}
+              px={'2.25rem'}
+              py={'0.75rem'}
+              color={'#3223A0'}
+              fontSize={'0.875rem'}
+              bg={'white'}
+              onClick={() => {
+                handleSubmit();
+              }}
+            >
+              Sign Up
+            </Button>
+            <Flex align="center">
+              <AvatarGroup max={3} size="sm">
+                {avatars.map((avatar, index) => (
+                  <Avatar
+                    key={index}
+                    borderWidth={'1px'}
+                    borderColor={'#49139c'}
+                    name={avatar.name}
+                    src={avatar.src}
+                  />
+                ))}
+              </AvatarGroup>
+              {usersCount !== null && (
+                <Text ml={'0.6875rem'} color="white" fontSize={'0.875rem'}>
+                  Join {usersCount.toLocaleString()}+ others
+                </Text>
+              )}
+            </Flex>
           </Flex>
-        </Flex>
-      </Box>
-    </>
-  );
+        </Box>
+      </>
+    );
+  }
+
+  return null;
 }
