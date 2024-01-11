@@ -283,7 +283,11 @@ export const BountiesCard = ({
                     </Text>
                     <Flex align={'center'} gap={1}>
                       <Circle bg="#16A35F" size="8px" />
-                      <Text color="#16A35F" fontSize="12px">
+                      <Text
+                        display={['none', 'none', 'block', 'block']}
+                        color="#16A35F"
+                        fontSize="12px"
+                      >
                         Open
                       </Text>
                     </Flex>
