@@ -5,6 +5,11 @@ import React, { useState } from 'react';
 export const SignIn = () => {
   const [email, setEmail] = useState('');
 
+  const handleEmailSignIn = () => {
+    localStorage.setItem('emailForSignIn', email); // Save email to localStorage
+    signIn('email', { email });
+  };
+
   return (
     <Box>
       <Flex
@@ -26,7 +31,7 @@ export const SignIn = () => {
           placeholder="Enter your email"
           value={email}
         />
-        <Button w="100%" onClick={() => signIn('email', { email })}>
+        <Button w="100%" onClick={handleEmailSignIn}>
           Sign in with Email
         </Button>
       </Flex>
