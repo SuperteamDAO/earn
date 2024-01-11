@@ -60,6 +60,7 @@ export const BountyTabs = ({
                   token={bounty?.token}
                   type={bounty?.type}
                   applicationType={bounty.applicationType}
+                  hasTabs
                 />
               ))
           ) : (
