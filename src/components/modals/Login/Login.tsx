@@ -89,7 +89,7 @@ Props) => {
         </ModalBody>
         <ModalFooter>
           <Text color="brand.slate.400" fontSize="xs" textAlign="center">
-            By connecting your wallet & signing up, you agree to our{' '}
+            By using this website, you agree to our{' '}
             <Link
               as={NextLink}
               fontWeight={700}
