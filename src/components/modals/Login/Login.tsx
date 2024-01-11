@@ -20,29 +20,9 @@ import { SignIn } from './SignIn';
 interface Props {
   isOpen: boolean;
   onClose: () => void;
-  // userInfo: User | null;
-  // setUserInfo: (userInfo: User) => void;
-  // initialStep?: number;
-  // inviteInfo?: {
-  //   emailInvite?: string;
-  //   currentSponsorId?: string;
-  //   memberType?: 'MEMBER' | 'ADMIN';
-  // };
 }
-export const Login = ({
-  isOpen,
-  onClose,
-}: // userInfo,
-// setUserInfo,
-// initialStep = 1,
-// inviteInfo,
-Props) => {
+export const Login = ({ isOpen, onClose }: Props) => {
   const router = useRouter();
-  // const [step, setStep] = useState(initialStep);
-  // const [otp, setOtp] = useState({
-  //   current: 0,
-  //   last: 0,
-  // });
 
   return (
     <Modal
@@ -66,26 +46,7 @@ Props) => {
         </ModalHeader>
         <ModalCloseButton />
         <ModalBody>
-          {/* {step === 1 &&  */}
           <SignIn />
-          {/* } */}
-          {/* {step === 2 && (
-            <NewUserInfo
-              inviteInfo={inviteInfo}
-              userInfo={userInfo}
-              setUserInfo={setUserInfo}
-              setStep={setStep}
-              setOtp={setOtp}
-            />
-          )} */}
-          {/* {step === 3 && (
-            <VerifyOTP
-              inviteInfo={inviteInfo}
-              userInfo={userInfo}
-              onClose={onClose}
-              otp={otp}
-            />
-          )} */}
         </ModalBody>
         <ModalFooter>
           <Text color="brand.slate.400" fontSize="xs" textAlign="center">

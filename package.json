@@ -11,7 +11,9 @@
     "check-types": "tsc --noEmit --pretty",
     "prepare": "husky install",
     "postbuild": "next-sitemap",
-    "postinstall": "prisma generate"
+    "postinstall": "prisma generate",
+    "knip": "knip",
+    "find-deadcode": "ts-prune"
   },
   "dependencies": {
     "@bomdi/codebox": "^2.0.0",
@@ -42,10 +44,8 @@
     "@vercel/og": "^0.5.9",
     "airtable": "^0.12.1",
     "axios": "^1.3.2",
-    "base32.js": "^0.1.0",
     "boring-avatars": "^1.7.0",
     "cloudinary": "^1.37.0",
-    "crypto-js": "^4.1.1",
     "datauri": "^4.1.0",
     "dayjs": "^1.11.7",
     "degen": "^0.0.161",
@@ -79,7 +79,6 @@
     "zustand": "^4.3.2"
   },
   "devDependencies": {
-    "@types/crypto-js": "^4.2.1",
     "@types/node": "18.11.18",
     "@types/react": "18.0.15",
     "@types/react-dom": "18.0.6",
