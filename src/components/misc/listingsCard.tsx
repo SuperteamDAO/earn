@@ -4,6 +4,7 @@ import {
   Box,
   Button,
   Center,
+  Circle,
   Flex,
   HStack,
   Image,
@@ -161,6 +162,7 @@ interface BountyProps {
   sponsorName?: string;
   type?: BountyType | string;
   applicationType?: 'fixed' | 'rolling';
+  hasTabs?: boolean;
 }
 
 export const BountiesCard = ({
@@ -173,6 +175,7 @@ export const BountiesCard = ({
   slug = '',
   sponsorName,
   applicationType,
+  hasTabs = false,
 }: BountyProps) => {
   const router = useRouter();
   const [isMobile] = useMediaQuery('(max-width: 768px)');
@@ -270,6 +273,26 @@ export const BountiesCard = ({
                     ? `Closing ${dayjs(deadline).fromNow()}`
                     : `Closed ${dayjs(deadline).fromNow()}`}
                 </Text>
+                {!hasTabs && dayjs().isBefore(dayjs(deadline)) && (
+                  <>
+                    <Text
+                      color={'brand.slate.300'}
+                      fontSize={['xx-small', 'xs', 'sm', 'sm']}
+                    >
+                      |
+                    </Text>
+                    <Flex align={'center'} gap={1}>
+                      <Circle bg="#16A35F" size="8px" />
+                      <Text
+                        display={['none', 'none', 'block', 'block']}
+                        color="#16A35F"
+                        fontSize="12px"
+                      >
+                        Open
+                      </Text>
+                    </Flex>
+                  </>
+                )}
               </Flex>
             </Flex>
           </Flex>
