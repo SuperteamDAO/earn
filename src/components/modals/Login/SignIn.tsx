@@ -31,6 +31,8 @@ export const SignIn = () => {
           bg="#fff"
           borderWidth="1px"
           borderColor="#CBD5E1"
+          _hover={{ bg: 'brand.slate.100' }}
+          _active={{ bg: 'brand.slate.200' }}
           leftIcon={<GoogleIcon />}
           onClick={() => signIn('google')}
           size="lg"
