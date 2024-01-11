@@ -79,38 +79,38 @@ export function UserInfo({ isMobile }: UserInfoProps) {
               rounded={'full'}
             >
               <Flex align="center">
-                {session?.user?.photo ? (
+                {userInfo?.photo ? (
                   <Image
                     boxSize="32px"
                     borderRadius="full"
                     objectFit={'cover'}
-                    alt={`${session?.user?.firstName} ${session?.user?.lastName}`}
-                    src={session?.user?.photo}
+                    alt={`${userInfo?.firstName} ${userInfo?.lastName}`}
+                    src={userInfo?.photo}
                   />
                 ) : (
                   <Avatar
-                    name={`${session?.user?.firstName} ${session?.user?.lastName}`}
+                    name={`${userInfo?.firstName} ${userInfo?.lastName}`}
                     colors={['#92A1C6', '#F0AB3D', '#C271B4']}
                     size={32}
                     variant="marble"
                   />
                 )}
                 <Flex display={displayValue} ml={2}>
-                  {!session?.user?.firstName ? (
+                  {!userInfo?.firstName ? (
                     <Text color="brand.slate.800" fontSize="sm">
                       New User
                     </Text>
                   ) : (
                     <Text color="brand.slate.800" fontSize="sm">
-                      {session?.user?.firstName}
+                      {userInfo?.firstName}
                     </Text>
                   )}
                   <Text color="brand.slate.500" fontSize="xs">
-                    {session.user?.email?.substring(0, 6)}
+                    {userInfo?.email?.substring(0, 6)}
                     ...
-                    {session.user?.email?.substring(
+                    {userInfo?.email?.substring(
                       session.user.email.length - 6,
-                      session.user?.email?.length
+                      userInfo?.email?.length
                     )}
                   </Text>
                 </Flex>
