@@ -256,7 +256,7 @@ model Session {
 
 model User {
   id               String            @id @default(uuid())
-  publicKey        String?           @unique
+  publicKey        String?
   email            String            @unique
   username         String?           @unique
   photo            String?

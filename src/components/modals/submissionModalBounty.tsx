@@ -6,6 +6,7 @@ import {
   FormHelperText,
   FormLabel,
   Input,
+  Link,
   Modal,
   ModalCloseButton,
   ModalContent,
@@ -15,12 +16,14 @@ import {
   VStack,
 } from '@chakra-ui/react';
 import type { BountyType } from '@prisma/client';
+import { PublicKey } from '@solana/web3.js';
 import axios from 'axios';
 import { useState } from 'react';
 import { useForm } from 'react-hook-form';
 
 import { QuestionHandler } from '@/components/listings/bounty/questions/questionHandler';
 import type { Eligibility } from '@/interface/bounty';
+import { userStore } from '@/store/user';
 
 import { AutoResizeTextarea } from '../shared/autosize-textarea';
 
@@ -47,6 +50,7 @@ export const SubmissionModal = ({
   const isPermissioned = type === 'permissioned';
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState('');
+  const [publicKeyError, setPublicKeyError] = useState('');
   const {
     register,
     handleSubmit,
@@ -55,14 +59,36 @@ export const SubmissionModal = ({
     watch,
   } = useForm();
 
+  const { userInfo } = userStore();
+
+  function validateSolAddress(address: string) {
+    try {
+      const pubkey = new PublicKey(address);
+      const isSolana = PublicKey.isOnCurve(pubkey.toBuffer());
+      if (!isSolana) {
+        setPublicKeyError('Please enter a valid Solana address');
+        return false;
+      }
+      return true;
+    } catch (err) {
+      setPublicKeyError('Please enter a valid Solana address');
+      return false;
+    }
+  }
+
   const submitSubmissions = async (data: any) => {
     setIsLoading(true);
     try {
-      const { applicationLink, tweetLink, otherInfo, ...answers } = data;
+      const { applicationLink, tweetLink, otherInfo, publicKey, ...answers } =
+        data;
       const eligibilityAnswers = eligibility.map((q) => ({
         question: q.question,
         answer: answers[`eligibility-${q.order}`],
       }));
+      await axios.post('/api/user/update', {
+        publicKey,
+      });
+
       await axios.post('/api/submission/create/', {
         listingId: id,
         listingType: 'BOUNTY',
@@ -291,6 +317,40 @@ export const SubmissionModal = ({
                 <FormErrorMessage>
                   {errors.otherInfo ? <>{errors.otherInfo.message}</> : <></>}
                 </FormErrorMessage>
+              </FormControl>
+
+              <FormControl isRequired>
+                <FormLabel
+                  mb={0}
+                  color={'brand.slate.800'}
+                  fontWeight={600}
+                  htmlFor={'publicKey'}
+                >
+                  Your Solana Wallet Address
+                </FormLabel>
+                <FormHelperText mt={0} mb={2} color="brand.slate.500">
+                  Add your Solana wallet address here. This is where you will
+                  receive your rewards if you win. Download{' '}
+                  <Text as="u">
+                    <Link href="https://phantom.app" isExternal>
+                      Phantom
+                    </Link>
+                  </Text>{' '}
+                  if you don&apos;t have a Solana wallet
+                </FormHelperText>
+                <Input
+                  borderColor={'brand.slate.300'}
+                  _placeholder={{ color: 'brand.slate.300' }}
+                  focusBorderColor="brand.purple"
+                  id="publicKey"
+                  placeholder="Add a link"
+                  {...register('publicKey', { validate: validateSolAddress })}
+                  defaultValue={userInfo?.publicKey}
+                  maxLength={54}
+                />
+                <Text mt={1} ml={1} color="red" fontSize="14px">
+                  {publicKeyError}
+                </Text>
               </FormControl>
             </VStack>
             {!!error && (
