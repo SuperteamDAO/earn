@@ -343,7 +343,7 @@ export const SubmissionModal = ({
                   _placeholder={{ color: 'brand.slate.300' }}
                   focusBorderColor="brand.purple"
                   id="publicKey"
-                  placeholder="Add a link"
+                  placeholder="Add your Solana wallet address"
                   {...register('publicKey', { validate: validateSolAddress })}
                   defaultValue={userInfo?.publicKey}
                   maxLength={54}

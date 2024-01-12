@@ -84,13 +84,13 @@ function BountySubmissions({ slug }: Props) {
 
   const [usedPositions, setUsedPositions] = useState<string[]>([]);
 
+  const { connected } = useWallet();
+
   const DynamicWalletMultiButton = dynamic(
     async () =>
       (await import('@solana/wallet-adapter-react-ui')).WalletMultiButton,
     { ssr: false }
   );
-
-  const { connected } = useWallet();
 
   const getBounty = async () => {
     setIsBountyLoading(true);
@@ -498,49 +498,73 @@ function BountySubmissions({ slug }: Props) {
                       {selectedSubmission?.isWinner &&
                         selectedSubmission?.winnerPosition &&
                         !selectedSubmission?.isPaid &&
-                        (connected ? (
-                          <Tooltip
-                            bg={'brand.purple'}
-                            hasArrow={true}
-                            isDisabled={!!bounty?.isWinnersAnnounced}
-                            label="You have to publish the results before you can pay out rewards!"
-                            placement="top"
-                          >
-                            <Button
-                              mr={4}
-                              isDisabled={!bounty?.isWinnersAnnounced}
-                              isLoading={isPaying}
-                              loadingText={'Paying...'}
-                              onClick={async () => {
-                                if (!selectedSubmission?.user.publicKey) {
-                                  console.error(
-                                    'Public key is null, cannot proceed with payment'
-                                  );
-                                  return;
-                                }
-                                handlePayout({
-                                  id: selectedSubmission?.id as string,
-                                  token: bounty?.token as string,
-                                  amount: bounty?.rewards![
-                                    selectedSubmission?.winnerPosition as keyof Rewards
-                                  ] as number,
-                                  receiver: new PublicKey(
-                                    selectedSubmission.user.publicKey
-                                  ),
-                                });
+                        (bounty?.isWinnersAnnounced ? (
+                          <>
+                            <DynamicWalletMultiButton
+                              style={{
+                                height: '32px',
+                                fontWeight: 600,
+                                fontFamily: 'Inter',
                               }}
-                              size="sm"
-                              variant="solid"
-                            >
-                              Pay {bounty?.token}{' '}
-                              {!!bounty?.rewards &&
-                                bounty?.rewards[
-                                  selectedSubmission?.winnerPosition as keyof Rewards
-                                ]}
-                            </Button>
-                          </Tooltip>
+                            />
+                            {connected && (
+                              <Button
+                                mr={4}
+                                isDisabled={!bounty?.isWinnersAnnounced}
+                                isLoading={isPaying}
+                                loadingText={'Paying...'}
+                                onClick={async () => {
+                                  if (!selectedSubmission?.user.publicKey) {
+                                    console.error(
+                                      'Public key is null, cannot proceed with payment'
+                                    );
+                                    return;
+                                  }
+                                  handlePayout({
+                                    id: selectedSubmission?.id as string,
+                                    token: bounty?.token as string,
+                                    amount: bounty?.rewards![
+                                      selectedSubmission?.winnerPosition as keyof Rewards
+                                    ] as number,
+                                    receiver: new PublicKey(
+                                      selectedSubmission.user.publicKey
+                                    ),
+                                  });
+                                }}
+                                size="sm"
+                                variant="solid"
+                              >
+                                Pay {bounty?.token}{' '}
+                                {!!bounty?.rewards &&
+                                  bounty?.rewards[
+                                    selectedSubmission?.winnerPosition as keyof Rewards
+                                  ]}
+                              </Button>
+                            )}
+                          </>
                         ) : (
-                          <DynamicWalletMultiButton />
+                          <>
+                            <Tooltip
+                              bg={'brand.purple'}
+                              hasArrow={true}
+                              isDisabled={!!bounty?.isWinnersAnnounced}
+                              label="You have to publish the results before you can pay out rewards!"
+                              placement="top"
+                            >
+                              <Button
+                                mr={4}
+                                isDisabled={!bounty?.isWinnersAnnounced}
+                                size="sm"
+                                variant="solid"
+                              >
+                                Pay {bounty?.token}{' '}
+                                {!!bounty?.rewards &&
+                                  bounty?.rewards[
+                                    selectedSubmission?.winnerPosition as keyof Rewards
+                                  ]}
+                              </Button>
+                            </Tooltip>
+                          </>
                         ))}
                       {selectedSubmission?.isWinner &&
                         selectedSubmission?.winnerPosition &&
