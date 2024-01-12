@@ -108,7 +108,6 @@ export default async function announce(
             rewards[winners[currentIndex]?.winnerPosition as keyof Rewards] || 0
           )
         : 0;
-      // TODO: convert amount to USD if token is not USDC, USDT, USD, DAI, or UST
       const amountWhere = {
         where: {
           id: winners[currentIndex]?.userId,

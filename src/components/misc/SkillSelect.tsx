@@ -32,7 +32,7 @@ export const SkillSelect = ({
   skills.forEach((s) => {
     const subSkillsForSkill =
       skillSubSkillMap[s.value as keyof typeof skillSubSkillMap];
-    // Check if subSkillsForSkill exists and is an array before spreading
+    // check if subSkillsForSkill exists and is an array before spreading
     if (Array.isArray(subSkillsForSkill)) {
       tempSubSkills.push(...subSkillsForSkill);
     }

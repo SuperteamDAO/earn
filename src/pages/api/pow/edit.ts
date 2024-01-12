@@ -82,7 +82,7 @@ export default async function handler(
 
   try {
     const transactionActions = [
-      prisma.poW.createMany({ data: createData as any }), // Casting to any as a workaround
+      prisma.poW.createMany({ data: createData as any }),
       ...updateData.map((data) => prisma.poW.update(data)),
       ...idsToDelete.map((id) => prisma.poW.delete({ where: { id } })),
     ];

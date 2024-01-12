@@ -71,9 +71,6 @@ export default async function user(req: NextApiRequest, res: NextApiResponse) {
           ...skillsFilter,
         },
         take,
-        // orderBy: {
-        //   deadline: 'desc',
-        // },
         include: {
           sponsor: {
             select: {

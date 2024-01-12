@@ -79,10 +79,6 @@ export default async function user(req: NextApiRequest, res: NextApiResponse) {
           },
           ...skillsFilter,
         },
-        // take,
-        // orderBy: {
-        //   deadline: 'asc',
-        // },
         include: {
           sponsor: {
             select: {
@@ -127,9 +123,6 @@ export default async function user(req: NextApiRequest, res: NextApiResponse) {
           },
           ...skillsFilter,
         },
-        // orderBy: {
-        //   deadline: 'desc',
-        // },
         include: {
           sponsor: {
             select: {
@@ -181,9 +174,6 @@ export default async function user(req: NextApiRequest, res: NextApiResponse) {
           },
           ...skillsFilter,
         },
-        // orderBy: {
-        //   deadline: 'desc',
-        // },
         include: {
           sponsor: {
             select: {

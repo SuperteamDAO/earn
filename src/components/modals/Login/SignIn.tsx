@@ -1,4 +1,12 @@
-import { Box, Button, Divider, Flex, Input, Text } from '@chakra-ui/react';
+import {
+  Box,
+  Button,
+  Divider,
+  Flex,
+  FormControl,
+  Input,
+  Text,
+} from '@chakra-ui/react';
 import { signIn } from 'next-auth/react';
 import React, { useState } from 'react';
 
@@ -6,11 +14,29 @@ import GoogleIcon from '@/svg/google';
 
 export const SignIn = () => {
   const [email, setEmail] = useState('');
+  const [isEmailValid, setIsEmailValid] = useState(false);
+  const [hasAttemptedSubmit, setHasAttemptedSubmit] = useState(false);
+
+  const validateEmail = (emailAddress: string) => {
+    const re = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    return re.test(emailAddress);
+  };
+
+  const handleEmailChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const emailInput = e.target.value;
+    setEmail(emailInput);
+    setIsEmailValid(validateEmail(emailInput));
+  };
 
   const handleEmailSignIn = () => {
-    localStorage.setItem('emailForSignIn', email); // Save email to localStorage
-    signIn('email', { email });
+    setHasAttemptedSubmit(true);
+    if (isEmailValid) {
+      localStorage.setItem('emailForSignIn', email);
+      signIn('email', { email });
+    }
   };
+
+  const isError = hasAttemptedSubmit && !isEmailValid;
 
   return (
     <Box>
@@ -46,15 +72,17 @@ export const SignIn = () => {
           </Text>{' '}
           <Divider borderColor={'brand.slate.300'} />
         </Flex>
-        <Input
-          fontSize={'16px'}
-          borderColor="#CBD5E1"
-          _placeholder={{ fontSize: '16px' }}
-          onChange={(e) => setEmail(e.target.value)}
-          placeholder="Enter your email"
-          size="lg"
-          value={email}
-        />
+        <FormControl isInvalid={isError}>
+          <Input
+            fontSize={'16px'}
+            borderColor="#CBD5E1"
+            _placeholder={{ fontSize: '16px' }}
+            onChange={handleEmailChange}
+            placeholder="Enter your email"
+            size="lg"
+            value={email}
+          />
+        </FormControl>
         <Button
           w="100%"
           h="2.9rem"

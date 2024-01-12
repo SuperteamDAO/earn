@@ -11,7 +11,6 @@ export default async function handler(
   if (method === 'GET') {
     const userId = query.userId as string;
 
-    // Validate the userId
     if (!userId) {
       return res.status(400).json({
         error: 'The "userId" query parameter is missing.',
