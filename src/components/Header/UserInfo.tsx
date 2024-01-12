@@ -224,6 +224,7 @@ export function UserInfo({ isMobile }: UserInfoProps) {
             <Button
               display={displayValue}
               w={{ base: '100%' }}
+              my={1}
               px={4}
               fontSize="xs"
               onClick={() => {
