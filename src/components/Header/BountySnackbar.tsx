@@ -58,12 +58,16 @@ export const BountySnackbar = () => {
     if (
       (type === 'open' && submissionCount <= 1) ||
       (type === 'permissioned' && submissionCount < 10)
-    )
+    ) {
+      if (submissionCount === 0) {
+        return type === 'open'
+          ? '🔥 High chance of winning: No submissions have been made for this bounty yet!'
+          : '🔥 The Odds Are in Your Favour! No applications yet';
+      }
       return type === 'open'
-        ? `🔥 High chance of winning: Only ${
-            submissionCount || 'no'
-          } submission(s) have been made for this bounty yet!`
+        ? `🔥 High chance of winning: Only ${submissionCount} submission(s) have been made for this bounty yet!`
         : '🔥 The Odds Are in Your Favour! Not too many applications yet';
+    }
 
     return null;
   };
