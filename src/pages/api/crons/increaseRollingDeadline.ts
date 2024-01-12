@@ -11,6 +11,7 @@ async function handler(_req: NextApiRequest, res: NextApiResponse) {
         type: 'permissioned',
         applicationType: 'rolling',
         status: 'OPEN',
+        isWinnersAnnounced: false,
       },
     });
 
