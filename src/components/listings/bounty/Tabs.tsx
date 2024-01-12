@@ -61,6 +61,7 @@ export const BountyTabs = ({
                   type={bounty?.type}
                   applicationType={bounty.applicationType}
                   hasTabs
+                  isWinnersAnnounced={bounty.isWinnersAnnounced}
                 />
               ))
           ) : (
@@ -109,6 +110,8 @@ export const BountyTabs = ({
                   token={bounty?.token}
                   type={bounty?.type}
                   applicationType={bounty.applicationType}
+                  isWinnersAnnounced={bounty?.isWinnersAnnounced}
+                  hasTabs
                 />
               ))
           ) : (
@@ -155,6 +158,8 @@ export const BountyTabs = ({
                   token={bounty?.token}
                   type={bounty?.type}
                   applicationType={bounty.applicationType}
+                  isWinnersAnnounced={bounty?.isWinnersAnnounced}
+                  hasTabs
                 />
               ))
           ) : (
