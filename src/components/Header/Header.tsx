@@ -252,7 +252,7 @@ export const Header = () => {
                 onClick={() => {
                   router.push('/');
                 }}
-                src={'/assets/logo/new-logo.svg'}
+                src={'/assets/logo/logo.svg'}
               />
             </Link>
 
@@ -285,7 +285,7 @@ export const Header = () => {
               h={5}
               my="auto"
               alt={'Superteam Earn'}
-              src="/assets/logo/new-logo.svg"
+              src="/assets/logo/logo.svg"
             />
           </Link>
 

@@ -135,8 +135,7 @@ export function ListingHeader({
             alt={'phantom'}
             rounded={'md'}
             src={
-              sponsor?.logo ||
-              `${router.basePath}/assets/images/sponsor-logo.png`
+              sponsor?.logo || `${router.basePath}/assets/logo/sponsor-logo.png`
             }
           />
           <VStack align={'start'}>

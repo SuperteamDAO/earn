@@ -25,7 +25,7 @@ const Logo = (props: any) => {
       cursor="pointer"
       objectFit={'contain'}
       alt={'Superteam Earn'}
-      src={'/assets/logo/new-logo.svg'}
+      src={'/assets/logo/logo.svg'}
       {...props}
     />
   );

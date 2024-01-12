@@ -16,7 +16,6 @@ import { create } from 'zustand';
 
 import { AboutYou } from '@/components/Talent/AboutYou';
 import type { UserStoreType } from '@/components/Talent/types';
-import { WelcomeMessage } from '@/components/Talent/WelcomeMessage';
 import { YourLinks } from '@/components/Talent/YourLinks';
 import { YourWork } from '@/components/Talent/YourWork';
 import { Default } from '@/layouts/Default';
@@ -257,9 +256,7 @@ const SuccessScreen = () => {
 };
 
 function Talent() {
-  const [currentPage, setcurrentPage] = useState<
-    'welcome' | 'steps' | 'success'
-  >('steps');
+  const [currentPage, setcurrentPage] = useState<'steps' | 'success'>('steps');
 
   return (
     <Default
@@ -272,13 +269,6 @@ function Talent() {
       }
     >
       <VStack>
-        {currentPage === 'welcome' && (
-          <WelcomeMessage
-            setStep={() => {
-              setcurrentPage('steps');
-            }}
-          />
-        )}
         {currentPage === 'steps' && (
           <StepsCon
             setSuccess={() => {

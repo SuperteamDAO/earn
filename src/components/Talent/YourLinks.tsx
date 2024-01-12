@@ -41,7 +41,7 @@ export const socials = [
   {
     label: 'LinkedIn',
     placeHolder: 'https://linkedin.com/in/tony-stark',
-    icon: '/assets/talent/link.png',
+    icon: '/assets/talent/linkedin.png',
   },
   {
     label: 'Telegram',

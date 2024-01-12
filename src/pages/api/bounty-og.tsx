@@ -16,7 +16,7 @@ const fontDataP = fetchAsset(
 );
 
 const sponsorImageP = fetchAsset(
-  new URL('../../../public/assets/images/sponsor-logo.png', import.meta.url)
+  new URL('../../../public/assets/logo/sponsor-logo.png', import.meta.url)
 );
 
 export default async function handler(request: NextRequest) {

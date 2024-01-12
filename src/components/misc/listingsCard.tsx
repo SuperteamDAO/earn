@@ -262,7 +262,7 @@ export const BountiesCard = ({
                       '/upload/',
                       '/upload/c_scale,w_128,h_128,f_auto/'
                     )
-                  : `${router.basePath}/assets/images/sponsor-logo.png`
+                  : `${router.basePath}/assets/logo/sponsor-logo.png`
               }
             />
             <Flex justify={'space-between'} direction={'column'} w={'full'}>
@@ -436,7 +436,7 @@ export const GrantsCard = ({
                       '/upload/',
                       '/upload/c_scale,w_128,h_128,f_auto/'
                     )
-                  : `assets/home/placeholder/ph3.png`
+                  : `assets/home/placeholder/ph1.png`
               }
             />
             <Flex justify={'space-between'} direction={'column'} w={'full'}>

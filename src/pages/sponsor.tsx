@@ -33,12 +33,12 @@ import ZapIcon from '@/public/assets/landingsponsor/icons/zap.png';
 import Dialect from '@/public/assets/landingsponsor/sponsors/dialect.png';
 // Sponsor Logos
 import Foundation from '@/public/assets/landingsponsor/sponsors/foundation.png';
+import Kash from '@/public/assets/landingsponsor/sponsors/kash.png';
 import Orbis from '@/public/assets/landingsponsor/sponsors/orbis.png';
 import Pyth from '@/public/assets/landingsponsor/sponsors/pyth.png';
 import Spaces from '@/public/assets/landingsponsor/sponsors/spaces.png';
 import StreamFlow from '@/public/assets/landingsponsor/sponsors/streamflow.png';
 import Wormhole from '@/public/assets/landingsponsor/sponsors/wormhole.png';
-import Kash from '@/public/assets/randompeople/kash.png';
 
 import { Footer } from '../components/Footer/Footer';
 
@@ -810,7 +810,7 @@ const Sponsor = () => {
       >
         <Link as={NextLink} href="/">
           <Box minW={'0.8125rem'} h="0.8125rem">
-            <img src="/assets/logo/new-logo.svg" alt="Superteam Earn Logo" />
+            <img src="/assets/logo/logo.svg" alt="Superteam Earn Logo" />
           </Box>
         </Link>
         <Flex

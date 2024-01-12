@@ -104,7 +104,7 @@ function TalentProfile({ slug }: TalentProps) {
     },
 
     {
-      icon: '/assets/talent/link.png',
+      icon: '/assets/talent/linkedin.png',
       link: talent?.linkedin,
     },
 

@@ -36,7 +36,7 @@ export default function VerifyRequest() {
             onClick={() => {
               router.push('/');
             }}
-            src={'/assets/logo/new-logo.svg'}
+            src={'/assets/logo/logo.svg'}
           />
         </Link>
       </Box>

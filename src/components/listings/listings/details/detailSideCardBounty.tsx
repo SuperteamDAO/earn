@@ -245,7 +245,7 @@ export function DetailSideCardBounty({
                 rounded={'full'}
                 src={
                   tokenList.filter((e) => e?.tokenSymbol === token)[0]?.icon ??
-                  '/assets/icons/green-doller.svg'
+                  '/assets/icons/green-dollar.svg'
                 }
               />
               <Text color="color.slate.800" fontSize={'2xl'} fontWeight={500}>

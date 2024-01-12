@@ -1,6 +1,6 @@
 <div align="center">
   <br/>
-  <img src="/public/assets/logo/newlogo.png" width="140px" height="auto"/>
+  <img src="/public/assets/logo/github-logo.png" width="140px" height="auto"/>
   <h2>SUPERTEAM EARN</h2>
   <p>
     <strong>Unlock your earning potential in web3</strong>

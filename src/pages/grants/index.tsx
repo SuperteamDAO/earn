@@ -185,7 +185,7 @@ function Grants() {
                         link={grant?.link}
                         icon={
                           grant?.sponsor?.logo ??
-                          '/assets/home/placeholder/ph5.png'
+                          '/assets/home/placeholder/ph2.png'
                         }
                         logo={grant?.logo}
                       />

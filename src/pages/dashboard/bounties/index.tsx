@@ -456,7 +456,7 @@ function Bounties() {
                           src={
                             tokenList.filter(
                               (e) => e?.tokenSymbol === currentBounty.token
-                            )[0]?.icon ?? '/assets/icons/green-doller.svg'
+                            )[0]?.icon ?? '/assets/icons/green-dollar.svg'
                           }
                         />
                         <Text color="brand.slate.400">
