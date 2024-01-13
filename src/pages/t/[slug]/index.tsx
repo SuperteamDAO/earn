@@ -498,7 +498,7 @@ function TalentProfile({ slug }: TalentProps) {
                   w={{ base: '100%', md: '50%' }}
                 >
                   <Flex direction={'column'}>
-                    <Text fontWeight={600}>${talent?.totalEarnings}</Text>
+                    <Text fontWeight={600}>${talent?.totalEarnedInUSD}</Text>
                     <Text color={'brand.slate.500'} fontWeight={500}>
                       Earned
                     </Text>

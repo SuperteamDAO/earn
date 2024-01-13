@@ -143,15 +143,18 @@ export default async function announce(
 
       const usdValue = amount * tokenUSDValue;
 
-      const earningsEntry = {
-        userId: winners[currentIndex]?.userId as string,
-        listingId: id as string,
-        currency: bountyToken as string,
-        amount,
-        usdValue,
+      const amountWhere = {
+        where: {
+          id: winners[currentIndex]?.userId,
+        },
+        data: {
+          totalEarnedInUSD: {
+            increment: usdValue,
+          },
+        },
       };
 
-      promises.push(prisma.earnings.create({ data: earningsEntry }));
+      promises.push(prisma.user.update(amountWhere));
       currentIndex += 1;
     }
     await Promise.all(promises);

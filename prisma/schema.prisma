@@ -80,7 +80,6 @@ model Bounties {
   poc                  User               @relation("poc", fields: [pocId], references: [id])
   Submission           Submission[]
   SubscribeBounty      SubscribeBounty[]
-  Earnings             Earnings[]
 
   @@index([id, slug])
   @@index([sponsorId])
@@ -255,21 +254,6 @@ model Session {
   @@index([userId])
 }
 
-model Earnings {
-  id        String   @id @default(uuid())
-  userId    String
-  listingId String
-  currency  String
-  amount    Float
-  usdValue  Float
-  createdAt DateTime @default(now())
-  user      User     @relation(fields: [userId], references: [id])
-  Bounty    Bounties @relation(fields: [listingId], references: [id])
-
-  @@index([userId])
-  @@index([listingId])
-}
-
 model User {
   id               String            @id @default(uuid())
   publicKey        String?
@@ -316,7 +300,6 @@ model User {
   accounts         Account[]
   sessions         Session[]
   emailVerified    DateTime?
-  Earnings         Earnings[]
 
   @@index([email, publicKey, username])
   @@index([currentSponsorId])

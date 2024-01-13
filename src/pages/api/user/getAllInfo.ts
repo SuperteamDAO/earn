@@ -25,11 +25,6 @@ export default async function getAllUsers(
           },
         },
         PoW: true,
-        Earnings: {
-          select: {
-            usdValue: true,
-          },
-        },
       },
     });
 
@@ -37,16 +32,7 @@ export default async function getAllUsers(
       return res.status(500).json({ error: 'Unable to fetch users' });
     }
 
-    const totalEarnings = user.Earnings.reduce(
-      (acc, earning) => acc + earning.usdValue,
-      0
-    );
-    const response = {
-      ...user,
-      totalEarnings,
-    };
-
-    return res.status(200).json(response);
+    return res.status(200).json(user);
   } catch (error: any) {
     return res
       .status(500)
