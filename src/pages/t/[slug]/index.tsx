@@ -41,8 +41,12 @@ interface TalentProps {
   slug: string;
 }
 
+type UserWithEarnings = User & {
+  totalEarnings: number;
+};
+
 function TalentProfile({ slug }: TalentProps) {
-  const [talent, setTalent] = useState<User>();
+  const [talent, setTalent] = useState<UserWithEarnings>();
   const [isloading, setIsloading] = useState<boolean>(true);
   const [error, setError] = useState(false);
   const [activeTab, setActiveTab] = useState<'activity' | 'projects'>(
@@ -494,7 +498,7 @@ function TalentProfile({ slug }: TalentProps) {
                   w={{ base: '100%', md: '50%' }}
                 >
                   <Flex direction={'column'}>
-                    <Text fontWeight={600}>${talent?.totalEarnedInUSD}</Text>
+                    <Text fontWeight={600}>${talent?.totalEarnings}</Text>
                     <Text color={'brand.slate.500'} fontWeight={500}>
                       Earned
                     </Text>

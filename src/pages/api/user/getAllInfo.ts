@@ -25,11 +25,31 @@ export default async function getAllUsers(
           },
         },
         PoW: true,
+        Earnings: {
+          select: {
+            usdValue: true,
+          },
+        },
       },
     });
 
-    res.status(200).json(user);
+    if (!user) {
+      return res.status(500).json({ error: 'Unable to fetch users' });
+    }
+
+    const totalEarnings = user.Earnings.reduce(
+      (acc, earning) => acc + earning.usdValue,
+      0
+    );
+    const response = {
+      ...user,
+      totalEarnings,
+    };
+
+    return res.status(200).json(response);
   } catch (error: any) {
-    res.status(500).json({ error: `Unable to fetch users: ${error.message}` });
+    return res
+      .status(500)
+      .json({ error: `Unable to fetch users: ${error.message}` });
   }
 }
