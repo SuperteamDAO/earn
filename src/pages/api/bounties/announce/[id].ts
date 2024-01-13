@@ -1,7 +1,9 @@
+import axios from 'axios';
 import type { NextApiRequest, NextApiResponse } from 'next';
 import { getToken } from 'next-auth/jwt';
 
 import { WinnersAnnouncedTemplate } from '@/components/emails/winnersAnnouncedTemplate';
+import { tokenList } from '@/constants';
 import type { Rewards } from '@/interface/bounty';
 import { prisma } from '@/prisma';
 import { getUnsubEmails } from '@/utils/airtable';
@@ -9,6 +11,24 @@ import { getBountyTypeLabel } from '@/utils/bounty';
 import { dayjs } from '@/utils/dayjs';
 import { rateLimitedPromiseAll } from '@/utils/rateLimitedPromises';
 import resendMail from '@/utils/resend';
+
+async function fetchTokenUSDValue(symbol: string) {
+  try {
+    const response = await axios.get(
+      'https://api.coingecko.com/api/v3/simple/price',
+      {
+        params: {
+          ids: symbol,
+          vs_currencies: 'USD',
+        },
+      }
+    );
+    return response.data[symbol].usd;
+  } catch (error) {
+    console.error('Error fetching token value from CoinGecko:', error);
+    return 0;
+  }
+}
 
 export default async function announce(
   req: NextApiRequest,
@@ -102,23 +122,36 @@ export default async function announce(
     const promises = [];
     let currentIndex = 0;
 
+    const bountyToken = bounty.token;
+    const tokenEntry = tokenList.find((t) => t.tokenSymbol === bountyToken);
+    const coingeckoSymbol = tokenEntry?.coingeckoSymbol as string;
+
+    let tokenUSDValue: any;
+
+    if (bountyToken === 'USDC') {
+      tokenUSDValue = 1;
+    } else {
+      tokenUSDValue = await fetchTokenUSDValue(coingeckoSymbol);
+    }
+
     while (currentIndex < winners?.length) {
       const amount: number = winners[currentIndex]?.winnerPosition
         ? Math.ceil(
             rewards[winners[currentIndex]?.winnerPosition as keyof Rewards] || 0
           )
         : 0;
-      const amountWhere = {
-        where: {
-          id: winners[currentIndex]?.userId,
-        },
-        data: {
-          totalEarnedInUSD: {
-            increment: amount,
-          },
-        },
+
+      const usdValue = amount * tokenUSDValue;
+
+      const earningsEntry = {
+        userId: winners[currentIndex]?.userId as string,
+        listingId: id as string,
+        currency: bountyToken as string,
+        amount,
+        usdValue,
       };
-      promises.push(prisma.user.update(amountWhere));
+
+      promises.push(prisma.earnings.create({ data: earningsEntry }));
       currentIndex += 1;
     }
     await Promise.all(promises);

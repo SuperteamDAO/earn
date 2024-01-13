@@ -91,6 +91,7 @@ export const tokenList = [
     address: 'So11111111111111111111111111111111111111111',
     icon: 'https://s2.coinmarketcap.com/static/img/coins/64x64/16116.png',
     decimals: 9,
+    coingeckoSymbol: 'solana',
   },
   {
     tokenName: 'ISC',
@@ -98,6 +99,7 @@ export const tokenList = [
     mintAddress: 'J9BcrQfX4p9D1bvLzRNCbMDv8f44a9LFdeqNE4Yk2WMD',
     address: 'J9BcrQfX4p9D1bvLzRNCbMDv8f44a9LFdeqNE4Yk2WMD',
     icon: 'https://res.cloudinary.com/dgvnuwspr/image/upload/v1683200072/sponsors/International%20Stable%20Currency.png',
+    coingeckoSymbol: 'international-stable-currency',
   },
   {
     tokenName: 'USDT',
@@ -106,6 +108,7 @@ export const tokenList = [
     address: 'Es9vMFrzaCERmJfrF4H2FYD4KCoNkY11McCe8BenwNYB',
     icon: 'https://s2.coinmarketcap.com/static/img/coins/64x64/825.png',
     decimals: 6,
+    coingeckoSymbol: 'tether',
   },
   {
     tokenName: 'STEP',
@@ -114,6 +117,7 @@ export const tokenList = [
     address: 'StepAscQoEioFxxWGnh2sLBDFp9d8rvKz2Yp39iDpyT',
     icon: 'https://assets.coingecko.com/coins/images/14988/small/step.png?1619274762',
     decimals: 6,
+    coingeckoSymbol: 'step-finance',
   },
   {
     tokenName: 'mSOL',
@@ -122,6 +126,7 @@ export const tokenList = [
     address: 'mSoLzYCxHdYgdzU16g5QSh3i5K3z3KZK7ytfqcJm7So',
     icon: 'https://s2.coinmarketcap.com/static/img/coins/64x64/11461.png',
     decimals: 9,
+    coingeckoSymbol: 'marinade-staked-sol',
   },
   {
     tokenName: 'UXD Stablecoin (UXD)',
@@ -130,6 +135,7 @@ export const tokenList = [
     address: '7kbnvuGBxxj8AG9qp8Scn56muWGaRaFqxg1FsRp3PaFT',
     icon: 'https://s2.coinmarketcap.com/static/img/coins/64x64/17535.png',
     decimals: 6,
+    coingeckoSymbol: 'uxd-stablecoin',
   },
   {
     tokenName: 'Raydium (RAY)',
@@ -137,6 +143,7 @@ export const tokenList = [
     mintAddress: '4k3Dyjzvzp8eMZWUXbBCjEvwSkkk59S5iCNLY3QrkX6R',
     address: '4k3Dyjzvzp8eMZWUXbBCjEvwSkkk59S5iCNLY3QrkX6R',
     icon: 'https://s2.coinmarketcap.com/static/img/coins/64x64/8526.png',
+    coingeckoSymbol: 'raydium',
   },
   {
     tokenName: 'Saber (SBR)',
@@ -144,6 +151,7 @@ export const tokenList = [
     mintAddress: 'Saber2gLauYim4Mvftnrasomsv6NvAuncvMEZwcLpD1',
     address: 'Saber2gLauYim4Mvftnrasomsv6NvAuncvMEZwcLpD1',
     icon: 'https://s2.coinmarketcap.com/static/img/coins/64x64/11181.png',
+    coingeckoSymbol: 'saber',
   },
   {
     tokenName: 'Solend (SLND)',
@@ -151,6 +159,7 @@ export const tokenList = [
     mintAddress: 'SLNDpmoWTVADgEdndyvWzroNL7zSi1dF9PC3xHGtPwp',
     address: 'SLNDpmoWTVADgEdndyvWzroNL7zSi1dF9PC3xHGtPwp',
     icon: 'https://s2.coinmarketcap.com/static/img/coins/64x64/13524.png',
+    coingeckoSymbol: 'solend',
   },
   {
     tokenName: 'Coin98 (C98)',
@@ -158,6 +167,7 @@ export const tokenList = [
     mintAddress: 'C98A4nkJXhpVZNAZdHUA95RpTF3T4whtQubL3YobiUX9',
     address: 'C98A4nkJXhpVZNAZdHUA95RpTF3T4whtQubL3YobiUX9',
     icon: 'https://s2.coinmarketcap.com/static/img/coins/64x64/10903.png',
+    coingeckoSymbol: 'coin98',
   },
   {
     tokenName: 'Serum (SRM)',
@@ -165,6 +175,7 @@ export const tokenList = [
     mintAddress: 'SRMuApVNdxXokk5GT7XD5cUUgXMBCoAz2LHeuAoKWRt',
     address: 'SRMuApVNdxXokk5GT7XD5cUUgXMBCoAz2LHeuAoKWRt',
     icon: 'https://s2.coinmarketcap.com/static/img/coins/64x64/6187.png',
+    coingeckoSymbol: 'serum',
   },
   {
     tokenName: 'DUST Protocol (DUST)',
@@ -172,6 +183,7 @@ export const tokenList = [
     mintAddress: 'DUSTawucrTsGU8hcqRdHDCbuYhCPADMLM2VcCb8VnFnQ',
     address: 'DUSTawucrTsGU8hcqRdHDCbuYhCPADMLM2VcCb8VnFnQ',
     icon: 'https://s2.coinmarketcap.com/static/img/coins/64x64/18802.png',
+    coingeckoSymbol: 'dust-protocol',
   },
   {
     tokenName: 'wrapped Solana (wSOL)',
@@ -179,6 +191,7 @@ export const tokenList = [
     mintAddress: 'So11111111111111111111111111111111111111112',
     address: 'So11111111111111111111111111111111111111112',
     icon: 'https://s2.coinmarketcap.com/static/img/coins/64x64/16116.png',
+    coingeckoSymbol: 'wrapped-solana',
   },
   {
     tokenName: 'Bonfida (FIDA)',
@@ -186,6 +199,7 @@ export const tokenList = [
     mintAddress: 'EchesyfXePKdLtoiZSL8pBe8Myagyy8ZRqsACNCFGnvp',
     address: 'EchesyfXePKdLtoiZSL8pBe8Myagyy8ZRqsACNCFGnvp',
     icon: 'https://s2.coinmarketcap.com/static/img/coins/64x64/7978.png',
+    coingeckoSymbol: 'bonfida',
   },
   {
     tokenName: 'Orca (ORCA)',
@@ -193,6 +207,7 @@ export const tokenList = [
     mintAddress: 'orcaEKTdK7LKz57vaAYr9QeNsVEPfiu6QeMU1kektZE',
     address: 'orcaEKTdK7LKz57vaAYr9QeNsVEPfiu6QeMU1kektZE',
     icon: 'https://s2.coinmarketcap.com/static/img/coins/64x64/11165.png',
+    coingeckoSymbol: 'orca',
   },
 ];
 export const MainSkills: MultiSelectOptions[] = [
