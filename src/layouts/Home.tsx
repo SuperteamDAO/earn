@@ -24,18 +24,13 @@ import { Meta } from '@/layouts/Meta';
 import { userStore } from '@/store/user';
 
 interface TotalType {
-  total?: number;
   count?: number;
   totalInUSD?: number;
+  totalUsers?: number;
 }
 interface HomeProps {
   children: ReactNode;
   type: 'home' | 'category' | 'region';
-}
-
-interface SidebarType {
-  totals?: TotalType;
-  earners?: User[];
 }
 
 export function Home({ children, type }: HomeProps) {
@@ -44,12 +39,15 @@ export function Home({ children, type }: HomeProps) {
   const [isTotalLoading, setIsTotalLoading] = useState(true);
   const [triggerLogin, setTriggerLogin] = useState(false);
 
-  const [sidebarInfo, setSidebarInfo] = useState<SidebarType>({});
+  const [recentEarners, setRecentEarners] = useState<User[]>([]);
+  const [totals, setTotals] = useState<TotalType>({});
 
   const getTotalInfo = async () => {
     try {
-      const aggregatesData = await axios.get('/api/sidebar/');
-      setSidebarInfo(aggregatesData.data);
+      const totalsData = await axios.get('/api/sidebar/totals');
+      setTotals(totalsData.data);
+      const earnerData = await axios.get('/api/sidebar/recentEarners');
+      setRecentEarners(earnerData.data);
       setIsTotalLoading(false);
     } catch (e) {
       setIsTotalLoading(false);
@@ -90,7 +88,10 @@ export function Home({ children, type }: HomeProps) {
               setTriggerLogin={setTriggerLogin}
             />
             <Box w="full">
-              <HomeBanner setTriggerLogin={setTriggerLogin} />
+              <HomeBanner
+                setTriggerLogin={setTriggerLogin}
+                userCount={totals.totalUsers}
+              />
               {type === 'category' && (
                 <CategoryBanner
                   type={
@@ -160,9 +161,9 @@ export function Home({ children, type }: HomeProps) {
           >
             <HomeSideBar
               isTotalLoading={isTotalLoading}
-              total={sidebarInfo?.totals?.totalInUSD ?? 0}
-              listings={sidebarInfo?.totals?.count ?? 0}
-              earners={sidebarInfo?.earners ?? []}
+              total={totals?.totalInUSD ?? 0}
+              listings={totals?.count ?? 0}
+              earners={recentEarners ?? []}
               userInfo={userInfo! || {}}
             />
           </Flex>

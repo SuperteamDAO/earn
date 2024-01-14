@@ -98,17 +98,16 @@ export function UserInfo({ isMobile }: UserInfoProps) {
                       New User
                     </Text>
                   ) : (
-                    <Text color="brand.slate.800" fontSize="sm">
+                    <Text
+                      color="brand.slate.600"
+                      fontSize="sm"
+                      fontWeight={500}
+                    >
                       {userInfo?.firstName}
                     </Text>
                   )}
-                  <Text color="brand.slate.500" fontSize="xs">
-                    {userInfo?.email?.substring(0, 6)}
-                    ...
-                    {userInfo?.email?.substring(
-                      userInfo.email.length - 6,
-                      userInfo?.email?.length,
-                    )}
+                  <Text color="brand.slate.400" fontSize="sm" fontWeight={500}>
+                    $ {userInfo?.totalEarnedInUSD}
                   </Text>
                 </Flex>
               </Flex>

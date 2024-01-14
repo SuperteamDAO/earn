@@ -8,15 +8,15 @@ import {
   Text,
   useMediaQuery,
 } from '@chakra-ui/react';
-import axios from 'axios';
 import { unstable_getImgProps as getImgProps } from 'next/image';
 import { useSession } from 'next-auth/react';
-import React, { useEffect, useState } from 'react';
+import React from 'react';
 
 import { userStore } from '@/store/user';
 
 interface BannerProps {
   setTriggerLogin: (arg0: boolean) => void;
+  userCount?: number;
 }
 
 const avatars = [
@@ -34,7 +34,7 @@ const avatars = [
   },
 ];
 
-export function HomeBanner({ setTriggerLogin }: BannerProps) {
+export function HomeBanner({ setTriggerLogin, userCount }: BannerProps) {
   const [isLessThan768px] = useMediaQuery('(max-width: 768px)');
 
   // Define image properties for each image
@@ -62,7 +62,6 @@ export function HomeBanner({ setTriggerLogin }: BannerProps) {
     src: '/assets/home/display/banner-mobile.png',
   });
 
-  const [usersCount, setUsersCount] = useState<number | null>(null);
   const { userInfo } = userStore();
 
   const handleSubmit = () => {
@@ -70,12 +69,6 @@ export function HomeBanner({ setTriggerLogin }: BannerProps) {
       setTriggerLogin(true);
     }
   };
-
-  useEffect(() => {
-    axios
-      .get('/api/user/count')
-      .then((response) => setUsersCount(response.data.totalUsers));
-  }, []);
 
   const { data: session, status } = useSession();
 
@@ -160,9 +153,9 @@ export function HomeBanner({ setTriggerLogin }: BannerProps) {
                   />
                 ))}
               </AvatarGroup>
-              {usersCount !== null && (
+              {userCount !== null && (
                 <Text ml={'0.6875rem'} color="white" fontSize={'0.875rem'}>
-                  Join {usersCount.toLocaleString()}+ others
+                  Join {userCount?.toLocaleString()}+ others
                 </Text>
               )}
             </Flex>

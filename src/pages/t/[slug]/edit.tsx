@@ -400,8 +400,15 @@ export default function EditProfilePage() {
             </Heading>
             <form onSubmit={handleSubmit(onSubmit)}>
               <FormControl>
-                <Text mt={12} mb={5} fontSize="xl">
-                  Personal Info
+                <Text
+                  mt={12}
+                  mb={5}
+                  color={'brand.slate.600'}
+                  fontSize="lg"
+                  fontWeight={600}
+                  letterSpacing={0.4}
+                >
+                  PERSONAL INFO
                 </Text>
 
                 {/* eslint-disable no-nested-ternary */}
@@ -515,8 +522,15 @@ export default function EditProfilePage() {
                   </Text>
                 </Box>
 
-                <Text mt={8} mb={5} fontSize="xl">
-                  Socials
+                <Text
+                  mt={12}
+                  mb={5}
+                  color={'brand.slate.600'}
+                  fontSize="lg"
+                  fontWeight={600}
+                  letterSpacing={0.4}
+                >
+                  SOCIALS
                 </Text>
 
                 {socials.map((sc, idx: number) => {
@@ -545,8 +559,15 @@ export default function EditProfilePage() {
                   <Text color="red">At least one social link is required!</Text>
                 )}
 
-                <Text mt={8} mb={5} fontSize="xl">
-                  Work
+                <Text
+                  mt={12}
+                  mb={5}
+                  color={'brand.slate.600'}
+                  fontSize="lg"
+                  fontWeight={600}
+                  letterSpacing={0.4}
+                >
+                  WORK
                 </Text>
 
                 <Box w={'full'} mb={'1.25rem'}>

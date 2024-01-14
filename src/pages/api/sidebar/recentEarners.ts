@@ -5,7 +5,6 @@ import { prisma } from '@/prisma';
 
 export default async function user(_req: NextApiRequest, res: NextApiResponse) {
   try {
-    const totals = await prisma.total.findFirst();
     const winningSubmissions = await prisma.submission.findMany({
       where: {
         isWinner: true,
@@ -45,7 +44,7 @@ export default async function user(_req: NextApiRequest, res: NextApiResponse) {
         photo: submission.user.photo,
       };
     });
-    res.status(200).json({ totals, earners });
+    res.status(200).json(earners);
   } catch (error) {
     res.status(400).json({
       error,

@@ -76,7 +76,7 @@ const Sponsor = () => {
   const fetchTotals = async () => {
     try {
       // Using Next.js's fetch with time-based revalidation for 6 hours (21600 seconds)
-      const response = await fetch('/api/listings/stats/', {
+      const response = await fetch('/api/sidebar/totals/', {
         next: { revalidate: 21600 },
       });
 
