@@ -83,7 +83,7 @@ export const CreatebountyPayment = ({
       label: `${r} prize`,
       placeHolder: bountyPayment?.rewards[r],
       defaultValue: bountyPayment?.rewards[r],
-    })
+    }),
   );
   const [prizes, setPrizes] = useState<PrizeListInterface[]>(
     prizesList?.length
@@ -94,7 +94,7 @@ export const CreatebountyPayment = ({
             label: 'first prize',
             placeHolder: 2500,
           },
-        ]
+        ],
   );
 
   const handleTokenChange = (tokenSymbol: string) => {
@@ -132,7 +132,7 @@ export const CreatebountyPayment = ({
 
   const handlePrizeDelete = (prizeToDelete: string) => {
     const updatedPrizes = prizes.filter(
-      (prize) => prize.value !== prizeToDelete
+      (prize) => prize.value !== prizeToDelete,
     );
     setPrizes(getPrizeLabels(updatedPrizes));
 
@@ -233,20 +233,20 @@ export const CreatebountyPayment = ({
                     w={'1.6rem'}
                     alt={
                       tokenList.find(
-                        (token) => token.tokenSymbol === bountyPayment.token
+                        (token) => token.tokenSymbol === bountyPayment.token,
                       )?.tokenName
                     }
                     rounded={'full'}
                     src={
                       tokenList.find(
-                        (token) => token.tokenSymbol === bountyPayment.token
+                        (token) => token.tokenSymbol === bountyPayment.token,
                       )?.icon
                     }
                   />
                   <Text>
                     {
                       tokenList.find(
-                        (token) => token.tokenSymbol === bountyPayment.token
+                        (token) => token.tokenSymbol === bountyPayment.token,
                       )?.tokenName
                     }
                   </Text>
@@ -305,7 +305,7 @@ export const CreatebountyPayment = ({
               Total {type === 'open' ? 'Reward Amount' : 'Compensation'} (in{' '}
               {
                 tokenList.find(
-                  (token) => token.tokenSymbol === bountyPayment.token
+                  (token) => token.tokenSymbol === bountyPayment.token,
                 )?.tokenSymbol
               }
               )
@@ -340,7 +340,7 @@ export const CreatebountyPayment = ({
                     onChange={(valueString) =>
                       handlePrizeValueChange(
                         el.value,
-                        parseInt(valueString, 10)
+                        parseInt(valueString, 10),
                       )
                     }
                   >

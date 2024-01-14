@@ -89,14 +89,14 @@ function BountySubmissions({ slug }: Props) {
   const DynamicWalletMultiButton = dynamic(
     async () =>
       (await import('@solana/wallet-adapter-react-ui')).WalletMultiButton,
-    { ssr: false }
+    { ssr: false },
   );
 
   const getBounty = async () => {
     setIsBountyLoading(true);
     try {
       const bountyDetails = await axios.get(
-        `/api/bounties/${slug}/submissions`
+        `/api/bounties/${slug}/submissions`,
       );
       setBounty(bountyDetails.data);
       if (bountyDetails.data.sponsorId !== userInfo?.currentSponsorId) {
@@ -131,7 +131,7 @@ function BountySubmissions({ slug }: Props) {
 
   const bountyStatus = getBountyDraftStatus(
     bounty?.status,
-    bounty?.isPublished
+    bounty?.isPublished,
   );
 
   const bountyProgress = getBountyProgress(bounty);
@@ -182,7 +182,7 @@ function BountySubmissions({ slug }: Props) {
     setIsExporting(true);
     try {
       const exportURL = await axios.get(
-        `/api/submission/${bounty?.id}/export/`
+        `/api/submission/${bounty?.id}/export/`,
       );
       const url = exportURL?.data?.url || '';
       window.open(url, '_blank');
@@ -227,7 +227,7 @@ function BountySubmissions({ slug }: Props) {
           anchorWallet as NodeWallet,
           receiver,
           amount,
-          JSON.stringify(Math.floor(Math.random() * 1000000000))
+          JSON.stringify(Math.floor(Math.random() * 1000000000)),
         );
         const tx = new Transaction();
         tx.add(ix);
@@ -242,7 +242,7 @@ function BountySubmissions({ slug }: Props) {
           receiver,
           (amount * 10 ** power) as number,
           new PublicKey(tokenAddress as string),
-          JSON.stringify(Math.floor(Math.random() * 10000))
+          JSON.stringify(Math.floor(Math.random() * 10000)),
         );
         const tx = new Transaction();
         if (ix2) {
@@ -516,7 +516,7 @@ function BountySubmissions({ slug }: Props) {
                                 onClick={async () => {
                                   if (!selectedSubmission?.user.publicKey) {
                                     console.error(
-                                      'Public key is null, cannot proceed with payment'
+                                      'Public key is null, cannot proceed with payment',
                                     );
                                     return;
                                   }
@@ -527,7 +527,7 @@ function BountySubmissions({ slug }: Props) {
                                       selectedSubmission?.winnerPosition as keyof Rewards
                                     ] as number,
                                     receiver: new PublicKey(
-                                      selectedSubmission.user.publicKey
+                                      selectedSubmission.user.publicKey,
                                     ),
                                   });
                                 }}
@@ -574,7 +574,7 @@ function BountySubmissions({ slug }: Props) {
                             onClick={() => {
                               window.open(
                                 `https://solscan.io/tx/${selectedSubmission?.paymentDetails?.txId}?cluster=${process.env.NEXT_PUBLIC_PAYMENT_CLUSTER}`,
-                                '_blank'
+                                '_blank',
                               );
                             }}
                             rightIcon={<ExternalLinkIcon />}
@@ -645,7 +645,7 @@ function BountySubmissions({ slug }: Props) {
                             color="brand.purple"
                             wordBreak={'break-all'}
                             href={getURLSanitized(
-                              selectedSubmission?.link || '#'
+                              selectedSubmission?.link || '#',
                             )}
                             isExternal
                           >
@@ -672,7 +672,7 @@ function BountySubmissions({ slug }: Props) {
                             color="brand.purple"
                             wordBreak={'break-all'}
                             href={getURLSanitized(
-                              selectedSubmission?.tweet || '#'
+                              selectedSubmission?.tweet || '#',
                             )}
                             isExternal
                           >
@@ -706,7 +706,7 @@ function BountySubmissions({ slug }: Props) {
                               {answer.answer || '-'}
                             </Text>
                           </Box>
-                        )
+                        ),
                       )}
                     <Box mb={4}>
                       <Text
@@ -759,7 +759,7 @@ function BountySubmissions({ slug }: Props) {
                           </Text>
                           <Text color="brand.slate.700">
                             {truncatePublicKey(
-                              selectedSubmission?.user?.publicKey
+                              selectedSubmission?.user?.publicKey,
                             )}
                             <Tooltip label="Copy Wallet ID" placement="right">
                               <CopyIcon
@@ -767,7 +767,7 @@ function BountySubmissions({ slug }: Props) {
                                 ml={1}
                                 onClick={() =>
                                   navigator.clipboard.writeText(
-                                    selectedSubmission?.user?.publicKey || ''
+                                    selectedSubmission?.user?.publicKey || '',
                                   )
                                 }
                               />
@@ -800,7 +800,6 @@ function BountySubmissions({ slug }: Props) {
                           Twitter:
                         </Text>
                         <Link
-                          as={NextLink}
                           color="brand.slate.700"
                           href={selectedSubmission?.user?.twitter || undefined}
                           isExternal
@@ -819,7 +818,6 @@ function BountySubmissions({ slug }: Props) {
                           LinkedIn:
                         </Text>
                         <Link
-                          as={NextLink}
                           color="brand.slate.700"
                           href={selectedSubmission?.user?.linkedin || undefined}
                           isExternal
@@ -827,7 +825,7 @@ function BountySubmissions({ slug }: Props) {
                           {selectedSubmission?.user?.linkedin
                             ? `${selectedSubmission?.user?.linkedin?.slice(
                                 0,
-                                25
+                                25,
                               )}${
                                 selectedSubmission?.user?.linkedin?.length >=
                                   25 && '...'
@@ -846,7 +844,6 @@ function BountySubmissions({ slug }: Props) {
                           GitHub:
                         </Text>
                         <Link
-                          as={NextLink}
                           color="brand.slate.700"
                           href={selectedSubmission?.user?.github || undefined}
                           isExternal
@@ -865,7 +862,6 @@ function BountySubmissions({ slug }: Props) {
                           Website:
                         </Text>
                         <Link
-                          as={NextLink}
                           color="brand.slate.700"
                           href={selectedSubmission?.user?.website || undefined}
                           isExternal
@@ -884,7 +880,7 @@ function BountySubmissions({ slug }: Props) {
                           onClick={() =>
                             window.open(
                               `${router.basePath}/t/${selectedSubmission?.user?.username}/`,
-                              '_ blank'
+                              '_ blank',
                             )
                           }
                           rightIcon={<ExternalLinkIcon />}

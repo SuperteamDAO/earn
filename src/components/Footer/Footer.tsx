@@ -20,14 +20,16 @@ const getCurrentYear = () => {
 
 const Logo = (props: any) => {
   return (
-    <Image
-      h={8}
-      cursor="pointer"
-      objectFit={'contain'}
-      alt={'Superteam Earn'}
-      src={'/assets/logo/logo.svg'}
-      {...props}
-    />
+    <Link as={NextLink} href="/">
+      <Image
+        h={8}
+        cursor="pointer"
+        objectFit={'contain'}
+        alt={'Superteam Earn'}
+        src={'/assets/logo/logo.svg'}
+        {...props}
+      />
+    </Link>
   );
 };
 

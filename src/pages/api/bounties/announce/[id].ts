@@ -21,7 +21,7 @@ async function fetchTokenUSDValue(symbol: string) {
           ids: symbol,
           vs_currencies: 'USD',
         },
-      }
+      },
     );
     return response.data[symbol].usd;
   } catch (error) {
@@ -32,7 +32,7 @@ async function fetchTokenUSDValue(symbol: string) {
 
 export default async function announce(
   req: NextApiRequest,
-  res: NextApiResponse
+  res: NextApiResponse,
 ) {
   const params = req.query;
   const id = params.id as string;
@@ -137,7 +137,8 @@ export default async function announce(
     while (currentIndex < winners?.length) {
       const amount: number = winners[currentIndex]?.winnerPosition
         ? Math.ceil(
-            rewards[winners[currentIndex]?.winnerPosition as keyof Rewards] || 0
+            rewards[winners[currentIndex]?.winnerPosition as keyof Rewards] ||
+              0,
           )
         : 0;
 
@@ -194,7 +195,7 @@ export default async function announce(
         email: submissionUser?.email || '',
         name: submissionUser?.name || '',
         userType: 'submissionUser',
-      })
+      }),
     );
 
     const allSubscribedUsersWithType: any[] = allSubscribedUsers.map(
@@ -202,7 +203,7 @@ export default async function announce(
         email: subscribedUser.email,
         name: subscribedUser.name,
         userType: 'subscribedUser',
-      })
+      }),
     );
 
     const allUsers = [

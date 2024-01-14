@@ -43,7 +43,7 @@ async function fetchCryptoPrices() {
           ids: cryptos,
           vs_currencies: 'USD',
         },
-      }
+      },
     );
 
     return response;

@@ -72,9 +72,9 @@ export const Login = ({ isOpen, onClose }: Props) => {
         </ModalBody>
         <ModalFooter
           flexDir={'column'}
+          py={'6px'}
           bg={'brand.slate.100'}
           borderBottomRadius="6px"
-          paddingY={'6px'}
         >
           <Text color="brand.slate.500" fontSize="xs" textAlign="center">
             Trouble Logging in?{' '}

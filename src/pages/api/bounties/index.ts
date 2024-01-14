@@ -4,7 +4,7 @@ import { prisma } from '@/prisma';
 
 export default async function bounties(
   req: NextApiRequest,
-  res: NextApiResponse
+  res: NextApiResponse,
 ) {
   const params = req.query;
   const sponsorId = params.sponsorId as string;

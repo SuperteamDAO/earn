@@ -5,7 +5,7 @@ import { prisma } from '@/prisma';
 
 export default async function handler(
   req: NextApiRequest,
-  res: NextApiResponse
+  res: NextApiResponse,
 ) {
   const token = await getToken({ req });
 

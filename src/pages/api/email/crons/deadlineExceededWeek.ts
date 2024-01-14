@@ -80,7 +80,7 @@ async function handler(_req: NextApiRequest, res: NextApiResponse) {
     await rateLimitedPromiseAll(
       emailPromises,
       9,
-      (emailPromise) => emailPromise
+      (emailPromise) => emailPromise,
     );
 
     return res.status(200).json({ message: 'Ok' });

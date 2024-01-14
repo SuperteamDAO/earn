@@ -40,14 +40,14 @@ export const BountyTabs = ({
               (bounty) =>
                 bounty.status === 'OPEN' &&
                 !dayjs().isAfter(bounty.deadline) &&
-                !bounty.isWinnersAnnounced
+                !bounty.isWinnersAnnounced,
             ).length ? (
             bounties.bounties
               .filter(
                 (bounty) =>
                   bounty.status === 'OPEN' &&
                   !dayjs().isAfter(bounty.deadline) &&
-                  !bounty.isWinnersAnnounced
+                  !bounty.isWinnersAnnounced,
               )
               .slice(0, take)
               .map((bounty) => (
@@ -90,14 +90,14 @@ export const BountyTabs = ({
               (bounty) =>
                 !bounty.isWinnersAnnounced &&
                 dayjs().isAfter(bounty.deadline) &&
-                bounty.status === 'OPEN'
+                bounty.status === 'OPEN',
             ).length ? (
             bounties.bounties
               .filter(
                 (bounty) =>
                   !bounty.isWinnersAnnounced &&
                   dayjs().isAfter(bounty.deadline) &&
-                  bounty.status === 'OPEN'
+                  bounty.status === 'OPEN',
               )
               .slice(0, 10)
               .map((bounty) => (
@@ -139,13 +139,13 @@ export const BountyTabs = ({
           ) : bounties?.bounties?.filter(
               (bounty) =>
                 bounty.status === 'CLOSED' ||
-                (bounty.isWinnersAnnounced && bounty.status === 'OPEN')
+                (bounty.isWinnersAnnounced && bounty.status === 'OPEN'),
             ).length ? (
             bounties.bounties
               .filter(
                 (bounty) =>
                   bounty.status === 'CLOSED' ||
-                  (bounty.isWinnersAnnounced && bounty.status === 'OPEN')
+                  (bounty.isWinnersAnnounced && bounty.status === 'OPEN'),
               )
               .slice(0, 10)
               .map((bounty) => (

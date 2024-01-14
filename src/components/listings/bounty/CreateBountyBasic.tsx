@@ -95,7 +95,7 @@ export const CreatebountyBasic = ({
 
   const isTimeToCompleteValid = useMemo(() => {
     return timeToCompleteOptions.some(
-      (option) => option.value === bountyBasic?.timeToComplete
+      (option) => option.value === bountyBasic?.timeToComplete,
     );
   }, [bountyBasic?.timeToComplete, timeToCompleteOptions]);
 

@@ -8,7 +8,7 @@ import { getURL } from '@/utils/validUrl';
 
 export default async function sendInvites(
   req: NextApiRequest,
-  res: NextApiResponse
+  res: NextApiResponse,
 ) {
   const token = await getToken({ req });
 

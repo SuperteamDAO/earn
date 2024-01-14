@@ -10,7 +10,7 @@ import resendMail from '@/utils/resend';
 
 export default async function bounty(
   req: NextApiRequest,
-  res: NextApiResponse
+  res: NextApiResponse,
 ) {
   const params = req.query;
   const id = params.id as string;
@@ -101,11 +101,11 @@ export default async function bounty(
       });
 
       const filteredSubscribers = subscribers.filter(
-        (subscriber) => !unsubscribedEmails.includes(subscriber.User.email)
+        (subscriber) => !unsubscribedEmails.includes(subscriber.User.email),
       );
 
       const sendEmail = async (
-        subscriber: (typeof filteredSubscribers)[number]
+        subscriber: (typeof filteredSubscribers)[number],
       ) => {
         return resendMail.emails.send({
           from: `Kash from Superteam <${process.env.RESEND_EMAIL}>`,

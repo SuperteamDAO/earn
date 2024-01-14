@@ -5,7 +5,7 @@ import { prisma } from '@/prisma';
 
 export default async function bountyDelete(
   req: NextApiRequest,
-  res: NextApiResponse
+  res: NextApiResponse,
 ) {
   const params = req.query;
   const id = params.id as string;

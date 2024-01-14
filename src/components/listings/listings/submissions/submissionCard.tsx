@@ -53,7 +53,7 @@ export const SubmissionCard = ({
             loading: 'Liking Submission...',
             success: 'Submission Liked!',
             error: 'Failed to like the submission',
-          }
+          },
         );
       }
       setIsLoading(false);

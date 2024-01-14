@@ -18,7 +18,6 @@ import {
 import Avatar from 'boring-avatars';
 import { useRouter } from 'next/router';
 import { useSession } from 'next-auth/react';
-import { useEffect } from 'react';
 
 import { Login } from '@/components/modals/Login/Login';
 import { userStore } from '@/store/user';
@@ -39,10 +38,6 @@ export function UserInfo({ isMobile }: UserInfoProps) {
     : { base: 'none', md: 'block' };
 
   const { data: session, status } = useSession();
-
-  useEffect(() => {
-    console.log(session);
-  }, []);
 
   if (status === 'loading' && !session) {
     return (
@@ -112,7 +107,7 @@ export function UserInfo({ isMobile }: UserInfoProps) {
                     ...
                     {userInfo?.email?.substring(
                       userInfo.email.length - 6,
-                      userInfo?.email?.length
+                      userInfo?.email?.length,
                     )}
                   </Text>
                 </Flex>

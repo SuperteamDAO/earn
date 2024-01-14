@@ -204,7 +204,7 @@ export const Template = ({
                         onClick={() => {
                           window.open(
                             `${getURL()}templates/bounties/${template?.slug}`,
-                            '_blank'
+                            '_blank',
                           );
                         }}
                         size="sm"

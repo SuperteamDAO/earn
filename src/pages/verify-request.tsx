@@ -47,7 +47,7 @@ export default function VerifyRequest() {
         <Text color="#475569" fontSize="20" textAlign={'center'}>
           On your email {email}
         </Text>
-        <Circle mt={16} mx="auto" bg="#EEF2FF" size={32}>
+        <Circle mx="auto" mt={16} bg="#EEF2FF" size={32}>
           <EmailIcon />
         </Circle>
         <Text mt={12} color="#475569" fontSize="18" textAlign={'center'}>

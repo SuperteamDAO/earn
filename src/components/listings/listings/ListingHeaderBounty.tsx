@@ -371,7 +371,7 @@ export function ListingHeader({
                 onClick={() => {
                   if (sub.find((e) => e.userId === userInfo?.id)) {
                     handleUnSubscribe(
-                      sub.find((e) => e.userId === userInfo?.id)?.id as string
+                      sub.find((e) => e.userId === userInfo?.id)?.id as string,
                     );
 
                     return;

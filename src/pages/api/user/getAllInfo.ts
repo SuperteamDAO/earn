@@ -4,7 +4,7 @@ import { prisma } from '@/prisma';
 
 export default async function getAllUsers(
   req: NextApiRequest,
-  res: NextApiResponse
+  res: NextApiResponse,
 ): Promise<void> {
   try {
     const user = await prisma.user.findUnique({

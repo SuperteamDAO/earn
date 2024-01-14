@@ -12,7 +12,7 @@ const isDeadlineOver = (deadline: string | undefined) =>
 
 export const getBountyDraftStatus = (
   status: string | undefined,
-  isPublished: boolean | undefined
+  isPublished: boolean | undefined,
 ) => {
   if (status !== 'OPEN') return 'CLOSED';
   if (isPublished) return 'PUBLISHED';
@@ -25,13 +25,13 @@ export const getBountyTypeLabel = (type: string) => {
 };
 
 export const getBountyProgress = (
-  bounty: Bounty | BountyWithSubmissions | null
+  bounty: Bounty | BountyWithSubmissions | null,
 ) => {
   if (!bounty) return '-';
   const rewardsLength = Object.keys(bounty?.rewards || {})?.length || 0;
   const bountyStatus = getBountyDraftStatus(
     bounty?.status,
-    bounty?.isPublished
+    bounty?.isPublished,
   );
   if (bountyStatus !== 'PUBLISHED') return '';
   const hasDeadlinePassed = isDeadlineOver(bounty?.deadline || '');

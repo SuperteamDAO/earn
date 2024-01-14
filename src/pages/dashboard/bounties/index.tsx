@@ -147,12 +147,12 @@ function Bounties() {
       });
 
       const changedBountyIndex = bounties.findIndex(
-        (b) => b.id === result.data.id
+        (b) => b.id === result.data.id,
       );
       const newBounties = bounties.map((b, index) =>
         changedBountyIndex === index
           ? { ...b, isPublished: result.data.isPublished }
-          : b
+          : b,
       );
       setBounties(newBounties);
       publishOnClose();
@@ -379,7 +379,7 @@ function Bounties() {
             <Tbody w="full">
               {bounties.map((currentBounty) => {
                 const bountyType = getBountyTypeLabel(
-                  currentBounty?.type ?? 'open'
+                  currentBounty?.type ?? 'open',
                 );
                 const deadlineFromNow =
                   currentBounty.type === 'open'
@@ -391,7 +391,7 @@ function Bounties() {
                     : 'This Project will expire once its winner has been selected';
                 const bountyStatus = getBountyDraftStatus(
                   currentBounty?.status,
-                  currentBounty?.isPublished
+                  currentBounty?.isPublished,
                 );
                 const bountyProgress = getBountyProgress(currentBounty);
                 const isListingIncomplete =
@@ -455,13 +455,13 @@ function Bounties() {
                           rounded={'full'}
                           src={
                             tokenList.filter(
-                              (e) => e?.tokenSymbol === currentBounty.token
+                              (e) => e?.tokenSymbol === currentBounty.token,
                             )[0]?.icon ?? '/assets/icons/green-dollar.svg'
                           }
                         />
                         <Text color="brand.slate.400">
                           {(currentBounty.rewardAmount || 0).toLocaleString(
-                            'en-US'
+                            'en-US',
                           )}
                         </Text>
                       </Flex>
@@ -545,7 +545,7 @@ function Bounties() {
                             onClick={() =>
                               window.open(
                                 `${router.basePath}/listings/bounties/${currentBounty.slug}`,
-                                '_ blank'
+                                '_ blank',
                               )
                             }
                           >

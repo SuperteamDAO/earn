@@ -116,7 +116,7 @@ export function DetailSideCardBounty({
     setIsSubmissionNumberLoading(true);
     try {
       const submissionCountDetails = await axios.get(
-        `/api/submission/${id}/count/`
+        `/api/submission/${id}/count/`,
       );
       const count = submissionCountDetails?.data || 0;
       setSubmissionNumber(count);
@@ -320,7 +320,7 @@ export function DetailSideCardBounty({
                               </Text>
                             </Td>
                           </Tr>
-                        )
+                        ),
                     )}
                   </Tbody>
                 </Table>
@@ -340,8 +340,8 @@ export function DetailSideCardBounty({
                   {isSubmissionNumberLoading
                     ? '...'
                     : type === 'open'
-                    ? submissionNumber.toLocaleString()
-                    : submissionRange}
+                      ? submissionNumber.toLocaleString()
+                      : submissionRange}
                 </Text>
               </Flex>
               <Text color={'#94A3B8'}>
@@ -350,8 +350,8 @@ export function DetailSideCardBounty({
                     ? 'Submission'
                     : 'Submissions'
                   : submissionNumber === 1
-                  ? 'Application'
-                  : 'Applications'}
+                    ? 'Application'
+                    : 'Applications'}
               </Text>
             </Flex>
 

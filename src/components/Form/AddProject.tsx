@@ -75,13 +75,13 @@ export const AddProject = ({
       setValue('description', projectToEdit.description);
       setValue('link', projectToEdit.link);
       setSkills(
-        projectToEdit.skills.map((value: string) => ({ label: value, value }))
+        projectToEdit.skills.map((value: string) => ({ label: value, value })),
       );
       setSubSkills(
         projectToEdit.subSkills.map((value: string) => ({
           label: value,
           value,
-        }))
+        })),
       );
     }
   }, [isOpen, projectToEdit, setValue, setSelectedProject]);

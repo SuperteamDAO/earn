@@ -4,7 +4,7 @@ import { prisma } from '@/prisma';
 
 export default async function grants(
   _req: NextApiRequest,
-  res: NextApiResponse
+  res: NextApiResponse,
 ) {
   try {
     const result = await prisma.grants.findMany({

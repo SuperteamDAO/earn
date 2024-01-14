@@ -7,7 +7,7 @@ async function delay(milliseconds: number) {
 export async function rateLimitedPromiseAll<T>(
   items: T[],
   chunkSize: number,
-  callback: (item: T) => Promise<any>
+  callback: (item: T) => Promise<any>,
 ) {
   const results: any[] = [];
 
@@ -15,7 +15,7 @@ export async function rateLimitedPromiseAll<T>(
   for (let i = 0; i < items.length; i += chunkSize) {
     const chunk = items.slice(i, i + chunkSize);
     await Promise.all(chunk.map(callback)).then((result) =>
-      results.push(...result)
+      results.push(...result),
     );
     if (i + chunkSize < items.length) {
       await delay(1000);

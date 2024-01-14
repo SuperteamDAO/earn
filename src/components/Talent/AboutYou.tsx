@@ -135,7 +135,7 @@ export function AboutYou({ setStep, useFormStore }: Step1Props) {
               })}
             </Select>
           </Box>
-          <VStack align={'start'} gap={2} rowGap={'0'} mb={'25px'} my={3}>
+          <VStack align={'start'} gap={2} rowGap={'0'} my={3} mb={'25px'}>
             {userInfo?.photo ? (
               <>
                 <FormLabel

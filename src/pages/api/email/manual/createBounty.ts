@@ -9,7 +9,7 @@ import resendMail from '@/utils/resend';
 
 export default async function handler(
   req: NextApiRequest,
-  res: NextApiResponse
+  res: NextApiResponse,
 ) {
   const { id } = req.body;
   try {
@@ -42,7 +42,7 @@ export default async function handler(
           : user.notifications;
 
       return userNotifications.some((notification: { label: string }) =>
-        skills.some((skill) => skill.skills === notification.label)
+        skills.some((skill) => skill.skills === notification.label),
       );
     });
 

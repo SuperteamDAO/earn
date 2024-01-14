@@ -216,7 +216,7 @@ const Index = () => {
                         ml={1}
                         onClick={() =>
                           navigator.clipboard.writeText(
-                            member?.user?.publicKey as string
+                            member?.user?.publicKey as string,
                           )
                         }
                       />

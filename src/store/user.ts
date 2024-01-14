@@ -24,14 +24,14 @@ export const userStore = create(
           produce((state: UserState) => {
             // eslint-disable-next-line no-param-reassign
             state.isLoggedIn = isLoggedIn;
-          })
+          }),
         ),
       setUserInfo: (user: User): void =>
         set(
           produce((state: UserState) => {
             // eslint-disable-next-line no-param-reassign
             state.userInfo = user;
-          })
+          }),
         ),
       logOut: () => {
         set({ userInfo: null });
@@ -42,8 +42,8 @@ export const userStore = create(
     {
       name: 'user-storage',
       storage: createJSONStorage(() => localStorage),
-    }
-  )
+    },
+  ),
 );
 
 if (process.env.NODE_ENV === 'development') {

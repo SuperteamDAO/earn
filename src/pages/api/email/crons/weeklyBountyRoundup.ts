@@ -57,8 +57,8 @@ async function handler(_req: NextApiRequest, res: NextApiResponse) {
             bountySkills.some((bountySkill: any) =>
               userNotifications.some(
                 (userNotification: any) =>
-                  userNotification.label === bountySkill.skills
-              )
+                  userNotification.label === bountySkill.skills,
+              ),
             )
           );
         });

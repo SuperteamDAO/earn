@@ -126,7 +126,7 @@ export const Comments = ({ refId, refType }: Props) => {
           triggerLogin={triggerLogin}
           setTriggerLogin={setTriggerLogin}
         />
-        <HStack w={'full'} pt={4} px={6}>
+        <HStack w={'full'} px={6} pt={4}>
           <GoCommentDiscussion fontWeight={600} fontSize={'1.5rem'} />
           <HStack>
             <Text color={'#64758B'} fontSize={'1.1rem'} fontWeight={600}>

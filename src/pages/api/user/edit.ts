@@ -3,8 +3,8 @@ import { getToken } from 'next-auth/jwt';
 
 import {
   type MainSkills,
-  type SubSkillsType,
   SkillList,
+  type SubSkillsType,
 } from '@/interface/skills';
 import { prisma } from '@/prisma';
 
@@ -13,7 +13,7 @@ const uniqueArray = (arr: SubSkillsType[]): SubSkillsType[] => {
 };
 
 const correctSkills = (
-  skillObjArray: { skills: MainSkills; subskills: SubSkillsType[] }[]
+  skillObjArray: { skills: MainSkills; subskills: SubSkillsType[] }[],
 ): { skills: MainSkills; subskills: SubSkillsType[] }[] => {
   const correctedSkills: { skills: MainSkills; subskills: SubSkillsType[] }[] =
     [];
@@ -28,7 +28,7 @@ const correctSkills = (
     }
     skillObj.subskills.forEach((subskill) => {
       const correctMainSkill = SkillList.find((s) =>
-        s.subskills.includes(subskill)
+        s.subskills.includes(subskill),
       );
 
       if (correctMainSkill) {
@@ -49,7 +49,7 @@ const correctSkills = (
 
 export default async function handle(
   req: NextApiRequest,
-  res: NextApiResponse
+  res: NextApiResponse,
 ) {
   const token = await getToken({ req });
 

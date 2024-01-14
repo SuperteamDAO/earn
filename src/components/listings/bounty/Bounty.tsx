@@ -42,17 +42,17 @@ export function CreateListing({ bounty, isEditMode = false, type }: Props) {
     string | undefined
   >(isEditMode ? bounty?.requirements : undefined);
   const [editorData, setEditorData] = useState<string | undefined>(
-    isEditMode ? bounty?.description : undefined
+    isEditMode ? bounty?.description : undefined,
   );
   const [regions, setRegions] = useState<Regions>(
-    isEditMode ? bounty?.region || Regions.GLOBAL : Regions.GLOBAL
+    isEditMode ? bounty?.region || Regions.GLOBAL : Regions.GLOBAL,
   );
   const skillsInfo = isEditMode ? splitSkills(bounty?.skills || []) : undefined;
   const [mainSkills, setMainSkills] = useState<MultiSelectOptions[]>(
-    isEditMode ? skillsInfo?.skills || [] : []
+    isEditMode ? skillsInfo?.skills || [] : [],
   );
   const [subSkill, setSubSkill] = useState<MultiSelectOptions[]>(
-    isEditMode ? skillsInfo?.subskills || [] : []
+    isEditMode ? skillsInfo?.subskills || [] : [],
   );
   const [slug, setSlug] = useState<string>('');
 
@@ -67,7 +67,7 @@ export function CreateListing({ bounty, isEditMode = false, type }: Props) {
           delete: true,
           label: e.question,
         }))
-      : []
+      : [],
   );
 
   const [references, setReferences] = useState<References[]>(
@@ -76,7 +76,7 @@ export function CreateListing({ bounty, isEditMode = false, type }: Props) {
           order: e.order,
           link: e.link,
         }))
-      : []
+      : [],
   );
 
   // - Bounty
@@ -193,7 +193,7 @@ export function CreateListing({ bounty, isEditMode = false, type }: Props) {
 
   const bountyDraftStatus = getBountyDraftStatus(
     bounty?.status,
-    bounty?.isPublished
+    bounty?.isPublished,
   );
 
   const isNewOrDraft = bountyDraftStatus === 'DRAFT' || newBounty === true;

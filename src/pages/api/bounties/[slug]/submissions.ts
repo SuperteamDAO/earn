@@ -4,7 +4,7 @@ import { prisma } from '@/prisma';
 
 export default async function handler(
   req: NextApiRequest,
-  res: NextApiResponse
+  res: NextApiResponse,
 ) {
   const slug = req.query.slug as string;
 
@@ -38,10 +38,10 @@ export default async function handler(
 
     const totalSubmissions = bountyWithSubmissions.Submission.length;
     const winnersSelected = bountyWithSubmissions.Submission.filter(
-      (sub) => sub.isWinner
+      (sub) => sub.isWinner,
     ).length;
     const paymentsMade = bountyWithSubmissions.Submission.filter(
-      (sub) => sub.isPaid
+      (sub) => sub.isPaid,
     ).length;
 
     return res.status(200).json({

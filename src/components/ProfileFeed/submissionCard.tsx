@@ -36,7 +36,7 @@ export function SubmissionCard({
   const { userInfo } = userStore();
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [isLiked, setIsLiked] = useState<boolean>(
-    !!sub?.like?.find((e: any) => e.id === userInfo?.id)
+    !!sub?.like?.find((e: any) => e.id === userInfo?.id),
   );
   const [totalLikes, setTotalLikes] = useState<number>(sub?.like?.length ?? 0);
 
@@ -144,7 +144,7 @@ export function SubmissionCard({
                 alt={`${sub?.listing?.token} icon`}
                 src={
                   tokenList.find(
-                    (token) => token.tokenSymbol === sub?.listing?.token
+                    (token) => token.tokenSymbol === sub?.listing?.token,
                   )?.icon || ''
                 }
               />

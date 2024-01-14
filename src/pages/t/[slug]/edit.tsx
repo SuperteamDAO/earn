@@ -156,7 +156,7 @@ export default function EditProfilePage() {
     socialLinksValidityRef.current[field] = isValid;
 
     const allUrlsValid = socialLinkFields.every(
-      (f) => socialLinksValidityRef.current[f as keyof FormData]
+      (f) => socialLinksValidityRef.current[f as keyof FormData],
     );
 
     setAnySocialUrlInvalid(!allUrlsValid);
@@ -171,7 +171,7 @@ export default function EditProfilePage() {
       if (userInfo.interests) {
         const interestsArray = JSON.parse(userInfo.interests);
         const defaultInterests = interestsArray.map((value: string) =>
-          IndustryList.find((option) => option.value === value)
+          IndustryList.find((option) => option.value === value),
         );
         setValue('interests', defaultInterests);
         setDropDownValues((prev) => ({
@@ -269,7 +269,7 @@ export default function EditProfilePage() {
       setDiscordError(false);
 
       const filledSocialLinksCount = socialLinkFields.filter(
-        (field) => data[field as keyof FormData]
+        (field) => data[field as keyof FormData],
       ).length;
 
       setSocialError(filledSocialLinksCount < 1);
@@ -297,7 +297,7 @@ export default function EditProfilePage() {
       }
 
       const interestsJSON = JSON.stringify(
-        (data.interests || []).map((interest) => interest.value)
+        (data.interests || []).map((interest) => interest.value),
       );
 
       const communityArray = (data.community || []).map((item) => item.value);
@@ -305,7 +305,7 @@ export default function EditProfilePage() {
 
       const combinedSkills = skills.map((mainskill) => {
         const main = SkillList.find(
-          (skill) => skill.mainskill === mainskill.value
+          (skill) => skill.mainskill === mainskill.value,
         );
         const sub: SubSkillsType[] = [];
 
@@ -535,7 +535,7 @@ export default function EditProfilePage() {
                       onUrlValidation={(isValid) => {
                         handleUrlValidation(
                           isValid,
-                          sc.label.toLowerCase() as keyof FormData
+                          sc.label.toLowerCase() as keyof FormData,
                         );
                       }}
                     />
@@ -563,7 +563,7 @@ export default function EditProfilePage() {
                     onChange={(selectedOptions: any) => {
                       const selectedInterests = selectedOptions
                         ? selectedOptions.map(
-                            (elm: { label: string; value: string }) => elm
+                            (elm: { label: string; value: string }) => elm,
                           )
                         : [];
                       setDropDownValues({
@@ -690,7 +690,7 @@ export default function EditProfilePage() {
                           <DeleteIcon
                             onClick={() => {
                               setPow((prevPow) =>
-                                prevPow.filter((_ele, id) => idx !== id)
+                                prevPow.filter((_ele, id) => idx !== id),
                               );
                             }}
                             cursor={'pointer'}

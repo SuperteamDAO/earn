@@ -63,7 +63,7 @@ export function Home({ children, type }: HomeProps) {
   const Skills = ['Development', 'Design', 'Content', 'Hyperdrive'];
 
   const matchedTeam = Superteams.find(
-    (e) => e.region.toLowerCase() === String(router.query.slug).toLowerCase()
+    (e) => e.region.toLowerCase() === String(router.query.slug).toLowerCase(),
   );
 
   return (
@@ -97,7 +97,7 @@ export function Home({ children, type }: HomeProps) {
                     Skills.find(
                       (skill) =>
                         skill.toLocaleLowerCase() ===
-                        router?.query?.slug?.toString().toLocaleLowerCase()
+                        router?.query?.slug?.toString().toLocaleLowerCase(),
                     ) as string
                   }
                 />
@@ -108,8 +108,8 @@ export function Home({ children, type }: HomeProps) {
                     direction={{ md: 'row', base: 'column' }}
                     w={{ md: 'brand.120', base: '100%' }}
                     h={{ md: '7.375rem', base: 'fit-content' }}
-                    mb={8}
                     mx={'auto'}
+                    mb={8}
                     p={6}
                     bg={`url(${matchedTeam.bg})`}
                     bgSize={'cover'}

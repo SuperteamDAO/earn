@@ -219,8 +219,8 @@ const SuccessScreen = () => {
         flexDir={{ base: 'column', md: 'row' }}
         gap={10}
         w={'fit-content'}
-        mt={10}
         mx={'auto'}
+        mt={10}
       >
         <Box w={'full'} p={{ base: 4, md: 0 }}>
           <TalentBio
@@ -232,8 +232,8 @@ const SuccessScreen = () => {
         <VStack
           maxW={'35rem'}
           h={'full'}
-          mb={12}
           mx={{ base: 4, md: 0 }}
+          mb={12}
           p={5}
           bg="white"
           rounded={'lg'}

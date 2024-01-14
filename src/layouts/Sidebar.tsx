@@ -98,10 +98,10 @@ const SidebarContent = ({ ...rest }: BoxProps) => {
       borderRightColor={'blackAlpha.200'}
       {...rest}
     >
-      <Box pb={6} px={6}>
+      <Box px={6} pb={6}>
         <SelectSponsor />
       </Box>
-      <Flex align="center" justify="space-between" pb={6} px={6}>
+      <Flex align="center" justify="space-between" px={6} pb={6}>
         <Menu>
           <MenuButton
             as={Button}

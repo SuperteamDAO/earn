@@ -21,7 +21,7 @@ const checkSlug = async (slug: string): Promise<boolean> => {
   } catch (error) {
     console.error(
       `Error occurred while fetching bounty with slug=${slug}.`,
-      error
+      error,
     );
     return false;
   }
@@ -45,7 +45,7 @@ const generateUniqueSlug = async (title: string): Promise<string> => {
 
 export default async function handler(
   req: NextApiRequest,
-  res: NextApiResponse
+  res: NextApiResponse,
 ) {
   const token = await getToken({ req });
 

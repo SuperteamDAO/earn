@@ -66,18 +66,18 @@ export function DetailDescription({ skills, description }: Props) {
             show
               ? 'full'
               : description && description?.length > 100
-              ? '21.5rem'
-              : 'max'
+                ? '21.5rem'
+                : 'max'
           }
-          pb={8}
           px={5}
+          pb={8}
           id="reset-des"
         >
           {parse(
             description?.startsWith('"')
               ? JSON.parse(description || '')
               : description ?? '',
-            options
+            options,
           )}
         </Flex>
         {description && description?.length > 100 && (

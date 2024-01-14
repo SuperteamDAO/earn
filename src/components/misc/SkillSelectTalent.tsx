@@ -27,7 +27,7 @@ export const SkillSelect = ({
 }: Props) => {
   const animatedComponents = makeAnimated();
   const [subSkillOptions, setSubSkillOptions] = useState<MultiSelectOptions[]>(
-    []
+    [],
   );
   const handleChange = (e: MultiSelectOptions[]) => {
     const sub: MultiSelectOptions[] = [];

@@ -134,8 +134,8 @@ export const SubmissionModal = ({
           gap={3}
           overflow={'scroll'}
           maxH={'50rem'}
-          pb={6}
           px={6}
+          pb={6}
         >
           <Box>
             <Text mb={1} color={'brand.slate.500'} fontSize="sm">

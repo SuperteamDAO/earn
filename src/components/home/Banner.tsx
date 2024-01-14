@@ -84,8 +84,8 @@ export function HomeBanner({ setTriggerLogin }: BannerProps) {
       <Skeleton
         h={isLessThan768px ? '400' : '280'}
         maxH="500px"
-        mb={8}
         mx={'auto'}
+        mb={8}
         p={{ base: '6', md: '10' }}
         rounded={'md'}
       />
@@ -99,8 +99,8 @@ export function HomeBanner({ setTriggerLogin }: BannerProps) {
           w={'100%'}
           h={isLessThan768px ? '96' : 'auto'}
           maxH={'500px'}
-          mb={8}
           mx={'auto'}
+          mb={8}
           p={{ base: '6', md: '10' }}
           bgImage={
             isLessThan768px

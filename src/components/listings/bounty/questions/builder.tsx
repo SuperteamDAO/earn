@@ -108,7 +108,8 @@ export const Builder = ({
 
               questions
                 .filter(
-                  (e) => e.type === 'single-choice' || e.type === 'multi-choice'
+                  (e) =>
+                    e.type === 'single-choice' || e.type === 'multi-choice',
                 )
                 .map((e) => {
                   if (e.options?.length === 0) {

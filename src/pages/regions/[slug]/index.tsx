@@ -32,7 +32,7 @@ const RegionsPage = ({ slug }: { slug: string }) => {
     setIsListingsLoading(true);
     try {
       const listingsData = await axios.get(
-        `/api/listings/regions/?region=${slug}`
+        `/api/listings/regions/?region=${slug}`,
       );
       setListings(listingsData.data);
       setIsListingsLoading(false);
@@ -152,7 +152,7 @@ export async function getServerSideProps(context: NextPageContext) {
   const { slug } = context.query;
 
   const validRegion = Superteams.some(
-    (team) => team.region.toLowerCase() === (slug as string).toLowerCase()
+    (team) => team.region.toLowerCase() === (slug as string).toLowerCase(),
   );
 
   if (!validRegion) {

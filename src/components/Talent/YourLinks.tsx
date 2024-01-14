@@ -163,7 +163,7 @@ export function YourLinks({ success, useFormStore }: Props) {
       website: string;
     },
     // eslint-disable-next-line @typescript-eslint/no-shadow
-    pow: PoW[]
+    pow: PoW[],
   ) => {
     // atleast one URL
     if (
@@ -215,7 +215,7 @@ export function YourLinks({ success, useFormStore }: Props) {
         telegram: data.Telegram,
         website: data.Website,
       },
-      pow
+      pow,
     );
   };
   return (
@@ -263,7 +263,7 @@ export function YourLinks({ success, useFormStore }: Props) {
                     <DeleteIcon
                       onClick={() => {
                         setPow((prevPow) =>
-                          prevPow.filter((_ele, id) => idx !== id)
+                          prevPow.filter((_ele, id) => idx !== id),
                         );
                       }}
                       cursor={'pointer'}

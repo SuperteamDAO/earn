@@ -21,7 +21,7 @@ interface SponsorOption {
 export function SelectSponsor() {
   const { setUserInfo, userInfo } = userStore();
   const [selectedSponsor, setSelectedSponsor] = useState<SponsorOption | null>(
-    null
+    null,
   );
 
   useEffect(() => {
@@ -36,7 +36,7 @@ export function SelectSponsor() {
 
   const loadSponsors = (
     inputValue: string,
-    callback: (options: SponsorOption[]) => void
+    callback: (options: SponsorOption[]) => void,
   ) => {
     axios
       .get(`/api/sponsors/list/`, {

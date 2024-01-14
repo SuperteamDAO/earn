@@ -4,7 +4,7 @@ import { prisma } from '@/prisma';
 
 export default async function checkUsername(
   req: NextApiRequest,
-  res: NextApiResponse
+  res: NextApiResponse,
 ) {
   if (req.method !== 'GET') {
     return res.status(405).end(`Method Not Allowed`);

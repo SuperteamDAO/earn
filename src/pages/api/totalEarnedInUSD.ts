@@ -6,7 +6,7 @@ import { prisma } from '@/prisma';
 
 export default async function handler(
   _req: NextApiRequest,
-  res: NextApiResponse
+  res: NextApiResponse,
 ) {
   try {
     const users = await prisma.user.findMany({

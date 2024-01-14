@@ -260,7 +260,7 @@ export const BountiesCard = ({
                 logo
                   ? logo.replace(
                       '/upload/',
-                      '/upload/c_scale,w_128,h_128,f_auto/'
+                      '/upload/c_scale,w_128,h_128,f_auto/',
                     )
                   : `${router.basePath}/assets/logo/sponsor-logo.png`
               }
@@ -323,8 +323,8 @@ export const BountiesCard = ({
                   {applicationType === 'rolling'
                     ? 'Rolling Deadline'
                     : dayjs().isBefore(dayjs(deadline))
-                    ? `Closing ${dayjs(deadline).fromNow()}`
-                    : `Closed ${dayjs(deadline).fromNow()}`}
+                      ? `Closing ${dayjs(deadline).fromNow()}`
+                      : `Closed ${dayjs(deadline).fromNow()}`}
                 </Text>
                 {!hasTabs &&
                   dayjs().isBefore(dayjs(deadline)) &&
@@ -434,7 +434,7 @@ export const GrantsCard = ({
                 logo
                   ? logo.replace(
                       '/upload/',
-                      '/upload/c_scale,w_128,h_128,f_auto/'
+                      '/upload/c_scale,w_128,h_128,f_auto/',
                     )
                   : `assets/home/placeholder/ph1.png`
               }
@@ -521,7 +521,7 @@ export const CategoryBanner = ({ type }: { type: string }) => {
 
   useEffect(() => {
     setIsSubscribed(
-      userInfo?.notifications?.some((e) => e.label === type) || false
+      userInfo?.notifications?.some((e) => e.label === type) || false,
     );
   }, [userInfo, type]);
 
@@ -558,7 +558,7 @@ export const CategoryBanner = ({ type }: { type: string }) => {
         `/api/user/updateNotification`,
         {
           notification,
-        }
+        },
       );
       if (status !== 200) {
         return null;
@@ -584,7 +584,7 @@ export const CategoryBanner = ({ type }: { type: string }) => {
 
     if (isSubscribed) {
       updatedNotifications = updatedNotifications.filter(
-        (e) => e.label !== type
+        (e) => e.label !== type,
       );
       subscriptionMessage = "You've been unsubscribed from this category";
       setIsSubscribed(false);
@@ -607,8 +607,8 @@ export const CategoryBanner = ({ type }: { type: string }) => {
         direction={{ md: 'row', base: 'column' }}
         w={{ md: 'brand.120', base: '100%' }}
         h={{ md: '7.375rem', base: 'fit-content' }}
-        mb={8}
         mx={'auto'}
+        mb={8}
         p={6}
         bg={`url('${categoryAssets[type]?.bg}')`}
         bgSize={'cover'}
@@ -642,9 +642,9 @@ export const CategoryBanner = ({ type }: { type: string }) => {
         </Box>
         {!router.asPath.includes('Hyperdrive') && (
           <Button
+            my={{ base: '', md: 'auto' }}
             mt={{ base: 4, md: '' }}
             ml={{ base: '', md: 'auto' }}
-            my={{ base: '', md: 'auto' }}
             px={4}
             color={'brand.slate.400'}
             fontWeight={'300'}
