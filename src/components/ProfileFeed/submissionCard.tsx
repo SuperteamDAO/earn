@@ -218,7 +218,9 @@ export function SubmissionCard({
                 fontSize={{ base: 'sm', md: 'md' }}
                 fontWeight={600}
               >
-                View Submission
+                {sub?.listing?.type === 'open'
+                  ? 'View Submission'
+                  : 'View Project'}
               </Text>
             </LinkOverlay>
             <ArrowForwardIcon color={'#6366F1'} />

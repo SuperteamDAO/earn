@@ -1,3 +1,4 @@
+import { ChevronDownIcon } from '@chakra-ui/icons';
 import {
   Button,
   Flex,
@@ -70,10 +71,22 @@ export function UserInfo({ isMobile }: UserInfoProps) {
             )}
           <Menu>
             <MenuButton
+              as={Button}
               display={isMobile ? 'none' : 'flex'}
               minW={0}
+              px={2}
+              bg={'brand.slate.50'}
+              borderWidth={'1px'}
+              borderColor={'white'}
+              _hover={{ bg: 'brand.slate.100' }}
+              _active={{
+                bg: 'brand.slate.200',
+                borderColor: 'brand.slate.300',
+              }}
               cursor={'pointer'}
-              rounded={'full'}
+              rightIcon={
+                <ChevronDownIcon color="brand.slate.400" boxSize={5} />
+              }
             >
               <Flex align="center">
                 {userInfo?.photo ? (
@@ -106,9 +119,6 @@ export function UserInfo({ isMobile }: UserInfoProps) {
                       {userInfo?.firstName}
                     </Text>
                   )}
-                  <Text color="brand.slate.400" fontSize="xs" fontWeight={500}>
-                    {userInfo?.username}
-                  </Text>
                 </Flex>
               </Flex>
             </MenuButton>
