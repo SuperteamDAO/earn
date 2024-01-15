@@ -20,9 +20,9 @@ import React from 'react';
 import type { IconType } from 'react-icons';
 import { AiFillFire, AiOutlineUsergroupAdd } from 'react-icons/ai';
 
-import { SelectSponsor } from '@/components/SelectSponsor/SelectSponsor';
 import { LoadingSection } from '@/components/shared/LoadingSection';
-import { Banner } from '@/components/sidebar/Banner';
+import { Banner } from '@/components/sponsor/Banner';
+import { SelectSponsor } from '@/components/sponsor/SelectSponsor';
 import { Default } from '@/layouts/Default';
 import { Meta } from '@/layouts/Meta';
 import { userStore } from '@/store/user';
@@ -34,7 +34,7 @@ interface LinkItemProps {
 }
 
 const LinkItems: Array<LinkItemProps> = [
-  { name: 'Listings', link: '/bounties', icon: AiFillFire },
+  { name: 'My Listings', link: '/bounties', icon: AiFillFire },
   { name: 'Members', link: '/members', icon: AiOutlineUsergroupAdd },
 ];
 
@@ -87,6 +87,7 @@ const NavItem = ({ icon, link, isActive, children, ...rest }: NavItemProps) => {
 const SidebarContent = ({ ...rest }: BoxProps) => {
   const router = useRouter();
   const currentPath = `/${router.route?.split('/')[2]}` || '';
+  const { userInfo } = userStore();
   return (
     <Box
       w={{ base: 0, md: 80 }}
@@ -98,9 +99,11 @@ const SidebarContent = ({ ...rest }: BoxProps) => {
       borderRightColor={'blackAlpha.200'}
       {...rest}
     >
-      <Box px={6} pb={6}>
-        <SelectSponsor />
-      </Box>
+      {userInfo?.role === 'GOD' && (
+        <Box px={6} pb={6}>
+          <SelectSponsor />
+        </Box>
+      )}
       <Flex align="center" justify="space-between" px={6} pb={6}>
         <Menu>
           <MenuButton
@@ -180,7 +183,7 @@ export function Sidebar({ children }: { children: ReactNode }) {
           {!userInfo?.currentSponsor?.id ? (
             <LoadingSection />
           ) : (
-            <Box w="full" px={6} py={8} bg="brand.grey.50">
+            <Box w="full" px={6} py={8} bg="white">
               <Banner />
               {children}
             </Box>

@@ -29,9 +29,9 @@ import axios from 'axios';
 import Avatar from 'boring-avatars';
 import React, { useEffect, useRef, useState } from 'react';
 
-import { InviteMembers } from '@/components/Members/InviteMembers';
 import { ErrorSection } from '@/components/shared/ErrorSection';
 import { LoadingSection } from '@/components/shared/LoadingSection';
+import { InviteMembers } from '@/components/sponsor/Members/InviteMembers';
 import type { UserSponsor } from '@/interface/userSponsor';
 import { Sidebar } from '@/layouts/Sidebar';
 import { userStore } from '@/store/user';

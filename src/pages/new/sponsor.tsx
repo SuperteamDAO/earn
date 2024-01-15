@@ -56,7 +56,7 @@ const CreateSponsor = () => {
         ...sponsor,
       });
       await axios.post(`/api/email/manual/welcomeSponsor`);
-      router.push('/dashboard/bounties');
+      router.push('/dashboard/listings');
     } catch (e: any) {
       if (e?.response?.data?.error?.code === 'P2002') {
         setErrorMessage('Sorry! Sponsor name or username already exists.');

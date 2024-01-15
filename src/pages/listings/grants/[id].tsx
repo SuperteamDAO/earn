@@ -79,7 +79,7 @@ const Grants = ({ slug }: GrantsDetailsProps) => {
               maxW={'7xl'}
               minH={'100vh'}
               mx={'auto'}
-              mt={10}
+              my={10}
             >
               <HStack w={['22rem', '22rem', 'full', 'full']}>
                 <DetailDescription

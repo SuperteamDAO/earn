@@ -100,7 +100,7 @@ function BountySubmissions({ slug }: Props) {
       );
       setBounty(bountyDetails.data);
       if (bountyDetails.data.sponsorId !== userInfo?.currentSponsorId) {
-        router.push('/dashboard/bounties');
+        router.push('/dashboard/listings');
       }
       const submissionsData = bountyDetails.data.Submission || [];
       const usedPos = submissionsData
@@ -309,7 +309,7 @@ function BountySubmissions({ slug }: Props) {
           <Box mb={4}>
             <Breadcrumb color="brand.slate.400">
               <BreadcrumbItem>
-                <NextLink href="/dashboard/bounties" passHref>
+                <NextLink href="/dashboard/listings" passHref>
                   <BreadcrumbLink color="brand.slate.400">
                     <Flex align="center">
                       <ChevronLeftIcon mr={1} w={6} h={6} />

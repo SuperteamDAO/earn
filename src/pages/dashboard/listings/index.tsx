@@ -164,7 +164,7 @@ function Bounties() {
   };
 
   const handleViewSubmissions = (slug: string | undefined) => {
-    router.push(`/dashboard/bounties/${slug}/submissions/`);
+    router.push(`/dashboard/listings/${slug}/submissions/`);
   };
 
   const deleteSelectedDraft = async () => {
@@ -406,7 +406,7 @@ function Bounties() {
                       wordBreak={'break-word'}
                     >
                       <NextLink
-                        href={`/dashboard/bounties/${currentBounty.slug}/submissions/`}
+                        href={`/dashboard/listings/${currentBounty.slug}/submissions/`}
                         passHref
                       >
                         <Text as="a" _hover={{ textDecoration: 'underline' }}>
@@ -518,7 +518,7 @@ function Bounties() {
                             }
                             onClick={() => {
                               if (isListingIncomplete) {
-                                window.location.href = `/dashboard/bounties/${currentBounty.slug}/edit/`;
+                                window.location.href = `/dashboard/listings/${currentBounty.slug}/edit/`;
                               } else {
                                 handlePublish(currentBounty);
                               }
@@ -555,7 +555,7 @@ function Bounties() {
                             <>
                               <MenuDivider />
                               <NextLink
-                                href={`/dashboard/bounties/${currentBounty.slug}/edit/`}
+                                href={`/dashboard/listings/${currentBounty.slug}/edit/`}
                                 passHref
                               >
                                 <MenuItem icon={<AiOutlineEdit />}>

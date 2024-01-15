@@ -155,7 +155,7 @@ export function UserInfo({ isMobile }: UserInfoProps) {
                       fontSize="sm"
                       fontWeight={600}
                       onClick={() => {
-                        router.push('/dashboard/bounties');
+                        router.push('/dashboard/listings');
                       }}
                     >
                       Sponsor Dashboard

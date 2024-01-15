@@ -30,7 +30,7 @@ export function InviteView({ invite }: Props) {
         await axios.post('/api/userSponsors/accept/', {
           inviteId: invite?.id,
         });
-        router.push('/dashboard/bounties');
+        router.push('/dashboard/listings');
       } catch (e) {
         setIsWalletError(true);
         setIsAccepting(false);
