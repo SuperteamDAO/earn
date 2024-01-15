@@ -106,8 +106,8 @@ export function UserInfo({ isMobile }: UserInfoProps) {
                       {userInfo?.firstName}
                     </Text>
                   )}
-                  <Text color="brand.slate.400" fontSize="sm" fontWeight={500}>
-                    $ {userInfo?.totalEarnedInUSD}
+                  <Text color="brand.slate.400" fontSize="xs" fontWeight={500}>
+                    {userInfo?.username}
                   </Text>
                 </Flex>
               </Flex>
