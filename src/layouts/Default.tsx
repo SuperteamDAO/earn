@@ -9,8 +9,7 @@ type IDefaultProps = {
   className?: string;
 };
 
-const Default = (props: IDefaultProps) => {
-  return (
+const Default = (props: IDefaultProps) => (
     <div
       className={
         !props.className ? 'min-h-full' : `min-h-full ${props.className}`
@@ -22,6 +21,5 @@ const Default = (props: IDefaultProps) => {
       <Footer />
     </div>
   );
-};
 
 export { Default };

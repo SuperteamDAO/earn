@@ -6,8 +6,7 @@ interface TemplateProps {
   loginUrl: string;
 }
 
-export const MagicLinkTemplate = ({ loginUrl }: TemplateProps) => {
-  return (
+export const MagicLinkTemplate = ({ loginUrl }: TemplateProps) => (
     <div style={styles.container}>
       <p style={styles.greetings}>Hello,</p>
       <p style={styles.textWithMargin}>
@@ -31,4 +30,3 @@ export const MagicLinkTemplate = ({ loginUrl }: TemplateProps) => {
       </p>
     </div>
   );
-};

@@ -51,8 +51,7 @@ const defaultRanks = [
   'fiftieth',
 ];
 
-export const sortRank = (rankArray: string[]) => {
-  return rankArray
+export const sortRank = (rankArray: string[]) => rankArray
     .map((rank) => ({
       rank,
       index: defaultRanks.indexOf(rank),
@@ -67,4 +66,3 @@ export const sortRank = (rankArray: string[]) => {
       return 0;
     })
     .map((item) => item.rank);
-};

@@ -14,12 +14,9 @@ import type { ReactNode } from 'react';
 
 import { getURL } from '@/utils/validUrl';
 
-const getCurrentYear = () => {
-  return new Date().getFullYear();
-};
+const getCurrentYear = () => new Date().getFullYear();
 
-const Logo = (props: any) => {
-  return (
+const Logo = (props: any) => (
     <Link as={NextLink} href="/">
       <Image
         h={8}
@@ -31,7 +28,6 @@ const Logo = (props: any) => {
       />
     </Link>
   );
-};
 
 const SocialButton = ({
   children,
@@ -41,8 +37,7 @@ const SocialButton = ({
   children: ReactNode;
   label: string;
   href: string;
-}) => {
-  return (
+}) => (
     <chakra.button
       bg={'blackAlpha.100'}
       color="brand.slate.300"
@@ -66,18 +61,14 @@ const SocialButton = ({
       {children}
     </chakra.button>
   );
-};
 
-const ListHeader = ({ children }: { children: ReactNode }) => {
-  return (
+const ListHeader = ({ children }: { children: ReactNode }) => (
     <Text mb={2} color={'brand.slate.500'} fontSize={'lg'} fontWeight={'700'}>
       {children}
     </Text>
   );
-};
 
-export const Footer = () => {
-  return (
+export const Footer = () => (
     <Box
       color={'brand.slate.500'}
       bg={'white'}
@@ -295,4 +286,3 @@ export const Footer = () => {
       </Container>
     </Box>
   );
-};

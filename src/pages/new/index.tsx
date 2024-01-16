@@ -6,8 +6,7 @@ import { TalentButton } from '@/components/ProfileSetup/TalentButton';
 import { Default } from '@/layouts/Default';
 import { Meta } from '@/layouts/Meta';
 
-const Index = () => {
-  return (
+const Index = () => (
     <Default
       meta={
         <Meta
@@ -209,6 +208,5 @@ const Index = () => {
       </Box>
     </Default>
   );
-};
 
 export default Index;

@@ -123,8 +123,7 @@ const StepsCon = ({ setSuccess }: { setSuccess: () => void }) => {
         </Text>
       </VStack>
       <HStack w="100%" px={{ base: 4, md: 0 }}>
-        {stepList.map((step, stepIndex) => {
-          return (
+        {stepList.map((step, stepIndex) => (
             <Fragment key={stepIndex}>
               <Steps
                 setStep={setSteps}
@@ -145,8 +144,7 @@ const StepsCon = ({ setSuccess }: { setSuccess: () => void }) => {
                 />
               )}
             </Fragment>
-          );
-        })}
+          ))}
       </HStack>
       {currentStep === 1 && (
         <AboutYou setStep={setSteps} useFormStore={useFormStore} />

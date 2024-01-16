@@ -50,9 +50,7 @@ export default async function user(req: NextApiRequest, res: NextApiResponse) {
       });
 
       const sortedData = bounties
-        .sort((a, b) => {
-          return dayjs(a.deadline).diff(dayjs(b.deadline));
-        })
+        .sort((a, b) => dayjs(a.deadline).diff(dayjs(b.deadline)))
         .slice(0, take);
       result.bounties = sortedData;
     } else if (category === 'bounties') {
@@ -81,9 +79,7 @@ export default async function user(req: NextApiRequest, res: NextApiResponse) {
           },
         },
       });
-      const sortedData = bounties.sort((a, b) => {
-        return dayjs(b.deadline).diff(dayjs(a.deadline));
-      });
+      const sortedData = bounties.sort((a, b) => dayjs(b.deadline).diff(dayjs(a.deadline)));
       const splitIndex = sortedData.findIndex((bounty) =>
         dayjs().isAfter(dayjs(bounty?.deadline)),
       );

@@ -7,8 +7,7 @@ interface Props {
   subskills: MultiSelectOptions[];
 }
 
-export const mergeSkills = ({ skills = [], subskills = [] }: Props): Skills => {
-  return skills.map((mainskill) => {
+export const mergeSkills = ({ skills = [], subskills = [] }: Props): Skills => skills.map((mainskill) => {
     const main = SkillList.find((skill) => skill.mainskill === mainskill.value);
     const sub: SubSkillsType[] = [];
 
@@ -23,21 +22,16 @@ export const mergeSkills = ({ skills = [], subskills = [] }: Props): Skills => {
       subskills: sub ?? [],
     };
   });
-};
 
-export const splitSkills = (skills: Skills): Props => {
-  return {
+export const splitSkills = (skills: Skills): Props => ({
     skills: skills?.map((skill) => ({
       value: skill.skills,
       label: skill.skills,
     })),
     subskills: skills
-      ?.map((skill) => {
-        return skill?.subskills?.map((subskill) => ({
+      ?.map((skill) => skill?.subskills?.map((subskill) => ({
           value: subskill,
           label: subskill,
-        }));
-      })
+        })))
       ?.flat(),
-  };
-};
+  });

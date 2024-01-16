@@ -78,10 +78,10 @@ export const CreateBounty = ({
   references,
   setReferences,
   isNewOrDraft,
-}: Props) => {
+}: Props) => 
   // handles the info from basic form
 
-  return (
+   (
     <>
       {steps === 2 && (
         <CreatebountyBasic
@@ -149,5 +149,5 @@ export const CreateBounty = ({
         />
       )}
     </>
-  );
-};
+  )
+;

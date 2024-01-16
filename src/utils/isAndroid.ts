@@ -1,3 +1,1 @@
-export const isAndroid = (): boolean => {
-  return /Android/i.test(navigator.userAgent);
-};
+export const isAndroid = (): boolean => /Android/i.test(navigator.userAgent);

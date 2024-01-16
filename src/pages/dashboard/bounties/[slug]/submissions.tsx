@@ -387,8 +387,7 @@ function BountySubmissions({ slug }: Props) {
                   borderColor={'blackAlpha.200'}
                   roundedLeft="xl"
                 >
-                  {submissions.map((submission, submissionIndex) => {
-                    return (
+                  {submissions.map((submission, submissionIndex) => (
                       <Flex
                         key={submission?.id}
                         align={'center'}
@@ -448,8 +447,7 @@ function BountySubmissions({ slug }: Props) {
                           </Tag>
                         )}
                       </Flex>
-                    );
-                  })}
+                    ))}
                 </Box>
               </Flex>
               <Flex flex="4 1 auto">

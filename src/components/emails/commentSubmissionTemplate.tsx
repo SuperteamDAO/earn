@@ -14,8 +14,7 @@ export const CommentSubmissionTemplate = ({
   bountyName,
   personName,
   link,
-}: SubmissionProps) => {
-  return (
+}: SubmissionProps) => (
     <div style={styles.container}>
       <p style={styles.greetings}>Hello&nbsp;{name},</p>
       <p style={styles.textWithMargin}>
@@ -42,4 +41,3 @@ export const CommentSubmissionTemplate = ({
       </p>
     </div>
   );
-};

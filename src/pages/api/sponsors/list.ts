@@ -44,16 +44,14 @@ export default async function sponsors(
           slug: 'asc',
         },
       });
-      finalSponsors = sponsorsList.map((sponsor) => {
-        return {
+      finalSponsors = sponsorsList.map((sponsor) => ({
           value: sponsor.id,
           label: sponsor.name,
           sponsor: {
             ...sponsor,
             role: 'GOD MODE',
           },
-        };
-      });
+        }));
     } else {
       const whereSearch = searchString
         ? {
@@ -86,16 +84,14 @@ export default async function sponsors(
         },
         take,
       });
-      finalSponsors = sponsorsList.map((sponsor) => {
-        return {
+      finalSponsors = sponsorsList.map((sponsor) => ({
           value: sponsor.sponsor.id,
           label: sponsor.sponsor.name,
           sponsor: {
             ...sponsor.sponsor,
             role: sponsor.role,
           },
-        };
-      });
+        }));
     }
     res.status(200).json(finalSponsors);
   } catch (error) {

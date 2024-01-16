@@ -587,8 +587,7 @@ export const Description = ({
                 </Text>
               </Flex>
               {setReferences &&
-                references?.map((reference, index) => {
-                  return (
+                references?.map((reference, index) => (
                     <Flex key={index} align="end" justify="space-end" w="full">
                       <ReferenceCard
                         setReferenceError={setReferenceError}
@@ -602,8 +601,7 @@ export const Description = ({
                         </Button>
                       )}
                     </Flex>
-                  );
-                })}
+                  ))}
               {references && setReferences && references.length < 6 && (
                 <Button
                   w={'full'}

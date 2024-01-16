@@ -258,8 +258,7 @@ export const SubmissionModal = ({
                   </FormControl>
                 </>
               ) : (
-                eligibility?.map((e) => {
-                  return (
+                eligibility?.map((e) => (
                     <FormControl key={e?.order} isRequired>
                       <QuestionHandler
                         register={register}
@@ -269,8 +268,7 @@ export const SubmissionModal = ({
                         watch={watch}
                       />
                     </FormControl>
-                  );
-                })
+                  ))
               )}
               <FormControl>
                 <FormLabel

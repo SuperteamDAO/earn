@@ -36,8 +36,7 @@ export const QuestionCard = ({
 }: Props) => {
   const [option, setOption] = useState<string>('');
   const handleChangeQuestion = (newq: string) => {
-    setQuestions((prev) => {
-      return prev.map((q) => {
+    setQuestions((prev) => prev.map((q) => {
         if (q.order === curentQuestion.order) {
           return {
             ...q,
@@ -46,8 +45,7 @@ export const QuestionCard = ({
           };
         }
         return q;
-      });
-    });
+      }));
   };
 
   return (
@@ -91,8 +89,7 @@ export const QuestionCard = ({
           curentQuestion.type === 'multi-choice') && (
           <>
             <VStack w={'full'}>
-              {curentQuestion.options?.map((currentOption, currentIndex) => {
-                return (
+              {curentQuestion.options?.map((currentOption, currentIndex) => (
                   <HStack key={currentIndex} w={'full'}>
                     <HStack w={'full'}>
                       <Text
@@ -119,8 +116,7 @@ export const QuestionCard = ({
                     </HStack>
                     <Button
                       onClick={() => {
-                        setQuestions((prev) => {
-                          return prev.map((q) => {
+                        setQuestions((prev) => prev.map((q) => {
                             if (q.order === curentQuestion.order) {
                               return {
                                 ...q,
@@ -130,16 +126,14 @@ export const QuestionCard = ({
                               };
                             }
                             return q;
-                          });
-                        });
+                          }));
                       }}
                       variant={'unstyled'}
                     >
                       <CloseIcon />
                     </Button>
                   </HStack>
-                );
-              })}
+                ))}
               <HStack w={'full'}>
                 <FormControl
                   isInvalid={
@@ -161,8 +155,7 @@ export const QuestionCard = ({
                 <Button
                   onClick={() => {
                     if (option.length === 0) return;
-                    setQuestions((prev) => {
-                      return prev.map((q) => {
+                    setQuestions((prev) => prev.map((q) => {
                         if (q.order === curentQuestion.order) {
                           return {
                             ...q,
@@ -170,8 +163,7 @@ export const QuestionCard = ({
                           };
                         }
                         return q;
-                      });
-                    });
+                      }));
                     setOption('');
                   }}
                 >

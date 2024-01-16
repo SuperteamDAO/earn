@@ -8,9 +8,7 @@ import {
 } from '@/interface/skills';
 import { prisma } from '@/prisma';
 
-const uniqueArray = (arr: SubSkillsType[]): SubSkillsType[] => {
-  return Array.from(new Set(arr));
-};
+const uniqueArray = (arr: SubSkillsType[]): SubSkillsType[] => Array.from(new Set(arr));
 
 const correctSkills = (
   skillObjArray: { skills: MainSkills; subskills: SubSkillsType[] }[],

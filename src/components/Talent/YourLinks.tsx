@@ -67,8 +67,7 @@ const SocialInput = ({
   placeHolder,
   icon,
   register,
-}: TypeSocialInput) => {
-  return (
+}: TypeSocialInput) => (
     <Flex align="center" justify="center" direction="row" mb={'1.25rem'}>
       <Box
         w="30%"
@@ -132,7 +131,6 @@ const SocialInput = ({
       />
     </Flex>
   );
-};
 
 interface Props {
   setStep?: Dispatch<SetStateAction<number>>;
@@ -223,11 +221,9 @@ export function YourLinks({ success, useFormStore }: Props) {
       <Box w={'full'}>
         <form style={{ width: '100%' }} onSubmit={handleSubmit(onSubmit)}>
           <FormControl w="full" mb={5}>
-            {socials.map((sc, idx: number) => {
-              return (
+            {socials.map((sc, idx: number) => (
                 <SocialInput register={register} {...sc} key={`sc${idx}`} />
-              );
-            })}
+              ))}
             <Text color={'brand.slate.500'} fontWeight={'500'}>
               Other Proof of Work
             </Text>

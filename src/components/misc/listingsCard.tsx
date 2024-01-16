@@ -359,9 +359,7 @@ export const BountiesCard = ({
               alt={token}
               rounded="full"
               src={
-                tokenList.find((ele) => {
-                  return ele.tokenSymbol === token;
-                })?.icon
+                tokenList.find((ele) => ele.tokenSymbol === token)?.icon
               }
             />
             <Flex align="baseline" gap={1}>

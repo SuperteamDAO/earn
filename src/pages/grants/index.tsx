@@ -40,8 +40,7 @@ const GrantEntry = ({
   link?: string;
   slug: string;
   logo?: string;
-}) => {
-  return (
+}) => (
     <Box w={80}>
       {logo ? (
         <Image
@@ -77,7 +76,6 @@ const GrantEntry = ({
       </Flex>
     </Box>
   );
-};
 
 function Grants() {
   const [isLoading, setIsLoading] = useState(true);
@@ -169,8 +167,7 @@ function Grants() {
             {!isLoading && error && <ErrorInfo />}
             {!isLoading && !error && (
               <Wrap justify={'center'} mx="auto" spacing={10}>
-                {grants?.map((grant) => {
-                  return (
+                {grants?.map((grant) => (
                     <WrapItem key={grant?.id}>
                       <GrantEntry
                         title={grant?.title}
@@ -190,8 +187,7 @@ function Grants() {
                         logo={grant?.logo}
                       />
                     </WrapItem>
-                  );
-                })}
+                  ))}
               </Wrap>
             )}
           </Container>

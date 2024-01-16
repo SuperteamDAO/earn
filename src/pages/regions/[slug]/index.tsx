@@ -83,8 +83,7 @@ const RegionsPage = ({ slug }: { slug: string }) => {
               </Flex>
             )}
             {!isListingsLoading &&
-              listings?.bounties?.map((bounty) => {
-                return (
+              listings?.bounties?.map((bounty) => (
                   <BountiesCard
                     slug={bounty.slug}
                     rewardAmount={bounty?.rewardAmount}
@@ -98,8 +97,7 @@ const RegionsPage = ({ slug }: { slug: string }) => {
                     applicationType={bounty.applicationType}
                     isWinnersAnnounced={bounty?.isWinnersAnnounced}
                   />
-                );
-              })}
+                ))}
           </ListingSection>
 
           <ListingSection
@@ -128,8 +126,7 @@ const RegionsPage = ({ slug }: { slug: string }) => {
               </Flex>
             )}
             {!isListingsLoading &&
-              listings?.grants?.map((grant) => {
-                return (
+              listings?.grants?.map((grant) => (
                   <GrantsCard
                     sponsorName={grant?.sponsor?.name}
                     logo={grant?.sponsor?.logo}
@@ -139,8 +136,7 @@ const RegionsPage = ({ slug }: { slug: string }) => {
                     title={grant?.title}
                     short_description={grant?.shortDescription}
                   />
-                );
-              })}
+                ))}
           </ListingSection>
         </Box>
       </Home>

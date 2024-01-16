@@ -19,8 +19,7 @@ export const Submissions = ({
   submissions,
   endTime,
   setUpdate,
-}: Props) => {
-  return (
+}: Props) => (
     <>
       <VStack
         align={['center', 'center', 'start', 'start']}
@@ -46,8 +45,7 @@ export const Submissions = ({
                 gap={10}
                 mt={10}
               >
-                {submissions?.map((el) => {
-                  return (
+                {submissions?.map((el) => (
                     <SubmissionCard
                       id={el.id}
                       likes={
@@ -63,8 +61,7 @@ export const Submissions = ({
                       setUpdate={setUpdate}
                       winnerPosition={el.winnerPosition}
                     />
-                  );
-                })}
+                  ))}
               </Flex>
             </VStack>
           </>
@@ -95,4 +92,3 @@ export const Submissions = ({
       </VStack>
     </>
   );
-};

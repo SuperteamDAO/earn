@@ -16,8 +16,7 @@ export const SelectBox = ({
   id,
   placeholder,
   register,
-}: SelectBoxProps) => {
-  return (
+}: SelectBoxProps) => (
     <Box w={'full'} mb={'1.25rem'}>
       <FormLabel color={'brand.slate.500'}>{label}</FormLabel>
       <Select
@@ -29,14 +28,11 @@ export const SelectBox = ({
         placeholder={placeholder}
         {...register(id, { required: true })}
       >
-        {options.map((option) => {
-          return (
+        {options.map((option) => (
             <option key={option} value={option}>
               {option}
             </option>
-          );
-        })}
+          ))}
       </Select>
     </Box>
   );
-};

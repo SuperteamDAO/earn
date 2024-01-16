@@ -106,8 +106,7 @@ export default async function bounty(
 
       const sendEmail = async (
         subscriber: (typeof filteredSubscribers)[number],
-      ) => {
-        return resendMail.emails.send({
+      ) => resendMail.emails.send({
           from: `Kash from Superteam <${process.env.RESEND_EMAIL}>`,
           to: subscriber.User.email,
           subject: 'Listing Deadline Extended!',
@@ -116,7 +115,6 @@ export default async function bounty(
             link: `https://earn.superteam.fun/listings/bounties/${result.slug}/`,
           }),
         });
-      };
 
       await rateLimitedPromiseAll(filteredSubscribers, 5, sendEmail);
     }

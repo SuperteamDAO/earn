@@ -14,8 +14,7 @@ interface TemplateProps {
   bounties: Bounty[] | undefined;
 }
 
-export const WeeklyRoundupTemplate = ({ name, bounties }: TemplateProps) => {
-  return (
+export const WeeklyRoundupTemplate = ({ name, bounties }: TemplateProps) => (
     <div style={styles.container}>
       <p style={styles.greetings}>Hey there, {name}!</p>
       <p style={styles.textWithMargin}>
@@ -54,4 +53,3 @@ export const WeeklyRoundupTemplate = ({ name, bounties }: TemplateProps) => {
       </p>
     </div>
   );
-};

@@ -18,8 +18,7 @@ const overFlowText = (limit: number, text: string) => {
   return text;
 };
 
-const Chip = ({ icon, label, value }: ChipType) => {
-  return (
+const Chip = ({ icon, label, value }: ChipType) => (
     <Flex>
       <Box
         alignItems={'center'}
@@ -48,7 +47,6 @@ const Chip = ({ icon, label, value }: ChipType) => {
       </Box>
     </Flex>
   );
-};
 
 export function TalentBio({
   user,
@@ -182,8 +180,7 @@ export function TalentBio({
       )}
 
       <Flex justify={'space-between'} mt={'32px'}>
-        {socialLinks.map((ele, eleIndex) => {
-          return (
+        {socialLinks.map((ele, eleIndex) => (
             <Box
               key={eleIndex}
               onClick={() => {
@@ -203,8 +200,7 @@ export function TalentBio({
                 src={ele.icon}
               />
             </Box>
-          );
-        })}
+          ))}
       </Flex>
     </Box>
   );

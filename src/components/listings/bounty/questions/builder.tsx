@@ -63,8 +63,7 @@ export const Builder = ({
             </Text>
           </VStack>
         </HStack>
-        {questions.map((question, index) => {
-          return (
+        {questions.map((question, index) => (
             <Flex key={index} align="end" justify="space-end" w="full">
               <QuestionCard
                 errorState={error}
@@ -74,8 +73,7 @@ export const Builder = ({
                 handleDelete={() => handleDelete(index)}
               />
             </Flex>
-          );
-        })}
+          ))}
         <Button
           w={'full'}
           h={12}

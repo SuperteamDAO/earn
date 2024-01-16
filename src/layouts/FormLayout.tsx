@@ -22,8 +22,7 @@ export const FormLayout = ({
   currentStep,
   stepList,
   setStep,
-}: Props) => {
-  return (
+}: Props) => (
     <VStack mb={12}>
       <VStack gap={6} w={'80%'}>
         <VStack>
@@ -46,8 +45,7 @@ export const FormLayout = ({
           </Text>
         </VStack>
         <HStack w="50%">
-          {stepList.map((step) => {
-            return (
+          {stepList.map((step) => (
               <>
                 <Steps
                   setStep={setStep}
@@ -68,11 +66,9 @@ export const FormLayout = ({
                   />
                 )}
               </>
-            );
-          })}
+            ))}
         </HStack>
         {children}
       </VStack>
     </VStack>
   );
-};

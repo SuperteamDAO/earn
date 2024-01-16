@@ -7,8 +7,7 @@ interface NewBountyProps {
   link: string;
 }
 
-export const NewBountyTemplate = ({ name, link }: NewBountyProps) => {
-  return (
+export const NewBountyTemplate = ({ name, link }: NewBountyProps) => (
     <div style={styles.container}>
       <p style={styles.greetings}>Hey {name},</p>
       <p style={styles.textWithMargin}>
@@ -40,4 +39,3 @@ export const NewBountyTemplate = ({ name, link }: NewBountyProps) => {
       </p>
     </div>
   );
-};

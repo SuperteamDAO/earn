@@ -533,8 +533,7 @@ export default function EditProfilePage() {
                   SOCIALS
                 </Text>
 
-                {socials.map((sc, idx: number) => {
-                  return (
+                {socials.map((sc, idx: number) => (
                     <SocialInput
                       name={sc.label.toLowerCase()}
                       register={register}
@@ -553,8 +552,7 @@ export default function EditProfilePage() {
                         );
                       }}
                     />
-                  );
-                })}
+                  ))}
                 {socialError && (
                   <Text color="red">At least one social link is required!</Text>
                 )}
@@ -611,9 +609,7 @@ export default function EditProfilePage() {
                     closeMenuOnSelect={false}
                     components={animatedComponents}
                     isMulti
-                    options={CommunityList.map((elm: string) => {
-                      return { label: elm, value: elm };
-                    })}
+                    options={CommunityList.map((elm: string) => ({ label: elm, value: elm }))}
                     value={DropDownValues.community}
                     required
                     onChange={(e: any) => {
@@ -682,8 +678,7 @@ export default function EditProfilePage() {
 
                 <FormLabel color={'brand.slate.500'}>Proof of Work</FormLabel>
                 <Box>
-                  {pow.map((data, idx) => {
-                    return (
+                  {pow.map((data, idx) => (
                       <Flex
                         key={data.id}
                         align={'center'}
@@ -719,8 +714,7 @@ export default function EditProfilePage() {
                           />
                         </Center>
                       </Flex>
-                    );
-                  })}
+                    ))}
                 </Box>
                 <Button
                   w={'full'}

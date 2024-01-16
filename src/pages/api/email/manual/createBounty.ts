@@ -49,12 +49,10 @@ export default async function handler(
     const email: {
       email: string;
       name: string;
-    }[] = users.map((user) => {
-      return {
+    }[] = users.map((user) => ({
         email: user.email,
         name: user.firstName as string,
-      };
-    });
+      }));
 
     const emailsSent: string[] = [];
 

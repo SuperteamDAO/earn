@@ -384,8 +384,7 @@ function TalentProfile({ slug }: TalentProps) {
                     Skills
                   </Text>
                   {Array.isArray(talent.skills) ? (
-                    talent.skills.map((skillItem: any, index: number) => {
-                      return skillItem ? (
+                    talent.skills.map((skillItem: any, index: number) => skillItem ? (
                         <Box key={index} mt={4}>
                           <Text
                             color={'brand.slate.400'}
@@ -451,8 +450,7 @@ function TalentProfile({ slug }: TalentProps) {
                             </Flex>
                           </Collapse>
                         </Box>
-                      ) : null;
-                    })
+                      ) : null)
                   ) : (
                     <Text>No skills available</Text>
                   )}
@@ -464,8 +462,7 @@ function TalentProfile({ slug }: TalentProps) {
                 gap={{ base: '12', md: '100' }}
               >
                 <Flex gap={6} w={{ base: '100%', md: '50%' }}>
-                  {socialLinks.map((ele, eleIndex) => {
-                    return (
+                  {socialLinks.map((ele, eleIndex) => (
                       <Box
                         key={eleIndex}
                         onClick={() => {
@@ -490,8 +487,7 @@ function TalentProfile({ slug }: TalentProps) {
                           src={ele.icon}
                         />
                       </Box>
-                    );
-                  })}
+                    ))}
                 </Flex>
                 <Flex
                   gap={{ base: '8', md: '6' }}

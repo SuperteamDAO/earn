@@ -7,8 +7,7 @@ interface SubmissionProps {
   bountyName: string;
 }
 
-export const SubmissionTemplate = ({ name, bountyName }: SubmissionProps) => {
-  return (
+export const SubmissionTemplate = ({ name, bountyName }: SubmissionProps) => (
     <div style={styles.container}>
       <p style={styles.greetings}>Hey {name},</p>
       <p style={styles.textWithMargin}>
@@ -38,4 +37,3 @@ export const SubmissionTemplate = ({ name, bountyName }: SubmissionProps) => {
       </p>
     </div>
   );
-};

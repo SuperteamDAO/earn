@@ -93,11 +93,9 @@ export const CreatebountyBasic = ({
     { value: '>8 Weeks', label: '>8 Weeks' },
   ];
 
-  const isTimeToCompleteValid = useMemo(() => {
-    return timeToCompleteOptions.some(
+  const isTimeToCompleteValid = useMemo(() => timeToCompleteOptions.some(
       (option) => option.value === bountyBasic?.timeToComplete,
-    );
-  }, [bountyBasic?.timeToComplete, timeToCompleteOptions]);
+    ), [bountyBasic?.timeToComplete, timeToCompleteOptions]);
 
   return (
     <>

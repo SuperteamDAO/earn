@@ -97,11 +97,9 @@ function Bounties() {
 
   const debouncedSetSearchText = useRef(debounce(setSearchText, 300)).current;
 
-  useEffect(() => {
-    return () => {
+  useEffect(() => () => {
       debouncedSetSearchText.cancel();
-    };
-  }, [debouncedSetSearchText]);
+    }, [debouncedSetSearchText]);
 
   const getBounties = async () => {
     setIsBountiesLoading(true);

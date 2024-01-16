@@ -130,13 +130,11 @@ export function YourWork({ setStep, useFormStore }: Step1Props) {
                 placeholder="Pick your Experience"
                 {...register('cryptoExperience', { required: true })}
               >
-                {web3Exp.map((ct) => {
-                  return (
+                {web3Exp.map((ct) => (
                     <option key={ct} value={ct}>
                       {ct}
                     </option>
-                  );
-                })}
+                  ))}
               </Select>
             </Box>
             <Box w={'full'}>
@@ -152,13 +150,11 @@ export function YourWork({ setStep, useFormStore }: Step1Props) {
                 placeholder="Pick your experience"
                 {...register('experience', { required: true })}
               >
-                {workExp.map((ct) => {
-                  return (
+                {workExp.map((ct) => (
                     <option key={ct} value={ct}>
                       {ct}
                     </option>
-                  );
-                })}
+                  ))}
               </Select>
             </Box>
           </Flex>
@@ -177,13 +173,11 @@ export function YourWork({ setStep, useFormStore }: Step1Props) {
               placeholder="Type of work"
               {...register('workPrefernce', { required: true })}
             >
-              {workType.map((ct) => {
-                return (
+              {workType.map((ct) => (
                   <option key={ct} value={ct}>
                     {ct}
                   </option>
-                );
-              })}
+                ))}
             </Select>
           </Box>
           <Box w={'full'} mb={'1.25rem'}>
@@ -208,21 +202,17 @@ export function YourWork({ setStep, useFormStore }: Step1Props) {
               closeMenuOnSelect={false}
               components={animatedComponents}
               isMulti
-              options={CommunityList.map((elm: string) => {
-                return { label: elm, value: elm };
-              })}
+              options={CommunityList.map((elm: string) => ({ label: elm, value: elm }))}
               required
               onChange={(e: any) => {
-                setDropDownValues((st) => {
-                  return {
+                setDropDownValues((st) => ({
                     ...st,
                     community: JSON.stringify(
                       e.map(
                         (elm: { label: string; value: string }) => elm.value,
                       ),
                     ),
-                  };
-                });
+                  }));
               }}
               styles={{
                 control: (baseStyles) => ({
@@ -248,16 +238,14 @@ export function YourWork({ setStep, useFormStore }: Step1Props) {
               options={IndustryList}
               required
               onChange={(e: any) => {
-                setDropDownValues((st) => {
-                  return {
+                setDropDownValues((st) => ({
                     ...st,
                     interests: JSON.stringify(
                       e.map(
                         (elm: { label: string; value: string }) => elm.value,
                       ),
                     ),
-                  };
-                });
+                  }));
               }}
               styles={{
                 control: (baseStyles) => ({

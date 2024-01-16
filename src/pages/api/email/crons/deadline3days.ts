@@ -25,11 +25,9 @@ async function handler(_req: NextApiRequest, res: NextApiResponse) {
         },
       },
     });
-    const bountiesWithDeadline = bounties.filter((bounty) => {
-      return dayjs
+    const bountiesWithDeadline = bounties.filter((bounty) => dayjs
         .utc(bounty.deadline?.toISOString().split('T')[0])
-        .isSame(dayjs.utc().add(3, 'day').toISOString().split('T')[0]);
-    });
+        .isSame(dayjs.utc().add(3, 'day').toISOString().split('T')[0]));
 
     const emailPromises = bountiesWithDeadline.map(async (bounty) => {
       const checkLogs = await prisma.emailLogs.findFirst({
@@ -52,12 +50,10 @@ async function handler(_req: NextApiRequest, res: NextApiResponse) {
         },
       });
 
-      const subEmail = subscribe.map((sub) => {
-        return {
+      const subEmail = subscribe.map((sub) => ({
           email: sub.User.email,
           name: sub.User.firstName,
-        };
-      });
+        }));
       const emailsSent: string[] = [];
       await rateLimitedPromiseAll(subEmail, 10, async (e) => {
         if (

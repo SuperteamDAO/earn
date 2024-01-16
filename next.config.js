@@ -1,5 +1,18 @@
+const withBundleAnalyzer = require('@next/bundle-analyzer')({
+  enabled: process.env.ANALYZE === 'true',
+});
+
 /** @type {import('next').NextConfig} */
 const nextConfig = {
+  experimental: {
+    optimizePackageImports: [
+      '@chakra-ui/icons',
+      '@chakra-ui/react',
+      '@emotion/react',
+      '@emotion/styled',
+      'framer-motion',
+    ],
+  },
   eslint: {
     dirs: ['.'],
   },
@@ -29,4 +42,5 @@ const nextConfig = {
     return headers;
   },
 };
-module.exports = nextConfig;
+
+module.exports = withBundleAnalyzer(nextConfig);

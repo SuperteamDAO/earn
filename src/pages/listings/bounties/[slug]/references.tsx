@@ -16,8 +16,7 @@ interface BountyDetailsProps {
   bounty: Bounty | null;
 }
 
-const ReferenceCard = ({ link }: { link: string }) => {
-  return (
+const ReferenceCard = ({ link }: { link: string }) => (
     <Box
       w="100%"
       borderWidth="2px"
@@ -35,7 +34,6 @@ const ReferenceCard = ({ link }: { link: string }) => {
       />
     </Box>
   );
-};
 
 function BountyDetails({ bounty: initialBounty }: BountyDetailsProps) {
   const [bounty] = useState<typeof initialBounty>(initialBounty);

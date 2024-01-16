@@ -96,13 +96,11 @@ export const QuestionHandler = ({
           {question}
         </FormLabel>
         <Select {...register(label)}>
-          {options?.map((e, eIndex) => {
-            return (
+          {options?.map((e, eIndex) => (
               <option key={eIndex} value={e}>
                 {e}
               </option>
-            );
-          })}
+            ))}
         </Select>
       </>
     );
@@ -120,8 +118,7 @@ export const QuestionHandler = ({
         </FormLabel>
         <Controller
           control={control}
-          render={({ field }) => {
-            return (
+          render={({ field }) => (
               <ReactSelect
                 closeMenuOnSelect={false}
                 components={animatedComponents}
@@ -130,8 +127,7 @@ export const QuestionHandler = ({
                 options={option}
                 {...field}
               />
-            );
-          }}
+            )}
           name={'multi-choice'}
         ></Controller>
       </>

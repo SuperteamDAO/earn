@@ -54,9 +54,7 @@ interface HighQualityImageProps extends ImageProps {
 const HighQualityImage: React.FC<HighQualityImageProps> = ({
   alt,
   ...props
-}) => {
-  return <Image alt={alt} {...props} quality={90} />;
-};
+}) => <Image alt={alt} {...props} quality={90} />;
 const Sponsor = () => {
   const [isLargerThan12800px] = useMediaQuery('(min-width: 80rem)');
   const [isLessThan600px] = useMediaQuery('(max-width: 600px)');
@@ -101,8 +99,7 @@ const Sponsor = () => {
     window.addEventListener('scroll', changeBackground);
   }, []);
 
-  const VideoPlayback = () => {
-    return (
+  const VideoPlayback = () => (
       <Grid
         pos="fixed"
         zIndex="100"
@@ -136,7 +133,6 @@ const Sponsor = () => {
         </Flex>
       </Grid>
     );
-  };
 
   function Sec5() {
     return (

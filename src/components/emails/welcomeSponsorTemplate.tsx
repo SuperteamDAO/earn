@@ -2,8 +2,7 @@ import React from 'react';
 
 import { styles } from './styles';
 
-export const WelcomeSponsorTemplate = () => {
-  return (
+export const WelcomeSponsorTemplate = () => (
     <div style={styles.container}>
       <p style={styles.text}>Welcome to Superteam Earn!</p>
       <p style={styles.textWithMargin}>
@@ -26,4 +25,3 @@ export const WelcomeSponsorTemplate = () => {
       </p>
     </div>
   );
-};

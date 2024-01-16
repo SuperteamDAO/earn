@@ -10,8 +10,7 @@ interface TemplateProps {
 export const DeadlineExtendedTemplate = ({
   listingName,
   link,
-}: TemplateProps) => {
-  return (
+}: TemplateProps) => (
     <div style={styles.container}>
       <p style={styles.greetings}>Hello,</p>
       <p style={styles.textWithMargin}>
@@ -29,4 +28,3 @@ export const DeadlineExtendedTemplate = ({
       </p>
     </div>
   );
-};

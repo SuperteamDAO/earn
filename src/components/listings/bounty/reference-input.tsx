@@ -16,8 +16,7 @@ export const ReferenceCard = ({
   index,
 }: Props) => {
   const handleChangeReference = (newLink: string) => {
-    setReferences((prev) => {
-      return prev.map((r) => {
+    setReferences((prev) => prev.map((r) => {
         if (r.order === curentReference.order) {
           return {
             ...r,
@@ -25,8 +24,7 @@ export const ReferenceCard = ({
           };
         }
         return r;
-      });
-    });
+      }));
   };
 
   return (

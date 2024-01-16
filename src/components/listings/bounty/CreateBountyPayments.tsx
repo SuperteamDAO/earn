@@ -271,8 +271,7 @@ export const CreatebountyPayment = ({
               fontSize="1rem"
               fontWeight={500}
             >
-              {tokenList.map((token) => {
-                return (
+              {tokenList.map((token) => (
                   <>
                     <MenuItem
                       key={token.mintAddress}
@@ -289,8 +288,7 @@ export const CreatebountyPayment = ({
                       </HStack>
                     </MenuItem>
                   </>
-                );
-              })}
+                ))}
             </MenuList>
           </Menu>
         </FormControl>

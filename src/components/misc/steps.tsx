@@ -75,8 +75,7 @@ export const VerticalStep = ({
   thisStep,
   label,
   sublabel,
-}: Props) => {
-  return (
+}: Props) => (
     <Flex pos="relative" align={'center'} justify={'center'} gap={3}>
       <Flex
         align={'center'}
@@ -113,4 +112,3 @@ export const VerticalStep = ({
       </Flex>
     </Flex>
   );
-};

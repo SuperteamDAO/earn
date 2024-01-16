@@ -52,9 +52,7 @@ export const Template = ({
   }, []);
 
   const createTemplate = (templateId: string) => {
-    const template: any = bountiesTemplates.find((t: any) => {
-      return t?.id === templateId;
-    });
+    const template: any = bountiesTemplates.find((t: any) => t?.id === templateId);
     setListingType('BOUNTY');
     setBountyBasic({
       title: template?.title || undefined,

@@ -3,20 +3,12 @@
   "extends": [
     "airbnb-base",
     "next/core-web-vitals", // Needed to avoid warning in next.js build: 'The Next.js plugin was not detected in your ESLint configuration'
-    "plugin:prettier/recommended",
+    "prettier",
     "plugin:react/recommended",
     "plugin:react-hooks/recommended"
   ],
   "parser": "@typescript-eslint/parser",
-  "rules": {
-    "prettier/prettier": [
-      "error",
-      {
-        "singleQuote": true,
-        "endOfLine": "auto"
-      }
-    ]
-  },
+  "rules": {},
   "overrides": [
     // Configuration for TypeScript files
     {
@@ -29,22 +21,11 @@
         "react",
         "react-hooks"
       ],
-      "extends": [
-        "airbnb-typescript",
-        "next/core-web-vitals",
-        "plugin:prettier/recommended"
-      ],
+      "extends": ["airbnb-typescript", "next/core-web-vitals", "prettier"],
       "parserOptions": {
         "project": "./tsconfig.json"
       },
       "rules": {
-        "prettier/prettier": [
-          "error",
-          {
-            "singleQuote": true,
-            "endOfLine": "auto"
-          }
-        ],
         "import/no-extraneous-dependencies": "off", // Allow import devDependencies
         "react/destructuring-assignment": "off", // Vscode doesn't support automatically destructuring, it's a pain to add a new variable
         "react/require-default-props": "off", // Allow non-defined react props as undefined

@@ -2,8 +2,7 @@ import React from 'react';
 
 import { styles } from './styles';
 
-export const WelcomeTalentTemplate = () => {
-  return (
+export const WelcomeTalentTemplate = () => (
     <div style={styles.container}>
       <p style={styles.textWithMargin}>
         OK let&apos;s get this out of the way.
@@ -37,4 +36,3 @@ export const WelcomeTalentTemplate = () => {
       </p>
     </div>
   );
-};

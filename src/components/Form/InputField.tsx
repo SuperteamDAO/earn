@@ -20,8 +20,7 @@ export const InputField = ({
   onChange,
   validationErrorMessage,
   isRequired = false,
-}: InputFieldProps) => {
-  return (
+}: InputFieldProps) => (
     <Box w={'full'} mb={'1.25rem'}>
       <FormLabel color={'brand.slate.500'}>{label}</FormLabel>
       <Input
@@ -42,4 +41,3 @@ export const InputField = ({
       )}
     </Box>
   );
-};

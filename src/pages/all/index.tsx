@@ -65,8 +65,7 @@ function AllListingsPage() {
             </Flex>
           )}
           {!isListingsLoading &&
-            listings?.bounties?.map((bounty) => {
-              return (
+            listings?.bounties?.map((bounty) => (
                 <BountiesCard
                   slug={bounty?.slug}
                   rewardAmount={bounty?.rewardAmount}
@@ -80,8 +79,7 @@ function AllListingsPage() {
                   applicationType={bounty.applicationType}
                   isWinnersAnnounced={bounty?.isWinnersAnnounced}
                 />
-              );
-            })}
+              ))}
         </ListingSection>
       </Box>
     </Home>

@@ -185,8 +185,7 @@ const HomePage: NextPage = () => {
             </Flex>
           )}
           {!isListingsLoading &&
-            grants?.grants?.map((grant) => {
-              return (
+            grants?.grants?.map((grant) => (
                 <GrantsCard
                   sponsorName={grant?.sponsor?.name}
                   logo={grant?.sponsor?.logo}
@@ -196,8 +195,7 @@ const HomePage: NextPage = () => {
                   title={grant?.title}
                   short_description={grant?.shortDescription}
                 />
-              );
-            })}
+              ))}
         </ListingSection>
       </Box>
     </Home>

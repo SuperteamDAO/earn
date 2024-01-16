@@ -197,8 +197,7 @@ const TotalStats = ({
   bountyCount: number;
   TVE: number;
   isTotalLoading: boolean;
-}) => {
-  return (
+}) => (
     <Flex
       align={'center'}
       justify={'space-between'}
@@ -254,7 +253,6 @@ const TotalStats = ({
       </Flex>
     </Flex>
   );
-};
 
 interface EarnerProps {
   name: string;
@@ -391,8 +389,7 @@ export const HomeSideBar = ({
   total,
   earners,
   isTotalLoading,
-}: SideBarProps) => {
-  return (
+}: SideBarProps) => (
     <Flex direction={'column'} rowGap={'2.5rem'} w={'22.125rem'} pl={6}>
       <GettingStarted userInfo={userInfo} />
       <TotalStats
@@ -403,4 +400,3 @@ export const HomeSideBar = ({
       <RecentEarners earners={earners} />
     </Flex>
   );
-};

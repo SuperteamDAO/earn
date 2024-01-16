@@ -126,13 +126,11 @@ export function AboutYou({ setStep, useFormStore }: Step1Props) {
               placeholder="Select your Country"
               {...register('location', { required: true })}
             >
-              {CountryList.map((ct) => {
-                return (
+              {CountryList.map((ct) => (
                   <option key={ct} value={ct}>
                     {ct}
                   </option>
-                );
-              })}
+                ))}
             </Select>
           </Box>
           <VStack align={'start'} gap={2} rowGap={'0'} my={3} mb={'25px'}>

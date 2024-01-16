@@ -12,8 +12,7 @@ export const CommentSponsorTemplate = ({
   name,
   bountyName,
   link,
-}: TemplateProps) => {
-  return (
+}: TemplateProps) => (
     <div style={styles.container}>
       <p style={styles.greetings}>Hello {name},</p>
       <p style={styles.textWithMargin}>
@@ -40,4 +39,3 @@ export const CommentSponsorTemplate = ({
       </p>
     </div>
   );
-};

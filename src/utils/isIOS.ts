@@ -1,3 +1,1 @@
-export const isIOS = (): boolean => {
-  return /iPad|iPhone|iPod/.test(navigator.userAgent);
-};
+export const isIOS = (): boolean => /iPad|iPhone|iPod/.test(navigator.userAgent);

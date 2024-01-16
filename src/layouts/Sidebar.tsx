@@ -45,8 +45,7 @@ interface NavItemProps extends FlexProps {
   children: ReactText;
 }
 
-const NavItem = ({ icon, link, isActive, children, ...rest }: NavItemProps) => {
-  return (
+const NavItem = ({ icon, link, isActive, children, ...rest }: NavItemProps) => (
     <Link
       as={NextLink}
       _focus={{ boxShadow: 'none' }}
@@ -82,7 +81,6 @@ const NavItem = ({ icon, link, isActive, children, ...rest }: NavItemProps) => {
       </Flex>
     </Link>
   );
-};
 
 const SidebarContent = ({ ...rest }: BoxProps) => {
   const router = useRouter();
