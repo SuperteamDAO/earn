@@ -19,7 +19,7 @@ interface LoginProps {
   acceptUser?: (user: User) => void;
 }
 
-function LoginWrapper({
+export function LoginWrapper({
   triggerLogin,
   setTriggerLogin,
   inviteInfo,
@@ -83,5 +83,3 @@ function LoginWrapper({
     </>
   );
 }
-
-export default LoginWrapper;

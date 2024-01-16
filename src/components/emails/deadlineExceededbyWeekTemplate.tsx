@@ -27,8 +27,11 @@ export const DeadlineExceededbyWeekTemplate = ({
         </a>{' '}
         to review the submissions.
       </p>
-      <p style={styles.salutation}>Best,</p>
-      <p style={styles.text}>Superteam Earn</p>
+      <p style={styles.salutation}>
+        Best,
+        <br />
+        Superteam Earn
+      </p>
       <p style={styles.unsubscribe}>
         Click{' '}
         <a

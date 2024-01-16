@@ -44,7 +44,7 @@ interface Bounty {
   references?: References[];
 }
 
-function ListingHeader({
+export function ListingHeader({
   title,
   status,
   deadline,
@@ -182,17 +182,19 @@ function ListingHeader({
                       Submissions In Review
                     </Text>
                   )}
-                {!hasDeadlineEnded && status === 'OPEN' && (
-                  <Text
-                    px={3}
-                    py={1}
-                    color={'green.600'}
-                    bg={'green.100'}
-                    rounded={'full'}
-                  >
-                    Submissions Open
-                  </Text>
-                )}
+                {!hasDeadlineEnded &&
+                  !isWinnersAnnounced &&
+                  status === 'OPEN' && (
+                    <Text
+                      px={3}
+                      py={1}
+                      color={'green.600'}
+                      bg={'green.100'}
+                      rounded={'full'}
+                    >
+                      Submissions Open
+                    </Text>
+                  )}
               </Flex>
             </HStack>
             {!isTemplate && (
@@ -309,7 +311,7 @@ function ListingHeader({
                 In Review
               </Text>
             )}
-            {!hasDeadlineEnded && status === 'OPEN' && (
+            {!hasDeadlineEnded && !isWinnersAnnounced && status === 'OPEN' && (
               <Text
                 px={3}
                 py={1}
@@ -503,5 +505,3 @@ function ListingHeader({
     </VStack>
   );
 }
-
-export default ListingHeader;

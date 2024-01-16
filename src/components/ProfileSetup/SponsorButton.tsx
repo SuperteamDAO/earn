@@ -7,7 +7,7 @@ import { BsBriefcaseFill } from 'react-icons/bs';
 import { SponsorStore } from '@/store/sponsor';
 import { userStore } from '@/store/user';
 
-function SponsorButton() {
+export function SponsorButton() {
   const router = useRouter();
   const { setCurrentSponsor } = SponsorStore();
   const { userInfo } = userStore();
@@ -61,5 +61,3 @@ function SponsorButton() {
     </>
   );
 }
-
-export default SponsorButton;

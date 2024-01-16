@@ -11,12 +11,12 @@ import type {
   Ques,
   QuestionType,
 } from '@/components/listings/bounty/questions/builder';
-import Template from '@/components/listings/templates/template';
+import { Template } from '@/components/listings/templates/template';
 import { SuccessListings } from '@/components/modals/successListings';
-import ErrorSection from '@/components/shared/ErrorSection';
+import { ErrorSection } from '@/components/shared/ErrorSection';
 import { type MultiSelectOptions, tokenList } from '@/constants';
 import type { Bounty, References } from '@/interface/bounty';
-import FormLayout from '@/layouts/FormLayout';
+import { FormLayout } from '@/layouts/FormLayout';
 import { userStore } from '@/store/user';
 import { getBountyDraftStatus } from '@/utils/bounty';
 import { dayjs } from '@/utils/dayjs';
@@ -28,7 +28,7 @@ interface Props {
   type: 'open' | 'permissioned';
 }
 
-function CreateListing({ bounty, isEditMode = false, type }: Props) {
+export function CreateListing({ bounty, isEditMode = false, type }: Props) {
   const router = useRouter();
   const { userInfo } = userStore();
   // Templates - 1
@@ -333,5 +333,3 @@ function CreateListing({ bounty, isEditMode = false, type }: Props) {
     </>
   );
 }
-
-export default CreateListing;

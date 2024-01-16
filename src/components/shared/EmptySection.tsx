@@ -1,7 +1,7 @@
 import { Flex, Text } from '@chakra-ui/react';
 import { AiOutlineInfoCircle } from 'react-icons/ai';
 
-function ErrorSection({
+export function EmptySection({
   title,
   message,
 }: {
@@ -22,5 +22,3 @@ function ErrorSection({
     </Flex>
   );
 }
-
-export default ErrorSection;

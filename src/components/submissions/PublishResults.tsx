@@ -28,7 +28,7 @@ interface Props {
   hasWinnersAnnounced?: boolean;
 }
 
-function PublishResults({
+export function PublishResults({
   isOpen,
   onClose,
   totalWinners,
@@ -183,5 +183,3 @@ function PublishResults({
     </Modal>
   );
 }
-
-export default PublishResults;

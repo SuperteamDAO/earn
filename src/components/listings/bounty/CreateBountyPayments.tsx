@@ -306,7 +306,7 @@ export const CreatebountyPayment = ({
               {
                 tokenList.find(
                   (token) => token.tokenSymbol === bountyPayment.token
-                )?.tokenName
+                )?.tokenSymbol
               }
               )
             </FormLabel>

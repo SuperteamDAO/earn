@@ -1,6 +1,6 @@
 import { Flex } from '@chakra-ui/react';
 
-function Loading() {
+export function Loading() {
   return (
     <Flex align={'center'} justify="center">
       <div className="earn-loader">
@@ -10,5 +10,3 @@ function Loading() {
     </Flex>
   );
 }
-
-export default Loading;

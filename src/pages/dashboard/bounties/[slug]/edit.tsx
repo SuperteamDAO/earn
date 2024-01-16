@@ -3,10 +3,10 @@ import type { GetServerSideProps } from 'next';
 import { useRouter } from 'next/router';
 import { useEffect, useState } from 'react';
 
-import CreateListing from '@/components/listings/bounty/Bounty';
-import LoadingSection from '@/components/shared/LoadingSection';
+import { CreateListing } from '@/components/listings/bounty/Bounty';
+import { LoadingSection } from '@/components/shared/LoadingSection';
 import type { Bounty } from '@/interface/bounty';
-import Sidebar from '@/layouts/Sidebar';
+import { Sidebar } from '@/layouts/Sidebar';
 import { userStore } from '@/store/user';
 
 interface Props {

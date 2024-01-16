@@ -3,7 +3,7 @@ import Avatar from 'boring-avatars';
 
 import type { User } from '@/interface/user';
 
-function UserAvatar({ user }: { user: User }) {
+export function UserAvatar({ user }: { user: User }) {
   if (user?.photo) {
     return (
       <Image
@@ -23,5 +23,3 @@ function UserAvatar({ user }: { user: User }) {
     />
   );
 }
-
-export default UserAvatar;

@@ -101,7 +101,7 @@ export const SubmissionModal = ({
       scrollBehavior={'inside'}
       size={'xl'}
     >
-      <ModalOverlay></ModalOverlay>
+      <ModalOverlay />
       <ModalContent>
         <ModalHeader color="brand.slate.800">
           {isPermissioned ? 'Submit Your Application' : 'Bounty Submission'}
