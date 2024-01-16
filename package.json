@@ -110,5 +110,10 @@
     "prettier": "^3.2.2",
     "prisma": "5.8.0",
     "typescript": "5.3.3"
-  }
+  },
+  "browserslist": [
+    "Chrome >= 100.0.4896.127",
+    "Firefox >= 115",
+    "Safari >= 14.1.2"
+  ]
 }
