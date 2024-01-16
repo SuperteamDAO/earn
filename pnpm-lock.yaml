@@ -46,7 +46,7 @@ dependencies:
     version: 0.9.34(@solana/web3.js@1.89.0)(bs58@4.0.1)(react-dom@18.2.0)(react-native@0.73.2)(react@18.2.0)
   "@solana/wallet-adapter-wallets":
     specifier: ^0.19.25
-    version: 0.19.25(@babel/runtime@7.23.8)(@particle-network/auth@1.2.2)(@solana/web3.js@1.89.0)(bs58@4.0.1)(react-dom@18.2.0)(react-native@0.73.2)(react@18.2.0)(tslib@2.6.2)
+    version: 0.19.25(@babel/runtime@7.23.8)(@particle-network/auth@1.3.0)(@solana/web3.js@1.89.0)(bs58@4.0.1)(react-dom@18.2.0)(react-native@0.73.2)(react@18.2.0)(tslib@2.6.2)
   "@solana/web3.js":
     specifier: ^1.89.0
     version: 1.89.0
@@ -4213,7 +4213,7 @@ packages:
       react-modal: 3.16.1(react-dom@16.13.1)(react@16.13.1)
       react-qr-reader: 2.2.1(react-dom@16.13.1)(react@16.13.1)
       rxjs: 6.6.7
-      typescript: 4.9.4
+      typescript: 4.9.5
     dev: false
 
   /@keystonehq/sol-keyring@0.3.1:
@@ -4667,7 +4667,6 @@ packages:
     dependencies:
       is-glob: 4.0.3
       micromatch: 4.0.5
-      napi-wasm: 1.1.0
     dev: false
     bundledDependencies:
       - napi-wasm
@@ -4744,23 +4743,23 @@ packages:
       uuidv4: 6.2.13
     dev: false
 
-  /@particle-network/auth@1.2.2:
+  /@particle-network/auth@1.3.0:
     resolution:
       {
-        integrity: sha512-xm5j+qex8z0cYxNy9XuxVaIBdb1x7edl4W5XDWx1Px/TdtuqbhGwMsCGbzkTc++yB/LTSIXzzdbDW8a4gRU/gQ==,
+        integrity: sha512-iCBiOAo/yrK7wLbZXCF1Z+eOOUc1OQwZCFt+HFCNtNjkM1t0Uj9+ugffuHJipSqtgzjzvw8y9IYE5dTGj89DlA==,
       }
     dependencies:
       "@particle-network/analytics": 1.0.1
-      "@particle-network/chains": 1.3.5
+      "@particle-network/chains": 1.3.6
       "@particle-network/crypto": 1.0.1
       buffer: 6.0.3
       draggabilly: 3.0.0
     dev: false
 
-  /@particle-network/chains@1.3.5:
+  /@particle-network/chains@1.3.6:
     resolution:
       {
-        integrity: sha512-od0ZFi+YU+QoemQxgkeSWVPpz+q2JgqAls56MyhkRlgety7fCG53PeVPu8y1vT/cOtp8o7G4ee/xofl3xYwpjA==,
+        integrity: sha512-zT9In4svIu5c01C881fhyHCklH+gJP9q73KodenLKYK87cSFp+79/NFdjPSkvAnwwdKPjPnAlxENfd9cyr30gg==,
       }
     dev: false
 
@@ -4774,7 +4773,7 @@ packages:
       uuidv4: 6.2.13
     dev: false
 
-  /@particle-network/solana-wallet@1.2.1(@particle-network/auth@1.2.2)(@solana/web3.js@1.89.0)(bs58@4.0.1):
+  /@particle-network/solana-wallet@1.2.1(@particle-network/auth@1.3.0)(@solana/web3.js@1.89.0)(bs58@4.0.1):
     resolution:
       {
         integrity: sha512-s7kG1NdC+aB4+pp4KGr+N9DwPUEG6V1rYVh3n3xRDjXBd7QoycY8UZIyKthELeSrBrTQdr2rSq3Dhmh4LAtOCg==,
@@ -4784,7 +4783,7 @@ packages:
       "@solana/web3.js": ^1.50.1
       bs58: ^4.0.1
     dependencies:
-      "@particle-network/auth": 1.2.2
+      "@particle-network/auth": 1.3.0
       "@solana/web3.js": 1.89.0
       bs58: 4.0.1
     dev: false
@@ -5038,7 +5037,7 @@ packages:
       cosmiconfig: 5.2.1
       deepmerge: 4.3.1
       glob: 7.2.3
-      joi: 17.11.0
+      joi: 17.11.1
     transitivePeerDependencies:
       - encoding
     dev: false
@@ -5183,7 +5182,7 @@ packages:
         integrity: sha512-MgOkmrXH4zsGxhte4YqKL7d+N8ZNEd3w1wo56MZlhu5WabwCJh87wYpU5T8vyfujFLYOFuFK5jjlcbs8F4/WDw==,
       }
     dependencies:
-      joi: 17.11.0
+      joi: 17.11.1
     dev: false
 
   /@react-native-community/cli@12.3.0:
@@ -6056,7 +6055,7 @@ packages:
       "@solana/web3.js": 1.89.0
     dev: false
 
-  /@solana/wallet-adapter-particle@0.1.11(@particle-network/auth@1.2.2)(@solana/web3.js@1.89.0)(bs58@4.0.1):
+  /@solana/wallet-adapter-particle@0.1.11(@particle-network/auth@1.3.0)(@solana/web3.js@1.89.0)(bs58@4.0.1):
     resolution:
       {
         integrity: sha512-Amhbpz9J93KGyXeyaNTHqkhhmeFHTF/WwdhAXhjt4HrhnO2BnI/8t7M+hDH2nR7GPdspQ6OKoIItd/UtfTxGRQ==,
@@ -6065,7 +6064,7 @@ packages:
     peerDependencies:
       "@solana/web3.js": ^1.77.3
     dependencies:
-      "@particle-network/solana-wallet": 1.2.1(@particle-network/auth@1.2.2)(@solana/web3.js@1.89.0)(bs58@4.0.1)
+      "@particle-network/solana-wallet": 1.2.1(@particle-network/auth@1.3.0)(@solana/web3.js@1.89.0)(bs58@4.0.1)
       "@solana/wallet-adapter-base": 0.9.23(@solana/web3.js@1.89.0)
       "@solana/web3.js": 1.89.0
     transitivePeerDependencies:
@@ -6360,7 +6359,7 @@ packages:
       - utf-8-validate
     dev: false
 
-  /@solana/wallet-adapter-wallets@0.19.25(@babel/runtime@7.23.8)(@particle-network/auth@1.2.2)(@solana/web3.js@1.89.0)(bs58@4.0.1)(react-dom@18.2.0)(react-native@0.73.2)(react@18.2.0)(tslib@2.6.2):
+  /@solana/wallet-adapter-wallets@0.19.25(@babel/runtime@7.23.8)(@particle-network/auth@1.3.0)(@solana/web3.js@1.89.0)(bs58@4.0.1)(react-dom@18.2.0)(react-native@0.73.2)(react@18.2.0)(tslib@2.6.2):
     resolution:
       {
         integrity: sha512-gk25fVa4HgB+3x4mqyr9fN3emp9TcEm8Rk2kVn3LZWzI01fmWVHA0TwaVnvN7bNycBc4MTCfQwP1HiELJloC+Q==,
@@ -6388,7 +6387,7 @@ packages:
       "@solana/wallet-adapter-nightly": 0.1.16(@solana/web3.js@1.89.0)
       "@solana/wallet-adapter-nufi": 0.1.17(@solana/web3.js@1.89.0)
       "@solana/wallet-adapter-onto": 0.1.7(@solana/web3.js@1.89.0)
-      "@solana/wallet-adapter-particle": 0.1.11(@particle-network/auth@1.2.2)(@solana/web3.js@1.89.0)(bs58@4.0.1)
+      "@solana/wallet-adapter-particle": 0.1.11(@particle-network/auth@1.3.0)(@solana/web3.js@1.89.0)(bs58@4.0.1)
       "@solana/wallet-adapter-phantom": 0.9.24(@solana/web3.js@1.89.0)
       "@solana/wallet-adapter-safepal": 0.5.18(@solana/web3.js@1.89.0)
       "@solana/wallet-adapter-saifu": 0.1.15(@solana/web3.js@1.89.0)
@@ -7975,6 +7974,17 @@ packages:
       "@typescript-eslint/visitor-keys": 6.18.1
     dev: true
 
+  /@typescript-eslint/scope-manager@6.19.0:
+    resolution:
+      {
+        integrity: sha512-dO1XMhV2ehBI6QN8Ufi7I10wmUovmLU0Oru3n5LVlM2JuzB4M+dVphCPLkVpKvGij2j/pHBWuJ9piuXx+BhzxQ==,
+      }
+    engines: { node: ^16.0.0 || >=18.0.0 }
+    dependencies:
+      "@typescript-eslint/types": 6.19.0
+      "@typescript-eslint/visitor-keys": 6.19.0
+    dev: true
+
   /@typescript-eslint/type-utils@6.18.1(eslint@8.56.0)(typescript@5.3.3):
     resolution:
       {
@@ -8010,6 +8020,14 @@ packages:
     resolution:
       {
         integrity: sha512-4TuMAe+tc5oA7wwfqMtB0Y5OrREPF1GeJBAjqwgZh1lEMH5PJQgWgHGfYufVB51LtjD+peZylmeyxUXPfENLCw==,
+      }
+    engines: { node: ^16.0.0 || >=18.0.0 }
+    dev: true
+
+  /@typescript-eslint/types@6.19.0:
+    resolution:
+      {
+        integrity: sha512-lFviGV/vYhOy3m8BJ/nAKoAyNhInTdXpftonhWle66XHAtT1ouBlkjL496b5H5hb8dWXHwtypTqgtb/DEa+j5A==,
       }
     engines: { node: ^16.0.0 || >=18.0.0 }
     dev: true
@@ -8052,6 +8070,31 @@ packages:
     dependencies:
       "@typescript-eslint/types": 6.18.1
       "@typescript-eslint/visitor-keys": 6.18.1
+      debug: 4.3.4
+      globby: 11.1.0
+      is-glob: 4.0.3
+      minimatch: 9.0.3
+      semver: 7.5.4
+      ts-api-utils: 1.0.3(typescript@5.3.3)
+      typescript: 5.3.3
+    transitivePeerDependencies:
+      - supports-color
+    dev: true
+
+  /@typescript-eslint/typescript-estree@6.19.0(typescript@5.3.3):
+    resolution:
+      {
+        integrity: sha512-o/zefXIbbLBZ8YJ51NlkSAt2BamrK6XOmuxSR3hynMIzzyMY33KuJ9vuMdFSXW+H0tVvdF9qBPTHA91HDb4BIQ==,
+      }
+    engines: { node: ^16.0.0 || >=18.0.0 }
+    peerDependencies:
+      typescript: "*"
+    peerDependenciesMeta:
+      typescript:
+        optional: true
+    dependencies:
+      "@typescript-eslint/types": 6.19.0
+      "@typescript-eslint/visitor-keys": 6.19.0
       debug: 4.3.4
       globby: 11.1.0
       is-glob: 4.0.3
@@ -8108,6 +8151,28 @@ packages:
       - typescript
     dev: true
 
+  /@typescript-eslint/utils@6.19.0(eslint@8.56.0)(typescript@5.3.3):
+    resolution:
+      {
+        integrity: sha512-QR41YXySiuN++/dC9UArYOg4X86OAYP83OWTewpVx5ct1IZhjjgTLocj7QNxGhWoTqknsgpl7L+hGygCO+sdYw==,
+      }
+    engines: { node: ^16.0.0 || >=18.0.0 }
+    peerDependencies:
+      eslint: ^7.0.0 || ^8.0.0
+    dependencies:
+      "@eslint-community/eslint-utils": 4.4.0(eslint@8.56.0)
+      "@types/json-schema": 7.0.15
+      "@types/semver": 7.5.6
+      "@typescript-eslint/scope-manager": 6.19.0
+      "@typescript-eslint/types": 6.19.0
+      "@typescript-eslint/typescript-estree": 6.19.0(typescript@5.3.3)
+      eslint: 8.56.0
+      semver: 7.5.4
+    transitivePeerDependencies:
+      - supports-color
+      - typescript
+    dev: true
+
   /@typescript-eslint/visitor-keys@5.62.0:
     resolution:
       {
@@ -8127,6 +8192,17 @@ packages:
     engines: { node: ^16.0.0 || >=18.0.0 }
     dependencies:
       "@typescript-eslint/types": 6.18.1
+      eslint-visitor-keys: 3.4.3
+    dev: true
+
+  /@typescript-eslint/visitor-keys@6.19.0:
+    resolution:
+      {
+        integrity: sha512-hZaUCORLgubBvtGpp1JEFEazcuEdfxta9j4iUwdSAr7mEsYYAp3EAUyCZk3VEEqGj6W+AV4uWyrDGtrlawAsgQ==,
+      }
+    engines: { node: ^16.0.0 || >=18.0.0 }
+    dependencies:
+      "@typescript-eslint/types": 6.19.0
       eslint-visitor-keys: 3.4.3
     dev: true
 
@@ -9699,7 +9775,7 @@ packages:
     dependencies:
       function-bind: 1.1.2
       get-intrinsic: 1.2.2
-      set-function-length: 1.1.1
+      set-function-length: 1.2.0
 
   /caller-callsite@2.0.0:
     resolution:
@@ -10014,7 +10090,6 @@ packages:
         integrity: sha512-JQHZ2QMW6l3aH/j6xCqQThY/9OH4D/9ls34cgkUBiEeocRTU04tHfKPBsUK1PqZCUQM7GiA0IIXJSuXHI64Kbg==,
       }
     engines: { node: ">=0.8" }
-    requiresBuild: true
     dev: false
 
   /cloudinary-core@2.13.0(lodash@4.17.21):
@@ -10689,7 +10764,6 @@ packages:
       {
         integrity: sha512-eFuaLoy/Rxalv2kr+lqMlUnrDWV+3j4pljOIJgLIhI058IQfWJ7vXhyEIHu+HtC738klGALYxOKDO0bQP3tg8A==,
       }
-    requiresBuild: true
     dependencies:
       clone: 1.0.4
     dev: false
@@ -11196,7 +11270,7 @@ packages:
       object-keys: 1.1.1
       object.assign: 4.1.5
       regexp.prototype.flags: 1.5.1
-      safe-array-concat: 1.0.1
+      safe-array-concat: 1.1.0
       safe-regex-test: 1.0.2
       string.prototype.trim: 1.2.8
       string.prototype.trimend: 1.0.7
@@ -11228,7 +11302,7 @@ packages:
       has-symbols: 1.0.3
       internal-slot: 1.0.6
       iterator.prototype: 1.1.2
-      safe-array-concat: 1.0.1
+      safe-array-concat: 1.1.0
     dev: true
 
   /es-set-tostringtag@2.0.2:
@@ -11475,7 +11549,7 @@ packages:
     peerDependencies:
       eslint: ">=6"
     dependencies:
-      "@typescript-eslint/utils": 6.18.1(eslint@8.56.0)(typescript@5.3.3)
+      "@typescript-eslint/utils": 6.19.0(eslint@8.56.0)(typescript@5.3.3)
       eslint: 8.56.0
     transitivePeerDependencies:
       - supports-color
@@ -13143,7 +13217,6 @@ packages:
       {
         integrity: sha512-WKa+XuLG1A1R0UWhl2+1XQSi+fZWMsYKffMZTTYsiZaUD8k2yDAj5atimTUD2TZkyCkNEeYE5NhFZmupOGtjYQ==,
       }
-    requiresBuild: true
     dev: false
 
   /iron-webcrypto@1.0.0:
@@ -13811,10 +13884,10 @@ packages:
     hasBin: true
     dev: false
 
-  /joi@17.11.0:
+  /joi@17.11.1:
     resolution:
       {
-        integrity: sha512-NgB+lZLNoqISVy1rZocE9PZI36bL/77ie924Ri43yEvi9GUUMPeyVIr8KdFTMUlby1p0PBYMk9spIxEUQYqrJQ==,
+        integrity: sha512-671acnrx+w96PCcQOzvm0VYQVwNL2PVgZmDRaFuSsx8sIUmGzYElPw5lU8F3Cr0jOuPs1oM56p7W2a1cdDOwcw==,
       }
     dependencies:
       "@hapi/hoek": 9.3.0
@@ -14069,7 +14142,6 @@ packages:
       {
         integrity: sha512-m6F1R3z8jjlf2imQHS2Qez5sjKWQzbuuhuJ/FKYFRZvPE3PuHcSMVZzfsLhGVOkfd20obL5SWEBew5ShlquNxg==,
       }
-    requiresBuild: true
     optionalDependencies:
       graceful-fs: 4.2.11
     dev: false
@@ -15138,13 +15210,6 @@ packages:
       }
     engines: { node: ^10 || ^12 || ^13.7 || ^14 || >=15.0.1 }
     hasBin: true
-    dev: false
-
-  /napi-wasm@1.1.0:
-    resolution:
-      {
-        integrity: sha512-lHwIAJbmLSjF9VDRm9GoVOy9AGp3aIvkjv+Kvz9h16QR3uSVYH78PNQUnT2U4X53mhlnV2M7wrhibQ3GHicDmg==,
-      }
     dev: false
 
   /natural-compare@1.4.0:
@@ -17559,10 +17624,10 @@ packages:
       tslib: 1.14.1
     dev: false
 
-  /safe-array-concat@1.0.1:
+  /safe-array-concat@1.1.0:
     resolution:
       {
-        integrity: sha512-6XbUAseYE2KtOuGueyeobCySj9L4+66Tn6KQMOPQJrAJEowYKW/YR/MGJZl7FdydUdaFu4LYyDZjxf4/Nmo23Q==,
+        integrity: sha512-ZdQ0Jeb9Ofti4hbt5lX3T2JcAamT9hfzYU1MNB+z/jaEbB6wfFfPIR/zEORmZqobkCCJhSjodobH6WHNmJ97dg==,
       }
     engines: { node: ">=0.4" }
     dependencies:
@@ -17781,14 +17846,15 @@ packages:
       }
     dev: false
 
-  /set-function-length@1.1.1:
+  /set-function-length@1.2.0:
     resolution:
       {
-        integrity: sha512-VoaqjbBJKiWtg4yRcKBQ7g7wnGnLV3M8oLvVWwOk2PdYY6PEFegR1vezXR0tw6fZGF9csVakIRjrJiy2veSBFQ==,
+        integrity: sha512-4DBHDoyHlM1IRPGYcoxexgh67y4ueR53FKV1yyxwFMY7aCqcN/38M1+SwZ/qJQ8iLv7+ck385ot4CcisOAPT9w==,
       }
     engines: { node: ">= 0.4" }
     dependencies:
       define-data-property: 1.1.1
+      function-bind: 1.1.2
       get-intrinsic: 1.2.2
       gopd: 1.0.1
       has-property-descriptors: 1.0.1
@@ -17810,7 +17876,6 @@ packages:
       {
         integrity: sha512-E5LDX7Wrp85Kil5bhZv46j8jOeboKq5JMmYM3gVGdGH8xFpPWXUMsNrlODCrkoxMEeNi/XZIwuRvY4XNwYMJpw==,
       }
-    requiresBuild: true
     dev: false
 
   /sha.js@2.4.11:
@@ -17962,7 +18027,6 @@ packages:
         integrity: sha512-94hK0Hh8rPqQl2xXc3HsaBoOXKV20MToPkcXvwbISWLEs+64sBq5kFgn2kJDHb1Pry9yrP0dxrCI9RRci7RXKg==,
       }
     engines: { node: ">= 6.0.0", npm: ">= 3.0.0" }
-    requiresBuild: true
     dev: false
 
   /snake-case@3.0.4:
@@ -18692,7 +18756,6 @@ packages:
         integrity: sha512-o5sSPKEkg/DIQNmH43V0/uerLrpzVedkUh8tGNvaeXpfpuwjKenlSox/2O/BTlZUtEe+JG7s5YhEz608PlAHRA==,
       }
     engines: { node: ">=0.6" }
-    requiresBuild: true
     dev: false
 
   /toml@3.0.0:
@@ -18872,10 +18935,10 @@ packages:
       }
     dev: false
 
-  /typescript@4.9.4:
+  /typescript@4.9.5:
     resolution:
       {
-        integrity: sha512-Uz+dTXYzxXXbsFpM86Wh3dKCxrQqUcVMxwU54orwlJjOpO3ao8L7j5lH+dWfTwgCwIuM9GQ2kvVotzYJMXTBZg==,
+        integrity: sha512-1FXk9E2Hm+QzZQ7z+McJiHL4NW1F2EzMu9Nq9i3zAaGqibafqYwCVU6WyWAuyQRRzOlxou8xZSyXLEN8oKj24g==,
       }
     engines: { node: ">=4.2.0" }
     hasBin: true
@@ -19049,7 +19112,6 @@ packages:
         integrity: sha512-rBJeI5CXAlmy1pV+617WB9J63U6XcazHHF2f2dbJix4XzpUF0RS3Zbj0FGIOCAva5P/d/GBOYaACQ1w+0azUkg==,
       }
     engines: { node: ">= 4.0.0" }
-    requiresBuild: true
     dev: false
 
   /unload@2.4.1:
@@ -19709,7 +19771,6 @@ packages:
       {
         integrity: sha512-a4UGQaWPH59mOXUYnAG2ewncQS4i4F43Tv3JoAM+s2VDAmS9NsK8GpDMLrCHPksFT7h3K6TOoUNn2pb7RoXx4g==,
       }
-    requiresBuild: true
     dev: false
 
   /yallist@4.0.0:

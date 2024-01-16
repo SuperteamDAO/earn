@@ -10,6 +10,7 @@ import {
 } from '@chakra-ui/icons';
 import {
   Button,
+  Divider,
   Flex,
   IconButton,
   Image,
@@ -274,7 +275,20 @@ function Bounties() {
           </ModalFooter>
         </ModalContent>
       </Modal>
-      <Flex justify="between" mb={4}>
+      <Flex justify="space-between" w="100%" mb={4}>
+        <Flex align="center" gap={3}>
+          <Text color="brand.slate.800" fontSize="lg" fontWeight={600}>
+            My Listings
+          </Text>
+          <Divider
+            h="60%"
+            borderColor="brand.slate.200"
+            orientation="vertical"
+          />
+          <Text color="brand.slate.500" letterSpacing={'-0.3px'}>
+            The one place to manage your listings
+          </Text>
+        </Flex>
         <InputGroup w={52}>
           <Input
             bg={'white'}

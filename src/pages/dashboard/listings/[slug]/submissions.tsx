@@ -55,6 +55,7 @@ import {
   createPaymentSPL,
 } from '@/utils/contract/contract';
 import { dayjs } from '@/utils/dayjs';
+import { getURLSanitized } from '@/utils/getURLSanitized';
 import { sortRank } from '@/utils/rank';
 import { truncatePublicKey } from '@/utils/truncatePublicKey';
 
@@ -190,18 +191,6 @@ function BountySubmissions({ slug }: Props) {
     } catch (e) {
       setIsExporting(false);
     }
-  };
-
-  const getURLSanitized = (url: string) => {
-    if (!url || url === '-' || url === '#') return url;
-    if (
-      !url.includes('https://') &&
-      !url.includes('http://') &&
-      !url.includes('www')
-    ) {
-      return `https://${url}`;
-    }
-    return url;
   };
 
   const handlePayout = async ({

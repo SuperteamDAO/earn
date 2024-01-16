@@ -18,7 +18,7 @@ import { useRouter } from 'next/router';
 import type { ReactNode, ReactText } from 'react';
 import React from 'react';
 import type { IconType } from 'react-icons';
-import { AiFillFire, AiOutlineUsergroupAdd } from 'react-icons/ai';
+import { MdList, MdOutlineGroup } from 'react-icons/md';
 
 import { LoadingSection } from '@/components/shared/LoadingSection';
 import { Banner } from '@/components/sponsor/Banner';
@@ -34,8 +34,8 @@ interface LinkItemProps {
 }
 
 const LinkItems: Array<LinkItemProps> = [
-  { name: 'My Listings', link: '/bounties', icon: AiFillFire },
-  { name: 'Members', link: '/members', icon: AiOutlineUsergroupAdd },
+  { name: 'My Listings', link: '/listings', icon: MdList },
+  { name: 'Members', link: '/members', icon: MdOutlineGroup },
 ];
 
 interface NavItemProps extends FlexProps {
