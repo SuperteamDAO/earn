@@ -47,7 +47,7 @@ import { userStore } from '@/store/user';
 import {
   getBgColor,
   getBountyDraftStatus,
-  getBountyProgress,
+  getBountyStatus,
 } from '@/utils/bounty';
 import {
   connection,
@@ -130,12 +130,12 @@ function BountySubmissions({ slug }: Props) {
     }
   }, [userInfo?.currentSponsorId]);
 
-  const bountyStatus = getBountyDraftStatus(
+  const bountyDraftStatus = getBountyDraftStatus(
     bounty?.status,
     bounty?.isPublished,
   );
 
-  const bountyProgress = getBountyProgress(bounty);
+  const bountyStatus = getBountyStatus(bounty);
 
   const selectWinner = async (position: string, id: string | undefined) => {
     if (!id) return;
@@ -319,19 +319,19 @@ function BountySubmissions({ slug }: Props) {
             </Text>
             <Tag
               color={'white'}
+              bg={getBgColor(bountyDraftStatus)}
+              size="sm"
+              variant="solid"
+            >
+              {bountyDraftStatus}
+            </Tag>
+            <Tag
+              color={'white'}
               bg={getBgColor(bountyStatus)}
               size="sm"
               variant="solid"
             >
               {bountyStatus}
-            </Tag>
-            <Tag
-              color={'white'}
-              bg={getBgColor(bountyProgress)}
-              size="sm"
-              variant="solid"
-            >
-              {bountyProgress}
             </Tag>
           </Flex>
           <Flex align="center" justify="space-between" mb={4}>

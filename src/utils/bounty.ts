@@ -5,7 +5,7 @@ export const getDeadlineFromNow = (deadline: string | undefined) =>
   deadline ? dayjs(deadline).fromNow() : '-';
 
 export const formatDeadline = (deadline: string | undefined) =>
-  deadline ? dayjs(deadline).format('MMM D, YYYY HH:mm') : '-';
+  deadline ? dayjs(deadline).format('DD MMM h:mm A') : '-';
 
 const isDeadlineOver = (deadline: string | undefined) =>
   deadline ? dayjs().isAfter(dayjs(deadline)) : false;
@@ -24,50 +24,52 @@ export const getBountyTypeLabel = (type: string) => {
   return 'Bounty';
 };
 
-export const getBountyProgress = (
+export const getBountyStatus = (
   bounty: Bounty | BountyWithSubmissions | null,
 ) => {
-  if (!bounty) return '-';
+  if (!bounty) return 'DRAFT';
   const rewardsLength = Object.keys(bounty?.rewards || {})?.length || 0;
   const bountyStatus = getBountyDraftStatus(
     bounty?.status,
     bounty?.isPublished,
   );
-  if (bountyStatus !== 'PUBLISHED') return '';
   const hasDeadlinePassed = isDeadlineOver(bounty?.deadline || '');
-  if (!hasDeadlinePassed) return 'IN PROGRESS';
-  if (bounty?.isWinnersAnnounced && bounty?.totalPaymentsMade === rewardsLength)
-    return 'COMPLETED';
-  if (bounty?.isWinnersAnnounced && bounty?.totalPaymentsMade !== rewardsLength)
-    return 'ANNOUNCED - PAYMENTS PENDING';
-  if (
-    !bounty?.isWinnersAnnounced &&
-    bounty?.totalWinnersSelected === rewardsLength &&
-    bounty?.totalPaymentsMade === rewardsLength
-  )
-    return 'PAYMENTS COMPLETED';
-  if (
-    !bounty?.isWinnersAnnounced &&
-    bounty?.totalWinnersSelected === rewardsLength
-  )
-    return 'WINNERS SELECTED';
-  return 'IN REVIEW';
+
+  switch (bountyStatus) {
+    case 'DRAFT':
+      return 'Draft';
+    case 'CLOSED':
+      return 'Closed';
+    case 'PUBLISHED':
+      if (!hasDeadlinePassed && !bounty?.isWinnersAnnounced)
+        return 'In Progress';
+      if (!bounty?.isWinnersAnnounced) return 'In Review';
+      if (
+        bounty?.isWinnersAnnounced &&
+        bounty?.totalPaymentsMade !== rewardsLength
+      )
+        return 'Payment Pending';
+      if (
+        bounty?.isWinnersAnnounced &&
+        bounty?.totalPaymentsMade === rewardsLength
+      )
+        return 'Completed';
+      return 'In Review';
+    default:
+      return 'Draft';
+  }
 };
 
 export const getBgColor = (status: string) => {
   switch (status) {
-    case 'PUBLISHED':
-    case 'COMPLETED':
+    case 'Published':
+    case 'Completed':
       return 'green';
-    case 'ANNOUNCED - PAYMENTS PENDING':
+    case 'Payment Pending':
       return 'green.400';
-    case 'PAYMENTS COMPLETED':
-      return 'green.500';
-    case 'WINNERS SELECTED':
-      return 'green.300';
-    case 'DRAFT':
+    case 'Draft':
       return 'orange';
-    case 'IN REVIEW':
+    case 'In':
       return 'brand.purple';
     default:
       return 'gray';
