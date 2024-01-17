@@ -394,8 +394,18 @@ function Bounties() {
                   currentBounty?.isPublished,
                 );
                 const bountyProgress = getBountyProgress(currentBounty);
-                const isListingIncomplete =
-                  Object.keys(currentBounty?.rewards || {}).length === 0;
+                const isListingIncomplete = (() => {
+                  if (currentBounty?.type === 'permissioned') {
+                    return currentBounty?.rewardAmount === null;
+                  }
+                  if (currentBounty?.type === 'open') {
+                    return (
+                      Object.keys(currentBounty?.rewards || {}).length === 0
+                    );
+                  }
+                  return true;
+                })();
+
                 return (
                   <Tr key={currentBounty?.id} bg="white">
                     <Td
