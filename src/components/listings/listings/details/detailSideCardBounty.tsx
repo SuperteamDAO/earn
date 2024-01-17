@@ -232,7 +232,7 @@ export function DetailSideCardBounty({
             <Flex align="center">
               <Image
                 w={7}
-                h="auto"
+                h={7}
                 mr={2}
                 alt={'green doller'}
                 rounded={'full'}

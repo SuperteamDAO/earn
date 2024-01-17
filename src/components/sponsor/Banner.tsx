@@ -39,7 +39,7 @@ export function Banner() {
         borderColor={'brand.slate.200'}
         borderRadius="md"
       >
-        <Flex align="center" gap={6}>
+        <Flex align="center" gap={12}>
           <Flex align="center" gap={3}>
             {userInfo?.currentSponsor?.logo ? (
               <Image
@@ -76,7 +76,7 @@ export function Banner() {
               Committed
             </Text>
             <Text color={'brand.slate.900'} fontSize="lg" fontWeight={600}>
-              ${sponsorStats?.totalRewardAmount}
+              ${sponsorStats?.totalRewardAmount?.toLocaleString()}
             </Text>
           </Box>
           <Box>

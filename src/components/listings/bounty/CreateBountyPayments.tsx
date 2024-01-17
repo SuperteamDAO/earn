@@ -152,8 +152,13 @@ export const CreatebountyPayment = ({
         ...prev,
         rewards: { first: prev.rewardAmount },
       }));
-      if (isEdit || mode === 'DRAFT') createDraft();
-      else confirmOnOpen();
+      if (!bountyPayment.rewardAmount) {
+        setIsRewardError(true);
+      } else {
+        setIsRewardError(false);
+        if (isEdit || mode === 'DRAFT') createDraft();
+        else confirmOnOpen();
+      }
     }
 
     if (type === 'open') {
@@ -170,6 +175,16 @@ export const CreatebountyPayment = ({
       }
     }
   };
+
+  const isListingIncomplete = (() => {
+    if (type === 'permissioned') {
+      return bountyPayment?.rewardAmount === null;
+    }
+    if (type === 'open') {
+      return Object.keys(bountyPayment?.rewards || {}).length === 0;
+    }
+    return true;
+  })();
 
   return (
     <>
@@ -380,14 +395,18 @@ export const CreatebountyPayment = ({
             </Button>
           </VStack>
         )}
-        {isRewardError && (
+        {isRewardError && type === 'permissioned' ? (
+          <Text w="full" color="red" textAlign={'center'}>
+            Please enter an amount
+          </Text>
+        ) : (
           <Text w="full" color="red" textAlign={'center'}>
             Sorry! Total reward amount should be equal to the sum of all prizes.
           </Text>
         )}
         <Toaster />
         <VStack gap={4} w={'full'} pt={4}>
-          {!isEditMode && (
+          {!isListingIncomplete && (
             <Button
               w="100%"
               disabled={isListingPublishing}

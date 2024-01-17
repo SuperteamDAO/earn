@@ -35,6 +35,7 @@ import {
   Text,
   Th,
   Thead,
+  Tooltip,
   Tr,
   useDisclosure,
 } from '@chakra-ui/react';
@@ -42,9 +43,8 @@ import axios from 'axios';
 import NextLink from 'next/link';
 import { useRouter } from 'next/router';
 import { useEffect, useRef, useState } from 'react';
-import { AiOutlineDelete, AiOutlineEdit } from 'react-icons/ai';
+import { AiOutlineDelete } from 'react-icons/ai';
 import { FiMoreVertical } from 'react-icons/fi';
-import { MdOutlinePublish } from 'react-icons/md';
 
 import { ErrorSection } from '@/components/shared/ErrorSection';
 import { LoadingSection } from '@/components/shared/LoadingSection';
@@ -54,20 +54,15 @@ import { Sidebar } from '@/layouts/Sidebar';
 import { userStore } from '@/store/user';
 import {
   formatDeadline,
-  getBgColor,
   getBountyStatus,
   getBountyTypeLabel,
+  getColorStyles,
 } from '@/utils/bounty';
 
 const debounce = require('lodash.debounce');
 
 function Bounties() {
   const router = useRouter();
-  const {
-    isOpen: publishIsOpen,
-    onOpen: publishOnOpen,
-    onClose: publishOnClose,
-  } = useDisclosure();
   const {
     isOpen: unpublishIsOpen,
     onOpen: unpublishOnOpen,
@@ -122,11 +117,6 @@ function Bounties() {
     }
   }, [userInfo?.currentSponsorId, skip, searchText]);
 
-  const handlePublish = async (publishedBounty: BountyWithSubmissions) => {
-    setBounty(publishedBounty);
-    publishOnOpen();
-  };
-
   const handleUnpublish = async (unpublishedBounty: BountyWithSubmissions) => {
     setBounty(unpublishedBounty);
     unpublishOnOpen();
@@ -148,7 +138,6 @@ function Bounties() {
           : b,
       );
       setBounties(newBounties);
-      publishOnClose();
       unpublishOnClose();
       setIsChangingStatus(false);
     } catch (e) {
@@ -179,34 +168,6 @@ function Bounties() {
 
   return (
     <Sidebar>
-      <Modal isOpen={publishIsOpen} onClose={publishOnClose}>
-        <ModalOverlay />
-        <ModalContent>
-          <ModalHeader>Publish Listing?</ModalHeader>
-          <ModalCloseButton />
-          <ModalBody>
-            <Text color="brand.slate.500">
-              This listing will become active and will show up on the homepage
-              once published. Are you sure you want to publish this listing?
-            </Text>
-          </ModalBody>
-
-          <ModalFooter>
-            <Button mr={4} onClick={publishOnClose} variant="ghost">
-              Close
-            </Button>
-            <Button
-              isLoading={isChangingStatus}
-              leftIcon={<ViewIcon />}
-              loadingText="Publishing..."
-              onClick={() => changeBountyStatus(true)}
-              variant="solid"
-            >
-              Publish
-            </Button>
-          </ModalFooter>
-        </ModalContent>
-      </Modal>
       <Modal isOpen={unpublishIsOpen} onClose={unpublishOnClose}>
         <ModalOverlay />
         <ModalContent>
@@ -277,7 +238,7 @@ function Bounties() {
             borderColor="brand.slate.200"
             orientation="vertical"
           />
-          <Text color="brand.slate.500" letterSpacing={'-0.3px'}>
+          <Text color="brand.slate.500">
             The one place to manage your listings
           </Text>
         </Flex>
@@ -322,6 +283,7 @@ function Bounties() {
                   color="brand.slate.400"
                   fontSize={14}
                   fontWeight={500}
+                  letterSpacing={'-2%'}
                   textTransform={'capitalize'}
                 >
                   Listing Name
@@ -331,6 +293,7 @@ function Bounties() {
                   color="brand.slate.400"
                   fontSize={14}
                   fontWeight={500}
+                  letterSpacing={'-2%'}
                   textAlign="right"
                   textTransform={'capitalize'}
                 >
@@ -340,6 +303,7 @@ function Bounties() {
                   color="brand.slate.400"
                   fontSize={14}
                   fontWeight={500}
+                  letterSpacing={'-2%'}
                   textTransform={'capitalize'}
                 >
                   Deadline
@@ -348,6 +312,7 @@ function Bounties() {
                   color="brand.slate.400"
                   fontSize={14}
                   fontWeight={500}
+                  letterSpacing={'-2%'}
                   textTransform={'capitalize'}
                 >
                   Prize
@@ -356,7 +321,7 @@ function Bounties() {
                   color="brand.slate.400"
                   fontSize={14}
                   fontWeight={500}
-                  textAlign="center"
+                  letterSpacing={'-2%'}
                   textTransform={'capitalize'}
                 >
                   Status
@@ -365,6 +330,7 @@ function Bounties() {
                   color="brand.slate.400"
                   fontSize={14}
                   fontWeight={500}
+                  letterSpacing={'-2%'}
                   textTransform={'capitalize'}
                 >
                   Actions
@@ -384,17 +350,6 @@ function Bounties() {
                 );
 
                 const bountyStatus = getBountyStatus(currentBounty);
-                const isListingIncomplete = (() => {
-                  if (currentBounty?.type === 'permissioned') {
-                    return currentBounty?.rewardAmount === null;
-                  }
-                  if (currentBounty?.type === 'open') {
-                    return (
-                      Object.keys(currentBounty?.rewards || {}).length === 0
-                    );
-                  }
-                  return true;
-                })();
 
                 return (
                   <Tr key={currentBounty?.id}>
@@ -410,16 +365,19 @@ function Bounties() {
                         passHref
                       >
                         <Flex align={'center'}>
-                          <Image
-                            h={5}
-                            mr={2}
-                            alt={`New ${bountyType}`}
-                            src={
-                              currentBounty.type === 'open'
-                                ? '/assets/icons/bolt.svg'
-                                : '/assets/icons/briefcase.svg'
-                            }
-                          />
+                          <Tooltip bg="brand.slate.400" label={bountyType}>
+                            <Image
+                              h={5}
+                              mr={2}
+                              alt={`New ${bountyType}`}
+                              src={
+                                currentBounty.type === 'open'
+                                  ? '/assets/icons/bolt.svg'
+                                  : '/assets/icons/briefcase.svg'
+                              }
+                            />
+                          </Tooltip>
+
                           <Text
                             as="a"
                             overflow="hidden"
@@ -434,9 +392,9 @@ function Bounties() {
                         </Flex>
                       </NextLink>
                     </Td>
-                    <Td px={0} py={2}>
+                    <Td py={2}>
                       <Text
-                        color="brand.slate.700"
+                        color="brand.slate.500"
                         fontWeight={500}
                         textAlign={'center'}
                       >
@@ -446,7 +404,7 @@ function Bounties() {
                         }
                       </Text>
                     </Td>
-                    <Td align="center" px={1} py={2}>
+                    <Td align="center" py={2}>
                       <Text
                         color="brand.slate.500"
                         fontWeight={500}
@@ -455,11 +413,11 @@ function Bounties() {
                         {deadline}
                       </Text>
                     </Td>
-                    <Td px={1} py={2}>
+                    <Td py={2}>
                       <Flex align={'center'} justify={'start'} gap={1}>
                         <Image
                           w={5}
-                          h="auto"
+                          h={5}
                           alt={'green dollar'}
                           rounded={'full'}
                           src={
@@ -478,23 +436,21 @@ function Bounties() {
                         </Text>
                       </Flex>
                     </Td>
-                    <Td align="center" px={1} py={2}>
-                      <Flex align="center" justify={'center'}>
-                        <Tag
-                          px={3}
-                          color={'white'}
-                          fontSize={'13px'}
-                          fontWeight={500}
-                          bg={getBgColor(bountyStatus)}
-                          borderRadius={'full'}
-                          wordBreak={'break-all'}
-                          variant="solid"
-                        >
-                          {bountyStatus}
-                        </Tag>
-                      </Flex>
+                    <Td align="center" py={2}>
+                      <Tag
+                        px={3}
+                        color={getColorStyles(bountyStatus).color}
+                        fontSize={'13px'}
+                        fontWeight={500}
+                        bg={getColorStyles(bountyStatus).bgColor}
+                        borderRadius={'full'}
+                        wordBreak={'break-all'}
+                        variant="solid"
+                      >
+                        {bountyStatus}
+                      </Tag>
                     </Td>
-                    <Td px={0} py={2}>
+                    <Td px={3} py={2}>
                       {currentBounty.status === 'OPEN' &&
                         currentBounty.isPublished && (
                           <Button
@@ -515,36 +471,18 @@ function Bounties() {
                       {currentBounty.status === 'OPEN' &&
                         !currentBounty.isPublished && (
                           <Button
-                            color={
-                              isListingIncomplete
-                                ? 'brand.slate.500'
-                                : 'green.500'
-                            }
+                            color={'brand.slate.500'}
                             fontSize={'15px'}
                             fontWeight={500}
-                            _hover={{
-                              bg: isListingIncomplete
-                                ? 'brand.slate.200'
-                                : 'green.100',
-                            }}
-                            leftIcon={
-                              isListingIncomplete ? (
-                                <EditIcon />
-                              ) : (
-                                <MdOutlinePublish />
-                              )
-                            }
+                            _hover={{ bg: 'brand.slate.200' }}
+                            leftIcon={<EditIcon />}
                             onClick={() => {
-                              if (isListingIncomplete) {
-                                window.location.href = `/dashboard/listings/${currentBounty.slug}/edit/`;
-                              } else {
-                                handlePublish(currentBounty);
-                              }
+                              window.location.href = `/dashboard/listings/${currentBounty.slug}/edit/`;
                             }}
                             size="sm"
                             variant="ghost"
                           >
-                            {isListingIncomplete ? 'Edit' : 'Publish'}
+                            Edit
                           </Button>
                         )}
                     </Td>
@@ -573,23 +511,6 @@ function Bounties() {
                           >
                             View {bountyType}
                           </MenuItem>
-                          {!isListingIncomplete && (
-                            <>
-                              <NextLink
-                                href={`/dashboard/listings/${currentBounty.slug}/edit/`}
-                                passHref
-                              >
-                                <MenuItem
-                                  py={2}
-                                  color={'brand.slate.500'}
-                                  fontWeight={500}
-                                  icon={<AiOutlineEdit size={18} />}
-                                >
-                                  Edit {bountyType}
-                                </MenuItem>
-                              </NextLink>
-                            </>
-                          )}
                           {bountyStatus === 'Draft' && (
                             <>
                               <MenuItem

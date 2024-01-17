@@ -70,18 +70,20 @@ export const getBountyStatus = (
   }
 };
 
-export const getBgColor = (status: string) => {
+export const getColorStyles = (status: string) => {
   switch (status) {
     case 'Published':
     case 'Completed':
-      return 'green';
+      return { bgColor: '#D1FAE5', color: '#0D9488' };
     case 'Payment Pending':
-      return 'green.400';
+      return { bgColor: '#ffecb3', color: '#F59E0B' };
     case 'Draft':
-      return 'orange';
+      return { bgColor: 'brand.slate.100', color: 'brand.slate.400' };
     case 'In Review':
-      return 'brand.purple';
+      return { bgColor: 'cyan.100', color: 'cyan.600' };
+    case 'In Progress':
+      return { bgColor: '#F3E8FF', color: '#8B5CF6' };
     default:
-      return 'gray';
+      return { bgColor: 'gray', color: 'white' };
   }
 };

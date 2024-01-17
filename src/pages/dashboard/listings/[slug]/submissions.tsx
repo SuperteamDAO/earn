@@ -52,7 +52,11 @@ import type { Bounty, Rewards } from '@/interface/bounty';
 import type { SubmissionWithUser } from '@/interface/submission';
 import { Sidebar } from '@/layouts/Sidebar';
 import { userStore } from '@/store/user';
-import { formatDeadline, getBgColor, getBountyStatus } from '@/utils/bounty';
+import {
+  formatDeadline,
+  getBountyStatus,
+  getColorStyles,
+} from '@/utils/bounty';
 import {
   connection,
   createPaymentSOL,
@@ -356,7 +360,6 @@ function BountySubmissions({ slug }: Props) {
                 Export CSV
               </Button>
               <Button
-                mr={4}
                 color={'brand.slate.400'}
                 _hover={{ bg: '#E0E7FF', color: '#6366F1' }}
                 leftIcon={<ExternalLinkIcon />}
@@ -370,15 +373,18 @@ function BountySubmissions({ slug }: Props) {
               >
                 View Listing
               </Button>
-              <Button
-                color="#6366F1"
-                bg="#E0E7FF"
-                leftIcon={<CheckIcon />}
-                onClick={onOpen}
-                variant={'solid'}
-              >
-                Announce Winners
-              </Button>
+              {!bounty?.isWinnersAnnounced && (
+                <Button
+                  ml={4}
+                  color="#6366F1"
+                  bg="#E0E7FF"
+                  leftIcon={<CheckIcon />}
+                  onClick={onOpen}
+                  variant={'solid'}
+                >
+                  Announce Winners
+                </Button>
+              )}
             </Flex>
           </Flex>
           <Divider />
@@ -400,9 +406,12 @@ function BountySubmissions({ slug }: Props) {
               <Tag
                 mt={3}
                 px={3}
-                color={'white'}
-                bg={getBgColor(bountyStatus)}
-                rounded="full"
+                color={getColorStyles(bountyStatus).color}
+                fontSize={'13px'}
+                fontWeight={500}
+                bg={getColorStyles(bountyStatus).bgColor}
+                borderRadius={'full'}
+                wordBreak={'break-all'}
                 variant="solid"
               >
                 {bountyStatus}
@@ -413,7 +422,7 @@ function BountySubmissions({ slug }: Props) {
               <Flex align={'center'} justify={'start'} gap={1} mt={3}>
                 <Image
                   w={5}
-                  h="auto"
+                  h={5}
                   alt={'green dollar'}
                   rounded={'full'}
                   src={
@@ -598,7 +607,7 @@ function BountySubmissions({ slug }: Props) {
                     <Text
                       w={'60%'}
                       color="brand.slate.900"
-                      fontSize="md"
+                      fontSize="lg"
                       fontWeight={500}
                     >
                       {`${selectedSubmission?.user?.firstName}'s Submission`}
