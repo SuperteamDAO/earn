@@ -73,7 +73,7 @@ export function Banner() {
           />
           <Box>
             <Text color={'brand.slate.500'} fontSize="md" fontWeight={400}>
-              Committed
+              Rewarded
             </Text>
             <Text color={'brand.slate.900'} fontSize="lg" fontWeight={600}>
               ${sponsorStats?.totalRewardAmount?.toLocaleString()}

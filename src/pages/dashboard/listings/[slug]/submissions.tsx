@@ -43,6 +43,10 @@ import dynamic from 'next/dynamic';
 import NextLink from 'next/link';
 import { useRouter } from 'next/router';
 import { useEffect, useRef, useState } from 'react';
+import { BsTwitterX } from 'react-icons/bs';
+import { CiGlobe } from 'react-icons/ci';
+import { FaDiscord, FaGithub, FaLinkedin } from 'react-icons/fa';
+import { MdOutlineAccountBalanceWallet, MdOutlineMail } from 'react-icons/md';
 
 import { ErrorSection } from '@/components/shared/ErrorSection';
 import { LoadingSection } from '@/components/shared/LoadingSection';
@@ -63,8 +67,8 @@ import {
   createPaymentSPL,
 } from '@/utils/contract/contract';
 import { dayjs } from '@/utils/dayjs';
-import { getURLSanitized } from '@/utils/getURLSanitized';
 import { sortRank } from '@/utils/rank';
+import { getURLSanitized } from '@/utils/submissions/getURLSanitized';
 import { truncatePublicKey } from '@/utils/truncatePublicKey';
 import { getURL } from '@/utils/validUrl';
 
@@ -108,7 +112,35 @@ function BountySubmissions({ slug }: Props) {
   const getBounty = async () => {
     setIsBountyLoading(true);
     try {
-      const bountyDetails = await axios.get(
+      const bountyDetails = await axios.get(`/api/bounties/${slug}/`);
+      setBounty(bountyDetails.data);
+      if (bountyDetails.data.sponsorId !== userInfo?.currentSponsorId) {
+        router.push('/dashboard/listings');
+      }
+      setTotalPaymentsMade(bountyDetails.data.paymentsMade || 0);
+
+      console.log(bountyDetails.data);
+
+      const usedPos = bountyDetails.data.Submission.filter(
+        (s: any) => s.isWinner,
+      ).map((s: any) => s.winnerPosition);
+      setUsedPositions(usedPos);
+
+      setTotalSubmissions(bountyDetails.data.totalSubmissions);
+      setTotalWinners(bountyDetails.data.winnersSelected);
+      setTotalPaymentsMade(bountyDetails.data.paymentsMade);
+
+      const ranks = sortRank(Object.keys(bountyDetails.data.rewards || {}));
+      setRewards(ranks);
+      setIsBountyLoading(false);
+    } catch (e) {
+      setIsBountyLoading(false);
+    }
+  };
+
+  const getSubmissions = async () => {
+    try {
+      const submissionDetails = await axios.get(
         `/api/bounties/${slug}/submissions`,
         {
           params: {
@@ -118,30 +150,18 @@ function BountySubmissions({ slug }: Props) {
           },
         },
       );
-      setBounty(bountyDetails.data);
-      if (bountyDetails.data.sponsorId !== userInfo?.currentSponsorId) {
-        router.push('/dashboard/listings');
-      }
-      const submissionsData = bountyDetails.data.Submission || [];
-      const usedPos = submissionsData
-        .filter((s: any) => s.isWinner)
-        .map((s: any) => s.winnerPosition);
-
-      setUsedPositions(usedPos);
-
-      setSubmissions(submissionsData);
-      setSelectedSubmission(submissionsData[0]);
-      setTotalSubmissions(submissionsData.length);
-      setTotalWinners(bountyDetails.data.winnersSelected || 0);
-      setTotalPaymentsMade(bountyDetails.data.paymentsMade || 0);
-
-      const ranks = sortRank(Object.keys(bountyDetails.data.rewards || {}));
-      setRewards(ranks);
-      setIsBountyLoading(false);
+      setSubmissions(submissionDetails.data);
+      setSelectedSubmission(submissionDetails.data[0]);
     } catch (e) {
-      setIsBountyLoading(false);
+      console.log(e);
     }
   };
+
+  useEffect(() => {
+    if (userInfo?.currentSponsorId) {
+      getSubmissions();
+    }
+  }, [userInfo?.currentSponsorId, skip, searchText]);
 
   useEffect(() => {
     if (userInfo?.currentSponsorId) {
@@ -316,6 +336,7 @@ function BountySubmissions({ slug }: Props) {
               bountyId={bounty?.id}
               isDeadlinePassed={dayjs().isAfter(bounty?.deadline)}
               hasWinnersAnnounced={bounty?.isWinnersAnnounced}
+              isRolling={bounty?.type === 'rolling'}
             />
           )}
           <Box mb={2}>
@@ -411,7 +432,7 @@ function BountySubmissions({ slug }: Props) {
                 fontWeight={500}
                 bg={getColorStyles(bountyStatus).bgColor}
                 borderRadius={'full'}
-                wordBreak={'break-all'}
+                whiteSpace={'nowrap'}
                 variant="solid"
               >
                 {bountyStatus}
@@ -468,7 +489,7 @@ function BountySubmissions({ slug }: Props) {
               </InputGroup>
             </Box>
           </Flex>
-          {!submissions?.length ? (
+          {!submissions?.length && !searchText ? (
             <ErrorSection
               title="No submissions found!"
               message="View your bounty submissions here once they are submitted"
@@ -520,7 +541,7 @@ function BountySubmissions({ slug }: Props) {
                         justify={'space-between'}
                         gap={4}
                         px={4}
-                        py={3}
+                        py={2}
                         bg={
                           selectedSubmission?.user?.id === submission?.user?.id
                             ? 'brand.slate.100'
@@ -566,7 +587,7 @@ function BountySubmissions({ slug }: Props) {
                             <Text
                               overflow={'hidden'}
                               color="brand.slate.500"
-                              fontSize="sm"
+                              fontSize="xs"
                               fontWeight={500}
                               whiteSpace="nowrap"
                               textOverflow="ellipsis"
@@ -597,157 +618,241 @@ function BountySubmissions({ slug }: Props) {
                   borderTopWidth="1px"
                   borderBottomWidth="1px"
                 >
-                  <Flex
-                    align="center"
-                    justify={'space-between'}
-                    w="full"
-                    px={4}
-                    py={3}
-                  >
-                    <Text
-                      w={'60%'}
-                      color="brand.slate.900"
-                      fontSize="lg"
-                      fontWeight={500}
-                    >
-                      {`${selectedSubmission?.user?.firstName}'s Submission`}
-                    </Text>
-                    <Flex align="center" justify={'flex-end'} gap={2} w="full">
-                      {selectedSubmission?.isWinner &&
-                        selectedSubmission?.winnerPosition &&
-                        !selectedSubmission?.isPaid &&
-                        (bounty?.isWinnersAnnounced ? (
-                          <>
-                            <DynamicWalletMultiButton
-                              style={{
-                                height: '32px',
-                                fontWeight: 600,
-                                fontFamily: 'Inter',
-                              }}
-                            />
-                            {connected && (
-                              <Button
-                                mr={4}
-                                isDisabled={!bounty?.isWinnersAnnounced}
-                                isLoading={isPaying}
-                                loadingText={'Paying...'}
-                                onClick={async () => {
-                                  if (!selectedSubmission?.user.publicKey) {
-                                    console.error(
-                                      'Public key is null, cannot proceed with payment',
-                                    );
-                                    return;
-                                  }
-                                  handlePayout({
-                                    id: selectedSubmission?.id as string,
-                                    token: bounty?.token as string,
-                                    amount: bounty?.rewards![
-                                      selectedSubmission?.winnerPosition as keyof Rewards
-                                    ] as number,
-                                    receiver: new PublicKey(
-                                      selectedSubmission.user.publicKey,
-                                    ),
-                                  });
-                                }}
-                                size="sm"
-                                variant="solid"
-                              >
-                                Pay {bounty?.token}{' '}
-                                {!!bounty?.rewards &&
-                                  bounty?.rewards[
-                                    selectedSubmission?.winnerPosition as keyof Rewards
-                                  ]}
-                              </Button>
-                            )}
-                          </>
-                        ) : (
-                          <>
-                            <Tooltip
-                              bg={'brand.purple'}
-                              hasArrow={true}
-                              isDisabled={!!bounty?.isWinnersAnnounced}
-                              label="You have to publish the results before you can pay out rewards!"
-                              placement="top"
-                            >
-                              <Button
-                                mr={4}
-                                isDisabled={!bounty?.isWinnersAnnounced}
-                                size="sm"
-                                variant="solid"
-                              >
-                                Pay {bounty?.token}{' '}
-                                {!!bounty?.rewards &&
-                                  bounty?.rewards[
-                                    selectedSubmission?.winnerPosition as keyof Rewards
-                                  ]}
-                              </Button>
-                            </Tooltip>
-                          </>
-                        ))}
-                      {selectedSubmission?.isWinner &&
-                        selectedSubmission?.winnerPosition &&
-                        selectedSubmission?.isPaid && (
-                          <Button
-                            mr={4}
-                            onClick={() => {
-                              window.open(
-                                `https://solscan.io/tx/${selectedSubmission?.paymentDetails?.txId}?cluster=${process.env.NEXT_PUBLIC_PAYMENT_CLUSTER}`,
-                                '_blank',
-                              );
-                            }}
-                            rightIcon={<ExternalLinkIcon />}
-                            size="sm"
-                            variant="ghost"
-                          >
-                            View Payment Txn
-                          </Button>
-                        )}
-                      {isSelectingWinner && (
-                        <Spinner color="brand.slate.400" size="sm" />
-                      )}
-                      <Tooltip
-                        bg={'brand.purple'}
-                        hasArrow={true}
-                        isDisabled={!bounty?.isWinnersAnnounced}
-                        label="You cannot change the winners once the results are published!"
-                        placement="top"
+                  {submissions.length ? (
+                    <>
+                      <Flex
+                        align="center"
+                        justify={'space-between'}
+                        w="full"
+                        px={4}
+                        py={3}
                       >
-                        <Select
-                          maxW={48}
-                          textTransform="capitalize"
-                          borderColor="brand.slate.300"
-                          _placeholder={{ color: 'brand.slate.300' }}
-                          focusBorderColor="brand.purple"
-                          isDisabled={!!bounty?.isWinnersAnnounced}
-                          onChange={(e) =>
-                            selectWinner(e.target.value, selectedSubmission?.id)
-                          }
-                          value={
-                            selectedSubmission?.isWinner
-                              ? selectedSubmission.winnerPosition || ''
-                              : ''
-                          }
+                        <Text
+                          w={'60%'}
+                          color="brand.slate.900"
+                          fontSize="lg"
+                          fontWeight={500}
                         >
-                          <option value={''}>Select Winner</option>
-                          {rewards.map((reward) => {
-                            const isRewardUsed = usedPositions.includes(reward);
-                            const isCurrentSubmissionReward =
-                              selectedSubmission?.winnerPosition === reward;
-                            return (
-                              (!isRewardUsed || isCurrentSubmissionReward) && (
-                                <option key={reward} value={reward}>
-                                  {reward}
-                                </option>
-                              )
-                            );
-                          })}
-                        </Select>
-                      </Tooltip>
-                    </Flex>
-                  </Flex>
-                  <Box w="full" px={4} py={5}>
-                    {bounty?.type === 'open' && (
-                      <>
+                          {`${selectedSubmission?.user?.firstName}'s Submission`}
+                        </Text>
+                        <Flex
+                          align="center"
+                          justify={'flex-end'}
+                          gap={2}
+                          w="full"
+                        >
+                          {selectedSubmission?.isWinner &&
+                            selectedSubmission?.winnerPosition &&
+                            !selectedSubmission?.isPaid &&
+                            (bounty?.isWinnersAnnounced ? (
+                              <>
+                                <DynamicWalletMultiButton
+                                  style={{
+                                    height: '32px',
+                                    fontWeight: 600,
+                                    fontFamily: 'Inter',
+                                  }}
+                                />
+                                {connected && (
+                                  <Button
+                                    mr={4}
+                                    isDisabled={!bounty?.isWinnersAnnounced}
+                                    isLoading={isPaying}
+                                    loadingText={'Paying...'}
+                                    onClick={async () => {
+                                      if (!selectedSubmission?.user.publicKey) {
+                                        console.error(
+                                          'Public key is null, cannot proceed with payment',
+                                        );
+                                        return;
+                                      }
+                                      handlePayout({
+                                        id: selectedSubmission?.id as string,
+                                        token: bounty?.token as string,
+                                        amount: bounty?.rewards![
+                                          selectedSubmission?.winnerPosition as keyof Rewards
+                                        ] as number,
+                                        receiver: new PublicKey(
+                                          selectedSubmission.user.publicKey,
+                                        ),
+                                      });
+                                    }}
+                                    size="sm"
+                                    variant="solid"
+                                  >
+                                    Pay {bounty?.token}{' '}
+                                    {!!bounty?.rewards &&
+                                      bounty?.rewards[
+                                        selectedSubmission?.winnerPosition as keyof Rewards
+                                      ]}
+                                  </Button>
+                                )}
+                              </>
+                            ) : (
+                              <>
+                                <Tooltip
+                                  bg={'brand.purple'}
+                                  hasArrow={true}
+                                  isDisabled={!!bounty?.isWinnersAnnounced}
+                                  label="You have to publish the results before you can pay out rewards!"
+                                  placement="top"
+                                >
+                                  <Button
+                                    mr={4}
+                                    isDisabled={!bounty?.isWinnersAnnounced}
+                                    size="sm"
+                                    variant="solid"
+                                  >
+                                    Pay {bounty?.token}{' '}
+                                    {!!bounty?.rewards &&
+                                      bounty?.rewards[
+                                        selectedSubmission?.winnerPosition as keyof Rewards
+                                      ]}
+                                  </Button>
+                                </Tooltip>
+                              </>
+                            ))}
+                          {selectedSubmission?.isWinner &&
+                            selectedSubmission?.winnerPosition &&
+                            selectedSubmission?.isPaid && (
+                              <Button
+                                mr={4}
+                                onClick={() => {
+                                  window.open(
+                                    `https://solscan.io/tx/${selectedSubmission?.paymentDetails?.txId}?cluster=${process.env.NEXT_PUBLIC_PAYMENT_CLUSTER}`,
+                                    '_blank',
+                                  );
+                                }}
+                                rightIcon={<ExternalLinkIcon />}
+                                size="sm"
+                                variant="ghost"
+                              >
+                                View Payment Txn
+                              </Button>
+                            )}
+                          {isSelectingWinner && (
+                            <Spinner color="brand.slate.400" size="sm" />
+                          )}
+                          <Tooltip
+                            bg={'brand.purple'}
+                            hasArrow={true}
+                            isDisabled={!bounty?.isWinnersAnnounced}
+                            label="You cannot change the winners once the results are published!"
+                            placement="top"
+                          >
+                            <Select
+                              maxW={48}
+                              textTransform="capitalize"
+                              borderColor="brand.slate.300"
+                              _placeholder={{ color: 'brand.slate.300' }}
+                              focusBorderColor="brand.purple"
+                              isDisabled={!!bounty?.isWinnersAnnounced}
+                              onChange={(e) =>
+                                selectWinner(
+                                  e.target.value,
+                                  selectedSubmission?.id,
+                                )
+                              }
+                              value={
+                                selectedSubmission?.isWinner
+                                  ? selectedSubmission.winnerPosition || ''
+                                  : ''
+                              }
+                            >
+                              <option value={''}>Select Winner</option>
+                              {rewards.map((reward) => {
+                                const isRewardUsed =
+                                  usedPositions.includes(reward);
+                                const isCurrentSubmissionReward =
+                                  selectedSubmission?.winnerPosition === reward;
+                                return (
+                                  (!isRewardUsed ||
+                                    isCurrentSubmissionReward) && (
+                                    <option key={reward} value={reward}>
+                                      {reward}
+                                    </option>
+                                  )
+                                );
+                              })}
+                            </Select>
+                          </Tooltip>
+                        </Flex>
+                      </Flex>
+                      <Box w="full" px={4} py={5}>
+                        {bounty?.type === 'open' && (
+                          <>
+                            <Box mb={4}>
+                              <Text
+                                mb={1}
+                                color="brand.slate.400"
+                                fontSize="xs"
+                                fontWeight={600}
+                                textTransform={'uppercase'}
+                              >
+                                Main Submission
+                              </Text>
+                              <Link
+                                as={NextLink}
+                                color="brand.purple"
+                                wordBreak={'break-all'}
+                                href={getURLSanitized(
+                                  selectedSubmission?.link || '#',
+                                )}
+                                isExternal
+                              >
+                                {selectedSubmission?.link
+                                  ? getURLSanitized(selectedSubmission?.link)
+                                  : '-'}
+                              </Link>
+                            </Box>
+                            <Box mb={4}>
+                              <Text
+                                mb={1}
+                                color="brand.slate.400"
+                                fontSize="xs"
+                                fontWeight={600}
+                                textTransform={'uppercase'}
+                              >
+                                Tweet Link
+                              </Text>
+                              <Link
+                                as={NextLink}
+                                color="brand.purple"
+                                wordBreak={'break-all'}
+                                href={getURLSanitized(
+                                  selectedSubmission?.tweet || '#',
+                                )}
+                                isExternal
+                              >
+                                {selectedSubmission?.tweet
+                                  ? getURLSanitized(selectedSubmission?.tweet)
+                                  : '-'}
+                              </Link>
+                            </Box>
+                          </>
+                        )}
+                        {bounty?.type === 'permissioned' &&
+                          selectedSubmission?.eligibilityAnswers?.map(
+                            (answer: any, answerIndex: number) => (
+                              <Box key={answerIndex} mb={4}>
+                                <Text
+                                  mb={1}
+                                  color="brand.slate.400"
+                                  fontSize="xs"
+                                  fontWeight={600}
+                                  textTransform={'uppercase'}
+                                >
+                                  {answer.question}
+                                </Text>
+                                <Text
+                                  color="brand.slate.700"
+                                  wordBreak={'break-all'}
+                                >
+                                  {answer.answer || '-'}
+                                </Text>
+                              </Box>
+                            ),
+                          )}
                         <Box mb={4}>
                           <Text
                             mb={1}
@@ -756,85 +861,17 @@ function BountySubmissions({ slug }: Props) {
                             fontWeight={600}
                             textTransform={'uppercase'}
                           >
-                            Main Submission
+                            Anything Else
                           </Text>
-                          <Link
-                            as={NextLink}
-                            color="brand.purple"
-                            wordBreak={'break-all'}
-                            href={getURLSanitized(
-                              selectedSubmission?.link || '#',
-                            )}
-                            isExternal
-                          >
-                            {selectedSubmission?.link
-                              ? getURLSanitized(selectedSubmission?.link)
-                              : '-'}
-                          </Link>
-                        </Box>
-                        <Box mb={4}>
-                          <Text
-                            mb={1}
-                            color="brand.slate.400"
-                            fontSize="xs"
-                            fontWeight={600}
-                            textTransform={'uppercase'}
-                          >
-                            Tweet Link
+                          <Text color="brand.slate.700" wordBreak={'break-all'}>
+                            {selectedSubmission?.otherInfo || '-'}
                           </Text>
-                          <Link
-                            as={NextLink}
-                            color="brand.purple"
-                            wordBreak={'break-all'}
-                            href={getURLSanitized(
-                              selectedSubmission?.tweet || '#',
-                            )}
-                            isExternal
-                          >
-                            {selectedSubmission?.tweet
-                              ? getURLSanitized(selectedSubmission?.tweet)
-                              : '-'}
-                          </Link>
                         </Box>
-                      </>
-                    )}
-                    {bounty?.type === 'permissioned' &&
-                      selectedSubmission?.eligibilityAnswers?.map(
-                        (answer: any, answerIndex: number) => (
-                          <Box key={answerIndex} mb={4}>
-                            <Text
-                              mb={1}
-                              color="brand.slate.400"
-                              fontSize="xs"
-                              fontWeight={600}
-                              textTransform={'uppercase'}
-                            >
-                              {answer.question}
-                            </Text>
-                            <Text
-                              color="brand.slate.700"
-                              wordBreak={'break-all'}
-                            >
-                              {answer.answer || '-'}
-                            </Text>
-                          </Box>
-                        ),
-                      )}
-                    <Box mb={4}>
-                      <Text
-                        mb={1}
-                        color="brand.slate.400"
-                        fontSize="xs"
-                        fontWeight={600}
-                        textTransform={'uppercase'}
-                      >
-                        Anything Else
-                      </Text>
-                      <Text color="brand.slate.700" wordBreak={'break-all'}>
-                        {selectedSubmission?.otherInfo || '-'}
-                      </Text>
-                    </Box>
-                  </Box>
+                      </Box>
+                    </>
+                  ) : (
+                    <></>
+                  )}
                 </Box>
                 <Box
                   w="70%"
@@ -843,175 +880,227 @@ function BountySubmissions({ slug }: Props) {
                   borderColor="brand.slate.200"
                   roundedRight={'xl'}
                 >
-                  <Box mb={4} px={4} py={3}>
-                    <Text
-                      mb={2}
-                      color="brand.slate.400"
-                      fontSize="xs"
-                      fontWeight={600}
-                      textTransform={'uppercase'}
-                    >
-                      User Profile
-                    </Text>
-                    <Flex
-                      align="start"
-                      justify="start"
-                      gap={2}
-                      mb={4}
-                      fontSize="sm"
-                    >
-                      <Text w={20} color="brand.slate.400">
-                        Bio:
-                      </Text>
-                      <Text color="brand.slate.700">
-                        {selectedSubmission?.user?.bio || '-'}
-                      </Text>
-                    </Flex>
-                    {selectedSubmission?.user?.publicKey && (
+                  {submissions.length ? (
+                    <>
                       <Flex
-                        align="center"
-                        justify="start"
-                        gap={2}
-                        mb={4}
-                        fontSize="sm"
+                        justify={'space-between'}
+                        direction={'column'}
+                        h="100%"
                       >
-                        <Text w={20} color="brand.slate.400">
-                          Wallet:
-                        </Text>
-                        <Text color="brand.slate.700">
-                          {truncatePublicKey(
-                            selectedSubmission?.user?.publicKey,
-                          )}
-                          <Tooltip label="Copy Wallet ID" placement="right">
-                            <CopyIcon
-                              cursor="pointer"
-                              ml={1}
-                              onClick={() =>
-                                navigator.clipboard.writeText(
-                                  selectedSubmission?.user?.publicKey || '',
-                                )
-                              }
+                        <Flex
+                          align={'center'}
+                          direction={'column'}
+                          my={2}
+                          px={4}
+                          py={3}
+                        >
+                          {selectedSubmission?.user?.photo ? (
+                            <Image
+                              boxSize="48px"
+                              borderRadius="full"
+                              alt={`${selectedSubmission?.user?.firstName} ${selectedSubmission?.user?.lastName}`}
+                              src={selectedSubmission?.user?.photo}
                             />
-                          </Tooltip>
-                        </Text>
+                          ) : (
+                            <Avatar
+                              name={`${selectedSubmission?.user?.firstName} ${selectedSubmission?.user?.lastName}`}
+                              colors={['#92A1C6', '#F0AB3D', '#C271B4']}
+                              size={48}
+                              variant="marble"
+                            />
+                          )}
+                          <Text
+                            mt={2}
+                            color="brand.slate.700"
+                            fontSize="md"
+                            fontWeight={500}
+                            textAlign={'center'}
+                          >
+                            {selectedSubmission?.user?.firstName}{' '}
+                            {selectedSubmission?.user?.lastName}
+                          </Text>
+
+                          <Text
+                            w={'60%'}
+                            color="brand.slate.400"
+                            fontSize="md"
+                            fontWeight={500}
+                            textAlign={'center'}
+                          >
+                            @{selectedSubmission?.user?.username}
+                          </Text>
+                        </Flex>
+                        <Flex direction={'column'} px={4} pb={6}>
+                          {selectedSubmission?.user?.email && (
+                            <Flex
+                              align="center"
+                              justify="start"
+                              gap={2}
+                              fontSize="sm"
+                            >
+                              <MdOutlineMail color="#94A3B8" />
+                              <Text color="brand.slate.400">
+                                {selectedSubmission?.user?.email}
+                              </Text>
+                            </Flex>
+                          )}
+                          {selectedSubmission?.user?.publicKey && (
+                            <Flex
+                              align="center"
+                              justify="start"
+                              gap={2}
+                              fontSize="sm"
+                            >
+                              <MdOutlineAccountBalanceWallet color="#94A3B8" />
+                              <Text color="brand.slate.400">
+                                {truncatePublicKey(
+                                  selectedSubmission?.user?.publicKey,
+                                )}
+                                <Tooltip
+                                  label="Copy Wallet ID"
+                                  placement="right"
+                                >
+                                  <CopyIcon
+                                    cursor="pointer"
+                                    ml={1}
+                                    color="brand.slate.400"
+                                    onClick={() =>
+                                      navigator.clipboard.writeText(
+                                        selectedSubmission?.user?.publicKey ||
+                                          '',
+                                      )
+                                    }
+                                  />
+                                </Tooltip>
+                              </Text>
+                            </Flex>
+                          )}
+                          {selectedSubmission?.user?.discord && (
+                            <Flex
+                              align="center"
+                              justify="start"
+                              gap={2}
+                              fontSize="sm"
+                            >
+                              <FaDiscord color="#94A3B8" />
+
+                              <Text color="brand.slate.400">
+                                {selectedSubmission?.user?.discord || '-'}
+                              </Text>
+                            </Flex>
+                          )}
+                          {selectedSubmission?.user?.twitter && (
+                            <Flex
+                              align="center"
+                              justify="start"
+                              gap={2}
+                              fontSize="sm"
+                            >
+                              <BsTwitterX color="#94A3B8" />
+
+                              <Link
+                                color="brand.slate.400"
+                                href={
+                                  selectedSubmission?.user?.twitter || undefined
+                                }
+                                isExternal
+                              >
+                                {selectedSubmission?.user?.twitter || '-'}
+                              </Link>
+                            </Flex>
+                          )}
+                          {selectedSubmission?.user?.linkedin && (
+                            <Flex
+                              align="center"
+                              justify="start"
+                              gap={2}
+                              fontSize="sm"
+                            >
+                              <FaLinkedin color="#94A3B8" />
+
+                              <Link
+                                color="brand.slate.400"
+                                href={
+                                  selectedSubmission?.user?.linkedin ||
+                                  undefined
+                                }
+                                isExternal
+                              >
+                                {selectedSubmission?.user?.linkedin || '-'}
+                              </Link>
+                            </Flex>
+                          )}
+                          {selectedSubmission?.user?.github && (
+                            <Flex
+                              align="center"
+                              justify="start"
+                              gap={2}
+                              fontSize="sm"
+                            >
+                              <FaGithub color="#94A3B8" />
+                              <Link
+                                color="brand.slate.400"
+                                href={
+                                  selectedSubmission?.user?.github || undefined
+                                }
+                                isExternal
+                              >
+                                {selectedSubmission?.user?.github || '-'}
+                              </Link>
+                            </Flex>
+                          )}
+                          {selectedSubmission?.user?.website && (
+                            <Flex
+                              align="center"
+                              justify="start"
+                              gap={2}
+                              fontSize="sm"
+                            >
+                              <CiGlobe color="#94A3B8" />
+
+                              <Link
+                                color="brand.slate.400"
+                                href={
+                                  selectedSubmission?.user?.website || undefined
+                                }
+                                isExternal
+                              >
+                                {selectedSubmission?.user?.website || '-'}
+                              </Link>
+                            </Flex>
+                          )}
+                        </Flex>
+                        <Flex>
+                          <Button
+                            w="full"
+                            py={5}
+                            color="brand.slate.500"
+                            borderWidth={0}
+                            borderColor="brand.slate.200"
+                            borderTopWidth={'1px'}
+                            borderTopRadius={0}
+                            _hover={{
+                              bg: 'transparent',
+                              color: 'brand.slate.700',
+                            }}
+                            onClick={() =>
+                              window.open(
+                                `${router.basePath}/t/${selectedSubmission?.user?.username}/`,
+                                '_ blank',
+                              )
+                            }
+                            rightIcon={<ArrowForwardIcon />}
+                            size="sm"
+                            variant="outline"
+                          >
+                            View Full Profile
+                          </Button>
+                        </Flex>
                       </Flex>
-                    )}
-                    <Flex
-                      align="center"
-                      justify="start"
-                      gap={2}
-                      mb={4}
-                      fontSize="sm"
-                    >
-                      <Text w={20} color="brand.slate.400">
-                        Discord:
-                      </Text>
-                      <Text color="brand.slate.700">
-                        {selectedSubmission?.user?.discord || '-'}
-                      </Text>
-                    </Flex>
-                    <Flex
-                      align="center"
-                      justify="start"
-                      gap={2}
-                      mb={4}
-                      fontSize="sm"
-                    >
-                      <Text w={20} color="brand.slate.400">
-                        Twitter:
-                      </Text>
-                      <Link
-                        color="brand.slate.700"
-                        href={selectedSubmission?.user?.twitter || undefined}
-                        isExternal
-                      >
-                        {selectedSubmission?.user?.twitter || '-'}
-                      </Link>
-                    </Flex>
-                    <Flex
-                      align="center"
-                      justify="start"
-                      gap={2}
-                      mb={4}
-                      fontSize="sm"
-                    >
-                      <Text w={20} color="brand.slate.400">
-                        LinkedIn:
-                      </Text>
-                      <Link
-                        color="brand.slate.700"
-                        href={selectedSubmission?.user?.linkedin || undefined}
-                        isExternal
-                      >
-                        {selectedSubmission?.user?.linkedin
-                          ? `${selectedSubmission?.user?.linkedin?.slice(
-                              0,
-                              25,
-                            )}${
-                              selectedSubmission?.user?.linkedin?.length >=
-                                25 && '...'
-                            }` || '-'
-                          : '-'}
-                      </Link>
-                    </Flex>
-                    <Flex
-                      align="center"
-                      justify="start"
-                      gap={2}
-                      mb={4}
-                      fontSize="sm"
-                    >
-                      <Text w={20} color="brand.slate.400">
-                        GitHub:
-                      </Text>
-                      <Link
-                        color="brand.slate.700"
-                        href={selectedSubmission?.user?.github || undefined}
-                        isExternal
-                      >
-                        {selectedSubmission?.user?.github || '-'}
-                      </Link>
-                    </Flex>
-                    <Flex
-                      align="center"
-                      justify="start"
-                      gap={2}
-                      mb={4}
-                      fontSize="sm"
-                    >
-                      <Text w={20} color="brand.slate.400">
-                        Website:
-                      </Text>
-                      <Link
-                        color="brand.slate.700"
-                        href={selectedSubmission?.user?.website || undefined}
-                        isExternal
-                      >
-                        {selectedSubmission?.user?.website || '-'}
-                      </Link>
-                    </Flex>
-                  </Box>
-                  <Button
-                    w="full"
-                    pt={2}
-                    color="brand.slate.500"
-                    borderWidth={0}
-                    borderColor="brand.slate.200"
-                    borderTopWidth={'1px'}
-                    borderTopRadius={0}
-                    _hover={{ bg: 'transparent', color: 'brand.slate.700' }}
-                    onClick={() =>
-                      window.open(
-                        `${router.basePath}/t/${selectedSubmission?.user?.username}/`,
-                        '_ blank',
-                      )
-                    }
-                    rightIcon={<ArrowForwardIcon />}
-                    size="sm"
-                    variant="outline"
-                  >
-                    View Full Profile
-                  </Button>
+                    </>
+                  ) : (
+                    <></>
+                  )}
                 </Box>
               </Flex>
             </Flex>

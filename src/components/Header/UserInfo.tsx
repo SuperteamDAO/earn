@@ -44,7 +44,7 @@ export function UserInfo({ isMobile }: UserInfoProps) {
     return (
       <Flex align={'center'} gap={2}>
         <SkeletonCircle size="10" />
-        <SkeletonText display={displayValue} w={'80px'} noOfLines={2} />
+        <SkeletonText display={displayValue} w={'80px'} noOfLines={1} />
       </Flex>
     );
   }

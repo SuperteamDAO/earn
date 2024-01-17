@@ -7,62 +7,49 @@ export default async function handler(
   res: NextApiResponse,
 ) {
   const params = req.query;
+
   const slug = params.slug as string;
+  const skip = params.take ? parseInt(params.skip as string, 10) : 0;
+  const take = params.take ? parseInt(params.take as string, 10) : 15;
 
-  // const searchText = params.searchText as string;
-  // const skip = params.take ? parseInt(params.skip as string, 10) : 0;
-  // const take = params.take ? parseInt(params.take as string, 10) : 15;
+  const searchText = params.searchText as string;
 
-  // const whereSearch = searchText
-  //   ? {
-  //       title: {
-  //         contains: searchText,
-  //       },
-  //     }
-  //   : {};
+  const whereSearch = searchText
+    ? {
+        user: {
+          firstName: {
+            contains: searchText,
+          },
+        },
+      }
+    : {};
 
   try {
-    const bountyWithSubmissions = await prisma.bounties.findFirst({
+    const submissions = await prisma.submission.findMany({
       where: {
-        slug,
+        listing: {
+          slug,
+          isActive: true,
+        },
         isActive: true,
+        isArchived: false,
+        ...whereSearch,
       },
       include: {
-        sponsor: true,
-        poc: true,
-        Submission: {
-          where: {
-            isActive: true,
-            isArchived: false,
-          },
-          include: {
-            user: true,
-          },
-          orderBy: { updatedAt: 'desc' },
-        },
+        user: true,
       },
+      orderBy: { updatedAt: 'desc' },
+      skip,
+      take,
     });
 
-    if (!bountyWithSubmissions) {
+    if (!submissions) {
       return res.status(404).json({
-        message: `Bounty with slug=${slug} not found.`,
+        message: `submissions with slug=${slug} not found.`,
       });
     }
 
-    const totalSubmissions = bountyWithSubmissions.Submission.length;
-    const winnersSelected = bountyWithSubmissions.Submission.filter(
-      (sub) => sub.isWinner,
-    ).length;
-    const paymentsMade = bountyWithSubmissions.Submission.filter(
-      (sub) => sub.isPaid,
-    ).length;
-
-    return res.status(200).json({
-      ...bountyWithSubmissions,
-      totalSubmissions,
-      winnersSelected,
-      paymentsMade,
-    });
+    return res.status(200).json(submissions);
   } catch (error) {
     return res.status(400).json({
       error,

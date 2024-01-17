@@ -270,14 +270,13 @@ function Bounties() {
       )}
       {!isBountiesLoading && bounties?.length && (
         <TableContainer
-          // w="7xl"
           mb={8}
           borderWidth={'1px'}
           borderColor={'brand.slate.200'}
           borderRadius={8}
         >
           <Table variant="simple">
-            <Thead style={{ color: '#6366F1' }}>
+            <Thead>
               <Tr bg="brand.slate.100">
                 <Th
                   color="brand.slate.400"
@@ -444,7 +443,6 @@ function Bounties() {
                         fontWeight={500}
                         bg={getColorStyles(bountyStatus).bgColor}
                         borderRadius={'full'}
-                        wordBreak={'break-all'}
                         variant="solid"
                       >
                         {bountyStatus}
