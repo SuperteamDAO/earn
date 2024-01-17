@@ -91,7 +91,11 @@ export function Banner() {
         borderColor={'brand.slate.200'}
         borderRadius="md"
       >
-        <Link href="https://t.me/pratikdholani" isExternal>
+        <Link
+          _hover={{ textDecoration: 'none' }}
+          href="https://t.me/pratikdholani"
+          isExternal
+        >
           <Flex align={'center'} justify={'space-between'}>
             <Flex align={'center'}>
               <Image

@@ -13,7 +13,6 @@ import posthog from 'posthog-js';
 import { PostHogProvider } from 'posthog-js/react';
 import { useEffect } from 'react';
 
-import { SolanaWalletProvider } from '@/context/SolanaWallet';
 import { userStore } from '@/store/user';
 
 import theme from '../config/chakra.config';
@@ -104,9 +103,7 @@ function App({ Component, pageProps: { session, ...pageProps } }: AppProps) {
       <ChakraProvider theme={extendThemeWithNextFonts}>
         <SessionProvider session={session}>
           <PostHogProvider client={posthog}>
-            <SolanaWalletProvider>
-              <MyApp Component={Component} pageProps={pageProps} />
-            </SolanaWalletProvider>
+            <MyApp Component={Component} pageProps={pageProps} />
           </PostHogProvider>
         </SessionProvider>
       </ChakraProvider>

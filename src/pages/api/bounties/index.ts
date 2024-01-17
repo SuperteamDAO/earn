@@ -57,6 +57,7 @@ export default async function bounties(
         totalWinnersSelected: true,
         totalPaymentsMade: true,
         isWinnersAnnounced: true,
+        applicationType: true,
       },
     });
     res.status(200).json({ total, data: result });

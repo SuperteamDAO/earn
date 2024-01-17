@@ -4,8 +4,18 @@ import { dayjs } from '@/utils/dayjs';
 export const getDeadlineFromNow = (deadline: string | undefined) =>
   deadline ? dayjs(deadline).fromNow() : '-';
 
-export const formatDeadline = (deadline: string | undefined) =>
-  deadline ? dayjs(deadline).format('DD MMM h:mm A') : '-';
+export const formatDeadline = (
+  deadline: string | undefined,
+  applicationType: 'fixed' | 'rolling' | undefined,
+) => {
+  if (applicationType === 'rolling') {
+    return 'Rolling';
+  }
+  if (applicationType === 'fixed') {
+    return deadline ? dayjs(deadline).format('DD MMM h:mm A') : '-';
+  }
+  return '-';
+};
 
 const isDeadlineOver = (deadline: string | undefined) =>
   deadline ? dayjs().isAfter(dayjs(deadline)) : false;
@@ -69,7 +79,7 @@ export const getBgColor = (status: string) => {
       return 'green.400';
     case 'Draft':
       return 'orange';
-    case 'In':
+    case 'In Review':
       return 'brand.purple';
     default:
       return 'gray';

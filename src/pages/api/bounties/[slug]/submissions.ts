@@ -6,7 +6,20 @@ export default async function handler(
   req: NextApiRequest,
   res: NextApiResponse,
 ) {
-  const slug = req.query.slug as string;
+  const params = req.query;
+  const slug = params.slug as string;
+
+  // const searchText = params.searchText as string;
+  // const skip = params.take ? parseInt(params.skip as string, 10) : 0;
+  // const take = params.take ? parseInt(params.take as string, 10) : 15;
+
+  // const whereSearch = searchText
+  //   ? {
+  //       title: {
+  //         contains: searchText,
+  //       },
+  //     }
+  //   : {};
 
   try {
     const bountyWithSubmissions = await prisma.bounties.findFirst({

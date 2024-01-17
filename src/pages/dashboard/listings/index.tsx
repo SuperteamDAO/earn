@@ -377,13 +377,25 @@ function Bounties() {
                 const bountyType = getBountyTypeLabel(
                   currentBounty?.type ?? 'open',
                 );
-                const deadline =
-                  currentBounty.type === 'open'
-                    ? formatDeadline(currentBounty?.deadline)
-                    : 'Rolling';
+
+                const deadline = formatDeadline(
+                  currentBounty?.deadline,
+                  currentBounty?.applicationType,
+                );
+
                 const bountyStatus = getBountyStatus(currentBounty);
-                const isListingIncomplete =
-                  Object.keys(currentBounty?.rewards || {}).length === 0;
+                const isListingIncomplete = (() => {
+                  if (currentBounty?.type === 'permissioned') {
+                    return currentBounty?.rewardAmount === null;
+                  }
+                  if (currentBounty?.type === 'open') {
+                    return (
+                      Object.keys(currentBounty?.rewards || {}).length === 0
+                    );
+                  }
+                  return true;
+                })();
+
                 return (
                   <Tr key={currentBounty?.id}>
                     <Td
@@ -489,6 +501,7 @@ function Bounties() {
                             color="#6366F1"
                             fontSize={'15px'}
                             fontWeight={500}
+                            _hover={{ bg: '#E0E7FF' }}
                             leftIcon={<ViewIcon />}
                             onClick={() =>
                               handleViewSubmissions(currentBounty.slug)
@@ -509,6 +522,11 @@ function Bounties() {
                             }
                             fontSize={'15px'}
                             fontWeight={500}
+                            _hover={{
+                              bg: isListingIncomplete
+                                ? 'brand.slate.200'
+                                : 'green.100',
+                            }}
                             leftIcon={
                               isListingIncomplete ? (
                                 <EditIcon />
@@ -543,7 +561,7 @@ function Bounties() {
                         <MenuList>
                           <MenuItem
                             py={2}
-                            color={'brand.slate.400'}
+                            color={'brand.slate.500'}
                             fontWeight={500}
                             icon={<ExternalLinkIcon h={4} w={4} />}
                             onClick={() =>
@@ -563,7 +581,7 @@ function Bounties() {
                               >
                                 <MenuItem
                                   py={2}
-                                  color={'brand.slate.400'}
+                                  color={'brand.slate.500'}
                                   fontWeight={500}
                                   icon={<AiOutlineEdit size={18} />}
                                 >
@@ -576,7 +594,7 @@ function Bounties() {
                             <>
                               <MenuItem
                                 py={2}
-                                color={'brand.slate.400'}
+                                color={'brand.slate.500'}
                                 fontWeight={500}
                                 icon={<AiOutlineDelete size={18} />}
                                 onClick={() => handleDeleteDraft(currentBounty)}
@@ -592,7 +610,7 @@ function Bounties() {
                             <>
                               <MenuItem
                                 py={2}
-                                color={'brand.slate.400'}
+                                color={'brand.slate.500'}
                                 fontWeight={500}
                                 icon={<ViewOffIcon h={4} w={4} />}
                                 onClick={() => handleUnpublish(currentBounty)}

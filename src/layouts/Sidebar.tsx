@@ -23,6 +23,7 @@ import { MdList, MdOutlineGroup } from 'react-icons/md';
 import { LoadingSection } from '@/components/shared/LoadingSection';
 import { Banner } from '@/components/sponsor/Banner';
 import { SelectSponsor } from '@/components/sponsor/SelectSponsor';
+import { SolanaWalletProvider } from '@/context/SolanaWallet';
 import { Default } from '@/layouts/Default';
 import { Meta } from '@/layouts/Meta';
 import { userStore } from '@/store/user';
@@ -161,35 +162,43 @@ const SidebarContent = ({ ...rest }: BoxProps) => {
   );
 };
 
-export function Sidebar({ children }: { children: ReactNode }) {
+export function Sidebar({
+  children,
+  showBanner = true,
+}: {
+  children: ReactNode;
+  showBanner?: boolean;
+}) {
   const { userInfo } = userStore();
 
   return (
-    <Default
-      className="bg-white"
-      meta={
-        <Meta
-          title="Superteam Earn |  Bounties, Grants, and Jobs in Crypto"
-          description="Explore the latest bounties on Superteam Earn, offering opportunities in the crypto space across Design, Development, and Content."
-          canonical="https://earn.superteam.fun"
-        />
-      }
-    >
-      {!userInfo?.id ? (
-        <LoadingSection />
-      ) : (
-        <Flex justify="start">
-          <SidebarContent display={{ base: 'none', md: 'block' }} />
-          {!userInfo?.currentSponsor?.id ? (
-            <LoadingSection />
-          ) : (
-            <Box w="full" px={6} py={8} bg="white">
-              <Banner />
-              {children}
-            </Box>
-          )}
-        </Flex>
-      )}
-    </Default>
+    <SolanaWalletProvider>
+      <Default
+        className="bg-white"
+        meta={
+          <Meta
+            title="Superteam Earn |  Bounties, Grants, and Jobs in Crypto"
+            description="Explore the latest bounties on Superteam Earn, offering opportunities in the crypto space across Design, Development, and Content."
+            canonical="https://earn.superteam.fun"
+          />
+        }
+      >
+        {!userInfo?.id ? (
+          <LoadingSection />
+        ) : (
+          <Flex justify="start">
+            <SidebarContent display={{ base: 'none', md: 'block' }} />
+            {!userInfo?.currentSponsor?.id ? (
+              <LoadingSection />
+            ) : (
+              <Box w="full" px={6} py={8} bg="white">
+                {showBanner && <Banner />}
+                {children}
+              </Box>
+            )}
+          </Flex>
+        )}
+      </Default>
+    </SolanaWalletProvider>
   );
 }
