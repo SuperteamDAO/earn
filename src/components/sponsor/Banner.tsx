@@ -1,11 +1,29 @@
 import { Box, Divider, Flex, Image, Link, Text } from '@chakra-ui/react';
+import axios from 'axios';
 import Avatar from 'boring-avatars';
+import { useEffect, useState } from 'react';
 import { MdOutlineChatBubbleOutline } from 'react-icons/md';
 
 import { userStore } from '@/store/user';
 
+interface SponsorStats {
+  yearOnPlatform?: number;
+  totalRewardAmount?: number;
+  totalListings?: number;
+  totalSubmissions?: number;
+}
+
 export function Banner() {
   const { userInfo } = userStore();
+  const [sponsorStats, setSponsorStats] = useState<SponsorStats>({});
+
+  useEffect(() => {
+    const getSponsorStats = async () => {
+      const sponsorData = await axios.get('/api/sponsors/stats');
+      setSponsorStats(sponsorData.data);
+    };
+    getSponsorStats();
+  }, [userInfo?.currentSponsorId]);
 
   if (!userInfo?.currentSponsorId) return null;
   return (
@@ -43,7 +61,7 @@ export function Banner() {
                 {userInfo?.currentSponsor?.name}
               </Text>
               <Text color={'brand.slate.500'} fontSize="lg" fontWeight={400}>
-                Sponsor since
+                Sponsor since {sponsorStats.yearOnPlatform}
               </Text>
             </Box>
           </Flex>
@@ -58,7 +76,7 @@ export function Banner() {
               Committed
             </Text>
             <Text color={'brand.slate.900'} fontSize="lg" fontWeight={600}>
-              $1000
+              ${sponsorStats?.totalRewardAmount}
             </Text>
           </Box>
           <Box>
@@ -66,7 +84,7 @@ export function Banner() {
               Listings
             </Text>
             <Text color={'brand.slate.900'} fontSize="lg" fontWeight={600}>
-              5
+              {sponsorStats?.totalListings}
             </Text>
           </Box>
           <Box>
@@ -74,7 +92,7 @@ export function Banner() {
               Submissions
             </Text>
             <Text color={'brand.slate.900'} fontSize="lg" fontWeight={600}>
-              400
+              {sponsorStats?.totalSubmissions}
             </Text>
           </Box>
         </Flex>
