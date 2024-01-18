@@ -50,7 +50,7 @@ import { ErrorSection } from '@/components/shared/ErrorSection';
 import { LoadingSection } from '@/components/shared/LoadingSection';
 import { tokenList } from '@/constants/index';
 import type { BountyWithSubmissions } from '@/interface/bounty';
-import { Sidebar } from '@/layouts/Sidebar';
+import { Sidebar } from '@/layouts/Sponsor';
 import { userStore } from '@/store/user';
 import {
   formatDeadline,

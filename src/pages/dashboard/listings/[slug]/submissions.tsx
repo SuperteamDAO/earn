@@ -54,7 +54,7 @@ import { PublishResults } from '@/components/submissions/PublishResults';
 import { tokenList } from '@/constants';
 import type { Bounty, Rewards } from '@/interface/bounty';
 import type { SubmissionWithUser } from '@/interface/submission';
-import { Sidebar } from '@/layouts/Sidebar';
+import { Sidebar } from '@/layouts/Sponsor';
 import { userStore } from '@/store/user';
 import {
   formatDeadline,
@@ -94,7 +94,7 @@ function BountySubmissions({ slug }: Props) {
   const [isBountyLoading, setIsBountyLoading] = useState(true);
   const [skip, setSkip] = useState(0);
   const anchorWallet = useAnchorWallet();
-  const length = 15;
+  const length = 10;
   const [searchText, setSearchText] = useState('');
 
   const [usedPositions, setUsedPositions] = useState<string[]>([]);

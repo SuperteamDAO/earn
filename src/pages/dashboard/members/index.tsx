@@ -34,7 +34,7 @@ import { ErrorSection } from '@/components/shared/ErrorSection';
 import { LoadingSection } from '@/components/shared/LoadingSection';
 import { InviteMembers } from '@/components/sponsor/Members/InviteMembers';
 import type { UserSponsor } from '@/interface/userSponsor';
-import { Sidebar } from '@/layouts/Sidebar';
+import { Sidebar } from '@/layouts/Sponsor';
 import { userStore } from '@/store/user';
 
 const debounce = require('lodash.debounce');

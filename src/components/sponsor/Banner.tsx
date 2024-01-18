@@ -1,4 +1,12 @@
-import { Box, Divider, Flex, Image, Link, Text } from '@chakra-ui/react';
+import {
+  Box,
+  Divider,
+  Flex,
+  Image,
+  Link,
+  Skeleton,
+  Text,
+} from '@chakra-ui/react';
 import axios from 'axios';
 import Avatar from 'boring-avatars';
 import { useEffect, useState } from 'react';
@@ -16,11 +24,13 @@ interface SponsorStats {
 export function Banner() {
   const { userInfo } = userStore();
   const [sponsorStats, setSponsorStats] = useState<SponsorStats>({});
+  const [isLoading, setIsLoading] = useState<boolean>(true);
 
   useEffect(() => {
     const getSponsorStats = async () => {
       const sponsorData = await axios.get('/api/sponsors/stats');
       setSponsorStats(sponsorData.data);
+      setIsLoading(false);
     };
     getSponsorStats();
   }, [userInfo?.currentSponsorId]);
@@ -60,9 +70,13 @@ export function Banner() {
               <Text color={'brand.slate.900'} fontSize="xl" fontWeight={600}>
                 {userInfo?.currentSponsor?.name}
               </Text>
-              <Text color={'brand.slate.500'} fontSize="lg" fontWeight={400}>
-                Sponsor since {sponsorStats.yearOnPlatform}
-              </Text>
+              {isLoading ? (
+                <Skeleton w="170px" h="20px" mt={2} />
+              ) : (
+                <Text color={'brand.slate.500'} fontSize="lg" fontWeight={400}>
+                  Sponsor since {sponsorStats.yearOnPlatform}
+                </Text>
+              )}
             </Box>
           </Flex>
           <Divider
@@ -75,25 +89,37 @@ export function Banner() {
             <Text color={'brand.slate.500'} fontSize="md" fontWeight={400}>
               Rewarded
             </Text>
-            <Text color={'brand.slate.900'} fontSize="lg" fontWeight={600}>
-              ${sponsorStats?.totalRewardAmount?.toLocaleString()}
-            </Text>
+            {isLoading ? (
+              <Skeleton w="72px" h="20px" mt={2} />
+            ) : (
+              <Text color={'brand.slate.900'} fontSize="lg" fontWeight={600}>
+                ${sponsorStats?.totalRewardAmount?.toLocaleString()}
+              </Text>
+            )}
           </Box>
           <Box>
             <Text color={'brand.slate.500'} fontSize="md" fontWeight={400}>
               Listings
             </Text>
-            <Text color={'brand.slate.900'} fontSize="lg" fontWeight={600}>
-              {sponsorStats?.totalListings}
-            </Text>
+            {isLoading ? (
+              <Skeleton w="32px" h="20px" mt={2} />
+            ) : (
+              <Text color={'brand.slate.900'} fontSize="lg" fontWeight={600}>
+                {sponsorStats?.totalListings}
+              </Text>
+            )}
           </Box>
           <Box>
             <Text color={'brand.slate.500'} fontSize="md" fontWeight={400}>
               Submissions
             </Text>
-            <Text color={'brand.slate.900'} fontSize="lg" fontWeight={600}>
-              {sponsorStats?.totalSubmissions}
-            </Text>
+            {isLoading ? (
+              <Skeleton w="36px" h="20px" mt={2} />
+            ) : (
+              <Text color={'brand.slate.900'} fontSize="lg" fontWeight={600}>
+                {sponsorStats?.totalSubmissions}
+              </Text>
+            )}
           </Box>
         </Flex>
       </Box>
