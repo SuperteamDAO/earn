@@ -64,11 +64,14 @@ export default async function handler(
       await resendMail.emails.send({
         from: `Kash from Superteam <${process.env.RESEND_EMAIL}>`,
         to: [pocUser?.email],
-        subject: 'New Bounty Submission Received',
+        subject:
+          listing.type === 'open'
+            ? 'New Bounty Submission Received'
+            : 'Project Application Received',
         react: SubmissionSponsorTemplate({
           name: pocUser?.firstName,
           bountyName: listing?.title,
-          link: `https://earn.superteam.fun/dashboard/bounties/${listing?.slug}/submissions/?utm_source=superteamearn&utm_medium=email&utm_campaign=notifications`,
+          link: `https://earn.superteam.fun/dashboard/listings/${listing?.slug}/submissions/?utm_source=superteamearn&utm_medium=email&utm_campaign=notifications`,
         }),
       });
     }

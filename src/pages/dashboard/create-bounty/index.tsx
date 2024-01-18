@@ -1,5 +1,5 @@
 import { CreateListing } from '@/components/listings/bounty/Bounty';
-import { Sidebar } from '@/layouts/Sidebar';
+import { Sidebar } from '@/layouts/Sponsor';
 
 function CreateBounty() {
   return (

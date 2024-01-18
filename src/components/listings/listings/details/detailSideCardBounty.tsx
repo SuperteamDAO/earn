@@ -8,14 +8,7 @@ import {
   HStack,
   Image,
   Link,
-  Table,
-  TableContainer,
-  Tbody,
-  Td,
   Text,
-  Th,
-  Thead,
-  Tr,
   useDisclosure,
   VStack,
 } from '@chakra-ui/react';
@@ -220,11 +213,11 @@ export function DetailSideCardBounty({
         triggerLogin={triggerLogin}
         setTriggerLogin={setTriggerLogin}
       />
-      <VStack gap={2} pt={10} marginInlineStart={'0 !important'}>
+      <VStack gap={2} mx={2} pt={10}>
         <VStack
           justify={'center'}
           gap={0}
-          minW={'22rem'}
+          minW={{ base: 'full', md: '22rem' }}
           pb={5}
           bg={'#FFFFFF'}
           rounded={'xl'}
@@ -239,7 +232,7 @@ export function DetailSideCardBounty({
             <Flex align="center">
               <Image
                 w={7}
-                h="auto"
+                h={7}
                 mr={2}
                 alt={'green doller'}
                 rounded={'full'}
@@ -269,62 +262,49 @@ export function DetailSideCardBounty({
           </HStack>
           {type === 'open' && (
             <VStack w={'full'} borderBottom={'1px solid #E2E8EF'}>
-              <TableContainer w={'full'}>
-                <Table mt={-8} variant={'unstyled'}>
-                  <Thead>
-                    <Tr>
-                      <Th></Th>
-                      <Th></Th>
-                      <Th> </Th>
-                    </Tr>
-                  </Thead>
-                  <Tbody>
-                    {prizeMapping.map(
-                      (prize, index) =>
-                        prizeList?.[prize.key] && (
-                          <Tr key={index}>
-                            <Td>
-                              <Flex
-                                align={'center'}
-                                justify={'center'}
-                                w={8}
-                                h={8}
-                                p={1.5}
-                                fontSize={'0.7rem'}
-                                bg={'#C6C6C62B'}
-                                rounded={'full'}
-                              >
-                                {prize.label}
-                              </Flex>
-                            </Td>
-                            <Td>
-                              <Text
-                                color={'#64758B'}
-                                fontSize={'1.1rem'}
-                                fontWeight={600}
-                              >
-                                {prizeList[prize.key]}
-                                <Text
-                                  as="span"
-                                  ml={1}
-                                  color="brand.slate.300"
-                                  fontWeight={400}
-                                >
-                                  {token}
-                                </Text>
-                              </Text>
-                            </Td>
-                            <Td>
-                              <Text color={'#CBD5E1'} fontWeight={500}>
-                                {prize.description}
-                              </Text>
-                            </Td>
-                          </Tr>
-                        ),
-                    )}
-                  </Tbody>
-                </Table>
-              </TableContainer>
+              {prizeMapping.map(
+                (prize, index) =>
+                  prizeList?.[prize.key] && (
+                    <Box key={index} w="100%" py={2}>
+                      <Flex
+                        align={'center'}
+                        justify={'space-between'}
+                        px={'1.5rem'}
+                      >
+                        <Flex
+                          align={'center'}
+                          justify={'center'}
+                          w={8}
+                          h={8}
+                          p={1.5}
+                          fontSize={'0.7rem'}
+                          bg={'#C6C6C62B'}
+                          rounded={'full'}
+                        >
+                          {prize.label}
+                        </Flex>
+                        <Text
+                          color={'#64758B'}
+                          fontSize={'1.1rem'}
+                          fontWeight={600}
+                        >
+                          {prizeList[prize.key]}
+                          <Text
+                            as="span"
+                            ml={1}
+                            color="brand.slate.300"
+                            fontWeight={400}
+                          >
+                            {token}
+                          </Text>
+                        </Text>
+                        <Text color={'#CBD5E1'} fontWeight={500}>
+                          {prize.description}
+                        </Text>
+                      </Flex>
+                    </Box>
+                  ),
+              )}
             </VStack>
           )}
           <Flex justify={'space-between'} w={'full'} px={5}>
@@ -444,7 +424,7 @@ export function DetailSideCardBounty({
           <VStack
             align={'start'}
             justify={'center'}
-            w={'22rem'}
+            w={{ base: 'full', md: '22rem' }}
             mt={4}
             p={6}
             bg={'#FFFFFF'}
@@ -466,7 +446,7 @@ export function DetailSideCardBounty({
         {requirements && (
           <VStack
             align="start"
-            w={'22rem'}
+            w={{ base: 'full', md: '22rem' }}
             mt={4}
             p={6}
             bg="white"
@@ -484,7 +464,7 @@ export function DetailSideCardBounty({
           <VStack
             align={'start'}
             justify={'center'}
-            w={'22rem'}
+            w={{ base: '100%', md: '22rem' }}
             mt={4}
             p={6}
             bg={'#FFFFFF'}
@@ -519,7 +499,7 @@ export function DetailSideCardBounty({
           <VStack
             align={'start'}
             justify={'center'}
-            minW={'22rem'}
+            minW={{ base: 'full', md: '22rem' }}
             mt={4}
             p={6}
             bg={'#FFFFFF'}

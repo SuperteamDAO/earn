@@ -183,7 +183,7 @@ export function CreateListing({ bounty, isEditMode = false, type }: Props) {
       //     id: bounty?.id,
       //   });
       // }
-      router.push('/dashboard/bounties');
+      router.push('/dashboard/listings');
     } catch (e) {
       setDraftLoading(false);
     }

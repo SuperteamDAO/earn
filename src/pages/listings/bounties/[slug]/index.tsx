@@ -135,7 +135,7 @@ function BountyDetails({ bounty: initialBounty }: BountyDetailsProps) {
                 mx={'auto'}
                 mb={10}
               >
-                <VStack gap={8} w={['22rem', '22rem', 'full', 'full']} mt={10}>
+                <VStack gap={8} w={'full'} mt={10}>
                   <DetailDescriptionBounty
                     skills={bounty?.skills?.map((e) => e.skills) ?? []}
                     description={bounty?.description}

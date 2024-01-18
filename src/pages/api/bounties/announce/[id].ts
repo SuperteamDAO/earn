@@ -128,7 +128,7 @@ export default async function announce(
 
     let tokenUSDValue: any;
 
-    if (bountyToken === 'USDC') {
+    if (bountyToken === 'USDC' || bountyToken === 'USDT') {
       tokenUSDValue = 1;
     } else {
       tokenUSDValue = await fetchTokenUSDValue(coingeckoSymbol);

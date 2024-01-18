@@ -8,11 +8,12 @@ import {
 import {
   Box,
   Button,
+  Divider,
   Flex,
   Image,
   Input,
   InputGroup,
-  InputRightElement,
+  InputLeftElement,
   Table,
   TableContainer,
   Tag,
@@ -29,13 +30,12 @@ import axios from 'axios';
 import Avatar from 'boring-avatars';
 import React, { useEffect, useRef, useState } from 'react';
 
-import { InviteMembers } from '@/components/Members/InviteMembers';
 import { ErrorSection } from '@/components/shared/ErrorSection';
 import { LoadingSection } from '@/components/shared/LoadingSection';
+import { InviteMembers } from '@/components/sponsor/Members/InviteMembers';
 import type { UserSponsor } from '@/interface/userSponsor';
-import { Sidebar } from '@/layouts/Sidebar';
+import { Sidebar } from '@/layouts/Sponsor';
 import { userStore } from '@/store/user';
-import { truncatePublicKey } from '@/utils/truncatePublicKey';
 
 const debounce = require('lodash.debounce');
 
@@ -80,29 +80,52 @@ const Index = () => {
     <Sidebar>
       {isOpen && <InviteMembers isOpen={isOpen} onClose={onClose} />}
       <Flex justify="space-between" mb={4}>
-        <InputGroup w={52}>
-          <Input
-            bg={'white'}
-            borderColor="brand.slate.400"
-            _placeholder={{
-              color: 'brand.slate.400',
-            }}
-            focusBorderColor="brand.purple"
-            onChange={(e) => debouncedSetSearchText(e.target.value)}
-            placeholder="Search members..."
-            type="text"
+        <Flex align="center" gap={3}>
+          <Text color="brand.slate.800" fontSize="lg" fontWeight={600}>
+            Team Members
+          </Text>
+          <Divider
+            h="60%"
+            borderColor="brand.slate.200"
+            orientation="vertical"
           />
-          <InputRightElement pointerEvents="none">
-            <SearchIcon color="brand.slate.400" />
-          </InputRightElement>
-        </InputGroup>
-        {(userInfo?.role === 'GOD' ||
-          (userInfo?.UserSponsors?.length &&
-            userInfo?.UserSponsors[0]?.role === 'ADMIN')) && (
-          <Button leftIcon={<AddIcon />} onClick={onOpen} variant="solid">
-            Invite Members
-          </Button>
-        )}
+          <Text color="brand.slate.500">
+            Manage who gets access to your sponsor profile
+          </Text>
+        </Flex>
+        <Flex align="center" gap={3}>
+          {(userInfo?.role === 'GOD' ||
+            (userInfo?.UserSponsors?.length &&
+              userInfo?.UserSponsors[0]?.role === 'ADMIN')) && (
+            <Button
+              color="#6366F1"
+              bg="#E0E7FF"
+              leftIcon={<AddIcon />}
+              onClick={onOpen}
+              variant="solid"
+            >
+              Invite Members
+            </Button>
+          )}
+          <InputGroup w={52}>
+            <Input
+              bg={'white'}
+              borderColor="brand.slate.200"
+              _placeholder={{
+                color: 'brand.slate.400',
+                fontWeight: 500,
+                fontSize: 'md',
+              }}
+              focusBorderColor="brand.purple"
+              onChange={(e) => debouncedSetSearchText(e.target.value)}
+              placeholder="Search members..."
+              type="text"
+            />
+            <InputLeftElement pointerEvents="none">
+              <SearchIcon color="brand.slate.400" />
+            </InputLeftElement>
+          </InputGroup>
+        </Flex>
       </Flex>
       {isMembersLoading && <LoadingSection />}
       {!isMembersLoading && !members?.length && (
@@ -112,19 +135,20 @@ const Index = () => {
         />
       )}
       {!isMembersLoading && members?.length && (
-        <TableContainer mb={8}>
-          <Table
-            border="1px solid"
-            borderColor={'blackAlpha.200'}
-            bgColor="white"
-            variant="simple"
-          >
+        <TableContainer
+          mb={8}
+          borderWidth={'1px'}
+          borderColor={'brand.slate.200'}
+          borderRadius={8}
+        >
+          <Table variant="simple">
             <Thead>
-              <Tr>
+              <Tr bg="brand.slate.100">
                 <Th
                   color="brand.slate.400"
                   fontSize="sm"
                   fontWeight={500}
+                  letterSpacing={'-2%'}
                   textTransform={'capitalize'}
                 >
                   Member
@@ -133,7 +157,7 @@ const Index = () => {
                   color="brand.slate.400"
                   fontSize="sm"
                   fontWeight={500}
-                  textAlign="center"
+                  letterSpacing={'-2%'}
                   textTransform={'capitalize'}
                 >
                   Role
@@ -142,17 +166,10 @@ const Index = () => {
                   color="brand.slate.400"
                   fontSize="sm"
                   fontWeight={500}
+                  letterSpacing={'-2%'}
                   textTransform={'capitalize'}
                 >
                   Email
-                </Th>
-                <Th
-                  color="brand.slate.400"
-                  fontSize="sm"
-                  fontWeight={500}
-                  textTransform={'capitalize'}
-                >
-                  Wallet
                 </Th>
                 <Th
                   color="brand.slate.400"
@@ -169,7 +186,7 @@ const Index = () => {
                     <Flex align="center">
                       {member?.user?.photo ? (
                         <Image
-                          boxSize="32px"
+                          boxSize="36px"
                           borderRadius="full"
                           alt={`${member?.user?.firstName} ${member?.user?.lastName}`}
                           src={member?.user?.photo}
@@ -178,45 +195,46 @@ const Index = () => {
                         <Avatar
                           name={`${member?.user?.firstName} ${member?.user?.lastName}`}
                           colors={['#92A1C6', '#F0AB3D', '#C271B4']}
-                          size={32}
+                          size={36}
                           variant="marble"
                         />
                       )}
                       <Box display={{ base: 'none', md: 'block' }} ml={2}>
-                        <Text color="brand.slate.800" fontSize="sm">
+                        <Text
+                          color="brand.slate.500"
+                          fontSize="15px"
+                          fontWeight={500}
+                        >
                           {`${member?.user?.firstName} ${member?.user?.lastName}`}
                         </Text>
-                        <Text color="brand.slate.500" fontSize="xs">
+                        <Text color="brand.slate.400" fontSize="sm">
                           @{member?.user?.username}
                         </Text>
                       </Box>
                     </Flex>
                   </Td>
                   <Td>
-                    <Flex align="center" justify="center">
+                    <Flex align="center">
                       <Tag
-                        color={'brand.purple'}
-                        fontWeight={700}
-                        bg={'brand.slate.200'}
-                        size="md"
+                        color={member?.role === 'ADMIN' ? '#0D9488' : '#8B5CF6'}
+                        fontWeight={600}
+                        bg={member?.role === 'ADMIN' ? '#D1FAE5' : '#F3E8FF'}
+                        size="sm"
                         variant="solid"
                       >
                         {member?.role}
                       </Tag>
                     </Flex>
                   </Td>
-                  <Td color={'brand.slate.800'}>
-                    {member?.user?.email || '-'}
-                  </Td>
-                  <Td color={'brand.slate.800'}>
-                    {truncatePublicKey(member?.user?.publicKey)}
-                    <Tooltip label="Copy Wallet ID" placement="right">
+                  <Td color={'brand.slate.600'} fontWeight={500}>
+                    {member?.user?.email}
+                    <Tooltip label="Copy Email Address" placement="right">
                       <CopyIcon
                         cursor="pointer"
                         ml={1}
                         onClick={() =>
                           navigator.clipboard.writeText(
-                            member?.user?.publicKey as string,
+                            member?.user?.email as string,
                           )
                         }
                       />

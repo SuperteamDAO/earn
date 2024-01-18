@@ -3,6 +3,7 @@ import type { LinkProps } from '@chakra-ui/react';
 import {
   Box,
   Collapse,
+  Divider,
   Flex,
   IconButton,
   Image,
@@ -207,6 +208,9 @@ export const Header = () => {
   const { isOpen, onToggle } = useDisclosure();
   const router = useRouter();
 
+  const isDashboardRoute = router.pathname.startsWith('/dashboard');
+  const maxWValue = isDashboardRoute ? '' : '7xl';
+
   return (
     <Box pos="sticky" zIndex="sticky" top={0}>
       <BountySnackbar />
@@ -218,7 +222,7 @@ export const Header = () => {
         borderBottom="1px solid"
         borderBottomColor="blackAlpha.200"
       >
-        <Flex justify={'space-between'} w="100%" maxW="7xl" mx="auto">
+        <Flex justify={'space-between'} w="100%" maxW={maxWValue} mx="auto">
           <Flex
             flex={{ base: 1, lg: 'auto' }}
             display={{ base: 'flex', lg: 'none' }}
@@ -242,10 +246,17 @@ export const Header = () => {
             justify={{ base: 'center', lg: 'start' }}
             gap={6}
           >
-            <Link as={NextLink} display={{ base: 'none', lg: 'flex' }} href="/">
+            <Link
+              as={NextLink}
+              alignItems={'center'}
+              gap={3}
+              display={{ base: 'none', lg: 'flex' }}
+              mr={5}
+              _hover={{ textDecoration: 'none' }}
+              href="/"
+            >
               <Image
                 h={5}
-                mr={5}
                 cursor="pointer"
                 objectFit={'contain'}
                 alt={'Superteam Earn'}
@@ -254,6 +265,20 @@ export const Header = () => {
                 }}
                 src={'/assets/logo/logo.svg'}
               />
+
+              {isDashboardRoute && (
+                <>
+                  <Divider
+                    w={'3px'}
+                    h={'24px'}
+                    borderColor={'brand.slate.400'}
+                    orientation="vertical"
+                  />
+                  <Text fontSize="sm" letterSpacing={'1.5px'}>
+                    SPONSORS
+                  </Text>
+                </>
+              )}
             </Link>
 
             <NavLink

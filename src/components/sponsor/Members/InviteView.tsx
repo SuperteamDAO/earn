@@ -14,7 +14,6 @@ interface Props {
 export function InviteView({ invite }: Props) {
   const router = useRouter();
   const [triggerLogin, setTriggerLogin] = useState(false);
-  const [isError, setIsError] = useState(false);
   const [isWalletError, setIsWalletError] = useState(false);
   const [isAccepting, setIsAccepting] = useState(false);
 
@@ -22,7 +21,7 @@ export function InviteView({ invite }: Props) {
 
   const acceptUser = async (user: User) => {
     setIsAccepting(true);
-    if (user?.id && user?.email !== invite?.email) {
+    if (user?.email !== invite?.email) {
       setIsWalletError(true);
       setIsAccepting(false);
     } else if (user?.id && user?.email === invite?.email) {
@@ -30,7 +29,11 @@ export function InviteView({ invite }: Props) {
         await axios.post('/api/userSponsors/accept/', {
           inviteId: invite?.id,
         });
-        router.push('/dashboard/bounties');
+        setUserInfo({
+          ...userInfo,
+          currentSponsorId: invite?.currentSponsorId,
+        });
+        router.push('/dashboard/listings');
       } catch (e) {
         setIsWalletError(true);
         setIsAccepting(false);
@@ -39,9 +42,7 @@ export function InviteView({ invite }: Props) {
   };
 
   const handleSubmit = () => {
-    if (userInfo?.id) {
-      setIsError(true);
-    } else {
+    if (!userInfo?.id) {
       setUserInfo({ email: invite?.email });
       setTriggerLogin(true);
     }
@@ -99,18 +100,11 @@ export function InviteView({ invite }: Props) {
             Accept Invite
           </Button>
         </Stack>
-        {isError && (
-          <Text pt={2} color={'red'}>
-            You are already logged in!
-            <br />
-            Please log out and then click on the invite link.
-          </Text>
-        )}
         {isWalletError && (
           <Text pt={2} color={'red'}>
-            You have already signed up using the same wallet address.
+            You have already signed up using the same email address.
             <br />
-            Please log out, change your wallet & try again.
+            Please log out, change your email address & try again.
           </Text>
         )}
       </Stack>

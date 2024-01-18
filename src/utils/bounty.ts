@@ -4,8 +4,18 @@ import { dayjs } from '@/utils/dayjs';
 export const getDeadlineFromNow = (deadline: string | undefined) =>
   deadline ? dayjs(deadline).fromNow() : '-';
 
-export const formatDeadline = (deadline: string | undefined) =>
-  deadline ? dayjs(deadline).format('MMM D, YYYY HH:mm') : '-';
+export const formatDeadline = (
+  deadline: string | undefined,
+  applicationType: 'fixed' | 'rolling' | undefined,
+) => {
+  if (applicationType === 'rolling') {
+    return 'Rolling';
+  }
+  if (applicationType === 'fixed') {
+    return deadline ? dayjs(deadline).format('DD MMM h:mm A') : '-';
+  }
+  return '-';
+};
 
 const isDeadlineOver = (deadline: string | undefined) =>
   deadline ? dayjs().isAfter(dayjs(deadline)) : false;
@@ -24,52 +34,56 @@ export const getBountyTypeLabel = (type: string) => {
   return 'Bounty';
 };
 
-export const getBountyProgress = (
+export const getBountyStatus = (
   bounty: Bounty | BountyWithSubmissions | null,
 ) => {
-  if (!bounty) return '-';
+  if (!bounty) return 'DRAFT';
   const rewardsLength = Object.keys(bounty?.rewards || {})?.length || 0;
   const bountyStatus = getBountyDraftStatus(
     bounty?.status,
     bounty?.isPublished,
   );
-  if (bountyStatus !== 'PUBLISHED') return '';
   const hasDeadlinePassed = isDeadlineOver(bounty?.deadline || '');
-  if (!hasDeadlinePassed) return 'IN PROGRESS';
-  if (bounty?.isWinnersAnnounced && bounty?.totalPaymentsMade === rewardsLength)
-    return 'COMPLETED';
-  if (bounty?.isWinnersAnnounced && bounty?.totalPaymentsMade !== rewardsLength)
-    return 'ANNOUNCED - PAYMENTS PENDING';
-  if (
-    !bounty?.isWinnersAnnounced &&
-    bounty?.totalWinnersSelected === rewardsLength &&
-    bounty?.totalPaymentsMade === rewardsLength
-  )
-    return 'PAYMENTS COMPLETED';
-  if (
-    !bounty?.isWinnersAnnounced &&
-    bounty?.totalWinnersSelected === rewardsLength
-  )
-    return 'WINNERS SELECTED';
-  return 'IN REVIEW';
+
+  switch (bountyStatus) {
+    case 'DRAFT':
+      return 'Draft';
+    case 'CLOSED':
+      return 'Closed';
+    case 'PUBLISHED':
+      if (!hasDeadlinePassed && !bounty?.isWinnersAnnounced)
+        return 'In Progress';
+      if (!bounty?.isWinnersAnnounced) return 'In Review';
+      if (
+        bounty?.isWinnersAnnounced &&
+        bounty?.totalPaymentsMade !== rewardsLength
+      )
+        return 'Payment Pending';
+      if (
+        bounty?.isWinnersAnnounced &&
+        bounty?.totalPaymentsMade === rewardsLength
+      )
+        return 'Completed';
+      return 'In Review';
+    default:
+      return 'Draft';
+  }
 };
 
-export const getBgColor = (status: string) => {
+export const getColorStyles = (status: string) => {
   switch (status) {
-    case 'PUBLISHED':
-    case 'COMPLETED':
-      return 'green';
-    case 'ANNOUNCED - PAYMENTS PENDING':
-      return 'green.400';
-    case 'PAYMENTS COMPLETED':
-      return 'green.500';
-    case 'WINNERS SELECTED':
-      return 'green.300';
-    case 'DRAFT':
-      return 'orange';
-    case 'IN REVIEW':
-      return 'brand.purple';
+    case 'Published':
+    case 'Completed':
+      return { bgColor: '#D1FAE5', color: '#0D9488' };
+    case 'Payment Pending':
+      return { bgColor: '#ffecb3', color: '#F59E0B' };
+    case 'Draft':
+      return { bgColor: 'brand.slate.100', color: 'brand.slate.400' };
+    case 'In Review':
+      return { bgColor: 'cyan.100', color: 'cyan.600' };
+    case 'In Progress':
+      return { bgColor: '#F3E8FF', color: '#8B5CF6' };
     default:
-      return 'gray';
+      return { bgColor: 'gray', color: 'white' };
   }
 };
