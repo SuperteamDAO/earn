@@ -1,9 +1,6 @@
 import type { Bounty, BountyWithSubmissions } from '@/interface/bounty';
 import { dayjs } from '@/utils/dayjs';
 
-export const getDeadlineFromNow = (deadline: string | undefined) =>
-  deadline ? dayjs(deadline).fromNow() : '-';
-
 export const formatDeadline = (
   deadline: string | undefined,
   applicationType: 'fixed' | 'rolling' | undefined,

@@ -31,6 +31,7 @@ export default async function handler(
       for (const submission of user.Submission) {
         const { rewards } = submission.listing;
         if (rewards && submission.winnerPosition) {
+          // eslint-disable-next-line @typescript-eslint/ban-ts-comment
           // @ts-ignore
           const positionReward = rewards[submission.winnerPosition];
           if (positionReward) {
