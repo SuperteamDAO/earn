@@ -48,7 +48,6 @@ import { CiGlobe } from 'react-icons/ci';
 import { FaDiscord, FaGithub, FaLinkedin } from 'react-icons/fa';
 import { MdOutlineAccountBalanceWallet, MdOutlineMail } from 'react-icons/md';
 
-import { ErrorSection } from '@/components/shared/ErrorSection';
 import { LoadingSection } from '@/components/shared/LoadingSection';
 import { PublishResults } from '@/components/submissions/PublishResults';
 import { tokenList } from '@/constants';
@@ -101,7 +100,7 @@ function BountySubmissions({ slug }: Props) {
 
   const debouncedSetSearchText = useRef(debounce(setSearchText, 300)).current;
 
-  const { connected } = useWallet();
+  const { connected, publicKey } = useWallet();
 
   const DynamicWalletMultiButton = dynamic(
     async () =>
@@ -118,8 +117,6 @@ function BountySubmissions({ slug }: Props) {
         router.push('/dashboard/listings');
       }
       setTotalPaymentsMade(bountyDetails.data.paymentsMade || 0);
-
-      console.log(bountyDetails.data);
 
       const usedPos = bountyDetails.data.Submission.filter(
         (s: any) => s.isWinner,
@@ -490,15 +487,39 @@ function BountySubmissions({ slug }: Props) {
             </Box>
           </Flex>
           {!submissions?.length && !searchText ? (
-            <ErrorSection
-              title="No submissions found!"
-              message="View your bounty submissions here once they are submitted"
-            />
+            <>
+              <Image
+                w={32}
+                mx="auto"
+                mt={32}
+                alt={'talent empty'}
+                src="/assets/bg/talent-empty.svg"
+              />
+              <Text
+                mx="auto"
+                mt={5}
+                color={'brand.slate.600'}
+                fontSize={'lg'}
+                fontWeight={600}
+                textAlign={'center'}
+              >
+                People are working!
+              </Text>
+              <Text
+                mx="auto"
+                mb={200}
+                color={'brand.slate.400'}
+                fontWeight={500}
+                textAlign={'center'}
+              >
+                Submissions will start appearing here
+              </Text>
+            </>
           ) : (
             <Flex align={'start'} bg="white">
               <Flex flex="4 1 auto">
                 <Box
-                  w="80%"
+                  w="70%"
                   bg="white"
                   borderWidth={'1px'}
                   borderColor={'brand.slate.200'}
@@ -573,7 +594,7 @@ function BountySubmissions({ slug }: Props) {
                               variant="marble"
                             />
                           )}
-                          <Box w={48} ml={2}>
+                          <Box w={40} ml={2}>
                             <Text
                               overflow={'hidden'}
                               color="brand.slate.700"
@@ -597,9 +618,10 @@ function BountySubmissions({ slug }: Props) {
                           </Box>
                         </Flex>
                         {submission?.isWinner && submission?.winnerPosition && (
-                          <Tag w={24} py={2} bg="green.200">
+                          <Tag w={24} py={1} bg="green.100">
                             <TagLabel
                               w="full"
+                              color="green.600"
                               textAlign={'center'}
                               textTransform={'capitalize'}
                             >
@@ -628,7 +650,7 @@ function BountySubmissions({ slug }: Props) {
                         py={3}
                       >
                         <Text
-                          w={'60%'}
+                          w="100%"
                           color="brand.slate.900"
                           fontSize="lg"
                           fontWeight={500}
@@ -651,10 +673,22 @@ function BountySubmissions({ slug }: Props) {
                                     height: '32px',
                                     fontWeight: 600,
                                     fontFamily: 'Inter',
+                                    maxWidth: '96px',
+                                    paddingRight: '6px',
+                                    paddingLeft: '6px',
                                   }}
-                                />
+                                >
+                                  {connected
+                                    ? truncatePublicKey(
+                                        publicKey?.toBase58(),
+                                        3,
+                                      )
+                                    : 'Pay'}
+                                </DynamicWalletMultiButton>
                                 {connected && (
                                   <Button
+                                    w="fit-content"
+                                    minW={'120px'}
                                     mr={4}
                                     isDisabled={!bounty?.isWinnersAnnounced}
                                     isLoading={isPaying}
@@ -741,6 +775,7 @@ function BountySubmissions({ slug }: Props) {
                             placement="top"
                           >
                             <Select
+                              minW={48}
                               maxW={48}
                               textTransform="capitalize"
                               borderColor="brand.slate.300"
@@ -955,6 +990,7 @@ function BountySubmissions({ slug }: Props) {
                               <Text color="brand.slate.400">
                                 {truncatePublicKey(
                                   selectedSubmission?.user?.publicKey,
+                                  6,
                                 )}
                                 <Tooltip
                                   label="Copy Wallet ID"

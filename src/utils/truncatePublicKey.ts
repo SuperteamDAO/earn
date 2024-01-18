@@ -1,6 +1,9 @@
-export const truncatePublicKey = (publicKey: string = '') => {
-  return `${publicKey?.substring(0, 4)}....${publicKey?.substring(
-    publicKey.length - 4,
+export const truncatePublicKey = (
+  publicKey: string = '',
+  length: number = 4,
+) => {
+  return `${publicKey?.substring(0, length)}....${publicKey?.substring(
+    publicKey.length - length,
     publicKey?.length,
   )}`;
 };

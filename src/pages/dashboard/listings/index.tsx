@@ -1,4 +1,5 @@
 import {
+  AddIcon,
   ChevronLeftIcon,
   ChevronRightIcon,
   EditIcon,
@@ -46,7 +47,7 @@ import { useEffect, useRef, useState } from 'react';
 import { AiOutlineDelete } from 'react-icons/ai';
 import { FiMoreVertical } from 'react-icons/fi';
 
-import { ErrorSection } from '@/components/shared/ErrorSection';
+import CreateListingModal from '@/components/modals/createListing';
 import { LoadingSection } from '@/components/shared/LoadingSection';
 import { tokenList } from '@/constants/index';
 import type { BountyWithSubmissions } from '@/interface/bounty';
@@ -166,6 +167,12 @@ function Bounties() {
     deleteDraftOnOpen();
   };
 
+  const {
+    isOpen: isOpenCreateListing,
+    onOpen: onOpenCreateListing,
+    onClose: onCloseCreateListing,
+  } = useDisclosure();
+
   return (
     <Sidebar>
       <Modal isOpen={unpublishIsOpen} onClose={unpublishOnClose}>
@@ -263,10 +270,50 @@ function Bounties() {
       </Flex>
       {isBountiesLoading && <LoadingSection />}
       {!isBountiesLoading && !bounties?.length && (
-        <ErrorSection
-          title="No listings found!"
-          message="Create a new listing from the sidebar"
-        />
+        <>
+          <CreateListingModal
+            isOpen={isOpenCreateListing}
+            onClose={onCloseCreateListing}
+          />
+          <Image
+            w={32}
+            mx="auto"
+            mt={32}
+            alt={'talent empty'}
+            src="/assets/bg/talent-empty.svg"
+          />
+          <Text
+            mx="auto"
+            mt={5}
+            color={'brand.slate.600'}
+            fontSize={'lg'}
+            fontWeight={600}
+            textAlign={'center'}
+          >
+            Create your first listing
+          </Text>
+          <Text
+            mx="auto"
+            color={'brand.slate.400'}
+            fontWeight={500}
+            textAlign={'center'}
+          >
+            and start getting contributions
+          </Text>
+          <Button
+            display="block"
+            w={'200px'}
+            mx="auto"
+            mt={6}
+            mb={48}
+            fontSize="md"
+            leftIcon={<AddIcon w={3} h={3} />}
+            onClick={() => onOpenCreateListing()}
+            variant="solid"
+          >
+            Create New Listing
+          </Button>
+        </>
       )}
       {!isBountiesLoading && bounties?.length && (
         <TableContainer
