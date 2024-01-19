@@ -34,7 +34,7 @@ export default async function bounties(
       ...countQuery,
       skip: skip ?? 0,
       take: take ?? 15,
-      orderBy: [{ deadline: 'desc' }, { id: 'desc' }],
+      orderBy: [{ createdAt: 'desc' }, { id: 'desc' }],
       select: {
         _count: {
           select: {

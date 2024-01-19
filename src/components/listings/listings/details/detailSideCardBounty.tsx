@@ -33,6 +33,7 @@ import { tokenList } from '@/constants/index';
 import type { Eligibility, Rewards } from '@/interface/bounty';
 import { userStore } from '@/store/user';
 import { getBountyDraftStatus } from '@/utils/bounty';
+import { getURLSanitized } from '@/utils/submissions/getURLSanitized';
 
 interface Props {
   id: string;
@@ -498,7 +499,7 @@ export function DetailSideCardBounty({
                 color={'#64768b'}
                 fontSize="1rem"
                 fontWeight={500}
-                href={pocSocials}
+                href={getURLSanitized(pocSocials)}
                 isExternal
               >
                 Reach out

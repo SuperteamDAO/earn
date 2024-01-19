@@ -6,7 +6,6 @@ import {
   FormLabel,
   HStack,
   Image,
-  Input,
   Menu,
   MenuButton,
   MenuItem,
@@ -104,8 +103,8 @@ export const CreatebountyPayment = ({
     }));
   };
 
-  const handleTotalRewardChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const newTotalReward = parseInt(e.target.value, 10) || 0;
+  const handleTotalRewardChange = (valueString: string) => {
+    const newTotalReward = parseInt(valueString, 10) || 0;
     setBountyPayment((prev: any) => ({
       ...prev,
       rewardAmount: newTotalReward,
@@ -327,17 +326,19 @@ export const CreatebountyPayment = ({
             </FormLabel>
           </Flex>
 
-          <Input
-            borderColor="brand.slate.300"
-            _placeholder={{
-              color: 'brand.slate.300',
-            }}
+          <NumberInput
             focusBorderColor="brand.purple"
-            onChange={handleTotalRewardChange}
-            placeholder="4,000"
-            type="number"
+            onChange={(valueString) => handleTotalRewardChange(valueString)}
             value={bountyPayment.rewardAmount || ''}
-          />
+          >
+            <NumberInputField
+              borderColor="brand.slate.300"
+              _placeholder={{
+                color: 'brand.slate.300',
+              }}
+              placeholder="4,000"
+            />
+          </NumberInput>
         </FormControl>
         {type === 'open' && (
           <VStack gap={4} w={'full'} mt={5} mb={8}>

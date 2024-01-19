@@ -1,5 +1,4 @@
 import {
-  ArrowForwardIcon,
   CheckIcon,
   ChevronLeftIcon,
   ChevronRightIcon,
@@ -594,7 +593,7 @@ function BountySubmissions({ slug }: Props) {
                               variant="marble"
                             />
                           )}
-                          <Box w={40} ml={2}>
+                          <Box w={36} ml={2}>
                             <Text
                               overflow={'hidden'}
                               color="brand.slate.700"
@@ -922,7 +921,7 @@ function BountySubmissions({ slug }: Props) {
                   {submissions.length ? (
                     <>
                       <Flex
-                        justify={'space-between'}
+                        justify={'space-around'}
                         direction={'column'}
                         h="100%"
                       >
@@ -932,6 +931,13 @@ function BountySubmissions({ slug }: Props) {
                           my={2}
                           px={4}
                           py={3}
+                          cursor={'pointer'}
+                          onClick={() =>
+                            window.open(
+                              `${router.basePath}/t/${selectedSubmission?.user?.username}/`,
+                              '_ blank',
+                            )
+                          }
                         >
                           {selectedSubmission?.user?.photo ? (
                             <Image
@@ -1040,9 +1046,9 @@ function BountySubmissions({ slug }: Props) {
 
                               <Link
                                 color="brand.slate.400"
-                                href={
-                                  selectedSubmission?.user?.twitter || undefined
-                                }
+                                href={getURLSanitized(
+                                  selectedSubmission?.user?.twitter || '#',
+                                )}
                                 isExternal
                               >
                                 {selectedSubmission?.user?.twitter || '-'}
@@ -1060,10 +1066,9 @@ function BountySubmissions({ slug }: Props) {
 
                               <Link
                                 color="brand.slate.400"
-                                href={
-                                  selectedSubmission?.user?.linkedin ||
-                                  undefined
-                                }
+                                href={getURLSanitized(
+                                  selectedSubmission?.user?.linkedin || '#',
+                                )}
                                 isExternal
                               >
                                 {selectedSubmission?.user?.linkedin || '-'}
@@ -1080,9 +1085,9 @@ function BountySubmissions({ slug }: Props) {
                               <FaGithub color="#94A3B8" />
                               <Link
                                 color="brand.slate.400"
-                                href={
-                                  selectedSubmission?.user?.github || undefined
-                                }
+                                href={getURLSanitized(
+                                  selectedSubmission?.user?.github || '#',
+                                )}
                                 isExternal
                               >
                                 {selectedSubmission?.user?.github || '-'}
@@ -1100,41 +1105,15 @@ function BountySubmissions({ slug }: Props) {
 
                               <Link
                                 color="brand.slate.400"
-                                href={
-                                  selectedSubmission?.user?.website || undefined
-                                }
+                                href={getURLSanitized(
+                                  selectedSubmission?.user?.website || '#',
+                                )}
                                 isExternal
                               >
                                 {selectedSubmission?.user?.website || '-'}
                               </Link>
                             </Flex>
                           )}
-                        </Flex>
-                        <Flex>
-                          <Button
-                            w="full"
-                            py={5}
-                            color="brand.slate.500"
-                            borderWidth={0}
-                            borderColor="brand.slate.200"
-                            borderTopWidth={'1px'}
-                            borderTopRadius={0}
-                            _hover={{
-                              bg: 'transparent',
-                              color: 'brand.slate.700',
-                            }}
-                            onClick={() =>
-                              window.open(
-                                `${router.basePath}/t/${selectedSubmission?.user?.username}/`,
-                                '_ blank',
-                              )
-                            }
-                            rightIcon={<ArrowForwardIcon />}
-                            size="sm"
-                            variant="outline"
-                          >
-                            View Full Profile
-                          </Button>
                         </Flex>
                       </Flex>
                     </>

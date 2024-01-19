@@ -41,13 +41,18 @@ export default async function handler(
     });
 
     if (user?.email && user?.firstName && listing?.title) {
+      const subject =
+        listing.type === 'open'
+          ? 'Submission Received!'
+          : 'Application Received';
       await resendMail.emails.send({
         from: `Kash from Superteam <${process.env.RESEND_EMAIL}>`,
         to: [user?.email],
-        subject: 'Submission Received!',
+        subject: subject,
         react: SubmissionTemplate({
           name: user?.firstName,
           bountyName: listing?.title,
+          type: listing?.type,
         }),
       });
     }

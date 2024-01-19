@@ -129,7 +129,11 @@ export function CreateListing({ bounty, isEditMode = false, type }: Props) {
         ...bountyPayment,
         isPublished: true,
       };
-      const result = await axios.post('/api/bounties/create/', newBounty);
+      let api = '/api/bounties/create';
+      if (isEditMode) {
+        api = `/api/bounties/update/${bounty?.id}/`;
+      }
+      const result = await axios.post(api, newBounty);
       await axios.post('/api/email/manual/createBounty', {
         id: result?.data?.id,
       });
