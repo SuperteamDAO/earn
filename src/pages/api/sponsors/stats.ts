@@ -1,3 +1,4 @@
+import { status } from '@prisma/client';
 import type { NextApiRequest, NextApiResponse } from 'next';
 import { getToken } from 'next-auth/jwt';
 
@@ -49,11 +50,16 @@ export default async function handler(
 
     const yearOnPlatform = sponsor.createdAt.getFullYear();
 
+    const commonWhere = {
+      sponsorId,
+      isWinnersAnnounced: true,
+      isActive: true,
+      isArchived: false,
+      status: status.OPEN,
+    };
+
     const totalRewardAmount = await prisma.bounties.aggregate({
-      where: {
-        sponsorId,
-        isWinnersAnnounced: true,
-      },
+      where: commonWhere,
       _sum: {
         rewardAmount: true,
       },
@@ -63,6 +69,9 @@ export default async function handler(
       where: {
         sponsorId,
         isWinnersAnnounced: true,
+        isActive: true,
+        isArchived: false,
+        status: 'OPEN',
       },
     });
 
@@ -71,6 +80,9 @@ export default async function handler(
         listing: {
           sponsorId,
           isWinnersAnnounced: true,
+          isActive: true,
+          isArchived: false,
+          status: 'OPEN',
         },
       },
     });

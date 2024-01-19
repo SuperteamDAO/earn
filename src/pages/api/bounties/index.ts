@@ -1,3 +1,4 @@
+import { status } from '@prisma/client';
 import type { NextApiRequest, NextApiResponse } from 'next';
 
 import { prisma } from '@/prisma';
@@ -25,6 +26,7 @@ export default async function bounties(
         isArchived: false,
         sponsorId,
         ...whereSearch,
+        status: status.OPEN,
       },
     };
     const total = await prisma.bounties.count(countQuery);

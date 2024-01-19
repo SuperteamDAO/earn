@@ -428,6 +428,7 @@ function Bounties() {
                             as="a"
                             overflow="hidden"
                             color="brand.slate.500"
+                            fontSize={'15px'}
                             fontWeight={500}
                             _hover={{ textDecoration: 'underline' }}
                             whiteSpace="nowrap"
@@ -441,6 +442,7 @@ function Bounties() {
                     <Td py={2}>
                       <Text
                         color="brand.slate.500"
+                        fontSize={'sm'}
                         fontWeight={500}
                         textAlign={'center'}
                       >
@@ -453,8 +455,8 @@ function Bounties() {
                     <Td align="center" py={2}>
                       <Text
                         color="brand.slate.500"
+                        fontSize={'sm'}
                         fontWeight={500}
-                        letterSpacing={'-0.7px'}
                       >
                         {deadline}
                       </Text>
@@ -472,12 +474,20 @@ function Bounties() {
                             )[0]?.icon ?? '/assets/icons/green-dollar.svg'
                           }
                         />
-                        <Text color="brand.slate.700" fontWeight={500}>
+                        <Text
+                          color="brand.slate.700"
+                          fontSize={'sm'}
+                          fontWeight={500}
+                        >
                           {(currentBounty.rewardAmount || 0).toLocaleString(
                             'en-US',
                           )}
                         </Text>
-                        <Text color="brand.slate.400" fontWeight={500}>
+                        <Text
+                          color="brand.slate.400"
+                          fontSize={'sm'}
+                          fontWeight={500}
+                        >
                           {currentBounty.token}
                         </Text>
                       </Flex>
@@ -486,7 +496,7 @@ function Bounties() {
                       <Tag
                         px={3}
                         color={getColorStyles(bountyStatus).color}
-                        fontSize={'13px'}
+                        fontSize={'12px'}
                         fontWeight={500}
                         bg={getColorStyles(bountyStatus).bgColor}
                         borderRadius={'full'}
@@ -500,7 +510,7 @@ function Bounties() {
                         currentBounty.isPublished && (
                           <Button
                             color="#6366F1"
-                            fontSize={'15px'}
+                            fontSize={'13px'}
                             fontWeight={500}
                             _hover={{ bg: '#E0E7FF' }}
                             leftIcon={<ViewIcon />}
@@ -517,7 +527,7 @@ function Bounties() {
                         !currentBounty.isPublished && (
                           <Button
                             color={'brand.slate.500'}
-                            fontSize={'15px'}
+                            fontSize={'13px'}
                             fontWeight={500}
                             _hover={{ bg: 'brand.slate.200' }}
                             leftIcon={<EditIcon />}
@@ -539,12 +549,14 @@ function Bounties() {
                           _hover={{ bg: 'brand.slate.100' }}
                           aria-label="Options"
                           icon={<FiMoreVertical />}
+                          size="sm"
                           variant="ghost"
                         />
                         <MenuList>
                           <MenuItem
                             py={2}
                             color={'brand.slate.500'}
+                            fontSize={'sm'}
                             fontWeight={500}
                             icon={<ExternalLinkIcon h={4} w={4} />}
                             onClick={() =>
@@ -561,6 +573,7 @@ function Bounties() {
                               <MenuItem
                                 py={2}
                                 color={'brand.slate.500'}
+                                fontSize={'sm'}
                                 fontWeight={500}
                                 icon={<AiOutlineDelete size={18} />}
                                 onClick={() => handleDeleteDraft(currentBounty)}
@@ -577,6 +590,7 @@ function Bounties() {
                               <MenuItem
                                 py={2}
                                 color={'brand.slate.500'}
+                                fontSize={'sm'}
                                 fontWeight={500}
                                 icon={<ViewOffIcon h={4} w={4} />}
                                 onClick={() => handleUnpublish(currentBounty)}

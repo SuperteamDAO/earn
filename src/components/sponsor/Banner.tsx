@@ -67,13 +67,17 @@ export function Banner() {
               />
             )}
             <Box>
-              <Text color={'brand.slate.900'} fontSize="xl" fontWeight={600}>
+              <Text color={'brand.slate.900'} fontSize="lg" fontWeight={600}>
                 {userInfo?.currentSponsor?.name}
               </Text>
               {isLoading ? (
                 <Skeleton w="170px" h="20px" mt={2} />
               ) : (
-                <Text color={'brand.slate.500'} fontSize="lg" fontWeight={400}>
+                <Text
+                  color={'brand.slate.500'}
+                  fontWeight={400}
+                  whiteSpace={'nowrap'}
+                >
                   Sponsor since {sponsorStats.yearOnPlatform}
                 </Text>
               )}
@@ -126,6 +130,7 @@ export function Banner() {
 
       <Box
         w="60%"
+        maxW="400px"
         mb={6}
         px={8}
         py={6}
@@ -146,15 +151,23 @@ export function Banner() {
                 w={'3.2rem'}
                 h={14}
                 mr={3}
-                alt="text pratik"
+                alt="message pratik"
                 src="/assets/sponsor/pratik.png"
               />
               <Box>
-                <Text color="brand.slate.900" fontWeight={600}>
+                <Text
+                  color="brand.slate.900"
+                  fontWeight={600}
+                  whiteSpace={'nowrap'}
+                >
                   Stuck with something?
                 </Text>
-                <Text color="brand.slate.500" fontWeight={600}>
-                  Text Pratik
+                <Text
+                  color="brand.slate.500"
+                  fontWeight={600}
+                  whiteSpace={'nowrap'}
+                >
+                  Message Pratik
                 </Text>
               </Box>
             </Flex>

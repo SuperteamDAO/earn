@@ -67,8 +67,14 @@ export function SelectSponsor() {
     setUserInfo(newUser);
   };
 
-  const SingleValue = (props: any) => {
-    const { data } = props;
+  // eslint-disable-next-line unused-imports/no-unused-vars
+  const SingleValue = ({ children, ...props }: any) => {
+    const { data, selectProps } = props;
+
+    if (selectProps.menuIsOpen) {
+      return <components.SingleValue {...props}></components.SingleValue>;
+    }
+
     return (
       <components.SingleValue {...props}>
         <Flex align="center" py={1}>
