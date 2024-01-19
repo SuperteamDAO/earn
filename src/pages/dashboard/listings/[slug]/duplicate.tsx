@@ -13,7 +13,7 @@ interface Props {
   slug: string;
 }
 
-function EditBounty({ slug }: Props) {
+export default function DuplicateBounty({ slug }: Props) {
   const router = useRouter();
   const { userInfo } = userStore();
   const [isBountyLoading, setIsBountyLoading] = useState(true);
@@ -48,6 +48,7 @@ function EditBounty({ slug }: Props) {
         <CreateListing
           bounty={bounty}
           editable
+          isDuplicating
           type={bounty?.type as 'permissioned' | 'open'}
         />
       )}
@@ -61,5 +62,3 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
     props: { slug },
   };
 };
-
-export default EditBounty;

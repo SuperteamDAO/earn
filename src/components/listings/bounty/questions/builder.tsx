@@ -11,8 +11,9 @@ interface Props {
   createDraft: () => void;
   questions: Ques[];
   setQuestions: Dispatch<SetStateAction<Ques[]>>;
-  isEditMode: boolean;
+  editable: boolean;
   isNewOrDraft?: boolean;
+  isDuplicating?: boolean;
 }
 export type QuestionType =
   | 'text'
@@ -40,6 +41,7 @@ export const Builder = ({
   questions,
   setQuestions,
   isNewOrDraft,
+  isDuplicating,
 }: Props) => {
   const [error, setError] = useState<ErrorState[]>([]);
 
@@ -169,7 +171,7 @@ export const Builder = ({
             }}
             variant="outline"
           >
-            {isNewOrDraft ? 'Save Draft' : 'Update Bounty'}
+            {isNewOrDraft || isDuplicating ? 'Save Draft' : 'Update Bounty'}
           </Button>
         </VStack>
       </VStack>

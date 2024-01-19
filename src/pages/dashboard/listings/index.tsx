@@ -2,6 +2,7 @@ import {
   AddIcon,
   ChevronLeftIcon,
   ChevronRightIcon,
+  CopyIcon,
   EditIcon,
   ExternalLinkIcon,
   SearchIcon,
@@ -567,6 +568,38 @@ function Bounties() {
                             }
                           >
                             View {bountyType}
+                          </MenuItem>
+                          {currentBounty.isPublished && (
+                            <MenuItem
+                              py={2}
+                              color={'brand.slate.500'}
+                              fontSize={'sm'}
+                              fontWeight={500}
+                              icon={<EditIcon w={4} h={4} />}
+                              onClick={() =>
+                                window.open(
+                                  `${router.basePath}/dashboard/listings/${currentBounty.slug}/edit`,
+                                  '_ blank',
+                                )
+                              }
+                            >
+                              Edit {bountyType}
+                            </MenuItem>
+                          )}
+                          <MenuItem
+                            py={2}
+                            color={'brand.slate.500'}
+                            fontSize={'sm'}
+                            fontWeight={500}
+                            icon={<CopyIcon h={4} w={4} />}
+                            onClick={() =>
+                              window.open(
+                                `${router.basePath}/dashboard/listings/${currentBounty.slug}/duplicate`,
+                                '_ blank',
+                              )
+                            }
+                          >
+                            Duplicate
                           </MenuItem>
                           {bountyStatus === 'Draft' && (
                             <>

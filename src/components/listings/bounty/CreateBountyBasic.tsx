@@ -32,12 +32,13 @@ interface Props {
   skills: MultiSelectOptions[];
   createDraft: () => void;
   draftLoading: boolean;
-  isEditMode: boolean;
+  editable: boolean;
   regions: Regions;
   setRegions: Dispatch<SetStateAction<Regions>>;
   type: 'open' | 'permissioned';
   timeToComplete?: string;
   isNewOrDraft?: boolean;
+  isDuplicating?: boolean;
 }
 interface ErrorsBasic {
   title: boolean;
@@ -61,6 +62,7 @@ export const CreatebountyBasic = ({
   setRegions,
   type,
   isNewOrDraft,
+  isDuplicating,
 }: Props) => {
   const { userInfo } = userStore();
 
@@ -454,7 +456,7 @@ export const CreatebountyBasic = ({
             }}
             variant="outline"
           >
-            {isNewOrDraft ? 'Save Draft' : 'Update Bounty'}
+            {isNewOrDraft || isDuplicating ? 'Save Draft' : 'Update Bounty'}
           </Button>
         </VStack>
       </VStack>

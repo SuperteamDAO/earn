@@ -53,9 +53,10 @@ interface Props {
   isListingPublishing: boolean;
   bountyPayment: any;
   setBountyPayment: Dispatch<SetStateAction<any | undefined>>;
-  isEditMode: boolean;
+  editable: boolean;
   isNewOrDraft?: boolean;
   type: 'open' | 'permissioned';
+  isDuplicating?: boolean;
 }
 export const CreatebountyPayment = ({
   createDraft,
@@ -64,9 +65,10 @@ export const CreatebountyPayment = ({
   isListingPublishing,
   bountyPayment,
   setBountyPayment,
-  isEditMode,
+  editable,
   isNewOrDraft,
   type,
+  isDuplicating,
 }: Props) => {
   const {
     isOpen: confirmIsOpen,
@@ -405,7 +407,7 @@ export const CreatebountyPayment = ({
         )}
         <Toaster />
         <VStack gap={4} w={'full'} pt={4}>
-          {!isListingIncomplete && (
+          {!isListingIncomplete && (isNewOrDraft || isDuplicating) && (
             <Button
               w="100%"
               disabled={isListingPublishing}
@@ -419,10 +421,10 @@ export const CreatebountyPayment = ({
           <Button
             w="100%"
             isLoading={draftLoading}
-            onClick={() => handleSubmit(isEditMode, 'DRAFT')}
-            variant={isEditMode ? 'solid' : 'outline'}
+            onClick={() => handleSubmit(editable, 'DRAFT')}
+            variant={editable ? 'solid' : 'outline'}
           >
-            {isNewOrDraft ? 'Save Draft' : 'Update Bounty'}
+            {isNewOrDraft || isDuplicating ? 'Save Draft' : 'Update Bounty'}
           </Button>
         </VStack>
       </VStack>

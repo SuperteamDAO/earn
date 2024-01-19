@@ -41,13 +41,14 @@ interface Props {
   isListingPublishing: boolean;
   bountyPayment: any;
   setBountyPayment: Dispatch<SetStateAction<any | undefined>>;
-  isEditMode: boolean;
+  editable: boolean;
   setBountyRequirements?: Dispatch<SetStateAction<any | undefined>>;
   bountyRequirements?: string | undefined;
   regions: Regions;
   setRegions: Dispatch<SetStateAction<Regions>>;
   type: 'open' | 'permissioned';
   isNewOrDraft?: boolean;
+  isDuplicating?: boolean;
 }
 export const CreateBounty = ({
   steps,
@@ -69,7 +70,7 @@ export const CreateBounty = ({
   isListingPublishing,
   bountyPayment,
   setBountyPayment,
-  isEditMode,
+  editable,
   bountyRequirements,
   setBountyRequirements,
   regions,
@@ -78,6 +79,7 @@ export const CreateBounty = ({
   references,
   setReferences,
   isNewOrDraft,
+  isDuplicating,
 }: Props) => {
   // handles the info from basic form
 
@@ -87,7 +89,7 @@ export const CreateBounty = ({
         <CreatebountyBasic
           regions={regions}
           setRegions={setRegions}
-          isEditMode={isEditMode}
+          editable={editable}
           draftLoading={draftLoading}
           createDraft={createDraft}
           skills={mainSkills}
@@ -99,6 +101,7 @@ export const CreateBounty = ({
           setbountyBasic={setBountyBasic}
           type={type}
           isNewOrDraft={isNewOrDraft}
+          isDuplicating={isDuplicating}
         />
       )}
       {steps === 3 && (
@@ -106,7 +109,7 @@ export const CreateBounty = ({
           type={type}
           setBountyRequirements={setBountyRequirements}
           bountyRequirements={bountyRequirements}
-          isEditMode={isEditMode}
+          editable={editable}
           createDraft={createDraft}
           editorData={editorData}
           setSteps={setSteps}
@@ -115,23 +118,25 @@ export const CreateBounty = ({
           references={references}
           setReferences={setReferences}
           isNewOrDraft={isNewOrDraft}
+          isDuplicating={isDuplicating}
         />
       )}
       {steps === 4 && (
         <Builder
-          isEditMode={isEditMode}
+          editable={editable}
           setSteps={setSteps}
           draftLoading={draftLoading}
           createDraft={createDraft}
           setQuestions={setQuestions}
           questions={questions}
           isNewOrDraft={isNewOrDraft}
+          isDuplicating={isDuplicating}
         />
       )}
 
       {steps === 5 && (
         <CreatebountyPayment
-          isEditMode={isEditMode}
+          editable={editable}
           createAndPublishListing={createAndPublishListing}
           isListingPublishing={isListingPublishing}
           bountyPayment={bountyPayment}
@@ -146,6 +151,7 @@ export const CreateBounty = ({
           editorData={editorData}
           isNewOrDraft={isNewOrDraft}
           type={type}
+          isDuplicating={isDuplicating}
         />
       )}
     </>
