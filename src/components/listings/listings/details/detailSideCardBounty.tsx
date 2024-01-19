@@ -8,7 +8,14 @@ import {
   HStack,
   Image,
   Link,
+  Table,
+  TableContainer,
+  Tbody,
+  Td,
   Text,
+  Th,
+  Thead,
+  Tr,
   useDisclosure,
   VStack,
 } from '@chakra-ui/react';
@@ -262,49 +269,62 @@ export function DetailSideCardBounty({
           </HStack>
           {type === 'open' && (
             <VStack w={'full'} borderBottom={'1px solid #E2E8EF'}>
-              {prizeMapping.map(
-                (prize, index) =>
-                  prizeList?.[prize.key] && (
-                    <Box key={index} w="100%" py={2}>
-                      <Flex
-                        align={'center'}
-                        justify={'space-between'}
-                        px={'1.5rem'}
-                      >
-                        <Flex
-                          align={'center'}
-                          justify={'center'}
-                          w={8}
-                          h={8}
-                          p={1.5}
-                          fontSize={'0.7rem'}
-                          bg={'#C6C6C62B'}
-                          rounded={'full'}
-                        >
-                          {prize.label}
-                        </Flex>
-                        <Text
-                          color={'#64758B'}
-                          fontSize={'1.1rem'}
-                          fontWeight={600}
-                        >
-                          {prizeList[prize.key]}
-                          <Text
-                            as="span"
-                            ml={1}
-                            color="brand.slate.300"
-                            fontWeight={400}
-                          >
-                            {token}
-                          </Text>
-                        </Text>
-                        <Text color={'#CBD5E1'} fontWeight={500}>
-                          {prize.description}
-                        </Text>
-                      </Flex>
-                    </Box>
-                  ),
-              )}
+              <TableContainer w={'full'}>
+                <Table mt={-8} variant={'unstyled'}>
+                  <Thead>
+                    <Tr>
+                      <Th></Th>
+                      <Th></Th>
+                      <Th> </Th>
+                    </Tr>
+                  </Thead>
+                  <Tbody>
+                    {prizeMapping.map(
+                      (prize, index) =>
+                        prizeList?.[prize.key] && (
+                          <Tr key={index}>
+                            <Td>
+                              <Flex
+                                align={'center'}
+                                justify={'center'}
+                                w={8}
+                                h={8}
+                                p={1.5}
+                                fontSize={'0.7rem'}
+                                bg={'#C6C6C62B'}
+                                rounded={'full'}
+                              >
+                                {prize.label}
+                              </Flex>
+                            </Td>
+                            <Td>
+                              <Text
+                                color={'#64758B'}
+                                fontSize={'1.1rem'}
+                                fontWeight={600}
+                              >
+                                {prizeList[prize.key]}
+                                <Text
+                                  as="span"
+                                  ml={1}
+                                  color="brand.slate.300"
+                                  fontWeight={400}
+                                >
+                                  {token}
+                                </Text>
+                              </Text>
+                            </Td>
+                            <Td>
+                              <Text color={'#CBD5E1'} fontWeight={500}>
+                                {prize.description}
+                              </Text>
+                            </Td>
+                          </Tr>
+                        ),
+                    )}
+                  </Tbody>
+                </Table>
+              </TableContainer>
             </VStack>
           )}
           <Flex justify={'space-between'} w={'full'} px={5}>

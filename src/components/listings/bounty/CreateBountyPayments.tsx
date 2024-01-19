@@ -395,13 +395,11 @@ export const CreatebountyPayment = ({
             </Button>
           </VStack>
         )}
-        {isRewardError && type === 'permissioned' ? (
+        {isRewardError && (
           <Text w="full" color="red" textAlign={'center'}>
-            Please enter an amount
-          </Text>
-        ) : (
-          <Text w="full" color="red" textAlign={'center'}>
-            Sorry! Total reward amount should be equal to the sum of all prizes.
+            {type === 'permissioned'
+              ? 'Please enter an amount'
+              : 'Sorry! Total reward amount should be equal to the sum of all prizes.'}
           </Text>
         )}
         <Toaster />

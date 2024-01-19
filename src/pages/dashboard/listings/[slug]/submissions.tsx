@@ -517,7 +517,7 @@ function BountySubmissions({ slug }: Props) {
             </>
           ) : (
             <Flex align={'start'} bg="white">
-              <Flex flex="4 1 auto">
+              <Flex flex="4 1 auto" minH="600px">
                 <Box
                   w="70%"
                   bg="white"
@@ -956,7 +956,7 @@ function BountySubmissions({ slug }: Props) {
                           </Text>
 
                           <Text
-                            w={'60%'}
+                            maxW="200px"
                             color="brand.slate.400"
                             fontSize="md"
                             fontWeight={500}
