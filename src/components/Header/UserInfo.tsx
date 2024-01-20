@@ -187,6 +187,19 @@ export function UserInfo({ isMobile }: UserInfoProps) {
                 </>
               )}
               <MenuItem
+                color="brand.slate.500"
+                fontSize="sm"
+                fontWeight={600}
+                onClick={() =>
+                  window.open(
+                    'https://discord.com/channels/857091160295866388/1192795350277312662',
+                    '_blank',
+                  )
+                }
+              >
+                Get Help
+              </MenuItem>
+              <MenuItem
                 color="red.500"
                 fontSize="sm"
                 fontWeight={600}

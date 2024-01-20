@@ -383,7 +383,7 @@ function BountySubmissions({ slug }: Props) {
                 onClick={() =>
                   window.open(
                     `${router.basePath}/listings/bounties/${bounty?.slug}`,
-                    '_ blank',
+                    '_blank',
                   )
                 }
                 variant={'ghost'}
@@ -935,7 +935,7 @@ function BountySubmissions({ slug }: Props) {
                           onClick={() =>
                             window.open(
                               `${router.basePath}/t/${selectedSubmission?.user?.username}/`,
-                              '_ blank',
+                              '_blank',
                             )
                           }
                         >

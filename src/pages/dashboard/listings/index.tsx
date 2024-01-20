@@ -563,7 +563,7 @@ function Bounties() {
                             onClick={() =>
                               window.open(
                                 `${router.basePath}/listings/bounties/${currentBounty.slug}`,
-                                '_ blank',
+                                '_blank',
                               )
                             }
                           >
@@ -579,7 +579,7 @@ function Bounties() {
                               onClick={() =>
                                 window.open(
                                   `${router.basePath}/dashboard/listings/${currentBounty.slug}/edit`,
-                                  '_ blank',
+                                  '_blank',
                                 )
                               }
                             >
@@ -595,7 +595,7 @@ function Bounties() {
                             onClick={() =>
                               window.open(
                                 `${router.basePath}/dashboard/listings/${currentBounty.slug}/duplicate`,
-                                '_ blank',
+                                '_blank',
                               )
                             }
                           >
