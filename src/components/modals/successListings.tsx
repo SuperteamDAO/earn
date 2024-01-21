@@ -81,7 +81,7 @@ export const SuccessListings = ({ isOpen, onClose, slug }: Props) => {
               <Button
                 w="100%"
                 onClick={() => {
-                  router.push('/dashboard/bounties');
+                  router.push('/dashboard/listings');
                 }}
                 variant="outline"
               >

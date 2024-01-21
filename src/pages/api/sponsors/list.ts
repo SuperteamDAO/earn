@@ -4,7 +4,7 @@ import { prisma } from '@/prisma';
 
 export default async function sponsors(
   req: NextApiRequest,
-  res: NextApiResponse
+  res: NextApiResponse,
 ) {
   const params = req.query;
   const userId = params.userId as string;

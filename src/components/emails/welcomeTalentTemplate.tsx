@@ -31,8 +31,10 @@ export const WelcomeTalentTemplate = () => {
       </p>
       <p style={styles.text}>Would love to learn more about you.</p>
 
-      <p style={styles.salutation}>Talk soon,</p>
-      <p style={styles.text}>Kash</p>
+      <p style={styles.salutation}>
+        Talk soon, <br />
+        Kash
+      </p>
     </div>
   );
 };

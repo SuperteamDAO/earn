@@ -2,7 +2,7 @@ import Airtable from 'airtable';
 
 function getDatabase() {
   const base = new Airtable({ apiKey: process.env.AIRTABLE_KEY }).base(
-    process.env.AIRTABLE_BASE!
+    process.env.AIRTABLE_BASE!,
   );
   const table = base(process.env.AIRTABLE_TABLE!);
   return table;

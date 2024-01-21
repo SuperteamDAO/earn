@@ -50,7 +50,7 @@ export type EarnReloaded = {
           name: 'rent';
           isMut: false;
           isSigner: false;
-        }
+        },
       ];
       args: [
         {
@@ -64,7 +64,7 @@ export type EarnReloaded = {
         {
           name: 'amount';
           type: 'u64';
-        }
+        },
       ];
     },
     {
@@ -100,7 +100,7 @@ export type EarnReloaded = {
           name: 'rent';
           isMut: false;
           isSigner: false;
-        }
+        },
       ];
       args: [
         {
@@ -114,9 +114,9 @@ export type EarnReloaded = {
         {
           name: 'amount';
           type: 'u64';
-        }
+        },
       ];
-    }
+    },
   ];
   accounts: [
     {
@@ -143,7 +143,7 @@ export type EarnReloaded = {
           {
             name: 'bump';
             type: 'u8';
-          }
+          },
         ];
       };
     },
@@ -167,17 +167,17 @@ export type EarnReloaded = {
           {
             name: 'bump';
             type: 'u8';
-          }
+          },
         ];
       };
-    }
+    },
   ];
   errors: [
     {
       code: 6000;
       name: 'Mismatch';
       msg: 'Mismatch Error';
-    }
+    },
   ];
 };
 

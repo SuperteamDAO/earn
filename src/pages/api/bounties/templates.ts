@@ -5,7 +5,7 @@ import { prisma } from '@/prisma';
 
 export default async function bounties(
   req: NextApiRequest,
-  res: NextApiResponse
+  res: NextApiResponse,
 ) {
   const type = req.query.type as BountyType;
 

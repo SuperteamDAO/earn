@@ -2,9 +2,11 @@
 import { Flex } from '@chakra-ui/react';
 import dayjs from 'dayjs';
 
-import { BountiesCard } from '@/components/misc/listingsCard';
+import {
+  BountiesCard,
+  ListingsCardSkeleton,
+} from '@/components/misc/listingsCard';
 import { EmptySection } from '@/components/shared/EmptySection';
-import { Loading } from '@/components/shared/Loading';
 import type { Bounty } from '@/interface/bounty';
 
 interface TabProps {
@@ -31,21 +33,21 @@ export const BountyTabs = ({
       content: (
         <Flex direction={'column'} rowGap={1}>
           {isListingsLoading ? (
-            <Flex align="center" justify="center" direction="column" minH={52}>
-              <Loading />
-            </Flex>
+            Array.from({ length: 8 }, (_, index) => (
+              <ListingsCardSkeleton key={index} />
+            ))
           ) : bounties?.bounties?.filter(
               (bounty) =>
                 bounty.status === 'OPEN' &&
                 !dayjs().isAfter(bounty.deadline) &&
-                !bounty.isWinnersAnnounced
+                !bounty.isWinnersAnnounced,
             ).length ? (
             bounties.bounties
               .filter(
                 (bounty) =>
                   bounty.status === 'OPEN' &&
                   !dayjs().isAfter(bounty.deadline) &&
-                  !bounty.isWinnersAnnounced
+                  !bounty.isWinnersAnnounced,
               )
               .slice(0, take)
               .map((bounty) => (
@@ -67,7 +69,7 @@ export const BountyTabs = ({
           ) : (
             <Flex align="center" justify="center" mt={8}>
               <EmptySection
-                title="No bounties available!"
+                title="No listings available!"
                 message="Subscribe to notifications to get notified about new bounties."
               />
             </Flex>
@@ -81,21 +83,21 @@ export const BountyTabs = ({
       content: (
         <Flex direction={'column'} rowGap={'1'}>
           {isListingsLoading ? (
-            <Flex align="center" justify="center" direction="column" minH={52}>
-              <Loading />
-            </Flex>
+            Array.from({ length: 8 }, (_, index) => (
+              <ListingsCardSkeleton key={index} />
+            ))
           ) : bounties?.bounties?.filter(
               (bounty) =>
                 !bounty.isWinnersAnnounced &&
                 dayjs().isAfter(bounty.deadline) &&
-                bounty.status === 'OPEN'
+                bounty.status === 'OPEN',
             ).length ? (
             bounties.bounties
               .filter(
                 (bounty) =>
                   !bounty.isWinnersAnnounced &&
                   dayjs().isAfter(bounty.deadline) &&
-                  bounty.status === 'OPEN'
+                  bounty.status === 'OPEN',
               )
               .slice(0, 10)
               .map((bounty) => (
@@ -117,7 +119,7 @@ export const BountyTabs = ({
           ) : (
             <Flex align="center" justify="center" mt={8}>
               <EmptySection
-                title="No bounties in review!"
+                title="No listings in review!"
                 message="Subscribe to notifications to get notified about updates."
               />
             </Flex>
@@ -131,19 +133,19 @@ export const BountyTabs = ({
       content: (
         <Flex direction={'column'} rowGap={'1'}>
           {isListingsLoading ? (
-            <Flex align="center" justify="center" direction="column" minH={52}>
-              <Loading />
-            </Flex>
+            Array.from({ length: 8 }, (_, index) => (
+              <ListingsCardSkeleton key={index} />
+            ))
           ) : bounties?.bounties?.filter(
               (bounty) =>
                 bounty.status === 'CLOSED' ||
-                (bounty.isWinnersAnnounced && bounty.status === 'OPEN')
+                (bounty.isWinnersAnnounced && bounty.status === 'OPEN'),
             ).length ? (
             bounties.bounties
               .filter(
                 (bounty) =>
                   bounty.status === 'CLOSED' ||
-                  (bounty.isWinnersAnnounced && bounty.status === 'OPEN')
+                  (bounty.isWinnersAnnounced && bounty.status === 'OPEN'),
               )
               .slice(0, 10)
               .map((bounty) => (
@@ -165,7 +167,7 @@ export const BountyTabs = ({
           ) : (
             <Flex align="center" justify="center" mt={8}>
               <EmptySection
-                title="No bounties announced!"
+                title="No listings announced!"
                 message="Subscribe to notifications to get notified about announcements."
               />
             </Flex>

@@ -127,7 +127,7 @@ export const ListingHeader = ({
             onClick={() => {
               if (!tabs) return;
               router.push(
-                `/bounties/${title.split(' ').join('-').toLowerCase()}`
+                `/bounties/${title.split(' ').join('-').toLowerCase()}`,
               );
             }}
             rounded={0}

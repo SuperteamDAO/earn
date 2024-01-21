@@ -20,16 +20,16 @@ export function BountyWinners({ bounty }: Props) {
     setIsBountyLoading(true);
     try {
       const submissionsDetails = await axios.get(
-        `/api/submission/${id || bounty?.id}/winners/`
+        `/api/submission/${id || bounty?.id}/winners/`,
       );
       const { data } = submissionsDetails;
       const winners = sortRank(
         data.map(
-          (submission: SubmissionWithUser) => submission.winnerPosition || ''
-        )
+          (submission: SubmissionWithUser) => submission.winnerPosition || '',
+        ),
       );
       const sortedSubmissions = winners.map((position) =>
-        data.find((d: SubmissionWithUser) => d.winnerPosition === position)
+        data.find((d: SubmissionWithUser) => d.winnerPosition === position),
       );
       setSubmissions(sortedSubmissions);
       setIsBountyLoading(false);
@@ -47,10 +47,10 @@ export function BountyWinners({ bounty }: Props) {
   }
 
   return (
-    <Box maxW={'7xl'} mt={10} mx={'auto'}>
+    <Box maxW={'7xl'} mx={'auto'} mt={10}>
       <Text
-        mb={4}
         mx={3}
+        mb={4}
         color="brand.slate.500"
         fontSize="xl"
         fontWeight={600}

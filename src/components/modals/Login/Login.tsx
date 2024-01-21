@@ -1,7 +1,5 @@
 /* eslint-disable @next/next/no-img-element */
 import {
-  Flex,
-  Image,
   Link,
   Modal,
   ModalBody,
@@ -12,56 +10,17 @@ import {
   ModalOverlay,
   Text,
 } from '@chakra-ui/react';
-import type { Wallet } from '@solana/wallet-adapter-react';
+import NextLink from 'next/link';
 import { useRouter } from 'next/router';
-import { useEffect, useState } from 'react';
 
-import type { User } from '@/interface/user';
-
-import { ConnectWallet } from './ConnectWallet';
-import { NewUserInfo } from './NewUserInfo';
-import { VerifyOTP } from './VerifyOtp';
+import { SignIn } from './SignIn';
 
 interface Props {
   isOpen: boolean;
   onClose: () => void;
-  onConnectWallet: (wallet: Wallet) => Promise<void>;
-  userInfo: User | null;
-  setUserInfo: (userInfo: User) => void;
-  wallets: Wallet[];
-  initialStep?: number;
-  inviteInfo?: {
-    emailInvite?: string;
-    currentSponsorId?: string;
-    memberType?: 'MEMBER' | 'ADMIN';
-  };
 }
-export const Login = ({
-  isOpen,
-  onClose,
-  onConnectWallet,
-  userInfo,
-  setUserInfo,
-  wallets,
-  initialStep = 1,
-  inviteInfo,
-}: Props) => {
+export const Login = ({ isOpen, onClose }: Props) => {
   const router = useRouter();
-  const [step, setStep] = useState(initialStep);
-  const [otp, setOtp] = useState({
-    current: 0,
-    last: 0,
-  });
-
-  useEffect(() => {
-    if (
-      userInfo?.publicKey &&
-      (!userInfo?.email || !userInfo?.isVerified) &&
-      step !== 2
-    ) {
-      setStep(2);
-    }
-  }, [userInfo]);
 
   return (
     <Modal
@@ -72,48 +31,28 @@ export const Login = ({
       onClose={onClose}
     >
       <ModalOverlay />
-      <ModalContent w={'22rem'} h={'max'}>
+      <ModalContent w={'22rem'} h={'max'} pt={2}>
         <ModalHeader>
-          <Flex justify="center">
-            <Image
-              w={32}
-              h="100%"
-              alt="Superteam Earn"
-              src="/assets/logo/new-logo.svg"
-            />
-          </Flex>
+          <Text color="brand.slate.900" fontSize={18} textAlign={'center'}>
+            You&apos;re one step away
+          </Text>
+          <Text
+            color="brand.slate.600"
+            fontSize={15}
+            fontWeight={400}
+            textAlign={'center'}
+          >
+            From earning in global standards
+          </Text>
         </ModalHeader>
-        <ModalCloseButton />
+        <ModalCloseButton mt={4} color={'brand.slate.400'} />
         <ModalBody>
-          {step === 1 && (
-            <ConnectWallet
-              wallets={wallets}
-              onConnectWallet={onConnectWallet}
-            />
-          )}
-          {step === 2 && (
-            <NewUserInfo
-              inviteInfo={inviteInfo}
-              userInfo={userInfo}
-              setUserInfo={setUserInfo}
-              setStep={setStep}
-              setOtp={setOtp}
-            />
-          )}
-          {step === 3 && (
-            <VerifyOTP
-              inviteInfo={inviteInfo}
-              userInfo={userInfo}
-              onClose={onClose}
-              otp={otp}
-            />
-          )}
-        </ModalBody>
-        <ModalFooter>
-          <Text color="brand.slate.400" fontSize="xs" textAlign="center">
-            By connecting your wallet & signing up, you agree to our{' '}
+          <SignIn />
+          <Text mt={4} color="brand.slate.500" fontSize="xs" textAlign="center">
+            By using this website, you agree to our{' '}
             <Link
-              fontWeight={700}
+              as={NextLink}
+              fontWeight={600}
               href={`${router.basePath}/terms-of-service.pdf`}
               isExternal
             >
@@ -121,13 +60,35 @@ export const Login = ({
             </Link>{' '}
             and our{' '}
             <Link
-              fontWeight={700}
+              as={NextLink}
+              fontWeight={600}
               href={`${router.basePath}/privacy-policy.pdf`}
               isExternal
             >
               Privacy Policy
             </Link>
             .
+          </Text>
+        </ModalBody>
+        <ModalFooter
+          flexDir={'column'}
+          py={'6px'}
+          bg={'brand.slate.100'}
+          borderBottomRadius="6px"
+        >
+          <Text color="brand.slate.500" fontSize="xs" textAlign="center">
+            Trouble Logging in?{' '}
+            <Text as="u">
+              <Link
+                as={NextLink}
+                href={
+                  'https://discord.com/channels/857091160295866388/1192795350277312662'
+                }
+                isExternal
+              >
+                Click here
+              </Link>
+            </Text>
           </Text>
         </ModalFooter>
       </ModalContent>

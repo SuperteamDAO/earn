@@ -5,6 +5,7 @@ import { css } from '@emotion/react';
 import axios from 'axios';
 import dayjs from 'dayjs';
 import type { NextPage } from 'next';
+import NextLink from 'next/link';
 import { useEffect, useState } from 'react';
 
 import { BountyTabs } from '@/components/listings/bounty/Tabs';
@@ -132,7 +133,7 @@ const HomePage: NextPage = () => {
               ))}
             </Flex>
             <Flex>
-              <Link href={'/all'}>
+              <Link as={NextLink} href={'/all'}>
                 <Button
                   px={2}
                   py={1}
@@ -148,7 +149,7 @@ const HomePage: NextPage = () => {
           </HStack>
 
           {tabs.map((tab) => tab.id === activeTab && tab.content)}
-          <Link href={'/all'}>
+          <Link as={NextLink} href={'/all'}>
             <Button
               w="100%"
               my={8}

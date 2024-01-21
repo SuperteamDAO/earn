@@ -6,7 +6,6 @@ import {
   FormLabel,
   HStack,
   Image,
-  Input,
   Menu,
   MenuButton,
   MenuItem,
@@ -54,9 +53,10 @@ interface Props {
   isListingPublishing: boolean;
   bountyPayment: any;
   setBountyPayment: Dispatch<SetStateAction<any | undefined>>;
-  isEditMode: boolean;
+  editable: boolean;
   isNewOrDraft?: boolean;
   type: 'open' | 'permissioned';
+  isDuplicating?: boolean;
 }
 export const CreatebountyPayment = ({
   createDraft,
@@ -65,9 +65,10 @@ export const CreatebountyPayment = ({
   isListingPublishing,
   bountyPayment,
   setBountyPayment,
-  isEditMode,
+  editable,
   isNewOrDraft,
   type,
+  isDuplicating,
 }: Props) => {
   const {
     isOpen: confirmIsOpen,
@@ -83,7 +84,7 @@ export const CreatebountyPayment = ({
       label: `${r} prize`,
       placeHolder: bountyPayment?.rewards[r],
       defaultValue: bountyPayment?.rewards[r],
-    })
+    }),
   );
   const [prizes, setPrizes] = useState<PrizeListInterface[]>(
     prizesList?.length
@@ -94,7 +95,7 @@ export const CreatebountyPayment = ({
             label: 'first prize',
             placeHolder: 2500,
           },
-        ]
+        ],
   );
 
   const handleTokenChange = (tokenSymbol: string) => {
@@ -104,8 +105,8 @@ export const CreatebountyPayment = ({
     }));
   };
 
-  const handleTotalRewardChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const newTotalReward = parseInt(e.target.value, 10) || 0;
+  const handleTotalRewardChange = (valueString: string) => {
+    const newTotalReward = parseInt(valueString, 10) || 0;
     setBountyPayment((prev: any) => ({
       ...prev,
       rewardAmount: newTotalReward,
@@ -132,7 +133,7 @@ export const CreatebountyPayment = ({
 
   const handlePrizeDelete = (prizeToDelete: string) => {
     const updatedPrizes = prizes.filter(
-      (prize) => prize.value !== prizeToDelete
+      (prize) => prize.value !== prizeToDelete,
     );
     setPrizes(getPrizeLabels(updatedPrizes));
 
@@ -152,8 +153,13 @@ export const CreatebountyPayment = ({
         ...prev,
         rewards: { first: prev.rewardAmount },
       }));
-      if (isEdit || mode === 'DRAFT') createDraft();
-      else confirmOnOpen();
+      if (!bountyPayment.rewardAmount) {
+        setIsRewardError(true);
+      } else {
+        setIsRewardError(false);
+        if (isEdit || mode === 'DRAFT') createDraft();
+        else confirmOnOpen();
+      }
     }
 
     if (type === 'open') {
@@ -170,6 +176,16 @@ export const CreatebountyPayment = ({
       }
     }
   };
+
+  const isListingIncomplete = (() => {
+    if (type === 'permissioned') {
+      return bountyPayment?.rewardAmount === null;
+    }
+    if (type === 'open') {
+      return Object.keys(bountyPayment?.rewards || {}).length === 0;
+    }
+    return true;
+  })();
 
   return (
     <>
@@ -233,20 +249,20 @@ export const CreatebountyPayment = ({
                     w={'1.6rem'}
                     alt={
                       tokenList.find(
-                        (token) => token.tokenSymbol === bountyPayment.token
+                        (token) => token.tokenSymbol === bountyPayment.token,
                       )?.tokenName
                     }
                     rounded={'full'}
                     src={
                       tokenList.find(
-                        (token) => token.tokenSymbol === bountyPayment.token
+                        (token) => token.tokenSymbol === bountyPayment.token,
                       )?.icon
                     }
                   />
                   <Text>
                     {
                       tokenList.find(
-                        (token) => token.tokenSymbol === bountyPayment.token
+                        (token) => token.tokenSymbol === bountyPayment.token,
                       )?.tokenName
                     }
                   </Text>
@@ -305,24 +321,26 @@ export const CreatebountyPayment = ({
               Total {type === 'open' ? 'Reward Amount' : 'Compensation'} (in{' '}
               {
                 tokenList.find(
-                  (token) => token.tokenSymbol === bountyPayment.token
+                  (token) => token.tokenSymbol === bountyPayment.token,
                 )?.tokenSymbol
               }
               )
             </FormLabel>
           </Flex>
 
-          <Input
-            borderColor="brand.slate.300"
-            _placeholder={{
-              color: 'brand.slate.300',
-            }}
+          <NumberInput
             focusBorderColor="brand.purple"
-            onChange={handleTotalRewardChange}
-            placeholder="4,000"
-            type="number"
+            onChange={(valueString) => handleTotalRewardChange(valueString)}
             value={bountyPayment.rewardAmount || ''}
-          />
+          >
+            <NumberInputField
+              borderColor="brand.slate.300"
+              _placeholder={{
+                color: 'brand.slate.300',
+              }}
+              placeholder="4,000"
+            />
+          </NumberInput>
         </FormControl>
         {type === 'open' && (
           <VStack gap={4} w={'full'} mt={5} mb={8}>
@@ -340,7 +358,7 @@ export const CreatebountyPayment = ({
                     onChange={(valueString) =>
                       handlePrizeValueChange(
                         el.value,
-                        parseInt(valueString, 10)
+                        parseInt(valueString, 10),
                       )
                     }
                   >
@@ -382,12 +400,14 @@ export const CreatebountyPayment = ({
         )}
         {isRewardError && (
           <Text w="full" color="red" textAlign={'center'}>
-            Sorry! Total reward amount should be equal to the sum of all prizes.
+            {type === 'permissioned'
+              ? 'Please enter an amount'
+              : 'Sorry! Total reward amount should be equal to the sum of all prizes.'}
           </Text>
         )}
         <Toaster />
         <VStack gap={4} w={'full'} pt={4}>
-          {!isEditMode && (
+          {!isListingIncomplete && (isNewOrDraft || isDuplicating) && (
             <Button
               w="100%"
               disabled={isListingPublishing}
@@ -401,10 +421,10 @@ export const CreatebountyPayment = ({
           <Button
             w="100%"
             isLoading={draftLoading}
-            onClick={() => handleSubmit(isEditMode, 'DRAFT')}
-            variant={isEditMode ? 'solid' : 'outline'}
+            onClick={() => handleSubmit(editable, 'DRAFT')}
+            variant={editable ? 'solid' : 'outline'}
           >
-            {isNewOrDraft ? 'Save Draft' : 'Update Bounty'}
+            {isNewOrDraft || isDuplicating ? 'Save Draft' : 'Update Bounty'}
           </Button>
         </VStack>
       </VStack>

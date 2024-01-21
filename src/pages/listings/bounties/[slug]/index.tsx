@@ -30,7 +30,7 @@ function BountyDetails({ bounty: initialBounty }: BountyDetailsProps) {
   const getSubmissionsCount = async () => {
     try {
       const submissionCountDetails = await axios.get(
-        `/api/submission/${bounty?.id}/count/`
+        `/api/submission/${bounty?.id}/count/`,
       );
       setSubmissionNumber(submissionCountDetails?.data || 0);
     } catch (e) {
@@ -132,10 +132,10 @@ function BountyDetails({ bounty: initialBounty }: BountyDetailsProps) {
                 flexDir={['column-reverse', 'column-reverse', 'row', 'row']}
                 gap={4}
                 maxW={'7xl'}
-                mb={10}
                 mx={'auto'}
+                mb={10}
               >
-                <VStack gap={8} w={['22rem', '22rem', 'full', 'full']} mt={10}>
+                <VStack gap={8} w={'full'} mt={10}>
                   <DetailDescriptionBounty
                     skills={bounty?.skills?.map((e) => e.skills) ?? []}
                     description={bounty?.description}

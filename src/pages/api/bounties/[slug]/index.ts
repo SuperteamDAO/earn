@@ -11,11 +11,25 @@ export default async function user(req: NextApiRequest, res: NextApiResponse) {
         slug,
         isActive: true,
       },
-      include: { sponsor: true, poc: true },
+      include: { sponsor: true, poc: true, Submission: true },
     });
-    res.status(200).json(result);
+
+    if (!result) {
+      return res.status(404).json({
+        message: `Bounty with slug=${slug} not found.`,
+      });
+    }
+
+    const totalSubmissions = result.Submission.length;
+    const winnersSelected = result.Submission.filter(
+      (sub) => sub.isWinner,
+    ).length;
+    const paymentsMade = result.Submission.filter((sub) => sub.isPaid).length;
+    return res
+      .status(200)
+      .json({ ...result, totalSubmissions, winnersSelected, paymentsMade });
   } catch (error) {
-    res.status(400).json({
+    return res.status(400).json({
       error,
       message: `Error occurred while fetching bounty with slug=${slug}.`,
     });

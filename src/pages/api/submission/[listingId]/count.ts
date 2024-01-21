@@ -4,7 +4,7 @@ import { prisma } from '@/prisma';
 
 export default async function submission(
   req: NextApiRequest,
-  res: NextApiResponse
+  res: NextApiResponse,
 ) {
   const params = req.query;
   const listingId = params.listingId as string;

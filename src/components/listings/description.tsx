@@ -87,13 +87,14 @@ interface Props {
   setSteps: Dispatch<SetStateAction<number>>;
   createDraft: () => void;
   draftLoading?: boolean;
-  isEditMode?: boolean;
+  editable?: boolean;
   setBountyRequirements?: Dispatch<SetStateAction<any | undefined>>;
   bountyRequirements?: string | undefined;
   type?: 'open' | 'permissioned';
   references?: References[];
   setReferences?: Dispatch<SetStateAction<References[]>>;
   isNewOrDraft?: boolean;
+  isDuplicating?: boolean;
 }
 
 export const Description = ({
@@ -108,6 +109,7 @@ export const Description = ({
   setReferences,
   type,
   isNewOrDraft,
+  isDuplicating,
 }: Props) => {
   const { isOpen, onClose, onOpen } = useDisclosure();
   const [referenceError, setReferenceError] = useState<boolean>(false);
@@ -171,13 +173,13 @@ export const Description = ({
         .run();
       onClose();
     },
-    [editor]
+    [editor],
   );
 
   const handleDeleteReference = () => {
     if (references && setReferences) {
       const temp = references.filter(
-        (_el, index) => index !== references.length - 1
+        (_el, index) => index !== references.length - 1,
       );
       setReferences(temp);
     }
@@ -277,7 +279,7 @@ export const Description = ({
             </Tooltip>
           </Flex>
         </Flex>
-        <VStack w={'3xl'} mb={8} mx={'auto'}>
+        <VStack w={'3xl'} mx={'auto'} mb={8}>
           <Flex
             align={'center'}
             justify={'start'}
@@ -651,7 +653,7 @@ export const Description = ({
             onClick={() => createDraft()}
             variant="outline"
           >
-            {isNewOrDraft ? 'Save Draft' : 'Update Bounty'}
+            {isNewOrDraft || isDuplicating ? 'Save Draft' : 'Update Bounty'}
           </Button>
         </VStack>
       </Box>
