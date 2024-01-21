@@ -1,8 +1,8 @@
 /* eslint-disable unused-imports/no-unused-vars */
 /* eslint-disable @typescript-eslint/naming-convention */
-import type { Program } from '@project-serum/anchor';
-import * as anchor from '@project-serum/anchor';
-import type NodeWallet from '@project-serum/anchor/dist/cjs/nodewallet';
+import type { Program } from '@coral-xyz/anchor';
+import * as anchor from '@coral-xyz/anchor';
+import type NodeWallet from '@coral-xyz/anchor/dist/cjs/nodewallet';
 import * as spl from '@solana/spl-token';
 import { LAMPORTS_PER_SOL, PublicKey } from '@solana/web3.js';
 
