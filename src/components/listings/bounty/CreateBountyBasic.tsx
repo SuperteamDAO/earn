@@ -16,6 +16,8 @@ import type { Dispatch, SetStateAction } from 'react';
 import { useMemo, useState } from 'react';
 
 import { SkillSelect } from '@/components/misc/SkillSelect';
+import { Superteams } from '@/constants/Superteam';
+import type { SuperteamName } from '@/interface/bounty';
 import { userStore } from '@/store/user';
 import { dayjs } from '@/utils/dayjs';
 
@@ -39,6 +41,8 @@ interface Props {
   timeToComplete?: string;
   isNewOrDraft?: boolean;
   isDuplicating?: boolean;
+  referredBy?: SuperteamName;
+  setReferredBy?: Dispatch<SetStateAction<SuperteamName | undefined>>;
 }
 interface ErrorsBasic {
   title: boolean;
@@ -63,6 +67,8 @@ export const CreatebountyBasic = ({
   type,
   isNewOrDraft,
   isDuplicating,
+  referredBy,
+  setReferredBy,
 }: Props) => {
   const { userInfo } = userStore();
 
@@ -201,15 +207,12 @@ export const CreatebountyBasic = ({
                 value={regions}
               >
                 <option value={Regions.GLOBAL}>Global</option>
-                <option value={Regions.INDIA}>India</option>
-                <option value={Regions.GERMANY}>Germany</option>
-                <option value={Regions.MEXICO}>Mexico</option>
-                <option value={Regions.TURKEY}>Turkey</option>
-                <option value={Regions.VIETNAM}>Vietnam</option>
-                <option value={Regions.UK}>UK</option>
-                <option value={Regions.UAE}>UAE</option>
-                <option value={Regions.NIGERIA}>Nigeria</option>
-                <option value={Regions.BRAZIL}>Brazil</option>
+                {Superteams.map((st) => (
+                  <option value={st.region} key={st.name}>
+                    {st.region.charAt(0).toUpperCase() +
+                      st.region.slice(1).toLowerCase()}
+                  </option>
+                ))}
               </Select>
             </FormControl>
           </>
@@ -403,15 +406,55 @@ export const CreatebountyBasic = ({
             </Select>
           </FormControl>
         )}
+        <FormControl w="full" mb={5}>
+          <Flex>
+            <FormLabel
+              color={'brand.slate.500'}
+              fontSize={'15px'}
+              fontWeight={600}
+            >
+              Referred By
+            </FormLabel>
+            <Tooltip
+              w="max"
+              p="0.7rem"
+              color="white"
+              fontSize="0.9rem"
+              fontWeight={600}
+              bg="#6562FF"
+              borderRadius="0.5rem"
+              hasArrow
+              label={`Who referred you to add this listing on Superteam Earn?`}
+              placement="right-end"
+            >
+              <Image
+                mt={-2}
+                alt={'Info Icon'}
+                src={'/assets/icons/info-icon.svg'}
+              />
+            </Tooltip>
+          </Flex>
+
+          <Select
+            onChange={(e) => {
+              setReferredBy?.(e.target.value);
+            }}
+            placeholder="Select"
+            value={referredBy}
+          >
+            {Superteams.map((st) => (
+              <option value={st.name} key={st.name}>
+                {st.name}
+              </option>
+            ))}
+          </Select>
+        </FormControl>
         <VStack gap={4} w={'full'} mt={6}>
           <Button
             w="100%"
             onClick={() => {
               setErrorState({
-                deadline:
-                  bountyBasic?.applicationType === 'fixed'
-                    ? !bountyBasic?.deadline
-                    : false,
+                deadline: !bountyBasic?.deadline,
                 skills: skills.length === 0,
                 subSkills: subSkills.length === 0,
                 title: !bountyBasic?.title,
@@ -439,8 +482,8 @@ export const CreatebountyBasic = ({
                     ...(bountyBasic as BountyBasicType),
                     deadline: thirtyDaysFromNow,
                   });
+                  setSteps(3);
                 }
-                setSteps(3);
               }
             }}
             variant="solid"

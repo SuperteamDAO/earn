@@ -69,7 +69,7 @@ export const BountyTabs = ({
           ) : (
             <Flex align="center" justify="center" mt={8}>
               <EmptySection
-                title="No bounties available!"
+                title="No listings available!"
                 message="Subscribe to notifications to get notified about new bounties."
               />
             </Flex>
@@ -119,7 +119,7 @@ export const BountyTabs = ({
           ) : (
             <Flex align="center" justify="center" mt={8}>
               <EmptySection
-                title="No bounties in review!"
+                title="No listings in review!"
                 message="Subscribe to notifications to get notified about updates."
               />
             </Flex>
@@ -167,7 +167,7 @@ export const BountyTabs = ({
           ) : (
             <Flex align="center" justify="center" mt={8}>
               <EmptySection
-                title="No bounties announced!"
+                title="No listings announced!"
                 message="Subscribe to notifications to get notified about announcements."
               />
             </Flex>

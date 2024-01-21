@@ -1,5 +1,4 @@
 import type { BountyType, Prisma } from '@prisma/client';
-import { Regions } from '@prisma/client';
 import type { NextApiRequest, NextApiResponse } from 'next';
 
 import { prisma } from '@/prisma';
@@ -60,20 +59,6 @@ export default async function user(req: NextApiRequest, res: NextApiResponse) {
           hackathonprize: false,
           isArchived: false,
           status: 'OPEN',
-          region: {
-            in: [
-              Regions.GLOBAL,
-              Regions.GERMANY,
-              Regions.INDIA,
-              Regions.MEXICO,
-              Regions.VIETNAM,
-              Regions.UK,
-              Regions.TURKEY,
-              Regions.UAE,
-              Regions.NIGERIA,
-              Regions.BRAZIL,
-            ],
-          },
           deadline: {
             gte: dayjs().toISOString(),
           },
@@ -104,20 +89,6 @@ export default async function user(req: NextApiRequest, res: NextApiResponse) {
           isArchived: false,
           status: 'OPEN',
           type,
-          region: {
-            in: [
-              Regions.GLOBAL,
-              Regions.GERMANY,
-              Regions.INDIA,
-              Regions.MEXICO,
-              Regions.VIETNAM,
-              Regions.UK,
-              Regions.TURKEY,
-              Regions.UAE,
-              Regions.NIGERIA,
-              Regions.BRAZIL,
-            ],
-          },
           deadline: {
             gte: deadline,
           },
@@ -155,20 +126,6 @@ export default async function user(req: NextApiRequest, res: NextApiResponse) {
           hackathonprize: true,
           isArchived: false,
           status: 'OPEN',
-          region: {
-            in: [
-              Regions.GLOBAL,
-              Regions.GERMANY,
-              Regions.INDIA,
-              Regions.MEXICO,
-              Regions.VIETNAM,
-              Regions.UK,
-              Regions.TURKEY,
-              Regions.UAE,
-              Regions.NIGERIA,
-              Regions.BRAZIL,
-            ],
-          },
           deadline: {
             gte: dayjs().subtract(1, 'month').toISOString(),
           },

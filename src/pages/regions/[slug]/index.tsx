@@ -77,7 +77,7 @@ const RegionsPage = ({ slug }: { slug: string }) => {
             {!isListingsLoading && !listings?.bounties?.length && (
               <Flex align="center" justify="center" mt={8}>
                 <EmptySection
-                  title="No bounties available!"
+                  title="No listings available!"
                   message="Subscribe to notifications to get notified about new bounties."
                 />
               </Flex>

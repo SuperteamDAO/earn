@@ -15,7 +15,7 @@ import { Template } from '@/components/listings/templates/template';
 import { SuccessListings } from '@/components/modals/successListings';
 import { ErrorSection } from '@/components/shared/ErrorSection';
 import { type MultiSelectOptions, tokenList } from '@/constants';
-import type { Bounty, References } from '@/interface/bounty';
+import type { Bounty, References, SuperteamName } from '@/interface/bounty';
 import { FormLayout } from '@/layouts/FormLayout';
 import { userStore } from '@/store/user';
 import { getBountyDraftStatus } from '@/utils/bounty';
@@ -52,6 +52,9 @@ export function CreateListing({
   );
   const [regions, setRegions] = useState<Regions>(
     editable ? bounty?.region || Regions.GLOBAL : Regions.GLOBAL,
+  );
+  const [referredBy, setReferredBy] = useState<SuperteamName | undefined>(
+    undefined,
   );
   const skillsInfo = editable ? splitSkills(bounty?.skills || []) : undefined;
   const [mainSkills, setMainSkills] = useState<MultiSelectOptions[]>(
@@ -124,6 +127,7 @@ export function CreateListing({
         type,
         pocSocials: bountybasic?.pocSocials,
         region: regions,
+        referredBy: referredBy,
         eligibility: (questions || []).map((q) => ({
           question: q.question,
           order: q.order,
@@ -142,12 +146,12 @@ export function CreateListing({
         api = `/api/bounties/update/${bounty?.id}/`;
       }
       const result = await axios.post(api, newBounty);
+      setSlug(`/bounties/${result?.data?.slug}/`);
+      setIsListingPublishing(false);
+      onOpen();
       await axios.post('/api/email/manual/createBounty', {
         id: result?.data?.id,
       });
-      setSlug(`/bounties/${result?.data?.slug}/`);
-      onOpen();
-      setIsListingPublishing(false);
     } catch (e) {
       setIsListingPublishing(false);
     }
@@ -182,6 +186,7 @@ export function CreateListing({
       })),
       pocSocials: bountybasic?.pocSocials,
       region: regions,
+      referredBy: referredBy,
       requirements: bountyRequirements,
       ...bountyPayment,
     };
@@ -310,6 +315,8 @@ export function CreateListing({
               type={type}
               regions={regions}
               setRegions={setRegions}
+              referredBy={referredBy}
+              setReferredBy={setReferredBy}
               setBountyRequirements={setBountyRequirements}
               bountyRequirements={bountyRequirements}
               createAndPublishListing={createAndPublishListing}

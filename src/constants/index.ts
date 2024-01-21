@@ -1,5 +1,7 @@
 import type { SkillMap } from '@/interface/skills';
 
+import { Superteams } from './Superteam';
+
 export interface MultiSelectOptions {
   value: string;
   label: string;
@@ -698,19 +700,13 @@ export const CountryList: string[] = [
   'Zimbabwe',
 ];
 
+const superteams = Superteams.map((team) => team.name);
+
 export const CommunityList: string[] = [
+  ...superteams,
+  'SuperWomenDao',
   'LamportDAO',
   "Grape / Dean's List",
-  'Superteam India',
-  'Superteam Mexico',
-  'Superteam Vietnam',
-  'Superteam Germany',
-  'Superteam Turkey',
-  'Superteam UK',
-  'Superteam UAE',
-  'Superteam Nigeria',
-  'Superteam Brazil',
-  'SuperWomenDao',
   'DeveloperDAO',
   'Metacamp',
   '10K Designers',

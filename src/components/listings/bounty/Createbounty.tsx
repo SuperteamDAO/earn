@@ -2,7 +2,7 @@ import type { Regions } from '@prisma/client';
 import type { Dispatch, SetStateAction } from 'react';
 import React from 'react';
 
-import type { References } from '@/interface/bounty';
+import type { References, SuperteamName } from '@/interface/bounty';
 
 import type { MultiSelectOptions } from '../../../constants';
 import { Description } from '../description';
@@ -49,6 +49,8 @@ interface Props {
   type: 'open' | 'permissioned';
   isNewOrDraft?: boolean;
   isDuplicating?: boolean;
+  referredBy?: SuperteamName;
+  setReferredBy?: Dispatch<SetStateAction<SuperteamName | undefined>>;
 }
 export const CreateBounty = ({
   steps,
@@ -80,6 +82,8 @@ export const CreateBounty = ({
   setReferences,
   isNewOrDraft,
   isDuplicating,
+  referredBy,
+  setReferredBy,
 }: Props) => {
   // handles the info from basic form
 
@@ -102,6 +106,8 @@ export const CreateBounty = ({
           type={type}
           isNewOrDraft={isNewOrDraft}
           isDuplicating={isDuplicating}
+          referredBy={referredBy}
+          setReferredBy={setReferredBy}
         />
       )}
       {steps === 3 && (

@@ -12,6 +12,7 @@ import {
 import NextLink from 'next/link';
 import type { ReactNode } from 'react';
 
+import { Superteams } from '@/constants/Superteam';
 import { getURL } from '@/utils/validUrl';
 
 const getCurrentYear = () => {
@@ -155,105 +156,21 @@ export const Footer = () => {
           </Stack>
           <Stack align={'flex-start'}>
             <ListHeader>All Superteams</ListHeader>
-            <Link
-              as={NextLink}
-              color="brand.slate.500"
-              _hover={{
-                color: 'brand.slate.800',
-              }}
-              href={`${getURL()}regions/india`}
-              isExternal
-            >
-              India
-            </Link>
-            <Link
-              as={NextLink}
-              color="brand.slate.500"
-              _hover={{
-                color: 'brand.slate.800',
-              }}
-              href={`${getURL()}regions/germany`}
-              isExternal
-            >
-              Germany
-            </Link>
-            <Link
-              as={NextLink}
-              color="brand.slate.500"
-              _hover={{
-                color: 'brand.slate.800',
-              }}
-              href={`${getURL()}regions/mexico`}
-              isExternal
-            >
-              Mexico
-            </Link>
-            <Link
-              as={NextLink}
-              color="brand.slate.500"
-              _hover={{
-                color: 'brand.slate.800',
-              }}
-              href={`${getURL()}regions/turkey`}
-              isExternal
-            >
-              Turkey
-            </Link>
-            <Link
-              as={NextLink}
-              color="brand.slate.500"
-              _hover={{
-                color: 'brand.slate.800',
-              }}
-              href={`${getURL()}regions/vietnam`}
-              isExternal
-            >
-              Vietnam
-            </Link>
-            <Link
-              as={NextLink}
-              color="brand.slate.500"
-              _hover={{
-                color: 'brand.slate.800',
-              }}
-              href={`${getURL()}regions/uk`}
-              isExternal
-            >
-              UK
-            </Link>
-            <Link
-              as={NextLink}
-              color="brand.slate.500"
-              _hover={{
-                color: 'brand.slate.800',
-              }}
-              href={`${getURL()}regions/uae`}
-              isExternal
-            >
-              UAE
-            </Link>
-            <Link
-              as={NextLink}
-              color="brand.slate.500"
-              _hover={{
-                color: 'brand.slate.800',
-              }}
-              href={`${getURL()}regions/nigeria`}
-              isExternal
-            >
-              Nigeria
-            </Link>
-            <Link
-              as={NextLink}
-              color="brand.slate.500"
-              _hover={{
-                color: 'brand.slate.800',
-              }}
-              href={`${getURL()}regions/brazil`}
-              isExternal
-            >
-              Brazil
-            </Link>
+            {Superteams.map((superteam) => (
+              <Link
+                key={superteam.region}
+                as={NextLink}
+                color="brand.slate.500"
+                _hover={{
+                  color: 'brand.slate.800',
+                }}
+                href={`${getURL()}regions/india`}
+                isExternal
+              >
+                {superteam.region.charAt(0).toUpperCase() +
+                  superteam.region.slice(1).toLowerCase()}
+              </Link>
+            ))}
           </Stack>
           <Stack align={'flex-start'}>
             <ListHeader>Superteam Productions</ListHeader>
