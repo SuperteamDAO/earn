@@ -30,7 +30,7 @@ import {
   useClipboard,
   useDisclosure,
 } from '@chakra-ui/react';
-import type NodeWallet from '@project-serum/anchor/dist/cjs/nodewallet';
+import type NodeWallet from '@coral-xyz/anchor/dist/cjs/nodewallet';
 import { useAnchorWallet, useWallet } from '@solana/wallet-adapter-react';
 import type { TransactionInstruction } from '@solana/web3.js';
 import { PublicKey, Transaction } from '@solana/web3.js';
