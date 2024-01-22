@@ -160,7 +160,7 @@ export function CreateListing({
   const createDraft = async () => {
     setDraftLoading(true);
     let api = '/api/bounties/create/';
-    if (editable) {
+    if (editable && !isDuplicating) {
       api = `/api/bounties/update/${bounty?.id}/`;
     }
     let draft: Bounty = {
