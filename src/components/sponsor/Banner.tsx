@@ -67,7 +67,12 @@ export function Banner() {
               />
             )}
             <Box>
-              <Text color={'brand.slate.900'} fontSize="lg" fontWeight={600}>
+              <Text
+                color={'brand.slate.900'}
+                fontSize="lg"
+                fontWeight={600}
+                whiteSpace={'nowrap'}
+              >
                 {userInfo?.currentSponsor?.name}
               </Text>
               {isLoading ? (

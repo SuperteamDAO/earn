@@ -14,14 +14,16 @@ import axios from 'axios';
 import { MediaPicker } from 'degen';
 import { useRouter } from 'next/router';
 import { useSession } from 'next-auth/react';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { Toaster } from 'react-hot-toast';
 import Select from 'react-select';
 import makeAnimated from 'react-select/animated';
 
+import { SignIn } from '@/components/modals/Login/SignIn';
 import { Default } from '@/layouts/Default';
 import { Meta } from '@/layouts/Meta';
+import { userStore } from '@/store/user';
 
 import { IndustryList } from '../../constants';
 import type { SponsorType } from '../../interface/sponsor';
@@ -43,6 +45,14 @@ const CreateSponsor = () => {
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [hasError, setHasError] = useState<boolean>(false);
   const [errorMessage, setErrorMessage] = useState<string>('');
+
+  const { userInfo } = userStore();
+
+  useEffect(() => {
+    if (userInfo?.currentSponsorId && userInfo.role !== 'GOD') {
+      router.push('/dashboard/listings');
+    }
+  }, [userInfo?.currentSponsorId, router]);
 
   const createNewSponsor = async (sponsor: SponsorType) => {
     if (getValues('bio').length > 180) {
@@ -77,16 +87,36 @@ const CreateSponsor = () => {
     >
       {!session ? (
         <>
-          <Box
-            alignItems={'center'}
-            justifyContent={'center'}
-            display={'flex'}
-            w={'full'}
-            minH={'100vh'}
-          >
-            <Text color={'gray.600'} fontSize={'xl'} fontWeight={500}>
-              Please sign up first!
-            </Text>
+          <Box w={'full'} minH={'100vh'} bg="white">
+            <Box
+              alignItems="center"
+              justifyContent={'center'}
+              flexDir={'column'}
+              display={'flex'}
+              maxW="32rem"
+              minH="60vh"
+              mx="auto"
+            >
+              <Text
+                pt={4}
+                color="brand.slate.900"
+                fontSize={18}
+                fontWeight={600}
+                textAlign={'center'}
+              >
+                You&apos;re one step away
+              </Text>
+              <Text
+                pb={4}
+                color="brand.slate.600"
+                fontSize={15}
+                fontWeight={400}
+                textAlign={'center'}
+              >
+                from joining Superteam Earn
+              </Text>
+              <SignIn />
+            </Box>
           </Box>
         </>
       ) : (
