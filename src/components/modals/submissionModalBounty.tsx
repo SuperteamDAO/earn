@@ -215,10 +215,9 @@ export const SubmissionModal = ({
                       Tweet Link
                     </FormLabel>
                     <FormHelperText mt={0} mb={2} color="brand.slate.500">
-                      We generally recommend tweeting out your work so that (1)
-                      we can further share the best entries, and (2) its easier
-                      for partner projects to discover you too! In case you
-                      tweet it out, give us a link to the Tweet here!
+                      This helps sponsors discover (and maybe repost) your work
+                      on Twitter! If this submission is for a Twitter thread
+                      bounty, you can ignore this field.
                     </FormHelperText>
                     <Input
                       borderColor={'brand.slate.300'}

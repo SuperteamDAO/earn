@@ -317,7 +317,7 @@ function BountySubmissions({ slug }: Props) {
   const { hasCopied, onCopy } = useClipboard(`${getURL()}t/${bounty?.slug}`);
 
   return (
-    <Sidebar showBanner={false}>
+    <Sidebar>
       {isBountyLoading ? (
         <LoadingSection />
       ) : (
@@ -672,10 +672,10 @@ function BountySubmissions({ slug }: Props) {
                                     height: '32px',
                                     fontWeight: 600,
                                     fontFamily: 'Inter',
-                                    maxWidth: '96px',
-                                    paddingRight: '6px',
-                                    paddingLeft: '6px',
-                                    fontSize: '10px',
+                                    // maxWidth: '96px',
+                                    paddingRight: '16px',
+                                    paddingLeft: '16px',
+                                    fontSize: '12px',
                                   }}
                                 >
                                   {connected
@@ -683,7 +683,11 @@ function BountySubmissions({ slug }: Props) {
                                         publicKey?.toBase58(),
                                         3,
                                       )
-                                    : 'Pay'}
+                                    : `Pay ${bounty?.token} ${
+                                        bounty?.rewards?.[
+                                          selectedSubmission?.winnerPosition as keyof Rewards
+                                        ] || '0'
+                                      }`}
                                 </DynamicWalletMultiButton>
                                 {connected && (
                                   <Button
@@ -984,9 +988,13 @@ function BountySubmissions({ slug }: Props) {
                               fontSize="sm"
                             >
                               <MdOutlineMail color="#94A3B8" />
-                              <Text color="brand.slate.400">
+                              <Link
+                                color="brand.slate.400"
+                                href={`mailto:${selectedSubmission.user.email}`}
+                                isExternal
+                              >
                                 {selectedSubmission?.user?.email}
-                              </Text>
+                              </Link>
                             </Flex>
                           )}
                           {selectedSubmission?.user?.publicKey && (

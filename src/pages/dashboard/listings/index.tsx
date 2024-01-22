@@ -175,7 +175,7 @@ function Bounties() {
   } = useDisclosure();
 
   return (
-    <Sidebar>
+    <Sidebar showBanner={true}>
       <Modal isOpen={unpublishIsOpen} onClose={unpublishOnClose}>
         <ModalOverlay />
         <ModalContent>
@@ -336,12 +336,11 @@ function Bounties() {
                   Listing Name
                 </Th>
                 <Th
-                  align="right"
                   color="brand.slate.400"
                   fontSize={14}
                   fontWeight={500}
                   letterSpacing={'-2%'}
-                  textAlign="right"
+                  textAlign="center"
                   textTransform={'capitalize'}
                 >
                   Submissions
