@@ -33,7 +33,7 @@ const LinkItems: Array<LinkItemProps> = [
   { name: 'Members', link: '/members', icon: MdOutlineGroup },
   {
     name: 'Get Help',
-    link: 'https://discord.com/channels/857091160295866388/1192795350277312662',
+    link: 'https://t.me/pratikdholani',
     icon: MdOutlineChatBubbleOutline,
   },
 ];

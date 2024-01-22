@@ -18,6 +18,7 @@ import {
   Input,
   InputGroup,
   InputLeftElement,
+  Link,
   Menu,
   MenuButton,
   MenuItem,
@@ -569,21 +570,21 @@ function Bounties() {
                             View {bountyType}
                           </MenuItem>
                           {currentBounty.isPublished && (
-                            <MenuItem
-                              py={2}
-                              color={'brand.slate.500'}
-                              fontSize={'sm'}
-                              fontWeight={500}
-                              icon={<EditIcon w={4} h={4} />}
-                              onClick={() =>
-                                window.open(
-                                  `${router.basePath}/dashboard/listings/${currentBounty.slug}/edit`,
-                                  '_blank',
-                                )
-                              }
+                            <Link
+                              as={NextLink}
+                              _hover={{ textDecoration: 'none' }}
+                              href={`/dashboard/listings/${currentBounty.slug}/edit`}
                             >
-                              Edit {bountyType}
-                            </MenuItem>
+                              <MenuItem
+                                py={2}
+                                color={'brand.slate.500'}
+                                fontSize={'sm'}
+                                fontWeight={500}
+                                icon={<EditIcon w={4} h={4} />}
+                              >
+                                Edit {bountyType}
+                              </MenuItem>
+                            </Link>
                           )}
                           <MenuItem
                             py={2}

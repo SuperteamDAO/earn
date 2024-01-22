@@ -165,7 +165,7 @@ export function Banner() {
                   fontWeight={600}
                   whiteSpace={'nowrap'}
                 >
-                  Stuck with something?
+                  Stuck somewhere?
                 </Text>
                 <Text
                   color="brand.slate.500"

@@ -32,7 +32,7 @@ import { uploadToCloudinary } from '../../utils/upload';
 const CreateSponsor = () => {
   const router = useRouter();
   const animatedComponents = makeAnimated();
-  const { data: session } = useSession();
+  const { data: session, status } = useSession();
   const {
     handleSubmit,
     register,
@@ -75,6 +75,11 @@ const CreateSponsor = () => {
       setHasError(true);
     }
   };
+
+  if (!session && status === 'loading') {
+    return <></>;
+  }
+
   return (
     <Default
       meta={
