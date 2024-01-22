@@ -15,7 +15,7 @@ import { useRouter } from 'next/router';
 import React, { useEffect, useState } from 'react';
 import type { Metadata } from 'unfurl.js/dist/types';
 
-import TalentBio from '@/components/TalentBio';
+import { TalentBio } from '@/components/TalentBio';
 import type { Bounty } from '@/interface/bounty';
 import type { SubmissionWithUser } from '@/interface/submission';
 

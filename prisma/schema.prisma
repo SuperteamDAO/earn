@@ -1,6 +1,5 @@
 generator client {
-  provider        = "prisma-client-js"
-  previewFeatures = ["filteredRelationCount"]
+  provider = "prisma-client-js"
 }
 
 datasource db {
@@ -405,4 +404,5 @@ enum Regions {
   UAE
   NIGERIA
   ISRAEL
+  BRAZIL
 }

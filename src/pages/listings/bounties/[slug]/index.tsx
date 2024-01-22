@@ -7,12 +7,12 @@ import Head from 'next/head';
 import { useEffect, useState } from 'react';
 
 import { bountySnackbarAtom } from '@/components/Header/BountySnackbar';
-import BountyWinners from '@/components/listings/bounty/BountyWinners';
+import { BountyWinners } from '@/components/listings/bounty/BountyWinners';
 import { Comments } from '@/components/listings/listings/comments';
-import DetailDescription from '@/components/listings/listings/details/detailDescriptionBounty';
-import DetailSideCard from '@/components/listings/listings/details/detailSideCardBounty';
-import ListingHeader from '@/components/listings/listings/ListingHeaderBounty';
-import ErrorSection from '@/components/shared/ErrorSection';
+import { DetailDescriptionBounty } from '@/components/listings/listings/details/detailDescriptionBounty';
+import { DetailSideCardBounty } from '@/components/listings/listings/details/detailSideCardBounty';
+import { ListingHeader } from '@/components/listings/listings/ListingHeaderBounty';
+import { ErrorSection } from '@/components/shared/ErrorSection';
 import type { Bounty } from '@/interface/bounty';
 import { Default } from '@/layouts/Default';
 import { getURL } from '@/utils/validUrl';
@@ -47,6 +47,7 @@ function BountyDetails({ bounty: initialBounty }: BountyDetailsProps) {
           deadline: bounty?.deadline,
           rewardAmount: bounty?.rewardAmount,
           type: bounty?.type,
+          isPublished: bounty?.isPublished,
         });
       }
     };
@@ -80,7 +81,7 @@ function BountyDetails({ bounty: initialBounty }: BountyDetailsProps) {
           />
           <meta
             property="og:image"
-            content={`https://earn.superteam.fun/api/ognew/?title=${initialBounty?.title}&reward=${initialBounty?.rewardAmount}&token=${initialBounty?.token}&sponsor=${initialBounty?.sponsor?.name}&logo=${initialBounty?.sponsor?.logo}&type=${initialBounty?.type}`}
+            content={`https://earn.superteam.fun/api/bounty-og/?title=${initialBounty?.title}&reward=${initialBounty?.rewardAmount}&token=${initialBounty?.token}&sponsor=${initialBounty?.sponsor?.name}&logo=${initialBounty?.sponsor?.logo}&type=${initialBounty?.type}`}
           />
           <meta
             name="twitter:title"
@@ -88,7 +89,7 @@ function BountyDetails({ bounty: initialBounty }: BountyDetailsProps) {
           />
           <meta
             name="twitter:image"
-            content={`https://earn.superteam.fun/api/ognew/?title=${initialBounty?.title}&reward=${initialBounty?.rewardAmount}&token=${initialBounty?.token}&sponsor=${initialBounty?.sponsor?.name}&logo=${initialBounty?.sponsor?.logo}&type=${initialBounty?.type}`}
+            content={`https://earn.superteam.fun/api/bounty-og/?title=${initialBounty?.title}&reward=${initialBounty?.rewardAmount}&token=${initialBounty?.token}&sponsor=${initialBounty?.sponsor?.name}&logo=${initialBounty?.sponsor?.logo}&type=${initialBounty?.type}`}
           />
           <meta name="twitter:card" content="summary_large_image" />
           <meta property="og:image:width" content="1200" />
@@ -135,13 +136,13 @@ function BountyDetails({ bounty: initialBounty }: BountyDetailsProps) {
                 mx={'auto'}
               >
                 <VStack gap={8} w={['22rem', '22rem', 'full', 'full']} mt={10}>
-                  <DetailDescription
+                  <DetailDescriptionBounty
                     skills={bounty?.skills?.map((e) => e.skills) ?? []}
                     description={bounty?.description}
                   />
                   <Comments refId={bounty?.id ?? ''} refType="BOUNTY" />
                 </VStack>
-                <DetailSideCard
+                <DetailSideCardBounty
                   id={bounty?.id || ''}
                   token={bounty?.token ?? ''}
                   eligibility={bounty?.eligibility}

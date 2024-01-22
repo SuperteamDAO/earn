@@ -14,9 +14,9 @@ import type { PoW } from '@/interface/pow';
 import type { User } from '@/interface/user';
 import { timeAgoShort } from '@/utils/timeAgo';
 
-import OgImageViewer from '../misc/ogImageViewer';
+import { OgImageViewer } from '../misc/ogImageViewer';
 
-export default function PowCard({ talent, pow }: { talent: User; pow: PoW }) {
+export function PowCard({ talent, pow }: { talent: User; pow: PoW }) {
   const breakpoint = useBreakpointValue({ base: 'base', md: 'md' });
 
   return (

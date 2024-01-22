@@ -3,8 +3,8 @@ import { Flex } from '@chakra-ui/react';
 import dayjs from 'dayjs';
 
 import { BountiesCard } from '@/components/misc/listingsCard';
-import EmptySection from '@/components/shared/EmptySection';
-import Loading from '@/components/shared/Loading';
+import { EmptySection } from '@/components/shared/EmptySection';
+import { Loading } from '@/components/shared/Loading';
 import type { Bounty } from '@/interface/bounty';
 
 interface TabProps {
@@ -60,6 +60,8 @@ export const BountyTabs = ({
                   token={bounty?.token}
                   type={bounty?.type}
                   applicationType={bounty.applicationType}
+                  hasTabs
+                  isWinnersAnnounced={bounty.isWinnersAnnounced}
                 />
               ))
           ) : (
@@ -108,6 +110,8 @@ export const BountyTabs = ({
                   token={bounty?.token}
                   type={bounty?.type}
                   applicationType={bounty.applicationType}
+                  isWinnersAnnounced={bounty?.isWinnersAnnounced}
+                  hasTabs
                 />
               ))
           ) : (
@@ -154,6 +158,8 @@ export const BountyTabs = ({
                   token={bounty?.token}
                   type={bounty?.type}
                   applicationType={bounty.applicationType}
+                  isWinnersAnnounced={bounty?.isWinnersAnnounced}
+                  hasTabs
                 />
               ))
           ) : (

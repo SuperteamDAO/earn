@@ -51,11 +51,11 @@ import {
 } from 'react-icons/ai';
 import { FiMoreVertical } from 'react-icons/fi';
 
-import ErrorSection from '@/components/shared/ErrorSection';
-import LoadingSection from '@/components/shared/LoadingSection';
+import { ErrorSection } from '@/components/shared/ErrorSection';
+import { LoadingSection } from '@/components/shared/LoadingSection';
 import { tokenList } from '@/constants/index';
 import type { BountyWithSubmissions } from '@/interface/bounty';
-import Sidebar from '@/layouts/Sidebar';
+import { Sidebar } from '@/layouts/Sidebar';
 import { userStore } from '@/store/user';
 import {
   formatDeadline,
@@ -381,17 +381,31 @@ function Bounties() {
                 const bountyType = getBountyTypeLabel(
                   currentBounty?.type ?? 'open'
                 );
-                const deadlineFromNow = getDeadlineFromNow(
-                  currentBounty?.deadline
-                );
-                const deadline = formatDeadline(currentBounty?.deadline);
+                const deadlineFromNow =
+                  currentBounty.type === 'open'
+                    ? getDeadlineFromNow(currentBounty?.deadline)
+                    : 'Rolling';
+                const deadline =
+                  currentBounty.type === 'open'
+                    ? formatDeadline(currentBounty?.deadline)
+                    : 'This Project will expire once its winner has been selected';
                 const bountyStatus = getBountyDraftStatus(
                   currentBounty?.status,
                   currentBounty?.isPublished
                 );
                 const bountyProgress = getBountyProgress(currentBounty);
-                const isListingIncomplete =
-                  Object.keys(currentBounty?.rewards || {}).length === 0;
+                const isListingIncomplete = (() => {
+                  if (currentBounty?.type === 'permissioned') {
+                    return currentBounty?.rewardAmount === null;
+                  }
+                  if (currentBounty?.type === 'open') {
+                    return (
+                      Object.keys(currentBounty?.rewards || {}).length === 0
+                    );
+                  }
+                  return true;
+                })();
+
                 return (
                   <Tr key={currentBounty?.id} bg="white">
                     <Td

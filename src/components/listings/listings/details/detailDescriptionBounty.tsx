@@ -11,7 +11,7 @@ interface Props {
   description?: string;
 }
 
-function DetailDescription({ skills, description }: Props) {
+export function DetailDescriptionBounty({ skills, description }: Props) {
   const options: HTMLReactParserOptions = {
     replace: ({ name, children, attribs }: any) => {
       if (name === 'p' && (!children || children.length === 0)) {
@@ -74,5 +74,3 @@ function DetailDescription({ skills, description }: Props) {
     </VStack>
   );
 }
-
-export default DetailDescription;

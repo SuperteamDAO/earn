@@ -32,7 +32,7 @@ const avatars = [
   },
 ];
 
-export default function HomeBanner({ setTriggerLogin }: BannerProps) {
+export function HomeBanner({ setTriggerLogin }: BannerProps) {
   const [isLessThan768px] = useMediaQuery('(max-width: 768px)');
 
   // Define image properties for each image

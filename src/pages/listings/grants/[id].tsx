@@ -12,10 +12,10 @@ import axios from 'axios';
 import type { GetServerSideProps } from 'next';
 import React, { useEffect, useState } from 'react';
 
-import DetailDescription from '@/components/listings/listings/details/detailDescription';
+import { DetailDescription } from '@/components/listings/listings/details/detailDescription';
 import { ListingHeader } from '@/components/listings/listings/ListingHeader';
-import ErrorSection from '@/components/shared/EmptySection';
-import LoadingSection from '@/components/shared/LoadingSection';
+import { EmptySection } from '@/components/shared/EmptySection';
+import { LoadingSection } from '@/components/shared/LoadingSection';
 import type { Grant } from '@/interface/grant';
 import type { SponsorType } from '@/interface/sponsor';
 import { Default } from '@/layouts/Default';
@@ -59,9 +59,9 @@ const Grants = ({ slug }: GrantsDetailsProps) => {
         }
       >
         {isLoading && <LoadingSection />}
-        {!isLoading && !!error && <ErrorSection />}
+        {!isLoading && !!error && <EmptySection />}
         {!isLoading && !error && !grants?.id && (
-          <ErrorSection message="Sorry! The bounty you are looking for is not available." />
+          <EmptySection message="Sorry! The bounty you are looking for is not available." />
         )}
         {!isLoading && !error && !!grants?.id && (
           <>
@@ -78,8 +78,8 @@ const Grants = ({ slug }: GrantsDetailsProps) => {
               gap={4}
               maxW={'7xl'}
               minH={'100vh'}
-              mt={10}
               mx={'auto'}
+              my={10}
             >
               <HStack w={['22rem', '22rem', 'full', 'full']}>
                 <DetailDescription

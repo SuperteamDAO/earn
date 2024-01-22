@@ -71,6 +71,7 @@ export default async function user(req: NextApiRequest, res: NextApiResponse) {
               Regions.TURKEY,
               Regions.UAE,
               Regions.NIGERIA,
+              Regions.BRAZIL,
             ],
           },
           deadline: {
@@ -118,6 +119,7 @@ export default async function user(req: NextApiRequest, res: NextApiResponse) {
               Regions.TURKEY,
               Regions.UAE,
               Regions.NIGERIA,
+              Regions.BRAZIL,
             ],
           },
           deadline: {
@@ -171,6 +173,7 @@ export default async function user(req: NextApiRequest, res: NextApiResponse) {
               Regions.TURKEY,
               Regions.UAE,
               Regions.NIGERIA,
+              Regions.BRAZIL,
             ],
           },
           deadline: {

@@ -16,7 +16,7 @@ const fontSans = Inter({
   display: 'swap',
   adjustFontFallback: true,
   preload: true,
-  fallback: ['Arial'],
+  // fallback: ['Arial'],
   weight: 'variable',
 });
 
@@ -25,7 +25,7 @@ const fontSerif = Domine({
   display: 'swap',
   adjustFontFallback: true,
   preload: true,
-  fallback: ['Times New Roman'],
+  // fallback: ['Times New Roman'],
   weight: 'variable',
 });
 

@@ -8,11 +8,11 @@ import {
   GrantsCard,
   ListingSection,
 } from '@/components/misc/listingsCard';
-import EmptySection from '@/components/shared/EmptySection';
-import Loading from '@/components/shared/Loading';
+import { EmptySection } from '@/components/shared/EmptySection';
+import { Loading } from '@/components/shared/Loading';
 import type { Bounty } from '@/interface/bounty';
 import type { Grant } from '@/interface/grant';
-import Home from '@/layouts/Home';
+import { Home } from '@/layouts/Home';
 import { Meta } from '@/layouts/Meta';
 
 interface Listings {
@@ -105,6 +105,7 @@ function ListingCategoryPage({ slug }: { slug: string }) {
                   token={bounty?.token}
                   type={bounty?.type}
                   applicationType={bounty?.applicationType}
+                  isWinnersAnnounced={bounty?.isWinnersAnnounced}
                 />
               );
             })}

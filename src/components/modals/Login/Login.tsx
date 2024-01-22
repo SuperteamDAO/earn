@@ -18,9 +18,9 @@ import { useEffect, useState } from 'react';
 
 import type { User } from '@/interface/user';
 
-import ConnectWallet from './ConnectWallet';
-import NewUserInfo from './NewUserInfo';
-import VerifyOtp from './VerifyOtp';
+import { ConnectWallet } from './ConnectWallet';
+import { NewUserInfo } from './NewUserInfo';
+import { VerifyOTP } from './VerifyOtp';
 
 interface Props {
   isOpen: boolean;
@@ -101,7 +101,7 @@ export const Login = ({
             />
           )}
           {step === 3 && (
-            <VerifyOtp
+            <VerifyOTP
               inviteInfo={inviteInfo}
               userInfo={userInfo}
               onClose={onClose}

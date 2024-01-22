@@ -13,8 +13,8 @@ import {
 import axios from 'axios';
 import React, { useEffect, useState } from 'react';
 
-import ErrorInfo from '@/components/shared/ErrorInfo';
-import Loading from '@/components/shared/Loading';
+import { ErrorInfo } from '@/components/shared/ErrorInfo';
+import { Loading } from '@/components/shared/Loading';
 import type { Grant } from '@/interface/grant';
 import { Default } from '@/layouts/Default';
 import { Meta } from '@/layouts/Meta';

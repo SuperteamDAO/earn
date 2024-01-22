@@ -20,9 +20,9 @@ import React from 'react';
 import type { IconType } from 'react-icons';
 import { AiFillFire, AiOutlineUsergroupAdd } from 'react-icons/ai';
 
-import SelectSponsor from '@/components/SelectSponsor/SelectSponsor';
-import LoadingSection from '@/components/shared/LoadingSection';
-import Banner from '@/components/sidebar/Banner';
+import { SelectSponsor } from '@/components/SelectSponsor/SelectSponsor';
+import { LoadingSection } from '@/components/shared/LoadingSection';
+import { Banner } from '@/components/sidebar/Banner';
 import { Default } from '@/layouts/Default';
 import { Meta } from '@/layouts/Meta';
 import { userStore } from '@/store/user';
@@ -158,7 +158,7 @@ const SidebarContent = ({ ...rest }: BoxProps) => {
   );
 };
 
-export default function SimpleSidebar({ children }: { children: ReactNode }) {
+export function Sidebar({ children }: { children: ReactNode }) {
   const { userInfo } = userStore();
 
   return (

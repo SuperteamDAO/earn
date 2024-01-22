@@ -140,7 +140,7 @@ interface Props {
   useFormStore: () => UserStoreType;
 }
 
-function YourLinks({ success, useFormStore }: Props) {
+export function YourLinks({ success, useFormStore }: Props) {
   const { isOpen, onOpen, onClose } = useDisclosure();
   const { form } = useFormStore();
   const [pow, setPow] = useState<PoW[]>([]);
@@ -321,5 +321,3 @@ function YourLinks({ success, useFormStore }: Props) {
     </>
   );
 }
-
-export default YourLinks;

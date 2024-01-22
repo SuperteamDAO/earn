@@ -17,7 +17,12 @@ interface Props {
   setStep: Dispatch<SetStateAction<number>>;
 }
 
-const FormLayout = ({ children, currentStep, stepList, setStep }: Props) => {
+export const FormLayout = ({
+  children,
+  currentStep,
+  stepList,
+  setStep,
+}: Props) => {
   return (
     <VStack mb={12}>
       <VStack gap={6} w={'80%'}>
@@ -71,5 +76,3 @@ const FormLayout = ({ children, currentStep, stepList, setStep }: Props) => {
     </VStack>
   );
 };
-
-export default FormLayout;

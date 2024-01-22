@@ -35,13 +35,13 @@ import NextLink from 'next/link';
 import { useRouter } from 'next/router';
 import { useEffect, useState } from 'react';
 
-import ErrorSection from '@/components/shared/ErrorSection';
-import LoadingSection from '@/components/shared/LoadingSection';
-import PublishResults from '@/components/submissions/PublishResults';
+import { ErrorSection } from '@/components/shared/ErrorSection';
+import { LoadingSection } from '@/components/shared/LoadingSection';
+import { PublishResults } from '@/components/submissions/PublishResults';
 import { tokenList } from '@/constants';
 import type { Bounty, Rewards } from '@/interface/bounty';
 import type { SubmissionWithUser } from '@/interface/submission';
-import Sidebar from '@/layouts/Sidebar';
+import { Sidebar } from '@/layouts/Sidebar';
 import { userStore } from '@/store/user';
 import {
   getBgColor,

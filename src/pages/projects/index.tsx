@@ -4,10 +4,10 @@ import dayjs from 'dayjs';
 import { useEffect, useState } from 'react';
 
 import { BountiesCard, ListingSection } from '@/components/misc/listingsCard';
-import EmptySection from '@/components/shared/EmptySection';
-import Loading from '@/components/shared/Loading';
+import { EmptySection } from '@/components/shared/EmptySection';
+import { Loading } from '@/components/shared/Loading';
 import type { Bounty } from '@/interface/bounty';
-import Home from '@/layouts/Home';
+import { Home } from '@/layouts/Home';
 import { Meta } from '@/layouts/Meta';
 
 interface Listings {
@@ -87,6 +87,7 @@ function AllBountiesPage() {
                   token={bounty?.token}
                   type={bounty?.type}
                   applicationType={bounty.applicationType}
+                  isWinnersAnnounced={bounty?.isWinnersAnnounced}
                 />
               );
             })}

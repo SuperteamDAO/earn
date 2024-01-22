@@ -8,7 +8,7 @@ import {
   VStack,
 } from '@chakra-ui/react';
 
-function WelcomeMessage({ setStep }: { setStep: () => void }) {
+export function WelcomeMessage({ setStep }: { setStep: () => void }) {
   return (
     <Flex align="center" justify="center" minH={'92vh'}>
       <Box w={'xl'}>
@@ -52,5 +52,3 @@ function WelcomeMessage({ setStep }: { setStep: () => void }) {
     </Flex>
   );
 }
-
-export default WelcomeMessage;

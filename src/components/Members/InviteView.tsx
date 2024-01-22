@@ -3,7 +3,7 @@ import axios from 'axios';
 import { useRouter } from 'next/router';
 import { useState } from 'react';
 
-import LoginWrapper from '@/components/Header/LoginWrapper';
+import { LoginWrapper } from '@/components/Header/LoginWrapper';
 import type { User } from '@/interface/user';
 import { userStore } from '@/store/user';
 
@@ -11,7 +11,7 @@ interface Props {
   invite: any;
 }
 
-function InviteView({ invite }: Props) {
+export function InviteView({ invite }: Props) {
   const router = useRouter();
   const [triggerLogin, setTriggerLogin] = useState(false);
   const [isError, setIsError] = useState(false);
@@ -118,5 +118,3 @@ function InviteView({ invite }: Props) {
     </Container>
   );
 }
-
-export default InviteView;

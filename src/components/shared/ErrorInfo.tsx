@@ -1,7 +1,13 @@
 import { Flex, Text } from '@chakra-ui/react';
 import { AiOutlineWarning } from 'react-icons/ai';
 
-function ErrorInfo({ title, message }: { title?: string; message?: string }) {
+export function ErrorInfo({
+  title,
+  message,
+}: {
+  title?: string;
+  message?: string;
+}) {
   return (
     <Flex align={'center'} justify="center" direction="column">
       <AiOutlineWarning fontSize={52} color="brand.slate.500" />
@@ -14,5 +20,3 @@ function ErrorInfo({ title, message }: { title?: string; message?: string }) {
     </Flex>
   );
 }
-
-export default ErrorInfo;
