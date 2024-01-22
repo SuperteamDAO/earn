@@ -3,6 +3,7 @@ import 'degen/styles';
 import '../styles/globals.scss';
 
 import { ChakraProvider } from '@chakra-ui/react';
+import { GoogleTagManager } from '@next/third-parties/google';
 import axios from 'axios';
 import type { AppProps } from 'next/app';
 // Fonts
@@ -110,6 +111,7 @@ function App({ Component, pageProps: { session, ...pageProps } }: AppProps) {
           </SessionProvider>
         </ChakraProvider>
       </SolanaWalletProvider>
+      <GoogleTagManager gtmId={process.env.NEXT_PUBLIC_GA_TRACKING_ID!} />
     </>
   );
 }
