@@ -59,7 +59,7 @@ export default function Document() {
         />
         <Script
           id="posthog-init"
-          strategy="afterInteractive"
+          strategy="beforeInteractive"
           dangerouslySetInnerHTML={{
             __html: `
               (function() {
