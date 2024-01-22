@@ -18,8 +18,9 @@ import { SignIn } from './SignIn';
 interface Props {
   isOpen: boolean;
   onClose: () => void;
+  isSponsor?: boolean;
 }
-export const Login = ({ isOpen, onClose }: Props) => {
+export const Login = ({ isOpen, onClose, isSponsor = false }: Props) => {
   const router = useRouter();
 
   return (
@@ -42,7 +43,9 @@ export const Login = ({ isOpen, onClose }: Props) => {
             fontWeight={400}
             textAlign={'center'}
           >
-            From earning in global standards
+            {isSponsor
+              ? 'from joining Superteam Earn'
+              : 'From earning in global standards'}
           </Text>
         </ModalHeader>
         <ModalCloseButton mt={4} color={'brand.slate.400'} />
