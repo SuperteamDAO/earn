@@ -54,7 +54,7 @@ export function CreateListing({
     editable ? bounty?.region || Regions.GLOBAL : Regions.GLOBAL,
   );
   const [referredBy, setReferredBy] = useState<SuperteamName | undefined>(
-    undefined,
+    editable ? bounty?.referredBy : undefined,
   );
   const skillsInfo = editable ? splitSkills(bounty?.skills || []) : undefined;
   const [mainSkills, setMainSkills] = useState<MultiSelectOptions[]>(
