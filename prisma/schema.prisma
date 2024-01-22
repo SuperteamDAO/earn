@@ -194,23 +194,24 @@ model Otp {
 }
 
 model Sponsors {
-  id           String         @id @default(uuid())
-  name         String         @unique
-  slug         String         @unique
-  logo         String?
-  url          String?
-  industry     String
-  twitter      String?
-  bio          String?
-  createdAt    DateTime       @default(now())
-  updatedAt    DateTime       @updatedAt
-  isArchived   Boolean        @default(false)
-  isActive     Boolean        @default(true)
-  UserSponsors UserSponsors[]
-  Bounties     Bounties[]
-  Grants       Grants[]
-  Jobs         Jobs[]
-  User         User[]
+  id                 String         @id @default(uuid())
+  name               String         @unique
+  slug               String         @unique
+  logo               String?
+  url                String?
+  industry           String
+  twitter            String?
+  bio                String?
+  createdAt          DateTime       @default(now())
+  updatedAt          DateTime       @updatedAt
+  isArchived         Boolean        @default(false)
+  isActive           Boolean        @default(true)
+  totalRewardedInUSD Int            @default(0)
+  UserSponsors       UserSponsors[]
+  Bounties           Bounties[]
+  Grants             Grants[]
+  Jobs               Jobs[]
+  User               User[]
 
   @@index([id, slug])
 }

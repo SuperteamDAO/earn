@@ -41,7 +41,7 @@ export default async function handler(
 
     const sponsor = await prisma.sponsors.findUnique({
       where: { id: sponsorId },
-      select: { createdAt: true },
+      select: { createdAt: true, totalRewardedInUSD: true },
     });
 
     if (!sponsor) {
@@ -58,39 +58,19 @@ export default async function handler(
       status: status.OPEN,
     };
 
-    const totalRewardAmount = await prisma.bounties.aggregate({
-      where: commonWhere,
-      _sum: {
-        rewardAmount: true,
-      },
-    });
-
     const totalListings = await prisma.bounties.count({
-      where: {
-        sponsorId,
-        isWinnersAnnounced: true,
-        isActive: true,
-        isArchived: false,
-        status: 'OPEN',
-      },
+      where: commonWhere,
     });
 
     const totalSubmissions = await prisma.submission.count({
       where: {
-        listing: {
-          sponsorId,
-          isWinnersAnnounced: true,
-          isActive: true,
-          isArchived: false,
-          status: 'OPEN',
-        },
+        listing: commonWhere,
       },
     });
 
     return res.status(200).json({
       yearOnPlatform,
-      // eslint-disable-next-line no-underscore-dangle
-      totalRewardAmount: totalRewardAmount._sum.rewardAmount || 0,
+      totalRewardAmount: sponsor.totalRewardedInUSD,
       totalListings,
       totalSubmissions,
     });
