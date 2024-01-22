@@ -50,21 +50,24 @@ export default async function handler(
 
     const yearOnPlatform = sponsor.createdAt.getFullYear();
 
-    const commonWhere = {
-      sponsorId,
-      isWinnersAnnounced: true,
-      isActive: true,
-      isArchived: false,
-      status: status.OPEN,
-    };
-
     const totalListings = await prisma.bounties.count({
-      where: commonWhere,
+      where: {
+        sponsorId,
+        isPublished: true,
+        isActive: true,
+        isArchived: false,
+        status: status.OPEN,
+      },
     });
 
     const totalSubmissions = await prisma.submission.count({
       where: {
-        listing: commonWhere,
+        listing: {
+          sponsorId,
+          isActive: true,
+          isArchived: false,
+          status: status.OPEN,
+        },
       },
     });
 
