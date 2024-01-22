@@ -5,6 +5,7 @@
   "scripts": {
     "dev": "cross-env NODE_ENV=development next dev",
     "build": "prisma generate && next build",
+    "analyze": "cross-env ANALYZE=true pnpm run build",
     "start": "cross-env NODE_ENV=production next start",
     "lint": "next lint",
     "format": "next lint --fix && prettier '**/*.{json,yaml}' --write --ignore-path .gitignore",
@@ -24,6 +25,7 @@
     "@emotion/styled": "^11.11.0",
     "@json2csv/plainjs": "^7.0.4",
     "@next-auth/prisma-adapter": "^1.0.7",
+    "@next/bundle-analyzer": "^14.1.0",
     "@prisma/client": "5.8.1",
     "@solana/spl-token": "^0.3.11",
     "@solana/wallet-adapter-base": "^0.9.23",
