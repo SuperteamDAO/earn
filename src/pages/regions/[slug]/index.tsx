@@ -6,6 +6,7 @@ import React, { useEffect, useState } from 'react';
 import {
   BountiesCard,
   GrantsCard,
+  ListingsCardSkeleton,
   ListingSection,
 } from '@/components/misc/listingsCard';
 import { EmptySection } from '@/components/shared/EmptySection';
@@ -31,7 +32,7 @@ const RegionsPage = ({ slug }: { slug: string }) => {
     setIsListingsLoading(true);
     try {
       const listingsData = await axios.get(
-        `/api/listings/regions/?region=${slug}`
+        `/api/listings/regions/?region=${slug}`,
       );
       setListings(listingsData.data);
       setIsListingsLoading(false);
@@ -69,20 +70,14 @@ const RegionsPage = ({ slug }: { slug: string }) => {
             url={`/regions/${slug}/bounties`}
             all
           >
-            {isListingsLoading && (
-              <Flex
-                align="center"
-                justify="center"
-                direction="column"
-                minH={52}
-              >
-                <Loading />
-              </Flex>
-            )}
+            {isListingsLoading &&
+              Array.from({ length: 8 }, (_, index) => (
+                <ListingsCardSkeleton key={index} />
+              ))}
             {!isListingsLoading && !listings?.bounties?.length && (
               <Flex align="center" justify="center" mt={8}>
                 <EmptySection
-                  title="No bounties available!"
+                  title="No listings available!"
                   message="Subscribe to notifications to get notified about new bounties."
                 />
               </Flex>
@@ -157,7 +152,7 @@ export async function getServerSideProps(context: NextPageContext) {
   const { slug } = context.query;
 
   const validRegion = Superteams.some(
-    (team) => team.region.toLowerCase() === (slug as string).toLowerCase()
+    (team) => team.region.toLowerCase() === (slug as string).toLowerCase(),
   );
 
   if (!validRegion) {

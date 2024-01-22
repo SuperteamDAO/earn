@@ -36,7 +36,7 @@ export function SubmissionCard({
   const { userInfo } = userStore();
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [isLiked, setIsLiked] = useState<boolean>(
-    !!sub?.like?.find((e: any) => e.id === userInfo?.id)
+    !!sub?.like?.find((e: any) => e.id === userInfo?.id),
   );
   const [totalLikes, setTotalLikes] = useState<number>(sub?.like?.length ?? 0);
 
@@ -45,7 +45,6 @@ export function SubmissionCard({
       setIsLoading(true);
       await axios.post('/api/submission/like', {
         submissionId: sub?.id,
-        userId: userInfo?.id,
       });
       if (isLiked) {
         setIsLiked(false);
@@ -56,7 +55,6 @@ export function SubmissionCard({
         setTotalLikes((prevLikes) => prevLikes + 1);
         await axios.post(`/api/email/manual/submissionLike`, {
           id: sub?.id,
-          userId: userInfo?.id,
         });
         toast.success('Liked submission');
       }
@@ -146,7 +144,7 @@ export function SubmissionCard({
                 alt={`${sub?.listing?.token} icon`}
                 src={
                   tokenList.find(
-                    (token) => token.tokenSymbol === sub?.listing?.token
+                    (token) => token.tokenSymbol === sub?.listing?.token,
                   )?.icon || ''
                 }
               />
@@ -220,7 +218,9 @@ export function SubmissionCard({
                 fontSize={{ base: 'sm', md: 'md' }}
                 fontWeight={600}
               >
-                View Submission
+                {sub?.listing?.type === 'open'
+                  ? 'View Submission'
+                  : 'View Project'}
               </Text>
             </LinkOverlay>
             <ArrowForwardIcon color={'#6366F1'} />

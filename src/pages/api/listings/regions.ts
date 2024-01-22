@@ -71,9 +71,6 @@ export default async function user(req: NextApiRequest, res: NextApiResponse) {
           ...skillsFilter,
         },
         take,
-        // orderBy: {
-        //   deadline: 'desc',
-        // },
         include: {
           sponsor: {
             select: {
@@ -88,7 +85,7 @@ export default async function user(req: NextApiRequest, res: NextApiResponse) {
         return dayjs(b.deadline).diff(dayjs(a.deadline));
       });
       const splitIndex = sortedData.findIndex((bounty) =>
-        dayjs().isAfter(dayjs(bounty?.deadline))
+        dayjs().isAfter(dayjs(bounty?.deadline)),
       );
       if (splitIndex >= 0) {
         const bountiesOpen = sortedData.slice(0, splitIndex).reverse();

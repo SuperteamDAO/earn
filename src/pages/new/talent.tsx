@@ -16,7 +16,6 @@ import { create } from 'zustand';
 
 import { AboutYou } from '@/components/Talent/AboutYou';
 import type { UserStoreType } from '@/components/Talent/types';
-import { WelcomeMessage } from '@/components/Talent/WelcomeMessage';
 import { YourLinks } from '@/components/Talent/YourLinks';
 import { YourWork } from '@/components/Talent/YourWork';
 import { Default } from '@/layouts/Default';
@@ -220,8 +219,8 @@ const SuccessScreen = () => {
         flexDir={{ base: 'column', md: 'row' }}
         gap={10}
         w={'fit-content'}
-        mt={10}
         mx={'auto'}
+        mt={10}
       >
         <Box w={'full'} p={{ base: 4, md: 0 }}>
           <TalentBio
@@ -233,8 +232,8 @@ const SuccessScreen = () => {
         <VStack
           maxW={'35rem'}
           h={'full'}
-          mb={12}
           mx={{ base: 4, md: 0 }}
+          mb={12}
           p={5}
           bg="white"
           rounded={'lg'}
@@ -257,9 +256,7 @@ const SuccessScreen = () => {
 };
 
 function Talent() {
-  const [currentPage, setcurrentPage] = useState<
-    'welcome' | 'steps' | 'success'
-  >('steps');
+  const [currentPage, setcurrentPage] = useState<'steps' | 'success'>('steps');
 
   return (
     <Default
@@ -272,13 +269,6 @@ function Talent() {
       }
     >
       <VStack>
-        {currentPage === 'welcome' && (
-          <WelcomeMessage
-            setStep={() => {
-              setcurrentPage('steps');
-            }}
-          />
-        )}
         {currentPage === 'steps' && (
           <StepsCon
             setSuccess={() => {

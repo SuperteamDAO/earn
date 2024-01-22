@@ -76,7 +76,7 @@ export function YourWork({ setStep, useFormStore }: Step1Props) {
       ...data,
       skills: skills.map((mainskill) => {
         const main = SkillList.find(
-          (skill) => skill.mainskill === mainskill.value
+          (skill) => skill.mainskill === mainskill.value,
         );
         const sub: SubSkillsType[] = [];
 
@@ -218,8 +218,8 @@ export function YourWork({ setStep, useFormStore }: Step1Props) {
                     ...st,
                     community: JSON.stringify(
                       e.map(
-                        (elm: { label: string; value: string }) => elm.value
-                      )
+                        (elm: { label: string; value: string }) => elm.value,
+                      ),
                     ),
                   };
                 });
@@ -253,8 +253,8 @@ export function YourWork({ setStep, useFormStore }: Step1Props) {
                     ...st,
                     interests: JSON.stringify(
                       e.map(
-                        (elm: { label: string; value: string }) => elm.value
-                      )
+                        (elm: { label: string; value: string }) => elm.value,
+                      ),
                     ),
                   };
                 });

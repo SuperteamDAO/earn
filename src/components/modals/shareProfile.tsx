@@ -50,7 +50,7 @@ export const ShareProfile = ({ isOpen, onClose, username, id }: Props) => {
         const encodedUrl = encodeURIComponent(url);
         window.open(
           `https://twitter.com/intent/tweet?text=${encodedMessage}&url=${encodedUrl}`,
-          '_blank'
+          '_blank',
         );
       },
     },
@@ -62,7 +62,7 @@ export const ShareProfile = ({ isOpen, onClose, username, id }: Props) => {
         const encodedUrl = encodeURIComponent(url);
         window.open(
           `https://t.me/share/url?url=${encodedUrl}&text=${encodedMessage}`,
-          '_blank'
+          '_blank',
         );
       },
     },
@@ -73,7 +73,7 @@ export const ShareProfile = ({ isOpen, onClose, username, id }: Props) => {
         const encodedMessage = encodeURIComponent(`${message} ${url}`);
         window.open(
           `https://api.whatsapp.com/send?text=${encodedMessage}`,
-          '_blank'
+          '_blank',
         );
       },
     },

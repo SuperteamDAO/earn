@@ -1,8 +1,8 @@
 /* eslint-disable unused-imports/no-unused-vars */
 /* eslint-disable @typescript-eslint/naming-convention */
-import type { Program } from '@project-serum/anchor';
-import * as anchor from '@project-serum/anchor';
-import type NodeWallet from '@project-serum/anchor/dist/cjs/nodewallet';
+import type { Program } from '@coral-xyz/anchor';
+import * as anchor from '@coral-xyz/anchor';
+import type NodeWallet from '@coral-xyz/anchor/dist/cjs/nodewallet';
 import * as spl from '@solana/spl-token';
 import { LAMPORTS_PER_SOL, PublicKey } from '@solana/web3.js';
 
@@ -21,7 +21,7 @@ const getProvider = (wallet: anchor.Wallet) => {
   const provider = new anchor.AnchorProvider(
     connection,
     wallet,
-    opts.preflightCommitment
+    opts.preflightCommitment,
   );
   return provider;
 };
@@ -32,7 +32,7 @@ const anchorProgram = (wallet: anchor.Wallet) => {
   const program = new anchor.Program(
     idl,
     PROGRAM_ID,
-    provider
+    provider,
   ) as unknown as Program<EarnReloaded>;
 
   return program;
@@ -42,7 +42,7 @@ export const createPaymentSPL = async (
   receiver: anchor.web3.PublicKey,
   amount: number,
   token: anchor.web3.PublicKey,
-  id: string
+  id: string,
 ) => {
   const program = anchorProgram(anchorWallet);
   const [payout_account] = anchor.web3.PublicKey.findProgramAddressSync(
@@ -52,21 +52,21 @@ export const createPaymentSPL = async (
       token.toBuffer(),
       receiver.toBuffer(),
     ],
-    program.programId
+    program.programId,
   );
   const receiver_usdc_ata = await spl.getAssociatedTokenAddress(
     token,
     receiver,
     false,
     spl.TOKEN_PROGRAM_ID,
-    spl.ASSOCIATED_TOKEN_PROGRAM_ID
+    spl.ASSOCIATED_TOKEN_PROGRAM_ID,
   );
   const usdc_ata = await spl.getAssociatedTokenAddress(
     token,
     anchorWallet.publicKey,
     false,
     spl.TOKEN_PROGRAM_ID,
-    spl.ASSOCIATED_TOKEN_PROGRAM_ID
+    spl.ASSOCIATED_TOKEN_PROGRAM_ID,
   );
   const info = await connection.getAccountInfo(receiver_usdc_ata);
   let tokenAccountIx;
@@ -75,7 +75,7 @@ export const createPaymentSPL = async (
       anchorWallet.publicKey,
       receiver_usdc_ata,
       receiver,
-      token
+      token,
     );
   }
   const ix = await program.methods
@@ -98,7 +98,7 @@ export const createPaymentSOL = async (
   anchorWallet: NodeWallet,
   receiver: anchor.web3.PublicKey,
   amount: number,
-  id: string
+  id: string,
 ) => {
   const program = anchorProgram(anchorWallet);
 
@@ -109,7 +109,7 @@ export const createPaymentSOL = async (
       anchor.utils.bytes.utf8.encode('sol'),
       receiver.toBuffer(),
     ],
-    program.programId
+    program.programId,
   );
   const ix = await program.methods
     .payoutSol(id, receiver, new anchor.BN(amount * LAMPORTS_PER_SOL))

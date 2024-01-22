@@ -1,24 +1,36 @@
 import type { NextApiRequest, NextApiResponse } from 'next';
+import { getToken } from 'next-auth/jwt';
 
 import { prisma } from '@/prisma';
 
 export default async function submission(
   req: NextApiRequest,
-  res: NextApiResponse
+  res: NextApiResponse,
 ) {
-  const { submissionId, userId } = req.body;
   try {
+    const token = await getToken({ req });
+
+    if (!token) {
+      return res.status(401).json({ error: 'Unauthorized' });
+    }
+
+    const userId = token.id;
+
+    if (!userId) {
+      return res.status(400).json({ error: 'Invalid token' });
+    }
+
+    const { submissionId } = req.body;
+
     const result = await prisma.submission.findFirst({
       where: {
         id: submissionId,
       },
     });
-    let newLikes: {
-      id: string;
-      date: number;
-    }[] = [];
 
-    const resLikes = result?.like as unknown as {
+    let newLikes = [];
+
+    const resLikes = result?.like as {
       id: string;
       date: number;
     }[];
@@ -27,13 +39,7 @@ export default async function submission(
       const like = resLikes.find((e) => e?.id === userId);
 
       if (like) {
-        const temp: any[] = [];
-        resLikes.forEach((e) => {
-          if (e.id !== userId) {
-            temp.push(e);
-          }
-        });
-        newLikes = temp;
+        newLikes = resLikes.filter((e) => e.id !== userId);
       } else {
         newLikes = [
           ...resLikes,
@@ -60,9 +66,10 @@ export default async function submission(
         like: newLikes,
       },
     });
-    res.status(200).json(updateLike);
+
+    return res.status(200).json(updateLike);
   } catch (error) {
-    res.status(400).json({
+    return res.status(400).json({
       error,
       message: `Error occurred while fetching submission.`,
     });

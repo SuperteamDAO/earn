@@ -10,10 +10,10 @@ import {
   Text,
   VStack,
 } from '@chakra-ui/react';
-import { useWallet } from '@solana/wallet-adapter-react';
 import axios from 'axios';
 import { MediaPicker } from 'degen';
 import { useRouter } from 'next/router';
+import { useSession } from 'next-auth/react';
 import { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { Toaster } from 'react-hot-toast';
@@ -22,7 +22,6 @@ import makeAnimated from 'react-select/animated';
 
 import { Default } from '@/layouts/Default';
 import { Meta } from '@/layouts/Meta';
-import { userStore } from '@/store/user';
 
 import { IndustryList } from '../../constants';
 import type { SponsorType } from '../../interface/sponsor';
@@ -31,8 +30,7 @@ import { uploadToCloudinary } from '../../utils/upload';
 const CreateSponsor = () => {
   const router = useRouter();
   const animatedComponents = makeAnimated();
-  const { connected } = useWallet();
-  const { userInfo } = userStore();
+  const { data: session } = useSession();
   const {
     handleSubmit,
     register,
@@ -56,15 +54,9 @@ const CreateSponsor = () => {
     try {
       await axios.post('/api/sponsors/create', {
         ...sponsor,
-        userId: userInfo?.id,
       });
-      await axios.post(`/api/email/manual/welcomeSponsor`, {
-        email: userInfo?.email,
-        name: userInfo?.firstName,
-      });
-      router.push('/dashboard/bounties');
-      // setIsLoading(false);
-      // toast.success('Sponsor created!');
+      await axios.post(`/api/email/manual/welcomeSponsor`);
+      router.push('/dashboard/listings');
     } catch (e: any) {
       if (e?.response?.data?.error?.code === 'P2002') {
         setErrorMessage('Sorry! Sponsor name or username already exists.');
@@ -83,7 +75,7 @@ const CreateSponsor = () => {
         />
       }
     >
-      {!connected ? (
+      {!session ? (
         <>
           <Box
             alignItems={'center'}

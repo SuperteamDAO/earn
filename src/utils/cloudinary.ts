@@ -10,7 +10,7 @@ cloudinary.config({
 export const csvUpload = async (
   file: any,
   fileName: string,
-  listingId: string
+  listingId: string,
 ) => {
   const result = await cloudinary.uploader.upload(file.content!, {
     public_id: `${fileName}.csv`,
@@ -20,7 +20,7 @@ export const csvUpload = async (
     access_type: 'anonymous',
     start: new Date().toISOString(),
     end: new Date(
-      new Date().setTime(new Date().getTime() + 60 * 1000)
+      new Date().setTime(new Date().getTime() + 60 * 1000),
     ).toISOString(),
     tags: [listingId],
     cloud_name: process.env.CLOUDINARY_CLOUD_NAME,

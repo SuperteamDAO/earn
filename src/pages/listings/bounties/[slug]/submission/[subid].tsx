@@ -1,5 +1,5 @@
 import { HStack } from '@chakra-ui/react';
-import { type User, Regions } from '@prisma/client';
+import { Regions, type User } from '@prisma/client';
 import axios from 'axios';
 import type { GetServerSideProps } from 'next';
 import React, { useEffect, useState } from 'react';
@@ -34,7 +34,7 @@ const Sumbissions = ({ slug, subid }: BountyDetailsProps) => {
         {
           slug,
           submissionId: subid,
-        }
+        },
       );
 
       setBounty(bountyDetails.data.bounty);
@@ -84,8 +84,8 @@ const Sumbissions = ({ slug, subid }: BountyDetailsProps) => {
               flexDir={['column-reverse', 'column-reverse', 'row', 'row']}
               gap={4}
               maxW={'7xl'}
-              mb={10}
               mx={'auto'}
+              mb={10}
             >
               <SubmissionPage
                 bounty={bounty}

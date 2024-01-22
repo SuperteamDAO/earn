@@ -1,13 +1,39 @@
+import { status } from '@prisma/client';
 import type { NextApiRequest, NextApiResponse } from 'next';
+import { getToken } from 'next-auth/jwt';
 
 import { prisma } from '@/prisma';
 
 export default async function bounties(
   req: NextApiRequest,
-  res: NextApiResponse
+  res: NextApiResponse,
 ) {
+  const token = await getToken({ req });
+
+  if (!token) {
+    return res.status(401).json({ error: 'Unauthorized' });
+  }
+
+  const userId = token.id;
+
+  if (!userId) {
+    return res.status(400).json({ error: 'Invalid token' });
+  }
+
+  const user = await prisma.user.findUnique({
+    where: {
+      id: userId as string,
+    },
+  });
+
+  if (!user || !user.currentSponsorId) {
+    return res
+      .status(403)
+      .json({ error: 'User does not have a current sponsor.' });
+  }
+
   const params = req.query;
-  const sponsorId = params.sponsorId as string;
+  const sponsorId = user.currentSponsorId;
   const searchText = params.searchText as string;
   const skip = params.take ? parseInt(params.skip as string, 10) : 0;
   const take = params.take ? parseInt(params.take as string, 10) : 15;
@@ -25,6 +51,7 @@ export default async function bounties(
         isArchived: false,
         sponsorId,
         ...whereSearch,
+        status: status.OPEN,
       },
     };
     const total = await prisma.bounties.count(countQuery);
@@ -32,7 +59,7 @@ export default async function bounties(
       ...countQuery,
       skip: skip ?? 0,
       take: take ?? 15,
-      orderBy: [{ deadline: 'desc' }, { id: 'desc' }],
+      orderBy: [{ createdAt: 'desc' }, { id: 'desc' }],
       select: {
         _count: {
           select: {
@@ -57,6 +84,7 @@ export default async function bounties(
         totalWinnersSelected: true,
         totalPaymentsMade: true,
         isWinnersAnnounced: true,
+        applicationType: true,
       },
     });
     res.status(200).json({ total, data: result });

@@ -6,6 +6,7 @@ import { useEffect, useState } from 'react';
 import {
   BountiesCard,
   GrantsCard,
+  ListingsCardSkeleton,
   ListingSection,
 } from '@/components/misc/listingsCard';
 import { EmptySection } from '@/components/shared/EmptySection';
@@ -78,15 +79,14 @@ function ListingCategoryPage({ slug }: { slug: string }) {
           emoji="/assets/home/emojis/moneyman.png"
           all
         >
-          {isListingsLoading && (
-            <Flex align="center" justify="center" direction="column" minH={52}>
-              <Loading />
-            </Flex>
-          )}
+          {isListingsLoading &&
+            Array.from({ length: 8 }, (_, index) => (
+              <ListingsCardSkeleton key={index} />
+            ))}
           {!isListingsLoading && !listings?.bounties?.length && (
             <Flex align="center" justify="center" mt={8}>
               <EmptySection
-                title="No bounties available!"
+                title="No listings available!"
                 message="Subscribe to notifications to get notified about new bounties."
               />
             </Flex>

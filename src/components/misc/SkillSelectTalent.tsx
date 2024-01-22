@@ -27,11 +27,12 @@ export const SkillSelect = ({
 }: Props) => {
   const animatedComponents = makeAnimated();
   const [subSkillOptions, setSubSkillOptions] = useState<MultiSelectOptions[]>(
-    []
+    [],
   );
   const handleChange = (e: MultiSelectOptions[]) => {
     const sub: MultiSelectOptions[] = [];
     e.forEach((op) => {
+      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
       // @ts-ignore
       sub.push(...(skillSubSkillMap[op.value as any] as any));
     });

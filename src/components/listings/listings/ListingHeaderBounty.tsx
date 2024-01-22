@@ -13,6 +13,7 @@ import {
 } from '@chakra-ui/react';
 import type { BountyType, Regions, SubscribeBounty } from '@prisma/client';
 import axios from 'axios';
+import NextLink from 'next/link';
 import { useRouter } from 'next/router';
 import React, { useEffect, useState } from 'react';
 import { toast, Toaster } from 'react-hot-toast';
@@ -76,7 +77,6 @@ export function ListingHeader({
 
     try {
       await axios.post('/api/bounties/subscribe/subscribe', {
-        userId: userInfo?.id,
         bountyId: id,
       });
       setUpdate((prev) => !prev);
@@ -135,8 +135,7 @@ export function ListingHeader({
             alt={'phantom'}
             rounded={'md'}
             src={
-              sponsor?.logo ||
-              `${router.basePath}/assets/images/sponsor-logo.png`
+              sponsor?.logo || `${router.basePath}/assets/logo/sponsor-logo.png`
             }
           />
           <VStack align={'start'}>
@@ -372,7 +371,7 @@ export function ListingHeader({
                 onClick={() => {
                   if (sub.find((e) => e.userId === userInfo?.id)) {
                     handleUnSubscribe(
-                      sub.find((e) => e.userId === userInfo?.id)?.id as string
+                      sub.find((e) => e.userId === userInfo?.id)?.id as string,
                     );
 
                     return;
@@ -424,6 +423,7 @@ export function ListingHeader({
             px={3}
           >
             <Link
+              as={NextLink}
               alignItems="center"
               justifyContent="center"
               display="flex"
@@ -449,6 +449,7 @@ export function ListingHeader({
             </Link>
             {type !== 'permissioned' && hasDeadlineEnded && (
               <Link
+                as={NextLink}
                 alignItems="center"
                 justifyContent="center"
                 display="flex"
@@ -476,6 +477,7 @@ export function ListingHeader({
               references &&
               references?.length > 0 && (
                 <Link
+                  as={NextLink}
                   alignItems="center"
                   justifyContent="center"
                   display="flex"

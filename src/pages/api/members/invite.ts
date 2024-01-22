@@ -1,4 +1,5 @@
 import type { NextApiRequest, NextApiResponse } from 'next';
+import { getToken } from 'next-auth/jwt';
 
 import { InviteMemberTemplate } from '@/components/emails/inviteMemberTemplate';
 import { prisma } from '@/prisma';
@@ -7,13 +8,25 @@ import { getURL } from '@/utils/validUrl';
 
 export default async function sendInvites(
   req: NextApiRequest,
-  res: NextApiResponse
+  res: NextApiResponse,
 ) {
-  const { email, userId, sponsorId, memberType } = req.body;
+  const token = await getToken({ req });
+
+  if (!token) {
+    return res.status(401).json({ error: 'Unauthorized' });
+  }
+
+  const userId = token.id;
+
+  if (!userId) {
+    return res.status(400).json({ error: 'Invalid token' });
+  }
+
+  const { email, memberType } = req.body;
   try {
     const user = await prisma.user.findUnique({
       where: {
-        id: userId,
+        id: userId as string,
       },
       select: {
         id: true,
@@ -26,14 +39,19 @@ export default async function sendInvites(
             name: true,
           },
         },
+        UserSponsors: true,
       },
     });
+
+    if (!user || !user.currentSponsor) {
+      return res.status(400).json({ error: 'Unauthorized' });
+    }
 
     const result = await prisma.userInvites.create({
       data: {
         email,
-        senderId: userId,
-        sponsorId,
+        senderId: userId as string,
+        sponsorId: user?.currentSponsor.id,
         memberType,
       },
     });
@@ -49,10 +67,10 @@ export default async function sendInvites(
       }),
     });
 
-    res.status(200).json({ message: 'OTP sent successfully.' });
+    return res.status(200).json({ message: 'OTP sent successfully.' });
   } catch (error) {
     console.log('file: invite.ts:54 ~ error:', error);
-    res.status(400).json({
+    return res.status(400).json({
       error,
       message: 'Error occurred while adding a new user.',
     });

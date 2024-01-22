@@ -12,6 +12,7 @@ import {
 import Head from 'next/head';
 import type { ImageProps } from 'next/image';
 import Image from 'next/image';
+import NextLink from 'next/link';
 import { useEffect, useState } from 'react';
 
 import DialectDisplay from '@/public/assets/landingsponsor/displays/chatwithdialect.png';
@@ -32,12 +33,12 @@ import ZapIcon from '@/public/assets/landingsponsor/icons/zap.png';
 import Dialect from '@/public/assets/landingsponsor/sponsors/dialect.png';
 // Sponsor Logos
 import Foundation from '@/public/assets/landingsponsor/sponsors/foundation.png';
+import Kash from '@/public/assets/landingsponsor/sponsors/kash.png';
 import Orbis from '@/public/assets/landingsponsor/sponsors/orbis.png';
 import Pyth from '@/public/assets/landingsponsor/sponsors/pyth.png';
 import Spaces from '@/public/assets/landingsponsor/sponsors/spaces.png';
 import StreamFlow from '@/public/assets/landingsponsor/sponsors/streamflow.png';
 import Wormhole from '@/public/assets/landingsponsor/sponsors/wormhole.png';
-import Kash from '@/public/assets/randompeople/kash.png';
 
 import { Footer } from '../components/Footer/Footer';
 
@@ -75,7 +76,7 @@ const Sponsor = () => {
   const fetchTotals = async () => {
     try {
       // Using Next.js's fetch with time-based revalidation for 6 hours (21600 seconds)
-      const response = await fetch('/api/listings/stats/', {
+      const response = await fetch('/api/sidebar/totals/', {
         next: { revalidate: 21600 },
       });
 
@@ -215,6 +216,7 @@ const Sponsor = () => {
             </Box>
 
             <Link
+              as={NextLink}
               _hover={{ textDecoration: 'none' }}
               href="https://airtable.com/shrmOAXpF2vhONYqe"
               isExternal
@@ -742,6 +744,7 @@ const Sponsor = () => {
                 </Box>
 
                 <Link
+                  as={NextLink}
                   _hover={{ textDecoration: 'none' }}
                   href="https://airtable.com/shrmOAXpF2vhONYqe"
                   isExternal
@@ -805,9 +808,9 @@ const Sponsor = () => {
         p="0.625rem"
         bg={navbarBg ? 'white' : 'transparent'}
       >
-        <Link href="/">
+        <Link as={NextLink} href="/">
           <Box minW={'0.8125rem'} h="0.8125rem">
-            <img src="/assets/logo/new-logo.svg" alt="Superteam Earn Logo" />
+            <img src="/assets/logo/logo.svg" alt="Superteam Earn Logo" />
           </Box>
         </Link>
         <Flex
@@ -816,8 +819,10 @@ const Sponsor = () => {
           fontSize={!isLessThan600px ? '0.8125rem' : '0.4rem'}
           fontWeight="400"
         >
-          <Link href="https://earn.superteam.fun/bounties">Listings</Link>
-          <Link href="https://airtable.com/shrmOAXpF2vhONYqe">
+          <Link as={NextLink} href="https://earn.superteam.fun/bounties">
+            Listings
+          </Link>
+          <Link as={NextLink} href="https://airtable.com/shrmOAXpF2vhONYqe">
             Get Help For Adding Your Listing
           </Link>
         </Flex>
@@ -871,15 +876,5 @@ const Sponsor = () => {
     </>
   );
 };
-
-/*
- const breakpoints = {
-  sm: '30em', // 480px
-  md: '48em', // 768px
-  lg: '62em', // 992px
-  xl: '80em', // 1280px
- '2xl': '96em', // 1536px
-}
- */
 
 export default Sponsor;

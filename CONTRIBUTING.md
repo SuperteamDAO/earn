@@ -31,7 +31,7 @@ We expect all contributors to act professionally and respectfully, and we expect
     git add .
     git commit -m "Add some feature"
     ```
-> **Note:** If errors occur, run `yarn format` to fix and remove lint errors prior to pushing changes.
+> **Note:** If errors occur, run `pnpm format` to fix and remove lint errors prior to pushing changes.
 5. **Push your changes:** Push the changes to your new branch on your fork.
     ```bash
     git push origin my-new-feature

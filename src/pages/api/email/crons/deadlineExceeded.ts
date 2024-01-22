@@ -63,7 +63,7 @@ async function handler(_req: NextApiRequest, res: NextApiResponse) {
         react: DeadlineSponsorTemplate({
           name: pocUserFirstName,
           bountyName: bounty.title,
-          link: `https://earn.superteam.fun/dashboard/bounties/${
+          link: `https://earn.superteam.fun/dashboard/listings/${
             bounty?.slug || ''
           }/submissions/?utm_source=superteamearn&utm_medium=email&utm_campaign=notifications`,
         }),
@@ -81,7 +81,7 @@ async function handler(_req: NextApiRequest, res: NextApiResponse) {
     await rateLimitedPromiseAll(
       emailPromises,
       9,
-      (emailPromise) => emailPromise
+      (emailPromise) => emailPromise,
     );
     return res.status(200).json({ message: 'Ok' });
   } catch (e) {

@@ -1,8 +1,13 @@
-import { forwardRef, Textarea } from '@chakra-ui/react';
+import type { TextareaProps } from '@chakra-ui/react';
+import { Textarea } from '@chakra-ui/react';
 import React from 'react';
 import ResizeTextarea from 'react-textarea-autosize';
 
-export const AutoResizeTextarea = forwardRef((props, ref) => (
+// eslint-disable-next-line react/display-name
+export const AutoResizeTextarea = React.forwardRef<
+  HTMLTextAreaElement,
+  TextareaProps
+>((props, ref) => (
   <Textarea
     ref={ref}
     as={ResizeTextarea}

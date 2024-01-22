@@ -9,8 +9,10 @@ import {
   Text,
   VisuallyHidden,
 } from '@chakra-ui/react';
+import NextLink from 'next/link';
 import type { ReactNode } from 'react';
 
+import { Superteams } from '@/constants/Superteam';
 import { getURL } from '@/utils/validUrl';
 
 const getCurrentYear = () => {
@@ -19,14 +21,16 @@ const getCurrentYear = () => {
 
 const Logo = (props: any) => {
   return (
-    <Image
-      h={8}
-      cursor="pointer"
-      objectFit={'contain'}
-      alt={'Superteam Earn'}
-      src={'/assets/logo/new-logo.svg'}
-      {...props}
-    />
+    <Link as={NextLink} href="/">
+      <Image
+        h={8}
+        cursor="pointer"
+        objectFit={'contain'}
+        alt={'Superteam Earn'}
+        src={'/assets/logo/logo.svg'}
+        {...props}
+      />
+    </Link>
   );
 };
 
@@ -152,100 +156,26 @@ export const Footer = () => {
           </Stack>
           <Stack align={'flex-start'}>
             <ListHeader>All Superteams</ListHeader>
-            <Link
-              color="brand.slate.500"
-              _hover={{
-                color: 'brand.slate.800',
-              }}
-              href={`${getURL()}regions/india`}
-              isExternal
-            >
-              India
-            </Link>
-            <Link
-              color="brand.slate.500"
-              _hover={{
-                color: 'brand.slate.800',
-              }}
-              href={`${getURL()}regions/germany`}
-              isExternal
-            >
-              Germany
-            </Link>
-            <Link
-              color="brand.slate.500"
-              _hover={{
-                color: 'brand.slate.800',
-              }}
-              href={`${getURL()}regions/mexico`}
-              isExternal
-            >
-              Mexico
-            </Link>
-            <Link
-              color="brand.slate.500"
-              _hover={{
-                color: 'brand.slate.800',
-              }}
-              href={`${getURL()}regions/turkey`}
-              isExternal
-            >
-              Turkey
-            </Link>
-            <Link
-              color="brand.slate.500"
-              _hover={{
-                color: 'brand.slate.800',
-              }}
-              href={`${getURL()}regions/vietnam`}
-              isExternal
-            >
-              Vietnam
-            </Link>
-            <Link
-              color="brand.slate.500"
-              _hover={{
-                color: 'brand.slate.800',
-              }}
-              href={`${getURL()}regions/uk`}
-              isExternal
-            >
-              UK
-            </Link>
-            <Link
-              color="brand.slate.500"
-              _hover={{
-                color: 'brand.slate.800',
-              }}
-              href={`${getURL()}regions/uae`}
-              isExternal
-            >
-              UAE
-            </Link>
-            <Link
-              color="brand.slate.500"
-              _hover={{
-                color: 'brand.slate.800',
-              }}
-              href={`${getURL()}regions/nigeria`}
-              isExternal
-            >
-              Nigeria
-            </Link>
-            <Link
-              color="brand.slate.500"
-              _hover={{
-                color: 'brand.slate.800',
-              }}
-              href={`${getURL()}regions/brazil`}
-              isExternal
-            >
-              Brazil
-            </Link>
+            {Superteams.map((superteam) => (
+              <Link
+                key={superteam.region}
+                as={NextLink}
+                color="brand.slate.500"
+                _hover={{
+                  color: 'brand.slate.800',
+                }}
+                href={`${getURL()}regions/india`}
+                isExternal
+              >
+                {superteam.region.charAt(0).toUpperCase() +
+                  superteam.region.slice(1).toLowerCase()}
+              </Link>
+            ))}
           </Stack>
           <Stack align={'flex-start'}>
             <ListHeader>Superteam Productions</ListHeader>
             <Link
+              as={NextLink}
               color="brand.slate.500"
               _hover={{
                 color: 'brand.slate.800',
@@ -256,6 +186,7 @@ export const Footer = () => {
               Build
             </Link>
             <Link
+              as={NextLink}
               color="brand.slate.500"
               _hover={{
                 color: 'brand.slate.800',
@@ -266,6 +197,7 @@ export const Footer = () => {
               Media
             </Link>
             <Link
+              as={NextLink}
               color="brand.slate.500"
               _hover={{
                 color: 'brand.slate.800',
