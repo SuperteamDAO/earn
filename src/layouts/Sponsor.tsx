@@ -165,7 +165,7 @@ export function Sidebar({
         />
       }
     >
-      <Flex justify="start">
+      <Flex justify="start" minH="100vh">
         <SidebarContent display={{ base: 'none', md: 'block' }} />
         {!userInfo?.currentSponsor?.id ? (
           <LoadingSection />
