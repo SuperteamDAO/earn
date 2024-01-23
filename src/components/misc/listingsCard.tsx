@@ -645,11 +645,11 @@ export const CategoryBanner = ({ type }: { type: string }) => {
             mt={{ base: 4, md: '' }}
             ml={{ base: '', md: 'auto' }}
             px={4}
-            color={'brand.slate.400'}
-            fontWeight={'300'}
+            color={'brand.slate.500'}
+            fontWeight={'500'}
             bg={'white'}
-            border={'1px solid'}
-            borderColor={'brand.slate.500'}
+            borderWidth={'1px'}
+            borderColor={'brand.slate.400'}
             isLoading={loading}
             leftIcon={isSubscribed ? <TiTick /> : <BellIcon />}
             onClick={handleNotification}

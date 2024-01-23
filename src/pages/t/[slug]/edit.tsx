@@ -410,19 +410,18 @@ export default function EditProfilePage() {
                 >
                   PERSONAL INFO
                 </Text>
-
-                {isPhotoLoading ? (
-                  <></>
-                ) : photoUrl ? (
-                  <>
-                    <FormLabel
-                      mb={'0'}
-                      pb={'0'}
-                      color={'brand.slate.500'}
-                      requiredIndicator={<></>}
-                    >
-                      Profile Picture
-                    </FormLabel>
+                <Box mb={4}>
+                  <FormLabel
+                    mb={'1'}
+                    pb={'0'}
+                    color={'brand.slate.500'}
+                    requiredIndicator={<></>}
+                  >
+                    Profile Picture
+                  </FormLabel>
+                  {isPhotoLoading ? (
+                    <></>
+                  ) : photoUrl ? (
                     <MediaPicker
                       defaultValue={{ url: photoUrl, type: 'image' }}
                       onChange={async (e) => {
@@ -438,17 +437,7 @@ export default function EditProfilePage() {
                       compact
                       label="Choose or drag and drop media"
                     />
-                  </>
-                ) : (
-                  <>
-                    <FormLabel
-                      mb={'0'}
-                      pb={'0'}
-                      color={'brand.slate.500'}
-                      requiredIndicator={<></>}
-                    >
-                      Profile Picture
-                    </FormLabel>
+                  ) : (
                     <MediaPicker
                       onChange={async (e) => {
                         setUploading(true);
@@ -463,8 +452,8 @@ export default function EditProfilePage() {
                       compact
                       label="Choose or drag and drop media"
                     />
-                  </>
-                )}
+                  )}
+                </Box>
                 <InputField
                   label="Username"
                   placeholder="Username"

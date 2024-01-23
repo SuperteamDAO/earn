@@ -167,8 +167,7 @@ export const Footer = () => {
                 href={`${getURL()}regions/${st.region.toLowerCase()}`}
                 isExternal
               >
-                {st.region.charAt(0).toUpperCase() +
-                  st.region.slice(1).toLowerCase()}
+                {st.displayValue}
               </Link>
             ))}
           </Stack>

@@ -23,9 +23,9 @@ export default function CreateListingModal({
   onClose: () => void;
 }) {
   return (
-    <Modal isOpen={isOpen} onClose={onClose} size={'5xl'}>
+    <Modal isCentered isOpen={isOpen} onClose={onClose} size={'5xl'}>
       <ModalOverlay />
-      <ModalContent>
+      <ModalContent mb="25%">
         <ModalCloseButton color={'brand.slate.300'} />
         <Flex>
           <Flex direction={'column'} w="50%" px={6} py={4}>

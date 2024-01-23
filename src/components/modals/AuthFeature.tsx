@@ -24,7 +24,7 @@ export const AuthFeatureModal = ({
   const [triggerLogin, setTriggerLogin] = useState(false);
 
   return (
-    <Modal isOpen={isOpen} onClose={onClose} size="lg">
+    <Modal isOpen={isOpen} onClose={onClose} size={{ base: 'sm', lg: 'lg' }}>
       <LoginWrapper
         triggerLogin={triggerLogin}
         setTriggerLogin={setTriggerLogin}
