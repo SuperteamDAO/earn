@@ -1,4 +1,3 @@
-/* eslint-disable no-nested-ternary */
 import { ExternalLinkIcon, WarningIcon } from '@chakra-ui/icons';
 import {
   Box,

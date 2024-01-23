@@ -153,7 +153,6 @@ export function YourLinks({ success, useFormStore }: Props) {
   const { setUserInfo } = userStore();
 
   const uploadProfile = async (
-    // eslint-disable-next-line @typescript-eslint/no-shadow
     socials: {
       discord: string;
       twitter: string;
@@ -162,7 +161,6 @@ export function YourLinks({ success, useFormStore }: Props) {
       telegram: string;
       website: string;
     },
-    // eslint-disable-next-line @typescript-eslint/no-shadow
     pow: PoW[],
   ) => {
     // atleast one URL

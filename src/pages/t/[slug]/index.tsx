@@ -1,4 +1,3 @@
-/* eslint-disable no-nested-ternary */
 import {
   ChevronDownIcon,
   ChevronUpIcon,

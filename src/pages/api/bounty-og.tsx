@@ -1,5 +1,3 @@
-/* eslint-disable no-nested-ternary */
-
 import { ImageResponse } from '@vercel/og';
 import type { NextRequest } from 'next/server';
 

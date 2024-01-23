@@ -55,6 +55,7 @@ export function Banner() {
               <Image
                 boxSize="52px"
                 borderRadius={4}
+                objectFit={'cover'}
                 alt={userInfo?.currentSponsor?.name}
                 src={userInfo?.currentSponsor?.logo}
               />

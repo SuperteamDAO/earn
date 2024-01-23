@@ -1,4 +1,3 @@
-/* eslint-disable no-nested-ternary */
 import { ArrowForwardIcon } from '@chakra-ui/icons';
 import { Box, Button, Flex, HStack, Image, Link, Text } from '@chakra-ui/react';
 import { css } from '@emotion/react';

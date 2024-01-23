@@ -11,7 +11,6 @@ export async function rateLimitedPromiseAll<T>(
 ) {
   const results: any[] = [];
 
-  /* eslint-disable no-await-in-loop */
   for (let i = 0; i < items.length; i += chunkSize) {
     const chunk = items.slice(i, i + chunkSize);
     await Promise.all(chunk.map(callback)).then((result) =>
