@@ -15,6 +15,7 @@ import {
 } from '@chakra-ui/react';
 import axios from 'axios';
 import { MediaPicker } from 'degen';
+import type { GetServerSideProps } from 'next';
 import { useRouter } from 'next/router';
 import React, { useEffect, useRef, useState } from 'react';
 import { useForm } from 'react-hook-form';
@@ -114,7 +115,7 @@ const parseSkillsAndSubskills = (skillsObject: any) => {
   return { skills, subSkills };
 };
 
-export default function EditProfilePage() {
+export default function EditProfilePage({ slug }: { slug: string }) {
   const { userInfo, setUserInfo } = userStore();
   const { register, handleSubmit, setValue, watch } = useForm<FormData>();
 
@@ -374,8 +375,6 @@ export default function EditProfilePage() {
       });
     }
   };
-
-  const { slug } = router.query;
 
   useEffect(() => {
     if (userInfo && slug !== userInfo?.username) {
@@ -768,3 +767,10 @@ export default function EditProfilePage() {
     </>
   );
 }
+
+export const getServerSideProps: GetServerSideProps = async (context) => {
+  const { slug } = context.query;
+  return {
+    props: { slug },
+  };
+};

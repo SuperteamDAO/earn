@@ -11,19 +11,13 @@ import { useRouter } from 'next/router';
 import { SessionProvider, useSession } from 'next-auth/react';
 import posthog from 'posthog-js';
 import { PostHogProvider } from 'posthog-js/react';
-import React, { useEffect, useState } from 'react';
+import React, { useEffect } from 'react';
 
 import { SolanaWalletProvider } from '@/context/SolanaWallet';
 import { userStore } from '@/store/user';
 
 import theme from '../config/chakra.config';
 // importing localFont from a local file as Google imported fonts do not enable font-feature-settings. Reference: https://github.com/vercel/next.js/discussions/52456
-
-const AuthFeatureModal = React.lazy(() =>
-  import('@/components/modals/AuthFeature').then((module) => ({
-    default: module.AuthFeatureModal,
-  })),
-);
 
 const fontSans = Inter({
   subsets: ['latin'],
@@ -74,8 +68,6 @@ function MyApp({ Component, pageProps }: any) {
   const { data: session, status } = useSession();
   const router = useRouter();
   const { setUserInfo, setIsLoggedIn } = userStore();
-  const modalShownKey = 'modalShown';
-  const [isModalOpen, setIsModalOpen] = useState(false);
 
   useEffect(() => {
     const fetchUserInfo = async () => {
@@ -93,37 +85,7 @@ function MyApp({ Component, pageProps }: any) {
     fetchUserInfo();
   }, [session, status]);
 
-  useEffect(() => {
-    const modalShown = localStorage.getItem(modalShownKey);
-
-    let timer: any;
-    if (!modalShown) {
-      timer = setTimeout(() => {
-        setIsModalOpen(true);
-        localStorage.setItem(modalShownKey, 'true');
-      }, 3000);
-    }
-
-    return () => clearTimeout(timer);
-  }, []);
-
-  const handleClose = () => {
-    setIsModalOpen(false);
-  };
-
-  const showCTA = !session && status === 'unauthenticated';
-
-  return (
-    <>
-      <Component {...pageProps} key={router.asPath} />
-
-      <AuthFeatureModal
-        showCTA={showCTA}
-        isOpen={isModalOpen}
-        onClose={handleClose}
-      />
-    </>
-  );
+  return <Component {...pageProps} key={router.asPath} />;
 }
 
 function App({ Component, pageProps: { session, ...pageProps } }: AppProps) {
