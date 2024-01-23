@@ -140,6 +140,7 @@ export function CreateListing({
         requirements: bountyRequirements,
         ...bountyPayment,
         isPublished: true,
+        publishedAt: new Date().toISOString(),
       };
       let api = '/api/bounties/create';
       if (editable && !isDuplicating) {

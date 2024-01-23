@@ -65,6 +65,7 @@ interface Bounty {
   timeToComplete?: string;
   hackathonprize?: boolean;
   referredBy?: SuperteamName;
+  publishedAt?: string;
 }
 
 interface BountyWithSubmissions extends Bounty {

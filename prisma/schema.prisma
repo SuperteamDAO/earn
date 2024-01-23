@@ -76,6 +76,7 @@ model Bounties {
   references           Json?
   winners              Json?
   referredBy           String?
+  publishedAt          DateTime?
   template             BountiesTemplates? @relation(fields: [templateId], references: [id])
   sponsor              Sponsors           @relation(fields: [sponsorId], references: [id])
   poc                  User               @relation("poc", fields: [pocId], references: [id])
