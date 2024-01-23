@@ -5,10 +5,12 @@ import axios from 'axios';
 import dayjs from 'dayjs';
 import type { NextPage } from 'next';
 import NextLink from 'next/link';
+import { useSession } from 'next-auth/react';
 import { useEffect, useState } from 'react';
 
 import { BountyTabs } from '@/components/listings/bounty/Tabs';
 import { GrantsCard, ListingSection } from '@/components/misc/listingsCard';
+import { AuthFeatureModal } from '@/components/modals/AuthFeature';
 import { EmptySection } from '@/components/shared/EmptySection';
 import { Loading } from '@/components/shared/Loading';
 import type { Bounty } from '@/interface/bounty';
@@ -61,8 +63,38 @@ const HomePage: NextPage = () => {
 
   const [activeTab, setActiveTab] = useState<string>(tabs[0]!.id);
 
+  const { data: session, status } = useSession();
+
+  const modalShownKey = 'modalShown';
+  const [isModalOpen, setIsModalOpen] = useState(false);
+
+  const handleClose = () => {
+    setIsModalOpen(false);
+  };
+
+  const showCTA = !session && status === 'unauthenticated';
+
+  useEffect(() => {
+    const modalShown = localStorage.getItem(modalShownKey);
+
+    let timer: any;
+    if (!modalShown) {
+      timer = setTimeout(() => {
+        setIsModalOpen(true);
+        localStorage.setItem(modalShownKey, 'true');
+      }, 3000);
+    }
+
+    return () => clearTimeout(timer);
+  }, []);
+
   return (
     <Home type="home">
+      <AuthFeatureModal
+        showCTA={showCTA}
+        isOpen={isModalOpen}
+        onClose={handleClose}
+      />
       <Box w={'100%'}>
         <Box my={10}>
           <HStack
