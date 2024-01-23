@@ -7,7 +7,11 @@ import { useSession } from 'next-auth/react';
 import type { ReactNode, ReactText } from 'react';
 import React from 'react';
 import type { IconType } from 'react-icons';
-import { MdList, MdOutlineGroup } from 'react-icons/md';
+import {
+  MdList,
+  MdOutlineChatBubbleOutline,
+  MdOutlineGroup,
+} from 'react-icons/md';
 
 import CreateListingModal from '@/components/modals/createListing';
 import { LoadingSection } from '@/components/shared/LoadingSection';
@@ -21,11 +25,17 @@ interface LinkItemProps {
   name: string;
   link: string;
   icon: IconType;
+  isExternal?: boolean;
 }
 
 const LinkItems: Array<LinkItemProps> = [
   { name: 'My Listings', link: '/listings', icon: MdList },
   { name: 'Members', link: '/members', icon: MdOutlineGroup },
+  {
+    name: 'Get Help',
+    link: 'https://t.me/pratikdholani',
+    icon: MdOutlineChatBubbleOutline,
+  },
 ];
 
 interface NavItemProps extends FlexProps {
@@ -36,22 +46,24 @@ interface NavItemProps extends FlexProps {
 }
 
 const NavItem = ({ icon, link, isActive, children, ...rest }: NavItemProps) => {
+  const isExternalLink = link.startsWith('https://');
+
   return (
     <Link
       as={NextLink}
       _focus={{ boxShadow: 'none' }}
-      href={`/dashboard${link}`}
+      href={isExternalLink ? link : `/dashboard${link}`}
+      isExternal={isExternalLink}
       style={{ textDecoration: 'none' }}
     >
       <Flex
         align="center"
-        mb={2}
         px={6}
         py={3}
         color={isActive ? 'brand.purple' : 'brand.slate.500'}
-        bg={isActive ? 'brand.slate.100' : 'transparent'}
+        bg={isActive ? '#EEF2FF' : 'transparent'}
         _hover={{
-          bg: 'brand.slate.100',
+          bg: '#F5F8FF',
           color: 'brand.purple',
         }}
         cursor="pointer"
@@ -124,7 +136,7 @@ const SidebarContent = ({ ...rest }: BoxProps) => {
 
 export function Sidebar({
   children,
-  showBanner = true,
+  showBanner = false,
 }: {
   children: ReactNode;
   showBanner?: boolean;

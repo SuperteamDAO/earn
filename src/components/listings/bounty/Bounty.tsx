@@ -54,7 +54,7 @@ export function CreateListing({
     editable ? bounty?.region || Regions.GLOBAL : Regions.GLOBAL,
   );
   const [referredBy, setReferredBy] = useState<SuperteamName | undefined>(
-    undefined,
+    editable ? bounty?.referredBy : undefined,
   );
   const skillsInfo = editable ? splitSkills(bounty?.skills || []) : undefined;
   const [mainSkills, setMainSkills] = useState<MultiSelectOptions[]>(
@@ -160,7 +160,7 @@ export function CreateListing({
   const createDraft = async () => {
     setDraftLoading(true);
     let api = '/api/bounties/create/';
-    if (editable) {
+    if (editable && !isDuplicating) {
       api = `/api/bounties/update/${bounty?.id}/`;
     }
     let draft: Bounty = {
@@ -193,13 +193,8 @@ export function CreateListing({
     try {
       await axios.post(api, {
         ...draft,
-        isPublished: editable ? bounty?.isPublished : false,
+        isPublished: editable && !isDuplicating ? bounty?.isPublished : false,
       });
-      // if (editable) {
-      //   await axios.post('/api/email/manual/bountyUpdate', {
-      //     id: bounty?.id,
-      //   });
-      // }
       router.push('/dashboard/listings');
     } catch (e) {
       setDraftLoading(false);

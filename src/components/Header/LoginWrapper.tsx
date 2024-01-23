@@ -43,5 +43,13 @@ export function LoginWrapper({
     }
   }, [triggerLogin]);
 
-  return <>{!!isOpen && <Login isOpen={isOpen} onClose={onClose} />}</>;
+  const isSponsor = inviteInfo && Object.keys(inviteInfo).length > 0;
+
+  return (
+    <>
+      {!!isOpen && (
+        <Login isSponsor={isSponsor} isOpen={isOpen} onClose={onClose} />
+      )}
+    </>
+  );
 }

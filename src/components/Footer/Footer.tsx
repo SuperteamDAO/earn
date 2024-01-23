@@ -156,19 +156,19 @@ export const Footer = () => {
           </Stack>
           <Stack align={'flex-start'}>
             <ListHeader>All Superteams</ListHeader>
-            {Superteams.map((superteam) => (
+            {Superteams.map((st) => (
               <Link
-                key={superteam.region}
+                key={st.region}
                 as={NextLink}
                 color="brand.slate.500"
                 _hover={{
                   color: 'brand.slate.800',
                 }}
-                href={`${getURL()}regions/india`}
+                href={`${getURL()}regions/${st.region.toLowerCase()}`}
                 isExternal
               >
-                {superteam.region.charAt(0).toUpperCase() +
-                  superteam.region.slice(1).toLowerCase()}
+                {st.region.charAt(0).toUpperCase() +
+                  st.region.slice(1).toLowerCase()}
               </Link>
             ))}
           </Stack>

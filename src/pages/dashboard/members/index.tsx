@@ -77,7 +77,7 @@ const Index = () => {
   }, [userInfo?.currentSponsorId, skip, searchText]);
 
   return (
-    <Sidebar>
+    <Sidebar showBanner={true}>
       {isOpen && <InviteMembers isOpen={isOpen} onClose={onClose} />}
       <Flex justify="space-between" mb={4}>
         <Flex align="center" gap={3}>

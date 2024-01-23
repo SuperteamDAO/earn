@@ -134,6 +134,8 @@ export default async function announce(
       tokenUSDValue = await fetchTokenUSDValue(coingeckoSymbol);
     }
 
+    let totalUSDRewarded = 0;
+
     while (currentIndex < winners?.length) {
       const amount: number = winners[currentIndex]?.winnerPosition
         ? Math.ceil(
@@ -143,6 +145,7 @@ export default async function announce(
         : 0;
 
       const usdValue = amount * tokenUSDValue;
+      totalUSDRewarded += usdValue;
 
       const amountWhere = {
         where: {
@@ -159,6 +162,17 @@ export default async function announce(
       currentIndex += 1;
     }
     await Promise.all(promises);
+
+    await prisma.sponsors.update({
+      where: {
+        id: bounty?.sponsorId,
+      },
+      data: {
+        totalRewardedInUSD: {
+          increment: totalUSDRewarded,
+        },
+      },
+    });
 
     const submissions = await prisma.submission.findMany({
       where: {

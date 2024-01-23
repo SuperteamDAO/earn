@@ -18,6 +18,7 @@ import {
   Input,
   InputGroup,
   InputLeftElement,
+  Link,
   Menu,
   MenuButton,
   MenuItem,
@@ -175,7 +176,7 @@ function Bounties() {
   } = useDisclosure();
 
   return (
-    <Sidebar>
+    <Sidebar showBanner={true}>
       <Modal isOpen={unpublishIsOpen} onClose={unpublishOnClose}>
         <ModalOverlay />
         <ModalContent>
@@ -316,369 +317,375 @@ function Bounties() {
           </Button>
         </>
       )}
-      {!isBountiesLoading && bounties?.length && (
-        <TableContainer
-          mb={8}
-          borderWidth={'1px'}
-          borderColor={'brand.slate.200'}
-          borderRadius={8}
-        >
-          <Table variant="simple">
-            <Thead>
-              <Tr bg="brand.slate.100">
-                <Th
-                  color="brand.slate.400"
-                  fontSize={14}
-                  fontWeight={500}
-                  letterSpacing={'-2%'}
-                  textTransform={'capitalize'}
-                >
-                  Listing Name
-                </Th>
-                <Th
-                  align="right"
-                  color="brand.slate.400"
-                  fontSize={14}
-                  fontWeight={500}
-                  letterSpacing={'-2%'}
-                  textAlign="right"
-                  textTransform={'capitalize'}
-                >
-                  Submissions
-                </Th>
-                <Th
-                  color="brand.slate.400"
-                  fontSize={14}
-                  fontWeight={500}
-                  letterSpacing={'-2%'}
-                  textTransform={'capitalize'}
-                >
-                  Deadline
-                </Th>
-                <Th
-                  color="brand.slate.400"
-                  fontSize={14}
-                  fontWeight={500}
-                  letterSpacing={'-2%'}
-                  textTransform={'capitalize'}
-                >
-                  Prize
-                </Th>
-                <Th
-                  color="brand.slate.400"
-                  fontSize={14}
-                  fontWeight={500}
-                  letterSpacing={'-2%'}
-                  textTransform={'capitalize'}
-                >
-                  Status
-                </Th>
-                <Th
-                  color="brand.slate.400"
-                  fontSize={14}
-                  fontWeight={500}
-                  letterSpacing={'-2%'}
-                  textTransform={'capitalize'}
-                >
-                  Actions
-                </Th>
-                <Th pl={0} />
-              </Tr>
-            </Thead>
-            <Tbody w="full">
-              {bounties.map((currentBounty) => {
-                const bountyType = getBountyTypeLabel(
-                  currentBounty?.type ?? 'open',
-                );
+      {!isBountiesLoading && !!bounties?.length && (
+        <>
+          <TableContainer
+            mb={8}
+            borderWidth={'1px'}
+            borderColor={'brand.slate.200'}
+            borderRadius={8}
+          >
+            <Table variant="simple">
+              <Thead>
+                <Tr bg="brand.slate.100">
+                  <Th
+                    color="brand.slate.400"
+                    fontSize={14}
+                    fontWeight={500}
+                    letterSpacing={'-2%'}
+                    textTransform={'capitalize'}
+                  >
+                    Listing Name
+                  </Th>
+                  <Th
+                    color="brand.slate.400"
+                    fontSize={14}
+                    fontWeight={500}
+                    letterSpacing={'-2%'}
+                    textAlign="center"
+                    textTransform={'capitalize'}
+                  >
+                    Submissions
+                  </Th>
+                  <Th
+                    color="brand.slate.400"
+                    fontSize={14}
+                    fontWeight={500}
+                    letterSpacing={'-2%'}
+                    textTransform={'capitalize'}
+                  >
+                    Deadline
+                  </Th>
+                  <Th
+                    color="brand.slate.400"
+                    fontSize={14}
+                    fontWeight={500}
+                    letterSpacing={'-2%'}
+                    textTransform={'capitalize'}
+                  >
+                    Prize
+                  </Th>
+                  <Th
+                    color="brand.slate.400"
+                    fontSize={14}
+                    fontWeight={500}
+                    letterSpacing={'-2%'}
+                    textTransform={'capitalize'}
+                  >
+                    Status
+                  </Th>
+                  <Th
+                    color="brand.slate.400"
+                    fontSize={14}
+                    fontWeight={500}
+                    letterSpacing={'-2%'}
+                    textTransform={'capitalize'}
+                  >
+                    Actions
+                  </Th>
+                  <Th pl={0} />
+                </Tr>
+              </Thead>
+              <Tbody w="full">
+                {bounties.map((currentBounty) => {
+                  const bountyType = getBountyTypeLabel(
+                    currentBounty?.type ?? 'open',
+                  );
 
-                const deadline = formatDeadline(
-                  currentBounty?.deadline,
-                  currentBounty?.applicationType,
-                );
+                  const deadline = formatDeadline(
+                    currentBounty?.deadline,
+                    currentBounty?.applicationType,
+                  );
 
-                const bountyStatus = getBountyStatus(currentBounty);
+                  const bountyStatus = getBountyStatus(currentBounty);
 
-                return (
-                  <Tr key={currentBounty?.id}>
-                    <Td
-                      maxW={96}
-                      color="brand.slate.700"
-                      fontWeight={500}
-                      whiteSpace="normal"
-                      wordBreak={'break-word'}
-                    >
-                      <NextLink
-                        href={`/dashboard/listings/${currentBounty.slug}/submissions/`}
-                        passHref
-                      >
-                        <Flex align={'center'}>
-                          <Tooltip bg="brand.slate.400" label={bountyType}>
-                            <Image
-                              h={5}
-                              mr={2}
-                              alt={`New ${bountyType}`}
-                              src={
-                                currentBounty.type === 'open'
-                                  ? '/assets/icons/bolt.svg'
-                                  : '/assets/icons/briefcase.svg'
-                              }
-                            />
-                          </Tooltip>
-
-                          <Text
-                            as="a"
-                            overflow="hidden"
-                            color="brand.slate.500"
-                            fontSize={'15px'}
-                            fontWeight={500}
-                            _hover={{ textDecoration: 'underline' }}
-                            whiteSpace="nowrap"
-                            textOverflow="ellipsis"
-                          >
-                            {currentBounty.title}
-                          </Text>
-                        </Flex>
-                      </NextLink>
-                    </Td>
-                    <Td py={2}>
-                      <Text
-                        color="brand.slate.500"
-                        fontSize={'sm'}
+                  return (
+                    <Tr key={currentBounty?.id}>
+                      <Td
+                        maxW={96}
+                        color="brand.slate.700"
                         fontWeight={500}
-                        textAlign={'center'}
+                        whiteSpace="normal"
+                        wordBreak={'break-word'}
                       >
-                        {
-                          // eslint-disable-next-line no-underscore-dangle
-                          currentBounty?._count?.Submission || 0
-                        }
-                      </Text>
-                    </Td>
-                    <Td align="center" py={2}>
-                      <Text
-                        color="brand.slate.500"
-                        fontSize={'sm'}
-                        fontWeight={500}
-                      >
-                        {deadline}
-                      </Text>
-                    </Td>
-                    <Td py={2}>
-                      <Flex align={'center'} justify={'start'} gap={1}>
-                        <Image
-                          w={5}
-                          h={5}
-                          alt={'green dollar'}
-                          rounded={'full'}
-                          src={
-                            tokenList.filter(
-                              (e) => e?.tokenSymbol === currentBounty.token,
-                            )[0]?.icon ?? '/assets/icons/green-dollar.svg'
+                        <NextLink
+                          href={`/dashboard/listings/${currentBounty.slug}/submissions/`}
+                          passHref
+                        >
+                          <Flex align={'center'}>
+                            <Tooltip bg="brand.slate.400" label={bountyType}>
+                              <Image
+                                h={5}
+                                mr={2}
+                                alt={`New ${bountyType}`}
+                                src={
+                                  currentBounty.type === 'open'
+                                    ? '/assets/icons/bolt.svg'
+                                    : '/assets/icons/briefcase.svg'
+                                }
+                              />
+                            </Tooltip>
+
+                            <Text
+                              as="a"
+                              overflow="hidden"
+                              color="brand.slate.500"
+                              fontSize={'15px'}
+                              fontWeight={500}
+                              _hover={{ textDecoration: 'underline' }}
+                              whiteSpace="nowrap"
+                              textOverflow="ellipsis"
+                            >
+                              {currentBounty.title}
+                            </Text>
+                          </Flex>
+                        </NextLink>
+                      </Td>
+                      <Td py={2}>
+                        <Text
+                          color="brand.slate.500"
+                          fontSize={'sm'}
+                          fontWeight={500}
+                          textAlign={'center'}
+                        >
+                          {
+                            // eslint-disable-next-line no-underscore-dangle
+                            currentBounty?._count?.Submission || 0
                           }
-                        />
+                        </Text>
+                      </Td>
+                      <Td align="center" py={2}>
                         <Text
-                          color="brand.slate.700"
+                          color="brand.slate.500"
                           fontSize={'sm'}
                           fontWeight={500}
                         >
-                          {(currentBounty.rewardAmount || 0).toLocaleString(
-                            'en-US',
-                          )}
+                          {deadline}
                         </Text>
-                        <Text
-                          color="brand.slate.400"
-                          fontSize={'sm'}
-                          fontWeight={500}
-                        >
-                          {currentBounty.token}
-                        </Text>
-                      </Flex>
-                    </Td>
-                    <Td align="center" py={2}>
-                      <Tag
-                        px={3}
-                        color={getColorStyles(bountyStatus).color}
-                        fontSize={'12px'}
-                        fontWeight={500}
-                        bg={getColorStyles(bountyStatus).bgColor}
-                        borderRadius={'full'}
-                        variant="solid"
-                      >
-                        {bountyStatus}
-                      </Tag>
-                    </Td>
-                    <Td px={3} py={2}>
-                      {currentBounty.status === 'OPEN' &&
-                        currentBounty.isPublished && (
-                          <Button
-                            color="#6366F1"
-                            fontSize={'13px'}
-                            fontWeight={500}
-                            _hover={{ bg: '#E0E7FF' }}
-                            leftIcon={<ViewIcon />}
-                            onClick={() =>
-                              handleViewSubmissions(currentBounty.slug)
+                      </Td>
+                      <Td py={2}>
+                        <Flex align={'center'} justify={'start'} gap={1}>
+                          <Image
+                            w={5}
+                            h={5}
+                            alt={'green dollar'}
+                            rounded={'full'}
+                            src={
+                              tokenList.filter(
+                                (e) => e?.tokenSymbol === currentBounty.token,
+                              )[0]?.icon ?? '/assets/icons/green-dollar.svg'
                             }
-                            size="sm"
-                            variant="ghost"
-                          >
-                            Submissions
-                          </Button>
-                        )}
-                      {currentBounty.status === 'OPEN' &&
-                        !currentBounty.isPublished && (
-                          <Button
-                            color={'brand.slate.500'}
-                            fontSize={'13px'}
-                            fontWeight={500}
-                            _hover={{ bg: 'brand.slate.200' }}
-                            leftIcon={<EditIcon />}
-                            onClick={() => {
-                              window.location.href = `/dashboard/listings/${currentBounty.slug}/edit/`;
-                            }}
-                            size="sm"
-                            variant="ghost"
-                          >
-                            Edit
-                          </Button>
-                        )}
-                    </Td>
-                    <Td px={0} py={2}>
-                      <Menu>
-                        <MenuButton
-                          as={IconButton}
-                          border="none"
-                          _hover={{ bg: 'brand.slate.100' }}
-                          aria-label="Options"
-                          icon={<FiMoreVertical />}
-                          size="sm"
-                          variant="ghost"
-                        />
-                        <MenuList>
-                          <MenuItem
-                            py={2}
-                            color={'brand.slate.500'}
+                          />
+                          <Text
+                            color="brand.slate.700"
                             fontSize={'sm'}
                             fontWeight={500}
-                            icon={<ExternalLinkIcon h={4} w={4} />}
-                            onClick={() =>
-                              window.open(
-                                `${router.basePath}/listings/bounties/${currentBounty.slug}`,
-                                '_blank',
-                              )
-                            }
                           >
-                            View {bountyType}
-                          </MenuItem>
-                          {currentBounty.isPublished && (
+                            {(currentBounty.rewardAmount || 0).toLocaleString(
+                              'en-US',
+                            )}
+                          </Text>
+                          <Text
+                            color="brand.slate.400"
+                            fontSize={'sm'}
+                            fontWeight={500}
+                          >
+                            {currentBounty.token}
+                          </Text>
+                        </Flex>
+                      </Td>
+                      <Td align="center" py={2}>
+                        <Tag
+                          px={3}
+                          color={getColorStyles(bountyStatus).color}
+                          fontSize={'12px'}
+                          fontWeight={500}
+                          bg={getColorStyles(bountyStatus).bgColor}
+                          borderRadius={'full'}
+                          variant="solid"
+                        >
+                          {bountyStatus}
+                        </Tag>
+                      </Td>
+                      <Td px={3} py={2}>
+                        {currentBounty.status === 'OPEN' &&
+                          currentBounty.isPublished && (
+                            <Button
+                              color="#6366F1"
+                              fontSize={'13px'}
+                              fontWeight={500}
+                              _hover={{ bg: '#E0E7FF' }}
+                              leftIcon={<ViewIcon />}
+                              onClick={() =>
+                                handleViewSubmissions(currentBounty.slug)
+                              }
+                              size="sm"
+                              variant="ghost"
+                            >
+                              Submissions
+                            </Button>
+                          )}
+                        {currentBounty.status === 'OPEN' &&
+                          !currentBounty.isPublished && (
+                            <Button
+                              color={'brand.slate.500'}
+                              fontSize={'13px'}
+                              fontWeight={500}
+                              _hover={{ bg: 'brand.slate.200' }}
+                              leftIcon={<EditIcon />}
+                              onClick={() => {
+                                window.location.href = `/dashboard/listings/${currentBounty.slug}/edit/`;
+                              }}
+                              size="sm"
+                              variant="ghost"
+                            >
+                              Edit
+                            </Button>
+                          )}
+                      </Td>
+                      <Td px={0} py={2}>
+                        <Menu>
+                          <MenuButton
+                            as={IconButton}
+                            border="none"
+                            _hover={{ bg: 'brand.slate.100' }}
+                            aria-label="Options"
+                            icon={<FiMoreVertical />}
+                            size="sm"
+                            variant="ghost"
+                          />
+                          <MenuList>
                             <MenuItem
                               py={2}
                               color={'brand.slate.500'}
                               fontSize={'sm'}
                               fontWeight={500}
-                              icon={<EditIcon w={4} h={4} />}
+                              icon={<ExternalLinkIcon h={4} w={4} />}
                               onClick={() =>
                                 window.open(
-                                  `${router.basePath}/dashboard/listings/${currentBounty.slug}/edit`,
+                                  `${router.basePath}/listings/bounties/${currentBounty.slug}`,
                                   '_blank',
                                 )
                               }
                             >
-                              Edit {bountyType}
+                              View {bountyType}
                             </MenuItem>
-                          )}
-                          <MenuItem
-                            py={2}
-                            color={'brand.slate.500'}
-                            fontSize={'sm'}
-                            fontWeight={500}
-                            icon={<CopyIcon h={4} w={4} />}
-                            onClick={() =>
-                              window.open(
-                                `${router.basePath}/dashboard/listings/${currentBounty.slug}/duplicate`,
-                                '_blank',
-                              )
-                            }
-                          >
-                            Duplicate
-                          </MenuItem>
-                          {bountyStatus === 'Draft' && (
-                            <>
-                              <MenuItem
-                                py={2}
-                                color={'brand.slate.500'}
-                                fontSize={'sm'}
-                                fontWeight={500}
-                                icon={<AiOutlineDelete size={18} />}
-                                onClick={() => handleDeleteDraft(currentBounty)}
+                            {currentBounty.isPublished && (
+                              <Link
+                                as={NextLink}
+                                _hover={{ textDecoration: 'none' }}
+                                href={`/dashboard/listings/${currentBounty.slug}/edit`}
                               >
-                                Delete Draft
-                              </MenuItem>
-                            </>
-                          )}
-                          {!(
-                            currentBounty.status === 'OPEN' &&
-                            !currentBounty.isPublished
-                          ) && (
-                            <>
-                              <MenuItem
-                                py={2}
-                                color={'brand.slate.500'}
-                                fontSize={'sm'}
-                                fontWeight={500}
-                                icon={<ViewOffIcon h={4} w={4} />}
-                                onClick={() => handleUnpublish(currentBounty)}
-                              >
-                                Unpublish
-                              </MenuItem>
-                            </>
-                          )}
-                        </MenuList>
-                      </Menu>
-                    </Td>
-                  </Tr>
-                );
-              })}
-            </Tbody>
-          </Table>
-        </TableContainer>
+                                <MenuItem
+                                  py={2}
+                                  color={'brand.slate.500'}
+                                  fontSize={'sm'}
+                                  fontWeight={500}
+                                  icon={<EditIcon w={4} h={4} />}
+                                >
+                                  Edit {bountyType}
+                                </MenuItem>
+                              </Link>
+                            )}
+                            <MenuItem
+                              py={2}
+                              color={'brand.slate.500'}
+                              fontSize={'sm'}
+                              fontWeight={500}
+                              icon={<CopyIcon h={4} w={4} />}
+                              onClick={() =>
+                                window.open(
+                                  `${router.basePath}/dashboard/listings/${currentBounty.slug}/duplicate`,
+                                  '_blank',
+                                )
+                              }
+                            >
+                              Duplicate
+                            </MenuItem>
+                            {bountyStatus === 'Draft' && (
+                              <>
+                                <MenuItem
+                                  py={2}
+                                  color={'brand.slate.500'}
+                                  fontSize={'sm'}
+                                  fontWeight={500}
+                                  icon={<AiOutlineDelete size={18} />}
+                                  onClick={() =>
+                                    handleDeleteDraft(currentBounty)
+                                  }
+                                >
+                                  Delete Draft
+                                </MenuItem>
+                              </>
+                            )}
+                            {!(
+                              currentBounty.status === 'OPEN' &&
+                              !currentBounty.isPublished
+                            ) && (
+                              <>
+                                <MenuItem
+                                  py={2}
+                                  color={'brand.slate.500'}
+                                  fontSize={'sm'}
+                                  fontWeight={500}
+                                  icon={<ViewOffIcon h={4} w={4} />}
+                                  onClick={() => handleUnpublish(currentBounty)}
+                                >
+                                  Unpublish
+                                </MenuItem>
+                              </>
+                            )}
+                          </MenuList>
+                        </Menu>
+                      </Td>
+                    </Tr>
+                  );
+                })}
+              </Tbody>
+            </Table>
+          </TableContainer>
+          <Flex align="center" justify="end" mt={6}>
+            <Text mr={4} color="brand.slate.400" fontSize="sm">
+              <Text as="span" fontWeight={700}>
+                {skip + 1}
+              </Text>{' '}
+              -{' '}
+              <Text as="span" fontWeight={700}>
+                {Math.min(skip + length, totalBounties)}
+              </Text>{' '}
+              of{' '}
+              <Text as="span" fontWeight={700}>
+                {totalBounties}
+              </Text>{' '}
+              Listings
+            </Text>
+            <Button
+              mr={4}
+              isDisabled={skip <= 0}
+              leftIcon={<ChevronLeftIcon w={5} h={5} />}
+              onClick={() =>
+                skip >= length ? setSkip(skip - length) : setSkip(0)
+              }
+              size="sm"
+              variant="outline"
+            >
+              Previous
+            </Button>
+            <Button
+              isDisabled={
+                totalBounties < skip + length ||
+                (skip > 0 && skip % length !== 0)
+              }
+              onClick={() => skip % length === 0 && setSkip(skip + length)}
+              rightIcon={<ChevronRightIcon w={5} h={5} />}
+              size="sm"
+              variant="outline"
+            >
+              Next
+            </Button>
+          </Flex>
+        </>
       )}
-      <Flex align="center" justify="end" mt={6}>
-        <Text mr={4} color="brand.slate.400" fontSize="sm">
-          <Text as="span" fontWeight={700}>
-            {skip + 1}
-          </Text>{' '}
-          -{' '}
-          <Text as="span" fontWeight={700}>
-            {Math.min(skip + length, totalBounties)}
-          </Text>{' '}
-          of{' '}
-          <Text as="span" fontWeight={700}>
-            {totalBounties}
-          </Text>{' '}
-          Listings
-        </Text>
-        <Button
-          mr={4}
-          isDisabled={skip <= 0}
-          leftIcon={<ChevronLeftIcon w={5} h={5} />}
-          onClick={() => (skip >= length ? setSkip(skip - length) : setSkip(0))}
-          size="sm"
-          variant="outline"
-        >
-          Previous
-        </Button>
-        <Button
-          isDisabled={
-            totalBounties < skip + length || (skip > 0 && skip % length !== 0)
-          }
-          onClick={() => skip % length === 0 && setSkip(skip + length)}
-          rightIcon={<ChevronRightIcon w={5} h={5} />}
-          size="sm"
-          variant="outline"
-        >
-          Next
-        </Button>
-      </Flex>
     </Sidebar>
   );
 }
