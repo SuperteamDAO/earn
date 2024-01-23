@@ -41,16 +41,20 @@ interface TalentProps {
   slug: string;
 }
 
+type UserWithEarnings = User & {
+  totalEarnings: number;
+};
+
 function TalentProfile({ slug }: TalentProps) {
-  const [talent, setTalent] = useState<User>();
-  const [isloading, setIsloading] = useState<boolean>(false);
+  const [talent, setTalent] = useState<UserWithEarnings>();
+  const [isloading, setIsloading] = useState<boolean>(true);
   const [error, setError] = useState(false);
   const [activeTab, setActiveTab] = useState<'activity' | 'projects'>(
-    'activity'
+    'activity',
   );
   const [randomIndex, setRandomIndex] = useState<number>(0);
   const [showSubskills, setShowSubskills] = useState<Record<number, boolean>>(
-    {}
+    {},
   );
 
   const handleToggleSubskills = (index: number) => {
@@ -104,7 +108,7 @@ function TalentProfile({ slug }: TalentProps) {
     },
 
     {
-      icon: '/assets/talent/link.png',
+      icon: '/assets/talent/linkedin.png',
       link: talent?.linkedin,
     },
 
@@ -121,7 +125,7 @@ function TalentProfile({ slug }: TalentProps) {
 
   const winnerCount =
     talent?.Submission?.filter(
-      (sub) => sub.isWinner && sub?.listing?.isWinnersAnnounced
+      (sub) => sub.isWinner && sub?.listing?.isWinnersAnnounced,
     ).length ?? 0;
 
   const router = useRouter();
@@ -209,7 +213,7 @@ function TalentProfile({ slug }: TalentProps) {
     icon: JSX.Element,
     text: string,
     onClickHandler: () => void,
-    outline: boolean = false
+    outline: boolean = false,
   ) => {
     if (isMD) {
       return (
@@ -311,8 +315,8 @@ function TalentProfile({ slug }: TalentProps) {
                     {isMD
                       ? talent?.username
                       : talent?.username?.length && talent?.username.length > 24
-                      ? `${talent?.username.slice(0, 24)}...`
-                      : talent?.username}
+                        ? `${talent?.username.slice(0, 24)}...`
+                        : talent?.username}
                   </Text>
                 </Box>
                 <Flex
@@ -324,15 +328,15 @@ function TalentProfile({ slug }: TalentProps) {
                     ? renderButton(
                         <EditIcon />,
                         'Edit Profile',
-                        handleEditProfileClick
+                        handleEditProfileClick,
                       )
                     : renderButton(<EmailIcon />, 'Reach Out', () => {
                         const email = encodeURIComponent(talent?.email || '');
                         const subject = encodeURIComponent(
-                          'Saw Your ST Earn Profile!'
+                          'Saw Your ST Earn Profile!',
                         );
                         const bcc = encodeURIComponent(
-                          'hello@superteamearn.com'
+                          'hello@superteamearn.com',
                         );
                         window.location.href = `mailto:${email}?subject=${subject}&bcc=${bcc}`;
                       })}
@@ -576,15 +580,15 @@ function TalentProfile({ slug }: TalentProps) {
                   <>
                     <Image
                       w={32}
-                      mt={32}
                       mx="auto"
+                      mt={32}
                       alt={'talent empty'}
                       src="/assets/bg/talent-empty.svg"
                     />
                     <Text
                       w="200px"
-                      mt={5}
                       mx="auto"
+                      mt={5}
                       color={'brand.slate.400'}
                       fontWeight={500}
                       textAlign={'center'}
@@ -597,8 +601,8 @@ function TalentProfile({ slug }: TalentProps) {
                       <Button
                         display="block"
                         w="200px"
-                        mt={5}
                         mx="auto"
+                        mt={5}
                         onClick={onOpenPow}
                       >
                         Add
@@ -610,8 +614,8 @@ function TalentProfile({ slug }: TalentProps) {
                     <Button
                       display="block"
                       w="200px"
-                      mt={2}
                       mx="auto"
+                      mt={2}
                       color={'brand.slate.500'}
                       fontWeight={500}
                       bg="white"

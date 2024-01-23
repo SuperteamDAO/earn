@@ -1,6 +1,7 @@
 import type { BountyType, Regions } from '@prisma/client';
 
 import type { QuestionType } from '@/components/listings/bounty/questions/builder';
+import type { Superteams } from '@/constants/Superteam';
 import type { SponsorType } from '@/interface/sponsor';
 import type { User } from '@/interface/user';
 
@@ -26,6 +27,7 @@ interface Rewards {
 }
 
 type BountyStatus = 'OPEN' | 'REVIEW' | 'CLOSED';
+export type SuperteamName = (typeof Superteams)[number]['name'];
 
 interface Bounty {
   id?: string;
@@ -62,6 +64,7 @@ interface Bounty {
   templateId?: string;
   timeToComplete?: string;
   hackathonprize?: boolean;
+  referredBy?: SuperteamName;
 }
 
 interface BountyWithSubmissions extends Bounty {

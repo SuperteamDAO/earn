@@ -1,25 +1,31 @@
 import axios from 'axios';
 import type { NextApiRequest, NextApiResponse } from 'next';
+import { getToken } from 'next-auth/jwt';
 
 import { prisma } from '@/prisma';
 
 export default async function submission(
   req: NextApiRequest,
-  res: NextApiResponse
+  res: NextApiResponse,
 ) {
-  const {
-    userId,
-    listingId,
-    listingType,
-    link,
-    tweet,
-    otherInfo,
-    eligibilityAnswers,
-  } = req.body;
+  const token = await getToken({ req });
+
+  if (!token) {
+    return res.status(401).json({ error: 'Unauthorized' });
+  }
+
+  const userId = token.id;
+
+  if (!userId) {
+    return res.status(400).json({ error: 'Invalid token' });
+  }
+
+  const { listingId, listingType, link, tweet, otherInfo, eligibilityAnswers } =
+    req.body;
   try {
     const result = await prisma.submission.create({
       data: {
-        userId,
+        userId: userId as string,
         listingId,
         listingType,
         link: link || '',
@@ -36,10 +42,10 @@ export default async function submission(
     const zapierWebhookUrl = process.env.ZAPIER_SUBMISSION_WEBHOOK!;
     await axios.post(zapierWebhookUrl, result);
 
-    res.status(200).json(result);
+    return res.status(200).json(result);
   } catch (error) {
     console.log(error);
-    res.status(400).json({
+    return res.status(400).json({
       error,
       message: 'Error occurred while adding a new submission.',
     });

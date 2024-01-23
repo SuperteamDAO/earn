@@ -33,6 +33,7 @@ import { tokenList } from '@/constants/index';
 import type { Eligibility, Rewards } from '@/interface/bounty';
 import { userStore } from '@/store/user';
 import { getBountyDraftStatus } from '@/utils/bounty';
+import { getURLSanitized } from '@/utils/submissions/getURLSanitized';
 
 interface Props {
   id: string;
@@ -116,7 +117,7 @@ export function DetailSideCardBounty({
     setIsSubmissionNumberLoading(true);
     try {
       const submissionCountDetails = await axios.get(
-        `/api/submission/${id}/count/`
+        `/api/submission/${id}/count/`,
       );
       const count = submissionCountDetails?.data || 0;
       setSubmissionNumber(count);
@@ -220,11 +221,11 @@ export function DetailSideCardBounty({
         triggerLogin={triggerLogin}
         setTriggerLogin={setTriggerLogin}
       />
-      <VStack gap={2} pt={10} marginInlineStart={'0 !important'}>
+      <VStack gap={2} mx={2} pt={10}>
         <VStack
           justify={'center'}
           gap={0}
-          minW={'22rem'}
+          minW={{ base: 'full', md: '22rem' }}
           pb={5}
           bg={'#FFFFFF'}
           rounded={'xl'}
@@ -239,13 +240,13 @@ export function DetailSideCardBounty({
             <Flex align="center">
               <Image
                 w={7}
-                h="auto"
+                h={7}
                 mr={2}
                 alt={'green doller'}
                 rounded={'full'}
                 src={
                   tokenList.filter((e) => e?.tokenSymbol === token)[0]?.icon ??
-                  '/assets/icons/green-doller.svg'
+                  '/assets/icons/green-dollar.svg'
                 }
               />
               <Text color="color.slate.800" fontSize={'2xl'} fontWeight={500}>
@@ -320,7 +321,7 @@ export function DetailSideCardBounty({
                               </Text>
                             </Td>
                           </Tr>
-                        )
+                        ),
                     )}
                   </Tbody>
                 </Table>
@@ -340,8 +341,8 @@ export function DetailSideCardBounty({
                   {isSubmissionNumberLoading
                     ? '...'
                     : type === 'open'
-                    ? submissionNumber.toLocaleString()
-                    : submissionRange}
+                      ? submissionNumber.toLocaleString()
+                      : submissionRange}
                 </Text>
               </Flex>
               <Text color={'#94A3B8'}>
@@ -350,8 +351,8 @@ export function DetailSideCardBounty({
                     ? 'Submission'
                     : 'Submissions'
                   : submissionNumber === 1
-                  ? 'Application'
-                  : 'Applications'}
+                    ? 'Application'
+                    : 'Applications'}
               </Text>
             </Flex>
 
@@ -444,7 +445,7 @@ export function DetailSideCardBounty({
           <VStack
             align={'start'}
             justify={'center'}
-            w={'22rem'}
+            w={{ base: 'full', md: '22rem' }}
             mt={4}
             p={6}
             bg={'#FFFFFF'}
@@ -466,7 +467,7 @@ export function DetailSideCardBounty({
         {requirements && (
           <VStack
             align="start"
-            w={'22rem'}
+            w={{ base: 'full', md: '22rem' }}
             mt={4}
             p={6}
             bg="white"
@@ -484,7 +485,7 @@ export function DetailSideCardBounty({
           <VStack
             align={'start'}
             justify={'center'}
-            w={'22rem'}
+            w={{ base: '100%', md: '22rem' }}
             mt={4}
             p={6}
             bg={'#FFFFFF'}
@@ -498,7 +499,7 @@ export function DetailSideCardBounty({
                 color={'#64768b'}
                 fontSize="1rem"
                 fontWeight={500}
-                href={pocSocials}
+                href={getURLSanitized(pocSocials)}
                 isExternal
               >
                 Reach out
@@ -519,7 +520,7 @@ export function DetailSideCardBounty({
           <VStack
             align={'start'}
             justify={'center'}
-            minW={'22rem'}
+            minW={{ base: 'full', md: '22rem' }}
             mt={4}
             p={6}
             bg={'#FFFFFF'}

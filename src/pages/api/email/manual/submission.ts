@@ -1,4 +1,5 @@
 import type { NextApiRequest, NextApiResponse } from 'next';
+import { getToken } from 'next-auth/jwt';
 
 import { SubmissionSponsorTemplate } from '@/components/emails/submissionSponsorTemplate';
 import { SubmissionTemplate } from '@/components/emails/submissionTemplate';
@@ -8,9 +9,21 @@ import resendMail from '@/utils/resend';
 
 export default async function handler(
   req: NextApiRequest,
-  res: NextApiResponse
+  res: NextApiResponse,
 ) {
-  const { listingId, userId } = req.body;
+  const token = await getToken({ req });
+
+  if (!token) {
+    return res.status(401).json({ error: 'Unauthorized' });
+  }
+
+  const userId = token.id;
+
+  if (!userId) {
+    return res.status(400).json({ error: 'Invalid token' });
+  }
+
+  const { listingId } = req.body;
   try {
     const unsubscribedEmails = await getUnsubEmails();
     const listing = await prisma.bounties.findFirst({
@@ -28,13 +41,18 @@ export default async function handler(
     });
 
     if (user?.email && user?.firstName && listing?.title) {
+      const subject =
+        listing.type === 'open'
+          ? 'Submission Received!'
+          : 'Application Received';
       await resendMail.emails.send({
         from: `Kash from Superteam <${process.env.RESEND_EMAIL}>`,
         to: [user?.email],
-        subject: 'Submission Received!',
+        subject: subject,
         react: SubmissionTemplate({
           name: user?.firstName,
           bountyName: listing?.title,
+          type: listing?.type,
         }),
       });
     }
@@ -51,11 +69,14 @@ export default async function handler(
       await resendMail.emails.send({
         from: `Kash from Superteam <${process.env.RESEND_EMAIL}>`,
         to: [pocUser?.email],
-        subject: 'New Bounty Submission Received',
+        subject:
+          listing.type === 'open'
+            ? 'New Bounty Submission Received'
+            : 'Project Application Received',
         react: SubmissionSponsorTemplate({
           name: pocUser?.firstName,
           bountyName: listing?.title,
-          link: `https://earn.superteam.fun/dashboard/bounties/${listing?.slug}/submissions/?utm_source=superteamearn&utm_medium=email&utm_campaign=notifications`,
+          link: `https://earn.superteam.fun/dashboard/listings/${listing?.slug}/submissions/?utm_source=superteamearn&utm_medium=email&utm_campaign=notifications`,
         }),
       });
     }

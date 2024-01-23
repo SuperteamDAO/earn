@@ -6,6 +6,7 @@ import {
   FormHelperText,
   FormLabel,
   Input,
+  Link,
   Modal,
   ModalCloseButton,
   ModalContent,
@@ -15,6 +16,7 @@ import {
   VStack,
 } from '@chakra-ui/react';
 import type { BountyType } from '@prisma/client';
+import { PublicKey } from '@solana/web3.js';
 import axios from 'axios';
 import { useState } from 'react';
 import { useForm } from 'react-hook-form';
@@ -46,9 +48,9 @@ export const SubmissionModal = ({
   type,
 }: Props) => {
   const isPermissioned = type === 'permissioned';
-  const { userInfo } = userStore();
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState('');
+  const [publicKeyError, setPublicKeyError] = useState('');
   const {
     register,
     handleSubmit,
@@ -57,16 +59,37 @@ export const SubmissionModal = ({
     watch,
   } = useForm();
 
+  const { userInfo } = userStore();
+
+  function validateSolAddress(address: string) {
+    try {
+      const pubkey = new PublicKey(address);
+      const isSolana = PublicKey.isOnCurve(pubkey.toBuffer());
+      if (!isSolana) {
+        setPublicKeyError('Please enter a valid Solana address');
+        return false;
+      }
+      return true;
+    } catch (err) {
+      setPublicKeyError('Please enter a valid Solana address');
+      return false;
+    }
+  }
+
   const submitSubmissions = async (data: any) => {
     setIsLoading(true);
     try {
-      const { applicationLink, tweetLink, otherInfo, ...answers } = data;
+      const { applicationLink, tweetLink, otherInfo, publicKey, ...answers } =
+        data;
       const eligibilityAnswers = eligibility.map((q) => ({
         question: q.question,
         answer: answers[`eligibility-${q.order}`],
       }));
+      await axios.post('/api/user/update', {
+        publicKey,
+      });
+
       await axios.post('/api/submission/create/', {
-        userId: userInfo?.id,
         listingId: id,
         listingType: 'BOUNTY',
         link: applicationLink || '',
@@ -78,7 +101,6 @@ export const SubmissionModal = ({
       });
       await axios.post(`/api/email/manual/submission`, {
         listingId: id,
-        userId: userInfo?.id,
       });
 
       reset();
@@ -112,8 +134,8 @@ export const SubmissionModal = ({
           gap={3}
           overflow={'scroll'}
           maxH={'50rem'}
-          pb={6}
           px={6}
+          pb={6}
         >
           <Box>
             <Text mb={1} color={'brand.slate.500'} fontSize="sm">
@@ -193,10 +215,9 @@ export const SubmissionModal = ({
                       Tweet Link
                     </FormLabel>
                     <FormHelperText mt={0} mb={2} color="brand.slate.500">
-                      We generally recommend tweeting out your work so that (1)
-                      we can further share the best entries, and (2) its easier
-                      for partner projects to discover you too! In case you
-                      tweet it out, give us a link to the Tweet here!
+                      This helps sponsors discover (and maybe repost) your work
+                      on Twitter! If this submission is for a Twitter thread
+                      bounty, you can ignore this field.
                     </FormHelperText>
                     <Input
                       borderColor={'brand.slate.300'}
@@ -295,6 +316,40 @@ export const SubmissionModal = ({
                 <FormErrorMessage>
                   {errors.otherInfo ? <>{errors.otherInfo.message}</> : <></>}
                 </FormErrorMessage>
+              </FormControl>
+
+              <FormControl isRequired>
+                <FormLabel
+                  mb={0}
+                  color={'brand.slate.800'}
+                  fontWeight={600}
+                  htmlFor={'publicKey'}
+                >
+                  Your Solana Wallet Address
+                </FormLabel>
+                <FormHelperText mt={0} mb={2} color="brand.slate.500">
+                  Add your Solana wallet address here. This is where you will
+                  receive your rewards if you win. Download{' '}
+                  <Text as="u">
+                    <Link href="https://phantom.app" isExternal>
+                      Phantom
+                    </Link>
+                  </Text>{' '}
+                  if you don&apos;t have a Solana wallet
+                </FormHelperText>
+                <Input
+                  borderColor={'brand.slate.300'}
+                  _placeholder={{ color: 'brand.slate.300' }}
+                  focusBorderColor="brand.purple"
+                  id="publicKey"
+                  placeholder="Add your Solana wallet address"
+                  {...register('publicKey', { validate: validateSolAddress })}
+                  defaultValue={userInfo?.publicKey}
+                  maxLength={54}
+                />
+                <Text mt={1} ml={1} color="red" fontSize="14px">
+                  {publicKeyError}
+                </Text>
               </FormControl>
             </VStack>
             {!!error && (

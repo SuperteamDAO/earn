@@ -92,7 +92,9 @@ export const Template = ({
               w={'15rem'}
               h={'16rem'}
               bg={'white'}
-              border={'1px solid #cbd5e1'}
+              borderWidth={'1px'}
+              borderColor={'brand.slate.200'}
+              borderRadius={5}
               cursor={'pointer'}
               onClick={() => {
                 setListingType('BOUNTY');
@@ -109,13 +111,21 @@ export const Template = ({
                 ...new Set(template?.Bounties?.map((b: any) => b.sponsor)),
               ];
               return (
-                <Box key={template.id} w={'15rem'} h={'16rem'} bg={'white'}>
+                <Box
+                  key={template.id}
+                  w={'15rem'}
+                  h={'16rem'}
+                  borderWidth={'1px'}
+                  borderColor={'brand.slate.200'}
+                  borderRadius={5}
+                >
                   <Flex
                     align="center"
                     justify="center"
                     h="45%"
                     fontSize="3xl"
                     bg={template.color || 'white'}
+                    borderTopRadius={5}
                   >
                     {template?.emoji}
                   </Flex>
@@ -126,7 +136,6 @@ export const Template = ({
                     h="55%"
                     px={4}
                     py={4}
-                    bg="white"
                   >
                     <Box>
                       <Text color={'brand.slate.700'} fontWeight={500}>
@@ -204,7 +213,7 @@ export const Template = ({
                         onClick={() => {
                           window.open(
                             `${getURL()}templates/bounties/${template?.slug}`,
-                            '_blank'
+                            '_blank',
                           );
                         }}
                         size="sm"

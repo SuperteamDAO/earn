@@ -35,6 +35,6 @@ export interface UserStoreType {
   verifyEmail: () => void;
   form: AboutYouType & WorkType & LinksType;
   updateState: (
-    data: AboutYouType | WorkType | LinksType | { email: string }
+    data: AboutYouType | WorkType | LinksType | { email: string },
   ) => void;
 }

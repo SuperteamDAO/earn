@@ -59,15 +59,15 @@ export function DetailDescriptionBounty({ skills, description }: Props) {
           overflow={'hidden'}
           w={'full'}
           h={'full'}
-          pb={8}
           px={5}
+          pb={8}
           id="reset-des"
         >
           {parse(
             description?.startsWith('"')
               ? JSON.parse(description || '')
               : description ?? '',
-            options
+            options,
           )}
         </Flex>
       </Flex>

@@ -44,16 +44,13 @@ model Bounties {
   title                String
   slug                 String             @unique
   description          String?            @db.Text
-  requirements         String?            @db.Text
   deadline             DateTime?
   eligibility          Json?
-  references           Json?
   status               status             @default(OPEN)
   token                String?
   rewardAmount         Int?
   rewards              Json?
   sponsorId            String
-  region               Regions            @default(GLOBAL)
   pocId                String
   source               Source             @default(NATIVE)
   sourceDetails        Json?
@@ -64,22 +61,26 @@ model Bounties {
   createdAt            DateTime           @default(now())
   updatedAt            DateTime           @updatedAt
   applicationLink      String?
-  applicationType      ApplicationType    @default(fixed)
   skills               Json?
-  totalWinnersSelected Int?               @default(0)
+  type                 BountyType         @default(open)
+  requirements         String?            @db.Text
   totalPaymentsMade    Int?               @default(0)
+  totalWinnersSelected Int?               @default(0)
   isWinnersAnnounced   Boolean            @default(false)
   templateId           String?
+  region               Regions            @default(GLOBAL)
+  pocSocials           String?
+  hackathonprize       Boolean            @default(false)
+  applicationType      ApplicationType    @default(fixed)
+  timeToComplete       String?
+  references           Json?
+  winners              Json?
+  referredBy           String?
   template             BountiesTemplates? @relation(fields: [templateId], references: [id])
-  type                 BountyType         @default(open)
   sponsor              Sponsors           @relation(fields: [sponsorId], references: [id])
   poc                  User               @relation("poc", fields: [pocId], references: [id])
-  pocSocials           String?
   Submission           Submission[]
   SubscribeBounty      SubscribeBounty[]
-  timeToComplete       String?
-  hackathonprize       Boolean            @default(false)
-  winners              Json?
 
   @@index([id, slug])
   @@index([sponsorId])
@@ -137,7 +138,6 @@ model Grants {
   description      String?  @db.Text
   shortDescription String?  @db.VarChar(1000)
   token            String?
-  logo             String?
   rewardAmount     Int?
   link             String?
   source           Source   @default(NATIVE)
@@ -150,6 +150,7 @@ model Grants {
   createdAt        DateTime @default(now())
   updatedAt        DateTime @updatedAt
   skills           Json?
+  logo             String?
   sponsor          Sponsors @relation(fields: [sponsorId], references: [id])
   poc              User     @relation(fields: [pocId], references: [id])
 
@@ -162,22 +163,22 @@ model Submission {
   id                 String      @id @default(uuid())
   link               String?     @db.VarChar(500)
   tweet              String?     @db.VarChar(500)
-  otherInfo          String?     @db.VarChar(2000)
   eligibilityAnswers Json?
   userId             String
   listingType        ListingType @default(BOUNTY)
   listingId          String
-  listing            Bounties    @relation(fields: [listingId], references: [id])
   isWinner           Boolean     @default(false)
   winnerPosition     String?
-  isPaid             Boolean     @default(false)
-  paymentDetails     Json?
   isActive           Boolean     @default(true)
   isArchived         Boolean     @default(false)
   createdAt          DateTime    @default(now())
   updatedAt          DateTime    @updatedAt
   like               Json?
   likes              Int?
+  isPaid             Boolean     @default(false)
+  paymentDetails     Json?
+  otherInfo          String?     @db.VarChar(2000)
+  listing            Bounties    @relation(fields: [listingId], references: [id])
   user               User        @relation(fields: [userId], references: [id])
 
   @@index([id, listingId])
@@ -193,23 +194,24 @@ model Otp {
 }
 
 model Sponsors {
-  id           String         @id @default(uuid())
-  name         String         @unique
-  slug         String         @unique
-  logo         String?
-  url          String?
-  industry     String
-  twitter      String?
-  bio          String?
-  createdAt    DateTime       @default(now())
-  updatedAt    DateTime       @updatedAt
-  isArchived   Boolean        @default(false)
-  isActive     Boolean        @default(true)
-  UserSponsors UserSponsors[]
-  Bounties     Bounties[]
-  Grants       Grants[]
-  Jobs         Jobs[]
-  User         User[]
+  id                 String         @id @default(uuid())
+  name               String         @unique
+  slug               String         @unique
+  logo               String?
+  url                String?
+  industry           String
+  twitter            String?
+  bio                String?
+  createdAt          DateTime       @default(now())
+  updatedAt          DateTime       @updatedAt
+  isArchived         Boolean        @default(false)
+  isActive           Boolean        @default(true)
+  totalRewardedInUSD Int            @default(0)
+  UserSponsors       UserSponsors[]
+  Bounties           Bounties[]
+  Grants             Grants[]
+  Jobs               Jobs[]
+  User               User[]
 
   @@index([id, slug])
 }
@@ -225,11 +227,40 @@ model Total {
   @@index([id])
 }
 
+model Account {
+  id                String  @id @default(uuid())
+  userId            String
+  type              String
+  provider          String
+  providerAccountId String
+  refresh_token     String? @db.Text
+  access_token      String? @db.Text
+  expires_at        Int?
+  token_type        String?
+  scope             String?
+  id_token          String? @db.Text
+  session_state     String?
+  user              User    @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([provider, providerAccountId])
+  @@index([userId])
+}
+
+model Session {
+  id           String   @id @default(uuid())
+  sessionToken String   @unique
+  userId       String
+  expires      DateTime
+  user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+}
+
 model User {
   id               String            @id @default(uuid())
-  publicKey        String            @unique
+  publicKey        String?
   email            String            @unique
-  username         String            @unique
+  username         String?           @unique
   photo            String?
   firstName        String?
   lastName         String?
@@ -268,6 +299,9 @@ model User {
   UserInvites      UserInvites[]
   SubscribeBounty  SubscribeBounty[]
   PoW              PoW[]
+  accounts         Account[]
+  sessions         Session[]
+  emailVerified    DateTime?
 
   @@index([email, publicKey, username])
   @@index([currentSponsorId])
@@ -279,11 +313,11 @@ model PoW {
   title       String
   description String   @db.Text
   skills      Json?
-  subSkills   Json?
   link        String
   createdAt   DateTime @default(now())
-  user        User     @relation(fields: [userId], references: [id])
+  subSkills   Json?
   updatedAt   DateTime @updatedAt
+  user        User     @relation(fields: [userId], references: [id])
 
   @@index([userId])
 }
@@ -306,11 +340,11 @@ model UserInvites {
   id         String   @id @default(uuid())
   email      String
   senderId   String
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
   sponsorId  String
   memberType Role     @default(MEMBER)
   sender     User     @relation(fields: [senderId], references: [id])
-  createdAt  DateTime @default(now())
-  updatedAt  DateTime @updatedAt
 
   @@index([id])
   @@index([senderId])
@@ -337,6 +371,14 @@ model SubscribeBounty {
 
   @@index([bountyId])
   @@index([userId])
+}
+
+model VerificationToken {
+  identifier String
+  token      String   @unique
+  expires    DateTime
+
+  @@unique([identifier, token])
 }
 
 enum EmailType {

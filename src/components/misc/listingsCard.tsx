@@ -9,12 +9,16 @@ import {
   HStack,
   Image,
   Link,
+  Skeleton,
+  SkeletonCircle,
+  SkeletonText,
   Text,
   useDisclosure,
   useMediaQuery,
 } from '@chakra-ui/react';
 import type { BountyType } from '@prisma/client';
 import axios from 'axios';
+import NextLink from 'next/link';
 import { useRouter } from 'next/router';
 import { useEffect, useState } from 'react';
 import { toast, Toaster } from 'react-hot-toast';
@@ -106,6 +110,7 @@ export const ListingSection = ({
           display={!all && router?.query?.category !== type ? 'block' : 'none'}
         >
           <Link
+            as={NextLink}
             href={
               url ||
               (router?.query?.filter
@@ -126,6 +131,7 @@ export const ListingSection = ({
         display={!all && router?.query?.category !== type ? 'block' : 'none'}
       >
         <Link
+          as={NextLink}
           href={
             url ||
             (router?.query?.filter
@@ -166,6 +172,50 @@ interface BountyProps {
   isWinnersAnnounced?: boolean;
 }
 
+export const ListingsCardSkeleton = () => {
+  const [isMobile] = useMediaQuery('(max-width: 768px)');
+
+  return (
+    <Box px={isMobile ? 1 : 4} py={4} borderRadius={5}>
+      <Flex align={'center'} justify={'space-between'} w="100%">
+        <Flex w="100%" h={isMobile ? 14 : 16}>
+          <Skeleton
+            w={isMobile ? '4.2rem' : '4.6rem'}
+            h={isMobile ? 14 : 16}
+            mr={isMobile ? 3 : 5}
+            rounded={5}
+          />
+          <Flex justify={'space-between'} direction={'column'} w={'full'}>
+            <Skeleton w="60%" h="3.5" />
+            <Skeleton
+              w="130px"
+              h="3"
+              fontSize={{ md: 'sm', base: 'xs' }}
+              noOfLines={1}
+            />
+            <Flex gap={2}>
+              <SkeletonText
+                w="56px"
+                fontSize={{ md: 'sm', base: 'xs' }}
+                noOfLines={1}
+              />
+              <Skeleton
+                w="48px"
+                fontSize={{ md: 'sm', base: 'xs' }}
+                noOfLines={1}
+              />
+            </Flex>
+          </Flex>
+        </Flex>
+        <Flex align={'center'} gap={2}>
+          <SkeletonCircle size={'4'} />
+          <Skeleton w="54px" h="14px" noOfLines={1} />
+        </Flex>
+      </Flex>
+    </Box>
+  );
+};
+
 export const BountiesCard = ({
   rewardAmount,
   deadline,
@@ -184,6 +234,7 @@ export const BountiesCard = ({
   return (
     <>
       <Link
+        as={NextLink}
         px={isMobile ? 1 : 4}
         py={4}
         borderRadius={5}
@@ -209,9 +260,9 @@ export const BountiesCard = ({
                 logo
                   ? logo.replace(
                       '/upload/',
-                      '/upload/c_scale,w_128,h_128,f_auto/'
+                      '/upload/c_scale,w_128,h_128,f_auto/',
                     )
-                  : `${router.basePath}/assets/images/sponsor-logo.png`
+                  : `${router.basePath}/assets/logo/sponsor-logo.png`
               }
             />
             <Flex justify={'space-between'} direction={'column'} w={'full'}>
@@ -272,8 +323,8 @@ export const BountiesCard = ({
                   {applicationType === 'rolling'
                     ? 'Rolling Deadline'
                     : dayjs().isBefore(dayjs(deadline))
-                    ? `Closing ${dayjs(deadline).fromNow()}`
-                    : `Closed ${dayjs(deadline).fromNow()}`}
+                      ? `Closing ${dayjs(deadline).fromNow()}`
+                      : `Closed ${dayjs(deadline).fromNow()}`}
                 </Text>
                 {!hasTabs &&
                   dayjs().isBefore(dayjs(deadline)) &&
@@ -357,6 +408,7 @@ export const GrantsCard = ({
   return (
     <>
       <Link
+        as={NextLink}
         px={isMobile ? 1 : 4}
         py={4}
         borderRadius={5}
@@ -382,9 +434,9 @@ export const GrantsCard = ({
                 logo
                   ? logo.replace(
                       '/upload/',
-                      '/upload/c_scale,w_128,h_128,f_auto/'
+                      '/upload/c_scale,w_128,h_128,f_auto/',
                     )
-                  : `assets/home/placeholder/ph3.png`
+                  : `assets/home/placeholder/ph1.png`
               }
             />
             <Flex justify={'space-between'} direction={'column'} w={'full'}>
@@ -469,7 +521,7 @@ export const CategoryBanner = ({ type }: { type: string }) => {
 
   useEffect(() => {
     setIsSubscribed(
-      userInfo?.notifications?.some((e) => e.label === type) || false
+      userInfo?.notifications?.some((e) => e.label === type) || false,
     );
   }, [userInfo, type]);
 
@@ -500,17 +552,13 @@ export const CategoryBanner = ({ type }: { type: string }) => {
     },
   };
 
-  const updateNotification = async (
-    id: string,
-    notification: Notifications[]
-  ) => {
+  const updateNotification = async (notification: Notifications[]) => {
     try {
       const { data, status } = await axios.post(
         `/api/user/updateNotification`,
         {
-          id,
           notification,
-        }
+        },
       );
       if (status !== 200) {
         return null;
@@ -536,7 +584,7 @@ export const CategoryBanner = ({ type }: { type: string }) => {
 
     if (isSubscribed) {
       updatedNotifications = updatedNotifications.filter(
-        (e) => e.label !== type
+        (e) => e.label !== type,
       );
       subscriptionMessage = "You've been unsubscribed from this category";
       setIsSubscribed(false);
@@ -546,7 +594,7 @@ export const CategoryBanner = ({ type }: { type: string }) => {
       setIsSubscribed(true);
     }
 
-    await updateNotification(userInfo?.id as string, updatedNotifications);
+    await updateNotification(updatedNotifications);
 
     setLoading(false);
     toast.success(subscriptionMessage);
@@ -559,8 +607,8 @@ export const CategoryBanner = ({ type }: { type: string }) => {
         direction={{ md: 'row', base: 'column' }}
         w={{ md: 'brand.120', base: '100%' }}
         h={{ md: '7.375rem', base: 'fit-content' }}
-        mb={8}
         mx={'auto'}
+        mb={8}
         p={6}
         bg={`url('${categoryAssets[type]?.bg}')`}
         bgSize={'cover'}
@@ -594,9 +642,9 @@ export const CategoryBanner = ({ type }: { type: string }) => {
         </Box>
         {!router.asPath.includes('Hyperdrive') && (
           <Button
+            my={{ base: '', md: 'auto' }}
             mt={{ base: 4, md: '' }}
             ml={{ base: '', md: 'auto' }}
-            my={{ base: '', md: 'auto' }}
             px={4}
             color={'brand.slate.400'}
             fontWeight={'300'}

@@ -125,7 +125,7 @@ export const QuestionCard = ({
                               return {
                                 ...q,
                                 options: q.options?.filter(
-                                  (_o, i) => i !== currentIndex
+                                  (_o, i) => i !== currentIndex,
                                 ),
                               };
                             }
@@ -144,7 +144,7 @@ export const QuestionCard = ({
                 <FormControl
                   isInvalid={
                     !!errorState.filter(
-                      (e) => e.order === curentQuestion.order
+                      (e) => e.order === curentQuestion.order,
                     )[0]
                   }
                 >

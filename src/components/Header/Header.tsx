@@ -3,6 +3,7 @@ import type { LinkProps } from '@chakra-ui/react';
 import {
   Box,
   Collapse,
+  Divider,
   Flex,
   IconButton,
   Image,
@@ -14,6 +15,7 @@ import {
   useColorModeValue,
   useDisclosure,
 } from '@chakra-ui/react';
+import NextLink from 'next/link';
 import { useRouter } from 'next/router';
 
 import { BountySnackbar } from './BountySnackbar';
@@ -91,6 +93,7 @@ const MobileNavItem = ({ label, children, href }: NavItem) => {
             children.map((child) => (
               <Link
                 key={child.label}
+                as={NextLink}
                 mt={0}
                 pb={2}
                 color={'gray.500'}
@@ -160,7 +163,7 @@ const NavLink = ({
   };
 
   return (
-    <Link href={href} {...styles}>
+    <Link as={NextLink} href={href} {...styles}>
       {typeof label === 'string' ? <Text fontSize="sm">{label}</Text> : label}
     </Link>
   );
@@ -205,6 +208,9 @@ export const Header = () => {
   const { isOpen, onToggle } = useDisclosure();
   const router = useRouter();
 
+  const isDashboardRoute = router.pathname.startsWith('/dashboard');
+  const maxWValue = isDashboardRoute ? '' : '7xl';
+
   return (
     <Box pos="sticky" zIndex="sticky" top={0}>
       <BountySnackbar />
@@ -216,7 +222,7 @@ export const Header = () => {
         borderBottom="1px solid"
         borderBottomColor="blackAlpha.200"
       >
-        <Flex justify={'space-between'} w="100%" maxW="7xl" mx="auto">
+        <Flex justify={'space-between'} w="100%" maxW={maxWValue} mx="auto">
           <Flex
             flex={{ base: 1, lg: 'auto' }}
             display={{ base: 'flex', lg: 'none' }}
@@ -240,18 +246,39 @@ export const Header = () => {
             justify={{ base: 'center', lg: 'start' }}
             gap={6}
           >
-            <Link display={{ base: 'none', lg: 'flex' }} href="/">
+            <Link
+              as={NextLink}
+              alignItems={'center'}
+              gap={3}
+              display={{ base: 'none', lg: 'flex' }}
+              mr={5}
+              _hover={{ textDecoration: 'none' }}
+              href="/"
+            >
               <Image
                 h={5}
-                mr={5}
                 cursor="pointer"
                 objectFit={'contain'}
                 alt={'Superteam Earn'}
                 onClick={() => {
                   router.push('/');
                 }}
-                src={'/assets/logo/new-logo.svg'}
+                src={'/assets/logo/logo.svg'}
               />
+
+              {isDashboardRoute && (
+                <>
+                  <Divider
+                    w={'3px'}
+                    h={'24px'}
+                    borderColor={'brand.slate.400'}
+                    orientation="vertical"
+                  />
+                  <Text fontSize="sm" letterSpacing={'1.5px'}>
+                    SPONSORS
+                  </Text>
+                </>
+              )}
             </Link>
 
             <NavLink
@@ -278,12 +305,12 @@ export const Header = () => {
           >
             <DesktopNav />
           </Flex>
-          <Link display={{ base: 'flex', lg: 'none' }} href="/">
+          <Link as={NextLink} display={{ base: 'flex', lg: 'none' }} href="/">
             <Image
               h={5}
               my="auto"
               alt={'Superteam Earn'}
-              src="/assets/logo/new-logo.svg"
+              src="/assets/logo/logo.svg"
             />
           </Link>
 

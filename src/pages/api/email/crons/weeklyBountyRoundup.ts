@@ -23,7 +23,6 @@ async function handler(_req: NextApiRequest, res: NextApiResponse) {
     const users = (
       await prisma.user.findMany({
         where: {
-          isVerified: true,
           isTalentFilled: true,
         },
       })
@@ -58,8 +57,8 @@ async function handler(_req: NextApiRequest, res: NextApiResponse) {
             bountySkills.some((bountySkill: any) =>
               userNotifications.some(
                 (userNotification: any) =>
-                  userNotification.label === bountySkill.skills
-              )
+                  userNotification.label === bountySkill.skills,
+              ),
             )
           );
         });

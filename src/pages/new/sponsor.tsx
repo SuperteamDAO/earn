@@ -10,16 +10,17 @@ import {
   Text,
   VStack,
 } from '@chakra-ui/react';
-import { useWallet } from '@solana/wallet-adapter-react';
 import axios from 'axios';
 import { MediaPicker } from 'degen';
 import { useRouter } from 'next/router';
-import { useState } from 'react';
+import { useSession } from 'next-auth/react';
+import { useEffect, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { Toaster } from 'react-hot-toast';
 import Select from 'react-select';
 import makeAnimated from 'react-select/animated';
 
+import { SignIn } from '@/components/modals/Login/SignIn';
 import { Default } from '@/layouts/Default';
 import { Meta } from '@/layouts/Meta';
 import { userStore } from '@/store/user';
@@ -31,8 +32,7 @@ import { uploadToCloudinary } from '../../utils/upload';
 const CreateSponsor = () => {
   const router = useRouter();
   const animatedComponents = makeAnimated();
-  const { connected } = useWallet();
-  const { userInfo } = userStore();
+  const { data: session, status } = useSession();
   const {
     handleSubmit,
     register,
@@ -46,6 +46,14 @@ const CreateSponsor = () => {
   const [hasError, setHasError] = useState<boolean>(false);
   const [errorMessage, setErrorMessage] = useState<string>('');
 
+  const { userInfo } = userStore();
+
+  useEffect(() => {
+    if (userInfo?.currentSponsorId && userInfo.role !== 'GOD') {
+      router.push('/dashboard/listings');
+    }
+  }, [userInfo?.currentSponsorId, router]);
+
   const createNewSponsor = async (sponsor: SponsorType) => {
     if (getValues('bio').length > 180) {
       setErrorMessage('Company short bio length exceeded the limit');
@@ -56,15 +64,9 @@ const CreateSponsor = () => {
     try {
       await axios.post('/api/sponsors/create', {
         ...sponsor,
-        userId: userInfo?.id,
       });
-      await axios.post(`/api/email/manual/welcomeSponsor`, {
-        email: userInfo?.email,
-        name: userInfo?.firstName,
-      });
-      router.push('/dashboard/bounties');
-      // setIsLoading(false);
-      // toast.success('Sponsor created!');
+      await axios.post(`/api/email/manual/welcomeSponsor`);
+      router.push('/dashboard/listings');
     } catch (e: any) {
       if (e?.response?.data?.error?.code === 'P2002') {
         setErrorMessage('Sorry! Sponsor name or username already exists.');
@@ -73,6 +75,11 @@ const CreateSponsor = () => {
       setHasError(true);
     }
   };
+
+  if (!session && status === 'loading') {
+    return <></>;
+  }
+
   return (
     <Default
       meta={
@@ -83,18 +90,38 @@ const CreateSponsor = () => {
         />
       }
     >
-      {!connected ? (
+      {!session ? (
         <>
-          <Box
-            alignItems={'center'}
-            justifyContent={'center'}
-            display={'flex'}
-            w={'full'}
-            minH={'100vh'}
-          >
-            <Text color={'gray.600'} fontSize={'xl'} fontWeight={500}>
-              Please sign up first!
-            </Text>
+          <Box w={'full'} minH={'100vh'} bg="white">
+            <Box
+              alignItems="center"
+              justifyContent={'center'}
+              flexDir={'column'}
+              display={'flex'}
+              maxW="32rem"
+              minH="60vh"
+              mx="auto"
+            >
+              <Text
+                pt={4}
+                color="brand.slate.900"
+                fontSize={18}
+                fontWeight={600}
+                textAlign={'center'}
+              >
+                You&apos;re one step away
+              </Text>
+              <Text
+                pb={4}
+                color="brand.slate.600"
+                fontSize={15}
+                fontWeight={400}
+                textAlign={'center'}
+              >
+                from joining Superteam Earn
+              </Text>
+              <SignIn />
+            </Box>
           </Box>
         </>
       ) : (

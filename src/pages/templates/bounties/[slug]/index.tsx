@@ -73,8 +73,8 @@ function BountyDetails({ slug }: BountyDetailsProps) {
             flexDir={['column-reverse', 'column-reverse', 'row', 'row']}
             gap={4}
             maxW={'7xl'}
-            mb={10}
             mx={'auto'}
+            mb={10}
           >
             <VStack gap={8} w={['22rem', '22rem', 'full', 'full']} mt={10}>
               <DetailDescriptionBounty

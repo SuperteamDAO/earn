@@ -109,9 +109,9 @@ function BountyDetails({ bounty: initialBounty }: BountyDetailsProps) {
                   flexDir={['column', 'column', 'row', 'row']}
                   gap={4}
                   maxW={'7xl'}
+                  mx={'auto'}
                   mt={6}
                   mb={10}
-                  mx={'auto'}
                   p={{ base: '2', md: '6' }}
                   bg="white"
                   rounded="lg"

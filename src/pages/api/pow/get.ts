@@ -4,14 +4,13 @@ import { prisma } from '@/prisma';
 
 export default async function handler(
   req: NextApiRequest,
-  res: NextApiResponse
+  res: NextApiResponse,
 ) {
   const { method, query } = req;
 
   if (method === 'GET') {
     const userId = query.userId as string;
 
-    // Validate the userId
     if (!userId) {
       return res.status(400).json({
         error: 'The "userId" query parameter is missing.',

@@ -108,7 +108,7 @@ const Grants = ({ slug }: GrantsDetailsProps) => {
                     <Image
                       w={4}
                       alt={'green doller'}
-                      src={'/assets/icons/green-doller.svg'}
+                      src={'/assets/icons/green-dollar.svg'}
                     />
                   </Box>
                   <VStack align={'start'}>

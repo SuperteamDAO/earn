@@ -60,14 +60,13 @@ export function DetailDescription({ skills, description }: Props) {
           w={'full'}
           h={'full'}
           pb={8}
-          px={5}
           id="reset-des"
         >
           {parse(
             description?.startsWith('"')
               ? JSON.parse(description || '')
               : description ?? '',
-            options
+            options,
           )}
         </Flex>
       </Flex>

@@ -41,7 +41,7 @@ export const socials = [
   {
     label: 'LinkedIn',
     placeHolder: 'https://linkedin.com/in/tony-stark',
-    icon: '/assets/talent/link.png',
+    icon: '/assets/talent/linkedin.png',
   },
   {
     label: 'Telegram',
@@ -150,7 +150,7 @@ export function YourLinks({ success, useFormStore }: Props) {
 
   const { updateState } = useFormStore();
 
-  const { setUserInfo, userInfo } = userStore();
+  const { setUserInfo } = userStore();
 
   const uploadProfile = async (
     // eslint-disable-next-line @typescript-eslint/no-shadow
@@ -163,7 +163,7 @@ export function YourLinks({ success, useFormStore }: Props) {
       website: string;
     },
     // eslint-disable-next-line @typescript-eslint/no-shadow
-    pow: PoW[]
+    pow: PoW[],
   ) => {
     // atleast one URL
     if (
@@ -182,12 +182,10 @@ export function YourLinks({ success, useFormStore }: Props) {
     setisLoading(true);
     try {
       await axios.post('/api/pow/create', {
-        userId: userInfo?.id,
         pows: pow,
       });
 
       const updateOptions = {
-        id: userInfo?.id,
         ...form,
         ...socials,
         superteamLevel: 'Lurker',
@@ -197,9 +195,7 @@ export function YourLinks({ success, useFormStore }: Props) {
       const { subSkills, ...finalOptions } = updateOptions;
 
       const updatedUser = await axios.post('/api/user/update/', finalOptions);
-      await axios.post('/api/email/manual/welcomeTalent/', {
-        email: userInfo?.email,
-      });
+      await axios.post('/api/email/manual/welcomeTalent/');
       setUserInfo(updatedUser?.data);
       success();
     } catch (e) {
@@ -219,7 +215,7 @@ export function YourLinks({ success, useFormStore }: Props) {
         telegram: data.Telegram,
         website: data.Website,
       },
-      pow
+      pow,
     );
   };
   return (
@@ -267,7 +263,7 @@ export function YourLinks({ success, useFormStore }: Props) {
                     <DeleteIcon
                       onClick={() => {
                         setPow((prevPow) =>
-                          prevPow.filter((_ele, id) => idx !== id)
+                          prevPow.filter((_ele, id) => idx !== id),
                         );
                       }}
                       cursor={'pointer'}
@@ -290,7 +286,8 @@ export function YourLinks({ success, useFormStore }: Props) {
             </Button>
             {socialsError && (
               <Text align="center" mb={'0.5rem'} color={'red'}>
-                Please fill at least one social link to continue!
+                Please fill at least one social (apart from Discord) to
+                continue!
               </Text>
             )}
             <Button

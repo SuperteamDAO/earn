@@ -4,7 +4,7 @@ import { prisma } from '@/prisma';
 
 export default async function inviteUser(
   req: NextApiRequest,
-  res: NextApiResponse
+  res: NextApiResponse,
 ) {
   const params = req.query;
   const invite = params.invite as string;

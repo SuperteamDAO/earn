@@ -72,7 +72,7 @@ export function TalentBio({
     },
 
     {
-      icon: '/assets/talent/link.png',
+      icon: '/assets/talent/linkedin.png',
       link: user?.linkedin,
     },
 

@@ -21,9 +21,7 @@ export function SponsorButton() {
       setShowMessage(false);
       setIsLoading(true);
       try {
-        const sponsors = await axios.post('/api/userSponsors', {
-          userId: userInfo.id,
-        });
+        const sponsors = await axios.post('/api/userSponsors');
         if (sponsors?.data?.length) {
           setCurrentSponsor(sponsors?.data[0]?.sponsor);
           router.push('/new/listing');
