@@ -1,4 +1,3 @@
-/* eslint-disable no-param-reassign */
 import { PrismaAdapter } from '@next-auth/prisma-adapter';
 import type { NextAuthOptions } from 'next-auth';
 import NextAuth from 'next-auth';

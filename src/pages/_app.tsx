@@ -11,13 +11,19 @@ import { useRouter } from 'next/router';
 import { SessionProvider, useSession } from 'next-auth/react';
 import posthog from 'posthog-js';
 import { PostHogProvider } from 'posthog-js/react';
-import { useEffect } from 'react';
+import React, { Suspense, useEffect, useState } from 'react';
 
 import { SolanaWalletProvider } from '@/context/SolanaWallet';
 import { userStore } from '@/store/user';
 
 import theme from '../config/chakra.config';
 // importing localFont from a local file as Google imported fonts do not enable font-feature-settings. Reference: https://github.com/vercel/next.js/discussions/52456
+
+const AuthFeatureModal = React.lazy(() =>
+  import('@/components/modals/AuthFeature').then((module) => ({
+    default: module.AuthFeatureModal,
+  })),
+);
 
 const fontSans = Inter({
   subsets: ['latin'],
@@ -58,7 +64,6 @@ const extendThemeWithNextFonts = {
 if (typeof window !== 'undefined') {
   posthog.init(process.env.NEXT_PUBLIC_POSTHOG_KEY!, {
     api_host: process.env.NEXT_PUBLIC_POSTHOG_HOST || 'https://app.posthog.com',
-    // eslint-disable-next-line @typescript-eslint/no-shadow
     loaded: (posthog) => {
       if (process.env.NODE_ENV === 'development') posthog.debug();
     },
@@ -69,6 +74,8 @@ function MyApp({ Component, pageProps }: any) {
   const { data: session, status } = useSession();
   const router = useRouter();
   const { setUserInfo, setIsLoggedIn } = userStore();
+  const modalShownKey = 'modalShown';
+  const [isModalOpen, setIsModalOpen] = useState(false);
 
   useEffect(() => {
     const fetchUserInfo = async () => {
@@ -86,7 +93,38 @@ function MyApp({ Component, pageProps }: any) {
     fetchUserInfo();
   }, [session, status]);
 
-  return <Component {...pageProps} key={router.asPath} />;
+  useEffect(() => {
+    const modalShown = localStorage.getItem(modalShownKey);
+
+    let timer: any;
+    if (!modalShown) {
+      timer = setTimeout(() => {
+        setIsModalOpen(true);
+        localStorage.setItem(modalShownKey, 'true');
+      }, 3000);
+    }
+
+    return () => clearTimeout(timer);
+  }, []);
+
+  const handleClose = () => {
+    setIsModalOpen(false);
+  };
+
+  const showCTA = !session && status === 'unauthenticated';
+
+  return (
+    <>
+      <Component {...pageProps} key={router.asPath} />
+      <Suspense>
+        <AuthFeatureModal
+          showCTA={showCTA}
+          isOpen={isModalOpen}
+          onClose={handleClose}
+        />
+      </Suspense>
+    </>
+  );
 }
 
 function App({ Component, pageProps: { session, ...pageProps } }: AppProps) {

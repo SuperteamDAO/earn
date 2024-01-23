@@ -1,3 +1,4 @@
+import { Box } from '@chakra-ui/react';
 import type { ReactNode } from 'react';
 
 import { Footer } from '@/components/Footer/Footer';
@@ -11,7 +12,7 @@ type IDefaultProps = {
 
 const Default = (props: IDefaultProps) => {
   return (
-    <div
+    <Box
       className={
         !props.className ? 'min-h-full' : `min-h-full ${props.className}`
       }
@@ -20,7 +21,7 @@ const Default = (props: IDefaultProps) => {
       <Header />
       {props.children}
       <Footer />
-    </div>
+    </Box>
   );
 };
 

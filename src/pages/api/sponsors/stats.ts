@@ -53,7 +53,6 @@ export default async function handler(
     const totalListings = await prisma.bounties.count({
       where: {
         sponsorId,
-        isPublished: true,
         isActive: true,
         isArchived: false,
         status: status.OPEN,

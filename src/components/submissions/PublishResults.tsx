@@ -85,7 +85,6 @@ export function PublishResults({
     const timer = setTimeout(() => {
       window.location.reload();
     }, 1500);
-    // eslint-disable-next-line consistent-return
     return () => clearTimeout(timer);
   }, [isWinnersAnnounced]);
 

@@ -14,7 +14,6 @@ export const SponsorStore = create<SponsorState>((set) => ({
   setCurrentSponsor: (sponsor: SponsorType) =>
     set(
       produce((state: SponsorState) => {
-        // eslint-disable-next-line no-param-reassign
         state.currentSponsor = sponsor;
       }),
     ),

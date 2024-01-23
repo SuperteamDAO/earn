@@ -1,4 +1,3 @@
-/* eslint-disable no-nested-ternary */
 import { ArrowForwardIcon, BellIcon } from '@chakra-ui/icons';
 import {
   Box,

@@ -411,8 +411,6 @@ export default function EditProfilePage() {
                   PERSONAL INFO
                 </Text>
 
-                {/* eslint-disable no-nested-ternary */}
-
                 {isPhotoLoading ? (
                   <></>
                 ) : photoUrl ? (
