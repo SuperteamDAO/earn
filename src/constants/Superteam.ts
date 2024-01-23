@@ -7,6 +7,7 @@ export const Superteams = [
     color: '#FEFBA8',
     icons: '/assets/superteams/india.jpg',
     region: Regions.INDIA,
+    displayValue: 'India',
   },
   {
     name: 'Superteam Germany',
@@ -14,6 +15,7 @@ export const Superteams = [
     color: '#FEB8A8',
     icons: '/assets/superteams/germany.jpg',
     region: Regions.GERMANY,
+    displayValue: 'Germany',
   },
   {
     name: 'Superteam UK',
@@ -21,6 +23,7 @@ export const Superteams = [
     color: '#BFA8FE',
     icons: '/assets/superteams/uk.png',
     region: Regions.UK,
+    displayValue: 'UK',
   },
   {
     name: 'Superteam Turkey',
@@ -28,6 +31,7 @@ export const Superteams = [
     color: '#FEEBA8',
     icons: '/assets/superteams/turkey.jpg',
     region: Regions.TURKEY,
+    displayValue: 'Turkey',
   },
   {
     name: 'Superteam Vietnam',
@@ -35,6 +39,7 @@ export const Superteams = [
     color: '#A8FEA8',
     icons: '/assets/superteams/vietnam.png',
     region: Regions.VIETNAM,
+    displayValue: 'Vietnam',
   },
   {
     name: 'Superteam UAE',
@@ -42,6 +47,7 @@ export const Superteams = [
     color: '#A8FEA8',
     icons: '/assets/superteams/uae.png',
     region: Regions.UAE,
+    displayValue: 'UAE',
   },
   {
     name: 'Superteam Mexico',
@@ -49,6 +55,7 @@ export const Superteams = [
     color: '#FEA8EB',
     icons: '/assets/superteams/mexico.jpg',
     region: Regions.MEXICO,
+    displayValue: 'Mexico',
   },
   {
     name: 'Superteam Nigeria',
@@ -56,6 +63,7 @@ export const Superteams = [
     color: '#F5A8ED',
     icons: '/assets/superteams/nigeria.png',
     region: Regions.NIGERIA,
+    displayValue: 'Nigeria',
   },
   {
     name: 'Superteam Brazil',
@@ -63,5 +71,6 @@ export const Superteams = [
     color: '#FEEBA8',
     icons: '/assets/superteams/brazil.png',
     region: Regions.BRAZIL,
+    displayValue: 'Brazil',
   },
 ];

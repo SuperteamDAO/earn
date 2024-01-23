@@ -11,7 +11,7 @@ import { useRouter } from 'next/router';
 import { SessionProvider, useSession } from 'next-auth/react';
 import posthog from 'posthog-js';
 import { PostHogProvider } from 'posthog-js/react';
-import React, { Suspense, useEffect, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 
 import { SolanaWalletProvider } from '@/context/SolanaWallet';
 import { userStore } from '@/store/user';
@@ -116,13 +116,12 @@ function MyApp({ Component, pageProps }: any) {
   return (
     <>
       <Component {...pageProps} key={router.asPath} />
-      <Suspense>
-        <AuthFeatureModal
-          showCTA={showCTA}
-          isOpen={isModalOpen}
-          onClose={handleClose}
-        />
-      </Suspense>
+
+      <AuthFeatureModal
+        showCTA={showCTA}
+        isOpen={isModalOpen}
+        onClose={handleClose}
+      />
     </>
   );
 }

@@ -65,9 +65,7 @@ export const ListingHeader = ({
                 {title}
               </Heading>
               <HStack>
-                <Text color={'#94A3B8'}>
-                  by @{sponsor?.slug} at {sponsor?.name}
-                </Text>
+                <Text color={'#94A3B8'}>by {sponsor?.name}</Text>
                 {endTime ? (
                   Number(moment(endTime).format('x')) > Date.now() ? (
                     <Text

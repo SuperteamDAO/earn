@@ -209,8 +209,7 @@ export const CreatebountyBasic = ({
                 <option value={Regions.GLOBAL}>Global</option>
                 {Superteams.map((st) => (
                   <option value={st.region} key={st.name}>
-                    {st.region.charAt(0).toUpperCase() +
-                      st.region.slice(1).toLowerCase()}
+                    {st.displayValue}
                   </option>
                 ))}
               </Select>
