@@ -217,17 +217,6 @@ model Sponsors {
   @@index([id, slug])
 }
 
-model Total {
-  id         String   @id @default(uuid())
-  total      Int?
-  totalInUSD Int?
-  count      Int?
-  createdAt  DateTime @default(now())
-  updatedAt  DateTime @updatedAt
-
-  @@index([id])
-}
-
 model Account {
   id                String  @id @default(uuid())
   userId            String
