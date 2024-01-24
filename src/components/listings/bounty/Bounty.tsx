@@ -88,6 +88,10 @@ export function CreateListing({
       : [],
   );
 
+  const [isPrivate, setIsPrivate] = useState<boolean>(
+    editable && bounty?.isPrivate ? bounty?.isPrivate : false,
+  );
+
   // - Bounty
   const [bountybasic, setBountyBasic] = useState<BountyBasicType | undefined>({
     title: editable
@@ -140,6 +144,7 @@ export function CreateListing({
         requirements: bountyRequirements,
         ...bountyPayment,
         isPublished: true,
+        isPrivate: isPrivate,
         publishedAt: new Date().toISOString(),
       };
       let api = '/api/bounties/create';
@@ -188,6 +193,7 @@ export function CreateListing({
       pocSocials: bountybasic?.pocSocials,
       region: regions,
       referredBy: referredBy,
+      isPrivate: isPrivate,
       requirements: bountyRequirements,
       ...bountyPayment,
     };
@@ -339,6 +345,8 @@ export function CreateListing({
               editable={editable}
               isNewOrDraft={isNewOrDraft}
               isDuplicating={isDuplicating}
+              isPrivate={isPrivate}
+              setIsPrivate={setIsPrivate}
             />
           )}
           <Toaster />
