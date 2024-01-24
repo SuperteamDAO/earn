@@ -7,11 +7,7 @@ export default async function handler(
   res: NextApiResponse,
 ) {
   try {
-    // const userCount = await prisma.user.count({
-    //   where: {
-    //     isTalentFilled: true,
-    //   },
-    // });
+    const userCount = await prisma.user.count();
 
     const bountiesCount = await prisma.bounties.count({
       where: {
@@ -25,22 +21,17 @@ export default async function handler(
       },
     });
 
+    const roundedUserCount = Math.ceil(userCount / 10) * 10;
+
     const totalRewardAmount =
       totalRewardAmountResult._sum.totalEarnedInUSD || 0;
 
     const roundedTotalRewardAmount = Math.ceil(totalRewardAmount / 10) * 10;
 
-    await prisma.total.updateMany({
-      data: {
-        count: bountiesCount,
-        totalInUSD: roundedTotalRewardAmount,
-      },
-    });
-
     return res.status(200).json({
       totalInUSD: roundedTotalRewardAmount,
       count: bountiesCount,
-      totalUsers: 4097,
+      totalUsers: roundedUserCount,
     });
   } catch (error) {
     console.error(error);
