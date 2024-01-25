@@ -71,7 +71,7 @@ export function BountyWinners({ bounty }: Props) {
               <NextLink
                 key={submission.id}
                 href={
-                  bounty?.type === 'open'
+                  bounty?.type !== 'permissioned'
                     ? `/listings/bounties/${bounty?.slug}/submission/${submission?.id}/`
                     : `/t/${submission?.user?.username}`
                 }

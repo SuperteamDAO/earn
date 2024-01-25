@@ -160,9 +160,7 @@ export const CreatebountyPayment = ({
         if (isEdit || mode === 'DRAFT') createDraft();
         else confirmOnOpen();
       }
-    }
-
-    if (type === 'open') {
+    } else {
       const totalPrizes = Object.values(bountyPayment.rewards)
         .map((reward) => reward as number)
         .reduce((a, b) => a + b, 0);
@@ -180,11 +178,9 @@ export const CreatebountyPayment = ({
   const isListingIncomplete = (() => {
     if (type === 'permissioned') {
       return bountyPayment?.rewardAmount === null;
-    }
-    if (type === 'open') {
+    } else {
       return Object.keys(bountyPayment?.rewards || {}).length === 0;
     }
-    return true;
   })();
 
   return (
@@ -318,7 +314,8 @@ export const CreatebountyPayment = ({
               fontWeight={600}
               htmlFor={'slug'}
             >
-              Total {type === 'open' ? 'Reward Amount' : 'Compensation'} (in{' '}
+              Total {type !== 'permissioned' ? 'Reward Amount' : 'Compensation'}{' '}
+              (in{' '}
               {
                 tokenList.find(
                   (token) => token.tokenSymbol === bountyPayment.token,
@@ -342,7 +339,7 @@ export const CreatebountyPayment = ({
             />
           </NumberInput>
         </FormControl>
-        {type === 'open' && (
+        {type !== 'permissioned' && (
           <VStack gap={4} w={'full'} mt={5} mb={8}>
             {prizes.map((el, index) => (
               <FormControl key={el.value}>

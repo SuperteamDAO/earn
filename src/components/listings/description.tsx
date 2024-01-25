@@ -635,7 +635,7 @@ export const Description = ({
               if (referenceError) {
                 return;
               }
-              if (type === 'open') {
+              if (type !== 'permissioned') {
                 setSteps(5);
                 return;
               }

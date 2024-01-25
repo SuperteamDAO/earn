@@ -42,7 +42,7 @@ export default async function handler(
 
     if (user?.email && user?.firstName && listing?.title) {
       const subject =
-        listing.type === 'open'
+        listing.type !== 'permissioned'
           ? 'Submission Received!'
           : 'Application Received';
       await resendMail.emails.send({
@@ -70,7 +70,7 @@ export default async function handler(
         from: `Kash from Superteam <${process.env.RESEND_EMAIL}>`,
         to: [pocUser?.email],
         subject:
-          listing.type === 'open'
+          listing.type !== 'open'
             ? 'New Bounty Submission Received'
             : 'Project Application Received',
         react: SubmissionSponsorTemplate({

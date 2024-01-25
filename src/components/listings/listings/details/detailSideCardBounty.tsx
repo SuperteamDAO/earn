@@ -261,13 +261,13 @@ export function DetailSideCardBounty({
                 </Text>
               </Text>
             </Flex>
-            {type === 'open' && (
+            {type !== 'permissioned' && (
               <Text color={'brand.slate.300'} fontSize={'lg'} fontWeight={400}>
                 Total Prizes
               </Text>
             )}
           </HStack>
-          {type === 'open' && (
+          {type !== 'permissioned' && (
             <VStack w={'full'} borderBottom={'1px solid #E2E8EF'}>
               <TableContainer w={'full'}>
                 <Table mt={-8} variant={'unstyled'}>
@@ -339,13 +339,13 @@ export function DetailSideCardBounty({
                 <Text color={'#000000'} fontSize="1.3rem" fontWeight={500}>
                   {isSubmissionNumberLoading
                     ? '...'
-                    : type === 'open'
+                    : type !== 'permissioned'
                       ? submissionNumber.toLocaleString()
                       : submissionRange}
                 </Text>
               </Flex>
               <Text color={'#94A3B8'}>
-                {type === 'open'
+                {type !== 'permissioned'
                   ? submissionNumber === 1
                     ? 'Submission'
                     : 'Submissions'

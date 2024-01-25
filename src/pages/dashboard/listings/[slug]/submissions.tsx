@@ -828,7 +828,7 @@ function BountySubmissions({ slug }: Props) {
                           </Flex>
                         </Flex>
                         <Box w="full" px={4} py={5}>
-                          {bounty?.type === 'open' && (
+                          {bounty?.type !== 'permissioned' && (
                             <>
                               <Box mb={4}>
                                 <Text
