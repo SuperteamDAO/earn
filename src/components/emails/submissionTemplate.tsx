@@ -5,7 +5,7 @@ import { styles } from './styles';
 interface SubmissionProps {
   name: string;
   bountyName: string;
-  type: 'open' | 'permissioned';
+  type: 'open' | 'permissioned' | 'hackathon';
 }
 
 export const SubmissionTemplate = ({

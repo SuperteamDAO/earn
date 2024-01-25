@@ -99,9 +99,9 @@ export const SubmissionModal = ({
           ? eligibilityAnswers
           : null,
       });
-      // await axios.post(`/api/email/manual/submission`, {
-      //   listingId: id,
-      // });
+      await axios.post(`/api/email/manual/submission`, {
+        listingId: id,
+      });
 
       reset();
       setIsSubmitted(true);
