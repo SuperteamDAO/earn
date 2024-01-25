@@ -1,10 +1,8 @@
 import type { NextApiRequest, NextApiResponse } from 'next';
 import { getToken } from 'next-auth/jwt';
 
-import { CommentSubmissionTemplate } from '@/components/emails/commentSubmissionTemplate';
 import { prisma } from '@/prisma';
 import { getUnsubEmails } from '@/utils/airtable';
-import resendMail from '@/utils/resend';
 
 export default async function handler(
   req: NextApiRequest,
@@ -34,27 +32,27 @@ export default async function handler(
         listing: true,
       },
     });
-    const user = await prisma.user.findUnique({
-      where: {
-        id: userId as string,
-      },
-    });
+    // const user = await prisma.user.findUnique({
+    //   where: {
+    //     id: userId as string,
+    //   },
+    // });
 
     if (
       submission &&
       !unsubscribedEmails.includes(submission.user.email as string)
     ) {
-      await resendMail.emails.send({
-        from: `Kash from Superteam <${process.env.RESEND_EMAIL}>`,
-        to: [submission?.user.email as string],
-        subject: 'Comment Received on Your Superteam Earn Submission',
-        react: CommentSubmissionTemplate({
-          name: submission?.user.firstName as string,
-          bountyName: submission?.listing.title as string,
-          personName: user?.firstName as string,
-          link: `https://earn.superteam.fun/listings/bounties/${submission?.listing.slug}/submission/${submission?.id}/?utm_source=superteamearn&utm_medium=email&utm_campaign=notifications`,
-        }),
-      });
+      // await resendMail.emails.send({
+      //   from: `Kash from Superteam <${process.env.RESEND_EMAIL}>`,
+      //   to: [submission?.user.email as string],
+      //   subject: 'Comment Received on Your Superteam Earn Submission',
+      //   react: CommentSubmissionTemplate({
+      //     name: submission?.user.firstName as string,
+      //     bountyName: submission?.listing.title as string,
+      //     personName: user?.firstName as string,
+      //     link: `https://earn.superteam.fun/listings/bounties/${submission?.listing.slug}/submission/${submission?.id}/?utm_source=superteamearn&utm_medium=email&utm_campaign=notifications`,
+      //   }),
+      // });
     }
 
     return res.status(200).json({ message: 'Ok' });

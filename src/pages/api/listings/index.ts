@@ -56,6 +56,7 @@ export default async function user(req: NextApiRequest, res: NextApiResponse) {
         where: {
           isPublished: true,
           isActive: true,
+          isPrivate: false,
           hackathonprize: false,
           isArchived: false,
           status: 'OPEN',
@@ -85,6 +86,7 @@ export default async function user(req: NextApiRequest, res: NextApiResponse) {
         where: {
           isPublished: true,
           isActive: true,
+          isPrivate: false,
           hackathonprize: false,
           isArchived: false,
           status: 'OPEN',
@@ -123,6 +125,7 @@ export default async function user(req: NextApiRequest, res: NextApiResponse) {
         where: {
           isPublished: true,
           isActive: true,
+          isPrivate: false,
           hackathonprize: true,
           isArchived: false,
           status: 'OPEN',

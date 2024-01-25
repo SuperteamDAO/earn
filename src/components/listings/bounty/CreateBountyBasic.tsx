@@ -7,6 +7,7 @@ import {
   Image,
   Input,
   Select,
+  Switch,
   Text,
   Tooltip,
   VStack,
@@ -43,6 +44,8 @@ interface Props {
   isDuplicating?: boolean;
   referredBy?: SuperteamName;
   setReferredBy?: Dispatch<SetStateAction<SuperteamName | undefined>>;
+  isPrivate: boolean;
+  setIsPrivate: Dispatch<SetStateAction<boolean>>;
 }
 interface ErrorsBasic {
   title: boolean;
@@ -69,6 +72,8 @@ export const CreatebountyBasic = ({
   isDuplicating,
   referredBy,
   setReferredBy,
+  isPrivate,
+  setIsPrivate,
 }: Props) => {
   const { userInfo } = userStore();
 
@@ -447,6 +452,43 @@ export const CreatebountyBasic = ({
               </option>
             ))}
           </Select>
+        </FormControl>
+        <FormControl alignItems="center" gap={3} display="flex">
+          <Flex>
+            <FormLabel
+              color={'brand.slate.500'}
+              fontSize={'15px'}
+              fontWeight={600}
+            >
+              Private Listing
+            </FormLabel>
+            <Tooltip
+              w="max"
+              p="0.7rem"
+              color="white"
+              fontSize="0.9rem"
+              fontWeight={600}
+              bg="#6562FF"
+              borderRadius="0.5rem"
+              hasArrow
+              label={
+                'Private listings are only accessible through direct links and do not appear on the Superteam Earn homepage or other public pages on the website.'
+              }
+              placement="right-end"
+            >
+              <Image
+                mt={-2}
+                alt={'Info Icon'}
+                src={'/assets/icons/info-icon.svg'}
+              />
+            </Tooltip>
+          </Flex>
+          <Switch
+            mb={2}
+            id="email-alerts"
+            isChecked={isPrivate}
+            onChange={() => setIsPrivate(!isPrivate)}
+          />
         </FormControl>
         <VStack gap={4} w={'full'} mt={6}>
           <Button

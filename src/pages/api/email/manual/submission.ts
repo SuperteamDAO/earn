@@ -1,11 +1,8 @@
 import type { NextApiRequest, NextApiResponse } from 'next';
 import { getToken } from 'next-auth/jwt';
 
-import { SubmissionSponsorTemplate } from '@/components/emails/submissionSponsorTemplate';
-import { SubmissionTemplate } from '@/components/emails/submissionTemplate';
 import { prisma } from '@/prisma';
 import { getUnsubEmails } from '@/utils/airtable';
-import resendMail from '@/utils/resend';
 
 export default async function handler(
   req: NextApiRequest,
@@ -41,20 +38,20 @@ export default async function handler(
     });
 
     if (user?.email && user?.firstName && listing?.title) {
-      const subject =
-        listing.type === 'open'
-          ? 'Submission Received!'
-          : 'Application Received';
-      await resendMail.emails.send({
-        from: `Kash from Superteam <${process.env.RESEND_EMAIL}>`,
-        to: [user?.email],
-        subject: subject,
-        react: SubmissionTemplate({
-          name: user?.firstName,
-          bountyName: listing?.title,
-          type: listing?.type,
-        }),
-      });
+      // const subject =
+      //   listing.type === 'open'
+      //     ? 'Submission Received!'
+      //     : 'Application Received';
+      // await resendMail.emails.send({
+      //   from: `Kash from Superteam <${process.env.RESEND_EMAIL}>`,
+      //   to: [user?.email],
+      //   subject: subject,
+      //   react: SubmissionTemplate({
+      //     name: user?.firstName,
+      //     bountyName: listing?.title,
+      //     type: listing?.type,
+      //   }),
+      // });
     }
 
     const pocUser = listing?.poc;
@@ -66,19 +63,19 @@ export default async function handler(
       pocUser?.firstName &&
       !unsubscribedEmails.includes(pocUser.email)
     ) {
-      await resendMail.emails.send({
-        from: `Kash from Superteam <${process.env.RESEND_EMAIL}>`,
-        to: [pocUser?.email],
-        subject:
-          listing.type === 'open'
-            ? 'New Bounty Submission Received'
-            : 'Project Application Received',
-        react: SubmissionSponsorTemplate({
-          name: pocUser?.firstName,
-          bountyName: listing?.title,
-          link: `https://earn.superteam.fun/dashboard/listings/${listing?.slug}/submissions/?utm_source=superteamearn&utm_medium=email&utm_campaign=notifications`,
-        }),
-      });
+      // await resendMail.emails.send({
+      //   from: `Kash from Superteam <${process.env.RESEND_EMAIL}>`,
+      //   to: [pocUser?.email],
+      //   subject:
+      //     listing.type === 'open'
+      //       ? 'New Bounty Submission Received'
+      //       : 'Project Application Received',
+      //   react: SubmissionSponsorTemplate({
+      //     name: pocUser?.firstName,
+      //     bountyName: listing?.title,
+      //     link: `https://earn.superteam.fun/dashboard/listings/${listing?.slug}/submissions/?utm_source=superteamearn&utm_medium=email&utm_campaign=notifications`,
+      //   }),
+      // });
     }
 
     return res.status(200).json({ message: 'Ok' });

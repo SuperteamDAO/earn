@@ -82,6 +82,7 @@ model Bounties {
   poc                  User               @relation("poc", fields: [pocId], references: [id])
   Submission           Submission[]
   SubscribeBounty      SubscribeBounty[]
+  isPrivate            Boolean            @default(false)
 
   @@index([id, slug])
   @@index([sponsorId])
@@ -411,6 +412,7 @@ enum status {
 enum BountyType {
   permissioned
   open
+  hackathon
 }
 
 enum ListingType {
