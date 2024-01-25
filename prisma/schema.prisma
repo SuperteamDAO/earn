@@ -412,6 +412,7 @@ enum status {
 enum BountyType {
   permissioned
   open
+  hackathon
 }
 
 enum ListingType {
