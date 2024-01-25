@@ -113,6 +113,8 @@ export function ListingHeader({
     fetchUser();
   }, [update]);
 
+  const isProject = type === 'permissioned';
+
   return (
     <VStack px={{ base: '2', md: '6' }} bg={'white'}>
       {isOpen && <EarningModal isOpen={isOpen} onClose={onClose} />}
@@ -221,7 +223,7 @@ export function ListingHeader({
                         bg="white"
                         borderRadius={'lg'}
                         label={
-                          type === 'permissioned'
+                          isProject
                             ? 'A Project is a short-term gig where sponsors solicit applications from multiple people, and select the best one to work on the Project.'
                             : 'Bounties are open for anyone to participate in and submit their work (as long as they meet the eligibility requirements mentioned below). The best submissions win!'
                         }
@@ -233,12 +235,12 @@ export function ListingHeader({
                             mr={1}
                             alt={type}
                             src={
-                              type === 'permissioned'
+                              isProject
                                 ? '/assets/icons/briefcase.svg'
                                 : '/assets/icons/bolt.svg'
                             }
                           />
-                          {type === 'permissioned' ? 'Project' : 'Bounty'}
+                          {isProject ? 'Project' : 'Bounty'}
                         </Flex>
                       </Tooltip>
                     )}
@@ -331,7 +333,7 @@ export function ListingHeader({
               bg="white"
               borderRadius={'lg'}
               label={
-                type === 'permissioned'
+                isProject
                   ? 'Projects are like short-term freelance gigs that you can apply for. If and when selected as the winner, you can begin executing the scope of work mentioned in this listing.'
                   : 'This is an open competition bounty! Anyone can start working and submit their work before the deadline!'
               }
@@ -343,13 +345,13 @@ export function ListingHeader({
                   mr={1}
                   alt={type}
                   src={
-                    type === 'permissioned'
+                    isProject
                       ? '/assets/icons/briefcase.svg'
                       : '/assets/icons/bolt.svg'
                   }
                 />
                 <Text color="gray.400" fontWeight={500}>
-                  {type === 'permissioned' ? 'Project' : 'Bounty'}
+                  {isProject ? 'Project' : 'Bounty'}
                 </Text>
               </Flex>
             </Tooltip>
@@ -446,7 +448,7 @@ export function ListingHeader({
             >
               Details
             </Link>
-            {type !== 'permissioned' && hasDeadlineEnded && (
+            {isProject && hasDeadlineEnded && (
               <Link
                 as={NextLink}
                 alignItems="center"
@@ -472,34 +474,32 @@ export function ListingHeader({
                 Submissions
               </Link>
             )}
-            {type === 'permissioned' &&
-              references &&
-              references?.length > 0 && (
-                <Link
-                  as={NextLink}
-                  alignItems="center"
-                  justifyContent="center"
-                  display="flex"
-                  h={'full'}
-                  color="gray.800"
-                  fontWeight={500}
-                  textDecoration="none"
-                  borderBottom="2px solid"
-                  borderBottomColor={
-                    router.asPath.includes('references')
-                      ? 'brand.purple'
-                      : 'transparent'
-                  }
-                  _hover={{
-                    textDecoration: 'none',
-                    borderBottom: '2px solid',
-                    borderBottomColor: 'brand.purple',
-                  }}
-                  href={`/listings/bounties/${slug}/references`}
-                >
-                  References
-                </Link>
-              )}
+            {isProject && references && references?.length > 0 && (
+              <Link
+                as={NextLink}
+                alignItems="center"
+                justifyContent="center"
+                display="flex"
+                h={'full'}
+                color="gray.800"
+                fontWeight={500}
+                textDecoration="none"
+                borderBottom="2px solid"
+                borderBottomColor={
+                  router.asPath.includes('references')
+                    ? 'brand.purple'
+                    : 'transparent'
+                }
+                _hover={{
+                  textDecoration: 'none',
+                  borderBottom: '2px solid',
+                  borderBottomColor: 'brand.purple',
+                }}
+                href={`/listings/bounties/${slug}/references`}
+              >
+                References
+              </Link>
+            )}
           </HStack>
         </Flex>
       )}

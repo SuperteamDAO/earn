@@ -161,6 +161,8 @@ export function DetailSideCardBounty({
     }
   };
 
+  const isProject = type === 'permissioned';
+
   const countDownRenderer = ({
     days,
     hours,
@@ -261,13 +263,13 @@ export function DetailSideCardBounty({
                 </Text>
               </Text>
             </Flex>
-            {type !== 'permissioned' && (
+            {!isProject && (
               <Text color={'brand.slate.300'} fontSize={'lg'} fontWeight={400}>
                 Total Prizes
               </Text>
             )}
           </HStack>
-          {type !== 'permissioned' && (
+          {!isProject && (
             <VStack w={'full'} borderBottom={'1px solid #E2E8EF'}>
               <TableContainer w={'full'}>
                 <Table mt={-8} variant={'unstyled'}>
@@ -339,13 +341,13 @@ export function DetailSideCardBounty({
                 <Text color={'#000000'} fontSize="1.3rem" fontWeight={500}>
                   {isSubmissionNumberLoading
                     ? '...'
-                    : type !== 'permissioned'
+                    : !isProject
                       ? submissionNumber.toLocaleString()
                       : submissionRange}
                 </Text>
               </Flex>
               <Text color={'#94A3B8'}>
-                {type !== 'permissioned'
+                {!isProject
                   ? submissionNumber === 1
                     ? 'Submission'
                     : 'Submissions'
@@ -389,7 +391,7 @@ export function DetailSideCardBounty({
           </Flex>
 
           <Box w="full" px={5}>
-            {type === 'permissioned' && (
+            {isProject && (
               <Flex align={'start'} direction={'column'} my={4}>
                 <Text color={'#000000'} fontSize="1.3rem" fontWeight={500}>
                   {timeToComplete}
@@ -406,9 +408,7 @@ export function DetailSideCardBounty({
                 size="lg"
                 variant="solid"
               >
-                {type === 'permissioned'
-                  ? 'Applied Successfully'
-                  : 'Submitted Successfully'}
+                {isProject ? 'Applied Successfully' : 'Submitted Successfully'}
               </Button>
             ) : (
               <Button
@@ -426,10 +426,10 @@ export function DetailSideCardBounty({
                 size="lg"
                 variant="solid"
               >
-                {type === 'permissioned' ? 'Apply Now' : 'Submit Now'}
+                {isProject ? 'Apply Now' : 'Submit Now'}
               </Button>
             )}
-            {type === 'permissioned' && (
+            {isProject && (
               <Flex gap="2" w="20rem" mt={4} p="3" bg={'#62F6FF10'}>
                 <WarningIcon color="#1A7F86" />
                 <Text color="#1A7F86" fontSize={'xs'} fontWeight={500}>
@@ -454,10 +454,10 @@ export function DetailSideCardBounty({
               TYPE
             </Text>
             <Text color={'#64768b'} fontSize="1.1rem" fontWeight={500}>
-              {type === 'permissioned' ? 'Project' : 'Bounty'}
+              {isProject ? 'Project' : 'Bounty'}
             </Text>
             <Text color={'#94A3B8'} fontSize="1rem" fontWeight={400}>
-              {type === 'permissioned'
+              {isProject
                 ? "Don't start working just yet! Apply first, and then you'll be notified if you're selected to work on this Project."
                 : 'This is an open competition bounty! Anyone can start working and submit their work before the deadline!'}
             </Text>
@@ -515,7 +515,7 @@ export function DetailSideCardBounty({
             </Text>
           </VStack>
         )}
-        {type !== 'permissioned' && (
+        {!isProject && (
           <VStack
             align={'start'}
             justify={'center'}

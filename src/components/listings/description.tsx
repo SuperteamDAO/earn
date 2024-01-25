@@ -184,6 +184,8 @@ export const Description = ({
     }
   };
 
+  const isProject = type === 'permissioned';
+
   return (
     <>
       {isOpen && (
@@ -562,7 +564,7 @@ export const Description = ({
               />
             </div>
           </Box>
-          {type === 'permissioned' && (
+          {isProject && (
             <>
               <Flex
                 align={'start'}
@@ -635,7 +637,7 @@ export const Description = ({
               if (referenceError) {
                 return;
               }
-              if (type !== 'permissioned') {
+              if (!isProject) {
                 setSteps(5);
                 return;
               }

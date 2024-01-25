@@ -147,8 +147,10 @@ export const CreatebountyPayment = ({
     });
   };
 
+  const isProject = type === 'permissioned';
+
   const handleSubmit = (isEdit?: boolean, mode?: string) => {
-    if (type === 'permissioned') {
+    if (isProject) {
       setBountyPayment((prev: any) => ({
         ...prev,
         rewards: { first: prev.rewardAmount },
@@ -176,7 +178,7 @@ export const CreatebountyPayment = ({
   };
 
   const isListingIncomplete = (() => {
-    if (type === 'permissioned') {
+    if (isProject) {
       return bountyPayment?.rewardAmount === null;
     } else {
       return Object.keys(bountyPayment?.rewards || {}).length === 0;
@@ -314,8 +316,7 @@ export const CreatebountyPayment = ({
               fontWeight={600}
               htmlFor={'slug'}
             >
-              Total {type !== 'permissioned' ? 'Reward Amount' : 'Compensation'}{' '}
-              (in{' '}
+              Total {!isProject ? 'Reward Amount' : 'Compensation'} (in{' '}
               {
                 tokenList.find(
                   (token) => token.tokenSymbol === bountyPayment.token,
@@ -397,7 +398,7 @@ export const CreatebountyPayment = ({
         )}
         {isRewardError && (
           <Text w="full" color="red" textAlign={'center'}>
-            {type === 'permissioned'
+            {isProject
               ? 'Please enter an amount'
               : 'Sorry! Total reward amount should be equal to the sum of all prizes.'}
           </Text>

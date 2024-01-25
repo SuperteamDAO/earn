@@ -112,6 +112,8 @@ export const CreatebountyBasic = ({
     );
   }, [bountyBasic?.timeToComplete, timeToCompleteOptions]);
 
+  const isProject = type === 'permissioned';
+
   return (
     <>
       <VStack align={'start'} gap={3} w={'2xl'} pt={7} pb={12}>
@@ -282,8 +284,8 @@ export const CreatebountyBasic = ({
             </Text>
           )}
         </FormControl>
-        {type === 'permissioned' && (
-          <FormControl w="full" mb={5} isRequired={type === 'permissioned'}>
+        {isProject && (
+          <FormControl w="full" mb={5} isRequired={isProject}>
             <Flex>
               <FormLabel
                 color={'brand.slate.500'}
@@ -372,12 +374,12 @@ export const CreatebountyBasic = ({
             </FormErrorMessage>
           </FormControl>
         )}
-        {type === 'permissioned' && (
+        {isProject && (
           <FormControl
             w="full"
             mb={5}
             isInvalid={errorState.timeToComplete}
-            isRequired={type === 'permissioned'}
+            isRequired={isProject}
           >
             <Flex>
               <FormLabel
@@ -500,21 +502,16 @@ export const CreatebountyBasic = ({
                 subSkills: subSkills.length === 0,
                 title: !bountyBasic?.title,
                 pocSocials: !bountyBasic?.pocSocials,
-                timeToComplete:
-                  type === 'permissioned' ? !isTimeToCompleteValid : false,
+                timeToComplete: isProject ? !isTimeToCompleteValid : false,
               });
-              if (type === 'permissioned' && !isTimeToCompleteValid) {
+              if (isProject && !isTimeToCompleteValid) {
                 return;
               }
 
               if (hasBasicInfo && bountyBasic?.deadline) {
                 setSteps(3);
               }
-              if (
-                type === 'permissioned' &&
-                hasBasicInfo &&
-                bountyBasic?.timeToComplete
-              ) {
+              if (isProject && hasBasicInfo && bountyBasic?.timeToComplete) {
                 if (
                   bountyBasic?.applicationType === 'rolling' &&
                   !bountyBasic?.deadline

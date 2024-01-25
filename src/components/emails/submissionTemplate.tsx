@@ -13,10 +13,11 @@ export const SubmissionTemplate = ({
   bountyName,
   type,
 }: SubmissionProps) => {
+  const isProject = type === 'permissioned';
   return (
     <div style={styles.container}>
       <p style={styles.greetings}>Hey {name},</p>
-      {type === 'permissioned' ? (
+      {isProject ? (
         <>
           <p style={styles.textWithMargin}>
             Nice work! Your application for <strong>{bountyName}</strong> has
