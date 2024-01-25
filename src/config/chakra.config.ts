@@ -43,6 +43,16 @@ const theme = extendTheme({
   config,
   styles,
   components: {
+    Switch: {
+      baseStyle: {
+        track: {
+          bg: 'brand.slate.400',
+          _checked: {
+            bg: 'brand.purple',
+          },
+        },
+      },
+    },
     Button: {
       baseStyle: {
         bg: 'brand.purple',

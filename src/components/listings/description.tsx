@@ -136,7 +136,6 @@ export const Description = ({
         },
       }),
     ],
-    // eslint-disable-next-line @typescript-eslint/no-shadow
     onUpdate: ({ editor }) => {
       const html = editor.getHTML();
       setEditorData(html);

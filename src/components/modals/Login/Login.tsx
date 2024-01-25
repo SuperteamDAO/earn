@@ -1,4 +1,3 @@
-/* eslint-disable @next/next/no-img-element */
 import {
   Box,
   Modal,
@@ -17,13 +16,7 @@ interface Props {
 }
 export const Login = ({ isOpen, onClose, isSponsor = false }: Props) => {
   return (
-    <Modal
-      closeOnEsc={false}
-      closeOnOverlayClick={false}
-      isCentered
-      isOpen={isOpen}
-      onClose={onClose}
-    >
+    <Modal isCentered isOpen={isOpen} onClose={onClose}>
       <ModalOverlay />
       <ModalCloseButton mt={4} color={'brand.slate.400'} />
       <ModalContent w={'22rem'} h={'max'} pt={2}>

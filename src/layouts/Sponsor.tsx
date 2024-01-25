@@ -94,9 +94,8 @@ const SidebarContent = ({ ...rest }: BoxProps) => {
   return (
     <Box
       w={{ base: 0, md: 80 }}
-      h="full"
+      minH="100vh"
       pt={8}
-      pb={80}
       bg="white"
       borderRight={'1px solid'}
       borderRightColor={'blackAlpha.200'}
@@ -165,7 +164,7 @@ export function Sidebar({
         />
       }
     >
-      <Flex justify="start">
+      <Flex justify="start" minH="100vh">
         <SidebarContent display={{ base: 'none', md: 'block' }} />
         {!userInfo?.currentSponsor?.id ? (
           <LoadingSection />

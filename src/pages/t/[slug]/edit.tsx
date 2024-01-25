@@ -15,6 +15,7 @@ import {
 } from '@chakra-ui/react';
 import axios from 'axios';
 import { MediaPicker } from 'degen';
+import type { GetServerSideProps } from 'next';
 import { useRouter } from 'next/router';
 import React, { useEffect, useRef, useState } from 'react';
 import { useForm } from 'react-hook-form';
@@ -114,7 +115,7 @@ const parseSkillsAndSubskills = (skillsObject: any) => {
   return { skills, subSkills };
 };
 
-export default function EditProfilePage() {
+export default function EditProfilePage({ slug }: { slug: string }) {
   const { userInfo, setUserInfo } = userStore();
   const { register, handleSubmit, setValue, watch } = useForm<FormData>();
 
@@ -375,8 +376,6 @@ export default function EditProfilePage() {
     }
   };
 
-  const { slug } = router.query;
-
   useEffect(() => {
     if (userInfo && slug !== userInfo?.username) {
       router.push(`/t/${slug}`);
@@ -410,21 +409,18 @@ export default function EditProfilePage() {
                 >
                   PERSONAL INFO
                 </Text>
-
-                {/* eslint-disable no-nested-ternary */}
-
-                {isPhotoLoading ? (
-                  <></>
-                ) : photoUrl ? (
-                  <>
-                    <FormLabel
-                      mb={'0'}
-                      pb={'0'}
-                      color={'brand.slate.500'}
-                      requiredIndicator={<></>}
-                    >
-                      Profile Picture
-                    </FormLabel>
+                <Box mb={4}>
+                  <FormLabel
+                    mb={'1'}
+                    pb={'0'}
+                    color={'brand.slate.500'}
+                    requiredIndicator={<></>}
+                  >
+                    Profile Picture
+                  </FormLabel>
+                  {isPhotoLoading ? (
+                    <></>
+                  ) : photoUrl ? (
                     <MediaPicker
                       defaultValue={{ url: photoUrl, type: 'image' }}
                       onChange={async (e) => {
@@ -440,17 +436,7 @@ export default function EditProfilePage() {
                       compact
                       label="Choose or drag and drop media"
                     />
-                  </>
-                ) : (
-                  <>
-                    <FormLabel
-                      mb={'0'}
-                      pb={'0'}
-                      color={'brand.slate.500'}
-                      requiredIndicator={<></>}
-                    >
-                      Profile Picture
-                    </FormLabel>
+                  ) : (
                     <MediaPicker
                       onChange={async (e) => {
                         setUploading(true);
@@ -465,8 +451,8 @@ export default function EditProfilePage() {
                       compact
                       label="Choose or drag and drop media"
                     />
-                  </>
-                )}
+                  )}
+                </Box>
                 <InputField
                   label="Username"
                   placeholder="Username"
@@ -781,3 +767,10 @@ export default function EditProfilePage() {
     </>
   );
 }
+
+export const getServerSideProps: GetServerSideProps = async (context) => {
+  const { slug } = context.query;
+  return {
+    props: { slug },
+  };
+};

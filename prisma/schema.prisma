@@ -76,11 +76,13 @@ model Bounties {
   references           Json?
   winners              Json?
   referredBy           String?
+  publishedAt          DateTime?
   template             BountiesTemplates? @relation(fields: [templateId], references: [id])
   sponsor              Sponsors           @relation(fields: [sponsorId], references: [id])
   poc                  User               @relation("poc", fields: [pocId], references: [id])
   Submission           Submission[]
   SubscribeBounty      SubscribeBounty[]
+  isPrivate            Boolean            @default(false)
 
   @@index([id, slug])
   @@index([sponsorId])
@@ -214,17 +216,6 @@ model Sponsors {
   User               User[]
 
   @@index([id, slug])
-}
-
-model Total {
-  id         String   @id @default(uuid())
-  total      Int?
-  totalInUSD Int?
-  count      Int?
-  createdAt  DateTime @default(now())
-  updatedAt  DateTime @updatedAt
-
-  @@index([id])
 }
 
 model Account {

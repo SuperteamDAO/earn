@@ -51,6 +51,8 @@ interface Props {
   isDuplicating?: boolean;
   referredBy?: SuperteamName;
   setReferredBy?: Dispatch<SetStateAction<SuperteamName | undefined>>;
+  isPrivate: boolean;
+  setIsPrivate: Dispatch<SetStateAction<boolean>>;
 }
 export const CreateBounty = ({
   steps,
@@ -84,6 +86,8 @@ export const CreateBounty = ({
   isDuplicating,
   referredBy,
   setReferredBy,
+  isPrivate,
+  setIsPrivate,
 }: Props) => {
   // handles the info from basic form
 
@@ -108,6 +112,8 @@ export const CreateBounty = ({
           isDuplicating={isDuplicating}
           referredBy={referredBy}
           setReferredBy={setReferredBy}
+          isPrivate={isPrivate}
+          setIsPrivate={setIsPrivate}
         />
       )}
       {steps === 3 && (

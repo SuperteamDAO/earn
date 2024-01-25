@@ -35,7 +35,6 @@ const generateUniqueSlug = async (title: string): Promise<string> => {
   while (slugExists) {
     const newTitle = `${title}-${i}`;
     slug = slugify(newTitle, { lower: true, strict: true });
-    // eslint-disable-next-line no-await-in-loop
     slugExists = await checkSlug(slug);
     i += 1;
   }

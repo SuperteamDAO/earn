@@ -66,9 +66,7 @@ export default async function bounty(
       const positions = ['first', 'second', 'third', 'fourth', 'fifth'];
       const positionsToReset = positions.slice(newRewardsCount);
 
-      // eslint-disable-next-line no-restricted-syntax
       for (const position of positionsToReset) {
-        // eslint-disable-next-line no-await-in-loop
         await prisma.submission.updateMany({
           where: {
             listingId: id,

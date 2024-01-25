@@ -11,7 +11,7 @@ import { useRouter } from 'next/router';
 import { SessionProvider, useSession } from 'next-auth/react';
 import posthog from 'posthog-js';
 import { PostHogProvider } from 'posthog-js/react';
-import { useEffect } from 'react';
+import React, { useEffect } from 'react';
 
 import { SolanaWalletProvider } from '@/context/SolanaWallet';
 import { userStore } from '@/store/user';
@@ -55,10 +55,9 @@ const extendThemeWithNextFonts = {
   },
 };
 
-if (typeof window !== 'undefined' && process.env.NODE_ENV !== 'development') {
+if (typeof window !== 'undefined') {
   posthog.init(process.env.NEXT_PUBLIC_POSTHOG_KEY!, {
     api_host: process.env.NEXT_PUBLIC_POSTHOG_HOST || 'https://app.posthog.com',
-    // eslint-disable-next-line @typescript-eslint/no-shadow
     loaded: (posthog) => {
       if (process.env.NODE_ENV === 'development') posthog.debug();
     },
@@ -102,13 +101,13 @@ function App({ Component, pageProps: { session, ...pageProps } }: AppProps) {
         `}
       </style>
       <SolanaWalletProvider>
-        <ChakraProvider theme={extendThemeWithNextFonts}>
+        <PostHogProvider client={posthog}>
           <SessionProvider session={session}>
-            <PostHogProvider client={posthog}>
+            <ChakraProvider theme={extendThemeWithNextFonts}>
               <MyApp Component={Component} pageProps={pageProps} />
-            </PostHogProvider>
+            </ChakraProvider>
           </SessionProvider>
-        </ChakraProvider>
+        </PostHogProvider>
       </SolanaWalletProvider>
     </>
   );

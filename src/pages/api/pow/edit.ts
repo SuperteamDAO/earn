@@ -56,11 +56,9 @@ export default async function handler(
   const updateData: { where: { id: string }; data: { [key: string]: any } }[] =
     [];
 
-  // eslint-disable-next-line no-restricted-syntax
   for (const pow of pows) {
     if (!pow) {
       errors.push('One of the data entries is undefined or null.');
-      // eslint-disable-next-line no-continue
       continue;
     }
 

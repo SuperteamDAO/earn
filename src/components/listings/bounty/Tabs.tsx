@@ -1,4 +1,3 @@
-/* eslint-disable no-nested-ternary */
 import { Flex } from '@chakra-ui/react';
 import dayjs from 'dayjs';
 

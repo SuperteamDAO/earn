@@ -22,14 +22,12 @@ export const userStore = create(
       setIsLoggedIn: (isLoggedIn: boolean): void =>
         set(
           produce((state: UserState) => {
-            // eslint-disable-next-line no-param-reassign
             state.isLoggedIn = isLoggedIn;
           }),
         ),
       setUserInfo: (user: User): void =>
         set(
           produce((state: UserState) => {
-            // eslint-disable-next-line no-param-reassign
             state.userInfo = user;
           }),
         ),

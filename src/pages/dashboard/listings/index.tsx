@@ -448,10 +448,7 @@ function Bounties() {
                           fontWeight={500}
                           textAlign={'center'}
                         >
-                          {
-                            // eslint-disable-next-line no-underscore-dangle
-                            currentBounty?._count?.Submission || 0
-                          }
+                          {currentBounty?._count?.Submission || 0}
                         </Text>
                       </Td>
                       <Td align="center" py={2}>

@@ -1,4 +1,3 @@
-/* eslint-disable @next/next/no-img-element */
 import { TriangleUpIcon } from '@chakra-ui/icons';
 import {
   Box,
