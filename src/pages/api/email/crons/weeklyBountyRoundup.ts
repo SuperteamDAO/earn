@@ -3,10 +3,12 @@ import dayjs from 'dayjs';
 import utc from 'dayjs/plugin/utc';
 import type { NextApiRequest, NextApiResponse } from 'next';
 
+import { WeeklyRoundupTemplate } from '@/components/emails/weeklyRoundupTemplate';
 import type { MainSkills, Skills } from '@/interface/skills';
 import { prisma } from '@/prisma';
 import { getUnsubEmails } from '@/utils/airtable';
 import { rateLimitedPromiseAll } from '@/utils/rateLimitedPromises';
+import resendMail from '@/utils/resend';
 
 dayjs.extend(utc);
 
@@ -84,15 +86,15 @@ async function handler(_req: NextApiRequest, res: NextApiResponse) {
         if (unsubscribedEmails.includes(user?.email!)) {
           return;
         }
-        // await resendMail.emails.send({
-        //   from: `Kash from Superteam <${process.env.RESEND_EMAIL}>`,
-        //   to: [user?.email!],
-        //   subject: 'Your Weekly Bounty Roundup Is Here!',
-        //   react: WeeklyRoundupTemplate({
-        //     name: user?.name!,
-        //     bounties: user?.bounties,
-        //   }),
-        // });
+        await resendMail.emails.send({
+          from: `Kash from Superteam <${process.env.RESEND_EMAIL}>`,
+          to: [user?.email!],
+          subject: 'Your Weekly Bounty Roundup Is Here!',
+          react: WeeklyRoundupTemplate({
+            name: user?.name!,
+            bounties: user?.bounties,
+          }),
+        });
       } catch (error) {
         console.error(`Failed to send email to ${user?.email}:`, error);
       }

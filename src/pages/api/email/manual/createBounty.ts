@@ -1,9 +1,11 @@
 import type { NextApiRequest, NextApiResponse } from 'next';
 
+import { NewBountyTemplate } from '@/components/emails/newBountyTemplate';
 import type { Skills } from '@/interface/skills';
 import { prisma } from '@/prisma';
 import { getUnsubEmails } from '@/utils/airtable';
 import { rateLimitedPromiseAll } from '@/utils/rateLimitedPromises';
+import resendMail from '@/utils/resend';
 
 export default async function handler(
   req: NextApiRequest,
@@ -61,15 +63,15 @@ export default async function handler(
         return;
       }
 
-      // await resendMail.emails.send({
-      //   from: `Kash from Superteam <${process.env.RESEND_EMAIL}>`,
-      //   to: [e.email],
-      //   subject: 'Here’s a New Listing You’d Be Interested In..',
-      //   react: NewBountyTemplate({
-      //     name: e.name,
-      //     link: `https://earn.superteam.fun/listings/bounties/${listing.slug}/?utm_source=superteamearn&utm_medium=email&utm_campaign=notifications`,
-      //   }),
-      // });
+      await resendMail.emails.send({
+        from: `Kash from Superteam <${process.env.RESEND_EMAIL}>`,
+        to: [e.email],
+        subject: 'Here’s a New Listing You’d Be Interested In..',
+        react: NewBountyTemplate({
+          name: e.name,
+          link: `https://earn.superteam.fun/listings/bounties/${listing.slug}/?utm_source=superteamearn&utm_medium=email&utm_campaign=notifications`,
+        }),
+      });
 
       emailsSent.push(e.email);
     });

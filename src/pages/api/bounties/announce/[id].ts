@@ -2,12 +2,15 @@ import axios from 'axios';
 import type { NextApiRequest, NextApiResponse } from 'next';
 import { getToken } from 'next-auth/jwt';
 
+import { WinnersAnnouncedTemplate } from '@/components/emails/winnersAnnouncedTemplate';
 import { tokenList } from '@/constants';
 import type { Rewards } from '@/interface/bounty';
 import { prisma } from '@/prisma';
 import { getUnsubEmails } from '@/utils/airtable';
+import { getBountyTypeLabel } from '@/utils/bounty';
 import { dayjs } from '@/utils/dayjs';
 import { rateLimitedPromiseAll } from '@/utils/rateLimitedPromises';
+import resendMail from '@/utils/resend';
 
 async function fetchTokenUSDValue(symbol: string) {
   try {
@@ -222,25 +225,25 @@ export default async function announce(
       ...allSubscribedUsersWithType,
     ];
 
-    // const listingType = getBountyTypeLabel(bounty?.type);
+    const listingType = getBountyTypeLabel(bounty?.type);
 
     await rateLimitedPromiseAll(allUsers, 9, async (e) => {
       if (unsubscribedEmails.includes(e.email)) return;
 
-      // const template = WinnersAnnouncedTemplate({
-      //   name: e.name,
-      //   bountyName: bounty?.title || '',
-      //   link: `https://earn.superteam.fun/listings/bounties/${
-      //     bounty?.slug || ''
-      //   }/?utm_source=superteamearn&utm_medium=email&utm_campaign=winnerannouncement`,
-      // });
+      const template = WinnersAnnouncedTemplate({
+        name: e.name,
+        bountyName: bounty?.title || '',
+        link: `https://earn.superteam.fun/listings/bounties/${
+          bounty?.slug || ''
+        }/?utm_source=superteamearn&utm_medium=email&utm_campaign=winnerannouncement`,
+      });
 
-      // await resendMail.emails.send({
-      //   from: `Kash from Superteam <${process.env.RESEND_EMAIL}>`,
-      //   to: [user.email],
-      //   subject: `${listingType} Winners Announced!`,
-      //   react: template,
-      // });
+      await resendMail.emails.send({
+        from: `Kash from Superteam <${process.env.RESEND_EMAIL}>`,
+        to: [e.email],
+        subject: `${listingType} Winners Announced!`,
+        react: template,
+      });
     });
 
     return res.status(200).json(result);

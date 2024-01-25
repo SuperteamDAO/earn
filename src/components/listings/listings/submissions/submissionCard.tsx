@@ -45,16 +45,16 @@ export const SubmissionCard = ({
       if (likes?.find((e) => e.id === (userInfo?.id as string))) {
         toast.success('Liked removed from submission');
       } else {
-        // toast.promise(
-        //   axios.post(`/api/email/manual/submissionLike`, {
-        //     id,
-        //   }),
-        //   {
-        //     loading: 'Liking Submission...',
-        //     success: 'Submission Liked!',
-        //     error: 'Failed to like the submission',
-        //   },
-        // );
+        toast.promise(
+          axios.post(`/api/email/manual/submissionLike`, {
+            id,
+          }),
+          {
+            loading: 'Liking Submission...',
+            success: 'Submission Liked!',
+            error: 'Failed to like the submission',
+          },
+        );
       }
       setIsLoading(false);
       setUpdate((prev: boolean) => !prev);

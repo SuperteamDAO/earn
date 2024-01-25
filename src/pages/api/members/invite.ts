@@ -1,7 +1,10 @@
 import type { NextApiRequest, NextApiResponse } from 'next';
 import { getToken } from 'next-auth/jwt';
 
+import { InviteMemberTemplate } from '@/components/emails/inviteMemberTemplate';
 import { prisma } from '@/prisma';
+import resendMail from '@/utils/resend';
+import { getURL } from '@/utils/validUrl';
 
 export default async function sendInvites(
   req: NextApiRequest,
@@ -19,7 +22,7 @@ export default async function sendInvites(
     return res.status(400).json({ error: 'Invalid token' });
   }
 
-  // const { email, memberType } = req.body;
+  const { email, memberType } = req.body;
   try {
     const user = await prisma.user.findUnique({
       where: {
@@ -44,25 +47,25 @@ export default async function sendInvites(
       return res.status(400).json({ error: 'Unauthorized' });
     }
 
-    // const result = await prisma.userInvites.create({
-    //   data: {
-    //     email,
-    //     senderId: userId as string,
-    //     sponsorId: user?.currentSponsor.id,
-    //     memberType,
-    //   },
-    // });
+    const result = await prisma.userInvites.create({
+      data: {
+        email,
+        senderId: userId as string,
+        sponsorId: user?.currentSponsor.id,
+        memberType,
+      },
+    });
 
-    // await resendMail.emails.send({
-    //   from: `Kash from Superteam <${process.env.RESEND_EMAIL}>`,
-    //   to: [email],
-    //   subject: `${user?.firstName} has invited you to join ${user?.currentSponsor?.name}'s profile on Superteam Earn`,
-    //   react: InviteMemberTemplate({
-    //     sponsorName: user?.currentSponsor?.name || '',
-    //     senderName: `${user?.firstName} ${user?.lastName}` || '',
-    //     link: `${getURL()}signup?invite=${result.id}`,
-    //   }),
-    // });
+    await resendMail.emails.send({
+      from: `Kash from Superteam <${process.env.RESEND_EMAIL}>`,
+      to: [email],
+      subject: `${user?.firstName} has invited you to join ${user?.currentSponsor?.name}'s profile on Superteam Earn`,
+      react: InviteMemberTemplate({
+        sponsorName: user?.currentSponsor?.name || '',
+        senderName: `${user?.firstName} ${user?.lastName}` || '',
+        link: `${getURL()}signup?invite=${result.id}`,
+      }),
+    });
 
     return res.status(200).json({ message: 'OTP sent successfully.' });
   } catch (error) {
