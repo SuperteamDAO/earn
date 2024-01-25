@@ -77,7 +77,7 @@ export function HomeBanner({ setTriggerLogin, userCount }: BannerProps) {
         >
           <Image
             src={isLessThan768px ? MobileBanner : DesktopBanner}
-            alt={isLessThan768px ? 'Mobile Banner' : 'Desktop Banner'}
+            alt="Illustration — Two people working on laptops outdoors at night, surrounded by a mystical mountainous landscape illuminated by the moonlight"
             layout="fill"
             objectFit="cover"
             quality={90}
