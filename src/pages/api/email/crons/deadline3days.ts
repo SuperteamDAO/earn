@@ -3,11 +3,9 @@ import dayjs from 'dayjs';
 import utc from 'dayjs/plugin/utc';
 import type { NextApiRequest, NextApiResponse } from 'next';
 
-import { DeadlineThreeDaysTemplate } from '@/components/emails/deadline3dayTemplate';
 import { prisma } from '@/prisma';
 import { getUnsubEmails } from '@/utils/airtable';
 import { rateLimitedPromiseAll } from '@/utils/rateLimitedPromises';
-import resendMail from '@/utils/resend';
 
 dayjs.extend(utc);
 
@@ -67,26 +65,26 @@ async function handler(_req: NextApiRequest, res: NextApiResponse) {
         ) {
           return;
         }
-        await resendMail.emails.send({
-          from: `Kash from Superteam <${process.env.RESEND_EMAIL}>`,
-          to: [e.email],
-          subject: 'This Bounty Is Expiring Soon!',
-          react: DeadlineThreeDaysTemplate({
-            name: e.name!,
-            bountyName: bounty.title,
-            link: `https://earn.superteam.fun/listings/bounties/${
-              bounty?.slug || ''
-            }/?utm_source=superteamearn&utm_medium=email&utm_campaign=notifications`,
-          }),
-        });
-        emailsSent.push(e.email);
+        // await resendMail.emails.send({
+        //   from: `Kash from Superteam <${process.env.RESEND_EMAIL}>`,
+        //   to: [e.email],
+        //   subject: 'This Bounty Is Expiring Soon!',
+        //   react: DeadlineThreeDaysTemplate({
+        //     name: e.name!,
+        //     bountyName: bounty.title,
+        //     link: `https://earn.superteam.fun/listings/bounties/${
+        //       bounty?.slug || ''
+        //     }/?utm_source=superteamearn&utm_medium=email&utm_campaign=notifications`,
+        //   }),
+        // });
+        // emailsSent.push(e.email);
 
-        await prisma.emailLogs.create({
-          data: {
-            type: 'BOUNTY_CLOSE_DEADLINE',
-            bountyId: bounty.id,
-          },
-        });
+        // await prisma.emailLogs.create({
+        //   data: {
+        //     type: 'BOUNTY_CLOSE_DEADLINE',
+        //     bountyId: bounty.id,
+        //   },
+        // });
       });
     });
 

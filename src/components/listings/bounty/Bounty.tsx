@@ -155,9 +155,9 @@ export function CreateListing({
       setSlug(`/bounties/${result?.data?.slug}/`);
       setIsListingPublishing(false);
       onOpen();
-      await axios.post('/api/email/manual/createBounty', {
-        id: result?.data?.id,
-      });
+      // await axios.post('/api/email/manual/createBounty', {
+      //   id: result?.data?.id,
+      // });
     } catch (e) {
       setIsListingPublishing(false);
     }

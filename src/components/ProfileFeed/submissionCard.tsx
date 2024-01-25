@@ -53,9 +53,9 @@ export function SubmissionCard({
       } else {
         setIsLiked(true);
         setTotalLikes((prevLikes) => prevLikes + 1);
-        await axios.post(`/api/email/manual/submissionLike`, {
-          id: sub?.id,
-        });
+        // await axios.post(`/api/email/manual/submissionLike`, {
+        //   id: sub?.id,
+        // });
         toast.success('Liked submission');
       }
       setIsLoading(false);

@@ -8,7 +8,6 @@ import {
   VStack,
 } from '@chakra-ui/react';
 import axios from 'axios';
-import { useRouter } from 'next/router';
 import { useEffect, useState } from 'react';
 import { GoCommentDiscussion } from 'react-icons/go';
 
@@ -28,7 +27,7 @@ interface Props {
 }
 export const Comments = ({ refId, refType }: Props) => {
   const { userInfo } = userStore();
-  const router = useRouter();
+  // const router = useRouter();
   const { isOpen, onOpen, onClose } = useDisclosure();
   const [triggerLogin, setTriggerLogin] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
@@ -46,17 +45,17 @@ export const Comments = ({ refId, refType }: Props) => {
         listingType: refType,
         listingId: refId,
       });
-      if (refType === 'BOUNTY') {
-        if (router.asPath.includes('submission')) {
-          await axios.post(`/api/email/manual/commentSubmission`, {
-            submissionId: router.query.subid,
-          });
-        } else {
-          await axios.post(`/api/email/manual/comment`, {
-            id: refId,
-          });
-        }
-      }
+      // if (refType === 'BOUNTY') {
+      //   if (router.asPath.includes('submission')) {
+      //     await axios.post(`/api/email/manual/commentSubmission`, {
+      //       submissionId: router.query.subid,
+      //     });
+      //   } else {
+      //     await axios.post(`/api/email/manual/comment`, {
+      //       id: refId,
+      //     });
+      //   }
+      // }
       setComments((prevComments) => [newCommentData.data, ...prevComments]);
       setNewComment('');
       setNewCommentLoading(false);
