@@ -65,7 +65,7 @@ import {
 
 const debounce = require('lodash.debounce');
 
-export default function Bounties() {
+export default function Hackathon({ slug }: { slug: string }) {
   const router = useRouter();
   const {
     isOpen: unpublishIsOpen,
@@ -100,7 +100,7 @@ export default function Bounties() {
     try {
       const bountiesList = await axios.get('/api/hackathon/', {
         params: {
-          slug: 'hackathon',
+          slug,
           searchText,
           skip,
           take: length,

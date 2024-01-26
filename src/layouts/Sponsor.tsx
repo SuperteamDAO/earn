@@ -1,5 +1,5 @@
 import { AddIcon } from '@chakra-ui/icons';
-import type { BoxProps, FlexProps } from '@chakra-ui/react';
+import type { FlexProps } from '@chakra-ui/react';
 import { Box, Button, Flex, Icon, Link, useDisclosure } from '@chakra-ui/react';
 import NextLink from 'next/link';
 import { useRouter } from 'next/router';
@@ -86,53 +86,6 @@ const NavItem = ({ icon, link, isActive, children, ...rest }: NavItemProps) => {
   );
 };
 
-const SidebarContent = ({ ...rest }: BoxProps) => {
-  const router = useRouter();
-  const currentPath = `/${router.route?.split('/')[2]}` || '';
-  const { userInfo } = userStore();
-  const { isOpen, onOpen, onClose } = useDisclosure();
-  return (
-    <Box
-      w={{ base: 0, md: 80 }}
-      minH="100vh"
-      pt={8}
-      bg="white"
-      borderRight={'1px solid'}
-      borderRightColor={'blackAlpha.200'}
-      {...rest}
-    >
-      {userInfo?.role === 'GOD' && (
-        <Box px={6} pb={6}>
-          <SelectSponsor />
-        </Box>
-      )}
-      <CreateListingModal isOpen={isOpen} onClose={onClose} />
-      <Flex align="center" justify="space-between" px={6} pb={6}>
-        <Button
-          w="full"
-          py={'22px'}
-          fontSize="md"
-          leftIcon={<AddIcon w={3} h={3} />}
-          onClick={() => onOpen()}
-          variant="solid"
-        >
-          Create New Listing
-        </Button>
-      </Flex>
-      {LinkItems.map((link) => (
-        <NavItem
-          key={link.name}
-          link={link.link}
-          icon={link.icon}
-          isActive={currentPath === link.link}
-        >
-          {link.name}
-        </NavItem>
-      ))}
-    </Box>
-  );
-};
-
 export function Sidebar({
   children,
   showBanner = false,
@@ -143,6 +96,7 @@ export function Sidebar({
   const { userInfo } = userStore();
   const { data: session, status } = useSession();
   const router = useRouter();
+  const { isOpen, onOpen, onClose } = useDisclosure();
 
   if (!session && status === 'loading') {
     return <LoadingSection />;
@@ -152,6 +106,15 @@ export function Sidebar({
     router.push('/');
     return null;
   }
+
+  const isHackathonRoute = router.asPath.startsWith('/dashboard/hackathon');
+
+  const slug =
+    isHackathonRoute && router.asPath
+      ? router.asPath.split('/dashboard/hackathon/')[1]?.replace(/\/$/, '')
+      : null;
+
+  const currentPath = `/${router.route?.split('/')[2]}` || '';
 
   return (
     <Default
@@ -165,12 +128,49 @@ export function Sidebar({
       }
     >
       <Flex justify="start" minH="100vh">
-        <SidebarContent display={{ base: 'none', md: 'block' }} />
+        <Box
+          display={{ base: 'none', md: 'block' }}
+          w={{ base: 0, md: 80 }}
+          minH="100vh"
+          pt={8}
+          bg="white"
+          borderRight={'1px solid'}
+          borderRightColor={'blackAlpha.200'}
+        >
+          {userInfo?.role === 'GOD' && !isHackathonRoute && (
+            <Box px={6} pb={6}>
+              <SelectSponsor />
+            </Box>
+          )}
+          <CreateListingModal isOpen={isOpen} onClose={onClose} />
+          <Flex align="center" justify="space-between" px={6} pb={6}>
+            <Button
+              w="full"
+              py={'22px'}
+              fontSize="md"
+              leftIcon={<AddIcon w={3} h={3} />}
+              onClick={() => onOpen()}
+              variant="solid"
+            >
+              {!isHackathonRoute ? 'Create New Listing' : 'Create New Track'}
+            </Button>
+          </Flex>
+          {LinkItems.map((link) => (
+            <NavItem
+              key={link.name}
+              link={link.link}
+              icon={link.icon}
+              isActive={currentPath === link.link}
+            >
+              {link.name}
+            </NavItem>
+          ))}
+        </Box>
         {!userInfo?.currentSponsor?.id ? (
           <LoadingSection />
         ) : (
           <Box w="full" px={6} py={8} bg="white">
-            {showBanner && <Banner />}
+            {showBanner && <Banner slug={slug} />}
             {children}
           </Box>
         )}
