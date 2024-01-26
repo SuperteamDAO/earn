@@ -212,15 +212,13 @@ model Sponsors {
   isArchived         Boolean        @default(false)
   isActive           Boolean        @default(true)
   totalRewardedInUSD Int            @default(0)
-  Hackathon          Hackathon?     @relation(fields: [hackathonId], references: [id])
-  hackathonId        String?
+  Hackathon          Hackathon?
   UserSponsors       UserSponsors[]
   Bounties           Bounties[]
   Grants             Grants[]
   Jobs               Jobs[]
   User               User[]
 
-  @@index([hackathonId])
   @@index([id, slug])
 }
 
@@ -379,12 +377,15 @@ model VerificationToken {
 }
 
 model Hackathon {
-  id       String     @id @default(uuid())
-  slug     String
-  name     String
-  logo     String
-  Bounties Bounties[]
-  Sponsors Sponsors[]
+  id        String     @id @default(uuid())
+  slug      String     @unique
+  name      String
+  logo      String
+  listings  Bounties[]
+  sponsorId String?    @unique
+  Sponsor   Sponsors?  @relation(fields: [sponsorId], references: [id])
+
+  @@index([sponsorId])
 }
 
 enum EmailType {
