@@ -240,7 +240,7 @@ export default async function announce(
 
       await resendMail.emails.send({
         from: `Kash from Superteam <${process.env.RESEND_EMAIL}>`,
-        to: [user.email],
+        to: [e.email],
         subject: `${listingType} Winners Announced!`,
         react: template,
       });

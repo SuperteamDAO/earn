@@ -97,11 +97,9 @@ export default async function bounty(
           User: true,
         },
       });
-
       const filteredSubscribers = subscribers.filter(
         (subscriber) => !unsubscribedEmails.includes(subscriber.User.email),
       );
-
       const sendEmail = async (
         subscriber: (typeof filteredSubscribers)[number],
       ) => {
@@ -115,7 +113,6 @@ export default async function bounty(
           }),
         });
       };
-
       await rateLimitedPromiseAll(filteredSubscribers, 5, sendEmail);
     }
 

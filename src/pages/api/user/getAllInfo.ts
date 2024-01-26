@@ -11,11 +11,6 @@ export default async function getAllUsers(
       where: { ...req.body },
       include: {
         Submission: {
-          where: {
-            listing: {
-              isWinnersAnnounced: true,
-            },
-          },
           include: {
             listing: {
               include: {
