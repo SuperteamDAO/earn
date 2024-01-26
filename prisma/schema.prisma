@@ -77,17 +77,20 @@ model Bounties {
   winners              Json?
   referredBy           String?
   publishedAt          DateTime?
+  isPrivate            Boolean            @default(false)
   template             BountiesTemplates? @relation(fields: [templateId], references: [id])
   sponsor              Sponsors           @relation(fields: [sponsorId], references: [id])
   poc                  User               @relation("poc", fields: [pocId], references: [id])
   Submission           Submission[]
   SubscribeBounty      SubscribeBounty[]
-  isPrivate            Boolean            @default(false)
+  hackathonId          String?
+  Hackathon            Hackathon?         @relation(fields: [hackathonId], references: [id])
 
   @@index([id, slug])
   @@index([sponsorId])
   @@index([pocId])
   @@index([templateId])
+  @@index([hackathonId])
 }
 
 model BountiesTemplates {
@@ -209,12 +212,15 @@ model Sponsors {
   isArchived         Boolean        @default(false)
   isActive           Boolean        @default(true)
   totalRewardedInUSD Int            @default(0)
+  Hackathon          Hackathon?     @relation(fields: [hackathonId], references: [id])
+  hackathonId        String?
   UserSponsors       UserSponsors[]
   Bounties           Bounties[]
   Grants             Grants[]
   Jobs               Jobs[]
   User               User[]
 
+  @@index([hackathonId])
   @@index([id, slug])
 }
 
@@ -370,6 +376,15 @@ model VerificationToken {
   expires    DateTime
 
   @@unique([identifier, token])
+}
+
+model Hackathon {
+  id       String     @id @default(uuid())
+  slug     String
+  name     String
+  logo     String
+  Bounties Bounties[]
+  Sponsors Sponsors[]
 }
 
 enum EmailType {

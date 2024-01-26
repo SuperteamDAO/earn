@@ -27,8 +27,9 @@ export default async function sponsors(
             name: {
               contains: searchString,
             },
+            hackathonId: null,
           }
-        : {};
+        : { hackathonId: null };
       const sponsorsList = await prisma.sponsors.findMany({
         where: {
           ...whereSearch,
@@ -61,9 +62,10 @@ export default async function sponsors(
               name: {
                 contains: searchString,
               },
+              hackathonId: null,
             },
           }
-        : {};
+        : { sponsor: { hackathonId: null } };
       const sponsorsList = await prisma.userSponsors.findMany({
         where: {
           userId,
