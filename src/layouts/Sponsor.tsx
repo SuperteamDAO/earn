@@ -144,16 +144,30 @@ export function Sidebar({
           )}
           <CreateListingModal isOpen={isOpen} onClose={onClose} />
           <Flex align="center" justify="space-between" px={6} pb={6}>
-            <Button
-              w="full"
-              py={'22px'}
-              fontSize="md"
-              leftIcon={<AddIcon w={3} h={3} />}
-              onClick={() => onOpen()}
-              variant="solid"
-            >
-              {!isHackathonRoute ? 'Create New Listing' : 'Create New Track'}
-            </Button>
+            {!isHackathonRoute ? (
+              <Button
+                w="full"
+                py={'22px'}
+                fontSize="md"
+                leftIcon={<AddIcon w={3} h={3} />}
+                onClick={() => onOpen()}
+                variant="solid"
+              >
+                Create New Listing
+              </Button>
+            ) : (
+              <Button
+                as={NextLink}
+                w="full"
+                py={'22px'}
+                fontSize="md"
+                href={`/dashboard/create-hackathon/${slug ? `?slug=${slug}` : ''}`}
+                leftIcon={<AddIcon w={3} h={3} />}
+                variant="solid"
+              >
+                Create New Track
+              </Button>
+            )}
           </Flex>
           {LinkItems.map((link) => (
             <NavItem

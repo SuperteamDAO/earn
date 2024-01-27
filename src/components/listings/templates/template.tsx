@@ -17,7 +17,7 @@ interface Props {
   setMainSkills: Dispatch<SetStateAction<MultiSelectOptions[]>>;
   setSubSkills: Dispatch<SetStateAction<MultiSelectOptions[]>>;
   setBountyBasic: Dispatch<SetStateAction<BountyBasicType | undefined>>;
-  type: 'open' | 'permissioned';
+  type: 'open' | 'permissioned' | 'hackathon';
 }
 export const Template = ({
   setSteps,

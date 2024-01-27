@@ -55,7 +55,7 @@ interface Props {
   setBountyPayment: Dispatch<SetStateAction<any | undefined>>;
   editable: boolean;
   isNewOrDraft?: boolean;
-  type: 'open' | 'permissioned';
+  type: 'open' | 'permissioned' | 'hackathon';
   isDuplicating?: boolean;
 }
 export const CreatebountyPayment = ({

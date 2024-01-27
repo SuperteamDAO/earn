@@ -38,7 +38,7 @@ interface Props {
   editable: boolean;
   regions: Regions;
   setRegions: Dispatch<SetStateAction<Regions>>;
-  type: 'open' | 'permissioned';
+  type: 'open' | 'permissioned' | 'hackathon';
   timeToComplete?: string;
   isNewOrDraft?: boolean;
   isDuplicating?: boolean;
