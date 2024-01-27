@@ -98,7 +98,7 @@ export default function Hackathon({ slug }: { slug: string }) {
   const getBounties = async () => {
     setIsBountiesLoading(true);
     try {
-      const bountiesList = await axios.get('/api/hackathon/', {
+      const bountiesList = await axios.get('/api/hackathon/listings/', {
         params: {
           slug,
           searchText,

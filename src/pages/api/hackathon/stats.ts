@@ -54,10 +54,22 @@ export default async function handler(
       },
     });
 
+    const totalRewardAmount = await prisma.bounties.aggregate({
+      _sum: {
+        rewardAmount: true,
+      },
+      where: {
+        hackathonId: hackathon.id,
+        isActive: true,
+        isArchived: false,
+        status: status.OPEN,
+      },
+    });
+
     return res.status(200).json({
       name: hackathon.name,
       logo: hackathon.logo,
-      totalRewardAmount: 400,
+      totalRewardAmount: totalRewardAmount._sum.rewardAmount || 0,
       totalListings,
       totalSubmissions,
     });

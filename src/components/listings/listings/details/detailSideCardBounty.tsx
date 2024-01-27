@@ -27,6 +27,7 @@ import Countdown from 'react-countdown';
 import { LoginWrapper } from '@/components/Header/LoginWrapper';
 import { VerticalStep } from '@/components/misc/steps';
 import { SubmissionModal } from '@/components/modals/submissionModalBounty';
+import { CountDownRenderer } from '@/components/shared/countdownRenderer';
 import { WarningModal } from '@/components/shared/WarningModal';
 import { tokenList } from '@/constants/index';
 import type { Eligibility, Rewards } from '@/interface/bounty';
@@ -162,23 +163,6 @@ export function DetailSideCardBounty({
   };
 
   const isProject = type === 'permissioned';
-
-  const countDownRenderer = ({
-    days,
-    hours,
-    minutes,
-    seconds,
-  }: {
-    days: number;
-    hours: number;
-    minutes: number;
-    seconds: number;
-  }) => {
-    if (days > 0) {
-      return <span>{`${days}d:${hours}h:${minutes}m`}</span>;
-    }
-    return <span>{`${hours}h:${minutes}m:${seconds}s`}</span>;
-  };
 
   type PrizeKey = keyof Rewards;
 
@@ -375,7 +359,7 @@ export function DetailSideCardBounty({
                     {applicationType === 'fixed' ? (
                       <Countdown
                         date={endingTime}
-                        renderer={countDownRenderer}
+                        renderer={CountDownRenderer}
                         zeroPadDays={1}
                       />
                     ) : (
