@@ -311,7 +311,7 @@ export const CreatebountyBasic = ({
             </Select>
           </FormControl>
         )}
-        {bountyBasic?.applicationType !== 'rolling' && (
+        {type !== 'hackathon' && bountyBasic?.applicationType !== 'rolling' && (
           <FormControl
             mb={5}
             isInvalid={errorState.deadline}
@@ -506,6 +506,10 @@ export const CreatebountyBasic = ({
               });
               if (isProject && !isTimeToCompleteValid) {
                 return;
+              }
+
+              if (type === 'hackathon' && hasBasicInfo) {
+                setSteps(3);
               }
 
               if (hasBasicInfo && bountyBasic?.deadline) {

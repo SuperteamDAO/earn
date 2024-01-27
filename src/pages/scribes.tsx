@@ -196,8 +196,8 @@ export default function Scribes() {
             </Flex>
           </Box>
         </Flex>
-        <Box maxW="7xl" mx="auto">
-          <Box mx={{ base: 3, md: 6 }} py={6}>
+        <Box mx={6}>
+          <Box maxW="7xl" mx="auto" py={6}>
             <Text
               mb={4}
               color={'brand.slate.900'}

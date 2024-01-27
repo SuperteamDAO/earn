@@ -383,6 +383,8 @@ model Hackathon {
   logo      String
   listings  Bounties[]
   sponsorId String?    @unique
+  startDate DateTime?
+  deadline  DateTime?
   Sponsor   Sponsors?  @relation(fields: [sponsorId], references: [id])
 
   @@index([sponsorId])
