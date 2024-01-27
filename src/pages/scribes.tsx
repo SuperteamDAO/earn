@@ -148,7 +148,17 @@ export default function Scribes() {
               gap={{ base: 2, md: 8 }}
               py={4}
             >
-              <Button rounded="full">Sponsor A Track</Button>
+              <Button
+                onClick={() =>
+                  window.open(
+                    'https://airtable.com/app3nkVnBCUqJGHay/shrCqEUm74icXCBi0',
+                    '_blank',
+                  )
+                }
+                rounded="full"
+              >
+                Sponsor A Track
+              </Button>
               <Flex align="center" gap={2}>
                 <Circle bg="#16A35F" size="8px" />
 

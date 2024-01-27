@@ -415,7 +415,7 @@ export const GrantsCard = ({
           textDecoration: 'none',
           bg: 'gray.100',
         }}
-        href={`/listings/grants/${slug}`}
+        href={`/grants/${slug}`}
       >
         <Flex
           align="center"
