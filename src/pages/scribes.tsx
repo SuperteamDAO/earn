@@ -130,24 +130,31 @@ export default function Scribes() {
           </Flex>
           <Box
             pos={{ base: 'unset', md: 'absolute' }}
-            right={6}
-            left={6}
+            right={{ base: 3, md: 6 }}
+            left={{ base: 3, md: 6 }}
+            w={{ base: '96vw', md: 'auto' }}
             maxW="7xl"
             mx="auto"
             mt={{ base: 8, md: 'auto' }}
           >
             <ScribesLogo />
-            <Text py={2} color="#4D2300">
-              Participate in the largest hackathon for content writers for{' '}
-              <br />
+            <Text w={{ base: '100%', md: '40%' }} py={2} color="#4D2300">
+              Participate in the largest hackathon for content writers for
               building amazing content on Solana
             </Text>
-            <Flex align="center" gap={8} py={4}>
+            <Flex
+              align={{ base: 'start', md: 'center' }}
+              direction={{ base: 'column', md: 'row' }}
+              gap={{ base: 2, md: 8 }}
+              py={4}
+            >
               <Button rounded="full">Sponsor A Track</Button>
               <Flex align="center" gap={2}>
                 <Circle bg="#16A35F" size="8px" />
 
-                <Text>Submissions Opening Shortly</Text>
+                <Text color="brand.slate.800" fontWeight={500}>
+                  Submissions Opening Shortly
+                </Text>
               </Flex>
             </Flex>
             <Flex gap={6} pt={6}>
@@ -158,7 +165,7 @@ export default function Scribes() {
                   fontSize={'2xl'}
                   fontWeight={600}
                 >
-                  ${stats?.totalRewardAmount}
+                  ${stats?.totalRewardAmount.toLocaleString()}
                 </Text>
               </Flex>
               <Flex direction={'column'}>
@@ -190,7 +197,7 @@ export default function Scribes() {
           </Box>
         </Flex>
         <Box maxW="7xl" mx="auto">
-          <Box mx={6} py={6}>
+          <Box mx={{ base: 3, md: 6 }} py={6}>
             <Text
               mb={4}
               color={'brand.slate.900'}

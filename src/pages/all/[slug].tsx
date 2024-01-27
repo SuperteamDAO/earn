@@ -153,9 +153,10 @@ function ListingCategoryPage({ slug }: { slug: string }) {
 export async function getServerSideProps(context: NextPageContext) {
   const { slug } = context.query;
 
-  const validCategories = ['Design', 'Content', 'Development', 'Hyperdrive'];
+  const normalizedSlug = typeof slug === 'string' ? slug.toLowerCase() : '';
+  const validCategories = ['design', 'content', 'development', 'hyperdrive'];
 
-  if (!validCategories.includes(slug as string)) {
+  if (!validCategories.includes(normalizedSlug)) {
     return {
       notFound: true,
     };

@@ -18,6 +18,8 @@ import {
 import NextLink from 'next/link';
 import { useRouter } from 'next/router';
 
+import ScribesLogo from '@/svg/scribes-logo';
+
 import { BountySnackbar } from './BountySnackbar';
 import { UserInfo } from './UserInfo';
 
@@ -35,20 +37,20 @@ const NAV_ITEMS: Array<NavItem> = [
     children: [
       {
         label: 'Content',
-        href: '/all/Content/',
+        href: '/all/content/',
       },
       {
         label: 'Design',
-        href: '/all/Design/',
+        href: '/all/design/',
       },
       {
         label: 'Development',
-        href: '/all/Development/',
+        href: '/all/development/',
       },
-      // {
-      //   label: 'HYPERDRIVE',
-      //   href: '/all/Hyperdrive/',
-      // },
+      {
+        label: 'Scribes',
+        href: '/scribes/',
+      },
     ],
   },
 ];
@@ -100,15 +102,11 @@ const MobileNavItem = ({ label, children, href }: NavItem) => {
                 fontSize="md"
                 href={child.href}
               >
-                {/* {child.label === 'HYPERDRIVE' ? (
-                  <Image
-                    w={100}
-                    alt="Hyperdrive Hackathon"
-                    src="/assets/category_assets/icon/Hyperdrive.svg"
-                  />
-                ) : ( */}
-                {child.label}
-                {/* )} */}
+                {child.label === 'Scribes' ? (
+                  <ScribesLogo styles={{ width: '80px', height: 'auto' }} />
+                ) : (
+                  child.label
+                )}
               </Link>
             ))}
         </Stack>
@@ -183,14 +181,15 @@ const DesktopNav = () => {
                 <NavLink
                   href={navItem.href ?? '#'}
                   label={
-                    // navItem.label === 'HYPERDRIVE' ? (
-                    //   <Image
-                    //     alt="Hyperdrive Hackathon"
-                    //     src="/assets/category_assets/icon/Hyperdrive.svg"
-                    //   />
-                    // ) : (
-                    navItem.label
-                    // )
+                    navItem.label === 'Scribes' ? (
+                      <Box>
+                        <ScribesLogo
+                          styles={{ width: '60px', height: 'auto' }}
+                        />
+                      </Box>
+                    ) : (
+                      navItem.label
+                    )
                   }
                   isActive={isCurrent}
                   isCategory={true}
