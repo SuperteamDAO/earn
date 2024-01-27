@@ -109,7 +109,12 @@ export function Banner({ slug }: { slug?: string | null }) {
             orientation="vertical"
           />
           <Box>
-            <Text color={'brand.slate.500'} fontSize="md" fontWeight={400}>
+            <Text
+              color={'brand.slate.500'}
+              fontSize="md"
+              fontWeight={400}
+              whiteSpace={'nowrap'}
+            >
               {!slug ? 'Rewarded' : 'Total Prizes'}
             </Text>
             {isLoading ? (

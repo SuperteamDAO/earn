@@ -65,10 +65,10 @@ export default function Scribes() {
         borderColor="brand.slate.200"
         borderRadius={8}
       >
-        <Flex gap={3}>
+        <Flex align="center" gap={3}>
           <Image
-            w={16}
-            h={16}
+            w={14}
+            h={14}
             borderRadius={3}
             objectFit={'cover'}
             alt={sponsor.name}

@@ -93,6 +93,12 @@ export default async function getHackathonListings(
         totalPaymentsMade: true,
         isWinnersAnnounced: true,
         applicationType: true,
+        sponsor: {
+          select: {
+            name: true,
+            logo: true,
+          },
+        },
       },
     });
     res.status(200).json({ total, data: result });
