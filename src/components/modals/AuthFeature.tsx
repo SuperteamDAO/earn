@@ -47,11 +47,10 @@ export const AuthFeatureModal = ({
           existing Earn account.
           <Image
             w="996px"
-            h="1054px"
+            h="auto"
             px={2}
             py={{ base: 1, md: 6 }}
             alt="new feature"
-            aspectRatio={996 / 1054}
             src="/assets/googleauth.webp"
           />
           {showCTA && (
