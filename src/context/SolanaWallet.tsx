@@ -1,4 +1,4 @@
-import '@solana/wallet-adapter-react-ui/styles.css';
+// import '@solana/wallet-adapter-react-ui/styles.css';
 
 import { WalletAdapterNetwork } from '@solana/wallet-adapter-base';
 import {

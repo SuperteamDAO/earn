@@ -3,20 +3,8 @@ import Script from 'next/script';
 
 export default function Document() {
   return (
-    <Html lang="en">
+    <Html data-theme="light" lang="en">
       <Head>
-        <link rel="preconnect" href="https://fonts.googleapis.com" />
-        <link
-          rel="preconnect"
-          href="https://fonts.googleapis.com"
-          crossOrigin="anonymous"
-        />
-        <link rel="preconnect" href="https://fonts.gstatic.com" />
-        <link
-          rel="preconnect"
-          href="https://fonts.gstatic.com"
-          crossOrigin="anonymous"
-        />
         <link rel="preconnect" href="https://app.posthog.com" />
         <link rel="preconnect" href="https://www.googletagmanager.com" />
         <link rel="preconnect" href="https://res.cloudinary.com" />

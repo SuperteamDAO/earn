@@ -43,15 +43,30 @@ export function Home({ children, type }: HomeProps) {
   const [totals, setTotals] = useState<TotalType>({});
 
   const getTotalInfo = async () => {
-    try {
-      const totalsData = await axios.get('/api/sidebar/totals');
+    let totalsData, earnerData;
+
+    const [getTotals, getEarnerData] = await Promise.allSettled([
+      axios.get('/api/sidebar/totals/'),
+      axios.get('/api/sidebar/recentEarners/'),
+    ]);
+
+    if (getTotals.status === 'rejected') {
+      console.error(getTotals.reason);
+    } else {
+      totalsData = getTotals.value;
       setTotals(totalsData.data);
-      const earnerData = await axios.get('/api/sidebar/recentEarners');
-      setRecentEarners(earnerData.data);
-      setIsTotalLoading(false);
-    } catch (e) {
-      setIsTotalLoading(false);
     }
+
+    if (getEarnerData.status === 'rejected') {
+      console.error(getEarnerData.reason);
+      setIsTotalLoading(false);
+    } else {
+      earnerData = getEarnerData.value;
+      setIsTotalLoading(false);
+      setRecentEarners(earnerData.data);
+    }
+
+    setIsTotalLoading(false);
   };
 
   useEffect(() => {

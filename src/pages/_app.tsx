@@ -1,5 +1,5 @@
 // Styles
-import 'degen/styles';
+// import 'degen/styles';
 import '../styles/globals.scss';
 
 import { ChakraProvider } from '@chakra-ui/react';
