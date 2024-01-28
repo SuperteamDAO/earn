@@ -291,38 +291,15 @@ export function ListingHeader({
             bg={'green.100'}
             rounded={'full'}
           >
-            {(status === 'CLOSED' ||
-              (status === 'OPEN' && isWinnersAnnounced)) && (
+            {statusText && (
               <Text
                 px={3}
                 py={1}
-                color={'orange.600'}
-                bg={'orange.100'}
+                color={statusTextColor}
+                bg={statusBgColor}
                 rounded={'full'}
               >
-                Submissions Closed
-              </Text>
-            )}
-            {!isWinnersAnnounced && hasDeadlineEnded && status === 'OPEN' && (
-              <Text
-                px={3}
-                py={1}
-                color={'orange.600'}
-                bg={'orange.100'}
-                rounded={'full'}
-              >
-                In Review
-              </Text>
-            )}
-            {!hasDeadlineEnded && !isWinnersAnnounced && status === 'OPEN' && (
-              <Text
-                px={3}
-                py={1}
-                color={'green.600'}
-                bg={'green.100'}
-                rounded={'full'}
-              >
-                Submissions Open
+                {statusText}
               </Text>
             )}
           </Flex>
@@ -447,7 +424,7 @@ export function ListingHeader({
                 borderBottom: '2px solid',
                 borderBottomColor: 'brand.purple',
               }}
-              href={`/listings/bounties/${slug}`}
+              href={`/listings/${type}/${slug}`}
             >
               Details
             </Link>
@@ -472,7 +449,7 @@ export function ListingHeader({
                   borderBottom: '2px solid',
                   borderBottomColor: 'brand.purple',
                 }}
-                href={`/listings/bounties/${slug}/submission`}
+                href={`/listings/${type}/${slug}/submission`}
               >
                 Submissions
               </Link>
@@ -498,7 +475,7 @@ export function ListingHeader({
                   borderBottom: '2px solid',
                   borderBottomColor: 'brand.purple',
                 }}
-                href={`/listings/bounties/${slug}/references`}
+                href={`/listings/${type}/${slug}/references`}
               >
                 References
               </Link>

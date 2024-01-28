@@ -243,7 +243,7 @@ export const ListingCard = ({
           textDecoration: 'none',
           bg: 'gray.100',
         }}
-        href={`/listings/bounties/${slug}`}
+        href={`/listings/${type}/${slug}`}
       >
         <Flex
           align="center"

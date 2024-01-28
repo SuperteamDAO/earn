@@ -7,6 +7,7 @@ interface Bounty {
   sponsor: string;
   slug: string;
   rewardAmount: number | null;
+  // type: 'bounty' | 'project' | 'hackathon';
 }
 
 interface TemplateProps {
@@ -25,15 +26,16 @@ export const WeeklyRoundupTemplate = ({ name, bounties }: TemplateProps) => {
       <ol style={styles.list}>
         {bounties?.map((bounty, i) => (
           <li key={i} style={styles.text}>
-            <a
-              href={`https://earn.superteam.fun/listings/bounties/${
+            {/* <a
+              href={`https://earn.superteam.fun/listings/${bounty.type}/${
                 bounty?.slug || ''
               }/?utm_source=superteamearn&utm_medium=email&utm_campaign=notifications`}
               style={styles.link}
             >
               {bounty.title} by {bounty.sponsor} ($
               {bounty.rewardAmount ?? 'Not specified'})
-            </a>
+            </a> */}
+            {bounty.title}
           </li>
         ))}
       </ol>

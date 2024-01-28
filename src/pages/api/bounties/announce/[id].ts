@@ -233,7 +233,7 @@ export default async function announce(
       const template = WinnersAnnouncedTemplate({
         name: e.name,
         bountyName: bounty?.title || '',
-        link: `https://earn.superteam.fun/listings/bounties/${
+        link: `https://earn.superteam.fun/listings/${bounty?.type}/${
           bounty?.slug || ''
         }/?utm_source=superteamearn&utm_medium=email&utm_campaign=winnerannouncement`,
       });

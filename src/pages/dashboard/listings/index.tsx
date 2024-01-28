@@ -560,7 +560,7 @@ function Bounties() {
                               icon={<ExternalLinkIcon h={4} w={4} />}
                               onClick={() =>
                                 window.open(
-                                  `${router.basePath}/listings/bounties/${currentBounty.slug}`,
+                                  `${router.basePath}/listings/${currentBounty?.type}/${currentBounty.slug}`,
                                   '_blank',
                                 )
                               }

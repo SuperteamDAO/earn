@@ -382,7 +382,7 @@ function BountySubmissions({ slug }: Props) {
                 leftIcon={<ExternalLinkIcon />}
                 onClick={() =>
                   window.open(
-                    `${router.basePath}/listings/bounties/${bounty?.slug}`,
+                    `${router.basePath}/listings/${bounty?.type}/${bounty?.slug}`,
                     '_blank',
                   )
                 }

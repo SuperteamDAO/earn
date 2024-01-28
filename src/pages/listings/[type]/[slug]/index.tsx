@@ -73,7 +73,7 @@ function BountyDetails({ bounty: initialBounty }: BountyDetailsProps) {
           />
           <link
             rel="canonical"
-            href={`http://earn.superteam.fun/listings/bounties/${bounty?.slug}/`}
+            href={`http://earn.superteam.fun/listings/${bounty?.type}/${bounty?.slug}/`}
           />
           <meta
             property="og:title"
@@ -171,11 +171,13 @@ function BountyDetails({ bounty: initialBounty }: BountyDetailsProps) {
 }
 
 export const getServerSideProps: GetServerSideProps = async (context) => {
-  const { slug } = context.query;
+  const { slug, type } = context.query;
 
   let bountyData;
   try {
-    const bountyDetails = await axios.get(`${getURL()}api/bounties/${slug}`);
+    const bountyDetails = await axios.get(`${getURL()}api/bounties/${slug}`, {
+      params: { type },
+    });
     bountyData = bountyDetails.data;
   } catch (e) {
     console.error(e);

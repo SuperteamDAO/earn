@@ -33,7 +33,7 @@ export default async function handler(
         react: SubmissionLikeTemplate({
           name: submission?.user.firstName as string,
           bountyName: submission?.listing.title as string,
-          link: `https://earn.superteam.fun/listings/bounties/${submission?.listing.slug}/submission/?utm_source=superteamearn&utm_medium=email&utm_campaign=notifications`,
+          link: `https://earn.superteam.fun/listings/${submission?.listing.type}/${submission?.listing.slug}/submission/?utm_source=superteamearn&utm_medium=email&utm_campaign=notifications`,
         }),
       });
     }

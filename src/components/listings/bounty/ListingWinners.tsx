@@ -72,7 +72,7 @@ export function ListingWinners({ bounty }: Props) {
                 key={submission.id}
                 href={
                   bounty?.type !== 'project'
-                    ? `/listings/bounties/${bounty?.slug}/submission/${submission?.id}/`
+                    ? `/listings/${bounty?.type}/${bounty?.slug}/submission/${submission?.id}/`
                     : `/t/${submission?.user?.username}`
                 }
                 passHref

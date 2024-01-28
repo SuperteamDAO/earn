@@ -5,10 +5,12 @@ import { prisma } from '@/prisma';
 export default async function user(req: NextApiRequest, res: NextApiResponse) {
   const params = req.query;
   const slug = params.slug as string;
+  const type = params.type as 'bounty' | 'project' | 'hackathon';
   try {
     const result = await prisma.bounties.findFirst({
       where: {
         slug,
+        type,
         isActive: true,
       },
       include: { sponsor: true, poc: true, Submission: true, Hackathon: true },
