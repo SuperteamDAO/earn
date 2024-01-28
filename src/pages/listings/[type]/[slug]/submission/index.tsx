@@ -3,7 +3,7 @@ import axios from 'axios';
 import type { GetServerSideProps } from 'next';
 import React, { useEffect, useState } from 'react';
 
-import { ListingHeader } from '@/components/listings/listings/ListingHeaderBounty';
+import { ListingHeader } from '@/components/listings/listings/ListingHeader';
 import { Submissions } from '@/components/listings/listings/submissions/submission';
 import { EmptySection } from '@/components/shared/EmptySection';
 import { LoadingSection } from '@/components/shared/LoadingSection';
@@ -62,6 +62,7 @@ const SubmissionPage = ({ slug }: { slug: string }) => {
               slug={bounty?.slug}
               isWinnersAnnounced={bounty?.isWinnersAnnounced}
               references={bounty?.references}
+              type={bounty?.type}
             />
             <Submissions
               bounty={bounty}

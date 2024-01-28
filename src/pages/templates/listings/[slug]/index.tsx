@@ -4,9 +4,9 @@ import axios from 'axios';
 import type { GetServerSideProps } from 'next';
 import { useEffect, useState } from 'react';
 
-import { BountyWinners } from '@/components/listings/bounty/BountyWinners';
+import { ListingWinners } from '@/components/listings/bounty/ListingWinners';
 import { DetailDescriptionBounty } from '@/components/listings/listings/details/detailDescriptionBounty';
-import { ListingHeader } from '@/components/listings/listings/ListingHeaderBounty';
+import { ListingHeader } from '@/components/listings/listings/ListingHeader';
 import { ErrorSection } from '@/components/shared/ErrorSection';
 import { LoadingSection } from '@/components/shared/LoadingSection';
 import { Default } from '@/layouts/Default';
@@ -66,7 +66,7 @@ function BountyDetails({ slug }: BountyDetailsProps) {
             isTemplate={true}
             references={bounty?.references}
           />
-          {bounty?.isWinnersAnnounced && <BountyWinners bounty={bounty} />}
+          {bounty?.isWinnersAnnounced && <ListingWinners bounty={bounty} />}
           <HStack
             align={['center', 'center', 'start', 'start']}
             justify={['center', 'center', 'space-between', 'space-between']}

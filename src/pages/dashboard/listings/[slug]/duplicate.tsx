@@ -49,7 +49,7 @@ export default function DuplicateBounty({ slug }: Props) {
           bounty={bounty}
           editable
           isDuplicating
-          type={bounty?.type as 'permissioned' | 'open'}
+          type={bounty?.type as 'bounty' | 'project' | 'hackathon'}
         />
       )}
     </Sidebar>

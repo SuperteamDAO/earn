@@ -31,7 +31,7 @@ export default async function handler(
         react: CommentSponsorTemplate({
           name: pocUser.firstName!,
           bountyName: listings?.title,
-          link: `https://earn.superteam.fun/listings/bounties/${listings?.slug}/?utm_source=superteamearn&utm_medium=email&utm_campaign=notifications`,
+          link: `https://earn.superteam.fun/listings/${listings?.type}/${listings?.slug}/?utm_source=superteamearn&utm_medium=email&utm_campaign=notifications`,
         }),
       });
     }

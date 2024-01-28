@@ -47,7 +47,7 @@ export const SubmissionModal = ({
   submissionNumber,
   type,
 }: Props) => {
-  const isProject = type === 'permissioned';
+  const isProject = type === 'project';
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState('');
   const [publicKeyError, setPublicKeyError] = useState('');

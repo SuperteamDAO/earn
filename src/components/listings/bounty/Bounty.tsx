@@ -25,7 +25,7 @@ import { mergeSkills, splitSkills } from '@/utils/skills';
 interface Props {
   bounty?: Bounty;
   editable?: boolean;
-  type: 'open' | 'permissioned' | 'hackathon';
+  type: 'bounty' | 'project' | 'hackathon';
   isDuplicating?: boolean;
   hackathonSlug?: string;
 }

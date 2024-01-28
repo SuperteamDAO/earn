@@ -215,10 +215,10 @@ export const ListingsCardSkeleton = () => {
   );
 };
 
-export const BountiesCard = ({
+export const ListingCard = ({
   rewardAmount,
   deadline,
-  type,
+  type = '',
   logo,
   title = '',
   token,
@@ -230,6 +230,8 @@ export const BountiesCard = ({
 }: BountyProps) => {
   const router = useRouter();
   const [isMobile] = useMediaQuery('(max-width: 768px)');
+
+  const isBounty = type === 'bounty';
   return (
     <>
       <Link
@@ -241,7 +243,7 @@ export const BountiesCard = ({
           textDecoration: 'none',
           bg: 'gray.100',
         }}
-        href={`/listings/bounties/${slug}`}
+        href={`/listings/${type}/${slug}`}
       >
         <Flex
           align="center"
@@ -292,21 +294,21 @@ export const BountiesCard = ({
                 <>
                   <Image
                     h="4"
-                    ml={type === 'open' ? -0.5 : 0}
+                    ml={isBounty ? -0.5 : 0}
                     alt={type}
                     src={
-                      type === 'open'
+                      isBounty
                         ? '/assets/icons/bolt.svg'
                         : '/assets/icons/briefcase.svg'
                     }
                   />
                   <Text
-                    ml={isMobile ? '-1' : type === 'open' ? '-3' : '-2.5'}
+                    ml={isMobile ? '-1' : isBounty ? '-3' : '-2.5'}
                     color="gray.500"
                     fontSize={['x-small', 'xs', 'xs', 'xs']}
                     fontWeight={500}
                   >
-                    {type === 'open' ? 'Bounty' : 'Project'}
+                    {type.charAt(0).toUpperCase() + type.slice(1)}
                   </Text>
                 </>
                 <Text

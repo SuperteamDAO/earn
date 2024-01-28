@@ -4,7 +4,7 @@ import { Sidebar } from '@/layouts/Sponsor';
 function CreateProject() {
   return (
     <Sidebar>
-      <CreateListing type="permissioned" />
+      <CreateListing type="project" />
     </Sidebar>
   );
 }

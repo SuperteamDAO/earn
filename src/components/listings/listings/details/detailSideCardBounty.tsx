@@ -20,6 +20,7 @@ import {
 } from '@chakra-ui/react';
 import type { BountyType } from '@prisma/client';
 import axios from 'axios';
+import dayjs from 'dayjs';
 import moment from 'moment';
 import { useEffect, useState } from 'react';
 import Countdown from 'react-countdown';
@@ -34,6 +35,35 @@ import type { Eligibility, Rewards } from '@/interface/bounty';
 import { userStore } from '@/store/user';
 import { getBountyDraftStatus } from '@/utils/bounty';
 import { getURLSanitized } from '@/utils/submissions/getURLSanitized';
+
+function getTypeTitleAndDescription(type: any, hackathon: any) {
+  let typeTitle, typeDescription;
+
+  switch (type) {
+    case 'project':
+      typeTitle = 'Project';
+      typeDescription =
+        "Don't start working just yet! Apply first, and then you'll be notified if you're selected to work on this Project.";
+      break;
+    case 'hackathon':
+      typeTitle = hackathon?.name
+        ? `${hackathon.name} Track`
+        : 'Hackathon Track';
+      typeDescription = hackathon?.description || 'Hackathon description';
+      break;
+    case 'bounty':
+      typeTitle = 'Bounty';
+      typeDescription =
+        'This is an open competition bounty! Anyone can start working and submit their work before the deadline!';
+      break;
+    default:
+      typeTitle = 'Default Title';
+      typeDescription = 'Default description';
+      break;
+  }
+
+  return { typeTitle, typeDescription };
+}
 
 interface Props {
   id: string;
@@ -51,12 +81,16 @@ interface Props {
   type?: BountyType | string;
   requirements?: string;
   isWinnersAnnounced?: boolean;
-  hackathonPrize?: boolean;
   pocSocials?: string;
   applicationType?: 'fixed' | 'rolling';
   timeToComplete?: string;
   isPublished?: boolean;
   status?: string;
+  hackathon?: {
+    name: string;
+    description: string;
+    startDate: string;
+  };
 }
 export function DetailSideCardBounty({
   id,
@@ -69,12 +103,12 @@ export function DetailSideCardBounty({
   requirements,
   type,
   pocSocials,
-  hackathonPrize,
   isWinnersAnnounced = false,
   applicationType,
   timeToComplete,
   isPublished,
   status,
+  hackathon,
 }: Props) {
   const { userInfo } = userStore();
   const [isSubmissionNumberLoading, setIsSubmissionNumberLoading] =
@@ -97,6 +131,8 @@ export function DetailSideCardBounty({
   if (isWinnersAnnounced) {
     submissionStatus = 3;
   }
+
+  const hasHackathonStarted = dayjs().isAfter(hackathon?.startDate);
 
   const getUserSubmission = async () => {
     setIsUserSubmissionLoading(true);
@@ -162,7 +198,8 @@ export function DetailSideCardBounty({
     }
   };
 
-  const isProject = type === 'permissioned';
+  const isProject = type === 'project';
+  const isBounty = type === 'bounty';
 
   type PrizeKey = keyof Rewards;
 
@@ -175,6 +212,11 @@ export function DetailSideCardBounty({
   ];
 
   const bountyDraftStatus = getBountyDraftStatus(status, isPublished);
+
+  const { typeTitle, typeDescription } = getTypeTitleAndDescription(
+    type,
+    hackathon,
+  );
 
   return (
     <>
@@ -402,7 +444,8 @@ export function DetailSideCardBounty({
                 }}
                 isDisabled={
                   bountyDraftStatus === 'DRAFT' ||
-                  Date.now() > Number(moment(endingTime).format('x'))
+                  Date.now() > Number(moment(endingTime).format('x')) ||
+                  !hasHackathonStarted
                 }
                 isLoading={isUserSubmissionLoading}
                 loadingText={'Checking Submission...'}
@@ -424,29 +467,26 @@ export function DetailSideCardBounty({
             )}
           </Box>
         </VStack>
-        {!hackathonPrize && (
-          <VStack
-            align={'start'}
-            justify={'center'}
-            w={{ base: 'full', md: '22rem' }}
-            mt={4}
-            p={6}
-            bg={'#FFFFFF'}
-            rounded={'xl'}
-          >
-            <Text h="100%" color={'#94A3B8'} fontSize="1rem" textAlign="center">
-              TYPE
-            </Text>
-            <Text color={'#64768b'} fontSize="1.1rem" fontWeight={500}>
-              {isProject ? 'Project' : 'Bounty'}
-            </Text>
-            <Text color={'#94A3B8'} fontSize="1rem" fontWeight={400}>
-              {isProject
-                ? "Don't start working just yet! Apply first, and then you'll be notified if you're selected to work on this Project."
-                : 'This is an open competition bounty! Anyone can start working and submit their work before the deadline!'}
-            </Text>
-          </VStack>
-        )}
+
+        <VStack
+          align={'start'}
+          justify={'center'}
+          w={{ base: 'full', md: '22rem' }}
+          mt={4}
+          p={6}
+          bg={'#FFFFFF'}
+          rounded={'xl'}
+        >
+          <Text h="100%" color={'#94A3B8'} fontSize="1rem" textAlign="center">
+            TYPE
+          </Text>
+          <Text color={'#64768b'} fontSize="1.1rem" fontWeight={500}>
+            {typeTitle}
+          </Text>
+          <Text color={'#94A3B8'} fontSize="1rem" fontWeight={400}>
+            {typeDescription}
+          </Text>
+        </VStack>
         {requirements && (
           <VStack
             align="start"
@@ -499,7 +539,7 @@ export function DetailSideCardBounty({
             </Text>
           </VStack>
         )}
-        {!isProject && (
+        {isBounty && (
           <VStack
             align={'start'}
             justify={'center'}

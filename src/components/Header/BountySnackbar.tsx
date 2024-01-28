@@ -19,7 +19,8 @@ export const BountySnackbar = () => {
 
   const { pathname } = router;
 
-  const showSnackbar = /^\/listings\/bounties\/[^/]+$/.test(pathname);
+  const showSnackbar =
+    /^\/listings\/(bounties|bounty|project|hackathon)\/[^/]+$/.test(pathname);
 
   if (!bountySnackbar) return null;
 
@@ -45,26 +46,24 @@ export const BountySnackbar = () => {
       return 'The Deadline for This Listing Has Passed. Check Out Other Listings on the Homepage!';
     if (daysToDeadline && daysToDeadline < 3)
       return `🕛 Expiring Soon: ${
-        type === 'open' ? 'Submit' : 'Apply'
+        type === 'bounty' ? 'Submit' : 'Apply'
       } while you still have the chance!`;
     if (
       rewardAmount &&
-      ((type === 'open' && rewardAmount > 1000) ||
-        (type === 'permissioned' && rewardAmount > 1500))
+      ((type === 'bounty' && rewardAmount > 1000) ||
+        (type === 'project' && rewardAmount > 1500))
     )
-      return `🤑 Mo' Money, Fewer Problems: Higher than average total ${
-        type === 'open' ? 'bounty' : 'project'
-      } reward`;
+      return `🤑 Mo' Money, Fewer Problems: Higher than average total ${type} reward`;
     if (
-      (type === 'open' && submissionCount <= 1) ||
-      (type === 'permissioned' && submissionCount < 10)
+      (type === 'bounty' && submissionCount <= 1) ||
+      (type === 'project' && submissionCount < 10)
     ) {
       if (submissionCount === 0) {
-        return type === 'open'
+        return type === 'bounty'
           ? '🔥 High chance of winning: No submissions have been made for this bounty yet!'
           : '🔥 The Odds Are in Your Favour! No applications yet';
       }
-      return type === 'open'
+      return type === 'bounty'
         ? `🔥 High chance of winning: Only ${submissionCount} submission(s) have been made for this bounty yet!`
         : '🔥 The Odds Are in Your Favour! Not too many applications yet';
     }

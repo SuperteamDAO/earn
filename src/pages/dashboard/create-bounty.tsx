@@ -4,7 +4,7 @@ import { Sidebar } from '@/layouts/Sponsor';
 function CreateBounty() {
   return (
     <Sidebar>
-      <CreateListing type="open" />
+      <CreateListing type="bounty" />
     </Sidebar>
   );
 }

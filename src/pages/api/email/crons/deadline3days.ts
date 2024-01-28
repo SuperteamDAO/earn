@@ -74,7 +74,7 @@ async function handler(_req: NextApiRequest, res: NextApiResponse) {
           react: DeadlineThreeDaysTemplate({
             name: e.name!,
             bountyName: bounty.title,
-            link: `https://earn.superteam.fun/listings/bounties/${
+            link: `https://earn.superteam.fun/listings/${bounty?.type}/${
               bounty?.slug || ''
             }/?utm_source=superteamearn&utm_medium=email&utm_campaign=notifications`,
           }),

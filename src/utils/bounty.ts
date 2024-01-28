@@ -27,7 +27,8 @@ export const getBountyDraftStatus = (
 };
 
 export const getBountyTypeLabel = (type: string) => {
-  if (type === 'permissioned') return 'Project';
+  if (type === 'project') return 'Project';
+  if (type === 'hackathon') return 'Hackathon';
   return 'Bounty';
 };
 

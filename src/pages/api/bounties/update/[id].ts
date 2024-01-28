@@ -109,7 +109,7 @@ export default async function bounty(
           subject: 'Listing Deadline Extended!',
           react: DeadlineExtendedTemplate({
             listingName: result.title,
-            link: `https://earn.superteam.fun/listings/bounties/${result.slug}/`,
+            link: `https://earn.superteam.fun/listings/${result.type}/${result.slug}/`,
           }),
         });
       };

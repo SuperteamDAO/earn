@@ -4,7 +4,7 @@ import dayjs from 'dayjs';
 import { useEffect, useState } from 'react';
 
 import {
-  BountiesCard,
+  ListingCard,
   ListingsCardSkeleton,
   ListingSection,
 } from '@/components/misc/listingsCard';
@@ -32,7 +32,7 @@ function AllBountiesPage() {
         params: {
           category: 'bounties',
           take: 100,
-          type: 'permissioned',
+          type: 'project',
           deadline: date,
         },
       });
@@ -78,7 +78,7 @@ function AllBountiesPage() {
           {!isListingsLoading &&
             listings?.bounties?.map((bounty) => {
               return (
-                <BountiesCard
+                <ListingCard
                   slug={bounty?.slug}
                   rewardAmount={bounty?.rewardAmount}
                   key={bounty?.id}
