@@ -8,6 +8,7 @@ import {
   Text,
   useMediaQuery,
 } from '@chakra-ui/react';
+import Head from 'next/head';
 import Image from 'next/image';
 import { useSession } from 'next-auth/react';
 import React from 'react';
@@ -65,6 +66,11 @@ export function HomeBanner({ setTriggerLogin, userCount }: BannerProps) {
   if (!session && status === 'unauthenticated') {
     return (
       <>
+        <Head>
+          {avatars.map((avatar, index) => (
+            <link rel="preload" as="image" key={index} href={avatar.src} />
+          ))}
+        </Head>
         <Box
           pos="relative"
           w={'100%'}
