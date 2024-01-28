@@ -1,12 +1,4 @@
-import {
-  Box,
-  Button,
-  Circle,
-  Flex,
-  Image,
-  SimpleGrid,
-  Text,
-} from '@chakra-ui/react';
+import { Box, Button, Flex, Image, SimpleGrid, Text } from '@chakra-ui/react';
 import axios from 'axios';
 import React, { useEffect, useState } from 'react';
 import Countdown from 'react-countdown';
@@ -138,9 +130,13 @@ export default function Scribes() {
             mt={{ base: 8, md: 'auto' }}
           >
             <ScribesLogo />
-            <Text w={{ base: '100%', md: '40%' }} py={2} color="#4D2300">
-              Participate in the largest hackathon for content writers for
-              building amazing content on Solana
+            <Text
+              w={{ base: '100%', md: '40%' }}
+              pt={4}
+              color="#4D2300"
+              fontSize={'lg'}
+            >
+              Participate in Solana&apos;s first ever content hackathon
             </Text>
             <Flex
               align={{ base: 'start', md: 'center' }}
@@ -159,13 +155,6 @@ export default function Scribes() {
               >
                 Sponsor A Track
               </Button>
-              <Flex align="center" gap={2}>
-                <Circle bg="#16A35F" size="8px" />
-
-                <Text color="brand.slate.800" fontWeight={500}>
-                  Submissions Opening Shortly
-                </Text>
-              </Flex>
             </Flex>
             <Flex gap={6} pt={6}>
               <Flex direction={'column'}>
