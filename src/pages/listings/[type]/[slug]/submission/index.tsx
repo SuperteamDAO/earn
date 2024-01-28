@@ -62,6 +62,7 @@ const SubmissionPage = ({ slug }: { slug: string }) => {
               slug={bounty?.slug}
               isWinnersAnnounced={bounty?.isWinnersAnnounced}
               references={bounty?.references}
+              type={bounty?.type}
             />
             <Submissions
               bounty={bounty}

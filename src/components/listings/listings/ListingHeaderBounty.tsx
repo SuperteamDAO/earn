@@ -384,7 +384,7 @@ export function ListingHeader({
         )}
       </VStack>
       <Toaster />
-      {router.asPath.includes('bounties') && !isTemplate && (
+      {!isTemplate && (
         <Flex
           align={'center'}
           w={'full'}
@@ -424,11 +424,11 @@ export function ListingHeader({
                 borderBottom: '2px solid',
                 borderBottomColor: 'brand.purple',
               }}
-              href={`/listings/${type}/${slug}`}
+              href={`/listings/${type}/${slug}/`}
             >
               Details
             </Link>
-            {isProject && hasDeadlineEnded && (
+            {!isProject && hasDeadlineEnded && (
               <Link
                 as={NextLink}
                 alignItems="center"
