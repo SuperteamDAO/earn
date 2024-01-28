@@ -40,7 +40,7 @@ function getTypeTitleAndDescription(type: any, hackathon: any) {
   let typeTitle, typeDescription;
 
   switch (type) {
-    case 'permissioned':
+    case 'project':
       typeTitle = 'Project';
       typeDescription =
         "Don't start working just yet! Apply first, and then you'll be notified if you're selected to work on this Project.";
@@ -51,7 +51,7 @@ function getTypeTitleAndDescription(type: any, hackathon: any) {
         : 'Hackathon Track';
       typeDescription = hackathon?.description || 'Hackathon description';
       break;
-    case 'open':
+    case 'bounty':
       typeTitle = 'Bounty';
       typeDescription =
         'This is an open competition bounty! Anyone can start working and submit their work before the deadline!';
@@ -198,8 +198,8 @@ export function DetailSideCardBounty({
     }
   };
 
-  const isProject = type === 'permissioned';
-  const isBounty = type === 'open';
+  const isProject = type === 'project';
+  const isBounty = type === 'bounty';
 
   type PrizeKey = keyof Rewards;
 

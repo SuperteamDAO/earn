@@ -5,7 +5,7 @@ import { styles } from './styles';
 interface SubmissionProps {
   name: string;
   bountyName: string;
-  type: 'open' | 'permissioned' | 'hackathon';
+  type: 'bounty' | 'project' | 'hackathon';
 }
 
 export const SubmissionTemplate = ({
@@ -13,7 +13,7 @@ export const SubmissionTemplate = ({
   bountyName,
   type,
 }: SubmissionProps) => {
-  const isProject = type === 'permissioned';
+  const isProject = type === 'project';
   return (
     <div style={styles.container}>
       <p style={styles.greetings}>Hey {name},</p>

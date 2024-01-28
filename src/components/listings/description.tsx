@@ -90,7 +90,7 @@ interface Props {
   editable?: boolean;
   setBountyRequirements?: Dispatch<SetStateAction<any | undefined>>;
   bountyRequirements?: string | undefined;
-  type?: 'open' | 'permissioned' | 'hackathon';
+  type?: 'bounty' | 'project' | 'hackathon';
   references?: References[];
   setReferences?: Dispatch<SetStateAction<References[]>>;
   isNewOrDraft?: boolean;
@@ -184,7 +184,7 @@ export const Description = ({
     }
   };
 
-  const isProject = type === 'permissioned';
+  const isProject = type === 'project';
 
   return (
     <>

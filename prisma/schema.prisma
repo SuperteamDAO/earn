@@ -62,7 +62,7 @@ model Bounties {
   updatedAt            DateTime           @updatedAt
   applicationLink      String?
   skills               Json?
-  type                 BountyType         @default(open)
+  type                 BountyType         @default(bounty)
   requirements         String?            @db.Text
   totalPaymentsMade    Int?               @default(0)
   totalWinnersSelected Int?               @default(0)
@@ -114,7 +114,7 @@ model BountiesTemplates {
   createdAt           DateTime   @default(now())
   updatedAt           DateTime   @updatedAt
   skills              Json?
-  type                BountyType @default(open)
+  type                BountyType @default(bounty)
   Bounties            Bounties[]
 
   @@index([id])
@@ -431,6 +431,8 @@ enum status {
 enum BountyType {
   permissioned
   open
+  bounty
+  project
   hackathon
 }
 

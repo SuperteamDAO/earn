@@ -828,7 +828,7 @@ function BountySubmissions({ slug }: Props) {
                           </Flex>
                         </Flex>
                         <Box w="full" px={4} py={5}>
-                          {bounty?.type !== 'permissioned' && (
+                          {bounty?.type !== 'project' && (
                             <>
                               <Box mb={4}>
                                 <Text
@@ -880,7 +880,7 @@ function BountySubmissions({ slug }: Props) {
                               </Box>
                             </>
                           )}
-                          {bounty?.type === 'permissioned' &&
+                          {bounty?.type === 'project' &&
                             selectedSubmission?.eligibilityAnswers?.map(
                               (answer: any, answerIndex: number) => (
                                 <Box key={answerIndex} mb={4}>

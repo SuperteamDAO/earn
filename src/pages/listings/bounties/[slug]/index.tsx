@@ -7,7 +7,7 @@ import Head from 'next/head';
 import { useEffect, useState } from 'react';
 
 import { bountySnackbarAtom } from '@/components/Header/BountySnackbar';
-import { BountyWinners } from '@/components/listings/bounty/BountyWinners';
+import { ListingWinners } from '@/components/listings/bounty/ListingWinners';
 import { Comments } from '@/components/listings/listings/comments';
 import { DetailDescriptionBounty } from '@/components/listings/listings/details/detailDescriptionBounty';
 import { DetailSideCardBounty } from '@/components/listings/listings/details/detailSideCardBounty';
@@ -126,7 +126,7 @@ function BountyDetails({ bounty: initialBounty }: BountyDetailsProps) {
                 hackathonStartsAt={bounty?.Hackathon?.logo}
                 references={bounty?.references}
               />
-              {bounty?.isWinnersAnnounced && <BountyWinners bounty={bounty} />}
+              {bounty?.isWinnersAnnounced && <ListingWinners bounty={bounty} />}
               <HStack
                 align={['center', 'center', 'start', 'start']}
                 justify={['center', 'center', 'space-between', 'space-between']}

@@ -55,7 +55,7 @@ interface Props {
   setBountyPayment: Dispatch<SetStateAction<any | undefined>>;
   editable: boolean;
   isNewOrDraft?: boolean;
-  type: 'open' | 'permissioned' | 'hackathon';
+  type: 'bounty' | 'project' | 'hackathon';
   isDuplicating?: boolean;
 }
 export const CreatebountyPayment = ({
@@ -147,7 +147,7 @@ export const CreatebountyPayment = ({
     });
   };
 
-  const isProject = type === 'permissioned';
+  const isProject = type === 'project';
 
   const handleSubmit = (isEdit?: boolean, mode?: string) => {
     if (isProject) {
@@ -340,7 +340,7 @@ export const CreatebountyPayment = ({
             />
           </NumberInput>
         </FormControl>
-        {type !== 'permissioned' && (
+        {type !== 'project' && (
           <VStack gap={4} w={'full'} mt={5} mb={8}>
             {prizes.map((el, index) => (
               <FormControl key={el.value}>

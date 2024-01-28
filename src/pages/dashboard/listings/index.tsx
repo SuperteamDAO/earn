@@ -389,7 +389,7 @@ function Bounties() {
               <Tbody w="full">
                 {bounties.map((currentBounty) => {
                   const bountyType = getBountyTypeLabel(
-                    currentBounty?.type ?? 'open',
+                    currentBounty?.type ?? 'bounty',
                   );
 
                   const deadline = formatDeadline(
@@ -419,7 +419,7 @@ function Bounties() {
                                 mr={2}
                                 alt={`New ${bountyType}`}
                                 src={
-                                  currentBounty.type === 'open'
+                                  currentBounty.type === 'bounty'
                                     ? '/assets/icons/bolt.svg'
                                     : '/assets/icons/briefcase.svg'
                                 }

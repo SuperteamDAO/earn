@@ -116,7 +116,7 @@ export function ListingHeader({
     fetchUser();
   }, [update]);
 
-  const isProject = type === 'permissioned';
+  const isProject = type === 'project';
   const isHackathon = type === 'hackathon';
 
   let statusText = '';

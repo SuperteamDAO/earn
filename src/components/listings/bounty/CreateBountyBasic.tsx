@@ -38,7 +38,7 @@ interface Props {
   editable: boolean;
   regions: Regions;
   setRegions: Dispatch<SetStateAction<Regions>>;
-  type: 'open' | 'permissioned' | 'hackathon';
+  type: 'bounty' | 'project' | 'hackathon';
   timeToComplete?: string;
   isNewOrDraft?: boolean;
   isDuplicating?: boolean;
@@ -112,7 +112,7 @@ export const CreatebountyBasic = ({
     );
   }, [bountyBasic?.timeToComplete, timeToCompleteOptions]);
 
-  const isProject = type === 'permissioned';
+  const isProject = type === 'project';
 
   return (
     <>

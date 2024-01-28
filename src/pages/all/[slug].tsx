@@ -4,8 +4,8 @@ import type { NextPageContext } from 'next';
 import { useEffect, useState } from 'react';
 
 import {
-  BountiesCard,
   GrantsCard,
+  ListingCard,
   ListingsCardSkeleton,
   ListingSection,
 } from '@/components/misc/listingsCard';
@@ -94,7 +94,7 @@ function ListingCategoryPage({ slug }: { slug: string }) {
           {!isListingsLoading &&
             listings?.bounties?.map((bounty) => {
               return (
-                <BountiesCard
+                <ListingCard
                   slug={bounty?.slug}
                   rewardAmount={bounty?.rewardAmount}
                   key={bounty?.id}
