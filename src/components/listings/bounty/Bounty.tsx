@@ -154,7 +154,7 @@ export function CreateListing({
         api = `/api/bounties/update/${bounty?.id}/`;
       }
       const result = await axios.post(api, { ...newBounty, hackathonSlug });
-      setSlug(`/bounties/${result?.data?.slug}/`);
+      setSlug(`/${result?.data?.type}/${result?.data?.slug}/`);
       setIsListingPublishing(false);
       onOpen();
       if (!isPrivate) {

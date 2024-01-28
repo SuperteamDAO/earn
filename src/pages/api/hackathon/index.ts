@@ -13,7 +13,6 @@ export default async function getHackathon(
     const hackathon = await prisma.hackathon.findUnique({
       where: { slug: hackathonSlug },
     });
-    console.log(hackathon);
 
     if (!hackathon) {
       return res.status(404).json({ error: 'Hackathon not found.' });

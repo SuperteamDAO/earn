@@ -31,7 +31,7 @@ export default function Scribes() {
     const getTracks = async () => {
       const trackData = await axios.get('/api/hackathon/', {
         params: {
-          slug: 'scribetest',
+          slug: 'scribes',
         },
       });
       setTrackData(trackData.data);
@@ -40,7 +40,7 @@ export default function Scribes() {
     const getStats = async () => {
       const statsData = await axios.get('/api/hackathon/stats/', {
         params: {
-          slug: 'scribetest',
+          slug: 'scribes',
         },
       });
       setStats(statsData.data);
