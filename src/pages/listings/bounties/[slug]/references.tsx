@@ -94,7 +94,8 @@ function BountyDetails({ bounty: initialBounty }: BountyDetailsProps) {
                 slug={bounty?.slug}
                 region={bounty?.region || Regions.GLOBAL}
                 isWinnersAnnounced={bounty?.isWinnersAnnounced}
-                hackathonPrize={bounty?.hackathonprize}
+                hackathonLogo={bounty?.Hackathon?.logo}
+                hackathonStartsAt={bounty?.Hackathon?.startDate}
                 references={bounty?.references}
               />
               <Box mx={4}>

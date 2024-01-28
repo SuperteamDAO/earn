@@ -38,7 +38,8 @@ interface Bounty {
   slug?: string;
   type?: BountyType | string;
   isWinnersAnnounced?: boolean;
-  hackathonPrize?: boolean;
+  hackathonLogo?: string;
+  hackathonStartsAt?: string;
   isTemplate?: boolean;
   region: Regions;
   references?: References[];
@@ -54,7 +55,8 @@ export function ListingHeader({
   isWinnersAnnounced,
   id,
   isTemplate,
-  hackathonPrize,
+  hackathonLogo,
+  hackathonStartsAt,
   region,
   references,
 }: Bounty) {
@@ -62,6 +64,7 @@ export function ListingHeader({
   const { isOpen, onClose, onOpen } = useDisclosure();
   const { userInfo } = userStore();
   const hasDeadlineEnded = dayjs().isAfter(deadline);
+  const hasHackathonStarted = dayjs().isAfter(hackathonStartsAt);
   const [update, setUpdate] = useState<boolean>(false);
   const [sub, setSub] = useState<
     (SubscribeBounty & {
@@ -114,6 +117,29 @@ export function ListingHeader({
   }, [update]);
 
   const isProject = type === 'permissioned';
+  const isHackathon = type === 'hackathon';
+
+  let statusText = '';
+  let statusBgColor = '';
+  let statusTextColor = '';
+
+  if (isHackathon && !hasDeadlineEnded && !hasHackathonStarted) {
+    statusText = 'Open';
+    statusBgColor = 'green.100';
+    statusTextColor = 'green.600';
+  } else if (status === 'CLOSED' || (status === 'OPEN' && isWinnersAnnounced)) {
+    statusText = 'Submissions Closed';
+    statusBgColor = 'orange.100';
+    statusTextColor = 'orange.600';
+  } else if (!isWinnersAnnounced && hasDeadlineEnded && status === 'OPEN') {
+    statusText = 'Submissions In Review';
+    statusBgColor = 'orange.100';
+    statusTextColor = 'orange.600';
+  } else if (!hasDeadlineEnded && !isWinnersAnnounced && status === 'OPEN') {
+    statusText = 'Submissions Open';
+    statusBgColor = 'green.100';
+    statusTextColor = 'green.600';
+  }
 
   return (
     <VStack px={{ base: '2', md: '6' }} bg={'white'}>
@@ -157,44 +183,17 @@ export function ListingHeader({
                 borderRadius={'full'}
                 whiteSpace={'nowrap'}
               >
-                {(status === 'CLOSED' ||
-                  (status === 'OPEN' && isWinnersAnnounced)) && (
+                {statusText && (
                   <Text
                     px={3}
                     py={1}
-                    color={'orange.600'}
-                    bg={'orange.100'}
+                    color={statusTextColor}
+                    bg={statusBgColor}
                     rounded={'full'}
                   >
-                    Submissions Closed
+                    {statusText}
                   </Text>
                 )}
-                {!isWinnersAnnounced &&
-                  hasDeadlineEnded &&
-                  status === 'OPEN' && (
-                    <Text
-                      px={3}
-                      py={1}
-                      color={'orange.600'}
-                      bg={'orange.100'}
-                      rounded={'full'}
-                    >
-                      Submissions In Review
-                    </Text>
-                  )}
-                {!hasDeadlineEnded &&
-                  !isWinnersAnnounced &&
-                  status === 'OPEN' && (
-                    <Text
-                      px={3}
-                      py={1}
-                      color={'green.600'}
-                      bg={'green.100'}
-                      rounded={'full'}
-                    >
-                      Submissions Open
-                    </Text>
-                  )}
               </Flex>
             </HStack>
             {!isTemplate && (
@@ -205,76 +204,80 @@ export function ListingHeader({
                 <Text color={'#E2E8EF'} fontWeight={500}>
                   |
                 </Text>
-                <Flex
-                  align={'center'}
-                  gap={1}
-                  display={{ base: 'none', md: 'flex' }}
-                >
-                  <Text color={'gray.400'} fontWeight={500}>
-                    {hackathonPrize ? (
-                      'Hackathon Prize'
-                    ) : (
-                      <Tooltip
-                        px={4}
-                        py={2}
-                        color="brand.slate.500"
-                        fontFamily={'var(--font-sans)'}
-                        fontSize="sm"
-                        bg="white"
-                        borderRadius={'lg'}
-                        label={
-                          isProject
-                            ? 'A Project is a short-term gig where sponsors solicit applications from multiple people, and select the best one to work on the Project.'
-                            : 'Bounties are open for anyone to participate in and submit their work (as long as they meet the eligibility requirements mentioned below). The best submissions win!'
-                        }
+                {isHackathon ? (
+                  <Flex align={'center'}>
+                    <Image h="6" alt={type} src={hackathonLogo} />
+                  </Flex>
+                ) : (
+                  <>
+                    <Flex
+                      align={'center'}
+                      gap={1}
+                      display={{ base: 'none', md: 'flex' }}
+                    >
+                      <Text color={'gray.400'} fontWeight={500}>
+                        <Tooltip
+                          px={4}
+                          py={2}
+                          color="brand.slate.500"
+                          fontFamily={'var(--font-sans)'}
+                          fontSize="sm"
+                          bg="white"
+                          borderRadius={'lg'}
+                          label={
+                            isProject
+                              ? 'A Project is a short-term gig where sponsors solicit applications from multiple people, and select the best one to work on the Project.'
+                              : 'Bounties are open for anyone to participate in and submit their work (as long as they meet the eligibility requirements mentioned below). The best submissions win!'
+                          }
+                        >
+                          <Flex>
+                            <Image
+                              h="4"
+                              mt={1}
+                              mr={1}
+                              alt={type}
+                              src={
+                                isProject
+                                  ? '/assets/icons/briefcase.svg'
+                                  : '/assets/icons/bolt.svg'
+                              }
+                            />
+                            {isProject ? 'Project' : 'Bounty'}
+                          </Flex>
+                        </Tooltip>
+                      </Text>
+                    </Flex>
+                    <Tooltip
+                      px={4}
+                      py={2}
+                      color="brand.slate.500"
+                      fontFamily={'Inter'}
+                      fontSize="sm"
+                      bg="white"
+                      borderRadius={'lg'}
+                      label={
+                        region === 'GLOBAL'
+                          ? 'This listing is open to everyone in the world!'
+                          : `You need to be a resident of ${
+                              region.charAt(0).toUpperCase() +
+                              region.slice(1).toLowerCase()
+                            } to participate in this bounty`
+                      }
+                    >
+                      <Text
+                        px={2}
+                        py={1}
+                        color={'#0800A5'}
+                        fontSize={'xs'}
+                        fontWeight={500}
+                        bg="#EBEAFF"
+                        rounded={'full'}
                       >
-                        <Flex>
-                          <Image
-                            h="4"
-                            mt={1}
-                            mr={1}
-                            alt={type}
-                            src={
-                              isProject
-                                ? '/assets/icons/briefcase.svg'
-                                : '/assets/icons/bolt.svg'
-                            }
-                          />
-                          {isProject ? 'Project' : 'Bounty'}
-                        </Flex>
-                      </Tooltip>
-                    )}
-                  </Text>
-                </Flex>
-                <Tooltip
-                  px={4}
-                  py={2}
-                  color="brand.slate.500"
-                  fontFamily={'Inter'}
-                  fontSize="sm"
-                  bg="white"
-                  borderRadius={'lg'}
-                  label={
-                    region === 'GLOBAL'
-                      ? 'This listing is open to everyone in the world!'
-                      : `You need to be a resident of ${
-                          region.charAt(0).toUpperCase() +
-                          region.slice(1).toLowerCase()
-                        } to participate in this bounty`
-                  }
-                >
-                  <Text
-                    px={2}
-                    py={1}
-                    color={'#0800A5'}
-                    fontSize={'xs'}
-                    fontWeight={500}
-                    bg="#EBEAFF"
-                    rounded={'full'}
-                  >
-                    {region}
-                  </Text>
-                </Tooltip>
+                        {region}
+                      </Text>
+                    </Tooltip>
+                  </>
+                )}
               </HStack>
             )}
           </VStack>

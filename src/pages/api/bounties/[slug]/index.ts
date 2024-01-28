@@ -11,7 +11,7 @@ export default async function user(req: NextApiRequest, res: NextApiResponse) {
         slug,
         isActive: true,
       },
-      include: { sponsor: true, poc: true, Submission: true },
+      include: { sponsor: true, poc: true, Submission: true, Hackathon: true },
     });
 
     if (!result) {

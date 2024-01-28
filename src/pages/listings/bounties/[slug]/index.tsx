@@ -122,7 +122,8 @@ function BountyDetails({ bounty: initialBounty }: BountyDetailsProps) {
                 slug={bounty?.slug}
                 region={bounty?.region || Regions.GLOBAL}
                 isWinnersAnnounced={bounty?.isWinnersAnnounced}
-                hackathonPrize={bounty?.hackathonprize}
+                hackathonLogo={bounty?.Hackathon?.logo}
+                hackathonStartsAt={bounty?.Hackathon?.logo}
                 references={bounty?.references}
               />
               {bounty?.isWinnersAnnounced && <BountyWinners bounty={bounty} />}
@@ -154,7 +155,7 @@ function BountyDetails({ bounty: initialBounty }: BountyDetailsProps) {
                   requirements={bounty?.requirements}
                   isWinnersAnnounced={bounty?.isWinnersAnnounced}
                   pocSocials={bounty?.pocSocials}
-                  hackathonPrize={bounty?.hackathonprize}
+                  hackathon={bounty?.Hackathon}
                   applicationType={bounty?.applicationType}
                   timeToComplete={bounty?.timeToComplete}
                   isPublished={bounty?.isPublished}
