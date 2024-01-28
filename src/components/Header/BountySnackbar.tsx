@@ -19,7 +19,8 @@ export const BountySnackbar = () => {
 
   const { pathname } = router;
 
-  const showSnackbar = /^\/listings\/bounties\/[^/]+$/.test(pathname);
+  const showSnackbar =
+    /^\/listings\/(bounties|bounty|project|hackathon)\/[^/]+$/.test(pathname);
 
   if (!bountySnackbar) return null;
 

@@ -4,7 +4,7 @@ import axios from 'axios';
 import type { GetServerSideProps } from 'next';
 import React, { useEffect, useState } from 'react';
 
-import { ListingHeader } from '@/components/listings/listings/ListingHeaderBounty';
+import { ListingHeader } from '@/components/listings/listings/ListingHeader';
 import { SubmissionPage } from '@/components/listings/listings/submissions/submissionPage';
 import { EmptySection } from '@/components/shared/EmptySection';
 import { LoadingSection } from '@/components/shared/LoadingSection';

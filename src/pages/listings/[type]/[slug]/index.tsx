@@ -11,7 +11,7 @@ import { ListingWinners } from '@/components/listings/bounty/ListingWinners';
 import { Comments } from '@/components/listings/listings/comments';
 import { DetailDescriptionBounty } from '@/components/listings/listings/details/detailDescriptionBounty';
 import { DetailSideCardBounty } from '@/components/listings/listings/details/detailSideCardBounty';
-import { ListingHeader } from '@/components/listings/listings/ListingHeaderBounty';
+import { ListingHeader } from '@/components/listings/listings/ListingHeader';
 import { ErrorSection } from '@/components/shared/ErrorSection';
 import type { Bounty } from '@/interface/bounty';
 import { Default } from '@/layouts/Default';

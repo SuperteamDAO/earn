@@ -6,7 +6,7 @@ import { useEffect, useState } from 'react';
 
 import { ListingWinners } from '@/components/listings/bounty/ListingWinners';
 import { DetailDescriptionBounty } from '@/components/listings/listings/details/detailDescriptionBounty';
-import { ListingHeader } from '@/components/listings/listings/ListingHeaderBounty';
+import { ListingHeader } from '@/components/listings/listings/ListingHeader';
 import { ErrorSection } from '@/components/shared/ErrorSection';
 import { LoadingSection } from '@/components/shared/LoadingSection';
 import { Default } from '@/layouts/Default';

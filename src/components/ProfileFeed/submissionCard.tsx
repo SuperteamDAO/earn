@@ -208,7 +208,7 @@ export function SubmissionCard({
             whiteSpace={'nowrap'}
           >
             <LinkOverlay
-              href={`${getURL()}listings/bounties/${
+              href={`${getURL()}listings/${sub?.listing?.type}/${
                 sub?.listing?.slug
               }/submission/${sub?.id}`}
             >
@@ -251,7 +251,7 @@ export function SubmissionCard({
             cursor: 'pointer',
           }}
           onClick={() => {
-            const submissionUrl = `${getURL()}listings/bounties/${
+            const submissionUrl = `${getURL()}listings/${sub?.listing?.type}/${
               sub?.listing?.slug
             }/submission/${sub?.id}`;
             window.location.href = submissionUrl;
