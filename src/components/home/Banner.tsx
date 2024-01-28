@@ -67,8 +67,8 @@ export function HomeBanner({ setTriggerLogin, userCount }: BannerProps) {
     return (
       <>
         <Head>
-          {avatars.map((avatar, index) => (
-            <link rel="preload" as="image" key={index} href={avatar.src} />
+          {avatars.map((avatar) => (
+            <link rel="preload" as="image" key={avatar.src} href={avatar.src} />
           ))}
         </Head>
         <Box

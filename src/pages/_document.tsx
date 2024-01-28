@@ -5,6 +5,7 @@ export default function Document() {
   return (
     <Html data-theme="light" lang="en">
       <Head>
+        <link rel="preload" as="image" href="/assets/googleauth.webp" />
         <link rel="preconnect" href="https://app.posthog.com" />
         <link rel="preconnect" href="https://www.googletagmanager.com" />
         <link rel="preconnect" href="https://res.cloudinary.com" />
