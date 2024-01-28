@@ -59,10 +59,8 @@ export function Home({ children, type }: HomeProps) {
 
     if (getEarnerData.status === 'rejected') {
       console.error(getEarnerData.reason);
-      setIsTotalLoading(false);
     } else {
       earnerData = getEarnerData.value;
-      setIsTotalLoading(false);
       setRecentEarners(earnerData.data);
     }
 
