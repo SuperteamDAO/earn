@@ -1,12 +1,12 @@
 import { CreateListing } from '@/components/listings/bounty/Bounty';
 import { Sidebar } from '@/layouts/Sponsor';
 
-function CreateBounty() {
+function CreateProject() {
   return (
     <Sidebar>
-      <CreateListing type="open" />
+      <CreateListing type="project" />
     </Sidebar>
   );
 }
 
-export default CreateBounty;
+export default CreateProject;

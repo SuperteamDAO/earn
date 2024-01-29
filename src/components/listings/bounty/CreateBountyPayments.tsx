@@ -55,7 +55,7 @@ interface Props {
   setBountyPayment: Dispatch<SetStateAction<any | undefined>>;
   editable: boolean;
   isNewOrDraft?: boolean;
-  type: 'open' | 'permissioned';
+  type: 'bounty' | 'project' | 'hackathon';
   isDuplicating?: boolean;
 }
 export const CreatebountyPayment = ({
@@ -147,8 +147,10 @@ export const CreatebountyPayment = ({
     });
   };
 
+  const isProject = type === 'project';
+
   const handleSubmit = (isEdit?: boolean, mode?: string) => {
-    if (type === 'permissioned') {
+    if (isProject) {
       setBountyPayment((prev: any) => ({
         ...prev,
         rewards: { first: prev.rewardAmount },
@@ -160,9 +162,7 @@ export const CreatebountyPayment = ({
         if (isEdit || mode === 'DRAFT') createDraft();
         else confirmOnOpen();
       }
-    }
-
-    if (type === 'open') {
+    } else {
       const totalPrizes = Object.values(bountyPayment.rewards)
         .map((reward) => reward as number)
         .reduce((a, b) => a + b, 0);
@@ -178,13 +178,11 @@ export const CreatebountyPayment = ({
   };
 
   const isListingIncomplete = (() => {
-    if (type === 'permissioned') {
+    if (isProject) {
       return bountyPayment?.rewardAmount === null;
-    }
-    if (type === 'open') {
+    } else {
       return Object.keys(bountyPayment?.rewards || {}).length === 0;
     }
-    return true;
   })();
 
   return (
@@ -318,7 +316,7 @@ export const CreatebountyPayment = ({
               fontWeight={600}
               htmlFor={'slug'}
             >
-              Total {type === 'open' ? 'Reward Amount' : 'Compensation'} (in{' '}
+              Total {!isProject ? 'Reward Amount' : 'Compensation'} (in{' '}
               {
                 tokenList.find(
                   (token) => token.tokenSymbol === bountyPayment.token,
@@ -342,7 +340,7 @@ export const CreatebountyPayment = ({
             />
           </NumberInput>
         </FormControl>
-        {type === 'open' && (
+        {type !== 'project' && (
           <VStack gap={4} w={'full'} mt={5} mb={8}>
             {prizes.map((el, index) => (
               <FormControl key={el.value}>
@@ -400,7 +398,7 @@ export const CreatebountyPayment = ({
         )}
         {isRewardError && (
           <Text w="full" color="red" textAlign={'center'}>
-            {type === 'permissioned'
+            {isProject
               ? 'Please enter an amount'
               : 'Sorry! Total reward amount should be equal to the sum of all prizes.'}
           </Text>

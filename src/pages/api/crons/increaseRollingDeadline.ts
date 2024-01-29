@@ -8,7 +8,7 @@ async function handler(_req: NextApiRequest, res: NextApiResponse) {
   try {
     const bounties = await prisma.bounties.findMany({
       where: {
-        type: 'permissioned',
+        type: 'project',
         applicationType: 'rolling',
         status: 'OPEN',
         isWinnersAnnounced: false,

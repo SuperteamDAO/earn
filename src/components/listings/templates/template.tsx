@@ -17,7 +17,7 @@ interface Props {
   setMainSkills: Dispatch<SetStateAction<MultiSelectOptions[]>>;
   setSubSkills: Dispatch<SetStateAction<MultiSelectOptions[]>>;
   setBountyBasic: Dispatch<SetStateAction<BountyBasicType | undefined>>;
-  type: 'open' | 'permissioned';
+  type: 'bounty' | 'project' | 'hackathon';
 }
 export const Template = ({
   setSteps,
@@ -212,7 +212,7 @@ export const Template = ({
                         leftIcon={<ViewIcon />}
                         onClick={() => {
                           window.open(
-                            `${getURL()}templates/bounties/${template?.slug}`,
+                            `${getURL()}templates/listings/${template?.slug}`,
                             '_blank',
                           );
                         }}

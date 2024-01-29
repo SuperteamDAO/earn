@@ -13,7 +13,7 @@ import type { GetServerSideProps } from 'next';
 import React, { useEffect, useState } from 'react';
 
 import { DetailDescription } from '@/components/listings/listings/details/detailDescription';
-import { ListingHeader } from '@/components/listings/listings/ListingHeader';
+import { GrantsHeader } from '@/components/listings/listings/GrantsHeader';
 import { EmptySection } from '@/components/shared/EmptySection';
 import { LoadingSection } from '@/components/shared/LoadingSection';
 import type { Grant } from '@/interface/grant';
@@ -65,11 +65,9 @@ const Grants = ({ slug }: GrantsDetailsProps) => {
         )}
         {!isLoading && !error && !!grants?.id && (
           <>
-            <ListingHeader
+            <GrantsHeader
               title={grants?.title ?? ''}
               sponsor={grants?.sponsor as SponsorType}
-              eligibility="permission-less"
-              tabs={false}
             />
             <HStack
               align={['center', 'center', 'start', 'start']}

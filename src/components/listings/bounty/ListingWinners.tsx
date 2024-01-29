@@ -12,12 +12,12 @@ interface Props {
   bounty: Bounty;
 }
 
-export function BountyWinners({ bounty }: Props) {
-  const [isBountyLoading, setIsBountyLoading] = useState(true);
+export function ListingWinners({ bounty }: Props) {
+  const [isListingLoading, setIsListingLoading] = useState(true);
   const [submissions, setSubmissions] = useState<SubmissionWithUser[]>([]);
 
   const getSubmissions = async (id?: string) => {
-    setIsBountyLoading(true);
+    setIsListingLoading(true);
     try {
       const submissionsDetails = await axios.get(
         `/api/submission/${id || bounty?.id}/winners/`,
@@ -32,9 +32,9 @@ export function BountyWinners({ bounty }: Props) {
         data.find((d: SubmissionWithUser) => d.winnerPosition === position),
       );
       setSubmissions(sortedSubmissions);
-      setIsBountyLoading(false);
+      setIsListingLoading(false);
     } catch (e) {
-      setIsBountyLoading(false);
+      setIsListingLoading(false);
     }
   };
 
@@ -42,7 +42,7 @@ export function BountyWinners({ bounty }: Props) {
     getSubmissions();
   }, []);
 
-  if (isBountyLoading || !submissions.length) {
+  if (isListingLoading || !submissions.length) {
     return null;
   }
 
@@ -71,8 +71,8 @@ export function BountyWinners({ bounty }: Props) {
               <NextLink
                 key={submission.id}
                 href={
-                  bounty?.type === 'open'
-                    ? `/listings/bounties/${bounty?.slug}/submission/${submission?.id}/`
+                  bounty?.type !== 'project'
+                    ? `/listings/${bounty?.type}/${bounty?.slug}/submission/${submission?.id}/`
                     : `/t/${submission?.user?.username}`
                 }
                 passHref

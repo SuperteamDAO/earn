@@ -1,7 +1,9 @@
 import {
   Box,
+  Button,
   Center,
   Flex,
+  HStack,
   Image,
   Skeleton,
   Text,
@@ -15,6 +17,7 @@ import { useEffect, useRef, useState } from 'react';
 import { LoginWrapper } from '@/components/Header/LoginWrapper';
 import { tokenList } from '@/constants';
 import type { User } from '@/interface/user';
+import ScribesLogo from '@/svg/scribes-logo';
 import { getURL } from '@/utils/validUrl';
 
 interface SideBarProps {
@@ -385,6 +388,66 @@ const RecentEarners = ({ earners }: { earners?: User[] }) => {
   );
 };
 
+const ScribesBanner = () => {
+  return (
+    <Flex
+      direction={'column'}
+      gap={1}
+      w={'full'}
+      h={'max-content'}
+      px={'1.5625rem'}
+      py={'0.875rem'}
+      bg={'#FFE2C9'}
+      rounded={'lg'}
+    >
+      <HStack>
+        <Image alt="solana" src="/assets/scribes3.png" />
+      </HStack>
+      <HStack>
+        <ScribesLogo
+          styles={{
+            width: '100%',
+            marginLeft: 'auto',
+            marginRight: 'auto',
+            height: '48px',
+            marginTop: '8px',
+          }}
+        />
+      </HStack>
+      <Text
+        mt={1}
+        color={'brand.slate.800'}
+        fontSize={'lg'}
+        fontWeight={'600'}
+        lineHeight={'6'}
+      >
+        Build a Solana dApp and compete for $1,000,000+
+      </Text>
+      <Text
+        mt={'0.5rem'}
+        color={'brand.slate.700'}
+        fontSize={'1rem'}
+        lineHeight={'1.1875rem'}
+      >
+        Register for the Q3 Solana global hackathon and build your prize-winning
+        project! Deadline for project submissions is October 15th, 2023.
+      </Text>
+      <Button
+        as={NextLink}
+        mt={'1.5625rem'}
+        mb={2}
+        py={'0.8125rem'}
+        fontWeight={'500'}
+        textAlign={'center'}
+        borderRadius={8}
+        href="/scribes"
+      >
+        Register Now
+      </Button>
+    </Flex>
+  );
+};
+
 export const HomeSideBar = ({
   userInfo,
   listings,
@@ -401,6 +464,7 @@ export const HomeSideBar = ({
         TVE={total}
       />
       <RecentEarners earners={earners} />
+      <ScribesBanner />
     </Flex>
   );
 };

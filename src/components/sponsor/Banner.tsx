@@ -15,25 +15,36 @@ import { MdOutlineChatBubbleOutline } from 'react-icons/md';
 import { userStore } from '@/store/user';
 
 interface SponsorStats {
+  name?: string;
+  logo?: string;
   yearOnPlatform?: number;
   totalRewardAmount?: number;
   totalListings?: number;
   totalSubmissions?: number;
 }
 
-export function Banner() {
+export function Banner({ slug }: { slug?: string | null }) {
   const { userInfo } = userStore();
   const [sponsorStats, setSponsorStats] = useState<SponsorStats>({});
   const [isLoading, setIsLoading] = useState<boolean>(true);
 
   useEffect(() => {
     const getSponsorStats = async () => {
-      const sponsorData = await axios.get('/api/sponsors/stats');
+      let apiEndpoint = '/api/sponsors/stats';
+      let params = {};
+
+      if (slug) {
+        apiEndpoint = '/api/hackathon/stats';
+        params = { slug };
+      }
+      const sponsorData = await axios.get(apiEndpoint, { params });
       setSponsorStats(sponsorData.data);
       setIsLoading(false);
     };
     getSponsorStats();
   }, [userInfo?.currentSponsorId]);
+
+  const sponsor = slug ? sponsorStats : userInfo?.currentSponsor;
 
   if (!userInfo?.currentSponsorId) return null;
   return (
@@ -51,18 +62,18 @@ export function Banner() {
       >
         <Flex align="center" gap={12}>
           <Flex align="center" gap={3}>
-            {userInfo?.currentSponsor?.logo ? (
+            {sponsor?.logo ? (
               <Image
                 boxSize="52px"
                 borderRadius={4}
                 objectFit={'cover'}
-                alt={userInfo?.currentSponsor?.name}
-                src={userInfo?.currentSponsor?.logo}
+                alt={sponsor?.name}
+                src={sponsor?.logo}
               />
             ) : (
               <Avatar
                 colors={['#92A1C6', '#F0AB3D', '#C271B4']}
-                name={userInfo?.currentSponsor?.name}
+                name={sponsor?.name}
                 size={54}
                 variant="marble"
               />
@@ -74,7 +85,7 @@ export function Banner() {
                 fontWeight={600}
                 whiteSpace={'nowrap'}
               >
-                {userInfo?.currentSponsor?.name}
+                {sponsor?.name}
               </Text>
               {isLoading ? (
                 <Skeleton w="170px" h="20px" mt={2} />
@@ -84,7 +95,9 @@ export function Banner() {
                   fontWeight={400}
                   whiteSpace={'nowrap'}
                 >
-                  Sponsor since {sponsorStats.yearOnPlatform}
+                  {!slug
+                    ? `Sponsor since ${sponsorStats.yearOnPlatform}`
+                    : 'Hackathon'}
                 </Text>
               )}
             </Box>
@@ -96,8 +109,13 @@ export function Banner() {
             orientation="vertical"
           />
           <Box>
-            <Text color={'brand.slate.500'} fontSize="md" fontWeight={400}>
-              Rewarded
+            <Text
+              color={'brand.slate.500'}
+              fontSize="md"
+              fontWeight={400}
+              whiteSpace={'nowrap'}
+            >
+              {!slug ? 'Rewarded' : 'Total Prizes'}
             </Text>
             {isLoading ? (
               <Skeleton w="72px" h="20px" mt={2} />
@@ -109,7 +127,7 @@ export function Banner() {
           </Box>
           <Box>
             <Text color={'brand.slate.500'} fontSize="md" fontWeight={400}>
-              Listings
+              {!slug ? 'Listings' : 'Tracks'}
             </Text>
             {isLoading ? (
               <Skeleton w="32px" h="20px" mt={2} />

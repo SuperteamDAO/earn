@@ -20,6 +20,7 @@ import {
 } from '@chakra-ui/react';
 import type { BountyType } from '@prisma/client';
 import axios from 'axios';
+import dayjs from 'dayjs';
 import moment from 'moment';
 import { useEffect, useState } from 'react';
 import Countdown from 'react-countdown';
@@ -27,12 +28,42 @@ import Countdown from 'react-countdown';
 import { LoginWrapper } from '@/components/Header/LoginWrapper';
 import { VerticalStep } from '@/components/misc/steps';
 import { SubmissionModal } from '@/components/modals/submissionModalBounty';
+import { CountDownRenderer } from '@/components/shared/countdownRenderer';
 import { WarningModal } from '@/components/shared/WarningModal';
 import { tokenList } from '@/constants/index';
 import type { Eligibility, Rewards } from '@/interface/bounty';
 import { userStore } from '@/store/user';
 import { getBountyDraftStatus } from '@/utils/bounty';
 import { getURLSanitized } from '@/utils/submissions/getURLSanitized';
+
+function getTypeTitleAndDescription(type: any, hackathon: any) {
+  let typeTitle, typeDescription;
+
+  switch (type) {
+    case 'project':
+      typeTitle = 'Project';
+      typeDescription =
+        "Don't start working just yet! Apply first, and then you'll be notified if you're selected to work on this Project.";
+      break;
+    case 'hackathon':
+      typeTitle = hackathon?.name
+        ? `${hackathon.name} Track`
+        : 'Hackathon Track';
+      typeDescription = hackathon?.description || 'Hackathon description';
+      break;
+    case 'bounty':
+      typeTitle = 'Bounty';
+      typeDescription =
+        'This is an open competition bounty! Anyone can start working and submit their work before the deadline!';
+      break;
+    default:
+      typeTitle = 'Default Title';
+      typeDescription = 'Default description';
+      break;
+  }
+
+  return { typeTitle, typeDescription };
+}
 
 interface Props {
   id: string;
@@ -50,12 +81,16 @@ interface Props {
   type?: BountyType | string;
   requirements?: string;
   isWinnersAnnounced?: boolean;
-  hackathonPrize?: boolean;
   pocSocials?: string;
   applicationType?: 'fixed' | 'rolling';
   timeToComplete?: string;
   isPublished?: boolean;
   status?: string;
+  hackathon?: {
+    name: string;
+    description: string;
+    startDate: string;
+  };
 }
 export function DetailSideCardBounty({
   id,
@@ -68,12 +103,12 @@ export function DetailSideCardBounty({
   requirements,
   type,
   pocSocials,
-  hackathonPrize,
   isWinnersAnnounced = false,
   applicationType,
   timeToComplete,
   isPublished,
   status,
+  hackathon,
 }: Props) {
   const { userInfo } = userStore();
   const [isSubmissionNumberLoading, setIsSubmissionNumberLoading] =
@@ -96,6 +131,8 @@ export function DetailSideCardBounty({
   if (isWinnersAnnounced) {
     submissionStatus = 3;
   }
+
+  const hasHackathonStarted = dayjs().isAfter(hackathon?.startDate);
 
   const getUserSubmission = async () => {
     setIsUserSubmissionLoading(true);
@@ -161,22 +198,8 @@ export function DetailSideCardBounty({
     }
   };
 
-  const countDownRenderer = ({
-    days,
-    hours,
-    minutes,
-    seconds,
-  }: {
-    days: number;
-    hours: number;
-    minutes: number;
-    seconds: number;
-  }) => {
-    if (days > 0) {
-      return <span>{`${days}d:${hours}h:${minutes}m`}</span>;
-    }
-    return <span>{`${hours}h:${minutes}m:${seconds}s`}</span>;
-  };
+  const isProject = type === 'project';
+  const isBounty = type === 'bounty';
 
   type PrizeKey = keyof Rewards;
 
@@ -189,6 +212,11 @@ export function DetailSideCardBounty({
   ];
 
   const bountyDraftStatus = getBountyDraftStatus(status, isPublished);
+
+  const { typeTitle, typeDescription } = getTypeTitleAndDescription(
+    type,
+    hackathon,
+  );
 
   return (
     <>
@@ -261,13 +289,13 @@ export function DetailSideCardBounty({
                 </Text>
               </Text>
             </Flex>
-            {type === 'open' && (
+            {!isProject && (
               <Text color={'brand.slate.300'} fontSize={'lg'} fontWeight={400}>
                 Total Prizes
               </Text>
             )}
           </HStack>
-          {type === 'open' && (
+          {!isProject && (
             <VStack w={'full'} borderBottom={'1px solid #E2E8EF'}>
               <TableContainer w={'full'}>
                 <Table mt={-8} variant={'unstyled'}>
@@ -339,13 +367,13 @@ export function DetailSideCardBounty({
                 <Text color={'#000000'} fontSize="1.3rem" fontWeight={500}>
                   {isSubmissionNumberLoading
                     ? '...'
-                    : type === 'open'
+                    : !isProject
                       ? submissionNumber.toLocaleString()
                       : submissionRange}
                 </Text>
               </Flex>
               <Text color={'#94A3B8'}>
-                {type === 'open'
+                {!isProject
                   ? submissionNumber === 1
                     ? 'Submission'
                     : 'Submissions'
@@ -373,7 +401,7 @@ export function DetailSideCardBounty({
                     {applicationType === 'fixed' ? (
                       <Countdown
                         date={endingTime}
-                        renderer={countDownRenderer}
+                        renderer={CountDownRenderer}
                         zeroPadDays={1}
                       />
                     ) : (
@@ -389,7 +417,7 @@ export function DetailSideCardBounty({
           </Flex>
 
           <Box w="full" px={5}>
-            {type === 'permissioned' && (
+            {isProject && (
               <Flex align={'start'} direction={'column'} my={4}>
                 <Text color={'#000000'} fontSize="1.3rem" fontWeight={500}>
                   {timeToComplete}
@@ -406,9 +434,7 @@ export function DetailSideCardBounty({
                 size="lg"
                 variant="solid"
               >
-                {type === 'permissioned'
-                  ? 'Applied Successfully'
-                  : 'Submitted Successfully'}
+                {isProject ? 'Applied Successfully' : 'Submitted Successfully'}
               </Button>
             ) : (
               <Button
@@ -418,7 +444,8 @@ export function DetailSideCardBounty({
                 }}
                 isDisabled={
                   bountyDraftStatus === 'DRAFT' ||
-                  Date.now() > Number(moment(endingTime).format('x'))
+                  Date.now() > Number(moment(endingTime).format('x')) ||
+                  !hasHackathonStarted
                 }
                 isLoading={isUserSubmissionLoading}
                 loadingText={'Checking Submission...'}
@@ -426,10 +453,10 @@ export function DetailSideCardBounty({
                 size="lg"
                 variant="solid"
               >
-                {type === 'permissioned' ? 'Apply Now' : 'Submit Now'}
+                {isProject ? 'Apply Now' : 'Submit Now'}
               </Button>
             )}
-            {type === 'permissioned' && (
+            {isProject && (
               <Flex gap="2" w="20rem" mt={4} p="3" bg={'#62F6FF10'}>
                 <WarningIcon color="#1A7F86" />
                 <Text color="#1A7F86" fontSize={'xs'} fontWeight={500}>
@@ -440,29 +467,26 @@ export function DetailSideCardBounty({
             )}
           </Box>
         </VStack>
-        {!hackathonPrize && (
-          <VStack
-            align={'start'}
-            justify={'center'}
-            w={{ base: 'full', md: '22rem' }}
-            mt={4}
-            p={6}
-            bg={'#FFFFFF'}
-            rounded={'xl'}
-          >
-            <Text h="100%" color={'#94A3B8'} fontSize="1rem" textAlign="center">
-              TYPE
-            </Text>
-            <Text color={'#64768b'} fontSize="1.1rem" fontWeight={500}>
-              {type === 'permissioned' ? 'Project' : 'Bounty'}
-            </Text>
-            <Text color={'#94A3B8'} fontSize="1rem" fontWeight={400}>
-              {type === 'permissioned'
-                ? "Don't start working just yet! Apply first, and then you'll be notified if you're selected to work on this Project."
-                : 'This is an open competition bounty! Anyone can start working and submit their work before the deadline!'}
-            </Text>
-          </VStack>
-        )}
+
+        <VStack
+          align={'start'}
+          justify={'center'}
+          w={{ base: 'full', md: '22rem' }}
+          mt={4}
+          p={6}
+          bg={'#FFFFFF'}
+          rounded={'xl'}
+        >
+          <Text h="100%" color={'#94A3B8'} fontSize="1rem" textAlign="center">
+            TYPE
+          </Text>
+          <Text color={'#64768b'} fontSize="1.1rem" fontWeight={500}>
+            {typeTitle}
+          </Text>
+          <Text color={'#94A3B8'} fontSize="1rem" fontWeight={400}>
+            {typeDescription}
+          </Text>
+        </VStack>
         {requirements && (
           <VStack
             align="start"
@@ -515,7 +539,7 @@ export function DetailSideCardBounty({
             </Text>
           </VStack>
         )}
-        {type !== 'permissioned' && (
+        {isBounty && (
           <VStack
             align={'start'}
             justify={'center'}

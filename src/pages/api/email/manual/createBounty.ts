@@ -69,7 +69,7 @@ export default async function handler(
         subject: 'Here’s a New Listing You’d Be Interested In..',
         react: NewBountyTemplate({
           name: e.name,
-          link: `https://earn.superteam.fun/listings/bounties/${listing.slug}/?utm_source=superteamearn&utm_medium=email&utm_campaign=notifications`,
+          link: `https://earn.superteam.fun/listings/${listing?.type}/${listing.slug}/?utm_source=superteamearn&utm_medium=email&utm_campaign=notifications`,
         }),
       });
 

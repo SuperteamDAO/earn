@@ -70,7 +70,7 @@ const GrantEntry = ({
             : ''}
         </Text>
         {!!link && (
-          <Link as={NextLink} href={`/listings/grants/${slug}`}>
+          <Link as={NextLink} href={`/grants/${slug}`}>
             <Button variant="outline">Apply</Button>
           </Link>
         )}

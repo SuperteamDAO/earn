@@ -2,7 +2,7 @@ import { Flex } from '@chakra-ui/react';
 import dayjs from 'dayjs';
 
 import {
-  BountiesCard,
+  ListingCard,
   ListingsCardSkeleton,
 } from '@/components/misc/listingsCard';
 import { EmptySection } from '@/components/shared/EmptySection';
@@ -50,7 +50,7 @@ export const BountyTabs = ({
               )
               .slice(0, take)
               .map((bounty) => (
-                <BountiesCard
+                <ListingCard
                   slug={bounty.slug}
                   rewardAmount={bounty?.rewardAmount}
                   key={bounty?.id}
@@ -100,7 +100,7 @@ export const BountyTabs = ({
               )
               .slice(0, 10)
               .map((bounty) => (
-                <BountiesCard
+                <ListingCard
                   slug={bounty.slug}
                   rewardAmount={bounty?.rewardAmount}
                   key={bounty?.id}
@@ -148,7 +148,7 @@ export const BountyTabs = ({
               )
               .slice(0, 10)
               .map((bounty) => (
-                <BountiesCard
+                <ListingCard
                   slug={bounty.slug}
                   rewardAmount={bounty?.rewardAmount}
                   key={bounty?.id}

@@ -25,8 +25,9 @@ import { mergeSkills, splitSkills } from '@/utils/skills';
 interface Props {
   bounty?: Bounty;
   editable?: boolean;
-  type: 'open' | 'permissioned';
+  type: 'bounty' | 'project' | 'hackathon';
   isDuplicating?: boolean;
+  hackathonSlug?: string;
 }
 
 export function CreateListing({
@@ -34,6 +35,7 @@ export function CreateListing({
   editable = false,
   type,
   isDuplicating = false,
+  hackathonSlug,
 }: Props) {
   const router = useRouter();
   const { userInfo } = userStore();
@@ -151,8 +153,8 @@ export function CreateListing({
       if (editable && !isDuplicating) {
         api = `/api/bounties/update/${bounty?.id}/`;
       }
-      const result = await axios.post(api, newBounty);
-      setSlug(`/bounties/${result?.data?.slug}/`);
+      const result = await axios.post(api, { ...newBounty, hackathonSlug });
+      setSlug(`/${result?.data?.type}/${result?.data?.slug}/`);
       setIsListingPublishing(false);
       onOpen();
       if (!isPrivate) {

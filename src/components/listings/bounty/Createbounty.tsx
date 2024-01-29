@@ -46,7 +46,7 @@ interface Props {
   bountyRequirements?: string | undefined;
   regions: Regions;
   setRegions: Dispatch<SetStateAction<Regions>>;
-  type: 'open' | 'permissioned';
+  type: 'bounty' | 'project' | 'hackathon';
   isNewOrDraft?: boolean;
   isDuplicating?: boolean;
   referredBy?: SuperteamName;

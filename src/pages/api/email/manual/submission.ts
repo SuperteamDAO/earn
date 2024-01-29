@@ -42,7 +42,7 @@ export default async function handler(
 
     if (user?.email && user?.firstName && listing?.title) {
       const subject =
-        listing.type === 'open'
+        listing.type !== 'project'
           ? 'Submission Received!'
           : 'Application Received';
       await resendMail.emails.send({
@@ -52,7 +52,7 @@ export default async function handler(
         react: SubmissionTemplate({
           name: user?.firstName,
           bountyName: listing?.title,
-          type: listing?.type,
+          type: listing?.type as 'bounty' | 'project' | 'hackathon',
         }),
       });
     }
@@ -70,7 +70,7 @@ export default async function handler(
         from: `Kash from Superteam <${process.env.RESEND_EMAIL}>`,
         to: [pocUser?.email],
         subject:
-          listing.type === 'open'
+          listing.type !== 'bounty'
             ? 'New Bounty Submission Received'
             : 'Project Application Received',
         react: SubmissionSponsorTemplate({

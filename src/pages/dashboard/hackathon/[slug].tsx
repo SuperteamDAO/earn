@@ -38,7 +38,6 @@ import {
   Text,
   Th,
   Thead,
-  Tooltip,
   Tr,
   useDisclosure,
 } from '@chakra-ui/react';
@@ -59,13 +58,12 @@ import { userStore } from '@/store/user';
 import {
   formatDeadline,
   getBountyStatus,
-  getBountyTypeLabel,
   getColorStyles,
 } from '@/utils/bounty';
 
 const debounce = require('lodash.debounce');
 
-export default function Bounties() {
+export default function Hackathon({ slug }: { slug: string }) {
   const router = useRouter();
   const {
     isOpen: unpublishIsOpen,
@@ -98,9 +96,9 @@ export default function Bounties() {
   const getBounties = async () => {
     setIsBountiesLoading(true);
     try {
-      const bountiesList = await axios.get('/api/hackathon/', {
+      const bountiesList = await axios.get('/api/hackathon/listings/', {
         params: {
-          slug: 'hackathon',
+          slug,
           searchText,
           skip,
           take: length,
@@ -241,7 +239,7 @@ export default function Bounties() {
       <Flex justify="space-between" w="100%" mb={4}>
         <Flex align="center" gap={3}>
           <Text color="brand.slate.800" fontSize="lg" fontWeight={600}>
-            My Listings
+            All Tracks
           </Text>
           <Divider
             h="60%"
@@ -249,7 +247,7 @@ export default function Bounties() {
             orientation="vertical"
           />
           <Text color="brand.slate.500">
-            The one place to manage your listings
+            Review hackathon tracks and submissions here
           </Text>
         </Flex>
         <InputGroup w={64}>
@@ -336,7 +334,7 @@ export default function Bounties() {
                     letterSpacing={'-2%'}
                     textTransform={'capitalize'}
                   >
-                    Listing Name
+                    Track
                   </Th>
                   <Th
                     color="brand.slate.400"
@@ -389,10 +387,6 @@ export default function Bounties() {
               </Thead>
               <Tbody w="full">
                 {bounties.map((currentBounty) => {
-                  const bountyType = getBountyTypeLabel(
-                    currentBounty?.type ?? 'open',
-                  );
-
                   const deadline = formatDeadline(
                     currentBounty?.deadline,
                     currentBounty?.applicationType,
@@ -414,18 +408,13 @@ export default function Bounties() {
                           passHref
                         >
                           <Flex align={'center'}>
-                            <Tooltip bg="brand.slate.400" label={bountyType}>
-                              <Image
-                                h={5}
-                                mr={2}
-                                alt={`New ${bountyType}`}
-                                src={
-                                  currentBounty.type === 'open'
-                                    ? '/assets/icons/bolt.svg'
-                                    : '/assets/icons/briefcase.svg'
-                                }
-                              />
-                            </Tooltip>
+                            <Image
+                              h={5}
+                              mr={2}
+                              borderRadius={2}
+                              alt={`${currentBounty?.sponsor?.name}`}
+                              src={currentBounty?.sponsor?.logo}
+                            />
 
                             <Text
                               as="a"
@@ -561,12 +550,12 @@ export default function Bounties() {
                               icon={<ExternalLinkIcon h={4} w={4} />}
                               onClick={() =>
                                 window.open(
-                                  `${router.basePath}/listings/bounties/${currentBounty.slug}`,
+                                  `${router.basePath}/listings/${currentBounty?.type}/${currentBounty.slug}`,
                                   '_blank',
                                 )
                               }
                             >
-                              View {bountyType}
+                              View Listing
                             </MenuItem>
                             {currentBounty.isPublished && (
                               <Link
@@ -581,7 +570,7 @@ export default function Bounties() {
                                   fontWeight={500}
                                   icon={<EditIcon w={4} h={4} />}
                                 >
-                                  Edit {bountyType}
+                                  Edit Listing
                                 </MenuItem>
                               </Link>
                             )}

@@ -70,13 +70,32 @@ export default async function handler(
       .json({ error: 'User does not have a current sponsor.' });
   }
 
-  const { title, ...data } = req.body;
+  const { title, hackathonSlug, deadline, ...data } = req.body;
   try {
+    let hackathonId;
+    let hackathonDeadline;
+
+    if (hackathonSlug) {
+      const hackathon = await prisma.hackathon.findUnique({
+        where: { slug: hackathonSlug },
+      });
+
+      if (!hackathon) {
+        return res.status(404).json({ error: 'Hackathon not found.' });
+      }
+
+      hackathonId = hackathon.id;
+      hackathonDeadline = hackathon.deadline;
+    }
+
     const slug = await generateUniqueSlug(title);
+    const finalDeadline = hackathonId ? hackathonDeadline : deadline;
     const finalData = {
       sponsorId: user.currentSponsorId,
       title,
       slug,
+      ...(hackathonId && { hackathonId }),
+      deadline: finalDeadline,
       ...data,
     };
     const result = await prisma.bounties.create({

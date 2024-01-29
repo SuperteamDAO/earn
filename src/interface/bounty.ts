@@ -67,6 +67,13 @@ interface Bounty {
   referredBy?: SuperteamName;
   publishedAt?: string;
   isPrivate?: boolean;
+  Hackathon?: {
+    name: string;
+    logo: string;
+    description: string;
+    deadline: string;
+    startDate: string;
+  };
 }
 
 interface BountyWithSubmissions extends Bounty {
