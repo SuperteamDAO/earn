@@ -381,6 +381,7 @@ model Hackathon {
   slug        String     @unique
   name        String
   logo        String
+  altLogo     String?
   description String
   listings    Bounties[]
   sponsorId   String?    @unique

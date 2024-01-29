@@ -1,5 +1,6 @@
 import { Box, Button, Flex, Image, SimpleGrid, Text } from '@chakra-ui/react';
 import axios from 'axios';
+import NextLink from 'next/link';
 import React, { useEffect, useState } from 'react';
 import Countdown from 'react-countdown';
 
@@ -11,6 +12,7 @@ import ScribesLogo from '@/svg/scribes-logo';
 
 interface TrackProps {
   title: string;
+  slug: string;
   sponsor: {
     name: string;
     logo: string;
@@ -49,13 +51,21 @@ export default function Scribes() {
     getTracks();
     getStats();
   }, []);
-  const TrackBox = ({ title, sponsor, token, rewardAmount }: TrackProps) => {
+  const TrackBox = ({
+    title,
+    sponsor,
+    token,
+    rewardAmount,
+    slug,
+  }: TrackProps) => {
     return (
       <Box
+        as={NextLink}
         p={4}
         borderWidth={'1px'}
         borderColor="brand.slate.200"
         borderRadius={8}
+        href={`/listings/hackathon/${slug}`}
       >
         <Flex align="center" gap={3}>
           <Image
@@ -126,7 +136,7 @@ export default function Scribes() {
             justify={{ base: 'center', md: 'end' }}
             w="100%"
             maxW="7xl"
-            pr={{ base: '0', md: '10%' }}
+            pr={{ base: '0', md: '5%' }}
           >
             <ScribesLogo styles={{ height: '80px', width: 'auto' }} />
           </Flex>
@@ -242,6 +252,7 @@ export default function Scribes() {
                     sponsor={track.sponsor}
                     token={track.token}
                     rewardAmount={track.rewardAmount}
+                    slug={track.slug}
                   />
                 ))}
             </SimpleGrid>

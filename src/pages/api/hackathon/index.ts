@@ -26,6 +26,7 @@ export default async function getHackathon(
         title: true,
         token: true,
         rewardAmount: true,
+        slug: true,
         sponsor: {
           select: {
             name: true,

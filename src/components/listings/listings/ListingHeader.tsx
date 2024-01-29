@@ -206,7 +206,7 @@ export function ListingHeader({
                 </Text>
                 {isHackathon ? (
                   <Flex align={'center'}>
-                    <Image h="6" alt={type} src={hackathonLogo} />
+                    <Image h="4" alt={type} src={hackathonLogo} />
                   </Flex>
                 ) : (
                   <>

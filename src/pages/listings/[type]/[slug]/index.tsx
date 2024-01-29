@@ -122,7 +122,7 @@ function BountyDetails({ bounty: initialBounty }: BountyDetailsProps) {
                 slug={bounty?.slug}
                 region={bounty?.region || Regions.GLOBAL}
                 isWinnersAnnounced={bounty?.isWinnersAnnounced}
-                hackathonLogo={bounty?.Hackathon?.logo}
+                hackathonLogo={bounty?.Hackathon?.altLogo}
                 hackathonStartsAt={bounty?.Hackathon?.startDate}
                 references={bounty?.references}
               />
