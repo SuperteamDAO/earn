@@ -451,7 +451,9 @@ const ScribesBanner = () => {
         py={'0.8125rem'}
         fontWeight={'500'}
         textAlign={'center'}
+        bg="#000"
         borderRadius={8}
+        _hover={{ bg: '#a459ff' }}
         href="/scribes"
       >
         Register Now
