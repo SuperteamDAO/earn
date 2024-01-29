@@ -81,7 +81,7 @@ export function SelectSponsor() {
           {data?.sponsor?.logo ? (
             <Image
               boxSize="32px"
-              borderRadius="full"
+              borderRadius={4}
               alt={data?.sponsor?.name}
               src={data?.sponsor?.logo}
             />
@@ -114,7 +114,7 @@ export function SelectSponsor() {
           {data?.sponsor?.logo ? (
             <Image
               boxSize="32px"
-              borderRadius="full"
+              borderRadius={4}
               alt={data?.sponsor?.name}
               src={data?.sponsor?.logo}
             />

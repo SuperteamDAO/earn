@@ -21,7 +21,7 @@ interface Listings {
   grants?: Grant[];
 }
 
-type SlugKeys = 'Design' | 'Content' | 'Development' | 'Hyperdrive';
+type SlugKeys = 'Design' | 'Content' | 'Development';
 
 function ListingCategoryPage({ slug }: { slug: string }) {
   const [isListingsLoading, setIsListingsLoading] = useState(true);
@@ -33,9 +33,10 @@ function ListingCategoryPage({ slug }: { slug: string }) {
   const getListings = async () => {
     setIsListingsLoading(true);
     const params =
-      slug === 'Hyperdrive'
-        ? { category: 'hyperdrive' }
-        : { category: 'all', take: 100, filter: slug };
+      // slug === 'Hyperdrive'
+      //   ? { category: 'hyperdrive' }
+      //   :
+      { category: 'all', take: 100, filter: slug };
     try {
       const listingsData = await axios.get('/api/listings/', { params });
       setListings(listingsData.data);
@@ -54,13 +55,13 @@ function ListingCategoryPage({ slug }: { slug: string }) {
     Design: 'Superteam Earn | Design Bounties and Grants',
     Content: 'Superteam Earn | Content Bounties and Grants',
     Development: 'Superteam Earn | Development Bounties and Grants',
-    Hyperdrive: 'Superteam Earn | Apply to Hyperdrive global Solana Hackathon',
+    // Hyperdrive: 'Superteam Earn | Apply to Hyperdrive global Solana Hackathon',
   };
 
   const titleKey = slug as SlugKeys;
   const title = titlesForSlugs[titleKey] || 'Superteam Earn'; // Default title if slug not found
-  const formattedSlug =
-    slug === 'Hyperdrive' ? slug.toUpperCase() : slug.toLowerCase();
+  const formattedSlug = slug?.toLowerCase();
+  // slug === 'Hyperdrive' ? slug.toUpperCase() : slug.toLowerCase();
   const metaDescription = `Find the latest ${formattedSlug} bounties and grants for freelancers and builders in the crypto space on Superteam Earn.`;
   const canonicalURL = `https://earn.superteam.fun/all/${slug}/`;
 
@@ -154,7 +155,7 @@ export async function getServerSideProps(context: NextPageContext) {
   const { slug } = context.query;
 
   const normalizedSlug = typeof slug === 'string' ? slug.toLowerCase() : '';
-  const validCategories = ['design', 'content', 'development', 'hyperdrive'];
+  const validCategories = ['design', 'content', 'development'];
 
   if (!validCategories.includes(normalizedSlug)) {
     return {
