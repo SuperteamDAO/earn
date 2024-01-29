@@ -115,10 +115,20 @@ export default function Scribes() {
           h={{ base: 'auto', md: 'full' }}
           minH={{ base: 'fit-content', md: '300px' }}
           py={8}
-          bgGradient="radial-gradient(ellipse farthest-corner at 0 140%, #ffe6d2 10%, #ffe2c9 80%)"
+          bgImage={"url('/assets/scribes-bg.png')"}
+          bgSize="cover"
+          bgPosition="center"
+          bgRepeat="no-repeat"
+          borderColor={'brand.slate.200'}
+          borderBottomWidth={'1px'}
         >
-          <Flex justify={'end'} w="100%" maxW="7xl">
-            <Image alt="solana scribes" src="/assets/scribes3.png" />
+          <Flex
+            justify={{ base: 'center', md: 'end' }}
+            w="100%"
+            maxW="7xl"
+            pr={{ base: '0', md: '10%' }}
+          >
+            <ScribesLogo styles={{ height: '80px', width: 'auto' }} />
           </Flex>
           <Box
             pos={{ base: 'unset', md: 'absolute' }}
@@ -129,12 +139,19 @@ export default function Scribes() {
             mx="auto"
             mt={{ base: 8, md: 'auto' }}
           >
-            <ScribesLogo />
             <Text
               w={{ base: '100%', md: '40%' }}
               pt={4}
-              color="#4D2300"
-              fontSize={'lg'}
+              color="brand.slate.800"
+              fontSize={'2xl'}
+              fontWeight={600}
+            >
+              Solana Scribes Writerthon
+            </Text>
+            <Text
+              w={{ base: '100%', md: '40%' }}
+              color="brand.slate.700"
+              fontWeight={600}
             >
               Participate in Solana&apos;s first ever content hackathon
             </Text>
@@ -145,6 +162,11 @@ export default function Scribes() {
               py={4}
             >
               <Button
+                my={4}
+                py={4}
+                fontSize={'sm'}
+                bg="#a459ff"
+                _hover={{ bg: '#a459ff' }}
                 onClick={() =>
                   window.open(
                     'https://airtable.com/app3nkVnBCUqJGHay/shrCqEUm74icXCBi0',
@@ -156,9 +178,11 @@ export default function Scribes() {
                 Sponsor A Track
               </Button>
             </Flex>
-            <Flex gap={6} pt={6}>
+            <Flex gap={6}>
               <Flex direction={'column'}>
-                <Text>Total Prizes</Text>
+                <Text fontSize={'sm'} fontWeight={500}>
+                  Total Prizes
+                </Text>
                 <Text
                   color={'brand.slate.800'}
                   fontSize={'2xl'}
@@ -168,7 +192,9 @@ export default function Scribes() {
                 </Text>
               </Flex>
               <Flex direction={'column'}>
-                <Text>Tracks</Text>
+                <Text fontSize={'sm'} fontWeight={500}>
+                  Tracks
+                </Text>
                 <Text
                   color={'brand.slate.800'}
                   fontSize={'2xl'}
@@ -178,7 +204,9 @@ export default function Scribes() {
                 </Text>
               </Flex>
               <Flex direction={'column'}>
-                <Text>Submissions Open in</Text>
+                <Text fontSize={'sm'} fontWeight={500}>
+                  Submissions Open in
+                </Text>
                 <Text
                   color={'brand.slate.800'}
                   fontSize={'2xl'}

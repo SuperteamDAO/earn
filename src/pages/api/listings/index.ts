@@ -60,6 +60,7 @@ export default async function user(req: NextApiRequest, res: NextApiResponse) {
           hackathonprize: false,
           isArchived: false,
           status: 'OPEN',
+          Hackathon: null,
           deadline: {
             gte: dayjs().toISOString(),
           },
@@ -95,6 +96,7 @@ export default async function user(req: NextApiRequest, res: NextApiResponse) {
             gte: deadline,
           },
           ...skillsFilter,
+          Hackathon: null,
         },
         include: {
           sponsor: {

@@ -396,14 +396,26 @@ const ScribesBanner = () => {
       w={'full'}
       h={'max-content'}
       px={'1.5625rem'}
-      py={'0.875rem'}
-      bg={'#FFE2C9'}
+      py={'8'}
+      bgImage={"url('/assets/scribes-sidebar.png')"}
+      bgSize="cover"
+      bgPosition="center"
+      bgRepeat="no-repeat"
+      borderWidth={'1px'}
+      borderColor={'brand.slate.200'}
       rounded={'lg'}
     >
       <HStack>
-        <Image alt="solana" src="/assets/scribes3.png" />
+        {/* <Image alt="solana" src="/assets/scribes3.png" /> */}
+        <ScribesLogo
+          styles={{
+            width: '100%',
+            marginLeft: 'auto',
+            marginRight: 'auto',
+          }}
+        />
       </HStack>
-      <HStack>
+      {/* <HStack>
         <ScribesLogo
           styles={{
             width: '100%',
@@ -413,7 +425,7 @@ const ScribesBanner = () => {
             marginTop: '8px',
           }}
         />
-      </HStack>
+      </HStack> */}
       <Text
         mt={1}
         color={'brand.slate.800'}
@@ -421,7 +433,7 @@ const ScribesBanner = () => {
         fontWeight={'600'}
         lineHeight={'6'}
       >
-        Build a Solana dApp and compete for $1,000,000+
+        Create Content to Win Prizes Worth $50,000+
       </Text>
       <Text
         mt={'0.5rem'}
@@ -429,13 +441,13 @@ const ScribesBanner = () => {
         fontSize={'1rem'}
         lineHeight={'1.1875rem'}
       >
-        Register for the Q3 Solana global hackathon and build your prize-winning
-        project! Deadline for project submissions is October 15th, 2023.
+        Solana&apos;s first-ever content hackathon is here! Check out tracks
+        from your favourite Solana projects and start creating today.
+        Submissions open Feb 19, 2024.
       </Text>
       <Button
         as={NextLink}
         mt={'1.5625rem'}
-        mb={2}
         py={'0.8125rem'}
         fontWeight={'500'}
         textAlign={'center'}
@@ -463,8 +475,8 @@ export const HomeSideBar = ({
         bountyCount={listings}
         TVE={total}
       />
-      <RecentEarners earners={earners} />
       <ScribesBanner />
+      <RecentEarners earners={earners} />
     </Flex>
   );
 };

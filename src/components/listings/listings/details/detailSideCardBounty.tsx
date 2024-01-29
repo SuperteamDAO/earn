@@ -132,7 +132,9 @@ export function DetailSideCardBounty({
     submissionStatus = 3;
   }
 
-  const hasHackathonStarted = dayjs().isAfter(hackathon?.startDate);
+  const hasHackathonStarted = hackathon?.startDate
+    ? dayjs().isAfter(hackathon.startDate)
+    : true;
 
   const getUserSubmission = async () => {
     setIsUserSubmissionLoading(true);
@@ -356,64 +358,98 @@ export function DetailSideCardBounty({
             </VStack>
           )}
           <Flex justify={'space-between'} w={'full'} px={5}>
-            <Flex align={'start'} justify={'center'} direction={'column'}>
-              <Flex align={'center'} justify={'center'} gap={2}>
-                <Image
-                  w={'1.4rem'}
-                  mt={-1}
-                  alt={'suit case'}
-                  src={'/assets/icons/purple-suitcase.svg'}
-                />
-                <Text color={'#000000'} fontSize="1.3rem" fontWeight={500}>
-                  {isSubmissionNumberLoading
-                    ? '...'
-                    : !isProject
-                      ? submissionNumber.toLocaleString()
-                      : submissionRange}
-                </Text>
-              </Flex>
-              <Text color={'#94A3B8'}>
-                {!isProject
-                  ? submissionNumber === 1
-                    ? 'Submission'
-                    : 'Submissions'
-                  : submissionNumber === 1
-                    ? 'Application'
-                    : 'Applications'}
-              </Text>
-            </Flex>
+            {hasHackathonStarted ? (
+              <>
+                <Flex align={'start'} justify={'center'} direction={'column'}>
+                  <Flex align={'center'} justify={'center'} gap={2}>
+                    <Image
+                      w={'1.4rem'}
+                      mt={-1}
+                      alt={'suit case'}
+                      src={'/assets/icons/purple-suitcase.svg'}
+                    />
+                    <Text color={'#000000'} fontSize="1.3rem" fontWeight={500}>
+                      {isSubmissionNumberLoading
+                        ? '...'
+                        : !isProject
+                          ? submissionNumber.toLocaleString()
+                          : submissionRange}
+                    </Text>
+                  </Flex>
+                  <Text color={'#94A3B8'}>
+                    {!isProject
+                      ? submissionNumber === 1
+                        ? 'Submission'
+                        : 'Submissions'
+                      : submissionNumber === 1
+                        ? 'Application'
+                        : 'Applications'}
+                  </Text>
+                </Flex>
 
-            <Flex
-              align={'start'}
-              justify={'center'}
-              direction={'column'}
-              py={3}
-            >
-              <Flex align={'start'} justify={'center'} gap={1}>
-                <Image
-                  w={'1.4rem'}
-                  mt={1}
-                  alt={'suit case'}
-                  src={'/assets/icons/purple-timer.svg'}
-                />
-                <VStack align={'start'} gap={0}>
-                  <Text color={'#000000'} fontSize="1.3rem" fontWeight={500}>
-                    {applicationType === 'fixed' ? (
+                <Flex
+                  align={'start'}
+                  justify={'center'}
+                  direction={'column'}
+                  py={3}
+                >
+                  <Flex align={'start'} justify={'center'} gap={1}>
+                    <Image
+                      w={'1.4rem'}
+                      mt={1}
+                      alt={'suit case'}
+                      src={'/assets/icons/purple-timer.svg'}
+                    />
+                    <VStack align={'start'} gap={0}>
+                      <Text
+                        color={'#000000'}
+                        fontSize="1.3rem"
+                        fontWeight={500}
+                      >
+                        {applicationType === 'fixed' ? (
+                          <Countdown
+                            date={endingTime}
+                            renderer={CountDownRenderer}
+                            zeroPadDays={1}
+                          />
+                        ) : (
+                          'Rolling'
+                        )}
+                      </Text>
+                      <Text color={'#94A3B8'}>
+                        {applicationType === 'fixed' ? 'Remaining' : 'Deadline'}
+                      </Text>
+                    </VStack>
+                  </Flex>
+                </Flex>
+              </>
+            ) : (
+              <Flex
+                align={'start'}
+                justify={'center'}
+                direction={'column'}
+                py={3}
+              >
+                <Flex align={'start'} justify={'center'} gap={1}>
+                  <Image
+                    w={'1.4rem'}
+                    mt={1}
+                    alt={'suit case'}
+                    src={'/assets/icons/purple-timer.svg'}
+                  />
+                  <VStack align={'start'} gap={0}>
+                    <Text color={'#000000'} fontSize="1.3rem" fontWeight={500}>
                       <Countdown
-                        date={endingTime}
+                        date={hackathon?.startDate}
                         renderer={CountDownRenderer}
                         zeroPadDays={1}
                       />
-                    ) : (
-                      'Rolling'
-                    )}
-                  </Text>
-                  <Text color={'#94A3B8'}>
-                    {applicationType === 'fixed' ? 'Remaining' : 'Deadline'}
-                  </Text>
-                </VStack>
+                    </Text>
+                    <Text color={'#94A3B8'}>Until Submissions Open</Text>
+                  </VStack>
+                </Flex>
               </Flex>
-            </Flex>
+            )}
           </Flex>
 
           <Box w="full" px={5}>
@@ -483,9 +519,21 @@ export function DetailSideCardBounty({
           <Text color={'#64768b'} fontSize="1.1rem" fontWeight={500}>
             {typeTitle}
           </Text>
+
           <Text color={'#94A3B8'} fontSize="1rem" fontWeight={400}>
             {typeDescription}
           </Text>
+          {hackathon && (
+            <Link
+              color={'brand.slate.400'}
+              fontSize="1rem"
+              fontWeight={500}
+              href={`/${hackathon.name.toLowerCase()}`}
+              isExternal
+            >
+              View all tracks
+            </Link>
+          )}
         </VStack>
         {requirements && (
           <VStack

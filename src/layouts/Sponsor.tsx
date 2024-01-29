@@ -7,7 +7,6 @@ import { useSession } from 'next-auth/react';
 import type { ReactNode, ReactText } from 'react';
 import React from 'react';
 import type { IconType } from 'react-icons';
-import { BsClock } from 'react-icons/bs';
 import {
   MdList,
   MdOutlineChatBubbleOutline,
@@ -78,11 +77,6 @@ export function Sidebar({
           name: 'Invite Sponsors',
           onClick: onOpenInvite,
           icon: MdOutlineGroup,
-        },
-        {
-          name: 'Extend Deadline',
-          link: '/deadline',
-          icon: BsClock,
         },
         {
           name: 'Get Help',
