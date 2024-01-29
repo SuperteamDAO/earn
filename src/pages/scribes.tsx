@@ -117,14 +117,9 @@ export default function Scribes() {
     >
       <Box>
         <Flex
-          pos={{ base: 'unset', md: 'relative' }}
           align="center"
-          justify="center"
-          direction={{ base: 'column', md: 'row' }}
-          w="100%"
-          h={{ base: 'auto', md: 'full' }}
-          minH={{ base: 'fit-content', md: '300px' }}
-          py={8}
+          direction={'column'}
+          pt={12}
           bgImage={"url('/assets/scribes-bg.png')"}
           bgSize="cover"
           bgPosition="center"
@@ -132,106 +127,62 @@ export default function Scribes() {
           borderColor={'brand.slate.200'}
           borderBottomWidth={'1px'}
         >
-          <Flex
-            justify={{ base: 'center', md: 'end' }}
-            w="100%"
-            maxW="7xl"
-            pr={{ base: '0', md: '5%' }}
-          >
-            <ScribesLogo styles={{ height: '80px', width: 'auto' }} />
-          </Flex>
-          <Box
-            pos={{ base: 'unset', md: 'absolute' }}
-            right={{ base: 3, md: 6 }}
-            left={{ base: 3, md: 6 }}
-            w={{ base: '96vw', md: 'auto' }}
-            maxW="7xl"
-            mx="auto"
-            mt={{ base: 8, md: 'auto' }}
-          >
-            <Text
-              w={{ base: '100%', md: '40%' }}
-              pt={4}
-              color="brand.slate.800"
-              fontSize={'2xl'}
-              fontWeight={600}
-            >
-              Solana Scribes Writerthon
-            </Text>
-            <Text
-              w={{ base: '100%', md: '40%' }}
-              color="brand.slate.700"
-              fontWeight={600}
-            >
-              Participate in Solana&apos;s first ever content hackathon
-            </Text>
-            <Flex
-              align={{ base: 'start', md: 'center' }}
-              direction={{ base: 'column', md: 'row' }}
-              gap={{ base: 2, md: 8 }}
+          <Text mb={4} fontFamily={'var(--font-mono)'}>
+            Lamport DAO presents
+          </Text>
+          <ScribesLogo styles={{ height: '80px', width: 'auto' }} />
+          <Text mt={4} px={6} color="brand.slate.600" textAlign={'center'}>
+            Participate in Solana&apos;s first ever content hackathon
+          </Text>
+          <Flex pb={4}>
+            <Button
+              my={6}
               py={4}
+              fontSize={'sm'}
+              bg="#000"
+              _hover={{ bg: '#a459ff' }}
+              onClick={() =>
+                window.open(
+                  'https://airtable.com/app3nkVnBCUqJGHay/shrCqEUm74icXCBi0',
+                  '_blank',
+                )
+              }
+              rounded="full"
             >
-              <Button
-                my={4}
-                py={4}
-                fontSize={'sm'}
-                bg="#a459ff"
-                _hover={{ bg: '#a459ff' }}
-                onClick={() =>
-                  window.open(
-                    'https://airtable.com/app3nkVnBCUqJGHay/shrCqEUm74icXCBi0',
-                    '_blank',
-                  )
-                }
-                rounded="full"
-              >
-                Sponsor A Track
-              </Button>
-            </Flex>
-            <Flex gap={6}>
-              <Flex direction={'column'}>
-                <Text fontSize={'sm'} fontWeight={500}>
-                  Total Prizes
-                </Text>
-                <Text
-                  color={'brand.slate.800'}
-                  fontSize={'2xl'}
-                  fontWeight={600}
-                >
-                  ${stats?.totalRewardAmount.toLocaleString()}
-                </Text>
-              </Flex>
-              <Flex direction={'column'}>
-                <Text fontSize={'sm'} fontWeight={500}>
-                  Tracks
-                </Text>
-                <Text
-                  color={'brand.slate.800'}
-                  fontSize={'2xl'}
-                  fontWeight={600}
-                >
-                  {stats?.totalListings}
-                </Text>
-              </Flex>
-              <Flex direction={'column'}>
-                <Text fontSize={'sm'} fontWeight={500}>
-                  Submissions Open in
-                </Text>
-                <Text
-                  color={'brand.slate.800'}
-                  fontSize={'2xl'}
-                  fontWeight={600}
-                >
-                  <Countdown
-                    // date={endingTime}
-                    date={new Date('2024-02-19T23:59:59')}
-                    renderer={CountDownRenderer}
-                    zeroPadDays={1}
-                  />
-                </Text>
-              </Flex>
-            </Flex>
-          </Box>
+              Sponsor A Track
+            </Button>
+          </Flex>
+        </Flex>
+        <Flex justify="center" gap={{ base: 4, md: 12 }} px={6} py={6}>
+          <Flex direction={'column'}>
+            <Text fontSize={'sm'} fontWeight={500}>
+              Total Prizes
+            </Text>
+            <Text color={'brand.slate.800'} fontSize={'2xl'} fontWeight={600}>
+              ${stats?.totalRewardAmount.toLocaleString()}
+            </Text>
+          </Flex>
+          <Flex direction={'column'}>
+            <Text fontSize={'sm'} fontWeight={500}>
+              Tracks
+            </Text>
+            <Text color={'brand.slate.800'} fontSize={'2xl'} fontWeight={600}>
+              {stats?.totalListings}
+            </Text>
+          </Flex>
+          <Flex direction={'column'}>
+            <Text fontSize={'sm'} fontWeight={500}>
+              Submissions Open in
+            </Text>
+            <Text color={'brand.slate.800'} fontSize={'2xl'} fontWeight={600}>
+              <Countdown
+                // date={endingTime}
+                date={new Date('2024-02-19T23:59:59')}
+                renderer={CountDownRenderer}
+                zeroPadDays={1}
+              />
+            </Text>
+          </Flex>
         </Flex>
         <Box mx={6}>
           <Box maxW="7xl" mx="auto" py={6}>
@@ -241,7 +192,7 @@ export default function Scribes() {
               fontSize={'xl'}
               fontWeight={600}
             >
-              Submission Tracks
+              Tracks
             </Text>
             <SimpleGrid columns={{ base: 1, md: 2, lg: 3 }} spacing={6}>
               {trackData &&

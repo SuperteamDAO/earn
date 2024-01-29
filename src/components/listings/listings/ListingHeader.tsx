@@ -303,39 +303,45 @@ export function ListingHeader({
               </Text>
             )}
           </Flex>
-          <Flex align={'center'} gap={1} display={{ base: 'flex', md: 'none' }}>
-            <Tooltip
-              px={4}
-              py={2}
-              color={'#94A3B8'}
-              fontFamily={'var(--font-sans)'}
-              fontSize="sm"
-              bg="white"
-              borderRadius={'lg'}
-              label={
-                isProject
-                  ? 'Projects are like short-term freelance gigs that you can apply for. If and when selected as the winner, you can begin executing the scope of work mentioned in this listing.'
-                  : 'This is an open competition bounty! Anyone can start working and submit their work before the deadline!'
-              }
+          {!isHackathon && (
+            <Flex
+              align={'center'}
+              gap={1}
+              display={{ base: 'flex', md: 'none' }}
             >
-              <Flex>
-                <Image
-                  h="4"
-                  mt={1}
-                  mr={1}
-                  alt={type}
-                  src={
-                    isProject
-                      ? '/assets/icons/briefcase.svg'
-                      : '/assets/icons/bolt.svg'
-                  }
-                />
-                <Text color="gray.400" fontWeight={500}>
-                  {isProject ? 'Project' : 'Bounty'}
-                </Text>
-              </Flex>
-            </Tooltip>
-          </Flex>
+              <Tooltip
+                px={4}
+                py={2}
+                color={'#94A3B8'}
+                fontFamily={'var(--font-sans)'}
+                fontSize="sm"
+                bg="white"
+                borderRadius={'lg'}
+                label={
+                  isProject
+                    ? 'Projects are like short-term freelance gigs that you can apply for. If and when selected as the winner, you can begin executing the scope of work mentioned in this listing.'
+                    : 'This is an open competition bounty! Anyone can start working and submit their work before the deadline!'
+                }
+              >
+                <Flex>
+                  <Image
+                    h="4"
+                    mt={1}
+                    mr={1}
+                    alt={type}
+                    src={
+                      isProject
+                        ? '/assets/icons/briefcase.svg'
+                        : '/assets/icons/bolt.svg'
+                    }
+                  />
+                  <Text color="gray.400" fontWeight={500}>
+                    {isProject ? 'Project' : 'Bounty'}
+                  </Text>
+                </Flex>
+              </Tooltip>
+            </Flex>
+          )}
         </Flex>
         {!isTemplate && (
           <HStack>
