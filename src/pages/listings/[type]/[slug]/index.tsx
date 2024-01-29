@@ -123,7 +123,7 @@ function BountyDetails({ bounty: initialBounty }: BountyDetailsProps) {
                 region={bounty?.region || Regions.GLOBAL}
                 isWinnersAnnounced={bounty?.isWinnersAnnounced}
                 hackathonLogo={bounty?.Hackathon?.logo}
-                hackathonStartsAt={bounty?.Hackathon?.logo}
+                hackathonStartsAt={bounty?.Hackathon?.startDate}
                 references={bounty?.references}
               />
               {bounty?.isWinnersAnnounced && <ListingWinners bounty={bounty} />}
