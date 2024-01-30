@@ -1,6 +1,7 @@
 import { useDisclosure } from '@chakra-ui/react';
 import { Regions } from '@prisma/client';
 import axios from 'axios';
+import { useAtomValue } from 'jotai';
 import { useRouter } from 'next/router';
 import { useState } from 'react';
 import { Toaster } from 'react-hot-toast';
@@ -14,6 +15,7 @@ import type {
 import { Template } from '@/components/listings/templates/template';
 import { SuccessListings } from '@/components/modals/successListings';
 import { ErrorSection } from '@/components/shared/ErrorSection';
+import { hackathonSponsorAtom } from '@/components/sponsor/SelectSponsor';
 import { type MultiSelectOptions, tokenList } from '@/constants';
 import type { Bounty, References, SuperteamName } from '@/interface/bounty';
 import { FormLayout } from '@/layouts/FormLayout';
@@ -94,6 +96,8 @@ export function CreateListing({
     editable && bounty?.isPrivate ? bounty?.isPrivate : false,
   );
 
+  const hackathonSponsor = useAtomValue(hackathonSponsorAtom);
+
   // - Bounty
   const [bountybasic, setBountyBasic] = useState<BountyBasicType | undefined>({
     title: editable
@@ -153,7 +157,11 @@ export function CreateListing({
       if (editable && !isDuplicating) {
         api = `/api/bounties/update/${bounty?.id}/`;
       }
-      const result = await axios.post(api, { ...newBounty, hackathonSlug });
+      const result = await axios.post(api, {
+        ...newBounty,
+        hackathonSlug,
+        hackathonSponsor,
+      });
       setSlug(`/${result?.data?.type}/${result?.data?.slug}/`);
       setIsListingPublishing(false);
       onOpen();

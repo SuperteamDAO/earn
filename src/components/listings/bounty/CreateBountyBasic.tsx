@@ -119,9 +119,11 @@ export const CreatebountyBasic = ({
   return (
     <>
       <VStack align={'start'} gap={3} w={'2xl'} pt={7} pb={12}>
-        <Box w="100%" mb={5}>
-          <SelectSponsor type="hackathon" />
-        </Box>
+        {type === 'hackathon' && (
+          <Box w="100%" mb={5}>
+            <SelectSponsor type="hackathon" />
+          </Box>
+        )}
         <FormControl w="full" mb={5} isInvalid={errorState.title} isRequired>
           <Flex>
             <FormLabel
