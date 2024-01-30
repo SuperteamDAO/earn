@@ -50,5 +50,6 @@ interface User {
   PoW?: PoW[];
   private?: boolean;
   Submission?: SubmissionWithUser[];
+  hackathonId?: string;
 }
 export type { Notifications, User };

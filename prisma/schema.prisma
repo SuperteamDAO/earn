@@ -297,9 +297,12 @@ model User {
   accounts         Account[]
   sessions         Session[]
   emailVerified    DateTime?
+  Hackathon        Hackathon?        @relation(fields: [hackathonId], references: [id])
+  hackathonId      String?
 
   @@index([email, publicKey, username])
   @@index([currentSponsorId])
+  @@index([hackathonId])
 }
 
 model PoW {
@@ -388,6 +391,7 @@ model Hackathon {
   startDate   DateTime?
   deadline    DateTime?
   Sponsor     Sponsors?  @relation(fields: [sponsorId], references: [id])
+  User        User[]
 
   @@index([sponsorId])
 }

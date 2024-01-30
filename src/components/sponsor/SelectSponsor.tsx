@@ -1,6 +1,7 @@
 import { Box, Flex, Image, Text } from '@chakra-ui/react';
 import axios from 'axios';
 import Avatar from 'boring-avatars';
+import { atom, useSetAtom } from 'jotai';
 import { useEffect, useState } from 'react';
 import { components } from 'react-select';
 import AsyncSelect from 'react-select/async';
@@ -18,14 +19,17 @@ interface SponsorOption {
   sponsor: SponsorOptionType;
 }
 
-export function SelectSponsor() {
+export const hackathonSponsorAtom = atom<string | null>(null);
+
+export function SelectSponsor({ type }: { type?: string }) {
   const { setUserInfo, userInfo } = userStore();
   const [selectedSponsor, setSelectedSponsor] = useState<SponsorOption | null>(
     null,
   );
+  const setHackathonSponsor = useSetAtom(hackathonSponsorAtom);
 
   useEffect(() => {
-    if (userInfo?.currentSponsor?.id) {
+    if (type !== 'hackathon' && userInfo?.currentSponsor?.id) {
       setSelectedSponsor({
         value: userInfo?.currentSponsor?.id,
         label: userInfo?.currentSponsor?.name,
@@ -63,8 +67,13 @@ export function SelectSponsor() {
   };
 
   const handleChange = async (option?: any) => {
-    const newUser = await updateUser(option.value);
-    setUserInfo(newUser);
+    if (type === 'hackathon') {
+      setHackathonSponsor(option.value);
+      setSelectedSponsor(option);
+    } else {
+      const newUser = await updateUser(option.value);
+      setUserInfo(newUser);
+    }
   };
 
   // eslint-disable-next-line unused-imports/no-unused-vars

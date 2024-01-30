@@ -6,7 +6,6 @@ import {
   EditIcon,
   ExternalLinkIcon,
   SearchIcon,
-  ViewIcon,
   ViewOffIcon,
 } from '@chakra-ui/icons';
 import {
@@ -114,10 +113,10 @@ export default function Hackathon({ slug }: { slug: string }) {
   };
 
   useEffect(() => {
-    if (userInfo?.currentSponsorId) {
+    if (userInfo?.hackathonId || userInfo?.role === 'GOD') {
       getBounties();
     }
-  }, [userInfo?.currentSponsorId, skip, searchText]);
+  }, [userInfo?.hackathonId, skip, searchText]);
 
   const handleUnpublish = async (unpublishedBounty: BountyWithSubmissions) => {
     setBounty(unpublishedBounty);
@@ -147,9 +146,9 @@ export default function Hackathon({ slug }: { slug: string }) {
     }
   };
 
-  const handleViewSubmissions = (slug: string | undefined) => {
-    router.push(`/dashboard/listings/${slug}/submissions/`);
-  };
+  // const handleViewSubmissions = (slug: string | undefined) => {
+  //   router.push(`/dashboard/listings/${slug}/submissions/`);
+  // };
 
   const deleteSelectedDraft = async () => {
     try {
@@ -495,7 +494,7 @@ export default function Hackathon({ slug }: { slug: string }) {
                         </Tag>
                       </Td>
                       <Td px={3} py={2}>
-                        {currentBounty.status === 'OPEN' &&
+                        {/* {currentBounty.status === 'OPEN' &&
                           currentBounty.isPublished && (
                             <Button
                               color="#6366F1"
@@ -513,22 +512,22 @@ export default function Hackathon({ slug }: { slug: string }) {
                             </Button>
                           )}
                         {currentBounty.status === 'OPEN' &&
-                          !currentBounty.isPublished && (
-                            <Button
-                              color={'brand.slate.500'}
-                              fontSize={'13px'}
-                              fontWeight={500}
-                              _hover={{ bg: 'brand.slate.200' }}
-                              leftIcon={<EditIcon />}
-                              onClick={() => {
-                                window.location.href = `/dashboard/listings/${currentBounty.slug}/edit/`;
-                              }}
-                              size="sm"
-                              variant="ghost"
-                            >
-                              Edit
-                            </Button>
-                          )}
+                          !currentBounty.isPublished && ( */}
+                        <Button
+                          color={'brand.slate.500'}
+                          fontSize={'13px'}
+                          fontWeight={500}
+                          _hover={{ bg: 'brand.slate.200' }}
+                          leftIcon={<EditIcon />}
+                          onClick={() => {
+                            window.location.href = `/dashboard/listings/${currentBounty.slug}/edit/`;
+                          }}
+                          size="sm"
+                          variant="ghost"
+                        >
+                          Edit
+                        </Button>
+                        {/* )} */}
                       </Td>
                       <Td px={0} py={2}>
                         <Menu>

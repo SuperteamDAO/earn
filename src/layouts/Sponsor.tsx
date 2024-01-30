@@ -165,6 +165,14 @@ export function Sidebar({
     </Flex>
   );
 
+  const showLoading = !isHackathonRoute
+    ? !userInfo?.currentSponsor?.id
+    : !userInfo?.hackathonId && userInfo?.role !== 'GOD';
+
+  const showContent = isHackathonRoute
+    ? userInfo?.hackathonId || userInfo?.role === 'GOD'
+    : userInfo?.currentSponsor?.id;
+
   return (
     <Default
       className="bg-white"
@@ -214,7 +222,7 @@ export function Sidebar({
                 w="full"
                 py={'22px'}
                 fontSize="md"
-                href={`/dashboard/create-hackathon/${slug ? `?slug=${slug}` : ''}`}
+                href={`/dashboard/hackathon/create-hackathon/${slug ? `?slug=${slug}` : ''}`}
                 leftIcon={<AddIcon w={3} h={3} />}
                 variant="solid"
               >
@@ -233,9 +241,8 @@ export function Sidebar({
             </NavItem>
           ))}
         </Box>
-        {!userInfo?.currentSponsor?.id ? (
-          <LoadingSection />
-        ) : (
+        {showLoading && <LoadingSection />}
+        {showContent && (
           <Box w="full" px={6} py={8} bg="white">
             {showBanner && <Banner slug={slug} />}
             {children}
