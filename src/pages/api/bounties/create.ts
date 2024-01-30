@@ -64,20 +64,21 @@ export default async function handler(
     },
   });
 
-  if (!user || !user.currentSponsorId) {
+  if (!user || !user.currentSponsorId || !user.hackathonId) {
     return res
       .status(403)
       .json({ error: 'User does not have a current sponsor.' });
   }
 
-  const { title, hackathonSlug, deadline, ...data } = req.body;
+  const { title, hackathonSlug, hackathonSponsor, deadline, ...data } =
+    req.body;
   try {
     let hackathonId;
     let hackathonDeadline;
 
     if (hackathonSlug) {
       const hackathon = await prisma.hackathon.findUnique({
-        where: { slug: hackathonSlug },
+        where: { id: user.hackathonId },
       });
 
       if (!hackathon) {
@@ -85,13 +86,13 @@ export default async function handler(
       }
 
       hackathonId = hackathon.id;
-      hackathonDeadline = hackathon.deadline;
     }
 
     const slug = await generateUniqueSlug(title);
     const finalDeadline = hackathonId ? hackathonDeadline : deadline;
+    const finalSponsor = hackathonId ? hackathonSponsor : user.currentSponsorId;
     const finalData = {
-      sponsorId: user.currentSponsorId,
+      sponsorId: finalSponsor,
       title,
       slug,
       ...(hackathonId && { hackathonId }),
