@@ -46,6 +46,9 @@ export default async function handler(
   req: NextApiRequest,
   res: NextApiResponse,
 ) {
+  const { title, hackathonSlug, hackathonSponsor, deadline, ...data } =
+    req.body;
+
   const token = await getToken({ req });
 
   if (!token) {
@@ -64,19 +67,31 @@ export default async function handler(
     },
   });
 
-  if (!user || !user.currentSponsorId || !user.hackathonId) {
+  if (!user) {
     return res
       .status(403)
       .json({ error: 'User does not have a current sponsor.' });
   }
 
-  const { title, hackathonSlug, hackathonSponsor, deadline, ...data } =
-    req.body;
+  if (!hackathonSlug) {
+    if (!user.currentSponsorId) {
+      return res
+        .status(403)
+        .json({ error: 'User does not have a current sponsor.' });
+    }
+  } else if (hackathonSlug) {
+    if (!user.hackathonId) {
+      return res
+        .status(403)
+        .json({ error: 'User does not have a current sponsor.' });
+    }
+  }
+
   try {
     let hackathonId;
     let hackathonDeadline;
 
-    if (hackathonSlug) {
+    if (hackathonSlug && user.hackathonId) {
       const hackathon = await prisma.hackathon.findUnique({
         where: { id: user.hackathonId },
       });
