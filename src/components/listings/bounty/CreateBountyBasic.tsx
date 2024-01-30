@@ -1,4 +1,5 @@
 import {
+  Box,
   Button,
   Flex,
   FormControl,
@@ -17,6 +18,7 @@ import type { Dispatch, SetStateAction } from 'react';
 import { useMemo, useState } from 'react';
 
 import { SkillSelect } from '@/components/misc/SkillSelect';
+import { SelectSponsor } from '@/components/sponsor/SelectSponsor';
 import { Superteams } from '@/constants/Superteam';
 import type { SuperteamName } from '@/interface/bounty';
 import { userStore } from '@/store/user';
@@ -117,9 +119,9 @@ export const CreatebountyBasic = ({
   return (
     <>
       <VStack align={'start'} gap={3} w={'2xl'} pt={7} pb={12}>
-        {/* <Box w="100%" mb={5}>
+        <Box w="100%" mb={5}>
           <SelectSponsor type="hackathon" />
-        </Box> */}
+        </Box>
         <FormControl w="full" mb={5} isInvalid={errorState.title} isRequired>
           <Flex>
             <FormLabel
