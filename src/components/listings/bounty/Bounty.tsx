@@ -219,7 +219,7 @@ export function CreateListing({
         isPublished: editable && !isDuplicating ? bounty?.isPublished : false,
       });
       if (type === 'hackathon') {
-        router.push(`/dashboard/hackathon/${hackathonSlug}`);
+        router.push(`/dashboard/hackathon/${hackathonSlug}/`);
       } else {
         router.push('/dashboard/listings');
       }

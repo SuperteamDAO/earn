@@ -2,7 +2,6 @@ import {
   AddIcon,
   ChevronLeftIcon,
   ChevronRightIcon,
-  CopyIcon,
   EditIcon,
   ExternalLinkIcon,
   SearchIcon,
@@ -540,7 +539,7 @@ export default function Hackathon({ slug }: { slug: string }) {
                               _hover={{ bg: 'brand.slate.200' }}
                               leftIcon={<EditIcon />}
                               onClick={() => {
-                                window.location.href = `/dashboard/listings/${currentBounty.slug}/edit/`;
+                                window.location.href = `/dashboard/hackathon/${currentBounty?.Hackathon?.slug}/${currentBounty.slug}/edit/`;
                               }}
                               size="sm"
                               variant="ghost"
@@ -580,7 +579,7 @@ export default function Hackathon({ slug }: { slug: string }) {
                               <Link
                                 as={NextLink}
                                 _hover={{ textDecoration: 'none' }}
-                                href={`/dashboard/listings/${currentBounty.slug}/edit`}
+                                href={`/dashboard/hackathon/${currentBounty.Hackathon?.slug}/${currentBounty.slug}/edit`}
                               >
                                 <MenuItem
                                   py={2}
@@ -593,7 +592,7 @@ export default function Hackathon({ slug }: { slug: string }) {
                                 </MenuItem>
                               </Link>
                             )}
-                            <MenuItem
+                            {/* <MenuItem
                               py={2}
                               color={'brand.slate.500'}
                               fontSize={'sm'}
@@ -601,13 +600,13 @@ export default function Hackathon({ slug }: { slug: string }) {
                               icon={<CopyIcon h={4} w={4} />}
                               onClick={() =>
                                 window.open(
-                                  `${router.basePath}/dashboard/listings/${currentBounty.slug}/duplicate`,
+                                  `${router.basePath}/dashboard/hackathon/${currentBounty?.Hackathon?.slug}/${currentBounty.slug}/duplicate`,
                                   '_blank',
                                 )
                               }
                             >
                               Duplicate
-                            </MenuItem>
+                            </MenuItem> */}
                             {bountyStatus === 'Draft' && (
                               <>
                                 <MenuItem

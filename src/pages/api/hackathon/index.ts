@@ -21,6 +21,7 @@ export default async function getHackathon(
     const result = await prisma.bounties.findMany({
       where: {
         hackathonId: hackathon.id,
+        isPublished: true,
       },
       select: {
         title: true,

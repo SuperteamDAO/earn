@@ -13,7 +13,20 @@ export default async function user(req: NextApiRequest, res: NextApiResponse) {
         type,
         isActive: true,
       },
-      include: { sponsor: true, poc: true, Submission: true, Hackathon: true },
+      include: {
+        sponsor: { select: { name: true, logo: true } },
+        poc: true,
+        Submission: true,
+        Hackathon: {
+          select: {
+            altLogo: true,
+            startDate: true,
+            name: true,
+            description: true,
+            slug: true,
+          },
+        },
+      },
     });
 
     if (!result) {

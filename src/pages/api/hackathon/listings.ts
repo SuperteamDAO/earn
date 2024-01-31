@@ -100,6 +100,11 @@ export default async function getHackathonListings(
             logo: true,
           },
         },
+        Hackathon: {
+          select: {
+            slug: true,
+          },
+        },
       },
     });
     res.status(200).json({ total, startDate, data: result });

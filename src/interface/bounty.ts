@@ -74,6 +74,7 @@ interface Bounty {
     deadline: string;
     startDate: string;
     altLogo: string;
+    slug: string;
   };
 }
 
