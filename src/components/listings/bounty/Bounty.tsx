@@ -325,7 +325,12 @@ export function CreateListing({
           }
         >
           {isOpen && (
-            <SuccessListings slug={slug} isOpen={isOpen} onClose={() => {}} />
+            <SuccessListings
+              slug={slug}
+              isOpen={isOpen}
+              onClose={() => {}}
+              hackathonSlug={hackathonSlug}
+            />
           )}
           {steps === 1 && (
             <Template
