@@ -90,7 +90,7 @@ export const Superteams = [
     displayValue: 'Balkans',
   },
   {
-    name: 'Superteam Vietnam',
+    name: 'Superteam Philippines',
     bg: `/assets/category_assets/bg/frontend.png`,
     color: '#A8FEA8',
     icons: '/assets/superteams/philippines.png',
