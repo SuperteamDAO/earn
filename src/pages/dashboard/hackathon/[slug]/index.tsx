@@ -139,6 +139,7 @@ export default function Hackathon({ slug }: { slug: string }) {
     try {
       const result = await axios.post(`/api/bounties/update/${bounty.id}/`, {
         isPublished: status,
+        hackathonSlug: slug,
       });
 
       const changedBountyIndex = bounties.findIndex(
@@ -432,7 +433,7 @@ export default function Hackathon({ slug }: { slug: string }) {
                             color="brand.slate.500"
                             fontSize={'15px'}
                             fontWeight={500}
-                            _hover={{ textDecoration: 'underline' }}
+                            // _hover={{ textDecoration: 'underline' }}
                             whiteSpace="nowrap"
                             textOverflow="ellipsis"
                           >

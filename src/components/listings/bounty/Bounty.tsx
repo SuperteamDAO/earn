@@ -1,9 +1,9 @@
 import { useDisclosure } from '@chakra-ui/react';
 import { Regions } from '@prisma/client';
 import axios from 'axios';
-import { useAtomValue } from 'jotai';
+import { useAtom } from 'jotai';
 import { useRouter } from 'next/router';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Toaster } from 'react-hot-toast';
 
 import type { BountyBasicType } from '@/components/listings/bounty/Createbounty';
@@ -98,7 +98,13 @@ export function CreateListing({
     editable && bounty?.isPrivate ? bounty?.isPrivate : false,
   );
 
-  const hackathonSponsor = useAtomValue(hackathonSponsorAtom);
+  const [hackathonSponsor, setHackathonSponsor] = useAtom(hackathonSponsorAtom);
+
+  useEffect(() => {
+    if (editable && type === 'hackathon' && bounty?.sponsorId) {
+      setHackathonSponsor(bounty?.sponsorId);
+    }
+  }, [editable]);
 
   // - Bounty
   const [bountybasic, setBountyBasic] = useState<BountyBasicType | undefined>({

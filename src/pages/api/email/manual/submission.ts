@@ -64,6 +64,7 @@ export default async function handler(
       pocUser?.email &&
       listing?.title &&
       pocUser?.firstName &&
+      listing.type !== 'hackathon' &&
       !unsubscribedEmails.includes(pocUser.email)
     ) {
       await resendMail.emails.send({

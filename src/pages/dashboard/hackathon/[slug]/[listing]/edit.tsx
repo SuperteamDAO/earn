@@ -47,9 +47,10 @@ function EditBounty({ slug, listing }: Props) {
         <LoadingSection />
       ) : (
         <CreateListing
+          hackathonSlug={slug}
           bounty={bounty}
           editable
-          type={bounty?.type as 'bounty' | 'project' | 'hackathon'}
+          type={'hackathon'}
         />
       )}
     </Sidebar>
