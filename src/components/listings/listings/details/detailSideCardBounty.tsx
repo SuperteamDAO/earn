@@ -536,17 +536,6 @@ export function DetailSideCardBounty({
           <Text color={'#94A3B8'} fontSize="1rem" fontWeight={400}>
             {typeDescription}
           </Text>
-          {hackathon && (
-            <Link
-              color={'brand.slate.400'}
-              fontSize="1rem"
-              fontWeight={500}
-              href={`/${hackathon.name.toLowerCase()}`}
-              isExternal
-            >
-              View all tracks
-            </Link>
-          )}
         </VStack>
         {requirements && (
           <VStack

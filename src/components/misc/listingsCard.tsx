@@ -1,4 +1,4 @@
-import { ArrowForwardIcon } from '@chakra-ui/icons';
+import { ArrowForwardIcon, BellIcon } from '@chakra-ui/icons';
 import {
   Box,
   Button,
@@ -12,16 +12,24 @@ import {
   SkeletonCircle,
   SkeletonText,
   Text,
+  useDisclosure,
   useMediaQuery,
 } from '@chakra-ui/react';
 import type { BountyType } from '@prisma/client';
+import axios from 'axios';
 import NextLink from 'next/link';
 import { useRouter } from 'next/router';
-import { Toaster } from 'react-hot-toast';
+import { useEffect, useState } from 'react';
+import toast, { Toaster } from 'react-hot-toast';
+import { TiTick } from 'react-icons/ti';
 
 import { tokenList } from '@/constants';
 import type { BountyStatus } from '@/interface/bounty';
+import type { Notifications } from '@/interface/user';
+import { userStore } from '@/store/user';
 import { dayjs } from '@/utils/dayjs';
+
+import { EarningModal } from '../modals/earningModal';
 
 type ListingSectionProps = {
   children?: React.ReactNode;
@@ -504,18 +512,18 @@ type CategoryAssetsType = {
 };
 
 export const CategoryBanner = ({ type }: { type: string }) => {
-  // const { userInfo } = userStore();
+  const { userInfo } = userStore();
 
-  // const [loading, setLoading] = useState(false);
-  // const [isSubscribed, setIsSubscribed] = useState<boolean>(false);
+  const [loading, setLoading] = useState(false);
+  const [isSubscribed, setIsSubscribed] = useState<boolean>(false);
 
-  // const { isOpen, onClose, onOpen } = useDisclosure();
+  const { isOpen, onClose, onOpen } = useDisclosure();
 
-  // useEffect(() => {
-  //   setIsSubscribed(
-  //     userInfo?.notifications?.some((e) => e.label === type) || false,
-  //   );
-  // }, [userInfo, type]);
+  useEffect(() => {
+    setIsSubscribed(
+      userInfo?.notifications?.some((e) => e.label === type) || false,
+    );
+  }, [userInfo, type]);
 
   const categoryAssets: CategoryAssetsType = {
     Design: {
@@ -544,57 +552,57 @@ export const CategoryBanner = ({ type }: { type: string }) => {
     // },
   };
 
-  // const updateNotification = async (notification: Notifications[]) => {
-  //   try {
-  //     const { data, status } = await axios.post(
-  //       `/api/user/updateNotification`,
-  //       {
-  //         notification,
-  //       },
-  //     );
-  //     if (status !== 200) {
-  //       return null;
-  //     }
-  //     return data.data;
-  //   } catch (error) {
-  //     console.log(error);
-  //     return null;
-  //   }
-  // };
+  const updateNotification = async (notification: Notifications[]) => {
+    try {
+      const { data, status } = await axios.post(
+        `/api/user/updateNotification`,
+        {
+          notification,
+        },
+      );
+      if (status !== 200) {
+        return null;
+      }
+      return data.data;
+    } catch (error) {
+      console.log(error);
+      return null;
+    }
+  };
 
-  // const handleNotification = async () => {
-  //   setLoading(true);
+  const handleNotification = async () => {
+    setLoading(true);
 
-  //   let updatedNotifications = [...(userInfo?.notifications ?? [])];
-  //   let subscriptionMessage = '';
+    let updatedNotifications = [...(userInfo?.notifications ?? [])];
+    let subscriptionMessage = '';
 
-  //   if (!userInfo?.isTalentFilled) {
-  //     onOpen();
-  //     setLoading(false);
-  //     return;
-  //   }
+    if (!userInfo?.isTalentFilled) {
+      onOpen();
+      setLoading(false);
+      return;
+    }
 
-  //   if (isSubscribed) {
-  //     updatedNotifications = updatedNotifications.filter(
-  //       (e) => e.label !== type,
-  //     );
-  //     subscriptionMessage = "You've been unsubscribed from this category";
-  //     setIsSubscribed(false);
-  //   } else {
-  //     updatedNotifications.push({ label: type, timestamp: Date.now() });
-  //     subscriptionMessage = "You've been subscribed to this category";
-  //     setIsSubscribed(true);
-  //   }
+    if (isSubscribed) {
+      updatedNotifications = updatedNotifications.filter(
+        (e) => e.label !== type,
+      );
+      subscriptionMessage = "You've been unsubscribed from this category";
+      setIsSubscribed(false);
+    } else {
+      updatedNotifications.push({ label: type, timestamp: Date.now() });
+      subscriptionMessage = "You've been subscribed to this category";
+      setIsSubscribed(true);
+    }
 
-  //   await updateNotification(updatedNotifications);
+    await updateNotification(updatedNotifications);
 
-  //   setLoading(false);
-  //   toast.success(subscriptionMessage);
-  // };
+    setLoading(false);
+    toast.success(subscriptionMessage);
+  };
 
   return (
     <>
-      {/* {isOpen && <EarningModal isOpen={isOpen} onClose={onClose} />} */}
+      {isOpen && <EarningModal isOpen={isOpen} onClose={onClose} />}
       <Flex
         direction={{ md: 'row', base: 'column' }}
         w={{ md: 'brand.120', base: '100%' }}
@@ -633,25 +641,23 @@ export const CategoryBanner = ({ type }: { type: string }) => {
             {categoryAssets[type]?.desc}
           </Text>
         </Box>
-        {/* {!router.asPath.includes('Hyperdrive') && (
-          <Button
-            my={{ base: '', md: 'auto' }}
-            mt={{ base: 4, md: '' }}
-            ml={{ base: '', md: 'auto' }}
-            px={4}
-            color={'brand.slate.500'}
-            fontWeight={'500'}
-            bg={'white'}
-            borderWidth={'1px'}
-            borderColor={'brand.slate.400'}
-            isLoading={loading}
-            leftIcon={isSubscribed ? <TiTick /> : <BellIcon />}
-            onClick={handleNotification}
-            variant="solid"
-          >
-            {isSubscribed ? 'Subscribed' : 'Notify Me'}
-          </Button>
-        )} */}
+        <Button
+          my={{ base: '', md: 'auto' }}
+          mt={{ base: 4, md: '' }}
+          ml={{ base: '', md: 'auto' }}
+          px={4}
+          color={'brand.slate.500'}
+          fontWeight={'500'}
+          bg={'white'}
+          borderWidth={'1px'}
+          borderColor={'brand.slate.400'}
+          isLoading={loading}
+          leftIcon={isSubscribed ? <TiTick /> : <BellIcon />}
+          onClick={handleNotification}
+          variant="solid"
+        >
+          {isSubscribed ? 'Subscribed' : 'Notify Me'}
+        </Button>
         <Toaster />
       </Flex>
     </>
