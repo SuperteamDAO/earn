@@ -173,6 +173,15 @@ function BountyDetails({ bounty: initialBounty }: BountyDetailsProps) {
 export const getServerSideProps: GetServerSideProps = async (context) => {
   const { slug, type } = context.query;
 
+  if (type === 'hackathon') {
+    return {
+      redirect: {
+        destination: '/',
+        permanent: false,
+      },
+    };
+  }
+
   let bountyData;
   try {
     const bountyDetails = await axios.get(`${getURL()}api/bounties/${slug}`, {
