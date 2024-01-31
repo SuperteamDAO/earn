@@ -18,8 +18,6 @@ import {
 import NextLink from 'next/link';
 import { useRouter } from 'next/router';
 
-import ScribesLogo from '@/svg/scribes-logo';
-
 import { BountySnackbar } from './BountySnackbar';
 import { UserInfo } from './UserInfo';
 
@@ -47,10 +45,10 @@ const NAV_ITEMS: Array<NavItem> = [
         label: 'Development',
         href: '/all/development/',
       },
-      {
-        label: 'Scribes',
-        href: '/scribes/',
-      },
+      // {
+      //   label: 'Scribes',
+      //   href: '/scribes/',
+      // },
     ],
   },
 ];
@@ -102,11 +100,13 @@ const MobileNavItem = ({ label, children, href }: NavItem) => {
                 fontSize="md"
                 href={child.href}
               >
-                {child.label === 'Scribes' ? (
-                  <ScribesLogo styles={{ width: '80px', height: 'auto' }} />
-                ) : (
+                {
+                  // child.label === 'Scribes' ? (
+                  //   <ScribesLogo styles={{ width: '80px', height: 'auto' }} />
+                  // ) : (
                   child.label
-                )}
+                  // )
+                }
               </Link>
             ))}
         </Stack>
@@ -181,15 +181,15 @@ const DesktopNav = () => {
                 <NavLink
                   href={navItem.href ?? '#'}
                   label={
-                    navItem.label === 'Scribes' ? (
-                      <Box>
-                        <ScribesLogo
-                          styles={{ width: '60px', height: 'auto' }}
-                        />
-                      </Box>
-                    ) : (
-                      navItem.label
-                    )
+                    // navItem.label === 'Scribes' ? (
+                    //   <Box>
+                    //     <ScribesLogo
+                    //       styles={{ width: '60px', height: 'auto' }}
+                    //     />
+                    //   </Box>
+                    // ) : (
+                    navItem.label
+                    // )
                   }
                   isActive={isCurrent}
                   isCategory={true}

@@ -1,9 +1,7 @@
 import {
   Box,
-  Button,
   Center,
   Flex,
-  HStack,
   Image,
   Skeleton,
   Text,
@@ -17,7 +15,6 @@ import { useEffect, useRef, useState } from 'react';
 import { LoginWrapper } from '@/components/Header/LoginWrapper';
 import { tokenList } from '@/constants';
 import type { User } from '@/interface/user';
-import ScribesLogo from '@/svg/scribes-logo';
 import { getURL } from '@/utils/validUrl';
 
 interface SideBarProps {
@@ -388,79 +385,67 @@ const RecentEarners = ({ earners }: { earners?: User[] }) => {
   );
 };
 
-const ScribesBanner = () => {
-  return (
-    <Flex
-      direction={'column'}
-      gap={1}
-      w={'full'}
-      h={'max-content'}
-      px={'1.5625rem'}
-      py={'8'}
-      bgImage={"url('/assets/scribes-sidebar.png')"}
-      bgSize="cover"
-      bgPosition="center"
-      bgRepeat="no-repeat"
-      borderWidth={'1px'}
-      borderColor={'brand.slate.200'}
-      rounded={'lg'}
-    >
-      <HStack>
-        {/* <Image alt="solana" src="/assets/scribes3.png" /> */}
-        <ScribesLogo
-          styles={{
-            width: '100%',
-            marginLeft: 'auto',
-            marginRight: 'auto',
-          }}
-        />
-      </HStack>
-      {/* <HStack>
-        <ScribesLogo
-          styles={{
-            width: '100%',
-            marginLeft: 'auto',
-            marginRight: 'auto',
-            height: '48px',
-            marginTop: '8px',
-          }}
-        />
-      </HStack> */}
-      <Text
-        mt={1}
-        color={'brand.slate.800'}
-        fontSize={'lg'}
-        fontWeight={'600'}
-        lineHeight={'6'}
-      >
-        Create Content to Win Prizes Worth $50,000+
-      </Text>
-      <Text
-        mt={'0.5rem'}
-        color={'brand.slate.700'}
-        fontSize={'1rem'}
-        lineHeight={'1.1875rem'}
-      >
-        Solana&apos;s first-ever content hackathon is here! Check out tracks
-        from your favourite Solana projects and start creating today.
-        Submissions open Feb 19, 2024.
-      </Text>
-      <Button
-        as={NextLink}
-        mt={'1.5625rem'}
-        py={'0.8125rem'}
-        fontWeight={'500'}
-        textAlign={'center'}
-        bg="#000"
-        borderRadius={8}
-        _hover={{ bg: '#a459ff' }}
-        href="/scribes"
-      >
-        View Tracks
-      </Button>
-    </Flex>
-  );
-};
+// const ScribesBanner = () => {
+//   return (
+//     <Flex
+//       direction={'column'}
+//       gap={1}
+//       w={'full'}
+//       h={'max-content'}
+//       px={'1.5625rem'}
+//       py={'8'}
+//       bgImage={"url('/assets/scribes-sidebar.png')"}
+//       bgSize="cover"
+//       bgPosition="center"
+//       bgRepeat="no-repeat"
+//       borderWidth={'1px'}
+//       borderColor={'brand.slate.200'}
+//       rounded={'lg'}
+//     >
+//       <HStack>
+//         <ScribesLogo
+//           styles={{
+//             width: '100%',
+//             marginLeft: 'auto',
+//             marginRight: 'auto',
+//           }}
+//         />
+//       </HStack>
+//       <Text
+//         mt={1}
+//         color={'brand.slate.800'}
+//         fontSize={'lg'}
+//         fontWeight={'600'}
+//         lineHeight={'6'}
+//       >
+//         Create Content to Win Prizes Worth $50,000+
+//       </Text>
+//       <Text
+//         mt={'0.5rem'}
+//         color={'brand.slate.700'}
+//         fontSize={'1rem'}
+//         lineHeight={'1.1875rem'}
+//       >
+//         Solana&apos;s first-ever content hackathon is here! Check out tracks
+//         from your favourite Solana projects and start creating today.
+//         Submissions open Feb 19, 2024.
+//       </Text>
+//       <Button
+//         as={NextLink}
+//         mt={'1.5625rem'}
+//         py={'0.8125rem'}
+//         fontWeight={'500'}
+//         textAlign={'center'}
+//         bg="#000"
+//         borderRadius={8}
+//         _hover={{ bg: '#a459ff' }}
+//         href="/scribes"
+//       >
+//         View Tracks
+//       </Button>
+//     </Flex>
+//   );
+// };
 
 export const HomeSideBar = ({
   userInfo,
@@ -477,7 +462,7 @@ export const HomeSideBar = ({
         bountyCount={listings}
         TVE={total}
       />
-      <ScribesBanner />
+      {/* <ScribesBanner /> */}
       <RecentEarners earners={earners} />
     </Flex>
   );
