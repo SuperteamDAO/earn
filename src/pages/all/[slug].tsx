@@ -60,9 +60,11 @@ function ListingCategoryPage({ slug }: { slug: string }) {
 
   const titleKey = slug as SlugKeys;
   const title = titlesForSlugs[titleKey] || 'Superteam Earn'; // Default title if slug not found
-  const formattedSlug = slug?.toLowerCase();
+  const formattedSlug =
+    slug.charAt(0).toUpperCase() + slug.slice(1).toLowerCase();
+
   // slug === 'Hyperdrive' ? slug.toUpperCase() : slug.toLowerCase();
-  const metaDescription = `Find the latest ${formattedSlug} bounties and grants for freelancers and builders in the crypto space on Superteam Earn.`;
+  const metaDescription = `Find the latest ${slug.toLowerCase()} bounties and grants for freelancers and builders in the crypto space on Superteam Earn.`;
   const canonicalURL = `https://earn.superteam.fun/all/${slug}/`;
 
   return (
@@ -75,7 +77,7 @@ function ListingCategoryPage({ slug }: { slug: string }) {
       <Box w={'100%'}>
         <ListingSection
           type="bounties"
-          title={`${slug} Gigs`}
+          title={`${formattedSlug} Gigs`}
           sub="Bite sized tasks for freelancers"
           emoji="/assets/home/emojis/moneyman.png"
           all

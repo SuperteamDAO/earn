@@ -14,6 +14,7 @@ import {
   Text,
   Th,
   Thead,
+  Tooltip,
   Tr,
   useDisclosure,
   VStack,
@@ -135,6 +136,10 @@ export function DetailSideCardBounty({
   const hasHackathonStarted = hackathon?.startDate
     ? dayjs().isAfter(hackathon.startDate)
     : true;
+
+  const formattedDate = hackathon
+    ? dayjs(hackathon.startDate).format('MMM DD')
+    : null;
 
   const getUserSubmission = async () => {
     setIsUserSubmissionLoading(true);
@@ -473,24 +478,32 @@ export function DetailSideCardBounty({
                 {isProject ? 'Applied Successfully' : 'Submitted Successfully'}
               </Button>
             ) : (
-              <Button
-                w="full"
-                _hover={{
-                  bg: 'brand.purple',
-                }}
-                isDisabled={
-                  bountyDraftStatus === 'DRAFT' ||
-                  Date.now() > Number(moment(endingTime).format('x')) ||
-                  !hasHackathonStarted
-                }
-                isLoading={isUserSubmissionLoading}
-                loadingText={'Checking Submission...'}
-                onClick={() => handleSubmit()}
-                size="lg"
-                variant="solid"
+              <Tooltip
+                bg="brand.slate.500"
+                hasArrow
+                isDisabled={hasHackathonStarted}
+                label={`Submissions Open ${formattedDate}`}
+                rounded="md"
               >
-                {isProject ? 'Apply Now' : 'Submit Now'}
-              </Button>
+                <Button
+                  w="full"
+                  _hover={{
+                    bg: 'brand.purple',
+                  }}
+                  isDisabled={
+                    bountyDraftStatus === 'DRAFT' ||
+                    Date.now() > Number(moment(endingTime).format('x')) ||
+                    !hasHackathonStarted
+                  }
+                  isLoading={isUserSubmissionLoading}
+                  loadingText={'Checking Submission...'}
+                  onClick={() => handleSubmit()}
+                  size="lg"
+                  variant="solid"
+                >
+                  {isProject ? 'Apply Now' : 'Submit Now'}
+                </Button>
+              </Tooltip>
             )}
             {isProject && (
               <Flex gap="2" w="20rem" mt={4} p="3" bg={'#62F6FF10'}>

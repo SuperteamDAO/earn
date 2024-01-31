@@ -399,6 +399,19 @@ function Bounties() {
 
                   const bountyStatus = getBountyStatus(currentBounty);
 
+                  const listingIcon = (() => {
+                    switch (currentBounty.type) {
+                      case 'bounty':
+                        return 'bolt.svg';
+                      case 'project':
+                        return 'briefcase.svg';
+                      case 'hackathon':
+                        return 'laptop.svg';
+                      default:
+                        return 'bolt.svg';
+                    }
+                  })();
+
                   return (
                     <Tr key={currentBounty?.id}>
                       <Td
@@ -418,11 +431,7 @@ function Bounties() {
                                 h={5}
                                 mr={2}
                                 alt={`New ${bountyType}`}
-                                src={
-                                  currentBounty.type === 'bounty'
-                                    ? '/assets/icons/bolt.svg'
-                                    : '/assets/icons/briefcase.svg'
-                                }
+                                src={`/assets/icons/${listingIcon}`}
                               />
                             </Tooltip>
 
@@ -565,7 +574,10 @@ function Bounties() {
                                 )
                               }
                             >
-                              View {bountyType}
+                              View{' '}
+                              {currentBounty?.type === 'hackathon'
+                                ? 'Track'
+                                : bountyType}
                             </MenuItem>
                             {currentBounty.isPublished && (
                               <Link

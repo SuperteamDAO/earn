@@ -14,7 +14,7 @@ export default async function bounty(
 ) {
   const params = req.query;
   const id = params.id as string;
-  const updatedData = req.body;
+  const { hackathonSlug, hackathonSponsor, ...updatedData } = req.body;
 
   try {
     const token = await getToken({ req });
@@ -39,10 +39,24 @@ export default async function bounty(
       where: { id },
     });
 
-    if (!user || !user.currentSponsorId || !user.hackathonId) {
+    if (!user) {
       return res
         .status(403)
         .json({ error: 'User does not have a current sponsor.' });
+    }
+
+    if (!hackathonSlug) {
+      if (!user.currentSponsorId) {
+        return res
+          .status(403)
+          .json({ error: 'User does not have a current sponsor.' });
+      }
+    } else if (hackathonSlug) {
+      if (!user.hackathonId) {
+        return res
+          .status(403)
+          .json({ error: 'User does not have a current sponsor.' });
+      }
     }
 
     if (!currentBounty) {
@@ -77,10 +91,8 @@ export default async function bounty(
       }
     }
 
-    const { hackathonSlug, hackathonSponsor } = req.body;
-
     let hackathonId;
-    if (hackathonSlug) {
+    if (hackathonSlug && user.hackathonId) {
       const hackathon = await prisma.hackathon.findUnique({
         where: { id: user.hackathonId },
       });
@@ -96,6 +108,7 @@ export default async function bounty(
     const result = await prisma.bounties.update({
       where: { id, sponsorId },
       data: {
+        sponsorId,
         ...(hackathonId && { hackathonId }),
         ...updatedData,
       },

@@ -16,7 +16,6 @@ import {
 import CreateListingModal from '@/components/modals/createListing';
 import { LoadingSection } from '@/components/shared/LoadingSection';
 import { Banner } from '@/components/sponsor/Banner';
-import { InviteMembers } from '@/components/sponsor/Members/InviteMembers';
 import { SelectSponsor } from '@/components/sponsor/SelectSponsor';
 import { Default } from '@/layouts/Default';
 import { Meta } from '@/layouts/Meta';
@@ -27,7 +26,6 @@ interface LinkItemProps {
   link?: string;
   icon: IconType;
   isExternal?: boolean;
-  onClick?: () => void;
 }
 
 interface NavItemProps extends FlexProps {
@@ -47,12 +45,6 @@ export function Sidebar({
   const { data: session, status } = useSession();
   const router = useRouter();
   const { isOpen, onOpen, onClose } = useDisclosure();
-
-  const {
-    isOpen: isOpenInvite,
-    onOpen: onOpenInvite,
-    onClose: onCloseInvite,
-  } = useDisclosure();
 
   if (!session && status === 'loading') {
     return <LoadingSection />;
@@ -74,11 +66,6 @@ export function Sidebar({
     ? [
         { name: 'All Tracks', link: `/hackathon/${slug}`, icon: MdList },
         {
-          name: 'Invite Sponsors',
-          onClick: onOpenInvite,
-          icon: MdOutlineGroup,
-        },
-        {
           name: 'Get Help',
           link: 'https://t.me/pratikdholani',
           icon: MdOutlineChatBubbleOutline,
@@ -94,13 +81,7 @@ export function Sidebar({
         },
       ];
 
-  const NavItem = ({
-    icon,
-    link,
-    children,
-    onClick,
-    ...rest
-  }: NavItemProps) => {
+  const NavItem = ({ icon, link, children, ...rest }: NavItemProps) => {
     const router = useRouter();
     const currentPath = router.asPath.split('?')[0];
     const isExternalLink = link?.startsWith('https://');
@@ -109,31 +90,19 @@ export function Sidebar({
       ? currentPath?.startsWith(resolvedLink)
       : false;
 
-    if (onClick) {
-      return (
-        <Box align="center" cursor="pointer" onClick={onClick} {...rest}>
-          <NavItemContent icon={icon} isActiveLink={false}>
-            {children}
-          </NavItemContent>
-        </Box>
-      );
-    }
-    if (link) {
-      return (
-        <Link
-          as={NextLink}
-          _focus={{ boxShadow: 'none' }}
-          href={resolvedLink}
-          isExternal={isExternalLink}
-          style={{ textDecoration: 'none' }}
-        >
-          <NavItemContent icon={icon} isActiveLink={isActiveLink} {...rest}>
-            {children}
-          </NavItemContent>
-        </Link>
-      );
-    }
-    return;
+    return (
+      <Link
+        as={NextLink}
+        _focus={{ boxShadow: 'none' }}
+        href={resolvedLink}
+        isExternal={isExternalLink}
+        style={{ textDecoration: 'none' }}
+      >
+        <NavItemContent icon={icon} isActiveLink={isActiveLink} {...rest}>
+          {children}
+        </NavItemContent>
+      </Link>
+    );
   };
 
   const NavItemContent = ({ icon, isActiveLink, children, ...rest }: any) => (
@@ -184,10 +153,6 @@ export function Sidebar({
         />
       }
     >
-      {isOpenInvite && (
-        <InviteMembers isOpen={isOpenInvite} onClose={onCloseInvite} />
-      )}
-
       <Flex justify="start" minH="100vh">
         <Box
           display={{ base: 'none', md: 'block' }}
@@ -231,12 +196,7 @@ export function Sidebar({
             )}
           </Flex>
           {LinkItems.map((link) => (
-            <NavItem
-              key={link.name}
-              onClick={link.onClick}
-              link={link.link}
-              icon={link.icon}
-            >
+            <NavItem key={link.name} link={link.link} icon={link.icon}>
               {link.name}
             </NavItem>
           ))}
