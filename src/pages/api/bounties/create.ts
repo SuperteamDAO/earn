@@ -101,6 +101,7 @@ export default async function handler(
       }
 
       hackathonId = hackathon.id;
+      hackathonDeadline = hackathon.deadline;
     }
 
     const slug = await generateUniqueSlug(title);

@@ -45,7 +45,9 @@ export function CreateListing({
   // Basic Info - 2
   // Description - 3
   // payment form - 4
-  const [steps, setSteps] = useState<number>(editable ? 2 : 1);
+  const [steps, setSteps] = useState<number>(
+    editable || type === 'hackathon' ? 2 : 1,
+  );
   const [listingType, setListingType] = useState('BOUNTY');
   const [draftLoading, setDraftLoading] = useState<boolean>(false);
   const [bountyRequirements, setBountyRequirements] = useState<
@@ -165,7 +167,7 @@ export function CreateListing({
       setSlug(`/${result?.data?.type}/${result?.data?.slug}/`);
       setIsListingPublishing(false);
       onOpen();
-      if (!isPrivate) {
+      if (!isPrivate || type !== 'hackathon') {
         await axios.post('/api/email/manual/createBounty', {
           id: result?.data?.id,
         });
@@ -211,10 +213,16 @@ export function CreateListing({
     };
     try {
       await axios.post(api, {
+        hackathonSlug,
+        hackathonSponsor,
         ...draft,
         isPublished: editable && !isDuplicating ? bounty?.isPublished : false,
       });
-      router.push('/dashboard/listings');
+      if (type === 'hackathon') {
+        router.push(`/dashboard/hackathon/${hackathonSlug}/`);
+      } else {
+        router.push('/dashboard/listings');
+      }
     } catch (e) {
       setDraftLoading(false);
     }

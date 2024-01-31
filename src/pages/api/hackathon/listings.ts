@@ -63,6 +63,7 @@ export default async function getHackathonListings(
       },
     };
     const total = await prisma.bounties.count(countQuery);
+    const startDate = hackathon.startDate;
     const result = await prisma.bounties.findMany({
       ...countQuery,
       skip: skip ?? 0,
@@ -99,9 +100,14 @@ export default async function getHackathonListings(
             logo: true,
           },
         },
+        Hackathon: {
+          select: {
+            slug: true,
+          },
+        },
       },
     });
-    res.status(200).json({ total, data: result });
+    res.status(200).json({ total, startDate, data: result });
   } catch (err) {
     res.status(400).json({ err: 'Error occurred while fetching bounties.' });
   }

@@ -2,10 +2,10 @@ import {
   AddIcon,
   ChevronLeftIcon,
   ChevronRightIcon,
-  CopyIcon,
   EditIcon,
   ExternalLinkIcon,
   SearchIcon,
+  ViewIcon,
   ViewOffIcon,
 } from '@chakra-ui/icons';
 import {
@@ -37,10 +37,12 @@ import {
   Text,
   Th,
   Thead,
+  Tooltip,
   Tr,
   useDisclosure,
 } from '@chakra-ui/react';
 import axios from 'axios';
+import dayjs from 'dayjs';
 import type { GetServerSideProps } from 'next';
 import NextLink from 'next/link';
 import { useRouter } from 'next/router';
@@ -80,6 +82,7 @@ export default function Hackathon({ slug }: { slug: string }) {
   const [bounty, setBounty] = useState<BountyWithSubmissions>({});
   const [isChangingStatus, setIsChangingStatus] = useState(false);
   const [isBountiesLoading, setIsBountiesLoading] = useState(true);
+  const [startDate, setStartDate] = useState();
   const [searchText, setSearchText] = useState('');
   const [skip, setSkip] = useState(0);
   const length = 15;
@@ -105,6 +108,7 @@ export default function Hackathon({ slug }: { slug: string }) {
         },
       });
       setTotalBounties(bountiesList.data.total);
+      setStartDate(bountiesList.data.startDate);
       setBounties(bountiesList.data.data);
       setIsBountiesLoading(false);
     } catch (error) {
@@ -122,6 +126,13 @@ export default function Hackathon({ slug }: { slug: string }) {
     setBounty(unpublishedBounty);
     unpublishOnOpen();
   };
+
+  const hasHackathonStarted = startDate ? dayjs().isAfter(startDate) : true;
+  const formattedDate = dayjs(startDate).format('MMM DD');
+
+  useEffect(() => {
+    console.log(hasHackathonStarted);
+  }, [startDate]);
 
   const changeBountyStatus = async (status: boolean) => {
     setIsChangingStatus(true);
@@ -146,9 +157,9 @@ export default function Hackathon({ slug }: { slug: string }) {
     }
   };
 
-  // const handleViewSubmissions = (slug: string | undefined) => {
-  //   router.push(`/dashboard/listings/${slug}/submissions/`);
-  // };
+  const handleViewSubmissions = (slug: string | undefined) => {
+    router.push(`/dashboard/listings/${slug}/submissions/`);
+  };
 
   const deleteSelectedDraft = async () => {
     try {
@@ -402,33 +413,33 @@ export default function Hackathon({ slug }: { slug: string }) {
                         whiteSpace="normal"
                         wordBreak={'break-word'}
                       >
-                        <NextLink
+                        {/* <NextLink
                           href={`/dashboard/listings/${currentBounty.slug}/submissions/`}
                           passHref
-                        >
-                          <Flex align={'center'}>
-                            <Image
-                              h={5}
-                              mr={2}
-                              borderRadius={2}
-                              alt={`${currentBounty?.sponsor?.name}`}
-                              src={currentBounty?.sponsor?.logo}
-                            />
+                        > */}
+                        <Flex align={'center'}>
+                          <Image
+                            h={5}
+                            mr={2}
+                            borderRadius={2}
+                            alt={`${currentBounty?.sponsor?.name}`}
+                            src={currentBounty?.sponsor?.logo}
+                          />
 
-                            <Text
-                              as="a"
-                              overflow="hidden"
-                              color="brand.slate.500"
-                              fontSize={'15px'}
-                              fontWeight={500}
-                              _hover={{ textDecoration: 'underline' }}
-                              whiteSpace="nowrap"
-                              textOverflow="ellipsis"
-                            >
-                              {currentBounty.title}
-                            </Text>
-                          </Flex>
-                        </NextLink>
+                          <Text
+                            as="a"
+                            overflow="hidden"
+                            color="brand.slate.500"
+                            fontSize={'15px'}
+                            fontWeight={500}
+                            _hover={{ textDecoration: 'underline' }}
+                            whiteSpace="nowrap"
+                            textOverflow="ellipsis"
+                          >
+                            {currentBounty.title}
+                          </Text>
+                        </Flex>
+                        {/* </NextLink> */}
                       </Td>
                       <Td py={2}>
                         <Text
@@ -494,40 +505,48 @@ export default function Hackathon({ slug }: { slug: string }) {
                         </Tag>
                       </Td>
                       <Td px={3} py={2}>
-                        {/* {currentBounty.status === 'OPEN' &&
+                        {currentBounty.status === 'OPEN' &&
                           currentBounty.isPublished && (
+                            <Tooltip
+                              bg="brand.slate.500"
+                              isDisabled={hasHackathonStarted}
+                              label={`Submissions Open ${formattedDate}`}
+                              rounded="md"
+                            >
+                              <Button
+                                color="#6366F1"
+                                fontSize={'13px'}
+                                fontWeight={500}
+                                _hover={{ bg: '#E0E7FF' }}
+                                isDisabled={!hasHackathonStarted}
+                                leftIcon={<ViewIcon />}
+                                onClick={() =>
+                                  handleViewSubmissions(currentBounty.slug)
+                                }
+                                size="sm"
+                                variant="ghost"
+                              >
+                                Submissions
+                              </Button>
+                            </Tooltip>
+                          )}
+                        {currentBounty.status === 'OPEN' &&
+                          !currentBounty.isPublished && (
                             <Button
-                              color="#6366F1"
+                              color={'brand.slate.500'}
                               fontSize={'13px'}
                               fontWeight={500}
-                              _hover={{ bg: '#E0E7FF' }}
-                              leftIcon={<ViewIcon />}
-                              onClick={() =>
-                                handleViewSubmissions(currentBounty.slug)
-                              }
+                              _hover={{ bg: 'brand.slate.200' }}
+                              leftIcon={<EditIcon />}
+                              onClick={() => {
+                                window.location.href = `/dashboard/hackathon/${currentBounty?.Hackathon?.slug}/${currentBounty.slug}/edit/`;
+                              }}
                               size="sm"
                               variant="ghost"
                             >
-                              Submissions
+                              Edit
                             </Button>
                           )}
-                        {currentBounty.status === 'OPEN' &&
-                          !currentBounty.isPublished && ( */}
-                        <Button
-                          color={'brand.slate.500'}
-                          fontSize={'13px'}
-                          fontWeight={500}
-                          _hover={{ bg: 'brand.slate.200' }}
-                          leftIcon={<EditIcon />}
-                          onClick={() => {
-                            window.location.href = `/dashboard/listings/${currentBounty.slug}/edit/`;
-                          }}
-                          size="sm"
-                          variant="ghost"
-                        >
-                          Edit
-                        </Button>
-                        {/* )} */}
                       </Td>
                       <Td px={0} py={2}>
                         <Menu>
@@ -560,7 +579,7 @@ export default function Hackathon({ slug }: { slug: string }) {
                               <Link
                                 as={NextLink}
                                 _hover={{ textDecoration: 'none' }}
-                                href={`/dashboard/listings/${currentBounty.slug}/edit`}
+                                href={`/dashboard/hackathon/${currentBounty.Hackathon?.slug}/${currentBounty.slug}/edit`}
                               >
                                 <MenuItem
                                   py={2}
@@ -573,7 +592,7 @@ export default function Hackathon({ slug }: { slug: string }) {
                                 </MenuItem>
                               </Link>
                             )}
-                            <MenuItem
+                            {/* <MenuItem
                               py={2}
                               color={'brand.slate.500'}
                               fontSize={'sm'}
@@ -581,13 +600,13 @@ export default function Hackathon({ slug }: { slug: string }) {
                               icon={<CopyIcon h={4} w={4} />}
                               onClick={() =>
                                 window.open(
-                                  `${router.basePath}/dashboard/listings/${currentBounty.slug}/duplicate`,
+                                  `${router.basePath}/dashboard/hackathon/${currentBounty?.Hackathon?.slug}/${currentBounty.slug}/duplicate`,
                                   '_blank',
                                 )
                               }
                             >
                               Duplicate
-                            </MenuItem>
+                            </MenuItem> */}
                             {bountyStatus === 'Draft' && (
                               <>
                                 <MenuItem
