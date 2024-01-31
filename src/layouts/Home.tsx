@@ -138,10 +138,10 @@ export function Home({ children, type }: HomeProps) {
                         {matchedTeam.name}
                       </Text>
                       <Text color={'brand.slate.500'} fontSize={'small'}>
-                        Welcome to Superteam {matchedTeam.region} earnings page
-                        — use these opportunities to earn in global standards
-                        and gain membership in the most exclusive Solana
-                        community of {matchedTeam.region}!
+                        Welcome to Superteam {matchedTeam.displayValue} earnings
+                        page — use these opportunities to earn in global
+                        standards and gain membership in the most exclusive
+                        Solana community of {matchedTeam.displayValue}!
                       </Text>
                     </Box>
 
