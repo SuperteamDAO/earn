@@ -239,6 +239,7 @@ export const CreatebountyPayment = ({
               textAlign="start"
               bg="transparent"
               border={'1px solid #cbd5e1'}
+              _hover={{ bg: 'transparent' }}
               rightIcon={<ChevronDownIcon />}
             >
               {bountyPayment.token ? (
