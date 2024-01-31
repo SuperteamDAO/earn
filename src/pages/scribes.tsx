@@ -177,7 +177,7 @@ export default function Scribes() {
             <Text color={'brand.slate.800'} fontSize={'2xl'} fontWeight={600}>
               <Countdown
                 // date={endingTime}
-                date={new Date('2024-02-19T23:59:59')}
+                date={new Date('2024-02-19T00:00:00')}
                 renderer={CountDownRenderer}
                 zeroPadDays={1}
               />
