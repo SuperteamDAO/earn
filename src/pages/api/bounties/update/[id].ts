@@ -14,7 +14,7 @@ export default async function bounty(
 ) {
   const params = req.query;
   const id = params.id as string;
-  const updatedData = req.body;
+  const { hackathonSlug, hackathonSponsor, ...updatedData } = req.body;
 
   try {
     const token = await getToken({ req });
@@ -39,14 +39,24 @@ export default async function bounty(
       where: { id },
     });
 
-    if (
-      !user ||
-      !user.currentSponsorId ||
-      currentBounty?.sponsorId !== user.currentSponsorId
-    ) {
+    if (!user) {
       return res
         .status(403)
         .json({ error: 'User does not have a current sponsor.' });
+    }
+
+    if (!hackathonSlug) {
+      if (!user.currentSponsorId) {
+        return res
+          .status(403)
+          .json({ error: 'User does not have a current sponsor.' });
+      }
+    } else if (hackathonSlug) {
+      if (!user.hackathonId) {
+        return res
+          .status(403)
+          .json({ error: 'User does not have a current sponsor.' });
+      }
     }
 
     if (!currentBounty) {
@@ -81,9 +91,27 @@ export default async function bounty(
       }
     }
 
+    let hackathonId;
+    if (hackathonSlug && user.hackathonId) {
+      const hackathon = await prisma.hackathon.findUnique({
+        where: { id: user.hackathonId },
+      });
+
+      if (!hackathon) {
+        return res.status(404).json({ error: 'Hackathon not found.' });
+      }
+
+      hackathonId = hackathon.id;
+    }
+
+    const sponsorId = hackathonId ? hackathonSponsor : user.currentSponsorId;
     const result = await prisma.bounties.update({
-      where: { id },
-      data: updatedData,
+      where: { id, sponsorId },
+      data: {
+        sponsorId,
+        ...(hackathonId && { hackathonId }),
+        ...updatedData,
+      },
     });
 
     const deadlineChanged = currentBounty.deadline !== updatedData.deadline;
@@ -109,7 +137,7 @@ export default async function bounty(
           subject: 'Listing Deadline Extended!',
           react: DeadlineExtendedTemplate({
             listingName: result.title,
-            link: `https://earn.superteam.fun/listings/bounties/${result.slug}/`,
+            link: `https://earn.superteam.fun/listings/${result.type}/${result.slug}/`,
           }),
         });
       };

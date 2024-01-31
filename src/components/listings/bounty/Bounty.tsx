@@ -1,8 +1,9 @@
 import { useDisclosure } from '@chakra-ui/react';
 import { Regions } from '@prisma/client';
 import axios from 'axios';
+import { useAtom } from 'jotai';
 import { useRouter } from 'next/router';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Toaster } from 'react-hot-toast';
 
 import type { BountyBasicType } from '@/components/listings/bounty/Createbounty';
@@ -14,6 +15,7 @@ import type {
 import { Template } from '@/components/listings/templates/template';
 import { SuccessListings } from '@/components/modals/successListings';
 import { ErrorSection } from '@/components/shared/ErrorSection';
+import { hackathonSponsorAtom } from '@/components/sponsor/SelectSponsor';
 import { type MultiSelectOptions, tokenList } from '@/constants';
 import type { Bounty, References, SuperteamName } from '@/interface/bounty';
 import { FormLayout } from '@/layouts/FormLayout';
@@ -25,8 +27,9 @@ import { mergeSkills, splitSkills } from '@/utils/skills';
 interface Props {
   bounty?: Bounty;
   editable?: boolean;
-  type: 'open' | 'permissioned';
+  type: 'bounty' | 'project' | 'hackathon';
   isDuplicating?: boolean;
+  hackathonSlug?: string;
 }
 
 export function CreateListing({
@@ -34,6 +37,7 @@ export function CreateListing({
   editable = false,
   type,
   isDuplicating = false,
+  hackathonSlug,
 }: Props) {
   const router = useRouter();
   const { userInfo } = userStore();
@@ -41,7 +45,9 @@ export function CreateListing({
   // Basic Info - 2
   // Description - 3
   // payment form - 4
-  const [steps, setSteps] = useState<number>(editable ? 2 : 1);
+  const [steps, setSteps] = useState<number>(
+    editable || type === 'hackathon' ? 2 : 1,
+  );
   const [listingType, setListingType] = useState('BOUNTY');
   const [draftLoading, setDraftLoading] = useState<boolean>(false);
   const [bountyRequirements, setBountyRequirements] = useState<
@@ -91,6 +97,14 @@ export function CreateListing({
   const [isPrivate, setIsPrivate] = useState<boolean>(
     editable && bounty?.isPrivate ? bounty?.isPrivate : false,
   );
+
+  const [hackathonSponsor, setHackathonSponsor] = useAtom(hackathonSponsorAtom);
+
+  useEffect(() => {
+    if (editable && type === 'hackathon' && bounty?.sponsorId) {
+      setHackathonSponsor(bounty?.sponsorId);
+    }
+  }, [editable]);
 
   // - Bounty
   const [bountybasic, setBountyBasic] = useState<BountyBasicType | undefined>({
@@ -151,11 +165,15 @@ export function CreateListing({
       if (editable && !isDuplicating) {
         api = `/api/bounties/update/${bounty?.id}/`;
       }
-      const result = await axios.post(api, newBounty);
-      setSlug(`/bounties/${result?.data?.slug}/`);
+      const result = await axios.post(api, {
+        ...newBounty,
+        hackathonSlug,
+        hackathonSponsor,
+      });
+      setSlug(`/${result?.data?.type}/${result?.data?.slug}/`);
       setIsListingPublishing(false);
       onOpen();
-      if (!isPrivate) {
+      if (!isPrivate || type !== 'hackathon') {
         await axios.post('/api/email/manual/createBounty', {
           id: result?.data?.id,
         });
@@ -201,10 +219,16 @@ export function CreateListing({
     };
     try {
       await axios.post(api, {
+        hackathonSlug,
+        hackathonSponsor,
         ...draft,
         isPublished: editable && !isDuplicating ? bounty?.isPublished : false,
       });
-      router.push('/dashboard/listings');
+      if (type === 'hackathon') {
+        router.push(`/dashboard/hackathon/${hackathonSlug}/`);
+      } else {
+        router.push('/dashboard/listings');
+      }
     } catch (e) {
       setDraftLoading(false);
     }
@@ -301,7 +325,12 @@ export function CreateListing({
           }
         >
           {isOpen && (
-            <SuccessListings slug={slug} isOpen={isOpen} onClose={() => {}} />
+            <SuccessListings
+              slug={slug}
+              isOpen={isOpen}
+              onClose={() => {}}
+              hackathonSlug={hackathonSlug}
+            />
           )}
           {steps === 1 && (
             <Template

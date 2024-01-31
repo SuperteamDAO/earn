@@ -5,7 +5,7 @@ import type { GetServerSideProps } from 'next';
 import Head from 'next/head';
 import { useState } from 'react';
 
-import { ListingHeader } from '@/components/listings/listings/ListingHeaderBounty';
+import { ListingHeader } from '@/components/listings/listings/ListingHeader';
 import { OgImageViewer } from '@/components/misc/ogImageViewer';
 import { ErrorSection } from '@/components/shared/ErrorSection';
 import type { Bounty } from '@/interface/bounty';
@@ -94,7 +94,8 @@ function BountyDetails({ bounty: initialBounty }: BountyDetailsProps) {
                 slug={bounty?.slug}
                 region={bounty?.region || Regions.GLOBAL}
                 isWinnersAnnounced={bounty?.isWinnersAnnounced}
-                hackathonPrize={bounty?.hackathonprize}
+                hackathonLogo={bounty?.Hackathon?.altLogo}
+                hackathonStartsAt={bounty?.Hackathon?.startDate}
                 references={bounty?.references}
               />
               <Box mx={4}>

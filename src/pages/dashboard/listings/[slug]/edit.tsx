@@ -48,7 +48,7 @@ function EditBounty({ slug }: Props) {
         <CreateListing
           bounty={bounty}
           editable
-          type={bounty?.type as 'permissioned' | 'open'}
+          type={bounty?.type as 'bounty' | 'project' | 'hackathon'}
         />
       )}
     </Sidebar>

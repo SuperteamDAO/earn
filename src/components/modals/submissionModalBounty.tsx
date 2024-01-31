@@ -47,7 +47,7 @@ export const SubmissionModal = ({
   submissionNumber,
   type,
 }: Props) => {
-  const isPermissioned = type === 'permissioned';
+  const isProject = type === 'project';
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState('');
   const [publicKeyError, setPublicKeyError] = useState('');
@@ -126,7 +126,7 @@ export const SubmissionModal = ({
       <ModalOverlay />
       <ModalContent>
         <ModalHeader color="brand.slate.800">
-          {isPermissioned ? 'Submit Your Application' : 'Bounty Submission'}
+          {isProject ? 'Submit Your Application' : 'Bounty Submission'}
         </ModalHeader>
         <ModalCloseButton />
         <VStack
@@ -139,12 +139,12 @@ export const SubmissionModal = ({
         >
           <Box>
             <Text mb={1} color={'brand.slate.500'} fontSize="sm">
-              {isPermissioned
+              {isProject
                 ? "Don't start working just yet! Apply first, and then begin working only once you've been hired for the project by the sponsor."
                 : `We can't wait to see what you've created!`}
             </Text>
             <Text color={'brand.slate.500'} fontSize="sm">
-              {!!isPermissioned &&
+              {!!isProject &&
                 'Please note that the sponsor might contact you to assess fit before picking the winner.'}
             </Text>
           </Box>
@@ -155,7 +155,7 @@ export const SubmissionModal = ({
             })}
           >
             <VStack gap={4} mb={5}>
-              {!isPermissioned ? (
+              {!isProject ? (
                 <>
                   <FormControl isRequired>
                     <FormLabel
@@ -365,7 +365,7 @@ export const SubmissionModal = ({
               type="submit"
               variant="solid"
             >
-              {!isPermissioned ? 'Submit' : 'Apply'}
+              {!isProject ? 'Submit' : 'Apply'}
             </Button>
           </form>
         </VStack>

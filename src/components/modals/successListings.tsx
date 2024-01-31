@@ -22,8 +22,14 @@ interface Props {
   onClose: () => void;
   isOpen: boolean;
   slug: string;
+  hackathonSlug?: string;
 }
-export const SuccessListings = ({ isOpen, onClose, slug }: Props) => {
+export const SuccessListings = ({
+  isOpen,
+  onClose,
+  slug,
+  hackathonSlug,
+}: Props) => {
   const { hasCopied, onCopy } = useClipboard(`${getURL()}listings${slug}`);
   const router = useRouter();
   return (
@@ -81,7 +87,11 @@ export const SuccessListings = ({ isOpen, onClose, slug }: Props) => {
               <Button
                 w="100%"
                 onClick={() => {
-                  router.push('/dashboard/listings');
+                  if (hackathonSlug) {
+                    router.push(`/dashboard/hackathon/${hackathonSlug}`);
+                  } else {
+                    router.push('/dashboard/listings');
+                  }
                 }}
                 variant="outline"
               >

@@ -62,7 +62,7 @@ model Bounties {
   updatedAt            DateTime           @updatedAt
   applicationLink      String?
   skills               Json?
-  type                 BountyType         @default(open)
+  type                 BountyType         @default(bounty)
   requirements         String?            @db.Text
   totalPaymentsMade    Int?               @default(0)
   totalWinnersSelected Int?               @default(0)
@@ -77,17 +77,20 @@ model Bounties {
   winners              Json?
   referredBy           String?
   publishedAt          DateTime?
+  isPrivate            Boolean            @default(false)
   template             BountiesTemplates? @relation(fields: [templateId], references: [id])
   sponsor              Sponsors           @relation(fields: [sponsorId], references: [id])
   poc                  User               @relation("poc", fields: [pocId], references: [id])
   Submission           Submission[]
   SubscribeBounty      SubscribeBounty[]
-  isPrivate            Boolean            @default(false)
+  hackathonId          String?
+  Hackathon            Hackathon?         @relation(fields: [hackathonId], references: [id])
 
   @@index([id, slug])
   @@index([sponsorId])
   @@index([pocId])
   @@index([templateId])
+  @@index([hackathonId])
 }
 
 model BountiesTemplates {
@@ -111,7 +114,7 @@ model BountiesTemplates {
   createdAt           DateTime   @default(now())
   updatedAt           DateTime   @updatedAt
   skills              Json?
-  type                BountyType @default(open)
+  type                BountyType @default(bounty)
   Bounties            Bounties[]
 
   @@index([id])
@@ -209,6 +212,7 @@ model Sponsors {
   isArchived         Boolean        @default(false)
   isActive           Boolean        @default(true)
   totalRewardedInUSD Int            @default(0)
+  Hackathon          Hackathon?
   UserSponsors       UserSponsors[]
   Bounties           Bounties[]
   Grants             Grants[]
@@ -293,9 +297,12 @@ model User {
   accounts         Account[]
   sessions         Session[]
   emailVerified    DateTime?
+  Hackathon        Hackathon?        @relation(fields: [hackathonId], references: [id])
+  hackathonId      String?
 
   @@index([email, publicKey, username])
   @@index([currentSponsorId])
+  @@index([hackathonId])
 }
 
 model PoW {
@@ -372,6 +379,23 @@ model VerificationToken {
   @@unique([identifier, token])
 }
 
+model Hackathon {
+  id          String     @id @default(uuid())
+  slug        String     @unique
+  name        String
+  logo        String
+  altLogo     String?
+  description String
+  listings    Bounties[]
+  sponsorId   String?    @unique
+  startDate   DateTime?
+  deadline    DateTime?
+  Sponsor     Sponsors?  @relation(fields: [sponsorId], references: [id])
+  User        User[]
+
+  @@index([sponsorId])
+}
+
 enum EmailType {
   BOUNTY_REVIEW
   BOUNTY_DEADLINE
@@ -412,6 +436,8 @@ enum status {
 enum BountyType {
   permissioned
   open
+  bounty
+  project
   hackathon
 }
 
@@ -439,4 +465,7 @@ enum Regions {
   NIGERIA
   ISRAEL
   BRAZIL
+  MALAYSIA
+  BALKANS
+  PHILIPPINES
 }

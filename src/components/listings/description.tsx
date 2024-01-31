@@ -90,7 +90,7 @@ interface Props {
   editable?: boolean;
   setBountyRequirements?: Dispatch<SetStateAction<any | undefined>>;
   bountyRequirements?: string | undefined;
-  type?: 'open' | 'permissioned';
+  type?: 'bounty' | 'project' | 'hackathon';
   references?: References[];
   setReferences?: Dispatch<SetStateAction<References[]>>;
   isNewOrDraft?: boolean;
@@ -183,6 +183,8 @@ export const Description = ({
       setReferences(temp);
     }
   };
+
+  const isProject = type === 'project';
 
   return (
     <>
@@ -562,7 +564,7 @@ export const Description = ({
               />
             </div>
           </Box>
-          {type === 'permissioned' && (
+          {isProject && (
             <>
               <Flex
                 align={'start'}
@@ -635,7 +637,7 @@ export const Description = ({
               if (referenceError) {
                 return;
               }
-              if (type === 'open') {
+              if (!isProject) {
                 setSteps(5);
                 return;
               }

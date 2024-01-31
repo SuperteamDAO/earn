@@ -50,7 +50,7 @@ interface Bounties {
   sponsor?: SponsorType;
   rewards?: Partial<PrizeListType>;
   isWinnersAnnounced?: boolean;
-  type?: 'open' | 'permissioned';
+  type?: 'bounty' | 'project' | 'hackathon';
 }
 
 type BountyStatus = 'open' | 'review' | 'close';

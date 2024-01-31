@@ -3,7 +3,7 @@ import axios from 'axios';
 import { useEffect, useState } from 'react';
 
 import {
-  BountiesCard,
+  ListingCard,
   ListingsCardSkeleton,
   ListingSection,
 } from '@/components/misc/listingsCard';
@@ -67,7 +67,7 @@ function AllListingsPage() {
           {!isListingsLoading &&
             listings?.bounties?.map((bounty) => {
               return (
-                <BountiesCard
+                <ListingCard
                   slug={bounty?.slug}
                   rewardAmount={bounty?.rewardAmount}
                   key={bounty?.id}

@@ -20,15 +20,15 @@ import axios from 'axios';
 import NextLink from 'next/link';
 import { useRouter } from 'next/router';
 import { useEffect, useState } from 'react';
-import { toast, Toaster } from 'react-hot-toast';
+import toast, { Toaster } from 'react-hot-toast';
 import { TiTick } from 'react-icons/ti';
 
 import { tokenList } from '@/constants';
 import type { BountyStatus } from '@/interface/bounty';
 import type { Notifications } from '@/interface/user';
+import { userStore } from '@/store/user';
 import { dayjs } from '@/utils/dayjs';
 
-import { userStore } from '../../store/user';
 import { EarningModal } from '../modals/earningModal';
 
 type ListingSectionProps = {
@@ -215,10 +215,10 @@ export const ListingsCardSkeleton = () => {
   );
 };
 
-export const BountiesCard = ({
+export const ListingCard = ({
   rewardAmount,
   deadline,
-  type,
+  type = '',
   logo,
   title = '',
   token,
@@ -230,6 +230,8 @@ export const BountiesCard = ({
 }: BountyProps) => {
   const router = useRouter();
   const [isMobile] = useMediaQuery('(max-width: 768px)');
+
+  const isBounty = type === 'bounty';
   return (
     <>
       <Link
@@ -241,7 +243,7 @@ export const BountiesCard = ({
           textDecoration: 'none',
           bg: 'gray.100',
         }}
-        href={`/listings/bounties/${slug}`}
+        href={`/listings/${type}/${slug}`}
       >
         <Flex
           align="center"
@@ -292,21 +294,21 @@ export const BountiesCard = ({
                 <>
                   <Image
                     h="4"
-                    ml={type === 'open' ? -0.5 : 0}
+                    ml={isBounty ? -0.5 : 0}
                     alt={type}
                     src={
-                      type === 'open'
+                      isBounty
                         ? '/assets/icons/bolt.svg'
                         : '/assets/icons/briefcase.svg'
                     }
                   />
                   <Text
-                    ml={isMobile ? '-1' : type === 'open' ? '-3' : '-2.5'}
+                    ml={isMobile ? '-1' : isBounty ? '-3' : '-2.5'}
                     color="gray.500"
                     fontSize={['x-small', 'xs', 'xs', 'xs']}
                     fontWeight={500}
                   >
-                    {type === 'open' ? 'Bounty' : 'Project'}
+                    {type.charAt(0).toUpperCase() + type.slice(1)}
                   </Text>
                 </>
                 <Text
@@ -415,7 +417,7 @@ export const GrantsCard = ({
           textDecoration: 'none',
           bg: 'gray.100',
         }}
-        href={`/listings/grants/${slug}`}
+        href={`/grants/${slug}`}
       >
         <Flex
           align="center"
@@ -516,7 +518,6 @@ export const CategoryBanner = ({ type }: { type: string }) => {
   const [isSubscribed, setIsSubscribed] = useState<boolean>(false);
 
   const { isOpen, onClose, onOpen } = useDisclosure();
-  const router = useRouter();
 
   useEffect(() => {
     setIsSubscribed(
@@ -543,12 +544,12 @@ export const CategoryBanner = ({ type }: { type: string }) => {
       color: '#FEA8EB',
       icon: '/assets/category_assets/icon/backend.png',
     },
-    Hyperdrive: {
-      bg: `/assets/category_assets/bg/contract.png`,
-      desc: 'Discover and apply to additional Hyperdrive prizes. Increase your chances of winning something at the online global hackathon!',
-      color: '#000',
-      icon: '/assets/category_assets/icon/solana_logo_green.svg',
-    },
+    // Hyperdrive: {
+    //   bg: `/assets/category_assets/bg/contract.png`,
+    //   desc: 'Discover and apply to additional Hyperdrive prizes. Increase your chances of winning something at the online global hackathon!',
+    //   color: '#000',
+    //   icon: '/assets/category_assets/icon/solana_logo_green.svg',
+    // },
   };
 
   const updateNotification = async (notification: Notifications[]) => {
@@ -624,40 +625,39 @@ export const CategoryBanner = ({ type }: { type: string }) => {
         </Center>
         <Box w={{ md: '60%', base: '100%' }} mt={{ base: 4, md: '0' }}>
           <Text fontFamily={'var(--font-serif)'} fontWeight={'700'}>
-            {type === 'Hyperdrive'
+            {/* {type === 'Hyperdrive'
               ? 'Hyperdrive Side Tracks & Local Prizes'
-              : type}
+              : */}
+            {type}
           </Text>
           <Text
             mb={6}
             color="brand.slate.500"
             fontSize="small"
-            {...(type === 'Hyperdrive'
-              ? { w: ['full', 'full', 'full', '130%', '130%'] }
-              : {})}
+            // {...(type === 'Hyperdrive'
+            //   ? { w: ['full', 'full', 'full', '130%', '130%'] }
+            //   : {})}
           >
             {categoryAssets[type]?.desc}
           </Text>
         </Box>
-        {!router.asPath.includes('Hyperdrive') && (
-          <Button
-            my={{ base: '', md: 'auto' }}
-            mt={{ base: 4, md: '' }}
-            ml={{ base: '', md: 'auto' }}
-            px={4}
-            color={'brand.slate.500'}
-            fontWeight={'500'}
-            bg={'white'}
-            borderWidth={'1px'}
-            borderColor={'brand.slate.400'}
-            isLoading={loading}
-            leftIcon={isSubscribed ? <TiTick /> : <BellIcon />}
-            onClick={handleNotification}
-            variant="solid"
-          >
-            {isSubscribed ? 'Subscribed' : 'Notify Me'}
-          </Button>
-        )}
+        <Button
+          my={{ base: '', md: 'auto' }}
+          mt={{ base: 4, md: '' }}
+          ml={{ base: '', md: 'auto' }}
+          px={4}
+          color={'brand.slate.500'}
+          fontWeight={'500'}
+          bg={'white'}
+          borderWidth={'1px'}
+          borderColor={'brand.slate.400'}
+          isLoading={loading}
+          leftIcon={isSubscribed ? <TiTick /> : <BellIcon />}
+          onClick={handleNotification}
+          variant="solid"
+        >
+          {isSubscribed ? 'Subscribed' : 'Notify Me'}
+        </Button>
         <Toaster />
       </Flex>
     </>

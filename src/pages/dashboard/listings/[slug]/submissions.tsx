@@ -382,7 +382,7 @@ function BountySubmissions({ slug }: Props) {
                 leftIcon={<ExternalLinkIcon />}
                 onClick={() =>
                   window.open(
-                    `${router.basePath}/listings/bounties/${bounty?.slug}`,
+                    `${router.basePath}/listings/${bounty?.type}/${bounty?.slug}`,
                     '_blank',
                   )
                 }
@@ -828,7 +828,7 @@ function BountySubmissions({ slug }: Props) {
                           </Flex>
                         </Flex>
                         <Box w="full" px={4} py={5}>
-                          {bounty?.type === 'open' && (
+                          {bounty?.type !== 'project' && (
                             <>
                               <Box mb={4}>
                                 <Text
@@ -880,7 +880,7 @@ function BountySubmissions({ slug }: Props) {
                               </Box>
                             </>
                           )}
-                          {bounty?.type === 'permissioned' &&
+                          {bounty?.type === 'project' &&
                             selectedSubmission?.eligibilityAnswers?.map(
                               (answer: any, answerIndex: number) => (
                                 <Box key={answerIndex} mb={4}>

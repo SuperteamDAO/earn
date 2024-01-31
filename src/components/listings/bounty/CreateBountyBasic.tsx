@@ -1,4 +1,5 @@
 import {
+  Box,
   Button,
   Flex,
   FormControl,
@@ -17,6 +18,7 @@ import type { Dispatch, SetStateAction } from 'react';
 import { useMemo, useState } from 'react';
 
 import { SkillSelect } from '@/components/misc/SkillSelect';
+import { SelectSponsor } from '@/components/sponsor/SelectSponsor';
 import { Superteams } from '@/constants/Superteam';
 import type { SuperteamName } from '@/interface/bounty';
 import { userStore } from '@/store/user';
@@ -38,7 +40,7 @@ interface Props {
   editable: boolean;
   regions: Regions;
   setRegions: Dispatch<SetStateAction<Regions>>;
-  type: 'open' | 'permissioned';
+  type: 'bounty' | 'project' | 'hackathon';
   timeToComplete?: string;
   isNewOrDraft?: boolean;
   isDuplicating?: boolean;
@@ -112,9 +114,16 @@ export const CreatebountyBasic = ({
     );
   }, [bountyBasic?.timeToComplete, timeToCompleteOptions]);
 
+  const isProject = type === 'project';
+
   return (
     <>
       <VStack align={'start'} gap={3} w={'2xl'} pt={7} pb={12}>
+        {type === 'hackathon' && (
+          <Box w="100%" mb={5}>
+            <SelectSponsor type="hackathon" />
+          </Box>
+        )}
         <FormControl w="full" mb={5} isInvalid={errorState.title} isRequired>
           <Flex>
             <FormLabel
@@ -282,8 +291,8 @@ export const CreatebountyBasic = ({
             </Text>
           )}
         </FormControl>
-        {type === 'permissioned' && (
-          <FormControl w="full" mb={5} isRequired={type === 'permissioned'}>
+        {isProject && (
+          <FormControl w="full" mb={5} isRequired={isProject}>
             <Flex>
               <FormLabel
                 color={'brand.slate.500'}
@@ -309,7 +318,7 @@ export const CreatebountyBasic = ({
             </Select>
           </FormControl>
         )}
-        {bountyBasic?.applicationType !== 'rolling' && (
+        {type !== 'hackathon' && bountyBasic?.applicationType !== 'rolling' && (
           <FormControl
             mb={5}
             isInvalid={errorState.deadline}
@@ -372,12 +381,12 @@ export const CreatebountyBasic = ({
             </FormErrorMessage>
           </FormControl>
         )}
-        {type === 'permissioned' && (
+        {isProject && (
           <FormControl
             w="full"
             mb={5}
             isInvalid={errorState.timeToComplete}
-            isRequired={type === 'permissioned'}
+            isRequired={isProject}
           >
             <Flex>
               <FormLabel
@@ -500,21 +509,20 @@ export const CreatebountyBasic = ({
                 subSkills: subSkills.length === 0,
                 title: !bountyBasic?.title,
                 pocSocials: !bountyBasic?.pocSocials,
-                timeToComplete:
-                  type === 'permissioned' ? !isTimeToCompleteValid : false,
+                timeToComplete: isProject ? !isTimeToCompleteValid : false,
               });
-              if (type === 'permissioned' && !isTimeToCompleteValid) {
+              if (isProject && !isTimeToCompleteValid) {
                 return;
+              }
+
+              if (type === 'hackathon' && hasBasicInfo) {
+                setSteps(3);
               }
 
               if (hasBasicInfo && bountyBasic?.deadline) {
                 setSteps(3);
               }
-              if (
-                type === 'permissioned' &&
-                hasBasicInfo &&
-                bountyBasic?.timeToComplete
-              ) {
+              if (isProject && hasBasicInfo && bountyBasic?.timeToComplete) {
                 if (
                   bountyBasic?.applicationType === 'rolling' &&
                   !bountyBasic?.deadline

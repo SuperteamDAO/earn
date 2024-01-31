@@ -389,7 +389,7 @@ function Bounties() {
               <Tbody w="full">
                 {bounties.map((currentBounty) => {
                   const bountyType = getBountyTypeLabel(
-                    currentBounty?.type ?? 'open',
+                    currentBounty?.type ?? 'bounty',
                   );
 
                   const deadline = formatDeadline(
@@ -398,6 +398,19 @@ function Bounties() {
                   );
 
                   const bountyStatus = getBountyStatus(currentBounty);
+
+                  const listingIcon = (() => {
+                    switch (currentBounty.type) {
+                      case 'bounty':
+                        return 'bolt.svg';
+                      case 'project':
+                        return 'briefcase.svg';
+                      case 'hackathon':
+                        return 'laptop.svg';
+                      default:
+                        return 'bolt.svg';
+                    }
+                  })();
 
                   return (
                     <Tr key={currentBounty?.id}>
@@ -418,11 +431,7 @@ function Bounties() {
                                 h={5}
                                 mr={2}
                                 alt={`New ${bountyType}`}
-                                src={
-                                  currentBounty.type === 'open'
-                                    ? '/assets/icons/bolt.svg'
-                                    : '/assets/icons/briefcase.svg'
-                                }
+                                src={`/assets/icons/${listingIcon}`}
                               />
                             </Tooltip>
 
@@ -560,12 +569,15 @@ function Bounties() {
                               icon={<ExternalLinkIcon h={4} w={4} />}
                               onClick={() =>
                                 window.open(
-                                  `${router.basePath}/listings/bounties/${currentBounty.slug}`,
+                                  `${router.basePath}/listings/${currentBounty?.type}/${currentBounty.slug}`,
                                   '_blank',
                                 )
                               }
                             >
-                              View {bountyType}
+                              View{' '}
+                              {currentBounty?.type === 'hackathon'
+                                ? 'Track'
+                                : bountyType}
                             </MenuItem>
                             {currentBounty.isPublished && (
                               <Link
