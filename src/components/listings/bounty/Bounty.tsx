@@ -173,7 +173,7 @@ export function CreateListing({
       setSlug(`/${result?.data?.type}/${result?.data?.slug}/`);
       setIsListingPublishing(false);
       onOpen();
-      if (!isPrivate || type !== 'hackathon') {
+      if (!isPrivate && type !== 'hackathon') {
         await axios.post('/api/email/manual/createBounty', {
           id: result?.data?.id,
         });
