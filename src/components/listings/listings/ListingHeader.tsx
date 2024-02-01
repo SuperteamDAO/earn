@@ -43,6 +43,7 @@ interface Bounty {
   isTemplate?: boolean;
   region: Regions;
   references?: References[];
+  publishedAt?: string;
 }
 
 export function ListingHeader({
@@ -59,6 +60,8 @@ export function ListingHeader({
   hackathonStartsAt,
   region,
   references,
+  isPublished,
+  publishedAt,
 }: Bounty) {
   const router = useRouter();
   const { isOpen, onClose, onOpen } = useDisclosure();
@@ -123,7 +126,15 @@ export function ListingHeader({
   let statusBgColor = '';
   let statusTextColor = '';
 
-  if (isHackathon && !hasDeadlineEnded && !hasHackathonStarted) {
+  if (!isPublished && !publishedAt) {
+    statusText = 'Draft';
+    statusBgColor = 'brand.slate.200';
+    statusTextColor = 'brand.slate.500';
+  } else if (!isPublished && publishedAt) {
+    statusText = 'Submissions Paused';
+    statusBgColor = '#ffecb3';
+    statusTextColor = '#F59E0B';
+  } else if (isHackathon && !hasDeadlineEnded && !hasHackathonStarted) {
     statusText = 'Open';
     statusBgColor = 'green.100';
     statusTextColor = 'green.600';

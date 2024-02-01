@@ -77,6 +77,7 @@ const Sumbissions = ({ slug, subid }: BountyDetailsProps) => {
               type={bounty?.type}
               isWinnersAnnounced={bounty?.isWinnersAnnounced}
               references={bounty?.references}
+              publishedAt={bounty?.publishedAt}
             />
             <HStack
               align={['center', 'center', 'start', 'start']}

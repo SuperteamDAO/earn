@@ -61,7 +61,7 @@ export default function Scribes() {
     return (
       <Box
         as={NextLink}
-        p={4}
+        p={{ base: 3, md: 4 }}
         borderWidth={'1px'}
         borderColor="brand.slate.200"
         borderRadius={8}
@@ -69,34 +69,50 @@ export default function Scribes() {
       >
         <Flex align="center" gap={3}>
           <Image
-            w={14}
-            h={14}
+            w={{ base: 12, md: 14 }}
+            h={{ base: 12, md: 14 }}
             borderRadius={3}
             objectFit={'cover'}
             alt={sponsor.name}
             src={sponsor.logo}
           />
           <Flex direction={'column'}>
-            <Text color={'brand.slate.900'} fontSize="lg" fontWeight={600}>
+            <Text
+              color={'brand.slate.900'}
+              fontSize={{ base: 'md', md: 'lg' }}
+              fontWeight={600}
+            >
               {title}
             </Text>
-            <Text color={'brand.slate.500'} fontSize="md" fontWeight={500}>
+            <Text
+              color={'brand.slate.500'}
+              fontSize={{ base: 'sm', md: 'md' }}
+              fontWeight={500}
+            >
               {sponsor.name}
             </Text>
           </Flex>
         </Flex>
-        <Flex justify={'end'} gap={1}>
+        <Flex align="center" justify={'end'} gap={1}>
           <Image
-            w={6}
-            h={6}
+            w={{ base: 4, md: 6 }}
+            h={{ base: 4, md: 6 }}
             alt={token}
             rounded={'full'}
             src={tokenList.find((t) => t.tokenSymbol === token)?.icon || ''}
           />
-          <Text color={'brand.slate.700'} fontWeight={600}>
+          <Text
+            color={'brand.slate.700'}
+            fontSize={{ base: 'sm', md: 'md' }}
+            fontWeight={600}
+          >
             {rewardAmount?.toLocaleString()}
           </Text>
-          <Text color={'brand.slate.400'} fontWeight={600}>
+          <Text
+            color={'brand.slate.400'}
+            fontSize={{ base: 'sm', md: 'md' }}
+            fontWeight={600}
+          >
             {token}
           </Text>
         </Flex>
@@ -158,7 +174,11 @@ export default function Scribes() {
             <Text fontSize={'sm'} fontWeight={500}>
               Total Prizes
             </Text>
-            <Text color={'brand.slate.800'} fontSize={'2xl'} fontWeight={600}>
+            <Text
+              color={'brand.slate.800'}
+              fontSize={{ base: 'xl', md: '2xl' }}
+              fontWeight={600}
+            >
               ${stats?.totalRewardAmount.toLocaleString()}
             </Text>
           </Flex>
@@ -166,7 +186,11 @@ export default function Scribes() {
             <Text fontSize={'sm'} fontWeight={500}>
               Tracks
             </Text>
-            <Text color={'brand.slate.800'} fontSize={'2xl'} fontWeight={600}>
+            <Text
+              color={'brand.slate.800'}
+              fontSize={{ base: 'xl', md: '2xl' }}
+              fontWeight={600}
+            >
               {stats?.totalListings}
             </Text>
           </Flex>
@@ -174,7 +198,11 @@ export default function Scribes() {
             <Text fontSize={'sm'} fontWeight={500}>
               Submissions Open in
             </Text>
-            <Text color={'brand.slate.800'} fontSize={'2xl'} fontWeight={600}>
+            <Text
+              color={'brand.slate.800'}
+              fontSize={{ base: 'xl', md: '2xl' }}
+              fontWeight={600}
+            >
               <Countdown
                 // date={endingTime}
                 date={new Date('2024-02-19T00:00:00')}
