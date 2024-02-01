@@ -162,7 +162,7 @@ export default function Scribes() {
               }
               rounded="full"
             >
-              Join LamportDAO&apos;s Discord
+              Join Solana Collective&apos;s Discord
             </Button>
           </Flex>
         </Flex>
