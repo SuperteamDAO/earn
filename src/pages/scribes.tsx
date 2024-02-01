@@ -158,14 +158,11 @@ export default function Scribes() {
               bg="#000"
               _hover={{ bg: '#a459ff' }}
               onClick={() =>
-                window.open(
-                  'https://airtable.com/app3nkVnBCUqJGHay/shrCqEUm74icXCBi0',
-                  '_blank',
-                )
+                window.open('https://discord.com/invite/deHy9bqsrP', '_blank')
               }
               rounded="full"
             >
-              Sponsor A Track
+              Join LamportDAO&apos;s Discord
             </Button>
           </Flex>
         </Flex>
