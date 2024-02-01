@@ -1,6 +1,6 @@
 <div align="center">
   <br/>
-  <img src="/public/assets/logo/github-logo.png" width="140px" height="auto"/>
+  <img src="https://pbs.twimg.com/profile_images/1655546485365407744/dOeIC0R-_400x400.jpg" style="border-radius:10px" width="120px" height="auto"/>
   <h2>SUPERTEAM EARN</h2>
   <p>
     <strong>Unlock your earning potential in web3</strong>
