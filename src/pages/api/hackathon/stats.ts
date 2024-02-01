@@ -43,7 +43,7 @@ export default async function handler(
 
     const totalRewardAmount = await prisma.bounties.aggregate({
       _sum: {
-        rewardAmount: true,
+        usdValue: true,
       },
       where: {
         hackathonId: hackathon.id,
@@ -56,7 +56,7 @@ export default async function handler(
     return res.status(200).json({
       name: hackathon.name,
       logo: hackathon.logo,
-      totalRewardAmount: totalRewardAmount._sum.rewardAmount || 0,
+      totalRewardAmount: totalRewardAmount._sum.usdValue || 0,
       totalListings,
       totalSubmissions,
     });

@@ -37,7 +37,7 @@ export default async function getHackathon(
         },
       },
       orderBy: {
-        rewardAmount: 'desc',
+        usdValue: 'desc',
       },
     });
     res.status(200).json(result);
