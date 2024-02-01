@@ -31,7 +31,7 @@ interface Bounty {
   deadline?: string;
   status?: 'OPEN' | 'REVIEW' | 'CLOSED';
   isActive?: boolean;
-  isPublished?: string;
+  isPublished?: boolean;
   isFeatured?: string;
   sponsor?: SponsorType | undefined;
   poc?: User;

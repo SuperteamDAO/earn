@@ -126,6 +126,7 @@ function BountyDetails({ bounty: initialBounty }: BountyDetailsProps) {
                 hackathonStartsAt={bounty?.Hackathon?.startDate}
                 references={bounty?.references}
                 publishedAt={bounty?.publishedAt}
+                isPublished={bounty?.isPublished}
               />
               {bounty?.isWinnersAnnounced && <ListingWinners bounty={bounty} />}
               <HStack
