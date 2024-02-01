@@ -61,6 +61,10 @@ export default async function handler(request: NextRequest) {
 
     const icon = getTokenIcon(token, tokenList);
 
+    const capitalizedType = type
+      ? type?.charAt(0).toUpperCase() + type?.slice(1).toLowerCase()
+      : null;
+
     return new ImageResponse(
       (
         <div
@@ -223,7 +227,7 @@ export default async function handler(request: NextRequest) {
                       padding: '12px 60px',
                     }}
                   >
-                    {type === 'project' ? 'Project' : 'Bounty'}
+                    {capitalizedType}
                   </div>
                 )}
                 <div
