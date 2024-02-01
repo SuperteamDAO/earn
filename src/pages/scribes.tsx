@@ -158,11 +158,11 @@ export default function Scribes() {
               bg="#000"
               _hover={{ bg: '#a459ff' }}
               onClick={() =>
-                window.open('https://discord.com/invite/deHy9bqsrP', '_blank')
+                window.open('https://discord.gg/solanacollective', '_blank')
               }
               rounded="full"
             >
-              Join LamportDAO&apos;s Discord
+              Join Solana Collective&apos;s Discord
             </Button>
           </Flex>
         </Flex>
