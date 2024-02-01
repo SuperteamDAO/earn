@@ -98,6 +98,7 @@ function BountyDetails({ bounty: initialBounty }: BountyDetailsProps) {
                 hackathonStartsAt={bounty?.Hackathon?.startDate}
                 references={bounty?.references}
                 publishedAt={bounty?.publishedAt}
+                isPublished={bounty?.isPublished}
               />
               <Box mx={4}>
                 <HStack
