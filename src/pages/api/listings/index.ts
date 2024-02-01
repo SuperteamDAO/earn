@@ -19,12 +19,12 @@ export default async function user(req: NextApiRequest, res: NextApiResponse) {
     grants: [],
   };
   const filterToSkillsMap: Record<string, string[]> = {
-    Development: ['Frontend', 'Backend', 'Blockchain'],
-    Design: ['Design'],
-    Content: ['Content'],
-    Frontend: ['Frontend'],
-    Backend: ['Backend'],
-    Blockchain: ['Blockchain'],
+    development: ['Frontend', 'Backend', 'Blockchain'],
+    design: ['Design'],
+    content: ['Content'],
+    frontend: ['Frontend'],
+    backend: ['Backend'],
+    blockchain: ['Blockchain'],
   };
 
   const skillsToFilter = filterToSkillsMap[filter] || [];

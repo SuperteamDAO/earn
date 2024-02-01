@@ -316,6 +316,19 @@ function BountySubmissions({ slug }: Props) {
   const deadline = formatDeadline(bounty?.deadline, bounty?.applicationType);
   const { hasCopied, onCopy } = useClipboard(`${getURL()}t/${bounty?.slug}`);
 
+  const listingIcon = (() => {
+    switch (bounty?.type) {
+      case 'bounty':
+        return 'bolt.svg';
+      case 'project':
+        return 'briefcase.svg';
+      case 'hackathon':
+        return 'laptop.svg';
+      default:
+        return 'bolt.svg';
+    }
+  })();
+
   return (
     <Sidebar>
       {isBountyLoading ? (
@@ -355,11 +368,7 @@ function BountySubmissions({ slug }: Props) {
           </Box>
           <Flex align="center" justify={'space-between'} mb={4}>
             <Flex align="center" gap={2}>
-              <Image
-                h={6}
-                alt="new project"
-                src={'/assets/icons/briefcase.svg'}
-              />
+              <Image h={6} alt="" src={`/assets/icons/${listingIcon}`} />
               <Text color="brand.slate.800" fontSize="xl" fontWeight="700">
                 {bounty?.title}
               </Text>
