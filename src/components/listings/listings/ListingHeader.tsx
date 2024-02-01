@@ -135,13 +135,13 @@ export function ListingHeader({
     statusBgColor = '#ffecb3';
     statusTextColor = '#F59E0B';
   } else if (isHackathon && !hasDeadlineEnded && !hasHackathonStarted) {
-    statusText = 'Open';
+    statusText = 'Opens Soon';
+    statusBgColor = '#F3E8FF';
+    statusTextColor = '#8B5CF6';
+  } else if (status === 'OPEN' && isWinnersAnnounced) {
+    statusText = 'Winners Announced';
     statusBgColor = 'green.100';
     statusTextColor = 'green.600';
-  } else if (status === 'CLOSED' || (status === 'OPEN' && isWinnersAnnounced)) {
-    statusText = 'Submissions Closed';
-    statusBgColor = 'orange.100';
-    statusTextColor = 'orange.600';
   } else if (!isWinnersAnnounced && hasDeadlineEnded && status === 'OPEN') {
     statusText = 'Submissions In Review';
     statusBgColor = 'orange.100';
