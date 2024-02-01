@@ -125,6 +125,7 @@ function BountyDetails({ bounty: initialBounty }: BountyDetailsProps) {
                 hackathonLogo={bounty?.Hackathon?.altLogo}
                 hackathonStartsAt={bounty?.Hackathon?.startDate}
                 references={bounty?.references}
+                publishedAt={bounty?.publishedAt}
               />
               {bounty?.isWinnersAnnounced && <ListingWinners bounty={bounty} />}
               <HStack
@@ -172,15 +173,6 @@ function BountyDetails({ bounty: initialBounty }: BountyDetailsProps) {
 
 export const getServerSideProps: GetServerSideProps = async (context) => {
   const { slug, type } = context.query;
-
-  if (type === 'hackathon') {
-    return {
-      redirect: {
-        destination: '/',
-        permanent: false,
-      },
-    };
-  }
 
   let bountyData;
   try {

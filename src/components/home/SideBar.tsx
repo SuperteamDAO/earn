@@ -418,7 +418,7 @@ const RecentEarners = ({ earners }: { earners?: User[] }) => {
 //         fontWeight={'600'}
 //         lineHeight={'6'}
 //       >
-//         Create Content to Win Prizes Worth $50,000+
+//         Create Content to Win Prizes Worth $100,000+
 //       </Text>
 //       <Text
 //         mt={'0.5rem'}
