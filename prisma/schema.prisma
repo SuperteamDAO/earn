@@ -85,6 +85,7 @@ model Bounties {
   SubscribeBounty      SubscribeBounty[]
   hackathonId          String?
   Hackathon            Hackathon?         @relation(fields: [hackathonId], references: [id])
+  usdValue             Int?
 
   @@index([id, slug])
   @@index([sponsorId])
