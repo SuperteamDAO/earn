@@ -21,7 +21,7 @@ interface Listings {
   grants?: Grant[];
 }
 
-type SlugKeys = 'Design' | 'Content' | 'Development';
+type SlugKeys = 'design' | 'content' | 'development';
 
 function ListingCategoryPage({ slug }: { slug: string }) {
   const [isListingsLoading, setIsListingsLoading] = useState(true);
@@ -52,9 +52,9 @@ function ListingCategoryPage({ slug }: { slug: string }) {
   }, []);
 
   const titlesForSlugs: { [key in SlugKeys]: string } = {
-    Design: 'Superteam Earn | Design Bounties and Grants',
-    Content: 'Superteam Earn | Content Bounties and Grants',
-    Development: 'Superteam Earn | Development Bounties and Grants',
+    design: 'Superteam Earn | Design Bounties and Grants',
+    content: 'Superteam Earn | Content Bounties and Grants',
+    development: 'Superteam Earn | Development Bounties and Grants',
     // Hyperdrive: 'Superteam Earn | Apply to Hyperdrive global Solana Hackathon',
   };
 
@@ -155,6 +155,15 @@ function ListingCategoryPage({ slug }: { slug: string }) {
 
 export async function getServerSideProps(context: NextPageContext) {
   const { slug } = context.query;
+
+  if (slug && typeof slug === 'string' && slug !== slug.toLowerCase()) {
+    return {
+      redirect: {
+        destination: `/all/${slug.toLowerCase()}`,
+        permanent: false,
+      },
+    };
+  }
 
   const normalizedSlug = typeof slug === 'string' ? slug.toLowerCase() : '';
   const validCategories = ['design', 'content', 'development'];

@@ -71,7 +71,7 @@ export default async function handler(
         from: `Kash from Superteam <${process.env.RESEND_EMAIL}>`,
         to: [pocUser?.email],
         subject:
-          listing.type !== 'bounty'
+          listing.type === 'bounty'
             ? 'New Bounty Submission Received'
             : 'Project Application Received',
         react: SubmissionSponsorTemplate({
