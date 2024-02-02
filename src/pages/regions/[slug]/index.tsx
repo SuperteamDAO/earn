@@ -21,7 +21,13 @@ interface Listings {
   bounties?: Bounty[];
   grants?: Grant[];
 }
-const RegionsPage = ({ slug }: { slug: string }) => {
+const RegionsPage = ({
+  slug,
+  displayName,
+}: {
+  slug: string;
+  displayName: string;
+}) => {
   const [isListingsLoading, setIsListingsLoading] = useState(true);
   const [listings, setListings] = useState<Listings>({
     bounties: [],
@@ -48,17 +54,12 @@ const RegionsPage = ({ slug }: { slug: string }) => {
     getListings();
   }, []);
 
-  const formattedSlug =
-    slug === 'uk' || slug === 'uae'
-      ? slug.toUpperCase()
-      : slug.charAt(0).toUpperCase() + slug.slice(1);
-
   return (
     <>
       <Home type="region">
         <Meta
-          title={`Welcome to Superteam Earn ${formattedSlug} | Discover Bounties and Grants`}
-          description={`Welcome to Superteam ${formattedSlug}'s page — Discover bounties and grants and become a part of the global crypto community`}
+          title={`Welcome to Superteam Earn ${displayName} | Discover Bounties and Grants`}
+          description={`Welcome to Superteam ${displayName}'s page — Discover bounties and grants and become a part of the global crypto community`}
           canonical={`https://earn.superteam.fun/regions/${slug}/`}
         ></Meta>
         <Box w={'100%'}>
@@ -151,6 +152,9 @@ const RegionsPage = ({ slug }: { slug: string }) => {
 export async function getServerSideProps(context: NextPageContext) {
   const { slug } = context.query;
 
+  const st = Superteams.find((team) => team.region.toLowerCase() === slug);
+  const displayName = st?.displayValue;
+
   const validRegion = Superteams.some(
     (team) => team.region.toLowerCase() === (slug as string).toLowerCase(),
   );
@@ -162,7 +166,7 @@ export async function getServerSideProps(context: NextPageContext) {
   }
 
   return {
-    props: { slug },
+    props: { slug, displayName },
   };
 }
 
