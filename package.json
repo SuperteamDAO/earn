@@ -10,7 +10,6 @@
     "format": "next lint --fix && prettier '**/*.{json,yaml}' --write --ignore-path .gitignore",
     "check-types": "tsc --noEmit --pretty",
     "prepare": "husky install",
-    "postbuild": "next-sitemap",
     "postinstall": "prisma generate",
     "knip": "knip",
     "find-deadcode": "ts-prune"

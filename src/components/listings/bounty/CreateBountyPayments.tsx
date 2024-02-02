@@ -423,7 +423,7 @@ export const CreatebountyPayment = ({
             onClick={() => handleSubmit(editable, 'DRAFT')}
             variant={editable ? 'solid' : 'outline'}
           >
-            {isNewOrDraft || isDuplicating ? 'Save Draft' : 'Update Bounty'}
+            {isNewOrDraft || isDuplicating ? 'Save Draft' : 'Update Listing'}
           </Button>
         </VStack>
       </VStack>
