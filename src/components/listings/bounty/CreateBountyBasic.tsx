@@ -76,6 +76,7 @@ export const CreatebountyBasic = ({
   setReferredBy,
   isPrivate,
   setIsPrivate,
+  editable,
 }: Props) => {
   const { userInfo } = userStore();
 
@@ -119,7 +120,7 @@ export const CreatebountyBasic = ({
   return (
     <>
       <VStack align={'start'} gap={3} w={'2xl'} pt={7} pb={12}>
-        {type === 'hackathon' && (
+        {type === 'hackathon' && !editable && (
           <Box w="100%" mb={5}>
             <SelectSponsor type="hackathon" />
           </Box>
@@ -548,7 +549,7 @@ export const CreatebountyBasic = ({
             }}
             variant="outline"
           >
-            {isNewOrDraft || isDuplicating ? 'Save Draft' : 'Update Bounty'}
+            {isNewOrDraft || isDuplicating ? 'Save Draft' : 'Update Listing'}
           </Button>
         </VStack>
       </VStack>

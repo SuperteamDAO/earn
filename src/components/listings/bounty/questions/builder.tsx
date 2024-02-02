@@ -171,7 +171,7 @@ export const Builder = ({
             }}
             variant="outline"
           >
-            {isNewOrDraft || isDuplicating ? 'Save Draft' : 'Update Bounty'}
+            {isNewOrDraft || isDuplicating ? 'Save Draft' : 'Update Listing'}
           </Button>
         </VStack>
       </VStack>

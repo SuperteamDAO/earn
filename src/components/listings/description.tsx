@@ -654,7 +654,7 @@ export const Description = ({
             onClick={() => createDraft()}
             variant="outline"
           >
-            {isNewOrDraft || isDuplicating ? 'Save Draft' : 'Update Bounty'}
+            {isNewOrDraft || isDuplicating ? 'Save Draft' : 'Update Listing'}
           </Button>
         </VStack>
       </Box>
