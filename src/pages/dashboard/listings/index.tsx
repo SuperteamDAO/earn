@@ -592,7 +592,10 @@ function Bounties() {
                                   fontWeight={500}
                                   icon={<EditIcon w={4} h={4} />}
                                 >
-                                  Edit {bountyType}
+                                  Edit{' '}
+                                  {currentBounty?.type === 'hackathon'
+                                    ? 'Track'
+                                    : bountyType}
                                 </MenuItem>
                               </Link>
                             )}

@@ -50,14 +50,6 @@ export const Superteams = [
     displayValue: 'UAE',
   },
   {
-    name: 'Superteam Mexico',
-    bg: `/assets/category_assets/bg/contract.png`,
-    color: '#FEA8EB',
-    icons: '/assets/superteams/mexico.jpg',
-    region: Regions.MEXICO,
-    displayValue: 'Mexico',
-  },
-  {
     name: 'Superteam Nigeria',
     bg: `/assets/category_assets/bg/content.png`,
     color: '#F5A8ED',

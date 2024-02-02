@@ -1,6 +1,7 @@
-import { Regions } from '@prisma/client';
+import type { Regions } from '@prisma/client';
 import type { NextApiRequest, NextApiResponse } from 'next';
 
+import { Superteams } from '@/constants/Superteam';
 import { prisma } from '@/prisma';
 import { dayjs } from '@/utils/dayjs';
 
@@ -14,6 +15,10 @@ export default async function user(req: NextApiRequest, res: NextApiResponse) {
     bounties: [],
     grants: [],
   };
+
+  const st = Superteams.find((team) => team.region.toLowerCase() === region);
+  const superteam = st?.name;
+
   const skillsFilter = filter
     ? {
         skills: {
@@ -31,12 +36,21 @@ export default async function user(req: NextApiRequest, res: NextApiResponse) {
           isArchived: false,
           isPrivate: false,
           status: 'OPEN',
-          region: {
-            in: [region.toUpperCase() as Regions, Regions.GLOBAL],
-          },
           deadline: {
             gte: dayjs().toISOString(),
           },
+          OR: [
+            {
+              region: {
+                in: [region.toUpperCase() as Regions],
+              },
+            },
+            {
+              sponsor: {
+                name: superteam,
+              },
+            },
+          ],
           ...skillsFilter,
         },
         include: {
@@ -64,12 +78,21 @@ export default async function user(req: NextApiRequest, res: NextApiResponse) {
           isArchived: false,
           isPrivate: false,
           status: 'OPEN',
-          region: {
-            in: [region.toUpperCase() as Regions, Regions.GLOBAL],
-          },
           deadline: {
             gte: dayjs().subtract(1, 'month').toISOString(),
           },
+          OR: [
+            {
+              region: {
+                in: [region.toUpperCase() as Regions],
+              },
+            },
+            {
+              sponsor: {
+                name: superteam,
+              },
+            },
+          ],
           ...skillsFilter,
         },
         take,

@@ -56,24 +56,28 @@ export const IndustryList: MultiSelectOptions[] = [
     value: 'DeFi',
   },
   {
-    label: 'Gaming',
-    value: 'Gaming',
-  },
-  {
     label: 'Infrastructure',
     value: 'Infrastructure',
   },
   {
-    label: 'NFTs',
-    value: 'NFTs',
+    label: 'DePIN',
+    value: 'DePIN',
+  },
+  {
+    value: 'Consumer dApps',
+    label: 'Consumer dApps',
   },
   {
     label: 'Wallets and Payments',
     value: 'Wallets and Payments',
   },
   {
-    value: 'Consumer dApps',
-    label: 'Consumer dApps',
+    label: 'NFTs',
+    value: 'NFTs',
+  },
+  {
+    label: 'Gaming',
+    value: 'Gaming',
   },
 ];
 
@@ -758,6 +762,7 @@ export const CommunityList: string[] = [
   'DeveloperDAO',
   'Metacamp',
   '10K Designers',
+  'Christex Foundation',
   'Other',
 ];
 

@@ -191,10 +191,7 @@ export function UserInfo({ isMobile }: UserInfoProps) {
                 fontSize="sm"
                 fontWeight={600}
                 onClick={() =>
-                  window.open(
-                    'https://discord.com/channels/857091160295866388/1192795350277312662',
-                    '_blank',
-                  )
+                  window.open('https://discord.gg/drptGUsr', '_blank')
                 }
               >
                 Get Help

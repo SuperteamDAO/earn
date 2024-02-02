@@ -37,35 +37,6 @@ import { userStore } from '@/store/user';
 import { getBountyDraftStatus } from '@/utils/bounty';
 import { getURLSanitized } from '@/utils/submissions/getURLSanitized';
 
-function getTypeTitleAndDescription(type: any, hackathon: any) {
-  let typeTitle, typeDescription;
-
-  switch (type) {
-    case 'project':
-      typeTitle = 'Project';
-      typeDescription =
-        "Don't start working just yet! Apply first, and then you'll be notified if you're selected to work on this Project.";
-      break;
-    case 'hackathon':
-      typeTitle = hackathon?.name
-        ? `${hackathon.name} Track`
-        : 'Hackathon Track';
-      typeDescription = hackathon?.description || 'Hackathon description';
-      break;
-    case 'bounty':
-      typeTitle = 'Bounty';
-      typeDescription =
-        'This is an open competition bounty! Anyone can start working and submit their work before the deadline!';
-      break;
-    default:
-      typeTitle = 'Default Title';
-      typeDescription = 'Default description';
-      break;
-  }
-
-  return { typeTitle, typeDescription };
-}
-
 interface Props {
   id: string;
   applicationLink?: string;
@@ -219,11 +190,6 @@ export function DetailSideCardBounty({
   ];
 
   const bountyDraftStatus = getBountyDraftStatus(status, isPublished);
-
-  const { typeTitle, typeDescription } = getTypeTitleAndDescription(
-    type,
-    hackathon,
-  );
 
   return (
     <>
@@ -516,27 +482,39 @@ export function DetailSideCardBounty({
             )}
           </Box>
         </VStack>
-
-        <VStack
-          align={'start'}
-          justify={'center'}
-          w={{ base: 'full', md: '22rem' }}
-          mt={4}
-          p={6}
-          bg={'#FFFFFF'}
-          rounded={'xl'}
-        >
-          <Text h="100%" color={'#94A3B8'} fontSize="1rem" textAlign="center">
-            TYPE
-          </Text>
-          <Text color={'#64768b'} fontSize="1.1rem" fontWeight={500}>
-            {typeTitle}
-          </Text>
-
-          <Text color={'#94A3B8'} fontSize="1rem" fontWeight={400}>
-            {typeDescription}
-          </Text>
-        </VStack>
+        {hackathon && (
+          <VStack
+            align={'start'}
+            justify={'center'}
+            w={{ base: 'full', md: '22rem' }}
+            mt={4}
+            p={6}
+            bg={'#FFFFFF'}
+            rounded={'xl'}
+          >
+            <Text
+              h="100%"
+              color={'brand.slate.400'}
+              fontSize="1rem"
+              fontWeight={500}
+              textAlign="center"
+            >
+              {hackathon.name.toUpperCase()} TRACK
+            </Text>
+            <Text color={'brand.slate.500'} fontSize="1rem">
+              {hackathon.description}
+            </Text>
+            <Link
+              color={'brand.slate.500'}
+              fontSize="1rem"
+              fontWeight={500}
+              href={`/${hackathon.name.toLowerCase()}`}
+              isExternal
+            >
+              View all tracks
+            </Link>
+          </VStack>
+        )}
         {requirements && (
           <VStack
             align="start"
@@ -546,12 +524,16 @@ export function DetailSideCardBounty({
             bg="white"
             rounded={'xl'}
           >
-            <Text h="100%" color={'#94A3B8'} fontSize="1rem" textAlign="center">
+            <Text
+              h="100%"
+              color={'brand.slate.400'}
+              fontSize="1rem"
+              fontWeight={500}
+              textAlign="center"
+            >
               ELIGIBILITY
             </Text>
-            <Text color={'gray.500'} fontSize={'md'} fontWeight={400}>
-              {requirements}
-            </Text>
+            <Text color={'brand.slate.500'}>{requirements}</Text>
           </VStack>
         )}
         {pocSocials && (
@@ -564,7 +546,13 @@ export function DetailSideCardBounty({
             bg={'#FFFFFF'}
             rounded={'xl'}
           >
-            <Text h="100%" color={'#94A3B8'} fontSize="1rem" textAlign="center">
+            <Text
+              h="100%"
+              color={'brand.slate.400'}
+              fontSize="1rem"
+              fontWeight={500}
+              textAlign="center"
+            >
               CONTACT
             </Text>
             <Text>
@@ -578,12 +566,7 @@ export function DetailSideCardBounty({
                 Reach out
                 <ExternalLinkIcon color={'#64768b'} mb={1} as="span" mx={1} />
               </Link>
-              <Text
-                as="span"
-                color={'#94A3B8'}
-                fontSize="1rem"
-                fontWeight={400}
-              >
+              <Text as="span" color={'brand.slate.500'} fontSize="1rem">
                 if you have any questions about this listing
               </Text>
             </Text>
