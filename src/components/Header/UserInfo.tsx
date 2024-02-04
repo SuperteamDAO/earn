@@ -191,7 +191,7 @@ export function UserInfo({ isMobile }: UserInfoProps) {
                 fontSize="sm"
                 fontWeight={600}
                 onClick={() =>
-                  window.open('https://discord.gg/drptGUsr', '_blank')
+                  window.open('https://discord.com/invite/Mq3ReaekgG', '_blank')
                 }
               >
                 Get Help

@@ -163,6 +163,9 @@ export function YourLinks({ success, useFormStore }: Props) {
     },
     pow: PoW[],
   ) => {
+    if (socials.discord.length === 0) {
+      setsocialsError(true);
+    }
     // atleast one URL
     if (
       socials.twitter.length === 0 &&
