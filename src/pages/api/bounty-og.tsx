@@ -26,8 +26,17 @@ export default async function handler(request: NextRequest) {
       sponsorImageP,
     ]);
 
-    const hasTitle = searchParams.has('title');
-    const paramTitle = searchParams.get('title');
+    let paramTitle = searchParams.get('title');
+    if (paramTitle) {
+      paramTitle = decodeURIComponent(paramTitle);
+      paramTitle = encodeURIComponent(paramTitle);
+
+      paramTitle = paramTitle
+        .replace(/%20/g, ' ')
+        .replace(/%2C/g, ',')
+        .replace(/%3A/g, ':');
+    }
+    const hasTitle = Boolean(paramTitle);
     const title = hasTitle
       ? paramTitle && paramTitle.length > 97
         ? `${paramTitle.slice(0, 97)}...`
