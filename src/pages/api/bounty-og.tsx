@@ -29,12 +29,6 @@ export default async function handler(request: NextRequest) {
     let paramTitle = searchParams.get('title');
     if (paramTitle) {
       paramTitle = decodeURIComponent(paramTitle);
-      paramTitle = encodeURIComponent(paramTitle);
-
-      paramTitle = paramTitle
-        .replace(/%20/g, ' ')
-        .replace(/%2C/g, ',')
-        .replace(/%3A/g, ':');
     }
     const hasTitle = Boolean(paramTitle);
     const title = hasTitle
@@ -272,7 +266,7 @@ export default async function handler(request: NextRequest) {
                         display: 'flex',
                       }}
                     >
-                      ${reward}
+                      {reward}
                     </div>
                   )}
                   {token && (
