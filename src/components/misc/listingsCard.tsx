@@ -167,7 +167,6 @@ interface BountyProps {
   sponsorName?: string;
   type?: BountyType | string;
   applicationType?: 'fixed' | 'rolling';
-  hasTabs?: boolean;
   isWinnersAnnounced?: boolean;
 }
 
@@ -225,7 +224,6 @@ export const ListingCard = ({
   slug = '',
   sponsorName,
   applicationType,
-  hasTabs = false,
   isWinnersAnnounced,
 }: BountyProps) => {
   const router = useRouter();
@@ -321,34 +319,32 @@ export const ListingCard = ({
                   color={'gray.500'}
                   fontSize={['x-small', 'xs', 'xs', 'xs']}
                 >
-                  {applicationType === 'rolling'
-                    ? 'Rolling Deadline'
-                    : dayjs().isBefore(dayjs(deadline))
-                      ? `Closing ${dayjs(deadline).fromNow()}`
-                      : `Closed ${dayjs(deadline).fromNow()}`}
+                  {dayjs().isBefore(dayjs(deadline))
+                    ? applicationType === 'rolling'
+                      ? 'Rolling Deadline'
+                      : `Closing ${dayjs(deadline).fromNow()}`
+                    : `Closed ${dayjs(deadline).fromNow()}`}
                 </Text>
-                {!hasTabs &&
-                  dayjs().isBefore(dayjs(deadline)) &&
-                  !isWinnersAnnounced && (
-                    <>
+                {dayjs().isBefore(dayjs(deadline)) && !isWinnersAnnounced && (
+                  <>
+                    <Text
+                      color={'brand.slate.300'}
+                      fontSize={['xx-small', 'xs', 'sm', 'sm']}
+                    >
+                      |
+                    </Text>
+                    <Flex align={'center'} gap={1}>
+                      <Circle bg="#16A35F" size="8px" />
                       <Text
-                        color={'brand.slate.300'}
-                        fontSize={['xx-small', 'xs', 'sm', 'sm']}
+                        display={['none', 'none', 'block', 'block']}
+                        color="#16A35F"
+                        fontSize="12px"
                       >
-                        |
+                        Open
                       </Text>
-                      <Flex align={'center'} gap={1}>
-                        <Circle bg="#16A35F" size="8px" />
-                        <Text
-                          display={['none', 'none', 'block', 'block']}
-                          color="#16A35F"
-                          fontSize="12px"
-                        >
-                          Open
-                        </Text>
-                      </Flex>
-                    </>
-                  )}
+                    </Flex>
+                  </>
+                )}
               </Flex>
             </Flex>
           </Flex>

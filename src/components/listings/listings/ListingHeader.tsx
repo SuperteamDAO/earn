@@ -293,7 +293,7 @@ export function ListingHeader({
                         bg="#EBEAFF"
                         rounded={'full'}
                       >
-                        {region}
+                        {displayValue} Only
                       </Text>
                     </Tooltip>
                   </>
