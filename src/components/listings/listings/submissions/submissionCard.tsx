@@ -1,11 +1,18 @@
-import { Box, Button, HStack, Image, Text, VStack } from '@chakra-ui/react';
+import {
+  Box,
+  Button,
+  HStack,
+  Image,
+  Text,
+  useToast,
+  VStack,
+} from '@chakra-ui/react';
 import type { User } from '@prisma/client';
 import axios from 'axios';
 import Avatar from 'boring-avatars';
 import { useRouter } from 'next/router';
 import type { Dispatch, SetStateAction } from 'react';
 import React, { useEffect, useState } from 'react';
-import { toast, Toaster } from 'react-hot-toast';
 import { AiFillHeart } from 'react-icons/ai';
 import type { Metadata } from 'unfurl.js/dist/types';
 
@@ -34,25 +41,42 @@ export const SubmissionCard = ({
 }: Props) => {
   const { userInfo } = userStore();
   const router = useRouter();
+  const toast = useToast();
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [image, setImage] = useState<string>('/assets/bg/og.svg');
-  const handleLike = async () => {
+  const handleLike = async (e: React.MouseEvent<HTMLButtonElement>) => {
+    e.stopPropagation();
     try {
       setIsLoading(true);
       await axios.post('/api/submission/like', {
         submissionId: id,
       });
       if (likes?.find((e) => e.id === (userInfo?.id as string))) {
-        toast.success('Liked removed from submission');
+        toast({
+          title: 'Like removed from submission.',
+          status: 'info',
+          duration: 2000,
+          isClosable: true,
+        });
       } else {
+        await axios.post(`/api/email/manual/submissionLike`, { id });
         toast.promise(
           axios.post(`/api/email/manual/submissionLike`, {
             id,
           }),
           {
-            loading: 'Liking Submission...',
-            success: 'Submission Liked!',
-            error: 'Failed to like the submission',
+            loading: { title: 'Liking Submission...' },
+            success: {
+              title: 'Submission Liked!',
+              description: 'Your like has been successfully added.',
+              duration: 2000,
+              isClosable: true,
+            },
+            error: {
+              title: 'Error while liking submission',
+              duration: 2000,
+              isClosable: true,
+            },
           },
         );
       }
@@ -61,8 +85,13 @@ export const SubmissionCard = ({
     } catch (error) {
       setIsLoading(false);
       console.log(error);
-
-      toast.error('Error while liking submission');
+      toast({
+        title: 'Error while liking submission',
+        description: 'Failed to like the submission. Please try again.',
+        status: 'error',
+        duration: 2000,
+        isClosable: true,
+      });
     }
   };
   useEffect(() => {
@@ -156,11 +185,7 @@ export const SubmissionCard = ({
             w={14}
             border={'1px solid #CBD5E1'}
             isLoading={isLoading}
-            onClick={(e) => {
-              e.stopPropagation();
-              if (!userInfo?.id) return;
-              handleLike();
-            }}
+            onClick={handleLike}
             type="button"
             variant={'unstyled'}
           >
@@ -173,7 +198,6 @@ export const SubmissionCard = ({
             />
             {likes?.length}
           </Button>
-          <Toaster />
         </HStack>
         <Box
           pos={'absolute'}
