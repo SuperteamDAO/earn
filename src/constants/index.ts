@@ -734,7 +734,6 @@ export const CountryList: string[] = [
   'United Arab Emirates',
   'United Kingdom',
   'United States',
-  'United States',
   'Uruguay',
   'Uzbekistan',
   'Vanuatu',
