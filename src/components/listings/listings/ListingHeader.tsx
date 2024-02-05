@@ -19,6 +19,7 @@ import { toast, Toaster } from 'react-hot-toast';
 import { TbBell, TbBellRinging } from 'react-icons/tb';
 
 import { EarningModal } from '@/components/modals/earningModal';
+import { Superteams } from '@/constants/Superteam';
 import type { References } from '@/interface/bounty';
 import type { SponsorType } from '@/interface/sponsor';
 import type { User } from '@/interface/user';
@@ -152,6 +153,21 @@ export function ListingHeader({
     statusTextColor = 'green.600';
   }
 
+  const displayValue = Superteams.find(
+    (team) => team.region === region,
+  )?.displayValue;
+
+  function getTooltipLabel() {
+    switch (region) {
+      case 'GLOBAL':
+        return 'This listing is open to everyone in the world!';
+      case 'BALKAN':
+        return 'You need to be a resident of one of the Balkan countries to be able to participate in this listing';
+      default:
+        return `You need to be a resident of ${displayValue} to participate in this listing`;
+    }
+  }
+
   return (
     <VStack px={{ base: '2', md: '6' }} bg={'white'}>
       {isOpen && <EarningModal isOpen={isOpen} onClose={onClose} />}
@@ -266,14 +282,7 @@ export function ListingHeader({
                       fontSize="sm"
                       bg="white"
                       borderRadius={'lg'}
-                      label={
-                        region === 'GLOBAL'
-                          ? 'This listing is open to everyone in the world!'
-                          : `You need to be a resident of ${
-                              region.charAt(0).toUpperCase() +
-                              region.slice(1).toLowerCase()
-                            } to participate in this bounty`
-                      }
+                      label={getTooltipLabel()}
                     >
                       <Text
                         px={2}
