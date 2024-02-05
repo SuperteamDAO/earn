@@ -74,6 +74,12 @@ export function SubmissionCard({
 
   const isBounty = sub?.listing?.type === 'bounty';
 
+  const listingLink = `${getURL()}listings/${sub?.listing?.type}/${
+    sub?.listing?.slug
+  }`;
+
+  const submissionLink = `${listingLink}/submission/${sub?.id}`;
+
   return (
     <Box my={'16'}>
       <Flex align="center" justify={'space-between'}>
@@ -96,7 +102,9 @@ export function SubmissionCard({
                 {isBounty ? 'won a bounty' : 'got selected for a project'}
               </Text>
             ) : (
-              <Text as={'span'}>submitted to a bounty</Text>
+              <Text as={'span'}>
+                {isBounty ? 'submitted to a bounty' : 'applied to a project'}
+              </Text>
             )}
           </Text>
         </Flex>
@@ -207,11 +215,7 @@ export function SubmissionCard({
             display="flex"
             whiteSpace={'nowrap'}
           >
-            <LinkOverlay
-              href={`${getURL()}listings/${sub?.listing?.type}/${
-                sub?.listing?.slug
-              }/submission/${sub?.id}`}
-            >
+            <LinkOverlay href={isBounty ? submissionLink : listingLink}>
               <Text
                 as="span"
                 color={'#6366F1'}
@@ -251,10 +255,7 @@ export function SubmissionCard({
             cursor: 'pointer',
           }}
           onClick={() => {
-            const submissionUrl = `${getURL()}listings/${sub?.listing?.type}/${
-              sub?.listing?.slug
-            }/submission/${sub?.id}`;
-            window.location.href = submissionUrl;
+            window.location.href = isBounty ? submissionLink : listingLink;
           }}
         />
       </Flex>
