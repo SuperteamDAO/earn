@@ -169,7 +169,7 @@ const GettingStarted = ({ userInfo }: GettingStartedProps) => {
                 }}
                 onClick={() => {
                   if (userInfo?.id) {
-                    router.push('/bounties');
+                    router.push('/all');
                   } else {
                     setTriggerLogin(true);
                   }

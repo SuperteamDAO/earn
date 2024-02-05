@@ -74,12 +74,12 @@ export const Superteams = [
     displayValue: 'Malaysia',
   },
   {
-    name: 'Superteam Balkans',
+    name: 'Superteam Balkan',
     bg: `/assets/category_assets/bg/design.png`,
     color: '#FEEBA8',
-    icons: '/assets/superteams/balkans.png',
-    region: Regions.BALKANS,
-    displayValue: 'Balkans',
+    icons: '/assets/superteams/balkan.jpeg',
+    region: Regions.BALKAN,
+    displayValue: 'Balkan',
   },
   {
     name: 'Superteam Philippines',
