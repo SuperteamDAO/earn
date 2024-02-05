@@ -4,7 +4,6 @@ import axios from 'axios';
 import { useAtom } from 'jotai';
 import { useRouter } from 'next/router';
 import { useEffect, useState } from 'react';
-import { Toaster } from 'react-hot-toast';
 
 import type { BountyBasicType } from '@/components/listings/bounty/Createbounty';
 import { CreateBounty } from '@/components/listings/bounty/Createbounty';
@@ -380,7 +379,6 @@ export function CreateListing({
               setIsPrivate={setIsPrivate}
             />
           )}
-          <Toaster />
         </FormLayout>
       )}
     </>

@@ -46,53 +46,53 @@ export const SubmissionCard = ({
   const [image, setImage] = useState<string>('/assets/bg/og.svg');
   const handleLike = async (e: React.MouseEvent<HTMLButtonElement>) => {
     e.stopPropagation();
-    try {
-      setIsLoading(true);
-      await axios.post('/api/submission/like', {
-        submissionId: id,
+    setIsLoading(true);
+
+    const likePromise = axios
+      .post('/api/submission/like/', { submissionId: id })
+      .then(async (response) => {
+        const wasLiked = response.data.like.find(
+          (like: any) => like.id === userInfo?.id,
+        );
+        if (wasLiked) {
+          await axios.post(`/api/email/manual/submissionLike`, { id });
+        }
+      })
+      .finally(() => {
+        setIsLoading(false);
+        setUpdate((prev: boolean) => !prev);
       });
-      if (likes?.find((e) => e.id === (userInfo?.id as string))) {
-        toast({
-          title: 'Like removed from submission.',
-          status: 'info',
+
+    toast.promise(likePromise, {
+      loading: {
+        title: 'Liking the submission...',
+        description: 'Please wait',
+        variant: 'subtle',
+      },
+      success: () => {
+        const likeAdded = likes?.some((e) => e.id === userInfo?.id)
+          ? 'Like removed'
+          : 'Liked submission';
+        const likeAddedDesc = likes?.some((e) => e.id === userInfo?.id)
+          ? "You've removed your like from the submission."
+          : "You've liked the submission.";
+        return {
+          title: likeAdded,
+          description: likeAddedDesc,
+          status: 'success',
           duration: 2000,
           isClosable: true,
-        });
-      } else {
-        await axios.post(`/api/email/manual/submissionLike`, { id });
-        toast.promise(
-          axios.post(`/api/email/manual/submissionLike`, {
-            id,
-          }),
-          {
-            loading: { title: 'Liking Submission...' },
-            success: {
-              title: 'Submission Liked!',
-              description: 'Your like has been successfully added.',
-              duration: 2000,
-              isClosable: true,
-            },
-            error: {
-              title: 'Error while liking submission',
-              duration: 2000,
-              isClosable: true,
-            },
-          },
-        );
-      }
-      setIsLoading(false);
-      setUpdate((prev: boolean) => !prev);
-    } catch (error) {
-      setIsLoading(false);
-      console.log(error);
-      toast({
+          variant: 'subtle',
+        };
+      },
+      error: {
         title: 'Error while liking submission',
         description: 'Failed to like the submission. Please try again.',
-        status: 'error',
         duration: 2000,
         isClosable: true,
-      });
-    }
+        variant: 'subtle',
+      },
+    });
   };
   useEffect(() => {
     const fetchImage = async () => {
