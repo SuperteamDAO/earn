@@ -11,7 +11,6 @@ import axios from 'axios';
 import { useRouter } from 'next/router';
 import type { ReactNode } from 'react';
 import React, { useEffect, useState } from 'react';
-import { Toaster } from 'react-hot-toast';
 
 import { LoginWrapper } from '@/components/Header/LoginWrapper';
 import { HomeBanner } from '@/components/home/Banner';
@@ -144,8 +143,6 @@ export function Home({ children, type }: HomeProps) {
                         Solana community of {matchedTeam.displayValue}!
                       </Text>
                     </Box>
-
-                    <Toaster />
                   </Flex>
                 </>
               )}

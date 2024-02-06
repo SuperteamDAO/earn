@@ -544,7 +544,7 @@ export const CountryList: string[] = [
   'Congo',
   'Cook Islands',
   'Costa Rica',
-  'Croatia (Hrvatska)',
+  'Croatia',
   'Cuba',
   'Curaçao',
   'Cyprus',

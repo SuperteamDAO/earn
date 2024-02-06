@@ -25,7 +25,6 @@ import {
 } from '@chakra-ui/react';
 import type { Dispatch, SetStateAction } from 'react';
 import { useState } from 'react';
-import { Toaster } from 'react-hot-toast';
 
 import type { MultiSelectOptions } from '@/constants';
 import { PrizeList, tokenList } from '@/constants';
@@ -404,7 +403,6 @@ export const CreatebountyPayment = ({
               : 'Sorry! Total reward amount should be equal to the sum of all prizes.'}
           </Text>
         )}
-        <Toaster />
         <VStack gap={4} w={'full'} pt={4}>
           {!isListingIncomplete && (isNewOrDraft || isDuplicating) && (
             <Button

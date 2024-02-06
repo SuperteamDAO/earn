@@ -1,6 +1,8 @@
+import { Regions } from '@prisma/client';
 import type { NextApiRequest, NextApiResponse } from 'next';
 
 import { NewBountyTemplate } from '@/components/emails/newBountyTemplate';
+import { Superteams } from '@/constants/Superteam';
 import type { Skills } from '@/interface/skills';
 import { prisma } from '@/prisma';
 import { getUnsubEmails } from '@/utils/airtable';
@@ -24,12 +26,20 @@ export default async function handler(
       return res.status(400).json({ error: 'Listing not found.' });
     }
 
+    const superteam = Superteams.find((team) => team.region === listing.region);
+    const countries = superteam ? superteam.country : [];
+
     const skills = listing.skills as Skills;
 
     const users = (
       await prisma.user.findMany({
         where: {
           isTalentFilled: true,
+          ...(listing.region !== Regions.GLOBAL && {
+            location: {
+              in: countries,
+            },
+          }),
         },
       })
     ).filter((user) => {

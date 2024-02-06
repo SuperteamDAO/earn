@@ -54,6 +54,8 @@ function BountyDetails({ bounty: initialBounty }: BountyDetailsProps) {
     fetchSubmissions();
   }, [bounty, submissionNumber]);
 
+  const encodedTitle = encodeURIComponent(initialBounty?.title || '');
+
   return (
     <Default
       meta={
@@ -77,11 +79,11 @@ function BountyDetails({ bounty: initialBounty }: BountyDetailsProps) {
           />
           <meta
             property="og:title"
-            content={`${initialBounty?.title || 'Bounty'} | Superteam Earn`}
+            content={`${initialBounty || 'Bounty'} | Superteam Earn`}
           />
           <meta
             property="og:image"
-            content={`${getURL()}api/bounty-og/?title=${initialBounty?.title}&reward=${initialBounty?.rewardAmount}&token=${initialBounty?.token}&sponsor=${initialBounty?.sponsor?.name}&logo=${initialBounty?.sponsor?.logo}&type=${initialBounty?.type}`}
+            content={`${getURL()}api/bounty-og/?title=${encodedTitle}&reward=${initialBounty?.rewardAmount}&token=${initialBounty?.token}&sponsor=${initialBounty?.sponsor?.name}&logo=${initialBounty?.sponsor?.logo}&type=${initialBounty?.type}`}
           />
           <meta
             name="twitter:title"
@@ -89,7 +91,7 @@ function BountyDetails({ bounty: initialBounty }: BountyDetailsProps) {
           />
           <meta
             name="twitter:image"
-            content={`${getURL()}api/bounty-og/?title=${initialBounty?.title}&reward=${initialBounty?.rewardAmount}&token=${initialBounty?.token}&sponsor=${initialBounty?.sponsor?.name}&logo=${initialBounty?.sponsor?.logo}&type=${initialBounty?.type}`}
+            content={`${getURL()}api/bounty-og/?title=${encodedTitle}&reward=${initialBounty?.rewardAmount}&token=${initialBounty?.token}&sponsor=${initialBounty?.sponsor?.name}&logo=${initialBounty?.sponsor?.logo}&type=${initialBounty?.type}`}
           />
           <meta name="twitter:card" content="summary_large_image" />
           <meta property="og:image:width" content="1200" />

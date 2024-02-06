@@ -250,6 +250,7 @@ export default function EditProfilePage({ slug }: { slug: string }) {
             status: 'error',
             duration: 5000,
             isClosable: true,
+            variant: 'subtle',
           });
           return;
         }
@@ -264,6 +265,7 @@ export default function EditProfilePage({ slug }: { slug: string }) {
           status: 'error',
           duration: 5000,
           isClosable: true,
+          variant: 'subtle',
         });
         return;
       }
@@ -282,6 +284,7 @@ export default function EditProfilePage({ slug }: { slug: string }) {
           status: 'error',
           duration: 5000,
           isClosable: true,
+          variant: 'subtle',
         });
         return;
       }
@@ -293,6 +296,7 @@ export default function EditProfilePage({ slug }: { slug: string }) {
           status: 'error',
           duration: 5000,
           isClosable: true,
+          variant: 'subtle',
         });
         return;
       }
@@ -360,6 +364,7 @@ export default function EditProfilePage({ slug }: { slug: string }) {
         status: 'success',
         duration: 3000,
         isClosable: true,
+        variant: 'subtle',
       });
       setTimeout(() => {
         router.push(`/t/${data.username}`);
@@ -372,6 +377,7 @@ export default function EditProfilePage({ slug }: { slug: string }) {
         status: 'error',
         duration: 5000,
         isClosable: true,
+        variant: 'subtle',
       });
     }
   };

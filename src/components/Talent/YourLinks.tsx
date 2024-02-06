@@ -165,6 +165,7 @@ export function YourLinks({ success, useFormStore }: Props) {
   ) => {
     if (socials.discord.length === 0) {
       setsocialsError(true);
+      return;
     }
     // atleast one URL
     if (

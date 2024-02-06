@@ -314,7 +314,9 @@ function BountySubmissions({ slug }: Props) {
   }, [debouncedSetSearchText]);
 
   const deadline = formatDeadline(bounty?.deadline, bounty?.applicationType);
-  const { hasCopied, onCopy } = useClipboard(`${getURL()}t/${bounty?.slug}`);
+  const { hasCopied, onCopy } = useClipboard(
+    `${getURL()}listings/${bounty?.type}/${bounty?.slug}`,
+  );
 
   const listingIcon = (() => {
     switch (bounty?.type) {
@@ -476,7 +478,7 @@ function BountySubmissions({ slug }: Props) {
                   textOverflow="ellipsis"
                   focusBorderColor="#CFD2D7"
                   isReadOnly
-                  value={`${getURL()}t/${bounty?.slug}`}
+                  value={`${getURL()}listings/${bounty?.type}/${bounty?.slug}`}
                 />
                 <InputRightElement h="100%" mr="1rem">
                   {hasCopied ? (

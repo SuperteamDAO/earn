@@ -16,7 +16,6 @@ import { useRouter } from 'next/router';
 import { useSession } from 'next-auth/react';
 import { useEffect, useState } from 'react';
 import { useForm } from 'react-hook-form';
-import { Toaster } from 'react-hot-toast';
 import Select from 'react-select';
 import makeAnimated from 'react-select/animated';
 
@@ -356,7 +355,6 @@ const CreateSponsor = () => {
                   </FormErrorMessage>
                 </FormControl>
               </Box>
-              <Toaster />
               <Box mt={8}>
                 {hasError && (
                   <Text align="center" mb={4} color="red">

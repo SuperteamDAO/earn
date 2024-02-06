@@ -54,8 +54,10 @@ export default async function handler(
       data: { isWinner, winnerPosition },
     });
 
-    const zapierWebhookUrl = process.env.ZAPIER_SUBMISSION_WEBHOOK!;
-    await axios.post(zapierWebhookUrl, result);
+    if (process.env.NEXT_PUBLIC_VERCEL_ENV === 'production') {
+      const zapierWebhookUrl = process.env.ZAPIER_SUBMISSION_WEBHOOK!;
+      await axios.post(zapierWebhookUrl, result);
+    }
 
     if (currentSubmission.isWinner !== isWinner) {
       const bountyId = result.listingId;

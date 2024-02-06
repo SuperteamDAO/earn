@@ -8,6 +8,7 @@ export const Superteams = [
     icons: '/assets/superteams/india.jpg',
     region: Regions.INDIA,
     displayValue: 'India',
+    country: ['India'],
   },
   {
     name: 'Superteam Germany',
@@ -16,6 +17,7 @@ export const Superteams = [
     icons: '/assets/superteams/germany.jpg',
     region: Regions.GERMANY,
     displayValue: 'Germany',
+    country: ['Germany'],
   },
   {
     name: 'Superteam UK',
@@ -24,6 +26,7 @@ export const Superteams = [
     icons: '/assets/superteams/uk.png',
     region: Regions.UK,
     displayValue: 'UK',
+    country: ['United Kingdom'],
   },
   {
     name: 'Superteam Turkey',
@@ -32,6 +35,7 @@ export const Superteams = [
     icons: '/assets/superteams/turkey.jpg',
     region: Regions.TURKEY,
     displayValue: 'Turkey',
+    country: ['Turkey'],
   },
   {
     name: 'Superteam Vietnam',
@@ -40,6 +44,7 @@ export const Superteams = [
     icons: '/assets/superteams/vietnam.png',
     region: Regions.VIETNAM,
     displayValue: 'Vietnam',
+    country: ['Vietnam'],
   },
   {
     name: 'Superteam UAE',
@@ -48,6 +53,7 @@ export const Superteams = [
     icons: '/assets/superteams/uae.png',
     region: Regions.UAE,
     displayValue: 'UAE',
+    country: ['United Arab Emirates'],
   },
   {
     name: 'Superteam Nigeria',
@@ -56,6 +62,7 @@ export const Superteams = [
     icons: '/assets/superteams/nigeria.png',
     region: Regions.NIGERIA,
     displayValue: 'Nigeria',
+    country: ['Nigeria'],
   },
   {
     name: 'Superteam Brazil',
@@ -64,6 +71,7 @@ export const Superteams = [
     icons: '/assets/superteams/brazil.png',
     region: Regions.BRAZIL,
     displayValue: 'Brazil',
+    country: ['Brazil'],
   },
   {
     name: 'Superteam Malaysia',
@@ -72,6 +80,7 @@ export const Superteams = [
     icons: '/assets/superteams/malaysia.jpg',
     region: Regions.MALAYSIA,
     displayValue: 'Malaysia',
+    country: ['Malaysia'],
   },
   {
     name: 'Superteam Balkan',
@@ -80,6 +89,18 @@ export const Superteams = [
     icons: '/assets/superteams/balkan.jpeg',
     region: Regions.BALKAN,
     displayValue: 'Balkan',
+    country: [
+      'Albania',
+      'Bosnia and Herzegovina',
+      'Bulgaria',
+      'Croatia',
+      'Kosovo',
+      'Montenegro',
+      'North Macedonia',
+      'Romania',
+      'Serbia',
+      'Slovenia',
+    ],
   },
   {
     name: 'Superteam Philippines',
@@ -88,5 +109,6 @@ export const Superteams = [
     icons: '/assets/superteams/philippines.png',
     region: Regions.PHILIPPINES,
     displayValue: 'Philippines',
+    country: ['Philippines'],
   },
 ];

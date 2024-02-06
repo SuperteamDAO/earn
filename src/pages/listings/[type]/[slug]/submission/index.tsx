@@ -32,7 +32,6 @@ const SubmissionPage = ({ slug }: { slug: string }) => {
   };
 
   useEffect(() => {
-    // if (!isLoading) return;
     getBounty();
   }, [update]);
   return (

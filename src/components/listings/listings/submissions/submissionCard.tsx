@@ -1,11 +1,18 @@
-import { Box, Button, HStack, Image, Text, VStack } from '@chakra-ui/react';
+import {
+  Box,
+  Button,
+  HStack,
+  Image,
+  Text,
+  useToast,
+  VStack,
+} from '@chakra-ui/react';
 import type { User } from '@prisma/client';
 import axios from 'axios';
 import Avatar from 'boring-avatars';
 import { useRouter } from 'next/router';
 import type { Dispatch, SetStateAction } from 'react';
 import React, { useEffect, useState } from 'react';
-import { toast, Toaster } from 'react-hot-toast';
 import { AiFillHeart } from 'react-icons/ai';
 import type { Metadata } from 'unfurl.js/dist/types';
 
@@ -34,36 +41,58 @@ export const SubmissionCard = ({
 }: Props) => {
   const { userInfo } = userStore();
   const router = useRouter();
+  const toast = useToast();
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [image, setImage] = useState<string>('/assets/bg/og.svg');
-  const handleLike = async () => {
-    try {
-      setIsLoading(true);
-      await axios.post('/api/submission/like', {
-        submissionId: id,
-      });
-      if (likes?.find((e) => e.id === (userInfo?.id as string))) {
-        toast.success('Liked removed from submission');
-      } else {
-        toast.promise(
-          axios.post(`/api/email/manual/submissionLike`, {
-            id,
-          }),
-          {
-            loading: 'Liking Submission...',
-            success: 'Submission Liked!',
-            error: 'Failed to like the submission',
-          },
-        );
-      }
-      setIsLoading(false);
-      setUpdate((prev: boolean) => !prev);
-    } catch (error) {
-      setIsLoading(false);
-      console.log(error);
+  const handleLike = async (e: React.MouseEvent<HTMLButtonElement>) => {
+    e.stopPropagation();
+    setIsLoading(true);
 
-      toast.error('Error while liking submission');
-    }
+    const likePromise = axios
+      .post('/api/submission/like/', { submissionId: id })
+      .then(async (response) => {
+        const wasLiked = response.data.like.find(
+          (like: any) => like.id === userInfo?.id,
+        );
+        if (wasLiked) {
+          await axios.post(`/api/email/manual/submissionLike`, { id });
+        }
+      })
+      .finally(() => {
+        setIsLoading(false);
+        setUpdate((prev: boolean) => !prev);
+      });
+
+    toast.promise(likePromise, {
+      loading: {
+        title: 'Liking the submission...',
+        description: 'Please wait',
+        variant: 'subtle',
+      },
+      success: () => {
+        const likeAdded = likes?.some((e) => e.id === userInfo?.id)
+          ? 'Like removed'
+          : 'Liked submission';
+        const likeAddedDesc = likes?.some((e) => e.id === userInfo?.id)
+          ? "You've removed your like from the submission."
+          : "You've liked the submission.";
+        return {
+          title: likeAdded,
+          description: likeAddedDesc,
+          status: 'success',
+          duration: 2000,
+          isClosable: true,
+          variant: 'subtle',
+        };
+      },
+      error: {
+        title: 'Error while liking submission',
+        description: 'Failed to like the submission. Please try again.',
+        duration: 2000,
+        isClosable: true,
+        variant: 'subtle',
+      },
+    });
   };
   useEffect(() => {
     const fetchImage = async () => {
@@ -156,11 +185,7 @@ export const SubmissionCard = ({
             w={14}
             border={'1px solid #CBD5E1'}
             isLoading={isLoading}
-            onClick={(e) => {
-              e.stopPropagation();
-              if (!userInfo?.id) return;
-              handleLike();
-            }}
+            onClick={handleLike}
             type="button"
             variant={'unstyled'}
           >
@@ -173,7 +198,6 @@ export const SubmissionCard = ({
             />
             {likes?.length}
           </Button>
-          <Toaster />
         </HStack>
         <Box
           pos={'absolute'}

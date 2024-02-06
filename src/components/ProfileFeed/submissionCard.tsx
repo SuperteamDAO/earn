@@ -12,7 +12,6 @@ import {
 } from '@chakra-ui/react';
 import axios from 'axios';
 import React, { useEffect, useState } from 'react';
-import toast from 'react-hot-toast';
 import { AiFillHeart } from 'react-icons/ai';
 import { BiComment } from 'react-icons/bi';
 
@@ -49,20 +48,17 @@ export function SubmissionCard({
       if (isLiked) {
         setIsLiked(false);
         setTotalLikes((prevLikes) => Math.max(prevLikes - 1, 0));
-        toast.success('Like removed from submission');
       } else {
         setIsLiked(true);
         setTotalLikes((prevLikes) => prevLikes + 1);
         await axios.post(`/api/email/manual/submissionLike`, {
           id: sub?.id,
         });
-        toast.success('Liked submission');
       }
       setIsLoading(false);
     } catch (error) {
       setIsLoading(false);
       console.log(error);
-      toast.error('Error while liking submission');
     }
   };
 
