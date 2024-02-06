@@ -1,4 +1,3 @@
-import type { Regions } from '@prisma/client';
 import { type BountyType, type Prisma } from '@prisma/client';
 import type { NextApiRequest, NextApiResponse } from 'next';
 
@@ -15,7 +14,6 @@ export default async function user(req: NextApiRequest, res: NextApiResponse) {
     | undefined;
   const take = params.take ? parseInt(params.take as string, 10) : 10;
   const deadline = params.deadline as string;
-  const region = params.region as Regions;
 
   const result: any = {
     bounties: [],
@@ -95,7 +93,6 @@ export default async function user(req: NextApiRequest, res: NextApiResponse) {
           isArchived: false,
           status: 'OPEN',
           type,
-          region,
           deadline: {
             gte: deadline,
           },
