@@ -115,7 +115,7 @@ function ListingCategoryPage({ slug }: { slug: string }) {
         </ListingSection>
         <ListingSection
           type="grants"
-          title={`${slug} Grants`}
+          title={`${formattedSlug} Grants`}
           sub="Equity-free funding opportunities for builders"
           emoji="/assets/home/emojis/grants.png"
           all
