@@ -23,7 +23,7 @@ interface BountyTabsProps {
 export const BountyTabs = ({
   isListingsLoading,
   bounties,
-  take = 10,
+  take = 20,
 }: BountyTabsProps) => {
   const tabs: TabProps[] = [
     {
@@ -62,6 +62,7 @@ export const BountyTabs = ({
                   type={bounty?.type}
                   applicationType={bounty.applicationType}
                   isWinnersAnnounced={bounty.isWinnersAnnounced}
+                  description={bounty?.description}
                 />
               ))
           ) : (
@@ -111,6 +112,7 @@ export const BountyTabs = ({
                   type={bounty?.type}
                   applicationType={bounty.applicationType}
                   isWinnersAnnounced={bounty?.isWinnersAnnounced}
+                  description={bounty?.description}
                 />
               ))
           ) : (
@@ -158,6 +160,7 @@ export const BountyTabs = ({
                   type={bounty?.type}
                   applicationType={bounty.applicationType}
                   isWinnersAnnounced={bounty?.isWinnersAnnounced}
+                  description={bounty?.description}
                 />
               ))
           ) : (

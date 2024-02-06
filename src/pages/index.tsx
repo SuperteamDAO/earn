@@ -1,6 +1,7 @@
 import { ArrowForwardIcon } from '@chakra-ui/icons';
 import { Box, Button, Flex, HStack, Image, Link, Text } from '@chakra-ui/react';
 import { css } from '@emotion/react';
+import { Regions } from '@prisma/client';
 import axios from 'axios';
 import dayjs from 'dayjs';
 import type { NextPage } from 'next';
@@ -39,8 +40,9 @@ const HomePage: NextPage = () => {
       const bountyData = await axios.get('/api/listings/', {
         params: {
           category: 'bounties',
-          take: 10,
+          take: 20,
           deadline: date,
+          region: Regions.GLOBAL,
         },
       });
 

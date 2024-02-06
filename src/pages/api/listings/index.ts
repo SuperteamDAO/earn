@@ -1,4 +1,5 @@
-import { type BountyType, type Prisma, Regions } from '@prisma/client';
+import type { Regions } from '@prisma/client';
+import { type BountyType, type Prisma } from '@prisma/client';
 import type { NextApiRequest, NextApiResponse } from 'next';
 
 import { prisma } from '@/prisma';
@@ -14,6 +15,8 @@ export default async function user(req: NextApiRequest, res: NextApiResponse) {
     | undefined;
   const take = params.take ? parseInt(params.take as string, 10) : 10;
   const deadline = params.deadline as string;
+  const region = params.region as Regions;
+
   const result: any = {
     bounties: [],
     grants: [],
@@ -55,7 +58,6 @@ export default async function user(req: NextApiRequest, res: NextApiResponse) {
       const bounties = await prisma.bounties.findMany({
         where: {
           isPublished: true,
-          region: Regions.GLOBAL,
           isActive: true,
           isPrivate: false,
           hackathonprize: false,
@@ -87,13 +89,13 @@ export default async function user(req: NextApiRequest, res: NextApiResponse) {
       const bounties = await prisma.bounties.findMany({
         where: {
           isPublished: true,
-          region: Regions.GLOBAL,
           isActive: true,
           isPrivate: false,
           hackathonprize: false,
           isArchived: false,
           status: 'OPEN',
           type,
+          region,
           deadline: {
             gte: deadline,
           },

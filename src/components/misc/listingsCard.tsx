@@ -17,6 +17,7 @@ import {
 } from '@chakra-ui/react';
 import type { BountyType } from '@prisma/client';
 import axios from 'axios';
+import { franc } from 'franc';
 import NextLink from 'next/link';
 import { useRouter } from 'next/router';
 import { useEffect, useState } from 'react';
@@ -168,6 +169,7 @@ interface BountyProps {
   type?: BountyType | string;
   applicationType?: 'fixed' | 'rolling';
   isWinnersAnnounced?: boolean;
+  description?: string;
 }
 
 export const ListingsCardSkeleton = () => {
@@ -225,11 +227,24 @@ export const ListingCard = ({
   sponsorName,
   applicationType,
   isWinnersAnnounced,
+  description,
 }: BountyProps) => {
   const router = useRouter();
   const [isMobile] = useMediaQuery('(max-width: 768px)');
 
   const isBounty = type === 'bounty';
+
+  const langCode = franc(description);
+  console.log(langCode);
+
+  const isEnglish = description
+    ? langCode === 'eng' || langCode === 'sco'
+    : true;
+
+  if (!isEnglish) {
+    return null;
+  }
+
   return (
     <>
       <Link
