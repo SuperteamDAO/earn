@@ -1,4 +1,4 @@
-import type { Regions } from '@prisma/client';
+import { Regions } from '@prisma/client';
 import type { NextApiRequest, NextApiResponse } from 'next';
 
 import { Superteams } from '@/constants/Superteam';
@@ -128,6 +128,9 @@ export default async function user(req: NextApiRequest, res: NextApiResponse) {
           isPublished: true,
           isActive: true,
           isArchived: false,
+          region: {
+            in: [region.toUpperCase() as Regions, Regions.GLOBAL],
+          },
           ...skillsFilter,
         },
         orderBy: {

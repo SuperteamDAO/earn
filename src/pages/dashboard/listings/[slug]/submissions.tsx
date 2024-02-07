@@ -1180,7 +1180,7 @@ function BountySubmissions({ slug }: Props) {
                 </Text>
                 <Button
                   isDisabled={
-                    totalSubmissions < skip + length ||
+                    totalSubmissions <= skip + length ||
                     (skip > 0 && skip % length !== 0)
                   }
                   onClick={() => skip % length === 0 && setSkip(skip + length)}

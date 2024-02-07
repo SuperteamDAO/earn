@@ -685,7 +685,7 @@ function Bounties() {
             </Button>
             <Button
               isDisabled={
-                totalBounties < skip + length ||
+                totalBounties <= skip + length ||
                 (skip > 0 && skip % length !== 0)
               }
               onClick={() => skip % length === 0 && setSkip(skip + length)}
