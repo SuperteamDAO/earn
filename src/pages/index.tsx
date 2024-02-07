@@ -39,7 +39,7 @@ const HomePage: NextPage = () => {
       const bountyData = await axios.get('/api/listings/', {
         params: {
           category: 'bounties',
-          take: 10,
+          take: 20,
           deadline: date,
         },
       });
