@@ -79,7 +79,7 @@ function BountyDetails({ bounty: initialBounty }: BountyDetailsProps) {
           />
           <meta
             property="og:title"
-            content={`${initialBounty || 'Bounty'} | Superteam Earn`}
+            content={`${initialBounty?.title || 'Bounty'} | Superteam Earn`}
           />
           <meta
             property="og:image"
