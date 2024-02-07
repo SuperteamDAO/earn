@@ -274,7 +274,7 @@ const Index = () => {
         </Button>
         <Button
           isDisabled={
-            totalMembers < skip + length || (skip > 0 && skip % length !== 0)
+            totalMembers <= skip + length || (skip > 0 && skip % length !== 0)
           }
           onClick={() => skip % length === 0 && setSkip(skip + length)}
           rightIcon={<ChevronRightIcon w={5} h={5} />}

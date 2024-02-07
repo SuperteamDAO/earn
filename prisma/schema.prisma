@@ -146,6 +146,7 @@ model Grants {
   token            String?
   rewardAmount     Int?
   link             String?
+  region           Regions  @default(GLOBAL)
   source           Source   @default(NATIVE)
   sponsorId        String
   pocId            String
