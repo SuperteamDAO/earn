@@ -158,8 +158,8 @@ export default function Hackathon({ slug }: { slug: string }) {
     }
   };
 
-  const handleViewSubmissions = (slug: string | undefined) => {
-    router.push(`/dashboard/listings/${slug}/submissions/`);
+  const handleViewSubmissions = (listing: string | undefined) => {
+    router.push(`/dashboard/hackathon/${slug}/${listing}/submissions/`);
   };
 
   const deleteSelectedDraft = async () => {

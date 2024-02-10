@@ -22,9 +22,10 @@ import { sortRank } from '@/utils/rank';
 
 interface Props {
   slug: string;
+  listing: string;
 }
 
-function BountySubmissions({ slug }: Props) {
+function BountySubmissions({ slug, listing }: Props) {
   const router = useRouter();
   const { isOpen, onOpen, onClose } = useDisclosure();
   const { userInfo } = userStore();
@@ -46,10 +47,10 @@ function BountySubmissions({ slug }: Props) {
   const getBounty = async () => {
     setIsBountyLoading(true);
     try {
-      const bountyDetails = await axios.get(`/api/bounties/${slug}/`);
+      const bountyDetails = await axios.get(`/api/bounties/${listing}/`);
       setBounty(bountyDetails.data);
-      if (bountyDetails.data.sponsorId !== userInfo?.currentSponsorId) {
-        router.push('/dashboard/listings');
+      if (bountyDetails.data.hackathonId !== userInfo?.hackathonId) {
+        router.push(`/dashboard/hackathon/${slug}`);
       }
       setTotalPaymentsMade(bountyDetails.data.paymentsMade || 0);
 
@@ -73,7 +74,7 @@ function BountySubmissions({ slug }: Props) {
   const getSubmissions = async () => {
     try {
       const submissionDetails = await axios.get(
-        `/api/bounties/${slug}/submissions`,
+        `/api/bounties/${listing}/submissions`,
         {
           params: {
             searchText,
@@ -230,9 +231,9 @@ function BountySubmissions({ slug }: Props) {
 }
 
 export const getServerSideProps: GetServerSideProps = async (context) => {
-  const { slug } = context.query;
+  const { slug, listing } = context.query;
   return {
-    props: { slug },
+    props: { slug, listing },
   };
 };
 
