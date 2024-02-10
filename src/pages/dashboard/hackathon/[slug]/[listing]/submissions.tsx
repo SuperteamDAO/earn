@@ -125,6 +125,7 @@ function BountySubmissions({ slug, listing }: Props) {
             bounty={bounty}
             onOpen={onOpen}
             totalSubmissions={totalSubmissions}
+            hackathonSlug={slug}
           />
           {!submissions?.length && !searchText ? (
             <>

@@ -114,6 +114,45 @@ export const SubmissionModal = ({
     }
   };
 
+  let headerText = '';
+  let subheadingText: JSX.Element | string = '';
+  switch (type) {
+    case 'project':
+      headerText = 'Submit Your Application';
+      subheadingText = (
+        <>
+          Don&apos;t start working just yet! Apply first, and then begin working
+          only once you&apos;ve been hired for the project by the sponsor.
+          <Text mt={1}>
+            Please note that the sponsor might contact you to assess fit before
+            picking the winner.
+          </Text>
+        </>
+      );
+      break;
+    case 'bounty':
+      headerText = 'Bounty Submission';
+      subheadingText = "We can't wait to see what you've created!";
+      break;
+    case 'hackathon':
+      headerText = 'Hackathon Submission';
+      subheadingText = (
+        <>
+          Share your hackathon submission here! Remember:
+          <Text>
+            To be eligible for different tracks, you need to submit to each
+            track separately
+          </Text>
+          <Text>
+            2. There&apos;s no restriction on the number of tracks you can
+            submit to
+          </Text>
+          <Text>3. You can submit only one entry to each track</Text>
+        </>
+      );
+      break;
+  }
+
   return (
     <Modal
       closeOnOverlayClick={false}
@@ -125,9 +164,7 @@ export const SubmissionModal = ({
     >
       <ModalOverlay />
       <ModalContent>
-        <ModalHeader color="brand.slate.800">
-          {isProject ? 'Submit Your Application' : 'Bounty Submission'}
-        </ModalHeader>
+        <ModalHeader color="brand.slate.800">{headerText}</ModalHeader>
         <ModalCloseButton />
         <VStack
           align={'start'}
@@ -139,13 +176,7 @@ export const SubmissionModal = ({
         >
           <Box>
             <Text mb={1} color={'brand.slate.500'} fontSize="sm">
-              {isProject
-                ? "Don't start working just yet! Apply first, and then begin working only once you've been hired for the project by the sponsor."
-                : `We can't wait to see what you've created!`}
-            </Text>
-            <Text color={'brand.slate.500'} fontSize="sm">
-              {!!isProject &&
-                'Please note that the sponsor might contact you to assess fit before picking the winner.'}
+              {subheadingText}
             </Text>
           </Box>
           <form
@@ -160,7 +191,7 @@ export const SubmissionModal = ({
                   <FormControl isRequired>
                     <FormLabel
                       mb={0}
-                      color={'brand.slate.800'}
+                      color={'brand.slate.600'}
                       fontWeight={600}
                       htmlFor={'applicationLink'}
                     >
@@ -208,7 +239,7 @@ export const SubmissionModal = ({
                   <FormControl>
                     <FormLabel
                       mb={0}
-                      color={'brand.slate.800'}
+                      color={'brand.slate.600'}
                       fontWeight={600}
                       htmlFor={'tweetLink'}
                     >
@@ -274,7 +305,7 @@ export const SubmissionModal = ({
               <FormControl>
                 <FormLabel
                   mb={0}
-                  color={'brand.slate.800'}
+                  color={'brand.slate.600'}
                   fontWeight={600}
                   htmlFor={'tweetLink'}
                 >
@@ -321,7 +352,7 @@ export const SubmissionModal = ({
               <FormControl isRequired>
                 <FormLabel
                   mb={0}
-                  color={'brand.slate.800'}
+                  color={'brand.slate.600'}
                   fontWeight={600}
                   htmlFor={'publicKey'}
                 >

@@ -37,7 +37,7 @@ export const QuestionHandler = ({
   if (type === 'text') {
     return (
       <>
-        <FormLabel color={'gray.600 !important'} fontSize={'1.1rem'}>
+        <FormLabel mb={1} color={'brand.slate.600'} fontWeight={600}>
           {question}
         </FormLabel>
         <AutoResizeTextarea

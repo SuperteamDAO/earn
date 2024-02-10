@@ -39,12 +39,14 @@ interface Props {
   bounty: Bounty | null;
   onOpen: () => void;
   totalSubmissions: number;
+  hackathonSlug?: string;
 }
 
 export const SubmissionHeader = ({
   bounty,
   onOpen,
   totalSubmissions,
+  hackathonSlug,
 }: Props) => {
   const [isExporting, setIsExporting] = useState(false);
 
@@ -82,12 +84,20 @@ export const SubmissionHeader = ({
         return 'bolt.svg';
     }
   })();
+
   return (
     <>
       <Box mb={2}>
         <Breadcrumb color="brand.slate.400">
           <BreadcrumbItem>
-            <NextLink href="/dashboard/listings" passHref>
+            <NextLink
+              href={
+                hackathonSlug
+                  ? `/dashboard/hackathon/${hackathonSlug}`
+                  : '/dashboard/listings'
+              }
+              passHref
+            >
               <BreadcrumbLink color="brand.slate.400">
                 <Flex align="center">
                   <ChevronLeftIcon mr={1} w={6} h={6} />
