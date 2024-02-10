@@ -32,6 +32,7 @@ import { SubmissionModal } from '@/components/modals/submissionModalBounty';
 import { CountDownRenderer } from '@/components/shared/countdownRenderer';
 import { WarningModal } from '@/components/shared/WarningModal';
 import { tokenList } from '@/constants/index';
+import { Superteams } from '@/constants/Superteam';
 import type { Eligibility, Rewards } from '@/interface/bounty';
 import { userStore } from '@/store/user';
 import { getBountyDraftStatus } from '@/utils/bounty';
@@ -63,6 +64,7 @@ interface Props {
     description: string;
     startDate: string;
   };
+  region?: string;
 }
 export function DetailSideCardBounty({
   id,
@@ -81,6 +83,7 @@ export function DetailSideCardBounty({
   isPublished,
   status,
   hackathon,
+  region,
 }: Props) {
   const { userInfo } = userStore();
   const [isSubmissionNumberLoading, setIsSubmissionNumberLoading] =
@@ -190,6 +193,23 @@ export function DetailSideCardBounty({
   ];
 
   const bountyDraftStatus = getBountyDraftStatus(status, isPublished);
+
+  function userRegionEligibilty() {
+    if (region === 'GLOBAL') {
+      return true;
+    }
+
+    const superteam = Superteams.find((st) => st.region === region);
+
+    const isEligible =
+      !!(
+        userInfo?.location && superteam?.country.includes(userInfo?.location)
+      ) || false;
+
+    return isEligible;
+  }
+
+  const isUserEligibleByRegion = userRegionEligibilty();
 
   return (
     <>
@@ -447,8 +467,14 @@ export function DetailSideCardBounty({
               <Tooltip
                 bg="brand.slate.500"
                 hasArrow
-                isDisabled={hasHackathonStarted}
-                label={`Submissions Open ${formattedDate}`}
+                isDisabled={hasHackathonStarted && isUserEligibleByRegion}
+                label={
+                  !hasHackathonStarted
+                    ? `Submissions Open ${formattedDate}`
+                    : !isUserEligibleByRegion
+                      ? `You aren't eligible for this listing`
+                      : ''
+                }
                 rounded="md"
               >
                 <Button
@@ -459,7 +485,8 @@ export function DetailSideCardBounty({
                   isDisabled={
                     bountyDraftStatus === 'DRAFT' ||
                     Date.now() > Number(moment(endingTime).format('x')) ||
-                    !hasHackathonStarted
+                    !hasHackathonStarted ||
+                    !isUserEligibleByRegion
                   }
                   isLoading={isUserSubmissionLoading}
                   loadingText={'Checking Submission...'}

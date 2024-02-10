@@ -14,6 +14,7 @@ import {
   Text,
   Tooltip,
   useDisclosure,
+  useToast,
   VStack,
 } from '@chakra-ui/react';
 import { Color } from '@tiptap/extension-color';
@@ -185,6 +186,8 @@ export const Description = ({
   };
 
   const isProject = type === 'project';
+
+  const toast = useToast();
 
   return (
     <>
@@ -635,6 +638,18 @@ export const Description = ({
             w="100%"
             onClick={() => {
               if (referenceError) {
+                return;
+              }
+              if (editor?.isEmpty) {
+                toast({
+                  title: 'Listing Details Required',
+                  description:
+                    'This information is essential for contributors to gauge their fit and understand how to participate effectively',
+                  status: 'error',
+                  duration: 10000,
+                  isClosable: true,
+                  variant: 'left-accent',
+                });
                 return;
               }
               if (!isProject) {

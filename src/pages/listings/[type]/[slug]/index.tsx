@@ -164,6 +164,7 @@ function BountyDetails({ bounty: initialBounty }: BountyDetailsProps) {
                   timeToComplete={bounty?.timeToComplete}
                   isPublished={bounty?.isPublished}
                   status={bounty?.status}
+                  region={bounty?.region}
                 />
               </HStack>
             </>
