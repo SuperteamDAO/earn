@@ -21,6 +21,7 @@ import { useRouter } from 'next/router';
 import ScribesLogo from '@/svg/scribes-logo';
 
 import { BountySnackbar } from './BountySnackbar';
+import { ScribesAnnouncementBar } from './ScribesAnnouncementBar';
 import { UserInfo } from './UserInfo';
 
 interface NavItem {
@@ -213,10 +214,12 @@ export const Header = () => {
 
   const isDashboardRoute = router.pathname.startsWith('/dashboard');
   const maxWValue = isDashboardRoute ? '' : '7xl';
+  const isRootRoute = router.pathname === '/';
 
   return (
     <Box pos="sticky" zIndex="sticky" top={0}>
       <BountySnackbar />
+      {isRootRoute && <ScribesAnnouncementBar />}
       <Flex
         px={{ base: '2', lg: 6 }}
         py={{ base: 2, lg: 0 }}
