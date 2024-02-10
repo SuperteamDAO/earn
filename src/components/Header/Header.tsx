@@ -103,7 +103,10 @@ const MobileNavItem = ({ label, children, href }: NavItem) => {
                 href={child.href}
               >
                 {child.label === 'Scribes' ? (
-                  <ScribesLogo styles={{ width: '80px', height: 'auto' }} />
+                  <ScribesLogo
+                    styles={{ width: '80px', height: 'auto' }}
+                    variant="#a459ff"
+                  />
                 ) : (
                   child.label
                 )}
@@ -185,6 +188,7 @@ const DesktopNav = () => {
                       <Box>
                         <ScribesLogo
                           styles={{ width: '60px', height: 'auto' }}
+                          variant="#a459ff"
                         />
                       </Box>
                     ) : (
@@ -214,7 +218,7 @@ export const Header = () => {
     <Box pos="sticky" zIndex="sticky" top={0}>
       <BountySnackbar />
       <Flex
-        px={{ base: 4, lg: 6 }}
+        px={{ base: '2', lg: 6 }}
         py={{ base: 2, lg: 0 }}
         color="brand.slate.500"
         bg="white"

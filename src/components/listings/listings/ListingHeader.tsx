@@ -169,7 +169,7 @@ export function ListingHeader({
   }
 
   return (
-    <VStack px={{ base: '2', md: '6' }} bg={'white'}>
+    <VStack px={{ base: '', md: '6' }} bg={'white'}>
       {isOpen && <EarningModal isOpen={isOpen} onClose={onClose} />}
       <VStack
         align="start"
@@ -197,7 +197,7 @@ export function ListingHeader({
               <Heading
                 color={'brand.charcoal.700'}
                 fontFamily={'var(--font-sans)'}
-                fontSize={{ base: 'lg', md: 'xl' }}
+                fontSize={{ base: 'md', md: 'xl' }}
                 fontWeight={{ base: 600, md: 700 }}
               >
                 {title}
@@ -225,10 +225,18 @@ export function ListingHeader({
             </HStack>
             {!isTemplate && (
               <HStack>
-                <Text color={'#94A3B8'} fontWeight={500}>
+                <Text
+                  color={'#94A3B8'}
+                  fontSize={{ base: 'xs', md: 'md' }}
+                  fontWeight={500}
+                >
                   by {sponsor?.name}
                 </Text>
-                <Text color={'#E2E8EF'} fontWeight={500}>
+                <Text
+                  color={'#E2E8EF'}
+                  fontSize={{ base: 'xs', md: 'md' }}
+                  fontWeight={500}
+                >
                   |
                 </Text>
                 {isHackathon ? (
@@ -285,12 +293,13 @@ export function ListingHeader({
                       label={getTooltipLabel()}
                     >
                       <Text
-                        px={2}
+                        px={3}
                         py={1}
                         color={'#0800A5'}
-                        fontSize={'xs'}
+                        fontSize={{ base: '10px', md: 'xs' }}
                         fontWeight={500}
                         bg="#EBEAFF"
+                        whiteSpace={'nowrap'}
                         rounded={'full'}
                       >
                         {region === 'GLOBAL'
@@ -318,6 +327,7 @@ export function ListingHeader({
                 px={3}
                 py={1}
                 color={statusTextColor}
+                fontSize={{ base: '10px', md: 'xs' }}
                 bg={statusBgColor}
                 rounded={'full'}
               >
@@ -345,10 +355,9 @@ export function ListingHeader({
                     : 'This is an open competition bounty! Anyone can start working and submit their work before the deadline!'
                 }
               >
-                <Flex>
+                <Flex align={'center'} justify={'center'}>
                   <Image
-                    h="4"
-                    mt={1}
+                    h={{ base: 3, md: 4 }}
                     mr={1}
                     alt={type}
                     src={
@@ -357,7 +366,11 @@ export function ListingHeader({
                         : '/assets/icons/bolt.svg'
                     }
                   />
-                  <Text color="gray.400" fontWeight={500}>
+                  <Text
+                    color="gray.400"
+                    fontSize={{ base: '12px', md: '' }}
+                    fontWeight={500}
+                  >
                     {isProject ? 'Project' : 'Bounty'}
                   </Text>
                 </Flex>
@@ -367,8 +380,9 @@ export function ListingHeader({
         </Flex>
         {!isTemplate && (
           <HStack>
-            <HStack align="start" px={[3, 3, 0, 0]}>
+            <HStack align="start">
               <IconButton
+                ml={{ base: '3', md: '' }}
                 aria-label="Notify"
                 icon={
                   sub.find((e) => e.userId === userInfo?.id) ? (
@@ -392,13 +406,17 @@ export function ListingHeader({
             </HStack>
             <HStack whiteSpace={'nowrap'}>
               <VStack align={'start'} gap={0}>
-                <Text color={'#000000'} fontSize={'md'} fontWeight={500}>
+                <Text
+                  color={'#000000'}
+                  fontSize={{ base: 'sm', md: 'md' }}
+                  fontWeight={500}
+                >
                   {sub?.length ? sub.length + 1 : 1}
                 </Text>
                 <Text
                   mt={'0px !important'}
                   color={'gray.500'}
-                  fontSize={'md'}
+                  fontSize={{ base: 'xs', md: 'md' }}
                   fontWeight={500}
                 >
                   {(sub?.length ? sub.length + 1 : 1) === 1
