@@ -235,6 +235,7 @@ export const Header = () => {
             ml={{ base: -2 }}
           >
             <IconButton
+              _hover={{ bg: 'transparent' }}
               aria-label={'Toggle Navigation'}
               icon={
                 isOpen ? (

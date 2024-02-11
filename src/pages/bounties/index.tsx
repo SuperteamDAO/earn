@@ -1,14 +1,9 @@
-import { Box, Flex } from '@chakra-ui/react';
+import { Box } from '@chakra-ui/react';
 import axios from 'axios';
 import dayjs from 'dayjs';
 import { useEffect, useState } from 'react';
 
-import {
-  ListingCard,
-  ListingsCardSkeleton,
-  ListingSection,
-} from '@/components/misc/listingsCard';
-import { EmptySection } from '@/components/shared/EmptySection';
+import { BountyTabs } from '@/components/listings/bounty/Tabs';
 import type { Bounty } from '@/interface/bounty';
 import { Home } from '@/layouts/Home';
 import { Meta } from '@/layouts/Meta';
@@ -56,44 +51,12 @@ function AllBountiesPage() {
       />
 
       <Box w={'100%'}>
-        <ListingSection
-          type="bounties"
-          title="Bounties"
-          sub="Competitive tasks where the best submissions win"
+        <BountyTabs
+          bounties={listings.bounties}
+          isListingsLoading={isListingsLoading}
           emoji="/assets/home/emojis/moneyman.png"
-          all
-        >
-          {isListingsLoading &&
-            Array.from({ length: 8 }, (_, index) => (
-              <ListingsCardSkeleton key={index} />
-            ))}
-          {!isListingsLoading && !listings?.bounties?.length && (
-            <Flex align="center" justify="center" mt={8}>
-              <EmptySection
-                title="No listings available!"
-                message="Subscribe to notifications to get notified about new bounties."
-              />
-            </Flex>
-          )}
-          {!isListingsLoading &&
-            listings?.bounties?.map((bounty) => {
-              return (
-                <ListingCard
-                  slug={bounty?.slug}
-                  rewardAmount={bounty?.rewardAmount}
-                  key={bounty?.id}
-                  sponsorName={bounty?.sponsor?.name}
-                  deadline={bounty?.deadline}
-                  title={bounty?.title}
-                  logo={bounty?.sponsor?.logo}
-                  token={bounty?.token}
-                  type={bounty?.type}
-                  applicationType={bounty.applicationType}
-                  isWinnersAnnounced={bounty?.isWinnersAnnounced}
-                />
-              );
-            })}
-        </ListingSection>
+          title="Bounties"
+        />
       </Box>
     </Home>
   );

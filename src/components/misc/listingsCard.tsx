@@ -1,4 +1,4 @@
-import { ArrowForwardIcon, BellIcon } from '@chakra-ui/icons';
+import { BellIcon } from '@chakra-ui/icons';
 import {
   Box,
   Button,
@@ -15,7 +15,6 @@ import {
   useDisclosure,
   useMediaQuery,
 } from '@chakra-ui/react';
-import type { BountyType } from '@prisma/client';
 import axios from 'axios';
 import { franc } from 'franc';
 import NextLink from 'next/link';
@@ -25,7 +24,7 @@ import toast, { Toaster } from 'react-hot-toast';
 import { TiTick } from 'react-icons/ti';
 
 import { tokenList } from '@/constants';
-import type { BountyStatus } from '@/interface/bounty';
+import type { Bounty } from '@/interface/bounty';
 import type { Notifications } from '@/interface/user';
 import { userStore } from '@/store/user';
 import { dayjs } from '@/utils/dayjs';
@@ -48,8 +47,6 @@ export const ListingSection = ({
   sub,
   emoji,
   type,
-  url,
-  all,
 }: ListingSectionProps) => {
   const router = useRouter();
 
@@ -106,71 +103,13 @@ export const ListingSection = ({
             {sub}
           </Text>
         </Flex>
-        <Flex
-          display={!all && router?.query?.category !== type ? 'block' : 'none'}
-        >
-          <Link
-            as={NextLink}
-            href={
-              url ||
-              (router?.query?.filter
-                ? `/${type}/${router?.query?.filter}/`
-                : `/${type}/`)
-            }
-          >
-            <Button color="brand.slate.400" size="sm" variant="ghost">
-              View All
-            </Button>
-          </Link>
-        </Flex>
       </HStack>
       <Flex direction={'column'} rowGap={'1'}>
         {children}
       </Flex>
-      <Flex
-        display={!all && router?.query?.category !== type ? 'block' : 'none'}
-      >
-        <Link
-          as={NextLink}
-          href={
-            url ||
-            (router?.query?.filter
-              ? `/${type}/${router?.query?.filter}/`
-              : `/${type}/`)
-          }
-        >
-          <Button
-            w="100%"
-            my={8}
-            py={5}
-            color="brand.slate.400"
-            borderColor="brand.slate.300"
-            rightIcon={<ArrowForwardIcon />}
-            size="sm"
-            variant="outline"
-          >
-            View All
-          </Button>
-        </Link>
-      </Flex>
     </Box>
   );
 };
-
-interface BountyProps {
-  title?: string;
-  rewardAmount?: number;
-  deadline?: string;
-  logo?: string;
-  status?: BountyStatus;
-  token?: string;
-  slug?: string;
-  sponsorName?: string;
-  type?: BountyType | string;
-  applicationType?: 'fixed' | 'rolling';
-  isWinnersAnnounced?: boolean;
-  description?: string;
-}
 
 export const ListingsCardSkeleton = () => {
   const [isMobile] = useMediaQuery('(max-width: 768px)');
@@ -216,19 +155,19 @@ export const ListingsCardSkeleton = () => {
   );
 };
 
-export const ListingCard = ({
-  rewardAmount,
-  deadline,
-  type = '',
-  logo,
-  title = '',
-  token,
-  slug = '',
-  sponsorName,
-  applicationType,
-  isWinnersAnnounced,
-  description,
-}: BountyProps) => {
+export const ListingCard = ({ bounty }: { bounty: Bounty }) => {
+  const {
+    rewardAmount,
+    deadline,
+    type,
+    sponsor,
+    title,
+    token,
+    slug,
+    applicationType,
+    isWinnersAnnounced,
+    description,
+  } = bounty;
   const router = useRouter();
   const [isMobile] = useMediaQuery('(max-width: 768px)');
 
@@ -268,11 +207,11 @@ export const ListingCard = ({
               w={isMobile ? 14 : 16}
               h={isMobile ? 14 : 16}
               mr={isMobile ? 3 : 5}
-              alt={sponsorName}
+              alt={sponsor?.name}
               rounded={5}
               src={
-                logo
-                  ? logo.replace(
+                sponsor?.logo
+                  ? sponsor.logo.replace(
                       '/upload/',
                       '/upload/c_scale,w_128,h_128,f_auto/',
                     )
@@ -301,7 +240,7 @@ export const ListingCard = ({
                 color={'brand.slate.500'}
                 fontSize={{ md: 'sm', base: 'xs' }}
               >
-                {sponsorName}
+                {sponsor?.name}
               </Text>
               <Flex align={'center'} gap={isMobile ? 1 : 3}>
                 <>
@@ -321,7 +260,7 @@ export const ListingCard = ({
                     fontSize={['x-small', 'xs', 'xs', 'xs']}
                     fontWeight={500}
                   >
-                    {type.charAt(0).toUpperCase() + type.slice(1)}
+                    {type && type.charAt(0).toUpperCase() + type.slice(1)}
                   </Text>
                 </>
                 <Text

@@ -85,21 +85,7 @@ const RegionsPage = ({
             )}
             {!isListingsLoading &&
               listings?.bounties?.map((bounty) => {
-                return (
-                  <ListingCard
-                    slug={bounty.slug}
-                    rewardAmount={bounty?.rewardAmount}
-                    key={bounty?.id}
-                    sponsorName={bounty?.sponsor?.name}
-                    deadline={bounty?.deadline}
-                    title={bounty?.title}
-                    logo={bounty?.sponsor?.logo}
-                    token={bounty?.token}
-                    type={bounty?.type}
-                    applicationType={bounty.applicationType}
-                    isWinnersAnnounced={bounty?.isWinnersAnnounced}
-                  />
-                );
+                return <ListingCard key={bounty.id} bounty={bounty} />;
               })}
           </ListingSection>
 
