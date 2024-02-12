@@ -3,6 +3,7 @@ import type { NextApiRequest, NextApiResponse } from 'next';
 
 import { Superteams } from '@/constants/Superteam';
 import { prisma } from '@/prisma';
+import { dayjs } from '@/utils/dayjs';
 
 export default async function user(req: NextApiRequest, res: NextApiResponse) {
   const params = req.query;
@@ -11,6 +12,11 @@ export default async function user(req: NextApiRequest, res: NextApiResponse) {
 
   const st = Superteams.find((team) => team.region.toLowerCase() === region);
   const superteam = st?.name;
+
+  const result: any = {
+    bounties: [],
+    grants: [],
+  };
 
   try {
     const bounties = await prisma.bounties.findMany({
@@ -45,6 +51,13 @@ export default async function user(req: NextApiRequest, res: NextApiResponse) {
       take,
     });
 
+    const sortedData = bounties
+      .sort((a, b) => {
+        return dayjs(b.deadline).diff(dayjs(a.deadline));
+      })
+      .slice(0, take);
+    result.bounties = sortedData;
+
     const grants = await prisma.grants.findMany({
       where: {
         isPublished: true,
@@ -76,7 +89,9 @@ export default async function user(req: NextApiRequest, res: NextApiResponse) {
       },
     });
 
-    res.status(200).json({ bounties, grants });
+    result.grants = grants;
+
+    res.status(200).json(result);
   } catch (error) {
     console.log(error);
 
