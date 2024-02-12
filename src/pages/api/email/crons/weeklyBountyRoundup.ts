@@ -3,11 +3,13 @@ import dayjs from 'dayjs';
 import utc from 'dayjs/plugin/utc';
 import type { NextApiRequest, NextApiResponse } from 'next';
 
-import { WeeklyRoundupTemplate } from '@/components/emails/weeklyRoundupTemplate';
+import {
+  getUnsubEmails,
+  rateLimitedPromiseAll,
+  WeeklyRoundupTemplate,
+} from '@/features/emails';
 import type { MainSkills, Skills } from '@/interface/skills';
 import { prisma } from '@/prisma';
-import { getUnsubEmails } from '@/utils/airtable';
-import { rateLimitedPromiseAll } from '@/utils/rateLimitedPromises';
 import resendMail from '@/utils/resend';
 
 dayjs.extend(utc);

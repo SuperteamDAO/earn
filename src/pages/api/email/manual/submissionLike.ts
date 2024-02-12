@@ -1,8 +1,7 @@
 import type { NextApiRequest, NextApiResponse } from 'next';
 
-import { SubmissionLikeTemplate } from '@/components/emails/submissionLikeTemplate';
+import { getUnsubEmails, SubmissionLikeTemplate } from '@/features/emails';
 import { prisma } from '@/prisma';
-import { getUnsubEmails } from '@/utils/airtable';
 import resendMail from '@/utils/resend';
 
 export default async function handler(

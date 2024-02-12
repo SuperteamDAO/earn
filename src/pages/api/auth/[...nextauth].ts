@@ -5,7 +5,7 @@ import type { Adapter } from 'next-auth/adapters';
 import EmailProvider from 'next-auth/providers/email';
 import GoogleProvider from 'next-auth/providers/google';
 
-import { MagicLinkTemplate } from '@/components/emails/magicLinkTemplate';
+import { MagicLinkTemplate } from '@/features/emails';
 import { prisma } from '@/prisma';
 import resendMail from '@/utils/resend';
 
