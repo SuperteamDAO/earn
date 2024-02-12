@@ -9,11 +9,10 @@ import { SubmissionPage } from '@/components/listings/listings/submissions/submi
 import { EmptySection } from '@/components/shared/EmptySection';
 import { LoadingSection } from '@/components/shared/LoadingSection';
 import type { Bounty } from '@/interface/bounty';
+import type { SponsorType } from '@/interface/sponsor';
 import type { SubmissionWithUser } from '@/interface/submission';
 import { Default } from '@/layouts/Default';
 import { Meta } from '@/layouts/Meta';
-
-import type { SponsorType } from '../../../../../interface/sponsor';
 
 interface BountyDetailsProps {
   slug: string;

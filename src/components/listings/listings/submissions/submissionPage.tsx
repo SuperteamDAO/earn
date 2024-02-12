@@ -18,7 +18,7 @@ import type { Metadata } from 'unfurl.js/dist/types';
 import { TalentBio } from '@/components/TalentBio';
 import type { Bounty } from '@/interface/bounty';
 import type { SubmissionWithUser } from '@/interface/submission';
-import { getURLSanitized } from '@/utils/submissions/getURLSanitized';
+import { getURLSanitized } from '@/utils/getURLSanitized';
 
 import { Comments } from '../comments';
 

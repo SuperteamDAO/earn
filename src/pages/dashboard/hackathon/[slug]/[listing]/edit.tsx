@@ -3,8 +3,8 @@ import type { GetServerSideProps } from 'next';
 import { useRouter } from 'next/router';
 import { useEffect, useState } from 'react';
 
-import { CreateListing } from '@/components/listings/bounty/Bounty';
 import { LoadingSection } from '@/components/shared/LoadingSection';
+import { CreateListing } from '@/features/listing-builder';
 import type { Bounty } from '@/interface/bounty';
 import { Sidebar } from '@/layouts/Sponsor';
 import { userStore } from '@/store/user';

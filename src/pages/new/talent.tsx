@@ -13,15 +13,14 @@ import type { User } from '@prisma/client';
 import React, { Fragment, useState } from 'react';
 import { create } from 'zustand';
 
+import { Steps } from '@/components/misc/steps';
 import { AboutYou } from '@/components/Talent/AboutYou';
 import type { UserStoreType } from '@/components/Talent/types';
 import { YourLinks } from '@/components/Talent/YourLinks';
 import { YourWork } from '@/components/Talent/YourWork';
+import { TalentBio } from '@/components/TalentBio';
 import { Default } from '@/layouts/Default';
 import { Meta } from '@/layouts/Meta';
-
-import { Steps } from '../../components/misc/steps';
-import { TalentBio } from '../../components/TalentBio';
 
 const useFormStore = create<UserStoreType>()((set) => ({
   form: {

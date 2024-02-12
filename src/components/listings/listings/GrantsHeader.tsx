@@ -1,7 +1,7 @@
 import { Heading, HStack, Image, Text, VStack } from '@chakra-ui/react';
 import React from 'react';
 
-import type { SponsorType } from '../../../interface/sponsor';
+import type { SponsorType } from '@/interface/sponsor';
 
 interface Props {
   sponsor: SponsorType;

@@ -35,8 +35,8 @@ import { tokenList } from '@/constants/index';
 import { Superteams } from '@/constants/Superteam';
 import type { Eligibility, Rewards } from '@/interface/bounty';
 import { userStore } from '@/store/user';
-import { getBountyDraftStatus } from '@/utils/bounty';
-import { getURLSanitized } from '@/utils/submissions/getURLSanitized';
+import { getBountyDraftStatus, getRegionTooltipLabel } from '@/utils/bounty';
+import { getURLSanitized } from '@/utils/getURLSanitized';
 
 interface Props {
   id: string;
@@ -210,6 +210,8 @@ export function DetailSideCardBounty({
   }
 
   const isUserEligibleByRegion = userRegionEligibilty();
+
+  const regionTooltipLabel = getRegionTooltipLabel(region);
 
   return (
     <>
@@ -472,7 +474,7 @@ export function DetailSideCardBounty({
                   !hasHackathonStarted
                     ? `Submissions Open ${formattedDate}`
                     : !isUserEligibleByRegion
-                      ? `You aren't eligible for this listing`
+                      ? regionTooltipLabel
                       : ''
                 }
                 rounded="md"

@@ -30,8 +30,8 @@ import type { MultiSelectOptions } from '@/constants';
 import { PrizeList, tokenList } from '@/constants';
 import { sortRank } from '@/utils/rank';
 
-import type { BountyBasicType } from './Createbounty';
-import type { Ques } from './questions/builder';
+import type { BountyBasicType } from './CreateListingForm';
+import type { Ques } from './questionBuilder';
 
 interface PrizeListInterface {
   value: string;

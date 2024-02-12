@@ -2,7 +2,7 @@ import produce from 'immer';
 import { mountStoreDevtool } from 'simple-zustand-devtools';
 import { create } from 'zustand';
 
-import type { SponsorType } from '../interface/sponsor';
+import type { SponsorType } from '@/interface/sponsor';
 
 interface SponsorState {
   currentSponsor: SponsorType | null;

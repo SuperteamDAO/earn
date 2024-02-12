@@ -27,7 +27,7 @@ import {
   createPaymentSOL,
   createPaymentSPL,
 } from '@/utils/contract/contract';
-import { getURLSanitized } from '@/utils/submissions/getURLSanitized';
+import { getURLSanitized } from '@/utils/getURLSanitized';
 import { truncatePublicKey } from '@/utils/truncatePublicKey';
 
 interface Props {

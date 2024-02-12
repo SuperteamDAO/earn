@@ -2,7 +2,7 @@ import { Heading, HStack, Text, VStack } from '@chakra-ui/react';
 import type { Dispatch, SetStateAction } from 'react';
 import React from 'react';
 
-import { Steps } from '../components/misc/steps';
+import { Steps } from '@/components/misc/steps';
 
 interface StepsList {
   label: string;

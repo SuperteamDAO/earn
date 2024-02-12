@@ -1,7 +1,6 @@
 import type { BountyType, Regions } from '@prisma/client';
 
-import type { QuestionType } from '@/components/listings/bounty/questions/builder';
-import type { Superteams } from '@/constants/Superteam';
+import type { SuperteamName } from '@/features/listing-builder';
 import type { SponsorType } from '@/interface/sponsor';
 import type { User } from '@/interface/user';
 
@@ -10,7 +9,7 @@ import type { Skills } from './skills';
 interface Eligibility {
   order: number;
   question: string;
-  type?: QuestionType;
+  type?: 'text';
 }
 
 interface References {
@@ -27,7 +26,6 @@ interface Rewards {
 }
 
 type BountyStatus = 'OPEN' | 'REVIEW' | 'CLOSED';
-export type SuperteamName = (typeof Superteams)[number]['name'];
 
 interface Bounty {
   id?: string;

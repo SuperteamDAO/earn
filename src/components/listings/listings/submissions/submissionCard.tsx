@@ -16,7 +16,7 @@ import React, { useEffect, useState } from 'react';
 import { AiFillHeart } from 'react-icons/ai';
 import type { Metadata } from 'unfurl.js/dist/types';
 
-import { userStore } from '../../../../store/user';
+import { userStore } from '@/store/user';
 
 interface Props {
   winner: boolean;

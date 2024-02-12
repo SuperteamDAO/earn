@@ -24,6 +24,7 @@ import type { References } from '@/interface/bounty';
 import type { SponsorType } from '@/interface/sponsor';
 import type { User } from '@/interface/user';
 import { userStore } from '@/store/user';
+import { getRegionTooltipLabel } from '@/utils/bounty';
 import { dayjs } from '@/utils/dayjs';
 
 interface Bounty {
@@ -154,19 +155,10 @@ export function ListingHeader({
   }
 
   const displayValue = Superteams.find(
-    (team) => team.region === region,
+    (st) => st.region === region,
   )?.displayValue;
 
-  function getTooltipLabel() {
-    switch (region) {
-      case 'GLOBAL':
-        return 'This listing is open to everyone in the world!';
-      case 'BALKAN':
-        return 'You need to be a resident of one of the Balkan countries to be able to participate in this listing';
-      default:
-        return `You need to be a resident of ${displayValue} to participate in this listing`;
-    }
-  }
+  const regionTooltipLabel = getRegionTooltipLabel(region);
 
   return (
     <VStack px={{ base: '', md: '6' }} bg={'white'}>
@@ -290,7 +282,7 @@ export function ListingHeader({
                       fontSize="sm"
                       bg="white"
                       borderRadius={'lg'}
-                      label={getTooltipLabel()}
+                      label={regionTooltipLabel}
                     >
                       <Text
                         px={3}

@@ -18,14 +18,14 @@ import type { Dispatch, SetStateAction } from 'react';
 import { useMemo, useState } from 'react';
 
 import { SkillSelect } from '@/components/misc/SkillSelect';
-import { SelectSponsor } from '@/components/sponsor/SelectSponsor';
+import type { MultiSelectOptions } from '@/constants';
 import { Superteams } from '@/constants/Superteam';
-import type { SuperteamName } from '@/interface/bounty';
 import { userStore } from '@/store/user';
 import { dayjs } from '@/utils/dayjs';
 
-import type { MultiSelectOptions } from '../../../constants';
-import type { BountyBasicType } from './Createbounty';
+import type { SuperteamName } from '../types';
+import type { BountyBasicType } from './CreateListingForm';
+import { SelectSponsor } from './SelectSponsor';
 
 interface Props {
   bountyBasic: BountyBasicType | undefined;

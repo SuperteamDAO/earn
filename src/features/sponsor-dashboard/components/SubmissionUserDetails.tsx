@@ -9,7 +9,7 @@ import { FaDiscord, FaGithub, FaLinkedin } from 'react-icons/fa';
 import { MdOutlineAccountBalanceWallet, MdOutlineMail } from 'react-icons/md';
 
 import type { SubmissionWithUser } from '@/interface/submission';
-import { getURLSanitized } from '@/utils/submissions/getURLSanitized';
+import { getURLSanitized } from '@/utils/getURLSanitized';
 import { truncatePublicKey } from '@/utils/truncatePublicKey';
 
 interface Props {

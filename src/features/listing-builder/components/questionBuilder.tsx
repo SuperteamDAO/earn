@@ -15,17 +15,11 @@ interface Props {
   isNewOrDraft?: boolean;
   isDuplicating?: boolean;
 }
-export type QuestionType =
-  | 'text'
-  | 'single-choice'
-  | 'long-text'
-  | 'checkbox'
-  | 'multi-choice'
-  | 'url';
+
 export interface Ques {
   order: number;
   question: string;
-  type: QuestionType;
+  type: 'text';
   delete?: boolean;
   options?: string[];
   label: string;
@@ -34,7 +28,7 @@ type ErrorState = {
   order: number;
   errMessage: string;
 };
-export const Builder = ({
+export const QuestionBuilder = ({
   setSteps,
   createDraft,
   draftLoading,
@@ -107,39 +101,6 @@ export const Builder = ({
                 return;
               }
               const rejectedQuestion: any[] = [];
-
-              questions
-                .filter(
-                  (e) =>
-                    e.type === 'single-choice' || e.type === 'multi-choice',
-                )
-                .map((e) => {
-                  if (e.options?.length === 0) {
-                    rejectedQuestion.push(e);
-                    setError([
-                      ...error,
-                      {
-                        order: e.order,
-                        errMessage:
-                          'Please add at least one more option for this question',
-                      },
-                    ]);
-                    return e;
-                  }
-                  if (e.options?.length === 1) {
-                    rejectedQuestion.push(e);
-                    setError([
-                      ...error,
-                      {
-                        order: e.order,
-                        errMessage:
-                          'Please add at least one more option for this question',
-                      },
-                    ]);
-                    return e;
-                  }
-                  return null;
-                });
 
               questions.map((e) => {
                 if (e.question.length === 0) {

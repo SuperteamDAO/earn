@@ -140,7 +140,7 @@ export const SubmissionModal = ({
         <>
           Share your hackathon submission here! Remember:
           <Text>
-            To be eligible for different tracks, you need to submit to each
+            1. To be eligible for different tracks, you need to submit to each
             track separately
           </Text>
           <Text>
@@ -294,7 +294,6 @@ export const SubmissionModal = ({
                       <QuestionHandler
                         register={register}
                         question={e?.question}
-                        type={e?.type ?? 'text'}
                         label={`eligibility-${e?.order}`}
                         watch={watch}
                       />

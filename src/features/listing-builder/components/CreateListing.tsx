@@ -5,23 +5,22 @@ import { useAtom } from 'jotai';
 import { useRouter } from 'next/router';
 import { useEffect, useState } from 'react';
 
-import type { BountyBasicType } from '@/components/listings/bounty/Createbounty';
-import { CreateBounty } from '@/components/listings/bounty/Createbounty';
-import type {
-  Ques,
-  QuestionType,
-} from '@/components/listings/bounty/questions/builder';
-import { Template } from '@/components/listings/templates/template';
-import { SuccessListings } from '@/components/modals/successListings';
 import { ErrorSection } from '@/components/shared/ErrorSection';
-import { hackathonSponsorAtom } from '@/components/sponsor/SelectSponsor';
 import { type MultiSelectOptions, tokenList } from '@/constants';
-import type { Bounty, References, SuperteamName } from '@/interface/bounty';
-import { FormLayout } from '@/layouts/FormLayout';
+import type { Bounty, References } from '@/interface/bounty';
 import { userStore } from '@/store/user';
 import { getBountyDraftStatus } from '@/utils/bounty';
 import { dayjs } from '@/utils/dayjs';
-import { mergeSkills, splitSkills } from '@/utils/skills';
+
+import type { SuperteamName } from '../types';
+import { mergeSkills, splitSkills } from '../utils/skills';
+import type { BountyBasicType } from './CreateListingForm';
+import { CreateListingForm } from './CreateListingForm';
+import { FormLayout } from './FormLayout';
+import type { Ques } from './questionBuilder';
+import { hackathonSponsorAtom } from './SelectSponsor';
+import { SuccessListings } from './successListings';
+import { Template } from './template';
 
 interface Props {
   bounty?: Bounty;
@@ -77,7 +76,7 @@ export function CreateListing({
       ? (bounty?.eligibility || [])?.map((e) => ({
           order: e.order,
           question: e.question,
-          type: e.type as QuestionType,
+          type: e.type as 'text',
           delete: true,
           label: e.question,
         }))
@@ -343,7 +342,7 @@ export function CreateListing({
             />
           )}
           {steps > 1 && listingType === 'BOUNTY' && (
-            <CreateBounty
+            <CreateListingForm
               type={type}
               regions={regions}
               setRegions={setRegions}

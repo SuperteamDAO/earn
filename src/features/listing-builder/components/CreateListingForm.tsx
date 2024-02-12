@@ -2,14 +2,15 @@ import type { Regions } from '@prisma/client';
 import type { Dispatch, SetStateAction } from 'react';
 import React from 'react';
 
-import type { References, SuperteamName } from '@/interface/bounty';
+import { Description } from '@/components/listings/description';
+import type { MultiSelectOptions } from '@/constants';
+import type { References } from '@/interface/bounty';
 
-import type { MultiSelectOptions } from '../../../constants';
-import { Description } from '../description';
-import { CreatebountyBasic } from './CreateBountyBasic';
-import { CreatebountyPayment } from './CreateBountyPayments';
-import type { Ques } from './questions/builder';
-import { Builder } from './questions/builder';
+import type { SuperteamName } from '../types';
+import { CreatebountyBasic } from './CreateListingBasic';
+import { CreatebountyPayment } from './CreateListingPayments';
+import type { Ques } from './questionBuilder';
+import { QuestionBuilder } from './questionBuilder';
 
 export interface BountyBasicType {
   title?: string;
@@ -54,7 +55,7 @@ interface Props {
   isPrivate: boolean;
   setIsPrivate: Dispatch<SetStateAction<boolean>>;
 }
-export const CreateBounty = ({
+export const CreateListingForm = ({
   steps,
   editorData,
   setEditorData,
@@ -134,7 +135,7 @@ export const CreateBounty = ({
         />
       )}
       {steps === 4 && (
-        <Builder
+        <QuestionBuilder
           editable={editable}
           setSteps={setSteps}
           draftLoading={draftLoading}

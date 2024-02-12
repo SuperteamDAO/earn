@@ -14,6 +14,7 @@ import Image from 'next/image';
 import NextLink from 'next/link';
 import { useEffect, useState } from 'react';
 
+import { Footer } from '@/components/Footer/Footer';
 import DialectDisplay from '@/public/assets/landingsponsor/displays/chatwithdialect.png';
 import DifferentListingsDisplay from '@/public/assets/landingsponsor/displays/differentlistings.png';
 import FindAnySkillsDisplay from '@/public/assets/landingsponsor/displays/findanyskill.png';
@@ -38,8 +39,6 @@ import Pyth from '@/public/assets/landingsponsor/sponsors/pyth.png';
 import Spaces from '@/public/assets/landingsponsor/sponsors/spaces.png';
 import StreamFlow from '@/public/assets/landingsponsor/sponsors/streamflow.png';
 import Wormhole from '@/public/assets/landingsponsor/sponsors/wormhole.png';
-
-import { Footer } from '../components/Footer/Footer';
 
 type Totals = {
   count: number;

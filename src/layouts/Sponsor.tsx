@@ -4,7 +4,7 @@ import { Box, Button, Flex, Icon, Link, useDisclosure } from '@chakra-ui/react';
 import NextLink from 'next/link';
 import { useRouter } from 'next/router';
 import { useSession } from 'next-auth/react';
-import type { ReactNode, ReactText } from 'react';
+import type { ReactNode } from 'react';
 import React from 'react';
 import type { IconType } from 'react-icons';
 import {
@@ -16,7 +16,7 @@ import {
 import CreateListingModal from '@/components/modals/createListing';
 import { LoadingSection } from '@/components/shared/LoadingSection';
 import { Banner } from '@/components/sponsor/Banner';
-import { SelectSponsor } from '@/components/sponsor/SelectSponsor';
+import { SelectSponsor } from '@/features/listing-builder';
 import { Default } from '@/layouts/Default';
 import { Meta } from '@/layouts/Meta';
 import { userStore } from '@/store/user';
@@ -31,7 +31,7 @@ interface LinkItemProps {
 interface NavItemProps extends FlexProps {
   icon: IconType;
   link?: string;
-  children: ReactText;
+  children: string | number;
 }
 
 export function Sidebar({
