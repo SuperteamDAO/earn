@@ -12,7 +12,7 @@ interface Listings {
   bounties?: Bounty[];
 }
 
-function AllBountiesPage() {
+export default function BountiesPage() {
   const [isListingsLoading, setIsListingsLoading] = useState(true);
   const [listings, setListings] = useState<Listings>({
     bounties: [],
@@ -25,7 +25,6 @@ function AllBountiesPage() {
       const listingsData = await axios.get('/api/listings/', {
         params: {
           category: 'bounties',
-          take: 100,
           type: 'bounty',
           deadline: date,
         },
@@ -56,10 +55,11 @@ function AllBountiesPage() {
           isListingsLoading={isListingsLoading}
           emoji="/assets/home/emojis/moneyman.png"
           title="Bounties"
+          take={20}
+          showViewAll
+          viewAllLink="/bounties/all"
         />
       </Box>
     </Home>
   );
 }
-
-export default AllBountiesPage;

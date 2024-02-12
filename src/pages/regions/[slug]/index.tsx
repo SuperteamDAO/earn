@@ -57,13 +57,16 @@ const RegionsPage = ({
           title={`Welcome to Superteam Earn ${displayName} | Discover Bounties and Grants`}
           description={`Welcome to Superteam ${displayName}'s page — Discover bounties and grants and become a part of the global crypto community`}
           canonical={`https://earn.superteam.fun/regions/${slug}/`}
-        ></Meta>
+        />
         <Box w={'100%'}>
           <BountyTabs
             bounties={listings.bounties}
             isListingsLoading={isListingsLoading}
             emoji="/assets/home/emojis/moneyman.png"
             title="Freelance Gigs"
+            showViewAll
+            viewAllLink={`/regions/${slug}/all`}
+            take={10}
           />
 
           <ListingSection

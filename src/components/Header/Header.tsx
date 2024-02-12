@@ -38,15 +38,15 @@ const NAV_ITEMS: Array<NavItem> = [
     children: [
       {
         label: 'Content',
-        href: '/all/content/',
+        href: '/category/content/',
       },
       {
         label: 'Design',
-        href: '/all/design/',
+        href: '/category/design/',
       },
       {
         label: 'Development',
-        href: '/all/development/',
+        href: '/category/development/',
       },
       {
         label: 'Scribes',

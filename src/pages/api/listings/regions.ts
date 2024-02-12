@@ -7,8 +7,7 @@ import { prisma } from '@/prisma';
 export default async function user(req: NextApiRequest, res: NextApiResponse) {
   const params = req.query;
   const region = params.region as string;
-
-  const deadline = params.deadline as string;
+  const take = params.take ? parseInt(params.take as string, 10) : 10;
 
   const st = Superteams.find((team) => team.region.toLowerCase() === region);
   const superteam = st?.name;
@@ -21,9 +20,6 @@ export default async function user(req: NextApiRequest, res: NextApiResponse) {
         isArchived: false,
         isPrivate: false,
         status: 'OPEN',
-        deadline: {
-          gte: deadline,
-        },
         OR: [
           {
             region: {
@@ -46,6 +42,7 @@ export default async function user(req: NextApiRequest, res: NextApiResponse) {
           },
         },
       },
+      take,
     });
 
     const grants = await prisma.grants.findMany({

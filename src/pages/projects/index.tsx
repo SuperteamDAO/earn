@@ -12,7 +12,7 @@ interface Listings {
   bounties?: Bounty[];
 }
 
-function AllBountiesPage() {
+export default function ProjectsPage() {
   const [isListingsLoading, setIsListingsLoading] = useState(true);
   const [listings, setListings] = useState<Listings>({
     bounties: [],
@@ -56,10 +56,11 @@ function AllBountiesPage() {
           isListingsLoading={isListingsLoading}
           emoji="/assets/home/emojis/moneyman.png"
           title="Projects"
+          viewAllLink="/projects/all"
+          showViewAll
+          take={20}
         />
       </Box>
     </Home>
   );
 }
-
-export default AllBountiesPage;

@@ -153,7 +153,13 @@ export const ListingsCardSkeleton = () => {
   );
 };
 
-export const ListingCard = ({ bounty }: { bounty: Bounty }) => {
+export const ListingCard = ({
+  bounty,
+  checkLanguage,
+}: {
+  bounty: Bounty;
+  checkLanguage?: boolean;
+}) => {
   const {
     rewardAmount,
     deadline,
@@ -178,7 +184,7 @@ export const ListingCard = ({ bounty }: { bounty: Bounty }) => {
     ? langCode === 'eng' || langCode === 'sco'
     : true;
 
-  if (!isEnglish) {
+  if (!isEnglish && checkLanguage) {
     return null;
   }
 

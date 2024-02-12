@@ -25,6 +25,7 @@ interface BountyTabsProps {
   title: string;
   viewAllLink?: string;
   showViewAll?: boolean;
+  checkLanguage?: boolean;
 }
 
 interface ContentProps {
@@ -34,6 +35,7 @@ interface ContentProps {
   filterFunction: (bounty: Bounty) => boolean;
   emptyTitle: string;
   emptyMessage: string;
+  checkLanguage: boolean;
 }
 
 const generateTabContent = ({
@@ -43,6 +45,7 @@ const generateTabContent = ({
   filterFunction,
   emptyTitle,
   emptyMessage,
+  checkLanguage,
 }: ContentProps) => (
   <Flex direction={'column'} rowGap={1}>
     {isListingsLoading ? (
@@ -53,7 +56,13 @@ const generateTabContent = ({
       bounties
         .filter(filterFunction)
         .slice(0, take)
-        .map((bounty) => <ListingCard key={bounty.id} bounty={bounty} />)
+        .map((bounty) => (
+          <ListingCard
+            key={bounty.id}
+            bounty={bounty}
+            checkLanguage={checkLanguage}
+          />
+        ))
     ) : (
       <Flex align="center" justify="center" mt={8}>
         <EmptySection title={emptyTitle} message={emptyMessage} />
@@ -70,6 +79,7 @@ export const BountyTabs = ({
   title,
   viewAllLink,
   showViewAll = false,
+  checkLanguage = false,
 }: BountyTabsProps) => {
   const tabs: TabProps[] = [
     {
@@ -86,6 +96,7 @@ export const BountyTabs = ({
         emptyTitle: 'No listings available!',
         emptyMessage:
           'Subscribe to notifications to get notified about new bounties.',
+        checkLanguage,
       }),
     },
     {
@@ -102,6 +113,7 @@ export const BountyTabs = ({
         emptyTitle: 'No listings in review!',
         emptyMessage:
           'Subscribe to notifications to get notified about updates.',
+        checkLanguage,
       }),
     },
     {
@@ -117,6 +129,7 @@ export const BountyTabs = ({
         emptyTitle: 'No completed listings!',
         emptyMessage:
           'Subscribe to notifications to get notified about announcements.',
+        checkLanguage,
       }),
     },
   ];

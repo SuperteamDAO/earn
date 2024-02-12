@@ -97,6 +97,7 @@ const HomePage: NextPage = () => {
           viewAllLink="/all"
           take={20}
           showViewAll
+          checkLanguage
         />
         <ListingSection
           type="grants"
