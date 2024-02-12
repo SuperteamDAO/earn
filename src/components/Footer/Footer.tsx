@@ -172,6 +172,17 @@ export const Footer = () => {
             ))}
           </Stack>
           <Stack align={'flex-start'}>
+            <Link
+              mb={2}
+              color={'brand.slate.500'}
+              fontSize={'lg'}
+              fontWeight={'700'}
+              href="https://superteamdao.notion.site/Superteam-Earn-FAQ-aedaa039b25741b1861167d68aa880b1?pvs=4"
+              isExternal
+            >
+              FAQ
+            </Link>
+
             <ListHeader>Superteam Productions</ListHeader>
             <Link
               as={NextLink}
