@@ -5,7 +5,7 @@ import { useEffect, useState } from 'react';
 
 import { LoadingSection } from '@/components/shared/LoadingSection';
 import { CreateListing } from '@/features/listing-builder';
-import type { Bounty } from '@/interface/bounty';
+import type { Bounty } from '@/features/listings';
 import { Sidebar } from '@/layouts/Sponsor';
 import { userStore } from '@/store/user';
 

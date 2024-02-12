@@ -4,7 +4,7 @@ import { Box, Button, Flex, Icon, Link, useDisclosure } from '@chakra-ui/react';
 import NextLink from 'next/link';
 import { useRouter } from 'next/router';
 import { useSession } from 'next-auth/react';
-import type { ReactNode } from 'react';
+import type { ReactNode, ReactText } from 'react';
 import React from 'react';
 import type { IconType } from 'react-icons';
 import {
@@ -31,7 +31,7 @@ interface LinkItemProps {
 interface NavItemProps extends FlexProps {
   icon: IconType;
   link?: string;
-  children: string | number;
+  children: ReactText;
 }
 
 export function Sidebar({

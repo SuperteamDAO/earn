@@ -3,14 +3,14 @@ import axios from 'axios';
 import type { NextPageContext } from 'next';
 import { useEffect, useState } from 'react';
 
-import {
-  ListingCard,
-  ListingsCardSkeleton,
-  ListingSection,
-} from '@/components/misc/listingsCard';
 import { EmptySection } from '@/components/shared/EmptySection';
 import { Superteams } from '@/constants/Superteam';
-import type { Bounty } from '@/interface/bounty';
+import type { Bounty } from '@/features/listings';
+import {
+  ListingCard,
+  ListingCardSkeleton,
+  ListingSection,
+} from '@/features/listings';
 import { Home } from '@/layouts/Home';
 import { Meta } from '@/layouts/Meta';
 
@@ -64,7 +64,7 @@ export default function AllRegionListingsPage({
         >
           {isListingsLoading &&
             Array.from({ length: 8 }, (_, index) => (
-              <ListingsCardSkeleton key={index} />
+              <ListingCardSkeleton key={index} />
             ))}
           {!isListingsLoading && !listings?.bounties?.length && (
             <Flex align="center" justify="center" mt={8}>

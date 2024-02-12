@@ -1,33 +1,11 @@
 import type { BountyType, Regions } from '@prisma/client';
+import type { User } from 'next-auth';
 
 import type { SuperteamName } from '@/features/listing-builder';
+import type { Skills } from '@/interface/skills';
 import type { SponsorType } from '@/interface/sponsor';
-import type { User } from '@/interface/user';
 
-import type { Skills } from './skills';
-
-interface Eligibility {
-  order: number;
-  question: string;
-  type?: 'text';
-}
-
-interface References {
-  order: number;
-  link: string;
-}
-
-interface Rewards {
-  first?: number;
-  second?: number;
-  third?: number;
-  fourth?: number;
-  fifth?: number;
-}
-
-type BountyStatus = 'OPEN' | 'REVIEW' | 'CLOSED';
-
-interface Bounty {
+export interface Bounty {
   id?: string;
   title?: string;
   slug?: string;
@@ -38,7 +16,7 @@ interface Bounty {
   deadline?: string;
   eligibility?: Eligibility[];
   references?: References[];
-  status?: BountyStatus;
+  status?: 'OPEN' | 'REVIEW' | 'CLOSED';
   isActive?: boolean;
   isArchived?: boolean;
   isPublished?: boolean;
@@ -76,17 +54,27 @@ interface Bounty {
   };
 }
 
-interface BountyWithSubmissions extends Bounty {
+export interface BountyWithSubmissions extends Bounty {
   _count?: {
     Submission?: number;
   };
 }
 
-export type {
-  Bounty,
-  BountyStatus,
-  BountyWithSubmissions,
-  Eligibility,
-  References,
-  Rewards,
-};
+export interface Eligibility {
+  order: number;
+  question: string;
+  type?: 'text';
+}
+
+export interface References {
+  order: number;
+  link: string;
+}
+
+export interface Rewards {
+  first?: number;
+  second?: number;
+  third?: number;
+  fourth?: number;
+  fifth?: number;
+}

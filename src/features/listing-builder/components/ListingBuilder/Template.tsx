@@ -8,8 +8,8 @@ import type { MultiSelectOptions } from '@/constants';
 import { getBountyTypeLabel } from '@/utils/bounty';
 import { getURL } from '@/utils/validUrl';
 
-import { splitSkills } from '../utils/skills';
-import type { BountyBasicType } from './CreateListingForm';
+import { splitSkills } from '../../utils/skills';
+import type { BountyBasicType } from '../CreateListingForm';
 
 interface Props {
   setSteps: Dispatch<SetStateAction<number>>;

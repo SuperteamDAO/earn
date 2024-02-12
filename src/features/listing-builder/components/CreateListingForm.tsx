@@ -2,15 +2,17 @@ import type { Regions } from '@prisma/client';
 import type { Dispatch, SetStateAction } from 'react';
 import React from 'react';
 
-import { Description } from '@/components/listings/description';
 import type { MultiSelectOptions } from '@/constants';
-import type { References } from '@/interface/bounty';
+import type { References } from '@/features/listings';
 
 import type { SuperteamName } from '../types';
-import { CreatebountyBasic } from './CreateListingBasic';
-import { CreatebountyPayment } from './CreateListingPayments';
-import type { Ques } from './questionBuilder';
-import { QuestionBuilder } from './questionBuilder';
+import type { Ques } from './ListingBuilder';
+import {
+  DescriptionBuilder,
+  ListingBasic,
+  ListingPayments,
+  QuestionBuilder,
+} from './ListingBuilder';
 
 export interface BountyBasicType {
   title?: string;
@@ -95,7 +97,7 @@ export const CreateListingForm = ({
   return (
     <>
       {steps === 2 && (
-        <CreatebountyBasic
+        <ListingBasic
           regions={regions}
           setRegions={setRegions}
           editable={editable}
@@ -118,7 +120,7 @@ export const CreateListingForm = ({
         />
       )}
       {steps === 3 && (
-        <Description
+        <DescriptionBuilder
           type={type}
           setBountyRequirements={setBountyRequirements}
           bountyRequirements={bountyRequirements}
@@ -148,7 +150,7 @@ export const CreateListingForm = ({
       )}
 
       {steps === 5 && (
-        <CreatebountyPayment
+        <ListingPayments
           editable={editable}
           createAndPublishListing={createAndPublishListing}
           isListingPublishing={isListingPublishing}

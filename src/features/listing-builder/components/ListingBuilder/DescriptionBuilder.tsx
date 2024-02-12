@@ -43,9 +43,8 @@ import {
   MdOutlineHorizontalRule,
 } from 'react-icons/md';
 
-import type { References } from '@/interface/bounty';
-
-import { ReferenceCard } from './bounty/reference-input';
+import type { References } from '@/features/listings';
+import { ReferenceCard } from '@/features/listings';
 
 const LinkModal = ({
   isOpen,
@@ -98,7 +97,7 @@ interface Props {
   isDuplicating?: boolean;
 }
 
-export const Description = ({
+export const DescriptionBuilder = ({
   editorData,
   setEditorData,
   setSteps,

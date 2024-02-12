@@ -7,13 +7,13 @@ import { useEffect, useState } from 'react';
 
 import { LoadingSection } from '@/components/shared/LoadingSection';
 import { PublishResults } from '@/components/submissions/PublishResults';
+import type { Bounty } from '@/features/listings';
 import {
   SubmissionDetails,
   SubmissionHeader,
   SubmissionList,
   SubmissionUserDetails,
 } from '@/features/sponsor-dashboard';
-import type { Bounty } from '@/interface/bounty';
 import type { SubmissionWithUser } from '@/interface/submission';
 import { Sidebar } from '@/layouts/Sponsor';
 import { userStore } from '@/store/user';

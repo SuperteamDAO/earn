@@ -3,7 +3,7 @@ import type { Dispatch, SetStateAction } from 'react';
 import React, { useState } from 'react';
 import toast, { Toaster } from 'react-hot-toast';
 
-import { QuestionCard } from './questionCard';
+import { QuestionCard } from './QuestionCard';
 
 interface Props {
   setSteps: Dispatch<SetStateAction<number>>;

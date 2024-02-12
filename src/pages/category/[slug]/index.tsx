@@ -4,11 +4,11 @@ import dayjs from 'dayjs';
 import type { NextPageContext } from 'next';
 import { useEffect, useState } from 'react';
 
-import { BountyTabs } from '@/components/listings/bounty/Tabs';
-import { GrantsCard, ListingSection } from '@/components/misc/listingsCard';
+import { GrantsCard } from '@/components/misc/GrantsCard';
 import { EmptySection } from '@/components/shared/EmptySection';
 import { Loading } from '@/components/shared/Loading';
-import type { Bounty } from '@/interface/bounty';
+import type { Bounty } from '@/features/listings';
+import { ListingSection, ListingTabs } from '@/features/listings';
 import type { Grant } from '@/interface/grant';
 import { Home } from '@/layouts/Home';
 import { Meta } from '@/layouts/Meta';
@@ -70,7 +70,7 @@ function ListingCategoryPage({ slug }: { slug: string }) {
         canonical={canonicalURL}
       />
       <Box w={'100%'}>
-        <BountyTabs
+        <ListingTabs
           bounties={listings.bounties}
           isListingsLoading={isListingsLoading}
           emoji="/assets/home/emojis/moneyman.png"

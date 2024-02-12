@@ -4,9 +4,10 @@ import Avatar from 'boring-avatars';
 import NextLink from 'next/link';
 import { useEffect, useState } from 'react';
 
-import type { Bounty, Rewards } from '@/interface/bounty';
 import type { SubmissionWithUser } from '@/interface/submission';
 import { sortRank } from '@/utils/rank';
+
+import type { Bounty, Rewards } from '../../types';
 
 interface Props {
   bounty: Bounty;

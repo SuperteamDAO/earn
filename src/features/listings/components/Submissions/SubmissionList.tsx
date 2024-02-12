@@ -3,10 +3,10 @@ import moment from 'moment';
 import type { Dispatch, SetStateAction } from 'react';
 import React from 'react';
 
-import type { Bounty } from '@/interface/bounty';
 import type { SubmissionWithUser } from '@/interface/submission';
 
-import { SubmissionCard } from './submissionCard';
+import type { Bounty } from '../../types';
+import { SubmissionCard } from './SubmissionCard';
 
 interface Props {
   bounty: Bounty;
@@ -14,7 +14,7 @@ interface Props {
   endTime: string;
   setUpdate: Dispatch<SetStateAction<boolean>>;
 }
-export const Submissions = ({
+export const SubmissionList = ({
   bounty,
   submissions,
   endTime,

@@ -16,11 +16,12 @@ import { LoginWrapper } from '@/components/Header/LoginWrapper';
 import { ErrorInfo } from '@/components/shared/ErrorInfo';
 import { Loading } from '@/components/shared/Loading';
 import { UserAvatar } from '@/components/shared/UserAvatar';
-import { WarningModal } from '@/components/shared/WarningModal';
 import type { Comment } from '@/interface/comments';
 import { userStore } from '@/store/user';
 import { dayjs } from '@/utils/dayjs';
 import { getURL } from '@/utils/validUrl';
+
+import { WarningModal } from '../WarningModal';
 
 interface Props {
   refId: string;

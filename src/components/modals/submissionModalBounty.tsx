@@ -19,10 +19,10 @@ import type { BountyType } from '@prisma/client';
 import { PublicKey } from '@solana/web3.js';
 import axios from 'axios';
 import { useState } from 'react';
+import type { FieldValues, UseFormRegister } from 'react-hook-form';
 import { useForm } from 'react-hook-form';
 
-import { QuestionHandler } from '@/components/listings/bounty/questions/questionHandler';
-import type { Eligibility } from '@/interface/bounty';
+import type { Eligibility } from '@/features/listings';
 import { userStore } from '@/store/user';
 
 import { AutoResizeTextarea } from '../shared/autosize-textarea';
@@ -37,6 +37,48 @@ interface Props {
   submissionNumber: number;
   type?: BountyType | string;
 }
+
+interface QuestionProps {
+  question: string;
+  label: string;
+  register: UseFormRegister<FieldValues>;
+  watch?: any;
+}
+
+const QuestionHandler = ({
+  question,
+  register,
+  label,
+  watch,
+}: QuestionProps) => {
+  return (
+    <>
+      <FormLabel mb={1} color={'brand.slate.600'} fontWeight={600}>
+        {question}
+      </FormLabel>
+      <AutoResizeTextarea
+        borderColor={'brand.slate.300'}
+        _placeholder={{ color: 'brand.slate.300' }}
+        focusBorderColor="brand.purple"
+        maxLength={3000}
+        {...register(label)}
+      />
+      <Text
+        color={(watch(label)?.length || 0) > 2900 ? 'red' : 'brand.slate.400'}
+        fontSize={'xs'}
+        textAlign="right"
+      >
+        {watch(label)?.length > 2500 &&
+          (3000 - (watch(label)?.length || 0) === 0 ? (
+            <p>Character limit reached</p>
+          ) : (
+            <p>{3000 - (watch(label)?.length || 0)} characters left</p>
+          ))}
+      </Text>
+    </>
+  );
+};
+
 export const SubmissionModal = ({
   id,
   isOpen,

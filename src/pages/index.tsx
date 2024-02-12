@@ -5,12 +5,12 @@ import type { NextPage } from 'next';
 import { useSession } from 'next-auth/react';
 import { useEffect, useState } from 'react';
 
-import { BountyTabs } from '@/components/listings/bounty/Tabs';
-import { GrantsCard, ListingSection } from '@/components/misc/listingsCard';
+import { GrantsCard } from '@/components/misc/GrantsCard';
 import { AuthFeatureModal } from '@/components/modals/AuthFeature';
 import { EmptySection } from '@/components/shared/EmptySection';
 import { Loading } from '@/components/shared/Loading';
-import type { Bounty } from '@/interface/bounty';
+import type { Bounty } from '@/features/listings';
+import { ListingSection, ListingTabs } from '@/features/listings';
 import type { Grant } from '@/interface/grant';
 import { Home } from '@/layouts/Home';
 
@@ -89,7 +89,7 @@ const HomePage: NextPage = () => {
         onClose={handleClose}
       />
       <Box w={'100%'}>
-        <BountyTabs
+        <ListingTabs
           bounties={bounties.bounties}
           isListingsLoading={isListingsLoading}
           emoji="/assets/home/emojis/moneyman.png"

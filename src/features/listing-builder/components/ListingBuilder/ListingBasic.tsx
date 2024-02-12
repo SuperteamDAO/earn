@@ -23,9 +23,9 @@ import { Superteams } from '@/constants/Superteam';
 import { userStore } from '@/store/user';
 import { dayjs } from '@/utils/dayjs';
 
-import type { SuperteamName } from '../types';
-import type { BountyBasicType } from './CreateListingForm';
-import { SelectSponsor } from './SelectSponsor';
+import type { SuperteamName } from '../../types';
+import type { BountyBasicType } from '../CreateListingForm';
+import { SelectSponsor } from '../SelectSponsor';
 
 interface Props {
   bountyBasic: BountyBasicType | undefined;
@@ -57,7 +57,7 @@ interface ErrorsBasic {
   pocSocials: boolean;
   timeToComplete: boolean;
 }
-export const CreatebountyBasic = ({
+export const ListingBasic = ({
   setbountyBasic,
   setSteps,
   setSkills,

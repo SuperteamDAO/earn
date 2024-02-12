@@ -4,12 +4,10 @@ import dayjs from 'dayjs';
 import NextLink from 'next/link';
 import { useState } from 'react';
 
-import {
-  ListingCard,
-  ListingsCardSkeleton,
-} from '@/components/misc/listingsCard';
 import { EmptySection } from '@/components/shared/EmptySection';
-import type { Bounty } from '@/interface/bounty';
+
+import type { Bounty } from '../types';
+import { ListingCard, ListingCardSkeleton } from './ListingCard';
 
 interface TabProps {
   id: string;
@@ -17,7 +15,7 @@ interface TabProps {
   content: JSX.Element;
 }
 
-interface BountyTabsProps {
+interface ListingTabsProps {
   isListingsLoading: boolean;
   bounties: Bounty[] | undefined;
   take?: number;
@@ -50,7 +48,7 @@ const generateTabContent = ({
   <Flex direction={'column'} rowGap={1}>
     {isListingsLoading ? (
       Array.from({ length: 8 }, (_, index) => (
-        <ListingsCardSkeleton key={index} />
+        <ListingCardSkeleton key={index} />
       ))
     ) : bounties?.filter(filterFunction).length ? (
       bounties
@@ -71,7 +69,7 @@ const generateTabContent = ({
   </Flex>
 );
 
-export const BountyTabs = ({
+export const ListingTabs = ({
   isListingsLoading,
   bounties,
   take,
@@ -80,7 +78,7 @@ export const BountyTabs = ({
   viewAllLink,
   showViewAll = false,
   checkLanguage = false,
-}: BountyTabsProps) => {
+}: ListingTabsProps) => {
   const tabs: TabProps[] = [
     {
       id: 'tab1',

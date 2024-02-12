@@ -30,13 +30,14 @@ import { LoginWrapper } from '@/components/Header/LoginWrapper';
 import { VerticalStep } from '@/components/misc/steps';
 import { SubmissionModal } from '@/components/modals/submissionModalBounty';
 import { CountDownRenderer } from '@/components/shared/countdownRenderer';
-import { WarningModal } from '@/components/shared/WarningModal';
 import { tokenList } from '@/constants/index';
 import { Superteams } from '@/constants/Superteam';
-import type { Eligibility, Rewards } from '@/interface/bounty';
 import { userStore } from '@/store/user';
 import { getBountyDraftStatus, getRegionTooltipLabel } from '@/utils/bounty';
 import { getURLSanitized } from '@/utils/getURLSanitized';
+
+import type { Eligibility, Rewards } from '../../types';
+import { WarningModal } from '../WarningModal';
 
 interface Props {
   id: string;
@@ -66,7 +67,7 @@ interface Props {
   };
   region?: string;
 }
-export function DetailSideCardBounty({
+export function RightSideBar({
   id,
   total,
   prizeList,

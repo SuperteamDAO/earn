@@ -18,14 +18,15 @@ import React, { useEffect, useState } from 'react';
 import { toast, Toaster } from 'react-hot-toast';
 import { TbBell, TbBellRinging } from 'react-icons/tb';
 
-import { EarningModal } from '@/components/modals/earningModal';
+import { SignUpPrompt } from '@/components/modals/Login/SignUpPrompt';
 import { Superteams } from '@/constants/Superteam';
-import type { References } from '@/interface/bounty';
 import type { SponsorType } from '@/interface/sponsor';
 import type { User } from '@/interface/user';
 import { userStore } from '@/store/user';
 import { getRegionTooltipLabel } from '@/utils/bounty';
 import { dayjs } from '@/utils/dayjs';
+
+import type { References } from '../../types';
 
 interface Bounty {
   id: string | undefined;
@@ -162,7 +163,7 @@ export function ListingHeader({
 
   return (
     <VStack px={{ base: '', md: '6' }} bg={'white'}>
-      {isOpen && <EarningModal isOpen={isOpen} onClose={onClose} />}
+      {isOpen && <SignUpPrompt isOpen={isOpen} onClose={onClose} />}
       <VStack
         align="start"
         justify={['start', 'start', 'space-between', 'space-between']}

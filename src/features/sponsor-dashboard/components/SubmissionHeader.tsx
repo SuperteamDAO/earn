@@ -27,7 +27,7 @@ import router from 'next/router';
 import React, { useState } from 'react';
 
 import { tokenList } from '@/constants';
-import type { Bounty } from '@/interface/bounty';
+import type { Bounty } from '@/features/listings';
 import {
   formatDeadline,
   getBountyStatus,

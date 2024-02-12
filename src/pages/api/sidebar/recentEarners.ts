@@ -1,6 +1,6 @@
 import type { NextApiRequest, NextApiResponse } from 'next';
 
-import type { Rewards } from '@/interface/bounty';
+import type { Rewards } from '@/features/listings';
 import { prisma } from '@/prisma';
 
 export default async function user(_req: NextApiRequest, res: NextApiResponse) {

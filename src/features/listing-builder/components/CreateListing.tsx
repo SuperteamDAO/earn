@@ -7,20 +7,17 @@ import { useEffect, useState } from 'react';
 
 import { ErrorSection } from '@/components/shared/ErrorSection';
 import { type MultiSelectOptions, tokenList } from '@/constants';
-import type { Bounty, References } from '@/interface/bounty';
+import type { Bounty, References } from '@/features/listings';
 import { userStore } from '@/store/user';
 import { getBountyDraftStatus } from '@/utils/bounty';
 import { dayjs } from '@/utils/dayjs';
 
 import type { SuperteamName } from '../types';
 import { mergeSkills, splitSkills } from '../utils/skills';
-import type { BountyBasicType } from './CreateListingForm';
-import { CreateListingForm } from './CreateListingForm';
-import { FormLayout } from './FormLayout';
-import type { Ques } from './questionBuilder';
+import type { BountyBasicType, Ques } from './ListingBuilder';
+import { CreateListingForm, FormLayout, Template } from './ListingBuilder';
+import { ListingSuccessModal } from './ListingSuccessModal';
 import { hackathonSponsorAtom } from './SelectSponsor';
-import { SuccessListings } from './successListings';
-import { Template } from './template';
 
 interface Props {
   bounty?: Bounty;
@@ -323,7 +320,7 @@ export function CreateListing({
           }
         >
           {isOpen && (
-            <SuccessListings
+            <ListingSuccessModal
               slug={slug}
               isOpen={isOpen}
               onClose={() => {}}

@@ -3,8 +3,7 @@ import axios from 'axios';
 import dayjs from 'dayjs';
 import { useEffect, useState } from 'react';
 
-import { BountyTabs } from '@/components/listings/bounty/Tabs';
-import type { Bounty } from '@/interface/bounty';
+import { type Bounty, ListingTabs } from '@/features/listings';
 import { Home } from '@/layouts/Home';
 import { Meta } from '@/layouts/Meta';
 
@@ -50,7 +49,7 @@ export default function BountiesPage() {
       />
 
       <Box w={'100%'}>
-        <BountyTabs
+        <ListingTabs
           bounties={listings.bounties}
           isListingsLoading={isListingsLoading}
           emoji="/assets/home/emojis/moneyman.png"

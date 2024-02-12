@@ -8,7 +8,7 @@ import {
   rateLimitedPromiseAll,
   WinnersAnnouncedTemplate,
 } from '@/features/emails';
-import type { Rewards } from '@/interface/bounty';
+import type { Rewards } from '@/features/listings';
 import { prisma } from '@/prisma';
 import { getBountyTypeLabel } from '@/utils/bounty';
 import { dayjs } from '@/utils/dayjs';

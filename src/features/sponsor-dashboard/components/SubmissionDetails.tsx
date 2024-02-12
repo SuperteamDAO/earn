@@ -20,7 +20,7 @@ import type { Dispatch, SetStateAction } from 'react';
 import React, { useState } from 'react';
 
 import { tokenList } from '@/constants';
-import type { Bounty, Rewards } from '@/interface/bounty';
+import type { Bounty, Rewards } from '@/features/listings';
 import type { SubmissionWithUser } from '@/interface/submission';
 import {
   connection,

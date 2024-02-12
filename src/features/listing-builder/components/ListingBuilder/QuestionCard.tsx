@@ -12,7 +12,7 @@ import {
 } from '@chakra-ui/react';
 import type { Dispatch, SetStateAction } from 'react';
 
-import type { Ques } from './questionBuilder';
+import type { Ques } from './QuestionBuilder';
 
 interface Props {
   setQuestions: Dispatch<SetStateAction<Ques[]>>;

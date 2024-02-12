@@ -24,7 +24,7 @@ interface Props {
   slug: string;
   hackathonSlug?: string;
 }
-export const SuccessListings = ({
+export const ListingSuccessModal = ({
   isOpen,
   onClose,
   slug,

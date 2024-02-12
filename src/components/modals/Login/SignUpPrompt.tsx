@@ -14,7 +14,7 @@ interface Props {
   onClose: () => void;
   isOpen: boolean;
 }
-export const EarningModal = ({ isOpen, onClose }: Props) => {
+export const SignUpPrompt = ({ isOpen, onClose }: Props) => {
   const router = useRouter();
   return (
     <>

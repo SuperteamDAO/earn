@@ -1,5 +1,5 @@
 import { Superteams } from '@/constants/Superteam';
-import type { Bounty, BountyWithSubmissions } from '@/interface/bounty';
+import type { Bounty, BountyWithSubmissions } from '@/features/listings';
 import { dayjs } from '@/utils/dayjs';
 
 export const formatDeadline = (

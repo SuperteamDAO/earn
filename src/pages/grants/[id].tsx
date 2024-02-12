@@ -12,10 +12,10 @@ import axios from 'axios';
 import type { GetServerSideProps } from 'next';
 import React, { useEffect, useState } from 'react';
 
-import { DetailDescription } from '@/components/listings/listings/details/detailDescription';
-import { GrantsHeader } from '@/components/listings/listings/GrantsHeader';
+import { GrantsHeader } from '@/components/misc/GrantsHeader';
 import { EmptySection } from '@/components/shared/EmptySection';
 import { LoadingSection } from '@/components/shared/LoadingSection';
+import { DescriptionUI } from '@/features/listings';
 import type { Grant } from '@/interface/grant';
 import type { SponsorType } from '@/interface/sponsor';
 import { Default } from '@/layouts/Default';
@@ -80,7 +80,7 @@ const Grants = ({ slug }: GrantsDetailsProps) => {
               my={10}
             >
               <HStack w={['22rem', '22rem', 'full', 'full']}>
-                <DetailDescription
+                <DescriptionUI
                   skills={grants?.skills?.map((e) => e.skills)}
                   description={(grants?.description as string) ?? ''}
                 />

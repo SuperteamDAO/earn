@@ -1,7 +1,7 @@
 import { FormControl, FormLabel, Input, Text, VStack } from '@chakra-ui/react';
 import { type Dispatch, type SetStateAction } from 'react';
 
-import type { References } from '@/interface/bounty';
+import type { References } from '../../types';
 
 interface Props {
   setReferences: Dispatch<SetStateAction<References[]>>;

@@ -11,7 +11,7 @@ interface Props {
   description?: string;
 }
 
-export function DetailDescription({ skills, description }: Props) {
+export function DescriptionUI({ skills, description }: Props) {
   const options: HTMLReactParserOptions = {
     replace: ({ name, children, attribs }: any) => {
       if (name === 'p' && (!children || children.length === 0)) {
@@ -59,6 +59,7 @@ export function DetailDescription({ skills, description }: Props) {
           overflow={'hidden'}
           w={'full'}
           h={'full'}
+          px={5}
           pb={8}
           id="reset-des"
         >

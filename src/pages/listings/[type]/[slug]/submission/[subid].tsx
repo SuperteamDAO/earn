@@ -4,11 +4,10 @@ import axios from 'axios';
 import type { GetServerSideProps } from 'next';
 import React, { useEffect, useState } from 'react';
 
-import { ListingHeader } from '@/components/listings/listings/ListingHeader';
-import { SubmissionPage } from '@/components/listings/listings/submissions/submissionPage';
 import { EmptySection } from '@/components/shared/EmptySection';
 import { LoadingSection } from '@/components/shared/LoadingSection';
-import type { Bounty } from '@/interface/bounty';
+import type { Bounty } from '@/features/listings';
+import { ListingHeader, SubmissionPage } from '@/features/listings';
 import type { SponsorType } from '@/interface/sponsor';
 import type { SubmissionWithUser } from '@/interface/submission';
 import { Default } from '@/layouts/Default';

@@ -4,11 +4,13 @@ import axios from 'axios';
 import type { GetServerSideProps } from 'next';
 import { useEffect, useState } from 'react';
 
-import { ListingWinners } from '@/components/listings/bounty/ListingWinners';
-import { DetailDescriptionBounty } from '@/components/listings/listings/details/detailDescriptionBounty';
-import { ListingHeader } from '@/components/listings/listings/ListingHeader';
 import { ErrorSection } from '@/components/shared/ErrorSection';
 import { LoadingSection } from '@/components/shared/LoadingSection';
+import {
+  DescriptionUI,
+  ListingHeader,
+  ListingWinners,
+} from '@/features/listings';
 import { Default } from '@/layouts/Default';
 import { Meta } from '@/layouts/Meta';
 
@@ -79,7 +81,7 @@ function BountyDetails({ slug }: BountyDetailsProps) {
             mb={10}
           >
             <VStack gap={8} w={['22rem', '22rem', 'full', 'full']} mt={10}>
-              <DetailDescriptionBounty
+              <DescriptionUI
                 skills={bounty?.skills?.map((e: any) => e.skills) ?? []}
                 description={bounty?.description}
               />
