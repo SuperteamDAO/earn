@@ -262,6 +262,16 @@ export const DescriptionBuilder = ({
             >
               Listing Details
             </FormLabel>
+            <Text
+              as="sup"
+              mt={3.5}
+              mr={3}
+              ml={-2}
+              color="#e53e3e"
+              fontWeight={600}
+            >
+              *
+            </Text>
             <Tooltip
               w="max"
               p="0.7rem"
