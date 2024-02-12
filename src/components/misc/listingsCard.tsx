@@ -37,8 +37,6 @@ type ListingSectionProps = {
   sub: string;
   emoji: string;
   type: 'bounties' | 'grants';
-  url?: string;
-  all?: boolean;
 };
 
 export const ListingSection = ({

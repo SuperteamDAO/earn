@@ -10,11 +10,6 @@ export default async function user(req: NextApiRequest, res: NextApiResponse) {
 
   const deadline = params.deadline as string;
 
-  const result: any = {
-    bounties: [],
-    grants: [],
-  };
-
   const st = Superteams.find((team) => team.region.toLowerCase() === region);
   const superteam = st?.name;
 
@@ -53,8 +48,6 @@ export default async function user(req: NextApiRequest, res: NextApiResponse) {
       },
     });
 
-    result.bounties = bounties;
-
     const grants = await prisma.grants.findMany({
       where: {
         isPublished: true,
@@ -85,9 +78,8 @@ export default async function user(req: NextApiRequest, res: NextApiResponse) {
         },
       },
     });
-    result.grants = grants;
 
-    res.status(200).json(result);
+    res.status(200).json({ bounties, grants });
   } catch (error) {
     console.log(error);
 

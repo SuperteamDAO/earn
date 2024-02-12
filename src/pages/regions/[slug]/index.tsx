@@ -3,12 +3,8 @@ import axios from 'axios';
 import type { NextPageContext } from 'next';
 import React, { useEffect, useState } from 'react';
 
-import {
-  GrantsCard,
-  ListingCard,
-  ListingsCardSkeleton,
-  ListingSection,
-} from '@/components/misc/listingsCard';
+import { BountyTabs } from '@/components/listings/bounty/Tabs';
+import { GrantsCard, ListingSection } from '@/components/misc/listingsCard';
 import { EmptySection } from '@/components/shared/EmptySection';
 import { Loading } from '@/components/shared/Loading';
 import { Superteams } from '@/constants/Superteam';
@@ -63,38 +59,18 @@ const RegionsPage = ({
           canonical={`https://earn.superteam.fun/regions/${slug}/`}
         ></Meta>
         <Box w={'100%'}>
-          <ListingSection
-            type="bounties"
-            title="Freelance Gigs"
-            sub="Bite sized tasks for freelancers"
+          <BountyTabs
+            bounties={listings.bounties}
+            isListingsLoading={isListingsLoading}
             emoji="/assets/home/emojis/moneyman.png"
-            url={`/regions/${slug}/bounties`}
-            all
-          >
-            {isListingsLoading &&
-              Array.from({ length: 8 }, (_, index) => (
-                <ListingsCardSkeleton key={index} />
-              ))}
-            {!isListingsLoading && !listings?.bounties?.length && (
-              <Flex align="center" justify="center" mt={8}>
-                <EmptySection
-                  title="No listings available!"
-                  message="Subscribe to notifications to get notified about new bounties."
-                />
-              </Flex>
-            )}
-            {!isListingsLoading &&
-              listings?.bounties?.map((bounty) => {
-                return <ListingCard key={bounty.id} bounty={bounty} />;
-              })}
-          </ListingSection>
+            title="Freelance Gigs"
+          />
 
           <ListingSection
             type="grants"
             title="Grants"
             sub="Equity-free funding opportunities for builders"
             emoji="/assets/home/emojis/grants.png"
-            all
           >
             {isListingsLoading && (
               <Flex

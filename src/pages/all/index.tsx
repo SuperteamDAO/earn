@@ -50,7 +50,6 @@ function AllListingsPage() {
           title="Freelance Gigs"
           sub="Bite sized tasks for freelancers"
           emoji="/assets/home/emojis/moneyman.png"
-          all
         >
           {isListingsLoading &&
             Array.from({ length: 8 }, (_, index) => (
