@@ -3,13 +3,12 @@ import axios from 'axios';
 import type { NextPageContext } from 'next';
 import React, { useEffect, useState } from 'react';
 
-import { GrantsCard } from '@/components/misc/GrantsCard';
 import { EmptySection } from '@/components/shared/EmptySection';
 import { Loading } from '@/components/shared/Loading';
 import { Superteams } from '@/constants/Superteam';
+import { type Grant, GrantsCard } from '@/features/grants';
 import type { Bounty } from '@/features/listings';
 import { ListingSection, ListingTabs } from '@/features/listings';
-import type { Grant } from '@/interface/grant';
 import { Home } from '@/layouts/Home';
 import { Meta } from '@/layouts/Meta';
 
@@ -95,17 +94,7 @@ const RegionsPage = ({
             )}
             {!isListingsLoading &&
               listings?.grants?.map((grant) => {
-                return (
-                  <GrantsCard
-                    sponsorName={grant?.sponsor?.name}
-                    logo={grant?.sponsor?.logo}
-                    key={grant?.id}
-                    slug={grant.slug}
-                    rewardAmount={grant?.rewardAmount}
-                    title={grant?.title}
-                    short_description={grant?.shortDescription}
-                  />
-                );
+                return <GrantsCard grant={grant} key={grant.id} />;
               })}
           </ListingSection>
         </Box>

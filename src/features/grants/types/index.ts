@@ -1,7 +1,6 @@
+import type { Skills } from '@/interface/skills';
 import type { SponsorType } from '@/interface/sponsor';
 import type { User } from '@/interface/user';
-
-import type { Skills } from './skills';
 
 interface Grant {
   id: string;

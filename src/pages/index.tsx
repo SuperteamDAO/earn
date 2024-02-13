@@ -5,13 +5,12 @@ import type { NextPage } from 'next';
 import { useSession } from 'next-auth/react';
 import { useEffect, useState } from 'react';
 
-import { GrantsCard } from '@/components/misc/GrantsCard';
 import { AuthFeatureModal } from '@/components/modals/AuthFeature';
 import { EmptySection } from '@/components/shared/EmptySection';
 import { Loading } from '@/components/shared/Loading';
+import { type Grant, GrantsCard } from '@/features/grants';
 import type { Bounty } from '@/features/listings';
 import { ListingSection, ListingTabs } from '@/features/listings';
-import type { Grant } from '@/interface/grant';
 import { Home } from '@/layouts/Home';
 
 const HomePage: NextPage = () => {
@@ -120,17 +119,7 @@ const HomePage: NextPage = () => {
           )}
           {!isListingsLoading &&
             grants?.grants?.map((grant) => {
-              return (
-                <GrantsCard
-                  sponsorName={grant?.sponsor?.name}
-                  logo={grant?.sponsor?.logo}
-                  key={grant?.id}
-                  slug={grant.slug}
-                  rewardAmount={grant?.rewardAmount}
-                  title={grant?.title}
-                  short_description={grant?.shortDescription}
-                />
-              );
+              return <GrantsCard grant={grant} key={grant.id} />;
             })}
         </ListingSection>
       </Box>

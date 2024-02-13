@@ -8,24 +8,13 @@ import {
 } from '@chakra-ui/react';
 import NextLink from 'next/link';
 
-interface GrantsProps {
-  title: string;
-  sponsorName?: string;
-  logo?: string;
-  rewardAmount?: number;
-  token?: string;
-  slug: string;
-  short_description?: string;
-}
-export const GrantsCard = ({
-  title,
-  logo,
-  rewardAmount,
-  sponsorName,
-  slug,
-  short_description,
-}: GrantsProps) => {
+import type { Grant } from '../types';
+
+export const GrantsCard = ({ grant }: { grant: Grant }) => {
   const [isMobile] = useMediaQuery('(max-width: 768px)');
+
+  const { sponsor, slug, rewardAmount, title, shortDescription } = grant;
+
   return (
     <>
       <Link
@@ -52,8 +41,8 @@ export const GrantsCard = ({
               alt={'company logo'}
               rounded={5}
               src={
-                logo
-                  ? logo.replace(
+                sponsor?.logo
+                  ? sponsor.logo.replace(
                       '/upload/',
                       '/upload/c_scale,w_128,h_128,f_auto/',
                     )
@@ -82,7 +71,7 @@ export const GrantsCard = ({
                 fontSize={['xs', 'xs', 'sm', 'sm']}
                 fontWeight="400"
               >
-                {sponsorName}
+                {sponsor?.name}
               </Text>
 
               {rewardAmount && (
@@ -101,7 +90,7 @@ export const GrantsCard = ({
                       : undefined
                   }
                 >
-                  {short_description}
+                  {shortDescription}
                 </Text>
               )}
             </Flex>

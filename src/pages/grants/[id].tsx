@@ -12,11 +12,10 @@ import axios from 'axios';
 import type { GetServerSideProps } from 'next';
 import React, { useEffect, useState } from 'react';
 
-import { GrantsHeader } from '@/components/misc/GrantsHeader';
 import { EmptySection } from '@/components/shared/EmptySection';
 import { LoadingSection } from '@/components/shared/LoadingSection';
+import { type Grant, GrantsHeader } from '@/features/grants';
 import { DescriptionUI } from '@/features/listings';
-import type { Grant } from '@/interface/grant';
 import type { SponsorType } from '@/interface/sponsor';
 import { Default } from '@/layouts/Default';
 import { Meta } from '@/layouts/Meta';
