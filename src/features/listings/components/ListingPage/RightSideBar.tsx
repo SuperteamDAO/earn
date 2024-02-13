@@ -28,7 +28,6 @@ import Countdown from 'react-countdown';
 
 import { LoginWrapper } from '@/components/Header/LoginWrapper';
 import { VerticalStep } from '@/components/misc/steps';
-import { SubmissionModal } from '@/components/modals/submissionModalBounty';
 import { CountDownRenderer } from '@/components/shared/countdownRenderer';
 import { tokenList } from '@/constants/index';
 import { Superteams } from '@/constants/Superteam';
@@ -38,6 +37,7 @@ import { getURLSanitized } from '@/utils/getURLSanitized';
 
 import type { Eligibility, Rewards } from '../../types';
 import { WarningModal } from '../WarningModal';
+import { SubmissionModal } from './SubmissionModal';
 
 interface Props {
   id: string;

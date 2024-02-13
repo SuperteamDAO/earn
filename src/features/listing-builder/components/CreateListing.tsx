@@ -13,7 +13,7 @@ import { getBountyDraftStatus } from '@/utils/bounty';
 import { dayjs } from '@/utils/dayjs';
 
 import type { SuperteamName } from '../types';
-import { mergeSkills, splitSkills } from '../utils/skills';
+import { mergeSkills, splitSkills } from '../utils';
 import type { BountyBasicType, Ques } from './ListingBuilder';
 import { CreateListingForm, FormLayout, Template } from './ListingBuilder';
 import { ListingSuccessModal } from './ListingSuccessModal';

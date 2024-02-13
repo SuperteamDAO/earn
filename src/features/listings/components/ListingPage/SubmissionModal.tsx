@@ -22,10 +22,9 @@ import { useState } from 'react';
 import type { FieldValues, UseFormRegister } from 'react-hook-form';
 import { useForm } from 'react-hook-form';
 
+import { AutoResizeTextarea } from '@/components/shared/autosize-textarea';
 import type { Eligibility } from '@/features/listings';
 import { userStore } from '@/store/user';
-
-import { AutoResizeTextarea } from '../shared/autosize-textarea';
 
 interface Props {
   id: string;
