@@ -11,10 +11,12 @@ import {
   useDisclosure,
 } from '@chakra-ui/react';
 import axios from 'axios';
-import type { Dispatch, SetStateAction } from 'react';
-import { useState } from 'react';
-import type { FieldValues, UseFormRegister } from 'react-hook-form';
-import { useForm } from 'react-hook-form';
+import { type Dispatch, type SetStateAction, useState } from 'react';
+import {
+  type FieldValues,
+  useForm,
+  type UseFormRegister,
+} from 'react-hook-form';
 
 import type { PoW } from '@/interface/pow';
 import { userStore } from '@/store/user';

@@ -1,8 +1,12 @@
 import { AddIcon, ViewIcon } from '@chakra-ui/icons';
 import { Box, Button, Flex, Image, Text, VStack } from '@chakra-ui/react';
 import axios from 'axios';
-import type { Dispatch, SetStateAction } from 'react';
-import React, { useEffect, useState } from 'react';
+import React, {
+  type Dispatch,
+  type SetStateAction,
+  useEffect,
+  useState,
+} from 'react';
 
 import type { MultiSelectOptions } from '@/constants';
 import { getBountyTypeLabel } from '@/utils/bounty';

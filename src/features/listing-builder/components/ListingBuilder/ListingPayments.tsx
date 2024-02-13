@@ -23,11 +23,9 @@ import {
   useDisclosure,
   VStack,
 } from '@chakra-ui/react';
-import type { Dispatch, SetStateAction } from 'react';
-import { useState } from 'react';
+import { type Dispatch, type SetStateAction, useState } from 'react';
 
-import type { MultiSelectOptions } from '@/constants';
-import { PrizeList, tokenList } from '@/constants';
+import { type MultiSelectOptions, PrizeList, tokenList } from '@/constants';
 import { sortRank } from '@/utils/rank';
 
 import type { BountyBasicType } from '../CreateListingForm';

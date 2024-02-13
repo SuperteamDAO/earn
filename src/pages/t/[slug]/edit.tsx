@@ -28,18 +28,17 @@ import { SelectBox } from '@/components/Form/SelectBox';
 import { SocialInput } from '@/components/Form/SocialInput';
 import { SkillSelect } from '@/components/misc/SkillSelect';
 import { socials } from '@/components/Talent/YourLinks';
-import type { MultiSelectOptions } from '@/constants';
 import {
   CommunityList,
   CountryList,
   IndustryList,
+  type MultiSelectOptions,
   web3Exp,
   workExp,
   workType,
 } from '@/constants';
 import type { PoW } from '@/interface/pow';
-import type { SubSkillsType } from '@/interface/skills';
-import { SkillList } from '@/interface/skills';
+import { SkillList, type SubSkillsType } from '@/interface/skills';
 import { Default } from '@/layouts/Default';
 import { Meta } from '@/layouts/Meta';
 import { userStore } from '@/store/user';

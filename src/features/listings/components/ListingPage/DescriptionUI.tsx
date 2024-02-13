@@ -1,6 +1,5 @@
 import { Box, Flex, HStack, Text, VStack } from '@chakra-ui/react';
-import type { HTMLReactParserOptions } from 'html-react-parser';
-import parse from 'html-react-parser';
+import parse, { type HTMLReactParserOptions } from 'html-react-parser';
 import React from 'react';
 
 import { skillMap } from '@/constants';

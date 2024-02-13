@@ -11,8 +11,7 @@ import {
   VStack,
 } from '@chakra-ui/react';
 import { MediaPicker } from 'degen';
-import type { Dispatch, SetStateAction } from 'react';
-import { useState } from 'react';
+import { type Dispatch, type SetStateAction, useState } from 'react';
 import { useForm } from 'react-hook-form';
 
 import { CountryList } from '@/constants';

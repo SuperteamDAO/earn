@@ -3,8 +3,7 @@ import axios from 'axios';
 import dayjs from 'dayjs';
 import { useEffect, useState } from 'react';
 
-import type { Bounty } from '@/features/listings';
-import { ListingTabs } from '@/features/listings';
+import { type Bounty, ListingTabs } from '@/features/listings';
 import { Home } from '@/layouts/Home';
 import { Meta } from '@/layouts/Meta';
 

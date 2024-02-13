@@ -24,8 +24,12 @@ import TextStyle from '@tiptap/extension-text-style';
 import Underline from '@tiptap/extension-underline';
 import { EditorContent, useEditor } from '@tiptap/react';
 import StarterKit from '@tiptap/starter-kit';
-import type { Dispatch, SetStateAction } from 'react';
-import React, { useCallback, useState } from 'react';
+import React, {
+  type Dispatch,
+  type SetStateAction,
+  useCallback,
+  useState,
+} from 'react';
 import { AiOutlineLink, AiOutlineOrderedList } from 'react-icons/ai';
 import { BiFontColor } from 'react-icons/bi';
 import {
@@ -42,8 +46,7 @@ import {
   MdOutlineHorizontalRule,
 } from 'react-icons/md';
 
-import type { References } from '@/features/listings';
-import { ReferenceCard } from '@/features/listings';
+import { ReferenceCard, type References } from '@/features/listings';
 
 const LinkModal = ({
   isOpen,

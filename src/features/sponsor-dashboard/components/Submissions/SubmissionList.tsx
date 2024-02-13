@@ -12,8 +12,12 @@ import {
 } from '@chakra-ui/react';
 import Avatar from 'boring-avatars';
 import debounce from 'lodash.debounce';
-import type { Dispatch, SetStateAction } from 'react';
-import React, { useEffect, useRef } from 'react';
+import React, {
+  type Dispatch,
+  type SetStateAction,
+  useEffect,
+  useRef,
+} from 'react';
 
 import type { SubmissionWithUser } from '@/interface/submission';
 

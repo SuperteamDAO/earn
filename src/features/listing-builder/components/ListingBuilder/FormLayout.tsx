@@ -1,6 +1,5 @@
 import { Heading, HStack, Text, VStack } from '@chakra-ui/react';
-import type { Dispatch, SetStateAction } from 'react';
-import React from 'react';
+import React, { type Dispatch, type SetStateAction } from 'react';
 
 import { Steps } from '@/components/misc/steps';
 

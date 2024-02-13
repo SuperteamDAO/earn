@@ -19,8 +19,11 @@ import type { BountyType } from '@prisma/client';
 import { PublicKey } from '@solana/web3.js';
 import axios from 'axios';
 import { useState } from 'react';
-import type { FieldValues, UseFormRegister } from 'react-hook-form';
-import { useForm } from 'react-hook-form';
+import {
+  type FieldValues,
+  useForm,
+  type UseFormRegister,
+} from 'react-hook-form';
 
 import { AutoResizeTextarea } from '@/components/shared/autosize-textarea';
 import type { Eligibility } from '@/features/listings';

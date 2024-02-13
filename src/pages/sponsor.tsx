@@ -9,8 +9,7 @@ import {
   useMediaQuery,
 } from '@chakra-ui/react';
 import Head from 'next/head';
-import type { ImageProps } from 'next/image';
-import Image from 'next/image';
+import Image, { type ImageProps } from 'next/image';
 import NextLink from 'next/link';
 import { useEffect, useState } from 'react';
 

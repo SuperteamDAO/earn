@@ -1,8 +1,7 @@
 /* eslint-disable @typescript-eslint/ban-ts-comment */
 import { CheckIcon } from '@chakra-ui/icons';
 import { Box, Flex, Image, Text } from '@chakra-ui/react';
-import type { Dispatch, SetStateAction } from 'react';
-import React from 'react';
+import React, { type Dispatch, type SetStateAction } from 'react';
 
 interface Props {
   currentStep: number;

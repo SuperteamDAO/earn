@@ -1,6 +1,5 @@
 import { Button, Flex, HStack, Image, Text, VStack } from '@chakra-ui/react';
-import type { Dispatch, SetStateAction } from 'react';
-import React, { useState } from 'react';
+import React, { type Dispatch, type SetStateAction, useState } from 'react';
 import toast, { Toaster } from 'react-hot-toast';
 
 import { QuestionCard } from './QuestionCard';

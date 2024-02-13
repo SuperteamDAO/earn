@@ -7,8 +7,7 @@ import { useEffect, useState } from 'react';
 import { EmptySection } from '@/components/shared/EmptySection';
 import { Loading } from '@/components/shared/Loading';
 import { type Grant, GrantsCard } from '@/features/grants';
-import type { Bounty } from '@/features/listings';
-import { ListingSection, ListingTabs } from '@/features/listings';
+import { type Bounty, ListingSection, ListingTabs } from '@/features/listings';
 import { Home } from '@/layouts/Home';
 import { Meta } from '@/layouts/Meta';
 
