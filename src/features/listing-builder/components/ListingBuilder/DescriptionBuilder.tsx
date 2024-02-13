@@ -14,7 +14,6 @@ import {
   Text,
   Tooltip,
   useDisclosure,
-  useToast,
   VStack,
 } from '@chakra-ui/react';
 import { Color } from '@tiptap/extension-color';
@@ -186,7 +185,7 @@ export const DescriptionBuilder = ({
 
   const isProject = type === 'project';
 
-  const toast = useToast();
+  const [editorError, setEditorError] = useState(false);
 
   return (
     <>
@@ -643,6 +642,11 @@ export const DescriptionBuilder = ({
           )}
         </VStack>
         <VStack gap={4} w={'full'} mt={16}>
+          {editorError && (
+            <Text align={'center'} color={'red'}>
+              Listing Details is a required field
+            </Text>
+          )}
           <Button
             w="100%"
             onClick={() => {
@@ -650,15 +654,7 @@ export const DescriptionBuilder = ({
                 return;
               }
               if (editor?.isEmpty) {
-                toast({
-                  title: 'Listing Details Required',
-                  description:
-                    'This information is essential for contributors to gauge their fit and understand how to participate effectively',
-                  status: 'error',
-                  duration: 10000,
-                  isClosable: true,
-                  variant: 'left-accent',
-                });
+                setEditorError(true);
                 return;
               }
               if (!isProject) {

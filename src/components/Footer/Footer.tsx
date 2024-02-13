@@ -173,7 +173,7 @@ export const Footer = () => {
           </Stack>
           <Stack align={'flex-start'}>
             <Link
-              mb={2}
+              mb={{ base: 6, md: 2 }}
               color={'brand.slate.500'}
               fontSize={'lg'}
               fontWeight={'700'}
