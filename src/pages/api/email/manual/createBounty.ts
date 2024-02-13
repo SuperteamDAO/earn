@@ -1,12 +1,14 @@
 import { Regions } from '@prisma/client';
 import type { NextApiRequest, NextApiResponse } from 'next';
 
-import { NewBountyTemplate } from '@/components/emails/newBountyTemplate';
 import { Superteams } from '@/constants/Superteam';
+import {
+  getUnsubEmails,
+  NewBountyTemplate,
+  rateLimitedPromiseAll,
+} from '@/features/emails';
 import type { Skills } from '@/interface/skills';
 import { prisma } from '@/prisma';
-import { getUnsubEmails } from '@/utils/airtable';
-import { rateLimitedPromiseAll } from '@/utils/rateLimitedPromises';
 import resendMail from '@/utils/resend';
 
 export default async function handler(

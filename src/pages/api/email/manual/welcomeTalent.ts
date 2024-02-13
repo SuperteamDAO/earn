@@ -1,7 +1,7 @@
 import type { NextApiRequest, NextApiResponse } from 'next';
 import { getToken } from 'next-auth/jwt';
 
-import { WelcomeTalentTemplate } from '@/components/emails/welcomeTalentTemplate';
+import { WelcomeTalentTemplate } from '@/features/emails';
 import resendMail from '@/utils/resend';
 
 export default async function handler(

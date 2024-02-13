@@ -1,4 +1,5 @@
-import type { Bounty, BountyWithSubmissions } from '@/interface/bounty';
+import { Superteams } from '@/constants/Superteam';
+import type { Bounty, BountyWithSubmissions } from '@/features/listings';
 import { dayjs } from '@/utils/dayjs';
 
 export const formatDeadline = (
@@ -16,6 +17,19 @@ export const formatDeadline = (
 
 const isDeadlineOver = (deadline: string | undefined) =>
   deadline ? dayjs().isAfter(dayjs(deadline)) : false;
+
+export const getRegionTooltipLabel = (region: string | undefined) => {
+  const country = Superteams.find((st) => st.region === region)?.displayValue;
+
+  switch (region) {
+    case 'GLOBAL':
+      return 'This listing is open to everyone in the world!';
+    case 'BALKAN':
+      return 'You need to be a resident of one of the Balkan countries to be able to participate in this listing';
+    default:
+      return `You need to be a resident of ${country} to participate in this listing`;
+  }
+};
 
 export const getBountyDraftStatus = (
   status: string | undefined,

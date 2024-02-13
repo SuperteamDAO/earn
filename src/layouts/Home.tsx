@@ -14,8 +14,8 @@ import React, { useEffect, useState } from 'react';
 
 import { LoginWrapper } from '@/components/Header/LoginWrapper';
 import { HomeBanner } from '@/components/home/Banner';
+import { CategoryBanner } from '@/components/home/CategoryBanner';
 import { HomeSideBar } from '@/components/home/SideBar';
-import { CategoryBanner } from '@/components/misc/listingsCard';
 import { Superteams } from '@/constants/Superteam';
 import type { User } from '@/interface/user';
 import { Default } from '@/layouts/Default';

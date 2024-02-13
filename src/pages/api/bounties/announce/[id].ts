@@ -2,14 +2,16 @@ import axios from 'axios';
 import type { NextApiRequest, NextApiResponse } from 'next';
 import { getToken } from 'next-auth/jwt';
 
-import { WinnersAnnouncedTemplate } from '@/components/emails/winnersAnnouncedTemplate';
 import { tokenList } from '@/constants';
-import type { Rewards } from '@/interface/bounty';
+import {
+  getUnsubEmails,
+  rateLimitedPromiseAll,
+  WinnersAnnouncedTemplate,
+} from '@/features/emails';
+import type { Rewards } from '@/features/listings';
 import { prisma } from '@/prisma';
-import { getUnsubEmails } from '@/utils/airtable';
 import { getBountyTypeLabel } from '@/utils/bounty';
 import { dayjs } from '@/utils/dayjs';
-import { rateLimitedPromiseAll } from '@/utils/rateLimitedPromises';
 import resendMail from '@/utils/resend';
 
 async function fetchTokenUSDValue(symbol: string) {

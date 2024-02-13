@@ -16,7 +16,7 @@ import {
 import CreateListingModal from '@/components/modals/createListing';
 import { LoadingSection } from '@/components/shared/LoadingSection';
 import { Banner } from '@/components/sponsor/Banner';
-import { SelectSponsor } from '@/components/sponsor/SelectSponsor';
+import { SelectSponsor } from '@/features/listing-builder';
 import { Default } from '@/layouts/Default';
 import { Meta } from '@/layouts/Meta';
 import { userStore } from '@/store/user';

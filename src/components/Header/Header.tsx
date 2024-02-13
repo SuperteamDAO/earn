@@ -21,6 +21,7 @@ import { useRouter } from 'next/router';
 import ScribesLogo from '@/svg/scribes-logo';
 
 import { BountySnackbar } from './BountySnackbar';
+import { ScribesAnnouncementBar } from './ScribesAnnouncementBar';
 import { UserInfo } from './UserInfo';
 
 interface NavItem {
@@ -37,15 +38,15 @@ const NAV_ITEMS: Array<NavItem> = [
     children: [
       {
         label: 'Content',
-        href: '/all/content/',
+        href: '/category/content/',
       },
       {
         label: 'Design',
-        href: '/all/design/',
+        href: '/category/design/',
       },
       {
         label: 'Development',
-        href: '/all/development/',
+        href: '/category/development/',
       },
       {
         label: 'Scribes',
@@ -103,7 +104,10 @@ const MobileNavItem = ({ label, children, href }: NavItem) => {
                 href={child.href}
               >
                 {child.label === 'Scribes' ? (
-                  <ScribesLogo styles={{ width: '80px', height: 'auto' }} />
+                  <ScribesLogo
+                    styles={{ width: '80px', height: 'auto' }}
+                    variant="#a459ff"
+                  />
                 ) : (
                   child.label
                 )}
@@ -185,6 +189,7 @@ const DesktopNav = () => {
                       <Box>
                         <ScribesLogo
                           styles={{ width: '60px', height: 'auto' }}
+                          variant="#a459ff"
                         />
                       </Box>
                     ) : (
@@ -209,12 +214,14 @@ export const Header = () => {
 
   const isDashboardRoute = router.pathname.startsWith('/dashboard');
   const maxWValue = isDashboardRoute ? '' : '7xl';
+  const isRootRoute = router.pathname === '/';
 
   return (
     <Box pos="sticky" zIndex="sticky" top={0}>
       <BountySnackbar />
+      {isRootRoute && <ScribesAnnouncementBar />}
       <Flex
-        px={{ base: 4, lg: 6 }}
+        px={{ base: '2', lg: 6 }}
         py={{ base: 2, lg: 0 }}
         color="brand.slate.500"
         bg="white"
@@ -228,6 +235,7 @@ export const Header = () => {
             ml={{ base: -2 }}
           >
             <IconButton
+              _hover={{ bg: 'transparent' }}
               aria-label={'Toggle Navigation'}
               icon={
                 isOpen ? (

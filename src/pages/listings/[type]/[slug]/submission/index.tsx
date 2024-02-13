@@ -3,11 +3,10 @@ import axios from 'axios';
 import type { GetServerSideProps } from 'next';
 import React, { useEffect, useState } from 'react';
 
-import { ListingHeader } from '@/components/listings/listings/ListingHeader';
-import { Submissions } from '@/components/listings/listings/submissions/submission';
 import { EmptySection } from '@/components/shared/EmptySection';
 import { LoadingSection } from '@/components/shared/LoadingSection';
-import type { Bounty } from '@/interface/bounty';
+import type { Bounty } from '@/features/listings';
+import { ListingHeader, SubmissionList } from '@/features/listings';
 import type { SubmissionWithUser } from '@/interface/submission';
 import { Default } from '@/layouts/Default';
 import { Meta } from '@/layouts/Meta';
@@ -65,7 +64,7 @@ const SubmissionPage = ({ slug }: { slug: string }) => {
               publishedAt={bounty?.publishedAt}
               isPublished={bounty?.isPublished}
             />
-            <Submissions
+            <SubmissionList
               bounty={bounty}
               setUpdate={setUpdate}
               submissions={submission}

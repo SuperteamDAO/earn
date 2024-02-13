@@ -1,6 +1,6 @@
 import type { ListingType, User } from '@prisma/client';
 
-import type { Rewards } from '@/interface/bounty';
+import type { Rewards } from '@/features/listings';
 
 import type { Bounties } from './listings';
 

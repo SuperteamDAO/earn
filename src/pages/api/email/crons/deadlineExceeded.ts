@@ -3,10 +3,12 @@ import dayjs from 'dayjs';
 import utc from 'dayjs/plugin/utc';
 import type { NextApiRequest, NextApiResponse } from 'next';
 
-import { DeadlineSponsorTemplate } from '@/components/emails/deadlineSponsorTemplate';
+import {
+  DeadlineSponsorTemplate,
+  getUnsubEmails,
+  rateLimitedPromiseAll,
+} from '@/features/emails';
 import { prisma } from '@/prisma';
-import { getUnsubEmails } from '@/utils/airtable';
-import { rateLimitedPromiseAll } from '@/utils/rateLimitedPromises';
 import resendMail from '@/utils/resend';
 
 dayjs.extend(utc);

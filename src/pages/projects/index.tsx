@@ -1,15 +1,10 @@
-import { Box, Flex } from '@chakra-ui/react';
+import { Box } from '@chakra-ui/react';
 import axios from 'axios';
 import dayjs from 'dayjs';
 import { useEffect, useState } from 'react';
 
-import {
-  ListingCard,
-  ListingsCardSkeleton,
-  ListingSection,
-} from '@/components/misc/listingsCard';
-import { EmptySection } from '@/components/shared/EmptySection';
-import type { Bounty } from '@/interface/bounty';
+import type { Bounty } from '@/features/listings';
+import { ListingTabs } from '@/features/listings';
 import { Home } from '@/layouts/Home';
 import { Meta } from '@/layouts/Meta';
 
@@ -17,7 +12,7 @@ interface Listings {
   bounties?: Bounty[];
 }
 
-function AllBountiesPage() {
+export default function ProjectsPage() {
   const [isListingsLoading, setIsListingsLoading] = useState(true);
   const [listings, setListings] = useState<Listings>({
     bounties: [],
@@ -56,47 +51,16 @@ function AllBountiesPage() {
         canonical="https://earn.superteam.fun/projects/"
       ></Meta>
       <Box w={'100%'}>
-        <ListingSection
-          type="bounties"
-          title="Projects"
-          sub="Apply and get selected for freelance opportunities"
+        <ListingTabs
+          bounties={listings.bounties}
+          isListingsLoading={isListingsLoading}
           emoji="/assets/home/emojis/moneyman.png"
-          all
-        >
-          {isListingsLoading &&
-            Array.from({ length: 8 }, (_, index) => (
-              <ListingsCardSkeleton key={index} />
-            ))}
-          {!isListingsLoading && !listings?.bounties?.length && (
-            <Flex align="center" justify="center" mt={8}>
-              <EmptySection
-                title="No listings available!"
-                message="Subscribe to notifications to get notified about new bounties."
-              />
-            </Flex>
-          )}
-          {!isListingsLoading &&
-            listings?.bounties?.map((bounty) => {
-              return (
-                <ListingCard
-                  slug={bounty?.slug}
-                  rewardAmount={bounty?.rewardAmount}
-                  key={bounty?.id}
-                  sponsorName={bounty?.sponsor?.name}
-                  deadline={bounty?.deadline}
-                  title={bounty?.title}
-                  logo={bounty?.sponsor?.logo}
-                  token={bounty?.token}
-                  type={bounty?.type}
-                  applicationType={bounty.applicationType}
-                  isWinnersAnnounced={bounty?.isWinnersAnnounced}
-                />
-              );
-            })}
-        </ListingSection>
+          title="Projects"
+          viewAllLink="/projects/all"
+          showViewAll
+          take={20}
+        />
       </Box>
     </Home>
   );
 }
-
-export default AllBountiesPage;

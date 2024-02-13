@@ -5,10 +5,10 @@ import type { GetServerSideProps } from 'next';
 import Head from 'next/head';
 import { useState } from 'react';
 
-import { ListingHeader } from '@/components/listings/listings/ListingHeader';
 import { OgImageViewer } from '@/components/misc/ogImageViewer';
 import { ErrorSection } from '@/components/shared/ErrorSection';
-import type { Bounty } from '@/interface/bounty';
+import type { Bounty } from '@/features/listings';
+import { ListingHeader } from '@/features/listings';
 import { Default } from '@/layouts/Default';
 import { getURL } from '@/utils/validUrl';
 

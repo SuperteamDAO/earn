@@ -1,6 +1,6 @@
 import { useRouter } from 'next/router';
 
-import { CreateListing } from '@/components/listings/bounty/Bounty';
+import { CreateListing } from '@/features/listing-builder';
 import { Sidebar } from '@/layouts/Sponsor';
 
 function CreateHackathon() {

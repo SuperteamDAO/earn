@@ -1,10 +1,12 @@
 import type { NextApiRequest, NextApiResponse } from 'next';
 import { getToken } from 'next-auth/jwt';
 
-import { SubmissionSponsorTemplate } from '@/components/emails/submissionSponsorTemplate';
-import { SubmissionTemplate } from '@/components/emails/submissionTemplate';
+import {
+  getUnsubEmails,
+  SubmissionSponsorTemplate,
+  SubmissionTemplate,
+} from '@/features/emails';
 import { prisma } from '@/prisma';
-import { getUnsubEmails } from '@/utils/airtable';
 import resendMail from '@/utils/resend';
 
 export default async function handler(

@@ -20,13 +20,12 @@ import Select from 'react-select';
 import makeAnimated from 'react-select/animated';
 
 import { SignIn } from '@/components/modals/Login/SignIn';
+import { IndustryList } from '@/constants';
+import type { SponsorType } from '@/interface/sponsor';
 import { Default } from '@/layouts/Default';
 import { Meta } from '@/layouts/Meta';
 import { userStore } from '@/store/user';
-
-import { IndustryList } from '../../constants';
-import type { SponsorType } from '../../interface/sponsor';
-import { uploadToCloudinary } from '../../utils/upload';
+import { uploadToCloudinary } from '@/utils/upload';
 
 const CreateSponsor = () => {
   const router = useRouter();

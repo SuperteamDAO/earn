@@ -7,13 +7,15 @@ import Head from 'next/head';
 import { useEffect, useState } from 'react';
 
 import { bountySnackbarAtom } from '@/components/Header/BountySnackbar';
-import { ListingWinners } from '@/components/listings/bounty/ListingWinners';
-import { Comments } from '@/components/listings/listings/comments';
-import { DetailDescriptionBounty } from '@/components/listings/listings/details/detailDescriptionBounty';
-import { DetailSideCardBounty } from '@/components/listings/listings/details/detailSideCardBounty';
-import { ListingHeader } from '@/components/listings/listings/ListingHeader';
 import { ErrorSection } from '@/components/shared/ErrorSection';
-import type { Bounty } from '@/interface/bounty';
+import type { Bounty } from '@/features/listings';
+import {
+  Comments,
+  DescriptionUI,
+  ListingHeader,
+  ListingWinners,
+  RightSideBar,
+} from '@/features/listings';
 import { Default } from '@/layouts/Default';
 import { getURL } from '@/utils/validUrl';
 
@@ -141,13 +143,13 @@ function BountyDetails({ bounty: initialBounty }: BountyDetailsProps) {
                 mb={10}
               >
                 <VStack gap={8} w={'full'} mt={10}>
-                  <DetailDescriptionBounty
+                  <DescriptionUI
                     skills={bounty?.skills?.map((e) => e.skills) ?? []}
                     description={bounty?.description}
                   />
                   <Comments refId={bounty?.id ?? ''} refType="BOUNTY" />
                 </VStack>
-                <DetailSideCardBounty
+                <RightSideBar
                   id={bounty?.id || ''}
                   token={bounty?.token ?? ''}
                   eligibility={bounty?.eligibility}
@@ -164,6 +166,7 @@ function BountyDetails({ bounty: initialBounty }: BountyDetailsProps) {
                   timeToComplete={bounty?.timeToComplete}
                   isPublished={bounty?.isPublished}
                   status={bounty?.status}
+                  region={bounty?.region}
                 />
               </HStack>
             </>

@@ -2,10 +2,12 @@ import axios from 'axios';
 import type { NextApiRequest, NextApiResponse } from 'next';
 import { getToken } from 'next-auth/jwt';
 
-import { DeadlineExtendedTemplate } from '@/components/emails/deadlineExtendedTemplate';
+import {
+  DeadlineExtendedTemplate,
+  getUnsubEmails,
+  rateLimitedPromiseAll,
+} from '@/features/emails';
 import { prisma } from '@/prisma';
-import { getUnsubEmails } from '@/utils/airtable';
-import { rateLimitedPromiseAll } from '@/utils/rateLimitedPromises';
 import resendMail from '@/utils/resend';
 
 export default async function bounty(

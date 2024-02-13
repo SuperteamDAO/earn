@@ -4,8 +4,8 @@ import React, { useState } from 'react';
 import ReactSelect from 'react-select';
 import makeAnimated from 'react-select/animated';
 
-import type { MultiSelectOptions } from '../../constants';
-import { MainSkills, skillSubSkillMap } from '../../constants';
+import type { MultiSelectOptions } from '@/constants';
+import { MainSkills, skillSubSkillMap } from '@/constants';
 
 interface Props {
   skills: MultiSelectOptions[];

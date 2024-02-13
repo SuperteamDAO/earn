@@ -1,7 +1,7 @@
 import type { NextApiRequest, NextApiResponse } from 'next';
 import { getToken } from 'next-auth/jwt';
 
-import { InviteMemberTemplate } from '@/components/emails/inviteMemberTemplate';
+import { InviteMemberTemplate } from '@/features/emails';
 import { prisma } from '@/prisma';
 import resendMail from '@/utils/resend';
 import { getURL } from '@/utils/validUrl';

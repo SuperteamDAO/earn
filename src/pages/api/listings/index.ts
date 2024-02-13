@@ -23,9 +23,6 @@ export default async function user(req: NextApiRequest, res: NextApiResponse) {
     development: ['Frontend', 'Backend', 'Blockchain'],
     design: ['Design'],
     content: ['Content'],
-    frontend: ['Frontend'],
-    backend: ['Backend'],
-    blockchain: ['Blockchain'],
   };
 
   const skillsToFilter = filterToSkillsMap[filter] || [];
@@ -63,7 +60,7 @@ export default async function user(req: NextApiRequest, res: NextApiResponse) {
           status: 'OPEN',
           Hackathon: null,
           deadline: {
-            gte: dayjs().toISOString(),
+            gte: deadline,
           },
           ...skillsFilter,
         },

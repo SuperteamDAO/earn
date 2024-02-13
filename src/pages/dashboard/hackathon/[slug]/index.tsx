@@ -53,7 +53,7 @@ import { FiMoreVertical } from 'react-icons/fi';
 import CreateListingModal from '@/components/modals/createListing';
 import { LoadingSection } from '@/components/shared/LoadingSection';
 import { tokenList } from '@/constants/index';
-import type { BountyWithSubmissions } from '@/interface/bounty';
+import type { BountyWithSubmissions } from '@/features/listings';
 import { Sidebar } from '@/layouts/Sponsor';
 import { userStore } from '@/store/user';
 import {
@@ -158,8 +158,8 @@ export default function Hackathon({ slug }: { slug: string }) {
     }
   };
 
-  const handleViewSubmissions = (slug: string | undefined) => {
-    router.push(`/dashboard/listings/${slug}/submissions/`);
+  const handleViewSubmissions = (listing: string | undefined) => {
+    router.push(`/dashboard/hackathon/${slug}/${listing}/submissions/`);
   };
 
   const deleteSelectedDraft = async () => {

@@ -2,13 +2,13 @@ import { Box, Flex } from '@chakra-ui/react';
 import axios from 'axios';
 import { useEffect, useState } from 'react';
 
+import { EmptySection } from '@/components/shared/EmptySection';
+import type { Bounty } from '@/features/listings';
 import {
   ListingCard,
-  ListingsCardSkeleton,
+  ListingCardSkeleton,
   ListingSection,
-} from '@/components/misc/listingsCard';
-import { EmptySection } from '@/components/shared/EmptySection';
-import type { Bounty } from '@/interface/bounty';
+} from '@/features/listings';
 import { Home } from '@/layouts/Home';
 
 interface Listings {
@@ -50,11 +50,10 @@ function AllListingsPage() {
           title="Freelance Gigs"
           sub="Bite sized tasks for freelancers"
           emoji="/assets/home/emojis/moneyman.png"
-          all
         >
           {isListingsLoading &&
             Array.from({ length: 8 }, (_, index) => (
-              <ListingsCardSkeleton key={index} />
+              <ListingCardSkeleton key={index} />
             ))}
           {!isListingsLoading && !listings?.bounties?.length && (
             <Flex align="center" justify="center" mt={8}>
@@ -66,21 +65,7 @@ function AllListingsPage() {
           )}
           {!isListingsLoading &&
             listings?.bounties?.map((bounty) => {
-              return (
-                <ListingCard
-                  slug={bounty?.slug}
-                  rewardAmount={bounty?.rewardAmount}
-                  key={bounty?.id}
-                  sponsorName={bounty?.sponsor?.name}
-                  deadline={bounty?.deadline}
-                  title={bounty?.title}
-                  logo={bounty?.sponsor?.logo}
-                  token={bounty?.token}
-                  type={bounty?.type}
-                  applicationType={bounty.applicationType}
-                  isWinnersAnnounced={bounty?.isWinnersAnnounced}
-                />
-              );
+              return <ListingCard key={bounty.id} bounty={bounty} />;
             })}
         </ListingSection>
       </Box>
