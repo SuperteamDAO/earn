@@ -1,6 +1,10 @@
 import type { MultiSelectOptions } from '@/constants';
-import type { MainSkills, Skills, SubSkillsType } from '@/interface/skills';
-import { SkillList } from '@/interface/skills';
+import {
+  type MainSkills,
+  SkillList,
+  type Skills,
+  type SubSkillsType,
+} from '@/interface/skills';
 
 interface Props {
   skills: MultiSelectOptions[];

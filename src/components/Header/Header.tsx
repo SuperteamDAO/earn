@@ -1,5 +1,4 @@
 import { ChevronDownIcon, CloseIcon, HamburgerIcon } from '@chakra-ui/icons';
-import type { LinkProps } from '@chakra-ui/react';
 import {
   Box,
   Collapse,
@@ -8,6 +7,7 @@ import {
   IconButton,
   Image,
   Link,
+  type LinkProps,
   Popover,
   PopoverTrigger,
   Stack,

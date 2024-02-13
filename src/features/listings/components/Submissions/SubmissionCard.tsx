@@ -11,8 +11,12 @@ import type { User } from '@prisma/client';
 import axios from 'axios';
 import Avatar from 'boring-avatars';
 import { useRouter } from 'next/router';
-import type { Dispatch, SetStateAction } from 'react';
-import React, { useEffect, useState } from 'react';
+import React, {
+  type Dispatch,
+  type SetStateAction,
+  useEffect,
+  useState,
+} from 'react';
 import { AiFillHeart } from 'react-icons/ai';
 import type { Metadata } from 'unfurl.js/dist/types';
 

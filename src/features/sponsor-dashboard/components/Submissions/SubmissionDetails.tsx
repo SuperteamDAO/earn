@@ -11,13 +11,15 @@ import {
 } from '@chakra-ui/react';
 import type NodeWallet from '@coral-xyz/anchor/dist/cjs/nodewallet';
 import { useAnchorWallet, useWallet } from '@solana/wallet-adapter-react';
-import type { TransactionInstruction } from '@solana/web3.js';
-import { PublicKey, Transaction } from '@solana/web3.js';
+import {
+  PublicKey,
+  Transaction,
+  type TransactionInstruction,
+} from '@solana/web3.js';
 import axios from 'axios';
 import dynamic from 'next/dynamic';
 import NextLink from 'next/link';
-import type { Dispatch, SetStateAction } from 'react';
-import React, { useState } from 'react';
+import React, { type Dispatch, type SetStateAction, useState } from 'react';
 
 import { tokenList } from '@/constants';
 import type { Bounty, Rewards } from '@/features/listings';

@@ -8,8 +8,8 @@ import { useEffect, useState } from 'react';
 
 import { bountySnackbarAtom } from '@/components/Header/BountySnackbar';
 import { ErrorSection } from '@/components/shared/ErrorSection';
-import type { Bounty } from '@/features/listings';
 import {
+  type Bounty,
   Comments,
   DescriptionUI,
   ListingHeader,

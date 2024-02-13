@@ -7,8 +7,7 @@ import { useState } from 'react';
 
 import { OgImageViewer } from '@/components/misc/ogImageViewer';
 import { ErrorSection } from '@/components/shared/ErrorSection';
-import type { Bounty } from '@/features/listings';
-import { ListingHeader } from '@/features/listings';
+import { type Bounty, ListingHeader } from '@/features/listings';
 import { Default } from '@/layouts/Default';
 import { getURL } from '@/utils/validUrl';
 

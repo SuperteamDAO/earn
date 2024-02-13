@@ -14,8 +14,7 @@ import {
   VStack,
 } from '@chakra-ui/react';
 import { Regions } from '@prisma/client';
-import type { Dispatch, SetStateAction } from 'react';
-import { useMemo, useState } from 'react';
+import { type Dispatch, type SetStateAction, useMemo, useState } from 'react';
 
 import { SkillSelect } from '@/components/misc/SkillSelect';
 import type { MultiSelectOptions } from '@/constants';

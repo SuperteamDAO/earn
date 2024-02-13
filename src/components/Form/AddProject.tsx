@@ -15,8 +15,7 @@ import {
   Textarea,
 } from '@chakra-ui/react';
 import axios from 'axios';
-import type { Dispatch, SetStateAction } from 'react';
-import { useEffect, useState } from 'react';
+import { type Dispatch, type SetStateAction, useEffect, useState } from 'react';
 import { useForm } from 'react-hook-form';
 
 import type { MultiSelectOptions } from '@/constants';

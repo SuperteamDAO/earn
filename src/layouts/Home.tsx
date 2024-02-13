@@ -9,8 +9,7 @@ import {
 } from '@chakra-ui/react';
 import axios from 'axios';
 import { useRouter } from 'next/router';
-import type { ReactNode } from 'react';
-import React, { useEffect, useState } from 'react';
+import React, { type ReactNode, useEffect, useState } from 'react';
 
 import { LoginWrapper } from '@/components/Header/LoginWrapper';
 import { HomeBanner } from '@/components/home/Banner';

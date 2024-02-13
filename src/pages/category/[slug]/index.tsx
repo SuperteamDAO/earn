@@ -4,12 +4,10 @@ import dayjs from 'dayjs';
 import type { NextPageContext } from 'next';
 import { useEffect, useState } from 'react';
 
-import { GrantsCard } from '@/components/misc/GrantsCard';
 import { EmptySection } from '@/components/shared/EmptySection';
 import { Loading } from '@/components/shared/Loading';
-import type { Bounty } from '@/features/listings';
-import { ListingSection, ListingTabs } from '@/features/listings';
-import type { Grant } from '@/interface/grant';
+import { type Grant, GrantsCard } from '@/features/grants';
+import { type Bounty, ListingSection, ListingTabs } from '@/features/listings';
 import { Home } from '@/layouts/Home';
 import { Meta } from '@/layouts/Meta';
 
@@ -100,17 +98,7 @@ function ListingCategoryPage({ slug }: { slug: string }) {
           )}
           {!isListingsLoading &&
             listings?.grants?.map((grant) => {
-              return (
-                <GrantsCard
-                  sponsorName={grant?.sponsor?.name}
-                  logo={grant?.sponsor?.logo}
-                  key={grant?.id}
-                  slug={grant.slug}
-                  rewardAmount={grant?.rewardAmount}
-                  title={grant?.title}
-                  short_description={grant?.shortDescription}
-                />
-              );
+              return <GrantsCard grant={grant} key={grant.id} />;
             })}
         </ListingSection>
       </Box>

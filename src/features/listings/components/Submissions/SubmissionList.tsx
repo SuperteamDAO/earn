@@ -1,7 +1,6 @@
 import { Flex, Image, Text, VStack } from '@chakra-ui/react';
 import moment from 'moment';
-import type { Dispatch, SetStateAction } from 'react';
-import React from 'react';
+import React, { type Dispatch, type SetStateAction } from 'react';
 
 import type { SubmissionWithUser } from '@/interface/submission';
 

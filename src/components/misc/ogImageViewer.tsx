@@ -1,5 +1,9 @@
-import type { ImageProps, ResponsiveValue } from '@chakra-ui/react';
-import { Image, Skeleton } from '@chakra-ui/react';
+import {
+  Image,
+  type ImageProps,
+  type ResponsiveValue,
+  Skeleton,
+} from '@chakra-ui/react';
 import axios from 'axios';
 import React, { useCallback, useEffect, useState } from 'react';
 import type { Metadata } from 'unfurl.js/dist/types';

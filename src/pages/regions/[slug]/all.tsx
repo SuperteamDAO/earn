@@ -5,8 +5,8 @@ import { useEffect, useState } from 'react';
 
 import { EmptySection } from '@/components/shared/EmptySection';
 import { Superteams } from '@/constants/Superteam';
-import type { Bounty } from '@/features/listings';
 import {
+  type Bounty,
   ListingCard,
   ListingCardSkeleton,
   ListingSection,
