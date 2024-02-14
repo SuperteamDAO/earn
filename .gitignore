@@ -49,3 +49,6 @@ local
 .vercel
 
 /public/assets/data
+
+# Sentry Config File
+.sentryclirc
