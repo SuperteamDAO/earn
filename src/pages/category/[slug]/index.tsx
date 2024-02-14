@@ -11,17 +11,14 @@ import { type Bounty, ListingSection, ListingTabs } from '@/features/listings';
 import { Home } from '@/layouts/Home';
 import { Meta } from '@/layouts/Meta';
 
-interface Listings {
-  bounties?: Bounty[];
-  grants?: Grant[];
-}
-
 type SlugKeys = 'design' | 'content' | 'development';
 
 function ListingCategoryPage({ slug }: { slug: string }) {
   const [isListingsLoading, setIsListingsLoading] = useState(true);
-  const [listings, setListings] = useState<Listings>({
+  const [listings, setListings] = useState<{ bounties: Bounty[] }>({
     bounties: [],
+  });
+  const [grants, setGrants] = useState<{ grants: Grant[] }>({
     grants: [],
   });
 
@@ -29,11 +26,18 @@ function ListingCategoryPage({ slug }: { slug: string }) {
 
   const getListings = async () => {
     setIsListingsLoading(true);
-    const params = { category: 'all', take: 100, filter: slug, deadline };
+    const params = { category: 'bounties', take: 100, filter: slug, deadline };
     try {
-      const listingsData = await axios.get('/api/listings/', { params });
-      setListings(listingsData.data);
+      const listingData = await axios.get('/api/listings/', { params });
+      setListings(listingData.data);
       setIsListingsLoading(false);
+
+      const grantsData = await axios.get('/api/listings/', {
+        params: {
+          category: 'grants',
+        },
+      });
+      setGrants(grantsData.data);
     } catch (e) {
       setIsListingsLoading(false);
     }
@@ -88,7 +92,7 @@ function ListingCategoryPage({ slug }: { slug: string }) {
               <Loading />
             </Flex>
           )}
-          {!isListingsLoading && !listings?.grants?.length && (
+          {!isListingsLoading && !grants?.grants?.length && (
             <Flex align="center" justify="center" mt={8}>
               <EmptySection
                 title="No grants available!"
@@ -97,7 +101,7 @@ function ListingCategoryPage({ slug }: { slug: string }) {
             </Flex>
           )}
           {!isListingsLoading &&
-            listings?.grants?.map((grant) => {
+            grants?.grants?.map((grant) => {
               return <GrantsCard grant={grant} key={grant.id} />;
             })}
         </ListingSection>
