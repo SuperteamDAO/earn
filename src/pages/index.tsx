@@ -26,22 +26,24 @@ const HomePage: NextPage = () => {
   const getListings = async () => {
     setIsListingsLoading(true);
     try {
+      const bountyData = await axios.get('/api/listings/', {
+        params: {
+          category: 'bounties',
+          take: 100,
+          deadline: date,
+        },
+      });
+
+      setBounties(bountyData.data);
+      setIsListingsLoading(false);
+
       const grantsData = await axios.get('/api/listings/', {
         params: {
           category: 'grants',
         },
       });
-      const bountyData = await axios.get('/api/listings/', {
-        params: {
-          category: 'bounties',
-          take: 20,
-          deadline: date,
-        },
-      });
 
       setGrants(grantsData.data);
-      setBounties(bountyData.data);
-      setIsListingsLoading(false);
     } catch (e) {
       console.log(e);
 
