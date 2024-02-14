@@ -30,8 +30,6 @@ function ListingCategoryPage({ slug }: { slug: string }) {
     try {
       const listingData = await axios.get('/api/listings/', { params });
       setListings(listingData.data);
-
-      setListings(listingData.data);
       setIsListingsLoading(false);
 
       const grantsData = await axios.get('/api/listings/', {
