@@ -164,33 +164,47 @@ export const SubmissionDetails = ({
         const signTx = await anchorWallet?.signTransaction(tx);
         sig = await connection.sendRawTransaction(signTx!.serialize(), {
           skipPreflight: false,
+          maxRetries: 3,
+          preflightCommitment: 'confirmed',
         });
       }
-      if (sig) {
-        await axios.post(`/api/submission/addPayment/`, {
-          id,
+      await new Promise((resolve, reject) => {
+        connection.onSignature(
+          sig,
+          (res) => {
+            if (res.err) {
+              reject(new Error('Transaction failed'));
+            } else {
+              resolve(res);
+            }
+          },
+          'confirmed',
+        );
+      });
+
+      await axios.post(`/api/submission/addPayment/`, {
+        id,
+        isPaid: true,
+        paymentDetails: {
+          txId: sig,
+        },
+      });
+      const submissionIndex = submissions.findIndex((s) => s.id === id);
+      if (submissionIndex >= 0) {
+        const updatedSubmission: SubmissionWithUser = {
+          ...(submissions[submissionIndex] as SubmissionWithUser),
           isPaid: true,
           paymentDetails: {
             txId: sig,
           },
-        });
-        const submissionIndex = submissions.findIndex((s) => s.id === id);
-        if (submissionIndex >= 0) {
-          const updatedSubmission: SubmissionWithUser = {
-            ...(submissions[submissionIndex] as SubmissionWithUser),
-            isPaid: true,
-            paymentDetails: {
-              txId: sig,
-            },
-          };
-          const newSubmissions = [...submissions];
-          newSubmissions[submissionIndex] = updatedSubmission;
-          setSubmissions(newSubmissions);
-          setSelectedSubmission(updatedSubmission);
-          setTotalPaymentsMade(
-            (prevTotalPaymentsMade: number) => prevTotalPaymentsMade + 1,
-          );
-        }
+        };
+        const newSubmissions = [...submissions];
+        newSubmissions[submissionIndex] = updatedSubmission;
+        setSubmissions(newSubmissions);
+        setSelectedSubmission(updatedSubmission);
+        setTotalPaymentsMade(
+          (prevTotalPaymentsMade: number) => prevTotalPaymentsMade + 1,
+        );
       }
       setIsPaying(false);
     } catch (error) {
