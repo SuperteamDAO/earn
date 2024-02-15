@@ -60,6 +60,7 @@ import {
   getBountyStatus,
   getBountyTypeLabel,
   getColorStyles,
+  isDeadlineOver,
 } from '@/utils/bounty';
 
 const debounce = require('lodash.debounce');
@@ -397,6 +398,8 @@ function Bounties() {
                     currentBounty?.applicationType,
                   );
 
+                  const pastDeadline = isDeadlineOver(currentBounty?.deadline);
+
                   const bountyStatus = getBountyStatus(currentBounty);
 
                   const listingIcon = (() => {
@@ -532,7 +535,8 @@ function Bounties() {
                             </Button>
                           )}
                         {currentBounty.status === 'OPEN' &&
-                          !currentBounty.isPublished && (
+                          !currentBounty.isPublished &&
+                          !pastDeadline && (
                             <Button
                               color={'brand.slate.500'}
                               fontSize={'13px'}
@@ -579,7 +583,7 @@ function Bounties() {
                                 ? 'Track'
                                 : bountyType}
                             </MenuItem>
-                            {currentBounty.isPublished && (
+                            {currentBounty.isPublished && !pastDeadline && (
                               <Link
                                 as={NextLink}
                                 _hover={{ textDecoration: 'none' }}
