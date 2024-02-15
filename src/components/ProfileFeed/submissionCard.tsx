@@ -218,7 +218,7 @@ export function SubmissionCard({
                 fontSize={{ base: 'sm', md: 'md' }}
                 fontWeight={600}
               >
-                {isBounty ? 'View Submission' : 'View Project'}
+                {isBounty ? 'View Submission' : 'View Listing'}
               </Text>
             </LinkOverlay>
             <ArrowForwardIcon color={'#6366F1'} />

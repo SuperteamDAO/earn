@@ -88,7 +88,7 @@ export function ListingHeader({
         bountyId: id,
       });
       setUpdate((prev) => !prev);
-      toast.success('Subscribed to bounty');
+      toast.success('Subscribed to the Listing');
     } catch (error) {
       console.log(error);
       toast.error('Error');
@@ -105,7 +105,7 @@ export function ListingHeader({
         id: idSub,
       });
       setUpdate((prev) => !prev);
-      toast.success('Unsubscribe to bounty');
+      toast.success('Unsubscribed');
     } catch (error) {
       console.log(error);
       toast.error('Error');

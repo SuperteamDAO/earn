@@ -18,7 +18,7 @@ import {
 import type { BountyType } from '@prisma/client';
 import { PublicKey } from '@solana/web3.js';
 import axios from 'axios';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import {
   type FieldValues,
   useForm,
@@ -30,7 +30,7 @@ import type { Eligibility } from '@/features/listings';
 import { userStore } from '@/store/user';
 
 interface Props {
-  id: string;
+  id: string | undefined;
   isOpen: boolean;
   onClose: () => void;
   eligibility: Eligibility[];
@@ -38,6 +38,12 @@ interface Props {
   setSubmissionNumber: (arg0: number) => void;
   submissionNumber: number;
   type?: BountyType | string;
+  editMode: boolean;
+}
+
+interface EligibilityAnswer {
+  question: string;
+  answer: string;
 }
 
 interface QuestionProps {
@@ -46,6 +52,8 @@ interface QuestionProps {
   register: UseFormRegister<FieldValues>;
   watch?: any;
 }
+
+type FormFields = Record<string, string>;
 
 const QuestionHandler = ({
   question,
@@ -90,6 +98,7 @@ export const SubmissionModal = ({
   setSubmissionNumber,
   submissionNumber,
   type,
+  editMode,
 }: Props) => {
   const isProject = type === 'project';
   const [isLoading, setIsLoading] = useState(false);
@@ -104,6 +113,49 @@ export const SubmissionModal = ({
   } = useForm();
 
   const { userInfo } = userStore();
+
+  useEffect(() => {
+    const fetchData = async () => {
+      if (editMode && id) {
+        try {
+          const response = await axios.get('/api/submission/get/', {
+            params: { id },
+          });
+
+          const { applicationLink, tweetLink, otherInfo, eligibilityAnswers } =
+            response.data;
+
+          const transformedAnswers = eligibilityAnswers.reduce(
+            (acc: FormFields, curr: EligibilityAnswer) => {
+              const index = eligibility.findIndex(
+                (e) => e.question === curr.question,
+              );
+
+              if (index !== -1) {
+                acc[`eligibility-${eligibility[index]!.order}`] = curr.answer;
+              }
+
+              return acc;
+            },
+            {} as FormFields,
+          );
+
+          const formData = {
+            ...transformedAnswers,
+            applicationLink,
+            tweetLink,
+            otherInfo,
+          };
+
+          reset(formData);
+        } catch (error) {
+          console.error('Failed to fetch submission data', error);
+        }
+      }
+    };
+
+    fetchData();
+  }, [id, editMode, reset]);
 
   function validateSolAddress(address: string) {
     try {
@@ -133,7 +185,11 @@ export const SubmissionModal = ({
         publicKey,
       });
 
-      await axios.post('/api/submission/create/', {
+      const submissionEndpoint = editMode
+        ? '/api/submission/update/'
+        : '/api/submission/create/';
+
+      await axios.post(submissionEndpoint, {
         listingId: id,
         listingType: 'BOUNTY',
         link: applicationLink || '',
@@ -143,9 +199,12 @@ export const SubmissionModal = ({
           ? eligibilityAnswers
           : null,
       });
-      await axios.post(`/api/email/manual/submission`, {
-        listingId: id,
-      });
+
+      if (!editMode) {
+        await axios.post(`/api/email/manual/submission`, {
+          listingId: id,
+        });
+      }
 
       reset();
       setIsSubmitted(true);

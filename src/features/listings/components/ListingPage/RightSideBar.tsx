@@ -1,7 +1,6 @@
 import { ExternalLinkIcon, WarningIcon } from '@chakra-ui/icons';
 import {
   Box,
-  Button,
   Divider,
   Flex,
   HStack,
@@ -14,122 +13,54 @@ import {
   Text,
   Th,
   Thead,
-  Tooltip,
   Tr,
-  useDisclosure,
   VStack,
 } from '@chakra-ui/react';
-import type { BountyType } from '@prisma/client';
 import axios from 'axios';
 import dayjs from 'dayjs';
 import moment from 'moment';
 import { useEffect, useState } from 'react';
 import Countdown from 'react-countdown';
 
-import { LoginWrapper } from '@/components/Header/LoginWrapper';
 import { VerticalStep } from '@/components/misc/steps';
 import { CountDownRenderer } from '@/components/shared/countdownRenderer';
 import { tokenList } from '@/constants/index';
-import { Superteams } from '@/constants/Superteam';
-import { userStore } from '@/store/user';
-import { getBountyDraftStatus, getRegionTooltipLabel } from '@/utils/bounty';
 import { getURLSanitized } from '@/utils/getURLSanitized';
 
-import type { Eligibility, Rewards } from '../../types';
-import { WarningModal } from '../WarningModal';
-import { SubmissionModal } from './SubmissionModal';
+import type { Bounty, Rewards } from '../../types';
+import { SubmissionActionButton } from './SubmissionActionButton';
 
-interface Props {
-  id: string;
-  applicationLink?: string;
-  total?: number;
-  prizeList?: Partial<Rewards>;
-  onOpen?: () => void;
-  endingTime?: string;
-  submissionisOpen?: boolean;
-  submissiononClose?: () => void;
-  submissiononOpen?: () => void;
-  token?: string;
-  questions?: string;
-  eligibility?: Eligibility[];
-  type?: BountyType | string;
-  requirements?: string;
-  isWinnersAnnounced?: boolean;
-  pocSocials?: string;
-  applicationType?: 'fixed' | 'rolling';
-  timeToComplete?: string;
-  isPublished?: boolean;
-  status?: string;
-  hackathon?: {
-    name: string;
-    description: string;
-    startDate: string;
-  };
-  region?: string;
-}
-export function RightSideBar({
-  id,
-  total,
-  prizeList,
-  endingTime,
-  token,
-  eligibility,
-  applicationLink,
-  requirements,
-  type,
-  pocSocials,
-  isWinnersAnnounced = false,
-  applicationType,
-  timeToComplete,
-  isPublished,
-  status,
-  hackathon,
-  region,
-}: Props) {
-  const { userInfo } = userStore();
+export function RightSideBar({ listing }: { listing: Bounty }) {
+  const {
+    id,
+    token,
+    type,
+    deadline,
+    rewards,
+    rewardAmount,
+    requirements,
+    isWinnersAnnounced,
+    pocSocials,
+    Hackathon,
+    applicationType,
+    timeToComplete,
+  } = listing;
+
   const [isSubmissionNumberLoading, setIsSubmissionNumberLoading] =
     useState(true);
   const [submissionNumber, setSubmissionNumber] = useState(0);
   const [submissionRange, setSubmissionRange] = useState('');
-  const [isUserSubmissionLoading, setIsUserSubmissionLoading] = useState(false);
-  const { isOpen, onOpen, onClose } = useDisclosure();
-  const {
-    isOpen: warningIsOpen,
-    onOpen: warningOnOpen,
-    onClose: warningOnClose,
-  } = useDisclosure();
-  const [triggerLogin, setTriggerLogin] = useState(false);
-  const [isSubmitted, setIsSubmitted] = useState(false);
   let submissionStatus = 0;
-  if (Number(moment(endingTime).format('x')) < Date.now()) {
+  if (Number(moment(deadline).format('x')) < Date.now()) {
     submissionStatus = 1;
   }
   if (isWinnersAnnounced) {
     submissionStatus = 3;
   }
 
-  const hasHackathonStarted = hackathon?.startDate
-    ? dayjs().isAfter(hackathon.startDate)
+  const hasHackathonStarted = Hackathon?.startDate
+    ? dayjs().isAfter(Hackathon.startDate)
     : true;
-
-  const formattedDate = hackathon
-    ? dayjs(hackathon.startDate).format('MMM DD')
-    : null;
-
-  const getUserSubmission = async () => {
-    setIsUserSubmissionLoading(true);
-    try {
-      const submissionDetails = await axios.get(`/api/submission/${id}/user/`, {
-        params: {
-          userId: userInfo?.id,
-        },
-      });
-      setIsSubmitted(!!submissionDetails?.data?.id);
-      setIsUserSubmissionLoading(false);
-    } catch (e) {
-      setIsUserSubmissionLoading(false);
-    }
-  };
 
   const getSubmissionsCount = async () => {
     setIsSubmissionNumberLoading(true);
@@ -157,28 +88,9 @@ export function RightSideBar({
   };
 
   useEffect(() => {
-    if (!userInfo?.id) return;
-    getUserSubmission();
-  }, [userInfo?.id]);
-
-  useEffect(() => {
     if (!isSubmissionNumberLoading) return;
     getSubmissionsCount();
   }, []);
-
-  const handleSubmit = () => {
-    if (applicationLink) {
-      window.open(applicationLink, '_blank');
-      return;
-    }
-    if (!userInfo?.id) {
-      setTriggerLogin(true);
-    } else if (!userInfo?.isTalentFilled) {
-      warningOnOpen();
-    } else {
-      onOpen();
-    }
-  };
 
   const isProject = type === 'project';
   const isBounty = type === 'bounty';
@@ -193,57 +105,8 @@ export function RightSideBar({
     { key: 'fifth' as PrizeKey, label: '5th', description: 'Fifth Prize' },
   ];
 
-  const bountyDraftStatus = getBountyDraftStatus(status, isPublished);
-
-  function userRegionEligibilty() {
-    if (region === 'GLOBAL') {
-      return true;
-    }
-
-    const superteam = Superteams.find((st) => st.region === region);
-
-    const isEligible =
-      !!(
-        userInfo?.location && superteam?.country.includes(userInfo?.location)
-      ) || false;
-
-    return isEligible;
-  }
-
-  const isUserEligibleByRegion = userRegionEligibilty();
-
-  const regionTooltipLabel = getRegionTooltipLabel(region);
-
   return (
     <>
-      {isOpen && (
-        <SubmissionModal
-          id={id}
-          type={type}
-          eligibility={eligibility || []}
-          onClose={onClose}
-          isOpen={isOpen}
-          submissionNumber={submissionNumber}
-          setSubmissionNumber={setSubmissionNumber}
-          setIsSubmitted={setIsSubmitted}
-        />
-      )}
-      {warningIsOpen && (
-        <WarningModal
-          isOpen={warningIsOpen}
-          onClose={warningOnClose}
-          title={'Complete your profile'}
-          bodyText={
-            'Please complete your profile before submitting to a bounty.'
-          }
-          primaryCtaText={'Complete Profile'}
-          primaryCtaLink={'/new/talent'}
-        />
-      )}
-      <LoginWrapper
-        triggerLogin={triggerLogin}
-        setTriggerLogin={setTriggerLogin}
-      />
       <VStack gap={2} mx={2} pt={10}>
         <VStack
           justify={'center'}
@@ -273,7 +136,7 @@ export function RightSideBar({
                 }
               />
               <Text color="color.slate.800" fontSize={'2xl'} fontWeight={500}>
-                {total?.toLocaleString() ?? 0}
+                {rewardAmount?.toLocaleString() ?? 0}
                 <Text
                   as="span"
                   ml={1}
@@ -305,7 +168,7 @@ export function RightSideBar({
                   <Tbody>
                     {prizeMapping.map(
                       (prize, index) =>
-                        prizeList?.[prize.key] && (
+                        rewards?.[prize.key] && (
                           <Tr key={index}>
                             <Td>
                               <Flex
@@ -327,7 +190,7 @@ export function RightSideBar({
                                 fontSize={'1.1rem'}
                                 fontWeight={600}
                               >
-                                {prizeList[prize.key]}
+                                {rewards[prize.key]}
                                 <Text
                                   as="span"
                                   ml={1}
@@ -402,7 +265,7 @@ export function RightSideBar({
                       >
                         {applicationType === 'fixed' ? (
                           <Countdown
-                            date={endingTime}
+                            date={deadline}
                             renderer={CountDownRenderer}
                             zeroPadDays={1}
                           />
@@ -434,7 +297,7 @@ export function RightSideBar({
                   <VStack align={'start'} gap={0}>
                     <Text color={'#000000'} fontSize="1.3rem" fontWeight={500}>
                       <Countdown
-                        date={hackathon?.startDate}
+                        date={Hackathon?.startDate}
                         renderer={CountDownRenderer}
                         zeroPadDays={1}
                       />
@@ -455,52 +318,12 @@ export function RightSideBar({
                 <Text color={'#94A3B8'}>Time to Complete</Text>
               </Flex>
             )}
-            {isSubmitted ? (
-              <Button
-                w="full"
-                bg="green"
-                pointerEvents={'none'}
-                isDisabled={true}
-                size="lg"
-                variant="solid"
-              >
-                {isProject ? 'Applied Successfully' : 'Submitted Successfully'}
-              </Button>
-            ) : (
-              <Tooltip
-                bg="brand.slate.500"
-                hasArrow
-                isDisabled={hasHackathonStarted && isUserEligibleByRegion}
-                label={
-                  !hasHackathonStarted
-                    ? `Submissions Open ${formattedDate}`
-                    : !isUserEligibleByRegion
-                      ? regionTooltipLabel
-                      : ''
-                }
-                rounded="md"
-              >
-                <Button
-                  w="full"
-                  _hover={{
-                    bg: 'brand.purple',
-                  }}
-                  isDisabled={
-                    bountyDraftStatus === 'DRAFT' ||
-                    Date.now() > Number(moment(endingTime).format('x')) ||
-                    !hasHackathonStarted ||
-                    !isUserEligibleByRegion
-                  }
-                  isLoading={isUserSubmissionLoading}
-                  loadingText={'Checking Submission...'}
-                  onClick={() => handleSubmit()}
-                  size="lg"
-                  variant="solid"
-                >
-                  {isProject ? 'Apply Now' : 'Submit Now'}
-                </Button>
-              </Tooltip>
-            )}
+            <SubmissionActionButton
+              listing={listing}
+              hasHackathonStarted={hasHackathonStarted}
+              submissionNumber={submissionNumber}
+              setSubmissionNumber={setSubmissionNumber}
+            />
             {isProject && (
               <Flex gap="2" w="20rem" mt={4} p="3" bg={'#62F6FF10'}>
                 <WarningIcon color="#1A7F86" />
@@ -512,7 +335,7 @@ export function RightSideBar({
             )}
           </Box>
         </VStack>
-        {hackathon && (
+        {Hackathon && (
           <VStack
             align={'start'}
             justify={'center'}
@@ -529,16 +352,16 @@ export function RightSideBar({
               fontWeight={500}
               textAlign="center"
             >
-              {hackathon.name.toUpperCase()} TRACK
+              {Hackathon.name.toUpperCase()} TRACK
             </Text>
             <Text color={'brand.slate.500'} fontSize="1rem">
-              {hackathon.description}
+              {Hackathon.description}
             </Text>
             <Link
               color={'brand.slate.500'}
               fontSize="1rem"
               fontWeight={500}
-              href={`/${hackathon.name.toLowerCase()}`}
+              href={`/${Hackathon.name.toLowerCase()}`}
               isExternal
             >
               View all tracks
@@ -645,7 +468,7 @@ export function RightSideBar({
               sublabel={
                 isWinnersAnnounced
                   ? 'Congratulations!'
-                  : `Around ${moment(endingTime)
+                  : `Around ${moment(deadline)
                       .add(8, 'd')
                       .format('Do MMM, YY')}`
               }
