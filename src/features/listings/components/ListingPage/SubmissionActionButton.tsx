@@ -200,7 +200,9 @@ export const SubmissionActionButton = ({
       <Tooltip
         bg="brand.slate.500"
         hasArrow
-        isDisabled={hasHackathonStarted && isUserEligibleByRegion}
+        isDisabled={
+          !userInfo?.id || (hasHackathonStarted && isUserEligibleByRegion)
+        }
         label={
           !hasHackathonStarted
             ? `Submissions Open ${formattedDate}`
