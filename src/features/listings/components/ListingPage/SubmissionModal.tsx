@@ -122,30 +122,36 @@ export const SubmissionModal = ({
             params: { id },
           });
 
-          const { applicationLink, tweetLink, otherInfo, eligibilityAnswers } =
-            response.data;
+          const {
+            link: applicationLink,
+            tweet: tweetLink,
+            otherInfo,
+            eligibilityAnswers,
+          } = response.data;
 
-          const transformedAnswers = eligibilityAnswers.reduce(
-            (acc: FormFields, curr: EligibilityAnswer) => {
-              const index = eligibility.findIndex(
-                (e) => e.question === curr.question,
-              );
-
-              if (index !== -1) {
-                acc[`eligibility-${eligibility[index]!.order}`] = curr.answer;
-              }
-
-              return acc;
-            },
-            {} as FormFields,
-          );
-
-          const formData = {
-            ...transformedAnswers,
+          let formData = {
             applicationLink,
             tweetLink,
             otherInfo,
           };
+
+          if (isProject) {
+            const transformedAnswers = eligibilityAnswers.reduce(
+              (acc: FormFields, curr: EligibilityAnswer) => {
+                const index = eligibility.findIndex(
+                  (e) => e.question === curr.question,
+                );
+
+                if (index !== -1) {
+                  acc[`eligibility-${eligibility[index]!.order}`] = curr.answer;
+                }
+
+                return acc;
+              },
+              {} as FormFields,
+            );
+            formData = { ...formData, ...transformedAnswers };
+          }
 
           reset(formData);
         } catch (error) {

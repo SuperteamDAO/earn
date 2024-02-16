@@ -1,4 +1,3 @@
-import console from 'console';
 import type { NextApiRequest, NextApiResponse } from 'next';
 
 import { prisma } from '@/prisma';
