@@ -76,6 +76,24 @@ export function SubmissionCard({
 
   const submissionLink = `${listingLink}/submission/${sub?.id}`;
 
+  let winningText;
+  let submissionText;
+
+  switch (sub?.listing?.type) {
+    case 'bounty':
+      winningText = 'won a bounty';
+      submissionText = 'submitted to a bounty';
+      break;
+    case 'hackathon':
+      winningText = 'won a hackathon';
+      submissionText = 'submitted to a hackathon';
+      break;
+    case 'project':
+      winningText = 'got selected for a project';
+      submissionText = 'applied to a project';
+      break;
+  }
+
   return (
     <Box my={'16'}>
       <Flex align="center" justify={'space-between'}>
@@ -94,13 +112,9 @@ export function SubmissionCard({
               {talent?.firstName} {talent?.lastName}
             </Text>{' '}
             {sub?.isWinner && sub?.listing?.isWinnersAnnounced ? (
-              <Text as={'span'}>
-                {isBounty ? 'won a bounty' : 'got selected for a project'}
-              </Text>
+              <Text as={'span'}>{winningText}</Text>
             ) : (
-              <Text as={'span'}>
-                {isBounty ? 'submitted to a bounty' : 'applied to a project'}
-              </Text>
+              <Text as={'span'}>{submissionText}</Text>
             )}
           </Text>
         </Flex>

@@ -157,11 +157,13 @@ export const SubmissionActionButton = ({
     default:
       buttonText = isProject ? 'Apply Now' : 'Submit Now';
       buttonBG = 'brand.purple';
-      isBtnDisabled =
-        bountyDraftStatus === 'DRAFT' ||
-        Date.now() > Number(moment(deadline).format('x')) ||
-        !hasHackathonStarted ||
-        !isUserEligibleByRegion;
+      isBtnDisabled = Boolean(
+        userInfo?.id &&
+          (bountyDraftStatus === 'DRAFT' ||
+            Date.now() > Number(moment(deadline).format('x')) ||
+            !hasHackathonStarted ||
+            !isUserEligibleByRegion),
+      );
       btnLoadingText = 'Checking Submission..';
   }
 
