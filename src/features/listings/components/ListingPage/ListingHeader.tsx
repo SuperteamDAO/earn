@@ -88,7 +88,7 @@ export function ListingHeader({
         bountyId: id,
       });
       setUpdate((prev) => !prev);
-      toast.success('Subscribed to the Listing');
+      toast.success('Subscribed to the listing');
     } catch (error) {
       console.log(error);
       toast.error('Error');

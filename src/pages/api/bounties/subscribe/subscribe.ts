@@ -24,6 +24,7 @@ export default async function bounty(
     const subFound = await prisma.subscribeBounty.findFirst({
       where: {
         bountyId: req.body.bountyId,
+        userId,
       },
     });
     if (subFound) {
