@@ -35,6 +35,7 @@ export default function Document() {
           href="https://res.cloudinary.com"
           crossOrigin="anonymous"
         />
+        <link rel="manifest" href="/site.webmanifest" />
       </Head>
       <body>
         <Main />

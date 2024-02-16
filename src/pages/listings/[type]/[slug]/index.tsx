@@ -149,25 +149,7 @@ function BountyDetails({ bounty: initialBounty }: BountyDetailsProps) {
                   />
                   <Comments refId={bounty?.id ?? ''} refType="BOUNTY" />
                 </VStack>
-                <RightSideBar
-                  id={bounty?.id || ''}
-                  token={bounty?.token ?? ''}
-                  eligibility={bounty?.eligibility}
-                  type={bounty?.type}
-                  endingTime={bounty?.deadline ?? ''}
-                  prizeList={bounty?.rewards}
-                  total={bounty?.rewardAmount || 0}
-                  applicationLink={bounty?.applicationLink || ''}
-                  requirements={bounty?.requirements}
-                  isWinnersAnnounced={bounty?.isWinnersAnnounced}
-                  pocSocials={bounty?.pocSocials}
-                  hackathon={bounty?.Hackathon}
-                  applicationType={bounty?.applicationType}
-                  timeToComplete={bounty?.timeToComplete}
-                  isPublished={bounty?.isPublished}
-                  status={bounty?.status}
-                  region={bounty?.region}
-                />
+                <RightSideBar listing={bounty} />
               </HStack>
             </>
           )}

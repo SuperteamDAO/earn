@@ -88,7 +88,6 @@ export const ListingCard = ({
   const isBounty = type === 'bounty';
 
   const langCode = franc(description);
-  console.log(langCode);
 
   const isEnglish = description
     ? langCode === 'eng' || langCode === 'sco'

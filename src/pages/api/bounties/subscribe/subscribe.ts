@@ -1,4 +1,3 @@
-import console from 'console';
 import type { NextApiRequest, NextApiResponse } from 'next';
 import { getToken } from 'next-auth/jwt';
 
@@ -24,6 +23,7 @@ export default async function bounty(
     const subFound = await prisma.subscribeBounty.findFirst({
       where: {
         bountyId: req.body.bountyId,
+        userId,
       },
     });
     if (subFound) {

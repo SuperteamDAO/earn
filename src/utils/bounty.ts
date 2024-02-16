@@ -15,7 +15,7 @@ export const formatDeadline = (
   return '-';
 };
 
-const isDeadlineOver = (deadline: string | undefined) =>
+export const isDeadlineOver = (deadline: string | undefined) =>
   deadline ? dayjs().isAfter(dayjs(deadline)) : false;
 
 export const getRegionTooltipLabel = (region: string | undefined) => {

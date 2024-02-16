@@ -183,6 +183,17 @@ export const Footer = () => {
               FAQ
             </Link>
 
+            <Link
+              mb={{ base: 6, md: 2 }}
+              color={'brand.slate.500'}
+              fontSize={'lg'}
+              fontWeight={'700'}
+              href="https://superteamdao.notion.site/Superteam-Earn-Changelog-faf0c85972a742699ecc07a52b569827"
+              isExternal
+            >
+              Changelog
+            </Link>
+
             <ListHeader>Superteam Productions</ListHeader>
             <Link
               as={NextLink}

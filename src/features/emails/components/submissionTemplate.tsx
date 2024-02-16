@@ -21,12 +21,13 @@ export const SubmissionTemplate = ({
         <>
           <p style={styles.textWithMargin}>
             Nice work! Your application for <strong>{bountyName}</strong> has
-            been received. We are praying day in and day out that you get chosen
-            for this Project listing 🫶
+            been received. Pour yourself a glass of something tasty —
+            you&apos;ve earned it 🥳
           </p>
           <p style={styles.textWithMargin}>
-            Rest assured, we’ll email you once the winner (hopefully you) has
-            been selected for the Project!
+            The sponsor will soon review all other applications. We’ll then send
+            you an email when the winners (hopefully including you) are
+            announced!
           </p>
         </>
       ) : (
