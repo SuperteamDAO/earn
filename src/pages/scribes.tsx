@@ -201,8 +201,7 @@ export default function Scribes() {
               fontWeight={600}
             >
               <Countdown
-                // date={endingTime}
-                date={new Date('2024-02-29T23:59:59')}
+                date={new Date('2024-02-29T23:59:59Z')}
                 renderer={CountDownRenderer}
                 zeroPadDays={1}
               />

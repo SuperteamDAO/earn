@@ -68,7 +68,7 @@ export function SubmissionCard({
 
   const breakpoint = useBreakpointValue({ base: 'base', md: 'md' });
 
-  const isBounty = sub?.listing?.type === 'bounty';
+  const isProject = sub?.listing?.type === 'project';
 
   const listingLink = `${getURL()}listings/${sub?.listing?.type}/${
     sub?.listing?.slug
@@ -225,14 +225,14 @@ export function SubmissionCard({
             display="flex"
             whiteSpace={'nowrap'}
           >
-            <LinkOverlay href={isBounty ? submissionLink : listingLink}>
+            <LinkOverlay href={isProject ? listingLink : submissionLink}>
               <Text
                 as="span"
                 color={'#6366F1'}
                 fontSize={{ base: 'sm', md: 'md' }}
                 fontWeight={600}
               >
-                {isBounty ? 'View Submission' : 'View Listing'}
+                {isProject ? 'View Listing' : 'View Submission'}
               </Text>
             </LinkOverlay>
             <ArrowForwardIcon color={'#6366F1'} />
@@ -265,7 +265,7 @@ export function SubmissionCard({
             cursor: 'pointer',
           }}
           onClick={() => {
-            window.location.href = isBounty ? submissionLink : listingLink;
+            window.location.href = isProject ? listingLink : submissionLink;
           }}
         />
       </Flex>
