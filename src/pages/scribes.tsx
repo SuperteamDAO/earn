@@ -193,7 +193,7 @@ export default function Scribes() {
           </Flex>
           <Flex direction={'column'}>
             <Text fontSize={'sm'} fontWeight={500}>
-              Submissions Open in
+              Submissions End In
             </Text>
             <Text
               color={'brand.slate.800'}
@@ -201,7 +201,7 @@ export default function Scribes() {
               fontWeight={600}
             >
               <Countdown
-                date={new Date('2024-02-19T00:00:00Z')}
+                date={new Date('2024-02-29T23:59:59Z')}
                 renderer={CountDownRenderer}
                 zeroPadDays={1}
               />
