@@ -28,16 +28,16 @@
 - If your PR refers to or fixes an issue, be sure to add `refs #XXX` or `fixes #XXX` to the PR description. Replacing `XXX` with the respective issue number. See more about [Linking a pull request to an issue](https://docs.github.com/en/issues/tracking-your-work-with-issues/linking-a-pull-request-to-an-issue).
 - Be sure to fill the PR Template accordingly.
 
-## Guidelines for committing yarn lockfile
+## Guidelines for committing pnpm lockfile
 
-Do not commit your `yarn.lock` unless you've made changes to the `package.json`. If you've already committed `yarn.lock` unintentionally, follow these steps to undo:
+Do not commit your `pnpm-lock.yaml` unless you've made changes to the `package.json`. If you've already committed `pnpm-lock.yaml` unintentionally, follow these steps to undo:
 
-If your last commit has the `yarn.lock` file alongside other files and you only wish to uncommit the `yarn.lock`:
+If your last commit has the `pnpm-lock.yaml` file alongside other files and you only wish to uncommit the `pnpm-lock.yaml`:
    ```bash
-   git checkout HEAD~1 yarn.lock
-   git commit -m "Revert yarn.lock changes"
+   git checkout HEAD~1 pnpm-lock.yaml
+   git commit -m "Revert pnpm-lock.yaml changes"
    ```
-If you've pushed the commit with the `yarn.lock`:
+If you've pushed the commit with the `pnpm-lock.yaml`:
    1. Correct the commit locally using the above method.
    2. Carefully force push:
 
@@ -45,22 +45,22 @@ If you've pushed the commit with the `yarn.lock`:
    git push origin <your-branch-name> --force
    ```
 
-If `yarn.lock` was committed a while ago and there have been several commits since, you can use the following steps to revert just the `yarn.lock` changes without impacting the subsequent changes:
+If `pnpm-lock.yaml` was committed a while ago and there have been several commits since, you can use the following steps to revert just the `pnpm-lock.yaml` changes without impacting the subsequent changes:
 
 1. **Checkout a Previous Version**:
-   - Find the commit hash before the `yarn.lock` was unintentionally committed. You can do this by viewing the Git log:
+   - Find the commit hash before the `pnpm-lock.yaml` was unintentionally committed. You can do this by viewing the Git log:
      ```bash
-     git log yarn.lock
+     git log pnpm-lock.yaml
      ```
-   - Once you have identified the commit hash, use it to checkout the previous version of `yarn.lock`:
+   - Once you have identified the commit hash, use it to checkout the previous version of `pnpm-lock.yaml`:
      ```bash
-     git checkout <commit_hash> yarn.lock
+     git checkout <commit_hash> pnpm-lock.yaml
      ```
 
 2. **Commit the Reverted Version**:
-   - After checking out the previous version of the `yarn.lock`, commit this change:
+   - After checking out the previous version of the `pnpm-lock.yaml`, commit this change:
      ```bash
-     git commit -m "Revert yarn.lock to its state before unintended changes"
+     git commit -m "Revert pnpm-lock.yaml to its state before unintended changes"
      ```
 
 3. **Proceed with Caution**:
