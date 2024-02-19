@@ -187,7 +187,7 @@ export const SubmissionModal = ({
         question: q.question,
         answer: answers[`eligibility-${q.order}`],
       }));
-      await axios.post('/api/user/update', {
+      await axios.post('/api/user/update/', {
         publicKey,
       });
 

@@ -66,7 +66,7 @@ export default async function user(req: NextApiRequest, res: NextApiResponse) {
   try {
     const updatedData = {
       ...updateAttributes,
-      skills: correctedSkills,
+      ...(skills && { skills: correctedSkills }),
     };
 
     result = await prisma.user.update({
