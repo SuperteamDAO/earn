@@ -107,7 +107,7 @@ export default async function getHackathonListings(
         },
       },
     });
-    res.status(200).json({ total, startDate, data: result });
+    res.status(200).json({ total, startDate, listings: result });
   } catch (err) {
     res.status(400).json({ err: 'Error occurred while fetching bounties.' });
   }

@@ -98,7 +98,7 @@ export default function Hackathon({ slug }: { slug: string }) {
   const getBounties = async () => {
     setIsBountiesLoading(true);
     try {
-      const bountiesList = await axios.get('/api/hackathon/listings/', {
+      const hackathonQuery = await axios.get('/api/hackathon/listings/', {
         params: {
           slug,
           searchText,
@@ -107,9 +107,10 @@ export default function Hackathon({ slug }: { slug: string }) {
           showSubmissionDetails: true,
         },
       });
-      setTotalBounties(bountiesList.data.total);
-      setStartDate(bountiesList.data.startDate);
-      setBounties(bountiesList.data.data);
+      const hackathonData = hackathonQuery.data;
+      setTotalBounties(hackathonData.total);
+      setStartDate(hackathonData.startDate);
+      setBounties(hackathonData.listings);
       setIsBountiesLoading(false);
     } catch (error) {
       setIsBountiesLoading(false);
@@ -129,10 +130,6 @@ export default function Hackathon({ slug }: { slug: string }) {
 
   const hasHackathonStarted = startDate ? dayjs().isAfter(startDate) : true;
   const formattedDate = dayjs(startDate).format('MMM DD');
-
-  useEffect(() => {
-    console.log(hasHackathonStarted);
-  }, [startDate]);
 
   const changeBountyStatus = async (status: boolean) => {
     setIsChangingStatus(true);

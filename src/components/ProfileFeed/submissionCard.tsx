@@ -85,7 +85,7 @@ export function SubmissionCard({
       submissionText = 'submitted to a bounty';
       break;
     case 'hackathon':
-      winningText = 'won a hackathon';
+      winningText = 'won a hackathon track';
       submissionText = 'submitted to a hackathon';
       break;
     case 'project':

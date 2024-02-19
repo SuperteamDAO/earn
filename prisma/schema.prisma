@@ -382,18 +382,19 @@ model VerificationToken {
 }
 
 model Hackathon {
-  id          String     @id @default(uuid())
-  slug        String     @unique
-  name        String
-  logo        String
-  altLogo     String?
-  description String
-  listings    Bounties[]
-  sponsorId   String?    @unique
-  startDate   DateTime?
-  deadline    DateTime?
-  Sponsor     Sponsors?  @relation(fields: [sponsorId], references: [id])
-  User        User[]
+  id           String     @id @default(uuid())
+  slug         String     @unique
+  name         String
+  logo         String
+  altLogo      String?
+  description  String
+  listings     Bounties[]
+  sponsorId    String?    @unique
+  startDate    DateTime?
+  deadline     DateTime?
+  announceDate DateTime?
+  Sponsor      Sponsors?  @relation(fields: [sponsorId], references: [id])
+  User         User[]
 
   @@index([sponsorId])
 }
