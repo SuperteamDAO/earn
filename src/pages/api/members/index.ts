@@ -11,47 +11,20 @@ export default async function members(
   const skip = params.take ? parseInt(params.skip as string, 10) : 0;
   const take = params.take ? parseInt(params.take as string, 10) : 15;
   const searchText = params.searchText as string;
+
+  const searchTextFields = ['email', 'username', 'firstName', 'lastName'];
   const whereSearch = searchText
     ? {
-        OR: [
-          {
-            user: {
-              email: {
-                contains: searchText,
-              },
+        OR: searchTextFields.map((field) => ({
+          user: {
+            [field]: {
+              contains: searchText,
             },
           },
-          {
-            user: {
-              publicKey: {
-                contains: searchText,
-              },
-            },
-          },
-          {
-            user: {
-              username: {
-                contains: searchText,
-              },
-            },
-          },
-          {
-            user: {
-              firstName: {
-                contains: searchText,
-              },
-            },
-          },
-          {
-            user: {
-              lastName: {
-                contains: searchText,
-              },
-            },
-          },
-        ],
+        })),
       }
     : {};
+
   try {
     const countQuery = {
       where: {
@@ -72,7 +45,6 @@ export default async function members(
             username: true,
             firstName: true,
             lastName: true,
-            publicKey: true,
             photo: true,
           },
         },

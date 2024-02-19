@@ -139,7 +139,7 @@ export const SubmissionActionButton = ({
 
   switch (buttonState) {
     case 'edit':
-      buttonText = 'Edit Submission';
+      buttonText = isProject ? 'Edit Application' : 'Edit Submission';
       buttonBG = 'brand.purple';
       isBtnDisabled = false;
       btnLoadingText = null;
