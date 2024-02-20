@@ -45,7 +45,6 @@ export const authOptions: NextAuthOptions = {
       },
     }),
   ],
-  secret: process.env.SECRET,
   session: {
     strategy: 'jwt',
   },
