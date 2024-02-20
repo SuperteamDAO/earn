@@ -29,18 +29,12 @@ cd earn
 pnpm i
 ```
 
-4. Set up your `.env` File.
-  - Start by copying the `.env.example` file to a new file named `.env`. This file will store your local environment variables.
-  - You have to set up resend for email authentication:
-    - Go to the [Resend website](https://resend.com) and log in or create an acount.
-    - Once logged in, navigate to the dashboard and generate a new API key. This key will be used to authenticate your application's requests to Resend.
-    - Add your email domain to Resend. Go to the [domains section](https://resend.com/domains) on the Resend website and register the domain of your email address. This step is necessary for sending emails through Resend
-  - Update your `.env` File:
-    - In your `.env` file, you need to add two key-value pairs:
-      - `RESEND_API_KEY`: Set this to the API key you generated on the Resend dashboard.
-      - `RESEND_EMAIL`: Use the email address that corresponds to the domain you registered on Resend.
-
-
+4. Set up your `.env` file.
+  - Start by copying the `.env.example` file to a new file named `.env`. This file will store your local environment settings.
+  - Use openssl rand -base64 32 to generate a key and add it under NEXTAUTH_SECRET in the .env file.
+  - You have to set up resend to run the app:
+    - [Resend](https://resend.com): To obtain your `RESEND_API_KEY`, visit the Resend dashboard. This credential is essential for setting up Email Auth.
+    
 5. Run the development server
 ```bash
 pnpm dev
