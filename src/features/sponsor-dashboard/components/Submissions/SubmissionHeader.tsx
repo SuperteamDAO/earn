@@ -86,9 +86,10 @@ export const SubmissionHeader = ({
     }
   })();
 
-  const afterAnnounceDate = hackathonSlug
-    ? dayjs().isAfter(bounty?.Hackathon?.announceDate)
-    : true;
+  const afterAnnounceDate =
+    bounty?.type === 'hackathon'
+      ? dayjs().isAfter(bounty?.Hackathon?.announceDate)
+      : true;
 
   return (
     <>
