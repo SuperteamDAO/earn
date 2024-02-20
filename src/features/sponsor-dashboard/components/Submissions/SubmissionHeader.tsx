@@ -22,6 +22,7 @@ import {
   useClipboard,
 } from '@chakra-ui/react';
 import axios from 'axios';
+import dayjs from 'dayjs';
 import NextLink from 'next/link';
 import router from 'next/router';
 import React, { useState } from 'react';
@@ -85,6 +86,11 @@ export const SubmissionHeader = ({
     }
   })();
 
+  const afterAnnounceDate =
+    bounty?.type === 'hackathon'
+      ? dayjs().isAfter(bounty?.Hackathon?.announceDate)
+      : true;
+
   return (
     <>
       <Box mb={2}>
@@ -147,6 +153,7 @@ export const SubmissionHeader = ({
               ml={4}
               color="#6366F1"
               bg="#E0E7FF"
+              isDisabled={!afterAnnounceDate}
               leftIcon={<CheckIcon />}
               onClick={onOpen}
               variant={'solid'}
@@ -166,7 +173,12 @@ export const SubmissionHeader = ({
         </Box>
         <Box>
           <Text color="brand.slate.500">Deadline</Text>
-          <Text mt={3} color="brand.slate.600" fontWeight={600}>
+          <Text
+            mt={3}
+            color="brand.slate.600"
+            fontWeight={600}
+            whiteSpace={'nowrap'}
+          >
             {deadline}
           </Text>
         </Box>

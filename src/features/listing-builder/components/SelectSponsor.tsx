@@ -57,7 +57,7 @@ export function SelectSponsor({ type }: { type?: string }) {
 
   const updateUser = async (sponsorId: string) => {
     try {
-      const userUpdatedDetails = await axios.post('/api/user/update', {
+      const userUpdatedDetails = await axios.post('/api/user/update/', {
         currentSponsorId: sponsorId,
       });
       return userUpdatedDetails.data;

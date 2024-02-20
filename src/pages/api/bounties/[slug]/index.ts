@@ -24,6 +24,7 @@ export default async function user(req: NextApiRequest, res: NextApiResponse) {
             name: true,
             description: true,
             slug: true,
+            announceDate: true,
           },
         },
       },

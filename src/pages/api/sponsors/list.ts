@@ -9,7 +9,7 @@ export default async function sponsors(
   const params = req.query;
   const userId = params.userId as string;
   const searchString = params.searchString as string;
-  const take = params.take ? parseInt(params.take as string, 10) : 10;
+  const take = params.take ? parseInt(params.take as string, 10) : 30;
   let finalSponsors = [];
   try {
     const user = await prisma.user.findUnique({

@@ -51,6 +51,7 @@ export interface Bounty {
     startDate: string;
     altLogo: string;
     slug: string;
+    announceDate: string;
   };
 }
 
