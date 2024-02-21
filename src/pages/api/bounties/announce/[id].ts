@@ -269,7 +269,7 @@ export default async function announce(
         await resendMail.emails.send({
           from: kashEmail,
           to: [email],
-          subject: `${listingType} Winners Announced!`,
+          subject: `Submit This Form to Claim Your Reward`,
           react: template,
         });
       });

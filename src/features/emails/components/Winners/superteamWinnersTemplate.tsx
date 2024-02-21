@@ -23,8 +23,8 @@ export const SuperteamWinnersTemplate = ({
         >
           this form
         </a>{' '}
-        to receive your bounty reward. Please select &quot;Pratik Dholani&quot;
-        as the Project Lead.
+        to receive your bounty reward, and select &quot;Pratik Dholani&quot; as
+        the Project Lead.
       </p>
       <p style={styles.textWithMargin}>
         We follow a weekly payout system. Therefore, your bounty reward might
@@ -36,7 +36,7 @@ export const SuperteamWinnersTemplate = ({
         >
           here
         </a>{' '}
-        (your entry will show up once your payout request is verified).
+        .
       </p>
       <p style={styles.salutation}>
         Best,
