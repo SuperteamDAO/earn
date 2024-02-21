@@ -296,10 +296,14 @@ export const DescriptionBuilder = ({
         </Flex>
         <VStack w={'3xl'} mx={'auto'} mb={8}>
           <Flex
+            pos={'sticky'}
+            zIndex="200"
+            top="14"
             align={'center'}
             justify={'start'}
             w={'full'}
             borderBottom={'1px solid #D2D2D2'}
+            bgColor={'#ffffff'}
           >
             <Button
               bg={editor?.isActive('heading', { level: 1 }) ? 'gray.200' : ''}
