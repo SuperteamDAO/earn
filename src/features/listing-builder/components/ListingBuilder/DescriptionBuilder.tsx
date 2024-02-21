@@ -298,7 +298,7 @@ export const DescriptionBuilder = ({
           <Flex
             pos={'sticky'}
             zIndex="200"
-            top="20"
+            top="14"
             align={'center'}
             justify={'start'}
             w={'full'}
