@@ -202,15 +202,18 @@ export const SubmissionCard = ({
           }}
         />
       </HStack>
+
       <Button
-        as={NextLink}
         w="full"
         py={4}
         color={'gray.500'}
         fontSize={'md'}
         fontWeight={500}
         borderColor={'gray.300'}
-        href={link}
+        onClick={(e) => {
+          e.stopPropagation();
+          router.push(link);
+        }}
         variant="outline"
       >
         View
