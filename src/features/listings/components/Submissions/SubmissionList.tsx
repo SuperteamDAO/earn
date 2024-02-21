@@ -1,4 +1,4 @@
-import { Flex, Image, Text, VStack } from '@chakra-ui/react';
+import { Flex, Image, SimpleGrid, Text, VStack } from '@chakra-ui/react';
 import moment from 'moment';
 import React, { type Dispatch, type SetStateAction } from 'react';
 
@@ -31,40 +31,41 @@ export const SubmissionList = ({
         {Number(moment(endTime).format('x')) < Date.now() ? (
           <>
             <VStack align={'start'} w={'full'} maxW={'7xl'} mx="auto">
-              <Flex gap={3} ml={5}>
+              <Flex gap={3} ml={{ base: 2, lg: 6 }}>
                 <Text color={'#1E293B'} fontSize={'1.2rem'} fontWeight={600}>
                   {submissions.length}
                 </Text>
-                <Text color={'#94A3B8'} fontSize={'1.2rem'} fontWeight={600}>
+                <Text color={'#94A3B8'} fontSize={'1.2rem'} fontWeight={500}>
                   Submissions
                 </Text>
               </Flex>
-              <Flex
-                justify={['center', 'center', 'start', 'start']}
-                wrap={'wrap'}
-                gap={10}
-                mt={10}
+              <SimpleGrid
+                mx={{ base: 2, lg: 6 }}
+                columns={{ base: 1, md: 2, lg: 3, xl: 4 }}
+                spacing={20}
               >
-                {submissions?.map((el) => {
+                {submissions?.map((submission) => {
                   return (
                     <SubmissionCard
-                      id={el.id}
+                      id={submission.id}
                       likes={
-                        (el.like as unknown as {
+                        (submission.like as unknown as {
                           id: string;
                           date: number;
                         }[]) ?? []
                       }
-                      talent={el.user}
-                      key={el.id}
-                      winner={!!bounty?.isWinnersAnnounced && !!el.isWinner}
-                      link={el.link ?? ''}
+                      talent={submission.user}
+                      key={submission.id}
+                      winner={
+                        !!bounty?.isWinnersAnnounced && !!submission.isWinner
+                      }
+                      link={submission.link ?? ''}
                       setUpdate={setUpdate}
-                      winnerPosition={el.winnerPosition}
+                      winnerPosition={submission.winnerPosition}
                     />
                   );
                 })}
-              </Flex>
+              </SimpleGrid>
             </VStack>
           </>
         ) : (
