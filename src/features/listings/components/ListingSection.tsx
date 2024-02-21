@@ -8,7 +8,7 @@ type ListingSectionProps = {
   sub: string;
   emoji: string;
   type: 'bounties' | 'grants';
-  all?: boolean;
+  showViewAll?: boolean;
   viewAllLink?: string;
 };
 
@@ -18,7 +18,7 @@ export const ListingSection = ({
   sub,
   emoji,
   type,
-  all,
+  showViewAll,
   viewAllLink,
 }: ListingSectionProps) => {
   const router = useRouter();
@@ -77,7 +77,9 @@ export const ListingSection = ({
           </Text>
         </Flex>
         <Flex
-          display={!all && router?.query?.category !== type ? 'block' : 'none'}
+          display={
+            showViewAll && router?.query?.category !== type ? 'block' : 'none'
+          }
         >
           <Link
             href={
@@ -97,7 +99,9 @@ export const ListingSection = ({
         {children}
       </Flex>
       <Flex
-        display={!all && router?.query?.category !== type ? 'block' : 'none'}
+        display={
+          showViewAll && router?.query?.category !== type ? 'block' : 'none'
+        }
       >
         <Link
           href={

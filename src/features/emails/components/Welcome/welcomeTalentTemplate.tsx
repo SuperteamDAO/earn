@@ -1,6 +1,6 @@
 import React from 'react';
 
-import { styles } from '../../utils/styles';
+import { styles } from '../../utils';
 
 export const WelcomeTalentTemplate = () => {
   return (
