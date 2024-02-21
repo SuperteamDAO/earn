@@ -1,5 +1,6 @@
 import type { NextApiRequest, NextApiResponse } from 'next';
 
+import { kashEmail } from '@/constants/kashEmail';
 import { CommentSponsorTemplate, getUnsubEmails } from '@/features/emails';
 import { prisma } from '@/prisma';
 import resendMail from '@/utils/resend';
@@ -24,7 +25,7 @@ export default async function handler(
 
     if (pocUser && !unsubscribedEmails.includes(pocUser.email)) {
       await resendMail.emails.send({
-        from: `Kash from Superteam <${process.env.RESEND_EMAIL}>`,
+        from: kashEmail,
         to: [pocUser.email],
         subject: 'Comment Received on Your Superteam Earn Listing',
         react: CommentSponsorTemplate({

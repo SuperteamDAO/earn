@@ -1,6 +1,7 @@
 import type { NextApiRequest, NextApiResponse } from 'next';
 import { getToken } from 'next-auth/jwt';
 
+import { kashEmail } from '@/constants/kashEmail';
 import { CommentSubmissionTemplate, getUnsubEmails } from '@/features/emails';
 import { prisma } from '@/prisma';
 import resendMail from '@/utils/resend';
@@ -44,7 +45,7 @@ export default async function handler(
       !unsubscribedEmails.includes(submission.user.email as string)
     ) {
       await resendMail.emails.send({
-        from: `Kash from Superteam <${process.env.RESEND_EMAIL}>`,
+        from: kashEmail,
         to: [submission?.user.email as string],
         subject: 'Comment Received on Your Superteam Earn Submission',
         react: CommentSubmissionTemplate({

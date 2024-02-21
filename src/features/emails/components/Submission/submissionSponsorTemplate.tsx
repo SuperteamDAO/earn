@@ -1,6 +1,6 @@
 import React from 'react';
 
-import { styles } from './styles';
+import { styles } from '../../utils/styles';
 
 interface TemplateProps {
   name: string;
@@ -8,7 +8,7 @@ interface TemplateProps {
   link: string;
 }
 
-export const DeadlineSponsorTemplate = ({
+export const SubmissionSponsorTemplate = ({
   name,
   bountyName,
   link,
@@ -17,15 +17,11 @@ export const DeadlineSponsorTemplate = ({
     <div style={styles.container}>
       <p style={styles.greetings}>Hey {name},</p>
       <p style={styles.textWithMargin}>
-        The deadline for your listing <strong>{bountyName}</strong>
-        &nbsp; has expired. Please review the submissions and announce the
-        winners on Superteam Earn&nbsp;within 5 to 7 days.
-      </p>
-      <p style={styles.textWithMargin}>
+        Your listing <strong>{bountyName}</strong> just received a submission on
+        Superteam Earn &mdash;{' '}
         <a href={link} style={styles.link}>
-          Click here
-        </a>{' '}
-        to review&nbsp;the submissions. &nbsp;
+          check it out!
+        </a>
       </p>
       <p style={styles.salutation}>
         Best,

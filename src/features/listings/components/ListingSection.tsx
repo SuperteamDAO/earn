@@ -1,4 +1,5 @@
-import { Box, Flex, HStack, Image, Text } from '@chakra-ui/react';
+import { ArrowForwardIcon } from '@chakra-ui/icons';
+import { Box, Button, Flex, HStack, Image, Link, Text } from '@chakra-ui/react';
 import { useRouter } from 'next/router';
 
 type ListingSectionProps = {
@@ -7,6 +8,8 @@ type ListingSectionProps = {
   sub: string;
   emoji: string;
   type: 'bounties' | 'grants';
+  all?: boolean;
+  viewAllLink?: string;
 };
 
 export const ListingSection = ({
@@ -15,6 +18,8 @@ export const ListingSection = ({
   sub,
   emoji,
   type,
+  all,
+  viewAllLink,
 }: ListingSectionProps) => {
   const router = useRouter();
 
@@ -71,9 +76,50 @@ export const ListingSection = ({
             {sub}
           </Text>
         </Flex>
+        <Flex
+          display={!all && router?.query?.category !== type ? 'block' : 'none'}
+        >
+          <Link
+            href={
+              viewAllLink ||
+              (router?.query?.filter
+                ? `/${type}/${router?.query?.filter}/`
+                : `/${type}/`)
+            }
+          >
+            <Button color="brand.slate.400" size="sm" variant="ghost">
+              View All
+            </Button>
+          </Link>
+        </Flex>
       </HStack>
       <Flex direction={'column'} rowGap={'1'}>
         {children}
+      </Flex>
+      <Flex
+        display={!all && router?.query?.category !== type ? 'block' : 'none'}
+      >
+        <Link
+          href={
+            viewAllLink ||
+            (router?.query?.filter
+              ? `/${type}/${router?.query?.filter}/`
+              : `/${type}/`)
+          }
+        >
+          <Button
+            w="100%"
+            my={8}
+            py={5}
+            color="brand.slate.400"
+            borderColor="brand.slate.300"
+            rightIcon={<ArrowForwardIcon />}
+            size="sm"
+            variant="outline"
+          >
+            View All
+          </Button>
+        </Link>
       </Flex>
     </Box>
   );

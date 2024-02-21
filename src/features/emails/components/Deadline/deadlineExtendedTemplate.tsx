@@ -1,28 +1,26 @@
 import React from 'react';
 
-import { styles } from './styles';
+import { styles } from '../../utils/styles';
 
 interface TemplateProps {
-  senderName: string;
-  sponsorName: string;
+  listingName: string;
   link: string;
 }
 
-export const InviteMemberTemplate = ({
-  senderName,
-  sponsorName,
+export const DeadlineExtendedTemplate = ({
+  listingName,
   link,
 }: TemplateProps) => {
   return (
     <div style={styles.container}>
       <p style={styles.greetings}>Hello,</p>
       <p style={styles.textWithMargin}>
-        You have been invited by {senderName} to join{' '}
-        <strong>{sponsorName}</strong> {''} on Superteam Earn!{' '}
+        Quick heads up – the deadline for the{' '}
         <a href={link} style={styles.link}>
-          Click here
+          {listingName}
         </a>{' '}
-        to be added as a {sponsorName} team member.
+        listing has been updated. Check it out and adjust your plans
+        accordingly!
       </p>
       <p style={styles.salutation}>
         Best,

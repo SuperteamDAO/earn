@@ -1,10 +1,11 @@
 import { Regions } from '@prisma/client';
 import type { NextApiRequest, NextApiResponse } from 'next';
 
+import { kashEmail } from '@/constants/kashEmail';
 import { Superteams } from '@/constants/Superteam';
 import {
   getUnsubEmails,
-  NewBountyTemplate,
+  NewListingTemplate,
   rateLimitedPromiseAll,
 } from '@/features/emails';
 import type { Skills } from '@/interface/skills';
@@ -76,10 +77,10 @@ export default async function handler(
       }
 
       await resendMail.emails.send({
-        from: `Kash from Superteam <${process.env.RESEND_EMAIL}>`,
+        from: kashEmail,
         to: [e.email],
         subject: 'Here’s a New Listing You’d Be Interested In..',
-        react: NewBountyTemplate({
+        react: NewListingTemplate({
           name: e.name,
           link: `https://earn.superteam.fun/listings/${listing?.type}/${listing.slug}/?utm_source=superteamearn&utm_medium=email&utm_campaign=notifications`,
         }),

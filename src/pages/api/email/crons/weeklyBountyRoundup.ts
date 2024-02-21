@@ -3,6 +3,7 @@ import dayjs from 'dayjs';
 import utc from 'dayjs/plugin/utc';
 import type { NextApiRequest, NextApiResponse } from 'next';
 
+import { kashEmail } from '@/constants/kashEmail';
 import {
   getUnsubEmails,
   rateLimitedPromiseAll,
@@ -89,7 +90,7 @@ async function handler(_req: NextApiRequest, res: NextApiResponse) {
           return;
         }
         await resendMail.emails.send({
-          from: `Kash from Superteam <${process.env.RESEND_EMAIL}>`,
+          from: kashEmail,
           to: [user?.email!],
           subject: 'Your Weekly Bounty Roundup Is Here!',
           react: WeeklyRoundupTemplate({

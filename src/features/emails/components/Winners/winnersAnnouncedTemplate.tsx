@@ -1,6 +1,6 @@
 import React from 'react';
 
-import { styles } from './styles';
+import { styles } from '../../utils/styles';
 
 interface TemplateProps {
   name: string;
@@ -8,26 +8,26 @@ interface TemplateProps {
   link: string;
 }
 
-export const CommentSponsorTemplate = ({
+export const WinnersAnnouncedTemplate = ({
   name,
   bountyName,
   link,
 }: TemplateProps) => {
   return (
     <div style={styles.container}>
-      <p style={styles.greetings}>Hello {name},</p>
+      <p style={styles.greetings}>Hey {name},</p>
       <p style={styles.textWithMargin}>
-        Your listing <strong>{bountyName}</strong> just received a comment
-        &mdash;{' '}
-        <a href={link} style={styles.link}>
-          check it out!
-        </a>
+        The winners for the <strong>{bountyName}</strong> listing have been
+        announced!{' '}
+        <p style={styles.text}>
+          <a href={link} style={styles.link}>
+            Click here
+          </a>{' '}
+          to see who claimed the top spots.
+        </p>
       </p>
-      <p style={styles.salutation}>
-        Best,
-        <br />
-        Superteam Earn
-      </p>
+      <p style={styles.text}>Best,</p>
+      <p style={styles.text}>Superteam Earn</p>
       <p style={styles.unsubscribe}>
         Click{' '}
         <a

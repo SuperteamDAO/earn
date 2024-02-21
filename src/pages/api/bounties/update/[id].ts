@@ -2,6 +2,7 @@ import axios from 'axios';
 import type { NextApiRequest, NextApiResponse } from 'next';
 import { getToken } from 'next-auth/jwt';
 
+import { kashEmail } from '@/constants/kashEmail';
 import {
   DeadlineExtendedTemplate,
   getUnsubEmails,
@@ -134,7 +135,7 @@ export default async function bounty(
         subscriber: (typeof filteredSubscribers)[number],
       ) => {
         return resendMail.emails.send({
-          from: `Kash from Superteam <${process.env.RESEND_EMAIL}>`,
+          from: kashEmail,
           to: subscriber.User.email,
           subject: 'Listing Deadline Extended!',
           react: DeadlineExtendedTemplate({

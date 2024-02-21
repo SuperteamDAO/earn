@@ -1,6 +1,7 @@
 import type { NextApiRequest, NextApiResponse } from 'next';
 import { getToken } from 'next-auth/jwt';
 
+import { kashEmail } from '@/constants/kashEmail';
 import { InviteMemberTemplate } from '@/features/emails';
 import { prisma } from '@/prisma';
 import resendMail from '@/utils/resend';
@@ -57,7 +58,7 @@ export default async function sendInvites(
     });
 
     await resendMail.emails.send({
-      from: `Kash from Superteam <${process.env.RESEND_EMAIL}>`,
+      from: kashEmail,
       to: [email],
       subject: `${user?.firstName} has invited you to join ${user?.currentSponsor?.name}'s profile on Superteam Earn`,
       react: InviteMemberTemplate({

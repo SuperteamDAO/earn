@@ -444,7 +444,7 @@ const ScribesBanner = () => {
         _hover={{ bg: '#a459ff' }}
         href="/scribes"
       >
-        View Tracks
+        Submit Now
       </Button>
     </Flex>
   );

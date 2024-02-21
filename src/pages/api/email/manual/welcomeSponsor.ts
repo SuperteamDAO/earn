@@ -1,6 +1,7 @@
 import type { NextApiRequest, NextApiResponse } from 'next';
 import { getToken } from 'next-auth/jwt';
 
+import { kashEmail } from '@/constants/kashEmail';
 import { WelcomeSponsorTemplate } from '@/features/emails';
 import resendMail from '@/utils/resend';
 
@@ -21,7 +22,7 @@ export default async function handler(
   }
   try {
     await resendMail.emails.send({
-      from: `Kash from Superteam <${process.env.RESEND_EMAIL}>`,
+      from: kashEmail,
       to: [userEmail],
       subject: 'Welcome!',
       react: WelcomeSponsorTemplate(),

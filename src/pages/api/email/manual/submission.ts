@@ -1,6 +1,7 @@
 import type { NextApiRequest, NextApiResponse } from 'next';
 import { getToken } from 'next-auth/jwt';
 
+import { kashEmail } from '@/constants/kashEmail';
 import {
   getUnsubEmails,
   SubmissionSponsorTemplate,
@@ -48,7 +49,7 @@ export default async function handler(
           ? 'Submission Received!'
           : 'Application Received';
       await resendMail.emails.send({
-        from: `Kash from Superteam <${process.env.RESEND_EMAIL}>`,
+        from: kashEmail,
         to: [user?.email],
         subject: subject,
         react: SubmissionTemplate({
@@ -70,7 +71,7 @@ export default async function handler(
       !unsubscribedEmails.includes(pocUser.email)
     ) {
       await resendMail.emails.send({
-        from: `Kash from Superteam <${process.env.RESEND_EMAIL}>`,
+        from: kashEmail,
         to: [pocUser?.email],
         subject:
           listing.type === 'bounty'

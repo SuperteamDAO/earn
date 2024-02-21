@@ -3,6 +3,7 @@ import dayjs from 'dayjs';
 import utc from 'dayjs/plugin/utc';
 import type { NextApiRequest, NextApiResponse } from 'next';
 
+import { kashEmail } from '@/constants/kashEmail';
 import {
   DeadlineExceededbyWeekTemplate,
   getUnsubEmails,
@@ -57,7 +58,7 @@ async function handler(_req: NextApiRequest, res: NextApiResponse) {
       }
 
       await resendMail.emails.send({
-        from: `Kash from Superteam <${process.env.RESEND_EMAIL}>`,
+        from: kashEmail,
         to: [pocEmail],
         bcc: ['pratikd.earnings@gmail.com'],
         subject: 'Winner Announcement for Your Earn Bounty Is Due!',

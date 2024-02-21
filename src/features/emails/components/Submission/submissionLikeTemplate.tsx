@@ -1,6 +1,6 @@
 import React from 'react';
 
-import { styles } from './styles';
+import { styles } from '../../utils/styles';
 
 interface TemplateProps {
   name: string;
@@ -8,7 +8,7 @@ interface TemplateProps {
   link: string;
 }
 
-export const DeadlineThreeDaysTemplate = ({
+export const SubmissionLikeTemplate = ({
   name,
   bountyName,
   link,
@@ -17,14 +17,16 @@ export const DeadlineThreeDaysTemplate = ({
     <div style={styles.container}>
       <p style={styles.greetings}>Hey {name},</p>
       <p style={styles.textWithMargin}>
-        Friendly reminder that the listing &quot;
-        <span style={{ fontWeight: 400 }}>{bountyName}&quot;</span>you&nbsp;had
-        indicated&nbsp;interest in will close in 3 days!{' '}
-        <a href={link} style={styles.link}>
-          Click here
-        </a>{' '}
-        to take another look.
+        People are digging your work on the <strong>{bountyName}</strong>{' '}
+        listing. Keep it up!
       </p>
+      <p style={styles.textWithMargin}>
+        Check out the other submissions and spread some love to the other
+        participants!
+      </p>
+      <a href={link} style={styles.link}>
+        View Other Submissions
+      </a>
       <p style={styles.salutation}>
         Best,
         <br />

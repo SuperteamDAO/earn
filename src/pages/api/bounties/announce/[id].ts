@@ -3,6 +3,7 @@ import type { NextApiRequest, NextApiResponse } from 'next';
 import { getToken } from 'next-auth/jwt';
 
 import { tokenList } from '@/constants';
+import { kashEmail } from '@/constants/kashEmail';
 import {
   getUnsubEmails,
   rateLimitedPromiseAll,
@@ -241,7 +242,7 @@ export default async function announce(
       });
 
       await resendMail.emails.send({
-        from: `Kash from Superteam <${process.env.RESEND_EMAIL}>`,
+        from: kashEmail,
         to: [e.email],
         subject: `${listingType} Winners Announced!`,
         react: template,
