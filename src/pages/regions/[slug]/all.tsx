@@ -70,7 +70,7 @@ export default function AllRegionListingsPage({
             <Flex align="center" justify="center" mt={8}>
               <EmptySection
                 title="No listings available!"
-                message="Subscribe to notifications to get notified about new bounties."
+                message="Subscribe to notifications to get notified about new listings."
               />
             </Flex>
           )}

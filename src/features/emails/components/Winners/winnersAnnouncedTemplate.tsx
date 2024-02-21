@@ -26,8 +26,11 @@ export const WinnersAnnouncedTemplate = ({
           to see who claimed the top spots.
         </p>
       </p>
-      <p style={styles.text}>Best,</p>
-      <p style={styles.text}>Superteam Earn</p>
+      <p style={styles.salutation}>
+        Best,
+        <br />
+        Superteam Earn
+      </p>
       <p style={styles.unsubscribe}>
         Click{' '}
         <a

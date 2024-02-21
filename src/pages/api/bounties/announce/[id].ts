@@ -7,6 +7,7 @@ import { kashEmail } from '@/constants/kashEmail';
 import {
   getUnsubEmails,
   rateLimitedPromiseAll,
+  SuperteamWinnersTemplate,
   WinnersAnnouncedTemplate,
 } from '@/features/emails';
 import type { Rewards } from '@/features/listings';
@@ -248,6 +249,33 @@ export default async function announce(
         react: template,
       });
     });
+
+    const sponsor = await prisma.sponsors.findUnique({
+      where: {
+        id: bounty?.sponsorId,
+      },
+    });
+
+    if (sponsor?.name.includes('Superteam')) {
+      winners.forEach(async (winner) => {
+        const email = winner.user.email;
+        const name = winner.user.firstName;
+
+        const template = SuperteamWinnersTemplate({
+          name,
+          listingName: bounty?.title || '',
+        });
+
+        await resendMail.emails.send({
+          from: kashEmail,
+          to: [email],
+          subject: `${listingType} Winners Announced!`,
+          react: template,
+        });
+      });
+    } else {
+      console.log('Sponsor is not Superteam. Skipping sending winner emails.');
+    }
 
     return res.status(200).json(result);
   } catch (error) {
