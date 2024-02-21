@@ -105,6 +105,14 @@ export const tokenList = [
     coingeckoSymbol: 'international-stable-currency',
   },
   {
+    tokenName: 'JUP',
+    tokenSymbol: 'JUP',
+    mintAddress: 'JUPyiwrYJFskUPiHa7hkeR8VUtAeFoSYbKedZNsDvCN',
+    icon: 'https://s2.coinmarketcap.com/static/img/coins/64x64/29210.png',
+    decimals: 6,
+    coingeckoSymbol: 'jupiter',
+  },
+  {
     tokenName: 'USDT',
     tokenSymbol: 'USDT',
     mintAddress: 'Es9vMFrzaCERmJfrF4H2FYD4KCoNkY11McCe8BenwNYB',
