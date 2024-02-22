@@ -157,7 +157,7 @@ export function RightSideBar({ listing }: { listing: Bounty }) {
           {!isProject && (
             <VStack w={'full'} borderBottom={'1px solid #E2E8EF'}>
               <TableContainer w={'full'}>
-                <Table mt={-8} variant={'unstyled'}>
+                <Table mt={-6} variant={'unstyled'}>
                   <Thead>
                     <Tr>
                       <Th></Th>
@@ -214,7 +214,12 @@ export function RightSideBar({ listing }: { listing: Bounty }) {
               </TableContainer>
             </VStack>
           )}
-          <Flex justify={'space-between'} w={'full'} px={5}>
+          <Flex
+            justify={'space-between'}
+            w={'full'}
+            px={5}
+            py={!rewards ? 3 : 0}
+          >
             {hasHackathonStarted ? (
               <>
                 <Flex align={'start'} justify={'center'} direction={'column'}>
