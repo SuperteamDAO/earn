@@ -14,6 +14,14 @@
 
 ## Development Setup
 
+### Prerequisites
+
+- NodeJS
+- MySQL
+- pnpm
+
+### Getting Started
+
 1. Clone the repository into a public Github repository (or fork it):
     ```bash
     git clone https://github.com/SuperteamDAO/earn.git
@@ -44,6 +52,8 @@
       
   - You have to set up resend to run the app:
     - [Resend](https://resend.com): To obtain your `RESEND_API_KEY`, visit the Resend dashboard. This credential is essential for setting up Email Auth.
+
+  NOTE: If you are facing any issues with setup, feel free to contact [Abhishek](https://twitter.com/abhwshek)
     
 5. Run the development server
     ```bash
