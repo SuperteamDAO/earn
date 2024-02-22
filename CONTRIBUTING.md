@@ -2,21 +2,16 @@
 
 ### How to Contribute
 
-1. Clone the repository into a public Github repository (or fork it):
-    ```bash
-    git clone https://github.com/SuperteamDAO/earn.git
-    ```
+1. Fork this repository to your own GitHub account and then clone it to your local device.
 
-2. Navigate to the project directory:
+2. Create a new branch where you'll do your work.
     ```bash
-    cd earn
+    git checkout -b my-new-feature
     ```
-
-3. Install the dependencies: 
+3. Install the dependencies with:
     ```bash
     pnpm i
     ```
-
 4. Set up your `.env` file.
   - Start by copying the `.env.example` file to a new file named `.env`. This file will store your local environment settings.
   - Use `openssl rand -base64 32` to generate a key and add it under `NEXTAUTH_SECRET` in the .env file.
@@ -33,7 +28,7 @@
   - You have to set up resend to run the app:
     - [Resend](https://resend.com): To obtain your `RESEND_API_KEY`, visit the Resend dashboard. This credential is essential for setting up Email Auth.
     
-5. Run the development server
+5. Start Developing
     ```bash
     pnpm dev
     ```
