@@ -26,7 +26,7 @@ export const PaymentReceivedTemplate = ({
       </p>
       <p style={styles.textWithMargin}>
         Check your wallet — you should&apos;ve received {amount} {tokenName} in
-        your wallet address {walletAddress}. This isn&spos;t just a win;
+        your wallet address {walletAddress}. This isn&apos;t just a win;
         it&apos;s a testament to your talent and hard work.
       </p>
       <p style={styles.textWithMargin}>
