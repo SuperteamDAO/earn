@@ -9,7 +9,7 @@ import React, {
 } from 'react';
 
 import type { MultiSelectOptions } from '@/constants';
-import { getBountyTypeLabel } from '@/utils/bounty';
+import { getBountyTypeLabel } from '@/features/listings';
 import { getURL } from '@/utils/validUrl';
 
 import { splitSkills } from '../../utils';

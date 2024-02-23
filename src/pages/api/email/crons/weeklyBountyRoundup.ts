@@ -3,15 +3,15 @@ import dayjs from 'dayjs';
 import utc from 'dayjs/plugin/utc';
 import type { NextApiRequest, NextApiResponse } from 'next';
 
-import { kashEmail } from '@/constants/kashEmail';
 import {
   getUnsubEmails,
+  kashEmail,
   rateLimitedPromiseAll,
+  resend,
   WeeklyRoundupTemplate,
 } from '@/features/emails';
 import type { MainSkills, Skills } from '@/interface/skills';
 import { prisma } from '@/prisma';
-import resendMail from '@/utils/resend';
 
 dayjs.extend(utc);
 
@@ -89,7 +89,7 @@ async function handler(_req: NextApiRequest, res: NextApiResponse) {
         if (unsubscribedEmails.includes(user?.email!)) {
           return;
         }
-        await resendMail.emails.send({
+        await resend.emails.send({
           from: kashEmail,
           to: [user?.email!],
           subject: 'Your Weekly Bounty Roundup Is Here!',

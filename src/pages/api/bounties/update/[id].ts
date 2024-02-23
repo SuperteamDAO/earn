@@ -2,14 +2,14 @@ import axios from 'axios';
 import type { NextApiRequest, NextApiResponse } from 'next';
 import { getToken } from 'next-auth/jwt';
 
-import { kashEmail } from '@/constants/kashEmail';
 import {
   DeadlineExtendedTemplate,
   getUnsubEmails,
+  kashEmail,
   rateLimitedPromiseAll,
+  resend,
 } from '@/features/emails';
 import { prisma } from '@/prisma';
-import resendMail from '@/utils/resend';
 
 export default async function bounty(
   req: NextApiRequest,
@@ -134,7 +134,7 @@ export default async function bounty(
       const sendEmail = async (
         subscriber: (typeof filteredSubscribers)[number],
       ) => {
-        return resendMail.emails.send({
+        return resend.emails.send({
           from: kashEmail,
           to: subscriber.User.email,
           subject: 'Listing Deadline Extended!',

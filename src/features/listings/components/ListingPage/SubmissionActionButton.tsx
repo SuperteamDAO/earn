@@ -11,12 +11,12 @@ import React, {
 
 import { LoginWrapper } from '@/components/Header/LoginWrapper';
 import { Superteams } from '@/constants/Superteam';
-import { userStore } from '@/store/user';
 import {
   getBountyDraftStatus,
   getRegionTooltipLabel,
   isDeadlineOver,
-} from '@/utils/bounty';
+} from '@/features/listings';
+import { userStore } from '@/store/user';
 
 import { type Bounty } from '../../types';
 import { WarningModal } from '../WarningModal';

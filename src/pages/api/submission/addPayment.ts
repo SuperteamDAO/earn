@@ -1,9 +1,8 @@
 import type { NextApiRequest, NextApiResponse } from 'next';
 import { getToken } from 'next-auth/jwt';
 
-import { PaymentReceivedTemplate } from '@/features/emails';
+import { kashEmail, PaymentReceivedTemplate, resend } from '@/features/emails';
 import { prisma } from '@/prisma';
-import resendMail from '@/utils/resend';
 
 export default async function handler(
   req: NextApiRequest,
@@ -79,8 +78,8 @@ export default async function handler(
         username: currentSubmission.user.username,
       });
 
-      await resendMail.emails.send({
-        from: '<your-from-email>',
+      await resend.emails.send({
+        from: kashEmail,
         to: [email],
         subject: `Payment Confirmation for ${currentSubmission.listing.title}`,
         react: template,

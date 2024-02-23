@@ -3,18 +3,17 @@ import type { NextApiRequest, NextApiResponse } from 'next';
 import { getToken } from 'next-auth/jwt';
 
 import { tokenList } from '@/constants';
-import { kashEmail } from '@/constants/kashEmail';
 import {
   getUnsubEmails,
+  kashEmail,
   rateLimitedPromiseAll,
+  resend,
   SuperteamWinnersTemplate,
   WinnersAnnouncedTemplate,
 } from '@/features/emails';
-import type { Rewards } from '@/features/listings';
+import { getBountyTypeLabel, type Rewards } from '@/features/listings';
 import { prisma } from '@/prisma';
-import { getBountyTypeLabel } from '@/utils/bounty';
 import { dayjs } from '@/utils/dayjs';
-import resendMail from '@/utils/resend';
 
 async function fetchTokenUSDValue(symbol: string) {
   try {
@@ -242,7 +241,7 @@ export default async function announce(
         }/?utm_source=superteamearn&utm_medium=email&utm_campaign=winnerannouncement`,
       });
 
-      await resendMail.emails.send({
+      await resend.emails.send({
         from: kashEmail,
         to: [e.email],
         subject: `${listingType} Winners Announced!`,
@@ -266,7 +265,7 @@ export default async function announce(
           listingName: bounty?.title || '',
         });
 
-        await resendMail.emails.send({
+        await resend.emails.send({
           from: kashEmail,
           to: [email],
           subject: `Submit This Form to Claim Your Reward`,

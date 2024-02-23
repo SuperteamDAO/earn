@@ -20,10 +20,10 @@ import { TbBell, TbBellRinging } from 'react-icons/tb';
 
 import { SignUpPrompt } from '@/components/modals/Login/SignUpPrompt';
 import { Superteams } from '@/constants/Superteam';
+import { getRegionTooltipLabel } from '@/features/listings';
 import type { SponsorType } from '@/interface/sponsor';
 import type { User } from '@/interface/user';
 import { userStore } from '@/store/user';
-import { getRegionTooltipLabel } from '@/utils/bounty';
 import { dayjs } from '@/utils/dayjs';
 
 import type { References } from '../../types';

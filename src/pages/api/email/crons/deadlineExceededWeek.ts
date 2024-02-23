@@ -3,14 +3,14 @@ import dayjs from 'dayjs';
 import utc from 'dayjs/plugin/utc';
 import type { NextApiRequest, NextApiResponse } from 'next';
 
-import { kashEmail } from '@/constants/kashEmail';
 import {
   DeadlineExceededbyWeekTemplate,
   getUnsubEmails,
+  kashEmail,
   rateLimitedPromiseAll,
+  resend,
 } from '@/features/emails';
 import { prisma } from '@/prisma';
-import resendMail from '@/utils/resend';
 
 dayjs.extend(utc);
 
@@ -57,7 +57,7 @@ async function handler(_req: NextApiRequest, res: NextApiResponse) {
         return null;
       }
 
-      await resendMail.emails.send({
+      await resend.emails.send({
         from: kashEmail,
         to: [pocEmail],
         bcc: ['pratikd.earnings@gmail.com'],

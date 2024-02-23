@@ -1,14 +1,14 @@
 import type { NextApiRequest, NextApiResponse } from 'next';
 import { getToken } from 'next-auth/jwt';
 
-import { kashEmail } from '@/constants/kashEmail';
 import {
   getUnsubEmails,
+  kashEmail,
+  resend,
   SubmissionSponsorTemplate,
   SubmissionTemplate,
 } from '@/features/emails';
 import { prisma } from '@/prisma';
-import resendMail from '@/utils/resend';
 
 export default async function handler(
   req: NextApiRequest,
@@ -48,7 +48,7 @@ export default async function handler(
         listing.type !== 'project'
           ? 'Submission Received!'
           : 'Application Received';
-      await resendMail.emails.send({
+      await resend.emails.send({
         from: kashEmail,
         to: [user?.email],
         subject: subject,
@@ -70,7 +70,7 @@ export default async function handler(
       listing.type !== 'hackathon' &&
       !unsubscribedEmails.includes(pocUser.email)
     ) {
-      await resendMail.emails.send({
+      await resend.emails.send({
         from: kashEmail,
         to: [pocUser?.email],
         subject:

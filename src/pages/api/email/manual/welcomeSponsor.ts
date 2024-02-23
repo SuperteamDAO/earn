@@ -1,9 +1,7 @@
 import type { NextApiRequest, NextApiResponse } from 'next';
 import { getToken } from 'next-auth/jwt';
 
-import { kashEmail } from '@/constants/kashEmail';
-import { WelcomeSponsorTemplate } from '@/features/emails';
-import resendMail from '@/utils/resend';
+import { kashEmail, resend, WelcomeSponsorTemplate } from '@/features/emails';
 
 export default async function handler(
   req: NextApiRequest,
@@ -21,7 +19,7 @@ export default async function handler(
     return res.status(400).json({ error: 'Invalid token' });
   }
   try {
-    await resendMail.emails.send({
+    await resend.emails.send({
       from: kashEmail,
       to: [userEmail],
       subject: 'Welcome!',

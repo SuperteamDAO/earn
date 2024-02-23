@@ -3,14 +3,14 @@ import dayjs from 'dayjs';
 import utc from 'dayjs/plugin/utc';
 import type { NextApiRequest, NextApiResponse } from 'next';
 
-import { kashEmail } from '@/constants/kashEmail';
 import {
   DeadlineThreeDaysTemplate,
   getUnsubEmails,
+  kashEmail,
   rateLimitedPromiseAll,
+  resend,
 } from '@/features/emails';
 import { prisma } from '@/prisma';
-import resendMail from '@/utils/resend';
 
 dayjs.extend(utc);
 
@@ -70,7 +70,7 @@ async function handler(_req: NextApiRequest, res: NextApiResponse) {
         ) {
           return;
         }
-        await resendMail.emails.send({
+        await resend.emails.send({
           from: kashEmail,
           to: [e.email],
           subject: 'This Bounty Is Expiring Soon!',
