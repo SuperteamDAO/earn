@@ -12,8 +12,8 @@ import {
 } from '@chakra-ui/react';
 import axios from 'axios';
 import React, { useEffect, useState } from 'react';
-import { AiFillHeart } from 'react-icons/ai';
 import { BiComment } from 'react-icons/bi';
+import { IoMdHeart } from 'react-icons/io';
 
 import { tokenList } from '@/constants';
 import { PrizeListMap } from '@/interface/listings';
@@ -254,11 +254,11 @@ export function SubmissionCard({
           }}
           variant={'unstyled'}
         >
-          <AiFillHeart color={!isLiked ? '#94A3B8' : '#FF005C'} />
+          <IoMdHeart color={!isLiked ? '#CBD5E1' : '#FF005C'} />
           {totalLikes}
         </Button>
         <BiComment
-          color={'#94A3B8'}
+          color={'#CBD5E1'}
           style={{
             transform: 'scaleX(-1)',
             marginTop: '2px',

@@ -93,7 +93,7 @@ export const ListingTabs = ({
           !bounty.isWinnersAnnounced,
         emptyTitle: 'No listings available!',
         emptyMessage:
-          'Subscribe to notifications to get notified about new bounties.',
+          'Subscribe to notifications to get notified about new listings.',
         checkLanguage,
       }),
     },

@@ -1,15 +1,19 @@
+import { ArrowUpIcon } from '@chakra-ui/icons';
 import {
   Box,
   Button,
   HStack,
   Image,
+  Link,
+  LinkBox,
+  LinkOverlay,
   Text,
   useToast,
-  VStack,
 } from '@chakra-ui/react';
 import type { User } from '@prisma/client';
 import axios from 'axios';
 import Avatar from 'boring-avatars';
+import NextLink from 'next/link';
 import { useRouter } from 'next/router';
 import React, {
   type Dispatch,
@@ -17,14 +21,18 @@ import React, {
   useEffect,
   useState,
 } from 'react';
-import { AiFillHeart } from 'react-icons/ai';
+import { BiSolidComment } from 'react-icons/bi';
+import { IoMdHeart } from 'react-icons/io';
 import type { Metadata } from 'unfurl.js/dist/types';
 
 import { userStore } from '@/store/user';
+import { Badge } from '@/svg/badge';
+
+import { type Rewards } from '../../types';
 
 interface Props {
   winner: boolean;
-  winnerPosition?: string;
+  winnerPosition?: keyof Rewards;
   talent: User;
   likes?: {
     id: string;
@@ -115,117 +123,118 @@ export const SubmissionCard = ({
     fetchImage();
   }, []);
 
-  const navigateToTalentProfile = (e: React.MouseEvent) => {
-    e.stopPropagation();
-    router.push(`/t/${talent?.username}`);
-  };
-
   return (
-    <>
-      <VStack
-        pos={'relative'}
-        overflow={'hidden'}
-        w={{ base: 'full', md: '18rem' }}
-        h={'18rem'}
-        p={5}
-        bg={'white'}
-        cursor={'pointer'}
-        onClick={() => {
-          router.push(`${router.asPath.split('?')[0]}/${id}`);
-        }}
-        rounded={'lg'}
-      >
+    <LinkBox
+      pos={'relative'}
+      overflow={'hidden'}
+      w={{ base: 'full', md: '17.7rem' }}
+      p={4}
+      bg={'white'}
+      cursor={'pointer'}
+      rounded={'md'}
+    >
+      {winner && (
+        <Box pos="absolute" top="0" right="0">
+          <Badge position={winnerPosition} />
+        </Box>
+      )}
+      <Link as={NextLink} href={`/t/${talent?.username}`}>
+        <HStack mb={2}>
+          {talent?.photo ? (
+            <Image
+              w={6}
+              h={6}
+              borderRadius="full"
+              objectFit={'cover'}
+              alt={`${talent?.firstName} ${talent?.lastName}`}
+              rounded={'full'}
+              src={talent?.photo || undefined}
+            />
+          ) : (
+            <Avatar
+              name={`${talent?.firstName} ${talent?.lastName}`}
+              colors={['#92A1C6', '#F0AB3D', '#C271B4']}
+              size={24}
+              variant="marble"
+            />
+          )}
+          <Text color={'gray.900'} fontSize={'lg'} fontWeight={500}>
+            {talent?.firstName} {talent?.lastName}
+          </Text>
+        </HStack>
+      </Link>
+      <LinkOverlay href={`${router.asPath}/${id}`}>
         <Image
           w={'full'}
-          h={'full'}
-          maxH={44}
+          h={48}
           objectFit={'cover'}
           alt={'card'}
+          rounded={'sm'}
           src={image}
         />
-        <HStack align={'center'} justify={'space-between'} w={'full'}>
-          <VStack align={'start'}>
-            <Text
-              color={'#000000'}
-              fontSize={'1.1rem'}
-              fontWeight={600}
-              onClick={navigateToTalentProfile}
-            >
-              {talent?.firstName}
-            </Text>
-            <HStack>
-              {talent?.photo ? (
-                <Image
-                  w={5}
-                  h={5}
-                  borderRadius="full"
-                  alt={`${talent?.firstName} ${talent?.lastName}`}
-                  rounded={'full'}
-                  src={talent?.photo || undefined}
-                />
-              ) : (
-                <Avatar
-                  name={`${talent?.firstName} ${talent?.lastName}`}
-                  colors={['#92A1C6', '#F0AB3D', '#C271B4']}
-                  size={20}
-                  variant="marble"
-                />
-              )}
-              <Text color={'gray.400'}>
-                by @
-                {talent?.username && talent?.username?.length < 12
-                  ? talent?.username
-                  : `${talent?.username?.slice(0, 12)}...`}
-              </Text>
-            </HStack>
-          </VStack>
-          <Button
-            pos={'absolute'}
-            zIndex={10}
-            right={5}
-            alignItems={'center'}
-            gap={2}
-            display={'flex'}
-            w={14}
-            border={'1px solid #CBD5E1'}
-            isLoading={isLoading}
-            onClick={handleLike}
-            type="button"
-            variant={'unstyled'}
-          >
-            <AiFillHeart
-              color={
-                !likes?.find((e) => e.id === (userInfo?.id as string))
-                  ? '#94A3B8'
-                  : '#FF005C'
-              }
-            />
-            {likes?.length}
-          </Button>
-        </HStack>
-        <Box
-          pos={'absolute'}
-          zIndex={3}
-          top={0}
-          justifyContent={'center'}
-          display={winner ? 'flex' : 'none'}
-          overflowX={'hidden'}
-          w={'15rem'}
-          h={'2rem'}
-          bg={'#FFE6B6'}
-          transform={'rotate(45deg) translate(4.5rem) translateY(-2rem)'}
+      </LinkOverlay>
+      <HStack align={'center'} gap={4} w={'full'}>
+        <Button
+          zIndex={10}
+          alignItems={'center'}
+          gap={2}
+          display={'flex'}
+          color="gray.500"
+          fontWeight={500}
+          isLoading={isLoading}
+          onClick={handleLike}
+          type="button"
+          variant={'unstyled'}
         >
-          <Text
-            ml={5}
-            color={'#D26F12'}
-            fontWeight={600}
-            lineHeight={8}
-            textTransform={'uppercase'}
-          >
-            🏆 {winnerPosition}
+          <IoMdHeart
+            size={'1.3rem'}
+            color={
+              !likes?.find((e) => e.id === (userInfo?.id as string))
+                ? '#CBD5E1'
+                : '#FF005C'
+            }
+          />
+          {likes?.length}
+        </Button>
+        <BiSolidComment
+          size={'1.23rem'}
+          color={'#CBD5E1'}
+          style={{
+            transform: 'scaleX(-1)',
+            marginTop: '2px',
+            cursor: 'pointer',
+          }}
+        />
+      </HStack>
+
+      <Link as={NextLink} href={link} isExternal>
+        <Button
+          w="full"
+          mt={1}
+          py={5}
+          color={'gray.400'}
+          fontWeight={500}
+          borderColor={'gray.300'}
+          onClick={(e) => {
+            e.stopPropagation();
+            router.push(link);
+          }}
+          rightIcon={
+            <ArrowUpIcon
+              h={5}
+              w={5}
+              color="gray.400"
+              ml={16}
+              transform="rotate(45deg)"
+            />
+          }
+          variant="outline"
+        >
+          <Text ml={24} fontSize={'17px'} textAlign={'center'}>
+            View
           </Text>
-        </Box>
-      </VStack>
-    </>
+        </Button>
+      </Link>
+    </LinkBox>
   );
 };

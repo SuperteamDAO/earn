@@ -1,31 +1,29 @@
 import React from 'react';
 
-import { styles } from './styles';
+import { styles } from '../../utils';
 
-interface TemplateProps {
+interface SubmissionProps {
   name: string;
   bountyName: string;
+  personName: string;
   link: string;
 }
 
-export const DeadlineSponsorTemplate = ({
+export const CommentSubmissionTemplate = ({
   name,
   bountyName,
+  personName,
   link,
-}: TemplateProps) => {
+}: SubmissionProps) => {
   return (
     <div style={styles.container}>
-      <p style={styles.greetings}>Hey {name},</p>
+      <p style={styles.greetings}>Hello&nbsp;{name},</p>
       <p style={styles.textWithMargin}>
-        The deadline for your listing <strong>{bountyName}</strong>
-        &nbsp; has expired. Please review the submissions and announce the
-        winners on Superteam Earn&nbsp;within 5 to 7 days.
-      </p>
-      <p style={styles.textWithMargin}>
+        {personName} just left a new comment on your submission to the{' '}
+        <strong>{bountyName}</strong> listing.
         <a href={link} style={styles.link}>
-          Click here
+          Click here to see what they said!
         </a>{' '}
-        to review&nbsp;the submissions. &nbsp;
       </p>
       <p style={styles.salutation}>
         Best,

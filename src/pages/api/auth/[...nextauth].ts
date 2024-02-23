@@ -4,9 +4,8 @@ import type { Adapter } from 'next-auth/adapters';
 import EmailProvider from 'next-auth/providers/email';
 import GoogleProvider from 'next-auth/providers/google';
 
-import { MagicLinkTemplate } from '@/features/emails';
+import { kashEmail, MagicLinkTemplate, resend } from '@/features/emails';
 import { prisma } from '@/prisma';
-import resendMail from '@/utils/resend';
 
 export const authOptions: NextAuthOptions = {
   adapter: PrismaAdapter(prisma) as Adapter,
@@ -36,8 +35,8 @@ export const authOptions: NextAuthOptions = {
       },
       from: process.env.RESEND_EMAIL,
       sendVerificationRequest: async ({ identifier, url }) => {
-        await resendMail.emails.send({
-          from: `Kash from Superteam <${process.env.RESEND_EMAIL}>`,
+        await resend.emails.send({
+          from: kashEmail,
           to: [identifier],
           subject: 'Log in to Superteam Earn',
           react: MagicLinkTemplate({ loginUrl: url }),

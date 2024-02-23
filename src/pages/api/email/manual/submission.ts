@@ -3,11 +3,12 @@ import { getToken } from 'next-auth/jwt';
 
 import {
   getUnsubEmails,
+  kashEmail,
+  resend,
   SubmissionSponsorTemplate,
   SubmissionTemplate,
 } from '@/features/emails';
 import { prisma } from '@/prisma';
-import resendMail from '@/utils/resend';
 
 export default async function handler(
   req: NextApiRequest,
@@ -47,8 +48,8 @@ export default async function handler(
         listing.type !== 'project'
           ? 'Submission Received!'
           : 'Application Received';
-      await resendMail.emails.send({
-        from: `Kash from Superteam <${process.env.RESEND_EMAIL}>`,
+      await resend.emails.send({
+        from: kashEmail,
         to: [user?.email],
         subject: subject,
         react: SubmissionTemplate({
@@ -69,8 +70,8 @@ export default async function handler(
       listing.type !== 'hackathon' &&
       !unsubscribedEmails.includes(pocUser.email)
     ) {
-      await resendMail.emails.send({
-        from: `Kash from Superteam <${process.env.RESEND_EMAIL}>`,
+      await resend.emails.send({
+        from: kashEmail,
         to: [pocUser?.email],
         subject:
           listing.type === 'bounty'

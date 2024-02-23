@@ -28,12 +28,12 @@ import router from 'next/router';
 import React, { useState } from 'react';
 
 import { tokenList } from '@/constants';
-import type { Bounty } from '@/features/listings';
 import {
+  type Bounty,
   formatDeadline,
   getBountyStatus,
   getColorStyles,
-} from '@/utils/bounty';
+} from '@/features/listings';
 import { getURL } from '@/utils/validUrl';
 
 interface Props {

@@ -1,3 +1,4 @@
+import { type Submission } from '@prisma/client';
 import moment from 'moment';
 import type { NextApiRequest, NextApiResponse } from 'next';
 
@@ -42,6 +43,32 @@ export default async function user(req: NextApiRequest, res: NextApiResponse) {
         },
       },
     });
+
+    const sortSubmissions = (a: Submission, b: Submission) => {
+      const order = { first: 1, second: 2, third: 3, fourth: 4, fifth: 5 };
+
+      const aPosition = a.winnerPosition as keyof typeof order;
+      const bPosition = b.winnerPosition as keyof typeof order;
+
+      if (a.winnerPosition && b.winnerPosition) {
+        return (
+          (order[aPosition] || Number.MAX_VALUE) -
+          (order[bPosition] || Number.MAX_VALUE)
+        );
+      }
+
+      if (a.winnerPosition && !b.winnerPosition) {
+        return -1;
+      }
+
+      if (!a.winnerPosition && b.winnerPosition) {
+        return 1;
+      }
+      return new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime();
+    };
+
+    submission.sort(sortSubmissions);
+
     res.status(200).json({
       bounty: result,
       submission,

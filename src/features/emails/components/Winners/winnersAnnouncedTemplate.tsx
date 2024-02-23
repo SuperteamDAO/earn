@@ -1,6 +1,6 @@
 import React from 'react';
 
-import { styles } from './styles';
+import { styles } from '../../utils';
 
 interface TemplateProps {
   name: string;
@@ -8,7 +8,7 @@ interface TemplateProps {
   link: string;
 }
 
-export const SubmissionLikeTemplate = ({
+export const WinnersAnnouncedTemplate = ({
   name,
   bountyName,
   link,
@@ -17,16 +17,15 @@ export const SubmissionLikeTemplate = ({
     <div style={styles.container}>
       <p style={styles.greetings}>Hey {name},</p>
       <p style={styles.textWithMargin}>
-        People are digging your work on the <strong>{bountyName}</strong>{' '}
-        listing. Keep it up!
+        The winners for the <strong>{bountyName}</strong> listing have been
+        announced!{' '}
+        <p style={styles.text}>
+          <a href={link} style={styles.link}>
+            Click here
+          </a>{' '}
+          to see who claimed the top spots.
+        </p>
       </p>
-      <p style={styles.textWithMargin}>
-        Check out the other submissions and spread some love to the other
-        participants!
-      </p>
-      <a href={link} style={styles.link}>
-        View Other Submissions
-      </a>
       <p style={styles.salutation}>
         Best,
         <br />

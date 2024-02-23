@@ -72,6 +72,7 @@ const RegionsPage = ({
             title="Grants"
             sub="Equity-free funding opportunities for builders"
             emoji="/assets/home/emojis/grants.png"
+            showViewAll
           >
             {isListingsLoading && (
               <Flex
