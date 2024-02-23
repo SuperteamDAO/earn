@@ -46,9 +46,8 @@
       DATABASE_URL='mysql://<user>:<pass>@<db-host>:<db-port>'
       ``` 
     - If you don't want to create a local DB, then you can also consider using services like railway.app or render.
-
-      - [Setup postgres DB with railway.app](https://docs.railway.app/guides/postgresql)
-      - [Setup postgres DB with render](https://render.com/docs/databases)
+      - [Setup MySQL DB with railway.app](https://docs.railway.app/guides/mysql)
+      - [Setup MYSQL DB with render](https://docs.render.com/deploy-mysql)
       
   - You have to set up resend to run the app:
     - [Resend](https://resend.com): To obtain your `RESEND_API_KEY`, visit the Resend dashboard. This credential is essential for setting up Email Auth.
