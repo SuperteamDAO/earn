@@ -1,9 +1,12 @@
+import { ArrowUpIcon } from '@chakra-ui/icons';
 import {
   Box,
   Button,
   HStack,
   Image,
   Link,
+  LinkBox,
+  LinkOverlay,
   Text,
   useToast,
 } from '@chakra-ui/react';
@@ -121,15 +124,13 @@ export const SubmissionCard = ({
   }, []);
 
   return (
-    <Box
-      as={NextLink}
+    <LinkBox
       pos={'relative'}
       overflow={'hidden'}
       w={{ base: 'full', md: '17.7rem' }}
       p={4}
       bg={'white'}
       cursor={'pointer'}
-      href={`${router.asPath.split('?')[0]}/${id}`}
       rounded={'md'}
     >
       {winner && (
@@ -162,14 +163,16 @@ export const SubmissionCard = ({
           </Text>
         </HStack>
       </Link>
-      <Image
-        w={'full'}
-        h={48}
-        objectFit={'cover'}
-        alt={'card'}
-        rounded={'sm'}
-        src={image}
-      />
+      <LinkOverlay href={`${router.asPath}/${id}`}>
+        <Image
+          w={'full'}
+          h={48}
+          objectFit={'cover'}
+          alt={'card'}
+          rounded={'sm'}
+          src={image}
+        />
+      </LinkOverlay>
       <HStack align={'center'} gap={4} w={'full'}>
         <Button
           zIndex={10}
@@ -194,6 +197,7 @@ export const SubmissionCard = ({
           {likes?.length}
         </Button>
         <BiSolidComment
+          size={'1.23rem'}
           color={'#CBD5E1'}
           style={{
             transform: 'scaleX(-1)',
@@ -203,21 +207,34 @@ export const SubmissionCard = ({
         />
       </HStack>
 
-      <Button
-        w="full"
-        py={4}
-        color={'gray.500'}
-        fontSize={'md'}
-        fontWeight={500}
-        borderColor={'gray.300'}
-        onClick={(e) => {
-          e.stopPropagation();
-          router.push(link);
-        }}
-        variant="outline"
-      >
-        View
-      </Button>
-    </Box>
+      <Link as={NextLink} href={link} isExternal>
+        <Button
+          w="full"
+          mt={1}
+          py={5}
+          color={'gray.400'}
+          fontWeight={500}
+          borderColor={'gray.300'}
+          onClick={(e) => {
+            e.stopPropagation();
+            router.push(link);
+          }}
+          rightIcon={
+            <ArrowUpIcon
+              h={5}
+              w={5}
+              color="gray.400"
+              ml={16}
+              transform="rotate(45deg)"
+            />
+          }
+          variant="outline"
+        >
+          <Text ml={24} fontSize={'17px'} textAlign={'center'}>
+            View
+          </Text>
+        </Button>
+      </Link>
+    </LinkBox>
   );
 };
