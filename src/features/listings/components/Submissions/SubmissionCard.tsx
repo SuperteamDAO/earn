@@ -27,6 +27,7 @@ import type { Metadata } from 'unfurl.js/dist/types';
 
 import { userStore } from '@/store/user';
 import { Badge } from '@/svg/badge';
+import { getURLSanitized } from '@/utils/getURLSanitized';
 
 import { type Rewards } from '../../types';
 
@@ -207,7 +208,7 @@ export const SubmissionCard = ({
         />
       </HStack>
 
-      <Link as={NextLink} href={link} isExternal>
+      <Link as={NextLink} href={getURLSanitized(link)} isExternal>
         <Button
           w="full"
           mt={1}
