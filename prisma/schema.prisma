@@ -86,6 +86,7 @@ model Bounties {
   hackathonId          String?
   Hackathon            Hackathon?         @relation(fields: [hackathonId], references: [id])
   usdValue             Int?
+  compensationType     CompensationType   @default(fixed)
 
   @@index([id, slug])
   @@index([sponsorId])
@@ -464,4 +465,10 @@ enum Regions {
   MALAYSIA
   BALKAN
   PHILIPPINES
+}
+
+enum CompensationType {
+  fixed
+  range
+  variable
 }

@@ -19,6 +19,7 @@ import {
   ModalOverlay,
   NumberInput,
   NumberInputField,
+  Select,
   Text,
   useDisclosure,
   VStack,
@@ -222,8 +223,43 @@ export const ListingPayments = ({
         pb={10}
         color={'gray.500'}
       >
+        {isProject && (
+          <FormControl isRequired>
+            <FormLabel
+              color={'brand.slate.500'}
+              fontSize={'15px'}
+              fontWeight={600}
+            >
+              Compensation Type
+            </FormLabel>
+            <Select
+              mb={4}
+              borderColor={'brand.slate.300'}
+              onChange={(e) => {
+                setBountyPayment((prev: any) => ({
+                  ...prev,
+                  compensationType: e.target.value,
+                }));
+              }}
+              value={bountyPayment?.compensationType}
+            >
+              <option selected hidden disabled value="">
+                Select a Compensation Type
+              </option>
+              <option value="fixed">Fixed Compensation</option>
+              <option value="range">Pre-decided Range</option>
+              <option value="variable">Variable Compensation</option>
+            </Select>
+          </FormControl>
+        )}
         <FormControl isRequired>
-          <FormLabel color={'gray.500'}>Select Token</FormLabel>
+          <FormLabel
+            color={'brand.slate.500'}
+            fontSize={'15px'}
+            fontWeight={600}
+          >
+            Select Token
+          </FormLabel>
           <Menu>
             <MenuButton
               as={Button}
@@ -306,13 +342,12 @@ export const ListingPayments = ({
             </MenuList>
           </Menu>
         </FormControl>
-        <FormControl w="full" mt={5} isRequired>
-          <Flex>
+        {bountyPayment.compensationType === 'fixed' && (
+          <FormControl w="full" mt={5} isRequired>
             <FormLabel
               color={'brand.slate.500'}
               fontSize={'15px'}
               fontWeight={600}
-              htmlFor={'slug'}
             >
               Total {!isProject ? 'Reward Amount' : 'Compensation'} (in{' '}
               {
@@ -322,22 +357,72 @@ export const ListingPayments = ({
               }
               )
             </FormLabel>
-          </Flex>
 
-          <NumberInput
-            focusBorderColor="brand.purple"
-            onChange={(valueString) => handleTotalRewardChange(valueString)}
-            value={bountyPayment.rewardAmount || ''}
-          >
-            <NumberInputField
-              borderColor="brand.slate.300"
-              _placeholder={{
-                color: 'brand.slate.300',
-              }}
-              placeholder="4,000"
-            />
-          </NumberInput>
-        </FormControl>
+            <NumberInput
+              focusBorderColor="brand.purple"
+              onChange={(valueString) => handleTotalRewardChange(valueString)}
+              value={bountyPayment.rewardAmount || ''}
+            >
+              <NumberInputField
+                borderColor="brand.slate.300"
+                _placeholder={{
+                  color: 'brand.slate.300',
+                }}
+                placeholder="4,000"
+              />
+            </NumberInput>
+          </FormControl>
+        )}
+        {bountyPayment.compensationType === 'variable' && (
+          <Flex gap="3" w="100%">
+            <FormControl w="full" mt={5} isRequired>
+              <FormLabel
+                color={'brand.slate.500'}
+                fontSize={'15px'}
+                fontWeight={600}
+              >
+                From
+              </FormLabel>
+
+              <NumberInput
+                focusBorderColor="brand.purple"
+                onChange={(valueString) => handleTotalRewardChange(valueString)}
+                value={bountyPayment.rewardAmount || ''}
+              >
+                <NumberInputField
+                  borderColor="brand.slate.300"
+                  _placeholder={{
+                    color: 'brand.slate.300',
+                  }}
+                  placeholder="Enter the lower range"
+                />
+              </NumberInput>
+            </FormControl>
+            <FormControl w="full" mt={5} isRequired>
+              <FormLabel
+                color={'brand.slate.500'}
+                fontSize={'15px'}
+                fontWeight={600}
+              >
+                Upto
+              </FormLabel>
+
+              <NumberInput
+                focusBorderColor="brand.purple"
+                onChange={(valueString) => handleTotalRewardChange(valueString)}
+                value={bountyPayment.rewardAmount || ''}
+              >
+                <NumberInputField
+                  borderColor="brand.slate.300"
+                  _placeholder={{
+                    color: 'brand.slate.300',
+                  }}
+                  placeholder="Enter the higher range"
+                />
+              </NumberInput>
+            </FormControl>
+          </Flex>
+        )}
         {type !== 'project' && (
           <VStack gap={4} w={'full'} mt={5} mb={8}>
             {prizes.map((el, index) => (

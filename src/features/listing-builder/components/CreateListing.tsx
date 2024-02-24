@@ -129,6 +129,12 @@ export function CreateListing({
     rewardAmount: editable ? bounty?.rewardAmount || 0 : 0,
     token: editable ? bounty?.token : tokenList[0]?.tokenSymbol,
     rewards: editable ? bounty?.rewards || undefined : undefined,
+    compensationType:
+      bounty?.type === 'project'
+        ? 'fixed'
+        : editable
+          ? bounty?.compensationType || undefined
+          : undefined,
   });
 
   const [isListingPublishing, setIsListingPublishing] =

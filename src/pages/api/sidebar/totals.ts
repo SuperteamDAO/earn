@@ -21,7 +21,13 @@ export default async function handler(
       },
     });
 
-    const roundedUserCount = Math.ceil((userCount - 289) / 10) * 10;
+    let errorCount = 0;
+
+    if (process.env.NODE_ENV === 'production') {
+      errorCount = 289;
+    }
+
+    const roundedUserCount = Math.ceil((userCount - errorCount) / 10) * 10;
 
     const totalRewardAmount =
       totalRewardAmountResult._sum.totalEarnedInUSD || 0;
