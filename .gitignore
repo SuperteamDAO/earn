@@ -42,6 +42,9 @@ yarn-error.log*
 .env*.local
 .env
 
+# prisma migration
+prisma.migration
+
 # local folder
 local
 

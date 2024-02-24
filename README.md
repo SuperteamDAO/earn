@@ -53,8 +53,13 @@
     - [Resend](https://resend.com): To obtain your `RESEND_API_KEY`, visit the Resend dashboard. This credential is essential for setting up Email Auth.
 
   NOTE: If you are facing any issues with setup, feel free to contact [Abhishek](https://twitter.com/abhwshek)
+
+5. Generate prisma migrations & client
+    ```bash
+    npx prisma migrate dev --name init && npx prisma generate
+    ```
     
-5. Run the development server
+6. Run the development server
     ```bash
     pnpm dev
     ```
