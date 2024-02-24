@@ -60,14 +60,28 @@ export default async function user(req: NextApiRequest, res: NextApiResponse) {
     return res.status(400).json({ error: 'Invalid token' });
   }
 
-  const { addUserSponsor, memberType, skills, ...updateAttributes } = req.body;
+  const user = await prisma.user.findUnique({
+    where: {
+      id: userId as string,
+    },
+  });
+
+  // eslint-disable-next-line
+  const { role, skills, currentSponsorId, ...updateAttributes } = req.body;
   let result;
   const correctedSkills = skills ? correctSkills(skills) : [];
   try {
     const updatedData = {
       ...updateAttributes,
-      ...(skills && { skills: correctedSkills }),
     };
+
+    if (skills) {
+      updatedData.skills = correctedSkills;
+    }
+
+    if (user && user.role === 'GOD' && currentSponsorId) {
+      updatedData.currentSponsorId = currentSponsorId;
+    }
 
     result = await prisma.user.update({
       where: {
@@ -79,15 +93,6 @@ export default async function user(req: NextApiRequest, res: NextApiResponse) {
       },
     });
 
-    if (addUserSponsor && updateAttributes?.currentSponsorId) {
-      await prisma.userSponsors.create({
-        data: {
-          userId: userId as string,
-          sponsorId: updateAttributes?.currentSponsorId,
-          role: memberType,
-        },
-      });
-    }
     return res.status(200).json(result);
   } catch (e) {
     console.log('file: update.ts:93 ~ user ~ e:', e);

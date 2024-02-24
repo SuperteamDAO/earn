@@ -14,12 +14,12 @@ import {
   VStack,
 } from '@chakra-ui/react';
 import { Regions } from '@prisma/client';
+import { useSession } from 'next-auth/react';
 import { type Dispatch, type SetStateAction, useMemo, useState } from 'react';
 
 import { SkillSelect } from '@/components/misc/SkillSelect';
 import type { MultiSelectOptions } from '@/constants';
 import { Superteams } from '@/constants/Superteam';
-import { userStore } from '@/store/user';
 import { dayjs } from '@/utils/dayjs';
 
 import type { SuperteamName } from '../../types';
@@ -77,8 +77,6 @@ export const ListingBasic = ({
   setIsPrivate,
   editable,
 }: Props) => {
-  const { userInfo } = userStore();
-
   const [errorState, setErrorState] = useState<ErrorsBasic>({
     deadline: false,
     title: false,
@@ -115,6 +113,8 @@ export const ListingBasic = ({
   }, [bountyBasic?.timeToComplete, timeToCompleteOptions]);
 
   const isProject = type === 'project';
+
+  const { data: session } = useSession();
 
   return (
     <>
@@ -183,7 +183,7 @@ export const ListingBasic = ({
           skills={skills}
           subSkills={subSkills}
         />
-        {userInfo?.role === 'GOD' && (
+        {session?.user?.role === 'GOD' && (
           <>
             <FormControl w="full" mb={5}>
               <Flex>

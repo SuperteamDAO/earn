@@ -248,8 +248,7 @@ export function CreateListing({
 
   return (
     <>
-      {!userInfo?.id ||
-      !(userInfo?.role === 'GOD' || !!userInfo?.currentSponsorId) ? (
+      {!userInfo?.id || !userInfo?.currentSponsorId ? (
         <ErrorSection
           title="Access is Forbidden!"
           message="Please contact support to access this section."

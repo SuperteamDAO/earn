@@ -142,10 +142,10 @@ export function Sidebar({
 
   const showLoading = !isHackathonRoute
     ? !userInfo?.currentSponsor?.id
-    : !userInfo?.hackathonId && userInfo?.role !== 'GOD';
+    : !userInfo?.hackathonId && session?.user?.role !== 'GOD';
 
   const showContent = isHackathonRoute
-    ? userInfo?.hackathonId || userInfo?.role === 'GOD'
+    ? userInfo?.hackathonId || session?.user?.role === 'GOD'
     : userInfo?.currentSponsor?.id;
 
   return (
@@ -169,7 +169,7 @@ export function Sidebar({
           borderRight={'1px solid'}
           borderRightColor={'blackAlpha.200'}
         >
-          {userInfo?.role === 'GOD' && !isHackathonRoute && (
+          {session?.user?.role === 'GOD' && !isHackathonRoute && (
             <Box px={6} pb={6}>
               <SelectSponsor />
             </Box>

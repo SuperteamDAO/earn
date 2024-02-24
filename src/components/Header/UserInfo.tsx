@@ -147,29 +147,29 @@ export function UserInfo({ isMobile }: UserInfoProps) {
                   Edit Profile
                 </MenuItem>
               )}
-              {!isLessthan768 &&
-                (userInfo?.role === 'GOD' || !!userInfo?.currentSponsorId) && (
-                  <>
-                    <MenuItem
-                      color="brand.slate.500"
-                      fontSize="sm"
-                      fontWeight={600}
-                      onClick={() => {
-                        router.push('/dashboard/listings');
-                      }}
-                    >
-                      Sponsor Dashboard
-                    </MenuItem>
-                    <MenuDivider />
-                  </>
-                )}
-              {!isLessthan768 && userInfo?.role === 'GOD' && (
+              {!isLessthan768 && !!userInfo?.currentSponsorId && (
+                <>
+                  <MenuItem
+                    color="brand.slate.500"
+                    fontSize="sm"
+                    fontWeight={600}
+                    onClick={() => {
+                      router.push('/dashboard/listings');
+                    }}
+                  >
+                    Sponsor Dashboard
+                  </MenuItem>
+                  <MenuDivider />
+                </>
+              )}
+              {!isLessthan768 && session?.user?.role === 'GOD' && (
                 <>
                   <MenuGroup
+                    mb={0}
                     ml={3}
-                    color="brand.slate.700"
+                    color="brand.slate.400"
                     fontSize="xs"
-                    fontWeight={700}
+                    fontWeight={500}
                     title="God Mode"
                   >
                     <MenuItem
