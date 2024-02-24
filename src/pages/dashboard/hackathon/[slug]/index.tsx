@@ -46,6 +46,7 @@ import dayjs from 'dayjs';
 import type { GetServerSideProps } from 'next';
 import NextLink from 'next/link';
 import { useRouter } from 'next/router';
+import { useSession } from 'next-auth/react';
 import { useEffect, useRef, useState } from 'react';
 import { AiOutlineDelete } from 'react-icons/ai';
 import { FiMoreVertical } from 'react-icons/fi';
@@ -89,6 +90,8 @@ export default function Hackathon({ slug }: { slug: string }) {
 
   const debouncedSetSearchText = useRef(debounce(setSearchText, 300)).current;
 
+  const { data: session } = useSession();
+
   useEffect(() => {
     return () => {
       debouncedSetSearchText.cancel();
@@ -118,7 +121,7 @@ export default function Hackathon({ slug }: { slug: string }) {
   };
 
   useEffect(() => {
-    if (userInfo?.hackathonId || userInfo?.role === 'GOD') {
+    if (userInfo?.hackathonId || session?.user?.role === 'GOD') {
       getBounties();
     }
   }, [userInfo?.hackathonId, skip, searchText]);

@@ -64,7 +64,7 @@ export default async function handle(
   }
 
   // eslint-disable-next-line
-  const { email, publicKey, skills, ...data } = req.body;
+  const { email, publicKey, skills, role,...data } = req.body;
 
   const correctedSkills = correctSkills(skills);
 

@@ -57,6 +57,7 @@ export const authOptions: NextAuthOptions = {
       session.user.firstName = token.firstName;
       session.user.lastName = token.lastName;
       session.token = token.access_token;
+      session.user.role = token.role;
       return session;
     },
   },

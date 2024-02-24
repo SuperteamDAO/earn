@@ -264,7 +264,7 @@ model User {
   createdAt        DateTime          @default(now())
   updatedAt        DateTime          @updatedAt
   isVerified       Boolean           @default(false)
-  role             SuperRole         @default(USER)
+  role             String            @default("USER")
   totalEarnedInUSD Int               @default(0)
   isTalentFilled   Boolean           @default(false)
   interests        String?
@@ -413,11 +413,6 @@ enum EmailType {
 enum Role {
   ADMIN
   MEMBER
-}
-
-enum SuperRole {
-  GOD
-  USER
 }
 
 enum Source {
