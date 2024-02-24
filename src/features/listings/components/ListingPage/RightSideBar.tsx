@@ -3,7 +3,6 @@ import {
   Box,
   Divider,
   Flex,
-  HStack,
   Image,
   Link,
   Table,
@@ -116,104 +115,115 @@ export function RightSideBar({ listing }: { listing: Bounty }) {
           bg={'#FFFFFF'}
           rounded={'xl'}
         >
-          <HStack
-            justify={'space-between'}
-            w={'full'}
-            h={16}
-            px={'1.5rem'}
-            borderBottom={'1px solid #E2E8EF'}
-          >
-            <Flex align="center">
-              <Image
-                w={7}
-                h={7}
-                mr={2}
-                alt={'green doller'}
-                rounded={'full'}
-                src={
-                  tokenList.filter((e) => e?.tokenSymbol === token)[0]?.icon ??
-                  '/assets/icons/green-dollar.svg'
-                }
-              />
-              <Text color="color.slate.800" fontSize={'2xl'} fontWeight={500}>
-                {rewardAmount?.toLocaleString() ?? 0}
-                <Text
-                  as="span"
-                  ml={1}
-                  color="brand.slate.400"
-                  fontSize="lg"
-                  fontWeight={400}
-                >
-                  {token}
-                </Text>
-              </Text>
-            </Flex>
-            {!isProject && (
-              <Text color={'brand.slate.300'} fontSize={'lg'} fontWeight={400}>
-                Total Prizes
-              </Text>
-            )}
-          </HStack>
-          {!isProject && (
-            <VStack w={'full'} borderBottom={'1px solid #E2E8EF'}>
-              <TableContainer w={'full'}>
-                <Table mt={-6} variant={'unstyled'}>
-                  <Thead>
-                    <Tr>
-                      <Th></Th>
-                      <Th></Th>
-                      <Th> </Th>
-                    </Tr>
-                  </Thead>
-                  <Tbody>
-                    {prizeMapping.map(
-                      (prize, index) =>
-                        rewards?.[prize.key] && (
-                          <Tr key={index}>
-                            <Td>
-                              <Flex
-                                align={'center'}
-                                justify={'center'}
-                                w={8}
-                                h={8}
-                                p={1.5}
-                                fontSize={'0.7rem'}
-                                bg={'#C6C6C62B'}
-                                rounded={'full'}
-                              >
-                                {prize.label}
-                              </Flex>
-                            </Td>
-                            <Td>
-                              <Text
-                                color={'#64758B'}
-                                fontSize={'1.1rem'}
-                                fontWeight={600}
-                              >
-                                {rewards[prize.key]}
-                                <Text
-                                  as="span"
-                                  ml={1}
-                                  color="brand.slate.300"
-                                  fontWeight={400}
+          {/* {!isProject && ( */}
+          <VStack w={'full'} borderBottom={'1px solid #E2E8EF'}>
+            <TableContainer w={'full'}>
+              <Table mt={-6} variant={'unstyled'}>
+                <Thead>
+                  <Tr>
+                    <Th></Th>
+                    <Th></Th>
+                    <Th> </Th>
+                  </Tr>
+                </Thead>
+                <Tbody>
+                  <Tr w={'full'} borderBottom={'1px solid #E2E8EF'}>
+                    <Td>
+                      <Image
+                        w={7}
+                        h={7}
+                        alt={'green doller'}
+                        rounded={'full'}
+                        src={
+                          tokenList.filter((e) => e?.tokenSymbol === token)[0]
+                            ?.icon ?? '/assets/icons/green-dollar.svg'
+                        }
+                      />
+                    </Td>
+                    <Td>
+                      <Text
+                        ml={isProject ? -32 : 0}
+                        color={'color.slate.800'}
+                        fontSize={'2xl'}
+                        fontWeight={500}
+                      >
+                        {rewardAmount?.toLocaleString() ?? 0}
+                        <Text
+                          as="span"
+                          ml={1}
+                          color="brand.slate.400"
+                          fontSize="lg"
+                          fontWeight={400}
+                        >
+                          {token}
+                        </Text>
+                      </Text>
+                    </Td>
+                    <Td>
+                      {!isProject && (
+                        <Text
+                          color={'brand.slate.300'}
+                          fontSize={'lg'}
+                          fontWeight={400}
+                        >
+                          Total Prizes
+                        </Text>
+                      )}
+                    </Td>
+                  </Tr>
+
+                  {!isProject && (
+                    <>
+                      {prizeMapping.map(
+                        (prize, index) =>
+                          rewards?.[prize.key] && (
+                            <Tr key={index}>
+                              <Td>
+                                <Flex
+                                  align={'center'}
+                                  justify={'center'}
+                                  w={8}
+                                  h={8}
+                                  p={1.5}
+                                  fontSize={'0.7rem'}
+                                  bg={'#C6C6C62B'}
+                                  rounded={'full'}
                                 >
-                                  {token}
+                                  {prize.label}
+                                </Flex>
+                              </Td>
+                              <Td>
+                                <Text
+                                  color={'#64758B'}
+                                  fontSize={'1.1rem'}
+                                  fontWeight={600}
+                                >
+                                  {rewards[prize.key]}
+                                  <Text
+                                    as="span"
+                                    ml={1}
+                                    color="brand.slate.300"
+                                    fontWeight={400}
+                                  >
+                                    {token}
+                                  </Text>
                                 </Text>
-                              </Text>
-                            </Td>
-                            <Td>
-                              <Text color={'#CBD5E1'} fontWeight={500}>
-                                {prize.description}
-                              </Text>
-                            </Td>
-                          </Tr>
-                        ),
-                    )}
-                  </Tbody>
-                </Table>
-              </TableContainer>
-            </VStack>
-          )}
+                              </Td>
+                              <Td>
+                                <Text color={'#CBD5E1'} fontWeight={500}>
+                                  {prize.description}
+                                </Text>
+                              </Td>
+                            </Tr>
+                          ),
+                      )}
+                    </>
+                  )}
+                </Tbody>
+              </Table>
+            </TableContainer>
+          </VStack>
+          {/* )} */}
           <Flex
             justify={'space-between'}
             w={'full'}
