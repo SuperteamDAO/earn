@@ -5,14 +5,15 @@ import { getToken } from 'next-auth/jwt';
 import { tokenList } from '@/constants';
 import {
   getUnsubEmails,
+  kashEmail,
   rateLimitedPromiseAll,
+  resend,
+  SuperteamWinnersTemplate,
   WinnersAnnouncedTemplate,
 } from '@/features/emails';
-import type { Rewards } from '@/features/listings';
+import { getBountyTypeLabel, type Rewards } from '@/features/listings';
 import { prisma } from '@/prisma';
-import { getBountyTypeLabel } from '@/utils/bounty';
 import { dayjs } from '@/utils/dayjs';
-import resendMail from '@/utils/resend';
 
 async function fetchTokenUSDValue(symbol: string) {
   try {
@@ -240,13 +241,40 @@ export default async function announce(
         }/?utm_source=superteamearn&utm_medium=email&utm_campaign=winnerannouncement`,
       });
 
-      await resendMail.emails.send({
-        from: `Kash from Superteam <${process.env.RESEND_EMAIL}>`,
+      await resend.emails.send({
+        from: kashEmail,
         to: [e.email],
         subject: `${listingType} Winners Announced!`,
         react: template,
       });
     });
+
+    const sponsor = await prisma.sponsors.findUnique({
+      where: {
+        id: bounty?.sponsorId,
+      },
+    });
+
+    if (sponsor?.name.includes('Superteam')) {
+      winners.forEach(async (winner) => {
+        const email = winner.user.email;
+        const name = winner.user.firstName;
+
+        const template = SuperteamWinnersTemplate({
+          name,
+          listingName: bounty?.title || '',
+        });
+
+        await resend.emails.send({
+          from: kashEmail,
+          to: [email],
+          subject: `Submit This Form to Claim Your Reward`,
+          react: template,
+        });
+      });
+    } else {
+      console.log('Sponsor is not Superteam. Skipping sending winner emails.');
+    }
 
     return res.status(200).json(result);
   } catch (error) {

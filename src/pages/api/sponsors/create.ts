@@ -16,35 +16,48 @@ export default async function user(req: NextApiRequest, res: NextApiResponse) {
     return res.status(400).json({ error: 'Invalid token' });
   }
 
+  const user = await prisma.user.findUnique({
+    where: {
+      id: userId as string,
+    },
+  });
+
   const { name, slug, logo, url, industry, twitter, bio } = req.body;
+
   try {
-    const result = await prisma.sponsors.create({
-      data: {
-        name,
-        slug,
-        logo,
-        url,
-        industry,
-        twitter,
-        bio,
-      },
-    });
-    await prisma.userSponsors.create({
-      data: {
-        userId: userId as string,
-        sponsorId: result.id,
-        role: 'ADMIN',
-      },
-    });
-    await prisma.user.update({
-      where: {
-        id: userId as string,
-      },
-      data: {
-        currentSponsorId: result.id,
-      },
-    });
-    return res.status(200).json(result);
+    if (user && (!user.currentSponsorId || user.role === 'GOD')) {
+      const result = await prisma.sponsors.create({
+        data: {
+          name,
+          slug,
+          logo,
+          url,
+          industry,
+          twitter,
+          bio,
+        },
+      });
+      await prisma.userSponsors.create({
+        data: {
+          userId: userId as string,
+          sponsorId: result.id,
+          role: 'ADMIN',
+        },
+      });
+      await prisma.user.update({
+        where: {
+          id: userId as string,
+        },
+        data: {
+          currentSponsorId: result.id,
+        },
+      });
+      return res.status(200).json(result);
+    } else {
+      return res.status(400).json({
+        message: 'Error occurred while adding a new sponsor.',
+      });
+    }
   } catch (error) {
     console.log('file: create.ts:29 ~ user ~ error:', error);
     return res.status(400).json({

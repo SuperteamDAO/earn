@@ -7,9 +7,12 @@ import { useEffect, useState } from 'react';
 
 import { ErrorSection } from '@/components/shared/ErrorSection';
 import { type MultiSelectOptions, tokenList } from '@/constants';
-import type { Bounty, References } from '@/features/listings';
+import {
+  type Bounty,
+  getBountyDraftStatus,
+  type References,
+} from '@/features/listings';
 import { userStore } from '@/store/user';
-import { getBountyDraftStatus } from '@/utils/bounty';
 import { dayjs } from '@/utils/dayjs';
 
 import type { SuperteamName } from '../types';
@@ -245,8 +248,7 @@ export function CreateListing({
 
   return (
     <>
-      {!userInfo?.id ||
-      !(userInfo?.role === 'GOD' || !!userInfo?.currentSponsorId) ? (
+      {!userInfo?.id || !userInfo?.currentSponsorId ? (
         <ErrorSection
           title="Access is Forbidden!"
           message="Please contact support to access this section."

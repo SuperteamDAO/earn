@@ -86,6 +86,7 @@ function ListingCategoryPage({ slug }: { slug: string }) {
           title={`${formattedSlug} Grants`}
           sub="Equity-free funding opportunities for builders"
           emoji="/assets/home/emojis/grants.png"
+          showViewAll
         >
           {isListingsLoading && (
             <Flex align="center" justify="center" direction="column" minH={52}>

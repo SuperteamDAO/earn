@@ -6,10 +6,11 @@ import type { NextApiRequest, NextApiResponse } from 'next';
 import {
   DeadlineSponsorTemplate,
   getUnsubEmails,
+  kashEmail,
   rateLimitedPromiseAll,
+  resend,
 } from '@/features/emails';
 import { prisma } from '@/prisma';
-import resendMail from '@/utils/resend';
 
 dayjs.extend(utc);
 
@@ -57,8 +58,8 @@ async function handler(_req: NextApiRequest, res: NextApiResponse) {
         return null;
       }
 
-      await resendMail.emails.send({
-        from: `Kash from Superteam <${process.env.RESEND_EMAIL}>`,
+      await resend.emails.send({
+        from: kashEmail,
         to: [pocUserEmail],
         bcc: ['pratikd.earnings@gmail.com'],
         subject: 'Your Earn Listing Is Ready to Be Reviewed',

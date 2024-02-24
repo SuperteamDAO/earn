@@ -4,12 +4,13 @@ import type { NextApiRequest, NextApiResponse } from 'next';
 import { Superteams } from '@/constants/Superteam';
 import {
   getUnsubEmails,
-  NewBountyTemplate,
+  kashEmail,
+  NewListingTemplate,
   rateLimitedPromiseAll,
+  resend,
 } from '@/features/emails';
 import type { Skills } from '@/interface/skills';
 import { prisma } from '@/prisma';
-import resendMail from '@/utils/resend';
 
 export default async function handler(
   req: NextApiRequest,
@@ -75,11 +76,11 @@ export default async function handler(
         return;
       }
 
-      await resendMail.emails.send({
-        from: `Kash from Superteam <${process.env.RESEND_EMAIL}>`,
+      await resend.emails.send({
+        from: kashEmail,
         to: [e.email],
         subject: 'Here’s a New Listing You’d Be Interested In..',
-        react: NewBountyTemplate({
+        react: NewListingTemplate({
           name: e.name,
           link: `https://earn.superteam.fun/listings/${listing?.type}/${listing.slug}/?utm_source=superteamearn&utm_medium=email&utm_campaign=notifications`,
         }),

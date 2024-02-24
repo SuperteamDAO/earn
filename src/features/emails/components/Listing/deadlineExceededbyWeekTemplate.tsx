@@ -1,6 +1,6 @@
 import React from 'react';
 
-import { styles } from './styles';
+import { styles } from '../../utils';
 
 interface TemplateProps {
   name: string;
@@ -8,7 +8,7 @@ interface TemplateProps {
   link: string;
 }
 
-export const DeadlineThreeDaysTemplate = ({
+export const DeadlineExceededbyWeekTemplate = ({
   name,
   bountyName,
   link,
@@ -17,13 +17,15 @@ export const DeadlineThreeDaysTemplate = ({
     <div style={styles.container}>
       <p style={styles.greetings}>Hey {name},</p>
       <p style={styles.textWithMargin}>
-        Friendly reminder that the listing &quot;
-        <span style={{ fontWeight: 400 }}>{bountyName}&quot;</span>you&nbsp;had
-        indicated&nbsp;interest in will close in 3 days!{' '}
+        It has been a week since the <strong>{bountyName}</strong> listing
+        expired. The participants would be expecting the results to be out soon
+        — request you to publish the winners on Earn shortly!
+      </p>
+      <p style={styles.textWithMargin}>
         <a href={link} style={styles.link}>
           Click here
         </a>{' '}
-        to take another look.
+        to review the submissions.
       </p>
       <p style={styles.salutation}>
         Best,

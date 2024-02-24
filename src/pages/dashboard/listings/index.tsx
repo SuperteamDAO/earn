@@ -52,16 +52,16 @@ import { FiMoreVertical } from 'react-icons/fi';
 import CreateListingModal from '@/components/modals/createListing';
 import { LoadingSection } from '@/components/shared/LoadingSection';
 import { tokenList } from '@/constants/index';
-import type { BountyWithSubmissions } from '@/features/listings';
-import { Sidebar } from '@/layouts/Sponsor';
-import { userStore } from '@/store/user';
 import {
+  type BountyWithSubmissions,
   formatDeadline,
   getBountyStatus,
   getBountyTypeLabel,
   getColorStyles,
   isDeadlineOver,
-} from '@/utils/bounty';
+} from '@/features/listings';
+import { Sidebar } from '@/layouts/Sponsor';
+import { userStore } from '@/store/user';
 
 const debounce = require('lodash.debounce');
 

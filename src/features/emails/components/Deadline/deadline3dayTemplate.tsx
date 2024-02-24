@@ -1,29 +1,29 @@
 import React from 'react';
 
-import { styles } from './styles';
+import { styles } from '../../utils';
 
-interface SubmissionProps {
+interface TemplateProps {
   name: string;
   bountyName: string;
-  personName: string;
   link: string;
 }
 
-export const CommentSubmissionTemplate = ({
+export const DeadlineThreeDaysTemplate = ({
   name,
   bountyName,
-  personName,
   link,
-}: SubmissionProps) => {
+}: TemplateProps) => {
   return (
     <div style={styles.container}>
-      <p style={styles.greetings}>Hello&nbsp;{name},</p>
+      <p style={styles.greetings}>Hey {name},</p>
       <p style={styles.textWithMargin}>
-        {personName} just left a new comment on your submission to the{' '}
-        <strong>{bountyName}</strong> listing.
+        Friendly reminder that the listing &quot;
+        <span style={{ fontWeight: 400 }}>{bountyName}&quot;</span>you&nbsp;had
+        indicated&nbsp;interest in will close in 3 days!{' '}
         <a href={link} style={styles.link}>
-          Click here to see what they said!
+          Click here
         </a>{' '}
+        to take another look.
       </p>
       <p style={styles.salutation}>
         Best,

@@ -5,10 +5,11 @@ import { getToken } from 'next-auth/jwt';
 import {
   DeadlineExtendedTemplate,
   getUnsubEmails,
+  kashEmail,
   rateLimitedPromiseAll,
+  resend,
 } from '@/features/emails';
 import { prisma } from '@/prisma';
-import resendMail from '@/utils/resend';
 
 export default async function bounty(
   req: NextApiRequest,
@@ -133,8 +134,8 @@ export default async function bounty(
       const sendEmail = async (
         subscriber: (typeof filteredSubscribers)[number],
       ) => {
-        return resendMail.emails.send({
-          from: `Kash from Superteam <${process.env.RESEND_EMAIL}>`,
+        return resend.emails.send({
+          from: kashEmail,
           to: subscriber.User.email,
           subject: 'Listing Deadline Extended!',
           react: DeadlineExtendedTemplate({

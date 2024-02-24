@@ -46,6 +46,7 @@ import dayjs from 'dayjs';
 import type { GetServerSideProps } from 'next';
 import NextLink from 'next/link';
 import { useRouter } from 'next/router';
+import { useSession } from 'next-auth/react';
 import { useEffect, useRef, useState } from 'react';
 import { AiOutlineDelete } from 'react-icons/ai';
 import { FiMoreVertical } from 'react-icons/fi';
@@ -53,14 +54,14 @@ import { FiMoreVertical } from 'react-icons/fi';
 import CreateListingModal from '@/components/modals/createListing';
 import { LoadingSection } from '@/components/shared/LoadingSection';
 import { tokenList } from '@/constants/index';
-import type { BountyWithSubmissions } from '@/features/listings';
-import { Sidebar } from '@/layouts/Sponsor';
-import { userStore } from '@/store/user';
 import {
+  type BountyWithSubmissions,
   formatDeadline,
   getBountyStatus,
   getColorStyles,
-} from '@/utils/bounty';
+} from '@/features/listings';
+import { Sidebar } from '@/layouts/Sponsor';
+import { userStore } from '@/store/user';
 
 const debounce = require('lodash.debounce');
 
@@ -88,6 +89,8 @@ export default function Hackathon({ slug }: { slug: string }) {
   const length = 15;
 
   const debouncedSetSearchText = useRef(debounce(setSearchText, 300)).current;
+
+  const { data: session } = useSession();
 
   useEffect(() => {
     return () => {
@@ -118,7 +121,7 @@ export default function Hackathon({ slug }: { slug: string }) {
   };
 
   useEffect(() => {
-    if (userInfo?.hackathonId || userInfo?.role === 'GOD') {
+    if (userInfo?.hackathonId || session?.user?.role === 'GOD') {
       getBounties();
     }
   }, [userInfo?.hackathonId, skip, searchText]);

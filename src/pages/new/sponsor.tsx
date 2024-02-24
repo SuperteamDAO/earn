@@ -47,7 +47,7 @@ const CreateSponsor = () => {
   const { userInfo } = userStore();
 
   useEffect(() => {
-    if (userInfo?.currentSponsorId && userInfo.role !== 'GOD') {
+    if (userInfo?.currentSponsorId && session?.user?.role !== 'GOD') {
       router.push('/dashboard/listings');
     }
   }, [userInfo?.currentSponsorId, router]);

@@ -1,8 +1,12 @@
 import type { NextApiRequest, NextApiResponse } from 'next';
 
-import { getUnsubEmails, SubmissionLikeTemplate } from '@/features/emails';
+import {
+  getUnsubEmails,
+  kashEmail,
+  resend,
+  SubmissionLikeTemplate,
+} from '@/features/emails';
 import { prisma } from '@/prisma';
-import resendMail from '@/utils/resend';
 
 export default async function handler(
   req: NextApiRequest,
@@ -25,8 +29,8 @@ export default async function handler(
       submission &&
       !unsubscribedEmails.includes(submission.user.email as string)
     ) {
-      await resendMail.emails.send({
-        from: `Kash from Superteam <${process.env.RESEND_EMAIL}>`,
+      await resend.emails.send({
+        from: kashEmail,
         to: [submission?.user.email as string],
         subject: 'People Love Your Superteam Earn Submission!',
         react: SubmissionLikeTemplate({

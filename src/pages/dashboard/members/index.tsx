@@ -28,6 +28,7 @@ import {
 } from '@chakra-ui/react';
 import axios from 'axios';
 import Avatar from 'boring-avatars';
+import { useSession } from 'next-auth/react';
 import React, { useEffect, useRef, useState } from 'react';
 
 import { ErrorSection } from '@/components/shared/ErrorSection';
@@ -50,6 +51,8 @@ const Index = () => {
   const length = 15;
 
   const debouncedSetSearchText = useRef(debounce(setSearchText, 300)).current;
+
+  const { data: session } = useSession();
 
   const getMembers = async () => {
     setIsMembersLoading(true);
@@ -94,7 +97,7 @@ const Index = () => {
           </Text>
         </Flex>
         <Flex align="center" gap={3}>
-          {(userInfo?.role === 'GOD' ||
+          {(session?.user?.role === 'GOD' ||
             (userInfo?.UserSponsors?.length &&
               userInfo?.UserSponsors[0]?.role === 'ADMIN')) && (
             <Button

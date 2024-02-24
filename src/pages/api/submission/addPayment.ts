@@ -1,6 +1,7 @@
 import type { NextApiRequest, NextApiResponse } from 'next';
 import { getToken } from 'next-auth/jwt';
 
+import { kashEmail, PaymentReceivedTemplate, resend } from '@/features/emails';
 import { prisma } from '@/prisma';
 
 export default async function handler(
@@ -29,11 +30,11 @@ export default async function handler(
     return res.status(400).json({ error: 'Unauthorized' });
   }
 
-  const { id, isPaid, paymentDetails } = req.body;
+  const { id, amount, isPaid, paymentDetails } = req.body;
   try {
     const currentSubmission = await prisma.submission.findUnique({
       where: { id },
-      include: { listing: true },
+      include: { listing: true, user: true },
     });
 
     if (!currentSubmission) {
@@ -65,6 +66,24 @@ export default async function handler(
       updatedBounty.totalPaymentsMade = {
         increment: 1,
       };
+
+      const email = currentSubmission.user.email;
+      const name = currentSubmission.user.firstName;
+
+      const template = PaymentReceivedTemplate({
+        name,
+        amount,
+        tokenName: currentSubmission.listing.token,
+        walletAddress: currentSubmission.user.publicKey,
+        username: currentSubmission.user.username,
+      });
+
+      await resend.emails.send({
+        from: kashEmail,
+        to: [email],
+        subject: `Payment Confirmation for ${currentSubmission.listing.title}`,
+        react: template,
+      });
     }
     await prisma.bounties.update({
       where: {
