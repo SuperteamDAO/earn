@@ -296,7 +296,7 @@ export function YourLinks({ success, useFormStore }: Props) {
             )}
             {socialsError === 2 && (
               <Text align="center" mb={'0.5rem'} color={'red'}>
-                Please fill at least one social to continue!
+                Please fill the discord field!
               </Text>
             )}
             <Button
