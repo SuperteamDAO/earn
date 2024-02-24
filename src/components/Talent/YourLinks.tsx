@@ -146,7 +146,7 @@ export function YourLinks({ success, useFormStore }: Props) {
   const { isOpen, onOpen, onClose } = useDisclosure();
   const { form } = useFormStore();
   const [pow, setPow] = useState<PoW[]>([]);
-  const [socialsError, setsocialsError] = useState<number | boolean>(false);
+  const [socialsError, setsocialsError] = useState<number>(0);
   const [isLoading, setisLoading] = useState<boolean>(false);
   const [selectedProject, setSelectedProject] = useState<number | null>(null);
 
@@ -180,7 +180,7 @@ export function YourLinks({ success, useFormStore }: Props) {
       setsocialsError(1);
       return;
     }
-    setsocialsError(false);
+    setsocialsError(0);
 
     updateState({ ...socials });
     setisLoading(true);
