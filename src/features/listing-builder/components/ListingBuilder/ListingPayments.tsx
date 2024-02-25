@@ -24,7 +24,8 @@ import {
   useDisclosure,
   VStack,
 } from '@chakra-ui/react';
-import { type Dispatch, type SetStateAction, useState } from 'react';
+import { useState } from 'react';
+import { toast, Toaster } from 'react-hot-toast';
 
 import { type MultiSelectOptions, PrizeList, tokenList } from '@/constants';
 import { sortRank } from '@/utils/rank';
@@ -50,11 +51,11 @@ interface Props {
   createAndPublishListing: () => void;
   isListingPublishing: boolean;
   bountyPayment: any;
-  setBountyPayment: Dispatch<SetStateAction<any | undefined>>;
   editable: boolean;
   isNewOrDraft?: boolean;
   type: 'bounty' | 'project' | 'hackathon';
   isDuplicating?: boolean;
+  bountyPaymentDispatch: any;
 }
 export const ListingPayments = ({
   createDraft,
@@ -62,7 +63,7 @@ export const ListingPayments = ({
   createAndPublishListing,
   isListingPublishing,
   bountyPayment,
-  setBountyPayment,
+  bountyPaymentDispatch,
   editable,
   isNewOrDraft,
   type,
@@ -73,7 +74,7 @@ export const ListingPayments = ({
     onOpen: confirmOnOpen,
     onClose: confirmOnClose,
   } = useDisclosure();
-  const [isRewardError, setIsRewardError] = useState<boolean>(false);
+  // const [isRewardError, setIsRewardError] = useState<boolean>(false);
 
   // handles the UI for prize
   const prizesList = sortRank(Object.keys(bountyPayment?.rewards || []))?.map(
@@ -97,28 +98,38 @@ export const ListingPayments = ({
   );
 
   const handleTokenChange = (tokenSymbol: string) => {
-    setBountyPayment((prev: any) => ({
-      ...prev,
-      token: tokenSymbol,
-    }));
+    bountyPaymentDispatch({ type: 'UPDATE_TOKEN', payload: tokenSymbol });
   };
 
   const handleTotalRewardChange = (valueString: string) => {
     const newTotalReward = parseInt(valueString, 10) || 0;
-    setBountyPayment((prev: any) => ({
-      ...prev,
-      rewardAmount: newTotalReward,
-    }));
+    bountyPaymentDispatch({
+      type: 'UPDATE_REWARD_AMOUNT',
+      payload: newTotalReward,
+    });
   };
 
   const handlePrizeValueChange = (prizeName: string, value: number) => {
-    setBountyPayment((prev: any) => ({
-      ...prev,
-      rewards: {
-        ...prev.rewards,
-        [prizeName]: value,
-      },
-    }));
+    bountyPaymentDispatch({
+      type: 'UPDATE_REWARDS',
+      payload: { [prizeName]: value },
+    });
+  };
+
+  const handleMinAskChange = (value: string) => {
+    const minAsk = parseInt(value, 10) || 0;
+    bountyPaymentDispatch({
+      type: 'UPDATE_MIN_ASK',
+      payload: minAsk,
+    });
+  };
+
+  const handleMaxAskChange = (value: string) => {
+    const maxAsk = parseInt(value, 10) || 0;
+    bountyPaymentDispatch({
+      type: 'UPDATE_MAX_ASK',
+      payload: maxAsk,
+    });
   };
 
   function getPrizeLabels(pri: PrizeListInterface[]): PrizeListInterface[] {
@@ -134,31 +145,41 @@ export const ListingPayments = ({
       (prize) => prize.value !== prizeToDelete,
     );
     setPrizes(getPrizeLabels(updatedPrizes));
-
-    setBountyPayment((prev: any) => {
-      const updatedRewards = { ...prev.rewards };
-      delete updatedRewards[prizeToDelete];
-      return {
-        ...prev,
-        rewards: updatedRewards,
-      };
-    });
+    bountyPaymentDispatch({ type: 'DELETE_PRIZE', payload: prizeToDelete });
   };
 
   const isProject = type === 'project';
 
-  const handleSubmit = (isEdit?: boolean, mode?: string) => {
+  const handleSubmit = (mode?: string) => {
+    if (mode === 'DRAFT') {
+      createDraft();
+      return;
+    }
+
+    let errorMessage = '';
+
     if (isProject) {
-      setBountyPayment((prev: any) => ({
-        ...prev,
-        rewards: { first: prev.rewardAmount },
-      }));
-      if (!bountyPayment.rewardAmount) {
-        setIsRewardError(true);
-      } else {
-        setIsRewardError(false);
-        if (isEdit || mode === 'DRAFT') createDraft();
-        else confirmOnOpen();
+      bountyPaymentDispatch({
+        type: 'UPDATE_REWARDS',
+        payload: { first: bountyPayment.rewardAmount },
+      });
+
+      if (!bountyPayment.compensationType) {
+        errorMessage = 'Please add a compensation type.';
+      }
+
+      if (
+        bountyPayment.compensationType === 'fixed' &&
+        !bountyPayment.rewardAmount
+      ) {
+        errorMessage =
+          'Fixed compensation type requires a total reward amount.';
+      } else if (
+        bountyPayment.compensationType === 'range' &&
+        (!bountyPayment?.minRewardAsk || !bountyPayment.maxRewardAsk)
+      ) {
+        errorMessage =
+          'Pre-decided range compensation type requires minimum and maximum reward asks.';
       }
     } else {
       const totalPrizes = Object.values(bountyPayment.rewards)
@@ -166,22 +187,32 @@ export const ListingPayments = ({
         .reduce((a, b) => a + b, 0);
 
       if (!totalPrizes || bountyPayment.rewardAmount !== totalPrizes) {
-        setIsRewardError(true);
-      } else {
-        setIsRewardError(false);
-        if (isEdit || mode === 'DRAFT') createDraft();
-        else confirmOnOpen();
+        errorMessage = 'Total prizes do not match the reward amount.';
       }
     }
-  };
 
-  const isListingIncomplete = (() => {
-    if (isProject) {
-      return bountyPayment?.rewardAmount === null;
+    if (errorMessage) {
+      toast.error(errorMessage, {
+        position: 'bottom-center',
+        style: {
+          backgroundColor: '#DC2626',
+          paddingRight: '20px',
+          paddingLeft: '20px',
+          paddingTop: '12px',
+          paddingBottom: '12px',
+          fontSize: '16px',
+          fontWeight: 600,
+          color: '#fff',
+        },
+        iconTheme: {
+          primary: '#fff',
+          secondary: '#f10101',
+        },
+      });
     } else {
-      return Object.keys(bountyPayment?.rewards || {}).length === 0;
+      mode === 'EDIT' ? createDraft() : confirmOnOpen();
     }
-  })();
+  };
 
   return (
     <>
@@ -236,10 +267,10 @@ export const ListingPayments = ({
               mb={4}
               borderColor={'brand.slate.300'}
               onChange={(e) => {
-                setBountyPayment((prev: any) => ({
-                  ...prev,
-                  compensationType: e.target.value,
-                }));
+                bountyPaymentDispatch({
+                  type: 'UPDATE_COMPENSATION_TYPE',
+                  payload: e.target.value,
+                });
               }}
               value={bountyPayment?.compensationType}
             >
@@ -373,7 +404,7 @@ export const ListingPayments = ({
             </NumberInput>
           </FormControl>
         )}
-        {bountyPayment.compensationType === 'variable' && (
+        {bountyPayment.compensationType === 'range' && (
           <Flex gap="3" w="100%">
             <FormControl w="full" mt={5} isRequired>
               <FormLabel
@@ -386,8 +417,8 @@ export const ListingPayments = ({
 
               <NumberInput
                 focusBorderColor="brand.purple"
-                onChange={(valueString) => handleTotalRewardChange(valueString)}
-                value={bountyPayment.rewardAmount || ''}
+                onChange={(valueString) => handleMinAskChange(valueString)}
+                value={bountyPayment.minRewardAsk || ''}
               >
                 <NumberInputField
                   borderColor="brand.slate.300"
@@ -409,8 +440,8 @@ export const ListingPayments = ({
 
               <NumberInput
                 focusBorderColor="brand.purple"
-                onChange={(valueString) => handleTotalRewardChange(valueString)}
-                value={bountyPayment.rewardAmount || ''}
+                onChange={(valueString) => handleMaxAskChange(valueString)}
+                value={bountyPayment.maxRewardAsk || ''}
               >
                 <NumberInputField
                   borderColor="brand.slate.300"
@@ -424,7 +455,7 @@ export const ListingPayments = ({
           </Flex>
         )}
         {type !== 'project' && (
-          <VStack gap={4} w={'full'} mt={5} mb={8}>
+          <VStack gap={4} w={'full'} mt={5}>
             {prizes.map((el, index) => (
               <FormControl key={el.value}>
                 <FormLabel color={'gray.500'} textTransform="capitalize">
@@ -479,15 +510,8 @@ export const ListingPayments = ({
             </Button>
           </VStack>
         )}
-        {isRewardError && (
-          <Text w="full" color="red" textAlign={'center'}>
-            {isProject
-              ? 'Please enter an amount'
-              : 'Sorry! Total reward amount should be equal to the sum of all prizes.'}
-          </Text>
-        )}
-        <VStack gap={4} w={'full'} pt={4}>
-          {!isListingIncomplete && (isNewOrDraft || isDuplicating) && (
+        <VStack gap={4} w={'full'} mt={10} pt={4}>
+          {(isNewOrDraft || isDuplicating) && (
             <Button
               w="100%"
               disabled={isListingPublishing}
@@ -501,11 +525,20 @@ export const ListingPayments = ({
           <Button
             w="100%"
             isLoading={draftLoading}
-            onClick={() => handleSubmit(editable, 'DRAFT')}
+            onClick={() =>
+              handleSubmit(isNewOrDraft || isDuplicating ? 'DRAFT' : 'EDIT')
+            }
             variant={editable ? 'solid' : 'outline'}
           >
             {isNewOrDraft || isDuplicating ? 'Save Draft' : 'Update Listing'}
           </Button>
+          <Toaster
+            containerStyle={{
+              bottom: 20,
+              left: '60%',
+              transform: 'translateX(-50%)',
+            }}
+          />
         </VStack>
       </VStack>
     </>

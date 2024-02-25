@@ -87,6 +87,8 @@ model Bounties {
   Hackathon            Hackathon?         @relation(fields: [hackathonId], references: [id])
   usdValue             Int?
   compensationType     CompensationType   @default(fixed)
+  minRewardAsk         Int?
+  maxRewardAsk         Int?
 
   @@index([id, slug])
   @@index([sponsorId])

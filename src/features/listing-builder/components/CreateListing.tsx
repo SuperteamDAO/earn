@@ -3,7 +3,7 @@ import { Regions } from '@prisma/client';
 import axios from 'axios';
 import { useAtom } from 'jotai';
 import { useRouter } from 'next/router';
-import { useEffect, useState } from 'react';
+import { useEffect, useReducer, useState } from 'react';
 
 import { ErrorSection } from '@/components/shared/ErrorSection';
 import { type MultiSelectOptions, tokenList } from '@/constants';
@@ -125,17 +125,55 @@ export function CreateListing({
     applicationType: editable ? bounty?.applicationType || 'fixed' : 'fixed',
     timeToComplete: editable ? bounty?.timeToComplete || undefined : undefined,
   });
-  const [bountyPayment, setBountyPayment] = useState({
+
+  const initialBountyPayment = {
     rewardAmount: editable ? bounty?.rewardAmount || 0 : 0,
     token: editable ? bounty?.token : tokenList[0]?.tokenSymbol,
     rewards: editable ? bounty?.rewards || undefined : undefined,
     compensationType:
-      bounty?.type === 'project'
+      type === 'bounty'
         ? 'fixed'
         : editable
           ? bounty?.compensationType || undefined
           : undefined,
-  });
+    minRewardAsk: editable ? bounty?.minRewardAsk || undefined : undefined,
+    maxRewardAsk: editable ? bounty?.maxRewardAsk || undefined : undefined,
+  };
+
+  const bountyPaymentReducer = (state: any, action: any) => {
+    switch (action.type) {
+      case 'UPDATE_TOKEN':
+        return { ...state, token: action.payload };
+      case 'UPDATE_REWARD_AMOUNT':
+        return { ...state, rewardAmount: action.payload };
+      case 'UPDATE_REWARDS':
+        return { ...state, rewards: { ...state.rewards, ...action.payload } };
+      case 'DELETE_PRIZE':
+        const newRewards = { ...state.rewards };
+        delete newRewards[action.payload];
+        return { ...state, rewards: newRewards };
+      case 'UPDATE_COMPENSATION_TYPE':
+        return {
+          ...state,
+          compensationType: action.payload,
+          minRewardAsk: undefined,
+          maxRewardAsk: undefined,
+          rewards: undefined,
+          rewardAmount: undefined,
+        };
+      case 'UPDATE_MIN_ASK':
+        return { ...state, minRewardAsk: action.payload };
+      case 'UPDATE_MAX_ASK':
+        return { ...state, maxRewardAsk: action.payload };
+      default:
+        return state;
+    }
+  };
+
+  const [bountyPayment, bountyPaymentDispatch] = useReducer(
+    bountyPaymentReducer,
+    initialBountyPayment,
+  );
 
   const [isListingPublishing, setIsListingPublishing] =
     useState<boolean>(false);
@@ -363,7 +401,7 @@ export function CreateListing({
               createAndPublishListing={createAndPublishListing}
               isListingPublishing={isListingPublishing}
               bountyPayment={bountyPayment}
-              setBountyPayment={setBountyPayment}
+              bountyPaymentDispatch={bountyPaymentDispatch}
               questions={questions}
               setQuestions={setQuestions}
               references={references}

@@ -54,6 +54,8 @@ export interface Bounty {
     announceDate: string;
   };
   compensationType?: 'fixed' | 'range' | 'variable';
+  minRewardAsk?: number;
+  maxRewardAsk?: number;
 }
 
 export interface BountyWithSubmissions extends Bounty {
