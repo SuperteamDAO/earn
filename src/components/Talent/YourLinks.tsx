@@ -146,7 +146,7 @@ export function YourLinks({ success, useFormStore }: Props) {
   const { isOpen, onOpen, onClose } = useDisclosure();
   const { form } = useFormStore();
   const [pow, setPow] = useState<PoW[]>([]);
-  const [socialsError, setsocialsError] = useState<boolean>(false);
+  const [socialsError, setsocialsError] = useState<number>(0);
   const [isLoading, setisLoading] = useState<boolean>(false);
   const [selectedProject, setSelectedProject] = useState<number | null>(null);
 
@@ -166,7 +166,7 @@ export function YourLinks({ success, useFormStore }: Props) {
     pow: PoW[],
   ) => {
     if (socials.discord.length === 0) {
-      setsocialsError(true);
+      setsocialsError(2);
       return;
     }
     // atleast one URL
@@ -177,10 +177,10 @@ export function YourLinks({ success, useFormStore }: Props) {
       socials.telegram.length === 0 &&
       socials.website.length === 0
     ) {
-      setsocialsError(true);
+      setsocialsError(1);
       return;
     }
-    setsocialsError(false);
+    setsocialsError(0);
 
     updateState({ ...socials });
     setisLoading(true);
@@ -288,10 +288,15 @@ export function YourLinks({ success, useFormStore }: Props) {
             >
               Add Project
             </Button>
-            {socialsError && (
+            {socialsError === 1 && (
               <Text align="center" mb={'0.5rem'} color={'red'}>
                 Please fill at least one social (apart from Discord) to
                 continue!
+              </Text>
+            )}
+            {socialsError === 2 && (
+              <Text align="center" mb={'0.5rem'} color={'red'}>
+                Please fill the discord field!
               </Text>
             )}
             <Button

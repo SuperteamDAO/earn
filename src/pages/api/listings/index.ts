@@ -20,7 +20,7 @@ export default async function user(req: NextApiRequest, res: NextApiResponse) {
     grants: [],
   };
   const filterToSkillsMap: Record<string, string[]> = {
-    development: ['Frontend', 'Backend', 'Blockchain'],
+    development: ['Frontend', 'Backend', 'Blockchain', 'Mobile'],
     design: ['Design'],
     content: ['Content'],
   };
@@ -29,7 +29,7 @@ export default async function user(req: NextApiRequest, res: NextApiResponse) {
 
   let skillsFilter = {};
   if (skillsToFilter.length > 0) {
-    if (filter === 'Development') {
+    if (filter === 'development') {
       skillsFilter = {
         OR: skillsToFilter.map((skill) => ({
           skills: {
