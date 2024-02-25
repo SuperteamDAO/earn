@@ -35,36 +35,28 @@ const Step = ({
   number: number;
   isComplete: boolean;
 }) => {
-  if (isComplete) {
-    return (
-      <Center
-        zIndex={'200'}
-        w={'2.375rem'}
-        h={'2.375rem'}
-        bg={'#6366F1'}
-        rounded={'full'}
-      >
-        <Image
-          w={'1.25rem'}
-          h={'1.25rem'}
-          alt=""
-          src="/assets/icons/white-tick.svg"
-        />
-      </Center>
-    );
-  }
-
   return (
     <Center
       zIndex={'200'}
       w={'2.375rem'}
       h={'2.375rem'}
-      color={'#94A3B8'}
-      bg={'#FFFFFF'}
-      border={'0.0625rem solid #94A3B8'}
+      color={isComplete ? '#FFFFFF' : '#94A3B8'}
+      bg={isComplete ? '#6366F1' : '#FFFFFF'}
+      border={
+        isComplete ? '0 transparent #6366F100' : '0.0625rem solid #94A3B8'
+      }
       rounded={'full'}
     >
-      {number}
+      {isComplete ? (
+        <Image
+          w={'1.25rem'}
+          h={'1.25rem'}
+          alt="New New"
+          src="/assets/icons/white-tick.svg"
+        />
+      ) : (
+        number
+      )}
     </Center>
   );
 };
@@ -106,24 +98,18 @@ const GettingStarted = ({ userInfo }: GettingStartedProps) => {
           h={'100%'}
         >
           <Box ml={'0.8125rem'}>
-            {!userInfo?.id ? (
-              <Text
-                as="button"
-                color={'black'}
-                fontSize={'md'}
-                fontWeight={500}
-                _hover={{
-                  color: 'brand.purple',
-                }}
-                onClick={() => setTriggerLogin(true)}
-              >
-                Create your account
-              </Text>
-            ) : (
-              <Text color={'brand.purple'} fontSize={'md'} fontWeight={500}>
-                Create your account
-              </Text>
-            )}
+            <Text
+              as="button"
+              color={!userInfo?.id ? 'black' : 'brand.purple'}
+              fontSize={'md'}
+              fontWeight={500}
+              _hover={{
+                color: 'brand.purple',
+              }}
+              onClick={() => !userInfo?.id && setTriggerLogin(true)}
+            >
+              Create your account
+            </Text>
             <Text color={'gray.500'} fontSize={'md'} fontWeight={500}>
               and get personalized notifications
             </Text>
@@ -219,15 +205,13 @@ const TotalStats = ({
           src="/assets/icons/lite-purple-dollar.svg"
         />
         <Box>
-          <Text color={'black'} fontSize={'sm'} fontWeight={'600'}>
-            {isTotalLoading ? (
-              <Skeleton w="54px" h="14px" />
-            ) : (
-              <Text color={'black'} fontSize={'sm'} fontWeight={'600'}>
-                ${TVE.toLocaleString()}
-              </Text>
-            )}{' '}
-          </Text>
+          {isTotalLoading ? (
+            <Skeleton w="54px" h="14px" />
+          ) : (
+            <Text color={'black'} fontSize={'sm'} fontWeight={'600'}>
+              ${TVE.toLocaleString()}
+            </Text>
+          )}
           <Text color={'gray.500'} fontSize={'xs'} fontWeight={'400'}>
             Total Value Earned
           </Text>
