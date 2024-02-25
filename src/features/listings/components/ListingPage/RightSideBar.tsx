@@ -115,8 +115,11 @@ export function RightSideBar({ listing }: { listing: Bounty }) {
           bg={'#FFFFFF'}
           rounded={'xl'}
         >
-          {/* {!isProject && ( */}
-          <VStack w={'full'} borderBottom={'1px solid #E2E8EF'}>
+          <VStack
+            justify={'space-between'}
+            w={'full'}
+            borderBottom={'1px solid #E2E8EF'}
+          >
             <TableContainer w={'full'}>
               <Table mt={-6} variant={'unstyled'}>
                 <Thead>
@@ -127,7 +130,7 @@ export function RightSideBar({ listing }: { listing: Bounty }) {
                   </Tr>
                 </Thead>
                 <Tbody>
-                  <Tr w={'full'} borderBottom={'1px solid #E2E8EF'}>
+                  <Tr w={'full'} h={16} borderBottom={'1px solid #E2E8EF'}>
                     <Td>
                       <Image
                         w={7}
@@ -143,19 +146,19 @@ export function RightSideBar({ listing }: { listing: Bounty }) {
                     <Td>
                       <Text
                         ml={isProject ? -32 : 0}
-                        color={'color.slate.800'}
-                        fontSize={'2xl'}
-                        fontWeight={500}
+                        color={'#64758B'}
+                        fontSize={'1.1rem'}
+                        fontWeight={700}
                       >
                         {rewardAmount?.toLocaleString() ?? 0}
                         <Text
                           as="span"
                           ml={1}
-                          color="brand.slate.400"
-                          fontSize="lg"
+                          color="brand.slate.300"
+                          fontSize={'md'}
                           fontWeight={400}
                         >
-                          {token}
+                          USDC
                         </Text>
                       </Text>
                     </Td>
@@ -171,7 +174,6 @@ export function RightSideBar({ listing }: { listing: Bounty }) {
                       )}
                     </Td>
                   </Tr>
-
                   {!isProject && (
                     <>
                       {prizeMapping.map(
@@ -223,7 +225,6 @@ export function RightSideBar({ listing }: { listing: Bounty }) {
               </Table>
             </TableContainer>
           </VStack>
-          {/* )} */}
           <Flex
             justify={'space-between'}
             w={'full'}
