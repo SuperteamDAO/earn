@@ -163,6 +163,7 @@ function BountySubmissions({ slug }: Props) {
                     setSearchText={setSearchText}
                     selectedSubmission={selectedSubmission}
                     setSelectedSubmission={setSelectedSubmission}
+                    type={bounty?.type}
                   />
                   <SubmissionDetails
                     bounty={bounty}

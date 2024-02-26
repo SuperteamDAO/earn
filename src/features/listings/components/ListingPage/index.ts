@@ -1,4 +1,5 @@
 export * from './Comments';
+export * from './CompensationAmount';
 export * from './DescriptionUI';
 export * from './ListingHeader';
 export * from './ListingWinners';

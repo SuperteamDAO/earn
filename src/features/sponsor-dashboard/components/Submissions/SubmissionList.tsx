@@ -28,6 +28,7 @@ interface Props {
   setSelectedSubmission: Dispatch<
     SetStateAction<SubmissionWithUser | undefined>
   >;
+  type?: string;
 }
 
 export const SubmissionList = ({
@@ -35,6 +36,7 @@ export const SubmissionList = ({
   setSearchText,
   selectedSubmission,
   setSelectedSubmission,
+  type,
 }: Props) => {
   const debouncedSetSearchText = useRef(debounce(setSearchText, 300)).current;
 
@@ -152,7 +154,8 @@ export const SubmissionList = ({
                     textAlign={'center'}
                     textTransform={'capitalize'}
                   >
-                    🏆 {submission?.winnerPosition || 'Winner'}
+                    🏆{' '}
+                    {type === 'project' ? 'Winner' : submission?.winnerPosition}
                   </TagLabel>
                 </Tag>
               )}

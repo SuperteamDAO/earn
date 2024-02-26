@@ -391,7 +391,7 @@ export const SubmissionDetails = ({
                         return (
                           (!isRewardUsed || isCurrentSubmissionReward) && (
                             <option key={reward} value={reward}>
-                              {reward}
+                              {isProject ? 'Winner' : reward}
                             </option>
                           )
                         );

@@ -18,7 +18,7 @@ import { tokenList } from '@/constants';
 import { dayjs } from '@/utils/dayjs';
 
 import type { Bounty } from '../types';
-import { CompensationAmount } from './ListingPage/CompensationAmount';
+import { CompensationAmount } from './ListingPage';
 
 export const ListingCardSkeleton = () => {
   const [isMobile] = useMediaQuery('(max-width: 768px)');
