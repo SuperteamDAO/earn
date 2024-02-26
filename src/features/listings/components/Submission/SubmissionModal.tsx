@@ -5,7 +5,10 @@ import {
   FormErrorMessage,
   FormHelperText,
   FormLabel,
+  Image,
   Input,
+  InputGroup,
+  InputLeftAddon,
   Link,
   Modal,
   ModalCloseButton,
@@ -15,30 +18,27 @@ import {
   Text,
   VStack,
 } from '@chakra-ui/react';
-import type { BountyType } from '@prisma/client';
 import { PublicKey } from '@solana/web3.js';
 import axios from 'axios';
 import { useEffect, useState } from 'react';
-import {
-  type FieldValues,
-  useForm,
-  type UseFormRegister,
-} from 'react-hook-form';
+import { useForm } from 'react-hook-form';
 
 import { AutoResizeTextarea } from '@/components/shared/autosize-textarea';
-import type { Eligibility } from '@/features/listings';
+import { tokenList } from '@/constants';
+import type { Bounty } from '@/features/listings';
 import { userStore } from '@/store/user';
+
+import { QuestionHandler } from './QuestionHandler';
 
 interface Props {
   id: string | undefined;
   isOpen: boolean;
   onClose: () => void;
-  eligibility: Eligibility[];
   setIsSubmitted: (arg0: boolean) => void;
   setSubmissionNumber: (arg0: number) => void;
   submissionNumber: number;
-  type?: BountyType | string;
   editMode: boolean;
+  listing: Bounty;
 }
 
 interface EligibilityAnswer {
@@ -46,64 +46,31 @@ interface EligibilityAnswer {
   answer: string;
 }
 
-interface QuestionProps {
-  question: string;
-  label: string;
-  register: UseFormRegister<FieldValues>;
-  watch?: any;
-}
-
 type FormFields = Record<string, string>;
 
-const QuestionHandler = ({
-  question,
-  register,
-  label,
-  watch,
-}: QuestionProps) => {
-  return (
-    <>
-      <FormLabel mb={1} color={'brand.slate.600'} fontWeight={600}>
-        {question}
-      </FormLabel>
-      <AutoResizeTextarea
-        borderColor={'brand.slate.300'}
-        _placeholder={{ color: 'brand.slate.300' }}
-        focusBorderColor="brand.purple"
-        maxLength={3000}
-        {...register(label)}
-      />
-      <Text
-        color={(watch(label)?.length || 0) > 2900 ? 'red' : 'brand.slate.400'}
-        fontSize={'xs'}
-        textAlign="right"
-      >
-        {watch(label)?.length > 2500 &&
-          (3000 - (watch(label)?.length || 0) === 0 ? (
-            <p>Character limit reached</p>
-          ) : (
-            <p>{3000 - (watch(label)?.length || 0)} characters left</p>
-          ))}
-      </Text>
-    </>
-  );
-};
-
 export const SubmissionModal = ({
-  id,
   isOpen,
   onClose,
-  eligibility,
   setIsSubmitted,
   setSubmissionNumber,
   submissionNumber,
-  type,
   editMode,
+  listing,
 }: Props) => {
+  const {
+    id,
+    type,
+    eligibility,
+    compensationType,
+    token,
+    minRewardAsk,
+    maxRewardAsk,
+  } = listing;
   const isProject = type === 'project';
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState('');
   const [publicKeyError, setPublicKeyError] = useState('');
+  const [askError, setAskError] = useState('');
   const {
     register,
     handleSubmit,
@@ -127,15 +94,17 @@ export const SubmissionModal = ({
             tweet: tweetLink,
             otherInfo,
             eligibilityAnswers,
+            ask,
           } = response.data;
 
           let formData = {
             applicationLink,
             tweetLink,
             otherInfo,
+            ask,
           };
 
-          if (isProject) {
+          if (isProject && eligibility) {
             const transformedAnswers = eligibilityAnswers.reduce(
               (acc: FormFields, curr: EligibilityAnswer) => {
                 const index = eligibility.findIndex(
@@ -181,9 +150,15 @@ export const SubmissionModal = ({
   const submitSubmissions = async (data: any) => {
     setIsLoading(true);
     try {
-      const { applicationLink, tweetLink, otherInfo, publicKey, ...answers } =
-        data;
-      const eligibilityAnswers = eligibility.map((q) => ({
+      const {
+        applicationLink,
+        tweetLink,
+        otherInfo,
+        ask,
+        publicKey,
+        ...answers
+      } = data;
+      const eligibilityAnswers = eligibility?.map((q) => ({
         question: q.question,
         answer: answers[`eligibility-${q.order}`],
       }));
@@ -201,7 +176,8 @@ export const SubmissionModal = ({
         link: applicationLink || '',
         tweet: tweetLink || '',
         otherInfo: otherInfo || '',
-        eligibilityAnswers: eligibilityAnswers.length
+        ask: ask || null,
+        eligibilityAnswers: eligibilityAnswers?.length
           ? eligibilityAnswers
           : null,
       });
@@ -410,12 +386,69 @@ export const SubmissionModal = ({
                   );
                 })
               )}
+              {compensationType !== 'fixed' && (
+                <FormControl isRequired>
+                  <FormLabel
+                    mb={1}
+                    color={'brand.slate.600'}
+                    fontWeight={600}
+                    htmlFor={'ask'}
+                  >
+                    What&apos;s the compensation you require to complete this
+                    fully?
+                  </FormLabel>
+                  <InputGroup>
+                    <InputLeftAddon>
+                      <Image
+                        w={4}
+                        h={4}
+                        alt={'green doller'}
+                        rounded={'full'}
+                        src={
+                          tokenList.filter((e) => e?.tokenSymbol === token)[0]
+                            ?.icon ?? '/assets/icons/green-dollar.svg'
+                        }
+                      />
+                      <Text ml={2} color="brand.slate.500" fontWeight={500}>
+                        {token}
+                      </Text>
+                    </InputLeftAddon>
+                    <Input
+                      borderColor={'brand.slate.300'}
+                      focusBorderColor="brand.purple"
+                      id="ask"
+                      {...register('ask', {
+                        valueAsNumber: true,
+                        validate: (value) => {
+                          if (
+                            compensationType === 'range' &&
+                            minRewardAsk &&
+                            maxRewardAsk
+                          ) {
+                            if (value < minRewardAsk || value > maxRewardAsk) {
+                              setAskError(
+                                `Compensation must be between ${minRewardAsk} and ${maxRewardAsk} ${token}`,
+                              );
+                              return false;
+                            }
+                          }
+                          return true;
+                        },
+                      })}
+                      type="number"
+                    />
+                  </InputGroup>
+                  <Text mt={1} ml={1} color="red" fontSize="14px">
+                    {askError}
+                  </Text>
+                </FormControl>
+              )}
               <FormControl>
                 <FormLabel
                   mb={0}
                   color={'brand.slate.600'}
                   fontWeight={600}
-                  htmlFor={'tweetLink'}
+                  htmlFor={'otherInfo'}
                 >
                   Anything Else?
                 </FormLabel>

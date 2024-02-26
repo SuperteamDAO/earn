@@ -42,7 +42,6 @@ interface Props {
   createAndPublishListing: () => void;
   isListingPublishing: boolean;
   bountyPayment: any;
-  setBountyPayment: Dispatch<SetStateAction<any | undefined>>;
   editable: boolean;
   setBountyRequirements?: Dispatch<SetStateAction<any | undefined>>;
   bountyRequirements?: string | undefined;
@@ -55,6 +54,7 @@ interface Props {
   setReferredBy?: Dispatch<SetStateAction<SuperteamName | undefined>>;
   isPrivate: boolean;
   setIsPrivate: Dispatch<SetStateAction<boolean>>;
+  bountyPaymentDispatch: any;
 }
 export const CreateListingForm = ({
   steps,
@@ -75,7 +75,6 @@ export const CreateListingForm = ({
   createAndPublishListing,
   isListingPublishing,
   bountyPayment,
-  setBountyPayment,
   editable,
   bountyRequirements,
   setBountyRequirements,
@@ -90,6 +89,7 @@ export const CreateListingForm = ({
   setReferredBy,
   isPrivate,
   setIsPrivate,
+  bountyPaymentDispatch,
 }: Props) => {
   // handles the info from basic form
 
@@ -154,7 +154,7 @@ export const CreateListingForm = ({
           createAndPublishListing={createAndPublishListing}
           isListingPublishing={isListingPublishing}
           bountyPayment={bountyPayment}
-          setBountyPayment={setBountyPayment}
+          bountyPaymentDispatch={bountyPaymentDispatch}
           questions={questions}
           draftLoading={draftLoading}
           createDraft={createDraft}

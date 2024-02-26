@@ -27,7 +27,8 @@ import { tokenList } from '@/constants/index';
 import { getURLSanitized } from '@/utils/getURLSanitized';
 
 import type { Bounty, Rewards } from '../../types';
-import { SubmissionActionButton } from './SubmissionActionButton';
+import { SubmissionActionButton } from '../Submission';
+import { CompensationAmount } from './CompensationAmount';
 
 export function RightSideBar({ listing }: { listing: Bounty }) {
   const {
@@ -37,6 +38,9 @@ export function RightSideBar({ listing }: { listing: Bounty }) {
     deadline,
     rewards,
     rewardAmount,
+    compensationType,
+    maxRewardAsk,
+    minRewardAsk,
     requirements,
     isWinnersAnnounced,
     pocSocials,
@@ -121,7 +125,23 @@ export function RightSideBar({ listing }: { listing: Bounty }) {
             borderBottom={'1px solid #E2E8EF'}
           >
             <TableContainer w={'full'}>
-              <Table mt={-6} variant={'unstyled'}>
+              {compensationType !== 'fixed' && (
+                <Text
+                  mb={1}
+                  px={6}
+                  pt={3}
+                  color="brand.slate.400"
+                  fontSize={'xs'}
+                  fontWeight={500}
+                >
+                  {compensationType === 'range' && 'Budget'}
+                  {compensationType === 'variable' && 'Payment in'}
+                </Text>
+              )}
+              <Table
+                mt={compensationType === 'fixed' ? -6 : -10}
+                variant={'unstyled'}
+              >
                 <Thead>
                   <Tr>
                     <Th></Th>
@@ -131,36 +151,31 @@ export function RightSideBar({ listing }: { listing: Bounty }) {
                 </Thead>
                 <Tbody>
                   <Tr w={'full'} h={16} borderBottom={'1px solid #E2E8EF'}>
-                    <Td>
-                      <Image
-                        w={7}
-                        h={7}
-                        alt={'green doller'}
-                        rounded={'full'}
-                        src={
-                          tokenList.filter((e) => e?.tokenSymbol === token)[0]
-                            ?.icon ?? '/assets/icons/green-dollar.svg'
-                        }
-                      />
-                    </Td>
-                    <Td>
-                      <Text
-                        ml={isProject ? -32 : -6}
-                        color={'#64758B'}
-                        fontSize={'2xl'}
-                        fontWeight={500}
-                      >
-                        {rewardAmount?.toLocaleString() ?? 0}
-                        <Text
-                          as="span"
-                          ml={1}
-                          color="brand.slate.300"
-                          fontSize={'lg'}
-                          fontWeight={400}
-                        >
-                          {token}
-                        </Text>
-                      </Text>
+                    <Td colSpan={2}>
+                      <Flex align="center" gap={2}>
+                        <Image
+                          w={7}
+                          h={7}
+                          alt={'green doller'}
+                          rounded={'full'}
+                          src={
+                            tokenList.filter((e) => e?.tokenSymbol === token)[0]
+                              ?.icon ?? '/assets/icons/green-dollar.svg'
+                          }
+                        />
+                        <CompensationAmount
+                          compensationType={compensationType}
+                          rewardAmount={rewardAmount}
+                          maxRewardAsk={maxRewardAsk}
+                          minRewardAsk={minRewardAsk}
+                          token={token}
+                          textStyle={{
+                            fontWeight: 500,
+                            fontSize: '2xl',
+                            color: 'brand.slate.700',
+                          }}
+                        />
+                      </Flex>
                     </Td>
                     <Td>
                       {!isProject && (
@@ -198,15 +213,15 @@ export function RightSideBar({ listing }: { listing: Bounty }) {
                               <Td>
                                 <Text
                                   ml={-6}
-                                  color={'#64758B'}
+                                  color={'brand.slate.500'}
                                   fontSize={'1.1rem'}
-                                  fontWeight={600}
+                                  fontWeight={500}
                                 >
                                   {rewards[prize.key]}
                                   <Text
                                     as="span"
                                     ml={1}
-                                    color="brand.slate.300"
+                                    color="brand.slate.400"
                                     fontWeight={400}
                                   >
                                     {token}
@@ -216,7 +231,7 @@ export function RightSideBar({ listing }: { listing: Bounty }) {
                               <Td>
                                 <Text
                                   ml={-6}
-                                  color={'#CBD5E1'}
+                                  color={'brand.slate.400'}
                                   fontWeight={500}
                                 >
                                   {prize.description}

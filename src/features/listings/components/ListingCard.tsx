@@ -18,6 +18,7 @@ import { tokenList } from '@/constants';
 import { dayjs } from '@/utils/dayjs';
 
 import type { Bounty } from '../types';
+import { CompensationAmount } from './ListingPage';
 
 export const ListingCardSkeleton = () => {
   const [isMobile] = useMediaQuery('(max-width: 768px)');
@@ -81,6 +82,9 @@ export const ListingCard = ({
     applicationType,
     isWinnersAnnounced,
     description,
+    compensationType,
+    minRewardAsk,
+    maxRewardAsk,
   } = bounty;
   const router = useRouter();
   const [isMobile] = useMediaQuery('(max-width: 768px)');
@@ -215,34 +219,48 @@ export const ListingCard = ({
               </Flex>
             </Flex>
           </Flex>
-          <Flex align={'center'} justify="start" mr={3}>
-            <Image
-              w={4}
-              h={4}
-              mr={1}
-              alt={token}
-              rounded="full"
-              src={
-                tokenList.find((ele) => {
-                  return ele.tokenSymbol === token;
-                })?.icon
-              }
-            />
+          <Flex
+            align={'center'}
+            justify="start"
+            mr={compensationType !== 'variable' ? 3 : 0}
+          >
+            {compensationType !== 'variable' && (
+              <Image
+                w={4}
+                h={4}
+                mr={1}
+                alt={token}
+                rounded="full"
+                src={
+                  tokenList.find((ele) => {
+                    return ele.tokenSymbol === token;
+                  })?.icon
+                }
+              />
+            )}
             <Flex align="baseline" gap={1}>
               <Text
                 color={'brand.slate.600'}
                 fontSize={['xs', 'xs', 'md', 'md']}
                 fontWeight={'600'}
+                whiteSpace={'nowrap'}
               >
-                {rewardAmount?.toLocaleString()}
+                <CompensationAmount
+                  compensationType={compensationType}
+                  maxRewardAsk={maxRewardAsk}
+                  minRewardAsk={minRewardAsk}
+                  rewardAmount={rewardAmount}
+                />
               </Text>
-              <Text
-                color={'gray.400'}
-                fontSize={['xs', 'xs', 'md', 'md']}
-                fontWeight={500}
-              >
-                {token}
-              </Text>
+              {compensationType !== 'variable' && (
+                <Text
+                  color={'gray.400'}
+                  fontSize={['xs', 'xs', 'md', 'md']}
+                  fontWeight={500}
+                >
+                  {token}
+                </Text>
+              )}
             </Flex>
           </Flex>
         </Flex>
