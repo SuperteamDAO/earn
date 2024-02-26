@@ -145,17 +145,17 @@ export function RightSideBar({ listing }: { listing: Bounty }) {
                     </Td>
                     <Td>
                       <Text
-                        ml={isProject ? -32 : 0}
+                        ml={isProject ? -32 : -6}
                         color={'#64758B'}
-                        fontSize={'1.1rem'}
-                        fontWeight={700}
+                        fontSize={'2xl'}
+                        fontWeight={500}
                       >
                         {rewardAmount?.toLocaleString() ?? 0}
                         <Text
                           as="span"
                           ml={1}
                           color="brand.slate.300"
-                          fontSize={'md'}
+                          fontSize={'lg'}
                           fontWeight={400}
                         >
                           USDC
@@ -165,6 +165,7 @@ export function RightSideBar({ listing }: { listing: Bounty }) {
                     <Td>
                       {!isProject && (
                         <Text
+                          ml={-6}
                           color={'brand.slate.300'}
                           fontSize={'lg'}
                           fontWeight={400}
@@ -196,6 +197,7 @@ export function RightSideBar({ listing }: { listing: Bounty }) {
                               </Td>
                               <Td>
                                 <Text
+                                  ml={-6}
                                   color={'#64758B'}
                                   fontSize={'1.1rem'}
                                   fontWeight={600}
@@ -212,7 +214,11 @@ export function RightSideBar({ listing }: { listing: Bounty }) {
                                 </Text>
                               </Td>
                               <Td>
-                                <Text color={'#CBD5E1'} fontWeight={500}>
+                                <Text
+                                  ml={-6}
+                                  color={'#CBD5E1'}
+                                  fontWeight={500}
+                                >
                                   {prize.description}
                                 </Text>
                               </Td>
