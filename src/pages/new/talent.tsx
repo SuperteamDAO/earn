@@ -10,7 +10,8 @@ import {
   VStack,
 } from '@chakra-ui/react';
 import type { User } from '@prisma/client';
-import React, { Fragment, useState } from 'react';
+import router from 'next/router';
+import React, { Fragment, useEffect, useState } from 'react';
 import { create } from 'zustand';
 
 import { Steps } from '@/components/misc/steps';
@@ -21,6 +22,7 @@ import { YourWork } from '@/components/Talent/YourWork';
 import { TalentBio } from '@/components/TalentBio';
 import { Default } from '@/layouts/Default';
 import { Meta } from '@/layouts/Meta';
+import { userStore } from '@/store/user';
 
 const useFormStore = create<UserStoreType>()((set) => ({
   form: {
@@ -255,6 +257,13 @@ const SuccessScreen = () => {
 
 function Talent() {
   const [currentPage, setcurrentPage] = useState<'steps' | 'success'>('steps');
+  const { userInfo } = userStore();
+
+  useEffect(() => {
+    if (userInfo && userInfo?.isTalentFilled) {
+      router.push('/');
+    }
+  }, [userInfo, router]);
 
   return (
     <Default

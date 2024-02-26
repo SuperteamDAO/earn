@@ -1,3 +1,4 @@
+import { ArrowForwardIcon } from '@chakra-ui/icons';
 import {
   Box,
   Circle,
@@ -63,6 +64,26 @@ export const ListingCardSkeleton = () => {
   );
 };
 
+const formatNumberWithSuffix = (number: number) => {
+  if (isNaN(number)) return null;
+
+  if (number < 1000) return number.toString();
+
+  const suffixes = ['', 'K', 'M'];
+  const tier = (Math.log10(number) / 3) | 0;
+
+  if (tier === 0) return number.toString();
+
+  const suffix = suffixes[tier];
+  const scale = Math.pow(10, tier * 3);
+  const scaled = number / scale;
+
+  const formattedNumber =
+    scaled % 1 === 0 ? scaled.toString() : scaled.toFixed(1);
+
+  return formattedNumber + suffix;
+};
+
 export const ListingCard = ({
   bounty,
   checkLanguage,
@@ -81,6 +102,9 @@ export const ListingCard = ({
     applicationType,
     isWinnersAnnounced,
     description,
+    compensationType,
+    minRewardAsk,
+    maxRewardAsk,
   } = bounty;
   const router = useRouter();
   const [isMobile] = useMediaQuery('(max-width: 768px)');
@@ -96,6 +120,26 @@ export const ListingCard = ({
   if (!isEnglish && checkLanguage) {
     return null;
   }
+
+  const CompensationAmount = () => {
+    switch (compensationType) {
+      case 'fixed':
+        return <>{rewardAmount?.toLocaleString()}</>;
+      case 'range':
+        return (
+          <>{`${formatNumberWithSuffix(minRewardAsk!)}-${formatNumberWithSuffix(maxRewardAsk!)}`}</>
+        );
+      case 'variable':
+        return (
+          <Flex align={'center'} gap={1}>
+            Send Quote
+            <ArrowForwardIcon />
+          </Flex>
+        );
+      default:
+        return null;
+    }
+  };
 
   return (
     <>
@@ -215,34 +259,43 @@ export const ListingCard = ({
               </Flex>
             </Flex>
           </Flex>
-          <Flex align={'center'} justify="start" mr={3}>
-            <Image
-              w={4}
-              h={4}
-              mr={1}
-              alt={token}
-              rounded="full"
-              src={
-                tokenList.find((ele) => {
-                  return ele.tokenSymbol === token;
-                })?.icon
-              }
-            />
+          <Flex
+            align={'center'}
+            justify="start"
+            mr={compensationType !== 'variable' ? 3 : 0}
+          >
+            {compensationType !== 'variable' && (
+              <Image
+                w={4}
+                h={4}
+                mr={1}
+                alt={token}
+                rounded="full"
+                src={
+                  tokenList.find((ele) => {
+                    return ele.tokenSymbol === token;
+                  })?.icon
+                }
+              />
+            )}
             <Flex align="baseline" gap={1}>
               <Text
                 color={'brand.slate.600'}
                 fontSize={['xs', 'xs', 'md', 'md']}
                 fontWeight={'600'}
+                whiteSpace={'nowrap'}
               >
-                {rewardAmount?.toLocaleString()}
+                <CompensationAmount />
               </Text>
-              <Text
-                color={'gray.400'}
-                fontSize={['xs', 'xs', 'md', 'md']}
-                fontWeight={500}
-              >
-                {token}
-              </Text>
+              {compensationType !== 'variable' && (
+                <Text
+                  color={'gray.400'}
+                  fontSize={['xs', 'xs', 'md', 'md']}
+                  fontWeight={500}
+                >
+                  {token}
+                </Text>
+              )}
             </Flex>
           </Flex>
         </Flex>

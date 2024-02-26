@@ -1,5 +1,6 @@
 import { AddIcon, ChevronDownIcon, DeleteIcon } from '@chakra-ui/icons';
 import {
+  Box,
   Button,
   Flex,
   FormControl,
@@ -21,11 +22,11 @@ import {
   NumberInputField,
   Select,
   Text,
+  Tooltip,
   useDisclosure,
   VStack,
 } from '@chakra-ui/react';
 import { useState } from 'react';
-import { toast, Toaster } from 'react-hot-toast';
 
 import { type MultiSelectOptions, PrizeList, tokenList } from '@/constants';
 import { sortRank } from '@/utils/rank';
@@ -74,7 +75,7 @@ export const ListingPayments = ({
     onOpen: confirmOnOpen,
     onClose: confirmOnClose,
   } = useDisclosure();
-  // const [isRewardError, setIsRewardError] = useState<boolean>(false);
+  const [errorMessage, setErrorMessage] = useState('');
 
   // handles the UI for prize
   const prizesList = sortRank(Object.keys(bountyPayment?.rewards || []))?.map(
@@ -165,21 +166,22 @@ export const ListingPayments = ({
       });
 
       if (!bountyPayment.compensationType) {
-        errorMessage = 'Please add a compensation type.';
+        errorMessage = 'Please add a compensation type';
       }
 
       if (
         bountyPayment.compensationType === 'fixed' &&
         !bountyPayment.rewardAmount
       ) {
-        errorMessage =
-          'Fixed compensation type requires a total reward amount.';
-      } else if (
-        bountyPayment.compensationType === 'range' &&
-        (!bountyPayment?.minRewardAsk || !bountyPayment.maxRewardAsk)
-      ) {
-        errorMessage =
-          'Pre-decided range compensation type requires minimum and maximum reward asks.';
+        errorMessage = 'Please specify the total reward amount to proceed';
+      } else if (bountyPayment.compensationType === 'range') {
+        if (!bountyPayment.minRewardAsk || !bountyPayment.maxRewardAsk) {
+          errorMessage =
+            'Please specify your preferred minimum and maximum compensation range';
+        } else if (bountyPayment.maxRewardAsk < bountyPayment.minRewardAsk) {
+          errorMessage =
+            'The compensation range is incorrect; the maximum must be higher than the minimum. Please adjust it';
+        }
       }
     } else {
       const totalPrizes = Object.values(bountyPayment.rewards)
@@ -187,32 +189,33 @@ export const ListingPayments = ({
         .reduce((a, b) => a + b, 0);
 
       if (!totalPrizes || bountyPayment.rewardAmount !== totalPrizes) {
-        errorMessage = 'Total prizes do not match the reward amount.';
+        errorMessage =
+          'Sum of the podium rank amounts does not match the total reward amount. Please check.';
       }
     }
 
     if (errorMessage) {
-      toast.error(errorMessage, {
-        position: 'bottom-center',
-        style: {
-          backgroundColor: '#DC2626',
-          paddingRight: '20px',
-          paddingLeft: '20px',
-          paddingTop: '12px',
-          paddingBottom: '12px',
-          fontSize: '16px',
-          fontWeight: 600,
-          color: '#fff',
-        },
-        iconTheme: {
-          primary: '#fff',
-          secondary: '#f10101',
-        },
-      });
+      setErrorMessage(errorMessage);
     } else {
       mode === 'EDIT' ? createDraft() : confirmOnOpen();
     }
   };
+
+  let compensationHelperText;
+
+  switch (bountyPayment.compensationType) {
+    case 'fixed':
+      compensationHelperText =
+        'Interested applicants will apply if the pay fits their expectations';
+      break;
+    case 'range':
+      compensationHelperText =
+        'Allow applicants to send quotes within a specific range';
+      break;
+    case 'variable':
+      compensationHelperText = 'Allow applicants to send quotes of any amount';
+      break;
+  }
 
   return (
     <>
@@ -255,33 +258,60 @@ export const ListingPayments = ({
         color={'gray.500'}
       >
         {isProject && (
-          <FormControl isRequired>
-            <FormLabel
-              color={'brand.slate.500'}
-              fontSize={'15px'}
-              fontWeight={600}
-            >
-              Compensation Type
-            </FormLabel>
-            <Select
-              mb={4}
-              borderColor={'brand.slate.300'}
-              onChange={(e) => {
-                bountyPaymentDispatch({
-                  type: 'UPDATE_COMPENSATION_TYPE',
-                  payload: e.target.value,
-                });
-              }}
-              value={bountyPayment?.compensationType}
-            >
-              <option selected hidden disabled value="">
-                Select a Compensation Type
-              </option>
-              <option value="fixed">Fixed Compensation</option>
-              <option value="range">Pre-decided Range</option>
-              <option value="variable">Variable Compensation</option>
-            </Select>
-          </FormControl>
+          <Box w="100%" mb={4}>
+            <FormControl isRequired>
+              <Flex>
+                <FormLabel
+                  color={'brand.slate.500'}
+                  fontSize={'15px'}
+                  fontWeight={600}
+                >
+                  Compensation Type
+                </FormLabel>
+                <Tooltip
+                  w="max"
+                  p="0.7rem"
+                  color="white"
+                  fontSize="0.9rem"
+                  fontWeight={600}
+                  bg="#6562FF"
+                  borderRadius="0.5rem"
+                  hasArrow
+                  label={
+                    'Would you like to keep a fixed compensation for this project, or let applicants send in their quotes?'
+                  }
+                  placement="right-end"
+                >
+                  <Image
+                    mt={-2}
+                    alt={'Info Icon'}
+                    src={'/assets/icons/info-icon.svg'}
+                  />
+                </Tooltip>
+              </Flex>
+              <Select
+                color="brand.slate.900"
+                borderColor={'brand.slate.300'}
+                onChange={(e) => {
+                  bountyPaymentDispatch({
+                    type: 'UPDATE_COMPENSATION_TYPE',
+                    payload: e.target.value,
+                  });
+                }}
+                value={bountyPayment?.compensationType}
+              >
+                <option selected hidden disabled value="">
+                  Select a Compensation Type
+                </option>
+                <option value="fixed">Fixed Compensation</option>
+                <option value="range">Pre-decided Range</option>
+                <option value="variable">Variable Compensation</option>
+              </Select>
+            </FormControl>
+            <Text mt={1} color="green.500" fontSize={'xs'}>
+              {compensationHelperText}
+            </Text>
+          </Box>
         )}
         <FormControl isRequired>
           <FormLabel
@@ -395,6 +425,7 @@ export const ListingPayments = ({
               value={bountyPayment.rewardAmount || ''}
             >
               <NumberInputField
+                color={'brand.slate.800'}
                 borderColor="brand.slate.300"
                 _placeholder={{
                   color: 'brand.slate.300',
@@ -421,6 +452,7 @@ export const ListingPayments = ({
                 value={bountyPayment.minRewardAsk || ''}
               >
                 <NumberInputField
+                  color={'brand.slate.800'}
                   borderColor="brand.slate.300"
                   _placeholder={{
                     color: 'brand.slate.300',
@@ -444,6 +476,7 @@ export const ListingPayments = ({
                 value={bountyPayment.maxRewardAsk || ''}
               >
                 <NumberInputField
+                  color={'brand.slate.800'}
                   borderColor="brand.slate.300"
                   _placeholder={{
                     color: 'brand.slate.300',
@@ -475,6 +508,7 @@ export const ListingPayments = ({
                     }
                   >
                     <NumberInputField
+                      color={'brand.slate.800'}
                       borderColor="brand.slate.300"
                       _placeholder={{
                         color: 'brand.slate.300',
@@ -532,13 +566,7 @@ export const ListingPayments = ({
           >
             {isNewOrDraft || isDuplicating ? 'Save Draft' : 'Update Listing'}
           </Button>
-          <Toaster
-            containerStyle={{
-              bottom: 20,
-              left: '60%',
-              transform: 'translateX(-50%)',
-            }}
-          />
+          <Text color="red.500">{errorMessage}</Text>
         </VStack>
       </VStack>
     </>

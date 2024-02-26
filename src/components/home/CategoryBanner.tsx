@@ -13,10 +13,11 @@ import { useEffect, useState } from 'react';
 import toast, { Toaster } from 'react-hot-toast';
 import { TiTick } from 'react-icons/ti';
 
+import { WarningModal } from '@/features/listings';
 import type { Notifications } from '@/interface/user';
 import { userStore } from '@/store/user';
 
-import { SignUpPrompt } from '../modals/Login/SignUpPrompt';
+import { LoginWrapper } from '../Header/LoginWrapper';
 
 type CategoryAssetsType = {
   [key: string]: {
@@ -33,7 +34,13 @@ export const CategoryBanner = ({ type }: { type: string }) => {
   const [loading, setLoading] = useState(false);
   const [isSubscribed, setIsSubscribed] = useState<boolean>(false);
 
-  const { isOpen, onClose, onOpen } = useDisclosure();
+  const [triggerLogin, setTriggerLogin] = useState(false);
+
+  const {
+    isOpen: warningIsOpen,
+    onOpen: warningOnOpen,
+    onClose: warningOnClose,
+  } = useDisclosure();
 
   useEffect(() => {
     setIsSubscribed(
@@ -92,10 +99,12 @@ export const CategoryBanner = ({ type }: { type: string }) => {
     let updatedNotifications = [...(userInfo?.notifications ?? [])];
     let subscriptionMessage = '';
 
-    if (!userInfo?.isTalentFilled) {
-      onOpen();
+    if (!userInfo?.id) {
+      setTriggerLogin(true);
       setLoading(false);
       return;
+    } else if (!userInfo?.isTalentFilled) {
+      warningOnOpen();
     }
 
     if (isSubscribed) {
@@ -118,7 +127,22 @@ export const CategoryBanner = ({ type }: { type: string }) => {
 
   return (
     <>
-      {isOpen && <SignUpPrompt isOpen={isOpen} onClose={onClose} />}
+      {warningIsOpen && (
+        <WarningModal
+          isOpen={warningIsOpen}
+          onClose={warningOnClose}
+          title={'Complete your profile'}
+          bodyText={
+            'Please complete your profile before submitting to a bounty.'
+          }
+          primaryCtaText={'Complete Profile'}
+          primaryCtaLink={'/new/talent'}
+        />
+      )}
+      <LoginWrapper
+        triggerLogin={triggerLogin}
+        setTriggerLogin={setTriggerLogin}
+      />
       <Flex
         direction={{ md: 'row', base: 'column' }}
         w={{ md: 'brand.120', base: '100%' }}

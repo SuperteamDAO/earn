@@ -18,9 +18,9 @@ import React, { useEffect, useState } from 'react';
 import { toast, Toaster } from 'react-hot-toast';
 import { TbBell, TbBellRinging } from 'react-icons/tb';
 
-import { SignUpPrompt } from '@/components/modals/Login/SignUpPrompt';
+import { LoginWrapper } from '@/components/Header/LoginWrapper';
 import { Superteams } from '@/constants/Superteam';
-import { getRegionTooltipLabel } from '@/features/listings';
+import { getRegionTooltipLabel, WarningModal } from '@/features/listings';
 import type { SponsorType } from '@/interface/sponsor';
 import type { User } from '@/interface/user';
 import { userStore } from '@/store/user';
@@ -67,10 +67,15 @@ export function ListingHeader({
   publishedAt,
 }: Bounty) {
   const router = useRouter();
-  const { isOpen, onClose, onOpen } = useDisclosure();
+  const {
+    isOpen: warningIsOpen,
+    onOpen: warningOnOpen,
+    onClose: warningOnClose,
+  } = useDisclosure();
   const { userInfo } = userStore();
   const hasDeadlineEnded = dayjs().isAfter(deadline);
   const hasHackathonStarted = dayjs().isAfter(hackathonStartsAt);
+  const [triggerLogin, setTriggerLogin] = useState(false);
   const [update, setUpdate] = useState<boolean>(false);
   const [sub, setSub] = useState<
     (SubscribeBounty & {
@@ -78,9 +83,11 @@ export function ListingHeader({
     })[]
   >([]);
   const handleSubscribe = async () => {
-    if (!userInfo?.isTalentFilled) {
-      onOpen();
+    if (!userInfo?.id) {
+      setTriggerLogin(true);
       return;
+    } else if (!userInfo?.isTalentFilled) {
+      warningOnOpen();
     }
 
     try {
@@ -95,11 +102,6 @@ export function ListingHeader({
     }
   };
   const handleUnSubscribe = async (idSub: string) => {
-    if (!userInfo?.isTalentFilled) {
-      onOpen();
-      return;
-    }
-
     try {
       await axios.post('/api/bounties/subscribe/unSubscribe', {
         id: idSub,
@@ -163,7 +165,22 @@ export function ListingHeader({
 
   return (
     <VStack px={{ base: '', md: '6' }} bg={'white'}>
-      {isOpen && <SignUpPrompt isOpen={isOpen} onClose={onClose} />}
+      {warningIsOpen && (
+        <WarningModal
+          isOpen={warningIsOpen}
+          onClose={warningOnClose}
+          title={'Complete your profile'}
+          bodyText={
+            'Please complete your profile before submitting to a bounty.'
+          }
+          primaryCtaText={'Complete Profile'}
+          primaryCtaLink={'/new/talent'}
+        />
+      )}
+      <LoginWrapper
+        triggerLogin={triggerLogin}
+        setTriggerLogin={setTriggerLogin}
+      />
       <VStack
         align="start"
         justify={['start', 'start', 'space-between', 'space-between']}
