@@ -44,7 +44,6 @@ export const SubmissionActionButton = ({
     applicationLink,
     type,
     Hackathon,
-    eligibility,
   } = listing;
 
   const [triggerLogin, setTriggerLogin] = useState(false);
@@ -172,14 +171,13 @@ export const SubmissionActionButton = ({
       {isOpen && (
         <SubmissionModal
           id={id}
-          type={type}
-          eligibility={eligibility || []}
           onClose={onClose}
           isOpen={isOpen}
           submissionNumber={submissionNumber}
           setSubmissionNumber={setSubmissionNumber}
           setIsSubmitted={setIsSubmitted}
           editMode={buttonState === 'edit'}
+          listing={listing}
         />
       )}
       {warningIsOpen && (

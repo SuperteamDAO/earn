@@ -190,6 +190,7 @@ model Submission {
   otherInfo          String?     @db.VarChar(2000)
   listing            Bounties    @relation(fields: [listingId], references: [id])
   user               User        @relation(fields: [userId], references: [id])
+  ask                Int?
 
   @@index([id, listingId])
   @@index([userId])
