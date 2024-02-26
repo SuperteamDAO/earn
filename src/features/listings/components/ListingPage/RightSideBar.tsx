@@ -27,6 +27,7 @@ import { tokenList } from '@/constants/index';
 import { getURLSanitized } from '@/utils/getURLSanitized';
 
 import type { Bounty, Rewards } from '../../types';
+import { CompensationAmount } from './CompensationAmount';
 import { SubmissionActionButton } from './SubmissionActionButton';
 
 export function RightSideBar({ listing }: { listing: Bounty }) {
@@ -37,6 +38,9 @@ export function RightSideBar({ listing }: { listing: Bounty }) {
     deadline,
     rewards,
     rewardAmount,
+    compensationType,
+    maxRewardAsk,
+    minRewardAsk,
     requirements,
     isWinnersAnnounced,
     pocSocials,
@@ -121,7 +125,23 @@ export function RightSideBar({ listing }: { listing: Bounty }) {
             borderBottom={'1px solid #E2E8EF'}
           >
             <TableContainer w={'full'}>
-              <Table mt={-6} variant={'unstyled'}>
+              {compensationType !== 'fixed' && (
+                <Text
+                  mb={1}
+                  px={6}
+                  pt={3}
+                  color="brand.slate.400"
+                  fontSize={'xs'}
+                  fontWeight={500}
+                >
+                  {compensationType === 'range' && 'Budget'}
+                  {compensationType === 'variable' && 'Payment in'}
+                </Text>
+              )}
+              <Table
+                mt={compensationType === 'fixed' ? -6 : -10}
+                variant={'unstyled'}
+              >
                 <Thead>
                   <Tr>
                     <Th></Th>
@@ -144,23 +164,19 @@ export function RightSideBar({ listing }: { listing: Bounty }) {
                       />
                     </Td>
                     <Td>
-                      <Text
-                        ml={isProject ? -32 : -6}
-                        color={'#64758B'}
-                        fontSize={'2xl'}
-                        fontWeight={500}
-                      >
-                        {rewardAmount?.toLocaleString() ?? 0}
-                        <Text
-                          as="span"
-                          ml={1}
-                          color="brand.slate.300"
-                          fontSize={'lg'}
-                          fontWeight={400}
-                        >
-                          {token}
-                        </Text>
-                      </Text>
+                      <CompensationAmount
+                        compensationType={compensationType}
+                        rewardAmount={rewardAmount}
+                        maxRewardAsk={maxRewardAsk}
+                        minRewardAsk={minRewardAsk}
+                        token={token}
+                        textStyle={{
+                          fontWeight: 500,
+                          fontSize: '2xl',
+                          ml: isProject ? -28 : -6,
+                          color: 'brand.slate.700',
+                        }}
+                      />
                     </Td>
                     <Td>
                       {!isProject && (
@@ -198,15 +214,15 @@ export function RightSideBar({ listing }: { listing: Bounty }) {
                               <Td>
                                 <Text
                                   ml={-6}
-                                  color={'#64758B'}
+                                  color={'brand.slate.500'}
                                   fontSize={'1.1rem'}
-                                  fontWeight={600}
+                                  fontWeight={500}
                                 >
                                   {rewards[prize.key]}
                                   <Text
                                     as="span"
                                     ml={1}
-                                    color="brand.slate.300"
+                                    color="brand.slate.400"
                                     fontWeight={400}
                                   >
                                     {token}
@@ -216,7 +232,7 @@ export function RightSideBar({ listing }: { listing: Bounty }) {
                               <Td>
                                 <Text
                                   ml={-6}
-                                  color={'#CBD5E1'}
+                                  color={'brand.slate.400'}
                                   fontWeight={500}
                                 >
                                   {prize.description}
