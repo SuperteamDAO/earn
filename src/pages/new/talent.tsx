@@ -10,6 +10,8 @@ import {
   VStack,
 } from '@chakra-ui/react';
 import type { User } from '@prisma/client';
+import axios from 'axios';
+import { type GetServerSideProps } from 'next';
 import router from 'next/router';
 import React, { Fragment, useEffect, useState } from 'react';
 import { create } from 'zustand';
@@ -23,6 +25,7 @@ import { TalentBio } from '@/components/TalentBio';
 import { Default } from '@/layouts/Default';
 import { Meta } from '@/layouts/Meta';
 import { userStore } from '@/store/user';
+import { getURL } from '@/utils/validUrl';
 
 const useFormStore = create<UserStoreType>()((set) => ({
   form: {
@@ -255,7 +258,7 @@ const SuccessScreen = () => {
   );
 };
 
-function Talent() {
+export default function Talent() {
   const [currentPage, setcurrentPage] = useState<'steps' | 'success'>('steps');
   const { userInfo } = userStore();
 
@@ -289,4 +292,25 @@ function Talent() {
   );
 }
 
-export default Talent;
+export const getServerSideProps: GetServerSideProps = async (context) => {
+  const { req } = context;
+
+  const res = await axios.get(`${getURL()}api/user`, {
+    headers: {
+      Cookie: req.headers.cookie,
+    },
+  });
+
+  if (res.data.isTalentFilled === true) {
+    return {
+      redirect: {
+        destination: '/',
+        permanent: false,
+      },
+    };
+  }
+
+  return {
+    props: {},
+  };
+};

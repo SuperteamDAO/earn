@@ -1,4 +1,3 @@
-import { ArrowForwardIcon } from '@chakra-ui/icons';
 import {
   Box,
   Circle,
@@ -19,6 +18,7 @@ import { tokenList } from '@/constants';
 import { dayjs } from '@/utils/dayjs';
 
 import type { Bounty } from '../types';
+import { CompensationAmount } from './ListingPage/CompensationAmount';
 
 export const ListingCardSkeleton = () => {
   const [isMobile] = useMediaQuery('(max-width: 768px)');
@@ -64,26 +64,6 @@ export const ListingCardSkeleton = () => {
   );
 };
 
-const formatNumberWithSuffix = (number: number) => {
-  if (isNaN(number)) return null;
-
-  if (number < 1000) return number.toString();
-
-  const suffixes = ['', 'K', 'M'];
-  const tier = (Math.log10(number) / 3) | 0;
-
-  if (tier === 0) return number.toString();
-
-  const suffix = suffixes[tier];
-  const scale = Math.pow(10, tier * 3);
-  const scaled = number / scale;
-
-  const formattedNumber =
-    scaled % 1 === 0 ? scaled.toString() : scaled.toFixed(1);
-
-  return formattedNumber + suffix;
-};
-
 export const ListingCard = ({
   bounty,
   checkLanguage,
@@ -120,26 +100,6 @@ export const ListingCard = ({
   if (!isEnglish && checkLanguage) {
     return null;
   }
-
-  const CompensationAmount = () => {
-    switch (compensationType) {
-      case 'fixed':
-        return <>{rewardAmount?.toLocaleString()}</>;
-      case 'range':
-        return (
-          <>{`${formatNumberWithSuffix(minRewardAsk!)}-${formatNumberWithSuffix(maxRewardAsk!)}`}</>
-        );
-      case 'variable':
-        return (
-          <Flex align={'center'} gap={1}>
-            Send Quote
-            <ArrowForwardIcon />
-          </Flex>
-        );
-      default:
-        return null;
-    }
-  };
 
   return (
     <>
@@ -285,7 +245,12 @@ export const ListingCard = ({
                 fontWeight={'600'}
                 whiteSpace={'nowrap'}
               >
-                <CompensationAmount />
+                <CompensationAmount
+                  compensationType={compensationType}
+                  maxRewardAsk={maxRewardAsk}
+                  minRewardAsk={minRewardAsk}
+                  rewardAmount={rewardAmount}
+                />
               </Text>
               {compensationType !== 'variable' && (
                 <Text
