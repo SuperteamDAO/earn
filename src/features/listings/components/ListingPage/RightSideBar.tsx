@@ -158,7 +158,7 @@ export function RightSideBar({ listing }: { listing: Bounty }) {
                           fontSize={'lg'}
                           fontWeight={400}
                         >
-                          USDC
+                          {token}
                         </Text>
                       </Text>
                     </Td>
