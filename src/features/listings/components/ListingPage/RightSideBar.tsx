@@ -151,32 +151,31 @@ export function RightSideBar({ listing }: { listing: Bounty }) {
                 </Thead>
                 <Tbody>
                   <Tr w={'full'} h={16} borderBottom={'1px solid #E2E8EF'}>
-                    <Td>
-                      <Image
-                        w={7}
-                        h={7}
-                        alt={'green doller'}
-                        rounded={'full'}
-                        src={
-                          tokenList.filter((e) => e?.tokenSymbol === token)[0]
-                            ?.icon ?? '/assets/icons/green-dollar.svg'
-                        }
-                      />
-                    </Td>
-                    <Td>
-                      <CompensationAmount
-                        compensationType={compensationType}
-                        rewardAmount={rewardAmount}
-                        maxRewardAsk={maxRewardAsk}
-                        minRewardAsk={minRewardAsk}
-                        token={token}
-                        textStyle={{
-                          fontWeight: 500,
-                          fontSize: '2xl',
-                          ml: isProject ? -28 : -6,
-                          color: 'brand.slate.700',
-                        }}
-                      />
+                    <Td colSpan={2}>
+                      <Flex align="center" gap={2}>
+                        <Image
+                          w={7}
+                          h={7}
+                          alt={'green doller'}
+                          rounded={'full'}
+                          src={
+                            tokenList.filter((e) => e?.tokenSymbol === token)[0]
+                              ?.icon ?? '/assets/icons/green-dollar.svg'
+                          }
+                        />
+                        <CompensationAmount
+                          compensationType={compensationType}
+                          rewardAmount={rewardAmount}
+                          maxRewardAsk={maxRewardAsk}
+                          minRewardAsk={minRewardAsk}
+                          token={token}
+                          textStyle={{
+                            fontWeight: 500,
+                            fontSize: '2xl',
+                            color: 'brand.slate.700',
+                          }}
+                        />
+                      </Flex>
                     </Td>
                     <Td>
                       {!isProject && (

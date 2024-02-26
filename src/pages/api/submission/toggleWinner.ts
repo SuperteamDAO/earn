@@ -30,7 +30,7 @@ export default async function handler(
     return res.status(400).json({ error: 'Unauthorized' });
   }
 
-  const { id, isWinner, winnerPosition } = req.body;
+  const { id, isWinner, winnerPosition, ask } = req.body;
   try {
     const currentSubmission = await prisma.submission.findUnique({
       where: { id },
@@ -52,6 +52,9 @@ export default async function handler(
     const result = await prisma.submission.update({
       where: { id },
       data: { isWinner, winnerPosition },
+      include: {
+        listing: true,
+      },
     });
 
     if (process.env.NEXT_PUBLIC_VERCEL_ENV === 'production') {
@@ -65,6 +68,10 @@ export default async function handler(
         where: { id: bountyId },
         data: {
           totalWinnersSelected: isWinner ? { increment: 1 } : { decrement: 1 },
+          ...(result.listing.compensationType !== 'fixed' && {
+            rewards: { first: ask },
+            rewardAmount: ask,
+          }),
         },
       });
     }

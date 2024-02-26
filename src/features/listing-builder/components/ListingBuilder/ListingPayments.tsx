@@ -162,7 +162,7 @@ export const ListingPayments = ({
     if (isProject) {
       bountyPaymentDispatch({
         type: 'UPDATE_REWARDS',
-        payload: { first: bountyPayment.rewardAmount },
+        payload: { first: bountyPayment.rewardAmount || 0 },
       });
 
       if (!bountyPayment.compensationType) {

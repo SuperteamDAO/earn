@@ -65,13 +65,19 @@ export const SubmissionDetails = ({
   const { connected, publicKey } = useWallet();
   const anchorWallet = useAnchorWallet();
 
+  const isProject = bounty?.type === 'project';
+
   const DynamicWalletMultiButton = dynamic(
     async () =>
       (await import('@solana/wallet-adapter-react-ui')).WalletMultiButton,
     { ssr: false },
   );
 
-  const selectWinner = async (position: string, id: string | undefined) => {
+  const selectWinner = async (
+    position: string,
+    id: string | undefined,
+    ask: number | undefined,
+  ) => {
     if (!id) return;
     setIsSelectingWinner(true);
     try {
@@ -79,6 +85,7 @@ export const SubmissionDetails = ({
         id,
         isWinner: !!position,
         winnerPosition: position || null,
+        ask: ask,
       });
 
       const submissionIndex = submissions.findIndex((s) => s.id === id);
@@ -364,7 +371,11 @@ export const SubmissionDetails = ({
                       focusBorderColor="brand.purple"
                       isDisabled={!!bounty?.isWinnersAnnounced}
                       onChange={(e) =>
-                        selectWinner(e.target.value, selectedSubmission?.id)
+                        selectWinner(
+                          e.target.value,
+                          selectedSubmission?.id,
+                          selectedSubmission?.ask,
+                        )
                       }
                       value={
                         selectedSubmission?.isWinner
@@ -390,8 +401,9 @@ export const SubmissionDetails = ({
                 )}
               </Flex>
             </Flex>
+
             <Box w="full" px={4} py={5}>
-              {bounty?.type !== 'project' && (
+              {!isProject && (
                 <>
                   <Box mb={4}>
                     <Text
@@ -439,7 +451,21 @@ export const SubmissionDetails = ({
                   </Box>
                 </>
               )}
-              {bounty?.type === 'project' &&
+              <Box mb={4}>
+                <Text
+                  mb={1}
+                  color="brand.slate.400"
+                  fontSize="xs"
+                  fontWeight={600}
+                  textTransform={'uppercase'}
+                >
+                  Ask
+                </Text>
+                <Text color="brand.slate.700" wordBreak={'break-all'}>
+                  {selectedSubmission?.ask} {bounty?.token}
+                </Text>
+              </Box>
+              {isProject &&
                 selectedSubmission?.eligibilityAnswers?.map(
                   (answer: any, answerIndex: number) => (
                     <Box key={answerIndex} mb={4}>
