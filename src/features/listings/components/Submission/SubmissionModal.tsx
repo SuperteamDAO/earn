@@ -280,7 +280,7 @@ export const SubmissionModal = ({
                       fontWeight={600}
                       htmlFor={'applicationLink'}
                     >
-                      Link to your submission
+                      Link to Your Submission
                     </FormLabel>
                     <FormHelperText mt={0} mb={2} color="brand.slate.500">
                       Make sure this link is accessible by everyone!
