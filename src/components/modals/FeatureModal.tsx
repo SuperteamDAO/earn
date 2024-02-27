@@ -46,8 +46,9 @@ export const FeatureModal = ({
             Announcing Quotes for Projects
           </Text>
           <Text mt={1} color="brand.slate.500" lineHeight={5}>
-            You can now send your desired rates for Projects and get paid for
-            what you think is the right price.
+            Certain project listings will now allow users to send their
+            preferred compensation for the work to be completed. Earn will host
+            a couple of such listings soon — look out for them!
           </Text>
         </ModalBody>
       </ModalContent>
