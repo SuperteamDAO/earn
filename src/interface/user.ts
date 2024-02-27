@@ -52,5 +52,17 @@ interface User {
   Submission?: SubmissionWithUser[];
   hackathonId?: string;
   featureModalShown?: boolean;
+  Hackathon?: {
+    id: string;
+    slug: string;
+    name: string;
+    logo: string;
+    altLogo: string;
+    description: string;
+    sponsorId: string;
+    startDate: string;
+    deadline: string;
+    announceDate: string;
+  };
 }
 export type { Notifications, User };
