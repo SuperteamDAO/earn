@@ -381,12 +381,10 @@ const SidebarBanner = () => {
       h={'max-content'}
       px={6}
       py={8}
-      bgImage={"url('/assets/hackathon/scribes/scribes-sidebar.png')"}
+      bgImage={"url('/assets/hackathon/renaissance/sidebar-bg.png')"}
       bgSize="cover"
       bgPosition="center"
       bgRepeat="no-repeat"
-      borderWidth={'1px'}
-      borderColor={'brand.slate.200'}
       rounded={'lg'}
     >
       <HStack>
@@ -425,7 +423,7 @@ const SidebarBanner = () => {
         textAlign={'center'}
         bg="#000"
         borderRadius={8}
-        _hover={{ bg: '#a459ff' }}
+        _hover={{ bg: '#716f6e' }}
         href="/renaissance"
       >
         View Tracks
