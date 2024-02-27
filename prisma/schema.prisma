@@ -258,53 +258,54 @@ model Session {
 }
 
 model User {
-  id               String            @id @default(uuid())
-  publicKey        String?
-  email            String            @unique
-  username         String?           @unique
-  photo            String?
-  firstName        String?
-  lastName         String?
-  createdAt        DateTime          @default(now())
-  updatedAt        DateTime          @updatedAt
-  isVerified       Boolean           @default(false)
-  role             String            @default("USER")
-  totalEarnedInUSD Int               @default(0)
-  isTalentFilled   Boolean           @default(false)
-  interests        String?
-  bio              String?
-  twitter          String?
-  discord          String?
-  github           String?
-  linkedin         String?
-  website          String?
-  telegram         String?
-  community        String?
-  experience       String?
-  superteamLevel   String?
-  location         String?
-  cryptoExperience String?
-  workPrefernce    String?
-  currentEmployer  String?
-  pow              String?           @db.VarChar(2000)
-  notifications    Json?
-  private          Boolean           @default(false)
-  skills           Json?
-  currentSponsorId String?
-  currentSponsor   Sponsors?         @relation(fields: [currentSponsorId], references: [id])
-  UserSponsors     UserSponsors[]
-  poc              Bounties[]        @relation("poc")
-  Comment          Comment[]
-  Submission       Submission[]
-  Grants           Grants[]
-  UserInvites      UserInvites[]
-  SubscribeBounty  SubscribeBounty[]
-  PoW              PoW[]
-  accounts         Account[]
-  sessions         Session[]
-  emailVerified    DateTime?
-  Hackathon        Hackathon?        @relation(fields: [hackathonId], references: [id])
-  hackathonId      String?
+  id                String            @id @default(uuid())
+  publicKey         String?
+  email             String            @unique
+  username          String?           @unique
+  photo             String?
+  firstName         String?
+  lastName          String?
+  createdAt         DateTime          @default(now())
+  updatedAt         DateTime          @updatedAt
+  isVerified        Boolean           @default(false)
+  role              String            @default("USER")
+  totalEarnedInUSD  Int               @default(0)
+  isTalentFilled    Boolean           @default(false)
+  interests         String?
+  bio               String?
+  twitter           String?
+  discord           String?
+  github            String?
+  linkedin          String?
+  website           String?
+  telegram          String?
+  community         String?
+  experience        String?
+  superteamLevel    String?
+  location          String?
+  cryptoExperience  String?
+  workPrefernce     String?
+  currentEmployer   String?
+  pow               String?           @db.VarChar(2000)
+  notifications     Json?
+  private           Boolean           @default(false)
+  skills            Json?
+  currentSponsorId  String?
+  currentSponsor    Sponsors?         @relation(fields: [currentSponsorId], references: [id])
+  UserSponsors      UserSponsors[]
+  poc               Bounties[]        @relation("poc")
+  Comment           Comment[]
+  Submission        Submission[]
+  Grants            Grants[]
+  UserInvites       UserInvites[]
+  SubscribeBounty   SubscribeBounty[]
+  PoW               PoW[]
+  accounts          Account[]
+  sessions          Session[]
+  emailVerified     DateTime?
+  Hackathon         Hackathon?        @relation(fields: [hackathonId], references: [id])
+  hackathonId       String?
+  featureModalShown Boolean           @default(false)
 
   @@index([email, publicKey, username])
   @@index([currentSponsorId])
