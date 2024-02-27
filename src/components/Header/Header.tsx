@@ -18,10 +18,10 @@ import {
 import NextLink from 'next/link';
 import { useRouter } from 'next/router';
 
-import ScribesLogo from '@/svg/scribes-logo';
+import { RenaissanceSecondaryLogo } from '@/svg/renaissance-secondary';
 
+import { AnnouncementBar } from './AnnouncementBar';
 import { BountySnackbar } from './BountySnackbar';
-import { ScribesAnnouncementBar } from './ScribesAnnouncementBar';
 import { UserInfo } from './UserInfo';
 
 interface NavItem {
@@ -49,8 +49,8 @@ const NAV_ITEMS: Array<NavItem> = [
         href: '/category/development/',
       },
       {
-        label: 'Scribes',
-        href: '/scribes/',
+        label: 'Renaissance',
+        href: '/renaissance/',
       },
     ],
   },
@@ -103,10 +103,9 @@ const MobileNavItem = ({ label, children, href }: NavItem) => {
                 fontSize="md"
                 href={child.href}
               >
-                {child.label === 'Scribes' ? (
-                  <ScribesLogo
-                    styles={{ width: '80px', height: 'auto' }}
-                    variant="#a459ff"
+                {child.label === 'Renaissance' ? (
+                  <RenaissanceSecondaryLogo
+                    styles={{ width: '116px', height: 'auto' }}
                   />
                 ) : (
                   child.label
@@ -185,11 +184,10 @@ const DesktopNav = () => {
                 <NavLink
                   href={navItem.href ?? '#'}
                   label={
-                    navItem.label === 'Scribes' ? (
+                    navItem.label === 'Renaissance' ? (
                       <Box>
-                        <ScribesLogo
-                          styles={{ width: '60px', height: 'auto' }}
-                          variant="#a459ff"
+                        <RenaissanceSecondaryLogo
+                          styles={{ width: '116px', height: 'auto' }}
                         />
                       </Box>
                     ) : (
@@ -219,7 +217,7 @@ export const Header = () => {
   return (
     <Box pos="sticky" zIndex="sticky" top={0}>
       <BountySnackbar />
-      {isRootRoute && <ScribesAnnouncementBar />}
+      {isRootRoute && <AnnouncementBar />}
       <Flex
         px={{ base: '2', lg: 6 }}
         py={{ base: 2, lg: 0 }}

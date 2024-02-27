@@ -8,7 +8,7 @@ import { CountDownRenderer } from '@/components/shared/countdownRenderer';
 import { tokenList } from '@/constants';
 import { Default } from '@/layouts/Default';
 import { Meta } from '@/layouts/Meta';
-import ScribesLogo from '@/svg/scribes-logo';
+import { RenaissanceLogo } from '@/svg/renaissance-logo';
 
 interface TrackProps {
   title: string;
@@ -26,14 +26,14 @@ interface Stats {
   totalListings: number;
 }
 
-export default function Scribes() {
+export default function Renaissance() {
   const [trackData, setTrackData] = useState<TrackProps[]>();
   const [stats, setStats] = useState<Stats>();
   useEffect(() => {
     const getTracks = async () => {
       const trackData = await axios.get('/api/hackathon/', {
         params: {
-          slug: 'scribes',
+          slug: 'renaissance',
         },
       });
       setTrackData(trackData.data);
@@ -42,7 +42,7 @@ export default function Scribes() {
     const getStats = async () => {
       const statsData = await axios.get('/api/hackathon/stats/', {
         params: {
-          slug: 'scribes',
+          slug: 'renaissance',
         },
       });
       setStats(statsData.data);
@@ -125,7 +125,7 @@ export default function Scribes() {
       className="bg-white"
       meta={
         <Meta
-          title="Solana Scribes | Superteam Earn"
+          title="Renaissance | Superteam Earn"
           description="Explore the latest bounties on Superteam Earn, offering opportunities in the crypto space across Design, Development, and Content."
           canonical="https://earn.superteam.fun"
         />
@@ -143,12 +143,9 @@ export default function Scribes() {
           borderColor={'brand.slate.200'}
           borderBottomWidth={'1px'}
         >
-          <Text mb={4} fontFamily={'var(--font-mono)'}>
-            Lamport DAO presents
-          </Text>
-          <ScribesLogo styles={{ height: '80px', width: 'auto' }} />
+          <RenaissanceLogo styles={{ height: '80px', width: 'auto' }} />
           <Text mt={4} px={6} color="brand.slate.600" textAlign={'center'}>
-            Participate in Solana&apos;s first ever content hackathon
+            Submit to side tracks of the latest Solana Global Hackathon
           </Text>
           <Flex pb={4}>
             <Button
@@ -157,12 +154,10 @@ export default function Scribes() {
               fontSize={'sm'}
               bg="#000"
               _hover={{ bg: '#a459ff' }}
-              onClick={() =>
-                window.open('https://discord.gg/solanacollective', '_blank')
-              }
+              onClick={() => window.open('', '_blank')}
               rounded="full"
             >
-              Join Solana Collective&apos;s Discord
+              Sponsor a Track
             </Button>
           </Flex>
         </Flex>

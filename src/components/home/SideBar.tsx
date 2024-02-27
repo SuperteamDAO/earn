@@ -17,7 +17,7 @@ import { useEffect, useRef, useState } from 'react';
 import { LoginWrapper } from '@/components/Header/LoginWrapper';
 import { tokenList } from '@/constants';
 import type { User } from '@/interface/user';
-import ScribesLogo from '@/svg/scribes-logo';
+import { RenaissanceLogo } from '@/svg/renaissance-logo';
 import { getURL } from '@/utils/validUrl';
 
 interface SideBarProps {
@@ -372,16 +372,16 @@ const RecentEarners = ({ earners }: { earners?: User[] }) => {
   );
 };
 
-const ScribesBanner = () => {
+const SidebarBanner = () => {
   return (
     <Flex
       direction={'column'}
       gap={1}
       w={'full'}
       h={'max-content'}
-      px={'1.5625rem'}
-      py={'8'}
-      bgImage={"url('/assets/scribes-sidebar.png')"}
+      px={6}
+      py={8}
+      bgImage={"url('/assets/hackathon/scribes/scribes-sidebar.png')"}
       bgSize="cover"
       bgPosition="center"
       bgRepeat="no-repeat"
@@ -390,11 +390,12 @@ const ScribesBanner = () => {
       rounded={'lg'}
     >
       <HStack>
-        <ScribesLogo
+        <RenaissanceLogo
           styles={{
             width: '100%',
             marginLeft: 'auto',
             marginRight: 'auto',
+            marginBottom: '16px',
           }}
         />
       </HStack>
@@ -405,7 +406,7 @@ const ScribesBanner = () => {
         fontWeight={'600'}
         lineHeight={'6'}
       >
-        Create Content to Win Prizes Worth $100,000+
+        Build a Solana project to win from a pool of $150,000+
       </Text>
       <Text
         mt={'0.5rem'}
@@ -413,9 +414,8 @@ const ScribesBanner = () => {
         fontSize={'1rem'}
         lineHeight={'1.1875rem'}
       >
-        Solana&apos;s first-ever content hackathon is here! Check out tracks
-        from your favourite Solana projects and start creating today.
-        Submissions open Feb 19, 2024.
+        Submit to any of the Renaissance side tracks on Earn and stand to win
+        some $$. Deadline for submissions is April 8, 2024.
       </Text>
       <Button
         as={NextLink}
@@ -426,9 +426,9 @@ const ScribesBanner = () => {
         bg="#000"
         borderRadius={8}
         _hover={{ bg: '#a459ff' }}
-        href="/scribes"
+        href="/renaissance"
       >
-        Submit Now
+        View Tracks
       </Button>
     </Flex>
   );
@@ -449,7 +449,7 @@ export const HomeSideBar = ({
         bountyCount={listings}
         TVE={total}
       />
-      <ScribesBanner />
+      <SidebarBanner />
       <RecentEarners earners={earners} />
     </Flex>
   );
