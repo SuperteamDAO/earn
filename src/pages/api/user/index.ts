@@ -27,6 +27,7 @@ export default async function handler(
       include: {
         currentSponsor: true,
         UserSponsors: true,
+        Hackathon: true,
       },
     });
 

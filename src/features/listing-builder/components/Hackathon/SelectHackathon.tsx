@@ -1,7 +1,7 @@
 import { Box, Flex, Image, Text } from '@chakra-ui/react';
 import axios from 'axios';
 import Avatar from 'boring-avatars';
-import { atom, useSetAtom } from 'jotai';
+import { useSetAtom } from 'jotai';
 import { useEffect, useState } from 'react';
 import { components } from 'react-select';
 import AsyncSelect from 'react-select/async';
@@ -9,41 +9,40 @@ import AsyncSelect from 'react-select/async';
 import type { SponsorType } from '@/interface/sponsor';
 import { userStore } from '@/store/user';
 
-interface SponsorOptionType extends SponsorType {
+import { hackathonSponsorAtom } from '../SelectSponsor';
+
+interface HackathonOptionType extends SponsorType {
   role?: string;
 }
 
-interface SponsorOption {
-  value: string;
-  label: string;
-  sponsor: SponsorOptionType;
+interface HackathonOption {
+  value?: string;
+  label?: string;
+  hackathon?: HackathonOptionType;
 }
 
-export const hackathonSponsorAtom = atom<string | null>(null);
-
-export function SelectSponsor({ type }: { type?: string }) {
+export function SelectHackathon({ type }: { type?: string }) {
   const { setUserInfo, userInfo } = userStore();
-  const [selectedSponsor, setSelectedSponsor] = useState<SponsorOption | null>(
-    null,
-  );
+  const [selectedHackathon, setSelectedHackathon] =
+    useState<HackathonOption | null>(null);
   const setHackathonSponsor = useSetAtom(hackathonSponsorAtom);
 
   useEffect(() => {
-    if (type !== 'hackathon' && userInfo?.currentSponsor?.id) {
-      setSelectedSponsor({
-        value: userInfo?.currentSponsor?.id,
-        label: userInfo?.currentSponsor?.name,
-        sponsor: userInfo?.currentSponsor,
+    if (type !== 'hackathon' && userInfo?.hackathonId) {
+      setSelectedHackathon({
+        value: userInfo?.Hackathon?.id,
+        label: userInfo?.Hackathon?.name,
+        hackathon: userInfo?.Hackathon,
       });
     }
   }, [userInfo]);
 
-  const loadSponsors = (
+  const loadHackathons = (
     inputValue: string,
-    callback: (options: SponsorOption[]) => void,
+    callback: (options: HackathonOption[]) => void,
   ) => {
     axios
-      .get(`/api/sponsors/list/`, {
+      .get(`/api/hackathon/list/`, {
         params: {
           searchString: inputValue,
         },
@@ -54,10 +53,10 @@ export function SelectSponsor({ type }: { type?: string }) {
       });
   };
 
-  const updateUser = async (sponsorId: string) => {
+  const updateUser = async (hackathonId: string) => {
     try {
       const userUpdatedDetails = await axios.post('/api/user/update/', {
-        currentSponsorId: sponsorId,
+        hackathonId,
       });
       return userUpdatedDetails.data;
     } catch (error) {
@@ -68,7 +67,7 @@ export function SelectSponsor({ type }: { type?: string }) {
   const handleChange = async (option?: any) => {
     if (type === 'hackathon') {
       setHackathonSponsor(option.value);
-      setSelectedSponsor(option);
+      setSelectedHackathon(option);
     } else {
       const newUser = await updateUser(option.value);
       setUserInfo(newUser);
@@ -86,16 +85,16 @@ export function SelectSponsor({ type }: { type?: string }) {
     return (
       <components.SingleValue {...props}>
         <Flex align="center" py={1}>
-          {data?.sponsor?.logo ? (
+          {data?.hackathon?.logo ? (
             <Image
               boxSize="32px"
               borderRadius={4}
-              alt={data?.sponsor?.name}
-              src={data?.sponsor?.logo}
+              alt={data?.hackathon?.name}
+              src={data?.hackathon?.logo}
             />
           ) : (
             <Avatar
-              name={data?.sponsor?.name}
+              name={data?.hackathon?.name}
               colors={['#92A1C6', '#F0AB3D', '#C271B4']}
               size={32}
               variant="marble"
@@ -103,10 +102,10 @@ export function SelectSponsor({ type }: { type?: string }) {
           )}
           <Box display={{ base: 'none', md: 'block' }} ml={2}>
             <Text color="brand.slate.800" fontSize="sm">
-              {data?.sponsor?.name}
+              {data?.hackathon?.name}
             </Text>
             <Text color="brand.slate.400" fontSize="xs">
-              {data?.sponsor?.role}
+              {data?.hackathon?.role}
             </Text>
           </Box>
         </Flex>
@@ -119,16 +118,16 @@ export function SelectSponsor({ type }: { type?: string }) {
     return (
       <components.Option {...props}>
         <Flex align="center">
-          {data?.sponsor?.logo ? (
+          {data?.hackathon?.logo ? (
             <Image
               boxSize="32px"
               borderRadius={4}
-              alt={data?.sponsor?.name}
-              src={data?.sponsor?.logo}
+              alt={data?.hackathon?.name}
+              src={data?.hackathon?.logo}
             />
           ) : (
             <Avatar
-              name={data?.sponsor?.name}
+              name={data?.hackathon?.name}
               colors={['#92A1C6', '#F0AB3D', '#C271B4']}
               size={32}
               variant="marble"
@@ -136,10 +135,10 @@ export function SelectSponsor({ type }: { type?: string }) {
           )}
           <Box display={{ base: 'none', md: 'block' }} ml={2}>
             <Text color="brand.slate.800" fontSize="sm">
-              {data?.sponsor?.name}
+              {data?.hackathon?.name}
             </Text>
             <Text color="brand.slate.400" fontSize="xs">
-              {data?.sponsor?.role}
+              {data?.hackathon?.role}
             </Text>
           </Box>
         </Flex>
@@ -150,10 +149,10 @@ export function SelectSponsor({ type }: { type?: string }) {
   return (
     <AsyncSelect
       components={{ SingleValue, Option }}
-      value={selectedSponsor}
+      value={selectedHackathon}
       onChange={(e) => handleChange(e)}
-      placeholder="Select Sponsor"
-      loadOptions={loadSponsors}
+      placeholder="Select Hackathon"
+      loadOptions={loadHackathons}
       defaultOptions
       isClearable={false}
       isSearchable={true}

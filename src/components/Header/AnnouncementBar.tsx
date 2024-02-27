@@ -11,8 +11,8 @@ export const AnnouncementBar = () => {
         as={NextLink}
         display={'block'}
         w="full"
-        color="white"
-        bgColor={'#a459ff'}
+        color="black"
+        bgColor={'#f1e7e6'}
         href={'/renaissance'}
       >
         <Text
