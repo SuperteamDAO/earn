@@ -51,5 +51,6 @@ interface User {
   private?: boolean;
   Submission?: SubmissionWithUser[];
   hackathonId?: string;
+  featureModalShown?: boolean;
 }
 export type { Notifications, User };

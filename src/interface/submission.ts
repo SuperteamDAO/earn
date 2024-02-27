@@ -27,6 +27,7 @@ interface SubmissionWithUser {
   likes?: number;
   user: User;
   listing?: Bounties;
+  ask?: number;
 }
 
 export type { SubmissionWithUser };

@@ -17,6 +17,8 @@ export function ListingWinners({ bounty }: Props) {
   const [isListingLoading, setIsListingLoading] = useState(true);
   const [submissions, setSubmissions] = useState<SubmissionWithUser[]>([]);
 
+  const isProject = bounty?.type === 'project';
+
   const getSubmissions = async (id?: string) => {
     setIsListingLoading(true);
     try {
@@ -72,7 +74,7 @@ export function ListingWinners({ bounty }: Props) {
               <NextLink
                 key={submission.id}
                 href={
-                  bounty?.type !== 'project'
+                  !isProject
                     ? `/listings/${bounty?.type}/${bounty?.slug}/submission/${submission?.id}/`
                     : `/t/${submission?.user?.username}`
                 }
@@ -98,7 +100,7 @@ export function ListingWinners({ bounty }: Props) {
                     bg="brand.purple"
                     rounded={'full'}
                   >
-                    {submission?.winnerPosition}
+                    {isProject ? 'Winner' : submission?.winnerPosition}
                   </Text>
                   {submission?.user?.photo ? (
                     <Image

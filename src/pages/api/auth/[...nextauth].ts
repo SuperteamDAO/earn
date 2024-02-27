@@ -63,7 +63,7 @@ export const authOptions: NextAuthOptions = {
   },
   pages: {
     verifyRequest: '/verify-request',
-    // newUser: '/new',
+    newUser: '/new?onboarding=true',
   },
 };
 

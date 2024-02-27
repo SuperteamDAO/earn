@@ -2,15 +2,15 @@ import { Box, Flex } from '@chakra-ui/react';
 import axios from 'axios';
 import dayjs from 'dayjs';
 import type { NextPage } from 'next';
-import { useSession } from 'next-auth/react';
 import { useEffect, useState } from 'react';
 
-import { AuthFeatureModal } from '@/components/modals/AuthFeature';
+import { FeatureModal } from '@/components/modals/FeatureModal';
 import { EmptySection } from '@/components/shared/EmptySection';
 import { Loading } from '@/components/shared/Loading';
 import { type Grant, GrantsCard } from '@/features/grants';
 import { type Bounty, ListingSection, ListingTabs } from '@/features/listings';
 import { Home } from '@/layouts/Home';
+import { userStore } from '@/store/user';
 
 const HomePage: NextPage = () => {
   const [isListingsLoading, setIsListingsLoading] = useState(true);
@@ -56,38 +56,30 @@ const HomePage: NextPage = () => {
     getListings();
   }, []);
 
-  const { data: session, status } = useSession();
+  const { userInfo } = userStore();
 
-  const modalShownKey = 'modalShown';
   const [isModalOpen, setIsModalOpen] = useState(false);
 
   const handleClose = () => {
     setIsModalOpen(false);
   };
 
-  const showCTA = !session && status === 'unauthenticated';
-
   useEffect(() => {
-    const modalShown = localStorage.getItem(modalShownKey);
-
-    let timer: any;
-    if (!modalShown) {
-      timer = setTimeout(() => {
+    const updateFeatureModalShown = async () => {
+      if (userInfo?.featureModalShown === false) {
         setIsModalOpen(true);
-        localStorage.setItem(modalShownKey, 'true');
-      }, 3000);
-    }
+        await axios.post('/api/user/update/', {
+          featureModalShown: true,
+        });
+      }
+    };
 
-    return () => clearTimeout(timer);
-  }, []);
+    updateFeatureModalShown();
+  }, [userInfo]);
 
   return (
     <Home type="home">
-      <AuthFeatureModal
-        showCTA={showCTA}
-        isOpen={isModalOpen}
-        onClose={handleClose}
-      />
+      <FeatureModal isOpen={isModalOpen} onClose={handleClose} />
       <Box w={'100%'}>
         <ListingTabs
           bounties={bounties.bounties}
