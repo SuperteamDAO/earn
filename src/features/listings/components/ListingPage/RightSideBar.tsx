@@ -181,7 +181,7 @@ export function RightSideBar({ listing }: { listing: Bounty }) {
                       {!isProject && (
                         <Text
                           ml={-6}
-                          color={'brand.slate.300'}
+                          color={'brand.slate.400'}
                           fontSize={'lg'}
                           fontWeight={400}
                         >
@@ -202,9 +202,9 @@ export function RightSideBar({ listing }: { listing: Bounty }) {
                                   justify={'center'}
                                   w={8}
                                   h={8}
-                                  p={1.5}
+                                  color="brand.slate.500"
                                   fontSize={'0.7rem'}
-                                  bg={'#C6C6C62B'}
+                                  bg={'blackAlpha.100'}
                                   rounded={'full'}
                                 >
                                   {prize.label}
@@ -232,7 +232,7 @@ export function RightSideBar({ listing }: { listing: Bounty }) {
                                 <Text
                                   ml={-6}
                                   color={'brand.slate.400'}
-                                  fontWeight={500}
+                                  fontWeight={400}
                                 >
                                   {prize.description}
                                 </Text>
@@ -271,13 +271,11 @@ export function RightSideBar({ listing }: { listing: Bounty }) {
                     </Text>
                   </Flex>
                   <Text color={'#94A3B8'}>
-                    {!isProject
-                      ? submissionNumber === 1
-                        ? 'Submission'
-                        : 'Submissions'
+                    {isProject
+                      ? 'Applications'
                       : submissionNumber === 1
-                        ? 'Application'
-                        : 'Applications'}
+                        ? 'Submission'
+                        : 'Submissions'}
                   </Text>
                 </Flex>
 

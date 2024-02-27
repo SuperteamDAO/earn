@@ -462,7 +462,7 @@ export const SubmissionDetails = ({
                   Ask
                 </Text>
                 <Text color="brand.slate.700" wordBreak={'break-all'}>
-                  {selectedSubmission?.ask} {bounty?.token}
+                  {selectedSubmission?.ask?.toLocaleString()} {bounty?.token}
                 </Text>
               </Box>
               {isProject &&

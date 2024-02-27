@@ -221,16 +221,27 @@ export default function NewProfilePage({
 }
 
 export const getServerSideProps: GetServerSideProps = async (context) => {
-  const { req } = context;
+  const { req, query } = context;
   let showTalentProfile = true;
+
   try {
     const response = await axios.get(`${getURL()}api/user`, {
       headers: {
         Cookie: req.headers.cookie,
       },
     });
-    showTalentProfile = response.data.isTalentFilled === false;
-    console.log(response.data);
+
+    const { isTalentFilled } = response.data;
+    showTalentProfile = isTalentFilled === false;
+
+    if (query.onboarding === 'true' && isTalentFilled) {
+      return {
+        redirect: {
+          destination: '/',
+          permanent: false,
+        },
+      };
+    }
   } catch (error) {
     console.error('Error fetching user data:', error);
   }

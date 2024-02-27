@@ -88,6 +88,7 @@ export function ListingHeader({
       return;
     } else if (!userInfo?.isTalentFilled) {
       warningOnOpen();
+      return;
     }
 
     try {

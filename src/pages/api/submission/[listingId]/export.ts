@@ -65,6 +65,7 @@ export default async function submission(
           ? ''
           : item.user.workPrefernce || '',
         'Submission Link': item.link || '',
+        Ask: item.ask,
         'Submission Tweet': item.tweet || '',
         ...eligibility,
       };
