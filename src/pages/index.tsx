@@ -66,7 +66,10 @@ const HomePage: NextPage = () => {
 
   useEffect(() => {
     const updateFeatureModalShown = async () => {
-      if (userInfo?.featureModalShown === false) {
+      if (
+        userInfo?.featureModalShown === false &&
+        userInfo?.isTalentFilled === true
+      ) {
         setIsModalOpen(true);
         await axios.post('/api/user/update/', {
           featureModalShown: true,
