@@ -18,16 +18,40 @@ import {
 import NextLink from 'next/link';
 import { useRouter } from 'next/router';
 
-import ScribesLogo from '@/svg/scribes-logo';
+import { ScribesLogo } from '@/svg/scribes-logo';
 
+import { AnnouncementBar } from './AnnouncementBar';
 import { BountySnackbar } from './BountySnackbar';
-import { ScribesAnnouncementBar } from './ScribesAnnouncementBar';
 import { UserInfo } from './UserInfo';
 
 interface NavItem {
   label: string;
   children?: Array<NavItem>;
   href?: string;
+}
+
+function renderLabel(navItem: NavItem) {
+  switch (navItem.label) {
+    // case 'Renaissance':
+    //   return (
+    //     <Box>
+    //       <RenaissanceSecondaryLogo
+    //         styles={{ width: '116px', height: 'auto' }}
+    //       />
+    //     </Box>
+    //   );
+    case 'Scribes':
+      return (
+        <Box>
+          <ScribesLogo
+            styles={{ width: '60px', height: 'auto' }}
+            variant="#a459ff"
+          />
+        </Box>
+      );
+    default:
+      return navItem.label;
+  }
 }
 
 const NAV_ITEMS: Array<NavItem> = [
@@ -48,6 +72,10 @@ const NAV_ITEMS: Array<NavItem> = [
         label: 'Development',
         href: '/category/development/',
       },
+      // {
+      //   label: 'Renaissance',
+      //   href: '/renaissance/',
+      // },
       {
         label: 'Scribes',
         href: '/scribes/',
@@ -103,14 +131,7 @@ const MobileNavItem = ({ label, children, href }: NavItem) => {
                 fontSize="md"
                 href={child.href}
               >
-                {child.label === 'Scribes' ? (
-                  <ScribesLogo
-                    styles={{ width: '80px', height: 'auto' }}
-                    variant="#a459ff"
-                  />
-                ) : (
-                  child.label
-                )}
+                {renderLabel(child)}
               </Link>
             ))}
         </Stack>
@@ -184,18 +205,7 @@ const DesktopNav = () => {
               <PopoverTrigger>
                 <NavLink
                   href={navItem.href ?? '#'}
-                  label={
-                    navItem.label === 'Scribes' ? (
-                      <Box>
-                        <ScribesLogo
-                          styles={{ width: '60px', height: 'auto' }}
-                          variant="#a459ff"
-                        />
-                      </Box>
-                    ) : (
-                      navItem.label
-                    )
-                  }
+                  label={renderLabel(navItem)}
                   isActive={isCurrent}
                   isCategory={true}
                 />
@@ -219,7 +229,7 @@ export const Header = () => {
   return (
     <Box pos="sticky" zIndex="sticky" top={0}>
       <BountySnackbar />
-      {isRootRoute && <ScribesAnnouncementBar />}
+      {isRootRoute && <AnnouncementBar />}
       <Flex
         px={{ base: '2', lg: 6 }}
         py={{ base: 2, lg: 0 }}

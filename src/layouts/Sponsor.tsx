@@ -22,7 +22,7 @@ import {
 import CreateListingModal from '@/components/modals/createListing';
 import { LoadingSection } from '@/components/shared/LoadingSection';
 import { Banner } from '@/components/sponsor/Banner';
-import { SelectSponsor } from '@/features/listing-builder';
+import { SelectHackathon, SelectSponsor } from '@/features/listing-builder';
 import { Default } from '@/layouts/Default';
 import { Meta } from '@/layouts/Meta';
 import { userStore } from '@/store/user';
@@ -169,11 +169,14 @@ export function Sidebar({
           borderRight={'1px solid'}
           borderRightColor={'blackAlpha.200'}
         >
-          {session?.user?.role === 'GOD' && !isHackathonRoute && (
-            <Box px={6} pb={6}>
-              <SelectSponsor />
-            </Box>
-          )}
+          {session?.user?.role === 'GOD' &&
+            (isHackathonRoute ? (
+              <SelectHackathon />
+            ) : (
+              <Box px={6} pb={6}>
+                <SelectSponsor />
+              </Box>
+            ))}
           <CreateListingModal isOpen={isOpen} onClose={onClose} />
           <Flex align="center" justify="space-between" px={6} pb={6}>
             {!isHackathonRoute ? (
