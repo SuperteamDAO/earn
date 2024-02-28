@@ -1,12 +1,12 @@
 import React from 'react';
 
-export default function ScribesLogo({
+export const ScribesLogo = ({
   styles,
   variant = 'black',
 }: {
   styles?: any;
   variant?: string;
-}) {
+}) => {
   return (
     <svg
       width="200"
@@ -46,4 +46,4 @@ export default function ScribesLogo({
       />
     </svg>
   );
-}
+};

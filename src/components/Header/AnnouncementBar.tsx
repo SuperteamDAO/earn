@@ -7,13 +7,34 @@ export const AnnouncementBar = () => {
 
   if (isSmallerThan800) {
     return (
+      // <Box
+      //   as={NextLink}
+      //   display={'block'}
+      //   w="full"
+      //   color="black"
+      //   bgColor={'#f1e7e6'}
+      //   href={'/renaissance'}
+      // >
+      //   <Text
+      //     p={3}
+      //     fontSize={{ base: '11px', md: 'sm' }}
+      //     fontWeight={500}
+      //     textAlign="center"
+      //   >
+      //     <Link as={NextLink} textDecoration={'underline'} href="/renaissance">
+      //       Click here
+      //     </Link>{' '}
+      //     to check out sidetracks for Renaissance — Solana&apos;s latest global
+      //     hackathon
+      //   </Text>
+      // </Box>
       <Box
         as={NextLink}
         display={'block'}
         w="full"
-        color="black"
-        bgColor={'#f1e7e6'}
-        href={'/renaissance'}
+        color="white"
+        bgColor={'#a459ff'}
+        href={'/scribes'}
       >
         <Text
           p={3}
@@ -21,11 +42,11 @@ export const AnnouncementBar = () => {
           fontWeight={500}
           textAlign="center"
         >
-          <Link as={NextLink} textDecoration={'underline'} href="/renaissance">
+          <Link as={NextLink} textDecoration={'underline'} href="/scribes">
             Click here
           </Link>{' '}
-          to check out sidetracks for Renaissance — Solana&apos;s latest global
-          hackathon
+          to check out Scribes — a content hackathon with prizes worth over
+          $100k!
         </Text>
       </Box>
     );

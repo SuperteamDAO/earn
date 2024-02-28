@@ -8,7 +8,7 @@ import { CountDownRenderer } from '@/components/shared/countdownRenderer';
 import { tokenList } from '@/constants';
 import { Default } from '@/layouts/Default';
 import { Meta } from '@/layouts/Meta';
-import ScribesLogo from '@/svg/scribes-logo';
+import { ScribesLogo } from '@/svg/scribes-logo';
 
 interface TrackProps {
   title: string;
