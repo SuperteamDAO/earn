@@ -131,7 +131,7 @@ export function CreateListing({
     token: editable ? bounty?.token : tokenList[0]?.tokenSymbol,
     rewards: editable ? bounty?.rewards || undefined : undefined,
     compensationType:
-      type === 'bounty'
+      type !== 'project'
         ? 'fixed'
         : editable
           ? bounty?.compensationType || undefined

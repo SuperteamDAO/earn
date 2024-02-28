@@ -1,4 +1,12 @@
-import { Box, Button, Flex, Image, SimpleGrid, Text } from '@chakra-ui/react';
+import {
+  Box,
+  Button,
+  Circle,
+  Flex,
+  Image,
+  SimpleGrid,
+  Text,
+} from '@chakra-ui/react';
 import axios from 'axios';
 import NextLink from 'next/link';
 import React, { useEffect, useState } from 'react';
@@ -8,7 +16,7 @@ import { CountDownRenderer } from '@/components/shared/countdownRenderer';
 import { tokenList } from '@/constants';
 import { Default } from '@/layouts/Default';
 import { Meta } from '@/layouts/Meta';
-import ScribesLogo from '@/svg/scribes-logo';
+import { RenaissanceLogo } from '@/svg/renaissance-logo';
 
 interface TrackProps {
   title: string;
@@ -26,14 +34,14 @@ interface Stats {
   totalListings: number;
 }
 
-export default function Scribes() {
+export default function Renaissance() {
   const [trackData, setTrackData] = useState<TrackProps[]>();
   const [stats, setStats] = useState<Stats>();
   useEffect(() => {
     const getTracks = async () => {
       const trackData = await axios.get('/api/hackathon/', {
         params: {
-          slug: 'scribes',
+          slug: 'renaissance',
         },
       });
       setTrackData(trackData.data);
@@ -42,7 +50,7 @@ export default function Scribes() {
     const getStats = async () => {
       const statsData = await axios.get('/api/hackathon/stats/', {
         params: {
-          slug: 'scribes',
+          slug: 'renaissance',
         },
       });
       setStats(statsData.data);
@@ -125,7 +133,7 @@ export default function Scribes() {
       className="bg-white"
       meta={
         <Meta
-          title="Solana Scribes | Superteam Earn"
+          title="Renaissance | Superteam Earn"
           description="Explore the latest bounties on Superteam Earn, offering opportunities in the crypto space across Design, Development, and Content."
           canonical="https://earn.superteam.fun"
         />
@@ -136,76 +144,79 @@ export default function Scribes() {
           align="center"
           direction={'column'}
           pt={12}
-          bgImage={"url('/assets/hackathon/scribes/scribes-bg.png')"}
+          bgImage={"url('/assets/hackathon/renaissance/bg.png')"}
           bgSize="cover"
           bgPosition="center"
           bgRepeat="no-repeat"
           borderColor={'brand.slate.200'}
           borderBottomWidth={'1px'}
         >
-          <Text mb={4} fontFamily={'var(--font-mono)'}>
-            Lamport DAO presents
+          <RenaissanceLogo styles={{ height: '80px', width: 'auto' }} />
+          <Text mt={4} px={6} color="blackAlpha.800" textAlign={'center'}>
+            Submit to side tracks of the latest Solana Global Hackathon
           </Text>
-          <ScribesLogo styles={{ height: '80px', width: 'auto' }} />
-          <Text mt={4} px={6} color="brand.slate.600" textAlign={'center'}>
-            Participate in Solana&apos;s first ever content hackathon
-          </Text>
-          <Flex pb={4}>
+          <Flex align="center" gap={6}>
             <Button
               my={6}
+              px={6}
               py={4}
+              color="#000"
               fontSize={'sm'}
-              bg="#000"
-              _hover={{ bg: '#a459ff' }}
-              onClick={() =>
-                window.open('https://discord.gg/solanacollective', '_blank')
-              }
+              bg="#A8EAFF"
+              _hover={{ bg: '#716f6e', color: '#fff' }}
+              onClick={() => window.open('', '_blank')}
               rounded="full"
             >
-              Join Solana Collective&apos;s Discord
+              Sponsor a Track
             </Button>
+            <Flex align="center" gap={1}>
+              <Circle bg="green.400" size={2.5} />
+              <Text fontSize={'sm'} fontWeight={500}>
+                Submissions Open
+              </Text>
+            </Flex>
           </Flex>
-        </Flex>
-        <Flex justify="center" gap={{ base: 4, md: 12 }} px={6} py={6}>
-          <Flex direction={'column'}>
-            <Text fontSize={'sm'} fontWeight={500}>
-              Total Prizes
-            </Text>
-            <Text
-              color={'brand.slate.800'}
-              fontSize={{ base: 'xl', md: '2xl' }}
-              fontWeight={600}
-            >
-              ${stats?.totalRewardAmount.toLocaleString()}
-            </Text>
-          </Flex>
-          <Flex direction={'column'}>
-            <Text fontSize={'sm'} fontWeight={500}>
-              Tracks
-            </Text>
-            <Text
-              color={'brand.slate.800'}
-              fontSize={{ base: 'xl', md: '2xl' }}
-              fontWeight={600}
-            >
-              {stats?.totalListings}
-            </Text>
-          </Flex>
-          <Flex direction={'column'}>
-            <Text fontSize={'sm'} fontWeight={500}>
-              Submissions End In
-            </Text>
-            <Text
-              color={'brand.slate.800'}
-              fontSize={{ base: 'xl', md: '2xl' }}
-              fontWeight={600}
-            >
-              <Countdown
-                date={new Date('2024-02-29T23:59:59Z')}
-                renderer={CountDownRenderer}
-                zeroPadDays={1}
-              />
-            </Text>
+          <Flex justify="center" gap={{ base: 4, md: 12 }} px={6} pb={6}>
+            <Flex direction={'column'}>
+              <Text fontSize={'sm'} fontWeight={500}>
+                Total Prizes
+              </Text>
+              <Text
+                color={'brand.slate.800'}
+                fontSize={{ base: 'xl', md: '2xl' }}
+                fontWeight={600}
+              >
+                ${stats?.totalRewardAmount.toLocaleString()}
+              </Text>
+            </Flex>
+            <Flex direction={'column'}>
+              <Text fontSize={'sm'} fontWeight={500}>
+                Tracks
+              </Text>
+              <Text
+                color={'brand.slate.800'}
+                fontSize={{ base: 'xl', md: '2xl' }}
+                fontWeight={600}
+              >
+                {stats?.totalListings}
+              </Text>
+            </Flex>
+            <Flex direction={'column'}>
+              <Text fontSize={'sm'} fontWeight={500}>
+                Submissions End In
+              </Text>
+              <Text
+                color={'brand.slate.800'}
+                fontSize={{ base: 'xl', md: '2xl' }}
+                fontWeight={600}
+              >
+                <Countdown
+                  date={new Date('2024-04-09T06:59:59Z')}
+                  renderer={CountDownRenderer}
+                  zeroPadDays={1}
+                />
+              </Text>
+            </Flex>
           </Flex>
         </Flex>
         <Box mx={6}>
