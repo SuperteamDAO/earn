@@ -404,7 +404,7 @@ const SidebarBanner = () => {
         fontWeight={'600'}
         lineHeight={'6'}
       >
-        Build a Solana project to win from a pool of $150,000+
+        Build a project for the latest Solana global hackathon!
       </Text>
       <Text
         mt={'0.5rem'}

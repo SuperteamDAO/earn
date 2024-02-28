@@ -24,8 +24,8 @@ export const AnnouncementBar = () => {
           <Link as={NextLink} textDecoration={'underline'} href="/renaissance">
             Click here
           </Link>{' '}
-          to check out Renaissance — the Global Solana hackathon with prizes
-          worth over $100k!
+          to check out sidetracks for Renaissance — Solana&apos;s latest global
+          hackathon
         </Text>
       </Box>
     );
