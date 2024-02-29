@@ -507,6 +507,12 @@ export const SubmissionModal = ({
                       Phantom
                     </Link>
                   </Text>{' '}
+                  /{' '}
+                  <Text as="u">
+                    <Link href="https://solflare.com" isExternal>
+                      Solflare
+                    </Link>
+                  </Text>{' '}
                   if you don&apos;t have a Solana wallet
                 </FormHelperText>
                 <Input
