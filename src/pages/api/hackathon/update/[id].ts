@@ -1,14 +1,6 @@
-import axios from 'axios';
 import type { NextApiRequest, NextApiResponse } from 'next';
 import { getToken } from 'next-auth/jwt';
 
-import {
-  DeadlineExtendedTemplate,
-  getUnsubEmails,
-  kashEmail,
-  rateLimitedPromiseAll,
-  resend,
-} from '@/features/emails';
 import { prisma } from '@/prisma';
 
 export default async function bounty(
@@ -60,8 +52,6 @@ export default async function bounty(
         .json({ message: `Bounty with id=${id} not found.` });
     }
 
-    const unsubscribedEmails = await getUnsubEmails();
-
     const newRewardsCount = Object.keys(updatedData.rewards || {}).length;
     const currentTotalWinners = currentBounty.totalWinnersSelected || 0;
 
@@ -103,40 +93,6 @@ export default async function bounty(
         ...updatedData,
       },
     });
-
-    const deadlineChanged = currentBounty.deadline !== updatedData.deadline;
-
-    if (deadlineChanged) {
-      const subscribers = await prisma.subscribeBounty.findMany({
-        where: {
-          bountyId: id,
-        },
-        include: {
-          User: true,
-        },
-      });
-      const filteredSubscribers = subscribers.filter(
-        (subscriber) => !unsubscribedEmails.includes(subscriber.User.email),
-      );
-      const sendEmail = async (
-        subscriber: (typeof filteredSubscribers)[number],
-      ) => {
-        return resend.emails.send({
-          from: kashEmail,
-          to: subscriber.User.email,
-          subject: 'Listing Deadline Extended!',
-          react: DeadlineExtendedTemplate({
-            listingName: result.title,
-            link: `https://earn.superteam.fun/listings/${result.type}/${result.slug}/`,
-          }),
-        });
-      };
-      await rateLimitedPromiseAll(filteredSubscribers, 5, sendEmail);
-    }
-    if (process.env.NEXT_PUBLIC_VERCEL_ENV === 'production') {
-      const zapierWebhookUrl = process.env.ZAPIER_BOUNTY_WEBHOOK!;
-      await axios.post(zapierWebhookUrl, result);
-    }
 
     return res.status(200).json(result);
   } catch (error) {
