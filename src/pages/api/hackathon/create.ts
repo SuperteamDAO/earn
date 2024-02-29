@@ -46,7 +46,7 @@ export default async function handler(
   req: NextApiRequest,
   res: NextApiResponse,
 ) {
-  const { title, ...data } = req.body;
+  const { title, hackathonSponsor, ...data } = req.body;
 
   const token = await getToken({ req });
 
@@ -66,19 +66,35 @@ export default async function handler(
     },
   });
 
-  if (!user || !user.currentSponsorId) {
+  if (!user) {
+    return res
+      .status(403)
+      .json({ error: 'User does not have a current sponsor.' });
+  }
+
+  if (!user.hackathonId) {
     return res
       .status(403)
       .json({ error: 'User does not have a current sponsor.' });
   }
 
   try {
+    const hackathon = await prisma.hackathon.findUnique({
+      where: { id: user.hackathonId },
+    });
+
+    if (!hackathon) {
+      return res.status(404).json({ error: 'Hackathon not found.' });
+    }
+
     const slug = await generateUniqueSlug(title);
 
     const finalData = {
-      sponsorId: user?.currentSponsorId,
+      sponsorId: hackathonSponsor,
       title,
       slug,
+      hackathonId: hackathon.id,
+      deadline: hackathon.deadline,
       ...data,
     };
     const result = await prisma.bounties.create({

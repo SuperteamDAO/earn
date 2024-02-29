@@ -32,7 +32,6 @@ interface Props {
   editable?: boolean;
   type: 'bounty' | 'project' | 'hackathon';
   isDuplicating?: boolean;
-  hackathonSlug?: string;
 }
 
 export function CreateListing({
@@ -40,7 +39,6 @@ export function CreateListing({
   editable = false,
   type,
   isDuplicating = false,
-  hackathonSlug,
 }: Props) {
   const router = useRouter();
   const { userInfo } = userStore();
@@ -208,13 +206,17 @@ export function CreateListing({
         isPrivate: isPrivate,
         publishedAt: new Date().toISOString(),
       };
-      let api = '/api/bounties/create';
+
+      let basePath = 'bounties';
+      if (type === 'hackathon') {
+        basePath = 'hackathon';
+      }
+      let api = `/api/${basePath}/create`;
       if (editable && !isDuplicating) {
         api = `/api/bounties/update/${bounty?.id}/`;
       }
       const result = await axios.post(api, {
         ...newBounty,
-        hackathonSlug,
         hackathonSponsor,
       });
       setSlug(`/${result?.data?.type}/${result?.data?.slug}/`);
@@ -232,7 +234,11 @@ export function CreateListing({
 
   const createDraft = async () => {
     setDraftLoading(true);
-    let api = '/api/bounties/create/';
+    let basePath = 'bounties';
+    if (type === 'hackathon') {
+      basePath = 'hackathon';
+    }
+    let api = `/api/${basePath}/create`;
     if (editable && !isDuplicating) {
       api = `/api/bounties/update/${bounty?.id}/`;
     }
@@ -266,13 +272,12 @@ export function CreateListing({
     };
     try {
       await axios.post(api, {
-        hackathonSlug,
         hackathonSponsor,
         ...draft,
         isPublished: editable && !isDuplicating ? bounty?.isPublished : false,
       });
-      if (type === 'hackathon' && hackathonSlug) {
-        router.push(`/dashboard/hackathon/${hackathonSlug}/`);
+      if (type === 'hackathon') {
+        router.push(`/dashboard/hackathon/`);
       } else {
         router.push('/dashboard/listings');
       }
@@ -375,7 +380,6 @@ export function CreateListing({
               slug={slug}
               isOpen={isOpen}
               onClose={() => {}}
-              hackathonSlug={hackathonSlug}
             />
           )}
           {steps === 1 && (

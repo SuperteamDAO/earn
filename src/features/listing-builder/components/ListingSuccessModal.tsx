@@ -22,16 +22,17 @@ interface Props {
   onClose: () => void;
   isOpen: boolean;
   slug: string;
-  hackathonSlug?: string;
 }
-export const ListingSuccessModal = ({
-  isOpen,
-  onClose,
-  slug,
-  hackathonSlug,
-}: Props) => {
+export const ListingSuccessModal = ({ isOpen, onClose, slug }: Props) => {
   const { hasCopied, onCopy } = useClipboard(`${getURL()}listings${slug}`);
   const router = useRouter();
+
+  function getTypeFromSlug() {
+    const parts = slug.split('/');
+    return parts[1];
+  }
+  const type = getTypeFromSlug();
+
   return (
     <>
       <Modal isOpen={isOpen} onClose={onClose}>
@@ -87,8 +88,8 @@ export const ListingSuccessModal = ({
               <Button
                 w="100%"
                 onClick={() => {
-                  if (hackathonSlug) {
-                    router.push(`/dashboard/hackathon/${hackathonSlug}`);
+                  if (type === 'hackathon') {
+                    router.push(`/dashboard/hackathon/`);
                   } else {
                     router.push('/dashboard/listings');
                   }
