@@ -33,7 +33,6 @@ export default async function getHackathonListings(
   }
 
   const params = req.query;
-  const hackathonSlug = params.slug as string;
   const searchText = params.searchText as string;
   const skip = params.take ? parseInt(params.skip as string, 10) : 0;
   const take = params.take ? parseInt(params.take as string, 10) : 15;
@@ -46,7 +45,7 @@ export default async function getHackathonListings(
     : {};
   try {
     const hackathon = await prisma.hackathon.findUnique({
-      where: { slug: hackathonSlug },
+      where: { id: user.hackathonId as string },
     });
 
     if (!hackathon) {

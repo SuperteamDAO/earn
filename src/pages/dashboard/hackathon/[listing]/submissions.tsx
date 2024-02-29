@@ -21,11 +21,10 @@ import { dayjs } from '@/utils/dayjs';
 import { sortRank } from '@/utils/rank';
 
 interface Props {
-  slug: string;
   listing: string;
 }
 
-function BountySubmissions({ slug, listing }: Props) {
+function BountySubmissions({ listing }: Props) {
   const router = useRouter();
   const { isOpen, onOpen, onClose } = useDisclosure();
   const { userInfo } = userStore();
@@ -50,7 +49,7 @@ function BountySubmissions({ slug, listing }: Props) {
       const bountyDetails = await axios.get(`/api/bounties/${listing}/`);
       setBounty(bountyDetails.data);
       if (bountyDetails.data.hackathonId !== userInfo?.hackathonId) {
-        router.push(`/dashboard/hackathon/${slug}`);
+        router.push(`/dashboard/hackathon/`);
       }
       setTotalPaymentsMade(bountyDetails.data.paymentsMade || 0);
 
@@ -125,7 +124,6 @@ function BountySubmissions({ slug, listing }: Props) {
             bounty={bounty}
             onOpen={onOpen}
             totalSubmissions={totalSubmissions}
-            hackathonSlug={slug}
           />
           {!submissions?.length && !searchText ? (
             <>
@@ -232,9 +230,9 @@ function BountySubmissions({ slug, listing }: Props) {
 }
 
 export const getServerSideProps: GetServerSideProps = async (context) => {
-  const { slug, listing } = context.query;
+  const { listing } = context.query;
   return {
-    props: { slug, listing },
+    props: { listing },
   };
 };
 

@@ -40,14 +40,12 @@ interface Props {
   bounty: Bounty | null;
   onOpen: () => void;
   totalSubmissions: number;
-  hackathonSlug?: string;
 }
 
 export const SubmissionHeader = ({
   bounty,
   onOpen,
   totalSubmissions,
-  hackathonSlug,
 }: Props) => {
   const [isExporting, setIsExporting] = useState(false);
 
@@ -98,8 +96,8 @@ export const SubmissionHeader = ({
           <BreadcrumbItem>
             <NextLink
               href={
-                hackathonSlug
-                  ? `/dashboard/hackathon/${hackathonSlug}`
+                bounty?.type === 'hackathon'
+                  ? `/dashboard/hackathon/`
                   : '/dashboard/listings'
               }
               passHref

@@ -17,7 +17,7 @@ export default async function bounty(
 ) {
   const params = req.query;
   const id = params.id as string;
-  const { hackathonSlug, hackathonSponsor, ...updatedData } = req.body;
+  const { hackathonSponsor, ...updatedData } = req.body;
 
   try {
     const token = await getToken({ req });
@@ -86,17 +86,12 @@ export default async function bounty(
       }
     }
 
-    let hackathonId;
-    if (hackathonSlug && user.hackathonId) {
-      const hackathon = await prisma.hackathon.findUnique({
-        where: { id: user.hackathonId },
-      });
+    const hackathon = await prisma.hackathon.findUnique({
+      where: { id: user.hackathonId },
+    });
 
-      if (!hackathon) {
-        return res.status(404).json({ error: 'Hackathon not found.' });
-      }
-
-      hackathonId = hackathon.id;
+    if (!hackathon) {
+      return res.status(404).json({ error: 'Hackathon not found.' });
     }
 
     const sponsorId = hackathonSponsor;
@@ -104,7 +99,7 @@ export default async function bounty(
       where: { id, sponsorId },
       data: {
         sponsorId,
-        hackathonId,
+        hackathonId: hackathon.id,
         ...updatedData,
       },
     });

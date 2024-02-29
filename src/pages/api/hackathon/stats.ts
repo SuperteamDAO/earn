@@ -1,5 +1,6 @@
 import { status } from '@prisma/client';
 import type { NextApiRequest, NextApiResponse } from 'next';
+import { getToken } from 'next-auth/jwt';
 
 import { prisma } from '@/prisma';
 
@@ -10,12 +11,31 @@ export default async function handler(
   try {
     const hackathonSlug = req.query.slug as string;
 
-    const hackathon = await prisma.hackathon.findUnique({
-      where: { slug: hackathonSlug },
-      include: {
-        listings: true,
+    const token = await getToken({ req });
+    const userId = token?.id;
+
+    const user = await prisma.user.findUnique({
+      where: {
+        id: userId as string,
       },
     });
+
+    let hackathon;
+    if (user && user.hackathonId) {
+      hackathon = await prisma.hackathon.findUnique({
+        where: { id: user.hackathonId },
+        include: {
+          listings: true,
+        },
+      });
+    } else {
+      hackathon = await prisma.hackathon.findUnique({
+        where: { slug: hackathonSlug },
+        include: {
+          listings: true,
+        },
+      });
+    }
 
     if (!hackathon) {
       return res.status(404).json({ error: 'Hackathon not found' });

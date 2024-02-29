@@ -10,11 +10,10 @@ import { Sidebar } from '@/layouts/Sponsor';
 import { userStore } from '@/store/user';
 
 interface Props {
-  slug: string;
   listing: string;
 }
 
-function EditBounty({ slug, listing }: Props) {
+function EditBounty({ listing }: Props) {
   const router = useRouter();
   const { userInfo } = userStore();
   const [isBountyLoading, setIsBountyLoading] = useState(true);
@@ -25,7 +24,7 @@ function EditBounty({ slug, listing }: Props) {
     try {
       const bountyDetails = await axios.get(`/api/bounties/${listing}/`);
       if (bountyDetails.data.hackathonId !== userInfo?.hackathonId) {
-        router.push(`/dashboard/hackathon/${slug}`);
+        router.push(`/dashboard/hackathon/`);
       } else {
         setBounty(bountyDetails.data);
         setIsBountyLoading(false);
@@ -53,9 +52,9 @@ function EditBounty({ slug, listing }: Props) {
 }
 
 export const getServerSideProps: GetServerSideProps = async (context) => {
-  const { slug, listing } = context.query;
+  const { listing } = context.query;
   return {
-    props: { slug, listing },
+    props: { listing },
   };
 };
 

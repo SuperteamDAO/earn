@@ -43,7 +43,6 @@ import {
 } from '@chakra-ui/react';
 import axios from 'axios';
 import dayjs from 'dayjs';
-import type { GetServerSideProps } from 'next';
 import NextLink from 'next/link';
 import { useRouter } from 'next/router';
 import { useSession } from 'next-auth/react';
@@ -65,7 +64,7 @@ import { userStore } from '@/store/user';
 
 const debounce = require('lodash.debounce');
 
-export default function Hackathon({ slug }: { slug: string }) {
+export default function Hackathon() {
   const router = useRouter();
   const {
     isOpen: unpublishIsOpen,
@@ -103,7 +102,6 @@ export default function Hackathon({ slug }: { slug: string }) {
     try {
       const hackathonQuery = await axios.get('/api/hackathon/listings/', {
         params: {
-          slug,
           searchText,
           skip,
           take: length,
@@ -137,9 +135,8 @@ export default function Hackathon({ slug }: { slug: string }) {
   const changeBountyStatus = async (status: boolean) => {
     setIsChangingStatus(true);
     try {
-      const result = await axios.post(`/api/bounties/update/${bounty.id}/`, {
+      const result = await axios.post(`/api/hackathon/update/${bounty.id}/`, {
         isPublished: status,
-        hackathonSlug: slug,
       });
 
       const changedBountyIndex = bounties.findIndex(
@@ -159,7 +156,7 @@ export default function Hackathon({ slug }: { slug: string }) {
   };
 
   const handleViewSubmissions = (listing: string | undefined) => {
-    router.push(`/dashboard/hackathon/${slug}/${listing}/submissions/`);
+    router.push(`/dashboard/hackathon/${listing}/submissions/`);
   };
 
   const deleteSelectedDraft = async () => {
@@ -695,10 +692,3 @@ export default function Hackathon({ slug }: { slug: string }) {
     </Sidebar>
   );
 }
-
-export const getServerSideProps: GetServerSideProps = async (context) => {
-  const { slug } = context.query;
-  return {
-    props: { slug },
-  };
-};
