@@ -14,7 +14,15 @@ export default async function user(req: NextApiRequest, res: NextApiResponse) {
         slug,
         isActive: true,
       },
-      include: { sponsor: true, poc: true },
+      include: {
+        sponsor: true,
+        poc: true,
+        Hackathon: {
+          select: {
+            altLogo: true,
+          },
+        },
+      },
     });
 
     if (Number(moment(result?.deadline).format('x')) > Date.now()) {

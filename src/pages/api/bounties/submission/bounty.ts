@@ -10,7 +10,15 @@ export default async function user(req: NextApiRequest, res: NextApiResponse) {
         slug,
         isActive: true,
       },
-      include: { sponsor: true, poc: true },
+      include: {
+        sponsor: true,
+        poc: true,
+        Hackathon: {
+          select: {
+            altLogo: true,
+          },
+        },
+      },
     });
 
     const submission = await prisma.submission.findUnique({

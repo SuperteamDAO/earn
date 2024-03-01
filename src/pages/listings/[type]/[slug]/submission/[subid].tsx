@@ -80,6 +80,7 @@ const Sumbissions = ({ slug, subid }: BountyDetailsProps) => {
               references={bounty?.references}
               publishedAt={bounty?.publishedAt}
               isPublished={bounty?.isPublished}
+              hackathonLogo={bounty?.Hackathon?.altLogo}
             />
             <HStack
               align={['center', 'center', 'start', 'start']}
