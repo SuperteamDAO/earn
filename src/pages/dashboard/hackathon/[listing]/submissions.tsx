@@ -124,6 +124,7 @@ function BountySubmissions({ listing }: Props) {
             bounty={bounty}
             onOpen={onOpen}
             totalSubmissions={totalSubmissions}
+            isHackathonPage
           />
           {!submissions?.length && !searchText ? (
             <>
@@ -175,6 +176,7 @@ function BountySubmissions({ listing }: Props) {
                     setUsedPositions={setUsedPositions}
                     setTotalPaymentsMade={setTotalPaymentsMade}
                     setTotalWinners={setTotalWinners}
+                    isHackathonPage
                   />
                   <SubmissionUserDetails
                     submissions={submissions}

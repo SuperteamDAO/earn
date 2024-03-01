@@ -40,12 +40,14 @@ interface Props {
   bounty: Bounty | null;
   onOpen: () => void;
   totalSubmissions: number;
+  isHackathonPage?: boolean;
 }
 
 export const SubmissionHeader = ({
   bounty,
   onOpen,
   totalSubmissions,
+  isHackathonPage,
 }: Props) => {
   const [isExporting, setIsExporting] = useState(false);
 
@@ -151,7 +153,7 @@ export const SubmissionHeader = ({
               ml={4}
               color="#6366F1"
               bg="#E0E7FF"
-              isDisabled={!afterAnnounceDate}
+              isDisabled={!afterAnnounceDate || isHackathonPage}
               leftIcon={<CheckIcon />}
               onClick={onOpen}
               variant={'solid'}

@@ -45,6 +45,7 @@ interface Props {
   usedPositions: string[];
   setUsedPositions: Dispatch<SetStateAction<string[]>>;
   setTotalPaymentsMade: Dispatch<SetStateAction<number>>;
+  isHackathonPage?: boolean;
 }
 
 export const SubmissionDetails = ({
@@ -58,6 +59,7 @@ export const SubmissionDetails = ({
   usedPositions,
   setUsedPositions,
   setTotalPaymentsMade,
+  isHackathonPage,
 }: Props) => {
   const [isSelectingWinner, setIsSelectingWinner] = useState(false);
   const [isPaying, setIsPaying] = useState(false);
@@ -66,6 +68,7 @@ export const SubmissionDetails = ({
   const anchorWallet = useAnchorWallet();
 
   const isProject = bounty?.type === 'project';
+  const isHackathon = bounty?.type === 'project';
 
   const DynamicWalletMultiButton = dynamic(
     async () =>
@@ -369,7 +372,9 @@ export const SubmissionDetails = ({
                       borderColor="brand.slate.300"
                       _placeholder={{ color: 'brand.slate.300' }}
                       focusBorderColor="brand.purple"
-                      isDisabled={!!bounty?.isWinnersAnnounced}
+                      isDisabled={
+                        !!bounty?.isWinnersAnnounced || isHackathonPage
+                      }
                       onChange={(e) =>
                         selectWinner(
                           e.target.value,
@@ -468,7 +473,7 @@ export const SubmissionDetails = ({
                 </Box>
               )}
 
-              {isProject &&
+              {(isProject || isHackathon) &&
                 selectedSubmission?.eligibilityAnswers?.map(
                   (answer: any, answerIndex: number) => (
                     <Box key={answerIndex} mb={4}>
