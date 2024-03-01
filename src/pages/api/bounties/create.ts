@@ -46,8 +46,6 @@ export default async function handler(
   req: NextApiRequest,
   res: NextApiResponse,
 ) {
-  const { title, ...data } = req.body;
-
   const token = await getToken({ req });
 
   if (!token) {
@@ -72,11 +70,11 @@ export default async function handler(
       .json({ error: 'User does not have a current sponsor.' });
   }
 
+  const { title, ...data } = req.body;
   try {
     const slug = await generateUniqueSlug(title);
-
     const finalData = {
-      sponsorId: user?.currentSponsorId,
+      sponsorId: user.currentSponsorId,
       title,
       slug,
       ...data,

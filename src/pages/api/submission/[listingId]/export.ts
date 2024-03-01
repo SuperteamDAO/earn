@@ -45,7 +45,7 @@ export default async function submission(
         eligibility[e.question] = e.answer;
       });
       return {
-        'Sr no': i,
+        'Sr no': i + 1,
         'User Link': `https://earn.superteam.fun/t/${user.username}`,
         'User Name': `${user.firstName} ${user.lastName}`,
         'Submission Link': item.link || '',

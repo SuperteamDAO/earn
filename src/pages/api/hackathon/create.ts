@@ -46,7 +46,8 @@ export default async function handler(
   req: NextApiRequest,
   res: NextApiResponse,
 ) {
-  const { title, hackathonSponsor, ...data } = req.body;
+  // eslint-disable-next-line unused-imports/no-unused-vars
+  const { title, eligibility, hackathonSponsor, ...data } = req.body;
 
   const token = await getToken({ req });
 
@@ -95,6 +96,7 @@ export default async function handler(
       slug,
       hackathonId: hackathon.id,
       deadline: hackathon.deadline,
+      eligibility: hackathon.eligibility,
       ...data,
     };
     const result = await prisma.bounties.create({

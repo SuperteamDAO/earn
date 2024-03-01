@@ -67,6 +67,7 @@ export const SubmissionModal = ({
     maxRewardAsk,
   } = listing;
   const isProject = type === 'project';
+  const isHackathon = type === 'hackathon';
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState('');
   const [publicKeyError, setPublicKeyError] = useState('');
@@ -104,7 +105,7 @@ export const SubmissionModal = ({
             ask,
           };
 
-          if (isProject && eligibility) {
+          if ((isProject || isHackathon) && eligibility) {
             const transformedAnswers = eligibilityAnswers.reduce(
               (acc: FormFields, curr: EligibilityAnswer) => {
                 const index = eligibility.findIndex(
@@ -371,6 +372,19 @@ export const SubmissionModal = ({
                       )}
                     </FormErrorMessage>
                   </FormControl>
+                  {isHackathon &&
+                    eligibility?.map((e) => {
+                      return (
+                        <FormControl key={e?.order} isRequired>
+                          <QuestionHandler
+                            register={register}
+                            question={e?.question}
+                            label={`eligibility-${e?.order}`}
+                            watch={watch}
+                          />
+                        </FormControl>
+                      );
+                    })}
                 </>
               ) : (
                 eligibility?.map((e) => {

@@ -195,7 +195,7 @@ export function CreateListing({
         type,
         pocSocials: bountybasic?.pocSocials,
         region: regions,
-        referredBy: referredBy,
+        referredBy,
         eligibility: (questions || []).map((q) => ({
           question: q.question,
           order: q.order,
@@ -218,7 +218,7 @@ export function CreateListing({
       }
       const result = await axios.post(api, {
         ...newBounty,
-        hackathonSponsor,
+        ...(type === 'hackathon' ? { hackathonSponsor } : {}),
       });
       setSlug(`/${result?.data?.type}/${result?.data?.slug}/`);
       setIsListingPublishing(false);
@@ -270,7 +270,7 @@ export function CreateListing({
     };
     try {
       await axios.post(api, {
-        hackathonSponsor,
+        ...(type === 'hackathon' ? { hackathonSponsor } : {}),
         ...draft,
         isPublished: editable && !isDuplicating ? bounty?.isPublished : false,
       });
