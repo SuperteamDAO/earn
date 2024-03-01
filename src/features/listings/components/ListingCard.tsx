@@ -228,6 +228,7 @@ export const ListingCard = ({
               <Image
                 w={4}
                 h={4}
+                mt={[1, 1, 0, 0]}
                 mr={1}
                 alt={token}
                 rounded="full"
