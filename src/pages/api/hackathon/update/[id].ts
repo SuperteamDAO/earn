@@ -30,26 +30,27 @@ export default async function bounty(
       },
     });
 
+    if (!user) {
+      return res.status(403).json({ error: 'User does not exist.' });
+    }
+
     const currentBounty = await prisma.bounties.findUnique({
       where: { id },
     });
-
-    if (!user) {
-      return res
-        .status(403)
-        .json({ error: 'User does not have a current sponsor.' });
-    }
-
-    if (!user.hackathonId) {
-      return res
-        .status(403)
-        .json({ error: 'User does not have a current sponsor.' });
-    }
 
     if (!currentBounty) {
       return res
         .status(404)
         .json({ message: `Bounty with id=${id} not found.` });
+    }
+
+    if (
+      user.currentSponsorId !== currentBounty?.sponsorId &&
+      user.hackathonId !== currentBounty.hackathonId
+    ) {
+      return res.status(403).json({
+        error: 'User does not match the current sponsor or hackathon ID.',
+      });
     }
 
     const newRewardsCount = Object.keys(updatedData.rewards || {}).length;
@@ -76,20 +77,11 @@ export default async function bounty(
       }
     }
 
-    const hackathon = await prisma.hackathon.findUnique({
-      where: { id: user.hackathonId },
-    });
-
-    if (!hackathon) {
-      return res.status(404).json({ error: 'Hackathon not found.' });
-    }
-
     const sponsorId = hackathonSponsor;
     const result = await prisma.bounties.update({
       where: { id, sponsorId },
       data: {
         sponsorId,
-        hackathonId: hackathon.id,
         ...updatedData,
       },
     });

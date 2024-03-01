@@ -451,20 +451,23 @@ export const SubmissionDetails = ({
                   </Box>
                 </>
               )}
-              <Box mb={4}>
-                <Text
-                  mb={1}
-                  color="brand.slate.400"
-                  fontSize="xs"
-                  fontWeight={600}
-                  textTransform={'uppercase'}
-                >
-                  Ask
-                </Text>
-                <Text color="brand.slate.700" wordBreak={'break-all'}>
-                  {selectedSubmission?.ask?.toLocaleString()} {bounty?.token}
-                </Text>
-              </Box>
+              {bounty?.compensationType !== 'fixed' && (
+                <Box mb={4}>
+                  <Text
+                    mb={1}
+                    color="brand.slate.400"
+                    fontSize="xs"
+                    fontWeight={600}
+                    textTransform={'uppercase'}
+                  >
+                    Ask
+                  </Text>
+                  <Text color="brand.slate.700" wordBreak={'break-all'}>
+                    {selectedSubmission?.ask?.toLocaleString()} {bounty?.token}
+                  </Text>
+                </Box>
+              )}
+
               {isProject &&
                 selectedSubmission?.eligibilityAnswers?.map(
                   (answer: any, answerIndex: number) => (

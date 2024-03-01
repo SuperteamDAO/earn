@@ -66,6 +66,7 @@ const SubmissionPage = ({ slug }: { slug: string }) => {
               type={bounty?.type}
               publishedAt={bounty?.publishedAt}
               isPublished={bounty?.isPublished}
+              hackathonLogo={bounty?.Hackathon?.altLogo}
             />
             <SubmissionList
               bounty={bounty}

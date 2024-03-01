@@ -176,6 +176,11 @@ export function CreateListing({
   const [isListingPublishing, setIsListingPublishing] =
     useState<boolean>(false);
 
+  let basePath = 'bounties';
+  if (type === 'hackathon') {
+    basePath = 'hackathon';
+  }
+
   const createAndPublishListing = async () => {
     setIsListingPublishing(true);
     try {
@@ -207,13 +212,9 @@ export function CreateListing({
         publishedAt: new Date().toISOString(),
       };
 
-      let basePath = 'bounties';
-      if (type === 'hackathon') {
-        basePath = 'hackathon';
-      }
       let api = `/api/${basePath}/create`;
       if (editable && !isDuplicating) {
-        api = `/api/bounties/update/${bounty?.id}/`;
+        api = `/api/${basePath}/update/${bounty?.id}/`;
       }
       const result = await axios.post(api, {
         ...newBounty,
@@ -234,13 +235,10 @@ export function CreateListing({
 
   const createDraft = async () => {
     setDraftLoading(true);
-    let basePath = 'bounties';
-    if (type === 'hackathon') {
-      basePath = 'hackathon';
-    }
+
     let api = `/api/${basePath}/create`;
     if (editable && !isDuplicating) {
-      api = `/api/bounties/update/${bounty?.id}/`;
+      api = `/api/${basePath}/update/${bounty?.id}/`;
     }
     let draft: Bounty = {
       pocId: userInfo?.id ?? '',
