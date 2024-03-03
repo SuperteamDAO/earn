@@ -1,6 +1,5 @@
 import { Button, Tooltip, useDisclosure } from '@chakra-ui/react';
 import axios from 'axios';
-import dayjs from 'dayjs';
 import moment from 'moment';
 import React, {
   type Dispatch,
@@ -43,7 +42,6 @@ export const SubmissionActionButton = ({
     region,
     applicationLink,
     type,
-    Hackathon,
     isWinnersAnnounced,
   } = listing;
 
@@ -95,10 +93,6 @@ export const SubmissionActionButton = ({
     }
   };
 
-  const formattedDate = Hackathon
-    ? dayjs(Hackathon.startDate).format('MMM DD')
-    : null;
-
   const pastDeadline = isDeadlineOver(deadline) || isWinnersAnnounced;
 
   const getUserSubmission = async () => {
@@ -149,7 +143,7 @@ export const SubmissionActionButton = ({
       buttonText = isProject
         ? 'Applied Successfully'
         : 'Submitted Successfully';
-      buttonBG = 'green';
+      buttonBG = 'green.500';
       isBtnDisabled = true;
       btnLoadingText = null;
       break;
@@ -201,16 +195,8 @@ export const SubmissionActionButton = ({
       <Tooltip
         bg="brand.slate.500"
         hasArrow
-        isDisabled={
-          !userInfo?.id || (hasHackathonStarted && isUserEligibleByRegion)
-        }
-        label={
-          !hasHackathonStarted
-            ? `Submissions Open ${formattedDate}`
-            : !isUserEligibleByRegion
-              ? regionTooltipLabel
-              : ''
-        }
+        isDisabled={!userInfo?.id || isUserEligibleByRegion}
+        label={!isUserEligibleByRegion ? regionTooltipLabel : ''}
         rounded="md"
       >
         <Button
