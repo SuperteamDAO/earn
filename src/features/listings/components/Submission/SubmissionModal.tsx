@@ -233,7 +233,11 @@ export const SubmissionModal = ({
             2. There&apos;s no restriction on the number of tracks you can
             submit to
           </Text>
-          <Text>3. You can submit only one entry to each track</Text>
+          <Text>
+            3. You can mark the Project Website, Project Twitter, and
+            Presentation Link fields as &quot;NA&quot; in case you do not have
+            these ready at the time of submission.
+          </Text>
         </>
       );
       break;

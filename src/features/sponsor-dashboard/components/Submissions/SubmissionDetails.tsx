@@ -68,7 +68,7 @@ export const SubmissionDetails = ({
   const anchorWallet = useAnchorWallet();
 
   const isProject = bounty?.type === 'project';
-  const isHackathon = bounty?.type === 'project';
+  const isHackathon = bounty?.type === 'hackathon';
 
   const DynamicWalletMultiButton = dynamic(
     async () =>
