@@ -398,6 +398,7 @@ model Hackathon {
   startDate    DateTime?
   deadline     DateTime?
   announceDate DateTime?
+  eligibility  Json?
   Sponsor      Sponsors?  @relation(fields: [sponsorId], references: [id])
   User         User[]
 

@@ -63,14 +63,9 @@ export function Sidebar({
 
   const isHackathonRoute = router.asPath.startsWith('/dashboard/hackathon');
 
-  const slug =
-    isHackathonRoute && router.asPath
-      ? router.asPath.split('/dashboard/hackathon/')[1]?.replace(/\/$/, '')
-      : null;
-
   const LinkItems: Array<LinkItemProps> = isHackathonRoute
     ? [
-        { name: 'All Tracks', link: `/hackathon/${slug}`, icon: MdList },
+        { name: 'All Tracks', link: `/hackathon`, icon: MdList },
         {
           name: 'Get Help',
           link: 'https://t.me/pratikdholani',
@@ -169,14 +164,11 @@ export function Sidebar({
           borderRight={'1px solid'}
           borderRightColor={'blackAlpha.200'}
         >
-          {session?.user?.role === 'GOD' &&
-            (isHackathonRoute ? (
-              <SelectHackathon />
-            ) : (
-              <Box px={6} pb={6}>
-                <SelectSponsor />
-              </Box>
-            ))}
+          {session?.user?.role === 'GOD' && (
+            <Box px={6} pb={6}>
+              {isHackathonRoute ? <SelectHackathon /> : <SelectSponsor />}
+            </Box>
+          )}
           <CreateListingModal isOpen={isOpen} onClose={onClose} />
           <Flex align="center" justify="space-between" px={6} pb={6}>
             {!isHackathonRoute ? (
@@ -196,7 +188,7 @@ export function Sidebar({
                 w="full"
                 py={'22px'}
                 fontSize="md"
-                href={`/dashboard/hackathon/create-hackathon/${slug ? `?slug=${slug}` : ''}`}
+                href={`/dashboard/hackathon/create-hackathon`}
                 leftIcon={<AddIcon w={3} h={3} />}
                 variant="solid"
               >
@@ -213,7 +205,7 @@ export function Sidebar({
         {showLoading && <LoadingSection />}
         {showContent && (
           <Box w="full" px={6} py={8} bg="white">
-            {showBanner && <Banner slug={slug} />}
+            {showBanner && <Banner isHackathonRoute={isHackathonRoute} />}
             {children}
           </Box>
         )}

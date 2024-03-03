@@ -23,30 +23,32 @@ interface SponsorStats {
   totalSubmissions?: number;
 }
 
-export function Banner({ slug }: { slug?: string | null }) {
+export function Banner({ isHackathonRoute }: { isHackathonRoute?: boolean }) {
   const { userInfo } = userStore();
   const [sponsorStats, setSponsorStats] = useState<SponsorStats>({});
   const [isLoading, setIsLoading] = useState<boolean>(true);
 
+  const sponsorId = isHackathonRoute
+    ? userInfo?.hackathonId
+    : userInfo?.currentSponsorId;
+
   useEffect(() => {
     const getSponsorStats = async () => {
       let apiEndpoint = '/api/sponsors/stats';
-      let params = {};
 
-      if (slug) {
+      if (isHackathonRoute) {
         apiEndpoint = '/api/hackathon/stats';
-        params = { slug };
       }
-      const sponsorData = await axios.get(apiEndpoint, { params });
+      const sponsorData = await axios.get(apiEndpoint);
       setSponsorStats(sponsorData.data);
       setIsLoading(false);
     };
     getSponsorStats();
-  }, [userInfo?.currentSponsorId]);
+  }, [sponsorId]);
 
-  const sponsor = slug ? sponsorStats : userInfo?.currentSponsor;
+  const sponsor = isHackathonRoute ? sponsorStats : userInfo?.currentSponsor;
 
-  if (!userInfo?.currentSponsorId) return null;
+  if (!sponsorId) return null;
   return (
     <Flex gap={4} w="100%">
       <Box
@@ -95,7 +97,7 @@ export function Banner({ slug }: { slug?: string | null }) {
                   fontWeight={400}
                   whiteSpace={'nowrap'}
                 >
-                  {!slug
+                  {!isHackathonRoute
                     ? `Sponsor since ${sponsorStats.yearOnPlatform}`
                     : 'Hackathon'}
                 </Text>
@@ -115,7 +117,7 @@ export function Banner({ slug }: { slug?: string | null }) {
               fontWeight={400}
               whiteSpace={'nowrap'}
             >
-              {!slug ? 'Rewarded' : 'Total Prizes'}
+              {!isHackathonRoute ? 'Rewarded' : 'Total Prizes'}
             </Text>
             {isLoading ? (
               <Skeleton w="72px" h="20px" mt={2} />
@@ -127,7 +129,7 @@ export function Banner({ slug }: { slug?: string | null }) {
           </Box>
           <Box>
             <Text color={'brand.slate.500'} fontSize="md" fontWeight={400}>
-              {!slug ? 'Listings' : 'Tracks'}
+              {!isHackathonRoute ? 'Listings' : 'Tracks'}
             </Text>
             {isLoading ? (
               <Skeleton w="32px" h="20px" mt={2} />

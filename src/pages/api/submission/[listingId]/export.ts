@@ -32,42 +32,29 @@ export default async function submission(
       include: {
         user: true,
       },
+      orderBy: {
+        createdAt: 'asc',
+      },
       take: 1000,
     });
-    const finalJson = result?.map((item) => {
+    const finalJson = result?.map((item, i) => {
+      const user = item.user;
       const eligibility: any = {};
       const eligibilityAnswers: any = item?.eligibilityAnswers || [];
       eligibilityAnswers.forEach((e: any) => {
         eligibility[e.question] = e.answer;
       });
-      const skills: any = item?.user?.skills || [];
       return {
-        'Submission ID': item.id,
-        'User First Name': item.user.firstName,
-        'User Last Name': item.user.lastName,
-        'User Email': item.user.email,
-        'User Wallet': item.user.publicKey,
-        'User Twitter': item.user.twitter || '',
-        'User Discord': item.user.discord || '',
-        'User Github': item.user.github || '',
-        'User Linkedin': item.user.linkedin || '',
-        'User Website': item.user.website || '',
-        'User Telegram': item.user.telegram || '',
-        'User Location': item.user.location || '',
-        'User Bio': item.user.bio || '',
-        'User Interests': item.user.interests || '',
-        'User Experience': item.user.experience || '',
-        'User Crypto Experience': item.user.cryptoExperience || '',
-        'User Skills':
-          skills?.map((skill: any) => skill.skills)?.join(', ') || '',
-        'User Current Employer': item.user.currentEmployer || '',
-        'User Work Preference': item.user?.private
-          ? ''
-          : item.user.workPrefernce || '',
+        'Sr no': i + 1,
+        'User Link': `https://earn.superteam.fun/t/${user.username}`,
+        'User Name': `${user.firstName} ${user.lastName}`,
         'Submission Link': item.link || '',
-        Ask: item.ask,
-        'Submission Tweet': item.tweet || '',
         ...eligibility,
+        Ask: item.ask && item.ask,
+        'Tweet Link': item.tweet || '',
+        'Email ID': user.email,
+        'User Twitter': user.twitter || '',
+        'User Wallet': user.publicKey,
       };
     });
     const parser = new Parser({});
