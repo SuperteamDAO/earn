@@ -44,6 +44,7 @@ export const SubmissionActionButton = ({
     applicationLink,
     type,
     Hackathon,
+    isWinnersAnnounced,
   } = listing;
 
   const [triggerLogin, setTriggerLogin] = useState(false);
@@ -98,7 +99,7 @@ export const SubmissionActionButton = ({
     ? dayjs(Hackathon.startDate).format('MMM DD')
     : null;
 
-  const pastDeadline = isDeadlineOver(deadline);
+  const pastDeadline = isDeadlineOver(deadline) || isWinnersAnnounced;
 
   const getUserSubmission = async () => {
     setIsUserSubmissionLoading(true);
