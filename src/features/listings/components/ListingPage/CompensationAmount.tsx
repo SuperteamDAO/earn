@@ -11,19 +11,28 @@ interface CompensationAmountType {
   textStyle?: TextProps;
 }
 
-const formatNumberWithSuffix = (number: number) => {
-  if (isNaN(number)) return null;
+const formatNumberWithSuffix = ({
+  amount,
+  skipThousands,
+}: {
+  amount: number;
+  skipThousands: boolean;
+}) => {
+  if (isNaN(amount)) return null;
 
-  if (number < 1000) return number.toString();
+  if (amount < 1000 || (skipThousands && amount < 1000000))
+    return amount.toString();
 
   const suffixes = ['', 'k', 'm'];
-  const tier = (Math.log10(number) / 3) | 0;
+  const tier = (Math.log10(amount) / 3) | 0;
 
-  if (tier === 0) return number.toString();
+  const adjustedTier = skipThousands ? Math.max(tier, 1) : tier;
 
-  const suffix = suffixes[tier];
-  const scale = Math.pow(10, tier * 3);
-  const scaled = number / scale;
+  if (adjustedTier === 0) return amount.toString();
+
+  const suffix = suffixes[adjustedTier];
+  const scale = Math.pow(10, adjustedTier * 3);
+  const scaled = amount / scale;
 
   const formattedNumber =
     scaled % 1 === 0 ? scaled.toString() : scaled.toFixed(1);
@@ -59,13 +68,17 @@ export const CompensationAmount = ({
           case 'fixed':
             return (
               <>
-                {rewardAmount?.toLocaleString()} <Token />
+                {formatNumberWithSuffix({
+                  amount: rewardAmount!,
+                  skipThousands: true,
+                })}
+                <Token />
               </>
             );
           case 'range':
             return (
               <>
-                {`${formatNumberWithSuffix(minRewardAsk!)}-${formatNumberWithSuffix(maxRewardAsk!)}`}
+                {`${formatNumberWithSuffix({ amount: minRewardAsk!, skipThousands: false })}-${formatNumberWithSuffix({ amount: maxRewardAsk!, skipThousands: false })}`}
                 <Token />
               </>
             );
