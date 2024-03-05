@@ -164,7 +164,12 @@ export default function Renaissance() {
               fontSize={'sm'}
               bg="#A8EAFF"
               _hover={{ bg: '#716f6e', color: '#fff' }}
-              onClick={() => window.open('', '_blank')}
+              onClick={() =>
+                window.open(
+                  'https://airtable.com/appTNIj7RXgv7Txbt/shrh4eZOkeDDFBCOH',
+                  '_blank',
+                )
+              }
               rounded="full"
             >
               Sponsor a Track
