@@ -40,7 +40,7 @@ export default function Scribes() {
     };
 
     const getStats = async () => {
-      const statsData = await axios.get('/api/hackathon/stats/', {
+      const statsData = await axios.get('/api/hackathon/publicStats/', {
         params: {
           slug: 'scribes',
         },
