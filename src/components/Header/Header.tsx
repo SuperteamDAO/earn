@@ -18,8 +18,10 @@ import {
 import NextLink from 'next/link';
 import { useRouter } from 'next/router';
 
+import { RenaissanceSecondaryLogo } from '@/svg/renaissance-secondary';
 import { ScribesLogo } from '@/svg/scribes-logo';
 
+import { AnnouncementBar } from './AnnouncementBar';
 import { BountySnackbar } from './BountySnackbar';
 import { UserInfo } from './UserInfo';
 
@@ -31,14 +33,14 @@ interface NavItem {
 
 function renderLabel(navItem: NavItem) {
   switch (navItem.label) {
-    // case 'Renaissance':
-    //   return (
-    //     <Box>
-    //       <RenaissanceSecondaryLogo
-    //         styles={{ width: '116px', height: 'auto' }}
-    //       />
-    //     </Box>
-    //   );
+    case 'Renaissance':
+      return (
+        <Box>
+          <RenaissanceSecondaryLogo
+            styles={{ width: '116px', height: 'auto' }}
+          />
+        </Box>
+      );
     case 'Scribes':
       return (
         <Box>
@@ -71,10 +73,10 @@ const NAV_ITEMS: Array<NavItem> = [
         label: 'Development',
         href: '/category/development/',
       },
-      // {
-      //   label: 'Renaissance',
-      //   href: '/renaissance/',
-      // },
+      {
+        label: 'Renaissance',
+        href: '/renaissance/',
+      },
       {
         label: 'Scribes',
         href: '/scribes/',
@@ -223,12 +225,12 @@ export const Header = () => {
 
   const isDashboardRoute = router.pathname.startsWith('/dashboard');
   const maxWValue = isDashboardRoute ? '' : '7xl';
-  // const isRootRoute = router.pathname === '/';
+  const isRootRoute = router.pathname === '/';
 
   return (
     <Box pos="sticky" zIndex="sticky" top={0}>
       <BountySnackbar />
-      {/* {isRootRoute && <AnnouncementBar />} */}
+      {isRootRoute && <AnnouncementBar />}
       <Flex
         px={{ base: '2', lg: 6 }}
         py={{ base: 2, lg: 0 }}
