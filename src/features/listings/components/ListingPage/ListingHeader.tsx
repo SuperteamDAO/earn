@@ -255,71 +255,63 @@ export function ListingHeader({
                     <Image h="4" alt={type} src={hackathonLogo} />
                   </Flex>
                 ) : (
-                  <>
-                    <Flex
-                      align={'center'}
-                      gap={1}
-                      display={{ base: 'none', md: 'flex' }}
-                    >
-                      <Text color={'gray.400'} fontWeight={500}>
-                        <Tooltip
-                          px={4}
-                          py={2}
-                          color="brand.slate.500"
-                          fontFamily={'var(--font-sans)'}
-                          fontSize="sm"
-                          bg="white"
-                          borderRadius={'lg'}
-                          label={
-                            isProject
-                              ? 'A Project is a short-term gig where sponsors solicit applications from multiple people, and select the best one to work on the Project.'
-                              : 'Bounties are open for anyone to participate in and submit their work (as long as they meet the eligibility requirements mentioned below). The best submissions win!'
-                          }
-                        >
-                          <Flex>
-                            <Image
-                              h="4"
-                              mt={1}
-                              mr={1}
-                              alt={type}
-                              src={
-                                isProject
-                                  ? '/assets/icons/briefcase.svg'
-                                  : '/assets/icons/bolt.svg'
-                              }
-                            />
-                            {isProject ? 'Project' : 'Bounty'}
-                          </Flex>
-                        </Tooltip>
-                      </Text>
-                    </Flex>
+                  <Flex display={{ base: 'none', md: 'flex' }}>
                     <Tooltip
                       px={4}
                       py={2}
                       color="brand.slate.500"
-                      fontFamily={'Inter'}
+                      fontFamily={'var(--font-sans)'}
                       fontSize="sm"
                       bg="white"
                       borderRadius={'lg'}
-                      label={regionTooltipLabel}
+                      label={
+                        isProject
+                          ? 'A Project is a short-term gig where sponsors solicit applications from multiple people, and select the best one to work on the Project.'
+                          : 'Bounties are open for anyone to participate in and submit their work (as long as they meet the eligibility requirements mentioned below). The best submissions win!'
+                      }
                     >
-                      <Text
-                        px={3}
-                        py={1}
-                        color={'#0800A5'}
-                        fontSize={{ base: '10px', md: 'xs' }}
-                        fontWeight={500}
-                        bg="#EBEAFF"
-                        whiteSpace={'nowrap'}
-                        rounded={'full'}
-                      >
-                        {region === 'GLOBAL'
-                          ? 'Global'
-                          : `${displayValue} Only`}
-                      </Text>
+                      <Flex>
+                        <Image
+                          h="4"
+                          mt={1}
+                          mr={1}
+                          alt={type}
+                          src={
+                            isProject
+                              ? '/assets/icons/briefcase.svg'
+                              : '/assets/icons/bolt.svg'
+                          }
+                        />
+                        <Text color={'gray.400'} fontWeight={500}>
+                          {isProject ? 'Project' : 'Bounty'}
+                        </Text>
+                      </Flex>
                     </Tooltip>
-                  </>
+                  </Flex>
                 )}
+                <Tooltip
+                  px={4}
+                  py={2}
+                  color="brand.slate.500"
+                  fontFamily={'Inter'}
+                  fontSize="sm"
+                  bg="white"
+                  borderRadius={'lg'}
+                  label={regionTooltipLabel}
+                >
+                  <Text
+                    px={3}
+                    py={1}
+                    color={'#0800A5'}
+                    fontSize={{ base: '10px', md: 'xs' }}
+                    fontWeight={500}
+                    bg="#EBEAFF"
+                    whiteSpace={'nowrap'}
+                    rounded={'full'}
+                  >
+                    {region === 'GLOBAL' ? 'Global' : `${displayValue} Only`}
+                  </Text>
+                </Tooltip>
               </HStack>
             )}
           </VStack>

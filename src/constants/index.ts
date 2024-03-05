@@ -129,6 +129,14 @@ export const tokenList = [
     coingeckoSymbol: 'step-finance',
   },
   {
+    tokenName: 'SAROS',
+    tokenSymbol: 'SAROS',
+    mintAddress: 'SarosY6Vscao718M4A778z4CGtvcwcGef5M9MEH1LGL',
+    icon: 'https://assets.coingecko.com/coins/images/34594/standard/saros-token-logo.png?1705476813',
+    decimals: 6,
+    coingeckoSymbol: 'saros-finance',
+  },
+  {
     tokenName: 'mSOL',
     tokenSymbol: 'mSOL',
     mintAddress: 'mSoLzYCxHdYgdzU16g5QSh3i5K3z3KZK7ytfqcJm7So',
