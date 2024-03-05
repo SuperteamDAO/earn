@@ -17,6 +17,7 @@ import {
   useMediaQuery,
 } from '@chakra-ui/react';
 import Avatar from 'boring-avatars';
+import NextLink from 'next/link';
 import { useRouter } from 'next/router';
 import { useSession } from 'next-auth/react';
 
@@ -125,24 +126,21 @@ export function UserInfo({ isMobile }: UserInfoProps) {
             <MenuList>
               {userInfo?.isTalentFilled && (
                 <MenuItem
-                  color="brand.slate.500"
+                  as={NextLink}
                   fontSize="sm"
                   fontWeight={600}
-                  onClick={() => {
-                    router.push(`/t/${userInfo?.username}`);
-                  }}
+                  href={`/t/${userInfo?.username}`}
                 >
                   Profile
                 </MenuItem>
               )}
               {userInfo?.isTalentFilled && (
                 <MenuItem
+                  as={NextLink}
                   color="brand.slate.500"
                   fontSize="sm"
                   fontWeight={600}
-                  onClick={() => {
-                    router.push(`/t/${userInfo?.username}/edit`);
-                  }}
+                  href={`/t/${userInfo?.username}/edit`}
                 >
                   Edit Profile
                 </MenuItem>
@@ -150,12 +148,11 @@ export function UserInfo({ isMobile }: UserInfoProps) {
               {!isLessthan768 && !!userInfo?.currentSponsorId && (
                 <>
                   <MenuItem
+                    as={NextLink}
                     color="brand.slate.500"
                     fontSize="sm"
                     fontWeight={600}
-                    onClick={() => {
-                      router.push('/dashboard/listings');
-                    }}
+                    href={'/dashboard/listings'}
                   >
                     Sponsor Dashboard
                   </MenuItem>
@@ -173,12 +170,11 @@ export function UserInfo({ isMobile }: UserInfoProps) {
                     title="God Mode"
                   >
                     <MenuItem
+                      as={NextLink}
                       color="brand.slate.500"
                       fontSize="sm"
                       fontWeight={600}
-                      onClick={() => {
-                        router.push('/new/sponsor');
-                      }}
+                      href={'/new/sponsor'}
                     >
                       Create New Sponsor
                     </MenuItem>

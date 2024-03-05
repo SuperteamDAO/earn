@@ -18,6 +18,7 @@ import {
 import NextLink from 'next/link';
 import { useRouter } from 'next/router';
 
+import { RenaissanceSecondaryLogo } from '@/svg/renaissance-secondary';
 import { ScribesLogo } from '@/svg/scribes-logo';
 
 import { AnnouncementBar } from './AnnouncementBar';
@@ -32,14 +33,14 @@ interface NavItem {
 
 function renderLabel(navItem: NavItem) {
   switch (navItem.label) {
-    // case 'Renaissance':
-    //   return (
-    //     <Box>
-    //       <RenaissanceSecondaryLogo
-    //         styles={{ width: '116px', height: 'auto' }}
-    //       />
-    //     </Box>
-    //   );
+    case 'Renaissance':
+      return (
+        <Box>
+          <RenaissanceSecondaryLogo
+            styles={{ width: '116px', height: 'auto' }}
+          />
+        </Box>
+      );
     case 'Scribes':
       return (
         <Box>
@@ -72,10 +73,10 @@ const NAV_ITEMS: Array<NavItem> = [
         label: 'Development',
         href: '/category/development/',
       },
-      // {
-      //   label: 'Renaissance',
-      //   href: '/renaissance/',
-      // },
+      {
+        label: 'Renaissance',
+        href: '/renaissance/',
+      },
       {
         label: 'Scribes',
         href: '/scribes/',

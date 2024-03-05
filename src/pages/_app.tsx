@@ -9,6 +9,7 @@ import type { AppProps } from 'next/app';
 import { Domine, Inter, JetBrains_Mono } from 'next/font/google';
 import { useRouter } from 'next/router';
 import { SessionProvider, useSession } from 'next-auth/react';
+import NextTopLoader from 'nextjs-toploader';
 import posthog from 'posthog-js';
 import { PostHogProvider } from 'posthog-js/react';
 import React, { useEffect } from 'react';
@@ -17,6 +18,7 @@ import { SolanaWalletProvider } from '@/context/SolanaWallet';
 import { userStore } from '@/store/user';
 
 import theme from '../config/chakra.config';
+
 // importing localFont from a local file as Google imported fonts do not enable font-feature-settings. Reference: https://github.com/vercel/next.js/discussions/52456
 
 const fontSans = Inter({
@@ -85,7 +87,12 @@ function MyApp({ Component, pageProps }: any) {
     fetchUserInfo();
   }, [session, status]);
 
-  return <Component {...pageProps} key={router.asPath} />;
+  return (
+    <>
+      <NextTopLoader color={'#6366F1'} showSpinner={false} />
+      <Component {...pageProps} key={router.asPath} />;
+    </>
+  );
 }
 
 function App({ Component, pageProps: { session, ...pageProps } }: AppProps) {

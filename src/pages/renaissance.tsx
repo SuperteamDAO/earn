@@ -48,7 +48,7 @@ export default function Renaissance() {
     };
 
     const getStats = async () => {
-      const statsData = await axios.get('/api/hackathon/stats/', {
+      const statsData = await axios.get('/api/hackathon/publicStats/', {
         params: {
           slug: 'renaissance',
         },
@@ -216,7 +216,7 @@ export default function Renaissance() {
                 fontWeight={600}
               >
                 <Countdown
-                  date={new Date('2024-04-09T06:59:59Z')}
+                  date={new Date('2024-04-09T07:59:59Z')}
                   renderer={CountDownRenderer}
                   zeroPadDays={1}
                 />

@@ -32,7 +32,6 @@ interface Props {
   editable?: boolean;
   type: 'bounty' | 'project' | 'hackathon';
   isDuplicating?: boolean;
-  hackathonSlug?: string;
 }
 
 export function CreateListing({
@@ -40,7 +39,6 @@ export function CreateListing({
   editable = false,
   type,
   isDuplicating = false,
-  hackathonSlug,
 }: Props) {
   const router = useRouter();
   const { userInfo } = userStore();
@@ -178,6 +176,11 @@ export function CreateListing({
   const [isListingPublishing, setIsListingPublishing] =
     useState<boolean>(false);
 
+  let basePath = 'bounties';
+  if (type === 'hackathon') {
+    basePath = 'hackathon';
+  }
+
   const createAndPublishListing = async () => {
     setIsListingPublishing(true);
     try {
@@ -192,7 +195,7 @@ export function CreateListing({
         type,
         pocSocials: bountybasic?.pocSocials,
         region: regions,
-        referredBy: referredBy,
+        referredBy,
         eligibility: (questions || []).map((q) => ({
           question: q.question,
           order: q.order,
@@ -208,14 +211,14 @@ export function CreateListing({
         isPrivate: isPrivate,
         publishedAt: new Date().toISOString(),
       };
-      let api = '/api/bounties/create';
+
+      let api = `/api/${basePath}/create`;
       if (editable && !isDuplicating) {
-        api = `/api/bounties/update/${bounty?.id}/`;
+        api = `/api/${basePath}/update/${bounty?.id}/`;
       }
       const result = await axios.post(api, {
         ...newBounty,
-        hackathonSlug,
-        hackathonSponsor,
+        ...(type === 'hackathon' ? { hackathonSponsor } : {}),
       });
       setSlug(`/${result?.data?.type}/${result?.data?.slug}/`);
       setIsListingPublishing(false);
@@ -232,9 +235,10 @@ export function CreateListing({
 
   const createDraft = async () => {
     setDraftLoading(true);
-    let api = '/api/bounties/create/';
+
+    let api = `/api/${basePath}/create`;
     if (editable && !isDuplicating) {
-      api = `/api/bounties/update/${bounty?.id}/`;
+      api = `/api/${basePath}/update/${bounty?.id}/`;
     }
     let draft: Bounty = {
       pocId: userInfo?.id ?? '',
@@ -266,13 +270,12 @@ export function CreateListing({
     };
     try {
       await axios.post(api, {
-        hackathonSlug,
-        hackathonSponsor,
+        ...(type === 'hackathon' ? { hackathonSponsor } : {}),
         ...draft,
         isPublished: editable && !isDuplicating ? bounty?.isPublished : false,
       });
-      if (type === 'hackathon' && hackathonSlug) {
-        router.push(`/dashboard/hackathon/${hackathonSlug}/`);
+      if (type === 'hackathon') {
+        router.push(`/dashboard/hackathon/`);
       } else {
         router.push('/dashboard/listings');
       }
@@ -375,7 +378,6 @@ export function CreateListing({
               slug={slug}
               isOpen={isOpen}
               onClose={() => {}}
-              hackathonSlug={hackathonSlug}
             />
           )}
           {steps === 1 && (

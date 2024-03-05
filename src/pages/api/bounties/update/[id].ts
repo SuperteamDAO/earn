@@ -17,7 +17,7 @@ export default async function bounty(
 ) {
   const params = req.query;
   const id = params.id as string;
-  const { hackathonSlug, hackathonSponsor, ...updatedData } = req.body;
+  const updatedData = req.body;
 
   try {
     const token = await getToken({ req });
@@ -48,18 +48,14 @@ export default async function bounty(
         .json({ error: 'User does not have a current sponsor.' });
     }
 
-    if (!hackathonSlug) {
-      if (!user.currentSponsorId) {
-        return res
-          .status(403)
-          .json({ error: 'User does not have a current sponsor.' });
-      }
-    } else if (hackathonSlug) {
-      if (!user.hackathonId) {
-        return res
-          .status(403)
-          .json({ error: 'User does not have a current sponsor.' });
-      }
+    if (
+      !user ||
+      !user.currentSponsorId ||
+      currentBounty?.sponsorId !== user.currentSponsorId
+    ) {
+      return res
+        .status(403)
+        .json({ error: 'User does not have a current sponsor.' });
     }
 
     if (!currentBounty) {
@@ -94,27 +90,9 @@ export default async function bounty(
       }
     }
 
-    let hackathonId;
-    if (hackathonSlug && user.hackathonId) {
-      const hackathon = await prisma.hackathon.findUnique({
-        where: { id: user.hackathonId },
-      });
-
-      if (!hackathon) {
-        return res.status(404).json({ error: 'Hackathon not found.' });
-      }
-
-      hackathonId = hackathon.id;
-    }
-
-    const sponsorId = hackathonId ? hackathonSponsor : user.currentSponsorId;
     const result = await prisma.bounties.update({
-      where: { id, sponsorId },
-      data: {
-        sponsorId,
-        ...(hackathonId && { hackathonId }),
-        ...updatedData,
-      },
+      where: { id },
+      data: updatedData,
     });
 
     const deadlineChanged = currentBounty.deadline !== updatedData.deadline;
@@ -128,9 +106,11 @@ export default async function bounty(
           User: true,
         },
       });
+
       const filteredSubscribers = subscribers.filter(
         (subscriber) => !unsubscribedEmails.includes(subscriber.User.email),
       );
+
       const sendEmail = async (
         subscriber: (typeof filteredSubscribers)[number],
       ) => {
@@ -146,6 +126,7 @@ export default async function bounty(
       };
       await rateLimitedPromiseAll(filteredSubscribers, 5, sendEmail);
     }
+
     if (process.env.NEXT_PUBLIC_VERCEL_ENV === 'production') {
       const zapierWebhookUrl = process.env.ZAPIER_BOUNTY_WEBHOOK!;
       await axios.post(zapierWebhookUrl, result);
