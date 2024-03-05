@@ -139,7 +139,7 @@ dependencies:
     version: 14.0.4(@babel/core@7.24.0)(react-dom@18.2.0)(react@18.2.0)(sass@1.70.0)
   next-auth:
     specifier: ^4.24.6
-    version: 4.24.6(next@14.0.4)(react-dom@18.2.0)(react@18.2.0)
+    version: 4.24.6(next@14.0.4)(nodemailer@6.9.11)(react-dom@18.2.0)(react@18.2.0)
   next-pwa:
     specifier: ^5.6.0
     version: 5.6.0(@babel/core@7.24.0)(next@14.0.4)(webpack@5.90.3)
@@ -149,6 +149,9 @@ dependencies:
   nextjs-toploader:
     specifier: ^1.6.6
     version: 1.6.6(next@14.0.4)(react-dom@18.2.0)(react@18.2.0)
+  nodemailer:
+    specifier: ^6.9.11
+    version: 6.9.11
   posthog-js:
     specifier: ^1.111.0
     version: 1.111.0
@@ -3887,7 +3890,7 @@ packages:
       next-auth: ^4
     dependencies:
       '@prisma/client': 5.10.2(prisma@5.10.2)
-      next-auth: 4.24.6(next@14.0.4)(react-dom@18.2.0)(react@18.2.0)
+      next-auth: 4.24.6(next@14.0.4)(nodemailer@6.9.11)(react-dom@18.2.0)(react@18.2.0)
     dev: false
 
   /@next/env@14.0.4:
@@ -13481,7 +13484,7 @@ packages:
     resolution: {integrity: sha512-SrQrok4CATudVzBS7coSz26QRSmlK9TzzoFbeKfcPBUFPjcQM9Rqvr/DlJkOrwI/0KcgvMub1n1g5Jt9EgRn4A==}
     dev: false
 
-  /next-auth@4.24.6(next@14.0.4)(react-dom@18.2.0)(react@18.2.0):
+  /next-auth@4.24.6(next@14.0.4)(nodemailer@6.9.11)(react-dom@18.2.0)(react@18.2.0):
     resolution: {integrity: sha512-djQt3ZEaWEIxcsuh3HTW2uuzLfXMRjHH+ugAsichlQSbH4iA5MRcgMA2HvTNvsDTDLh44tyU72+/gWsxgTbAKg==}
     peerDependencies:
       next: ^12.2.5 || ^13 || ^14
@@ -13497,6 +13500,7 @@ packages:
       cookie: 0.5.0
       jose: 4.15.4
       next: 14.0.4(@babel/core@7.24.0)(react-dom@18.2.0)(react@18.2.0)(sass@1.70.0)
+      nodemailer: 6.9.11
       oauth: 0.9.15
       openid-client: 5.6.4
       preact: 10.19.6
@@ -13673,6 +13677,11 @@ packages:
   /node-stream-zip@1.15.0:
     resolution: {integrity: sha512-LN4fydt9TqhZhThkZIVQnF9cwjU3qmUH9h78Mx/K7d3VvfRqqwthLwJEUOEL0QPZ0XQmNN7be5Ggit5+4dq3Bw==}
     engines: {node: '>=0.12.0'}
+    dev: false
+
+  /nodemailer@6.9.11:
+    resolution: {integrity: sha512-UiAkgiERuG94kl/3bKfE8o10epvDnl0vokNEtZDPTq9BWzIl6EFT9336SbIT4oaTBD8NmmUTLsQyXHV82eXSWg==}
+    engines: {node: '>=6.0.0'}
     dev: false
 
   /nopt@7.2.0:
