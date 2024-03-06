@@ -1,6 +1,6 @@
 import React from 'react';
 
-import { styles } from '../../utils';
+import { styles } from '../utils';
 
 interface TemplateProps {
   senderName: string;

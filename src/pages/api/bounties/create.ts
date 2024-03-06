@@ -3,6 +3,7 @@ import type { NextApiRequest, NextApiResponse } from 'next';
 import { getToken } from 'next-auth/jwt';
 import slugify from 'slugify';
 
+import { sendEmailNotification } from '@/features/emails';
 import { prisma } from '@/prisma';
 
 const checkSlug = async (slug: string): Promise<boolean> => {
@@ -70,7 +71,7 @@ export default async function handler(
       .json({ error: 'User does not have a current sponsor.' });
   }
 
-  const { title, ...data } = req.body;
+  const { title, isPublished, ...data } = req.body;
   try {
     const slug = await generateUniqueSlug(title);
     const finalData = {
@@ -85,6 +86,13 @@ export default async function handler(
         sponsor: true,
       },
     });
+
+    if (isPublished) {
+      await sendEmailNotification({
+        type: 'createListing',
+        id: result.id,
+      });
+    }
     if (process.env.NEXT_PUBLIC_VERCEL_ENV === 'production') {
       const zapierWebhookUrl = process.env.ZAPIER_BOUNTY_WEBHOOK!;
       await axios.post(zapierWebhookUrl, result);

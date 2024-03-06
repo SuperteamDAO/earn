@@ -173,7 +173,6 @@ export const SubmissionModal = ({
 
       await axios.post(submissionEndpoint, {
         listingId: id,
-        listingType: 'BOUNTY',
         link: applicationLink || '',
         tweet: tweetLink || '',
         otherInfo: otherInfo || '',
@@ -182,12 +181,6 @@ export const SubmissionModal = ({
           ? eligibilityAnswers
           : null,
       });
-
-      if (!editMode) {
-        await axios.post(`/api/email/manual/submission`, {
-          listingId: id,
-        });
-      }
 
       reset();
       setIsSubmitted(true);
