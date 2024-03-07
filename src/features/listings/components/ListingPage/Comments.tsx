@@ -43,7 +43,7 @@ export const Comments = ({ refId, refType }: Props) => {
     try {
       const newCommentData = await axios.post(`/api/comment/create`, {
         message: newComment,
-        commentType: refType,
+        listingType: refType,
         listingId: refId,
       });
       setComments((prevComments) => [newCommentData.data, ...prevComments]);
