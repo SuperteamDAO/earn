@@ -123,7 +123,7 @@ export const SubmissionList = ({
                     variant="marble"
                   />
                 )}
-                <Box w={36} ml={2}>
+                <Box w={48} ml={2}>
                   <Text
                     overflow={'hidden'}
                     color="brand.slate.700"

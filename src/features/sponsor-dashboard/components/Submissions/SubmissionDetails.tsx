@@ -1,8 +1,9 @@
-import { ExternalLinkIcon } from '@chakra-ui/icons';
+import { ArrowForwardIcon, CopyIcon, ExternalLinkIcon } from '@chakra-ui/icons';
 import {
   Box,
   Button,
   Flex,
+  Image,
   Link,
   Select,
   Spinner,
@@ -17,9 +18,16 @@ import {
   type TransactionInstruction,
 } from '@solana/web3.js';
 import axios from 'axios';
+import Avatar from 'boring-avatars';
 import dynamic from 'next/dynamic';
 import NextLink from 'next/link';
 import React, { type Dispatch, type SetStateAction, useState } from 'react';
+import { BsTwitterX } from 'react-icons/bs';
+import {
+  MdArrowDropDown,
+  MdOutlineAccountBalanceWallet,
+  MdOutlineMail,
+} from 'react-icons/md';
 
 import { tokenList } from '@/constants';
 import type { Bounty, Rewards } from '@/features/listings';
@@ -228,10 +236,13 @@ export const SubmissionDetails = ({
     <>
       <Box
         w="150%"
+        p={1.5}
         bg="white"
         borderColor="brand.slate.200"
         borderTopWidth="1px"
+        borderRightWidth={'1px'}
         borderBottomWidth="1px"
+        roundedRight={'xl'}
       >
         {submissions.length ? (
           <>
@@ -242,14 +253,45 @@ export const SubmissionDetails = ({
               px={4}
               py={3}
             >
-              <Text
-                w="100%"
-                color="brand.slate.900"
-                fontSize="lg"
-                fontWeight={500}
-              >
-                {`${selectedSubmission?.user?.firstName}'s Submission`}
-              </Text>
+              <Flex align="center" gap={2} w="full">
+                {selectedSubmission?.user?.photo ? (
+                  <Image
+                    w="40px"
+                    h="40px"
+                    borderRadius="full"
+                    objectFit={'cover'}
+                    alt={`${selectedSubmission?.user?.firstName} ${selectedSubmission?.user?.lastName}`}
+                    src={selectedSubmission?.user?.photo}
+                  />
+                ) : (
+                  <Avatar
+                    name={`${selectedSubmission?.user?.firstName} ${selectedSubmission?.user?.lastName}`}
+                    colors={['#92A1C6', '#F0AB3D', '#C271B4']}
+                    size={40}
+                    variant="marble"
+                  />
+                )}
+                <Box>
+                  <Text
+                    w="100%"
+                    color="brand.slate.900"
+                    fontSize="md"
+                    fontWeight={500}
+                    whiteSpace={'nowrap'}
+                  >
+                    {`${selectedSubmission?.user?.firstName}'s Submission`}
+                  </Text>
+                  <Text
+                    w="100%"
+                    color="brand.purple"
+                    fontSize="xs"
+                    fontWeight={500}
+                    whiteSpace={'nowrap'}
+                  >
+                    View Profile <ArrowForwardIcon mb="0.5" />
+                  </Text>
+                </Box>
+              </Flex>
               <Flex align="center" justify={'flex-end'} gap={2} w="full">
                 {selectedSubmission?.isWinner &&
                   selectedSubmission?.winnerPosition &&
@@ -258,7 +300,7 @@ export const SubmissionDetails = ({
                     <>
                       <DynamicWalletMultiButton
                         style={{
-                          height: '32px',
+                          height: '40px',
                           fontWeight: 600,
                           fontFamily: 'Inter',
                           // maxWidth: '96px',
@@ -301,7 +343,7 @@ export const SubmissionDetails = ({
                               ),
                             });
                           }}
-                          size="sm"
+                          size="md"
                           variant="solid"
                         >
                           Pay {bounty?.token}{' '}
@@ -348,7 +390,7 @@ export const SubmissionDetails = ({
                         );
                       }}
                       rightIcon={<ExternalLinkIcon />}
-                      size="sm"
+                      size="md"
                       variant="ghost"
                     >
                       View Payment Txn
@@ -356,6 +398,25 @@ export const SubmissionDetails = ({
                   )}
                 {isSelectingWinner && (
                   <Spinner color="brand.slate.400" size="sm" />
+                )}
+                {!bounty?.isWinnersAnnounced && (
+                  <Select
+                    minW={44}
+                    maxW={44}
+                    color="brand.slate.500"
+                    fontWeight={500}
+                    textTransform="capitalize"
+                    borderColor="brand.slate.300"
+                    _placeholder={{ color: 'brand.slate.300' }}
+                    focusBorderColor="brand.purple"
+                    icon={<MdArrowDropDown />}
+                  >
+                    <option value={'Unreviewed'}>Unreviewed</option>
+                    <option value={'Reviewed'}>Reviewed</option>
+                    <option value={'ShortListed'}>Shortlisted</option>
+                    <option value={'Not a Winner'}>Not a Winner</option>
+                    <option value={'Spam'}>Spam</option>
+                  </Select>
                 )}
                 {!bounty?.isWinnersAnnounced && (
                   <Tooltip
@@ -366,12 +427,15 @@ export const SubmissionDetails = ({
                     placement="top"
                   >
                     <Select
-                      minW={48}
-                      maxW={48}
+                      minW={44}
+                      maxW={44}
+                      color="brand.slate.500"
+                      fontWeight={500}
                       textTransform="capitalize"
                       borderColor="brand.slate.300"
                       _placeholder={{ color: 'brand.slate.300' }}
                       focusBorderColor="brand.purple"
+                      icon={<MdArrowDropDown />}
                       isDisabled={
                         !!bounty?.isWinnersAnnounced || isHackathonPage
                       }
@@ -405,6 +469,62 @@ export const SubmissionDetails = ({
                   </Tooltip>
                 )}
               </Flex>
+            </Flex>
+
+            <Flex align="center" gap={5} px={6} py={2}>
+              {selectedSubmission?.user?.email && (
+                <Flex align="center" justify="start" gap={2} fontSize="sm">
+                  <MdOutlineMail color="#94A3B8" />
+                  <Link
+                    color="brand.slate.400"
+                    href={`mailto:${selectedSubmission.user.email}`}
+                    isExternal
+                  >
+                    {selectedSubmission?.user?.email}
+                  </Link>
+                </Flex>
+              )}
+              {selectedSubmission?.user?.publicKey && (
+                <Flex align="center" justify="start" gap={2} fontSize="sm">
+                  <MdOutlineAccountBalanceWallet color="#94A3B8" />
+                  <Text color="brand.slate.400">
+                    {truncatePublicKey(selectedSubmission?.user?.publicKey, 4)}
+                    <Tooltip label="Copy Wallet ID" placement="right">
+                      <CopyIcon
+                        cursor="pointer"
+                        ml={1}
+                        color="brand.slate.400"
+                        onClick={() =>
+                          navigator.clipboard.writeText(
+                            selectedSubmission?.user?.publicKey || '',
+                          )
+                        }
+                      />
+                    </Tooltip>
+                  </Text>
+                </Flex>
+              )}
+              {selectedSubmission?.user?.twitter && (
+                <Flex align="center" justify="start" gap={2} fontSize="sm">
+                  <BsTwitterX color="#94A3B8" />
+
+                  <Link
+                    color="brand.slate.400"
+                    href={getURLSanitized(
+                      selectedSubmission?.user?.twitter?.replace(
+                        'twitter.com',
+                        'x.com',
+                      ) || '#',
+                    )}
+                    isExternal
+                  >
+                    {selectedSubmission?.user?.twitter?.replace(
+                      'twitter.com',
+                      'x.com',
+                    ) || '-'}
+                  </Link>
+                </Flex>
+              )}
             </Flex>
 
             <Box w="full" px={4} py={5}>

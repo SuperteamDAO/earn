@@ -19,15 +19,8 @@ export default async function updateSubmission(
     return res.status(400).json({ error: 'Invalid token' });
   }
 
-  const {
-    listingId,
-    listingType,
-    link,
-    tweet,
-    otherInfo,
-    eligibilityAnswers,
-    ask,
-  } = req.body;
+  const { listingId, link, tweet, otherInfo, eligibilityAnswers, ask } =
+    req.body;
 
   try {
     const submission = await prisma.submission.findFirst({
@@ -43,7 +36,6 @@ export default async function updateSubmission(
       },
       data: {
         listingId,
-        listingType,
         link: link || '',
         tweet: tweet || '',
         otherInfo: otherInfo || '',

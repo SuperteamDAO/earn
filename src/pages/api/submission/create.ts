@@ -20,21 +20,13 @@ export default async function submission(
     return res.status(400).json({ error: 'Invalid token' });
   }
 
-  const {
-    listingId,
-    listingType,
-    link,
-    tweet,
-    otherInfo,
-    eligibilityAnswers,
-    ask,
-  } = req.body;
+  const { listingId, link, tweet, otherInfo, eligibilityAnswers, ask } =
+    req.body;
   try {
     const result = await prisma.submission.create({
       data: {
         userId: userId as string,
         listingId,
-        listingType,
         link: link || '',
         tweet: tweet || '',
         otherInfo: otherInfo || '',
