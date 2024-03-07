@@ -64,7 +64,7 @@ export interface BountyWithSubmissions extends Bounty {
   };
 }
 
-export interface Eligibility {
+interface Eligibility {
   order: number;
   question: string;
   type?: 'text';

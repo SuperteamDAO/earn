@@ -17,7 +17,6 @@ import type { BountyBasicType } from '../CreateListingForm';
 
 interface Props {
   setSteps: Dispatch<SetStateAction<number>>;
-  setListingType: Dispatch<SetStateAction<string>>;
   setEditorData: Dispatch<SetStateAction<string | undefined>>;
   setMainSkills: Dispatch<SetStateAction<MultiSelectOptions[]>>;
   setSubSkills: Dispatch<SetStateAction<MultiSelectOptions[]>>;
@@ -26,7 +25,6 @@ interface Props {
 }
 export const Template = ({
   setSteps,
-  setListingType,
   setEditorData,
   setMainSkills,
   setSubSkills,
@@ -60,7 +58,6 @@ export const Template = ({
     const template: any = bountiesTemplates.find((t: any) => {
       return t?.id === templateId;
     });
-    setListingType('BOUNTY');
     setBountyBasic({
       title: template?.title || undefined,
       templateId: template?.id || undefined,
@@ -102,7 +99,6 @@ export const Template = ({
               borderRadius={5}
               cursor={'pointer'}
               onClick={() => {
-                setListingType('BOUNTY');
                 setSteps(2);
               }}
             >

@@ -49,7 +49,7 @@ export function CreateListing({
   const [steps, setSteps] = useState<number>(
     editable || type === 'hackathon' ? 2 : 1,
   );
-  const [listingType, setListingType] = useState('BOUNTY');
+
   const [draftLoading, setDraftLoading] = useState<boolean>(false);
   const [bountyRequirements, setBountyRequirements] = useState<
     string | undefined
@@ -223,11 +223,6 @@ export function CreateListing({
       setSlug(`/${result?.data?.type}/${result?.data?.slug}/`);
       setIsListingPublishing(false);
       onOpen();
-      if (!isPrivate && type !== 'hackathon') {
-        await axios.post('/api/email/manual/createBounty', {
-          id: result?.data?.id,
-        });
-      }
     } catch (e) {
       setIsListingPublishing(false);
     }
@@ -304,74 +299,40 @@ export function CreateListing({
         <FormLayout
           setStep={setSteps}
           currentStep={steps}
-          stepList={
-            listingType !== 'BOUNTY'
-              ? [
-                  {
-                    label: 'Template',
-                    number: 1,
-                    mainHead: 'List your Opportunity',
-                    description:
-                      'To save time, check out our ready made templates below. If you already have a listing elsewhere, use "Start from Scratch" and copy/paste your text.',
-                  },
-                  {
-                    label: 'Basics',
-                    number: 2,
-                    mainHead: 'Create a Listing',
-                    description: `Now let's learn a bit more about the work you need completed`,
-                  },
-                  {
-                    label: 'Description',
-                    number: 3,
-                    mainHead: 'Tell us some more',
-                    description:
-                      'Add more details about the opportunity, submission requirements, reward(s) details, and resources',
-                  },
-                  {
-                    label: 'Reward',
-                    number: 4,
-                    mainHead: 'Add the reward amount',
-                    description:
-                      'Decide the compensation amount for your listing',
-                  },
-                ]
-              : [
-                  {
-                    label: 'Template',
-                    number: 1,
-                    mainHead: 'List your Opportunity',
-                    description:
-                      'To save time, check out our ready made templates below. If you already have a listing elsewhere, use "Start from Scratch" and copy/paste your text.',
-                  },
-                  {
-                    label: 'Basics',
-                    number: 2,
-                    mainHead: 'Create a Listing',
-                    description: `Now let's learn a bit more about the work you need completed`,
-                  },
-                  {
-                    label: 'Description',
-                    number: 3,
-                    mainHead: 'Tell us some more',
-                    description:
-                      'Add more details about the opportunity, submission requirements, reward(s) details, and resources',
-                  },
-                  {
-                    label: 'Questions',
-                    number: 4,
-                    mainHead: 'Enter your questions',
-                    description:
-                      'What would you like to know about your applicants?',
-                  },
-                  {
-                    label: 'Reward',
-                    number: 5,
-                    mainHead: 'Add the reward amount',
-                    description:
-                      'Decide the compensation amount for your listing',
-                  },
-                ]
-          }
+          stepList={[
+            {
+              label: 'Template',
+              number: 1,
+              mainHead: 'List your Opportunity',
+              description:
+                'To save time, check out our ready made templates below. If you already have a listing elsewhere, use "Start from Scratch" and copy/paste your text.',
+            },
+            {
+              label: 'Basics',
+              number: 2,
+              mainHead: 'Create a Listing',
+              description: `Now let's learn a bit more about the work you need completed`,
+            },
+            {
+              label: 'Description',
+              number: 3,
+              mainHead: 'Tell us some more',
+              description:
+                'Add more details about the opportunity, submission requirements, reward(s) details, and resources',
+            },
+            {
+              label: 'Questions',
+              number: 4,
+              mainHead: 'Enter your questions',
+              description: 'What would you like to know about your applicants?',
+            },
+            {
+              label: 'Reward',
+              number: 5,
+              mainHead: 'Add the reward amount',
+              description: 'Decide the compensation amount for your listing',
+            },
+          ]}
         >
           {isOpen && (
             <ListingSuccessModal
@@ -383,7 +344,6 @@ export function CreateListing({
           {steps === 1 && (
             <Template
               setSteps={setSteps}
-              setListingType={setListingType}
               setEditorData={setEditorData}
               setSubSkills={setSubSkill}
               setMainSkills={setMainSkills}
@@ -391,7 +351,7 @@ export function CreateListing({
               type={type}
             />
           )}
-          {steps > 1 && listingType === 'BOUNTY' && (
+          {steps > 1 && (
             <CreateListingForm
               type={type}
               regions={regions}

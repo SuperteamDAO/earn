@@ -170,26 +170,25 @@ model Grants {
 }
 
 model Submission {
-  id                 String      @id @default(uuid())
-  link               String?     @db.VarChar(500)
-  tweet              String?     @db.VarChar(500)
+  id                 String   @id @default(uuid())
+  link               String?  @db.VarChar(500)
+  tweet              String?  @db.VarChar(500)
   eligibilityAnswers Json?
   userId             String
-  listingType        ListingType @default(BOUNTY)
   listingId          String
-  isWinner           Boolean     @default(false)
+  isWinner           Boolean  @default(false)
   winnerPosition     String?
-  isActive           Boolean     @default(true)
-  isArchived         Boolean     @default(false)
-  createdAt          DateTime    @default(now())
-  updatedAt          DateTime    @updatedAt
+  isActive           Boolean  @default(true)
+  isArchived         Boolean  @default(false)
+  createdAt          DateTime @default(now())
+  updatedAt          DateTime @updatedAt
   like               Json?
   likes              Int?
-  isPaid             Boolean     @default(false)
+  isPaid             Boolean  @default(false)
   paymentDetails     Json?
-  otherInfo          String?     @db.VarChar(2000)
-  listing            Bounties    @relation(fields: [listingId], references: [id])
-  user               User        @relation(fields: [userId], references: [id])
+  otherInfo          String?  @db.VarChar(2000)
+  listing            Bounties @relation(fields: [listingId], references: [id])
+  user               User     @relation(fields: [userId], references: [id])
   ask                Int?
 
   @@index([id, listingId])
@@ -445,8 +444,7 @@ enum BountyType {
 
 enum ListingType {
   BOUNTY
-  JOB
-  GRANT
+  SUBMISSION
 }
 
 enum JobType {

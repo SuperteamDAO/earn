@@ -120,7 +120,7 @@ export const SubmissionPage = ({ bounty, submission, user, link }: Props) => {
 
         <Comments
           refId={(router.query.subid as string) ?? ''}
-          refType="BOUNTY"
+          refType="SUBMISSION"
         />
       </VStack>
       {!isMobile && (

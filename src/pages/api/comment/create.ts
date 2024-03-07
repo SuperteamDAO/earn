@@ -1,6 +1,7 @@
 import type { NextApiRequest, NextApiResponse } from 'next';
 import { getToken } from 'next-auth/jwt';
 
+import { sendEmailNotification } from '@/features/emails';
 import { prisma } from '@/prisma';
 
 export default async function comment(
@@ -40,6 +41,21 @@ export default async function comment(
         },
       },
     });
+
+    if (listingType === 'BOUNTY') {
+      await sendEmailNotification({
+        type: 'commentSponsor',
+        id: listingId,
+      });
+    }
+
+    if (listingType === 'SUBMISSION') {
+      await sendEmailNotification({
+        type: 'commentSubmission',
+        id: listingId,
+        userId: userId as string,
+      });
+    }
 
     return res.status(200).json(result);
   } catch (error) {

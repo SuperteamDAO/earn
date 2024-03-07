@@ -28,7 +28,6 @@ export const styles = {
     lineHeight: '20px',
     marginBottom: '16px',
   },
-  list: {},
   unsubscribe: {
     fontSize: '11px',
     lineHeight: '20px',
