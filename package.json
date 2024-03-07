@@ -42,7 +42,6 @@
     "@tiptap/starter-kit": "^2.2.3",
     "@upstash/qstash": "^2.3.0",
     "@vercel/og": "^0.6.2",
-    "airtable": "^0.12.2",
     "axios": "^1.6.5",
     "boring-avatars": "^1.10.1",
     "cloudinary": "^1.41.3",
