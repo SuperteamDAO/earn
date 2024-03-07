@@ -31,6 +31,14 @@ interface Props {
   type?: string;
 }
 
+const colorMap = {
+  Spam: { bg: 'red.100', color: 'red.600' },
+  Reviewed: { bg: 'blue.100', color: 'blue.600' },
+  Unreviewed: { bg: 'orange.100', color: 'orange.800' },
+  Shortlisted: { bg: 'purple.100', color: 'purple.600' },
+  winner: { bg: 'green.100', color: 'green.800' },
+};
+
 export const SubmissionList = ({
   submissions,
   setSearchText,
@@ -45,6 +53,7 @@ export const SubmissionList = ({
       debouncedSetSearchText.cancel();
     };
   }, [debouncedSetSearchText]);
+
   return (
     <>
       <Box
@@ -84,6 +93,12 @@ export const SubmissionList = ({
           </InputGroup>
         </Flex>
         {submissions.map((submission) => {
+          const { bg, color } = submission?.isWinner
+            ? colorMap.winner
+            : colorMap[submission?.label] || {
+                bg: 'gray.100',
+                color: 'gray.600',
+              };
           return (
             <Flex
               key={submission?.id}
@@ -146,19 +161,27 @@ export const SubmissionList = ({
                   </Text>
                 </Box>
               </Flex>
-              {submission?.isWinner && submission?.winnerPosition && (
-                <Tag w={24} py={1} bg="green.100">
-                  <TagLabel
-                    w="full"
-                    color="green.600"
-                    textAlign={'center'}
-                    textTransform={'capitalize'}
-                  >
-                    🏆{' '}
-                    {type === 'project' ? 'Winner' : submission?.winnerPosition}
-                  </TagLabel>
-                </Tag>
-              )}
+              <Tag px={3} py={1} bg={bg} rounded="full">
+                <TagLabel
+                  w="full"
+                  color={color}
+                  fontSize={'xs'}
+                  textAlign={'center'}
+                  textTransform={'capitalize'}
+                  whiteSpace={'nowrap'}
+                >
+                  {submission?.isWinner && submission?.winnerPosition ? (
+                    <>
+                      🏆{' '}
+                      {type === 'project'
+                        ? 'Winner'
+                        : submission.winnerPosition}
+                    </>
+                  ) : (
+                    submission?.label
+                  )}
+                </TagLabel>
+              </Tag>
             </Flex>
           );
         })}

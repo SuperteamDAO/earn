@@ -11,6 +11,7 @@ import {
   Tooltip,
 } from '@chakra-ui/react';
 import type NodeWallet from '@coral-xyz/anchor/dist/cjs/nodewallet';
+import { type SubmissionLabels } from '@prisma/client';
 import { useAnchorWallet, useWallet } from '@solana/wallet-adapter-react';
 import {
   PublicKey,
@@ -232,6 +233,31 @@ export const SubmissionDetails = ({
     }
   };
 
+  const selectLabel = async (
+    label: SubmissionLabels,
+    id: string | undefined,
+  ) => {
+    try {
+      await axios.post(`/api/submission/updateLabel/`, {
+        label,
+        id,
+      });
+      const submissionIndex = submissions.findIndex((s) => s.id === id);
+      if (submissionIndex >= 0) {
+        const updatedSubmission: SubmissionWithUser = {
+          ...(submissions[submissionIndex] as SubmissionWithUser),
+          label,
+        };
+        const newSubmissions = [...submissions];
+        newSubmissions[submissionIndex] = updatedSubmission;
+        setSubmissions(newSubmissions);
+        setSelectedSubmission(updatedSubmission);
+      }
+    } catch (e) {
+      console.log(e);
+    }
+  };
+
   return (
     <>
       <Box
@@ -410,11 +436,17 @@ export const SubmissionDetails = ({
                     _placeholder={{ color: 'brand.slate.300' }}
                     focusBorderColor="brand.purple"
                     icon={<MdArrowDropDown />}
+                    onChange={(e) =>
+                      selectLabel(
+                        e.target.value as SubmissionLabels,
+                        selectedSubmission?.id,
+                      )
+                    }
+                    value={selectedSubmission?.label}
                   >
                     <option value={'Unreviewed'}>Unreviewed</option>
                     <option value={'Reviewed'}>Reviewed</option>
-                    <option value={'ShortListed'}>Shortlisted</option>
-                    <option value={'Not a Winner'}>Not a Winner</option>
+                    <option value={'Shortlisted'}>Shortlisted</option>
                     <option value={'Spam'}>Spam</option>
                   </Select>
                 )}

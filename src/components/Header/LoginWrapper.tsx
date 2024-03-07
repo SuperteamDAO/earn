@@ -33,7 +33,7 @@ export function LoginWrapper({
         acceptUser(userDetails.data);
       }
     };
-    inviteInfo && makeUser();
+    makeUser();
   }, []);
 
   useEffect(() => {
