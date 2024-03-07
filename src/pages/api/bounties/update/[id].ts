@@ -87,10 +87,16 @@ export default async function bounty(
       data: updatedData,
     });
 
-    const deadlineChanged = currentBounty.deadline !== updatedData.deadline;
-
-    if (deadlineChanged) {
+    if (
+      currentBounty?.isPublished === false &&
+      updatedData.isPublished === true
+    ) {
       await sendEmailNotification({ type: 'deadlineExtended', id });
+    }
+
+    const deadlineChanged = currentBounty.deadline !== updatedData.deadline;
+    if (deadlineChanged) {
+      await sendEmailNotification({ type: 'createListing', id });
     }
 
     if (process.env.NEXT_PUBLIC_VERCEL_ENV === 'production') {
