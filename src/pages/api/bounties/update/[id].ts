@@ -89,14 +89,16 @@ export default async function bounty(
 
     if (
       currentBounty?.isPublished === false &&
-      updatedData.isPublished === true
+      result.isPublished === true &&
+      !result.isPrivate &&
+      result.type !== 'hackathon'
     ) {
-      await sendEmailNotification({ type: 'deadlineExtended', id });
+      await sendEmailNotification({ type: 'createListing', id });
     }
 
     const deadlineChanged = currentBounty.deadline !== updatedData.deadline;
     if (deadlineChanged) {
-      await sendEmailNotification({ type: 'createListing', id });
+      await sendEmailNotification({ type: 'deadlineExtended', id });
     }
 
     if (process.env.NEXT_PUBLIC_VERCEL_ENV === 'production') {

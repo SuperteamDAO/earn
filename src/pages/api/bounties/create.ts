@@ -71,7 +71,7 @@ export default async function handler(
       .json({ error: 'User does not have a current sponsor.' });
   }
 
-  const { title, isPublished, ...data } = req.body;
+  const { title, ...data } = req.body;
   try {
     const slug = await generateUniqueSlug(title);
     const finalData = {
@@ -87,7 +87,11 @@ export default async function handler(
       },
     });
 
-    if (isPublished) {
+    if (
+      result.isPublished &&
+      !result.isPrivate &&
+      result.type !== 'hackathon'
+    ) {
       await sendEmailNotification({
         type: 'createListing',
         id: result.id,
