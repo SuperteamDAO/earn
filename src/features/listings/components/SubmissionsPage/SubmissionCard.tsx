@@ -63,14 +63,7 @@ export const SubmissionCard = ({
 
     const likePromise = axios
       .post('/api/submission/like/', { submissionId: id })
-      .then(async (response) => {
-        const wasLiked = response.data.like.find(
-          (like: any) => like.id === userInfo?.id,
-        );
-        if (wasLiked) {
-          await axios.post(`/api/email/manual/submissionLike`, { id });
-        }
-      })
+      .then()
       .finally(() => {
         setIsLoading(false);
         setUpdate((prev: boolean) => !prev);

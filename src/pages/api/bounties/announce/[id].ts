@@ -3,15 +3,8 @@ import type { NextApiRequest, NextApiResponse } from 'next';
 import { getToken } from 'next-auth/jwt';
 
 import { tokenList } from '@/constants';
-import {
-  getUnsubEmails,
-  kashEmail,
-  rateLimitedPromiseAll,
-  resend,
-  SuperteamWinnersTemplate,
-  WinnersAnnouncedTemplate,
-} from '@/features/emails';
-import { getBountyTypeLabel, type Rewards } from '@/features/listings';
+import { sendEmailNotification } from '@/features/emails';
+import { type Rewards } from '@/features/listings';
 import { prisma } from '@/prisma';
 import { dayjs } from '@/utils/dayjs';
 
@@ -60,6 +53,9 @@ export default async function announce(
 
     const bounty = await prisma.bounties.findUnique({
       where: { id },
+      include: {
+        sponsor: true,
+      },
     });
 
     if (
@@ -77,8 +73,6 @@ export default async function announce(
         .status(404)
         .json({ message: `Bounty with id=${id} not found.` });
     }
-
-    const unsubscribedEmails = await getUnsubEmails();
 
     if (bounty?.isWinnersAnnounced) {
       return res.status(400).json({
@@ -177,101 +171,10 @@ export default async function announce(
       },
     });
 
-    const submissions = await prisma.submission.findMany({
-      where: {
-        listingId: id,
-        isActive: true,
-        isArchived: false,
-      },
-      take: 500,
-      include: {
-        user: true,
-      },
-    });
-    const allSubmissionUsers = submissions?.map((submission) => ({
-      email: submission?.user?.email || '',
-      name: submission?.user?.firstName || '',
-    }));
+    await sendEmailNotification({ type: 'announceWinners', id });
 
-    const subscribedUsers = await prisma.subscribeBounty.findMany({
-      where: {
-        bountyId: id,
-      },
-      include: {
-        User: true,
-      },
-    });
-
-    const allSubscribedUsers = subscribedUsers?.map((subscribedUser) => ({
-      email: subscribedUser?.User?.email || '',
-      name: subscribedUser?.User?.firstName || '',
-    }));
-
-    const allSubmissionUsersWithType: any[] = allSubmissionUsers.map(
-      (submissionUser) => ({
-        email: submissionUser?.email || '',
-        name: submissionUser?.name || '',
-        userType: 'submissionUser',
-      }),
-    );
-
-    const allSubscribedUsersWithType: any[] = allSubscribedUsers.map(
-      (subscribedUser) => ({
-        email: subscribedUser.email,
-        name: subscribedUser.name,
-        userType: 'subscribedUser',
-      }),
-    );
-
-    const allUsers = [
-      ...allSubmissionUsersWithType,
-      ...allSubscribedUsersWithType,
-    ];
-
-    const listingType = getBountyTypeLabel(bounty?.type);
-
-    await rateLimitedPromiseAll(allUsers, 9, async (e) => {
-      if (unsubscribedEmails.includes(e.email)) return;
-
-      const template = WinnersAnnouncedTemplate({
-        name: e.name,
-        bountyName: bounty?.title || '',
-        link: `https://earn.superteam.fun/listings/${bounty?.type}/${
-          bounty?.slug || ''
-        }/?utm_source=superteamearn&utm_medium=email&utm_campaign=winnerannouncement`,
-      });
-
-      await resend.emails.send({
-        from: kashEmail,
-        to: [e.email],
-        subject: `${listingType} Winners Announced!`,
-        react: template,
-      });
-    });
-
-    const sponsor = await prisma.sponsors.findUnique({
-      where: {
-        id: bounty?.sponsorId,
-      },
-    });
-
-    if (sponsor?.name.includes('Superteam')) {
-      winners.forEach(async (winner) => {
-        const email = winner.user.email;
-        const name = winner.user.firstName;
-
-        const template = SuperteamWinnersTemplate({
-          name,
-          listingName: bounty?.title || '',
-        });
-
-        await resend.emails.send({
-          from: kashEmail,
-          to: [email],
-          subject: `Submit This Form to Claim Your Reward`,
-          react: template,
-        });
-      });
+    if (bounty?.sponsor?.name.includes('Superteam')) {
+      await sendEmailNotification({ type: 'superteamWinners', id });
     } else {
       console.log('Sponsor is not Superteam. Skipping sending winner emails.');
     }

@@ -35,7 +35,6 @@ export default async function user(req: NextApiRequest, res: NextApiResponse) {
 
     const submission = await prisma.submission.findMany({
       where: {
-        listingType: 'BOUNTY',
         listingId: result?.id,
       },
       include: {
