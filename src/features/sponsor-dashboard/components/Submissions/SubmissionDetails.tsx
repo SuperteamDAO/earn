@@ -5,8 +5,14 @@ import {
   Flex,
   Image,
   Link,
+  Menu,
+  MenuButton,
+  MenuItem,
+  MenuList,
   Select,
   Spinner,
+  Tag,
+  TagLabel,
   Text,
   Tooltip,
 } from '@chakra-ui/react';
@@ -41,6 +47,8 @@ import {
 import { getURLSanitized } from '@/utils/getURLSanitized';
 import { truncatePublicKey } from '@/utils/truncatePublicKey';
 
+import { colorMap } from '../../utils';
+
 interface Props {
   bounty: Bounty | null;
   submissions: SubmissionWithUser[];
@@ -56,6 +64,23 @@ interface Props {
   setTotalPaymentsMade: Dispatch<SetStateAction<number>>;
   isHackathonPage?: boolean;
 }
+
+const menuOptions = [
+  {
+    label: 'Unreviewed',
+    value: 'Unreviewed',
+    bg: 'orange.100',
+    color: 'orange.800',
+  },
+  { label: 'Reviewed', value: 'Reviewed', bg: 'blue.100', color: 'blue.600' },
+  {
+    label: 'Shortlisted',
+    value: 'Shortlisted',
+    bg: 'purple.100',
+    color: 'purple.600',
+  },
+  { label: 'Spam', value: 'Spam', bg: 'red.100', color: 'red.600' },
+];
 
 export const SubmissionDetails = ({
   bounty,
@@ -258,6 +283,8 @@ export const SubmissionDetails = ({
     }
   };
 
+  const { bg, color } = colorMap[selectedSubmission?.label as SubmissionLabels];
+
   return (
     <>
       <Box
@@ -426,29 +453,64 @@ export const SubmissionDetails = ({
                   <Spinner color="brand.slate.400" size="sm" />
                 )}
                 {!bounty?.isWinnersAnnounced && (
-                  <Select
-                    minW={44}
-                    maxW={44}
-                    color="brand.slate.500"
-                    fontWeight={500}
-                    textTransform="capitalize"
-                    borderColor="brand.slate.300"
-                    _placeholder={{ color: 'brand.slate.300' }}
-                    focusBorderColor="brand.purple"
-                    icon={<MdArrowDropDown />}
-                    onChange={(e) =>
-                      selectLabel(
-                        e.target.value as SubmissionLabels,
-                        selectedSubmission?.id,
-                      )
-                    }
-                    value={selectedSubmission?.label}
-                  >
-                    <option value={'Unreviewed'}>Unreviewed</option>
-                    <option value={'Reviewed'}>Reviewed</option>
-                    <option value={'Shortlisted'}>Shortlisted</option>
-                    <option value={'Spam'}>Spam</option>
-                  </Select>
+                  <Menu>
+                    <MenuButton
+                      as={Button}
+                      color="brand.slate.500"
+                      fontWeight={500}
+                      textTransform="capitalize"
+                      bg="transparent"
+                      borderWidth={'1px'}
+                      borderColor="brand.slate.300"
+                      _hover={{ backgroundColor: 'transparent' }}
+                      _active={{
+                        backgroundColor: 'transparent',
+                        borderWidth: '1px',
+                      }}
+                      _expanded={{ borderColor: 'brand.purple' }}
+                      rightIcon={<MdArrowDropDown />}
+                    >
+                      <Tag px={3} py={1} bg={bg} rounded="full">
+                        <TagLabel
+                          w="full"
+                          color={color}
+                          fontSize={'13px'}
+                          textAlign={'center'}
+                          textTransform={'capitalize'}
+                          whiteSpace={'nowrap'}
+                        >
+                          {selectedSubmission?.label || 'Select Option'}
+                        </TagLabel>
+                      </Tag>
+                    </MenuButton>
+                    <MenuList borderColor="brand.slate.300">
+                      {menuOptions.map((option) => (
+                        <MenuItem
+                          key={option.value}
+                          _focus={{ bg: 'brand.slate.100' }}
+                          onClick={() =>
+                            selectLabel(
+                              option.value as SubmissionLabels,
+                              selectedSubmission?.id,
+                            )
+                          }
+                        >
+                          <Tag px={3} py={1} bg={option.bg} rounded="full">
+                            <TagLabel
+                              w="full"
+                              color={option.color}
+                              fontSize={'11px'}
+                              textAlign={'center'}
+                              textTransform={'capitalize'}
+                              whiteSpace={'nowrap'}
+                            >
+                              {option.label}
+                            </TagLabel>
+                          </Tag>
+                        </MenuItem>
+                      ))}
+                    </MenuList>
+                  </Menu>
                 )}
                 {!bounty?.isWinnersAnnounced && (
                   <Tooltip
