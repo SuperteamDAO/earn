@@ -46,6 +46,7 @@ import {
 } from '@/utils/contract/contract';
 import { getURLSanitized } from '@/utils/getURLSanitized';
 import { truncatePublicKey } from '@/utils/truncatePublicKey';
+import { truncateString } from '@/utils/truncateString';
 
 import { colorMap } from '../../utils';
 
@@ -334,15 +335,17 @@ export const SubmissionDetails = ({
                   >
                     {`${selectedSubmission?.user?.firstName}'s Submission`}
                   </Text>
-                  <Text
+                  <Link
+                    as={NextLink}
                     w="100%"
                     color="brand.purple"
                     fontSize="xs"
                     fontWeight={500}
                     whiteSpace={'nowrap'}
+                    href={`/t/${selectedSubmission?.user?.username}`}
                   >
                     View Profile <ArrowForwardIcon mb="0.5" />
-                  </Text>
+                  </Link>
                 </Box>
               </Flex>
               <Flex align="center" justify={'flex-end'} gap={2} w="full">
@@ -468,6 +471,10 @@ export const SubmissionDetails = ({
                         borderWidth: '1px',
                       }}
                       _expanded={{ borderColor: 'brand.purple' }}
+                      pointerEvents={
+                        selectedSubmission?.isWinner ? 'none' : 'all'
+                      }
+                      isDisabled={selectedSubmission?.isWinner}
                       rightIcon={<MdArrowDropDown />}
                     >
                       <Tag px={3} py={1} bg={bg} rounded="full">
@@ -565,7 +572,7 @@ export const SubmissionDetails = ({
               </Flex>
             </Flex>
 
-            <Flex align="center" gap={5} px={6} py={2}>
+            <Flex align="center" gap={5} px={5} py={2}>
               {selectedSubmission?.user?.email && (
                 <Flex align="center" justify="start" gap={2} fontSize="sm">
                   <MdOutlineMail color="#94A3B8" />
@@ -574,15 +581,21 @@ export const SubmissionDetails = ({
                     href={`mailto:${selectedSubmission.user.email}`}
                     isExternal
                   >
-                    {selectedSubmission?.user?.email}
+                    {truncateString(selectedSubmission?.user?.email, 36)}
                   </Link>
                 </Flex>
               )}
               {selectedSubmission?.user?.publicKey && (
-                <Flex align="center" justify="start" gap={2} fontSize="sm">
+                <Flex
+                  align="center"
+                  justify="start"
+                  gap={2}
+                  fontSize="sm"
+                  whiteSpace={'nowrap'}
+                >
                   <MdOutlineAccountBalanceWallet color="#94A3B8" />
                   <Text color="brand.slate.400">
-                    {truncatePublicKey(selectedSubmission?.user?.publicKey, 4)}
+                    {truncatePublicKey(selectedSubmission?.user?.publicKey, 3)}
                     <Tooltip label="Copy Wallet ID" placement="right">
                       <CopyIcon
                         cursor="pointer"
@@ -612,10 +625,13 @@ export const SubmissionDetails = ({
                     )}
                     isExternal
                   >
-                    {selectedSubmission?.user?.twitter?.replace(
-                      'twitter.com',
-                      'x.com',
-                    ) || '-'}
+                    {truncateString(
+                      selectedSubmission?.user?.twitter?.replace(
+                        'twitter.com',
+                        'x.com',
+                      ) || '-',
+                      36,
+                    )}
                   </Link>
                 </Flex>
               )}
