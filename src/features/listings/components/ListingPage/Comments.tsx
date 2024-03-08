@@ -28,7 +28,6 @@ interface Props {
 }
 export const Comments = ({ refId, refType }: Props) => {
   const { userInfo } = userStore();
-
   const { isOpen, onOpen, onClose } = useDisclosure();
   const [triggerLogin, setTriggerLogin] = useState(false);
   const [isLoading, setIsLoading] = useState(true);

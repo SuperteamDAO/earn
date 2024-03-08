@@ -1,4 +1,4 @@
-import type { User } from '@prisma/client';
+import { type SubmissionLabels, type User } from '@prisma/client';
 
 import type { Rewards } from '@/features/listings';
 
@@ -27,6 +27,7 @@ interface SubmissionWithUser {
   user: User;
   listing?: Bounties;
   ask?: number;
+  label: SubmissionLabels;
 }
 
 export type { SubmissionWithUser };

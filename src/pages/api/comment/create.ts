@@ -28,7 +28,6 @@ export default async function comment(
         authorId: userId as string,
         message,
         listingId,
-        listingType,
       },
       include: {
         author: {

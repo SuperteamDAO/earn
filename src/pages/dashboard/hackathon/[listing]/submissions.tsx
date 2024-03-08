@@ -12,7 +12,6 @@ import {
   SubmissionDetails,
   SubmissionHeader,
   SubmissionList,
-  SubmissionUserDetails,
 } from '@/features/sponsor-dashboard';
 import type { SubmissionWithUser } from '@/interface/submission';
 import { Sidebar } from '@/layouts/Sponsor';
@@ -177,10 +176,6 @@ function BountySubmissions({ listing }: Props) {
                     setTotalPaymentsMade={setTotalPaymentsMade}
                     setTotalWinners={setTotalWinners}
                     isHackathonPage
-                  />
-                  <SubmissionUserDetails
-                    submissions={submissions}
-                    selectedSubmission={selectedSubmission}
                   />
                 </Flex>
               </Flex>

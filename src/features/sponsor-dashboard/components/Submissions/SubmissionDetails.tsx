@@ -1,15 +1,23 @@
-import { ExternalLinkIcon } from '@chakra-ui/icons';
+import { ArrowForwardIcon, CopyIcon, ExternalLinkIcon } from '@chakra-ui/icons';
 import {
   Box,
   Button,
   Flex,
+  Image,
   Link,
+  Menu,
+  MenuButton,
+  MenuItem,
+  MenuList,
   Select,
   Spinner,
+  Tag,
+  TagLabel,
   Text,
   Tooltip,
 } from '@chakra-ui/react';
 import type NodeWallet from '@coral-xyz/anchor/dist/cjs/nodewallet';
+import { type SubmissionLabels } from '@prisma/client';
 import { useAnchorWallet, useWallet } from '@solana/wallet-adapter-react';
 import {
   PublicKey,
@@ -17,9 +25,16 @@ import {
   type TransactionInstruction,
 } from '@solana/web3.js';
 import axios from 'axios';
+import Avatar from 'boring-avatars';
 import dynamic from 'next/dynamic';
 import NextLink from 'next/link';
 import React, { type Dispatch, type SetStateAction, useState } from 'react';
+import { BsTwitterX } from 'react-icons/bs';
+import {
+  MdArrowDropDown,
+  MdOutlineAccountBalanceWallet,
+  MdOutlineMail,
+} from 'react-icons/md';
 
 import { tokenList } from '@/constants';
 import type { Bounty, Rewards } from '@/features/listings';
@@ -31,6 +46,8 @@ import {
 } from '@/utils/contract/contract';
 import { getURLSanitized } from '@/utils/getURLSanitized';
 import { truncatePublicKey } from '@/utils/truncatePublicKey';
+
+import { colorMap } from '../../utils';
 
 interface Props {
   bounty: Bounty | null;
@@ -47,6 +64,23 @@ interface Props {
   setTotalPaymentsMade: Dispatch<SetStateAction<number>>;
   isHackathonPage?: boolean;
 }
+
+const menuOptions = [
+  {
+    label: 'Unreviewed',
+    value: 'Unreviewed',
+    bg: 'orange.100',
+    color: 'orange.800',
+  },
+  { label: 'Reviewed', value: 'Reviewed', bg: 'blue.100', color: 'blue.600' },
+  {
+    label: 'Shortlisted',
+    value: 'Shortlisted',
+    bg: 'purple.100',
+    color: 'purple.600',
+  },
+  { label: 'Spam', value: 'Spam', bg: 'red.100', color: 'red.600' },
+];
 
 export const SubmissionDetails = ({
   bounty,
@@ -223,14 +257,44 @@ export const SubmissionDetails = ({
     }
   };
 
+  const selectLabel = async (
+    label: SubmissionLabels,
+    id: string | undefined,
+  ) => {
+    try {
+      await axios.post(`/api/submission/updateLabel/`, {
+        label,
+        id,
+      });
+      const submissionIndex = submissions.findIndex((s) => s.id === id);
+      if (submissionIndex >= 0) {
+        const updatedSubmission: SubmissionWithUser = {
+          ...(submissions[submissionIndex] as SubmissionWithUser),
+          label,
+        };
+        const newSubmissions = [...submissions];
+        newSubmissions[submissionIndex] = updatedSubmission;
+        setSubmissions(newSubmissions);
+        setSelectedSubmission(updatedSubmission);
+      }
+    } catch (e) {
+      console.log(e);
+    }
+  };
+
+  const { bg, color } = colorMap[selectedSubmission?.label as SubmissionLabels];
+
   return (
     <>
       <Box
         w="150%"
+        p={1.5}
         bg="white"
         borderColor="brand.slate.200"
         borderTopWidth="1px"
+        borderRightWidth={'1px'}
         borderBottomWidth="1px"
+        roundedRight={'xl'}
       >
         {submissions.length ? (
           <>
@@ -241,14 +305,45 @@ export const SubmissionDetails = ({
               px={4}
               py={3}
             >
-              <Text
-                w="100%"
-                color="brand.slate.900"
-                fontSize="lg"
-                fontWeight={500}
-              >
-                {`${selectedSubmission?.user?.firstName}'s Submission`}
-              </Text>
+              <Flex align="center" gap={2} w="full">
+                {selectedSubmission?.user?.photo ? (
+                  <Image
+                    w="40px"
+                    h="40px"
+                    borderRadius="full"
+                    objectFit={'cover'}
+                    alt={`${selectedSubmission?.user?.firstName} ${selectedSubmission?.user?.lastName}`}
+                    src={selectedSubmission?.user?.photo}
+                  />
+                ) : (
+                  <Avatar
+                    name={`${selectedSubmission?.user?.firstName} ${selectedSubmission?.user?.lastName}`}
+                    colors={['#92A1C6', '#F0AB3D', '#C271B4']}
+                    size={40}
+                    variant="marble"
+                  />
+                )}
+                <Box>
+                  <Text
+                    w="100%"
+                    color="brand.slate.900"
+                    fontSize="md"
+                    fontWeight={500}
+                    whiteSpace={'nowrap'}
+                  >
+                    {`${selectedSubmission?.user?.firstName}'s Submission`}
+                  </Text>
+                  <Text
+                    w="100%"
+                    color="brand.purple"
+                    fontSize="xs"
+                    fontWeight={500}
+                    whiteSpace={'nowrap'}
+                  >
+                    View Profile <ArrowForwardIcon mb="0.5" />
+                  </Text>
+                </Box>
+              </Flex>
               <Flex align="center" justify={'flex-end'} gap={2} w="full">
                 {selectedSubmission?.isWinner &&
                   selectedSubmission?.winnerPosition &&
@@ -257,7 +352,7 @@ export const SubmissionDetails = ({
                     <>
                       <DynamicWalletMultiButton
                         style={{
-                          height: '32px',
+                          height: '40px',
                           fontWeight: 600,
                           fontFamily: 'Inter',
                           // maxWidth: '96px',
@@ -300,7 +395,7 @@ export const SubmissionDetails = ({
                               ),
                             });
                           }}
-                          size="sm"
+                          size="md"
                           variant="solid"
                         >
                           Pay {bounty?.token}{' '}
@@ -347,7 +442,7 @@ export const SubmissionDetails = ({
                         );
                       }}
                       rightIcon={<ExternalLinkIcon />}
-                      size="sm"
+                      size="md"
                       variant="ghost"
                     >
                       View Payment Txn
@@ -355,6 +450,66 @@ export const SubmissionDetails = ({
                   )}
                 {isSelectingWinner && (
                   <Spinner color="brand.slate.400" size="sm" />
+                )}
+                {!bounty?.isWinnersAnnounced && (
+                  <Menu>
+                    <MenuButton
+                      as={Button}
+                      color="brand.slate.500"
+                      fontWeight={500}
+                      textTransform="capitalize"
+                      bg="transparent"
+                      borderWidth={'1px'}
+                      borderColor="brand.slate.300"
+                      _hover={{ backgroundColor: 'transparent' }}
+                      _active={{
+                        backgroundColor: 'transparent',
+                        borderWidth: '1px',
+                      }}
+                      _expanded={{ borderColor: 'brand.purple' }}
+                      rightIcon={<MdArrowDropDown />}
+                    >
+                      <Tag px={3} py={1} bg={bg} rounded="full">
+                        <TagLabel
+                          w="full"
+                          color={color}
+                          fontSize={'13px'}
+                          textAlign={'center'}
+                          textTransform={'capitalize'}
+                          whiteSpace={'nowrap'}
+                        >
+                          {selectedSubmission?.label || 'Select Option'}
+                        </TagLabel>
+                      </Tag>
+                    </MenuButton>
+                    <MenuList borderColor="brand.slate.300">
+                      {menuOptions.map((option) => (
+                        <MenuItem
+                          key={option.value}
+                          _focus={{ bg: 'brand.slate.100' }}
+                          onClick={() =>
+                            selectLabel(
+                              option.value as SubmissionLabels,
+                              selectedSubmission?.id,
+                            )
+                          }
+                        >
+                          <Tag px={3} py={1} bg={option.bg} rounded="full">
+                            <TagLabel
+                              w="full"
+                              color={option.color}
+                              fontSize={'11px'}
+                              textAlign={'center'}
+                              textTransform={'capitalize'}
+                              whiteSpace={'nowrap'}
+                            >
+                              {option.label}
+                            </TagLabel>
+                          </Tag>
+                        </MenuItem>
+                      ))}
+                    </MenuList>
+                  </Menu>
                 )}
                 {!bounty?.isWinnersAnnounced && (
                   <Tooltip
@@ -365,12 +520,15 @@ export const SubmissionDetails = ({
                     placement="top"
                   >
                     <Select
-                      minW={48}
-                      maxW={48}
+                      minW={44}
+                      maxW={44}
+                      color="brand.slate.500"
+                      fontWeight={500}
                       textTransform="capitalize"
                       borderColor="brand.slate.300"
                       _placeholder={{ color: 'brand.slate.300' }}
                       focusBorderColor="brand.purple"
+                      icon={<MdArrowDropDown />}
                       isDisabled={
                         !!bounty?.isWinnersAnnounced || isHackathonPage
                       }
@@ -404,6 +562,62 @@ export const SubmissionDetails = ({
                   </Tooltip>
                 )}
               </Flex>
+            </Flex>
+
+            <Flex align="center" gap={5} px={6} py={2}>
+              {selectedSubmission?.user?.email && (
+                <Flex align="center" justify="start" gap={2} fontSize="sm">
+                  <MdOutlineMail color="#94A3B8" />
+                  <Link
+                    color="brand.slate.400"
+                    href={`mailto:${selectedSubmission.user.email}`}
+                    isExternal
+                  >
+                    {selectedSubmission?.user?.email}
+                  </Link>
+                </Flex>
+              )}
+              {selectedSubmission?.user?.publicKey && (
+                <Flex align="center" justify="start" gap={2} fontSize="sm">
+                  <MdOutlineAccountBalanceWallet color="#94A3B8" />
+                  <Text color="brand.slate.400">
+                    {truncatePublicKey(selectedSubmission?.user?.publicKey, 4)}
+                    <Tooltip label="Copy Wallet ID" placement="right">
+                      <CopyIcon
+                        cursor="pointer"
+                        ml={1}
+                        color="brand.slate.400"
+                        onClick={() =>
+                          navigator.clipboard.writeText(
+                            selectedSubmission?.user?.publicKey || '',
+                          )
+                        }
+                      />
+                    </Tooltip>
+                  </Text>
+                </Flex>
+              )}
+              {selectedSubmission?.user?.twitter && (
+                <Flex align="center" justify="start" gap={2} fontSize="sm">
+                  <BsTwitterX color="#94A3B8" />
+
+                  <Link
+                    color="brand.slate.400"
+                    href={getURLSanitized(
+                      selectedSubmission?.user?.twitter?.replace(
+                        'twitter.com',
+                        'x.com',
+                      ) || '#',
+                    )}
+                    isExternal
+                  >
+                    {selectedSubmission?.user?.twitter?.replace(
+                      'twitter.com',
+                      'x.com',
+                    ) || '-'}
+                  </Link>
+                </Flex>
+              )}
             </Flex>
 
             <Box w="full" px={4} py={5}>
