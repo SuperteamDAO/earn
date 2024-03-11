@@ -136,6 +136,13 @@ export const tokenList = [
     coingeckoSymbol: 'saros-finance',
   },
   {
+    tokenName: 'Samoyed Coin',
+    tokenSymbol: 'SAMO',
+    mintAddress: '7xKXtg2CW87d97TXJSDpbD5jBkheTqA83TZRuJosgAsU',
+    icon: 'https://assets.coingecko.com/coins/images/15051/standard/IXeEj5e.png?1696514710',
+    coingeckoSymbol: 'samoyedcoin',
+  },
+  {
     tokenName: 'USDT',
     tokenSymbol: 'USDT',
     mintAddress: 'Es9vMFrzaCERmJfrF4H2FYD4KCoNkY11McCe8BenwNYB',
