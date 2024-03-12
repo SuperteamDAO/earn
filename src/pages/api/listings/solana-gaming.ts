@@ -17,7 +17,7 @@ export default async function user(req: NextApiRequest, res: NextApiResponse) {
         isPublished: true,
         isActive: true,
         isArchived: false,
-        isPrivate: false,
+        isPrivate: true,
         status: 'OPEN',
         sponsor: {
           name: 'Solana Gaming',
