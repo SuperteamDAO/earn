@@ -9,7 +9,7 @@
     "lint": "next lint",
     "format": "next lint --fix && prettier '**/*.{json,yaml}' --write --ignore-path .gitignore",
     "check-types": "tsc --noEmit --pretty",
-    "prepare": "husky install",
+    "prepare": "husky",
     "postinstall": "prisma generate",
     "knip": "knip",
     "find-deadcode": "ts-prune"

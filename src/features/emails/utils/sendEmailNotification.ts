@@ -6,15 +6,11 @@ type EmailType =
   | 'commentSponsor'
   | 'commentSubmission'
   | 'createListing'
-  | 'deadline3days'
-  | 'deadlineExceeded'
-  | 'deadlineExceededWeek'
   | 'deadlineExtended'
   | 'submissionLike'
   | 'submissionSponsor'
   | 'submissionTalent'
-  | 'superteamWinners'
-  | 'weeklyListingRoundup';
+  | 'superteamWinners';
 
 interface EmailNotificationParams {
   type: EmailType;
