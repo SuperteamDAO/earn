@@ -36,6 +36,8 @@ import {
 } from '@/features/listings';
 import { getURL } from '@/utils/validUrl';
 
+import { SponsorPrize } from '../SponsorPrize';
+
 interface Props {
   bounty: Bounty | null;
   onOpen: () => void;
@@ -211,9 +213,16 @@ export const SubmissionHeader = ({
                   ?.icon ?? '/assets/icons/green-dollar.svg'
               }
             />
-            <Text color="brand.slate.700" fontWeight={600}>
-              {(bounty?.rewardAmount || 0).toLocaleString('en-US')}
-            </Text>
+            <SponsorPrize
+              compensationType={bounty?.compensationType}
+              maxRewardAsk={bounty?.maxRewardAsk}
+              minRewardAsk={bounty?.minRewardAsk}
+              rewardAmount={bounty?.rewardAmount}
+              textStyle={{
+                fontWeight: 600,
+                color: 'brand.slate.700',
+              }}
+            />
             <Text color="brand.slate.400" fontWeight={600}>
               {bounty?.token}
             </Text>
