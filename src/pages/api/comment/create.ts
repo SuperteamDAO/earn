@@ -20,14 +20,13 @@ export default async function comment(
       return res.status(400).json({ error: 'Invalid token' });
     }
 
-    const { message, listingId, listingType } = req.body;
+    const { message, listingId } = req.body;
 
     const result = await prisma.comment.create({
       data: {
         authorId: userId as string,
         message,
         listingId,
-        listingType,
       },
       include: {
         author: {

@@ -55,6 +55,8 @@ export default async function submission(
         'Email ID': user.email,
         'User Twitter': user.twitter || '',
         'User Wallet': user.publicKey,
+        Label: item.label,
+        'Winner Position': item.isWinner ? item.winnerPosition : '',
       };
     });
     const parser = new Parser({});

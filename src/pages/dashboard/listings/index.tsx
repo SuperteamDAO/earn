@@ -60,6 +60,7 @@ import {
   getColorStyles,
   isDeadlineOver,
 } from '@/features/listings';
+import { SponsorPrize } from '@/features/sponsor-dashboard';
 import { Sidebar } from '@/layouts/Sponsor';
 import { userStore } from '@/store/user';
 
@@ -485,15 +486,17 @@ function Bounties() {
                               )[0]?.icon ?? '/assets/icons/green-dollar.svg'
                             }
                           />
-                          <Text
-                            color="brand.slate.700"
-                            fontSize={'sm'}
-                            fontWeight={500}
-                          >
-                            {(currentBounty.rewardAmount || 0).toLocaleString(
-                              'en-US',
-                            )}
-                          </Text>
+                          <SponsorPrize
+                            compensationType={currentBounty?.compensationType}
+                            maxRewardAsk={currentBounty?.maxRewardAsk}
+                            minRewardAsk={currentBounty?.minRewardAsk}
+                            rewardAmount={currentBounty?.rewardAmount}
+                            textStyle={{
+                              fontWeight: 500,
+                              fontSize: 'sm',
+                              color: 'brand.slate.700',
+                            }}
+                          />
                           <Text
                             color="brand.slate.400"
                             fontSize={'sm'}

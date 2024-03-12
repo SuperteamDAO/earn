@@ -43,6 +43,7 @@ const CreateSponsor = () => {
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [hasError, setHasError] = useState<boolean>(false);
   const [errorMessage, setErrorMessage] = useState<string>('');
+  const [loginStep, setLoginStep] = useState(0);
 
   const { userInfo } = userStore();
 
@@ -118,7 +119,7 @@ const CreateSponsor = () => {
               >
                 from joining Superteam Earn
               </Text>
-              <SignIn />
+              <SignIn loginStep={loginStep} setLoginStep={setLoginStep} />
             </Box>
           </Box>
         </>

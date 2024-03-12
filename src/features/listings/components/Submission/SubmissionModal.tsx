@@ -173,7 +173,6 @@ export const SubmissionModal = ({
 
       await axios.post(submissionEndpoint, {
         listingId: id,
-        listingType: 'BOUNTY',
         link: applicationLink || '',
         tweet: tweetLink || '',
         otherInfo: otherInfo || '',

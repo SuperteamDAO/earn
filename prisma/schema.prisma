@@ -170,27 +170,27 @@ model Grants {
 }
 
 model Submission {
-  id                 String      @id @default(uuid())
-  link               String?     @db.VarChar(500)
-  tweet              String?     @db.VarChar(500)
+  id                 String           @id @default(uuid())
+  link               String?          @db.VarChar(500)
+  tweet              String?          @db.VarChar(500)
   eligibilityAnswers Json?
   userId             String
-  listingType        ListingType @default(BOUNTY)
   listingId          String
-  isWinner           Boolean     @default(false)
+  isWinner           Boolean          @default(false)
   winnerPosition     String?
-  isActive           Boolean     @default(true)
-  isArchived         Boolean     @default(false)
-  createdAt          DateTime    @default(now())
-  updatedAt          DateTime    @updatedAt
+  isActive           Boolean          @default(true)
+  isArchived         Boolean          @default(false)
+  createdAt          DateTime         @default(now())
+  updatedAt          DateTime         @updatedAt
   like               Json?
   likes              Int?
-  isPaid             Boolean     @default(false)
+  isPaid             Boolean          @default(false)
   paymentDetails     Json?
-  otherInfo          String?     @db.VarChar(2000)
-  listing            Bounties    @relation(fields: [listingId], references: [id])
-  user               User        @relation(fields: [userId], references: [id])
+  otherInfo          String?          @db.VarChar(2000)
+  listing            Bounties         @relation(fields: [listingId], references: [id])
+  user               User             @relation(fields: [userId], references: [id])
   ask                Int?
+  label              SubmissionLabels @default(Unreviewed)
 
   @@index([id, listingId])
   @@index([userId])
@@ -306,6 +306,7 @@ model User {
   Hackathon         Hackathon?        @relation(fields: [hackathonId], references: [id])
   hackathonId       String?
   featureModalShown Boolean           @default(false)
+  emailSettings     EmailSettings[]
 
   @@index([email, publicKey, username])
   @@index([currentSponsorId])
@@ -325,6 +326,24 @@ model PoW {
   user        User     @relation(fields: [userId], references: [id])
 
   @@index([userId])
+}
+
+model UserEmailType {
+  id            Int             @id @default(autoincrement())
+  name          String
+  emailSettings EmailSettings[]
+}
+
+model EmailSettings {
+  id           Int           @id @default(autoincrement())
+  isSubscribed Boolean
+  user         User          @relation(fields: [userId], references: [id])
+  userId       String
+  emailType    UserEmailType @relation(fields: [emailTypeId], references: [id])
+  emailTypeId  Int
+
+  @@index([userId])
+  @@index([emailTypeId])
 }
 
 model UserSponsors {
@@ -445,8 +464,7 @@ enum BountyType {
 
 enum ListingType {
   BOUNTY
-  JOB
-  GRANT
+  SUBMISSION
 }
 
 enum JobType {
@@ -476,4 +494,11 @@ enum CompensationType {
   fixed
   range
   variable
+}
+
+enum SubmissionLabels {
+  Unreviewed
+  Reviewed
+  Shortlisted
+  Spam
 }

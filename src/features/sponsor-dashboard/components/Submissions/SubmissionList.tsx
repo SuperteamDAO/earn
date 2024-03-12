@@ -21,6 +21,8 @@ import React, {
 
 import type { SubmissionWithUser } from '@/interface/submission';
 
+import { colorMap } from '../../utils';
+
 interface Props {
   submissions: SubmissionWithUser[];
   setSearchText: Dispatch<SetStateAction<string>>;
@@ -45,6 +47,7 @@ export const SubmissionList = ({
       debouncedSetSearchText.cancel();
     };
   }, [debouncedSetSearchText]);
+
   return (
     <>
       <Box
@@ -84,6 +87,12 @@ export const SubmissionList = ({
           </InputGroup>
         </Flex>
         {submissions.map((submission) => {
+          const { bg, color } = submission?.isWinner
+            ? colorMap.winner
+            : colorMap[submission?.label] || {
+                bg: 'gray.100',
+                color: 'gray.600',
+              };
           return (
             <Flex
               key={submission?.id}
@@ -123,7 +132,7 @@ export const SubmissionList = ({
                     variant="marble"
                   />
                 )}
-                <Box w={36} ml={2}>
+                <Box w={48} ml={2}>
                   <Text
                     overflow={'hidden'}
                     color="brand.slate.700"
@@ -146,19 +155,27 @@ export const SubmissionList = ({
                   </Text>
                 </Box>
               </Flex>
-              {submission?.isWinner && submission?.winnerPosition && (
-                <Tag w={24} py={1} bg="green.100">
-                  <TagLabel
-                    w="full"
-                    color="green.600"
-                    textAlign={'center'}
-                    textTransform={'capitalize'}
-                  >
-                    🏆{' '}
-                    {type === 'project' ? 'Winner' : submission?.winnerPosition}
-                  </TagLabel>
-                </Tag>
-              )}
+              <Tag px={3} py={1} bg={bg} rounded="full">
+                <TagLabel
+                  w="full"
+                  color={color}
+                  fontSize={'11px'}
+                  textAlign={'center'}
+                  textTransform={'capitalize'}
+                  whiteSpace={'nowrap'}
+                >
+                  {submission?.isWinner && submission?.winnerPosition ? (
+                    <>
+                      🏆{' '}
+                      {type === 'project'
+                        ? 'Winner'
+                        : submission.winnerPosition}
+                    </>
+                  ) : (
+                    submission?.label
+                  )}
+                </TagLabel>
+              </Tag>
             </Flex>
           );
         })}

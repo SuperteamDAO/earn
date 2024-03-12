@@ -38,22 +38,44 @@ export default async function handler(
       include: {
         user: true,
       },
-      orderBy: { updatedAt: 'desc' },
+      orderBy: { createdAt: 'asc' },
       skip,
       take,
     });
 
     if (!submissions) {
       return res.status(404).json({
-        message: `submissions with slug=${slug} not found.`,
+        message: `Submissions with slug=${slug} not found.`,
       });
     }
 
-    return res.status(200).json(submissions);
+    const submissionsWithSortKey = submissions.map((submission) => ({
+      submission,
+      sortKey:
+        submission.label === 'Unreviewed'
+          ? 1
+          : submission.isWinner === true
+            ? 2
+            : submission.label === 'Shortlisted'
+              ? 3
+              : submission.label === 'Reviewed'
+                ? 4
+                : submission.label === 'Spam'
+                  ? 5
+                  : 6,
+    }));
+
+    submissionsWithSortKey.sort((a, b) => a.sortKey - b.sortKey);
+
+    const sortedSubmissions = submissionsWithSortKey.map(
+      (item) => item.submission,
+    );
+
+    return res.status(200).json(sortedSubmissions);
   } catch (error) {
     return res.status(400).json({
       error,
-      message: `Error occurred while fetching bounty with slug=${slug}.`,
+      message: `Error occurred while fetching submissions with slug=${slug}.`,
     });
   }
 }
