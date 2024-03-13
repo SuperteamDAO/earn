@@ -182,12 +182,6 @@ export const SubmissionModal = ({
           : null,
       });
 
-      if (!editMode) {
-        await axios.post(`/api/email/manual/submission`, {
-          listingId: id,
-        });
-      }
-
       reset();
       setIsSubmitted(true);
       setSubmissionNumber(submissionNumber + 1);

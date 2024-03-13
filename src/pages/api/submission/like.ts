@@ -1,6 +1,7 @@
 import type { NextApiRequest, NextApiResponse } from 'next';
 import { getToken } from 'next-auth/jwt';
 
+import { sendEmailNotification } from '@/features/emails';
 import { prisma } from '@/prisma';
 
 export default async function submission(
@@ -48,6 +49,10 @@ export default async function submission(
             date: Date.now(),
           },
         ];
+        await sendEmailNotification({
+          type: 'submissionLike',
+          id: submissionId,
+        });
       }
     } else {
       newLikes = [
@@ -56,6 +61,10 @@ export default async function submission(
           date: Date.now(),
         },
       ];
+      await sendEmailNotification({
+        type: 'submissionLike',
+        id: submissionId,
+      });
     }
 
     const updateLike = await prisma.submission.update({

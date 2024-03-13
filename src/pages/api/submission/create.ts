@@ -2,6 +2,7 @@ import axios from 'axios';
 import type { NextApiRequest, NextApiResponse } from 'next';
 import { getToken } from 'next-auth/jwt';
 
+import { sendEmailNotification } from '@/features/emails';
 import { prisma } from '@/prisma';
 
 export default async function submission(
@@ -37,6 +38,17 @@ export default async function submission(
         user: true,
         listing: true,
       },
+    });
+
+    await sendEmailNotification({
+      type: 'submissionTalent',
+      id: listingId,
+      userId: userId as string,
+    });
+
+    await sendEmailNotification({
+      type: 'submissionSponsor',
+      id: listingId,
     });
 
     if (process.env.NEXT_PUBLIC_VERCEL_ENV === 'production') {

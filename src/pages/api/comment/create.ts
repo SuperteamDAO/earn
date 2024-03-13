@@ -1,6 +1,7 @@
 import type { NextApiRequest, NextApiResponse } from 'next';
 import { getToken } from 'next-auth/jwt';
 
+import { sendEmailNotification } from '@/features/emails';
 import { prisma } from '@/prisma';
 
 export default async function comment(
@@ -20,7 +21,7 @@ export default async function comment(
       return res.status(400).json({ error: 'Invalid token' });
     }
 
-    const { message, listingId } = req.body;
+    const { message, listingId, listingType } = req.body;
 
     const result = await prisma.comment.create({
       data: {
@@ -39,6 +40,21 @@ export default async function comment(
         },
       },
     });
+
+    if (listingType === 'BOUNTY') {
+      await sendEmailNotification({
+        type: 'commentSponsor',
+        id: listingId,
+      });
+    }
+
+    if (listingType === 'SUBMISSION') {
+      await sendEmailNotification({
+        type: 'commentSubmission',
+        id: listingId,
+        userId: userId as string,
+      });
+    }
 
     return res.status(200).json(result);
   } catch (error) {

@@ -229,7 +229,6 @@ export const SubmissionDetails = ({
 
       await axios.post(`/api/submission/addPayment/`, {
         id,
-        amount,
         isPaid: true,
         paymentDetails: {
           txId: sig,
