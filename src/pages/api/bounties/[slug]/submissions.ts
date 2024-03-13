@@ -69,28 +69,24 @@ export default async function handler(
 
     const submissionsWithSortKey = submissions.map((submission) => {
       let sortKey = 0;
-      const isWinnersAnnounced = submission.listing.isWinnersAnnounced;
-
       if (submission.isWinner) {
         const positionValue = mapPositionToNumber(
           submission.winnerPosition as string,
         );
-        sortKey = isWinnersAnnounced
-          ? 100 + positionValue
-          : 100 + positionValue;
+        sortKey = positionValue;
       } else {
         switch (submission.label) {
           case 'Unreviewed':
-            sortKey = isWinnersAnnounced ? 4000 : 1;
+            sortKey = 400;
             break;
           case 'Shortlisted':
-            sortKey = 2000;
+            sortKey = 200;
             break;
           case 'Reviewed':
-            sortKey = 3000;
+            sortKey = submission.listing?.isWinnersAnnounced ? 300 : 600;
             break;
           case 'Spam':
-            sortKey = 10000;
+            sortKey = 1000;
             break;
         }
       }
