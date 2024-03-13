@@ -15,6 +15,7 @@ const nextConfig = {
   poweredByHeader: false,
   trailingSlash: true,
   reactStrictMode: true,
+  swcMinify: true,
   images: {
     domains: ['res.cloudinary.com'],
     formats: ['image/avif', 'image/webp'],
