@@ -6,6 +6,7 @@ import {
   Link,
   Skeleton,
   Text,
+  Tooltip,
 } from '@chakra-ui/react';
 import axios from 'axios';
 import Avatar from 'boring-avatars';
@@ -27,10 +28,13 @@ export function Banner({ isHackathonRoute }: { isHackathonRoute?: boolean }) {
   const { userInfo } = userStore();
   const [sponsorStats, setSponsorStats] = useState<SponsorStats>({});
   const [isLoading, setIsLoading] = useState<boolean>(true);
-
   const sponsorId = isHackathonRoute
     ? userInfo?.hackathonId
     : userInfo?.currentSponsorId;
+
+  const tooltiptextreward = `Total amount rewarded by sponsor : $${sponsorStats?.totalRewardAmount?.toLocaleString()}`;
+  const tooltiptextlistings = `Total Listing done by sponsor : ${sponsorStats?.totalListings?.toLocaleString()}`;
+  const tooltiptextsubmissions = `Total Submissions by sponsor : ${sponsorStats?.totalSubmissions?.toLocaleString()}`;
 
   useEffect(() => {
     const getSponsorStats = async () => {
@@ -110,47 +114,68 @@ export function Banner({ isHackathonRoute }: { isHackathonRoute?: boolean }) {
             borderColor={'brand.slate.200'}
             orientation="vertical"
           />
-          <Box>
-            <Text
-              color={'brand.slate.500'}
-              fontSize="md"
-              fontWeight={400}
-              whiteSpace={'nowrap'}
-            >
-              {!isHackathonRoute ? 'Rewarded' : 'Total Prizes'}
-            </Text>
-            {isLoading ? (
-              <Skeleton w="72px" h="20px" mt={2} />
-            ) : (
-              <Text color={'brand.slate.900'} fontSize="lg" fontWeight={600}>
-                ${sponsorStats?.totalRewardAmount?.toLocaleString()}
+          <Tooltip
+            color="grey"
+            bg="white"
+            label={tooltiptextreward}
+            placement="bottom"
+          >
+            <Box _hover={{ cursor: 'pointer' }}>
+              <Text
+                color={'brand.slate.500'}
+                fontSize="md"
+                fontWeight={400}
+                whiteSpace={'nowrap'}
+              >
+                {!isHackathonRoute ? 'Rewarded' : 'Total Prizes'}
               </Text>
-            )}
-          </Box>
-          <Box>
-            <Text color={'brand.slate.500'} fontSize="md" fontWeight={400}>
-              {!isHackathonRoute ? 'Listings' : 'Tracks'}
-            </Text>
-            {isLoading ? (
-              <Skeleton w="32px" h="20px" mt={2} />
-            ) : (
-              <Text color={'brand.slate.900'} fontSize="lg" fontWeight={600}>
-                {sponsorStats?.totalListings}
+              {isLoading ? (
+                <Skeleton w="72px" h="20px" mt={2} />
+              ) : (
+                <Text color={'brand.slate.900'} fontSize="lg" fontWeight={600}>
+                  ${sponsorStats?.totalRewardAmount?.toLocaleString()}
+                </Text>
+              )}
+            </Box>
+          </Tooltip>
+          <Tooltip
+            color="grey"
+            bg="white"
+            label={tooltiptextlistings}
+            placement="bottom"
+          >
+            <Box _hover={{ cursor: 'pointer' }}>
+              <Text color={'brand.slate.500'} fontSize="md" fontWeight={400}>
+                {!isHackathonRoute ? 'Listings' : 'Tracks'}
               </Text>
-            )}
-          </Box>
-          <Box>
-            <Text color={'brand.slate.500'} fontSize="md" fontWeight={400}>
-              Submissions
-            </Text>
-            {isLoading ? (
-              <Skeleton w="36px" h="20px" mt={2} />
-            ) : (
-              <Text color={'brand.slate.900'} fontSize="lg" fontWeight={600}>
-                {sponsorStats?.totalSubmissions}
+              {isLoading ? (
+                <Skeleton w="32px" h="20px" mt={2} />
+              ) : (
+                <Text color={'brand.slate.900'} fontSize="lg" fontWeight={600}>
+                  {sponsorStats?.totalListings}
+                </Text>
+              )}
+            </Box>
+          </Tooltip>
+          <Tooltip
+            color="grey"
+            bg="white"
+            label={tooltiptextsubmissions}
+            placement="bottom"
+          >
+            <Box _hover={{ cursor: 'pointer' }}>
+              <Text color={'brand.slate.500'} fontSize="md" fontWeight={400}>
+                Submissions
               </Text>
-            )}
-          </Box>
+              {isLoading ? (
+                <Skeleton w="36px" h="20px" mt={2} />
+              ) : (
+                <Text color={'brand.slate.900'} fontSize="lg" fontWeight={600}>
+                  {sponsorStats?.totalSubmissions}
+                </Text>
+              )}
+            </Box>
+          </Tooltip>
         </Flex>
       </Box>
 
