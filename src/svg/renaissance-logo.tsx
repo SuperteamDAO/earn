@@ -10,7 +10,7 @@ export const RenaissanceLogo = ({ styles }: { styles?: any }) => {
       xmlns="http://www.w3.org/2000/svg"
       style={styles}
     >
-      <g clip-path="url(#clip0_2_275)">
+      <g clipPath="url(#clip0_2_275)">
         <mask
           id="mask0_2_275"
           style={{ maskType: 'luminance' }}
