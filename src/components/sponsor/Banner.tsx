@@ -11,7 +11,7 @@ import {
 import axios from 'axios';
 import Avatar from 'boring-avatars';
 import { useEffect, useState } from 'react';
-import { MdOutlineChatBubbleOutline } from 'react-icons/md';
+import { MdInfoOutline, MdOutlineChatBubbleOutline } from 'react-icons/md';
 
 import { userStore } from '@/store/user';
 
@@ -32,9 +32,9 @@ export function Banner({ isHackathonRoute }: { isHackathonRoute?: boolean }) {
     ? userInfo?.hackathonId
     : userInfo?.currentSponsorId;
 
-  const tooltiptextreward = `Total amount rewarded by sponsor : $${sponsorStats?.totalRewardAmount?.toLocaleString()}`;
-  const tooltiptextlistings = `Total Listing done by sponsor : ${sponsorStats?.totalListings?.toLocaleString()}`;
-  const tooltiptextsubmissions = `Total Submissions by sponsor : ${sponsorStats?.totalSubmissions?.toLocaleString()}`;
+  const tooltiptextreward = `Total compensation (in USD) of listings where the winners have been announced : $${sponsorStats?.totalRewardAmount?.toLocaleString()}`;
+  const tooltiptextlistings = `Total number of listings added to Earn : ${sponsorStats?.totalListings?.toLocaleString()}`;
+  const tooltiptextsubmissions = `Total number of submissions/applications received on all listings : ${sponsorStats?.totalSubmissions?.toLocaleString()}`;
 
   useEffect(() => {
     const getSponsorStats = async () => {
@@ -121,14 +121,17 @@ export function Banner({ isHackathonRoute }: { isHackathonRoute?: boolean }) {
             placement="bottom"
           >
             <Box _hover={{ cursor: 'pointer' }}>
-              <Text
-                color={'brand.slate.500'}
-                fontSize="md"
-                fontWeight={400}
-                whiteSpace={'nowrap'}
-              >
-                {!isHackathonRoute ? 'Rewarded' : 'Total Prizes'}
-              </Text>
+              <Flex align="center">
+                <Text
+                  color={'brand.slate.500'}
+                  fontSize="md"
+                  fontWeight={400}
+                  whiteSpace={'nowrap'}
+                >
+                  {!isHackathonRoute ? 'Rewarded' : 'Total Prizes'}
+                </Text>
+                <MdInfoOutline color="#3182CE" size={18} />
+              </Flex>
               {isLoading ? (
                 <Skeleton w="72px" h="20px" mt={2} />
               ) : (
@@ -145,9 +148,17 @@ export function Banner({ isHackathonRoute }: { isHackathonRoute?: boolean }) {
             placement="bottom"
           >
             <Box _hover={{ cursor: 'pointer' }}>
-              <Text color={'brand.slate.500'} fontSize="md" fontWeight={400}>
-                {!isHackathonRoute ? 'Listings' : 'Tracks'}
-              </Text>
+              <Flex align="center">
+                <Text
+                  color={'brand.slate.500'}
+                  fontSize="md"
+                  fontWeight={400}
+                  whiteSpace={'nowrap'}
+                >
+                  {!isHackathonRoute ? 'Listings' : 'Tracks'}
+                </Text>
+                <MdInfoOutline color="#3182CE" size={18} />
+              </Flex>
               {isLoading ? (
                 <Skeleton w="32px" h="20px" mt={2} />
               ) : (
@@ -164,9 +175,17 @@ export function Banner({ isHackathonRoute }: { isHackathonRoute?: boolean }) {
             placement="bottom"
           >
             <Box _hover={{ cursor: 'pointer' }}>
-              <Text color={'brand.slate.500'} fontSize="md" fontWeight={400}>
-                Submissions
-              </Text>
+              <Flex align="center">
+                <Text
+                  color={'brand.slate.500'}
+                  fontSize="md"
+                  fontWeight={400}
+                  whiteSpace={'nowrap'}
+                >
+                  Submissions
+                </Text>
+                <MdInfoOutline color="#3182CE" size={18} />
+              </Flex>
               {isLoading ? (
                 <Skeleton w="36px" h="20px" mt={2} />
               ) : (
