@@ -11,7 +11,7 @@ import { useRouter } from 'next/router';
 import { SessionProvider, useSession } from 'next-auth/react';
 import NextTopLoader from 'nextjs-toploader';
 import posthog from 'posthog-js';
-import { PostHogProvider } from 'posthog-js/react';
+import { PostHogProvider, usePostHog } from 'posthog-js/react';
 import React, { useEffect } from 'react';
 
 import { SolanaWalletProvider } from '@/context/SolanaWallet';
@@ -70,6 +70,16 @@ function MyApp({ Component, pageProps }: any) {
   const { data: session, status } = useSession();
   const router = useRouter();
   const { setUserInfo, setIsLoggedIn } = userStore();
+
+  const posthog = usePostHog();
+
+  const newLoginState = router.query.loginState;
+  if (newLoginState == 'signedIn' && session) {
+    posthog.identify(session.user.email);
+    const url = new URL(window.location.href);
+    url.searchParams.delete('loginState');
+    window.history.replaceState(null, '', url.href);
+  }
 
   useEffect(() => {
     const fetchUserInfo = async () => {

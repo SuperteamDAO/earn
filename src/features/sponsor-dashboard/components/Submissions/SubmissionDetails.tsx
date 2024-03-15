@@ -170,12 +170,13 @@ export const SubmissionDetails = ({
     receiver: PublicKey;
   }) => {
     setIsPaying(true);
-    let sig = '';
     try {
-      const power = tokenList.find((e) => e.tokenSymbol === token)
-        ?.decimals as number;
-      const tokenAddress = tokenList.find((e) => e.tokenSymbol === token)
-        ?.mintAddress as string;
+      const { blockhash } = await connection.getLatestBlockhash();
+      const tokenDetails = tokenList.find((e) => e.tokenSymbol === token);
+      const power = tokenDetails?.decimals as number;
+      const tokenAddress = tokenDetails?.mintAddress as string;
+      let transaction;
+
       if (token === 'SOL') {
         const ix = await createPaymentSOL(
           anchorWallet as NodeWallet,
@@ -183,13 +184,7 @@ export const SubmissionDetails = ({
           amount,
           JSON.stringify(Math.floor(Math.random() * 1000000000)),
         );
-        const tx = new Transaction();
-        tx.add(ix);
-        const { blockhash } = await connection.getLatestBlockhash();
-        tx.recentBlockhash = blockhash;
-        tx.feePayer = (anchorWallet as NodeWallet).publicKey;
-        const signTx = await anchorWallet?.signTransaction(tx);
-        sig = await connection.sendRawTransaction(signTx!.serialize());
+        transaction = new Transaction().add(ix);
       } else {
         const [ix, ix2] = await createPaymentSPL(
           anchorWallet as NodeWallet,
@@ -198,21 +193,22 @@ export const SubmissionDetails = ({
           new PublicKey(tokenAddress as string),
           JSON.stringify(Math.floor(Math.random() * 10000)),
         );
-        const tx = new Transaction();
+        transaction = new Transaction();
         if (ix2) {
-          tx.add(ix2 as TransactionInstruction);
+          transaction.add(ix2 as TransactionInstruction);
         }
-        tx.add(ix as TransactionInstruction);
-        const { blockhash } = await connection.getLatestBlockhash();
-        tx.recentBlockhash = blockhash;
-        tx.feePayer = (anchorWallet as NodeWallet).publicKey;
-        const signTx = await anchorWallet?.signTransaction(tx);
-        sig = await connection.sendRawTransaction(signTx!.serialize(), {
-          skipPreflight: false,
-          maxRetries: 3,
-          preflightCommitment: 'confirmed',
-        });
+        transaction.add(ix as TransactionInstruction);
       }
+
+      transaction.recentBlockhash = blockhash;
+      transaction.feePayer = (anchorWallet as NodeWallet).publicKey;
+      const signTx = await anchorWallet?.signTransaction(transaction);
+      const sig = await connection.sendRawTransaction(signTx!.serialize(), {
+        skipPreflight: false,
+        maxRetries: 3,
+        preflightCommitment: 'confirmed',
+      });
+
       await new Promise((resolve, reject) => {
         connection.onSignature(
           sig,
