@@ -63,7 +63,7 @@
     "next-seo": "^6.5.0",
     "nextjs-toploader": "^1.6.6",
     "nodemailer": "^6.9.11",
-    "posthog-js": "^1.111.0",
+    "posthog-js": "^1.114.2",
     "react": "18.2.0",
     "react-countdown": "^2.3.5",
     "react-dom": "18.2.0",

@@ -44,7 +44,10 @@ export const SignIn = ({
     setHasAttemptedSubmit(true);
     if (isEmailValid) {
       localStorage.setItem('emailForSignIn', email);
-      signIn('email', { email });
+      signIn('email', {
+        email,
+        callbackUrl: `${router.asPath}?loginState=signedIn`,
+      });
     }
   };
 
@@ -70,7 +73,11 @@ export const SignIn = ({
                   fontSize="17px"
                   fontWeight={500}
                   leftIcon={<GoogleIcon />}
-                  onClick={() => signIn('google')}
+                  onClick={() =>
+                    signIn('google', {
+                      callbackUrl: `${router.asPath}?loginState=signedIn`,
+                    })
+                  }
                   size="lg"
                 >
                   Continue with Google
@@ -103,22 +110,6 @@ export const SignIn = ({
             )}
             {loginStep === 1 && (
               <>
-                {/* <Text
-                  color="brand.slate.900"
-                  fontSize={18}
-                  fontWeight={600}
-                  textAlign={'center'}
-                >
-                  What&apos;s your email?
-                </Text>
-                <Text
-                  color="brand.slate.600"
-                  fontSize={15}
-                  fontWeight={400}
-                  textAlign={'center'}
-                >
-                  Continue with any other email provider
-                </Text> */}
                 <FormControl isInvalid={isError}>
                   <Input
                     fontSize={'16px'}
