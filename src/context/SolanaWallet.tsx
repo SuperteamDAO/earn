@@ -16,10 +16,10 @@ export function SolanaWalletProvider({
   const network = WalletAdapterNetwork.Mainnet;
 
   let rpc: string;
-  if (process.env.NODE_ENV === 'development') {
-    rpc = 'https://beta.earn.superteam.fun/api/rpcProxy';
-  } else {
+  if (process.env.NODE_ENV === 'production') {
     rpc = 'https://earn.superteam.fun/api/rpcProxy';
+  } else {
+    rpc = 'https://beta.earn.superteam.fun/api/rpcProxy';
   }
 
   const endpoint = useMemo(() => rpc, [network]);
