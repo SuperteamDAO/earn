@@ -16,14 +16,13 @@ import {
   Text,
   Tooltip,
 } from '@chakra-ui/react';
-import type NodeWallet from '@coral-xyz/anchor/dist/cjs/nodewallet';
 import { type SubmissionLabels } from '@prisma/client';
-import { useAnchorWallet, useWallet } from '@solana/wallet-adapter-react';
 import {
-  PublicKey,
-  Transaction,
-  type TransactionInstruction,
-} from '@solana/web3.js';
+  createTransferInstruction,
+  getAssociatedTokenAddressSync,
+} from '@solana/spl-token';
+import { useConnection, useWallet } from '@solana/wallet-adapter-react';
+import { PublicKey, SystemProgram, Transaction } from '@solana/web3.js';
 import axios from 'axios';
 import Avatar from 'boring-avatars';
 import dynamic from 'next/dynamic';
@@ -39,11 +38,6 @@ import {
 import { tokenList } from '@/constants';
 import type { Bounty, Rewards } from '@/features/listings';
 import type { SubmissionWithUser } from '@/interface/submission';
-import {
-  connection,
-  createPaymentSOL,
-  createPaymentSPL,
-} from '@/utils/contract/contract';
 import { getURLSanitized } from '@/utils/getURLSanitized';
 import { truncatePublicKey } from '@/utils/truncatePublicKey';
 import { truncateString } from '@/utils/truncateString';
@@ -99,8 +93,7 @@ export const SubmissionDetails = ({
   const [isSelectingWinner, setIsSelectingWinner] = useState(false);
   const [isPaying, setIsPaying] = useState(false);
 
-  const { connected, publicKey } = useWallet();
-  const anchorWallet = useAnchorWallet();
+  const { connected, publicKey, sendTransaction } = useWallet();
 
   const isProject = bounty?.type === 'project';
   const isHackathon = bounty?.type === 'hackathon';
@@ -158,6 +151,8 @@ export const SubmissionDetails = ({
     }
   };
 
+  const { connection } = useConnection();
+
   const handlePayout = async ({
     id,
     token,
@@ -171,47 +166,59 @@ export const SubmissionDetails = ({
   }) => {
     setIsPaying(true);
     try {
-      const { blockhash } = await connection.getLatestBlockhash();
-      const tokenDetails = tokenList.find((e) => e.tokenSymbol === token);
-      const power = tokenDetails?.decimals as number;
-      const tokenAddress = tokenDetails?.mintAddress as string;
       let transaction;
+      const tokenDetails = tokenList.find((e) => e.tokenSymbol === token);
+      const tokenAddress = tokenDetails?.mintAddress as string;
+      const power = tokenDetails?.decimals as number;
+
+      const senderATA = await getAssociatedTokenAddressSync(
+        new PublicKey(tokenAddress),
+        publicKey as PublicKey,
+      );
+      const receiverATA = await getAssociatedTokenAddressSync(
+        new PublicKey(tokenAddress),
+        receiver as PublicKey,
+      );
 
       if (token === 'SOL') {
-        const ix = await createPaymentSOL(
-          anchorWallet as NodeWallet,
-          receiver,
-          amount,
-          JSON.stringify(Math.floor(Math.random() * 1000000000)),
+        const lamports = await connection.getMinimumBalanceForRentExemption(0);
+
+        transaction = new Transaction().add(
+          SystemProgram.transfer({
+            fromPubkey: publicKey as PublicKey,
+            toPubkey: receiver,
+            lamports,
+          }),
         );
-        transaction = new Transaction().add(ix);
       } else {
-        const [ix, ix2] = await createPaymentSPL(
-          anchorWallet as NodeWallet,
-          receiver,
-          (amount * 10 ** power) as number,
-          new PublicKey(tokenAddress as string),
-          JSON.stringify(Math.floor(Math.random() * 10000)),
+        transaction = new Transaction().add(
+          createTransferInstruction(
+            senderATA,
+            receiverATA,
+            publicKey as PublicKey,
+            amount * 10 ** power,
+          ),
         );
-        transaction = new Transaction();
-        if (ix2) {
-          transaction.add(ix2 as TransactionInstruction);
-        }
-        transaction.add(ix as TransactionInstruction);
       }
 
-      transaction.recentBlockhash = blockhash;
-      transaction.feePayer = (anchorWallet as NodeWallet).publicKey;
-      const signTx = await anchorWallet?.signTransaction(transaction);
-      const sig = await connection.sendRawTransaction(signTx!.serialize(), {
-        skipPreflight: false,
-        maxRetries: 3,
-        preflightCommitment: 'confirmed',
+      const {
+        context: { slot: minContextSlot },
+        value: { blockhash, lastValidBlockHeight },
+      } = await connection.getLatestBlockhashAndContext();
+
+      const signature = await sendTransaction(transaction, connection, {
+        minContextSlot,
+      });
+
+      await connection.confirmTransaction({
+        blockhash,
+        lastValidBlockHeight,
+        signature,
       });
 
       await new Promise((resolve, reject) => {
         connection.onSignature(
-          sig,
+          signature,
           (res) => {
             if (res.err) {
               reject(new Error('Transaction failed'));
@@ -227,16 +234,17 @@ export const SubmissionDetails = ({
         id,
         isPaid: true,
         paymentDetails: {
-          txId: sig,
+          txId: signature,
         },
       });
+
       const submissionIndex = submissions.findIndex((s) => s.id === id);
       if (submissionIndex >= 0) {
         const updatedSubmission: SubmissionWithUser = {
           ...(submissions[submissionIndex] as SubmissionWithUser),
           isPaid: true,
           paymentDetails: {
-            txId: sig,
+            txId: signature,
           },
         };
         const newSubmissions = [...submissions];
