@@ -143,6 +143,12 @@ export const tokenList = [
     coingeckoSymbol: 'samoyedcoin',
   },
   {
+    tokenName: 'DevWifHat (DWH)',
+    tokenSymbol: 'DWH',
+    mintAddress: 'DEVwHJ57QMPPArD2CyjboMbdWvjEMjXRigYpaUNDTD7o',
+    icon: '/assets/coins/dwh.png',
+  },
+  {
     tokenName: 'USDT',
     tokenSymbol: 'USDT',
     mintAddress: 'Es9vMFrzaCERmJfrF4H2FYD4KCoNkY11McCe8BenwNYB',
