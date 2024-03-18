@@ -32,7 +32,6 @@ function AllCategoryListingsPage({ slug }: { slug: string }) {
         params: {
           category: 'bounties',
           filter: slug,
-          type: 'bounty',
           take: 100,
         },
       });
