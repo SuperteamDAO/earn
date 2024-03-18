@@ -32,6 +32,9 @@ export function AboutYou({ setStep, useFormStore }: Step1Props) {
   const [userNameValid, setuserNameValid] = useState(true);
   const { updateState, form } = useFormStore();
   const { userInfo } = userStore();
+  const [isGooglePhoto, setIsGooglePhoto] = useState<boolean>(
+    userInfo?.photo?.includes('googleusercontent.com') || false,
+  );
 
   const { register, handleSubmit, watch } = useForm({
     defaultValues: {
@@ -39,7 +42,7 @@ export function AboutYou({ setStep, useFormStore }: Step1Props) {
       lastName: userInfo?.lastName,
       username: userInfo?.username ?? '',
       location: form.location,
-      photo: form.photo,
+      photo: userInfo?.photo,
       bio: form.bio,
     },
   });
@@ -52,7 +55,7 @@ export function AboutYou({ setStep, useFormStore }: Step1Props) {
         return;
       }
     }
-    updateState({ ...data, photo: imageUrl });
+    updateState({ ...data, photo: isGooglePhoto ? userInfo?.photo : imageUrl });
     setStep((i) => i + 1);
   };
 
@@ -150,6 +153,7 @@ export function AboutYou({ setStep, useFormStore }: Step1Props) {
                   onChange={async (e) => {
                     setUploading(true);
                     const a = await uploadToCloudinary(e);
+                    setIsGooglePhoto(false);
                     setImageUrl(a);
                     setUploading(false);
                   }}
