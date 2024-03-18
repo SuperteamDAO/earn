@@ -15,8 +15,7 @@ export function SolanaWalletProvider({
 }) {
   const network = WalletAdapterNetwork.Mainnet;
 
-  // let rpc: string;
-  const rpc = 'https://beta.earn.superteam.fun/api/rpcProxy';
+  const rpc = `https://${process.env.NEXT_PUBLIC_RPC_URL}`;
 
   const endpoint = useMemo(() => rpc, [network]);
 

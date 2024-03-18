@@ -22,7 +22,12 @@ import {
   getAssociatedTokenAddressSync,
 } from '@solana/spl-token';
 import { useConnection, useWallet } from '@solana/wallet-adapter-react';
-import { PublicKey, SystemProgram, Transaction } from '@solana/web3.js';
+import {
+  LAMPORTS_PER_SOL,
+  PublicKey,
+  SystemProgram,
+  Transaction,
+} from '@solana/web3.js';
 import axios from 'axios';
 import Avatar from 'boring-avatars';
 import dynamic from 'next/dynamic';
@@ -171,6 +176,8 @@ export const SubmissionDetails = ({
       const tokenAddress = tokenDetails?.mintAddress as string;
       const power = tokenDetails?.decimals as number;
 
+      const latestBlockHash = await connection.getLatestBlockhash();
+
       const senderATA = await getAssociatedTokenAddressSync(
         new PublicKey(tokenAddress),
         publicKey as PublicKey,
@@ -181,13 +188,11 @@ export const SubmissionDetails = ({
       );
 
       if (token === 'SOL') {
-        const lamports = await connection.getMinimumBalanceForRentExemption(0);
-
         transaction = new Transaction().add(
           SystemProgram.transfer({
             fromPubkey: publicKey as PublicKey,
             toPubkey: receiver,
-            lamports,
+            lamports: LAMPORTS_PER_SOL * amount,
           }),
         );
       } else {
@@ -201,18 +206,11 @@ export const SubmissionDetails = ({
         );
       }
 
-      const {
-        context: { slot: minContextSlot },
-        value: { blockhash, lastValidBlockHeight },
-      } = await connection.getLatestBlockhashAndContext();
-
-      const signature = await sendTransaction(transaction, connection, {
-        minContextSlot,
-      });
+      const signature = await sendTransaction(transaction, connection);
 
       await connection.confirmTransaction({
-        blockhash,
-        lastValidBlockHeight,
+        blockhash: latestBlockHash.blockhash,
+        lastValidBlockHeight: latestBlockHash.lastValidBlockHeight,
         signature,
       });
 
