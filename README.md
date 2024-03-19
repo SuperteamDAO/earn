@@ -69,6 +69,11 @@ We welcome contributions from everyone! Whether it's submitting an issue, a pull
 
 Facing an issue? Please feel free to reach out to [Abhishek](https://twitter.com/abhwshek) or [Pratik](https://twitter.com/pratikdholani)
 
+### Why should you contribute to Earn?
+- Consistent, good-quality contributions will earn you [contributor](https://docs.superteam.fun/the-superteam-handbook/getting-started/community-structure) status in the Superteam of your preference! Contributors get special access to channels on Discord, preferential entry to events, and is a great stepping stone to becoming a Superteam member.
+- Get [XP](https://docs.superteam.fun/the-superteam-handbook/community/the-reputation-system) if you're already a Superteam Member or Contributor
+- Unwavering love and support from the Superteam Earn team!
+
 ### Contributors
 <a href="https://github.com/SuperteamDAO/earn/graphs/contributors">
   <img src="https://contrib.rocks/image?repo=SuperteamDAO/earn" />

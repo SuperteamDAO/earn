@@ -514,8 +514,8 @@ export const SubmissionModal = ({
                   Add your Solana wallet address here. This is where you will
                   receive your rewards if you win. Download{' '}
                   <Text as="u">
-                    <Link href="https://phantom.app" isExternal>
-                      Phantom
+                    <Link href="https://backpack.app" isExternal>
+                      Backpack
                     </Link>
                   </Text>{' '}
                   /{' '}

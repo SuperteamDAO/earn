@@ -12,6 +12,7 @@ import {
   type Bounty,
   Comments,
   DescriptionUI,
+  getBountyTypeLabel,
   ListingHeader,
   ListingWinners,
   RightSideBar,
@@ -67,7 +68,7 @@ function BountyDetails({ bounty: initialBounty }: BountyDetailsProps) {
           } by ${initialBounty?.sponsor?.name}`}</title>
           <meta
             name="description"
-            content={`Bounty on Superteam Earn | ${
+            content={`${getBountyTypeLabel(initialBounty?.type ?? 'Bounty')} on Superteam Earn | ${
               initialBounty?.sponsor?.name
             } is seeking freelancers and builders ${
               initialBounty?.title

@@ -209,12 +209,13 @@ export function UserInfo({ isMobile }: UserInfoProps) {
             <HStack gap={0} w={{ base: '100%', md: 'auto' }}>
               <Button
                 display={isMobile ? 'none' : { base: 'none', md: 'block' }}
+                color="#6366F1"
                 fontSize="xs"
+                bg={'white'}
                 onClick={() => {
                   router.push('/sponsor');
                 }}
                 size="sm"
-                variant={{ base: 'solid', md: 'ghost' }}
               >
                 Create A Listing
               </Button>
