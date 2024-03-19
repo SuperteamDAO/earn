@@ -89,6 +89,7 @@ model Bounties {
   compensationType     CompensationType   @default(fixed)
   minRewardAsk         Int?
   maxRewardAsk         Int?
+  winnerBannerUrl      String?
 
   @@index([id, slug])
   @@index([sponsorId])
