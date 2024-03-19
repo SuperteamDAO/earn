@@ -60,7 +60,7 @@ export function ListingWinners({ bounty }: Props) {
       let path = window.location.href.split('?')[0];
       if (!path) return;
 
-      path += '/winner';
+      path += 'winner';
 
       console.log('twitter id - ', bounty?.sponsor?.twitter);
       const tweetLink = tweetEmbedLink(
@@ -124,7 +124,7 @@ export function ListingWinners({ bounty }: Props) {
       let path = window.location.href.split('?')[0];
       if (!path) return;
 
-      path += '/winner';
+      path += 'winner';
 
       const tweetLink = tweetEmbedLink(
         tweetTemplate(
