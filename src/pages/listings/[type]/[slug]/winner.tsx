@@ -4,7 +4,7 @@ import Head from 'next/head';
 import { useRouter } from 'next/router';
 import { useEffect, useState } from 'react';
 
-import { type Bounty } from '@/features/listings';
+import { type Bounty, getBountyTypeLabel } from '@/features/listings';
 import { getURL } from '@/utils/validUrl';
 
 interface BountyDetailsProps {
@@ -26,7 +26,7 @@ function WinnerBounty({ bounty: initialBounty }: BountyDetailsProps) {
       } by ${initialBounty?.sponsor?.name}`}</title>
       <meta
         name="description"
-        content={`Bounty on Superteam Earn | ${
+        content={`${getBountyTypeLabel(initialBounty?.type ?? 'Bounty')} on Superteam Earn | ${
           initialBounty?.sponsor?.name
         } is seeking freelancers and builders ${
           initialBounty?.title

@@ -6,6 +6,7 @@ import NextLink from 'next/link';
 import { useCallback, useEffect, useRef, useState } from 'react';
 
 import type { SubmissionWithUser } from '@/interface/submission';
+import { openExternalLinkInNewTab } from '@/utils/linkInNewTab';
 import { sortRank } from '@/utils/rank';
 import { tweetEmbedLink, tweetTemplate } from '@/utils/tweetTemplate';
 import { uploadToCloudinary } from '@/utils/upload';
@@ -56,13 +57,11 @@ export function ListingWinners({ bounty }: Props) {
   const onShareClick = useCallback(async () => {
     setLoadingBanner(true);
     if (bannerUrl) {
-      console.log('banner already exists', bannerUrl);
       let path = window.location.href.split('?')[0];
       if (!path) return;
 
       path += 'winner';
 
-      console.log('twitter id - ', bounty?.sponsor?.twitter);
       const tweetLink = tweetEmbedLink(
         tweetTemplate(
           bounty.sponsor?.twitter ?? bounty.sponsor?.name ?? '',
@@ -71,18 +70,11 @@ export function ListingWinners({ bounty }: Props) {
         ),
       );
 
-      const link = document.createElement('a');
-      link.href = tweetLink.toString();
-      link.target = '_blank';
-      link.style.visibility = 'hidden';
-      document.body.appendChild(link);
-      link.click();
-      document.body.removeChild(link);
+      openExternalLinkInNewTab(tweetLink);
 
       setLoadingBanner(false);
       return;
     }
-    console.log('banner doesnt exists, creating one ');
     if (!winnerBannerRef.current) return;
     const canvas = await html2canvas(winnerBannerRef.current, {
       useCORS: true,
@@ -92,10 +84,8 @@ export function ListingWinners({ bounty }: Props) {
       y: 0,
       onclone: (el) => {
         const elementsWithShiftedDownwardText =
-          el.querySelectorAll('.shifted-text');
+          el.querySelectorAll<HTMLElement>('.shifted-text');
         elementsWithShiftedDownwardText.forEach((element) => {
-          // adjust styles or do whatever you want here
-          //@ts-expect-error Style is definitely typed but not recognized
           element.style.transform = 'translateY(-30%)';
         });
       },
@@ -103,17 +93,13 @@ export function ListingWinners({ bounty }: Props) {
     // const data = canvas.toDataURL('image/jpg')
     canvas.toBlob(async function (blob) {
       if (!bounty.id || !bounty.slug) return;
-      console.log('bounty id:  ', bounty.id);
       const fileName = `${bounty.id}-winner-banner`;
       const mimeType = 'image/png';
 
       if (!blob) return;
       const file = new File([blob], fileName, { type: mimeType });
 
-      console.log('File ready for upload: ', file);
-
       const url = await uploadToCloudinary(file);
-      console.log('uploaded url:  ', url);
 
       await axios.put(`/api/bounties/${bounty.slug}/setWinnerBanner`, {
         image: url,
@@ -134,13 +120,7 @@ export function ListingWinners({ bounty }: Props) {
         ),
       );
 
-      const link = document.createElement('a');
-      link.href = tweetLink.toString();
-      link.target = '_blank';
-      link.style.visibility = 'hidden';
-      document.body.appendChild(link);
-      link.click();
-      document.body.removeChild(link);
+      openExternalLinkInNewTab(tweetLink);
 
       setLoadingBanner(false);
     }, 'image/png');
@@ -256,8 +236,8 @@ export function ListingWinners({ bounty }: Props) {
             right={5}
             gap={2}
             display="flex"
-            color="rgba(0, 0, 0, 0.8)"
-            fontSize="large"
+            color="rgba(0, 0, 0, 0.65)"
+            fontSize="24px"
             fontWeight={500}
             bg="white"
             _hover={{ background: 'rgba(255, 255, 255, 0.8)' }}
@@ -268,8 +248,8 @@ export function ListingWinners({ bounty }: Props) {
             Share on
             <Center w="1.5rem">
               <svg
-                width="33"
-                height="33"
+                width="33px"
+                height="33px"
                 viewBox="0 0 33 33"
                 fill="none"
                 xmlns="http://www.w3.org/2000/svg"
