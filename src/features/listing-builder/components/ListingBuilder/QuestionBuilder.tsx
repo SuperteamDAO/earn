@@ -96,7 +96,7 @@ export const QuestionBuilder = ({
             w="100%"
             onClick={() => {
               if (questions.length === 0) {
-                toast.error('Add minimun of one question');
+                toast.error('Add minimum of one question');
                 return;
               }
               const rejectedQuestion: any[] = [];

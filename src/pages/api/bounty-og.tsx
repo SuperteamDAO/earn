@@ -53,7 +53,7 @@ export default async function handler(request: NextRequest) {
       case 'range':
         displayReward = `${minRewardAsk} - ${maxRewardAsk}`;
         break;
-      case 'Variable':
+      case 'variable':
         displayReward = 'Variable';
         break;
     }
