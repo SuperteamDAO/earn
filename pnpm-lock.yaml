@@ -110,6 +110,9 @@ dependencies:
   html-react-parser:
     specifier: ^5.1.1
     version: 5.1.1(react@18.2.0)
+  html2canvas:
+    specifier: ^1.4.1
+    version: 1.4.1
   husky:
     specifier: ^9.0.7
     version: 9.0.7
@@ -3458,7 +3461,7 @@ packages:
       '@react-native-community/cli-tools': 12.3.6
       chalk: 4.1.2
       execa: 5.1.1
-      fast-xml-parser: 4.3.6
+      fast-xml-parser: 4.3.5
       glob: 7.2.3
       logkitty: 0.7.1
     transitivePeerDependencies:
@@ -3471,7 +3474,7 @@ packages:
       '@react-native-community/cli-tools': 12.3.6
       chalk: 4.1.2
       execa: 5.1.1
-      fast-xml-parser: 4.3.6
+      fast-xml-parser: 4.3.5
       glob: 7.2.3
       ora: 5.4.1
     transitivePeerDependencies:
@@ -5927,6 +5930,11 @@ packages:
     resolution: {integrity: sha512-FuwxlW4H5kh37X/oW59pwTzzTKRzfrrQwhmyspRM7swOEZcHtDZSCt45U6oKgtuFE+WYPblePMVIPR4RZrh/hw==}
     dev: false
 
+  /base64-arraybuffer@1.0.2:
+    resolution: {integrity: sha512-I3yl4r9QB5ZRY3XuJVEPfc2XhZO6YweFPI+UovAzn+8/hb3oJ6lnysaFcjVpkCPfVWFUDvoZ8kmVDP7WyRtYtQ==}
+    engines: {node: '>= 0.6.0'}
+    dev: false
+
   /base64-js@0.0.8:
     resolution: {integrity: sha512-3XSA2cR/h/73EzlXXdU6YNycmYI7+kicTxks4eJg2g39biHR84slg2+des+p7iHYhbRg/udIS4TD53WabcOUkw==}
     engines: {node: '>= 0.4'}
@@ -6534,6 +6542,12 @@ packages:
   /css-color-keywords@1.0.0:
     resolution: {integrity: sha512-FyyrDHZKEjXDpNJYvVsV960FiqQyXc/LlYmsxl2BcdMb2WPx0OGRVgTg55rPSyLSNMqP52R9r8geSp7apN3Ofg==}
     engines: {node: '>=4'}
+    dev: false
+
+  /css-line-break@2.1.0:
+    resolution: {integrity: sha512-FHcKFCZcAha3LwfVBhCQbW2nCNbkZXn7KVUJcsT5/P8YmfsVja0FMPJr0B903j/E69HUphKiV9iQArX8SDYA4w==}
+    dependencies:
+      utrie: 1.0.2
     dev: false
 
   /css-to-react-native@3.2.0:
@@ -7459,8 +7473,8 @@ packages:
     resolution: {integrity: sha512-wpYMUmFu5f00Sm0cj2pfivpmawLZ0NKdviQ4w9zJeR8JVtOpOxHmLaJuj0vxvGqMJQWyP/COUkF75/57OKyRag==}
     dev: false
 
-  /fast-xml-parser@4.3.6:
-    resolution: {integrity: sha512-M2SovcRxD4+vC493Uc2GZVcZaj66CCJhWurC4viynVSTvrpErCShNcDz1lAho6n9REQKvL/ll4A4/fw6Y9z8nw==}
+  /fast-xml-parser@4.3.5:
+    resolution: {integrity: sha512-sWvP1Pl8H03B8oFJpFR3HE31HUfwtX7Rlf9BNsvdpujD4n7WMhfmu8h9wOV2u+c1k0ZilTADhPqypzx2J690ZQ==}
     hasBin: true
     dependencies:
       strnum: 1.0.5
@@ -7984,6 +7998,14 @@ packages:
       dom-serializer: 2.0.0
       htmlparser2: 8.0.2
       selderee: 0.11.0
+    dev: false
+
+  /html2canvas@1.4.1:
+    resolution: {integrity: sha512-fPU6BHNpsyIhr8yyMpTLLxAbkaK8ArIBcmZIRiBLiDhjeqvXolaEmDGmELFuX9I4xDcaKKcJl+TKZLqruBbmWA==}
+    engines: {node: '>=8.0.0'}
+    dependencies:
+      css-line-break: 2.1.0
+      text-segmentation: 1.0.3
     dev: false
 
   /htmlparser2@8.0.2:
@@ -9159,7 +9181,7 @@ packages:
     resolution: {integrity: sha512-83eZaH2+B+jP92KuodPqXknzwmiboKAuZY4doRfTEEXAG57pNVNN6cqSRJlwDnmaTBKRffxoncBXbYqHQgulgg==}
     engines: {node: '>=18'}
     dependencies:
-      terser: 5.29.2
+      terser: 5.29.1
     dev: false
 
   /metro-resolver@0.80.6:
@@ -11466,8 +11488,8 @@ packages:
       source-map-support: 0.5.21
     dev: false
 
-  /terser@5.29.2:
-    resolution: {integrity: sha512-ZiGkhUBIM+7LwkNjXYJq8svgkd+QK3UUr0wJqY4MieaezBSAIPgbSPZyIx0idM6XWK5CMzSWa8MJIzmRcB8Caw==}
+  /terser@5.29.1:
+    resolution: {integrity: sha512-lZQ/fyaIGxsbGxApKmoPTODIzELy3++mXhS5hOqaAWZjQtpq/hFHAc+rm29NND1rYRxRWKcjuARNwULNXa5RtQ==}
     engines: {node: '>=10'}
     hasBin: true
     dependencies:
@@ -11479,6 +11501,12 @@ packages:
 
   /text-encoding-utf-8@1.0.2:
     resolution: {integrity: sha512-8bw4MY9WjdsD2aMtO0OzOCY3pXGYNx2d2FfHRVUKkiCPDWjKuOlhLVASS+pD7VkLTVjW268LYJHwsnPFlBpbAg==}
+    dev: false
+
+  /text-segmentation@1.0.3:
+    resolution: {integrity: sha512-iOiPUo/BGnZ6+54OsWxZidGCsdU8YbE4PSpdPinp7DeMtUJNJBoJ/ouUSTJjHkh1KntHaltHl/gDs2FC4i5+Nw==}
+    dependencies:
+      utrie: 1.0.2
     dev: false
 
   /text-table@0.2.0:
@@ -11869,6 +11897,12 @@ packages:
   /utils-merge@1.0.1:
     resolution: {integrity: sha512-pMZTvIkT1d+TFGvDOqodOclx0QWkkgi6Tdoa8gC8ffGAAqz9pzPTZWAybbsHHoED/ztMtkv/VoYTYyShUn81hA==}
     engines: {node: '>= 0.4.0'}
+    dev: false
+
+  /utrie@1.0.2:
+    resolution: {integrity: sha512-1MLa5ouZiOmQzUbjbu9VmjLzn1QLXBhwpUa7kdLUQK+KQ5KA9I1vk5U4YHe/X2Ch7PYnJfWuWT+VbuxbGwljhw==}
+    dependencies:
+      base64-arraybuffer: 1.0.2
     dev: false
 
   /uuid@8.3.2:
