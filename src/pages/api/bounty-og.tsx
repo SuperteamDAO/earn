@@ -39,8 +39,8 @@ export default async function handler(request: NextRequest) {
     const type = getParam('type');
     const logo = getParam('logo', (x) => formatString(x, 100)) || sponsorImg;
     const reward = getParam('reward', formatNumber);
-    const minRewardAmount = getParam('minRewardAmount', formatNumber);
-    const maxRewardAmount = getParam('maxRewardAmount', formatNumber);
+    const minRewardAsk = getParam('minRewardAsk', formatNumber);
+    const maxRewardAsk = getParam('maxRewardAsk', formatNumber);
     const compensationType = getParam('compensationType', (x) => x) || 'fixed';
     const sponsor = getParam('sponsor', (x) => formatString(x, 100));
     const token = getParam('token', (x) => formatString(x, 100));
@@ -51,7 +51,7 @@ export default async function handler(request: NextRequest) {
         displayReward = reward;
         break;
       case 'range':
-        displayReward = `${minRewardAmount} - ${maxRewardAmount}`;
+        displayReward = `${minRewardAsk} - ${maxRewardAsk}`;
         break;
       case 'Variable':
         displayReward = 'Variable';
