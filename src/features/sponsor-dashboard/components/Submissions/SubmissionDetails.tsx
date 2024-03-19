@@ -285,7 +285,11 @@ export const SubmissionDetails = ({
     }
   };
 
-  const { bg, color } = colorMap[selectedSubmission?.label as SubmissionLabels];
+  let bg, color;
+
+  if (submissions.length > 0) {
+    ({ bg, color } = colorMap[selectedSubmission?.label as SubmissionLabels]);
+  }
 
   return (
     <>
