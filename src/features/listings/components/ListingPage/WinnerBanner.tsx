@@ -127,6 +127,7 @@ const ProfileIcon: React.FC<{
         <Image
           boxSize="126.26px"
           borderRadius="full"
+          objectFit="cover"
           alt={`${winner?.user?.firstName} ${winner?.user?.lastName}`}
           src={winner?.user?.photo}
         />
