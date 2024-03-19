@@ -1,4 +1,4 @@
-import { Box, Flex, Image, Text } from '@chakra-ui/react';
+import { Box, Button, Center, Flex, Image, Text } from '@chakra-ui/react';
 import axios from 'axios';
 import Avatar from 'boring-avatars';
 import NextLink from 'next/link';
@@ -8,6 +8,7 @@ import type { SubmissionWithUser } from '@/interface/submission';
 import { sortRank } from '@/utils/rank';
 
 import type { Bounty, Rewards } from '../../types';
+import WinnerBanner from './WinnerBanner';
 
 interface Props {
   bounty: Bounty;
@@ -60,8 +61,14 @@ export function ListingWinners({ bounty }: Props) {
       >
         🎉 Winners Announced
       </Text>
+      <WinnerBanner
+        bounty={bounty}
+        submissions={submissions}
+        isProject={isProject}
+      />
       <Box mx={3}>
         <Box
+          pos="relative"
           w="full"
           px={10}
           py={6}
@@ -138,6 +145,37 @@ export function ListingWinners({ bounty }: Props) {
               </NextLink>
             ))}
           </Flex>
+          <NextLink href={`/listings/${bounty?.type}/${bounty?.slug}/winners/`}>
+            <Button
+              pos="absolute"
+              top={5}
+              right={5}
+              gap={2}
+              display="flex"
+              color="rgba(0, 0, 0, 0.8)"
+              fontSize="large"
+              fontWeight={500}
+              bg="white"
+              _hover={{ background: 'rgba(255, 255, 255, 0.8)' }}
+              _active={{ background: 'rgba(255, 255, 255, 0.5)' }}
+            >
+              Share on
+              <Center w="1.5rem">
+                <svg
+                  width="33"
+                  height="33"
+                  viewBox="0 0 33 33"
+                  fill="none"
+                  xmlns="http://www.w3.org/2000/svg"
+                >
+                  <path
+                    d="M25.0851 3.09375H29.6355L19.6968 14.4504L31.3886 29.9062H22.2363L15.0626 20.5348L6.86421 29.9062H2.30737L12.9357 17.7568L1.72729 3.09375H11.1117L17.5892 11.6596L25.0851 3.09375ZM23.4867 27.1863H26.0068L9.73882 5.67188H7.03179L23.4867 27.1863Z"
+                    fill="black"
+                  />
+                </svg>
+              </Center>
+            </Button>
+          </NextLink>
         </Box>
       </Box>
     </Box>
