@@ -237,7 +237,7 @@ export function ListingWinners({ bounty }: Props) {
             gap={2}
             display="flex"
             color="rgba(0, 0, 0, 0.65)"
-            fontSize="24px"
+            fontSize="14px"
             fontWeight={500}
             bg="white"
             _hover={{ background: 'rgba(255, 255, 255, 0.8)' }}
@@ -246,7 +246,7 @@ export function ListingWinners({ bounty }: Props) {
             onClick={onShareClick}
           >
             Share on
-            <Center w="1.5rem">
+            <Center w="1.2rem">
               <svg
                 width="33px"
                 height="33px"
