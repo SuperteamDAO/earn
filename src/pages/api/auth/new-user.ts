@@ -38,7 +38,9 @@ export default async function newUser(
     const hasInvite = user && invite;
 
     if (!hasInvite) {
-      return res.status(307).redirect('/new?onboarding=true');
+      return res
+        .status(307)
+        .redirect('/new?onboarding=true&loginState=signedIn');
     } else {
       await prisma.userSponsors.create({
         data: {
@@ -55,7 +57,9 @@ export default async function newUser(
           currentSponsorId: invite?.sponsorId,
         },
       });
-      return res.status(307).redirect('/dashboard/listings');
+      return res
+        .status(307)
+        .redirect('/dashboard/listings/?loginState=signedIn');
     }
   } catch (error) {
     return res.status(400).json({

@@ -62,8 +62,13 @@ export function ListingWinners({ bounty }: Props) {
 
       path += '/winner';
 
+      console.log('twitter id - ', bounty?.sponsor?.twitter);
       const tweetLink = tweetEmbedLink(
-        tweetTemplate(bounty.title || '', false, path),
+        tweetTemplate(
+          bounty.sponsor?.twitter ?? bounty.sponsor?.name ?? '',
+          !!bounty.sponsor?.twitter,
+          path,
+        ),
       );
 
       const link = document.createElement('a');
@@ -122,7 +127,11 @@ export function ListingWinners({ bounty }: Props) {
       path += '/winner';
 
       const tweetLink = tweetEmbedLink(
-        tweetTemplate(bounty.title || '', false, path),
+        tweetTemplate(
+          bounty.sponsor?.twitter ?? bounty.sponsor?.name ?? '',
+          !!bounty.sponsor?.twitter,
+          path,
+        ),
       );
 
       const link = document.createElement('a');

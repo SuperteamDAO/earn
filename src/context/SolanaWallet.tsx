@@ -6,7 +6,6 @@ import {
   WalletProvider,
 } from '@solana/wallet-adapter-react';
 import { WalletModalProvider } from '@solana/wallet-adapter-react-ui';
-import { clusterApiUrl } from '@solana/web3.js';
 import { useMemo } from 'react';
 
 export function SolanaWalletProvider({
@@ -16,7 +15,9 @@ export function SolanaWalletProvider({
 }) {
   const network = WalletAdapterNetwork.Mainnet;
 
-  const endpoint = useMemo(() => clusterApiUrl(network), [network]);
+  const rpc = `https://${process.env.NEXT_PUBLIC_RPC_URL}`;
+
+  const endpoint = useMemo(() => rpc, [network]);
 
   return (
     <ConnectionProvider endpoint={endpoint}>

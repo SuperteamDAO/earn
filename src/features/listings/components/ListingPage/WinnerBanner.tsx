@@ -80,42 +80,6 @@ const WinnerBanner = forwardRef<HTMLDivElement, Props>(
                 isProject={isProject}
               />
             ))}
-            {submissions.slice(0, 5).map((winner, index) => (
-              <ProfileIcon
-                key={index}
-                winner={winner}
-                index={index}
-                bounty={bounty}
-                isProject={isProject}
-              />
-            ))}
-            {submissions.slice(0, 5).map((winner, index) => (
-              <ProfileIcon
-                key={index}
-                winner={winner}
-                index={index}
-                bounty={bounty}
-                isProject={isProject}
-              />
-            ))}
-            {submissions.slice(0, 5).map((winner, index) => (
-              <ProfileIcon
-                key={index}
-                winner={winner}
-                index={index}
-                bounty={bounty}
-                isProject={isProject}
-              />
-            ))}
-            {submissions.slice(0, 5).map((winner, index) => (
-              <ProfileIcon
-                key={index}
-                winner={winner}
-                index={index}
-                bounty={bounty}
-                isProject={isProject}
-              />
-            ))}
           </Flex>
         </AbsoluteCenter>
         <Flex

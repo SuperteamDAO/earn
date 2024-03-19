@@ -5,6 +5,8 @@ import {
   Heading,
   Image,
   Link,
+  PinInput,
+  PinInputField,
   Text,
 } from '@chakra-ui/react';
 import NextLink from 'next/link';
@@ -23,6 +25,14 @@ export default function VerifyRequest() {
       setEmail(storedEmail);
     }
   }, []);
+
+  const verifyOTP = (value: string) => {
+    const token = value.trim();
+    const encodedEmail = encodeURIComponent(email);
+    const apiUrl = `/api/auth/callback/email?token=${token}&email=${encodedEmail}`;
+    router.push(apiUrl);
+  };
+
   return (
     <>
       <Box py={3} borderBottomWidth={2}>
@@ -42,17 +52,31 @@ export default function VerifyRequest() {
       </Box>
       <Flex align="center" justify="center" direction="column" h="60vh">
         <Heading mt={16} color="#1E293B" fontSize={'28'} textAlign={'center'}>
-          We sent you a magic link
+          We just sent an OTP
         </Heading>
         <Text color="#475569" fontSize="20" textAlign={'center'}>
           On your email {email}
         </Text>
-        <Circle mx="auto" mt={16} bg="#EEF2FF" size={32}>
+        <Circle mx="auto" my={16} bg="#EEF2FF" size={32}>
           <EmailIcon />
         </Circle>
-        <Text mt={12} color="#475569" fontSize="18" textAlign={'center'}>
-          Please click on the link to verify your email
-        </Text>
+        <Flex gap={1.5}>
+          <PinInput
+            autoFocus
+            colorScheme="purple"
+            focusBorderColor="brand.purple"
+            onComplete={verifyOTP}
+            otp
+            size={'lg'}
+          >
+            <PinInputField borderColor={'gray.400'} />
+            <PinInputField borderColor={'gray.400'} />
+            <PinInputField borderColor={'gray.400'} />
+            <PinInputField borderColor={'gray.400'} />
+            <PinInputField borderColor={'gray.400'} />
+            <PinInputField borderColor={'gray.400'} />
+          </PinInput>
+        </Flex>
       </Flex>
     </>
   );
