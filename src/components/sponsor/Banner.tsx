@@ -11,7 +11,7 @@ import axios from 'axios';
 import Avatar from 'boring-avatars';
 import NextLink from 'next/link';
 import { useEffect, useState } from 'react';
-import { CiEdit } from 'react-icons/ci';
+import { AiOutlineEdit } from 'react-icons/ai';
 import { MdOutlineChatBubbleOutline } from 'react-icons/md';
 
 import { userStore } from '@/store/user';
@@ -100,7 +100,7 @@ export function Banner({ isHackathonRoute }: { isHackathonRoute?: boolean }) {
                   }}
                   href={`/edit/sponsor`}
                 >
-                  <CiEdit size={20} color="#1E293B" />
+                  <AiOutlineEdit size={18} color="#94a3b8" />
                 </Link>
               </Box>
               {isLoading ? (
