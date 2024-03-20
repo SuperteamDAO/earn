@@ -42,7 +42,7 @@
     "@vercel/og": "^0.6.2",
     "axios": "^1.6.8",
     "boring-avatars": "^1.10.1",
-    "cloudinary": "^1.41.3",
+    "cloudinary": "^2.0.3",
     "datauri": "^4.1.0",
     "dayjs": "^1.11.10",
     "degen": "^0.0.161",

@@ -15,6 +15,11 @@ export default async function user(req: NextApiRequest, res: NextApiResponse) {
     return res.status(400).json({ error: 'Winner banner url is required' });
   }
 
+  const optimizedWinnerBannerUrl = winnerBannerUrl.replace(
+    /(https:\/\/res.cloudinary.com\/dgvnuwspr\/image\/upload\/)(.*)/,
+    '$1f_auto,q_auto/$2',
+  );
+
   try {
     const result = await prisma.bounties.findFirst({
       where: {
@@ -34,7 +39,7 @@ export default async function user(req: NextApiRequest, res: NextApiResponse) {
         id: result.id,
       },
       data: {
-        winnerBannerUrl,
+        winnerBannerUrl: optimizedWinnerBannerUrl,
       },
     });
     return res.status(200).json({ status: 'success' });
