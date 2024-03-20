@@ -38,15 +38,7 @@ function WinnerBounty({ bounty: initialBounty }: BountyDetailsProps) {
         rel="canonical"
         href={`${getURL()}listings/${bounty?.type}/${bounty?.slug}/`}
       />
-      <meta
-        property="og:title"
-        content={`${initialBounty?.title || 'Bounty'} | Superteam Earn`}
-      />
       <meta property="og:image" content={bounty?.winnerBannerUrl} />
-      <meta
-        name="twitter:title"
-        content={`${initialBounty?.title || 'Bounty'} | Superteam Earn`}
-      />
       <meta name="twitter:image" content={bounty?.winnerBannerUrl} />
       <meta name="twitter:card" content="summary_large_image" />
       <meta property="og:image:width" content="1200" />
