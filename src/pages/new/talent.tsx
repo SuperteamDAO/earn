@@ -13,7 +13,6 @@ import {
 import type { User } from '@prisma/client';
 import axios from 'axios';
 import { type GetServerSideProps } from 'next';
-import { getURL } from 'next/dist/shared/lib/utils';
 import router from 'next/router';
 import React, { Fragment, useEffect, useState } from 'react';
 import { create } from 'zustand';
@@ -27,6 +26,7 @@ import { TalentBio } from '@/components/TalentBio';
 import { Default } from '@/layouts/Default';
 import { Meta } from '@/layouts/Meta';
 import { userStore } from '@/store/user';
+import { getURL } from '@/utils/validUrl';
 
 const useFormStore = create<UserStoreType>()((set) => ({
   form: {
