@@ -133,9 +133,8 @@ const UpdateSponsor = () => {
     <Default
       meta={
         <Meta
-          title="Create Sponsor | Superteam Earn"
+          title="Edit Sponsor Profile | Superteam Earn"
           description="Every Solana opportunity in one place!"
-          canonical="https://earn.superteam.fun/new/sponsor/"
         />
       }
     >
@@ -182,16 +181,8 @@ const UpdateSponsor = () => {
               fontSize={'24px'}
               fontWeight={700}
             >
-              Welcome to Superteam Earn
+              Edit Sponsor Profile
             </Heading>
-            <Text
-              color={'gray.400'}
-              fontFamily={'var(--font-sans)'}
-              fontSize={'20px'}
-              fontWeight={500}
-            >
-              {"Let's start with some basic information about your team"}
-            </Text>
           </VStack>
           <VStack w={'2xl'} pt={10}>
             <form
@@ -417,7 +408,7 @@ const UpdateSponsor = () => {
                 {hasError && (
                   <Text align="center" mb={4} color="red">
                     {errorMessage ||
-                      'Sorry! An error occurred while creating your company!'}
+                      'Sorry! An error occurred while editing your company profile!'}
                     <br />
                     Please update the details & try again or contact support!
                   </Text>
@@ -428,7 +419,7 @@ const UpdateSponsor = () => {
                     process.env.NODE_ENV === 'production' && imageUrl === ''
                   }
                   isLoading={!!isLoading}
-                  loadingText="Creating..."
+                  loadingText="Updating..."
                   size="lg"
                   type="submit"
                   variant="solid"
