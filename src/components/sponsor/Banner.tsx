@@ -123,6 +123,7 @@ export function Banner({ isHackathonRoute }: { isHackathonRoute?: boolean }) {
             <Box _hover={{ cursor: 'pointer' }}>
               <Flex align="center">
                 <Text
+                  mr={0.5}
                   color={'brand.slate.500'}
                   fontSize="md"
                   fontWeight={400}
@@ -150,6 +151,7 @@ export function Banner({ isHackathonRoute }: { isHackathonRoute?: boolean }) {
             <Box _hover={{ cursor: 'pointer' }}>
               <Flex align="center">
                 <Text
+                  mr={0.5}
                   color={'brand.slate.500'}
                   fontSize="md"
                   fontWeight={400}
@@ -177,6 +179,7 @@ export function Banner({ isHackathonRoute }: { isHackathonRoute?: boolean }) {
             <Box _hover={{ cursor: 'pointer' }}>
               <Flex align="center">
                 <Text
+                  mr={0.5}
                   color={'brand.slate.500'}
                   fontSize="md"
                   fontWeight={400}

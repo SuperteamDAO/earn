@@ -9,7 +9,9 @@ import { LAMPORTS_PER_SOL, PublicKey } from '@solana/web3.js';
 import { type EarnReloaded, IDL } from './program';
 
 const PROGRAM_ID = process.env.NEXT_PUBLIC_PAYMENT_PROGRAM_ID || '';
-const RPC_URL = process.env.NEXT_PUBLIC_PAYMENT_RPC_URL || '';
+const RPC_URL =
+  process.env.NEXT_PUBLIC_PAYMENT_RPC_URL ||
+  'https://api.mainnet-beta.solana.com';
 
 export const connection = new anchor.web3.Connection(RPC_URL, 'confirmed');
 
