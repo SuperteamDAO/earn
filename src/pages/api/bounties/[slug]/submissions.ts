@@ -18,11 +18,22 @@ export default async function handler(
 
   const whereSearch = searchText
     ? {
-        user: {
-          firstName: {
-            contains: searchText,
+        OR: [
+          {
+            user: {
+              firstName: {
+                contains: searchText,
+              },
+            },
           },
-        },
+          {
+            user: {
+              email: {
+                contains: searchText,
+              },
+            },
+          },
+        ],
       }
     : {};
 

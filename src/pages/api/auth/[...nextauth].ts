@@ -4,7 +4,7 @@ import type { Adapter } from 'next-auth/adapters';
 import EmailProvider from 'next-auth/providers/email';
 import GoogleProvider from 'next-auth/providers/google';
 
-import { kashEmail, MagicLinkTemplate, resend } from '@/features/emails';
+import { kashEmail, OTPTemplate, resend } from '@/features/emails';
 import { prisma } from '@/prisma';
 
 export const authOptions: NextAuthOptions = {
@@ -21,10 +21,20 @@ export const authOptions: NextAuthOptions = {
           lastName: profile.family_name,
           email: profile.email,
           emailVerified: profile.emailVerified,
+          photo: profile.picture,
         } as any;
       },
     }),
     EmailProvider({
+      async generateVerificationToken() {
+        const digits = '0123456789';
+        let verificationCode = '';
+        for (let i = 0; i < 6; i++) {
+          const randomIndex = Math.floor(Math.random() * digits.length);
+          verificationCode += digits.charAt(randomIndex);
+        }
+        return verificationCode;
+      },
       server: {
         host: process.env.EMAIL_SERVER_HOST,
         port: process.env.EMAIL_SERVER_PORT,
@@ -34,14 +44,15 @@ export const authOptions: NextAuthOptions = {
         },
       },
       from: process.env.RESEND_EMAIL,
-      sendVerificationRequest: async ({ identifier, url }) => {
+      sendVerificationRequest: async ({ identifier, token }) => {
         await resend.emails.send({
           from: kashEmail,
           to: [identifier],
           subject: 'Log in to Superteam Earn',
-          react: MagicLinkTemplate({ loginUrl: url }),
+          react: OTPTemplate({ token }),
         });
       },
+      maxAge: 30 * 60,
     }),
   ],
   session: {

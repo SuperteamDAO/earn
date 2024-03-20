@@ -1,6 +1,5 @@
 import { Button, Tooltip, useDisclosure } from '@chakra-ui/react';
 import axios from 'axios';
-import moment from 'moment';
 import React, {
   type Dispatch,
   type SetStateAction,
@@ -152,11 +151,12 @@ export const SubmissionActionButton = ({
       buttonText = isProject ? 'Apply Now' : 'Submit Now';
       buttonBG = 'brand.purple';
       isBtnDisabled = Boolean(
-        userInfo?.id &&
-          (bountyDraftStatus === 'DRAFT' ||
-            Date.now() > Number(moment(deadline).format('x')) ||
-            !hasHackathonStarted ||
-            !isUserEligibleByRegion),
+        pastDeadline ||
+          (userInfo?.id &&
+            userInfo?.isTalentFilled &&
+            (bountyDraftStatus === 'DRAFT' ||
+              !hasHackathonStarted ||
+              !isUserEligibleByRegion)),
       );
       btnLoadingText = 'Checking Submission..';
   }
@@ -195,7 +195,12 @@ export const SubmissionActionButton = ({
       <Tooltip
         bg="brand.slate.500"
         hasArrow
-        isDisabled={!userInfo?.id || isUserEligibleByRegion}
+        isDisabled={
+          !userInfo?.id ||
+          !userInfo?.isTalentFilled ||
+          isUserEligibleByRegion ||
+          pastDeadline
+        }
         label={!isUserEligibleByRegion ? regionTooltipLabel : ''}
         rounded="md"
       >

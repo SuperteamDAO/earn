@@ -45,6 +45,7 @@ import {
 import axios from 'axios';
 import NextLink from 'next/link';
 import { useRouter } from 'next/router';
+import { useSession } from 'next-auth/react';
 import { useEffect, useRef, useState } from 'react';
 import { AiOutlineDelete } from 'react-icons/ai';
 import { FiMoreVertical } from 'react-icons/fi';
@@ -89,6 +90,7 @@ function Bounties() {
   const length = 15;
 
   const debouncedSetSearchText = useRef(debounce(setSearchText, 300)).current;
+  const { data: session } = useSession();
 
   useEffect(() => {
     return () => {
@@ -586,7 +588,8 @@ function Bounties() {
                                 ? 'Track'
                                 : bountyType}
                             </MenuItem>
-                            {currentBounty.isPublished && !pastDeadline && (
+                            {session?.user?.role === 'GOD' ||
+                            (currentBounty.isPublished && !pastDeadline) ? (
                               <Link
                                 as={NextLink}
                                 _hover={{ textDecoration: 'none' }}
@@ -605,7 +608,10 @@ function Bounties() {
                                     : bountyType}
                                 </MenuItem>
                               </Link>
+                            ) : (
+                              <></>
                             )}
+
                             <MenuItem
                               py={2}
                               color={'brand.slate.500'}
