@@ -49,7 +49,8 @@ const UpdateSponsor = () => {
       industry: '',
     },
   });
-  const [imageUrl, setImageUrl] = useState<string>('');
+  const [imageUrl, setImageUrl] = useState<string | null>(null);
+  const [isPhotoLoading, setIsPhotoLoading] = useState(true);
   const [industries, setIndustries] = useState<string>();
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [hasError, setHasError] = useState<boolean>(false);
@@ -70,7 +71,6 @@ const UpdateSponsor = () => {
       setIsLoading(true);
       const response = await fetchSponsorData();
       const { bio, industry, name, slug, logo, twitter, url } = response;
-      if (logo) setImageUrl(logo);
       register('bio', { value: bio, required: 'Company bio is required' });
       register('sponsorname', {
         value: name,
@@ -95,6 +95,10 @@ const UpdateSponsor = () => {
         sponsorurl: url,
         twitterHandle: twitter,
       });
+      if (logo) {
+        setImageUrl(logo);
+      }
+      setIsPhotoLoading(false);
       setIndustries(industry);
       setIsLoading(false);
     };
@@ -301,7 +305,7 @@ const UpdateSponsor = () => {
                   </FormErrorMessage>
                 </FormControl>
               </HStack>
-              {process.env.NODE_ENV === 'production' && (
+              {process.env.NODE_ENV !== 'production' && (
                 <VStack align={'start'} gap={2} my={3}>
                   <Heading
                     color={'brand.slate.500'}
@@ -318,14 +322,37 @@ const UpdateSponsor = () => {
                     </span>
                   </Heading>
                   <HStack gap={5}>
-                    <MediaPicker
-                      onChange={async (e) => {
-                        const a = await uploadToCloudinary(e);
-                        setImageUrl(a);
-                      }}
-                      compact
-                      label="Choose or Drag & Drop Media"
-                    />
+                    {isPhotoLoading ? (
+                      <></>
+                    ) : imageUrl ? (
+                      <MediaPicker
+                        onChange={async (e) => {
+                          const a = await uploadToCloudinary(e);
+                          setImageUrl(a);
+                        }}
+                        compact
+                        label="Choose or Drag & Drop Media"
+                        defaultValue={{
+                          url: imageUrl,
+                          type: 'image',
+                        }}
+                        onReset={() => {
+                          setImageUrl('');
+                        }}
+                      />
+                    ) : (
+                      <MediaPicker
+                        onChange={async (e) => {
+                          const a = await uploadToCloudinary(e);
+                          setImageUrl(a);
+                        }}
+                        onReset={() => {
+                          setImageUrl('');
+                        }}
+                        compact
+                        label="Choose or Drag & Drop Media"
+                      />
+                    )}
                   </HStack>
                 </VStack>
               )}
