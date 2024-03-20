@@ -32,9 +32,9 @@ export function Banner({ isHackathonRoute }: { isHackathonRoute?: boolean }) {
     ? userInfo?.hackathonId
     : userInfo?.currentSponsorId;
 
-  const tooltiptextreward = `Total compensation (in USD) of listings where the winners have been announced : $${sponsorStats?.totalRewardAmount?.toLocaleString()}`;
-  const tooltiptextlistings = `Total number of listings added to Earn : ${sponsorStats?.totalListings?.toLocaleString()}`;
-  const tooltiptextsubmissions = `Total number of submissions/applications received on all listings : ${sponsorStats?.totalSubmissions?.toLocaleString()}`;
+  const tooltipTextReward = `Total compensation (in USD) of listings where the winners have been announced`;
+  const tooltipTextListings = `Total number of listings added to Earn`;
+  const tooltipTextSubmissions = `Total number of submissions/applications received on all listings`;
 
   useEffect(() => {
     const getSponsorStats = async () => {
@@ -117,7 +117,7 @@ export function Banner({ isHackathonRoute }: { isHackathonRoute?: boolean }) {
           <Tooltip
             color="grey"
             bg="white"
-            label={tooltiptextreward}
+            label={tooltipTextReward}
             placement="bottom"
           >
             <Box _hover={{ cursor: 'pointer' }}>
@@ -131,7 +131,7 @@ export function Banner({ isHackathonRoute }: { isHackathonRoute?: boolean }) {
                 >
                   {!isHackathonRoute ? 'Rewarded' : 'Total Prizes'}
                 </Text>
-                <MdInfoOutline color="#3182CE" size={18} />
+                <MdInfoOutline color="#94a3b8" size={16} />
               </Flex>
               {isLoading ? (
                 <Skeleton w="72px" h="20px" mt={2} />
@@ -145,7 +145,7 @@ export function Banner({ isHackathonRoute }: { isHackathonRoute?: boolean }) {
           <Tooltip
             color="grey"
             bg="white"
-            label={tooltiptextlistings}
+            label={tooltipTextListings}
             placement="bottom"
           >
             <Box _hover={{ cursor: 'pointer' }}>
@@ -159,7 +159,7 @@ export function Banner({ isHackathonRoute }: { isHackathonRoute?: boolean }) {
                 >
                   {!isHackathonRoute ? 'Listings' : 'Tracks'}
                 </Text>
-                <MdInfoOutline color="#3182CE" size={18} />
+                <MdInfoOutline color="#94a3b8" size={16} />
               </Flex>
               {isLoading ? (
                 <Skeleton w="32px" h="20px" mt={2} />
@@ -173,7 +173,7 @@ export function Banner({ isHackathonRoute }: { isHackathonRoute?: boolean }) {
           <Tooltip
             color="grey"
             bg="white"
-            label={tooltiptextsubmissions}
+            label={tooltipTextSubmissions}
             placement="bottom"
           >
             <Box _hover={{ cursor: 'pointer' }}>
@@ -187,7 +187,7 @@ export function Banner({ isHackathonRoute }: { isHackathonRoute?: boolean }) {
                 >
                   Submissions
                 </Text>
-                <MdInfoOutline color="#3182CE" size={18} />
+                <MdInfoOutline color="#94a3b8" size={16} />
               </Flex>
               {isLoading ? (
                 <Skeleton w="36px" h="20px" mt={2} />
