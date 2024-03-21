@@ -6,7 +6,7 @@ import slugify from 'slugify';
 import { sendEmailNotification } from '@/features/emails';
 import { prisma } from '@/prisma';
 
-export const checkSlug = async (slug: string): Promise<boolean> => {
+const checkSlug = async (slug: string): Promise<boolean> => {
   try {
     const bounty = await prisma.bounties.findFirst({
       where: {
@@ -28,7 +28,7 @@ export const checkSlug = async (slug: string): Promise<boolean> => {
   }
 };
 
-export const generateUniqueSlug = async (title: string): Promise<string> => {
+const generateUniqueSlug = async (title: string): Promise<string> => {
   let slug = slugify(title, { lower: true, strict: true });
   let slugExists = await checkSlug(slug);
   let i = 1;
