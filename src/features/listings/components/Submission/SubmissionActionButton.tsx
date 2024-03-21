@@ -18,6 +18,7 @@ import { userStore } from '@/store/user';
 
 import { type Bounty } from '../../types';
 import { WarningModal } from '../WarningModal';
+import { EasterEgg } from './EasterEgg';
 import { SubmissionModal } from './SubmissionModal';
 
 interface Props {
@@ -47,6 +48,9 @@ export const SubmissionActionButton = ({
   const [triggerLogin, setTriggerLogin] = useState(false);
   const [isUserSubmissionLoading, setIsUserSubmissionLoading] = useState(false);
   const [isSubmitted, setIsSubmitted] = useState(false);
+
+  const [isEasterEggOpen, setEasterEggOpen] = useState(false);
+
   const { userInfo } = userStore();
 
   function userRegionEligibilty() {
@@ -173,6 +177,7 @@ export const SubmissionActionButton = ({
           setIsSubmitted={setIsSubmitted}
           editMode={buttonState === 'edit'}
           listing={listing}
+          showEasterEgg={() => setEasterEggOpen(true)}
         />
       )}
       {warningIsOpen && (
@@ -185,6 +190,12 @@ export const SubmissionActionButton = ({
           }
           primaryCtaText={'Complete Profile'}
           primaryCtaLink={'/new/talent'}
+        />
+      )}
+      {isEasterEggOpen && (
+        <EasterEgg
+          isOpen={isEasterEggOpen}
+          onClose={() => setEasterEggOpen(false)}
         />
       )}
 
