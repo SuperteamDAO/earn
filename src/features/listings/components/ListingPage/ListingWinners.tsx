@@ -66,21 +66,21 @@ export function ListingWinners({ bounty }: Props) {
 
   const onShareClick = useCallback(async () => {
     setLoadingBanner(true);
+    if (bannerUrl) {
+      let path = window.location.href.split('?')[0];
+      if (!path) return;
+
+      path += 'winner';
+
+      const tweetLink = tweetEmbedLink(tweetTemplate(path));
+
+      openExternalLinkInNewTab(tweetLink);
+
+      setLoadingBanner(false);
+      return;
+    }
+    if (!winnerBannerRef.current) return;
     try {
-      if (bannerUrl) {
-        let path = window.location.href.split('?')[0];
-        if (!path) return;
-
-        path += 'winner';
-
-        const tweetLink = tweetEmbedLink(tweetTemplate(path));
-
-        openExternalLinkInNewTab(tweetLink);
-
-        setLoadingBanner(false);
-        return;
-      }
-      if (!winnerBannerRef.current) return;
       const canvas = await html2canvas(winnerBannerRef.current, {
         useCORS: true,
         width: 1200,
@@ -97,33 +97,55 @@ export function ListingWinners({ bounty }: Props) {
       });
       // const data = canvas.toDataURL('image/jpg')
       canvas.toBlob(async function (blob) {
-        if (!bounty.id || !bounty.slug) return;
-        const fileName = `${bounty.id}-winner-banner`;
-        const mimeType = 'image/png';
+        try {
+          if (!bounty.id || !bounty.slug) return;
+          const fileName = `${bounty.id}-winner-banner`;
+          const mimeType = 'image/png';
 
-        if (!blob) return;
-        const file = new File([blob], fileName, { type: mimeType });
+          if (!blob) return;
+          const file = new File([blob], fileName, { type: mimeType });
 
-        const url = await uploadToCloudinary(file);
+          // NEED THIS FOR LOCAL DOWNLOAD LINK, WE DONT WANT TO SPAM CLOUDINARY FOR IMAGE LINK
+          // const localUrl = URL.createObjectURL(file);
+          // const downloadLink = document.createElement('a');
+          // downloadLink.href = localUrl;
+          // downloadLink.setAttribute('download', 'data.png'); // Name the file here
+          // document.body.appendChild(downloadLink);
+          // downloadLink.click();
+          // document.body.removeChild(downloadLink);
+          // throw new Error("done")
 
-        await axios.put(`/api/bounties/${bounty.slug}/setWinnerBanner`, {
-          image: url,
-        });
+          const url = await uploadToCloudinary(file);
 
-        setBannerUrl(url);
+          await axios.put(`/api/bounties/${bounty.slug}/setWinnerBanner`, {
+            image: url,
+          });
 
-        let path = window.location.href.split('?')[0];
-        if (!path) return;
+          setBannerUrl(url);
 
-        path += 'winner';
+          let path = window.location.href.split('?')[0];
+          if (!path) return;
 
-        const tweetLink = tweetEmbedLink(tweetTemplate(path));
+          path += 'winner';
 
-        openExternalLinkInNewTab(tweetLink);
+          const tweetLink = tweetEmbedLink(tweetTemplate(path));
 
-        setLoadingBanner(false);
+          openExternalLinkInNewTab(tweetLink);
+
+          setLoadingBanner(false);
+        } catch (err) {
+          setLoadingBanner(false);
+          toast({
+            title: 'Failed to Share',
+            description: 'Please try again later',
+            status: 'error',
+            duration: 5000,
+            isClosable: true,
+            variant: 'subtle',
+          });
+        }
       }, 'image/png');
-    } catch (err) {
+    } catch {
       setLoadingBanner(false);
       toast({
         title: 'Failed to Share',
@@ -152,7 +174,7 @@ export function ListingWinners({ bounty }: Props) {
         🎉 Winners Announced
       </Text>
       {!bannerUrl && (
-        <Box pos="absolute" zIndex={-99999} top={'-200%'} right={'-200%'}>
+        <Box pos="fixed" zIndex={-99999} top={'-300%'} right={'-300%'}>
           <WinnerBanner
             ref={winnerBannerRef}
             bounty={bounty}

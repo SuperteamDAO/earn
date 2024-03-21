@@ -62,14 +62,14 @@ const WinnerBanner = forwardRef<HTMLDivElement, Props>(
         <Text
           className="shifted-text"
           pos="absolute"
-          top="1.7rem"
+          top="1.5rem"
           color="rgba(255, 245, 245, 0.07)"
           fontSize="250px"
           fontWeight="500"
         >
           {submissions.length > 1 ? 'Winners' : 'Winner'}
         </Text>
-        <AbsoluteCenter w="100%">
+        <AbsoluteCenter w="100%" mt="2rem">
           <Flex justify="space-around" gap="2" w="80%" mx="auto">
             {submissions.slice(0, 5).map((winner, index) => (
               <ProfileIcon
@@ -84,27 +84,20 @@ const WinnerBanner = forwardRef<HTMLDivElement, Props>(
         </AbsoluteCenter>
         <Flex
           pos="absolute"
-          bottom="0"
+          top="0"
           left="0"
           align="center"
           justify="space-between"
           w="full"
           px="2.5rem"
           py="2rem"
-          bg="rgba(0, 0, 0, 0.17)"
         >
-          <Flex align="center" gap="6" fontSize="26px" fontWeight="500">
+          <Flex ml="auto">
             <Image
-              w="55px"
-              h="55px"
-              alt={bounty?.sponsor?.name}
-              rounded="5px"
-              src={bounty?.sponsor?.logo}
+              w="200px"
+              alt="ST Earn Logo"
+              src="/assets/logo/st-earn-white.svg"
             />
-            <Text className="shifted-text">{bounty.title}</Text>
-          </Flex>
-          <Flex px="2rem">
-            <Image alt="ST Earn Logo" src="/assets/logo/st-earn-white.svg" />
           </Flex>
         </Flex>
       </Flex>
@@ -142,6 +135,10 @@ const ProfileIcon: React.FC<{
       <Circle
         pos="absolute"
         top={-6}
+        minW="50px"
+        maxW="50px"
+        minH="50px"
+        maxH="50px"
         p={'10px'}
         color="white"
         fontSize="18.11px"
@@ -153,17 +150,26 @@ const ProfileIcon: React.FC<{
         </Text>
       </Circle>
       <Text
-        className="shifted-text"
         w="220px"
-        pt="0.5rem"
+        mt="0.5rem"
         fontSize="27.17px"
         fontWeight="600"
         textAlign="center"
       >
-        {`${winner?.user?.firstName} ${winner?.user?.lastName}`}
+        {winner?.user?.firstName ?? ''}
+      </Text>
+      <Text
+        w="220px"
+        mt="-0.5rem"
+        fontSize="27.17px"
+        fontWeight="600"
+        textAlign="center"
+      >
+        {winner?.user?.lastName ?? ''}
       </Text>
       <Text
         className="shifted-text"
+        mt="0.5rem"
         color="rgba(255, 255, 255, 0.58)"
         fontSize="24.17px"
         fontWeight={500}
