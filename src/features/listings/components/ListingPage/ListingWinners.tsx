@@ -1,4 +1,12 @@
-import { Box, Button, Center, Flex, Image, Text } from '@chakra-ui/react';
+import {
+  Box,
+  Button,
+  Center,
+  Flex,
+  Image,
+  Text,
+  useToast,
+} from '@chakra-ui/react';
 import axios from 'axios';
 import Avatar from 'boring-avatars';
 import html2canvas from 'html2canvas';
@@ -28,6 +36,8 @@ export function ListingWinners({ bounty }: Props) {
 
   const isProject = bounty?.type === 'project';
 
+  const toast = useToast();
+
   const getSubmissions = async (id?: string) => {
     setIsListingLoading(true);
     try {
@@ -56,74 +66,74 @@ export function ListingWinners({ bounty }: Props) {
 
   const onShareClick = useCallback(async () => {
     setLoadingBanner(true);
-    if (bannerUrl) {
-      let path = window.location.href.split('?')[0];
-      if (!path) return;
+    try {
+      if (bannerUrl) {
+        let path = window.location.href.split('?')[0];
+        if (!path) return;
 
-      path += 'winner';
+        path += 'winner';
 
-      const tweetLink = tweetEmbedLink(
-        tweetTemplate(
-          bounty.sponsor?.twitter ?? bounty.sponsor?.name ?? '',
-          !!bounty.sponsor?.twitter,
-          path,
-        ),
-      );
+        const tweetLink = tweetEmbedLink(tweetTemplate(path));
 
-      openExternalLinkInNewTab(tweetLink);
+        openExternalLinkInNewTab(tweetLink);
 
-      setLoadingBanner(false);
-      return;
-    }
-    if (!winnerBannerRef.current) return;
-    const canvas = await html2canvas(winnerBannerRef.current, {
-      useCORS: true,
-      width: 1200,
-      height: 675,
-      x: 0,
-      y: 0,
-      onclone: (el) => {
-        const elementsWithShiftedDownwardText =
-          el.querySelectorAll<HTMLElement>('.shifted-text');
-        elementsWithShiftedDownwardText.forEach((element) => {
-          element.style.transform = 'translateY(-30%)';
-        });
-      },
-    });
-    // const data = canvas.toDataURL('image/jpg')
-    canvas.toBlob(async function (blob) {
-      if (!bounty.id || !bounty.slug) return;
-      const fileName = `${bounty.id}-winner-banner`;
-      const mimeType = 'image/png';
-
-      if (!blob) return;
-      const file = new File([blob], fileName, { type: mimeType });
-
-      const url = await uploadToCloudinary(file);
-
-      await axios.put(`/api/bounties/${bounty.slug}/setWinnerBanner`, {
-        image: url,
+        setLoadingBanner(false);
+        return;
+      }
+      if (!winnerBannerRef.current) return;
+      const canvas = await html2canvas(winnerBannerRef.current, {
+        useCORS: true,
+        width: 1200,
+        height: 675,
+        x: 0,
+        y: 0,
+        onclone: (el) => {
+          const elementsWithShiftedDownwardText =
+            el.querySelectorAll<HTMLElement>('.shifted-text');
+          elementsWithShiftedDownwardText.forEach((element) => {
+            element.style.transform = 'translateY(-30%)';
+          });
+        },
       });
+      // const data = canvas.toDataURL('image/jpg')
+      canvas.toBlob(async function (blob) {
+        if (!bounty.id || !bounty.slug) return;
+        const fileName = `${bounty.id}-winner-banner`;
+        const mimeType = 'image/png';
 
-      setBannerUrl(url);
+        if (!blob) return;
+        const file = new File([blob], fileName, { type: mimeType });
 
-      let path = window.location.href.split('?')[0];
-      if (!path) return;
+        const url = await uploadToCloudinary(file);
 
-      path += 'winner';
+        await axios.put(`/api/bounties/${bounty.slug}/setWinnerBanner`, {
+          image: url,
+        });
 
-      const tweetLink = tweetEmbedLink(
-        tweetTemplate(
-          bounty.sponsor?.twitter ?? bounty.sponsor?.name ?? '',
-          !!bounty.sponsor?.twitter,
-          path,
-        ),
-      );
+        setBannerUrl(url);
 
-      openExternalLinkInNewTab(tweetLink);
+        let path = window.location.href.split('?')[0];
+        if (!path) return;
 
+        path += 'winner';
+
+        const tweetLink = tweetEmbedLink(tweetTemplate(path));
+
+        openExternalLinkInNewTab(tweetLink);
+
+        setLoadingBanner(false);
+      }, 'image/png');
+    } catch (err) {
       setLoadingBanner(false);
-    }, 'image/png');
+      toast({
+        title: 'Failed to Share',
+        description: 'Please try again later',
+        status: 'error',
+        duration: 5000,
+        isClosable: true,
+        variant: 'subtle',
+      });
+    }
   }, [winnerBannerRef]);
 
   if (isListingLoading || !submissions.length) {

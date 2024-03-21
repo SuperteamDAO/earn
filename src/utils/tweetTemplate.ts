@@ -1,5 +1,5 @@
-export function tweetTemplate(name: string, isTag: boolean, url: string) {
-  return `The results of this latest ${isTag ? '@' : ''}${name} listing are out. Congratulations to the winners👏
+export function tweetTemplate(url: string) {
+  return `The results of this latest @SuperteamEarn listing are out. Congratulations to the winners👏
 
 ${url}
 `;
