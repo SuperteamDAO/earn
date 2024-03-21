@@ -95,15 +95,17 @@ export function TalentBio({
   };
 
   return (
-    <Box
+    <Flex
+      justify={'space-between'}
+      direction={'column'}
       w={w ?? '80%'}
-      px={'1.5625rem'}
-      py={'1.125rem'}
+      h="full"
+      p={'1.5625rem'}
       bg={'white'}
       borderRadius={10}
     >
       <Flex align={'center'} justify="space-between">
-        <Flex align={'center'}>
+        <Flex align={'center'} h={'fit-content'}>
           <Avatar
             name={`${user?.firstName}${user?.lastName}`}
             size="lg"
@@ -111,7 +113,8 @@ export function TalentBio({
           />
           <Box ml={'12px'}>
             <Text
-              fontSize={'md'}
+              color={'rgb(71,86,104)'}
+              fontSize={'xl'}
               fontWeight={'600'}
               cursor={'pointer'}
               onClick={() => {
@@ -149,39 +152,7 @@ export function TalentBio({
           </Button>
         )}
       </Flex>
-      <Text mt={4} color={'gray.400'} fontSize={'sm'} fontWeight={'400'}>
-        {user?.bio}
-      </Text>
-      <Flex justify={'space-between'} mt={4}>
-        {!user?.private && (
-          <Chip
-            icon={'/assets/talent/eyes.png'}
-            label={'Interested In'}
-            value={user?.workPrefernce as string}
-          />
-        )}
-        <Chip
-          icon={'/assets/talent/cap.png'}
-          label={'Works At'}
-          value={user?.currentEmployer as string}
-        />
-      </Flex>
-
-      {successPage ? (
-        <a style={{ textDecoration: 'none' }} href={`/t/${user?.username}`}>
-          <Button w={'full'} mt={'1.575rem'} color={'white'} bg={'#6562FF'}>
-            View Your Profile
-          </Button>
-        </a>
-      ) : (
-        <a style={{ textDecoration: 'none' }} href={createMailtoLink()}>
-          <Button w={'full'} mt={'1.575rem'} color={'white'} bg={'#6562FF'}>
-            Get in Touch
-          </Button>
-        </a>
-      )}
-
-      <Flex justify={'space-between'} mt={'32px'}>
+      <Flex justify={'space-between'} mx={'10px'} mt={'20px'}>
         {socialLinks.map((ele, eleIndex) => {
           return (
             <Box
@@ -206,6 +177,43 @@ export function TalentBio({
           );
         })}
       </Flex>
-    </Box>
+      <Text mt={4} color={'gray.400'} fontSize={'sm'} fontWeight={'400'}>
+        {user?.bio}
+      </Text>
+      <Flex justify={'space-between'} mt={4}>
+        {!user?.private && (
+          <Chip
+            icon={'/assets/talent/eyes.png'}
+            label={'Interested In'}
+            value={user?.workPrefernce as string}
+          />
+        )}
+        <Chip
+          icon={'/assets/talent/cap.png'}
+          label={'Works At'}
+          value={user?.currentEmployer as string}
+        />
+      </Flex>
+
+      {successPage ? (
+        <a style={{ textDecoration: 'none' }} href={`/t/${user?.username}`}>
+          <Button
+            w={'full'}
+            mt={'1.575rem'}
+            py={'1.5rem'}
+            color={'white'}
+            bg={'#6562FF'}
+          >
+            View Your Profile
+          </Button>
+        </a>
+      ) : (
+        <a style={{ textDecoration: 'none' }} href={createMailtoLink()}>
+          <Button w={'full'} mt={'1.575rem'} color={'white'} bg={'#6562FF'}>
+            Get in Touch
+          </Button>
+        </a>
+      )}
+    </Flex>
   );
 }
