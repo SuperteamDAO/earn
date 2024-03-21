@@ -82,7 +82,7 @@ export const SubmissionModal = ({
     watch,
   } = useForm();
 
-  const { userInfo } = userStore();
+  const { userInfo, setUserInfo } = userStore();
 
   useEffect(() => {
     console.log('user submissions ', userInfo?.Submission);
@@ -190,7 +190,13 @@ export const SubmissionModal = ({
 
       reset();
       setIsSubmitted(true);
-      if (!editMode) setSubmissionNumber(submissionNumber + 1);
+
+      const updatedUser = await axios.post('/api/user/');
+      setUserInfo(updatedUser?.data);
+
+      if (!editMode) {
+        setSubmissionNumber(submissionNumber + 1);
+      }
 
       onClose();
     } catch (e) {
