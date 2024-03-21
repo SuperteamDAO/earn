@@ -9,8 +9,8 @@ export function tweetEmbedLink(content: string) {
   const tweetUrl = new URL(`https://twitter.com/intent/tweet`);
   tweetUrl.searchParams.set('text', content);
   let stringUrl = tweetUrl.toString();
-  if (stringUrl[stringUrl.length - 1] === '/') {
-    stringUrl = stringUrl.slice(0, stringUrl.length - 1);
+  if (stringUrl[stringUrl.length - 1] !== '/') {
+    stringUrl = `${stringUrl}/`;
   }
   return stringUrl;
 }
