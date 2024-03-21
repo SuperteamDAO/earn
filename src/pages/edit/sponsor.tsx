@@ -305,57 +305,56 @@ const UpdateSponsor = () => {
                   </FormErrorMessage>
                 </FormControl>
               </HStack>
-              {process.env.NODE_ENV !== 'production' && (
-                <VStack align={'start'} gap={2} my={3}>
-                  <Heading
-                    color={'brand.slate.500'}
-                    fontSize={'15px'}
-                    fontWeight={600}
+
+              <VStack align={'start'} gap={2} my={3}>
+                <Heading
+                  color={'brand.slate.500'}
+                  fontSize={'15px'}
+                  fontWeight={600}
+                >
+                  Company Logo{' '}
+                  <span
+                    style={{
+                      color: 'red',
+                    }}
                   >
-                    Company Logo{' '}
-                    <span
-                      style={{
-                        color: 'red',
+                    *
+                  </span>
+                </Heading>
+                <HStack gap={5}>
+                  {isPhotoLoading ? (
+                    <></>
+                  ) : imageUrl ? (
+                    <MediaPicker
+                      onChange={async (e) => {
+                        const a = await uploadToCloudinary(e);
+                        setImageUrl(a);
                       }}
-                    >
-                      *
-                    </span>
-                  </Heading>
-                  <HStack gap={5}>
-                    {isPhotoLoading ? (
-                      <></>
-                    ) : imageUrl ? (
-                      <MediaPicker
-                        onChange={async (e) => {
-                          const a = await uploadToCloudinary(e);
-                          setImageUrl(a);
-                        }}
-                        compact
-                        label="Choose or Drag & Drop Media"
-                        defaultValue={{
-                          url: imageUrl,
-                          type: 'image',
-                        }}
-                        onReset={() => {
-                          setImageUrl('');
-                        }}
-                      />
-                    ) : (
-                      <MediaPicker
-                        onChange={async (e) => {
-                          const a = await uploadToCloudinary(e);
-                          setImageUrl(a);
-                        }}
-                        onReset={() => {
-                          setImageUrl('');
-                        }}
-                        compact
-                        label="Choose or Drag & Drop Media"
-                      />
-                    )}
-                  </HStack>
-                </VStack>
-              )}
+                      compact
+                      label="Choose or Drag & Drop Media"
+                      defaultValue={{
+                        url: imageUrl,
+                        type: 'image',
+                      }}
+                      onReset={() => {
+                        setImageUrl('');
+                      }}
+                    />
+                  ) : (
+                    <MediaPicker
+                      onChange={async (e) => {
+                        const a = await uploadToCloudinary(e);
+                        setImageUrl(a);
+                      }}
+                      onReset={() => {
+                        setImageUrl('');
+                      }}
+                      compact
+                      label="Choose or Drag & Drop Media"
+                    />
+                  )}
+                </HStack>
+              </VStack>
 
               <HStack justify={'space-between'} w={'full'} mt={6}>
                 <FormControl w={'full'} isRequired>
@@ -442,9 +441,7 @@ const UpdateSponsor = () => {
                 )}
                 <Button
                   w="full"
-                  isDisabled={
-                    process.env.NODE_ENV === 'production' && imageUrl === ''
-                  }
+                  isDisabled={imageUrl === ''}
                   isLoading={!!isLoading}
                   loadingText="Updating..."
                   size="lg"
