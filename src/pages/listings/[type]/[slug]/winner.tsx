@@ -50,7 +50,7 @@ function WinnerBounty({ bounty: initialBounty }: BountyDetailsProps) {
       <meta name="twitter:site" content="https://earn.superteam.fun" />
       <meta name="twitter:creator" content="@SuperteamEarn" />
       <meta name="twitter:image" content={bounty?.winnerBannerUrl} />
-      <meta name="twitter:card" content="summary_large_image" />
+      <meta name="twitter:card" content="summary" />
       <meta property="og:image:width" content="1200" />
       <meta property="og:image:height" content="675" />
       <meta property="og:image:alt" content="Superteam Bounty" />
