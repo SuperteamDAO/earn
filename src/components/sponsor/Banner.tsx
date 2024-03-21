@@ -9,7 +9,9 @@ import {
 } from '@chakra-ui/react';
 import axios from 'axios';
 import Avatar from 'boring-avatars';
+import NextLink from 'next/link';
 import { useEffect, useState } from 'react';
+import { AiOutlineEdit } from 'react-icons/ai';
 import { MdOutlineChatBubbleOutline } from 'react-icons/md';
 
 import { userStore } from '@/store/user';
@@ -81,14 +83,26 @@ export function Banner({ isHackathonRoute }: { isHackathonRoute?: boolean }) {
               />
             )}
             <Box>
-              <Text
-                color={'brand.slate.900'}
-                fontSize="lg"
-                fontWeight={600}
-                whiteSpace={'nowrap'}
-              >
-                {sponsor?.name}
-              </Text>
+              <Box alignItems={'center'} flexDir={'row'} display={'flex'}>
+                <Text
+                  color={'brand.slate.900'}
+                  fontSize="lg"
+                  fontWeight={600}
+                  whiteSpace={'nowrap'}
+                >
+                  {sponsor?.name}
+                </Text>
+                <Link
+                  as={NextLink}
+                  color="brand.slate.500"
+                  _hover={{
+                    color: 'brand.slate.800',
+                  }}
+                  href={`/edit/sponsor`}
+                >
+                  <AiOutlineEdit size={18} color="#94a3b8" />
+                </Link>
+              </Box>
               {isLoading ? (
                 <Skeleton w="170px" h="20px" mt={2} />
               ) : (
