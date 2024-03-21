@@ -48,7 +48,6 @@ export const SubmissionActionButton = ({
   const [triggerLogin, setTriggerLogin] = useState(false);
   const [isUserSubmissionLoading, setIsUserSubmissionLoading] = useState(false);
   const [isSubmitted, setIsSubmitted] = useState(false);
-
   const [isEasterEggOpen, setEasterEggOpen] = useState(false);
 
   const { userInfo } = userStore();
