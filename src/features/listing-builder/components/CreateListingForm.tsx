@@ -16,6 +16,7 @@ import {
 export interface BountyBasicType {
   title?: string;
   deadline?: string;
+  slug?: string;
   templateId?: string;
   pocSocials?: string;
   applicationType?: 'fixed' | 'rolling';

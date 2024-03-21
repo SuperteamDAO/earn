@@ -15,7 +15,13 @@ import {
 } from '@chakra-ui/react';
 import { Regions } from '@prisma/client';
 import { useSession } from 'next-auth/react';
-import { type Dispatch, type SetStateAction, useMemo, useState } from 'react';
+import {
+  type Dispatch,
+  type SetStateAction,
+  useEffect,
+  useMemo,
+  useState,
+} from 'react';
 
 import { SkillSelect } from '@/components/misc/SkillSelect';
 import type { MultiSelectOptions } from '@/constants';
@@ -55,6 +61,7 @@ interface ErrorsBasic {
   subSkills: boolean;
   pocSocials: boolean;
   timeToComplete: boolean;
+  slug: boolean;
 }
 export const ListingBasic = ({
   setbountyBasic,
@@ -84,12 +91,92 @@ export const ListingBasic = ({
     skills: false,
     pocSocials: false,
     timeToComplete: false,
+    slug: false,
   });
+  const [slugErrorMsg, setSlugErrorMsg] = useState('');
 
   const [isUrlValid, setIsUrlValid] = useState(true);
 
   const date = dayjs().format('YYYY-MM-DD');
   const thirtyDaysFromNow = dayjs().add(30, 'day').format('YYYY-MM-DDTHH:mm');
+
+  const generateSlug = (title: string) => {
+    return title
+      .toLowerCase()
+      .replace(/ /g, '-')
+      .replace(/[^\w-]+/g, '');
+  };
+
+  const isSlugUnique = async (slug: string) => {
+    const response = await fetch(`/api/listings/slug?slug=${slug}`);
+    const data = await response.json();
+    return data;
+  };
+
+  const checkSlugPattern = (slug: string) => {
+    const pattern = /^[a-z0-9]+(?:-[a-z0-9]+)*$/;
+    return pattern.test(slug);
+  };
+
+  useEffect(() => {
+    if (bountyBasic?.title) {
+      setbountyBasic({
+        ...(bountyBasic as BountyBasicType),
+        slug: generateSlug(bountyBasic.title),
+      });
+    }
+  }, [bountyBasic?.title]);
+
+  const isSlugValid = () => {
+    setErrorState((errorState) => ({
+      ...errorState,
+      slug: false,
+    }));
+
+    if (bountyBasic?.slug && bountyBasic.slug.length > 0) {
+      const slug = bountyBasic.slug;
+      isSlugUnique(slug)
+        .then((data) => {
+          if (!checkSlugPattern(slug)) {
+            setErrorState((errorState) => ({
+              ...errorState,
+              slug: true,
+            }));
+            setSlugErrorMsg(
+              'Slug Name should only contain lowercase alphabets, numbers and hyphens',
+            );
+            return false;
+          }
+
+          if (data.error) {
+            setErrorState((errorState) => ({
+              ...errorState,
+              slug: true,
+            }));
+            setSlugErrorMsg(
+              'Slug Name already exists. Please choose a different one.',
+            );
+            return false;
+          } else {
+            setErrorState((errorState) => ({
+              ...errorState,
+              slug: false,
+            }));
+            setSlugErrorMsg('');
+            return true;
+          }
+        })
+        .catch(() => {
+          setErrorState((errorState) => ({
+            ...errorState,
+            slug: true,
+          }));
+          setSlugErrorMsg('An error occurred while checking the slug');
+          return false;
+        });
+    }
+    return false;
+  };
 
   const hasBasicInfo =
     bountyBasic?.title &&
@@ -172,6 +259,62 @@ export const ListingBasic = ({
           />
           <FormErrorMessage>
             {/* {errors.title ? <>{errors.title.message}</> : <></>} */}
+          </FormErrorMessage>
+        </FormControl>
+
+        <FormControl w="full" mb={5} isInvalid={errorState.slug} isRequired>
+          <Flex>
+            <FormLabel
+              color={'brand.slate.500'}
+              fontSize={'15px'}
+              fontWeight={600}
+              htmlFor={'slug'}
+            >
+              Listing Slug
+            </FormLabel>
+            <Tooltip
+              w="max"
+              p="0.7rem"
+              color="white"
+              fontSize="0.9rem"
+              fontWeight={600}
+              bg="#6562FF"
+              borderRadius="0.5rem"
+              hasArrow
+              label={`Use a short slug to describe the Listing`}
+              placement="right-end"
+            >
+              <Image
+                mt={-2}
+                alt={'Info Icon'}
+                src={'/assets/icons/info-icon.svg'}
+              />
+            </Tooltip>
+          </Flex>
+
+          <Input
+            borderColor="brand.slate.300"
+            _placeholder={{
+              color: 'brand.slate.300',
+            }}
+            focusBorderColor="brand.purple"
+            id="slug"
+            onChange={(e) => {
+              setErrorState({
+                ...errorState,
+                slug: false,
+              });
+              setbountyBasic({
+                ...(bountyBasic as BountyBasicType),
+                slug: e.target.value,
+              });
+              setIsUrlValid(true);
+            }}
+            placeholder="develop-a-new-landing-page"
+            value={bountyBasic?.slug}
+          />
+          <FormErrorMessage>
+            {slugErrorMsg ? <>{slugErrorMsg}</> : <></>}
           </FormErrorMessage>
         </FormControl>
 
@@ -502,7 +645,7 @@ export const ListingBasic = ({
         <VStack gap={4} w={'full'} mt={6}>
           <Button
             w="100%"
-            onClick={() => {
+            onClick={async () => {
               setErrorState({
                 deadline: !bountyBasic?.deadline,
                 skills: skills.length === 0,
@@ -510,6 +653,7 @@ export const ListingBasic = ({
                 title: !bountyBasic?.title,
                 pocSocials: !bountyBasic?.pocSocials,
                 timeToComplete: isProject ? !isTimeToCompleteValid : false,
+                slug: isSlugValid(), // Change THIS
               });
               if (isProject && !isTimeToCompleteValid) {
                 return;
