@@ -90,7 +90,7 @@ const WinnerBanner = forwardRef<HTMLDivElement, Props>(
           justify="space-between"
           w="full"
           px="2.5rem"
-          py="2rem"
+          py="3.5rem"
         >
           <Flex ml="auto">
             <Image

@@ -174,6 +174,7 @@ export function ListingWinners({ bounty }: Props) {
         🎉 Winners Announced
       </Text>
       {!bannerUrl && (
+        // <Box pos="fixed" zIndex={1} top={'10%'} right={'30%'}>
         <Box pos="fixed" zIndex={-99999} top={'-300%'} right={'-300%'}>
           <WinnerBanner
             ref={winnerBannerRef}
