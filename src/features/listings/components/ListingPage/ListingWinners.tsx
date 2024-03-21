@@ -180,7 +180,6 @@ export function ListingWinners({ bounty }: Props) {
             ref={winnerBannerRef}
             bounty={bounty}
             submissions={submissions}
-            isProject={isProject}
           />
         </Box>
       )}

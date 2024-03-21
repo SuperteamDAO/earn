@@ -15,7 +15,6 @@ import type { SubmissionWithUser } from '@/interface/submission';
 interface Props {
   bounty: Bounty;
   submissions: SubmissionWithUser[];
-  isProject: boolean;
   ref?: Ref<HTMLDivElement>;
 }
 
@@ -40,11 +39,11 @@ const winnerToNumber = (winner: string): string => {
   if (winner.toLowerCase().includes('fifth')) {
     return '5th';
   }
-  return 'Winner';
+  return '1st';
 };
 
 const WinnerBanner = forwardRef<HTMLDivElement, Props>(
-  ({ bounty, submissions, isProject }, ref) => {
+  ({ bounty, submissions }, ref) => {
     return (
       <Flex
         ref={ref}
@@ -77,7 +76,6 @@ const WinnerBanner = forwardRef<HTMLDivElement, Props>(
                 winner={winner}
                 index={index}
                 bounty={bounty}
-                isProject={isProject}
               />
             ))}
           </Flex>
@@ -112,8 +110,7 @@ const ProfileIcon: React.FC<{
   winner: SubmissionWithUser;
   index: number;
   bounty: Bounty;
-  isProject: boolean;
-}> = ({ winner, index, bounty, isProject }) => {
+}> = ({ winner, index, bounty }) => {
   return (
     <VStack key={index} pos="relative" alignItems="center" spacing="2">
       {winner?.user?.photo ? (
@@ -146,7 +143,7 @@ const ProfileIcon: React.FC<{
         bg="rgba(157, 111, 255, 1)"
       >
         <Text className="shifted-text">
-          {isProject ? 'Winner' : winnerToNumber(winner?.winnerPosition || '')}
+          {winnerToNumber(winner?.winnerPosition || '')}
         </Text>
       </Circle>
       <Text
