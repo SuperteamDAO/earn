@@ -68,11 +68,11 @@ export function HomeBanner({ setTriggerLogin, userCount }: BannerProps) {
         <Box
           pos="relative"
           w={'100%'}
-          h={isLessThan768px ? '400' : '280'}
+          h={isLessThan768px ? '260' : '280'}
           maxH={'500px'}
           mx={'auto'}
           mb={8}
-          p={{ base: '6', md: '10' }}
+          p={{ base: '5', md: '10' }}
           rounded={'md'}
         >
           <Image
@@ -94,9 +94,9 @@ export function HomeBanner({ setTriggerLogin, userCount }: BannerProps) {
             pos="relative"
             zIndex={1}
             color="white"
-            fontSize={'28px'}
+            fontSize={isLessThan768px ? '2xl' : '28px'}
             fontWeight={'700'}
-            lineHeight={'2.2rem'}
+            lineHeight={'120%'}
           >
             Unlock your crypto
             <br /> earning potential
@@ -105,9 +105,9 @@ export function HomeBanner({ setTriggerLogin, userCount }: BannerProps) {
             pos="relative"
             zIndex={1}
             maxW={{ base: '100%', md: '460px' }}
-            mt={isLessThan768px ? '2' : '4'}
+            mt={isLessThan768px ? '2.5' : '4'}
             color={'white'}
-            fontSize={{ base: 'sm', md: 'lg' }}
+            fontSize={{ base: '13px', md: 'lg' }}
           >
             Explore bounties, projects, and grant opportunities for developers
             and non-technical talent alike
@@ -117,7 +117,7 @@ export function HomeBanner({ setTriggerLogin, userCount }: BannerProps) {
             align={'center'}
             direction={isLessThan768px ? 'column' : 'row'}
             gap={isLessThan768px ? '3' : '4'}
-            mt={isLessThan768px ? '24' : '4'}
+            mt={'4'}
           >
             <Button
               w={isLessThan768px ? '100%' : 'auto'}
@@ -133,7 +133,7 @@ export function HomeBanner({ setTriggerLogin, userCount }: BannerProps) {
               Sign Up
             </Button>
             <Flex align="center">
-              <AvatarGroup max={3} size="sm">
+              <AvatarGroup max={3} size={{ base: 'xs', md: 'sm' }}>
                 {avatars.map((avatar, index) => (
                   <Avatar
                     key={index}
@@ -149,8 +149,8 @@ export function HomeBanner({ setTriggerLogin, userCount }: BannerProps) {
                 <Text
                   pos="relative"
                   ml={'0.6875rem'}
-                  color="white"
-                  fontSize={'0.875rem'}
+                  color="brand.slate.200"
+                  fontSize={{ base: '0.8rem', md: '0.875rem' }}
                 >
                   Join {userCount?.toLocaleString()}+ others
                 </Text>

@@ -198,6 +198,7 @@ export function ListingWinners({ bounty }: Props) {
                     <Image
                       boxSize="72px"
                       borderRadius="full"
+                      objectFit={'cover'}
                       alt={`${submission?.user?.firstName} ${submission?.user?.lastName}`}
                       src={submission?.user?.photo}
                     />
