@@ -85,7 +85,7 @@ export const EasterEgg = ({ isOpen, onClose }: Props) => {
             height="600"
             priority
             loading="eager"
-            quality={70}
+            quality={100}
           />
         </AbsoluteCenter>
         <audio
