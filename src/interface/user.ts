@@ -64,5 +64,6 @@ interface User {
     deadline: string;
     announceDate: string;
   };
+  surveysShown?: string[];
 }
 export type { Notifications, User };

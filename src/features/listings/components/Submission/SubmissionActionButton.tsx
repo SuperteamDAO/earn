@@ -165,11 +165,9 @@ export const SubmissionActionButton = ({
       btnLoadingText = 'Checking Submission..';
   }
 
-  const {
-    isOpen: isSurveyOpen,
-    onOpen: onSurveyOpen,
-    onClose: onSurveyClose,
-  } = useDisclosure();
+  const { isOpen: isSurveyOpen, onOpen: onSurveyOpen } = useDisclosure();
+
+  const surveyId = '018c6743-c893-0000-a90e-f35d31c16692';
 
   return (
     <>
@@ -187,13 +185,14 @@ export const SubmissionActionButton = ({
           onSurveyOpen={onSurveyOpen}
         />
       )}
-      {isSurveyOpen && (
-        <SurveyModal
-          isOpen={isSurveyOpen}
-          onClose={onSurveyClose}
-          surveyId="018c6743-c893-0000-a90e-f35d31c16692"
-        />
-      )}
+      {isSurveyOpen &&
+        (!userInfo?.surveysShown || !(surveyId in userInfo.surveysShown)) && (
+          <SurveyModal
+            isOpen={isSurveyOpen}
+            onClose={() => {}}
+            surveyId={surveyId}
+          />
+        )}
       {warningIsOpen && (
         <WarningModal
           isOpen={warningIsOpen}
