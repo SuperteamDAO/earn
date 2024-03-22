@@ -28,14 +28,6 @@ function Grants() {
     getGrants();
   }, []);
 
-  const colors = [
-    '#D2F4FF',
-    '#F1FFD2',
-    '#D2DFFF',
-    '#FFD8D2',
-    '#D2FFDC',
-    '#D2FFF7',
-  ];
   return (
     <>
       <Default
@@ -104,18 +96,10 @@ function Grants() {
                       <GrantEntry
                         title={grant?.title}
                         shortDescription={grant?.shortDescription}
-                        color={
-                          colors[Math.floor(Math.random() * colors.length)] ||
-                          ''
-                        }
                         slug={grant.slug}
                         rewardAmount={grant?.rewardAmount}
                         token={grant?.token}
                         link={grant?.link}
-                        icon={
-                          grant?.sponsor?.logo ??
-                          '/assets/home/placeholder/ph2.png'
-                        }
                         logo={grant?.logo}
                       />
                     </WrapItem>

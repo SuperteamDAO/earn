@@ -6,9 +6,9 @@ import { useEffect, useState } from 'react';
 
 import type { SubmissionWithUser } from '@/interface/submission';
 import { sortRank } from '@/utils/rank';
-import { tweetEmbedLink, tweetTemplate } from '@/utils/tweetTemplate';
 
 import type { Bounty, Rewards } from '../../types';
+import { tweetEmbedLink, tweetTemplate } from '../../utils';
 
 interface Props {
   bounty: Bounty;
