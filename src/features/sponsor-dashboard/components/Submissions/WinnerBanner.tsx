@@ -102,9 +102,8 @@ const WinnerBanner = forwardRef<HTMLDivElement, Props>(
     );
   },
 );
-
 WinnerBanner.displayName = 'WinnerBanner';
-export default WinnerBanner;
+export { WinnerBanner };
 
 const ProfileIcon: React.FC<{
   winner: SubmissionWithUser;

@@ -15,7 +15,14 @@ import {
   Text,
 } from '@chakra-ui/react';
 import axios from 'axios';
-import { useEffect, useState } from 'react';
+import html2canvas from 'html2canvas';
+import { useEffect, useRef, useState } from 'react';
+
+import { type Bounty } from '@/features/listings';
+import { WinnerBanner } from '@/features/sponsor-dashboard';
+import { type SubmissionWithUser } from '@/interface/submission';
+import { getBlobFromCanvas } from '@/utils/canvasToBlob';
+import { uploadToCloudinary } from '@/utils/upload';
 
 interface Props {
   onClose: () => void;
@@ -24,9 +31,11 @@ interface Props {
   totalPaymentsMade: number;
   rewards: any;
   bountyId: string | undefined;
+  bounty: Bounty | null;
   isDeadlinePassed?: boolean;
   hasWinnersAnnounced?: boolean;
   isRolling?: boolean;
+  submissions: SubmissionWithUser[];
 }
 
 export function PublishResults({
@@ -39,10 +48,14 @@ export function PublishResults({
   isDeadlinePassed,
   hasWinnersAnnounced = false,
   isRolling = false,
+  bounty,
+  submissions,
 }: Props) {
   const [isPublishingResults, setIsPublishingResults] = useState(false);
   const [isWinnersAnnounced, setIsWinnersAnnounced] =
     useState(hasWinnersAnnounced);
+  const winnerBannerRef = useRef<HTMLDivElement>(null);
+
   let alertType:
     | 'loading'
     | 'info'
@@ -68,11 +81,67 @@ export function PublishResults({
     }.`;
   }
 
+  const saveBannerUrl = async (): Promise<string> => {
+    return new Promise(async (resolve, reject) => {
+      try {
+        if (!winnerBannerRef.current) {
+          throw new Error('no banner ref');
+        }
+        console.log('oooo no banner url');
+        const canvas = await html2canvas(winnerBannerRef.current, {
+          useCORS: true,
+          width: 1200,
+          height: 675,
+          x: 0,
+          y: 0,
+          onclone: (el) => {
+            const elementsWithShiftedDownwardText =
+              el.querySelectorAll<HTMLElement>('.shifted-text');
+            elementsWithShiftedDownwardText.forEach((element) => {
+              element.style.transform = 'translateY(-30%)';
+            });
+          },
+        });
+
+        const mimeType = 'image/png';
+        if (!bounty?.id || !bounty?.slug) throw new Error('no id or slug');
+        const fileName = `${bounty.id}-winner-banner`;
+
+        const blob = await getBlobFromCanvas(canvas, mimeType);
+
+        if (!blob) throw new Error('no blob');
+        const file = new File([blob], fileName, { type: mimeType });
+        console.log('image size - ', blob.size, file.size);
+
+        // NEED THIS FOR LOCAL DOWNLOAD LINK, WE DONT WANT TO SPAM CLOUDINARY FOR IMAGE LINK
+        // const localUrl = URL.createObjectURL(file);
+        // const downloadLink = document.createElement('a');
+        // downloadLink.href = localUrl;
+        // downloadLink.setAttribute('download', 'data.png'); // Name the file here
+        // document.body.appendChild(downloadLink);
+        // downloadLink.click();
+        // document.body.removeChild(downloadLink);
+        // throw new Error("done")
+
+        const url = await uploadToCloudinary(file);
+
+        await axios.put(`/api/bounties/${bounty.slug}/setWinnerBanner`, {
+          image: url,
+        });
+
+        resolve(url);
+      } catch {
+        reject('Some Error Occured');
+      }
+    });
+  };
+
   const publishResults = async () => {
     if (!bountyId) return;
     setIsPublishingResults(true);
     try {
       await axios.post(`/api/bounties/announce/${bountyId}/`);
+      await saveBannerUrl();
       setIsWinnersAnnounced(true);
       setIsPublishingResults(false);
     } catch (e) {
@@ -94,6 +163,15 @@ export function PublishResults({
       <ModalContent>
         <ModalHeader>Publish Results</ModalHeader>
         <ModalCloseButton />
+        {bounty && (
+          <Box pos="fixed" zIndex={-99999} top={'-300%'} right={'-300%'}>
+            <WinnerBanner
+              ref={winnerBannerRef}
+              submissions={submissions}
+              bounty={bounty}
+            />
+          </Box>
+        )}
         <ModalBody>
           {isWinnersAnnounced && (
             <Alert

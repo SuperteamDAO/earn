@@ -114,6 +114,8 @@ function BountySubmissions({ slug }: Props) {
               totalPaymentsMade={totalPaymentsMade}
               rewards={Object.keys(bounty?.rewards || {})}
               bountyId={bounty?.id}
+              bounty={bounty}
+              submissions={submissions}
               isDeadlinePassed={dayjs().isAfter(bounty?.deadline)}
               hasWinnersAnnounced={bounty?.isWinnersAnnounced}
               isRolling={bounty?.type === 'rolling'}
