@@ -64,128 +64,137 @@ export function ListingWinners({ bounty }: Props) {
     getSubmissions();
   }, []);
 
-  const onShareClick = useCallback(async () => {
-    setLoadingBanner(true);
-    if (bannerUrl) {
-      let path = window.location.href.split('?')[0];
-      if (!path) return;
-
-      path += 'winner/';
-
-      const tweetLink = tweetEmbedLink(tweetTemplate(path));
-
-      openExternalLinkInNewTab(tweetLink);
-
-      setLoadingBanner(false);
-      return;
-    }
-    if (!winnerBannerRef.current) return;
-    try {
-      let endTime,
-        computeTime,
-        startTime = performance.now();
-      const canvas = await html2canvas(winnerBannerRef.current, {
-        useCORS: true,
-        width: 1200,
-        height: 675,
-        x: 0,
-        y: 0,
-        onclone: (el) => {
-          const elementsWithShiftedDownwardText =
-            el.querySelectorAll<HTMLElement>('.shifted-text');
-          elementsWithShiftedDownwardText.forEach((element) => {
-            element.style.transform = 'translateY(-30%)';
-          });
-        },
-      });
-      endTime = performance.now();
-      computeTime = endTime - startTime;
-      console.log(`Canvas Created: ${computeTime} milliseconds`);
-      startTime = performance.now();
-
-      // const data = canvas.toDataURL('image/jpg')
-      canvas.toBlob(async function (blob) {
-        try {
-          endTime = performance.now();
-          computeTime = endTime - startTime;
-          console.log(`Image Created: ${computeTime} milliseconds`);
-          startTime = performance.now();
-
-          if (!bounty.id || !bounty.slug) return;
-          const fileName = `${bounty.id}-winner-banner`;
-          const mimeType = 'image/png';
-
-          if (!blob) return;
-          const file = new File([blob], fileName, { type: mimeType });
-          console.log('image size - ', blob.size, file.size);
-
-          // NEED THIS FOR LOCAL DOWNLOAD LINK, WE DONT WANT TO SPAM CLOUDINARY FOR IMAGE LINK
-          // const localUrl = URL.createObjectURL(file);
-          // const downloadLink = document.createElement('a');
-          // downloadLink.href = localUrl;
-          // downloadLink.setAttribute('download', 'data.png'); // Name the file here
-          // document.body.appendChild(downloadLink);
-          // downloadLink.click();
-          // document.body.removeChild(downloadLink);
-          // throw new Error("done")
-
-          const url = await uploadToCloudinary(file);
-
-          endTime = performance.now();
-          computeTime = endTime - startTime;
-          console.log(`Uploaded to Cloudinary: ${computeTime} milliseconds`);
-          startTime = performance.now();
-
-          await axios.put(`/api/bounties/${bounty.slug}/setWinnerBanner`, {
-            image: url,
-          });
-
-          endTime = performance.now();
-          computeTime = endTime - startTime;
-          console.log(`Updated Database: ${computeTime} milliseconds`);
-          startTime = performance.now();
-
-          setBannerUrl(url);
-
-          let path = window.location.href.split('?')[0];
-          if (!path) return;
-
-          path += 'winner/';
-
-          const tweetLink = tweetEmbedLink(tweetTemplate(path));
-
-          openExternalLinkInNewTab(tweetLink);
-
-          endTime = performance.now();
-          computeTime = endTime - startTime;
-          console.log(`Opened Twitter: ${computeTime} milliseconds`);
-          startTime = performance.now();
-
+  const onShareClick = useCallback(
+    async (bannerUrl: string | undefined) => {
+      setLoadingBanner(true);
+      if (bannerUrl) {
+        console.log('we got banner url');
+        let path = window.location.href.split('?')[0];
+        if (!path) {
           setLoadingBanner(false);
-        } catch (err) {
-          setLoadingBanner(false);
-          toast({
-            title: 'Failed to Share',
-            description: 'Please try again later',
-            status: 'error',
-            duration: 5000,
-            isClosable: true,
-            variant: 'subtle',
-          });
+          return;
         }
-      }, 'image/png');
-    } catch {
-      setLoadingBanner(false);
-      toast({
-        title: 'Failed to Share',
-        description: 'Please try again later',
-        status: 'error',
-        duration: 5000,
-        isClosable: true,
-        variant: 'subtle',
-      });
-    }
-  }, [winnerBannerRef]);
+
+        path += 'winner/';
+
+        const tweetLink = tweetEmbedLink(tweetTemplate(path));
+
+        setLoadingBanner(false);
+        openExternalLinkInNewTab(tweetLink);
+        return;
+      }
+      if (!winnerBannerRef.current) {
+        setLoadingBanner(false);
+        return;
+      }
+      try {
+        console.log('oooo no banner url');
+        let endTime,
+          computeTime,
+          startTime = performance.now();
+        const canvas = await html2canvas(winnerBannerRef.current, {
+          useCORS: true,
+          width: 1200,
+          height: 675,
+          x: 0,
+          y: 0,
+          onclone: (el) => {
+            const elementsWithShiftedDownwardText =
+              el.querySelectorAll<HTMLElement>('.shifted-text');
+            elementsWithShiftedDownwardText.forEach((element) => {
+              element.style.transform = 'translateY(-30%)';
+            });
+          },
+        });
+        endTime = performance.now();
+        computeTime = endTime - startTime;
+        console.log(`Canvas Created: ${computeTime} milliseconds`);
+        startTime = performance.now();
+
+        // const data = canvas.toDataURL('image/jpg')
+        canvas.toBlob(async function (blob) {
+          try {
+            endTime = performance.now();
+            computeTime = endTime - startTime;
+            console.log(`Image Created: ${computeTime} milliseconds`);
+            startTime = performance.now();
+
+            if (!bounty.id || !bounty.slug) throw new Error('no id or slug');
+            const fileName = `${bounty.id}-winner-banner`;
+            const mimeType = 'image/png';
+
+            if (!blob) throw new Error('no blob');
+            const file = new File([blob], fileName, { type: mimeType });
+            console.log('image size - ', blob.size, file.size);
+
+            // NEED THIS FOR LOCAL DOWNLOAD LINK, WE DONT WANT TO SPAM CLOUDINARY FOR IMAGE LINK
+            // const localUrl = URL.createObjectURL(file);
+            // const downloadLink = document.createElement('a');
+            // downloadLink.href = localUrl;
+            // downloadLink.setAttribute('download', 'data.png'); // Name the file here
+            // document.body.appendChild(downloadLink);
+            // downloadLink.click();
+            // document.body.removeChild(downloadLink);
+            // throw new Error("done")
+
+            const url = await uploadToCloudinary(file);
+            setBannerUrl(url);
+
+            endTime = performance.now();
+            computeTime = endTime - startTime;
+            console.log(`Uploaded to Cloudinary: ${computeTime} milliseconds`);
+            startTime = performance.now();
+
+            await axios.put(`/api/bounties/${bounty.slug}/setWinnerBanner`, {
+              image: url,
+            });
+
+            endTime = performance.now();
+            computeTime = endTime - startTime;
+            console.log(`Updated Database: ${computeTime} milliseconds`);
+            startTime = performance.now();
+
+            let path = window.location.href.split('?')[0];
+            if (!path) throw new Error('no path');
+
+            path += 'winner/';
+
+            const tweetLink = tweetEmbedLink(tweetTemplate(path));
+
+            openExternalLinkInNewTab(tweetLink);
+
+            endTime = performance.now();
+            computeTime = endTime - startTime;
+            console.log(`Opened Twitter: ${computeTime} milliseconds`);
+            startTime = performance.now();
+
+            setLoadingBanner(false);
+          } catch (err) {
+            setLoadingBanner(false);
+            toast({
+              title: 'Failed to Share',
+              description: 'Please try again later',
+              status: 'error',
+              duration: 5000,
+              isClosable: true,
+              variant: 'subtle',
+            });
+          }
+        }, 'image/png');
+      } catch {
+        setLoadingBanner(false);
+        toast({
+          title: 'Failed to Share',
+          description: 'Please try again later',
+          status: 'error',
+          duration: 5000,
+          isClosable: true,
+          variant: 'subtle',
+        });
+      }
+    },
+    [winnerBannerRef],
+  );
 
   if (isListingLoading || !submissions.length) {
     return null;
@@ -304,7 +313,7 @@ export function ListingWinners({ bounty }: Props) {
             _hover={{ background: 'rgba(255, 255, 255, 0.8)' }}
             _active={{ background: 'rgba(255, 255, 255, 0.5)' }}
             isLoading={loadingBanner}
-            onClick={onShareClick}
+            onClick={() => onShareClick(bannerUrl)}
           >
             Share on
             <Center w="1.2rem">
