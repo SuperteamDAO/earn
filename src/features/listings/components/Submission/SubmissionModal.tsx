@@ -40,6 +40,7 @@ interface Props {
   editMode: boolean;
   listing: Bounty;
   showEasterEgg: () => void;
+  onSurveyOpen: () => void;
 }
 
 interface EligibilityAnswer {
@@ -58,6 +59,7 @@ export const SubmissionModal = ({
   editMode,
   listing,
   showEasterEgg,
+  onSurveyOpen,
 }: Props) => {
   const {
     id,
@@ -187,6 +189,7 @@ export const SubmissionModal = ({
 
       const latestSubmissionNumber = (userInfo?.Submission?.length ?? 0) + 1;
       if (!editMode && latestSubmissionNumber % 3 === 0) showEasterEgg();
+      if (!editMode && latestSubmissionNumber % 3 !== 0) onSurveyOpen();
 
       reset();
       setIsSubmitted(true);
