@@ -11,12 +11,14 @@ import {
   ModalBody,
   ModalContent,
   ModalOverlay,
+  Select,
   Text,
   Tooltip,
   useDisclosure,
   VStack,
 } from '@chakra-ui/react';
 import { Color } from '@tiptap/extension-color';
+import ImageUpload from '@tiptap/extension-image';
 import Link from '@tiptap/extension-link';
 import ListItem from '@tiptap/extension-list-item';
 import Placeholder from '@tiptap/extension-placeholder';
@@ -24,6 +26,7 @@ import TextStyle from '@tiptap/extension-text-style';
 import Underline from '@tiptap/extension-underline';
 import { EditorContent, useEditor } from '@tiptap/react';
 import StarterKit from '@tiptap/starter-kit';
+import imageCompression from 'browser-image-compression';
 import React, {
   type Dispatch,
   type SetStateAction,
@@ -41,12 +44,15 @@ import {
 import { CiRedo, CiUndo } from 'react-icons/ci';
 import { GoBold } from 'react-icons/go';
 import {
+  MdOutlineAddPhotoAlternate,
   MdOutlineFormatListBulleted,
   MdOutlineFormatUnderlined,
   MdOutlineHorizontalRule,
 } from 'react-icons/md';
+import ImageResize from 'tiptap-extension-resize-image';
 
 import { ReferenceCard, type References } from '@/features/listings';
+import { uploadToCloudinary } from '@/utils/upload';
 
 const LinkModal = ({
   isOpen,
@@ -118,6 +124,14 @@ export const DescriptionBuilder = ({
   const editor = useEditor({
     extensions: [
       Underline,
+      ImageResize,
+      ImageUpload.configure({
+        inline: true,
+        allowBase64: true,
+        HTMLAttributes: {
+          style: 'align-item:center',
+        },
+      }),
       Color.configure({ types: [TextStyle.name, ListItem.name] }),
       TextStyle.configure(),
       Link.configure({
@@ -177,12 +191,65 @@ export const DescriptionBuilder = ({
     [editor],
   );
 
+  const addImage = useCallback(() => {
+    const fileInput = document.createElement('input');
+    fileInput.type = 'file';
+    fileInput.accept = 'image/jpeg, image/png'; // Accept only JPEG & PNG files
+    fileInput.click();
+
+    // Listen for file selection
+    fileInput.addEventListener('change', async (event: any) => {
+      const file = event?.target?.files[0]; // Get the first selected file
+      if (file) {
+        const options = {
+          maxSizeMB: 1,
+          maxWidthOrHeight: 1920,
+          useWebWorker: true,
+        };
+        const compressedImg = await imageCompression(file, options);
+
+        // upload the file and get its URL
+        const url = await uploadToCloudinary(compressedImg);
+        if (url) {
+          // Set the image in the editor
+          editor?.chain().focus().setImage({ src: url }).run();
+        }
+      }
+    });
+  }, [editor]);
+
   const handleDeleteReference = () => {
     if (references && setReferences) {
       const temp = references.filter(
         (_el, index) => index !== references.length - 1,
       );
       setReferences(temp);
+    }
+  };
+
+  const handleHeadingChange = (h: any) => {
+    const level = Number(h);
+    switch (level) {
+      case 1:
+        editor?.chain().focus().toggleHeading({ level: 1 }).run();
+        break;
+      case 2:
+        editor?.chain().focus().toggleHeading({ level: 2 }).run();
+        break;
+      case 3:
+        editor?.chain().focus().toggleHeading({ level: 3 }).run();
+        break;
+      case 4:
+        editor?.chain().focus().toggleHeading({ level: 4 }).run();
+        break;
+      case 5:
+        editor?.chain().focus().toggleHeading({ level: 5 }).run();
+        break;
+      case 6:
+        editor?.chain().focus().toggleHeading({ level: 6 }).run();
+        break;
+      default:
+        break;
     }
   };
 
@@ -305,7 +372,7 @@ export const DescriptionBuilder = ({
             borderBottom={'1px solid #D2D2D2'}
             bgColor={'#ffffff'}
           >
-            <Button
+            {/* <Button
               bg={editor?.isActive('heading', { level: 1 }) ? 'gray.200' : ''}
               borderTop={'1px solid #D2D2D2'}
               borderRight={'1px solid #D2D2D2'}
@@ -377,7 +444,78 @@ export const DescriptionBuilder = ({
               variant={'unstyled'}
             >
               H6
-            </Button>
+            </Button> */}
+            <VStack display={'flex'} w={'full'}>
+              <Select
+                onChange={(e) => {
+                  handleHeadingChange(e.target.value);
+                }}
+                placeholder="Headings"
+              >
+                <option value={1}>
+                  <Button
+                    borderTop={'1px solid #D2D2D2'}
+                    borderRight={'1px solid #D2D2D2'}
+                    borderLeft={'1px solid #D2D2D2'}
+                    borderRadius={'0px'}
+                    variant={'unstyled'}
+                  >
+                    <h5>H1</h5>
+                  </Button>
+                </option>
+                <option value={2}>
+                  {' '}
+                  <Button
+                    borderTop={'1px solid #D2D2D2'}
+                    borderRight={'1px solid #D2D2D2'}
+                    borderRadius={'0px'}
+                    variant={'unstyled'}
+                  >
+                    H2
+                  </Button>
+                </option>
+                <option value={3}>
+                  <Button
+                    borderTop={'1px solid #D2D2D2'}
+                    borderRight={'1px solid #D2D2D2'}
+                    borderRadius={'0px'}
+                    variant={'unstyled'}
+                  >
+                    H3
+                  </Button>
+                </option>
+                <option value={4}>
+                  <Button
+                    borderTop={'1px solid #D2D2D2'}
+                    borderRight={'1px solid #D2D2D2'}
+                    borderRadius={'0px'}
+                    variant={'unstyled'}
+                  >
+                    H4
+                  </Button>
+                </option>
+                <option value={5}>
+                  <Button
+                    borderTop={'1px solid #D2D2D2'}
+                    borderRight={'1px solid #D2D2D2'}
+                    borderRadius={'0px'}
+                    variant={'unstyled'}
+                  >
+                    H5
+                  </Button>
+                </option>
+                <option value={6}>
+                  <Button
+                    borderTop={'1px solid #D2D2D2'}
+                    borderRight={'1px solid #D2D2D2'}
+                    borderRadius={'0px'}
+                    variant={'unstyled'}
+                  >
+                    H6
+                  </Button>
+                </option>
+              </Select>
+            </VStack>
             <Button
               alignItems={'center'}
               justifyContent={'center'}
@@ -422,6 +560,19 @@ export const DescriptionBuilder = ({
               variant={'unstyled'}
             >
               <MdOutlineFormatUnderlined />
+            </Button>
+            <Button
+              alignItems={'center'}
+              justifyContent={'center'}
+              display={'flex'}
+              bg={editor?.isActive('underline') ? 'gray.200' : ''}
+              borderTop={'1px solid #D2D2D2'}
+              borderRight={'1px solid #D2D2D2'}
+              borderRadius={'0px'}
+              onClick={addImage}
+              variant={'unstyled'}
+            >
+              <MdOutlineAddPhotoAlternate />
             </Button>
             <Button
               alignItems={'center'}
@@ -530,7 +681,6 @@ export const DescriptionBuilder = ({
               alignItems={'center'}
               justifyContent={'center'}
               display={'flex'}
-              w={'full'}
               borderTop={'1px solid #D2D2D2'}
               borderRight={'1px solid #D2D2D2'}
               borderRadius={'0px'}
@@ -545,7 +695,6 @@ export const DescriptionBuilder = ({
               alignItems={'center'}
               justifyContent={'center'}
               display={'flex'}
-              w={'full'}
               borderTop={'1px solid #D2D2D2'}
               borderRight={'1px solid #D2D2D2'}
               borderRadius={'0px'}
@@ -560,7 +709,6 @@ export const DescriptionBuilder = ({
               alignItems={'center'}
               justifyContent={'center'}
               display={'flex'}
-              w={'full'}
               borderTop={'1px solid #D2D2D2'}
               borderRight={'1px solid #D2D2D2'}
               borderRadius={'0px'}
