@@ -17,6 +17,7 @@ import {
   VStack,
 } from '@chakra-ui/react';
 import { Color } from '@tiptap/extension-color';
+import { Image as TiptapImage } from '@tiptap/extension-image';
 import Link from '@tiptap/extension-link';
 import ListItem from '@tiptap/extension-list-item';
 import Placeholder from '@tiptap/extension-placeholder';
@@ -24,6 +25,7 @@ import TextStyle from '@tiptap/extension-text-style';
 import Underline from '@tiptap/extension-underline';
 import { EditorContent, useEditor } from '@tiptap/react';
 import StarterKit from '@tiptap/starter-kit';
+import imageCompression from 'browser-image-compression';
 import React, {
   type Dispatch,
   type SetStateAction,
@@ -44,9 +46,11 @@ import {
   MdOutlineFormatListBulleted,
   MdOutlineFormatUnderlined,
   MdOutlineHorizontalRule,
+  MdUploadFile,
 } from 'react-icons/md';
 
 import { ReferenceCard, type References } from '@/features/listings';
+import { uploadToCloudinary } from '@/utils/upload';
 
 const LinkModal = ({
   isOpen,
@@ -115,8 +119,10 @@ export const DescriptionBuilder = ({
 }: Props) => {
   const { isOpen, onClose, onOpen } = useDisclosure();
   const [referenceError, setReferenceError] = useState<boolean>(false);
+  const fileInputRef = React.useRef(null);
   const editor = useEditor({
     extensions: [
+      TiptapImage,
       Underline,
       Color.configure({ types: [TextStyle.name, ListItem.name] }),
       TextStyle.configure(),
@@ -176,6 +182,43 @@ export const DescriptionBuilder = ({
     },
     [editor],
   );
+
+  const handleImageUpload = (event: any) => {
+    const file = event.target.files[0];
+    console.log(file);
+
+    if (!file || !['image/png', 'image/jpeg'].includes(file.type)) {
+      alert('Only JPEG or PNG files are supported.');
+      return;
+    }
+
+    compressImage(file)
+      .then((compressedImage) => {
+        const uniqueId = Date.now().toString();
+        uploadToCloudinary(compressedImage, uniqueId).then((url) => {
+          editor?.chain().focus().setImage({ src: url }).run();
+          event.target.value = '';
+        });
+      })
+      .catch((error) => {
+        console.log(error);
+      });
+  };
+
+  async function compressImage(imageFile: any) {
+    const options = {
+      maxSizeMB: 1,
+      maxWidthOrHeight: 1920,
+      useWebWorker: true,
+    };
+    try {
+      const compressedFile = await imageCompression(imageFile, options);
+      return compressedFile;
+    } catch (error) {
+      console.log(error);
+      return null;
+    }
+  }
 
   const handleDeleteReference = () => {
     if (references && setReferences) {
@@ -422,6 +465,29 @@ export const DescriptionBuilder = ({
               variant={'unstyled'}
             >
               <MdOutlineFormatUnderlined />
+            </Button>
+            {/* I am coding here */}
+            <input
+              type="file"
+              accept="image/png, image/jpeg"
+              style={{ display: 'none' }}
+              onChange={handleImageUpload}
+              ref={fileInputRef}
+            />
+            <Button
+              alignItems={'center'}
+              justifyContent={'center'}
+              display={'flex'}
+              bg={editor?.isActive('color') ? 'gray.200' : ''}
+              borderTop={'1px solid #D2D2D2'}
+              borderRight={'1px solid #D2D2D2'}
+              borderRadius={'0px'}
+              onClick={() =>
+                (fileInputRef.current as unknown as HTMLInputElement)?.click()
+              }
+              variant={'unstyled'}
+            >
+              <MdUploadFile />
             </Button>
             <Button
               alignItems={'center'}
