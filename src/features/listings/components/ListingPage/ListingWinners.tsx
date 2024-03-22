@@ -154,37 +154,31 @@ export function ListingWinners({ bounty }: Props) {
     });
   };
 
-  const onShareClick = async (bannerUrl: string | undefined) => {
-    setLoadingBanner(true);
-    if (bannerUrl) {
-      console.log('we got banner url');
-      let path = window.location.href.split('?')[0];
-      if (!path) {
-        setLoadingBanner(false);
-        return;
-      }
-
-      path += 'winner/';
-
-      const tweetLink = tweetEmbedLink(tweetTemplate(path));
-
+  const openWinnerLink = () => {
+    console.log('we got banner url');
+    let path = window.location.href.split('?')[0];
+    if (!path) {
       setLoadingBanner(false);
-      openExternalLinkInNewTab(tweetLink);
       return;
     }
 
-    saveBannerUrl();
-
-    let path = window.location.href.split('?')[0];
-    if (!path) throw new Error('no path');
-
     path += 'winner/';
 
-    console.log(shareButtonRef.current);
-    setLoadingBanner(false);
-
     const tweetLink = tweetEmbedLink(tweetTemplate(path));
+
+    setLoadingBanner(false);
     openExternalLinkInNewTab(tweetLink);
+  };
+
+  const onShareClick = async (bannerUrl: string | undefined) => {
+    setLoadingBanner(true);
+    if (bannerUrl) {
+      openWinnerLink();
+      return;
+    }
+    saveBannerUrl();
+    openWinnerLink();
+    setLoadingBanner(false);
   };
 
   if (isListingLoading || !submissions.length) {
