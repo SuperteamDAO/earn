@@ -81,6 +81,9 @@ export function ListingWinners({ bounty }: Props) {
     }
     if (!winnerBannerRef.current) return;
     try {
+      let endTime,
+        computeTime,
+        startTime = performance.now();
       const canvas = await html2canvas(winnerBannerRef.current, {
         useCORS: true,
         width: 1200,
@@ -95,15 +98,26 @@ export function ListingWinners({ bounty }: Props) {
           });
         },
       });
+      endTime = performance.now();
+      computeTime = endTime - startTime;
+      console.log(`Canvas Created: ${computeTime} milliseconds`);
+      startTime = performance.now();
+
       // const data = canvas.toDataURL('image/jpg')
       canvas.toBlob(async function (blob) {
         try {
+          endTime = performance.now();
+          computeTime = endTime - startTime;
+          console.log(`Image Created: ${computeTime} milliseconds`);
+          startTime = performance.now();
+
           if (!bounty.id || !bounty.slug) return;
           const fileName = `${bounty.id}-winner-banner`;
           const mimeType = 'image/png';
 
           if (!blob) return;
           const file = new File([blob], fileName, { type: mimeType });
+          console.log('image size - ', blob.size, file.size);
 
           // NEED THIS FOR LOCAL DOWNLOAD LINK, WE DONT WANT TO SPAM CLOUDINARY FOR IMAGE LINK
           // const localUrl = URL.createObjectURL(file);
@@ -117,9 +131,19 @@ export function ListingWinners({ bounty }: Props) {
 
           const url = await uploadToCloudinary(file);
 
+          endTime = performance.now();
+          computeTime = endTime - startTime;
+          console.log(`Uploaded to Cloudinary: ${computeTime} milliseconds`);
+          startTime = performance.now();
+
           await axios.put(`/api/bounties/${bounty.slug}/setWinnerBanner`, {
             image: url,
           });
+
+          endTime = performance.now();
+          computeTime = endTime - startTime;
+          console.log(`Updated Database: ${computeTime} milliseconds`);
+          startTime = performance.now();
 
           setBannerUrl(url);
 
@@ -131,6 +155,11 @@ export function ListingWinners({ bounty }: Props) {
           const tweetLink = tweetEmbedLink(tweetTemplate(path));
 
           openExternalLinkInNewTab(tweetLink);
+
+          endTime = performance.now();
+          computeTime = endTime - startTime;
+          console.log(`Opened Twitter: ${computeTime} milliseconds`);
+          startTime = performance.now();
 
           setLoadingBanner(false);
         } catch (err) {
