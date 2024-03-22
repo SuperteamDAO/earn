@@ -14,6 +14,7 @@ import NextLink from 'next/link';
 import { useCallback, useEffect, useRef, useState } from 'react';
 
 import type { SubmissionWithUser } from '@/interface/submission';
+import { getBlobFromCanvas } from '@/utils/canvasToBlob';
 import { openExternalLinkInNewTab } from '@/utils/linkInNewTab';
 import { sortRank } from '@/utils/rank';
 import { tweetEmbedLink, tweetTemplate } from '@/utils/tweetTemplate';
@@ -111,76 +112,63 @@ export function ListingWinners({ bounty }: Props) {
         console.log(`Canvas Created: ${computeTime} milliseconds`);
         startTime = performance.now();
 
-        // const data = canvas.toDataURL('image/jpg')
-        canvas.toBlob(async function (blob) {
-          try {
-            endTime = performance.now();
-            computeTime = endTime - startTime;
-            console.log(`Image Created: ${computeTime} milliseconds`);
-            startTime = performance.now();
+        const mimeType = 'image/png';
+        if (!bounty.id || !bounty.slug) throw new Error('no id or slug');
+        const fileName = `${bounty.id}-winner-banner`;
 
-            if (!bounty.id || !bounty.slug) throw new Error('no id or slug');
-            const fileName = `${bounty.id}-winner-banner`;
-            const mimeType = 'image/png';
+        const blob = await getBlobFromCanvas(canvas, mimeType);
 
-            if (!blob) throw new Error('no blob');
-            const file = new File([blob], fileName, { type: mimeType });
-            console.log('image size - ', blob.size, file.size);
+        endTime = performance.now();
+        computeTime = endTime - startTime;
+        console.log(`Image Created: ${computeTime} milliseconds`);
+        startTime = performance.now();
 
-            // NEED THIS FOR LOCAL DOWNLOAD LINK, WE DONT WANT TO SPAM CLOUDINARY FOR IMAGE LINK
-            // const localUrl = URL.createObjectURL(file);
-            // const downloadLink = document.createElement('a');
-            // downloadLink.href = localUrl;
-            // downloadLink.setAttribute('download', 'data.png'); // Name the file here
-            // document.body.appendChild(downloadLink);
-            // downloadLink.click();
-            // document.body.removeChild(downloadLink);
-            // throw new Error("done")
+        if (!blob) throw new Error('no blob');
+        const file = new File([blob], fileName, { type: mimeType });
+        console.log('image size - ', blob.size, file.size);
 
-            const url = await uploadToCloudinary(file);
-            setBannerUrl(url);
+        // NEED THIS FOR LOCAL DOWNLOAD LINK, WE DONT WANT TO SPAM CLOUDINARY FOR IMAGE LINK
+        // const localUrl = URL.createObjectURL(file);
+        // const downloadLink = document.createElement('a');
+        // downloadLink.href = localUrl;
+        // downloadLink.setAttribute('download', 'data.png'); // Name the file here
+        // document.body.appendChild(downloadLink);
+        // downloadLink.click();
+        // document.body.removeChild(downloadLink);
+        // throw new Error("done")
 
-            endTime = performance.now();
-            computeTime = endTime - startTime;
-            console.log(`Uploaded to Cloudinary: ${computeTime} milliseconds`);
-            startTime = performance.now();
+        const url = await uploadToCloudinary(file);
+        setBannerUrl(url);
 
-            await axios.put(`/api/bounties/${bounty.slug}/setWinnerBanner`, {
-              image: url,
-            });
+        endTime = performance.now();
+        computeTime = endTime - startTime;
+        console.log(`Uploaded to Cloudinary: ${computeTime} milliseconds`);
+        startTime = performance.now();
 
-            endTime = performance.now();
-            computeTime = endTime - startTime;
-            console.log(`Updated Database: ${computeTime} milliseconds`);
-            startTime = performance.now();
+        await axios.put(`/api/bounties/${bounty.slug}/setWinnerBanner`, {
+          image: url,
+        });
 
-            let path = window.location.href.split('?')[0];
-            if (!path) throw new Error('no path');
+        endTime = performance.now();
+        computeTime = endTime - startTime;
+        console.log(`Updated Database: ${computeTime} milliseconds`);
+        startTime = performance.now();
 
-            path += 'winner/';
+        let path = window.location.href.split('?')[0];
+        if (!path) throw new Error('no path');
 
-            const tweetLink = tweetEmbedLink(tweetTemplate(path));
+        path += 'winner/';
 
-            openExternalLinkInNewTab(tweetLink);
+        const tweetLink = tweetEmbedLink(tweetTemplate(path));
 
-            endTime = performance.now();
-            computeTime = endTime - startTime;
-            console.log(`Opened Twitter: ${computeTime} milliseconds`);
-            startTime = performance.now();
+        openExternalLinkInNewTab(tweetLink);
 
-            setLoadingBanner(false);
-          } catch (err) {
-            setLoadingBanner(false);
-            toast({
-              title: 'Failed to Share',
-              description: 'Please try again later',
-              status: 'error',
-              duration: 5000,
-              isClosable: true,
-              variant: 'subtle',
-            });
-          }
-        }, 'image/png');
+        endTime = performance.now();
+        computeTime = endTime - startTime;
+        console.log(`Opened Twitter: ${computeTime} milliseconds`);
+        startTime = performance.now();
+
+        setLoadingBanner(false);
       } catch {
         setLoadingBanner(false);
         toast({
