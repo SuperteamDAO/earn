@@ -11,7 +11,7 @@ import axios from 'axios';
 import Avatar from 'boring-avatars';
 import html2canvas from 'html2canvas';
 import NextLink from 'next/link';
-import { useCallback, useEffect, useRef, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 
 import type { SubmissionWithUser } from '@/interface/submission';
 import { getBlobFromCanvas } from '@/utils/canvasToBlob';
@@ -34,6 +34,7 @@ export function ListingWinners({ bounty }: Props) {
   const [bannerUrl, setBannerUrl] = useState(bounty.winnerBannerUrl);
 
   const winnerBannerRef = useRef<HTMLDivElement>(null);
+  const shareButtonRef = useRef<HTMLButtonElement>(null);
 
   const isProject = bounty?.type === 'project';
 
@@ -65,8 +66,8 @@ export function ListingWinners({ bounty }: Props) {
     getSubmissions();
   }, []);
 
-  const onShareClick = useCallback(
-    async (bannerUrl: string | undefined) => {
+  const onShareClick = async (bannerUrl: string | undefined) => {
+    try {
       setLoadingBanner(true);
       if (bannerUrl) {
         console.log('we got banner url');
@@ -88,101 +89,98 @@ export function ListingWinners({ bounty }: Props) {
         setLoadingBanner(false);
         return;
       }
-      try {
-        console.log('oooo no banner url');
-        let endTime,
-          computeTime,
-          startTime = performance.now();
-        const canvas = await html2canvas(winnerBannerRef.current, {
-          useCORS: true,
-          width: 1200,
-          height: 675,
-          x: 0,
-          y: 0,
-          onclone: (el) => {
-            const elementsWithShiftedDownwardText =
-              el.querySelectorAll<HTMLElement>('.shifted-text');
-            elementsWithShiftedDownwardText.forEach((element) => {
-              element.style.transform = 'translateY(-30%)';
-            });
-          },
-        });
-        endTime = performance.now();
-        computeTime = endTime - startTime;
-        console.log(`Canvas Created: ${computeTime} milliseconds`);
+      console.log('oooo no banner url');
+      let endTime,
+        computeTime,
         startTime = performance.now();
+      const canvas = await html2canvas(winnerBannerRef.current, {
+        useCORS: true,
+        width: 1200,
+        height: 675,
+        x: 0,
+        y: 0,
+        onclone: (el) => {
+          const elementsWithShiftedDownwardText =
+            el.querySelectorAll<HTMLElement>('.shifted-text');
+          elementsWithShiftedDownwardText.forEach((element) => {
+            element.style.transform = 'translateY(-30%)';
+          });
+        },
+      });
+      endTime = performance.now();
+      computeTime = endTime - startTime;
+      console.log(`Canvas Created: ${computeTime} milliseconds`);
+      startTime = performance.now();
 
-        const mimeType = 'image/png';
-        if (!bounty.id || !bounty.slug) throw new Error('no id or slug');
-        const fileName = `${bounty.id}-winner-banner`;
+      const mimeType = 'image/png';
+      if (!bounty.id || !bounty.slug) throw new Error('no id or slug');
+      const fileName = `${bounty.id}-winner-banner`;
 
-        const blob = await getBlobFromCanvas(canvas, mimeType);
+      const blob = await getBlobFromCanvas(canvas, mimeType);
 
-        endTime = performance.now();
-        computeTime = endTime - startTime;
-        console.log(`Image Created: ${computeTime} milliseconds`);
-        startTime = performance.now();
+      endTime = performance.now();
+      computeTime = endTime - startTime;
+      console.log(`Image Created: ${computeTime} milliseconds`);
+      startTime = performance.now();
 
-        if (!blob) throw new Error('no blob');
-        const file = new File([blob], fileName, { type: mimeType });
-        console.log('image size - ', blob.size, file.size);
+      if (!blob) throw new Error('no blob');
+      const file = new File([blob], fileName, { type: mimeType });
+      console.log('image size - ', blob.size, file.size);
 
-        // NEED THIS FOR LOCAL DOWNLOAD LINK, WE DONT WANT TO SPAM CLOUDINARY FOR IMAGE LINK
-        // const localUrl = URL.createObjectURL(file);
-        // const downloadLink = document.createElement('a');
-        // downloadLink.href = localUrl;
-        // downloadLink.setAttribute('download', 'data.png'); // Name the file here
-        // document.body.appendChild(downloadLink);
-        // downloadLink.click();
-        // document.body.removeChild(downloadLink);
-        // throw new Error("done")
+      // NEED THIS FOR LOCAL DOWNLOAD LINK, WE DONT WANT TO SPAM CLOUDINARY FOR IMAGE LINK
+      // const localUrl = URL.createObjectURL(file);
+      // const downloadLink = document.createElement('a');
+      // downloadLink.href = localUrl;
+      // downloadLink.setAttribute('download', 'data.png'); // Name the file here
+      // document.body.appendChild(downloadLink);
+      // downloadLink.click();
+      // document.body.removeChild(downloadLink);
+      // throw new Error("done")
 
-        const url = await uploadToCloudinary(file);
-        setBannerUrl(url);
+      const url = await uploadToCloudinary(file);
+      setBannerUrl(url);
 
-        endTime = performance.now();
-        computeTime = endTime - startTime;
-        console.log(`Uploaded to Cloudinary: ${computeTime} milliseconds`);
-        startTime = performance.now();
+      endTime = performance.now();
+      computeTime = endTime - startTime;
+      console.log(`Uploaded to Cloudinary: ${computeTime} milliseconds`);
+      startTime = performance.now();
 
-        await axios.put(`/api/bounties/${bounty.slug}/setWinnerBanner`, {
-          image: url,
-        });
+      await axios.put(`/api/bounties/${bounty.slug}/setWinnerBanner`, {
+        image: url,
+      });
 
-        endTime = performance.now();
-        computeTime = endTime - startTime;
-        console.log(`Updated Database: ${computeTime} milliseconds`);
-        startTime = performance.now();
+      endTime = performance.now();
+      computeTime = endTime - startTime;
+      console.log(`Updated Database: ${computeTime} milliseconds`);
+      startTime = performance.now();
 
-        let path = window.location.href.split('?')[0];
-        if (!path) throw new Error('no path');
+      let path = window.location.href.split('?')[0];
+      if (!path) throw new Error('no path');
 
-        path += 'winner/';
+      path += 'winner/';
 
-        const tweetLink = tweetEmbedLink(tweetTemplate(path));
+      console.log(shareButtonRef.current);
+      shareButtonRef.current?.click();
+      setLoadingBanner(false);
 
-        openExternalLinkInNewTab(tweetLink);
+      const tweetLink = tweetEmbedLink(tweetTemplate(path));
+      openExternalLinkInNewTab(tweetLink);
 
-        endTime = performance.now();
-        computeTime = endTime - startTime;
-        console.log(`Opened Twitter: ${computeTime} milliseconds`);
-        startTime = performance.now();
-
-        setLoadingBanner(false);
-      } catch {
-        setLoadingBanner(false);
-        toast({
-          title: 'Failed to Share',
-          description: 'Please try again later',
-          status: 'error',
-          duration: 5000,
-          isClosable: true,
-          variant: 'subtle',
-        });
-      }
-    },
-    [winnerBannerRef],
-  );
+      endTime = performance.now();
+      computeTime = endTime - startTime;
+      console.log(`Opened Twitter: ${computeTime} milliseconds`);
+    } catch {
+      setLoadingBanner(false);
+      toast({
+        title: 'Failed to Share',
+        description: 'Please try again later',
+        status: 'error',
+        duration: 5000,
+        isClosable: true,
+        variant: 'subtle',
+      });
+    }
+  };
 
   if (isListingLoading || !submissions.length) {
     return null;
@@ -289,6 +287,7 @@ export function ListingWinners({ bounty }: Props) {
             ))}
           </Flex>
           <Button
+            ref={shareButtonRef}
             pos="absolute"
             top={5}
             right={5}
