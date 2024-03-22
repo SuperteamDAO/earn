@@ -83,6 +83,9 @@ export const EasterEgg = ({ isOpen, onClose }: Props) => {
             style={{ width: '100%', marginTop: 'auto', display: 'block' }}
             width="500"
             height="600"
+            priority
+            loading="eager"
+            quality={70}
           />
         </AbsoluteCenter>
         <audio
