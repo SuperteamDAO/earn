@@ -50,6 +50,9 @@ dependencies:
   '@tiptap/extension-color':
     specifier: ^2.2.3
     version: 2.2.3(@tiptap/core@2.2.4)(@tiptap/extension-text-style@2.2.3)
+  '@tiptap/extension-image':
+    specifier: ^2.2.4
+    version: 2.2.4(@tiptap/core@2.2.4)
   '@tiptap/extension-link':
     specifier: ^2.2.3
     version: 2.2.3(@tiptap/core@2.2.4)(@tiptap/pm@2.2.3)
@@ -86,6 +89,9 @@ dependencies:
   boring-avatars:
     specifier: ^1.10.1
     version: 1.10.1
+  browser-image-compression:
+    specifier: ^2.0.2
+    version: 2.0.2
   cloudinary:
     specifier: ^2.0.3
     version: 2.0.3
@@ -188,6 +194,9 @@ dependencies:
   slugify:
     specifier: ^1.6.6
     version: 1.6.6
+  tiptap-extension-resize-image:
+    specifier: ^1.0.3
+    version: 1.0.3(@tiptap/core@2.2.4)(@tiptap/extension-image@2.2.4)(@tiptap/pm@2.2.3)
   unfurl.js:
     specifier: ^6.4.0
     version: 6.4.0
@@ -5608,6 +5617,14 @@ packages:
       '@tiptap/pm': 2.2.3
     dev: false
 
+  /@tiptap/extension-image@2.2.4(@tiptap/core@2.2.4):
+    resolution: {integrity: sha512-xOnqZpnP/fAfmK5AKmXplVQdXBtY5AoZ9B+qllH129aLABaDRzl3e14ZRHC8ahQawOmCe6AOCCXYUBXDOlY5Jg==}
+    peerDependencies:
+      '@tiptap/core': ^2.0.0
+    dependencies:
+      '@tiptap/core': 2.2.4(@tiptap/pm@2.2.3)
+    dev: false
+
   /@tiptap/extension-italic@2.2.4(@tiptap/core@2.2.4):
     resolution: {integrity: sha512-qIhGNvWnsQswSgEMRA8jQQjxfkOGNAuNWKEVQX9DPoqAUgknT41hQcAMP8L2+OdACpb2jbVMOO5Cy5Dof2L8/w==}
     peerDependencies:
@@ -7056,6 +7073,12 @@ packages:
     engines: {node: '>=8'}
     dependencies:
       fill-range: 7.0.1
+
+  /browser-image-compression@2.0.2:
+    resolution: {integrity: sha512-pBLlQyUf6yB8SmmngrcOw3EoS4RpQ1BcylI3T9Yqn7+4nrQTXJD4sJDe5ODnJdrvNMaio5OicFo75rDyJD2Ucw==}
+    dependencies:
+      uzip: 0.20201231.0
+    dev: false
 
   /browserslist@4.23.0:
     resolution: {integrity: sha512-QW8HiM1shhT2GuzkvklfjcKDiWFXHOeFCIA/huJPwHsslwcydgk7X+z2zXpEijP98UCY7HbubZt5J2Zgvf0CaQ==}
@@ -12587,6 +12610,18 @@ packages:
       '@popperjs/core': 2.11.8
     dev: false
 
+  /tiptap-extension-resize-image@1.0.3(@tiptap/core@2.2.4)(@tiptap/extension-image@2.2.4)(@tiptap/pm@2.2.3):
+    resolution: {integrity: sha512-4kjAgRCliVjE9YzZFO+adAk0yZZVKOYMGhwaSX3Fl7czl67qWtqDn0vEBh/Za4KDVfo0OM8MkuAM9JriHfbKLQ==}
+    peerDependencies:
+      '@tiptap/core': ^2.0.0
+      '@tiptap/extension-image': ^2.0.0
+      '@tiptap/pm': ^2.0.0
+    dependencies:
+      '@tiptap/core': 2.2.4(@tiptap/pm@2.2.3)
+      '@tiptap/extension-image': 2.2.4(@tiptap/core@2.2.4)
+      '@tiptap/pm': 2.2.3
+    dev: false
+
   /tmpl@1.0.5:
     resolution: {integrity: sha512-3f0uOEAQwIqGuWW2MVzYg8fV/QNnc/IpuJNG837rLuczAaLVHslWHZQj4IGiEl5Hs3kkbhwL9Ab7Hrsmuj+Smw==}
     dev: false
@@ -12958,6 +12993,10 @@ packages:
   /uuid@8.3.2:
     resolution: {integrity: sha512-+NYs2QeMWy+GWFOEm9xnn6HCDp0l7QBD7ml8zLUmJ+93Q5NF0NocErnwkTkXVFNiX3/fpC6afS8Dhb/gz7R7eg==}
     hasBin: true
+    dev: false
+
+  /uzip@0.20201231.0:
+    resolution: {integrity: sha512-OZeJfZP+R0z9D6TmBgLq2LHzSSptGMGDGigGiEe0pr8UBe/7fdflgHlHBNDASTXB5jnFuxHpNaJywSg8YFeGng==}
     dev: false
 
   /vary@1.1.2:

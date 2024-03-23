@@ -9,6 +9,7 @@ export async function uploadToCloudinary(image: any) {
     process.env.NEXT_PUBLIC_CLOUDINARY as string,
   );
   formData.append('quality', 'auto:good');
+  formData.append('crop', 'limit');
 
   const post = await axios.post(
     `https://api.cloudinary.com/v1_1/dgvnuwspr/image/upload`,
