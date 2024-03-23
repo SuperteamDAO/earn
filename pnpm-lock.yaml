@@ -47,6 +47,9 @@ dependencies:
   '@solana/web3.js':
     specifier: ^1.91.0
     version: 1.91.0
+  '@tiptap/core':
+    specifier: ^2.2.4
+    version: 2.2.4(@tiptap/pm@2.2.3)
   '@tiptap/extension-color':
     specifier: ^2.2.3
     version: 2.2.3(@tiptap/core@2.2.4)(@tiptap/extension-text-style@2.2.3)
@@ -86,6 +89,9 @@ dependencies:
   boring-avatars:
     specifier: ^1.10.1
     version: 1.10.1
+  browser-image-compression:
+    specifier: ^2.0.2
+    version: 2.0.2
   cloudinary:
     specifier: ^1.41.3
     version: 1.41.3
@@ -6004,6 +6010,12 @@ packages:
     dependencies:
       fill-range: 7.0.1
 
+  /browser-image-compression@2.0.2:
+    resolution: {integrity: sha512-pBLlQyUf6yB8SmmngrcOw3EoS4RpQ1BcylI3T9Yqn7+4nrQTXJD4sJDe5ODnJdrvNMaio5OicFo75rDyJD2Ucw==}
+    dependencies:
+      uzip: 0.20201231.0
+    dev: false
+
   /browserslist@4.23.0:
     resolution: {integrity: sha512-QW8HiM1shhT2GuzkvklfjcKDiWFXHOeFCIA/huJPwHsslwcydgk7X+z2zXpEijP98UCY7HbubZt5J2Zgvf0CaQ==}
     engines: {node: ^6 || ^7 || ^8 || ^9 || ^10 || ^11 || ^12 || >=13.7}
@@ -11874,6 +11886,10 @@ packages:
   /uuid@8.3.2:
     resolution: {integrity: sha512-+NYs2QeMWy+GWFOEm9xnn6HCDp0l7QBD7ml8zLUmJ+93Q5NF0NocErnwkTkXVFNiX3/fpC6afS8Dhb/gz7R7eg==}
     hasBin: true
+    dev: false
+
+  /uzip@0.20201231.0:
+    resolution: {integrity: sha512-OZeJfZP+R0z9D6TmBgLq2LHzSSptGMGDGigGiEe0pr8UBe/7fdflgHlHBNDASTXB5jnFuxHpNaJywSg8YFeGng==}
     dev: false
 
   /vary@1.1.2:
