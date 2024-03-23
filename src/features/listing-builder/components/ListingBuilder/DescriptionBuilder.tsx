@@ -17,6 +17,7 @@ import {
   VStack,
 } from '@chakra-ui/react';
 import { Color } from '@tiptap/extension-color';
+import { Image as TipTapImage } from '@tiptap/extension-image';
 import Link from '@tiptap/extension-link';
 import ListItem from '@tiptap/extension-list-item';
 import Placeholder from '@tiptap/extension-placeholder';
@@ -24,6 +25,7 @@ import TextStyle from '@tiptap/extension-text-style';
 import Underline from '@tiptap/extension-underline';
 import { EditorContent, useEditor } from '@tiptap/react';
 import StarterKit from '@tiptap/starter-kit';
+import imageCompression from 'browser-image-compression';
 import React, {
   type Dispatch,
   type SetStateAction,
@@ -40,13 +42,16 @@ import {
 } from 'react-icons/bs';
 import { CiRedo, CiUndo } from 'react-icons/ci';
 import { GoBold } from 'react-icons/go';
+import { LuImagePlus } from 'react-icons/lu';
 import {
   MdOutlineFormatListBulleted,
   MdOutlineFormatUnderlined,
   MdOutlineHorizontalRule,
 } from 'react-icons/md';
+import ImageResize from 'tiptap-extension-resize-image';
 
 import { ReferenceCard, type References } from '@/features/listings';
+import { uploadToCloudinary } from '@/utils/upload';
 
 const LinkModal = ({
   isOpen,
@@ -115,8 +120,11 @@ export const DescriptionBuilder = ({
 }: Props) => {
   const { isOpen, onClose, onOpen } = useDisclosure();
   const [referenceError, setReferenceError] = useState<boolean>(false);
+
   const editor = useEditor({
     extensions: [
+      ImageResize,
+      TipTapImage,
       Underline,
       Color.configure({ types: [TextStyle.name, ListItem.name] }),
       TextStyle.configure(),
@@ -138,6 +146,7 @@ export const DescriptionBuilder = ({
         },
       }),
     ],
+
     onUpdate: ({ editor }) => {
       const html = editor.getHTML();
       setEditorData(html);
@@ -176,6 +185,50 @@ export const DescriptionBuilder = ({
     },
     [editor],
   );
+
+  //Upload Image function
+  const addImage = useCallback(async () => {
+    const input = document.createElement('input');
+    input.type = 'file';
+    input.accept = 'image/jpeg, image/png'; // Only allow JPEG and PNG images
+    input.onchange = async (event: any) => {
+      const file = event?.target?.files[0];
+      if (file) {
+        const extension = file.name.split('.').pop().toLowerCase();
+        if (
+          extension === 'jpeg' ||
+          extension === 'jpg' ||
+          extension === 'png'
+        ) {
+          try {
+            const compressedImage = await compressImage(file);
+            const imageUrl = await uploadToCloudinary(compressedImage);
+            if (imageUrl) {
+              editor?.chain().focus().setImage({ src: imageUrl }).run();
+            }
+          } catch (error) {
+            console.error('Error:', error);
+          }
+        }
+      }
+    };
+    input.click();
+  }, [editor]);
+
+  //Compress image
+  const compressImage = async (file: any) => {
+    try {
+      const options = {
+        maxSizeMB: 1,
+        maxWidthOrHeight: 1920,
+      };
+      const compressedFile = await imageCompression(file, options);
+      return compressedFile;
+    } catch (error) {
+      console.error('Error compressing image:', error);
+      throw error;
+    }
+  };
 
   const handleDeleteReference = () => {
     if (references && setReferences) {
@@ -294,7 +347,7 @@ export const DescriptionBuilder = ({
             </Tooltip>
           </Flex>
         </Flex>
-        <VStack w={'3xl'} mx={'auto'} mb={8}>
+        <VStack mx={'auto'} mb={8}>
           <Flex
             pos={'sticky'}
             zIndex="200"
@@ -318,6 +371,7 @@ export const DescriptionBuilder = ({
             >
               H1
             </Button>
+
             <Button
               bg={editor?.isActive('heading', { level: 2 }) ? 'gray.200' : ''}
               borderTop={'1px solid #D2D2D2'}
@@ -330,6 +384,7 @@ export const DescriptionBuilder = ({
             >
               H2
             </Button>
+
             <Button
               bg={editor?.isActive('heading', { level: 3 }) ? 'gray.200' : ''}
               borderTop={'1px solid #D2D2D2'}
@@ -342,6 +397,7 @@ export const DescriptionBuilder = ({
             >
               H3
             </Button>
+
             <Button
               bg={editor?.isActive('heading', { level: 4 }) ? 'gray.200' : ''}
               borderTop={'1px solid #D2D2D2'}
@@ -354,6 +410,7 @@ export const DescriptionBuilder = ({
             >
               H4
             </Button>
+
             <Button
               bg={editor?.isActive('heading', { level: 5 }) ? 'gray.200' : ''}
               borderTop={'1px solid #D2D2D2'}
@@ -366,6 +423,7 @@ export const DescriptionBuilder = ({
             >
               H5
             </Button>
+
             <Button
               bg={editor?.isActive('heading', { level: 6 }) ? 'gray.200' : ''}
               borderTop={'1px solid #D2D2D2'}
@@ -378,6 +436,7 @@ export const DescriptionBuilder = ({
             >
               H6
             </Button>
+
             <Button
               alignItems={'center'}
               justifyContent={'center'}
@@ -393,6 +452,7 @@ export const DescriptionBuilder = ({
             >
               <GoBold />
             </Button>
+
             <Button
               alignItems={'center'}
               justifyContent={'center'}
@@ -407,7 +467,8 @@ export const DescriptionBuilder = ({
               variant={'unstyled'}
             >
               <BsTypeItalic />
-            </Button>{' '}
+            </Button>
+
             <Button
               alignItems={'center'}
               justifyContent={'center'}
@@ -423,6 +484,21 @@ export const DescriptionBuilder = ({
             >
               <MdOutlineFormatUnderlined />
             </Button>
+
+            <Button
+              alignItems={'center'}
+              justifyContent={'center'}
+              display={'flex'}
+              bg={editor?.isActive('image') ? 'gray.200' : ''}
+              borderTop={'1px solid #D2D2D2'}
+              borderRight={'1px solid #D2D2D2'}
+              borderRadius={'0px'}
+              onClick={addImage}
+              variant={'unstyled'}
+            >
+              <LuImagePlus />
+            </Button>
+
             <Button
               alignItems={'center'}
               justifyContent={'center'}
@@ -438,6 +514,7 @@ export const DescriptionBuilder = ({
             >
               <AiOutlineLink />
             </Button>
+
             <Button
               alignItems={'center'}
               justifyContent={'center'}
@@ -453,6 +530,7 @@ export const DescriptionBuilder = ({
             >
               <MdOutlineFormatListBulleted />
             </Button>
+
             <Button
               alignItems={'center'}
               justifyContent={'center'}
@@ -468,6 +546,7 @@ export const DescriptionBuilder = ({
             >
               <AiOutlineOrderedList />
             </Button>
+
             <Button
               alignItems={'center'}
               justifyContent={'center'}
@@ -483,6 +562,7 @@ export const DescriptionBuilder = ({
             >
               <BsCodeSlash />
             </Button>
+
             <Button
               alignItems={'center'}
               justifyContent={'center'}
@@ -498,6 +578,7 @@ export const DescriptionBuilder = ({
             >
               <BsBlockquoteLeft />
             </Button>
+
             <Button
               alignItems={'center'}
               justifyContent={'center'}
@@ -512,6 +593,7 @@ export const DescriptionBuilder = ({
             >
               <MdOutlineHorizontalRule />
             </Button>
+
             <Button
               alignItems={'center'}
               justifyContent={'center'}
@@ -526,6 +608,7 @@ export const DescriptionBuilder = ({
             >
               <BsFileBreak />
             </Button>
+
             <Button
               alignItems={'center'}
               justifyContent={'center'}
@@ -541,6 +624,7 @@ export const DescriptionBuilder = ({
             >
               <CiUndo />
             </Button>
+
             <Button
               alignItems={'center'}
               justifyContent={'center'}
@@ -556,6 +640,7 @@ export const DescriptionBuilder = ({
             >
               <CiRedo />
             </Button>
+
             <Button
               alignItems={'center'}
               justifyContent={'center'}
@@ -582,6 +667,7 @@ export const DescriptionBuilder = ({
               />
             </div>
           </Box>
+
           {isProject && (
             <>
               <Flex

@@ -2,6 +2,7 @@ body {
   font-family: var(--font-sans);
 }
 
+
 .wallet-adapter-button.wallet-adapter-button-trigger {
   width: 100% !important;
   background-color: #6366f1;
@@ -109,6 +110,11 @@ pre {
     border: "none";
     outline: "none !important";
   }
+}
+
+.ProseMirror-selectednode img{
+  max-width: 100%;
+  max-height: 100%;
 }
 
 //earn-loader-css
