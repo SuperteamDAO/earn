@@ -24,12 +24,15 @@ import TextStyle from '@tiptap/extension-text-style';
 import Underline from '@tiptap/extension-underline';
 import { EditorContent, useEditor } from '@tiptap/react';
 import StarterKit from '@tiptap/starter-kit';
+import imageCompression from 'browser-image-compression';
+import { MediaPicker } from 'degen';
 import React, {
   type Dispatch,
   type SetStateAction,
   useCallback,
   useState,
 } from 'react';
+import toast, { Toaster } from 'react-hot-toast';
 import { AiOutlineLink, AiOutlineOrderedList } from 'react-icons/ai';
 import { BiFontColor } from 'react-icons/bi';
 import {
@@ -41,12 +44,15 @@ import {
 import { CiRedo, CiUndo } from 'react-icons/ci';
 import { GoBold } from 'react-icons/go';
 import {
+  MdOutlineAddPhotoAlternate,
   MdOutlineFormatListBulleted,
   MdOutlineFormatUnderlined,
   MdOutlineHorizontalRule,
 } from 'react-icons/md';
+import ImageResize from 'tiptap-extension-resize-image';
 
 import { ReferenceCard, type References } from '@/features/listings';
+import { uploadToCloudinary } from '@/utils/upload';
 
 const LinkModal = ({
   isOpen,
@@ -73,6 +79,53 @@ const LinkModal = ({
                 Cancel
               </Button>
               <Button onClick={() => setLink(linkUrl)} variant="solid">
+                Submit
+              </Button>
+            </HStack>
+          </ModalBody>
+        </ModalContent>
+      </Modal>
+    </>
+  );
+};
+
+const ImageModal = ({
+  setImageBlock,
+  isOpen,
+  onClose,
+  isUploading,
+}: {
+  setImageBlock: (file: File) => void;
+  isOpen: boolean;
+  onClose: () => void;
+  isUploading: boolean;
+}) => {
+  const [file, setFile] = useState<any>();
+
+  return (
+    <>
+      <Modal isOpen={isOpen} onClose={onClose}>
+        <ModalOverlay />
+        <ModalContent>
+          <ModalBody my={5}>
+            <MediaPicker
+              compact
+              accept="image/jpeg, image/png, image/webp"
+              label="Choose or drag and drop image"
+              onChange={async (e) => {
+                setFile(e);
+              }}
+            />
+            <HStack justify={'end'} w={'full'} mt={5}>
+              <Button mr={4} onClick={onClose} variant="ghost">
+                Cancel
+              </Button>
+              <Button
+                isDisabled={!file}
+                isLoading={isUploading}
+                onClick={() => setImageBlock(file)}
+                variant="solid"
+              >
                 Submit
               </Button>
             </HStack>
@@ -114,9 +167,12 @@ export const DescriptionBuilder = ({
   isDuplicating,
 }: Props) => {
   const { isOpen, onClose, onOpen } = useDisclosure();
+  const ImageUploadModal = useDisclosure();
   const [referenceError, setReferenceError] = useState<boolean>(false);
+  const [isUploading, setIsUploading] = useState<boolean>(false);
   const editor = useEditor({
     extensions: [
+      ImageResize,
       Underline,
       Color.configure({ types: [TextStyle.name, ListItem.name] }),
       TextStyle.configure(),
@@ -177,6 +233,34 @@ export const DescriptionBuilder = ({
     [editor],
   );
 
+  const setImageBlock = useCallback(
+    async (file: File) => {
+      if (!file) {
+        toast.error('Please select a file!');
+        return;
+      }
+
+      const options = {
+        maxSizeMB: 1,
+        maxWidthOrHeight: 1920,
+        useWebWorker: true,
+      };
+
+      try {
+        setIsUploading(true);
+        const compressedImage = await imageCompression(file, options);
+        const fileUrl = await uploadToCloudinary(compressedImage);
+        editor?.chain().focus().setImage({ src: fileUrl }).run();
+        ImageUploadModal.onClose();
+      } catch (error) {
+        toast.error('Error uploading file');
+      } finally {
+        setIsUploading(false);
+      }
+    },
+    [editor],
+  );
+
   const handleDeleteReference = () => {
     if (references && setReferences) {
       const temp = references.filter(
@@ -192,8 +276,17 @@ export const DescriptionBuilder = ({
 
   return (
     <>
+      <Toaster />
       {isOpen && (
         <LinkModal setLink={setLink} isOpen={isOpen} onClose={onClose} />
+      )}
+      {ImageUploadModal.isOpen && (
+        <ImageModal
+          setImageBlock={setImageBlock}
+          isOpen={ImageUploadModal.isOpen}
+          onClose={ImageUploadModal.onClose}
+          isUploading={isUploading}
+        />
       )}
       <Box>
         <Box mb={8}>
@@ -294,7 +387,7 @@ export const DescriptionBuilder = ({
             </Tooltip>
           </Flex>
         </Flex>
-        <VStack w={'3xl'} mx={'auto'} mb={8}>
+        <VStack w={'min-content'} mb={8}>
           <Flex
             pos={'sticky'}
             zIndex="200"
@@ -306,6 +399,7 @@ export const DescriptionBuilder = ({
             bgColor={'#ffffff'}
           >
             <Button
+              fontSize={'small'}
               bg={editor?.isActive('heading', { level: 1 }) ? 'gray.200' : ''}
               borderTop={'1px solid #D2D2D2'}
               borderRight={'1px solid #D2D2D2'}
@@ -319,6 +413,7 @@ export const DescriptionBuilder = ({
               H1
             </Button>
             <Button
+              fontSize={'small'}
               bg={editor?.isActive('heading', { level: 2 }) ? 'gray.200' : ''}
               borderTop={'1px solid #D2D2D2'}
               borderRight={'1px solid #D2D2D2'}
@@ -331,6 +426,7 @@ export const DescriptionBuilder = ({
               H2
             </Button>
             <Button
+              fontSize={'small'}
               bg={editor?.isActive('heading', { level: 3 }) ? 'gray.200' : ''}
               borderTop={'1px solid #D2D2D2'}
               borderRight={'1px solid #D2D2D2'}
@@ -343,6 +439,7 @@ export const DescriptionBuilder = ({
               H3
             </Button>
             <Button
+              fontSize={'small'}
               bg={editor?.isActive('heading', { level: 4 }) ? 'gray.200' : ''}
               borderTop={'1px solid #D2D2D2'}
               borderRight={'1px solid #D2D2D2'}
@@ -355,6 +452,7 @@ export const DescriptionBuilder = ({
               H4
             </Button>
             <Button
+              fontSize={'small'}
               bg={editor?.isActive('heading', { level: 5 }) ? 'gray.200' : ''}
               borderTop={'1px solid #D2D2D2'}
               borderRight={'1px solid #D2D2D2'}
@@ -367,6 +465,7 @@ export const DescriptionBuilder = ({
               H5
             </Button>
             <Button
+              fontSize={'small'}
               bg={editor?.isActive('heading', { level: 6 }) ? 'gray.200' : ''}
               borderTop={'1px solid #D2D2D2'}
               borderRight={'1px solid #D2D2D2'}
@@ -422,6 +521,21 @@ export const DescriptionBuilder = ({
               variant={'unstyled'}
             >
               <MdOutlineFormatUnderlined />
+            </Button>
+            <Button
+              alignItems={'center'}
+              justifyContent={'center'}
+              display={'flex'}
+              bg={editor?.isActive('link') ? 'gray.200' : ''}
+              borderTop={'1px solid #D2D2D2'}
+              borderRight={'1px solid #D2D2D2'}
+              borderRadius={'0px'}
+              onClick={() => {
+                ImageUploadModal.onOpen();
+              }}
+              variant={'unstyled'}
+            >
+              <MdOutlineAddPhotoAlternate />
             </Button>
             <Button
               alignItems={'center'}
