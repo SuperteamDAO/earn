@@ -15,6 +15,7 @@ import {
 
 export interface BountyBasicType {
   title?: string;
+  slug?: string;
   deadline?: string;
   templateId?: string;
   pocSocials?: string;
@@ -55,6 +56,7 @@ interface Props {
   isPrivate: boolean;
   setIsPrivate: Dispatch<SetStateAction<boolean>>;
   bountyPaymentDispatch: any;
+  currentSlug: string | undefined | null;
 }
 export const CreateListingForm = ({
   steps,
@@ -90,6 +92,7 @@ export const CreateListingForm = ({
   isPrivate,
   setIsPrivate,
   bountyPaymentDispatch,
+  currentSlug,
 }: Props) => {
   // handles the info from basic form
 
@@ -116,6 +119,7 @@ export const CreateListingForm = ({
           setReferredBy={setReferredBy}
           isPrivate={isPrivate}
           setIsPrivate={setIsPrivate}
+          currentSlug={currentSlug}
         />
       )}
       {steps === 3 && (

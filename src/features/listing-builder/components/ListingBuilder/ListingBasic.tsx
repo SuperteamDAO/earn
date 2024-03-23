@@ -14,6 +14,7 @@ import {
   VStack,
 } from '@chakra-ui/react';
 import { Regions } from '@prisma/client';
+import axios from 'axios';
 import { useSession } from 'next-auth/react';
 import { type Dispatch, type SetStateAction, useMemo, useState } from 'react';
 
@@ -47,9 +48,11 @@ interface Props {
   setReferredBy?: Dispatch<SetStateAction<SuperteamName | undefined>>;
   isPrivate: boolean;
   setIsPrivate: Dispatch<SetStateAction<boolean>>;
+  currentSlug: string | undefined | null;
 }
 interface ErrorsBasic {
   title: boolean;
+  slug: boolean;
   deadline: boolean;
   skills: boolean;
   subSkills: boolean;
@@ -76,10 +79,12 @@ export const ListingBasic = ({
   isPrivate,
   setIsPrivate,
   editable,
+  currentSlug,
 }: Props) => {
   const [errorState, setErrorState] = useState<ErrorsBasic>({
     deadline: false,
     title: false,
+    slug: false,
     subSkills: false,
     skills: false,
     pocSocials: false,
@@ -87,6 +92,8 @@ export const ListingBasic = ({
   });
 
   const [isUrlValid, setIsUrlValid] = useState(true);
+
+  const [slugErrMsg, setSlugErrMsg] = useState('');
 
   const date = dayjs().format('YYYY-MM-DD');
   const thirtyDaysFromNow = dayjs().add(30, 'day').format('YYYY-MM-DDTHH:mm');
@@ -115,6 +122,62 @@ export const ListingBasic = ({
   const isProject = type === 'project';
 
   const { data: session } = useSession();
+
+  const slugAvailable = async (slug: string) => {
+    const response = await axios.get(`/api/bounties/${slug}/isAvailable`);
+    const isSlugAvailable = response.data.slugAvailable;
+
+    if (isSlugAvailable) {
+      return true;
+    }
+    return false;
+  };
+
+  const handleSlugChange = async (value: string) => {
+    const specialCharactersRegex = /[!@#$%^&*(),.?":{}|<>]/;
+
+    // Check if value contains special characters
+    if (specialCharactersRegex.test(value)) {
+      setErrorState({
+        ...(errorState as ErrorsBasic),
+        slug: true,
+      });
+      setSlugErrMsg('Slug cannot contain special characters');
+      return;
+    } else if (value.length >= 40) {
+      setErrorState({
+        ...(errorState as ErrorsBasic),
+        slug: true,
+      });
+      setSlugErrMsg('number of characters should less than 40');
+      return;
+    } else if (value.length > 0) {
+      const isSlug = await slugAvailable(value);
+
+      if (isSlug && value != currentSlug) {
+        setErrorState({
+          ...(errorState as ErrorsBasic),
+          slug: true,
+        });
+        setSlugErrMsg('slug is already available');
+      } else {
+        setErrorState({
+          ...(errorState as ErrorsBasic),
+          slug: false,
+        });
+      }
+    } else {
+      setErrorState({
+        ...(errorState as ErrorsBasic),
+        slug: false,
+      });
+    }
+
+    setbountyBasic({
+      ...(bountyBasic as BountyBasicType),
+      slug: value.toLowerCase().replace(/\s+/g, '-').substring(0, 40),
+    });
+  };
 
   return (
     <>
@@ -172,6 +235,53 @@ export const ListingBasic = ({
           />
           <FormErrorMessage>
             {/* {errors.title ? <>{errors.title.message}</> : <></>} */}
+          </FormErrorMessage>
+        </FormControl>
+
+        <FormControl w="full" mb={5} isInvalid={errorState.slug} isRequired>
+          <Flex>
+            <FormLabel
+              color={'brand.slate.500'}
+              fontSize={'15px'}
+              fontWeight={600}
+              htmlFor={'title'}
+            >
+              Listing Slug
+            </FormLabel>
+            <Tooltip
+              w="max"
+              p="0.7rem"
+              color="white"
+              fontSize="0.9rem"
+              fontWeight={600}
+              bg="#6562FF"
+              borderRadius="0.5rem"
+              hasArrow
+              label={`short but descriptive slug for your listing`}
+              placement="right-end"
+            >
+              <Image
+                mt={-2}
+                alt={'Info Icon'}
+                src={'/assets/icons/info-icon.svg'}
+              />
+            </Tooltip>
+          </Flex>
+
+          <Input
+            borderColor="brand.slate.300"
+            _placeholder={{
+              color: 'brand.slate.300',
+            }}
+            disabled={!bountyBasic?.title}
+            focusBorderColor={errorState.slug ? '#E53E3E' : 'brand.purple'}
+            id="slug"
+            onChange={(e) => handleSlugChange(e.target.value)}
+            placeholder="develop-a-new-landing-page-1hj3hk"
+            value={bountyBasic?.slug}
+          />
+          <FormErrorMessage>
+            {errorState.slug ? <>{slugErrMsg}</> : <></>}
           </FormErrorMessage>
         </FormControl>
 
@@ -508,6 +618,7 @@ export const ListingBasic = ({
                 skills: skills.length === 0,
                 subSkills: subSkills.length === 0,
                 title: !bountyBasic?.title,
+                slug: !bountyBasic?.slug,
                 pocSocials: !bountyBasic?.pocSocials,
                 timeToComplete: isProject ? !isTimeToCompleteValid : false,
               });

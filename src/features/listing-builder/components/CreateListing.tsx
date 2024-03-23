@@ -30,6 +30,7 @@ import { hackathonSponsorAtom } from './SelectSponsor';
 
 interface Props {
   bounty?: Bounty;
+  currentSlug?: string;
   editable?: boolean;
   type: 'bounty' | 'project' | 'hackathon';
   isDuplicating?: boolean;
@@ -37,6 +38,7 @@ interface Props {
 
 export function CreateListing({
   bounty,
+  currentSlug,
   editable = false,
   type,
   isDuplicating = false,
@@ -115,6 +117,10 @@ export function CreateListing({
       ? (isDuplicating && bounty?.title
           ? `${bounty.title} (2)`
           : bounty?.title) || undefined
+      : undefined,
+    slug: editable
+      ? (isDuplicating && bounty?.slug ? `${bounty.slug} (2)` : bounty?.slug) ||
+        undefined
       : undefined,
     deadline:
       !isDuplicating && editable && bounty?.deadline
@@ -295,6 +301,23 @@ export function CreateListing({
 
   const isNewOrDraft = bountyDraftStatus === 'DRAFT' || newBounty === true;
 
+  useEffect(() => {
+    if (!editable) {
+      const randomString = Math.random().toString(36).substring(2, 10);
+      setBountyBasic({
+        ...(bountybasic as BountyBasicType),
+        slug:
+          bountybasic?.title
+            ?.toLowerCase()
+            .replace(/[^\w\s]/g, '')
+            .replace(/\s+/g, '-')
+            .substring(0, 40) +
+            '-' +
+            randomString || '',
+      });
+    }
+  }, [bountybasic?.title]);
+
   return (
     <>
       {!userInfo?.id || !userInfo?.currentSponsorId ? (
@@ -400,6 +423,7 @@ export function CreateListing({
               isDuplicating={isDuplicating}
               isPrivate={isPrivate}
               setIsPrivate={setIsPrivate}
+              currentSlug={currentSlug}
             />
           )}
         </FormLayout>
