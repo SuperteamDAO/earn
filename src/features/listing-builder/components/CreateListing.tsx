@@ -6,6 +6,7 @@ import { useRouter } from 'next/router';
 import { useEffect, useReducer, useState } from 'react';
 
 import { ErrorSection } from '@/components/shared/ErrorSection';
+import { SurveyModal } from '@/components/Survey';
 import { type MultiSelectOptions, tokenList } from '@/constants';
 import {
   type Bounty,
@@ -73,6 +74,7 @@ export function CreateListing({
   const [slug, setSlug] = useState<string>('');
 
   const { isOpen, onOpen } = useDisclosure();
+  const { isOpen: isSurveyOpen, onOpen: onSurveyOpen } = useDisclosure();
 
   const [questions, setQuestions] = useState<Ques[]>(
     editable
@@ -181,6 +183,8 @@ export function CreateListing({
     basePath = 'hackathon';
   }
 
+  const surveyId = '018c674f-7e49-0000-5097-f2affbdddb0d';
+
   const createAndPublishListing = async () => {
     setIsListingPublishing(true);
     try {
@@ -223,6 +227,9 @@ export function CreateListing({
       setSlug(`/${result?.data?.type}/${result?.data?.slug}/`);
       setIsListingPublishing(false);
       onOpen();
+      if (!userInfo?.surveysShown || !(surveyId in userInfo.surveysShown)) {
+        onSurveyOpen();
+      }
     } catch (e) {
       setIsListingPublishing(false);
     }
@@ -339,6 +346,13 @@ export function CreateListing({
               slug={slug}
               isOpen={isOpen}
               onClose={() => {}}
+            />
+          )}
+          {isSurveyOpen && (
+            <SurveyModal
+              isOpen={isSurveyOpen}
+              onClose={() => {}}
+              surveyId={surveyId}
             />
           )}
           {steps === 1 && (
