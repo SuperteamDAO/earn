@@ -2,9 +2,9 @@ import {
   Box,
   chakra,
   Container,
-  Flex,
   Image,
   Link,
+  SimpleGrid,
   Stack,
   Text,
   VisuallyHidden,
@@ -19,28 +19,20 @@ const getCurrentYear = () => {
   return new Date().getFullYear();
 };
 
-const linkData = [
-  {
-    text: 'FAQ',
-    href: 'https://superteamdao.notion.site/Superteam-Earn-FAQ-aedaa039b25741b1861167d68aa880b1?pvs=4',
-  },
-  {
-    text: 'Changelog',
-    href: 'https://superteamdao.notion.site/Superteam-Earn-Changelog-faf0c85972a742699ecc07a52b569827',
-  },
-  {
-    text: 'Build',
-    href: 'https://build.superteam.fun',
-  },
-  {
-    text: 'Media',
-    href: 'https://superteam.substack.com/',
-  },
-  {
-    text: 'Podcast',
-    href: 'https://www.youtube.com/@superteampodcast',
-  },
-];
+const Logo = (props: any) => {
+  return (
+    <Link as={NextLink} href="/">
+      <Image
+        h={8}
+        cursor="pointer"
+        objectFit={'contain'}
+        alt={'Superteam Earn'}
+        src={'/assets/logo/logo.svg'}
+        {...props}
+      />
+    </Link>
+  );
+};
 
 const SocialButton = ({
   children,
@@ -54,7 +46,7 @@ const SocialButton = ({
   return (
     <chakra.button
       bg={'blackAlpha.100'}
-      color="brand.slate.600"
+      color="brand.slate.300"
       rounded={'full'}
       w={8}
       h={8}
@@ -77,6 +69,14 @@ const SocialButton = ({
   );
 };
 
+const ListHeader = ({ children }: { children: ReactNode }) => {
+  return (
+    <Text mb={2} color={'brand.slate.500'} fontSize={'lg'} fontWeight={'700'}>
+      {children}
+    </Text>
+  );
+};
+
 export const Footer = () => {
   return (
     <Box
@@ -85,31 +85,22 @@ export const Footer = () => {
       borderTop="1px solid"
       borderTopColor="blackAlpha.200"
     >
-      <Container as={Stack} maxW={'7xl'} py={{ base: 4, md: 6 }}>
-        <Flex
-          justify={'space-between'}
-          direction={{ base: 'column', md: 'row' }}
+      <Container as={Stack} maxW={'7xl'} py={12}>
+        <SimpleGrid
+          templateColumns={{ sm: '1fr 1fr', md: '3fr 1fr 1fr' }}
+          spacing={8}
         >
-          <Stack maxW="540px" mr={{ base: 0, md: 32 }} spacing={6}>
+          <Stack mr={{ base: 0, md: 32 }} spacing={6}>
             <Box>
-              <Link as={NextLink} href="/">
-                <Image
-                  h={{ base: 6, md: 8 }}
-                  color="brand.slate.500"
-                  cursor="pointer"
-                  objectFit={'contain'}
-                  alt={'Superteam Earn'}
-                  src={'/assets/logo/logo.svg'}
-                />
-              </Link>
+              <Logo color={'brand.slate.500'} />
             </Box>
-            <Text color="brand.slate.500" fontSize={{ base: 'sm', md: 'md' }}>
+            <Text color="brand.slate.500">
               Superteam Earn is where crypto founders meet world-class talent.
               Distribute your work to crypto-native talent, meet your next team
               member & get things done fast. <br />
               <br />© {getCurrentYear()} Superteam. All rights reserved.
             </Text>
-            <Stack direction={'row'} mb={6} spacing={6}>
+            <Stack direction={'row'} spacing={6}>
               <SocialButton
                 label={'Twitter'}
                 href="https://twitter.com/superteamearn"
@@ -163,47 +154,82 @@ export const Footer = () => {
               </SocialButton>
             </Stack>
           </Stack>
-          <Flex justify={'space-between'} gap={24}>
-            <Stack align={'flex-start'}>
-              <Text
-                color={'brand.slate.700'}
-                fontSize={{ base: 'md', md: 'lg' }}
-                fontWeight={'500'}
+          <Stack align={'flex-start'}>
+            <ListHeader>All Superteams</ListHeader>
+            {Superteams.map((st) => (
+              <Link
+                key={st.region}
+                as={NextLink}
+                color="brand.slate.500"
+                _hover={{
+                  color: 'brand.slate.800',
+                }}
+                href={`${getURL()}regions/${st.region.toLowerCase()}`}
+                isExternal
               >
-                All Superteams
-              </Text>
-              {Superteams.map((st) => (
-                <Link
-                  key={st.region}
-                  as={NextLink}
-                  color="brand.slate.500"
-                  fontSize={{ base: 'sm', md: 'md' }}
-                  _hover={{
-                    color: 'brand.slate.600',
-                  }}
-                  href={`${getURL()}regions/${st.region.toLowerCase()}`}
-                  isExternal
-                >
-                  {st.displayValue}
-                </Link>
-              ))}
-            </Stack>
-            <Stack align={'flex-start'} gap={2} mr={3}>
-              {linkData.map((link) => (
-                <Link
-                  key={link.text}
-                  color={'brand.slate.700'}
-                  fontSize={{ base: 'md', md: 'lg' }}
-                  fontWeight={'500'}
-                  href={link.href}
-                  isExternal
-                >
-                  {link.text}
-                </Link>
-              ))}
-            </Stack>
-          </Flex>
-        </Flex>
+                {st.displayValue}
+              </Link>
+            ))}
+          </Stack>
+          <Stack align={'flex-start'}>
+            <Link
+              mb={{ base: 6, md: 2 }}
+              color={'brand.slate.500'}
+              fontSize={'lg'}
+              fontWeight={'700'}
+              href="https://superteamdao.notion.site/Superteam-Earn-FAQ-aedaa039b25741b1861167d68aa880b1?pvs=4"
+              isExternal
+            >
+              FAQ
+            </Link>
+
+            <Link
+              mb={{ base: 6, md: 2 }}
+              color={'brand.slate.500'}
+              fontSize={'lg'}
+              fontWeight={'700'}
+              href="https://superteamdao.notion.site/Superteam-Earn-Changelog-faf0c85972a742699ecc07a52b569827"
+              isExternal
+            >
+              Changelog
+            </Link>
+
+            <ListHeader>Superteam Productions</ListHeader>
+            <Link
+              as={NextLink}
+              color="brand.slate.500"
+              _hover={{
+                color: 'brand.slate.800',
+              }}
+              href="https://build.superteam.fun"
+              isExternal
+            >
+              Build
+            </Link>
+            <Link
+              as={NextLink}
+              color="brand.slate.500"
+              _hover={{
+                color: 'brand.slate.800',
+              }}
+              href="https://superteam.substack.com/"
+              isExternal
+            >
+              Media
+            </Link>
+            <Link
+              as={NextLink}
+              color="brand.slate.500"
+              _hover={{
+                color: 'brand.slate.800',
+              }}
+              href="https://www.youtube.com/@superteampodcast"
+              isExternal
+            >
+              Podcast
+            </Link>
+          </Stack>
+        </SimpleGrid>
       </Container>
     </Box>
   );

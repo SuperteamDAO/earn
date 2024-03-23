@@ -24,6 +24,7 @@ import TextStyle from '@tiptap/extension-text-style';
 import Underline from '@tiptap/extension-underline';
 import { EditorContent, useEditor } from '@tiptap/react';
 import StarterKit from '@tiptap/starter-kit';
+import ImageCompressor from 'browser-image-compression';
 import React, {
   type Dispatch,
   type SetStateAction,
@@ -34,13 +35,13 @@ import { AiOutlineLink, AiOutlineOrderedList } from 'react-icons/ai';
 import { BiFontColor } from 'react-icons/bi';
 import {
   BsBlockquoteLeft,
-  BsChevronCompactLeft,
   BsCodeSlash,
   BsFileBreak,
   BsTypeItalic,
 } from 'react-icons/bs';
 import { CiRedo, CiUndo } from 'react-icons/ci';
 import { GoBold } from 'react-icons/go';
+import { LuImagePlus } from 'react-icons/lu';
 import {
   MdOutlineFormatListBulleted,
   MdOutlineFormatUnderlined,
@@ -48,10 +49,9 @@ import {
 } from 'react-icons/md';
 
 import { ReferenceCard, type References } from '@/features/listings';
-import { ResizableImageExtension } from './ResizeableImage';
-import { LuImagePlus } from "react-icons/lu";
-import ImageCompressor from 'browser-image-compression';
 import { uploadToCloudinary } from '@/utils/upload';
+
+import { ResizableImageExtension } from './ResizeableImage';
 
 const LinkModal = ({
   isOpen,
@@ -122,7 +122,7 @@ export const DescriptionBuilder = ({
   const [referenceError, setReferenceError] = useState<boolean>(false);
   const editor = useEditor({
     extensions: [
-      ResizableImageExtension, 
+      ResizableImageExtension,
       Underline,
       Color.configure({ types: [TextStyle.name, ListItem.name] }),
       TextStyle.configure(),
@@ -192,25 +192,29 @@ export const DescriptionBuilder = ({
     }
   };
 
-  const handleImageChange = (event) => {
+  const handleImageChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    if (!event.target.files || !event.target.files[0]) return;
     const selectedFile = event.target.files[0];
     const reader = new FileReader();
-    handleCompressAndUpload(selectedFile)
+    handleCompressAndUpload(selectedFile);
     reader.onloadend = () => {
-      editor?.commands.setImage({src: reader.result, alt: selectedFile.name,width: 400});
+      editor?.commands.setImage({
+        src: reader.result,
+        alt: selectedFile.name,
+        width: 400,
+      });
     };
     reader.readAsDataURL(selectedFile);
   };
 
   const handleCompressAndUpload = async (image: File) => {
-
     const compressedImage = await ImageCompressor(image, {
       maxSizeMB: 1,
       maxWidthOrHeight: 1920,
       useWebWorker: true,
     }); // Adjust quality as needed
 
-    uploadToCloudinary(compressedImage).catch((e) => console.log(e))
+    uploadToCloudinary(compressedImage).catch((e) => console.log(e));
   };
 
   const isProject = type === 'project';
@@ -321,7 +325,7 @@ export const DescriptionBuilder = ({
             </Tooltip>
           </Flex>
         </Flex>
-        <VStack w={'fit-content'} mx={'auto'} mb={8} >
+        <VStack w={'fit-content'} mx={'auto'} mb={8}>
           <Flex
             pos={'sticky'}
             zIndex="200"
@@ -459,9 +463,24 @@ export const DescriptionBuilder = ({
               borderRadius={'0px'}
               variant={'unstyled'}
             >
-              <label htmlFor="fileInput" style={{cursor: "pointer", width: "100%", display: "grid", placeItems: "center"}}><LuImagePlus /></label>
-              <input type="file" id="fileInput" accept="image/jpeg, image/png" onChange={handleImageChange} style={{ display: 'none' }} />
-              
+              <label
+                htmlFor="fileInput"
+                style={{
+                  cursor: 'pointer',
+                  width: '100%',
+                  display: 'grid',
+                  placeItems: 'center',
+                }}
+              >
+                <LuImagePlus />
+              </label>
+              <input
+                type="file"
+                id="fileInput"
+                accept="image/jpeg, image/png"
+                onChange={handleImageChange}
+                style={{ display: 'none' }}
+              />
             </Button>
             <Button
               alignItems={'center'}

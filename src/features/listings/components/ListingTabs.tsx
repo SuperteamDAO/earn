@@ -82,7 +82,7 @@ export const ListingTabs = ({
   const tabs: TabProps[] = [
     {
       id: 'tab1',
-      title: 'Open',
+      title: 'OPEN',
       content: generateTabContent({
         bounties: bounties,
         take,
@@ -99,7 +99,7 @@ export const ListingTabs = ({
     },
     {
       id: 'tab2',
-      title: 'In Review',
+      title: 'IN REVIEW',
       content: generateTabContent({
         bounties: bounties,
         take,
@@ -116,7 +116,7 @@ export const ListingTabs = ({
     },
     {
       id: 'tab3',
-      title: 'Completed',
+      title: 'COMPLETED',
       content: generateTabContent({
         bounties: bounties,
         take,
@@ -135,7 +135,7 @@ export const ListingTabs = ({
   const [activeTab, setActiveTab] = useState<string>(tabs[0]!.id);
 
   return (
-    <Box mt={5} mb={10}>
+    <Box my={10}>
       <HStack
         align="center"
         justify="space-between"
@@ -144,64 +144,61 @@ export const ListingTabs = ({
         borderBottom="2px solid"
         borderBottomColor="#E2E8F0"
       >
-        <Flex
-          align={'center'}
-          justify={{ base: 'space-between', sm: 'unset' }}
-          w="100%"
-        >
-          <Flex align={'center'}>
-            <Image w={5} h={5} mr={{ base: 2 }} alt="emoji" src={emoji} />
-            <Text
-              pr={2}
-              color={'#334155'}
-              fontSize={['14', '15', '16', '16']}
-              fontWeight={'600'}
+        <Flex align={'center'}>
+          <Image
+            display={{ md: 'block', base: 'none' }}
+            w={'1.4375rem'}
+            h={'1.4375rem'}
+            mr={'0.75rem'}
+            alt="emoji"
+            src={emoji}
+          />
+          <Text
+            pr={2}
+            color={'#334155'}
+            fontSize={['13', '14', '16', '16']}
+            fontWeight={'600'}
+          >
+            {title}
+          </Text>
+          <Text
+            display={['none', 'none', 'block', 'block']}
+            mx={3}
+            color={'brand.slate.300'}
+            fontSize={'xxs'}
+          >
+            |
+          </Text>
+
+          {tabs.map((tab) => (
+            <Box
+              key={tab.id}
+              sx={{
+                ...(tab.id === activeTab && {
+                  '&::after': {
+                    content: '""',
+                    position: 'absolute',
+                    right: 0,
+                    bottom: '-13px',
+                    left: 0,
+                    height: '2px',
+                    backgroundColor: '#6366f1',
+                  },
+                }),
+              }}
+              pos="relative"
+              p={2}
+              color="#475668"
+              fontSize={['x-small', '11', '14', '14']}
+              cursor="pointer"
+              onClick={() => setActiveTab(tab.id)}
             >
-              {title}
-            </Text>
-          </Flex>
-          <Flex align="center">
-            <Text
-              mx={{ base: 0, sm: 3 }}
-              mr={3}
-              color={'brand.slate.300'}
-              fontSize={'xxs'}
-            >
-              |
-            </Text>
-            {tabs.map((tab) => (
-              <Box
-                key={tab.id}
-                sx={{
-                  ...(tab.id === activeTab && {
-                    '&::after': {
-                      content: '""',
-                      position: 'absolute',
-                      right: 0,
-                      bottom: '-13px',
-                      left: 0,
-                      height: '2px',
-                      backgroundColor: '#6366f1',
-                    },
-                  }),
-                }}
-                pos="relative"
-                p={{ base: 1, sm: 2 }}
-                color={
-                  tab.id === activeTab ? 'brand.slate.700' : 'brand.slate.500'
-                }
-                fontSize={['13', '13', '14', '14']}
-                fontWeight={500}
-                cursor="pointer"
-                onClick={() => setActiveTab(tab.id)}
-              >
-                {tab.title}
-              </Box>
-            ))}
-          </Flex>
+              {tab.title}
+            </Box>
+          ))}
         </Flex>
         {showViewAll && (
-          <Flex display={{ base: 'none', sm: 'flex' }}>
+          <Flex>
             <Link as={NextLink} href={viewAllLink}>
               <Button
                 px={2}

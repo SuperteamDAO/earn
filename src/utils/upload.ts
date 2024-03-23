@@ -8,11 +8,9 @@ export async function uploadToCloudinary(image: any) {
     'upload_preset',
     process.env.NEXT_PUBLIC_CLOUDINARY as string,
   );
-  formData.append('quality', 'auto:good');
-
   const post = await axios.post(
     `https://api.cloudinary.com/v1_1/dgvnuwspr/image/upload`,
     formData,
   );
-  return post.data.secure_url as string;
+  return post.data.secure_url;
 }

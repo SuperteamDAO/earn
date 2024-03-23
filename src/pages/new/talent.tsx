@@ -2,7 +2,6 @@ import {
   Box,
   Button,
   Center,
-  Flex,
   Heading,
   HStack,
   Image,
@@ -221,45 +220,30 @@ const SuccessScreen = () => {
         align={'start'}
         justifyContent={'center'}
         flexDir={{ base: 'column', md: 'row' }}
-        gap={8}
-        h={{ md: '25rem' }}
-        minH={{ md: '25rem' }}
-        mx={3}
-        my={8}
+        gap={10}
+        w={'fit-content'}
+        mx={'auto'}
+        mt={10}
       >
-        <Box w={{ sm: 'full', lg: '25rem' }} h={'full'}>
+        <Box w={'full'} p={{ base: 4, md: 0 }}>
           <TalentBio
             user={form as unknown as User}
             successPage={true}
-            w={{ sm: '100%' }}
+            w={{ md: '90%' }}
           />
         </Box>
-
-        <Flex
-          justify={'space-between'}
-          direction={'column'}
-          gap={'12px'}
-          maxW={{ lg: '35rem' }}
-          h={'100%'}
-          p={'1.5625rem'}
+        <VStack
+          maxW={'35rem'}
+          h={'full'}
+          mx={{ base: 4, md: 0 }}
+          mb={12}
+          p={5}
           bg="white"
           rounded={'lg'}
         >
-          <Flex
-            h={'full'}
-            bg={'rgb(224,242,255)'}
-            borderRadius={'8px'}
-            objectFit={'contain'}
-          >
-            <Image
-              objectFit={'contain'}
-              alt="final"
-              src="/assets/talent/fake-tasks.png"
-            />
-          </Flex>
+          <Image alt="final" src="/assets/talent/fake-tasks.png" />
           <Button
             w="full"
-            py={'1.5rem'}
             color={'white'}
             bg={'rgb(101, 98, 255)'}
             onClick={() => {
@@ -268,7 +252,7 @@ const SuccessScreen = () => {
           >
             Start Earning
           </Button>
-        </Flex>
+        </VStack>
       </HStack>
     </Box>
   );

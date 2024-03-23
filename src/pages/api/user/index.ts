@@ -28,7 +28,6 @@ export default async function handler(
         currentSponsor: true,
         UserSponsors: true,
         Hackathon: true,
-        Submission: true,
       },
     });
 

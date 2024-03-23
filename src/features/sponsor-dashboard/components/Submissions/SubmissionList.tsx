@@ -121,7 +121,6 @@ export const SubmissionList = ({
                   <Image
                     boxSize="32px"
                     borderRadius="full"
-                    objectFit={'cover'}
                     alt={`${submission?.user?.firstName} ${submission?.user?.lastName}`}
                     src={submission?.user?.photo}
                   />

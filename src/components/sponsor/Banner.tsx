@@ -6,14 +6,11 @@ import {
   Link,
   Skeleton,
   Text,
-  Tooltip,
 } from '@chakra-ui/react';
 import axios from 'axios';
 import Avatar from 'boring-avatars';
-import NextLink from 'next/link';
 import { useEffect, useState } from 'react';
-import { AiOutlineEdit } from 'react-icons/ai';
-import { MdInfoOutline, MdOutlineChatBubbleOutline } from 'react-icons/md';
+import { MdOutlineChatBubbleOutline } from 'react-icons/md';
 
 import { userStore } from '@/store/user';
 
@@ -30,13 +27,10 @@ export function Banner({ isHackathonRoute }: { isHackathonRoute?: boolean }) {
   const { userInfo } = userStore();
   const [sponsorStats, setSponsorStats] = useState<SponsorStats>({});
   const [isLoading, setIsLoading] = useState<boolean>(true);
+
   const sponsorId = isHackathonRoute
     ? userInfo?.hackathonId
     : userInfo?.currentSponsorId;
-
-  const tooltipTextReward = `Total compensation (in USD) of listings where the winners have been announced`;
-  const tooltipTextListings = `Total number of listings added to Earn`;
-  const tooltipTextSubmissions = `Total number of submissions/applications received on all listings`;
 
   useEffect(() => {
     const getSponsorStats = async () => {
@@ -87,26 +81,14 @@ export function Banner({ isHackathonRoute }: { isHackathonRoute?: boolean }) {
               />
             )}
             <Box>
-              <Box alignItems={'center'} flexDir={'row'} display={'flex'}>
-                <Text
-                  color={'brand.slate.900'}
-                  fontSize="lg"
-                  fontWeight={600}
-                  whiteSpace={'nowrap'}
-                >
-                  {sponsor?.name}
-                </Text>
-                <Link
-                  as={NextLink}
-                  color="brand.slate.500"
-                  _hover={{
-                    color: 'brand.slate.800',
-                  }}
-                  href={`/edit/sponsor`}
-                >
-                  <AiOutlineEdit size={18} color="#94a3b8" />
-                </Link>
-              </Box>
+              <Text
+                color={'brand.slate.900'}
+                fontSize="lg"
+                fontWeight={600}
+                whiteSpace={'nowrap'}
+              >
+                {sponsor?.name}
+              </Text>
               {isLoading ? (
                 <Skeleton w="170px" h="20px" mt={2} />
               ) : (
@@ -128,90 +110,47 @@ export function Banner({ isHackathonRoute }: { isHackathonRoute?: boolean }) {
             borderColor={'brand.slate.200'}
             orientation="vertical"
           />
-          <Tooltip
-            color="grey"
-            bg="white"
-            label={tooltipTextReward}
-            placement="bottom"
-          >
-            <Box _hover={{ cursor: 'pointer' }}>
-              <Flex align="center">
-                <Text
-                  mr={0.5}
-                  color={'brand.slate.500'}
-                  fontSize="md"
-                  fontWeight={400}
-                  whiteSpace={'nowrap'}
-                >
-                  {!isHackathonRoute ? 'Rewarded' : 'Total Prizes'}
-                </Text>
-                <MdInfoOutline color="#94a3b8" size={16} />
-              </Flex>
-              {isLoading ? (
-                <Skeleton w="72px" h="20px" mt={2} />
-              ) : (
-                <Text color={'brand.slate.900'} fontSize="lg" fontWeight={600}>
-                  ${sponsorStats?.totalRewardAmount?.toLocaleString()}
-                </Text>
-              )}
-            </Box>
-          </Tooltip>
-          <Tooltip
-            color="grey"
-            bg="white"
-            label={tooltipTextListings}
-            placement="bottom"
-          >
-            <Box _hover={{ cursor: 'pointer' }}>
-              <Flex align="center">
-                <Text
-                  mr={0.5}
-                  color={'brand.slate.500'}
-                  fontSize="md"
-                  fontWeight={400}
-                  whiteSpace={'nowrap'}
-                >
-                  {!isHackathonRoute ? 'Listings' : 'Tracks'}
-                </Text>
-                <MdInfoOutline color="#94a3b8" size={16} />
-              </Flex>
-              {isLoading ? (
-                <Skeleton w="32px" h="20px" mt={2} />
-              ) : (
-                <Text color={'brand.slate.900'} fontSize="lg" fontWeight={600}>
-                  {sponsorStats?.totalListings}
-                </Text>
-              )}
-            </Box>
-          </Tooltip>
-          <Tooltip
-            color="grey"
-            bg="white"
-            label={tooltipTextSubmissions}
-            placement="bottom"
-          >
-            <Box _hover={{ cursor: 'pointer' }}>
-              <Flex align="center">
-                <Text
-                  mr={0.5}
-                  color={'brand.slate.500'}
-                  fontSize="md"
-                  fontWeight={400}
-                  whiteSpace={'nowrap'}
-                >
-                  Submissions
-                </Text>
-                <MdInfoOutline color="#94a3b8" size={16} />
-              </Flex>
-              {isLoading ? (
-                <Skeleton w="36px" h="20px" mt={2} />
-              ) : (
-                <Text color={'brand.slate.900'} fontSize="lg" fontWeight={600}>
-                  {sponsorStats?.totalSubmissions}
-                </Text>
-              )}
-            </Box>
-          </Tooltip>
+          <Box>
+            <Text
+              color={'brand.slate.500'}
+              fontSize="md"
+              fontWeight={400}
+              whiteSpace={'nowrap'}
+            >
+              {!isHackathonRoute ? 'Rewarded' : 'Total Prizes'}
+            </Text>
+            {isLoading ? (
+              <Skeleton w="72px" h="20px" mt={2} />
+            ) : (
+              <Text color={'brand.slate.900'} fontSize="lg" fontWeight={600}>
+                ${sponsorStats?.totalRewardAmount?.toLocaleString()}
+              </Text>
+            )}
+          </Box>
+          <Box>
+            <Text color={'brand.slate.500'} fontSize="md" fontWeight={400}>
+              {!isHackathonRoute ? 'Listings' : 'Tracks'}
+            </Text>
+            {isLoading ? (
+              <Skeleton w="32px" h="20px" mt={2} />
+            ) : (
+              <Text color={'brand.slate.900'} fontSize="lg" fontWeight={600}>
+                {sponsorStats?.totalListings}
+              </Text>
+            )}
+          </Box>
+          <Box>
+            <Text color={'brand.slate.500'} fontSize="md" fontWeight={400}>
+              Submissions
+            </Text>
+            {isLoading ? (
+              <Skeleton w="36px" h="20px" mt={2} />
+            ) : (
+              <Text color={'brand.slate.900'} fontSize="lg" fontWeight={600}>
+                {sponsorStats?.totalSubmissions}
+              </Text>
+            )}
+          </Box>
         </Flex>
       </Box>
 
