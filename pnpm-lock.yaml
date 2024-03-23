@@ -47,9 +47,6 @@ dependencies:
   '@solana/web3.js':
     specifier: ^1.91.0
     version: 1.91.0
-  '@tiptap/core':
-    specifier: ^2.2.4
-    version: 2.2.4(@tiptap/pm@2.2.3)
   '@tiptap/extension-color':
     specifier: ^2.2.3
     version: 2.2.3(@tiptap/core@2.2.4)(@tiptap/extension-text-style@2.2.3)
