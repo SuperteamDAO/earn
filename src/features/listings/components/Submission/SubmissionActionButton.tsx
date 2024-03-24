@@ -165,7 +165,11 @@ export const SubmissionActionButton = ({
       btnLoadingText = 'Checking Submission..';
   }
 
-  const { isOpen: isSurveyOpen, onOpen: onSurveyOpen } = useDisclosure();
+  const {
+    isOpen: isSurveyOpen,
+    onOpen: onSurveyOpen,
+    onClose: onSurveyClose,
+  } = useDisclosure();
 
   const surveyId = '018c6743-c893-0000-a90e-f35d31c16692';
 
@@ -189,7 +193,7 @@ export const SubmissionActionButton = ({
         (!userInfo?.surveysShown || !(surveyId in userInfo.surveysShown)) && (
           <SurveyModal
             isOpen={isSurveyOpen}
-            onClose={() => {}}
+            onClose={onSurveyClose}
             surveyId={surveyId}
           />
         )}
