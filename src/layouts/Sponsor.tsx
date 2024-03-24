@@ -21,8 +21,8 @@ import {
 
 import CreateListingModal from '@/components/modals/createListing';
 import { LoadingSection } from '@/components/shared/LoadingSection';
-import { Banner } from '@/components/sponsor/Banner';
 import { SelectHackathon, SelectSponsor } from '@/features/listing-builder';
+import { Banner } from '@/features/sponsor-dashboard';
 import { Default } from '@/layouts/Default';
 import { Meta } from '@/layouts/Meta';
 import { userStore } from '@/store/user';

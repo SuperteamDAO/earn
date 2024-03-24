@@ -102,7 +102,7 @@ export function Banner({ isHackathonRoute }: { isHackathonRoute?: boolean }) {
                   _hover={{
                     color: 'brand.slate.800',
                   }}
-                  href={`/edit/sponsor`}
+                  href={`/sponsor/edit`}
                 >
                   <AiOutlineEdit size={18} color="#94a3b8" />
                 </Link>
