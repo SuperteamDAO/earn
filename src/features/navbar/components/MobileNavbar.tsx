@@ -1,6 +1,7 @@
 import { HamburgerIcon } from '@chakra-ui/icons';
 import {
   AbsoluteCenter,
+  Box,
   Button,
   CloseButton,
   Divider,
@@ -157,57 +158,106 @@ export const MobileNavbar = ({ onLoginOpen }: { onLoginOpen: () => void }) => {
   };
 
   return (
-    <Flex
-      align="center"
-      justify="space-between"
-      display={{ base: 'flex', md: 'none' }}
-      px={2}
-      py={2}
-      bg="white"
-      borderBottom="1px solid"
-      borderBottomColor="blackAlpha.200"
-    >
-      <IconButton
-        ref={btnRef}
-        bg="transparent"
-        _hover={{ bg: 'transparent' }}
-        _active={{ bg: 'transparent' }}
-        aria-label="Open Drawer"
-        icon={<HamburgerIcon h={6} w={6} color="brand.slate.500" />}
-        onClick={onDrawerOpen}
-      />
-      <MobileDrawer />
-      <AbsoluteCenter>
-        <Link
-          as={NextLink}
-          alignItems={'center'}
-          _hover={{ textDecoration: 'none' }}
-          href="/"
+    <>
+      <Box pos="sticky" zIndex="sticky" top={0}>
+        <Flex
+          align="center"
+          justify="space-between"
+          display={{ base: 'flex', md: 'none' }}
+          px={2}
+          py={2}
+          bg="white"
+          borderBottom="1px solid"
+          borderBottomColor="blackAlpha.200"
         >
-          <Image
-            h={5}
-            cursor="pointer"
-            objectFit={'contain'}
-            alt={'Superteam Earn'}
-            src={'/assets/logo/logo.svg'}
+          <IconButton
+            ref={btnRef}
+            bg="transparent"
+            _hover={{ bg: 'transparent' }}
+            _active={{ bg: 'transparent' }}
+            aria-label="Open Drawer"
+            icon={<HamburgerIcon h={6} w={6} color="brand.slate.500" />}
+            onClick={onDrawerOpen}
           />
-        </Link>
-      </AbsoluteCenter>
-      {status === 'authenticated' && session && <UserMenu />}
-      {status === 'unauthenticated' && !session && (
-        <Button
-          mr={2}
-          color="brand.purple"
-          fontSize="md"
-          onClick={() => {
-            onLoginOpen();
-          }}
-          size="sm"
-          variant="unstyled"
-        >
-          Login
-        </Button>
-      )}
-    </Flex>
+          <MobileDrawer />
+          <AbsoluteCenter>
+            <Link
+              as={NextLink}
+              alignItems={'center'}
+              _hover={{ textDecoration: 'none' }}
+              href="/"
+            >
+              <Image
+                h={5}
+                cursor="pointer"
+                objectFit={'contain'}
+                alt={'Superteam Earn'}
+                src={'/assets/logo/logo.svg'}
+              />
+            </Link>
+          </AbsoluteCenter>
+          {status === 'authenticated' && session && <UserMenu />}
+          {status === 'unauthenticated' && !session && (
+            <Button
+              mr={2}
+              color="brand.purple"
+              fontSize="md"
+              onClick={() => {
+                onLoginOpen();
+              }}
+              size="sm"
+              variant="unstyled"
+            >
+              Login
+            </Button>
+          )}
+        </Flex>
+      </Box>
+      <Flex
+        align={'center'}
+        justify={'space-between'}
+        display={{ base: 'flex', sm: 'none' }}
+        px={4}
+        py={2}
+        bg={'#F8FAFC'}
+      >
+        <Flex gap={2}>
+          {LISTING_NAV_ITEMS?.map((navItem) => {
+            const isCurrent = `${navItem.href}` === router.asPath;
+            return (
+              <NavLink
+                key={navItem.label}
+                href={navItem.href ?? '#'}
+                label={renderLabel(navItem)}
+                isActive={isCurrent}
+                fontSize={'sm'}
+                fontWeight={400}
+              />
+            );
+          })}
+        </Flex>
+        <Divider
+          h={5}
+          borderWidth={'0.5px'}
+          borderColor={'brand.slate.400'}
+          orientation="vertical"
+        />
+        <Flex gap={2}>
+          {CATEGORY_NAV_ITEMS?.map((navItem) => {
+            const isCurrent = `${navItem.href}` === router.asPath;
+            return (
+              <NavLink
+                key={navItem.label}
+                href={navItem.href ?? '#'}
+                label={renderLabel(navItem)}
+                isActive={isCurrent}
+                fontSize={'sm'}
+                fontWeight={400}
+              />
+            );
+          })}
+        </Flex>
+      </Flex>
+    </>
   );
 };

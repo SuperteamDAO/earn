@@ -22,12 +22,13 @@ export const NavLink = ({ href, label, isActive, ...props }: NavLinkProps) => {
       textDecoration: 'none',
       color: 'brand.slate.600',
     },
+    fontSize: { base: 'lg', md: 'sm' },
     ...props,
   };
 
   return (
     <Link as={NextLink} href={href} {...styles}>
-      <Text fontSize={{ base: 'lg', md: 'sm' }}>{label}</Text>
+      <Text>{label}</Text>
     </Link>
   );
 };

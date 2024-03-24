@@ -28,9 +28,7 @@ export const Header = () => {
         <DesktopNavbar onLoginOpen={onLoginOpen} />
       </Box>
 
-      <Box pos="sticky" zIndex="sticky" top={0}>
-        <MobileNavbar onLoginOpen={onLoginOpen} />
-      </Box>
+      <MobileNavbar onLoginOpen={onLoginOpen} />
     </>
   );
 };
