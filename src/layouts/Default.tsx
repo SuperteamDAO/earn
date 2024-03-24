@@ -2,7 +2,7 @@ import { Box } from '@chakra-ui/react';
 import type { ReactNode } from 'react';
 
 import { Footer } from '@/components/Footer/Footer';
-import { Header } from '@/components/Header/Header';
+import { Header } from '@/features/navbar';
 
 type IDefaultProps = {
   meta: ReactNode;

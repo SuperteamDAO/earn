@@ -7,7 +7,7 @@ import React, {
   useState,
 } from 'react';
 
-import { LoginWrapper } from '@/components/Header/LoginWrapper';
+import { LoginWrapper } from '@/components/LoginWrapper';
 import { SurveyModal } from '@/components/Survey';
 import { Superteams } from '@/constants/Superteam';
 import {

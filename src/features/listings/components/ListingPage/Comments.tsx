@@ -11,7 +11,7 @@ import axios from 'axios';
 import { useEffect, useState } from 'react';
 import { GoCommentDiscussion } from 'react-icons/go';
 
-import { LoginWrapper } from '@/components/Header/LoginWrapper';
+import { LoginWrapper } from '@/components/LoginWrapper';
 import { ErrorInfo } from '@/components/shared/ErrorInfo';
 import { Loading } from '@/components/shared/Loading';
 import { UserAvatar } from '@/components/shared/UserAvatar';

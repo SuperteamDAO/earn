@@ -18,7 +18,7 @@ import React, { useEffect, useState } from 'react';
 import { toast, Toaster } from 'react-hot-toast';
 import { TbBell, TbBellRinging } from 'react-icons/tb';
 
-import { LoginWrapper } from '@/components/Header/LoginWrapper';
+import { LoginWrapper } from '@/components/LoginWrapper';
 import { Superteams } from '@/constants/Superteam';
 import { getRegionTooltipLabel, WarningModal } from '@/features/listings';
 import type { SponsorType } from '@/interface/sponsor';

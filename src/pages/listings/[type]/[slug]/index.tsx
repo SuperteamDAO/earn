@@ -6,7 +6,6 @@ import type { GetServerSideProps } from 'next';
 import Head from 'next/head';
 import { useEffect, useState } from 'react';
 
-import { bountySnackbarAtom } from '@/components/Header/BountySnackbar';
 import { ErrorSection } from '@/components/shared/ErrorSection';
 import {
   type Bounty,
@@ -17,6 +16,7 @@ import {
   ListingWinners,
   RightSideBar,
 } from '@/features/listings';
+import { bountySnackbarAtom } from '@/features/navbar';
 import { Default } from '@/layouts/Default';
 import { getURL } from '@/utils/validUrl';
 

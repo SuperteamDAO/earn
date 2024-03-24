@@ -11,10 +11,10 @@ import axios from 'axios';
 import { useRouter } from 'next/router';
 import React, { type ReactNode, useEffect, useState } from 'react';
 
-import { LoginWrapper } from '@/components/Header/LoginWrapper';
 import { HomeBanner } from '@/components/home/Banner';
 import { CategoryBanner } from '@/components/home/CategoryBanner';
 import { HomeSideBar } from '@/components/home/SideBar';
+import { LoginWrapper } from '@/components/LoginWrapper';
 import { Superteams } from '@/constants/Superteam';
 import type { User } from '@/interface/user';
 import { Default } from '@/layouts/Default';
