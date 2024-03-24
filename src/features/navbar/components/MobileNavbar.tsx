@@ -53,8 +53,8 @@ export const MobileNavbar = ({ onLoginOpen }: { onLoginOpen: () => void }) => {
         onClose={onDrawerClose}
         placement="left"
       >
-        <DrawerOverlay display={{ base: 'block', md: 'none' }} />
-        <DrawerContent display={{ base: 'block', md: 'none' }}>
+        <DrawerOverlay display={{ base: 'block', lg: 'none' }} />
+        <DrawerContent display={{ base: 'block', lg: 'none' }}>
           <Flex px={3} py={2}>
             <CloseButton onClick={onDrawerClose} />
           </Flex>
@@ -163,7 +163,7 @@ export const MobileNavbar = ({ onLoginOpen }: { onLoginOpen: () => void }) => {
         <Flex
           align="center"
           justify="space-between"
-          display={{ base: 'flex', md: 'none' }}
+          display={{ base: 'flex', lg: 'none' }}
           px={2}
           py={2}
           bg="white"
@@ -216,12 +216,12 @@ export const MobileNavbar = ({ onLoginOpen }: { onLoginOpen: () => void }) => {
       <Flex
         align={'center'}
         justify={'space-between'}
-        display={{ base: 'flex', sm: 'none' }}
+        display={{ base: 'flex', lg: 'none' }}
         px={4}
         py={2}
         bg={'#F8FAFC'}
       >
-        <Flex gap={2}>
+        <Flex gap={{ base: 2, sm: 12 }}>
           {LISTING_NAV_ITEMS?.map((navItem) => {
             const isCurrent = `${navItem.href}` === router.asPath;
             return (
@@ -230,19 +230,22 @@ export const MobileNavbar = ({ onLoginOpen }: { onLoginOpen: () => void }) => {
                 href={navItem.href ?? '#'}
                 label={renderLabel(navItem)}
                 isActive={isCurrent}
-                fontSize={'sm'}
+                fontSize={{ base: 'sm', sm: 'sm' }}
                 fontWeight={400}
+                borderBottom={'none'}
+                h={'auto'}
               />
             );
           })}
         </Flex>
         <Divider
+          display={{ base: 'flex', md: 'none' }}
           h={5}
           borderWidth={'0.5px'}
           borderColor={'brand.slate.400'}
           orientation="vertical"
         />
-        <Flex gap={2}>
+        <Flex gap={{ base: 2, sm: 12 }}>
           {CATEGORY_NAV_ITEMS?.map((navItem) => {
             const isCurrent = `${navItem.href}` === router.asPath;
             return (
@@ -251,8 +254,10 @@ export const MobileNavbar = ({ onLoginOpen }: { onLoginOpen: () => void }) => {
                 href={navItem.href ?? '#'}
                 label={renderLabel(navItem)}
                 isActive={isCurrent}
-                fontSize={'sm'}
+                fontSize={{ base: 'sm', sm: 'sm' }}
                 fontWeight={400}
+                h={'auto'}
+                borderBottom={'none'}
               />
             );
           })}

@@ -14,15 +14,15 @@ export const NavLink = ({ href, label, isActive, ...props }: NavLinkProps) => {
     fontWeight: 500,
     alignItems: 'center',
     display: 'flex',
-    h: { base: '8', md: 14 },
+    h: { base: '8', lg: 14 },
     py: 2,
-    borderBottom: { base: 'none', md: isActive ? '1px solid' : 'none' },
+    borderBottom: { base: 'none', lg: isActive ? '1px solid' : 'none' },
     borderBottomColor: isActive ? 'brand.purple' : 'transparent',
     _hover: {
       textDecoration: 'none',
       color: 'brand.slate.600',
     },
-    fontSize: { base: 'lg', md: 'sm' },
+    fontSize: { base: 'lg', lg: 'sm' },
     ...props,
   };
 

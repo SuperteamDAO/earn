@@ -34,7 +34,7 @@ export const DesktopNavbar = ({ onLoginOpen }: { onLoginOpen: () => void }) => {
 
   return (
     <Flex
-      display={{ base: 'none', md: 'flex' }}
+      display={{ base: 'none', lg: 'flex' }}
       px={{ base: '2', lg: 6 }}
       color="brand.slate.500"
       bg="white"
