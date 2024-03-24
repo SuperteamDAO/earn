@@ -47,6 +47,7 @@ export const DesktopNavbar = ({ onLoginOpen }: { onLoginOpen: () => void }) => {
             as={NextLink}
             alignItems={'center'}
             gap={3}
+            display={'flex'}
             mr={5}
             _hover={{ textDecoration: 'none' }}
             href="/"

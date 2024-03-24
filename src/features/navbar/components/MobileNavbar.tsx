@@ -52,8 +52,8 @@ export const MobileNavbar = ({ onLoginOpen }: { onLoginOpen: () => void }) => {
         onClose={onDrawerClose}
         placement="left"
       >
-        <DrawerOverlay />
-        <DrawerContent>
+        <DrawerOverlay display={{ base: 'block', md: 'none' }} />
+        <DrawerContent display={{ base: 'block', md: 'none' }}>
           <Flex px={3} py={2}>
             <CloseButton onClick={onDrawerClose} />
           </Flex>
