@@ -230,8 +230,8 @@ export const MobileNavbar = ({ onLoginOpen }: { onLoginOpen: () => void }) => {
                 href={navItem.href ?? '#'}
                 label={renderLabel(navItem)}
                 isActive={isCurrent}
-                fontSize={{ base: 'sm', sm: 'sm' }}
-                fontWeight={400}
+                fontSize={{ base: 'sm', md: '15px' }}
+                fontWeight={500}
                 borderBottom={'none'}
                 h={'auto'}
               />
@@ -254,8 +254,8 @@ export const MobileNavbar = ({ onLoginOpen }: { onLoginOpen: () => void }) => {
                 href={navItem.href ?? '#'}
                 label={renderLabel(navItem)}
                 isActive={isCurrent}
-                fontSize={{ base: 'sm', sm: 'sm' }}
-                fontWeight={400}
+                fontSize={{ base: 'sm', md: '15px' }}
+                fontWeight={500}
                 h={'auto'}
                 borderBottom={'none'}
               />

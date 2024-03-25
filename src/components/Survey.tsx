@@ -75,7 +75,13 @@ export const SurveyModal = ({
   }, [posthog]);
 
   return (
-    <Modal isOpen={isOpen} onClose={onClose} size="lg">
+    <Modal
+      closeOnEsc={false}
+      closeOnOverlayClick={false}
+      isOpen={isOpen}
+      onClose={onClose}
+      size="lg"
+    >
       <ModalOverlay />
       <ModalContent px={6} py={6}>
         {!question ? (

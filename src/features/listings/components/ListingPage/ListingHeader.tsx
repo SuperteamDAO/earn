@@ -458,7 +458,8 @@ export function ListingHeader({
               justifyContent="center"
               display="flex"
               h={'full'}
-              color="gray.800"
+              color="brand.slate.500"
+              fontSize={{ base: 'xs', md: 'sm' }}
               fontWeight={500}
               textDecoration="none"
               borderBottom="2px solid"
@@ -475,7 +476,7 @@ export function ListingHeader({
               }}
               href={`/listings/${type}/${slug}/`}
             >
-              Details
+              DETAILS
             </Link>
             {!isProject && hasDeadlineEnded && (
               <Link
@@ -484,7 +485,8 @@ export function ListingHeader({
                 justifyContent="center"
                 display="flex"
                 h={'full'}
-                color="gray.800"
+                color="brand.slate.500"
+                fontSize={{ base: 'xs', md: 'sm' }}
                 fontWeight={500}
                 textDecoration="none"
                 borderBottom="2px solid"
@@ -500,7 +502,7 @@ export function ListingHeader({
                 }}
                 href={`/listings/${type}/${slug}/submission`}
               >
-                Submissions
+                SUBMISSIONS
               </Link>
             )}
             {isProject && references && references?.length > 0 && (
