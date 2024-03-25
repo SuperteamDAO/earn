@@ -150,12 +150,20 @@ export const ListingTabs = ({
           w="100%"
         >
           <Flex align={'center'}>
-            <Image w={5} h={5} mr={{ base: 2 }} alt="emoji" src={emoji} />
+            <Image
+              display={{ base: 'none', xs: 'flex' }}
+              w={5}
+              h={5}
+              mr={2}
+              alt="emoji"
+              src={emoji}
+            />
             <Text
               pr={2}
               color={'#334155'}
               fontSize={['14', '15', '16', '16']}
               fontWeight={'600'}
+              whiteSpace={'nowrap'}
             >
               {title}
             </Text>
@@ -190,12 +198,16 @@ export const ListingTabs = ({
                 color={
                   tab.id === activeTab ? 'brand.slate.700' : 'brand.slate.500'
                 }
-                fontSize={['13', '13', '14', '14']}
-                fontWeight={500}
                 cursor="pointer"
                 onClick={() => setActiveTab(tab.id)}
               >
-                {tab.title}
+                <Text
+                  fontSize={['13', '13', '14', '14']}
+                  fontWeight={500}
+                  whiteSpace={'nowrap'}
+                >
+                  {tab.title}
+                </Text>
               </Box>
             ))}
           </Flex>

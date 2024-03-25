@@ -164,7 +164,7 @@ export const MobileNavbar = ({ onLoginOpen }: { onLoginOpen: () => void }) => {
           align="center"
           justify="space-between"
           display={{ base: 'flex', lg: 'none' }}
-          px={2}
+          px={1}
           py={2}
           bg="white"
           borderBottom="1px solid"
@@ -217,7 +217,7 @@ export const MobileNavbar = ({ onLoginOpen }: { onLoginOpen: () => void }) => {
         align={'center'}
         justify={'space-between'}
         display={{ base: 'flex', lg: 'none' }}
-        px={4}
+        px={{ base: 3, sm: 4 }}
         py={2}
         bg={'#F8FAFC'}
       >
@@ -230,7 +230,7 @@ export const MobileNavbar = ({ onLoginOpen }: { onLoginOpen: () => void }) => {
                 href={navItem.href ?? '#'}
                 label={renderLabel(navItem)}
                 isActive={isCurrent}
-                fontSize={{ base: 'sm', md: '15px' }}
+                fontSize={{ base: '13px', xs: 'sm', md: '15px' }}
                 fontWeight={500}
                 borderBottom={'none'}
                 h={'auto'}
@@ -254,7 +254,7 @@ export const MobileNavbar = ({ onLoginOpen }: { onLoginOpen: () => void }) => {
                 href={navItem.href ?? '#'}
                 label={renderLabel(navItem)}
                 isActive={isCurrent}
-                fontSize={{ base: 'sm', md: '15px' }}
+                fontSize={{ base: '13px', xs: 'sm', md: '15px' }}
                 fontWeight={500}
                 h={'auto'}
                 borderBottom={'none'}

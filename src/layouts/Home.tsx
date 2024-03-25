@@ -73,7 +73,7 @@ export function Home({ children, type }: HomeProps) {
         />
       }
     >
-      <Container maxW={'7xl'} mx="auto">
+      <Container maxW={'7xl'} mx="auto" px={{ base: 3, md: 4 }}>
         <HStack align="start" justify="space-between" my={{ base: 4, md: 8 }}>
           <Flex
             w="full"

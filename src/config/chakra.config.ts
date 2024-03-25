@@ -31,6 +31,15 @@ const theme = extendTheme({
       },
     },
   },
+  breakpoints: {
+    base: '0em',
+    xs: '24em',
+    sm: '30em',
+    md: '48em',
+    lg: '62em',
+    xl: '80em',
+    '2xl': '96em',
+  },
   space: {
     85: '21rem',
     120: '46.0625rem',

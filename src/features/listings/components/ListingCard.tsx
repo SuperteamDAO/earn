@@ -238,6 +238,7 @@ export const ListingCard = ({
                   <Text
                     color={'gray.500'}
                     fontSize={['x-small', 'xs', 'xs', 'xs']}
+                    whiteSpace={'nowrap'}
                   >
                     {dayjs().isBefore(dayjs(deadline))
                       ? applicationType === 'rolling'
