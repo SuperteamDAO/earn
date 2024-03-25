@@ -11,7 +11,6 @@ import {
   ModalBody,
   ModalContent,
   ModalOverlay,
-  Select,
   Text,
   Tooltip,
   useDisclosure,
@@ -33,6 +32,7 @@ import React, {
   useCallback,
   useState,
 } from 'react';
+import toast, { Toaster } from 'react-hot-toast';
 import { AiOutlineLink, AiOutlineOrderedList } from 'react-icons/ai';
 import { BiFontColor } from 'react-icons/bi';
 import {
@@ -199,20 +199,28 @@ export const DescriptionBuilder = ({
 
     // Listen for file selection
     fileInput.addEventListener('change', async (event: any) => {
-      const file = event?.target?.files[0]; // Get the first selected file
+      const file = event?.target?.files[0];
       if (file) {
-        const options = {
-          maxSizeMB: 1,
-          maxWidthOrHeight: 1920,
-          useWebWorker: true,
-        };
-        const compressedImg = await imageCompression(file, options);
+        const toastId = toast.loading('Uploading image...');
 
-        // upload the file and get its URL
-        const url = await uploadToCloudinary(compressedImg);
-        if (url) {
-          // Set the image in the editor
-          editor?.chain().focus().setImage({ src: url }).run();
+        try {
+          const options = {
+            maxSizeMB: 1,
+            maxWidthOrHeight: 1920,
+            useWebWorker: true,
+          };
+          const compressedImg = await imageCompression(file, options);
+
+          // upload the file and get its URL
+          const url = await uploadToCloudinary(compressedImg);
+          if (url) {
+            // Set the image in the editor
+            editor?.chain().focus().setImage({ src: url }).run();
+            toast.success('Image uploaded successfully!', { id: toastId });
+          }
+        } catch (error) {
+          console.error('Error uploading image:', error);
+          toast.error('Failed to upload image.', { id: toastId });
         }
       }
     });
@@ -227,32 +235,6 @@ export const DescriptionBuilder = ({
     }
   };
 
-  const handleHeadingChange = (h: any) => {
-    const level = Number(h);
-    switch (level) {
-      case 1:
-        editor?.chain().focus().toggleHeading({ level: 1 }).run();
-        break;
-      case 2:
-        editor?.chain().focus().toggleHeading({ level: 2 }).run();
-        break;
-      case 3:
-        editor?.chain().focus().toggleHeading({ level: 3 }).run();
-        break;
-      case 4:
-        editor?.chain().focus().toggleHeading({ level: 4 }).run();
-        break;
-      case 5:
-        editor?.chain().focus().toggleHeading({ level: 5 }).run();
-        break;
-      case 6:
-        editor?.chain().focus().toggleHeading({ level: 6 }).run();
-        break;
-      default:
-        break;
-    }
-  };
-
   const isProject = type === 'project';
 
   const [editorError, setEditorError] = useState(false);
@@ -262,6 +244,7 @@ export const DescriptionBuilder = ({
       {isOpen && (
         <LinkModal setLink={setLink} isOpen={isOpen} onClose={onClose} />
       )}
+      <Toaster position="bottom-center" />
       <Box>
         <Box mb={8}>
           <Flex justify="start" w="full">
@@ -361,7 +344,7 @@ export const DescriptionBuilder = ({
             </Tooltip>
           </Flex>
         </Flex>
-        <VStack w={'3xl'} mx={'auto'} mb={8}>
+        <VStack w={'min-content'} mb={8}>
           <Flex
             pos={'sticky'}
             zIndex="200"
@@ -372,77 +355,79 @@ export const DescriptionBuilder = ({
             borderBottom={'1px solid #D2D2D2'}
             bgColor={'#ffffff'}
           >
-            <VStack display={'flex'} w={'full'}>
-              <Select
-                onChange={(e) => {
-                  handleHeadingChange(e.target.value);
-                }}
-                placeholder="Headings"
-              >
-                <option value={1}>
-                  <Button
-                    borderTop={'1px solid #D2D2D2'}
-                    borderRight={'1px solid #D2D2D2'}
-                    borderLeft={'1px solid #D2D2D2'}
-                    borderRadius={'0px'}
-                    variant={'unstyled'}
-                  >
-                    <h5>H1</h5>
-                  </Button>
-                </option>
-                <option value={2}>
-                  {' '}
-                  <Button
-                    borderTop={'1px solid #D2D2D2'}
-                    borderRight={'1px solid #D2D2D2'}
-                    borderRadius={'0px'}
-                    variant={'unstyled'}
-                  >
-                    H2
-                  </Button>
-                </option>
-                <option value={3}>
-                  <Button
-                    borderTop={'1px solid #D2D2D2'}
-                    borderRight={'1px solid #D2D2D2'}
-                    borderRadius={'0px'}
-                    variant={'unstyled'}
-                  >
-                    H3
-                  </Button>
-                </option>
-                <option value={4}>
-                  <Button
-                    borderTop={'1px solid #D2D2D2'}
-                    borderRight={'1px solid #D2D2D2'}
-                    borderRadius={'0px'}
-                    variant={'unstyled'}
-                  >
-                    H4
-                  </Button>
-                </option>
-                <option value={5}>
-                  <Button
-                    borderTop={'1px solid #D2D2D2'}
-                    borderRight={'1px solid #D2D2D2'}
-                    borderRadius={'0px'}
-                    variant={'unstyled'}
-                  >
-                    H5
-                  </Button>
-                </option>
-                <option value={6}>
-                  <Button
-                    borderTop={'1px solid #D2D2D2'}
-                    borderRight={'1px solid #D2D2D2'}
-                    borderRadius={'0px'}
-                    variant={'unstyled'}
-                  >
-                    H6
-                  </Button>
-                </option>
-              </Select>
-            </VStack>
+            <Button
+              bg={editor?.isActive('heading', { level: 1 }) ? 'gray.200' : ''}
+              borderTop={'1px solid #D2D2D2'}
+              borderRight={'1px solid #D2D2D2'}
+              borderLeft={'1px solid #D2D2D2'}
+              borderRadius={'0px'}
+              onClick={() => {
+                editor?.chain().focus().toggleHeading({ level: 1 }).run();
+              }}
+              variant={'unstyled'}
+            >
+              H1
+            </Button>
+            <Button
+              bg={editor?.isActive('heading', { level: 2 }) ? 'gray.200' : ''}
+              borderTop={'1px solid #D2D2D2'}
+              borderRight={'1px solid #D2D2D2'}
+              borderRadius={'0px'}
+              onClick={() => {
+                editor?.chain().focus().toggleHeading({ level: 2 }).run();
+              }}
+              variant={'unstyled'}
+            >
+              H2
+            </Button>
+            <Button
+              bg={editor?.isActive('heading', { level: 3 }) ? 'gray.200' : ''}
+              borderTop={'1px solid #D2D2D2'}
+              borderRight={'1px solid #D2D2D2'}
+              borderRadius={'0px'}
+              onClick={() => {
+                editor?.chain().focus().toggleHeading({ level: 3 }).run();
+              }}
+              variant={'unstyled'}
+            >
+              H3
+            </Button>
+            <Button
+              bg={editor?.isActive('heading', { level: 4 }) ? 'gray.200' : ''}
+              borderTop={'1px solid #D2D2D2'}
+              borderRight={'1px solid #D2D2D2'}
+              borderRadius={'0px'}
+              onClick={() => {
+                editor?.chain().focus().toggleHeading({ level: 4 }).run();
+              }}
+              variant={'unstyled'}
+            >
+              H4
+            </Button>
+            <Button
+              bg={editor?.isActive('heading', { level: 5 }) ? 'gray.200' : ''}
+              borderTop={'1px solid #D2D2D2'}
+              borderRight={'1px solid #D2D2D2'}
+              borderRadius={'0px'}
+              onClick={() => {
+                editor?.chain().focus().toggleHeading({ level: 5 }).run();
+              }}
+              variant={'unstyled'}
+            >
+              H5
+            </Button>
+            <Button
+              bg={editor?.isActive('heading', { level: 6 }) ? 'gray.200' : ''}
+              borderTop={'1px solid #D2D2D2'}
+              borderRight={'1px solid #D2D2D2'}
+              borderRadius={'0px'}
+              onClick={() => {
+                editor?.chain().focus().toggleHeading({ level: 6 }).run();
+              }}
+              variant={'unstyled'}
+            >
+              H6
+            </Button>
             <Button
               alignItems={'center'}
               justifyContent={'center'}
