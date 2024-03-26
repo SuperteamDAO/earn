@@ -115,7 +115,6 @@ export function RightSideBar({ listing }: { listing: Bounty }) {
           justify={'center'}
           gap={0}
           w={{ base: 'full', md: '22rem' }}
-          pb={5}
           bg={'#FFFFFF'}
           rounded={'xl'}
         >
@@ -262,7 +261,11 @@ export function RightSideBar({ listing }: { listing: Bounty }) {
                       alt={'suit case'}
                       src={'/assets/icons/purple-suitcase.svg'}
                     />
-                    <Text color={'#000000'} fontSize="1.3rem" fontWeight={500}>
+                    <Text
+                      color={'#000000'}
+                      fontSize={{ base: 'lg', md: 'xl' }}
+                      fontWeight={500}
+                    >
                       {isSubmissionNumberLoading
                         ? '...'
                         : !isProject
@@ -295,7 +298,7 @@ export function RightSideBar({ listing }: { listing: Bounty }) {
                     <VStack align={'start'} gap={0}>
                       <Text
                         color={'#000000'}
-                        fontSize="1.3rem"
+                        fontSize={{ base: 'lg', md: 'xl' }}
                         fontWeight={500}
                       >
                         {applicationType === 'fixed' ? (
@@ -330,7 +333,11 @@ export function RightSideBar({ listing }: { listing: Bounty }) {
                     src={'/assets/icons/purple-timer.svg'}
                   />
                   <VStack align={'start'} gap={0}>
-                    <Text color={'#000000'} fontSize="1.3rem" fontWeight={500}>
+                    <Text
+                      color={'#000000'}
+                      fontSize={{ base: 'lg', md: 'xl' }}
+                      fontWeight={500}
+                    >
                       <Countdown
                         date={Hackathon?.startDate}
                         renderer={CountDownRenderer}
@@ -347,7 +354,11 @@ export function RightSideBar({ listing }: { listing: Bounty }) {
           <Box w="full" px={5}>
             {isProject && (
               <Flex align={'start'} direction={'column'} my={4}>
-                <Text color={'#000000'} fontSize="1.3rem" fontWeight={500}>
+                <Text
+                  color={'#000000'}
+                  fontSize={{ base: 'lg', md: 'xl' }}
+                  fontWeight={500}
+                >
                   {timeToComplete}
                 </Text>
                 <Text color={'#94A3B8'}>Time to Complete</Text>

@@ -1,3 +1,4 @@
+import { InfoOutlineIcon } from '@chakra-ui/icons';
 import {
   Flex,
   Heading,
@@ -5,6 +6,12 @@ import {
   IconButton,
   Image,
   Link,
+  Popover,
+  PopoverArrow,
+  PopoverBody,
+  PopoverCloseButton,
+  PopoverContent,
+  PopoverTrigger,
   Text,
   Tooltip,
   useDisclosure,
@@ -132,7 +139,7 @@ export function ListingHeader({
     statusBgColor = 'green.100';
     statusTextColor = 'green.600';
   } else if (!isWinnersAnnounced && hasDeadlineEnded && status === 'OPEN') {
-    statusText = 'Submissions In Review';
+    statusText = 'In Review';
     statusBgColor = 'orange.100';
     statusTextColor = 'orange.600';
   } else if (!hasDeadlineEnded && !isWinnersAnnounced && status === 'OPEN') {
@@ -216,7 +223,7 @@ export function ListingHeader({
       <HStack gap={{ base: 1, md: 3 }}>
         <Text
           color={'#94A3B8'}
-          fontSize={{ base: 'sm', sm: 'md' }}
+          fontSize={{ base: 'xs', sm: 'md' }}
           fontWeight={500}
           whiteSpace={'nowrap'}
         >
@@ -294,6 +301,25 @@ export function ListingHeader({
             {region === 'GLOBAL' ? 'Global' : `${displayValue} Only`}
           </Text>
         </Tooltip>
+        <Popover>
+          <PopoverTrigger>
+            <InfoOutlineIcon
+              display={{ base: 'flex', sm: 'none' }}
+              boxSize={'12px'}
+            />
+          </PopoverTrigger>
+          <PopoverContent>
+            <PopoverArrow />
+            <PopoverCloseButton color="brand.slate.300" />
+            <PopoverBody
+              color={'brand.slate.500'}
+              fontSize={'xs'}
+              fontWeight={500}
+            >
+              {regionTooltipLabel}
+            </PopoverBody>
+          </PopoverContent>
+        </Popover>
       </HStack>
     );
   };
