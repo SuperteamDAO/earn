@@ -45,7 +45,10 @@ export const GrantEntry = ({
           <Link as={NextLink} href={`/grants/${slug}`}>
             <Button
               color="brand.slate.400"
+              fontSize={{ base: 'sm', md: 'md' }}
+              fontWeight={500}
               borderColor={'brand.slate.400'}
+              size={{ base: 'sm', md: 'md' }}
               variant="outline"
             >
               Apply

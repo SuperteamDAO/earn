@@ -233,9 +233,17 @@ export const SubmissionActionButton = ({
         rounded="md"
       >
         <Button
-          w="full"
+          pos={{ base: 'fixed', md: 'static' }}
+          zIndex={999}
+          bottom={5}
+          left="50%"
+          w={{ base: '96%', md: 'full' }}
           bg={buttonBG}
           _hover={{ bg: buttonBG }}
+          _disabled={{
+            opacity: { base: '96%', md: '70%' },
+          }}
+          transform={{ base: 'translateX(-50%)', md: 'none' }}
           pointerEvents={btnPointerEvents}
           isDisabled={isBtnDisabled}
           isLoading={isUserSubmissionLoading}

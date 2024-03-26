@@ -26,9 +26,6 @@ const theme = extendTheme({
       grey: {
         50: '#F7FAFC',
       },
-      charcoal: {
-        700: '#334254',
-      },
     },
   },
   breakpoints: {

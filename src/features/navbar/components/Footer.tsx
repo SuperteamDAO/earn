@@ -25,6 +25,10 @@ const linkData = [
     href: 'https://superteamdao.notion.site/Superteam-Earn-FAQ-aedaa039b25741b1861167d68aa880b1?pvs=4',
   },
   {
+    text: 'GitHub',
+    href: 'https://github.com/SuperteamDAO/earn',
+  },
+  {
     text: 'Changelog',
     href: 'https://superteamdao.notion.site/Superteam-Earn-Changelog-faf0c85972a742699ecc07a52b569827',
   },

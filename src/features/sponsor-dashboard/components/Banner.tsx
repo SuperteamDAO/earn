@@ -98,6 +98,7 @@ export function Banner({ isHackathonRoute }: { isHackathonRoute?: boolean }) {
                 </Text>
                 <Link
                   as={NextLink}
+                  ml={2}
                   color="brand.slate.500"
                   _hover={{
                     color: 'brand.slate.800',

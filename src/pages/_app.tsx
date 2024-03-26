@@ -27,7 +27,7 @@ const fontSans = Inter({
   display: 'swap',
   adjustFontFallback: true,
   preload: true,
-  // fallback: ['Arial'],
+  fallback: ['Inter'],
   weight: 'variable',
 });
 

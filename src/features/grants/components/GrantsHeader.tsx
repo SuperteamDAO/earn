@@ -32,7 +32,7 @@ export const GrantsHeader = ({ sponsor, title }: Props) => {
             />
             <VStack align={'start'}>
               <Heading
-                color={'brand.charcoal.700'}
+                color={'brand.slate.700'}
                 fontFamily={'var(--font-sans)'}
                 fontSize={'lg'}
                 fontWeight={700}

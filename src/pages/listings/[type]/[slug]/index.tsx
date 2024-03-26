@@ -1,5 +1,4 @@
 import { Box, HStack, VStack } from '@chakra-ui/react';
-import { Regions } from '@prisma/client';
 import axios from 'axios';
 import { useAtom } from 'jotai';
 import type { GetServerSideProps } from 'next';
@@ -117,33 +116,18 @@ function BountyDetails({ bounty: initialBounty }: BountyDetailsProps) {
           )}
           {bounty !== null && !!bounty?.id && (
             <>
-              <ListingHeader
-                type={bounty?.type}
-                id={bounty?.id}
-                status={bounty?.status}
-                deadline={bounty?.deadline}
-                title={bounty?.title ?? ''}
-                sponsor={bounty?.sponsor}
-                slug={bounty?.slug}
-                region={bounty?.region || Regions.GLOBAL}
-                isWinnersAnnounced={bounty?.isWinnersAnnounced}
-                hackathonLogo={bounty?.Hackathon?.altLogo}
-                hackathonStartsAt={bounty?.Hackathon?.startDate}
-                references={bounty?.references}
-                publishedAt={bounty?.publishedAt}
-                isPublished={bounty?.isPublished}
-              />
+              <ListingHeader listing={bounty} />
               {bounty?.isWinnersAnnounced && <ListingWinners bounty={bounty} />}
               <HStack
                 align={['center', 'center', 'start', 'start']}
                 justify={['center', 'center', 'space-between', 'space-between']}
-                flexDir={['column-reverse', 'column-reverse', 'row', 'row']}
+                flexDir={{ base: 'column-reverse', md: 'row' }}
                 gap={4}
                 maxW={'7xl'}
                 mx={'auto'}
                 mb={10}
               >
-                <VStack gap={8} w={'full'} mt={10}>
+                <VStack gap={8} w={'full'} mt={{ base: 0, md: 10 }}>
                   <DescriptionUI
                     skills={bounty?.skills?.map((e) => e.skills) ?? []}
                     description={bounty?.description}
