@@ -27,7 +27,7 @@ const fontSans = Inter({
   display: 'swap',
   adjustFontFallback: true,
   preload: true,
-  // fallback: ['Arial'],
+  fallback: ['Inter'],
   weight: 'variable',
 });
 
@@ -100,7 +100,7 @@ function MyApp({ Component, pageProps }: any) {
   return (
     <>
       <NextTopLoader color={'#6366F1'} showSpinner={false} />
-      <Component {...pageProps} key={router.asPath} />;
+      <Component {...pageProps} key={router.asPath} />
     </>
   );
 }

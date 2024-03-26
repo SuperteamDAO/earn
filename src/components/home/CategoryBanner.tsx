@@ -17,7 +17,7 @@ import { WarningModal } from '@/features/listings';
 import type { Notifications } from '@/interface/user';
 import { userStore } from '@/store/user';
 
-import { LoginWrapper } from '../Header/LoginWrapper';
+import { LoginWrapper } from '../LoginWrapper';
 
 type CategoryAssetsType = {
   [key: string]: {

@@ -76,7 +76,11 @@ export function CreateListing({
   const [slug, setSlug] = useState<string>('');
 
   const { isOpen, onOpen } = useDisclosure();
-  const { isOpen: isSurveyOpen, onOpen: onSurveyOpen } = useDisclosure();
+  const {
+    isOpen: isSurveyOpen,
+    onOpen: onSurveyOpen,
+    onClose: onSurveyClose,
+  } = useDisclosure();
 
   const [questions, setQuestions] = useState<Ques[]>(
     editable
@@ -374,7 +378,7 @@ export function CreateListing({
           {isSurveyOpen && (
             <SurveyModal
               isOpen={isSurveyOpen}
-              onClose={() => {}}
+              onClose={onSurveyClose}
               surveyId={surveyId}
             />
           )}

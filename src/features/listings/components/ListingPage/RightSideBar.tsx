@@ -109,12 +109,12 @@ export function RightSideBar({ listing }: { listing: Bounty }) {
   ];
 
   return (
-    <>
-      <VStack gap={2} mx={2} pt={10}>
+    <Box w={{ base: 'full', md: 'auto' }}>
+      <VStack gap={2} mx={3} pt={10}>
         <VStack
           justify={'center'}
           gap={0}
-          minW={{ base: 'full', md: '22rem' }}
+          w={{ base: 'full', md: '22rem' }}
           pb={5}
           bg={'#FFFFFF'}
           rounded={'xl'}
@@ -171,7 +171,7 @@ export function RightSideBar({ listing }: { listing: Bounty }) {
                           token={token}
                           textStyle={{
                             fontWeight: 500,
-                            fontSize: '2xl',
+                            fontSize: { base: 'lg', md: '2xl' },
                             color: 'brand.slate.700',
                           }}
                         />
@@ -464,6 +464,7 @@ export function RightSideBar({ listing }: { listing: Bounty }) {
           <VStack
             align={'start'}
             justify={'center'}
+            display={{ base: 'none', md: 'flex' }}
             minW={{ base: 'full', md: '22rem' }}
             mt={4}
             p={6}
@@ -503,15 +504,13 @@ export function RightSideBar({ listing }: { listing: Bounty }) {
               sublabel={
                 isWinnersAnnounced
                   ? 'Congratulations!'
-                  : `Around ${moment(deadline)
-                      .add(8, 'd')
-                      .format('Do MMM, YY')}`
+                  : `Around ${moment(deadline).add(8, 'd').format('Do MMM, YY')}`
               }
               label={'Winner Announced'}
             />
           </VStack>
         )}
       </VStack>
-    </>
+    </Box>
   );
 }

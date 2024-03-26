@@ -75,7 +75,13 @@ export const SurveyModal = ({
   }, [posthog]);
 
   return (
-    <Modal isOpen={isOpen} onClose={onClose} size={'sm'}>
+    <Modal
+      closeOnEsc={false}
+      closeOnOverlayClick={false}
+      isOpen={isOpen}
+      onClose={onClose}
+      size="lg"
+    >
       <ModalOverlay />
       <ModalContent px={6} py={6}>
         {!question ? (
@@ -110,8 +116,8 @@ export const SurveyModal = ({
                     {[...Array(question.scale)].map((_, i) => (
                       <Button
                         key={i}
-                        px={6}
                         onClick={() => handleRating(i + 1)}
+                        size={'sm'}
                         variant={response === i + 1 ? 'solid' : 'outline'}
                       >
                         {i + 1}

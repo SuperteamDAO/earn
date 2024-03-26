@@ -26,10 +26,16 @@ const theme = extendTheme({
       grey: {
         50: '#F7FAFC',
       },
-      charcoal: {
-        700: '#334254',
-      },
     },
+  },
+  breakpoints: {
+    base: '0em',
+    xs: '24em',
+    sm: '30em',
+    md: '48em',
+    lg: '62em',
+    xl: '80em',
+    '2xl': '96em',
   },
   space: {
     85: '21rem',
