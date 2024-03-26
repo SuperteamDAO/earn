@@ -131,7 +131,6 @@ export const ListingBasic = ({
   const { data: session } = useSession();
 
   const slugAvailable = async (slug: string) => {
-    console.log(slug);
     const response = await axios.get(`/api/bounties/${slug}/isAvailable`);
     const isSlugAvailable = response.data.slugAvailable;
 
@@ -159,7 +158,6 @@ export const ListingBasic = ({
 
     if (slugInput.length > 3) {
       isSlug = setTimeout(() => {
-        console.log('This is runnig now');
         slugAvailable(slugInput);
       }, delay);
     }
