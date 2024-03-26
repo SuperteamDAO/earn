@@ -16,7 +16,13 @@ import {
 import { Regions } from '@prisma/client';
 import axios from 'axios';
 import { useSession } from 'next-auth/react';
-import { type Dispatch, type SetStateAction, useMemo, useState } from 'react';
+import {
+  type Dispatch,
+  type SetStateAction,
+  useEffect,
+  useMemo,
+  useState,
+} from 'react';
 
 import { SkillSelect } from '@/components/misc/SkillSelect';
 import type { MultiSelectOptions } from '@/constants';
@@ -92,7 +98,8 @@ export const ListingBasic = ({
   });
 
   const [isUrlValid, setIsUrlValid] = useState(true);
-
+  // Slug Related Variables
+  const [slugInput, setSlugInput] = useState('');
   const [slugErrMsg, setSlugErrMsg] = useState('');
 
   const date = dayjs().format('YYYY-MM-DD');
@@ -124,14 +131,41 @@ export const ListingBasic = ({
   const { data: session } = useSession();
 
   const slugAvailable = async (slug: string) => {
+    console.log(slug);
     const response = await axios.get(`/api/bounties/${slug}/isAvailable`);
     const isSlugAvailable = response.data.slugAvailable;
 
-    if (isSlugAvailable) {
-      return true;
+    if (isSlugAvailable && slug != currentSlug) {
+      setErrorState({
+        ...(errorState as ErrorsBasic),
+        slug: true,
+      });
+      setSlugErrMsg('slug is already available');
+    } else {
+      setErrorState({
+        ...(errorState as ErrorsBasic),
+        slug: false,
+      });
     }
-    return false;
   };
+
+  let isSlug: any;
+  useEffect(() => {
+    const delay = 1000;
+
+    if (isSlug) {
+      clearTimeout(isSlug);
+    }
+
+    if (slugInput.length > 3) {
+      isSlug = setTimeout(() => {
+        console.log('This is runnig now');
+        slugAvailable(slugInput);
+      }, delay);
+    }
+
+    return () => clearTimeout(isSlug);
+  }, [slugInput]);
 
   const handleSlugChange = async (value: string) => {
     const specialCharactersRegex = /[!@#$%^&*(),.?":{}|<>]/;
@@ -142,7 +176,7 @@ export const ListingBasic = ({
         ...(errorState as ErrorsBasic),
         slug: true,
       });
-      setSlugErrMsg('Slug cannot contain special characters');
+      setSlugErrMsg('Slug cannot contain special characters (!@#$%&)');
       return;
     } else if (value.length >= 40) {
       setErrorState({
@@ -152,26 +186,18 @@ export const ListingBasic = ({
       setSlugErrMsg('number of characters should less than 40');
       return;
     } else if (value.length > 0) {
-      const isSlug = await slugAvailable(value);
-
-      if (isSlug && value != currentSlug) {
-        setErrorState({
-          ...(errorState as ErrorsBasic),
-          slug: true,
-        });
-        setSlugErrMsg('slug is already available');
-      } else {
-        setErrorState({
-          ...(errorState as ErrorsBasic),
-          slug: false,
-        });
-      }
+      setSlugInput(value);
     } else {
       setErrorState({
         ...(errorState as ErrorsBasic),
         slug: false,
       });
     }
+
+    setErrorState({
+      ...(errorState as ErrorsBasic),
+      slug: false,
+    });
 
     setbountyBasic({
       ...(bountyBasic as BountyBasicType),
