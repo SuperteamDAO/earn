@@ -220,7 +220,7 @@ export function ListingHeader({
 
   const HeaderSub = () => {
     return (
-      <HStack gap={{ base: 1, md: 3 }}>
+      <Flex align={'center'} wrap={'wrap'} gap={{ base: 1, md: 3 }}>
         <Text
           color={'#94A3B8'}
           fontSize={{ base: 'xs', sm: 'md' }}
@@ -255,8 +255,8 @@ export function ListingHeader({
               <Flex>
                 <Image
                   h="4"
-                  mt={{ base: 0.5, sm: 1 }}
-                  mr={{ base: 0, sm: 1 }}
+                  mt={{ base: '1px', sm: 1 }}
+                  mr={{ base: '1px', sm: 1 }}
                   alt={type}
                   src={
                     isProject
@@ -320,7 +320,7 @@ export function ListingHeader({
             </PopoverBody>
           </PopoverContent>
         </Popover>
-      </HStack>
+      </Flex>
     );
   };
 

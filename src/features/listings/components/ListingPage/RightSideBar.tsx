@@ -153,8 +153,8 @@ export function RightSideBar({ listing }: { listing: Bounty }) {
                     <Td colSpan={2}>
                       <Flex align="center" gap={2}>
                         <Image
-                          w={7}
-                          h={7}
+                          w={8}
+                          h={8}
                           alt={'green doller'}
                           rounded={'full'}
                           src={
@@ -195,37 +195,38 @@ export function RightSideBar({ listing }: { listing: Bounty }) {
                         (prize, index) =>
                           rewards?.[prize.key] && (
                             <Tr key={index}>
-                              <Td>
-                                <Flex
-                                  align={'center'}
-                                  justify={'center'}
-                                  w={8}
-                                  h={8}
-                                  color="brand.slate.500"
-                                  fontSize={'0.7rem'}
-                                  bg={'blackAlpha.100'}
-                                  rounded={'full'}
-                                >
-                                  {prize.label}
-                                </Flex>
-                              </Td>
-                              <Td>
-                                <Text
-                                  ml={-6}
-                                  color={'brand.slate.500'}
-                                  fontSize={'1.1rem'}
-                                  fontWeight={500}
-                                >
-                                  {rewards[prize.key]}
-                                  <Text
-                                    as="span"
-                                    ml={1}
-                                    color="brand.slate.400"
-                                    fontWeight={400}
+                              <Td colSpan={2}>
+                                <Flex align="center">
+                                  <Flex
+                                    align={'center'}
+                                    justify={'center'}
+                                    w={8}
+                                    h={8}
+                                    mr={3}
+                                    color="brand.slate.500"
+                                    fontSize={'0.7rem'}
+                                    bg={'blackAlpha.100'}
+                                    rounded={'full'}
                                   >
-                                    {token}
-                                  </Text>
-                                </Text>
+                                    {prize.label}
+                                  </Flex>
+                                  <Flex>
+                                    <Text
+                                      color={'brand.slate.500'}
+                                      fontSize={'lg'}
+                                      fontWeight={500}
+                                    >
+                                      {rewards[prize.key]}
+                                    </Text>
+                                    <Text
+                                      ml={1}
+                                      color="brand.slate.400"
+                                      fontWeight={400}
+                                    >
+                                      {token}
+                                    </Text>
+                                  </Flex>
+                                </Flex>
                               </Td>
                               <Td>
                                 <Text
