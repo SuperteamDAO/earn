@@ -15,13 +15,13 @@ import {
   Text,
 } from '@chakra-ui/react';
 import axios from 'axios';
+import dayjs from 'dayjs';
 import html2canvas from 'html2canvas';
 import { useEffect, useRef, useState } from 'react';
 
-import { type Bounty } from '@/features/listings';
+import { type Bounty, getBlobFromCanvas } from '@/features/listings';
 import { WinnerBanner } from '@/features/sponsor-dashboard';
 import { type SubmissionWithUser } from '@/interface/submission';
-import { getBlobFromCanvas } from '@/utils/canvasToBlob';
 import { uploadToCloudinary } from '@/utils/upload';
 
 interface Props {
@@ -29,12 +29,7 @@ interface Props {
   isOpen: boolean;
   totalWinners: number;
   totalPaymentsMade: number;
-  rewards: any;
-  bountyId: string | undefined;
   bounty: Bounty | null;
-  isDeadlinePassed?: boolean;
-  hasWinnersAnnounced?: boolean;
-  isRolling?: boolean;
   submissions: SubmissionWithUser[];
 }
 
@@ -43,17 +38,16 @@ export function PublishResults({
   onClose,
   totalWinners,
   totalPaymentsMade,
-  rewards,
-  bountyId,
-  isDeadlinePassed,
-  hasWinnersAnnounced = false,
-  isRolling = false,
   bounty,
   submissions,
 }: Props) {
   const [isPublishingResults, setIsPublishingResults] = useState(false);
-  const [isWinnersAnnounced, setIsWinnersAnnounced] =
-    useState(hasWinnersAnnounced);
+  const [isWinnersAnnounced, setIsWinnersAnnounced] = useState(
+    bounty?.isWinnersAnnounced,
+  );
+  const isDeadlinePassed = dayjs().isAfter(bounty?.deadline);
+
+  const rewards = Object.keys(bounty?.rewards || {});
   const winnerBannerRef = useRef<HTMLDivElement>(null);
 
   let alertType:
@@ -111,17 +105,6 @@ export function PublishResults({
 
         if (!blob) throw new Error('no blob');
         const file = new File([blob], fileName, { type: mimeType });
-        console.log('image size - ', blob.size, file.size);
-
-        // NEED THIS FOR LOCAL DOWNLOAD LINK, WE DONT WANT TO SPAM CLOUDINARY FOR IMAGE LINK
-        // const localUrl = URL.createObjectURL(file);
-        // const downloadLink = document.createElement('a');
-        // downloadLink.href = localUrl;
-        // downloadLink.setAttribute('download', 'data.png'); // Name the file here
-        // document.body.appendChild(downloadLink);
-        // downloadLink.click();
-        // document.body.removeChild(downloadLink);
-        // throw new Error("done")
 
         const url = await uploadToCloudinary(file);
 
@@ -137,10 +120,10 @@ export function PublishResults({
   };
 
   const publishResults = async () => {
-    if (!bountyId) return;
+    if (!bounty?.id) return;
     setIsPublishingResults(true);
     try {
-      await axios.post(`/api/bounties/announce/${bountyId}/`);
+      await axios.post(`/api/bounties/announce/${bounty?.id}/`);
       await saveBannerUrl();
       setIsWinnersAnnounced(true);
       setIsPublishingResults(false);
@@ -150,7 +133,7 @@ export function PublishResults({
   };
 
   useEffect(() => {
-    if (!isWinnersAnnounced || hasWinnersAnnounced) return;
+    if (!isWinnersAnnounced || bounty?.isWinnersAnnounced) return;
     const timer = setTimeout(() => {
       window.location.reload();
     }, 1500);
@@ -192,7 +175,7 @@ export function PublishResults({
                 results on the Bounty&apos;s page.
                 <br />
                 <br />
-                {!hasWinnersAnnounced && (
+                {!bounty?.isWinnersAnnounced && (
                   <Text as="span" color="brand.slate.500" fontSize="sm">
                     Refreshing...
                   </Text>
@@ -220,7 +203,7 @@ export function PublishResults({
               </Box>
             </Alert>
           )}
-          {!isRolling &&
+          {bounty?.applicationType !== 'rolling' &&
             !isWinnersAnnounced &&
             rewards?.length &&
             totalWinners === rewards?.length &&

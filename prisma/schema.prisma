@@ -308,6 +308,7 @@ model User {
   hackathonId       String?
   featureModalShown Boolean           @default(false)
   emailSettings     EmailSettings[]
+  surveysShown      Json?
 
   @@index([email, publicKey, username])
   @@index([currentSponsorId])

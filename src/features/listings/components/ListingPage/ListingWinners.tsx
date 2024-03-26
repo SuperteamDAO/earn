@@ -6,9 +6,9 @@ import { useEffect, useState } from 'react';
 
 import type { SubmissionWithUser } from '@/interface/submission';
 import { sortRank } from '@/utils/rank';
-import { tweetEmbedLink, tweetTemplate } from '@/utils/tweetTemplate';
 
 import type { Bounty, Rewards } from '../../types';
+import { tweetEmbedLink, tweetTemplate } from '../../utils';
 
 interface Props {
   bounty: Bounty;
@@ -64,7 +64,7 @@ export function ListingWinners({ bounty }: Props) {
         mx={3}
         mb={4}
         color="brand.slate.500"
-        fontSize="xl"
+        fontSize={{ base: 'lg', md: 'xl' }}
         fontWeight={600}
       >
         🎉 Winners Announced
@@ -116,6 +116,7 @@ export function ListingWinners({ bounty }: Props) {
                     <Image
                       boxSize="72px"
                       borderRadius="full"
+                      objectFit={'cover'}
                       alt={`${submission?.user?.firstName} ${submission?.user?.lastName}`}
                       src={submission?.user?.photo}
                     />

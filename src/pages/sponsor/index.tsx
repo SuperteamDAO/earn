@@ -13,7 +13,7 @@ import Image, { type ImageProps } from 'next/image';
 import NextLink from 'next/link';
 import { useEffect, useState } from 'react';
 
-import { Footer } from '@/components/Footer/Footer';
+import { Footer } from '@/features/navbar';
 import DialectDisplay from '@/public/assets/landingsponsor/displays/chatwithdialect.png';
 import DifferentListingsDisplay from '@/public/assets/landingsponsor/displays/differentlistings.png';
 import FindAnySkillsDisplay from '@/public/assets/landingsponsor/displays/findanyskill.png';

@@ -1,5 +1,4 @@
 import { HStack, VStack } from '@chakra-ui/react';
-import { Regions } from '@prisma/client';
 import axios from 'axios';
 import type { GetServerSideProps } from 'next';
 import { useEffect, useState } from 'react';
@@ -55,21 +54,7 @@ function BountyDetails({ slug }: BountyDetailsProps) {
       )}
       {!isLoading && !error && !!bounty?.id && (
         <>
-          <ListingHeader
-            type={bounty?.type}
-            region={(bounty?.region as Regions) || Regions.GLOBAL}
-            id={bounty?.id}
-            status={bounty?.status}
-            deadline={bounty?.deadline}
-            title={bounty?.title ?? ''}
-            sponsor={bounty?.sponsor}
-            slug={bounty?.slug}
-            isWinnersAnnounced={bounty?.isWinnersAnnounced}
-            isTemplate={true}
-            references={bounty?.references}
-            publishedAt={bounty?.publishedAt}
-            isPublished={bounty?.isPublished}
-          />
+          <ListingHeader isTemplate={true} listing={bounty} />
           {bounty?.isWinnersAnnounced && <ListingWinners bounty={bounty} />}
           <HStack
             align={['center', 'center', 'start', 'start']}
