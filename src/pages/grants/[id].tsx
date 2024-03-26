@@ -88,11 +88,11 @@ const Grants = ({ slug }: GrantsDetailsProps) => {
                 direction={'column'}
                 gap={5}
                 w={{ base: 'full', md: '32rem' }}
-                h={'10rem'}
+                py={5}
                 bg={'white'}
                 rounded={'md'}
               >
-                <HStack gap={3} mt={5} px={8}>
+                <HStack gap={3} px={8}>
                   <Box
                     alignItems={'center'}
                     justifyContent={'center'}
@@ -109,7 +109,11 @@ const Grants = ({ slug }: GrantsDetailsProps) => {
                     />
                   </Box>
                   <VStack align={'start'}>
-                    <Text color={'gray.600'} fontSize={'lg'} fontWeight={500}>
+                    <Text
+                      color={'gray.600'}
+                      fontSize={{ base: 'md', md: 'lg' }}
+                      fontWeight={500}
+                    >
                       Upto ${(grants.rewardAmount || 0).toLocaleString()}
                     </Text>
                     <Text mt={'0px !important'} color={'gray.500'}>
@@ -121,10 +125,15 @@ const Grants = ({ slug }: GrantsDetailsProps) => {
                 <Box w={'full'} px={10}>
                   <Button
                     as={Link}
-                    w={'full'}
+                    pos={{ base: 'fixed', md: 'static' }}
+                    zIndex={999}
+                    bottom={5}
+                    left="50%"
+                    w={{ base: '96%', md: 'full' }}
                     _hover={{
                       textDecoration: 'none',
                     }}
+                    transform={{ base: 'translateX(-50%)', md: 'none' }}
                     href={grants?.link}
                     isExternal
                     size="lg"
