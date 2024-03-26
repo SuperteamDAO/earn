@@ -70,14 +70,17 @@ const WinnerBanner = forwardRef<HTMLDivElement, Props>(
         </Text>
         <AbsoluteCenter w="100%" mt="2rem">
           <Flex justify="space-around" gap="2" w="80%" mx="auto">
-            {submissions.slice(0, 5).map((winner, index) => (
-              <ProfileIcon
-                key={index}
-                winner={winner}
-                index={index}
-                bounty={bounty}
-              />
-            ))}
+            {submissions
+              .slice(0, 5)
+              .sort()
+              .map((winner, index) => (
+                <ProfileIcon
+                  key={index}
+                  winner={winner}
+                  index={index}
+                  bounty={bounty}
+                />
+              ))}
           </Flex>
         </AbsoluteCenter>
         <Flex

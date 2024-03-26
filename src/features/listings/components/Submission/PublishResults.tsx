@@ -82,6 +82,8 @@ export function PublishResults({
           throw new Error('no banner ref');
         }
         console.log('oooo no banner url');
+        winnerBannerRef.current.style.fontFeatureSettings = '"liga" 0';
+        winnerBannerRef.current.style.fontFamily = 'var(--font-sans)';
         const canvas = await html2canvas(winnerBannerRef.current, {
           useCORS: true,
           width: 1200,
