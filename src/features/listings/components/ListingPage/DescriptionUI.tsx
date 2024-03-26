@@ -30,7 +30,11 @@ export function DescriptionUI({ skills, description }: Props) {
           w={'full'}
           px={5}
         >
-          <Text color={'brand.slate.400'} fontWeight={500}>
+          <Text
+            color={'brand.slate.400'}
+            fontWeight={500}
+            whiteSpace={'nowrap'}
+          >
             Skills Needed
           </Text>
           <HStack flexWrap={'wrap'} gap={3}>

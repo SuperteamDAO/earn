@@ -69,16 +69,16 @@ const Grants = ({ slug }: GrantsDetailsProps) => {
               sponsor={grants?.sponsor as SponsorType}
             />
             <HStack
-              align={['center', 'center', 'start', 'start']}
-              justify={['center', 'center', 'space-between', 'space-between']}
-              flexDir={['column-reverse', 'column-reverse', 'row', 'row']}
+              align={{ base: 'center', md: 'start' }}
+              justify={{ base: 'center', md: 'space-between' }}
+              flexDir={{ base: 'column-reverse', md: 'row' }}
               gap={4}
               maxW={'7xl'}
               minH={'100vh'}
               mx={'auto'}
-              my={10}
+              my={{ base: 3, md: 10 }}
             >
-              <HStack w={['22rem', '22rem', 'full', 'full']}>
+              <HStack w={'full'}>
                 <DescriptionUI
                   skills={grants?.skills?.map((e) => e.skills)}
                   description={(grants?.description as string) ?? ''}
@@ -87,7 +87,7 @@ const Grants = ({ slug }: GrantsDetailsProps) => {
               <Flex
                 direction={'column'}
                 gap={5}
-                w={['20rem', '20rem', '32rem', '32rem']}
+                w={{ base: 'full', md: '32rem' }}
                 h={'10rem'}
                 bg={'white'}
                 rounded={'md'}
