@@ -33,7 +33,7 @@ import React, { useEffect, useRef, useState } from 'react';
 
 import { ErrorSection } from '@/components/shared/ErrorSection';
 import { LoadingSection } from '@/components/shared/LoadingSection';
-import { InviteMembers } from '@/components/sponsor/Members/InviteMembers';
+import { InviteMembers } from '@/features/sponsor-dashboard';
 import type { UserSponsor } from '@/interface/userSponsor';
 import { Sidebar } from '@/layouts/Sponsor';
 import { userStore } from '@/store/user';

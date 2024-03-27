@@ -21,7 +21,7 @@ const formatNumberWithSuffix = ({
   if (isNaN(amount)) return null;
 
   if (amount < 1000 || (skipThousands && amount < 1000000))
-    return amount.toString();
+    return amount?.toString();
 
   const suffixes = ['', 'k', 'm'];
   const tier = (Math.log10(amount) / 3) | 0;
@@ -50,13 +50,7 @@ export const CompensationAmount = ({
 }: CompensationAmountType) => {
   const Token = () => {
     return (
-      <Text
-        as="span"
-        ml={1}
-        color="brand.slate.400"
-        fontSize={'lg'}
-        fontWeight={400}
-      >
+      <Text as="span" ml={1} color="brand.slate.400" fontWeight={400}>
         {token}
       </Text>
     );

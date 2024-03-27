@@ -174,9 +174,7 @@ export const SignIn = ({
             <Text as="u">
               <Link
                 as={NextLink}
-                href={
-                  'https://discord.com/channels/857091160295866388/1192795350277312662'
-                }
+                href={'mailto:hello@superteamearn.com'}
                 isExternal
               >
                 Click here

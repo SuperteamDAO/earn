@@ -89,6 +89,7 @@ model Bounties {
   compensationType     CompensationType   @default(fixed)
   minRewardAsk         Int?
   maxRewardAsk         Int?
+  winnerBannerUrl      String?
 
   @@index([id, slug])
   @@index([sponsorId])
@@ -307,6 +308,7 @@ model User {
   hackathonId       String?
   featureModalShown Boolean           @default(false)
   emailSettings     EmailSettings[]
+  surveysShown      Json?
 
   @@index([email, publicKey, username])
   @@index([currentSponsorId])

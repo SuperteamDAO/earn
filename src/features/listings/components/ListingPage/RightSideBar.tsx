@@ -109,13 +109,12 @@ export function RightSideBar({ listing }: { listing: Bounty }) {
   ];
 
   return (
-    <>
-      <VStack gap={2} mx={2} pt={10}>
+    <Box w={{ base: 'full', md: 'auto' }}>
+      <VStack gap={2} mx={3} pt={10}>
         <VStack
           justify={'center'}
           gap={0}
-          minW={{ base: 'full', md: '22rem' }}
-          pb={5}
+          w={{ base: 'full', md: '22rem' }}
           bg={'#FFFFFF'}
           rounded={'xl'}
         >
@@ -154,8 +153,8 @@ export function RightSideBar({ listing }: { listing: Bounty }) {
                     <Td colSpan={2}>
                       <Flex align="center" gap={2}>
                         <Image
-                          w={7}
-                          h={7}
+                          w={8}
+                          h={8}
                           alt={'green doller'}
                           rounded={'full'}
                           src={
@@ -171,7 +170,7 @@ export function RightSideBar({ listing }: { listing: Bounty }) {
                           token={token}
                           textStyle={{
                             fontWeight: 500,
-                            fontSize: '2xl',
+                            fontSize: { base: 'lg', md: '2xl' },
                             color: 'brand.slate.700',
                           }}
                         />
@@ -196,37 +195,38 @@ export function RightSideBar({ listing }: { listing: Bounty }) {
                         (prize, index) =>
                           rewards?.[prize.key] && (
                             <Tr key={index}>
-                              <Td>
-                                <Flex
-                                  align={'center'}
-                                  justify={'center'}
-                                  w={8}
-                                  h={8}
-                                  color="brand.slate.500"
-                                  fontSize={'0.7rem'}
-                                  bg={'blackAlpha.100'}
-                                  rounded={'full'}
-                                >
-                                  {prize.label}
-                                </Flex>
-                              </Td>
-                              <Td>
-                                <Text
-                                  ml={-6}
-                                  color={'brand.slate.500'}
-                                  fontSize={'1.1rem'}
-                                  fontWeight={500}
-                                >
-                                  {rewards[prize.key]}
-                                  <Text
-                                    as="span"
-                                    ml={1}
-                                    color="brand.slate.400"
-                                    fontWeight={400}
+                              <Td colSpan={2}>
+                                <Flex align="center">
+                                  <Flex
+                                    align={'center'}
+                                    justify={'center'}
+                                    w={8}
+                                    h={8}
+                                    mr={3}
+                                    color="brand.slate.500"
+                                    fontSize={'0.7rem'}
+                                    bg={'blackAlpha.100'}
+                                    rounded={'full'}
                                   >
-                                    {token}
-                                  </Text>
-                                </Text>
+                                    {prize.label}
+                                  </Flex>
+                                  <Flex>
+                                    <Text
+                                      color={'brand.slate.500'}
+                                      fontSize={'lg'}
+                                      fontWeight={500}
+                                    >
+                                      {rewards[prize.key]}
+                                    </Text>
+                                    <Text
+                                      ml={1}
+                                      color="brand.slate.400"
+                                      fontWeight={400}
+                                    >
+                                      {token}
+                                    </Text>
+                                  </Flex>
+                                </Flex>
                               </Td>
                               <Td>
                                 <Text
@@ -262,7 +262,11 @@ export function RightSideBar({ listing }: { listing: Bounty }) {
                       alt={'suit case'}
                       src={'/assets/icons/purple-suitcase.svg'}
                     />
-                    <Text color={'#000000'} fontSize="1.3rem" fontWeight={500}>
+                    <Text
+                      color={'#000000'}
+                      fontSize={{ base: 'lg', md: 'xl' }}
+                      fontWeight={500}
+                    >
                       {isSubmissionNumberLoading
                         ? '...'
                         : !isProject
@@ -295,7 +299,7 @@ export function RightSideBar({ listing }: { listing: Bounty }) {
                     <VStack align={'start'} gap={0}>
                       <Text
                         color={'#000000'}
-                        fontSize="1.3rem"
+                        fontSize={{ base: 'lg', md: 'xl' }}
                         fontWeight={500}
                       >
                         {applicationType === 'fixed' ? (
@@ -330,7 +334,11 @@ export function RightSideBar({ listing }: { listing: Bounty }) {
                     src={'/assets/icons/purple-timer.svg'}
                   />
                   <VStack align={'start'} gap={0}>
-                    <Text color={'#000000'} fontSize="1.3rem" fontWeight={500}>
+                    <Text
+                      color={'#000000'}
+                      fontSize={{ base: 'lg', md: 'xl' }}
+                      fontWeight={500}
+                    >
                       <Countdown
                         date={Hackathon?.startDate}
                         renderer={CountDownRenderer}
@@ -347,7 +355,11 @@ export function RightSideBar({ listing }: { listing: Bounty }) {
           <Box w="full" px={5}>
             {isProject && (
               <Flex align={'start'} direction={'column'} my={4}>
-                <Text color={'#000000'} fontSize="1.3rem" fontWeight={500}>
+                <Text
+                  color={'#000000'}
+                  fontSize={{ base: 'lg', md: 'xl' }}
+                  fontWeight={500}
+                >
                   {timeToComplete}
                 </Text>
                 <Text color={'#94A3B8'}>Time to Complete</Text>
@@ -464,6 +476,7 @@ export function RightSideBar({ listing }: { listing: Bounty }) {
           <VStack
             align={'start'}
             justify={'center'}
+            display={{ base: 'none', md: 'flex' }}
             minW={{ base: 'full', md: '22rem' }}
             mt={4}
             p={6}
@@ -503,15 +516,13 @@ export function RightSideBar({ listing }: { listing: Bounty }) {
               sublabel={
                 isWinnersAnnounced
                   ? 'Congratulations!'
-                  : `Around ${moment(deadline)
-                      .add(8, 'd')
-                      .format('Do MMM, YY')}`
+                  : `Around ${moment(deadline).add(8, 'd').format('Do MMM, YY')}`
               }
               label={'Winner Announced'}
             />
           </VStack>
         )}
       </VStack>
-    </>
+    </Box>
   );
 }
