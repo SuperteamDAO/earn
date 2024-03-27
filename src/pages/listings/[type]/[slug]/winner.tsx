@@ -21,6 +21,14 @@ function WinnerBounty({ bounty: initialBounty, url }: BountyDetailsProps) {
     router.push(`${getURL()}listings/${bounty?.type}/${bounty?.slug}/`);
   }, []);
 
+  console.log('id - ', bounty?.id);
+  const image = new URL(`${url}api/winners-og/`);
+  image.searchParams.set('id', bounty?.id || '');
+  image.searchParams.set('rewards', JSON.stringify(bounty?.rewards));
+  image.searchParams.set('token', bounty?.token || '');
+  image.searchParams.set('logo', url + 'assets/logo/st-earn-white.svg');
+  image.searchParams.set('fallback', url + 'assets/fallback/avatar.png');
+
   return (
     <Head>
       <title>{`Superteam Earn Bounty | ${
@@ -40,10 +48,7 @@ function WinnerBounty({ bounty: initialBounty, url }: BountyDetailsProps) {
         rel="canonical"
         href={`${getURL()}listings/${bounty?.type}/${bounty?.slug}/`}
       />
-      <meta
-        property="og:image"
-        content={`${url}api/winners-og/?id=${initialBounty?.id}&rewards=${encodeURIComponent(JSON.stringify(initialBounty?.rewards))}&token=${initialBounty?.token}&logo=${url}assets/logo/st-earn-white.svg&fallback=${url}assets/fallback/avatar.png`}
-      />
+      <meta property="og:image" content={`${image.toString()}`} />
       <meta
         property="og:title"
         content={`${initialBounty?.title || 'Bounty'} | Superteam Earn`}
@@ -54,10 +59,7 @@ function WinnerBounty({ bounty: initialBounty, url }: BountyDetailsProps) {
       />
       <meta name="twitter:site" content="https://earn.superteam.fun" />
       <meta name="twitter:creator" content="@SuperteamEarn" />
-      <meta
-        name="twitter:image"
-        content={`${url}api/winners-og/?id=${initialBounty?.id}&rewards=${encodeURIComponent(JSON.stringify(initialBounty?.rewards))}&token=${initialBounty?.token}&logo=${url}assets/logo/st-earn-white.svg&fallback=${url}assets/fallback/avatar.png`}
-      />
+      <meta name="twitter:image" content={`${image.toString()}`} />
       <meta name="twitter:card" content="summary_large_image" />
       <meta property="og:image:width" content="1200" />
       <meta property="og:image:height" content="675" />

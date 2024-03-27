@@ -59,6 +59,8 @@ export default async function handler(request: NextRequest) {
       JSON.parse(decodeURIComponent(x)),
     ) as Rewards;
 
+    console.log('rewards = ', searchParams.get('rewards'));
+
     const logo = getParam('logo', (x) => decodeURIComponent(x)) as string;
 
     const fallback = getParam('fallback', (x) =>
