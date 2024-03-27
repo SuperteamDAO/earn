@@ -196,7 +196,7 @@ export default async function handler(request: NextRequest) {
                 <div
                   style={{
                     maxWidth: '220px',
-                    marginTop: '-0.5rem',
+                    marginTop: '-0.2rem',
                     fontSize: '27.17px',
                     fontWeight: '600',
                     textAlign: 'center',
