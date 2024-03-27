@@ -73,7 +73,7 @@ export function ListingWinners({ bounty }: Props) {
         <Box
           pos="relative"
           w="full"
-          px={10}
+          px={{ base: 3, md: 10 }}
           py={6}
           color="white"
           bg="radial-gradient(circle, rgba(159,65,255,1) 25%, rgba(99,102,241,1) 100%);"
@@ -103,7 +103,7 @@ export function ListingWinners({ bounty }: Props) {
                     top={-2}
                     px={1}
                     color="white"
-                    fontSize="xs"
+                    fontSize={{ base: 'xx-small', md: 'xs' }}
                     fontWeight={700}
                     textAlign="center"
                     textTransform="capitalize"
@@ -114,7 +114,7 @@ export function ListingWinners({ bounty }: Props) {
                   </Text>
                   {submission?.user?.photo ? (
                     <Image
-                      boxSize="72px"
+                      boxSize="64px"
                       borderRadius="full"
                       objectFit={'cover'}
                       alt={`${submission?.user?.firstName} ${submission?.user?.lastName}`}
@@ -124,18 +124,18 @@ export function ListingWinners({ bounty }: Props) {
                     <Avatar
                       name={`${submission?.user?.firstName} ${submission?.user?.lastName}`}
                       colors={['#92A1C6', '#F0AB3D', '#C271B4']}
-                      size={72}
+                      size={64}
                       variant="marble"
                     />
                   )}
                   <Text
-                    fontSize="sm"
+                    fontSize={{ base: 'xs', md: 'sm' }}
                     fontWeight={600}
                     textAlign={'center'}
                   >{`${submission?.user?.firstName} ${submission?.user?.lastName}`}</Text>
                   <Text
-                    fontSize="xs"
-                    fontWeight={300}
+                    fontSize={{ base: 'xx-small', md: 'xs' }}
+                    fontWeight={400}
                     textAlign="center"
                     opacity={0.6}
                   >
@@ -151,11 +151,13 @@ export function ListingWinners({ bounty }: Props) {
           </Flex>
           <NextLink href={openWinnerLink() ?? '#'} target="_blank">
             <Button
-              pos="absolute"
+              pos={{ base: 'static', md: 'absolute' }}
               top={5}
               right={5}
               gap={2}
               display="flex"
+              w={{ base: '100%', md: 'auto' }}
+              mt={{ base: 6, md: 0 }}
               color="rgba(0, 0, 0, 0.65)"
               fontSize="14px"
               fontWeight={500}

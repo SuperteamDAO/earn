@@ -238,6 +238,7 @@ export const SubmissionActionButton = ({
           bottom={5}
           left="50%"
           w={{ base: '96%', md: 'full' }}
+          mb={5}
           bg={buttonBG}
           _hover={{ bg: buttonBG }}
           _disabled={{
