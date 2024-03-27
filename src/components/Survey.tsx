@@ -18,10 +18,7 @@ import { useEffect, useState } from 'react';
 
 import { userStore } from '@/store/user';
 
-export function getMatchingSurvey(
-  surveys: Survey[],
-  id: string,
-): Survey | null {
+function getMatchingSurvey(surveys: Survey[], id: string): Survey | null {
   const survey = surveys.find((survey) => survey.id === id);
   return survey || null;
 }
