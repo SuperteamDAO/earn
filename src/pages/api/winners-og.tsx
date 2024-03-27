@@ -107,13 +107,9 @@ export default async function handler(request: NextRequest) {
           </div>
           <div
             style={{
-              position: 'absolute',
-              top: '50%',
-              left: '50%',
-              transform: 'translate(-50%, -50%)',
               display: 'flex',
               justifyContent: 'space-around',
-              gap: '8px',
+              gap: '3.5rem',
               margin: 'auto',
             }}
           >
