@@ -4,15 +4,26 @@ import Head from 'next/head';
 import { useRouter } from 'next/router';
 import { useEffect, useState } from 'react';
 
-import { type Bounty, getBountyTypeLabel } from '@/features/listings';
+import {
+  type Bounty,
+  getBountyTypeLabel,
+  type Rewards,
+} from '@/features/listings';
+import type { SubmissionWithUser } from '@/interface/submission';
+import { sortRank } from '@/utils/rank';
 import { getURL } from '@/utils/validUrl';
 
 interface BountyDetailsProps {
   bounty: Bounty | null;
   url: string;
+  submissions: SubmissionWithUser[];
 }
 
-function WinnerBounty({ bounty: initialBounty, url }: BountyDetailsProps) {
+function WinnerBounty({
+  bounty: initialBounty,
+  url,
+  submissions,
+}: BountyDetailsProps) {
   const [bounty] = useState<typeof initialBounty>(initialBounty);
   const router = useRouter();
   console.log('url - ', url);
@@ -28,6 +39,7 @@ function WinnerBounty({ bounty: initialBounty, url }: BountyDetailsProps) {
   image.searchParams.set('token', bounty?.token || '');
   image.searchParams.set('logo', url + 'assets/logo/st-earn-white.svg');
   image.searchParams.set('fallback', url + 'assets/fallback/avatar.png');
+  image.searchParams.set('submissions', JSON.stringify(submissions));
 
   return (
     <Head>
@@ -74,6 +86,16 @@ function WinnerBounty({ bounty: initialBounty, url }: BountyDetailsProps) {
   );
 }
 
+interface StrippedSubmission {
+  id: string;
+  winnerPosition: keyof Rewards | undefined;
+  user: {
+    firstName: string | null;
+    lastName: string | null;
+    photo: string | null;
+  };
+}
+
 export const getServerSideProps: GetServerSideProps = async (context) => {
   const { slug, type } = context.query;
   const { req } = context;
@@ -82,11 +104,38 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
   const fullUrl = `${protocol}://${host}/`;
 
   let bountyData;
+  const submissions: StrippedSubmission[] = [];
   try {
-    const bountyDetails = await axios.get(`${getURL()}api/bounties/${slug}`, {
+    const bountyDetails = await axios.get(`${fullUrl}api/bounties/${slug}`, {
       params: { type },
     });
     bountyData = bountyDetails.data;
+    console.log(bountyDetails.data);
+
+    const submissionsDetails = await axios.get(
+      `${fullUrl}api/submission/${bountyDetails.data.id}/winners/`,
+    );
+    const { data } = submissionsDetails;
+    const winners = sortRank(
+      data.map(
+        (submission: SubmissionWithUser) => submission.winnerPosition || '',
+      ),
+    );
+    const sortedSubmissions = winners.map((position) =>
+      data.find((d: SubmissionWithUser) => d.winnerPosition === position),
+    ) as SubmissionWithUser[];
+    sortedSubmissions.forEach((s) => {
+      submissions.push({
+        id: s.id,
+        winnerPosition: s.winnerPosition,
+        user: {
+          firstName: s.user.firstName,
+          lastName: s.user.lastName,
+          photo: s.user.photo,
+        },
+      });
+    });
+    console.log('submissions - ', submissions);
   } catch (e) {
     console.error(e);
     bountyData = null;
@@ -96,6 +145,7 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
     props: {
       bounty: bountyData,
       url: fullUrl,
+      submissions,
     },
   };
 };
