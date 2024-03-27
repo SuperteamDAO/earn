@@ -9,11 +9,13 @@ import { getURL } from '@/utils/validUrl';
 
 interface BountyDetailsProps {
   bounty: Bounty | null;
+  url: string;
 }
 
-function WinnerBounty({ bounty: initialBounty }: BountyDetailsProps) {
+function WinnerBounty({ bounty: initialBounty, url }: BountyDetailsProps) {
   const [bounty] = useState<typeof initialBounty>(initialBounty);
   const router = useRouter();
+  console.log('url - ', url);
 
   useEffect(() => {
     router.push(`${getURL()}listings/${bounty?.type}/${bounty?.slug}/`);
@@ -38,7 +40,10 @@ function WinnerBounty({ bounty: initialBounty }: BountyDetailsProps) {
         rel="canonical"
         href={`${getURL()}listings/${bounty?.type}/${bounty?.slug}/`}
       />
-      <meta property="og:image" content={bounty?.winnerBannerUrl} />
+      <meta
+        property="og:image"
+        content={`${url}api/winners-og/?id=${initialBounty?.id}&rewards=${encodeURIComponent(JSON.stringify(initialBounty?.rewards))}&token=${initialBounty?.token}&logo=${url}assets/logo/st-earn-white.svg&fallback=${url}assets/fallback/avatar.png`}
+      />
       <meta
         property="og:title"
         content={`${initialBounty?.title || 'Bounty'} | Superteam Earn`}
@@ -49,7 +54,10 @@ function WinnerBounty({ bounty: initialBounty }: BountyDetailsProps) {
       />
       <meta name="twitter:site" content="https://earn.superteam.fun" />
       <meta name="twitter:creator" content="@SuperteamEarn" />
-      <meta name="twitter:image" content={bounty?.winnerBannerUrl} />
+      <meta
+        name="twitter:image"
+        content={`${url}api/winners-og/?id=${initialBounty?.id}&rewards=${encodeURIComponent(JSON.stringify(initialBounty?.rewards))}&token=${initialBounty?.token}&logo=${url}assets/logo/st-earn-white.svg&fallback=${url}assets/fallback/avatar.png`}
+      />
       <meta name="twitter:card" content="summary_large_image" />
       <meta property="og:image:width" content="1200" />
       <meta property="og:image:height" content="675" />
@@ -66,6 +74,10 @@ function WinnerBounty({ bounty: initialBounty }: BountyDetailsProps) {
 
 export const getServerSideProps: GetServerSideProps = async (context) => {
   const { slug, type } = context.query;
+  const { req } = context;
+  const protocol = req.headers['x-forwarded-proto'] || 'http';
+  const host = req.headers.host;
+  const fullUrl = `${protocol}://${host}/`;
 
   let bountyData;
   try {
@@ -81,6 +93,7 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
   return {
     props: {
       bounty: bountyData,
+      url: fullUrl,
     },
   };
 };
