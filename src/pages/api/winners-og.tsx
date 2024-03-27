@@ -1,5 +1,6 @@
 import { ImageResponse } from '@vercel/og';
 import axios from 'axios';
+import he from 'he';
 import type { NextRequest } from 'next/server';
 
 import { type Rewards } from '@/features/listings';
@@ -44,7 +45,7 @@ const formatter = new Intl.NumberFormat('en-US', {
 
 export default async function handler(request: NextRequest) {
   try {
-    const { searchParams } = new URL(request.url);
+    const { searchParams } = new URL(he.decode(request.url));
 
     const getParam = (name: string, processFn = (x: any) => x) =>
       searchParams.has(name) ? processFn(searchParams.get(name)) : null;

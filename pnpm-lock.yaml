@@ -113,6 +113,9 @@ dependencies:
   franc:
     specifier: ^6.2.0
     version: 6.2.0
+  he:
+    specifier: ^1.2.0
+    version: 1.2.0
   html-react-parser:
     specifier: ^5.1.1
     version: 5.1.1(react@18.2.0)
@@ -214,6 +217,9 @@ devDependencies:
   '@types/eslint-config-prettier':
     specifier: ~6.11.3
     version: 6.11.3
+  '@types/he':
+    specifier: ^1.2.3
+    version: 1.2.3
   '@types/lint-staged':
     specifier: ~13.3.0
     version: 13.3.0
@@ -5818,6 +5824,10 @@ packages:
       '@types/minimatch': 5.1.2
       '@types/node': 20.11.0
     dev: false
+
+  /@types/he@1.2.3:
+    resolution: {integrity: sha512-q67/qwlxblDzEDvzHhVkwc1gzVWxaNxeyHUBF4xElrvjL11O+Ytze+1fGpBHlr/H9myiBUaUXNnNPmBHxxfAcA==}
+    dev: true
 
   /@types/istanbul-lib-coverage@2.0.6:
     resolution: {integrity: sha512-2QF/t/auWm0lsy8XtKVPG19v3sSOQlJe/YHZgfjb/KBBHOGSV+J2q/S671rcq9uTBrLAXmZpqJiaQbMT+zNU1w==}
