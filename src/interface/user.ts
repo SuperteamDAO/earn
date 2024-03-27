@@ -4,11 +4,6 @@ import type { UserSponsor } from '@/interface/userSponsor';
 import type { PoW } from './pow';
 import type { SubmissionWithUser } from './submission';
 
-interface Notifications {
-  label: string;
-  timestamp: number;
-}
-
 interface User {
   id?: string;
   publicKey?: string;
@@ -42,7 +37,6 @@ interface User {
   website?: string;
   telegram?: string;
   pow?: string;
-  notifications?: Notifications[] | null;
   totalEarnedInUSD?: number;
   currentSponsorId?: string;
   currentSponsor?: SponsorType;
@@ -66,4 +60,4 @@ interface User {
   };
   surveysShown?: string[];
 }
-export type { Notifications, User };
+export type { User };
