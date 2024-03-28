@@ -33,7 +33,6 @@ export default async function handler(
         prisma.emailSettings.create({
           data: {
             userId: userId as string,
-            isSubscribed: true,
             category,
           },
         }),
