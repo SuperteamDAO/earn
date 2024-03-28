@@ -18,6 +18,7 @@ import {
 } from '@chakra-ui/react';
 import { type SubmissionLabels } from '@prisma/client';
 import {
+  createAssociatedTokenAccountInstruction,
   createTransferInstruction,
   getAssociatedTokenAddressSync,
 } from '@solana/spl-token';
@@ -171,7 +172,7 @@ export const SubmissionDetails = ({
   }) => {
     setIsPaying(true);
     try {
-      let transaction;
+      const transaction = new Transaction();
       const tokenDetails = tokenList.find((e) => e.tokenSymbol === token);
       const tokenAddress = tokenDetails?.mintAddress as string;
       const power = tokenDetails?.decimals as number;
@@ -188,7 +189,7 @@ export const SubmissionDetails = ({
       );
 
       if (token === 'SOL') {
-        transaction = new Transaction().add(
+        transaction.add(
           SystemProgram.transfer({
             fromPubkey: publicKey as PublicKey,
             toPubkey: receiver,
@@ -196,7 +197,20 @@ export const SubmissionDetails = ({
           }),
         );
       } else {
-        transaction = new Transaction().add(
+        const receiverATAExists = await connection.getAccountInfo(receiverATA);
+
+        if (!receiverATAExists) {
+          transaction.add(
+            createAssociatedTokenAccountInstruction(
+              publicKey as PublicKey,
+              receiverATA,
+              receiver,
+              new PublicKey(tokenAddress),
+            ),
+          );
+        }
+
+        transaction.add(
           createTransferInstruction(
             senderATA,
             receiverATA,
