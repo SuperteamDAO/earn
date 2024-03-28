@@ -151,14 +151,16 @@ export function UserMenu({}) {
               <MenuDivider />
             </Box>
           )}
-          <MenuItem
-            color="brand.slate.500"
-            fontSize="sm"
-            fontWeight={600}
-            onClick={onOpen}
-          >
-            Email Preferences
-          </MenuItem>
+          {(userInfo?.isTalentFilled || !!userInfo?.currentSponsorId) && (
+            <MenuItem
+              color="brand.slate.500"
+              fontSize="sm"
+              fontWeight={600}
+              onClick={onOpen}
+            >
+              Email Preferences
+            </MenuItem>
+          )}
           <MenuItem
             color="brand.slate.500"
             fontSize="sm"
