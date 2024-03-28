@@ -7,7 +7,8 @@ import React, {
   useState,
 } from 'react';
 
-import { LoginWrapper } from '@/components/Header/LoginWrapper';
+import { LoginWrapper } from '@/components/LoginWrapper';
+import { SurveyModal } from '@/components/Survey';
 import { Superteams } from '@/constants/Superteam';
 import {
   getBountyDraftStatus,
@@ -48,7 +49,6 @@ export const SubmissionActionButton = ({
   const [triggerLogin, setTriggerLogin] = useState(false);
   const [isUserSubmissionLoading, setIsUserSubmissionLoading] = useState(false);
   const [isSubmitted, setIsSubmitted] = useState(false);
-
   const [isEasterEggOpen, setEasterEggOpen] = useState(false);
 
   const { userInfo } = userStore();
@@ -165,6 +165,14 @@ export const SubmissionActionButton = ({
       btnLoadingText = 'Checking Submission..';
   }
 
+  const {
+    isOpen: isSurveyOpen,
+    onOpen: onSurveyOpen,
+    onClose: onSurveyClose,
+  } = useDisclosure();
+
+  const surveyId = '018c6743-c893-0000-a90e-f35d31c16692';
+
   return (
     <>
       {isOpen && (
@@ -178,8 +186,17 @@ export const SubmissionActionButton = ({
           editMode={buttonState === 'edit'}
           listing={listing}
           showEasterEgg={() => setEasterEggOpen(true)}
+          onSurveyOpen={onSurveyOpen}
         />
       )}
+      {isSurveyOpen &&
+        (!userInfo?.surveysShown || !(surveyId in userInfo.surveysShown)) && (
+          <SurveyModal
+            isOpen={isSurveyOpen}
+            onClose={onSurveyClose}
+            surveyId={surveyId}
+          />
+        )}
       {warningIsOpen && (
         <WarningModal
           isOpen={warningIsOpen}
@@ -216,9 +233,18 @@ export const SubmissionActionButton = ({
         rounded="md"
       >
         <Button
-          w="full"
+          pos={{ base: 'fixed', md: 'static' }}
+          zIndex={999}
+          bottom={5}
+          left="50%"
+          w={{ base: '96%', md: 'full' }}
+          mb={5}
           bg={buttonBG}
           _hover={{ bg: buttonBG }}
+          _disabled={{
+            opacity: { base: '96%', md: '70%' },
+          }}
+          transform={{ base: 'translateX(-50%)', md: 'none' }}
           pointerEvents={btnPointerEvents}
           isDisabled={isBtnDisabled}
           isLoading={isUserSubmissionLoading}

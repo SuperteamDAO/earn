@@ -1,5 +1,4 @@
 import { Box, Grid, HStack, Text } from '@chakra-ui/react';
-import { Regions } from '@prisma/client';
 import axios from 'axios';
 import type { GetServerSideProps } from 'next';
 import Head from 'next/head';
@@ -84,22 +83,7 @@ function BountyDetails({ bounty: initialBounty }: BountyDetailsProps) {
           )}
           {bounty !== null && !!bounty?.id && (
             <>
-              <ListingHeader
-                type={bounty?.type}
-                id={bounty?.id}
-                status={bounty?.status}
-                deadline={bounty?.deadline}
-                title={bounty?.title ?? ''}
-                sponsor={bounty?.sponsor}
-                slug={bounty?.slug}
-                region={bounty?.region || Regions.GLOBAL}
-                isWinnersAnnounced={bounty?.isWinnersAnnounced}
-                hackathonLogo={bounty?.Hackathon?.altLogo}
-                hackathonStartsAt={bounty?.Hackathon?.startDate}
-                references={bounty?.references}
-                publishedAt={bounty?.publishedAt}
-                isPublished={bounty?.isPublished}
-              />
+              <ListingHeader listing={bounty} />
               <Box mx={4}>
                 <HStack
                   align={['center', 'center', 'start', 'start']}

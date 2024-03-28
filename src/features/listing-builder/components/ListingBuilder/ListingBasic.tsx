@@ -346,7 +346,7 @@ export const ListingBasic = ({
                   bg="#6562FF"
                   borderRadius="0.5rem"
                   hasArrow
-                  label={`Select the Superteam region this listing will be available and relevant to. The geography selected here will determine which Superteam Geography page it shows up on. If the listing is open to all, please select global; otherwise, please select the specific country`}
+                  label={`Select the Superteam region this listing will be available and relevant to. Only users from the region you specify will be able to apply/submit to this listing.`}
                   placement="right-end"
                 >
                   <Image

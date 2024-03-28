@@ -19,8 +19,8 @@ export const EasterEgg = ({ isOpen, onClose }: Props) => {
     <Modal isOpen={isOpen} onClose={onClose}>
       <ModalContent
         pos="fixed"
-        top="0px"
-        left="0px"
+        top="0"
+        left="0"
         w="100vw"
         maxW="none"
         h="100vh"
@@ -29,10 +29,10 @@ export const EasterEgg = ({ isOpen, onClose }: Props) => {
         bg="#5243FF"
       >
         <Confetti />
-        <ModalCloseButton w="2rem" h="2rem" m="1rem" color="white">
-          <CloseIcon width="1rem" height="1rem" />
+        <ModalCloseButton w={6} h={6} m={4} color="white">
+          <CloseIcon width={4} height={4} />
         </ModalCloseButton>
-        <Container mt={['112px', '24px']} px="16px">
+        <Container mt={[28, 6]} px={4}>
           <Box
             width="112px"
             marginX="auto"
@@ -48,7 +48,7 @@ export const EasterEgg = ({ isOpen, onClose }: Props) => {
           </Box>
           <Text
             color="white"
-            fontSize={['2.5rem', '3.5rem']}
+            fontSize={[42, 58]}
             fontWeight={500}
             lineHeight="1"
             textAlign="center"
@@ -56,9 +56,9 @@ export const EasterEgg = ({ isOpen, onClose }: Props) => {
             Submission Received
           </Text>
           <Text
-            mt={['30px', '20px']}
+            mt={[8, 5]}
             color="white"
-            fontSize={['2.3rem', '3.3rem']}
+            fontSize={[38, 48]}
             lineHeight="1"
             textAlign="center"
             opacity="0.6"
@@ -67,7 +67,7 @@ export const EasterEgg = ({ isOpen, onClose }: Props) => {
           </Text>
         </Container>
         <AbsoluteCenter
-          bottom="0px"
+          bottom="0"
           alignItems="flex-end"
           flexDir="column"
           display="flex"

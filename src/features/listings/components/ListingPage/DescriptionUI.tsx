@@ -21,55 +21,61 @@ export function DescriptionUI({ skills, description }: Props) {
   };
 
   return (
-    <VStack w={'full'} p={5} bg={'white'} rounded={'xl'}>
-      <Flex
-        justify={['center', 'center', 'space-between', 'space-between']}
-        direction={['column', 'column', 'row', 'row']}
-        gap={3}
-        w={'full'}
-        px={5}
-      >
-        <Text color={'brand.slate.400'} fontWeight={500}>
-          Skills Needed
-        </Text>
-        <HStack flexWrap={'wrap'} gap={3}>
-          {skills?.map((skill) => (
-            <Box
-              key={skill}
-              m={'0px !important'}
-              px={4}
-              py={1}
-              bg={`${skillMap.find((e) => e.mainskill === skill)?.color}1A`}
-              rounded={'md'}
-            >
-              <Text
-                color={skillMap.find((e) => e.mainskill === skill)?.color}
-                fontSize={'sm'}
-              >
-                {skill}
-              </Text>
-            </Box>
-          ))}
-        </HStack>
-      </Flex>
-      <Flex pos={'relative'} direction={'column'} w={'full'}>
+    <Box w={'full'}>
+      <VStack mx={3} px={{ base: 0 }} py={5} bg={'white'} rounded={'xl'}>
         <Flex
-          direction={'column'}
-          overflow={'hidden'}
+          justify={['center', 'center', 'space-between', 'space-between']}
+          direction={['column', 'column', 'row', 'row']}
+          gap={3}
           w={'full'}
-          h={'full'}
           px={5}
-          pb={8}
-          id="reset-des"
         >
-          {parse(
-            description?.startsWith('"')
-              ? JSON.parse(description || '')
-              : description ?? '',
-            options,
-          )}
+          <Text
+            color={'brand.slate.400'}
+            fontWeight={500}
+            whiteSpace={'nowrap'}
+          >
+            Skills Needed
+          </Text>
+          <HStack flexWrap={'wrap'} gap={3}>
+            {skills?.map((skill) => (
+              <Box
+                key={skill}
+                m={'0px !important'}
+                px={4}
+                py={1}
+                bg={`${skillMap.find((e) => e.mainskill === skill)?.color}1A`}
+                rounded={'md'}
+              >
+                <Text
+                  color={skillMap.find((e) => e.mainskill === skill)?.color}
+                  fontSize={'sm'}
+                >
+                  {skill}
+                </Text>
+              </Box>
+            ))}
+          </HStack>
         </Flex>
-      </Flex>
-    </VStack>
+        <Flex pos={'relative'} direction={'column'} w={'full'}>
+          <Flex
+            direction={'column'}
+            overflow={'hidden'}
+            w={'full'}
+            h={'full'}
+            px={5}
+            pb={8}
+            id="reset-des"
+          >
+            {parse(
+              description?.startsWith('"')
+                ? JSON.parse(description || '')
+                : description ?? '',
+              options,
+            )}
+          </Flex>
+        </Flex>
+      </VStack>
+    </Box>
   );
 }
