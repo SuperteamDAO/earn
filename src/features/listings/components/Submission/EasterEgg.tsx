@@ -53,7 +53,7 @@ export const EasterEgg = ({ isOpen, onClose }: Props) => {
             lineHeight="1"
             textAlign="center"
           >
-            Submission Received
+            Submission Received!
           </Text>
           <Text
             mt={[8, 5]}
@@ -63,7 +63,7 @@ export const EasterEgg = ({ isOpen, onClose }: Props) => {
             textAlign="center"
             opacity="0.6"
           >
-            We have received your submission
+            Sending some vibes your way 💃 💃
           </Text>
         </Container>
         <AbsoluteCenter
@@ -83,6 +83,9 @@ export const EasterEgg = ({ isOpen, onClose }: Props) => {
             style={{ width: '100%', marginTop: 'auto', display: 'block' }}
             width="500"
             height="600"
+            priority
+            loading="eager"
+            quality={100}
           />
         </AbsoluteCenter>
         <audio
