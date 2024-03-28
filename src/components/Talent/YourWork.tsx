@@ -277,6 +277,7 @@ export function YourWork({ setStep, useFormStore }: Step1Props) {
             subSkills={subSkills}
             setSkills={setSkills}
             setSubSkills={setSubSkills}
+            helperText="We will send email notifications of new listings for your selected skills"
           />
           <Flex align={'center'} mb={'2.5rem'}>
             <FormControl>

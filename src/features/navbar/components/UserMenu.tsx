@@ -11,12 +11,14 @@ import {
   MenuItem,
   MenuList,
   Text,
+  useDisclosure,
 } from '@chakra-ui/react';
 import Avatar from 'boring-avatars';
 import NextLink from 'next/link';
 import { useRouter } from 'next/router';
 import { useSession } from 'next-auth/react';
 
+import { EmailSettingsModal } from '@/components/modals/EmailSettingsModal';
 import { userStore } from '@/store/user';
 
 export function UserMenu({}) {
@@ -26,8 +28,11 @@ export function UserMenu({}) {
 
   const { data: session } = useSession();
 
+  const { isOpen, onClose, onOpen } = useDisclosure();
+
   return (
     <>
+      <EmailSettingsModal isOpen={isOpen} onClose={onClose} />
       {userInfo && !userInfo.currentSponsorId && !userInfo.isTalentFilled && (
         <Button
           display={{ base: 'none', md: 'flex' }}
@@ -120,9 +125,9 @@ export function UserMenu({}) {
               >
                 Sponsor Dashboard
               </MenuItem>
-              <MenuDivider />
             </>
           )}
+          <MenuDivider />
           {session?.user?.role === 'GOD' && (
             <Box display={{ base: 'none', sm: 'block' }}>
               <MenuGroup
@@ -150,8 +155,16 @@ export function UserMenu({}) {
             color="brand.slate.500"
             fontSize="sm"
             fontWeight={600}
+            onClick={onOpen}
+          >
+            Email Preferences
+          </MenuItem>
+          <MenuItem
+            color="brand.slate.500"
+            fontSize="sm"
+            fontWeight={600}
             onClick={() =>
-              window.open('https://discord.com/invite/Mq3ReaekgG', '_blank')
+              window.open('mailto:hello@superteamearn.com', '_blank')
             }
           >
             Get Help

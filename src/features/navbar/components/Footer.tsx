@@ -32,6 +32,9 @@ const linkData = [
     text: 'Changelog',
     href: 'https://superteamdao.notion.site/Superteam-Earn-Changelog-faf0c85972a742699ecc07a52b569827',
   },
+];
+
+const superteamProductions = [
   {
     text: 'Build',
     href: 'https://build.superteam.fun',
@@ -167,14 +170,15 @@ export const Footer = () => {
               </SocialButton>
             </Stack>
           </Stack>
-          <Flex justify={'space-between'} gap={24}>
+          <Flex justify={'space-between'} gap={{ base: 16, md: 24 }}>
             <Stack align={'flex-start'}>
               <Text
-                color={'brand.slate.700'}
-                fontSize={{ base: 'md', md: 'lg' }}
+                color={'brand.slate.400'}
+                fontSize={{ base: 'xs', md: 'sm' }}
                 fontWeight={'500'}
+                whiteSpace={'nowrap'}
               >
-                All Superteams
+                ALL SUPERTEAMS
               </Text>
               {Superteams.map((st) => (
                 <Link
@@ -196,9 +200,30 @@ export const Footer = () => {
               {linkData.map((link) => (
                 <Link
                   key={link.text}
-                  color={'brand.slate.700'}
+                  color={'brand.slate.500'}
                   fontSize={{ base: 'md', md: 'lg' }}
                   fontWeight={'500'}
+                  href={link.href}
+                  isExternal
+                >
+                  {link.text}
+                </Link>
+              ))}
+              <Text
+                mt={4}
+                color={'brand.slate.400'}
+                fontSize={{ base: 'xs', md: 'sm' }}
+                fontWeight={'500'}
+                whiteSpace={'nowrap'}
+              >
+                SUPERTEAM PRODUCTIONS
+              </Text>
+              {superteamProductions.map((link) => (
+                <Link
+                  key={link.text}
+                  as={NextLink}
+                  color="brand.slate.500"
+                  fontSize={{ base: 'sm', md: 'md' }}
                   href={link.href}
                   isExternal
                 >

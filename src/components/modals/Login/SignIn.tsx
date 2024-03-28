@@ -14,7 +14,7 @@ import { signIn } from 'next-auth/react';
 import React, { type Dispatch, type SetStateAction, useState } from 'react';
 import { MdOutlineEmail } from 'react-icons/md';
 
-import GoogleIcon from '@/svg/google';
+import { GoogleIcon } from '@/svg/google';
 
 export const SignIn = ({
   loginStep,
@@ -174,9 +174,7 @@ export const SignIn = ({
             <Text as="u">
               <Link
                 as={NextLink}
-                href={
-                  'https://discord.com/channels/857091160295866388/1192795350277312662'
-                }
+                href={'mailto:hello@superteamearn.com'}
                 isExternal
               >
                 Click here

@@ -1,3 +1,4 @@
+import { InfoOutlineIcon } from '@chakra-ui/icons';
 import {
   Flex,
   Heading,
@@ -5,6 +6,12 @@ import {
   IconButton,
   Image,
   Link,
+  Popover,
+  PopoverArrow,
+  PopoverBody,
+  PopoverCloseButton,
+  PopoverContent,
+  PopoverTrigger,
   Text,
   Tooltip,
   useDisclosure,
@@ -15,7 +22,7 @@ import axios from 'axios';
 import NextLink from 'next/link';
 import { useRouter } from 'next/router';
 import React, { useEffect, useState } from 'react';
-import { toast, Toaster } from 'react-hot-toast';
+import { toast } from 'react-hot-toast';
 import { TbBell, TbBellRinging } from 'react-icons/tb';
 
 import { LoginWrapper } from '@/components/LoginWrapper';
@@ -132,7 +139,7 @@ export function ListingHeader({
     statusBgColor = 'green.100';
     statusTextColor = 'green.600';
   } else if (!isWinnersAnnounced && hasDeadlineEnded && status === 'OPEN') {
-    statusText = 'Submissions In Review';
+    statusText = 'In Review';
     statusBgColor = 'orange.100';
     statusTextColor = 'orange.600';
   } else if (!hasDeadlineEnded && !isWinnersAnnounced && status === 'OPEN') {
@@ -213,10 +220,10 @@ export function ListingHeader({
 
   const HeaderSub = () => {
     return (
-      <HStack gap={{ base: 1, md: 3 }}>
+      <Flex align={'center'} wrap={'wrap'} gap={{ base: 1, md: 3 }}>
         <Text
           color={'#94A3B8'}
-          fontSize={{ base: 'sm', sm: 'md' }}
+          fontSize={{ base: 'xs', sm: 'md' }}
           fontWeight={500}
           whiteSpace={'nowrap'}
         >
@@ -248,8 +255,8 @@ export function ListingHeader({
               <Flex>
                 <Image
                   h="4"
-                  mt={{ base: 0.5, sm: 1 }}
-                  mr={{ base: 0, sm: 1 }}
+                  mt={{ base: '1px', sm: 1 }}
+                  mr={{ base: '1px', sm: 1 }}
                   alt={type}
                   src={
                     isProject
@@ -294,7 +301,26 @@ export function ListingHeader({
             {region === 'GLOBAL' ? 'Global' : `${displayValue} Only`}
           </Text>
         </Tooltip>
-      </HStack>
+        <Popover>
+          <PopoverTrigger>
+            <InfoOutlineIcon
+              display={{ base: 'flex', sm: 'none' }}
+              boxSize={'12px'}
+            />
+          </PopoverTrigger>
+          <PopoverContent>
+            <PopoverArrow />
+            <PopoverCloseButton color="brand.slate.300" />
+            <PopoverBody
+              color={'brand.slate.500'}
+              fontSize={'xs'}
+              fontWeight={500}
+            >
+              {regionTooltipLabel}
+            </PopoverBody>
+          </PopoverContent>
+        </Popover>
+      </Flex>
     );
   };
 
@@ -414,7 +440,6 @@ export function ListingHeader({
         <ListingTitle />
         <HeaderSub />
       </Flex>
-      <Toaster />
       {!isTemplate && (
         <Flex
           align={'center'}

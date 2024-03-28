@@ -197,7 +197,7 @@ const UpdateSponsor = () => {
                   name: e.sponsorname,
                   slug: e.slug,
                   logo: imageUrl ?? '',
-                  twitter: e.twitterHandle ?? '',
+                  twitter: e.twitterHandle,
                   url: e.sponsorurl ?? '',
                 });
               })}
@@ -279,7 +279,7 @@ const UpdateSponsor = () => {
                     )}
                   </FormErrorMessage>
                 </FormControl>
-                <FormControl w={'18rem'}>
+                <FormControl w={'18rem'} isRequired>
                   <FormLabel
                     color={'brand.slate.500'}
                     fontSize={'15px'}

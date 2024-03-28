@@ -27,6 +27,5 @@ export interface Talent {
   telegram?: string;
   twitter?: string;
   website?: string;
-  notifications?: string;
   PoW?: PoW[];
 }

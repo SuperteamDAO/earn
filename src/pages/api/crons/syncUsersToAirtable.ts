@@ -141,7 +141,8 @@ function convertUserToAirtable(user: User): ForFoundersAirtableSchema {
     'Work Preference': user.workPrefernce ?? undefined,
     'Current Employer': user.currentEmployer ?? undefined,
     pow: user.pow ?? undefined,
-    notifications: user.notifications?.toString() ?? undefined,
+    // notifications: JSON.stringify(user.notifications ?? {}) ?? undefined,
+    notifications: undefined,
     private: String(user.private ? 1 : 0),
     skills: JSON.stringify(user.skills ?? {}) ?? undefined,
     currentSponsorId: user.currentSponsorId ?? undefined,
@@ -160,18 +161,22 @@ function convertUserToAirtable(user: User): ForFoundersAirtableSchema {
 // }
 async function handler(_req: NextApiRequest, res: NextApiResponse) {
   let count = 0;
+  const startTime = performance.now();
+  let endTime = performance.now();
   try {
     let cursor: string | undefined = undefined;
     let users = await prisma.user.findMany({
       take: 10,
     });
 
+    // console.log("users - ", users)
+
     const usersAirtable: {
       fields: ForFoundersAirtableSchema;
     }[] = [];
     for (const user of users) {
-      console.log('id - ', user.id);
-      console.log('skills - ', user.skills);
+      // console.log('id - ', user.id);
+      // console.log('skills - ', user.skills);
       usersAirtable.push({
         fields: convertUserToAirtable(user as any),
       });
@@ -179,12 +184,8 @@ async function handler(_req: NextApiRequest, res: NextApiResponse) {
 
     const data = airtableUpsert('id', usersAirtable);
     console.log('data - ', data);
-    const response = await axios.patch(
-      airtableUrl(),
-      JSON.stringify(data),
-      airtableConfig(),
-    );
-    console.log('response ok? ', response.statusText);
+    await axios.patch(airtableUrl(), JSON.stringify(data), airtableConfig());
+    // console.log('response ok? ', response.statusText);
     count++;
 
     do {
@@ -200,23 +201,25 @@ async function handler(_req: NextApiRequest, res: NextApiResponse) {
         fields: ForFoundersAirtableSchema;
       }[] = [];
       for (const user of users) {
-        console.log('id - ', user.id);
-        console.log('skills - ', user.skills);
+        // console.log('id - ', user.id);
+        // console.log('skills - ', user.skills);
         usersAirtable.push({
           fields: convertUserToAirtable(user as any),
         });
       }
-      const response = await axios.patch(
+      await axios.patch(
         airtableUrl(),
         airtableUpsert('id', usersAirtable),
         airtableConfig(),
       );
-      console.log('response ok? ', response.statusText);
+      // console.log('response ok? ', response.statusText);
 
       count++;
     } while (cursor);
     console.log('count - ', count);
 
+    endTime = performance.now();
+    console.log('full performance time - ', endTime - startTime);
     res.status(200).json({ message: 'Airtable Synced successfully' });
   } catch (error: any) {
     console.log('count - ', count);
