@@ -1,5 +1,4 @@
 import { Box, Center, Flex, Image, Text } from '@chakra-ui/react';
-import { Toaster } from 'react-hot-toast';
 
 type CategoryAssetsType = {
   [key: string]: {
@@ -78,7 +77,6 @@ export const CategoryBanner = ({ type }: { type: string }) => {
             {categoryAssets[type]?.desc}
           </Text>
         </Box>
-        <Toaster />
       </Flex>
     </>
   );

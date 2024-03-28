@@ -330,22 +330,14 @@ model PoW {
   @@index([userId])
 }
 
-model UserEmailType {
-  id            Int             @id @default(autoincrement())
-  name          String
-  emailSettings EmailSettings[]
-}
-
 model EmailSettings {
-  id           Int           @id @default(autoincrement())
+  id           Int     @id @default(autoincrement())
   isSubscribed Boolean
-  user         User          @relation(fields: [userId], references: [id])
+  user         User    @relation(fields: [userId], references: [id])
   userId       String
-  emailType    UserEmailType @relation(fields: [emailTypeId], references: [id])
-  emailTypeId  Int
+  category     String
 
   @@index([userId])
-  @@index([emailTypeId])
 }
 
 model UserSponsors {

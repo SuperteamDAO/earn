@@ -1,3 +1,5 @@
+import type { EmailSettings } from '@prisma/client';
+
 import type { SponsorType } from '@/interface/sponsor';
 import type { UserSponsor } from '@/interface/userSponsor';
 
@@ -59,5 +61,6 @@ interface User {
     announceDate: string;
   };
   surveysShown?: string[];
+  emailSettings?: EmailSettings[];
 }
 export type { User };
