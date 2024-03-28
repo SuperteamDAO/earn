@@ -14,7 +14,7 @@ import NextLink from 'next/link';
 import { useRouter } from 'next/router';
 import { useEffect, useRef, useState } from 'react';
 
-import { LoginWrapper } from '@/components/Header/LoginWrapper';
+import { LoginWrapper } from '@/components/LoginWrapper';
 import { tokenList } from '@/constants';
 import type { User } from '@/interface/user';
 import { RenaissanceLogo } from '@/svg/renaissance-logo';

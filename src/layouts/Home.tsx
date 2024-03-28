@@ -11,10 +11,10 @@ import axios from 'axios';
 import { useRouter } from 'next/router';
 import React, { type ReactNode, useEffect, useState } from 'react';
 
-import { LoginWrapper } from '@/components/Header/LoginWrapper';
 import { HomeBanner } from '@/components/home/Banner';
 import { CategoryBanner } from '@/components/home/CategoryBanner';
 import { HomeSideBar } from '@/components/home/SideBar';
+import { LoginWrapper } from '@/components/LoginWrapper';
 import { Superteams } from '@/constants/Superteam';
 import type { User } from '@/interface/user';
 import { Default } from '@/layouts/Default';
@@ -73,7 +73,7 @@ export function Home({ children, type }: HomeProps) {
         />
       }
     >
-      <Container maxW={'7xl'} mx="auto">
+      <Container maxW={'7xl'} mx="auto" px={{ base: 3, md: 4 }}>
         <HStack align="start" justify="space-between" my={{ base: 4, md: 8 }}>
           <Flex
             w="full"

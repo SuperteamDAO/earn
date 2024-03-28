@@ -50,7 +50,6 @@ import { useEffect, useRef, useState } from 'react';
 import { AiOutlineDelete } from 'react-icons/ai';
 import { FiMoreVertical } from 'react-icons/fi';
 
-import CreateListingModal from '@/components/modals/createListing';
 import { LoadingSection } from '@/components/shared/LoadingSection';
 import { tokenList } from '@/constants/index';
 import {
@@ -61,7 +60,7 @@ import {
   getColorStyles,
   isDeadlineOver,
 } from '@/features/listings';
-import { SponsorPrize } from '@/features/sponsor-dashboard';
+import { CreateListingModal, SponsorPrize } from '@/features/sponsor-dashboard';
 import { Sidebar } from '@/layouts/Sponsor';
 import { userStore } from '@/store/user';
 

@@ -13,6 +13,7 @@ import NextTopLoader from 'nextjs-toploader';
 import posthog from 'posthog-js';
 import { PostHogProvider, usePostHog } from 'posthog-js/react';
 import React, { useEffect } from 'react';
+import { Toaster } from 'react-hot-toast';
 
 import { SolanaWalletProvider } from '@/context/SolanaWallet';
 import { userStore } from '@/store/user';
@@ -27,7 +28,7 @@ const fontSans = Inter({
   display: 'swap',
   adjustFontFallback: true,
   preload: true,
-  // fallback: ['Arial'],
+  fallback: ['Inter'],
   weight: 'variable',
 });
 
@@ -100,7 +101,8 @@ function MyApp({ Component, pageProps }: any) {
   return (
     <>
       <NextTopLoader color={'#6366F1'} showSpinner={false} />
-      <Component {...pageProps} key={router.asPath} />;
+      <Component {...pageProps} key={router.asPath} />
+      <Toaster position="bottom-center" />
     </>
   );
 }

@@ -98,11 +98,12 @@ export function Banner({ isHackathonRoute }: { isHackathonRoute?: boolean }) {
                 </Text>
                 <Link
                   as={NextLink}
+                  ml={2}
                   color="brand.slate.500"
                   _hover={{
                     color: 'brand.slate.800',
                   }}
-                  href={`/edit/sponsor`}
+                  href={`/sponsor/edit`}
                 >
                   <AiOutlineEdit size={18} color="#94a3b8" />
                 </Link>

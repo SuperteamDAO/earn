@@ -1,4 +1,3 @@
-import { Regions } from '@prisma/client';
 import axios from 'axios';
 import type { GetServerSideProps } from 'next';
 import React, { useEffect, useState } from 'react';
@@ -53,21 +52,7 @@ const SubmissionPage = ({ slug }: { slug: string }) => {
         )}
         {!isLoading && !error && !!bounty?.id && (
           <>
-            <ListingHeader
-              id={bounty?.id}
-              region={bounty?.region || Regions.GLOBAL}
-              status={bounty?.status}
-              deadline={bounty?.deadline}
-              title={bounty?.title ?? ''}
-              sponsor={bounty?.sponsor}
-              slug={bounty?.slug}
-              isWinnersAnnounced={bounty?.isWinnersAnnounced}
-              references={bounty?.references}
-              type={bounty?.type}
-              publishedAt={bounty?.publishedAt}
-              isPublished={bounty?.isPublished}
-              hackathonLogo={bounty?.Hackathon?.altLogo}
-            />
+            <ListingHeader listing={bounty} />
             <SubmissionList
               bounty={bounty}
               setUpdate={setUpdate}

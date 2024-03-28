@@ -76,8 +76,8 @@ export function CreateListing({
   const { isOpen, onOpen } = useDisclosure();
   const {
     isOpen: isSurveyOpen,
-    onClose: onSurveyClose,
     onOpen: onSurveyOpen,
+    onClose: onSurveyClose,
   } = useDisclosure();
 
   const [questions, setQuestions] = useState<Ques[]>(
@@ -187,6 +187,8 @@ export function CreateListing({
     basePath = 'hackathon';
   }
 
+  const surveyId = '018c674f-7e49-0000-5097-f2affbdddb0d';
+
   const createAndPublishListing = async () => {
     setIsListingPublishing(true);
     try {
@@ -229,7 +231,9 @@ export function CreateListing({
       setSlug(`/${result?.data?.type}/${result?.data?.slug}/`);
       setIsListingPublishing(false);
       onOpen();
-      onSurveyOpen();
+      if (!userInfo?.surveysShown || !(surveyId in userInfo.surveysShown)) {
+        onSurveyOpen();
+      }
     } catch (e) {
       setIsListingPublishing(false);
     }
@@ -352,7 +356,7 @@ export function CreateListing({
             <SurveyModal
               isOpen={isSurveyOpen}
               onClose={onSurveyClose}
-              surveyId="018c674f-7e49-0000-5097-f2affbdddb0d"
+              surveyId={surveyId}
             />
           )}
           {steps === 1 && (

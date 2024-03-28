@@ -15,18 +15,17 @@ import {
   Text,
 } from '@chakra-ui/react';
 import axios from 'axios';
+import dayjs from 'dayjs';
 import { useEffect, useState } from 'react';
+
+import { type Bounty } from '@/features/listings';
 
 interface Props {
   onClose: () => void;
   isOpen: boolean;
   totalWinners: number;
   totalPaymentsMade: number;
-  rewards: any;
-  bountyId: string | undefined;
-  isDeadlinePassed?: boolean;
-  hasWinnersAnnounced?: boolean;
-  isRolling?: boolean;
+  bounty: Bounty | null;
 }
 
 export function PublishResults({
@@ -34,15 +33,16 @@ export function PublishResults({
   onClose,
   totalWinners,
   totalPaymentsMade,
-  rewards,
-  bountyId,
-  isDeadlinePassed,
-  hasWinnersAnnounced = false,
-  isRolling = false,
+  bounty,
 }: Props) {
   const [isPublishingResults, setIsPublishingResults] = useState(false);
-  const [isWinnersAnnounced, setIsWinnersAnnounced] =
-    useState(hasWinnersAnnounced);
+  const [isWinnersAnnounced, setIsWinnersAnnounced] = useState(
+    bounty?.isWinnersAnnounced,
+  );
+  const isDeadlinePassed = dayjs().isAfter(bounty?.deadline);
+
+  const rewards = Object.keys(bounty?.rewards || {});
+
   let alertType:
     | 'loading'
     | 'info'
@@ -69,10 +69,10 @@ export function PublishResults({
   }
 
   const publishResults = async () => {
-    if (!bountyId) return;
+    if (!bounty?.id) return;
     setIsPublishingResults(true);
     try {
-      await axios.post(`/api/bounties/announce/${bountyId}/`);
+      await axios.post(`/api/bounties/announce/${bounty?.id}/`);
       setIsWinnersAnnounced(true);
       setIsPublishingResults(false);
     } catch (e) {
@@ -81,7 +81,7 @@ export function PublishResults({
   };
 
   useEffect(() => {
-    if (!isWinnersAnnounced || hasWinnersAnnounced) return;
+    if (!isWinnersAnnounced || bounty?.isWinnersAnnounced) return;
     const timer = setTimeout(() => {
       window.location.reload();
     }, 1500);
@@ -114,7 +114,7 @@ export function PublishResults({
                 results on the Bounty&apos;s page.
                 <br />
                 <br />
-                {!hasWinnersAnnounced && (
+                {!bounty?.isWinnersAnnounced && (
                   <Text as="span" color="brand.slate.500" fontSize="sm">
                     Refreshing...
                   </Text>
@@ -142,7 +142,7 @@ export function PublishResults({
               </Box>
             </Alert>
           )}
-          {!isRolling &&
+          {bounty?.applicationType !== 'rolling' &&
             !isWinnersAnnounced &&
             rewards?.length &&
             totalWinners === rewards?.length &&

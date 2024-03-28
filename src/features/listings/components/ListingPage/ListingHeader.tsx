@@ -1,3 +1,4 @@
+import { InfoOutlineIcon } from '@chakra-ui/icons';
 import {
   Flex,
   Heading,
@@ -5,67 +6,56 @@ import {
   IconButton,
   Image,
   Link,
+  Popover,
+  PopoverArrow,
+  PopoverBody,
+  PopoverCloseButton,
+  PopoverContent,
+  PopoverTrigger,
   Text,
   Tooltip,
   useDisclosure,
   VStack,
 } from '@chakra-ui/react';
-import type { BountyType, Regions, SubscribeBounty } from '@prisma/client';
+import type { SubscribeBounty } from '@prisma/client';
 import axios from 'axios';
 import NextLink from 'next/link';
 import { useRouter } from 'next/router';
 import React, { useEffect, useState } from 'react';
-import { toast, Toaster } from 'react-hot-toast';
+import { toast } from 'react-hot-toast';
 import { TbBell, TbBellRinging } from 'react-icons/tb';
 
-import { LoginWrapper } from '@/components/Header/LoginWrapper';
+import { LoginWrapper } from '@/components/LoginWrapper';
 import { Superteams } from '@/constants/Superteam';
 import { getRegionTooltipLabel, WarningModal } from '@/features/listings';
-import type { SponsorType } from '@/interface/sponsor';
 import type { User } from '@/interface/user';
 import { userStore } from '@/store/user';
 import { dayjs } from '@/utils/dayjs';
 
-import type { References } from '../../types';
-
-interface Bounty {
-  id: string | undefined;
-  title: string;
-  deadline?: string;
-  status?: 'OPEN' | 'REVIEW' | 'CLOSED';
-  isActive?: boolean;
-  isPublished?: boolean;
-  isFeatured?: string;
-  sponsor?: SponsorType | undefined;
-  poc?: User;
-  slug?: string;
-  type?: BountyType | string;
-  isWinnersAnnounced?: boolean;
-  hackathonLogo?: string;
-  hackathonStartsAt?: string;
-  isTemplate?: boolean;
-  region: Regions;
-  references?: References[];
-  publishedAt?: string;
-}
+import type { Bounty } from '../../types';
 
 export function ListingHeader({
-  title,
-  status,
-  deadline,
-  sponsor,
-  type,
-  slug,
-  isWinnersAnnounced,
-  id,
+  listing,
   isTemplate,
-  hackathonLogo,
-  hackathonStartsAt,
-  region,
-  references,
-  isPublished,
-  publishedAt,
-}: Bounty) {
+}: {
+  listing: Bounty;
+  isTemplate?: boolean;
+}) {
+  const {
+    type,
+    id,
+    status,
+    deadline,
+    title,
+    sponsor,
+    slug,
+    region,
+    isWinnersAnnounced,
+    references,
+    publishedAt,
+    isPublished,
+    Hackathon,
+  } = listing;
   const router = useRouter();
   const {
     isOpen: warningIsOpen,
@@ -74,7 +64,7 @@ export function ListingHeader({
   } = useDisclosure();
   const { userInfo } = userStore();
   const hasDeadlineEnded = dayjs().isAfter(deadline);
-  const hasHackathonStarted = dayjs().isAfter(hackathonStartsAt);
+  const hasHackathonStarted = dayjs().isAfter(Hackathon?.startDate);
   const [triggerLogin, setTriggerLogin] = useState(false);
   const [update, setUpdate] = useState<boolean>(false);
   const [sub, setSub] = useState<
@@ -149,7 +139,7 @@ export function ListingHeader({
     statusBgColor = 'green.100';
     statusTextColor = 'green.600';
   } else if (!isWinnersAnnounced && hasDeadlineEnded && status === 'OPEN') {
-    statusText = 'Submissions In Review';
+    statusText = 'In Review';
     statusBgColor = 'orange.100';
     statusTextColor = 'orange.600';
   } else if (!hasDeadlineEnded && !isWinnersAnnounced && status === 'OPEN') {
@@ -164,8 +154,191 @@ export function ListingHeader({
 
   const regionTooltipLabel = getRegionTooltipLabel(region);
 
+  const ListingNavLink = ({
+    href,
+    text,
+    isActive,
+  }: {
+    href: string;
+    text: string;
+    isActive: boolean;
+  }) => {
+    return (
+      <Link
+        as={NextLink}
+        alignItems="center"
+        justifyContent="center"
+        display="flex"
+        h={'full'}
+        color="brand.slate.500"
+        fontSize={{ base: 'xs', md: 'sm' }}
+        fontWeight={500}
+        textDecoration="none"
+        borderBottom="2px solid"
+        borderBottomColor={isActive ? 'brand.purple' : 'transparent'}
+        _hover={{
+          textDecoration: 'none',
+          borderBottom: '2px solid',
+          borderBottomColor: 'brand.purple',
+        }}
+        href={href}
+      >
+        {text}
+      </Link>
+    );
+  };
+
+  const ListingTitle = () => {
+    return (
+      <Heading
+        color={'brand.slate.700'}
+        fontFamily={'var(--font-sans)'}
+        fontSize={'xl'}
+        fontWeight={700}
+      >
+        {title}
+      </Heading>
+    );
+  };
+
+  const StatusBadge = () => {
+    return (
+      <Text
+        px={3}
+        py={1}
+        color={statusTextColor}
+        fontSize={{ base: 'xx-small', sm: 'xs' }}
+        fontWeight={500}
+        bg={statusBgColor}
+        whiteSpace={'nowrap'}
+        rounded={'full'}
+      >
+        {statusText}
+      </Text>
+    );
+  };
+
+  const HeaderSub = () => {
+    return (
+      <Flex align={'center'} wrap={'wrap'} gap={{ base: 1, md: 3 }}>
+        <Text
+          color={'#94A3B8'}
+          fontSize={{ base: 'xs', sm: 'md' }}
+          fontWeight={500}
+          whiteSpace={'nowrap'}
+        >
+          by {sponsor?.name}
+        </Text>
+        <Text color={'#E2E8EF'} fontWeight={500}>
+          |
+        </Text>
+        {isHackathon ? (
+          <Flex align={'center'}>
+            <Image h="4" alt={type} src={Hackathon?.altLogo} />
+          </Flex>
+        ) : (
+          <Flex>
+            <Tooltip
+              px={4}
+              py={2}
+              color="brand.slate.100"
+              fontFamily={'var(--font-sans)'}
+              fontSize="sm"
+              bg="white"
+              borderRadius={'lg'}
+              label={
+                isProject
+                  ? 'A Project is a short-term gig where sponsors solicit applications from multiple people, and select the best one to work on the Project.'
+                  : 'Bounties are open for anyone to participate in and submit their work (as long as they meet the eligibility requirements mentioned below). The best submissions win!'
+              }
+            >
+              <Flex>
+                <Image
+                  h="4"
+                  mt={{ base: '1px', sm: 1 }}
+                  mr={{ base: '1px', sm: 1 }}
+                  alt={type}
+                  src={
+                    isProject
+                      ? '/assets/icons/briefcase.svg'
+                      : '/assets/icons/bolt.svg'
+                  }
+                />
+                <Text
+                  color={'gray.400'}
+                  fontSize={{ base: 'xs', sm: 'md' }}
+                  fontWeight={500}
+                >
+                  {isProject ? 'Project' : 'Bounty'}
+                </Text>
+              </Flex>
+            </Tooltip>
+          </Flex>
+        )}
+        <Flex display={{ base: 'flex', md: 'none' }}>
+          <StatusBadge />
+        </Flex>
+        <Tooltip
+          px={4}
+          py={2}
+          color="brand.slate.500"
+          fontFamily={'Inter'}
+          fontSize={'small'}
+          bg="white"
+          borderRadius={'lg'}
+          label={regionTooltipLabel}
+        >
+          <Text
+            px={3}
+            py={1}
+            color={'#0800A5'}
+            fontSize={{ base: 'xx-small', sm: 'xs' }}
+            fontWeight={500}
+            bg="#EBEAFF"
+            whiteSpace={'nowrap'}
+            rounded={'full'}
+          >
+            {region === 'GLOBAL' ? 'Global' : `${displayValue} Only`}
+          </Text>
+        </Tooltip>
+        <Popover>
+          <PopoverTrigger>
+            <InfoOutlineIcon
+              display={{ base: 'flex', sm: 'none' }}
+              boxSize={'12px'}
+            />
+          </PopoverTrigger>
+          <PopoverContent>
+            <PopoverArrow />
+            <PopoverCloseButton color="brand.slate.300" />
+            <PopoverBody
+              color={'brand.slate.500'}
+              fontSize={'xs'}
+              fontWeight={500}
+            >
+              {regionTooltipLabel}
+            </PopoverBody>
+          </PopoverContent>
+        </Popover>
+      </Flex>
+    );
+  };
+
+  const SponsorLogo = () => {
+    return (
+      <Image
+        w={{ base: 12, md: 16 }}
+        h={{ base: 12, md: 16 }}
+        objectFit={'cover'}
+        alt={'phantom'}
+        rounded={'md'}
+        src={sponsor?.logo || `${router.basePath}/assets/logo/sponsor-logo.png`}
+      />
+    );
+  };
+
   return (
-    <VStack px={{ base: '', md: '6' }} bg={'white'}>
+    <VStack px={{ base: 3, md: 6 }} bg={'white'}>
       {warningIsOpen && (
         <WarningModal
           isOpen={warningIsOpen}
@@ -183,209 +356,38 @@ export function ListingHeader({
         setTriggerLogin={setTriggerLogin}
       />
       <VStack
-        align="start"
-        justify={['start', 'start', 'space-between', 'space-between']}
-        flexDir={['column', 'column', 'row', 'row']}
+        justify={'space-between'}
+        flexDir={'row'}
         gap={5}
         w={'full'}
         maxW={'7xl'}
         mx={'auto'}
-        py={10}
+        py={{ base: 4, md: 10 }}
       >
-        <HStack align="center" px={[3, 3, 0, 0]}>
-          <Image
-            w={'4rem'}
-            h={'4rem'}
-            objectFit={'cover'}
-            alt={'phantom'}
-            rounded={'md'}
-            src={
-              sponsor?.logo || `${router.basePath}/assets/logo/sponsor-logo.png`
-            }
-          />
+        <HStack align="center">
+          <SponsorLogo />
           <VStack align={'start'}>
             <HStack>
-              <Heading
-                color={'brand.charcoal.700'}
-                fontFamily={'var(--font-sans)'}
-                fontSize={{ base: 'md', md: 'xl' }}
-                fontWeight={{ base: 600, md: 700 }}
-              >
-                {title}
-              </Heading>
-              <Flex
-                display={{ base: 'none', md: 'flex' }}
-                fontSize={'xs'}
-                fontWeight={500}
-                bg={'green.100'}
-                borderRadius={'full'}
-                whiteSpace={'nowrap'}
-              >
-                {statusText && (
-                  <Text
-                    px={3}
-                    py={1}
-                    color={statusTextColor}
-                    bg={statusBgColor}
-                    rounded={'full'}
-                  >
-                    {statusText}
-                  </Text>
-                )}
+              <Flex display={{ base: 'none', md: 'flex' }}>
+                <ListingTitle />
+              </Flex>
+              <Flex display={{ base: 'none', md: 'flex' }}>
+                <StatusBadge />
               </Flex>
             </HStack>
             {!isTemplate && (
-              <HStack>
-                <Text
-                  color={'#94A3B8'}
-                  fontSize={{ base: 'xs', md: 'md' }}
-                  fontWeight={500}
-                >
-                  by {sponsor?.name}
-                </Text>
-                <Text
-                  color={'#E2E8EF'}
-                  fontSize={{ base: 'xs', md: 'md' }}
-                  fontWeight={500}
-                >
-                  |
-                </Text>
-                {isHackathon ? (
-                  <Flex align={'center'}>
-                    <Image h="4" alt={type} src={hackathonLogo} />
-                  </Flex>
-                ) : (
-                  <Flex display={{ base: 'none', md: 'flex' }}>
-                    <Tooltip
-                      px={4}
-                      py={2}
-                      color="brand.slate.500"
-                      fontFamily={'var(--font-sans)'}
-                      fontSize="sm"
-                      bg="white"
-                      borderRadius={'lg'}
-                      label={
-                        isProject
-                          ? 'A Project is a short-term gig where sponsors solicit applications from multiple people, and select the best one to work on the Project.'
-                          : 'Bounties are open for anyone to participate in and submit their work (as long as they meet the eligibility requirements mentioned below). The best submissions win!'
-                      }
-                    >
-                      <Flex>
-                        <Image
-                          h="4"
-                          mt={1}
-                          mr={1}
-                          alt={type}
-                          src={
-                            isProject
-                              ? '/assets/icons/briefcase.svg'
-                              : '/assets/icons/bolt.svg'
-                          }
-                        />
-                        <Text color={'gray.400'} fontWeight={500}>
-                          {isProject ? 'Project' : 'Bounty'}
-                        </Text>
-                      </Flex>
-                    </Tooltip>
-                  </Flex>
-                )}
-                <Tooltip
-                  px={4}
-                  py={2}
-                  color="brand.slate.500"
-                  fontFamily={'Inter'}
-                  fontSize="sm"
-                  bg="white"
-                  borderRadius={'lg'}
-                  label={regionTooltipLabel}
-                >
-                  <Text
-                    px={3}
-                    py={1}
-                    color={'#0800A5'}
-                    fontSize={{ base: '10px', md: 'xs' }}
-                    fontWeight={500}
-                    bg="#EBEAFF"
-                    whiteSpace={'nowrap'}
-                    rounded={'full'}
-                  >
-                    {region === 'GLOBAL' ? 'Global' : `${displayValue} Only`}
-                  </Text>
-                </Tooltip>
-              </HStack>
+              <Flex display={{ base: 'none', md: 'flex' }}>
+                <HeaderSub />
+              </Flex>
             )}
           </VStack>
         </HStack>
-        <Flex gap={3}>
-          <Flex
-            display={{ base: 'flex', md: 'none' }}
-            ml={3}
-            fontSize={'xs'}
-            fontWeight={500}
-            bg={'green.100'}
-            rounded={'full'}
-          >
-            {statusText && (
-              <Text
-                px={3}
-                py={1}
-                color={statusTextColor}
-                fontSize={{ base: '10px', md: 'xs' }}
-                bg={statusBgColor}
-                rounded={'full'}
-              >
-                {statusText}
-              </Text>
-            )}
-          </Flex>
-          {!isHackathon && (
-            <Flex
-              align={'center'}
-              gap={1}
-              display={{ base: 'flex', md: 'none' }}
-            >
-              <Tooltip
-                px={4}
-                py={2}
-                color={'#94A3B8'}
-                fontFamily={'var(--font-sans)'}
-                fontSize="sm"
-                bg="white"
-                borderRadius={'lg'}
-                label={
-                  isProject
-                    ? 'Projects are like short-term freelance gigs that you can apply for. If and when selected as the winner, you can begin executing the scope of work mentioned in this listing.'
-                    : 'This is an open competition bounty! Anyone can start working and submit their work before the deadline!'
-                }
-              >
-                <Flex align={'center'} justify={'center'}>
-                  <Image
-                    h={{ base: 3, md: 4 }}
-                    mr={1}
-                    alt={type}
-                    src={
-                      isProject
-                        ? '/assets/icons/briefcase.svg'
-                        : '/assets/icons/bolt.svg'
-                    }
-                  />
-                  <Text
-                    color="gray.400"
-                    fontSize={{ base: '12px', md: '' }}
-                    fontWeight={500}
-                  >
-                    {isProject ? 'Project' : 'Bounty'}
-                  </Text>
-                </Flex>
-              </Tooltip>
-            </Flex>
-          )}
-        </Flex>
         {!isTemplate && (
           <HStack>
             <HStack align="start">
               <IconButton
-                ml={{ base: '3', md: '' }}
+                color="brand.slate.500"
+                bg="brand.slate.100"
                 aria-label="Notify"
                 icon={
                   sub.find((e) => e.userId === userInfo?.id) ? (
@@ -409,18 +411,14 @@ export function ListingHeader({
             </HStack>
             <HStack whiteSpace={'nowrap'}>
               <VStack align={'start'} gap={0}>
-                <Text
-                  color={'#000000'}
-                  fontSize={{ base: 'sm', md: 'md' }}
-                  fontWeight={500}
-                >
+                <Text color={'#000000'} fontWeight={500}>
                   {sub?.length ? sub.length + 1 : 1}
                 </Text>
                 <Text
-                  mt={'0px !important'}
-                  color={'gray.500'}
-                  fontSize={{ base: 'xs', md: 'md' }}
-                  fontWeight={500}
+                  display={{ base: 'none', md: 'flex' }}
+                  color={'gray.400'}
+                  fontSize={'sm'}
+                  fontWeight={400}
                 >
                   {(sub?.length ? sub.length + 1 : 1) === 1
                     ? 'Person'
@@ -432,7 +430,16 @@ export function ListingHeader({
           </HStack>
         )}
       </VStack>
-      <Toaster />
+      <Flex
+        direction={'column'}
+        gap={1}
+        display={{ base: 'flex', md: 'none' }}
+        w="full"
+        mb={5}
+      >
+        <ListingTitle />
+        <HeaderSub />
+      </Flex>
       {!isTemplate && (
         <Flex
           align={'center'}
@@ -452,82 +459,29 @@ export function ListingHeader({
             my={'auto'}
             px={3}
           >
-            <Link
-              as={NextLink}
-              alignItems="center"
-              justifyContent="center"
-              display="flex"
-              h={'full'}
-              color="gray.800"
-              fontWeight={500}
-              textDecoration="none"
-              borderBottom="2px solid"
-              borderBottomColor={
+            <ListingNavLink
+              href={`/listings/${type}/${slug}/`}
+              text="DETAILS"
+              isActive={
                 !router.asPath.includes('submission') &&
                 !router.asPath.includes('references')
-                  ? 'brand.purple'
-                  : 'transparent'
               }
-              _hover={{
-                textDecoration: 'none',
-                borderBottom: '2px solid',
-                borderBottomColor: 'brand.purple',
-              }}
-              href={`/listings/${type}/${slug}/`}
-            >
-              Details
-            </Link>
+            />
+
             {!isProject && hasDeadlineEnded && (
-              <Link
-                as={NextLink}
-                alignItems="center"
-                justifyContent="center"
-                display="flex"
-                h={'full'}
-                color="gray.800"
-                fontWeight={500}
-                textDecoration="none"
-                borderBottom="2px solid"
-                borderBottomColor={
-                  router.asPath.includes('submission')
-                    ? 'brand.purple'
-                    : 'transparent'
-                }
-                _hover={{
-                  textDecoration: 'none',
-                  borderBottom: '2px solid',
-                  borderBottomColor: 'brand.purple',
-                }}
+              <ListingNavLink
                 href={`/listings/${type}/${slug}/submission`}
-              >
-                Submissions
-              </Link>
+                text="SUBMISSIONS"
+                isActive={router.asPath.includes('submission')}
+              />
             )}
+
             {isProject && references && references?.length > 0 && (
-              <Link
-                as={NextLink}
-                alignItems="center"
-                justifyContent="center"
-                display="flex"
-                h={'full'}
-                color="gray.800"
-                fontWeight={500}
-                textDecoration="none"
-                borderBottom="2px solid"
-                borderBottomColor={
-                  router.asPath.includes('references')
-                    ? 'brand.purple'
-                    : 'transparent'
-                }
-                _hover={{
-                  textDecoration: 'none',
-                  borderBottom: '2px solid',
-                  borderBottomColor: 'brand.purple',
-                }}
+              <ListingNavLink
                 href={`/listings/${type}/${slug}/references`}
-              >
-                References
-              </Link>
+                text="REFERENCES"
+                isActive={router.asPath.includes('references')}
+              />
             )}
           </HStack>
         </Flex>

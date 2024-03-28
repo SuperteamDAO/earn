@@ -1,9 +1,7 @@
-import { Box, Button, Center, Flex, Image, Link, Text } from '@chakra-ui/react';
+import { Box, Button, Flex, Image, Link, Text } from '@chakra-ui/react';
 import NextLink from 'next/link';
 
 export const GrantEntry = ({
-  color,
-  icon,
   title,
   shortDescription = '',
   rewardAmount,
@@ -12,8 +10,6 @@ export const GrantEntry = ({
   link,
   logo,
 }: {
-  color: string;
-  icon: string;
   title: string;
   shortDescription?: string;
   rewardAmount?: number;
@@ -23,25 +19,20 @@ export const GrantEntry = ({
   logo?: string;
 }) => {
   return (
-    <Box w={80}>
-      {logo ? (
-        <Image
-          w={'320px'}
-          h={'180px'}
-          mb={5}
-          objectFit={'cover'}
-          alt=""
-          src={logo}
-        />
-      ) : (
-        <Center w={'320px'} h={'180px'} mb={5} bg={color}>
-          <Image w={16} alt="" src={icon} />
-        </Center>
-      )}
+    <Box w={{ base: '100%', sm: 80 }}>
+      <Image
+        w={{ base: '100%', sm: '320px' }}
+        h={{ base: '240px', sm: '180px' }}
+        mb={3}
+        borderRadius={5}
+        objectFit={'cover'}
+        alt=""
+        src={logo}
+      />
       <Text mb={'4px'} fontSize={'md'} fontWeight={'600'}>
         {title}
       </Text>
-      <Text mb={5} color={'brand.slate.500'} fontSize={'sm'}>
+      <Text mb={1.5} color={'brand.slate.500'} fontSize={'sm'}>
         {shortDescription}
       </Text>
       <Flex align={'center'} justify={'space-between'}>
@@ -52,7 +43,16 @@ export const GrantEntry = ({
         </Text>
         {!!link && (
           <Link as={NextLink} href={`/grants/${slug}`}>
-            <Button variant="outline">Apply</Button>
+            <Button
+              color="brand.slate.400"
+              fontSize={{ base: 'sm', md: 'md' }}
+              fontWeight={500}
+              borderColor={'brand.slate.400'}
+              size={{ base: 'sm', md: 'md' }}
+              variant="outline"
+            >
+              Apply
+            </Button>
           </Link>
         )}
       </Flex>

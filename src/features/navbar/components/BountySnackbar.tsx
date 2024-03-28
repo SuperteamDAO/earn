@@ -76,7 +76,12 @@ export const BountySnackbar = () => {
   if (showSnackbar && bountySnackbar && message) {
     return (
       <Box w="full" color="white" bgColor={bgColor}>
-        <Text p={3} fontSize="sm" fontWeight={500} textAlign="center">
+        <Text
+          p={3}
+          fontSize={{ base: 'xs', md: 'sm' }}
+          fontWeight={500}
+          textAlign="center"
+        >
           {message}
         </Text>
       </Box>
