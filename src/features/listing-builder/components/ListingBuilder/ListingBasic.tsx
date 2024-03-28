@@ -7,21 +7,27 @@ import {
   FormLabel,
   Image,
   Input,
+  InputGroup,
+  InputRightElement,
   Select,
+  Spinner,
   Switch,
   Text,
   Tooltip,
   VStack,
 } from '@chakra-ui/react';
 import { Regions } from '@prisma/client';
+import axios from 'axios';
 import { useSession } from 'next-auth/react';
 import {
   type Dispatch,
   type SetStateAction,
+  useCallback,
   useEffect,
   useMemo,
   useState,
 } from 'react';
+import slugify from 'slugify';
 
 import { SkillSelect } from '@/components/misc/SkillSelect';
 import type { MultiSelectOptions } from '@/constants';
@@ -93,6 +99,7 @@ export const ListingBasic = ({
     timeToComplete: false,
     slug: false,
   });
+  const [isSlugGenerating, setIsSlugGenerating] = useState(false);
   const [slugErrorMsg, setSlugErrorMsg] = useState('');
 
   const [isUrlValid, setIsUrlValid] = useState(true);
@@ -100,12 +107,50 @@ export const ListingBasic = ({
   const date = dayjs().format('YYYY-MM-DD');
   const thirtyDaysFromNow = dayjs().add(30, 'day').format('YYYY-MM-DDTHH:mm');
 
-  const generateSlug = (title: string) => {
-    return title
-      .toLowerCase()
-      .replace(/ /g, '-')
-      .replace(/[^\w-]+/g, '');
+  const debounce = (func: any, wait: number) => {
+    let timeout: any;
+
+    return function executedFunction(...args: any) {
+      const later = () => {
+        clearTimeout(timeout);
+        func(...args);
+      };
+
+      clearTimeout(timeout);
+      timeout = setTimeout(later, wait);
+    };
   };
+
+  const generateUniqueSlug = async () => {
+    if (bountyBasic?.title) {
+      setIsSlugGenerating(true);
+      try {
+        const newSlug = await axios.get(
+          `/api/listings/slug?slug=${slugify(bountyBasic.title, { lower: true, strict: true })}`,
+        );
+        console.log(newSlug.data.slug);
+        setIsSlugGenerating(false);
+        return newSlug.data.slug;
+      } catch (error) {
+        console.error('Error generating slug:', error);
+        setIsSlugGenerating(false);
+        throw error;
+      }
+    }
+  };
+
+  const debouncedGenerateUniqueSlug = useCallback(
+    debounce(async () => {
+      if (bountyBasic?.title) {
+        const newSlug = await generateUniqueSlug();
+        setbountyBasic((currentBountyBasic) => ({
+          ...currentBountyBasic,
+          slug: newSlug,
+        }));
+      }
+    }, 500),
+    [bountyBasic?.title],
+  );
 
   const isSlugUnique = async (slug: string) => {
     const response = await fetch(`/api/listings/slug?slug=${slug}`);
@@ -119,13 +164,8 @@ export const ListingBasic = ({
   };
 
   useEffect(() => {
-    if (bountyBasic?.title) {
-      setbountyBasic({
-        ...(bountyBasic as BountyBasicType),
-        slug: generateSlug(bountyBasic.title),
-      });
-    }
-  }, [bountyBasic?.title]);
+    debouncedGenerateUniqueSlug();
+  }, [debouncedGenerateUniqueSlug]);
 
   const isSlugValid = () => {
     setErrorState((errorState) => ({
@@ -292,32 +332,38 @@ export const ListingBasic = ({
             </Tooltip>
           </Flex>
 
-          <Input
-            borderColor="brand.slate.300"
-            _placeholder={{
-              color: 'brand.slate.300',
-            }}
-            focusBorderColor="brand.purple"
-            id="slug"
-            onChange={(e) => {
-              setErrorState({
-                ...errorState,
-                slug: false,
-              });
-              setbountyBasic({
-                ...(bountyBasic as BountyBasicType),
-                slug: e.target.value,
-              });
-              setIsUrlValid(true);
-            }}
-            placeholder="develop-a-new-landing-page"
-            value={bountyBasic?.slug}
-          />
+          <InputGroup>
+            <Input
+              borderColor="brand.slate.300"
+              _placeholder={{
+                color: 'brand.slate.300',
+              }}
+              focusBorderColor="brand.purple"
+              id="slug"
+              onChange={(e) => {
+                setErrorState({
+                  ...errorState,
+                  slug: false,
+                });
+                setbountyBasic({
+                  ...(bountyBasic as BountyBasicType),
+                  slug: e.target.value,
+                });
+                setIsUrlValid(true);
+              }}
+              placeholder="develop-a-new-landing-page"
+              value={bountyBasic?.slug}
+            />
+            {isSlugGenerating && (
+              <InputRightElement>
+                <Spinner size="sm" />
+              </InputRightElement>
+            )}
+          </InputGroup>
           <FormErrorMessage>
             {slugErrorMsg ? <>{slugErrorMsg}</> : <></>}
           </FormErrorMessage>
         </FormControl>
-
         <SkillSelect
           errorSkill={errorState.skills}
           errorSubSkill={errorState.subSkills}
@@ -653,7 +699,7 @@ export const ListingBasic = ({
                 title: !bountyBasic?.title,
                 pocSocials: !bountyBasic?.pocSocials,
                 timeToComplete: isProject ? !isTimeToCompleteValid : false,
-                slug: isSlugValid(), // Change THIS
+                slug: isSlugValid(),
               });
               if (isProject && !isTimeToCompleteValid) {
                 return;
