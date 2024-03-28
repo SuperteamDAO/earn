@@ -18,6 +18,7 @@ const ReferenceCard = ({ link }: { link: string }) => {
   return (
     <Box
       w="100%"
+      // h={'100%'}
       borderWidth="2px"
       borderColor={'gray.200'}
       borderRadius={8}
@@ -26,8 +27,8 @@ const ReferenceCard = ({ link }: { link: string }) => {
     >
       <OgImageViewer
         externalUrl={link}
-        w={{ base: '100%', md: '400px' }}
-        h={{ base: '200px', md: '280px' }}
+        w={'100%'}
+        aspectRatio={1.91 / 1}
         objectFit="cover"
         borderRadius={6}
       />
