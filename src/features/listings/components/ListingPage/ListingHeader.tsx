@@ -22,7 +22,7 @@ import axios from 'axios';
 import NextLink from 'next/link';
 import { useRouter } from 'next/router';
 import React, { useEffect, useState } from 'react';
-import { toast, Toaster } from 'react-hot-toast';
+import { toast } from 'react-hot-toast';
 import { TbBell, TbBellRinging } from 'react-icons/tb';
 
 import { LoginWrapper } from '@/components/LoginWrapper';
@@ -440,7 +440,6 @@ export function ListingHeader({
         <ListingTitle />
         <HeaderSub />
       </Flex>
-      <Toaster />
       {!isTemplate && (
         <Flex
           align={'center'}
