@@ -42,8 +42,6 @@ const formatter = new Intl.NumberFormat('en-US', {
 
 export default async function handler(request: NextRequest) {
   try {
-    console.log('og url - ', request.url);
-    console.log('replace amp', request.url.replaceAll('&amp%3B', '&'));
     const { searchParams } = new URL(request.url.replaceAll('&amp%3B', '&'));
 
     const getParam = (name: string, processFn = (x: any) => x) =>
@@ -62,8 +60,6 @@ export default async function handler(request: NextRequest) {
     const submissions = getParam('submissions', (x) =>
       JSON.parse(decodeURIComponent(x)),
     ) as SubmissionWithUser[];
-
-    console.log('rewards = ', searchParams.get('rewards'));
 
     const logo = getParam('logo', (x) => decodeURIComponent(x)) as string;
 

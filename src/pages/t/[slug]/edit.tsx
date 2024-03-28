@@ -98,6 +98,7 @@ const keysToOmit = [
   'Grants',
   'UserInvites',
   'SubscribeBounty',
+  'emailSettings',
 ];
 
 const parseSkillsAndSubskills = (skillsObject: any) => {
