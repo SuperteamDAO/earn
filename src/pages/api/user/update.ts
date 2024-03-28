@@ -67,7 +67,7 @@ export default async function user(req: NextApiRequest, res: NextApiResponse) {
   });
 
   // eslint-disable-next-line
-  const { role, skills, currentSponsorId, ...updateAttributes } = req.body;
+  const { role, skills, currentSponsorId, generateTalentEmailSettings, ...updateAttributes } = req.body;
   let result;
   const correctedSkills = skills ? correctSkills(skills) : [];
   try {
@@ -92,6 +92,24 @@ export default async function user(req: NextApiRequest, res: NextApiResponse) {
         currentSponsor: true,
       },
     });
+
+    if (generateTalentEmailSettings) {
+      const categories = new Set();
+
+      categories.add('submissionSponsor');
+      categories.add('commentSponsor');
+      categories.add('deadlineSponsor');
+      categories.add('productAndNewsletter');
+
+      for (const category of categories) {
+        await prisma.emailSettings.create({
+          data: {
+            user: { connect: { id: userId as string } },
+            category: category as string,
+          },
+        });
+      }
+    }
 
     return res.status(200).json(result);
   } catch (e) {

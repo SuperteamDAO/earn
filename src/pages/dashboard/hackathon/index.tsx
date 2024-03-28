@@ -50,7 +50,6 @@ import { useEffect, useRef, useState } from 'react';
 import { AiOutlineDelete } from 'react-icons/ai';
 import { FiMoreVertical } from 'react-icons/fi';
 
-import CreateListingModal from '@/components/modals/createListing';
 import { LoadingSection } from '@/components/shared/LoadingSection';
 import { tokenList } from '@/constants/index';
 import {
@@ -59,6 +58,7 @@ import {
   getBountyStatus,
   getColorStyles,
 } from '@/features/listings';
+import { CreateListingModal } from '@/features/sponsor-dashboard';
 import { Sidebar } from '@/layouts/Sponsor';
 import { userStore } from '@/store/user';
 

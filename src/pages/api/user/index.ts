@@ -29,6 +29,7 @@ export default async function handler(
         UserSponsors: true,
         Hackathon: true,
         Submission: true,
+        emailSettings: true,
       },
     });
 

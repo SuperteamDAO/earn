@@ -15,13 +15,13 @@ import {
 import NextLink from 'next/link';
 import React from 'react';
 
-export default function CreateListingModal({
+export const CreateListingModal = ({
   isOpen = false,
   onClose,
 }: {
   isOpen: boolean;
   onClose: () => void;
-}) {
+}) => {
   return (
     <Modal isCentered isOpen={isOpen} onClose={onClose} size={'5xl'}>
       <ModalOverlay />
@@ -120,4 +120,4 @@ export default function CreateListingModal({
       </ModalContent>
     </Modal>
   );
-}
+};

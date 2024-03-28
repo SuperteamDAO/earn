@@ -49,6 +49,7 @@ export default async function submission(
     await sendEmailNotification({
       type: 'submissionSponsor',
       id: listingId,
+      userId: userId as string,
     });
 
     if (process.env.NEXT_PUBLIC_VERCEL_ENV === 'production') {

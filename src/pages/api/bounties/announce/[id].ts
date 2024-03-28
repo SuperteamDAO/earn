@@ -171,10 +171,17 @@ export default async function announce(
       },
     });
 
-    await sendEmailNotification({ type: 'announceWinners', id });
+    await sendEmailNotification({
+      type: 'announceWinners',
+      id,
+      userId: userId as string,
+    });
 
     if (bounty?.sponsor?.name.includes('Superteam')) {
-      await sendEmailNotification({ type: 'superteamWinners', id });
+      await sendEmailNotification({
+        type: 'superteamWinners',
+        id,
+      });
     } else {
       console.log('Sponsor is not Superteam. Skipping sending winner emails.');
     }

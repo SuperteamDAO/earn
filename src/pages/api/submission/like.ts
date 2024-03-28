@@ -52,6 +52,7 @@ export default async function submission(
         await sendEmailNotification({
           type: 'submissionLike',
           id: submissionId,
+          userId: userId as string,
         });
       }
     } else {
@@ -64,6 +65,7 @@ export default async function submission(
       await sendEmailNotification({
         type: 'submissionLike',
         id: submissionId,
+        userId: userId as string,
       });
     }
 

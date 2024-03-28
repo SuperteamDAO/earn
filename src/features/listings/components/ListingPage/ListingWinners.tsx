@@ -1,4 +1,4 @@
-import { Box, Flex, Image, Text } from '@chakra-ui/react';
+import { Box, Button, Center, Flex, Image, Text } from '@chakra-ui/react';
 import axios from 'axios';
 import Avatar from 'boring-avatars';
 import NextLink from 'next/link';
@@ -8,6 +8,7 @@ import type { SubmissionWithUser } from '@/interface/submission';
 import { sortRank } from '@/utils/rank';
 
 import type { Bounty, Rewards } from '../../types';
+import { tweetEmbedLink, tweetTemplate } from '../../utils';
 
 interface Props {
   bounty: Bounty;
@@ -45,13 +46,13 @@ export function ListingWinners({ bounty }: Props) {
     getSubmissions();
   }, []);
 
-  // const openWinnerLink = () => {
-  //   let path = window.location.href.split('?')[0];
-  //   if (!path) return;
-  //   path += 'winner/';
+  const openWinnerLink = () => {
+    let path = window.location.href.split('?')[0];
+    if (!path) return;
+    path += 'winner/';
 
-  //   return tweetEmbedLink(tweetTemplate(path));
-  // };
+    return tweetEmbedLink(tweetTemplate(path));
+  };
 
   if (isListingLoading || !submissions.length) {
     return null;
@@ -148,7 +149,7 @@ export function ListingWinners({ bounty }: Props) {
               </NextLink>
             ))}
           </Flex>
-          {/* <NextLink href={openWinnerLink() ?? '#'} target="_blank">
+          <NextLink href={openWinnerLink() ?? '#'} target="_blank">
             <Button
               pos={{ base: 'static', md: 'absolute' }}
               top={5}
@@ -180,7 +181,7 @@ export function ListingWinners({ bounty }: Props) {
                 </svg>
               </Center>
             </Button>
-          </NextLink> */}
+          </NextLink>
         </Box>
       </Box>
     </Box>

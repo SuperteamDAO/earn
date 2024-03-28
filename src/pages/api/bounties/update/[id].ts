@@ -93,12 +93,20 @@ export default async function bounty(
       !result.isPrivate &&
       result.type !== 'hackathon'
     ) {
-      await sendEmailNotification({ type: 'createListing', id });
+      await sendEmailNotification({
+        type: 'createListing',
+        id,
+        userId: userId as string,
+      });
     }
 
     const deadlineChanged = currentBounty.deadline !== updatedData.deadline;
     if (deadlineChanged) {
-      await sendEmailNotification({ type: 'deadlineExtended', id });
+      await sendEmailNotification({
+        type: 'deadlineExtended',
+        id,
+        userId: userId as string,
+      });
     }
 
     if (process.env.NEXT_PUBLIC_VERCEL_ENV === 'production') {

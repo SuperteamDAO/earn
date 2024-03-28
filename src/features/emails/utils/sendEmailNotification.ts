@@ -25,7 +25,6 @@ export async function sendEmailNotification({
 }: EmailNotificationParams) {
   try {
     await axios.post(process.env.EMAIL_BACKEND!, { type, id, userId });
-    console.log(`email sent successfully for ${type} with ID ${id}`);
   } catch (error) {
     console.error(`failed to send email for ${type} with ID ${id}: ${error}`);
     throw error;

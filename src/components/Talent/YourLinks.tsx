@@ -194,6 +194,7 @@ export function YourLinks({ success, useFormStore }: Props) {
         ...socials,
         superteamLevel: 'Lurker',
         isTalentFilled: true,
+        generateTalentEmailSettings: true,
       };
       // eslint-disable-next-line unused-imports/no-unused-vars
       const { subSkills, ...finalOptions } = updateOptions;

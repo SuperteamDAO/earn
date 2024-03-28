@@ -111,7 +111,6 @@ function BountySubmissions({ listing }: Props) {
               totalWinners={totalWinners}
               totalPaymentsMade={totalPaymentsMade}
               bounty={bounty}
-              submissions={submissions}
             />
           )}
           <SubmissionHeader

@@ -15,7 +15,6 @@
     "find-deadcode": "ts-prune"
   },
   "dependencies": {
-    "@bomdi/codebox": "^2.0.0",
     "@chakra-ui/icons": "^2.1.1",
     "@chakra-ui/react": "^2.8.2",
     "@emotion/react": "^11.11.3",
@@ -52,7 +51,6 @@
     "framer-motion": "^11.0.3",
     "franc": "^6.2.0",
     "html-react-parser": "^5.1.1",
-    "html2canvas": "^1.4.1",
     "husky": "^9.0.7",
     "immer": "^9.0.19",
     "jotai": "^2.7.0",

@@ -14,7 +14,7 @@ import { signIn } from 'next-auth/react';
 import React, { type Dispatch, type SetStateAction, useState } from 'react';
 import { MdOutlineEmail } from 'react-icons/md';
 
-import GoogleIcon from '@/svg/google';
+import { GoogleIcon } from '@/svg/google';
 
 export const SignIn = ({
   loginStep,

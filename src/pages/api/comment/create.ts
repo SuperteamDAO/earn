@@ -45,6 +45,7 @@ export default async function comment(
       await sendEmailNotification({
         type: 'commentSponsor',
         id: listingId,
+        userId: userId as string,
       });
     }
 
