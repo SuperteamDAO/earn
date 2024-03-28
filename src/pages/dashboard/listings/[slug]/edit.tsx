@@ -47,6 +47,7 @@ function EditBounty({ slug }: Props) {
       ) : (
         <CreateListing
           bounty={bounty}
+          currentSlug={slug}
           editable
           type={bounty?.type as 'bounty' | 'project' | 'hackathon'}
         />
