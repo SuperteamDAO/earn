@@ -156,27 +156,46 @@ function convertUserToAirtable(user: User): ForFoundersAirtableSchema {
   };
 }
 
-// where: {
-//   id: "24db2a27-cdee-451a-bb3c-f096afe14a63"
-// }
 async function handler(_req: NextApiRequest, res: NextApiResponse) {
   let count = 0;
   const startTime = performance.now();
   let endTime = performance.now();
   try {
+    // GET LAST UPDATED RECORD
+    const listUrl = new URL(airtableUrl());
+    listUrl.searchParams.set('maxRecords', '1');
+    listUrl.searchParams.set('sort[0][field]', 'Created Time Check');
+    listUrl.searchParams.set('sort[0][direction]', 'desc');
+
+    const resp = await axios.get(listUrl.toString(), airtableConfig());
+    const listData = resp.data;
+    if (!listData || !listData.records) {
+      throw new Error('no data');
+    }
+    const listTime = listData.records[0].fields['Created Time Check'] as string;
+    const lastCronDateTime = new Date(listTime);
+    if (!lastCronDateTime) {
+      throw new Error('no date');
+    }
+
     let cursor: string | undefined = undefined;
     let users = await prisma.user.findMany({
       take: 10,
+      where: {
+        updatedAt: {
+          gt: lastCronDateTime,
+        },
+      },
     });
-
-    // console.log("users - ", users)
+    if (users.length === 0) {
+      res.status(200).json({ message: 'Airtable already up-to-date ' });
+      return;
+    }
 
     const usersAirtable: {
       fields: ForFoundersAirtableSchema;
     }[] = [];
     for (const user of users) {
-      // console.log('id - ', user.id);
-      // console.log('skills - ', user.skills);
       usersAirtable.push({
         fields: convertUserToAirtable(user as any),
       });
@@ -185,7 +204,6 @@ async function handler(_req: NextApiRequest, res: NextApiResponse) {
     const data = airtableUpsert('id', usersAirtable);
     console.log('data - ', data);
     await axios.patch(airtableUrl(), JSON.stringify(data), airtableConfig());
-    // console.log('response ok? ', response.statusText);
     count++;
 
     do {
@@ -195,14 +213,17 @@ async function handler(_req: NextApiRequest, res: NextApiResponse) {
         take: 10,
         skip: 1,
         cursor: { id: cursor },
+        where: {
+          updatedAt: {
+            gt: lastCronDateTime,
+          },
+        },
       });
 
       const usersAirtable: {
         fields: ForFoundersAirtableSchema;
       }[] = [];
       for (const user of users) {
-        // console.log('id - ', user.id);
-        // console.log('skills - ', user.skills);
         usersAirtable.push({
           fields: convertUserToAirtable(user as any),
         });
@@ -212,8 +233,6 @@ async function handler(_req: NextApiRequest, res: NextApiResponse) {
         airtableUpsert('id', usersAirtable),
         airtableConfig(),
       );
-      // console.log('response ok? ', response.statusText);
-
       count++;
     } while (cursor);
     console.log('count - ', count);
