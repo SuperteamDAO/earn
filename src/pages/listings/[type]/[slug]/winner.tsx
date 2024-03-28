@@ -26,13 +26,11 @@ function WinnerBounty({
 }: BountyDetailsProps) {
   const [bounty] = useState<typeof initialBounty>(initialBounty);
   const router = useRouter();
-  console.log('url - ', url);
 
   useEffect(() => {
     router.push(`${getURL()}listings/${bounty?.type}/${bounty?.slug}/`);
   }, []);
 
-  console.log('id - ', bounty?.id);
   const image = new URL(`${url}api/winners-og/`);
   image.searchParams.set('id', bounty?.id || '');
   image.searchParams.set('rewards', JSON.stringify(bounty?.rewards));
@@ -110,7 +108,6 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
       params: { type },
     });
     bountyData = bountyDetails.data;
-    console.log(bountyDetails.data);
 
     const submissionsDetails = await axios.get(
       `${fullUrl}api/submission/${bountyDetails.data.id}/winners/`,
@@ -135,7 +132,6 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
         },
       });
     });
-    console.log('submissions - ', submissions);
   } catch (e) {
     console.error(e);
     bountyData = null;
