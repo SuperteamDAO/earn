@@ -28,13 +28,18 @@ function EditBounty({ slug }: Props) {
         router.push('/dashboard/listings');
       } else {
         const bounty = bountyDetails.data as Bounty;
+        console.log(
+          'description and requirements - ',
+          bounty.description,
+          bounty.requirements,
+        );
         if (
           !bounty.title ||
           !bounty.skills ||
           !bounty.pocSocials ||
           !bounty.applicationType ||
           !bounty.deadline ||
-          !bounty.timeToComplete
+          (bounty.type === 'project' && !bounty.timeToComplete)
         ) {
           setPrevStep(2);
         } else if (bounty.rewards || bounty.rewardAmount) {
