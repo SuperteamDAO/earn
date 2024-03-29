@@ -1,4 +1,3 @@
-import { ExternalLinkIcon } from '@chakra-ui/icons';
 import {
   Box,
   Button,
@@ -8,7 +7,6 @@ import {
   FormLabel,
   Image,
   Input,
-  Link,
   Select,
   Switch,
   Text,
@@ -25,7 +23,6 @@ import { Superteams } from '@/constants/Superteam';
 import { dayjs } from '@/utils/dayjs';
 
 import type { SuperteamName } from '../../types';
-import { getBountySuggestions } from '../../utils';
 import type { BountyBasicType } from '../CreateListingForm';
 import { SelectSponsor } from '../SelectSponsor';
 
@@ -90,12 +87,6 @@ export const ListingBasic = ({
   });
 
   const [isUrlValid, setIsUrlValid] = useState(true);
-  const [suggestions, setSuggestions] = useState<
-    {
-      label: string;
-      link: string;
-    }[]
-  >([]);
 
   const date = dayjs().format('YYYY-MM-DD');
   const thirtyDaysFromNow = dayjs().add(30, 'day').format('YYYY-MM-DDTHH:mm');
@@ -124,16 +115,6 @@ export const ListingBasic = ({
   const isProject = type === 'project';
 
   const { data: session } = useSession();
-
-  function onBlurTitle() {
-    if (!bountyBasic?.title) {
-      setSuggestions([]);
-      return;
-    }
-    if (type === 'bounty') {
-      setSuggestions(getBountySuggestions(bountyBasic.title));
-    }
-  }
 
   return (
     <>
@@ -180,7 +161,6 @@ export const ListingBasic = ({
             }}
             focusBorderColor="brand.purple"
             id="title"
-            onBlur={onBlurTitle}
             onChange={(e) => {
               setbountyBasic({
                 ...(bountyBasic as BountyBasicType),
@@ -193,29 +173,6 @@ export const ListingBasic = ({
           <FormErrorMessage>
             {/* {errors.title ? <>{errors.title.message}</> : <></>} */}
           </FormErrorMessage>
-          {suggestions.length > 0 && (
-            <Flex
-              gap={2}
-              mt={2}
-              color="#318C5B"
-              fontSize={14}
-              fontWeight={600}
-              fontStyle="italic"
-            >
-              <Text>Similar Listings: </Text>
-              {suggestions.map((suggestion) => (
-                <Link
-                  key={suggestion.link}
-                  href={suggestion.link}
-                  isExternal
-                  target="_blank"
-                >
-                  {suggestion.label}
-                  <ExternalLinkIcon display="inline-block" mx="4px" />;
-                </Link>
-              ))}
-            </Flex>
-          )}
         </FormControl>
 
         <SkillSelect
