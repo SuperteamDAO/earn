@@ -191,7 +191,7 @@ export const ListingBasic = ({
           {suggestions.length > 0 && (
             <Flex
               align="start"
-              gap={2}
+              gap={1}
               mt={2}
               color="#318C5B"
               fontSize={14}
@@ -199,7 +199,7 @@ export const ListingBasic = ({
               fontStyle="italic"
             >
               <Box>
-                <Text w="max-content">Similar Listings: </Text>
+                <Text w="max-content">Similar Listings:</Text>
               </Box>
               <Flex align="center" wrap="wrap" columnGap={2}>
                 {suggestions.map((suggestion, index) => (
