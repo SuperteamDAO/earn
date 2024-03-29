@@ -116,9 +116,11 @@ export const ListingBasic = ({
         const newSlug = await axios.get(
           `/api/listings/slug?slug=${slugify(bountyBasic.title, { lower: true, strict: true })}&check=false`,
         );
+        console.log(newSlug.data.slug);
         setIsSlugGenerating(false);
         return newSlug.data.slug;
       } catch (error) {
+        console.error('Error generating slug:', error);
         setIsSlugGenerating(false);
         throw error;
       }
@@ -195,7 +197,7 @@ export const ListingBasic = ({
     return () => {
       debouncedGetUniqueSlug.cancel();
     };
-  }, [bountyBasic?.title]);
+  }, [debouncedGetUniqueSlug]);
 
   const hasBasicInfo =
     bountyBasic?.title &&
@@ -671,6 +673,7 @@ export const ListingBasic = ({
             w="100%"
             onClick={async () => {
               const slugIsValid = await isSlugValid();
+              console.log(slugIsValid);
               setErrorState({
                 deadline: !bountyBasic?.deadline,
                 skills: skills.length === 0,
@@ -682,6 +685,7 @@ export const ListingBasic = ({
               });
 
               if (!slugIsValid) {
+                console.log('here');
                 return;
               }
 
