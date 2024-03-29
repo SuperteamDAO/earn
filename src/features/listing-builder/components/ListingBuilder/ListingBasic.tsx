@@ -102,7 +102,6 @@ export const ListingBasic = ({
     pocSocials: false,
     timeToComplete: false,
   });
-
   const [isSlugGenerating, setIsSlugGenerating] = useState(false);
   const [slugErrorMsg, setSlugErrorMsg] = useState('');
   const [isUrlValid, setIsUrlValid] = useState(true);
@@ -125,13 +124,10 @@ export const ListingBasic = ({
         const newSlug = await axios.get(
           `/api/listings/slug?slug=${slugifiedTitle}&check=false`,
         );
-        console.log(newSlug.data.slug);
         setIsSlugGenerating(false);
         return newSlug.data.slug;
       } catch (error) {
-        console.error('Error generating slug:', error);
         setIsSlugGenerating(false);
-        throw error;
       }
     }
   };
@@ -198,7 +194,10 @@ export const ListingBasic = ({
   };
 
   useEffect(() => {
-    if (shouldSlugGenerate) {
+    if (
+      (bountyBasic?.title && shouldSlugGenerate) ||
+      (bountyBasic?.title && !bountyBasic?.slug && bountyBasic.templateId)
+    ) {
       debouncedGetUniqueSlug();
     } else {
       setShouldSlugGenerate(true);
@@ -206,7 +205,21 @@ export const ListingBasic = ({
     return () => {
       debouncedGetUniqueSlug.cancel();
     };
-  }, [debouncedGetUniqueSlug]);
+  }, [bountyBasic?.title, debouncedGetUniqueSlug, shouldSlugGenerate]);
+
+  useEffect(() => {
+    if (bountyBasic?.slug) {
+      if (!checkSlugPattern(bountyBasic.slug)) {
+        setErrorState((errorState) => ({
+          ...errorState,
+          slug: true,
+        }));
+        setSlugErrorMsg(
+          'Slug Name should only contain lowercase alphabets, numbers and hyphens',
+        );
+      }
+    }
+  }, [bountyBasic?.slug]);
 
   const hasBasicInfo =
     bountyBasic?.title &&
@@ -682,7 +695,6 @@ export const ListingBasic = ({
             w="100%"
             onClick={async () => {
               const slugIsValid = await isSlugValid();
-              console.log(slugIsValid);
               setErrorState({
                 deadline: !bountyBasic?.deadline,
                 skills: skills.length === 0,
@@ -694,7 +706,6 @@ export const ListingBasic = ({
               });
 
               if (!slugIsValid) {
-                console.log('here');
                 return;
               }
 
