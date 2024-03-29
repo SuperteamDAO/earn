@@ -15,6 +15,7 @@ interface Props {
   objectFit?: ImageProps['objectFit'];
   borderTopRadius?: string | number;
   borderRadius?: string | number;
+  aspectRatio?: ResponsiveValue<string | number>;
 }
 
 const getRandomFallbackImage = (): string => {
