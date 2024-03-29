@@ -197,20 +197,6 @@ export const ListingBasic = ({
     };
   }, [bountyBasic?.title]);
 
-  useEffect(() => {
-    if (bountyBasic?.slug) {
-      if (!checkSlugPattern(bountyBasic.slug)) {
-        setErrorState((errorState) => ({
-          ...errorState,
-          slug: true,
-        }));
-        setSlugErrorMsg(
-          'Slug Name should only contain lowercase alphabets, numbers and hyphens',
-        );
-      }
-    }
-  }, [bountyBasic?.slug]);
-
   const hasBasicInfo =
     bountyBasic?.title &&
     skills.length !== 0 &&
