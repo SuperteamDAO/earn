@@ -15,6 +15,7 @@ import {
 
 export interface BountyBasicType {
   title?: string;
+  slug?: string;
   deadline?: string;
   templateId?: string;
   pocSocials?: string;

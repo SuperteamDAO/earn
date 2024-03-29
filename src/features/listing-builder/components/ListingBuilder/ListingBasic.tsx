@@ -7,15 +7,28 @@ import {
   FormLabel,
   Image,
   Input,
+  InputGroup,
+  InputRightElement,
   Select,
+  Spinner,
   Switch,
   Text,
   Tooltip,
   VStack,
 } from '@chakra-ui/react';
 import { Regions } from '@prisma/client';
+import axios from 'axios';
+import debounce from 'lodash.debounce';
 import { useSession } from 'next-auth/react';
-import { type Dispatch, type SetStateAction, useMemo, useState } from 'react';
+import {
+  type Dispatch,
+  type SetStateAction,
+  useCallback,
+  useEffect,
+  useMemo,
+  useState,
+} from 'react';
+import slugify from 'slugify';
 
 import { SkillSelect } from '@/components/misc/SkillSelect';
 import type { MultiSelectOptions } from '@/constants';
@@ -50,6 +63,7 @@ interface Props {
 }
 interface ErrorsBasic {
   title: boolean;
+  slug: boolean;
   deadline: boolean;
   skills: boolean;
   subSkills: boolean;
@@ -80,16 +94,119 @@ export const ListingBasic = ({
   const [errorState, setErrorState] = useState<ErrorsBasic>({
     deadline: false,
     title: false,
+    slug: false,
     subSkills: false,
     skills: false,
     pocSocials: false,
     timeToComplete: false,
   });
 
+  const [isSlugGenerating, setIsSlugGenerating] = useState(false);
+  const [slugErrorMsg, setSlugErrorMsg] = useState('');
   const [isUrlValid, setIsUrlValid] = useState(true);
 
   const date = dayjs().format('YYYY-MM-DD');
   const thirtyDaysFromNow = dayjs().add(30, 'day').format('YYYY-MM-DDTHH:mm');
+
+  const getUniqueSlug = async () => {
+    if (bountyBasic?.title) {
+      setIsSlugGenerating(true);
+      try {
+        const newSlug = await axios.get(
+          `/api/listings/slug?slug=${slugify(bountyBasic.title, { lower: true, strict: true })}`,
+        );
+        console.log(newSlug.data.slug);
+        setIsSlugGenerating(false);
+        return newSlug.data.slug;
+      } catch (error) {
+        console.error('Error generating slug:', error);
+        setIsSlugGenerating(false);
+        throw error;
+      }
+    }
+  };
+
+  const debouncedGetUniqueSlug = useCallback(
+    debounce(async () => {
+      if (bountyBasic?.title) {
+        const newSlug = await getUniqueSlug();
+        setbountyBasic((currentBountyBasic) => ({
+          ...currentBountyBasic,
+          slug: newSlug,
+        }));
+      }
+    }, 500),
+    [bountyBasic?.title],
+  );
+
+  const isSlugUnique = async (slug: string) => {
+    const response = await fetch(`/api/listings/slug?slug=${slug}`);
+    const data = await response.json();
+    return data;
+  };
+
+  const checkSlugPattern = (slug: string) => {
+    const pattern = /^[a-z0-9]+(?:-[a-z0-9]+)*$/;
+    return pattern.test(slug);
+  };
+
+  const isSlugValid = () => {
+    setErrorState((errorState) => ({
+      ...errorState,
+      slug: false,
+    }));
+
+    if (bountyBasic?.slug && bountyBasic.slug.length > 0) {
+      const slug = bountyBasic.slug;
+      isSlugUnique(slug)
+        .then((data) => {
+          if (!checkSlugPattern(slug)) {
+            setErrorState((errorState) => ({
+              ...errorState,
+              slug: true,
+            }));
+            setSlugErrorMsg(
+              'Slug Name should only contain lowercase alphabets, numbers and hyphens',
+            );
+            return false;
+          }
+
+          if (data.error) {
+            setErrorState((errorState) => ({
+              ...errorState,
+              slug: true,
+            }));
+            setSlugErrorMsg(
+              'Slug Name already exists. Please choose a different one.',
+            );
+            return false;
+          } else {
+            setErrorState((errorState) => ({
+              ...errorState,
+              slug: false,
+            }));
+            setSlugErrorMsg('');
+            return true;
+          }
+        })
+        .catch(() => {
+          setErrorState((errorState) => ({
+            ...errorState,
+            slug: true,
+          }));
+          setSlugErrorMsg('An error occurred while checking the slug');
+          return false;
+        });
+    }
+    return false;
+  };
+
+  useEffect(() => {
+    debouncedGetUniqueSlug();
+    return () => {
+      debouncedGetUniqueSlug.cancel();
+    };
+  }, [debouncedGetUniqueSlug]);
 
   const hasBasicInfo =
     bountyBasic?.title &&
@@ -174,7 +291,68 @@ export const ListingBasic = ({
             {/* {errors.title ? <>{errors.title.message}</> : <></>} */}
           </FormErrorMessage>
         </FormControl>
+        <FormControl w="full" mb={5} isInvalid={errorState.slug} isRequired>
+          <Flex>
+            <FormLabel
+              color={'brand.slate.500'}
+              fontSize={'15px'}
+              fontWeight={600}
+              htmlFor={'slug'}
+            >
+              Listing Slug
+            </FormLabel>
+            <Tooltip
+              w="max"
+              p="0.7rem"
+              color="white"
+              fontSize="0.9rem"
+              fontWeight={600}
+              bg="#6562FF"
+              borderRadius="0.5rem"
+              hasArrow
+              label={`Use a short slug to describe the Listing`}
+              placement="right-end"
+            >
+              <Image
+                mt={-2}
+                alt={'Info Icon'}
+                src={'/assets/icons/info-icon.svg'}
+              />
+            </Tooltip>
+          </Flex>
 
+          <InputGroup>
+            <Input
+              borderColor="brand.slate.300"
+              _placeholder={{
+                color: 'brand.slate.300',
+              }}
+              focusBorderColor="brand.purple"
+              id="slug"
+              onChange={(e) => {
+                setErrorState({
+                  ...errorState,
+                  slug: false,
+                });
+                setbountyBasic({
+                  ...(bountyBasic as BountyBasicType),
+                  slug: e.target.value,
+                });
+                setIsUrlValid(true);
+              }}
+              placeholder="develop-a-new-landing-page"
+              value={bountyBasic?.slug}
+            />
+            {isSlugGenerating && (
+              <InputRightElement>
+                <Spinner size="sm" />
+              </InputRightElement>
+            )}
+          </InputGroup>
+          <FormErrorMessage>
+            {slugErrorMsg ? <>{slugErrorMsg}</> : <></>}
+          </FormErrorMessage>
+        </FormControl>
         <SkillSelect
           errorSkill={errorState.skills}
           errorSubSkill={errorState.subSkills}
@@ -502,7 +680,7 @@ export const ListingBasic = ({
         <VStack gap={4} w={'full'} mt={6}>
           <Button
             w="100%"
-            onClick={() => {
+            onClick={async () => {
               setErrorState({
                 deadline: !bountyBasic?.deadline,
                 skills: skills.length === 0,
@@ -510,6 +688,7 @@ export const ListingBasic = ({
                 title: !bountyBasic?.title,
                 pocSocials: !bountyBasic?.pocSocials,
                 timeToComplete: isProject ? !isTimeToCompleteValid : false,
+                slug: isSlugValid(),
               });
               if (isProject && !isTimeToCompleteValid) {
                 return;
