@@ -1,5 +1,6 @@
 import { Button, Tooltip, useDisclosure } from '@chakra-ui/react';
 import axios from 'axios';
+import Image from 'next/image';
 import React, {
   type Dispatch,
   type SetStateAction,
@@ -213,8 +214,29 @@ export const SubmissionActionButton = ({
         <EasterEgg
           isOpen={isEasterEggOpen}
           onClose={() => setEasterEggOpen(false)}
+          isProject={isProject}
         />
       )}
+      <Image
+        // Hack to show GIF Immediately when Easter Egg is visible
+        src="/assets/memes/JohnCenaVibingToCupid.gif"
+        alt="John Cena Vibing to Cupid"
+        style={{
+          width: '100%',
+          marginTop: 'auto',
+          display: 'block',
+          visibility: 'hidden',
+          position: 'fixed',
+          zIndex: -99999,
+          top: '-300%',
+          left: '-300%',
+        }}
+        width="500"
+        height="600"
+        priority
+        loading="eager"
+        quality={80}
+      />
 
       <LoginWrapper
         triggerLogin={triggerLogin}
