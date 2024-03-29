@@ -214,6 +214,7 @@ export const SubmissionActionButton = ({
         <EasterEgg
           isOpen={isEasterEggOpen}
           onClose={() => setEasterEggOpen(false)}
+          isProject={isProject}
         />
       )}
       <Image
@@ -234,7 +235,7 @@ export const SubmissionActionButton = ({
         height="600"
         priority
         loading="eager"
-        quality={100}
+        quality={80}
       />
 
       <LoginWrapper

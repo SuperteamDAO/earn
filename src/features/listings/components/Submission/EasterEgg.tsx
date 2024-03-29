@@ -13,8 +13,9 @@ import Confetti from 'react-confetti';
 interface Props {
   isOpen: boolean;
   onClose: () => void;
+  isProject: boolean;
 }
-export const EasterEgg = ({ isOpen, onClose }: Props) => {
+export const EasterEgg = ({ isOpen, onClose, isProject }: Props) => {
   return (
     <Modal isOpen={isOpen} onClose={onClose}>
       <ModalContent
@@ -27,6 +28,7 @@ export const EasterEgg = ({ isOpen, onClose }: Props) => {
         mt="0"
         mb="0"
         bg="#5243FF"
+        borderRadius={0}
       >
         <Confetti />
         <ModalCloseButton w={6} h={6} m={4} color="white">
@@ -53,7 +55,7 @@ export const EasterEgg = ({ isOpen, onClose }: Props) => {
             lineHeight="1"
             textAlign="center"
           >
-            Submission Received!
+            {isProject ? 'Application' : 'Submission'} Received!
           </Text>
           <Text
             mt={[8, 5]}
@@ -85,7 +87,7 @@ export const EasterEgg = ({ isOpen, onClose }: Props) => {
             height="600"
             priority
             loading="eager"
-            quality={100}
+            quality={80}
           />
         </AbsoluteCenter>
         <audio
