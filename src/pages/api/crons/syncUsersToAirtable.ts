@@ -2,9 +2,7 @@
 import axios from 'axios';
 import type { NextApiRequest, NextApiResponse } from 'next';
 
-// import { Prisma } from '@prisma/client';
 import { type User } from '@/interface/user';
-// import Airtable from "airtable"
 import { prisma } from '@/prisma';
 
 function airtableUrl() {
@@ -14,10 +12,6 @@ function airtableUrl() {
     throw new Error('AIRTABLE BASE ID OR TABLE NAME NOT PROVIDED');
 
   return `https://api.airtable.com/v0/${baseId}/${tableName}`;
-
-  // return new Airtable({
-  //   apiKey: apiToken
-  // }).base(baseId)(tableName)
 }
 
 function airtableConfig() {
@@ -92,14 +86,6 @@ function talentProfileNonUtmLink(username: string) {
   return `https://earn.superteam.fun/t/${username}`;
 }
 
-// function contactTalentViaLink(publicKey: string) {
-//   const url = new URL(`https://earn.superteam.fun/t/${publicKey}`)
-//   url.searchParams.set("utm_source", "superteamearn")
-//   url.searchParams.set("utm_medium", "airtable")
-//   url.searchParams.set("utm_campaign", "founderprofilesearch")
-//   return url.toString()
-// }
-
 interface Skills {
   skills: string | undefined;
   subSkills: string[];
@@ -141,7 +127,6 @@ function convertUserToAirtable(user: User): ForFoundersAirtableSchema {
     'Work Preference': user.workPrefernce ?? undefined,
     'Current Employer': user.currentEmployer ?? undefined,
     pow: user.pow ?? undefined,
-    // notifications: JSON.stringify(user.notifications ?? {}) ?? undefined,
     notifications: undefined,
     private: String(user.private ? 1 : 0),
     skills: JSON.stringify(user.skills ?? {}) ?? undefined,
@@ -149,7 +134,6 @@ function convertUserToAirtable(user: User): ForFoundersAirtableSchema {
     'Talent Profile non UTM': user.username
       ? talentProfileNonUtmLink(user.username)
       : undefined,
-    // "Contact Talent Via": user.publicKey ? contactTalentViaLink(user.publicKey.toLowerCase()) : undefined,
     'Self Selected Skills': user.skills
       ? extractSkills(user.skills as any as Skills[]) ?? []
       : [],
