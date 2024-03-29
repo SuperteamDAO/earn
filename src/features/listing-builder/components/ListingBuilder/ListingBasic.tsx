@@ -18,12 +18,10 @@ import {
 } from '@chakra-ui/react';
 import { Regions } from '@prisma/client';
 import axios from 'axios';
-import debounce from 'lodash.debounce';
 import { useSession } from 'next-auth/react';
 import {
   type Dispatch,
   type SetStateAction,
-  useCallback,
   useEffect,
   useMemo,
   useState,
@@ -116,29 +114,13 @@ export const ListingBasic = ({
         const newSlug = await axios.get(
           `/api/listings/slug?slug=${slugify(bountyBasic.title, { lower: true, strict: true })}&check=false`,
         );
-        console.log(newSlug.data.slug);
         setIsSlugGenerating(false);
         return newSlug.data.slug;
       } catch (error) {
-        console.error('Error generating slug:', error);
         setIsSlugGenerating(false);
-        throw error;
       }
     }
   };
-
-  const debouncedGetUniqueSlug = useCallback(
-    debounce(async () => {
-      if (bountyBasic?.title) {
-        const newSlug = await getUniqueSlug();
-        setbountyBasic((currentBountyBasic) => ({
-          ...currentBountyBasic,
-          slug: newSlug,
-        }));
-      }
-    }, 500),
-    [bountyBasic?.title],
-  );
 
   const isSlugUnique = async (slug: string) => {
     const response = await fetch(`/api/listings/slug?slug=${slug}&check=true`);
@@ -191,15 +173,17 @@ export const ListingBasic = ({
   };
 
   useEffect(() => {
-    if (shouldSlugGenerate) {
-      debouncedGetUniqueSlug();
+    if (bountyBasic?.title && shouldSlugGenerate) {
+      getUniqueSlug().then((slug) => {
+        setbountyBasic((currentBountyBasic) => ({
+          ...currentBountyBasic,
+          slug: slug,
+        }));
+      });
     } else {
       setShouldSlugGenerate(true);
     }
-    return () => {
-      debouncedGetUniqueSlug.cancel();
-    };
-  }, [debouncedGetUniqueSlug]);
+  }, [bountyBasic?.title]);
 
   const hasBasicInfo =
     bountyBasic?.title &&
