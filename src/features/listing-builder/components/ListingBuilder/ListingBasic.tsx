@@ -162,9 +162,7 @@ export const ListingBasic = ({
           ...errorState,
           slug: true,
         }));
-        setSlugErrorMsg(
-          'Slug Name already exists. Please choose a different one.',
-        );
+        setSlugErrorMsg('Slug already exists. Please try another.');
         return false;
       }
       if (!checkSlugPattern(slug)) {
