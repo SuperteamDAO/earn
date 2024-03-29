@@ -25,7 +25,7 @@ import { Superteams } from '@/constants/Superteam';
 import { dayjs } from '@/utils/dayjs';
 
 import type { SuperteamName } from '../../types';
-import { getBountySuggestions } from '../../utils';
+import { getSuggestions } from '../../utils';
 import type { BountyBasicType } from '../CreateListingForm';
 import { SelectSponsor } from '../SelectSponsor';
 
@@ -125,16 +125,6 @@ export const ListingBasic = ({
 
   const { data: session } = useSession();
 
-  function onBlurTitle() {
-    if (!bountyBasic?.title) {
-      setSuggestions([]);
-      return;
-    }
-    if (type === 'bounty') {
-      setSuggestions(getBountySuggestions(bountyBasic.title));
-    }
-  }
-
   return (
     <>
       <VStack align={'start'} gap={3} w={'2xl'} pt={7} pb={12}>
@@ -180,12 +170,17 @@ export const ListingBasic = ({
             }}
             focusBorderColor="brand.purple"
             id="title"
-            onBlur={onBlurTitle}
+            onBlur={() => {
+              setSuggestions(getSuggestions(bountyBasic?.title, type));
+            }}
             onChange={(e) => {
               setbountyBasic({
                 ...(bountyBasic as BountyBasicType),
                 title: e.target.value,
               });
+              if (suggestions.length > 0) {
+                setSuggestions(getSuggestions(e.target.value, type));
+              }
             }}
             placeholder="Develop a new landing page"
             value={bountyBasic?.title}
@@ -195,6 +190,7 @@ export const ListingBasic = ({
           </FormErrorMessage>
           {suggestions.length > 0 && (
             <Flex
+              align="start"
               gap={2}
               mt={2}
               color="#318C5B"
@@ -202,18 +198,32 @@ export const ListingBasic = ({
               fontWeight={600}
               fontStyle="italic"
             >
-              <Text>Similar Listings: </Text>
-              {suggestions.map((suggestion) => (
-                <Link
-                  key={suggestion.link}
-                  href={suggestion.link}
-                  isExternal
-                  target="_blank"
-                >
-                  {suggestion.label}
-                  <ExternalLinkIcon display="inline-block" mx="4px" />;
-                </Link>
-              ))}
+              <Box>
+                <Text w="max-content">Similar Listings: </Text>
+              </Box>
+              <Flex align="center" wrap="wrap" columnGap={2}>
+                {suggestions.map((suggestion, index) => (
+                  <Flex key={suggestion.link} align="center" gap={2}>
+                    <Link
+                      key={suggestion.link}
+                      w="max-content"
+                      href={suggestion.link}
+                      isExternal
+                      tabIndex={-1}
+                      target="_blank"
+                    >
+                      {suggestion.label}
+                      {suggestions.length - 1 !== index && ';'}
+                    </Link>
+                    {suggestions.length - 1 === index && (
+                      <ExternalLinkIcon
+                        color="GrayText"
+                        display="inline-block"
+                      />
+                    )}
+                  </Flex>
+                ))}
+              </Flex>
             </Flex>
           )}
         </FormControl>

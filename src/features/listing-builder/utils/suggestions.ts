@@ -47,12 +47,36 @@ const bountySuggestions: Suggestions[] = [
   },
 ];
 
-export function getBountySuggestions(input: string) {
-  return bountySuggestions
+const projectSuggestions: Suggestions[] = [];
+
+const hackathonSuggestions: Suggestions[] = [];
+
+export function calculateSuggestions(
+  suggestions: Suggestions[],
+  input: string,
+) {
+  return suggestions
     .filter((row) =>
       row.tokens.some((token) =>
         input.toLowerCase().includes(token.toLowerCase()),
       ),
     )
     .flatMap((row) => row.suggestions);
+}
+
+export function getSuggestions(
+  input: string | undefined,
+  type: 'bounty' | 'project' | 'hackathon',
+) {
+  if (!input) return [];
+  if (type === 'bounty') {
+    return calculateSuggestions(bountySuggestions, input);
+  }
+  if (type === 'project') {
+    return calculateSuggestions(projectSuggestions, input);
+  }
+  if (type === 'hackathon') {
+    return calculateSuggestions(hackathonSuggestions, input);
+  }
+  return [];
 }
