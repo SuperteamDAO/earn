@@ -120,6 +120,7 @@ export const ListingBasic = ({
         return newSlug.data.slug;
       } catch (error) {
         setIsSlugGenerating(false);
+        throw error;
       }
     }
   };
@@ -186,10 +187,7 @@ export const ListingBasic = ({
   };
 
   useEffect(() => {
-    if (
-      (bountyBasic?.title && shouldSlugGenerate) ||
-      (bountyBasic?.slug === '' && bountyBasic?.title)
-    ) {
+    if (shouldSlugGenerate) {
       debouncedGetUniqueSlug();
     } else {
       setShouldSlugGenerate(true);
