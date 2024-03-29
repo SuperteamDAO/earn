@@ -100,7 +100,6 @@ export const ListingBasic = ({
     pocSocials: false,
     timeToComplete: false,
   });
-
   const [isSlugGenerating, setIsSlugGenerating] = useState(false);
   const [slugErrorMsg, setSlugErrorMsg] = useState('');
   const [isUrlValid, setIsUrlValid] = useState(true);
@@ -186,7 +185,10 @@ export const ListingBasic = ({
   };
 
   useEffect(() => {
-    if (bountyBasic?.title && shouldSlugGenerate) {
+    if (
+      (bountyBasic?.title && shouldSlugGenerate) ||
+      (bountyBasic?.title && !bountyBasic?.slug && bountyBasic.templateId)
+    ) {
       debouncedGetUniqueSlug();
     } else {
       setShouldSlugGenerate(true);
