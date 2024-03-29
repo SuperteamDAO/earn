@@ -111,7 +111,6 @@ function BountySubmissions({ slug }: Props) {
               totalWinners={totalWinners}
               totalPaymentsMade={totalPaymentsMade}
               bounty={bounty}
-              submissions={submissions}
             />
           )}
           <SubmissionHeader

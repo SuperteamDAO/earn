@@ -13,7 +13,7 @@ import NextLink from 'next/link';
 import { useRouter } from 'next/router';
 import { useEffect, useState } from 'react';
 
-import EmailIcon from '@/svg/email';
+import { EmailIcon } from '@/svg/email';
 
 export default function VerifyRequest() {
   const [email, setEmail] = useState('');

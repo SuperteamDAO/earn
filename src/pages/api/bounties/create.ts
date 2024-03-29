@@ -96,6 +96,7 @@ export default async function handler(
       await sendEmailNotification({
         type: 'createListing',
         id: result.id,
+        userId: userId as string,
       });
     }
     if (process.env.NEXT_PUBLIC_VERCEL_ENV === 'production') {

@@ -32,7 +32,7 @@ import React, {
   useCallback,
   useState,
 } from 'react';
-import toast, { Toaster } from 'react-hot-toast';
+import toast from 'react-hot-toast';
 import { AiOutlineLink, AiOutlineOrderedList } from 'react-icons/ai';
 import { BiFontColor } from 'react-icons/bi';
 import {
@@ -244,7 +244,6 @@ export const DescriptionBuilder = ({
       {isOpen && (
         <LinkModal setLink={setLink} isOpen={isOpen} onClose={onClose} />
       )}
-      <Toaster position="bottom-center" />
       <Box>
         <Box mb={8}>
           <Flex justify="start" w="full">
