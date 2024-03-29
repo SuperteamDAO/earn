@@ -40,6 +40,7 @@ import type { BountyBasicType } from '../CreateListingForm';
 import { SelectSponsor } from '../SelectSponsor';
 
 interface Props {
+  id?: string;
   bountyBasic: BountyBasicType | undefined;
   setbountyBasic: Dispatch<SetStateAction<BountyBasicType | undefined>>;
   setSteps: Dispatch<SetStateAction<number>>;
@@ -90,6 +91,7 @@ export const ListingBasic = ({
   isPrivate,
   setIsPrivate,
   editable,
+  id,
 }: Props) => {
   const [errorState, setErrorState] = useState<ErrorsBasic>({
     deadline: false,
@@ -110,11 +112,18 @@ export const ListingBasic = ({
   const thirtyDaysFromNow = dayjs().add(30, 'day').format('YYYY-MM-DDTHH:mm');
 
   const getUniqueSlug = async () => {
-    if (bountyBasic?.title) {
+    if (
+      (bountyBasic?.title && !editable) ||
+      (bountyBasic?.title && isDuplicating)
+    ) {
       setIsSlugGenerating(true);
       try {
+        const slugifiedTitle = slugify(bountyBasic.title, {
+          lower: true,
+          strict: true,
+        });
         const newSlug = await axios.get(
-          `/api/listings/slug?slug=${slugify(bountyBasic.title, { lower: true, strict: true })}&check=false`,
+          `/api/listings/slug?slug=${slugifiedTitle}&check=false`,
         );
         console.log(newSlug.data.slug);
         setIsSlugGenerating(false);
@@ -129,19 +138,19 @@ export const ListingBasic = ({
 
   const debouncedGetUniqueSlug = useCallback(
     debounce(async () => {
-      if (bountyBasic?.title) {
-        const newSlug = await getUniqueSlug();
-        setbountyBasic((currentBountyBasic) => ({
-          ...currentBountyBasic,
-          slug: newSlug,
-        }));
-      }
+      const newSlug = await getUniqueSlug();
+      setbountyBasic((currentBountyBasic) => ({
+        ...currentBountyBasic,
+        slug: newSlug,
+      }));
     }, 500),
     [bountyBasic?.title],
   );
 
   const isSlugUnique = async (slug: string) => {
-    const response = await fetch(`/api/listings/slug?slug=${slug}&check=true`);
+    const response = await fetch(
+      `/api/listings/slug?slug=${slug}&check=true&id=${id}`,
+    );
     const data = await response.json();
     return data;
   };
@@ -174,7 +183,7 @@ export const ListingBasic = ({
           slug: true,
         }));
         setSlugErrorMsg(
-          'Slug Name should only contain lowercase alphabets, numbers and hyphens',
+          'Slug should only contain lowercase alphabets, numbers and hyphens',
         );
         return false;
       }

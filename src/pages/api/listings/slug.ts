@@ -4,20 +4,8 @@ import slugify from 'slugify';
 import { prisma } from '@/prisma';
 
 const checkSlug = async (slug: string): Promise<boolean> => {
-  try {
-    const bounty = await prisma.bounties.findFirst({
-      where: {
-        slug,
-      },
-    });
-
-    if (bounty) {
-      return true;
-    }
-    return false;
-  } catch (error) {
-    return false;
-  }
+  const existingBounty = await prisma.bounties.findFirst({ where: { slug } });
+  return Boolean(existingBounty);
 };
 
 const generateUniqueSlug = async (title: string): Promise<string> => {
@@ -39,16 +27,29 @@ export default async function handler(
   req: NextApiRequest,
   res: NextApiResponse,
 ) {
-  const { slug, check } = req.query;
+  const { slug, check, id } = req.query;
 
   if (check === 'true') {
-    const slugExists = await checkSlug(slug as string);
-    if (slugExists) {
-      res.status(400).json({ slugExists: true, error: 'Slug already exists' });
-      return;
+    if (id) {
+      const bounty = await prisma.bounties.findFirst({
+        where: {
+          id: id as string,
+        },
+      });
+      if (bounty?.slug === slug) {
+        return res.status(200).json({ slugExists: true });
+      }
     } else {
-      res.status(200).json({ slugExists });
-      return;
+      const slugExists = await checkSlug(slug as string);
+      if (slugExists) {
+        res
+          .status(400)
+          .json({ slugExists: true, error: 'Slug already exists' });
+        return;
+      } else {
+        res.status(200).json({ slugExists });
+        return;
+      }
     }
   } else {
     const newSlug = await generateUniqueSlug(slug as string);

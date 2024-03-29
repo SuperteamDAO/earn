@@ -23,6 +23,7 @@ export interface BountyBasicType {
   timeToComplete?: string;
 }
 interface Props {
+  id?: string;
   steps: number;
   setSteps: Dispatch<SetStateAction<number>>;
   setEditorData: Dispatch<SetStateAction<string | undefined>>;
@@ -58,6 +59,7 @@ interface Props {
   bountyPaymentDispatch: any;
 }
 export const CreateListingForm = ({
+  id,
   steps,
   editorData,
   setEditorData,
@@ -98,6 +100,7 @@ export const CreateListingForm = ({
     <>
       {steps === 2 && (
         <ListingBasic
+          id={id}
           regions={regions}
           setRegions={setRegions}
           editable={editable}
