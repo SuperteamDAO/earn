@@ -1,13 +1,13 @@
 import { CloseIcon } from '@chakra-ui/icons';
 import {
   AbsoluteCenter,
+  Box,
   Container,
   Modal,
   ModalCloseButton,
   ModalContent,
   Text,
 } from '@chakra-ui/react';
-import { Box } from 'degen';
 import Image from 'next/image';
 import Confetti from 'react-confetti';
 interface Props {
@@ -35,12 +35,7 @@ export const EasterEgg = ({ isOpen, onClose, isProject }: Props) => {
           <CloseIcon width={4} height={4} />
         </ModalCloseButton>
         <Container mt={[28, 6]} px={4}>
-          <Box
-            width="112px"
-            marginX="auto"
-            marginTop="24px"
-            marginBottom="44px"
-          >
+          <Box w="112px" mx="auto" mt="24px" mb="44px">
             <Image
               src="/assets/icons/celebration.png"
               alt="celebration icon"
