@@ -148,10 +148,6 @@ export const EmailSettingsModal = ({
                   category="createListing"
                 />
                 <AlertOption
-                  title="Updates on a listing I'm participating in"
-                  category="updateListing"
-                />
-                <AlertOption
                   title="Likes and comments on my submissions"
                   category="commentOrLikeSubmission"
                 />
