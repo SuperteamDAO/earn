@@ -43,6 +43,7 @@ export function CreateListing({
 }: Props) {
   const router = useRouter();
   const { userInfo } = userStore();
+
   // Templates - 1
   // Basic Info - 2
   // Description - 3
@@ -56,7 +57,17 @@ export function CreateListing({
     string | undefined
   >(editable ? bounty?.requirements : undefined);
   const [editorData, setEditorData] = useState<string | undefined>(
-    editable ? bounty?.description : undefined,
+    editable
+      ? bounty?.description
+      : [
+          'About the Bounty & Scope',
+          'Rewards',
+          'Judging Criteria',
+          'Submission Requirements',
+          'Resources',
+        ]
+          .map((heading) => `<h2 key=${heading}>${heading}</h2>`)
+          .join(''),
   );
   const [regions, setRegions] = useState<Regions>(
     editable ? bounty?.region || Regions.GLOBAL : Regions.GLOBAL,
