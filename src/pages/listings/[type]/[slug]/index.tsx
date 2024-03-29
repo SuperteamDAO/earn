@@ -132,7 +132,11 @@ function BountyDetails({ bounty: initialBounty }: BountyDetailsProps) {
                     skills={bounty?.skills?.map((e) => e.skills) ?? []}
                     description={bounty?.description}
                   />
-                  <Comments refId={bounty?.id ?? ''} refType="BOUNTY" />
+                  <Comments
+                    sponsorId={bounty?.sponsorId}
+                    refId={bounty?.id ?? ''}
+                    refType="BOUNTY"
+                  />
                 </VStack>
                 <RightSideBar listing={bounty} />
               </HStack>

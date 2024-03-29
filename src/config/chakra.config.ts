@@ -28,6 +28,9 @@ const theme = extendTheme({
       },
     },
   },
+  fontSizes: {
+    xxs: '0.625rem',
+  },
   breakpoints: {
     base: '0em',
     xs: '24em',

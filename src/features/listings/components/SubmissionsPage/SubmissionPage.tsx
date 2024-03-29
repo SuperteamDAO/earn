@@ -119,6 +119,7 @@ export const SubmissionPage = ({ bounty, submission, user, link }: Props) => {
         </VStack>
 
         <Comments
+          sponsorId={bounty?.sponsorId}
           refId={(router.query.subid as string) ?? ''}
           refType="SUBMISSION"
         />

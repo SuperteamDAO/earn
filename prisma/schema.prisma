@@ -128,6 +128,7 @@ model Comment {
   id          String      @id @default(uuid())
   message     String      @db.VarChar(1000)
   authorId    String
+  replyToId   String?
   listingType ListingType @default(BOUNTY)
   listingId   String
   isActive    Boolean     @default(true)

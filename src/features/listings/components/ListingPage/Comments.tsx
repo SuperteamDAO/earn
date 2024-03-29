@@ -14,19 +14,18 @@ import { GoCommentDiscussion } from 'react-icons/go';
 import { LoginWrapper } from '@/components/LoginWrapper';
 import { ErrorInfo } from '@/components/shared/ErrorInfo';
 import { Loading } from '@/components/shared/Loading';
-import { UserAvatar } from '@/components/shared/UserAvatar';
 import type { Comment } from '@/interface/comments';
 import { userStore } from '@/store/user';
-import { dayjs } from '@/utils/dayjs';
-import { getURL } from '@/utils/validUrl';
 
 import { WarningModal } from '../WarningModal';
+import { Comment as CommentUI } from './Comment';
 
 interface Props {
   refId: string;
   refType: 'BOUNTY' | 'SUBMISSION';
+  sponsorId: string | undefined;
 }
-export const Comments = ({ refId, refType }: Props) => {
+export const Comments = ({ refId, refType, sponsorId }: Props) => {
   const { userInfo } = userStore();
   const { isOpen, onOpen, onClose } = useDisclosure();
   const [triggerLogin, setTriggerLogin] = useState(false);
@@ -36,6 +35,7 @@ export const Comments = ({ refId, refType }: Props) => {
   const [newComment, setNewComment] = useState('');
   const [newCommentLoading, setNewCommentLoading] = useState(false);
   const [newCommentError, setNewCommentError] = useState(false);
+
   const addNewComment = async () => {
     setNewCommentLoading(true);
     setNewCommentError(false);
@@ -62,7 +62,29 @@ export const Comments = ({ refId, refType }: Props) => {
           skip,
         },
       });
-      setComments([...comments, ...commentsData.data]);
+      const allComments = commentsData.data as Comment[];
+
+      const commentMap = allComments.reduce(
+        (acc: Record<string, Comment>, comment) => {
+          comment.replies = [];
+          acc[comment.id] = comment;
+          return acc;
+        },
+        {},
+      );
+
+      allComments.forEach((comment) => {
+        if (comment.replyToId && commentMap[comment.replyToId]) {
+          commentMap[comment.replyToId]?.replies.push(comment);
+        }
+      });
+
+      const topLevelComments = allComments.filter(
+        (comment) => !comment.replyToId,
+      );
+      console.log('top level comments - ', topLevelComments);
+
+      setComments([...comments, ...topLevelComments]);
     } catch (e) {
       setError(true);
     }
@@ -155,45 +177,15 @@ export const Comments = ({ refId, refType }: Props) => {
             </Button>
           </Flex>
         </VStack>
-        {comments?.map((comment: any) => {
-          const date = dayjs(comment?.updatedAt).fromNow();
+        {comments?.map((comment) => {
           return (
-            <HStack key={comment.id} align={'start'} px={6}>
-              <Flex
-                minW="32px"
-                minH="32px"
-                cursor={'pointer'}
-                onClick={() => {
-                  const url = `${getURL()}t/${comment?.author?.username}`;
-                  window.open(url, '_blank', 'noopener,noreferrer');
-                }}
-              >
-                <UserAvatar user={comment?.author} />
-              </Flex>
-
-              <VStack align={'start'}>
-                <HStack>
-                  <Text
-                    color="brand.slate.800"
-                    fontSize="sm"
-                    fontWeight={600}
-                    cursor={'pointer'}
-                    onClick={() => {
-                      const url = `${getURL()}t/${comment?.author?.username}`;
-                      window.open(url, '_blank', 'noopener,noreferrer');
-                    }}
-                  >
-                    {`${comment?.author?.firstName} ${comment?.author?.lastName}`}
-                  </Text>
-                  <Text color="brand.slate.500" fontSize="sm">
-                    {date}
-                  </Text>
-                </HStack>
-                <Text mt={'0px !important'} color="brand.slate.800">
-                  {comment?.message}
-                </Text>
-              </VStack>
-            </HStack>
+            <CommentUI
+              key={comment.id}
+              comment={comment}
+              sponsorId={sponsorId}
+              refType={refType}
+              refId={refId}
+            />
           );
         })}
         {!!comments.length && comments.length % 30 === 0 && (

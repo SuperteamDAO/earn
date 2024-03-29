@@ -3,12 +3,18 @@ import Avatar from 'boring-avatars';
 
 import type { User } from '@/interface/user';
 
-export function UserAvatar({ user }: { user: User }) {
+interface Props {
+  user: User | undefined | null;
+  size?: string;
+}
+
+export function UserAvatar({ user, size = '32px' }: Props) {
   if (user?.photo) {
     return (
       <Image
-        boxSize="32px"
+        boxSize={size}
         borderRadius="full"
+        objectFit="cover"
         alt={`${user?.firstName} ${user?.lastName}`}
         src={user?.photo}
       />

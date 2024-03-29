@@ -21,13 +21,24 @@ export default async function comment(
       return res.status(400).json({ error: 'Invalid token' });
     }
 
-    const { message, listingId, listingType } = req.body;
+    const { message, listingId, listingType, replyToId } = req.body;
+    console.log(
+      'message',
+      message,
+      'listingId',
+      listingId,
+      'listingType',
+      listingType,
+      'replyToId',
+      replyToId,
+    );
 
     const result = await prisma.comment.create({
       data: {
         authorId: userId as string,
-        message,
-        listingId,
+        message: message as string,
+        replyToId: replyToId as string | undefined,
+        listingId: listingId as string,
       },
       include: {
         author: {
@@ -36,6 +47,7 @@ export default async function comment(
             lastName: true,
             photo: true,
             username: true,
+            currentSponsorId: true,
           },
         },
       },
@@ -59,6 +71,7 @@ export default async function comment(
 
     return res.status(200).json(result);
   } catch (error) {
+    console.log('error', error);
     return res.status(400).json({
       error,
       message: 'Error occurred while adding a new comment.',
