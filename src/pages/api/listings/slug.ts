@@ -16,17 +16,12 @@ const checkSlug = async (slug: string): Promise<boolean> => {
     }
     return false;
   } catch (error) {
-    console.error(
-      `Error occurred while fetching bounty with slug=${slug}.`,
-      error,
-    );
     return false;
   }
 };
 
 const generateUniqueSlug = async (title: string): Promise<string> => {
   let slug = slugify(title, { lower: true, strict: true });
-  console.log(slug);
   let slugExists = await checkSlug(slug);
   let i = 1;
 
