@@ -4,6 +4,7 @@ import axios from 'axios';
 import { useAtom } from 'jotai';
 import { useRouter } from 'next/router';
 import { useEffect, useReducer, useState } from 'react';
+import slugify from 'slugify';
 
 import { ErrorSection } from '@/components/shared/ErrorSection';
 import { SurveyModal } from '@/components/Survey';
@@ -306,18 +307,15 @@ export function CreateListing({
   const isNewOrDraft = bountyDraftStatus === 'DRAFT' || newBounty === true;
 
   useEffect(() => {
-    if (!editable) {
-      const randomString = Math.random().toString(36).substring(2, 10);
+    if (!editable && bountybasic?.title?.length) {
+      const slug = slugify(bountybasic?.title as string, {
+        lower: true,
+        strict: true,
+      });
+
       setBountyBasic({
         ...(bountybasic as BountyBasicType),
-        slug:
-          bountybasic?.title
-            ?.toLowerCase()
-            .replace(/[^\w\s]/g, '')
-            .replace(/\s+/g, '-')
-            .substring(0, 40) +
-            '-' +
-            randomString || '',
+        slug: slug,
       });
     }
   }, [bountybasic?.title]);

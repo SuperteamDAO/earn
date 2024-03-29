@@ -107,6 +107,7 @@ export const ListingBasic = ({
 
   const hasBasicInfo =
     bountyBasic?.title &&
+    bountyBasic?.slug &&
     skills.length !== 0 &&
     subSkills.length !== 0 &&
     bountyBasic?.pocSocials &&
@@ -139,7 +140,7 @@ export const ListingBasic = ({
         ...(errorState as ErrorsBasic),
         slug: true,
       });
-      setSlugErrMsg('slug is already available');
+      setSlugErrMsg('same slug is already exists.');
     } else {
       setErrorState({
         ...(errorState as ErrorsBasic),
@@ -167,7 +168,6 @@ export const ListingBasic = ({
 
   const handleSlugChange = async (value: string) => {
     const specialCharactersRegex = /[!@#$%^&*(),.?":{}|<>]/;
-
     // Check if value contains special characters
     if (specialCharactersRegex.test(value)) {
       setErrorState({
@@ -176,20 +176,8 @@ export const ListingBasic = ({
       });
       setSlugErrMsg('Slug cannot contain special characters (!@#$%&)');
       return;
-    } else if (value.length >= 40) {
-      setErrorState({
-        ...(errorState as ErrorsBasic),
-        slug: true,
-      });
-      setSlugErrMsg('number of characters should less than 40');
-      return;
     } else if (value.length > 0) {
       setSlugInput(value);
-    } else {
-      setErrorState({
-        ...(errorState as ErrorsBasic),
-        slug: false,
-      });
     }
 
     setErrorState({
@@ -199,7 +187,7 @@ export const ListingBasic = ({
 
     setbountyBasic({
       ...(bountyBasic as BountyBasicType),
-      slug: value.toLowerCase().replace(/\s+/g, '-').substring(0, 40),
+      slug: value.toLowerCase().replace(/\s+/g, '-'),
     });
   };
 
@@ -301,7 +289,7 @@ export const ListingBasic = ({
             focusBorderColor={errorState.slug ? '#E53E3E' : 'brand.purple'}
             id="slug"
             onChange={(e) => handleSlugChange(e.target.value)}
-            placeholder="develop-a-new-landing-page-1hj3hk"
+            placeholder="develop-a-new-landing-page"
             value={bountyBasic?.slug}
           />
           <FormErrorMessage>
