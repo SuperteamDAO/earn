@@ -33,6 +33,7 @@ interface Props {
   editable?: boolean;
   type: 'bounty' | 'project' | 'hackathon';
   isDuplicating?: boolean;
+  prevStep?: number;
 }
 
 export function CreateListing({
@@ -40,6 +41,7 @@ export function CreateListing({
   editable = false,
   type,
   isDuplicating = false,
+  prevStep,
 }: Props) {
   const router = useRouter();
   const { userInfo } = userStore();
@@ -48,7 +50,7 @@ export function CreateListing({
   // Description - 3
   // payment form - 4
   const [steps, setSteps] = useState<number>(
-    editable || type === 'hackathon' ? 2 : 1,
+    !!prevStep ? prevStep : editable || type === 'hackathon' ? 2 : 1,
   );
 
   const [draftLoading, setDraftLoading] = useState<boolean>(false);
