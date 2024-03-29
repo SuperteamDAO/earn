@@ -140,7 +140,7 @@ export const ListingBasic = ({
   );
 
   const isSlugUnique = async (slug: string) => {
-    const response = await fetch(`/api/listings/slug?slug=${slug}`);
+    const response = await fetch(`/api/listings/uniqueSlug?slug=${slug}`);
     const data = await response.json();
     return data;
   };
@@ -150,7 +150,7 @@ export const ListingBasic = ({
     return pattern.test(slug);
   };
 
-  const isSlugValid = () => {
+  const isSlugValid = async () => {
     setErrorState((errorState) => ({
       ...errorState,
       slug: false,
@@ -158,45 +158,41 @@ export const ListingBasic = ({
 
     if (bountyBasic?.slug && bountyBasic.slug.length > 0) {
       const slug = bountyBasic.slug;
-      isSlugUnique(slug)
-        .then((data) => {
-          if (!checkSlugPattern(slug)) {
-            setErrorState((errorState) => ({
-              ...errorState,
-              slug: true,
-            }));
-            setSlugErrorMsg(
-              'Slug Name should only contain lowercase alphabets, numbers and hyphens',
-            );
-            return false;
-          }
+      const isUniqueResponse = await isSlugUnique(slug);
+      console.log('1');
 
-          if (data.error) {
-            setErrorState((errorState) => ({
-              ...errorState,
-              slug: true,
-            }));
-            setSlugErrorMsg(
-              'Slug Name already exists. Please choose a different one.',
-            );
-            return false;
-          } else {
-            setErrorState((errorState) => ({
-              ...errorState,
-              slug: false,
-            }));
-            setSlugErrorMsg('');
-            return true;
-          }
-        })
-        .catch(() => {
-          setErrorState((errorState) => ({
-            ...errorState,
-            slug: true,
-          }));
-          setSlugErrorMsg('An error occurred while checking the slug');
-          return false;
-        });
+      if (isUniqueResponse.error) {
+        console.log('2');
+
+        setErrorState((errorState) => ({
+          ...errorState,
+          slug: true,
+        }));
+        setSlugErrorMsg(
+          'Slug Name already exists. Please choose a different one.',
+        );
+        return false;
+      }
+      if (!checkSlugPattern(slug)) {
+        setErrorState((errorState) => ({
+          ...errorState,
+          slug: true,
+        }));
+        setSlugErrorMsg(
+          'Slug Name should only contain lowercase alphabets, numbers and hyphens',
+        );
+        console.log('3');
+
+        return false;
+      }
+      console.log('4');
+
+      setErrorState((errorState) => ({
+        ...errorState,
+        slug: false,
+      }));
+      setSlugErrorMsg('');
+      return true;
     }
     return false;
   };
@@ -681,6 +677,8 @@ export const ListingBasic = ({
           <Button
             w="100%"
             onClick={async () => {
+              const slugIsValid = await isSlugValid();
+              console.log(slugIsValid);
               setErrorState({
                 deadline: !bountyBasic?.deadline,
                 skills: skills.length === 0,
@@ -688,8 +686,14 @@ export const ListingBasic = ({
                 title: !bountyBasic?.title,
                 pocSocials: !bountyBasic?.pocSocials,
                 timeToComplete: isProject ? !isTimeToCompleteValid : false,
-                slug: isSlugValid(),
+                slug: !slugIsValid,
               });
+
+              if (!slugIsValid) {
+                console.log('here');
+                return;
+              }
+
               if (isProject && !isTimeToCompleteValid) {
                 return;
               }
