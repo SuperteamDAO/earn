@@ -18,10 +18,12 @@ import {
 } from '@chakra-ui/react';
 import { Regions } from '@prisma/client';
 import axios from 'axios';
+import debounce from 'lodash.debounce';
 import { useSession } from 'next-auth/react';
 import {
   type Dispatch,
   type SetStateAction,
+  useCallback,
   useEffect,
   useMemo,
   useState,
@@ -122,6 +124,19 @@ export const ListingBasic = ({
     }
   };
 
+  const debouncedGetUniqueSlug = useCallback(
+    debounce(async () => {
+      if (bountyBasic?.title) {
+        const newSlug = await getUniqueSlug();
+        setbountyBasic((currentBountyBasic) => ({
+          ...currentBountyBasic,
+          slug: newSlug,
+        }));
+      }
+    }, 500),
+    [bountyBasic?.title],
+  );
+
   const isSlugUnique = async (slug: string) => {
     const response = await fetch(`/api/listings/slug?slug=${slug}&check=true`);
     const data = await response.json();
@@ -174,15 +189,13 @@ export const ListingBasic = ({
 
   useEffect(() => {
     if (bountyBasic?.title && shouldSlugGenerate) {
-      getUniqueSlug().then((slug) => {
-        setbountyBasic((currentBountyBasic) => ({
-          ...currentBountyBasic,
-          slug: slug,
-        }));
-      });
+      debouncedGetUniqueSlug();
     } else {
       setShouldSlugGenerate(true);
     }
+    return () => {
+      debouncedGetUniqueSlug.cancel();
+    };
   }, [bountyBasic?.title]);
 
   const hasBasicInfo =
@@ -659,7 +672,6 @@ export const ListingBasic = ({
             w="100%"
             onClick={async () => {
               const slugIsValid = await isSlugValid();
-              console.log(slugIsValid);
               setErrorState({
                 deadline: !bountyBasic?.deadline,
                 skills: skills.length === 0,
@@ -671,7 +683,6 @@ export const ListingBasic = ({
               });
 
               if (!slugIsValid) {
-                console.log('here');
                 return;
               }
 
