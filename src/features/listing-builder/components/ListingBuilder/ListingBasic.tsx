@@ -114,7 +114,7 @@ export const ListingBasic = ({
       setIsSlugGenerating(true);
       try {
         const newSlug = await axios.get(
-          `/api/listings/slug?slug=${slugify(bountyBasic.title, { lower: true, strict: true })}`,
+          `/api/listings/slug?slug=${slugify(bountyBasic.title, { lower: true, strict: true })}&check=false`,
         );
         console.log(newSlug.data.slug);
         setIsSlugGenerating(false);
@@ -141,7 +141,7 @@ export const ListingBasic = ({
   );
 
   const isSlugUnique = async (slug: string) => {
-    const response = await fetch(`/api/listings/uniqueSlug?slug=${slug}`);
+    const response = await fetch(`/api/listings/slug?slug=${slug}&check=true`);
     const data = await response.json();
     return data;
   };
