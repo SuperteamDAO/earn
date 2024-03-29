@@ -186,7 +186,10 @@ export const ListingBasic = ({
   };
 
   useEffect(() => {
-    if (bountyBasic?.title && shouldSlugGenerate) {
+    if (
+      (bountyBasic?.title && shouldSlugGenerate) ||
+      (bountyBasic?.slug === '' && shouldSlugGenerate)
+    ) {
       debouncedGetUniqueSlug();
     } else {
       setShouldSlugGenerate(true);
