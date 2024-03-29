@@ -104,6 +104,7 @@ export const ListingBasic = ({
   const [isSlugGenerating, setIsSlugGenerating] = useState(false);
   const [slugErrorMsg, setSlugErrorMsg] = useState('');
   const [isUrlValid, setIsUrlValid] = useState(true);
+  const [shouldSlugGenerate, setShouldSlugGenerate] = useState(false);
 
   const date = dayjs().format('YYYY-MM-DD');
   const thirtyDaysFromNow = dayjs().add(30, 'day').format('YYYY-MM-DDTHH:mm');
@@ -159,11 +160,7 @@ export const ListingBasic = ({
     if (bountyBasic?.slug && bountyBasic.slug.length > 0) {
       const slug = bountyBasic.slug;
       const isUniqueResponse = await isSlugUnique(slug);
-      console.log('1');
-
       if (isUniqueResponse.error) {
-        console.log('2');
-
         setErrorState((errorState) => ({
           ...errorState,
           slug: true,
@@ -181,12 +178,8 @@ export const ListingBasic = ({
         setSlugErrorMsg(
           'Slug Name should only contain lowercase alphabets, numbers and hyphens',
         );
-        console.log('3');
-
         return false;
       }
-      console.log('4');
-
       setErrorState((errorState) => ({
         ...errorState,
         slug: false,
@@ -198,7 +191,11 @@ export const ListingBasic = ({
   };
 
   useEffect(() => {
-    debouncedGetUniqueSlug();
+    if (shouldSlugGenerate) {
+      debouncedGetUniqueSlug();
+    } else {
+      setShouldSlugGenerate(true);
+    }
     return () => {
       debouncedGetUniqueSlug.cancel();
     };
