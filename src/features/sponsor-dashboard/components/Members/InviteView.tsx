@@ -102,7 +102,8 @@ export function InviteView({ invite }: Props) {
         </Stack>
         {isWalletError && (
           <Text pt={2} color={'red'}>
-            You have already signed up using the same email address.
+            You have already signed up using the same email address with another
+            sponsor.
             <br />
             Please log out, change your email address & try again.
           </Text>

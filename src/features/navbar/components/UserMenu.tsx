@@ -151,7 +151,7 @@ export function UserMenu({}) {
             fontSize="sm"
             fontWeight={600}
             onClick={() =>
-              window.open('https://discord.com/invite/Mq3ReaekgG', '_blank')
+              window.open('mailto:hello@superteamearn.com', '_blank')
             }
           >
             Get Help
