@@ -11,6 +11,7 @@ import {
   Link,
   Select,
   Switch,
+  Tag,
   Text,
   Tooltip,
   VStack,
@@ -88,6 +89,20 @@ export const ListingBasic = ({
     pocSocials: false,
     timeToComplete: false,
   });
+
+  const deadlineOptions = [
+    { label: '1 Week', value: 7 },
+    { label: '2 Weeks', value: 14 },
+    { label: '3 Weeks', value: 21 },
+  ];
+
+  const handleDeadlineSelection = (days: number) => {
+    const deadlineDate = dayjs().add(days, 'day').format('YYYY-MM-DDTHH:mm');
+    setbountyBasic({
+      ...(bountyBasic as BountyBasicType),
+      deadline: deadlineDate,
+    });
+  };
 
   const [isUrlValid, setIsUrlValid] = useState(true);
   const [suggestions, setSuggestions] = useState<
@@ -408,6 +423,24 @@ export const ListingBasic = ({
               _placeholder={{
                 color: 'brand.slate.300',
               }}
+              css={{
+                boxSizing: 'border-box',
+                padding: '.75rem',
+                position: 'relative',
+                width: '100%',
+                '&::-webkit-calendar-picker-indicator': {
+                  background: 'transparent',
+                  bottom: 0,
+                  color: 'transparent',
+                  cursor: 'pointer',
+                  height: 'auto',
+                  left: 0,
+                  position: 'absolute',
+                  right: 0,
+                  top: 0,
+                  width: 'auto',
+                },
+              }}
               focusBorderColor="brand.purple"
               id="deadline"
               min={`${date}T00:00`}
@@ -421,6 +454,26 @@ export const ListingBasic = ({
               type={'datetime-local'}
               value={bountyBasic?.deadline}
             />
+            <Flex align="flex-start" gap={1} mt={2}>
+              {deadlineOptions.map((option) => (
+                <Tag
+                  key={option.label}
+                  px={3}
+                  color="green.500"
+                  fontSize={'11px'}
+                  bg="green.100"
+                  opacity={'100%'}
+                  borderRadius={'full'}
+                  cursor="pointer"
+                  onClick={() => handleDeadlineSelection(option.value)}
+                  size={'sm'}
+                  variant="subtle"
+                >
+                  {option.label}
+                </Tag>
+              ))}
+            </Flex>
+
             <FormErrorMessage>
               {/* {errors.deadline ? <>{errors.deadline.message}</> : <></>} */}
             </FormErrorMessage>
