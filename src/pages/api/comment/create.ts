@@ -50,6 +50,19 @@ export default async function comment(
             currentSponsorId: true,
           },
         },
+        replies: {
+          include: {
+            author: {
+              select: {
+                firstName: true,
+                lastName: true,
+                photo: true,
+                username: true,
+                currentSponsorId: true,
+              },
+            },
+          },
+        },
       },
     });
 

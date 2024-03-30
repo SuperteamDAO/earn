@@ -38,6 +38,7 @@ export const Comments = ({ refId, refType, sponsorId }: Props) => {
   const [newComment, setNewComment] = useState('');
   const [newCommentLoading, setNewCommentLoading] = useState(false);
   const [newCommentError, setNewCommentError] = useState(false);
+  const [count, setCount] = useState(0);
   const inputRef = useRef<HTMLTextAreaElement>(null);
 
   const addNewComment = async () => {
@@ -49,6 +50,8 @@ export const Comments = ({ refId, refType, sponsorId }: Props) => {
         listingType: refType,
         listingId: refId,
       });
+      console.log('new comment - ', newCommentData.data);
+      setCount((count) => count + 1);
       setComments((prevComments) => [newCommentData.data, ...prevComments]);
       setNewComment('');
       setNewCommentLoading(false);
@@ -66,29 +69,31 @@ export const Comments = ({ refId, refType, sponsorId }: Props) => {
           skip,
         },
       });
-      const allComments = commentsData.data as Comment[];
+      const allComments = commentsData.data.result as Comment[];
+      console.log('all comments - ', allComments);
 
-      const commentMap = allComments.reduce(
-        (acc: Record<string, Comment>, comment) => {
-          comment.replies = [];
-          acc[comment.id] = comment;
-          return acc;
-        },
-        {},
-      );
+      // const commentMap = allComments.reduce(
+      //   (acc: Record<string, Comment>, comment) => {
+      //     comment.replies = [];
+      //     acc[comment.id] = comment;
+      //     return acc;
+      //   },
+      //   {},
+      // );
+      //
+      // allComments.forEach((comment) => {
+      //   if (comment.replyToId && commentMap[comment.replyToId]) {
+      //     commentMap[comment.replyToId]?.replies.push(comment);
+      //   }
+      // });
+      //
+      // const topLevelComments = allComments.filter(
+      //   (comment) => !comment.replyToId,
+      // );
+      // console.log('top level comments - ', topLevelComments);
 
-      allComments.forEach((comment) => {
-        if (comment.replyToId && commentMap[comment.replyToId]) {
-          commentMap[comment.replyToId]?.replies.push(comment);
-        }
-      });
-
-      const topLevelComments = allComments.filter(
-        (comment) => !comment.replyToId,
-      );
-      console.log('top level comments - ', topLevelComments);
-
-      setComments([...comments, ...topLevelComments]);
+      setCount(commentsData.data.count);
+      setComments([...comments, ...allComments]);
     } catch (e) {
       setError(true);
     }
@@ -132,14 +137,7 @@ export const Comments = ({ refId, refType, sponsorId }: Props) => {
           primaryCtaLink={'/new/talent'}
         />
       )}
-      <VStack
-        align={'start'}
-        gap={3}
-        w={'full'}
-        pb={5}
-        bg={'#FFFFFF'}
-        rounded={'xl'}
-      >
+      <VStack align={'start'} gap={4} w={'full'} bg={'#FFFFFF'} rounded={'xl'}>
         <LoginWrapper
           triggerLogin={triggerLogin}
           setTriggerLogin={setTriggerLogin}
@@ -153,7 +151,7 @@ export const Comments = ({ refId, refType, sponsorId }: Props) => {
           />
           <HStack>
             <Text color="brand.slate.900" fontSize={'1.1rem'} fontWeight={600}>
-              {comments?.length ?? 0}
+              {count}
             </Text>
             <Text color="brand.slate.900" fontSize={'1.1rem'} fontWeight={400}>
               {comments?.length === 1 ? 'Comment' : 'Comments'}
@@ -220,20 +218,31 @@ export const Comments = ({ refId, refType, sponsorId }: Props) => {
             </Flex>
           </Collapse>
         </VStack>
-        {comments?.map((comment) => {
-          return (
-            <CommentUI
-              key={comment.id}
-              comment={comment}
-              sponsorId={sponsorId}
-              refType={refType}
-              refId={refId}
-            />
-          );
-        })}
-        {!!comments.length && comments.length % 30 === 0 && (
-          <Flex justify="center" w="full">
+        <VStack gap={4} w={'full'} pb={8}>
+          {comments?.map((comment) => {
+            return (
+              <CommentUI
+                key={comment.id}
+                comment={comment}
+                sponsorId={sponsorId}
+                refType={refType}
+                refId={refId}
+              />
+            );
+          })}
+        </VStack>
+        {!!comments.length && comments.length !== count && (
+          <Flex
+            justify="center"
+            w="full"
+            py={3}
+            rounded="md"
+            style={{
+              boxShadow: '0px -1px 7px 0px rgba(193, 193, 193, 0.25)',
+            }}
+          >
             <Button
+              fontWeight={400}
               isDisabled={!!isLoading}
               isLoading={!!isLoading}
               loadingText="Fetching Comments..."

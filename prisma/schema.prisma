@@ -128,7 +128,6 @@ model Comment {
   id          String      @id @default(uuid())
   message     String      @db.VarChar(1000)
   authorId    String
-  replyToId   String?
   listingType ListingType @default(BOUNTY)
   listingId   String
   isActive    Boolean     @default(true)
@@ -136,6 +135,9 @@ model Comment {
   createdAt   DateTime    @default(now())
   updatedAt   DateTime    @updatedAt
   author      User        @relation(fields: [authorId], references: [id])
+  replyToId   String?
+  repliedTo Comment? @relation("CommentReplies", fields: [replyToId], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  replies   Comment[] @relation("CommentReplies")
 
   @@index([id, listingId])
   @@index([authorId])

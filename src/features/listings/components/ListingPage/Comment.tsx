@@ -278,7 +278,7 @@ export const Comment = ({
             </VStack>
           </Collapse>
           <Collapse animateOpacity in={showReplies} style={{ width: '100%' }}>
-            <VStack gap={1} w="full" pt={4}>
+            <VStack gap={3} w="full" pt={4}>
               {replies
                 ?.toReversed()
                 .map((reply) => (
