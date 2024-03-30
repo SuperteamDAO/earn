@@ -88,10 +88,9 @@ export const ListingBasic = ({
   });
 
   const deadlineOptions = [
-    { label: '1 Week', value: 7 }, // 7 days
-    { label: '2 Weeks', value: 14 }, // 14 days
-    { label: '3 Weeks', value: 21 }, // 21 days
-    // Add more options as needed
+    { label: '1 Week', value: 7 },
+    { label: '2 Weeks', value: 14 },
+    { label: '3 Weeks', value: 21 },
   ];
 
   const handleDeadlineSelection = (days: number) => {
@@ -410,13 +409,19 @@ export const ListingBasic = ({
               type={'datetime-local'}
               value={bountyBasic?.deadline}
             />
-            <Flex align="flex-start" gap={2} mt={4}>
+            <Flex align="flex-start" gap={1} mt={2}>
               {deadlineOptions.map((option) => (
                 <Tag
                   key={option.label}
+                  px={3}
+                  color="green.500"
+                  fontSize={'11px'}
+                  bg="green.100"
+                  opacity={'100%'}
+                  borderRadius={'full'}
                   cursor="pointer"
-                  colorScheme="purple"
                   onClick={() => handleDeadlineSelection(option.value)}
+                  size={'sm'}
                   variant="subtle"
                 >
                   {option.label}
