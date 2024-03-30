@@ -158,7 +158,10 @@ export const ListingBasic = ({
 
   const isSlugUnique = async (slug: string) => {
     try {
-      await axios.get(`/api/listings/slug?slug=${slug}&check=true&id=${id}`);
+      const listingId = editable && !isDuplicating ? id : null;
+      await axios.get(
+        `/api/listings/slug?slug=${slug}&check=true&id=${listingId}`,
+      );
       return { success: true };
     } catch (error) {
       return {
