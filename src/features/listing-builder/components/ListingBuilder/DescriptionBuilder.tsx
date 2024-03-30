@@ -346,18 +346,16 @@ export const DescriptionBuilder = ({
           <ChakraLink
             gap={1}
             display="flex"
-            color="GrayText"
-            fontSize="14px"
+            color="brand.slate.400"
+            fontSize={'13px'}
             _hover={{
               textDecoration: 'none',
+              color: 'brand.slate.500',
             }}
             href="https://chat.openai.com/g/g-HS6eWTMku-st-earn-listings-bot"
             target="_blank"
           >
-            {' '}
-            <Text pos="relative" top={'-2px'} textDecoration="none">
-              🤖
-            </Text>
+            <Text textDecoration="none">🤖</Text>
             <Text textDecoration="underline" textUnderlineOffset={2}>
               Go live in {'<1'} min by using our drafting bot (ChatGPT 4
               Required)
