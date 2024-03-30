@@ -29,6 +29,7 @@ interface Props {
   refType: 'BOUNTY' | 'SUBMISSION';
   sponsorId: string | undefined;
   isReply?: boolean;
+  addNewReply?: (msg: string) => Promise<void>;
 }
 
 export const Comment = ({
@@ -37,6 +38,7 @@ export const Comment = ({
   refId,
   refType,
   isReply = false,
+  addNewReply,
 }: Props) => {
   const { userInfo } = userStore();
 
@@ -49,36 +51,42 @@ export const Comment = ({
   const [newReplyError, setNewReplyError] = useState(false);
   const inputRef = useRef<HTMLTextAreaElement>(null);
 
-  const addNewComment = async () => {
-    setNewReplyLoading(true);
-    setNewReplyError(false);
-    try {
-      const newReplyData = await axios.post(`/api/comment/create`, {
-        message: newReply,
-        listingType: refType,
-        listingId: refId,
-        replyToId: comment?.id ?? null,
-      });
-      setReplies((prevReplies) => [newReplyData.data, ...prevReplies]);
-      setNewReply('');
-      setNewReplyLoading(false);
-      setShowReplyInput(false);
-    } catch (e) {
-      console.log('error - ', e);
-      setNewReplyError(true);
-      setNewReplyLoading(false);
-    }
+  const addNewReplyLvl1 = async (msg: string) => {
+    const newReplyData = await axios.post(`/api/comment/create`, {
+      message: msg,
+      listingType: refType,
+      listingId: refId,
+      replyToId: comment?.id ?? null,
+    });
+    setReplies((prevReplies) => [newReplyData.data, ...prevReplies]);
   };
 
   const date = formatFromNow(dayjs(comment?.updatedAt).fromNow());
 
-  const handleSubmit = () => {
+  const handleSubmit = async () => {
     if (!userInfo?.id) {
       setTriggerLogin(true);
     } else if (!userInfo?.isTalentFilled) {
       onOpen();
     } else {
-      addNewComment();
+      try {
+        setNewReplyLoading(true);
+        setNewReplyError(false);
+
+        if (addNewReply) {
+          await addNewReply(newReply);
+        } else {
+          await addNewReplyLvl1(newReply);
+        }
+
+        setNewReply('');
+        setNewReplyLoading(false);
+        setShowReplyInput(false);
+      } catch (e) {
+        console.log('error - ', e);
+        setNewReplyError(true);
+        setNewReplyLoading(false);
+      }
     }
   };
 
@@ -228,6 +236,9 @@ export const Comment = ({
                     _hover={{
                       bg: 'brand.slate.300',
                     }}
+                    _active={{
+                      bg: 'brand.slate.400',
+                    }}
                     isDisabled={!!newReplyLoading || !newReply}
                     isLoading={!!newReplyLoading}
                     loadingText="Adding..."
@@ -240,16 +251,19 @@ export const Comment = ({
             </VStack>
           </Collapse>
           <VStack gap={1} w="full" pt={4}>
-            {replies.map((reply) => (
-              <Comment
-                isReply
-                key={reply.id}
-                refType={refType}
-                sponsorId={sponsorId}
-                comment={reply}
-                refId={refId}
-              />
-            ))}
+            {replies
+              ?.toReversed()
+              .map((reply) => (
+                <Comment
+                  addNewReply={addNewReplyLvl1}
+                  isReply
+                  key={reply.id}
+                  refType={refType}
+                  sponsorId={sponsorId}
+                  comment={reply}
+                  refId={refId}
+                />
+              ))}
           </VStack>
         </VStack>
       </HStack>

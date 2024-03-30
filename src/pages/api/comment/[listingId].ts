@@ -28,6 +28,7 @@ export default async function comment(
             lastName: true,
             photo: true,
             username: true,
+            currentSponsorId: true,
           },
         },
       },

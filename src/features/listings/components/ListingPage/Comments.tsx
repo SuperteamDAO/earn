@@ -1,5 +1,6 @@
 import {
   Button,
+  Collapse,
   Flex,
   HStack,
   Text,
@@ -8,15 +9,17 @@ import {
   VStack,
 } from '@chakra-ui/react';
 import axios from 'axios';
-import { useEffect, useState } from 'react';
-import { GoCommentDiscussion } from 'react-icons/go';
+import Image from 'next/image';
+import { useEffect, useRef, useState } from 'react';
 
 import { LoginWrapper } from '@/components/LoginWrapper';
 import { ErrorInfo } from '@/components/shared/ErrorInfo';
 import { Loading } from '@/components/shared/Loading';
+import { UserAvatar } from '@/components/shared/UserAvatar';
 import type { Comment } from '@/interface/comments';
 import { userStore } from '@/store/user';
 
+import { autoResize } from '../../utils';
 import { WarningModal } from '../WarningModal';
 import { Comment as CommentUI } from './Comment';
 
@@ -35,6 +38,7 @@ export const Comments = ({ refId, refType, sponsorId }: Props) => {
   const [newComment, setNewComment] = useState('');
   const [newCommentLoading, setNewCommentLoading] = useState(false);
   const [newCommentError, setNewCommentError] = useState(false);
+  const inputRef = useRef<HTMLTextAreaElement>(null);
 
   const addNewComment = async () => {
     setNewCommentLoading(true);
@@ -106,6 +110,10 @@ export const Comments = ({ refId, refType, sponsorId }: Props) => {
     }
   };
 
+  useEffect(() => {
+    if (inputRef.current) autoResize(inputRef.current);
+  }, [newComment]);
+
   if (isLoading && !comments?.length) return <Loading />;
 
   if (error) return <ErrorInfo />;
@@ -137,45 +145,80 @@ export const Comments = ({ refId, refType, sponsorId }: Props) => {
           setTriggerLogin={setTriggerLogin}
         />
         <HStack w={'full'} px={6} pt={4}>
-          <GoCommentDiscussion fontWeight={600} fontSize={'1.5rem'} />
+          <Image
+            width={21}
+            height={18}
+            alt="Comments Icon"
+            src="/assets/icons/comments.svg"
+          />
           <HStack>
-            <Text color={'#64758B'} fontSize={'1.1rem'} fontWeight={600}>
+            <Text color="brand.slate.900" fontSize={'1.1rem'} fontWeight={600}>
               {comments?.length ?? 0}
             </Text>
-            <Text color={'#64758B'} fontSize={'1.1rem'} fontWeight={400}>
+            <Text color="brand.slate.900" fontSize={'1.1rem'} fontWeight={400}>
               {comments?.length === 1 ? 'Comment' : 'Comments'}
             </Text>
           </HStack>
         </HStack>
-        <VStack w={'full'} px={6}>
-          <Textarea
-            borderColor="brand.slate.300"
-            _placeholder={{
-              color: 'brand.slate.300',
-            }}
-            focusBorderColor="brand.purple"
-            onChange={(e) => {
-              setNewComment(e.target.value);
-            }}
-            placeholder="Write a comment..."
-            value={newComment}
-          ></Textarea>
+        <VStack gap={4} w={'full'} mb={4} px={6}>
+          <HStack align="start" gap={3} w="full">
+            <UserAvatar user={userInfo} size="36px" />
+            <Textarea
+              ref={inputRef}
+              overflowY="hidden"
+              h="auto"
+              pt={0}
+              fontSize="sm"
+              borderColor="brand.slate.200"
+              _placeholder={{
+                color: 'brand.slate.400',
+              }}
+              resize="none"
+              focusBorderColor="brand.purple"
+              onChange={(e) => {
+                setNewComment(e.target.value);
+              }}
+              placeholder="Write a comment"
+              rows={1}
+              value={newComment}
+              variant="flushed"
+            />
+          </HStack>
           {!!newCommentError && (
             <Text mt={4} color="red">
               Error in adding your comment! Please try again!
             </Text>
           )}
-          <Flex justify={'end'} w="full">
-            <Button
-              isDisabled={!!newCommentLoading || !newComment}
-              isLoading={!!newCommentLoading}
-              loadingText="Adding..."
-              onClick={() => handleSubmit()}
-              variant="solid"
-            >
-              Comment
-            </Button>
-          </Flex>
+          <Collapse animateOpacity in={!!newComment} style={{ width: '100%' }}>
+            <Flex justify={'end'} gap={4} w="full">
+              <Button
+                h="auto"
+                px={5}
+                py={2}
+                fontSize="xxs"
+                fontWeight={500}
+                isDisabled={!!newCommentLoading || !newComment}
+                onClick={() => setNewComment('')}
+                variant="ghost"
+              >
+                Cancel
+              </Button>
+              <Button
+                h="auto"
+                px={5}
+                py={2}
+                fontSize="xxs"
+                fontWeight={500}
+                isDisabled={!!newCommentLoading || !newComment}
+                isLoading={!!newCommentLoading}
+                loadingText="Adding..."
+                onClick={() => handleSubmit()}
+                variant="solid"
+              >
+                Comment
+              </Button>
+            </Flex>
+          </Collapse>
         </VStack>
         {comments?.map((comment) => {
           return (
