@@ -22,7 +22,6 @@ export default async function handler(
       if (user.isTalentFilled) {
         categories.add('weeklyListingRoundup');
         categories.add('createListing');
-        categories.add('updateListing');
         categories.add('commentOrLikeSubmission');
         categories.add('productAndNewsletter');
       }

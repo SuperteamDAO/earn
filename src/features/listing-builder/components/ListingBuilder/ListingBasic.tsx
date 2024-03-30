@@ -1,3 +1,4 @@
+import { ExternalLinkIcon } from '@chakra-ui/icons';
 import {
   Box,
   Button,
@@ -9,6 +10,7 @@ import {
   Input,
   InputGroup,
   InputRightElement,
+  Link,
   Select,
   Spinner,
   Switch,
@@ -36,6 +38,7 @@ import { Superteams } from '@/constants/Superteam';
 import { dayjs } from '@/utils/dayjs';
 
 import type { SuperteamName } from '../../types';
+import { getSuggestions } from '../../utils';
 import type { BountyBasicType } from '../CreateListingForm';
 import { SelectSponsor } from '../SelectSponsor';
 
@@ -106,7 +109,16 @@ export const ListingBasic = ({
   const [isSlugGenerating, setIsSlugGenerating] = useState(false);
   const [slugErrorMsg, setSlugErrorMsg] = useState('');
   const [isUrlValid, setIsUrlValid] = useState(true);
+
   const [shouldSlugGenerate, setShouldSlugGenerate] = useState(false);
+
+  const [suggestions, setSuggestions] = useState<
+    {
+      label: string;
+      link: string;
+    }[]
+  >([]);
+
 
   const date = dayjs().format('YYYY-MM-DD');
   const thirtyDaysFromNow = dayjs().add(30, 'day').format('YYYY-MM-DDTHH:mm');
@@ -288,11 +300,17 @@ export const ListingBasic = ({
             }}
             focusBorderColor="brand.purple"
             id="title"
+            onBlur={() => {
+              setSuggestions(getSuggestions(bountyBasic?.title, type));
+            }}
             onChange={(e) => {
               setbountyBasic({
                 ...(bountyBasic as BountyBasicType),
                 title: e.target.value,
               });
+              if (suggestions.length > 0) {
+                setSuggestions(getSuggestions(e.target.value, type));
+              }
             }}
             placeholder="Develop a new landing page"
             value={bountyBasic?.title}
@@ -300,6 +318,36 @@ export const ListingBasic = ({
           <FormErrorMessage>
             {/* {errors.title ? <>{errors.title.message}</> : <></>} */}
           </FormErrorMessage>
+          {suggestions.length > 0 && (
+            <Flex
+              gap={1}
+              mt={1.5}
+              color="green.500"
+              fontSize={'xs'}
+              fontWeight={500}
+              fontStyle="italic"
+            >
+              <Text w="max-content">Similar Listings:</Text>
+              <Flex align="center" wrap="wrap" columnGap={1.5}>
+                {suggestions.map((suggestion, index) => (
+                  <Flex key={suggestion.link} align="center" gap={2}>
+                    <Link
+                      key={suggestion.link}
+                      href={suggestion.link}
+                      isExternal
+                      target="_blank"
+                    >
+                      {suggestion.label}
+                      {suggestions.length - 1 !== index && ';'}
+                    </Link>
+                    {suggestions.length - 1 === index && (
+                      <ExternalLinkIcon color="brand.slate.400" />
+                    )}
+                  </Flex>
+                ))}
+              </Flex>
+            </Flex>
+          )}
         </FormControl>
         <FormControl w="full" mb={5} isInvalid={errorState.slug} isRequired>
           <Flex>
