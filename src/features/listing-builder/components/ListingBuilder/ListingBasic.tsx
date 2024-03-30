@@ -119,7 +119,6 @@ export const ListingBasic = ({
     }[]
   >([]);
 
-
   const date = dayjs().format('YYYY-MM-DD');
   const thirtyDaysFromNow = dayjs().add(30, 'day').format('YYYY-MM-DDTHH:mm');
 
