@@ -412,7 +412,7 @@ export const ListingBasic = ({
               type={'datetime-local'}
               value={bountyBasic?.deadline}
             />
-            <VStack align="flex-start" gap={2} mt={4}>
+            <Flex align="flex-start" gap={2} mt={4}>
               {deadlineOptions.map((option) => (
                 <Tag
                   key={option.label}
@@ -424,7 +424,7 @@ export const ListingBasic = ({
                   {option.label}
                 </Tag>
               ))}
-            </VStack>
+            </Flex>
 
             <FormErrorMessage>
               {/* {errors.deadline ? <>{errors.deadline.message}</> : <></>} */}
