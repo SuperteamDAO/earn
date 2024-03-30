@@ -380,9 +380,7 @@ export const ListingBasic = ({
                 color: 'brand.slate.300',
               }}
               css={{
-                border: 'none',
                 boxSizing: 'border-box',
-                outline: 0,
                 padding: '.75rem',
                 position: 'relative',
                 width: '100%',
