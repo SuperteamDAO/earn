@@ -128,7 +128,6 @@ export const ListingBasic = ({
         setIsSlugGenerating(false);
         return newSlug.data.slug;
       } catch (error) {
-        console.error('Error generating slug:', error);
         setIsSlugGenerating(false);
         throw error;
       }
@@ -200,7 +199,12 @@ export const ListingBasic = ({
   };
 
   useEffect(() => {
-    if (shouldSlugGenerate) {
+    if (
+      (bountyBasic?.title && shouldSlugGenerate) ||
+      (bountyBasic?.title &&
+        !bountyBasic?.slug &&
+        bountyBasic.templateId !== undefined)
+    ) {
       debouncedGetUniqueSlug();
     } else {
       setShouldSlugGenerate(true);
@@ -208,7 +212,7 @@ export const ListingBasic = ({
     return () => {
       debouncedGetUniqueSlug.cancel();
     };
-  }, [debouncedGetUniqueSlug]);
+  }, [bountyBasic?.title]);
 
   const hasBasicInfo =
     bountyBasic?.title &&
