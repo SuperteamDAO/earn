@@ -183,11 +183,13 @@ export const ListingBasic = ({
           ...errorState,
           slug: true,
         }));
+
         setSlugErrorMsg(
           'Slug should only contain lowercase alphabets, numbers and hyphens',
         );
         return false;
       }
+
       setErrorState((errorState) => ({
         ...errorState,
         slug: false,
@@ -195,15 +197,17 @@ export const ListingBasic = ({
       setSlugErrorMsg('');
       return true;
     }
+
     return false;
   };
 
   useEffect(() => {
     if (
-      (bountyBasic?.title && shouldSlugGenerate) ||
+      (bountyBasic?.title && shouldSlugGenerate && !editable) ||
       (bountyBasic?.title &&
         !bountyBasic?.slug &&
-        bountyBasic.templateId !== undefined)
+        bountyBasic.templateId !== undefined &&
+        !editable)
     ) {
       debouncedGetUniqueSlug();
     } else {
