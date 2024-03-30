@@ -28,7 +28,7 @@ interface TotalType {
 }
 interface HomeProps {
   children: ReactNode;
-  type: 'home' | 'category' | 'region';
+  type: 'home' | 'category' | 'region' | 'niche';
 }
 
 export function Home({ children, type }: HomeProps) {
@@ -78,8 +78,14 @@ export function Home({ children, type }: HomeProps) {
           <Flex
             w="full"
             pr={{ base: 0, lg: 6 }}
-            borderRight={{ base: 'none', lg: '1px solid' }}
-            borderRightColor={{ base: 'none', lg: 'blackAlpha.200' }}
+            borderRight={{
+              base: 'none',
+              lg: type === 'niche' ? 'none' : '1px solid',
+            }}
+            borderRightColor={{
+              base: 'none',
+              lg: 'blackAlpha.200',
+            }}
           >
             <LoginWrapper
               triggerLogin={triggerLogin}
@@ -148,21 +154,23 @@ export function Home({ children, type }: HomeProps) {
               {children}
             </Box>
           </Flex>
-          <Flex
-            display={{
-              base: 'none',
-              lg: 'flex',
-            }}
-            marginInlineStart={'0 !important'}
-          >
-            <HomeSideBar
-              isTotalLoading={isTotalLoading}
-              total={totals?.totalInUSD ?? 0}
-              listings={totals?.count ?? 0}
-              earners={recentEarners ?? []}
-              userInfo={userInfo! || {}}
-            />
-          </Flex>
+          {type !== 'niche' && (
+            <Flex
+              display={{
+                base: 'none',
+                lg: 'flex',
+              }}
+              marginInlineStart={'0 !important'}
+            >
+              <HomeSideBar
+                isTotalLoading={isTotalLoading}
+                total={totals?.totalInUSD ?? 0}
+                listings={totals?.count ?? 0}
+                earners={recentEarners ?? []}
+                userInfo={userInfo! || {}}
+              />
+            </Flex>
+          )}
         </HStack>
       </Container>
     </Default>
