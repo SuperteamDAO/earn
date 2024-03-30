@@ -12,6 +12,7 @@ const theme = extendTheme({
     brand: {
       purple: '#6366F1',
       'purple.light': '#7471ff',
+      'purple.dark': '#4F46E5',
       slate: {
         100: '#f1f5f9',
         200: '#e2e8f0',

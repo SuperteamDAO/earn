@@ -45,6 +45,7 @@ export const Comment = ({
   const { isOpen, onOpen, onClose } = useDisclosure();
   const [triggerLogin, setTriggerLogin] = useState(false);
   const [showReplyInput, setShowReplyInput] = useState(false);
+  const [showReplies, setShowReplies] = useState(false);
   const [replies, setReplies] = useState(comment?.replies ?? []);
   const [newReply, setNewReply] = useState('');
   const [newReplyLoading, setNewReplyLoading] = useState(false);
@@ -173,6 +174,32 @@ export const Comment = ({
             {comment?.message}
           </Text>
           <HStack pt={2}>
+            {replies?.length > 0 && (
+              <Button
+                pos="relative"
+                left="-3px"
+                color="brand.purple.dark"
+                fontSize="xs"
+                bg="none"
+                onClick={() => setShowReplies((prev) => !prev)}
+                variant="link"
+              >
+                <svg
+                  style={{ marginRight: '4px' }}
+                  width="7"
+                  height="4"
+                  viewBox="0 0 7 4"
+                  fill="none"
+                  xmlns="http://www.w3.org/2000/svg"
+                >
+                  <path
+                    d="M0.375 0.25L3.5 3.375L6.625 0.25H0.375Z"
+                    fill="#4F46E5"
+                  />
+                </svg>
+                {replies?.length} {replies?.length === 1 ? 'Reply' : 'Replies'}
+              </Button>
+            )}
             <Button
               pos="relative"
               left="-3px"
@@ -250,21 +277,23 @@ export const Comment = ({
               </Collapse>
             </VStack>
           </Collapse>
-          <VStack gap={1} w="full" pt={4}>
-            {replies
-              ?.toReversed()
-              .map((reply) => (
-                <Comment
-                  addNewReply={addNewReplyLvl1}
-                  isReply
-                  key={reply.id}
-                  refType={refType}
-                  sponsorId={sponsorId}
-                  comment={reply}
-                  refId={refId}
-                />
-              ))}
-          </VStack>
+          <Collapse animateOpacity in={showReplies} style={{ width: '100%' }}>
+            <VStack gap={1} w="full" pt={4}>
+              {replies
+                ?.toReversed()
+                .map((reply) => (
+                  <Comment
+                    addNewReply={addNewReplyLvl1}
+                    isReply
+                    key={reply.id}
+                    refType={refType}
+                    sponsorId={sponsorId}
+                    comment={reply}
+                    refId={refId}
+                  />
+                ))}
+            </VStack>
+          </Collapse>
         </VStack>
       </HStack>
     </>
