@@ -39,17 +39,14 @@ export default async function handler(
       if (bounty?.slug === slug) {
         return res.status(200).json({ slugExists: true });
       }
+    }
+    const slugExists = await checkSlug(slug as string);
+    if (slugExists) {
+      res.status(400).json({ slugExists: true, error: 'Slug already exists' });
+      return;
     } else {
-      const slugExists = await checkSlug(slug as string);
-      if (slugExists) {
-        res
-          .status(400)
-          .json({ slugExists: true, error: 'Slug already exists' });
-        return;
-      } else {
-        res.status(200).json({ slugExists });
-        return;
-      }
+      res.status(200).json({ slugExists });
+      return;
     }
   } else {
     const newSlug = await generateUniqueSlug(slug as string);

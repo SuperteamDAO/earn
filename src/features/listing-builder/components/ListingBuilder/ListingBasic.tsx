@@ -102,6 +102,7 @@ export const ListingBasic = ({
     pocSocials: false,
     timeToComplete: false,
   });
+
   const [isSlugGenerating, setIsSlugGenerating] = useState(false);
   const [slugErrorMsg, setSlugErrorMsg] = useState('');
   const [isUrlValid, setIsUrlValid] = useState(true);
@@ -127,7 +128,9 @@ export const ListingBasic = ({
         setIsSlugGenerating(false);
         return newSlug.data.slug;
       } catch (error) {
+        console.error('Error generating slug:', error);
         setIsSlugGenerating(false);
+        throw error;
       }
     }
   };
@@ -144,11 +147,14 @@ export const ListingBasic = ({
   );
 
   const isSlugUnique = async (slug: string) => {
-    const response = await fetch(
-      `/api/listings/slug?slug=${slug}&check=true&id=${id}`,
-    );
-    const data = await response.json();
-    return data;
+    try {
+      await axios.get(`/api/listings/slug?slug=${slug}&check=true&id=${id}`);
+      return { success: true };
+    } catch (error) {
+      return {
+        success: false,
+      };
+    }
   };
 
   const checkSlugPattern = (slug: string) => {
@@ -165,7 +171,7 @@ export const ListingBasic = ({
     if (bountyBasic?.slug && bountyBasic.slug.length > 0) {
       const slug = bountyBasic.slug;
       const isUniqueResponse = await isSlugUnique(slug);
-      if (isUniqueResponse.error) {
+      if (!isUniqueResponse.success) {
         setErrorState((errorState) => ({
           ...errorState,
           slug: true,
@@ -194,10 +200,7 @@ export const ListingBasic = ({
   };
 
   useEffect(() => {
-    if (
-      (bountyBasic?.title && shouldSlugGenerate) ||
-      (bountyBasic?.title && !bountyBasic?.slug && bountyBasic.templateId)
-    ) {
+    if (shouldSlugGenerate) {
       debouncedGetUniqueSlug();
     } else {
       setShouldSlugGenerate(true);
@@ -205,21 +208,7 @@ export const ListingBasic = ({
     return () => {
       debouncedGetUniqueSlug.cancel();
     };
-  }, [bountyBasic?.title, debouncedGetUniqueSlug, shouldSlugGenerate]);
-
-  useEffect(() => {
-    if (bountyBasic?.slug) {
-      if (!checkSlugPattern(bountyBasic.slug)) {
-        setErrorState((errorState) => ({
-          ...errorState,
-          slug: true,
-        }));
-        setSlugErrorMsg(
-          'Slug Name should only contain lowercase alphabets, numbers and hyphens',
-        );
-      }
-    }
-  }, [bountyBasic?.slug]);
+  }, [debouncedGetUniqueSlug]);
 
   const hasBasicInfo =
     bountyBasic?.title &&
