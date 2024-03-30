@@ -9,6 +9,7 @@ import {
   Input,
   Select,
   Switch,
+  Tag,
   Text,
   Tooltip,
   VStack,
@@ -85,6 +86,21 @@ export const ListingBasic = ({
     pocSocials: false,
     timeToComplete: false,
   });
+
+  const deadlineOptions = [
+    { label: '1 Week', value: 7 }, // 7 days
+    { label: '2 Weeks', value: 14 }, // 14 days
+    { label: '3 Weeks', value: 21 }, // 21 days
+    // Add more options as needed
+  ];
+
+  const handleDeadlineSelection = (days: number) => {
+    const deadlineDate = dayjs().add(days, 'day').format('YYYY-MM-DDTHH:mm');
+    setbountyBasic({
+      ...(bountyBasic as BountyBasicType),
+      deadline: deadlineDate,
+    });
+  };
 
   const [isUrlValid, setIsUrlValid] = useState(true);
 
@@ -363,6 +379,26 @@ export const ListingBasic = ({
               _placeholder={{
                 color: 'brand.slate.300',
               }}
+              css={{
+                border: 'none',
+                boxSizing: 'border-box',
+                outline: 0,
+                padding: '.75rem',
+                position: 'relative',
+                width: '100%',
+                '&::-webkit-calendar-picker-indicator': {
+                  background: 'transparent',
+                  bottom: 0,
+                  color: 'transparent',
+                  cursor: 'pointer',
+                  height: 'auto',
+                  left: 0,
+                  position: 'absolute',
+                  right: 0,
+                  top: 0,
+                  width: 'auto',
+                },
+              }}
               focusBorderColor="brand.purple"
               id="deadline"
               min={`${date}T00:00`}
@@ -376,6 +412,20 @@ export const ListingBasic = ({
               type={'datetime-local'}
               value={bountyBasic?.deadline}
             />
+            <VStack align="flex-start" gap={2} mt={4}>
+              {deadlineOptions.map((option) => (
+                <Tag
+                  key={option.label}
+                  cursor="pointer"
+                  colorScheme="purple"
+                  onClick={() => handleDeadlineSelection(option.value)}
+                  variant="subtle"
+                >
+                  {option.label}
+                </Tag>
+              ))}
+            </VStack>
+
             <FormErrorMessage>
               {/* {errors.deadline ? <>{errors.deadline.message}</> : <></>} */}
             </FormErrorMessage>
