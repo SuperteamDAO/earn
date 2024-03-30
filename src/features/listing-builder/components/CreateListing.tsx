@@ -133,6 +133,7 @@ export function CreateListing({
           ? `${bounty.title} (2)`
           : bounty?.title) || undefined
       : undefined,
+    slug: editable ? bounty?.slug || undefined : undefined,
     deadline:
       !isDuplicating && editable && bounty?.deadline
         ? dayjs(bounty?.deadline).format('YYYY-MM-DDTHH:mm') || undefined
@@ -384,6 +385,7 @@ export function CreateListing({
           )}
           {steps > 1 && (
             <CreateListingForm
+              id={bounty?.id}
               type={type}
               regions={regions}
               setRegions={setRegions}
