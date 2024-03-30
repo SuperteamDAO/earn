@@ -190,36 +190,28 @@ export const ListingBasic = ({
           </FormErrorMessage>
           {suggestions.length > 0 && (
             <Flex
-              align="start"
               gap={1}
-              mt={2}
-              color="#318C5B"
-              fontSize={14}
-              fontWeight={600}
+              mt={1.5}
+              color="green.500"
+              fontSize={'xs'}
+              fontWeight={500}
               fontStyle="italic"
             >
-              <Box>
-                <Text w="max-content">Similar Listings:</Text>
-              </Box>
-              <Flex align="center" wrap="wrap" columnGap={2}>
+              <Text w="max-content">Similar Listings:</Text>
+              <Flex align="center" wrap="wrap" columnGap={1.5}>
                 {suggestions.map((suggestion, index) => (
                   <Flex key={suggestion.link} align="center" gap={2}>
                     <Link
                       key={suggestion.link}
-                      w="max-content"
                       href={suggestion.link}
                       isExternal
-                      tabIndex={-1}
                       target="_blank"
                     >
                       {suggestion.label}
                       {suggestions.length - 1 !== index && ';'}
                     </Link>
                     {suggestions.length - 1 === index && (
-                      <ExternalLinkIcon
-                        color="GrayText"
-                        display="inline-block"
-                      />
+                      <ExternalLinkIcon color="brand.slate.400" />
                     )}
                   </Flex>
                 ))}
