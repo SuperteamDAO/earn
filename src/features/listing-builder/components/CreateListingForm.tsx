@@ -57,6 +57,7 @@ interface Props {
   isPrivate: boolean;
   setIsPrivate: Dispatch<SetStateAction<boolean>>;
   bountyPaymentDispatch: any;
+  publishedAt?: string;
 }
 export const CreateListingForm = ({
   id,
@@ -93,6 +94,7 @@ export const CreateListingForm = ({
   isPrivate,
   setIsPrivate,
   bountyPaymentDispatch,
+  publishedAt,
 }: Props) => {
   // handles the info from basic form
 
@@ -120,6 +122,7 @@ export const CreateListingForm = ({
           setReferredBy={setReferredBy}
           isPrivate={isPrivate}
           setIsPrivate={setIsPrivate}
+          publishedAt={publishedAt}
         />
       )}
       {steps === 3 && (
