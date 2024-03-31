@@ -17,7 +17,7 @@ import { tokenList } from '@/constants';
 import { dayjs } from '@/utils/dayjs';
 
 import type { Bounty } from '../types';
-import { CompensationAmount } from './ListingPage';
+import { CompensationAmount } from './ListingPage/CompensationAmount';
 
 export const ListingCardSkeleton = () => {
   return (

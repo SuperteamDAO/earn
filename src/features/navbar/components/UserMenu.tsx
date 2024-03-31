@@ -92,26 +92,26 @@ export function UserMenu({}) {
         </MenuButton>
         <MenuList>
           {userInfo?.isTalentFilled && (
-            <MenuItem
-              as={NextLink}
-              color="brand.slate.500"
-              fontSize="sm"
-              fontWeight={600}
-              href={`/t/${userInfo?.username}`}
-            >
-              Profile
-            </MenuItem>
-          )}
-          {userInfo?.isTalentFilled && (
-            <MenuItem
-              as={NextLink}
-              color="brand.slate.500"
-              fontSize="sm"
-              fontWeight={600}
-              href={`/t/${userInfo?.username}/edit`}
-            >
-              Edit Profile
-            </MenuItem>
+            <>
+              <MenuItem
+                as={NextLink}
+                color="brand.slate.500"
+                fontSize="sm"
+                fontWeight={600}
+                href={`/t/${userInfo?.username}`}
+              >
+                Profile
+              </MenuItem>
+              <MenuItem
+                as={NextLink}
+                color="brand.slate.500"
+                fontSize="sm"
+                fontWeight={600}
+                href={`/t/${userInfo?.username}/edit`}
+              >
+                Edit Profile
+              </MenuItem>
+            </>
           )}
           {!!userInfo?.currentSponsorId && (
             <>

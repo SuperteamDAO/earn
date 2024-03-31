@@ -123,24 +123,32 @@ const Grants = ({ slug }: GrantsDetailsProps) => {
                 </HStack>
 
                 <Box w={'full'} px={10}>
-                  <Button
-                    as={Link}
+                  <Flex
                     pos={{ base: 'fixed', md: 'static' }}
                     zIndex={999}
-                    bottom={5}
+                    bottom={0}
                     left="50%"
-                    w={{ base: '96%', md: 'full' }}
-                    _hover={{
-                      textDecoration: 'none',
-                    }}
+                    w="full"
+                    px={{ base: 3, md: 0 }}
+                    py={{ base: 4, md: 0 }}
+                    bg="white"
                     transform={{ base: 'translateX(-50%)', md: 'none' }}
-                    href={grants?.link}
-                    isExternal
-                    size="lg"
-                    variant="solid"
                   >
-                    Submit Now
-                  </Button>
+                    <Button
+                      as={Link}
+                      zIndex={999}
+                      w="full"
+                      _hover={{
+                        textDecoration: 'none',
+                      }}
+                      href={grants?.link}
+                      isExternal
+                      size="lg"
+                      variant="solid"
+                    >
+                      Submit Now
+                    </Button>
+                  </Flex>
                 </Box>
               </Flex>
             </HStack>
