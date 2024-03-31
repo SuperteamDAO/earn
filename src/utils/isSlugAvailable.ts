@@ -17,7 +17,7 @@ export const isSlugAvailable = async (
 
 // either resolves with true, or throws the validation error
 export const isSlugValid = async (slug: string, type: BountyType) => {
-  if (!/[a-zA-Z0-9\-]+/g.test(slug))
+  if (!/^[a-zA-Z0-9\-]+$/g.test(slug))
     return Promise.reject(
       'Only letters (a-z), numbers (0-9) and hyphens (-) are allowed.',
     );
