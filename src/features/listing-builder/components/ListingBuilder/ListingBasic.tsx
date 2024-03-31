@@ -15,12 +15,21 @@ import {
 } from '@chakra-ui/react';
 import { Regions } from '@prisma/client';
 import { useSession } from 'next-auth/react';
-import { type Dispatch, type SetStateAction, useMemo, useState } from 'react';
+import {
+  type Dispatch,
+  type SetStateAction,
+  useCallback,
+  useEffect,
+  useMemo,
+  useState,
+} from 'react';
+import slugify from 'slugify';
 
 import { SkillSelect } from '@/components/misc/SkillSelect';
 import type { MultiSelectOptions } from '@/constants';
 import { Superteams } from '@/constants/Superteam';
 import { dayjs } from '@/utils/dayjs';
+import { isSlugValid } from '@/utils/isSlugAvailable';
 
 import type { SuperteamName } from '../../types';
 import type { BountyBasicType } from '../CreateListingForm';
@@ -55,7 +64,9 @@ interface ErrorsBasic {
   subSkills: boolean;
   pocSocials: boolean;
   timeToComplete: boolean;
+  slug: boolean | string;
 }
+
 export const ListingBasic = ({
   setbountyBasic,
   setSteps,
@@ -84,6 +95,7 @@ export const ListingBasic = ({
     skills: false,
     pocSocials: false,
     timeToComplete: false,
+    slug: false,
   });
 
   const [isUrlValid, setIsUrlValid] = useState(true);
@@ -112,9 +124,52 @@ export const ListingBasic = ({
     );
   }, [bountyBasic?.timeToComplete, timeToCompleteOptions]);
 
+  const checkIfValidSlug = useCallback(() => {
+    if (!bountyBasic?.slug) {
+      setErrorState((errors) => ({
+        ...(errors || {}),
+        slug: false,
+      }));
+    }
+    if (bountyBasic?.title && !bountyBasic?.slug) {
+      setErrorState((errors) => ({
+        ...(errors || {}),
+        slug: false,
+      }));
+    } else if (bountyBasic?.slug) {
+      isSlugValid(bountyBasic.slug, 'bounty')
+        .then((valid) => {
+          setErrorState((errors) => ({
+            ...(errors || {}),
+            slug: !valid,
+          }));
+        })
+        .catch((err) => {
+          setErrorState((errors) => ({
+            ...(errors || {}),
+            slug: err,
+          }));
+        });
+    }
+  }, [bountyBasic?.slug, bountyBasic?.title]);
+
   const isProject = type === 'project';
 
   const { data: session } = useSession();
+
+  // generate the slug when name changes
+  useEffect(() => {
+    let slug = '';
+    if (bountyBasic?.title) {
+      slug = slugify(bountyBasic.title, {
+        lower: true,
+      });
+    }
+    setbountyBasic((prevBountyBasic) => ({
+      ...(prevBountyBasic ?? {}),
+      slug,
+    }));
+  }, [bountyBasic?.title]);
 
   return (
     <>
@@ -124,7 +179,14 @@ export const ListingBasic = ({
             <SelectSponsor type="hackathon" />
           </Box>
         )}
-        <FormControl w="full" mb={5} isInvalid={errorState.title} isRequired>
+        <FormControl
+          w="full"
+          mb={5}
+          isInvalid={errorState.title}
+          isRequired
+          // we also want to check slug validity for auto generated slugs
+          onBlur={checkIfValidSlug}
+        >
           <Flex>
             <FormLabel
               color={'brand.slate.500'}
@@ -173,6 +235,63 @@ export const ListingBasic = ({
           <FormErrorMessage>
             {/* {errors.title ? <>{errors.title.message}</> : <></>} */}
           </FormErrorMessage>
+        </FormControl>
+
+        <FormControl
+          w="full"
+          mb={5}
+          isInvalid={!!errorState.slug}
+          isRequired
+          onBlur={checkIfValidSlug}
+        >
+          <Flex>
+            <FormLabel
+              color={'brand.slate.500'}
+              fontSize={'15px'}
+              fontWeight={600}
+              htmlFor={'slug'}
+            >
+              Listing Slug
+            </FormLabel>
+            <Tooltip
+              w="max"
+              p="0.7rem"
+              color="white"
+              fontSize="0.9rem"
+              fontWeight={600}
+              bg="#6562FF"
+              borderRadius="0.5rem"
+              hasArrow
+              label={`The slug will be part of the Listing URL`}
+              placement="right-end"
+            >
+              <Image
+                mt={-2}
+                alt={'Info Icon'}
+                src={'/assets/icons/info-icon.svg'}
+              />
+            </Tooltip>
+          </Flex>
+
+          <Input
+            borderColor="brand.slate.300"
+            _placeholder={{
+              color: 'brand.slate.300',
+            }}
+            focusBorderColor="brand.purple"
+            id="slug"
+            onChange={(e) => {
+              setbountyBasic({
+                ...(bountyBasic || {}),
+                slug: e.target.value,
+              });
+            }}
+            placeholder="develop-a-new-landing-page"
+            value={bountyBasic?.slug || ''}
+          />
+          {errorState?.slug ? (
+            <FormErrorMessage>{errorState.slug}</FormErrorMessage>
+          ) : null}
         </FormControl>
 
         <SkillSelect
@@ -505,6 +624,7 @@ export const ListingBasic = ({
             onClick={() => {
               setErrorState({
                 deadline: !bountyBasic?.deadline,
+                slug: !!errorState?.slug ? errorState.slug : !bountyBasic?.slug,
                 skills: skills.length === 0,
                 subSkills: subSkills.length === 0,
                 title: !bountyBasic?.title,

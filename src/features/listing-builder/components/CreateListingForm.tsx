@@ -20,6 +20,7 @@ export interface BountyBasicType {
   pocSocials?: string;
   applicationType?: 'fixed' | 'rolling';
   timeToComplete?: string;
+  slug?: string;
 }
 interface Props {
   steps: number;
