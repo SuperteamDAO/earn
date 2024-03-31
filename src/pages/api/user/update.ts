@@ -83,16 +83,6 @@ export default async function user(req: NextApiRequest, res: NextApiResponse) {
       updatedData.currentSponsorId = currentSponsorId;
     }
 
-    result = await prisma.user.update({
-      where: {
-        id: userId as string,
-      },
-      data: updatedData,
-      include: {
-        currentSponsor: true,
-      },
-    });
-
     if (generateTalentEmailSettings) {
       const categories = new Set();
 
@@ -110,6 +100,20 @@ export default async function user(req: NextApiRequest, res: NextApiResponse) {
         });
       }
     }
+
+    result = await prisma.user.update({
+      where: {
+        id: userId as string,
+      },
+      data: updatedData,
+      include: {
+        currentSponsor: true,
+        UserSponsors: true,
+        Hackathon: true,
+        Submission: true,
+        emailSettings: true,
+      },
+    });
 
     return res.status(200).json(result);
   } catch (e) {
