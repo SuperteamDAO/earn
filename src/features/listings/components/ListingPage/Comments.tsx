@@ -41,6 +41,22 @@ export const Comments = ({ refId, refType, sponsorId }: Props) => {
   const [count, setCount] = useState(0);
   const inputRef = useRef<HTMLTextAreaElement>(null);
 
+  const deleteComment = async (commentId: string) => {
+    const commentIndex = comments.findIndex(
+      (comment) => comment.id === commentId,
+    );
+    if (commentIndex > -1) {
+      await axios.delete(`/api/comment/${commentId}/delete`);
+      setComments((prevComments) => {
+        const newComments = [...prevComments];
+        newComments.splice(commentIndex, 1);
+        return newComments;
+      });
+    } else {
+      throw new Error('Comment not found');
+    }
+  };
+
   const addNewComment = async () => {
     setNewCommentLoading(true);
     setNewCommentError(false);
@@ -71,26 +87,6 @@ export const Comments = ({ refId, refType, sponsorId }: Props) => {
       });
       const allComments = commentsData.data.result as Comment[];
       console.log('all comments - ', allComments);
-
-      // const commentMap = allComments.reduce(
-      //   (acc: Record<string, Comment>, comment) => {
-      //     comment.replies = [];
-      //     acc[comment.id] = comment;
-      //     return acc;
-      //   },
-      //   {},
-      // );
-      //
-      // allComments.forEach((comment) => {
-      //   if (comment.replyToId && commentMap[comment.replyToId]) {
-      //     commentMap[comment.replyToId]?.replies.push(comment);
-      //   }
-      // });
-      //
-      // const topLevelComments = allComments.filter(
-      //   (comment) => !comment.replyToId,
-      // );
-      // console.log('top level comments - ', topLevelComments);
 
       setCount(commentsData.data.count);
       setComments([...comments, ...allComments]);
@@ -227,6 +223,7 @@ export const Comments = ({ refId, refType, sponsorId }: Props) => {
                 sponsorId={sponsorId}
                 refType={refType}
                 refId={refId}
+                deleteComment={deleteComment}
               />
             );
           })}

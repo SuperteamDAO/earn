@@ -13,6 +13,8 @@ export function UserAvatar({ user, size = '32px' }: Props) {
     return (
       <Image
         boxSize={size}
+        minW={size}
+        minH={size}
         borderRadius="full"
         objectFit="cover"
         alt={`${user?.firstName} ${user?.lastName}`}

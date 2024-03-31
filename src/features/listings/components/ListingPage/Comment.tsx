@@ -1,8 +1,23 @@
 import {
+  Alert,
+  AlertDescription,
+  AlertDialog,
+  AlertDialogBody,
+  AlertDialogContent,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogOverlay,
+  AlertIcon,
+  AlertTitle,
   Button,
   Collapse,
+  Fade,
   Flex,
   HStack,
+  Menu,
+  MenuButton,
+  MenuItem,
+  MenuList,
   Text,
   Textarea,
   useDisclosure,
@@ -28,6 +43,7 @@ interface Props {
   refId: string;
   refType: 'BOUNTY' | 'SUBMISSION';
   sponsorId: string | undefined;
+  deleteComment: (commentId: string) => Promise<void>;
   isReply?: boolean;
   addNewReply?: (msg: string) => Promise<void>;
 }
@@ -37,12 +53,18 @@ export const Comment = ({
   sponsorId,
   refId,
   refType,
+  deleteComment,
   isReply = false,
   addNewReply,
 }: Props) => {
   const { userInfo } = userStore();
 
   const { isOpen, onOpen, onClose } = useDisclosure();
+  const {
+    isOpen: deleteIsOpen,
+    onOpen: deleteOnOpen,
+    onClose: deleteOnClose,
+  } = useDisclosure();
   const [triggerLogin, setTriggerLogin] = useState(false);
   const [showReplyInput, setShowReplyInput] = useState(false);
   const [showReplies, setShowReplies] = useState(false);
@@ -50,7 +72,39 @@ export const Comment = ({
   const [newReply, setNewReply] = useState('');
   const [newReplyLoading, setNewReplyLoading] = useState(false);
   const [newReplyError, setNewReplyError] = useState(false);
+  const [deleteLoading, setDeleteLoading] = useState(false);
+  const [deleteError, setDeleteError] = useState(false);
+  const [showOptions, setShowOptions] = useState(false);
   const inputRef = useRef<HTMLTextAreaElement>(null);
+  const cancelRef = useRef<any>(null);
+
+  const deleteReplyLvl1 = async (replyId: string) => {
+    const replyIndex = replies.findIndex((reply) => reply.id === replyId);
+    if (replyIndex > -1) {
+      await axios.delete(`/api/comment/${replyId}/delete`);
+      setReplies((prevReplies) => {
+        const newReplies = [...prevReplies];
+        newReplies.splice(replyIndex, 1);
+        return newReplies;
+      });
+    } else {
+      throw new Error('Reply not found');
+    }
+  };
+
+  const handleDelete = async () => {
+    setDeleteLoading(true);
+    setDeleteError(false);
+    try {
+      await deleteComment(comment.id);
+      setDeleteLoading(false);
+      deleteOnClose();
+    } catch (e) {
+      console.log('error - ', e);
+      setDeleteError(true);
+      setDeleteLoading(false);
+    }
+  };
 
   const addNewReplyLvl1 = async (msg: string) => {
     const newReplyData = await axios.post(`/api/comment/create`, {
@@ -119,6 +173,8 @@ export const Comment = ({
         gap={3}
         w="full"
         px={isReply ? 0 : 6}
+        onMouseEnter={() => setShowOptions(true)}
+        onMouseLeave={() => setShowOptions(false)}
       >
         <Link
           href={`${getURL()}t/${comment?.author?.username}`}
@@ -172,6 +228,8 @@ export const Comment = ({
           </HStack>
           <Text mt={'0px !important'} color="brand.slate.500" fontSize="sm">
             {comment?.message}
+            <br />
+            {comment.id}
           </Text>
           <HStack pt={2}>
             {replies?.length > 0 && (
@@ -283,6 +341,7 @@ export const Comment = ({
                 ?.toReversed()
                 .map((reply) => (
                   <Comment
+                    deleteComment={deleteReplyLvl1}
                     addNewReply={addNewReplyLvl1}
                     isReply
                     key={reply.id}
@@ -295,7 +354,88 @@ export const Comment = ({
             </VStack>
           </Collapse>
         </VStack>
+        <Fade
+          in={showOptions && comment.authorId === userInfo?.id}
+          style={{ display: 'block' }}
+        >
+          <Menu>
+            <MenuButton>
+              <button style={{ padding: '0 0.5rem' }}>
+                <svg
+                  width="3"
+                  height="12"
+                  viewBox="0 0 3 12"
+                  fill="none"
+                  xmlns="http://www.w3.org/2000/svg"
+                >
+                  <path
+                    d="M1.5 3C2.325 3 3 2.325 3 1.5C3 0.675 2.325 0 1.5 0C0.675 0 0 0.675 0 1.5C0 2.325 0.675 3 1.5 3ZM1.5 4.5C0.675 4.5 0 5.175 0 6C0 6.825 0.675 7.5 1.5 7.5C2.325 7.5 3 6.825 3 6C3 5.175 2.325 4.5 1.5 4.5ZM1.5 9C0.675 9 0 9.675 0 10.5C0 11.325 0.675 12 1.5 12C2.325 12 3 11.325 3 10.5C3 9.675 2.325 9 1.5 9Z"
+                    fill="#94A3B8"
+                  />
+                </svg>
+              </button>
+            </MenuButton>
+            <MenuList minW="10rem" px={1} py={1}>
+              <MenuItem
+                color="brand.slate.500"
+                fontSize="sm"
+                fontWeight={500}
+                onClick={deleteOnOpen}
+                rounded="sm"
+                tabIndex={-1}
+              >
+                Delete
+              </MenuItem>
+            </MenuList>
+          </Menu>
+        </Fade>
       </HStack>
+      <AlertDialog
+        isOpen={deleteIsOpen}
+        leastDestructiveRef={cancelRef}
+        onClose={deleteOnClose}
+      >
+        <AlertDialogOverlay>
+          <AlertDialogContent>
+            <AlertDialogHeader fontSize="lg" fontWeight="bold">
+              Delete Comment
+            </AlertDialogHeader>
+
+            <AlertDialogBody>
+              Are you sure? You {"can't"} undo this action afterwards.
+              {deleteError && (
+                <Alert mt={3} rounded="md" status="error">
+                  <AlertIcon />
+                  <VStack>
+                    <AlertTitle>Failed to delete comment</AlertTitle>
+                    <AlertDescription alignSelf="start">
+                      Please try again later.
+                    </AlertDescription>
+                  </VStack>
+                </Alert>
+              )}
+            </AlertDialogBody>
+
+            <AlertDialogFooter>
+              <Button ref={cancelRef} onClick={deleteOnClose} variant="ghost">
+                Cancel
+              </Button>
+              <Button
+                ml={3}
+                bg="red.500"
+                _hover={{ bg: 'red.400' }}
+                _active={{ bg: 'red.600' }}
+                colorScheme="red"
+                disabled={deleteLoading}
+                isLoading={deleteLoading}
+                onClick={handleDelete}
+              >
+                Delete
+              </Button>
+            </AlertDialogFooter>
+          </AlertDialogContent>
+        </AlertDialogOverlay>
+      </AlertDialog>
     </>
   );
 };

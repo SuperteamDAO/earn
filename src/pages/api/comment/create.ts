@@ -22,16 +22,6 @@ export default async function comment(
     }
 
     const { message, listingId, listingType, replyToId } = req.body;
-    console.log(
-      'message',
-      message,
-      'listingId',
-      listingId,
-      'listingType',
-      listingType,
-      'replyToId',
-      replyToId,
-    );
 
     const result = await prisma.comment.create({
       data: {

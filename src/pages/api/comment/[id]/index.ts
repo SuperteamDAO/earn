@@ -7,7 +7,7 @@ export default async function comment(
   res: NextApiResponse,
 ) {
   const params = req.query;
-  const listingId = params.listingId as string;
+  const listingId = params.id as string;
   const skip = params.skip ? parseInt(params.skip as string, 10) : 0;
   try {
     const result = await prisma.comment.findMany({
