@@ -71,13 +71,12 @@ export default async function handler(
       .json({ error: 'User does not have a current sponsor.' });
   }
 
-  const { title, ...data } = req.body;
+  const { title, slug, ...data } = req.body;
   try {
-    const slug = await generateUniqueSlug(title);
     const finalData = {
       sponsorId: user.currentSponsorId,
       title,
-      slug,
+      slug: slug ?? (await generateUniqueSlug(title)),
       ...data,
     };
     const result = await prisma.bounties.create({
