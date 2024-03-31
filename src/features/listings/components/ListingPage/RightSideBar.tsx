@@ -27,7 +27,7 @@ import { tokenList } from '@/constants/index';
 import { getURLSanitized } from '@/utils/getURLSanitized';
 
 import type { Bounty, Rewards } from '../../types';
-import { SubmissionActionButton } from '../Submission';
+import { SubmissionActionButton } from '../Submission/SubmissionActionButton';
 import { CompensationAmount } from './CompensationAmount';
 
 export function RightSideBar({ listing }: { listing: Bounty }) {

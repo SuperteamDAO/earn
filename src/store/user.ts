@@ -1,4 +1,4 @@
-import produce from 'immer';
+import { produce } from 'immer';
 import { signOut } from 'next-auth/react';
 import { mountStoreDevtool } from 'simple-zustand-devtools';
 import { create } from 'zustand';
