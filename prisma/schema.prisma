@@ -287,7 +287,7 @@ model User {
   workPrefernce     String?
   currentEmployer   String?
   pow               String?           @db.VarChar(2000)
-  notifications     Json?
+  notifications     Json? //remove this later
   private           Boolean           @default(false)
   skills            Json?
   currentSponsorId  String?
@@ -307,6 +307,7 @@ model User {
   hackathonId       String?
   featureModalShown Boolean           @default(false)
   emailSettings     EmailSettings[]
+  surveysShown      Json?
 
   @@index([email, publicKey, username])
   @@index([currentSponsorId])
@@ -328,22 +329,13 @@ model PoW {
   @@index([userId])
 }
 
-model UserEmailType {
-  id            Int             @id @default(autoincrement())
-  name          String
-  emailSettings EmailSettings[]
-}
-
 model EmailSettings {
-  id           Int           @id @default(autoincrement())
-  isSubscribed Boolean
-  user         User          @relation(fields: [userId], references: [id])
-  userId       String
-  emailType    UserEmailType @relation(fields: [emailTypeId], references: [id])
-  emailTypeId  Int
+  id       Int    @id @default(autoincrement())
+  user     User   @relation(fields: [userId], references: [id])
+  userId   String
+  category String
 
   @@index([userId])
-  @@index([emailTypeId])
 }
 
 model UserSponsors {

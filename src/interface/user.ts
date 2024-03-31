@@ -1,13 +1,10 @@
+import type { EmailSettings } from '@prisma/client';
+
 import type { SponsorType } from '@/interface/sponsor';
 import type { UserSponsor } from '@/interface/userSponsor';
 
 import type { PoW } from './pow';
 import type { SubmissionWithUser } from './submission';
-
-interface Notifications {
-  label: string;
-  timestamp: number;
-}
 
 interface User {
   id?: string;
@@ -42,7 +39,6 @@ interface User {
   website?: string;
   telegram?: string;
   pow?: string;
-  notifications?: Notifications[] | null;
   totalEarnedInUSD?: number;
   currentSponsorId?: string;
   currentSponsor?: SponsorType;
@@ -64,5 +60,7 @@ interface User {
     deadline: string;
     announceDate: string;
   };
+  surveysShown?: string[];
+  emailSettings?: EmailSettings[];
 }
-export type { Notifications, User };
+export type { User };

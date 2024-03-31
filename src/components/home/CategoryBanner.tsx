@@ -1,23 +1,4 @@
-import { BellIcon } from '@chakra-ui/icons';
-import {
-  Box,
-  Button,
-  Center,
-  Flex,
-  Image,
-  Text,
-  useDisclosure,
-} from '@chakra-ui/react';
-import axios from 'axios';
-import { useEffect, useState } from 'react';
-import toast, { Toaster } from 'react-hot-toast';
-import { TiTick } from 'react-icons/ti';
-
-import { WarningModal } from '@/features/listings';
-import type { Notifications } from '@/interface/user';
-import { userStore } from '@/store/user';
-
-import { LoginWrapper } from '../Header/LoginWrapper';
+import { Box, Center, Flex, Image, Text } from '@chakra-ui/react';
 
 type CategoryAssetsType = {
   [key: string]: {
@@ -29,25 +10,6 @@ type CategoryAssetsType = {
 };
 
 export const CategoryBanner = ({ type }: { type: string }) => {
-  const { userInfo } = userStore();
-
-  const [loading, setLoading] = useState(false);
-  const [isSubscribed, setIsSubscribed] = useState<boolean>(false);
-
-  const [triggerLogin, setTriggerLogin] = useState(false);
-
-  const {
-    isOpen: warningIsOpen,
-    onOpen: warningOnOpen,
-    onClose: warningOnClose,
-  } = useDisclosure();
-
-  useEffect(() => {
-    setIsSubscribed(
-      userInfo?.notifications?.some((e) => e.label === type) || false,
-    );
-  }, [userInfo, type]);
-
   const categoryAssets: CategoryAssetsType = {
     Design: {
       bg: `/assets/category_assets/bg/design.png`,
@@ -75,74 +37,8 @@ export const CategoryBanner = ({ type }: { type: string }) => {
     // },
   };
 
-  const updateNotification = async (notification: Notifications[]) => {
-    try {
-      const { data, status } = await axios.post(
-        `/api/user/updateNotification`,
-        {
-          notification,
-        },
-      );
-      if (status !== 200) {
-        return null;
-      }
-      return data.data;
-    } catch (error) {
-      console.log(error);
-      return null;
-    }
-  };
-
-  const handleNotification = async () => {
-    setLoading(true);
-
-    let updatedNotifications = [...(userInfo?.notifications ?? [])];
-    let subscriptionMessage = '';
-
-    if (!userInfo?.id) {
-      setTriggerLogin(true);
-      setLoading(false);
-      return;
-    } else if (!userInfo?.isTalentFilled) {
-      warningOnOpen();
-    }
-
-    if (isSubscribed) {
-      updatedNotifications = updatedNotifications.filter(
-        (e) => e.label !== type,
-      );
-      subscriptionMessage = "You've been unsubscribed from this category";
-      setIsSubscribed(false);
-    } else {
-      updatedNotifications.push({ label: type, timestamp: Date.now() });
-      subscriptionMessage = "You've been subscribed to this category";
-      setIsSubscribed(true);
-    }
-
-    await updateNotification(updatedNotifications);
-
-    setLoading(false);
-    toast.success(subscriptionMessage);
-  };
-
   return (
     <>
-      {warningIsOpen && (
-        <WarningModal
-          isOpen={warningIsOpen}
-          onClose={warningOnClose}
-          title={'Complete your profile'}
-          bodyText={
-            'Please complete your profile before submitting to a bounty.'
-          }
-          primaryCtaText={'Complete Profile'}
-          primaryCtaLink={'/new/talent'}
-        />
-      )}
-      <LoginWrapper
-        triggerLogin={triggerLogin}
-        setTriggerLogin={setTriggerLogin}
-      />
       <Flex
         direction={{ md: 'row', base: 'column' }}
         w={{ md: 'brand.120', base: '100%' }}
@@ -181,24 +77,6 @@ export const CategoryBanner = ({ type }: { type: string }) => {
             {categoryAssets[type]?.desc}
           </Text>
         </Box>
-        <Button
-          my={{ base: '', md: 'auto' }}
-          mt={{ base: 4, md: '' }}
-          ml={{ base: '', md: 'auto' }}
-          px={4}
-          color={'brand.slate.500'}
-          fontWeight={'500'}
-          bg={'white'}
-          borderWidth={'1px'}
-          borderColor={'brand.slate.400'}
-          isLoading={loading}
-          leftIcon={isSubscribed ? <TiTick /> : <BellIcon />}
-          onClick={handleNotification}
-          variant="solid"
-        >
-          {isSubscribed ? 'Subscribed' : 'Notify Me'}
-        </Button>
-        <Toaster />
       </Flex>
     </>
   );

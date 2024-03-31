@@ -6,12 +6,13 @@ import {
   type FlexProps,
   Icon,
   Link,
+  Text,
   useDisclosure,
 } from '@chakra-ui/react';
 import NextLink from 'next/link';
 import { useRouter } from 'next/router';
 import { useSession } from 'next-auth/react';
-import type { ReactNode, ReactText } from 'react';
+import { type ReactNode, useEffect } from 'react';
 import type { IconType } from 'react-icons';
 import {
   MdList,
@@ -19,10 +20,10 @@ import {
   MdOutlineGroup,
 } from 'react-icons/md';
 
-import CreateListingModal from '@/components/modals/createListing';
+import { SponsorInfoModal } from '@/components/modals/SponsorInfoModal';
 import { LoadingSection } from '@/components/shared/LoadingSection';
-import { Banner } from '@/components/sponsor/Banner';
 import { SelectHackathon, SelectSponsor } from '@/features/listing-builder';
+import { Banner, CreateListingModal } from '@/features/sponsor-dashboard';
 import { Default } from '@/layouts/Default';
 import { Meta } from '@/layouts/Meta';
 import { userStore } from '@/store/user';
@@ -37,7 +38,7 @@ interface LinkItemProps {
 interface NavItemProps extends FlexProps {
   icon: IconType;
   link?: string;
-  children: ReactText;
+  children: ReactNode;
 }
 
 export function Sidebar({
@@ -51,6 +52,18 @@ export function Sidebar({
   const { data: session, status } = useSession();
   const router = useRouter();
   const { isOpen, onOpen, onClose } = useDisclosure();
+
+  const {
+    isOpen: isSponsorInfoModalOpen,
+    onOpen: onSponsorInfoModalOpen,
+    onClose: onSponsorInfoModalClose,
+  } = useDisclosure();
+
+  useEffect(() => {
+    if (!userInfo?.firstName || !userInfo?.lastName || !userInfo?.username) {
+      onSponsorInfoModalOpen();
+    }
+  }, []);
 
   if (!session && status === 'loading') {
     return <LoadingSection />;
@@ -154,7 +167,23 @@ export function Sidebar({
         />
       }
     >
-      <Flex justify="start" minH="100vh">
+      <SponsorInfoModal
+        onClose={onSponsorInfoModalClose}
+        isOpen={isSponsorInfoModalOpen}
+      />
+      <Flex display={{ base: 'flex', md: 'none' }} minH="80vh" px={3}>
+        <Text
+          align={'center'}
+          pt={20}
+          color={'brand.slate.500'}
+          fontSize={'xl'}
+          fontWeight={500}
+        >
+          The Sponsor Dashboard on Earn is not optimized for mobile yet. Please
+          use a desktop to check out the Sponsor Dashboard
+        </Text>
+      </Flex>
+      <Flex justify="start" display={{ base: 'none', md: 'flex' }} minH="100vh">
         <Box
           display={{ base: 'none', md: 'block' }}
           w={{ base: 0, md: 80 }}

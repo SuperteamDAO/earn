@@ -1,5 +1,6 @@
-import { Button, Tooltip, useDisclosure } from '@chakra-ui/react';
+import { Button, Flex, Tooltip, useDisclosure } from '@chakra-ui/react';
 import axios from 'axios';
+import Image from 'next/image';
 import React, {
   type Dispatch,
   type SetStateAction,
@@ -7,7 +8,8 @@ import React, {
   useState,
 } from 'react';
 
-import { LoginWrapper } from '@/components/Header/LoginWrapper';
+import { LoginWrapper } from '@/components/LoginWrapper';
+import { SurveyModal } from '@/components/Survey';
 import { Superteams } from '@/constants/Superteam';
 import {
   getBountyDraftStatus,
@@ -18,6 +20,7 @@ import { userStore } from '@/store/user';
 
 import { type Bounty } from '../../types';
 import { WarningModal } from '../WarningModal';
+import { EasterEgg } from './EasterEgg';
 import { SubmissionModal } from './SubmissionModal';
 
 interface Props {
@@ -47,6 +50,8 @@ export const SubmissionActionButton = ({
   const [triggerLogin, setTriggerLogin] = useState(false);
   const [isUserSubmissionLoading, setIsUserSubmissionLoading] = useState(false);
   const [isSubmitted, setIsSubmitted] = useState(false);
+  const [isEasterEggOpen, setEasterEggOpen] = useState(false);
+
   const { userInfo } = userStore();
 
   function userRegionEligibilty() {
@@ -161,6 +166,14 @@ export const SubmissionActionButton = ({
       btnLoadingText = 'Checking Submission..';
   }
 
+  const {
+    isOpen: isSurveyOpen,
+    onOpen: onSurveyOpen,
+    onClose: onSurveyClose,
+  } = useDisclosure();
+
+  const surveyId = '018c6743-c893-0000-a90e-f35d31c16692';
+
   return (
     <>
       {isOpen && (
@@ -173,8 +186,18 @@ export const SubmissionActionButton = ({
           setIsSubmitted={setIsSubmitted}
           editMode={buttonState === 'edit'}
           listing={listing}
+          showEasterEgg={() => setEasterEggOpen(true)}
+          onSurveyOpen={onSurveyOpen}
         />
       )}
+      {isSurveyOpen &&
+        (!userInfo?.surveysShown || !(surveyId in userInfo.surveysShown)) && (
+          <SurveyModal
+            isOpen={isSurveyOpen}
+            onClose={onSurveyClose}
+            surveyId={surveyId}
+          />
+        )}
       {warningIsOpen && (
         <WarningModal
           isOpen={warningIsOpen}
@@ -187,6 +210,33 @@ export const SubmissionActionButton = ({
           primaryCtaLink={'/new/talent'}
         />
       )}
+      {isEasterEggOpen && (
+        <EasterEgg
+          isOpen={isEasterEggOpen}
+          onClose={() => setEasterEggOpen(false)}
+          isProject={isProject}
+        />
+      )}
+      <Image
+        // Hack to show GIF Immediately when Easter Egg is visible
+        src="/assets/memes/JohnCenaVibingToCupid.gif"
+        alt="John Cena Vibing to Cupid"
+        style={{
+          width: '100%',
+          marginTop: 'auto',
+          display: 'block',
+          visibility: 'hidden',
+          position: 'fixed',
+          zIndex: -99999,
+          top: '-300%',
+          left: '-300%',
+        }}
+        width="500"
+        height="600"
+        priority
+        loading="eager"
+        quality={80}
+      />
 
       <LoginWrapper
         triggerLogin={triggerLogin}
@@ -204,20 +254,36 @@ export const SubmissionActionButton = ({
         label={!isUserEligibleByRegion ? regionTooltipLabel : ''}
         rounded="md"
       >
-        <Button
+        <Flex
+          pos={{ base: 'fixed', md: 'static' }}
+          zIndex={999}
+          bottom={0}
+          left="50%"
           w="full"
-          bg={buttonBG}
-          _hover={{ bg: buttonBG }}
-          pointerEvents={btnPointerEvents}
-          isDisabled={isBtnDisabled}
-          isLoading={isUserSubmissionLoading}
-          loadingText={btnLoadingText}
-          onClick={handleSubmit}
-          size="lg"
-          variant="solid"
+          px={{ base: 3, md: 0 }}
+          py={{ base: 4, md: 0 }}
+          bg="white"
+          transform={{ base: 'translateX(-50%)', md: 'none' }}
         >
-          {buttonText}
-        </Button>
+          <Button
+            w={'full'}
+            mb={{ base: 0, md: 5 }}
+            bg={buttonBG}
+            _hover={{ bg: buttonBG }}
+            _disabled={{
+              opacity: { base: '96%', md: '70%' },
+            }}
+            pointerEvents={btnPointerEvents}
+            isDisabled={isBtnDisabled}
+            isLoading={isUserSubmissionLoading}
+            loadingText={btnLoadingText}
+            onClick={handleSubmit}
+            size="lg"
+            variant="solid"
+          >
+            {buttonText}
+          </Button>
+        </Flex>
       </Tooltip>
     </>
   );

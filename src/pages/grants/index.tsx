@@ -28,14 +28,6 @@ function Grants() {
     getGrants();
   }, []);
 
-  const colors = [
-    '#D2F4FF',
-    '#F1FFD2',
-    '#D2DFFF',
-    '#FFD8D2',
-    '#D2FFDC',
-    '#D2FFF7',
-  ];
   return (
     <>
       <Default
@@ -64,32 +56,29 @@ function Grants() {
             alt=""
             src="/assets/home/bg_grad.svg"
           />
-          <Flex
-            align={'center'}
-            direction={'column'}
-            gap={4}
-            mt={{ base: 12, md: 24 }}
-            mb={12}
-            px={4}
-          >
+          <Flex align={'center'} direction={'column'} my={12} px={3}>
             <Text
+              align={'center'}
               fontFamily={'var(--font-serif)'}
-              fontSize={[20, 20, 40, 40]}
+              fontSize={{ base: '2xl', md: '4xl' }}
               fontWeight={700}
             >
               Need funds to build out your idea?
             </Text>
             <Text
-              maxW={'680px'}
               color="brand.slate.500"
-              fontSize={[16, 16, 24, 24]}
+              fontSize={{ base: '16', md: '20' }}
               fontWeight={'400'}
               textAlign={'center'}
             >
               Discover the complete list of crypto grants available to support
               your project.
             </Text>
-            <Text color={'brand.slate.400'} fontSize={'md'}>
+            <Text
+              mt={3}
+              color={'brand.slate.400'}
+              fontSize={{ base: 'sm', md: 'md' }}
+            >
               Equity-Free • No Bullshit • Fast AF
             </Text>
           </Flex>
@@ -104,18 +93,10 @@ function Grants() {
                       <GrantEntry
                         title={grant?.title}
                         shortDescription={grant?.shortDescription}
-                        color={
-                          colors[Math.floor(Math.random() * colors.length)] ||
-                          ''
-                        }
                         slug={grant.slug}
                         rewardAmount={grant?.rewardAmount}
                         token={grant?.token}
                         link={grant?.link}
-                        icon={
-                          grant?.sponsor?.logo ??
-                          '/assets/home/placeholder/ph2.png'
-                        }
                         logo={grant?.logo}
                       />
                     </WrapItem>

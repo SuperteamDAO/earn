@@ -67,7 +67,7 @@ export default async function user(req: NextApiRequest, res: NextApiResponse) {
   });
 
   // eslint-disable-next-line
-  const { role, skills, currentSponsorId, ...updateAttributes } = req.body;
+  const { role, skills, currentSponsorId, generateTalentEmailSettings, ...updateAttributes } = req.body;
   let result;
   const correctedSkills = skills ? correctSkills(skills) : [];
   try {
@@ -83,6 +83,24 @@ export default async function user(req: NextApiRequest, res: NextApiResponse) {
       updatedData.currentSponsorId = currentSponsorId;
     }
 
+    if (generateTalentEmailSettings) {
+      const categories = new Set();
+
+      categories.add('submissionSponsor');
+      categories.add('commentSponsor');
+      categories.add('deadlineSponsor');
+      categories.add('productAndNewsletter');
+
+      for (const category of categories) {
+        await prisma.emailSettings.create({
+          data: {
+            user: { connect: { id: userId as string } },
+            category: category as string,
+          },
+        });
+      }
+    }
+
     result = await prisma.user.update({
       where: {
         id: userId as string,
@@ -90,6 +108,10 @@ export default async function user(req: NextApiRequest, res: NextApiResponse) {
       data: updatedData,
       include: {
         currentSponsor: true,
+        UserSponsors: true,
+        Hackathon: true,
+        Submission: true,
+        emailSettings: true,
       },
     });
 

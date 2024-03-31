@@ -1,5 +1,4 @@
 import { Box, Grid, HStack, Text } from '@chakra-ui/react';
-import { Regions } from '@prisma/client';
 import axios from 'axios';
 import type { GetServerSideProps } from 'next';
 import Head from 'next/head';
@@ -19,6 +18,7 @@ const ReferenceCard = ({ link }: { link: string }) => {
   return (
     <Box
       w="100%"
+      // h={'100%'}
       borderWidth="2px"
       borderColor={'gray.200'}
       borderRadius={8}
@@ -27,8 +27,8 @@ const ReferenceCard = ({ link }: { link: string }) => {
     >
       <OgImageViewer
         externalUrl={link}
-        w={{ base: '100%', md: '400px' }}
-        h={{ base: '200px', md: '280px' }}
+        w={'100%'}
+        aspectRatio={1.91 / 1}
         objectFit="cover"
         borderRadius={6}
       />
@@ -84,22 +84,7 @@ function BountyDetails({ bounty: initialBounty }: BountyDetailsProps) {
           )}
           {bounty !== null && !!bounty?.id && (
             <>
-              <ListingHeader
-                type={bounty?.type}
-                id={bounty?.id}
-                status={bounty?.status}
-                deadline={bounty?.deadline}
-                title={bounty?.title ?? ''}
-                sponsor={bounty?.sponsor}
-                slug={bounty?.slug}
-                region={bounty?.region || Regions.GLOBAL}
-                isWinnersAnnounced={bounty?.isWinnersAnnounced}
-                hackathonLogo={bounty?.Hackathon?.altLogo}
-                hackathonStartsAt={bounty?.Hackathon?.startDate}
-                references={bounty?.references}
-                publishedAt={bounty?.publishedAt}
-                isPublished={bounty?.isPublished}
-              />
+              <ListingHeader listing={bounty} />
               <Box mx={4}>
                 <HStack
                   align={['center', 'center', 'start', 'start']}

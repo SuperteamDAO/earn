@@ -11,10 +11,10 @@ import axios from 'axios';
 import { useRouter } from 'next/router';
 import React, { type ReactNode, useEffect, useState } from 'react';
 
-import { LoginWrapper } from '@/components/Header/LoginWrapper';
 import { HomeBanner } from '@/components/home/Banner';
 import { CategoryBanner } from '@/components/home/CategoryBanner';
 import { HomeSideBar } from '@/components/home/SideBar';
+import { LoginWrapper } from '@/components/LoginWrapper';
 import { Superteams } from '@/constants/Superteam';
 import type { User } from '@/interface/user';
 import { Default } from '@/layouts/Default';
@@ -28,7 +28,7 @@ interface TotalType {
 }
 interface HomeProps {
   children: ReactNode;
-  type: 'home' | 'category' | 'region';
+  type: 'home' | 'category' | 'region' | 'niche';
 }
 
 export function Home({ children, type }: HomeProps) {
@@ -73,13 +73,19 @@ export function Home({ children, type }: HomeProps) {
         />
       }
     >
-      <Container maxW={'7xl'} mx="auto">
+      <Container maxW={'7xl'} mx="auto" px={{ base: 3, md: 4 }}>
         <HStack align="start" justify="space-between" my={{ base: 4, md: 8 }}>
           <Flex
             w="full"
             pr={{ base: 0, lg: 6 }}
-            borderRight={{ base: 'none', lg: '1px solid' }}
-            borderRightColor={{ base: 'none', lg: 'blackAlpha.200' }}
+            borderRight={{
+              base: 'none',
+              lg: type === 'niche' ? 'none' : '1px solid',
+            }}
+            borderRightColor={{
+              base: 'none',
+              lg: 'blackAlpha.200',
+            }}
           >
             <LoginWrapper
               triggerLogin={triggerLogin}
@@ -148,21 +154,23 @@ export function Home({ children, type }: HomeProps) {
               {children}
             </Box>
           </Flex>
-          <Flex
-            display={{
-              base: 'none',
-              lg: 'flex',
-            }}
-            marginInlineStart={'0 !important'}
-          >
-            <HomeSideBar
-              isTotalLoading={isTotalLoading}
-              total={totals?.totalInUSD ?? 0}
-              listings={totals?.count ?? 0}
-              earners={recentEarners ?? []}
-              userInfo={userInfo! || {}}
-            />
-          </Flex>
+          {type !== 'niche' && (
+            <Flex
+              display={{
+                base: 'none',
+                lg: 'flex',
+              }}
+              marginInlineStart={'0 !important'}
+            >
+              <HomeSideBar
+                isTotalLoading={isTotalLoading}
+                total={totals?.totalInUSD ?? 0}
+                listings={totals?.count ?? 0}
+                earners={recentEarners ?? []}
+                userInfo={userInfo! || {}}
+              />
+            </Flex>
+          )}
         </HStack>
       </Container>
     </Default>

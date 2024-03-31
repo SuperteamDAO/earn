@@ -13,9 +13,11 @@ import NextTopLoader from 'nextjs-toploader';
 import posthog from 'posthog-js';
 import { PostHogProvider, usePostHog } from 'posthog-js/react';
 import React, { useEffect } from 'react';
+import { Toaster } from 'react-hot-toast';
 
 import { SolanaWalletProvider } from '@/context/SolanaWallet';
 import { userStore } from '@/store/user';
+import { getURL } from '@/utils/validUrl';
 
 import theme from '../config/chakra.config';
 
@@ -26,7 +28,7 @@ const fontSans = Inter({
   display: 'swap',
   adjustFontFallback: true,
   preload: true,
-  // fallback: ['Arial'],
+  fallback: ['Inter'],
   weight: 'variable',
 });
 
@@ -60,7 +62,8 @@ const extendThemeWithNextFonts = {
 if (typeof window !== 'undefined') {
   posthog.init(process.env.NEXT_PUBLIC_POSTHOG_KEY!, {
     debug: false,
-    api_host: process.env.NEXT_PUBLIC_POSTHOG_HOST || 'https://app.posthog.com',
+    api_host: `${getURL()}ingest`,
+    ui_host: process.env.NEXT_PUBLIC_POSTHOG_HOST || 'https://app.posthog.com',
   });
 }
 
@@ -98,7 +101,8 @@ function MyApp({ Component, pageProps }: any) {
   return (
     <>
       <NextTopLoader color={'#6366F1'} showSpinner={false} />
-      <Component {...pageProps} key={router.asPath} />;
+      <Component {...pageProps} key={router.asPath} />
+      <Toaster position="bottom-center" />
     </>
   );
 }

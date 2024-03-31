@@ -1,6 +1,6 @@
 import { Button, Flex, HStack, Image, Text, VStack } from '@chakra-ui/react';
 import React, { type Dispatch, type SetStateAction, useState } from 'react';
-import toast, { Toaster } from 'react-hot-toast';
+import toast from 'react-hot-toast';
 
 import { QuestionCard } from './QuestionCard';
 
@@ -90,7 +90,6 @@ export const QuestionBuilder = ({
         >
           + Add Question
         </Button>
-        <Toaster />
         <VStack gap={6} w={'full'} pt={10}>
           <Button
             w="100%"

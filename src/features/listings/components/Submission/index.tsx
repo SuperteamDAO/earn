@@ -1,1 +1,1 @@
-export * from './SubmissionActionButton';
+export * from './PublishResults';

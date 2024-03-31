@@ -1,4 +1,11 @@
-import { Flex, FormControl, FormLabel, Image, Tooltip } from '@chakra-ui/react';
+import {
+  Flex,
+  FormControl,
+  FormHelperText,
+  FormLabel,
+  Image,
+  Tooltip,
+} from '@chakra-ui/react';
 import React, { type Dispatch, type SetStateAction, useState } from 'react';
 import ReactSelect from 'react-select';
 import makeAnimated from 'react-select/animated';
@@ -18,6 +25,7 @@ interface Props {
   errorSubSkill?: boolean;
   skillLabel?: string;
   subSkillLabel?: string;
+  helperText?: string;
 }
 export const SkillSelect = ({
   skills,
@@ -28,6 +36,7 @@ export const SkillSelect = ({
   setSubSkills,
   skillLabel = 'Skills Needed',
   subSkillLabel = 'Sub Skills Needed',
+  helperText,
 }: Props) => {
   const animatedComponents = makeAnimated();
   const tempSubSkills: MultiSelectOptions[] = [];
@@ -80,6 +89,18 @@ export const SkillSelect = ({
             />
           </Tooltip>
         </Flex>
+        {helperText && (
+          <FormHelperText
+            mt={-2}
+            mb={3}
+            ml={0.5}
+            color="brand.slate.400"
+            fontSize={'13px'}
+          >
+            {helperText}
+          </FormHelperText>
+        )}
+
         <ReactSelect
           styles={{
             control: (baseStyles, state) => ({

@@ -121,7 +121,7 @@ export const SubmissionCard = ({
     <LinkBox
       pos={'relative'}
       overflow={'hidden'}
-      w={{ base: 'full', md: '17.7rem' }}
+      w={{ base: 'full', md: 72 }}
       p={4}
       bg={'white'}
       cursor={'pointer'}

@@ -13,7 +13,7 @@ import NextLink from 'next/link';
 import { useRouter } from 'next/router';
 import { useEffect, useState } from 'react';
 
-import EmailIcon from '@/svg/email';
+import { EmailIcon } from '@/svg/email';
 
 export default function VerifyRequest() {
   const [email, setEmail] = useState('');
@@ -50,11 +50,20 @@ export default function VerifyRequest() {
           />
         </Link>
       </Box>
-      <Flex align="center" justify="center" direction="column" h="60vh">
-        <Heading mt={16} color="#1E293B" fontSize={'28'} textAlign={'center'}>
+      <Flex align="center" justify="center" direction="column" h="60vh" px={3}>
+        <Heading
+          mt={16}
+          color="#1E293B"
+          fontSize={{ base: '2xl', md: '28' }}
+          textAlign={'center'}
+        >
           We just sent an OTP
         </Heading>
-        <Text color="#475569" fontSize="20" textAlign={'center'}>
+        <Text
+          color="#475569"
+          fontSize={{ base: 'lg', md: '20' }}
+          textAlign={'center'}
+        >
           On your email {email}
         </Text>
         <Circle mx="auto" my={16} bg="#EEF2FF" size={32}>

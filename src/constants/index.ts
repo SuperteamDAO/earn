@@ -194,6 +194,22 @@ export const tokenList = [
     coingeckoSymbol: 'saber',
   },
   {
+    tokenName: 'KIWI',
+    tokenSymbol: 'KIWI',
+    mintAddress: '66Qq2qS67K4L5xQ3xUTinCyxzdPeZQG1R1ipK8jrY7gc',
+    icon: 'https://bafkreibcamcjwo5z3itvybznrdtb3fgeiplfy36izu75jygxkt7jzoq4ju.ipfs.nftstorage.link/',
+    decimals: 5,
+    coingeckoSymbol: 'kiwi-token-2',
+  },
+  {
+    tokenName: 'EUROe Stablecoin (EUROe)',
+    tokenSymbol: 'EUROe',
+    mintAddress: '2VhjJ9WxaGC3EZFwJG9BDUs9KxKCAjQY4vgd1qxgYWVg',
+    icon: 'https://assets.coingecko.com/coins/images/28913/standard/euroe-200x200-round.png?1696527889',
+    decimals: 6,
+    coingeckoSymbol: 'euroe-stablecoin',
+  },
+  {
     tokenName: 'Solend (SLND)',
     tokenSymbol: 'SLND',
     mintAddress: 'SLNDpmoWTVADgEdndyvWzroNL7zSi1dF9PC3xHGtPwp',

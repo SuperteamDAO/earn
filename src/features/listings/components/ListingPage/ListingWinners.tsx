@@ -1,4 +1,4 @@
-import { Box, Flex, Image, Text } from '@chakra-ui/react';
+import { Box, Button, Center, Flex, Image, Text } from '@chakra-ui/react';
 import axios from 'axios';
 import Avatar from 'boring-avatars';
 import NextLink from 'next/link';
@@ -8,6 +8,7 @@ import type { SubmissionWithUser } from '@/interface/submission';
 import { sortRank } from '@/utils/rank';
 
 import type { Bounty, Rewards } from '../../types';
+import { tweetEmbedLink, tweetTemplate } from '../../utils';
 
 interface Props {
   bounty: Bounty;
@@ -45,6 +46,14 @@ export function ListingWinners({ bounty }: Props) {
     getSubmissions();
   }, []);
 
+  const openWinnerLink = () => {
+    let path = window.location.href.split('?')[0];
+    if (!path) return;
+    path += 'winner/';
+
+    return tweetEmbedLink(tweetTemplate(path));
+  };
+
   if (isListingLoading || !submissions.length) {
     return null;
   }
@@ -55,15 +64,16 @@ export function ListingWinners({ bounty }: Props) {
         mx={3}
         mb={4}
         color="brand.slate.500"
-        fontSize="xl"
+        fontSize={{ base: 'lg', md: 'xl' }}
         fontWeight={600}
       >
         🎉 Winners Announced
       </Text>
       <Box mx={3}>
         <Box
+          pos="relative"
           w="full"
-          px={10}
+          px={{ base: 3, md: 10 }}
           py={6}
           color="white"
           bg="radial-gradient(circle, rgba(159,65,255,1) 25%, rgba(99,102,241,1) 100%);"
@@ -93,7 +103,7 @@ export function ListingWinners({ bounty }: Props) {
                     top={-2}
                     px={1}
                     color="white"
-                    fontSize="xs"
+                    fontSize={{ base: 'xx-small', md: 'xs' }}
                     fontWeight={700}
                     textAlign="center"
                     textTransform="capitalize"
@@ -104,8 +114,9 @@ export function ListingWinners({ bounty }: Props) {
                   </Text>
                   {submission?.user?.photo ? (
                     <Image
-                      boxSize="72px"
+                      boxSize="64px"
                       borderRadius="full"
+                      objectFit={'cover'}
                       alt={`${submission?.user?.firstName} ${submission?.user?.lastName}`}
                       src={submission?.user?.photo}
                     />
@@ -113,18 +124,18 @@ export function ListingWinners({ bounty }: Props) {
                     <Avatar
                       name={`${submission?.user?.firstName} ${submission?.user?.lastName}`}
                       colors={['#92A1C6', '#F0AB3D', '#C271B4']}
-                      size={72}
+                      size={64}
                       variant="marble"
                     />
                   )}
                   <Text
-                    fontSize="sm"
+                    fontSize={{ base: 'xs', md: 'sm' }}
                     fontWeight={600}
                     textAlign={'center'}
                   >{`${submission?.user?.firstName} ${submission?.user?.lastName}`}</Text>
                   <Text
-                    fontSize="xs"
-                    fontWeight={300}
+                    fontSize={{ base: 'xx-small', md: 'xs' }}
+                    fontWeight={400}
                     textAlign="center"
                     opacity={0.6}
                   >
@@ -138,6 +149,39 @@ export function ListingWinners({ bounty }: Props) {
               </NextLink>
             ))}
           </Flex>
+          <NextLink href={openWinnerLink() ?? '#'} target="_blank">
+            <Button
+              pos={{ base: 'static', md: 'absolute' }}
+              top={5}
+              right={5}
+              gap={2}
+              display="flex"
+              w={{ base: '100%', md: 'auto' }}
+              mt={{ base: 6, md: 0 }}
+              color="rgba(0, 0, 0, 0.65)"
+              fontSize="14px"
+              fontWeight={500}
+              bg="white"
+              _hover={{ background: 'rgba(255, 255, 255, 0.8)' }}
+              _active={{ background: 'rgba(255, 255, 255, 0.5)' }}
+            >
+              Share on
+              <Center w="1.2rem">
+                <svg
+                  width="33px"
+                  height="33px"
+                  viewBox="0 0 33 33"
+                  fill="none"
+                  xmlns="http://www.w3.org/2000/svg"
+                >
+                  <path
+                    d="M25.0851 3.09375H29.6355L19.6968 14.4504L31.3886 29.9062H22.2363L15.0626 20.5348L6.86421 29.9062H2.30737L12.9357 17.7568L1.72729 3.09375H11.1117L17.5892 11.6596L25.0851 3.09375ZM23.4867 27.1863H26.0068L9.73882 5.67188H7.03179L23.4867 27.1863Z"
+                    fill="black"
+                  />
+                </svg>
+              </Center>
+            </Button>
+          </NextLink>
         </Box>
       </Box>
     </Box>

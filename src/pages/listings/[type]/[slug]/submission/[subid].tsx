@@ -1,5 +1,5 @@
 import { HStack } from '@chakra-ui/react';
-import { Regions, type User } from '@prisma/client';
+import { type User } from '@prisma/client';
 import axios from 'axios';
 import type { GetServerSideProps } from 'next';
 import React, { useEffect, useState } from 'react';
@@ -11,7 +11,6 @@ import {
   ListingHeader,
   SubmissionPage,
 } from '@/features/listings';
-import type { SponsorType } from '@/interface/sponsor';
 import type { SubmissionWithUser } from '@/interface/submission';
 import { Default } from '@/layouts/Default';
 import { Meta } from '@/layouts/Meta';
@@ -67,21 +66,7 @@ const Sumbissions = ({ slug, subid }: BountyDetailsProps) => {
         )}
         {!isLoading && !error && !!bounty?.id && (
           <>
-            <ListingHeader
-              region={(bounty?.region as Regions) || Regions.GLOBAL}
-              id={bounty?.id}
-              status={bounty?.status}
-              deadline={bounty?.deadline}
-              title={bounty?.title ?? ''}
-              sponsor={bounty?.sponsor as SponsorType}
-              slug={bounty?.slug}
-              type={bounty?.type}
-              isWinnersAnnounced={bounty?.isWinnersAnnounced}
-              references={bounty?.references}
-              publishedAt={bounty?.publishedAt}
-              isPublished={bounty?.isPublished}
-              hackathonLogo={bounty?.Hackathon?.altLogo}
-            />
+            <ListingHeader listing={bounty} />
             <HStack
               align={['center', 'center', 'start', 'start']}
               justify={['center', 'center', 'space-between', 'space-between']}

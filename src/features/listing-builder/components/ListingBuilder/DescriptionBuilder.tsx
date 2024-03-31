@@ -7,6 +7,7 @@ import {
   HStack,
   Image,
   Input,
+  Link as ChakraLink,
   Modal,
   ModalBody,
   ModalContent,
@@ -17,6 +18,7 @@ import {
   VStack,
 } from '@chakra-ui/react';
 import { Color } from '@tiptap/extension-color';
+import ImageUpload from '@tiptap/extension-image';
 import Link from '@tiptap/extension-link';
 import ListItem from '@tiptap/extension-list-item';
 import Placeholder from '@tiptap/extension-placeholder';
@@ -24,12 +26,14 @@ import TextStyle from '@tiptap/extension-text-style';
 import Underline from '@tiptap/extension-underline';
 import { EditorContent, useEditor } from '@tiptap/react';
 import StarterKit from '@tiptap/starter-kit';
+import imageCompression from 'browser-image-compression';
 import React, {
   type Dispatch,
   type SetStateAction,
   useCallback,
   useState,
 } from 'react';
+import toast from 'react-hot-toast';
 import { AiOutlineLink, AiOutlineOrderedList } from 'react-icons/ai';
 import { BiFontColor } from 'react-icons/bi';
 import {
@@ -41,12 +45,15 @@ import {
 import { CiRedo, CiUndo } from 'react-icons/ci';
 import { GoBold } from 'react-icons/go';
 import {
+  MdOutlineAddPhotoAlternate,
   MdOutlineFormatListBulleted,
   MdOutlineFormatUnderlined,
   MdOutlineHorizontalRule,
 } from 'react-icons/md';
+import ImageResize from 'tiptap-extension-resize-image';
 
 import { ReferenceCard, type References } from '@/features/listings';
+import { uploadToCloudinary } from '@/utils/upload';
 
 const LinkModal = ({
   isOpen,
@@ -118,6 +125,14 @@ export const DescriptionBuilder = ({
   const editor = useEditor({
     extensions: [
       Underline,
+      ImageResize,
+      ImageUpload.configure({
+        inline: true,
+        allowBase64: true,
+        HTMLAttributes: {
+          style: 'align-item:center',
+        },
+      }),
       Color.configure({ types: [TextStyle.name, ListItem.name] }),
       TextStyle.configure(),
       Link.configure({
@@ -176,6 +191,41 @@ export const DescriptionBuilder = ({
     },
     [editor],
   );
+
+  const addImage = useCallback(() => {
+    const fileInput = document.createElement('input');
+    fileInput.type = 'file';
+    fileInput.accept = 'image/jpeg, image/png'; // Accept only JPEG & PNG files
+    fileInput.click();
+
+    // Listen for file selection
+    fileInput.addEventListener('change', async (event: any) => {
+      const file = event?.target?.files[0];
+      if (file) {
+        const toastId = toast.loading('Uploading image...');
+
+        try {
+          const options = {
+            maxSizeMB: 1,
+            maxWidthOrHeight: 1920,
+            useWebWorker: true,
+          };
+          const compressedImg = await imageCompression(file, options);
+
+          // upload the file and get its URL
+          const url = await uploadToCloudinary(compressedImg);
+          if (url) {
+            // Set the image in the editor
+            editor?.chain().focus().setImage({ src: url }).run();
+            toast.success('Image uploaded successfully!', { id: toastId });
+          }
+        } catch (error) {
+          console.error('Error uploading image:', error);
+          toast.error('Failed to upload image.', { id: toastId });
+        }
+      }
+    });
+  }, [editor]);
 
   const handleDeleteReference = () => {
     if (references && setReferences) {
@@ -255,7 +305,7 @@ export const DescriptionBuilder = ({
             {220 - (bountyRequirements?.length || 0)} characters left
           </Text>
         </Box>
-        <Flex justify="start" w="full">
+        <Flex justify="space-between" w="full">
           <Flex>
             <FormLabel
               color={'brand.slate.500'}
@@ -293,8 +343,26 @@ export const DescriptionBuilder = ({
               />
             </Tooltip>
           </Flex>
+          <ChakraLink
+            gap={1}
+            display="flex"
+            color="brand.slate.400"
+            fontSize={'13px'}
+            _hover={{
+              textDecoration: 'none',
+              color: 'brand.slate.500',
+            }}
+            href="https://chat.openai.com/g/g-HS6eWTMku-st-earn-listings-bot"
+            target="_blank"
+          >
+            <Text textDecoration="none">🤖</Text>
+            <Text textDecoration="underline" textUnderlineOffset={2}>
+              Go live in {'<1'} min by using our drafting bot (ChatGPT 4
+              Required)
+            </Text>
+          </ChakraLink>
         </Flex>
-        <VStack w={'3xl'} mx={'auto'} mb={8}>
+        <VStack w={'min-content'} mb={8}>
           <Flex
             pos={'sticky'}
             zIndex="200"
@@ -427,6 +495,19 @@ export const DescriptionBuilder = ({
               alignItems={'center'}
               justifyContent={'center'}
               display={'flex'}
+              bg={editor?.isActive('underline') ? 'gray.200' : ''}
+              borderTop={'1px solid #D2D2D2'}
+              borderRight={'1px solid #D2D2D2'}
+              borderRadius={'0px'}
+              onClick={addImage}
+              variant={'unstyled'}
+            >
+              <MdOutlineAddPhotoAlternate />
+            </Button>
+            <Button
+              alignItems={'center'}
+              justifyContent={'center'}
+              display={'flex'}
               bg={editor?.isActive('link') ? 'gray.200' : ''}
               borderTop={'1px solid #D2D2D2'}
               borderRight={'1px solid #D2D2D2'}
@@ -530,7 +611,6 @@ export const DescriptionBuilder = ({
               alignItems={'center'}
               justifyContent={'center'}
               display={'flex'}
-              w={'full'}
               borderTop={'1px solid #D2D2D2'}
               borderRight={'1px solid #D2D2D2'}
               borderRadius={'0px'}
@@ -545,7 +625,6 @@ export const DescriptionBuilder = ({
               alignItems={'center'}
               justifyContent={'center'}
               display={'flex'}
-              w={'full'}
               borderTop={'1px solid #D2D2D2'}
               borderRight={'1px solid #D2D2D2'}
               borderRadius={'0px'}
@@ -560,7 +639,6 @@ export const DescriptionBuilder = ({
               alignItems={'center'}
               justifyContent={'center'}
               display={'flex'}
-              w={'full'}
               borderTop={'1px solid #D2D2D2'}
               borderRight={'1px solid #D2D2D2'}
               borderRadius={'0px'}

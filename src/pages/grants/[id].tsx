@@ -69,16 +69,16 @@ const Grants = ({ slug }: GrantsDetailsProps) => {
               sponsor={grants?.sponsor as SponsorType}
             />
             <HStack
-              align={['center', 'center', 'start', 'start']}
-              justify={['center', 'center', 'space-between', 'space-between']}
-              flexDir={['column-reverse', 'column-reverse', 'row', 'row']}
+              align={{ base: 'center', md: 'start' }}
+              justify={{ base: 'center', md: 'space-between' }}
+              flexDir={{ base: 'column-reverse', md: 'row' }}
               gap={4}
               maxW={'7xl'}
               minH={'100vh'}
               mx={'auto'}
-              my={10}
+              my={{ base: 3, md: 10 }}
             >
-              <HStack w={['22rem', '22rem', 'full', 'full']}>
+              <HStack w={'full'}>
                 <DescriptionUI
                   skills={grants?.skills?.map((e) => e.skills)}
                   description={(grants?.description as string) ?? ''}
@@ -87,12 +87,12 @@ const Grants = ({ slug }: GrantsDetailsProps) => {
               <Flex
                 direction={'column'}
                 gap={5}
-                w={['20rem', '20rem', '32rem', '32rem']}
-                h={'10rem'}
+                w={{ base: 'full', md: '32rem' }}
+                py={5}
                 bg={'white'}
                 rounded={'md'}
               >
-                <HStack gap={3} mt={5} px={8}>
+                <HStack gap={3} px={8}>
                   <Box
                     alignItems={'center'}
                     justifyContent={'center'}
@@ -109,7 +109,11 @@ const Grants = ({ slug }: GrantsDetailsProps) => {
                     />
                   </Box>
                   <VStack align={'start'}>
-                    <Text color={'gray.600'} fontSize={'lg'} fontWeight={500}>
+                    <Text
+                      color={'gray.600'}
+                      fontSize={{ base: 'md', md: 'lg' }}
+                      fontWeight={500}
+                    >
                       Upto ${(grants.rewardAmount || 0).toLocaleString()}
                     </Text>
                     <Text mt={'0px !important'} color={'gray.500'}>
@@ -119,19 +123,32 @@ const Grants = ({ slug }: GrantsDetailsProps) => {
                 </HStack>
 
                 <Box w={'full'} px={10}>
-                  <Button
-                    as={Link}
-                    w={'full'}
-                    _hover={{
-                      textDecoration: 'none',
-                    }}
-                    href={grants?.link}
-                    isExternal
-                    size="lg"
-                    variant="solid"
+                  <Flex
+                    pos={{ base: 'fixed', md: 'static' }}
+                    zIndex={999}
+                    bottom={0}
+                    left="50%"
+                    w="full"
+                    px={{ base: 3, md: 0 }}
+                    py={{ base: 4, md: 0 }}
+                    bg="white"
+                    transform={{ base: 'translateX(-50%)', md: 'none' }}
                   >
-                    Submit Now
-                  </Button>
+                    <Button
+                      as={Link}
+                      zIndex={999}
+                      w="full"
+                      _hover={{
+                        textDecoration: 'none',
+                      }}
+                      href={grants?.link}
+                      isExternal
+                      size="lg"
+                      variant="solid"
+                    >
+                      Submit Now
+                    </Button>
+                  </Flex>
                 </Box>
               </Flex>
             </HStack>

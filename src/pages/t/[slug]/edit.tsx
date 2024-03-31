@@ -98,6 +98,7 @@ const keysToOmit = [
   'Grants',
   'UserInvites',
   'SubscribeBounty',
+  'emailSettings',
 ];
 
 const parseSkillsAndSubskills = (skillsObject: any) => {
@@ -398,7 +399,7 @@ export default function EditProfilePage({ slug }: { slug: string }) {
         }
       >
         <Box bg="#fff">
-          <Box w="90%" maxW="600px" mx="auto" p={5}>
+          <Box maxW="600px" mx="auto" p={{ base: 3, md: 5 }}>
             <Heading mt={3} mb={5}>
               Edit Profile
             </Heading>
@@ -732,6 +733,7 @@ export default function EditProfilePage({ slug }: { slug: string }) {
                   setSubSkills={setSubSkills}
                   skillLabel="Your Skills"
                   subSkillLabel="Sub Skills"
+                  helperText="We will send email notifications of new listings for your selected skills"
                 />
 
                 <Checkbox

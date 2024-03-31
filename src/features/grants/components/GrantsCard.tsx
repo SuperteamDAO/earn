@@ -97,7 +97,7 @@ export const GrantsCard = ({ grant }: { grant: Grant }) => {
           </Flex>
 
           <Button
-            minW={24}
+            minW={{ base: 16, md: 24 }}
             h={isMobile ? 7 : 9}
             px={6}
             fontSize={['xs', 'xs', 'sm', 'sm']}

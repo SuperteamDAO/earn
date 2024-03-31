@@ -6,8 +6,7 @@ import { useRouter } from 'next/router';
 import { useEffect, useState } from 'react';
 
 import { LoadingSection } from '@/components/shared/LoadingSection';
-import { PublishResults } from '@/components/submissions/PublishResults';
-import type { Bounty } from '@/features/listings';
+import { type Bounty, PublishResults } from '@/features/listings';
 import {
   SubmissionDetails,
   SubmissionHeader,
@@ -16,7 +15,6 @@ import {
 import type { SubmissionWithUser } from '@/interface/submission';
 import { Sidebar } from '@/layouts/Sponsor';
 import { userStore } from '@/store/user';
-import { dayjs } from '@/utils/dayjs';
 import { sortRank } from '@/utils/rank';
 
 interface Props {
@@ -112,11 +110,7 @@ function BountySubmissions({ listing }: Props) {
               onClose={onClose}
               totalWinners={totalWinners}
               totalPaymentsMade={totalPaymentsMade}
-              rewards={Object.keys(bounty?.rewards || {})}
-              bountyId={bounty?.id}
-              isDeadlinePassed={dayjs().isAfter(bounty?.deadline)}
-              hasWinnersAnnounced={bounty?.isWinnersAnnounced}
-              isRolling={bounty?.type === 'rolling'}
+              bounty={bounty}
             />
           )}
           <SubmissionHeader
