@@ -1,4 +1,5 @@
 import type { SkillMap } from '@/interface/skills';
+import { type IScratchEditorData } from '@/utils/createDefaultEditorData';
 
 import { Superteams } from './Superteam';
 
@@ -855,4 +856,27 @@ export const workType = [
   'Freelance',
   'Fulltime',
   'Internship',
+];
+
+export const scratchEditorData: IScratchEditorData = [
+  {
+    text: 'About the Bounty & Scope',
+    element: 'h1',
+  },
+  {
+    text: 'Rewards',
+    element: 'h1',
+  },
+  {
+    text: 'Judging Criteria',
+    element: 'h1',
+  },
+  {
+    text: 'Submission Requirements',
+    element: 'h1',
+  },
+  {
+    text: 'Resources',
+    element: 'h1',
+  },
 ];
