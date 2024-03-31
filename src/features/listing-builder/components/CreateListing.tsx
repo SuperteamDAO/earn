@@ -3,17 +3,22 @@ import { Regions } from '@prisma/client';
 import axios from 'axios';
 import { useAtom } from 'jotai';
 import { useRouter } from 'next/router';
-import { useEffect, useReducer, useState } from 'react';
+import { useEffect, useMemo, useReducer, useState } from 'react';
 
 import { ErrorSection } from '@/components/shared/ErrorSection';
 import { SurveyModal } from '@/components/Survey';
-import { type MultiSelectOptions, tokenList } from '@/constants';
+import {
+  type MultiSelectOptions,
+  scratchEditorData,
+  tokenList,
+} from '@/constants';
 import {
   type Bounty,
   getBountyDraftStatus,
   type References,
 } from '@/features/listings';
 import { userStore } from '@/store/user';
+import { createDefaultEditorData } from '@/utils/createDefaultEditorData';
 import { dayjs } from '@/utils/dayjs';
 
 import type { SuperteamName } from '../types';
@@ -305,6 +310,11 @@ export function CreateListing({
 
   const isNewOrDraft = bountyDraftStatus === 'DRAFT' || newBounty === true;
 
+  const defaultEditorData = useMemo(
+    () => createDefaultEditorData(scratchEditorData),
+    [],
+  );
+
   return (
     <>
       {!userInfo?.id || !userInfo?.currentSponsorId ? (
@@ -373,6 +383,7 @@ export function CreateListing({
               setMainSkills={setMainSkills}
               setBountyBasic={setBountyBasic}
               type={type}
+              defaultEditorData={defaultEditorData}
             />
           )}
           {steps > 1 && (

@@ -22,6 +22,7 @@ interface Props {
   setSubSkills: Dispatch<SetStateAction<MultiSelectOptions[]>>;
   setBountyBasic: Dispatch<SetStateAction<BountyBasicType | undefined>>;
   type: 'bounty' | 'project' | 'hackathon';
+  defaultEditorData?: string;
 }
 export const Template = ({
   setSteps,
@@ -30,6 +31,7 @@ export const Template = ({
   setSubSkills,
   setBountyBasic,
   type,
+  defaultEditorData,
 }: Props) => {
   const [bountiesTemplates, setBountiesTemplates] = useState([]);
   const [isBountiesTemplatesLoading, setIsBountiesTemplatesLoading] =
@@ -99,7 +101,8 @@ export const Template = ({
               borderRadius={5}
               cursor={'pointer'}
               onClick={() => {
-                setSteps(2);
+                setEditorData(defaultEditorData);
+                setSteps(3);
               }}
             >
               <AddIcon color="gray.500" mb="1rem" />
