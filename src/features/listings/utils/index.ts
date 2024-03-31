@@ -113,11 +113,6 @@ export function tweetEmbedLink(content: string) {
   const stringUrl = tweetUrl.toString();
   return stringUrl;
 }
-export function autoResize(element: HTMLElement) {
-  element.style.height = 'auto';
-  element.style.height =
-    element.scrollHeight === 0 ? '25px' : element.scrollHeight + 'px';
-}
 
 export function formatFromNow(now: string) {
   return now

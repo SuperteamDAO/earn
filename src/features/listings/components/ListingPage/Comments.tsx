@@ -4,22 +4,21 @@ import {
   Flex,
   HStack,
   Text,
-  Textarea,
   useDisclosure,
   VStack,
 } from '@chakra-ui/react';
 import axios from 'axios';
 import Image from 'next/image';
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useState } from 'react';
 
 import { LoginWrapper } from '@/components/LoginWrapper';
+import { AutoResizeTextarea } from '@/components/shared/autosize-textarea';
 import { ErrorInfo } from '@/components/shared/ErrorInfo';
 import { Loading } from '@/components/shared/Loading';
 import { UserAvatar } from '@/components/shared/UserAvatar';
 import type { Comment } from '@/interface/comments';
 import { userStore } from '@/store/user';
 
-import { autoResize } from '../../utils';
 import { WarningModal } from '../WarningModal';
 import { Comment as CommentUI } from './Comment';
 
@@ -39,7 +38,6 @@ export const Comments = ({ refId, refType, sponsorId }: Props) => {
   const [newCommentLoading, setNewCommentLoading] = useState(false);
   const [newCommentError, setNewCommentError] = useState(false);
   const [count, setCount] = useState(0);
-  const inputRef = useRef<HTMLTextAreaElement>(null);
 
   const deleteComment = async (commentId: string) => {
     const commentIndex = comments.findIndex(
@@ -111,10 +109,6 @@ export const Comments = ({ refId, refType, sponsorId }: Props) => {
     }
   };
 
-  useEffect(() => {
-    if (inputRef.current) autoResize(inputRef.current);
-  }, [newComment]);
-
   if (isLoading && !comments?.length) return <Loading />;
 
   if (error) return <ErrorInfo />;
@@ -157,23 +151,18 @@ export const Comments = ({ refId, refType, sponsorId }: Props) => {
         <VStack gap={4} w={'full'} mb={4} px={6}>
           <HStack align="start" gap={3} w="full">
             <UserAvatar user={userInfo} size="36px" />
-            <Textarea
-              ref={inputRef}
-              overflowY="hidden"
-              h="auto"
+            <AutoResizeTextarea
               pt={0}
               fontSize="sm"
               borderColor="brand.slate.200"
               _placeholder={{
                 color: 'brand.slate.400',
               }}
-              resize="none"
               focusBorderColor="brand.purple"
               onChange={(e) => {
                 setNewComment(e.target.value);
               }}
               placeholder="Write a comment"
-              rows={1}
               value={newComment}
               variant="flushed"
             />
@@ -189,7 +178,7 @@ export const Comments = ({ refId, refType, sponsorId }: Props) => {
                 h="auto"
                 px={5}
                 py={2}
-                fontSize="xxs"
+                fontSize="xx-small"
                 fontWeight={500}
                 isDisabled={!!newCommentLoading || !newComment}
                 onClick={() => setNewComment('')}
@@ -201,7 +190,7 @@ export const Comments = ({ refId, refType, sponsorId }: Props) => {
                 h="auto"
                 px={5}
                 py={2}
-                fontSize="xxs"
+                fontSize="xx-small"
                 fontWeight={500}
                 isDisabled={!!newCommentLoading || !newComment}
                 isLoading={!!newCommentLoading}

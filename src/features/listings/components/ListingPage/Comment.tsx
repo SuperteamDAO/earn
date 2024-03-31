@@ -19,23 +19,23 @@ import {
   MenuItem,
   MenuList,
   Text,
-  Textarea,
   useDisclosure,
   VStack,
 } from '@chakra-ui/react';
 import axios from 'axios';
 import Image from 'next/image';
 import Link from 'next/link';
-import { useEffect, useRef, useState } from 'react';
+import { useRef, useState } from 'react';
 
 import { LoginWrapper } from '@/components/LoginWrapper';
+import { AutoResizeTextarea } from '@/components/shared/autosize-textarea';
 import { UserAvatar } from '@/components/shared/UserAvatar';
 import { type Comment as IComment } from '@/interface/comments';
 import { userStore } from '@/store/user';
 import { dayjs } from '@/utils/dayjs';
 import { getURL } from '@/utils/validUrl';
 
-import { autoResize, formatFromNow } from '../../utils';
+import { formatFromNow } from '../../utils';
 import { WarningModal } from '../WarningModal';
 
 interface Props {
@@ -75,7 +75,6 @@ export const Comment = ({
   const [deleteLoading, setDeleteLoading] = useState(false);
   const [deleteError, setDeleteError] = useState(false);
   const [showOptions, setShowOptions] = useState(false);
-  const inputRef = useRef<HTMLTextAreaElement>(null);
   const cancelRef = useRef<any>(null);
 
   const deleteReplyLvl1 = async (replyId: string) => {
@@ -145,10 +144,6 @@ export const Comment = ({
     }
   };
 
-  useEffect(() => {
-    if (inputRef.current) autoResize(inputRef.current);
-  }, [newReply]);
-
   return (
     <>
       {isOpen && (
@@ -205,7 +200,7 @@ export const Comment = ({
                 display="flex"
                 pb="2px"
                 color="blue.500"
-                fontSize="xxs"
+                fontSize="xx-small"
                 fontWeight={500}
               >
                 <Image
@@ -220,7 +215,7 @@ export const Comment = ({
             <Text
               pb="2px"
               color="brand.slate.400"
-              fontSize="xxs"
+              fontSize="xx-small"
               fontWeight={500}
             >
               {date}
@@ -228,8 +223,6 @@ export const Comment = ({
           </HStack>
           <Text mt={'0px !important'} color="brand.slate.500" fontSize="sm">
             {comment?.message}
-            <br />
-            {comment.id}
           </Text>
           <HStack pt={2}>
             {replies?.length > 0 && (
@@ -278,23 +271,18 @@ export const Comment = ({
             <VStack gap={4} w={'full'} mb={4} pt={4}>
               <HStack align="start" gap={3} w="full">
                 <UserAvatar user={userInfo} size="28px" />
-                <Textarea
-                  ref={inputRef}
-                  overflowY="hidden"
-                  h="50px"
+                <AutoResizeTextarea
                   pt={0}
                   fontSize="sm"
                   borderColor="brand.slate.200"
                   _placeholder={{
                     color: 'brand.slate.400',
                   }}
-                  resize="none"
                   focusBorderColor="brand.purple"
                   onChange={(e) => {
                     setNewReply(e.target.value);
                   }}
                   placeholder="Write a comment"
-                  rows={1}
                   value={newReply}
                   variant="flushed"
                 />
@@ -315,7 +303,7 @@ export const Comment = ({
                     px={5}
                     py={2}
                     color="brand.slate.800"
-                    fontSize="xxs"
+                    fontSize="xx-small"
                     fontWeight={500}
                     bg="brand.slate.200"
                     _hover={{
@@ -422,10 +410,6 @@ export const Comment = ({
               </Button>
               <Button
                 ml={3}
-                bg="red.500"
-                _hover={{ bg: 'red.400' }}
-                _active={{ bg: 'red.600' }}
-                colorScheme="red"
                 disabled={deleteLoading}
                 isLoading={deleteLoading}
                 onClick={handleDelete}
