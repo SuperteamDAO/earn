@@ -133,7 +133,10 @@ export function CreateListing({
           ? `${bounty.title} (2)`
           : bounty?.title) || undefined
       : undefined,
-    slug: editable ? bounty?.slug || undefined : undefined,
+    slug: editable
+      ? (isDuplicating && bounty?.slug ? `${bounty.slug}-2` : bounty?.slug) ||
+        undefined
+      : undefined,
     deadline:
       !isDuplicating && editable && bounty?.deadline
         ? dayjs(bounty?.deadline).format('YYYY-MM-DDTHH:mm') || undefined
@@ -419,6 +422,7 @@ export function CreateListing({
               isDuplicating={isDuplicating}
               isPrivate={isPrivate}
               setIsPrivate={setIsPrivate}
+              publishedAt={bounty?.publishedAt}
             />
           )}
         </FormLayout>
