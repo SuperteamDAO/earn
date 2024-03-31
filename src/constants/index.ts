@@ -202,6 +202,14 @@ export const tokenList = [
     coingeckoSymbol: 'kiwi-token-2',
   },
   {
+    tokenName: 'EUROe Stablecoin (EUROe)',
+    tokenSymbol: 'EUROe',
+    mintAddress: '2VhjJ9WxaGC3EZFwJG9BDUs9KxKCAjQY4vgd1qxgYWVg',
+    icon: 'https://assets.coingecko.com/coins/images/28913/standard/euroe-200x200-round.png?1696527889',
+    decimals: 6,
+    coingeckoSymbol: 'euroe-stablecoin',
+  },
+  {
     tokenName: 'Solend (SLND)',
     tokenSymbol: 'SLND',
     mintAddress: 'SLNDpmoWTVADgEdndyvWzroNL7zSi1dF9PC3xHGtPwp',

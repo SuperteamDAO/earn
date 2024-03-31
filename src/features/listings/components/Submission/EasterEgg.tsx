@@ -1,20 +1,21 @@
 import { CloseIcon } from '@chakra-ui/icons';
 import {
   AbsoluteCenter,
+  Box,
   Container,
   Modal,
   ModalCloseButton,
   ModalContent,
   Text,
 } from '@chakra-ui/react';
-import { Box } from 'degen';
 import Image from 'next/image';
 import Confetti from 'react-confetti';
 interface Props {
   isOpen: boolean;
   onClose: () => void;
+  isProject: boolean;
 }
-export const EasterEgg = ({ isOpen, onClose }: Props) => {
+export const EasterEgg = ({ isOpen, onClose, isProject }: Props) => {
   return (
     <Modal isOpen={isOpen} onClose={onClose}>
       <ModalContent
@@ -27,18 +28,14 @@ export const EasterEgg = ({ isOpen, onClose }: Props) => {
         mt="0"
         mb="0"
         bg="#5243FF"
+        borderRadius={0}
       >
         <Confetti />
         <ModalCloseButton w={6} h={6} m={4} color="white">
           <CloseIcon width={4} height={4} />
         </ModalCloseButton>
         <Container mt={[28, 6]} px={4}>
-          <Box
-            width="112px"
-            marginX="auto"
-            marginTop="24px"
-            marginBottom="44px"
-          >
+          <Box w="112px" mx="auto" mt="24px" mb="44px">
             <Image
               src="/assets/icons/celebration.png"
               alt="celebration icon"
@@ -53,7 +50,7 @@ export const EasterEgg = ({ isOpen, onClose }: Props) => {
             lineHeight="1"
             textAlign="center"
           >
-            Submission Received
+            {isProject ? 'Application' : 'Submission'} Received!
           </Text>
           <Text
             mt={[8, 5]}
@@ -63,7 +60,7 @@ export const EasterEgg = ({ isOpen, onClose }: Props) => {
             textAlign="center"
             opacity="0.6"
           >
-            We have received your submission
+            Sending some vibes your way 💃 💃
           </Text>
         </Container>
         <AbsoluteCenter
@@ -83,6 +80,9 @@ export const EasterEgg = ({ isOpen, onClose }: Props) => {
             style={{ width: '100%', marginTop: 'auto', display: 'block' }}
             width="500"
             height="600"
+            priority
+            loading="eager"
+            quality={80}
           />
         </AbsoluteCenter>
         <audio

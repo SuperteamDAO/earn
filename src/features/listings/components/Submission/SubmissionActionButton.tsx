@@ -1,5 +1,6 @@
-import { Button, Tooltip, useDisclosure } from '@chakra-ui/react';
+import { Button, Flex, Tooltip, useDisclosure } from '@chakra-ui/react';
 import axios from 'axios';
+import Image from 'next/image';
 import React, {
   type Dispatch,
   type SetStateAction,
@@ -213,8 +214,29 @@ export const SubmissionActionButton = ({
         <EasterEgg
           isOpen={isEasterEggOpen}
           onClose={() => setEasterEggOpen(false)}
+          isProject={isProject}
         />
       )}
+      <Image
+        // Hack to show GIF Immediately when Easter Egg is visible
+        src="/assets/memes/JohnCenaVibingToCupid.gif"
+        alt="John Cena Vibing to Cupid"
+        style={{
+          width: '100%',
+          marginTop: 'auto',
+          display: 'block',
+          visibility: 'hidden',
+          position: 'fixed',
+          zIndex: -99999,
+          top: '-300%',
+          left: '-300%',
+        }}
+        width="500"
+        height="600"
+        priority
+        loading="eager"
+        quality={80}
+      />
 
       <LoginWrapper
         triggerLogin={triggerLogin}
@@ -232,29 +254,36 @@ export const SubmissionActionButton = ({
         label={!isUserEligibleByRegion ? regionTooltipLabel : ''}
         rounded="md"
       >
-        <Button
+        <Flex
           pos={{ base: 'fixed', md: 'static' }}
           zIndex={999}
-          bottom={5}
+          bottom={0}
           left="50%"
-          w={{ base: '96%', md: 'full' }}
-          mb={5}
-          bg={buttonBG}
-          _hover={{ bg: buttonBG }}
-          _disabled={{
-            opacity: { base: '96%', md: '70%' },
-          }}
+          w="full"
+          px={{ base: 3, md: 0 }}
+          py={{ base: 4, md: 0 }}
+          bg="white"
           transform={{ base: 'translateX(-50%)', md: 'none' }}
-          pointerEvents={btnPointerEvents}
-          isDisabled={isBtnDisabled}
-          isLoading={isUserSubmissionLoading}
-          loadingText={btnLoadingText}
-          onClick={handleSubmit}
-          size="lg"
-          variant="solid"
         >
-          {buttonText}
-        </Button>
+          <Button
+            w={'full'}
+            mb={{ base: 0, md: 5 }}
+            bg={buttonBG}
+            _hover={{ bg: buttonBG }}
+            _disabled={{
+              opacity: { base: '96%', md: '70%' },
+            }}
+            pointerEvents={btnPointerEvents}
+            isDisabled={isBtnDisabled}
+            isLoading={isUserSubmissionLoading}
+            loadingText={btnLoadingText}
+            onClick={handleSubmit}
+            size="lg"
+            variant="solid"
+          >
+            {buttonText}
+          </Button>
+        </Flex>
       </Tooltip>
     </>
   );

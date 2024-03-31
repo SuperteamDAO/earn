@@ -7,6 +7,7 @@ import {
   HStack,
   Image,
   Input,
+  Link as ChakraLink,
   Modal,
   ModalBody,
   ModalContent,
@@ -32,7 +33,7 @@ import React, {
   useCallback,
   useState,
 } from 'react';
-import toast, { Toaster } from 'react-hot-toast';
+import toast from 'react-hot-toast';
 import { AiOutlineLink, AiOutlineOrderedList } from 'react-icons/ai';
 import { BiFontColor } from 'react-icons/bi';
 import {
@@ -244,7 +245,6 @@ export const DescriptionBuilder = ({
       {isOpen && (
         <LinkModal setLink={setLink} isOpen={isOpen} onClose={onClose} />
       )}
-      <Toaster position="bottom-center" />
       <Box>
         <Box mb={8}>
           <Flex justify="start" w="full">
@@ -305,7 +305,7 @@ export const DescriptionBuilder = ({
             {220 - (bountyRequirements?.length || 0)} characters left
           </Text>
         </Box>
-        <Flex justify="start" w="full">
+        <Flex justify="space-between" w="full">
           <Flex>
             <FormLabel
               color={'brand.slate.500'}
@@ -343,6 +343,24 @@ export const DescriptionBuilder = ({
               />
             </Tooltip>
           </Flex>
+          <ChakraLink
+            gap={1}
+            display="flex"
+            color="brand.slate.400"
+            fontSize={'13px'}
+            _hover={{
+              textDecoration: 'none',
+              color: 'brand.slate.500',
+            }}
+            href="https://chat.openai.com/g/g-HS6eWTMku-st-earn-listings-bot"
+            target="_blank"
+          >
+            <Text textDecoration="none">🤖</Text>
+            <Text textDecoration="underline" textUnderlineOffset={2}>
+              Go live in {'<1'} min by using our drafting bot (ChatGPT 4
+              Required)
+            </Text>
+          </ChakraLink>
         </Flex>
         <VStack w={'min-content'} mb={8}>
           <Flex

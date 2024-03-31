@@ -33,7 +33,7 @@ export default function AllRegionListingsPage() {
   }, []);
 
   return (
-    <Home type="home">
+    <Home type="niche">
       <Meta title={`Solana Gaming | Superteam Earn`} description={``} />
       <Flex
         direction={{ md: 'row', base: 'column' }}
@@ -74,7 +74,7 @@ export default function AllRegionListingsPage() {
           bounties={listings.bounties}
           isListingsLoading={isListingsLoading}
           emoji="/assets/home/emojis/moneyman.png"
-          title="Freelance Gigs"
+          title="Ambassador Jobs"
           take={20}
         />
       </Box>

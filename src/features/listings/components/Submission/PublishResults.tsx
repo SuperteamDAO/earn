@@ -19,7 +19,6 @@ import dayjs from 'dayjs';
 import { useEffect, useState } from 'react';
 
 import { type Bounty } from '@/features/listings';
-import { type SubmissionWithUser } from '@/interface/submission';
 
 interface Props {
   onClose: () => void;
@@ -27,7 +26,6 @@ interface Props {
   totalWinners: number;
   totalPaymentsMade: number;
   bounty: Bounty | null;
-  submissions: SubmissionWithUser[];
 }
 
 export function PublishResults({
@@ -36,7 +34,6 @@ export function PublishResults({
   totalWinners,
   totalPaymentsMade,
   bounty,
-  // submissions,
 }: Props) {
   const [isPublishingResults, setIsPublishingResults] = useState(false);
   const [isWinnersAnnounced, setIsWinnersAnnounced] = useState(
@@ -45,7 +42,6 @@ export function PublishResults({
   const isDeadlinePassed = dayjs().isAfter(bounty?.deadline);
 
   const rewards = Object.keys(bounty?.rewards || {});
-  // const winnerBannerRef = useRef<HTMLDivElement>(null);
 
   let alertType:
     | 'loading'
@@ -72,56 +68,11 @@ export function PublishResults({
     }.`;
   }
 
-  // const saveBannerUrl = async (): Promise<string> => {
-  //   return new Promise(async (resolve, reject) => {
-  //     try {
-  //       if (!winnerBannerRef.current) {
-  //         throw new Error('no banner ref');
-  //       }
-  //       console.log('oooo no banner url');
-  //       const canvas = await html2canvas(winnerBannerRef.current, {
-  //         useCORS: true,
-  //         width: 1200,
-  //         height: 675,
-  //         x: 0,
-  //         y: 0,
-  //         onclone: (el) => {
-  //           const elementsWithShiftedDownwardText =
-  //             el.querySelectorAll<HTMLElement>('.shifted-text');
-  //           elementsWithShiftedDownwardText.forEach((element) => {
-  //             element.style.transform = 'translateY(-30%)';
-  //           });
-  //         },
-  //       });
-
-  //       const mimeType = 'image/png';
-  //       if (!bounty?.id || !bounty?.slug) throw new Error('no id or slug');
-  //       const fileName = `${bounty.id}-winner-banner`;
-
-  //       const blob = await getBlobFromCanvas(canvas, mimeType);
-
-  //       if (!blob) throw new Error('no blob');
-  //       const file = new File([blob], fileName, { type: mimeType });
-
-  //       const url = await uploadToCloudinary(file);
-
-  //       await axios.put(`/api/bounties/${bounty.slug}/setWinnerBanner`, {
-  //         image: url,
-  //       });
-
-  //       resolve(url);
-  //     } catch {
-  //       reject('Some Error Occured');
-  //     }
-  //   });
-  // };
-
   const publishResults = async () => {
     if (!bounty?.id) return;
     setIsPublishingResults(true);
     try {
       await axios.post(`/api/bounties/announce/${bounty?.id}/`);
-      // await saveBannerUrl();
       setIsWinnersAnnounced(true);
       setIsPublishingResults(false);
     } catch (e) {
@@ -143,15 +94,6 @@ export function PublishResults({
       <ModalContent>
         <ModalHeader>Publish Results</ModalHeader>
         <ModalCloseButton />
-        {/* {bounty && (
-          <Box pos="fixed" zIndex={-99999} top={'-300%'} right={'-300%'}>
-            <WinnerBanner
-              ref={winnerBannerRef}
-              submissions={submissions}
-              bounty={bounty}
-            />
-          </Box>
-        )} */}
         <ModalBody>
           {isWinnersAnnounced && (
             <Alert
