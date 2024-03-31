@@ -416,7 +416,7 @@ export const ListingBasic = ({
               }}
               focusBorderColor="brand.purple"
               id="slug"
-              isDisabled={!!publishedAt}
+              isDisabled={!isDuplicating && !!publishedAt}
               onChange={(e) => {
                 const newValue = e.target.value
                   .replace(/\s+/g, '-')
