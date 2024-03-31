@@ -36,5 +36,3 @@ export const str2ab = (str: string, fileName: string) => {
   const file64 = parser.format(fileName, buffer);
   return file64;
 };
-
-export default cloudinary;
