@@ -148,7 +148,7 @@ async function handler(_req: NextApiRequest, res: NextApiResponse) {
     // GET LAST UPDATED RECORD
     const listUrl = new URL(airtableUrl());
     listUrl.searchParams.set('maxRecords', '1');
-    listUrl.searchParams.set('sort[0][field]', 'Created Time Check');
+    listUrl.searchParams.set('sort[0][field]', 'Last Modified');
     listUrl.searchParams.set('sort[0][direction]', 'desc');
 
     const resp = await axios.get(listUrl.toString(), airtableConfig());
@@ -156,7 +156,7 @@ async function handler(_req: NextApiRequest, res: NextApiResponse) {
     if (!listData || !listData.records) {
       throw new Error('no data');
     }
-    const listTime = listData.records[0].fields['Created Time Check'] as string;
+    const listTime = listData.records[0].fields['Last Modified'] as string;
     const lastCronDateTime = new Date(listTime);
     if (!lastCronDateTime) {
       throw new Error('no date');
