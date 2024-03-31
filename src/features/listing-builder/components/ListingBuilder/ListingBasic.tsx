@@ -5,6 +5,7 @@ import {
   Flex,
   FormControl,
   FormErrorMessage,
+  FormHelperText,
   FormLabel,
   Image,
   Input,
@@ -65,6 +66,7 @@ interface Props {
   setReferredBy?: Dispatch<SetStateAction<SuperteamName | undefined>>;
   isPrivate: boolean;
   setIsPrivate: Dispatch<SetStateAction<boolean>>;
+  publishedAt?: string;
 }
 interface ErrorsBasic {
   title: boolean;
@@ -96,6 +98,7 @@ export const ListingBasic = ({
   setIsPrivate,
   editable,
   id,
+  publishedAt,
 }: Props) => {
   const [errorState, setErrorState] = useState<ErrorsBasic>({
     deadline: false,
@@ -395,6 +398,15 @@ export const ListingBasic = ({
               />
             </Tooltip>
           </Flex>
+          <FormHelperText
+            mt={-1.5}
+            mb={2.5}
+            ml={0}
+            color="brand.slate.400"
+            fontSize={'13px'}
+          >
+            This field can&apos;t be edited after a listing has been published
+          </FormHelperText>
 
           <InputGroup>
             <Input
@@ -404,14 +416,18 @@ export const ListingBasic = ({
               }}
               focusBorderColor="brand.purple"
               id="slug"
+              isDisabled={!isDuplicating && !!publishedAt}
               onChange={(e) => {
+                const newValue = e.target.value
+                  .replace(/\s+/g, '-')
+                  .toLowerCase();
                 setErrorState({
                   ...errorState,
                   slug: false,
                 });
                 setbountyBasic({
                   ...(bountyBasic as BountyBasicType),
-                  slug: e.target.value,
+                  slug: newValue,
                 });
                 setIsUrlValid(true);
               }}
