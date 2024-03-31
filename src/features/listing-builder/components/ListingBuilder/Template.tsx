@@ -102,7 +102,7 @@ export const Template = ({
               cursor={'pointer'}
               onClick={() => {
                 setEditorData(defaultEditorData);
-                setSteps(3);
+                setSteps(2);
               }}
             >
               <AddIcon color="gray.500" mb="1rem" />
