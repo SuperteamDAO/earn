@@ -37,7 +37,6 @@ const theme = extendTheme({
     lg: '62em',
     xl: '80em',
     '2xl': '96em',
-    '3xl': '116em',
   },
   space: {
     85: '21rem',

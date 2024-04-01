@@ -164,7 +164,6 @@ export const Comments = ({ refId, refType, sponsorId }: Props) => {
               fontSize={{
                 base: 'sm',
                 '2xl': 'md',
-                '3xl': 'large',
               }}
               borderColor="brand.slate.200"
               _placeholder={{
@@ -194,7 +193,6 @@ export const Comments = ({ refId, refType, sponsorId }: Props) => {
                 fontSize={{
                   base: 'xx-small',
                   '2xl': 'sm',
-                  '3xl': 'md',
                 }}
                 fontWeight={500}
                 isDisabled={!!newCommentLoading || !newComment}
@@ -210,7 +208,6 @@ export const Comments = ({ refId, refType, sponsorId }: Props) => {
                 fontSize={{
                   base: 'xx-small',
                   '2xl': 'sm',
-                  '3xl': 'md',
                 }}
                 fontWeight={500}
                 isDisabled={!!newCommentLoading || !newComment}
@@ -252,7 +249,6 @@ export const Comments = ({ refId, refType, sponsorId }: Props) => {
               fontSize={{
                 base: 'md',
                 '2xl': 'large',
-                '3xl': 'larger',
               }}
               fontWeight={400}
               isDisabled={!!isLoading}

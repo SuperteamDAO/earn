@@ -204,8 +204,7 @@ export const Comment = ({
                 color="brand.slate.800"
                 fontSize={{
                   base: 'sm',
-                  '2xl': 'md',
-                  '3xl': 'large',
+                  '2xl': 'medium',
                 }}
                 fontWeight={500}
               >
@@ -221,7 +220,6 @@ export const Comment = ({
                 fontSize={{
                   base: 'xx-small',
                   '2xl': 'sm',
-                  '3xl': 'md',
                 }}
                 fontWeight={500}
               >
@@ -240,7 +238,6 @@ export const Comment = ({
               fontSize={{
                 base: 'xx-small',
                 '2xl': 'sm',
-                '3xl': 'md',
               }}
               fontWeight={500}
             >
@@ -253,7 +250,6 @@ export const Comment = ({
             fontSize={{
               base: 'sm',
               '2xl': 'md',
-              '3xl': 'large',
             }}
           >
             {comment?.message}
@@ -267,7 +263,6 @@ export const Comment = ({
                 fontSize={{
                   base: 'sm',
                   '2xl': 'md',
-                  '3xl': 'large',
                 }}
                 bg="none"
                 onClick={() => setShowReplies((prev) => !prev)}
@@ -296,7 +291,6 @@ export const Comment = ({
               fontSize={{
                 base: 'sm',
                 '2xl': 'md',
-                '3xl': 'large',
               }}
               bg="none"
               onClick={() => setShowReplyInput((prev) => !prev)}
@@ -318,7 +312,6 @@ export const Comment = ({
                   fontSize={{
                     base: 'sm',
                     '2xl': 'md',
-                    '3xl': 'large',
                   }}
                   borderColor="brand.slate.200"
                   _placeholder={{
@@ -356,7 +349,6 @@ export const Comment = ({
                     fontSize={{
                       base: 'xx-small',
                       '2xl': 'sm',
-                      '3xl': 'md',
                     }}
                     fontWeight={500}
                     bg="brand.slate.200"
@@ -423,7 +415,6 @@ export const Comment = ({
                 fontSize={{
                   base: 'sm',
                   '2xl': 'md',
-                  '3xl': 'large',
                 }}
                 fontWeight={500}
                 onClick={deleteOnOpen}
