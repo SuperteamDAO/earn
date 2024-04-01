@@ -36,6 +36,16 @@ interface Props {
   prevStep?: number;
 }
 
+const listingDescriptionHeadings = [
+  'About the Listing & Scope',
+  'Rewards',
+  'Judging Criteria',
+  'Submission Requirements',
+  'Resources',
+]
+  .map((heading) => `<h1 key=${heading}>${heading}</h1>`)
+  .join('');
+
 export function CreateListing({
   bounty,
   editable = false,
@@ -58,7 +68,7 @@ export function CreateListing({
     string | undefined
   >(editable ? bounty?.requirements : undefined);
   const [editorData, setEditorData] = useState<string | undefined>(
-    editable ? bounty?.description : undefined,
+    editable ? bounty?.description : listingDescriptionHeadings,
   );
   const [regions, setRegions] = useState<Regions>(
     editable ? bounty?.region || Regions.GLOBAL : Regions.GLOBAL,
