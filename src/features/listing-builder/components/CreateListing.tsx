@@ -37,7 +37,7 @@ interface Props {
 }
 
 const listingDescriptionHeadings = [
-  'About the Bounty & Scope',
+  'About the Listing & Scope',
   'Rewards',
   'Judging Criteria',
   'Submission Requirements',
