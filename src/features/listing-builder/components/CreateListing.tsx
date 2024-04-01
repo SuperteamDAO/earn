@@ -7,11 +7,7 @@ import { useEffect, useReducer, useState } from 'react';
 
 import { ErrorSection } from '@/components/shared/ErrorSection';
 import { SurveyModal } from '@/components/Survey';
-import {
-  bountyDescriptionFallback,
-  type MultiSelectOptions,
-  tokenList,
-} from '@/constants';
+import { type MultiSelectOptions, tokenList } from '@/constants';
 import {
   type Bounty,
   getBountyDraftStatus,
@@ -40,6 +36,16 @@ interface Props {
   prevStep?: number;
 }
 
+const listingDescriptionHeadings = [
+  'About the Bounty & Scope',
+  'Rewards',
+  'Judging Criteria',
+  'Submission Requirements',
+  'Resources',
+]
+  .map((heading) => `<h1 key=${heading}>${heading}</h1>`)
+  .join('');
+
 export function CreateListing({
   bounty,
   editable = false,
@@ -62,7 +68,7 @@ export function CreateListing({
     string | undefined
   >(editable ? bounty?.requirements : undefined);
   const [editorData, setEditorData] = useState<string | undefined>(
-    editable ? bounty?.description : bountyDescriptionFallback,
+    editable ? bounty?.description : listingDescriptionHeadings,
   );
   const [regions, setRegions] = useState<Regions>(
     editable ? bounty?.region || Regions.GLOBAL : Regions.GLOBAL,

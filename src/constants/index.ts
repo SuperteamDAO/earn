@@ -856,13 +856,3 @@ export const workType = [
   'Fulltime',
   'Internship',
 ];
-
-export const bountyDescriptionFallback = [
-  'About the Bounty & Scope',
-  'Rewards',
-  'Judging Criteria',
-  'Submission Requirements',
-  'Resources',
-]
-  .map((heading) => `<h2 key=${heading}>${heading}</h2>`)
-  .join('');
