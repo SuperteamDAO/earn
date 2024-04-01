@@ -25,7 +25,7 @@ import {
 import axios from 'axios';
 import Image from 'next/image';
 import Link from 'next/link';
-import { useRef, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 
 import { LoginWrapper } from '@/components/LoginWrapper';
 import { AutoResizeTextarea } from '@/components/shared/autosize-textarea';
@@ -76,6 +76,16 @@ export const Comment = ({
   const [deleteError, setDeleteError] = useState(false);
   const [showOptions, setShowOptions] = useState(false);
   const cancelRef = useRef<any>(null);
+
+  useEffect(() => {
+    const reply = localStorage.getItem(`comment-${refId}-${comment.id}`);
+    if (reply) {
+      setNewReply(reply);
+      setShowReplies(true);
+      setShowReplyInput(true);
+      localStorage.removeItem(`comment-${refId}-${comment.id}`);
+    }
+  }, []);
 
   const deleteReplyLvl1 = async (replyId: string) => {
     const replyIndex = replies.findIndex((reply) => reply.id === replyId);
@@ -190,7 +200,15 @@ export const Comment = ({
               tabIndex={-1}
               target="_blank"
             >
-              <Text color="brand.slate.800" fontSize="sm" fontWeight={500}>
+              <Text
+                color="brand.slate.800"
+                fontSize={{
+                  base: 'sm',
+                  '2xl': 'md',
+                  '3xl': 'large',
+                }}
+                fontWeight={500}
+              >
                 {`${comment?.author?.firstName} ${comment?.author?.lastName}`}
               </Text>
             </Link>
@@ -200,7 +218,11 @@ export const Comment = ({
                 display="flex"
                 pb="2px"
                 color="blue.500"
-                fontSize="xx-small"
+                fontSize={{
+                  base: 'xx-small',
+                  '2xl': 'sm',
+                  '3xl': 'md',
+                }}
                 fontWeight={500}
               >
                 <Image
@@ -215,13 +237,25 @@ export const Comment = ({
             <Text
               pb="2px"
               color="brand.slate.400"
-              fontSize="xx-small"
+              fontSize={{
+                base: 'xx-small',
+                '2xl': 'sm',
+                '3xl': 'md',
+              }}
               fontWeight={500}
             >
               {date}
             </Text>
           </HStack>
-          <Text mt={'0px !important'} color="brand.slate.500" fontSize="sm">
+          <Text
+            mt={'0px !important'}
+            color="brand.slate.500"
+            fontSize={{
+              base: 'sm',
+              '2xl': 'md',
+              '3xl': 'large',
+            }}
+          >
             {comment?.message}
           </Text>
           <HStack pt={2}>
@@ -230,7 +264,11 @@ export const Comment = ({
                 pos="relative"
                 left="-3px"
                 color="brand.purple.dark"
-                fontSize="xs"
+                fontSize={{
+                  base: 'sm',
+                  '2xl': 'md',
+                  '3xl': 'large',
+                }}
                 bg="none"
                 onClick={() => setShowReplies((prev) => !prev)}
                 variant="link"
@@ -255,7 +293,11 @@ export const Comment = ({
               pos="relative"
               left="-3px"
               color="brand.slate.900"
-              fontSize="xs"
+              fontSize={{
+                base: 'sm',
+                '2xl': 'md',
+                '3xl': 'large',
+              }}
               bg="none"
               onClick={() => setShowReplyInput((prev) => !prev)}
               variant="link"
@@ -273,13 +315,21 @@ export const Comment = ({
                 <UserAvatar user={userInfo} size="28px" />
                 <AutoResizeTextarea
                   pt={0}
-                  fontSize="sm"
+                  fontSize={{
+                    base: 'sm',
+                    '2xl': 'md',
+                    '3xl': 'large',
+                  }}
                   borderColor="brand.slate.200"
                   _placeholder={{
                     color: 'brand.slate.400',
                   }}
                   focusBorderColor="brand.purple"
                   onChange={(e) => {
+                    localStorage.setItem(
+                      `comment-${refId}-${comment.id}`,
+                      e.target.value,
+                    );
                     setNewReply(e.target.value);
                   }}
                   placeholder="Write a comment"
@@ -303,7 +353,11 @@ export const Comment = ({
                     px={5}
                     py={2}
                     color="brand.slate.800"
-                    fontSize="xx-small"
+                    fontSize={{
+                      base: 'xx-small',
+                      '2xl': 'sm',
+                      '3xl': 'md',
+                    }}
                     fontWeight={500}
                     bg="brand.slate.200"
                     _hover={{
@@ -366,7 +420,11 @@ export const Comment = ({
             <MenuList minW="10rem" px={1} py={1}>
               <MenuItem
                 color="brand.slate.500"
-                fontSize="sm"
+                fontSize={{
+                  base: 'sm',
+                  '2xl': 'md',
+                  '3xl': 'large',
+                }}
                 fontWeight={500}
                 onClick={deleteOnOpen}
                 rounded="sm"

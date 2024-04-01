@@ -39,6 +39,14 @@ export const Comments = ({ refId, refType, sponsorId }: Props) => {
   const [newCommentError, setNewCommentError] = useState(false);
   const [count, setCount] = useState(0);
 
+  useEffect(() => {
+    const comment = localStorage.getItem(`comment-${refId}`);
+    if (comment) {
+      setNewComment(comment);
+      localStorage.removeItem(`comment-${refId}`);
+    }
+  }, []);
+
   const deleteComment = async (commentId: string) => {
     const commentIndex = comments.findIndex(
       (comment) => comment.id === commentId,
@@ -153,13 +161,18 @@ export const Comments = ({ refId, refType, sponsorId }: Props) => {
             <UserAvatar user={userInfo} size="36px" />
             <AutoResizeTextarea
               pt={0}
-              fontSize="sm"
+              fontSize={{
+                base: 'sm',
+                '2xl': 'md',
+                '3xl': 'large',
+              }}
               borderColor="brand.slate.200"
               _placeholder={{
                 color: 'brand.slate.400',
               }}
               focusBorderColor="brand.purple"
               onChange={(e) => {
+                localStorage.setItem(`comment-${refId}`, e.target.value);
                 setNewComment(e.target.value);
               }}
               placeholder="Write a comment"
@@ -178,7 +191,11 @@ export const Comments = ({ refId, refType, sponsorId }: Props) => {
                 h="auto"
                 px={5}
                 py={2}
-                fontSize="xx-small"
+                fontSize={{
+                  base: 'xx-small',
+                  '2xl': 'sm',
+                  '3xl': 'md',
+                }}
                 fontWeight={500}
                 isDisabled={!!newCommentLoading || !newComment}
                 onClick={() => setNewComment('')}
@@ -190,7 +207,11 @@ export const Comments = ({ refId, refType, sponsorId }: Props) => {
                 h="auto"
                 px={5}
                 py={2}
-                fontSize="xx-small"
+                fontSize={{
+                  base: 'xx-small',
+                  '2xl': 'sm',
+                  '3xl': 'md',
+                }}
                 fontWeight={500}
                 isDisabled={!!newCommentLoading || !newComment}
                 isLoading={!!newCommentLoading}
@@ -228,13 +249,17 @@ export const Comments = ({ refId, refType, sponsorId }: Props) => {
             }}
           >
             <Button
+              fontSize={{
+                base: 'md',
+                '2xl': 'large',
+                '3xl': 'larger',
+              }}
               fontWeight={400}
               isDisabled={!!isLoading}
               isLoading={!!isLoading}
               loadingText="Fetching Comments..."
               onClick={() => getComments(comments.length)}
               rounded="md"
-              size="sm"
               variant="ghost"
             >
               Show More Comments
