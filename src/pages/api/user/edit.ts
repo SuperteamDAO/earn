@@ -1,6 +1,6 @@
-import type { NextApiRequest, NextApiResponse } from 'next';
-import { getToken } from 'next-auth/jwt';
+import type { NextApiResponse } from 'next';
 
+import { type NextApiRequestWithUser, withAuth } from '@/features/auth';
 import {
   type MainSkills,
   SkillList,
@@ -47,21 +47,8 @@ const correctSkills = (
   return correctedSkills;
 };
 
-export default async function handle(
-  req: NextApiRequest,
-  res: NextApiResponse,
-) {
-  const token = await getToken({ req });
-
-  if (!token) {
-    return res.status(401).json({ error: 'Unauthorized' });
-  }
-
-  const { id } = token;
-
-  if (!id) {
-    return res.status(400).json({ error: 'Invalid token' });
-  }
+async function handler(req: NextApiRequestWithUser, res: NextApiResponse) {
+  const userId = req.userId;
 
   // eslint-disable-next-line
   const { email, publicKey, skills, role, Hackathon,...data } = req.body;
@@ -75,7 +62,7 @@ export default async function handle(
     };
 
     const updatedUser = await prisma.user.update({
-      where: { id: id as string },
+      where: { id: userId },
       data: updatedData,
       select: {
         email: true,
@@ -89,3 +76,5 @@ export default async function handle(
     return res.status(500).json({ error: 'Error updating user profile.' });
   }
 }
+
+export default withAuth(handler);

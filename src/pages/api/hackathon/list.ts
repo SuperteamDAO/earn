@@ -1,25 +1,12 @@
-import type { NextApiRequest, NextApiResponse } from 'next';
-import { getToken } from 'next-auth/jwt';
+import type { NextApiResponse } from 'next';
 
+import { type NextApiRequestWithUser, withAuth } from '@/features/auth';
 import { prisma } from '@/prisma';
 
-export default async function hackathons(
-  req: NextApiRequest,
-  res: NextApiResponse,
-) {
+async function hackathons(req: NextApiRequestWithUser, res: NextApiResponse) {
   const params = req.query;
 
-  const token = await getToken({ req });
-
-  if (!token) {
-    return res.status(401).json({ error: 'Unauthorized' });
-  }
-
-  const userId = token.id;
-
-  if (!userId) {
-    return res.status(400).json({ error: 'Invalid token' });
-  }
+  const userId = req.userId;
 
   const searchString = params.searchString as string;
   const take = params.take ? parseInt(params.take as string, 10) : 30;
@@ -103,3 +90,5 @@ export default async function hackathons(
     });
   }
 }
+
+export default withAuth(hackathons);

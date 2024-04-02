@@ -20,10 +20,13 @@ import {
   MdOutlineGroup,
 } from 'react-icons/md';
 
-import { SponsorInfoModal } from '@/components/modals/SponsorInfoModal';
 import { LoadingSection } from '@/components/shared/LoadingSection';
 import { SelectHackathon, SelectSponsor } from '@/features/listing-builder';
-import { Banner, CreateListingModal } from '@/features/sponsor-dashboard';
+import {
+  Banner,
+  CreateListingModal,
+  SponsorInfoModal,
+} from '@/features/sponsor-dashboard';
 import { Default } from '@/layouts/Default';
 import { Meta } from '@/layouts/Meta';
 import { userStore } from '@/store/user';

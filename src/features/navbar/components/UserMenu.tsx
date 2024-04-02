@@ -18,7 +18,7 @@ import NextLink from 'next/link';
 import { useRouter } from 'next/router';
 import { useSession } from 'next-auth/react';
 
-import { EmailSettingsModal } from '@/components/modals/EmailSettingsModal';
+import { EmailSettingsModal } from '@/features/emails';
 import { userStore } from '@/store/user';
 
 export function UserMenu({}) {
