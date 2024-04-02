@@ -226,7 +226,7 @@ export function SubmissionCard({
             bg="white"
             borderRadius={'lg'}
             label={
-              'This submission will be accessible after the listing deadline'
+              'This submission will be accessible after the listing announces winners'
             }
             shouldWrapChildren
           >
