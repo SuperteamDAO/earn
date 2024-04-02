@@ -1,5 +1,4 @@
 import { type Submission } from '@prisma/client';
-import moment from 'moment';
 import type { NextApiRequest, NextApiResponse } from 'next';
 
 import { prisma } from '@/prisma';
@@ -25,7 +24,7 @@ export default async function user(req: NextApiRequest, res: NextApiResponse) {
       },
     });
 
-    if (Number(moment(result?.deadline).format('x')) > Date.now()) {
+    if (result?.isWinnersAnnounced) {
       return res.status(200).json({
         bounty: result,
         submission: [],

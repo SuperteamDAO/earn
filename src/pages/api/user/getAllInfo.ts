@@ -1,4 +1,3 @@
-import dayjs from 'dayjs';
 import type { NextApiRequest, NextApiResponse } from 'next';
 
 import { prisma } from '@/prisma';
@@ -29,18 +28,16 @@ export default async function getAllUsers(
     }
 
     const modifiedSubmissions = user.Submission.map((submission) => {
-      const isDeadlinePast = dayjs().isAfter(
-        dayjs(submission.listing.deadline),
-      );
+      const isWinnersAnnounced = submission.listing.isWinnersAnnounced;
       return {
         ...submission,
-        id: isDeadlinePast ? submission.id : null,
-        link: isDeadlinePast ? submission.link : null,
-        tweet: isDeadlinePast ? submission.tweet : null,
-        eligibilityAnswers: isDeadlinePast
+        id: isWinnersAnnounced ? submission.id : null,
+        link: isWinnersAnnounced ? submission.link : null,
+        tweet: isWinnersAnnounced ? submission.tweet : null,
+        eligibilityAnswers: isWinnersAnnounced
           ? submission.eligibilityAnswers
           : null,
-        otherInfo: isDeadlinePast ? submission.otherInfo : null,
+        otherInfo: isWinnersAnnounced ? submission.otherInfo : null,
       };
     });
 

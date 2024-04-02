@@ -468,7 +468,7 @@ export function ListingHeader({
               }
             />
 
-            {!isProject && hasDeadlineEnded && (
+            {!isProject && isWinnersAnnounced && (
               <ListingNavLink
                 href={`/listings/${type}/${slug}/submission`}
                 text="SUBMISSIONS"
