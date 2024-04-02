@@ -24,7 +24,7 @@ export default async function user(req: NextApiRequest, res: NextApiResponse) {
       },
     });
 
-    if (result?.isWinnersAnnounced) {
+    if (result?.isWinnersAnnounced === false) {
       return res.status(200).json({
         bounty: result,
         submission: [],

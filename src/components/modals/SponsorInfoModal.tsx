@@ -43,6 +43,7 @@ export const SponsorInfoModal = ({
   const [isGooglePhoto, setIsGooglePhoto] = useState<boolean>(
     userInfo?.photo?.includes('googleusercontent.com') || false,
   );
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   const checkUsernameAvailability = debounce(async (username) => {
     if (username && username !== userInfo?.username) {
@@ -62,12 +63,14 @@ export const SponsorInfoModal = ({
     if (!userNameValid) {
       return;
     }
+    setIsSubmitting(true);
     const finalData = {
       ...data,
       photo: isGooglePhoto ? userInfo?.photo : imageUrl,
     };
     const updatedUser = await axios.post('/api/user/update/', finalData);
     setUserInfo(updatedUser?.data);
+    setIsSubmitting(false);
     onClose();
   };
 
@@ -198,7 +201,8 @@ export const SponsorInfoModal = ({
 
             <Button
               w={'full'}
-              isLoading={uploading}
+              isLoading={uploading || isSubmitting}
+              loadingText="Submitting"
               spinnerPlacement="start"
               type="submit"
             >

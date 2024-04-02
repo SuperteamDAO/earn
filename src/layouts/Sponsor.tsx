@@ -60,9 +60,13 @@ export function Sidebar({
   } = useDisclosure();
 
   useEffect(() => {
-    if (!userInfo?.firstName || !userInfo?.lastName || !userInfo?.username) {
+    if (
+      userInfo?.currentSponsorId &&
+      (!userInfo?.firstName || !userInfo?.lastName || !userInfo?.username)
+    ) {
       onSponsorInfoModalOpen();
     }
+    console.log(userInfo);
   }, []);
 
   if (!session && status === 'loading') {
