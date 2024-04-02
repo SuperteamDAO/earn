@@ -67,7 +67,7 @@ export function Sidebar({
       onSponsorInfoModalOpen();
     }
     console.log(userInfo);
-  }, []);
+  }, [userInfo]);
 
   if (!session && status === 'loading') {
     return <LoadingSection />;
