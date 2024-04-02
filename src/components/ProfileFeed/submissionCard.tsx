@@ -8,6 +8,7 @@ import {
   LinkBox,
   LinkOverlay,
   Text,
+  Tooltip,
   useBreakpointValue,
 } from '@chakra-ui/react';
 import axios from 'axios';
@@ -216,27 +217,43 @@ export function SubmissionCard({
               {sub?.listing?.title}
             </Text>
           </Flex>
-          <LinkBox
-            alignItems={'center'}
-            gap={2}
-            display="flex"
-            whiteSpace={'nowrap'}
+          <Tooltip
+            px={4}
+            py={2}
+            color="brand.slate.500"
+            fontFamily={'var(--font-sans)'}
+            fontSize="sm"
+            bg="white"
+            borderRadius={'lg'}
+            label={
+              'This submission will be accessible after the listing deadline'
+            }
+            shouldWrapChildren
           >
-            <LinkOverlay href={isProject ? listingLink : submissionLink}>
-              <Text
-                as="span"
-                color={'#6366F1'}
-                fontSize={{ base: 'sm', md: 'md' }}
-                fontWeight={600}
-              >
-                {isProject ? 'View Listing' : 'View Submission'}
-              </Text>
-            </LinkOverlay>
-            <ArrowForwardIcon color={'#6366F1'} />
-          </LinkBox>
+            <LinkBox
+              alignItems={'center'}
+              gap={2}
+              display="flex"
+              opacity={sub?.id ? '100%' : '50%'}
+              whiteSpace={'nowrap'}
+              pointerEvents={sub?.id ? 'all' : 'none'}
+            >
+              <LinkOverlay href={isProject ? listingLink : submissionLink}>
+                <Text
+                  as="span"
+                  color={'brand.purple'}
+                  fontSize={{ base: 'sm', md: 'md' }}
+                  fontWeight={600}
+                >
+                  {isProject ? 'View Listing' : 'View Submission'}
+                </Text>
+              </LinkOverlay>
+              <ArrowForwardIcon color={'brand.purple'} />
+            </LinkBox>
+          </Tooltip>
         </Flex>
       </Box>
-      <Flex align={'center'}>
+      <Flex align={'center'} pointerEvents={sub?.id ? 'all' : 'none'}>
         <Button
           zIndex={10}
           alignItems={'center'}

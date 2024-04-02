@@ -26,11 +26,10 @@ export default async function user(req: NextApiRequest, res: NextApiResponse) {
     });
 
     if (Number(moment(result?.deadline).format('x')) > Date.now()) {
-      res.status(200).json({
+      return res.status(200).json({
         bounty: result,
         submission: [],
       });
-      return;
     }
 
     const submission = await prisma.submission.findMany({
@@ -76,12 +75,12 @@ export default async function user(req: NextApiRequest, res: NextApiResponse) {
 
     submission.sort(sortSubmissions);
 
-    res.status(200).json({
+    return res.status(200).json({
       bounty: result,
       submission,
     });
   } catch (error) {
-    res.status(400).json({
+    return res.status(400).json({
       error,
       message: `Error occurred while fetching bounty with slug=${slug}.`,
     });
