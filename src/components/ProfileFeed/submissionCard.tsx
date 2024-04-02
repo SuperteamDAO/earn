@@ -222,11 +222,11 @@ export function SubmissionCard({
             py={2}
             color="brand.slate.500"
             fontFamily={'var(--font-sans)'}
-            fontSize="sm"
             bg="white"
             borderRadius={'lg'}
+            isDisabled={!!sub?.id}
             label={
-              'This submission will be accessible after the listing announces winners'
+              'This submission will be accessible once winners for the listing have been announced.'
             }
             shouldWrapChildren
           >
