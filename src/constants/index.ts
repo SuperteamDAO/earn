@@ -856,3 +856,5 @@ export const workType = [
   'Fulltime',
   'Internship',
 ];
+
+export const MAX_SUGGESTIONS = 5;

@@ -16,6 +16,7 @@ import {
   RightSideBar,
 } from '@/features/listings';
 import { bountySnackbarAtom } from '@/features/navbar';
+import { type User } from '@/interface/user';
 import { Default } from '@/layouts/Default';
 import { getURL } from '@/utils/validUrl';
 
@@ -133,6 +134,7 @@ function BountyDetails({ bounty: initialBounty }: BountyDetailsProps) {
                     description={bounty?.description}
                   />
                   <Comments
+                    poc={bounty?.poc as User}
                     sponsorId={bounty?.sponsorId}
                     refId={bounty?.id ?? ''}
                     refType="BOUNTY"

@@ -17,6 +17,7 @@ import type { Metadata } from 'unfurl.js/dist/types';
 
 import { TalentBio } from '@/components/TalentBio';
 import type { SubmissionWithUser } from '@/interface/submission';
+import { type User as IUser } from '@/interface/user';
 import { getURLSanitized } from '@/utils/getURLSanitized';
 
 import type { Bounty } from '../../types';
@@ -119,6 +120,7 @@ export const SubmissionPage = ({ bounty, submission, user, link }: Props) => {
         </VStack>
 
         <Comments
+          poc={bounty?.poc as IUser}
           sponsorId={bounty?.sponsorId}
           refId={(router.query.subid as string) ?? ''}
           refType="SUBMISSION"

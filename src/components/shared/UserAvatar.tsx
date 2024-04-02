@@ -26,7 +26,7 @@ export function UserAvatar({ user, size = '32px' }: Props) {
     <Avatar
       name={`${user?.firstName} ${user?.lastName}`}
       colors={['#92A1C6', '#F0AB3D', '#C271B4']}
-      size="32px"
+      size={size}
       variant="marble"
     />
   );

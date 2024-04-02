@@ -28,9 +28,10 @@ import Link from 'next/link';
 import { useEffect, useRef, useState } from 'react';
 
 import { LoginWrapper } from '@/components/LoginWrapper';
-import { AutoResizeTextarea } from '@/components/shared/autosize-textarea';
 import { UserAvatar } from '@/components/shared/UserAvatar';
+import { UserSuggestionTextarea } from '@/components/shared/UserSuggestionTextarea';
 import { type Comment as IComment } from '@/interface/comments';
+import { type User } from '@/interface/user';
 import { userStore } from '@/store/user';
 import { dayjs } from '@/utils/dayjs';
 import { getURL } from '@/utils/validUrl';
@@ -44,6 +45,7 @@ interface Props {
   refType: 'BOUNTY' | 'SUBMISSION';
   sponsorId: string | undefined;
   deleteComment: (commentId: string) => Promise<void>;
+  defaultSuggestions: Map<string, User>;
   isReply?: boolean;
   addNewReply?: (msg: string) => Promise<void>;
 }
@@ -54,6 +56,7 @@ export const Comment = ({
   refId,
   refType,
   deleteComment,
+  defaultSuggestions,
   isReply = false,
   addNewReply,
 }: Props) => {
@@ -153,6 +156,10 @@ export const Comment = ({
       }
     }
   };
+
+  useEffect(() => {
+    localStorage.setItem(`comment-${refId}-${comment.id}`, newReply);
+  }, [newReply]);
 
   return (
     <>
@@ -302,12 +309,13 @@ export const Comment = ({
           <Collapse
             animateOpacity
             in={showReplyInput}
-            style={{ width: '100%' }}
+            style={{ width: '100%', overflow: 'visible!important' }}
           >
             <VStack gap={4} w={'full'} mb={4} pt={4}>
               <HStack align="start" gap={3} w="full">
                 <UserAvatar user={userInfo} size="28px" />
-                <AutoResizeTextarea
+                <UserSuggestionTextarea
+                  defaultSuggestions={defaultSuggestions}
                   pt={0}
                   fontSize={{
                     base: 'sm',
@@ -318,15 +326,9 @@ export const Comment = ({
                     color: 'brand.slate.400',
                   }}
                   focusBorderColor="brand.purple"
-                  onChange={(e) => {
-                    localStorage.setItem(
-                      `comment-${refId}-${comment.id}`,
-                      e.target.value,
-                    );
-                    setNewReply(e.target.value);
-                  }}
                   placeholder="Write a comment"
                   value={newReply}
+                  setValue={setNewReply}
                   variant="flushed"
                 />
               </HStack>
@@ -375,6 +377,7 @@ export const Comment = ({
                 ?.toReversed()
                 .map((reply) => (
                   <Comment
+                    defaultSuggestions={defaultSuggestions}
                     deleteComment={deleteReplyLvl1}
                     addNewReply={addNewReplyLvl1}
                     isReply

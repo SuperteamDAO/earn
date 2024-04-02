@@ -1,4 +1,5 @@
 import {
+  Box,
   Button,
   Collapse,
   Flex,
@@ -12,11 +13,12 @@ import Image from 'next/image';
 import { useEffect, useState } from 'react';
 
 import { LoginWrapper } from '@/components/LoginWrapper';
-import { AutoResizeTextarea } from '@/components/shared/autosize-textarea';
 import { ErrorInfo } from '@/components/shared/ErrorInfo';
 import { Loading } from '@/components/shared/Loading';
 import { UserAvatar } from '@/components/shared/UserAvatar';
+import { UserSuggestionTextarea } from '@/components/shared/UserSuggestionTextarea';
 import type { Comment } from '@/interface/comments';
+import { type User } from '@/interface/user';
 import { userStore } from '@/store/user';
 
 import { WarningModal } from '../WarningModal';
@@ -26,8 +28,9 @@ interface Props {
   refId: string;
   refType: 'BOUNTY' | 'SUBMISSION';
   sponsorId: string | undefined;
+  poc: User | undefined;
 }
-export const Comments = ({ refId, refType, sponsorId }: Props) => {
+export const Comments = ({ refId, refType, sponsorId, poc }: Props) => {
   const { userInfo } = userStore();
   const { isOpen, onOpen, onClose } = useDisclosure();
   const [triggerLogin, setTriggerLogin] = useState(false);
@@ -38,14 +41,9 @@ export const Comments = ({ refId, refType, sponsorId }: Props) => {
   const [newCommentLoading, setNewCommentLoading] = useState(false);
   const [newCommentError, setNewCommentError] = useState(false);
   const [count, setCount] = useState(0);
-
-  useEffect(() => {
-    const comment = localStorage.getItem(`comment-${refId}`);
-    if (comment) {
-      setNewComment(comment);
-      localStorage.removeItem(`comment-${refId}`);
-    }
-  }, []);
+  const [defaultSuggestions, setDefaultSuggestions] = useState<
+    Map<string, User>
+  >(new Map());
 
   const deleteComment = async (commentId: string) => {
     const commentIndex = comments.findIndex(
@@ -96,16 +94,17 @@ export const Comments = ({ refId, refType, sponsorId }: Props) => {
 
       setCount(commentsData.data.count);
       setComments([...comments, ...allComments]);
+      if (poc && poc.id) defaultSuggestions.set(poc.id, poc);
+      allComments.forEach((comment) => {
+        setDefaultSuggestions((suggestions) =>
+          suggestions.set(comment.authorId, comment.author),
+        );
+      });
     } catch (e) {
       setError(true);
     }
     setIsLoading(false);
   };
-
-  useEffect(() => {
-    if (!isLoading) return;
-    getComments();
-  }, []);
 
   const handleSubmit = () => {
     if (!userInfo?.id) {
@@ -116,6 +115,23 @@ export const Comments = ({ refId, refType, sponsorId }: Props) => {
       addNewComment();
     }
   };
+
+  useEffect(() => {
+    if (!isLoading) return;
+    getComments();
+  }, []);
+
+  useEffect(() => {
+    const comment = localStorage.getItem(`comment-${refId}`);
+    if (comment) {
+      setNewComment(comment);
+      localStorage.removeItem(`comment-${refId}`);
+    }
+  }, []);
+
+  useEffect(() => {
+    localStorage.setItem(`comment-${refId}`, newComment);
+  }, [newComment]);
 
   if (isLoading && !comments?.length) return <Loading />;
 
@@ -159,25 +175,25 @@ export const Comments = ({ refId, refType, sponsorId }: Props) => {
         <VStack gap={4} w={'full'} mb={4} px={6}>
           <HStack align="start" gap={3} w="full">
             <UserAvatar user={userInfo} size="36px" />
-            <AutoResizeTextarea
-              pt={0}
-              fontSize={{
-                base: 'sm',
-                '2xl': 'md',
-              }}
-              borderColor="brand.slate.200"
-              _placeholder={{
-                color: 'brand.slate.400',
-              }}
-              focusBorderColor="brand.purple"
-              onChange={(e) => {
-                localStorage.setItem(`comment-${refId}`, e.target.value);
-                setNewComment(e.target.value);
-              }}
-              placeholder="Write a comment"
-              value={newComment}
-              variant="flushed"
-            />
+            <Box pos={'relative'} w="full">
+              <UserSuggestionTextarea
+                defaultSuggestions={defaultSuggestions}
+                pt={0}
+                fontSize={{
+                  base: 'sm',
+                  '2xl': 'md',
+                }}
+                borderColor="brand.slate.200"
+                _placeholder={{
+                  color: 'brand.slate.400',
+                }}
+                focusBorderColor="brand.purple"
+                placeholder="Write a comment"
+                value={newComment}
+                setValue={setNewComment}
+                variant="flushed"
+              />
+            </Box>
           </HStack>
           {!!newCommentError && (
             <Text mt={4} color="red">
@@ -225,6 +241,7 @@ export const Comments = ({ refId, refType, sponsorId }: Props) => {
           {comments?.map((comment) => {
             return (
               <CommentUI
+                defaultSuggestions={defaultSuggestions}
                 key={comment.id}
                 comment={comment}
                 sponsorId={sponsorId}
