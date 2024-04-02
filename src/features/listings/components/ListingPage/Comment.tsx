@@ -38,6 +38,7 @@ import { getURL } from '@/utils/validUrl';
 
 import { formatFromNow } from '../../utils';
 import { WarningModal } from '../WarningModal';
+import { CommentParser } from './CommentParser';
 
 interface Props {
   comment: IComment;
@@ -259,7 +260,7 @@ export const Comment = ({
               '2xl': 'md',
             }}
           >
-            {comment?.message}
+            <CommentParser value={comment?.message} />
           </Text>
           <HStack pt={2}>
             {replies?.length > 0 && (
