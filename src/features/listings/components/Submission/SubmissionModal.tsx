@@ -190,13 +190,15 @@ export const SubmissionModal = ({
           : null,
       });
 
-      if (!editMode)
+      if (!editMode) {
         await axios.post(`/api/comment/create`, {
           message: randomSubmissionCommentGenerator(type),
           listingId: id,
           submissionId: response?.data?.id,
           type: 'SUBMISSION',
         });
+        window.dispatchEvent(new Event('update-comments'));
+      }
 
       const latestSubmissionNumber = (userInfo?.Submission?.length ?? 0) + 1;
       if (!editMode && latestSubmissionNumber % 3 === 0) showEasterEgg();

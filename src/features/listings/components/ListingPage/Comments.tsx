@@ -130,6 +130,11 @@ export const Comments = ({
   useEffect(() => {
     if (!isLoading) return;
     getComments();
+
+    window.addEventListener('update-comments', () => {
+      console.log('update coments');
+      getComments();
+    });
   }, []);
 
   useEffect(() => {
