@@ -8,10 +8,6 @@ import { prisma } from '@/prisma';
 async function handler(req: NextApiRequestWithUser, res: NextApiResponse) {
   const userId = req.userId;
 
-  if (!userId) {
-    return res.status(400).json({ error: 'Invalid token' });
-  }
-
   const user = await prisma.user.findUnique({
     where: {
       id: userId as string,
