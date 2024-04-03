@@ -27,9 +27,9 @@ import Image from 'next/image';
 import Link from 'next/link';
 import { useEffect, useRef, useState } from 'react';
 
-import { LoginWrapper } from '@/components/LoginWrapper';
 import { UserAvatar } from '@/components/shared/UserAvatar';
 import { UserSuggestionTextarea } from '@/components/shared/UserSuggestionTextarea';
+import { LoginWrapper } from '@/features/auth';
 import { type Comment as IComment } from '@/interface/comments';
 import { type User } from '@/interface/user';
 import { userStore } from '@/store/user';

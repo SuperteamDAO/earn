@@ -1,8 +1,8 @@
 import axios from 'axios';
-import type { NextApiRequest, NextApiResponse } from 'next';
-import { getToken } from 'next-auth/jwt';
+import type { NextApiResponse } from 'next';
 
 import { tokenList } from '@/constants';
+import { type NextApiRequestWithUser, withAuth } from '@/features/auth';
 import { sendEmailNotification } from '@/features/emails';
 import { type Rewards } from '@/features/listings';
 import { prisma } from '@/prisma';
@@ -26,24 +26,11 @@ async function fetchTokenUSDValue(symbol: string) {
   }
 }
 
-export default async function announce(
-  req: NextApiRequest,
-  res: NextApiResponse,
-) {
+async function announce(req: NextApiRequestWithUser, res: NextApiResponse) {
   const params = req.query;
   const id = params.id as string;
   try {
-    const token = await getToken({ req });
-
-    if (!token) {
-      return res.status(401).json({ error: 'Unauthorized' });
-    }
-
-    const userId = token.id;
-
-    if (!userId) {
-      return res.status(400).json({ error: 'Invalid token' });
-    }
+    const userId = req.userId;
 
     const user = await prisma.user.findUnique({
       where: {
@@ -255,3 +242,5 @@ export default async function announce(
     });
   }
 }
+
+export default withAuth(announce);

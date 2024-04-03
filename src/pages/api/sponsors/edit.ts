@@ -1,20 +1,10 @@
-import type { NextApiRequest, NextApiResponse } from 'next';
-import { getToken } from 'next-auth/jwt';
+import type { NextApiResponse } from 'next';
 
+import { type NextApiRequestWithUser, withAuth } from '@/features/auth';
 import { prisma } from '@/prisma';
 
-export default async function user(req: NextApiRequest, res: NextApiResponse) {
-  const token = await getToken({ req });
-
-  if (!token) {
-    return res.status(401).json({ error: 'Unauthorized' });
-  }
-
-  const userId = token.id;
-
-  if (!userId) {
-    return res.status(400).json({ error: 'Invalid token' });
-  }
+async function user(req: NextApiRequestWithUser, res: NextApiResponse) {
+  const userId = req.userId;
 
   const user = await prisma.user.findUnique({
     where: {
@@ -54,3 +44,5 @@ export default async function user(req: NextApiRequest, res: NextApiResponse) {
     });
   }
 }
+
+export default withAuth(user);

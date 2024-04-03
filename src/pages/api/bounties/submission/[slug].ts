@@ -1,5 +1,4 @@
 import { type Submission } from '@prisma/client';
-import moment from 'moment';
 import type { NextApiRequest, NextApiResponse } from 'next';
 
 import { prisma } from '@/prisma';
@@ -25,12 +24,11 @@ export default async function user(req: NextApiRequest, res: NextApiResponse) {
       },
     });
 
-    if (Number(moment(result?.deadline).format('x')) > Date.now()) {
-      res.status(200).json({
+    if (result?.isWinnersAnnounced === false) {
+      return res.status(200).json({
         bounty: result,
         submission: [],
       });
-      return;
     }
 
     const submission = await prisma.submission.findMany({
@@ -76,12 +74,12 @@ export default async function user(req: NextApiRequest, res: NextApiResponse) {
 
     submission.sort(sortSubmissions);
 
-    res.status(200).json({
+    return res.status(200).json({
       bounty: result,
       submission,
     });
   } catch (error) {
-    res.status(400).json({
+    return res.status(400).json({
       error,
       message: `Error occurred while fetching bounty with slug=${slug}.`,
     });

@@ -13,7 +13,8 @@ import {
 } from '@chakra-ui/react';
 import axios from 'axios';
 import { MediaPicker } from 'degen';
-import React, { useState } from 'react';
+import debounce from 'lodash.debounce';
+import React, { useEffect, useState } from 'react';
 import { useForm } from 'react-hook-form';
 
 import { userStore } from '@/store/user';
@@ -28,7 +29,7 @@ export const SponsorInfoModal = ({
   onClose: () => void;
 }) => {
   const { userInfo, setUserInfo } = userStore();
-  const { register, handleSubmit } = useForm({
+  const { register, handleSubmit, watch } = useForm({
     defaultValues: {
       firstName: userInfo?.firstName,
       lastName: userInfo?.lastName,
@@ -38,25 +39,38 @@ export const SponsorInfoModal = ({
   });
   const [imageUrl, setImageUrl] = useState<string>('');
   const [uploading, setUploading] = useState<boolean>(false);
-  const [userNameValid, setuserNameValid] = useState(true);
+  const [userNameValid, setUserNameValid] = useState(true);
   const [isGooglePhoto, setIsGooglePhoto] = useState<boolean>(
     userInfo?.photo?.includes('googleusercontent.com') || false,
   );
+  const [isSubmitting, setIsSubmitting] = useState(false);
+
+  const checkUsernameAvailability = debounce(async (username) => {
+    if (username && username !== userInfo?.username) {
+      const isAvailable = await isUsernameAvailable(username);
+      setUserNameValid(isAvailable);
+    }
+  }, 500);
+
+  const username = watch('username');
+
+  useEffect(() => {
+    checkUsernameAvailability(username);
+    return () => checkUsernameAvailability.cancel();
+  }, [username]);
 
   const onSubmit = async (data: any) => {
-    if (data.username && data.username !== userInfo?.username) {
-      const avl = await isUsernameAvailable(data.username);
-      if (!avl) {
-        setuserNameValid(false);
-        return;
-      }
+    if (!userNameValid) {
+      return;
     }
+    setIsSubmitting(true);
     const finalData = {
       ...data,
       photo: isGooglePhoto ? userInfo?.photo : imageUrl,
     };
     const updatedUser = await axios.post('/api/user/update/', finalData);
     setUserInfo(updatedUser?.data);
+    setIsSubmitting(false);
     onClose();
   };
 
@@ -69,7 +83,10 @@ export const SponsorInfoModal = ({
       size="lg"
     >
       <ModalOverlay />
-      <ModalContent px={6} py={8}>
+      <ModalContent px={6} py={5}>
+        <Text mb={3} color="brand.slate.600" fontSize={'2xl'} fontWeight={600}>
+          Complete Your Profile
+        </Text>
         <form style={{ width: '100%' }} onSubmit={handleSubmit(onSubmit)}>
           <FormControl w="full" isRequired>
             <Box w={'full'} mb={'1.25rem'}>
@@ -184,7 +201,8 @@ export const SponsorInfoModal = ({
 
             <Button
               w={'full'}
-              isLoading={uploading}
+              isLoading={uploading || isSubmitting}
+              loadingText="Submitting"
               spinnerPlacement="start"
               type="submit"
             >

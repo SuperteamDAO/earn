@@ -422,7 +422,7 @@ model Hackathon {
 }
 
 model UnsubscribedEmail {
-  id    String @id
+  id    String @id @default(uuid())
   email String @unique
 }
 

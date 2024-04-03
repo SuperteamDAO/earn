@@ -2,7 +2,7 @@ import { useDisclosure } from '@chakra-ui/react';
 import axios from 'axios';
 import { useEffect } from 'react';
 
-import { Login } from '@/components/modals/Login/Login';
+import { Login } from '@/features/auth';
 import type { User } from '@/interface/user';
 import { userStore } from '@/store/user';
 

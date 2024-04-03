@@ -12,11 +12,11 @@ import axios from 'axios';
 import Image from 'next/image';
 import { useEffect, useState } from 'react';
 
-import { LoginWrapper } from '@/components/LoginWrapper';
 import { ErrorInfo } from '@/components/shared/ErrorInfo';
 import { Loading } from '@/components/shared/Loading';
 import { UserAvatar } from '@/components/shared/UserAvatar';
 import { UserSuggestionTextarea } from '@/components/shared/UserSuggestionTextarea';
+import { LoginWrapper } from '@/features/auth';
 import type { Comment } from '@/interface/comments';
 import { type User } from '@/interface/user';
 import { userStore } from '@/store/user';
