@@ -1,8 +1,8 @@
 import axios from 'axios';
-import type { NextApiRequest, NextApiResponse } from 'next';
-import { getToken } from 'next-auth/jwt';
+import type { NextApiResponse } from 'next';
 import slugify from 'slugify';
 
+import { type NextApiRequestWithUser, withAuth } from '@/features/auth';
 import { prisma } from '@/prisma';
 
 const checkSlug = async (slug: string): Promise<boolean> => {
@@ -42,24 +42,11 @@ const generateUniqueSlug = async (title: string): Promise<string> => {
   return slug;
 };
 
-export default async function handler(
-  req: NextApiRequest,
-  res: NextApiResponse,
-) {
+async function handler(req: NextApiRequestWithUser, res: NextApiResponse) {
   // eslint-disable-next-line unused-imports/no-unused-vars
   const { title, eligibility, hackathonSponsor, ...data } = req.body;
 
-  const token = await getToken({ req });
-
-  if (!token) {
-    return res.status(401).json({ error: 'Unauthorized' });
-  }
-
-  const userId = token.id;
-
-  if (!userId) {
-    return res.status(400).json({ error: 'Invalid token' });
-  }
+  const userId = req.userId;
 
   const user = await prisma.user.findUnique({
     where: {
@@ -118,3 +105,5 @@ export default async function handler(
     });
   }
 }
+
+export default withAuth(handler);

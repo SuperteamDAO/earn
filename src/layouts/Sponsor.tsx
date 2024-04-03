@@ -12,7 +12,7 @@ import {
 import NextLink from 'next/link';
 import { useRouter } from 'next/router';
 import { useSession } from 'next-auth/react';
-import type { ReactNode } from 'react';
+import { type ReactNode, useEffect } from 'react';
 import type { IconType } from 'react-icons';
 import {
   MdList,
@@ -22,7 +22,11 @@ import {
 
 import { LoadingSection } from '@/components/shared/LoadingSection';
 import { SelectHackathon, SelectSponsor } from '@/features/listing-builder';
-import { Banner, CreateListingModal } from '@/features/sponsor-dashboard';
+import {
+  Banner,
+  CreateListingModal,
+  SponsorInfoModal,
+} from '@/features/sponsor-dashboard';
 import { Default } from '@/layouts/Default';
 import { Meta } from '@/layouts/Meta';
 import { userStore } from '@/store/user';
@@ -51,6 +55,22 @@ export function Sidebar({
   const { data: session, status } = useSession();
   const router = useRouter();
   const { isOpen, onOpen, onClose } = useDisclosure();
+
+  const {
+    isOpen: isSponsorInfoModalOpen,
+    onOpen: onSponsorInfoModalOpen,
+    onClose: onSponsorInfoModalClose,
+  } = useDisclosure();
+
+  useEffect(() => {
+    if (
+      userInfo?.currentSponsorId &&
+      (!userInfo?.firstName || !userInfo?.lastName || !userInfo?.username)
+    ) {
+      onSponsorInfoModalOpen();
+    }
+    console.log(userInfo);
+  }, [userInfo]);
 
   if (!session && status === 'loading') {
     return <LoadingSection />;
@@ -154,6 +174,10 @@ export function Sidebar({
         />
       }
     >
+      <SponsorInfoModal
+        onClose={onSponsorInfoModalClose}
+        isOpen={isSponsorInfoModalOpen}
+      />
       <Flex display={{ base: 'flex', md: 'none' }} minH="80vh" px={3}>
         <Text
           align={'center'}

@@ -27,7 +27,7 @@ import { tokenList } from '@/constants/index';
 import { getURLSanitized } from '@/utils/getURLSanitized';
 
 import type { Bounty, Rewards } from '../../types';
-import { SubmissionActionButton } from '../Submission';
+import { SubmissionActionButton } from '../Submission/SubmissionActionButton';
 import { CompensationAmount } from './CompensationAmount';
 
 export function RightSideBar({ listing }: { listing: Bounty }) {
@@ -372,7 +372,7 @@ export function RightSideBar({ listing }: { listing: Bounty }) {
               setSubmissionNumber={setSubmissionNumber}
             />
             {isProject && (
-              <Flex gap="2" w="20rem" mt={4} p="3" bg={'#62F6FF10'}>
+              <Flex gap="2" w="20rem" mt={-1} mb={4} p="3" bg={'#62F6FF10'}>
                 <WarningIcon color="#1A7F86" />
                 <Text color="#1A7F86" fontSize={'xs'} fontWeight={500}>
                   Don&apos;t start working just yet! Apply first, and then begin

@@ -25,8 +25,8 @@ import React, { useEffect, useState } from 'react';
 import { toast } from 'react-hot-toast';
 import { TbBell, TbBellRinging } from 'react-icons/tb';
 
-import { LoginWrapper } from '@/components/LoginWrapper';
 import { Superteams } from '@/constants/Superteam';
+import { LoginWrapper } from '@/features/auth';
 import { getRegionTooltipLabel, WarningModal } from '@/features/listings';
 import type { User } from '@/interface/user';
 import { userStore } from '@/store/user';
@@ -241,7 +241,7 @@ export function ListingHeader({
             <Tooltip
               px={4}
               py={2}
-              color="brand.slate.100"
+              color="brand.slate.400"
               fontFamily={'var(--font-sans)'}
               fontSize="sm"
               bg="white"
@@ -282,7 +282,7 @@ export function ListingHeader({
           px={4}
           py={2}
           color="brand.slate.500"
-          fontFamily={'Inter'}
+          fontFamily={'var(--font-sans)'}
           fontSize={'small'}
           bg="white"
           borderRadius={'lg'}
@@ -468,7 +468,7 @@ export function ListingHeader({
               }
             />
 
-            {!isProject && hasDeadlineEnded && (
+            {!isProject && isWinnersAnnounced && (
               <ListingNavLink
                 href={`/listings/${type}/${slug}/submission`}
                 text="SUBMISSIONS"

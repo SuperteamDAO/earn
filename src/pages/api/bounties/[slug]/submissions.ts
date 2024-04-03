@@ -1,13 +1,23 @@
-import type { NextApiRequest, NextApiResponse } from 'next';
+import type { NextApiResponse } from 'next';
 
+import { type NextApiRequestWithUser, withAuth } from '@/features/auth';
 import { prisma } from '@/prisma';
 
 type WinnerPosition = 'first' | 'second' | 'third' | 'fourth' | 'fifth';
 
-export default async function handler(
-  req: NextApiRequest,
-  res: NextApiResponse,
-) {
+async function handler(req: NextApiRequestWithUser, res: NextApiResponse) {
+  const userId = req.userId;
+
+  const user = await prisma.user.findUnique({
+    where: {
+      id: userId as string,
+    },
+  });
+
+  if (!user) {
+    return res.status(400).json({ error: 'Unauthorized' });
+  }
+
   const params = req.query;
 
   const slug = params.slug as string;
@@ -60,6 +70,9 @@ export default async function handler(
         listing: {
           slug,
           isActive: true,
+          sponsor: {
+            id: user.currentSponsorId!,
+          },
         },
         isActive: true,
         isArchived: false,
@@ -121,3 +134,5 @@ export default async function handler(
     });
   }
 }
+
+export default withAuth(handler);

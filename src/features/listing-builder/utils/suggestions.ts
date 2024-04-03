@@ -51,10 +51,7 @@ const projectSuggestions: Suggestions[] = [];
 
 const hackathonSuggestions: Suggestions[] = [];
 
-export function calculateSuggestions(
-  suggestions: Suggestions[],
-  input: string,
-) {
+function calculateSuggestions(suggestions: Suggestions[], input: string) {
   return suggestions
     .filter((row) =>
       row.tokens.some((token) =>

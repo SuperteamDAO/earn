@@ -1,6 +1,6 @@
-import type { NextApiRequest, NextApiResponse } from 'next';
-import { getToken } from 'next-auth/jwt';
+import type { NextApiResponse } from 'next';
 
+import { type NextApiRequestWithUser, withAuth } from '@/features/auth';
 import {
   type MainSkills,
   SkillList,
@@ -47,18 +47,8 @@ const correctSkills = (
   return correctedSkills;
 };
 
-export default async function user(req: NextApiRequest, res: NextApiResponse) {
-  const token = await getToken({ req });
-
-  if (!token) {
-    return res.status(401).json({ error: 'Unauthorized' });
-  }
-
-  const userId = token.id;
-
-  if (!userId) {
-    return res.status(400).json({ error: 'Invalid token' });
-  }
+async function handler(req: NextApiRequestWithUser, res: NextApiResponse) {
+  const userId = req.userId;
 
   const user = await prisma.user.findUnique({
     where: {
@@ -83,16 +73,6 @@ export default async function user(req: NextApiRequest, res: NextApiResponse) {
       updatedData.currentSponsorId = currentSponsorId;
     }
 
-    result = await prisma.user.update({
-      where: {
-        id: userId as string,
-      },
-      data: updatedData,
-      include: {
-        currentSponsor: true,
-      },
-    });
-
     if (generateTalentEmailSettings) {
       const categories = new Set();
 
@@ -111,6 +91,20 @@ export default async function user(req: NextApiRequest, res: NextApiResponse) {
       }
     }
 
+    result = await prisma.user.update({
+      where: {
+        id: userId as string,
+      },
+      data: updatedData,
+      include: {
+        currentSponsor: true,
+        UserSponsors: true,
+        Hackathon: true,
+        Submission: true,
+        emailSettings: true,
+      },
+    });
+
     return res.status(200).json(result);
   } catch (e) {
     console.log('file: update.ts:93 ~ user ~ e:', e);
@@ -119,3 +113,5 @@ export default async function user(req: NextApiRequest, res: NextApiResponse) {
     });
   }
 }
+
+export default withAuth(handler);

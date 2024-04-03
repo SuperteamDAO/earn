@@ -80,7 +80,7 @@ export const SurveyModal = ({
       size="lg"
     >
       <ModalOverlay />
-      <ModalContent px={6} py={6}>
+      <ModalContent p={6}>
         {!question ? (
           <Box>
             <Skeleton h="18px" mb={2} />

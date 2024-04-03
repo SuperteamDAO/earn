@@ -8,9 +8,9 @@ import React, {
   useState,
 } from 'react';
 
-import { LoginWrapper } from '@/components/LoginWrapper';
 import { SurveyModal } from '@/components/Survey';
 import { Superteams } from '@/constants/Superteam';
+import { LoginWrapper } from '@/features/auth';
 import {
   getBountyDraftStatus,
   getRegionTooltipLabel,
@@ -102,11 +102,7 @@ export const SubmissionActionButton = ({
   const getUserSubmission = async () => {
     setIsUserSubmissionLoading(true);
     try {
-      const submissionDetails = await axios.get(`/api/submission/${id}/user/`, {
-        params: {
-          userId: userInfo?.id,
-        },
-      });
+      const submissionDetails = await axios.get(`/api/submission/${id}/user/`);
       setIsSubmitted(!!submissionDetails?.data?.id);
       setIsUserSubmissionLoading(false);
     } catch (e) {

@@ -1,7 +1,7 @@
 import { Box, useDisclosure } from '@chakra-ui/react';
 import { useRouter } from 'next/router';
 
-import { Login } from '@/components/modals/Login/Login';
+import { Login } from '@/features/auth';
 
 import { AnnouncementBar } from './AnnouncementBar';
 import { BountySnackbar } from './BountySnackbar';

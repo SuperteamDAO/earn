@@ -27,8 +27,28 @@ export default async function getAllUsers(
       return res.status(500).json({ error: 'Unable to fetch users' });
     }
 
-    return res.status(200).json(user);
+    const modifiedSubmissions = user.Submission.map((submission) => {
+      const isWinnersAnnounced = submission.listing.isWinnersAnnounced;
+      return {
+        ...submission,
+        id: isWinnersAnnounced ? submission.id : null,
+        link: isWinnersAnnounced ? submission.link : null,
+        tweet: isWinnersAnnounced ? submission.tweet : null,
+        eligibilityAnswers: isWinnersAnnounced
+          ? submission.eligibilityAnswers
+          : null,
+        otherInfo: isWinnersAnnounced ? submission.otherInfo : null,
+      };
+    });
+
+    const modifiedUser = {
+      ...user,
+      Submission: modifiedSubmissions,
+    };
+
+    return res.status(200).json(modifiedUser);
   } catch (error: any) {
+    console.log(error);
     return res
       .status(500)
       .json({ error: `Unable to fetch users: ${error.message}` });

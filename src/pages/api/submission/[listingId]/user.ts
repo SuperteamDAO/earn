@@ -1,14 +1,13 @@
-import type { NextApiRequest, NextApiResponse } from 'next';
+import type { NextApiResponse } from 'next';
 
+import { type NextApiRequestWithUser, withAuth } from '@/features/auth';
 import { prisma } from '@/prisma';
 
-export default async function submission(
-  req: NextApiRequest,
-  res: NextApiResponse,
-) {
+async function handler(req: NextApiRequestWithUser, res: NextApiResponse) {
   const params = req.query;
   const listingId = params.listingId as string;
-  const userId = params.userId as string;
+  const userId = req.userId;
+
   try {
     const result = await prisma.submission.findFirst({
       where: {
@@ -26,3 +25,5 @@ export default async function submission(
     });
   }
 }
+
+export default withAuth(handler);
