@@ -1,6 +1,7 @@
 import { Link } from '@chakra-ui/react';
 
 import { type CommentType } from '@/interface/comments';
+import { truncateString } from '@/utils/truncateString';
 
 interface Props {
   listingSlug: string;
@@ -51,7 +52,7 @@ export const CommentParser = ({
             color="brand.purple"
             href={`/t/${part.value.substring(1)}`}
           >
-            {part.value}
+            {truncateString(part.value, 12)}
           </Link>
         ) : (
           <span key={index}>{part.value}</span>

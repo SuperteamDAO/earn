@@ -4,6 +4,7 @@ import {
   Popover,
   PopoverContent,
   PopoverTrigger,
+  Text,
   Textarea,
   type TextareaProps,
 } from '@chakra-ui/react';
@@ -25,6 +26,8 @@ import {
   Suggestions,
   userSuggestionOverrider,
 } from './Suggestions';
+
+const MAX_LENGTH = 280;
 
 interface Props extends TextareaProps {
   value: string;
@@ -76,6 +79,7 @@ export const UserSuggestionTextarea = ({
         w="100%"
         minH="unset"
         resize="none"
+        maxLength={280}
         minRows={1}
         onChange={handleInput}
         onKeyDown={(e) => {
@@ -86,6 +90,17 @@ export const UserSuggestionTextarea = ({
         value={value}
         {...props}
       />
+      {value?.length > 0 && (
+        <Text
+          pt={1}
+          pr={1}
+          color="brand.slate.400"
+          fontSize={'xx-small'}
+          textAlign={'right'}
+        >
+          {MAX_LENGTH - value.length} characters left
+        </Text>
+      )}
       {showSuggestions && (
         <Box
           pos={'absolute'}
@@ -110,6 +125,7 @@ export const UserSuggestionTextarea = ({
             minW={8}
             h={8}
             p={0}
+            _hover={{ bg: 'brand.slate.100' }}
             rounded={'full'}
             tabIndex={-1}
             variant="ghost"
