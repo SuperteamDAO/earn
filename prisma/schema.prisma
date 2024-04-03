@@ -78,17 +78,17 @@ model Bounties {
   referredBy           String?
   publishedAt          DateTime?
   isPrivate            Boolean            @default(false)
+  hackathonId          String?
+  usdValue             Int?
+  compensationType     CompensationType   @default(fixed)
+  maxRewardAsk         Int?
+  minRewardAsk         Int?
   template             BountiesTemplates? @relation(fields: [templateId], references: [id])
   sponsor              Sponsors           @relation(fields: [sponsorId], references: [id])
   poc                  User               @relation("poc", fields: [pocId], references: [id])
   Submission           Submission[]
   SubscribeBounty      SubscribeBounty[]
-  hackathonId          String?
   Hackathon            Hackathon?         @relation(fields: [hackathonId], references: [id])
-  usdValue             Int?
-  compensationType     CompensationType   @default(fixed)
-  minRewardAsk         Int?
-  maxRewardAsk         Int?
 
   @@index([id, slug])
   @@index([sponsorId])
@@ -125,19 +125,21 @@ model BountiesTemplates {
 }
 
 model Comment {
-  id          String      @id @default(uuid())
-  message     String      @db.VarChar(1000)
-  authorId    String
-  listingType ListingType @default(BOUNTY)
-  listingId   String
-  isActive    Boolean     @default(true)
-  isArchived  Boolean     @default(false)
-  createdAt   DateTime    @default(now())
-  updatedAt   DateTime    @updatedAt
-  author      User        @relation(fields: [authorId], references: [id])
-  replyToId   String?
-  repliedTo Comment? @relation("CommentReplies", fields: [replyToId], references: [id], onDelete: NoAction, onUpdate: NoAction)
-  replies   Comment[] @relation("CommentReplies")
+  id           String      @id @default(uuid())
+  message      String      @db.VarChar(1000)
+  authorId     String
+  listingType  ListingType @default(BOUNTY)
+  listingId    String
+  isActive     Boolean     @default(true)
+  isArchived   Boolean     @default(false)
+  createdAt    DateTime    @default(now())
+  updatedAt    DateTime    @updatedAt
+  replyToId    String?
+  submissionId String?
+  type         CommentType @default(NORMAL)
+  author       User        @relation(fields: [authorId], references: [id])
+  repliedTo    Comment?    @relation("CommentReplies", fields: [replyToId], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  replies      Comment[]   @relation("CommentReplies")
 
   @@index([id, listingId])
   @@index([authorId])
@@ -152,7 +154,6 @@ model Grants {
   token            String?
   rewardAmount     Int?
   link             String?
-  region           Regions  @default(GLOBAL)
   source           Source   @default(NATIVE)
   sponsorId        String
   pocId            String
@@ -164,6 +165,7 @@ model Grants {
   updatedAt        DateTime @updatedAt
   skills           Json?
   logo             String?
+  region           Regions  @default(GLOBAL)
   sponsor          Sponsors @relation(fields: [sponsorId], references: [id])
   poc              User     @relation(fields: [pocId], references: [id])
 
@@ -190,10 +192,10 @@ model Submission {
   isPaid             Boolean          @default(false)
   paymentDetails     Json?
   otherInfo          String?          @db.VarChar(2000)
-  listing            Bounties         @relation(fields: [listingId], references: [id])
-  user               User             @relation(fields: [userId], references: [id])
   ask                Int?
   label              SubmissionLabels @default(Unreviewed)
+  listing            Bounties         @relation(fields: [listingId], references: [id])
+  user               User             @relation(fields: [userId], references: [id])
 
   @@index([id, listingId])
   @@index([userId])
@@ -290,10 +292,14 @@ model User {
   workPrefernce     String?
   currentEmployer   String?
   pow               String?           @db.VarChar(2000)
-  notifications     Json? //remove this later
+  notifications     Json?
   private           Boolean           @default(false)
   skills            Json?
   currentSponsorId  String?
+  emailVerified     DateTime?
+  hackathonId       String?
+  featureModalShown Boolean           @default(false)
+  surveysShown      Json?
   currentSponsor    Sponsors?         @relation(fields: [currentSponsorId], references: [id])
   UserSponsors      UserSponsors[]
   poc               Bounties[]        @relation("poc")
@@ -305,12 +311,8 @@ model User {
   PoW               PoW[]
   accounts          Account[]
   sessions          Session[]
-  emailVerified     DateTime?
   Hackathon         Hackathon?        @relation(fields: [hackathonId], references: [id])
-  hackathonId       String?
-  featureModalShown Boolean           @default(false)
   emailSettings     EmailSettings[]
-  surveysShown      Json?
 
   @@index([email, publicKey, username])
   @@index([currentSponsorId])
@@ -334,9 +336,9 @@ model PoW {
 
 model EmailSettings {
   id       Int    @id @default(autoincrement())
-  user     User   @relation(fields: [userId], references: [id])
   userId   String
   category String
+  user     User   @relation(fields: [userId], references: [id])
 
   @@index([userId])
 }
@@ -405,18 +407,23 @@ model Hackathon {
   slug         String     @unique
   name         String
   logo         String
-  altLogo      String?
-  description  String
-  listings     Bounties[]
   sponsorId    String?    @unique
-  startDate    DateTime?
   deadline     DateTime?
+  startDate    DateTime?
+  description  String
+  altLogo      String?
   announceDate DateTime?
   eligibility  Json?
+  listings     Bounties[]
   Sponsor      Sponsors?  @relation(fields: [sponsorId], references: [id])
   User         User[]
 
   @@index([sponsorId])
+}
+
+model UnsubscribedEmail {
+  id    String @id
+  email String @unique
 }
 
 enum EmailType {
@@ -460,6 +467,13 @@ enum BountyType {
 enum ListingType {
   BOUNTY
   SUBMISSION
+}
+
+enum CommentType {
+  NORMAL
+  SUBMISSION
+  DEADLINE_EXTENSION
+  WINNER_ANNOUNCEMENT
 }
 
 enum JobType {

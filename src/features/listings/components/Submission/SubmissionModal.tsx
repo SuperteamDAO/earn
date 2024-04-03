@@ -25,7 +25,10 @@ import { useForm } from 'react-hook-form';
 
 import { AutoResizeTextarea } from '@/components/shared/autosize-textarea';
 import { tokenList } from '@/constants';
-import type { Bounty } from '@/features/listings';
+import {
+  type Bounty,
+  randomSubmissionCommentGenerator,
+} from '@/features/listings';
 import { userStore } from '@/store/user';
 
 import { QuestionHandler } from './QuestionHandler';
@@ -176,7 +179,7 @@ export const SubmissionModal = ({
         ? '/api/submission/update/'
         : '/api/submission/create/';
 
-      await axios.post(submissionEndpoint, {
+      const response = await axios.post(submissionEndpoint, {
         listingId: id,
         link: applicationLink || '',
         tweet: tweetLink || '',
@@ -186,6 +189,14 @@ export const SubmissionModal = ({
           ? eligibilityAnswers
           : null,
       });
+
+      if (!editMode)
+        await axios.post(`/api/comment/create`, {
+          message: randomSubmissionCommentGenerator(type),
+          listingId: id,
+          submissionId: response?.data?.id,
+          type: 'SUBMISSION',
+        });
 
       const latestSubmissionNumber = (userInfo?.Submission?.length ?? 0) + 1;
       if (!editMode && latestSubmissionNumber % 3 === 0) showEasterEgg();

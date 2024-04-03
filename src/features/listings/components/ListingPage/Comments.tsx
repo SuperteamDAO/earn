@@ -29,8 +29,19 @@ interface Props {
   refType: 'BOUNTY' | 'SUBMISSION';
   sponsorId: string | undefined;
   poc: User | undefined;
+  listingType: string;
+  listingSlug: string;
+  isAnnounced: boolean;
 }
-export const Comments = ({ refId, refType, sponsorId, poc }: Props) => {
+export const Comments = ({
+  refId,
+  refType,
+  sponsorId,
+  poc,
+  listingType,
+  listingSlug,
+  isAnnounced,
+}: Props) => {
   const { userInfo } = userStore();
   const { isOpen, onOpen, onClose } = useDisclosure();
   const [triggerLogin, setTriggerLogin] = useState(false);
@@ -241,6 +252,9 @@ export const Comments = ({ refId, refType, sponsorId, poc }: Props) => {
           {comments?.map((comment) => {
             return (
               <CommentUI
+                isAnnounced={isAnnounced}
+                listingSlug={listingSlug}
+                listingType={listingType}
                 defaultSuggestions={defaultSuggestions}
                 key={comment.id}
                 comment={comment}

@@ -116,6 +116,67 @@ export default async function announce(
       },
     });
 
+    const sortSubmissions = (
+      a: (typeof winners)[0],
+      b: (typeof winners)[0],
+    ) => {
+      const order = { first: 1, second: 2, third: 3, fourth: 4, fifth: 5 };
+
+      const aPosition = a.winnerPosition as keyof typeof order;
+      const bPosition = b.winnerPosition as keyof typeof order;
+
+      if (a.winnerPosition && b.winnerPosition) {
+        return (
+          (order[aPosition] || Number.MAX_VALUE) -
+          (order[bPosition] || Number.MAX_VALUE)
+        );
+      }
+
+      if (a.winnerPosition && !b.winnerPosition) {
+        return -1;
+      }
+
+      if (!a.winnerPosition && b.winnerPosition) {
+        return 1;
+      }
+      return new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime();
+    };
+
+    const sortedWinners = winners.sort(sortSubmissions);
+
+    const extractedTags = sortedWinners
+      .map((c, i) => {
+        if (i > 0 && i === sortedWinners.length - 1)
+          return `and @${c.user.username}`;
+        else return `@${c.user.username}`;
+      })
+      .join(', ');
+
+    let comment: string = 'Winners have been announced. ';
+    const random = Math.floor(Math.random() * (2 - 1 + 1)) + 1;
+    switch (random) {
+      case 1:
+        comment = `Congratulations! ${extractedTags} have bee announced as the winners!`;
+        break;
+      case 2:
+        if (bounty.type === 'bounty')
+          comment = `Applaud ${extractedTags} for winning this Bounty`;
+        if (bounty.type === 'project')
+          comment = `Applaud ${extractedTags} for winning this Project`;
+        break;
+      default:
+        break;
+    }
+
+    await prisma.comment.create({
+      data: {
+        authorId: user.id,
+        listingId: id,
+        message: comment,
+        type: 'WINNER_ANNOUNCEMENT',
+      },
+    });
+
     const promises = [];
     let currentIndex = 0;
 

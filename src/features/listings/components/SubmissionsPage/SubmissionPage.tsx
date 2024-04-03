@@ -120,6 +120,9 @@ export const SubmissionPage = ({ bounty, submission, user, link }: Props) => {
         </VStack>
 
         <Comments
+          isAnnounced={bounty?.isWinnersAnnounced ?? false}
+          listingSlug={bounty?.slug ?? ''}
+          listingType={bounty?.type ?? ''}
           poc={bounty?.poc as IUser}
           sponsorId={bounty?.sponsorId}
           refId={(router.query.subid as string) ?? ''}

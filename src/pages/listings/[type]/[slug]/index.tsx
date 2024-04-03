@@ -134,6 +134,9 @@ function BountyDetails({ bounty: initialBounty }: BountyDetailsProps) {
                     description={bounty?.description}
                   />
                   <Comments
+                    isAnnounced={bounty?.isWinnersAnnounced ?? false}
+                    listingSlug={bounty?.slug ?? ''}
+                    listingType={bounty?.type ?? ''}
                     poc={bounty?.poc as User}
                     sponsorId={bounty?.sponsorId}
                     refId={bounty?.id ?? ''}

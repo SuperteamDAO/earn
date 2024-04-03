@@ -45,8 +45,11 @@ interface Props {
   refId: string;
   refType: 'BOUNTY' | 'SUBMISSION';
   sponsorId: string | undefined;
-  deleteComment: (commentId: string) => Promise<void>;
   defaultSuggestions: Map<string, User>;
+  deleteComment: (commentId: string) => Promise<void>;
+  listingSlug: string;
+  listingType: string;
+  isAnnounced: boolean;
   isReply?: boolean;
   addNewReply?: (msg: string) => Promise<void>;
 }
@@ -58,8 +61,11 @@ export const Comment = ({
   refType,
   deleteComment,
   defaultSuggestions,
-  isReply = false,
   addNewReply,
+  listingType,
+  listingSlug,
+  isReply = false,
+  isAnnounced,
 }: Props) => {
   const { userInfo } = userStore();
 
@@ -260,7 +266,14 @@ export const Comment = ({
               '2xl': 'md',
             }}
           >
-            <CommentParser value={comment?.message} />
+            <CommentParser
+              listingSlug={listingSlug}
+              listingType={listingType}
+              isAnnounced={isAnnounced}
+              type={comment.type}
+              submissionId={comment.submissionId}
+              value={comment?.message}
+            />
           </Text>
           <HStack pt={2}>
             {replies?.length > 0 && (
@@ -378,6 +391,9 @@ export const Comment = ({
                 ?.toReversed()
                 .map((reply) => (
                   <Comment
+                    isAnnounced={isAnnounced}
+                    listingSlug={listingSlug}
+                    listingType={listingType}
                     defaultSuggestions={defaultSuggestions}
                     deleteComment={deleteReplyLvl1}
                     addNewReply={addNewReplyLvl1}

@@ -21,7 +21,10 @@ export default async function comment(
       return res.status(400).json({ error: 'Invalid token' });
     }
 
-    const { message, listingId, listingType, replyToId } = req.body;
+    const { message, listingId, listingType, replyToId, submissionId } =
+      req.body;
+    let { type } = req.body;
+    if (!type) type = 'NORMAL';
 
     const result = await prisma.comment.create({
       data: {
@@ -29,6 +32,12 @@ export default async function comment(
         message: message as string,
         replyToId: replyToId as string | undefined,
         listingId: listingId as string,
+        type: type as
+          | 'NORMAL'
+          | 'SUBMISSION'
+          | 'DEADLINE_EXTENSION'
+          | 'WINNER_ANNOUNCEMENT',
+        submissionId: submissionId as string | undefined,
       },
       include: {
         author: {
