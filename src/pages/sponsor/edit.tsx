@@ -54,7 +54,6 @@ const UpdateSponsor = () => {
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [hasError, setHasError] = useState<boolean>(false);
   const [errorMessage, setErrorMessage] = useState<string>('');
-  const [loginStep, setLoginStep] = useState(0);
   const { userInfo, setUserInfo } = userStore();
   const { setCurrentSponsor } = SponsorStore();
 
