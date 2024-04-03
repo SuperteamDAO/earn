@@ -1,25 +1,12 @@
-import type { NextApiRequest, NextApiResponse } from 'next';
-import { getToken } from 'next-auth/jwt';
+import type { NextApiResponse } from 'next';
 
+import { type NextApiRequestWithUser, withAuth } from '@/features/auth';
 import { InviteMemberTemplate, kashEmail, resend } from '@/features/emails';
 import { prisma } from '@/prisma';
 import { getURL } from '@/utils/validUrl';
 
-export default async function sendInvites(
-  req: NextApiRequest,
-  res: NextApiResponse,
-) {
-  const token = await getToken({ req });
-
-  if (!token) {
-    return res.status(401).json({ error: 'Unauthorized' });
-  }
-
-  const userId = token.id;
-
-  if (!userId) {
-    return res.status(400).json({ error: 'Invalid token' });
-  }
+async function sendInvites(req: NextApiRequestWithUser, res: NextApiResponse) {
+  const userId = req.userId;
 
   const { email, memberType } = req.body;
   try {
@@ -75,3 +62,5 @@ export default async function sendInvites(
     });
   }
 }
+
+export default withAuth(sendInvites);

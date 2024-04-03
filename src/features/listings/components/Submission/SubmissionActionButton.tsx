@@ -8,9 +8,9 @@ import React, {
   useState,
 } from 'react';
 
-import { LoginWrapper } from '@/components/LoginWrapper';
 import { SurveyModal } from '@/components/Survey';
 import { Superteams } from '@/constants/Superteam';
+import { LoginWrapper } from '@/features/auth';
 import {
   getBountyDraftStatus,
   getRegionTooltipLabel,

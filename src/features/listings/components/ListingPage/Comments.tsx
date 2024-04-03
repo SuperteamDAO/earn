@@ -11,10 +11,10 @@ import axios from 'axios';
 import { useEffect, useState } from 'react';
 import { GoCommentDiscussion } from 'react-icons/go';
 
-import { LoginWrapper } from '@/components/LoginWrapper';
 import { ErrorInfo } from '@/components/shared/ErrorInfo';
 import { Loading } from '@/components/shared/Loading';
 import { UserAvatar } from '@/components/shared/UserAvatar';
+import { LoginWrapper } from '@/features/auth';
 import type { Comment } from '@/interface/comments';
 import { userStore } from '@/store/user';
 import { dayjs } from '@/utils/dayjs';

@@ -1,17 +1,13 @@
-import type { NextApiRequest, NextApiResponse } from 'next';
-import { getToken } from 'next-auth/jwt';
+import type { NextApiResponse } from 'next';
 
+import { type NextApiRequestWithUser, withAuth } from '@/features/auth';
 import { prisma } from '@/prisma';
 
-export default async function handler(
-  req: NextApiRequest,
-  res: NextApiResponse,
-) {
+async function handler(req: NextApiRequestWithUser, res: NextApiResponse) {
   try {
     const hackathonSlug = req.query.slug as string;
 
-    const token = await getToken({ req });
-    const userId = token?.id;
+    const userId = req.userId;
 
     const user = await prisma.user.findUnique({
       where: {
@@ -83,3 +79,5 @@ export default async function handler(
     return res.status(500).json({ error: error });
   }
 }
+
+export default withAuth(handler);

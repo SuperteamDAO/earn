@@ -1,6 +1,6 @@
-import type { NextApiRequest, NextApiResponse } from 'next';
-import { getToken } from 'next-auth/jwt';
+import type { NextApiResponse } from 'next';
 
+import { type NextApiRequestWithUser, withAuth } from '@/features/auth';
 import { prisma } from '@/prisma';
 
 interface PoW {
@@ -14,28 +14,11 @@ interface PoW {
   createdAt?: string;
 }
 
-export default async function handler(
-  req: NextApiRequest,
-  res: NextApiResponse,
-) {
-  if (req.method !== 'POST') {
-    return res.status(405).end();
-  }
-
+async function handler(req: NextApiRequestWithUser, res: NextApiResponse) {
   const { pows } = req.body as { pows: PoW[] };
   const errors: string[] = [];
 
-  const token = await getToken({ req });
-
-  if (!token) {
-    return res.status(401).json({ error: 'Unauthorized' });
-  }
-
-  const userId = token.id;
-
-  if (!userId) {
-    return res.status(400).json({ error: 'Invalid token' });
-  }
+  const userId = req.userId;
 
   if (!pows) {
     return res
@@ -100,3 +83,5 @@ export default async function handler(
     return res.status(500).json({ error });
   }
 }
+
+export default withAuth(handler);

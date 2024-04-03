@@ -19,8 +19,8 @@ import { useForm } from 'react-hook-form';
 import Select from 'react-select';
 import makeAnimated from 'react-select/animated';
 
-import { SignIn } from '@/components/modals/Login/SignIn';
 import { IndustryList } from '@/constants';
+import { SignIn } from '@/features/auth';
 import type { SponsorType } from '@/interface/sponsor';
 import { Default } from '@/layouts/Default';
 import { Meta } from '@/layouts/Meta';

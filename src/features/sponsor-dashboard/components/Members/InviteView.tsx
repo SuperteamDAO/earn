@@ -3,7 +3,7 @@ import axios from 'axios';
 import { useRouter } from 'next/router';
 import { useState } from 'react';
 
-import { LoginWrapper } from '@/components/LoginWrapper';
+import { LoginWrapper } from '@/features/auth';
 import type { User } from '@/interface/user';
 import { userStore } from '@/store/user';
 
