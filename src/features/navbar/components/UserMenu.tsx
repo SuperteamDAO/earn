@@ -17,6 +17,7 @@ import Avatar from 'boring-avatars';
 import NextLink from 'next/link';
 import { useRouter } from 'next/router';
 import { useSession } from 'next-auth/react';
+import { useEffect } from 'react';
 
 import { userStore } from '@/store/user';
 
@@ -31,9 +32,24 @@ export function UserMenu({}) {
 
   const { isOpen, onClose, onOpen } = useDisclosure();
 
+  useEffect(() => {
+    const checkHashAndOpenModal = () => {
+      if (window.location.hash === '#emailPreferences') {
+        onOpen();
+      }
+    };
+
+    checkHashAndOpenModal();
+  }, [isOpen, onOpen]);
+
+  const handleClose = () => {
+    onClose();
+    router.push(router.pathname, undefined, { shallow: true });
+  };
+
   return (
     <>
-      <EmailSettingsModal isOpen={isOpen} onClose={onClose} />
+      <EmailSettingsModal isOpen={isOpen} onClose={handleClose} />
       {userInfo && !userInfo.currentSponsorId && !userInfo.isTalentFilled && (
         <Button
           display={{ base: 'none', md: 'flex' }}
