@@ -134,7 +134,6 @@ model Comment {
   isArchived  Boolean     @default(false)
   createdAt   DateTime    @default(now())
   updatedAt   DateTime    @updatedAt
-  replyToId   String?
   author      User        @relation(fields: [authorId], references: [id])
 
   @@index([id, listingId])
