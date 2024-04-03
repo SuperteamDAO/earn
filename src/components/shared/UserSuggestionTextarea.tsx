@@ -72,24 +72,67 @@ export const UserSuggestionTextarea = ({
   };
   return (
     <Box pos={'relative'} w="full">
-      <Textarea
-        ref={inputRef}
-        as={ResizeTextarea}
-        overflow="hidden"
-        w="100%"
-        minH="unset"
-        resize="none"
-        maxLength={280}
-        minRows={1}
-        onChange={handleInput}
-        onKeyDown={(e) => {
-          if (showSuggestions) {
-            userSuggestionOverrider(e, value, () => setShowSuggestions(false));
-          }
-        }}
-        value={value}
-        {...props}
-      />
+      <Box pos={'relative'} w="full">
+        <Textarea
+          ref={inputRef}
+          as={ResizeTextarea}
+          overflow="hidden"
+          w="100%"
+          minH="unset"
+          resize="none"
+          maxLength={280}
+          minRows={1}
+          onChange={handleInput}
+          onKeyDown={(e) => {
+            if (showSuggestions) {
+              userSuggestionOverrider(e, value, () =>
+                setShowSuggestions(false),
+              );
+            }
+          }}
+          value={value}
+          {...props}
+        />
+        <Popover>
+          <PopoverTrigger>
+            <Button
+              pos={'absolute'}
+              right={2}
+              bottom={0}
+              w={8}
+              minW={8}
+              h={8}
+              p={0}
+              _hover={{ bg: 'brand.slate.100' }}
+              rounded={'full'}
+              tabIndex={-1}
+              variant="ghost"
+            >
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                width="15"
+                height="15"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+              >
+                <circle cx="12" cy="12" r="10" />
+                <path d="M18 13a6 6 0 0 1-6 5 6 6 0 0 1-6-5h12Z" />
+                <line x1="9" x2="9.01" y1="9" y2="9" />
+                <line x1="15" x2="15.01" y1="9" y2="9" />
+              </svg>
+            </Button>
+          </PopoverTrigger>
+          <PopoverContent>
+            <EmojiPicker
+              onEmojiClick={(emoji) => setValue((s) => s + emoji.emoji)}
+            />
+          </PopoverContent>
+        </Popover>
+      </Box>
       {value?.length > 0 && (
         <Text
           pt={1}
@@ -115,45 +158,6 @@ export const UserSuggestionTextarea = ({
           />
         </Box>
       )}
-      <Popover>
-        <PopoverTrigger>
-          <Button
-            pos={'absolute'}
-            right={2}
-            bottom={0}
-            w={8}
-            minW={8}
-            h={8}
-            p={0}
-            _hover={{ bg: 'brand.slate.100' }}
-            rounded={'full'}
-            tabIndex={-1}
-            variant="ghost"
-          >
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              width="15"
-              height="15"
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="currentColor"
-              stroke-width="2"
-              stroke-linecap="round"
-              stroke-linejoin="round"
-            >
-              <circle cx="12" cy="12" r="10" />
-              <path d="M18 13a6 6 0 0 1-6 5 6 6 0 0 1-6-5h12Z" />
-              <line x1="9" x2="9.01" y1="9" y2="9" />
-              <line x1="15" x2="15.01" y1="9" y2="9" />
-            </svg>
-          </Button>
-        </PopoverTrigger>
-        <PopoverContent>
-          <EmojiPicker
-            onEmojiClick={(emoji) => setValue((s) => s + emoji.emoji)}
-          />
-        </PopoverContent>
-      </Popover>
     </Box>
   );
 };
