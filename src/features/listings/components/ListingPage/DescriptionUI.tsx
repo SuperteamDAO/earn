@@ -1,6 +1,6 @@
 import { Box, Flex, HStack, Text, VStack } from '@chakra-ui/react';
 import parse, { type HTMLReactParserOptions } from 'html-react-parser';
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 
 import { skillMap } from '@/constants';
 import type { MainSkills } from '@/interface/skills';
@@ -19,6 +19,17 @@ export function DescriptionUI({ skills, description }: Props) {
       return { name, children, attribs };
     },
   };
+
+  //to resolve a chain of hydration errors
+  const [isMounted, setIsMounted] = useState(false);
+
+  useEffect(() => {
+    setIsMounted(true);
+  }, []);
+
+  if (!isMounted) {
+    return null;
+  }
 
   return (
     <Box w={'full'}>
@@ -57,24 +68,21 @@ export function DescriptionUI({ skills, description }: Props) {
             ))}
           </HStack>
         </Flex>
-        <Flex pos={'relative'} direction={'column'} w={'full'}>
-          <Flex
-            direction={'column'}
-            overflow={'hidden'}
-            w={'full'}
-            h={'full'}
-            px={5}
-            pb={8}
-            id="reset-des"
-          >
-            {parse(
-              description?.startsWith('"')
-                ? JSON.parse(description || '')
-                : description ?? '',
-              options,
-            )}
-          </Flex>
-        </Flex>
+        <Box
+          overflow={'hidden'}
+          w={'full'}
+          h={'full'}
+          px={5}
+          pb={8}
+          id="reset-des"
+        >
+          {parse(
+            description?.startsWith('"')
+              ? JSON.parse(description || '')
+              : description ?? '',
+            options,
+          )}
+        </Box>
       </VStack>
     </Box>
   );

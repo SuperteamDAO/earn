@@ -241,7 +241,7 @@ export function ListingHeader({
             <Tooltip
               px={4}
               py={2}
-              color="brand.slate.100"
+              color="brand.slate.400"
               fontFamily={'var(--font-sans)'}
               fontSize="sm"
               bg="white"
@@ -282,7 +282,7 @@ export function ListingHeader({
           px={4}
           py={2}
           color="brand.slate.500"
-          fontFamily={'Inter'}
+          fontFamily={'var(--font-sans)'}
           fontSize={'small'}
           bg="white"
           borderRadius={'lg'}

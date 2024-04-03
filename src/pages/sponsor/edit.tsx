@@ -54,7 +54,8 @@ const UpdateSponsor = () => {
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [hasError, setHasError] = useState<boolean>(false);
   const [errorMessage, setErrorMessage] = useState<string>('');
-  const { userInfo } = userStore();
+  const [loginStep, setLoginStep] = useState(0);
+  const { userInfo, setUserInfo } = userStore();
   const { setCurrentSponsor } = SponsorStore();
 
   useEffect(() => {
@@ -116,6 +117,8 @@ const UpdateSponsor = () => {
         ...sponsor,
       });
       setCurrentSponsor(sponsor);
+      const updatedUser = await axios.get('/api/user/');
+      setUserInfo(updatedUser?.data);
       router.push('/dashboard/listings');
     } catch (e: any) {
       if (e?.response?.data?.error?.code === 'P2002') {
