@@ -7,7 +7,9 @@ import {
   Text,
   Textarea,
   type TextareaProps,
+  useDisclosure,
 } from '@chakra-ui/react';
+import EmojiPicker from 'emoji-picker-react';
 import React, {
   type ChangeEvent,
   type Dispatch,
@@ -41,6 +43,11 @@ export const UserSuggestionTextarea = ({
   ...props
 }: Props) => {
   const inputRef = useRef<HTMLTextAreaElement>(null);
+  const {
+    isOpen: isEmojiPickerOpen,
+    onToggle: onEmojiPickerToggle,
+    onClose: onEmojiPickerClose,
+  } = useDisclosure();
   const [showSuggestions, setShowSuggestions] = useState(false);
   const [suggestionPosition, setSuggestionPosition] = useState({
     top: 0,
@@ -92,7 +99,12 @@ export const UserSuggestionTextarea = ({
           value={value}
           {...props}
         />
-        <Popover>
+        <Popover
+          isOpen={isEmojiPickerOpen}
+          onClose={onEmojiPickerClose}
+          placement="right"
+          returnFocusOnClose={false}
+        >
           <PopoverTrigger>
             <Button
               pos={'absolute'}
@@ -103,6 +115,7 @@ export const UserSuggestionTextarea = ({
               h={8}
               p={0}
               _hover={{ bg: 'brand.slate.100' }}
+              onClick={onEmojiPickerToggle}
               rounded={'full'}
               tabIndex={-1}
               variant="ghost"
@@ -125,7 +138,14 @@ export const UserSuggestionTextarea = ({
               </svg>
             </Button>
           </PopoverTrigger>
-          <PopoverContent></PopoverContent>
+          {isEmojiPickerOpen && (
+            <PopoverContent>
+              <EmojiPicker
+                onEmojiClick={(emoji) => setValue((s) => s + emoji.emoji)}
+                lazyLoadEmojis
+              />
+            </PopoverContent>
+          )}
         </Popover>
       </Box>
       {value?.length > 0 && (
