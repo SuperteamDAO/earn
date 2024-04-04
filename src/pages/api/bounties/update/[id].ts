@@ -1,4 +1,5 @@
 import axios from 'axios';
+import dayjs from 'dayjs';
 import type { NextApiResponse } from 'next';
 
 import { type NextApiRequestWithUser, withAuth } from '@/features/auth';
@@ -89,6 +90,17 @@ async function bounty(req: NextApiRequestWithUser, res: NextApiResponse) {
 
     const deadlineChanged = currentBounty.deadline !== updatedData.deadline;
     if (deadlineChanged) {
+      const dayjsDeadline = dayjs(result.deadline);
+      await prisma.comment.create({
+        data: {
+          message: `The deadline for this listing has been updated to ${dayjsDeadline.format(
+            'h:mm A, MMMM D, YYYY (Z)',
+          )}`,
+          listingId: result.id,
+          authorId: result.pocId,
+          type: 'DEADLINE_EXTENSION',
+        },
+      });
       await sendEmailNotification({
         type: 'deadlineExtended',
         id,

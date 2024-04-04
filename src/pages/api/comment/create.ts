@@ -8,8 +8,14 @@ async function comment(req: NextApiRequestWithUser, res: NextApiResponse) {
   try {
     const userId = req.userId;
 
-    const { message, listingId, listingType, replyToId, submissionId } =
-      req.body;
+    const {
+      message,
+      listingId,
+      listingType,
+      replyToId,
+      submissionId,
+      replyToUserId,
+    } = req.body;
     let { type } = req.body;
     if (!type) type = 'NORMAL';
 
@@ -52,7 +58,41 @@ async function comment(req: NextApiRequestWithUser, res: NextApiResponse) {
       },
     });
 
-    if (listingType === 'BOUNTY') {
+    const taggedUsernames = (message as string)
+      .split(' ')
+      .filter((tag) => tag.startsWith('@'))
+      .map((tag) => tag.substring(1));
+    const taggedUsers = await prisma.user.findMany({
+      select: {
+        id: true,
+      },
+      where: {
+        username: {
+          in: taggedUsernames,
+        },
+      },
+    });
+
+    taggedUsers.forEach(async (taggedUser) => {
+      await sendEmailNotification({
+        type: 'commentTag',
+        id: listingId,
+        userId: taggedUser.id,
+        otherInfo: {
+          personName: result.author.username,
+        },
+      });
+    });
+
+    if (replyToId) {
+      await sendEmailNotification({
+        type: 'commentReply',
+        id: listingId,
+        userId: replyToUserId as string,
+      });
+    }
+
+    if (listingType === 'BOUNTY' && !replyToId) {
       await sendEmailNotification({
         type: 'commentSponsor',
         id: listingId,
