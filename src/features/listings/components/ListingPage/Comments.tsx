@@ -81,7 +81,7 @@ export const Comments = ({
         listingType: refType,
         listingId: refId,
       });
-      console.log('new comment - ', newCommentData.data);
+      // console.log('new comment - ', newCommentData.data);
       setCount((count) => count + 1);
       setComments((prevComments) => [newCommentData.data, ...prevComments]);
       setNewComment('');
@@ -101,7 +101,7 @@ export const Comments = ({
         },
       });
       const allComments = commentsData.data.result as Comment[];
-      console.log('all comments - ', allComments);
+      // console.log('all comments - ', allComments);
 
       setCount(commentsData.data.count);
       setComments([...comments, ...allComments]);
@@ -132,7 +132,7 @@ export const Comments = ({
     getComments();
 
     window.addEventListener('update-comments', () => {
-      console.log('update coments');
+      // console.log('update coments');
       getComments();
     });
   }, []);

@@ -31,14 +31,14 @@ export const Suggestions = ({ defaultSuggestions, input, onSelect }: Props) => {
             take: MAX_SUGGESTIONS - suggestions.size,
           },
         });
-        console.log(searchResp.data);
+        // console.log(searchResp.data);
         const users = searchResp.data.users as User[];
         users.forEach((user) => {
           if (user.id) searchSuggestions.set(user.id, user);
         });
         setSearchSuggestions(searchSuggestions);
       }
-      console.log(searchSuggestions);
+      // console.log(searchSuggestions);
       const filteredSuggestions = new Map<string, User>();
       searchSuggestions.forEach((value, key) => {
         if (
@@ -62,10 +62,6 @@ export const Suggestions = ({ defaultSuggestions, input, onSelect }: Props) => {
       debouncedFilterSuggestions.cancel();
     };
   }, [input]);
-
-  useEffect(() => {
-    console.log('suggestions', suggestions);
-  }, [suggestions]);
 
   useEffect(() => {
     const handleKeyPress = (event: globalThis.KeyboardEvent) => {

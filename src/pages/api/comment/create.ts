@@ -62,6 +62,7 @@ async function comment(req: NextApiRequestWithUser, res: NextApiResponse) {
       .split(' ')
       .filter((tag) => tag.startsWith('@'))
       .map((tag) => tag.substring(1));
+    console.log('taggedUsernames', taggedUsernames);
     const taggedUsers = await prisma.user.findMany({
       select: {
         id: true,
@@ -72,7 +73,7 @@ async function comment(req: NextApiRequestWithUser, res: NextApiResponse) {
         },
       },
     });
-
+    console.log('taggedUsers', taggedUsers);
     taggedUsers.forEach(async (taggedUser) => {
       await sendEmailNotification({
         type: 'commentTag',

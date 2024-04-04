@@ -8,7 +8,6 @@ import {
   Textarea,
   type TextareaProps,
 } from '@chakra-ui/react';
-import EmojiPicker from 'emoji-picker-react';
 import React, {
   type ChangeEvent,
   type Dispatch,
@@ -55,7 +54,7 @@ export const UserSuggestionTextarea = ({
 
   const handleInput = (event: ChangeEvent<HTMLTextAreaElement>) => {
     const input = event.target.value;
-    console.log('input', input);
+    // console.log('input', input);
     setValue(input);
     if (inputRef.current) {
       if (!showSuggestions) {
@@ -126,11 +125,7 @@ export const UserSuggestionTextarea = ({
               </svg>
             </Button>
           </PopoverTrigger>
-          <PopoverContent>
-            <EmojiPicker
-              onEmojiClick={(emoji) => setValue((s) => s + emoji.emoji)}
-            />
-          </PopoverContent>
+          <PopoverContent></PopoverContent>
         </Popover>
       </Box>
       {value?.length > 0 && (
