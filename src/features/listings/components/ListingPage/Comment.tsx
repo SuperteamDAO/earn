@@ -126,6 +126,7 @@ export const Comment = ({
   };
 
   const addNewReplyLvl1 = async (msg: string) => {
+    setNewReplyError(false);
     const newReplyData = await axios.post(`/api/comment/create`, {
       message: msg,
       listingType: refType,
@@ -133,6 +134,7 @@ export const Comment = ({
       replyToId: comment?.id ?? null,
     });
     setReplies((prevReplies) => [newReplyData.data, ...prevReplies]);
+    setShowReplies(true);
   };
 
   const date = formatFromNow(dayjs(comment?.updatedAt).fromNow());
@@ -232,7 +234,7 @@ export const Comment = ({
                 pb="2px"
                 color="blue.500"
                 fontSize={{
-                  base: 'xx-small',
+                  base: 'xs',
                   '2xl': 'sm',
                 }}
                 fontWeight={500}
@@ -250,7 +252,7 @@ export const Comment = ({
               pb="2px"
               color="brand.slate.400"
               fontSize={{
-                base: 'xx-small',
+                base: 'xs',
                 '2xl': 'sm',
               }}
               fontWeight={500}
@@ -282,9 +284,10 @@ export const Comment = ({
                 left="-3px"
                 color="brand.purple.dark"
                 fontSize={{
-                  base: 'sm',
-                  '2xl': 'md',
+                  base: 'xs',
+                  '2xl': 'sm',
                 }}
+                fontWeight={500}
                 bg="none"
                 onClick={() => setShowReplies((prev) => !prev)}
                 variant="link"
@@ -310,9 +313,10 @@ export const Comment = ({
               left="-3px"
               color="brand.slate.900"
               fontSize={{
-                base: 'sm',
-                '2xl': 'md',
+                base: 'xs',
+                '2xl': 'sm',
               }}
+              fontWeight={500}
               bg="none"
               onClick={() => setShowReplyInput((prev) => !prev)}
               variant="link"
@@ -363,8 +367,7 @@ export const Comment = ({
                     py={2}
                     color="brand.slate.800"
                     fontSize={{
-                      base: 'xx-small',
-                      '2xl': 'sm',
+                      base: 'xs',
                     }}
                     fontWeight={500}
                     bg="brand.slate.200"
@@ -386,7 +389,7 @@ export const Comment = ({
             </VStack>
           </Collapse>
           <Collapse animateOpacity in={showReplies} style={{ width: '100%' }}>
-            <VStack gap={3} w="full" pt={4}>
+            <VStack gap={4} w="full" pt={3}>
               {replies
                 ?.toReversed()
                 .map((reply) => (

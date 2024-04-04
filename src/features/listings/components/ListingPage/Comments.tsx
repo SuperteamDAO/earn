@@ -253,7 +253,7 @@ export const Comments = ({
             </Flex>
           </Collapse>
         </VStack>
-        <VStack gap={4} w={'full'} pb={8}>
+        <VStack gap={5} w={'full'} pb={8}>
           {comments?.map((comment) => {
             return (
               <CommentUI
