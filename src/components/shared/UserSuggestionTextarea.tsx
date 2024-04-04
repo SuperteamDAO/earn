@@ -102,8 +102,10 @@ export const UserSuggestionTextarea = ({
         />
         <Popover
           closeOnBlur
+          closeOnEsc
           isOpen={isEmojiPickerOpen}
           onClose={onEmojiPickerClose}
+          returnFocusOnClose={false}
         >
           <PopoverTrigger>
             <Button
@@ -138,8 +140,8 @@ export const UserSuggestionTextarea = ({
               </svg>
             </Button>
           </PopoverTrigger>
-          {isEmojiPickerOpen && (
-            <PopoverContent>
+          <PopoverContent w={355}>
+            {isEmojiPickerOpen && (
               <Picker
                 data={data}
                 onEmojiSelect={(emoji: any) =>
@@ -148,8 +150,8 @@ export const UserSuggestionTextarea = ({
                 theme="light"
                 lazyLoadEmojis
               />
-            </PopoverContent>
-          )}
+            )}
+          </PopoverContent>
         </Popover>
       </Box>
       {value?.length > 0 && (

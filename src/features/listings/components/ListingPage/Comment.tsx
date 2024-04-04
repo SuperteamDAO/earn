@@ -20,6 +20,7 @@ import {
   MenuList,
   Text,
   useDisclosure,
+  useMediaQuery,
   VStack,
 } from '@chakra-ui/react';
 import axios from 'axios';
@@ -171,6 +172,8 @@ export const Comment = ({
     localStorage.setItem(`comment-${refId}-${comment.id}`, newReply);
   }, [newReply]);
 
+  const [isMobile] = useMediaQuery('(max-width: 768px)');
+
   return (
     <>
       {isOpen && (
@@ -193,10 +196,15 @@ export const Comment = ({
         key={comment.id}
         align="start"
         gap={3}
+        overflow="visible"
         w="full"
         px={isReply ? 0 : 6}
-        onMouseEnter={() => setShowOptions(true)}
-        onMouseLeave={() => setShowOptions(false)}
+        onMouseEnter={() => {
+          if (!isMobile) setShowOptions(true);
+        }}
+        onMouseLeave={() => {
+          if (!isMobile) setShowOptions(false);
+        }}
       >
         <Link
           href={`${getURL()}t/${comment?.author?.username}`}
@@ -278,7 +286,7 @@ export const Comment = ({
               value={comment?.message}
             />
           </Text>
-          <HStack pt={2}>
+          <HStack overflow="visible!important" pt={2}>
             {replies?.length > 0 && (
               <Button
                 pos="relative"
@@ -359,7 +367,7 @@ export const Comment = ({
               <Collapse
                 animateOpacity
                 in={!!newReply}
-                style={{ width: '100%' }}
+                style={{ width: '100%', overflow: 'visible!important' }}
               >
                 <Flex justify={'end'} gap={4} w="full">
                   <Button
@@ -389,7 +397,11 @@ export const Comment = ({
               </Collapse>
             </VStack>
           </Collapse>
-          <Collapse animateOpacity in={showReplies} style={{ width: '100%' }}>
+          <Collapse
+            animateOpacity
+            in={showReplies}
+            style={{ width: '100%', overflow: 'visible!important' }}
+          >
             <VStack gap={4} w="full" pt={3}>
               {replies
                 ?.toReversed()
@@ -413,7 +425,7 @@ export const Comment = ({
           </Collapse>
         </VStack>
         <Fade
-          in={showOptions && comment.authorId === userInfo?.id}
+          in={(showOptions || isMobile) && comment.authorId === userInfo?.id}
           style={{ display: 'block' }}
         >
           <Menu>
