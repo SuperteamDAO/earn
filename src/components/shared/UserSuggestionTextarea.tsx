@@ -9,7 +9,8 @@ import {
   type TextareaProps,
   useDisclosure,
 } from '@chakra-ui/react';
-import EmojiPicker from 'emoji-picker-react';
+import data from '@emoji-mart/data';
+import Picker from '@emoji-mart/react';
 import React, {
   type ChangeEvent,
   type Dispatch,
@@ -100,10 +101,9 @@ export const UserSuggestionTextarea = ({
           {...props}
         />
         <Popover
+          closeOnBlur
           isOpen={isEmojiPickerOpen}
           onClose={onEmojiPickerClose}
-          placement="right"
-          returnFocusOnClose={false}
         >
           <PopoverTrigger>
             <Button
@@ -140,8 +140,12 @@ export const UserSuggestionTextarea = ({
           </PopoverTrigger>
           {isEmojiPickerOpen && (
             <PopoverContent>
-              <EmojiPicker
-                onEmojiClick={(emoji) => setValue((s) => s + emoji.emoji)}
+              <Picker
+                data={data}
+                onEmojiSelect={(emoji: any) =>
+                  setValue((s) => s + emoji.native)
+                }
+                theme="light"
                 lazyLoadEmojis
               />
             </PopoverContent>
