@@ -133,7 +133,7 @@ export const Comment = ({
       listingType: refType,
       listingId: refId,
       replyToId: comment?.id ?? null,
-      replyToUserId: comment?.author.id ?? null,
+      replyToUserId: comment?.authorId ?? null,
     });
     setReplies((prevReplies) => [newReplyData.data, ...prevReplies]);
     setShowReplies(true);
