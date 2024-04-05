@@ -120,7 +120,7 @@ export const Comments = ({
   const handleSubmit = () => {
     if (!userInfo?.id) {
       setTriggerLogin(true);
-    } else if (!userInfo?.isTalentFilled || !userInfo?.currentSponsorId) {
+    } else if (!userInfo?.isTalentFilled && !userInfo?.currentSponsorId) {
       onOpen();
     } else {
       addNewComment();
