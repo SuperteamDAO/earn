@@ -144,7 +144,7 @@ export const Comment = ({
   const handleSubmit = async () => {
     if (!userInfo?.id) {
       setTriggerLogin(true);
-    } else if (!userInfo?.isTalentFilled) {
+    } else if (!userInfo?.isTalentFilled && !userInfo?.currentSponsorId) {
       onOpen();
     } else {
       try {
