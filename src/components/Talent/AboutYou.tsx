@@ -16,8 +16,8 @@ import { useForm } from 'react-hook-form';
 
 import { CountryList } from '@/constants';
 import { userStore } from '@/store/user';
-import { isUsernameAvailable } from '@/utils/isUsernameAvailable';
 import { uploadToCloudinary } from '@/utils/upload';
+import { useUsernameValidation } from '@/utils/useUsernameValidation';
 
 import type { UserStoreType } from './types';
 
@@ -29,7 +29,6 @@ interface Step1Props {
 export function AboutYou({ setStep, useFormStore }: Step1Props) {
   const [imageUrl, setImageUrl] = useState<string>('');
   const [uploading, setUploading] = useState<boolean>(false);
-  const [userNameValid, setuserNameValid] = useState(true);
   const { updateState, form } = useFormStore();
   const { userInfo } = userStore();
   const [isGooglePhoto, setIsGooglePhoto] = useState<boolean>(
@@ -47,13 +46,12 @@ export function AboutYou({ setStep, useFormStore }: Step1Props) {
     },
   });
 
+  const { setUsername, isInvalid, validationErrorMessage, username } =
+    useUsernameValidation();
+
   const onSubmit = async (data: any) => {
-    if (data.username && data.username !== userInfo?.username) {
-      const avl = await isUsernameAvailable(data.username);
-      if (!avl) {
-        setuserNameValid(false);
-        return;
-      }
+    if (isInvalid) {
+      return;
     }
     updateState({ ...data, photo: isGooglePhoto ? userInfo?.photo : imageUrl });
     setStep((i) => i + 1);
@@ -75,11 +73,13 @@ export function AboutYou({ setStep, useFormStore }: Step1Props) {
               id="username"
               placeholder="Username"
               {...register('username', { required: true })}
-              isInvalid={!userNameValid}
+              isInvalid={isInvalid}
+              onChange={(e) => setUsername(e.target.value)}
+              value={username}
             />
-            {!userNameValid && (
-              <Text color={'red'}>
-                Username is unavailable! Please try another one.
+            {isInvalid && (
+              <Text color={'red'} fontSize={'sm'}>
+                {validationErrorMessage}
               </Text>
             )}
           </Box>

@@ -13,13 +13,12 @@ import {
 } from '@chakra-ui/react';
 import axios from 'axios';
 import { MediaPicker } from 'degen';
-import debounce from 'lodash.debounce';
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import { useForm } from 'react-hook-form';
 
 import { userStore } from '@/store/user';
-import { isUsernameAvailable } from '@/utils/isUsernameAvailable';
 import { uploadToCloudinary } from '@/utils/upload';
+import { useUsernameValidation } from '@/utils/useUsernameValidation';
 
 export const SponsorInfoModal = ({
   isOpen,
@@ -29,7 +28,7 @@ export const SponsorInfoModal = ({
   onClose: () => void;
 }) => {
   const { userInfo, setUserInfo } = userStore();
-  const { register, handleSubmit, watch } = useForm({
+  const { register, handleSubmit } = useForm({
     defaultValues: {
       firstName: userInfo?.firstName,
       lastName: userInfo?.lastName,
@@ -39,30 +38,15 @@ export const SponsorInfoModal = ({
   });
   const [imageUrl, setImageUrl] = useState<string>('');
   const [uploading, setUploading] = useState<boolean>(false);
-  const [userNameValid, setUserNameValid] = useState(true);
   const [isGooglePhoto, setIsGooglePhoto] = useState<boolean>(
     userInfo?.photo?.includes('googleusercontent.com') || false,
   );
   const [isSubmitting, setIsSubmitting] = useState(false);
 
-  const checkUsernameAvailability = debounce(async (username) => {
-    if (username && username !== userInfo?.username) {
-      const isAvailable = await isUsernameAvailable(username);
-      setUserNameValid(isAvailable);
-    }
-  }, 500);
-
-  const username = watch('username');
-
-  useEffect(() => {
-    checkUsernameAvailability(username);
-    return () => checkUsernameAvailability.cancel();
-  }, [username]);
+  const { setUsername, isInvalid, validationErrorMessage, username } =
+    useUsernameValidation();
 
   const onSubmit = async (data: any) => {
-    if (!userNameValid) {
-      return;
-    }
     setIsSubmitting(true);
     const finalData = {
       ...data,
@@ -101,11 +85,13 @@ export const SponsorInfoModal = ({
                 id="username"
                 placeholder="Username"
                 {...register('username', { required: true })}
-                isInvalid={!userNameValid}
+                isInvalid={isInvalid}
+                onChange={(e) => setUsername(e.target.value)}
+                value={username}
               />
-              {!userNameValid && (
-                <Text color={'red'}>
-                  Username is unavailable! Please try another one.
+              {isInvalid && (
+                <Text color={'red'} fontSize={'sm'}>
+                  {validationErrorMessage}
                 </Text>
               )}
             </Box>

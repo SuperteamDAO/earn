@@ -6,9 +6,10 @@ type InputFieldProps = {
   name: string;
   register: any;
   isInvalid?: boolean;
-  onChange?: () => void;
+  onChange?: (e: React.ChangeEvent<HTMLInputElement>) => void;
   validationErrorMessage?: string;
   isRequired?: boolean;
+  value?: string;
 };
 
 export const InputField = ({
@@ -20,6 +21,7 @@ export const InputField = ({
   onChange,
   validationErrorMessage,
   isRequired = false,
+  value,
 }: InputFieldProps) => {
   return (
     <Box w={'full'} mb={'1.25rem'}>
@@ -36,9 +38,12 @@ export const InputField = ({
         {...register(name, { required: isRequired })}
         isInvalid={isInvalid}
         onChange={onChange}
+        value={value}
       />
       {isInvalid && validationErrorMessage && (
-        <Text color={'red'}>{validationErrorMessage}</Text>
+        <Text color={'red'} fontSize={'sm'}>
+          {validationErrorMessage}
+        </Text>
       )}
     </Box>
   );
