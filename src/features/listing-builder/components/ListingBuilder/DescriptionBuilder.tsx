@@ -26,7 +26,6 @@ import TextStyle from '@tiptap/extension-text-style';
 import Underline from '@tiptap/extension-underline';
 import { EditorContent, useEditor } from '@tiptap/react';
 import StarterKit from '@tiptap/starter-kit';
-import imageCompression from 'browser-image-compression';
 import React, {
   type Dispatch,
   type SetStateAction,
@@ -205,15 +204,8 @@ export const DescriptionBuilder = ({
         const toastId = toast.loading('Uploading image...');
 
         try {
-          const options = {
-            maxSizeMB: 1,
-            maxWidthOrHeight: 1920,
-            useWebWorker: true,
-          };
-          const compressedImg = await imageCompression(file, options);
-
           // upload the file and get its URL
-          const url = await uploadToCloudinary(compressedImg);
+          const url = await uploadToCloudinary(file, 'description');
           if (url) {
             // Set the image in the editor
             editor?.chain().focus().setImage({ src: url }).run();
