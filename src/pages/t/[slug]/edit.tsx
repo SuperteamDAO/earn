@@ -42,8 +42,8 @@ import { SkillList, type SubSkillsType } from '@/interface/skills';
 import { Default } from '@/layouts/Default';
 import { Meta } from '@/layouts/Meta';
 import { userStore } from '@/store/user';
-import { isUsernameAvailable } from '@/utils/isUsernameAvailable';
 import { uploadToCloudinary } from '@/utils/upload';
+import { useUsernameValidation } from '@/utils/useUsernameValidation';
 
 type FormData = {
   username: string;
@@ -119,7 +119,6 @@ export default function EditProfilePage({ slug }: { slug: string }) {
   const { userInfo, setUserInfo } = userStore();
   const { register, handleSubmit, setValue, watch } = useForm<FormData>();
 
-  const [userNameValid, setUserNameValid] = useState(true);
   const [discordError, setDiscordError] = useState(false);
   const [socialError, setSocialError] = useState(false);
   const [isAnySocialUrlInvalid, setAnySocialUrlInvalid] = useState(false);
@@ -162,6 +161,9 @@ export default function EditProfilePage({ slug }: { slug: string }) {
 
     setAnySocialUrlInvalid(!allUrlsValid);
   };
+
+  const { setUsername, isInvalid, validationErrorMessage, username } =
+    useUsernameValidation();
 
   useEffect(() => {
     if (userInfo) {
@@ -240,23 +242,6 @@ export default function EditProfilePage({ slug }: { slug: string }) {
 
   const onSubmit = async (data: FormData) => {
     try {
-      if (data.username !== userInfo?.username) {
-        const avl = await isUsernameAvailable(data.username);
-        if (!avl) {
-          setUserNameValid(false);
-          toast({
-            title: 'Username Error.',
-            description: 'This username is not available.',
-            status: 'error',
-            duration: 5000,
-            isClosable: true,
-            variant: 'subtle',
-          });
-          return;
-        }
-      }
-      setUserNameValid(true);
-
       if (!data.discord) {
         setDiscordError(true);
         toast({
@@ -464,10 +449,11 @@ export default function EditProfilePage({ slug }: { slug: string }) {
                   placeholder="Username"
                   name="username"
                   register={register}
-                  isInvalid={!userNameValid}
-                  onChange={() => setUserNameValid(true)}
-                  validationErrorMessage="Username is unavailable! Please try another one."
                   isRequired
+                  value={username}
+                  onChange={(e) => setUsername(e.target.value)}
+                  isInvalid={isInvalid}
+                  validationErrorMessage={validationErrorMessage}
                 />
 
                 <InputField
