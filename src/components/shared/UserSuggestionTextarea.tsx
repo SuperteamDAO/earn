@@ -170,7 +170,7 @@ export const UserSuggestionTextarea = ({
           pt={1}
           pr={1}
           color="brand.slate.400"
-          fontSize={'xx-small'}
+          fontSize={'x-small'}
           textAlign={'right'}
         >
           {MAX_LENGTH - value.length} characters left
