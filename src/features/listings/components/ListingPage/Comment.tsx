@@ -218,7 +218,7 @@ export const Comment = ({
           <UserAvatar size={isReply ? '28px' : '36px'} user={comment?.author} />
         </Link>
 
-        <VStack align={'start'} gap={0} w="full">
+        <VStack align={'start'} gap={0} w="100%">
           <HStack align="end" gap={2}>
             <Link
               href={`${getURL()}t/${comment?.author?.username}`}
@@ -270,6 +270,14 @@ export const Comment = ({
             </Text>
           </HStack>
           <Text
+            overflow={'clip'}
+            maxW={{
+              base: '15rem',
+              sm: '20rem',
+              md: '17rem',
+              lg: '29rem',
+              xl: '46rem',
+            }}
             mt={'0px !important'}
             color="brand.slate.500"
             fontSize={{
@@ -342,6 +350,7 @@ export const Comment = ({
               <HStack align="start" gap={3} w="full">
                 <UserAvatar user={userInfo} size="28px" />
                 <UserSuggestionTextarea
+                  autoFocusOn={showReplyInput}
                   defaultSuggestions={defaultSuggestions}
                   pt={0}
                   fontSize={{

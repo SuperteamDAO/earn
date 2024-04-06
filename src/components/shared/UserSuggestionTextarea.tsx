@@ -15,6 +15,7 @@ import React, {
   type ChangeEvent,
   type Dispatch,
   type SetStateAction,
+  useEffect,
   useRef,
   useState,
 } from 'react';
@@ -35,12 +36,14 @@ interface Props extends TextareaProps {
   value: string;
   setValue: Dispatch<SetStateAction<string>>;
   defaultSuggestions: Map<string, User>;
+  autoFocusOn?: boolean;
 }
 
 export const UserSuggestionTextarea = ({
   value,
   setValue,
   defaultSuggestions,
+  autoFocusOn,
   ...props
 }: Props) => {
   const inputRef = useRef<HTMLTextAreaElement>(null);
@@ -77,6 +80,14 @@ export const UserSuggestionTextarea = ({
       setShowSuggestions(true);
     }
   };
+
+  useEffect(() => {
+    console.log('autofocus');
+    setTimeout(() => {
+      if (autoFocusOn) inputRef?.current?.focus();
+    }, 0);
+  }, [autoFocusOn]);
+
   return (
     <Box pos={'relative'} w="full">
       <Box pos={'relative'} w="full">
