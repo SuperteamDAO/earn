@@ -13,6 +13,7 @@ import {
   IconButton,
   Image,
   Link,
+  Text,
   useDisclosure,
 } from '@chakra-ui/react';
 import NextLink from 'next/link';
@@ -23,13 +24,7 @@ import React, { useRef } from 'react';
 import { UserMenu } from '@/components/shared/UserMenu';
 import { userStore } from '@/store/user';
 
-import {
-  CATEGORY_NAV_ITEMS,
-  HACKATHON_NAV_ITEMS,
-  LISTING_NAV_ITEMS,
-  renderLabel,
-} from '../constants';
-import { NavLink } from './NavLink';
+import { NAV_LINKS } from '../utils';
 
 export const MobileNavbar = ({ onLoginOpen }: { onLoginOpen: () => void }) => {
   const {
@@ -110,44 +105,26 @@ export const MobileNavbar = ({ onLoginOpen }: { onLoginOpen: () => void }) => {
                 </Button>
               )}
 
-            <Flex direction={'column'} mt={5}>
-              {HACKATHON_NAV_ITEMS?.map((navItem) => {
-                const isCurrent = `${navItem.href}` === router.asPath;
-                return (
-                  <NavLink
-                    key={navItem.label}
-                    href={navItem.href ?? '#'}
-                    label={renderLabel(navItem)}
-                    isActive={isCurrent}
-                  />
-                );
-              })}
-            </Flex>
-            <Divider my={2} borderColor={'brand.slate.300'} />
             <Flex direction={'column'}>
-              {LISTING_NAV_ITEMS?.map((navItem) => {
-                const isCurrent = `${navItem.href}` === router.asPath;
+              {NAV_LINKS?.map((navItem) => {
                 return (
-                  <NavLink
+                  <Link
                     key={navItem.label}
-                    href={navItem.href ?? '#'}
-                    label={renderLabel(navItem)}
-                    isActive={isCurrent}
-                  />
-                );
-              })}
-            </Flex>
-            <Divider my={2} borderColor={'brand.slate.300'} />
-            <Flex direction={'column'}>
-              {CATEGORY_NAV_ITEMS?.map((navItem) => {
-                const isCurrent = `${navItem.href}` === router.asPath;
-                return (
-                  <NavLink
-                    key={navItem.label}
-                    href={navItem.href ?? '#'}
-                    label={renderLabel(navItem)}
-                    isActive={isCurrent}
-                  />
+                    alignItems={'center'}
+                    display={'flex'}
+                    h={{ base: '8', lg: 14 }}
+                    py={2}
+                    color="brand.slate.500"
+                    fontSize={{ base: 'lg', lg: 'sm' }}
+                    fontWeight={500}
+                    _hover={{
+                      textDecoration: 'none',
+                      color: 'brand.slate.600',
+                    }}
+                    href={navItem.link ?? '#'}
+                  >
+                    {navItem.label}
+                  </Link>
                 );
               })}
             </Flex>
@@ -184,6 +161,8 @@ export const MobileNavbar = ({ onLoginOpen }: { onLoginOpen: () => void }) => {
             <Link
               as={NextLink}
               alignItems={'center'}
+              gap={3}
+              display={'flex'}
               _hover={{ textDecoration: 'none' }}
               href="/"
             >
@@ -194,6 +173,22 @@ export const MobileNavbar = ({ onLoginOpen }: { onLoginOpen: () => void }) => {
                 alt={'Superteam Earn'}
                 src={'/assets/logo/logo.svg'}
               />
+              <>
+                <Divider
+                  w={'3px'}
+                  h={'24px'}
+                  borderColor={'brand.slate.400'}
+                  orientation="vertical"
+                />
+                <Text
+                  color={'brand.slate.500'}
+                  fontSize="sm"
+                  fontWeight={600}
+                  letterSpacing={'1.5px'}
+                >
+                  SPONSORS
+                </Text>
+              </>
             </Link>
           </AbsoluteCenter>
           {status === 'authenticated' && session && <UserMenu />}
@@ -213,56 +208,6 @@ export const MobileNavbar = ({ onLoginOpen }: { onLoginOpen: () => void }) => {
           )}
         </Flex>
       </Box>
-      <Flex
-        align={'center'}
-        justify={'space-between'}
-        display={{ base: 'flex', lg: 'none' }}
-        px={{ base: 3, sm: 4 }}
-        py={2}
-        bg={'#F8FAFC'}
-      >
-        <Flex gap={{ base: 2, sm: 12 }}>
-          {LISTING_NAV_ITEMS?.map((navItem) => {
-            const isCurrent = `${navItem.href}` === router.asPath;
-            return (
-              <NavLink
-                key={navItem.label}
-                href={navItem.href ?? '#'}
-                label={renderLabel(navItem)}
-                isActive={isCurrent}
-                fontSize={{ base: '13px', xs: 'sm', md: '15px' }}
-                fontWeight={500}
-                borderBottom={'none'}
-                h={'auto'}
-              />
-            );
-          })}
-        </Flex>
-        <Divider
-          display={{ base: 'flex', md: 'none' }}
-          h={5}
-          borderWidth={'0.5px'}
-          borderColor={'brand.slate.400'}
-          orientation="vertical"
-        />
-        <Flex gap={{ base: 2, sm: 12 }}>
-          {CATEGORY_NAV_ITEMS?.map((navItem) => {
-            const isCurrent = `${navItem.href}` === router.asPath;
-            return (
-              <NavLink
-                key={navItem.label}
-                href={navItem.href ?? '#'}
-                label={renderLabel(navItem)}
-                isActive={isCurrent}
-                fontSize={{ base: '13px', xs: 'sm', md: '15px' }}
-                fontWeight={500}
-                h={'auto'}
-                borderBottom={'none'}
-              />
-            );
-          })}
-        </Flex>
-      </Flex>
     </>
   );
 };

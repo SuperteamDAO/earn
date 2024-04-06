@@ -18,13 +18,7 @@ import React from 'react';
 
 import { UserMenu } from '@/components/shared/UserMenu';
 
-import {
-  CATEGORY_NAV_ITEMS,
-  HACKATHON_NAV_ITEMS,
-  LISTING_NAV_ITEMS,
-  renderLabel,
-} from '../constants';
-import { NavLink } from './NavLink';
+import { NAV_LINKS } from '../utils';
 
 export const DesktopNavbar = ({ onLoginOpen }: { onLoginOpen: () => void }) => {
   const { data: session, status } = useSession();
@@ -61,56 +55,46 @@ export const DesktopNavbar = ({ onLoginOpen }: { onLoginOpen: () => void }) => {
               src={'/assets/logo/logo.svg'}
             />
 
-            {isDashboardRoute && (
-              <>
-                <Divider
-                  w={'3px'}
-                  h={'24px'}
-                  borderColor={'brand.slate.400'}
-                  orientation="vertical"
-                />
-                <Text fontSize="sm" letterSpacing={'1.5px'}>
-                  SPONSORS
-                </Text>
-              </>
-            )}
-          </Link>
-
-          {LISTING_NAV_ITEMS?.map((navItem) => {
-            const isCurrent = `${navItem.href}` === router.asPath;
-            return (
-              <NavLink
-                key={navItem.label}
-                href={navItem.href ?? '#'}
-                label={navItem.label}
-                isActive={isCurrent}
+            <>
+              <Divider
+                w={'3px'}
+                h={'24px'}
+                borderColor={'brand.slate.400'}
+                orientation="vertical"
               />
-            );
-          })}
+              <Text
+                color={'brand.slate.500'}
+                fontSize="sm"
+                fontWeight={600}
+                letterSpacing={'1.5px'}
+              >
+                SPONSORS
+              </Text>
+            </>
+          </Link>
         </Flex>
         <AbsoluteCenter>
           <Flex align="center" justify={'center'} flexGrow={1} h="full" ml={10}>
             <Stack direction={'row'} h="full" spacing={7}>
-              {CATEGORY_NAV_ITEMS?.map((navItem) => {
-                const isCurrent = `${navItem.href}` === router.asPath;
+              {NAV_LINKS?.map((navItem) => {
                 return (
-                  <NavLink
-                    href={navItem.href ?? '#'}
-                    label={navItem.label}
-                    isActive={isCurrent}
+                  <Link
                     key={navItem.label}
-                  />
-                );
-              })}
-              {HACKATHON_NAV_ITEMS?.map((navItem) => {
-                const isCurrent = `${navItem.href}` === router.asPath;
-                return (
-                  <NavLink
-                    key={navItem.label}
-                    href={navItem.href ?? '#'}
-                    label={renderLabel(navItem)}
-                    isActive={isCurrent}
-                  />
+                    alignItems={'center'}
+                    display={'flex'}
+                    h={{ base: '8', lg: 14 }}
+                    py={2}
+                    color="brand.slate.500"
+                    fontSize={{ base: 'lg', lg: 'sm' }}
+                    fontWeight={500}
+                    _hover={{
+                      textDecoration: 'none',
+                      color: 'brand.slate.600',
+                    }}
+                    href={navItem.link ?? '#'}
+                  >
+                    {navItem.label}
+                  </Link>
                 );
               })}
             </Stack>

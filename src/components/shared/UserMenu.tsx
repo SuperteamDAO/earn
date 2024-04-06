@@ -21,7 +21,7 @@ import { useEffect } from 'react';
 
 import { userStore } from '@/store/user';
 
-import { EmailSettingsModal } from './EmailSettingsModal';
+import { EmailSettingsModal } from '../modals/EmailSettingsModal';
 
 export function UserMenu({}) {
   const router = useRouter();
