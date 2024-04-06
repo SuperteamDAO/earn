@@ -30,17 +30,9 @@ export default async function handler(
               .json({ error: 'Error uploading to Cloudinary', details: error });
           }
           if (result && result.secure_url) {
-            let transformedUrl = result.secure_url;
-
-            if (type === 'pfp') {
-              transformedUrl = transformedUrl.replace(
-                '/upload/',
-                '/upload/f_auto,q_auto,w_128/',
-              );
-            }
             return res
               .status(200)
-              .json({ message: 'Upload successful', url: transformedUrl });
+              .json({ message: 'Upload successful', url: result.secure_url });
           } else {
             return res
               .status(500)
