@@ -234,7 +234,7 @@ export const SubmissionModal = ({
         <>
           Share your hackathon submission here! Remember:
           <Text>
-            In the “Link to your Submission” field, submit your hackathon
+            1. In the “Link to your Submission” field, submit your hackathon
             project’s most useful link (could be a loom video, GitHub link,
             website, etc)
           </Text>
