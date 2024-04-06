@@ -23,6 +23,7 @@ async function handler(req: NextApiRequestWithUser, res: NextApiResponse) {
   const slug = params.slug as string;
   const skip = params.take ? parseInt(params.skip as string, 10) : 0;
   const take = params.take ? parseInt(params.take as string, 10) : 15;
+  const isHackathon = params.isHackathon === 'true';
 
   const searchText = params.searchText as string;
 
@@ -70,9 +71,9 @@ async function handler(req: NextApiRequestWithUser, res: NextApiResponse) {
         listing: {
           slug,
           isActive: true,
-          sponsor: {
-            id: user.currentSponsorId!,
-          },
+          ...(isHackathon
+            ? { hackathonId: user.hackathonId }
+            : { sponsor: { id: user.currentSponsorId! } }),
         },
         isActive: true,
         isArchived: false,
