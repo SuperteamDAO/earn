@@ -76,6 +76,7 @@ function BountySubmissions({ listing }: Props) {
             searchText,
             take: length,
             skip,
+            isHackathon: true,
           },
         },
       );
