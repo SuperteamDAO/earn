@@ -162,7 +162,7 @@ export default function EditProfilePage({ slug }: { slug: string }) {
     setAnySocialUrlInvalid(!allUrlsValid);
   };
 
-  const { setUsername, isInvalid, validationErrorMessage, username } =
+  const { setUsername, isInvalid, validationErrorMessage } =
     useUsernameValidation();
 
   useEffect(() => {
@@ -450,7 +450,6 @@ export default function EditProfilePage({ slug }: { slug: string }) {
                   name="username"
                   register={register}
                   isRequired
-                  value={username}
                   onChange={(e) => setUsername(e.target.value)}
                   isInvalid={isInvalid}
                   validationErrorMessage={validationErrorMessage}
