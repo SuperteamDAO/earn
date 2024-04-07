@@ -100,10 +100,7 @@ const HomePage: NextPage<UserAgentPropType> = ({ ua }) => {
       const isPWA = window.matchMedia('(display-mode: standalone)').matches;
       const isInstalled = localStorage.getItem('isAppInstalled');
 
-      if (
-        (isMobile && !modalShown && !isInstalled) ||
-        (isMobile && !isPWA && !modalShown && !isInstalled)
-      ) {
+      if (isMobile && !isPWA && !modalShown && !isInstalled) {
         //TODO: add modalshown key in localstorage
         localStorage.setItem('installAppModalShown', 'true');
         onOpen();
