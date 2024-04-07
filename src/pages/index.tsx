@@ -1,10 +1,13 @@
-import { Box, Flex } from '@chakra-ui/react';
+import { Box, Flex, useDisclosure } from '@chakra-ui/react';
 import axios from 'axios';
 import dayjs from 'dayjs';
 import type { NextPage } from 'next';
-import { useEffect, useState } from 'react';
+import { type GetServerSideProps } from 'next/types';
+import { parse } from 'next-useragent';
+import React, { useEffect, useRef, useState } from 'react';
 
 import { FeatureModal } from '@/components/modals/FeatureModal';
+import { InstallAppModal } from '@/components/modals/InstallAppModal';
 import { EmptySection } from '@/components/shared/EmptySection';
 import { Loading } from '@/components/shared/Loading';
 import { type Grant, GrantsCard } from '@/features/grants';
@@ -12,7 +15,11 @@ import { type Bounty, ListingSection, ListingTabs } from '@/features/listings';
 import { Home } from '@/layouts/Home';
 import { userStore } from '@/store/user';
 
-const HomePage: NextPage = () => {
+interface UserAgentPropType {
+  ua: string;
+}
+
+const HomePage: NextPage<UserAgentPropType> = ({ ua }) => {
   const [isListingsLoading, setIsListingsLoading] = useState(true);
   const [bounties, setBounties] = useState<{ bounties: Bounty[] }>({
     bounties: [],
@@ -20,7 +27,8 @@ const HomePage: NextPage = () => {
   const [grants, setGrants] = useState<{ grants: Grant[] }>({
     grants: [],
   });
-
+  const installPrompt = useRef<Event | null>();
+  const deviceInfo = parse(ua);
   const date = dayjs().subtract(1, 'month').toISOString();
 
   const getListings = async () => {
@@ -52,6 +60,10 @@ const HomePage: NextPage = () => {
   };
 
   useEffect(() => {
+    window.addEventListener('beforeinstallprompt', (e) => {
+      e.preventDefault();
+      installPrompt.current = e;
+    });
     if (!isListingsLoading) return;
     getListings();
   }, []);
@@ -59,6 +71,7 @@ const HomePage: NextPage = () => {
   const { userInfo } = userStore();
 
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const { isOpen, onClose, onOpen } = useDisclosure();
 
   const handleClose = () => {
     setIsModalOpen(false);
@@ -80,9 +93,48 @@ const HomePage: NextPage = () => {
     updateFeatureModalShown();
   }, [userInfo]);
 
+  useEffect(() => {
+    const showInstallAppModal = () => {
+      const isMobile = deviceInfo.isMobile;
+      const modalShown = localStorage.getItem('installAppModalShown');
+      const isPWA = window.matchMedia('(display-mode: standalone)').matches;
+      const isInstalled = localStorage.getItem('isAppInstalled');
+
+      if (
+        (isMobile && !modalShown && !isInstalled) ||
+        (isMobile && !isPWA && !modalShown && !isInstalled)
+      ) {
+        //TODO: add modalshown key in localstorage
+        localStorage.setItem('installAppModalShown', 'true');
+        onOpen();
+      }
+    };
+
+    setTimeout(() => {
+      showInstallAppModal();
+    }, 1000);
+  }, [userInfo]);
+
+  const installApp = async () => {
+    if (installPrompt.current) {
+      // @ts-expect-error --> to remove prompt doesnt exist error
+      const status = await installPrompt.current?.prompt();
+      if (status.outcome === 'accepted') {
+        localStorage.setItem('isAppInstalled', 'true');
+      }
+    }
+    onClose();
+  };
+
   return (
     <Home type="home">
       <FeatureModal isOpen={isModalOpen} onClose={handleClose} />
+      <InstallAppModal
+        isOpen={isOpen}
+        onClose={onClose}
+        installApp={installApp}
+        deviceInfo={deviceInfo}
+      />
       <Box w={'100%'}>
         <ListingTabs
           bounties={bounties.bounties}
@@ -122,6 +174,14 @@ const HomePage: NextPage = () => {
       </Box>
     </Home>
   );
+};
+
+export const getServerSideProps: GetServerSideProps = async (ctx) => {
+  return {
+    props: {
+      ua: ctx?.req?.headers['user-agent'],
+    },
+  };
 };
 
 export default HomePage;

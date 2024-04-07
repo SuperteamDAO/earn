@@ -59,6 +59,7 @@
     "next-auth": "^4.24.6",
     "next-pwa": "^5.6.0",
     "next-seo": "^6.5.0",
+    "next-useragent": "^2.8.0",
     "nextjs-toploader": "^1.6.11",
     "nodemailer": "^6.9.11",
     "posthog-js": "^1.116.6",
