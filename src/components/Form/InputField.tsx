@@ -6,7 +6,7 @@ type InputFieldProps = {
   name: string;
   register: any;
   isInvalid?: boolean;
-  onChange?: () => void;
+  onChange?: (e: React.ChangeEvent<HTMLInputElement>) => void;
   validationErrorMessage?: string;
   isRequired?: boolean;
 };
@@ -38,7 +38,9 @@ export const InputField = ({
         onChange={onChange}
       />
       {isInvalid && validationErrorMessage && (
-        <Text color={'red'}>{validationErrorMessage}</Text>
+        <Text color={'red'} fontSize={'sm'}>
+          {validationErrorMessage}
+        </Text>
       )}
     </Box>
   );
