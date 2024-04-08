@@ -143,7 +143,7 @@ export const SponsorInfoModal = ({
                       defaultValue={{ url: userInfo.photo, type: 'image' }}
                       onChange={async (e) => {
                         setUploading(true);
-                        const a = await uploadToCloudinary(e);
+                        const a = await uploadToCloudinary(e, 'earn-pfp');
                         setIsGooglePhoto(false);
                         setImageUrl(a);
                         setUploading(false);
@@ -170,7 +170,7 @@ export const SponsorInfoModal = ({
                   <MediaPicker
                     onChange={async (e) => {
                       setUploading(true);
-                      const a = await uploadToCloudinary(e);
+                      const a = await uploadToCloudinary(e, 'earn-pfp');
                       setImageUrl(a);
                       setUploading(false);
                     }}
