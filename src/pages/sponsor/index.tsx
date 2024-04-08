@@ -37,7 +37,7 @@ import { useEffect, useState } from 'react';
 // import Spaces from '@/public/assets/landingsponsor/sponsors/spaces.png';
 // import StreamFlow from '@/public/assets/landingsponsor/sponsors/streamflow.png';
 // import Wormhole from '@/public/assets/landingsponsor/sponsors/wormhole.png';
-import { Header, Hero } from '@/features/sponsor';
+import { Features, Header, Hero, ListingShow } from '@/features/sponsor';
 
 // type Totals = {
 //   count: number;
@@ -114,7 +114,7 @@ const Sponsor = () => {
           pos="relative"
           gap="1.25rem"
           overflow="hidden"
-          w="60vw"
+          w={{ base: '95vw', lg: '60vw' }}
           pt="56.25%"
           flexFlow="column"
         >
@@ -128,7 +128,7 @@ const Sponsor = () => {
               left: '0',
               right: '0',
             }}
-            src="https://www.youtube.com/embed/HwFp_9YgVKg?autoplay=1&mute=1"
+            src="https://www.youtube.com/embed/tHdS-JNwsgg?autoplay=1&mute=1"
           ></iframe>
         </Flex>
       </Grid>
@@ -677,6 +677,7 @@ const Sponsor = () => {
       <Flex
         overflow="hidden"
         fontFamily="var(--font-sans)"
+        bg="white"
         flexFlow="column"
         placeItems="center"
       >
@@ -689,6 +690,8 @@ const Sponsor = () => {
           flexFlow="column"
         >
           <Hero />
+          <ListingShow />
+          <Features showVideo={() => setVideoPopup(true)} />
         </Flex>
       </Flex>
     </>
