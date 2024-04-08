@@ -288,7 +288,7 @@ const UpdateSponsor = () => {
                 ) : imageUrl ? (
                   <MediaPicker
                     onChange={async (e) => {
-                      const a = await uploadToCloudinary(e);
+                      const a = await uploadToCloudinary(e, 'earn-sponsor');
                       setImageUrl(a);
                     }}
                     compact
@@ -304,7 +304,7 @@ const UpdateSponsor = () => {
                 ) : (
                   <MediaPicker
                     onChange={async (e) => {
-                      const a = await uploadToCloudinary(e);
+                      const a = await uploadToCloudinary(e, 'earn-sponsor');
                       setImageUrl(a);
                     }}
                     onReset={() => {
