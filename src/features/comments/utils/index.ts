@@ -25,31 +25,31 @@ export function randomSubmissionCommentGenerator(type: string | undefined) {
       break;
     case 2:
       if (type === 'bounty')
-        return 'Is in the arena, they just submitted to this Bounty';
+        return 'Is in the arena, They just submitted to this Bounty';
       if (type === 'project')
-        return 'Is in the arena, they just applied to this Project';
+        return 'Is in the arena, They just applied to this Project';
       break;
     case 3:
       if (type === 'bounty')
-        return 'Potential Winner? they just submitted to this bounty';
+        return 'Potential Winner? They just submitted to this bounty';
       if (type === 'project')
-        return 'Potential Winner? they just applied to this project';
+        return 'Potential Winner? They just applied to this project';
       break;
     case 4:
       if (type === 'bounty')
-        return 'Is stepping up; they just submitted to this bounty';
+        return 'Is stepping up; They just submitted to this bounty';
       if (type === 'project')
-        return 'Is stepping up; they just applied to this project';
+        return 'Is stepping up; They just applied to this project';
       break;
     case 5:
-      if (type === 'bounty') return 'Is in! they just submitted to this bounty';
-      if (type === 'project') return 'Is in! they just applied to this project';
+      if (type === 'bounty') return 'Is in! They just submitted to this bounty';
+      if (type === 'project') return 'Is in! They just applied to this project';
       break;
     case 6:
       if (type === 'bounty')
-        return 'Is on the move! they just submitted to this bounty';
+        return 'Is on the move! They just submitted to this bounty';
       if (type === 'project')
-        return 'Is on the move! they just applied to this project';
+        return 'Is on the move! They just applied to this project';
       break;
     default:
       break;
