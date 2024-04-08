@@ -114,6 +114,5 @@
     "Chrome >= 100.0.4896.127",
     "Firefox >= 115",
     "Safari >= 14.1.2"
-  ],
-  "packageManager": "pnpm@8.6.12+sha1.a2f983fbf8f2531dc85db2a5d7f398063d51a6f3"
+  ]
 }
