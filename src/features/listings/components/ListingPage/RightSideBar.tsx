@@ -110,7 +110,7 @@ export function RightSideBar({ listing }: { listing: Bounty }) {
 
   return (
     <Box w={{ base: 'full', md: 'auto' }}>
-      <VStack gap={2} mx={3} pt={10}>
+      <VStack gap={2} pt={10}>
         <VStack
           justify={'center'}
           gap={0}

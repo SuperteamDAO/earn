@@ -74,6 +74,7 @@ async function comment(req: NextApiRequestWithUser, res: NextApiResponse) {
       },
     });
     console.log('taggedUsers', taggedUsers);
+    console.log('personName - ', result.author.username);
     taggedUsers.forEach(async (taggedUser) => {
       await sendEmailNotification({
         type: 'commentTag',

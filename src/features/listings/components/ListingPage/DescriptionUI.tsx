@@ -33,7 +33,7 @@ export function DescriptionUI({ skills, description }: Props) {
 
   return (
     <Box w={'full'}>
-      <VStack mx={3} px={{ base: 0 }} py={5} bg={'white'} rounded={'xl'}>
+      <VStack px={{ base: 0 }} py={5} bg={'white'} rounded={'xl'}>
         <Flex
           justify={['center', 'center', 'space-between', 'space-between']}
           direction={['column', 'column', 'row', 'row']}

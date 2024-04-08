@@ -127,6 +127,7 @@ function BountyDetails({ bounty: initialBounty }: BountyDetailsProps) {
                 maxW={'7xl'}
                 mx={'auto'}
                 mb={10}
+                px={3}
               >
                 <VStack gap={8} w={'full'} mt={{ base: 0, md: 10 }}>
                   <DescriptionUI
