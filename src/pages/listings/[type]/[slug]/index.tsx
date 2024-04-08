@@ -6,9 +6,9 @@ import Head from 'next/head';
 import { useEffect, useState } from 'react';
 
 import { ErrorSection } from '@/components/shared/ErrorSection';
+import { Comments } from '@/features/comments';
 import {
   type Bounty,
-  Comments,
   DescriptionUI,
   getBountyTypeLabel,
   ListingHeader,

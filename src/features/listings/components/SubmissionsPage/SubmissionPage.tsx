@@ -16,12 +16,12 @@ import React, { useEffect, useState } from 'react';
 import type { Metadata } from 'unfurl.js/dist/types';
 
 import { TalentBio } from '@/components/TalentBio';
+import { Comments } from '@/features/comments';
 import type { SubmissionWithUser } from '@/interface/submission';
 import { type User as IUser } from '@/interface/user';
 import { getURLSanitized } from '@/utils/getURLSanitized';
 
 import type { Bounty } from '../../types';
-import { Comments } from '../ListingPage/Comments';
 
 interface Props {
   bounty: Bounty;

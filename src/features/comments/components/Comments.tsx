@@ -15,14 +15,14 @@ import { useEffect, useState } from 'react';
 import { ErrorInfo } from '@/components/shared/ErrorInfo';
 import { Loading } from '@/components/shared/Loading';
 import { UserAvatar } from '@/components/shared/UserAvatar';
-import { UserSuggestionTextarea } from '@/components/shared/UserSuggestionTextarea';
 import { LoginWrapper } from '@/features/auth';
 import type { Comment } from '@/interface/comments';
 import { type User } from '@/interface/user';
 import { userStore } from '@/store/user';
 
-import { WarningModal } from '../WarningModal';
+import { WarningModal } from '../../listings/components/WarningModal';
 import { Comment as CommentUI } from './Comment';
+import { UserSuggestionTextarea } from './UserSuggestionTextarea';
 
 interface Props {
   refId: string;

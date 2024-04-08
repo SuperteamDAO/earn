@@ -25,10 +25,8 @@ import { useForm } from 'react-hook-form';
 
 import { AutoResizeTextarea } from '@/components/shared/autosize-textarea';
 import { tokenList } from '@/constants';
-import {
-  type Bounty,
-  randomSubmissionCommentGenerator,
-} from '@/features/listings';
+import { randomSubmissionCommentGenerator } from '@/features/comments';
+import { type Bounty } from '@/features/listings';
 import { userStore } from '@/store/user';
 
 import { QuestionHandler } from './QuestionHandler';

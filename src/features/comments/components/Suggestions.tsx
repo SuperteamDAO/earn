@@ -145,7 +145,7 @@ export const Suggestions = ({ defaultSuggestions, input, onSelect }: Props) => {
   );
 };
 
-export function getLastWord(str: string): string {
+function getLastWord(str: string): string {
   const lastAtIndex = str.lastIndexOf('@');
   return str.slice(lastAtIndex + 1);
 }

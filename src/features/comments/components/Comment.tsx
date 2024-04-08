@@ -29,7 +29,6 @@ import Link from 'next/link';
 import { useEffect, useRef, useState } from 'react';
 
 import { UserAvatar } from '@/components/shared/UserAvatar';
-import { UserSuggestionTextarea } from '@/components/shared/UserSuggestionTextarea';
 import { LoginWrapper } from '@/features/auth';
 import { type Comment as IComment } from '@/interface/comments';
 import { type User } from '@/interface/user';
@@ -37,9 +36,10 @@ import { userStore } from '@/store/user';
 import { dayjs } from '@/utils/dayjs';
 import { getURL } from '@/utils/validUrl';
 
-import { formatFromNow } from '../../utils';
-import { WarningModal } from '../WarningModal';
+import { WarningModal } from '../../listings/components/WarningModal';
+import { formatFromNow } from '../utils';
 import { CommentParser } from './CommentParser';
+import { UserSuggestionTextarea } from './UserSuggestionTextarea';
 
 interface Props {
   comment: IComment;
