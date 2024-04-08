@@ -229,7 +229,7 @@ export const Comment = ({
                 color="brand.slate.800"
                 fontSize={{
                   base: 'sm',
-                  '2xl': 'medium',
+                  md: 'md',
                 }}
                 fontWeight={500}
               >
@@ -244,7 +244,7 @@ export const Comment = ({
                 color="blue.500"
                 fontSize={{
                   base: 'xs',
-                  '2xl': 'sm',
+                  md: 'sm',
                 }}
                 fontWeight={500}
               >
@@ -262,7 +262,7 @@ export const Comment = ({
               color="brand.slate.400"
               fontSize={{
                 base: 'xs',
-                '2xl': 'sm',
+                md: 'sm',
               }}
               fontWeight={500}
             >
@@ -282,7 +282,7 @@ export const Comment = ({
             color="brand.slate.500"
             fontSize={{
               base: 'sm',
-              '2xl': 'md',
+              md: 'md',
             }}
           >
             <CommentParser
@@ -302,7 +302,7 @@ export const Comment = ({
                 color="brand.purple.dark"
                 fontSize={{
                   base: 'xs',
-                  '2xl': 'sm',
+                  md: 'sm',
                 }}
                 fontWeight={500}
                 bg="none"
@@ -326,12 +326,11 @@ export const Comment = ({
               </Button>
             )}
             <Button
-              pos="relative"
-              left="-3px"
-              color="brand.slate.900"
+              left={'-3px'}
+              color="brand.slate.800"
               fontSize={{
                 base: 'xs',
-                '2xl': 'sm',
+                md: 'sm',
               }}
               fontWeight={500}
               bg="none"
@@ -347,7 +346,7 @@ export const Comment = ({
             style={{ width: '100%', overflow: 'visible!important' }}
           >
             <VStack gap={4} w={'full'} mb={4} pt={4}>
-              <HStack align="start" gap={3} w="full">
+              <Flex gap={3} w="full">
                 <UserAvatar user={userInfo} size="28px" />
                 <UserSuggestionTextarea
                   autoFocusOn={showReplyInput}
@@ -355,7 +354,7 @@ export const Comment = ({
                   pt={0}
                   fontSize={{
                     base: 'sm',
-                    '2xl': 'md',
+                    md: 'md',
                   }}
                   borderColor="brand.slate.200"
                   _placeholder={{
@@ -367,7 +366,7 @@ export const Comment = ({
                   setValue={setNewReply}
                   variant="flushed"
                 />
-              </HStack>
+              </Flex>
               {!!newReplyError && (
                 <Text my={0} mt={4} color="red" fontSize="xs">
                   Error in adding your comment! Please try again!
@@ -377,6 +376,7 @@ export const Comment = ({
                 animateOpacity
                 in={!!newReply}
                 style={{ width: '100%', overflow: 'visible!important' }}
+                unmountOnExit={true}
               >
                 <Flex justify={'end'} gap={4} w="full">
                   <Button
@@ -456,10 +456,10 @@ export const Comment = ({
             </MenuButton>
             <MenuList minW="10rem" px={1} py={1}>
               <MenuItem
-                color="brand.slate.500"
+                color="brand.slate.600"
                 fontSize={{
                   base: 'sm',
-                  '2xl': 'md',
+                  md: 'md',
                 }}
                 fontWeight={500}
                 onClick={deleteOnOpen}

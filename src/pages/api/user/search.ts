@@ -1,6 +1,6 @@
 import type { NextApiRequest, NextApiResponse } from 'next';
 
-import { MAX_SUGGESTIONS } from '@/constants';
+import { MAX_COMMENT_SUGGESTIONS } from '@/constants';
 import { prisma } from '@/prisma';
 
 export default async function searchUser(
@@ -16,8 +16,8 @@ export default async function searchUser(
     return res.status(400).json({ error: 'Query is required' });
   }
   try {
-    let takeNum = Number(take) || MAX_SUGGESTIONS;
-    if (takeNum > MAX_SUGGESTIONS) takeNum = MAX_SUGGESTIONS;
+    let takeNum = Number(take) || MAX_COMMENT_SUGGESTIONS;
+    if (takeNum > MAX_COMMENT_SUGGESTIONS) takeNum = MAX_COMMENT_SUGGESTIONS;
 
     const users = await prisma.user.findMany({
       where: {

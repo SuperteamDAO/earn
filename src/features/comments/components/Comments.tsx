@@ -189,15 +189,15 @@ export const Comments = ({
           </HStack>
         </HStack>
         <VStack gap={4} w={'full'} mb={4} px={6}>
-          <HStack align="start" gap={3} w="full">
+          <Flex gap={3} w="full">
             <UserAvatar user={userInfo} size="36px" />
-            <Box pos={'relative'} w="full">
+            <Box pos={'relative'} w="full" mt={0.5}>
               <UserSuggestionTextarea
                 defaultSuggestions={defaultSuggestions}
                 pt={0}
                 fontSize={{
                   base: 'sm',
-                  '2xl': 'md',
+                  md: 'md',
                 }}
                 borderColor="brand.slate.200"
                 _placeholder={{
@@ -210,13 +210,17 @@ export const Comments = ({
                 variant="flushed"
               />
             </Box>
-          </HStack>
+          </Flex>
           {!!newCommentError && (
             <Text mt={4} color="red">
               Error in adding your comment! Please try again!
             </Text>
           )}
-          <Collapse animateOpacity in={!!newComment} style={{ width: '100%' }}>
+          <Collapse
+            in={!!newComment}
+            style={{ width: '100%' }}
+            unmountOnExit={true}
+          >
             <Flex justify={'end'} gap={4} w="full">
               <Button
                 h="auto"
@@ -224,7 +228,7 @@ export const Comments = ({
                 py={2}
                 fontSize={{
                   base: 'xx-small',
-                  '2xl': 'sm',
+                  md: 'sm',
                 }}
                 fontWeight={500}
                 isDisabled={!!newCommentLoading || !newComment}
@@ -239,7 +243,7 @@ export const Comments = ({
                 py={2}
                 fontSize={{
                   base: 'xx-small',
-                  '2xl': 'sm',
+                  md: 'sm',
                 }}
                 fontWeight={500}
                 isDisabled={!!newCommentLoading || !newComment}
@@ -284,7 +288,7 @@ export const Comments = ({
             <Button
               fontSize={{
                 base: 'md',
-                '2xl': 'large',
+                md: 'large',
               }}
               fontWeight={400}
               isDisabled={!!isLoading}

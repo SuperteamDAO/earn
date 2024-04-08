@@ -4,7 +4,7 @@ import debounce from 'lodash.debounce';
 import { type KeyboardEvent, useEffect, useState } from 'react';
 
 import { UserAvatar } from '@/components/shared/UserAvatar';
-import { MAX_SUGGESTIONS } from '@/constants';
+import { MAX_COMMENT_SUGGESTIONS } from '@/constants';
 import { type User } from '@/interface/user';
 
 interface Props {
@@ -24,11 +24,11 @@ export const Suggestions = ({ defaultSuggestions, input, onSelect }: Props) => {
     if (text === '') {
       setSuggestions(searchSuggestions);
     } else {
-      if (suggestions.size < MAX_SUGGESTIONS) {
+      if (suggestions.size < MAX_COMMENT_SUGGESTIONS) {
         const searchResp = await axios.get('/api/user/search', {
           params: {
             query: text,
-            take: MAX_SUGGESTIONS - suggestions.size,
+            take: MAX_COMMENT_SUGGESTIONS - suggestions.size,
           },
         });
         // console.log(searchResp.data);
@@ -108,7 +108,7 @@ export const Suggestions = ({ defaultSuggestions, input, onSelect }: Props) => {
       rounded="lg"
     >
       {[...suggestions.values()]
-        .slice(0, MAX_SUGGESTIONS)
+        .slice(0, MAX_COMMENT_SUGGESTIONS)
         .map((suggestion, index) => (
           <Button
             key={suggestion.id}

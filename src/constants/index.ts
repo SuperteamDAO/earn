@@ -857,4 +857,4 @@ export const workType = [
   'Internship',
 ];
 
-export const MAX_SUGGESTIONS = 5;
+export const MAX_COMMENT_SUGGESTIONS = 5;
