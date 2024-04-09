@@ -63,8 +63,8 @@ async function handler(req: NextApiRequestWithUser, res: NextApiResponse) {
       });
       return {
         'Sr no': i + 1,
-        'User Link': `https://earn.superteam.fun/t/${user.username}`,
-        'User Name': `${user.firstName} ${user.lastName}`,
+        'Profile Link': `https://earn.superteam.fun/t/${user.username}`,
+        Name: `${user.firstName} ${user.lastName}`,
         'Submission Link': item.link || '',
         ...eligibility,
         Ask: item.ask && item.ask,

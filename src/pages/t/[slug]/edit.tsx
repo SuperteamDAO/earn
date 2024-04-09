@@ -167,6 +167,9 @@ export default function EditProfilePage({ slug }: { slug: string }) {
     useUsernameValidation();
 
   useEffect(() => {
+    if (isInvalid) {
+      return;
+    }
     if (userInfo) {
       editableFields.forEach((field) => {
         setValue(field, userInfo[field]);

@@ -48,6 +48,9 @@ export const SponsorInfoModal = ({
 
   const onSubmit = async (data: any) => {
     setIsSubmitting(true);
+    if (isInvalid) {
+      return;
+    }
     const finalData = {
       ...data,
       photo: isGooglePhoto ? userInfo?.photo : imageUrl,
