@@ -146,6 +146,14 @@ export const tokenList = [
     coingeckoSymbol: 'samoyedcoin',
   },
   {
+    tokenName: 'SynesisOne (SNS)',
+    tokenSymbol: 'SNS',
+    mintAddress: 'SNSNkV9zfG5ZKWQs6x4hxvBRV6s8SqMfSGCtECDvdMd',
+    icon: 'https://assets.coingecko.com/coins/images/23289/standard/sns.png?1696522507',
+    decimals: 9,
+    coingeckoSymbol: 'synesis-one',
+  },
+  {
     tokenName: 'DevWifHat (DWH)',
     tokenSymbol: 'DWH',
     mintAddress: 'DEVwHJ57QMPPArD2CyjboMbdWvjEMjXRigYpaUNDTD7o',
