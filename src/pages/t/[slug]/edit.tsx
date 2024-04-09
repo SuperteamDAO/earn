@@ -123,6 +123,7 @@ export default function EditProfilePage({ slug }: { slug: string }) {
   const [socialError, setSocialError] = useState(false);
   const [isAnySocialUrlInvalid, setAnySocialUrlInvalid] = useState(false);
   const [uploading, setUploading] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
   const [photoUrl, setPhotoUrl] = useState<string | null>(null);
   const [isPhotoLoading, setIsPhotoLoading] = useState(true);
 
@@ -241,6 +242,7 @@ export default function EditProfilePage({ slug }: { slug: string }) {
   }, [userInfo?.id]);
 
   const onSubmit = async (data: FormData) => {
+    setIsLoading(true);
     try {
       if (!data.discord) {
         setDiscordError(true);
@@ -342,6 +344,8 @@ export default function EditProfilePage({ slug }: { slug: string }) {
       await axios.post('/api/pow/edit', {
         pows: pow,
       });
+
+      setIsLoading(false);
 
       toast({
         title: 'Profile updated.',
@@ -739,7 +743,11 @@ export default function EditProfilePage({ slug }: { slug: string }) {
                 </Checkbox>
                 <br />
 
-                <Button mb={12} isLoading={uploading} type="submit">
+                <Button
+                  mb={12}
+                  isLoading={uploading || isLoading}
+                  type="submit"
+                >
                   Update Profile
                 </Button>
               </FormControl>
