@@ -1,4 +1,4 @@
-const cloudinary = require('cloudinary').v2;
+import { v2 as cloudinary } from 'cloudinary';
 const DatauriParser = require('datauri/parser');
 
 cloudinary.config({
@@ -12,20 +12,13 @@ export const csvUpload = async (
   fileName: string,
   listingId: string,
 ) => {
-  const result = await cloudinary.uploader.upload(file.content!, {
+  const result = await cloudinary.uploader.upload(file.content, {
     public_id: `${fileName}.csv`,
     folder: process.env.CLOUDINARY_SUBMISSIONS_FOLDER,
     resource_type: 'raw',
     type: 'private',
     access_type: 'anonymous',
-    start: new Date().toISOString(),
-    end: new Date(
-      new Date().setTime(new Date().getTime() + 60 * 1000),
-    ).toISOString(),
     tags: [listingId],
-    cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
-    api_key: process.env.CLOUDINARY_API_KEY,
-    api_secret: process.env.CLOUDINARY_API_SECRET,
   });
   return result;
 };
