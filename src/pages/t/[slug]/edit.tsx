@@ -413,6 +413,7 @@ export default function EditProfilePage({ slug }: { slug: string }) {
                     <></>
                   ) : photoUrl ? (
                     <MediaPicker
+                      accept="image/jpeg, image/png, image/webp"
                       defaultValue={{ url: photoUrl, type: 'image' }}
                       onChange={async (e) => {
                         setUploading(true);
@@ -429,6 +430,7 @@ export default function EditProfilePage({ slug }: { slug: string }) {
                     />
                   ) : (
                     <MediaPicker
+                      accept="image/jpeg, image/png, image/webp"
                       onChange={async (e) => {
                         setUploading(true);
                         const a = await uploadToCloudinary(e, 'earn-pfp');

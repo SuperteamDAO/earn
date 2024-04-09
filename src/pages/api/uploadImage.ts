@@ -19,7 +19,7 @@ export default async function handler(
 
       const processedImage = await sharp(buffer)
         .resize(type === 'pfp' ? 200 : undefined)
-        .jpeg({ quality: 80 })
+        .webp({ quality: 80 })
         .toBuffer();
 
       cloudinary.uploader

@@ -287,6 +287,7 @@ const UpdateSponsor = () => {
                   <></>
                 ) : imageUrl ? (
                   <MediaPicker
+                    accept="image/jpeg, image/png, image/webp"
                     onChange={async (e) => {
                       const a = await uploadToCloudinary(e, 'earn-sponsor');
                       setImageUrl(a);
@@ -303,6 +304,7 @@ const UpdateSponsor = () => {
                   />
                 ) : (
                   <MediaPicker
+                    accept="image/jpeg, image/png, image/webp"
                     onChange={async (e) => {
                       const a = await uploadToCloudinary(e, 'earn-sponsor');
                       setImageUrl(a);
