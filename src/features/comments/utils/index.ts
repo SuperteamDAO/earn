@@ -25,9 +25,9 @@ export function randomSubmissionCommentGenerator(type: string | undefined) {
       break;
     case 2:
       if (type === 'bounty')
-        return 'Is in the arena, They just submitted to this Bounty';
+        return 'Is in the arena, they just submitted to this Bounty';
       if (type === 'project')
-        return 'Is in the arena, They just applied to this Project';
+        return 'Is in the arena, they just applied to this Project';
       break;
     case 3:
       if (type === 'bounty')
@@ -37,9 +37,9 @@ export function randomSubmissionCommentGenerator(type: string | undefined) {
       break;
     case 4:
       if (type === 'bounty')
-        return 'Is stepping up; They just submitted to this bounty';
+        return 'Is stepping up; they just submitted to this bounty';
       if (type === 'project')
-        return 'Is stepping up; They just applied to this project';
+        return 'Is stepping up; they just applied to this project';
       break;
     case 5:
       if (type === 'bounty') return 'Is in! They just submitted to this bounty';

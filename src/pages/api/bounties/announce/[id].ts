@@ -143,7 +143,11 @@ async function announce(req: NextApiRequestWithUser, res: NextApiResponse) {
     const random = Math.floor(Math.random() * (2 - 1 + 1)) + 1;
     switch (random) {
       case 1:
-        comment = `Congratulations! ${extractedTags} have bee announced as the winners!`;
+        if (sortedWinners.length === 1) {
+          comment = `Congratulations! ${extractedTags} has been announced as the winner!`;
+        } else {
+          comment = `Congratulations! ${extractedTags} have been announced as the winners!`;
+        }
         break;
       case 2:
         if (bounty.type === 'bounty')
