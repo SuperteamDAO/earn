@@ -76,10 +76,12 @@ export const Comments = ({
     setNewCommentLoading(true);
     setNewCommentError(false);
     try {
+      console.log(poc);
       const newCommentData = await axios.post(`/api/comment/create`, {
         message: newComment,
         listingType: refType,
         listingId: refId,
+        pocId: poc?.id,
       });
       // console.log('new comment - ', newCommentData.data);
       setCount((count) => count + 1);
@@ -267,6 +269,7 @@ export const Comments = ({
                 defaultSuggestions={defaultSuggestions}
                 key={comment.id}
                 comment={comment}
+                poc={poc}
                 sponsorId={sponsorId}
                 refType={refType}
                 refId={refId}

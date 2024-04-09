@@ -43,6 +43,7 @@ import { UserSuggestionTextarea } from './UserSuggestionTextarea';
 
 interface Props {
   comment: IComment;
+  poc: User | undefined;
   refId: string;
   refType: 'BOUNTY' | 'SUBMISSION';
   sponsorId: string | undefined;
@@ -60,6 +61,7 @@ export const Comment = ({
   sponsorId,
   refId,
   refType,
+  poc,
   deleteComment,
   defaultSuggestions,
   addNewReply,
@@ -134,6 +136,7 @@ export const Comment = ({
       listingId: refId,
       replyToId: comment?.id ?? null,
       replyToUserId: comment?.authorId ?? null,
+      pocId: poc?.id,
     });
     setReplies((prevReplies) => [newReplyData.data, ...prevReplies]);
     setShowReplies(true);
@@ -416,6 +419,7 @@ export const Comment = ({
                 ?.toReversed()
                 .map((reply) => (
                   <Comment
+                    poc={poc}
                     isAnnounced={isAnnounced}
                     listingSlug={listingSlug}
                     listingType={listingType}

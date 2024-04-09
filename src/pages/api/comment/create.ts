@@ -8,7 +8,9 @@ async function comment(req: NextApiRequestWithUser, res: NextApiResponse) {
   try {
     const userId = req.userId;
 
+    console.log('userID - ', userId);
     const {
+      pocId,
       message,
       listingId,
       listingType,
@@ -68,9 +70,18 @@ async function comment(req: NextApiRequestWithUser, res: NextApiResponse) {
         id: true,
       },
       where: {
-        username: {
-          in: taggedUsernames,
-        },
+        AND: [
+          {
+            username: {
+              in: taggedUsernames,
+            },
+          },
+          {
+            NOT: {
+              id: userId as string,
+            },
+          },
+        ],
       },
     });
     console.log('taggedUsers', taggedUsers);
@@ -86,7 +97,8 @@ async function comment(req: NextApiRequestWithUser, res: NextApiResponse) {
       });
     });
 
-    if (replyToId) {
+    console.log('reply author - ', replyToUserId);
+    if (replyToUserId !== userId) {
       await sendEmailNotification({
         type: 'commentReply',
         id: listingId,
@@ -94,20 +106,31 @@ async function comment(req: NextApiRequestWithUser, res: NextApiResponse) {
       });
     }
 
-    if (listingType === 'BOUNTY' && !replyToId) {
-      await sendEmailNotification({
-        type: 'commentSponsor',
-        id: listingId,
-        userId: userId as string,
-      });
-    }
+    console.log('user Id - ', userId);
+    console.log('poc Id - ', pocId);
+    console.log(!taggedUsers.find((t) => t.id.includes(pocId)));
+    if (
+      userId !== pocId &&
+      !taggedUsers.find((t) => t.id.includes(pocId)) &&
+      !replyToId
+    ) {
+      console.log('sending comment mail to sponsor');
+      if (listingType === 'BOUNTY') {
+        console.log('send ??');
+        await sendEmailNotification({
+          type: 'commentSponsor',
+          id: listingId,
+          userId: pocId as string,
+        });
+      }
 
-    if (listingType === 'SUBMISSION') {
-      await sendEmailNotification({
-        type: 'commentSubmission',
-        id: listingId,
-        userId: userId as string,
-      });
+      if (listingType === 'SUBMISSION') {
+        await sendEmailNotification({
+          type: 'commentSubmission',
+          id: listingId,
+          userId: pocId as string,
+        });
+      }
     }
 
     return res.status(200).json(result);
