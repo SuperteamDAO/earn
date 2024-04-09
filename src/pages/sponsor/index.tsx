@@ -37,7 +37,14 @@ import { useEffect, useState } from 'react';
 // import Spaces from '@/public/assets/landingsponsor/sponsors/spaces.png';
 // import StreamFlow from '@/public/assets/landingsponsor/sponsors/streamflow.png';
 // import Wormhole from '@/public/assets/landingsponsor/sponsors/wormhole.png';
-import { Features, Header, Hero, ListingShow } from '@/features/sponsor';
+import {
+  Features,
+  Header,
+  Hero,
+  ListingTypes,
+  ListingWork,
+  Stats,
+} from '@/features/sponsor';
 
 // type Totals = {
 //   count: number;
@@ -690,8 +697,10 @@ const Sponsor = () => {
           flexFlow="column"
         >
           <Hero />
-          <ListingShow />
+          <ListingTypes />
           <Features showVideo={() => setVideoPopup(true)} />
+          <Stats />
+          <ListingWork />
         </Flex>
       </Flex>
     </>

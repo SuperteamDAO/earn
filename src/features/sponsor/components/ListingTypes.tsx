@@ -4,7 +4,7 @@ import PurpleTick from '@/public/assets/landingsponsor/icons/purple-tick.svg';
 
 import { HighQualityImage } from './HighQualityImage';
 
-export function ListingShow() {
+export function ListingTypes() {
   return (
     <VStack gap={8} px={{ base: '1.875rem', lg: '7rem', xl: '11rem' }}>
       <Text
