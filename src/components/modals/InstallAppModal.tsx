@@ -14,7 +14,6 @@ import {
   VStack,
 } from '@chakra-ui/react';
 import Image from 'next/image';
-import { type UserAgent } from 'next-useragent';
 import { BsThreeDotsVertical } from 'react-icons/bs';
 import { MdIosShare, MdOutlineInstallMobile } from 'react-icons/md';
 
@@ -35,20 +34,17 @@ export const InstallAppModal = ({
   isOpen,
   onClose,
   installApp,
-  deviceInfo,
+  deviceOs,
 }: {
   isOpen: boolean;
   onClose: () => void;
   installApp: () => void;
-  deviceInfo: UserAgent;
+  deviceOs: 'Android' | 'iOS' | 'Other';
 }) => {
-  const { os } = deviceInfo;
-
   const isAutoInstallable = () => {
-    if (os === 'iOS') {
+    if (deviceOs === 'iOS') {
       return false;
     }
-
     return true;
   };
 

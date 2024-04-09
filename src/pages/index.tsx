@@ -2,9 +2,7 @@ import { Box, Flex, useDisclosure } from '@chakra-ui/react';
 import axios from 'axios';
 import dayjs from 'dayjs';
 import type { NextPage } from 'next';
-import { type GetServerSideProps } from 'next/types';
-import { parse } from 'next-useragent';
-import React, { useEffect, useRef, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 
 import { FeatureModal } from '@/components/modals/FeatureModal';
 import { InstallAppModal } from '@/components/modals/InstallAppModal';
@@ -15,20 +13,18 @@ import { type Bounty, ListingSection, ListingTabs } from '@/features/listings';
 import { Home } from '@/layouts/Home';
 import { userStore } from '@/store/user';
 
-interface UserAgentPropType {
-  ua: string;
-}
-
-const HomePage: NextPage<UserAgentPropType> = ({ ua }) => {
+const HomePage: NextPage = () => {
   const [isListingsLoading, setIsListingsLoading] = useState(true);
+  const [deviceOs, setDeviceOs] = useState<'Android' | 'iOS' | 'Other'>(
+    'Other',
+  );
   const [bounties, setBounties] = useState<{ bounties: Bounty[] }>({
     bounties: [],
   });
   const [grants, setGrants] = useState<{ grants: Grant[] }>({
     grants: [],
   });
-  const installPrompt = useRef<Event | null>();
-  const deviceInfo = parse(ua);
+  const installPrompt = useRef<BeforeInstallPromptEvent | null>();
   const date = dayjs().subtract(1, 'month').toISOString();
 
   const getListings = async () => {
@@ -59,11 +55,18 @@ const HomePage: NextPage<UserAgentPropType> = ({ ua }) => {
     }
   };
 
+  interface BeforeInstallPromptEvent extends Event {
+    prompt: () => Promise<{ outcome: 'accepted' | 'dismissed' }>;
+  }
+
   useEffect(() => {
-    window.addEventListener('beforeinstallprompt', (e) => {
+    window.addEventListener('beforeinstallprompt', ((
+      e: BeforeInstallPromptEvent,
+    ) => {
       e.preventDefault();
       installPrompt.current = e;
-    });
+    }) as EventListener);
+
     if (!isListingsLoading) return;
     getListings();
   }, []);
@@ -93,15 +96,24 @@ const HomePage: NextPage<UserAgentPropType> = ({ ua }) => {
     updateFeatureModalShown();
   }, [userInfo]);
 
+  const getOS = () => {
+    const ua = navigator.userAgent;
+    if (/android/i.test(ua)) {
+      return 'Android';
+    } else if (/iPad|iPhone|iPod/.test(ua)) {
+      return 'iOS';
+    }
+    return 'Other';
+  };
+
   useEffect(() => {
     const showInstallAppModal = () => {
-      const isMobile = deviceInfo.isMobile;
       const modalShown = localStorage.getItem('installAppModalShown');
       const isPWA = window.matchMedia('(display-mode: standalone)').matches;
       const isInstalled = localStorage.getItem('isAppInstalled');
-
-      if (isMobile && !isPWA && !modalShown && !isInstalled) {
-        //TODO: add modalshown key in localstorage
+      const os = getOS();
+      setDeviceOs(os);
+      if (os !== 'Other' && !isPWA && !modalShown && !isInstalled) {
         localStorage.setItem('installAppModalShown', 'true');
         onOpen();
       }
@@ -109,12 +121,11 @@ const HomePage: NextPage<UserAgentPropType> = ({ ua }) => {
 
     setTimeout(() => {
       showInstallAppModal();
-    }, 1000);
+    }, 30000);
   }, [userInfo]);
 
   const installApp = async () => {
     if (installPrompt.current) {
-      // @ts-expect-error --> to remove prompt doesnt exist error
       const status = await installPrompt.current?.prompt();
       if (status.outcome === 'accepted') {
         localStorage.setItem('isAppInstalled', 'true');
@@ -130,7 +141,7 @@ const HomePage: NextPage<UserAgentPropType> = ({ ua }) => {
         isOpen={isOpen}
         onClose={onClose}
         installApp={installApp}
-        deviceInfo={deviceInfo}
+        deviceOs={deviceOs}
       />
       <Box w={'100%'}>
         <ListingTabs
@@ -171,14 +182,6 @@ const HomePage: NextPage<UserAgentPropType> = ({ ua }) => {
       </Box>
     </Home>
   );
-};
-
-export const getServerSideProps: GetServerSideProps = async (ctx) => {
-  return {
-    props: {
-      ua: ctx?.req?.headers['user-agent'],
-    },
-  };
 };
 
 export default HomePage;
