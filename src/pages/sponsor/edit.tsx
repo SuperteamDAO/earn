@@ -49,6 +49,8 @@ const UpdateSponsor = () => {
     },
   });
   const [imageUrl, setImageUrl] = useState<string | null>(null);
+  const [isImageUploading, setIsImageUploading] = useState(false);
+
   const [isPhotoLoading, setIsPhotoLoading] = useState(true);
   const [industries, setIndustries] = useState<string>();
   const [isLoading, setIsLoading] = useState<boolean>(false);
@@ -287,9 +289,12 @@ const UpdateSponsor = () => {
                   <></>
                 ) : imageUrl ? (
                   <MediaPicker
+                    accept="image/jpeg, image/png, image/webp"
                     onChange={async (e) => {
-                      const a = await uploadToCloudinary(e);
+                      setIsImageUploading(true);
+                      const a = await uploadToCloudinary(e, 'earn-sponsor');
                       setImageUrl(a);
+                      setIsImageUploading(false);
                     }}
                     compact
                     label="Choose or Drag & Drop Media"
@@ -303,9 +308,12 @@ const UpdateSponsor = () => {
                   />
                 ) : (
                   <MediaPicker
+                    accept="image/jpeg, image/png, image/webp"
                     onChange={async (e) => {
-                      const a = await uploadToCloudinary(e);
+                      setIsImageUploading(true);
+                      const a = await uploadToCloudinary(e, 'earn-sponsor');
                       setImageUrl(a);
+                      setIsImageUploading(false);
                     }}
                     onReset={() => {
                       setImageUrl('');
@@ -403,8 +411,7 @@ const UpdateSponsor = () => {
               <Button
                 w="full"
                 isDisabled={imageUrl === ''}
-                isLoading={!!isLoading}
-                loadingText="Updating..."
+                isLoading={!!isLoading || isImageUploading}
                 size="lg"
                 type="submit"
                 variant="solid"

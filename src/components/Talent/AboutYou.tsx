@@ -149,10 +149,11 @@ export function AboutYou({ setStep, useFormStore }: Step1Props) {
                   Profile Picture
                 </FormLabel>
                 <MediaPicker
+                  accept="image/jpeg, image/png, image/webp"
                   defaultValue={{ url: userInfo.photo, type: 'image' }}
                   onChange={async (e) => {
                     setUploading(true);
-                    const a = await uploadToCloudinary(e);
+                    const a = await uploadToCloudinary(e, 'earn-pfp');
                     setIsGooglePhoto(false);
                     setImageUrl(a);
                     setUploading(false);
@@ -176,9 +177,10 @@ export function AboutYou({ setStep, useFormStore }: Step1Props) {
                   Profile Picture
                 </FormLabel>
                 <MediaPicker
+                  accept="image/jpeg, image/png, image/webp"
                   onChange={async (e) => {
                     setUploading(true);
-                    const a = await uploadToCloudinary(e);
+                    const a = await uploadToCloudinary(e, 'earn-pfp');
                     setImageUrl(a);
                     setUploading(false);
                   }}

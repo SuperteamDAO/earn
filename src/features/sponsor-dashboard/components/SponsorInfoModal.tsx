@@ -48,6 +48,9 @@ export const SponsorInfoModal = ({
 
   const onSubmit = async (data: any) => {
     setIsSubmitting(true);
+    if (isInvalid) {
+      return;
+    }
     const finalData = {
       ...data,
       photo: isGooglePhoto ? userInfo?.photo : imageUrl,
@@ -140,10 +143,11 @@ export const SponsorInfoModal = ({
                   </FormLabel>
                   <Box w="full" mt={1}>
                     <MediaPicker
+                      accept="image/jpeg, image/png, image/webp"
                       defaultValue={{ url: userInfo.photo, type: 'image' }}
                       onChange={async (e) => {
                         setUploading(true);
-                        const a = await uploadToCloudinary(e);
+                        const a = await uploadToCloudinary(e, 'earn-pfp');
                         setIsGooglePhoto(false);
                         setImageUrl(a);
                         setUploading(false);
@@ -168,9 +172,10 @@ export const SponsorInfoModal = ({
                     Profile Picture
                   </FormLabel>
                   <MediaPicker
+                    accept="image/jpeg, image/png, image/webp"
                     onChange={async (e) => {
                       setUploading(true);
-                      const a = await uploadToCloudinary(e);
+                      const a = await uploadToCloudinary(e, 'earn-pfp');
                       setImageUrl(a);
                       setUploading(false);
                     }}

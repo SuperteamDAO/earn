@@ -14,16 +14,16 @@ export default async function handler(
 ) {
   if (req.method === 'POST') {
     try {
-      const { imageBase64, type } = req.body;
+      const { imageBase64, type, folder } = req.body;
       const buffer = Buffer.from(imageBase64, 'base64');
 
       const processedImage = await sharp(buffer)
         .resize(type === 'pfp' ? 200 : undefined)
-        .jpeg({ quality: 80 })
+        .webp({ quality: 80 })
         .toBuffer();
 
       cloudinary.uploader
-        .upload_stream({ resource_type: 'image' }, (error, result) => {
+        .upload_stream({ resource_type: 'image', folder }, (error, result) => {
           if (error) {
             return res
               .status(500)
