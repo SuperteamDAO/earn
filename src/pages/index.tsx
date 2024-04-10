@@ -121,7 +121,7 @@ const HomePage: NextPage = () => {
 
     setTimeout(() => {
       showInstallAppModal();
-    }, 30000);
+    }, 10000);
   }, [userInfo]);
 
   const installApp = async () => {
