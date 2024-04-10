@@ -67,7 +67,8 @@ export function ListingWork() {
       align="start"
       gap={8}
       w="100vw"
-      my="8rem"
+      mt="8rem"
+      mb="4rem"
       px={{ base: '1.875rem', lg: '7rem', xl: '11rem' }}
       pt="4rem"
     >

@@ -38,12 +38,15 @@ import { useEffect, useState } from 'react';
 // import StreamFlow from '@/public/assets/landingsponsor/sponsors/streamflow.png';
 // import Wormhole from '@/public/assets/landingsponsor/sponsors/wormhole.png';
 import {
+  FAQs,
   Features,
+  Footer,
   Header,
   Hero,
   ListingTypes,
   ListingWork,
   Stats,
+  Testimonials,
 } from '@/features/sponsor';
 
 // type Totals = {
@@ -701,6 +704,9 @@ const Sponsor = () => {
           <Features showVideo={() => setVideoPopup(true)} />
           <Stats />
           <ListingWork />
+          <Testimonials />
+          <FAQs />
+          <Footer />
         </Flex>
       </Flex>
     </>
