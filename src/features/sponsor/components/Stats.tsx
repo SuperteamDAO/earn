@@ -3,7 +3,7 @@ import { Box, Divider, Flex, Grid, Text, VStack } from '@chakra-ui/react';
 import GlobalEarn from '@/public/assets/landingsponsor/displays/global-earn.png';
 import EarnIcon from '@/public/assets/landingsponsor/icons/earn.svg';
 
-import { fontSize, padding } from '../utils';
+import { fontSize, maxW, padding } from '../utils';
 import { HighQualityImage } from './HighQualityImage';
 
 const stats = [
@@ -42,6 +42,7 @@ export function Stats() {
       direction={{ base: 'column', lg: 'row-reverse' }}
       gap={{ base: 16, lg: 20 }}
       w="100vw"
+      maxW={maxW}
       px={padding}
     >
       <Box w="full" maxW={{ base: '20rem', xl: '30rem' }}>
@@ -54,7 +55,7 @@ export function Stats() {
           }}
         />
       </Box>
-      <VStack gap={{ base: 8 }} px={{ base: '1rem', lg: '2rem' }}>
+      <VStack gap={{ base: 8 }}>
         <VStack
           align={{ base: 'center', lg: 'start' }}
           textAlign={{ base: 'center', lg: 'left' }}

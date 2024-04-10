@@ -1,11 +1,12 @@
 import { Button, Text, VStack } from '@chakra-ui/react';
 
-import { fontSize, padding } from '../utils';
+import { fontSize, maxW2, padding } from '../utils';
 
 export function Footer() {
   return (
     <VStack
       gap={8}
+      maxW={maxW2}
       mx={padding}
       mt={'3rem'}
       mb="6rem"
@@ -23,7 +24,17 @@ export function Footer() {
       >
         Where Solana teams come to get sh*t done
       </Text>
-      <Button px={'2.5rem'} color="#4F46E5" fontSize={'1.2rem'} bg="white">
+      <Button
+        w="12.5rem"
+        h="3.125rem"
+        mx="auto"
+        px={'2.5rem'}
+        color="#4F46E5"
+        fontSize="1.125rem"
+        bg="white"
+        borderRadius="0.625rem"
+        variant={'solid'}
+      >
         Get Started
       </Button>
     </VStack>

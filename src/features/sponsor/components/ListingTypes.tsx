@@ -2,12 +2,12 @@ import { Center, Flex, HStack, Text, VStack } from '@chakra-ui/react';
 
 import PurpleTick from '@/public/assets/landingsponsor/icons/purple-tick.svg';
 
-import { fontSize, padding } from '../utils';
+import { fontSize, maxW, padding } from '../utils';
 import { HighQualityImage } from './HighQualityImage';
 
 export function ListingTypes() {
   return (
-    <VStack gap={8} px={padding}>
+    <VStack gap={8} w="100%" maxW={maxW} px={padding}>
       <Text
         maxW="48rem"
         color="brand.slate.900"
@@ -18,7 +18,11 @@ export function ListingTypes() {
       >
         Start by posting your first Bounty or Project
       </Text>
-      <Flex direction={{ base: 'column', md: 'row' }} gap={{ base: 12 }}>
+      <Flex
+        direction={{ base: 'column', md: 'row' }}
+        gap={{ base: 12 }}
+        w="100%"
+      >
         <VStack align="start" gap={4}>
           <Center w="full" h="10rem" bg="#F0FDFA">
             <svg

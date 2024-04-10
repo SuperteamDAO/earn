@@ -1,4 +1,5 @@
 import { Box, Button, Flex, HStack, Text, VStack } from '@chakra-ui/react';
+import Link from 'next/link';
 
 import Bonk from '@/public/assets/landingsponsor/sponsors/bonk.png';
 import De from '@/public/assets/landingsponsor/sponsors/de.png';
@@ -10,7 +11,7 @@ import Solflare from '@/public/assets/landingsponsor/sponsors/solflare.png';
 import Squads from '@/public/assets/landingsponsor/sponsors/squads.png';
 import Tensor from '@/public/assets/landingsponsor/sponsors/tensor.png';
 
-import { fontSize, padding } from '../utils';
+import { fontSize, maxW, padding } from '../utils';
 import { HighQualityImage } from './HighQualityImage';
 import { StepOne } from './steps/One';
 import { StepThree } from './steps/Three';
@@ -63,22 +64,21 @@ export function Hero() {
             from the right people, at the right time.
           </Text>
 
-          <Flex justify="start" gap="2rem" w="100%">
-            <Button
-              w="12.5rem"
-              h="3.125rem"
-              mx="auto"
-              color={'white'}
-              fontSize="1.125rem"
-              bg={'#6562FF'}
-              borderRadius="0.625rem"
-              onClick={() => {
-                window.location.href = '/new/sponsor';
-              }}
-              variant={'solid'}
-            >
-              Get Started
-            </Button>
+          <Flex justify="center" gap="2rem" w="100%">
+            <Link href="/new/sponsor">
+              <Button
+                w="12.5rem"
+                h="3.125rem"
+                mx="auto"
+                color={'white'}
+                fontSize="1.125rem"
+                bg={'#6562FF'}
+                borderRadius="0.625rem"
+                variant={'solid'}
+              >
+                Get Started
+              </Button>
+            </Link>
           </Flex>
           <Box pos="absolute" bottom="-12rem" w="full" h="12rem" bg="#F8FAFC" />
         </Flex>
@@ -169,6 +169,7 @@ export function Hero() {
           wrap="wrap"
           gap="1.25rem"
           w="100%"
+          maxW={maxW}
           h="7.5rem"
           mx="auto"
           mt="2rem"

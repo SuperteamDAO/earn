@@ -9,7 +9,7 @@ import {
   VStack,
 } from '@chakra-ui/react';
 
-import { fontSize, padding } from '../utils';
+import { fontSize, maxW, padding } from '../utils';
 
 const faqs = [
   {
@@ -44,7 +44,7 @@ Earn can be used to get any small to medium scale task done, including but not l
 
 export function FAQs() {
   return (
-    <VStack w="full" px={padding} pt="2rem" pb="4rem" bg="#EEF2FF">
+    <VStack w="full" pt="2rem" pb="4rem" bg="#EEF2FF">
       <Text
         pos="relative"
         w="full"
@@ -55,7 +55,13 @@ export function FAQs() {
       >
         FAQs
       </Text>
-      <Accordion w="full" allowToggle rounded="0.25rem">
+      <Accordion
+        w="full"
+        maxW={maxW}
+        px={padding}
+        allowToggle
+        rounded="0.25rem"
+      >
         {faqs.map((faq) => (
           <AccordionItem
             key={faq.question}

@@ -7,7 +7,7 @@ import DReader from '@/public/assets/landingsponsor/sponsors/dreader.png';
 import OKX from '@/public/assets/landingsponsor/sponsors/okx.png';
 import Saros from '@/public/assets/landingsponsor/sponsors/saros.png';
 
-import { fontSize, padding } from '../utils';
+import { fontSize, maxW, padding } from '../utils';
 import { ListingCard, type ListingCardProps } from './ListingCard';
 
 const works: ListingCardProps[] = [
@@ -65,7 +65,7 @@ export function ListingWork() {
   return (
     <VStack
       pos="relative"
-      align="start"
+      align={{ base: 'start', '2xl': 'center' }}
       gap={8}
       w="100vw"
       mt="8rem"
@@ -91,7 +91,7 @@ export function ListingWork() {
       >
         Get almost any kind of work done
       </Text>
-      <HStack pos="relative" align="start" gap={8}>
+      <HStack pos="relative" align="start" gap={8} maxW={maxW}>
         {works.map((w) => (
           <VStack key={w.title} align="start">
             <Text

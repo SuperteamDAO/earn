@@ -17,7 +17,7 @@ import Eno from '@/public/assets/landingsponsor/users/eno.png';
 import EvanSolomon from '@/public/assets/landingsponsor/users/evanSolomon.png';
 import TensorHQ from '@/public/assets/landingsponsor/users/tensor.png';
 
-import { padding } from '../utils';
+import { maxW, padding } from '../utils';
 import { HighQualityImage } from './HighQualityImage';
 import { Stars } from './Stars';
 import { TestimonialCard, type TestimonialProps } from './TestimonialCard';
@@ -57,7 +57,7 @@ users`,
 
 export function Testimonials() {
   return (
-    <VStack align="start" gap={8} w="full" mb="4rem" px={padding}>
+    <VStack align="start" gap={8} w="full" maxW={maxW} mb="4rem" px={padding}>
       <Divider mb="2rem" />
       <Flex
         justify={'space-between'}

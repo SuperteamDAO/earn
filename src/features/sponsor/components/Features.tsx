@@ -16,7 +16,7 @@ import Invite from '@/public/assets/landingsponsor/icons/Invite.svg';
 import Review from '@/public/assets/landingsponsor/icons/Review.svg';
 import Skill from '@/public/assets/landingsponsor/icons/Skill.svg';
 
-import { fontSize, padding } from '../utils';
+import { fontSize, maxW2, padding } from '../utils';
 import { HighQualityImage } from './HighQualityImage';
 
 interface FeatureProps {
@@ -78,7 +78,7 @@ export function Features({ showVideo }: Props) {
         h={{ base: '17.8rem', md: '30.8rem' }}
         bg="brand.purple"
       />
-      <VStack pos="relative" px={padding} py={'2rem'}>
+      <VStack pos="relative" maxW={maxW2} px={padding} py={'2rem'}>
         <Text
           maxW="48rem"
           color="white"
@@ -100,8 +100,8 @@ export function Features({ showVideo }: Props) {
           A seamless way to manage all your listings in one place
         </Text>
       </VStack>
-      <Center pos="relative" px={padding} onClick={showVideo}>
-        <AbsoluteCenter p={3} bg="brand.purple" rounded="full">
+      <Center pos="relative" w="full" maxW={maxW2} onClick={showVideo}>
+        <AbsoluteCenter p={3} bg="brand.purple" cursor="pointer" rounded="full">
           <svg
             width="34"
             height="34"
@@ -129,18 +129,20 @@ export function Features({ showVideo }: Props) {
             borderRadius: '0.3rem',
             boxShadow: '0 4px 10px 0 rgba(0, 0, 0, 0.06)',
             border: '1px solid #E2E8F0',
+            cursor: 'pointer',
           }}
           src={SponsorDashboard}
           alt="Sponsord dashboard screenshot"
         />
       </Center>
       <Grid
-        gap={{ base: 10, md: 6 }}
+        gap={{ base: 10, md: 10, xl: 20 }}
         templateColumns={{
           base: 'repeat(1, 1fr)',
           md: 'repeat(2, 1fr)',
           lg: 'repeat(3, 1fr)',
         }}
+        maxW={maxW2}
         mt="4rem"
       >
         {features.map((feature, index) => (
@@ -154,12 +156,21 @@ export function Features({ showVideo }: Props) {
 function Feature({ icon, title, description }: FeatureProps) {
   return (
     <VStack align="start" gap={4}>
-      <HighQualityImage src={icon} alt={title} />
+      <HighQualityImage
+        src={icon}
+        alt={title}
+        style={{ height: '1.8rem', width: '2rem' }}
+      />
       <VStack align="start" gap={0}>
-        <Text color="brand.slate.700" fontSize={'large'} fontWeight={600}>
+        <Text color="brand.slate.700" fontSize={'1.25rem'} fontWeight={600}>
           {title}
         </Text>
-        <Text color="brand.slate.500" fontWeight={500}>
+        <Text
+          color="brand.slate.500"
+          fontSize={'1rem'}
+          fontWeight={500}
+          lineHeight={1.2}
+        >
           {description}
         </Text>
       </VStack>
