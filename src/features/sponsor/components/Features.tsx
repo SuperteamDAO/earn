@@ -16,6 +16,7 @@ import Invite from '@/public/assets/landingsponsor/icons/Invite.svg';
 import Review from '@/public/assets/landingsponsor/icons/Review.svg';
 import Skill from '@/public/assets/landingsponsor/icons/Skill.svg';
 
+import { fontSize, padding } from '../utils';
 import { HighQualityImage } from './HighQualityImage';
 
 interface FeatureProps {
@@ -69,12 +70,7 @@ interface Props {
 
 export function Features({ showVideo }: Props) {
   return (
-    <VStack
-      pos="relative"
-      w="full"
-      my="8rem"
-      px={{ base: '1.875rem', lg: '7rem', xl: '11rem' }}
-    >
+    <VStack pos="relative" w="full" my="8rem" px={padding}>
       <Box
         pos="absolute"
         top={0}
@@ -82,11 +78,7 @@ export function Features({ showVideo }: Props) {
         h={{ base: '17.8rem', md: '30.8rem' }}
         bg="brand.purple"
       />
-      <VStack
-        pos="relative"
-        px={{ base: '1.875rem', lg: '7rem', xl: '11rem' }}
-        py={'2rem'}
-      >
+      <VStack pos="relative" px={padding} py={'2rem'}>
         <Text
           maxW="48rem"
           color="white"
@@ -100,7 +92,7 @@ export function Features({ showVideo }: Props) {
         <Text
           maxW="48rem"
           color="white"
-          fontSize={{ base: '2rem', md: '3.5rem' }}
+          fontSize={fontSize}
           fontWeight={600}
           lineHeight={1.1}
           textAlign="center"
@@ -108,11 +100,7 @@ export function Features({ showVideo }: Props) {
           A seamless way to manage all your listings in one place
         </Text>
       </VStack>
-      <Center
-        pos="relative"
-        px={{ base: '1.875rem', lg: '7rem', xl: '11rem' }}
-        onClick={showVideo}
-      >
+      <Center pos="relative" px={padding} onClick={showVideo}>
         <AbsoluteCenter p={3} bg="brand.purple" rounded="full">
           <svg
             width="34"

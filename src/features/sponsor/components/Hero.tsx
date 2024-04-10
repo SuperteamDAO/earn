@@ -9,6 +9,7 @@ import MonkeDao from '@/public/assets/landingsponsor/sponsors/monkedao.png';
 import Solflare from '@/public/assets/landingsponsor/sponsors/solflare.png';
 import Squads from '@/public/assets/landingsponsor/sponsors/squads.png';
 
+import { fontSize, padding } from '../utils';
 import { HighQualityImage } from './HighQualityImage';
 import { StepOne } from './steps/One';
 import { StepThree } from './steps/Three';
@@ -40,7 +41,7 @@ export function Hero() {
             maxW="48rem"
             color="gray.700"
             fontFamily="var(--font-sans)"
-            fontSize={{ base: '2rem', md: '3.5rem' }}
+            fontSize={fontSize}
             fontWeight={'600'}
             lineHeight="1.15em"
             letterSpacing={'-0.04em'}
@@ -171,7 +172,7 @@ export function Hero() {
           mx="auto"
           mt="2rem"
           mb="3.125rem"
-          px={{ base: '1.875rem', lg: '7rem', xl: '11rem' }}
+          px={padding}
         >
           <HighQualityImage
             height={18}

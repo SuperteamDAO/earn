@@ -3,6 +3,7 @@ import { Box, Divider, Flex, Grid, Text, VStack } from '@chakra-ui/react';
 import GlobalEarn from '@/public/assets/landingsponsor/displays/global-earn.png';
 import EarnIcon from '@/public/assets/landingsponsor/icons/earn.svg';
 
+import { fontSize, padding } from '../utils';
 import { HighQualityImage } from './HighQualityImage';
 
 const stats = [
@@ -41,7 +42,7 @@ export function Stats() {
       direction={{ base: 'column', lg: 'row-reverse' }}
       gap={{ base: 16, lg: 20 }}
       w="100vw"
-      px={{ base: '1.875rem', lg: '7rem', xl: '11rem' }}
+      px={padding}
     >
       <Box w="full" maxW={{ base: '20rem', xl: '30rem' }}>
         <HighQualityImage
@@ -58,11 +59,7 @@ export function Stats() {
           align={{ base: 'center', lg: 'start' }}
           textAlign={{ base: 'center', lg: 'left' }}
         >
-          <Text
-            fontSize={{ base: '2rem', lg: '3.5rem' }}
-            fontWeight={600}
-            lineHeight={1}
-          >
+          <Text fontSize={fontSize} fontWeight={600} lineHeight={1}>
             The distribution of the Superteam network
           </Text>
           <Text

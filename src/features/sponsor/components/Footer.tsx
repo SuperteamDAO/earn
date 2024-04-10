@@ -1,13 +1,15 @@
 import { Button, Text, VStack } from '@chakra-ui/react';
 
+import { fontSize, padding } from '../utils';
+
 export function Footer() {
   return (
     <VStack
       gap={8}
-      mx={{ base: '1.875rem', lg: '7rem', xl: '11rem' }}
+      mx={padding}
       mt={'3rem'}
       mb="6rem"
-      px={{ base: '1.875rem', lg: '7rem', xl: '11rem' }}
+      px={padding}
       py={{ base: '1.275rem', lg: '2rem', xl: '3rem' }}
       lineHeight={1.2}
       bg="#4F46E5"
@@ -15,7 +17,7 @@ export function Footer() {
     >
       <Text
         color="white"
-        fontSize={{ base: '2rem', md: '3.5rem' }}
+        fontSize={fontSize}
         fontWeight={600}
         textAlign={'center'}
       >

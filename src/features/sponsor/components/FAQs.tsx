@@ -9,6 +9,8 @@ import {
   VStack,
 } from '@chakra-ui/react';
 
+import { fontSize, padding } from '../utils';
+
 const faqs = [
   {
     question: 'Who qualifies to be a sponsor?',
@@ -42,18 +44,12 @@ Earn can be used to get any small to medium scale task done, including but not l
 
 export function FAQs() {
   return (
-    <VStack
-      w="full"
-      px={{ base: '1.875rem', lg: '7rem', xl: '11rem' }}
-      pt="2rem"
-      pb="4rem"
-      bg="#EEF2FF"
-    >
+    <VStack w="full" px={padding} pt="2rem" pb="4rem" bg="#EEF2FF">
       <Text
         pos="relative"
         w="full"
         color="brand.slate.800"
-        fontSize={{ base: '2rem', md: '3.5rem' }}
+        fontSize={fontSize}
         fontWeight={600}
         textAlign="center"
       >

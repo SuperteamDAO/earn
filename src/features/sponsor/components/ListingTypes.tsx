@@ -2,15 +2,16 @@ import { Center, Flex, HStack, Text, VStack } from '@chakra-ui/react';
 
 import PurpleTick from '@/public/assets/landingsponsor/icons/purple-tick.svg';
 
+import { fontSize, padding } from '../utils';
 import { HighQualityImage } from './HighQualityImage';
 
 export function ListingTypes() {
   return (
-    <VStack gap={8} px={{ base: '1.875rem', lg: '7rem', xl: '11rem' }}>
+    <VStack gap={8} px={padding}>
       <Text
         maxW="48rem"
         color="brand.slate.900"
-        fontSize={{ base: '2rem', md: '3.5rem' }}
+        fontSize={fontSize}
         fontWeight={600}
         lineHeight={1.25}
         textAlign="center"

@@ -7,6 +7,7 @@ import DReader from '@/public/assets/landingsponsor/sponsors/dreader.png';
 import OKX from '@/public/assets/landingsponsor/sponsors/okx.png';
 import Saros from '@/public/assets/landingsponsor/sponsors/saros.png';
 
+import { fontSize, padding } from '../utils';
 import { ListingCard, type ListingCardProps } from './ListingCard';
 
 const works: ListingCardProps[] = [
@@ -69,7 +70,7 @@ export function ListingWork() {
       w="100vw"
       mt="8rem"
       mb="4rem"
-      px={{ base: '1.875rem', lg: '7rem', xl: '11rem' }}
+      px={padding}
       pt="4rem"
     >
       <Box
@@ -84,7 +85,7 @@ export function ListingWork() {
         pos="relative"
         w="full"
         color="brand.slate.800"
-        fontSize={{ base: '2rem', md: '3.5rem' }}
+        fontSize={fontSize}
         fontWeight={600}
         textAlign="center"
       >
