@@ -205,7 +205,11 @@ export const DescriptionBuilder = ({
 
         try {
           // upload the file and get its URL
-          const url = await uploadToCloudinary(file, 'description');
+          const url = await uploadToCloudinary(
+            file,
+            'listing-description',
+            'description',
+          );
           if (url) {
             // Set the image in the editor
             editor?.chain().focus().setImage({ src: url }).run();

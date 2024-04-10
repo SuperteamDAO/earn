@@ -123,6 +123,7 @@ export default function EditProfilePage({ slug }: { slug: string }) {
   const [socialError, setSocialError] = useState(false);
   const [isAnySocialUrlInvalid, setAnySocialUrlInvalid] = useState(false);
   const [uploading, setUploading] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
   const [photoUrl, setPhotoUrl] = useState<string | null>(null);
   const [isPhotoLoading, setIsPhotoLoading] = useState(true);
 
@@ -162,7 +163,7 @@ export default function EditProfilePage({ slug }: { slug: string }) {
     setAnySocialUrlInvalid(!allUrlsValid);
   };
 
-  const { setUsername, isInvalid, validationErrorMessage, username } =
+  const { setUsername, isInvalid, validationErrorMessage } =
     useUsernameValidation();
 
   useEffect(() => {
@@ -241,6 +242,10 @@ export default function EditProfilePage({ slug }: { slug: string }) {
   }, [userInfo?.id]);
 
   const onSubmit = async (data: FormData) => {
+    if (isInvalid) {
+      return;
+    }
+    setIsLoading(true);
     try {
       if (!data.discord) {
         setDiscordError(true);
@@ -343,6 +348,8 @@ export default function EditProfilePage({ slug }: { slug: string }) {
         pows: pow,
       });
 
+      setIsLoading(false);
+
       toast({
         title: 'Profile updated.',
         description: 'Your profile has been updated successfully!',
@@ -413,10 +420,11 @@ export default function EditProfilePage({ slug }: { slug: string }) {
                     <></>
                   ) : photoUrl ? (
                     <MediaPicker
+                      accept="image/jpeg, image/png, image/webp"
                       defaultValue={{ url: photoUrl, type: 'image' }}
                       onChange={async (e) => {
                         setUploading(true);
-                        const a = await uploadToCloudinary(e);
+                        const a = await uploadToCloudinary(e, 'earn-pfp');
                         setValue('photo', a);
                         setUploading(false);
                       }}
@@ -429,9 +437,10 @@ export default function EditProfilePage({ slug }: { slug: string }) {
                     />
                   ) : (
                     <MediaPicker
+                      accept="image/jpeg, image/png, image/webp"
                       onChange={async (e) => {
                         setUploading(true);
-                        const a = await uploadToCloudinary(e);
+                        const a = await uploadToCloudinary(e, 'earn-pfp');
                         setValue('photo', a);
                         setUploading(false);
                       }}
@@ -450,7 +459,6 @@ export default function EditProfilePage({ slug }: { slug: string }) {
                   name="username"
                   register={register}
                   isRequired
-                  value={username}
                   onChange={(e) => setUsername(e.target.value)}
                   isInvalid={isInvalid}
                   validationErrorMessage={validationErrorMessage}
@@ -738,7 +746,11 @@ export default function EditProfilePage({ slug }: { slug: string }) {
                 </Checkbox>
                 <br />
 
-                <Button mb={12} isLoading={uploading} type="submit">
+                <Button
+                  mb={12}
+                  isLoading={uploading || isLoading}
+                  type="submit"
+                >
                   Update Profile
                 </Button>
               </FormControl>

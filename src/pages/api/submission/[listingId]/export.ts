@@ -1,5 +1,5 @@
-import { Parser } from '@json2csv/plainjs';
 import type { NextApiResponse } from 'next';
+import Papa from 'papaparse';
 
 import { type NextApiRequestWithUser, withAuth } from '@/features/auth';
 import { prisma } from '@/prisma';
@@ -29,10 +29,14 @@ async function handler(req: NextApiRequestWithUser, res: NextApiResponse) {
         slug: true,
         type: true,
         sponsorId: true,
+        hackathonId: true,
       },
     });
 
-    if (user?.currentSponsorId !== bounty?.sponsorId) {
+    if (
+      user?.currentSponsorId !== bounty?.sponsorId &&
+      user?.hackathonId !== bounty?.hackathonId
+    ) {
       return res.status(401).json({ error: 'Unauthorized' });
     }
 
@@ -59,8 +63,8 @@ async function handler(req: NextApiRequestWithUser, res: NextApiResponse) {
       });
       return {
         'Sr no': i + 1,
-        'User Link': `https://earn.superteam.fun/t/${user.username}`,
-        'User Name': `${user.firstName} ${user.lastName}`,
+        'Profile Link': `https://earn.superteam.fun/t/${user.username}`,
+        Name: `${user.firstName} ${user.lastName}`,
         'Submission Link': item.link || '',
         ...eligibility,
         Ask: item.ask && item.ask,
@@ -72,17 +76,18 @@ async function handler(req: NextApiRequestWithUser, res: NextApiResponse) {
         'Winner Position': item.isWinner ? item.winnerPosition : '',
       };
     });
-    const parser = new Parser({});
-    const csv = parser.parse(finalJson);
+
+    const csv = Papa.unparse(finalJson);
     const fileName = `${bounty?.slug || listingId}-submissions-${Date.now()}`;
     const file = str2ab(csv, fileName);
     const cloudinaryDetails = await csvUpload(file, fileName, listingId);
     res.status(200).json({
       url: cloudinaryDetails?.secure_url || cloudinaryDetails?.url,
     });
-  } catch (error) {
-    res.status(400).json({
-      error,
+  } catch (error: any) {
+    console.error(error);
+    return res.status(400).json({
+      error: error.message || error.toString(),
       message: `Error occurred while exporting submissions of listing=${listingId}.`,
     });
   }

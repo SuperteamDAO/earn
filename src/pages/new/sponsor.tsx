@@ -278,8 +278,9 @@ const CreateSponsor = () => {
                   </Heading>
                   <HStack gap={5}>
                     <MediaPicker
+                      accept="image/jpeg, image/png, image/webp"
                       onChange={async (e) => {
-                        const a = await uploadToCloudinary(e);
+                        const a = await uploadToCloudinary(e, 'earn-sponsor');
                         setImageUrl(a);
                       }}
                       compact

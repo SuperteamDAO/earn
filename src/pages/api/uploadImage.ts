@@ -14,33 +14,25 @@ export default async function handler(
 ) {
   if (req.method === 'POST') {
     try {
-      const { imageBase64, type } = req.body;
+      const { imageBase64, type, folder } = req.body;
       const buffer = Buffer.from(imageBase64, 'base64');
 
       const processedImage = await sharp(buffer)
         .resize(type === 'pfp' ? 200 : undefined)
-        .jpeg({ quality: 80 })
+        .webp({ quality: 80 })
         .toBuffer();
 
       cloudinary.uploader
-        .upload_stream({ resource_type: 'image' }, (error, result) => {
+        .upload_stream({ resource_type: 'image', folder }, (error, result) => {
           if (error) {
             return res
               .status(500)
               .json({ error: 'Error uploading to Cloudinary', details: error });
           }
           if (result && result.secure_url) {
-            let transformedUrl = result.secure_url;
-
-            if (type === 'pfp') {
-              transformedUrl = transformedUrl.replace(
-                '/upload/',
-                '/upload/f_auto,q_auto,w_128/',
-              );
-            }
             return res
               .status(200)
-              .json({ message: 'Upload successful', url: transformedUrl });
+              .json({ message: 'Upload successful', url: result.secure_url });
           } else {
             return res
               .status(500)

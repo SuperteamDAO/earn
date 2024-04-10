@@ -15,7 +15,11 @@ function fileToBase64(file: File): Promise<string> {
   });
 }
 
-export async function uploadToCloudinary(file: any, type = 'pfp') {
+export async function uploadToCloudinary(
+  file: any,
+  folder: 'earn-pfp' | 'earn-sponsor' | 'listing-description',
+  type = 'pfp',
+) {
   try {
     const base64Image = await fileToBase64(file);
     const base64Content = base64Image.split(',')[1];
@@ -23,6 +27,7 @@ export async function uploadToCloudinary(file: any, type = 'pfp') {
     const response = await axios.post('/api/uploadImage', {
       imageBase64: base64Content,
       type,
+      folder,
     });
 
     return response.data.url;
