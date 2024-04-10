@@ -8,7 +8,6 @@ async function comment(req: NextApiRequestWithUser, res: NextApiResponse) {
   try {
     const userId = req.userId;
 
-    console.log('userID - ', userId);
     const {
       pocId,
       message,
@@ -64,7 +63,6 @@ async function comment(req: NextApiRequestWithUser, res: NextApiResponse) {
       .split(' ')
       .filter((tag) => tag.startsWith('@'))
       .map((tag) => tag.substring(1));
-    console.log('taggedUsernames', taggedUsernames);
     const taggedUsers = await prisma.user.findMany({
       select: {
         id: true,
@@ -84,8 +82,6 @@ async function comment(req: NextApiRequestWithUser, res: NextApiResponse) {
         ],
       },
     });
-    console.log('taggedUsers', taggedUsers);
-    console.log('personName - ', result.author.username);
     taggedUsers.forEach(async (taggedUser) => {
       await sendEmailNotification({
         type: 'commentTag',
@@ -97,7 +93,6 @@ async function comment(req: NextApiRequestWithUser, res: NextApiResponse) {
       });
     });
 
-    console.log('reply author - ', replyToUserId);
     if (replyToUserId !== userId) {
       await sendEmailNotification({
         type: 'commentReply',
@@ -106,17 +101,12 @@ async function comment(req: NextApiRequestWithUser, res: NextApiResponse) {
       });
     }
 
-    console.log('user Id - ', userId);
-    console.log('poc Id - ', pocId);
-    console.log(!taggedUsers.find((t) => t.id.includes(pocId)));
     if (
       userId !== pocId &&
       !taggedUsers.find((t) => t.id.includes(pocId)) &&
       !replyToId
     ) {
-      console.log('sending comment mail to sponsor');
       if (listingType === 'BOUNTY') {
-        console.log('send ??');
         await sendEmailNotification({
           type: 'commentSponsor',
           id: listingId,
@@ -135,7 +125,6 @@ async function comment(req: NextApiRequestWithUser, res: NextApiResponse) {
 
     return res.status(200).json(result);
   } catch (error) {
-    console.log('error', error);
     return res.status(400).json({
       error,
       message: 'Error occurred while adding a new comment.',

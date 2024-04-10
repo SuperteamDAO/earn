@@ -57,8 +57,6 @@ export default async function comment(
       },
     });
 
-    console.log('result - ', result);
-    console.log('count - ', commentsCount);
     res.status(200).json({
       count: commentsCount,
       result,

@@ -88,7 +88,6 @@ export const SubmissionModal = ({
   const { userInfo, setUserInfo } = userStore();
 
   useEffect(() => {
-    console.log('user submissions ', userInfo?.Submission);
     const fetchData = async () => {
       if (editMode && id) {
         try {

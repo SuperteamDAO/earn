@@ -31,14 +31,12 @@ export const Suggestions = ({ defaultSuggestions, input, onSelect }: Props) => {
             take: MAX_COMMENT_SUGGESTIONS - suggestions.size,
           },
         });
-        // console.log(searchResp.data);
         const users = searchResp.data.users as User[];
         users.forEach((user) => {
           if (user.id) searchSuggestions.set(user.id, user);
         });
         setSearchSuggestions(searchSuggestions);
       }
-      // console.log(searchSuggestions);
       const filteredSuggestions = new Map<string, User>();
       searchSuggestions.forEach((value, key) => {
         if (

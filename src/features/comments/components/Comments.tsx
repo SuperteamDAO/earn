@@ -76,14 +76,12 @@ export const Comments = ({
     setNewCommentLoading(true);
     setNewCommentError(false);
     try {
-      console.log(poc);
       const newCommentData = await axios.post(`/api/comment/create`, {
         message: newComment,
         listingType: refType,
         listingId: refId,
         pocId: poc?.id,
       });
-      // console.log('new comment - ', newCommentData.data);
       setCount((count) => count + 1);
       setComments((prevComments) => [newCommentData.data, ...prevComments]);
       setNewComment('');
@@ -103,7 +101,6 @@ export const Comments = ({
         },
       });
       const allComments = commentsData.data.result as Comment[];
-      // console.log('all comments - ', allComments);
 
       setCount(commentsData.data.count);
       setComments([...comments, ...allComments]);
@@ -134,7 +131,6 @@ export const Comments = ({
     getComments();
 
     window.addEventListener('update-comments', () => {
-      // console.log('update coments');
       getComments();
     });
   }, []);

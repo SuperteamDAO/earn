@@ -7,7 +7,6 @@ export default async function comment(
   req: NextApiRequest,
   res: NextApiResponse,
 ) {
-  console.log('delete called');
   if (req.method !== 'DELETE') {
     return res.status(405).json({ error: 'Method not allowed' });
   }
@@ -42,13 +41,10 @@ export default async function comment(
         id: commentId,
       },
     });
-    console.log('delete succesfull');
     return res.status(200).json({
       message: 'Comment deleted successfully.',
     });
   } catch (error) {
-    console.log('error', error);
-    console.log('error - ', error);
     return res.status(400).json({
       error,
       message: 'Error occurred while deleting a comment.',

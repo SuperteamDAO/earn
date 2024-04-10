@@ -65,7 +65,6 @@ export const UserSuggestionTextarea = ({
 
   const handleInput = (event: ChangeEvent<HTMLTextAreaElement>) => {
     const input = event.target.value;
-    // console.log('input', input);
     setValue(input);
     if (inputRef.current) {
       if (!showSuggestions) {
@@ -82,7 +81,6 @@ export const UserSuggestionTextarea = ({
   };
 
   useEffect(() => {
-    console.log('autofocus');
     setTimeout(() => {
       if (autoFocusOn) inputRef?.current?.focus();
     }, 0);
