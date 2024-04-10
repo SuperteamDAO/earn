@@ -137,7 +137,7 @@ async function announce(req: NextApiRequestWithUser, res: NextApiResponse) {
           return `and @${c.user.username}`;
         else return `@${c.user.username}`;
       })
-      .join(', ');
+      .join(sortedWinners.length > 2 ? ', ' : ' ');
 
     let comment: string = 'Winners have been announced. ';
     const random = Math.floor(Math.random() * (2 - 1 + 1)) + 1;
