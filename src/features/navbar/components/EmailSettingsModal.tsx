@@ -97,17 +97,15 @@ export const EmailSettingsModal = ({
             </Text>
             {showSponsorAlerts && (
               <Box mt={6}>
-                {showSponsorAlerts && showTalentAlerts && (
-                  <Text
-                    mt={6}
-                    mb={1}
-                    color="brand.slate.400"
-                    fontSize="sm"
-                    letterSpacing={0.8}
-                  >
-                    SPONSOR ALERTS
-                  </Text>
-                )}
+                <Text
+                  mt={6}
+                  mb={1}
+                  color="brand.slate.400"
+                  fontSize="sm"
+                  letterSpacing={0.8}
+                >
+                  SPONSOR ALERTS
+                </Text>
                 <AlertOption
                   title="New submissions received for your listing"
                   category="submissionSponsor"
@@ -120,25 +118,19 @@ export const EmailSettingsModal = ({
                   title="Deadline related reminders"
                   category="deadlineSponsor"
                 />
-                <AlertOption
-                  title="Product Updates and Newsletters"
-                  category="productAndNewsletter"
-                />
               </Box>
             )}
             {showTalentAlerts && (
               <Box mt={6}>
-                {showSponsorAlerts && showTalentAlerts && (
-                  <Text
-                    mt={6}
-                    mb={1}
-                    color="brand.slate.400"
-                    fontSize="sm"
-                    letterSpacing={0.8}
-                  >
-                    TALENT ALERTS
-                  </Text>
-                )}
+                <Text
+                  mt={6}
+                  mb={1}
+                  color="brand.slate.400"
+                  fontSize="sm"
+                  letterSpacing={0.8}
+                >
+                  TALENT ALERTS
+                </Text>
                 <AlertOption
                   title="Weekly Roundup of new listings"
                   category="weeklyListingRoundup"
@@ -150,6 +142,23 @@ export const EmailSettingsModal = ({
                 <AlertOption
                   title="Likes and comments on my submissions"
                   category="commentOrLikeSubmission"
+                />
+              </Box>
+            )}
+            {(showTalentAlerts || showSponsorAlerts) && (
+              <Box mt={6}>
+                <Text
+                  mt={6}
+                  mb={1}
+                  color="brand.slate.400"
+                  fontSize="sm"
+                  letterSpacing={0.8}
+                >
+                  GENERAL ALERTS
+                </Text>
+                <AlertOption
+                  title="Comment replies and tags"
+                  category="replyOrTagComment"
                 />
                 <AlertOption
                   title="Product updates and newsletters"

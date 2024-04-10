@@ -10,21 +10,30 @@ type EmailType =
   | 'submissionLike'
   | 'submissionSponsor'
   | 'submissionTalent'
-  | 'superteamWinners';
+  | 'superteamWinners'
+  | 'commentReply'
+  | 'commentTag';
 
 interface EmailNotificationParams {
   type: EmailType;
   id: string;
   userId?: string;
+  otherInfo?: any;
 }
 
 export async function sendEmailNotification({
   type,
   id,
   userId,
+  otherInfo,
 }: EmailNotificationParams) {
   try {
-    await axios.post(process.env.EMAIL_BACKEND!, { type, id, userId });
+    await axios.post(process.env.EMAIL_BACKEND!, {
+      type,
+      id,
+      userId,
+      otherInfo,
+    });
   } catch (error) {
     console.error(`failed to send email for ${type} with ID ${id}: ${error}`);
     throw error;

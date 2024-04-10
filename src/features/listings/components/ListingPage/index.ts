@@ -1,4 +1,3 @@
-export * from './Comments';
 export * from './DescriptionUI';
 export * from './ListingHeader';
 export * from './ListingWinners';

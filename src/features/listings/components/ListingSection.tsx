@@ -64,7 +64,7 @@ export const ListingSection = ({
             display={['none', 'none', 'block', 'block']}
             mx={3}
             color={'brand.slate.300'}
-            fontSize={'xxs'}
+            fontSize="xx-small"
           >
             |
           </Text>

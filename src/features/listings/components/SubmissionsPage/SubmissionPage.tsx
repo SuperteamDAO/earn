@@ -16,11 +16,12 @@ import React, { useEffect, useState } from 'react';
 import type { Metadata } from 'unfurl.js/dist/types';
 
 import { TalentBio } from '@/components/TalentBio';
+import { Comments } from '@/features/comments';
 import type { SubmissionWithUser } from '@/interface/submission';
+import { type User as IUser } from '@/interface/user';
 import { getURLSanitized } from '@/utils/getURLSanitized';
 
 import type { Bounty } from '../../types';
-import { Comments } from '../ListingPage/Comments';
 
 interface Props {
   bounty: Bounty;
@@ -119,6 +120,11 @@ export const SubmissionPage = ({ bounty, submission, user, link }: Props) => {
         </VStack>
 
         <Comments
+          isAnnounced={bounty?.isWinnersAnnounced ?? false}
+          listingSlug={bounty?.slug ?? ''}
+          listingType={bounty?.type ?? ''}
+          poc={bounty?.poc as IUser}
+          sponsorId={bounty?.sponsorId}
           refId={(router.query.subid as string) ?? ''}
           refType="SUBMISSION"
         />
