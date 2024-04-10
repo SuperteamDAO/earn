@@ -8,6 +8,7 @@ import Meteora from '@/public/assets/landingsponsor/sponsors/meteora.png';
 import MonkeDao from '@/public/assets/landingsponsor/sponsors/monkedao.png';
 import Solflare from '@/public/assets/landingsponsor/sponsors/solflare.png';
 import Squads from '@/public/assets/landingsponsor/sponsors/squads.png';
+import Tensor from '@/public/assets/landingsponsor/sponsors/tensor.png';
 
 import { fontSize, padding } from '../utils';
 import { HighQualityImage } from './HighQualityImage';
@@ -24,6 +25,7 @@ export function Hero() {
         justify="start"
         overflow="hidden"
         w="100%"
+        pb={{ base: '4rem', md: '1rem' }}
       >
         <Flex
           pos="relative"
@@ -174,7 +176,7 @@ export function Hero() {
           px={padding}
         >
           <HighQualityImage
-            height={18}
+            height={22}
             src={Squads}
             alt="Squads Logo"
             unoptimized={true}
@@ -182,9 +184,17 @@ export function Hero() {
             loading="eager"
           />
           <HighQualityImage
+            height={26}
+            src={Tensor}
+            alt="Tensor Logo"
+            unoptimized={true}
+            priority={true}
+            loading="eager"
+          />
+          <HighQualityImage
             src={Jupiter}
             alt="Jupiter Logo"
-            height={21.6}
+            height={21}
             unoptimized={true}
             priority={true}
             loading="eager"
@@ -192,7 +202,7 @@ export function Hero() {
           <HighQualityImage
             src={De}
             alt="De Logo"
-            height={24}
+            height={48}
             unoptimized={true}
             priority={true}
             loading="eager"
@@ -200,7 +210,7 @@ export function Hero() {
           <HighQualityImage
             src={MadLads}
             alt="Madlads  Logo"
-            height={24}
+            height={38}
             unoptimized={true}
             priority={true}
             loading="eager"
@@ -208,7 +218,7 @@ export function Hero() {
           <HighQualityImage
             src={Solflare}
             alt="Solflare Logo"
-            height={24}
+            height={41}
             unoptimized={true}
             priority={true}
             loading="eager"
@@ -216,7 +226,7 @@ export function Hero() {
           <HighQualityImage
             src={Meteora}
             alt="Meteroa Logo"
-            height={18}
+            height={28}
             unoptimized={true}
             priority={true}
             loading="eager"
@@ -224,7 +234,7 @@ export function Hero() {
           <HighQualityImage
             src={MonkeDao}
             alt="MonkeDao Logo"
-            height={24}
+            height={25}
             unoptimized={true}
             priority={true}
             loading="eager"
@@ -232,7 +242,7 @@ export function Hero() {
           <HighQualityImage
             src={Bonk}
             alt="Bonk Logo"
-            height={24}
+            height={42}
             unoptimized={true}
             priority={true}
             loading="eager"

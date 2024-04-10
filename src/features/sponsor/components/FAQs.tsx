@@ -26,7 +26,7 @@ const faqs = [
   },
   {
     question: 'Are there any hidden costs and charges?',
-    answer: `none at all!`,
+    answer: `None at all!`,
   },
   {
     question: 'What can I use Superteam Earn for?',
