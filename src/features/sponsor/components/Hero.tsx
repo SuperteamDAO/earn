@@ -38,9 +38,8 @@ export function Hero() {
           flexFlow="column"
         >
           <Text
-            maxW="48rem"
+            maxW="45rem"
             color="gray.700"
-            fontFamily="var(--font-sans)"
             fontSize={fontSize}
             fontWeight={'600'}
             lineHeight="1.15em"

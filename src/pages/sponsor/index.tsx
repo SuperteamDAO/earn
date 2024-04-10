@@ -8,10 +8,17 @@ import {
   // Text,
   // useMediaQuery,
 } from '@chakra-ui/react';
+import localFont from 'next/font/local';
 import Head from 'next/head';
 // import Image, { type ImageProps } from 'next/image';
 // import NextLink from 'next/link';
 import { useEffect, useState } from 'react';
+
+const font = localFont({
+  src: '../../../public/assets/landingsponsor/fonts/OverusedGrotesk-VF.woff2',
+  variable: '--font-overused-grotesk',
+});
+console.log(font);
 
 // import { Footer } from '@/features/navbar';
 // import DialectDisplay from '@/public/assets/landingsponsor/displays/chatwithdialect.png';
@@ -685,11 +692,12 @@ const Sponsor = () => {
       <Header />
 
       <Flex
+        className={`${font.className}`}
         overflow="hidden"
-        fontFamily="var(--font-sans)"
         bg="white"
         flexFlow="column"
         placeItems="center"
+        style={font.style}
       >
         <Flex
           pos="relative"
