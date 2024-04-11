@@ -11,12 +11,6 @@ dependencies:
   '@chakra-ui/react':
     specifier: ^2.8.2
     version: 2.8.2(@emotion/react@11.11.4)(@emotion/styled@11.11.5)(@types/react@18.2.47)(framer-motion@11.0.27)(react-dom@18.2.0)(react@18.2.0)
-  '@emoji-mart/data':
-    specifier: ^1.1.2
-    version: 1.1.2
-  '@emoji-mart/react':
-    specifier: ^1.1.1
-    version: 1.1.1(emoji-mart@5.5.2)(react@18.2.0)
   '@emotion/react':
     specifier: ^11.11.3
     version: 11.11.4(@types/react@18.2.47)(react@18.2.0)
@@ -104,9 +98,6 @@ dependencies:
   degen:
     specifier: ^0.0.161
     version: 0.0.161(react-dom@18.2.0)(react@18.2.0)
-  emoji-mart:
-    specifier: ^5.5.2
-    version: 5.5.2
   eslint-plugin-prettier:
     specifier: ^5.1.3
     version: 5.1.3(@types/eslint@8.56.7)(eslint-config-prettier@9.1.0)(eslint@8.57.0)(prettier@3.2.5)
@@ -2850,20 +2841,6 @@ packages:
       react: '>=18'
     dependencies:
       '@chakra-ui/system': 2.6.2(@emotion/react@11.11.4)(@emotion/styled@11.11.5)(react@18.2.0)
-      react: 18.2.0
-    dev: false
-
-  /@emoji-mart/data@1.1.2:
-    resolution: {integrity: sha512-1HP8BxD2azjqWJvxIaWAMyTySeZY0Osr83ukYjltPVkNXeJvTz7yDrPLBtnrD5uqJ3tg4CcLuuBW09wahqL/fg==}
-    dev: false
-
-  /@emoji-mart/react@1.1.1(emoji-mart@5.5.2)(react@18.2.0):
-    resolution: {integrity: sha512-NMlFNeWgv1//uPsvLxvGQoIerPuVdXwK/EUek8OOkJ6wVOWPUizRBJU0hDqWZCOROVpfBgCemaC3m6jDOXi03g==}
-    peerDependencies:
-      emoji-mart: ^5.2
-      react: ^16.8 || ^17 || ^18
-    dependencies:
-      emoji-mart: 5.5.2
       react: 18.2.0
     dev: false
 
@@ -6864,10 +6841,6 @@ packages:
 
   /electron-to-chromium@1.4.733:
     resolution: {integrity: sha512-gUI9nhI2iBGF0OaYYLKOaOtliFMl+Bt1rY7VmEjwxOxqoYLub/D9xmduPEhbw2imE6gYkJKhIE5it+KE2ulVxQ==}
-    dev: false
-
-  /emoji-mart@5.5.2:
-    resolution: {integrity: sha512-Sqc/nso4cjxhOwWJsp9xkVm8OF5c+mJLZJFoFfzRuKO+yWiN7K8c96xmtughYb0d/fZ8UC6cLIQ/p4BR6Pv3/A==}
     dev: false
 
   /emoji-regex@10.3.0:
