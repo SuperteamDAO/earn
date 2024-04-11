@@ -63,12 +63,12 @@ const works: ListingCardProps[] = [
 
 export function ListingWork() {
   return (
-    <VStack>
+    <VStack pos="relative" w={{ xl: '100%' }} mt="8rem" mb="4rem" pt="4rem">
       <Box
         pos="absolute"
         top={0}
         left={0}
-        w="full"
+        w={{ base: 'full' }}
         h={{ base: '27.8rem', md: '25.8rem' }}
         bg="brand.slate.100"
       />
@@ -78,10 +78,7 @@ export function ListingWork() {
         gap={8}
         w="100vw"
         maxW={maxW}
-        mt="8rem"
-        mb="4rem"
         px={padding}
-        pt="4rem"
       >
         <Text
           pos="relative"
