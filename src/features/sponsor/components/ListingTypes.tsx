@@ -5,6 +5,20 @@ import PurpleTick from '@/public/assets/landingsponsor/icons/purple-tick.svg';
 import { fontSize, maxW, padding } from '../utils';
 import { HighQualityImage } from './HighQualityImage';
 
+const bountyFeatures = [
+  'Great for awareness campaigns where you want to reach the most people possible',
+  'Get multiple options to choose from',
+  'Examples: Twitter Threads, Deep-Dives, Memes, Product Feedback, and more',
+];
+
+const projectFeatures = [
+  'Perfect for work that requires collaboration and iteration',
+  'Single output that is specific to your exact needs',
+  'Examples: Full Stack Development, Hype Video Production, Hiring a Community Manager, and more',
+];
+
+const normalFont = { base: '1.2rem' };
+
 export function ListingTypes() {
   return (
     <VStack gap={8} w="100%" maxW={maxW} px={padding}>
@@ -13,7 +27,7 @@ export function ListingTypes() {
         color="brand.slate.900"
         fontSize={fontSize}
         fontWeight={600}
-        lineHeight={1.25}
+        lineHeight={1}
         textAlign="center"
       >
         Start by posting your first Bounty or Project
@@ -41,53 +55,18 @@ export function ListingTypes() {
             </svg>
           </Center>
           <VStack align="start" gap={1}>
-            <Text fontSize="x-large" fontWeight={600}>
+            <Text fontSize={{ base: '1.625rem' }} fontWeight={600}>
               Bounty
             </Text>
-            <Text fontSize={'larger'} fontWeight={500}>
+            <Text fontSize={normalFont} fontWeight={500} lineHeight={1.1}>
               Bounties are listings where everyone completes a given scope of
               work, and competes for the prize pool
             </Text>
           </VStack>
-          <VStack align="start" gap={4}>
-            <HStack align="start">
-              <HighQualityImage
-                src={PurpleTick}
-                alt="Purple Tick"
-                width={25}
-                height={25}
-                style={{ marginTop: '0.5rem' }}
-              />
-              <Text color="brand.slate.500" fontSize={'large'}>
-                Great for awareness campaigns where you want to reach the most
-                people possible
-              </Text>
-            </HStack>
-            <HStack align="start">
-              <HighQualityImage
-                src={PurpleTick}
-                alt="Purple Tick"
-                width={25}
-                style={{ marginTop: '0.5rem' }}
-                height={25}
-              />
-              <Text color="brand.slate.500" fontSize={'large'}>
-                Get multiple options to choose from
-              </Text>
-            </HStack>
-            <HStack align="start">
-              <HighQualityImage
-                src={PurpleTick}
-                alt="Purple Tick"
-                style={{ marginTop: '0.5rem' }}
-                width={25}
-                height={25}
-              />
-              <Text color="brand.slate.500" fontSize={'large'}>
-                Examples: Twitter Threads, Deep-Dives, Memes, Product Feedback,
-                and more
-              </Text>
-            </HStack>
+          <VStack align="start" gap={4} mt={{ xl: '1rem' }}>
+            {bountyFeatures.map((feature) => (
+              <Feature key={feature} description={feature} />
+            ))}
           </VStack>
         </VStack>
         <VStack align="start" gap={4}>
@@ -113,55 +92,42 @@ export function ListingTypes() {
             </svg>
           </Center>
           <VStack align="start" gap={1}>
-            <Text fontSize="x-large" fontWeight={600}>
+            <Text fontSize={{ base: '1.625rem' }} fontWeight={600}>
               Project
             </Text>
-            <Text fontSize={'larger'} fontWeight={500}>
+            <Text fontSize={normalFont} fontWeight={500} lineHeight={1.1}>
               Projects are freelance gigs — people apply with their proposals
               but don’t begin working until you pick them
             </Text>
           </VStack>
-          <VStack align="start" gap={4}>
-            <HStack align="start">
-              <HighQualityImage
-                src={PurpleTick}
-                alt="Purple Tick"
-                width={25}
-                height={25}
-                style={{ marginTop: '0.5rem' }}
-              />
-              <Text color="brand.slate.500" fontSize={'large'}>
-                Perfect for work that requires collaboration and iteration
-              </Text>
-            </HStack>
-            <HStack align="start">
-              <HighQualityImage
-                src={PurpleTick}
-                alt="Purple Tick"
-                width={25}
-                style={{ marginTop: '0.5rem' }}
-                height={25}
-              />
-              <Text color="brand.slate.500" fontSize={'large'}>
-                Single output that is specific to your exact needs
-              </Text>
-            </HStack>
-            <HStack align="start">
-              <HighQualityImage
-                src={PurpleTick}
-                alt="Purple Tick"
-                style={{ marginTop: '0.5rem' }}
-                width={25}
-                height={25}
-              />
-              <Text color="brand.slate.500" fontSize={'large'}>
-                Examples: Full Stack Development, Hype Video Production, Hiring
-                a Community Manager, and more
-              </Text>
-            </HStack>
+          <VStack align="start" gap={4} mt={{ xl: '1rem' }}>
+            {projectFeatures.map((feature) => (
+              <Feature key={feature} description={feature} />
+            ))}
           </VStack>
         </VStack>
       </Flex>
     </VStack>
+  );
+}
+
+interface FeatureProps {
+  description: string;
+}
+
+function Feature({ description }: FeatureProps) {
+  return (
+    <HStack align="start" gap={4}>
+      <HighQualityImage
+        src={PurpleTick}
+        alt="Purple Tick"
+        style={{ marginTop: '0.4rem', minWidth: '28px' }}
+        width={28}
+        height={28}
+      />
+      <Text color="brand.slate.500" fontSize={normalFont} lineHeight={1.35}>
+        {description}
+      </Text>
+    </HStack>
   );
 }

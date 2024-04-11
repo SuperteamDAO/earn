@@ -70,15 +70,15 @@ interface Props {
 
 export function Features({ showVideo }: Props) {
   return (
-    <VStack pos="relative" w="full" my="8rem" px={padding}>
+    <VStack pos="relative" w="full" my="8rem" px={padding} id="features">
       <Box
         pos="absolute"
         top={0}
         w="full"
-        h={{ base: '17.8rem', md: '30.8rem' }}
+        h={{ base: '17.8rem', md: '36.96rem' }}
         bg="brand.purple"
       />
-      <VStack pos="relative" maxW={maxW2} px={padding} py={'2rem'}>
+      <VStack pos="relative" maxW={maxW2} px={padding} py={'3rem'}>
         <Text
           maxW="48rem"
           color="white"

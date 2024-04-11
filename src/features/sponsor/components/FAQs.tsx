@@ -44,7 +44,7 @@ Earn can be used to get any small to medium scale task done, including but not l
 
 export function FAQs() {
   return (
-    <VStack w="full" pt="2rem" pb="4rem" bg="#EEF2FF">
+    <VStack w="full" pt="2rem" pb="4rem" bg="#EEF2FF" id="faqs">
       <Text
         pos="relative"
         w="full"

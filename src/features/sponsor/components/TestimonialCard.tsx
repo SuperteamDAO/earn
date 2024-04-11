@@ -51,10 +51,10 @@ export function TestimonialCard({
             />
           </Box>
           <VStack align="start" gap={0}>
-            <Text color="black" fontSize={'1rem'}>
+            <Text color="brand.slate.500" fontSize={'1rem'}>
               {name}
             </Text>
-            <Text color="black" fontSize={'1rem'}>
+            <Text color="brand.slate.500" fontSize={'1rem'}>
               {position}
             </Text>
           </VStack>

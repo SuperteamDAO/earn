@@ -74,36 +74,47 @@ export const MobileNavbar = ({ onLoginOpen }: { onLoginOpen: () => void }) => {
                   borderColor={'brand.slate.300'}
                   orientation="vertical"
                 />
-                <Button
-                  color="brand.purple"
-                  fontSize="md"
-                  onClick={() => {
-                    onDrawerClose();
-                    onLoginOpen();
-                  }}
-                  size="md"
-                  variant="unstyled"
-                >
-                  Sign Up
-                </Button>
+                <NextLink href="/new/sponsor/">
+                  <Button
+                    color="#4F46E5"
+                    fontWeight={600}
+                    bg={'white'}
+                    size="md"
+                    variant="unstyled"
+                  >
+                    Get Started
+                  </Button>
+                </NextLink>
               </Flex>
             )}
 
-            {userInfo &&
-              !userInfo.currentSponsorId &&
-              !userInfo.isTalentFilled && (
-                <Button
-                  color={'brand.purple'}
-                  fontSize="md"
-                  onClick={() => {
-                    router.push('/new');
-                  }}
-                  size="md"
-                  variant="unstyled"
-                >
-                  Complete your Profile
-                </Button>
-              )}
+            {userInfo && !userInfo.currentSponsorId && (
+              <Button
+                color={'brand.purple'}
+                fontSize="md"
+                onClick={() => {
+                  router.push('/new/sponsor/');
+                }}
+                size="md"
+                variant="unstyled"
+              >
+                Get Started
+              </Button>
+            )}
+
+            {userInfo && userInfo.currentSponsorId && (
+              <Button
+                color={'brand.purple'}
+                fontSize="md"
+                onClick={() => {
+                  router.push('/dashboard/listings/');
+                }}
+                size="md"
+                variant="unstyled"
+              >
+                Create a Listing
+              </Button>
+            )}
 
             <Flex direction={'column'}>
               {NAV_LINKS?.map((navItem) => {

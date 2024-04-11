@@ -51,7 +51,7 @@ const works: ListingCardProps[] = [
     pfp: Saros,
     title: 'Community Manager at Saros Finance',
     name: 'Saros',
-    description: `Saros, a DeFi Mobile Siperapp is looking for a comm- that can help strategize and manage it’s community`,
+    description: `Saros, a DeFi Mobile Superapp is looking for a community manager who can help strategise community growth, and manage its community`,
     skills: ['writing', 'marketing', 'community'],
     submissionCount: 84,
     type: 'community',
@@ -63,16 +63,7 @@ const works: ListingCardProps[] = [
 
 export function ListingWork() {
   return (
-    <VStack
-      pos="relative"
-      align={{ base: 'start', '2xl': 'center' }}
-      gap={8}
-      w="100vw"
-      mt="8rem"
-      mb="4rem"
-      px={padding}
-      pt="4rem"
-    >
+    <VStack>
       <Box
         pos="absolute"
         top={0}
@@ -81,31 +72,43 @@ export function ListingWork() {
         h={{ base: '27.8rem', md: '25.8rem' }}
         bg="brand.slate.100"
       />
-      <Text
+      <VStack
         pos="relative"
-        w="full"
-        color="brand.slate.800"
-        fontSize={fontSize}
-        fontWeight={600}
-        textAlign="center"
+        align={{ base: 'start' }}
+        gap={8}
+        w="100vw"
+        maxW={maxW}
+        mt="8rem"
+        mb="4rem"
+        px={padding}
+        pt="4rem"
       >
-        Get almost any kind of work done
-      </Text>
-      <HStack pos="relative" align="start" gap={8} maxW={maxW}>
-        {works.map((w) => (
-          <VStack key={w.title} align="start">
-            <Text
-              fontSize={'1.25rem'}
-              fontWeight={600}
-              textTransform={'capitalize'}
-            >
-              {' '}
-              {w.type}
-            </Text>
-            <ListingCard key={w.title} {...w} />
-          </VStack>
-        ))}
-      </HStack>
+        <Text
+          pos="relative"
+          w="full"
+          color="brand.slate.800"
+          fontSize={fontSize}
+          fontWeight={600}
+          textAlign="center"
+        >
+          Get almost any kind of work done
+        </Text>
+        <HStack pos="relative" align="start" gap={8} maxW={maxW}>
+          {works.map((w) => (
+            <VStack key={w.title} align="start">
+              <Text
+                fontSize={'1.25rem'}
+                fontWeight={600}
+                textTransform={'capitalize'}
+              >
+                {' '}
+                {w.type}
+              </Text>
+              <ListingCard key={w.title} {...w} />
+            </VStack>
+          ))}
+        </HStack>
+      </VStack>
     </VStack>
   );
 }

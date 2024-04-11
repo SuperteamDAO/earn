@@ -116,22 +116,43 @@ export const DesktopNavbar = ({ onLoginOpen }: { onLoginOpen: () => void }) => {
             </Flex>
           )}
 
-          {status === 'authenticated' && session && <UserMenu />}
+          <HStack gap={2}>
+            <HStack gap={0}>
+              {status === 'authenticated' &&
+                session &&
+                !!session?.user?.currentSponsorId && (
+                  <NextLink href="/dashboard/listings/">
+                    <Button
+                      color="#4F46E5"
+                      fontWeight={600}
+                      bg={'white'}
+                      size="sm"
+                    >
+                      Create a Listing
+                    </Button>
+                  </NextLink>
+                )}
+              {status === 'authenticated' &&
+                session &&
+                !session?.user?.currentSponsorId && (
+                  <NextLink href="/new/sponsor/">
+                    <Button
+                      color="#4F46E5"
+                      fontWeight={600}
+                      bg={'white'}
+                      size="sm"
+                    >
+                      Get Started
+                    </Button>
+                  </NextLink>
+                )}
+              {status === 'authenticated' && session && <UserMenu />}
+            </HStack>
+          </HStack>
 
           {status === 'unauthenticated' && !session && (
             <HStack gap={2}>
               <HStack gap={0}>
-                <Button
-                  color="#6366F1"
-                  fontSize="xs"
-                  bg={'white'}
-                  onClick={() => {
-                    router.push('/sponsor');
-                  }}
-                  size="sm"
-                >
-                  Create A Listing
-                </Button>
                 <Button
                   fontSize="xs"
                   onClick={() => {
@@ -142,20 +163,17 @@ export const DesktopNavbar = ({ onLoginOpen }: { onLoginOpen: () => void }) => {
                 >
                   Login
                 </Button>
+                <NextLink href="/new/sponsor/">
+                  <Button
+                    color="#4F46E5"
+                    fontWeight={600}
+                    bg={'white'}
+                    size="sm"
+                  >
+                    Get Started
+                  </Button>
+                </NextLink>
               </HStack>
-              <Button
-                w={'100%'}
-                my={1}
-                px={4}
-                fontSize="xs"
-                onClick={() => {
-                  onLoginOpen();
-                }}
-                size="sm"
-                variant="solid"
-              >
-                Sign Up
-              </Button>
             </HStack>
           )}
         </Stack>

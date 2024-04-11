@@ -57,7 +57,15 @@ users`,
 
 export function Testimonials() {
   return (
-    <VStack align="start" gap={8} w="full" maxW={maxW} mb="4rem" px={padding}>
+    <VStack
+      align="start"
+      gap={8}
+      w="full"
+      maxW={maxW}
+      mb="4rem"
+      px={padding}
+      id="customers"
+    >
       <Divider mb="2rem" />
       <Flex
         justify={'space-between'}
