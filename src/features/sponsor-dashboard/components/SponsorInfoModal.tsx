@@ -12,10 +12,10 @@ import {
   VStack,
 } from '@chakra-ui/react';
 import axios from 'axios';
-import { MediaPicker } from 'degen';
 import React, { useState } from 'react';
 import { useForm } from 'react-hook-form';
 
+import { ImagePicker } from '@/components/shared/ImagePicker';
 import { userStore } from '@/store/user';
 import { uploadToCloudinary } from '@/utils/upload';
 import { useUsernameValidation } from '@/utils/useUsernameValidation';
@@ -142,8 +142,7 @@ export const SponsorInfoModal = ({
                     Profile Picture
                   </FormLabel>
                   <Box w="full" mt={1}>
-                    <MediaPicker
-                      accept="image/jpeg, image/png, image/webp"
+                    <ImagePicker
                       defaultValue={{ url: userInfo.photo, type: 'image' }}
                       onChange={async (e) => {
                         setUploading(true);
@@ -156,8 +155,6 @@ export const SponsorInfoModal = ({
                         setImageUrl('');
                         setUploading(false);
                       }}
-                      compact
-                      label="Choose or drag and drop media"
                     />
                   </Box>
                 </>
@@ -171,8 +168,7 @@ export const SponsorInfoModal = ({
                   >
                     Profile Picture
                   </FormLabel>
-                  <MediaPicker
-                    accept="image/jpeg, image/png, image/webp"
+                  <ImagePicker
                     onChange={async (e) => {
                       setUploading(true);
                       const a = await uploadToCloudinary(e, 'earn-pfp');
@@ -183,8 +179,6 @@ export const SponsorInfoModal = ({
                       setImageUrl('');
                       setUploading(false);
                     }}
-                    compact
-                    label="Choose or drag and drop media"
                   />
                 </>
               )}

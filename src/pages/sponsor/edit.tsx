@@ -11,7 +11,6 @@ import {
   VStack,
 } from '@chakra-ui/react';
 import axios from 'axios';
-import { MediaPicker } from 'degen';
 import { useRouter } from 'next/router';
 import { useSession } from 'next-auth/react';
 import { useEffect, useState } from 'react';
@@ -19,6 +18,7 @@ import { useForm } from 'react-hook-form';
 import Select from 'react-select';
 import makeAnimated from 'react-select/animated';
 
+import { ImagePicker } from '@/components/shared/ImagePicker';
 import { IndustryList } from '@/constants';
 import type { SponsorType } from '@/interface/sponsor';
 import { Default } from '@/layouts/Default';
@@ -288,16 +288,13 @@ const UpdateSponsor = () => {
                 {isPhotoLoading ? (
                   <></>
                 ) : imageUrl ? (
-                  <MediaPicker
-                    accept="image/jpeg, image/png, image/webp"
+                  <ImagePicker
                     onChange={async (e) => {
                       setIsImageUploading(true);
                       const a = await uploadToCloudinary(e, 'earn-sponsor');
                       setImageUrl(a);
                       setIsImageUploading(false);
                     }}
-                    compact
-                    label="Choose or Drag & Drop Media"
                     defaultValue={{
                       url: imageUrl,
                       type: 'image',
@@ -307,8 +304,7 @@ const UpdateSponsor = () => {
                     }}
                   />
                 ) : (
-                  <MediaPicker
-                    accept="image/jpeg, image/png, image/webp"
+                  <ImagePicker
                     onChange={async (e) => {
                       setIsImageUploading(true);
                       const a = await uploadToCloudinary(e, 'earn-sponsor');
@@ -318,8 +314,6 @@ const UpdateSponsor = () => {
                     onReset={() => {
                       setImageUrl('');
                     }}
-                    compact
-                    label="Choose or Drag & Drop Media"
                   />
                 )}
               </HStack>
