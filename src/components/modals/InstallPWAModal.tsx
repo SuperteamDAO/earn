@@ -30,19 +30,19 @@ const ManualInstructions = () => {
   );
 };
 
-export const InstallAppModal = ({
+export const InstallPWAModal = ({
   isOpen,
   onClose,
   installApp,
-  deviceOs,
+  mobileOs,
 }: {
   isOpen: boolean;
   onClose: () => void;
   installApp: () => void;
-  deviceOs: 'Android' | 'iOS' | 'Other';
+  mobileOs: 'Android' | 'iOS' | 'Other';
 }) => {
   const isAutoInstallable = () => {
-    if (deviceOs === 'iOS') {
+    if (mobileOs === 'iOS') {
       return false;
     }
     return true;

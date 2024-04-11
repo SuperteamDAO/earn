@@ -5,7 +5,7 @@ import type { NextPage } from 'next';
 import { useEffect, useRef, useState } from 'react';
 
 import { FeatureModal } from '@/components/modals/FeatureModal';
-import { InstallAppModal } from '@/components/modals/InstallAppModal';
+import { InstallPWAModal } from '@/components/modals/InstallPWAModal';
 import { EmptySection } from '@/components/shared/EmptySection';
 import { Loading } from '@/components/shared/Loading';
 import { type Grant, GrantsCard } from '@/features/grants';
@@ -15,7 +15,7 @@ import { userStore } from '@/store/user';
 
 const HomePage: NextPage = () => {
   const [isListingsLoading, setIsListingsLoading] = useState(true);
-  const [deviceOs, setDeviceOs] = useState<'Android' | 'iOS' | 'Other'>(
+  const [mobileOs, setMobileOs] = useState<'Android' | 'iOS' | 'Other'>(
     'Other',
   );
   const [bounties, setBounties] = useState<{ bounties: Bounty[] }>({
@@ -74,7 +74,11 @@ const HomePage: NextPage = () => {
   const { userInfo } = userStore();
 
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const { isOpen, onClose, onOpen } = useDisclosure();
+  const {
+    isOpen: isPWAModalOpen,
+    onClose: onPWAModalClose,
+    onOpen: onPWAModalOpen,
+  } = useDisclosure();
 
   const handleClose = () => {
     setIsModalOpen(false);
@@ -96,7 +100,7 @@ const HomePage: NextPage = () => {
     updateFeatureModalShown();
   }, [userInfo]);
 
-  const getOS = () => {
+  const getMobileOS = () => {
     const ua = navigator.userAgent;
     if (/android/i.test(ua)) {
       return 'Android';
@@ -109,13 +113,18 @@ const HomePage: NextPage = () => {
   useEffect(() => {
     const showInstallAppModal = () => {
       const modalShown = localStorage.getItem('installAppModalShown');
-      const isPWA = window.matchMedia('(display-mode: standalone)').matches;
+      const navigator: any = window.navigator;
+
+      const isPWA =
+        window.matchMedia('(display-mode: standalone)').matches ||
+        document.referrer.includes('android-app://') ||
+        navigator.standalone;
       const isInstalled = localStorage.getItem('isAppInstalled');
-      const os = getOS();
-      setDeviceOs(os);
+      const os = getMobileOS();
+      setMobileOs(os);
       if (os !== 'Other' && !isPWA && !modalShown && !isInstalled) {
         localStorage.setItem('installAppModalShown', 'true');
-        onOpen();
+        onPWAModalOpen();
       }
     };
 
@@ -131,17 +140,17 @@ const HomePage: NextPage = () => {
         localStorage.setItem('isAppInstalled', 'true');
       }
     }
-    onClose();
+    onPWAModalClose();
   };
 
   return (
     <Home type="home">
       <FeatureModal isOpen={isModalOpen} onClose={handleClose} />
-      <InstallAppModal
-        isOpen={isOpen}
-        onClose={onClose}
+      <InstallPWAModal
+        isOpen={isPWAModalOpen}
+        onClose={onPWAModalClose}
         installApp={installApp}
-        deviceOs={deviceOs}
+        mobileOs={mobileOs}
       />
       <Box w={'100%'}>
         <ListingTabs
