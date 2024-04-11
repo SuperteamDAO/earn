@@ -141,9 +141,6 @@ function convertUserToAirtable(user: User): ForFoundersAirtableSchema {
 }
 
 async function handler(_req: NextApiRequest, res: NextApiResponse) {
-  let count = 0;
-  const startTime = performance.now();
-  let endTime = performance.now();
   try {
     // GET LAST UPDATED RECORD
     const listUrl = new URL(airtableUrl());
@@ -186,9 +183,7 @@ async function handler(_req: NextApiRequest, res: NextApiResponse) {
     }
 
     const data = airtableUpsert('id', usersAirtable);
-    console.log('data - ', data);
     await axios.patch(airtableUrl(), JSON.stringify(data), airtableConfig());
-    count++;
 
     do {
       cursor = users[9]?.id ?? undefined;
@@ -217,15 +212,10 @@ async function handler(_req: NextApiRequest, res: NextApiResponse) {
         airtableUpsert('id', usersAirtable),
         airtableConfig(),
       );
-      count++;
     } while (cursor);
-    console.log('count - ', count);
 
-    endTime = performance.now();
-    console.log('full performance time - ', endTime - startTime);
     res.status(200).json({ message: 'Airtable Synced successfully' });
   } catch (error: any) {
-    console.log('count - ', count);
     console.error('Error airtable sync:', error);
     if (error?.response?.data)
       console.error('Airtable Error', error.response.data);
