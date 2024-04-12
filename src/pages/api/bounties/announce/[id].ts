@@ -226,7 +226,6 @@ async function announce(req: NextApiRequestWithUser, res: NextApiResponse) {
     await sendEmailNotification({
       type: 'announceWinners',
       id,
-      userId: userId as string,
     });
 
     if (bounty?.sponsor?.name.includes('Superteam')) {

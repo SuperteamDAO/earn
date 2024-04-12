@@ -42,7 +42,6 @@ async function handler(req: NextApiRequestWithUser, res: NextApiResponse) {
       await sendEmailNotification({
         type: 'createListing',
         id: result.id,
-        userId: userId as string,
       });
     }
     if (process.env.NEXT_PUBLIC_VERCEL_ENV === 'production') {

@@ -24,7 +24,7 @@ interface EmailNotificationParams {
 export async function sendEmailNotification({
   type,
   id,
-  userId,
+  userId, // pass userId of the person you are sending the email to
   otherInfo,
 }: EmailNotificationParams) {
   try {

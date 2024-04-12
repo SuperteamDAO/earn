@@ -118,7 +118,9 @@ async function comment(req: NextApiRequestWithUser, res: NextApiResponse) {
         await sendEmailNotification({
           type: 'commentSubmission',
           id: listingId,
-          userId: pocId as string,
+          otherInfo: {
+            personName: result?.author?.firstName,
+          },
         });
       }
     }
