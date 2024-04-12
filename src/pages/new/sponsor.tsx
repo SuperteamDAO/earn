@@ -49,7 +49,7 @@ const CreateSponsor = () => {
 
   useEffect(() => {
     if (userInfo?.currentSponsorId && session?.user?.role !== 'GOD') {
-      router.push('/dashboard/listings');
+      router.push('/dashboard/listings?open=1');
     }
   }, [userInfo?.currentSponsorId, router]);
 
@@ -65,7 +65,7 @@ const CreateSponsor = () => {
         ...sponsor,
       });
       await axios.post(`/api/email/manual/welcomeSponsor`);
-      router.push('/dashboard/listings');
+      router.push('/dashboard/listings?open=1');
     } catch (e: any) {
       if (e?.response?.data?.error?.code === 'P2002') {
         setErrorMessage('Sorry! Sponsor name or username already exists.');

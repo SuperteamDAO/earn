@@ -1,26 +1,16 @@
-import { Box, useDisclosure } from '@chakra-ui/react';
-
-import { Login } from '@/features/auth';
+import { Box } from '@chakra-ui/react';
 
 import { DesktopNavbar } from './DesktopNavbar';
 import { MobileNavbar } from './MobileNavbar';
 
 export const Header = () => {
-  const {
-    isOpen: isLoginOpen,
-    onOpen: onLoginOpen,
-    onClose: onLoginClose,
-  } = useDisclosure();
-
   return (
     <>
-      {!!isLoginOpen && <Login isOpen={isLoginOpen} onClose={onLoginClose} />}
-
       <Box pos="sticky" zIndex="sticky" top={0}>
-        <DesktopNavbar onLoginOpen={onLoginOpen} />
+        <DesktopNavbar />
       </Box>
 
-      <MobileNavbar onLoginOpen={onLoginOpen} />
+      <MobileNavbar />
     </>
   );
 };

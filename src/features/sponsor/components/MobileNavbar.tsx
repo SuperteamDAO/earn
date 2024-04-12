@@ -26,7 +26,7 @@ import { userStore } from '@/store/user';
 
 import { NAV_LINKS } from '../utils';
 
-export const MobileNavbar = ({ onLoginOpen }: { onLoginOpen: () => void }) => {
+export const MobileNavbar = () => {
   const {
     isOpen: isDrawerOpen,
     onOpen: onDrawerOpen,
@@ -35,10 +35,10 @@ export const MobileNavbar = ({ onLoginOpen }: { onLoginOpen: () => void }) => {
 
   const { data: session, status } = useSession();
 
+  const { userInfo } = userStore();
+
   const btnRef = useRef<HTMLButtonElement>(null);
   const router = useRouter();
-
-  const { userInfo } = userStore();
 
   const MobileDrawer = () => {
     return (
@@ -56,18 +56,16 @@ export const MobileNavbar = ({ onLoginOpen }: { onLoginOpen: () => void }) => {
           <DrawerBody>
             {status === 'unauthenticated' && !session && (
               <Flex align="center" gap={3}>
-                <Button
-                  color="brand.slate.500"
-                  fontSize="md"
-                  onClick={() => {
-                    onDrawerClose();
-                    onLoginOpen();
-                  }}
-                  size="md"
-                  variant="unstyled"
-                >
-                  Login
-                </Button>
+                <NextLink href="/new/sponsor/">
+                  <Button
+                    color="brand.slate.500"
+                    fontSize="md"
+                    size="md"
+                    variant="unstyled"
+                  >
+                    Login
+                  </Button>
+                </NextLink>
                 <Divider
                   h={5}
                   borderWidth={'0.5px'}
@@ -102,12 +100,12 @@ export const MobileNavbar = ({ onLoginOpen }: { onLoginOpen: () => void }) => {
               </Button>
             )}
 
-            {userInfo && userInfo.currentSponsorId && (
+            {userInfo && !!userInfo.currentSponsorId && (
               <Button
                 color={'brand.purple'}
                 fontSize="md"
                 onClick={() => {
-                  router.push('/dashboard/listings/');
+                  router.push('/dashboard/listings/?open=1');
                 }}
                 size="md"
                 variant="unstyled"
@@ -204,18 +202,17 @@ export const MobileNavbar = ({ onLoginOpen }: { onLoginOpen: () => void }) => {
           </AbsoluteCenter>
           {status === 'authenticated' && session && <UserMenu />}
           {status === 'unauthenticated' && !session && (
-            <Button
-              mr={2}
-              color="brand.purple"
-              fontSize="md"
-              onClick={() => {
-                onLoginOpen();
-              }}
-              size="sm"
-              variant="unstyled"
-            >
-              Login
-            </Button>
+            <NextLink href="/new/sponsor/">
+              <Button
+                mr={2}
+                color="brand.purple"
+                fontSize="md"
+                size="sm"
+                variant="unstyled"
+              >
+                Login
+              </Button>
+            </NextLink>
           )}
         </Flex>
       </Box>

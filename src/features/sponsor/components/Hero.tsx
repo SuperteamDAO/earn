@@ -1,5 +1,6 @@
 import { Box, Button, Flex, HStack, Text, VStack } from '@chakra-ui/react';
 import Link from 'next/link';
+import { useSession } from 'next-auth/react';
 
 import Bonk from '@/public/assets/landingsponsor/sponsors/bonk.png';
 import De from '@/public/assets/landingsponsor/sponsors/de.png';
@@ -10,6 +11,7 @@ import MonkeDao from '@/public/assets/landingsponsor/sponsors/monkedao.png';
 import Solflare from '@/public/assets/landingsponsor/sponsors/solflare.png';
 import Squads from '@/public/assets/landingsponsor/sponsors/squads.png';
 import Tensor from '@/public/assets/landingsponsor/sponsors/tensor.png';
+import { userStore } from '@/store/user';
 
 import { fontSize, maxW, padding } from '../utils';
 import { HighQualityImage } from './HighQualityImage';
@@ -18,6 +20,15 @@ import { StepThree } from './steps/Three';
 import { StepTwo } from './steps/Two';
 
 export function Hero() {
+  const { data: session } = useSession();
+
+  const { userInfo } = userStore();
+
+  function getStartedWhere(authenticated: boolean, isSponsor: boolean) {
+    if (!authenticated) return '/new/sponsor';
+    if (!isSponsor) return '/new/sponsor';
+    return '/dashboard/listings/?open=1';
+  }
   return (
     <>
       <VStack
@@ -65,7 +76,9 @@ export function Hero() {
           </Text>
 
           <Flex justify="center" gap="2rem" w="100%">
-            <Link href="/new/sponsor">
+            <Link
+              href={getStartedWhere(!!session, !!userInfo?.currentSponsorId)}
+            >
               <Button
                 w="12.5rem"
                 h="3.125rem"

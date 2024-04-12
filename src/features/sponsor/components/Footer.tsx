@@ -1,8 +1,22 @@
 import { Button, Text, VStack } from '@chakra-ui/react';
+import NextLink from 'next/link';
+import { useSession } from 'next-auth/react';
+
+import { userStore } from '@/store/user';
 
 import { fontSize, maxW2, padding } from '../utils';
 
 export function Footer() {
+  const { data: session } = useSession();
+
+  const { userInfo } = userStore();
+
+  function getStartedWhere(authenticated: boolean, isSponsor: boolean) {
+    if (!authenticated) return '/new/sponsor';
+    if (!isSponsor) return '/new/sponsor';
+    return '/dashboard/listings/?open=1';
+  }
+
   return (
     <VStack
       gap={8}
@@ -24,19 +38,21 @@ export function Footer() {
       >
         Where Solana teams come to get sh*t done
       </Text>
-      <Button
-        w="12.5rem"
-        h="3.125rem"
-        mx="auto"
-        px={'2.5rem'}
-        color="#4F46E5"
-        fontSize="1.125rem"
-        bg="white"
-        borderRadius="0.625rem"
-        variant={'solid'}
-      >
-        Get Started
-      </Button>
+      <NextLink href={getStartedWhere(!!session, !!userInfo?.currentSponsorId)}>
+        <Button
+          w="12.5rem"
+          h="3.125rem"
+          mx="auto"
+          px={'2.5rem'}
+          color="#4F46E5"
+          fontSize="1.125rem"
+          bg="white"
+          borderRadius="0.625rem"
+          variant={'solid'}
+        >
+          Get Started
+        </Button>
+      </NextLink>
     </VStack>
   );
 }

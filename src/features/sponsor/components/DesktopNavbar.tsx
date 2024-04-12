@@ -17,11 +17,15 @@ import { useSession } from 'next-auth/react';
 import React from 'react';
 
 import { UserMenu } from '@/components/shared/UserMenu';
+import { userStore } from '@/store/user';
 
 import { NAV_LINKS } from '../utils';
 
-export const DesktopNavbar = ({ onLoginOpen }: { onLoginOpen: () => void }) => {
+export const DesktopNavbar = () => {
   const { data: session, status } = useSession();
+
+  const { userInfo } = userStore();
+
   const router = useRouter();
 
   const isDashboardRoute = router.pathname.startsWith('/dashboard');
@@ -118,34 +122,30 @@ export const DesktopNavbar = ({ onLoginOpen }: { onLoginOpen: () => void }) => {
 
           <HStack gap={2}>
             <HStack gap={0}>
-              {status === 'authenticated' &&
-                session &&
-                !!session?.user?.currentSponsorId && (
-                  <NextLink href="/dashboard/listings/">
-                    <Button
-                      color="#4F46E5"
-                      fontWeight={600}
-                      bg={'white'}
-                      size="sm"
-                    >
-                      Create a Listing
-                    </Button>
-                  </NextLink>
-                )}
-              {status === 'authenticated' &&
-                session &&
-                !session?.user?.currentSponsorId && (
-                  <NextLink href="/new/sponsor/">
-                    <Button
-                      color="#4F46E5"
-                      fontWeight={600}
-                      bg={'white'}
-                      size="sm"
-                    >
-                      Get Started
-                    </Button>
-                  </NextLink>
-                )}
+              {status === 'authenticated' && !!userInfo?.currentSponsorId && (
+                <NextLink href="/dashboard/listings/?open=1">
+                  <Button
+                    color="#4F46E5"
+                    fontWeight={600}
+                    bg={'white'}
+                    size="sm"
+                  >
+                    Create a Listing
+                  </Button>
+                </NextLink>
+              )}
+              {status === 'authenticated' && !userInfo?.currentSponsorId && (
+                <NextLink href="/new/sponsor/">
+                  <Button
+                    color="#4F46E5"
+                    fontWeight={600}
+                    bg={'white'}
+                    size="sm"
+                  >
+                    Get Started
+                  </Button>
+                </NextLink>
+              )}
               {status === 'authenticated' && session && <UserMenu />}
             </HStack>
           </HStack>
@@ -153,16 +153,11 @@ export const DesktopNavbar = ({ onLoginOpen }: { onLoginOpen: () => void }) => {
           {status === 'unauthenticated' && !session && (
             <HStack gap={2}>
               <HStack gap={0}>
-                <Button
-                  fontSize="xs"
-                  onClick={() => {
-                    onLoginOpen();
-                  }}
-                  size="sm"
-                  variant={'ghost'}
-                >
-                  Login
-                </Button>
+                <NextLink href="/new/sponsor/">
+                  <Button fontSize="xs" size="sm" variant={'ghost'}>
+                    Login
+                  </Button>
+                </NextLink>
                 <NextLink href="/new/sponsor/">
                   <Button
                     color="#4F46E5"
