@@ -46,6 +46,7 @@ async function user(req: NextApiRequestWithUser, res: NextApiResponse) {
       categories.add('commentSponsor');
       categories.add('deadlineSponsor');
       categories.add('productAndNewsletter');
+      categories.add('replyOrTagComment');
 
       for (const category of categories) {
         await prisma.emailSettings.create({
