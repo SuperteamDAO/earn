@@ -7,6 +7,7 @@ import {
   VStack,
 } from '@chakra-ui/react';
 import Image, { type StaticImageData } from 'next/image';
+import { usePostHog } from 'posthog-js/react';
 
 import SponsorDashboard from '@/public/assets/landingsponsor/displays/sponsor-dashboard.png';
 import Doc from '@/public/assets/landingsponsor/icons/Doc.svg';
@@ -69,6 +70,8 @@ interface Props {
 }
 
 export function Features({ showVideo }: Props) {
+  const posthog = usePostHog();
+
   return (
     <VStack pos="relative" w="full" my="8rem" px={padding} id="features">
       <Box
@@ -100,7 +103,15 @@ export function Features({ showVideo }: Props) {
           A seamless way to manage all your listings in one place
         </Text>
       </VStack>
-      <Center pos="relative" w="full" maxW={maxW2} onClick={showVideo}>
+      <Center
+        pos="relative"
+        w="full"
+        maxW={maxW2}
+        onClick={() => {
+          posthog?.capture('clicked_video');
+          showVideo();
+        }}
+      >
         <AbsoluteCenter p={3} bg="brand.purple" cursor="pointer" rounded="full">
           <svg
             width="34"

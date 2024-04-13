@@ -17,8 +17,8 @@ import {
   useDisclosure,
 } from '@chakra-ui/react';
 import NextLink from 'next/link';
-import { useRouter } from 'next/router';
 import { useSession } from 'next-auth/react';
+import { usePostHog } from 'posthog-js/react';
 import React, { useRef } from 'react';
 
 import { UserMenu } from '@/components/shared/UserMenu';
@@ -37,8 +37,9 @@ export const MobileNavbar = () => {
 
   const { userInfo } = userStore();
 
+  const posthog = usePostHog();
+
   const btnRef = useRef<HTMLButtonElement>(null);
-  const router = useRouter();
 
   const MobileDrawer = () => {
     return (
@@ -56,7 +57,10 @@ export const MobileNavbar = () => {
           <DrawerBody>
             {status === 'unauthenticated' && !session && (
               <Flex align="center" gap={3}>
-                <NextLink href="/new/sponsor/">
+                <NextLink
+                  href="/new/sponsor/"
+                  onClick={() => posthog.capture('clicked_nav_login')}
+                >
                   <Button
                     color="brand.slate.500"
                     fontSize="md"
@@ -72,7 +76,10 @@ export const MobileNavbar = () => {
                   borderColor={'brand.slate.300'}
                   orientation="vertical"
                 />
-                <NextLink href="/new/sponsor/">
+                <NextLink
+                  href="/new/sponsor/"
+                  onClick={() => posthog.capture('clicked_nav_get_started')}
+                >
                   <Button
                     color="#4F46E5"
                     fontWeight={600}
@@ -87,31 +94,35 @@ export const MobileNavbar = () => {
             )}
 
             {userInfo && !userInfo.currentSponsorId && (
-              <Button
-                color={'brand.purple'}
-                fontSize="md"
-                onClick={() => {
-                  router.push('/new/sponsor/');
-                }}
-                size="md"
-                variant="unstyled"
+              <NextLink
+                href="/new/sponsor/"
+                onClick={() => posthog.capture('clicked_nav_get_started')}
               >
-                Get Started
-              </Button>
+                <Button
+                  color={'brand.purple'}
+                  fontSize="md"
+                  size="md"
+                  variant="unstyled"
+                >
+                  Get Started
+                </Button>
+              </NextLink>
             )}
 
             {userInfo && !!userInfo.currentSponsorId && (
-              <Button
-                color={'brand.purple'}
-                fontSize="md"
-                onClick={() => {
-                  router.push('/dashboard/listings/?open=1');
-                }}
-                size="md"
-                variant="unstyled"
+              <NextLink
+                href="/dashboard/listings/?open=1"
+                onClick={() => posthog.capture('clicked_nav_create_listing')}
               >
-                Create a Listing
-              </Button>
+                <Button
+                  color={'brand.purple'}
+                  fontSize="md"
+                  size="md"
+                  variant="unstyled"
+                >
+                  Create a Listing
+                </Button>
+              </NextLink>
             )}
 
             <Flex direction={'column'}>
@@ -202,7 +213,10 @@ export const MobileNavbar = () => {
           </AbsoluteCenter>
           {status === 'authenticated' && session && <UserMenu />}
           {status === 'unauthenticated' && !session && (
-            <NextLink href="/new/sponsor/">
+            <NextLink
+              href="/new/sponsor/"
+              onClick={() => posthog.capture('clicked_nav_login')}
+            >
               <Button
                 mr={2}
                 color="brand.purple"

@@ -14,6 +14,7 @@ import {
 import NextLink from 'next/link';
 import { useRouter } from 'next/router';
 import { useSession } from 'next-auth/react';
+import { usePostHog } from 'posthog-js/react';
 import React from 'react';
 
 import { UserMenu } from '@/components/shared/UserMenu';
@@ -25,6 +26,8 @@ export const DesktopNavbar = () => {
   const { data: session, status } = useSession();
 
   const { userInfo } = userStore();
+
+  const posthog = usePostHog();
 
   const router = useRouter();
 
@@ -123,7 +126,10 @@ export const DesktopNavbar = () => {
           <HStack gap={2}>
             <HStack gap={0}>
               {status === 'authenticated' && !!userInfo?.currentSponsorId && (
-                <NextLink href="/dashboard/listings/?open=1">
+                <NextLink
+                  href="/dashboard/listings/?open=1"
+                  onClick={() => posthog.capture('clicked_nav_create_listing')}
+                >
                   <Button
                     color="#4F46E5"
                     fontWeight={600}
@@ -135,7 +141,10 @@ export const DesktopNavbar = () => {
                 </NextLink>
               )}
               {status === 'authenticated' && !userInfo?.currentSponsorId && (
-                <NextLink href="/new/sponsor/">
+                <NextLink
+                  href="/new/sponsor/"
+                  onClick={() => posthog.capture('clicked_nav_get_started')}
+                >
                   <Button
                     color="#4F46E5"
                     fontWeight={600}
@@ -153,12 +162,18 @@ export const DesktopNavbar = () => {
           {status === 'unauthenticated' && !session && (
             <HStack gap={2}>
               <HStack gap={0}>
-                <NextLink href="/new/sponsor/">
+                <NextLink
+                  href="/new/sponsor/"
+                  onClick={() => posthog.capture('clicked_nav_login')}
+                >
                   <Button fontSize="xs" size="sm" variant={'ghost'}>
                     Login
                   </Button>
                 </NextLink>
-                <NextLink href="/new/sponsor/">
+                <NextLink
+                  href="/new/sponsor/"
+                  onClick={() => posthog.capture('clicked_nav_get_started')}
+                >
                   <Button
                     color="#4F46E5"
                     fontWeight={600}

@@ -1,6 +1,7 @@
 import { Button, Text, VStack } from '@chakra-ui/react';
 import NextLink from 'next/link';
 import { useSession } from 'next-auth/react';
+import { usePostHog } from 'posthog-js/react';
 
 import { userStore } from '@/store/user';
 
@@ -10,6 +11,8 @@ export function Footer() {
   const { data: session } = useSession();
 
   const { userInfo } = userStore();
+
+  const posthog = usePostHog();
 
   function getStartedWhere(authenticated: boolean, isSponsor: boolean) {
     if (!authenticated) return '/new/sponsor';
@@ -38,7 +41,10 @@ export function Footer() {
       >
         Where Solana teams come to get sh*t done
       </Text>
-      <NextLink href={getStartedWhere(!!session, !!userInfo?.currentSponsorId)}>
+      <NextLink
+        href={getStartedWhere(!!session, !!userInfo?.currentSponsorId)}
+        onClick={() => posthog.capture('clicked_footer_get_started')}
+      >
         <Button
           w="12.5rem"
           h="3.125rem"

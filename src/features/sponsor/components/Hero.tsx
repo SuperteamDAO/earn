@@ -1,6 +1,7 @@
 import { Box, Button, Flex, HStack, Text, VStack } from '@chakra-ui/react';
 import Link from 'next/link';
 import { useSession } from 'next-auth/react';
+import { usePostHog } from 'posthog-js/react';
 
 import Bonk from '@/public/assets/landingsponsor/sponsors/bonk.png';
 import De from '@/public/assets/landingsponsor/sponsors/de.png';
@@ -23,6 +24,8 @@ export function Hero() {
   const { data: session } = useSession();
 
   const { userInfo } = userStore();
+
+  const posthog = usePostHog();
 
   function getStartedWhere(authenticated: boolean, isSponsor: boolean) {
     if (!authenticated) return '/new/sponsor';
@@ -78,6 +81,9 @@ export function Hero() {
           <Flex justify="center" gap="2rem" w="100%">
             <Link
               href={getStartedWhere(!!session, !!userInfo?.currentSponsorId)}
+              onClick={() => {
+                posthog?.capture('clicked_hero_get_started');
+              }}
             >
               <Button
                 w="12.5rem"
