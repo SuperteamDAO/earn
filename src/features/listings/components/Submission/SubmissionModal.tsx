@@ -25,7 +25,8 @@ import { useForm } from 'react-hook-form';
 
 import { AutoResizeTextarea } from '@/components/shared/autosize-textarea';
 import { tokenList } from '@/constants';
-import type { Bounty } from '@/features/listings';
+import { randomSubmissionCommentGenerator } from '@/features/comments';
+import { type Bounty } from '@/features/listings';
 import { userStore } from '@/store/user';
 
 import { QuestionHandler } from './QuestionHandler';
@@ -87,7 +88,6 @@ export const SubmissionModal = ({
   const { userInfo, setUserInfo } = userStore();
 
   useEffect(() => {
-    console.log('user submissions ', userInfo?.Submission);
     const fetchData = async () => {
       if (editMode && id) {
         try {
@@ -176,7 +176,7 @@ export const SubmissionModal = ({
         ? '/api/submission/update/'
         : '/api/submission/create/';
 
-      await axios.post(submissionEndpoint, {
+      const response = await axios.post(submissionEndpoint, {
         listingId: id,
         link: applicationLink || '',
         tweet: tweetLink || '',
@@ -186,6 +186,16 @@ export const SubmissionModal = ({
           ? eligibilityAnswers
           : null,
       });
+
+      if (!editMode) {
+        await axios.post(`/api/comment/create`, {
+          message: randomSubmissionCommentGenerator(type),
+          listingId: id,
+          submissionId: response?.data?.id,
+          type: 'SUBMISSION',
+        });
+        window.dispatchEvent(new Event('update-comments'));
+      }
 
       const latestSubmissionNumber = (userInfo?.Submission?.length ?? 0) + 1;
       if (!editMode && latestSubmissionNumber % 3 === 0) showEasterEgg();
@@ -234,15 +244,20 @@ export const SubmissionModal = ({
         <>
           Share your hackathon submission here! Remember:
           <Text>
-            1. To be eligible for different tracks, you need to submit to each
+            1. In the “Link to your Submission” field, submit your hackathon
+            project’s most useful link (could be a loom video, GitHub link,
+            website, etc)
+          </Text>
+          <Text>
+            2. To be eligible for different tracks, you need to submit to each
             track separately
           </Text>
           <Text>
-            2. There&apos;s no restriction on the number of tracks you can
+            3. There&apos;s no restriction on the number of tracks you can
             submit to
           </Text>
           <Text>
-            3. You can mark the Project Website, Project Twitter, and
+            4. You can mark the Project Website, Project Twitter, and
             Presentation Link fields as &quot;NA&quot; in case you do not have
             these ready at the time of submission.
           </Text>

@@ -1,19 +1,37 @@
 import axios from 'axios';
 
-export async function uploadToCloudinary(image: any) {
-  const formData = new FormData();
+function fileToBase64(file: File): Promise<string> {
+  return new Promise((resolve, reject) => {
+    const reader = new FileReader();
+    reader.readAsDataURL(file);
+    reader.onload = () => {
+      if (reader.result !== null) {
+        resolve(reader.result as string);
+      } else {
+        reject(new Error('FileReader result is null'));
+      }
+    };
+    reader.onerror = (error) => reject(error);
+  });
+}
 
-  formData.append('file', image);
-  formData.append(
-    'upload_preset',
-    process.env.NEXT_PUBLIC_CLOUDINARY as string,
-  );
-  formData.append('quality', 'auto:good');
-  formData.append('crop', 'limit');
+export async function uploadToCloudinary(
+  file: any,
+  folder: 'earn-pfp' | 'earn-sponsor' | 'listing-description',
+  type = 'pfp',
+) {
+  try {
+    const base64Image = await fileToBase64(file);
+    const base64Content = base64Image.split(',')[1];
 
-  const post = await axios.post(
-    `https://api.cloudinary.com/v1_1/dgvnuwspr/image/upload`,
-    formData,
-  );
-  return post.data.secure_url as string;
+    const response = await axios.post('/api/uploadImage', {
+      imageBase64: base64Content,
+      type,
+      folder,
+    });
+
+    return response.data.url;
+  } catch (error) {
+    console.error('Error uploading the image:', error);
+  }
 }

@@ -14,7 +14,6 @@ import {
   useToast,
 } from '@chakra-ui/react';
 import axios from 'axios';
-import { MediaPicker } from 'degen';
 import type { GetServerSideProps } from 'next';
 import { useRouter } from 'next/router';
 import React, { useEffect, useRef, useState } from 'react';
@@ -27,6 +26,7 @@ import { InputField } from '@/components/Form/InputField';
 import { SelectBox } from '@/components/Form/SelectBox';
 import { SocialInput } from '@/components/Form/SocialInput';
 import { SkillSelect } from '@/components/misc/SkillSelect';
+import { ImagePicker } from '@/components/shared/ImagePicker';
 import { socials } from '@/components/Talent/YourLinks';
 import {
   CommunityList,
@@ -42,8 +42,8 @@ import { SkillList, type SubSkillsType } from '@/interface/skills';
 import { Default } from '@/layouts/Default';
 import { Meta } from '@/layouts/Meta';
 import { userStore } from '@/store/user';
-import { isUsernameAvailable } from '@/utils/isUsernameAvailable';
 import { uploadToCloudinary } from '@/utils/upload';
+import { useUsernameValidation } from '@/utils/useUsernameValidation';
 
 type FormData = {
   username: string;
@@ -119,11 +119,11 @@ export default function EditProfilePage({ slug }: { slug: string }) {
   const { userInfo, setUserInfo } = userStore();
   const { register, handleSubmit, setValue, watch } = useForm<FormData>();
 
-  const [userNameValid, setUserNameValid] = useState(true);
   const [discordError, setDiscordError] = useState(false);
   const [socialError, setSocialError] = useState(false);
   const [isAnySocialUrlInvalid, setAnySocialUrlInvalid] = useState(false);
   const [uploading, setUploading] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
   const [photoUrl, setPhotoUrl] = useState<string | null>(null);
   const [isPhotoLoading, setIsPhotoLoading] = useState(true);
 
@@ -162,6 +162,9 @@ export default function EditProfilePage({ slug }: { slug: string }) {
 
     setAnySocialUrlInvalid(!allUrlsValid);
   };
+
+  const { setUsername, isInvalid, validationErrorMessage } =
+    useUsernameValidation();
 
   useEffect(() => {
     if (userInfo) {
@@ -239,24 +242,11 @@ export default function EditProfilePage({ slug }: { slug: string }) {
   }, [userInfo?.id]);
 
   const onSubmit = async (data: FormData) => {
+    if (isInvalid) {
+      return;
+    }
+    setIsLoading(true);
     try {
-      if (data.username !== userInfo?.username) {
-        const avl = await isUsernameAvailable(data.username);
-        if (!avl) {
-          setUserNameValid(false);
-          toast({
-            title: 'Username Error.',
-            description: 'This username is not available.',
-            status: 'error',
-            duration: 5000,
-            isClosable: true,
-            variant: 'subtle',
-          });
-          return;
-        }
-      }
-      setUserNameValid(true);
-
       if (!data.discord) {
         setDiscordError(true);
         toast({
@@ -358,6 +348,8 @@ export default function EditProfilePage({ slug }: { slug: string }) {
         pows: pow,
       });
 
+      setIsLoading(false);
+
       toast({
         title: 'Profile updated.',
         description: 'Your profile has been updated successfully!',
@@ -427,11 +419,11 @@ export default function EditProfilePage({ slug }: { slug: string }) {
                   {isPhotoLoading ? (
                     <></>
                   ) : photoUrl ? (
-                    <MediaPicker
+                    <ImagePicker
                       defaultValue={{ url: photoUrl, type: 'image' }}
                       onChange={async (e) => {
                         setUploading(true);
-                        const a = await uploadToCloudinary(e);
+                        const a = await uploadToCloudinary(e, 'earn-pfp');
                         setValue('photo', a);
                         setUploading(false);
                       }}
@@ -439,14 +431,12 @@ export default function EditProfilePage({ slug }: { slug: string }) {
                         setValue('photo', '');
                         setUploading(false);
                       }}
-                      compact
-                      label="Choose or drag and drop media"
                     />
                   ) : (
-                    <MediaPicker
+                    <ImagePicker
                       onChange={async (e) => {
                         setUploading(true);
-                        const a = await uploadToCloudinary(e);
+                        const a = await uploadToCloudinary(e, 'earn-pfp');
                         setValue('photo', a);
                         setUploading(false);
                       }}
@@ -454,8 +444,6 @@ export default function EditProfilePage({ slug }: { slug: string }) {
                         setValue('photo', '');
                         setUploading(false);
                       }}
-                      compact
-                      label="Choose or drag and drop media"
                     />
                   )}
                 </Box>
@@ -464,10 +452,10 @@ export default function EditProfilePage({ slug }: { slug: string }) {
                   placeholder="Username"
                   name="username"
                   register={register}
-                  isInvalid={!userNameValid}
-                  onChange={() => setUserNameValid(true)}
-                  validationErrorMessage="Username is unavailable! Please try another one."
                   isRequired
+                  onChange={(e) => setUsername(e.target.value)}
+                  isInvalid={isInvalid}
+                  validationErrorMessage={validationErrorMessage}
                 />
 
                 <InputField
@@ -752,7 +740,11 @@ export default function EditProfilePage({ slug }: { slug: string }) {
                 </Checkbox>
                 <br />
 
-                <Button mb={12} isLoading={uploading} type="submit">
+                <Button
+                  mb={12}
+                  isLoading={uploading || isLoading}
+                  type="submit"
+                >
                   Update Profile
                 </Button>
               </FormControl>

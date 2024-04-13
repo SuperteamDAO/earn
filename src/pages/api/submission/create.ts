@@ -36,7 +36,7 @@ async function submission(req: NextApiRequestWithUser, res: NextApiResponse) {
     await sendEmailNotification({
       type: 'submissionSponsor',
       id: listingId,
-      userId: userId as string,
+      userId: result?.listing?.pocId,
     });
 
     if (process.env.NEXT_PUBLIC_VERCEL_ENV === 'production') {

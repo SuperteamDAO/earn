@@ -216,7 +216,7 @@ export default function Renaissance() {
                 fontWeight={600}
               >
                 <Countdown
-                  date={new Date('2024-04-09T07:59:59Z')}
+                  date={new Date('2024-04-10T11:59:59Z')}
                   renderer={CountDownRenderer}
                   zeroPadDays={1}
                 />

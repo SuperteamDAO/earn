@@ -11,7 +11,6 @@ import {
   VStack,
 } from '@chakra-ui/react';
 import axios from 'axios';
-import { MediaPicker } from 'degen';
 import { useRouter } from 'next/router';
 import { useSession } from 'next-auth/react';
 import { useEffect, useState } from 'react';
@@ -19,6 +18,7 @@ import { useForm } from 'react-hook-form';
 import Select from 'react-select';
 import makeAnimated from 'react-select/animated';
 
+import { ImagePicker } from '@/components/shared/ImagePicker';
 import { IndustryList } from '@/constants';
 import { SignIn } from '@/features/auth';
 import type { SponsorType } from '@/interface/sponsor';
@@ -49,7 +49,7 @@ const CreateSponsor = () => {
 
   useEffect(() => {
     if (userInfo?.currentSponsorId && session?.user?.role !== 'GOD') {
-      router.push('/dashboard/listings?open=1');
+      router.push('/dashboard/listings');
     }
   }, [userInfo?.currentSponsorId, router]);
 
@@ -65,7 +65,7 @@ const CreateSponsor = () => {
         ...sponsor,
       });
       await axios.post(`/api/email/manual/welcomeSponsor`);
-      router.push('/dashboard/listings?open=1');
+      router.push('/dashboard/listings');
     } catch (e: any) {
       if (e?.response?.data?.error?.code === 'P2002') {
         setErrorMessage('Sorry! Sponsor name or username already exists.');
@@ -260,32 +260,32 @@ const CreateSponsor = () => {
                   </FormErrorMessage>
                 </FormControl>
               </HStack>
-              <VStack align={'start'} gap={2} my={3}>
-                <Heading
-                  color={'brand.slate.500'}
-                  fontSize={'15px'}
-                  fontWeight={600}
-                >
-                  Company Logo{' '}
-                  <span
-                    style={{
-                      color: 'red',
-                    }}
+              {process.env.NODE_ENV === 'production' && (
+                <VStack align={'start'} gap={2} my={3}>
+                  <Heading
+                    color={'brand.slate.500'}
+                    fontSize={'15px'}
+                    fontWeight={600}
                   >
-                    *
-                  </span>
-                </Heading>
-                <HStack gap={5}>
-                  <MediaPicker
-                    onChange={async (e) => {
-                      const a = await uploadToCloudinary(e);
-                      setImageUrl(a);
-                    }}
-                    compact
-                    label="Choose or Drag & Drop Media"
-                  />
-                </HStack>
-              </VStack>
+                    Company Logo{' '}
+                    <span
+                      style={{
+                        color: 'red',
+                      }}
+                    >
+                      *
+                    </span>
+                  </Heading>
+                  <HStack gap={5}>
+                    <ImagePicker
+                      onChange={async (e) => {
+                        const a = await uploadToCloudinary(e, 'earn-sponsor');
+                        setImageUrl(a);
+                      }}
+                    />
+                  </HStack>
+                </VStack>
+              )}
 
               <HStack justify={'space-between'} w={'full'} mt={6}>
                 <FormControl w={'full'} isRequired>
@@ -366,6 +366,9 @@ const CreateSponsor = () => {
                 )}
                 <Button
                   w="full"
+                  isDisabled={
+                    process.env.NODE_ENV === 'production' && imageUrl === ''
+                  }
                   isLoading={!!isLoading}
                   loadingText="Creating..."
                   size="lg"

@@ -11,7 +11,6 @@ import {
   VStack,
 } from '@chakra-ui/react';
 import axios from 'axios';
-import { MediaPicker } from 'degen';
 import { useRouter } from 'next/router';
 import { useSession } from 'next-auth/react';
 import { useEffect, useState } from 'react';
@@ -19,6 +18,7 @@ import { useForm } from 'react-hook-form';
 import Select from 'react-select';
 import makeAnimated from 'react-select/animated';
 
+import { ImagePicker } from '@/components/shared/ImagePicker';
 import { IndustryList } from '@/constants';
 import type { SponsorType } from '@/interface/sponsor';
 import { Default } from '@/layouts/Default';
@@ -49,6 +49,8 @@ const UpdateSponsor = () => {
     },
   });
   const [imageUrl, setImageUrl] = useState<string | null>(null);
+  const [isImageUploading, setIsImageUploading] = useState(false);
+
   const [isPhotoLoading, setIsPhotoLoading] = useState(true);
   const [industries, setIndustries] = useState<string>();
   const [isLoading, setIsLoading] = useState<boolean>(false);
@@ -286,13 +288,13 @@ const UpdateSponsor = () => {
                 {isPhotoLoading ? (
                   <></>
                 ) : imageUrl ? (
-                  <MediaPicker
+                  <ImagePicker
                     onChange={async (e) => {
-                      const a = await uploadToCloudinary(e);
+                      setIsImageUploading(true);
+                      const a = await uploadToCloudinary(e, 'earn-sponsor');
                       setImageUrl(a);
+                      setIsImageUploading(false);
                     }}
-                    compact
-                    label="Choose or Drag & Drop Media"
                     defaultValue={{
                       url: imageUrl,
                       type: 'image',
@@ -302,16 +304,16 @@ const UpdateSponsor = () => {
                     }}
                   />
                 ) : (
-                  <MediaPicker
+                  <ImagePicker
                     onChange={async (e) => {
-                      const a = await uploadToCloudinary(e);
+                      setIsImageUploading(true);
+                      const a = await uploadToCloudinary(e, 'earn-sponsor');
                       setImageUrl(a);
+                      setIsImageUploading(false);
                     }}
                     onReset={() => {
                       setImageUrl('');
                     }}
-                    compact
-                    label="Choose or Drag & Drop Media"
                   />
                 )}
               </HStack>
@@ -403,8 +405,7 @@ const UpdateSponsor = () => {
               <Button
                 w="full"
                 isDisabled={imageUrl === ''}
-                isLoading={!!isLoading}
-                loadingText="Updating..."
+                isLoading={!!isLoading || isImageUploading}
                 size="lg"
                 type="submit"
                 variant="solid"

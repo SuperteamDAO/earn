@@ -1,10 +1,11 @@
-import { Box, Flex } from '@chakra-ui/react';
+import { Box, Flex, useDisclosure } from '@chakra-ui/react';
 import axios from 'axios';
 import dayjs from 'dayjs';
 import type { NextPage } from 'next';
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 
 import { FeatureModal } from '@/components/modals/FeatureModal';
+import { InstallPWAModal } from '@/components/modals/InstallPWAModal';
 import { EmptySection } from '@/components/shared/EmptySection';
 import { Loading } from '@/components/shared/Loading';
 import { type Grant, GrantsCard } from '@/features/grants';
@@ -14,13 +15,16 @@ import { userStore } from '@/store/user';
 
 const HomePage: NextPage = () => {
   const [isListingsLoading, setIsListingsLoading] = useState(true);
+  const [mobileOs, setMobileOs] = useState<'Android' | 'iOS' | 'Other'>(
+    'Other',
+  );
   const [bounties, setBounties] = useState<{ bounties: Bounty[] }>({
     bounties: [],
   });
   const [grants, setGrants] = useState<{ grants: Grant[] }>({
     grants: [],
   });
-
+  const installPrompt = useRef<BeforeInstallPromptEvent | null>();
   const date = dayjs().subtract(1, 'month').toISOString();
 
   const getListings = async () => {
@@ -51,7 +55,18 @@ const HomePage: NextPage = () => {
     }
   };
 
+  interface BeforeInstallPromptEvent extends Event {
+    prompt: () => Promise<{ outcome: 'accepted' | 'dismissed' }>;
+  }
+
   useEffect(() => {
+    window.addEventListener('beforeinstallprompt', ((
+      e: BeforeInstallPromptEvent,
+    ) => {
+      e.preventDefault();
+      installPrompt.current = e;
+    }) as EventListener);
+
     if (!isListingsLoading) return;
     getListings();
   }, []);
@@ -59,6 +74,11 @@ const HomePage: NextPage = () => {
   const { userInfo } = userStore();
 
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const {
+    isOpen: isPWAModalOpen,
+    onClose: onPWAModalClose,
+    onOpen: onPWAModalOpen,
+  } = useDisclosure();
 
   const handleClose = () => {
     setIsModalOpen(false);
@@ -80,9 +100,58 @@ const HomePage: NextPage = () => {
     updateFeatureModalShown();
   }, [userInfo]);
 
+  const getMobileOS = () => {
+    const ua = navigator.userAgent;
+    if (/android/i.test(ua)) {
+      return 'Android';
+    } else if (/iPad|iPhone|iPod/.test(ua)) {
+      return 'iOS';
+    }
+    return 'Other';
+  };
+
+  useEffect(() => {
+    const showInstallAppModal = () => {
+      const modalShown = localStorage.getItem('installAppModalShown');
+      const navigator: any = window.navigator;
+
+      const isPWA =
+        window.matchMedia('(display-mode: standalone)').matches ||
+        document.referrer.includes('android-app://') ||
+        navigator.standalone;
+      const isInstalled = localStorage.getItem('isAppInstalled');
+      const os = getMobileOS();
+      setMobileOs(os);
+      if (os !== 'Other' && !isPWA && !modalShown && !isInstalled) {
+        localStorage.setItem('installAppModalShown', 'true');
+        onPWAModalOpen();
+      }
+    };
+
+    setTimeout(() => {
+      showInstallAppModal();
+    }, 10000);
+  }, [userInfo]);
+
+  const installApp = async () => {
+    if (installPrompt.current) {
+      const status = await installPrompt.current?.prompt();
+      if (status.outcome === 'accepted') {
+        localStorage.setItem('isAppInstalled', 'true');
+      }
+    }
+    onPWAModalClose();
+  };
+
   return (
     <Home type="home">
       <FeatureModal isOpen={isModalOpen} onClose={handleClose} />
+      <InstallPWAModal
+        isOpen={isPWAModalOpen}
+        onClose={onPWAModalClose}
+        installApp={installApp}
+        mobileOs={mobileOs}
+      />
       <Box w={'100%'}>
         <ListingTabs
           bounties={bounties.bounties}

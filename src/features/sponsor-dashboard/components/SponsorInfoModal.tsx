@@ -12,14 +12,13 @@ import {
   VStack,
 } from '@chakra-ui/react';
 import axios from 'axios';
-import { MediaPicker } from 'degen';
-import debounce from 'lodash.debounce';
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import { useForm } from 'react-hook-form';
 
+import { ImagePicker } from '@/components/shared/ImagePicker';
 import { userStore } from '@/store/user';
-import { isUsernameAvailable } from '@/utils/isUsernameAvailable';
 import { uploadToCloudinary } from '@/utils/upload';
+import { useUsernameValidation } from '@/utils/useUsernameValidation';
 
 export const SponsorInfoModal = ({
   isOpen,
@@ -29,7 +28,7 @@ export const SponsorInfoModal = ({
   onClose: () => void;
 }) => {
   const { userInfo, setUserInfo } = userStore();
-  const { register, handleSubmit, watch } = useForm({
+  const { register, handleSubmit } = useForm({
     defaultValues: {
       firstName: userInfo?.firstName,
       lastName: userInfo?.lastName,
@@ -39,31 +38,19 @@ export const SponsorInfoModal = ({
   });
   const [imageUrl, setImageUrl] = useState<string>('');
   const [uploading, setUploading] = useState<boolean>(false);
-  const [userNameValid, setUserNameValid] = useState(true);
   const [isGooglePhoto, setIsGooglePhoto] = useState<boolean>(
     userInfo?.photo?.includes('googleusercontent.com') || false,
   );
   const [isSubmitting, setIsSubmitting] = useState(false);
 
-  const checkUsernameAvailability = debounce(async (username) => {
-    if (username && username !== userInfo?.username) {
-      const isAvailable = await isUsernameAvailable(username);
-      setUserNameValid(isAvailable);
-    }
-  }, 500);
-
-  const username = watch('username');
-
-  useEffect(() => {
-    checkUsernameAvailability(username);
-    return () => checkUsernameAvailability.cancel();
-  }, [username]);
+  const { setUsername, isInvalid, validationErrorMessage, username } =
+    useUsernameValidation();
 
   const onSubmit = async (data: any) => {
-    if (!userNameValid) {
+    setIsSubmitting(true);
+    if (isInvalid) {
       return;
     }
-    setIsSubmitting(true);
     const finalData = {
       ...data,
       photo: isGooglePhoto ? userInfo?.photo : imageUrl,
@@ -101,11 +88,13 @@ export const SponsorInfoModal = ({
                 id="username"
                 placeholder="Username"
                 {...register('username', { required: true })}
-                isInvalid={!userNameValid}
+                isInvalid={isInvalid}
+                onChange={(e) => setUsername(e.target.value)}
+                value={username}
               />
-              {!userNameValid && (
-                <Text color={'red'}>
-                  Username is unavailable! Please try another one.
+              {isInvalid && (
+                <Text color={'red'} fontSize={'sm'}>
+                  {validationErrorMessage}
                 </Text>
               )}
             </Box>
@@ -153,11 +142,11 @@ export const SponsorInfoModal = ({
                     Profile Picture
                   </FormLabel>
                   <Box w="full" mt={1}>
-                    <MediaPicker
+                    <ImagePicker
                       defaultValue={{ url: userInfo.photo, type: 'image' }}
                       onChange={async (e) => {
                         setUploading(true);
-                        const a = await uploadToCloudinary(e);
+                        const a = await uploadToCloudinary(e, 'earn-pfp');
                         setIsGooglePhoto(false);
                         setImageUrl(a);
                         setUploading(false);
@@ -166,8 +155,6 @@ export const SponsorInfoModal = ({
                         setImageUrl('');
                         setUploading(false);
                       }}
-                      compact
-                      label="Choose or drag and drop media"
                     />
                   </Box>
                 </>
@@ -181,10 +168,10 @@ export const SponsorInfoModal = ({
                   >
                     Profile Picture
                   </FormLabel>
-                  <MediaPicker
+                  <ImagePicker
                     onChange={async (e) => {
                       setUploading(true);
-                      const a = await uploadToCloudinary(e);
+                      const a = await uploadToCloudinary(e, 'earn-pfp');
                       setImageUrl(a);
                       setUploading(false);
                     }}
@@ -192,8 +179,6 @@ export const SponsorInfoModal = ({
                       setImageUrl('');
                       setUploading(false);
                     }}
-                    compact
-                    label="Choose or drag and drop media"
                   />
                 </>
               )}

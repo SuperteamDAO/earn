@@ -1,5 +1,7 @@
 import { Box, useDisclosure } from '@chakra-ui/react';
 import { useRouter } from 'next/router';
+import { useSession } from 'next-auth/react';
+import { useEffect } from 'react';
 
 import { Login } from '@/features/auth';
 
@@ -10,6 +12,7 @@ import { MobileNavbar } from './MobileNavbar';
 
 export const Header = () => {
   const router = useRouter();
+  const { data: session, status } = useSession();
 
   const isRootRoute = router.pathname === '/';
   const {
@@ -17,6 +20,17 @@ export const Header = () => {
     onOpen: onLoginOpen,
     onClose: onLoginClose,
   } = useDisclosure();
+
+  useEffect(() => {
+    const checkHashAndOpenModal = () => {
+      const hashHasEmail = window.location.hash === '#emailPreferences';
+      if (hashHasEmail && status === 'unauthenticated' && !session) {
+        onLoginOpen();
+      }
+    };
+
+    checkHashAndOpenModal();
+  }, [isLoginOpen, onLoginOpen, status]);
 
   return (
     <>
