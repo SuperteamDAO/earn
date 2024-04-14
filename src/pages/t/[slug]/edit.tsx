@@ -14,7 +14,6 @@ import {
   useToast,
 } from '@chakra-ui/react';
 import axios from 'axios';
-import { MediaPicker } from 'degen';
 import type { GetServerSideProps } from 'next';
 import { useRouter } from 'next/router';
 import React, { useEffect, useRef, useState } from 'react';
@@ -27,6 +26,7 @@ import { InputField } from '@/components/Form/InputField';
 import { SelectBox } from '@/components/Form/SelectBox';
 import { SocialInput } from '@/components/Form/SocialInput';
 import { SkillSelect } from '@/components/misc/SkillSelect';
+import { ImagePicker } from '@/components/shared/ImagePicker';
 import { socials } from '@/components/Talent/YourLinks';
 import {
   CommunityList,
@@ -167,9 +167,6 @@ export default function EditProfilePage({ slug }: { slug: string }) {
     useUsernameValidation();
 
   useEffect(() => {
-    if (isInvalid) {
-      return;
-    }
     if (userInfo) {
       editableFields.forEach((field) => {
         setValue(field, userInfo[field]);
@@ -245,6 +242,9 @@ export default function EditProfilePage({ slug }: { slug: string }) {
   }, [userInfo?.id]);
 
   const onSubmit = async (data: FormData) => {
+    if (isInvalid) {
+      return;
+    }
     setIsLoading(true);
     try {
       if (!data.discord) {
@@ -419,8 +419,7 @@ export default function EditProfilePage({ slug }: { slug: string }) {
                   {isPhotoLoading ? (
                     <></>
                   ) : photoUrl ? (
-                    <MediaPicker
-                      accept="image/jpeg, image/png, image/webp"
+                    <ImagePicker
                       defaultValue={{ url: photoUrl, type: 'image' }}
                       onChange={async (e) => {
                         setUploading(true);
@@ -432,12 +431,9 @@ export default function EditProfilePage({ slug }: { slug: string }) {
                         setValue('photo', '');
                         setUploading(false);
                       }}
-                      compact
-                      label="Choose or drag and drop media"
                     />
                   ) : (
-                    <MediaPicker
-                      accept="image/jpeg, image/png, image/webp"
+                    <ImagePicker
                       onChange={async (e) => {
                         setUploading(true);
                         const a = await uploadToCloudinary(e, 'earn-pfp');
@@ -448,8 +444,6 @@ export default function EditProfilePage({ slug }: { slug: string }) {
                         setValue('photo', '');
                         setUploading(false);
                       }}
-                      compact
-                      label="Choose or drag and drop media"
                     />
                   )}
                 </Box>

@@ -864,3 +864,5 @@ export const workType = [
   'Fulltime',
   'Internship',
 ];
+
+export const MAX_COMMENT_SUGGESTIONS = 5;

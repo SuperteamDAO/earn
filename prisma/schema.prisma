@@ -125,16 +125,21 @@ model BountiesTemplates {
 }
 
 model Comment {
-  id          String      @id @default(uuid())
-  message     String      @db.VarChar(1000)
-  authorId    String
-  listingType ListingType @default(BOUNTY)
-  listingId   String
-  isActive    Boolean     @default(true)
-  isArchived  Boolean     @default(false)
-  createdAt   DateTime    @default(now())
-  updatedAt   DateTime    @updatedAt
-  author      User        @relation(fields: [authorId], references: [id])
+  id           String      @id @default(uuid())
+  message      String      @db.VarChar(1000)
+  authorId     String
+  listingType  ListingType @default(BOUNTY)
+  listingId    String
+  isActive     Boolean     @default(true)
+  isArchived   Boolean     @default(false)
+  createdAt    DateTime    @default(now())
+  updatedAt    DateTime    @updatedAt
+  replyToId    String?
+  submissionId String?
+  type         CommentType @default(NORMAL)
+  author       User        @relation(fields: [authorId], references: [id])
+  repliedTo    Comment?    @relation("CommentReplies", fields: [replyToId], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  replies      Comment[]   @relation("CommentReplies")
 
   @@index([id, listingId])
   @@index([authorId])
@@ -462,6 +467,13 @@ enum BountyType {
 enum ListingType {
   BOUNTY
   SUBMISSION
+}
+
+enum CommentType {
+  NORMAL
+  SUBMISSION
+  DEADLINE_EXTENSION
+  WINNER_ANNOUNCEMENT
 }
 
 enum JobType {

@@ -6,9 +6,9 @@ import Head from 'next/head';
 import { useEffect, useState } from 'react';
 
 import { ErrorSection } from '@/components/shared/ErrorSection';
+import { Comments } from '@/features/comments';
 import {
   type Bounty,
-  Comments,
   DescriptionUI,
   getBountyTypeLabel,
   ListingHeader,
@@ -16,6 +16,7 @@ import {
   RightSideBar,
 } from '@/features/listings';
 import { bountySnackbarAtom } from '@/features/navbar';
+import { type User } from '@/interface/user';
 import { Default } from '@/layouts/Default';
 import { getURL } from '@/utils/validUrl';
 
@@ -126,13 +127,22 @@ function BountyDetails({ bounty: initialBounty }: BountyDetailsProps) {
                 maxW={'7xl'}
                 mx={'auto'}
                 mb={10}
+                px={3}
               >
                 <VStack gap={8} w={'full'} mt={{ base: 0, md: 10 }}>
                   <DescriptionUI
                     skills={bounty?.skills?.map((e) => e.skills) ?? []}
                     description={bounty?.description}
                   />
-                  <Comments refId={bounty?.id ?? ''} refType="BOUNTY" />
+                  <Comments
+                    isAnnounced={bounty?.isWinnersAnnounced ?? false}
+                    listingSlug={bounty?.slug ?? ''}
+                    listingType={bounty?.type ?? ''}
+                    poc={bounty?.poc as User}
+                    sponsorId={bounty?.sponsorId}
+                    refId={bounty?.id ?? ''}
+                    refType="BOUNTY"
+                  />
                 </VStack>
                 <RightSideBar listing={bounty} />
               </HStack>

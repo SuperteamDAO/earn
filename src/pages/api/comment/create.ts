@@ -8,13 +8,30 @@ async function comment(req: NextApiRequestWithUser, res: NextApiResponse) {
   try {
     const userId = req.userId;
 
-    const { message, listingId, listingType } = req.body;
+    const {
+      pocId,
+      message,
+      listingId,
+      listingType,
+      replyToId,
+      submissionId,
+      replyToUserId,
+    } = req.body;
+    let { type } = req.body;
+    if (!type) type = 'NORMAL';
 
     const result = await prisma.comment.create({
       data: {
         authorId: userId as string,
-        message,
-        listingId,
+        message: message as string,
+        replyToId: replyToId as string | undefined,
+        listingId: listingId as string,
+        type: type as
+          | 'NORMAL'
+          | 'SUBMISSION'
+          | 'DEADLINE_EXTENSION'
+          | 'WINNER_ANNOUNCEMENT',
+        submissionId: submissionId as string | undefined,
       },
       include: {
         author: {
@@ -23,25 +40,89 @@ async function comment(req: NextApiRequestWithUser, res: NextApiResponse) {
             lastName: true,
             photo: true,
             username: true,
+            currentSponsorId: true,
+          },
+        },
+        replies: {
+          include: {
+            author: {
+              select: {
+                firstName: true,
+                lastName: true,
+                photo: true,
+                username: true,
+                currentSponsorId: true,
+              },
+            },
           },
         },
       },
     });
 
-    if (listingType === 'BOUNTY') {
+    const taggedUsernames = (message as string)
+      .split(' ')
+      .filter((tag) => tag.startsWith('@'))
+      .map((tag) => tag.substring(1));
+    const taggedUsers = await prisma.user.findMany({
+      select: {
+        id: true,
+      },
+      where: {
+        AND: [
+          {
+            username: {
+              in: taggedUsernames,
+            },
+          },
+          {
+            NOT: {
+              id: userId as string,
+            },
+          },
+        ],
+      },
+    });
+    taggedUsers.forEach(async (taggedUser) => {
       await sendEmailNotification({
-        type: 'commentSponsor',
+        type: 'commentTag',
         id: listingId,
-        userId: userId as string,
+        userId: taggedUser.id,
+        otherInfo: {
+          personName: result.author.username,
+        },
+      });
+    });
+
+    if (replyToUserId !== userId) {
+      await sendEmailNotification({
+        type: 'commentReply',
+        id: listingId,
+        userId: replyToUserId as string,
       });
     }
 
-    if (listingType === 'SUBMISSION') {
-      await sendEmailNotification({
-        type: 'commentSubmission',
-        id: listingId,
-        userId: userId as string,
-      });
+    if (
+      userId !== pocId &&
+      !taggedUsers.find((t) => t.id.includes(pocId)) &&
+      !replyToId
+    ) {
+      if (listingType === 'BOUNTY') {
+        await sendEmailNotification({
+          type: 'commentSponsor',
+          id: listingId,
+          userId: pocId as string,
+        });
+      }
+
+      if (listingType === 'SUBMISSION') {
+        await sendEmailNotification({
+          type: 'commentSubmission',
+          id: listingId,
+          otherInfo: {
+            personName: result?.author?.firstName,
+          },
+        });
+      }
     }
 
     return res.status(200).json(result);

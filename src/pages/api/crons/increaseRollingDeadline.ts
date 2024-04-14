@@ -24,7 +24,7 @@ async function handler(_req: NextApiRequest, res: NextApiResponse) {
 
         if (deadline.isBefore(twoDaysFromNow)) {
           const newDeadline = deadline.add(30, 'day');
-          return prisma.bounties.update({
+          const updatedBounty = await prisma.bounties.update({
             where: {
               id: bounty.id,
             },
@@ -32,6 +32,8 @@ async function handler(_req: NextApiRequest, res: NextApiResponse) {
               deadline: newDeadline.toDate(),
             },
           });
+
+          return updatedBounty;
         }
       }
       return Promise.resolve(null);

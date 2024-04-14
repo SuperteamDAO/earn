@@ -38,7 +38,7 @@ async function submission(req: NextApiRequestWithUser, res: NextApiResponse) {
         await sendEmailNotification({
           type: 'submissionLike',
           id: submissionId,
-          userId: userId as string,
+          userId: result?.userId,
         });
       }
     } else {
@@ -51,7 +51,7 @@ async function submission(req: NextApiRequestWithUser, res: NextApiResponse) {
       await sendEmailNotification({
         type: 'submissionLike',
         id: submissionId,
-        userId: userId as string,
+        userId: result?.userId,
       });
     }
 

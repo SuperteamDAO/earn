@@ -10,7 +10,6 @@ import {
   Textarea,
   VStack,
 } from '@chakra-ui/react';
-import { MediaPicker } from 'degen';
 import { type Dispatch, type SetStateAction, useState } from 'react';
 import { useForm } from 'react-hook-form';
 
@@ -19,6 +18,7 @@ import { userStore } from '@/store/user';
 import { uploadToCloudinary } from '@/utils/upload';
 import { useUsernameValidation } from '@/utils/useUsernameValidation';
 
+import { ImagePicker } from '../shared/ImagePicker';
 import type { UserStoreType } from './types';
 
 interface Step1Props {
@@ -148,8 +148,7 @@ export function AboutYou({ setStep, useFormStore }: Step1Props) {
                 >
                   Profile Picture
                 </FormLabel>
-                <MediaPicker
-                  accept="image/jpeg, image/png, image/webp"
+                <ImagePicker
                   defaultValue={{ url: userInfo.photo, type: 'image' }}
                   onChange={async (e) => {
                     setUploading(true);
@@ -162,8 +161,6 @@ export function AboutYou({ setStep, useFormStore }: Step1Props) {
                     setImageUrl('');
                     setUploading(false);
                   }}
-                  compact
-                  label="Choose or drag and drop media"
                 />
               </>
             ) : (
@@ -176,8 +173,7 @@ export function AboutYou({ setStep, useFormStore }: Step1Props) {
                 >
                   Profile Picture
                 </FormLabel>
-                <MediaPicker
-                  accept="image/jpeg, image/png, image/webp"
+                <ImagePicker
                   onChange={async (e) => {
                     setUploading(true);
                     const a = await uploadToCloudinary(e, 'earn-pfp');
@@ -188,8 +184,6 @@ export function AboutYou({ setStep, useFormStore }: Step1Props) {
                     setImageUrl('');
                     setUploading(false);
                   }}
-                  compact
-                  label="Choose or drag and drop media"
                 />
               </>
             )}
