@@ -1,40 +1,28 @@
 import { useDisclosure } from '@chakra-ui/react';
 import { Regions } from '@prisma/client';
 import axios from 'axios';
+import dayjs from 'dayjs';
 import { useAtom } from 'jotai';
 import { useRouter } from 'next/router';
-import { useEffect, useReducer, useState } from 'react';
+import { useEffect, useState } from 'react';
+import { create } from 'zustand';
 
 import { ErrorSection } from '@/components/shared/ErrorSection';
 import { SurveyModal } from '@/components/Survey';
-import { type MultiSelectOptions, tokenList } from '@/constants';
-import {
-  type Bounty,
-  getBountyDraftStatus,
-  type References,
-} from '@/features/listings';
+import { type Bounty, getBountyDraftStatus } from '@/features/listings';
 import { userStore } from '@/store/user';
-import { dayjs } from '@/utils/dayjs';
 
-import type { SuperteamName } from '../types';
-import { mergeSkills, splitSkills } from '../utils';
+import type { ListingStoreType } from '../types';
 import {
-  type BountyBasicType,
-  CreateListingForm,
+  DescriptionBuilder,
   FormLayout,
-  type Ques,
+  ListingBasic,
+  ListingPayments,
+  QuestionBuilder,
   Template,
 } from './ListingBuilder';
 import { ListingSuccessModal } from './ListingSuccessModal';
 import { hackathonSponsorAtom } from './SelectSponsor';
-
-interface Props {
-  bounty?: Bounty;
-  editable?: boolean;
-  type: 'bounty' | 'project' | 'hackathon';
-  isDuplicating?: boolean;
-  prevStep?: number;
-}
 
 const listingDescriptionHeadings = [
   'About the Listing & Scope',
@@ -46,8 +34,53 @@ const listingDescriptionHeadings = [
   .map((heading) => `<h1 key=${heading}>${heading}</h1>`)
   .join('');
 
+const useFormStore = create<ListingStoreType>()((set) => ({
+  form: {
+    id: '',
+    title: '',
+    slug: '',
+    deadline: undefined,
+    templateId: undefined,
+    pocSocials: undefined,
+    applicationType: 'fixed',
+    timeToComplete: undefined,
+    type: undefined,
+    region: Regions.GLOBAL,
+    referredBy: undefined,
+    requirements: '',
+    eligibility: [],
+    references: [],
+    isPrivate: false,
+    skills: [],
+    description: listingDescriptionHeadings,
+    publishedAt: '',
+    rewardAmount: undefined,
+    rewards: undefined,
+    token: 'USDC',
+    compensationType: 'fixed',
+    minRewardAsk: undefined,
+    maxRewardAsk: undefined,
+  },
+  updateState: (data) => {
+    console.log('running updateState', data);
+    set((state) => {
+      console.log('state', state);
+      state.form = { ...state.form, ...data };
+      return { ...state };
+    });
+  },
+}));
+
+interface Props {
+  listing?: Bounty;
+  editable?: boolean;
+  type: 'bounty' | 'project' | 'hackathon';
+  isDuplicating?: boolean;
+  prevStep?: number;
+}
+
 export function CreateListing({
-  bounty,
+  listing,
   editable = false,
   type,
   isDuplicating = false,
@@ -55,190 +88,59 @@ export function CreateListing({
 }: Props) {
   const router = useRouter();
   const { userInfo } = userStore();
-  // Templates - 1
-  // Basic Info - 2
-  // Description - 3
-  // payment form - 4
-  const [steps, setSteps] = useState<number>(
-    !!prevStep ? prevStep : editable || type === 'hackathon' ? 2 : 1,
+
+  const bountyDraftStatus = getBountyDraftStatus(
+    listing?.status,
+    listing?.isPublished,
   );
 
-  const [draftLoading, setDraftLoading] = useState<boolean>(false);
-  const [bountyRequirements, setBountyRequirements] = useState<
-    string | undefined
-  >(editable ? bounty?.requirements : undefined);
-  const [editorData, setEditorData] = useState<string | undefined>(
-    editable ? bounty?.description : listingDescriptionHeadings,
-  );
-  const [regions, setRegions] = useState<Regions>(
-    editable ? bounty?.region || Regions.GLOBAL : Regions.GLOBAL,
-  );
-  const [referredBy, setReferredBy] = useState<SuperteamName | undefined>(
-    editable ? bounty?.referredBy : undefined,
-  );
-  const skillsInfo = editable ? splitSkills(bounty?.skills || []) : undefined;
-  const [mainSkills, setMainSkills] = useState<MultiSelectOptions[]>(
-    editable ? skillsInfo?.skills || [] : [],
-  );
-  const [subSkill, setSubSkill] = useState<MultiSelectOptions[]>(
-    editable ? skillsInfo?.subskills || [] : [],
-  );
-  const [slug, setSlug] = useState<string>('');
-
-  const { isOpen, onOpen } = useDisclosure();
-  const {
-    isOpen: isSurveyOpen,
-    onOpen: onSurveyOpen,
-    onClose: onSurveyClose,
-  } = useDisclosure();
-
-  const [questions, setQuestions] = useState<Ques[]>(
-    editable
-      ? (bounty?.eligibility || [])?.map((e) => ({
-          order: e.order,
-          question: e.question,
-          type: e.type as 'text',
-          delete: true,
-          label: e.question,
-        }))
-      : [],
-  );
-
-  const [references, setReferences] = useState<References[]>(
-    editable
-      ? (bounty?.references || [])?.map((e) => ({
-          order: e.order,
-          link: e.link,
-        }))
-      : [],
-  );
-
-  const [isPrivate, setIsPrivate] = useState<boolean>(
-    editable && bounty?.isPrivate ? bounty?.isPrivate : false,
-  );
-
-  const [hackathonSponsor, setHackathonSponsor] = useAtom(hackathonSponsorAtom);
-
-  useEffect(() => {
-    if (editable && type === 'hackathon' && bounty?.sponsorId) {
-      setHackathonSponsor(bounty?.sponsorId);
-    }
-  }, [editable]);
-
-  // - Bounty
-  const [bountybasic, setBountyBasic] = useState<BountyBasicType | undefined>({
-    title: editable
-      ? (isDuplicating && bounty?.title
-          ? `${bounty.title} (2)`
-          : bounty?.title) || undefined
-      : undefined,
-    slug: editable
-      ? (isDuplicating && bounty?.slug ? `${bounty.slug}-2` : bounty?.slug) ||
-        undefined
-      : undefined,
-    deadline:
-      !isDuplicating && editable && bounty?.deadline
-        ? dayjs(bounty?.deadline).format('YYYY-MM-DDTHH:mm') || undefined
-        : undefined,
-    templateId: editable ? bounty?.templateId || undefined : undefined,
-    pocSocials: editable ? bounty?.pocSocials || undefined : undefined,
-    applicationType: editable ? bounty?.applicationType || 'fixed' : 'fixed',
-    timeToComplete: editable ? bounty?.timeToComplete || undefined : undefined,
-  });
-
-  const initialBountyPayment = {
-    rewardAmount: editable ? bounty?.rewardAmount || 0 : 0,
-    token: editable ? bounty?.token : tokenList[0]?.tokenSymbol,
-    rewards: editable ? bounty?.rewards || undefined : undefined,
-    compensationType:
-      type !== 'project'
-        ? 'fixed'
-        : editable
-          ? bounty?.compensationType || undefined
-          : undefined,
-    minRewardAsk: editable ? bounty?.minRewardAsk || undefined : undefined,
-    maxRewardAsk: editable ? bounty?.maxRewardAsk || undefined : undefined,
-  };
-
-  const bountyPaymentReducer = (state: any, action: any) => {
-    switch (action.type) {
-      case 'UPDATE_TOKEN':
-        return { ...state, token: action.payload };
-      case 'UPDATE_REWARD_AMOUNT':
-        return { ...state, rewardAmount: action.payload };
-      case 'UPDATE_REWARDS':
-        return { ...state, rewards: { ...state.rewards, ...action.payload } };
-      case 'DELETE_PRIZE':
-        const newRewards = { ...state.rewards };
-        delete newRewards[action.payload];
-        return { ...state, rewards: newRewards };
-      case 'UPDATE_COMPENSATION_TYPE':
-        return {
-          ...state,
-          compensationType: action.payload,
-          minRewardAsk: undefined,
-          maxRewardAsk: undefined,
-          rewards: undefined,
-          rewardAmount: undefined,
-        };
-      case 'UPDATE_MIN_ASK':
-        return { ...state, minRewardAsk: action.payload };
-      case 'UPDATE_MAX_ASK':
-        return { ...state, maxRewardAsk: action.payload };
-      default:
-        return state;
-    }
-  };
-
-  const [bountyPayment, bountyPaymentDispatch] = useReducer(
-    bountyPaymentReducer,
-    initialBountyPayment,
-  );
-
-  const [isListingPublishing, setIsListingPublishing] =
-    useState<boolean>(false);
-
-  let basePath = 'bounties';
-  if (type === 'hackathon') {
-    basePath = 'hackathon';
-  }
-
-  const surveyId = '018c674f-7e49-0000-5097-f2affbdddb0d';
+  const newBounty = listing?.id === undefined;
+  const [isDraftLoading, setIsDraftLoading] = useState<boolean>(false);
 
   const createAndPublishListing = async () => {
     setIsListingPublishing(true);
     try {
       const newBounty: Bounty = {
         pocId: userInfo?.id ?? '',
-        skills: mergeSkills({ skills: mainSkills, subskills: subSkill }),
-        ...bountybasic,
-        deadline: bountybasic?.deadline
-          ? new Date(bountybasic?.deadline).toISOString()
+        skills: form?.skills,
+        title: form?.title,
+        slug: form?.slug,
+        deadline: form?.deadline
+          ? new Date(form?.deadline).toISOString()
           : undefined,
-        description: editorData || '',
+        templateId: form?.templateId,
+        pocSocials: form?.pocSocials,
+        applicationType: form?.applicationType,
+        timeToComplete: form?.timeToComplete,
+
+        description: form?.description || '',
         type,
-        pocSocials: bountybasic?.pocSocials,
-        region: regions,
-        referredBy,
-        eligibility: (questions || []).map((q) => ({
+        region: form?.region,
+        referredBy: form?.referredBy,
+        eligibility: (form?.eligibility || []).map((q) => ({
           question: q.question,
           order: q.order,
           type: q.type,
         })),
-        references: (references || []).map((r) => ({
+        references: (form?.references || []).map((r) => ({
           link: r.link,
           order: r.order,
         })),
-        requirements: bountyRequirements,
-        ...bountyPayment,
+        requirements: form?.requirements,
+        rewardAmount: form?.rewardAmount,
+        rewards: form?.rewards,
+        token: form?.token,
+        compensationType: form?.compensationType,
+        minRewardAsk: form?.minRewardAsk,
+        maxRewardAsk: form?.maxRewardAsk,
         isPublished: true,
-        isPrivate: isPrivate,
+        isPrivate: form?.isPrivate,
         publishedAt: new Date().toISOString(),
       };
 
       let api = `/api/${basePath}/create`;
       if (editable && !isDuplicating) {
-        api = `/api/${basePath}/update/${bounty?.id}/`;
+        api = `/api/${basePath}/update/${listing?.id}/`;
       }
       const result = await axios.post(api, {
         ...newBounty,
@@ -256,11 +158,11 @@ export function CreateListing({
   };
 
   const createDraft = async () => {
-    setDraftLoading(true);
+    setIsDraftLoading(true);
 
     let api = `/api/${basePath}/create`;
     if (editable && !isDuplicating) {
-      api = `/api/${basePath}/update/${bounty?.id}/`;
+      api = `/api/${basePath}/update/${listing?.id}/`;
     }
     let draft: Bounty = {
       pocId: userInfo?.id ?? '',
@@ -268,33 +170,42 @@ export function CreateListing({
     draft = {
       ...draft,
       type,
-      skills: mergeSkills({ skills: mainSkills, subskills: subSkill }),
-      ...bountybasic,
-      deadline: bountybasic?.deadline
-        ? new Date(bountybasic?.deadline).toISOString()
+      skills: form?.skills,
+      title: form?.title,
+      slug: form?.slug,
+      deadline: form?.deadline
+        ? new Date(form?.deadline).toISOString()
         : undefined,
-      description: editorData || '',
-      eligibility: (questions || []).map((q) => ({
+      templateId: form?.templateId,
+      pocSocials: form?.pocSocials,
+      applicationType: form?.applicationType,
+      timeToComplete: form?.timeToComplete,
+      description: form?.description || '',
+      eligibility: (form?.eligibility || []).map((q) => ({
         question: q.question,
         order: q.order,
         type: q.type,
       })),
-      references: (references || []).map((r) => ({
+      references: (form?.references || []).map((r) => ({
         link: r.link,
         order: r.order,
       })),
-      pocSocials: bountybasic?.pocSocials,
-      region: regions,
-      referredBy: referredBy,
-      isPrivate: isPrivate,
-      requirements: bountyRequirements,
-      ...bountyPayment,
+      region: form?.region,
+      referredBy: form?.referredBy,
+      isPrivate: form?.isPrivate,
+      requirements: form?.requirements,
+      rewardAmount: form?.rewardAmount,
+      rewards: form?.rewards,
+      token: form?.token,
+      compensationType: form?.compensationType,
+      minRewardAsk: form?.minRewardAsk,
+      maxRewardAsk: form?.maxRewardAsk,
     };
     try {
       await axios.post(api, {
         ...(type === 'hackathon' ? { hackathonSponsor } : {}),
         ...draft,
-        isPublished: editable && !isDuplicating ? bounty?.isPublished : false,
+        isPublished: editable && !isDuplicating ? listing?.isPublished : false,
       });
       if (type === 'hackathon') {
         router.push(`/dashboard/hackathon/`);
@@ -302,17 +213,88 @@ export function CreateListing({
         router.push('/dashboard/listings');
       }
     } catch (e) {
-      setDraftLoading(false);
+      setIsDraftLoading(false);
     }
   };
 
-  const newBounty = bounty?.id === undefined;
+  const { form, updateState } = useFormStore();
 
-  const bountyDraftStatus = getBountyDraftStatus(
-    bounty?.status,
-    bounty?.isPublished,
+  if (editable) {
+    updateState({
+      ...form,
+      id: '',
+      title:
+        isDuplicating && listing?.title
+          ? `${listing.title} (2)`
+          : listing?.title,
+      slug:
+        isDuplicating && listing?.slug ? `${listing.slug}-2` : listing?.slug,
+      deadline:
+        !isDuplicating && listing?.deadline
+          ? dayjs(listing?.deadline).format('YYYY-MM-DDTHH:mm') || undefined
+          : undefined,
+      templateId: listing?.templateId,
+      pocSocials: listing?.pocSocials,
+      applicationType: listing?.applicationType || 'fixed',
+      timeToComplete: listing?.timeToComplete,
+      type: type,
+      region: listing?.region,
+      referredBy: listing?.referredBy,
+      requirements: listing?.requirements,
+      eligibility: (listing?.eligibility || [])?.map((e) => ({
+        order: e.order,
+        question: e.question,
+        type: e.type as 'text',
+        delete: true,
+        label: e.question,
+      })),
+      references: (listing?.references || [])?.map((e) => ({
+        order: e.order,
+        link: e.link,
+      })),
+      isPrivate: listing?.isPrivate ? listing?.isPrivate : false,
+      skills: listing?.skills,
+      description: listing?.description,
+      publishedAt: listing?.publishedAt,
+      rewardAmount: listing?.rewardAmount || 0,
+      rewards: listing?.rewards || undefined,
+      token: listing?.token || 'USDC',
+      compensationType: listing?.compensationType,
+      minRewardAsk: listing?.minRewardAsk || 0,
+      maxRewardAsk: listing?.maxRewardAsk || 0,
+    });
+  }
+
+  const [steps, setSteps] = useState<number>(
+    !!prevStep ? prevStep : editable || type === 'hackathon' ? 2 : 1,
   );
 
+  const [slug, setSlug] = useState<string>('');
+
+  const { isOpen, onOpen } = useDisclosure();
+
+  const {
+    isOpen: isSurveyOpen,
+    onOpen: onSurveyOpen,
+    onClose: onSurveyClose,
+  } = useDisclosure();
+
+  const [hackathonSponsor, setHackathonSponsor] = useAtom(hackathonSponsorAtom);
+
+  useEffect(() => {
+    if (editable && type === 'hackathon' && listing?.sponsorId) {
+      setHackathonSponsor(listing?.sponsorId);
+    }
+  }, [editable]);
+
+  const [isListingPublishing, setIsListingPublishing] =
+    useState<boolean>(false);
+  let basePath = 'bounties';
+  if (type === 'hackathon') {
+    basePath = 'hackathon';
+  }
+
+  const surveyId = '018c674f-7e49-0000-5097-f2affbdddb0d';
   const isNewOrDraft = bountyDraftStatus === 'DRAFT' || newBounty === true;
 
   return (
@@ -377,51 +359,58 @@ export function CreateListing({
           )}
           {steps === 1 && (
             <Template
+              useFormStore={useFormStore}
+              type={type}
               setSteps={setSteps}
-              setEditorData={setEditorData}
-              setSubSkills={setSubSkill}
-              setMainSkills={setMainSkills}
-              setBountyBasic={setBountyBasic}
+            />
+          )}
+          {steps === 2 && (
+            <ListingBasic
+              useFormStore={useFormStore}
+              editable={editable}
+              isDraftLoading={isDraftLoading}
+              setSteps={setSteps}
+              type={type}
+              isDuplicating={isDuplicating}
+              isNewOrDraft={isNewOrDraft}
+              createDraft={createDraft}
+            />
+          )}
+          {steps === 3 && (
+            <DescriptionBuilder
+              createDraft={createDraft}
+              setSteps={setSteps}
+              useFormStore={useFormStore}
+              editable={editable}
+              isDraftLoading={isDraftLoading}
+              isDuplicating={isDuplicating}
+              isNewOrDraft={isNewOrDraft}
               type={type}
             />
           )}
-          {steps > 1 && (
-            <CreateListingForm
-              id={bounty?.id}
-              type={type}
-              regions={regions}
-              setRegions={setRegions}
-              referredBy={referredBy}
-              setReferredBy={setReferredBy}
-              setBountyRequirements={setBountyRequirements}
-              bountyRequirements={bountyRequirements}
-              createAndPublishListing={createAndPublishListing}
-              isListingPublishing={isListingPublishing}
-              bountyPayment={bountyPayment}
-              bountyPaymentDispatch={bountyPaymentDispatch}
-              questions={questions}
-              setQuestions={setQuestions}
-              references={references}
-              setReferences={setReferences}
-              draftLoading={draftLoading}
+          {steps === 4 && (
+            <QuestionBuilder
               createDraft={createDraft}
-              bountybasic={bountybasic}
-              setBountyBasic={setBountyBasic}
-              onOpen={onOpen}
-              setSubSkills={setSubSkill}
-              subSkills={subSkill}
-              setMainSkills={setMainSkills}
-              mainSkills={mainSkills}
-              editorData={editorData}
-              setEditorData={setEditorData}
-              setSteps={setSteps}
-              steps={steps}
+              draftLoading={isDraftLoading}
               editable={editable}
-              isNewOrDraft={isNewOrDraft}
+              setSteps={setSteps}
+              useFormStore={useFormStore}
               isDuplicating={isDuplicating}
-              isPrivate={isPrivate}
-              setIsPrivate={setIsPrivate}
-              publishedAt={bounty?.publishedAt}
+              isNewOrDraft={isNewOrDraft}
+            />
+          )}
+
+          {steps === 5 && (
+            <ListingPayments
+              useFormStore={useFormStore}
+              createAndPublishListing={createAndPublishListing}
+              createDraft={createDraft}
+              isDraftLoading={isDraftLoading}
+              editable={editable}
+              isListingPublishing={isListingPublishing}
+              type={type}
+              isDuplicating={isDuplicating}
+              isNewOrDraft={isNewOrDraft}
             />
           )}
         </FormLayout>

@@ -70,7 +70,7 @@ function EditBounty({ slug }: Props) {
         <LoadingSection />
       ) : (
         <CreateListing
-          bounty={bounty}
+          listing={bounty}
           editable
           prevStep={prevStep}
           type={bounty?.type as 'bounty' | 'project' | 'hackathon'}

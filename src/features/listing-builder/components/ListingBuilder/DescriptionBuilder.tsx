@@ -32,6 +32,7 @@ import React, {
   useCallback,
   useState,
 } from 'react';
+import { useFieldArray, useForm } from 'react-hook-form';
 import toast from 'react-hot-toast';
 import { AiOutlineLink, AiOutlineOrderedList } from 'react-icons/ai';
 import { BiFontColor } from 'react-icons/bi';
@@ -51,8 +52,10 @@ import {
 } from 'react-icons/md';
 import ImageResize from 'tiptap-extension-resize-image';
 
-import { ReferenceCard, type References } from '@/features/listings';
+import { ReferenceCard } from '@/features/listings';
 import { uploadToCloudinary } from '@/utils/upload';
+
+import { type ListingStoreType } from '../../types';
 
 const LinkModal = ({
   isOpen,
@@ -90,37 +93,45 @@ const LinkModal = ({
 };
 
 interface Props {
-  setEditorData: Dispatch<SetStateAction<string | undefined>>;
-  editorData: string | undefined;
+  useFormStore: () => ListingStoreType;
   setSteps: Dispatch<SetStateAction<number>>;
   createDraft: () => void;
-  draftLoading?: boolean;
+  isDraftLoading?: boolean;
   editable?: boolean;
-  setBountyRequirements?: Dispatch<SetStateAction<any | undefined>>;
-  bountyRequirements?: string | undefined;
   type?: 'bounty' | 'project' | 'hackathon';
-  references?: References[];
-  setReferences?: Dispatch<SetStateAction<References[]>>;
   isNewOrDraft?: boolean;
   isDuplicating?: boolean;
 }
 
 export const DescriptionBuilder = ({
-  editorData,
-  setEditorData,
+  useFormStore,
   setSteps,
   createDraft,
-  draftLoading,
-  bountyRequirements,
-  setBountyRequirements,
-  references,
-  setReferences,
+  isDraftLoading,
   type,
   isNewOrDraft,
   isDuplicating,
 }: Props) => {
+  const { form, updateState } = useFormStore();
+
+  const { register, control, handleSubmit, watch, setValue } = useForm({
+    mode: 'onBlur',
+    defaultValues: {
+      description: form?.description,
+      requirements: form?.requirements,
+      references: form?.references,
+    },
+  });
+
+  const { fields, append, remove } = useFieldArray({
+    control,
+    name: 'references',
+  });
+
+  const description = watch('description');
+  const requirements = watch('requirements');
+
   const { isOpen, onClose, onOpen } = useDisclosure();
-  const [referenceError, setReferenceError] = useState<boolean>(false);
   const editor = useEditor({
     extensions: [
       Underline,
@@ -154,7 +165,7 @@ export const DescriptionBuilder = ({
     ],
     onUpdate: ({ editor }) => {
       const html = editor.getHTML();
-      setEditorData(html);
+      setValue('description', html);
     },
     editorProps: {
       attributes: {
@@ -162,7 +173,7 @@ export const DescriptionBuilder = ({
           'prose dark:prose-invert prose-sm sm:prose-base lg:prose-lg xl:prose-2xl m-5 focus:outline-none',
       },
     },
-    content: editorData,
+    content: description,
   });
 
   const setLink = useCallback(
@@ -223,18 +234,22 @@ export const DescriptionBuilder = ({
     });
   }, [editor]);
 
-  const handleDeleteReference = () => {
-    if (references && setReferences) {
-      const temp = references.filter(
-        (_el, index) => index !== references.length - 1,
-      );
-      setReferences(temp);
-    }
-  };
-
   const isProject = type === 'project';
 
   const [editorError, setEditorError] = useState(false);
+
+  const onSubmit = async (data: any) => {
+    updateState({ ...data });
+    if (editor?.isEmpty) {
+      setEditorError(true);
+      return;
+    }
+    if (!isProject) {
+      setSteps(5);
+      return;
+    }
+    setSteps(4);
+  };
 
   return (
     <>
@@ -280,25 +295,20 @@ export const DescriptionBuilder = ({
               color: 'brand.slate.300',
             }}
             focusBorderColor="brand.purple"
-            id="bountyRequirements"
+            id="requirements"
             maxLength={220}
-            onChange={(e) =>
-              setBountyRequirements && setBountyRequirements(e.target.value)
-            }
+            {...register('requirements')}
             placeholder="Add Eligibility Requirements"
             type={'text'}
-            value={bountyRequirements}
           />
           <Text
             color={
-              (bountyRequirements?.length || 0) > 200
-                ? 'red'
-                : 'brand.slate.400'
+              (requirements?.length || 0) > 200 ? 'red' : 'brand.slate.400'
             }
             fontSize={'xs'}
             textAlign="right"
           >
-            {220 - (bountyRequirements?.length || 0)} characters left
+            {220 - (requirements?.length || 0)} characters left
           </Text>
         </Box>
         <Flex justify="space-between" w="full">
@@ -681,40 +691,32 @@ export const DescriptionBuilder = ({
                   kind of deliverables you are looking for.
                 </Text>
               </Flex>
-              {setReferences &&
-                references?.map((reference, index) => {
-                  return (
-                    <Flex key={index} align="end" justify="space-end" w="full">
-                      <ReferenceCard
-                        setReferenceError={setReferenceError}
-                        index={index}
-                        curentReference={reference}
-                        setReferences={setReferences}
-                      />
-                      {index === references.length - 1 && (
-                        <Button ml={4} onClick={() => handleDeleteReference()}>
-                          <DeleteIcon />
-                        </Button>
-                      )}
-                    </Flex>
-                  );
-                })}
-              {references && setReferences && references.length < 6 && (
+              {fields.map((field, index) => (
+                <Flex
+                  key={field.id}
+                  align="end"
+                  justify="space-between"
+                  w="full"
+                >
+                  <ReferenceCard register={register} index={index} />
+                  <Button ml={4} onClick={() => remove(index)}>
+                    <DeleteIcon />
+                  </Button>
+                </Flex>
+              ))}
+              {fields.length < 6 && (
                 <Button
                   w={'full'}
                   h={12}
                   mt={2}
                   color={'#64758B'}
                   bg={'#F1F5F9'}
-                  onClick={() => {
-                    setReferences([
-                      ...references,
-                      {
-                        order: (references?.length || 0) + 1,
-                        link: '',
-                      },
-                    ]);
-                  }}
+                  onClick={() =>
+                    append({
+                      order: fields.length + 1,
+                      link: '',
+                    })
+                  }
                 >
                   + Add Reference
                 </Button>
@@ -728,30 +730,13 @@ export const DescriptionBuilder = ({
               Listing Details is a required field
             </Text>
           )}
-          <Button
-            w="100%"
-            onClick={() => {
-              if (referenceError) {
-                return;
-              }
-              if (editor?.isEmpty) {
-                setEditorError(true);
-                return;
-              }
-              if (!isProject) {
-                setSteps(5);
-                return;
-              }
-              setSteps(4);
-            }}
-            variant="solid"
-          >
+          <Button w="100%" onClick={handleSubmit(onSubmit)} variant="solid">
             Continue
           </Button>
           <Button
             w="100%"
-            isDisabled={!editorData}
-            isLoading={draftLoading}
+            isDisabled={!description}
+            isLoading={isDraftLoading}
             onClick={() => createDraft()}
             variant="outline"
           >

@@ -17,7 +17,6 @@ import { Toaster } from 'react-hot-toast';
 
 import { SolanaWalletProvider } from '@/context/SolanaWallet';
 import { userStore } from '@/store/user';
-import { getURL } from '@/utils/validUrl';
 
 import theme from '../config/chakra.config';
 
@@ -59,13 +58,13 @@ const extendThemeWithNextFonts = {
   },
 };
 
-if (typeof window !== 'undefined') {
-  posthog.init(process.env.NEXT_PUBLIC_POSTHOG_KEY!, {
-    debug: false,
-    api_host: `${getURL()}ingest`,
-    ui_host: process.env.NEXT_PUBLIC_POSTHOG_HOST || 'https://app.posthog.com',
-  });
-}
+// if (typeof window !== 'undefined') {
+//   posthog.init(process.env.NEXT_PUBLIC_POSTHOG_KEY!, {
+//     debug: false,
+//     api_host: `${getURL()}ingest`,
+//     ui_host: process.env.NEXT_PUBLIC_POSTHOG_HOST || 'https://app.posthog.com',
+//   });
+// }
 
 function MyApp({ Component, pageProps }: any) {
   const { data: session, status } = useSession();

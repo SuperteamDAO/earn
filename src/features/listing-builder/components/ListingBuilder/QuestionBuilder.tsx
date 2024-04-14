@@ -1,18 +1,19 @@
-import { Button, Flex, HStack, Image, Text, VStack } from '@chakra-ui/react';
-import React, { type Dispatch, type SetStateAction, useState } from 'react';
+import { Button, HStack, Image, Text, VStack } from '@chakra-ui/react';
+import React, { type Dispatch, type SetStateAction } from 'react';
+import { useFieldArray, useForm } from 'react-hook-form';
 import toast from 'react-hot-toast';
 
+import { type ListingStoreType } from '../../types';
 import { QuestionCard } from './QuestionCard';
 
 interface Props {
   setSteps: Dispatch<SetStateAction<number>>;
   draftLoading: boolean;
   createDraft: () => void;
-  questions: Ques[];
-  setQuestions: Dispatch<SetStateAction<Ques[]>>;
   editable: boolean;
   isNewOrDraft?: boolean;
   isDuplicating?: boolean;
+  useFormStore: () => ListingStoreType;
 }
 
 export interface Ques {
@@ -23,27 +24,43 @@ export interface Ques {
   options?: string[];
   label: string;
 }
-type ErrorState = {
-  order: number;
-  errMessage: string;
-};
+
 export const QuestionBuilder = ({
   setSteps,
   createDraft,
   draftLoading,
-  questions,
-  setQuestions,
   isNewOrDraft,
   isDuplicating,
+  useFormStore,
 }: Props) => {
-  const [error, setError] = useState<ErrorState[]>([]);
+  const { form, updateState } = useFormStore();
+  const { control, handleSubmit, register } = useForm({
+    defaultValues: {
+      eligibility: form?.eligibility,
+    },
+  });
 
-  const handleDelete = (index: number) => {
-    setQuestions(questions.filter((_, i) => i !== index));
+  const { fields, append, remove } = useFieldArray({
+    control,
+    name: 'eligibility',
+  });
+
+  const onSubmit = (data: any) => {
+    if (data.questions.length === 0) {
+      toast.error('Add a minimum of one question');
+      return;
+    }
+    const hasEmptyQuestions = data.questions.some((q: Ques) => !q.question);
+    if (hasEmptyQuestions) {
+      toast.error('All questions must be filled out');
+      return;
+    }
+    updateState({ ...data });
+    setSteps(5);
   };
 
   return (
-    <>
+    <form onSubmit={handleSubmit(onSubmit)}>
       <VStack align={'start'} gap={3} w={'2xl'} pt={7}>
         <HStack gap={3} w={'full'} p={5} bg={'#F7FAFC'} rounded={'md'}>
           <Image alt={'hands'} src={'/assets/icons/hands.svg'} />
@@ -58,68 +75,33 @@ export const QuestionBuilder = ({
             </Text>
           </VStack>
         </HStack>
-        {questions.map((question, index) => {
-          return (
-            <Flex key={index} align="end" justify="space-end" w="full">
-              <QuestionCard
-                errorState={error}
-                index={index}
-                curentQuestion={question}
-                setQuestions={setQuestions}
-                handleDelete={() => handleDelete(index)}
-              />
-            </Flex>
-          );
-        })}
+        {fields.map((field, index) => (
+          <QuestionCard
+            key={field.id}
+            register={register}
+            index={index}
+            remove={remove}
+          />
+        ))}
         <Button
           w={'full'}
           h={12}
           color={'#64758B'}
           bg={'#F1F5F9'}
-          onClick={() => {
-            setQuestions([
-              ...questions,
-              {
-                order: (questions?.length || 0) + 1,
-                question: '',
-                type: 'text',
-                label: '',
-              },
-            ]);
-          }}
+          onClick={() =>
+            append({
+              order: fields.length + 1,
+              question: '',
+              type: 'text',
+              label: '',
+              options: [],
+            })
+          }
         >
           + Add Question
         </Button>
         <VStack gap={6} w={'full'} pt={10}>
-          <Button
-            w="100%"
-            onClick={() => {
-              if (questions.length === 0) {
-                toast.error('Add minimum of one question');
-                return;
-              }
-              const rejectedQuestion: any[] = [];
-
-              questions.map((e) => {
-                if (e.question.length === 0) {
-                  rejectedQuestion.push(e);
-                  setError([
-                    ...error,
-                    {
-                      order: e.order,
-                      errMessage: 'Add question',
-                    },
-                  ]);
-                }
-                return null;
-              });
-
-              if (rejectedQuestion.length === 0) {
-                setSteps(5);
-              }
-            }}
-            variant="solid"
-          >
+          <Button w="100%" variant="solid">
             Continue
           </Button>
           <Button
@@ -134,6 +116,6 @@ export const QuestionBuilder = ({
           </Button>
         </VStack>
       </VStack>
-    </>
+    </form>
   );
 };

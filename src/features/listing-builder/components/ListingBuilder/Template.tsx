@@ -8,29 +8,18 @@ import React, {
   useState,
 } from 'react';
 
-import type { MultiSelectOptions } from '@/constants';
 import { getBountyTypeLabel } from '@/features/listings';
 import { getURL } from '@/utils/validUrl';
 
-import { splitSkills } from '../../utils';
-import type { BountyBasicType } from '../CreateListingForm';
+import { type ListingStoreType } from '../../types';
 
 interface Props {
-  setSteps: Dispatch<SetStateAction<number>>;
-  setEditorData: Dispatch<SetStateAction<string | undefined>>;
-  setMainSkills: Dispatch<SetStateAction<MultiSelectOptions[]>>;
-  setSubSkills: Dispatch<SetStateAction<MultiSelectOptions[]>>;
-  setBountyBasic: Dispatch<SetStateAction<BountyBasicType | undefined>>;
+  useFormStore: () => ListingStoreType;
   type: 'bounty' | 'project' | 'hackathon';
+  setSteps: Dispatch<SetStateAction<number>>;
 }
-export const Template = ({
-  setSteps,
-  setEditorData,
-  setMainSkills,
-  setSubSkills,
-  setBountyBasic,
-  type,
-}: Props) => {
+export const Template = ({ useFormStore, type, setSteps }: Props) => {
+  const { updateState, form } = useFormStore();
   const [bountiesTemplates, setBountiesTemplates] = useState([]);
   const [isBountiesTemplatesLoading, setIsBountiesTemplatesLoading] =
     useState(false);
@@ -58,15 +47,15 @@ export const Template = ({
     const template: any = bountiesTemplates.find((t: any) => {
       return t?.id === templateId;
     });
-    setBountyBasic({
-      title: template?.title || undefined,
-      templateId: template?.id || undefined,
+
+    updateState({
+      title: template?.title,
+      templateId: template?.id,
+      description: template?.description,
+      skills: template?.skills,
     });
-    setEditorData(template?.description || '');
-    const skillsInfo = splitSkills(template?.skills || []);
-    setMainSkills(skillsInfo?.skills || []);
-    setSubSkills(skillsInfo?.subskills || []);
     setSteps(2);
+    console.log(form);
   };
 
   return (
