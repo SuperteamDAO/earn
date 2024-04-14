@@ -557,7 +557,7 @@ export const ListingPayments = ({
                 } else {
                   setMode('EDIT');
                 }
-                // onSubmit();
+                handleSubmit(onSubmit);
               }}
               variant={editable ? 'solid' : 'outline'}
             >

@@ -59,6 +59,11 @@ export const QuestionBuilder = ({
     setSteps(5);
   };
 
+  const onDraftClick = async (data: any) => {
+    updateState({ ...data });
+    createDraft();
+  };
+
   return (
     <form onSubmit={handleSubmit(onSubmit)}>
       <VStack align={'start'} gap={3} w={'2xl'} pt={7}>
@@ -107,9 +112,7 @@ export const QuestionBuilder = ({
           <Button
             w="100%"
             isLoading={draftLoading}
-            onClick={() => {
-              createDraft();
-            }}
+            onClick={handleSubmit(onDraftClick)}
             variant="outline"
           >
             {isNewOrDraft || isDuplicating ? 'Save Draft' : 'Update Listing'}

@@ -62,9 +62,7 @@ const useFormStore = create<ListingStoreType>()((set) => ({
     maxRewardAsk: undefined,
   },
   updateState: (data) => {
-    console.log('running updateState', data);
     set((state) => {
-      console.log('state', state);
       state.form = { ...state.form, ...data };
       return { ...state };
     });

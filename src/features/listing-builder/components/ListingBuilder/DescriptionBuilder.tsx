@@ -251,6 +251,11 @@ export const DescriptionBuilder = ({
     setSteps(4);
   };
 
+  const onDraftClick = async (data: any) => {
+    updateState({ ...data });
+    createDraft();
+  };
+
   return (
     <>
       {isOpen && (
@@ -737,7 +742,7 @@ export const DescriptionBuilder = ({
             w="100%"
             isDisabled={!description}
             isLoading={isDraftLoading}
-            onClick={() => createDraft()}
+            onClick={handleSubmit(onDraftClick)}
             variant="outline"
           >
             {isNewOrDraft || isDuplicating ? 'Save Draft' : 'Update Listing'}

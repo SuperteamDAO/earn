@@ -42,7 +42,7 @@ import { Superteams } from '@/constants/Superteam';
 import { dayjs } from '@/utils/dayjs';
 
 import type { ListingStoreType } from '../../types';
-import { getSuggestions, splitSkills } from '../../utils';
+import { getSuggestions, mergeSkills, splitSkills } from '../../utils';
 import { SelectSponsor } from '../SelectSponsor';
 
 interface Props {
@@ -247,12 +247,24 @@ export const ListingBasic = ({
       setValue('deadline', thirtyDaysFromNow);
     }
     if (Object.keys(errors).length > 0) {
-      console.log(errors);
       return;
     } else {
-      updateState({ ...data });
+      const mergedSkills = mergeSkills({
+        skills: skills,
+        subskills: subSkills,
+      });
+      updateState({ skills: mergedSkills, ...data });
       setSteps(3);
     }
+  };
+
+  const onDraftClick = async (data: any) => {
+    const mergedSkills = mergeSkills({
+      skills: skills,
+      subskills: subSkills,
+    });
+    updateState({ skills: mergedSkills, ...data });
+    createDraft();
   };
 
   return (
@@ -732,9 +744,7 @@ export const ListingBasic = ({
               w="100%"
               isDisabled={!form?.title}
               isLoading={isDraftLoading}
-              onClick={() => {
-                createDraft();
-              }}
+              onClick={handleSubmit(onDraftClick)}
               variant="outline"
             >
               {isNewOrDraft || isDuplicating ? 'Save Draft' : 'Update Listing'}

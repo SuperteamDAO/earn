@@ -19,7 +19,7 @@ interface Props {
   setSteps: Dispatch<SetStateAction<number>>;
 }
 export const Template = ({ useFormStore, type, setSteps }: Props) => {
-  const { updateState, form } = useFormStore();
+  const { updateState } = useFormStore();
   const [bountiesTemplates, setBountiesTemplates] = useState([]);
   const [isBountiesTemplatesLoading, setIsBountiesTemplatesLoading] =
     useState(false);
@@ -55,7 +55,6 @@ export const Template = ({ useFormStore, type, setSteps }: Props) => {
       skills: template?.skills,
     });
     setSteps(2);
-    console.log(form);
   };
 
   return (
