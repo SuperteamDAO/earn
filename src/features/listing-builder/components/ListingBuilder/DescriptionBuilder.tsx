@@ -55,7 +55,7 @@ import ImageResize from 'tiptap-extension-resize-image';
 import { ReferenceCard } from '@/features/listings';
 import { uploadToCloudinary } from '@/utils/upload';
 
-import { type ListingStoreType } from '../../types';
+import { useListingFormStore } from '../../store';
 
 const LinkModal = ({
   isOpen,
@@ -93,7 +93,6 @@ const LinkModal = ({
 };
 
 interface Props {
-  useFormStore: () => ListingStoreType;
   setSteps: Dispatch<SetStateAction<number>>;
   createDraft: () => void;
   isDraftLoading?: boolean;
@@ -104,7 +103,6 @@ interface Props {
 }
 
 export const DescriptionBuilder = ({
-  useFormStore,
   setSteps,
   createDraft,
   isDraftLoading,
@@ -112,7 +110,7 @@ export const DescriptionBuilder = ({
   isNewOrDraft,
   isDuplicating,
 }: Props) => {
-  const { form, updateState } = useFormStore();
+  const { form, updateState } = useListingFormStore();
 
   const { register, control, handleSubmit, watch, setValue } = useForm({
     mode: 'onBlur',

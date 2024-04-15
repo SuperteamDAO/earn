@@ -1,10 +1,20 @@
-import { Button, HStack, Image, Text, VStack } from '@chakra-ui/react';
+import { DeleteIcon } from '@chakra-ui/icons';
+import {
+  Button,
+  Flex,
+  FormControl,
+  FormLabel,
+  HStack,
+  Image,
+  Input,
+  Text,
+  VStack,
+} from '@chakra-ui/react';
 import React, { type Dispatch, type SetStateAction } from 'react';
 import { useFieldArray, useForm } from 'react-hook-form';
 import toast from 'react-hot-toast';
 
-import { type ListingStoreType } from '../../types';
-import { QuestionCard } from './QuestionCard';
+import { useListingFormStore } from '../../store';
 
 interface Props {
   setSteps: Dispatch<SetStateAction<number>>;
@@ -13,7 +23,6 @@ interface Props {
   editable: boolean;
   isNewOrDraft?: boolean;
   isDuplicating?: boolean;
-  useFormStore: () => ListingStoreType;
 }
 
 export interface Ques {
@@ -25,15 +34,39 @@ export interface Ques {
   label: string;
 }
 
+interface QuestionCardProps {
+  register: any;
+  index: number;
+  remove: (index: number) => void;
+}
+
+const QuestionCard = ({ register, index, remove }: QuestionCardProps) => {
+  return (
+    <VStack align={'start'} w={'full'}>
+      <FormControl>
+        <FormLabel>Question {index + 1}</FormLabel>
+        <Flex gap="4">
+          <Input
+            {...register(`eligibility.${index}.question`)}
+            placeholder="Enter your question here"
+          />
+          <Button colorScheme="red" onClick={() => remove(index)}>
+            <DeleteIcon />
+          </Button>
+        </Flex>
+      </FormControl>
+    </VStack>
+  );
+};
+
 export const QuestionBuilder = ({
   setSteps,
   createDraft,
   draftLoading,
   isNewOrDraft,
   isDuplicating,
-  useFormStore,
 }: Props) => {
-  const { form, updateState } = useFormStore();
+  const { form, updateState } = useListingFormStore();
   const { control, handleSubmit, register } = useForm({
     defaultValues: {
       eligibility: form?.eligibility,

@@ -11,15 +11,14 @@ import React, {
 import { getBountyTypeLabel } from '@/features/listings';
 import { getURL } from '@/utils/validUrl';
 
-import { type ListingStoreType } from '../../types';
+import { useListingFormStore } from '../../store';
 
 interface Props {
-  useFormStore: () => ListingStoreType;
   type: 'bounty' | 'project' | 'hackathon';
   setSteps: Dispatch<SetStateAction<number>>;
 }
-export const Template = ({ useFormStore, type, setSteps }: Props) => {
-  const { updateState } = useFormStore();
+export const Template = ({ type, setSteps }: Props) => {
+  const { updateState } = useListingFormStore();
   const [bountiesTemplates, setBountiesTemplates] = useState([]);
   const [isBountiesTemplatesLoading, setIsBountiesTemplatesLoading] =
     useState(false);

@@ -41,12 +41,11 @@ import { type MultiSelectOptions } from '@/constants';
 import { Superteams } from '@/constants/Superteam';
 import { dayjs } from '@/utils/dayjs';
 
-import type { ListingStoreType } from '../../types';
+import { useListingFormStore } from '../../store';
 import { getSuggestions, mergeSkills, splitSkills } from '../../utils';
 import { SelectSponsor } from '../SelectSponsor';
 
 interface Props {
-  useFormStore: () => ListingStoreType;
   editable: boolean;
   type: 'bounty' | 'project' | 'hackathon';
   isDuplicating?: boolean;
@@ -57,7 +56,6 @@ interface Props {
 }
 
 export const ListingBasic = ({
-  useFormStore,
   editable,
   isDuplicating,
   type,
@@ -66,7 +64,7 @@ export const ListingBasic = ({
   isDraftLoading,
   createDraft,
 }: Props) => {
-  const { form, updateState } = useFormStore();
+  const { form, updateState } = useListingFormStore();
   const slugUniqueCheck = async (slug: string) => {
     try {
       const listingId = editable && !isDuplicating ? form?.id : null;

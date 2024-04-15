@@ -36,6 +36,7 @@ export interface ListingFormType {
 export interface ListingStoreType {
   form: ListingFormType;
   updateState: (data: ListingFormType) => void;
+  resetForm: () => void;
 }
 
 export interface BountyBasicType {

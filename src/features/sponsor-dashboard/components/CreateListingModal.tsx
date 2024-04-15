@@ -15,6 +15,8 @@ import {
 import NextLink from 'next/link';
 import React from 'react';
 
+import { useListingFormStore } from '@/features/listing-builder';
+
 export const CreateListingModal = ({
   isOpen = false,
   onClose,
@@ -22,6 +24,10 @@ export const CreateListingModal = ({
   isOpen: boolean;
   onClose: () => void;
 }) => {
+  const { resetForm } = useListingFormStore();
+  const resetListingForm = () => {
+    resetForm();
+  };
   return (
     <Modal isCentered isOpen={isOpen} onClose={onClose} size={'5xl'}>
       <ModalOverlay />
@@ -65,9 +71,11 @@ export const CreateListingModal = ({
               </ListItem>
             </UnorderedList>
             <Box flex="1" />
-            <Button as={NextLink} href="/dashboard/create-bounty" size="lg">
-              Create New Bounty
-            </Button>
+            <NextLink href="/dashboard/create-bounty" passHref>
+              <Button onClick={resetListingForm} size="lg">
+                Create New Bounty
+              </Button>
+            </NextLink>
           </Flex>
           <Divider
             w="1px"
@@ -112,9 +120,11 @@ export const CreateListingModal = ({
               color="brand.slate.200"
               orientation="horizontal"
             />
-            <Button as={NextLink} href="/dashboard/create-project" size="lg">
-              Create New Project
-            </Button>
+            <NextLink href="/dashboard/create-bounty" passHref>
+              <Button onClick={resetListingForm} size="lg">
+                Create New Project
+              </Button>
+            </NextLink>
           </Flex>
         </Flex>
       </ModalContent>

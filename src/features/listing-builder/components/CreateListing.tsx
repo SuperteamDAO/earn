@@ -1,18 +1,16 @@
 import { useDisclosure } from '@chakra-ui/react';
-import { Regions } from '@prisma/client';
 import axios from 'axios';
 import dayjs from 'dayjs';
 import { useAtom } from 'jotai';
 import { useRouter } from 'next/router';
 import { useEffect, useState } from 'react';
-import { create } from 'zustand';
 
 import { ErrorSection } from '@/components/shared/ErrorSection';
 import { SurveyModal } from '@/components/Survey';
 import { type Bounty, getBountyDraftStatus } from '@/features/listings';
 import { userStore } from '@/store/user';
 
-import type { ListingStoreType } from '../types';
+import { useListingFormStore } from '../store';
 import {
   DescriptionBuilder,
   FormLayout,
@@ -23,51 +21,6 @@ import {
 } from './ListingBuilder';
 import { ListingSuccessModal } from './ListingSuccessModal';
 import { hackathonSponsorAtom } from './SelectSponsor';
-
-const listingDescriptionHeadings = [
-  'About the Listing & Scope',
-  'Rewards',
-  'Judging Criteria',
-  'Submission Requirements',
-  'Resources',
-]
-  .map((heading) => `<h1 key=${heading}>${heading}</h1>`)
-  .join('');
-
-const useFormStore = create<ListingStoreType>()((set) => ({
-  form: {
-    id: '',
-    title: '',
-    slug: '',
-    deadline: undefined,
-    templateId: undefined,
-    pocSocials: undefined,
-    applicationType: 'fixed',
-    timeToComplete: undefined,
-    type: undefined,
-    region: Regions.GLOBAL,
-    referredBy: undefined,
-    requirements: '',
-    eligibility: [],
-    references: [],
-    isPrivate: false,
-    skills: [],
-    description: listingDescriptionHeadings,
-    publishedAt: '',
-    rewardAmount: undefined,
-    rewards: undefined,
-    token: 'USDC',
-    compensationType: 'fixed',
-    minRewardAsk: undefined,
-    maxRewardAsk: undefined,
-  },
-  updateState: (data) => {
-    set((state) => {
-      state.form = { ...state.form, ...data };
-      return { ...state };
-    });
-  },
-}));
 
 interface Props {
   listing?: Bounty;
@@ -215,7 +168,7 @@ export function CreateListing({
     }
   };
 
-  const { form, updateState } = useFormStore();
+  const { form, updateState } = useListingFormStore();
 
   if (editable) {
     updateState({
@@ -355,16 +308,9 @@ export function CreateListing({
               surveyId={surveyId}
             />
           )}
-          {steps === 1 && (
-            <Template
-              useFormStore={useFormStore}
-              type={type}
-              setSteps={setSteps}
-            />
-          )}
+          {steps === 1 && <Template type={type} setSteps={setSteps} />}
           {steps === 2 && (
             <ListingBasic
-              useFormStore={useFormStore}
               editable={editable}
               isDraftLoading={isDraftLoading}
               setSteps={setSteps}
@@ -378,7 +324,6 @@ export function CreateListing({
             <DescriptionBuilder
               createDraft={createDraft}
               setSteps={setSteps}
-              useFormStore={useFormStore}
               editable={editable}
               isDraftLoading={isDraftLoading}
               isDuplicating={isDuplicating}
@@ -392,7 +337,6 @@ export function CreateListing({
               draftLoading={isDraftLoading}
               editable={editable}
               setSteps={setSteps}
-              useFormStore={useFormStore}
               isDuplicating={isDuplicating}
               isNewOrDraft={isNewOrDraft}
             />
@@ -400,7 +344,6 @@ export function CreateListing({
 
           {steps === 5 && (
             <ListingPayments
-              useFormStore={useFormStore}
               createAndPublishListing={createAndPublishListing}
               createDraft={createDraft}
               isDraftLoading={isDraftLoading}

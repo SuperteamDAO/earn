@@ -33,7 +33,7 @@ import { PrizeList, tokenList } from '@/constants';
 import { type Rewards } from '@/features/listings';
 import { sortRank } from '@/utils/rank';
 
-import { type ListingStoreType } from '../../types';
+import { useListingFormStore } from '../../store';
 
 interface PrizeListInterface {
   value: string;
@@ -50,7 +50,6 @@ interface Props {
   isNewOrDraft?: boolean;
   type: 'bounty' | 'project' | 'hackathon';
   isDuplicating?: boolean;
-  useFormStore: () => ListingStoreType;
 }
 export const ListingPayments = ({
   isListingPublishing,
@@ -61,9 +60,8 @@ export const ListingPayments = ({
   isNewOrDraft,
   type,
   isDuplicating,
-  useFormStore,
 }: Props) => {
-  const { form, updateState } = useFormStore();
+  const { form, updateState } = useListingFormStore();
   const {
     isOpen: confirmIsOpen,
     onOpen: confirmOnOpen,
