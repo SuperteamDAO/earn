@@ -22,7 +22,6 @@ import {
   NumberInputField,
   Select,
   Text,
-  Tooltip,
   useDisclosure,
   VStack,
 } from '@chakra-ui/react';
@@ -34,6 +33,7 @@ import { type Rewards } from '@/features/listings';
 import { sortRank } from '@/utils/rank';
 
 import { useListingFormStore } from '../../store';
+import { ListingFormLabel, ListingTooltip } from './Form';
 
 interface PrizeListInterface {
   value: string;
@@ -250,33 +250,10 @@ export const ListingPayments = ({
             <Box w="100%" mb={4}>
               <FormControl isRequired>
                 <Flex>
-                  <FormLabel
-                    color={'brand.slate.500'}
-                    fontSize={'15px'}
-                    fontWeight={600}
-                  >
+                  <ListingFormLabel htmlFor="compensationType">
                     Compensation Type
-                  </FormLabel>
-                  <Tooltip
-                    w="max"
-                    p="0.7rem"
-                    color="white"
-                    fontSize="0.9rem"
-                    fontWeight={600}
-                    bg="#6562FF"
-                    borderRadius="0.5rem"
-                    hasArrow
-                    label={
-                      'Would you like to keep a fixed compensation for this project, or let applicants send in their quotes?'
-                    }
-                    placement="right-end"
-                  >
-                    <Image
-                      mt={-2}
-                      alt={'Info Icon'}
-                      src={'/assets/icons/info-icon.svg'}
-                    />
-                  </Tooltip>
+                  </ListingFormLabel>
+                  <ListingTooltip label="Would you like to keep a fixed compensation for this project, or let applicants send in their quotes?" />
                 </Flex>
                 <Controller
                   control={control}
@@ -311,13 +288,7 @@ export const ListingPayments = ({
             </Box>
           )}
           <FormControl isRequired>
-            <FormLabel
-              color={'brand.slate.500'}
-              fontSize={'15px'}
-              fontWeight={600}
-            >
-              Select Token
-            </FormLabel>
+            <ListingFormLabel htmlFor="token">Select Token</ListingFormLabel>
             <Menu>
               <MenuButton
                 as={Button}
@@ -396,14 +367,10 @@ export const ListingPayments = ({
           </FormControl>
           {compensationType === 'fixed' && (
             <FormControl w="full" mt={5} isRequired>
-              <FormLabel
-                color={'brand.slate.500'}
-                fontSize={'15px'}
-                fontWeight={600}
-              >
+              <ListingFormLabel htmlFor="rewardAmount">
                 Total {!isProject ? 'Reward Amount' : 'Compensation'} (in{' '}
                 {tokenList.find((t) => t.tokenSymbol === token)?.tokenSymbol})
-              </FormLabel>
+              </ListingFormLabel>
 
               <NumberInput focusBorderColor="brand.purple">
                 <NumberInputField
@@ -424,13 +391,7 @@ export const ListingPayments = ({
           {compensationType === 'range' && (
             <Flex gap="3" w="100%">
               <FormControl w="full" mt={5} isRequired>
-                <FormLabel
-                  color={'brand.slate.500'}
-                  fontSize={'15px'}
-                  fontWeight={600}
-                >
-                  From
-                </FormLabel>
+                <ListingFormLabel htmlFor="minRewardAsk">From</ListingFormLabel>
 
                 <NumberInput focusBorderColor="brand.purple">
                   <NumberInputField
@@ -448,13 +409,7 @@ export const ListingPayments = ({
                 </NumberInput>
               </FormControl>
               <FormControl w="full" mt={5} isRequired>
-                <FormLabel
-                  color={'brand.slate.500'}
-                  fontSize={'15px'}
-                  fontWeight={600}
-                >
-                  Upto
-                </FormLabel>
+                <ListingFormLabel htmlFor="minRewardAsk">Upto</ListingFormLabel>
 
                 <NumberInput focusBorderColor="brand.purple">
                   <NumberInputField

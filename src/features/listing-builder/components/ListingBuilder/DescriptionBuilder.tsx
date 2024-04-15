@@ -3,9 +3,7 @@ import {
   Box,
   Button,
   Flex,
-  FormLabel,
   HStack,
-  Image,
   Input,
   Link as ChakraLink,
   Modal,
@@ -13,7 +11,6 @@ import {
   ModalContent,
   ModalOverlay,
   Text,
-  Tooltip,
   useDisclosure,
   VStack,
 } from '@chakra-ui/react';
@@ -56,6 +53,7 @@ import { ReferenceCard } from '@/features/listings';
 import { uploadToCloudinary } from '@/utils/upload';
 
 import { useListingFormStore } from '../../store';
+import { ListingFormLabel, ListingTooltip } from './Form';
 
 const LinkModal = ({
   isOpen,
@@ -263,31 +261,10 @@ export const DescriptionBuilder = ({
         <Box mb={8}>
           <Flex justify="start" w="full">
             <Flex>
-              <FormLabel
-                color={'brand.slate.500'}
-                fontSize={'15px'}
-                fontWeight={600}
-              >
+              <ListingFormLabel htmlFor="requirements">
                 Eligibility Requirements
-              </FormLabel>
-              <Tooltip
-                w="max"
-                p="0.7rem"
-                color="white"
-                fontSize="0.9rem"
-                fontWeight={600}
-                bg="#6562FF"
-                borderRadius="0.5rem"
-                hasArrow
-                label={`Add here if you have any specific eligibility requirements for the Listing.`}
-                placement="right-end"
-              >
-                <Image
-                  mt={-2}
-                  alt={'Info Icon'}
-                  src={'/assets/icons/info-icon.svg'}
-                />
-              </Tooltip>
+              </ListingFormLabel>
+              <ListingTooltip label="Add here if you have any specific eligibility requirements for the Listing." />
             </Flex>
           </Flex>
           <Input
@@ -316,13 +293,9 @@ export const DescriptionBuilder = ({
         </Box>
         <Flex justify="space-between" w="full">
           <Flex>
-            <FormLabel
-              color={'brand.slate.500'}
-              fontSize={'15px'}
-              fontWeight={600}
-            >
+            <ListingFormLabel htmlFor="description">
               Listing Details
-            </FormLabel>
+            </ListingFormLabel>
             <Text
               as="sup"
               mt={3.5}
@@ -333,24 +306,7 @@ export const DescriptionBuilder = ({
             >
               *
             </Text>
-            <Tooltip
-              w="max"
-              p="0.7rem"
-              color="white"
-              fontSize="0.9rem"
-              fontWeight={600}
-              bg="#6562FF"
-              borderRadius="0.5rem"
-              hasArrow
-              label={`Write details about the Listing - About, Requirements, Evaluation Criteria, Resources, Rewards, etc.`}
-              placement="right-end"
-            >
-              <Image
-                mt={-2}
-                alt={'Info Icon'}
-                src={'/assets/icons/info-icon.svg'}
-              />
-            </Tooltip>
+            <ListingTooltip label="Write details about the Listing - About, Requirements, Evaluation Criteria, Resources, Rewards, etc." />
           </Flex>
           <ChakraLink
             gap={1}

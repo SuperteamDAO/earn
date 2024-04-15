@@ -6,8 +6,6 @@ import {
   FormControl,
   FormErrorMessage,
   FormHelperText,
-  FormLabel,
-  Image,
   Input,
   InputGroup,
   InputRightElement,
@@ -17,7 +15,6 @@ import {
   Switch,
   Tag,
   Text,
-  Tooltip,
   VStack,
 } from '@chakra-ui/react';
 import { zodResolver } from '@hookform/resolvers/zod';
@@ -44,6 +41,7 @@ import { dayjs } from '@/utils/dayjs';
 import { useListingFormStore } from '../../store';
 import { getSuggestions, mergeSkills, splitSkills } from '../../utils';
 import { SelectSponsor } from '../SelectSponsor';
+import { ListingFormLabel, ListingTooltip } from './Form';
 
 interface Props {
   editable: boolean;
@@ -276,32 +274,10 @@ export const ListingBasic = ({
           )}
           <FormControl w="full" mb={5} isInvalid={!!errors.title} isRequired>
             <Flex>
-              <FormLabel
-                color={'brand.slate.500'}
-                fontSize={'15px'}
-                fontWeight={600}
-                htmlFor={'title'}
-              >
+              <ListingFormLabel htmlFor={'title'}>
                 Listing Title
-              </FormLabel>
-              <Tooltip
-                w="max"
-                p="0.7rem"
-                color="white"
-                fontSize="0.9rem"
-                fontWeight={600}
-                bg="#6562FF"
-                borderRadius="0.5rem"
-                hasArrow
-                label={`Use a short title to describe the Listing`}
-                placement="right-end"
-              >
-                <Image
-                  mt={-2}
-                  alt={'Info Icon'}
-                  src={'/assets/icons/info-icon.svg'}
-                />
-              </Tooltip>
+              </ListingFormLabel>
+              <ListingTooltip label="Use a short title to describe the Listing" />
             </Flex>
 
             <Input
@@ -354,32 +330,8 @@ export const ListingBasic = ({
           </FormControl>
           <FormControl w="full" mb={5} isInvalid={!!errors.slug} isRequired>
             <Flex>
-              <FormLabel
-                color={'brand.slate.500'}
-                fontSize={'15px'}
-                fontWeight={600}
-                htmlFor={'slug'}
-              >
-                Listing Slug
-              </FormLabel>
-              <Tooltip
-                w="max"
-                p="0.7rem"
-                color="white"
-                fontSize="0.9rem"
-                fontWeight={600}
-                bg="#6562FF"
-                borderRadius="0.5rem"
-                hasArrow
-                label={`Use a short slug to describe the Listing`}
-                placement="right-end"
-              >
-                <Image
-                  mt={-2}
-                  alt={'Info Icon'}
-                  src={'/assets/icons/info-icon.svg'}
-                />
-              </Tooltip>
+              <ListingFormLabel htmlFor={'slug'}>Listing Slug</ListingFormLabel>
+              <ListingTooltip label="Use a short slug to describe the Listing" />
             </Flex>
             <FormHelperText
               mt={-1.5}
@@ -435,33 +387,11 @@ export const ListingBasic = ({
             <>
               <FormControl w="full" mb={5}>
                 <Flex>
-                  <FormLabel
-                    color={'brand.slate.500'}
-                    fontSize={'15px'}
-                    fontWeight={600}
-                  >
+                  <ListingFormLabel htmlFor="region">
                     Listing Geography
-                  </FormLabel>
-                  <Tooltip
-                    w="max"
-                    p="0.7rem"
-                    color="white"
-                    fontSize="0.9rem"
-                    fontWeight={600}
-                    bg="#6562FF"
-                    borderRadius="0.5rem"
-                    hasArrow
-                    label={`Select the Superteam region this listing will be available and relevant to. Only users from the region you specify will be able to apply/submit to this listing.`}
-                    placement="right-end"
-                  >
-                    <Image
-                      mt={-2}
-                      alt={'Info Icon'}
-                      src={'/assets/icons/info-icon.svg'}
-                    />
-                  </Tooltip>
+                  </ListingFormLabel>
+                  <ListingTooltip label="Select the Superteam region this listing will be available and relevant to. Only users from the region you specify will be able to apply/submit to this listing." />
                 </Flex>
-
                 <Select {...register('region')}>
                   <option value={Regions.GLOBAL}>Global</option>
                   {Superteams.map((st) => (
@@ -480,32 +410,10 @@ export const ListingBasic = ({
             isRequired
           >
             <Flex>
-              <FormLabel
-                color={'brand.slate.500'}
-                fontSize={'15px'}
-                fontWeight={600}
-                htmlFor={'pocSocials'}
-              >
+              <ListingFormLabel htmlFor={'pocSocials'}>
                 Point of Contact
-              </FormLabel>
-              <Tooltip
-                w="max"
-                p="0.7rem"
-                color="white"
-                fontSize="0.9rem"
-                fontWeight={600}
-                bg="#6562FF"
-                borderRadius="0.5rem"
-                hasArrow
-                label={`Please add a social link of the person people reach out to in case they have questions about this listing.`}
-                placement="right-end"
-              >
-                <Image
-                  mt={-2}
-                  alt={'Info Icon'}
-                  src={'/assets/icons/info-icon.svg'}
-                />
-              </Tooltip>
+              </ListingFormLabel>
+              <ListingTooltip label="Please add a social link of the person people reach out to in case they have questions about this listing." />
             </Flex>
 
             <Input
@@ -527,13 +435,9 @@ export const ListingBasic = ({
           {isProject && (
             <FormControl w="full" mb={5} isRequired={isProject}>
               <Flex>
-                <FormLabel
-                  color={'brand.slate.500'}
-                  fontSize={'15px'}
-                  fontWeight={600}
-                >
+                <ListingFormLabel htmlFor="applicationType">
                   Application Type
-                </FormLabel>
+                </ListingFormLabel>
               </Flex>
 
               <Select
@@ -552,33 +456,11 @@ export const ListingBasic = ({
               isRequired={applicationType ? applicationType === 'fixed' : true}
             >
               <Flex align={'center'} justify={'start'}>
-                <FormLabel
-                  color={'brand.slate.500'}
-                  fontSize={'15px'}
-                  fontWeight={600}
-                  htmlFor={'deadline'}
-                >
+                <ListingFormLabel htmlFor={'deadline'}>
                   Deadline (in{' '}
                   {Intl.DateTimeFormat().resolvedOptions().timeZone})
-                </FormLabel>
-                <Tooltip
-                  w="max"
-                  p="0.7rem"
-                  color="white"
-                  fontSize="0.9rem"
-                  fontWeight={600}
-                  bg="#6562FF"
-                  borderRadius="0.5rem"
-                  hasArrow
-                  label={`Select the deadline date for accepting submissions`}
-                  placement="right-end"
-                >
-                  <Image
-                    mt={-2}
-                    alt={'Info Icon'}
-                    src={'/assets/icons/info-icon.svg'}
-                  />
-                </Tooltip>
+                </ListingFormLabel>
+                <ListingTooltip label="Select the deadline date for accepting submissions" />
               </Flex>
               <Input
                 w={'full'}
@@ -641,13 +523,9 @@ export const ListingBasic = ({
               isRequired={isProject}
             >
               <Flex>
-                <FormLabel
-                  color={'brand.slate.500'}
-                  fontSize={'15px'}
-                  fontWeight={600}
-                >
+                <ListingFormLabel htmlFor="timeToComplete">
                   Estimated Time to Complete
-                </FormLabel>
+                </ListingFormLabel>
               </Flex>
 
               <Select
@@ -667,31 +545,10 @@ export const ListingBasic = ({
           )}
           <FormControl w="full" mb={5}>
             <Flex>
-              <FormLabel
-                color={'brand.slate.500'}
-                fontSize={'15px'}
-                fontWeight={600}
-              >
+              <ListingFormLabel htmlFor="referredBy">
                 Referred By
-              </FormLabel>
-              <Tooltip
-                w="max"
-                p="0.7rem"
-                color="white"
-                fontSize="0.9rem"
-                fontWeight={600}
-                bg="#6562FF"
-                borderRadius="0.5rem"
-                hasArrow
-                label={`Who referred you to add this listing on Superteam Earn?`}
-                placement="right-end"
-              >
-                <Image
-                  mt={-2}
-                  alt={'Info Icon'}
-                  src={'/assets/icons/info-icon.svg'}
-                />
-              </Tooltip>
+              </ListingFormLabel>
+              <ListingTooltip label="Who referred you to add this listing on Superteam Earn?" />
             </Flex>
 
             <Select {...register('referredBy')} placeholder="Select">
@@ -704,33 +561,10 @@ export const ListingBasic = ({
           </FormControl>
           <FormControl alignItems="center" gap={3} display="flex">
             <Flex>
-              <FormLabel
-                color={'brand.slate.500'}
-                fontSize={'15px'}
-                fontWeight={600}
-              >
+              <ListingFormLabel htmlFor="isPrivate">
                 Private Listing
-              </FormLabel>
-              <Tooltip
-                w="max"
-                p="0.7rem"
-                color="white"
-                fontSize="0.9rem"
-                fontWeight={600}
-                bg="#6562FF"
-                borderRadius="0.5rem"
-                hasArrow
-                label={
-                  'Private listings are only accessible through direct links and do not appear on the Superteam Earn homepage or other public pages on the website.'
-                }
-                placement="right-end"
-              >
-                <Image
-                  mt={-2}
-                  alt={'Info Icon'}
-                  src={'/assets/icons/info-icon.svg'}
-                />
-              </Tooltip>
+              </ListingFormLabel>
+              <ListingTooltip label="Private listings are only accessible through direct links and do not appear on the Superteam Earn homepage or other public pages on the website." />
             </Flex>
             <Switch mb={2} id="email-alerts" {...register('isPrivate')} />
           </FormControl>

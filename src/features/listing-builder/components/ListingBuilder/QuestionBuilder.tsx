@@ -3,7 +3,6 @@ import {
   Button,
   Flex,
   FormControl,
-  FormLabel,
   HStack,
   Image,
   Input,
@@ -15,6 +14,7 @@ import { useFieldArray, useForm } from 'react-hook-form';
 import toast from 'react-hot-toast';
 
 import { useListingFormStore } from '../../store';
+import { ListingFormLabel } from './Form';
 
 interface Props {
   setSteps: Dispatch<SetStateAction<number>>;
@@ -44,7 +44,7 @@ const QuestionCard = ({ register, index, remove }: QuestionCardProps) => {
   return (
     <VStack align={'start'} w={'full'}>
       <FormControl>
-        <FormLabel>Question {index + 1}</FormLabel>
+        <ListingFormLabel>Question {index + 1}</ListingFormLabel>
         <Flex gap="4">
           <Input
             {...register(`eligibility.${index}.question`)}
