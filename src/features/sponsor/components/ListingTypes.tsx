@@ -1,4 +1,4 @@
-import { Center, Flex, HStack, Text, VStack } from '@chakra-ui/react';
+import { Center, Flex, Text, VStack } from '@chakra-ui/react';
 
 import PurpleTick from '@/public/assets/landingsponsor/icons/purple-tick.svg';
 
@@ -117,17 +117,21 @@ interface FeatureProps {
 
 function Feature({ description }: FeatureProps) {
   return (
-    <HStack align="start" gap={4}>
+    <Flex align="start" direction={'row'} gap={4}>
       <HighQualityImage
         src={PurpleTick}
         alt="Purple Tick"
-        style={{ marginTop: '0.4rem', minWidth: '28px' }}
-        width={28}
-        height={28}
+        width={24}
+        height={24}
       />
-      <Text color="brand.slate.500" fontSize={normalFont} lineHeight={1.35}>
+      <Text
+        pos={'relative'}
+        top="-5px"
+        color="brand.slate.500"
+        fontSize={normalFont}
+      >
         {description}
       </Text>
-    </HStack>
+    </Flex>
   );
 }
