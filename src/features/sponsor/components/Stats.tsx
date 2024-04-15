@@ -8,11 +8,11 @@ import { HighQualityImage } from './HighQualityImage';
 
 const stats = [
   {
-    title: '21k',
+    title: '21K',
     label: 'Global Discord',
   },
   {
-    title: '75k',
+    title: '75K',
     label: 'Twitter Followes',
   },
   {
@@ -25,7 +25,7 @@ const stats = [
     showEarn: true,
   },
   {
-    title: '16k',
+    title: '16K',
     label: 'Verified Earn Users',
     showEarn: true,
   },
