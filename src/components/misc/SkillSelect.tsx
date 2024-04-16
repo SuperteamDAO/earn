@@ -127,7 +127,7 @@ export const SkillSelect = ({
           <FormLabel
             color={'brand.slate.500'}
             fontWeight={500}
-            htmlFor={'skills'}
+            htmlFor={'subskills'}
           >
             {subSkillLabel}
           </FormLabel>

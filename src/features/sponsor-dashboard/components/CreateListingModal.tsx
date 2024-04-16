@@ -120,7 +120,7 @@ export const CreateListingModal = ({
               color="brand.slate.200"
               orientation="horizontal"
             />
-            <NextLink href="/dashboard/create-bounty" passHref>
+            <NextLink href="/dashboard/create-project" passHref>
               <Button w="full" onClick={resetListingForm} size="lg">
                 Create New Project
               </Button>

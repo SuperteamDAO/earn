@@ -1,5 +1,17 @@
-import { FormLabel, Image, Tooltip } from '@chakra-ui/react';
+import {
+  Button,
+  type ButtonProps,
+  FormLabel,
+  Image,
+  Tooltip,
+} from '@chakra-ui/react';
 import { type ReactNode } from 'react';
+
+type ToolbarButtonProps = {
+  isActive?: boolean;
+  children: ReactNode;
+  onClick: () => void;
+} & ButtonProps;
 
 export const ListingFormLabel = ({
   children,
@@ -36,5 +48,29 @@ export const ListingTooltip = ({ label }: { label: string }) => {
     >
       <Image mt={-2} alt={'Info Icon'} src={'/assets/icons/info-icon.svg'} />
     </Tooltip>
+  );
+};
+
+export const ToolbarButton = ({
+  isActive = false,
+  children,
+  onClick,
+  ...props
+}: ToolbarButtonProps) => {
+  return (
+    <Button
+      alignItems={'center'}
+      justifyContent={'center'}
+      display={'flex'}
+      bg={isActive ? 'gray.200' : ''}
+      borderTop={'1px solid #D2D2D2'}
+      borderRight={'1px solid #D2D2D2'}
+      borderRadius={'0px'}
+      onClick={onClick}
+      variant={'unstyled'}
+      {...props}
+    >
+      {children}
+    </Button>
   );
 };

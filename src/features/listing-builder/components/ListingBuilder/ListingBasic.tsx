@@ -122,7 +122,7 @@ export const ListingBasic = ({
       ) {
         ctx.addIssue({
           path: ['deadline'],
-          message: 'Deadline is a required field',
+          message: 'Deadline is required',
           code: 'custom',
         });
       }
@@ -133,13 +133,13 @@ export const ListingBasic = ({
     handleSubmit,
     watch,
     setValue,
+    getValues,
     formState: { errors },
   } = useForm({
-    mode: 'onBlur',
+    mode: 'onChange',
     resolver: zodResolver(formSchema),
     defaultValues: {
       title: form?.title,
-      templateId: form?.templateId,
       description: form?.description,
       skills: form?.skills,
       slug: form?.slug,
@@ -216,7 +216,7 @@ export const ListingBasic = ({
     debounce(async () => {
       const newSlug = await getUniqueSlug();
       setValue('slug', newSlug);
-    }, 500),
+    }, 300),
     [title],
   );
 
@@ -249,17 +249,18 @@ export const ListingBasic = ({
         skills: skills,
         subskills: subSkills,
       });
-      updateState({ skills: mergedSkills, ...data });
+      updateState({ ...data, skills: mergedSkills });
       setSteps(3);
     }
   };
 
-  const onDraftClick = async (data: any) => {
+  const onDraftClick = async () => {
+    const data = getValues();
     const mergedSkills = mergeSkills({
       skills: skills,
       subskills: subSkills,
     });
-    updateState({ skills: mergedSkills, ...data });
+    updateState({ ...data, skills: mergedSkills });
     createDraft();
   };
 
@@ -376,8 +377,6 @@ export const ListingBasic = ({
             </FormErrorMessage>
           </FormControl>
           <SkillSelect
-            // errorSkill={errorState.skills}
-            // errorSubSkill={errorState.subSkills}
             setSkills={setSkills}
             setSubSkills={setSubSkills}
             skills={skills}
@@ -576,7 +575,7 @@ export const ListingBasic = ({
               w="100%"
               isDisabled={!form?.title}
               isLoading={isDraftLoading}
-              onClick={handleSubmit(onDraftClick)}
+              onClick={onDraftClick}
               variant="outline"
             >
               {isNewOrDraft || isDuplicating ? 'Save Draft' : 'Update Listing'}

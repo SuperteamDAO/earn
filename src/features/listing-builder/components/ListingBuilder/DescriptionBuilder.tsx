@@ -53,7 +53,7 @@ import { ReferenceCard } from '@/features/listings';
 import { uploadToCloudinary } from '@/utils/upload';
 
 import { useListingFormStore } from '../../store';
-import { ListingFormLabel, ListingTooltip } from './Form';
+import { ListingFormLabel, ListingTooltip, ToolbarButton } from './Form';
 
 const LinkModal = ({
   isOpen,
@@ -204,14 +204,12 @@ export const DescriptionBuilder = ({
     fileInput.accept = 'image/jpeg, image/png'; // Accept only JPEG & PNG files
     fileInput.click();
 
-    // Listen for file selection
     fileInput.addEventListener('change', async (event: any) => {
       const file = event?.target?.files[0];
       if (file) {
         const toastId = toast.loading('Uploading image...');
 
         try {
-          // upload the file and get its URL
           const url = await uploadToCloudinary(
             file,
             'listing-description',
@@ -334,280 +332,156 @@ export const DescriptionBuilder = ({
             borderBottom={'1px solid #D2D2D2'}
             bgColor={'#ffffff'}
           >
-            <Button
-              bg={editor?.isActive('heading', { level: 1 }) ? 'gray.200' : ''}
-              borderTop={'1px solid #D2D2D2'}
-              borderRight={'1px solid #D2D2D2'}
-              borderLeft={'1px solid #D2D2D2'}
-              borderRadius={'0px'}
+            <ToolbarButton
+              isActive={editor?.isActive('heading', { level: 1 })}
               onClick={() => {
                 editor?.chain().focus().toggleHeading({ level: 1 }).run();
               }}
-              variant={'unstyled'}
+              borderLeft={'1px solid #D2D2D2'}
             >
               H1
-            </Button>
-            <Button
-              bg={editor?.isActive('heading', { level: 2 }) ? 'gray.200' : ''}
-              borderTop={'1px solid #D2D2D2'}
-              borderRight={'1px solid #D2D2D2'}
-              borderRadius={'0px'}
+            </ToolbarButton>
+            <ToolbarButton
+              isActive={editor?.isActive('heading', { level: 2 })}
               onClick={() => {
                 editor?.chain().focus().toggleHeading({ level: 2 }).run();
               }}
-              variant={'unstyled'}
             >
               H2
-            </Button>
-            <Button
-              bg={editor?.isActive('heading', { level: 3 }) ? 'gray.200' : ''}
-              borderTop={'1px solid #D2D2D2'}
-              borderRight={'1px solid #D2D2D2'}
-              borderRadius={'0px'}
+            </ToolbarButton>
+            <ToolbarButton
+              isActive={editor?.isActive('heading', { level: 3 })}
               onClick={() => {
                 editor?.chain().focus().toggleHeading({ level: 3 }).run();
               }}
-              variant={'unstyled'}
             >
               H3
-            </Button>
-            <Button
-              bg={editor?.isActive('heading', { level: 4 }) ? 'gray.200' : ''}
-              borderTop={'1px solid #D2D2D2'}
-              borderRight={'1px solid #D2D2D2'}
-              borderRadius={'0px'}
+            </ToolbarButton>
+            <ToolbarButton
+              isActive={editor?.isActive('heading', { level: 4 })}
               onClick={() => {
                 editor?.chain().focus().toggleHeading({ level: 4 }).run();
               }}
-              variant={'unstyled'}
             >
               H4
-            </Button>
-            <Button
-              bg={editor?.isActive('heading', { level: 5 }) ? 'gray.200' : ''}
-              borderTop={'1px solid #D2D2D2'}
-              borderRight={'1px solid #D2D2D2'}
-              borderRadius={'0px'}
+            </ToolbarButton>
+            <ToolbarButton
+              isActive={editor?.isActive('heading', { level: 5 })}
               onClick={() => {
                 editor?.chain().focus().toggleHeading({ level: 5 }).run();
               }}
-              variant={'unstyled'}
             >
               H5
-            </Button>
-            <Button
-              bg={editor?.isActive('heading', { level: 6 }) ? 'gray.200' : ''}
-              borderTop={'1px solid #D2D2D2'}
-              borderRight={'1px solid #D2D2D2'}
-              borderRadius={'0px'}
+            </ToolbarButton>
+            <ToolbarButton
+              isActive={editor?.isActive('heading', { level: 6 })}
               onClick={() => {
                 editor?.chain().focus().toggleHeading({ level: 6 }).run();
               }}
-              variant={'unstyled'}
             >
               H6
-            </Button>
-            <Button
-              alignItems={'center'}
-              justifyContent={'center'}
-              display={'flex'}
-              bg={editor?.isActive('bold') ? 'gray.200' : ''}
-              borderTop={'1px solid #D2D2D2'}
-              borderRight={'1px solid #D2D2D2'}
-              borderRadius={'0px'}
+            </ToolbarButton>
+            <ToolbarButton
+              isActive={editor?.isActive('bold')}
               onClick={() => {
                 editor?.chain().focus().toggleBold().run();
               }}
-              variant={'unstyled'}
             >
               <GoBold />
-            </Button>
-            <Button
-              alignItems={'center'}
-              justifyContent={'center'}
-              display={'flex'}
-              bg={editor?.isActive('italic') ? 'gray.200' : ''}
-              borderTop={'1px solid #D2D2D2'}
-              borderRight={'1px solid #D2D2D2'}
-              borderRadius={'0px'}
+            </ToolbarButton>
+            <ToolbarButton
+              isActive={editor?.isActive('italic')}
               onClick={() => {
                 editor?.chain().focus().toggleItalic().run();
               }}
-              variant={'unstyled'}
             >
               <BsTypeItalic />
-            </Button>{' '}
-            <Button
-              alignItems={'center'}
-              justifyContent={'center'}
-              display={'flex'}
-              bg={editor?.isActive('underline') ? 'gray.200' : ''}
-              borderTop={'1px solid #D2D2D2'}
-              borderRight={'1px solid #D2D2D2'}
-              borderRadius={'0px'}
+            </ToolbarButton>{' '}
+            <ToolbarButton
+              isActive={editor?.isActive('underline')}
               onClick={() => {
                 editor?.chain().focus().toggleUnderline().run();
               }}
-              variant={'unstyled'}
             >
               <MdOutlineFormatUnderlined />
-            </Button>
-            <Button
-              alignItems={'center'}
-              justifyContent={'center'}
-              display={'flex'}
-              bg={editor?.isActive('underline') ? 'gray.200' : ''}
-              borderTop={'1px solid #D2D2D2'}
-              borderRight={'1px solid #D2D2D2'}
-              borderRadius={'0px'}
+            </ToolbarButton>
+            <ToolbarButton
+              isActive={editor?.isActive('underline')}
               onClick={addImage}
-              variant={'unstyled'}
             >
               <MdOutlineAddPhotoAlternate />
-            </Button>
-            <Button
-              alignItems={'center'}
-              justifyContent={'center'}
-              display={'flex'}
-              bg={editor?.isActive('link') ? 'gray.200' : ''}
-              borderTop={'1px solid #D2D2D2'}
-              borderRight={'1px solid #D2D2D2'}
-              borderRadius={'0px'}
+            </ToolbarButton>
+            <ToolbarButton
+              isActive={editor?.isActive('link')}
               onClick={() => {
                 onOpen();
               }}
-              variant={'unstyled'}
             >
               <AiOutlineLink />
-            </Button>
-            <Button
-              alignItems={'center'}
-              justifyContent={'center'}
-              display={'flex'}
-              bg={editor?.isActive('bulletList') ? 'gray.200' : ''}
-              borderTop={'1px solid #D2D2D2'}
-              borderRight={'1px solid #D2D2D2'}
-              borderRadius={'0px'}
+            </ToolbarButton>
+            <ToolbarButton
+              isActive={editor?.isActive('bulletList')}
               onClick={() => {
                 editor?.chain().focus().toggleBulletList().run();
               }}
-              variant={'unstyled'}
             >
               <MdOutlineFormatListBulleted />
-            </Button>
-            <Button
-              alignItems={'center'}
-              justifyContent={'center'}
-              display={'flex'}
-              bg={editor?.isActive('orderedList') ? 'gray.200' : ''}
-              borderTop={'1px solid #D2D2D2'}
-              borderRight={'1px solid #D2D2D2'}
-              borderRadius={'0px'}
+            </ToolbarButton>
+            <ToolbarButton
+              isActive={editor?.isActive('orderedList')}
               onClick={() => {
                 editor?.chain().focus().toggleOrderedList().run();
               }}
-              variant={'unstyled'}
             >
               <AiOutlineOrderedList />
-            </Button>
-            <Button
-              alignItems={'center'}
-              justifyContent={'center'}
-              display={'flex'}
-              bg={editor?.isActive('codeBlock') ? 'gray.200' : ''}
-              borderTop={'1px solid #D2D2D2'}
-              borderRight={'1px solid #D2D2D2'}
-              borderRadius={'0px'}
+            </ToolbarButton>
+            <ToolbarButton
+              isActive={editor?.isActive('codeBlock')}
               onClick={() => {
                 editor?.chain().focus().toggleCodeBlock().run();
               }}
-              variant={'unstyled'}
             >
               <BsCodeSlash />
-            </Button>
-            <Button
-              alignItems={'center'}
-              justifyContent={'center'}
-              display={'flex'}
-              bg={editor?.isActive('blockquote') ? 'gray.200' : ''}
-              borderTop={'1px solid #D2D2D2'}
-              borderRight={'1px solid #D2D2D2'}
-              borderRadius={'0px'}
+            </ToolbarButton>
+            <ToolbarButton
+              isActive={editor?.isActive('blockquote')}
               onClick={() => {
                 editor?.chain().focus().toggleBlockquote().run();
               }}
-              variant={'unstyled'}
             >
               <BsBlockquoteLeft />
-            </Button>
-            <Button
-              alignItems={'center'}
-              justifyContent={'center'}
-              display={'flex'}
-              borderTop={'1px solid #D2D2D2'}
-              borderRight={'1px solid #D2D2D2'}
-              borderRadius={'0px'}
+            </ToolbarButton>
+            <ToolbarButton
               onClick={() => {
                 editor?.chain().focus().setHorizontalRule().run();
               }}
-              variant={'unstyled'}
             >
               <MdOutlineHorizontalRule />
-            </Button>
-            <Button
-              alignItems={'center'}
-              justifyContent={'center'}
-              display={'flex'}
-              borderTop={'1px solid #D2D2D2'}
-              borderRight={'1px solid #D2D2D2'}
-              borderRadius={'0px'}
+            </ToolbarButton>
+            <ToolbarButton
               onClick={() => {
                 editor?.chain().focus().setHardBreak().run();
               }}
-              variant={'unstyled'}
             >
               <BsFileBreak />
-            </Button>
-            <Button
-              alignItems={'center'}
-              justifyContent={'center'}
-              display={'flex'}
-              borderTop={'1px solid #D2D2D2'}
-              borderRight={'1px solid #D2D2D2'}
-              borderRadius={'0px'}
+            </ToolbarButton>
+            <ToolbarButton
               onClick={() => {
                 editor?.chain().focus().undo().run();
               }}
-              variant={'unstyled'}
             >
               <CiUndo />
-            </Button>
-            <Button
-              alignItems={'center'}
-              justifyContent={'center'}
-              display={'flex'}
-              borderTop={'1px solid #D2D2D2'}
-              borderRight={'1px solid #D2D2D2'}
-              borderRadius={'0px'}
+            </ToolbarButton>
+            <ToolbarButton
               onClick={() => {
                 editor?.chain().focus().redo().run();
               }}
-              variant={'unstyled'}
             >
               <CiRedo />
-            </Button>
-            <Button
-              alignItems={'center'}
-              justifyContent={'center'}
-              display={'flex'}
-              borderTop={'1px solid #D2D2D2'}
-              borderRight={'1px solid #D2D2D2'}
-              borderRadius={'0px'}
-              onClick={() => {}}
-              variant={'unstyled'}
-            >
+            </ToolbarButton>
+            <ToolbarButton onClick={() => {}}>
               <BiFontColor />
-            </Button>
+            </ToolbarButton>
           </Flex>
 
           <Box w={'full'} h={'full'} mb={10}>
