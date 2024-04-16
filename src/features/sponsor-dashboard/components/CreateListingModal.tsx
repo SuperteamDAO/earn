@@ -72,7 +72,7 @@ export const CreateListingModal = ({
             </UnorderedList>
             <Box flex="1" />
             <NextLink href="/dashboard/create-bounty" passHref>
-              <Button onClick={resetListingForm} size="lg">
+              <Button w="full" onClick={resetListingForm} size="lg">
                 Create New Bounty
               </Button>
             </NextLink>
@@ -121,7 +121,7 @@ export const CreateListingModal = ({
               orientation="horizontal"
             />
             <NextLink href="/dashboard/create-bounty" passHref>
-              <Button onClick={resetListingForm} size="lg">
+              <Button w="full" onClick={resetListingForm} size="lg">
                 Create New Project
               </Button>
             </NextLink>

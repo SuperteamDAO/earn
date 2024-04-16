@@ -30,6 +30,41 @@ interface Props {
   prevStep?: number;
 }
 
+const defaultStepList = [
+  {
+    label: 'Template',
+    number: 1,
+    mainHead: 'List your Opportunity',
+    description:
+      'To save time, check out our ready made templates below. If you already have a listing elsewhere, use "Start from Scratch" and copy/paste your text.',
+  },
+  {
+    label: 'Basics',
+    number: 2,
+    mainHead: 'Create a Listing',
+    description: `Now let's learn a bit more about the work you need completed`,
+  },
+  {
+    label: 'Description',
+    number: 3,
+    mainHead: 'Tell us some more',
+    description:
+      'Add more details about the opportunity, submission requirements, reward(s) details, and resources',
+  },
+  {
+    label: 'Questions',
+    number: 4,
+    mainHead: 'Enter your questions',
+    description: 'What would you like to know about your applicants?',
+  },
+  {
+    label: 'Reward',
+    number: 5,
+    mainHead: 'Add the reward amount',
+    description: 'Decide the compensation amount for your listing',
+  },
+];
+
 export function CreateListing({
   listing,
   editable = false,
@@ -248,6 +283,19 @@ export function CreateListing({
   const surveyId = '018c674f-7e49-0000-5097-f2affbdddb0d';
   const isNewOrDraft = bountyDraftStatus === 'DRAFT' || newBounty === true;
 
+  const getStepList = (type: string) => {
+    const filteredStepList =
+      type === 'project'
+        ? defaultStepList
+        : defaultStepList.filter((step) => step.number !== 4);
+    return filteredStepList.map((step, index) => ({
+      ...step,
+      number: index + 1,
+    }));
+  };
+
+  const stepList = getStepList(type);
+
   return (
     <>
       {!userInfo?.id || !userInfo?.currentSponsorId ? (
@@ -256,44 +304,7 @@ export function CreateListing({
           message="Please contact support to access this section."
         />
       ) : (
-        <FormLayout
-          setStep={setSteps}
-          currentStep={steps}
-          stepList={[
-            {
-              label: 'Template',
-              number: 1,
-              mainHead: 'List your Opportunity',
-              description:
-                'To save time, check out our ready made templates below. If you already have a listing elsewhere, use "Start from Scratch" and copy/paste your text.',
-            },
-            {
-              label: 'Basics',
-              number: 2,
-              mainHead: 'Create a Listing',
-              description: `Now let's learn a bit more about the work you need completed`,
-            },
-            {
-              label: 'Description',
-              number: 3,
-              mainHead: 'Tell us some more',
-              description:
-                'Add more details about the opportunity, submission requirements, reward(s) details, and resources',
-            },
-            {
-              label: 'Questions',
-              number: 4,
-              mainHead: 'Enter your questions',
-              description: 'What would you like to know about your applicants?',
-            },
-            {
-              label: 'Reward',
-              number: 5,
-              mainHead: 'Add the reward amount',
-              description: 'Decide the compensation amount for your listing',
-            },
-          ]}
-        >
+        <FormLayout setStep={setSteps} currentStep={steps} stepList={stepList}>
           {isOpen && (
             <ListingSuccessModal
               slug={slug}
@@ -331,7 +342,7 @@ export function CreateListing({
               type={type}
             />
           )}
-          {steps === 4 && (
+          {type === 'project' && steps === 4 && (
             <QuestionBuilder
               createDraft={createDraft}
               draftLoading={isDraftLoading}
@@ -342,18 +353,19 @@ export function CreateListing({
             />
           )}
 
-          {steps === 5 && (
-            <ListingPayments
-              createAndPublishListing={createAndPublishListing}
-              createDraft={createDraft}
-              isDraftLoading={isDraftLoading}
-              editable={editable}
-              isListingPublishing={isListingPublishing}
-              type={type}
-              isDuplicating={isDuplicating}
-              isNewOrDraft={isNewOrDraft}
-            />
-          )}
+          {(type === 'project' && steps === 5) ||
+            (type !== 'project' && steps === 4 && (
+              <ListingPayments
+                createAndPublishListing={createAndPublishListing}
+                createDraft={createDraft}
+                isDraftLoading={isDraftLoading}
+                editable={editable}
+                isListingPublishing={isListingPublishing}
+                type={type}
+                isDuplicating={isDuplicating}
+                isNewOrDraft={isNewOrDraft}
+              />
+            ))}
         </FormLayout>
       )}
     </>

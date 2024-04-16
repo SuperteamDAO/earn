@@ -240,10 +240,6 @@ export const DescriptionBuilder = ({
       setEditorError(true);
       return;
     }
-    if (!isProject) {
-      setSteps(5);
-      return;
-    }
     setSteps(4);
   };
 
