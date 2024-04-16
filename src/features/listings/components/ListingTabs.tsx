@@ -173,7 +173,7 @@ export const ListingTabs = ({
               mx={{ base: 0, sm: 3 }}
               mr={3}
               color={'brand.slate.300'}
-              fontSize={'xxs'}
+              fontSize="xx-small"
             >
               |
             </Text>

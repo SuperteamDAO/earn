@@ -11,7 +11,6 @@ import {
   VStack,
 } from '@chakra-ui/react';
 import axios from 'axios';
-import { MediaPicker } from 'degen';
 import { useRouter } from 'next/router';
 import { useSession } from 'next-auth/react';
 import { useEffect, useState } from 'react';
@@ -19,6 +18,7 @@ import { useForm } from 'react-hook-form';
 import Select from 'react-select';
 import makeAnimated from 'react-select/animated';
 
+import { ImagePicker } from '@/components/shared/ImagePicker';
 import { IndustryList } from '@/constants';
 import { SignIn } from '@/features/auth';
 import type { SponsorType } from '@/interface/sponsor';
@@ -277,14 +277,11 @@ const CreateSponsor = () => {
                     </span>
                   </Heading>
                   <HStack gap={5}>
-                    <MediaPicker
-                      accept="image/jpeg, image/png, image/webp"
+                    <ImagePicker
                       onChange={async (e) => {
                         const a = await uploadToCloudinary(e, 'earn-sponsor');
                         setImageUrl(a);
                       }}
-                      compact
-                      label="Choose or Drag & Drop Media"
                     />
                   </HStack>
                 </VStack>

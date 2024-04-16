@@ -23,7 +23,6 @@ export const Header = () => {
 
   useEffect(() => {
     const checkHashAndOpenModal = () => {
-      console.log(window.location.hash);
       const hashHasEmail = window.location.hash === '#emailPreferences';
       if (hashHasEmail && status === 'unauthenticated' && !session) {
         onLoginOpen();
