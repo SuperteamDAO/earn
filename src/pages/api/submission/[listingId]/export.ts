@@ -54,12 +54,22 @@ async function handler(req: NextApiRequestWithUser, res: NextApiResponse) {
       },
       take: 1000,
     });
-    const finalJson = result?.map((item, i) => {
+
+    const eligibilityQuestions = new Set<string>();
+    result.forEach((submission: any) => {
+      submission.eligibilityAnswers?.forEach((answer: any) => {
+        eligibilityQuestions.add(answer.question);
+      });
+    });
+
+    const finalJson = result?.map((item: any, i) => {
       const user = item.user;
       const eligibility: any = {};
-      const eligibilityAnswers: any = item?.eligibilityAnswers || [];
-      eligibilityAnswers.forEach((e: any) => {
-        eligibility[e.question] = e.answer;
+      eligibilityQuestions.forEach((question) => {
+        const answer = item.eligibilityAnswers?.find(
+          (e: any) => e.question === question,
+        );
+        eligibility[question] = answer ? answer.answer : '';
       });
       return {
         'Sr no': i + 1,
