@@ -87,7 +87,8 @@ async function bounty(req: NextApiRequestWithUser, res: NextApiResponse) {
       });
     }
 
-    const deadlineChanged = currentBounty.deadline !== updatedData.deadline;
+    const deadlineChanged =
+      currentBounty.deadline?.toString() !== result.deadline?.toString();
     if (deadlineChanged) {
       const dayjsDeadline = dayjs(result.deadline);
       await prisma.comment.create({

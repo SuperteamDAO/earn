@@ -12,6 +12,7 @@ import {
   PopoverCloseButton,
   PopoverContent,
   PopoverTrigger,
+  Spinner,
   Text,
   Tooltip,
   useDisclosure,
@@ -72,6 +73,8 @@ export function ListingHeader({
       User: User | null;
     })[]
   >([]);
+  const [isSubscribeLoading, setIsSubscribeLoading] = useState(false);
+
   const handleSubscribe = async () => {
     if (!userInfo?.id) {
       setTriggerLogin(true);
@@ -81,26 +84,33 @@ export function ListingHeader({
       return;
     }
 
+    setIsSubscribeLoading(true);
     try {
       await axios.post('/api/bounties/subscribe/subscribe', {
         bountyId: id,
       });
       setUpdate((prev) => !prev);
+      setIsSubscribeLoading(false);
       toast.success('Subscribed to the listing');
     } catch (error) {
       console.log(error);
+      setIsSubscribeLoading(false);
       toast.error('Error');
     }
   };
   const handleUnSubscribe = async (idSub: string) => {
+    setIsSubscribeLoading(true);
+
     try {
       await axios.post('/api/bounties/subscribe/unSubscribe', {
         id: idSub,
       });
       setUpdate((prev) => !prev);
+      setIsSubscribeLoading(false);
       toast.success('Unsubscribed');
     } catch (error) {
       console.log(error);
+      setIsSubscribeLoading(false);
       toast.error('Error');
     }
   };
@@ -386,11 +396,21 @@ export function ListingHeader({
           <HStack>
             <HStack align="start">
               <IconButton
-                color="brand.slate.500"
-                bg="brand.slate.100"
+                color={
+                  sub.find((e) => e.userId === userInfo?.id)
+                    ? 'white'
+                    : 'brand.slate.500'
+                }
+                bg={
+                  sub.find((e) => e.userId === userInfo?.id)
+                    ? 'brand.purple'
+                    : 'brand.slate.100'
+                }
                 aria-label="Notify"
                 icon={
-                  sub.find((e) => e.userId === userInfo?.id) ? (
+                  isSubscribeLoading ? (
+                    <Spinner color="white" size="sm" />
+                  ) : sub.find((e) => e.userId === userInfo?.id) ? (
                     <TbBellRinging />
                   ) : (
                     <TbBell />

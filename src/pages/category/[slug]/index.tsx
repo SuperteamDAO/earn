@@ -52,7 +52,6 @@ function ListingCategoryPage({ slug }: { slug: string }) {
     design: 'Superteam Earn | Design Bounties and Grants',
     content: 'Superteam Earn | Content Bounties and Grants',
     development: 'Superteam Earn | Development Bounties and Grants',
-    // Hyperdrive: 'Superteam Earn | Apply to Hyperdrive global Solana Hackathon',
   };
 
   const titleKey = slug as SlugKeys;
@@ -60,7 +59,6 @@ function ListingCategoryPage({ slug }: { slug: string }) {
   const formattedSlug =
     slug.charAt(0).toUpperCase() + slug.slice(1).toLowerCase();
 
-  // slug === 'Hyperdrive' ? slug.toUpperCase() : slug.toLowerCase();
   const metaDescription = `Find the latest ${slug.toLowerCase()} bounties and grants for freelancers and builders in the crypto space on Superteam Earn.`;
   const canonicalURL = `https://earn.superteam.fun/category/${slug}/`;
 
