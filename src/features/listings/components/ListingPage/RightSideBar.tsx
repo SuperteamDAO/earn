@@ -24,6 +24,7 @@ import Countdown from 'react-countdown';
 import { VerticalStep } from '@/components/misc/steps';
 import { CountDownRenderer } from '@/components/shared/countdownRenderer';
 import { tokenList } from '@/constants/index';
+import { formatNumberWithSuffix } from '@/utils/formatNumberWithSuffix';
 import { getURLSanitized } from '@/utils/getURLSanitized';
 
 import type { Bounty, Rewards } from '../../types';
@@ -216,9 +217,13 @@ export function RightSideBar({ listing }: { listing: Bounty }) {
                                       fontSize={'lg'}
                                       fontWeight={500}
                                     >
-                                      {rewards[prize.key]}
+                                      {formatNumberWithSuffix({
+                                        amount: rewards[prize.key]!,
+                                        skipThousands: true,
+                                      })}
                                     </Text>
                                     <Text
+                                      mt="1px"
                                       ml={1}
                                       color="brand.slate.400"
                                       fontWeight={400}

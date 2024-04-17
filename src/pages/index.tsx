@@ -35,6 +35,7 @@ const HomePage: NextPage = () => {
           category: 'bounties',
           take: 100,
           deadline: date,
+          isHomePage: true,
         },
       });
 

@@ -2,6 +2,8 @@ import { ArrowForwardIcon } from '@chakra-ui/icons';
 import { Flex, Text, type TextProps } from '@chakra-ui/react';
 import React from 'react';
 
+import { formatNumberWithSuffix } from '@/utils/formatNumberWithSuffix';
+
 interface CompensationAmountType {
   compensationType?: 'fixed' | 'range' | 'variable';
   rewardAmount?: number;
@@ -10,35 +12,6 @@ interface CompensationAmountType {
   token?: string;
   textStyle?: TextProps;
 }
-
-const formatNumberWithSuffix = ({
-  amount,
-  skipThousands,
-}: {
-  amount: number;
-  skipThousands: boolean;
-}) => {
-  if (isNaN(amount)) return null;
-
-  if (amount < 1000 || (skipThousands && amount < 1000000))
-    return amount?.toString();
-
-  const suffixes = ['', 'k', 'm'];
-  const tier = (Math.log10(amount) / 3) | 0;
-
-  const adjustedTier = skipThousands ? Math.max(tier, 1) : tier;
-
-  if (adjustedTier === 0) return amount.toString();
-
-  const suffix = suffixes[adjustedTier];
-  const scale = Math.pow(10, adjustedTier * 3);
-  const scaled = amount / scale;
-
-  const formattedNumber =
-    scaled % 1 === 0 ? scaled.toString() : scaled.toFixed(1);
-
-  return formattedNumber + suffix;
-};
 
 export const CompensationAmount = ({
   compensationType,
@@ -72,7 +45,7 @@ export const CompensationAmount = ({
           case 'range':
             return (
               <>
-                {`${formatNumberWithSuffix({ amount: minRewardAsk!, skipThousands: false })}-${formatNumberWithSuffix({ amount: maxRewardAsk!, skipThousands: false })}`}
+                {`${formatNumberWithSuffix({ amount: minRewardAsk! })}-${formatNumberWithSuffix({ amount: maxRewardAsk! })}`}
                 <Token />
               </>
             );

@@ -7,6 +7,8 @@ import { dayjs } from '@/utils/dayjs';
 export default async function user(req: NextApiRequest, res: NextApiResponse) {
   const params = req.query;
   const category = params.category as string;
+  const isHomePage = params.isHomePage === 'true';
+
   const filter = params.filter as string;
   const type = params.type as
     | Prisma.EnumBountyTypeFilter
@@ -62,6 +64,7 @@ export default async function user(req: NextApiRequest, res: NextApiResponse) {
           deadline: {
             gte: deadline,
           },
+          ...(isHomePage ? { rewardAmount: { gt: 100 } } : {}),
           ...skillsFilter,
         },
         include: {
@@ -93,6 +96,7 @@ export default async function user(req: NextApiRequest, res: NextApiResponse) {
           deadline: {
             gte: deadline,
           },
+          ...(isHomePage ? { rewardAmount: { gt: 100 } } : {}),
           ...skillsFilter,
           Hackathon: null,
         },
@@ -121,45 +125,6 @@ export default async function user(req: NextApiRequest, res: NextApiResponse) {
         result.bounties = sortedData.slice(0, take);
       }
     }
-    // else if (category === 'hyperdrive') {
-    //   const bounties = await prisma.bounties.findMany({
-    //     where: {
-    //       isPublished: true,
-    //       isActive: true,
-    //       isPrivate: false,
-    //       hackathonprize: true,
-    //       isArchived: false,
-    //       status: 'OPEN',
-    //       deadline: {
-    //         gte: dayjs().subtract(1, 'month').toISOString(),
-    //       },
-    //       ...skillsFilter,
-    //     },
-    //     include: {
-    //       sponsor: {
-    //         select: {
-    //           name: true,
-    //           slug: true,
-    //           logo: true,
-    //         },
-    //       },
-    //     },
-    //   });
-    //   const sortedData = bounties.sort((a, b) => {
-    //     return dayjs(b.deadline).diff(dayjs(a.deadline));
-    //   });
-    //   const splitIndex = sortedData.findIndex((bounty) =>
-    //     dayjs().isAfter(dayjs(bounty?.deadline)),
-    //   );
-    //   if (splitIndex >= 0) {
-    //     const bountiesOpen = sortedData.slice(0, splitIndex).reverse();
-    //     const bountiesClosed = sortedData.slice(splitIndex);
-
-    //     result.bounties = [...bountiesOpen, ...bountiesClosed];
-    //   } else {
-    //     result.bounties = sortedData.slice(0, take);
-    //   }
-    // }
 
     if (!category || category === 'all' || category === 'grants') {
       const grants = await prisma.grants.findMany({

@@ -1,6 +1,8 @@
 import { Text, type TextProps } from '@chakra-ui/react';
 import React from 'react';
 
+import { formatNumberWithSuffix } from '@/utils/formatNumberWithSuffix';
+
 interface CompensationAmountType {
   compensationType?: 'fixed' | 'range' | 'variable';
   rewardAmount?: number;
@@ -8,26 +10,6 @@ interface CompensationAmountType {
   maxRewardAsk?: number;
   textStyle?: TextProps;
 }
-
-const formatNumberWithSuffix = ({ amount }: { amount: number }) => {
-  if (isNaN(amount)) return null;
-
-  if (amount < 1000) return amount.toString();
-
-  const suffixes = ['', 'k', 'm'];
-  const tier = (Math.log10(amount) / 3) | 0;
-
-  if (tier === 0) return amount.toString();
-
-  const suffix = suffixes[tier];
-  const scale = Math.pow(10, tier * 3);
-  const scaled = amount / scale;
-
-  const formattedNumber =
-    scaled % 1 === 0 ? scaled.toString() : scaled.toFixed(1);
-
-  return formattedNumber + suffix;
-};
 
 export const SponsorPrize = ({
   compensationType,

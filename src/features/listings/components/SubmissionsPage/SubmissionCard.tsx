@@ -152,7 +152,15 @@ export const SubmissionCard = ({
               variant="marble"
             />
           )}
-          <Text color={'gray.900'} fontSize={'lg'} fontWeight={500}>
+          <Text
+            overflow={'hidden'}
+            color={'gray.900'}
+            fontSize={'lg'}
+            fontWeight={500}
+            textAlign={'center'}
+            whiteSpace={'nowrap'}
+            textOverflow={'ellipsis'}
+          >
             {talent?.firstName} {talent?.lastName}
           </Text>
         </HStack>
@@ -190,15 +198,17 @@ export const SubmissionCard = ({
           />
           {likes?.length}
         </Button>
-        <BiSolidComment
-          size={'1.23rem'}
-          color={'#CBD5E1'}
-          style={{
-            transform: 'scaleX(-1)',
-            marginTop: '2px',
-            cursor: 'pointer',
-          }}
-        />
+        <LinkOverlay href={`${router.asPath}/${id}`}>
+          <BiSolidComment
+            size={'1.23rem'}
+            color={'#CBD5E1'}
+            style={{
+              transform: 'scaleX(-1)',
+              marginTop: '2px',
+              cursor: 'pointer',
+            }}
+          />
+        </LinkOverlay>
       </HStack>
 
       <Link as={NextLink} href={getURLSanitized(link)} isExternal>
@@ -224,7 +234,7 @@ export const SubmissionCard = ({
           }
           variant="outline"
         >
-          <Text ml={24} fontSize={'17px'} textAlign={'center'}>
+          <Text ml={24} fontSize={'17px'}>
             View
           </Text>
         </Button>
