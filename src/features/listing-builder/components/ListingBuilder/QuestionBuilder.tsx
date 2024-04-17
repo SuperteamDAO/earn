@@ -79,11 +79,11 @@ export const QuestionBuilder = ({
   });
 
   const onSubmit = (data: any) => {
-    if (data.questions.length === 0) {
+    if (data.eligibility.length === 0) {
       toast.error('Add a minimum of one question');
       return;
     }
-    const hasEmptyQuestions = data.questions.some((q: Ques) => !q.question);
+    const hasEmptyQuestions = data.eligibility.some((q: Ques) => !q.question);
     if (hasEmptyQuestions) {
       toast.error('All questions must be filled out');
       return;
@@ -139,7 +139,7 @@ export const QuestionBuilder = ({
           + Add Question
         </Button>
         <VStack gap={6} w={'full'} pt={10}>
-          <Button w="100%" variant="solid">
+          <Button w="100%" type="submit" variant="solid">
             Continue
           </Button>
           <Button

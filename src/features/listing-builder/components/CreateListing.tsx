@@ -296,6 +296,9 @@ export function CreateListing({
 
   const stepList = getStepList(type);
 
+  const showPayments =
+    (type === 'project' && steps === 5) || (type !== 'project' && steps === 4);
+
   return (
     <>
       {!userInfo?.id || !userInfo?.currentSponsorId ? (
@@ -353,19 +356,18 @@ export function CreateListing({
             />
           )}
 
-          {(type === 'project' && steps === 5) ||
-            (type !== 'project' && steps === 4 && (
-              <ListingPayments
-                createAndPublishListing={createAndPublishListing}
-                createDraft={createDraft}
-                isDraftLoading={isDraftLoading}
-                editable={editable}
-                isListingPublishing={isListingPublishing}
-                type={type}
-                isDuplicating={isDuplicating}
-                isNewOrDraft={isNewOrDraft}
-              />
-            ))}
+          {showPayments && (
+            <ListingPayments
+              createAndPublishListing={createAndPublishListing}
+              createDraft={createDraft}
+              isDraftLoading={isDraftLoading}
+              editable={editable}
+              isListingPublishing={isListingPublishing}
+              type={type}
+              isDuplicating={isDuplicating}
+              isNewOrDraft={isNewOrDraft}
+            />
+          )}
         </FormLayout>
       )}
     </>

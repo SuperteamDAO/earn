@@ -25,7 +25,8 @@ import {
   useDisclosure,
   VStack,
 } from '@chakra-ui/react';
-import { useState } from 'react';
+import debounce from 'lodash.debounce';
+import { useEffect, useState } from 'react';
 import { Controller, useForm } from 'react-hook-form';
 
 import { PrizeList, tokenList } from '@/constants';
@@ -87,6 +88,9 @@ export const ListingPayments = ({
   const maxRewardAsk = watch('maxRewardAsk');
   const token = watch('token');
   const rewards = watch('rewards');
+
+  const [debouncedRewardAmount, setDebouncedRewardAmount] =
+    useState(rewardAmount);
 
   const prizesList = sortRank(Object.keys(rewards || []))?.map((r) => ({
     value: r,
@@ -205,6 +209,16 @@ export const ListingPayments = ({
       break;
   }
 
+  useEffect(() => {
+    const debouncedUpdate = debounce((amount) => {
+      setDebouncedRewardAmount(amount);
+    }, 700);
+
+    debouncedUpdate(rewardAmount);
+    return () => {
+      debouncedUpdate.cancel();
+    };
+  }, [rewardAmount]);
   return (
     <>
       <Modal isOpen={confirmIsOpen} onClose={confirmOnClose}>
@@ -490,6 +504,12 @@ export const ListingPayments = ({
             </VStack>
           )}
           <VStack gap={4} w={'full'} mt={10} pt={4}>
+            <Text color="yellow.500">
+              {!!debouncedRewardAmount &&
+                debouncedRewardAmount <= 100 &&
+                (token === 'USDT' || 'USDC') &&
+                "Note: This listing will not show up on Earn's Landing Page since it is ≤$100 in value. Increase the total compensation for better discoverability."}
+            </Text>
             {(isNewOrDraft || isDuplicating) && (
               <Button
                 w="100%"
