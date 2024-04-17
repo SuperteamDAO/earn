@@ -118,16 +118,6 @@ export const ListingPayments = ({
     setValue('rewards', { ...rewards, [prizeName]: value });
   };
 
-  const handleMinAskChange = (value: string) => {
-    const minAsk = parseInt(value, 10) || 0;
-    setValue('minRewardAsk', minAsk);
-  };
-
-  const handleMaxAskChange = (value: string) => {
-    const maxAsk = parseInt(value, 10) || 0;
-    setValue('maxRewardAsk', maxAsk);
-  };
-
   function getPrizeLabels(pri: PrizeListInterface[]): PrizeListInterface[] {
     const labels = ['first', 'second', 'third', 'fourth', 'fifth'];
     return pri.map((prize, index) => ({
@@ -417,7 +407,7 @@ export const ListingPayments = ({
                     placeholder="Enter the lower range"
                     {...register('minRewardAsk', {
                       required: 'This field is required',
-                      setValueAs: (value) => handleMinAskChange(value),
+                      setValueAs: (value) => parseInt(value, 10),
                     })}
                   />
                 </NumberInput>
@@ -435,7 +425,7 @@ export const ListingPayments = ({
                     placeholder="Enter the higher range"
                     {...register('maxRewardAsk', {
                       required: 'This field is required',
-                      setValueAs: (value) => handleMaxAskChange(value),
+                      setValueAs: (value) => parseInt(value, 10),
                     })}
                   />
                 </NumberInput>
