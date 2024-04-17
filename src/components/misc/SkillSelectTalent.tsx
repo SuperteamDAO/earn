@@ -107,7 +107,7 @@ export const SkillSelect = ({
           }}
         />
       </FormControl>
-      <FormControl my={6}>
+      <FormControl my={6} isRequired>
         <Flex align={'center'} justify={'start'}>
           <FormLabel color={'brand.slate.500'} htmlFor={'skills'}>
             Sub Skills
