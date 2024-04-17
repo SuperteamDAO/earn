@@ -104,6 +104,7 @@ export function Features({ showVideo }: Props) {
         </Text>
       </VStack>
       <Center
+        className="ph-no-capture"
         pos="relative"
         w="full"
         maxW={maxW2}

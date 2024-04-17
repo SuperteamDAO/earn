@@ -81,6 +81,7 @@ export function Hero() {
           <Flex justify="center" gap="2rem" w="100%">
             <Link
               href={getStartedWhere(!!session, !!userInfo?.currentSponsorId)}
+              className="ph-no-capture"
               onClick={() => {
                 posthog?.capture('clicked_hero_get_started');
               }}

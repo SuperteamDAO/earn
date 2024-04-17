@@ -43,6 +43,7 @@ export function Footer() {
       </Text>
       <NextLink
         href={getStartedWhere(!!session, !!userInfo?.currentSponsorId)}
+        className="ph-no-capture"
         onClick={() => posthog.capture('clicked_footer_get_started')}
       >
         <Button

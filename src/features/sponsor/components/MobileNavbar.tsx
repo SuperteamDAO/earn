@@ -59,6 +59,7 @@ export const MobileNavbar = () => {
               <Flex align="center" gap={3}>
                 <NextLink
                   href="/new/sponsor/"
+                  className="ph-no-capture"
                   onClick={() => posthog.capture('clicked_nav_login')}
                 >
                   <Button
@@ -78,6 +79,7 @@ export const MobileNavbar = () => {
                 />
                 <NextLink
                   href="/new/sponsor/"
+                  className="ph-no-capture"
                   onClick={() => posthog.capture('clicked_nav_get_started')}
                 >
                   <Button
@@ -96,6 +98,7 @@ export const MobileNavbar = () => {
             {userInfo && !userInfo.currentSponsorId && (
               <NextLink
                 href="/new/sponsor/"
+                className="ph-no-capture"
                 onClick={() => posthog.capture('clicked_nav_get_started')}
               >
                 <Button
@@ -112,6 +115,7 @@ export const MobileNavbar = () => {
             {userInfo && !!userInfo.currentSponsorId && (
               <NextLink
                 href="/dashboard/listings/?open=1"
+                className="ph-no-capture"
                 onClick={() => posthog.capture('clicked_nav_create_listing')}
               >
                 <Button
@@ -215,6 +219,7 @@ export const MobileNavbar = () => {
           {status === 'unauthenticated' && !session && (
             <NextLink
               href="/new/sponsor/"
+              className="ph-no-capture"
               onClick={() => posthog.capture('clicked_nav_login')}
             >
               <Button

@@ -128,6 +128,7 @@ export const DesktopNavbar = () => {
               {status === 'authenticated' && !!userInfo?.currentSponsorId && (
                 <NextLink
                   href="/dashboard/listings/?open=1"
+                  className="ph-no-capture"
                   onClick={() => posthog.capture('clicked_nav_create_listing')}
                 >
                   <Button
@@ -143,6 +144,7 @@ export const DesktopNavbar = () => {
               {status === 'authenticated' && !userInfo?.currentSponsorId && (
                 <NextLink
                   href="/new/sponsor/"
+                  className="ph-no-capture"
                   onClick={() => posthog.capture('clicked_nav_get_started')}
                 >
                   <Button
@@ -164,6 +166,7 @@ export const DesktopNavbar = () => {
               <HStack gap={0}>
                 <NextLink
                   href="/new/sponsor/"
+                  className="ph-no-capture"
                   onClick={() => posthog.capture('clicked_nav_login')}
                 >
                   <Button fontSize="xs" size="sm" variant={'ghost'}>
@@ -172,6 +175,7 @@ export const DesktopNavbar = () => {
                 </NextLink>
                 <NextLink
                   href="/new/sponsor/"
+                  className="ph-no-capture"
                   onClick={() => posthog.capture('clicked_nav_get_started')}
                 >
                   <Button
