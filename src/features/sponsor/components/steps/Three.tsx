@@ -1,5 +1,6 @@
 import { HStack, Text, VStack } from '@chakra-ui/react';
-import Image from 'next/image';
+
+import { HighQualityImage } from '../HighQualityImage';
 
 const submissions = [
   {
@@ -35,7 +36,7 @@ function Profile({ submissions }: ProfileProps) {
       shadow={'0px 4px 6px 0px rgba(226, 232, 240, 0.41)'}
       rounded={6}
     >
-      <Image
+      <HighQualityImage
         src={submissions.avatar}
         alt={submissions.title}
         width={40}

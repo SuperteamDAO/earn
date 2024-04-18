@@ -6,7 +6,7 @@ import {
   Text,
   VStack,
 } from '@chakra-ui/react';
-import Image, { type StaticImageData } from 'next/image';
+import { type StaticImageData } from 'next/image';
 import { usePostHog } from 'posthog-js/react';
 
 import SponsorDashboard from '@/public/assets/landingsponsor/displays/sponsor-dashboard.png';
@@ -134,7 +134,7 @@ export function Features({ showVideo }: Props) {
             </defs>
           </svg>
         </AbsoluteCenter>
-        <Image
+        <HighQualityImage
           style={{
             width: '100%',
             height: '100%',

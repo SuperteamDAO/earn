@@ -1,5 +1,5 @@
 import { Divider, HStack, Text, VStack } from '@chakra-ui/react';
-import Image, { type StaticImageData } from 'next/image';
+import { type StaticImageData } from 'next/image';
 
 import { HighQualityImage } from './HighQualityImage';
 
@@ -119,7 +119,12 @@ export function ListingCard({
       <Divider />
       <HStack justify={'space-between'} w="full" px={4} pt={2} pb={4}>
         <HStack>
-          <Image height={18} width={18} src={tokenIcon} alt={`${token} icon`} />
+          <HighQualityImage
+            height={18}
+            width={18}
+            src={tokenIcon}
+            alt={`${token} icon`}
+          />
           <Text color="brand.slate.800" fontWeight={600}>
             {amount}
           </Text>
