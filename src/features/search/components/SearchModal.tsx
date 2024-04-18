@@ -1,5 +1,7 @@
 import { ArrowForwardIcon, SearchIcon } from '@chakra-ui/icons';
 import {
+  Button,
+  Container,
   Input,
   InputGroup,
   InputLeftElement,
@@ -7,9 +9,16 @@ import {
   Modal,
   ModalContent,
   ModalOverlay,
+  VStack,
 } from '@chakra-ui/react';
 import axios from 'axios';
-import { useEffect, useState } from 'react';
+import debounce from 'lodash.debounce';
+import Link from 'next/link';
+import { useSearchParams } from 'next/navigation';
+import { useRouter } from 'next/router';
+import { useCallback, useEffect, useState } from 'react';
+
+import { type Bounty, ListingCard } from '@/features/listings';
 
 interface Props {
   isOpen: boolean;
@@ -17,7 +26,14 @@ interface Props {
 }
 
 export function SearchModal({ isOpen, onClose }: Props) {
-  const [query, setQuery] = useState('');
+  const router = useRouter();
+
+  const searchParams = useSearchParams();
+
+  const [query, setQuery] = useState(searchParams.get('q') ?? '');
+  const [results, setResults] = useState<Bounty[]>([]);
+
+  const debouncedSearch = useCallback(debounce(search, 500), [query]);
 
   async function search() {
     try {
@@ -28,36 +44,88 @@ export function SearchModal({ isOpen, onClose }: Props) {
         );
         console.log('done?');
         console.log(resp);
+        setResults(resp.data.bounties as Bounty[]);
       }
     } catch (err) {
+      console.log('search failed - ', err);
       return;
     }
   }
   useEffect(() => {
     console.log(query);
-    search();
+    debouncedSearch();
+    return () => {
+      debouncedSearch.cancel();
+    };
   }, [query]);
 
+  useEffect(() => {
+    console.log(results);
+  }, [results]);
+
   return (
-    <Modal isOpen={isOpen} onClose={onClose}>
+    <Modal isOpen={isOpen} onClose={onClose} size={{ base: 'sm', lg: 'xl' }}>
       <ModalOverlay />
       <ModalContent p={0} border="none">
-        <InputGroup border="none">
-          <InputLeftElement color="brand.slate.400" pointerEvents="none">
-            <SearchIcon />
-          </InputLeftElement>
-          <Input
-            fontSize="sm"
-            border="none"
-            onChange={(e) => setQuery(e.target.value)}
-            placeholder="Search for bounties, projects "
-            value={query}
-            variant="filled"
-          />
-          <InputRightElement color="brand.slate.400">
-            <ArrowForwardIcon />
-          </InputRightElement>
-        </InputGroup>
+        <form
+          onSubmit={(e) => {
+            e.preventDefault();
+            router.push(`/search?q=${encodeURIComponent(query)}`);
+          }}
+        >
+          <InputGroup border="none">
+            <InputLeftElement color="brand.slate.400" pointerEvents="none">
+              <SearchIcon />
+            </InputLeftElement>
+            <Input
+              fontSize="sm"
+              border="none"
+              onChange={(e) => setQuery(e.target.value)}
+              placeholder="Search for bounties, projects "
+              value={query}
+              variant="filled"
+            />
+            <InputRightElement color="brand.slate.400">
+              <button type="submit">
+                <ArrowForwardIcon />
+              </button>
+            </InputRightElement>
+          </InputGroup>
+        </form>
+        {results.length > 0 && (
+          <VStack w="full">
+            <VStack w="full" py={0}>
+              {results.map((r) => (
+                <Container
+                  key={r.id}
+                  justifyContent="space-between"
+                  display="flex"
+                  w="full"
+                  p={0}
+                >
+                  <ListingCard bounty={r} />
+                </Container>
+              ))}
+            </VStack>
+            <Link
+              href={`/search?q=${encodeURIComponent(query)}`}
+              style={{ width: '100%' }}
+            >
+              <Button
+                gap={2}
+                w="full"
+                fontSize="sm"
+                fontWeight="normal"
+                borderColor="brand.slate.100"
+                borderTop={'1px solid'}
+                rounded="none"
+                variant="ghost"
+              >
+                View All Results <ArrowForwardIcon />{' '}
+              </Button>
+            </Link>
+          </VStack>
+        )}
       </ModalContent>
     </Modal>
   );

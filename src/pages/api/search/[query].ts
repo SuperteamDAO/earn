@@ -33,6 +33,8 @@ export default async function user(req: NextApiRequest, res: NextApiResponse) {
 
   const limit = (req.query.limit as string) || '5';
 
+  const offset = (req.query.offset as string) || null;
+
   const status = req.query.status as string;
   let statusList: string[] = [];
   if (status) statusList = status.split(',');
@@ -82,8 +84,22 @@ s.name LIKE CONCAT('%', ?, '%')
   const combinedWhereClause =
     whereClauses.length > 0 ? whereClauses.join(' AND ') : '1=1';
 
+  const countQuery = `
+SELECT COUNT(*) as totalCount
+FROM (
+  SELECT DISTINCT b.id
+  FROM Bounties b
+  JOIN Sponsors s ON b.sponsorId = s.id
+  WHERE (1=1) AND (
+b.isPublished = 1 AND
+b.isPrivate = 0 AND
+    ${combinedWhereClause} ${status && statusList.length > 0 ? `AND b.status IN (${statusList.map(() => '?').join(',')})` : ''} 
+  ) ${skills ? ` AND (${skillsQuery})` : ''}
+) as subquery;
+`;
+
   const sqlQuery = `
-SELECT b.id, 
+SELECT DISTINCT b.id, 
 b.rewardAmount, 
 b.deadline, 
 b.type, 
@@ -96,29 +112,44 @@ b.isWinnersAnnounced,
 b.description, 
 b.compensationType, 
 b.minRewardAsk, 
-b.maxRewardAsk
+b.maxRewardAsk,
+b.updatedAt
 FROM Bounties b
 JOIN Sponsors s ON b.sponsorId = s.id
 WHERE (1=1) AND (
+b.isPublished = 1 AND
+b.isPrivate = 0 AND
 ${combinedWhereClause} ${status && statusList.length > 0 ? `AND b.status IN (${statusList.map(() => '?').join(',')})` : ''} 
 ) ${skills ? ` AND (${skillsQuery})` : ''}
-ORDER BY b.updatedAt DESC
-LIMIT ?
+ORDER BY b.updatedAt DESC, b.id
+LIMIT ? ${offset ? `OFFSET ?` : ''}
 `;
-
-  console.log('query - ', sqlQuery);
 
   let values: (string | number)[] = duplicateElements(words, 2);
   if (status) values = values.concat(statusList);
   if (skills) values = values.concat(skillsFlattened);
+
+  const bountiesCount = await prisma.$queryRawUnsafe<[{ totalCount: bigint }]>(
+    countQuery,
+    ...values,
+  );
+  // console.log('count query - ', countQuery);
+  // console.log('count values - ', values);
+
+  // console.log('bounties count - ', bountiesCount[0].totalCount.toString());
+
+  // console.log('reuslts query - ', sqlQuery);
   values.push(Number(limit));
-  console.log('values - ', values);
+  if (offset) values.push(Number(offset));
+  // console.log('results values - ', values);
 
   const bounties = await prisma.$queryRawUnsafe<Bounties[]>(
     sqlQuery,
     ...values,
   );
 
-  console.log('bounties - ', bounties);
-  res.status(200).json(bounties);
+  console.log('bounties lenght - ', bounties.length);
+  res
+    .status(200)
+    .json({ bounties, count: bountiesCount[0].totalCount.toString() });
 }

@@ -101,6 +101,7 @@ export const ListingCard = ({
     <>
       <Link
         as={NextLink}
+        w="full"
         px={{ base: 1, sm: 4 }}
         py={4}
         borderRadius={5}
