@@ -205,51 +205,52 @@ export function CreateListing({
 
   const { form, updateState } = useListingFormStore();
 
-  if (editable) {
-    updateState({
-      ...form,
-      id: '',
-      title:
-        isDuplicating && listing?.title
-          ? `${listing.title} (2)`
-          : listing?.title,
-      slug:
-        isDuplicating && listing?.slug ? `${listing.slug}-2` : listing?.slug,
-      deadline:
-        !isDuplicating && listing?.deadline
-          ? dayjs(listing?.deadline).format('YYYY-MM-DDTHH:mm') || undefined
-          : undefined,
-      templateId: listing?.templateId,
-      pocSocials: listing?.pocSocials,
-      applicationType: listing?.applicationType || 'fixed',
-      timeToComplete: listing?.timeToComplete,
-      type: type,
-      region: listing?.region,
-      referredBy: listing?.referredBy,
-      requirements: listing?.requirements,
-      eligibility: (listing?.eligibility || [])?.map((e) => ({
-        order: e.order,
-        question: e.question,
-        type: e.type as 'text',
-        delete: true,
-        label: e.question,
-      })),
-      references: (listing?.references || [])?.map((e) => ({
-        order: e.order,
-        link: e.link,
-      })),
-      isPrivate: listing?.isPrivate ? listing?.isPrivate : false,
-      skills: listing?.skills,
-      description: listing?.description,
-      publishedAt: listing?.publishedAt,
-      rewardAmount: listing?.rewardAmount || 0,
-      rewards: listing?.rewards || undefined,
-      token: listing?.token || 'USDC',
-      compensationType: listing?.compensationType,
-      minRewardAsk: listing?.minRewardAsk || 0,
-      maxRewardAsk: listing?.maxRewardAsk || 0,
-    });
-  }
+  useEffect(() => {
+    if (editable && !!listing) {
+      updateState({
+        id: listing.id,
+        title:
+          isDuplicating && listing?.title
+            ? `${listing.title} (2)`
+            : listing?.title,
+        slug:
+          isDuplicating && listing?.slug ? `${listing.slug}-2` : listing?.slug,
+        deadline:
+          !isDuplicating && listing?.deadline
+            ? dayjs(listing?.deadline).format('YYYY-MM-DDTHH:mm') || undefined
+            : undefined,
+        templateId: listing?.templateId,
+        pocSocials: listing?.pocSocials,
+        applicationType: listing?.applicationType || 'fixed',
+        timeToComplete: listing?.timeToComplete,
+        type: type,
+        region: listing?.region,
+        referredBy: listing?.referredBy,
+        requirements: listing?.requirements,
+        eligibility: (listing?.eligibility || [])?.map((e) => ({
+          order: e.order,
+          question: e.question,
+          type: e.type as 'text',
+          delete: true,
+          label: e.question,
+        })),
+        references: (listing?.references || [])?.map((e) => ({
+          order: e.order,
+          link: e.link,
+        })),
+        isPrivate: listing?.isPrivate ? listing?.isPrivate : false,
+        skills: listing?.skills,
+        description: listing?.description,
+        publishedAt: listing?.publishedAt || undefined,
+        rewardAmount: listing?.rewardAmount || undefined,
+        rewards: listing?.rewards || undefined,
+        token: listing?.token || 'USDC',
+        compensationType: listing?.compensationType,
+        minRewardAsk: listing?.minRewardAsk || undefined,
+        maxRewardAsk: listing?.maxRewardAsk || undefined,
+      });
+    }
+  }, [editable, listing, isDuplicating]);
 
   const [steps, setSteps] = useState<number>(
     !!prevStep ? prevStep : editable || type === 'hackathon' ? 2 : 1,

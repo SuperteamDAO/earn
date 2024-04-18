@@ -37,7 +37,7 @@ export default async function handler(
         },
       });
       if (bounty?.slug === slug) {
-        return res.status(200).json({ slugExists: true });
+        return res.status(200).json({ slugExists: false });
       }
     }
     const slugExists = await checkSlug(slug as string);

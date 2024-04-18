@@ -28,11 +28,6 @@ function EditBounty({ slug }: Props) {
         router.push('/dashboard/listings');
       } else {
         const bounty = bountyDetails.data as Bounty;
-        console.log(
-          'description and requirements - ',
-          bounty.description,
-          bounty.requirements,
-        );
         if (
           bounty.isPublished ||
           !bounty.title ||

@@ -52,6 +52,7 @@ import { FiMoreVertical } from 'react-icons/fi';
 
 import { LoadingSection } from '@/components/shared/LoadingSection';
 import { tokenList } from '@/constants/index';
+import { useListingFormStore } from '@/features/listing-builder';
 import {
   type BountyWithSubmissions,
   formatDeadline,
@@ -171,6 +172,8 @@ function Bounties() {
     setBounty(deleteBounty);
     deleteDraftOnOpen();
   };
+
+  const { resetForm } = useListingFormStore();
 
   const {
     isOpen: isOpenCreateListing,
@@ -593,6 +596,7 @@ function Bounties() {
                                 as={NextLink}
                                 _hover={{ textDecoration: 'none' }}
                                 href={`/dashboard/listings/${currentBounty.slug}/edit`}
+                                onClick={resetForm}
                               >
                                 <MenuItem
                                   py={2}
