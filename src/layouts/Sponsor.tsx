@@ -58,7 +58,6 @@ export function Sidebar({
 
   const { query } = router;
   const open = !!query.open; // Replace 'paramName' with the actual parameter name
-  console.log(open);
   useEffect(() => {
     if (open) {
       onOpen();
@@ -78,7 +77,6 @@ export function Sidebar({
     ) {
       onSponsorInfoModalOpen();
     }
-    console.log(userInfo);
   }, [userInfo]);
 
   if (!session && status === 'loading') {

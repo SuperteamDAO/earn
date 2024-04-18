@@ -7,7 +7,6 @@ const font = localFont({
   src: '../../../public/assets/landingsponsor/fonts/OverusedGrotesk-VF.woff2',
   variable: '--font-overused-grotesk',
 });
-console.log(font);
 
 import {
   FAQs,
