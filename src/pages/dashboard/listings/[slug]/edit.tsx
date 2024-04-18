@@ -34,6 +34,7 @@ function EditBounty({ slug }: Props) {
           bounty.requirements,
         );
         if (
+          bounty.isPublished ||
           !bounty.title ||
           !bounty.skills ||
           !bounty.pocSocials ||
