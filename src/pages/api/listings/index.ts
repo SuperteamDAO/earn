@@ -7,7 +7,7 @@ import { dayjs } from '@/utils/dayjs';
 export default async function user(req: NextApiRequest, res: NextApiResponse) {
   const params = req.query;
   const category = params.category as string;
-  const isHomePage = params.isHomePage === 'true';
+  // const isHomePage = params.isHomePage === 'true';
 
   const filter = params.filter as string;
   const type = params.type as
@@ -64,7 +64,7 @@ export default async function user(req: NextApiRequest, res: NextApiResponse) {
           deadline: {
             gte: deadline,
           },
-          ...(isHomePage ? { rewardAmount: { gt: 100 } } : {}),
+          // ...(isHomePage ? { rewardAmount: { gt: 100 } } : {}),
           ...skillsFilter,
         },
         include: {
@@ -96,7 +96,7 @@ export default async function user(req: NextApiRequest, res: NextApiResponse) {
           deadline: {
             gte: deadline,
           },
-          ...(isHomePage ? { rewardAmount: { gt: 100 } } : {}),
+          // ...(isHomePage ? { rewardAmount: { gt: 100 } } : {}),
           ...skillsFilter,
           Hackathon: null,
         },
