@@ -20,6 +20,7 @@ import { useRouter } from 'next/router';
 import { useSession } from 'next-auth/react';
 import React, { useRef } from 'react';
 
+import { UserMenu } from '@/components/shared/UserMenu';
 import { userStore } from '@/store/user';
 
 import {
@@ -29,7 +30,6 @@ import {
   renderLabel,
 } from '../constants';
 import { NavLink } from './NavLink';
-import { UserMenu } from './UserMenu';
 
 export const MobileNavbar = ({ onLoginOpen }: { onLoginOpen: () => void }) => {
   const {
