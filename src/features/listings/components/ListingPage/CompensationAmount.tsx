@@ -35,17 +35,14 @@ export const CompensationAmount = ({
           case 'fixed':
             return (
               <>
-                {formatNumberWithSuffix({
-                  amount: rewardAmount!,
-                  skipThousands: true,
-                })}
+                {formatNumberWithSuffix(rewardAmount!)}
                 <Token />
               </>
             );
           case 'range':
             return (
               <>
-                {`${formatNumberWithSuffix({ amount: minRewardAsk! })}-${formatNumberWithSuffix({ amount: maxRewardAsk! })}`}
+                {`${formatNumberWithSuffix(minRewardAsk!)}-${formatNumberWithSuffix(maxRewardAsk!)}`}
                 <Token />
               </>
             );
