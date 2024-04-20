@@ -58,15 +58,12 @@ export const CreateListingModal = ({
               Great for:
             </Text>
             <UnorderedList mt={1} mb={4} ml={6} color="brand.slate.500">
-              <ListItem>
-                raising awareness for your product, specific features,
-                campaigns, etc.
+              <ListItem mb={1}>raising awareness for your product, or</ListItem>
+              <ListItem mb={1}>
+                when you want multiple deliverable options
               </ListItem>
-              <ListItem>
-                or, when you want multiple deliverable options to choose from
-              </ListItem>
-              <ListItem>
-                Examples: Twitter threads, deep dive articles, merch/logo
+              <ListItem mb={1}>
+                Examples: Twitter threads, long-form articles, merch/logo
                 design, product feedback, etc.
               </ListItem>
             </UnorderedList>
@@ -107,11 +104,13 @@ export const CreateListingModal = ({
               Great for:
             </Text>
             <UnorderedList mt={1} mb={4} ml={6} color="brand.slate.500">
-              <ListItem>the work to be done is very specific, or</ListItem>
-              <ListItem>it would require iteration and feedback</ListItem>
-              <ListItem>
-                Example: Website / app development, website / app design, hype
-                video creation, hiring a Twitter manager, etc.
+              <ListItem mb={1}>the work to be done is specific, or</ListItem>
+              <ListItem mb={1}>
+                the output would require feedback and iteration
+              </ListItem>
+              <ListItem mb={1}>
+                Examples: Website/app development, website/app design, producing
+                hype videods, hiring a Twitter manager, etc.
               </ListItem>
             </UnorderedList>
             <Box flex="1" />

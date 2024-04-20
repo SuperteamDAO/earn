@@ -162,23 +162,13 @@ export const Template = ({ type, setSteps }: Props) => {
                               />
                             )}
                           </Flex>
-                          <Text
-                            color="brand.slate.400"
-                            fontSize="xs"
-                            wordBreak={'break-word'}
-                          >
+                          <Text color="brand.slate.400" fontSize="xs">
                             Used by{' '}
                             {sponsors.length >= 1 && (
                               <Text as="span">{sponsors[0]?.name}</Text>
                             )}
                             {sponsors.length >= 2 && (
-                              <Text as="span">
-                                {sponsors.length > 2 ? ',' : ' &'}{' '}
-                                {sponsors[1]?.name}
-                              </Text>
-                            )}
-                            {sponsors.length >= 3 && (
-                              <Text as="span"> & {sponsors[2]?.name}</Text>
+                              <Text as="span"> & {sponsors[1]?.name}</Text>
                             )}
                           </Text>
                         </Flex>
