@@ -217,10 +217,9 @@ export function RightSideBar({ listing }: { listing: Bounty }) {
                                       fontSize={'lg'}
                                       fontWeight={500}
                                     >
-                                      {formatNumberWithSuffix({
-                                        amount: rewards[prize.key]!,
-                                        skipThousands: true,
-                                      })}
+                                      {formatNumberWithSuffix(
+                                        rewards[prize.key]!,
+                                      )}
                                     </Text>
                                     <Text
                                       mt="1px"

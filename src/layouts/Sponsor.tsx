@@ -56,6 +56,14 @@ export function Sidebar({
   const router = useRouter();
   const { isOpen, onOpen, onClose } = useDisclosure();
 
+  const { query } = router;
+  const open = !!query.open; // Replace 'paramName' with the actual parameter name
+  useEffect(() => {
+    if (open) {
+      onOpen();
+    }
+  }, [open]);
+
   const {
     isOpen: isSponsorInfoModalOpen,
     onOpen: onSponsorInfoModalOpen,

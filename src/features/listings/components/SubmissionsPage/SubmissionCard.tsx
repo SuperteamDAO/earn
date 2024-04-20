@@ -154,10 +154,10 @@ export const SubmissionCard = ({
           )}
           <Text
             overflow={'hidden'}
+            w="80%"
             color={'gray.900'}
             fontSize={'lg'}
             fontWeight={500}
-            textAlign={'center'}
             whiteSpace={'nowrap'}
             textOverflow={'ellipsis'}
           >

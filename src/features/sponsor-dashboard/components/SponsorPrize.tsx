@@ -23,11 +23,11 @@ export const SponsorPrize = ({
       {(() => {
         switch (compensationType) {
           case 'fixed':
-            return <>{rewardAmount?.toLocaleString()}</>;
+            return <>{formatNumberWithSuffix(rewardAmount!)}</>;
           case 'range':
             return (
               <>
-                {`${formatNumberWithSuffix({ amount: minRewardAsk! })}-${formatNumberWithSuffix({ amount: maxRewardAsk! })}`}
+                {`${formatNumberWithSuffix(minRewardAsk!)}-${formatNumberWithSuffix(maxRewardAsk!)}`}
               </>
             );
           case 'variable':
