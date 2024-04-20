@@ -1,76 +1,71 @@
-import { ArrowForwardIcon } from '@chakra-ui/icons';
-import { Box, Button, Flex, Text, VStack } from '@chakra-ui/react';
-import axios from 'axios';
+import { Box, Flex, VStack } from '@chakra-ui/react';
 import debounce from 'lodash.debounce';
+import { type GetServerSideProps } from 'next';
 import { useSearchParams } from 'next/navigation';
-import { useCallback, useEffect, useState } from 'react';
+import { useRouter } from 'next/router';
+import { usePostHog } from 'posthog-js/react';
+import { useCallback, useEffect, useState, useTransition } from 'react';
 
-import { type Bounty, ListingCard } from '@/features/listings';
+import { type Bounty } from '@/features/listings';
+import {
+  Filters,
+  Info,
+  preSkillFilters,
+  preStatusFilters,
+  QueryInput,
+  Results,
+  serverSearch,
+  updateCheckboxes,
+} from '@/features/search';
 import { Default } from '@/layouts/Default';
 import { Meta } from '@/layouts/Meta';
 
-const Search = () => {
+interface CheckboxFilter {
+  label: string;
+  value: string;
+  checked: boolean;
+}
+
+interface SearchProps {
+  statusFilters: CheckboxFilter[];
+  skillsFilters: CheckboxFilter[];
+  bounties?: Bounty[];
+  count?: number;
+}
+
+const Search = ({
+  statusFilters,
+  skillsFilters,
+  bounties,
+  count = 0,
+}: SearchProps) => {
   const searchParams = useSearchParams();
-  const query = searchParams.get('q') ?? '';
+  const router = useRouter();
+  const [, startTransition] = useTransition();
+  const posthog = usePostHog();
 
-  const [results, setResults] = useState<Bounty[]>([]);
-  const [count, setCount] = useState(0);
+  const [results, setResults] = useState<Bounty[]>(bounties ?? []);
+  const [query, setQuery] = useState(searchParams.get('q') ?? '');
+
+  const debouncedServerSearch = useCallback(debounce(serverSearch, 500), [
+    query,
+  ]);
 
   useEffect(() => {
-    console.log('results length ', results.length);
-    console.log(
-      'results  ',
-      results.map((r) => r.id),
-    );
-  }, [results]);
-  useEffect(() => {
-    console.log('total count', count);
-  }, [count]);
-
-  const debouncedSearch = useCallback(
-    debounce(async () => {
-      const data = await search();
-      if (data) {
-        setResults(data.bounties);
-        setCount(data.count);
-        console.log('count', data.count);
-      }
-    }, 500),
-    [query],
-  );
-
-  interface SearchQuery {
-    offsetId?: string;
-    status?: string;
-    skills?: string;
-    offset?: number;
-  }
-  async function search(params?: SearchQuery) {
-    try {
-      if (query.length > 0) {
-        const resp = await axios.get(
-          `/api/search/${encodeURIComponent(query)}`,
-          {
-            params: {
-              limit: 10,
-              ...params,
-            },
-          },
-        );
-        return resp.data as { bounties: Bounty[]; count: number };
-      } else return undefined;
-    } catch (err) {
-      console.log('search failed - ', err);
-      return undefined;
-    }
-  }
-  useEffect(() => {
-    // console.log(query);
-    debouncedSearch();
+    debouncedServerSearch(startTransition, router, query);
     return () => {
-      debouncedSearch.cancel();
+      debouncedServerSearch.cancel();
     };
   }, [query]);
+
+  useEffect(() => {
+    posthog.capture('search', {
+      query,
+      count,
+      status: statusFilters.filter((f) => f.checked).map((f) => f.value),
+      skills: skillsFilters.filter((f) => f.checked).map((f) => f.value),
+    });
+  }, []);
 
   return (
     <Default
@@ -81,70 +76,90 @@ const Search = () => {
         />
       }
     >
-      <Box w="full" bg="white">
+      <Box w="full" minH="100vh" bg="white">
         <Flex
+          gap={8}
           w="full"
           maxW={'7xl'}
           mx="auto"
           px={{ base: 3, md: 4 }}
           py={{ base: 4 }}
         >
-          <VStack align="start" w="full">
-            <Box px={{ base: 1, sm: 4 }} py={4}>
-              <Text fontSize="sm" fontWeight={600}>
-                Found {count} search results
-              </Text>
-              <Text color="brand.slate.500" fontSize="sm" fontWeight={500}>
-                for {`"${query.trim()}"`}
-              </Text>
+          <VStack align="start" w={{ base: 'full', md: '70%' }}>
+            <QueryInput query={query} setQuery={setQuery} />
+            <Info count={count} query={query} />
+            <Box display={{ md: 'none' }} w="full">
+              <Filters
+                query={query}
+                statusFilters={statusFilters}
+                skillsFilters={skillsFilters}
+              />
             </Box>
             {results.length > 0 && (
-              <VStack w="full">
-                <VStack w="full" py={0}>
-                  {results.map((r) => (
-                    <Flex key={r.id} justify="space-between" w="full" p={0}>
-                      <ListingCard bounty={r} />
-                    </Flex>
-                  ))}
-                </VStack>
-                {results.length < count && (
-                  <Button
-                    gap={2}
-                    w="full"
-                    fontSize="sm"
-                    fontWeight="normal"
-                    borderColor="brand.slate.100"
-                    borderTop={'1px solid'}
-                    onClick={async () => {
-                      // console.log('view more')
-                      if (results) {
-                        const lastId = results[results.length - 1]?.id;
-                        console.log('last id - ', lastId);
-                        if (lastId) {
-                          // console.log('calling search')
-                          const nextResults = await search({
-                            offset: results.length,
-                          });
-                          // console.log('next results - ', nextResults)
-                          if (nextResults) {
-                            setResults((s) => s.concat(nextResults.bounties));
-                          }
-                        }
-                      }
-                    }}
-                    rounded="none"
-                    variant="ghost"
-                  >
-                    View More <ArrowForwardIcon />
-                  </Button>
-                )}
-              </VStack>
+              <Results
+                query={query}
+                results={results}
+                setResults={setResults}
+                count={count}
+              />
             )}
           </VStack>
+          <Box
+            display={{ base: 'none', md: 'block' }}
+            w={{ base: 'full', md: '30%' }}
+          >
+            <Filters
+              query={query}
+              statusFilters={statusFilters}
+              skillsFilters={skillsFilters}
+            />
+          </Box>
         </Flex>
       </Box>
     </Default>
   );
+};
+
+export const getServerSideProps: GetServerSideProps = async ({
+  query,
+  req,
+}) => {
+  const protocol = req.headers['x-forwarded-proto'] || 'http';
+  const host = req.headers.host;
+  const fullUrl = `${protocol}://${host}`;
+
+  const queryTerm = (query.q as string).trim();
+  const queryString = new URLSearchParams(query as any).toString();
+
+  const status = (query.status as string) || undefined;
+  const statusFilters = updateCheckboxes(status ?? '', preStatusFilters);
+
+  const skills = (query.skills as string) || undefined;
+  const skillsFilters = updateCheckboxes(skills ?? '', preSkillFilters);
+
+  try {
+    const response = await fetch(
+      `${fullUrl}/api/search/${encodeURIComponent(queryTerm)}?${queryString}&limit=10`,
+    );
+    const results = await response.json();
+
+    return {
+      props: {
+        statusFilters,
+        skillsFilters,
+        bounties: results.bounties,
+        count: results.count,
+      },
+    };
+  } catch (e) {
+    console.log(e);
+    return {
+      props: {
+        statusFilters,
+        skillsFilters,
+      },
+    };
+  }
 };
 
 export default Search;

@@ -13,12 +13,6 @@ function duplicateElements(array: string[], count: number) {
   return array.flatMap((item) => Array(count).fill(item));
 }
 
-// function operatorsToWords(input: string): string {
-//   const words = input.trim().split(/\s+/);
-//   const modifiedWords = words.map(word => `${word}*`).join(' ');
-//   return modifiedWords;
-// }
-
 const Skills = {
   DEVELOPMENT: 'DEVELOPMENT',
   DESIGN: 'DESIGN',
@@ -29,8 +23,6 @@ export default async function user(req: NextApiRequest, res: NextApiResponse) {
   const params = req.query;
   const query = params.query as string;
 
-  console.log('query - ', query);
-
   const limit = (req.query.limit as string) || '5';
 
   const offset = (req.query.offset as string) || null;
@@ -40,6 +32,19 @@ export default async function user(req: NextApiRequest, res: NextApiResponse) {
   if (status) statusList = status.split(',');
   if (checkInvalidItems(Status, statusList))
     return res.status(400).send('query status is not valid');
+
+  const statusQuery = [];
+  if (statusList.includes(Status.OPEN)) {
+    statusQuery.push('b.deadline > CURRENT_TIMESTAMP');
+  }
+  if (statusList.includes(Status.REVIEW)) {
+    statusQuery.push(
+      'b.deadline <= CURRENT_TIMESTAMP AND b.isWinnersAnnounced = 0',
+    );
+  }
+  if (statusList.includes(Status.CLOSED)) {
+    statusQuery.push('b.isWinnersAnnounced = 1');
+  }
 
   const skills = req.query.skills as string;
   let skillList: string[] = [];
@@ -65,8 +70,6 @@ export default async function user(req: NextApiRequest, res: NextApiResponse) {
     )
     .join(' OR ');
 
-  console.log(skillsQuery);
-
   const words = query
     .split(/\s+/)
     .map((c) => c.trim())
@@ -74,11 +77,11 @@ export default async function user(req: NextApiRequest, res: NextApiResponse) {
   const whereClauses: string[] = [];
 
   words.forEach(() => {
-    const soundexCondition = `(
+    const multiWordCondition = `(
 b.title LIKE CONCAT('%', ?, '%') OR 
 s.name LIKE CONCAT('%', ?, '%')
 )`;
-    whereClauses.push(soundexCondition);
+    whereClauses.push(multiWordCondition);
   });
 
   const combinedWhereClause =
@@ -87,19 +90,20 @@ s.name LIKE CONCAT('%', ?, '%')
   const countQuery = `
 SELECT COUNT(*) as totalCount
 FROM (
-  SELECT DISTINCT b.id
-  FROM Bounties b
-  JOIN Sponsors s ON b.sponsorId = s.id
-  WHERE (1=1) AND (
+SELECT DISTINCT b.id
+FROM Bounties b
+JOIN Sponsors s ON b.sponsorId = s.id
+WHERE (1=1) AND (
 b.isPublished = 1 AND
 b.isPrivate = 0 AND
-    ${combinedWhereClause} ${status && statusList.length > 0 ? `AND b.status IN (${statusList.map(() => '?').join(',')})` : ''} 
-  ) ${skills ? ` AND (${skillsQuery})` : ''}
+${combinedWhereClause} ${statusQuery.length > 0 ? ` AND ( ${statusQuery.join(' OR ')} )` : ''} 
+) ${skills ? ` AND (${skillsQuery})` : ''}
 ) as subquery;
 `;
 
   const sqlQuery = `
 SELECT DISTINCT b.id, 
+b.status,
 b.rewardAmount, 
 b.deadline, 
 b.type, 
@@ -119,37 +123,51 @@ JOIN Sponsors s ON b.sponsorId = s.id
 WHERE (1=1) AND (
 b.isPublished = 1 AND
 b.isPrivate = 0 AND
-${combinedWhereClause} ${status && statusList.length > 0 ? `AND b.status IN (${statusList.map(() => '?').join(',')})` : ''} 
+${combinedWhereClause} ${statusQuery.length > 0 ? ` AND ( ${statusQuery.join(' OR ')} )` : ''} 
 ) ${skills ? ` AND (${skillsQuery})` : ''}
-ORDER BY b.updatedAt DESC, b.id
+ORDER BY 
+  CASE 
+    WHEN b.deadline >= CURRENT_TIMESTAMP THEN 1
+    ELSE 2
+  END,
+  CASE 
+    WHEN b.deadline >= CURRENT_TIMESTAMP THEN b.deadline
+    ELSE NULL
+  END ASC,
+  CASE 
+    WHEN b.deadline < CURRENT_TIMESTAMP THEN b.deadline
+    ELSE NULL
+  END DESC,
+  b.updatedAt DESC, b.id
 LIMIT ? ${offset ? `OFFSET ?` : ''}
 `;
 
   let values: (string | number)[] = duplicateElements(words, 2);
-  if (status) values = values.concat(statusList);
   if (skills) values = values.concat(skillsFlattened);
 
-  const bountiesCount = await prisma.$queryRawUnsafe<[{ totalCount: bigint }]>(
-    countQuery,
-    ...values,
-  );
-  // console.log('count query - ', countQuery);
-  // console.log('count values - ', values);
+  try {
+    const start = performance.now();
+    const bountiesCount = await prisma.$queryRawUnsafe<
+      [{ totalCount: bigint }]
+    >(countQuery, ...values);
+    const count = performance.now();
+    console.log('count query time - ', count - start);
 
-  // console.log('bounties count - ', bountiesCount[0].totalCount.toString());
+    values.push(Number(limit));
+    if (offset) values.push(Number(offset));
 
-  // console.log('reuslts query - ', sqlQuery);
-  values.push(Number(limit));
-  if (offset) values.push(Number(offset));
-  // console.log('results values - ', values);
+    const bounties = await prisma.$queryRawUnsafe<Bounties[]>(
+      sqlQuery,
+      ...values,
+    );
+    const bountiesTime = performance.now();
+    console.log('count query time - ', bountiesTime - start);
 
-  const bounties = await prisma.$queryRawUnsafe<Bounties[]>(
-    sqlQuery,
-    ...values,
-  );
-
-  console.log('bounties lenght - ', bounties.length);
-  res
-    .status(200)
-    .json({ bounties, count: bountiesCount[0].totalCount.toString() });
+    res
+      .status(200)
+      .json({ bounties, count: bountiesCount[0].totalCount.toString() });
+  } catch (err) {
+    console.log('err - ', err);
+    res.status(500);
+  }
 }

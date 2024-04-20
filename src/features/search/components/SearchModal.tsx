@@ -38,12 +38,9 @@ export function SearchModal({ isOpen, onClose }: Props) {
   async function search() {
     try {
       if (query.length > 0) {
-        console.log('run ???');
         const resp = await axios.get(
           `/api/search/${encodeURIComponent(query)}`,
         );
-        console.log('done?');
-        console.log(resp);
         setResults(resp.data.bounties as Bounty[]);
       }
     } catch (err) {
@@ -52,16 +49,11 @@ export function SearchModal({ isOpen, onClose }: Props) {
     }
   }
   useEffect(() => {
-    console.log(query);
     debouncedSearch();
     return () => {
       debouncedSearch.cancel();
     };
   }, [query]);
-
-  useEffect(() => {
-    console.log(results);
-  }, [results]);
 
   return (
     <Modal isOpen={isOpen} onClose={onClose} size={{ base: 'sm', lg: 'xl' }}>

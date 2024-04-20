@@ -13,7 +13,6 @@ import {
   Text,
 } from '@chakra-ui/react';
 import NextLink from 'next/link';
-import { useSearchParams } from 'next/navigation';
 import { useRouter } from 'next/router';
 import { useSession } from 'next-auth/react';
 import React from 'react';
@@ -35,7 +34,6 @@ interface Props {
 export const DesktopNavbar = ({ onLoginOpen, onSearchOpen }: Props) => {
   const { data: session, status } = useSession();
   const router = useRouter();
-  const searchParams = useSearchParams();
 
   const isDashboardRoute = router.pathname.startsWith('/dashboard');
   const maxWValue = isDashboardRoute ? '' : '7xl';
@@ -87,10 +85,7 @@ export const DesktopNavbar = ({ onLoginOpen, onSearchOpen }: Props) => {
             gap={2}
             color="brand.slate.400"
             fontWeight={400}
-            border={{
-              sm: 'none',
-              xl: 'solid 1px',
-            }}
+            border={'none'}
             borderColor={'brand.slate.300'}
             _hover={{
               bg: 'brand.slate.100',
@@ -99,16 +94,6 @@ export const DesktopNavbar = ({ onLoginOpen, onSearchOpen }: Props) => {
             variant="outline"
           >
             <SearchIcon />
-            <Text
-              display={{ sm: 'none', xl: 'block' }}
-              overflow={'hidden'}
-              maxW={{ base: '3rem', '2xl': '4rem' }}
-              textOverflow={'ellipsis'}
-            >
-              {router.pathname === '/search' && searchParams.has('q')
-                ? searchParams.get('q')
-                : 'Search..'}
-            </Text>
           </Button>
 
           {LISTING_NAV_ITEMS?.map((navItem) => {
