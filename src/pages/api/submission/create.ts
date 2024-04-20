@@ -33,19 +33,27 @@ async function submission(req: NextApiRequestWithUser, res: NextApiResponse) {
         id: listingId,
         userId: userId as string,
       });
+    } catch (err) {
+      console.log('Error in sending mail to User -', err);
+    }
 
+    try {
       await sendEmailNotification({
         type: 'submissionSponsor',
         id: listingId,
         userId: result?.listing?.pocId,
       });
+    } catch (err) {
+      console.log('Error in sending mail to Sponsor -', err);
+    }
 
+    try {
       if (process.env.NEXT_PUBLIC_VERCEL_ENV === 'production') {
         const zapierWebhookUrl = process.env.ZAPIER_SUBMISSION_WEBHOOK!;
         await axios.post(zapierWebhookUrl, result);
       }
     } catch (err) {
-      console.log(err);
+      console.log('Error with Zapier Webhook -', err);
     }
 
     return res.status(200).json(result);
