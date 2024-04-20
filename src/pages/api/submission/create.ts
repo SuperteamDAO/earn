@@ -10,6 +10,19 @@ async function submission(req: NextApiRequestWithUser, res: NextApiResponse) {
 
   const { listingId, link, tweet, otherInfo, eligibilityAnswers, ask } =
     req.body;
+
+  const existingSubmission = await prisma.submission.findFirst({
+    where: {
+      userId,
+      listingId,
+    },
+  });
+
+  if (existingSubmission) {
+    return res.status(400).json({
+      message: 'Submission already exists for this user and listing.',
+    });
+  }
   try {
     const result = await prisma.submission.create({
       data: {
