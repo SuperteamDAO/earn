@@ -188,13 +188,17 @@ export const SubmissionModal = ({
       });
 
       if (!editMode) {
-        await axios.post(`/api/comment/create`, {
-          message: randomSubmissionCommentGenerator(type),
-          listingId: id,
-          submissionId: response?.data?.id,
-          type: 'SUBMISSION',
-        });
-        window.dispatchEvent(new Event('update-comments'));
+        try {
+          await axios.post(`/api/comment/create`, {
+            message: randomSubmissionCommentGenerator(type),
+            listingId: id,
+            submissionId: response?.data?.id,
+            type: 'SUBMISSION',
+          });
+          window.dispatchEvent(new Event('update-comments'));
+        } catch (err) {
+          console.log(err);
+        }
       }
 
       const latestSubmissionNumber = (userInfo?.Submission?.length ?? 0) + 1;
