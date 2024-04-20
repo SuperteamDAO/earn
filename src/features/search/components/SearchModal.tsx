@@ -28,6 +28,9 @@ interface Props {
 
 export function SearchModal({ isOpen, onClose }: Props) {
   const router = useRouter();
+  useEffect(() => {
+    router.prefetch('/search');
+  }, []);
 
   const searchParams = useSearchParams();
 
