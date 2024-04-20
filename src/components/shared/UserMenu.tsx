@@ -2,6 +2,7 @@ import { ChevronDownIcon } from '@chakra-ui/icons';
 import {
   Box,
   Button,
+  Circle,
   Flex,
   Image,
   Menu,
@@ -17,7 +18,7 @@ import Avatar from 'boring-avatars';
 import NextLink from 'next/link';
 import { useRouter } from 'next/router';
 import { useSession } from 'next-auth/react';
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 
 import { userStore } from '@/store/user';
 
@@ -54,6 +55,16 @@ export function UserMenu({}) {
   const handleClose = () => {
     onClose();
     router.push(router.pathname, undefined, { shallow: true });
+  };
+
+  const [showBlueCircle, setShowBlueCircle] = useState(() => {
+    return !localStorage.getItem('emailPreferencesClicked');
+  });
+
+  const handleEmailPreferencesClick = () => {
+    onOpen();
+    setShowBlueCircle(false);
+    localStorage.setItem('emailPreferencesClicked', 'true');
   };
 
   return (
@@ -109,10 +120,15 @@ export function UserMenu({}) {
                 variant="marble"
               />
             )}
-            <Flex display={{ base: 'none', md: 'flex' }} ml={2}>
+            <Flex
+              align={'center'}
+              display={{ base: 'none', md: 'flex' }}
+              ml={2}
+            >
               <Text color="brand.slate.600" fontSize="sm" fontWeight={500}>
                 {userInfo?.firstName ?? 'New User'}
               </Text>
+              {showBlueCircle && <Circle ml={2} bg="blue.400" size="8px" />}
             </Flex>
           </Flex>
         </MenuButton>
@@ -182,9 +198,10 @@ export function UserMenu({}) {
               color="brand.slate.500"
               fontSize="sm"
               fontWeight={600}
-              onClick={onOpen}
+              onClick={handleEmailPreferencesClick}
             >
               Email Preferences
+              {showBlueCircle && <Circle ml={2} bg="blue.400" size="8px" />}
             </MenuItem>
           )}
           <MenuItem
