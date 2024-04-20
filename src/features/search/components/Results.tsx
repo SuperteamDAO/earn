@@ -29,8 +29,8 @@ export function Results({ results, setResults, count, query }: Props) {
           w="full"
           fontSize="sm"
           fontWeight="normal"
-          borderColor="brand.slate.100"
-          borderTop={'1px solid'}
+          borderTopWidth={1}
+          borderTopColor="brand.slate.100"
           onClick={async () => {
             if (results) {
               const lastId = results[results.length - 1]?.id;

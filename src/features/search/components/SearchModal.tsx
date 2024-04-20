@@ -17,6 +17,7 @@ import Link from 'next/link';
 import { useSearchParams } from 'next/navigation';
 import { useRouter } from 'next/router';
 import { useCallback, useEffect, useState } from 'react';
+import { LoaderIcon } from 'react-hot-toast';
 
 import { type Bounty, ListingCard } from '@/features/listings';
 
@@ -32,19 +33,23 @@ export function SearchModal({ isOpen, onClose }: Props) {
 
   const [query, setQuery] = useState(searchParams.get('q') ?? '');
   const [results, setResults] = useState<Bounty[]>([]);
+  const [loading, setLoading] = useState(false);
 
   const debouncedSearch = useCallback(debounce(search, 500), [query]);
 
   async function search() {
     try {
+      setLoading(true);
       if (query.length > 0) {
         const resp = await axios.get(
           `/api/search/${encodeURIComponent(query)}`,
         );
         setResults(resp.data.bounties as Bounty[]);
       }
+      setLoading(false);
     } catch (err) {
       console.log('search failed - ', err);
+      setLoading(false);
       return;
     }
   }
@@ -78,9 +83,13 @@ export function SearchModal({ isOpen, onClose }: Props) {
               variant="filled"
             />
             <InputRightElement color="brand.slate.400">
-              <button type="submit">
-                <ArrowForwardIcon />
-              </button>
+              {loading ? (
+                <LoaderIcon />
+              ) : (
+                <button type="submit">
+                  <ArrowForwardIcon />
+                </button>
+              )}
             </InputRightElement>
           </InputGroup>
         </form>
@@ -108,8 +117,8 @@ export function SearchModal({ isOpen, onClose }: Props) {
                 w="full"
                 fontSize="sm"
                 fontWeight="normal"
-                borderColor="brand.slate.100"
-                borderTop={'1px solid'}
+                borderTopWidth={1}
+                borderTopColor="brand.slate.100"
                 rounded="none"
                 variant="ghost"
               >

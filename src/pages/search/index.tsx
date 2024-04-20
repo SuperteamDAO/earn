@@ -46,13 +46,39 @@ const Search = ({
 
   const [results, setResults] = useState<Bounty[]>(bounties ?? []);
   const [query, setQuery] = useState(searchParams.get('q') ?? '');
+  const [loading, setLoading] = useState(false);
 
   const debouncedServerSearch = useCallback(debounce(serverSearch, 500), [
     query,
   ]);
 
   useEffect(() => {
+    const handleStart = (url: string) => {
+      if (url !== router.asPath) {
+        setLoading(true);
+      }
+    };
+
+    const handleComplete = (url: string) => {
+      if (url === router.asPath) {
+        setLoading(false);
+      }
+    };
+
+    router.events.on('routeChangeStart', handleStart);
+    router.events.on('routeChangeComplete', handleComplete);
+    router.events.on('routeChangeError', handleComplete);
+
+    return () => {
+      router.events.off('routeChangeStart', handleStart);
+      router.events.off('routeChangeComplete', handleComplete);
+      router.events.off('routeChangeError', handleComplete);
+    };
+  }, [router]);
+
+  useEffect(() => {
     debouncedServerSearch(startTransition, router, query);
+    setLoading(false);
     return () => {
       debouncedServerSearch.cancel();
     };
@@ -87,7 +113,7 @@ const Search = ({
         >
           <VStack align="start" w={{ base: 'full', md: '70%' }}>
             <QueryInput query={query} setQuery={setQuery} />
-            <Info count={count} query={query} />
+            <Info loading={loading} count={count} query={query} />
             <Box display={{ md: 'none' }} w="full">
               <Filters
                 query={query}
