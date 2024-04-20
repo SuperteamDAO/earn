@@ -27,21 +27,33 @@ async function submission(req: NextApiRequestWithUser, res: NextApiResponse) {
       },
     });
 
-    await sendEmailNotification({
-      type: 'submissionTalent',
-      id: listingId,
-      userId: userId as string,
-    });
+    try {
+      await sendEmailNotification({
+        type: 'submissionTalent',
+        id: listingId,
+        userId: userId as string,
+      });
+    } catch (err) {
+      console.log('Error in sending mail to User -', err);
+    }
 
-    await sendEmailNotification({
-      type: 'submissionSponsor',
-      id: listingId,
-      userId: result?.listing?.pocId,
-    });
+    try {
+      await sendEmailNotification({
+        type: 'submissionSponsor',
+        id: listingId,
+        userId: result?.listing?.pocId,
+      });
+    } catch (err) {
+      console.log('Error in sending mail to Sponsor -', err);
+    }
 
-    if (process.env.NEXT_PUBLIC_VERCEL_ENV === 'production') {
-      const zapierWebhookUrl = process.env.ZAPIER_SUBMISSION_WEBHOOK!;
-      await axios.post(zapierWebhookUrl, result);
+    try {
+      if (process.env.NEXT_PUBLIC_VERCEL_ENV === 'production') {
+        const zapierWebhookUrl = process.env.ZAPIER_SUBMISSION_WEBHOOK!;
+        await axios.post(zapierWebhookUrl, result);
+      }
+    } catch (err) {
+      console.log('Error with Zapier Webhook -', err);
     }
 
     return res.status(200).json(result);
