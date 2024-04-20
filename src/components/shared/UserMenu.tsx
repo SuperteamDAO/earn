@@ -120,6 +120,15 @@ export function UserMenu({}) {
                 variant="marble"
               />
             )}
+            {showBlueCircle && (
+              <Circle
+                display={{ base: 'flex', md: 'none' }}
+                ml={2}
+                bg="blue.400"
+                size="8px"
+              />
+            )}
+
             <Flex
               align={'center'}
               display={{ base: 'none', md: 'flex' }}
