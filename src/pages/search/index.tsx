@@ -112,7 +112,7 @@ const Search = ({
           py={{ base: 4 }}
         >
           <VStack align="start" w={{ base: 'full', md: '70%' }}>
-            <QueryInput query={query} setQuery={setQuery} />
+            <QueryInput loading={loading} query={query} setQuery={setQuery} />
             <Info loading={loading} count={count} query={query} />
             <Box display={{ md: 'none' }} w="full">
               <Filters

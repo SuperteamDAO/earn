@@ -1,12 +1,20 @@
 import { SearchIcon } from '@chakra-ui/icons';
-import { Box, Input, InputGroup, InputLeftElement } from '@chakra-ui/react';
+import {
+  Box,
+  Input,
+  InputGroup,
+  InputLeftElement,
+  InputRightElement,
+} from '@chakra-ui/react';
+import { LoaderIcon } from 'react-hot-toast';
 
 interface Props {
+  loading: boolean;
   query: string;
   setQuery: (query: string) => void;
 }
 
-export function QueryInput({ query, setQuery }: Props) {
+export function QueryInput({ loading, query, setQuery }: Props) {
   return (
     <Box className="ph-no-capture" w="full" maxW="xl" px={{ base: 1, sm: 4 }}>
       <InputGroup border="none">
@@ -25,6 +33,7 @@ export function QueryInput({ query, setQuery }: Props) {
           value={query}
           variant="outline"
         />
+        <InputRightElement>{loading && <LoaderIcon />}</InputRightElement>
       </InputGroup>
     </Box>
   );
