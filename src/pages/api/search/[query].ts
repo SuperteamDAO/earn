@@ -146,12 +146,9 @@ LIMIT ? ${offset ? `OFFSET ?` : ''}
   if (skills) values = values.concat(skillsFlattened);
 
   try {
-    const start = performance.now();
     const bountiesCount = await prisma.$queryRawUnsafe<
       [{ totalCount: bigint }]
     >(countQuery, ...values);
-    const count = performance.now();
-    console.log('count query time - ', count - start);
 
     values.push(Number(limit));
     if (offset) values.push(Number(offset));
@@ -160,8 +157,6 @@ LIMIT ? ${offset ? `OFFSET ?` : ''}
       sqlQuery,
       ...values,
     );
-    const bountiesTime = performance.now();
-    console.log('count query time - ', bountiesTime - start);
 
     res
       .status(200)
