@@ -44,9 +44,13 @@ async function handler(req: NextApiRequestWithUser, res: NextApiResponse) {
         id: result.id,
       });
     }
-    if (process.env.NEXT_PUBLIC_VERCEL_ENV === 'production') {
-      const zapierWebhookUrl = process.env.ZAPIER_BOUNTY_WEBHOOK!;
-      await axios.post(zapierWebhookUrl, result);
+    try {
+      if (process.env.NEXT_PUBLIC_VERCEL_ENV === 'production') {
+        const zapierWebhookUrl = process.env.ZAPIER_BOUNTY_WEBHOOK!;
+        await axios.post(zapierWebhookUrl, result);
+      }
+    } catch (err) {
+      console.log('Error with Zapier Webhook -', err);
     }
     return res.status(200).json(result);
   } catch (error) {
