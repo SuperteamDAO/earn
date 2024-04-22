@@ -55,12 +55,14 @@ const Search = ({
   useEffect(() => {
     const handleStart = (url: string) => {
       if (url !== router.asPath) {
+        document.body.style.cursor = 'wait';
         setLoading(true);
       }
     };
 
     const handleComplete = (url: string) => {
       if (url === router.asPath) {
+        document.body.style.cursor = 'auto';
         setLoading(false);
       }
     };
@@ -116,6 +118,7 @@ const Search = ({
             <Info loading={loading} count={count} query={query} />
             <Box display={{ md: 'none' }} w="full">
               <Filters
+                loading={loading}
                 query={query}
                 statusFilters={statusFilters}
                 skillsFilters={skillsFilters}
@@ -135,6 +138,7 @@ const Search = ({
           >
             <Filters
               query={query}
+              loading={loading}
               statusFilters={statusFilters}
               skillsFilters={skillsFilters}
             />

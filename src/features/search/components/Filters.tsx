@@ -10,9 +10,15 @@ interface Props {
   statusFilters: CheckboxFilter[];
   skillsFilters: CheckboxFilter[];
   query: string;
+  loading: boolean;
 }
 
-export function Filters({ statusFilters, skillsFilters, query }: Props) {
+export function Filters({
+  statusFilters,
+  skillsFilters,
+  query,
+  loading,
+}: Props) {
   const searchParams = useSearchParams();
   const router = useRouter();
   const [, startTransition] = useTransition();
@@ -72,20 +78,23 @@ export function Filters({ statusFilters, skillsFilters, query }: Props) {
       maxW="xl"
       px={{ base: 1, sm: 4 }}
       pb={2}
+      pointerEvents={loading ? 'none' : 'auto'}
     >
       <VStack align="start">
         <Text color="brand.slate.500" fontSize="sm" fontWeight={500}>
           STATUS
         </Text>
         <Stack
+          flexWrap="wrap"
           direction={{ base: 'row', md: 'column' }}
-          gap={{ base: 6, md: 4 }}
+          columnGap={{ base: 6, md: 4 }}
         >
           {statusFilters?.map((f) => (
             <Stack key={f.value}>
               <Checkbox
                 checked={f.checked}
                 defaultChecked={f.checked}
+                disabled={loading}
                 onChange={() => {
                   handleStatusChange(f.value);
                 }}
@@ -104,14 +113,16 @@ export function Filters({ statusFilters, skillsFilters, query }: Props) {
           SKILLS
         </Text>
         <Stack
+          flexWrap="wrap"
           direction={{ base: 'row', md: 'column' }}
-          gap={{ base: 6, md: 4 }}
+          columnGap={{ base: 6, md: 4 }}
         >
           {skillsFilters?.map((f) => (
             <Stack key={f.value}>
               <Checkbox
                 checked={f.checked}
                 defaultChecked={f.checked}
+                disabled={loading}
                 onChange={() => {
                   handleSkillsChange(f.value);
                 }}

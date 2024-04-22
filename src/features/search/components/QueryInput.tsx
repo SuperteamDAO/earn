@@ -28,7 +28,6 @@ export function QueryInput({ loading, query, setQuery }: Props) {
           fontSize="sm"
           fontWeight={500}
           borderColor="brand.slate.300"
-          autoFocus
           onChange={(e) => setQuery(e.target.value)}
           placeholder="Search for Superteam Earn Listings"
           value={query}

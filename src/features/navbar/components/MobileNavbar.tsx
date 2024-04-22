@@ -185,19 +185,22 @@ export const MobileNavbar = ({ onLoginOpen, onSearchOpen }: Props) => {
               icon={<HamburgerIcon h={6} w={6} color="brand.slate.500" />}
               onClick={onDrawerOpen}
             />
-            <IconButton
-              gap={2}
-              color="brand.slate.400"
-              fontWeight={400}
-              border={'none'}
-              borderColor={'brand.slate.300'}
-              _hover={{ bg: 'transparent' }}
-              _active={{ bg: 'transparent' }}
-              aria-label="Open Search"
-              icon={<SearchIcon />}
-              onClick={onSearchOpen}
-              variant="outline"
-            />
+
+            {router.pathname !== '/search' && (
+              <IconButton
+                gap={2}
+                color="brand.slate.400"
+                fontWeight={400}
+                border={'none'}
+                borderColor={'brand.slate.300'}
+                _hover={{ bg: 'transparent' }}
+                _active={{ bg: 'transparent' }}
+                aria-label="Open Search"
+                icon={<SearchIcon />}
+                onClick={onSearchOpen}
+                variant="outline"
+              />
+            )}
           </Flex>
 
           <MobileDrawer />

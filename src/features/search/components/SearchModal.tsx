@@ -97,7 +97,7 @@ export function SearchModal({ isOpen, onClose }: Props) {
             </InputRightElement>
           </InputGroup>
         </form>
-        {results.length > 0 && (
+        {query.length > 0 && results.length > 0 && (
           <VStack w="full">
             <VStack w="full" py={0}>
               {results.map((r) => (
@@ -106,7 +106,7 @@ export function SearchModal({ isOpen, onClose }: Props) {
                   justifyContent="space-between"
                   display="flex"
                   w="full"
-                  p={0}
+                  p={{ md: 0 }}
                 >
                   <ListingCard bounty={r} />
                 </Container>

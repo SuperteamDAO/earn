@@ -155,8 +155,6 @@ LIMIT ? ${offset ? `OFFSET ?` : ''}
     values.push(Number(limit));
     if (offset) values.push(Number(offset));
 
-    console.log('query - ', sqlQuery);
-    console.log('values - ', values);
     const bounties = await prisma.$queryRawUnsafe<Bounties[]>(
       sqlQuery,
       ...values,
