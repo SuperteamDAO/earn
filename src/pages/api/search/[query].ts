@@ -17,6 +17,7 @@ const Skills = {
   DEVELOPMENT: 'DEVELOPMENT',
   DESIGN: 'DESIGN',
   CONTENT: 'CONTENT',
+  OTHER: 'OTHER',
 };
 
 export default async function user(req: NextApiRequest, res: NextApiResponse) {
@@ -154,6 +155,8 @@ LIMIT ? ${offset ? `OFFSET ?` : ''}
     values.push(Number(limit));
     if (offset) values.push(Number(offset));
 
+    console.log('query - ', sqlQuery);
+    console.log('values - ', values);
     const bounties = await prisma.$queryRawUnsafe<Bounties[]>(
       sqlQuery,
       ...values,
