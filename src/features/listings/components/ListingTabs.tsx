@@ -103,7 +103,7 @@ export const ListingTabs = ({
     {
       id: 'tab2',
       title: 'In Review',
-      posthog: 'in_review_listing',
+      posthog: 'in review_listing',
       content: generateTabContent({
         bounties: bounties,
         take,
@@ -227,13 +227,17 @@ export const ListingTabs = ({
           </Flex>
         </Flex>
         {showViewAll && (
-          <Flex display={{ base: 'none', sm: 'flex' }}>
+          <Flex
+            className="ph-no-capture"
+            display={{ base: 'none', sm: 'flex' }}
+          >
             <Link as={NextLink} href={viewAllLink}>
               <Button
                 px={2}
                 py={1}
                 color="brand.slate.400"
                 fontSize={['x-small', 'sm', 'sm', 'sm']}
+                onClick={() => posthog.capture('listings_viewall_top')}
                 size={{ base: 'x-small', md: 'sm' }}
                 variant={'ghost'}
               >
@@ -247,13 +251,14 @@ export const ListingTabs = ({
       {tabs.map((tab) => tab.id === activeTab && tab.content)}
 
       {showViewAll && (
-        <Link as={NextLink} href={viewAllLink}>
+        <Link className="ph-no-capture" as={NextLink} href={viewAllLink}>
           <Button
             w="100%"
             my={8}
             py={5}
             color="brand.slate.400"
             borderColor="brand.slate.300"
+            onClick={() => posthog.capture('listings_viewall_bottom')}
             rightIcon={<ArrowForwardIcon />}
             size="sm"
             variant="outline"

@@ -1,6 +1,7 @@
 import { ArrowForwardIcon } from '@chakra-ui/icons';
 import { Box, Button, Flex, HStack, Image, Link, Text } from '@chakra-ui/react';
 import { useRouter } from 'next/router';
+import { usePostHog } from 'posthog-js/react';
 
 type ListingSectionProps = {
   children?: React.ReactNode;
@@ -22,6 +23,7 @@ export const ListingSection = ({
   viewAllLink,
 }: ListingSectionProps) => {
   const router = useRouter();
+  const posthog = usePostHog();
 
   return (
     <Box
@@ -77,6 +79,7 @@ export const ListingSection = ({
           </Text>
         </Flex>
         <Flex
+          className="ph-no-capture"
           display={
             showViewAll && router?.query?.category !== type ? 'block' : 'none'
           }
@@ -89,7 +92,16 @@ export const ListingSection = ({
                 : `/${type}/`)
             }
           >
-            <Button color="brand.slate.400" size="sm" variant="ghost">
+            <Button
+              color="brand.slate.400"
+              onClick={() => {
+                if (type === 'grants') {
+                  posthog.capture('grants_viewall_top');
+                }
+              }}
+              size="sm"
+              variant="ghost"
+            >
               View All
             </Button>
           </Link>
@@ -99,6 +111,7 @@ export const ListingSection = ({
         {children}
       </Flex>
       <Flex
+        className="ph-no-capture"
         display={
           showViewAll && router?.query?.category !== type ? 'block' : 'none'
         }
@@ -117,6 +130,11 @@ export const ListingSection = ({
             py={5}
             color="brand.slate.400"
             borderColor="brand.slate.300"
+            onClick={() => {
+              if (type === 'grants') {
+                posthog.capture('grants_viewall_bottom');
+              }
+            }}
             rightIcon={<ArrowForwardIcon />}
             size="sm"
             variant="outline"

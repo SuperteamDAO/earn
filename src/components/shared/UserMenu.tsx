@@ -18,6 +18,7 @@ import Avatar from 'boring-avatars';
 import NextLink from 'next/link';
 import { useRouter } from 'next/router';
 import { useSession } from 'next-auth/react';
+import { usePostHog } from 'posthog-js/react';
 import { useEffect, useState } from 'react';
 
 import { userStore } from '@/store/user';
@@ -26,6 +27,7 @@ import { EmailSettingsModal } from '../modals/EmailSettingsModal';
 
 export function UserMenu({}) {
   const router = useRouter();
+  const posthog = usePostHog();
 
   const { userInfo, logOut } = userStore();
 
@@ -75,6 +77,7 @@ export function UserMenu({}) {
           display={{ base: 'none', md: 'flex' }}
           fontSize="xs"
           onClick={() => {
+            posthog.capture('complete profile_getting started');
             router.push('/new');
           }}
           size="sm"
@@ -96,6 +99,10 @@ export function UserMenu({}) {
             borderColor: 'brand.slate.300',
           }}
           cursor={'pointer'}
+          id="user menu"
+          onClick={() => {
+            posthog.capture('clicked_user menu');
+          }}
           rightIcon={
             <ChevronDownIcon
               color="brand.slate.400"
@@ -141,7 +148,7 @@ export function UserMenu({}) {
             </Flex>
           </Flex>
         </MenuButton>
-        <MenuList>
+        <MenuList className="ph-no-capture">
           {userInfo?.isTalentFilled && (
             <>
               <MenuItem
@@ -150,6 +157,9 @@ export function UserMenu({}) {
                 fontSize="sm"
                 fontWeight={600}
                 href={`/t/${userInfo?.username}`}
+                onClick={() => {
+                  posthog.capture('profile_user menu');
+                }}
               >
                 Profile
               </MenuItem>
@@ -159,6 +169,9 @@ export function UserMenu({}) {
                 fontSize="sm"
                 fontWeight={600}
                 href={`/t/${userInfo?.username}/edit`}
+                onClick={() => {
+                  posthog.capture('edit profile_user menu');
+                }}
               >
                 Edit Profile
               </MenuItem>
@@ -173,6 +186,9 @@ export function UserMenu({}) {
                 fontSize="sm"
                 fontWeight={600}
                 href={'/dashboard/listings'}
+                onClick={() => {
+                  posthog.capture('sponsor dashboard_user menu');
+                }}
               >
                 Sponsor Dashboard
               </MenuItem>
@@ -207,7 +223,10 @@ export function UserMenu({}) {
               color="brand.slate.500"
               fontSize="sm"
               fontWeight={600}
-              onClick={handleEmailPreferencesClick}
+              onClick={() => {
+                handleEmailPreferencesClick();
+                posthog.capture('email preferences_user menu');
+              }}
             >
               Email Preferences
               {showBlueCircle && <Circle ml={2} bg="blue.400" size="8px" />}
@@ -217,9 +236,10 @@ export function UserMenu({}) {
             color="brand.slate.500"
             fontSize="sm"
             fontWeight={600}
-            onClick={() =>
-              window.open('mailto:hello@superteamearn.com', '_blank')
-            }
+            onClick={() => {
+              window.open('mailto:hello@superteamearn.com', '_blank');
+              posthog.capture('get help_user menu');
+            }}
           >
             Get Help
           </MenuItem>
@@ -227,7 +247,10 @@ export function UserMenu({}) {
             color="red.500"
             fontSize="sm"
             fontWeight={600}
-            onClick={() => logOut()}
+            onClick={() => {
+              posthog.capture('logout_user menu');
+              logOut();
+            }}
           >
             Logout
           </MenuItem>
