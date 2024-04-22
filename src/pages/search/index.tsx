@@ -1,4 +1,4 @@
-import { Box, Flex, VStack } from '@chakra-ui/react';
+import { Box, Divider, Flex, VStack } from '@chakra-ui/react';
 import debounce from 'lodash.debounce';
 import { type GetServerSideProps } from 'next';
 import { useSearchParams } from 'next/navigation';
@@ -121,14 +121,13 @@ const Search = ({
                 skillsFilters={skillsFilters}
               />
             </Box>
-            {results.length > 0 && (
-              <Results
-                query={query}
-                results={results}
-                setResults={setResults}
-                count={count}
-              />
-            )}
+            <Divider mx={{ base: 3, md: 4 }} />
+            <Results
+              query={query}
+              results={results}
+              setResults={setResults}
+              count={count}
+            />
           </VStack>
           <Box
             display={{ base: 'none', md: 'block' }}
