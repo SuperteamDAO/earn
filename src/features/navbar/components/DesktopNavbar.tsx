@@ -81,20 +81,22 @@ export const DesktopNavbar = ({ onLoginOpen, onSearchOpen }: Props) => {
             )}
           </Link>
 
-          <Button
-            gap={2}
-            color="brand.slate.400"
-            fontWeight={400}
-            border={'none'}
-            borderColor={'brand.slate.300'}
-            _hover={{
-              bg: 'brand.slate.100',
-            }}
-            onClick={onSearchOpen}
-            variant="outline"
-          >
-            <SearchIcon />
-          </Button>
+          {router.pathname !== '/search' && (
+            <Button
+              gap={2}
+              color="brand.slate.400"
+              fontWeight={400}
+              border={'none'}
+              borderColor={'brand.slate.300'}
+              _hover={{
+                bg: 'brand.slate.100',
+              }}
+              onClick={onSearchOpen}
+              variant="outline"
+            >
+              <SearchIcon />
+            </Button>
+          )}
 
           {LISTING_NAV_ITEMS?.map((navItem) => {
             const isCurrent = `${navItem.href}` === router.asPath;

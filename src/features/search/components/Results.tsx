@@ -34,7 +34,9 @@ export function Results({ results, setResults, count, query }: Props) {
           </Circle>
           <VStack gap={0}>
             <Text fontSize="sm" fontWeight="600" textAlign="center">
-              We couldn’t find anything for that keyword
+              {query.length > 0
+                ? 'We couldn’t find anything for that keyword'
+                : 'The search field is empty'}
             </Text>
             <Text
               color="brand.slate.400"
@@ -42,7 +44,9 @@ export function Results({ results, setResults, count, query }: Props) {
               fontWeight="500"
               textAlign="center"
             >
-              Try searching for something else
+              {query.length > 0
+                ? 'Try searching for something else'
+                : 'Please enter a keyword to search'}
             </Text>
           </VStack>
         </VStack>
@@ -60,8 +64,9 @@ export function Results({ results, setResults, count, query }: Props) {
             <Button
               gap={2}
               w="full"
+              color="brand.slate.400"
               fontSize="sm"
-              fontWeight="normal"
+              fontWeight={600}
               borderTopWidth={1}
               borderTopColor="brand.slate.100"
               onClick={async () => {

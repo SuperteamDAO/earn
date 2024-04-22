@@ -48,6 +48,7 @@ export function SearchModal({ isOpen, onClose }: Props) {
           `/api/search/${encodeURIComponent(query)}`,
         );
         setResults(resp.data.bounties as Bounty[]);
+        router.prefetch(`/search?q=${query}`);
       }
       setLoading(false);
     } catch (err) {

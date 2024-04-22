@@ -5,6 +5,7 @@ import {
   InputGroup,
   InputLeftElement,
   InputRightElement,
+  Text,
 } from '@chakra-ui/react';
 import { LoaderIcon } from 'react-hot-toast';
 
@@ -29,12 +30,17 @@ export function QueryInput({ loading, query, setQuery }: Props) {
           borderColor="brand.slate.300"
           autoFocus
           onChange={(e) => setQuery(e.target.value)}
-          placeholder="Search for bounties, projects "
+          placeholder="Search for Superteam Earn Listings"
           value={query}
           variant="outline"
         />
         <InputRightElement>{loading && <LoaderIcon />}</InputRightElement>
       </InputGroup>
+      {query.length === 0 && (
+        <Text pt={2} color="brand.slate.500" fontSize="sm">
+          Enter a keyword to find what you need.
+        </Text>
+      )}
     </Box>
   );
 }

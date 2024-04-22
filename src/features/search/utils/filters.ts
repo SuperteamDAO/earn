@@ -34,4 +34,9 @@ export const preSkillFilters: CheckboxFilter[] = [
     value: 'DEVELOPMENT',
     checked: false,
   },
+  {
+    label: 'Others',
+    value: 'OTHER',
+    checked: false,
+  },
 ];
