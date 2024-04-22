@@ -96,7 +96,9 @@ export const ListingBasic = ({
         .refine(slugUniqueCheck, {
           message: 'Slug already exists. Please try another.',
         }),
-      pocSocials: z.string().url('Enter a valid URL'),
+      pocSocials: z.string(),
+      region: z.string().optional(),
+      applicationType: z.string().optional(),
       deadline: z.string().optional(),
       timeToComplete: z.string().optional(),
       referredBy: z.string().optional(),
@@ -249,6 +251,7 @@ export const ListingBasic = ({
         skills: skills,
         subskills: subSkills,
       });
+      console.log(data);
       updateState({ ...data, skills: mergedSkills });
       setSteps(3);
     }

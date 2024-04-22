@@ -218,9 +218,9 @@ export const ListingPayments = ({
           <ModalCloseButton />
           <ModalBody>
             <Text>
-              Publishing this listing means it will show up on the homepage for
-              all visitors. Make sure the details in your listing are correct
-              before you publish.
+              {form?.isPrivate
+                ? 'This listing will only be accessible via the link — and will not show up anywhere else on the site — since it has been marked as a "Private Listing"'
+                : 'Publishing this listing means it will show up on the homepage for all visitors. Make sure the details in your listing are correct before you publish.'}
             </Text>
           </ModalBody>
 

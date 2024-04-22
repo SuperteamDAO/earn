@@ -38,13 +38,3 @@ export interface ListingStoreType {
   updateState: (data: ListingFormType) => void;
   resetForm: () => void;
 }
-
-export interface BountyBasicType {
-  title?: string;
-  slug?: string;
-  deadline?: string;
-  templateId?: string;
-  pocSocials?: string;
-  applicationType?: 'fixed' | 'rolling';
-  timeToComplete?: string;
-}

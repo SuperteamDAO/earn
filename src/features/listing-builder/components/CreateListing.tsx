@@ -153,41 +153,43 @@ export function CreateListing({
     let draft: Bounty = {
       pocId: userInfo?.id ?? '',
     };
-    draft = {
-      ...draft,
-      type,
-      skills: form?.skills,
-      title: form?.title,
-      slug: form?.slug,
-      deadline: form?.deadline
-        ? new Date(form?.deadline).toISOString()
-        : undefined,
-      templateId: form?.templateId,
-      pocSocials: form?.pocSocials,
-      applicationType: form?.applicationType,
-      timeToComplete: form?.timeToComplete,
-      description: form?.description || '',
-      eligibility: (form?.eligibility || []).map((q) => ({
-        question: q.question,
-        order: q.order,
-        type: q.type,
-      })),
-      references: (form?.references || []).map((r) => ({
-        link: r.link,
-        order: r.order,
-      })),
-      region: form?.region,
-      referredBy: form?.referredBy,
-      isPrivate: form?.isPrivate,
-      requirements: form?.requirements,
-      rewardAmount: form?.rewardAmount,
-      rewards: form?.rewards,
-      token: form?.token,
-      compensationType: form?.compensationType,
-      minRewardAsk: form?.minRewardAsk,
-      maxRewardAsk: form?.maxRewardAsk,
-    };
     try {
+      draft = {
+        ...draft,
+        type,
+        skills: form?.skills,
+        title: form?.title,
+        slug: form?.slug,
+        deadline: form?.deadline
+          ? new Date(form?.deadline).toISOString()
+          : undefined,
+        templateId: form?.templateId,
+        pocSocials: form?.pocSocials,
+        applicationType: form?.applicationType,
+        timeToComplete: form?.timeToComplete,
+        description: form?.description || '',
+        eligibility: (form?.eligibility || []).map((q) => ({
+          question: q.question,
+          order: q.order,
+          type: q.type,
+        })),
+        references: (form?.references || []).map((r) => ({
+          link: r.link,
+          order: r.order,
+        })),
+        region: form?.region,
+        referredBy: form?.referredBy,
+        isPrivate: form?.isPrivate,
+        requirements: form?.requirements,
+        rewardAmount: form?.rewardAmount,
+        rewards: form?.rewards,
+        token: form?.token,
+        compensationType: form?.compensationType,
+        minRewardAsk: form?.minRewardAsk,
+        maxRewardAsk: form?.maxRewardAsk,
+      };
+      console.log(draft);
+
       await axios.post(api, {
         ...(type === 'hackathon' ? { hackathonSponsor } : {}),
         ...draft,
