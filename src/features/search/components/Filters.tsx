@@ -1,7 +1,8 @@
 import { Checkbox, Stack, Text, VStack } from '@chakra-ui/react';
+import debounce from 'lodash.debounce';
 import { useSearchParams } from 'next/navigation';
 import { useRouter } from 'next/router';
-import { useState, useTransition } from 'react';
+import { useCallback, useState, useTransition } from 'react';
 
 import { type CheckboxFilter } from '../types';
 import { serverSearch } from '../utils';
@@ -26,6 +27,10 @@ export function Filters({
   const [status, setStatus] = useState(searchParams.get('status') ?? undefined);
   const [skills, setSkills] = useState(searchParams.get('skills') ?? undefined);
 
+  const debouncedServerSearch = useCallback(debounce(serverSearch, 500), [
+    query,
+  ]);
+
   const handleStatusChange = (value: string) => {
     const statusArray = status ? status.split(',') : [];
     let statusQuery = '';
@@ -40,9 +45,9 @@ export function Filters({
     }
     setStatus(statusQuery);
     if (statusQuery === '') {
-      serverSearch(startTransition, router, query, { skills });
+      debouncedServerSearch(startTransition, router, query, { skills });
     } else {
-      serverSearch(startTransition, router, query, {
+      debouncedServerSearch(startTransition, router, query, {
         status: statusQuery,
         skills,
       });
@@ -60,9 +65,9 @@ export function Filters({
     setSkills(skillQuery);
     console.log('skill query - ', skillQuery);
     if (skillQuery === '') {
-      serverSearch(startTransition, router, query, { status });
+      debouncedServerSearch(startTransition, router, query, { status });
     } else {
-      serverSearch(startTransition, router, query, {
+      debouncedServerSearch(startTransition, router, query, {
         status,
         skills: skillQuery,
       });
