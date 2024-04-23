@@ -54,7 +54,7 @@ export function UserMenu({}) {
 
   const handleClose = () => {
     onClose();
-    router.push(router.pathname, undefined, { shallow: true });
+    // router.push(router.pathname, undefined, { shallow: true });
   };
 
   const [showBlueCircle, setShowBlueCircle] = useState(() => {
