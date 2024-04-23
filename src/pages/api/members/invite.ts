@@ -54,8 +54,8 @@ async function sendInvites(req: NextApiRequestWithUser, res: NextApiResponse) {
     });
 
     return res.status(200).json({ message: 'OTP sent successfully.' });
-  } catch (error) {
-    console.log('file: invite.ts:54 ~ error:', error);
+  } catch (error: any) {
+    console.error(`User ${userId} unable to invite`, error.message);
     return res.status(400).json({
       error,
       message: 'Error occurred while adding a new user.',

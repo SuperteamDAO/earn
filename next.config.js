@@ -1,6 +1,5 @@
 /** @type {import('next').NextConfig} */
 /* eslint-disable @typescript-eslint/no-var-requires */
-const { withSentryConfig } = require('@sentry/nextjs');
 const { withAxiom } = require('next-axiom');
 
 const withPWA = require('next-pwa')({
@@ -59,23 +58,4 @@ const nextConfig = {
   },
 };
 
-module.exports = withAxiom(
-  withPWA(
-    withSentryConfig(
-      nextConfig,
-      {
-        silent: true,
-        org: process.env.SENTRY_ORG,
-        project: process.env.SENTRY_PROJECT,
-      },
-      {
-        widenClientFileUpload: true,
-        transpileClientSDK: true,
-        tunnelRoute: '/monitoring',
-        hideSourceMaps: true,
-        disableLogger: true,
-        automaticVercelMonitors: true,
-      },
-    ),
-  ),
-);
+module.exports = withAxiom(withPWA(nextConfig));

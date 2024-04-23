@@ -16,7 +16,7 @@ async function handler(req: NextApiRequestWithUser, res: NextApiResponse) {
     });
     return res.status(200).json(result);
   } catch (error) {
-    console.log('file: create.ts:29 ~ user ~ error:', error);
+    console.log(error);
     return res.status(400).json({
       error,
       message: 'Error occurred while adding a new sponsor.',

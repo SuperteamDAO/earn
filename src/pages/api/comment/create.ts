@@ -5,9 +5,8 @@ import { sendEmailNotification } from '@/features/emails';
 import { prisma } from '@/prisma';
 
 async function comment(req: NextApiRequestWithUser, res: NextApiResponse) {
+  const userId = req.userId;
   try {
-    const userId = req.userId;
-
     const {
       pocId,
       message,
@@ -126,7 +125,9 @@ async function comment(req: NextApiRequestWithUser, res: NextApiResponse) {
     }
 
     return res.status(200).json(result);
-  } catch (error) {
+  } catch (error: any) {
+    console.error(`User ${userId} unable to edit comment`, error.message);
+
     return res.status(400).json({
       error,
       message: 'Error occurred while adding a new comment.',

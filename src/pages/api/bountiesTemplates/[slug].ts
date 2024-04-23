@@ -14,7 +14,7 @@ export default async function user(req: NextApiRequest, res: NextApiResponse) {
     });
     res.status(200).json(result);
   } catch (error) {
-    console.log('file: [slug].tsx:17 ~ user ~ error:', error);
+    console.log(error);
     res.status(400).json({
       error,
       message: `Error occurred while fetching bounty template with slug=${slug}.`,
