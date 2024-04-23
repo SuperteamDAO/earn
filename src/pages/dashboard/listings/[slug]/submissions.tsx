@@ -35,10 +35,21 @@ function BountySubmissions({ slug }: Props) {
   const [rewards, setRewards] = useState<string[]>([]);
   const [isBountyLoading, setIsBountyLoading] = useState(true);
   const [skip, setSkip] = useState(0);
-  const length = 10;
+  let length = 10;
   const [searchText, setSearchText] = useState('');
 
   const [usedPositions, setUsedPositions] = useState<string[]>([]);
+
+  useEffect(() => {
+    if (searchText) {
+      length = 999;
+      if (skip !== 0) {
+        setSkip(0);
+      }
+    } else {
+      length = 10;
+    }
+  }, [searchText]);
 
   const getBounty = async () => {
     setIsBountyLoading(true);
@@ -173,43 +184,57 @@ function BountySubmissions({ slug }: Props) {
                 </Flex>
               </Flex>
               <Flex align="center" justify="start" gap={4} mt={4}>
-                <Button
-                  isDisabled={skip <= 0}
-                  leftIcon={<ChevronLeftIcon w={5} h={5} />}
-                  onClick={() =>
-                    skip >= length ? setSkip(skip - length) : setSkip(0)
-                  }
-                  size="sm"
-                  variant="outline"
-                >
-                  Previous
-                </Button>
-                <Text color="brand.slate.400" fontSize="sm">
-                  <Text as="span" fontWeight={700}>
-                    {skip + 1}
-                  </Text>{' '}
-                  -{' '}
-                  <Text as="span" fontWeight={700}>
-                    {Math.min(skip + length, totalSubmissions)}
-                  </Text>{' '}
-                  of{' '}
-                  <Text as="span" fontWeight={700}>
-                    {totalSubmissions}
-                  </Text>{' '}
-                  Submissions
-                </Text>
-                <Button
-                  isDisabled={
-                    totalSubmissions <= skip + length ||
-                    (skip > 0 && skip % length !== 0)
-                  }
-                  onClick={() => skip % length === 0 && setSkip(skip + length)}
-                  rightIcon={<ChevronRightIcon w={5} h={5} />}
-                  size="sm"
-                  variant="outline"
-                >
-                  Next
-                </Button>
+                {!!searchText ? (
+                  <Text color="brand.slate.400" fontSize="sm">
+                    Found{' '}
+                    <Text as="span" fontWeight={700}>
+                      {submissions.length}
+                    </Text>{' '}
+                    {submissions.length === 1 ? 'result' : 'results'}
+                  </Text>
+                ) : (
+                  <>
+                    <Button
+                      isDisabled={skip <= 0}
+                      leftIcon={<ChevronLeftIcon w={5} h={5} />}
+                      onClick={() =>
+                        skip >= length ? setSkip(skip - length) : setSkip(0)
+                      }
+                      size="sm"
+                      variant="outline"
+                    >
+                      Previous
+                    </Button>
+                    <Text color="brand.slate.400" fontSize="sm">
+                      <Text as="span" fontWeight={700}>
+                        {skip + 1}
+                      </Text>{' '}
+                      -{' '}
+                      <Text as="span" fontWeight={700}>
+                        {Math.min(skip + length, totalSubmissions)}
+                      </Text>{' '}
+                      of{' '}
+                      <Text as="span" fontWeight={700}>
+                        {totalSubmissions}
+                      </Text>{' '}
+                      Submissions
+                    </Text>
+                    <Button
+                      isDisabled={
+                        totalSubmissions <= skip + length ||
+                        (skip > 0 && skip % length !== 0)
+                      }
+                      onClick={() =>
+                        skip % length === 0 && setSkip(skip + length)
+                      }
+                      rightIcon={<ChevronRightIcon w={5} h={5} />}
+                      size="sm"
+                      variant="outline"
+                    >
+                      Next
+                    </Button>
+                  </>
+                )}
               </Flex>
             </>
           )}
