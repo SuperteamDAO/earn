@@ -53,6 +53,7 @@ import { ReferenceCard } from '@/features/listings';
 import { uploadToCloudinary } from '@/utils/upload';
 
 import { useListingFormStore } from '../../store';
+import { type ListingFormType } from '../../types';
 import { ListingFormLabel, ListingTooltip, ToolbarButton } from './Form';
 
 const LinkModal = ({
@@ -92,7 +93,7 @@ const LinkModal = ({
 
 interface Props {
   setSteps: Dispatch<SetStateAction<number>>;
-  createDraft: () => void;
+  createDraft: (data: ListingFormType) => Promise<void>;
   isDraftLoading?: boolean;
   editable?: boolean;
   type?: 'bounty' | 'project' | 'hackathon';
@@ -242,8 +243,8 @@ export const DescriptionBuilder = ({
   };
 
   const onDraftClick = async (data: any) => {
-    updateState({ ...data });
-    createDraft();
+    const formData = { ...form, ...data };
+    createDraft(formData);
   };
 
   return (

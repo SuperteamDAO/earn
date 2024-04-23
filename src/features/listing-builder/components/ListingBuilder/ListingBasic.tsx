@@ -39,6 +39,7 @@ import { Superteams } from '@/constants/Superteam';
 import { dayjs } from '@/utils/dayjs';
 
 import { useListingFormStore } from '../../store';
+import { type ListingFormType } from '../../types';
 import { getSuggestions, mergeSkills, splitSkills } from '../../utils';
 import { SelectSponsor } from '../SelectSponsor';
 import { ListingFormLabel, ListingTooltip } from './Form';
@@ -50,7 +51,7 @@ interface Props {
   setSteps: Dispatch<SetStateAction<number>>;
   isNewOrDraft?: boolean;
   isDraftLoading: boolean;
-  createDraft: () => void;
+  createDraft: (data: ListingFormType) => Promise<void>;
 }
 
 export const ListingBasic = ({
@@ -251,7 +252,6 @@ export const ListingBasic = ({
         skills: skills,
         subskills: subSkills,
       });
-      console.log(data);
       updateState({ ...data, skills: mergedSkills });
       setSteps(3);
     }
@@ -263,8 +263,8 @@ export const ListingBasic = ({
       skills: skills,
       subskills: subSkills,
     });
-    updateState({ ...data, skills: mergedSkills });
-    createDraft();
+    const formData = { ...form, ...data, skills: mergedSkills };
+    createDraft(formData);
   };
 
   return (

@@ -30,7 +30,7 @@ export default async function handler(
   const { slug, check, id } = req.query;
 
   if (check === 'true') {
-    if (id) {
+    if (!!id) {
       const bounty = await prisma.bounties.findFirst({
         where: {
           id: id as string,

@@ -11,6 +11,7 @@ import { type Bounty, getBountyDraftStatus } from '@/features/listings';
 import { userStore } from '@/store/user';
 
 import { useListingFormStore } from '../store';
+import { type ListingFormType } from '../types';
 import {
   DescriptionBuilder,
   FormLayout,
@@ -74,6 +75,7 @@ export function CreateListing({
 }: Props) {
   const router = useRouter();
   const { userInfo } = userStore();
+  const { form, updateState } = useListingFormStore();
 
   const bountyDraftStatus = getBountyDraftStatus(
     listing?.status,
@@ -143,7 +145,7 @@ export function CreateListing({
     }
   };
 
-  const createDraft = async () => {
+  const createDraft = async (data: ListingFormType) => {
     setIsDraftLoading(true);
 
     let api = `/api/${basePath}/create`;
@@ -157,38 +159,37 @@ export function CreateListing({
       draft = {
         ...draft,
         type,
-        skills: form?.skills,
-        title: form?.title,
-        slug: form?.slug,
-        deadline: form?.deadline
-          ? new Date(form?.deadline).toISOString()
+        skills: data?.skills,
+        title: data?.title,
+        slug: data?.slug,
+        deadline: data?.deadline
+          ? new Date(data?.deadline).toISOString()
           : undefined,
-        templateId: form?.templateId,
-        pocSocials: form?.pocSocials,
-        applicationType: form?.applicationType,
-        timeToComplete: form?.timeToComplete,
-        description: form?.description || '',
-        eligibility: (form?.eligibility || []).map((q) => ({
+        templateId: data?.templateId,
+        pocSocials: data?.pocSocials,
+        applicationType: data?.applicationType,
+        timeToComplete: data?.timeToComplete,
+        description: data?.description || '',
+        eligibility: (data?.eligibility || []).map((q) => ({
           question: q.question,
           order: q.order,
           type: q.type,
         })),
-        references: (form?.references || []).map((r) => ({
+        references: (data?.references || []).map((r) => ({
           link: r.link,
           order: r.order,
         })),
-        region: form?.region,
-        referredBy: form?.referredBy,
-        isPrivate: form?.isPrivate,
-        requirements: form?.requirements,
-        rewardAmount: form?.rewardAmount,
-        rewards: form?.rewards,
-        token: form?.token,
-        compensationType: form?.compensationType,
-        minRewardAsk: form?.minRewardAsk,
-        maxRewardAsk: form?.maxRewardAsk,
+        region: data?.region,
+        referredBy: data?.referredBy,
+        isPrivate: data?.isPrivate,
+        requirements: data?.requirements,
+        rewardAmount: data?.rewardAmount,
+        rewards: data?.rewards,
+        token: data?.token,
+        compensationType: data?.compensationType,
+        minRewardAsk: data?.minRewardAsk,
+        maxRewardAsk: data?.maxRewardAsk,
       };
-      console.log(draft);
 
       await axios.post(api, {
         ...(type === 'hackathon' ? { hackathonSponsor } : {}),
@@ -204,8 +205,6 @@ export function CreateListing({
       setIsDraftLoading(false);
     }
   };
-
-  const { form, updateState } = useListingFormStore();
 
   useEffect(() => {
     if (editable && !!listing) {

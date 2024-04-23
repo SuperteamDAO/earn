@@ -34,6 +34,7 @@ import { type Rewards } from '@/features/listings';
 import { sortRank } from '@/utils/rank';
 
 import { useListingFormStore } from '../../store';
+import { type ListingFormType } from '../../types';
 import { ListingFormLabel, ListingTooltip } from './Form';
 
 interface PrizeListInterface {
@@ -44,7 +45,7 @@ interface PrizeListInterface {
 }
 interface Props {
   isDraftLoading: boolean;
-  createDraft: () => void;
+  createDraft: (data: ListingFormType) => Promise<void>;
   createAndPublishListing: () => void;
   isListingPublishing: boolean;
   editable: boolean;
@@ -140,8 +141,9 @@ export const ListingPayments = ({
 
   const onSubmit = async (data: any) => {
     updateState({ ...data });
+    const formData = { ...form, ...data };
     if (mode === 'DRAFT') {
-      createDraft();
+      createDraft(formData);
       return;
     }
 
@@ -179,7 +181,7 @@ export const ListingPayments = ({
     if (errorMessage) {
       setErrorMessage(errorMessage);
     } else {
-      mode === 'EDIT' ? createDraft() : confirmOnOpen();
+      mode === 'EDIT' ? createDraft(formData) : confirmOnOpen();
     }
   };
 

@@ -14,12 +14,13 @@ import { useFieldArray, useForm } from 'react-hook-form';
 import toast from 'react-hot-toast';
 
 import { useListingFormStore } from '../../store';
+import { type ListingFormType } from '../../types';
 import { ListingFormLabel } from './Form';
 
 interface Props {
   setSteps: Dispatch<SetStateAction<number>>;
   draftLoading: boolean;
-  createDraft: () => void;
+  createDraft: (data: ListingFormType) => Promise<void>;
   editable: boolean;
   isNewOrDraft?: boolean;
   isDuplicating?: boolean;
@@ -93,8 +94,8 @@ export const QuestionBuilder = ({
   };
 
   const onDraftClick = async (data: any) => {
-    updateState({ ...data });
-    createDraft();
+    const formData = { ...form, ...data };
+    createDraft(formData);
   };
 
   return (

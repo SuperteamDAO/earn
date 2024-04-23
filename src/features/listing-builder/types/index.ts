@@ -35,6 +35,6 @@ export interface ListingFormType {
 
 export interface ListingStoreType {
   form: ListingFormType;
-  updateState: (data: ListingFormType) => void;
+  updateState: (data: Partial<ListingFormType>) => void;
   resetForm: () => void;
 }

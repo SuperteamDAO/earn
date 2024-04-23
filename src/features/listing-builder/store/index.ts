@@ -1,4 +1,5 @@
 import { Regions } from '@prisma/client';
+import { produce } from 'immer';
 import { create } from 'zustand';
 
 import { type ListingFormType, type ListingStoreType } from '../types';
@@ -43,12 +44,17 @@ const initialFormState = {
 export const useListingFormStore = create<ListingStoreType>()((set) => ({
   form: { ...(initialFormState as ListingFormType) },
   updateState: (data) => {
-    set((state) => {
-      state.form = { ...state.form, ...data };
-      return { ...state };
-    });
+    set(
+      produce((draft) => {
+        draft.form = { ...draft.form, ...data };
+      }),
+    );
   },
   resetForm: () => {
-    set({ form: { ...(initialFormState as ListingFormType) } });
+    set(
+      produce((draft) => {
+        draft.form = { ...(initialFormState as ListingFormType) };
+      }),
+    );
   },
 }));
