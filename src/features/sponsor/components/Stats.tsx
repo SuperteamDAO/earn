@@ -13,7 +13,7 @@ const stats = [
   },
   {
     title: '75K',
-    label: 'Twitter Followes',
+    label: 'Twitter Followers',
   },
   {
     title: '$4M',

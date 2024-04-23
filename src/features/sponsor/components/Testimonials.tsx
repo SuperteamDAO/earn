@@ -28,7 +28,7 @@ const testimonials: TestimonialProps[] = [
     message: `I'll say it again, Earn is going to become one of the most important non-protocol products in the Solana ecosystem. Connecting developers (amongst others) to opportunity and protocols to talent.`,
     logo: Solana,
     pfp: ChasedBarker,
-    name: 'Chased Barker',
+    name: 'Chase Barker',
     position: 'Global Developer Growth, Solana',
   },
   {
@@ -41,7 +41,7 @@ Perfect hiring workflow: 
 <br /> bounty -> trial period -> full-time offer.`,
     logo: ISC,
     pfp: Eno,
-    name: 'Chased Barker',
+    name: 'Eno Sim',
     position: 'Co-Founder, ISC',
   },
   {

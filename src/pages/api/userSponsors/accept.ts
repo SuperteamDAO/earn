@@ -29,8 +29,8 @@ async function handler(req: NextApiRequestWithUser, res: NextApiResponse) {
       },
     });
     return res.status(200).json({ accepted: true });
-  } catch (error) {
-    console.log('file: create.ts:31 ~ user ~ error:', error);
+  } catch (error: any) {
+    console.error(`User ${userId} unable to be accept invite`, error.message);
     return res.status(400).json({
       error,
       message: 'Error occurred while adding user to a sponsor',

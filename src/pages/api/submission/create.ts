@@ -10,6 +10,19 @@ async function submission(req: NextApiRequestWithUser, res: NextApiResponse) {
 
   const { listingId, link, tweet, otherInfo, eligibilityAnswers, ask } =
     req.body;
+
+  const existingSubmission = await prisma.submission.findFirst({
+    where: {
+      userId,
+      listingId,
+    },
+  });
+
+  if (existingSubmission) {
+    return res.status(400).json({
+      message: 'Submission already exists for this user and listing.',
+    });
+  }
   try {
     const result = await prisma.submission.create({
       data: {
@@ -27,26 +40,38 @@ async function submission(req: NextApiRequestWithUser, res: NextApiResponse) {
       },
     });
 
-    await sendEmailNotification({
-      type: 'submissionTalent',
-      id: listingId,
-      userId: userId as string,
-    });
+    try {
+      await sendEmailNotification({
+        type: 'submissionTalent',
+        id: listingId,
+        userId: userId as string,
+      });
+    } catch (err) {
+      console.log('Error in sending mail to User -', err);
+    }
 
-    await sendEmailNotification({
-      type: 'submissionSponsor',
-      id: listingId,
-      userId: result?.listing?.pocId,
-    });
+    try {
+      await sendEmailNotification({
+        type: 'submissionSponsor',
+        id: listingId,
+        userId: result?.listing?.pocId,
+      });
+    } catch (err) {
+      console.log('Error in sending mail to Sponsor -', err);
+    }
 
-    if (process.env.NEXT_PUBLIC_VERCEL_ENV === 'production') {
-      const zapierWebhookUrl = process.env.ZAPIER_SUBMISSION_WEBHOOK!;
-      await axios.post(zapierWebhookUrl, result);
+    try {
+      if (process.env.NEXT_PUBLIC_VERCEL_ENV === 'production') {
+        const zapierWebhookUrl = process.env.ZAPIER_SUBMISSION_WEBHOOK!;
+        await axios.post(zapierWebhookUrl, result);
+      }
+    } catch (err) {
+      console.log('Error with Zapier Webhook -', err);
     }
 
     return res.status(200).json(result);
-  } catch (error) {
-    console.log(error);
+  } catch (error: any) {
+    console.error(`User ${userId} unable to submit`, error.message);
     return res.status(400).json({
       error,
       message: 'Error occurred while adding a new submission.',
