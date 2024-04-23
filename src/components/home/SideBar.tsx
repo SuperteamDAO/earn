@@ -1,9 +1,7 @@
 import {
   Box,
-  Button,
   Center,
   Flex,
-  HStack,
   Image,
   Skeleton,
   Text,
@@ -17,7 +15,6 @@ import { useEffect, useRef, useState } from 'react';
 import { tokenList } from '@/constants';
 import { LoginWrapper } from '@/features/auth';
 import type { User } from '@/interface/user';
-import { RenaissanceLogo } from '@/svg/renaissance-logo';
 import { getURL } from '@/utils/validUrl';
 
 interface SideBarProps {
@@ -372,65 +369,65 @@ const RecentEarners = ({ earners }: { earners?: User[] }) => {
   );
 };
 
-const SidebarBanner = () => {
-  return (
-    <Flex
-      direction={'column'}
-      gap={1}
-      w={'full'}
-      h={'max-content'}
-      px={6}
-      py={8}
-      bgImage={"url('/assets/hackathon/renaissance/sidebar-bg.png')"}
-      bgSize="cover"
-      bgPosition="center"
-      bgRepeat="no-repeat"
-      rounded={'lg'}
-    >
-      <HStack>
-        <RenaissanceLogo
-          styles={{
-            width: '100%',
-            marginLeft: 'auto',
-            marginRight: 'auto',
-            marginBottom: '16px',
-          }}
-        />
-      </HStack>
-      <Text
-        mt={1}
-        color={'brand.slate.800'}
-        fontSize={'lg'}
-        fontWeight={'600'}
-        lineHeight={'6'}
-      >
-        Build a project for the latest Solana global hackathon!
-      </Text>
-      <Text
-        mt={'0.5rem'}
-        color={'brand.slate.700'}
-        fontSize={'1rem'}
-        lineHeight={'1.1875rem'}
-      >
-        Submit to any of the Renaissance side tracks on Earn and stand to win
-        some $$. Deadline for submissions is April 8, 2024.
-      </Text>
-      <Button
-        as={NextLink}
-        mt={'1.5625rem'}
-        py={'0.8125rem'}
-        fontWeight={'500'}
-        textAlign={'center'}
-        bg="#000"
-        borderRadius={8}
-        _hover={{ bg: '#716f6e' }}
-        href="/renaissance"
-      >
-        View Tracks
-      </Button>
-    </Flex>
-  );
-};
+// const SidebarBanner = () => {
+//   return (
+//     <Flex
+//       direction={'column'}
+//       gap={1}
+//       w={'full'}
+//       h={'max-content'}
+//       px={6}
+//       py={8}
+//       bgImage={"url('/assets/hackathon/renaissance/sidebar-bg.png')"}
+//       bgSize="cover"
+//       bgPosition="center"
+//       bgRepeat="no-repeat"
+//       rounded={'lg'}
+//     >
+//       <HStack>
+//         <RenaissanceLogo
+//           styles={{
+//             width: '100%',
+//             marginLeft: 'auto',
+//             marginRight: 'auto',
+//             marginBottom: '16px',
+//           }}
+//         />
+//       </HStack>
+//       <Text
+//         mt={1}
+//         color={'brand.slate.800'}
+//         fontSize={'lg'}
+//         fontWeight={'600'}
+//         lineHeight={'6'}
+//       >
+//         Build a project for the latest Solana global hackathon!
+//       </Text>
+//       <Text
+//         mt={'0.5rem'}
+//         color={'brand.slate.700'}
+//         fontSize={'1rem'}
+//         lineHeight={'1.1875rem'}
+//       >
+//         Submit to any of the Renaissance side tracks on Earn and stand to win
+//         some $$. Deadline for submissions is April 8, 2024.
+//       </Text>
+//       <Button
+//         as={NextLink}
+//         mt={'1.5625rem'}
+//         py={'0.8125rem'}
+//         fontWeight={'500'}
+//         textAlign={'center'}
+//         bg="#000"
+//         borderRadius={8}
+//         _hover={{ bg: '#716f6e' }}
+//         href="/renaissance"
+//       >
+//         View Tracks
+//       </Button>
+//     </Flex>
+//   );
+// };
 
 export const HomeSideBar = ({
   userInfo,
@@ -447,7 +444,7 @@ export const HomeSideBar = ({
         bountyCount={listings}
         TVE={total}
       />
-      <SidebarBanner />
+      {/* <SidebarBanner /> */}
       <RecentEarners earners={earners} />
     </Flex>
   );
