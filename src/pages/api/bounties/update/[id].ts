@@ -116,9 +116,6 @@ async function bounty(req: NextApiRequestWithUser, res: NextApiResponse) {
       console.log('Error with Zapier Webhook -', err);
     }
 
-    if (process.env.NEXT_PUBLIC_VERCEL_ENV === 'production') {
-    }
-
     return res.status(200).json(result);
   } catch (error) {
     return res.status(400).json({
