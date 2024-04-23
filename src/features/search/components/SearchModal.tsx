@@ -66,7 +66,7 @@ export function SearchModal({ isOpen, onClose }: Props) {
 
   return (
     <Modal isOpen={isOpen} onClose={onClose} size={{ base: 'sm', lg: 'xl' }}>
-      <ModalOverlay backdropFilter="blur(6px) hue-rotate(90deg)" />
+      <ModalOverlay backdropFilter="blur(6px)" />
       <ModalContent mt={'15rem'} p={0} border="none">
         <form
           onSubmit={(e) => {
