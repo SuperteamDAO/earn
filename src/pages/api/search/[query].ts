@@ -57,7 +57,7 @@ export default async function user(req: NextApiRequest, res: NextApiResponse) {
     DEVELOPMENT: ['Frontend', 'Backend', 'Blockchain', 'Mobile'],
     DESIGN: ['Design'],
     CONTENT: ['Content'],
-    OTHER: ['Other'],
+    OTHER: ['Other', 'Growth', 'Community'],
   };
 
   const skillsFlattened = skillList.reduce((acc: string[], category) => {

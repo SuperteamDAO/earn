@@ -83,6 +83,22 @@ function MyApp({ Component, pageProps }: any) {
   }
 
   useEffect(() => {
+    const handleComplete = (url: string) => {
+      if (url === router.asPath) {
+        document.body.style.cursor = 'auto';
+      }
+    };
+
+    router.events.on('routeChangeComplete', handleComplete);
+    router.events.on('routeChangeError', handleComplete);
+
+    return () => {
+      router.events.off('routeChangeComplete', handleComplete);
+      router.events.off('routeChangeError', handleComplete);
+    };
+  }, [router]);
+
+  useEffect(() => {
     const fetchUserInfo = async () => {
       if (status === 'authenticated') {
         try {

@@ -66,8 +66,8 @@ export function SearchModal({ isOpen, onClose }: Props) {
 
   return (
     <Modal isOpen={isOpen} onClose={onClose} size={{ base: 'sm', lg: 'xl' }}>
-      <ModalOverlay />
-      <ModalContent p={0} border="none">
+      <ModalOverlay backdropFilter="blur(6px) hue-rotate(90deg)" />
+      <ModalContent mt={'15rem'} p={0} border="none">
         <form
           onSubmit={(e) => {
             e.preventDefault();
@@ -82,7 +82,7 @@ export function SearchModal({ isOpen, onClose }: Props) {
               fontSize="sm"
               border="none"
               onChange={(e) => setQuery(e.target.value)}
-              placeholder="Search for bounties, projects "
+              placeholder="Search for Superteam Earn Listings"
               value={query}
               variant="filled"
             />
@@ -106,7 +106,7 @@ export function SearchModal({ isOpen, onClose }: Props) {
                   justifyContent="space-between"
                   display="flex"
                   w="full"
-                  p={{ md: 0 }}
+                  p={0}
                 >
                   <ListingCard bounty={r} />
                 </Container>

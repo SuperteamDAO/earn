@@ -12,13 +12,17 @@ export function Info({ count, query, loading }: Props) {
     <Box px={{ base: 1, sm: 4 }} py={4}>
       <HStack>
         <Text fontSize="sm" fontWeight={600}>
-          Found {count} search results
+          {query.length === 0
+            ? 'Enter a keyword to find what you need.'
+            : `Found ${count} search results`}
         </Text>
         {loading && <LoaderIcon />}
       </HStack>
-      <Text color="brand.slate.500" fontSize="sm" fontWeight={500}>
-        for {`"${query.trim()}"`}
-      </Text>
+      {query.length > 0 && (
+        <Text color="brand.slate.500" fontSize="sm" fontWeight={500}>
+          for {`"${query.trim()}"`}
+        </Text>
+      )}
     </Box>
   );
 }

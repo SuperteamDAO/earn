@@ -67,8 +67,6 @@ export function Results({ results, setResults, count, query }: Props) {
               color="brand.slate.400"
               fontSize="sm"
               fontWeight={600}
-              borderTopWidth={1}
-              borderTopColor="brand.slate.100"
               onClick={async () => {
                 if (results) {
                   const lastId = results[results.length - 1]?.id;

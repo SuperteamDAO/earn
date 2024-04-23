@@ -5,7 +5,6 @@ import {
   InputGroup,
   InputLeftElement,
   InputRightElement,
-  Text,
 } from '@chakra-ui/react';
 import { LoaderIcon } from 'react-hot-toast';
 
@@ -35,11 +34,6 @@ export function QueryInput({ loading, query, setQuery }: Props) {
         />
         <InputRightElement>{loading && <LoaderIcon />}</InputRightElement>
       </InputGroup>
-      {query.length === 0 && (
-        <Text pt={2} color="brand.slate.500" fontSize="sm">
-          Enter a keyword to find what you need.
-        </Text>
-      )}
     </Box>
   );
 }

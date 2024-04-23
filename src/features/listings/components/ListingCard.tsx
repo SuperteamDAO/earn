@@ -102,7 +102,7 @@ export const ListingCard = ({
       <Link
         as={NextLink}
         w="full"
-        px={{ base: 1, sm: 4 }}
+        px={{ base: 2, sm: 4 }}
         py={4}
         borderRadius={5}
         _hover={{
@@ -116,7 +116,7 @@ export const ListingCard = ({
           justify="space-between"
           w={{ base: '100%', md: 'brand.120' }}
         >
-          <Flex w="100%" h={{ base: 14, sm: 16 }}>
+          <Flex w="100%">
             <Image
               w={{ base: 14, sm: 16 }}
               h={{ base: 14, sm: 16 }}
@@ -156,7 +156,12 @@ export const ListingCard = ({
               >
                 {sponsor?.name}
               </Text>
-              <Flex align={'center'} gap={{ base: 1, sm: 3 }} mt={'1px'}>
+              <Flex
+                align={'center'}
+                wrap={'wrap'}
+                gap={{ base: 1, sm: 3 }}
+                mt={'1px'}
+              >
                 <>
                   <Flex
                     align={'center'}
