@@ -27,11 +27,10 @@ async function fetchTokenUSDValue(symbol: string) {
 }
 
 async function announce(req: NextApiRequestWithUser, res: NextApiResponse) {
+  const userId = req.userId;
   const params = req.query;
   const id = params.id as string;
   try {
-    const userId = req.userId;
-
     const user = await prisma.user.findUnique({
       where: {
         id: userId as string,
@@ -238,7 +237,8 @@ async function announce(req: NextApiRequestWithUser, res: NextApiResponse) {
     }
 
     return res.status(200).json(result);
-  } catch (error) {
+  } catch (error: any) {
+    console.error(`User ${userId} unable to announce a listing`, error.message);
     return res.status(400).json({
       error,
       message: `Error occurred while announcing bounty with id=${id}.`,
