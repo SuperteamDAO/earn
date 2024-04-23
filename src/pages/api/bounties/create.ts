@@ -53,8 +53,8 @@ async function handler(req: NextApiRequestWithUser, res: NextApiResponse) {
       console.log('Error with Zapier Webhook -', err);
     }
     return res.status(200).json(result);
-  } catch (error) {
-    console.log('file: create.ts:31 ~ user ~ error:', error);
+  } catch (error: any) {
+    console.error(`User ${userId} unable to create a listing`, error.message);
     return res.status(400).json({
       error,
       message: 'Error occurred while adding a new bounty.',

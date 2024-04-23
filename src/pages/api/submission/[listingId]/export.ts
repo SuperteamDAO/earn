@@ -95,7 +95,7 @@ async function handler(req: NextApiRequestWithUser, res: NextApiResponse) {
       url: cloudinaryDetails?.secure_url || cloudinaryDetails?.url,
     });
   } catch (error: any) {
-    console.error(error);
+    console.error(`User ${userId} unable to download csv`, error.message);
     return res.status(400).json({
       error: error.message || error.toString(),
       message: `Error occurred while exporting submissions of listing=${listingId}.`,

@@ -65,6 +65,7 @@ if (typeof window !== 'undefined') {
     api_host: `${getURL()}ingest`,
     ui_host: process.env.NEXT_PUBLIC_POSTHOG_HOST || 'https://app.posthog.com',
   });
+  posthog.debug(false);
 }
 
 function MyApp({ Component, pageProps }: any) {

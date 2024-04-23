@@ -33,6 +33,7 @@ import axios from 'axios';
 import Avatar from 'boring-avatars';
 import dynamic from 'next/dynamic';
 import NextLink from 'next/link';
+import { log } from 'next-axiom';
 import React, { type Dispatch, type SetStateAction, useState } from 'react';
 import { BsTwitterX } from 'react-icons/bs';
 import {
@@ -270,6 +271,7 @@ export const SubmissionDetails = ({
       setIsPaying(false);
     } catch (error) {
       console.log(error);
+      log.error('Sponsor unable to pay');
       setIsPaying(false);
     }
   };
