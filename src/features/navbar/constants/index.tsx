@@ -43,7 +43,7 @@ export const HACKATHON_NAV_ITEMS: Array<NavItem> = [
   {
     label: 'Renaissance',
     href: '/renaissance/',
-    posthog: 'development_navbar',
+    posthog: 'renaissance_navbar',
   },
   {
     label: 'Scribes',

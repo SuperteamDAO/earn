@@ -12,6 +12,7 @@ import {
 import Avatar from 'boring-avatars';
 import NextLink from 'next/link';
 import { useRouter } from 'next/router';
+import { usePostHog } from 'posthog-js/react';
 import { useEffect, useRef, useState } from 'react';
 
 import { tokenList } from '@/constants';
@@ -67,6 +68,7 @@ interface GettingStartedProps {
 
 const GettingStarted = ({ userInfo }: GettingStartedProps) => {
   const router = useRouter();
+  const posthog = usePostHog();
   const [triggerLogin, setTriggerLogin] = useState(false);
   return (
     <Box>
@@ -106,7 +108,12 @@ const GettingStarted = ({ userInfo }: GettingStartedProps) => {
               _hover={{
                 color: 'brand.purple',
               }}
-              onClick={() => !userInfo?.id && setTriggerLogin(true)}
+              onClick={() => {
+                if (!userInfo?.id) {
+                  posthog.capture('create account_getting started');
+                  setTriggerLogin(true);
+                }
+              }}
             >
               Create your account
             </Text>
@@ -126,6 +133,7 @@ const GettingStarted = ({ userInfo }: GettingStartedProps) => {
                 }}
                 onClick={() => {
                   if (userInfo?.id) {
+                    posthog.capture('complete profile_getting started');
                     router.push(`/new/talent`);
                   } else {
                     setTriggerLogin(true);
@@ -155,6 +163,7 @@ const GettingStarted = ({ userInfo }: GettingStartedProps) => {
                 }}
                 onClick={() => {
                   if (userInfo?.id) {
+                    posthog.capture('win_getting started');
                     router.push('/all');
                   } else {
                     setTriggerLogin(true);

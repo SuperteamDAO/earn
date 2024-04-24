@@ -11,6 +11,7 @@ import {
   useDisclosure,
 } from '@chakra-ui/react';
 import axios from 'axios';
+import { usePostHog } from 'posthog-js/react';
 import { type Dispatch, type SetStateAction, useState } from 'react';
 import {
   type FieldValues,
@@ -153,6 +154,7 @@ export function YourLinks({ success, useFormStore }: Props) {
   const { updateState } = useFormStore();
 
   const { setUserInfo } = userStore();
+  const posthog = usePostHog();
 
   const uploadProfile = async (
     socials: {
@@ -211,6 +213,7 @@ export function YourLinks({ success, useFormStore }: Props) {
   const { register, handleSubmit } = useForm();
 
   const onSubmit = (data: any) => {
+    posthog.capture('finish profile_talent');
     uploadProfile(
       {
         discord: data.Discord,

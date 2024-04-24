@@ -16,6 +16,7 @@ import {
 import axios from 'axios';
 import type { GetServerSideProps } from 'next';
 import { useRouter } from 'next/router';
+import { usePostHog } from 'posthog-js/react';
 import React, { useEffect, useRef, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import ReactSelect from 'react-select';
@@ -128,6 +129,7 @@ export default function EditProfilePage({ slug }: { slug: string }) {
   const [isPhotoLoading, setIsPhotoLoading] = useState(true);
 
   const router = useRouter();
+  const posthog = usePostHog();
 
   const [pow, setPow] = useState<PoW[]>([]);
   const [selectedProject, setSelectedProject] = useState<number | null>(null);
@@ -242,6 +244,7 @@ export default function EditProfilePage({ slug }: { slug: string }) {
   }, [userInfo?.id]);
 
   const onSubmit = async (data: FormData) => {
+    posthog.capture('confirm_edit profile');
     if (isInvalid) {
       return;
     }
@@ -741,6 +744,7 @@ export default function EditProfilePage({ slug }: { slug: string }) {
                 <br />
 
                 <Button
+                  className="ph-no-capture"
                   mb={12}
                   isLoading={uploading || isLoading}
                   type="submit"

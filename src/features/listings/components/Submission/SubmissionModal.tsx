@@ -20,6 +20,7 @@ import {
 } from '@chakra-ui/react';
 import { PublicKey } from '@solana/web3.js';
 import axios from 'axios';
+import { usePostHog } from 'posthog-js/react';
 import { useEffect, useState } from 'react';
 import { useForm } from 'react-hook-form';
 
@@ -86,6 +87,7 @@ export const SubmissionModal = ({
   } = useForm();
 
   const { userInfo, setUserInfo } = userStore();
+  const posthog = usePostHog();
 
   useEffect(() => {
     const fetchData = async () => {
@@ -154,6 +156,7 @@ export const SubmissionModal = ({
   }
 
   const submitSubmissions = async (data: any) => {
+    posthog.capture('confirmed_submission');
     setIsLoading(true);
     try {
       const {

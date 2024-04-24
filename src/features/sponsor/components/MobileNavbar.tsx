@@ -60,7 +60,7 @@ export const MobileNavbar = () => {
                 <NextLink
                   href="/new/sponsor/"
                   className="ph-no-capture"
-                  onClick={() => posthog.capture('clicked_nav_login')}
+                  onClick={() => posthog.capture('login_navbar')}
                 >
                   <Button
                     color="brand.slate.500"
@@ -80,7 +80,7 @@ export const MobileNavbar = () => {
                 <NextLink
                   href="/new/sponsor/"
                   className="ph-no-capture"
-                  onClick={() => posthog.capture('clicked_nav_get_started')}
+                  onClick={() => posthog.capture('get started_sponsor navbar')}
                 >
                   <Button
                     color="#4F46E5"
@@ -99,7 +99,7 @@ export const MobileNavbar = () => {
               <NextLink
                 href="/new/sponsor/"
                 className="ph-no-capture"
-                onClick={() => posthog.capture('clicked_nav_get_started')}
+                onClick={() => posthog.capture('get started_sponsor navbar')}
               >
                 <Button
                   color={'brand.purple'}
@@ -116,7 +116,9 @@ export const MobileNavbar = () => {
               <NextLink
                 href="/dashboard/listings/?open=1"
                 className="ph-no-capture"
-                onClick={() => posthog.capture('clicked_nav_create_listing')}
+                onClick={() =>
+                  posthog.capture('create a listing_sponsor navbar')
+                }
               >
                 <Button
                   color={'brand.purple'}
@@ -220,7 +222,7 @@ export const MobileNavbar = () => {
             <NextLink
               href="/new/sponsor/"
               className="ph-no-capture"
-              onClick={() => posthog.capture('clicked_nav_login')}
+              onClick={() => posthog.capture('login_navbar')}
             >
               <Button
                 mr={2}

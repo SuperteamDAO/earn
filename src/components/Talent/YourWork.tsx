@@ -10,6 +10,7 @@ import {
   Select,
   Tooltip,
 } from '@chakra-ui/react';
+import { usePostHog } from 'posthog-js/react';
 import { type Dispatch, type SetStateAction, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import ReactSelect from 'react-select';
@@ -46,6 +47,7 @@ export function YourWork({ setStep, useFormStore }: Step1Props) {
 
   const { updateState } = useFormStore();
   const { form } = useFormStore();
+  const posthog = usePostHog();
 
   const [post, setPost] = useState(false);
 
@@ -70,6 +72,7 @@ export function YourWork({ setStep, useFormStore }: Step1Props) {
     ) {
       return false;
     }
+    posthog.capture('your work_talent');
     updateState({
       ...data,
       skills: skills.map((mainskill) => {

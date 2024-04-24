@@ -1,6 +1,7 @@
 import { Button, Flex, Tooltip, useDisclosure } from '@chakra-ui/react';
 import axios from 'axios';
 import Image from 'next/image';
+import { usePostHog } from 'posthog-js/react';
 import React, {
   type Dispatch,
   type SetStateAction,
@@ -70,6 +71,7 @@ export const SubmissionActionButton = ({
   }
 
   const isUserEligibleByRegion = userRegionEligibilty();
+  const posthog = usePostHog();
 
   const { isOpen, onOpen, onClose } = useDisclosure();
 
@@ -83,7 +85,17 @@ export const SubmissionActionButton = ({
 
   const bountyDraftStatus = getBountyDraftStatus(status, isPublished);
 
+  const pastDeadline = isDeadlineOver(deadline) || isWinnersAnnounced;
+  const buttonState = getButtonState();
+
   const handleSubmit = () => {
+    if (buttonState === 'submit') {
+      console.log('submit');
+      posthog.capture('start_submission');
+    } else if (buttonState === 'edit') {
+      console.log('edit');
+      posthog.capture('edit_submission');
+    }
     if (applicationLink) {
       window.open(applicationLink, '_blank');
       return;
@@ -96,8 +108,6 @@ export const SubmissionActionButton = ({
       onOpen();
     }
   };
-
-  const pastDeadline = isDeadlineOver(deadline) || isWinnersAnnounced;
 
   const getUserSubmission = async () => {
     setIsUserSubmissionLoading(true);
@@ -128,8 +138,6 @@ export const SubmissionActionButton = ({
     if (isSubmitted && pastDeadline) return 'submitted';
     return 'submit';
   }
-
-  const buttonState = getButtonState();
 
   switch (buttonState) {
     case 'edit':
@@ -251,6 +259,7 @@ export const SubmissionActionButton = ({
         rounded="md"
       >
         <Flex
+          className="pg-no-capture"
           pos={{ base: 'fixed', md: 'static' }}
           zIndex={999}
           bottom={0}

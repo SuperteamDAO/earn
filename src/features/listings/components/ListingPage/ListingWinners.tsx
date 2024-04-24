@@ -2,6 +2,7 @@ import { Box, Button, Center, Flex, Image, Text } from '@chakra-ui/react';
 import axios from 'axios';
 import Avatar from 'boring-avatars';
 import NextLink from 'next/link';
+import { usePostHog } from 'posthog-js/react';
 import { useEffect, useState } from 'react';
 
 import type { SubmissionWithUser } from '@/interface/submission';
@@ -19,6 +20,8 @@ export function ListingWinners({ bounty }: Props) {
   const [submissions, setSubmissions] = useState<SubmissionWithUser[]>([]);
 
   const isProject = bounty?.type === 'project';
+
+  const posthog = usePostHog();
 
   const getSubmissions = async (id?: string) => {
     setIsListingLoading(true);
@@ -164,6 +167,7 @@ export function ListingWinners({ bounty }: Props) {
               bg="white"
               _hover={{ background: 'rgba(255, 255, 255, 0.8)' }}
               _active={{ background: 'rgba(255, 255, 255, 0.5)' }}
+              onClick={() => posthog.capture('click to tweet_listing')}
             >
               Share on
               <Center w="1.2rem">

@@ -10,6 +10,7 @@ import {
 } from '@chakra-ui/react';
 import axios from 'axios';
 import type { GetServerSideProps } from 'next';
+import { usePostHog } from 'posthog-js/react';
 import React, { useEffect, useState } from 'react';
 
 import { EmptySection } from '@/components/shared/EmptySection';
@@ -30,6 +31,8 @@ const Grants = ({ slug }: GrantsDetailsProps) => {
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState(false);
 
+  const posthog = usePostHog();
+
   const getGrants = async () => {
     setIsLoading(true);
     try {
@@ -44,6 +47,7 @@ const Grants = ({ slug }: GrantsDetailsProps) => {
 
   useEffect(() => {
     if (!isLoading) return;
+    posthog.capture('open_grant');
     getGrants();
   }, []);
 
