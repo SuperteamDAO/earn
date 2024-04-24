@@ -83,6 +83,17 @@ function MyApp({ Component, pageProps }: any) {
   }
 
   useEffect(() => {
+    if (navigator.userAgent.indexOf('iPhone') > -1) {
+      document
+        ?.querySelector('[name=viewport]')
+        ?.setAttribute(
+          'content',
+          'width=device-width, initial-scale=1, maximum-scale=1',
+        );
+    }
+  }, []);
+
+  useEffect(() => {
     const handleComplete = (url: string) => {
       if (url === router.asPath) {
         document.body.style.cursor = 'auto';

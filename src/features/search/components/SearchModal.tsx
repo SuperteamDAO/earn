@@ -108,7 +108,7 @@ export function SearchModal({ isOpen, onClose }: Props) {
                   w="full"
                   p={0}
                 >
-                  <ListingCard bounty={r} />
+                  <ListingCard adjustMobile bounty={r} />
                 </Container>
               ))}
             </VStack>

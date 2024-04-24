@@ -64,9 +64,11 @@ export const ListingCardSkeleton = () => {
 export const ListingCard = ({
   bounty,
   checkLanguage,
+  adjustMobile,
 }: {
   bounty: Bounty;
   checkLanguage?: boolean;
+  adjustMobile?: boolean;
 }) => {
   const {
     rewardAmount,
@@ -215,6 +217,9 @@ export const ListingCard = ({
                     </Text>
                   </Flex>
                   <Image
+                    display={
+                      adjustMobile ? { base: 'none', sm: 'flex' } : 'flex'
+                    }
                     h={{ base: 3, sm: 4 }}
                     ml={isBounty ? -0.5 : 0}
                     alt={type}
@@ -225,6 +230,9 @@ export const ListingCard = ({
                     }
                   />
                   <Text
+                    display={
+                      adjustMobile ? { base: 'none', sm: 'flex' } : 'flex'
+                    }
                     ml={{ base: -1, sm: isBounty ? '-3' : '-2.5' }}
                     color="gray.500"
                     fontSize={['x-small', 'xs', 'xs', 'xs']}
@@ -234,6 +242,7 @@ export const ListingCard = ({
                   </Text>
                 </>
                 <Text
+                  display={adjustMobile ? { base: 'none', sm: 'flex' } : 'flex'}
                   color={'brand.slate.300'}
                   fontSize={['xx-small', 'xs', 'sm', 'sm']}
                 >
