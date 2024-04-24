@@ -1,3 +1,5 @@
+"use client";
+
 import { ChevronDownIcon } from '@chakra-ui/icons';
 import {
   Box,
@@ -17,6 +19,7 @@ import {
 import Avatar from 'boring-avatars';
 import NextLink from 'next/link';
 import { useRouter } from 'next/router';
+import { usePathname } from 'next/navigation';
 import { useSession } from 'next-auth/react';
 import { useEffect, useState } from 'react';
 
@@ -26,6 +29,8 @@ import { EmailSettingsModal } from '../modals/EmailSettingsModal';
 
 export function UserMenu({}) {
   const router = useRouter();
+
+  const currentPathName = usePathname();
 
   const { userInfo, logOut } = userStore();
 
@@ -54,7 +59,7 @@ export function UserMenu({}) {
 
   const handleClose = () => {
     onClose();
-    // router.push(router.pathname, undefined, { shallow: true });
+    router.push(currentPathName, undefined, { shallow: true });
   };
 
   const [showBlueCircle, setShowBlueCircle] = useState(() => {
