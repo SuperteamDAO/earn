@@ -530,7 +530,7 @@ export const ListingPayments = ({
               w="100%"
               isLoading={isDraftLoading}
               onClick={() => {
-                if (isNewOrDraft || isDraftLoading) {
+                if (isNewOrDraft || isDuplicating) {
                   setMode('DRAFT');
                 } else {
                   setMode('EDIT');

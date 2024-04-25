@@ -1,3 +1,4 @@
+/* eslint-disable @next/next/no-html-link-for-pages */
 import {
   Box,
   Button,
@@ -12,7 +13,6 @@ import {
   Text,
   UnorderedList,
 } from '@chakra-ui/react';
-import NextLink from 'next/link';
 import React from 'react';
 
 import { useListingFormStore } from '@/features/listing-builder';
@@ -68,11 +68,11 @@ export const CreateListingModal = ({
               </ListItem>
             </UnorderedList>
             <Box flex="1" />
-            <NextLink href="/dashboard/create-bounty" passHref>
+            <a href="/dashboard/create-bounty">
               <Button w="full" onClick={resetListingForm} size="lg">
                 Create New Bounty
               </Button>
-            </NextLink>
+            </a>
           </Flex>
           <Divider
             w="1px"
@@ -119,11 +119,11 @@ export const CreateListingModal = ({
               color="brand.slate.200"
               orientation="horizontal"
             />
-            <NextLink href="/dashboard/create-project" passHref>
+            <a href="/dashboard/create-project">
               <Button w="full" onClick={resetListingForm} size="lg">
                 Create New Project
               </Button>
-            </NextLink>
+            </a>
           </Flex>
         </Flex>
       </ModalContent>
