@@ -44,7 +44,8 @@ export default async function user(req: NextApiRequest, res: NextApiResponse) {
     return res
       .status(200)
       .json({ ...result, totalSubmissions, winnersSelected, paymentsMade });
-  } catch (error) {
+  } catch (error: any) {
+    console.error(`unable to view listing`, error.message);
     return res.status(400).json({
       error,
       message: `Error occurred while fetching bounty with slug=${slug}.`,

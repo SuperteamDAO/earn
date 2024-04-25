@@ -68,7 +68,8 @@ async function handler(req: NextApiRequestWithUser, res: NextApiResponse) {
     }
 
     return res.status(200).json(result);
-  } catch (error) {
+  } catch (error: any) {
+    console.error(`User ${userId} unable to toggle winners`, error.message);
     return res.status(400).json({
       error,
       message: `Error occurred while updating submission ${id}.`,

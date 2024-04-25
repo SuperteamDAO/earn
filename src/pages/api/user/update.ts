@@ -107,8 +107,9 @@ async function handler(req: NextApiRequestWithUser, res: NextApiResponse) {
     });
 
     return res.status(200).json(result);
-  } catch (e) {
-    console.log('file: update.ts:93 ~ user ~ e:', e);
+  } catch (error: any) {
+    console.error(`User ${userId} unable to onboard`, error.message);
+
     return res.status(400).json({
       message: `Error occurred while updating user ${userId}.`,
     });
