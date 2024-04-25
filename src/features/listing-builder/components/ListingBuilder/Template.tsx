@@ -1,6 +1,7 @@
 import { AddIcon, ViewIcon } from '@chakra-ui/icons';
 import { Box, Button, Flex, Image, Text, VStack } from '@chakra-ui/react';
 import axios from 'axios';
+import { usePostHog } from 'posthog-js/react';
 import React, {
   type Dispatch,
   type SetStateAction,
@@ -34,6 +35,12 @@ export const Template = ({
   const [bountiesTemplates, setBountiesTemplates] = useState([]);
   const [isBountiesTemplatesLoading, setIsBountiesTemplatesLoading] =
     useState(false);
+
+  const posthog = usePostHog();
+
+  useEffect(() => {
+    posthog.capture('template_sponsor');
+  }, []);
 
   const getBountyTemplates = async () => {
     setIsBountiesTemplatesLoading(true);
@@ -99,6 +106,7 @@ export const Template = ({
               borderRadius={5}
               cursor={'pointer'}
               onClick={() => {
+                posthog.capture('start from scratch_sponsor');
                 setSteps(2);
               }}
             >

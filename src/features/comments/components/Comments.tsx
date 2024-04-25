@@ -10,6 +10,7 @@ import {
 } from '@chakra-ui/react';
 import axios from 'axios';
 import Image from 'next/image';
+import { usePostHog } from 'posthog-js/react';
 import { useEffect, useState } from 'react';
 
 import { ErrorInfo } from '@/components/shared/ErrorInfo';
@@ -43,6 +44,8 @@ export const Comments = ({
   isAnnounced,
 }: Props) => {
   const { userInfo } = userStore();
+  const posthog = usePostHog();
+
   const { isOpen, onOpen, onClose } = useDisclosure();
   const [triggerLogin, setTriggerLogin] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
@@ -57,6 +60,7 @@ export const Comments = ({
   >(new Map());
 
   const deleteComment = async (commentId: string) => {
+    posthog.capture('delete_comment');
     const commentIndex = comments.findIndex(
       (comment) => comment.id === commentId,
     );
@@ -73,6 +77,7 @@ export const Comments = ({
   };
 
   const addNewComment = async () => {
+    posthog.capture('publish_comment');
     setNewCommentLoading(true);
     setNewCommentError(false);
     try {

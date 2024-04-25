@@ -29,6 +29,7 @@ import {
 import axios from 'axios';
 import Avatar from 'boring-avatars';
 import { useSession } from 'next-auth/react';
+import { usePostHog } from 'posthog-js/react';
 import React, { useEffect, useRef, useState } from 'react';
 
 import { ErrorSection } from '@/components/shared/ErrorSection';
@@ -53,6 +54,11 @@ const Index = () => {
   const debouncedSetSearchText = useRef(debounce(setSearchText, 300)).current;
 
   const { data: session } = useSession();
+  const posthog = usePostHog();
+
+  useEffect(() => {
+    posthog.capture('members tab_sponsor');
+  }, []);
 
   const getMembers = async () => {
     setIsMembersLoading(true);
@@ -101,10 +107,14 @@ const Index = () => {
             (userInfo?.UserSponsors?.length &&
               userInfo?.UserSponsors[0]?.role === 'ADMIN')) && (
             <Button
+              className="pg-no-capture"
               color="#6366F1"
               bg="#E0E7FF"
               leftIcon={<AddIcon />}
-              onClick={onOpen}
+              onClick={() => {
+                posthog.capture('invite member_sponsor');
+                onOpen();
+              }}
               variant="solid"
             >
               Invite Members

@@ -13,6 +13,7 @@ import {
   UnorderedList,
 } from '@chakra-ui/react';
 import NextLink from 'next/link';
+import { usePostHog } from 'posthog-js/react';
 import React from 'react';
 
 export const CreateListingModal = ({
@@ -22,6 +23,7 @@ export const CreateListingModal = ({
   isOpen: boolean;
   onClose: () => void;
 }) => {
+  const posthog = usePostHog();
   return (
     <Modal isCentered isOpen={isOpen} onClose={onClose} size={'5xl'}>
       <ModalOverlay />
@@ -65,7 +67,15 @@ export const CreateListingModal = ({
               </ListItem>
             </UnorderedList>
             <Box flex="1" />
-            <Button as={NextLink} href="/dashboard/create-bounty" size="lg">
+            <Button
+              className="pg-no-capture"
+              as={NextLink}
+              href="/dashboard/create-bounty"
+              onClick={() => {
+                posthog.capture('create new bounty_sponsor');
+              }}
+              size="lg"
+            >
               Create New Bounty
             </Button>
           </Flex>
@@ -112,7 +122,15 @@ export const CreateListingModal = ({
               color="brand.slate.200"
               orientation="horizontal"
             />
-            <Button as={NextLink} href="/dashboard/create-project" size="lg">
+            <Button
+              className="pg-no-capture"
+              as={NextLink}
+              href="/dashboard/create-project"
+              onClick={() => {
+                posthog.capture('create new project_sponsor');
+              }}
+              size="lg"
+            >
               Create New Project
             </Button>
           </Flex>
