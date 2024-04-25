@@ -16,6 +16,9 @@ export default async function comment(
         isActive: true,
         isArchived: false,
         replyToId: null,
+        type: {
+          not: 'SUBMISSION',
+        },
       },
       orderBy: {
         updatedAt: 'desc',
@@ -57,6 +60,9 @@ export default async function comment(
         isActive: true,
         isArchived: false,
         replyToId: null,
+        type: {
+          not: 'SUBMISSION',
+        },
       },
     });
 

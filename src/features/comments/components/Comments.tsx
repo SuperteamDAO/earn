@@ -257,7 +257,6 @@ export const Comments = ({
         </VStack>
         <VStack gap={5} w={'full'} pb={8}>
           {comments?.map((comment) => {
-            if (comment.type === 'SUBMISSION') return <> </>;
             return (
               <CommentUI
                 isAnnounced={isAnnounced}
