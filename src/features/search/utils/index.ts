@@ -9,7 +9,6 @@ export function updateCheckboxes(
 ): CheckboxFilter[] {
   const activeStatuses = arrayFilters.split(',');
 
-  console.log('active statuses - ', activeStatuses);
   return filters.map((filter) => {
     if (activeStatuses.includes(filter.value)) {
       filter.checked = true;

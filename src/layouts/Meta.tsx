@@ -19,7 +19,6 @@ const Meta = (props: IMetaProps) => {
   );
 
   useEffect(() => {
-    console.log('userAgent - ', navigator.userAgent);
     if (navigator.userAgent.indexOf('iPhone') > -1) {
       setViewport('width=device-width, initial-scale=1, maximum-scale=1');
     }

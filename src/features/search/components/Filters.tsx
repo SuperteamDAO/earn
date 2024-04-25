@@ -63,7 +63,6 @@ export function Filters({
       skillQuery = [...skillsArray, value].join(',');
     }
     setSkills(skillQuery);
-    console.log('skill query - ', skillQuery);
     if (skillQuery === '') {
       debouncedServerSearch(startTransition, router, query, { status });
     } else {
