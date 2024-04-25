@@ -44,6 +44,32 @@ async function handler(req: NextApiRequestWithUser, res: NextApiResponse) {
               },
             },
           },
+          {
+            user: {
+              username: {
+                contains: searchText,
+              },
+            },
+          },
+          {
+            user: {
+              twitter: {
+                contains: searchText,
+              },
+            },
+          },
+          {
+            user: {
+              discord: {
+                contains: searchText,
+              },
+            },
+          },
+          {
+            link: {
+              contains: searchText,
+            },
+          },
         ],
       }
     : {};

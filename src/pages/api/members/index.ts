@@ -52,7 +52,7 @@ export default async function members(
     });
     res.status(200).json({ total, data: result });
   } catch (err) {
-    console.log('file: index.ts:51 ~ err:', err);
+    console.log(err);
     res.status(400).json({ err: 'Error occurred while fetching members.' });
   }
 }

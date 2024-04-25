@@ -44,9 +44,13 @@ async function handler(req: NextApiRequestWithUser, res: NextApiResponse) {
       },
     });
 
-    if (process.env.NEXT_PUBLIC_VERCEL_ENV === 'production') {
-      const zapierWebhookUrl = process.env.ZAPIER_SUBMISSION_WEBHOOK!;
-      await axios.post(zapierWebhookUrl, result);
+    try {
+      if (process.env.NEXT_PUBLIC_VERCEL_ENV === 'production') {
+        const zapierWebhookUrl = process.env.ZAPIER_SUBMISSION_WEBHOOK!;
+        await axios.post(zapierWebhookUrl, result);
+      }
+    } catch (err) {
+      console.log('Error with Zapier Webhook -', err);
     }
 
     if (currentSubmission.isWinner !== isWinner) {
@@ -64,7 +68,8 @@ async function handler(req: NextApiRequestWithUser, res: NextApiResponse) {
     }
 
     return res.status(200).json(result);
-  } catch (error) {
+  } catch (error: any) {
+    console.error(`User ${userId} unable to toggle winners`, error.message);
     return res.status(400).json({
       error,
       message: `Error occurred while updating submission ${id}.`,

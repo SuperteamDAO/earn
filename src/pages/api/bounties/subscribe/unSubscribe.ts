@@ -17,7 +17,7 @@ export default async function handler(
     });
     res.status(200).json(result);
   } catch (error) {
-    console.log('file: create.ts:31 ~ user ~ error:', error);
+    console.log(error);
     res.status(400).json({
       error,
       message: 'Error occurred while adding a new bounty.',

@@ -279,10 +279,10 @@ export function YourWork({ setStep, useFormStore }: Step1Props) {
             setSubSkills={setSubSkills}
             helperText="We will send email notifications of new listings for your selected skills"
           />
-          <Flex align={'center'} mb={'2.5rem'}>
+          <Flex align={'center'} justify={'flex-start'} mb={'2.5rem'}>
             <FormControl>
               <Checkbox
-                mr={1}
+                mr={3}
                 color="brand.slate.500"
                 fontWeight={500}
                 colorScheme="purple"
@@ -291,21 +291,21 @@ export function YourWork({ setStep, useFormStore }: Step1Props) {
               >
                 Keep my info private
               </Checkbox>
+              <Tooltip
+                w="max"
+                p="0.7rem"
+                color="white"
+                fontSize="xs"
+                fontWeight={400}
+                bg="#6562FF"
+                borderRadius="0.5rem"
+                hasArrow
+                label={`Your "Work Preference" information will be hidden from your public talent profile. However, you will continue to receive updates about new opportunities on your email.`}
+                placement="right-end"
+              >
+                <InfoOutlineIcon color="brand.slate.500" />
+              </Tooltip>
             </FormControl>
-            <Tooltip
-              w="max"
-              p="0.7rem"
-              color="white"
-              fontSize="xs"
-              fontWeight={400}
-              bg="#6562FF"
-              borderRadius="0.5rem"
-              hasArrow
-              label={`Your "Work Preference" information will be hidden from your public talent profile. However, you will continue to receive updates about new opportunities on your email.`}
-              placement="right-end"
-            >
-              <InfoOutlineIcon color="brand.slate.500" />
-            </Tooltip>
           </Flex>
           <Button
             w={'full'}

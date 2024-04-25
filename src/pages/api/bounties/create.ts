@@ -44,13 +44,17 @@ async function handler(req: NextApiRequestWithUser, res: NextApiResponse) {
         id: result.id,
       });
     }
-    if (process.env.NEXT_PUBLIC_VERCEL_ENV === 'production') {
-      const zapierWebhookUrl = process.env.ZAPIER_BOUNTY_WEBHOOK!;
-      await axios.post(zapierWebhookUrl, result);
+    try {
+      if (process.env.NEXT_PUBLIC_VERCEL_ENV === 'production') {
+        const zapierWebhookUrl = process.env.ZAPIER_BOUNTY_WEBHOOK!;
+        await axios.post(zapierWebhookUrl, result);
+      }
+    } catch (err) {
+      console.log('Error with Zapier Webhook -', err);
     }
     return res.status(200).json(result);
-  } catch (error) {
-    console.log('file: create.ts:31 ~ user ~ error:', error);
+  } catch (error: any) {
+    console.error(`User ${userId} unable to create a listing`, error.message);
     return res.status(400).json({
       error,
       message: 'Error occurred while adding a new bounty.',

@@ -17,6 +17,8 @@ import { useRouter } from 'next/router';
 import { useSession } from 'next-auth/react';
 import React from 'react';
 
+import { UserMenu } from '@/components/shared/UserMenu';
+
 import {
   CATEGORY_NAV_ITEMS,
   HACKATHON_NAV_ITEMS,
@@ -24,7 +26,6 @@ import {
   renderLabel,
 } from '../constants';
 import { NavLink } from './NavLink';
-import { UserMenu } from './UserMenu';
 
 interface Props {
   onLoginOpen: () => void;

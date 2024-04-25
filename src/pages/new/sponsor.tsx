@@ -49,7 +49,7 @@ const CreateSponsor = () => {
 
   useEffect(() => {
     if (userInfo?.currentSponsorId && session?.user?.role !== 'GOD') {
-      router.push('/dashboard/listings');
+      router.push('/dashboard/listings?open=1');
     }
   }, [userInfo?.currentSponsorId, router]);
 
@@ -65,7 +65,7 @@ const CreateSponsor = () => {
         ...sponsor,
       });
       await axios.post(`/api/email/manual/welcomeSponsor`);
-      router.push('/dashboard/listings');
+      router.push('/dashboard/listings?open=1');
     } catch (e: any) {
       if (e?.response?.data?.error?.code === 'P2002') {
         setErrorMessage('Sorry! Sponsor name or username already exists.');
@@ -260,7 +260,7 @@ const CreateSponsor = () => {
                   </FormErrorMessage>
                 </FormControl>
               </HStack>
-              {process.env.NODE_ENV === 'production' && (
+              {
                 <VStack align={'start'} gap={2} my={3}>
                   <Heading
                     color={'brand.slate.500'}
@@ -285,7 +285,7 @@ const CreateSponsor = () => {
                     />
                   </HStack>
                 </VStack>
-              )}
+              }
 
               <HStack justify={'space-between'} w={'full'} mt={6}>
                 <FormControl w={'full'} isRequired>
@@ -366,9 +366,7 @@ const CreateSponsor = () => {
                 )}
                 <Button
                   w="full"
-                  isDisabled={
-                    process.env.NODE_ENV === 'production' && imageUrl === ''
-                  }
+                  isDisabled={imageUrl === ''}
                   isLoading={!!isLoading}
                   loadingText="Creating..."
                   size="lg"

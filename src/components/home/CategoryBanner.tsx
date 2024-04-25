@@ -29,12 +29,6 @@ export const CategoryBanner = ({ type }: { type: string }) => {
       color: '#FEA8EB',
       icon: '/assets/category_assets/icon/backend.png',
     },
-    // Hyperdrive: {
-    //   bg: `/assets/category_assets/bg/contract.png`,
-    //   desc: 'Discover and apply to additional Hyperdrive prizes. Increase your chances of winning something at the online global hackathon!',
-    //   color: '#000',
-    //   icon: '/assets/category_assets/icon/solana_logo_green.svg',
-    // },
   };
 
   return (
@@ -61,19 +55,9 @@ export const CategoryBanner = ({ type }: { type: string }) => {
         </Center>
         <Box w={{ md: '60%', base: '100%' }} mt={{ base: 4, md: '0' }}>
           <Text fontFamily={'var(--font-serif)'} fontWeight={'700'}>
-            {/* {type === 'Hyperdrive'
-              ? 'Hyperdrive Side Tracks & Local Prizes'
-              : */}
             {type}
           </Text>
-          <Text
-            mb={6}
-            color="brand.slate.500"
-            fontSize="small"
-            // {...(type === 'Hyperdrive'
-            //   ? { w: ['full', 'full', 'full', '130%', '130%'] }
-            //   : {})}
-          >
+          <Text mb={6} color="brand.slate.500" fontSize="small">
             {categoryAssets[type]?.desc}
           </Text>
         </Box>

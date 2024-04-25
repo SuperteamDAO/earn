@@ -36,8 +36,8 @@ async function handler(req: NextApiRequestWithUser, res: NextApiResponse) {
     });
 
     return res.status(200).json(result);
-  } catch (error) {
-    console.log(error);
+  } catch (error: any) {
+    console.error(`User ${userId} unable to edit submission`, error.message);
     return res.status(400).json({
       error,
       message: 'Error occurred while updating the submission.',
