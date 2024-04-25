@@ -1,5 +1,11 @@
 import { Button, Flex, HStack, Image, Text, VStack } from '@chakra-ui/react';
-import React, { type Dispatch, type SetStateAction, useState } from 'react';
+import { usePostHog } from 'posthog-js/react';
+import React, {
+  type Dispatch,
+  type SetStateAction,
+  useEffect,
+  useState,
+} from 'react';
 import toast from 'react-hot-toast';
 
 import { QuestionCard } from './QuestionCard';
@@ -41,6 +47,12 @@ export const QuestionBuilder = ({
   const handleDelete = (index: number) => {
     setQuestions(questions.filter((_, i) => i !== index));
   };
+
+  const posthog = usePostHog();
+
+  useEffect(() => {
+    posthog.capture('questions_sponsor');
+  }, []);
 
   return (
     <>
@@ -126,6 +138,11 @@ export const QuestionBuilder = ({
             w="100%"
             isLoading={draftLoading}
             onClick={() => {
+              if (isNewOrDraft || isDuplicating) {
+                posthog.capture('save draft_sponsor');
+              } else {
+                posthog.capture('edit listing_sponsor');
+              }
               createDraft();
             }}
             variant="outline"

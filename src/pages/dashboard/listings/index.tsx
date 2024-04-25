@@ -46,6 +46,7 @@ import axios from 'axios';
 import NextLink from 'next/link';
 import { useRouter } from 'next/router';
 import { useSession } from 'next-auth/react';
+import { usePostHog } from 'posthog-js/react';
 import { useEffect, useRef, useState } from 'react';
 import { AiOutlineDelete } from 'react-icons/ai';
 import { FiMoreVertical } from 'react-icons/fi';
@@ -90,6 +91,7 @@ function Bounties() {
 
   const debouncedSetSearchText = useRef(debounce(setSearchText, 300)).current;
   const { data: session } = useSession();
+  const posthog = usePostHog();
 
   useEffect(() => {
     return () => {
@@ -427,6 +429,9 @@ function Bounties() {
                         wordBreak={'break-word'}
                       >
                         <NextLink
+                          onClick={() => {
+                            posthog.capture('submissions_sponsor');
+                          }}
                           href={`/dashboard/listings/${currentBounty.slug}/submissions/`}
                           passHref
                         >
@@ -529,9 +534,10 @@ function Bounties() {
                               fontWeight={500}
                               _hover={{ bg: '#E0E7FF' }}
                               leftIcon={<ViewIcon />}
-                              onClick={() =>
-                                handleViewSubmissions(currentBounty.slug)
-                              }
+                              onClick={() => {
+                                posthog.capture('submissions_sponsor');
+                                handleViewSubmissions(currentBounty.slug);
+                              }}
                               size="sm"
                               variant="ghost"
                             >
@@ -617,12 +623,13 @@ function Bounties() {
                               fontSize={'sm'}
                               fontWeight={500}
                               icon={<CopyIcon h={4} w={4} />}
-                              onClick={() =>
+                              onClick={() => {
+                                posthog.capture('duplicate listing_sponsor');
                                 window.open(
                                   `${router.basePath}/dashboard/listings/${currentBounty.slug}/duplicate`,
                                   '_blank',
-                                )
-                              }
+                                );
+                              }}
                             >
                               Duplicate
                             </MenuItem>

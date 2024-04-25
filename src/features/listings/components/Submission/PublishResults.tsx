@@ -16,6 +16,7 @@ import {
 } from '@chakra-ui/react';
 import axios from 'axios';
 import dayjs from 'dayjs';
+import { usePostHog } from 'posthog-js/react';
 import { useEffect, useState } from 'react';
 
 import { type Bounty } from '@/features/listings';
@@ -39,6 +40,7 @@ export function PublishResults({
   const [isWinnersAnnounced, setIsWinnersAnnounced] = useState(
     bounty?.isWinnersAnnounced,
   );
+  const posthog = usePostHog();
   const isDeadlinePassed = dayjs().isAfter(bounty?.deadline);
 
   const rewards = Object.keys(bounty?.rewards || {});
@@ -173,7 +175,10 @@ export function PublishResults({
                 }
                 isLoading={isPublishingResults}
                 loadingText={'Publishing...'}
-                onClick={() => publishResults()}
+                onClick={() => {
+                  posthog.capture('announce winners_sponsor');
+                  publishResults();
+                }}
                 variant="solid"
               >
                 Publish

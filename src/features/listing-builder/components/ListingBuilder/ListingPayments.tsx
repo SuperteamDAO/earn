@@ -26,7 +26,8 @@ import {
   useDisclosure,
   VStack,
 } from '@chakra-ui/react';
-import { useState } from 'react';
+import { usePostHog } from 'posthog-js/react';
+import { useEffect, useState } from 'react';
 
 import { type MultiSelectOptions, PrizeList, tokenList } from '@/constants';
 import { sortRank } from '@/utils/rank';
@@ -216,6 +217,12 @@ export const ListingPayments = ({
       compensationHelperText = 'Allow applicants to send quotes of any amount';
       break;
   }
+
+  const posthog = usePostHog();
+
+  useEffect(() => {
+    posthog.capture('rewards_sponsor');
+  }, []);
 
   return (
     <>
@@ -550,7 +557,10 @@ export const ListingPayments = ({
               w="100%"
               disabled={isListingPublishing}
               isLoading={isListingPublishing}
-              onClick={() => handleSubmit()}
+              onClick={() => {
+                posthog.capture('publish listing_sponsor');
+                handleSubmit();
+              }}
               variant={'solid'}
             >
               Create & Publish Listing
@@ -559,9 +569,14 @@ export const ListingPayments = ({
           <Button
             w="100%"
             isLoading={draftLoading}
-            onClick={() =>
-              handleSubmit(isNewOrDraft || isDuplicating ? 'DRAFT' : 'EDIT')
-            }
+            onClick={() => {
+              if (isNewOrDraft || isDuplicating) {
+                posthog.capture('save draft_sponsor');
+              } else {
+                posthog.capture('edit listing_sponsor');
+              }
+              handleSubmit(isNewOrDraft || isDuplicating ? 'DRAFT' : 'EDIT');
+            }}
             variant={editable ? 'solid' : 'outline'}
           >
             {isNewOrDraft || isDuplicating ? 'Save Draft' : 'Update Listing'}

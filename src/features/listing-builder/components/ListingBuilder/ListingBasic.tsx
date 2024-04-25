@@ -24,6 +24,7 @@ import { Regions } from '@prisma/client';
 import axios from 'axios';
 import debounce from 'lodash.debounce';
 import { useSession } from 'next-auth/react';
+import { usePostHog } from 'posthog-js/react';
 import {
   type Dispatch,
   type SetStateAction,
@@ -274,6 +275,11 @@ export const ListingBasic = ({
   const isProject = type === 'project';
 
   const { data: session } = useSession();
+  const posthog = usePostHog();
+
+  useEffect(() => {
+    posthog.capture('basics_sponsor');
+  }, []);
 
   return (
     <>
@@ -355,6 +361,9 @@ export const ListingBasic = ({
                       key={suggestion.link}
                       href={suggestion.link}
                       isExternal
+                      onClick={() => {
+                        posthog.capture('similar listings_sponsor');
+                      }}
                       target="_blank"
                     >
                       {suggestion.label}
@@ -858,6 +867,11 @@ export const ListingBasic = ({
             isDisabled={!bountyBasic?.title}
             isLoading={draftLoading}
             onClick={() => {
+              if (isNewOrDraft || isDuplicating) {
+                posthog.capture('save draft_sponsor');
+              } else {
+                posthog.capture('edit listing_sponsor');
+              }
               createDraft();
             }}
             variant="outline"

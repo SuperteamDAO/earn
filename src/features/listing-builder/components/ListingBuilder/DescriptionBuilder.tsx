@@ -26,10 +26,12 @@ import TextStyle from '@tiptap/extension-text-style';
 import Underline from '@tiptap/extension-underline';
 import { EditorContent, useEditor } from '@tiptap/react';
 import StarterKit from '@tiptap/starter-kit';
+import { usePostHog } from 'posthog-js/react';
 import React, {
   type Dispatch,
   type SetStateAction,
   useCallback,
+  useEffect,
   useState,
 } from 'react';
 import toast from 'react-hot-toast';
@@ -236,6 +238,12 @@ export const DescriptionBuilder = ({
 
   const [editorError, setEditorError] = useState(false);
 
+  const posthog = usePostHog();
+
+  useEffect(() => {
+    posthog.capture('description_sponsor');
+  }, []);
+
   return (
     <>
       {isOpen && (
@@ -349,6 +357,9 @@ export const DescriptionBuilder = ({
               color: 'brand.slate.500',
             }}
             href="https://chat.openai.com/g/g-HS6eWTMku-st-earn-listings-bot"
+            onClick={() => {
+              posthog.capture('chatGPT bot_sponsor');
+            }}
             target="_blank"
           >
             <Text textDecoration="none">🤖</Text>
@@ -752,7 +763,14 @@ export const DescriptionBuilder = ({
             w="100%"
             isDisabled={!editorData}
             isLoading={draftLoading}
-            onClick={() => createDraft()}
+            onClick={() => {
+              if (isNewOrDraft || isDuplicating) {
+                posthog.capture('save draft_sponsor');
+              } else {
+                posthog.capture('edit listing_sponsor');
+              }
+              createDraft();
+            }}
             variant="outline"
           >
             {isNewOrDraft || isDuplicating ? 'Save Draft' : 'Update Listing'}
