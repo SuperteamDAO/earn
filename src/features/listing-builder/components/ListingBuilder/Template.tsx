@@ -38,10 +38,6 @@ export const Template = ({
 
   const posthog = usePostHog();
 
-  useEffect(() => {
-    posthog.capture('template_sponsor');
-  }, []);
-
   const getBountyTemplates = async () => {
     setIsBountiesTemplatesLoading(true);
     try {
@@ -232,7 +228,10 @@ export const Template = ({
                       </Button>
                       <Button
                         w="full"
-                        onClick={() => createTemplate(template?.id)}
+                        onClick={() => {
+                          posthog.capture('template_sponsor');
+                          createTemplate(template?.id);
+                        }}
                         size="sm"
                         variant="solid"
                       >

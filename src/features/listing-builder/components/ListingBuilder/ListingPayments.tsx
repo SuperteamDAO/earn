@@ -27,7 +27,7 @@ import {
   VStack,
 } from '@chakra-ui/react';
 import { usePostHog } from 'posthog-js/react';
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 
 import { type MultiSelectOptions, PrizeList, tokenList } from '@/constants';
 import { sortRank } from '@/utils/rank';
@@ -219,10 +219,6 @@ export const ListingPayments = ({
   }
 
   const posthog = usePostHog();
-
-  useEffect(() => {
-    posthog.capture('rewards_sponsor');
-  }, []);
 
   return (
     <>

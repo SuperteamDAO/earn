@@ -31,7 +31,6 @@ import React, {
   type Dispatch,
   type SetStateAction,
   useCallback,
-  useEffect,
   useState,
 } from 'react';
 import toast from 'react-hot-toast';
@@ -239,10 +238,6 @@ export const DescriptionBuilder = ({
   const [editorError, setEditorError] = useState(false);
 
   const posthog = usePostHog();
-
-  useEffect(() => {
-    posthog.capture('description_sponsor');
-  }, []);
 
   return (
     <>
@@ -749,6 +744,7 @@ export const DescriptionBuilder = ({
                 setEditorError(true);
                 return;
               }
+              posthog.capture('description_sponsor');
               if (!isProject) {
                 setSteps(5);
                 return;

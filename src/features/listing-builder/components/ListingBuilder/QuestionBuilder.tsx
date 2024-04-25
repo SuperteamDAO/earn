@@ -1,11 +1,6 @@
 import { Button, Flex, HStack, Image, Text, VStack } from '@chakra-ui/react';
 import { usePostHog } from 'posthog-js/react';
-import React, {
-  type Dispatch,
-  type SetStateAction,
-  useEffect,
-  useState,
-} from 'react';
+import React, { type Dispatch, type SetStateAction, useState } from 'react';
 import toast from 'react-hot-toast';
 
 import { QuestionCard } from './QuestionCard';
@@ -49,10 +44,6 @@ export const QuestionBuilder = ({
   };
 
   const posthog = usePostHog();
-
-  useEffect(() => {
-    posthog.capture('questions_sponsor');
-  }, []);
 
   return (
     <>
@@ -110,6 +101,7 @@ export const QuestionBuilder = ({
                 toast.error('Add minimum of one question');
                 return;
               }
+              posthog.capture('questions_sponsor');
               const rejectedQuestion: any[] = [];
 
               questions.map((e) => {

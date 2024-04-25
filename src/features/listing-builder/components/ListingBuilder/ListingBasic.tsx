@@ -277,10 +277,6 @@ export const ListingBasic = ({
   const { data: session } = useSession();
   const posthog = usePostHog();
 
-  useEffect(() => {
-    posthog.capture('basics_sponsor');
-  }, []);
-
   return (
     <>
       <VStack align={'start'} gap={3} w={'2xl'} pt={7} pb={12}>
@@ -838,6 +834,7 @@ export const ListingBasic = ({
                 return;
               }
 
+              posthog.capture('basics_sponsor');
               if (type === 'hackathon' && hasBasicInfo) {
                 setSteps(3);
               }
