@@ -44,6 +44,9 @@ export default async function comment(
               },
             },
           },
+          orderBy: {
+            updatedAt: 'asc',
+          },
         },
       },
     });
