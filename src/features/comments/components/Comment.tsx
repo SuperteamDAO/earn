@@ -415,25 +415,23 @@ export const Comment = ({
             style={{ width: '100%', overflow: 'visible!important' }}
           >
             <VStack gap={4} w="full" pt={3}>
-              {replies
-                ?.toReversed()
-                .map((reply) => (
-                  <Comment
-                    poc={poc}
-                    isAnnounced={isAnnounced}
-                    listingSlug={listingSlug}
-                    listingType={listingType}
-                    defaultSuggestions={defaultSuggestions}
-                    deleteComment={deleteReplyLvl1}
-                    addNewReply={addNewReplyLvl1}
-                    isReply
-                    key={reply.id}
-                    refType={refType}
-                    sponsorId={sponsorId}
-                    comment={reply}
-                    refId={refId}
-                  />
-                ))}
+              {replies.map((reply) => (
+                <Comment
+                  poc={poc}
+                  isAnnounced={isAnnounced}
+                  listingSlug={listingSlug}
+                  listingType={listingType}
+                  defaultSuggestions={defaultSuggestions}
+                  deleteComment={deleteReplyLvl1}
+                  addNewReply={addNewReplyLvl1}
+                  isReply
+                  key={reply.id}
+                  refType={refType}
+                  sponsorId={sponsorId}
+                  comment={reply}
+                  refId={refId}
+                />
+              ))}
             </VStack>
           </Collapse>
         </VStack>
