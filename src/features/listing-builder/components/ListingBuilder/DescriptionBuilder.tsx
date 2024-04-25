@@ -27,6 +27,7 @@ import React, {
   type Dispatch,
   type SetStateAction,
   useCallback,
+  useEffect,
   useState,
 } from 'react';
 import { useFieldArray, useForm } from 'react-hook-form';
@@ -108,10 +109,11 @@ export const DescriptionBuilder = ({
   type,
   isNewOrDraft,
   isDuplicating,
+  editable,
 }: Props) => {
   const { form, updateState } = useListingFormStore();
 
-  const { register, control, handleSubmit, watch, setValue } = useForm({
+  const { register, control, handleSubmit, watch, setValue, reset } = useForm({
     mode: 'onBlur',
     defaultValues: {
       description: form?.description,
@@ -124,6 +126,19 @@ export const DescriptionBuilder = ({
     control,
     name: 'references',
   });
+
+  useEffect(() => {
+    if (editable) {
+      reset({
+        description: form?.description,
+        requirements: form?.requirements,
+        references: (form?.references || [])?.map((e) => ({
+          order: e.order,
+          link: e.link,
+        })),
+      });
+    }
+  }, [form]);
 
   const description = watch('description');
   const requirements = watch('requirements');

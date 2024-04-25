@@ -101,13 +101,13 @@ export const ListingBasic = ({
       region: z.string().optional(),
       applicationType: z.string().optional(),
       deadline: z.string().optional(),
-      timeToComplete: z.string().optional(),
-      referredBy: z.string().optional(),
+      timeToComplete: z.string().nullable().optional(),
+      referredBy: z.string().nullable().optional(),
       isPrivate: z.boolean(),
     })
     .superRefine((data, ctx) => {
       if (
-        form.type === 'project' &&
+        type === 'project' &&
         !timeToCompleteOptions.some(
           (option) => option.value === data.timeToComplete,
         )
@@ -119,7 +119,7 @@ export const ListingBasic = ({
         });
       }
       if (
-        form.type !== 'hackathon' &&
+        type !== 'hackathon' &&
         applicationType !== 'rolling' &&
         !data.deadline
       ) {
@@ -137,15 +137,15 @@ export const ListingBasic = ({
     watch,
     setValue,
     getValues,
+    reset,
     formState: { errors },
   } = useForm({
     mode: 'onChange',
     resolver: zodResolver(formSchema),
     defaultValues: {
       title: form?.title,
-      description: form?.description,
-      skills: form?.skills,
       slug: form?.slug,
+      skills: form?.skills,
       pocSocials: form?.pocSocials,
       region: form?.region,
       applicationType: form?.applicationType,
@@ -161,6 +161,23 @@ export const ListingBasic = ({
     { label: '2 Weeks', value: 14 },
     { label: '3 Weeks', value: 21 },
   ];
+
+  useEffect(() => {
+    if (editable) {
+      reset({
+        title: form?.title,
+        slug: form?.slug,
+        deadline: dayjs(form?.deadline).format('YYYY-MM-DDTHH:mm') || undefined,
+        skills: form?.skills,
+        pocSocials: form?.pocSocials,
+        region: form?.region,
+        applicationType: form?.applicationType || 'fixed',
+        timeToComplete: form?.timeToComplete,
+        referredBy: form?.referredBy,
+        isPrivate: form?.isPrivate ? form?.isPrivate : false,
+      });
+    }
+  }, [form]);
 
   const [skills, setSkills] = useState<MultiSelectOptions[]>([]);
   const [subSkills, setSubSkills] = useState<MultiSelectOptions[]>([]);
@@ -189,7 +206,6 @@ export const ListingBasic = ({
   >([]);
 
   const date = dayjs().format('YYYY-MM-DD');
-  const thirtyDaysFromNow = dayjs().add(30, 'day').format('YYYY-MM-DDTHH:mm');
 
   const title = watch('title');
   const slug = watch('slug');
@@ -241,11 +257,9 @@ export const ListingBasic = ({
 
   const { data: session } = useSession();
 
-  const onSubmit = async (data: any) => {
-    if (isProject && applicationType === 'rolling') {
-      setValue('deadline', thirtyDaysFromNow);
-    }
+  const onSubmit = (data: any) => {
     if (Object.keys(errors).length > 0) {
+      console.log(errors);
       return;
     } else {
       const mergedSkills = mergeSkills({
@@ -271,7 +285,7 @@ export const ListingBasic = ({
     <>
       <VStack align={'start'} gap={3} w={'2xl'} pt={7} pb={12}>
         <form onSubmit={handleSubmit(onSubmit)} style={{ width: '100%' }}>
-          {form?.type === 'hackathon' && !editable && (
+          {type === 'hackathon' && !editable && (
             <Box w="100%" mb={5}>
               <SelectSponsor type="hackathon" />
             </Box>
@@ -444,7 +458,15 @@ export const ListingBasic = ({
 
               <Select
                 defaultValue={'fixed'}
-                {...register('applicationType', { required: true })}
+                {...register('applicationType', {
+                  required: true,
+                  onChange: (e) => {
+                    const value = e.target.value;
+                    if (value === 'rolling') {
+                      handleDeadlineSelection(30);
+                    }
+                  },
+                })}
               >
                 <option value="fixed">Fixed Deadline</option>
                 <option value="rolling">Rolling Deadline</option>

@@ -9,7 +9,7 @@ import {
   Text,
   VStack,
 } from '@chakra-ui/react';
-import React, { type Dispatch, type SetStateAction } from 'react';
+import React, { type Dispatch, type SetStateAction, useEffect } from 'react';
 import { useFieldArray, useForm } from 'react-hook-form';
 import toast from 'react-hot-toast';
 
@@ -66,13 +66,28 @@ export const QuestionBuilder = ({
   draftLoading,
   isNewOrDraft,
   isDuplicating,
+  editable,
 }: Props) => {
   const { form, updateState } = useListingFormStore();
-  const { control, handleSubmit, register } = useForm({
+  const { control, handleSubmit, register, reset } = useForm({
     defaultValues: {
       eligibility: form?.eligibility,
     },
   });
+
+  useEffect(() => {
+    if (editable) {
+      reset({
+        eligibility: (form?.eligibility || [])?.map((e) => ({
+          order: e.order,
+          question: e.question,
+          type: e.type as 'text',
+          delete: true,
+          label: e.question,
+        })),
+      });
+    }
+  }, [form]);
 
   const { fields, append, remove } = useFieldArray({
     control,

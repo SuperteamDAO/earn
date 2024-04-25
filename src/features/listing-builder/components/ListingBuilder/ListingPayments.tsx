@@ -72,7 +72,7 @@ export const ListingPayments = ({
   const [errorMessage, setErrorMessage] = useState('');
   const [mode, setMode] = useState('');
 
-  const { register, setValue, watch, control, handleSubmit } = useForm({
+  const { register, setValue, watch, control, handleSubmit, reset } = useForm({
     defaultValues: {
       compensationType: form?.compensationType,
       rewardAmount: form?.rewardAmount,
@@ -82,6 +82,19 @@ export const ListingPayments = ({
       rewards: form?.rewards,
     },
   });
+
+  useEffect(() => {
+    if (editable) {
+      reset({
+        compensationType: form?.compensationType,
+        rewardAmount: form?.rewardAmount || undefined,
+        minRewardAsk: form?.minRewardAsk || undefined,
+        maxRewardAsk: form?.maxRewardAsk || undefined,
+        rewards: form?.rewards || undefined,
+        token: form?.token || 'USDC',
+      });
+    }
+  }, [form]);
 
   const compensationType = watch('compensationType');
   const rewardAmount = watch('rewardAmount');
