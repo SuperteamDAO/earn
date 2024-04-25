@@ -91,13 +91,6 @@ export const Comment = ({
   const cancelRef = useRef<any>(null);
 
   useEffect(() => {
-    console.log(
-      'replies time - ',
-      replies.map((c) => c.updatedAt),
-    );
-  }, []);
-
-  useEffect(() => {
     const reply = localStorage.getItem(`comment-${refId}-${comment.id}`);
     if (reply) {
       setNewReply(reply);
