@@ -14,7 +14,6 @@ import React from 'react';
 
 import DesktopBanner from '@/public/assets/home/display/banner.png';
 import MobileBanner from '@/public/assets/home/display/banner-mobile.png';
-import { userStore } from '@/store/user';
 
 interface BannerProps {
   setTriggerLogin: (arg0: boolean) => void;
@@ -39,12 +38,8 @@ const avatars = [
 export function HomeBanner({ setTriggerLogin, userCount }: BannerProps) {
   const [isLessThan768px] = useMediaQuery('(max-width: 768px)');
 
-  const { userInfo } = userStore();
-
   const handleSubmit = () => {
-    if (!userInfo?.id) {
-      setTriggerLogin(true);
-    }
+    setTriggerLogin(true);
   };
 
   const { data: session, status } = useSession();
