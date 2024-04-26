@@ -19,6 +19,7 @@ import {
 } from '@/features/search';
 import { Default } from '@/layouts/Default';
 import { Meta } from '@/layouts/Meta';
+import { getURL } from '@/utils/validUrl';
 
 interface CheckboxFilter {
   label: string;
@@ -149,13 +150,8 @@ const Search = ({
   );
 };
 
-export const getServerSideProps: GetServerSideProps = async ({
-  query,
-  req,
-}) => {
-  const protocol = req.headers['x-forwarded-proto'] || 'http';
-  const host = req.headers.host;
-  const fullUrl = `${protocol}://${host}`;
+export const getServerSideProps: GetServerSideProps = async ({ query }) => {
+  const fullUrl = getURL();
 
   const queryTerm = (query.q as string).trim();
   const queryString = new URLSearchParams(query as any).toString();

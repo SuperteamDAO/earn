@@ -40,6 +40,10 @@ export function SearchModal({ isOpen, onClose }: Props) {
 
   const debouncedSearch = useCallback(debounce(search, 500), [query]);
 
+  useEffect(() => {
+    console.log('bounties - ', results);
+  }, []);
+
   async function search() {
     try {
       setLoading(true);
@@ -67,7 +71,14 @@ export function SearchModal({ isOpen, onClose }: Props) {
   return (
     <Modal isOpen={isOpen} onClose={onClose} size={{ base: 'sm', lg: 'xl' }}>
       <ModalOverlay backdropFilter="blur(6px)" />
-      <ModalContent mt={'15rem'} p={0} border="none">
+      <ModalContent
+        mt={{
+          base: results?.length > 0 && query.length > 0 ? '10rem' : '15rem',
+          lg: '10rem',
+        }}
+        p={0}
+        border="none"
+      >
         <form
           onSubmit={(e) => {
             e.preventDefault();

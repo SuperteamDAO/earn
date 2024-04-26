@@ -74,7 +74,7 @@ export function Results({ results, setResults, count, query }: Props) {
                     const nextResults = await search(query, {
                       offset: results.length,
                     });
-                    if (nextResults) {
+                    if (nextResults?.bounties) {
                       setResults((s) => s.concat(nextResults.bounties));
                     }
                   }

@@ -27,9 +27,7 @@ export function Filters({
   const [status, setStatus] = useState(searchParams.get('status') ?? undefined);
   const [skills, setSkills] = useState(searchParams.get('skills') ?? undefined);
 
-  const debouncedServerSearch = useCallback(debounce(serverSearch, 500), [
-    query,
-  ]);
+  const debouncedServerSearch = useCallback(debounce(serverSearch, 500), []);
 
   const handleStatusChange = (value: string) => {
     const statusArray = status ? status.split(',') : [];

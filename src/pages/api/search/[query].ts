@@ -22,7 +22,7 @@ const Skills = {
 
 export default async function user(req: NextApiRequest, res: NextApiResponse) {
   const params = req.query;
-  const query = params.query as string;
+  const query = (params.query as string).replace(/[^a-zA-Z0-9 _-]/g, '');
 
   const limit = (req.query.limit as string) || '5';
 
