@@ -81,13 +81,23 @@ export const IndustryList: MultiSelectOptions[] = [
   },
 ];
 
-export const tokenList = [
+interface Token {
+  tokenName: string;
+  tokenSymbol: string;
+  mintAddress: string;
+  icon: string;
+  decimals: number;
+  coingeckoSymbol: string;
+}
+
+export const tokenList: Token[] = [
   {
     tokenName: 'USDC',
     tokenSymbol: 'USDC',
     mintAddress: 'EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v',
     icon: 'https://s2.coinmarketcap.com/static/img/coins/128x128/3408.png',
     decimals: 6,
+    coingeckoSymbol: 'usd-coin',
   },
   {
     tokenName: 'Solana (SOL)',
@@ -103,7 +113,7 @@ export const tokenList = [
     mintAddress: 'JUPyiwrYJFskUPiHa7hkeR8VUtAeFoSYbKedZNsDvCN',
     icon: 'https://s2.coinmarketcap.com/static/img/coins/64x64/29210.png',
     decimals: 6,
-    coingeckoSymbol: 'jupiter',
+    coingeckoSymbol: 'jupiter-exchange-solana',
   },
   {
     tokenName: 'BONK',
@@ -175,7 +185,7 @@ export const tokenList = [
     mintAddress: 'mSoLzYCxHdYgdzU16g5QSh3i5K3z3KZK7ytfqcJm7So',
     icon: 'https://s2.coinmarketcap.com/static/img/coins/64x64/11461.png',
     decimals: 9,
-    coingeckoSymbol: 'marinade-staked-sol',
+    coingeckoSymbol: 'msol',
   },
   {
     tokenName: 'UXD Stablecoin (UXD)',
