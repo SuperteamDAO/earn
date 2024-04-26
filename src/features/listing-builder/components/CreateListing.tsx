@@ -95,6 +95,82 @@ export function CreateListing({
     editable ? skillsInfo?.subskills || [] : [],
   );
 
+  const [steps, setSteps] = useState<number>(
+    !!prevStep ? prevStep : editable || type === 'hackathon' ? 2 : 1,
+  );
+
+  const [slug, setSlug] = useState<string>('');
+
+  const [isListingPublishing, setIsListingPublishing] =
+    useState<boolean>(false);
+
+  const { isOpen, onOpen } = useDisclosure();
+
+  const {
+    isOpen: isSurveyOpen,
+    onOpen: onSurveyOpen,
+    onClose: onSurveyClose,
+  } = useDisclosure();
+
+  const [hackathonSponsor, setHackathonSponsor] = useAtom(hackathonSponsorAtom);
+
+  const basePath = type === 'hackathon' ? 'hackathon' : 'bounties';
+  const surveyId = '018c674f-7e49-0000-5097-f2affbdddb0d';
+  const isNewOrDraft = listingDraftStatus === 'DRAFT' || newListing === true;
+
+  useEffect(() => {
+    if (editable && !!listing) {
+      updateState({
+        id: listing.id,
+        title:
+          isDuplicating && listing?.title
+            ? `${listing.title} (2)`
+            : listing?.title,
+        slug:
+          isDuplicating && listing?.slug ? `${listing.slug}-2` : listing?.slug,
+        deadline:
+          !isDuplicating && listing?.deadline
+            ? dayjs(listing?.deadline).format('YYYY-MM-DDTHH:mm') || undefined
+            : undefined,
+        templateId: listing?.templateId,
+        pocSocials: listing?.pocSocials,
+        applicationType: listing?.applicationType || 'fixed',
+        timeToComplete: listing?.timeToComplete,
+        type: type,
+        region: listing?.region,
+        referredBy: listing?.referredBy,
+        requirements: listing?.requirements,
+        eligibility: (listing?.eligibility || [])?.map((e) => ({
+          order: e.order,
+          question: e.question,
+          type: e.type as 'text',
+          delete: true,
+          label: e.question,
+        })),
+        references: (listing?.references || [])?.map((e) => ({
+          order: e.order,
+          link: e.link,
+        })),
+        isPrivate: listing?.isPrivate ? listing?.isPrivate : false,
+        skills: listing?.skills,
+        description: listing?.description,
+        publishedAt: listing?.publishedAt || undefined,
+        rewardAmount: listing?.rewardAmount || undefined,
+        rewards: listing?.rewards || undefined,
+        token: listing?.token || 'USDC',
+        compensationType: listing?.compensationType,
+        minRewardAsk: listing?.minRewardAsk || undefined,
+        maxRewardAsk: listing?.maxRewardAsk || undefined,
+      });
+    }
+  }, [editable, listing, isDuplicating]);
+
+  useEffect(() => {
+    if (editable && type === 'hackathon' && listing?.sponsorId) {
+      setHackathonSponsor(listing?.sponsorId);
+    }
+  }, [editable]);
+
   const createAndPublishListing = async () => {
     setIsListingPublishing(true);
     try {
@@ -215,85 +291,6 @@ export function CreateListing({
       setIsDraftLoading(false);
     }
   };
-
-  useEffect(() => {
-    if (editable && !!listing) {
-      updateState({
-        id: listing.id,
-        title:
-          isDuplicating && listing?.title
-            ? `${listing.title} (2)`
-            : listing?.title,
-        slug:
-          isDuplicating && listing?.slug ? `${listing.slug}-2` : listing?.slug,
-        deadline:
-          !isDuplicating && listing?.deadline
-            ? dayjs(listing?.deadline).format('YYYY-MM-DDTHH:mm') || undefined
-            : undefined,
-        templateId: listing?.templateId,
-        pocSocials: listing?.pocSocials,
-        applicationType: listing?.applicationType || 'fixed',
-        timeToComplete: listing?.timeToComplete,
-        type: type,
-        region: listing?.region,
-        referredBy: listing?.referredBy,
-        requirements: listing?.requirements,
-        eligibility: (listing?.eligibility || [])?.map((e) => ({
-          order: e.order,
-          question: e.question,
-          type: e.type as 'text',
-          delete: true,
-          label: e.question,
-        })),
-        references: (listing?.references || [])?.map((e) => ({
-          order: e.order,
-          link: e.link,
-        })),
-        isPrivate: listing?.isPrivate ? listing?.isPrivate : false,
-        skills: listing?.skills,
-        description: listing?.description,
-        publishedAt: listing?.publishedAt || undefined,
-        rewardAmount: listing?.rewardAmount || undefined,
-        rewards: listing?.rewards || undefined,
-        token: listing?.token || 'USDC',
-        compensationType: listing?.compensationType,
-        minRewardAsk: listing?.minRewardAsk || undefined,
-        maxRewardAsk: listing?.maxRewardAsk || undefined,
-      });
-    }
-  }, [editable, listing, isDuplicating]);
-
-  const [steps, setSteps] = useState<number>(
-    !!prevStep ? prevStep : editable || type === 'hackathon' ? 2 : 1,
-  );
-
-  const [slug, setSlug] = useState<string>('');
-
-  const { isOpen, onOpen } = useDisclosure();
-
-  const {
-    isOpen: isSurveyOpen,
-    onOpen: onSurveyOpen,
-    onClose: onSurveyClose,
-  } = useDisclosure();
-
-  const [hackathonSponsor, setHackathonSponsor] = useAtom(hackathonSponsorAtom);
-
-  useEffect(() => {
-    if (editable && type === 'hackathon' && listing?.sponsorId) {
-      setHackathonSponsor(listing?.sponsorId);
-    }
-  }, [editable]);
-
-  const [isListingPublishing, setIsListingPublishing] =
-    useState<boolean>(false);
-  let basePath = 'bounties';
-  if (type === 'hackathon') {
-    basePath = 'hackathon';
-  }
-
-  const surveyId = '018c674f-7e49-0000-5097-f2affbdddb0d';
-  const isNewOrDraft = listingDraftStatus === 'DRAFT' || newListing === true;
 
   const getStepList = (type: string) => {
     const filteredStepList =

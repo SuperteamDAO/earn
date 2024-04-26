@@ -83,19 +83,6 @@ export const ListingPayments = ({
     },
   });
 
-  useEffect(() => {
-    if (editable) {
-      reset({
-        compensationType: form?.compensationType,
-        rewardAmount: form?.rewardAmount || undefined,
-        minRewardAsk: form?.minRewardAsk || undefined,
-        maxRewardAsk: form?.maxRewardAsk || undefined,
-        rewards: form?.rewards || undefined,
-        token: form?.token || 'USDC',
-      });
-    }
-  }, [form]);
-
   const compensationType = watch('compensationType');
   const rewardAmount = watch('rewardAmount');
   const minRewardAsk = watch('minRewardAsk');
@@ -123,6 +110,19 @@ export const ListingPayments = ({
           },
         ],
   );
+
+  useEffect(() => {
+    if (editable) {
+      reset({
+        compensationType: form?.compensationType,
+        rewardAmount: form?.rewardAmount || undefined,
+        minRewardAsk: form?.minRewardAsk || undefined,
+        maxRewardAsk: form?.maxRewardAsk || undefined,
+        rewards: form?.rewards || undefined,
+        token: form?.token || 'USDC',
+      });
+    }
+  }, [form]);
 
   const handleTokenChange = (tokenSymbol: string) => {
     setValue('token', tokenSymbol);

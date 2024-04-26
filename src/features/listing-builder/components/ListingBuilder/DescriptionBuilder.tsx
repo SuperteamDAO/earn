@@ -127,6 +127,13 @@ export const DescriptionBuilder = ({
     name: 'references',
   });
 
+  const description = watch('description');
+  const requirements = watch('requirements');
+
+  const { isOpen, onClose, onOpen } = useDisclosure();
+
+  const [editorError, setEditorError] = useState(false);
+
   useEffect(() => {
     if (editable) {
       reset({
@@ -140,10 +147,6 @@ export const DescriptionBuilder = ({
     }
   }, [form]);
 
-  const description = watch('description');
-  const requirements = watch('requirements');
-
-  const { isOpen, onClose, onOpen } = useDisclosure();
   const editor = useEditor({
     extensions: [
       Underline,
@@ -245,8 +248,6 @@ export const DescriptionBuilder = ({
   }, [editor]);
 
   const isProject = type === 'project';
-
-  const [editorError, setEditorError] = useState(false);
 
   const onSubmit = async (data: any) => {
     updateState({ ...data });
