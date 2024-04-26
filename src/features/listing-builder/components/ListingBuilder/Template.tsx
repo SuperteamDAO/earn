@@ -9,7 +9,7 @@ import React, {
 } from 'react';
 
 import { type MultiSelectOptions } from '@/constants';
-import { getBountyTypeLabel } from '@/features/listings';
+import { getListingTypeLabel } from '@/features/listings';
 import { getURL } from '@/utils/validUrl';
 
 import { useListingFormStore } from '../../store';
@@ -28,31 +28,30 @@ export const Template = ({
   setSubSkills,
 }: Props) => {
   const { updateState } = useListingFormStore();
-  const [bountiesTemplates, setBountiesTemplates] = useState([]);
-  const [isBountiesTemplatesLoading, setIsBountiesTemplatesLoading] =
-    useState(false);
+  const [templates, setTemplates] = useState([]);
+  const [isTemplatesLoading, setIsTemplatesLoading] = useState(false);
 
-  const getBountyTemplates = async () => {
-    setIsBountiesTemplatesLoading(true);
+  const getListingTemplates = async () => {
+    setIsTemplatesLoading(true);
     try {
       const templates: any = await axios.get('/api/bounties/templates/', {
         params: { type },
       });
-      setBountiesTemplates(templates?.data || []);
-      setIsBountiesTemplatesLoading(false);
+      setTemplates(templates?.data || []);
+      setIsTemplatesLoading(false);
     } catch (e) {
-      setIsBountiesTemplatesLoading(false);
+      setIsTemplatesLoading(false);
     }
   };
 
   useEffect(() => {
-    if (!isBountiesTemplatesLoading) {
-      getBountyTemplates();
+    if (!isTemplatesLoading) {
+      getListingTemplates();
     }
   }, []);
 
   const createTemplate = (templateId: string) => {
-    const template: any = bountiesTemplates.find((t: any) => {
+    const template: any = templates.find((t: any) => {
       return t?.id === templateId;
     });
     const skillsInfo = splitSkills(template?.skills || []);
@@ -73,7 +72,7 @@ export const Template = ({
         <VStack align="start" w={'full'}>
           <Flex align="center" justify="center" gap="2rem" w="full" mb="2rem">
             <Text color="gray.600" fontSize="1.3rem" fontWeight={600}>
-              {getBountyTypeLabel(type)}
+              {getListingTypeLabel(type)}
             </Text>
             <hr
               style={{
@@ -105,7 +104,7 @@ export const Template = ({
                 Start from Scratch
               </Text>
             </Box>
-            {bountiesTemplates.map((template: any) => {
+            {templates.map((template: any) => {
               const sponsors: any = [
                 ...new Set(template?.Bounties?.map((b: any) => b.sponsor)),
               ];

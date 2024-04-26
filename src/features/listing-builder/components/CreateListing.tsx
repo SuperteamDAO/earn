@@ -8,7 +8,7 @@ import { useEffect, useState } from 'react';
 import { ErrorSection } from '@/components/shared/ErrorSection';
 import { SurveyModal } from '@/components/Survey';
 import { type MultiSelectOptions } from '@/constants';
-import { type Bounty, getBountyDraftStatus } from '@/features/listings';
+import { type Bounty, getListingDraftStatus } from '@/features/listings';
 import { userStore } from '@/store/user';
 
 import { useListingFormStore } from '../store';
@@ -79,12 +79,12 @@ export function CreateListing({
   const { userInfo } = userStore();
   const { form, updateState } = useListingFormStore();
 
-  const bountyDraftStatus = getBountyDraftStatus(
+  const listingDraftStatus = getListingDraftStatus(
     listing?.status,
     listing?.isPublished,
   );
 
-  const newBounty = listing?.id === undefined;
+  const newListing = listing?.id === undefined;
   const [isDraftLoading, setIsDraftLoading] = useState<boolean>(false);
 
   const skillsInfo = editable ? splitSkills(listing?.skills || []) : undefined;
@@ -98,7 +98,7 @@ export function CreateListing({
   const createAndPublishListing = async () => {
     setIsListingPublishing(true);
     try {
-      const newBounty: Bounty = {
+      const newListing: Bounty = {
         pocId: userInfo?.id ?? '',
         skills: form?.skills,
         title: form?.title,
@@ -141,7 +141,7 @@ export function CreateListing({
         api = `/api/${basePath}/update/${listing?.id}/`;
       }
       const result = await axios.post(api, {
-        ...newBounty,
+        ...newListing,
         ...(type === 'hackathon' ? { hackathonSponsor } : {}),
       });
       setSlug(`/${result?.data?.type}/${result?.data?.slug}/`);
@@ -293,7 +293,7 @@ export function CreateListing({
   }
 
   const surveyId = '018c674f-7e49-0000-5097-f2affbdddb0d';
-  const isNewOrDraft = bountyDraftStatus === 'DRAFT' || newBounty === true;
+  const isNewOrDraft = listingDraftStatus === 'DRAFT' || newListing === true;
 
   const getStepList = (type: string) => {
     const filteredStepList =

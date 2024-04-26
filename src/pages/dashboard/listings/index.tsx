@@ -57,8 +57,8 @@ import {
   type BountyWithSubmissions,
   formatDeadline,
   getBountyStatus,
-  getBountyTypeLabel,
   getColorStyles,
+  getListingTypeLabel,
   isDeadlineOver,
 } from '@/features/listings';
 import { CreateListingModal, SponsorPrize } from '@/features/sponsor-dashboard';
@@ -394,7 +394,7 @@ function Bounties() {
               </Thead>
               <Tbody w="full">
                 {bounties.map((currentBounty) => {
-                  const bountyType = getBountyTypeLabel(
+                  const bountyType = getListingTypeLabel(
                     currentBounty?.type ?? 'bounty',
                   );
 
