@@ -7,11 +7,13 @@ import { useEffect, useState } from 'react';
 
 import { ErrorSection } from '@/components/shared/ErrorSection';
 import { SurveyModal } from '@/components/Survey';
+import { type MultiSelectOptions } from '@/constants';
 import { type Bounty, getBountyDraftStatus } from '@/features/listings';
 import { userStore } from '@/store/user';
 
 import { useListingFormStore } from '../store';
 import { type ListingFormType } from '../types';
+import { splitSkills } from '../utils';
 import {
   DescriptionBuilder,
   FormLayout,
@@ -84,6 +86,14 @@ export function CreateListing({
 
   const newBounty = listing?.id === undefined;
   const [isDraftLoading, setIsDraftLoading] = useState<boolean>(false);
+
+  const skillsInfo = editable ? splitSkills(listing?.skills || []) : undefined;
+  const [skills, setSkills] = useState<MultiSelectOptions[]>(
+    editable ? skillsInfo?.skills || [] : [],
+  );
+  const [subSkills, setSubSkills] = useState<MultiSelectOptions[]>(
+    editable ? skillsInfo?.subskills || [] : [],
+  );
 
   const createAndPublishListing = async () => {
     setIsListingPublishing(true);
@@ -324,7 +334,14 @@ export function CreateListing({
               surveyId={surveyId}
             />
           )}
-          {steps === 1 && <Template type={type} setSteps={setSteps} />}
+          {steps === 1 && (
+            <Template
+              type={type}
+              setSteps={setSteps}
+              setSubSkills={setSubSkills}
+              setSkills={setSkills}
+            />
+          )}
           {steps === 2 && (
             <ListingBasic
               editable={editable}
@@ -334,6 +351,10 @@ export function CreateListing({
               isDuplicating={isDuplicating}
               isNewOrDraft={isNewOrDraft}
               createDraft={createDraft}
+              skills={skills}
+              subSkills={subSkills}
+              setSubSkills={setSubSkills}
+              setSkills={setSkills}
             />
           )}
           {steps === 3 && (

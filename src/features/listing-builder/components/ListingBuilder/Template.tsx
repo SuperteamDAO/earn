@@ -8,16 +8,25 @@ import React, {
   useState,
 } from 'react';
 
+import { type MultiSelectOptions } from '@/constants';
 import { getBountyTypeLabel } from '@/features/listings';
 import { getURL } from '@/utils/validUrl';
 
 import { useListingFormStore } from '../../store';
+import { splitSkills } from '../../utils';
 
 interface Props {
   type: 'bounty' | 'project' | 'hackathon';
   setSteps: Dispatch<SetStateAction<number>>;
+  setSkills: Dispatch<SetStateAction<MultiSelectOptions[]>>;
+  setSubSkills: Dispatch<SetStateAction<MultiSelectOptions[]>>;
 }
-export const Template = ({ type, setSteps }: Props) => {
+export const Template = ({
+  type,
+  setSteps,
+  setSkills,
+  setSubSkills,
+}: Props) => {
   const { updateState } = useListingFormStore();
   const [bountiesTemplates, setBountiesTemplates] = useState([]);
   const [isBountiesTemplatesLoading, setIsBountiesTemplatesLoading] =
@@ -46,12 +55,14 @@ export const Template = ({ type, setSteps }: Props) => {
     const template: any = bountiesTemplates.find((t: any) => {
       return t?.id === templateId;
     });
+    const skillsInfo = splitSkills(template?.skills || []);
+    setSkills(skillsInfo?.skills || []);
+    setSubSkills(skillsInfo?.subskills || []);
 
     updateState({
       title: template?.title,
       templateId: template?.id,
       description: template?.description,
-      skills: template?.skills,
     });
     setSteps(2);
   };

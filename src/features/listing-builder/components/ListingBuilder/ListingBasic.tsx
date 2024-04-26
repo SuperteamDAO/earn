@@ -40,7 +40,7 @@ import { dayjs } from '@/utils/dayjs';
 
 import { useListingFormStore } from '../../store';
 import { type ListingFormType } from '../../types';
-import { getSuggestions, mergeSkills, splitSkills } from '../../utils';
+import { getSuggestions, mergeSkills } from '../../utils';
 import { SelectSponsor } from '../SelectSponsor';
 import { ListingFormLabel, ListingTooltip } from './Form';
 
@@ -52,6 +52,10 @@ interface Props {
   isNewOrDraft?: boolean;
   isDraftLoading: boolean;
   createDraft: (data: ListingFormType) => Promise<void>;
+  setSkills: Dispatch<SetStateAction<MultiSelectOptions[]>>;
+  setSubSkills: Dispatch<SetStateAction<MultiSelectOptions[]>>;
+  subSkills: MultiSelectOptions[];
+  skills: MultiSelectOptions[];
 }
 
 export const ListingBasic = ({
@@ -62,6 +66,10 @@ export const ListingBasic = ({
   isNewOrDraft,
   isDraftLoading,
   createDraft,
+  setSkills,
+  setSubSkills,
+  skills,
+  subSkills,
 }: Props) => {
   const { form, updateState } = useListingFormStore();
   const slugUniqueCheck = async (slug: string) => {
@@ -179,14 +187,9 @@ export const ListingBasic = ({
     }
   }, [form]);
 
-  const [skills, setSkills] = useState<MultiSelectOptions[]>([]);
-  const [subSkills, setSubSkills] = useState<MultiSelectOptions[]>([]);
-
-  useEffect(() => {
-    const skillsInfo = splitSkills(form?.skills || []);
-    setSkills(skillsInfo.skills || []);
-    setSubSkills(skillsInfo.subskills || []);
-  }, [form?.skills]);
+  const title = watch('title');
+  const slug = watch('slug');
+  const applicationType = watch('applicationType');
 
   const handleDeadlineSelection = (days: number) => {
     const deadlineDate = dayjs().add(days, 'day').format('YYYY-MM-DDTHH:mm');
@@ -206,10 +209,6 @@ export const ListingBasic = ({
   >([]);
 
   const date = dayjs().format('YYYY-MM-DD');
-
-  const title = watch('title');
-  const slug = watch('slug');
-  const applicationType = watch('applicationType');
 
   const getUniqueSlug = async () => {
     if ((title && !editable) || (title && isDuplicating)) {
