@@ -40,10 +40,6 @@ export function SearchModal({ isOpen, onClose }: Props) {
 
   const debouncedSearch = useCallback(debounce(search, 500), []);
 
-  useEffect(() => {
-    console.log('bounties - ', results);
-  }, []);
-
   async function search(query: string) {
     try {
       setLoading(true);
