@@ -51,21 +51,28 @@ const Search = ({
 
   const debouncedServerSearch = useCallback(debounce(serverSearch, 500), []);
 
+  const handleStart = (url: string) => {
+    if (url !== router.asPath) {
+      document.body.style.cursor = 'wait';
+      setLoading(true);
+    }
+  };
+
+  const handleComplete = (url: string) => {
+    if (url === router.asPath) {
+      document.body.style.cursor = 'auto';
+      setLoading(false);
+    }
+  };
+
   useEffect(() => {
-    const handleStart = (url: string) => {
-      if (url !== router.asPath) {
-        document.body.style.cursor = 'wait';
-        setLoading(true);
-      }
+    return () => {
+      document.body.style.cursor = 'auto';
+      setLoading(false);
     };
+  }, []);
 
-    const handleComplete = (url: string) => {
-      if (url === router.asPath) {
-        document.body.style.cursor = 'auto';
-        setLoading(false);
-      }
-    };
-
+  useEffect(() => {
     router.events.on('routeChangeStart', handleStart);
     router.events.on('routeChangeComplete', handleComplete);
     router.events.on('routeChangeError', handleComplete);
