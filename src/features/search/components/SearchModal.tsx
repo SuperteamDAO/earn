@@ -38,13 +38,13 @@ export function SearchModal({ isOpen, onClose }: Props) {
   const [results, setResults] = useState<Bounty[]>([]);
   const [loading, setLoading] = useState(false);
 
-  const debouncedSearch = useCallback(debounce(search, 500), [query]);
+  const debouncedSearch = useCallback(debounce(search, 500), []);
 
   useEffect(() => {
     console.log('bounties - ', results);
   }, []);
 
-  async function search() {
+  async function search(query: string) {
     try {
       setLoading(true);
       if (query.length > 0) {
@@ -62,7 +62,7 @@ export function SearchModal({ isOpen, onClose }: Props) {
     }
   }
   useEffect(() => {
-    debouncedSearch();
+    debouncedSearch(query);
     return () => {
       debouncedSearch.cancel();
     };

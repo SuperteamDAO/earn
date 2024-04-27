@@ -49,9 +49,7 @@ const Search = ({
   const [query, setQuery] = useState(searchParams.get('q') ?? '');
   const [loading, setLoading] = useState(false);
 
-  const debouncedServerSearch = useCallback(debounce(serverSearch, 500), [
-    query,
-  ]);
+  const debouncedServerSearch = useCallback(debounce(serverSearch, 500), []);
 
   useEffect(() => {
     const handleStart = (url: string) => {
