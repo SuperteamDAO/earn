@@ -175,9 +175,9 @@ export default function Renaissance() {
               Sponsor a Track
             </Button>
             <Flex align="center" gap={1}>
-              <Circle bg="green.400" size={2.5} />
+              <Circle bg="gray.500" size={2.5} />
               <Text fontSize={'sm'} fontWeight={500}>
-                Submissions Open
+                Submissions Closed
               </Text>
             </Flex>
           </Flex>
