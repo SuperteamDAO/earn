@@ -3,6 +3,7 @@ import { useSession } from 'next-auth/react';
 import { useEffect } from 'react';
 
 import { Login } from '@/features/auth';
+import { SearchModal } from '@/features/search';
 
 import { BountySnackbar } from './BountySnackbar';
 import { DesktopNavbar } from './DesktopNavbar';
@@ -15,6 +16,12 @@ export const Header = () => {
     isOpen: isLoginOpen,
     onOpen: onLoginOpen,
     onClose: onLoginClose,
+  } = useDisclosure();
+
+  const {
+    isOpen: isSearchOpen,
+    onOpen: onSearchOpen,
+    onClose: onSearchClose,
   } = useDisclosure();
 
   useEffect(() => {
@@ -35,10 +42,11 @@ export const Header = () => {
       <BountySnackbar />
       {/* {isRootRoute && <AnnouncementBar />} */}
       <Box pos="sticky" zIndex="sticky" top={0}>
-        <DesktopNavbar onLoginOpen={onLoginOpen} />
+        <DesktopNavbar onLoginOpen={onLoginOpen} onSearchOpen={onSearchOpen} />
       </Box>
 
-      <MobileNavbar onLoginOpen={onLoginOpen} />
+      <MobileNavbar onLoginOpen={onLoginOpen} onSearchOpen={onSearchOpen} />
+      <SearchModal isOpen={isSearchOpen} onClose={onSearchClose} />
     </>
   );
 };
