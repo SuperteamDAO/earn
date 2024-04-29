@@ -86,7 +86,7 @@ export function SearchModal({ isOpen, onClose }: Props) {
               <SearchIcon />
             </InputLeftElement>
             <Input
-              fontSize="sm"
+              fontSize={{ base: 'sm', md: 'md' }}
               border="none"
               onChange={(e) => setQuery(e.target.value)}
               placeholder="Search for Superteam Earn Listings"

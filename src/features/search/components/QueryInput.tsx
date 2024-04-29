@@ -23,8 +23,8 @@ export function QueryInput({ loading, query, setQuery }: Props) {
         </InputLeftElement>
         <Input
           className="ph-no-capture"
-          color="brand.slate.400"
-          fontSize="sm"
+          color="brand.slate.600"
+          fontSize={{ base: 'sm', md: 'md' }}
           fontWeight={500}
           borderColor="brand.slate.300"
           autoFocus
