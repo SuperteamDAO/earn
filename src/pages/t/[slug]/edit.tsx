@@ -375,7 +375,7 @@ export default function EditProfilePage({ slug }: { slug: string }) {
   };
 
   useEffect(() => {
-    if (userInfo && slug !== userInfo?.username) {
+    if (!userInfo || (userInfo && slug !== userInfo?.username)) {
       router.push(`/t/${slug}`);
     }
   }, [slug, router, userInfo]);
