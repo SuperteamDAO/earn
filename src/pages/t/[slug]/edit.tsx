@@ -16,6 +16,7 @@ import {
 import axios from 'axios';
 import type { GetServerSideProps } from 'next';
 import { useRouter } from 'next/router';
+import { useSession } from 'next-auth/react';
 import React, { useEffect, useRef, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import ReactSelect from 'react-select';
@@ -117,6 +118,7 @@ const parseSkillsAndSubskills = (skillsObject: any) => {
 
 export default function EditProfilePage({ slug }: { slug: string }) {
   const { userInfo, setUserInfo } = userStore();
+  const { data: session, status } = useSession();
   const { register, handleSubmit, setValue, watch } = useForm<FormData>();
 
   const [discordError, setDiscordError] = useState(false);
@@ -375,10 +377,14 @@ export default function EditProfilePage({ slug }: { slug: string }) {
   };
 
   useEffect(() => {
-    if (!userInfo || (userInfo && slug !== userInfo?.username)) {
+    if (userInfo && slug !== userInfo?.username) {
       router.push(`/t/${slug}`);
     }
   }, [slug, router, userInfo]);
+
+  if (!session && status === 'unauthenticated') {
+    router.push('/');
+  }
 
   return (
     <>
