@@ -24,7 +24,7 @@ import { userStore } from '@/store/user';
 
 import { EmailSettingsModal } from '../modals/EmailSettingsModal';
 
-export function UserMenu({ }) {
+export function UserMenu({}) {
   const router = useRouter();
 
   const { userInfo, logOut } = userStore();
