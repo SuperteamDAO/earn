@@ -102,7 +102,7 @@ export function SubmissionCard({ talent, sub, type }: SubCardProps) {
       <Flex align="center" justify={'space-between'}>
         <Flex align="center">
           <EarnAvatar
-            name={`${user?.firstName}${user?.lastName}`}
+            name={`${user?.firstName} ${user?.lastName}`}
             avatar={user?.photo as string}
             size="24px"
           />

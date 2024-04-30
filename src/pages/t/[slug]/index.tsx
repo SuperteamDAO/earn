@@ -291,7 +291,7 @@ function TalentProfile({ slug }: TalentProps) {
               <Flex justify={'space-between'}>
                 <Box>
                   <EarnAvatar
-                    size="64px"
+                    size={isMD ? '64px' : '52px'}
                     name={`${talent?.firstName} ${talent?.lastName}`}
                     avatar={talent?.photo}
                   />

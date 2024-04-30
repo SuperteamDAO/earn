@@ -31,7 +31,16 @@ export const EarnAvatar = ({
           size={size}
           name={name}
           variant="marble"
-          colors={['#da4c65', '#5e25c2', '#d433ab', '#2e53af', '#ceea94']}
+          colors={[
+            '#da4c65',
+            '#5e25c2',
+            '#d433ab',
+            '#2e53af',
+            '#ceea94',
+            '#92a1c6',
+            '#f0ab3d',
+            '#c271b4',
+          ]}
         />
       )}
     </>
