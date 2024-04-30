@@ -230,12 +230,23 @@ export default function EditProfilePage({ slug }: { slug: string }) {
 
   useEffect(() => {
     const fetchPoW = async () => {
-      const response = await axios.get('/api/pow/get', {
-        params: {
-          userId: userInfo?.id,
-        },
-      });
-      setPow(response.data);
+      try {
+        const response = await axios.get('/api/pow/get', {
+          params: {
+            userId: userInfo?.id,
+          },
+        });
+        setPow(response.data);
+      } catch (error) {
+        toast({
+          title: 'Server Error.',
+          description: "Can't fetch Proof of work right now. Please try Later.",
+          status: 'error',
+          duration: 5000,
+          isClosable: true,
+          variant: 'subtle',
+        });
+      }
     };
 
     if (userInfo?.id) {
