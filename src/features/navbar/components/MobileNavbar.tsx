@@ -1,4 +1,4 @@
-import { HamburgerIcon, SearchIcon } from '@chakra-ui/icons';
+import { HamburgerIcon } from '@chakra-ui/icons';
 import {
   AbsoluteCenter,
   Box,
@@ -31,12 +31,7 @@ import {
 } from '../constants';
 import { NavLink } from './NavLink';
 
-interface Props {
-  onLoginOpen: () => void;
-  onSearchOpen: () => void;
-}
-
-export const MobileNavbar = ({ onLoginOpen, onSearchOpen }: Props) => {
+export const MobileNavbar = ({ onLoginOpen }: { onLoginOpen: () => void }) => {
   const {
     isOpen: isDrawerOpen,
     onOpen: onDrawerOpen,
@@ -58,8 +53,8 @@ export const MobileNavbar = ({ onLoginOpen, onSearchOpen }: Props) => {
         onClose={onDrawerClose}
         placement="left"
       >
-        <DrawerOverlay display={{ base: 'block', xl: 'none' }} />
-        <DrawerContent display={{ base: 'block', xl: 'none' }}>
+        <DrawerOverlay display={{ base: 'block', lg: 'none' }} />
+        <DrawerContent display={{ base: 'block', lg: 'none' }}>
           <Flex px={3} py={2}>
             <CloseButton onClick={onDrawerClose} />
           </Flex>
@@ -168,41 +163,22 @@ export const MobileNavbar = ({ onLoginOpen, onSearchOpen }: Props) => {
         <Flex
           align="center"
           justify="space-between"
-          display={{ base: 'flex', xl: 'none' }}
+          display={{ base: 'flex', lg: 'none' }}
           px={1}
           py={2}
           bg="white"
           borderBottom="1px solid"
           borderBottomColor="blackAlpha.200"
         >
-          <Flex>
-            <IconButton
-              ref={btnRef}
-              bg="transparent"
-              _hover={{ bg: 'transparent' }}
-              _active={{ bg: 'transparent' }}
-              aria-label="Open Drawer"
-              icon={<HamburgerIcon h={6} w={6} color="brand.slate.500" />}
-              onClick={onDrawerOpen}
-            />
-
-            {router.pathname !== '/search' && (
-              <IconButton
-                gap={2}
-                color="brand.slate.400"
-                fontWeight={400}
-                border={'none'}
-                borderColor={'brand.slate.300'}
-                _hover={{ bg: 'transparent' }}
-                _active={{ bg: 'transparent' }}
-                aria-label="Open Search"
-                icon={<SearchIcon />}
-                onClick={onSearchOpen}
-                variant="outline"
-              />
-            )}
-          </Flex>
-
+          <IconButton
+            ref={btnRef}
+            bg="transparent"
+            _hover={{ bg: 'transparent' }}
+            _active={{ bg: 'transparent' }}
+            aria-label="Open Drawer"
+            icon={<HamburgerIcon h={6} w={6} color="brand.slate.500" />}
+            onClick={onDrawerOpen}
+          />
           <MobileDrawer />
           <AbsoluteCenter>
             <Link
@@ -240,7 +216,7 @@ export const MobileNavbar = ({ onLoginOpen, onSearchOpen }: Props) => {
       <Flex
         align={'center'}
         justify={'space-between'}
-        display={{ base: 'flex', xl: 'none' }}
+        display={{ base: 'flex', lg: 'none' }}
         px={{ base: 3, sm: 4 }}
         py={2}
         bg={'#F8FAFC'}

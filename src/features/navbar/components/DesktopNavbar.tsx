@@ -1,4 +1,3 @@
-import { SearchIcon } from '@chakra-ui/icons';
 import {
   AbsoluteCenter,
   Button,
@@ -27,12 +26,7 @@ import {
 } from '../constants';
 import { NavLink } from './NavLink';
 
-interface Props {
-  onLoginOpen: () => void;
-  onSearchOpen: () => void;
-}
-
-export const DesktopNavbar = ({ onLoginOpen, onSearchOpen }: Props) => {
+export const DesktopNavbar = ({ onLoginOpen }: { onLoginOpen: () => void }) => {
   const { data: session, status } = useSession();
   const router = useRouter();
 
@@ -41,7 +35,7 @@ export const DesktopNavbar = ({ onLoginOpen, onSearchOpen }: Props) => {
 
   return (
     <Flex
-      display={{ base: 'none', xl: 'flex' }}
+      display={{ base: 'none', lg: 'flex' }}
       px={{ base: '2', lg: 6 }}
       color="brand.slate.500"
       bg="white"
@@ -49,7 +43,7 @@ export const DesktopNavbar = ({ onLoginOpen, onSearchOpen }: Props) => {
       borderBottomColor="blackAlpha.200"
     >
       <Flex justify={'space-between'} w="100%" maxW={maxWValue} mx="auto">
-        <Flex align="center" gap={{ base: 3, xl: 6 }}>
+        <Flex align="center" gap={6}>
           <Link
             as={NextLink}
             alignItems={'center'}
@@ -81,23 +75,6 @@ export const DesktopNavbar = ({ onLoginOpen, onSearchOpen }: Props) => {
               </>
             )}
           </Link>
-
-          {router.pathname !== '/search' && (
-            <Button
-              gap={2}
-              color="brand.slate.400"
-              fontWeight={400}
-              border={'none'}
-              borderColor={'brand.slate.300'}
-              _hover={{
-                bg: 'brand.slate.100',
-              }}
-              onClick={onSearchOpen}
-              variant="outline"
-            >
-              <SearchIcon />
-            </Button>
-          )}
 
           {LISTING_NAV_ITEMS?.map((navItem) => {
             const isCurrent = `${navItem.href}` === router.asPath;

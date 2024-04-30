@@ -95,10 +95,6 @@ model Bounties {
   @@index([pocId])
   @@index([templateId])
   @@index([hackathonId])
-  @@index([isPublished, isPrivate])
-  @@index([deadline, updatedAt])
-  @@index([isWinnersAnnounced])
-  @@index([title])
 }
 
 model BountiesTemplates {
@@ -235,7 +231,6 @@ model Sponsors {
   User               User[]
 
   @@index([id, slug])
-  @@index([name])
 }
 
 model Account {
