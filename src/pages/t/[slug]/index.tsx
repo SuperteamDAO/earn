@@ -5,7 +5,6 @@ import {
   EmailIcon,
 } from '@chakra-ui/icons';
 import {
-  Avatar,
   Box,
   Button,
   Collapse,
@@ -25,10 +24,10 @@ import React, { useEffect, useMemo, useState } from 'react';
 import { AddProject } from '@/components/Form/AddProject';
 import { ShareIcon } from '@/components/misc/shareIcon';
 import { ShareProfile } from '@/components/modals/shareProfile';
-import { PowCard } from '@/components/ProfileFeed/powCard';
-import { SubmissionCard } from '@/components/ProfileFeed/submissionCard';
+import { EarnAvatar } from '@/components/shared/EarnAvatar';
 import { EmptySection } from '@/components/shared/EmptySection';
 import { LoadingSection } from '@/components/shared/LoadingSection';
+import { PowCard, SubmissionCard } from '@/features/feed';
 import type { PoW } from '@/interface/pow';
 import type { SubmissionWithUser } from '@/interface/submission';
 import type { User } from '@/interface/user';
@@ -291,12 +290,12 @@ function TalentProfile({ slug }: TalentProps) {
             >
               <Flex justify={'space-between'}>
                 <Box>
-                  <Avatar
-                    w={{ base: '60px', md: '80px' }}
-                    h={{ base: '60px', md: '80px' }}
-                    name={`${talent?.firstName}${talent?.lastName}`}
-                    src={talent?.photo as string}
+                  <EarnAvatar
+                    size="64px"
+                    name={`${talent?.firstName} ${talent?.lastName}`}
+                    avatar={talent?.photo}
                   />
+
                   <Text
                     mt={6}
                     color={'brand.slate.900'}
@@ -633,6 +632,7 @@ function TalentProfile({ slug }: TalentProps) {
                           key={index}
                           sub={item as SubmissionWithUser}
                           talent={talent}
+                          type="profile"
                         />
                       );
                     }
@@ -642,6 +642,7 @@ function TalentProfile({ slug }: TalentProps) {
                           key={index}
                           pow={item as PoW}
                           talent={talent}
+                          type="profile"
                         />
                       );
                     }

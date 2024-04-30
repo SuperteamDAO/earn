@@ -19,7 +19,6 @@ import { LoginWrapper } from '@/features/auth';
 import type { User } from '@/interface/user';
 import { Default } from '@/layouts/Default';
 import { Meta } from '@/layouts/Meta';
-import { userStore } from '@/store/user';
 
 interface TotalType {
   count?: number;
@@ -33,7 +32,7 @@ interface HomeProps {
 
 export function Home({ children, type }: HomeProps) {
   const router = useRouter();
-  const { userInfo } = userStore();
+
   const [isTotalLoading, setIsTotalLoading] = useState(true);
   const [triggerLogin, setTriggerLogin] = useState(false);
 
@@ -167,7 +166,6 @@ export function Home({ children, type }: HomeProps) {
                 total={totals?.totalInUSD ?? 0}
                 listings={totals?.count ?? 0}
                 earners={recentEarners ?? []}
-                userInfo={userInfo! || {}}
               />
             </Flex>
           )}

@@ -9,13 +9,13 @@ import {
   LinkOverlay,
   Text,
   Tooltip,
-  useBreakpointValue,
 } from '@chakra-ui/react';
 import axios from 'axios';
 import React, { useEffect, useState } from 'react';
 import { BiComment } from 'react-icons/bi';
 import { IoMdHeart } from 'react-icons/io';
 
+import { EarnAvatar } from '@/components/shared/EarnAvatar';
 import { tokenList } from '@/constants';
 import { PrizeListMap } from '@/interface/listings';
 import type { SubmissionWithUser } from '@/interface/submission';
@@ -24,15 +24,15 @@ import { userStore } from '@/store/user';
 import { timeAgoShort } from '@/utils/timeAgo';
 import { getURL } from '@/utils/validUrl';
 
-import { OgImageViewer } from '../misc/ogImageViewer';
+import { OgImageViewer } from '../../../components/misc/ogImageViewer';
 
-export function SubmissionCard({
-  talent,
-  sub,
-}: {
-  talent: User;
+interface SubCardProps {
+  talent?: User;
   sub: SubmissionWithUser;
-}) {
+  type: 'profile' | 'activity';
+}
+
+export function SubmissionCard({ talent, sub, type }: SubCardProps) {
   const { userInfo } = userStore();
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [isLiked, setIsLiked] = useState<boolean>(
@@ -64,8 +64,6 @@ export function SubmissionCard({
     setIsLiked(!!sub?.like?.find((e: any) => e.id === userInfo?.id));
   }, [sub.like, userInfo?.id]);
 
-  const breakpoint = useBreakpointValue({ base: 'base', md: 'md' });
-
   const isProject = sub?.listing?.type === 'project';
 
   const listingLink = `${getURL()}listings/${sub?.listing?.type}/${
@@ -74,8 +72,15 @@ export function SubmissionCard({
 
   const submissionLink = `${listingLink}/submission/${sub?.id}`;
 
-  let winningText;
-  let submissionText;
+  let winningText: string;
+  let submissionText: string;
+
+  let user: User | undefined;
+  if (type === 'profile') {
+    user = talent;
+  } else {
+    user = sub.user;
+  }
 
   switch (sub?.listing?.type) {
     case 'bounty':
@@ -92,14 +97,14 @@ export function SubmissionCard({
       break;
   }
 
-  return (
-    <Box my={'16'}>
+  const Header = () => {
+    return (
       <Flex align="center" justify={'space-between'}>
         <Flex align="center">
-          <Avatar
-            name={`${talent?.firstName}${talent?.lastName}`}
-            size={'xs'}
-            src={talent?.photo as string}
+          <EarnAvatar
+            name={`${user?.firstName}${user?.lastName}`}
+            avatar={user?.photo as string}
+            size="24px"
           />
           <Text
             color={'brand.slate.400'}
@@ -107,7 +112,7 @@ export function SubmissionCard({
             fontWeight={500}
           >
             <Text as={'span'} ml={2} color={'brand.slate.900'} fontWeight={600}>
-              {talent?.firstName} {talent?.lastName}
+              {user?.firstName} {user?.lastName}
             </Text>{' '}
             {sub?.isWinner && sub?.listing?.isWinnersAnnounced ? (
               <Text as={'span'}>{winningText}</Text>
@@ -121,9 +126,15 @@ export function SubmissionCard({
           fontSize={{ base: 'xs', md: 'sm' }}
           fontWeight={500}
         >
-          {timeAgoShort(sub?.createdAt)} {breakpoint === 'md' && ' ago'}
+          {timeAgoShort(sub?.createdAt)}
         </Text>
       </Flex>
+    );
+  };
+
+  return (
+    <Box my={'16'}>
+      <Header />
       <Box
         mt={4}
         borderWidth={'1px'}

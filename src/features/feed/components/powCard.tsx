@@ -1,32 +1,39 @@
 import { ArrowForwardIcon } from '@chakra-ui/icons';
-import {
-  Avatar,
-  Box,
-  Flex,
-  LinkBox,
-  LinkOverlay,
-  Text,
-  useBreakpointValue,
-} from '@chakra-ui/react';
+import { Box, Flex, LinkBox, LinkOverlay, Text } from '@chakra-ui/react';
 import React from 'react';
 
+import { OgImageViewer } from '@/components/misc/ogImageViewer';
+import { EarnAvatar } from '@/components/shared/EarnAvatar';
 import type { PoW } from '@/interface/pow';
 import type { User } from '@/interface/user';
 import { timeAgoShort } from '@/utils/timeAgo';
 
-import { OgImageViewer } from '../misc/ogImageViewer';
+type PowWithUser = PoW & {
+  user?: User;
+};
 
-export function PowCard({ talent, pow }: { talent: User; pow: PoW }) {
-  const breakpoint = useBreakpointValue({ base: 'base', md: 'md' });
+interface PowCardProps {
+  talent?: User;
+  pow: PowWithUser;
+  type: 'profile' | 'activity';
+}
+
+export function PowCard({ talent, pow, type }: PowCardProps) {
+  let user;
+  if (type === 'profile') {
+    user = talent;
+  } else {
+    user = pow?.user;
+  }
 
   return (
     <Box my={'16'}>
       <Flex align="center" justify={'space-between'}>
         <Flex align="center">
-          <Avatar
-            name={`${talent?.firstName}${talent?.lastName}`}
-            size={'xs'}
-            src={talent?.photo as string}
+          <EarnAvatar
+            name={`${user?.firstName}${user?.lastName}`}
+            avatar={user?.photo as string}
+            size="24px"
           />
           <Text
             color={'brand.slate.400'}
@@ -34,7 +41,7 @@ export function PowCard({ talent, pow }: { talent: User; pow: PoW }) {
             fontWeight={500}
           >
             <Text as={'span'} ml={2} color={'brand.slate.900'} fontWeight={600}>
-              {talent?.firstName} {talent?.lastName}
+              {user?.firstName} {user?.lastName}
             </Text>{' '}
             added a personal project
           </Text>
@@ -44,7 +51,7 @@ export function PowCard({ talent, pow }: { talent: User; pow: PoW }) {
           fontSize={{ base: 'xs', md: 'sm' }}
           fontWeight={500}
         >
-          {timeAgoShort(pow?.createdAt || '')} {breakpoint === 'md' && ' ago'}
+          {timeAgoShort(pow?.createdAt || '')}
         </Text>
       </Flex>
       <Text
@@ -89,7 +96,7 @@ export function PowCard({ talent, pow }: { talent: User; pow: PoW }) {
             display="flex"
             whiteSpace={'nowrap'}
           >
-            <LinkOverlay href={pow.link}>
+            <LinkOverlay href={pow?.link}>
               <Text
                 as="span"
                 color={'#6366F1'}
