@@ -90,7 +90,13 @@ export function ListingWork() {
         >
           Get almost any kind of work done
         </Text>
-        <HStack pos="relative" align="start" gap={8} maxW={maxW}>
+        <HStack
+          pos="relative"
+          align="start"
+          gap={8}
+          overflow={'scroll'}
+          maxW={{ base: '100%' }}
+        >
           {works.map((w) => (
             <VStack key={w.title} align="start">
               <Text
