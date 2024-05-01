@@ -53,13 +53,27 @@
       ```bash
       npx prisma migrate dev --name init && npx prisma generate
       ```
+  - OR - Database Setup using Docker:
+    - Replace `DATABASE_URL`and `SHADOW_DATABASE_URL` with the following:
+      ```
+      DATABASE_URL= 'mysql://user:secret@localhost:3308/earn'
+      SHADOW_DATABASE_URL= 'mysql://user:secret@localhost:3307/shadow'
+      ```
+    - Now run this command to spin up the docker container for MySQL with the configs in `docker-compose.yaml` (Make use to start docker first).
+      ```
+      docker compose up -d
+      ```
+    - When closing things up run this command to close and delete the container that we created:
+      ```
+      docker compose down
+      ```
 
   - You have to set up resend to run the app:
     - [Resend](https://resend.com): To obtain your `RESEND_API_KEY`, visit the Resend dashboard. This credential is essential for setting up Email Auth.
 
   NOTE: If you are facing any issues with setup, feel free to contact [Abhishek](https://twitter.com/abhwshek)
 
-5. Run the development server
+1. Run the development server
     ```bash
     pnpm dev
     ```
