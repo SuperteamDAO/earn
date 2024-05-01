@@ -238,14 +238,7 @@ export default function EditProfilePage({ slug }: { slug: string }) {
         });
         setPow(response.data);
       } catch (error) {
-        toast({
-          title: 'Server Error.',
-          description: "Can't fetch Proof of work right now. Please try Later.",
-          status: 'error',
-          duration: 5000,
-          isClosable: true,
-          variant: 'subtle',
-        });
+        console.log(error);
       }
     };
 
