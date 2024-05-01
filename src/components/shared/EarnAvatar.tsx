@@ -10,7 +10,7 @@ export const EarnAvatar = ({
 }: {
   name: string;
   avatar?: string;
-  size?: '24px' | '28px' | '32px' | '36px' | '40px' | '52px' | '64px';
+  size?: '24px' | '28px' | '32px' | '36px' | '40px' | '44px' | '52px' | '64px';
   borderRadius?: string;
 }) => {
   return (

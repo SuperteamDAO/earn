@@ -178,8 +178,8 @@ export const SubmissionCard = ({
             size={'1.3rem'}
             color={
               !likes?.find((e) => e.id === (userInfo?.id as string))
-                ? '#CBD5E1'
-                : '#FF005C'
+                ? '#64748b'
+                : '#E11D48'
             }
           />
           {likes?.length}

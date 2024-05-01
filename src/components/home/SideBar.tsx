@@ -165,7 +165,7 @@ export const HomeSideBar = ({
   isTotalLoading,
 }: SideBarProps) => {
   return (
-    <Flex direction={'column'} rowGap={'2.5rem'} w={'22.125rem'} pl={6}>
+    <Flex direction={'column'} rowGap={'2.5rem'} w={'22.125rem'} py={6} pl={6}>
       <RecentEarners earners={earners} />
       {/* <GettingStarted userInfo={userInfo} /> */}
       <TotalStats

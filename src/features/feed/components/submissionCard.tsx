@@ -1,30 +1,17 @@
-import { ArrowForwardIcon } from '@chakra-ui/icons';
-import {
-  Avatar,
-  Box,
-  Button,
-  Flex,
-  Image,
-  LinkBox,
-  LinkOverlay,
-  Text,
-  Tooltip,
-} from '@chakra-ui/react';
+import { Avatar, Button, Flex, Text, Tooltip } from '@chakra-ui/react';
 import axios from 'axios';
 import React, { useEffect, useState } from 'react';
-import { BiComment } from 'react-icons/bi';
-import { IoMdHeart } from 'react-icons/io';
+import { GoComment } from 'react-icons/go';
+import { IoMdHeart, IoMdHeartEmpty } from 'react-icons/io';
 
-import { EarnAvatar } from '@/components/shared/EarnAvatar';
-import { tokenList } from '@/constants';
-import { PrizeListMap } from '@/interface/listings';
+import { OgImageViewer } from '@/components/misc/ogImageViewer';
 import type { SubmissionWithUser } from '@/interface/submission';
 import type { User } from '@/interface/user';
 import { userStore } from '@/store/user';
-import { timeAgoShort } from '@/utils/timeAgo';
 import { getURL } from '@/utils/validUrl';
 
-import { OgImageViewer } from '../../../components/misc/ogImageViewer';
+import { FeedCardContainer, FeedCardLink } from './FeedCardContainer';
+import { WinnerFeedImage } from './WinnerFeedImage';
 
 interface SubCardProps {
   talent?: User;
@@ -43,6 +30,7 @@ export function SubmissionCard({ talent, sub, type }: SubCardProps) {
   const handleLike = async () => {
     try {
       setIsLoading(true);
+      console.log(sub);
       await axios.post('/api/submission/like', {
         submissionId: sub?.id,
       });
@@ -64,25 +52,20 @@ export function SubmissionCard({ talent, sub, type }: SubCardProps) {
     setIsLiked(!!sub?.like?.find((e: any) => e.id === userInfo?.id));
   }, [sub.like, userInfo?.id]);
 
-  const isProject = sub?.listing?.type === 'project';
+  const listing = sub?.listing;
 
-  const listingLink = `${getURL()}listings/${sub?.listing?.type}/${
-    sub?.listing?.slug
-  }`;
+  const isProject = listing?.type === 'project';
+
+  const listingLink = `${getURL()}listings/${listing?.type}/${listing?.slug}`;
 
   const submissionLink = `${listingLink}/submission/${sub?.id}`;
 
-  let winningText: string;
-  let submissionText: string;
+  let winningText: string = '';
+  let submissionText: string = '';
 
-  let user: User | undefined;
-  if (type === 'profile') {
-    user = talent;
-  } else {
-    user = sub.user;
-  }
+  const user = type === 'profile' ? talent : sub.user;
 
-  switch (sub?.listing?.type) {
+  switch (listing?.type) {
     case 'bounty':
       winningText = 'won a bounty';
       submissionText = 'submitted to a bounty';
@@ -97,203 +80,110 @@ export function SubmissionCard({ talent, sub, type }: SubCardProps) {
       break;
   }
 
-  const Header = () => {
-    return (
-      <Flex align="center" justify={'space-between'}>
-        <Flex align="center">
-          <EarnAvatar
-            name={`${user?.firstName} ${user?.lastName}`}
-            avatar={user?.photo as string}
-            size="24px"
-          />
-          <Text
-            color={'brand.slate.400'}
-            fontSize={{ base: 'xs', md: 'md' }}
-            fontWeight={500}
-          >
-            <Text as={'span'} ml={2} color={'brand.slate.900'} fontWeight={600}>
-              {user?.firstName} {user?.lastName}
-            </Text>{' '}
-            {sub?.isWinner && sub?.listing?.isWinnersAnnounced ? (
-              <Text as={'span'}>{winningText}</Text>
-            ) : (
-              <Text as={'span'}>{submissionText}</Text>
-            )}
-          </Text>
-        </Flex>
-        <Text
-          color={'brand.slate.400'}
-          fontSize={{ base: 'xs', md: 'sm' }}
-          fontWeight={500}
-        >
-          {timeAgoShort(sub?.createdAt)}
-        </Text>
-      </Flex>
-    );
+  const content = {
+    actionText:
+      sub?.isWinner && sub?.listing?.isWinnersAnnounced
+        ? winningText
+        : submissionText,
+    createdAt: sub?.createdAt,
   };
 
-  return (
-    <Box my={'16'}>
-      <Header />
-      <Box
-        mt={4}
-        borderWidth={'1px'}
-        borderColor={'brand.slate.200'}
-        borderRadius={'6'}
-        shadow={'0px 4px 4px 0px rgba(0, 0, 0, 0.01)'}
-      >
-        {sub?.isWinner && sub?.listing?.isWinnersAnnounced ? (
-          <Flex
-            justify={'center'}
-            direction={'column'}
-            w="full"
-            h={{ base: '200px', md: '350px' }}
-            bg={'#7E51FF'}
-            borderTopRadius={6}
-          >
-            <Image
-              w={{ base: '36px', md: '80px' }}
-              h={{ base: '36px', md: '80px' }}
-              mx={'auto'}
-              alt="winner"
-              src={'/assets/icons/celebration.png'}
-            />
-            <Flex
-              align="center"
-              justify={'center'}
-              gap={{ base: '1', md: '4' }}
-              w="100%"
-              mt={4}
-            >
-              <Image
-                w={{ base: '8', md: '16' }}
-                h={{ base: '8', md: '16' }}
-                alt={`${sub?.listing?.token} icon`}
-                src={
-                  tokenList.find(
-                    (token) => token.tokenSymbol === sub?.listing?.token,
-                  )?.icon || ''
-                }
-              />
-              <Text
-                color="white"
-                fontSize={{ base: '2xl', md: '5xl' }}
-                fontWeight={600}
-              >
-                {sub?.winnerPosition
-                  ? `$${sub?.listing?.rewards?.[sub?.winnerPosition]}`
-                  : 'N/A'}{' '}
-                {sub?.listing?.token}
-              </Text>
-            </Flex>
-            <Text
-              w="fit-content"
-              mx="auto"
-              my={4}
-              px={4}
-              py={2}
-              color="white"
-              fontSize={{ base: 'xs', md: 'lg' }}
-              fontWeight={500}
-              bg={'rgba(85, 54, 171, 0.54)'}
-              borderRadius={'full'}
-            >
-              {PrizeListMap[
-                sub?.winnerPosition as keyof typeof PrizeListMap
-              ].toUpperCase()}
-            </Text>
-          </Flex>
-        ) : (
-          <OgImageViewer
-            externalUrl={sub?.link ?? ''}
-            w="full"
-            h={{ base: '200px', md: '350px' }}
-            objectFit="cover"
-            borderTopRadius={6}
-          />
-        )}
-        <Flex
-          align={'center'}
-          justify={'space-between'}
-          px={{ base: '3', md: '6' }}
-          py={{ base: '4', md: '6' }}
+  const actionLinks = (
+    <>
+      <Flex align={'center'} gap={3}>
+        <Avatar size={'xs'} src={listing?.sponsor?.logo} />
+        <Text
+          color={'brand.slate.500'}
+          fontSize={{ base: 'sm', md: 'md' }}
+          fontWeight={600}
         >
-          <Flex align={'center'} gap={3}>
-            <Avatar size={'xs'} src={sub?.listing?.sponsor?.logo} />
-            <Text
-              color={'brand.slate.500'}
-              fontSize={{ base: 'sm', md: 'md' }}
-              fontWeight={600}
-            >
-              {sub?.listing?.title}
-            </Text>
-          </Flex>
-          <Tooltip
-            px={4}
-            py={2}
-            color="brand.slate.500"
-            fontFamily={'var(--font-sans)'}
-            bg="white"
-            borderRadius={'lg'}
-            isDisabled={!!sub?.id}
-            label={
-              'This submission will be accessible once winners for the listing have been announced.'
-            }
-            shouldWrapChildren
-          >
-            <LinkBox
-              alignItems={'center'}
-              gap={2}
-              display="flex"
-              opacity={sub?.id ? '100%' : '50%'}
-              whiteSpace={'nowrap'}
-              pointerEvents={sub?.id ? 'all' : 'none'}
-            >
-              <LinkOverlay href={isProject ? listingLink : submissionLink}>
-                <Text
-                  as="span"
-                  color={'brand.purple'}
-                  fontSize={{ base: 'sm', md: 'md' }}
-                  fontWeight={600}
-                >
-                  {isProject ? 'View Listing' : 'View Submission'}
-                </Text>
-              </LinkOverlay>
-              <ArrowForwardIcon color={'brand.purple'} />
-            </LinkBox>
-          </Tooltip>
-        </Flex>
-      </Box>
-      <Flex align={'center'} pointerEvents={sub?.id ? 'all' : 'none'}>
-        <Button
-          zIndex={10}
-          alignItems={'center'}
-          gap={1}
-          display={'flex'}
-          w={14}
-          isLoading={isLoading}
-          onClick={(e) => {
-            e.stopPropagation();
-            if (!userInfo?.id) return;
-            handleLike();
-          }}
-          variant={'unstyled'}
-        >
-          <IoMdHeart color={!isLiked ? '#CBD5E1' : '#FF005C'} />
-          {totalLikes}
-        </Button>
-        <BiComment
-          color={'#CBD5E1'}
-          style={{
-            transform: 'scaleX(-1)',
-            marginTop: '2px',
-            cursor: 'pointer',
-          }}
-          onClick={() => {
-            window.location.href = isProject ? listingLink : submissionLink;
-          }}
-        />
+          {listing?.title}
+        </Text>
       </Flex>
-    </Box>
+      <Tooltip
+        px={4}
+        py={2}
+        color="brand.slate.500"
+        fontFamily={'var(--font-sans)'}
+        bg="white"
+        borderRadius={'lg'}
+        isDisabled={!!sub?.id && !isProject}
+        label={
+          'This submission will be accessible once winners for the listing have been announced.'
+        }
+        shouldWrapChildren
+      >
+        <FeedCardLink
+          href={isProject ? listingLink : submissionLink}
+          style={{
+            opacity: sub?.id ? '100%' : '50%',
+            pointerEvents: sub?.id ? 'all' : 'none',
+          }}
+        >
+          {isProject ? 'View Listing' : 'View Submission'}
+        </FeedCardLink>
+      </Tooltip>
+    </>
+  );
+
+  const likesAndComments = (
+    <Flex align={'center'} pointerEvents={sub?.id ? 'all' : 'none'}>
+      <Button
+        zIndex={10}
+        alignItems={'center'}
+        gap={1}
+        display={'flex'}
+        w={14}
+        isLoading={isLoading}
+        onClick={(e) => {
+          e.stopPropagation();
+          if (!userInfo?.id) return;
+          handleLike();
+        }}
+        variant={'unstyled'}
+      >
+        {!isLiked && <IoMdHeartEmpty size={'22px'} color={'#64748b'} />}
+        {isLiked && <IoMdHeart size={'22px'} color={'#E11D48'} />}
+        <Text color="brand.slate.500" fontSize={'md'} fontWeight={500}>
+          {totalLikes}
+        </Text>
+      </Button>
+      <GoComment
+        color={'#64748b'}
+        size={'21px'}
+        style={{
+          cursor: 'pointer',
+        }}
+        onClick={() => {
+          window.location.href = isProject ? listingLink : submissionLink;
+        }}
+      />
+    </Flex>
+  );
+
+  return (
+    <FeedCardContainer
+      user={user}
+      content={content}
+      actionLinks={actionLinks}
+      likesAndComments={likesAndComments}
+      type={type}
+    >
+      {sub?.isWinner && listing?.isWinnersAnnounced ? (
+        <WinnerFeedImage
+          token={listing?.token}
+          rewards={listing?.rewards}
+          winnerPosition={sub?.winnerPosition}
+        />
+      ) : (
+        <OgImageViewer
+          externalUrl={sub?.link ?? ''}
+          w="full"
+          h={{ base: '200px', md: '350px' }}
+          objectFit="cover"
+          borderTopRadius={6}
+        />
+      )}
+    </FeedCardContainer>
   );
 }

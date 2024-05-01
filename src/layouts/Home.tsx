@@ -73,10 +73,10 @@ export function Home({ children, type }: HomeProps) {
       }
     >
       <Container maxW={'7xl'} mx="auto" px={{ base: 3, md: 4 }}>
-        <HStack align="start" justify="space-between" my={{ base: 4, md: 8 }}>
+        <HStack align="start" justify="space-between">
           <Flex
             w="full"
-            pr={{ base: 0, lg: 6 }}
+            py={4}
             borderRight={{
               base: 'none',
               lg: type === 'niche' ? 'none' : '1px solid',
@@ -90,7 +90,7 @@ export function Home({ children, type }: HomeProps) {
               triggerLogin={triggerLogin}
               setTriggerLogin={setTriggerLogin}
             />
-            <Box w="full">
+            <Box w="full" pr={{ base: 0, lg: 6 }}>
               <HomeBanner
                 setTriggerLogin={setTriggerLogin}
                 userCount={totals.totalUsers}
@@ -107,7 +107,7 @@ export function Home({ children, type }: HomeProps) {
                 />
               )}
               {type === 'region' && matchedTeam && (
-                <>
+                <Box>
                   <Flex
                     direction={{ md: 'row', base: 'column' }}
                     w={{ md: 'brand.120', base: '100%' }}
@@ -148,7 +148,7 @@ export function Home({ children, type }: HomeProps) {
                       </Text>
                     </Box>
                   </Flex>
-                </>
+                </Box>
               )}
               {children}
             </Box>
@@ -159,7 +159,6 @@ export function Home({ children, type }: HomeProps) {
                 base: 'none',
                 lg: 'flex',
               }}
-              marginInlineStart={'0 !important'}
             >
               <HomeSideBar
                 isTotalLoading={isTotalLoading}
