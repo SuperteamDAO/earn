@@ -16,6 +16,7 @@ import {
 import axios from 'axios';
 import type { GetServerSideProps } from 'next';
 import { useRouter } from 'next/router';
+import { useSession } from 'next-auth/react';
 import React, { useEffect, useRef, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import ReactSelect from 'react-select';
@@ -117,6 +118,7 @@ const parseSkillsAndSubskills = (skillsObject: any) => {
 
 export default function EditProfilePage({ slug }: { slug: string }) {
   const { userInfo, setUserInfo } = userStore();
+  const { data: session, status } = useSession();
   const { register, handleSubmit, setValue, watch } = useForm<FormData>();
 
   const [discordError, setDiscordError] = useState(false);
@@ -228,12 +230,16 @@ export default function EditProfilePage({ slug }: { slug: string }) {
 
   useEffect(() => {
     const fetchPoW = async () => {
-      const response = await axios.get('/api/pow/get', {
-        params: {
-          userId: userInfo?.id,
-        },
-      });
-      setPow(response.data);
+      try {
+        const response = await axios.get('/api/pow/get', {
+          params: {
+            userId: userInfo?.id,
+          },
+        });
+        setPow(response.data);
+      } catch (error) {
+        console.log(error);
+      }
     };
 
     if (userInfo?.id) {
@@ -379,6 +385,10 @@ export default function EditProfilePage({ slug }: { slug: string }) {
       router.push(`/t/${slug}`);
     }
   }, [slug, router, userInfo]);
+
+  if (!session && status === 'unauthenticated') {
+    router.push('/');
+  }
 
   return (
     <>

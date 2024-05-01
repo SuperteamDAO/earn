@@ -1,24 +1,27 @@
 import { Box, useDisclosure } from '@chakra-ui/react';
-import { useRouter } from 'next/router';
 import { useSession } from 'next-auth/react';
 import { useEffect } from 'react';
 
 import { Login } from '@/features/auth';
+import { SearchModal } from '@/features/search';
 
-import { AnnouncementBar } from './AnnouncementBar';
 import { BountySnackbar } from './BountySnackbar';
 import { DesktopNavbar } from './DesktopNavbar';
 import { MobileNavbar } from './MobileNavbar';
 
 export const Header = () => {
-  const router = useRouter();
   const { data: session, status } = useSession();
 
-  const isRootRoute = router.pathname === '/';
   const {
     isOpen: isLoginOpen,
     onOpen: onLoginOpen,
     onClose: onLoginClose,
+  } = useDisclosure();
+
+  const {
+    isOpen: isSearchOpen,
+    onOpen: onSearchOpen,
+    onClose: onSearchClose,
   } = useDisclosure();
 
   useEffect(() => {
@@ -37,12 +40,13 @@ export const Header = () => {
       {!!isLoginOpen && <Login isOpen={isLoginOpen} onClose={onLoginClose} />}
 
       <BountySnackbar />
-      {isRootRoute && <AnnouncementBar />}
+      {/* {isRootRoute && <AnnouncementBar />} */}
       <Box pos="sticky" zIndex="sticky" top={0}>
-        <DesktopNavbar onLoginOpen={onLoginOpen} />
+        <DesktopNavbar onLoginOpen={onLoginOpen} onSearchOpen={onSearchOpen} />
       </Box>
 
-      <MobileNavbar onLoginOpen={onLoginOpen} />
+      <MobileNavbar onLoginOpen={onLoginOpen} onSearchOpen={onSearchOpen} />
+      <SearchModal isOpen={isSearchOpen} onClose={onSearchClose} />
     </>
   );
 };
