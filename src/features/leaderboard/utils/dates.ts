@@ -5,11 +5,11 @@ dayjs.extend(QuarterOfYear);
 
 const FORMAT = 'YYYY-MM-DD';
 
-export function firstDayOfYear(): string {
-  return dayjs().startOf('year').format(FORMAT);
+export function firstDayOfYear(): [string] {
+  return [dayjs().startOf('year').format(FORMAT)];
 }
 
-export function firstAndLastDayOfLastYear(): string[] {
+export function firstAndLastDayOfLastYear(): [string, string] {
   const firstDayOfLastYear = dayjs()
     .subtract(1, 'year')
     .startOf('year')
@@ -21,7 +21,7 @@ export function firstAndLastDayOfLastYear(): string[] {
   return [firstDayOfLastYear, lastDayOfLastYear];
 }
 
-export function firstAndLastDayOfLastMonth(): string[] {
+export function firstAndLastDayOfLastMonth(): [string, string] {
   const firstDayOfLastMonth = dayjs()
     .subtract(1, 'month')
     .startOf('month')
@@ -33,7 +33,7 @@ export function firstAndLastDayOfLastMonth(): string[] {
   return [firstDayOfLastMonth, lastDayOfLastMonth];
 }
 
-export function firstAndLastDayOfLastQuarter(): string[] {
+export function firstAndLastDayOfLastQuarter(): [string, string] {
   const firstDayOfLastQuarter = dayjs()
     .subtract(1, 'quarter')
     .startOf('quarter')

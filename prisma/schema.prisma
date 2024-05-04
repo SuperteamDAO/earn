@@ -318,10 +318,38 @@ model User {
   sessions          Session[]
   Hackathon         Hackathon?        @relation(fields: [hackathonId], references: [id])
   emailSettings     EmailSettings[]
+  TalentRankings    TalentRankings[]
 
   @@index([email, publicKey, username])
   @@index([currentSponsorId])
   @@index([hackathonId])
+}
+
+model TalentRankings {
+  id        String                  @id @default(uuid())
+  userId    String
+  skill     TalentRankingSkills @default(ALL)
+  timeframe TalentRankingTimeframes @default(ALL_TIME)
+  rank      Int
+  user      User                    @relation(fields: [userId], references: [id])
+
+  @@unique([userId, skill, timeframe])
+  @@index([userId, skill, timeframe])
+}
+
+enum TalentRankingSkills {
+  DEVELOPMENT
+  DESIGN
+  CONTENT
+  OTHER
+  ALL
+}
+
+enum TalentRankingTimeframes {
+  THIS_YEAR
+  LAST_MONTH
+  LAST_QUARTER
+  ALL_TIME
 }
 
 model PoW {
