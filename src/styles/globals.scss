@@ -163,3 +163,34 @@ pre {
 .tiptap img {
   margin: 0 auto;
 }
+
+.banner-wrapper {
+  width: 100%;
+  overflow: hidden;
+  mask-image: linear-gradient(to right, transparent 0, black 40px, black calc(100% - 40px), transparent 100%);
+}
+
+.banner-wrapper .wrapper {
+  display: flex;
+  gap:2rem;
+}
+
+.banner-wrapper .wrapper .content {
+  display: flex;
+  gap: 2rem;
+  animation: swipe 40s linear infinite;
+}
+
+.banner-wrapper:hover .wrapper .content {
+  animation-play-state: paused;
+}
+
+@keyframes swipe {
+  0% {
+    transform: translateX(0);
+  }
+
+  100% {
+    transform: translateX(-100%);
+  }
+}
