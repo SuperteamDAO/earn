@@ -90,22 +90,35 @@ export function ListingWork() {
         >
           Get almost any kind of work done
         </Text>
-        <HStack pos="relative" align="start" gap={8} maxW={maxW}>
-          {works.map((w) => (
-            <VStack key={w.title} align="start">
-              <Text
-                fontSize={'1.25rem'}
-                fontWeight={600}
-                textTransform={'capitalize'}
-              >
-                {' '}
-                {w.type}
-              </Text>
-              <ListingCard key={w.title} {...w} />
-            </VStack>
-          ))}
-        </HStack>
+        <Box className="banner-wrapper" maxW={{ base: '100%' }}>
+          <Banner />
+        </Box>
       </VStack>
     </VStack>
+  );
+}
+
+function Banner() {
+  return (
+    <div className="banner-wrapper">
+      <div className="wrapper">
+        {[...new Array(4)].map((_, i) => (
+          <HStack className="content" key={i}>
+            {works.map((value) => (
+              <VStack key={`${value.title}-${value.type}`} align="start">
+                <Text
+                  fontSize={'1.25rem'}
+                  fontWeight={600}
+                  textTransform={'capitalize'}
+                >
+                  {value.type}
+                </Text>
+                <ListingCard key={value.title} {...value} />
+              </VStack>
+            ))}
+          </HStack>
+        ))}
+      </div>
+    </div>
   );
 }
