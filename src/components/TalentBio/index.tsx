@@ -102,6 +102,7 @@ export function TalentBio({
       direction={'column'}
       w={w ?? '80%'}
       h="full"
+      mt={8}
       p={'1.5625rem'}
       bg={'white'}
       borderRadius={10}
@@ -109,6 +110,7 @@ export function TalentBio({
       <Flex align={'center'} justify="space-between">
         <Flex align={'center'} h={'fit-content'}>
           <EarnAvatar
+            size="64px"
             name={`${user?.firstName} ${user?.lastName}`}
             avatar={user?.photo as string}
           />

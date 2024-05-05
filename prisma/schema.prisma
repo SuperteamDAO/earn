@@ -334,6 +334,8 @@ model PoW {
   createdAt   DateTime @default(now())
   subSkills   Json?
   updatedAt   DateTime @updatedAt
+  likes       Int      @default(0)
+  like        Json?
   user        User     @relation(fields: [userId], references: [id])
 
   @@index([userId])
@@ -431,6 +433,20 @@ model UnsubscribedEmail {
   email String @unique
 }
 
+model TalentRankings {
+  id          String                   @id
+  userId      String
+  skill       TalentRankings_skill     @default(ALL)
+  timeframe   TalentRankings_timeframe @default(ALL_TIME)
+  rank        Int
+  submissions Int                      @default(0)
+  winRate     Int                      @default(0)
+  wins        Int                      @default(0)
+
+  @@unique([userId, skill, timeframe])
+  @@index([userId, skill, timeframe])
+}
+
 enum EmailType {
   BOUNTY_REVIEW
   BOUNTY_DEADLINE
@@ -515,4 +531,19 @@ enum SubmissionLabels {
   Reviewed
   Shortlisted
   Spam
+}
+
+enum TalentRankings_skill {
+  DEVELOPMENT
+  DESIGN
+  CONTENT
+  OTHER
+  ALL
+}
+
+enum TalentRankings_timeframe {
+  THIS_YEAR
+  LAST_MONTH
+  LAST_QUARTER
+  ALL_TIME
 }

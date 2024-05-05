@@ -2,28 +2,34 @@ import { Flex, Text } from '@chakra-ui/react';
 import React from 'react';
 
 import { OgImageViewer } from '@/components/misc/ogImageViewer';
-import type { PoW } from '@/interface/pow';
-import type { User } from '@/interface/user';
 
 import { FeedCardContainer, FeedCardLink } from './FeedCardContainer';
 
-type PowWithUser = PoW & {
-  user?: User;
-};
-
 interface PowCardProps {
-  talent?: User;
-  pow: PowWithUser;
+  pow: {
+    createdAt: string;
+    description: string;
+    firstName: string;
+    lastName: string;
+    link: string;
+    photo: string;
+    title: string;
+    username: string;
+  };
   type: 'profile' | 'activity';
 }
 
-export function PowCard({ talent, pow, type }: PowCardProps) {
-  const user = type === 'profile' ? talent : pow?.user;
+export function PowCard({ pow, type }: PowCardProps) {
   const content = {
     actionText: 'added a personal project',
     createdAt: pow?.createdAt || '',
     description: pow?.description,
   };
+
+  const firstName = pow?.firstName;
+  const lastName = pow?.lastName;
+  const photo = pow?.photo;
+  const username = pow?.username;
 
   const actionLinks = (
     <>
@@ -43,9 +49,12 @@ export function PowCard({ talent, pow, type }: PowCardProps) {
   return (
     <FeedCardContainer
       type={type}
-      user={user}
       content={content}
       actionLinks={actionLinks}
+      firstName={firstName}
+      lastName={lastName}
+      photo={photo}
+      username={username}
     >
       <OgImageViewer
         externalUrl={pow?.link ?? ''}

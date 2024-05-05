@@ -1,27 +1,49 @@
 import { Box, Flex, Text } from '@chakra-ui/react';
 import axios from 'axios';
-import React, { useEffect, useMemo, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { FiHome } from 'react-icons/fi';
 import { GoTrophy } from 'react-icons/go';
 import { PiStarFour } from 'react-icons/pi';
 
 import { PowCard, SubmissionCard } from '@/features/feed';
-import { type PoW } from '@/interface/pow';
-import { type SubmissionWithUser } from '@/interface/submission';
-import { type User } from '@/interface/user';
+import { type Rewards } from '@/features/listings';
+import { type PrizeListMap } from '@/interface/listings';
 import { Home } from '@/layouts/Home';
 
-type PowWithUser = PoW & {
-  user?: User;
-};
-
-interface FeedData {
-  Submission: SubmissionWithUser[];
-  PoW: PowWithUser[];
+export interface FeedDataProps {
+  id: number;
+  createdAt: string;
+  like: {
+    id: string | undefined;
+    date: number;
+  }[];
+  likes: number;
+  link: string;
+  tweet: string;
+  eligibilityAnswers: string;
+  otherInfo: string;
+  isWinner: boolean;
+  winnerPosition: keyof Rewards | undefined;
+  description: string;
+  firstName: string;
+  lastName: string;
+  photo: string;
+  username: string;
+  listingId: number;
+  sponsorId: number;
+  listingTitle: string;
+  rewards: Partial<typeof PrizeListMap> | undefined;
+  listingType: string;
+  listingSlug: string;
+  isWinnersAnnounced: boolean;
+  token: string;
+  sponsorName: string;
+  sponsorLogo: string;
+  type: string;
 }
 
 export default function Feed() {
-  const [data, setData] = useState<FeedData>();
+  const [data, setData] = useState<FeedDataProps[]>();
   // const [isloading, setIsloading] = useState<boolean>(true);
   useEffect(() => {
     const fetch = async () => {
@@ -40,23 +62,6 @@ export default function Feed() {
     };
     fetch();
   }, []);
-
-  const filteredFeed = useMemo(() => {
-    const submissions = data?.Submission ?? [];
-    const pows = data?.PoW ?? [];
-    const typedSubmissions = submissions.map((s) => ({
-      ...s,
-      type: 'submission',
-    }));
-    const typedPows = pows.map((p) => ({ ...p, type: 'pow' }));
-
-    return [...typedSubmissions, ...typedPows].sort((a, b) => {
-      const dateA = new Date(a.createdAt ?? 0).getTime();
-      const dateB = new Date(b.createdAt ?? 0).getTime();
-
-      return dateB - dateA;
-    });
-  }, [data]);
 
   const NavItem = ({
     name,
@@ -116,23 +121,19 @@ export default function Feed() {
                 Find and discover the best work on Earn
               </Text>
             </Box>
-            {filteredFeed.map((item, index) => {
-              if (item.type === 'submission') {
+            {data?.map((item, index) => {
+              if (item.type === 'Submission') {
                 return (
                   <SubmissionCard
                     key={index}
-                    sub={item as SubmissionWithUser}
+                    sub={item as any}
                     type="activity"
                   />
                 );
               }
-              if (item.type === 'pow') {
+              if (item.type === 'PoW') {
                 return (
-                  <PowCard
-                    key={index}
-                    pow={item as PowWithUser}
-                    type="activity"
-                  />
+                  <PowCard key={index} pow={item as any} type="activity" />
                 );
               }
               return null;

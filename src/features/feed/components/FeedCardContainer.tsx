@@ -10,7 +10,6 @@ import {
 import React, { type ReactNode } from 'react';
 
 import { EarnAvatar } from '@/components/shared/EarnAvatar';
-import { type User } from '@/interface/user';
 import { timeAgoShort } from '@/utils/timeAgo';
 
 interface FeedCardHeaderProps {
@@ -24,7 +23,6 @@ interface FeedCardHeaderProps {
 }
 
 interface FeedCardContainerProps {
-  user: User | undefined;
   content: {
     actionText: string;
     createdAt: string;
@@ -34,6 +32,10 @@ interface FeedCardContainerProps {
   children: ReactNode;
   likesAndComments?: ReactNode;
   type: 'activity' | 'profile';
+  firstName: string;
+  lastName: string;
+  photo: string | undefined;
+  username?: string;
 }
 
 const FeedCardHeader = ({
@@ -138,12 +140,15 @@ export const FeedCardLink = ({
 };
 
 export const FeedCardContainer = ({
-  user,
   content,
   actionLinks,
   children,
   likesAndComments,
   type,
+  firstName,
+  lastName,
+  photo,
+  username,
 }: FeedCardContainerProps) => {
   return (
     <Box
@@ -156,15 +161,15 @@ export const FeedCardContainer = ({
     >
       <Flex gap={3}>
         <EarnAvatar
-          name={`${user?.firstName} ${user?.lastName}`}
-          avatar={user?.photo}
+          name={`${firstName} ${lastName}`}
+          avatar={photo}
           size="44px"
         />
         <Flex direction={'column'} w={'full'}>
           <FeedCardHeader
-            name={`${user?.firstName} ${user?.lastName}`}
-            photo={user?.photo}
-            username={user?.username}
+            name={`${firstName} ${lastName}`}
+            photo={photo}
+            username={username}
             action={content.actionText}
             createdAt={content.createdAt}
             description={content.description}

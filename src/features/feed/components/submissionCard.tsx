@@ -5,8 +5,7 @@ import { GoComment } from 'react-icons/go';
 import { IoMdHeart, IoMdHeartEmpty } from 'react-icons/io';
 
 import { OgImageViewer } from '@/components/misc/ogImageViewer';
-import type { SubmissionWithUser } from '@/interface/submission';
-import type { User } from '@/interface/user';
+import { type FeedDataProps } from '@/pages/feed';
 import { userStore } from '@/store/user';
 import { getURL } from '@/utils/validUrl';
 
@@ -14,18 +13,22 @@ import { FeedCardContainer, FeedCardLink } from './FeedCardContainer';
 import { WinnerFeedImage } from './WinnerFeedImage';
 
 interface SubCardProps {
-  talent?: User;
-  sub: SubmissionWithUser;
+  sub: FeedDataProps;
   type: 'profile' | 'activity';
 }
 
-export function SubmissionCard({ talent, sub, type }: SubCardProps) {
+export function SubmissionCard({ sub, type }: SubCardProps) {
   const { userInfo } = userStore();
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [isLiked, setIsLiked] = useState<boolean>(
     !!sub?.like?.find((e: any) => e.id === userInfo?.id),
   );
   const [totalLikes, setTotalLikes] = useState<number>(sub?.like?.length ?? 0);
+
+  const firstName = sub?.firstName;
+  const lastName = sub?.lastName;
+  const photo = sub?.photo;
+  const username = sub?.username;
 
   const handleLike = async () => {
     try {
@@ -52,20 +55,16 @@ export function SubmissionCard({ talent, sub, type }: SubCardProps) {
     setIsLiked(!!sub?.like?.find((e: any) => e.id === userInfo?.id));
   }, [sub.like, userInfo?.id]);
 
-  const listing = sub?.listing;
+  const isProject = sub?.listingType === 'project';
 
-  const isProject = listing?.type === 'project';
-
-  const listingLink = `${getURL()}listings/${listing?.type}/${listing?.slug}`;
+  const listingLink = `${getURL()}listings/${sub?.listingType}/${sub?.listingSlug}`;
 
   const submissionLink = `${listingLink}/submission/${sub?.id}`;
 
   let winningText: string = '';
   let submissionText: string = '';
 
-  const user = type === 'profile' ? talent : sub.user;
-
-  switch (listing?.type) {
+  switch (sub?.listingType) {
     case 'bounty':
       winningText = 'won a bounty';
       submissionText = 'submitted to a bounty';
@@ -82,22 +81,20 @@ export function SubmissionCard({ talent, sub, type }: SubCardProps) {
 
   const content = {
     actionText:
-      sub?.isWinner && sub?.listing?.isWinnersAnnounced
-        ? winningText
-        : submissionText,
+      sub?.isWinner && sub?.isWinnersAnnounced ? winningText : submissionText,
     createdAt: sub?.createdAt,
   };
 
   const actionLinks = (
     <>
       <Flex align={'center'} gap={3}>
-        <Avatar size={'xs'} src={listing?.sponsor?.logo} />
+        <Avatar size={'xs'} src={sub?.sponsorLogo} />
         <Text
           color={'brand.slate.500'}
           fontSize={{ base: 'sm', md: 'md' }}
           fontWeight={600}
         >
-          {listing?.title}
+          {sub?.listingTitle}
         </Text>
       </Flex>
       <Tooltip
@@ -163,16 +160,19 @@ export function SubmissionCard({ talent, sub, type }: SubCardProps) {
 
   return (
     <FeedCardContainer
-      user={user}
       content={content}
       actionLinks={actionLinks}
       likesAndComments={likesAndComments}
       type={type}
+      firstName={firstName}
+      lastName={lastName}
+      photo={photo}
+      username={username}
     >
-      {sub?.isWinner && listing?.isWinnersAnnounced ? (
+      {sub?.isWinner && sub?.isWinnersAnnounced ? (
         <WinnerFeedImage
-          token={listing?.token}
-          rewards={listing?.rewards}
+          token={sub?.token}
+          rewards={sub?.rewards}
           winnerPosition={sub?.winnerPosition}
         />
       ) : (
