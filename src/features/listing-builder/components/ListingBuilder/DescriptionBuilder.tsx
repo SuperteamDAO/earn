@@ -269,7 +269,7 @@ export const DescriptionBuilder = ({
         <LinkModal setLink={setLink} isOpen={isOpen} onClose={onClose} />
       )}
       <Box>
-        <Box mb={8}>
+        <Box mb={8} pt={5}>
           <Flex justify="start" w="full">
             <Flex>
               <ListingFormLabel htmlFor="requirements">

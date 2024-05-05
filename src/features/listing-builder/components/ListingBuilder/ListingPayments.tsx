@@ -260,7 +260,7 @@ export const ListingPayments = ({
         align={'start'}
         gap={2}
         w={'2xl'}
-        pt={7}
+        pt={5}
         pb={10}
         color={'gray.500'}
       >

@@ -115,7 +115,7 @@ export const QuestionBuilder = ({
 
   return (
     <form onSubmit={handleSubmit(onSubmit)}>
-      <VStack align={'start'} gap={3} w={'2xl'} pt={7}>
+      <VStack align={'start'} gap={3} w={'2xl'} pt={5}>
         <HStack gap={3} w={'full'} p={5} bg={'#F7FAFC'} rounded={'md'}>
           <Image alt={'hands'} src={'/assets/icons/hands.svg'} />
           <VStack align={'start'} justify={'start'}>
