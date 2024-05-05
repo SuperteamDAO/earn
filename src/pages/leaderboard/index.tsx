@@ -1,5 +1,10 @@
 import { Box, Flex, VStack } from '@chakra-ui/react';
+import {
+  type TalentRankingSkills,
+  type TalentRankingTimeframes,
+} from '@prisma/client';
 import axios from 'axios';
+import { type GetServerSideProps } from 'next';
 import { useEffect, useState } from 'react';
 
 import { TotalStats } from '@/components/home/TotalStats';
@@ -7,12 +12,15 @@ import {
   Banner,
   ComingSoon,
   FilterRow,
+  getSubskills,
   Introduction,
   RanksTable,
+  type RowType,
   type Timeframe,
 } from '@/features/leaderboard';
 import { Default } from '@/layouts/Default';
 import { Meta } from '@/layouts/Meta';
+import { prisma } from '@/prisma';
 
 interface TotalType {
   count?: number;
@@ -20,7 +28,11 @@ interface TotalType {
   totalUsers?: number;
 }
 
-function TalentLeaderboard() {
+interface Props {
+  results: RowType[];
+}
+
+function TalentLeaderboard({ results }: Props) {
   const [isTotalLoading, setIsTotalLoading] = useState(true);
   const [totals, setTotals] = useState<TotalType>({});
 
@@ -76,7 +88,7 @@ function TalentLeaderboard() {
                 timeframe={timeframe}
                 setTimeframe={(value: Timeframe) => setTimeframe(value)}
               />
-              <RanksTable />
+              <RanksTable rankings={results} />
             </VStack>
           </VStack>
           <VStack display={{ base: 'none', md: 'block' }} w={{ md: '30%' }}>
@@ -95,3 +107,48 @@ function TalentLeaderboard() {
 }
 
 export default TalentLeaderboard;
+
+export const getServerSideProps: GetServerSideProps = async ({ query }) => {
+  const skill = (query.skill || 'ALL') as TalentRankingSkills;
+  const timeframe = (query.timeframe || 'THIS_YEAR') as TalentRankingTimeframes;
+  const page = Number(query.page) || 1;
+
+  const results = await prisma.talentRankings.findMany({
+    where: {
+      skill,
+      timeframe,
+    },
+    skip: (page - 1) * 10,
+    take: 10,
+    include: {
+      user: {
+        select: {
+          photo: true,
+          firstName: true,
+          lastName: true,
+          username: true,
+          skills: true,
+          totalEarnedInUSD: true,
+        },
+      },
+    },
+  });
+
+  const formatted: RowType[] = results.map((r) => ({
+    rank: r.rank,
+    skills: getSubskills(r.user.skills as any, skill),
+    username: r.user.username,
+    pfp: r.user.photo,
+    dollarsEarned: r.user.totalEarnedInUSD,
+    name: r.user.firstName + ' ' + r.user.lastName,
+    submissions: r.submissions,
+    wins: r.wins,
+    winRate: r.winRate,
+  }));
+
+  return {
+    props: {
+      results: formatted,
+    },
+  };
+};

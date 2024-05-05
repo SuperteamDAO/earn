@@ -13,6 +13,8 @@ import {
   VStack,
 } from '@chakra-ui/react';
 
+import { type RowType } from '../types';
+
 interface ColumnType {
   label: string;
   align?: 'center' | 'start';
@@ -49,50 +51,17 @@ const headColumns: ColumnType[] = [
   },
 ];
 
-interface RowType {
-  rank: number;
-  name: string;
-  pfp: string;
-  username: string;
-  dollarsEarned: number;
-  submissions: number;
-  wins: number;
-  winRate: number;
-  skills: string[];
-}
-
-const exampleRows: RowType[] = [
-  {
-    rank: 1,
-    name: 'Pratik Das',
-    pfp: 'https://res.cloudinary.com/dgvnuwspr/image/upload/v1711903030/vrcpbrhpfarikmpaz5go.jpg',
-    username: 'pratikdas',
-    dollarsEarned: 10000,
-    submissions: 23,
-    wins: 45,
-    winRate: 25,
-    skills: ['React', 'Next.js', 'Sveltekit'],
-  },
-  {
-    rank: 2,
-    name: 'Pratik Das',
-    pfp: 'https://res.cloudinary.com/dgvnuwspr/image/upload/v1711903030/vrcpbrhpfarikmpaz5go.jpg',
-    username: 'pratikdas',
-    dollarsEarned: 10000,
-    submissions: 23,
-    wins: 45,
-    winRate: 25,
-    skills: ['React', 'Next.js'],
-  },
-];
-
 const formatter = new Intl.NumberFormat('en-US', {
   style: 'currency',
   maximumFractionDigits: 0,
   currency: 'USD',
 }).format;
 
-export function RanksTable() {
+interface Props {
+  rankings: RowType[];
+}
+
+export function RanksTable({ rankings }: Props) {
   return (
     <TableContainer overflowX="auto" overflowY="hidden" w="full">
       <Table>
@@ -113,11 +82,11 @@ export function RanksTable() {
           </Tr>
         </Thead>
         <Tbody color="brand.slate.500" fontSize="xs" fontWeight={500}>
-          {exampleRows.map((row) => (
+          {rankings.map((row) => (
             <Tr key={row.username}>
               <Td textAlign={'center'}>#{row.rank}</Td>
               <Td align="center" gap={2} display="flex">
-                <Avatar w={8} h={8} src={row.pfp} />
+                <Avatar w={8} h={8} src={row.pfp ?? undefined} />
                 <VStack align="start" lineHeight={0.7}>
                   <Text color="black">{row.name}</Text>
                   <Text>@{row.username}</Text>

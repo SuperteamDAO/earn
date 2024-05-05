@@ -327,29 +327,17 @@ model User {
 
 model TalentRankings {
   id        String                  @id @default(uuid())
+  rank      Int
+  submissions Int @default(0)
+  wins Int @default(0)
+  winRate Int @default(0)
   userId    String
   skill     TalentRankingSkills @default(ALL)
   timeframe TalentRankingTimeframes @default(ALL_TIME)
-  rank      Int
   user      User                    @relation(fields: [userId], references: [id])
 
   @@unique([userId, skill, timeframe])
   @@index([userId, skill, timeframe])
-}
-
-enum TalentRankingSkills {
-  DEVELOPMENT
-  DESIGN
-  CONTENT
-  OTHER
-  ALL
-}
-
-enum TalentRankingTimeframes {
-  THIS_YEAR
-  LAST_MONTH
-  LAST_QUARTER
-  ALL_TIME
 }
 
 model PoW {
@@ -457,6 +445,21 @@ model Hackathon {
 model UnsubscribedEmail {
   id    String @id @default(uuid())
   email String @unique
+}
+
+enum TalentRankingSkills {
+  DEVELOPMENT
+  DESIGN
+  CONTENT
+  OTHER
+  ALL
+}
+
+enum TalentRankingTimeframes {
+  THIS_YEAR
+  LAST_MONTH
+  LAST_QUARTER
+  ALL_TIME
 }
 
 enum EmailType {
