@@ -1,6 +1,7 @@
 import { ArrowForwardIcon } from '@chakra-ui/icons';
 import { Box, Flex, Image, Skeleton, Text } from '@chakra-ui/react';
 import axios from 'axios';
+import dayjs from 'dayjs';
 import NextLink from 'next/link';
 import { useEffect, useState } from 'react';
 
@@ -225,7 +226,7 @@ const RecentActivity = () => {
           <Flex align={'center'}>
             <Text
               overflow={'hidden'}
-              maxW={28}
+              maxW={32}
               color={'brand.slate.800'}
               fontSize={'0.9rem'}
               fontWeight={600}
@@ -236,7 +237,7 @@ const RecentActivity = () => {
             </Text>
             <Text
               overflow={'hidden'}
-              maxW={24}
+              maxW={20}
               color={'brand.slate.400'}
               fontSize={'sm'}
               fontWeight={500}
@@ -309,6 +310,7 @@ const OpenListings = () => {
           category: 'bounties',
           take: 5,
           isHomePage: true,
+          deadline: dayjs().add(1, 'day').toISOString(),
         },
       });
 
