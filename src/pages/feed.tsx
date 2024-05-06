@@ -1,4 +1,4 @@
-import { Box, Flex, Text } from '@chakra-ui/react';
+import { Box, Flex, Select, Text } from '@chakra-ui/react';
 import axios from 'axios';
 import React, { useEffect, useState } from 'react';
 import { FiHome } from 'react-icons/fi';
@@ -44,15 +44,28 @@ export interface FeedDataProps {
 
 export default function Feed() {
   const [data, setData] = useState<FeedDataProps[]>();
+  const [activeMenu, setActiveMenu] = useState('New');
+  const [timePeriod, setTimePeriod] = useState('Today');
+
   // const [isloading, setIsloading] = useState<boolean>(true);
   useEffect(() => {
     const fetch = async () => {
       try {
         // setIsloading(true);
-        const res = await axios.get(`/api/feed/get`);
+        const res = await axios.get(`/api/feed/get`, {
+          params: {
+            filter: activeMenu === 'Popular' ? 'popular' : undefined,
+            timePeriod:
+              activeMenu === 'Popular' ? timePeriod.toLowerCase() : undefined,
+          },
+        });
 
         if (res) {
-          setData(res?.data);
+          setData(
+            JSON.parse(res.data, (_key, value) => {
+              return value;
+            }),
+          );
           // setIsloading(false);
         }
       } catch (err) {
@@ -61,7 +74,7 @@ export default function Feed() {
       }
     };
     fetch();
-  }, []);
+  }, [activeMenu, timePeriod]);
 
   const NavItem = ({
     name,
@@ -83,6 +96,17 @@ export default function Feed() {
       </Flex>
     );
   };
+
+  const MenuOption = ({ option }: { option: 'New' | 'Popular' }) => (
+    <Text
+      color={activeMenu === option ? 'brand.slate.700' : 'brand.slate.500'}
+      fontWeight={activeMenu === option ? 600 : 400}
+      cursor="pointer"
+      onClick={() => setActiveMenu(option)}
+    >
+      {option}
+    </Text>
+  );
 
   return (
     <Home type="home">
@@ -117,9 +141,33 @@ export default function Feed() {
               <Text color="brand.slate.900" fontSize="xl" fontWeight={600}>
                 Activity Feed
               </Text>
-              <Text color="brand.slate.600" fontSize="md">
-                Find and discover the best work on Earn
-              </Text>
+              <Flex align="center" justify={'space-between'} mt={2}>
+                <Text color="brand.slate.600" fontSize="md">
+                  Find and discover the best work on Earn
+                </Text>
+                <Flex align="center" justify={'space-between'} gap={3}>
+                  <Flex gap={3}>
+                    <MenuOption option="New" />
+                    <MenuOption option="Popular" />
+                  </Flex>
+
+                  {activeMenu === 'Popular' && (
+                    <Select
+                      w={28}
+                      color={'brand.slate.500'}
+                      textAlign={'right'}
+                      onChange={(e) => setTimePeriod(e.target.value)}
+                      size={'sm'}
+                      value={timePeriod}
+                      variant={'unstyled'}
+                    >
+                      <option>Today</option>
+                      <option>This Week</option>
+                      <option>This Month</option>
+                    </Select>
+                  )}
+                </Flex>
+              </Flex>
             </Box>
             {data?.map((item, index) => {
               if (item.type === 'Submission') {

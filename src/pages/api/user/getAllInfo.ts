@@ -20,16 +20,28 @@ export default async function getAllUsers(
     const powAndSubmissions = await prisma.$queryRaw<any[]>`
       (SELECT
         CASE WHEN l.isWinnersAnnounced THEN sub.id ELSE NULL END as id,
-        sub.createdAt, sub.like, sub.likes,
+        sub.createdAt, 
+        sub.like, 
         CASE WHEN l.isWinnersAnnounced THEN sub.link ELSE NULL END as link,
         CASE WHEN l.isWinnersAnnounced THEN sub.tweet ELSE NULL END as tweet,
         CASE WHEN l.isWinnersAnnounced THEN sub.eligibilityAnswers ELSE NULL END as eligibilityAnswers,
         CASE WHEN l.isWinnersAnnounced THEN sub.otherInfo ELSE NULL END as otherInfo,
-        sub.isWinner, sub.winnerPosition,
+        sub.isWinner, 
+        sub.winnerPosition,
         NULL as description,
-        u.firstName, u.lastName, u.photo,
-        l.id as listingId, l.sponsorId, l.title as listingTitle, l.rewards, l.type as listingType, l.slug as listingSlug, l.isWinnersAnnounced, l.token,
-        s.name as sponsorName, s.logo as sponsorLogo,
+        u.firstName, 
+        u.lastName, 
+        u.photo,
+        l.id as listingId, 
+        l.sponsorId, 
+        l.title as listingTitle, 
+        l.rewards, 
+        l.type as listingType, 
+        l.slug as listingSlug, 
+        l.isWinnersAnnounced, 
+        l.token,
+        s.name as sponsorName, 
+        s.logo as sponsorLogo,
         'Submission' as type
       FROM
         Submission as sub
@@ -43,11 +55,29 @@ export default async function getAllUsers(
         sub.userId = ${userId})
       UNION ALL
       (SELECT
-        pow.id, pow.createdAt, pow.like, pow.likes, pow.link, NULL as tweet, NULL as eligibilityAnswers, NULL as otherInfo, NULL as isWinner, NULL as winnerPosition,
+        pow.id, 
+        pow.createdAt, 
+        pow.like, 
+        pow.link, 
+        NULL as tweet, 
+        NULL as eligibilityAnswers, 
+        NULL as otherInfo, 
+        NULL as isWinner, 
+        NULL as winnerPosition,
         pow.description,
-        u.firstName, u.lastName, u.photo,
-        NULL as listingId, NULL as sponsorId, NULL as listingTitle, NULL as rewards, NULL as listingType, NULL as listingSlug, NULL as isWinnersAnnounced, NULL as token,
-        NULL as sponsorName, NULL as sponsorLogo,
+        u.firstName, 
+        u.lastName, 
+        u.photo,
+        NULL as listingId, 
+        NULL as sponsorId, 
+        NULL as listingTitle, 
+        NULL as rewards, 
+        NULL as listingType, 
+        NULL as listingSlug, 
+        NULL as isWinnersAnnounced, 
+        NULL as token,
+        NULL as sponsorName, 
+        NULL as sponsorLogo,
         'PoW' as type
       FROM
         PoW as pow
