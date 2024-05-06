@@ -109,6 +109,7 @@ export default async function user(req: NextApiRequest, res: NextApiResponse) {
             },
           },
         },
+        take,
       });
       const sortedData = bounties.sort((a, b) => {
         return dayjs(b.deadline).diff(dayjs(a.deadline));

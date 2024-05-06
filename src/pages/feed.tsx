@@ -109,7 +109,7 @@ export default function Feed() {
   );
 
   return (
-    <Home type="home">
+    <Home type="feed">
       <Box
         mt={'-4'}
         mr={'-25px'}

@@ -1,9 +1,15 @@
 import { ArrowForwardIcon } from '@chakra-ui/icons';
 import { Box, Flex, Image, Skeleton, Text } from '@chakra-ui/react';
+import axios from 'axios';
 import NextLink from 'next/link';
+import { useEffect, useState } from 'react';
 
+import { type Bounty, ListingCardMobile } from '@/features/listings';
 import type { User } from '@/interface/user';
+import { getURLSanitized } from '@/utils/getURLSanitized';
+import { timeAgoShort } from '@/utils/timeAgo';
 
+import { OgImageViewer } from '../misc/ogImageViewer';
 import { RecentEarners } from './RecentEarners';
 
 interface SideBarProps {
@@ -11,6 +17,7 @@ interface SideBarProps {
   listings: number;
   earners?: User[];
   isTotalLoading: boolean;
+  type: 'home' | 'category' | 'region' | 'niche' | 'feed';
 }
 
 const TotalStats = ({
@@ -139,26 +146,209 @@ const TotalStats = ({
 // };
 
 const RecentActivity = () => {
+  const [activity, setActivity] = useState<any[]>([]);
+  useEffect(() => {
+    const fetchRecentActivity = async () => {
+      try {
+        const res = await axios.get(`/api/feed/get`, {
+          params: {
+            take: 5,
+          },
+        });
+
+        if (res) {
+          setActivity(
+            JSON.parse(res.data, (_key, value) => {
+              return value;
+            }),
+          );
+        }
+      } catch (err) {
+        console.log(err);
+      }
+    };
+    fetchRecentActivity();
+  }, []);
+
+  interface ActivityCardProps {
+    firstName: string;
+    lastName: string;
+    username: string;
+    createdAt: string;
+    link: string;
+    listingType: 'bounty' | 'hackathon' | 'project';
+    isWinner: boolean;
+    isWinnersAnnounced: boolean;
+    type: string;
+  }
+
+  const ActivityCard = ({
+    firstName,
+    lastName,
+    username,
+    createdAt,
+    link,
+    listingType,
+    isWinner,
+    isWinnersAnnounced,
+    type,
+  }: ActivityCardProps) => {
+    const getActionText = () => {
+      const defaultActionText = {
+        bounty: 'just submitted a bounty',
+        hackathon: 'just submitted to a hackathon',
+        project: 'just applied to a project',
+      };
+
+      const winnerActionText = {
+        bounty: 'just won a bounty',
+        hackathon: 'just won a hackathon track',
+        project: 'just got selected for a project',
+      };
+
+      if (type === 'PoW') {
+        return 'just added a personal project';
+      } else if (isWinner && isWinnersAnnounced) {
+        return winnerActionText[listingType] || 'just achieved something great';
+      } else {
+        return defaultActionText[listingType] || 'just took an action';
+      }
+    };
+
+    const actionText = getActionText();
+    const sanitizedLink = getURLSanitized(link);
+
+    return (
+      <Flex as={NextLink} href={sanitizedLink}>
+        <OgImageViewer h={12} w={20} objectFit={'cover'} externalUrl={link} />
+        <Box ml={3}>
+          <Flex align={'center'}>
+            <Text
+              overflow={'hidden'}
+              maxW={28}
+              color={'brand.slate.800'}
+              fontSize={'0.9rem'}
+              fontWeight={600}
+              whiteSpace={'nowrap'}
+              textOverflow={'ellipsis'}
+            >
+              {firstName} {lastName}
+            </Text>
+            <Text
+              overflow={'hidden'}
+              maxW={24}
+              color={'brand.slate.400'}
+              fontSize={'sm'}
+              fontWeight={500}
+              whiteSpace={'nowrap'}
+              textOverflow={'ellipsis'}
+            >
+              @{username}
+            </Text>
+            <Text mx={1} color="brand.slate.400" fontSize={'xs'}>
+              •
+            </Text>
+            <Text color={'brand.slate.400'} fontSize={'xs'}>
+              {timeAgoShort(createdAt)}
+            </Text>
+          </Flex>
+          <Text color={'brand.slate.600'} fontSize={'sm'} fontWeight={500}>
+            {actionText}
+          </Text>
+        </Box>
+      </Flex>
+    );
+  };
   return (
-    <Flex align="center" justify={'space-between'}>
-      <Text color={'gray.400'} fontWeight={500}>
-        RECENT ACTIVITY
-      </Text>
-      <Text
-        as={NextLink}
-        color="brand.purple"
-        fontSize="xs"
-        fontWeight={600}
-        href="/feed"
-      >
-        View All
-        <ArrowForwardIcon ml={1} />
-      </Text>
-    </Flex>
+    <Box>
+      <Flex align="center" justify={'space-between'}>
+        <Text color={'gray.400'} fontWeight={500}>
+          RECENT ACTIVITY
+        </Text>
+        <Text
+          as={NextLink}
+          color="brand.purple"
+          fontSize="xs"
+          fontWeight={600}
+          href="/feed"
+        >
+          View All
+          <ArrowForwardIcon ml={1} />
+        </Text>
+      </Flex>
+      <Flex direction={'column'} rowGap={'1rem'} w={'full'} mt={4}>
+        {activity.map((act, i) => {
+          return (
+            <ActivityCard
+              key={i}
+              link={act.link}
+              firstName={act.firstName}
+              lastName={act.lastName}
+              username={act.username}
+              createdAt={act.createdAt}
+              listingType={act.listingType}
+              isWinner={act.isWinner}
+              isWinnersAnnounced={act.isWinnersAnnounced}
+              type={act.type}
+            />
+          );
+        })}
+      </Flex>
+    </Box>
+  );
+};
+
+const OpenListings = () => {
+  const [listings, setListings] = useState<{ bounties: Bounty[] }>({
+    bounties: [],
+  });
+  const getListings = async () => {
+    try {
+      const listingData = await axios.get('/api/listings/', {
+        params: {
+          category: 'bounties',
+          take: 5,
+          isHomePage: true,
+        },
+      });
+
+      setListings(listingData.data);
+    } catch (e) {
+      console.log(e);
+    }
+  };
+
+  useEffect(() => {
+    getListings();
+  }, []);
+  return (
+    <Box>
+      <Flex align="center" justify={'space-between'}>
+        <Text color={'gray.400'} fontWeight={500}>
+          OPEN LISTINGS
+        </Text>
+        <Text
+          as={NextLink}
+          color="brand.purple"
+          fontSize="xs"
+          fontWeight={600}
+          href="/"
+        >
+          View All
+          <ArrowForwardIcon ml={1} />
+        </Text>
+      </Flex>
+      <Flex direction={'column'} rowGap={'1rem'} w={'full'} mt={4}>
+        {listings?.bounties?.map((listing) => {
+          return <ListingCardMobile bounty={listing} key={listing?.id} />;
+        })}
+      </Flex>
+    </Box>
   );
 };
 
 export const HomeSideBar = ({
+  type,
   listings,
   total,
   earners,
@@ -166,14 +356,18 @@ export const HomeSideBar = ({
 }: SideBarProps) => {
   return (
     <Flex direction={'column'} rowGap={'2.5rem'} w={'22.125rem'} py={6} pl={6}>
+      {type === 'feed' && <OpenListings />}
       <RecentEarners earners={earners} />
-      {/* <GettingStarted userInfo={userInfo} /> */}
-      <TotalStats
-        isTotalLoading={isTotalLoading}
-        bountyCount={listings}
-        TVE={total}
-      />
-      <RecentActivity />
+      {type !== 'feed' && (
+        <>
+          <TotalStats
+            isTotalLoading={isTotalLoading}
+            bountyCount={listings}
+            TVE={total}
+          />
+          <RecentActivity />
+        </>
+      )}
       {/* <SidebarBanner /> */}
     </Flex>
   );

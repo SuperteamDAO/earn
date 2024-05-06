@@ -8,7 +8,7 @@ export default async function handler(
   res: NextApiResponse,
 ): Promise<void> {
   try {
-    const { filter, timePeriod } = req.query;
+    const { filter, timePeriod, take = 15 } = req.query;
     const orderByColumn =
       filter === 'popular'
         ? 'likeCount DESC, createdAt DESC'
@@ -107,7 +107,7 @@ export default async function handler(
         User as u ON pow.userId = u.id
       WHERE DATE(pow.createdAt) BETWEEN '${startDate}' AND '${endDate}')    
       ORDER BY ${orderByColumn}
-      LIMIT 15
+      LIMIT ${take}
     `;
 
     const powAndSubmissions = await prisma.$queryRawUnsafe(rawQuery);

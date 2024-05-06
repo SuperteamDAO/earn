@@ -27,7 +27,7 @@ interface TotalType {
 }
 interface HomeProps {
   children: ReactNode;
-  type: 'home' | 'category' | 'region' | 'niche';
+  type: 'home' | 'category' | 'region' | 'niche' | 'feed';
 }
 
 export function Home({ children, type }: HomeProps) {
@@ -91,10 +91,12 @@ export function Home({ children, type }: HomeProps) {
               setTriggerLogin={setTriggerLogin}
             />
             <Box w="full" pr={{ base: 0, lg: 6 }}>
-              <HomeBanner
-                setTriggerLogin={setTriggerLogin}
-                userCount={totals.totalUsers}
-              />
+              {type === 'home' && (
+                <HomeBanner
+                  setTriggerLogin={setTriggerLogin}
+                  userCount={totals.totalUsers}
+                />
+              )}
               {type === 'category' && (
                 <CategoryBanner
                   type={
@@ -161,6 +163,7 @@ export function Home({ children, type }: HomeProps) {
               }}
             >
               <HomeSideBar
+                type={type}
                 isTotalLoading={isTotalLoading}
                 total={totals?.totalInUSD ?? 0}
                 listings={totals?.count ?? 0}
