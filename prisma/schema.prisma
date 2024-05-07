@@ -198,6 +198,7 @@ model Submission {
   otherInfo          String?          @db.VarChar(2000)
   ask                Int?
   label              SubmissionLabels @default(Unreviewed)
+  rewardInUSD        Int              @default(0)
   listing            Bounties         @relation(fields: [listingId], references: [id])
   user               User             @relation(fields: [userId], references: [id])
 
@@ -326,15 +327,16 @@ model User {
 }
 
 model TalentRankings {
-  id        String                  @id @default(uuid())
-  rank      Int
-  submissions Int @default(0)
-  wins Int @default(0)
-  winRate Int @default(0)
-  userId    String
-  skill     TalentRankingSkills @default(ALL)
-  timeframe TalentRankingTimeframes @default(ALL_TIME)
-  user      User                    @relation(fields: [userId], references: [id])
+  id          String                   @id @default(uuid())
+  userId      String
+  skill       TalentRankingSkills      @default(ALL)
+  timeframe   TalentRankingTimeframe @default(ALL_TIME)
+  totalEarnedInUSD Int
+  rank        Int
+  submissions Int                      @default(0)
+  winRate     Int                      @default(0)
+  wins        Int                      @default(0)
+  user        User                     @relation(fields: [userId], references: [id])
 
   @@unique([userId, skill, timeframe])
   @@index([userId, skill, timeframe])
@@ -350,6 +352,8 @@ model PoW {
   createdAt   DateTime @default(now())
   subSkills   Json?
   updatedAt   DateTime @updatedAt
+  like        Json?
+  likes       Int      @default(0)
   user        User     @relation(fields: [userId], references: [id])
 
   @@index([userId])
@@ -455,13 +459,6 @@ enum TalentRankingSkills {
   ALL
 }
 
-enum TalentRankingTimeframes {
-  THIS_YEAR
-  LAST_MONTH
-  LAST_QUARTER
-  ALL_TIME
-}
-
 enum EmailType {
   BOUNTY_REVIEW
   BOUNTY_DEADLINE
@@ -546,4 +543,11 @@ enum SubmissionLabels {
   Reviewed
   Shortlisted
   Spam
+}
+
+enum TalentRankingTimeframe {
+  THIS_YEAR
+  LAST_30_DAYS
+  LAST_7_DAYS
+  ALL_TIME
 }

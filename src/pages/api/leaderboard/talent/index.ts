@@ -1,20 +1,20 @@
 import { type NextApiRequest, type NextApiResponse } from 'next';
 
 import {
-  firstAndLastDayOfLastMonth,
-  // firstAndLastDayOfLastQuarter,
-  // firstDayOfYear
+  firstDayOfYear,
+  lastSevenDays,
+  lastThirtyDays,
+  type SKILL,
+  type TIMEFRAME,
 } from '@/features/leaderboard';
 import { prisma } from '@/prisma';
-
-type SKILL_FILTER = 'DEVELOPMENT' | 'DESIGN' | 'CONTENT' | 'OTHER' | 'ALL';
 
 interface RankingCriteria {
   dollarsEarnedWeight: number;
   winRateWeight: number;
 }
 
-const skillCategories: Record<SKILL_FILTER, string[]> = {
+const skillCategories: Record<SKILL, string[]> = {
   DEVELOPMENT: ['Frontend', 'Backend', 'Blockchain', 'Mobile'],
   DESIGN: ['Design'],
   CONTENT: ['Content'],
@@ -24,7 +24,7 @@ const skillCategories: Record<SKILL_FILTER, string[]> = {
 
 function buildTalentLeaderboardQuery(
   rankingCriteria: RankingCriteria,
-  skillFilter: SKILL_FILTER,
+  skillFilter: SKILL,
   dateFilter?: {
     range: [string] | [string, string];
     label: string;
@@ -35,11 +35,11 @@ function buildTalentLeaderboardQuery(
   const baseQuery = `
     SELECT
       u.id AS userId,
-      u.totalEarnedInUSD,
+      SUM(s.rewardInUSD) AS totalEarnedInUSD,
       COUNT(s.id) AS submissions,
       SUM(s.isWinner) AS wins,
       COALESCE(AVG(s.isWinner), 0) AS winRate,
-      (u.totalEarnedInUSD * ${dollarsEarnedWeight} + COALESCE(AVG(s.isWinner), 0) * ${winRateWeight}) AS score
+      (SUM(s.rewardInUSD) * ${dollarsEarnedWeight} + COALESCE(AVG(s.isWinner), 0) * ${winRateWeight}) AS score
     FROM User u
     LEFT JOIN Submission s ON u.id = s.userId
     LEFT JOIN Bounties b ON s.listingId = b.id
@@ -72,6 +72,7 @@ function buildTalentLeaderboardQuery(
 submissions,
 wins,
 ROUND(winRate * 100) AS winRate,
+totalEarnedInUSD,
 userId,
 '${skillFilter}' AS skill,
 '${dateFilter ? dateFilter.label : 'ALL_TIME'}' AS timeframe
@@ -81,17 +82,19 @@ userId,
       ${skillCondition}
       ${dateCondition}
       ${groupByClause}
+HAVING SUM(s.rewardInUSD) > 0
     ) AS ranking
   `;
 
   const upsertQuery = `
-    INSERT INTO TalentRankings (id, \`rank\`, submissions, wins, winRate, userId, skill, timeframe)
+    INSERT INTO TalentRankings (id, \`rank\`, submissions, wins, winRate, totalEarnedInUSD, userId, skill, timeframe)
     ${rankingSubquery}
     ON DUPLICATE KEY UPDATE
       \`rank\` = VALUES(\`rank\`),
       submissions = VALUES(submissions),
       wins = VALUES(wins),
       winRate = VALUES(winRate),
+      totalEarnedInUSD = VALUES(totalEarnedInUSD),
       skill = VALUES(skill),
       timeframe = VALUES(timeframe)
   `;
@@ -100,12 +103,18 @@ userId,
 }
 
 // Example usage to create queries for each skill filter
-const skillsFilter: SKILL_FILTER[] = [
+const skillsFilter: SKILL[] = [
   'ALL',
   'DEVELOPMENT',
   'OTHER',
   'DESIGN',
   'CONTENT',
+];
+
+const timeframeFilters: [TIMEFRAME, [string, string] | [string]][] = [
+  ['LAST_7_DAYS', lastSevenDays()],
+  ['LAST_30_DAYS', lastThirtyDays()],
+  ['THIS_YEAR', firstDayOfYear()],
 ];
 
 const rankingCriteria: RankingCriteria = {
@@ -116,78 +125,39 @@ const rankingCriteria: RankingCriteria = {
 export default async function user(_: NextApiRequest, res: NextApiResponse) {
   // TODO: convert to only POST request later
 
-  const allQueries = skillsFilter.map((skillFilter) => {
-    return buildTalentLeaderboardQuery(rankingCriteria, skillFilter, {
-      range: firstAndLastDayOfLastMonth(),
-      label: 'LAST_MONTH',
-    });
-  });
-  try {
-    for (let i = 0; i < allQueries.length; i++) {
-      // console.log(allQueries[i]);
-      const result = await prisma.$executeRawUnsafe(allQueries[i]!);
-      console.log('skill -', skillsFilter[i], ' done - ', result);
-    }
-    console.log('done');
-    res.send('done');
-  } catch (err) {
-    console.log('Erorr', JSON.stringify(err, null, 2));
-    res.send('fail');
-  }
-}
+  await prisma.$transaction(async (tsx) => {
+    await tsx.talentRankings.deleteMany({});
 
-// function buildTalentLeaderboardQuerySelect(
-//   rankingCriteria: RankingCriteria,
-//   skillFilter: SKILL_FILTER,
-//   dateFilter?: {
-//     range: [string] | [string, string],
-//     label: string
-//   }
-// ): string {
-//   const { dollarsEarnedWeight, winRateWeight } = rankingCriteria;
-//
-//   const baseQuery = `
-//     SELECT
-//       u.id AS userId,
-//       u.totalEarnedInUSD,
-//       COALESCE(AVG(s.isWinner), 0) AS winRate,
-//       (u.totalEarnedInUSD * ${dollarsEarnedWeight} + COALESCE(AVG(s.isWinner), 0) * ${winRateWeight}) AS score
-//     FROM User u
-//     LEFT JOIN Submission s ON u.id = s.userId
-//     LEFT JOIN Bounties b ON s.listingId = b.id
-//   `;
-//
-//   const skillCondition =
-//     skillFilter !== 'ALL'
-//       ? `AND (${skillCategories[skillFilter]
-//         .map((skill) => `JSON_CONTAINS(JSON_EXTRACT(b.skills, '$[*].skills'), JSON_QUOTE('${skill}'))`)
-//         .join(' OR ')})`
-//       : '';
-//
-//   const dateCondition = dateFilter
-//     ? dateFilter.range.length === 1
-//       ? `AND b.createdAt >= '${dateFilter.range[0]}'`
-//       : `AND b.createdAt BETWEEN '${dateFilter.range[0]}' AND '${dateFilter.range[1]}'`
-//     : '';
-//
-//   const groupByClause = `
-//     GROUP BY u.id
-//   `;
-//
-//   const query = `
-//     SELECT
-//       userId,
-//       '${skillFilter}' AS skill,
-//       '${dateFilter ? dateFilter.label : 'ALL_TIME'}' AS timeframe,
-//       RANK() OVER (ORDER BY score DESC) AS \`rank\`
-//     FROM (
-//       ${baseQuery}
-//       WHERE 1=1
-//       ${skillCondition}
-//       ${dateCondition}
-//       ${groupByClause}
-//     ) AS ranking
-//   `;
-//
-//   return query;
-// }
+    const allQueries: string[] = [];
+
+    skillsFilter.forEach((skillFilter) => {
+      allQueries.push(
+        buildTalentLeaderboardQuery(rankingCriteria, skillFilter),
+      );
+    });
+
+    timeframeFilters.forEach((timeframe) => {
+      skillsFilter.forEach((skillFilter) => {
+        allQueries.push(
+          buildTalentLeaderboardQuery(rankingCriteria, skillFilter, {
+            range: timeframe[1],
+            label: timeframe[0],
+          }),
+        );
+      });
+    });
+
+    try {
+      for (let i = 0; i < allQueries.length; i++) {
+        console.log(allQueries[i]);
+        const result = await tsx.$executeRawUnsafe(allQueries[i]!);
+        console.log(' done - ', result);
+      }
+      console.log('done');
+      res.send('done');
+    } catch (err) {
+      console.log('Erorr', JSON.stringify(err, null, 2));
+      res.send('fail');
+    }
+  });
+}

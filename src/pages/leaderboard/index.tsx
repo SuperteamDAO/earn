@@ -1,11 +1,13 @@
 import { Box, Flex, VStack } from '@chakra-ui/react';
 import {
   type TalentRankingSkills,
-  type TalentRankingTimeframes,
+  type TalentRankingTimeframe,
 } from '@prisma/client';
 import axios from 'axios';
 import { type GetServerSideProps } from 'next';
-import { useEffect, useState } from 'react';
+import { useRouter } from 'next/router';
+import { getServerSession } from 'next-auth/next';
+import { useEffect, useState, useTransition } from 'react';
 
 import { TotalStats } from '@/components/home/TotalStats';
 import {
@@ -14,13 +16,17 @@ import {
   FilterRow,
   getSubskills,
   Introduction,
+  Pagination,
   RanksTable,
   type RowType,
-  type Timeframe,
+  type SKILL,
+  type TIMEFRAME,
 } from '@/features/leaderboard';
 import { Default } from '@/layouts/Default';
 import { Meta } from '@/layouts/Meta';
 import { prisma } from '@/prisma';
+
+import { authOptions } from '../../pages/api/auth/[...nextauth]';
 
 interface TotalType {
   count?: number;
@@ -30,14 +36,28 @@ interface TotalType {
 
 interface Props {
   results: RowType[];
+  skill: SKILL;
+  timeframe: TIMEFRAME;
+  page: number;
+  count: number;
 }
 
-function TalentLeaderboard({ results }: Props) {
+function TalentLeaderboard({
+  results,
+  skill: curSkill,
+  timeframe: curTimeframe,
+  page: curPage,
+  count,
+}: Props) {
   const [isTotalLoading, setIsTotalLoading] = useState(true);
   const [totals, setTotals] = useState<TotalType>({});
 
-  const [timeframe, setTimeframe] = useState<Timeframe>('this_year');
-  // const [status, setStatus] = useState<Status>('overall_rankings');
+  const [timeframe, setTimeframe] = useState<TIMEFRAME>(curTimeframe);
+  const [skill, setSkill] = useState<SKILL>(curSkill);
+  const [page, setPage] = useState(curPage);
+
+  const [, startTransition] = useTransition();
+  const router = useRouter();
 
   const getTotalInfo = async () => {
     try {
@@ -52,6 +72,43 @@ function TalentLeaderboard({ results }: Props) {
   useEffect(() => {
     getTotalInfo();
   }, []);
+
+  useEffect(() => {
+    const url = new URL(window.location.href);
+
+    if (url.searchParams.get('skill') !== skill)
+      url.searchParams.set('skill', skill);
+
+    if (url.searchParams.get('timeframe') !== timeframe)
+      url.searchParams.set('timeframe', timeframe);
+
+    if (Number(url.searchParams.get('page')) !== page)
+      url.searchParams.set('page', String(page));
+
+    startTransition(() => {
+      router.replace(`?${url.searchParams.toString()}`);
+    });
+  }, [skill, timeframe, page]);
+
+  // useEffect(() => {
+  //   const url = new URL(window.location.href);
+  //   if (url.searchParams.get('timeframe') === timeframe) return
+  //
+  //   url.searchParams.set('timeframe', timeframe);
+  //   startTransition(() => {
+  //     router.replace(`?${url.searchParams.toString()}`);
+  //   });
+  // }, [timeframe])
+  //
+  // useEffect(() => {
+  //   const url = new URL(window.location.href);
+  //   if (Number(url.searchParams.get('page')) === page) return
+  //
+  //   url.searchParams.set('page', String(page));
+  //   startTransition(() => {
+  //     router.replace(`?${url.searchParams.toString()}`);
+  //   });
+  // }, [page])
 
   return (
     <Default
@@ -83,12 +140,19 @@ function TalentLeaderboard({ results }: Props) {
               <Introduction />
               <ComingSoon />
             </VStack>
-            <VStack w={'100%'}>
+            <VStack align="start" w={'100%'}>
               <FilterRow
+                skill={skill}
+                setSkill={(value: SKILL) => setSkill(value)}
                 timeframe={timeframe}
-                setTimeframe={(value: Timeframe) => setTimeframe(value)}
+                setTimeframe={(value: TIMEFRAME) => setTimeframe(value)}
               />
               <RanksTable rankings={results} />
+              <Pagination
+                count={count}
+                page={page}
+                setPage={(v: number) => setPage(v)}
+              />
             </VStack>
           </VStack>
           <VStack display={{ base: 'none', md: 'block' }} w={{ md: '30%' }}>
@@ -108,18 +172,40 @@ function TalentLeaderboard({ results }: Props) {
 
 export default TalentLeaderboard;
 
-export const getServerSideProps: GetServerSideProps = async ({ query }) => {
+export const getServerSideProps: GetServerSideProps = async ({
+  query,
+  req,
+  res,
+}) => {
   const skill = (query.skill || 'ALL') as TalentRankingSkills;
-  const timeframe = (query.timeframe || 'THIS_YEAR') as TalentRankingTimeframes;
-  const page = Number(query.page) || 1;
+  const timeframe = (query.timeframe || 'ALL_TIME') as TalentRankingTimeframe;
+  let page = Number(query.page) || 1;
+  if (page < 1) page = 1;
+  if (page > 10) page = 10;
+
+  const session = await getServerSession(req, res, authOptions);
+
+  const PAGE_SIZE = 10;
+
+  const count = await prisma.talentRankings.count({
+    where: {
+      skill,
+      timeframe,
+    },
+  });
+  console.log('count - ', count);
+  if (page * PAGE_SIZE > count) page = 1;
 
   const results = await prisma.talentRankings.findMany({
     where: {
       skill,
       timeframe,
     },
-    skip: (page - 1) * 10,
-    take: 10,
+    skip: (page - 1) * PAGE_SIZE,
+    take: PAGE_SIZE,
+    orderBy: {
+      rank: 'asc',
+    },
     include: {
       user: {
         select: {
@@ -128,27 +214,59 @@ export const getServerSideProps: GetServerSideProps = async ({ query }) => {
           lastName: true,
           username: true,
           skills: true,
-          totalEarnedInUSD: true,
         },
       },
     },
   });
 
-  const formatted: RowType[] = results.map((r) => ({
-    rank: r.rank,
-    skills: getSubskills(r.user.skills as any, skill),
-    username: r.user.username,
-    pfp: r.user.photo,
-    dollarsEarned: r.user.totalEarnedInUSD,
-    name: r.user.firstName + ' ' + r.user.lastName,
-    submissions: r.submissions,
-    wins: r.wins,
-    winRate: r.winRate,
-  }));
+  let userRank: (typeof results)[0] | null = null;
+  if (session && !results.find((c) => c.userId === session.user.id)) {
+    userRank = await prisma.talentRankings.findFirst({
+      where: {
+        skill,
+        timeframe,
+        userId: session.user.id,
+      },
+      skip: (page - 1) * PAGE_SIZE,
+      take: PAGE_SIZE,
+      include: {
+        user: {
+          select: {
+            photo: true,
+            firstName: true,
+            lastName: true,
+            username: true,
+            skills: true,
+          },
+        },
+      },
+    });
+    if (userRank) {
+      results.push(userRank);
+    }
+  }
+
+  const formatted: RowType[] = results.map((r) => {
+    return {
+      rank: r.rank,
+      skills: getSubskills(r.user.skills as any, skill),
+      username: r.user.username,
+      pfp: r.user.photo,
+      dollarsEarned: r.totalEarnedInUSD,
+      name: r.user.firstName + ' ' + r.user.lastName,
+      submissions: r.submissions,
+      wins: r.wins,
+      winRate: r.winRate,
+    };
+  });
 
   return {
     props: {
       results: formatted,
+      skill,
+      timeframe,
+      page,
+      count,
     },
   };
 };

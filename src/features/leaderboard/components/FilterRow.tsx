@@ -8,8 +8,10 @@ import {
   Text,
   VStack,
 } from '@chakra-ui/react';
+import debounce from 'lodash.debounce';
+import { useCallback } from 'react';
 
-import { Timeframe } from '../types';
+import { type SKILL, type TIMEFRAME } from '../types';
 
 const selectedStyles = {
   borderColor: 'brand.purple',
@@ -23,11 +25,52 @@ const tabfontsize = {
 };
 
 interface Props {
-  timeframe: Timeframe;
-  setTimeframe: (value: Timeframe) => void;
+  timeframe: TIMEFRAME;
+  setTimeframe: (value: TIMEFRAME) => void;
+  skill: SKILL;
+  setSkill: (value: SKILL) => void;
 }
 
-export function FilterRow({ timeframe, setTimeframe }: Props) {
+export function FilterRow({ timeframe, setTimeframe, setSkill, skill }: Props) {
+  const debouncedSetSkill = useCallback(debounce(decideSkill, 500), []);
+
+  function decideSkill(value: number) {
+    switch (value) {
+      case 0:
+        setSkill('ALL');
+        break;
+      case 1:
+        setSkill('CONTENT');
+        break;
+      case 2:
+        setSkill('DESIGN');
+        break;
+      case 3:
+        setSkill('DEVELOPMENT');
+        break;
+      case 4:
+        setSkill('OTHER');
+        break;
+    }
+  }
+
+  function skillIndexOf(value: SKILL): number {
+    switch (value) {
+      case 'ALL':
+        return 0;
+      case 'CONTENT':
+        return 1;
+      case 'DESIGN':
+        return 2;
+      case 'DEVELOPMENT':
+        return 3;
+      case 'OTHER':
+        return 4;
+      default:
+        return 0;
+    }
+  }
+
   return (
     <VStack w="full">
       <Flex
@@ -38,7 +81,11 @@ export function FilterRow({ timeframe, setTimeframe }: Props) {
         borderBottom="2px solid"
         borderBottomColor={'brand.slate.200'}
       >
-        <Tabs color="brand.slate.400">
+        <Tabs
+          color="brand.slate.400"
+          defaultIndex={skillIndexOf(skill)}
+          onChange={(value) => debouncedSetSkill(value)}
+        >
           <TabList alignItems="center" borderBottomWidth={0}>
             <Tab
               w="max-content"
@@ -108,20 +155,23 @@ function Timeframe({
   value,
   setValue,
 }: {
-  value: Timeframe;
-  setValue: (value: Timeframe) => void;
+  value: TIMEFRAME;
+  setValue: (value: TIMEFRAME) => void;
 }) {
+  const debouncedSetTimeframe = useCallback(debounce(setValue, 500), []);
+
   return (
     <Select
       color="brand.slate.400"
       fontSize={{ base: 'xs', sm: 'sm' }}
-      onChange={(e) => setValue(e.target.value as Timeframe)}
+      onChange={(e) => debouncedSetTimeframe(e.target.value as TIMEFRAME)}
       value={value}
       variant="unstyled"
     >
-      <option value="this_year">This Year</option>
-      <option value="last_quarter">Last Quarter</option>
-      <option value="last_month">Last Month</option>
+      <option value="ALL_TIME">All Time</option>
+      <option value="THIS_YEAR">This Year</option>
+      <option value="LAST_30_DAYS">Last 30 Days</option>
+      <option value="LAST_7_DAYS">Last 7 Days</option>
     </Select>
   );
 }

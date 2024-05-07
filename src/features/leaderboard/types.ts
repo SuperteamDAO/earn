@@ -1,5 +1,9 @@
-export type Timeframe = 'this_year' | 'last_month' | 'last_quarter';
-export type Status = 'overall_rankings' | 'content' | 'design' | 'others';
+export type TIMEFRAME =
+  | 'THIS_YEAR'
+  | 'LAST_30_DAYS'
+  | 'LAST_7_DAYS'
+  | 'ALL_TIME';
+export type SKILL = 'ALL' | 'CONTENT' | 'DESIGN' | 'DEVELOPMENT' | 'OTHER';
 
 export interface RowType {
   rank: number;

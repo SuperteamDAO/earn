@@ -63,7 +63,13 @@ interface Props {
 
 export function RanksTable({ rankings }: Props) {
   return (
-    <TableContainer overflowX="auto" overflowY="hidden" w="full">
+    <TableContainer
+      overflowX="auto"
+      overflowY="hidden"
+      w="full"
+      border="1px solid #E2E8F0"
+      borderRadius="md"
+    >
       <Table>
         <Thead>
           <Tr textTransform={'none'} bg="#F8FAFC">
@@ -82,17 +88,27 @@ export function RanksTable({ rankings }: Props) {
           </Tr>
         </Thead>
         <Tbody color="brand.slate.500" fontSize="xs" fontWeight={500}>
-          {rankings.map((row) => (
+          {rankings.map((row, i) => (
             <Tr key={row.username}>
-              <Td textAlign={'center'}>#{row.rank}</Td>
-              <Td align="center" gap={2} display="flex">
+              <Td
+                textAlign={'center'}
+                borderBottomWidth={i === rankings.length - 1 ? '0px' : '1px'}
+              >
+                #{row.rank}
+              </Td>
+              <Td
+                align="center"
+                gap={2}
+                display="flex"
+                borderBottomWidth={i === rankings.length - 1 ? '0px' : '1px'}
+              >
                 <Avatar w={8} h={8} src={row.pfp ?? undefined} />
                 <VStack align="start" lineHeight={0.7}>
                   <Text color="black">{row.name}</Text>
                   <Text>@{row.username}</Text>
                 </VStack>
               </Td>
-              <Td>
+              <Td borderBottomWidth={i === rankings.length - 1 ? '0px' : '1px'}>
                 <Flex justify="center" gap={2}>
                   <Text color="black" textAlign={'center'}>
                     {formatter(row.dollarsEarned)}
@@ -100,10 +116,28 @@ export function RanksTable({ rankings }: Props) {
                   <Text textAlign={'center'}>USD</Text>
                 </Flex>
               </Td>
-              <Td textAlign={'center'}>{row.submissions}</Td>
-              <Td textAlign={'center'}>{row.wins}</Td>
-              <Td textAlign={'center'}>{row.winRate}</Td>
-              <Td textAlign={'center'}>
+              <Td
+                textAlign={'center'}
+                borderBottomWidth={i === rankings.length - 1 ? '0px' : '1px'}
+              >
+                {row.submissions}
+              </Td>
+              <Td
+                textAlign={'center'}
+                borderBottomWidth={i === rankings.length - 1 ? '0px' : '1px'}
+              >
+                {row.wins}
+              </Td>
+              <Td
+                textAlign={'center'}
+                borderBottomWidth={i === rankings.length - 1 ? '0px' : '1px'}
+              >
+                {row.winRate}
+              </Td>
+              <Td
+                textAlign={'center'}
+                borderBottomWidth={i === rankings.length - 1 ? '0px' : '1px'}
+              >
                 <Flex gap={2}>
                   {row.skills.slice(0, 2).map((s) => (
                     <Badge
