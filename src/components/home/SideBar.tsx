@@ -1,5 +1,13 @@
 import { ArrowForwardIcon } from '@chakra-ui/icons';
-import { Box, Flex, Image, Skeleton, Text } from '@chakra-ui/react';
+import {
+  Box,
+  Button,
+  Divider,
+  Flex,
+  Image,
+  Skeleton,
+  Text,
+} from '@chakra-ui/react';
 import axios from 'axios';
 import dayjs from 'dayjs';
 import NextLink from 'next/link';
@@ -226,7 +234,7 @@ const RecentActivity = () => {
           <Flex align={'center'}>
             <Text
               overflow={'hidden'}
-              maxW={32}
+              maxW={36}
               color={'brand.slate.800'}
               fontSize={'0.9rem'}
               fontWeight={600}
@@ -237,7 +245,7 @@ const RecentActivity = () => {
             </Text>
             <Text
               overflow={'hidden'}
-              maxW={20}
+              maxW={'5.7rem'}
               color={'brand.slate.400'}
               fontSize={'sm'}
               fontWeight={500}
@@ -340,12 +348,36 @@ const OpenListings = () => {
           <ArrowForwardIcon ml={1} />
         </Text>
       </Flex>
-      <Flex direction={'column'} rowGap={'1rem'} w={'full'} mt={4}>
+      <Flex direction={'column'} w={'full'} mt={4}>
         {listings?.bounties?.map((listing) => {
           return <ListingCardMobile bounty={listing} key={listing?.id} />;
         })}
       </Flex>
     </Box>
+  );
+};
+
+const VibeCard = ({ number }: { number: number }) => {
+  return (
+    <Flex px={4} py={4} bg="brand.slate.100" borderRadius={8}>
+      <Text color="brand.slate.500" fontSize="13px" fontWeight={500}>
+        <Text as="span" color="brand.slate.900">
+          {number}{' '}
+        </Text>
+        people vibing rn
+      </Text>
+      <Divider mx={2} orientation="vertical" />
+      <Button
+        color="brand.slate.500"
+        fontSize="sm"
+        fontWeight={500}
+        bg="white"
+        borderColor={'brand.slate.200'}
+        variant={'outline'}
+      >
+        click to vibe w/ everyone
+      </Button>
+    </Flex>
   );
 };
 
@@ -357,8 +389,13 @@ export const HomeSideBar = ({
   isTotalLoading,
 }: SideBarProps) => {
   return (
-    <Flex direction={'column'} rowGap={'2.5rem'} w={'22.125rem'} py={6} pl={6}>
-      {type === 'feed' && <OpenListings />}
+    <Flex direction={'column'} rowGap={'2.5rem'} w={'24rem'} py={6} pl={6}>
+      {type === 'feed' && (
+        <>
+          <VibeCard number={35} />
+          <OpenListings />
+        </>
+      )}
       <RecentEarners earners={earners} />
       {type !== 'feed' && (
         <>

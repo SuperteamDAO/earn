@@ -59,7 +59,7 @@ export function ListingWinners({ bounty }: Props) {
   }
 
   return (
-    <Box maxW={'7xl'} mx={'auto'} mt={10}>
+    <Box maxW={'8xl'} mx={'auto'} mt={10}>
       <Text
         mx={3}
         mb={4}

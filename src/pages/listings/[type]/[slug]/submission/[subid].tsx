@@ -72,7 +72,7 @@ const Sumbissions = ({ slug, subid }: BountyDetailsProps) => {
               justify={['center', 'center', 'space-between', 'space-between']}
               flexDir={['column-reverse', 'column-reverse', 'row', 'row']}
               gap={4}
-              maxW={'7xl'}
+              maxW={'8xl'}
               mx={'auto'}
               mb={10}
             >

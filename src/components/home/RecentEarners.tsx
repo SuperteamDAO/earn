@@ -36,7 +36,7 @@ const Earner = ({
           <EarnAvatar name={name} avatar={avatar} />
         </Center>
 
-        <Box w="11rem">
+        <Box w="13.8rem">
           <Text
             overflow="hidden"
             color={'black'}

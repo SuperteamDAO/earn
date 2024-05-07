@@ -56,7 +56,7 @@ export const SubmissionPage = ({ bounty, submission, user, link }: Props) => {
       flexDir={['column', 'column', 'row', 'row']}
       gap={4}
       w="full"
-      maxW={'7xl'}
+      maxW={'8xl'}
       mx={'auto'}
     >
       <VStack gap={3} w={'full'} mt={3}>
