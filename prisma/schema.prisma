@@ -502,6 +502,7 @@ enum Regions {
   MALAYSIA
   BALKAN
   PHILIPPINES
+  JAPAN
 }
 
 enum CompensationType {
