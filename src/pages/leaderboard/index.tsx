@@ -139,7 +139,6 @@ function TalentLeaderboard({
               display={{ base: 'flex', md: 'none' }}
             >
               <Introduction />
-              <ComingSoon />
             </VStack>
             <VStack align="start" w={'100%'}>
               <FilterRow
