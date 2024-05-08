@@ -1,3 +1,4 @@
+import { InfoOutlineIcon } from '@chakra-ui/icons';
 import {
   Divider,
   Flex,
@@ -6,6 +7,7 @@ import {
   TabList,
   Tabs,
   Text,
+  Tooltip,
   VStack,
 } from '@chakra-ui/react';
 import debounce from 'lodash.debounce';
@@ -130,6 +132,11 @@ export function FilterRow({ timeframe, setTimeframe, setSkill, skill }: Props) {
             >
               Others
             </Tab>
+            <Tooltip
+              label={`The skill filters showcase users based on the skills requested in the listings they've successfully won, not the skills listed in their talent profiles.`}
+            >
+              <InfoOutlineIcon ml={4} />
+            </Tooltip>
           </TabList>
         </Tabs>
         <Flex align="center" display={{ base: 'none', md: 'flex' }}>

@@ -38,21 +38,13 @@ export function RanksTable({ rankings, skill, userRank }: Props) {
   return (
     <TableContainer
       className="hide-scrollbar"
-      pos="relative"
       overflowX="auto"
       w="full"
-      h={
-        rankings.length === 0
-          ? '35rem'
-          : {
-              base: '39rem',
-              md: '47.4rem',
-            }
-      }
+      h={rankings.length === 0 ? '35rem' : 'auto'}
       border="1px solid #E2E8F0"
       borderRadius="md"
     >
-      <Table>
+      <Table pos="relative" style={{ borderCollapse: 'collapse' }}>
         <Thead>
           <Tr textTransform={'none'} bg="#F8FAFC">
             <Th
@@ -311,16 +303,24 @@ export function RanksTable({ rankings, skill, userRank }: Props) {
               </Tr>
             ))}
             {userInfo && (
-              <Tr pos="sticky" zIndex={100} bottom={0} h="full" bg="#F5F3FF80">
+              <Tr w="full" bg="#F5F3FF80">
                 <Td
-                  h="full"
+                  pos="sticky"
+                  zIndex={100}
+                  bottom={0}
                   px={{ base: 1, md: 2 }}
                   textAlign={'center'}
                   borderBottomWidth={'0px'}
                 >
                   {userRank ? '#' + userRank.rank : '-'}
                 </Td>
-                <Td h="full" px={{ base: 1, md: 2 }} borderBottomWidth={'0px'}>
+                <Td
+                  pos="sticky"
+                  zIndex={100}
+                  bottom={0}
+                  px={{ base: 1, md: 2 }}
+                  borderBottomWidth={'0px'}
+                >
                   <Link
                     as={NextLink}
                     alignItems="center"
@@ -374,7 +374,13 @@ export function RanksTable({ rankings, skill, userRank }: Props) {
                     </VStack>
                   </Link>
                 </Td>
-                <Td h="full" px={{ base: 1, md: 2 }} borderBottomWidth={'0px'}>
+                <Td
+                  pos="sticky"
+                  zIndex={100}
+                  bottom={0}
+                  px={{ base: 1, md: 2 }}
+                  borderBottomWidth={'0px'}
+                >
                   <Flex
                     justify="center"
                     gap={2}
@@ -392,7 +398,9 @@ export function RanksTable({ rankings, skill, userRank }: Props) {
                   </Flex>
                 </Td>
                 <Td
-                  h="full"
+                  pos="sticky"
+                  zIndex={100}
+                  bottom={0}
                   px={{ base: 1, md: 2 }}
                   fontSize={{ base: 'xs', md: 'sm' }}
                   textAlign={'center'}
@@ -401,7 +409,9 @@ export function RanksTable({ rankings, skill, userRank }: Props) {
                   {userRank?.winRate ?? 0}%
                 </Td>
                 <Td
-                  h="full"
+                  pos="sticky"
+                  zIndex={100}
+                  bottom={0}
                   px={{ base: 1, md: 2 }}
                   textAlign={'center'}
                   borderBottomWidth={'0px'}
@@ -409,7 +419,9 @@ export function RanksTable({ rankings, skill, userRank }: Props) {
                   {userRank?.submissions ?? '-'}
                 </Td>
                 <Td
-                  h="full"
+                  pos="sticky"
+                  zIndex={100}
+                  bottom={0}
                   px={{ base: 1, md: 2 }}
                   textAlign={'center'}
                   borderBottomWidth={'0px'}
@@ -417,11 +429,13 @@ export function RanksTable({ rankings, skill, userRank }: Props) {
                   {userRank?.wins ?? '-'}
                 </Td>
                 <Td
+                  pos="sticky"
+                  zIndex={100}
+                  bottom={0}
                   display={{
                     base: 'none',
                     md: skill !== 'ALL' ? 'none' : 'table-cell',
                   }}
-                  h="full"
                   px={{ base: 1, md: 2 }}
                   borderBottomWidth={'0px'}
                 >
