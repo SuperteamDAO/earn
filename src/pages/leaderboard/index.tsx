@@ -253,9 +253,7 @@ export const getServerSideProps: GetServerSideProps = async ({
         },
       },
     });
-
     if (userRank) {
-      console.log(userRank.user.skills);
       formatterUserRank = {
         rank: userRank.rank,
         skills: getSubskills(
@@ -287,6 +285,7 @@ export const getServerSideProps: GetServerSideProps = async ({
     };
   });
 
+  console.log('userRank - ', formatterUserRank);
   return {
     props: {
       results: formatted,
