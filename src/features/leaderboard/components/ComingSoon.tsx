@@ -2,7 +2,7 @@ import { Text, VStack } from '@chakra-ui/react';
 
 export function ComingSoon() {
   return (
-    <VStack align="start" p={6} bg="#F0F9FF" rounded={12}>
+    <VStack align="start" p={6} fontSize={'sm'} bg="#F0F9FF" rounded={12}>
       <Text fontWeight={600}>Coming Soon... </Text>
       <Text color="brand.slate.500">
         We’re actively looking at ways of rewarding the top contributors.{' '}

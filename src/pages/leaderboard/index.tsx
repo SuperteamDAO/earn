@@ -20,6 +20,7 @@ import {
   RanksTable,
   type RowType,
   type SKILL,
+  skillCategories,
   type TIMEFRAME,
 } from '@/features/leaderboard';
 import { Default } from '@/layouts/Default';
@@ -155,7 +156,11 @@ function TalentLeaderboard({
               />
             </VStack>
           </VStack>
-          <VStack display={{ base: 'none', md: 'block' }} w={{ md: '30%' }}>
+          <VStack
+            gap={6}
+            display={{ base: 'none', md: 'flex' }}
+            w={{ md: '30%' }}
+          >
             <TotalStats
               TVE={totals?.totalInUSD ?? 0}
               bountyCount={totals?.count ?? 0}
@@ -181,7 +186,6 @@ export const getServerSideProps: GetServerSideProps = async ({
   const timeframe = (query.timeframe || 'ALL_TIME') as TalentRankingTimeframe;
   let page = Number(query.page) || 1;
   if (page < 1) page = 1;
-  if (page > 10) page = 10;
 
   const session = await getServerSession(req, res, authOptions);
 
@@ -194,8 +198,10 @@ export const getServerSideProps: GetServerSideProps = async ({
     },
   });
   console.log('count - ', count);
-  if (page * PAGE_SIZE > count) page = 1;
-
+  const totalPages = Math.ceil(count / PAGE_SIZE);
+  if (page < 1 || page > totalPages) {
+    page = 1;
+  }
   const results = await prisma.talentRankings.findMany({
     where: {
       skill,
@@ -249,7 +255,7 @@ export const getServerSideProps: GetServerSideProps = async ({
   const formatted: RowType[] = results.map((r) => {
     return {
       rank: r.rank,
-      skills: getSubskills(r.user.skills as any, skill),
+      skills: getSubskills(r.user.skills as any, skillCategories[skill]),
       username: r.user.username,
       pfp: r.user.photo,
       dollarsEarned: r.totalEarnedInUSD,

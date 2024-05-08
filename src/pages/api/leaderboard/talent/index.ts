@@ -5,6 +5,7 @@ import {
   lastSevenDays,
   lastThirtyDays,
   type SKILL,
+  skillCategories,
   type TIMEFRAME,
 } from '@/features/leaderboard';
 import { prisma } from '@/prisma';
@@ -13,14 +14,6 @@ interface RankingCriteria {
   dollarsEarnedWeight: number;
   winRateWeight: number;
 }
-
-const skillCategories: Record<SKILL, string[]> = {
-  DEVELOPMENT: ['Frontend', 'Backend', 'Blockchain', 'Mobile'],
-  DESIGN: ['Design'],
-  CONTENT: ['Content'],
-  OTHER: ['Other', 'Growth', 'Community'],
-  ALL: [],
-};
 
 function buildTalentLeaderboardQuery(
   rankingCriteria: RankingCriteria,

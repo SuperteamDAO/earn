@@ -9,7 +9,14 @@ import Semistar from '../icons/semistart.svg';
 
 export function Introduction() {
   return (
-    <VStack align="start" gap={4} p={6} bg="#FAF5FF" rounded={12}>
+    <VStack
+      align="start"
+      gap={4}
+      p={6}
+      fontSize={'sm'}
+      bg="#FAF5FF"
+      rounded={12}
+    >
       <VStack align="start">
         <Image alt="Medal" src={Medal} height={26} width={26} />
         <Text fontWeight={600}>Introducing Leaderboards</Text>

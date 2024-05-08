@@ -74,6 +74,7 @@ export function FilterRow({ timeframe, setTimeframe, setSkill, skill }: Props) {
   return (
     <VStack w="full">
       <Flex
+        className="hide-scrollbar"
         justify="space-between"
         overflowX="auto"
         overflowY="hidden"
@@ -96,7 +97,7 @@ export function FilterRow({ timeframe, setTimeframe, setSkill, skill }: Props) {
             >
               Overall Rankings
             </Tab>
-            <Divider h="1.5rem" orientation="vertical" />
+            <Divider h="1.5rem" mr={1} ml={2} orientation="vertical" />
             <Tab
               my={0}
               px={2}
