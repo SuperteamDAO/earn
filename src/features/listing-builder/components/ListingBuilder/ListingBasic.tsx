@@ -157,7 +157,7 @@ export const ListingBasic = ({
       pocSocials: form?.pocSocials,
       region: form?.region,
       applicationType: form?.applicationType,
-      deadline: form?.deadline,
+      deadline: form?.deadline || undefined,
       timeToComplete: form?.timeToComplete,
       referredBy: form?.referredBy,
       isPrivate: form?.isPrivate,
@@ -175,7 +175,9 @@ export const ListingBasic = ({
       reset({
         title: form?.title,
         slug: form?.slug,
-        deadline: dayjs(form?.deadline).format('YYYY-MM-DDTHH:mm') || undefined,
+        deadline: form?.deadline
+          ? dayjs(form?.deadline).format('YYYY-MM-DDTHH:mm')
+          : undefined,
         skills: form?.skills,
         pocSocials: form?.pocSocials,
         region: form?.region,
@@ -307,8 +309,12 @@ export const ListingBasic = ({
               {...register('title', {
                 required: true,
                 onChange: (e) => {
-                  if (suggestions.length > 0) {
-                    setSuggestions(getSuggestions(e.target.value, type));
+                  const suggestedListings = getSuggestions(
+                    e.target.value,
+                    type,
+                  );
+                  if (suggestedListings) {
+                    setSuggestions(suggestedListings);
                   }
                 },
               })}

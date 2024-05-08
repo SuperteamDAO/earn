@@ -69,19 +69,20 @@ export const ListingPayments = ({
     onOpen: confirmOnOpen,
     onClose: confirmOnClose,
   } = useDisclosure();
-  const [errorMessage, setErrorMessage] = useState('');
-  const [mode, setMode] = useState('');
 
-  const { register, setValue, watch, control, handleSubmit, reset } = useForm({
-    defaultValues: {
-      compensationType: form?.compensationType,
-      rewardAmount: form?.rewardAmount,
-      minRewardAsk: form?.minRewardAsk,
-      maxRewardAsk: form?.maxRewardAsk,
-      token: form?.token,
-      rewards: form?.rewards,
-    },
-  });
+  const [errorMessage, setErrorMessage] = useState('');
+
+  const { register, setValue, watch, control, handleSubmit, reset, getValues } =
+    useForm({
+      defaultValues: {
+        compensationType: form?.compensationType,
+        rewardAmount: form?.rewardAmount,
+        minRewardAsk: form?.minRewardAsk,
+        maxRewardAsk: form?.maxRewardAsk,
+        token: form?.token,
+        rewards: form?.rewards,
+      },
+    });
 
   const compensationType = watch('compensationType');
   const rewardAmount = watch('rewardAmount');
@@ -152,14 +153,7 @@ export const ListingPayments = ({
 
   const isProject = type === 'project';
 
-  const onSubmit = async (data: any) => {
-    updateState({ ...data });
-    const formData = { ...form, ...data };
-    if (mode === 'DRAFT') {
-      createDraft(formData);
-      return;
-    }
-
+  const validateRewardsData = () => {
     let errorMessage = '';
 
     if (isProject) {
@@ -191,10 +185,33 @@ export const ListingPayments = ({
       }
     }
 
+    return errorMessage;
+  };
+
+  const handleSaveDraft = async () => {
+    const data = getValues();
+    const formData = { ...form, ...data };
+    createDraft(formData);
+  };
+
+  const handleUpdateListing = async () => {
+    const data = getValues();
+    const formData = { ...form, ...data };
+    const errorMessage = validateRewardsData();
     if (errorMessage) {
       setErrorMessage(errorMessage);
     } else {
-      mode === 'EDIT' ? createDraft(formData) : confirmOnOpen();
+      createDraft(formData);
+    }
+  };
+
+  const onSubmit = async (data: any) => {
+    updateState({ ...data });
+    const errorMessage = validateRewardsData();
+    if (errorMessage) {
+      setErrorMessage(errorMessage);
+    } else {
+      confirmOnOpen();
     }
   };
 
@@ -531,11 +548,10 @@ export const ListingPayments = ({
               isLoading={isDraftLoading}
               onClick={() => {
                 if (isNewOrDraft || isDuplicating) {
-                  setMode('DRAFT');
+                  handleSaveDraft();
                 } else {
-                  setMode('EDIT');
+                  handleUpdateListing();
                 }
-                handleSubmit(onSubmit);
               }}
               variant={editable ? 'solid' : 'outline'}
             >
