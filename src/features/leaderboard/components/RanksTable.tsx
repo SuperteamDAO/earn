@@ -16,6 +16,8 @@ import {
 } from '@chakra-ui/react';
 import NextLink from 'next/link';
 
+import { userStore } from '@/store/user';
+
 import { type RowType, type SKILL } from '../types';
 
 const formatter = new Intl.NumberFormat('en-US', {
@@ -27,17 +29,26 @@ const formatter = new Intl.NumberFormat('en-US', {
 interface Props {
   rankings: RowType[];
   skill: SKILL;
+  userRank: RowType | null;
 }
 
-export function RanksTable({ rankings, skill }: Props) {
+export function RanksTable({ rankings, skill, userRank }: Props) {
+  const { userInfo } = userStore();
+
   return (
     <TableContainer
       className="hide-scrollbar"
       pos="relative"
       overflowX="auto"
-      overflowY="hidden"
       w="full"
-      h={rankings.length === 0 ? '35rem' : 'auto'}
+      h={
+        rankings.length === 0
+          ? '35rem'
+          : {
+              base: '39rem',
+              md: '47.4rem',
+            }
+      }
       border="1px solid #E2E8F0"
       borderRadius="md"
     >
@@ -169,21 +180,12 @@ export function RanksTable({ rankings, skill }: Props) {
         )}
         {rankings.length > 0 && (
           <Tbody color="brand.slate.500" fontSize="xs" fontWeight={500}>
-            {rankings.map((row, i) => (
+            {rankings.map((row) => (
               <Tr key={row.username} h="full">
-                <Td
-                  h="full"
-                  px={{ base: 1, md: 2 }}
-                  textAlign={'center'}
-                  borderBottomWidth={i === rankings.length - 1 ? '0px' : '1px'}
-                >
+                <Td h="full" px={{ base: 1, md: 2 }} textAlign={'center'}>
                   #{row.rank}
                 </Td>
-                <Td
-                  h="full"
-                  px={{ base: 1, md: 2 }}
-                  borderBottomWidth={i === rankings.length - 1 ? '0px' : '1px'}
-                >
+                <Td h="full" px={{ base: 1, md: 2 }}>
                   <Link
                     as={NextLink}
                     alignItems="center"
@@ -237,11 +239,7 @@ export function RanksTable({ rankings, skill }: Props) {
                     </VStack>
                   </Link>
                 </Td>
-                <Td
-                  h="full"
-                  px={{ base: 1, md: 2 }}
-                  borderBottomWidth={i === rankings.length - 1 ? '0px' : '1px'}
-                >
+                <Td h="full" px={{ base: 1, md: 2 }}>
                   <Flex
                     justify="center"
                     gap={2}
@@ -263,24 +261,13 @@ export function RanksTable({ rankings, skill }: Props) {
                   px={{ base: 1, md: 2 }}
                   fontSize={{ base: 'xs', md: 'sm' }}
                   textAlign={'center'}
-                  borderBottomWidth={i === rankings.length - 1 ? '0px' : '1px'}
                 >
                   {row.winRate}%
                 </Td>
-                <Td
-                  h="full"
-                  px={{ base: 1, md: 2 }}
-                  textAlign={'center'}
-                  borderBottomWidth={i === rankings.length - 1 ? '0px' : '1px'}
-                >
+                <Td h="full" px={{ base: 1, md: 2 }} textAlign={'center'}>
                   {row.submissions}
                 </Td>
-                <Td
-                  h="full"
-                  px={{ base: 1, md: 2 }}
-                  textAlign={'center'}
-                  borderBottomWidth={i === rankings.length - 1 ? '0px' : '1px'}
-                >
+                <Td h="full" px={{ base: 1, md: 2 }} textAlign={'center'}>
                   {row.wins}
                 </Td>
                 <Td
@@ -290,7 +277,6 @@ export function RanksTable({ rankings, skill }: Props) {
                   }}
                   h="full"
                   px={{ base: 1, md: 2 }}
-                  borderBottomWidth={i === rankings.length - 1 ? '0px' : '1px'}
                 >
                   <Flex gap={2} h="full" textAlign={'center'}>
                     {row.skills.slice(0, 2).map((s) => (
@@ -324,6 +310,153 @@ export function RanksTable({ rankings, skill }: Props) {
                 </Td>
               </Tr>
             ))}
+            {userInfo && (
+              <Tr pos="sticky" zIndex={100} bottom={0} h="full" bg="#F5F3FF80">
+                <Td
+                  h="full"
+                  px={{ base: 1, md: 2 }}
+                  textAlign={'center'}
+                  borderBottomWidth={'0px'}
+                >
+                  {userRank ? '#' + userRank.rank : '-'}
+                </Td>
+                <Td h="full" px={{ base: 1, md: 2 }} borderBottomWidth={'0px'}>
+                  <Link
+                    as={NextLink}
+                    alignItems="center"
+                    gap={2}
+                    display="flex"
+                    href={`/t/${userInfo.username}`}
+                    target="_blank"
+                  >
+                    <Avatar
+                      w={{ base: 5, md: 8 }}
+                      h={{ base: 5, md: 8 }}
+                      src={userInfo.photo ?? undefined}
+                    />
+                    <VStack
+                      align="start"
+                      justify={{ base: 'center', md: 'start' }}
+                      gap={1}
+                      lineHeight={1}
+                    >
+                      <Text
+                        display={{ base: 'block', md: 'none' }}
+                        overflowX="hidden"
+                        maxW={'7rem'}
+                        color="black"
+                        _groupHover={{
+                          textDecoration: 'underline',
+                        }}
+                        textOverflow={'ellipsis'}
+                      >
+                        {userInfo.firstName +
+                          ' ' +
+                          userInfo.lastName?.slice(0, 1).toUpperCase()}
+                      </Text>
+                      <Text
+                        display={{ base: 'none', md: 'block' }}
+                        overflowX="hidden"
+                        maxW={'7rem'}
+                        color="black"
+                        textOverflow={'ellipsis'}
+                      >
+                        {userInfo.firstName + ' ' + userInfo.lastName}
+                      </Text>
+                      <Text
+                        display={{ base: 'none', md: 'block' }}
+                        overflowX="hidden"
+                        maxW={'7rem'}
+                        textOverflow={'ellipsis'}
+                      >
+                        @{userInfo.username}
+                      </Text>
+                    </VStack>
+                  </Link>
+                </Td>
+                <Td h="full" px={{ base: 1, md: 2 }} borderBottomWidth={'0px'}>
+                  <Flex
+                    justify="center"
+                    gap={2}
+                    fontSize={{ base: 'xs', md: 'sm' }}
+                  >
+                    <Text color="black" textAlign={'center'}>
+                      {formatter(userRank?.dollarsEarned ?? 0)}
+                    </Text>
+                    <Text
+                      display={{ base: 'none', md: 'block' }}
+                      textAlign={'center'}
+                    >
+                      USD
+                    </Text>
+                  </Flex>
+                </Td>
+                <Td
+                  h="full"
+                  px={{ base: 1, md: 2 }}
+                  fontSize={{ base: 'xs', md: 'sm' }}
+                  textAlign={'center'}
+                  borderBottomWidth={'0px'}
+                >
+                  {userRank?.winRate ?? 0}%
+                </Td>
+                <Td
+                  h="full"
+                  px={{ base: 1, md: 2 }}
+                  textAlign={'center'}
+                  borderBottomWidth={'0px'}
+                >
+                  {userRank?.submissions ?? '-'}
+                </Td>
+                <Td
+                  h="full"
+                  px={{ base: 1, md: 2 }}
+                  textAlign={'center'}
+                  borderBottomWidth={'0px'}
+                >
+                  {userRank?.wins ?? '-'}
+                </Td>
+                <Td
+                  display={{
+                    base: 'none',
+                    md: skill !== 'ALL' ? 'none' : 'table-cell',
+                  }}
+                  h="full"
+                  px={{ base: 1, md: 2 }}
+                  borderBottomWidth={'0px'}
+                >
+                  <Flex gap={2} h="full" textAlign={'center'}>
+                    {userRank?.skills.slice(0, 2).map((s) => (
+                      <Badge
+                        key={s}
+                        px={2}
+                        color="#64739C"
+                        fontSize={'xx-small'}
+                        fontWeight={500}
+                        textTransform={'none'}
+                        bg="#EFF1F5"
+                        rounded="full"
+                      >
+                        {s}
+                      </Badge>
+                    ))}
+                    {userRank && userRank.skills.length > 2 && (
+                      <Badge
+                        px={2}
+                        color="#64739C"
+                        fontSize={'xx-small'}
+                        fontWeight={500}
+                        textTransform={'none'}
+                        bg="#EFF1F5"
+                        rounded="full"
+                      >
+                        +{userRank.skills.length - 2}
+                      </Badge>
+                    )}
+                  </Flex>
+                </Td>
+              </Tr>
+            )}
           </Tbody>
         )}
       </Table>

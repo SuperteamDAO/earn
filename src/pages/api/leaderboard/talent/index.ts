@@ -61,7 +61,7 @@ function buildTalentLeaderboardQuery(
   const rankingSubquery = `
     SELECT
       UUID() AS id,
-      RANK() OVER (ORDER BY score DESC) AS \`rank\`,
+      ROW_NUMBER() OVER (ORDER BY score DESC, submissions DESC) AS \`rank\`,
 submissions,
 wins,
 ROUND(winRate * 100) AS winRate,
@@ -76,6 +76,7 @@ userId,
       ${dateCondition}
       ${groupByClause}
 HAVING SUM(s.rewardInUSD) > 0
+ORDER BY u.createdAt ASC
     ) AS ranking
   `;
 

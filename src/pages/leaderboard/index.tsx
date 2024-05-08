@@ -41,6 +41,7 @@ interface Props {
   timeframe: TIMEFRAME;
   page: number;
   count: number;
+  userRank: RowType | null;
 }
 
 function TalentLeaderboard({
@@ -49,6 +50,7 @@ function TalentLeaderboard({
   timeframe: curTimeframe,
   page: curPage,
   count,
+  userRank,
 }: Props) {
   const [isTotalLoading, setIsTotalLoading] = useState(true);
   const [totals, setTotals] = useState<TotalType>({});
@@ -149,7 +151,11 @@ function TalentLeaderboard({
                 timeframe={timeframe}
                 setTimeframe={(value: TIMEFRAME) => setTimeframe(value)}
               />
-              <RanksTable skill={skill} rankings={results} />
+              <RanksTable
+                userRank={userRank}
+                skill={skill}
+                rankings={results}
+              />
               <Pagination
                 count={count}
                 page={page}
@@ -227,6 +233,7 @@ export const getServerSideProps: GetServerSideProps = async ({
   });
 
   let userRank: (typeof results)[0] | null = null;
+  let formatterUserRank: RowType | null = null;
   if (session && !results.find((c) => c.userId === session.user.id)) {
     userRank = await prisma.talentRankings.findFirst({
       where: {
@@ -246,8 +253,22 @@ export const getServerSideProps: GetServerSideProps = async ({
         },
       },
     });
+
     if (userRank) {
-      results.push(userRank);
+      formatterUserRank = {
+        rank: userRank.rank,
+        skills: getSubskills(
+          userRank.user.skills as any,
+          skillCategories[skill],
+        ),
+        username: userRank.user.username,
+        name: userRank.user.firstName + ' ' + userRank.user.lastName,
+        pfp: userRank.user.photo,
+        dollarsEarned: userRank.totalEarnedInUSD,
+        winRate: userRank.winRate,
+        submissions: userRank.submissions,
+        wins: userRank.wins,
+      };
     }
   }
 
@@ -272,6 +293,7 @@ export const getServerSideProps: GetServerSideProps = async ({
       timeframe,
       page,
       count,
+      userRank: formatterUserRank,
     },
   };
 };
