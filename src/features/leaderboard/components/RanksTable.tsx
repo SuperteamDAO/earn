@@ -47,17 +47,17 @@ const headColumns: ColumnType[] = [
     paddingX: { base: 1, md: 2 },
   },
   {
+    label: 'Win Rate',
+    align: 'center',
+    paddingX: { base: 1, md: 2 },
+  },
+  {
     label: 'Submissions',
     align: 'center',
     paddingX: { base: 1, md: 2 },
   },
   {
     label: 'Wins',
-    align: 'center',
-    paddingX: { base: 1, md: 2 },
-  },
-  {
-    label: 'Win Rate',
     align: 'center',
     paddingX: { base: 1, md: 2 },
   },
@@ -187,6 +187,15 @@ export function RanksTable({ rankings }: Props) {
               <Td
                 h="full"
                 px={headColumns[0]?.paddingX}
+                fontSize={{ base: 'xs', md: 'sm' }}
+                textAlign={'center'}
+                borderBottomWidth={i === rankings.length - 1 ? '0px' : '1px'}
+              >
+                {row.winRate}%
+              </Td>
+              <Td
+                h="full"
+                px={headColumns[0]?.paddingX}
                 textAlign={'center'}
                 borderBottomWidth={i === rankings.length - 1 ? '0px' : '1px'}
               >
@@ -199,15 +208,6 @@ export function RanksTable({ rankings }: Props) {
                 borderBottomWidth={i === rankings.length - 1 ? '0px' : '1px'}
               >
                 {row.wins}
-              </Td>
-              <Td
-                h="full"
-                px={headColumns[0]?.paddingX}
-                fontSize={{ base: 'xs', md: 'sm' }}
-                textAlign={'center'}
-                borderBottomWidth={i === rankings.length - 1 ? '0px' : '1px'}
-              >
-                {row.winRate}%
               </Td>
               <Td
                 display={{ base: 'none', md: 'table-cell' }}
