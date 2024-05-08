@@ -65,12 +65,17 @@ export function FAQs() {
         {faqs.map((faq) => (
           <AccordionItem
             key={faq.question}
+            my="1rem"
             bg="white"
             border="0"
             rounded="0.25rem"
           >
             <h2>
-              <AccordionButton my="1rem" py="0.8rem" rounded="0.25rem">
+              <AccordionButton
+                py="0.8rem"
+                _expanded={{ bg: 'blackAlpha.50' }}
+                rounded="0.25rem"
+              >
                 <Box as="span" flex="1" textAlign="left">
                   {faq.question}
                 </Box>
@@ -80,7 +85,7 @@ export function FAQs() {
             <AccordionPanel
               pb={4}
               dangerouslySetInnerHTML={{ __html: faq.answer }}
-            ></AccordionPanel>
+            />
           </AccordionItem>
         ))}
       </Accordion>

@@ -75,7 +75,12 @@ export function Stats() {
         <Divider display={{ base: 'none', lg: 'block' }} />
         <Grid gap={4} columnGap={8} templateColumns="repeat(3, 1fr)" w="full">
           {stats.map((s) => (
-            <VStack key={s.title} align="start" gap={0} overflow="visible">
+            <VStack
+              key={s.title}
+              align={{ base: 'center', lg: 'start' }}
+              gap={0}
+              overflow="visible"
+            >
               <Text
                 fontSize={{ base: '2.3rem', lg: '3.5rem' }}
                 fontWeight={600}
@@ -88,6 +93,7 @@ export function Stats() {
                 color="brand.slate.500"
                 fontSize={{ base: '0.68rem', lg: '1rem' }}
                 fontWeight={500}
+                whiteSpace={{ base: 'nowrap' }}
               >
                 {s.label}
                 {s.showEarn && (
