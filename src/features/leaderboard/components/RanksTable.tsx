@@ -19,6 +19,7 @@ import NextLink from 'next/link';
 import { userStore } from '@/store/user';
 
 import { type RowType, type SKILL } from '../types';
+import { getSubskills, skillCategories } from '../utils';
 
 const formatter = new Intl.NumberFormat('en-US', {
   style: 'currency',
@@ -34,6 +35,10 @@ interface Props {
 
 export function RanksTable({ rankings, skill, userRank }: Props) {
   const { userInfo } = userStore();
+  const userSkills = getSubskills(
+    userInfo?.skills as any,
+    skillCategories[skill],
+  );
 
   return (
     <TableContainer
@@ -440,7 +445,7 @@ export function RanksTable({ rankings, skill, userRank }: Props) {
                   borderBottomWidth={'0px'}
                 >
                   <Flex gap={2} h="full" textAlign={'center'}>
-                    {userRank?.skills.slice(0, 2).map((s) => (
+                    {userSkills.slice(0, 2).map((s) => (
                       <Badge
                         key={s}
                         px={2}
@@ -454,7 +459,7 @@ export function RanksTable({ rankings, skill, userRank }: Props) {
                         {s}
                       </Badge>
                     ))}
-                    {userRank && userRank.skills.length > 2 && (
+                    {userSkills.length > 2 && (
                       <Badge
                         px={2}
                         color="#64739C"
@@ -464,7 +469,7 @@ export function RanksTable({ rankings, skill, userRank }: Props) {
                         bg="#EFF1F5"
                         rounded="full"
                       >
-                        +{userRank.skills.length - 2}
+                        +{userSkills.length - 2}
                       </Badge>
                     )}
                   </Flex>
