@@ -10,6 +10,8 @@ interface Props {
 const SIZE = 6;
 const ROUNDED = 4;
 export function Pagination({ page, setPage, count }: Props) {
+  if (count === 0) return <></>;
+
   const totalPages = Math.ceil(count / 10);
   console.log('page', page, 'count', count);
 
