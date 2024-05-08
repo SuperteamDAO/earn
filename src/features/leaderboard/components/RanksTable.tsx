@@ -1,7 +1,9 @@
 import {
   Avatar,
   Badge,
+  Center,
   Flex,
+  Link,
   Table,
   TableContainer,
   Tbody,
@@ -12,62 +14,9 @@ import {
   Tr,
   VStack,
 } from '@chakra-ui/react';
+import NextLink from 'next/link';
 
-import { type RowType } from '../types';
-
-interface ColumnType {
-  label: string;
-  align?: 'center' | 'start';
-  paddingX?:
-    | {
-        base: number;
-        md: number;
-      }
-    | number;
-  display?: {
-    base: string;
-    md: string;
-  };
-}
-
-const headColumns: ColumnType[] = [
-  {
-    label: 'Rank',
-    align: 'center',
-    paddingX: { base: 1, md: 2 },
-  },
-  {
-    label: 'Name',
-    align: 'start',
-    paddingX: { base: 1, md: 2 },
-  },
-  {
-    label: 'Dollars Earned',
-    align: 'center',
-    paddingX: { base: 1, md: 2 },
-  },
-  {
-    label: 'Win Rate',
-    align: 'center',
-    paddingX: { base: 1, md: 2 },
-  },
-  {
-    label: 'Submissions',
-    align: 'center',
-    paddingX: { base: 1, md: 2 },
-  },
-  {
-    label: 'Wins',
-    align: 'center',
-    paddingX: { base: 1, md: 2 },
-  },
-  {
-    label: 'Skills',
-    align: 'start',
-    paddingX: 1,
-    display: { base: 'none', md: 'block' },
-  },
-];
+import { type RowType, type SKILL } from '../types';
 
 const formatter = new Intl.NumberFormat('en-US', {
   style: 'currency',
@@ -77,177 +26,306 @@ const formatter = new Intl.NumberFormat('en-US', {
 
 interface Props {
   rankings: RowType[];
+  skill: SKILL;
 }
 
-export function RanksTable({ rankings }: Props) {
+export function RanksTable({ rankings, skill }: Props) {
   return (
     <TableContainer
       className="hide-scrollbar"
+      pos="relative"
       overflowX="auto"
       overflowY="hidden"
       w="full"
+      h={rankings.length === 0 ? '35rem' : 'auto'}
       border="1px solid #E2E8F0"
       borderRadius="md"
     >
       <Table>
         <Thead>
           <Tr textTransform={'none'} bg="#F8FAFC">
-            {headColumns.map((head) => (
-              <Th
-                key={head.label}
-                display={head.display}
-                px={head.paddingX}
-                color="brand.slate.500"
-                fontSize={'xs'}
-                fontWeight={500}
-                letterSpacing={0.5}
-                textAlign={head.align ?? 'left'}
-                textTransform={'none'}
-              >
-                {head.label}
-              </Th>
-            ))}
+            <Th
+              px={{ base: 1, md: 2 }}
+              color="brand.slate.500"
+              fontSize={'xs'}
+              fontWeight={500}
+              letterSpacing={0.5}
+              textAlign={'center'}
+              textTransform={'none'}
+            >
+              Rank
+            </Th>
+            <Th
+              px={{ base: 1, md: 2 }}
+              color="brand.slate.500"
+              fontSize={'xs'}
+              fontWeight={500}
+              letterSpacing={0.5}
+              textAlign={'start'}
+              textTransform={'none'}
+            >
+              Name
+            </Th>
+            <Th
+              px={{ base: 1, md: 2 }}
+              color="brand.slate.500"
+              fontSize={'xs'}
+              fontWeight={500}
+              letterSpacing={0.5}
+              textAlign={'center'}
+              textTransform={'none'}
+            >
+              <Text display={{ base: 'none', md: 'block' }}>
+                Dollars Earned
+              </Text>
+              <Text display={{ base: 'block', md: 'none' }}>$ Earned</Text>
+            </Th>
+            <Th
+              px={{ base: 1, md: 2 }}
+              color="brand.slate.500"
+              fontSize={'xs'}
+              fontWeight={500}
+              letterSpacing={0.5}
+              textAlign={'center'}
+              textTransform={'none'}
+            >
+              Win Rate
+            </Th>
+            <Th
+              overflowX="hidden"
+              maxW="3.5rem"
+              px={{ base: 1, md: 2 }}
+              color="brand.slate.500"
+              fontSize={'xs'}
+              fontWeight={500}
+              letterSpacing={0.5}
+              textAlign={'center'}
+              textTransform={'none'}
+              textOverflow="ellipsis"
+            >
+              Submissions
+            </Th>
+            <Th
+              px={{ base: 1, md: 2 }}
+              color="brand.slate.500"
+              fontSize={'xs'}
+              fontWeight={500}
+              letterSpacing={0.5}
+              textAlign={'center'}
+              textTransform={'none'}
+            >
+              Wins
+            </Th>
+            <Th
+              display={{ base: 'none', md: skill !== 'ALL' ? 'none' : 'block' }}
+              px={{ base: 1, md: 2 }}
+              color="brand.slate.500"
+              fontSize={'xs'}
+              fontWeight={500}
+              letterSpacing={0.5}
+              textAlign={'start'}
+              textTransform={'none'}
+            >
+              Skills
+            </Th>
           </Tr>
         </Thead>
-        <Tbody color="brand.slate.500" fontSize="xs" fontWeight={500}>
-          {rankings.map((row, i) => (
-            <Tr key={row.username} h="full">
-              <Td
-                h="full"
-                px={headColumns[0]?.paddingX}
-                textAlign={'center'}
-                borderBottomWidth={i === rankings.length - 1 ? '0px' : '1px'}
+        {rankings.length === 0 && (
+          <VStack
+            pos="absolute"
+            top={'10rem'}
+            left="50%"
+            mx="auto"
+            transform="translateX(-50%)"
+          >
+            <Center w={20} h={20} bg="brand.slate.100" rounded="full">
+              <svg
+                width="24"
+                height="24"
+                viewBox="0 0 24 24"
+                fill="none"
+                xmlns="http://www.w3.org/2000/svg"
               >
-                #{row.rank}
-              </Td>
-              <Td
-                h="full"
-                px={headColumns[0]?.paddingX}
-                borderBottomWidth={i === rankings.length - 1 ? '0px' : '1px'}
-              >
-                <Flex align="center" gap={2}>
-                  <Avatar
-                    w={{ base: 5, md: 8 }}
-                    h={{ base: 5, md: 8 }}
-                    src={row.pfp ?? undefined}
+                <g clipPath="url(#clip0_482_662)">
+                  <path
+                    d="M16 11V3H8V9H2V21H22V11H16ZM10 5H14V19H10V5ZM4 11H8V19H4V11ZM20 19H16V13H20V19Z"
+                    fill="#64748B"
                   />
-                  <VStack
-                    align="start"
-                    justify={{ base: 'center', md: 'start' }}
-                    gap={1}
-                    lineHeight={1}
-                  >
-                    <Text
-                      display={{ base: 'block', md: 'none' }}
-                      overflowX="hidden"
-                      maxW={'7rem'}
-                      color="black"
-                      textOverflow={'ellipsis'}
-                    >
-                      {row.name.split(' ')[0] +
-                        ' ' +
-                        row.name.split(' ')[1]?.slice(0, 1).toUpperCase()}
-                    </Text>
-                    <Text
-                      display={{ base: 'none', md: 'block' }}
-                      overflowX="hidden"
-                      maxW={'7rem'}
-                      color="black"
-                      textOverflow={'ellipsis'}
-                    >
-                      {row.name}
-                    </Text>
-                    <Text
-                      display={{ base: 'none', md: 'block' }}
-                      overflowX="hidden"
-                      maxW={'7rem'}
-                      textOverflow={'ellipsis'}
-                    >
-                      @{row.username}
-                    </Text>
-                  </VStack>
-                </Flex>
-              </Td>
-              <Td
-                h="full"
-                px={headColumns[0]?.paddingX}
-                borderBottomWidth={i === rankings.length - 1 ? '0px' : '1px'}
-              >
-                <Flex
-                  justify="center"
-                  gap={2}
-                  fontSize={{ base: 'xs', md: 'sm' }}
+                </g>
+                <defs>
+                  <clipPath id="clip0_482_662">
+                    <rect width="24" height="24" fill="white" />
+                  </clipPath>
+                </defs>
+              </svg>
+            </Center>
+            <VStack fontSize="xs" fontWeight={500}>
+              <Text>The Leaderboard is empty for your filters</Text>
+              <Text color="brand.slate.500">
+                Please change your filters or try again later
+              </Text>
+            </VStack>
+          </VStack>
+        )}
+        {rankings.length > 0 && (
+          <Tbody color="brand.slate.500" fontSize="xs" fontWeight={500}>
+            {rankings.map((row, i) => (
+              <Tr key={row.username} h="full">
+                <Td
+                  h="full"
+                  px={{ base: 1, md: 2 }}
+                  textAlign={'center'}
+                  borderBottomWidth={i === rankings.length - 1 ? '0px' : '1px'}
                 >
-                  <Text color="black" textAlign={'center'}>
-                    {formatter(row.dollarsEarned)}
-                  </Text>
-                  <Text textAlign={'center'}>USD</Text>
-                </Flex>
-              </Td>
-              <Td
-                h="full"
-                px={headColumns[0]?.paddingX}
-                fontSize={{ base: 'xs', md: 'sm' }}
-                textAlign={'center'}
-                borderBottomWidth={i === rankings.length - 1 ? '0px' : '1px'}
-              >
-                {row.winRate}%
-              </Td>
-              <Td
-                h="full"
-                px={headColumns[0]?.paddingX}
-                textAlign={'center'}
-                borderBottomWidth={i === rankings.length - 1 ? '0px' : '1px'}
-              >
-                {row.submissions}
-              </Td>
-              <Td
-                h="full"
-                px={headColumns[0]?.paddingX}
-                textAlign={'center'}
-                borderBottomWidth={i === rankings.length - 1 ? '0px' : '1px'}
-              >
-                {row.wins}
-              </Td>
-              <Td
-                display={{ base: 'none', md: 'table-cell' }}
-                h="full"
-                px={headColumns[0]?.paddingX}
-                borderBottomWidth={i === rankings.length - 1 ? '0px' : '1px'}
-              >
-                <Flex gap={2} h="full" textAlign={'center'}>
-                  {row.skills.slice(0, 2).map((s) => (
-                    <Badge
-                      key={s}
-                      px={2}
-                      color="#64739C"
-                      fontSize={'xx-small'}
-                      fontWeight={500}
-                      textTransform={'none'}
-                      bg="#EFF1F5"
-                      rounded="full"
+                  #{row.rank}
+                </Td>
+                <Td
+                  h="full"
+                  px={{ base: 1, md: 2 }}
+                  borderBottomWidth={i === rankings.length - 1 ? '0px' : '1px'}
+                >
+                  <Link
+                    as={NextLink}
+                    alignItems="center"
+                    gap={2}
+                    display="flex"
+                    href={`/t/${row.username}`}
+                    target="_blank"
+                  >
+                    <Avatar
+                      w={{ base: 5, md: 8 }}
+                      h={{ base: 5, md: 8 }}
+                      src={row.pfp ?? undefined}
+                    />
+                    <VStack
+                      align="start"
+                      justify={{ base: 'center', md: 'start' }}
+                      gap={1}
+                      lineHeight={1}
                     >
-                      {s}
-                    </Badge>
-                  ))}
-                  {row.skills.length > 2 && (
-                    <Badge
-                      px={2}
-                      color="#64739C"
-                      fontSize={'xx-small'}
-                      fontWeight={500}
-                      textTransform={'none'}
-                      bg="#EFF1F5"
-                      rounded="full"
+                      <Text
+                        display={{ base: 'block', md: 'none' }}
+                        overflowX="hidden"
+                        maxW={'7rem'}
+                        color="black"
+                        _groupHover={{
+                          textDecoration: 'underline',
+                        }}
+                        textOverflow={'ellipsis'}
+                      >
+                        {row.name.split(' ')[0] +
+                          ' ' +
+                          row.name.split(' ')[1]?.slice(0, 1).toUpperCase()}
+                      </Text>
+                      <Text
+                        display={{ base: 'none', md: 'block' }}
+                        overflowX="hidden"
+                        maxW={'7rem'}
+                        color="black"
+                        textOverflow={'ellipsis'}
+                      >
+                        {row.name}
+                      </Text>
+                      <Text
+                        display={{ base: 'none', md: 'block' }}
+                        overflowX="hidden"
+                        maxW={'7rem'}
+                        textOverflow={'ellipsis'}
+                      >
+                        @{row.username}
+                      </Text>
+                    </VStack>
+                  </Link>
+                </Td>
+                <Td
+                  h="full"
+                  px={{ base: 1, md: 2 }}
+                  borderBottomWidth={i === rankings.length - 1 ? '0px' : '1px'}
+                >
+                  <Flex
+                    justify="center"
+                    gap={2}
+                    fontSize={{ base: 'xs', md: 'sm' }}
+                  >
+                    <Text color="black" textAlign={'center'}>
+                      {formatter(row.dollarsEarned)}
+                    </Text>
+                    <Text
+                      display={{ base: 'none', md: 'block' }}
+                      textAlign={'center'}
                     >
-                      +{row.skills.length - 2}
-                    </Badge>
-                  )}
-                </Flex>
-              </Td>
-            </Tr>
-          ))}
-        </Tbody>
+                      USD
+                    </Text>
+                  </Flex>
+                </Td>
+                <Td
+                  h="full"
+                  px={{ base: 1, md: 2 }}
+                  fontSize={{ base: 'xs', md: 'sm' }}
+                  textAlign={'center'}
+                  borderBottomWidth={i === rankings.length - 1 ? '0px' : '1px'}
+                >
+                  {row.winRate}%
+                </Td>
+                <Td
+                  h="full"
+                  px={{ base: 1, md: 2 }}
+                  textAlign={'center'}
+                  borderBottomWidth={i === rankings.length - 1 ? '0px' : '1px'}
+                >
+                  {row.submissions}
+                </Td>
+                <Td
+                  h="full"
+                  px={{ base: 1, md: 2 }}
+                  textAlign={'center'}
+                  borderBottomWidth={i === rankings.length - 1 ? '0px' : '1px'}
+                >
+                  {row.wins}
+                </Td>
+                <Td
+                  display={{
+                    base: 'none',
+                    md: skill !== 'ALL' ? 'none' : 'table-cell',
+                  }}
+                  h="full"
+                  px={{ base: 1, md: 2 }}
+                  borderBottomWidth={i === rankings.length - 1 ? '0px' : '1px'}
+                >
+                  <Flex gap={2} h="full" textAlign={'center'}>
+                    {row.skills.slice(0, 2).map((s) => (
+                      <Badge
+                        key={s}
+                        px={2}
+                        color="#64739C"
+                        fontSize={'xx-small'}
+                        fontWeight={500}
+                        textTransform={'none'}
+                        bg="#EFF1F5"
+                        rounded="full"
+                      >
+                        {s}
+                      </Badge>
+                    ))}
+                    {row.skills.length > 2 && (
+                      <Badge
+                        px={2}
+                        color="#64739C"
+                        fontSize={'xx-small'}
+                        fontWeight={500}
+                        textTransform={'none'}
+                        bg="#EFF1F5"
+                        rounded="full"
+                      >
+                        +{row.skills.length - 2}
+                      </Badge>
+                    )}
+                  </Flex>
+                </Td>
+              </Tr>
+            ))}
+          </Tbody>
+        )}
       </Table>
     </TableContainer>
   );

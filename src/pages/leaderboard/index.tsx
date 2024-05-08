@@ -87,7 +87,9 @@ function TalentLeaderboard({
       url.searchParams.set('page', String(page));
 
     startTransition(() => {
-      router.replace(`?${url.searchParams.toString()}`);
+      router.replace(`?${url.searchParams.toString()}`, undefined, {
+        scroll: false,
+      });
     });
   }, [skill, timeframe, page]);
 
@@ -120,7 +122,7 @@ function TalentLeaderboard({
         />
       }
     >
-      <Box overflow="hidden" bg="white">
+      <Box overflow="hidden" pb={20} bg="white">
         <Flex
           gap={{ base: 4, md: 8 }}
           maxW={'7xl'}
@@ -147,7 +149,7 @@ function TalentLeaderboard({
                 timeframe={timeframe}
                 setTimeframe={(value: TIMEFRAME) => setTimeframe(value)}
               />
-              <RanksTable rankings={results} />
+              <RanksTable skill={skill} rankings={results} />
               <Pagination
                 count={count}
                 page={page}
@@ -232,8 +234,6 @@ export const getServerSideProps: GetServerSideProps = async ({
         timeframe,
         userId: session.user.id,
       },
-      skip: (page - 1) * PAGE_SIZE,
-      take: PAGE_SIZE,
       include: {
         user: {
           select: {
