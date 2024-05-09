@@ -30,10 +30,6 @@ export const CATEGORY_NAV_ITEMS: Array<NavItem> = [
     label: 'Development',
     href: '/category/development/',
   },
-  {
-    label: 'Leaderboard',
-    href: '/leaderboard/',
-  },
 ];
 
 export const HACKATHON_NAV_ITEMS: Array<NavItem> = [
