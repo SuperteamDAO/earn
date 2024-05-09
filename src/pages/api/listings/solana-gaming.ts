@@ -1,7 +1,6 @@
 import { type NextApiRequest, type NextApiResponse } from 'next';
 
 import { prisma } from '@/prisma';
-import { dayjs } from '@/utils/dayjs';
 
 export default async function user(req: NextApiRequest, res: NextApiResponse) {
   const take = req.query.take ? parseInt(req.query.take as string, 10) : 10;
@@ -33,12 +32,12 @@ export default async function user(req: NextApiRequest, res: NextApiResponse) {
         },
       },
       take,
+      orderBy: {
+        deadline: 'desc',
+      },
     });
 
-    const sortedData = bounties
-      .sort((a, b) => dayjs(b.deadline).diff(dayjs(a.deadline)))
-      .slice(0, take);
-    result.bounties = sortedData;
+    result.bounties = bounties;
 
     res.status(200).json(result);
   } catch (error) {
