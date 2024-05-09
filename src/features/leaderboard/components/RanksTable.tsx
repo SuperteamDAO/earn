@@ -101,7 +101,7 @@ export function RanksTable({ rankings, skill, userRank }: Props) {
             </Th>
             <Th
               overflowX="hidden"
-              maxW="3.5rem"
+              maxW={{ base: '3.5rem', md: 'none' }}
               px={{ base: 1, md: 2 }}
               color="brand.slate.500"
               fontSize={'xs'}
@@ -257,12 +257,7 @@ export function RanksTable({ rankings, skill, userRank }: Props) {
                     </Text>
                   </Flex>
                 </Td>
-                <Td
-                  h="full"
-                  px={{ base: 1, md: 2 }}
-                  fontSize={{ base: 'xs', md: 'sm' }}
-                  textAlign={'center'}
-                >
+                <Td h="full" px={{ base: 1, md: 2 }} textAlign={'center'}>
                   {row.winRate}%
                 </Td>
                 <Td h="full" px={{ base: 1, md: 2 }} textAlign={'center'}>
@@ -412,7 +407,6 @@ export function RanksTable({ rankings, skill, userRank }: Props) {
                     zIndex={100}
                     bottom={0}
                     px={{ base: 1, md: 2 }}
-                    fontSize={{ base: 'xs', md: 'sm' }}
                     textAlign={'center'}
                     borderBottomWidth={'0px'}
                   >
