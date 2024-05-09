@@ -553,7 +553,7 @@ export const ListingPayments = ({
                   handleUpdateListing();
                 }
               }}
-              variant={editable ? 'solid' : 'outline'}
+              variant={isNewOrDraft || isDuplicating ? 'outline' : 'solid'}
             >
               {isNewOrDraft || isDuplicating ? 'Save Draft' : 'Update Listing'}
             </Button>
