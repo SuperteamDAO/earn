@@ -231,6 +231,8 @@ export const ListingPayments = ({
       break;
   }
 
+  const isDraft = isNewOrDraft || isDuplicating;
+
   useEffect(() => {
     const debouncedUpdate = debounce((amount) => {
       setDebouncedRewardAmount(amount);
@@ -532,7 +534,7 @@ export const ListingPayments = ({
                 (token === 'USDT' || 'USDC') &&
                 "Note: This listing will not show up on Earn's Landing Page since it is ≤$100 in value. Increase the total compensation for better discoverability."}
             </Text>
-            {(isNewOrDraft || isDuplicating) && (
+            {isDraft && (
               <Button
                 w="100%"
                 disabled={isListingPublishing}
@@ -547,15 +549,15 @@ export const ListingPayments = ({
               w="100%"
               isLoading={isDraftLoading}
               onClick={() => {
-                if (isNewOrDraft || isDuplicating) {
+                if (isDraft) {
                   handleSaveDraft();
                 } else {
                   handleUpdateListing();
                 }
               }}
-              variant={isNewOrDraft || isDuplicating ? 'outline' : 'solid'}
+              variant={isDraft ? 'outline' : 'solid'}
             >
-              {isNewOrDraft || isDuplicating ? 'Save Draft' : 'Update Listing'}
+              {isDraft ? 'Save Draft' : 'Update Listing'}
             </Button>
             <Text color="red.500">{errorMessage}</Text>
           </VStack>
