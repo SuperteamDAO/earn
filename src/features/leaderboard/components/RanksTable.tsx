@@ -204,7 +204,7 @@ export function RanksTable({ rankings, skill, userRank }: Props) {
                       align="start"
                       justify={{ base: 'center', md: 'start' }}
                       gap={1}
-                      lineHeight={1.15}
+                      lineHeight={{ base: 'normal', md: 1.15 }}
                     >
                       <Text
                         display={{ base: 'block', md: 'none' }}
@@ -343,7 +343,7 @@ export function RanksTable({ rankings, skill, userRank }: Props) {
                         align="start"
                         justify={{ base: 'center', md: 'start' }}
                         gap={1}
-                        lineHeight={1.15}
+                        lineHeight={{ base: 1.5, md: 1.15 }}
                       >
                         <Text
                           display={{ base: 'block', md: 'none' }}
