@@ -311,6 +311,7 @@ export function YourWork({ setStep, useFormStore }: Step1Props) {
             </FormControl>
           </Flex>
           <Button
+            className="ph-no-capture"
             w={'full'}
             h="50px"
             color={'white'}

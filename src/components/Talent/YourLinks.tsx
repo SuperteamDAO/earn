@@ -304,6 +304,7 @@ export function YourLinks({ success, useFormStore }: Props) {
               </Text>
             )}
             <Button
+              className="ph-no-capture"
               w={'full'}
               h="50px"
               color={'white'}

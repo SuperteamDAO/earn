@@ -368,6 +368,7 @@ const CreateSponsor = () => {
                   </Text>
                 )}
                 <Button
+                  className="ph-no-capture"
                   w="full"
                   isDisabled={imageUrl === ''}
                   isLoading={!!isLoading}

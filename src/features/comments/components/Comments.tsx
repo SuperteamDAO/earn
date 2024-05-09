@@ -241,6 +241,7 @@ export const Comments = ({
                 Cancel
               </Button>
               <Button
+                className="ph-no-capture"
                 h="auto"
                 px={5}
                 py={2}

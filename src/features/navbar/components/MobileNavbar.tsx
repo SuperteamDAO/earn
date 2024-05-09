@@ -56,13 +56,16 @@ export const MobileNavbar = ({ onLoginOpen }: { onLoginOpen: () => void }) => {
         placement="left"
       >
         <DrawerOverlay display={{ base: 'block', lg: 'none' }} />
-        <DrawerContent display={{ base: 'block', lg: 'none' }}>
+        <DrawerContent
+          className="ph-no-capture"
+          display={{ base: 'block', lg: 'none' }}
+        >
           <Flex px={3} py={2}>
             <CloseButton onClick={onDrawerClose} />
           </Flex>
           <DrawerBody>
             {status === 'unauthenticated' && !session && (
-              <Flex className="pg-no-capture" align="center" gap={3}>
+              <Flex className="ph-no-capture" align="center" gap={3}>
                 <Button
                   color="brand.slate.500"
                   fontSize="md"
@@ -114,11 +117,12 @@ export const MobileNavbar = ({ onLoginOpen }: { onLoginOpen: () => void }) => {
                 </Button>
               )}
 
-            <Flex className="pg-no-capture" direction={'column'} mt={5}>
+            <Flex className="ph-no-capture" direction={'column'} mt={5}>
               {HACKATHON_NAV_ITEMS?.map((navItem) => {
                 const isCurrent = `${navItem.href}` === router.asPath;
                 return (
                   <NavLink
+                    className="ph-no-capture"
                     onClick={() => {
                       posthog.capture(navItem.posthog);
                     }}
@@ -131,7 +135,7 @@ export const MobileNavbar = ({ onLoginOpen }: { onLoginOpen: () => void }) => {
               })}
             </Flex>
             <Divider my={2} borderColor={'brand.slate.300'} />
-            <Flex className="pg-no-capture" direction={'column'}>
+            <Flex className="ph-no-capture" direction={'column'}>
               {LISTING_NAV_ITEMS?.map((navItem) => {
                 const isCurrent = `${navItem.href}` === router.asPath;
                 return (
@@ -140,6 +144,7 @@ export const MobileNavbar = ({ onLoginOpen }: { onLoginOpen: () => void }) => {
                       posthog.capture(navItem.posthog);
                     }}
                     key={navItem.label}
+                    className="ph-no-capture"
                     href={navItem.href ?? '#'}
                     label={renderLabel(navItem)}
                     isActive={isCurrent}
@@ -148,11 +153,12 @@ export const MobileNavbar = ({ onLoginOpen }: { onLoginOpen: () => void }) => {
               })}
             </Flex>
             <Divider my={2} borderColor={'brand.slate.300'} />
-            <Flex className="pg-no-capture" direction={'column'}>
+            <Flex className="ph-no-capture" direction={'column'}>
               {CATEGORY_NAV_ITEMS?.map((navItem) => {
                 const isCurrent = `${navItem.href}` === router.asPath;
                 return (
                   <NavLink
+                    className="ph-no-capture"
                     onClick={() => {
                       posthog.capture(navItem.posthog);
                     }}
@@ -212,7 +218,7 @@ export const MobileNavbar = ({ onLoginOpen }: { onLoginOpen: () => void }) => {
           {status === 'authenticated' && session && <UserMenu />}
           {status === 'unauthenticated' && !session && (
             <Button
-              className="pg-no-capture"
+              className="ph-no-capture"
               mr={2}
               color="brand.purple"
               fontSize="md"
@@ -236,7 +242,7 @@ export const MobileNavbar = ({ onLoginOpen }: { onLoginOpen: () => void }) => {
         py={2}
         bg={'#F8FAFC'}
       >
-        <Flex className="pg-no-capture" gap={{ base: 2, sm: 12 }}>
+        <Flex className="ph-no-capture" gap={{ base: 2, sm: 12 }}>
           {LISTING_NAV_ITEMS?.map((navItem) => {
             const isCurrent = `${navItem.href}` === router.asPath;
             return (
@@ -244,6 +250,7 @@ export const MobileNavbar = ({ onLoginOpen }: { onLoginOpen: () => void }) => {
                 onClick={() => {
                   posthog.capture(navItem.posthog);
                 }}
+                className="ph-no-capture"
                 key={navItem.label}
                 href={navItem.href ?? '#'}
                 label={renderLabel(navItem)}
@@ -263,7 +270,7 @@ export const MobileNavbar = ({ onLoginOpen }: { onLoginOpen: () => void }) => {
           borderColor={'brand.slate.400'}
           orientation="vertical"
         />
-        <Flex className="pg-no-capture" gap={{ base: 2, sm: 12 }}>
+        <Flex className="ph-no-capture" gap={{ base: 2, sm: 12 }}>
           {CATEGORY_NAV_ITEMS?.map((navItem) => {
             const isCurrent = `${navItem.href}` === router.asPath;
             return (
@@ -271,6 +278,7 @@ export const MobileNavbar = ({ onLoginOpen }: { onLoginOpen: () => void }) => {
                 onClick={() => {
                   posthog.capture(navItem.posthog);
                 }}
+                className="ph-no-capture"
                 key={navItem.label}
                 href={navItem.href ?? '#'}
                 label={renderLabel(navItem)}

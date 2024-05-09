@@ -585,6 +585,7 @@ export const SubmissionModal = ({
               </Text>
             )}
             <Button
+              className="ph-no-capture"
               w={'full'}
               isLoading={!!isLoading}
               loadingText="Submitting..."

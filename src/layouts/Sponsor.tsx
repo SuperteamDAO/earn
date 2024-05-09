@@ -221,6 +221,7 @@ export function Sidebar({
           <Flex align="center" justify="space-between" px={6} pb={6}>
             {!isHackathonRoute ? (
               <Button
+                className="ph-no-capture"
                 w="full"
                 py={'22px'}
                 fontSize="md"
@@ -252,6 +253,7 @@ export function Sidebar({
               onClick={() => {
                 if (link.posthog) posthog.capture(link.posthog);
               }}
+              className="ph-no-capture"
               key={link.name}
               link={link.link}
               icon={link.icon}

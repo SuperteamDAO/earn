@@ -98,6 +98,7 @@ const GettingStarted = ({ userInfo }: GettingStartedProps) => {
         >
           <Box ml={'0.8125rem'}>
             <Text
+              className="ph-no-capture"
               as="button"
               color={!userInfo?.id ? 'black' : 'brand.purple'}
               fontSize={'md'}
@@ -121,6 +122,7 @@ const GettingStarted = ({ userInfo }: GettingStartedProps) => {
           <Box ml={'0.8125rem'}>
             {!userInfo?.id || !userInfo?.isTalentFilled ? (
               <Text
+                className="ph-no-capture"
                 as="button"
                 color={'black'}
                 fontSize={'md'}
@@ -151,6 +153,7 @@ const GettingStarted = ({ userInfo }: GettingStartedProps) => {
           <Box ml={'0.8125rem'}>
             {!userInfo?.id || !userInfo.totalEarnedInUSD ? (
               <Text
+                className="ph-no-capture"
                 as="button"
                 color={'black'}
                 fontSize={'md'}

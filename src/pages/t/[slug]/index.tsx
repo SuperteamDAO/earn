@@ -219,6 +219,7 @@ function TalentProfile({ slug }: TalentProps) {
     if (isMD) {
       return (
         <Button
+          className="ph-no-capture"
           color={outline ? 'brand.slate.500' : '#6366F1'}
           fontSize="sm"
           fontWeight={500}

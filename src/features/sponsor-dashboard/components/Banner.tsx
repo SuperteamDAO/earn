@@ -231,6 +231,7 @@ export function Banner({ isHackathonRoute }: { isHackathonRoute?: boolean }) {
         borderRadius="md"
       >
         <Link
+          className="ph-no-capture"
           _hover={{ textDecoration: 'none' }}
           href="https://t.me/pratikdholani"
           isExternal

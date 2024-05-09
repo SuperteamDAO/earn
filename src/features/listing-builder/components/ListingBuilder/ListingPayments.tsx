@@ -550,6 +550,7 @@ export const ListingPayments = ({
         <VStack gap={4} w={'full'} mt={10} pt={4}>
           {(isNewOrDraft || isDuplicating) && (
             <Button
+              className="ph-no-capture"
               w="100%"
               disabled={isListingPublishing}
               isLoading={isListingPublishing}
@@ -563,6 +564,7 @@ export const ListingPayments = ({
             </Button>
           )}
           <Button
+            className="ph-no-capture"
             w="100%"
             isLoading={draftLoading}
             onClick={() => {

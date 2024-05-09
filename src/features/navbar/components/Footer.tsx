@@ -187,6 +187,7 @@ export const Footer = () => {
               </Text>
               {Superteams.map((st) => (
                 <Link
+                  className="ph-no-capture"
                   key={st.region}
                   as={NextLink}
                   color="brand.slate.500"
@@ -209,6 +210,7 @@ export const Footer = () => {
             <Stack align={'flex-start'} gap={2} mr={3}>
               {linkData.map((link) => (
                 <Link
+                  className="ph-no-capture"
                   key={link.text}
                   color={'brand.slate.500'}
                   fontSize={{ base: 'md', md: 'lg' }}

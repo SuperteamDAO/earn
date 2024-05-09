@@ -68,7 +68,7 @@ export const CreateListingModal = ({
             </UnorderedList>
             <Box flex="1" />
             <Button
-              className="pg-no-capture"
+              className="ph-no-capture"
               as={NextLink}
               href="/dashboard/create-bounty"
               onClick={() => {
@@ -123,7 +123,7 @@ export const CreateListingModal = ({
               orientation="horizontal"
             />
             <Button
-              className="pg-no-capture"
+              className="ph-no-capture"
               as={NextLink}
               href="/dashboard/create-project"
               onClick={() => {

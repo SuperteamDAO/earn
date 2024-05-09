@@ -398,6 +398,7 @@ export const SubmissionDetails = ({
                       </DynamicWalletMultiButton>
                       {connected && (
                         <Button
+                          className="ph-no-capture"
                           w="fit-content"
                           minW={'120px'}
                           mr={4}

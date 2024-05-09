@@ -74,6 +74,7 @@ export function UserMenu({}) {
       <EmailSettingsModal isOpen={isOpen} onClose={handleClose} />
       {userInfo && !userInfo.currentSponsorId && !userInfo.isTalentFilled && (
         <Button
+          className="ph-no-capture"
           display={{ base: 'none', md: 'flex' }}
           fontSize="xs"
           onClick={() => {
@@ -88,6 +89,7 @@ export function UserMenu({}) {
       )}
       <Menu>
         <MenuButton
+          className="ph-no-capture"
           as={Button}
           px={{ base: 0.5, md: 2 }}
           bg={'brand.slate.50'}
@@ -152,6 +154,7 @@ export function UserMenu({}) {
           {userInfo?.isTalentFilled && (
             <>
               <MenuItem
+                className="ph-no-capture"
                 as={NextLink}
                 color="brand.slate.500"
                 fontSize="sm"
@@ -164,6 +167,7 @@ export function UserMenu({}) {
                 Profile
               </MenuItem>
               <MenuItem
+                className="ph-no-capture"
                 as={NextLink}
                 color="brand.slate.500"
                 fontSize="sm"
@@ -180,6 +184,7 @@ export function UserMenu({}) {
           {!!userInfo?.currentSponsorId && (
             <>
               <MenuItem
+                className="ph-no-capture"
                 as={NextLink}
                 display={{ base: 'none', sm: 'block' }}
                 color="brand.slate.500"
@@ -220,6 +225,7 @@ export function UserMenu({}) {
           )}
           {(userInfo?.isTalentFilled || !!userInfo?.currentSponsorId) && (
             <MenuItem
+              className="ph-no-capture"
               color="brand.slate.500"
               fontSize="sm"
               fontWeight={600}
@@ -233,6 +239,7 @@ export function UserMenu({}) {
             </MenuItem>
           )}
           <MenuItem
+            className="ph-no-capture"
             color="brand.slate.500"
             fontSize="sm"
             fontWeight={600}
@@ -244,6 +251,7 @@ export function UserMenu({}) {
             Get Help
           </MenuItem>
           <MenuItem
+            className="ph-no-capture"
             color="red.500"
             fontSize="sm"
             fontWeight={600}

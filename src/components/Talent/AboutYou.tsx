@@ -216,6 +216,7 @@ export function AboutYou({ setStep, useFormStore }: Step1Props) {
             </Text>
           </Box>
           <Button
+            className="ph-no-capture"
             w={'full'}
             h="50px"
             color={'white'}

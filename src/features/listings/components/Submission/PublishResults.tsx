@@ -168,6 +168,7 @@ export function PublishResults({
                 Close
               </Button>
               <Button
+                className="ph-no-capture"
                 ml={4}
                 isDisabled={
                   (rewards?.length && totalWinners !== rewards?.length) ||

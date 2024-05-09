@@ -259,7 +259,7 @@ export const SubmissionActionButton = ({
         rounded="md"
       >
         <Flex
-          className="pg-no-capture"
+          className="ph-no-capture"
           pos={{ base: 'fixed', md: 'static' }}
           zIndex={999}
           bottom={0}
@@ -271,6 +271,7 @@ export const SubmissionActionButton = ({
           transform={{ base: 'translateX(-50%)', md: 'none' }}
         >
           <Button
+            className="ph-no-capture"
             w={'full'}
             mb={{ base: 0, md: 5 }}
             bg={buttonBG}

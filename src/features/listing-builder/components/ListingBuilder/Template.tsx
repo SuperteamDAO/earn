@@ -90,6 +90,7 @@ export const Template = ({
           </Flex>
           <Flex wrap={'wrap'} gap={6}>
             <Box
+              className="ph-no-capture"
               alignItems={'center'}
               justifyContent={'center'}
               flexDir={'column'}
@@ -227,6 +228,7 @@ export const Template = ({
                         Preview
                       </Button>
                       <Button
+                        className="ph-no-capture"
                         w="full"
                         onClick={() => {
                           posthog.capture('template_sponsor');

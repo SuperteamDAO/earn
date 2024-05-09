@@ -107,7 +107,7 @@ const Index = () => {
             (userInfo?.UserSponsors?.length &&
               userInfo?.UserSponsors[0]?.role === 'ADMIN')) && (
             <Button
-              className="pg-no-capture"
+              className="ph-no-capture"
               color="#6366F1"
               bg="#E0E7FF"
               leftIcon={<AddIcon />}

@@ -387,6 +387,7 @@ export const Comment = ({
               >
                 <Flex justify={'end'} gap={4} w="full">
                   <Button
+                    className="ph-no-capture"
                     h="auto"
                     px={5}
                     py={2}
@@ -462,6 +463,7 @@ export const Comment = ({
             </MenuButton>
             <MenuList minW="10rem" px={1} py={1}>
               <MenuItem
+                className="ph-no-capture"
                 color="brand.slate.600"
                 fontSize={{
                   base: 'sm',
@@ -509,6 +511,7 @@ export const Comment = ({
                 Cancel
               </Button>
               <Button
+                className="ph-no-capture"
                 ml={3}
                 disabled={deleteLoading}
                 isLoading={deleteLoading}

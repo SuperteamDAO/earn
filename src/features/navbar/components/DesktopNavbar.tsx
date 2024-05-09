@@ -82,7 +82,7 @@ export const DesktopNavbar = ({ onLoginOpen }: { onLoginOpen: () => void }) => {
             const isCurrent = `${navItem.href}` === router.asPath;
             return (
               <NavLink
-                className="pg-no-capture"
+                className="ph-no-capture"
                 onClick={() => {
                   posthog.capture(navItem.posthog);
                 }}
@@ -97,7 +97,7 @@ export const DesktopNavbar = ({ onLoginOpen }: { onLoginOpen: () => void }) => {
         <AbsoluteCenter>
           <Flex align="center" justify={'center'} flexGrow={1} h="full" ml={10}>
             <Stack
-              className="pg-no-capture"
+              className="ph-no-capture"
               direction={'row'}
               h="full"
               spacing={7}
@@ -152,7 +152,7 @@ export const DesktopNavbar = ({ onLoginOpen }: { onLoginOpen: () => void }) => {
           {status === 'authenticated' && session && <UserMenu />}
 
           {status === 'unauthenticated' && !session && (
-            <HStack className="pg-no-capture" gap={2}>
+            <HStack className="ph-no-capture" gap={2}>
               <HStack gap={0}>
                 <Button
                   color="#6366F1"

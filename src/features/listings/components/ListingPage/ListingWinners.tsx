@@ -154,6 +154,7 @@ export function ListingWinners({ bounty }: Props) {
           </Flex>
           <NextLink href={openWinnerLink() ?? '#'} target="_blank">
             <Button
+              className="ph-no-capture"
               pos={{ base: 'static', md: 'absolute' }}
               top={5}
               right={5}

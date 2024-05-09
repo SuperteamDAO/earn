@@ -354,6 +354,7 @@ export const ListingBasic = ({
                 {suggestions.map((suggestion, index) => (
                   <Flex key={suggestion.link} align="center" gap={2}>
                     <Link
+                      className="ph-no-capture"
                       key={suggestion.link}
                       href={suggestion.link}
                       isExternal
@@ -813,6 +814,7 @@ export const ListingBasic = ({
         </FormControl>
         <VStack gap={4} w={'full'} mt={6}>
           <Button
+            className="ph-no-capture"
             w="100%"
             onClick={async () => {
               const slugIsValid = await isSlugValid();
@@ -860,6 +862,7 @@ export const ListingBasic = ({
             Continue
           </Button>
           <Button
+            className="ph-no-capture"
             w="100%"
             isDisabled={!bountyBasic?.title}
             isLoading={draftLoading}

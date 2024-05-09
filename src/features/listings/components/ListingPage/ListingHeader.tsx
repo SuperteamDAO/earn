@@ -179,6 +179,7 @@ export function ListingHeader({
   }) => {
     return (
       <Link
+        className="ph-no-capture"
         as={NextLink}
         alignItems="center"
         justifyContent="center"
@@ -401,6 +402,7 @@ export function ListingHeader({
           <HStack>
             <HStack align="start">
               <IconButton
+                className="ph-no-capture"
                 color={
                   sub.find((e) => e.userId === userInfo?.id)
                     ? 'white'

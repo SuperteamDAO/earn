@@ -464,6 +464,7 @@ export function RightSideBar({ listing }: { listing: Bounty }) {
             </Text>
             <Text>
               <Link
+                className="ph-no-capture"
                 color={'#64768b'}
                 fontSize="1rem"
                 fontWeight={500}

@@ -343,6 +343,7 @@ export const DescriptionBuilder = ({
             </Tooltip>
           </Flex>
           <ChakraLink
+            className="ph-no-capture"
             gap={1}
             display="flex"
             color="brand.slate.400"
@@ -735,6 +736,7 @@ export const DescriptionBuilder = ({
             </Text>
           )}
           <Button
+            className="ph-no-capture"
             w="100%"
             onClick={() => {
               if (referenceError) {
@@ -756,6 +758,7 @@ export const DescriptionBuilder = ({
             Continue
           </Button>
           <Button
+            className="ph-no-capture"
             w="100%"
             isDisabled={!editorData}
             isLoading={draftLoading}

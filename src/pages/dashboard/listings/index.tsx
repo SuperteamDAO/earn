@@ -429,6 +429,7 @@ function Bounties() {
                         wordBreak={'break-word'}
                       >
                         <NextLink
+                          className="ph-no-capture"
                           onClick={() => {
                             posthog.capture('submissions_sponsor');
                           }}
@@ -529,6 +530,7 @@ function Bounties() {
                         {currentBounty.status === 'OPEN' &&
                           currentBounty.isPublished && (
                             <Button
+                              className="ph-no-capture"
                               color="#6366F1"
                               fontSize={'13px'}
                               fontWeight={500}
@@ -618,6 +620,7 @@ function Bounties() {
                             )}
 
                             <MenuItem
+                              className="ph-no-capture"
                               py={2}
                               color={'brand.slate.500'}
                               fontSize={'sm'}

@@ -95,6 +95,7 @@ export const QuestionBuilder = ({
         </Button>
         <VStack gap={6} w={'full'} pt={10}>
           <Button
+            className="ph-no-capture"
             w="100%"
             onClick={() => {
               if (questions.length === 0) {
@@ -127,6 +128,7 @@ export const QuestionBuilder = ({
             Continue
           </Button>
           <Button
+            className="ph-no-capture"
             w="100%"
             isLoading={draftLoading}
             onClick={() => {
