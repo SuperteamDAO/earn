@@ -6,7 +6,7 @@ import { useEffect, useState } from 'react';
 
 import {
   type Bounty,
-  getBountyTypeLabel,
+  getListingTypeLabel,
   type Rewards,
 } from '@/features/listings';
 import type { SubmissionWithUser } from '@/interface/submission';
@@ -46,7 +46,7 @@ function WinnerBounty({
       } by ${initialBounty?.sponsor?.name}`}</title>
       <meta
         name="description"
-        content={`${getBountyTypeLabel(initialBounty?.type ?? 'Bounty')} on Superteam Earn | ${
+        content={`${getListingTypeLabel(initialBounty?.type ?? 'Bounty')} on Superteam Earn | ${
           initialBounty?.sponsor?.name
         } is seeking freelancers and builders ${
           initialBounty?.title

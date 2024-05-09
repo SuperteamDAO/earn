@@ -31,7 +31,7 @@ export const getRegionTooltipLabel = (region: string | undefined) => {
   }
 };
 
-export const getBountyDraftStatus = (
+export const getListingDraftStatus = (
   status: string | undefined,
   isPublished: boolean | undefined,
 ) => {
@@ -40,7 +40,7 @@ export const getBountyDraftStatus = (
   return 'DRAFT';
 };
 
-export const getBountyTypeLabel = (type: string) => {
+export const getListingTypeLabel = (type: string) => {
   if (type === 'project') return 'Project';
   if (type === 'hackathon') return 'Hackathon';
   return 'Bounty';
@@ -51,7 +51,7 @@ export const getBountyStatus = (
 ) => {
   if (!bounty) return 'DRAFT';
   const rewardsLength = Object.keys(bounty?.rewards || {})?.length || 0;
-  const bountyStatus = getBountyDraftStatus(
+  const bountyStatus = getListingDraftStatus(
     bounty?.status,
     bounty?.isPublished,
   );

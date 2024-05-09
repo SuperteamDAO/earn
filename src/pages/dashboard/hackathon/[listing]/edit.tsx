@@ -45,7 +45,7 @@ function EditBounty({ listing }: Props) {
       {isBountyLoading ? (
         <LoadingSection />
       ) : (
-        <CreateListing bounty={bounty} editable type={'hackathon'} />
+        <CreateListing listing={bounty} editable type={'hackathon'} />
       )}
     </Sidebar>
   );

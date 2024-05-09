@@ -51,19 +51,7 @@ const useFormStore = create<UserStoreType>()((set) => ({
     private: false,
   },
   otp: undefined,
-  setOtp: (data) => {
-    set((state) => {
-      state.otp = data;
-      return { ...state };
-    });
-  },
   emailVerified: false,
-  verifyEmail: () => {
-    set((state) => {
-      state.emailVerified = true;
-      return { ...state };
-    });
-  },
   updateState: (data) => {
     set((state) => {
       state.form = { ...state.form, ...data };
