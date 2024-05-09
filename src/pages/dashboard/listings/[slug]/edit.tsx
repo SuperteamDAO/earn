@@ -28,11 +28,7 @@ function EditBounty({ slug }: Props) {
         router.push('/dashboard/listings');
       } else {
         const bounty = bountyDetails.data as Bounty;
-        console.log(
-          'description and requirements - ',
-          bounty.description,
-          bounty.requirements,
-        );
+        const isProject = bounty?.type === 'project';
         if (
           bounty.isPublished ||
           !bounty.title ||
@@ -40,12 +36,18 @@ function EditBounty({ slug }: Props) {
           !bounty.pocSocials ||
           !bounty.applicationType ||
           !bounty.deadline ||
-          (bounty.type === 'project' && !bounty.timeToComplete)
+          (isProject && !bounty.timeToComplete)
         ) {
           setPrevStep(2);
-        } else if (bounty.rewards || bounty.rewardAmount) {
+        } else if ((bounty.rewards || bounty.rewardAmount) && !isProject) {
+          setPrevStep(4);
+        } else if ((bounty.rewards || bounty.rewardAmount) && isProject) {
           setPrevStep(5);
-        } else if (bounty.eligibility && bounty.eligibility.length !== 0) {
+        } else if (
+          bounty.eligibility &&
+          bounty.eligibility.length !== 0 &&
+          isProject
+        ) {
           setPrevStep(4);
         } else if (bounty.requirements || bounty.description) {
           setPrevStep(3);
@@ -71,7 +73,7 @@ function EditBounty({ slug }: Props) {
         <LoadingSection />
       ) : (
         <CreateListing
-          bounty={bounty}
+          listing={bounty}
           editable
           prevStep={prevStep}
           type={bounty?.type as 'bounty' | 'project' | 'hackathon'}

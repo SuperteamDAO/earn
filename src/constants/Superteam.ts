@@ -111,4 +111,13 @@ export const Superteams = [
     displayValue: 'Philippines',
     country: ['Philippines'],
   },
+  {
+    name: 'Superteam Japan',
+    bg: `/assets/category_assets/bg/growth.png`,
+    color: '#A8FEA8',
+    icons: '/assets/superteams/japan.png',
+    region: Regions.JAPAN,
+    displayValue: 'Japan',
+    country: ['Japan'],
+  },
 ];

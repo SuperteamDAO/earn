@@ -202,7 +202,7 @@ export function Sidebar({
           display={{ base: 'none', md: 'block' }}
           w={{ base: 0, md: 80 }}
           minH="100vh"
-          pt={8}
+          pt={10}
           bg="white"
           borderRight={'1px solid'}
           borderRightColor={'blackAlpha.200'}
@@ -247,7 +247,7 @@ export function Sidebar({
         </Box>
         {showLoading && <LoadingSection />}
         {showContent && (
-          <Box w="full" px={6} py={8} bg="white">
+          <Box w="full" px={6} py={10} bg="white">
             {showBanner && <Banner isHackathonRoute={isHackathonRoute} />}
             {children}
           </Box>
