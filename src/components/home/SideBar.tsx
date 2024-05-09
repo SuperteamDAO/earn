@@ -1,7 +1,9 @@
-import { Box, Center, Flex, Image, Text, VStack } from '@chakra-ui/react';
+import { ChevronRightIcon } from '@chakra-ui/icons';
+import { Box, Center, Flex, Image, Link, Text, VStack } from '@chakra-ui/react';
 import Avatar from 'boring-avatars';
 import NextLink from 'next/link';
 import { useRouter } from 'next/router';
+import { usePostHog } from 'posthog-js/react';
 import { useEffect, useRef, useState } from 'react';
 
 import { tokenList } from '@/constants';
@@ -326,6 +328,7 @@ const RecentEarners = ({ earners }: { earners?: User[] }) => {
   const marqueeRef = useRef<HTMLDivElement>(null);
   const animationFrameRef = useRef<number | null>(null);
   const [isPaused, setIsPaused] = useState(false);
+  const posthog = usePostHog();
 
   const multipliedEarners = earners ? [...earners, ...earners, ...earners] : [];
 
@@ -356,9 +359,24 @@ const RecentEarners = ({ earners }: { earners?: User[] }) => {
 
   return (
     <Box>
-      <Text mb={4} color={'gray.400'} fontWeight={500}>
-        RECENT EARNERS
-      </Text>
+      <Flex justify={'space-between'}>
+        <Text mb={4} color={'gray.400'} fontWeight={500}>
+          RECENT EARNERS
+        </Text>
+        <Link
+          className="ph-no-capture"
+          as={NextLink}
+          color="brand.purple"
+          fontSize="sm"
+          fontWeight={500}
+          href="/leaderboard"
+          onClick={() => {
+            posthog.capture('view leaderboard_homepage');
+          }}
+        >
+          Leaderboard <ChevronRightIcon w={'1.1rem'} h={'1.1rem'} />
+        </Link>
+      </Flex>
       <VStack>
         <Box
           ref={marqueeRef}

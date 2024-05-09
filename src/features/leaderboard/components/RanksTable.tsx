@@ -15,6 +15,7 @@ import {
   VStack,
 } from '@chakra-ui/react';
 import NextLink from 'next/link';
+import { usePostHog } from 'posthog-js/react';
 
 import { userStore } from '@/store/user';
 
@@ -35,6 +36,8 @@ interface Props {
 
 export function RanksTable({ rankings, skill, userRank }: Props) {
   const { userInfo } = userStore();
+  const posthog = usePostHog();
+
   const userSkills = getSubskills(
     userInfo?.skills as any,
     skillCategories[skill],
@@ -188,11 +191,17 @@ export function RanksTable({ rankings, skill, userRank }: Props) {
                 </Td>
                 <Td h="full" px={{ base: 1, md: 2 }}>
                   <Link
+                    className="ph-no-capture"
                     as={NextLink}
                     alignItems="center"
                     gap={2}
                     display="flex"
                     href={`/t/${row.username}`}
+                    onClick={() => {
+                      posthog.capture('profile click_leaderboard', {
+                        clicked_username: row.username,
+                      });
+                    }}
                     target="_blank"
                   >
                     <Avatar
@@ -241,11 +250,7 @@ export function RanksTable({ rankings, skill, userRank }: Props) {
                   </Link>
                 </Td>
                 <Td h="full" px={{ base: 1, md: 2 }}>
-                  <Flex
-                    justify="center"
-                    gap={2}
-                    fontSize={{ base: 'xs', md: 'sm' }}
-                  >
+                  <Flex justify="center" gap={2}>
                     <Text color="black" textAlign={'center'}>
                       {formatter(row.dollarsEarned)}
                     </Text>
@@ -327,11 +332,17 @@ export function RanksTable({ rankings, skill, userRank }: Props) {
                     borderBottomWidth={'0px'}
                   >
                     <Link
+                      className="ph-no-capture"
                       as={NextLink}
                       alignItems="center"
                       gap={2}
                       display="flex"
                       href={`/t/${userInfo.username}`}
+                      onClick={() => {
+                        posthog.capture('profile click_leaderboard', {
+                          clicked_username: userInfo.username,
+                        });
+                      }}
                       target="_blank"
                     >
                       <Avatar
@@ -386,11 +397,7 @@ export function RanksTable({ rankings, skill, userRank }: Props) {
                     px={{ base: 1, md: 2 }}
                     borderBottomWidth={'0px'}
                   >
-                    <Flex
-                      justify="center"
-                      gap={2}
-                      fontSize={{ base: 'xs', md: 'sm' }}
-                    >
+                    <Flex justify="center" gap={2}>
                       <Text color="black" textAlign={'center'}>
                         {formatter(userRank?.dollarsEarned ?? 0)}
                       </Text>
