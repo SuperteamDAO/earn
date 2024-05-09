@@ -29,6 +29,9 @@ export default async function user(_req: NextApiRequest, res: NextApiResponse) {
         },
       },
       take: 15,
+      orderBy: {
+        updatedAt: 'desc',
+      },
     });
 
     const earners = winningSubmissions.map((submission) => {

@@ -53,12 +53,13 @@ import { FiMoreVertical } from 'react-icons/fi';
 
 import { LoadingSection } from '@/components/shared/LoadingSection';
 import { tokenList } from '@/constants/index';
+import { useListingFormStore } from '@/features/listing-builder';
 import {
   type BountyWithSubmissions,
   formatDeadline,
   getBountyStatus,
-  getBountyTypeLabel,
   getColorStyles,
+  getListingTypeLabel,
   isDeadlineOver,
 } from '@/features/listings';
 import { CreateListingModal, SponsorPrize } from '@/features/sponsor-dashboard';
@@ -173,6 +174,8 @@ function Bounties() {
     setBounty(deleteBounty);
     deleteDraftOnOpen();
   };
+
+  const { resetForm } = useListingFormStore();
 
   const {
     isOpen: isOpenCreateListing,
@@ -393,7 +396,7 @@ function Bounties() {
               </Thead>
               <Tbody w="full">
                 {bounties.map((currentBounty) => {
-                  const bountyType = getBountyTypeLabel(
+                  const bountyType = getListingTypeLabel(
                     currentBounty?.type ?? 'bounty',
                   );
 
@@ -601,6 +604,7 @@ function Bounties() {
                                 as={NextLink}
                                 _hover={{ textDecoration: 'none' }}
                                 href={`/dashboard/listings/${currentBounty.slug}/edit`}
+                                onClick={resetForm}
                               >
                                 <MenuItem
                                   py={2}

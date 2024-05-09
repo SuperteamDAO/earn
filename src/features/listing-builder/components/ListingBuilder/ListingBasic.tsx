@@ -6,8 +6,6 @@ import {
   FormControl,
   FormErrorMessage,
   FormHelperText,
-  FormLabel,
-  Image,
   Input,
   InputGroup,
   InputRightElement,
@@ -17,9 +15,9 @@ import {
   Switch,
   Tag,
   Text,
-  Tooltip,
   VStack,
 } from '@chakra-ui/react';
+import { zodResolver } from '@hookform/resolvers/zod';
 import { Regions } from '@prisma/client';
 import axios from 'axios';
 import debounce from 'lodash.debounce';
@@ -30,85 +28,141 @@ import {
   type SetStateAction,
   useCallback,
   useEffect,
-  useMemo,
   useState,
 } from 'react';
+import { useForm } from 'react-hook-form';
 import slugify from 'slugify';
+import { z } from 'zod';
 
 import { SkillSelect } from '@/components/misc/SkillSelect';
-import type { MultiSelectOptions } from '@/constants';
+import { type MultiSelectOptions } from '@/constants';
 import { Superteams } from '@/constants/Superteam';
 import { dayjs } from '@/utils/dayjs';
 
-import type { SuperteamName } from '../../types';
-import { getSuggestions } from '../../utils';
-import type { BountyBasicType } from '../CreateListingForm';
+import { useListingFormStore } from '../../store';
+import { type ListingFormType } from '../../types';
+import { getSuggestions, mergeSkills } from '../../utils';
 import { SelectSponsor } from '../SelectSponsor';
+import { ListingFormLabel, ListingTooltip } from './Form';
 
 interface Props {
-  id?: string;
-  bountyBasic: BountyBasicType | undefined;
-  setbountyBasic: Dispatch<SetStateAction<BountyBasicType | undefined>>;
+  editable: boolean;
+  type: 'bounty' | 'project' | 'hackathon';
+  isDuplicating?: boolean;
   setSteps: Dispatch<SetStateAction<number>>;
+  isNewOrDraft?: boolean;
+  isDraftLoading: boolean;
+  createDraft: (data: ListingFormType) => Promise<void>;
   setSkills: Dispatch<SetStateAction<MultiSelectOptions[]>>;
   setSubSkills: Dispatch<SetStateAction<MultiSelectOptions[]>>;
   subSkills: MultiSelectOptions[];
   skills: MultiSelectOptions[];
-  createDraft: () => void;
-  draftLoading: boolean;
-  editable: boolean;
-  regions: Regions;
-  setRegions: Dispatch<SetStateAction<Regions>>;
-  type: 'bounty' | 'project' | 'hackathon';
-  timeToComplete?: string;
-  isNewOrDraft?: boolean;
-  isDuplicating?: boolean;
-  referredBy?: SuperteamName;
-  setReferredBy?: Dispatch<SetStateAction<SuperteamName | undefined>>;
-  isPrivate: boolean;
-  setIsPrivate: Dispatch<SetStateAction<boolean>>;
-  publishedAt?: string;
 }
-interface ErrorsBasic {
-  title: boolean;
-  slug: boolean;
-  deadline: boolean;
-  skills: boolean;
-  subSkills: boolean;
-  pocSocials: boolean;
-  timeToComplete: boolean;
-}
+
 export const ListingBasic = ({
-  setbountyBasic,
+  editable,
+  isDuplicating,
+  type,
   setSteps,
+  isNewOrDraft,
+  isDraftLoading,
+  createDraft,
   setSkills,
   setSubSkills,
   skills,
   subSkills,
-  bountyBasic,
-  createDraft,
-  draftLoading,
-  regions,
-  setRegions,
-  type,
-  isNewOrDraft,
-  isDuplicating,
-  referredBy,
-  setReferredBy,
-  isPrivate,
-  setIsPrivate,
-  editable,
-  id,
-  publishedAt,
 }: Props) => {
-  const [errorState, setErrorState] = useState<ErrorsBasic>({
-    deadline: false,
-    title: false,
-    slug: false,
-    subSkills: false,
-    skills: false,
-    pocSocials: false,
-    timeToComplete: false,
+  const { form, updateState } = useListingFormStore();
+  const slugUniqueCheck = async (slug: string) => {
+    try {
+      const listingId = editable && !isDuplicating ? form?.id : null;
+      await axios.get(
+        `/api/listings/slug?slug=${slug}&check=true&id=${listingId}`,
+      );
+      return true;
+    } catch (error) {
+      return false;
+    }
+  };
+
+  const timeToCompleteOptions = [
+    { value: '<1 Week', label: '<1 Week' },
+    { value: '1-2 Weeks', label: '1-2 Weeks' },
+    { value: '2-4 Weeks', label: '2-4 Weeks' },
+    { value: '4-8 Weeks', label: '4-8 Weeks' },
+    { value: '>8 Weeks', label: '>8 Weeks' },
+  ];
+
+  const formSchema = z
+    .object({
+      title: z.string().min(1, 'Title is required'),
+      slug: z
+        .string()
+        .min(1, 'Slug is required')
+        .regex(
+          /^[a-z0-9]+(?:-[a-z0-9]+)*$/,
+          'Slug should only contain lowercase alphabets, numbers, and hyphens',
+        )
+        .refine(slugUniqueCheck, {
+          message: 'Slug already exists. Please try another.',
+        }),
+      pocSocials: z.string(),
+      region: z.string().optional(),
+      applicationType: z.string().optional(),
+      deadline: z.string().optional(),
+      timeToComplete: z.string().nullable().optional(),
+      referredBy: z.string().nullable().optional(),
+      isPrivate: z.boolean(),
+    })
+    .superRefine((data, ctx) => {
+      if (
+        type === 'project' &&
+        !timeToCompleteOptions.some(
+          (option) => option.value === data.timeToComplete,
+        )
+      ) {
+        ctx.addIssue({
+          path: ['timeToComplete'],
+          message: 'Time to complete is required for projects',
+          code: 'custom',
+        });
+      }
+      if (
+        type !== 'hackathon' &&
+        applicationType !== 'rolling' &&
+        !data.deadline
+      ) {
+        ctx.addIssue({
+          path: ['deadline'],
+          message: 'Deadline is required',
+          code: 'custom',
+        });
+      }
+    });
+
+  const {
+    register,
+    handleSubmit,
+    watch,
+    setValue,
+    getValues,
+    reset,
+    formState: { errors },
+  } = useForm({
+    mode: 'onChange',
+    resolver: zodResolver(formSchema),
+    defaultValues: {
+      title: form?.title,
+      slug: form?.slug,
+      skills: form?.skills,
+      pocSocials: form?.pocSocials,
+      region: form?.region,
+      applicationType: form?.applicationType,
+      deadline: form?.deadline || undefined,
+      timeToComplete: form?.timeToComplete,
+      referredBy: form?.referredBy,
+      isPrivate: form?.isPrivate,
+    },
   });
 
   const deadlineOptions = [
@@ -117,16 +171,35 @@ export const ListingBasic = ({
     { label: '3 Weeks', value: 21 },
   ];
 
+  useEffect(() => {
+    if (editable) {
+      reset({
+        title: form?.title,
+        slug: form?.slug,
+        deadline: form?.deadline
+          ? dayjs(form?.deadline).format('YYYY-MM-DDTHH:mm')
+          : undefined,
+        skills: form?.skills,
+        pocSocials: form?.pocSocials,
+        region: form?.region,
+        applicationType: form?.applicationType || 'fixed',
+        timeToComplete: form?.timeToComplete,
+        referredBy: form?.referredBy,
+        isPrivate: form?.isPrivate ? form?.isPrivate : false,
+      });
+    }
+  }, [form]);
+
+  const title = watch('title');
+  const slug = watch('slug');
+  const applicationType = watch('applicationType');
+
   const handleDeadlineSelection = (days: number) => {
     const deadlineDate = dayjs().add(days, 'day').format('YYYY-MM-DDTHH:mm');
-    setbountyBasic({
-      ...(bountyBasic as BountyBasicType),
-      deadline: deadlineDate,
-    });
+    setValue('deadline', deadlineDate);
   };
 
   const [isSlugGenerating, setIsSlugGenerating] = useState(false);
-  const [slugErrorMsg, setSlugErrorMsg] = useState('');
   const [isUrlValid, setIsUrlValid] = useState(true);
 
   const [shouldSlugGenerate, setShouldSlugGenerate] = useState(false);
@@ -139,16 +212,12 @@ export const ListingBasic = ({
   >([]);
 
   const date = dayjs().format('YYYY-MM-DD');
-  const thirtyDaysFromNow = dayjs().add(30, 'day').format('YYYY-MM-DDTHH:mm');
 
   const getUniqueSlug = async () => {
-    if (
-      (bountyBasic?.title && !editable) ||
-      (bountyBasic?.title && isDuplicating)
-    ) {
+    if ((title && !editable) || (title && isDuplicating)) {
       setIsSlugGenerating(true);
       try {
-        const slugifiedTitle = slugify(bountyBasic.title, {
+        const slugifiedTitle = slugify(title, {
           lower: true,
           strict: true,
         });
@@ -167,80 +236,15 @@ export const ListingBasic = ({
   const debouncedGetUniqueSlug = useCallback(
     debounce(async () => {
       const newSlug = await getUniqueSlug();
-      setbountyBasic((currentBountyBasic) => ({
-        ...currentBountyBasic,
-        slug: newSlug,
-      }));
-    }, 500),
-    [bountyBasic?.title],
+      setValue('slug', newSlug);
+    }, 300),
+    [title],
   );
-
-  const isSlugUnique = async (slug: string) => {
-    try {
-      const listingId = editable && !isDuplicating ? id : null;
-      await axios.get(
-        `/api/listings/slug?slug=${slug}&check=true&id=${listingId}`,
-      );
-      return { success: true };
-    } catch (error) {
-      return {
-        success: false,
-      };
-    }
-  };
-
-  const checkSlugPattern = (slug: string) => {
-    const pattern = /^[a-z0-9]+(?:-[a-z0-9]+)*$/;
-    return pattern.test(slug);
-  };
-
-  const isSlugValid = async () => {
-    setErrorState((errorState) => ({
-      ...errorState,
-      slug: false,
-    }));
-
-    if (bountyBasic?.slug && bountyBasic.slug.length > 0) {
-      const slug = bountyBasic.slug;
-      const isUniqueResponse = await isSlugUnique(slug);
-      if (!isUniqueResponse.success) {
-        setErrorState((errorState) => ({
-          ...errorState,
-          slug: true,
-        }));
-        setSlugErrorMsg('Slug already exists. Please try another.');
-        return false;
-      }
-      if (!checkSlugPattern(slug)) {
-        setErrorState((errorState) => ({
-          ...errorState,
-          slug: true,
-        }));
-
-        setSlugErrorMsg(
-          'Slug should only contain lowercase alphabets, numbers and hyphens',
-        );
-        return false;
-      }
-
-      setErrorState((errorState) => ({
-        ...errorState,
-        slug: false,
-      }));
-      setSlugErrorMsg('');
-      return true;
-    }
-
-    return false;
-  };
 
   useEffect(() => {
     if (
-      (bountyBasic?.title && shouldSlugGenerate && !editable) ||
-      (bountyBasic?.title &&
-        !bountyBasic?.slug &&
-        bountyBasic.templateId !== undefined &&
-        !editable)
+      (title && shouldSlugGenerate && !editable) ||
+      (title && !slug && form.templateId !== undefined && !editable)
     ) {
       debouncedGetUniqueSlug();
     } else {
@@ -249,636 +253,383 @@ export const ListingBasic = ({
     return () => {
       debouncedGetUniqueSlug.cancel();
     };
-  }, [bountyBasic?.title]);
-
-  const hasBasicInfo =
-    bountyBasic?.title &&
-    skills.length !== 0 &&
-    subSkills.length !== 0 &&
-    bountyBasic?.pocSocials &&
-    isUrlValid;
-
-  const timeToCompleteOptions = [
-    { value: '<1 Week', label: '<1 Week' },
-    { value: '1-2 Weeks', label: '1-2 Weeks' },
-    { value: '2-4 Weeks', label: '2-4 Weeks' },
-    { value: '4-8 Weeks', label: '4-8 Weeks' },
-    { value: '>8 Weeks', label: '>8 Weeks' },
-  ];
-
-  const isTimeToCompleteValid = useMemo(() => {
-    return timeToCompleteOptions.some(
-      (option) => option.value === bountyBasic?.timeToComplete,
-    );
-  }, [bountyBasic?.timeToComplete, timeToCompleteOptions]);
+  }, [title]);
 
   const isProject = type === 'project';
 
   const { data: session } = useSession();
   const posthog = usePostHog();
 
+  const onSubmit = (data: any) => {
+    if (Object.keys(errors).length > 0) {
+      console.log(errors);
+      return;
+    } else {
+      const mergedSkills = mergeSkills({
+        skills: skills,
+        subskills: subSkills,
+      });
+      updateState({ ...data, skills: mergedSkills });
+      posthog.capture('basics_sponsor');
+      setSteps(3);
+    }
+  };
+
+  const onDraftClick = async () => {
+    const data = getValues();
+    const mergedSkills = mergeSkills({
+      skills: skills,
+      subskills: subSkills,
+    });
+    const formData = { ...form, ...data, skills: mergedSkills };
+    if (isNewOrDraft || isDuplicating) {
+      posthog.capture('save draft_sponsor');
+    } else {
+      posthog.capture('edit listing_sponsor');
+    }
+    createDraft(formData);
+  };
+
   return (
     <>
-      <VStack align={'start'} gap={3} w={'2xl'} pt={7} pb={12}>
-        {type === 'hackathon' && !editable && (
-          <Box w="100%" mb={5}>
-            <SelectSponsor type="hackathon" />
-          </Box>
-        )}
-        <FormControl w="full" mb={5} isInvalid={errorState.title} isRequired>
-          <Flex>
-            <FormLabel
-              color={'brand.slate.500'}
-              fontSize={'15px'}
-              fontWeight={600}
-              htmlFor={'title'}
-            >
-              Listing Title
-            </FormLabel>
-            <Tooltip
-              w="max"
-              p="0.7rem"
-              color="white"
-              fontSize="0.9rem"
-              fontWeight={600}
-              bg="#6562FF"
-              borderRadius="0.5rem"
-              hasArrow
-              label={`Use a short title to describe the Listing`}
-              placement="right-end"
-            >
-              <Image
-                mt={-2}
-                alt={'Info Icon'}
-                src={'/assets/icons/info-icon.svg'}
-              />
-            </Tooltip>
-          </Flex>
-
-          <Input
-            borderColor="brand.slate.300"
-            _placeholder={{
-              color: 'brand.slate.300',
-            }}
-            focusBorderColor="brand.purple"
-            id="title"
-            onBlur={() => {
-              setSuggestions(getSuggestions(bountyBasic?.title, type));
-            }}
-            onChange={(e) => {
-              setbountyBasic({
-                ...(bountyBasic as BountyBasicType),
-                title: e.target.value,
-              });
-              if (suggestions.length > 0) {
-                setSuggestions(getSuggestions(e.target.value, type));
-              }
-            }}
-            placeholder="Develop a new landing page"
-            value={bountyBasic?.title}
-          />
-          <FormErrorMessage>
-            {/* {errors.title ? <>{errors.title.message}</> : <></>} */}
-          </FormErrorMessage>
-          {suggestions.length > 0 && (
-            <Flex
-              gap={1}
-              mt={1.5}
-              color="green.500"
-              fontSize={'xs'}
-              fontWeight={500}
-              fontStyle="italic"
-            >
-              <Text w="max-content">Similar Listings:</Text>
-              <Flex align="center" wrap="wrap" columnGap={1.5}>
-                {suggestions.map((suggestion, index) => (
-                  <Flex key={suggestion.link} align="center" gap={2}>
-                    <Link
-                      className="ph-no-capture"
-                      key={suggestion.link}
-                      href={suggestion.link}
-                      isExternal
-                      onClick={() => {
-                        posthog.capture('similar listings_sponsor');
-                      }}
-                      target="_blank"
-                    >
-                      {suggestion.label}
-                      {suggestions.length - 1 !== index && ';'}
-                    </Link>
-                    {suggestions.length - 1 === index && (
-                      <ExternalLinkIcon color="brand.slate.400" />
-                    )}
-                  </Flex>
-                ))}
-              </Flex>
-            </Flex>
+      <VStack align={'start'} gap={3} w={'2xl'} pt={5} pb={12}>
+        <form onSubmit={handleSubmit(onSubmit)} style={{ width: '100%' }}>
+          {type === 'hackathon' && !editable && (
+            <Box w="100%" mb={5}>
+              <SelectSponsor type="hackathon" />
+            </Box>
           )}
-        </FormControl>
-        <FormControl w="full" mb={5} isInvalid={errorState.slug} isRequired>
-          <Flex>
-            <FormLabel
-              color={'brand.slate.500'}
-              fontSize={'15px'}
-              fontWeight={600}
-              htmlFor={'slug'}
-            >
-              Listing Slug
-            </FormLabel>
-            <Tooltip
-              w="max"
-              p="0.7rem"
-              color="white"
-              fontSize="0.9rem"
-              fontWeight={600}
-              bg="#6562FF"
-              borderRadius="0.5rem"
-              hasArrow
-              label={`Use a short slug to describe the Listing`}
-              placement="right-end"
-            >
-              <Image
-                mt={-2}
-                alt={'Info Icon'}
-                src={'/assets/icons/info-icon.svg'}
-              />
-            </Tooltip>
-          </Flex>
-          <FormHelperText
-            mt={-1.5}
-            mb={2.5}
-            ml={0}
-            color="brand.slate.400"
-            fontSize={'13px'}
-          >
-            This field can&apos;t be edited after a listing has been published
-          </FormHelperText>
+          <FormControl w="full" mb={5} isInvalid={!!errors.title} isRequired>
+            <Flex>
+              <ListingFormLabel htmlFor={'title'}>
+                Listing Title
+              </ListingFormLabel>
+              <ListingTooltip label="Use a short title to describe the Listing" />
+            </Flex>
 
-          <InputGroup>
             <Input
               borderColor="brand.slate.300"
               _placeholder={{
                 color: 'brand.slate.300',
               }}
               focusBorderColor="brand.purple"
-              id="slug"
-              isDisabled={!isDuplicating && !!publishedAt}
-              onChange={(e) => {
-                const newValue = e.target.value
-                  .replace(/\s+/g, '-')
-                  .toLowerCase();
-                setErrorState({
-                  ...errorState,
-                  slug: false,
-                });
-                setbountyBasic({
-                  ...(bountyBasic as BountyBasicType),
-                  slug: newValue,
-                });
-                setIsUrlValid(true);
-              }}
-              placeholder="develop-a-new-landing-page"
-              value={bountyBasic?.slug}
+              id="title"
+              {...register('title', {
+                required: true,
+                onChange: (e) => {
+                  const suggestedListings = getSuggestions(
+                    e.target.value,
+                    type,
+                  );
+                  if (suggestedListings) {
+                    setSuggestions(suggestedListings);
+                  }
+                },
+              })}
+              placeholder="Develop a new landing page"
             />
-            {isSlugGenerating && (
-              <InputRightElement>
-                <Spinner size="sm" />
-              </InputRightElement>
+            {suggestions.length > 0 && (
+              <Flex
+                gap={1}
+                mt={1.5}
+                color="green.500"
+                fontSize={'xs'}
+                fontWeight={500}
+                fontStyle="italic"
+              >
+                <Text w="max-content">Similar Listings:</Text>
+                <Flex align="center" wrap="wrap" columnGap={1.5}>
+                  {suggestions.map((suggestion, index) => (
+                    <Flex key={suggestion.link} align="center" gap={2}>
+                      <Link
+                        className="ph-no-capture"
+                        key={suggestion.link}
+                        href={suggestion.link}
+                        isExternal
+                        onClick={() => {
+                          posthog.capture('similar listings_sponsor');
+                        }}
+                        target="_blank"
+                      >
+                        {suggestion.label}
+                        {suggestions.length - 1 !== index && ';'}
+                      </Link>
+                      {suggestions.length - 1 === index && (
+                        <ExternalLinkIcon color="brand.slate.400" />
+                      )}
+                    </Flex>
+                  ))}
+                </Flex>
+              </Flex>
             )}
-          </InputGroup>
-          <FormErrorMessage>
-            {slugErrorMsg ? <>{slugErrorMsg}</> : <></>}
-          </FormErrorMessage>
-        </FormControl>
-        <SkillSelect
-          errorSkill={errorState.skills}
-          errorSubSkill={errorState.subSkills}
-          setSkills={setSkills}
-          setSubSkills={setSubSkills}
-          skills={skills}
-          subSkills={subSkills}
-        />
-        {session?.user?.role === 'GOD' && (
-          <>
-            <FormControl w="full" mb={5}>
+          </FormControl>
+          <FormControl w="full" mb={5} isInvalid={!!errors.slug} isRequired>
+            <Flex>
+              <ListingFormLabel htmlFor={'slug'}>Listing Slug</ListingFormLabel>
+              <ListingTooltip label="Use a short slug to describe the Listing" />
+            </Flex>
+            <FormHelperText
+              mt={-1.5}
+              mb={2.5}
+              ml={0}
+              color="brand.slate.400"
+              fontSize={'13px'}
+            >
+              This field can&apos;t be edited after a listing has been published
+            </FormHelperText>
+
+            <InputGroup>
+              <Input
+                borderColor="brand.slate.300"
+                _placeholder={{
+                  color: 'brand.slate.300',
+                }}
+                focusBorderColor="brand.purple"
+                id="slug"
+                isDisabled={!isDuplicating && !!form?.publishedAt}
+                {...register('slug', {
+                  required: true,
+                  onChange: (e) => {
+                    const newValue = e.target.value
+                      .replace(/\s+/g, '-')
+                      .toLowerCase();
+                    setValue('slug', newValue);
+
+                    setIsUrlValid(true);
+                  },
+                })}
+                placeholder="develop-a-new-landing-page"
+              />
+              {isSlugGenerating && (
+                <InputRightElement>
+                  <Spinner size="sm" />
+                </InputRightElement>
+              )}
+            </InputGroup>
+            <FormErrorMessage>
+              {errors.slug ? <>{errors.slug.message}</> : <></>}
+            </FormErrorMessage>
+          </FormControl>
+          <SkillSelect
+            setSkills={setSkills}
+            setSubSkills={setSubSkills}
+            skills={skills}
+            subSkills={subSkills}
+          />
+          {session?.user?.role === 'GOD' && (
+            <>
+              <FormControl w="full" mb={5}>
+                <Flex>
+                  <ListingFormLabel htmlFor="region">
+                    Listing Geography
+                  </ListingFormLabel>
+                  <ListingTooltip label="Select the Superteam region this listing will be available and relevant to. Only users from the region you specify will be able to apply/submit to this listing." />
+                </Flex>
+                <Select {...register('region')}>
+                  <option value={Regions.GLOBAL}>Global</option>
+                  {Superteams.map((st) => (
+                    <option value={st.region} key={st.name}>
+                      {st.displayValue}
+                    </option>
+                  ))}
+                </Select>
+              </FormControl>
+            </>
+          )}
+          <FormControl
+            w="full"
+            mb={5}
+            isInvalid={!!errors.pocSocials || !isUrlValid}
+            isRequired
+          >
+            <Flex>
+              <ListingFormLabel htmlFor={'pocSocials'}>
+                Point of Contact
+              </ListingFormLabel>
+              <ListingTooltip label="Please add a social link of the person people reach out to in case they have questions about this listing." />
+            </Flex>
+
+            <Input
+              borderColor="brand.slate.300"
+              _placeholder={{
+                color: 'brand.slate.300',
+              }}
+              focusBorderColor="brand.purple"
+              id="pocSocials"
+              {...register('pocSocials')}
+              placeholder="https://twitter.com/elonmusk"
+            />
+            {!isUrlValid && (
+              <Text color={'red'}>
+                URL needs to contain &quot;https://&quot; prefix
+              </Text>
+            )}
+          </FormControl>
+          {isProject && (
+            <FormControl w="full" mb={5} isRequired={isProject}>
               <Flex>
-                <FormLabel
-                  color={'brand.slate.500'}
-                  fontSize={'15px'}
-                  fontWeight={600}
-                >
-                  Listing Geography
-                </FormLabel>
-                <Tooltip
-                  w="max"
-                  p="0.7rem"
-                  color="white"
-                  fontSize="0.9rem"
-                  fontWeight={600}
-                  bg="#6562FF"
-                  borderRadius="0.5rem"
-                  hasArrow
-                  label={`Select the Superteam region this listing will be available and relevant to. Only users from the region you specify will be able to apply/submit to this listing.`}
-                  placement="right-end"
-                >
-                  <Image
-                    mt={-2}
-                    alt={'Info Icon'}
-                    src={'/assets/icons/info-icon.svg'}
-                  />
-                </Tooltip>
+                <ListingFormLabel htmlFor="applicationType">
+                  Application Type
+                </ListingFormLabel>
               </Flex>
 
               <Select
-                onChange={(e) => {
-                  setRegions(e.target.value as Regions);
-                }}
-                value={regions}
+                defaultValue={'fixed'}
+                {...register('applicationType', {
+                  required: true,
+                  onChange: (e) => {
+                    const value = e.target.value;
+                    if (value === 'rolling') {
+                      handleDeadlineSelection(30);
+                    }
+                  },
+                })}
               >
-                <option value={Regions.GLOBAL}>Global</option>
-                {Superteams.map((st) => (
-                  <option value={st.region} key={st.name}>
-                    {st.displayValue}
+                <option value="fixed">Fixed Deadline</option>
+                <option value="rolling">Rolling Deadline</option>
+              </Select>
+            </FormControl>
+          )}
+          {type !== 'hackathon' && applicationType !== 'rolling' && (
+            <FormControl
+              mb={5}
+              isInvalid={!!errors.deadline}
+              isRequired={applicationType ? applicationType === 'fixed' : true}
+            >
+              <Flex align={'center'} justify={'start'}>
+                <ListingFormLabel htmlFor={'deadline'}>
+                  Deadline (in{' '}
+                  {Intl.DateTimeFormat().resolvedOptions().timeZone})
+                </ListingFormLabel>
+                <ListingTooltip label="Select the deadline date for accepting submissions" />
+              </Flex>
+              <Input
+                w={'full'}
+                color={'brand.slate.500'}
+                borderColor="brand.slate.300"
+                _placeholder={{
+                  color: 'brand.slate.300',
+                }}
+                css={{
+                  boxSizing: 'border-box',
+                  padding: '.75rem',
+                  position: 'relative',
+                  width: '100%',
+                  '&::-webkit-calendar-picker-indicator': {
+                    background: 'transparent',
+                    bottom: 0,
+                    color: 'transparent',
+                    cursor: 'pointer',
+                    height: 'auto',
+                    left: 0,
+                    position: 'absolute',
+                    right: 0,
+                    top: 0,
+                    width: 'auto',
+                  },
+                }}
+                focusBorderColor="brand.purple"
+                id="deadline"
+                min={`${date}T00:00`}
+                placeholder="deadline"
+                type={'datetime-local'}
+                {...register('deadline', { required: true })}
+              />
+              <Flex align="flex-start" gap={1} mt={2}>
+                {deadlineOptions.map((option) => (
+                  <Tag
+                    key={option.label}
+                    px={3}
+                    color="green.500"
+                    fontSize={'11px'}
+                    bg="green.100"
+                    opacity={'100%'}
+                    borderRadius={'full'}
+                    cursor="pointer"
+                    onClick={() => handleDeadlineSelection(option.value)}
+                    size={'sm'}
+                    variant="subtle"
+                  >
+                    {option.label}
+                  </Tag>
+                ))}
+              </Flex>
+            </FormControl>
+          )}
+          {isProject && (
+            <FormControl
+              w="full"
+              mb={5}
+              isInvalid={!!errors.timeToComplete}
+              isRequired={isProject}
+            >
+              <Flex>
+                <ListingFormLabel htmlFor="timeToComplete">
+                  Estimated Time to Complete
+                </ListingFormLabel>
+              </Flex>
+
+              <Select
+                _placeholder={{
+                  color: 'brand.slate.300',
+                }}
+                placeholder="Select time to complete"
+                {...register('timeToComplete', { required: true })}
+              >
+                {timeToCompleteOptions.map((option) => (
+                  <option key={option.value} value={option.value}>
+                    {option.label}
                   </option>
                 ))}
               </Select>
             </FormControl>
-          </>
-        )}
-        <FormControl
-          w="full"
-          mb={5}
-          isInvalid={errorState.pocSocials || !isUrlValid}
-          isRequired
-        >
-          <Flex>
-            <FormLabel
-              color={'brand.slate.500'}
-              fontSize={'15px'}
-              fontWeight={600}
-              htmlFor={'pocSocials'}
-            >
-              Point of Contact
-            </FormLabel>
-            <Tooltip
-              w="max"
-              p="0.7rem"
-              color="white"
-              fontSize="0.9rem"
-              fontWeight={600}
-              bg="#6562FF"
-              borderRadius="0.5rem"
-              hasArrow
-              label={`Please add a social link of the person people reach out to in case they have questions about this listing.`}
-              placement="right-end"
-            >
-              <Image
-                mt={-2}
-                alt={'Info Icon'}
-                src={'/assets/icons/info-icon.svg'}
-              />
-            </Tooltip>
-          </Flex>
-
-          <Input
-            borderColor="brand.slate.300"
-            _placeholder={{
-              color: 'brand.slate.300',
-            }}
-            focusBorderColor="brand.purple"
-            id="pocSocials"
-            onChange={(e) => {
-              setbountyBasic({
-                ...(bountyBasic as BountyBasicType),
-                pocSocials: e.target.value,
-              });
-              setIsUrlValid(true);
-            }}
-            placeholder="https://twitter.com/elonmusk"
-            value={bountyBasic?.pocSocials}
-          />
-          <FormErrorMessage>
-            {/* {errors.title ? <>{errors.title.message}</> : <></>} */}
-          </FormErrorMessage>
-          {!isUrlValid && (
-            <Text color={'red'}>
-              URL needs to contain &quot;https://&quot; prefix
-            </Text>
           )}
-        </FormControl>
-        {isProject && (
-          <FormControl w="full" mb={5} isRequired={isProject}>
+          <FormControl w="full" mb={5}>
             <Flex>
-              <FormLabel
-                color={'brand.slate.500'}
-                fontSize={'15px'}
-                fontWeight={600}
-              >
-                Application Type
-              </FormLabel>
+              <ListingFormLabel htmlFor="referredBy">
+                Referred By
+              </ListingFormLabel>
+              <ListingTooltip label="Who referred you to add this listing on Superteam Earn?" />
             </Flex>
 
-            <Select
-              defaultValue={'fixed'}
-              onChange={(e) => {
-                setbountyBasic({
-                  ...(bountyBasic as BountyBasicType),
-                  applicationType: e.target.value as 'fixed' | 'rolling',
-                });
-              }}
-              value={bountyBasic?.applicationType}
-            >
-              <option value="fixed">Fixed Deadline</option>
-              <option value="rolling">Rolling Deadline</option>
-            </Select>
-          </FormControl>
-        )}
-        {type !== 'hackathon' && bountyBasic?.applicationType !== 'rolling' && (
-          <FormControl
-            mb={5}
-            isInvalid={errorState.deadline}
-            isRequired={
-              bountyBasic?.applicationType
-                ? bountyBasic.applicationType === 'fixed'
-                : true
-            }
-          >
-            <Flex align={'center'} justify={'start'}>
-              <FormLabel
-                color={'brand.slate.500'}
-                fontSize={'15px'}
-                fontWeight={600}
-                htmlFor={'deadline'}
-              >
-                Deadline (in {Intl.DateTimeFormat().resolvedOptions().timeZone})
-              </FormLabel>
-              <Tooltip
-                w="max"
-                p="0.7rem"
-                color="white"
-                fontSize="0.9rem"
-                fontWeight={600}
-                bg="#6562FF"
-                borderRadius="0.5rem"
-                hasArrow
-                label={`Select the deadline date for accepting submissions`}
-                placement="right-end"
-              >
-                <Image
-                  mt={-2}
-                  alt={'Info Icon'}
-                  src={'/assets/icons/info-icon.svg'}
-                />
-              </Tooltip>
-            </Flex>
-            <Input
-              w={'full'}
-              color={'brand.slate.500'}
-              borderColor="brand.slate.300"
-              _placeholder={{
-                color: 'brand.slate.300',
-              }}
-              css={{
-                boxSizing: 'border-box',
-                padding: '.75rem',
-                position: 'relative',
-                width: '100%',
-                '&::-webkit-calendar-picker-indicator': {
-                  background: 'transparent',
-                  bottom: 0,
-                  color: 'transparent',
-                  cursor: 'pointer',
-                  height: 'auto',
-                  left: 0,
-                  position: 'absolute',
-                  right: 0,
-                  top: 0,
-                  width: 'auto',
-                },
-              }}
-              focusBorderColor="brand.purple"
-              id="deadline"
-              min={`${date}T00:00`}
-              onChange={(e) => {
-                setbountyBasic({
-                  ...(bountyBasic as BountyBasicType),
-                  deadline: e.target.value,
-                });
-              }}
-              placeholder="deadline"
-              type={'datetime-local'}
-              value={bountyBasic?.deadline}
-            />
-            <Flex align="flex-start" gap={1} mt={2}>
-              {deadlineOptions.map((option) => (
-                <Tag
-                  key={option.label}
-                  px={3}
-                  color="green.500"
-                  fontSize={'11px'}
-                  bg="green.100"
-                  opacity={'100%'}
-                  borderRadius={'full'}
-                  cursor="pointer"
-                  onClick={() => handleDeadlineSelection(option.value)}
-                  size={'sm'}
-                  variant="subtle"
-                >
-                  {option.label}
-                </Tag>
-              ))}
-            </Flex>
-
-            <FormErrorMessage>
-              {/* {errors.deadline ? <>{errors.deadline.message}</> : <></>} */}
-            </FormErrorMessage>
-          </FormControl>
-        )}
-        {isProject && (
-          <FormControl
-            w="full"
-            mb={5}
-            isInvalid={errorState.timeToComplete}
-            isRequired={isProject}
-          >
-            <Flex>
-              <FormLabel
-                color={'brand.slate.500'}
-                fontSize={'15px'}
-                fontWeight={600}
-              >
-                Estimated Time to Complete
-              </FormLabel>
-            </Flex>
-
-            <Select
-              _placeholder={{
-                color: 'brand.slate.300',
-              }}
-              onChange={(e) => {
-                setbountyBasic({
-                  ...(bountyBasic as BountyBasicType),
-                  timeToComplete: e.target.value,
-                });
-              }}
-              placeholder="Select time to complete"
-              value={bountyBasic?.timeToComplete || ''}
-            >
-              {timeToCompleteOptions.map((option) => (
-                <option key={option.value} value={option.value}>
-                  {option.label}
+            <Select {...register('referredBy')} placeholder="Select">
+              {Superteams.map((st) => (
+                <option value={st.name} key={st.name}>
+                  {st.name}
                 </option>
               ))}
             </Select>
           </FormControl>
-        )}
-        <FormControl w="full" mb={5}>
-          <Flex>
-            <FormLabel
-              color={'brand.slate.500'}
-              fontSize={'15px'}
-              fontWeight={600}
+          <FormControl alignItems="center" gap={3} display="flex">
+            <Flex>
+              <ListingFormLabel htmlFor="isPrivate">
+                Private Listing
+              </ListingFormLabel>
+              <ListingTooltip label="Private listings are only accessible through direct links and do not appear on the Superteam Earn homepage or other public pages on the website." />
+            </Flex>
+            <Switch mb={2} id="email-alerts" {...register('isPrivate')} />
+          </FormControl>
+          <VStack gap={4} w={'full'} mt={6}>
+            <Button
+              className="ph-no-capture"
+              w="100%"
+              type="submit"
+              variant="solid"
             >
-              Referred By
-            </FormLabel>
-            <Tooltip
-              w="max"
-              p="0.7rem"
-              color="white"
-              fontSize="0.9rem"
-              fontWeight={600}
-              bg="#6562FF"
-              borderRadius="0.5rem"
-              hasArrow
-              label={`Who referred you to add this listing on Superteam Earn?`}
-              placement="right-end"
+              Continue
+            </Button>
+            <Button
+              className="ph-no-capture"
+              w="100%"
+              isDisabled={!form?.title}
+              isLoading={isDraftLoading}
+              onClick={onDraftClick}
+              variant="outline"
             >
-              <Image
-                mt={-2}
-                alt={'Info Icon'}
-                src={'/assets/icons/info-icon.svg'}
-              />
-            </Tooltip>
-          </Flex>
-
-          <Select
-            onChange={(e) => {
-              setReferredBy?.(e.target.value);
-            }}
-            placeholder="Select"
-            value={referredBy}
-          >
-            {Superteams.map((st) => (
-              <option value={st.name} key={st.name}>
-                {st.name}
-              </option>
-            ))}
-          </Select>
-        </FormControl>
-        <FormControl alignItems="center" gap={3} display="flex">
-          <Flex>
-            <FormLabel
-              color={'brand.slate.500'}
-              fontSize={'15px'}
-              fontWeight={600}
-            >
-              Private Listing
-            </FormLabel>
-            <Tooltip
-              w="max"
-              p="0.7rem"
-              color="white"
-              fontSize="0.9rem"
-              fontWeight={600}
-              bg="#6562FF"
-              borderRadius="0.5rem"
-              hasArrow
-              label={
-                'Private listings are only accessible through direct links and do not appear on the Superteam Earn homepage or other public pages on the website.'
-              }
-              placement="right-end"
-            >
-              <Image
-                mt={-2}
-                alt={'Info Icon'}
-                src={'/assets/icons/info-icon.svg'}
-              />
-            </Tooltip>
-          </Flex>
-          <Switch
-            mb={2}
-            id="email-alerts"
-            isChecked={isPrivate}
-            onChange={() => setIsPrivate(!isPrivate)}
-          />
-        </FormControl>
-        <VStack gap={4} w={'full'} mt={6}>
-          <Button
-            className="ph-no-capture"
-            w="100%"
-            onClick={async () => {
-              const slugIsValid = await isSlugValid();
-              setErrorState({
-                deadline: !bountyBasic?.deadline,
-                skills: skills.length === 0,
-                subSkills: subSkills.length === 0,
-                title: !bountyBasic?.title,
-                pocSocials: !bountyBasic?.pocSocials,
-                timeToComplete: isProject ? !isTimeToCompleteValid : false,
-                slug: !slugIsValid,
-              });
-
-              if (!slugIsValid) {
-                return;
-              }
-
-              if (isProject && !isTimeToCompleteValid) {
-                return;
-              }
-
-              posthog.capture('basics_sponsor');
-              if (type === 'hackathon' && hasBasicInfo) {
-                setSteps(3);
-              }
-
-              if (hasBasicInfo && bountyBasic?.deadline) {
-                setSteps(3);
-              }
-              if (isProject && hasBasicInfo && bountyBasic?.timeToComplete) {
-                if (
-                  bountyBasic?.applicationType === 'rolling' &&
-                  !bountyBasic?.deadline
-                ) {
-                  setbountyBasic({
-                    ...(bountyBasic as BountyBasicType),
-                    deadline: thirtyDaysFromNow,
-                  });
-                  setSteps(3);
-                }
-              }
-            }}
-            variant="solid"
-          >
-            Continue
-          </Button>
-          <Button
-            className="ph-no-capture"
-            w="100%"
-            isDisabled={!bountyBasic?.title}
-            isLoading={draftLoading}
-            onClick={() => {
-              if (isNewOrDraft || isDuplicating) {
-                posthog.capture('save draft_sponsor');
-              } else {
-                posthog.capture('edit listing_sponsor');
-              }
-              createDraft();
-            }}
-            variant="outline"
-          >
-            {isNewOrDraft || isDuplicating ? 'Save Draft' : 'Update Listing'}
-          </Button>
-        </VStack>
+              {isNewOrDraft || isDuplicating ? 'Save Draft' : 'Update Listing'}
+            </Button>
+          </VStack>
+        </form>
       </VStack>
     </>
   );

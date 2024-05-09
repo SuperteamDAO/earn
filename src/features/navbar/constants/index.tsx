@@ -1,5 +1,4 @@
 import { RenaissanceSecondaryLogo } from '@/svg/renaissance-secondary';
-import { ScribesLogo } from '@/svg/scribes-logo';
 
 interface NavItem {
   label: string;
@@ -45,11 +44,11 @@ export const HACKATHON_NAV_ITEMS: Array<NavItem> = [
     href: '/renaissance/',
     posthog: 'renaissance_navbar',
   },
-  {
-    label: 'Scribes',
-    href: '/scribes/',
-    posthog: 'scribes_navbar',
-  },
+  // {
+  //   label: 'Scribes',
+  //   href: '/scribes/',
+  // posthog: 'scribes_navbar',
+  // },
 ];
 
 export function renderLabel(navItem: NavItem) {
@@ -57,13 +56,6 @@ export function renderLabel(navItem: NavItem) {
     case 'Renaissance':
       return (
         <RenaissanceSecondaryLogo styles={{ width: '116px', height: 'auto' }} />
-      );
-    case 'Scribes':
-      return (
-        <ScribesLogo
-          styles={{ width: '60px', height: 'auto' }}
-          variant="#a459ff"
-        />
       );
     default:
       return navItem.label;

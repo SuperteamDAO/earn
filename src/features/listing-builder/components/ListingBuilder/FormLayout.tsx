@@ -1,4 +1,4 @@
-import { Heading, HStack, Text, VStack } from '@chakra-ui/react';
+import { Flex, HStack, Text, VStack } from '@chakra-ui/react';
 import React, { type Dispatch, type SetStateAction } from 'react';
 
 import { Steps } from '@/components/misc/steps';
@@ -24,26 +24,21 @@ export const FormLayout = ({
 }: Props) => {
   return (
     <VStack mb={12}>
-      <VStack gap={6} w={'80%'}>
-        <VStack>
-          <Heading
-            color={'#334254'}
-            fontFamily={'var(--font-sans)'}
-            fontSize={'24px'}
-            fontWeight={700}
-          >
+      <VStack w={'80%'}>
+        <Flex align={'center'} direction="column">
+          <Text color={'brand.slate.700'} fontSize={'1.7rem'} fontWeight={700}>
             {stepList[currentStep - 1]?.mainHead}
-          </Heading>
+          </Text>
           <Text
-            color={'#94A3B8'}
-            fontFamily={'var(--font-sans)'}
-            fontSize={'20px'}
+            mt={1}
+            color={'brand.slate.400'}
+            fontSize={'lg'}
             fontWeight={500}
             textAlign={'center'}
           >
             {stepList[currentStep - 1]?.description}
           </Text>
-        </VStack>
+        </Flex>
         <HStack w="50%">
           {stepList.map((step) => {
             return (
@@ -57,12 +52,14 @@ export const FormLayout = ({
                 {step.number !== stepList.length && (
                   <hr
                     style={{
-                      width: '50%',
+                      width: '100%',
                       outline:
                         currentStep >= step.number
                           ? '1px solid #6562FF'
                           : '1px solid #CBD5E1',
                       border: 'none',
+                      marginLeft: '-0.5rem',
+                      marginRight: '-0.5rem',
                     }}
                   />
                 )}

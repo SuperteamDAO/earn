@@ -284,15 +284,17 @@ export const SubmissionModal = ({
     >
       <ModalOverlay />
       <ModalContent>
-        <ModalHeader color="brand.slate.800">{headerText}</ModalHeader>
-        <ModalCloseButton />
+        <ModalHeader px={{ base: 4, md: 10 }} pt={8} color="brand.slate.800">
+          {headerText}
+        </ModalHeader>
+        <ModalCloseButton mt={5} />
         <VStack
           align={'start'}
           gap={3}
-          overflow={'scroll'}
+          overflowY={'auto'}
           maxH={'50rem'}
-          px={6}
-          pb={6}
+          px={{ base: 4, md: 10 }}
+          pb={10}
         >
           <Box>
             <Text mb={1} color={'brand.slate.500'} fontSize="sm">

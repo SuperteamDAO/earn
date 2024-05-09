@@ -18,7 +18,6 @@ const ReferenceCard = ({ link }: { link: string }) => {
   return (
     <Box
       w="100%"
-      // h={'100%'}
       borderWidth="2px"
       borderColor={'gray.200'}
       borderRadius={8}

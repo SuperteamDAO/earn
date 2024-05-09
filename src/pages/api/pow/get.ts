@@ -31,7 +31,7 @@ export default async function handler(
 
     return res.status(200).json(pows);
   } catch (error: any) {
-    return res.status(500).json({
+    return res.status(400).json({
       error: `An error occurred while fetching the data: ${error.message}`,
     });
   }

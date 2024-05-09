@@ -76,11 +76,11 @@ async function handler(req: NextApiRequestWithUser, res: NextApiResponse) {
     if (generateTalentEmailSettings) {
       const categories = new Set();
 
-      categories.add('submissionSponsor');
-      categories.add('commentSponsor');
-      categories.add('deadlineSponsor');
-      categories.add('productAndNewsletter');
+      categories.add('createListing');
+      categories.add('commentOrLikeSubmission');
+      categories.add('weeklyListingRoundup');
       categories.add('replyOrTagComment');
+      categories.add('productAndNewsletter');
 
       for (const category of categories) {
         await prisma.emailSettings.create({

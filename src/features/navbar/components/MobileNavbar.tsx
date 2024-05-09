@@ -1,4 +1,4 @@
-import { HamburgerIcon } from '@chakra-ui/icons';
+import { HamburgerIcon, SearchIcon } from '@chakra-ui/icons';
 import {
   AbsoluteCenter,
   Box,
@@ -32,7 +32,12 @@ import {
 } from '../constants';
 import { NavLink } from './NavLink';
 
-export const MobileNavbar = ({ onLoginOpen }: { onLoginOpen: () => void }) => {
+interface Props {
+  onLoginOpen: () => void;
+  onSearchOpen: () => void;
+}
+
+export const MobileNavbar = ({ onLoginOpen, onSearchOpen }: Props) => {
   const {
     isOpen: isDrawerOpen,
     onOpen: onDrawerOpen,
@@ -182,22 +187,41 @@ export const MobileNavbar = ({ onLoginOpen }: { onLoginOpen: () => void }) => {
         <Flex
           align="center"
           justify="space-between"
-          display={{ base: 'flex', lg: 'none' }}
+          display={{ base: 'flex', xl: 'none' }}
           px={1}
           py={2}
           bg="white"
           borderBottom="1px solid"
           borderBottomColor="blackAlpha.200"
         >
-          <IconButton
-            ref={btnRef}
-            bg="transparent"
-            _hover={{ bg: 'transparent' }}
-            _active={{ bg: 'transparent' }}
-            aria-label="Open Drawer"
-            icon={<HamburgerIcon h={6} w={6} color="brand.slate.500" />}
-            onClick={onDrawerOpen}
-          />
+          <Flex>
+            <IconButton
+              ref={btnRef}
+              bg="transparent"
+              _hover={{ bg: 'transparent' }}
+              _active={{ bg: 'transparent' }}
+              aria-label="Open Drawer"
+              icon={<HamburgerIcon h={6} w={6} color="brand.slate.500" />}
+              onClick={onDrawerOpen}
+            />
+
+            {router.pathname !== '/search' && (
+              <IconButton
+                gap={2}
+                color="brand.slate.400"
+                fontWeight={400}
+                border={'none'}
+                borderColor={'brand.slate.300'}
+                _hover={{ bg: 'transparent' }}
+                _active={{ bg: 'transparent' }}
+                aria-label="Open Search"
+                icon={<SearchIcon />}
+                onClick={onSearchOpen}
+                variant="outline"
+              />
+            )}
+          </Flex>
+
           <MobileDrawer />
           <AbsoluteCenter>
             <Link
@@ -237,7 +261,7 @@ export const MobileNavbar = ({ onLoginOpen }: { onLoginOpen: () => void }) => {
       <Flex
         align={'center'}
         justify={'space-between'}
-        display={{ base: 'flex', lg: 'none' }}
+        display={{ base: 'flex', xl: 'none' }}
         px={{ base: 3, sm: 4 }}
         py={2}
         bg={'#F8FAFC'}

@@ -16,6 +16,7 @@ import { useEffect, useRef, useState } from 'react';
 import { tokenList } from '@/constants';
 import { LoginWrapper } from '@/features/auth';
 import type { User } from '@/interface/user';
+import { formatNumberWithSuffix } from '@/utils/formatNumberWithSuffix';
 import { getURL } from '@/utils/validUrl';
 
 interface SideBarProps {
@@ -297,21 +298,41 @@ const Earner = ({
           </Center>
         )}
 
-        <Box>
-          <Text color={'black'} fontSize={'sm'} fontWeight={500}>
-            {name?.length > 25 ? `${name?.slice(0, 18)}...` : name}
+        <Box w="11rem">
+          <Text
+            overflow="hidden"
+            color={'black'}
+            fontSize={'sm'}
+            fontWeight={500}
+            whiteSpace={'nowrap'}
+            textOverflow={'ellipsis'}
+          >
+            {name}
           </Text>
-          <Text color={'gray.400'} fontSize={'xs'} fontWeight={500}>
-            {bounty?.slice(0, 20)}...
+          <Text
+            overflow={'hidden'}
+            color={'gray.400'}
+            fontSize={'xs'}
+            fontWeight={500}
+            whiteSpace={'nowrap'}
+            textOverflow={'ellipsis'}
+          >
+            {bounty}
           </Text>
         </Box>
         <Flex align={'center'} columnGap={1} ml={'auto'}>
-          <Image w={5} h={5} alt={`${token} icon`} src={tokenIcon} />
+          <Image
+            w={5}
+            h={5}
+            alt={`${token} icon`}
+            rounded={'full'}
+            src={tokenIcon}
+          />
           <Text color={'gray.600'} fontSize={'sm'} fontWeight={500}>
-            ${amount.toLocaleString()}
+            {formatNumberWithSuffix(amount)}
           </Text>
           <Text color={'gray.400'} fontSize={'sm'} fontWeight={500}>
-            USDC
+            {token}
           </Text>
         </Flex>
       </Flex>
@@ -352,7 +373,7 @@ const RecentEarners = ({ earners }: { earners?: User[] }) => {
   const handleMouseLeave = () => setIsPaused(false);
 
   return (
-    <Box w={'100%'}>
+    <Box>
       <Text mb={4} color={'gray.400'} fontWeight={500}>
         RECENT EARNERS
       </Text>

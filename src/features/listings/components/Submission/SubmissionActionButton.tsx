@@ -13,7 +13,7 @@ import { SurveyModal } from '@/components/Survey';
 import { Superteams } from '@/constants/Superteam';
 import { LoginWrapper } from '@/features/auth';
 import {
-  getBountyDraftStatus,
+  getListingDraftStatus,
   getRegionTooltipLabel,
   isDeadlineOver,
 } from '@/features/listings';
@@ -83,7 +83,7 @@ export const SubmissionActionButton = ({
 
   const regionTooltipLabel = getRegionTooltipLabel(region);
 
-  const bountyDraftStatus = getBountyDraftStatus(status, isPublished);
+  const bountyDraftStatus = getListingDraftStatus(status, isPublished);
 
   const pastDeadline = isDeadlineOver(deadline) || isWinnersAnnounced;
   const buttonState = getButtonState();
