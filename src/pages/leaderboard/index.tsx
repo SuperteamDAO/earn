@@ -141,6 +141,7 @@ function TalentLeaderboard({
             <VStack
               gap={{ base: 4, md: 8 }}
               display={{ base: 'flex', md: 'none' }}
+              w="full"
             >
               <Introduction />
             </VStack>

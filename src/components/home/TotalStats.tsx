@@ -13,9 +13,11 @@ export const TotalStats = ({
     <Flex
       align={'center'}
       justify={'space-between'}
+      wrap={'wrap'}
+      gap={2}
       w="full"
-      h={'69'}
       px={'0.5rem'}
+      py={'1rem'}
       bg={'#F8FAFC'}
       rounded={'md'}
     >
@@ -40,7 +42,12 @@ export const TotalStats = ({
           </Text>
         </Box>
       </Flex>
-      <Box w={'0.0625rem'} h={'50%'} bg={'#CBD5E1'}></Box>
+      <Box
+        display={{ base: 'none', xl: 'block' }}
+        w={'0.0625rem'}
+        h={'80%'}
+        bg={'#CBD5E1'}
+      ></Box>
       <Flex>
         <Image
           h={'25x'}

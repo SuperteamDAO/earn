@@ -135,7 +135,12 @@ export function FilterRow({ timeframe, setTimeframe, setSkill, skill }: Props) {
             <Tooltip
               label={`The skill filters showcase users based on the skills requested in the listings they've successfully won, not the skills listed in their talent profiles.`}
             >
-              <InfoOutlineIcon ml={4} />
+              <InfoOutlineIcon
+                ml={4}
+                w={3.5}
+                h={3.5}
+                display={{ base: 'none', md: 'block' }}
+              />
             </Tooltip>
           </TabList>
         </Tabs>

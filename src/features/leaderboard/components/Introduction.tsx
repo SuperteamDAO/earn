@@ -12,6 +12,7 @@ export function Introduction() {
     <VStack
       align="start"
       gap={4}
+      w="full"
       p={6}
       fontSize={'sm'}
       bg="#FAF5FF"
