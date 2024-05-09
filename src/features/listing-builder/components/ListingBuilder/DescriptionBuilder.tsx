@@ -3,9 +3,7 @@ import {
   Box,
   Button,
   Flex,
-  FormLabel,
   HStack,
-  Image,
   Input,
   Link as ChakraLink,
   Modal,
@@ -13,7 +11,6 @@ import {
   ModalContent,
   ModalOverlay,
   Text,
-  Tooltip,
   useDisclosure,
   VStack,
 } from '@chakra-ui/react';
@@ -30,8 +27,10 @@ import React, {
   type Dispatch,
   type SetStateAction,
   useCallback,
+  useEffect,
   useState,
 } from 'react';
+import { useFieldArray, useForm } from 'react-hook-form';
 import toast from 'react-hot-toast';
 import { AiOutlineLink, AiOutlineOrderedList } from 'react-icons/ai';
 import { BiFontColor } from 'react-icons/bi';
@@ -51,8 +50,12 @@ import {
 } from 'react-icons/md';
 import ImageResize from 'tiptap-extension-resize-image';
 
-import { ReferenceCard, type References } from '@/features/listings';
+import { ReferenceCard } from '@/features/listings';
 import { uploadToCloudinary } from '@/utils/upload';
+
+import { useListingFormStore } from '../../store';
+import { type ListingFormType } from '../../types';
+import { ListingFormLabel, ListingTooltip, ToolbarButton } from './Form';
 
 const LinkModal = ({
   isOpen,
@@ -90,37 +93,60 @@ const LinkModal = ({
 };
 
 interface Props {
-  setEditorData: Dispatch<SetStateAction<string | undefined>>;
-  editorData: string | undefined;
   setSteps: Dispatch<SetStateAction<number>>;
-  createDraft: () => void;
-  draftLoading?: boolean;
+  createDraft: (data: ListingFormType) => Promise<void>;
+  isDraftLoading?: boolean;
   editable?: boolean;
-  setBountyRequirements?: Dispatch<SetStateAction<any | undefined>>;
-  bountyRequirements?: string | undefined;
   type?: 'bounty' | 'project' | 'hackathon';
-  references?: References[];
-  setReferences?: Dispatch<SetStateAction<References[]>>;
   isNewOrDraft?: boolean;
   isDuplicating?: boolean;
 }
 
 export const DescriptionBuilder = ({
-  editorData,
-  setEditorData,
   setSteps,
   createDraft,
-  draftLoading,
-  bountyRequirements,
-  setBountyRequirements,
-  references,
-  setReferences,
+  isDraftLoading,
   type,
   isNewOrDraft,
   isDuplicating,
+  editable,
 }: Props) => {
+  const { form, updateState } = useListingFormStore();
+
+  const { register, control, handleSubmit, watch, setValue, reset } = useForm({
+    mode: 'onBlur',
+    defaultValues: {
+      description: form?.description,
+      requirements: form?.requirements,
+      references: form?.references,
+    },
+  });
+
+  const { fields, append, remove } = useFieldArray({
+    control,
+    name: 'references',
+  });
+
+  const description = watch('description');
+  const requirements = watch('requirements');
+
   const { isOpen, onClose, onOpen } = useDisclosure();
-  const [referenceError, setReferenceError] = useState<boolean>(false);
+
+  const [editorError, setEditorError] = useState(false);
+
+  useEffect(() => {
+    if (editable) {
+      reset({
+        description: form?.description,
+        requirements: form?.requirements,
+        references: (form?.references || [])?.map((e) => ({
+          order: e.order,
+          link: e.link,
+        })),
+      });
+    }
+  }, [form]);
+
   const editor = useEditor({
     extensions: [
       Underline,
@@ -154,7 +180,7 @@ export const DescriptionBuilder = ({
     ],
     onUpdate: ({ editor }) => {
       const html = editor.getHTML();
-      setEditorData(html);
+      setValue('description', html);
     },
     editorProps: {
       attributes: {
@@ -162,7 +188,7 @@ export const DescriptionBuilder = ({
           'prose dark:prose-invert prose-sm sm:prose-base lg:prose-lg xl:prose-2xl m-5 focus:outline-none',
       },
     },
-    content: editorData,
+    content: description,
   });
 
   const setLink = useCallback(
@@ -197,14 +223,12 @@ export const DescriptionBuilder = ({
     fileInput.accept = 'image/jpeg, image/png'; // Accept only JPEG & PNG files
     fileInput.click();
 
-    // Listen for file selection
     fileInput.addEventListener('change', async (event: any) => {
       const file = event?.target?.files[0];
       if (file) {
         const toastId = toast.loading('Uploading image...');
 
         try {
-          // upload the file and get its URL
           const url = await uploadToCloudinary(
             file,
             'listing-description',
@@ -223,18 +247,21 @@ export const DescriptionBuilder = ({
     });
   }, [editor]);
 
-  const handleDeleteReference = () => {
-    if (references && setReferences) {
-      const temp = references.filter(
-        (_el, index) => index !== references.length - 1,
-      );
-      setReferences(temp);
-    }
-  };
-
   const isProject = type === 'project';
 
-  const [editorError, setEditorError] = useState(false);
+  const onSubmit = async (data: any) => {
+    updateState({ ...data });
+    if (editor?.isEmpty) {
+      setEditorError(true);
+      return;
+    }
+    setSteps(4);
+  };
+
+  const onDraftClick = async (data: any) => {
+    const formData = { ...form, ...data };
+    createDraft(formData);
+  };
 
   return (
     <>
@@ -242,34 +269,13 @@ export const DescriptionBuilder = ({
         <LinkModal setLink={setLink} isOpen={isOpen} onClose={onClose} />
       )}
       <Box>
-        <Box mb={8}>
+        <Box mb={8} pt={5}>
           <Flex justify="start" w="full">
             <Flex>
-              <FormLabel
-                color={'brand.slate.500'}
-                fontSize={'15px'}
-                fontWeight={600}
-              >
+              <ListingFormLabel htmlFor="requirements">
                 Eligibility Requirements
-              </FormLabel>
-              <Tooltip
-                w="max"
-                p="0.7rem"
-                color="white"
-                fontSize="0.9rem"
-                fontWeight={600}
-                bg="#6562FF"
-                borderRadius="0.5rem"
-                hasArrow
-                label={`Add here if you have any specific eligibility requirements for the Listing.`}
-                placement="right-end"
-              >
-                <Image
-                  mt={-2}
-                  alt={'Info Icon'}
-                  src={'/assets/icons/info-icon.svg'}
-                />
-              </Tooltip>
+              </ListingFormLabel>
+              <ListingTooltip label="Add here if you have any specific eligibility requirements for the Listing." />
             </Flex>
           </Flex>
           <Input
@@ -280,36 +286,27 @@ export const DescriptionBuilder = ({
               color: 'brand.slate.300',
             }}
             focusBorderColor="brand.purple"
-            id="bountyRequirements"
+            id="requirements"
             maxLength={220}
-            onChange={(e) =>
-              setBountyRequirements && setBountyRequirements(e.target.value)
-            }
+            {...register('requirements')}
             placeholder="Add Eligibility Requirements"
             type={'text'}
-            value={bountyRequirements}
           />
           <Text
             color={
-              (bountyRequirements?.length || 0) > 200
-                ? 'red'
-                : 'brand.slate.400'
+              (requirements?.length || 0) > 200 ? 'red' : 'brand.slate.400'
             }
             fontSize={'xs'}
             textAlign="right"
           >
-            {220 - (bountyRequirements?.length || 0)} characters left
+            {220 - (requirements?.length || 0)} characters left
           </Text>
         </Box>
         <Flex justify="space-between" w="full">
           <Flex>
-            <FormLabel
-              color={'brand.slate.500'}
-              fontSize={'15px'}
-              fontWeight={600}
-            >
+            <ListingFormLabel htmlFor="description">
               Listing Details
-            </FormLabel>
+            </ListingFormLabel>
             <Text
               as="sup"
               mt={3.5}
@@ -320,24 +317,7 @@ export const DescriptionBuilder = ({
             >
               *
             </Text>
-            <Tooltip
-              w="max"
-              p="0.7rem"
-              color="white"
-              fontSize="0.9rem"
-              fontWeight={600}
-              bg="#6562FF"
-              borderRadius="0.5rem"
-              hasArrow
-              label={`Write details about the Listing - About, Requirements, Evaluation Criteria, Resources, Rewards, etc.`}
-              placement="right-end"
-            >
-              <Image
-                mt={-2}
-                alt={'Info Icon'}
-                src={'/assets/icons/info-icon.svg'}
-              />
-            </Tooltip>
+            <ListingTooltip label="Write details about the Listing - About, Requirements, Evaluation Criteria, Resources, Rewards, etc." />
           </Flex>
           <ChakraLink
             gap={1}
@@ -369,280 +349,156 @@ export const DescriptionBuilder = ({
             borderBottom={'1px solid #D2D2D2'}
             bgColor={'#ffffff'}
           >
-            <Button
-              bg={editor?.isActive('heading', { level: 1 }) ? 'gray.200' : ''}
-              borderTop={'1px solid #D2D2D2'}
-              borderRight={'1px solid #D2D2D2'}
-              borderLeft={'1px solid #D2D2D2'}
-              borderRadius={'0px'}
+            <ToolbarButton
+              isActive={editor?.isActive('heading', { level: 1 })}
               onClick={() => {
                 editor?.chain().focus().toggleHeading({ level: 1 }).run();
               }}
-              variant={'unstyled'}
+              borderLeft={'1px solid #D2D2D2'}
             >
               H1
-            </Button>
-            <Button
-              bg={editor?.isActive('heading', { level: 2 }) ? 'gray.200' : ''}
-              borderTop={'1px solid #D2D2D2'}
-              borderRight={'1px solid #D2D2D2'}
-              borderRadius={'0px'}
+            </ToolbarButton>
+            <ToolbarButton
+              isActive={editor?.isActive('heading', { level: 2 })}
               onClick={() => {
                 editor?.chain().focus().toggleHeading({ level: 2 }).run();
               }}
-              variant={'unstyled'}
             >
               H2
-            </Button>
-            <Button
-              bg={editor?.isActive('heading', { level: 3 }) ? 'gray.200' : ''}
-              borderTop={'1px solid #D2D2D2'}
-              borderRight={'1px solid #D2D2D2'}
-              borderRadius={'0px'}
+            </ToolbarButton>
+            <ToolbarButton
+              isActive={editor?.isActive('heading', { level: 3 })}
               onClick={() => {
                 editor?.chain().focus().toggleHeading({ level: 3 }).run();
               }}
-              variant={'unstyled'}
             >
               H3
-            </Button>
-            <Button
-              bg={editor?.isActive('heading', { level: 4 }) ? 'gray.200' : ''}
-              borderTop={'1px solid #D2D2D2'}
-              borderRight={'1px solid #D2D2D2'}
-              borderRadius={'0px'}
+            </ToolbarButton>
+            <ToolbarButton
+              isActive={editor?.isActive('heading', { level: 4 })}
               onClick={() => {
                 editor?.chain().focus().toggleHeading({ level: 4 }).run();
               }}
-              variant={'unstyled'}
             >
               H4
-            </Button>
-            <Button
-              bg={editor?.isActive('heading', { level: 5 }) ? 'gray.200' : ''}
-              borderTop={'1px solid #D2D2D2'}
-              borderRight={'1px solid #D2D2D2'}
-              borderRadius={'0px'}
+            </ToolbarButton>
+            <ToolbarButton
+              isActive={editor?.isActive('heading', { level: 5 })}
               onClick={() => {
                 editor?.chain().focus().toggleHeading({ level: 5 }).run();
               }}
-              variant={'unstyled'}
             >
               H5
-            </Button>
-            <Button
-              bg={editor?.isActive('heading', { level: 6 }) ? 'gray.200' : ''}
-              borderTop={'1px solid #D2D2D2'}
-              borderRight={'1px solid #D2D2D2'}
-              borderRadius={'0px'}
+            </ToolbarButton>
+            <ToolbarButton
+              isActive={editor?.isActive('heading', { level: 6 })}
               onClick={() => {
                 editor?.chain().focus().toggleHeading({ level: 6 }).run();
               }}
-              variant={'unstyled'}
             >
               H6
-            </Button>
-            <Button
-              alignItems={'center'}
-              justifyContent={'center'}
-              display={'flex'}
-              bg={editor?.isActive('bold') ? 'gray.200' : ''}
-              borderTop={'1px solid #D2D2D2'}
-              borderRight={'1px solid #D2D2D2'}
-              borderRadius={'0px'}
+            </ToolbarButton>
+            <ToolbarButton
+              isActive={editor?.isActive('bold')}
               onClick={() => {
                 editor?.chain().focus().toggleBold().run();
               }}
-              variant={'unstyled'}
             >
               <GoBold />
-            </Button>
-            <Button
-              alignItems={'center'}
-              justifyContent={'center'}
-              display={'flex'}
-              bg={editor?.isActive('italic') ? 'gray.200' : ''}
-              borderTop={'1px solid #D2D2D2'}
-              borderRight={'1px solid #D2D2D2'}
-              borderRadius={'0px'}
+            </ToolbarButton>
+            <ToolbarButton
+              isActive={editor?.isActive('italic')}
               onClick={() => {
                 editor?.chain().focus().toggleItalic().run();
               }}
-              variant={'unstyled'}
             >
               <BsTypeItalic />
-            </Button>{' '}
-            <Button
-              alignItems={'center'}
-              justifyContent={'center'}
-              display={'flex'}
-              bg={editor?.isActive('underline') ? 'gray.200' : ''}
-              borderTop={'1px solid #D2D2D2'}
-              borderRight={'1px solid #D2D2D2'}
-              borderRadius={'0px'}
+            </ToolbarButton>{' '}
+            <ToolbarButton
+              isActive={editor?.isActive('underline')}
               onClick={() => {
                 editor?.chain().focus().toggleUnderline().run();
               }}
-              variant={'unstyled'}
             >
               <MdOutlineFormatUnderlined />
-            </Button>
-            <Button
-              alignItems={'center'}
-              justifyContent={'center'}
-              display={'flex'}
-              bg={editor?.isActive('underline') ? 'gray.200' : ''}
-              borderTop={'1px solid #D2D2D2'}
-              borderRight={'1px solid #D2D2D2'}
-              borderRadius={'0px'}
+            </ToolbarButton>
+            <ToolbarButton
+              isActive={editor?.isActive('underline')}
               onClick={addImage}
-              variant={'unstyled'}
             >
               <MdOutlineAddPhotoAlternate />
-            </Button>
-            <Button
-              alignItems={'center'}
-              justifyContent={'center'}
-              display={'flex'}
-              bg={editor?.isActive('link') ? 'gray.200' : ''}
-              borderTop={'1px solid #D2D2D2'}
-              borderRight={'1px solid #D2D2D2'}
-              borderRadius={'0px'}
+            </ToolbarButton>
+            <ToolbarButton
+              isActive={editor?.isActive('link')}
               onClick={() => {
                 onOpen();
               }}
-              variant={'unstyled'}
             >
               <AiOutlineLink />
-            </Button>
-            <Button
-              alignItems={'center'}
-              justifyContent={'center'}
-              display={'flex'}
-              bg={editor?.isActive('bulletList') ? 'gray.200' : ''}
-              borderTop={'1px solid #D2D2D2'}
-              borderRight={'1px solid #D2D2D2'}
-              borderRadius={'0px'}
+            </ToolbarButton>
+            <ToolbarButton
+              isActive={editor?.isActive('bulletList')}
               onClick={() => {
                 editor?.chain().focus().toggleBulletList().run();
               }}
-              variant={'unstyled'}
             >
               <MdOutlineFormatListBulleted />
-            </Button>
-            <Button
-              alignItems={'center'}
-              justifyContent={'center'}
-              display={'flex'}
-              bg={editor?.isActive('orderedList') ? 'gray.200' : ''}
-              borderTop={'1px solid #D2D2D2'}
-              borderRight={'1px solid #D2D2D2'}
-              borderRadius={'0px'}
+            </ToolbarButton>
+            <ToolbarButton
+              isActive={editor?.isActive('orderedList')}
               onClick={() => {
                 editor?.chain().focus().toggleOrderedList().run();
               }}
-              variant={'unstyled'}
             >
               <AiOutlineOrderedList />
-            </Button>
-            <Button
-              alignItems={'center'}
-              justifyContent={'center'}
-              display={'flex'}
-              bg={editor?.isActive('codeBlock') ? 'gray.200' : ''}
-              borderTop={'1px solid #D2D2D2'}
-              borderRight={'1px solid #D2D2D2'}
-              borderRadius={'0px'}
+            </ToolbarButton>
+            <ToolbarButton
+              isActive={editor?.isActive('codeBlock')}
               onClick={() => {
                 editor?.chain().focus().toggleCodeBlock().run();
               }}
-              variant={'unstyled'}
             >
               <BsCodeSlash />
-            </Button>
-            <Button
-              alignItems={'center'}
-              justifyContent={'center'}
-              display={'flex'}
-              bg={editor?.isActive('blockquote') ? 'gray.200' : ''}
-              borderTop={'1px solid #D2D2D2'}
-              borderRight={'1px solid #D2D2D2'}
-              borderRadius={'0px'}
+            </ToolbarButton>
+            <ToolbarButton
+              isActive={editor?.isActive('blockquote')}
               onClick={() => {
                 editor?.chain().focus().toggleBlockquote().run();
               }}
-              variant={'unstyled'}
             >
               <BsBlockquoteLeft />
-            </Button>
-            <Button
-              alignItems={'center'}
-              justifyContent={'center'}
-              display={'flex'}
-              borderTop={'1px solid #D2D2D2'}
-              borderRight={'1px solid #D2D2D2'}
-              borderRadius={'0px'}
+            </ToolbarButton>
+            <ToolbarButton
               onClick={() => {
                 editor?.chain().focus().setHorizontalRule().run();
               }}
-              variant={'unstyled'}
             >
               <MdOutlineHorizontalRule />
-            </Button>
-            <Button
-              alignItems={'center'}
-              justifyContent={'center'}
-              display={'flex'}
-              borderTop={'1px solid #D2D2D2'}
-              borderRight={'1px solid #D2D2D2'}
-              borderRadius={'0px'}
+            </ToolbarButton>
+            <ToolbarButton
               onClick={() => {
                 editor?.chain().focus().setHardBreak().run();
               }}
-              variant={'unstyled'}
             >
               <BsFileBreak />
-            </Button>
-            <Button
-              alignItems={'center'}
-              justifyContent={'center'}
-              display={'flex'}
-              borderTop={'1px solid #D2D2D2'}
-              borderRight={'1px solid #D2D2D2'}
-              borderRadius={'0px'}
+            </ToolbarButton>
+            <ToolbarButton
               onClick={() => {
                 editor?.chain().focus().undo().run();
               }}
-              variant={'unstyled'}
             >
               <CiUndo />
-            </Button>
-            <Button
-              alignItems={'center'}
-              justifyContent={'center'}
-              display={'flex'}
-              borderTop={'1px solid #D2D2D2'}
-              borderRight={'1px solid #D2D2D2'}
-              borderRadius={'0px'}
+            </ToolbarButton>
+            <ToolbarButton
               onClick={() => {
                 editor?.chain().focus().redo().run();
               }}
-              variant={'unstyled'}
             >
               <CiRedo />
-            </Button>
-            <Button
-              alignItems={'center'}
-              justifyContent={'center'}
-              display={'flex'}
-              borderTop={'1px solid #D2D2D2'}
-              borderRight={'1px solid #D2D2D2'}
-              borderRadius={'0px'}
-              onClick={() => {}}
-              variant={'unstyled'}
-            >
+            </ToolbarButton>
+            <ToolbarButton onClick={() => {}}>
               <BiFontColor />
-            </Button>
+            </ToolbarButton>
           </Flex>
 
           <Box w={'full'} h={'full'} mb={10}>
@@ -681,40 +537,32 @@ export const DescriptionBuilder = ({
                   kind of deliverables you are looking for.
                 </Text>
               </Flex>
-              {setReferences &&
-                references?.map((reference, index) => {
-                  return (
-                    <Flex key={index} align="end" justify="space-end" w="full">
-                      <ReferenceCard
-                        setReferenceError={setReferenceError}
-                        index={index}
-                        curentReference={reference}
-                        setReferences={setReferences}
-                      />
-                      {index === references.length - 1 && (
-                        <Button ml={4} onClick={() => handleDeleteReference()}>
-                          <DeleteIcon />
-                        </Button>
-                      )}
-                    </Flex>
-                  );
-                })}
-              {references && setReferences && references.length < 6 && (
+              {fields.map((field, index) => (
+                <Flex
+                  key={field.id}
+                  align="end"
+                  justify="space-between"
+                  w="full"
+                >
+                  <ReferenceCard register={register} index={index} />
+                  <Button ml={4} onClick={() => remove(index)}>
+                    <DeleteIcon />
+                  </Button>
+                </Flex>
+              ))}
+              {fields.length < 6 && (
                 <Button
                   w={'full'}
                   h={12}
                   mt={2}
                   color={'#64758B'}
                   bg={'#F1F5F9'}
-                  onClick={() => {
-                    setReferences([
-                      ...references,
-                      {
-                        order: (references?.length || 0) + 1,
-                        link: '',
-                      },
-                    ]);
-                  }}
+                  onClick={() =>
+                    append({
+                      order: fields.length + 1,
+                      link: '',
+                    })
+                  }
                 >
                   + Add Reference
                 </Button>
@@ -728,31 +576,14 @@ export const DescriptionBuilder = ({
               Listing Details is a required field
             </Text>
           )}
-          <Button
-            w="100%"
-            onClick={() => {
-              if (referenceError) {
-                return;
-              }
-              if (editor?.isEmpty) {
-                setEditorError(true);
-                return;
-              }
-              if (!isProject) {
-                setSteps(5);
-                return;
-              }
-              setSteps(4);
-            }}
-            variant="solid"
-          >
+          <Button w="100%" onClick={handleSubmit(onSubmit)} variant="solid">
             Continue
           </Button>
           <Button
             w="100%"
-            isDisabled={!editorData}
-            isLoading={draftLoading}
-            onClick={() => createDraft()}
+            isDisabled={!description}
+            isLoading={isDraftLoading}
+            onClick={handleSubmit(onDraftClick)}
             variant="outline"
           >
             {isNewOrDraft || isDuplicating ? 'Save Draft' : 'Update Listing'}

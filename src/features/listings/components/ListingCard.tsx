@@ -158,12 +158,7 @@ export const ListingCard = ({
               >
                 {sponsor?.name}
               </Text>
-              <Flex
-                align={'center'}
-                wrap={'wrap'}
-                gap={{ base: 1, sm: 3 }}
-                mt={'1px'}
-              >
+              <Flex align={'center'} gap={{ base: 1, sm: 3 }} mt={'1px'}>
                 <>
                   <Flex
                     align={'center'}

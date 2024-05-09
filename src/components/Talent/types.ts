@@ -30,9 +30,7 @@ interface LinksType {
 
 export interface UserStoreType {
   otp: number | undefined;
-  setOtp: (data: number) => void;
   emailVerified: boolean;
-  verifyEmail: () => void;
   form: AboutYouType & WorkType & LinksType;
   updateState: (
     data: AboutYouType | WorkType | LinksType | { email: string },

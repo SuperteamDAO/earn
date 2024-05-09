@@ -8,64 +8,61 @@ import React, {
   useState,
 } from 'react';
 
-import type { MultiSelectOptions } from '@/constants';
-import { getBountyTypeLabel } from '@/features/listings';
+import { type MultiSelectOptions } from '@/constants';
+import { getListingTypeLabel } from '@/features/listings';
 import { getURL } from '@/utils/validUrl';
 
+import { useListingFormStore } from '../../store';
 import { splitSkills } from '../../utils';
-import type { BountyBasicType } from '../CreateListingForm';
 
 interface Props {
-  setSteps: Dispatch<SetStateAction<number>>;
-  setEditorData: Dispatch<SetStateAction<string | undefined>>;
-  setMainSkills: Dispatch<SetStateAction<MultiSelectOptions[]>>;
-  setSubSkills: Dispatch<SetStateAction<MultiSelectOptions[]>>;
-  setBountyBasic: Dispatch<SetStateAction<BountyBasicType | undefined>>;
   type: 'bounty' | 'project' | 'hackathon';
+  setSteps: Dispatch<SetStateAction<number>>;
+  setSkills: Dispatch<SetStateAction<MultiSelectOptions[]>>;
+  setSubSkills: Dispatch<SetStateAction<MultiSelectOptions[]>>;
 }
 export const Template = ({
-  setSteps,
-  setEditorData,
-  setMainSkills,
-  setSubSkills,
-  setBountyBasic,
   type,
+  setSteps,
+  setSkills,
+  setSubSkills,
 }: Props) => {
-  const [bountiesTemplates, setBountiesTemplates] = useState([]);
-  const [isBountiesTemplatesLoading, setIsBountiesTemplatesLoading] =
-    useState(false);
+  const { updateState } = useListingFormStore();
+  const [templates, setTemplates] = useState([]);
+  const [isTemplatesLoading, setIsTemplatesLoading] = useState(false);
 
-  const getBountyTemplates = async () => {
-    setIsBountiesTemplatesLoading(true);
+  const getListingTemplates = async () => {
+    setIsTemplatesLoading(true);
     try {
       const templates: any = await axios.get('/api/bounties/templates/', {
         params: { type },
       });
-      setBountiesTemplates(templates?.data || []);
-      setIsBountiesTemplatesLoading(false);
+      setTemplates(templates?.data || []);
+      setIsTemplatesLoading(false);
     } catch (e) {
-      setIsBountiesTemplatesLoading(false);
+      setIsTemplatesLoading(false);
     }
   };
 
   useEffect(() => {
-    if (!isBountiesTemplatesLoading) {
-      getBountyTemplates();
+    if (!isTemplatesLoading) {
+      getListingTemplates();
     }
   }, []);
 
   const createTemplate = (templateId: string) => {
-    const template: any = bountiesTemplates.find((t: any) => {
+    const template: any = templates.find((t: any) => {
       return t?.id === templateId;
     });
-    setBountyBasic({
-      title: template?.title || undefined,
-      templateId: template?.id || undefined,
-    });
-    setEditorData(template?.description || '');
     const skillsInfo = splitSkills(template?.skills || []);
-    setMainSkills(skillsInfo?.skills || []);
+    setSkills(skillsInfo?.skills || []);
     setSubSkills(skillsInfo?.subskills || []);
+
+    updateState({
+      title: template?.title,
+      templateId: template?.id,
+      description: template?.description,
+    });
     setSteps(2);
   };
 
@@ -75,7 +72,7 @@ export const Template = ({
         <VStack align="start" w={'full'}>
           <Flex align="center" justify="center" gap="2rem" w="full" mb="2rem">
             <Text color="gray.600" fontSize="1.3rem" fontWeight={600}>
-              {getBountyTypeLabel(type)}
+              {getListingTypeLabel(type)}
             </Text>
             <hr
               style={{
@@ -107,7 +104,7 @@ export const Template = ({
                 Start from Scratch
               </Text>
             </Box>
-            {bountiesTemplates.map((template: any) => {
+            {templates.map((template: any) => {
               const sponsors: any = [
                 ...new Set(template?.Bounties?.map((b: any) => b.sponsor)),
               ];
@@ -175,23 +172,13 @@ export const Template = ({
                               />
                             )}
                           </Flex>
-                          <Text
-                            color="brand.slate.400"
-                            fontSize="xs"
-                            wordBreak={'break-word'}
-                          >
+                          <Text color="brand.slate.400" fontSize="xs">
                             Used by{' '}
                             {sponsors.length >= 1 && (
                               <Text as="span">{sponsors[0]?.name}</Text>
                             )}
                             {sponsors.length >= 2 && (
-                              <Text as="span">
-                                {sponsors.length > 2 ? ',' : ' &'}{' '}
-                                {sponsors[1]?.name}
-                              </Text>
-                            )}
-                            {sponsors.length >= 3 && (
-                              <Text as="span"> & {sponsors[2]?.name}</Text>
+                              <Text as="span"> & {sponsors[1]?.name}</Text>
                             )}
                           </Text>
                         </Flex>

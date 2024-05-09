@@ -46,7 +46,7 @@ export default function DuplicateBounty({ slug }: Props) {
         <LoadingSection />
       ) : (
         <CreateListing
-          bounty={bounty}
+          listing={bounty}
           editable
           isDuplicating
           type={bounty?.type as 'bounty' | 'project' | 'hackathon'}

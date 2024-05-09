@@ -1,15 +1,26 @@
-import { Button, Flex, HStack, Image, Text, VStack } from '@chakra-ui/react';
-import React, { type Dispatch, type SetStateAction, useState } from 'react';
+import { DeleteIcon } from '@chakra-ui/icons';
+import {
+  Button,
+  Flex,
+  FormControl,
+  HStack,
+  Image,
+  Input,
+  Text,
+  VStack,
+} from '@chakra-ui/react';
+import React, { type Dispatch, type SetStateAction, useEffect } from 'react';
+import { useFieldArray, useForm } from 'react-hook-form';
 import toast from 'react-hot-toast';
 
-import { QuestionCard } from './QuestionCard';
+import { useListingFormStore } from '../../store';
+import { type ListingFormType } from '../../types';
+import { ListingFormLabel } from './Form';
 
 interface Props {
   setSteps: Dispatch<SetStateAction<number>>;
   draftLoading: boolean;
-  createDraft: () => void;
-  questions: Ques[];
-  setQuestions: Dispatch<SetStateAction<Ques[]>>;
+  createDraft: (data: ListingFormType) => Promise<void>;
   editable: boolean;
   isNewOrDraft?: boolean;
   isDuplicating?: boolean;
@@ -23,28 +34,88 @@ export interface Ques {
   options?: string[];
   label: string;
 }
-type ErrorState = {
-  order: number;
-  errMessage: string;
+
+interface QuestionCardProps {
+  register: any;
+  index: number;
+  remove: (index: number) => void;
+}
+
+const QuestionCard = ({ register, index, remove }: QuestionCardProps) => {
+  return (
+    <VStack align={'start'} w={'full'}>
+      <FormControl>
+        <ListingFormLabel>Question {index + 1}</ListingFormLabel>
+        <Flex gap="4">
+          <Input
+            {...register(`eligibility.${index}.question`)}
+            placeholder="Enter your question here"
+          />
+          <Button colorScheme="red" onClick={() => remove(index)}>
+            <DeleteIcon />
+          </Button>
+        </Flex>
+      </FormControl>
+    </VStack>
+  );
 };
+
 export const QuestionBuilder = ({
   setSteps,
   createDraft,
   draftLoading,
-  questions,
-  setQuestions,
   isNewOrDraft,
   isDuplicating,
+  editable,
 }: Props) => {
-  const [error, setError] = useState<ErrorState[]>([]);
+  const { form, updateState } = useListingFormStore();
+  const { control, handleSubmit, register, reset } = useForm({
+    defaultValues: {
+      eligibility: form?.eligibility,
+    },
+  });
 
-  const handleDelete = (index: number) => {
-    setQuestions(questions.filter((_, i) => i !== index));
+  useEffect(() => {
+    if (editable) {
+      reset({
+        eligibility: (form?.eligibility || [])?.map((e) => ({
+          order: e.order,
+          question: e.question,
+          type: e.type as 'text',
+          delete: true,
+          label: e.question,
+        })),
+      });
+    }
+  }, [form]);
+
+  const { fields, append, remove } = useFieldArray({
+    control,
+    name: 'eligibility',
+  });
+
+  const onSubmit = (data: any) => {
+    if (data.eligibility.length === 0) {
+      toast.error('Add a minimum of one question');
+      return;
+    }
+    const hasEmptyQuestions = data.eligibility.some((q: Ques) => !q.question);
+    if (hasEmptyQuestions) {
+      toast.error('All questions must be filled out');
+      return;
+    }
+    updateState({ ...data });
+    setSteps(5);
+  };
+
+  const onDraftClick = async (data: any) => {
+    const formData = { ...form, ...data };
+    createDraft(formData);
   };
 
   return (
-    <>
-      <VStack align={'start'} gap={3} w={'2xl'} pt={7}>
+    <form onSubmit={handleSubmit(onSubmit)}>
+      <VStack align={'start'} gap={3} w={'2xl'} pt={5}>
         <HStack gap={3} w={'full'} p={5} bg={'#F7FAFC'} rounded={'md'}>
           <Image alt={'hands'} src={'/assets/icons/hands.svg'} />
           <VStack align={'start'} justify={'start'}>
@@ -58,82 +129,45 @@ export const QuestionBuilder = ({
             </Text>
           </VStack>
         </HStack>
-        {questions.map((question, index) => {
-          return (
-            <Flex key={index} align="end" justify="space-end" w="full">
-              <QuestionCard
-                errorState={error}
-                index={index}
-                curentQuestion={question}
-                setQuestions={setQuestions}
-                handleDelete={() => handleDelete(index)}
-              />
-            </Flex>
-          );
-        })}
+        {fields.map((field, index) => (
+          <QuestionCard
+            key={field.id}
+            register={register}
+            index={index}
+            remove={remove}
+          />
+        ))}
         <Button
           w={'full'}
           h={12}
           color={'#64758B'}
           bg={'#F1F5F9'}
-          onClick={() => {
-            setQuestions([
-              ...questions,
-              {
-                order: (questions?.length || 0) + 1,
-                question: '',
-                type: 'text',
-                label: '',
-              },
-            ]);
-          }}
+          onClick={() =>
+            append({
+              order: fields.length + 1,
+              question: '',
+              type: 'text',
+              label: '',
+              options: [],
+            })
+          }
         >
           + Add Question
         </Button>
         <VStack gap={6} w={'full'} pt={10}>
-          <Button
-            w="100%"
-            onClick={() => {
-              if (questions.length === 0) {
-                toast.error('Add minimum of one question');
-                return;
-              }
-              const rejectedQuestion: any[] = [];
-
-              questions.map((e) => {
-                if (e.question.length === 0) {
-                  rejectedQuestion.push(e);
-                  setError([
-                    ...error,
-                    {
-                      order: e.order,
-                      errMessage: 'Add question',
-                    },
-                  ]);
-                }
-                return null;
-              });
-
-              if (rejectedQuestion.length === 0) {
-                setSteps(5);
-              }
-            }}
-            variant="solid"
-          >
+          <Button w="100%" type="submit" variant="solid">
             Continue
           </Button>
           <Button
             w="100%"
             isLoading={draftLoading}
-            onClick={() => {
-              createDraft();
-            }}
+            onClick={handleSubmit(onDraftClick)}
             variant="outline"
           >
             {isNewOrDraft || isDuplicating ? 'Save Draft' : 'Update Listing'}
           </Button>
         </VStack>
       </VStack>
-    </>
+    </form>
   );
 };

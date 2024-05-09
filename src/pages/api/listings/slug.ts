@@ -30,14 +30,14 @@ export default async function handler(
   const { slug, check, id } = req.query;
 
   if (check === 'true') {
-    if (id) {
+    if (!!id) {
       const bounty = await prisma.bounties.findFirst({
         where: {
           id: id as string,
         },
       });
       if (bounty?.slug === slug) {
-        return res.status(200).json({ slugExists: true });
+        return res.status(200).json({ slugExists: false });
       }
     }
     const slugExists = await checkSlug(slug as string);
