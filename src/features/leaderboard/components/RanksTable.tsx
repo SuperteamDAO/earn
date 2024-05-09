@@ -103,6 +103,17 @@ export function RanksTable({ rankings, skill, userRank }: Props) {
               Win Rate
             </Th>
             <Th
+              px={{ base: 1, md: 2 }}
+              color="brand.slate.500"
+              fontSize={'xs'}
+              fontWeight={500}
+              letterSpacing={0.5}
+              textAlign={'center'}
+              textTransform={'none'}
+            >
+              Wins
+            </Th>
+            <Th
               overflowX="hidden"
               maxW={{ base: '3.5rem', md: 'none' }}
               px={{ base: 1, md: 2 }}
@@ -115,17 +126,6 @@ export function RanksTable({ rankings, skill, userRank }: Props) {
               textOverflow="ellipsis"
             >
               Submissions
-            </Th>
-            <Th
-              px={{ base: 1, md: 2 }}
-              color="brand.slate.500"
-              fontSize={'xs'}
-              fontWeight={500}
-              letterSpacing={0.5}
-              textAlign={'center'}
-              textTransform={'none'}
-            >
-              Wins
             </Th>
             <Th
               display={{ base: 'none', md: skill !== 'ALL' ? 'none' : 'block' }}
@@ -266,10 +266,10 @@ export function RanksTable({ rankings, skill, userRank }: Props) {
                   {row.winRate}%
                 </Td>
                 <Td h="full" px={{ base: 1, md: 2 }} textAlign={'center'}>
-                  {row.submissions}
+                  {row.wins}
                 </Td>
                 <Td h="full" px={{ base: 1, md: 2 }} textAlign={'center'}>
-                  {row.wins}
+                  {row.submissions}
                 </Td>
                 <Td
                   display={{
@@ -427,7 +427,7 @@ export function RanksTable({ rankings, skill, userRank }: Props) {
                     textAlign={'center'}
                     borderBottomWidth={'0px'}
                   >
-                    {userRank?.submissions ?? '-'}
+                    {userRank?.wins ?? '-'}
                   </Td>
                   <Td
                     pos="sticky"
@@ -437,7 +437,7 @@ export function RanksTable({ rankings, skill, userRank }: Props) {
                     textAlign={'center'}
                     borderBottomWidth={'0px'}
                   >
-                    {userRank?.wins ?? '-'}
+                    {userRank?.submissions ?? '-'}
                   </Td>
                   <Td
                     pos="sticky"
