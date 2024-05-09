@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/ban-ts-comment */
 import { CheckIcon } from '@chakra-ui/icons';
 import { Box, Flex, Image, Text } from '@chakra-ui/react';
 import React, { type Dispatch, type SetStateAction } from 'react';
@@ -12,8 +11,7 @@ interface Props {
 }
 export const Steps = ({ currentStep, thisStep, label, setStep }: Props) => {
   const handleChange = () => {
-    if (currentStep > thisStep) {
-      // @ts-ignore
+    if (currentStep > thisStep && setStep) {
       setStep(thisStep);
     }
   };
@@ -22,7 +20,6 @@ export const Steps = ({ currentStep, thisStep, label, setStep }: Props) => {
       pos="relative"
       alignItems={'center'}
       justifyContent={'center'}
-      flexDir={'column'}
       display={'flex'}
       h={'6rem'}
       cursor={currentStep > thisStep ? 'pointer' : 'default'}
@@ -35,8 +32,8 @@ export const Steps = ({ currentStep, thisStep, label, setStep }: Props) => {
         h="2.3rem"
         color="white"
         bg={currentStep >= thisStep ? '#6562FF' : 'transparent'}
-        border={currentStep === thisStep ? 'none' : '1px solid #94A3B8'}
-        borderRadius="50%"
+        border={currentStep > thisStep - 1 ? 'none' : '1px solid #94A3B8'}
+        borderRadius="full"
       >
         {currentStep > thisStep ? (
           <CheckIcon color="white" />
@@ -62,7 +59,7 @@ export const Steps = ({ currentStep, thisStep, label, setStep }: Props) => {
         w={'max-content'}
         color={currentStep === thisStep ? 'brand.purple' : 'brand.slate.500'}
         fontSize={{ base: '0.9rem', md: '1rem' }}
-        fontWeight={600}
+        fontWeight={currentStep === thisStep ? 600 : 500}
       >
         {label}
       </Text>

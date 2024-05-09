@@ -1,3 +1,4 @@
+/* eslint-disable @next/next/no-html-link-for-pages */
 import {
   Box,
   Button,
@@ -12,8 +13,9 @@ import {
   Text,
   UnorderedList,
 } from '@chakra-ui/react';
-import NextLink from 'next/link';
 import React from 'react';
+
+import { useListingFormStore } from '@/features/listing-builder';
 
 export const CreateListingModal = ({
   isOpen = false,
@@ -22,6 +24,10 @@ export const CreateListingModal = ({
   isOpen: boolean;
   onClose: () => void;
 }) => {
+  const { resetForm } = useListingFormStore();
+  const resetListingForm = () => {
+    resetForm();
+  };
   return (
     <Modal isCentered isOpen={isOpen} onClose={onClose} size={'5xl'}>
       <ModalOverlay />
@@ -52,22 +58,21 @@ export const CreateListingModal = ({
               Great for:
             </Text>
             <UnorderedList mt={1} mb={4} ml={6} color="brand.slate.500">
-              <ListItem>
-                raising awareness for your product, specific features,
-                campaigns, etc.
+              <ListItem mb={1}>raising awareness for your product, or</ListItem>
+              <ListItem mb={1}>
+                when you want multiple deliverable options
               </ListItem>
-              <ListItem>
-                or, when you want multiple deliverable options to choose from
-              </ListItem>
-              <ListItem>
-                Examples: Twitter threads, deep dive articles, merch/logo
+              <ListItem mb={1}>
+                Examples: Twitter threads, long-form articles, merch/logo
                 design, product feedback, etc.
               </ListItem>
             </UnorderedList>
             <Box flex="1" />
-            <Button as={NextLink} href="/dashboard/create-bounty" size="lg">
-              Create New Bounty
-            </Button>
+            <a href="/dashboard/create-bounty">
+              <Button w="full" onClick={resetListingForm} size="lg">
+                Create New Bounty
+              </Button>
+            </a>
           </Flex>
           <Divider
             w="1px"
@@ -99,11 +104,13 @@ export const CreateListingModal = ({
               Great for:
             </Text>
             <UnorderedList mt={1} mb={4} ml={6} color="brand.slate.500">
-              <ListItem>the work to be done is very specific, or</ListItem>
-              <ListItem>it would require iteration and feedback</ListItem>
-              <ListItem>
-                Example: Website / app development, website / app design, hype
-                video creation, hiring a Twitter manager, etc.
+              <ListItem mb={1}>the work to be done is specific, or</ListItem>
+              <ListItem mb={1}>
+                the output would require feedback and iteration
+              </ListItem>
+              <ListItem mb={1}>
+                Examples: Website/app development, website/app design, producing
+                hype videods, hiring a Twitter manager, etc.
               </ListItem>
             </UnorderedList>
             <Box flex="1" />
@@ -112,9 +119,11 @@ export const CreateListingModal = ({
               color="brand.slate.200"
               orientation="horizontal"
             />
-            <Button as={NextLink} href="/dashboard/create-project" size="lg">
-              Create New Project
-            </Button>
+            <a href="/dashboard/create-project">
+              <Button w="full" onClick={resetListingForm} size="lg">
+                Create New Project
+              </Button>
+            </a>
           </Flex>
         </Flex>
       </ModalContent>
