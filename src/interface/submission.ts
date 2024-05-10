@@ -24,7 +24,6 @@ interface SubmissionWithUser {
   createdAt: string;
   updatedAt: string;
   like?: any;
-  likes?: number;
   user: User;
   listing?: Bounties;
   ask?: number;

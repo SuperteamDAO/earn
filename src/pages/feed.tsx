@@ -11,13 +11,12 @@ import { type PrizeListMap } from '@/interface/listings';
 import { Home } from '@/layouts/Home';
 
 export interface FeedDataProps {
-  id: number;
+  id: string;
   createdAt: string;
   like: {
     id: string | undefined;
     date: number;
   }[];
-  likes: number;
   link: string;
   tweet: string;
   eligibilityAnswers: string;

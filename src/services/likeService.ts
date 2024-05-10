@@ -1,0 +1,79 @@
+import { prisma } from '@/prisma';
+
+async function updateLike(
+  model: 'submission' | 'poW',
+  itemId: string,
+  userId: string,
+) {
+  let result;
+
+  if (model === 'submission') {
+    result = await prisma.submission.findFirst({
+      where: {
+        id: itemId,
+      },
+    });
+  } else if (model === 'poW') {
+    result = await prisma.poW.findFirst({
+      where: {
+        id: itemId,
+      },
+    });
+  } else {
+    throw new Error('Invalid model provided');
+  }
+
+  let newLikes = [];
+  const resLikes = result?.like as {
+    id: string;
+    date: number;
+  }[];
+
+  if (resLikes?.length > 0) {
+    const like = resLikes.find((e) => e?.id === userId);
+    if (like) {
+      newLikes = resLikes.filter((e) => e.id !== userId);
+    } else {
+      newLikes = [
+        ...resLikes,
+        {
+          id: userId,
+          date: Date.now(),
+        },
+      ];
+    }
+  } else {
+    newLikes = [
+      {
+        id: userId,
+        date: Date.now(),
+      },
+    ];
+  }
+
+  let updateLike;
+
+  if (model === 'submission') {
+    updateLike = await prisma.submission.update({
+      where: {
+        id: itemId,
+      },
+      data: {
+        like: newLikes,
+      },
+    });
+  } else if (model === 'poW') {
+    updateLike = await prisma.poW.update({
+      where: {
+        id: itemId,
+      },
+      data: {
+        like: newLikes,
+      },
+    });
+  }
+
+  return updateLike;
+}
+
+export { updateLike };

@@ -1,15 +1,20 @@
 import { ArrowForwardIcon } from '@chakra-ui/icons';
 import {
   Box,
+  Button,
   Flex,
   LinkBox,
   type LinkBoxProps,
   LinkOverlay,
   Text,
 } from '@chakra-ui/react';
-import React, { type ReactNode } from 'react';
+import axios from 'axios';
+import React, { type ReactNode, useEffect, useState } from 'react';
+import { GoComment } from 'react-icons/go';
+import { IoMdHeart, IoMdHeartEmpty } from 'react-icons/io';
 
 import { EarnAvatar } from '@/components/shared/EarnAvatar';
+import { userStore } from '@/store/user';
 import { timeAgoShort } from '@/utils/timeAgo';
 
 interface FeedCardHeaderProps {
@@ -30,12 +35,15 @@ interface FeedCardContainerProps {
   };
   actionLinks: ReactNode;
   children: ReactNode;
-  likesAndComments?: ReactNode;
   type: 'activity' | 'profile';
   firstName: string;
   lastName: string;
   photo: string | undefined;
   username?: string;
+  id: string;
+  like: any;
+  commentLink?: string;
+  cardType: 'submission' | 'pow';
 }
 
 const FeedCardHeader = ({
@@ -143,13 +151,45 @@ export const FeedCardContainer = ({
   content,
   actionLinks,
   children,
-  likesAndComments,
   type,
   firstName,
   lastName,
   photo,
   username,
+  id,
+  like,
+  commentLink,
+  cardType,
 }: FeedCardContainerProps) => {
+  const { userInfo } = userStore();
+
+  const [isLoading, setIsLoading] = useState<boolean>(false);
+  const [isLiked, setIsLiked] = useState<boolean>(
+    !!like?.find((e: any) => e.id === userInfo?.id),
+  );
+  const [totalLikes, setTotalLikes] = useState<number>(like?.length ?? 0);
+
+  useEffect(() => {
+    setIsLiked(!!like?.find((e: any) => e.id === userInfo?.id));
+  }, [like, userInfo?.id]);
+
+  const handleLike = async () => {
+    try {
+      setIsLoading(true);
+      await axios.post(`/api/${cardType}/like`, { id });
+      if (isLiked) {
+        setIsLiked(false);
+        setTotalLikes((prevLikes) => Math.max(prevLikes - 1, 0));
+      } else {
+        setIsLiked(true);
+        setTotalLikes((prevLikes) => prevLikes + 1);
+      }
+      setIsLoading(false);
+    } catch (error) {
+      setIsLoading(false);
+      console.log(error);
+    }
+  };
   return (
     <Box
       mx="0"
@@ -192,7 +232,41 @@ export const FeedCardContainer = ({
               {actionLinks}
             </Flex>
           </Box>
-          {likesAndComments}
+
+          <Flex align={'center'} pointerEvents={id ? 'all' : 'none'}>
+            <Button
+              zIndex={10}
+              alignItems={'center'}
+              gap={1}
+              display={'flex'}
+              w={14}
+              isLoading={isLoading}
+              onClick={(e) => {
+                e.stopPropagation();
+                if (!userInfo?.id) return;
+                handleLike();
+              }}
+              variant={'unstyled'}
+            >
+              {!isLiked && <IoMdHeartEmpty size={'22px'} color={'#64748b'} />}
+              {isLiked && <IoMdHeart size={'22px'} color={'#E11D48'} />}
+              <Text color="brand.slate.500" fontSize={'md'} fontWeight={500}>
+                {totalLikes}
+              </Text>
+            </Button>
+            {commentLink && (
+              <GoComment
+                color={'#64748b'}
+                size={'21px'}
+                style={{
+                  cursor: 'pointer',
+                }}
+                onClick={() => {
+                  window.location.href = commentLink;
+                }}
+              />
+            )}
+          </Flex>
         </Flex>
       </Flex>
     </Box>

@@ -228,7 +228,7 @@ const RecentActivity = () => {
     const sanitizedLink = getURLSanitized(link);
 
     return (
-      <Flex as={NextLink} href={sanitizedLink}>
+      <Flex as={NextLink} href={sanitizedLink || ''}>
         <OgImageViewer h={12} w={20} objectFit={'cover'} externalUrl={link} />
         <Box ml={3}>
           <Flex align={'center'}>

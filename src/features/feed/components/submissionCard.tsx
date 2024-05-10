@@ -1,12 +1,8 @@
-import { Avatar, Button, Flex, Text, Tooltip } from '@chakra-ui/react';
-import axios from 'axios';
-import React, { useEffect, useState } from 'react';
-import { GoComment } from 'react-icons/go';
-import { IoMdHeart, IoMdHeartEmpty } from 'react-icons/io';
+import { Avatar, Flex, Text, Tooltip } from '@chakra-ui/react';
+import React from 'react';
 
 import { OgImageViewer } from '@/components/misc/ogImageViewer';
 import { type FeedDataProps } from '@/pages/feed';
-import { userStore } from '@/store/user';
 import { getURL } from '@/utils/validUrl';
 
 import { FeedCardContainer, FeedCardLink } from './FeedCardContainer';
@@ -18,48 +14,18 @@ interface SubCardProps {
 }
 
 export function SubmissionCard({ sub, type }: SubCardProps) {
-  const { userInfo } = userStore();
-  const [isLoading, setIsLoading] = useState<boolean>(false);
-  const [isLiked, setIsLiked] = useState<boolean>(
-    !!sub?.like?.find((e: any) => e.id === userInfo?.id),
-  );
-  const [totalLikes, setTotalLikes] = useState<number>(sub?.like?.length ?? 0);
-
   const firstName = sub?.firstName;
   const lastName = sub?.lastName;
   const photo = sub?.photo;
   const username = sub?.username;
-
-  const handleLike = async () => {
-    try {
-      setIsLoading(true);
-      console.log(sub);
-      await axios.post('/api/submission/like', {
-        submissionId: sub?.id,
-      });
-      if (isLiked) {
-        setIsLiked(false);
-        setTotalLikes((prevLikes) => Math.max(prevLikes - 1, 0));
-      } else {
-        setIsLiked(true);
-        setTotalLikes((prevLikes) => prevLikes + 1);
-      }
-      setIsLoading(false);
-    } catch (error) {
-      setIsLoading(false);
-      console.log(error);
-    }
-  };
-
-  useEffect(() => {
-    setIsLiked(!!sub?.like?.find((e: any) => e.id === userInfo?.id));
-  }, [sub.like, userInfo?.id]);
 
   const isProject = sub?.listingType === 'project';
 
   const listingLink = `${getURL()}listings/${sub?.listingType}/${sub?.listingSlug}`;
 
   const submissionLink = `${listingLink}/submission/${sub?.id}`;
+
+  const link = isProject ? listingLink : submissionLink;
 
   let winningText: string = '';
   let submissionText: string = '';
@@ -111,7 +77,7 @@ export function SubmissionCard({ sub, type }: SubCardProps) {
         shouldWrapChildren
       >
         <FeedCardLink
-          href={isProject ? listingLink : submissionLink}
+          href={link}
           style={{
             opacity: sub?.id ? '100%' : '50%',
             pointerEvents: sub?.id ? 'all' : 'none',
@@ -123,51 +89,19 @@ export function SubmissionCard({ sub, type }: SubCardProps) {
     </>
   );
 
-  const likesAndComments = (
-    <Flex align={'center'} pointerEvents={sub?.id ? 'all' : 'none'}>
-      <Button
-        zIndex={10}
-        alignItems={'center'}
-        gap={1}
-        display={'flex'}
-        w={14}
-        isLoading={isLoading}
-        onClick={(e) => {
-          e.stopPropagation();
-          if (!userInfo?.id) return;
-          handleLike();
-        }}
-        variant={'unstyled'}
-      >
-        {!isLiked && <IoMdHeartEmpty size={'22px'} color={'#64748b'} />}
-        {isLiked && <IoMdHeart size={'22px'} color={'#E11D48'} />}
-        <Text color="brand.slate.500" fontSize={'md'} fontWeight={500}>
-          {totalLikes}
-        </Text>
-      </Button>
-      <GoComment
-        color={'#64748b'}
-        size={'21px'}
-        style={{
-          cursor: 'pointer',
-        }}
-        onClick={() => {
-          window.location.href = isProject ? listingLink : submissionLink;
-        }}
-      />
-    </Flex>
-  );
-
   return (
     <FeedCardContainer
       content={content}
       actionLinks={actionLinks}
-      likesAndComments={likesAndComments}
       type={type}
       firstName={firstName}
       lastName={lastName}
       photo={photo}
       username={username}
+      id={sub?.id}
+      like={sub?.like}
+      commentLink={link}
+      cardType="submission"
     >
       {sub?.isWinner && sub?.isWinnersAnnounced ? (
         <WinnerFeedImage
