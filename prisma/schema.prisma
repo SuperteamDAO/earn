@@ -192,7 +192,6 @@ model Submission {
   createdAt          DateTime         @default(now())
   updatedAt          DateTime         @updatedAt
   like               Json?
-  likes              Int?
   isPaid             Boolean          @default(false)
   paymentDetails     Json?
   otherInfo          String?          @db.VarChar(2000)
@@ -327,16 +326,16 @@ model User {
 }
 
 model TalentRankings {
-  id          String                   @id @default(uuid())
-  userId      String
-  skill       TalentRankingSkills      @default(ALL)
-  timeframe   TalentRankingTimeframe @default(ALL_TIME)
+  id               String                 @id @default(uuid())
+  userId           String
+  skill            TalentRankingSkills    @default(ALL)
+  timeframe        TalentRankingTimeframe @default(ALL_TIME)
+  rank             Int
+  submissions      Int                    @default(0)
+  winRate          Int                    @default(0)
+  wins             Int                    @default(0)
   totalEarnedInUSD Int
-  rank        Int
-  submissions Int                      @default(0)
-  winRate     Int                      @default(0)
-  wins        Int                      @default(0)
-  user        User                     @relation(fields: [userId], references: [id])
+  user             User                   @relation(fields: [userId], references: [id])
 
   @@unique([userId, skill, timeframe])
   @@index([userId, skill, timeframe])
@@ -353,7 +352,6 @@ model PoW {
   subSkills   Json?
   updatedAt   DateTime @updatedAt
   like        Json?
-  likes       Int      @default(0)
   user        User     @relation(fields: [userId], references: [id])
 
   @@index([userId])
