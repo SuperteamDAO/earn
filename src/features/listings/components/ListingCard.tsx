@@ -63,7 +63,7 @@ export const ListingCardSkeleton = () => {
 
 export const ListingCard = ({
   bounty,
-  checkLanguage,
+  checkLanguage = false,
   adjustMobile,
 }: {
   bounty: Bounty;
@@ -89,14 +89,12 @@ export const ListingCard = ({
 
   const isBounty = type === 'bounty';
 
-  const langCode = franc(description);
-
-  const isEnglish = description
-    ? langCode === 'eng' || langCode === 'sco'
-    : true;
-
-  if (!isEnglish && checkLanguage) {
-    return null;
+  if (checkLanguage) {
+    const langCode = franc(description);
+    const isEnglish = description
+      ? langCode === 'eng' || langCode === 'sco'
+      : true;
+    if (!isEnglish) return null;
   }
 
   return (

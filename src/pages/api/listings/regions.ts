@@ -3,12 +3,11 @@ import type { NextApiRequest, NextApiResponse } from 'next';
 
 import { Superteams } from '@/constants/Superteam';
 import { prisma } from '@/prisma';
-import { dayjs } from '@/utils/dayjs';
 
 export default async function user(req: NextApiRequest, res: NextApiResponse) {
   const params = req.query;
   const region = params.region as string;
-  const take = params.take ? parseInt(params.take as string, 10) : 10;
+  const take = params.take ? parseInt(params.take as string, 10) : 30;
 
   const st = Superteams.find((team) => team.region.toLowerCase() === region);
   const superteam = st?.name;
@@ -49,14 +48,11 @@ export default async function user(req: NextApiRequest, res: NextApiResponse) {
         },
       },
       take,
+      orderBy: {
+        deadline: 'desc',
+      },
     });
-
-    const sortedData = bounties
-      .sort((a, b) => {
-        return dayjs(b.deadline).diff(dayjs(a.deadline));
-      })
-      .slice(0, take);
-    result.bounties = sortedData;
+    result.bounties = bounties;
 
     const grants = await prisma.grants.findMany({
       where: {
