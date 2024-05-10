@@ -58,6 +58,7 @@ function TalentLeaderboard({
   const [timeframe, setTimeframe] = useState<TIMEFRAME>(curTimeframe);
   const [skill, setSkill] = useState<SKILL>(curSkill);
   const [page, setPage] = useState(curPage);
+  const [loading, setLoading] = useState(false);
 
   const [, startTransition] = useTransition();
   const router = useRouter();
@@ -71,6 +72,36 @@ function TalentLeaderboard({
       setIsTotalLoading(false);
     }
   };
+
+  const handleStart = (url: string) => {
+    if (url !== router.asPath) {
+      setLoading(true);
+    }
+  };
+
+  const handleComplete = (url: string) => {
+    if (url === router.asPath) {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    return () => {
+      setLoading(false);
+    };
+  }, []);
+
+  useEffect(() => {
+    router.events.on('routeChangeStart', handleStart);
+    router.events.on('routeChangeComplete', handleComplete);
+    router.events.on('routeChangeError', handleComplete);
+
+    return () => {
+      router.events.off('routeChangeStart', handleStart);
+      router.events.off('routeChangeComplete', handleComplete);
+      router.events.off('routeChangeError', handleComplete);
+    };
+  }, [router]);
 
   useEffect(() => {
     getTotalInfo();
@@ -153,6 +184,7 @@ function TalentLeaderboard({
                 setTimeframe={(value: TIMEFRAME) => setTimeframe(value)}
               />
               <RanksTable
+                loading={loading}
                 userRank={userRank}
                 skill={skill}
                 rankings={results}

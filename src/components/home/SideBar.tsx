@@ -359,7 +359,7 @@ const RecentEarners = ({ earners }: { earners?: User[] }) => {
 
   return (
     <Box>
-      <Flex justify={'space-between'}>
+      <Flex justify={'space-between'} fontSize="sm">
         <Text mb={4} color={'gray.400'} fontWeight={500}>
           RECENT EARNERS
         </Text>
@@ -367,7 +367,6 @@ const RecentEarners = ({ earners }: { earners?: User[] }) => {
           className="ph-no-capture"
           as={NextLink}
           color="brand.purple"
-          fontSize="sm"
           fontWeight={500}
           href="/leaderboard"
           onClick={() => {

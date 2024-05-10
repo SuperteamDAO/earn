@@ -4,6 +4,9 @@ import {
   Center,
   Flex,
   Link,
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
   Table,
   TableContainer,
   Tbody,
@@ -32,9 +35,10 @@ interface Props {
   rankings: RowType[];
   skill: SKILL;
   userRank: RowType | null;
+  loading: boolean;
 }
 
-export function RanksTable({ rankings, skill, userRank }: Props) {
+export function RanksTable({ rankings, skill, userRank, loading }: Props) {
   const { userInfo } = userStore();
   const posthog = usePostHog();
 
@@ -49,6 +53,7 @@ export function RanksTable({ rankings, skill, userRank }: Props) {
       overflowX="auto"
       w="full"
       h={rankings.length === 0 ? '35rem' : 'auto'}
+      opacity={loading ? 0.3 : 1}
       border="1px solid #E2E8F0"
       borderRadius="md"
     >
@@ -285,7 +290,7 @@ export function RanksTable({ rankings, skill, userRank }: Props) {
                         key={s}
                         px={2}
                         color="#64739C"
-                        fontSize={'xx-small'}
+                        fontSize={'x-small'}
                         fontWeight={500}
                         textTransform={'none'}
                         bg="#EFF1F5"
@@ -295,17 +300,51 @@ export function RanksTable({ rankings, skill, userRank }: Props) {
                       </Badge>
                     ))}
                     {row.skills.length > 2 && (
-                      <Badge
-                        px={2}
-                        color="#64739C"
-                        fontSize={'xx-small'}
-                        fontWeight={500}
-                        textTransform={'none'}
-                        bg="#EFF1F5"
-                        rounded="full"
-                      >
-                        +{row.skills.length - 2}
-                      </Badge>
+                      <Popover trigger="hover">
+                        <PopoverTrigger>
+                          <Badge
+                            px={2}
+                            color="#64739C"
+                            fontSize={'x-small'}
+                            fontWeight={500}
+                            textTransform={'none'}
+                            bg="#EFF1F5"
+                            rounded="full"
+                          >
+                            +{row.skills.length - 2}
+                          </Badge>
+                        </PopoverTrigger>
+                        <PopoverContent
+                          w="fit-content"
+                          maxW="10rem"
+                          px={4}
+                          py={2}
+                          shadow="lg"
+                        >
+                          <Flex
+                            wrap={'wrap'}
+                            gap={2}
+                            w="fit-content"
+                            h="full"
+                            textAlign={'center'}
+                          >
+                            {row.skills.slice(2).map((s) => (
+                              <Badge
+                                key={s}
+                                px={2}
+                                color="#64739C"
+                                fontSize={'x-small'}
+                                fontWeight={500}
+                                textTransform={'none'}
+                                bg="#EFF1F5"
+                                rounded="full"
+                              >
+                                {s}
+                              </Badge>
+                            ))}
+                          </Flex>
+                        </PopoverContent>
+                      </Popover>
                     )}
                   </Flex>
                 </Td>
@@ -417,7 +456,7 @@ export function RanksTable({ rankings, skill, userRank }: Props) {
                     textAlign={'center'}
                     borderBottomWidth={'0px'}
                   >
-                    {userRank?.winRate ?? 0}%
+                    {userRank?.winRate ? userRank?.winRate + '%' : '-'}
                   </Td>
                   <Td
                     pos="sticky"
@@ -456,7 +495,7 @@ export function RanksTable({ rankings, skill, userRank }: Props) {
                           key={s}
                           px={2}
                           color="#64739C"
-                          fontSize={'xx-small'}
+                          fontSize={'x-small'}
                           fontWeight={500}
                           textTransform={'none'}
                           bg="#EFF1F5"
@@ -466,17 +505,51 @@ export function RanksTable({ rankings, skill, userRank }: Props) {
                         </Badge>
                       ))}
                       {userSkills.length > 2 && (
-                        <Badge
-                          px={2}
-                          color="#64739C"
-                          fontSize={'xx-small'}
-                          fontWeight={500}
-                          textTransform={'none'}
-                          bg="#EFF1F5"
-                          rounded="full"
-                        >
-                          +{userSkills.length - 2}
-                        </Badge>
+                        <Popover trigger="hover">
+                          <PopoverTrigger>
+                            <Badge
+                              px={2}
+                              color="#64739C"
+                              fontSize={'x-small'}
+                              fontWeight={500}
+                              textTransform={'none'}
+                              bg="#EFF1F5"
+                              rounded="full"
+                            >
+                              +{userSkills.length - 2}
+                            </Badge>
+                          </PopoverTrigger>
+                          <PopoverContent
+                            w="fit-content"
+                            maxW="10rem"
+                            px={4}
+                            py={2}
+                            shadow="lg"
+                          >
+                            <Flex
+                              wrap={'wrap'}
+                              gap={2}
+                              w="fit-content"
+                              h="full"
+                              textAlign={'center'}
+                            >
+                              {userSkills.slice(2).map((s) => (
+                                <Badge
+                                  key={s}
+                                  px={2}
+                                  color="#64739C"
+                                  fontSize={'x-small'}
+                                  fontWeight={500}
+                                  textTransform={'none'}
+                                  bg="#EFF1F5"
+                                  rounded="full"
+                                >
+                                  {s}
+                                </Badge>
+                              ))}
+                            </Flex>
+                          </PopoverContent>
+                        </Popover>
                       )}
                     </Flex>
                   </Td>

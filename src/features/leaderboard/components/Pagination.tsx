@@ -32,7 +32,7 @@ export function Pagination({ page, setPage, count }: Props) {
             p={0}
             color={page === i ? 'brand.purple' : 'brand.slate.500'}
             fontSize={'xs'}
-            borderColor={page === i ? 'brand.purple' : 'brand.slate.500'}
+            borderColor={page === i ? 'brand.purple' : 'brand.slate.100'}
             onClick={() => handleClick(i)}
             rounded={ROUNDED}
             variant="outline"
@@ -48,9 +48,11 @@ export function Pagination({ page, setPage, count }: Props) {
             minW={0}
             h={SIZE}
             p={0}
-            color={'brand.purple'}
             fontSize={'xs'}
-            borderColor={'brand.purple'}
+            _disabled={{
+              color: 'brand.slate.500',
+              borderColor: 'brand.slate.100',
+            }}
             isDisabled
             rounded={ROUNDED}
             variant="outline"
@@ -70,6 +72,12 @@ export function Pagination({ page, setPage, count }: Props) {
         minW={0}
         h={SIZE}
         p={0}
+        _disabled={{
+          bg: 'brand.slate.300',
+          borderColor: 'brand.slate.300',
+          color: 'brand.slate.500',
+          opacity: 0.5,
+        }}
         isDisabled={page === 1}
         onClick={() => setPage(page - 1)}
         rounded={ROUNDED}
