@@ -318,10 +318,27 @@ model User {
   sessions          Session[]
   Hackathon         Hackathon?        @relation(fields: [hackathonId], references: [id])
   emailSettings     EmailSettings[]
+  TalentRankings    TalentRankings[]
 
   @@index([email, publicKey, username])
   @@index([currentSponsorId])
   @@index([hackathonId])
+}
+
+model TalentRankings {
+  id               String                 @id @default(uuid())
+  userId           String
+  skill            TalentRankingSkills    @default(ALL)
+  timeframe        TalentRankingTimeframe @default(ALL_TIME)
+  rank             Int
+  submissions      Int                    @default(0)
+  winRate          Int                    @default(0)
+  wins             Int                    @default(0)
+  totalEarnedInUSD Int
+  user             User                   @relation(fields: [userId], references: [id])
+
+  @@unique([userId, skill, timeframe])
+  @@index([userId, skill, timeframe])
 }
 
 model PoW {
@@ -432,19 +449,12 @@ model UnsubscribedEmail {
   email String @unique
 }
 
-model TalentRankings {
-  id               String                   @id
-  userId           String
-  skill            TalentRankings_skill     @default(ALL)
-  timeframe        TalentRankings_timeframe @default(ALL_TIME)
-  rank             Int
-  submissions      Int                      @default(0)
-  winRate          Int                      @default(0)
-  wins             Int                      @default(0)
-  totalEarnedInUSD Int
-
-  @@unique([userId, skill, timeframe])
-  @@index([userId, skill, timeframe])
+enum TalentRankingSkills {
+  DEVELOPMENT
+  DESIGN
+  CONTENT
+  OTHER
+  ALL
 }
 
 enum EmailType {
@@ -503,34 +513,6 @@ enum JobType {
   internship
 }
 
-enum CompensationType {
-  fixed
-  range
-  variable
-}
-
-enum SubmissionLabels {
-  Unreviewed
-  Reviewed
-  Shortlisted
-  Spam
-}
-
-enum TalentRankings_skill {
-  DEVELOPMENT
-  DESIGN
-  CONTENT
-  OTHER
-  ALL
-}
-
-enum TalentRankings_timeframe {
-  THIS_YEAR
-  LAST_30_DAYS
-  LAST_7_DAYS
-  ALL_TIME
-}
-
 enum Regions {
   GLOBAL
   INDIA
@@ -547,4 +529,24 @@ enum Regions {
   BALKAN
   PHILIPPINES
   JAPAN
+}
+
+enum CompensationType {
+  fixed
+  range
+  variable
+}
+
+enum SubmissionLabels {
+  Unreviewed
+  Reviewed
+  Shortlisted
+  Spam
+}
+
+enum TalentRankingTimeframe {
+  THIS_YEAR
+  LAST_30_DAYS
+  LAST_7_DAYS
+  ALL_TIME
 }

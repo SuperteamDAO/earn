@@ -7,17 +7,20 @@ export const EarnAvatar = ({
   avatar,
   size = '32px',
   borderRadius = 'full',
+  onClick,
 }: {
   name: string;
   avatar?: string;
   size?: '24px' | '28px' | '32px' | '36px' | '40px' | '44px' | '52px' | '64px';
   borderRadius?: string;
+  onClick?: () => void;
 }) => {
   return (
-    <>
+    <div onClick={onClick}>
       {avatar ? (
         <Image
           boxSize={size}
+          maxW={'max-content'}
           borderRadius={borderRadius}
           objectFit={'cover'}
           alt={name}
@@ -43,6 +46,6 @@ export const EarnAvatar = ({
           ]}
         />
       )}
-    </>
+    </div>
   );
 };

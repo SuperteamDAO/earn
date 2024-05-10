@@ -68,7 +68,7 @@ export default function Feed() {
 
     window.addEventListener('scroll', onScroll);
     return () => window.removeEventListener('scroll', onScroll);
-  }, [isLoading, hasMore]);
+  }, [isLoading, hasMore, activeMenu]);
 
   const fetchMoreData = async () => {
     const currentScrollPosition = window.pageYOffset;
@@ -78,17 +78,21 @@ export default function Feed() {
           filter: activeMenu === 'Popular' ? 'popular' : undefined,
           timePeriod:
             activeMenu === 'Popular' ? timePeriod.toLowerCase() : undefined,
-          take: 15,
-          skip: 15,
+          skip: data?.length,
         },
       });
 
-      if (res.data.length < 15) {
+      if (res.data.length === 0) {
         setHasMore(false);
+        window.scrollTo(0, currentScrollPosition + 10);
+      } else {
+        const moreData = JSON.parse(res.data, (_key, value) => {
+          return value;
+        });
+
+        setData((data) => [...data, ...moreData]);
       }
 
-      setData((data) => [...data, ...JSON.parse(res.data)]);
-      window.scrollTo(0, currentScrollPosition);
       setIsLoading(false);
     } catch (err) {
       console.error(err);
@@ -97,8 +101,31 @@ export default function Feed() {
   };
 
   useEffect(() => {
-    fetchMoreData();
-  }, []);
+    const fetchData = async () => {
+      try {
+        const res = await axios.get(`/api/feed/get`, {
+          params: {
+            filter: activeMenu === 'Popular' ? 'popular' : undefined,
+            timePeriod:
+              activeMenu === 'Popular' ? timePeriod.toLowerCase() : undefined,
+          },
+        });
+
+        if (res) {
+          setData(
+            JSON.parse(res.data, (_key, value) => {
+              return value;
+            }),
+          );
+          setIsLoading(false);
+        }
+      } catch (err) {
+        console.log(err);
+        setIsLoading(false);
+      }
+    };
+    fetchData();
+  }, [activeMenu, timePeriod]);
 
   const NavItem = ({
     name,
@@ -124,6 +151,7 @@ export default function Feed() {
   const MenuOption = ({ option }: { option: 'New' | 'Popular' }) => (
     <Text
       color={activeMenu === option ? 'brand.slate.700' : 'brand.slate.500'}
+      fontSize={{ base: '15px', lg: 'md' }}
       fontWeight={activeMenu === option ? 600 : 400}
       cursor="pointer"
       onClick={() => setActiveMenu(option)}
@@ -136,7 +164,8 @@ export default function Feed() {
     <Home type="feed">
       <Box
         mt={'-4'}
-        mr={'-25px'}
+        mr={{ base: '-3', lg: '-25px' }}
+        ml={{ base: '-25px', lg: '0' }}
         borderColor={'brand.slate.200'}
         borderRightWidth={'1px'}
       >
@@ -160,17 +189,33 @@ export default function Feed() {
             <NavItem name="Leaderboard" icon={PiStarFour} size={'23px'} />
             <NavItem name="Winners" icon={GoTrophy} size={'21px'} />
           </Flex>
-          <Flex direction={'column'} w="100%">
-            <Box px={5} py={5} borderBottomWidth={'1px'}>
-              <Text color="brand.slate.900" fontSize="xl" fontWeight={600}>
+          <Flex direction={'column'} w="100%" mr={{ base: '0', lg: '0' }}>
+            <Box py={5} pl={{ base: 6, md: 5 }} borderBottomWidth={'1px'}>
+              <Text
+                color="brand.slate.900"
+                fontSize={{ base: 'lg', lg: 'xl' }}
+                fontWeight={600}
+              >
                 Activity Feed
               </Text>
-              <Flex align="center" justify={'space-between'} mt={2}>
-                <Text color="brand.slate.600" fontSize="md">
+              <Flex
+                align={{ base: 'right', md: 'center' }}
+                justify={'space-between'}
+                direction={{ base: 'column', md: 'row' }}
+                mt={2}
+              >
+                <Text
+                  color="brand.slate.600"
+                  fontSize={{ base: 'sm', lg: 'md' }}
+                >
                   Find and discover the best work on Earn
                 </Text>
-                <Flex align="center" justify={'space-between'} gap={3}>
-                  <Flex gap={3}>
+                <Flex
+                  align="center"
+                  justify={'space-between'}
+                  mt={{ base: 4, md: 0 }}
+                >
+                  <Flex gap={3} mr={3}>
                     <MenuOption option="New" />
                     <MenuOption option="Popular" />
                   </Flex>
@@ -193,31 +238,33 @@ export default function Feed() {
                 </Flex>
               </Flex>
             </Box>
-            {isLoading
-              ? Array.from({ length: 5 }).map((_, index) => (
-                  <FeedCardContainerSkeleton key={index} />
-                ))
-              : data?.map((item) => {
-                  if (item.type === 'Submission') {
-                    return (
-                      <SubmissionCard
-                        key={item.id}
-                        sub={item as any}
-                        type="activity"
-                      />
-                    );
-                  }
-                  if (item.type === 'PoW') {
-                    return (
-                      <PowCard
-                        key={item.id}
-                        pow={item as any}
-                        type="activity"
-                      />
-                    );
-                  }
-                  return null;
-                })}
+            <Box px={{ base: 1, md: 0 }}>
+              {isLoading
+                ? Array.from({ length: 5 }).map((_, index) => (
+                    <FeedCardContainerSkeleton key={index} />
+                  ))
+                : data?.map((item) => {
+                    if (item.type === 'Submission') {
+                      return (
+                        <SubmissionCard
+                          key={item.id}
+                          sub={item as any}
+                          type="activity"
+                        />
+                      );
+                    }
+                    if (item.type === 'PoW') {
+                      return (
+                        <PowCard
+                          key={item.id}
+                          pow={item as any}
+                          type="activity"
+                        />
+                      );
+                    }
+                    return null;
+                  })}
+            </Box>
           </Flex>
         </Flex>
       </Box>

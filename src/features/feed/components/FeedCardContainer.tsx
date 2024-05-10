@@ -10,9 +10,11 @@ import {
   SkeletonCircle,
   SkeletonText,
   Text,
+  useBreakpointValue,
 } from '@chakra-ui/react';
 import axios from 'axios';
 import NextLink from 'next/link';
+import { useRouter } from 'next/router';
 import React, { type ReactNode, useEffect, useState } from 'react';
 import { GoComment } from 'react-icons/go';
 import { IoMdHeart, IoMdHeartEmpty } from 'react-icons/io';
@@ -60,6 +62,7 @@ const FeedCardHeader = ({
   createdAt,
   type,
 }: FeedCardHeaderProps) => {
+  const router = useRouter();
   if (type === 'profile') {
     return (
       <Box mt={-0.5} mb={-1}>
@@ -67,7 +70,7 @@ const FeedCardHeader = ({
           <Flex align="center">
             <Text
               color={'brand.slate.400'}
-              fontSize={{ base: 'xs', md: 'md' }}
+              fontSize={{ base: 'sm', md: 'md' }}
               fontWeight={500}
             >
               <Text as={'span'} color={'brand.slate.800'} fontWeight={600}>
@@ -95,8 +98,10 @@ const FeedCardHeader = ({
       <Flex direction={'column'} mt={-0.5}>
         <Text
           color={'brand.slate.800'}
-          fontSize={{ base: 'xs', md: 'md' }}
+          fontSize={{ base: 'sm', md: 'md' }}
           fontWeight={600}
+          cursor={'pointer'}
+          onClick={() => router.push(`/t/${username}`)}
         >
           {name}
         </Text>
@@ -109,7 +114,7 @@ const FeedCardHeader = ({
           @{username} • {timeAgoShort(createdAt)}
         </Text>
         <Text
-          mt={2}
+          mt={{ base: 1, md: 2 }}
           color={'brand.slate.600'}
           fontSize={{ base: 'sm', md: 'md' }}
           fontWeight={500}
@@ -170,7 +175,6 @@ export const FeedCardContainer = ({
 }: FeedCardContainerProps) => {
   const { userInfo } = userStore();
 
-  const [isLoading, setIsLoading] = useState<boolean>(false);
   const [isLiked, setIsLiked] = useState<boolean>(
     !!like?.find((e: any) => e.id === userInfo?.id),
   );
@@ -184,7 +188,6 @@ export const FeedCardContainer = ({
 
   const handleLike = async () => {
     try {
-      setIsLoading(true);
       await axios.post(`/api/${cardType}/like`, { id });
       if (isLiked) {
         setIsLiked(false);
@@ -193,18 +196,20 @@ export const FeedCardContainer = ({
         setIsLiked(true);
         setTotalLikes((prevLikes) => prevLikes + 1);
       }
-      setIsLoading(false);
     } catch (error) {
-      setIsLoading(false);
       console.log(error);
     }
   };
+
+  const router = useRouter();
+  const isSM = useBreakpointValue({ base: false, md: true });
+
   return (
     <Box
       mx="0"
       mt={'-1px'}
       px={type === 'activity' ? 5 : 0}
-      py={8}
+      py={{ base: 4, md: 8 }}
       borderColor={'brand.slate.200'}
       borderBottomWidth={type === 'activity' ? '1px' : '0px'}
     >
@@ -212,7 +217,8 @@ export const FeedCardContainer = ({
         <EarnAvatar
           name={`${firstName} ${lastName}`}
           avatar={photo}
-          size="44px"
+          size={isSM ? '44px' : '32px'}
+          onClick={() => router.push(`/t/${username}`)}
         />
         <Flex direction={'column'} w={'full'}>
           <FeedCardHeader
@@ -257,7 +263,6 @@ export const FeedCardContainer = ({
               gap={1}
               display={'flex'}
               w={14}
-              isLoading={isLoading}
               onClick={(e) => {
                 e.stopPropagation();
                 if (!userInfo?.id) return;
