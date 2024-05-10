@@ -68,7 +68,7 @@ const GettingStarted = ({ userInfo }: GettingStartedProps) => {
         triggerLogin={triggerLogin}
         setTriggerLogin={setTriggerLogin}
       />
-      <Text mb={'1.5rem'} color={'gray.400'} fontWeight={500}>
+      <Text mb={'1.5rem'} color={'gray.400'} fontSize={'sm'} fontWeight={500}>
         GETTING STARTED
       </Text>
       <Flex h={'12.5rem'}>
