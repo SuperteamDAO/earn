@@ -27,11 +27,10 @@ import { ShareProfile } from '@/components/modals/shareProfile';
 import { EarnAvatar } from '@/components/shared/EarnAvatar';
 import { EmptySection } from '@/components/shared/EmptySection';
 import { LoadingSection } from '@/components/shared/LoadingSection';
-import { PowCard, SubmissionCard } from '@/features/feed';
+import { type FeedDataProps, PowCard, SubmissionCard } from '@/features/feed';
 import type { User } from '@/interface/user';
 import { Default } from '@/layouts/Default';
 import { Meta } from '@/layouts/Meta';
-import { type FeedDataProps } from '@/pages/feed';
 import { userStore } from '@/store/user';
 
 interface TalentProps {

@@ -1,5 +1,6 @@
 import { Box, Flex, Select, Text } from '@chakra-ui/react';
 import axios from 'axios';
+import NextLink from 'next/link';
 import React, { useEffect, useState } from 'react';
 import { FiHome } from 'react-icons/fi';
 import { GoTrophy } from 'react-icons/go';
@@ -7,45 +8,13 @@ import { PiStarFour } from 'react-icons/pi';
 
 import {
   FeedCardContainerSkeleton,
+  type FeedDataProps,
   PowCard,
   SubmissionCard,
 } from '@/features/feed';
-import { type Rewards } from '@/features/listings';
-import { type PrizeListMap } from '@/interface/listings';
 import { Home } from '@/layouts/Home';
 
-export interface FeedDataProps {
-  id: string;
-  createdAt: string;
-  like: {
-    id: string | undefined;
-    date: number;
-  }[];
-  link: string;
-  tweet: string;
-  eligibilityAnswers: string;
-  otherInfo: string;
-  isWinner: boolean;
-  winnerPosition: keyof Rewards | undefined;
-  description: string;
-  firstName: string;
-  lastName: string;
-  photo: string;
-  username: string;
-  listingId: number;
-  sponsorId: number;
-  listingTitle: string;
-  rewards: Partial<typeof PrizeListMap> | undefined;
-  listingType: string;
-  listingSlug: string;
-  isWinnersAnnounced: boolean;
-  token: string;
-  sponsorName: string;
-  sponsorLogo: string;
-  type: string;
-}
-
-export default function Feed() {
+export const Feed = ({ isWinner = false }: { isWinner?: boolean }) => {
   const [data, setData] = useState<FeedDataProps[]>([]);
   const [activeMenu, setActiveMenu] = useState('New');
   const [timePeriod, setTimePeriod] = useState('Today');
@@ -68,7 +37,7 @@ export default function Feed() {
 
     window.addEventListener('scroll', onScroll);
     return () => window.removeEventListener('scroll', onScroll);
-  }, [isLoading, hasMore, activeMenu]);
+  }, [isLoading, hasMore, activeMenu, timePeriod, data, isWinner]);
 
   const fetchMoreData = async () => {
     const currentScrollPosition = window.pageYOffset;
@@ -79,12 +48,16 @@ export default function Feed() {
           timePeriod:
             activeMenu === 'Popular' ? timePeriod.toLowerCase() : undefined,
           skip: data?.length,
+          isWinner,
         },
       });
 
-      if (res.data.length === 0) {
+      if (res.data.length < 15) {
         setHasMore(false);
-        window.scrollTo(0, currentScrollPosition + 10);
+      }
+
+      if (res.data.length === 0) {
+        window.scrollTo(0, currentScrollPosition);
       } else {
         const moreData = JSON.parse(res.data, (_key, value) => {
           return value;
@@ -108,6 +81,7 @@ export default function Feed() {
             filter: activeMenu === 'Popular' ? 'popular' : undefined,
             timePeriod:
               activeMenu === 'Popular' ? timePeriod.toLowerCase() : undefined,
+            isWinner,
           },
         });
 
@@ -125,19 +99,21 @@ export default function Feed() {
       }
     };
     fetchData();
-  }, [activeMenu, timePeriod]);
+  }, [activeMenu, timePeriod, isWinner]);
 
   const NavItem = ({
     name,
     icon: Icon,
     size,
+    href,
   }: {
     name: string;
     icon: any;
     size: string;
+    href: string;
   }) => {
     return (
-      <Flex align="center">
+      <Flex as={NextLink} align="center" href={href}>
         <Box w={7}>
           <Icon color="#64748b" size={size} />
         </Box>
@@ -185,11 +161,21 @@ export default function Feed() {
             pr={5}
             borderRightWidth={'1px'}
           >
-            <NavItem name="Homepage" icon={FiHome} size={'21px'} />
-            <NavItem name="Leaderboard" icon={PiStarFour} size={'23px'} />
-            <NavItem name="Winners" icon={GoTrophy} size={'21px'} />
+            <NavItem name="Homepage" icon={FiHome} size={'21px'} href="/" />
+            <NavItem
+              name="Leaderboard"
+              icon={PiStarFour}
+              size={'23px'}
+              href="/leaderboard"
+            />
+            <NavItem
+              name="Winners"
+              icon={GoTrophy}
+              size={'21px'}
+              href="/feed/winners"
+            />
           </Flex>
-          <Flex direction={'column'} w="100%" mr={{ base: '0', lg: '0' }}>
+          <Flex direction={'column'} w="100%">
             <Box py={5} pl={{ base: 6, md: 5 }} borderBottomWidth={'1px'}>
               <Text
                 color="brand.slate.900"
@@ -238,7 +224,7 @@ export default function Feed() {
                 </Flex>
               </Flex>
             </Box>
-            <Box px={{ base: 1, md: 0 }}>
+            <Box pl={{ base: 1, md: 0 }}>
               {isLoading
                 ? Array.from({ length: 5 }).map((_, index) => (
                     <FeedCardContainerSkeleton key={index} />
@@ -270,4 +256,4 @@ export default function Feed() {
       </Box>
     </Home>
   );
-}
+};

@@ -2,9 +2,9 @@ import { Avatar, Flex, Text, Tooltip } from '@chakra-ui/react';
 import React from 'react';
 
 import { OgImageViewer } from '@/components/misc/ogImageViewer';
-import { type FeedDataProps } from '@/pages/feed';
 import { getURL } from '@/utils/validUrl';
 
+import { type FeedDataProps } from '../types';
 import { FeedCardContainer, FeedCardLink } from './FeedCardContainer';
 import { WinnerFeedImage } from './WinnerFeedImage';
 

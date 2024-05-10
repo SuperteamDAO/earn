@@ -8,13 +8,17 @@ export default async function handler(
   res: NextApiResponse,
 ): Promise<void> {
   try {
-    const { filter, timePeriod, skip = 0 } = req.query;
+    const { filter, timePeriod, skip = 0, isWinner } = req.query;
     const orderByColumn =
       filter === 'popular'
         ? 'likeCount DESC, createdAt DESC'
         : 'createdAt DESC';
 
     const limitAndOffset = `LIMIT 15 OFFSET ${skip}`;
+    const winnerFilter =
+      isWinner === 'true'
+        ? 'AND sub.isWinner = 1 AND l.isWinnersAnnounced = 1'
+        : '';
 
     let startDate: string;
     let endDate: string;
@@ -37,6 +41,46 @@ export default async function handler(
         endDate = dayjs().format('YYYY-MM-DD');
         break;
     }
+
+    const powQuery =
+      isWinner !== 'true'
+        ? `
+    UNION ALL
+      (SELECT 
+        pow.id, 
+        pow.createdAt, 
+        JSON_LENGTH(pow.like) as likeCount, 
+        pow.like, 
+        pow.link, 
+        NULL as tweet, 
+        NULL as eligibilityAnswers, 
+        NULL as otherInfo, 
+        NULL as isWinner, 
+        NULL as winnerPosition,
+        pow.description,
+        pow.title,
+        u.firstName, 
+        u.lastName, 
+        u.photo, 
+        u.username,
+        NULL as listingId, 
+        NULL as sponsorId, 
+        NULL as listingTitle, 
+        NULL as rewards, 
+        NULL as listingType, 
+        NULL as listingSlug, 
+        NULL as isWinnersAnnounced, 
+        NULL as token,
+        NULL as sponsorName, 
+        NULL as sponsorLogo,
+        'PoW' as type
+      FROM 
+        PoW as pow
+      JOIN 
+        User as u ON pow.userId = u.id
+      WHERE DATE(pow.createdAt) BETWEEN '${startDate}' AND '${endDate}') 
+    `
+        : '';
 
     const rawQuery = `
       (SELECT 
@@ -75,41 +119,8 @@ export default async function handler(
         Bounties as l ON sub.listingId = l.id
       JOIN 
         Sponsors as s ON l.sponsorId = s.id
-        WHERE DATE(sub.createdAt) BETWEEN '${startDate}' AND '${endDate}')
-      UNION ALL
-      (SELECT 
-        pow.id, 
-        pow.createdAt, 
-        JSON_LENGTH(pow.like) as likeCount, 
-        pow.like, 
-        pow.link, 
-        NULL as tweet, 
-        NULL as eligibilityAnswers, 
-        NULL as otherInfo, 
-        NULL as isWinner, 
-        NULL as winnerPosition,
-        pow.description,
-        pow.title,
-        u.firstName, 
-        u.lastName, 
-        u.photo, 
-        u.username,
-        NULL as listingId, 
-        NULL as sponsorId, 
-        NULL as listingTitle, 
-        NULL as rewards, 
-        NULL as listingType, 
-        NULL as listingSlug, 
-        NULL as isWinnersAnnounced, 
-        NULL as token,
-        NULL as sponsorName, 
-        NULL as sponsorLogo,
-        'PoW' as type
-      FROM 
-        PoW as pow
-      JOIN 
-        User as u ON pow.userId = u.id
-      WHERE DATE(pow.createdAt) BETWEEN '${startDate}' AND '${endDate}')    
+        WHERE DATE(sub.createdAt) BETWEEN '${startDate}' AND '${endDate}' ${winnerFilter})
+      ${powQuery}   
       ORDER BY ${orderByColumn}
       ${limitAndOffset}
       `;

@@ -19,8 +19,8 @@ import { type Dispatch, type SetStateAction, useEffect, useState } from 'react';
 import { useForm } from 'react-hook-form';
 
 import type { MultiSelectOptions } from '@/constants';
+import { type FeedDataProps } from '@/features/feed';
 import type { PoW } from '@/interface/pow';
-import { type FeedDataProps } from '@/pages/feed';
 import { userStore } from '@/store/user';
 
 import { SkillSelect } from '../misc/SkillSelect';

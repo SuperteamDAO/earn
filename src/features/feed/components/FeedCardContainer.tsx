@@ -1,7 +1,6 @@
 import { ArrowForwardIcon } from '@chakra-ui/icons';
 import {
   Box,
-  Button,
   Flex,
   LinkBox,
   type LinkBoxProps,
@@ -139,9 +138,9 @@ export const FeedCardLink = ({
     <LinkBox
       alignItems={'center'}
       gap={2}
-      display="flex"
       whiteSpace={'nowrap'}
       {...style}
+      display={{ base: 'none', md: 'flex' }}
     >
       <LinkOverlay href={href}>
         <Text
@@ -187,17 +186,21 @@ export const FeedCardContainer = ({
   }, [like, userInfo?.id]);
 
   const handleLike = async () => {
+    const newIsLiked = !isLiked;
+    const newTotalLikes = newIsLiked
+      ? totalLikes + 1
+      : Math.max(totalLikes - 1, 0);
+
+    setIsLiked(newIsLiked);
+    setTotalLikes(newTotalLikes);
+
     try {
       await axios.post(`/api/${cardType}/like`, { id });
-      if (isLiked) {
-        setIsLiked(false);
-        setTotalLikes((prevLikes) => Math.max(prevLikes - 1, 0));
-      } else {
-        setIsLiked(true);
-        setTotalLikes((prevLikes) => prevLikes + 1);
-      }
     } catch (error) {
       console.log(error);
+      setIsLiked(isLiked);
+      setTotalLikes(totalLikes);
+      alert('Failed to update like status. Please try again.');
     }
   };
 
@@ -247,8 +250,9 @@ export const FeedCardContainer = ({
           >
             {children}
             <Flex
-              align={'center'}
+              align={{ base: 'start', md: 'center' }}
               justify={'space-between'}
+              direction={{ base: 'column', md: 'row' }}
               px={{ base: '3', md: '6' }}
               py={{ base: '4', md: '6' }}
             >
@@ -256,30 +260,36 @@ export const FeedCardContainer = ({
             </Flex>
           </Box>
 
-          <Flex align={'center'} pointerEvents={id ? 'all' : 'none'}>
-            <Button
+          <Flex align={'center'} mt={2} pointerEvents={id ? 'all' : 'none'}>
+            <Box
               zIndex={10}
               alignItems={'center'}
               gap={1}
               display={'flex'}
-              w={14}
+              mr={2}
               onClick={(e) => {
                 e.stopPropagation();
                 if (!userInfo?.id) return;
                 handleLike();
               }}
-              variant={'unstyled'}
             >
-              {!isLiked && <IoMdHeartEmpty size={'22px'} color={'#64748b'} />}
-              {isLiked && <IoMdHeart size={'22px'} color={'#E11D48'} />}
+              {!isLiked && (
+                <IoMdHeartEmpty
+                  size={isSM ? '22px' : '20px'}
+                  color={'#64748b'}
+                />
+              )}
+              {isLiked && (
+                <IoMdHeart size={isSM ? '22px' : '20px'} color={'#E11D48'} />
+              )}
               <Text color="brand.slate.500" fontSize={'md'} fontWeight={500}>
                 {totalLikes}
               </Text>
-            </Button>
+            </Box>
             {commentLink && (
               <GoComment
                 color={'#64748b'}
-                size={'21px'}
+                size={isSM ? '21px' : '19px'}
                 style={{
                   cursor: 'pointer',
                 }}
@@ -312,7 +322,7 @@ export const FeedCardContainerSkeleton = () => {
             <SkeletonText w={36} h={5} mt={1} noOfLines={2} spacing="2" />
           </Box>
           <Skeleton
-            h={96}
+            h={{ base: '200px', md: '300px' }}
             mt={4}
             p={4}
             borderWidth={'1px'}
