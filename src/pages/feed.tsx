@@ -5,7 +5,11 @@ import { FiHome } from 'react-icons/fi';
 import { GoTrophy } from 'react-icons/go';
 import { PiStarFour } from 'react-icons/pi';
 
-import { PowCard, SubmissionCard } from '@/features/feed';
+import {
+  FeedCardContainerSkeleton,
+  PowCard,
+  SubmissionCard,
+} from '@/features/feed';
 import { type Rewards } from '@/features/listings';
 import { type PrizeListMap } from '@/interface/listings';
 import { Home } from '@/layouts/Home';
@@ -42,38 +46,59 @@ export interface FeedDataProps {
 }
 
 export default function Feed() {
-  const [data, setData] = useState<FeedDataProps[]>();
+  const [data, setData] = useState<FeedDataProps[]>([]);
   const [activeMenu, setActiveMenu] = useState('New');
   const [timePeriod, setTimePeriod] = useState('Today');
 
-  // const [isloading, setIsloading] = useState<boolean>(true);
-  useEffect(() => {
-    const fetch = async () => {
-      try {
-        // setIsloading(true);
-        const res = await axios.get(`/api/feed/get`, {
-          params: {
-            filter: activeMenu === 'Popular' ? 'popular' : undefined,
-            timePeriod:
-              activeMenu === 'Popular' ? timePeriod.toLowerCase() : undefined,
-          },
-        });
+  const [isLoading, setIsLoading] = useState<boolean>(true);
 
-        if (res) {
-          setData(
-            JSON.parse(res.data, (_key, value) => {
-              return value;
-            }),
-          );
-          // setIsloading(false);
-        }
-      } catch (err) {
-        console.log(err);
-        // setIsloading(false);
+  const [hasMore, setHasMore] = useState(true);
+
+  useEffect(() => {
+    const onScroll = () => {
+      if (
+        window.innerHeight + document.documentElement.scrollTop >=
+          document.documentElement.offsetHeight - 500 &&
+        hasMore &&
+        !isLoading
+      ) {
+        fetchMoreData();
       }
     };
-    fetch();
-  }, [activeMenu, timePeriod]);
+
+    window.addEventListener('scroll', onScroll);
+    return () => window.removeEventListener('scroll', onScroll);
+  }, [isLoading, hasMore]);
+
+  const fetchMoreData = async () => {
+    const currentScrollPosition = window.pageYOffset;
+    try {
+      const res = await axios.get(`/api/feed/get`, {
+        params: {
+          filter: activeMenu === 'Popular' ? 'popular' : undefined,
+          timePeriod:
+            activeMenu === 'Popular' ? timePeriod.toLowerCase() : undefined,
+          take: 15,
+          skip: 15,
+        },
+      });
+
+      if (res.data.length < 15) {
+        setHasMore(false);
+      }
+
+      setData((data) => [...data, ...JSON.parse(res.data)]);
+      window.scrollTo(0, currentScrollPosition);
+      setIsLoading(false);
+    } catch (err) {
+      console.error(err);
+    }
+    setIsLoading(false);
+  };
+
+  useEffect(() => {
+    fetchMoreData();
+  }, []);
 
   const NavItem = ({
     name,
@@ -168,23 +193,31 @@ export default function Feed() {
                 </Flex>
               </Flex>
             </Box>
-            {data?.map((item, index) => {
-              if (item.type === 'Submission') {
-                return (
-                  <SubmissionCard
-                    key={index}
-                    sub={item as any}
-                    type="activity"
-                  />
-                );
-              }
-              if (item.type === 'PoW') {
-                return (
-                  <PowCard key={index} pow={item as any} type="activity" />
-                );
-              }
-              return null;
-            })}
+            {isLoading
+              ? Array.from({ length: 5 }).map((_, index) => (
+                  <FeedCardContainerSkeleton key={index} />
+                ))
+              : data?.map((item) => {
+                  if (item.type === 'Submission') {
+                    return (
+                      <SubmissionCard
+                        key={item.id}
+                        sub={item as any}
+                        type="activity"
+                      />
+                    );
+                  }
+                  if (item.type === 'PoW') {
+                    return (
+                      <PowCard
+                        key={item.id}
+                        pow={item as any}
+                        type="activity"
+                      />
+                    );
+                  }
+                  return null;
+                })}
           </Flex>
         </Flex>
       </Box>

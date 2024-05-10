@@ -6,15 +6,20 @@ import {
   LinkBox,
   type LinkBoxProps,
   LinkOverlay,
+  Skeleton,
+  SkeletonCircle,
+  SkeletonText,
   Text,
 } from '@chakra-ui/react';
 import axios from 'axios';
+import NextLink from 'next/link';
 import React, { type ReactNode, useEffect, useState } from 'react';
 import { GoComment } from 'react-icons/go';
 import { IoMdHeart, IoMdHeartEmpty } from 'react-icons/io';
 
 import { EarnAvatar } from '@/components/shared/EarnAvatar';
 import { userStore } from '@/store/user';
+import { getURLSanitized } from '@/utils/getURLSanitized';
 import { timeAgoShort } from '@/utils/timeAgo';
 
 interface FeedCardHeaderProps {
@@ -44,6 +49,7 @@ interface FeedCardContainerProps {
   like: any;
   commentLink?: string;
   cardType: 'submission' | 'pow';
+  link: string;
 }
 
 const FeedCardHeader = ({
@@ -160,6 +166,7 @@ export const FeedCardContainer = ({
   like,
   commentLink,
   cardType,
+  link,
 }: FeedCardContainerProps) => {
   const { userInfo } = userStore();
 
@@ -168,6 +175,8 @@ export const FeedCardContainer = ({
     !!like?.find((e: any) => e.id === userInfo?.id),
   );
   const [totalLikes, setTotalLikes] = useState<number>(like?.length ?? 0);
+
+  const sanitizedLink = getURLSanitized(link);
 
   useEffect(() => {
     setIsLiked(!!like?.find((e: any) => e.id === userInfo?.id));
@@ -216,11 +225,19 @@ export const FeedCardContainer = ({
             type={type}
           />
           <Box
+            as={NextLink}
             mt={4}
             borderWidth={'1px'}
             borderColor={'brand.slate.200'}
             borderRadius={'6'}
             shadow={'0px 4px 4px 0px rgba(0, 0, 0, 0.01);'}
+            _hover={{
+              shadow: '0px 4px 8px 0px rgba(0, 0, 0, 0.1)',
+              transform: 'translateY(-0.5px)',
+              transition: 'all 0.1s ease-in-out',
+            }}
+            cursor={'pointer'}
+            href={sanitizedLink}
           >
             {children}
             <Flex
@@ -267,6 +284,37 @@ export const FeedCardContainer = ({
               />
             )}
           </Flex>
+        </Flex>
+      </Flex>
+    </Box>
+  );
+};
+
+export const FeedCardContainerSkeleton = () => {
+  return (
+    <Box
+      mx="0"
+      mt={'-1px'}
+      px={5}
+      py={8}
+      borderColor={'brand.slate.200'}
+      borderBottomWidth={'1px'}
+    >
+      <Flex gap={3}>
+        <SkeletonCircle w="44px" h="44px" />
+        <Flex direction={'column'} w={'full'}>
+          <Box>
+            <SkeletonText w={36} h={5} mt={1} noOfLines={2} spacing="2" />
+          </Box>
+          <Skeleton
+            h={96}
+            mt={4}
+            p={4}
+            borderWidth={'1px'}
+            borderColor={'brand.slate.200'}
+            borderRadius={'6'}
+            shadow={'0px 4px 4px 0px rgba(0, 0, 0, 0.01)'}
+          />
         </Flex>
       </Flex>
     </Box>

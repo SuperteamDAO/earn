@@ -102,6 +102,7 @@ export function SubmissionCard({ sub, type }: SubCardProps) {
       like={sub?.like}
       commentLink={link}
       cardType="submission"
+      link={link}
     >
       {sub?.isWinner && sub?.isWinnersAnnounced ? (
         <WinnerFeedImage

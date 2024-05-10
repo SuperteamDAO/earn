@@ -60,6 +60,7 @@ export function PowCard({ pow, type }: PowCardProps) {
       id={pow?.id}
       like={pow?.like}
       cardType="pow"
+      link={pow?.link}
     >
       <OgImageViewer
         externalUrl={pow?.link ?? ''}

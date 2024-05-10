@@ -8,7 +8,7 @@ export default async function handler(
   res: NextApiResponse,
 ): Promise<void> {
   try {
-    const { filter, timePeriod, take = 15 } = req.query;
+    const { filter, timePeriod, take = 15, skip = 0 } = req.query;
     const orderByColumn =
       filter === 'popular'
         ? 'likeCount DESC, createdAt DESC'
@@ -49,6 +49,7 @@ export default async function handler(
         sub.isWinner, 
         sub.winnerPosition,
         NULL as description,
+        NULL as title,
         u.firstName, 
         u.lastName, 
         u.photo, 
@@ -86,6 +87,7 @@ export default async function handler(
         NULL as isWinner, 
         NULL as winnerPosition,
         pow.description,
+        pow.title,
         u.firstName, 
         u.lastName, 
         u.photo, 
@@ -107,7 +109,7 @@ export default async function handler(
         User as u ON pow.userId = u.id
       WHERE DATE(pow.createdAt) BETWEEN '${startDate}' AND '${endDate}')    
       ORDER BY ${orderByColumn}
-      LIMIT ${take}
+      LIMIT ${take} OFFSET ${skip}
     `;
 
     const powAndSubmissions = await prisma.$queryRawUnsafe(rawQuery);

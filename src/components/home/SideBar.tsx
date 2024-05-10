@@ -235,6 +235,7 @@ const RecentActivity = () => {
             <Text
               overflow={'hidden'}
               maxW={36}
+              mr={1.5}
               color={'brand.slate.800'}
               fontSize={'0.9rem'}
               fontWeight={600}
