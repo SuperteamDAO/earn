@@ -1,5 +1,7 @@
 import { ChevronLeftIcon, ChevronRightIcon } from '@chakra-ui/icons';
 import { Button, Flex } from '@chakra-ui/react';
+import debounce from 'lodash.debounce';
+import { useCallback } from 'react';
 
 interface Props {
   page: number;
@@ -10,14 +12,14 @@ interface Props {
 const SIZE = 6;
 const ROUNDED = 4;
 export function Pagination({ page, setPage, count }: Props) {
-  if (count === 0) return <></>;
-
-  const totalPages = Math.ceil(count / 10);
-  console.log('page', page, 'count', count);
-
   const handleClick = (newPage: number) => {
     setPage(newPage);
   };
+  const debouncedHandleClick = useCallback(debounce(handleClick, 500), []);
+
+  if (count === 0) return <></>;
+
+  const totalPages = Math.ceil(count / 10);
 
   const renderPageNumbers = () => {
     const pageNumbers = [];
@@ -33,7 +35,7 @@ export function Pagination({ page, setPage, count }: Props) {
             color={page === i ? 'brand.purple' : 'brand.slate.500'}
             fontSize={'xs'}
             borderColor={page === i ? 'brand.purple' : 'brand.slate.100'}
-            onClick={() => handleClick(i)}
+            onClick={() => debouncedHandleClick(i)}
             rounded={ROUNDED}
             variant="outline"
           >
@@ -77,9 +79,10 @@ export function Pagination({ page, setPage, count }: Props) {
           borderColor: 'brand.slate.300',
           color: 'brand.slate.500',
           opacity: 0.5,
+          pointerEvents: 'none',
         }}
         isDisabled={page === 1}
-        onClick={() => setPage(page - 1)}
+        onClick={() => debouncedHandleClick(page - 1)}
         rounded={ROUNDED}
         variant="outline"
       >
@@ -91,8 +94,15 @@ export function Pagination({ page, setPage, count }: Props) {
         minW={0}
         h={SIZE}
         p={0}
+        _disabled={{
+          bg: 'brand.slate.300',
+          borderColor: 'brand.slate.300',
+          color: 'brand.slate.500',
+          opacity: 0.5,
+          pointerEvents: 'none',
+        }}
         isDisabled={page === totalPages}
-        onClick={() => setPage(page + 1)}
+        onClick={() => debouncedHandleClick(page + 1)}
         rounded={ROUNDED}
         variant="outline"
       >
