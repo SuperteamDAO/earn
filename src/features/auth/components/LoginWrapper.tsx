@@ -4,7 +4,6 @@ import { useEffect } from 'react';
 
 import { Login } from '@/features/auth';
 import type { User } from '@/interface/user';
-import { userStore } from '@/store/user';
 
 interface LoginProps {
   triggerLogin: boolean;
@@ -24,7 +23,6 @@ export function LoginWrapper({
   acceptUser,
 }: LoginProps) {
   const { isOpen, onOpen, onClose } = useDisclosure();
-  const { userInfo } = userStore();
 
   useEffect(() => {
     const makeUser = async () => {
@@ -37,7 +35,7 @@ export function LoginWrapper({
   }, []);
 
   useEffect(() => {
-    if (triggerLogin && !userInfo?.id) {
+    if (triggerLogin) {
       setTriggerLogin(false);
       onOpen();
     }

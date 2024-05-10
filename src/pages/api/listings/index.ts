@@ -76,13 +76,12 @@ export default async function user(req: NextApiRequest, res: NextApiResponse) {
             },
           },
         },
+        orderBy: {
+          deadline: 'desc',
+        },
       });
-      const sortedData = bounties
-        .sort((a, b) => {
-          return dayjs(a.deadline).diff(dayjs(b.deadline));
-        })
-        .slice(0, take);
-      result.bounties = sortedData;
+
+      result.bounties = bounties;
     } else if (category === 'bounties') {
       const bounties = await prisma.bounties.findMany({
         where: {
@@ -109,20 +108,20 @@ export default async function user(req: NextApiRequest, res: NextApiResponse) {
             },
           },
         },
+        orderBy: {
+          deadline: 'desc',
+        },
       });
-      const sortedData = bounties.sort((a, b) => {
-        return dayjs(b.deadline).diff(dayjs(a.deadline));
-      });
-      const splitIndex = sortedData.findIndex((bounty) =>
+      const splitIndex = bounties.findIndex((bounty) =>
         dayjs().isAfter(dayjs(bounty?.deadline)),
       );
       if (splitIndex >= 0) {
-        const bountiesOpen = sortedData.slice(0, splitIndex).reverse();
-        const bountiesClosed = sortedData.slice(splitIndex);
+        const bountiesOpen = bounties.slice(0, splitIndex).reverse();
+        const bountiesClosed = bounties.slice(splitIndex);
 
         result.bounties = [...bountiesOpen, ...bountiesClosed];
       } else {
-        result.bounties = sortedData.slice(0, take);
+        result.bounties = bounties.slice(0, take);
       }
     }
 
