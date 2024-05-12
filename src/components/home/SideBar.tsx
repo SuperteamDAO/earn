@@ -1,13 +1,5 @@
 import { ArrowForwardIcon } from '@chakra-ui/icons';
-import {
-  Box,
-  Button,
-  Divider,
-  Flex,
-  Image,
-  Skeleton,
-  Text,
-} from '@chakra-ui/react';
+import { Box, Flex, Image, Skeleton, Text } from '@chakra-ui/react';
 import axios from 'axios';
 import dayjs from 'dayjs';
 import NextLink from 'next/link';
@@ -20,6 +12,7 @@ import { timeAgoShort } from '@/utils/timeAgo';
 
 import { OgImageViewer } from '../misc/ogImageViewer';
 import { RecentEarners } from './RecentEarners';
+import { VibeCard } from './VibeCard';
 
 interface SideBarProps {
   total: number;
@@ -358,30 +351,6 @@ const OpenListings = () => {
   );
 };
 
-const VibeCard = ({ number }: { number: number }) => {
-  return (
-    <Flex px={4} py={4} bg="brand.slate.100" borderRadius={8}>
-      <Text color="brand.slate.500" fontSize="13px" fontWeight={500}>
-        <Text as="span" color="brand.slate.900">
-          {number}{' '}
-        </Text>
-        people vibing rn
-      </Text>
-      <Divider mx={2} orientation="vertical" />
-      <Button
-        color="brand.slate.500"
-        fontSize="sm"
-        fontWeight={500}
-        bg="white"
-        borderColor={'brand.slate.200'}
-        variant={'outline'}
-      >
-        click to vibe w/ everyone
-      </Button>
-    </Flex>
-  );
-};
-
 export const HomeSideBar = ({
   type,
   listings,
@@ -393,7 +362,7 @@ export const HomeSideBar = ({
     <Flex direction={'column'} rowGap={'2.5rem'} w={'24rem'} py={6} pl={6}>
       {type === 'feed' && (
         <>
-          <VibeCard number={35} />
+          <VibeCard />
           <OpenListings />
         </>
       )}

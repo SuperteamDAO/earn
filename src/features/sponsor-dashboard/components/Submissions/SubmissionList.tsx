@@ -117,7 +117,7 @@ export const SubmissionList = ({
             >
               <Flex align="center">
                 <EarnAvatar
-                  name={`${submission?.user?.firstName} ${submission?.user?.lastName}`}
+                  id={`${submission?.user?.id}`}
                   avatar={selectedSubmission?.user?.photo || undefined}
                 />
                 <Box w={48} ml={2}>

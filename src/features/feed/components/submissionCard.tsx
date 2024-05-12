@@ -103,6 +103,7 @@ export function SubmissionCard({ sub, type }: SubCardProps) {
       commentLink={link}
       cardType="submission"
       link={link}
+      userId={sub?.userId}
     >
       {sub?.isWinner && sub?.isWinnersAnnounced ? (
         <WinnerFeedImage

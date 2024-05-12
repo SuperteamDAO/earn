@@ -277,7 +277,7 @@ function TalentProfile({ slug }: TalentProps) {
                 <Box>
                   <EarnAvatar
                     size={isMD ? '64px' : '52px'}
-                    name={`${talent?.firstName} ${talent?.lastName}`}
+                    id={`${talent?.id}`}
                     avatar={talent?.photo}
                   />
 

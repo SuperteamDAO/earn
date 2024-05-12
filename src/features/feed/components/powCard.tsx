@@ -17,6 +17,7 @@ interface PowCardProps {
     username: string;
     id: string;
     like: any;
+    userId: string;
   };
   type: 'profile' | 'activity';
 }
@@ -61,6 +62,7 @@ export function PowCard({ pow, type }: PowCardProps) {
       like={pow?.like}
       cardType="pow"
       link={pow?.link}
+      userId={pow?.userId}
     >
       <OgImageViewer
         externalUrl={pow?.link ?? ''}

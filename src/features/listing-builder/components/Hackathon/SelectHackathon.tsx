@@ -87,7 +87,7 @@ export function SelectHackathon({ type }: { type?: string }) {
         <Flex align="center" py={1}>
           <EarnAvatar
             borderRadius="4"
-            name={data?.hackathon?.name}
+            id={data?.hackathon?.name}
             avatar={data?.hackathon?.logo}
           />
           <Box display={{ base: 'none', md: 'block' }} ml={2}>
@@ -110,7 +110,7 @@ export function SelectHackathon({ type }: { type?: string }) {
         <Flex align="center">
           <EarnAvatar
             borderRadius="4"
-            name={data?.hackathon?.name}
+            id={data?.hackathon?.name}
             avatar={data?.hackathon?.logo}
           />
           <Box display={{ base: 'none', md: 'block' }} ml={2}>

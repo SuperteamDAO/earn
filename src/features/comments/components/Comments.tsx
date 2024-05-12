@@ -190,7 +190,7 @@ export const Comments = ({
           <Flex gap={3} w="full">
             <EarnAvatar
               size={'36px'}
-              name={`${userInfo?.firstName} ${userInfo?.lastName}`}
+              id={`${userInfo?.id}`}
               avatar={userInfo?.photo}
             />
             <Box pos={'relative'} w="full" mt={0.5}>

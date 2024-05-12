@@ -3,13 +3,13 @@ import Avatar from 'boring-avatars';
 import React from 'react';
 
 export const EarnAvatar = ({
-  name,
+  id,
   avatar,
   size = '32px',
   borderRadius = 'full',
   onClick,
 }: {
-  name: string;
+  id: string;
   avatar?: string;
   size?: '24px' | '28px' | '32px' | '36px' | '40px' | '44px' | '52px' | '64px';
   borderRadius?: string;
@@ -23,7 +23,7 @@ export const EarnAvatar = ({
           maxW={'max-content'}
           borderRadius={borderRadius}
           objectFit={'cover'}
-          alt={name}
+          alt={id}
           src={avatar.replace(
             '/upload/',
             '/upload/c_scale,w_256,h_256,f_auto/',
@@ -32,7 +32,7 @@ export const EarnAvatar = ({
       ) : (
         <Avatar
           size={size}
-          name={name}
+          name={id}
           variant="marble"
           colors={[
             '#da4c65',

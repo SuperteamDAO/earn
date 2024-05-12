@@ -188,7 +188,7 @@ const Index = () => {
                     <Flex align="center">
                       <EarnAvatar
                         size="36px"
-                        name={`${member?.user?.firstName} ${member?.user?.lastName}`}
+                        id={`${member?.user?.id}`}
                         avatar={member?.user?.photo}
                       />
                       <Box display={{ base: 'none', md: 'block' }} ml={2}>

@@ -111,7 +111,7 @@ export function TalentBio({
         <Flex align={'center'} h={'fit-content'}>
           <EarnAvatar
             size="64px"
-            name={`${user?.firstName} ${user?.lastName}`}
+            id={`${user?.id}`}
             avatar={user?.photo as string}
           />
           <Box ml={'12px'}>

@@ -87,7 +87,7 @@ export function SelectSponsor({ type }: { type?: string }) {
       <components.SingleValue {...props}>
         <Flex align="center" py={1}>
           <EarnAvatar
-            name={data?.sponsor?.name}
+            id={data?.sponsor?.name}
             avatar={data?.sponsor?.logo}
             borderRadius="4"
           />
@@ -110,7 +110,7 @@ export function SelectSponsor({ type }: { type?: string }) {
       <components.Option {...props}>
         <Flex align="center">
           <EarnAvatar
-            name={data?.sponsor?.name}
+            id={data?.sponsor?.name}
             avatar={data?.sponsor?.logo}
             borderRadius="4"
           />

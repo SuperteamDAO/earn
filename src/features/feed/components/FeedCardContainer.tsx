@@ -51,6 +51,7 @@ interface FeedCardContainerProps {
   commentLink?: string;
   cardType: 'submission' | 'pow';
   link: string;
+  userId: string;
 }
 
 const FeedCardHeader = ({
@@ -171,6 +172,7 @@ export const FeedCardContainer = ({
   commentLink,
   cardType,
   link,
+  userId,
 }: FeedCardContainerProps) => {
   const { userInfo } = userStore();
 
@@ -218,7 +220,7 @@ export const FeedCardContainer = ({
     >
       <Flex gap={3}>
         <EarnAvatar
-          name={`${firstName} ${lastName}`}
+          id={`${userId}`}
           avatar={photo}
           size={isSM ? '44px' : '32px'}
           onClick={() => router.push(`/t/${username}`)}

@@ -16,6 +16,7 @@ interface EarnerProps {
   bounty?: string;
   token?: string;
   username: string;
+  id: string;
 }
 const Earner = ({
   amount,
@@ -24,6 +25,7 @@ const Earner = ({
   bounty,
   token,
   username,
+  id,
 }: EarnerProps) => {
   const tokenObj = tokenList.find((t) => t.tokenSymbol === token);
   const tokenIcon = tokenObj
@@ -33,7 +35,7 @@ const Earner = ({
     <NextLink href={`${getURL()}t/${username}`}>
       <Flex align={'center'} w={'100%'} my={4}>
         <Center mr={'0.75rem'}>
-          <EarnAvatar name={name} avatar={avatar} />
+          <EarnAvatar id={id} avatar={avatar} />
         </Center>
 
         <Box w="13.8rem">
@@ -132,6 +134,7 @@ export const RecentEarners = ({ earners }: { earners?: User[] }) => {
               avatar={t.photo}
               key={`${t.id}-${index}`}
               bounty={t.title ?? ''}
+              id={t.id}
             />
           ))}
         </Box>
