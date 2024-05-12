@@ -1,6 +1,6 @@
 import { Box, Button, Divider, Flex, Text } from '@chakra-ui/react';
 import axios from 'axios';
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import Fireworks from 'react-canvas-confetti/dist/presets/fireworks';
 import { type TConductorInstance } from 'react-canvas-confetti/dist/types';
 
@@ -14,14 +14,19 @@ export const VibeCard = () => {
   const [userIds, setUserIds] = useState<string[]>([]);
   const [conductor, setConductor] = useState<TConductorInstance>();
   const [isAudioPlaying, setIsAudioPlaying] = useState(false);
+  const audioRef = useRef<HTMLAudioElement | null>(null);
 
-  const audio = new Audio('/assets/memes/chipichapa.mp3');
-  audio.onended = () => setIsAudioPlaying(false);
+  useEffect(() => {
+    audioRef.current = new Audio('/assets/memes/chipichapa.mp3');
+    audioRef.current.onended = () => setIsAudioPlaying(false);
+  }, []);
 
   const shootConfetti = () => {
     conductor?.shoot();
-    if (!isAudioPlaying) {
-      audio.play().catch((error) => console.error('Audio play failed:', error));
+    if (!isAudioPlaying && audioRef.current) {
+      audioRef.current
+        .play()
+        .catch((error) => console.error('Audio play failed:', error));
       setIsAudioPlaying(true);
     }
   };
