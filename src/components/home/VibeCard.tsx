@@ -59,14 +59,15 @@ export const VibeCard = () => {
   const { userInfo } = userStore();
 
   const fetchUserData = async (userIds: string[]) => {
+    const maxPfps = 8;
     try {
-      const latestUserIds = userIds.slice(-6);
+      const latestUserIds = userIds.slice(-maxPfps);
       const responses = await Promise.all(
         latestUserIds.map((id) =>
           axios.post('/api/feed/viberPfp', { id }).then((res) => res.data),
         ),
       );
-      const remainingSlots = Math.max(0, 6 - responses.length);
+      const remainingSlots = Math.max(0, maxPfps - responses.length);
       setUsers([...dummyUsers.slice(0, remainingSlots), ...responses]);
     } catch (error) {
       console.error('Error fetching user data:', error);
@@ -99,10 +100,10 @@ export const VibeCard = () => {
 
   return (
     <Flex align={'center'} px={4} py={4} bg="brand.slate.100" borderRadius={8}>
-      <Flex direction={'column'}>
+      <Flex direction={'column'} w="full">
         <Text
           color="brand.slate.500"
-          fontSize="13px"
+          fontSize="sm"
           fontWeight={500}
           whiteSpace={'nowrap'}
         >
@@ -124,8 +125,9 @@ export const VibeCard = () => {
           ))}
         </Flex>
       </Flex>
-      <Divider mx={2} orientation="vertical" />
+      <Divider mx={4} orientation="vertical" />
       <Button
+        px={10}
         color="brand.slate.500"
         fontSize="sm"
         fontWeight={500}
@@ -134,7 +136,7 @@ export const VibeCard = () => {
         onClick={handleVibeClick}
         variant={'outline'}
       >
-        click to vibe w/ everyone
+        click to vibeeeee
       </Button>
       <Fireworks onInit={onInit} />
     </Flex>
