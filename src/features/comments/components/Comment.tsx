@@ -29,7 +29,7 @@ import Link from 'next/link';
 import { useEffect, useRef, useState } from 'react';
 
 import { UserAvatar } from '@/components/shared/UserAvatar';
-import { LoginWrapper } from '@/features/auth';
+import { AuthWrapper } from '@/features/auth';
 import { type Comment as IComment } from '@/interface/comments';
 import { type User } from '@/interface/user';
 import { userStore } from '@/store/user';
@@ -78,7 +78,6 @@ export const Comment = ({
     onOpen: deleteOnOpen,
     onClose: deleteOnClose,
   } = useDisclosure();
-  const [triggerLogin, setTriggerLogin] = useState(false);
   const [showReplyInput, setShowReplyInput] = useState(false);
   const [showReplies, setShowReplies] = useState(false);
   const [replies, setReplies] = useState(comment?.replies ?? []);
@@ -145,9 +144,7 @@ export const Comment = ({
   const date = formatFromNow(dayjs(comment?.updatedAt).fromNow());
 
   const handleSubmit = async () => {
-    if (!userInfo?.id) {
-      setTriggerLogin(true);
-    } else if (!userInfo?.isTalentFilled && !userInfo?.currentSponsorId) {
+    if (!userInfo?.isTalentFilled && !userInfo?.currentSponsorId) {
       onOpen();
     } else {
       try {
@@ -191,10 +188,6 @@ export const Comment = ({
           primaryCtaLink={'/new/talent'}
         />
       )}
-      <LoginWrapper
-        triggerLogin={triggerLogin}
-        setTriggerLogin={setTriggerLogin}
-      />
       <HStack
         key={comment.id}
         align="start"
@@ -382,29 +375,31 @@ export const Comment = ({
                 unmountOnExit={true}
               >
                 <Flex justify={'end'} gap={4} w="full">
-                  <Button
-                    h="auto"
-                    px={5}
-                    py={2}
-                    color="brand.slate.800"
-                    fontSize={{
-                      base: 'xs',
-                    }}
-                    fontWeight={500}
-                    bg="brand.slate.200"
-                    _hover={{
-                      bg: 'brand.slate.300',
-                    }}
-                    _active={{
-                      bg: 'brand.slate.400',
-                    }}
-                    isDisabled={!!newReplyLoading || !newReply}
-                    isLoading={!!newReplyLoading}
-                    loadingText="Adding..."
-                    onClick={() => handleSubmit()}
-                  >
-                    Reply
-                  </Button>
+                  <AuthWrapper>
+                    <Button
+                      h="auto"
+                      px={5}
+                      py={2}
+                      color="brand.slate.800"
+                      fontSize={{
+                        base: 'xs',
+                      }}
+                      fontWeight={500}
+                      bg="brand.slate.200"
+                      _hover={{
+                        bg: 'brand.slate.300',
+                      }}
+                      _active={{
+                        bg: 'brand.slate.400',
+                      }}
+                      isDisabled={!!newReplyLoading || !newReply}
+                      isLoading={!!newReplyLoading}
+                      loadingText="Adding..."
+                      onClick={() => handleSubmit()}
+                    >
+                      Reply
+                    </Button>
+                  </AuthWrapper>
                 </Flex>
               </Collapse>
             </VStack>
