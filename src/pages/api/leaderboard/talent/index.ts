@@ -119,39 +119,45 @@ const rankingCriteria: RankingCriteria = {
 export default async function user(_: NextApiRequest, res: NextApiResponse) {
   // TODO: convert to only POST request later
 
-  await prisma.$transaction(async (tsx) => {
-    await tsx.talentRankings.deleteMany({});
+  await prisma.$transaction(
+    async (tsx) => {
+      await tsx.talentRankings.deleteMany({});
 
-    const allQueries: string[] = [];
+      const allQueries: string[] = [];
 
-    skillsFilter.forEach((skillFilter) => {
-      allQueries.push(
-        buildTalentLeaderboardQuery(rankingCriteria, skillFilter),
-      );
-    });
-
-    timeframeFilters.forEach((timeframe) => {
       skillsFilter.forEach((skillFilter) => {
         allQueries.push(
-          buildTalentLeaderboardQuery(rankingCriteria, skillFilter, {
-            range: timeframe[1],
-            label: timeframe[0],
-          }),
+          buildTalentLeaderboardQuery(rankingCriteria, skillFilter),
         );
       });
-    });
 
-    try {
-      for (let i = 0; i < allQueries.length; i++) {
-        console.log(allQueries[i]);
-        const result = await tsx.$executeRawUnsafe(allQueries[i]!);
-        console.log(' done - ', result);
+      timeframeFilters.forEach((timeframe) => {
+        skillsFilter.forEach((skillFilter) => {
+          allQueries.push(
+            buildTalentLeaderboardQuery(rankingCriteria, skillFilter, {
+              range: timeframe[1],
+              label: timeframe[0],
+            }),
+          );
+        });
+      });
+
+      try {
+        for (let i = 0; i < allQueries.length; i++) {
+          console.log(allQueries[i]);
+          const result = await tsx.$executeRawUnsafe(allQueries[i]!);
+          console.log(' done - ', result);
+        }
+        console.log('done');
+        res.send('done');
+      } catch (err) {
+        console.log('Erorr', JSON.stringify(err, null, 2));
+        res.send('fail');
       }
-      console.log('done');
-      res.send('done');
-    } catch (err) {
-      console.log('Erorr', JSON.stringify(err, null, 2));
-      res.send('fail');
-    }
-  });
+    },
+    {
+      timeout: 1000000,
+      maxWait: 1000000,
+    },
+  );
 }
