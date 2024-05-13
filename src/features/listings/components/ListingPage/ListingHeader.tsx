@@ -27,7 +27,7 @@ import { toast } from 'react-hot-toast';
 import { TbBell, TbBellRinging } from 'react-icons/tb';
 
 import { Superteams } from '@/constants/Superteam';
-import { LoginWrapper } from '@/features/auth';
+import { AuthWrapper } from '@/features/auth';
 import { getRegionTooltipLabel, WarningModal } from '@/features/listings';
 import type { User } from '@/interface/user';
 import { userStore } from '@/store/user';
@@ -66,7 +66,6 @@ export function ListingHeader({
   const { userInfo } = userStore();
   const hasDeadlineEnded = dayjs().isAfter(deadline);
   const hasHackathonStarted = dayjs().isAfter(Hackathon?.startDate);
-  const [triggerLogin, setTriggerLogin] = useState(false);
   const [update, setUpdate] = useState<boolean>(false);
   const [sub, setSub] = useState<
     (SubscribeBounty & {
@@ -76,10 +75,7 @@ export function ListingHeader({
   const [isSubscribeLoading, setIsSubscribeLoading] = useState(false);
 
   const handleSubscribe = async () => {
-    if (!userInfo?.id) {
-      setTriggerLogin(true);
-      return;
-    } else if (!userInfo?.isTalentFilled) {
+    if (!userInfo?.isTalentFilled) {
       warningOnOpen();
       return;
     }
@@ -361,10 +357,6 @@ export function ListingHeader({
           primaryCtaLink={'/new/talent'}
         />
       )}
-      <LoginWrapper
-        triggerLogin={triggerLogin}
-        setTriggerLogin={setTriggerLogin}
-      />
       <VStack
         justify={'space-between'}
         flexDir={'row'}
@@ -395,39 +387,42 @@ export function ListingHeader({
         {!isTemplate && (
           <HStack>
             <HStack align="start">
-              <IconButton
-                color={
-                  sub.find((e) => e.userId === userInfo?.id)
-                    ? 'white'
-                    : 'brand.slate.500'
-                }
-                bg={
-                  sub.find((e) => e.userId === userInfo?.id)
-                    ? 'brand.purple'
-                    : 'brand.slate.100'
-                }
-                aria-label="Notify"
-                icon={
-                  isSubscribeLoading ? (
-                    <Spinner color="white" size="sm" />
-                  ) : sub.find((e) => e.userId === userInfo?.id) ? (
-                    <TbBellRinging />
-                  ) : (
-                    <TbBell />
-                  )
-                }
-                onClick={() => {
-                  if (sub.find((e) => e.userId === userInfo?.id)) {
-                    handleUnSubscribe(
-                      sub.find((e) => e.userId === userInfo?.id)?.id as string,
-                    );
-
-                    return;
+              <AuthWrapper>
+                <IconButton
+                  color={
+                    sub.find((e) => e.userId === userInfo?.id)
+                      ? 'white'
+                      : 'brand.slate.500'
                   }
-                  handleSubscribe();
-                }}
-                variant="solid"
-              />
+                  bg={
+                    sub.find((e) => e.userId === userInfo?.id)
+                      ? 'brand.purple'
+                      : 'brand.slate.100'
+                  }
+                  aria-label="Notify"
+                  icon={
+                    isSubscribeLoading ? (
+                      <Spinner color="white" size="sm" />
+                    ) : sub.find((e) => e.userId === userInfo?.id) ? (
+                      <TbBellRinging />
+                    ) : (
+                      <TbBell />
+                    )
+                  }
+                  onClick={() => {
+                    if (sub.find((e) => e.userId === userInfo?.id)) {
+                      handleUnSubscribe(
+                        sub.find((e) => e.userId === userInfo?.id)
+                          ?.id as string,
+                      );
+
+                      return;
+                    }
+                    handleSubscribe();
+                  }}
+                  variant="solid"
+                />
+              </AuthWrapper>
             </HStack>
             <HStack whiteSpace={'nowrap'}>
               <VStack align={'start'} gap={0}>

@@ -15,7 +15,6 @@ import { HomeBanner } from '@/components/home/Banner';
 import { CategoryBanner } from '@/components/home/CategoryBanner';
 import { HomeSideBar } from '@/components/home/SideBar';
 import { Superteams } from '@/constants/Superteam';
-import { LoginWrapper } from '@/features/auth';
 import type { User } from '@/interface/user';
 import { Default } from '@/layouts/Default';
 import { Meta } from '@/layouts/Meta';
@@ -34,7 +33,6 @@ export function Home({ children, type }: HomeProps) {
   const router = useRouter();
 
   const [isTotalLoading, setIsTotalLoading] = useState(true);
-  const [triggerLogin, setTriggerLogin] = useState(false);
 
   const [recentEarners, setRecentEarners] = useState<User[]>([]);
   const [totals, setTotals] = useState<TotalType>({});
@@ -86,17 +84,8 @@ export function Home({ children, type }: HomeProps) {
               lg: 'blackAlpha.200',
             }}
           >
-            <LoginWrapper
-              triggerLogin={triggerLogin}
-              setTriggerLogin={setTriggerLogin}
-            />
             <Box w="full" pr={{ base: 0, lg: 6 }}>
-              {type === 'home' && (
-                <HomeBanner
-                  setTriggerLogin={setTriggerLogin}
-                  userCount={totals.totalUsers}
-                />
-              )}
+              {type === 'home' && <HomeBanner userCount={totals.totalUsers} />}
               {type === 'category' && (
                 <CategoryBanner
                   type={

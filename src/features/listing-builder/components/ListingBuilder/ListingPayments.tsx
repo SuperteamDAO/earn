@@ -127,10 +127,12 @@ export const ListingPayments = ({
 
   const handleTokenChange = (tokenSymbol: string) => {
     setValue('token', tokenSymbol);
+    console.log(token);
   };
 
   const handlePrizeValueChange = (prizeName: string, value: number) => {
     setValue('rewards', { ...rewards, [prizeName]: value });
+    console.log(value);
   };
 
   function getPrizeLabels(pri: PrizeListInterface[]): PrizeListInterface[] {
@@ -175,13 +177,21 @@ export const ListingPayments = ({
         }
       }
     } else {
-      const totalPrizes = Object.values(rewards || {})
-        .map((reward) => reward as number)
-        .reduce((a, b) => a + b, 0);
+      if (rewardAmount !== undefined) {
+        const totalPrizes = Object.values(rewards || {})
+          .map((reward) => parseFloat(reward.toFixed(2)))
+          .reduce((a, b) => a + b, 0)
+          .toFixed(2);
 
-      if (!totalPrizes || rewardAmount !== totalPrizes) {
-        errorMessage =
-          'Sum of the podium rank amounts does not match the total reward amount. Please check.';
+        if (
+          !totalPrizes ||
+          parseFloat(rewardAmount.toFixed(2)) !== parseFloat(totalPrizes)
+        ) {
+          errorMessage =
+            'Sum of the podium rank amounts does not match the total reward amount. Please check.';
+        }
+      } else {
+        errorMessage = 'Total reward amount is not specified';
       }
     }
 
@@ -419,7 +429,7 @@ export const ListingPayments = ({
                   }}
                   {...register('rewardAmount', {
                     required: 'This field is required',
-                    setValueAs: (value) => parseInt(value, 10),
+                    setValueAs: (value) => parseFloat(value),
                   })}
                   placeholder="4,000"
                 />
@@ -441,7 +451,7 @@ export const ListingPayments = ({
                     placeholder="Enter the lower range"
                     {...register('minRewardAsk', {
                       required: 'This field is required',
-                      setValueAs: (value) => parseInt(value, 10),
+                      setValueAs: (value) => parseFloat(value),
                     })}
                   />
                 </NumberInput>
@@ -459,7 +469,7 @@ export const ListingPayments = ({
                     placeholder="Enter the higher range"
                     {...register('maxRewardAsk', {
                       required: 'This field is required',
-                      setValueAs: (value) => parseInt(value, 10),
+                      setValueAs: (value) => parseFloat(value),
                     })}
                   />
                 </NumberInput>
@@ -482,7 +492,7 @@ export const ListingPayments = ({
                       onChange={(valueString) =>
                         handlePrizeValueChange(
                           el.value,
-                          parseInt(valueString, 10),
+                          parseFloat(valueString),
                         )
                       }
                     >
@@ -531,7 +541,7 @@ export const ListingPayments = ({
             <Text color="yellow.500">
               {!!debouncedRewardAmount &&
                 debouncedRewardAmount <= 100 &&
-                (token === 'USDT' || 'USDC') &&
+                (token === 'USDT' || token === 'USDC') &&
                 "Note: This listing will not show up on Earn's Landing Page since it is ≤$100 in value. Increase the total compensation for better discoverability."}
             </Text>
             {isDraft && (
