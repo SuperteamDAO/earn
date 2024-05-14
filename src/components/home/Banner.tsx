@@ -12,11 +12,11 @@ import Image from 'next/image';
 import { useSession } from 'next-auth/react';
 import React from 'react';
 
+import { AuthWrapper } from '@/features/auth';
 import DesktopBanner from '@/public/assets/home/display/banner.png';
 import MobileBanner from '@/public/assets/home/display/banner-mobile.png';
 
 interface BannerProps {
-  setTriggerLogin: (arg0: boolean) => void;
   userCount?: number;
 }
 
@@ -35,12 +35,8 @@ const avatars = [
   },
 ];
 
-export function HomeBanner({ setTriggerLogin, userCount }: BannerProps) {
+export function HomeBanner({ userCount }: BannerProps) {
   const [isLessThan768px] = useMediaQuery('(max-width: 768px)');
-
-  const handleSubmit = () => {
-    setTriggerLogin(true);
-  };
 
   const { data: session, status } = useSession();
 
@@ -114,19 +110,18 @@ export function HomeBanner({ setTriggerLogin, userCount }: BannerProps) {
             gap={isLessThan768px ? '3' : '4'}
             mt={'4'}
           >
-            <Button
-              w={isLessThan768px ? '100%' : 'auto'}
-              px={'2.25rem'}
-              py={'0.75rem'}
-              color={'#3223A0'}
-              fontSize={'0.875rem'}
-              bg={'white'}
-              onClick={() => {
-                handleSubmit();
-              }}
-            >
-              Sign Up
-            </Button>
+            <AuthWrapper>
+              <Button
+                w={isLessThan768px ? '100%' : 'auto'}
+                px={'2.25rem'}
+                py={'0.75rem'}
+                color={'#3223A0'}
+                fontSize={'0.875rem'}
+                bg={'white'}
+              >
+                Sign Up
+              </Button>
+            </AuthWrapper>
             <Flex align="center">
               <AvatarGroup max={3} size={{ base: 'xs', md: 'sm' }}>
                 {avatars.map((avatar, index) => (

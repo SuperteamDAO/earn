@@ -15,7 +15,7 @@ import { useEffect, useState } from 'react';
 import { ErrorInfo } from '@/components/shared/ErrorInfo';
 import { Loading } from '@/components/shared/Loading';
 import { UserAvatar } from '@/components/shared/UserAvatar';
-import { LoginWrapper } from '@/features/auth';
+import { AuthWrapper } from '@/features/auth';
 import type { Comment } from '@/interface/comments';
 import { type User } from '@/interface/user';
 import { userStore } from '@/store/user';
@@ -44,7 +44,6 @@ export const Comments = ({
 }: Props) => {
   const { userInfo } = userStore();
   const { isOpen, onOpen, onClose } = useDisclosure();
-  const [triggerLogin, setTriggerLogin] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState(false);
   const [comments, setComments] = useState<Comment[]>([]);
@@ -117,9 +116,7 @@ export const Comments = ({
   };
 
   const handleSubmit = () => {
-    if (!userInfo?.id) {
-      setTriggerLogin(true);
-    } else if (!userInfo?.isTalentFilled && !userInfo?.currentSponsorId) {
+    if (!userInfo?.isTalentFilled && !userInfo?.currentSponsorId) {
       onOpen();
     } else {
       addNewComment();
@@ -166,10 +163,6 @@ export const Comments = ({
         />
       )}
       <VStack align={'start'} gap={4} w={'full'} bg={'#FFFFFF'} rounded={'xl'}>
-        <LoginWrapper
-          triggerLogin={triggerLogin}
-          setTriggerLogin={setTriggerLogin}
-        />
         <HStack w={'full'} px={6} pt={4}>
           <Image
             width={21}
@@ -235,23 +228,25 @@ export const Comments = ({
               >
                 Cancel
               </Button>
-              <Button
-                h="auto"
-                px={5}
-                py={2}
-                fontSize={{
-                  base: 'xx-small',
-                  md: 'sm',
-                }}
-                fontWeight={500}
-                isDisabled={!!newCommentLoading || !newComment}
-                isLoading={!!newCommentLoading}
-                loadingText="Adding..."
-                onClick={() => handleSubmit()}
-                variant="solid"
-              >
-                Comment
-              </Button>
+              <AuthWrapper>
+                <Button
+                  h="auto"
+                  px={5}
+                  py={2}
+                  fontSize={{
+                    base: 'xx-small',
+                    md: 'sm',
+                  }}
+                  fontWeight={500}
+                  isDisabled={!!newCommentLoading || !newComment}
+                  isLoading={!!newCommentLoading}
+                  loadingText="Adding..."
+                  onClick={() => handleSubmit()}
+                  variant="solid"
+                >
+                  Comment
+                </Button>
+              </AuthWrapper>
             </Flex>
           </Collapse>
         </VStack>
