@@ -8,6 +8,9 @@ export default async function user(_req: NextApiRequest, res: NextApiResponse) {
     const winningSubmissions = await prisma.submission.findMany({
       where: {
         isWinner: true,
+        listing: {
+          isWinnersAnnounced: true,
+        },
       },
       select: {
         winnerPosition: true,
