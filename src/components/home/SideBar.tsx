@@ -7,7 +7,7 @@ import { usePostHog } from 'posthog-js/react';
 import { useEffect, useRef, useState } from 'react';
 
 import { tokenList } from '@/constants';
-import { LoginWrapper } from '@/features/auth';
+import { AuthWrapper } from '@/features/auth';
 import type { User } from '@/interface/user';
 import { formatNumberWithSuffix } from '@/utils/formatNumberWithSuffix';
 import { getURL } from '@/utils/validUrl';
@@ -61,13 +61,8 @@ interface GettingStartedProps {
 
 const GettingStarted = ({ userInfo }: GettingStartedProps) => {
   const router = useRouter();
-  const [triggerLogin, setTriggerLogin] = useState(false);
   return (
     <Box>
-      <LoginWrapper
-        triggerLogin={triggerLogin}
-        setTriggerLogin={setTriggerLogin}
-      />
       <Text mb={'1.5rem'} color={'gray.400'} fontSize={'sm'} fontWeight={500}>
         GETTING STARTED
       </Text>
@@ -92,42 +87,43 @@ const GettingStarted = ({ userInfo }: GettingStartedProps) => {
           h={'100%'}
         >
           <Box ml={'0.8125rem'}>
-            <Text
-              as="button"
-              color={!userInfo?.id ? 'black' : 'brand.purple'}
-              fontSize={'md'}
-              fontWeight={500}
-              _hover={{
-                color: 'brand.purple',
-              }}
-              onClick={() => !userInfo?.id && setTriggerLogin(true)}
-            >
-              Create your account
-            </Text>
+            <AuthWrapper>
+              <Text
+                as="button"
+                color={!userInfo?.id ? 'black' : 'brand.purple'}
+                fontSize={'md'}
+                fontWeight={500}
+                _hover={{
+                  color: 'brand.purple',
+                }}
+              >
+                Create your account
+              </Text>
+            </AuthWrapper>
             <Text color={'gray.500'} fontSize={'md'} fontWeight={500}>
               and get personalized notifications
             </Text>
           </Box>
           <Box ml={'0.8125rem'}>
             {!userInfo?.id || !userInfo?.isTalentFilled ? (
-              <Text
-                as="button"
-                color={'black'}
-                fontSize={'md'}
-                fontWeight={500}
-                _hover={{
-                  color: 'brand.purple',
-                }}
-                onClick={() => {
-                  if (userInfo?.id) {
-                    router.push(`/new/talent`);
-                  } else {
-                    setTriggerLogin(true);
-                  }
-                }}
-              >
-                Complete your profile
-              </Text>
+              <AuthWrapper>
+                <Text
+                  as="button"
+                  color={'black'}
+                  fontSize={'md'}
+                  fontWeight={500}
+                  _hover={{
+                    color: 'brand.purple',
+                  }}
+                  onClick={() => {
+                    if (userInfo?.id) {
+                      router.push(`/new/talent`);
+                    }
+                  }}
+                >
+                  Complete your profile
+                </Text>
+              </AuthWrapper>
             ) : (
               <Text color={'brand.purple'} fontSize={'md'} fontWeight={500}>
                 Complete your profile
@@ -139,24 +135,24 @@ const GettingStarted = ({ userInfo }: GettingStartedProps) => {
           </Box>
           <Box ml={'0.8125rem'}>
             {!userInfo?.id || !userInfo.totalEarnedInUSD ? (
-              <Text
-                as="button"
-                color={'black'}
-                fontSize={'md'}
-                fontWeight={500}
-                _hover={{
-                  color: 'brand.purple',
-                }}
-                onClick={() => {
-                  if (userInfo?.id) {
-                    router.push('/all');
-                  } else {
-                    setTriggerLogin(true);
-                  }
-                }}
-              >
-                Win a bounty or project
-              </Text>
+              <AuthWrapper>
+                <Text
+                  as="button"
+                  color={'black'}
+                  fontSize={'md'}
+                  fontWeight={500}
+                  _hover={{
+                    color: 'brand.purple',
+                  }}
+                  onClick={() => {
+                    if (userInfo?.id) {
+                      router.push('/all');
+                    }
+                  }}
+                >
+                  Win a bounty or project
+                </Text>
+              </AuthWrapper>
             ) : (
               <Text color={'brand.purple'} fontSize={'md'} fontWeight={500}>
                 Win a bounty or project
@@ -171,71 +167,6 @@ const GettingStarted = ({ userInfo }: GettingStartedProps) => {
     </Box>
   );
 };
-
-// const TotalStats = ({
-//   bountyCount,
-//   TVE,
-//   isTotalLoading,
-// }: {
-//   bountyCount: number;
-//   TVE: number;
-//   isTotalLoading: boolean;
-// }) => {
-//   return (
-//     <Flex
-//       align={'center'}
-//       justify={'space-between'}
-//       h={'69'}
-//       px={'0.5rem'}
-//       bg={'#F8FAFC'}
-//       rounded={'md'}
-//     >
-//       <Flex>
-//         <Image
-//           h={'1.5625rem'}
-//           mr={'0.5rem'}
-//           mb={'auto'}
-//           alt=""
-//           src="/assets/icons/lite-purple-dollar.svg"
-//         />
-//         <Box>
-//           {isTotalLoading ? (
-//             <Skeleton w="54px" h="14px" />
-//           ) : (
-//             <Text color={'black'} fontSize={'sm'} fontWeight={'600'}>
-//               ${TVE.toLocaleString()}
-//             </Text>
-//           )}
-//           <Text color={'gray.500'} fontSize={'xs'} fontWeight={'400'}>
-//             Total Value Earned
-//           </Text>
-//         </Box>
-//       </Flex>
-//       <Box w={'0.0625rem'} h={'50%'} bg={'#CBD5E1'}></Box>
-//       <Flex>
-//         <Image
-//           h={'25x'}
-//           mr={'0.5rem'}
-//           mb={'auto'}
-//           alt="suitcase"
-//           src="/assets/icons/lite-purple-suitcase.svg"
-//         />
-//         <Box>
-//           {isTotalLoading ? (
-//             <Skeleton w="32px" h="14px" />
-//           ) : (
-//             <Text color={'black'} fontSize={'sm'} fontWeight={'600'}>
-//               {bountyCount}
-//             </Text>
-//           )}
-//           <Text color={'gray.500'} fontSize={'xs'} fontWeight={'400'}>
-//             Opportunities Listed
-//           </Text>
-//         </Box>
-//       </Flex>
-//     </Flex>
-//   );
-// };
 
 interface EarnerProps {
   name: string;

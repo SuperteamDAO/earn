@@ -1,9 +1,17 @@
-import { Box, Button, Container, Heading, Stack, Text } from '@chakra-ui/react';
+import {
+  Box,
+  Button,
+  Container,
+  Heading,
+  Stack,
+  Text,
+  useDisclosure,
+} from '@chakra-ui/react';
 import axios from 'axios';
 import { useRouter } from 'next/router';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 
-import { LoginWrapper } from '@/features/auth';
+import { Login } from '@/features/auth';
 import type { User } from '@/interface/user';
 import { userStore } from '@/store/user';
 
@@ -18,6 +26,8 @@ export function InviteView({ invite }: Props) {
   const [isAccepting, setIsAccepting] = useState(false);
 
   const { setUserInfo, userInfo } = userStore();
+
+  const { isOpen, onOpen, onClose } = useDisclosure();
 
   const acceptUser = async (user: User) => {
     setIsAccepting(true);
@@ -48,18 +58,36 @@ export function InviteView({ invite }: Props) {
     }
   };
 
+  const inviteInfo = {
+    emailInvite: invite?.email,
+    currentSponsorId: invite?.sponsorId,
+    memberType: invite?.memberType,
+  };
+
+  useEffect(() => {
+    const makeUser = async () => {
+      const userDetails = await axios.post('/api/user/');
+      if (invite?.email && acceptUser) {
+        acceptUser(userDetails.data);
+      }
+    };
+    inviteInfo && makeUser();
+  }, []);
+
+  useEffect(() => {
+    if (triggerLogin) {
+      setTriggerLogin(false);
+      onOpen();
+    }
+  }, [triggerLogin]);
+
+  const isSponsor = inviteInfo && Object.keys(inviteInfo).length > 0;
+
   return (
     <Container maxW={'3xl'}>
-      <LoginWrapper
-        acceptUser={acceptUser}
-        inviteInfo={{
-          emailInvite: invite?.email,
-          currentSponsorId: invite?.sponsorId,
-          memberType: invite?.memberType,
-        }}
-        triggerLogin={triggerLogin}
-        setTriggerLogin={setTriggerLogin}
-      />
+      {!!isOpen && (
+        <Login isSponsor={isSponsor} isOpen={isOpen} onClose={onClose} />
+      )}
       <Stack as={Box} py={{ base: 20, md: 36 }} textAlign={'center'}>
         <Heading
           fontSize={{ base: '2xl', sm: '4xl', md: '6xl' }}

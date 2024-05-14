@@ -10,7 +10,7 @@ import React, {
 
 import { SurveyModal } from '@/components/Survey';
 import { Superteams } from '@/constants/Superteam';
-import { LoginWrapper } from '@/features/auth';
+import { AuthWrapper } from '@/features/auth';
 import {
   getListingDraftStatus,
   getRegionTooltipLabel,
@@ -47,7 +47,6 @@ export const SubmissionActionButton = ({
     isWinnersAnnounced,
   } = listing;
 
-  const [triggerLogin, setTriggerLogin] = useState(false);
   const [isUserSubmissionLoading, setIsUserSubmissionLoading] = useState(false);
   const [isSubmitted, setIsSubmitted] = useState(false);
   const [isEasterEggOpen, setEasterEggOpen] = useState(false);
@@ -88,9 +87,7 @@ export const SubmissionActionButton = ({
       window.open(applicationLink, '_blank');
       return;
     }
-    if (!userInfo?.id) {
-      setTriggerLogin(true);
-    } else if (!userInfo?.isTalentFilled) {
+    if (!userInfo?.isTalentFilled) {
       warningOnOpen();
     } else {
       onOpen();
@@ -233,11 +230,6 @@ export const SubmissionActionButton = ({
         loading="eager"
         quality={80}
       />
-
-      <LoginWrapper
-        triggerLogin={triggerLogin}
-        setTriggerLogin={setTriggerLogin}
-      />
       <Tooltip
         bg="brand.slate.500"
         hasArrow
@@ -261,24 +253,26 @@ export const SubmissionActionButton = ({
           bg="white"
           transform={{ base: 'translateX(-50%)', md: 'none' }}
         >
-          <Button
-            w={'full'}
-            mb={{ base: 0, md: 5 }}
-            bg={buttonBG}
-            _hover={{ bg: buttonBG }}
-            _disabled={{
-              opacity: { base: '96%', md: '70%' },
-            }}
-            pointerEvents={btnPointerEvents}
-            isDisabled={isBtnDisabled}
-            isLoading={isUserSubmissionLoading}
-            loadingText={btnLoadingText}
-            onClick={handleSubmit}
-            size="lg"
-            variant="solid"
-          >
-            {buttonText}
-          </Button>
+          <AuthWrapper>
+            <Button
+              w={'full'}
+              mb={{ base: 0, md: 5 }}
+              bg={buttonBG}
+              _hover={{ bg: buttonBG }}
+              _disabled={{
+                opacity: { base: '96%', md: '70%' },
+              }}
+              pointerEvents={btnPointerEvents}
+              isDisabled={isBtnDisabled}
+              isLoading={isUserSubmissionLoading}
+              loadingText={btnLoadingText}
+              onClick={handleSubmit}
+              size="lg"
+              variant="solid"
+            >
+              {buttonText}
+            </Button>
+          </AuthWrapper>
         </Flex>
       </Tooltip>
     </>
