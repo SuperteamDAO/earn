@@ -10,6 +10,7 @@ export default async function user(_req: NextApiRequest, res: NextApiResponse) {
         isWinner: true,
         listing: {
           isWinnersAnnounced: true,
+          isPrivate: false,
         },
       },
       select: {
