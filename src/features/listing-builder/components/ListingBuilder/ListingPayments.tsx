@@ -157,8 +157,6 @@ export const ListingPayments = ({
     let errorMessage = '';
 
     if (isProject) {
-      setValue('rewards', { first: rewardAmount });
-
       if (!compensationType) {
         errorMessage = 'Please add a compensation type';
       }
@@ -215,7 +213,11 @@ export const ListingPayments = ({
 
   const onSubmit = async (data: any) => {
     const errorMessage = validateRewardsData();
-    updateState({ ...data, rewards });
+    let newState = { ...data };
+    if (isProject) {
+      newState = { ...data, rewards: { first: rewardAmount! } };
+    }
+    updateState(newState);
     if (errorMessage) {
       setErrorMessage(errorMessage);
     } else {
