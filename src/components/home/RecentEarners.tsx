@@ -128,7 +128,7 @@ export const RecentEarners = ({ earners }: { earners?: User[] }) => {
           color="brand.purple"
           fontSize="xs"
           fontWeight={600}
-          href="/feed"
+          href="/leaderboard"
           onClick={() => {
             posthog.capture('view leaderboard_homepage');
           }}

@@ -237,7 +237,7 @@ const RecentActivity = () => {
   );
 };
 
-const OpenListings = () => {
+const LiveListings = () => {
   const [listings, setListings] = useState<{ bounties: Bounty[] }>({
     bounties: [],
   });
@@ -249,6 +249,7 @@ const OpenListings = () => {
           take: 5,
           isHomePage: true,
           deadline: dayjs().add(1, 'day').toISOString(),
+          order: 'asc',
         },
       });
 
@@ -265,7 +266,7 @@ const OpenListings = () => {
     <Box>
       <Flex align="center" justify={'space-between'}>
         <Text color={'gray.400'} fontSize={'sm'} fontWeight={500}>
-          OPEN LISTINGS
+          LIVE LISTINGS
         </Text>
         <Text
           as={NextLink}
@@ -278,7 +279,7 @@ const OpenListings = () => {
           <ArrowForwardIcon ml={1} />
         </Text>
       </Flex>
-      <Flex direction={'column'} w={'full'} mt={4}>
+      <Flex direction={'column'} w={'full'} mt={1}>
         {listings?.bounties?.map((listing) => {
           return <ListingCardMobile bounty={listing} key={listing?.id} />;
         })}
@@ -299,7 +300,7 @@ export const HomeSideBar = ({
       {type === 'feed' && (
         <>
           <VibeCard />
-          <OpenListings />
+          <LiveListings />
         </>
       )}
       <RecentEarners earners={earners} />

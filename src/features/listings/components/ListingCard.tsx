@@ -323,7 +323,6 @@ export const ListingCardMobile = ({
     token,
     slug,
     applicationType,
-    isWinnersAnnounced,
     description,
     compensationType,
     minRewardAsk,
@@ -454,15 +453,6 @@ export const ListingCardMobile = ({
                         : '/assets/icons/briefcase.svg'
                     }
                   />
-                  <Text
-                    display={'flex'}
-                    ml={-1}
-                    color="gray.500"
-                    fontSize={'x-small'}
-                    fontWeight={500}
-                  >
-                    {type && type.charAt(0).toUpperCase() + type.slice(1)}
-                  </Text>
                 </>
                 <Text
                   display={'flex'}
@@ -484,9 +474,6 @@ export const ListingCardMobile = ({
                         : `Due ${dayjs(deadline).fromNow()}`
                       : `Closed ${dayjs(deadline).fromNow()}`}
                   </Text>
-                  {dayjs().isBefore(dayjs(deadline)) && !isWinnersAnnounced && (
-                    <Circle bg="#16A35F" size="8px" />
-                  )}
                 </Flex>
               </Flex>
             </Flex>

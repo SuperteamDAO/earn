@@ -19,6 +19,12 @@ export const VibeCard = () => {
   useEffect(() => {
     audioRef.current = new Audio('/assets/memes/chipichapa.mp3');
     audioRef.current.onended = () => setIsAudioPlaying(false);
+    return () => {
+      if (audioRef.current) {
+        audioRef.current.pause();
+        audioRef.current.currentTime = 0;
+      }
+    };
   }, []);
 
   const shootConfetti = () => {
