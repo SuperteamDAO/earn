@@ -26,6 +26,7 @@ import {
 import axios from 'axios';
 import Image from 'next/image';
 import Link from 'next/link';
+import { useSession } from 'next-auth/react';
 import { useEffect, useRef, useState } from 'react';
 
 import { EarnAvatar } from '@/components/shared/EarnAvatar';
@@ -89,6 +90,10 @@ export const Comment = ({
   const [showOptions, setShowOptions] = useState(false);
   const cancelRef = useRef<any>(null);
 
+  const { status } = useSession();
+
+  const isAuthenticated = status === 'authenticated';
+
   useEffect(() => {
     const reply = localStorage.getItem(`comment-${refId}-${comment.id}`);
     if (reply) {
@@ -144,26 +149,28 @@ export const Comment = ({
   const date = formatFromNow(dayjs(comment?.updatedAt).fromNow());
 
   const handleSubmit = async () => {
-    if (!userInfo?.isTalentFilled && !userInfo?.currentSponsorId) {
-      onOpen();
-    } else {
-      try {
-        setNewReplyLoading(true);
-        setNewReplyError(false);
+    if (isAuthenticated) {
+      if (!userInfo?.isTalentFilled && !userInfo?.currentSponsorId) {
+        onOpen();
+      } else {
+        try {
+          setNewReplyLoading(true);
+          setNewReplyError(false);
 
-        if (addNewReply) {
-          await addNewReply(newReply);
-        } else {
-          await addNewReplyLvl1(newReply);
+          if (addNewReply) {
+            await addNewReply(newReply);
+          } else {
+            await addNewReplyLvl1(newReply);
+          }
+
+          setNewReply('');
+          setNewReplyLoading(false);
+          setShowReplyInput(false);
+        } catch (e) {
+          console.log('error - ', e);
+          setNewReplyError(true);
+          setNewReplyLoading(false);
         }
-
-        setNewReply('');
-        setNewReplyLoading(false);
-        setShowReplyInput(false);
-      } catch (e) {
-        console.log('error - ', e);
-        setNewReplyError(true);
-        setNewReplyLoading(false);
       }
     }
   };

@@ -109,7 +109,7 @@ export function HomeBanner({ userCount }: BannerProps) {
           gap={isLessThan768px ? '3' : '4'}
           mt={'4'}
         >
-          <AuthWrapper>
+          <AuthWrapper style={{ w: isLessThan768px ? '100%' : 'auto' }}>
             <Button
               w={isLessThan768px ? '100%' : 'auto'}
               px={'2.25rem'}

@@ -253,7 +253,7 @@ export const SubmissionActionButton = ({
           bg="white"
           transform={{ base: 'translateX(-50%)', md: 'none' }}
         >
-          <AuthWrapper>
+          <AuthWrapper style={{ w: 'full' }}>
             <Button
               w={'full'}
               mb={{ base: 0, md: 5 }}
