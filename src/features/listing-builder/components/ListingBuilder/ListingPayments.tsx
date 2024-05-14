@@ -203,9 +203,9 @@ export const ListingPayments = ({
   };
 
   const handleUpdateListing = async () => {
+    const errorMessage = validateRewardsData();
     const data = getValues();
     const formData = { ...form, ...data };
-    const errorMessage = validateRewardsData();
     if (errorMessage) {
       setErrorMessage(errorMessage);
     } else {
@@ -214,8 +214,8 @@ export const ListingPayments = ({
   };
 
   const onSubmit = async (data: any) => {
-    updateState({ ...data });
     const errorMessage = validateRewardsData();
+    updateState({ ...data, rewards });
     if (errorMessage) {
       setErrorMessage(errorMessage);
     } else {
