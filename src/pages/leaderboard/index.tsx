@@ -126,26 +126,6 @@ function TalentLeaderboard({
     });
   }, [skill, timeframe, page]);
 
-  // useEffect(() => {
-  //   const url = new URL(window.location.href);
-  //   if (url.searchParams.get('timeframe') === timeframe) return
-  //
-  //   url.searchParams.set('timeframe', timeframe);
-  //   startTransition(() => {
-  //     router.replace(`?${url.searchParams.toString()}`);
-  //   });
-  // }, [timeframe])
-  //
-  // useEffect(() => {
-  //   const url = new URL(window.location.href);
-  //   if (Number(url.searchParams.get('page')) === page) return
-  //
-  //   url.searchParams.set('page', String(page));
-  //   startTransition(() => {
-  //     router.replace(`?${url.searchParams.toString()}`);
-  //   });
-  // }, [page])
-
   return (
     <Default
       meta={
@@ -237,7 +217,6 @@ export const getServerSideProps: GetServerSideProps = async ({
       timeframe,
     },
   });
-  console.log('count - ', count);
   const totalPages = Math.ceil(count / PAGE_SIZE);
   if (page < 1 || page > totalPages) {
     page = 1;
@@ -318,7 +297,6 @@ export const getServerSideProps: GetServerSideProps = async ({
     };
   });
 
-  console.log('userRank - ', formatterUserRank);
   return {
     props: {
       results: formatted,

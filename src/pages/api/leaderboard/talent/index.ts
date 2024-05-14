@@ -144,11 +144,8 @@ export default async function user(_: NextApiRequest, res: NextApiResponse) {
 
       try {
         for (let i = 0; i < allQueries.length; i++) {
-          console.log(allQueries[i]);
-          const result = await tsx.$executeRawUnsafe(allQueries[i]!);
-          console.log(' done - ', result);
+          await tsx.$executeRawUnsafe(allQueries[i]!);
         }
-        console.log('done');
         res.send('done');
       } catch (err) {
         console.log('Erorr', JSON.stringify(err, null, 2));

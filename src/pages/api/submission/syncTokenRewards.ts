@@ -97,7 +97,6 @@ export default async function handler(_: NextApiRequest, res: NextApiResponse) {
                       );
 
                     if (result.data.history?.[0]?.rate) {
-                      console.log(result.data.history[0].rate);
                       rewardInUSD = result.data.history[0].rate * reward;
                     }
                   }
@@ -155,13 +154,11 @@ export default async function handler(_: NextApiRequest, res: NextApiResponse) {
       prevId = nextBatch[BATCH_SIZE - 1]?.id;
       totalRecordsUpdated += nextBatch.length;
     }
-    console.log('records updated - ', totalRecordsUpdated);
     return res.status(200).json({
       message: 'Synced Succesfully',
       recordsUpdated: totalRecordsUpdated,
     });
   } catch (error) {
-    console.log('records updated - ', totalRecordsUpdated);
     return res.status(500).json({
       error,
       message: `Error occurred while syncing token reward.`,
