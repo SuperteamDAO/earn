@@ -215,7 +215,11 @@ export const ListingPayments = ({
     const errorMessage = validateRewardsData();
     let newState = { ...data };
     if (isProject) {
-      newState = { ...data, rewards: { first: rewardAmount! } };
+      if (compensationType === 'fixed') {
+        newState = { ...data, rewards: { first: rewardAmount } };
+      } else {
+        newState = { ...data, rewards: { first: 0 } };
+      }
     }
     updateState(newState);
     if (errorMessage) {
