@@ -127,12 +127,10 @@ export const ListingPayments = ({
 
   const handleTokenChange = (tokenSymbol: string) => {
     setValue('token', tokenSymbol);
-    console.log(token);
   };
 
   const handlePrizeValueChange = (prizeName: string, value: number) => {
     setValue('rewards', { ...rewards, [prizeName]: value });
-    console.log(value);
   };
 
   function getPrizeLabels(pri: PrizeListInterface[]): PrizeListInterface[] {
@@ -159,7 +157,7 @@ export const ListingPayments = ({
     let errorMessage = '';
 
     if (isProject) {
-      setValue('rewards', { ...rewards, first: rewardAmount });
+      setValue('rewards', { first: rewardAmount });
 
       if (!compensationType) {
         errorMessage = 'Please add a compensation type';
