@@ -127,12 +127,10 @@ export const ListingPayments = ({
 
   const handleTokenChange = (tokenSymbol: string) => {
     setValue('token', tokenSymbol);
-    console.log(token);
   };
 
   const handlePrizeValueChange = (prizeName: string, value: number) => {
     setValue('rewards', { ...rewards, [prizeName]: value });
-    console.log(value);
   };
 
   function getPrizeLabels(pri: PrizeListInterface[]): PrizeListInterface[] {
@@ -159,8 +157,6 @@ export const ListingPayments = ({
     let errorMessage = '';
 
     if (isProject) {
-      setValue('rewards', { ...rewards, first: rewardAmount });
-
       if (!compensationType) {
         errorMessage = 'Please add a compensation type';
       }
@@ -205,9 +201,9 @@ export const ListingPayments = ({
   };
 
   const handleUpdateListing = async () => {
+    const errorMessage = validateRewardsData();
     const data = getValues();
     const formData = { ...form, ...data };
-    const errorMessage = validateRewardsData();
     if (errorMessage) {
       setErrorMessage(errorMessage);
     } else {
@@ -216,8 +212,16 @@ export const ListingPayments = ({
   };
 
   const onSubmit = async (data: any) => {
-    updateState({ ...data });
     const errorMessage = validateRewardsData();
+    let newState = { ...data };
+    if (isProject) {
+      if (compensationType === 'fixed') {
+        newState = { ...data, rewards: { first: rewardAmount } };
+      } else {
+        newState = { ...data, rewards: { first: 0 } };
+      }
+    }
+    updateState(newState);
     if (errorMessage) {
       setErrorMessage(errorMessage);
     } else {
