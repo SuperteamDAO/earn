@@ -82,7 +82,7 @@ function Grants() {
               Equity-Free • No Bullshit • Fast AF
             </Text>
           </Flex>
-          <Container maxW={'7xl'} mb={12}>
+          <Container maxW={'8xl'} mb={12}>
             {isLoading && <Loading />}
             {!isLoading && error && <ErrorInfo />}
             {!isLoading && !error && (

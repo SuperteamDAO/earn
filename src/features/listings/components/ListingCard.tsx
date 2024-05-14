@@ -64,11 +64,9 @@ export const ListingCardSkeleton = () => {
 export const ListingCard = ({
   bounty,
   checkLanguage = false,
-  adjustMobile,
 }: {
   bounty: Bounty;
   checkLanguage?: boolean;
-  adjustMobile?: boolean;
 }) => {
   const {
     rewardAmount,
@@ -210,9 +208,7 @@ export const ListingCard = ({
                     </Text>
                   </Flex>
                   <Image
-                    display={
-                      adjustMobile ? { base: 'none', sm: 'flex' } : 'flex'
-                    }
+                    display={'flex'}
                     h={{ base: 3, sm: 4 }}
                     ml={isBounty ? -0.5 : 0}
                     alt={type}
@@ -223,9 +219,7 @@ export const ListingCard = ({
                     }
                   />
                   <Text
-                    display={
-                      adjustMobile ? { base: 'none', sm: 'flex' } : 'flex'
-                    }
+                    display={'flex'}
                     ml={{ base: -1, sm: isBounty ? '-3' : '-2.5' }}
                     color="gray.500"
                     fontSize={['x-small', 'xs', 'xs', 'xs']}
@@ -235,7 +229,7 @@ export const ListingCard = ({
                   </Text>
                 </>
                 <Text
-                  display={adjustMobile ? { base: 'none', sm: 'flex' } : 'flex'}
+                  display={'flex'}
                   color={'brand.slate.300'}
                   fontSize={['xx-small', 'xs', 'sm', 'sm']}
                 >
@@ -305,6 +299,196 @@ export const ListingCard = ({
                   {token}
                 </Text>
               )}
+            </Flex>
+          </Flex>
+        </Flex>
+      </Link>
+    </>
+  );
+};
+
+export const ListingCardMobile = ({
+  bounty,
+  checkLanguage,
+}: {
+  bounty: Bounty;
+  checkLanguage?: boolean;
+}) => {
+  const {
+    rewardAmount,
+    deadline,
+    type,
+    sponsor,
+    title,
+    token,
+    slug,
+    applicationType,
+    isWinnersAnnounced,
+    description,
+    compensationType,
+    minRewardAsk,
+    maxRewardAsk,
+  } = bounty;
+  const router = useRouter();
+
+  const isBounty = type === 'bounty';
+
+  const langCode = franc(description);
+
+  const isEnglish = description
+    ? langCode === 'eng' || langCode === 'sco'
+    : true;
+
+  if (!isEnglish && checkLanguage) {
+    return null;
+  }
+
+  return (
+    <>
+      <Link
+        as={NextLink}
+        w="full"
+        px={2}
+        py={4}
+        borderRadius={5}
+        _hover={{
+          textDecoration: 'none',
+          bg: 'gray.100',
+        }}
+        href={`/listings/${type}/${slug}`}
+      >
+        <Flex align="center" justify="space-between" w={'100%'}>
+          <Flex w="100%">
+            <Image
+              w={14}
+              h={14}
+              mr={3}
+              alt={sponsor?.name}
+              rounded={5}
+              src={
+                sponsor?.logo
+                  ? sponsor.logo.replace(
+                      '/upload/',
+                      '/upload/c_scale,w_128,h_128,f_auto/',
+                    )
+                  : `${router.basePath}/assets/logo/sponsor-logo.png`
+              }
+            />
+            <Flex justify={'space-between'} direction={'column'} w={'full'}>
+              <Text
+                color="brand.slate.700"
+                fontSize={'sm'}
+                fontWeight={600}
+                _hover={{
+                  textDecoration: 'underline',
+                }}
+                style={{
+                  display: '-webkit-box',
+                  WebkitLineClamp: 1,
+                  WebkitBoxOrient: 'vertical',
+                  overflow: 'hidden',
+                }}
+              >
+                {title}
+              </Text>
+              <Text w={'full'} color={'brand.slate.500'} fontSize={'xs'}>
+                {sponsor?.name}
+              </Text>
+              <Flex align={'center'} wrap={'wrap'} gap={1} mt={'1px'}>
+                <>
+                  <Flex align={'center'} justify="start" display={'flex'}>
+                    {compensationType !== 'variable' && (
+                      <Image
+                        w={3.5}
+                        h={3.5}
+                        mr={0.5}
+                        alt={token}
+                        rounded="full"
+                        src={
+                          tokenList.find((ele) => {
+                            return ele.tokenSymbol === token;
+                          })?.icon
+                        }
+                      />
+                    )}
+                    <Flex align="baseline">
+                      <Text
+                        color={'brand.slate.600'}
+                        fontSize={'xs'}
+                        fontWeight={'600'}
+                        whiteSpace={'nowrap'}
+                      >
+                        <CompensationAmount
+                          compensationType={compensationType}
+                          maxRewardAsk={maxRewardAsk}
+                          minRewardAsk={minRewardAsk}
+                          rewardAmount={rewardAmount}
+                        />
+                      </Text>
+                      {compensationType !== 'variable' && (
+                        <Text
+                          color={'gray.400'}
+                          fontSize={'xs'}
+                          fontWeight={500}
+                        >
+                          {token}
+                        </Text>
+                      )}
+                    </Flex>
+                    <Text
+                      ml={1}
+                      color={'brand.slate.300'}
+                      fontSize={'xx-small'}
+                    >
+                      |
+                    </Text>
+                  </Flex>
+                  <Image
+                    display={'flex'}
+                    h={3}
+                    ml={isBounty ? -0.5 : 0}
+                    alt={type}
+                    src={
+                      isBounty
+                        ? '/assets/icons/bolt.svg'
+                        : '/assets/icons/briefcase.svg'
+                    }
+                  />
+                  <Text
+                    display={'flex'}
+                    ml={-1}
+                    color="gray.500"
+                    fontSize={'x-small'}
+                    fontWeight={500}
+                  >
+                    {type && type.charAt(0).toUpperCase() + type.slice(1)}
+                  </Text>
+                </>
+                <Text
+                  display={'flex'}
+                  color={'brand.slate.300'}
+                  fontSize={'xx-small'}
+                >
+                  |
+                </Text>
+
+                <Flex align={'center'} gap={1}>
+                  <Text
+                    color={'gray.500'}
+                    fontSize={'x-small'}
+                    whiteSpace={'nowrap'}
+                  >
+                    {dayjs().isBefore(dayjs(deadline))
+                      ? applicationType === 'rolling'
+                        ? 'Rolling Deadline'
+                        : `Due ${dayjs(deadline).fromNow()}`
+                      : `Closed ${dayjs(deadline).fromNow()}`}
+                  </Text>
+                  {dayjs().isBefore(dayjs(deadline)) && !isWinnersAnnounced && (
+                    <Circle bg="#16A35F" size="8px" />
+                  )}
+                </Flex>
+              </Flex>
             </Flex>
           </Flex>
         </Flex>

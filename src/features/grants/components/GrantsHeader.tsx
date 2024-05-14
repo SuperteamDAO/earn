@@ -17,7 +17,7 @@ export const GrantsHeader = ({ sponsor, title }: Props) => {
           flexDir={['column', 'column', 'row', 'row']}
           gap={5}
           w={'full'}
-          maxW={'7xl'}
+          maxW={'8xl'}
           mx={'auto'}
           py={10}
         >

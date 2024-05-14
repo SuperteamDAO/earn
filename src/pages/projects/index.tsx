@@ -48,7 +48,7 @@ export default function ProjectsPage() {
         title="Superteam Earn | Apply to Projects in the Crypto Space"
         description="Discover unique crypto projects seeking talent. Apply on Superteam Earn and take your chance to work and earn in the crypto space."
         canonical="https://earn.superteam.fun/projects/"
-      ></Meta>
+      />
       <Box w={'100%'}>
         <ListingTabs
           bounties={listings.bounties}

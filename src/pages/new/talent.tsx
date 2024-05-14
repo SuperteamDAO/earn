@@ -10,7 +10,6 @@ import {
   Text,
   VStack,
 } from '@chakra-ui/react';
-import type { User } from '@prisma/client';
 import axios from 'axios';
 import { type GetServerSideProps } from 'next';
 import router from 'next/router';
@@ -23,6 +22,7 @@ import type { UserStoreType } from '@/components/Talent/types';
 import { YourLinks } from '@/components/Talent/YourLinks';
 import { YourWork } from '@/components/Talent/YourWork';
 import { TalentBio } from '@/components/TalentBio';
+import { type User } from '@/interface/user';
 import { Default } from '@/layouts/Default';
 import { Meta } from '@/layouts/Meta';
 import { userStore } from '@/store/user';
