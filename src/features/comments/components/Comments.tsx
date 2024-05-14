@@ -10,6 +10,7 @@ import {
 } from '@chakra-ui/react';
 import axios from 'axios';
 import Image from 'next/image';
+import { useSession } from 'next-auth/react';
 import { useEffect, useState } from 'react';
 
 import { ErrorInfo } from '@/components/shared/ErrorInfo';
@@ -54,6 +55,10 @@ export const Comments = ({
   const [defaultSuggestions, setDefaultSuggestions] = useState<
     Map<string, User>
   >(new Map());
+
+  const { status } = useSession();
+
+  const isAuthenticated = status === 'authenticated';
 
   const deleteComment = async (commentId: string) => {
     const commentIndex = comments.findIndex(
@@ -116,10 +121,12 @@ export const Comments = ({
   };
 
   const handleSubmit = () => {
-    if (!userInfo?.isTalentFilled && !userInfo?.currentSponsorId) {
-      onOpen();
-    } else {
-      addNewComment();
+    if (isAuthenticated) {
+      if (!userInfo?.isTalentFilled && !userInfo?.currentSponsorId) {
+        onOpen();
+      } else {
+        addNewComment();
+      }
     }
   };
 

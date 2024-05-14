@@ -22,6 +22,7 @@ import type { SubscribeBounty } from '@prisma/client';
 import axios from 'axios';
 import NextLink from 'next/link';
 import { useRouter } from 'next/router';
+import { useSession } from 'next-auth/react';
 import React, { useEffect, useState } from 'react';
 import { toast } from 'react-hot-toast';
 import { TbBell, TbBellRinging } from 'react-icons/tb';
@@ -74,24 +75,30 @@ export function ListingHeader({
   >([]);
   const [isSubscribeLoading, setIsSubscribeLoading] = useState(false);
 
-  const handleSubscribe = async () => {
-    if (!userInfo?.isTalentFilled) {
-      warningOnOpen();
-      return;
-    }
+  const { status: authStatus } = useSession();
 
-    setIsSubscribeLoading(true);
-    try {
-      await axios.post('/api/bounties/subscribe/subscribe', {
-        bountyId: id,
-      });
-      setUpdate((prev) => !prev);
-      setIsSubscribeLoading(false);
-      toast.success('Subscribed to the listing');
-    } catch (error) {
-      console.log(error);
-      setIsSubscribeLoading(false);
-      toast.error('Error');
+  const isAuthenticated = authStatus === 'authenticated';
+
+  const handleSubscribe = async () => {
+    if (isAuthenticated) {
+      if (!userInfo?.isTalentFilled) {
+        warningOnOpen();
+        return;
+      }
+
+      setIsSubscribeLoading(true);
+      try {
+        await axios.post('/api/bounties/subscribe/subscribe', {
+          bountyId: id,
+        });
+        setUpdate((prev) => !prev);
+        setIsSubscribeLoading(false);
+        toast.success('Subscribed to the listing');
+      } catch (error) {
+        console.log(error);
+        setIsSubscribeLoading(false);
+        toast.error('Error');
+      }
     }
   };
   const handleUnSubscribe = async (idSub: string) => {
