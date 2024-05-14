@@ -1,5 +1,7 @@
+import { ArrowForwardIcon } from '@chakra-ui/icons';
 import { Box, Center, Flex, Image, Text, VStack } from '@chakra-ui/react';
 import NextLink from 'next/link';
+import { usePostHog } from 'posthog-js/react';
 import React, { useEffect, useRef, useState } from 'react';
 
 import { tokenList } from '@/constants';
@@ -85,6 +87,8 @@ export const RecentEarners = ({ earners }: { earners?: User[] }) => {
   const animationFrameRef = useRef<number | null>(null);
   const [isPaused, setIsPaused] = useState(false);
 
+  const posthog = usePostHog();
+
   const multipliedEarners = earners ? [...earners, ...earners, ...earners] : [];
 
   const animate = () => {
@@ -114,9 +118,25 @@ export const RecentEarners = ({ earners }: { earners?: User[] }) => {
 
   return (
     <Box>
-      <Text mb={4} color={'gray.400'} fontWeight={500}>
-        RECENT EARNERS
-      </Text>
+      <Flex align={'center'} justify={'space-between'} mb={4}>
+        <Text color={'gray.400'} fontSize={'sm'} fontWeight={500}>
+          RECENT EARNERS
+        </Text>
+        <Text
+          className="ph-no-capture"
+          as={NextLink}
+          color="brand.purple"
+          fontSize="xs"
+          fontWeight={600}
+          href="/feed"
+          onClick={() => {
+            posthog.capture('view leaderboard_homepage');
+          }}
+        >
+          Leaderboard
+          <ArrowForwardIcon ml={1} />
+        </Text>
+      </Flex>
       <VStack>
         <Box
           ref={marqueeRef}

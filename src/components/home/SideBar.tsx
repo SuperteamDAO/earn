@@ -1,5 +1,5 @@
 import { ArrowForwardIcon } from '@chakra-ui/icons';
-import { Box, Flex, Image, Skeleton, Text } from '@chakra-ui/react';
+import { Box, Flex, Text } from '@chakra-ui/react';
 import axios from 'axios';
 import dayjs from 'dayjs';
 import NextLink from 'next/link';
@@ -12,6 +12,7 @@ import { timeAgoShort } from '@/utils/timeAgo';
 
 import { OgImageViewer } from '../misc/ogImageViewer';
 import { RecentEarners } from './RecentEarners';
+import { TotalStats } from './TotalStats';
 import { VibeCard } from './VibeCard';
 
 interface SideBarProps {
@@ -21,71 +22,6 @@ interface SideBarProps {
   isTotalLoading: boolean;
   type: 'home' | 'category' | 'region' | 'niche' | 'feed';
 }
-
-const TotalStats = ({
-  bountyCount,
-  TVE,
-  isTotalLoading,
-}: {
-  bountyCount: number;
-  TVE: number;
-  isTotalLoading: boolean;
-}) => {
-  return (
-    <Flex
-      align={'center'}
-      justify={'space-between'}
-      h={'69'}
-      px={'0.5rem'}
-      bg={'#F8FAFC'}
-      rounded={'md'}
-    >
-      <Flex>
-        <Image
-          h={'1.5625rem'}
-          mr={'0.5rem'}
-          mb={'auto'}
-          alt=""
-          src="/assets/icons/lite-purple-dollar.svg"
-        />
-        <Box>
-          {isTotalLoading ? (
-            <Skeleton w="54px" h="14px" />
-          ) : (
-            <Text color={'black'} fontSize={'sm'} fontWeight={'600'}>
-              ${TVE.toLocaleString()}
-            </Text>
-          )}
-          <Text color={'gray.500'} fontSize={'xs'} fontWeight={'400'}>
-            Total Value Earned
-          </Text>
-        </Box>
-      </Flex>
-      <Box w={'0.0625rem'} h={'50%'} bg={'#CBD5E1'}></Box>
-      <Flex>
-        <Image
-          h={'25x'}
-          mr={'0.5rem'}
-          mb={'auto'}
-          alt="suitcase"
-          src="/assets/icons/lite-purple-suitcase.svg"
-        />
-        <Box>
-          {isTotalLoading ? (
-            <Skeleton w="32px" h="14px" />
-          ) : (
-            <Text color={'black'} fontSize={'sm'} fontWeight={'600'}>
-              {bountyCount}
-            </Text>
-          )}
-          <Text color={'gray.500'} fontSize={'xs'} fontWeight={'400'}>
-            Opportunities Listed
-          </Text>
-        </Box>
-      </Flex>
-    </Flex>
-  );
-};
 
 // const SidebarBanner = () => {
 //   return (
@@ -265,7 +201,7 @@ const RecentActivity = () => {
   return (
     <Box>
       <Flex align="center" justify={'space-between'}>
-        <Text color={'gray.400'} fontWeight={500}>
+        <Text color={'gray.400'} fontSize={'sm'} fontWeight={500}>
           RECENT ACTIVITY
         </Text>
         <Text
@@ -328,7 +264,7 @@ const OpenListings = () => {
   return (
     <Box>
       <Flex align="center" justify={'space-between'}>
-        <Text color={'gray.400'} fontWeight={500}>
+        <Text color={'gray.400'} fontSize={'sm'} fontWeight={500}>
           OPEN LISTINGS
         </Text>
         <Text
