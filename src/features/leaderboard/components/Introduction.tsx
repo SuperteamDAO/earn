@@ -40,7 +40,7 @@ export function Introduction() {
             style={{ paddingRight: '0.4rem' }}
           />
           <Text color="brand.slate.600">
-            Discover top profile & their submissions
+            Discover top profiles {'&'} their submissions
           </Text>
         </Flex>
         <Flex gap={2}>

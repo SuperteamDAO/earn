@@ -19,6 +19,7 @@ export function Banner() {
       </Flex>
       <VStack
         align="start"
+        gap={1}
         fontSize={{
           base: 'sm',
           sm: 'md',
@@ -28,7 +29,7 @@ export function Banner() {
           Talent Leaderboard
         </Text>
         <Text color="brand.slate.400" fontWeight={500} lineHeight={1.2}>
-          See where you stand amongst the global talent
+          See where you stand amongst the {"Solana's"} top contributors
         </Text>
       </VStack>
       <Flex display={{ base: 'flex', md: 'none' }} h={'100%'}>
