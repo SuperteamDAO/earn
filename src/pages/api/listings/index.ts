@@ -26,13 +26,14 @@ export default async function user(req: NextApiRequest, res: NextApiResponse) {
     development: ['Frontend', 'Backend', 'Blockchain', 'Mobile'],
     design: ['Design'],
     content: ['Content'],
+    other: ['Other', 'Growth', 'Community'],
   };
 
   const skillsToFilter = filterToSkillsMap[filter] || [];
 
   let skillsFilter = {};
   if (skillsToFilter.length > 0) {
-    if (filter === 'development') {
+    if (filter === 'development' || filter === 'other') {
       skillsFilter = {
         OR: skillsToFilter.map((skill) => ({
           skills: {

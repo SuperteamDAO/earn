@@ -1,3 +1,4 @@
+import { verifySignature } from '@upstash/qstash/nextjs';
 import { type NextApiRequest, type NextApiResponse } from 'next';
 
 import {
@@ -116,8 +117,11 @@ const rankingCriteria: RankingCriteria = {
   winRateWeight: 0.5,
 };
 
-export default async function user(_: NextApiRequest, res: NextApiResponse) {
-  // TODO: convert to only POST request later
+async function handler(req: NextApiRequest, res: NextApiResponse) {
+  if (req.method !== 'POST') {
+    res.status(405).json({ message: 'Method Not Allowed' });
+    return;
+  }
 
   await prisma.$transaction(
     async (tsx) => {
@@ -158,3 +162,11 @@ export default async function user(_: NextApiRequest, res: NextApiResponse) {
     },
   );
 }
+
+export default verifySignature(handler);
+
+export const config = {
+  api: {
+    bodyParser: false,
+  },
+};

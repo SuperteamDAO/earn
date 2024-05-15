@@ -28,6 +28,10 @@ export const CATEGORY_NAV_ITEMS: Array<NavItem> = [
     label: 'Development',
     href: '/category/development/',
   },
+  {
+    label: 'Other',
+    href: '/category/other/',
+  },
 ];
 
 export const HACKATHON_NAV_ITEMS: Array<NavItem> = [
