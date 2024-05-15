@@ -88,9 +88,9 @@ interface StrippedSubmission {
   id: string;
   winnerPosition: keyof Rewards | undefined;
   user: {
-    firstName: string | null;
-    lastName: string | null;
-    photo: string | null;
+    firstName: string | undefined;
+    lastName: string | undefined;
+    photo: string | undefined;
   };
 }
 

@@ -1,8 +1,9 @@
-import { type SubmissionLabels, type User } from '@prisma/client';
+import { type SubmissionLabels } from '@prisma/client';
 
 import type { Rewards } from '@/features/listings';
 
 import type { Bounties } from './listings';
+import { type User } from './user';
 
 interface SubmissionWithUser {
   id: string;
@@ -23,7 +24,6 @@ interface SubmissionWithUser {
   createdAt: string;
   updatedAt: string;
   like?: any;
-  likes?: number;
   user: User;
   listing?: Bounties;
   ask?: number;

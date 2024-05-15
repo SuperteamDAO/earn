@@ -18,7 +18,6 @@ import { Superteams } from '@/constants/Superteam';
 import type { User } from '@/interface/user';
 import { Default } from '@/layouts/Default';
 import { Meta } from '@/layouts/Meta';
-import { userStore } from '@/store/user';
 
 interface TotalType {
   count?: number;
@@ -27,12 +26,12 @@ interface TotalType {
 }
 interface HomeProps {
   children: ReactNode;
-  type: 'home' | 'category' | 'region' | 'niche';
+  type: 'home' | 'category' | 'region' | 'niche' | 'feed';
 }
 
 export function Home({ children, type }: HomeProps) {
   const router = useRouter();
-  const { userInfo } = userStore();
+
   const [isTotalLoading, setIsTotalLoading] = useState(true);
 
   const [recentEarners, setRecentEarners] = useState<User[]>([]);
@@ -71,11 +70,11 @@ export function Home({ children, type }: HomeProps) {
         />
       }
     >
-      <Container maxW={'7xl'} mx="auto" px={{ base: 3, md: 4 }}>
-        <HStack align="start" justify="space-between" my={{ base: 4, md: 8 }}>
+      <Container maxW={'8xl'} mx="auto" px={{ base: 3, md: 4 }}>
+        <HStack align="start" justify="space-between">
           <Flex
             w="full"
-            pr={{ base: 0, lg: 6 }}
+            py={4}
             borderRight={{
               base: 'none',
               lg: type === 'niche' ? 'none' : '1px solid',
@@ -85,8 +84,8 @@ export function Home({ children, type }: HomeProps) {
               lg: 'blackAlpha.200',
             }}
           >
-            <Box w="full">
-              <HomeBanner userCount={totals.totalUsers} />
+            <Box w="full" pr={{ base: 0, lg: 6 }}>
+              {type === 'home' && <HomeBanner userCount={totals.totalUsers} />}
               {type === 'category' && (
                 <CategoryBanner
                   type={
@@ -99,7 +98,7 @@ export function Home({ children, type }: HomeProps) {
                 />
               )}
               {type === 'region' && matchedTeam && (
-                <>
+                <Box>
                   <Flex
                     direction={{ md: 'row', base: 'column' }}
                     w={{ md: 'brand.120', base: '100%' }}
@@ -140,7 +139,7 @@ export function Home({ children, type }: HomeProps) {
                       </Text>
                     </Box>
                   </Flex>
-                </>
+                </Box>
               )}
               {children}
             </Box>
@@ -151,14 +150,13 @@ export function Home({ children, type }: HomeProps) {
                 base: 'none',
                 lg: 'flex',
               }}
-              marginInlineStart={'0 !important'}
             >
               <HomeSideBar
+                type={type}
                 isTotalLoading={isTotalLoading}
                 total={totals?.totalInUSD ?? 0}
                 listings={totals?.count ?? 0}
                 earners={recentEarners ?? []}
-                userInfo={userInfo! || {}}
               />
             </Flex>
           )}

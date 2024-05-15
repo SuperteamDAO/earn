@@ -1,11 +1,11 @@
-import { Box, Flex, Image, Text } from '@chakra-ui/react';
+import { Box, Flex, Text } from '@chakra-ui/react';
 import axios from 'axios';
-import Avatar from 'boring-avatars';
 import { atom, useSetAtom } from 'jotai';
 import { useEffect, useState } from 'react';
 import { components } from 'react-select';
 import AsyncSelect from 'react-select/async';
 
+import { EarnAvatar } from '@/components/shared/EarnAvatar';
 import type { SponsorType } from '@/interface/sponsor';
 import { userStore } from '@/store/user';
 
@@ -86,21 +86,11 @@ export function SelectSponsor({ type }: { type?: string }) {
     return (
       <components.SingleValue {...props}>
         <Flex align="center" py={1}>
-          {data?.sponsor?.logo ? (
-            <Image
-              boxSize="32px"
-              borderRadius={4}
-              alt={data?.sponsor?.name}
-              src={data?.sponsor?.logo}
-            />
-          ) : (
-            <Avatar
-              name={data?.sponsor?.name}
-              colors={['#92A1C6', '#F0AB3D', '#C271B4']}
-              size={32}
-              variant="marble"
-            />
-          )}
+          <EarnAvatar
+            id={data?.sponsor?.name}
+            avatar={data?.sponsor?.logo}
+            borderRadius="4"
+          />
           <Box display={{ base: 'none', md: 'block' }} ml={2}>
             <Text color="brand.slate.800" fontSize="sm">
               {data?.sponsor?.name}
@@ -119,21 +109,11 @@ export function SelectSponsor({ type }: { type?: string }) {
     return (
       <components.Option {...props}>
         <Flex align="center">
-          {data?.sponsor?.logo ? (
-            <Image
-              boxSize="32px"
-              borderRadius={4}
-              alt={data?.sponsor?.name}
-              src={data?.sponsor?.logo}
-            />
-          ) : (
-            <Avatar
-              name={data?.sponsor?.name}
-              colors={['#92A1C6', '#F0AB3D', '#C271B4']}
-              size={32}
-              variant="marble"
-            />
-          )}
+          <EarnAvatar
+            id={data?.sponsor?.name}
+            avatar={data?.sponsor?.logo}
+            borderRadius="4"
+          />
           <Box display={{ base: 'none', md: 'block' }} ml={2}>
             <Text color="brand.slate.800" fontSize="sm">
               {data?.sponsor?.name}

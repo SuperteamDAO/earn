@@ -369,7 +369,7 @@ export function ListingHeader({
         flexDir={'row'}
         gap={5}
         w={'full'}
-        maxW={'7xl'}
+        maxW={'8xl'}
         mx={'auto'}
         py={{ base: 4, md: 10 }}
       >
@@ -475,7 +475,7 @@ export function ListingHeader({
             justifyContent="start"
             gap={10}
             w={'full'}
-            maxW={'7xl'}
+            maxW={'8xl'}
             h={'full'}
             mx={'auto'}
             my={'auto'}
