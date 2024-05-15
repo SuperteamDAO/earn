@@ -30,7 +30,7 @@ export const SubmissionList = ({
       >
         {Number(moment(endTime).format('x')) < Date.now() ? (
           <>
-            <VStack align={'start'} w={'full'} maxW={'7xl'} mx="auto">
+            <VStack align={'start'} w={'full'} maxW={'8xl'} mx="auto">
               <SimpleGrid
                 w="full"
                 px={{ base: 3, md: 6 }}

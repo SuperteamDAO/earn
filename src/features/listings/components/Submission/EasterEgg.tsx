@@ -9,12 +9,46 @@ import {
   Text,
 } from '@chakra-ui/react';
 import Image from 'next/image';
-import Confetti from 'react-confetti';
+import Pride from 'react-canvas-confetti/dist/presets/pride';
+import { type TDecorateOptionsFn } from 'react-canvas-confetti/dist/types';
+
 interface Props {
   isOpen: boolean;
   onClose: () => void;
   isProject: boolean;
 }
+
+const decorateOptions: TDecorateOptionsFn = (options) => {
+  const colors = [
+    '#E63946',
+    '#F1FAEE',
+    '##A8DADC',
+    '#457B9D',
+    '#1D3557',
+    '#F4A261',
+    '#E9C46A',
+    '#2A9D8F',
+    '#FF5733',
+    '#FF2400',
+    '#FFC0CB',
+  ];
+  const selectedColors: string[] = [];
+
+  while (selectedColors.length < 5) {
+    const randomIndex = Math.floor(Math.random() * colors.length);
+    const color = colors[randomIndex];
+    if (!selectedColors.includes(color!)) {
+      selectedColors.push(color!);
+    }
+  }
+
+  return {
+    ...options,
+    particleCount: 20,
+    colors: selectedColors,
+  };
+};
+
 export const EasterEgg = ({ isOpen, onClose, isProject }: Props) => {
   return (
     <Modal isOpen={isOpen} onClose={onClose}>
@@ -30,7 +64,7 @@ export const EasterEgg = ({ isOpen, onClose, isProject }: Props) => {
         bg="#5243FF"
         borderRadius={0}
       >
-        <Confetti />
+        <Pride autorun={{ speed: 10 }} decorateOptions={decorateOptions} />
         <ModalCloseButton w={6} h={6} m={4} color="white">
           <CloseIcon width={4} height={4} />
         </ModalCloseButton>

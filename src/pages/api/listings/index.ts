@@ -8,6 +8,7 @@ export default async function user(req: NextApiRequest, res: NextApiResponse) {
   const params = req.query;
   const category = params.category as string;
   const isHomePage = params.isHomePage === 'true';
+  const order = (params.order as 'asc' | 'desc') ?? 'desc';
 
   const filter = params.filter as string;
   const type = params.type as
@@ -77,7 +78,7 @@ export default async function user(req: NextApiRequest, res: NextApiResponse) {
           },
         },
         orderBy: {
-          deadline: 'desc',
+          deadline: order,
         },
       });
 
@@ -109,7 +110,7 @@ export default async function user(req: NextApiRequest, res: NextApiResponse) {
           },
         },
         orderBy: {
-          deadline: 'desc',
+          deadline: order,
         },
       });
       const splitIndex = bounties.findIndex((bounty) =>
@@ -135,7 +136,7 @@ export default async function user(req: NextApiRequest, res: NextApiResponse) {
         },
         take,
         orderBy: {
-          updatedAt: 'desc',
+          updatedAt: order,
         },
         select: {
           id: true,

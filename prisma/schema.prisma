@@ -192,12 +192,12 @@ model Submission {
   createdAt          DateTime         @default(now())
   updatedAt          DateTime         @updatedAt
   like               Json?
-  likes              Int?
   isPaid             Boolean          @default(false)
   paymentDetails     Json?
   otherInfo          String?          @db.VarChar(2000)
   ask                Int?
   label              SubmissionLabels @default(Unreviewed)
+  rewardInUSD        Int              @default(0)
   listing            Bounties         @relation(fields: [listingId], references: [id])
   user               User             @relation(fields: [userId], references: [id])
 
@@ -318,10 +318,27 @@ model User {
   sessions          Session[]
   Hackathon         Hackathon?        @relation(fields: [hackathonId], references: [id])
   emailSettings     EmailSettings[]
+  TalentRankings    TalentRankings[]
 
   @@index([email, publicKey, username])
   @@index([currentSponsorId])
   @@index([hackathonId])
+}
+
+model TalentRankings {
+  id               String                 @id @default(uuid())
+  userId           String
+  skill            TalentRankingSkills    @default(ALL)
+  timeframe        TalentRankingTimeframe @default(ALL_TIME)
+  rank             Int
+  submissions      Int                    @default(0)
+  winRate          Int                    @default(0)
+  wins             Int                    @default(0)
+  totalEarnedInUSD Int
+  user             User                   @relation(fields: [userId], references: [id])
+
+  @@unique([userId, skill, timeframe])
+  @@index([userId, skill, timeframe])
 }
 
 model PoW {
@@ -334,6 +351,7 @@ model PoW {
   createdAt   DateTime @default(now())
   subSkills   Json?
   updatedAt   DateTime @updatedAt
+  like        Json?
   user        User     @relation(fields: [userId], references: [id])
 
   @@index([userId])
@@ -431,6 +449,14 @@ model UnsubscribedEmail {
   email String @unique
 }
 
+enum TalentRankingSkills {
+  DEVELOPMENT
+  DESIGN
+  CONTENT
+  OTHER
+  ALL
+}
+
 enum EmailType {
   BOUNTY_REVIEW
   BOUNTY_DEADLINE
@@ -516,4 +542,11 @@ enum SubmissionLabels {
   Reviewed
   Shortlisted
   Spam
+}
+
+enum TalentRankingTimeframe {
+  THIS_YEAR
+  LAST_30_DAYS
+  LAST_7_DAYS
+  ALL_TIME
 }

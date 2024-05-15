@@ -1,14 +1,15 @@
-import { useDisclosure } from '@chakra-ui/react';
+import { Flex, type FlexProps, useDisclosure } from '@chakra-ui/react';
 import { useSession } from 'next-auth/react';
 import { type ReactNode, useEffect, useState } from 'react';
 
 import { Login } from '@/features/auth';
 
 interface LoginProps {
-  children?: ReactNode;
+  children: ReactNode;
+  style?: FlexProps;
 }
 
-export function AuthWrapper({ children }: LoginProps) {
+export function AuthWrapper({ children, style }: LoginProps) {
   const [triggerLogin, setTriggerLogin] = useState(false);
   const { isOpen, onOpen, onClose } = useDisclosure();
 
@@ -32,7 +33,9 @@ export function AuthWrapper({ children }: LoginProps) {
   return (
     <>
       {!!isOpen && <Login isOpen={isOpen} onClose={onClose} />}
-      <div onClick={handleLoginTrigger}>{children}</div>
+      <Flex onClick={handleLoginTrigger} {...style}>
+        {children}
+      </Flex>
     </>
   );
 }

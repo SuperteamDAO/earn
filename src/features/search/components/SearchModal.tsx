@@ -9,6 +9,7 @@ import {
   Modal,
   ModalContent,
   ModalOverlay,
+  useBreakpointValue,
   VStack,
 } from '@chakra-ui/react';
 import axios from 'axios';
@@ -19,7 +20,11 @@ import { useRouter } from 'next/router';
 import { useCallback, useEffect, useState } from 'react';
 import { LoaderIcon } from 'react-hot-toast';
 
-import { type Bounty, ListingCard } from '@/features/listings';
+import {
+  type Bounty,
+  ListingCard,
+  ListingCardMobile,
+} from '@/features/listings';
 
 interface Props {
   isOpen: boolean;
@@ -39,6 +44,7 @@ export function SearchModal({ isOpen, onClose }: Props) {
   const [loading, setLoading] = useState(false);
 
   const debouncedSearch = useCallback(debounce(search, 500), []);
+  const isSM = useBreakpointValue({ base: false, md: true });
 
   async function search(query: string) {
     try {
@@ -100,15 +106,19 @@ export function SearchModal({ isOpen, onClose }: Props) {
         {query.length > 0 && results.length > 0 && (
           <VStack w="full">
             <VStack w="full" py={0}>
-              {results.map((r) => (
+              {results.map((listing) => (
                 <Container
-                  key={r.id}
+                  key={listing.id}
                   justifyContent="space-between"
                   display="flex"
                   w="full"
                   p={0}
                 >
-                  <ListingCard adjustMobile bounty={r} />
+                  {isSM ? (
+                    <ListingCard bounty={listing} />
+                  ) : (
+                    <ListingCardMobile bounty={listing} />
+                  )}
                 </Container>
               ))}
             </VStack>

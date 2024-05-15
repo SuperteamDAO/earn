@@ -187,7 +187,16 @@ async function announce(req: NextApiRequestWithUser, res: NextApiResponse) {
           },
         },
       };
-
+      promises.push(
+        prisma.submission.update({
+          where: {
+            id: winners[currentIndex]?.id,
+          },
+          data: {
+            rewardInUSD: usdValue,
+          },
+        }),
+      );
       promises.push(prisma.user.update(amountWhere));
       currentIndex += 1;
     }
