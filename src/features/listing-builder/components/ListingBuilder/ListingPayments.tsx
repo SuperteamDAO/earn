@@ -1,4 +1,4 @@
-import { AddIcon, ChevronDownIcon, DeleteIcon } from '@chakra-ui/icons';
+import { AddIcon, DeleteIcon, SearchIcon } from '@chakra-ui/icons';
 import {
   Box,
   Button,
@@ -7,10 +7,11 @@ import {
   FormLabel,
   HStack,
   Image,
-  Menu,
-  MenuButton,
-  MenuItem,
-  MenuList,
+  Input,
+  InputGroup,
+  InputLeftElement,
+  List,
+  ListItem,
   Modal,
   ModalBody,
   ModalCloseButton,
@@ -36,6 +37,16 @@ import { sortRank } from '@/utils/rank';
 import { useListingFormStore } from '../../store';
 import { type ListingFormType } from '../../types';
 import { ListingFormLabel, ListingTooltip } from './Form';
+
+interface Token {
+  tokenName: string;
+  tokenSymbol: string;
+  mintAddress: string;
+  icon: string;
+  decimals: number;
+  coingeckoSymbol: string;
+  livecoinwatchSymbol: string;
+}
 
 interface PrizeListInterface {
   value: string;
@@ -70,6 +81,12 @@ export const ListingPayments = ({
     onClose: confirmOnClose,
   } = useDisclosure();
 
+  const [searchState, setSearchState] = useState({
+    searchTerm: '',
+    tokenImage: '',
+  });
+  const [searchResults, setSearchResults] = useState<Token[]>([]);
+  const [isOpen, setIsOpen] = useState(false);
   const [errorMessage, setErrorMessage] = useState('');
 
   const { register, setValue, watch, control, handleSubmit, reset, getValues } =
@@ -211,6 +228,20 @@ export const ListingPayments = ({
     }
   };
 
+  const handleSearch = (value: string) => {
+    setSearchState({ searchTerm: value, tokenImage: '' });
+    setIsOpen(true);
+    const filteredResults = tokenList.filter((token) =>
+      token.tokenName.toLowerCase().includes(value.toLowerCase()),
+    );
+    setSearchResults(filteredResults);
+  };
+
+  const handleSelectToken = (tokenName: string, icon: string) => {
+    setSearchState({ searchTerm: tokenName, tokenImage: icon });
+    setIsOpen(false);
+  };
+
   const onSubmit = async (data: any) => {
     const errorMessage = validateRewardsData();
     let newState = { ...data };
@@ -257,6 +288,22 @@ export const ListingPayments = ({
       debouncedUpdate.cancel();
     };
   }, [rewardAmount]);
+
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      const input = document.getElementById('search-input');
+      if (input && !input.contains(event.target as Node)) {
+        setIsOpen(false);
+      }
+    };
+
+    document.addEventListener('mousedown', handleClickOutside);
+
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+    };
+  }, []);
+
   return (
     <>
       <Modal isOpen={confirmIsOpen} onClose={confirmOnClose}>
@@ -339,83 +386,70 @@ export const ListingPayments = ({
               </Text>
             </Box>
           )}
-          <FormControl isRequired>
+          <FormControl pos="relative" isRequired>
             <ListingFormLabel htmlFor="token">Select Token</ListingFormLabel>
-            <Menu>
-              <MenuButton
-                as={Button}
-                overflow="hidden"
-                w="100%"
-                h={'2.6rem'}
+            <InputGroup>
+              <InputLeftElement ml={2}>
+                {searchState.tokenImage ? (
+                  <Image
+                    w={'1.6rem'}
+                    alt={searchState.tokenImage}
+                    rounded={'full'}
+                    src={searchState.tokenImage}
+                  />
+                ) : (
+                  <SearchIcon color="gray.300" />
+                )}
+              </InputLeftElement>
+              <Input
+                pl="3.0rem"
                 color="gray.700"
                 fontSize="1rem"
                 fontWeight={500}
-                textAlign="start"
-                bg="transparent"
                 border={'1px solid #cbd5e1'}
-                _hover={{ bg: 'transparent' }}
-                rightIcon={<ChevronDownIcon />}
-              >
-                {token ? (
-                  <HStack>
-                    <Image
-                      w={'1.6rem'}
-                      alt={
-                        tokenList.find((t) => t.tokenSymbol === token)
-                          ?.tokenName
-                      }
-                      rounded={'full'}
-                      src={tokenList.find((t) => t.tokenSymbol === token)?.icon}
-                    />
-                    <Text>
-                      {
-                        tokenList.find((t) => t.tokenSymbol === token)
-                          ?.tokenName
-                      }
-                    </Text>
-                  </HStack>
-                ) : (
-                  <HStack>
-                    <Image
-                      w={'1.6rem'}
-                      alt={tokenList[0]?.tokenName}
-                      rounded={'full'}
-                      src={tokenList[0]?.icon}
-                    />
-                    <Text>{tokenList[0]?.tokenName}</Text>
-                  </HStack>
-                )}
-              </MenuButton>
-              <MenuList
-                overflow="scroll"
+                focusBorderColor="brand.purple"
+                onChange={(e) => handleSearch(e.target.value)}
+                placeholder="Search token..."
+                value={searchState.searchTerm}
+              />
+            </InputGroup>
+            {searchResults.length > 0 && isOpen && (
+              <List
+                pos={'absolute'}
+                zIndex={10}
+                overflowX="hidden"
                 w="40rem"
                 maxH="15rem"
+                mt={3}
                 color="gray.600"
-                fontSize="1rem"
-                fontWeight={500}
+                bg={'white'}
+                border={'1px solid #cbd5e1'}
+                id="search-input"
+                rounded={'lg'}
               >
-                {tokenList.map((token) => {
-                  return (
-                    <>
-                      <MenuItem
-                        key={token.mintAddress}
-                        onClick={() => handleTokenChange(token.tokenSymbol)}
-                      >
-                        <HStack>
-                          <Image
-                            w={'1.6rem'}
-                            alt={token.tokenName}
-                            rounded={'full'}
-                            src={token.icon}
-                          />
-                          <Text color="gray.600">{token.tokenName}</Text>
-                        </HStack>
-                      </MenuItem>
-                    </>
-                  );
-                })}
-              </MenuList>
-            </Menu>
+                {searchResults.map((token) => (
+                  <ListItem
+                    key={token.tokenName}
+                    _hover={{ background: 'gray.100' }}
+                    cursor="pointer"
+                    onClick={() => {
+                      handleTokenChange(token.tokenSymbol);
+                      handleSelectToken(token.tokenName, token.icon);
+                    }}
+                  >
+                    <HStack px={3} py={2}>
+                      <Image
+                        w={'1.6rem'}
+                        alt={token.tokenName}
+                        rounded={'full'}
+                        src={token.icon}
+                      />
+                      <Text>{token.tokenName}</Text>
+                    </HStack>
+                  </ListItem>
+                ))}
+              </List>
+            )}
           </FormControl>
           {compensationType === 'fixed' && (
             <FormControl w="full" mt={5} isRequired>
