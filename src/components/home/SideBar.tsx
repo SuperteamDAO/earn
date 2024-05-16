@@ -90,7 +90,7 @@ const RecentActivity = () => {
       try {
         const res = await axios.get(`/api/feed/get`, {
           params: {
-            take: 5,
+            take: 10,
           },
         });
 

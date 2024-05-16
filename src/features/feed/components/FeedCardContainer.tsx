@@ -100,6 +100,7 @@ const FeedCardHeader = ({
           color={'brand.slate.800'}
           fontSize={{ base: 'sm', md: 'md' }}
           fontWeight={600}
+          _hover={{ textDecoration: 'underline' }}
           cursor={'pointer'}
           onClick={() => router.push(`/t/${username}`)}
         >
@@ -110,6 +111,7 @@ const FeedCardHeader = ({
           color={'brand.slate.400'}
           fontSize={{ base: 'xs', md: 'sm' }}
           fontWeight={500}
+          _hover={{ textDecoration: 'underline' }}
         >
           @{username} • {timeAgoShort(createdAt)}
         </Text>
@@ -131,7 +133,7 @@ export const FeedCardLink = ({
   style,
   children,
 }: {
-  href: string;
+  href: string | undefined;
   style?: LinkBoxProps;
   children: ReactNode;
 }) => {
@@ -261,7 +263,6 @@ export const FeedCardContainer = ({
               {actionLinks}
             </Flex>
           </Box>
-
           <Flex align={'center'} mt={2} pointerEvents={id ? 'all' : 'none'}>
             <Box
               zIndex={10}

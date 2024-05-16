@@ -8,13 +8,13 @@ export default async function handler(
   res: NextApiResponse,
 ): Promise<void> {
   try {
-    const { filter, timePeriod, skip = 0, isWinner } = req.query;
+    const { filter, timePeriod, take = 15, skip = 0, isWinner } = req.query;
     const orderByColumn =
       filter === 'popular'
         ? 'likeCount DESC, createdAt DESC'
         : 'createdAt DESC';
 
-    const limitAndOffset = `LIMIT 15 OFFSET ${skip}`;
+    const limitAndOffset = `LIMIT ${take} OFFSET ${skip}`;
     const winnerFilter =
       isWinner === 'true'
         ? 'AND sub.isWinner = 1 AND l.isWinnersAnnounced = 1'

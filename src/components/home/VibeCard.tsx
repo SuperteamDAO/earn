@@ -105,8 +105,14 @@ export const VibeCard = () => {
   };
 
   return (
-    <Flex align={'center'} px={4} py={4} bg="brand.slate.100" borderRadius={8}>
-      <Flex direction={'column'} w="full">
+    <Flex
+      align={'center'}
+      justify={'space-between'}
+      p={4}
+      bg="brand.slate.100"
+      borderRadius={8}
+    >
+      <Flex direction={'column'}>
         <Text
           color="brand.slate.500"
           fontSize="sm"
@@ -133,6 +139,7 @@ export const VibeCard = () => {
       </Flex>
       <Divider mx={4} orientation="vertical" />
       <Button
+        maxW={40}
         px={10}
         color="brand.slate.500"
         fontSize="sm"

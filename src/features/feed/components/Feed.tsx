@@ -2,9 +2,6 @@ import { Box, Flex, Select, Text } from '@chakra-ui/react';
 import axios from 'axios';
 import NextLink from 'next/link';
 import React, { useEffect, useState } from 'react';
-import { FiHome } from 'react-icons/fi';
-import { GoTrophy } from 'react-icons/go';
-import { PiStarFour } from 'react-icons/pi';
 
 import {
   FeedCardContainerSkeleton,
@@ -13,6 +10,8 @@ import {
   SubmissionCard,
 } from '@/features/feed';
 import { Home } from '@/layouts/Home';
+
+import { HomeIcon, LeaderboardIcon, WinnersIcon } from './icons';
 
 export const Feed = ({ isWinner = false }: { isWinner?: boolean }) => {
   const [data, setData] = useState<FeedDataProps[]>([]);
@@ -104,20 +103,18 @@ export const Feed = ({ isWinner = false }: { isWinner?: boolean }) => {
   const NavItem = ({
     name,
     icon: Icon,
-    size,
     href,
   }: {
     name: string;
     icon: any;
-    size: string;
     href: string;
   }) => {
     return (
       <Flex as={NextLink} align="center" href={href}>
-        <Box w={7}>
-          <Icon color="#64748b" size={size} />
-        </Box>
-        <Text mt={1.5} color="brand.slate.500" fontWeight={500}>
+        <Flex align="center" justify="center" w={9}>
+          <Icon />
+        </Flex>
+        <Text mt={1} color="brand.slate.500" fontWeight={500}>
           {name}
         </Text>
       </Flex>
@@ -161,19 +158,13 @@ export const Feed = ({ isWinner = false }: { isWinner?: boolean }) => {
             pr={5}
             borderRightWidth={'1px'}
           >
-            <NavItem name="Homepage" icon={FiHome} size={'21px'} href="/" />
+            <NavItem name="Homepage" icon={HomeIcon} href="/" />
             <NavItem
               name="Leaderboard"
-              icon={PiStarFour}
-              size={'23px'}
+              icon={LeaderboardIcon}
               href="/leaderboard"
             />
-            <NavItem
-              name="Winners"
-              icon={GoTrophy}
-              size={'21px'}
-              href="/feed/winners"
-            />
+            <NavItem name="Winners" icon={WinnersIcon} href="/feed/winners" />
           </Flex>
           <Flex direction={'column'} w="100%">
             <Box py={5} pl={{ base: 6, md: 5 }} borderBottomWidth={'1px'}>
