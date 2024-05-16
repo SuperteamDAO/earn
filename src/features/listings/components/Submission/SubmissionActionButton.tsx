@@ -1,6 +1,7 @@
 import { Button, Flex, Tooltip, useDisclosure } from '@chakra-ui/react';
 import axios from 'axios';
 import Image from 'next/image';
+import { useSession } from 'next-auth/react';
 import React, {
   type Dispatch,
   type SetStateAction,
@@ -83,14 +84,16 @@ export const SubmissionActionButton = ({
   const bountyDraftStatus = getListingDraftStatus(status, isPublished);
 
   const handleSubmit = () => {
-    if (applicationLink) {
-      window.open(applicationLink, '_blank');
-      return;
-    }
-    if (!userInfo?.isTalentFilled) {
-      warningOnOpen();
-    } else {
-      onOpen();
+    if (isAuthenticated) {
+      if (applicationLink) {
+        window.open(applicationLink, '_blank');
+        return;
+      }
+      if (!userInfo?.isTalentFilled) {
+        warningOnOpen();
+      } else {
+        onOpen();
+      }
     }
   };
 
@@ -166,6 +169,10 @@ export const SubmissionActionButton = ({
   } = useDisclosure();
 
   const surveyId = '018c6743-c893-0000-a90e-f35d31c16692';
+
+  const { status: authStatus } = useSession();
+
+  const isAuthenticated = authStatus === 'authenticated';
 
   return (
     <>
