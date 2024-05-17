@@ -1,10 +1,6 @@
-import { ArrowForwardIcon } from '@chakra-ui/icons';
 import {
   Box,
   Flex,
-  LinkBox,
-  type LinkBoxProps,
-  LinkOverlay,
   Skeleton,
   SkeletonCircle,
   SkeletonText,
@@ -21,17 +17,8 @@ import { IoMdHeart, IoMdHeartEmpty } from 'react-icons/io';
 import { EarnAvatar } from '@/components/shared/EarnAvatar';
 import { userStore } from '@/store/user';
 import { getURLSanitized } from '@/utils/getURLSanitized';
-import { timeAgoShort } from '@/utils/timeAgo';
 
-interface FeedCardHeaderProps {
-  name: string;
-  username?: string;
-  action: string;
-  description?: string;
-  photo: string | undefined;
-  createdAt: string;
-  type: 'activity' | 'profile';
-}
+import { FeedCardHeader } from './FeedCardHeader';
 
 interface FeedCardContainerProps {
   content: {
@@ -53,112 +40,6 @@ interface FeedCardContainerProps {
   link: string;
   userId: string;
 }
-
-const FeedCardHeader = ({
-  name,
-  username,
-  action,
-  description,
-  createdAt,
-  type,
-}: FeedCardHeaderProps) => {
-  const router = useRouter();
-  if (type === 'profile') {
-    return (
-      <Box mt={-0.5} mb={-1}>
-        <Flex align="center" justify={'space-between'}>
-          <Flex align="center">
-            <Text
-              color={'brand.slate.400'}
-              fontSize={{ base: 'sm', md: 'md' }}
-              fontWeight={500}
-            >
-              <Text as={'span'} color={'brand.slate.800'} fontWeight={600}>
-                {name}
-              </Text>{' '}
-              {action}
-            </Text>
-          </Flex>
-          <Text
-            color={'brand.slate.400'}
-            fontSize={{ base: 'xs', md: 'sm' }}
-            fontWeight={500}
-          >
-            {timeAgoShort(createdAt)}
-          </Text>
-        </Flex>
-        <Text color={'brand.slate.500'} fontSize={{ base: 'sm', md: 'md' }}>
-          {description}
-        </Text>
-      </Box>
-    );
-  }
-  return (
-    <Flex>
-      <Flex direction={'column'} mt={-0.5}>
-        <Text
-          color={'brand.slate.800'}
-          fontSize={{ base: 'sm', md: 'md' }}
-          fontWeight={600}
-          _hover={{ textDecoration: 'underline' }}
-          cursor={'pointer'}
-          onClick={() => router.push(`/t/${username}`)}
-        >
-          {name}
-        </Text>
-        <Text
-          mt={-1}
-          color={'brand.slate.400'}
-          fontSize={{ base: 'xs', md: 'sm' }}
-          fontWeight={500}
-          _hover={{ textDecoration: 'underline' }}
-        >
-          @{username} • {timeAgoShort(createdAt)}
-        </Text>
-        <Text
-          mt={{ base: 1, md: 2 }}
-          color={'brand.slate.600'}
-          fontSize={{ base: 'sm', md: 'md' }}
-          fontWeight={500}
-        >
-          {action}
-        </Text>
-      </Flex>
-    </Flex>
-  );
-};
-
-export const FeedCardLink = ({
-  href,
-  style,
-  children,
-}: {
-  href: string | undefined;
-  style?: LinkBoxProps;
-  children: ReactNode;
-}) => {
-  return (
-    <LinkBox
-      alignItems={'center'}
-      gap={2}
-      whiteSpace={'nowrap'}
-      {...style}
-      display={{ base: 'none', md: 'flex' }}
-    >
-      <LinkOverlay href={href}>
-        <Text
-          as="span"
-          color={'#6366F1'}
-          fontSize={{ base: 'sm', md: 'md' }}
-          fontWeight={600}
-        >
-          {children}
-        </Text>
-      </LinkOverlay>
-      <ArrowForwardIcon color={'#6366F1'} />
-    </LinkBox>
-  );
-};
 
 export const FeedCardContainer = ({
   content,
@@ -263,45 +144,47 @@ export const FeedCardContainer = ({
               {actionLinks}
             </Flex>
           </Box>
-          <Flex align={'center'} mt={2} pointerEvents={id ? 'all' : 'none'}>
-            <Box
-              zIndex={10}
-              alignItems={'center'}
-              gap={1}
-              display={'flex'}
-              mr={2}
-              onClick={(e) => {
-                e.stopPropagation();
-                if (!userInfo?.id) return;
-                handleLike();
-              }}
-            >
-              {!isLiked && (
-                <IoMdHeartEmpty
-                  size={isSM ? '22px' : '20px'}
+          {id && (
+            <Flex align={'center'} mt={2} pointerEvents={id ? 'all' : 'none'}>
+              <Box
+                zIndex={10}
+                alignItems={'center'}
+                gap={1}
+                display={'flex'}
+                mr={2}
+                onClick={(e) => {
+                  e.stopPropagation();
+                  if (!userInfo?.id) return;
+                  handleLike();
+                }}
+              >
+                {!isLiked && (
+                  <IoMdHeartEmpty
+                    size={isSM ? '22px' : '20px'}
+                    color={'#64748b'}
+                  />
+                )}
+                {isLiked && (
+                  <IoMdHeart size={isSM ? '22px' : '20px'} color={'#E11D48'} />
+                )}
+                <Text color="brand.slate.500" fontSize={'md'} fontWeight={500}>
+                  {totalLikes}
+                </Text>
+              </Box>
+              {commentLink && (
+                <GoComment
                   color={'#64748b'}
+                  size={isSM ? '21px' : '19px'}
+                  style={{
+                    cursor: 'pointer',
+                  }}
+                  onClick={() => {
+                    window.location.href = commentLink;
+                  }}
                 />
               )}
-              {isLiked && (
-                <IoMdHeart size={isSM ? '22px' : '20px'} color={'#E11D48'} />
-              )}
-              <Text color="brand.slate.500" fontSize={'md'} fontWeight={500}>
-                {totalLikes}
-              </Text>
-            </Box>
-            {commentLink && (
-              <GoComment
-                color={'#64748b'}
-                size={isSM ? '21px' : '19px'}
-                style={{
-                  cursor: 'pointer',
-                }}
-                onClick={() => {
-                  window.location.href = commentLink;
-                }}
-              />
-            )}
-          </Flex>
+            </Flex>
+          )}
         </Flex>
       </Flex>
     </Box>

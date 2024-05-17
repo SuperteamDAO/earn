@@ -15,8 +15,8 @@ import { HomeIcon, LeaderboardIcon, WinnersIcon } from './icons';
 
 export const Feed = ({ isWinner = false }: { isWinner?: boolean }) => {
   const [data, setData] = useState<FeedDataProps[]>([]);
-  const [activeMenu, setActiveMenu] = useState('New');
-  const [timePeriod, setTimePeriod] = useState('Today');
+  const [activeMenu, setActiveMenu] = useState('Popular');
+  const [timePeriod, setTimePeriod] = useState('This Month');
 
   const [isLoading, setIsLoading] = useState<boolean>(true);
 
@@ -185,7 +185,7 @@ export const Feed = ({ isWinner = false }: { isWinner?: boolean }) => {
                   color="brand.slate.600"
                   fontSize={{ base: 'sm', lg: 'md' }}
                 >
-                  Find and discover the best work on Earn
+                  Discover the best work on Earn
                 </Text>
                 <Flex
                   align="center"
