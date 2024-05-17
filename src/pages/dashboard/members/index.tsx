@@ -2,6 +2,7 @@ import {
   AddIcon,
   ChevronLeftIcon,
   ChevronRightIcon,
+  CloseIcon,
   CopyIcon,
   SearchIcon,
 } from '@chakra-ui/icons';
@@ -14,6 +15,12 @@ import {
   Input,
   InputGroup,
   InputLeftElement,
+  Modal,
+  ModalBody,
+  ModalContent,
+  ModalFooter,
+  ModalHeader,
+  ModalOverlay,
   Table,
   TableContainer,
   Tag,
@@ -28,8 +35,10 @@ import {
 } from '@chakra-ui/react';
 import axios from 'axios';
 import Avatar from 'boring-avatars';
+import { type Session } from 'next-auth';
 import { useSession } from 'next-auth/react';
 import React, { useEffect, useRef, useState } from 'react';
+import toast from 'react-hot-toast';
 
 import { ErrorSection } from '@/components/shared/ErrorSection';
 import { LoadingSection } from '@/components/shared/LoadingSection';
@@ -71,6 +80,21 @@ const Index = () => {
     } catch (error) {
       setIsMembersLoading(false);
     }
+  };
+
+  const isAdminLoggedIn = () => {
+    if (
+      userInfo === undefined ||
+      userInfo?.UserSponsors === undefined ||
+      userInfo?.UserSponsors[0] === undefined
+    ) {
+      return false;
+    }
+
+    return (
+      session?.user?.role === 'GOD' ||
+      userInfo?.UserSponsors[0]?.role === 'ADMIN'
+    );
   };
 
   useEffect(() => {
@@ -183,69 +207,79 @@ const Index = () => {
               </Tr>
             </Thead>
             <Tbody>
-              {members.map((member) => (
-                <Tr key={member?.userId}>
-                  <Td>
-                    <Flex align="center">
-                      {member?.user?.photo ? (
-                        <Image
-                          boxSize="36px"
-                          borderRadius="full"
-                          alt={`${member?.user?.firstName} ${member?.user?.lastName}`}
-                          src={member?.user?.photo}
-                        />
-                      ) : (
-                        <Avatar
-                          name={`${member?.user?.firstName} ${member?.user?.lastName}`}
-                          colors={['#92A1C6', '#F0AB3D', '#C271B4']}
-                          size={36}
-                          variant="marble"
-                        />
-                      )}
-                      <Box display={{ base: 'none', md: 'block' }} ml={2}>
-                        <Text
-                          color="brand.slate.500"
-                          fontSize="15px"
-                          fontWeight={500}
+              {members.map((member) => {
+                return (
+                  <Tr key={member?.userId}>
+                    <Td>
+                      <Flex align="center">
+                        {member?.user?.photo ? (
+                          <Image
+                            boxSize="36px"
+                            borderRadius="full"
+                            alt={`${member?.user?.firstName} ${member?.user?.lastName}`}
+                            src={member?.user?.photo}
+                          />
+                        ) : (
+                          <Avatar
+                            name={`${member?.user?.firstName} ${member?.user?.lastName}`}
+                            colors={['#92A1C6', '#F0AB3D', '#C271B4']}
+                            size={36}
+                            variant="marble"
+                          />
+                        )}
+                        <Box display={{ base: 'none', md: 'block' }} ml={2}>
+                          <Text
+                            color="brand.slate.500"
+                            fontSize="15px"
+                            fontWeight={500}
+                          >
+                            {`${member?.user?.firstName} ${member?.user?.lastName}`}
+                          </Text>
+                          <Text color="brand.slate.400" fontSize="sm">
+                            @{member?.user?.username}
+                          </Text>
+                        </Box>
+                      </Flex>
+                    </Td>
+                    <Td>
+                      <Flex align="center">
+                        <Tag
+                          color={
+                            member?.role === 'ADMIN' ? '#0D9488' : '#8B5CF6'
+                          }
+                          fontWeight={600}
+                          bg={member?.role === 'ADMIN' ? '#D1FAE5' : '#F3E8FF'}
+                          size="sm"
+                          variant="solid"
                         >
-                          {`${member?.user?.firstName} ${member?.user?.lastName}`}
-                        </Text>
-                        <Text color="brand.slate.400" fontSize="sm">
-                          @{member?.user?.username}
-                        </Text>
-                      </Box>
-                    </Flex>
-                  </Td>
-                  <Td>
-                    <Flex align="center">
-                      <Tag
-                        color={member?.role === 'ADMIN' ? '#0D9488' : '#8B5CF6'}
-                        fontWeight={600}
-                        bg={member?.role === 'ADMIN' ? '#D1FAE5' : '#F3E8FF'}
-                        size="sm"
-                        variant="solid"
-                      >
-                        {member?.role}
-                      </Tag>
-                    </Flex>
-                  </Td>
-                  <Td color={'brand.slate.600'} fontWeight={500}>
-                    {member?.user?.email}
-                    <Tooltip label="Copy Email Address" placement="right">
-                      <CopyIcon
-                        cursor="pointer"
-                        ml={1}
-                        onClick={() =>
-                          navigator.clipboard.writeText(
-                            member?.user?.email as string,
-                          )
-                        }
+                          {member?.role}
+                        </Tag>
+                      </Flex>
+                    </Td>
+                    <Td color={'brand.slate.600'} fontWeight={500}>
+                      {member?.user?.email}
+                      <Tooltip label="Copy Email Address" placement="right">
+                        <CopyIcon
+                          cursor="pointer"
+                          ml={1}
+                          onClick={() =>
+                            navigator.clipboard.writeText(
+                              member?.user?.email as string,
+                            )
+                          }
+                        />
+                      </Tooltip>
+                    </Td>
+                    <Td>
+                      <RemoveMemberModal
+                        member={member}
+                        isAdminLoggedIn={isAdminLoggedIn}
+                        session={session}
                       />
-                    </Tooltip>
-                  </Td>
-                  <Td></Td>
-                </Tr>
-              ))}
+                    </Td>
+                  </Tr>
+                );
+              })}
             </Tbody>
           </Table>
         </TableContainer>
@@ -288,6 +322,90 @@ const Index = () => {
         </Button>
       </Flex>
     </Sidebar>
+  );
+};
+
+const RemoveMemberModal = ({
+  member,
+  isAdminLoggedIn,
+  session,
+}: {
+  member: UserSponsor;
+  isAdminLoggedIn: () => boolean;
+  session: Session | null;
+}) => {
+  const [isOpen, setIsOpen] = useState(false);
+
+  const onRemoveMember = async (userId: string | undefined) => {
+    await axios.post('/api/members/remove', {
+      id: userId,
+    });
+
+    setIsOpen(false);
+    toast.success('Member removed successfully');
+  };
+
+  return (
+    <Flex align="center" justify="end">
+      {isAdminLoggedIn() &&
+        member?.role !== 'ADMIN' &&
+        member?.user?.email !== session?.user?.email && (
+          <Button
+            color="#6366F1"
+            bg="#E0E7FF"
+            onClick={() => setIsOpen(true)}
+            size="sm"
+            variant="solid"
+          >
+            Remove
+          </Button>
+        )}
+      <Modal
+        key={member.userId}
+        closeOnOverlayClick={false}
+        isOpen={isOpen}
+        onClose={() => setIsOpen(false)}
+      >
+        <ModalOverlay />
+        <ModalContent h={'max'} py={5}>
+          <ModalHeader color={'brand.slate.900'} fontSize="lg">
+            Remove Member
+            <Button
+              pos="absolute"
+              top={2}
+              right={2}
+              onClick={() => setIsOpen(false)}
+              size="sm"
+            >
+              <CloseIcon />
+            </Button>
+          </ModalHeader>
+          <ModalBody>
+            <Text>
+              Are you sure you want to remove{' '}
+              <Text as="span" fontWeight={700}>
+                {member.user?.email}
+              </Text>{' '}
+              from accessing your sponsor dashboard? You can invite them back
+              again later if needed.
+            </Text>
+          </ModalBody>
+          <ModalFooter justifyContent="flex-end" display="flex" mt={4}>
+            <Button
+              color="#6366F1"
+              bg="#E0E7FF"
+              onClick={() => {
+                onRemoveMember(member.userId);
+              }}
+              size="sm"
+              variant="solid"
+            >
+              Remove Member
+            </Button>
+          </ModalFooter>
+        </ModalContent>
+      </Modal>
+    </Flex>
   );
 };
 
