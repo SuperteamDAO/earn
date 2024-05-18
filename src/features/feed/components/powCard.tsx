@@ -19,6 +19,7 @@ interface PowCardProps {
     id: string;
     like: any;
     userId: string;
+    likeCount: number;
   };
   type: 'profile' | 'activity';
 }

@@ -10,7 +10,7 @@ import {
 import axios from 'axios';
 import NextLink from 'next/link';
 import { useRouter } from 'next/router';
-import React, { type ReactNode, useEffect, useState } from 'react';
+import { type ReactNode, useEffect, useState } from 'react';
 import { GoComment } from 'react-icons/go';
 import { IoMdHeart, IoMdHeartEmpty } from 'react-icons/io';
 

@@ -192,6 +192,7 @@ model Submission {
   createdAt          DateTime         @default(now())
   updatedAt          DateTime         @updatedAt
   like               Json?
+  likeCount          Int              @default(0)
   isPaid             Boolean          @default(false)
   paymentDetails     Json?
   otherInfo          String?          @db.VarChar(2000)
@@ -204,6 +205,11 @@ model Submission {
   @@index([id, listingId])
   @@index([userId])
   @@index([listingId])
+  @@index([createdAt])
+  @@index([isWinner])
+  @@index([createdAt, isWinner])
+  @@index([createdAt, listingId])
+  @@index([likeCount])
 }
 
 model Otp {
@@ -352,9 +358,12 @@ model PoW {
   subSkills   Json?
   updatedAt   DateTime @updatedAt
   like        Json?
+  likeCount   Int      @default(0)
   user        User     @relation(fields: [userId], references: [id])
 
   @@index([userId])
+  @@index([createdAt])
+  @@index([likeCount])
 }
 
 model EmailSettings {

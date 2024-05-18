@@ -1,6 +1,6 @@
 import { prisma } from '@/prisma';
 
-async function updateLike(
+export async function updateLike(
   model: 'submission' | 'poW',
   itemId: string,
   userId: string,
@@ -51,6 +51,8 @@ async function updateLike(
     ];
   }
 
+  const likeCount = newLikes.length;
+
   let updateLike;
 
   if (model === 'submission') {
@@ -60,6 +62,7 @@ async function updateLike(
       },
       data: {
         like: newLikes,
+        likeCount,
       },
     });
   } else if (model === 'poW') {
@@ -69,11 +72,10 @@ async function updateLike(
       },
       data: {
         like: newLikes,
+        likeCount,
       },
     });
   }
 
   return updateLike;
 }
-
-export { updateLike };
