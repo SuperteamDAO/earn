@@ -46,6 +46,9 @@ export default async function handler(
           lte: endDate,
         },
         ...winnerFilter,
+        listing: {
+          isPrivate: false,
+        },
       },
       skip: parseInt(skip as string, 10),
       take: parseInt(take as string, 10),
@@ -119,13 +122,15 @@ export default async function handler(
 
     const results = [
       ...submissions.map((sub) => ({
-        id: sub.id,
+        id: sub.listing.isWinnersAnnounced ? sub.id : null,
         createdAt: sub.createdAt,
-        link: sub.link,
-        tweet: sub.tweet,
-        otherInfo: sub.otherInfo,
-        isWinner: sub.isWinner,
-        winnerPosition: sub.winnerPosition,
+        link: sub.listing.isWinnersAnnounced ? sub.link : null,
+        tweet: sub.listing.isWinnersAnnounced ? sub.tweet : null,
+        otherInfo: sub.listing.isWinnersAnnounced ? sub.otherInfo : null,
+        isWinner: sub.listing.isWinnersAnnounced ? sub.isWinner : null,
+        winnerPosition: sub.listing.isWinnersAnnounced
+          ? sub.winnerPosition
+          : null,
         firstName: sub.user.firstName,
         lastName: sub.user.lastName,
         photo: sub.user.photo,
