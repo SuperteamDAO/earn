@@ -1,4 +1,4 @@
-import { Box, Flex, Select, Text } from '@chakra-ui/react';
+import { Box, Flex, Image, Select, Text } from '@chakra-ui/react';
 import axios from 'axios';
 import NextLink from 'next/link';
 import React, { useEffect, useState } from 'react';
@@ -212,27 +212,59 @@ export const Feed = ({ isWinner = false }: { isWinner?: boolean }) => {
               </Flex>
             </Box>
             <Box pl={{ base: 1, md: 0 }}>
-              {isLoading
-                ? Array.from({ length: 5 }).map((_, index) => (
-                    <FeedCardContainerSkeleton key={index} />
-                  ))
-                : data?.map((item, i) => {
-                    if (item.type === 'Submission') {
-                      return (
-                        <SubmissionCard
-                          key={i}
-                          sub={item as any}
-                          type="activity"
-                        />
-                      );
-                    }
-                    if (item.type === 'PoW') {
-                      return (
-                        <PowCard key={i} pow={item as any} type="activity" />
-                      );
-                    }
-                    return null;
-                  })}
+              {isLoading ? (
+                Array.from({ length: 5 }).map((_, index) => (
+                  <FeedCardContainerSkeleton key={index} />
+                ))
+              ) : data && data.length > 0 ? (
+                data.map((item, i) => {
+                  if (item.type === 'Submission') {
+                    return (
+                      <SubmissionCard
+                        key={i}
+                        sub={item as any}
+                        type="activity"
+                      />
+                    );
+                  }
+                  if (item.type === 'PoW') {
+                    return (
+                      <PowCard key={i} pow={item as any} type="activity" />
+                    );
+                  }
+                  return null;
+                })
+              ) : (
+                <Box my={32}>
+                  <Image
+                    w={32}
+                    mx="auto"
+                    alt={'talent empty'}
+                    src="/assets/bg/talent-empty.svg"
+                  />
+                  <Text
+                    w="200px"
+                    mx="auto"
+                    mt={5}
+                    color={'brand.slate.500'}
+                    fontSize={{ base: 'md', md: 'lg' }}
+                    fontWeight={500}
+                    textAlign={'center'}
+                  >
+                    No Activity Found
+                  </Text>
+                  <Text
+                    mx="auto"
+                    mt={1}
+                    color={'brand.slate.400'}
+                    fontSize={{ base: 'sm', md: 'md' }}
+                    fontWeight={400}
+                    textAlign={'center'}
+                  >
+                    We couldn’t find any activity for your time filter
+                  </Text>
+                </Box>
+              )}
             </Box>
           </Flex>
         </Flex>
