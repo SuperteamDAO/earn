@@ -429,7 +429,11 @@ function Bounties() {
                         whiteSpace="normal"
                         wordBreak={'break-word'}
                       >
-                        <NextLink
+                        <Link
+                          as={NextLink}
+                          pointerEvents={
+                            !currentBounty.isPublished ? 'none' : 'auto'
+                          }
                           href={`/dashboard/listings/${currentBounty.slug}/submissions/`}
                           passHref
                         >
@@ -456,7 +460,7 @@ function Bounties() {
                               {currentBounty.title}
                             </Text>
                           </Flex>
-                        </NextLink>
+                        </Link>
                       </Td>
                       <Td py={2}>
                         <Text

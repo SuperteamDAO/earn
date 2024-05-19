@@ -27,6 +27,11 @@ const theme = extendTheme({
       grey: {
         50: '#F7FAFC',
       },
+      progress: {
+        darkGreen: { 500: '#0D9488' },
+        lightGreen: { 500: '#84CC16' },
+        lightYellow: { 500: '#FDBA74' },
+      },
     },
   },
   breakpoints: {
@@ -132,6 +137,25 @@ const theme = extendTheme({
         },
       },
     },
+    // Progress: {
+    //   variants: {
+    //     lightGreen: {
+    //       filledTrack: {
+    //         bg: '#84CC16'
+    //       }
+    //     },
+    //     darkGreen: {
+    //       filledTrack: {
+    //         bg: '#0D9488'
+    //       }
+    //     },
+    //     lightYellow: {
+    //       filledTrack: {
+    //         bg: '#FDBA74'
+    //       }
+    //     }
+    //   }
+    // }
   },
 });
 
