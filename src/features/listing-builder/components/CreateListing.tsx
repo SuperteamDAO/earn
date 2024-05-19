@@ -151,7 +151,7 @@ export function CreateListing({
           order: e.order,
           link: e.link,
         })),
-        isPrivate: listing?.isPrivate ? listing?.isPrivate : false,
+        isPrivate: listing?.isPrivate,
         skills: listing?.skills,
         description: listing?.description,
         publishedAt: listing?.publishedAt || undefined,

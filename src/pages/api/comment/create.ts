@@ -106,6 +106,7 @@ async function comment(req: NextApiRequestWithUser, res: NextApiResponse) {
       !replyToId
     ) {
       if (listingType === 'BOUNTY') {
+        console.log({ pocId: pocId });
         await sendEmailNotification({
           type: 'commentSponsor',
           id: listingId,

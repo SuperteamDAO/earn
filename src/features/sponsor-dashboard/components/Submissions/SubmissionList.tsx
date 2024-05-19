@@ -2,7 +2,6 @@ import { SearchIcon } from '@chakra-ui/icons';
 import {
   Box,
   Flex,
-  Image,
   Input,
   InputGroup,
   InputLeftElement,
@@ -10,7 +9,6 @@ import {
   TagLabel,
   Text,
 } from '@chakra-ui/react';
-import Avatar from 'boring-avatars';
 import debounce from 'lodash.debounce';
 import React, {
   type Dispatch,
@@ -19,6 +17,7 @@ import React, {
   useRef,
 } from 'react';
 
+import { EarnAvatar } from '@/components/shared/EarnAvatar';
 import type { SubmissionWithUser } from '@/interface/submission';
 
 import { colorMap } from '../../utils';
@@ -117,22 +116,10 @@ export const SubmissionList = ({
               }}
             >
               <Flex align="center">
-                {submission?.user?.photo ? (
-                  <Image
-                    boxSize="32px"
-                    borderRadius="full"
-                    objectFit={'cover'}
-                    alt={`${submission?.user?.firstName} ${submission?.user?.lastName}`}
-                    src={submission?.user?.photo}
-                  />
-                ) : (
-                  <Avatar
-                    name={`${submission?.user?.firstName} ${submission?.user?.lastName}`}
-                    colors={['#92A1C6', '#F0AB3D', '#C271B4']}
-                    size={32}
-                    variant="marble"
-                  />
-                )}
+                <EarnAvatar
+                  id={submission?.user?.id}
+                  avatar={submission?.user?.photo || undefined}
+                />
                 <Box w={48} ml={2}>
                   <Text
                     overflow={'hidden'}

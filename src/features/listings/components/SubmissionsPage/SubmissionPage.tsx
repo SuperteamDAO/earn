@@ -9,7 +9,6 @@ import {
   useMediaQuery,
   VStack,
 } from '@chakra-ui/react';
-import type { User } from '@prisma/client';
 import axios from 'axios';
 import { useRouter } from 'next/router';
 import React, { useEffect, useState } from 'react';
@@ -26,7 +25,7 @@ import type { Bounty } from '../../types';
 interface Props {
   bounty: Bounty;
   submission?: SubmissionWithUser;
-  user: User;
+  user: IUser;
   link: string;
 }
 export const SubmissionPage = ({ bounty, submission, user, link }: Props) => {
@@ -57,7 +56,7 @@ export const SubmissionPage = ({ bounty, submission, user, link }: Props) => {
       flexDir={['column', 'column', 'row', 'row']}
       gap={4}
       w="full"
-      maxW={'7xl'}
+      maxW={'8xl'}
       mx={'auto'}
     >
       <VStack gap={3} w={'full'} mt={3}>

@@ -1,9 +1,9 @@
-import { Box, Button, Center, Flex, Image, Text } from '@chakra-ui/react';
+import { Box, Button, Center, Flex, Text } from '@chakra-ui/react';
 import axios from 'axios';
-import Avatar from 'boring-avatars';
 import NextLink from 'next/link';
 import { useEffect, useState } from 'react';
 
+import { EarnAvatar } from '@/components/shared/EarnAvatar';
 import type { SubmissionWithUser } from '@/interface/submission';
 import { sortRank } from '@/utils/rank';
 
@@ -59,7 +59,7 @@ export function ListingWinners({ bounty }: Props) {
   }
 
   return (
-    <Box maxW={'7xl'} mx={'auto'} mt={10}>
+    <Box maxW={'8xl'} mx={'auto'} mt={10}>
       <Text
         mx={3}
         mb={4}
@@ -112,22 +112,11 @@ export function ListingWinners({ bounty }: Props) {
                   >
                     {isProject ? 'Winner' : submission?.winnerPosition}
                   </Text>
-                  {submission?.user?.photo ? (
-                    <Image
-                      boxSize="64px"
-                      borderRadius="full"
-                      objectFit={'cover'}
-                      alt={`${submission?.user?.firstName} ${submission?.user?.lastName}`}
-                      src={submission?.user?.photo}
-                    />
-                  ) : (
-                    <Avatar
-                      name={`${submission?.user?.firstName} ${submission?.user?.lastName}`}
-                      colors={['#92A1C6', '#F0AB3D', '#C271B4']}
-                      size={64}
-                      variant="marble"
-                    />
-                  )}
+                  <EarnAvatar
+                    size="64px"
+                    id={submission?.user?.id}
+                    avatar={submission?.user?.photo as string}
+                  />
                   <Text
                     fontSize={{ base: 'xs', md: 'sm' }}
                     fontWeight={600}

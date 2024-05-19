@@ -1,390 +1,27 @@
-import {
-  Box,
-  Center,
-  Flex,
-  Image,
-  Skeleton,
-  Text,
-  VStack,
-} from '@chakra-ui/react';
-import Avatar from 'boring-avatars';
+import { ArrowForwardIcon } from '@chakra-ui/icons';
+import { Box, Flex, Text } from '@chakra-ui/react';
+import axios from 'axios';
+import dayjs from 'dayjs';
 import NextLink from 'next/link';
-import { useRouter } from 'next/router';
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useState } from 'react';
 
-import { tokenList } from '@/constants';
-import { AuthWrapper } from '@/features/auth';
+import { type Bounty, ListingCardMobile } from '@/features/listings';
 import type { User } from '@/interface/user';
-import { formatNumberWithSuffix } from '@/utils/formatNumberWithSuffix';
-import { getURL } from '@/utils/validUrl';
+import { getURLSanitized } from '@/utils/getURLSanitized';
+import { timeAgoShort } from '@/utils/timeAgo';
+
+import { OgImageViewer } from '../misc/ogImageViewer';
+import { RecentEarners } from './RecentEarners';
+import { TotalStats } from './TotalStats';
+import { VibeCard } from './VibeCard';
 
 interface SideBarProps {
   total: number;
   listings: number;
   earners?: User[];
-  userInfo?: User;
   isTotalLoading: boolean;
+  type: 'home' | 'category' | 'region' | 'niche' | 'feed';
 }
-
-const Step = ({
-  number,
-  isComplete,
-}: {
-  number: number;
-  isComplete: boolean;
-}) => {
-  return (
-    <Center
-      zIndex={'200'}
-      w={'2.375rem'}
-      h={'2.375rem'}
-      color={isComplete ? '#FFFFFF' : '#94A3B8'}
-      bg={isComplete ? '#6366F1' : '#FFFFFF'}
-      border={
-        isComplete ? '0 transparent #6366F100' : '0.0625rem solid #94A3B8'
-      }
-      rounded={'full'}
-    >
-      {isComplete ? (
-        <Image
-          w={'1.25rem'}
-          h={'1.25rem'}
-          alt="New New"
-          src="/assets/icons/white-tick.svg"
-        />
-      ) : (
-        number
-      )}
-    </Center>
-  );
-};
-
-interface GettingStartedProps {
-  userInfo?: User;
-}
-
-const GettingStarted = ({ userInfo }: GettingStartedProps) => {
-  const router = useRouter();
-  return (
-    <Box>
-      <Text mb={'1.5rem'} color={'gray.400'} fontWeight={500}>
-        GETTING STARTED
-      </Text>
-      <Flex h={'12.5rem'}>
-        <VStack pos={'relative'} justifyContent={'space-between'} h={'100%'}>
-          <Step number={1} isComplete={!!userInfo?.id} />
-
-          <Step
-            number={2}
-            isComplete={!!userInfo?.id && !!userInfo?.isTalentFilled}
-          />
-          <Step
-            number={3}
-            isComplete={!!userInfo?.id && !!userInfo.totalEarnedInUSD}
-          />
-          <Flex pos={'absolute'} w={'0.0625rem'} h={'90%'} bg={'#CBD5E1'} />
-        </VStack>
-        <VStack
-          pos={'relative'}
-          alignItems={'flex-start'}
-          justifyContent={'space-between'}
-          h={'100%'}
-        >
-          <Box ml={'0.8125rem'}>
-            <AuthWrapper>
-              <Text
-                as="button"
-                color={!userInfo?.id ? 'black' : 'brand.purple'}
-                fontSize={'md'}
-                fontWeight={500}
-                _hover={{
-                  color: 'brand.purple',
-                }}
-              >
-                Create your account
-              </Text>
-            </AuthWrapper>
-            <Text color={'gray.500'} fontSize={'md'} fontWeight={500}>
-              and get personalized notifications
-            </Text>
-          </Box>
-          <Box ml={'0.8125rem'}>
-            {!userInfo?.id || !userInfo?.isTalentFilled ? (
-              <AuthWrapper>
-                <Text
-                  as="button"
-                  color={'black'}
-                  fontSize={'md'}
-                  fontWeight={500}
-                  _hover={{
-                    color: 'brand.purple',
-                  }}
-                  onClick={() => {
-                    if (userInfo?.id) {
-                      router.push(`/new/talent`);
-                    }
-                  }}
-                >
-                  Complete your profile
-                </Text>
-              </AuthWrapper>
-            ) : (
-              <Text color={'brand.purple'} fontSize={'md'} fontWeight={500}>
-                Complete your profile
-              </Text>
-            )}
-            <Text color={'gray.500'} fontSize={'md'} fontWeight={500}>
-              and participate on Earn
-            </Text>
-          </Box>
-          <Box ml={'0.8125rem'}>
-            {!userInfo?.id || !userInfo.totalEarnedInUSD ? (
-              <AuthWrapper>
-                <Text
-                  as="button"
-                  color={'black'}
-                  fontSize={'md'}
-                  fontWeight={500}
-                  _hover={{
-                    color: 'brand.purple',
-                  }}
-                  onClick={() => {
-                    if (userInfo?.id) {
-                      router.push('/all');
-                    }
-                  }}
-                >
-                  Win a bounty or project
-                </Text>
-              </AuthWrapper>
-            ) : (
-              <Text color={'brand.purple'} fontSize={'md'} fontWeight={500}>
-                Win a bounty or project
-              </Text>
-            )}
-            <Text color={'gray.500'} fontSize={'md'} fontWeight={500}>
-              and build proof-of-work
-            </Text>
-          </Box>
-        </VStack>
-      </Flex>
-    </Box>
-  );
-};
-
-const TotalStats = ({
-  bountyCount,
-  TVE,
-  isTotalLoading,
-}: {
-  bountyCount: number;
-  TVE: number;
-  isTotalLoading: boolean;
-}) => {
-  return (
-    <Flex
-      align={'center'}
-      justify={'space-between'}
-      h={'69'}
-      px={'0.5rem'}
-      bg={'#F8FAFC'}
-      rounded={'md'}
-    >
-      <Flex>
-        <Image
-          h={'1.5625rem'}
-          mr={'0.5rem'}
-          mb={'auto'}
-          alt=""
-          src="/assets/icons/lite-purple-dollar.svg"
-        />
-        <Box>
-          {isTotalLoading ? (
-            <Skeleton w="54px" h="14px" />
-          ) : (
-            <Text color={'black'} fontSize={'sm'} fontWeight={'600'}>
-              ${TVE.toLocaleString()}
-            </Text>
-          )}
-          <Text color={'gray.500'} fontSize={'xs'} fontWeight={'400'}>
-            Total Value Earned
-          </Text>
-        </Box>
-      </Flex>
-      <Box w={'0.0625rem'} h={'50%'} bg={'#CBD5E1'}></Box>
-      <Flex>
-        <Image
-          h={'25x'}
-          mr={'0.5rem'}
-          mb={'auto'}
-          alt="suitcase"
-          src="/assets/icons/lite-purple-suitcase.svg"
-        />
-        <Box>
-          {isTotalLoading ? (
-            <Skeleton w="32px" h="14px" />
-          ) : (
-            <Text color={'black'} fontSize={'sm'} fontWeight={'600'}>
-              {bountyCount}
-            </Text>
-          )}
-          <Text color={'gray.500'} fontSize={'xs'} fontWeight={'400'}>
-            Opportunities Listed
-          </Text>
-        </Box>
-      </Flex>
-    </Flex>
-  );
-};
-
-interface EarnerProps {
-  name: string;
-  avatar?: string;
-  amount: number;
-  bounty?: string;
-  token?: string;
-  username: string;
-}
-const Earner = ({
-  amount,
-  name,
-  avatar,
-  bounty,
-  token,
-  username,
-}: EarnerProps) => {
-  const tokenObj = tokenList.find((t) => t.tokenSymbol === token);
-  const tokenIcon = tokenObj
-    ? tokenObj.icon
-    : '/assets/landingsponsor/icons/usdc.svg';
-  return (
-    <NextLink href={`${getURL()}t/${username}`}>
-      <Flex align={'center'} w={'100%'} my={4}>
-        {avatar ? (
-          <Image
-            boxSize="32px"
-            mr={'1.0625rem'}
-            alt=""
-            rounded={'full'}
-            src={avatar.replace(
-              '/upload/',
-              '/upload/c_scale,w_64,h_64,f_auto/',
-            )}
-          />
-        ) : (
-          <Center mr={'1.0625rem'}>
-            <Avatar
-              size="32px"
-              name={name}
-              variant="marble"
-              colors={['#da4c65', '#5e25c2', '#d433ab', '#2e53af', '#ceea94']}
-            />
-          </Center>
-        )}
-
-        <Box w="11rem">
-          <Text
-            overflow="hidden"
-            color={'black'}
-            fontSize={'sm'}
-            fontWeight={500}
-            whiteSpace={'nowrap'}
-            textOverflow={'ellipsis'}
-          >
-            {name}
-          </Text>
-          <Text
-            overflow={'hidden'}
-            color={'gray.400'}
-            fontSize={'xs'}
-            fontWeight={500}
-            whiteSpace={'nowrap'}
-            textOverflow={'ellipsis'}
-          >
-            {bounty}
-          </Text>
-        </Box>
-        <Flex align={'center'} columnGap={1} ml={'auto'}>
-          <Image
-            w={5}
-            h={5}
-            alt={`${token} icon`}
-            rounded={'full'}
-            src={tokenIcon}
-          />
-          <Text color={'gray.600'} fontSize={'sm'} fontWeight={500}>
-            {formatNumberWithSuffix(amount)}
-          </Text>
-          <Text color={'gray.400'} fontSize={'sm'} fontWeight={500}>
-            {token}
-          </Text>
-        </Flex>
-      </Flex>
-    </NextLink>
-  );
-};
-
-const RecentEarners = ({ earners }: { earners?: User[] }) => {
-  const marqueeRef = useRef<HTMLDivElement>(null);
-  const animationFrameRef = useRef<number | null>(null);
-  const [isPaused, setIsPaused] = useState(false);
-
-  const multipliedEarners = earners ? [...earners, ...earners, ...earners] : [];
-
-  const animate = () => {
-    const marquee = marqueeRef.current;
-    if (marquee && !isPaused) {
-      if (marquee.scrollHeight - marquee.scrollTop <= marquee.clientHeight) {
-        marquee.scrollTop -= marquee.scrollHeight / 3;
-      } else {
-        marquee.scrollTop += 1;
-      }
-    }
-    animationFrameRef.current = requestAnimationFrame(animate);
-  };
-
-  useEffect(() => {
-    animationFrameRef.current = requestAnimationFrame(animate);
-
-    return () => {
-      if (animationFrameRef.current) {
-        cancelAnimationFrame(animationFrameRef.current);
-      }
-    };
-  }, [isPaused]);
-
-  const handleMouseEnter = () => setIsPaused(true);
-  const handleMouseLeave = () => setIsPaused(false);
-
-  return (
-    <Box>
-      <Text mb={4} color={'gray.400'} fontWeight={500}>
-        RECENT EARNERS
-      </Text>
-      <VStack>
-        <Box
-          ref={marqueeRef}
-          overflowY="hidden"
-          h="300px"
-          onMouseEnter={handleMouseEnter}
-          onMouseLeave={handleMouseLeave}
-        >
-          {multipliedEarners.map((t: any, index: number) => (
-            <Earner
-              amount={t.reward ?? 0}
-              token={t.rewardToken}
-              name={`${t.firstName} ${t.lastName}`}
-              username={t.username}
-              avatar={t.photo}
-              key={`${t.id}-${index}`}
-              bounty={t.title ?? ''}
-            />
-          ))}
-        </Box>
-      </VStack>
-    </Box>
-  );
-};
 
 // const SidebarBanner = () => {
 //   return (
@@ -446,23 +83,234 @@ const RecentEarners = ({ earners }: { earners?: User[] }) => {
 //   );
 // };
 
+const RecentActivity = () => {
+  const [activity, setActivity] = useState<any[]>([]);
+  useEffect(() => {
+    const fetchRecentActivity = async () => {
+      try {
+        const res = await axios.get(`/api/feed/get`, {
+          params: {
+            take: 5,
+          },
+        });
+
+        if (res) {
+          setActivity(res.data);
+        }
+      } catch (err) {
+        console.log(err);
+      }
+    };
+    fetchRecentActivity();
+  }, []);
+
+  interface ActivityCardProps {
+    firstName: string;
+    lastName: string;
+    username: string;
+    createdAt: string;
+    link: string;
+    listingType: 'bounty' | 'hackathon' | 'project';
+    isWinner: boolean;
+    isWinnersAnnounced: boolean;
+    type: string;
+  }
+
+  const ActivityCard = ({
+    firstName,
+    lastName,
+    username,
+    createdAt,
+    link,
+    listingType,
+    isWinner,
+    isWinnersAnnounced,
+    type,
+  }: ActivityCardProps) => {
+    const getActionText = () => {
+      const defaultActionText = {
+        bounty: 'just submitted a bounty',
+        hackathon: 'just submitted to a hackathon',
+        project: 'just applied to a project',
+      };
+
+      const winnerActionText = {
+        bounty: 'just won a bounty',
+        hackathon: 'just won a hackathon track',
+        project: 'just got selected for a project',
+      };
+
+      if (type === 'PoW') {
+        return 'just added a personal project';
+      } else if (isWinner && isWinnersAnnounced) {
+        return winnerActionText[listingType] || 'just achieved something great';
+      } else {
+        return defaultActionText[listingType] || 'just took an action';
+      }
+    };
+
+    const actionText = getActionText();
+    const sanitizedLink = getURLSanitized(link);
+
+    return (
+      <Flex as={NextLink} href={sanitizedLink || ''}>
+        <OgImageViewer h={12} w={20} objectFit={'cover'} externalUrl={link} />
+        <Box ml={3}>
+          <Flex align={'center'}>
+            <Text
+              overflow={'hidden'}
+              maxW={36}
+              mr={1.5}
+              color={'brand.slate.800'}
+              fontSize={'0.9rem'}
+              fontWeight={600}
+              whiteSpace={'nowrap'}
+              textOverflow={'ellipsis'}
+            >
+              {firstName} {lastName}
+            </Text>
+            <Text
+              overflow={'hidden'}
+              maxW={'5.7rem'}
+              color={'brand.slate.400'}
+              fontSize={'sm'}
+              fontWeight={500}
+              whiteSpace={'nowrap'}
+              textOverflow={'ellipsis'}
+            >
+              @{username}
+            </Text>
+            <Text mx={1} color="brand.slate.400" fontSize={'xs'}>
+              •
+            </Text>
+            <Text color={'brand.slate.400'} fontSize={'xs'}>
+              {timeAgoShort(createdAt)}
+            </Text>
+          </Flex>
+          <Text color={'brand.slate.600'} fontSize={'sm'} fontWeight={500}>
+            {actionText}
+          </Text>
+        </Box>
+      </Flex>
+    );
+  };
+  return (
+    <Box>
+      <Flex align="center" justify={'space-between'}>
+        <Text color={'gray.400'} fontSize={'sm'} fontWeight={500}>
+          RECENT ACTIVITY
+        </Text>
+        <Text
+          as={NextLink}
+          color="brand.purple"
+          fontSize="xs"
+          fontWeight={600}
+          href="/feed"
+        >
+          View All
+          <ArrowForwardIcon ml={1} />
+        </Text>
+      </Flex>
+      <Flex direction={'column'} rowGap={'1rem'} w={'full'} mt={4}>
+        {activity.map((act, i) => {
+          return (
+            <ActivityCard
+              key={i}
+              link={act.link}
+              firstName={act.firstName}
+              lastName={act.lastName}
+              username={act.username}
+              createdAt={act.createdAt}
+              listingType={act.listingType}
+              isWinner={act.isWinner}
+              isWinnersAnnounced={act.isWinnersAnnounced}
+              type={act.type}
+            />
+          );
+        })}
+      </Flex>
+    </Box>
+  );
+};
+
+const LiveListings = () => {
+  const [listings, setListings] = useState<{ bounties: Bounty[] }>({
+    bounties: [],
+  });
+  const getListings = async () => {
+    try {
+      const listingData = await axios.get('/api/listings/', {
+        params: {
+          category: 'bounties',
+          take: 5,
+          isHomePage: true,
+          deadline: dayjs().add(1, 'day').toISOString(),
+          order: 'asc',
+        },
+      });
+
+      setListings(listingData.data);
+    } catch (e) {
+      console.log(e);
+    }
+  };
+
+  useEffect(() => {
+    getListings();
+  }, []);
+  return (
+    <Box>
+      <Flex align="center" justify={'space-between'}>
+        <Text color={'gray.400'} fontSize={'sm'} fontWeight={500}>
+          LIVE LISTINGS
+        </Text>
+        <Text
+          as={NextLink}
+          color="brand.purple"
+          fontSize="xs"
+          fontWeight={600}
+          href="/"
+        >
+          View All
+          <ArrowForwardIcon ml={1} />
+        </Text>
+      </Flex>
+      <Flex direction={'column'} w={'full'} mt={1}>
+        {listings?.bounties?.map((listing) => {
+          return <ListingCardMobile bounty={listing} key={listing?.id} />;
+        })}
+      </Flex>
+    </Box>
+  );
+};
+
 export const HomeSideBar = ({
-  userInfo,
+  type,
   listings,
   total,
   earners,
   isTotalLoading,
 }: SideBarProps) => {
   return (
-    <Flex direction={'column'} rowGap={'2.5rem'} w={'22.125rem'} pl={6}>
-      <GettingStarted userInfo={userInfo} />
-      <TotalStats
-        isTotalLoading={isTotalLoading}
-        bountyCount={listings}
-        TVE={total}
-      />
-      {/* <SidebarBanner /> */}
+    <Flex direction={'column'} rowGap={'2.5rem'} w={'24rem'} py={6} pl={6}>
+      {type === 'feed' && (
+        <>
+          <VibeCard />
+          <LiveListings />
+        </>
+      )}
       <RecentEarners earners={earners} />
+      {type !== 'feed' && (
+        <>
+          <TotalStats
+            isTotalLoading={isTotalLoading}
+            bountyCount={listings}
+            TVE={total}
+          />
+          <RecentActivity />
+        </>
+      )}
+      {/* <SidebarBanner /> */}
     </Flex>
   );
 };

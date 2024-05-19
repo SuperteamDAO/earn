@@ -156,6 +156,13 @@ export const MobileNavbar = ({ onLoginOpen, onSearchOpen }: Props) => {
                 );
               })}
             </Flex>
+            <Divider my={2} borderColor={'brand.slate.300'} />
+            <NavLink href={'/feed'} label={'Activity Feed'} isActive={false} />
+            <NavLink
+              href={'/leaderboard'}
+              label={'Leaderboard'}
+              isActive={false}
+            />
           </DrawerBody>
         </DrawerContent>
       </Drawer>
