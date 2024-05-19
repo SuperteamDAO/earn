@@ -21,18 +21,6 @@ export default async function handler(
       });
     }
 
-    const powItems = await prisma.poW.findMany({
-      select: { id: true, like: true },
-    });
-
-    for (const pow of powItems) {
-      const likeCount = Array.isArray(pow.like) ? pow.like.length : 0;
-      await prisma.poW.update({
-        where: { id: pow.id },
-        data: { likeCount },
-      });
-    }
-
     res.status(200).json({ message: 'Like counts synchronized successfully' });
   } catch (error) {
     console.error(error);

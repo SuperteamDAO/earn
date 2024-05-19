@@ -134,10 +134,7 @@ export const SubmissionCard = ({
       )}
       <Link as={NextLink} href={`/t/${talent?.username}`}>
         <HStack mb={2}>
-          <EarnAvatar
-            id={`${talent?.id}`}
-            avatar={talent?.photo || undefined}
-          />
+          <EarnAvatar id={talent?.id} avatar={talent?.photo || undefined} />
           <Text
             overflow={'hidden'}
             w="80%"

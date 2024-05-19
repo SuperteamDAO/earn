@@ -220,7 +220,7 @@ export const Comment = ({
         >
           <EarnAvatar
             size={isReply ? '28px' : '36px'}
-            id={`${comment?.author?.id}`}
+            id={comment?.author?.id}
             avatar={comment?.author?.photo}
           />
         </Link>
@@ -356,7 +356,7 @@ export const Comment = ({
               <Flex gap={3} w="full">
                 <EarnAvatar
                   size={'28px'}
-                  id={`${userInfo?.id}`}
+                  id={userInfo?.id}
                   avatar={userInfo?.photo}
                 />
                 <UserSuggestionTextarea

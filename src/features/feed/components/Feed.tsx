@@ -68,27 +68,29 @@ export const Feed = ({ isWinner = false }: { isWinner?: boolean }) => {
     setIsLoading(false);
   };
 
-  useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const res = await axios.get(`/api/feed/get`, {
-          params: {
-            filter: activeMenu === 'Popular' ? 'popular' : undefined,
-            timePeriod:
-              activeMenu === 'Popular' ? timePeriod.toLowerCase() : undefined,
-            isWinner,
-          },
-        });
+  const fetchData = async () => {
+    setIsLoading(true);
+    try {
+      const res = await axios.get(`/api/feed/get`, {
+        params: {
+          filter: activeMenu === 'Popular' ? 'popular' : undefined,
+          timePeriod:
+            activeMenu === 'Popular' ? timePeriod.toLowerCase() : undefined,
+          isWinner,
+        },
+      });
 
-        if (res) {
-          setData(res.data);
-          setIsLoading(false);
-        }
-      } catch (err) {
-        console.log(err);
+      if (res) {
+        setData(res.data);
         setIsLoading(false);
       }
-    };
+    } catch (err) {
+      console.log(err);
+      setIsLoading(false);
+    }
+  };
+
+  useEffect(() => {
     fetchData();
   }, [activeMenu, timePeriod, isWinner]);
 
@@ -114,26 +116,17 @@ export const Feed = ({ isWinner = false }: { isWinner?: boolean }) => {
   };
 
   const MenuOption = ({ option }: { option: 'New' | 'Popular' }) => {
-    const onClick = () => {
-      setActiveMenu(option);
-      setIsLoading(true);
-    };
     return (
       <Text
         color={activeMenu === option ? 'brand.slate.700' : 'brand.slate.500'}
         fontSize={{ base: '15px', lg: 'md' }}
         fontWeight={activeMenu === option ? 600 : 400}
         cursor="pointer"
-        onClick={onClick}
+        onClick={() => setActiveMenu(option)}
       >
         {option}
       </Text>
     );
-  };
-
-  const onTimePeriodChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
-    setTimePeriod(e.target.value);
-    setIsLoading(true);
   };
 
   return (
@@ -205,14 +198,14 @@ export const Feed = ({ isWinner = false }: { isWinner?: boolean }) => {
                       w={28}
                       color={'brand.slate.500'}
                       textAlign={'right'}
-                      onChange={onTimePeriodChange}
+                      onChange={(e) => setTimePeriod(e.target.value)}
                       size={'sm'}
                       value={timePeriod}
                       variant={'unstyled'}
                     >
-                      <option>Today</option>
                       <option>This Week</option>
                       <option>This Month</option>
+                      <option>This Year</option>
                     </Select>
                   )}
                 </Flex>
@@ -223,11 +216,11 @@ export const Feed = ({ isWinner = false }: { isWinner?: boolean }) => {
                 ? Array.from({ length: 5 }).map((_, index) => (
                     <FeedCardContainerSkeleton key={index} />
                   ))
-                : data?.map((item) => {
+                : data?.map((item, i) => {
                     if (item.type === 'Submission') {
                       return (
                         <SubmissionCard
-                          key={item.id}
+                          key={i}
                           sub={item as any}
                           type="activity"
                         />
@@ -235,11 +228,7 @@ export const Feed = ({ isWinner = false }: { isWinner?: boolean }) => {
                     }
                     if (item.type === 'PoW') {
                       return (
-                        <PowCard
-                          key={item.id}
-                          pow={item as any}
-                          type="activity"
-                        />
+                        <PowCard key={i} pow={item as any} type="activity" />
                       );
                     }
                     return null;

@@ -123,7 +123,7 @@ export const Suggestions = ({ defaultSuggestions, input, onSelect }: Props) => {
           >
             <EarnAvatar
               size={'28px'}
-              id={`${suggestion?.id}`}
+              id={suggestion?.id}
               avatar={suggestion?.photo}
             />
             <VStack align="start" gap={0}>

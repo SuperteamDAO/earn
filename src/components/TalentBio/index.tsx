@@ -109,11 +109,7 @@ export function TalentBio({
     >
       <Flex align={'center'} justify="space-between">
         <Flex align={'center'} h={'fit-content'}>
-          <EarnAvatar
-            size="64px"
-            id={`${user?.id}`}
-            avatar={user?.photo as string}
-          />
+          <EarnAvatar size="64px" id={user.id} avatar={user?.photo as string} />
           <Box ml={'12px'}>
             <Text
               color={'rgb(71,86,104)'}

@@ -72,7 +72,7 @@ export function Banner({ isHackathonRoute }: { isHackathonRoute?: boolean }) {
           <Flex align="center" gap={3}>
             <EarnAvatar
               size="52px"
-              id={sponsor?.name as string}
+              id={sponsor?.name}
               avatar={sponsor?.logo}
               borderRadius="6"
             />

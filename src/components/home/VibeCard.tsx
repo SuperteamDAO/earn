@@ -4,6 +4,7 @@ import { useEffect, useRef, useState } from 'react';
 import Fireworks from 'react-canvas-confetti/dist/presets/fireworks';
 import { type TConductorInstance } from 'react-canvas-confetti/dist/types';
 
+import { AuthWrapper } from '@/features/auth';
 import { userStore } from '@/store/user';
 
 import { EarnAvatar } from '../shared/EarnAvatar';
@@ -44,19 +45,19 @@ export const VibeCard = () => {
   const dummyUsers = [
     {
       id: '1',
-      photo: '/assets/fallback/avatar.png',
+      photo: 'https://beta.earn.superteam.fun/assets/fallback/avatar.png',
     },
     {
       id: '2',
-      photo: '/assets/fallback/avatar.png',
+      photo: 'https://beta.earn.superteam.fun/assets/fallback/avatar.png',
     },
     {
       id: '3',
-      photo: '/assets/fallback/avatar.png',
+      photo: 'https://beta.earn.superteam.fun/assets/fallback/avatar.png',
     },
     {
       id: '4',
-      photo: '/assets/fallback/avatar.png',
+      photo: 'https://beta.earn.superteam.fun/assets/fallback/avatar.png',
     },
   ];
 
@@ -138,19 +139,21 @@ export const VibeCard = () => {
         </Flex>
       </Flex>
       <Divider mx={4} orientation="vertical" />
-      <Button
-        maxW={40}
-        px={10}
-        color="brand.slate.500"
-        fontSize="sm"
-        fontWeight={500}
-        bg="white"
-        borderColor={'brand.slate.200'}
-        onClick={handleVibeClick}
-        variant={'outline'}
-      >
-        click to vibeeeee
-      </Button>
+      <AuthWrapper>
+        <Button
+          maxW={40}
+          px={10}
+          color="brand.slate.500"
+          fontSize="sm"
+          fontWeight={500}
+          bg="white"
+          borderColor={'brand.slate.200'}
+          onClick={handleVibeClick}
+          variant={'outline'}
+        >
+          click to vibeeeee
+        </Button>
+      </AuthWrapper>
       <Fireworks onInit={onInit} />
     </Flex>
   );

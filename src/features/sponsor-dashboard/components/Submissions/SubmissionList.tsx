@@ -117,8 +117,8 @@ export const SubmissionList = ({
             >
               <Flex align="center">
                 <EarnAvatar
-                  id={`${submission?.user?.id}`}
-                  avatar={selectedSubmission?.user?.photo || undefined}
+                  id={submission?.user?.id}
+                  avatar={submission?.user?.photo || undefined}
                 />
                 <Box w={48} ml={2}>
                   <Text

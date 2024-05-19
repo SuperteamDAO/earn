@@ -103,7 +103,7 @@ export function UserMenu({}) {
           }
         >
           <Flex align="center">
-            <EarnAvatar id={`${userInfo?.id}`} avatar={userInfo?.photo} />
+            <EarnAvatar id={userInfo?.id} avatar={userInfo?.photo} />
             {showBlueCircle && (
               <Circle
                 display={{ base: 'flex', md: 'none' }}

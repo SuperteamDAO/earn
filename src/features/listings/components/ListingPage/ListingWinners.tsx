@@ -114,7 +114,7 @@ export function ListingWinners({ bounty }: Props) {
                   </Text>
                   <EarnAvatar
                     size="64px"
-                    id={`${submission?.user?.id}`}
+                    id={submission?.user?.id}
                     avatar={submission?.user?.photo as string}
                   />
                   <Text

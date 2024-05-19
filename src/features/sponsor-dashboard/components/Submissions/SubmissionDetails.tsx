@@ -330,7 +330,7 @@ export const SubmissionDetails = ({
               <Flex align="center" gap={2} w="full">
                 <EarnAvatar
                   size="40px"
-                  id={`${selectedSubmission?.user?.id}`}
+                  id={selectedSubmission?.user?.id}
                   avatar={selectedSubmission?.user?.photo || undefined}
                 />
                 <Box>

@@ -25,14 +25,14 @@ export default async function handler(
     const endDate: Date = new Date();
 
     switch (timePeriod) {
-      case 'today':
-        startDate = dayjs().subtract(24, 'hour').toDate();
-        break;
       case 'this week':
         startDate = dayjs().subtract(7, 'day').toDate();
         break;
       case 'this month':
         startDate = dayjs().subtract(30, 'day').toDate();
+        break;
+      case 'this year':
+        startDate = dayjs().subtract(365, 'day').toDate();
         break;
       default:
         startDate = dayjs().subtract(30, 'day').toDate();
@@ -93,7 +93,7 @@ export default async function handler(
         username: string | null;
       };
     })[] = [];
-    if (!isWinner) {
+    if (isWinner !== 'true') {
       pow = await prisma.poW.findMany({
         where: {
           createdAt: {
@@ -163,6 +163,17 @@ export default async function handler(
         likeCount: pow.likeCount,
       })),
     ];
+
+    results.sort((a, b) => {
+      if (filter === 'popular') {
+        if (a.likeCount === b.likeCount) {
+          return b.createdAt.getTime() - a.createdAt.getTime();
+        }
+        return b.likeCount - a.likeCount;
+      } else {
+        return b.createdAt.getTime() - a.createdAt.getTime();
+      }
+    });
 
     res.status(200).json(results);
   } catch (error: any) {

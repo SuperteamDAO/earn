@@ -103,7 +103,7 @@ export const FeedCardContainer = ({
     >
       <Flex gap={3}>
         <EarnAvatar
-          id={`${userId}`}
+          id={userId}
           avatar={photo}
           size={isSM ? '44px' : '32px'}
           onClick={() => router.push(`/t/${username}`)}
