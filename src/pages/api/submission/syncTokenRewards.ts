@@ -38,6 +38,7 @@ export default async function handler(_: NextApiRequest, res: NextApiResponse) {
         listing: {
           select: {
             createdAt: true,
+            publishedAt: true,
             token: true,
             rewards: true,
             isWinnersAnnounced: true,
@@ -75,7 +76,11 @@ export default async function handler(_: NextApiRequest, res: NextApiResponse) {
                   );
 
                   if (livecoinwatchSymbol?.livecoinwatchSymbol) {
-                    const startOfCreatedAt = dayjs(item.listing.createdAt)
+                    const referenceDate = item.listing.publishedAt
+                      ? item.listing.publishedAt
+                      : item.listing.createdAt;
+
+                    const startOfReferenceDate = dayjs(referenceDate)
                       .startOf('day')
                       .valueOf();
 
@@ -85,8 +90,8 @@ export default async function handler(_: NextApiRequest, res: NextApiResponse) {
                         {
                           currency: 'USD',
                           code: livecoinwatchSymbol.livecoinwatchSymbol,
-                          start: startOfCreatedAt,
-                          end: startOfCreatedAt,
+                          start: startOfReferenceDate,
+                          end: startOfReferenceDate,
                         },
                         {
                           headers: {
@@ -139,6 +144,7 @@ export default async function handler(_: NextApiRequest, res: NextApiResponse) {
           listing: {
             select: {
               createdAt: true,
+              publishedAt: true,
               token: true,
               rewards: true,
               isWinnersAnnounced: true,

@@ -48,7 +48,7 @@ model Bounties {
   eligibility          Json?
   status               status             @default(OPEN)
   token                String?
-  rewardAmount         Int?
+  rewardAmount         Float?
   rewards              Json?
   sponsorId            String
   pocId                String
@@ -112,7 +112,7 @@ model BountiesTemplates {
   deadline            DateTime?
   eligibility         Json?
   token               String?
-  rewardAmount        Int?
+  rewardAmount        Float?
   rewards             Json?
   color               String?
   emoji               String?
@@ -147,6 +147,7 @@ model Comment {
 
   @@index([id, listingId])
   @@index([authorId])
+  @@index([replyToId])
 }
 
 model Grants {
