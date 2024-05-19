@@ -85,6 +85,25 @@ body {
   all: revert !important;
 }
 
+#reset-des {
+  word-wrap: break-word;
+  overflow-wrap: break-word;
+}
+
+#reset-des code {
+  white-space: pre-wrap;
+  word-break: break-all;
+}
+
+#reset-des pre {
+  white-space: pre-wrap;
+  word-break: break-all; 
+}
+
+#reset-des p {
+  white-space: pre-wrap; 
+}
+
 code {
   background-color: rgba(#616161, 0.1);
   color: #616161;

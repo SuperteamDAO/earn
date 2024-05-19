@@ -44,7 +44,7 @@ interface QuestionCardProps {
 const QuestionCard = ({ register, index, remove }: QuestionCardProps) => {
   return (
     <VStack align={'start'} w={'full'}>
-      <FormControl>
+      <FormControl isRequired>
         <ListingFormLabel>Question {index + 1}</ListingFormLabel>
         <Flex gap="4">
           <Input
