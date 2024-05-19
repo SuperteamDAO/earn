@@ -31,4 +31,5 @@ export interface FeedDataProps {
   sponsorLogo: string;
   type: string;
   userId: string;
+  likeCount: number;
 }

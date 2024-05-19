@@ -3,7 +3,8 @@ import React from 'react';
 
 import { OgImageViewer } from '@/components/misc/ogImageViewer';
 
-import { FeedCardContainer, FeedCardLink } from './FeedCardContainer';
+import { FeedCardContainer } from './FeedCardContainer';
+import { FeedCardLink } from './FeedCardLink';
 
 interface PowCardProps {
   pow: {
@@ -18,6 +19,7 @@ interface PowCardProps {
     id: string;
     like: any;
     userId: string;
+    likeCount: number;
   };
   type: 'profile' | 'activity';
 }

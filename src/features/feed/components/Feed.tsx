@@ -15,8 +15,8 @@ import { HomeIcon, LeaderboardIcon, WinnersIcon } from './icons';
 
 export const Feed = ({ isWinner = false }: { isWinner?: boolean }) => {
   const [data, setData] = useState<FeedDataProps[]>([]);
-  const [activeMenu, setActiveMenu] = useState('New');
-  const [timePeriod, setTimePeriod] = useState('Today');
+  const [activeMenu, setActiveMenu] = useState('Popular');
+  const [timePeriod, setTimePeriod] = useState('This Month');
 
   const [isLoading, setIsLoading] = useState<boolean>(true);
 
@@ -58,11 +58,7 @@ export const Feed = ({ isWinner = false }: { isWinner?: boolean }) => {
       if (res.data.length === 0) {
         window.scrollTo(0, currentScrollPosition);
       } else {
-        const moreData = JSON.parse(res.data, (_key, value) => {
-          return value;
-        });
-
-        setData((data) => [...data, ...moreData]);
+        setData((data) => [...data, ...res.data]);
       }
 
       setIsLoading(false);
@@ -85,11 +81,7 @@ export const Feed = ({ isWinner = false }: { isWinner?: boolean }) => {
         });
 
         if (res) {
-          setData(
-            JSON.parse(res.data, (_key, value) => {
-              return value;
-            }),
-          );
+          setData(res.data);
           setIsLoading(false);
         }
       } catch (err) {
@@ -121,17 +113,28 @@ export const Feed = ({ isWinner = false }: { isWinner?: boolean }) => {
     );
   };
 
-  const MenuOption = ({ option }: { option: 'New' | 'Popular' }) => (
-    <Text
-      color={activeMenu === option ? 'brand.slate.700' : 'brand.slate.500'}
-      fontSize={{ base: '15px', lg: 'md' }}
-      fontWeight={activeMenu === option ? 600 : 400}
-      cursor="pointer"
-      onClick={() => setActiveMenu(option)}
-    >
-      {option}
-    </Text>
-  );
+  const MenuOption = ({ option }: { option: 'New' | 'Popular' }) => {
+    const onClick = () => {
+      setActiveMenu(option);
+      setIsLoading(true);
+    };
+    return (
+      <Text
+        color={activeMenu === option ? 'brand.slate.700' : 'brand.slate.500'}
+        fontSize={{ base: '15px', lg: 'md' }}
+        fontWeight={activeMenu === option ? 600 : 400}
+        cursor="pointer"
+        onClick={onClick}
+      >
+        {option}
+      </Text>
+    );
+  };
+
+  const onTimePeriodChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
+    setTimePeriod(e.target.value);
+    setIsLoading(true);
+  };
 
   return (
     <Home type="feed">
@@ -185,7 +188,7 @@ export const Feed = ({ isWinner = false }: { isWinner?: boolean }) => {
                   color="brand.slate.600"
                   fontSize={{ base: 'sm', lg: 'md' }}
                 >
-                  Find and discover the best work on Earn
+                  Discover the best work on Earn
                 </Text>
                 <Flex
                   align="center"
@@ -202,7 +205,7 @@ export const Feed = ({ isWinner = false }: { isWinner?: boolean }) => {
                       w={28}
                       color={'brand.slate.500'}
                       textAlign={'right'}
-                      onChange={(e) => setTimePeriod(e.target.value)}
+                      onChange={onTimePeriodChange}
                       size={'sm'}
                       value={timePeriod}
                       variant={'unstyled'}

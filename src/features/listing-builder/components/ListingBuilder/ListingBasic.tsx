@@ -184,7 +184,7 @@ export const ListingBasic = ({
         applicationType: form?.applicationType || 'fixed',
         timeToComplete: form?.timeToComplete,
         referredBy: form?.referredBy,
-        isPrivate: form?.isPrivate ? form?.isPrivate : false,
+        isPrivate: form?.isPrivate,
       });
     }
   }, [form]);
@@ -192,6 +192,7 @@ export const ListingBasic = ({
   const title = watch('title');
   const slug = watch('slug');
   const applicationType = watch('applicationType');
+  const isPrivate = watch('isPrivate');
 
   const handleDeadlineSelection = (days: number) => {
     const deadlineDate = dayjs().add(days, 'day').format('YYYY-MM-DDTHH:mm');
@@ -595,7 +596,12 @@ export const ListingBasic = ({
               </ListingFormLabel>
               <ListingTooltip label="Private listings are only accessible through direct links and do not appear on the Superteam Earn homepage or other public pages on the website." />
             </Flex>
-            <Switch mb={2} id="email-alerts" {...register('isPrivate')} />
+            <Switch
+              mb={2}
+              id="email-alerts"
+              {...register('isPrivate')}
+              isChecked={isPrivate}
+            />
           </FormControl>
           <VStack gap={4} w={'full'} mt={6}>
             <Button w="100%" type="submit" variant="solid">

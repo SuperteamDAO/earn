@@ -95,11 +95,7 @@ const RecentActivity = () => {
         });
 
         if (res) {
-          setActivity(
-            JSON.parse(res.data, (_key, value) => {
-              return value;
-            }),
-          );
+          setActivity(res.data);
         }
       } catch (err) {
         console.log(err);
