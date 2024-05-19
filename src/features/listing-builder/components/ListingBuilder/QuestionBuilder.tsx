@@ -51,9 +51,11 @@ const QuestionCard = ({ register, index, remove }: QuestionCardProps) => {
             {...register(`eligibility.${index}.question`)}
             placeholder="Enter your question here"
           />
-          <Button colorScheme="red" onClick={() => remove(index)}>
-            <DeleteIcon />
-          </Button>
+          {index > 0 && (
+            <Button colorScheme="red" onClick={() => remove(index)}>
+              <DeleteIcon />
+            </Button>
+          )}
         </Flex>
       </FormControl>
     </VStack>
@@ -71,18 +73,20 @@ export const QuestionBuilder = ({
   const { form, updateState } = useListingFormStore();
   const { control, handleSubmit, register, reset } = useForm({
     defaultValues: {
-      eligibility: form?.eligibility,
+      eligibility: form?.eligibility?.length
+        ? form.eligibility
+        : [{ order: 1, question: '', type: 'text', label: '', options: [] }],
     },
   });
 
   useEffect(() => {
     if (editable) {
       reset({
-        eligibility: (form?.eligibility || [])?.map((e) => ({
+        eligibility: (form?.eligibility || []).map((e, index) => ({
           order: e.order,
           question: e.question,
           type: e.type as 'text',
-          delete: true,
+          delete: index > 0,
           label: e.question,
         })),
       });
@@ -140,6 +144,7 @@ export const QuestionBuilder = ({
         <Button
           w={'full'}
           h={12}
+          mt={4}
           color={'#64758B'}
           bg={'#F1F5F9'}
           onClick={() =>
