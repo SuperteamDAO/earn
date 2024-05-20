@@ -47,7 +47,7 @@ export const WinnerFeedImage = ({
           fontSize={{ base: '2xl', md: '5xl' }}
           fontWeight={600}
         >
-          {winnerPosition ? `$${rewards?.[winnerPosition]}` : 'N/A'} {token}
+          {winnerPosition ? `${rewards?.[winnerPosition]}` : 'N/A'} {token}
         </Text>
       </Flex>
       <Text
