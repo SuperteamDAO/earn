@@ -64,6 +64,11 @@ interface Props {
   type: 'bounty' | 'project' | 'hackathon';
   isDuplicating?: boolean;
 }
+interface SearchState {
+  searchTerm: string | null;
+  tokenImage: string | null;
+}
+
 export const ListingPayments = ({
   isListingPublishing,
   createDraft,
@@ -81,9 +86,9 @@ export const ListingPayments = ({
     onClose: confirmOnClose,
   } = useDisclosure();
 
-  const [searchState, setSearchState] = useState({
-    searchTerm: '',
-    tokenImage: '',
+  const [searchState, setSearchState] = useState<SearchState>({
+    searchTerm: null,
+    tokenImage: null,
   });
   const [searchResults, setSearchResults] = useState<Token[]>([]);
   const [isOpen, setIsOpen] = useState(false);
@@ -172,6 +177,16 @@ export const ListingPayments = ({
 
   const validateRewardsData = () => {
     let errorMessage = '';
+
+    if (searchState.searchTerm) {
+      const tokenSym = tokenList.find(
+        (t) =>
+          t.tokenName.toLowerCase() === searchState.searchTerm!.toLowerCase(),
+      );
+      if (!tokenSym) {
+        errorMessage = 'Please select a valid token';
+      }
+    }
 
     if (isProject) {
       if (!compensationType) {
@@ -386,21 +401,87 @@ export const ListingPayments = ({
               </Text>
             </Box>
           )}
-          <FormControl pos="relative" isRequired>
+          <FormControl pos="relative">
             <ListingFormLabel htmlFor="token">Select Token</ListingFormLabel>
             <InputGroup>
-              <InputLeftElement ml={2}>
-                {searchState.tokenImage ? (
-                  <Image
-                    w={'1.6rem'}
-                    alt={searchState.tokenImage}
-                    rounded={'full'}
-                    src={searchState.tokenImage}
-                  />
-                ) : (
-                  <SearchIcon color="gray.300" />
+              {token && token !== 'USDC' && (
+                <>
+                  <InputLeftElement ml={2}>
+                    {searchState.tokenImage === null ? (
+                      <Image
+                        w={'1.6rem'}
+                        alt={
+                          tokenList.find((t) => t.tokenSymbol === token)
+                            ?.tokenName
+                        }
+                        rounded={'full'}
+                        src={
+                          tokenList.find((t) => t.tokenSymbol === token)?.icon
+                        }
+                      />
+                    ) : searchState.tokenImage !== null &&
+                      searchState.tokenImage !== '' ? (
+                      <Image
+                        w={'1.6rem'}
+                        alt={searchState.tokenImage}
+                        rounded={'full'}
+                        src={searchState.tokenImage}
+                      />
+                    ) : (
+                      <SearchIcon color="gray.300" />
+                    )}
+                  </InputLeftElement>
+                </>
+              )}
+              {token === 'USDC' &&
+                !window.location.href.includes('edit') &&
+                !window.location.href.includes('duplicate') && (
+                  <>
+                    <InputLeftElement ml={2}>
+                      {searchState.tokenImage ? (
+                        <Image
+                          w={'1.6rem'}
+                          alt={searchState.tokenImage}
+                          rounded={'full'}
+                          src={searchState.tokenImage}
+                        />
+                      ) : (
+                        <SearchIcon color="gray.300" />
+                      )}
+                    </InputLeftElement>
+                  </>
                 )}
-              </InputLeftElement>
+              {token === 'USDC' &&
+                (window.location.href.includes('edit') ||
+                  window.location.href.includes('duplicate')) && (
+                  <>
+                    <InputLeftElement ml={2}>
+                      {searchState.tokenImage === null ? (
+                        <Image
+                          w={'1.6rem'}
+                          alt={
+                            tokenList.find((t) => t.tokenSymbol === token)
+                              ?.tokenName
+                          }
+                          rounded={'full'}
+                          src={
+                            tokenList.find((t) => t.tokenSymbol === token)?.icon
+                          }
+                        />
+                      ) : searchState.tokenImage !== null &&
+                        searchState.tokenImage !== '' ? (
+                        <Image
+                          w={'1.6rem'}
+                          alt={searchState.tokenImage}
+                          rounded={'full'}
+                          src={searchState.tokenImage}
+                        />
+                      ) : (
+                        <SearchIcon color="gray.300" />
+                      )}
+                    </InputLeftElement>
+                  </>
+                )}
               <Input
                 pl="3.0rem"
                 color="gray.700"
@@ -409,8 +490,17 @@ export const ListingPayments = ({
                 border={'1px solid #cbd5e1'}
                 focusBorderColor="brand.purple"
                 onChange={(e) => handleSearch(e.target.value)}
-                placeholder="Search token..."
-                value={searchState.searchTerm}
+                placeholder="Search token(default USDC)"
+                value={
+                  searchState.searchTerm === null
+                    ? token === 'USDC' &&
+                      !window.location.href.includes('edit') &&
+                      !window.location.href.includes('duplicate')
+                      ? (searchState.searchTerm as unknown as string)
+                      : tokenList.find((t) => t.tokenSymbol === token)
+                          ?.tokenName
+                    : (searchState.searchTerm as string)
+                }
               />
             </InputGroup>
             {searchResults.length > 0 && isOpen && (
