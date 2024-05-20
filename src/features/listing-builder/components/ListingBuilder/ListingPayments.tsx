@@ -404,7 +404,7 @@ export const ListingPayments = ({
           <FormControl pos="relative">
             <ListingFormLabel htmlFor="token">Select Token</ListingFormLabel>
             <InputGroup>
-              {token && token !== 'USDC' && (
+              {token && (
                 <>
                   <InputLeftElement ml={2}>
                     {searchState.tokenImage === null ? (
@@ -433,55 +433,6 @@ export const ListingPayments = ({
                   </InputLeftElement>
                 </>
               )}
-              {token === 'USDC' &&
-                !window.location.href.includes('edit') &&
-                !window.location.href.includes('duplicate') && (
-                  <>
-                    <InputLeftElement ml={2}>
-                      {searchState.tokenImage ? (
-                        <Image
-                          w={'1.6rem'}
-                          alt={searchState.tokenImage}
-                          rounded={'full'}
-                          src={searchState.tokenImage}
-                        />
-                      ) : (
-                        <SearchIcon color="gray.300" />
-                      )}
-                    </InputLeftElement>
-                  </>
-                )}
-              {token === 'USDC' &&
-                (window.location.href.includes('edit') ||
-                  window.location.href.includes('duplicate')) && (
-                  <>
-                    <InputLeftElement ml={2}>
-                      {searchState.tokenImage === null ? (
-                        <Image
-                          w={'1.6rem'}
-                          alt={
-                            tokenList.find((t) => t.tokenSymbol === token)
-                              ?.tokenName
-                          }
-                          rounded={'full'}
-                          src={
-                            tokenList.find((t) => t.tokenSymbol === token)?.icon
-                          }
-                        />
-                      ) : searchState.tokenImage !== null &&
-                        searchState.tokenImage !== '' ? (
-                        <Image
-                          w={'1.6rem'}
-                          alt={searchState.tokenImage}
-                          rounded={'full'}
-                          src={searchState.tokenImage}
-                        />
-                      ) : (
-                        <SearchIcon color="gray.300" />
-                      )}
-                    </InputLeftElement>
-                  </>
-                )}
               <Input
                 pl="3.0rem"
                 color="gray.700"
@@ -493,12 +444,7 @@ export const ListingPayments = ({
                 placeholder="Search token(default USDC)"
                 value={
                   searchState.searchTerm === null
-                    ? token === 'USDC' &&
-                      !window.location.href.includes('edit') &&
-                      !window.location.href.includes('duplicate')
-                      ? (searchState.searchTerm as unknown as string)
-                      : tokenList.find((t) => t.tokenSymbol === token)
-                          ?.tokenName
+                    ? tokenList.find((t) => t.tokenSymbol === token)?.tokenName
                     : (searchState.searchTerm as string)
                 }
               />
