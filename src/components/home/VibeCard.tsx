@@ -10,7 +10,7 @@ import { userStore } from '@/store/user';
 import { EarnAvatar } from '../shared/EarnAvatar';
 
 export const VibeCard = () => {
-  const [vibeCount, setVibeCount] = useState(4);
+  const [vibeCount, setVibeCount] = useState(13);
   const [ws, setWs] = useState<WebSocket | null>(null);
   const [userIds, setUserIds] = useState<string[]>([]);
   const [conductor, setConductor] = useState<TConductorInstance>();
@@ -45,19 +45,55 @@ export const VibeCard = () => {
   const dummyUsers = [
     {
       id: '1',
-      photo: '/assets/fallback/avatar.png',
+      photo: '',
     },
     {
       id: '2',
-      photo: 'https://beta.earn.superteam.fun/assets/fallback/avatar.png',
+      photo: '',
     },
     {
       id: '3',
-      photo: 'https://beta.earn.superteam.fun/assets/fallback/avatar.png',
+      photo: '',
     },
     {
       id: '4',
-      photo: 'https://beta.earn.superteam.fun/assets/fallback/avatar.png',
+      photo: '',
+    },
+    {
+      id: '5',
+      photo: '',
+    },
+    {
+      id: '6',
+      photo: '',
+    },
+    {
+      id: '7',
+      photo: '',
+    },
+    {
+      id: '8',
+      photo: '',
+    },
+    {
+      id: '9',
+      photo: '',
+    },
+    {
+      id: '10',
+      photo: '',
+    },
+    {
+      id: '11',
+      photo: '',
+    },
+    {
+      id: '12',
+      photo: '',
+    },
+    {
+      id: '13',
+      photo: '',
     },
   ];
 
@@ -66,7 +102,7 @@ export const VibeCard = () => {
   const { userInfo } = userStore();
 
   const fetchUserData = async (userIds: string[]) => {
-    const maxPfps = 8;
+    const maxPfps = 6;
     try {
       const latestUserIds = userIds.slice(-maxPfps);
       const responses = await Promise.all(
@@ -89,7 +125,7 @@ export const VibeCard = () => {
     const newWs = new WebSocket('wss://earn-vibe-production.up.railway.app');
     newWs.onmessage = (event) => {
       const { vibeCount, userIds } = JSON.parse(event.data);
-      setVibeCount(vibeCount + 4);
+      setVibeCount(vibeCount + 13);
       setUserIds(userIds);
     };
     setWs(newWs);
@@ -125,7 +161,7 @@ export const VibeCard = () => {
           </Text>
           people vibing rn
         </Text>
-        <Flex>
+        <Flex align={'center'}>
           {users.map((user, i) => (
             <Box key={user.id} ml={i > 0 ? '-10px' : '0'}>
               <EarnAvatar
@@ -136,6 +172,9 @@ export const VibeCard = () => {
               />
             </Box>
           ))}
+          <Text ml={1} color="brand.slate.400" fontSize={'xs'}>
+            +{vibeCount - 6}
+          </Text>
         </Flex>
       </Flex>
       <Divider mx={4} orientation="vertical" />

@@ -15,6 +15,7 @@ import { GoComment } from 'react-icons/go';
 import { IoMdHeart, IoMdHeartEmpty } from 'react-icons/io';
 
 import { EarnAvatar } from '@/components/shared/EarnAvatar';
+import { AuthWrapper } from '@/features/auth';
 import { userStore } from '@/store/user';
 import { getURLSanitized } from '@/utils/getURLSanitized';
 
@@ -132,6 +133,8 @@ export const FeedCardContainer = ({
             }}
             cursor={'pointer'}
             href={sanitizedLink}
+            rel="noopener noreferrer"
+            target="_blank"
           >
             {children}
             <Flex
@@ -159,13 +162,20 @@ export const FeedCardContainer = ({
                 }}
               >
                 {!isLiked && (
-                  <IoMdHeartEmpty
-                    size={isSM ? '22px' : '20px'}
-                    color={'#64748b'}
-                  />
+                  <AuthWrapper>
+                    <IoMdHeartEmpty
+                      size={isSM ? '22px' : '20px'}
+                      color={'#64748b'}
+                      cursor={'pointer'}
+                    />
+                  </AuthWrapper>
                 )}
                 {isLiked && (
-                  <IoMdHeart size={isSM ? '22px' : '20px'} color={'#E11D48'} />
+                  <IoMdHeart
+                    size={isSM ? '22px' : '20px'}
+                    color={'#E11D48'}
+                    cursor={'pointer'}
+                  />
                 )}
                 <Text color="brand.slate.500" fontSize={'md'} fontWeight={500}>
                   {totalLikes}

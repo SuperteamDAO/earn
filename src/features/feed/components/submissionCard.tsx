@@ -68,6 +68,8 @@ export function SubmissionCard({ sub, type }: SubCardProps) {
           fontWeight={600}
           _hover={{ textDecoration: 'underline' }}
           href={listingLink}
+          rel="noopener noreferrer"
+          target="_blank"
         >
           {sub?.listingTitle}
         </Text>
@@ -79,7 +81,7 @@ export function SubmissionCard({ sub, type }: SubCardProps) {
         fontFamily={'var(--font-sans)'}
         bg="white"
         borderRadius={'lg'}
-        isDisabled={!!sub?.id && !isProject}
+        isDisabled={!!sub?.id || isProject}
         label={
           'This submission will be accessible once winners for the listing have been announced.'
         }
@@ -88,8 +90,8 @@ export function SubmissionCard({ sub, type }: SubCardProps) {
         <FeedCardLink
           href={link}
           style={{
-            opacity: sub?.id ? '100%' : '50%',
-            pointerEvents: sub?.id ? 'all' : 'none',
+            opacity: sub?.id || isProject ? '100%' : '50%',
+            pointerEvents: sub?.id || isProject ? 'all' : 'none',
           }}
         >
           {isProject ? 'View Listing' : 'View Submission'}
