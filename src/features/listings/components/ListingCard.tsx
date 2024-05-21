@@ -95,6 +95,20 @@ export const ListingCard = ({
     if (!isEnglish) return null;
   }
 
+  const isBeforeDeadline = dayjs().isBefore(dayjs(deadline));
+  const formattedDeadline = dayjs(deadline).fromNow();
+  let deadlineText;
+  if (isBeforeDeadline) {
+    deadlineText =
+      applicationType === 'rolling'
+        ? 'Rolling Deadline'
+        : `Due ${formattedDeadline}`;
+  } else {
+    deadlineText = isWinnersAnnounced
+      ? `Completed ${formattedDeadline}`
+      : `Expired ${formattedDeadline}`;
+  }
+
   return (
     <>
       <Link
@@ -242,11 +256,7 @@ export const ListingCard = ({
                     fontSize={['x-small', 'xs', 'xs', 'xs']}
                     whiteSpace={'nowrap'}
                   >
-                    {dayjs().isBefore(dayjs(deadline))
-                      ? applicationType === 'rolling'
-                        ? 'Rolling Deadline'
-                        : `Due ${dayjs(deadline).fromNow()}`
-                      : `Closed ${dayjs(deadline).fromNow()}`}
+                    {deadlineText}
                   </Text>
                   {dayjs().isBefore(dayjs(deadline)) && !isWinnersAnnounced && (
                     <Circle bg="#16A35F" size="8px" />
