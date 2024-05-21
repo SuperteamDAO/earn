@@ -45,7 +45,7 @@ export const VibeCard = () => {
   const dummyUsers = [
     {
       id: '1',
-      photo: 'https://beta.earn.superteam.fun/assets/fallback/avatar.png',
+      photo: '/assets/fallback/avatar.png',
     },
     {
       id: '2',

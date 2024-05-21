@@ -1,6 +1,6 @@
-import { Image, SkeletonCircle } from '@chakra-ui/react';
+import { Image } from '@chakra-ui/react';
 import Avatar from 'boring-avatars';
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 
 export const EarnAvatar = ({
   id,
@@ -15,27 +15,14 @@ export const EarnAvatar = ({
   borderRadius?: string;
   onClick?: () => void;
 }) => {
-  const [isLoading, setIsLoading] = useState(!!avatar);
   const [hasError, setHasError] = useState(false);
 
-  useEffect(() => {
-    if (!avatar) {
-      setIsLoading(false);
-    }
-  }, [avatar]);
-
-  const handleImageLoad = () => {
-    setIsLoading(false);
-  };
-
   const handleImageError = () => {
-    setIsLoading(false);
     setHasError(true);
   };
 
   return (
     <div onClick={onClick}>
-      {isLoading && <SkeletonCircle size={size} />}
       {!hasError && avatar ? (
         <Image
           boxSize={size}
@@ -44,12 +31,10 @@ export const EarnAvatar = ({
           objectFit={'cover'}
           alt={id}
           onError={handleImageError}
-          onLoad={handleImageLoad}
           src={avatar.replace(
             '/upload/',
             '/upload/c_scale,w_256,h_256,f_auto/',
           )}
-          style={{ display: isLoading ? 'none' : 'block' }}
         />
       ) : (
         <Avatar
