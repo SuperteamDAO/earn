@@ -45,27 +45,27 @@ export const VibeCard = () => {
   const dummyUsers = [
     {
       id: '1',
-      photo: '',
+      photo: '/assets/pfps/t1.png',
     },
     {
       id: '2',
-      photo: '',
+      photo: '/assets/pfps/md2.png',
     },
     {
       id: '3',
-      photo: '',
+      photo: '/assets/pfps/fff1.png',
     },
     {
-      id: '4',
+      id: '55',
       photo: '',
     },
     {
       id: '5',
-      photo: '',
+      photo: '/assets/pfps/md1.png',
     },
     {
       id: '6',
-      photo: '',
+      photo: '/assets/pfps/t2.png',
     },
     {
       id: '7',
