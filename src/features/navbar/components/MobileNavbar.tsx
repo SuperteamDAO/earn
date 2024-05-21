@@ -252,7 +252,7 @@ export const MobileNavbar = ({ onLoginOpen, onSearchOpen }: Props) => {
         py={2}
         bg={'#F8FAFC'}
       >
-        <Flex gap={{ base: 2, sm: 12 }}>
+        <Flex gap={{ base: 2, sm: 8, md: 12 }}>
           {LISTING_NAV_ITEMS?.map((navItem) => {
             const isCurrent = `${navItem.href}` === router.asPath;
             return (
@@ -261,7 +261,7 @@ export const MobileNavbar = ({ onLoginOpen, onSearchOpen }: Props) => {
                 href={navItem.href ?? '#'}
                 label={renderLabel(navItem)}
                 isActive={isCurrent}
-                fontSize={{ base: '13px', xs: 'sm', md: '15px' }}
+                fontSize={{ base: '12px', xs: 'sm', md: '15px' }}
                 fontWeight={500}
                 borderBottom={'none'}
                 h={'auto'}
@@ -276,7 +276,7 @@ export const MobileNavbar = ({ onLoginOpen, onSearchOpen }: Props) => {
           borderColor={'brand.slate.400'}
           orientation="vertical"
         />
-        <Flex gap={{ base: 2, sm: 12 }}>
+        <Flex gap={{ base: 2, sm: 8, md: 12 }}>
           {CATEGORY_NAV_ITEMS?.map((navItem) => {
             const isCurrent = `${navItem.href}` === router.asPath;
             return (
@@ -285,7 +285,7 @@ export const MobileNavbar = ({ onLoginOpen, onSearchOpen }: Props) => {
                 href={navItem.href ?? '#'}
                 label={renderLabel(navItem)}
                 isActive={isCurrent}
-                fontSize={{ base: '13px', xs: 'sm', md: '15px' }}
+                fontSize={{ base: '11.5px', xs: 'sm', md: '15px' }}
                 fontWeight={500}
                 h={'auto'}
                 borderBottom={'none'}
