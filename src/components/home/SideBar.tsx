@@ -7,7 +7,6 @@ import { useEffect, useState } from 'react';
 
 import { type Bounty, ListingCardMobile } from '@/features/listings';
 import type { User } from '@/interface/user';
-import { getURLSanitized } from '@/utils/getURLSanitized';
 import { timeAgoShort } from '@/utils/timeAgo';
 
 import { OgImageViewer } from '../misc/ogImageViewer';
@@ -150,10 +149,9 @@ const RecentActivity = () => {
     };
 
     const actionText = getActionText();
-    const sanitizedLink = getURLSanitized(link);
 
     return (
-      <Flex as={NextLink} href={sanitizedLink || ''}>
+      <Flex as={NextLink} href={'/feed/?filter=new'}>
         <OgImageViewer h={12} w={20} objectFit={'cover'} externalUrl={link} />
         <Box ml={3}>
           <Flex align={'center'}>

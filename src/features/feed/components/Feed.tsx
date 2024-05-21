@@ -1,6 +1,7 @@
 import { Box, Flex, Image, Select, Text } from '@chakra-ui/react';
 import axios from 'axios';
 import NextLink from 'next/link';
+import { useRouter } from 'next/router';
 import React, { useEffect, useState } from 'react';
 
 import {
@@ -14,12 +15,14 @@ import { Home } from '@/layouts/Home';
 import { HomeIcon, LeaderboardIcon, WinnersIcon } from './icons';
 
 export const Feed = ({ isWinner = false }: { isWinner?: boolean }) => {
+  const router = useRouter();
+  const { query } = router;
+
   const [data, setData] = useState<FeedDataProps[]>([]);
-  const [activeMenu, setActiveMenu] = useState('Popular');
+  const [activeMenu, setActiveMenu] = useState(query.filter || 'popular');
   const [timePeriod, setTimePeriod] = useState('This Month');
 
   const [isLoading, setIsLoading] = useState<boolean>(true);
-
   const [hasMore, setHasMore] = useState(true);
 
   useEffect(() => {
@@ -43,9 +46,9 @@ export const Feed = ({ isWinner = false }: { isWinner?: boolean }) => {
     try {
       const res = await axios.get(`/api/feed/get`, {
         params: {
-          filter: activeMenu === 'Popular' ? 'popular' : undefined,
+          filter: activeMenu === 'popular' ? 'popular' : undefined,
           timePeriod:
-            activeMenu === 'Popular' ? timePeriod.toLowerCase() : undefined,
+            activeMenu === 'popular' ? timePeriod.toLowerCase() : undefined,
           skip: data?.length,
           isWinner,
         },
@@ -73,9 +76,9 @@ export const Feed = ({ isWinner = false }: { isWinner?: boolean }) => {
     try {
       const res = await axios.get(`/api/feed/get`, {
         params: {
-          filter: activeMenu === 'Popular' ? 'popular' : undefined,
+          filter: activeMenu === 'popular' ? 'popular' : undefined,
           timePeriod:
-            activeMenu === 'Popular' ? timePeriod.toLowerCase() : undefined,
+            activeMenu === 'popular' ? timePeriod.toLowerCase() : undefined,
           isWinner,
         },
       });
@@ -93,6 +96,23 @@ export const Feed = ({ isWinner = false }: { isWinner?: boolean }) => {
   useEffect(() => {
     fetchData();
   }, [activeMenu, timePeriod, isWinner]);
+
+  useEffect(() => {
+    if (query.filter && query.filter !== activeMenu) {
+      setActiveMenu(query.filter);
+    }
+  }, [query]);
+
+  const updateQuery = (key: string, value: string) => {
+    router.push(
+      {
+        pathname: router.pathname,
+        query: { ...query, [key]: value },
+      },
+      undefined,
+      { shallow: true },
+    );
+  };
 
   const NavItem = ({
     name,
@@ -115,14 +135,18 @@ export const Feed = ({ isWinner = false }: { isWinner?: boolean }) => {
     );
   };
 
-  const MenuOption = ({ option }: { option: 'New' | 'Popular' }) => {
+  const MenuOption = ({ option }: { option: 'new' | 'popular' }) => {
     return (
       <Text
         color={activeMenu === option ? 'brand.slate.700' : 'brand.slate.500'}
         fontSize={{ base: '15px', lg: 'md' }}
         fontWeight={activeMenu === option ? 600 : 400}
+        textTransform={'capitalize'}
         cursor="pointer"
-        onClick={() => setActiveMenu(option)}
+        onClick={() => {
+          setActiveMenu(option);
+          updateQuery('filter', option);
+        }}
       >
         {option}
       </Text>
@@ -189,16 +213,18 @@ export const Feed = ({ isWinner = false }: { isWinner?: boolean }) => {
                   mt={{ base: 4, md: 0 }}
                 >
                   <Flex gap={3} mr={3}>
-                    <MenuOption option="New" />
-                    <MenuOption option="Popular" />
+                    <MenuOption option="new" />
+                    <MenuOption option="popular" />
                   </Flex>
 
-                  {activeMenu === 'Popular' && (
+                  {activeMenu === 'popular' && (
                     <Select
                       w={28}
                       color={'brand.slate.500'}
                       textAlign={'right'}
-                      onChange={(e) => setTimePeriod(e.target.value)}
+                      onChange={(e) => {
+                        setTimePeriod(e.target.value);
+                      }}
                       size={'sm'}
                       value={timePeriod}
                       variant={'unstyled'}
