@@ -283,6 +283,9 @@ export const SubmissionModal = ({
       <ModalContent>
         <ModalHeader px={{ base: 4, md: 10 }} pt={8} color="brand.slate.800">
           {headerText}
+          <Text mt={1} color={'brand.slate.500'} fontSize="sm" fontWeight={400}>
+            {subheadingText}
+          </Text>
         </ModalHeader>
         <ModalCloseButton mt={5} />
         <VStack
@@ -293,11 +296,7 @@ export const SubmissionModal = ({
           px={{ base: 4, md: 10 }}
           pb={10}
         >
-          <Box>
-            <Text mb={1} color={'brand.slate.500'} fontSize="sm">
-              {subheadingText}
-            </Text>
-          </Box>
+          <Box></Box>
           <form
             style={{ width: '100%' }}
             onSubmit={handleSubmit((e) => {

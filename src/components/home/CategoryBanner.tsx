@@ -29,39 +29,43 @@ export const CategoryBanner = ({ type }: { type: string }) => {
       color: '#FEA8EB',
       icon: '/assets/category_assets/icon/backend.png',
     },
+    Other: {
+      bg: `/assets/category_assets/bg/backend.png`,
+      color: '#FEB8A8',
+      desc: 'If you have a unique skill set that doesn’t fit into the other categories, you might find your next gig here.',
+      icon: '/assets/category_assets/icon/other.png',
+    },
   };
 
   return (
-    <>
-      <Flex
-        direction={{ md: 'row', base: 'column' }}
-        w={{ md: 'brand.120', base: '100%' }}
-        h={{ md: '7.375rem', base: 'fit-content' }}
-        mx={'auto'}
-        mb={8}
-        p={6}
-        bg={`url('${categoryAssets[type]?.bg}')`}
-        bgSize={'cover'}
-        rounded={10}
+    <Flex
+      direction={{ md: 'row', base: 'column' }}
+      w={{ md: 'brand.120', base: '100%' }}
+      h={{ md: '7.375rem', base: 'fit-content' }}
+      mx={'auto'}
+      mb={8}
+      p={6}
+      bg={`url('${categoryAssets[type]?.bg}')`}
+      bgSize={'cover'}
+      rounded={10}
+    >
+      <Center
+        w={14}
+        h={14}
+        mr={3}
+        bg={categoryAssets[type]?.color}
+        rounded={'md'}
       >
-        <Center
-          w={14}
-          h={14}
-          mr={3}
-          bg={categoryAssets[type]?.color}
-          rounded={'md'}
-        >
-          <Image h="18" alt="Category icon" src={categoryAssets[type]?.icon} />
-        </Center>
-        <Box w={{ md: '60%', base: '100%' }} mt={{ base: 4, md: '0' }}>
-          <Text fontFamily={'var(--font-serif)'} fontWeight={'700'}>
-            {type}
-          </Text>
-          <Text mb={6} color="brand.slate.500" fontSize="small">
-            {categoryAssets[type]?.desc}
-          </Text>
-        </Box>
-      </Flex>
-    </>
+        <Image h="18" alt="Category icon" src={categoryAssets[type]?.icon} />
+      </Center>
+      <Box w={{ md: '60%', base: '100%' }} mt={{ base: 4, md: '0' }}>
+        <Text fontFamily={'var(--font-serif)'} fontWeight={'700'}>
+          {type}
+        </Text>
+        <Text mb={6} color="brand.slate.500" fontSize="small">
+          {categoryAssets[type]?.desc}
+        </Text>
+      </Box>
+    </Flex>
   );
 };

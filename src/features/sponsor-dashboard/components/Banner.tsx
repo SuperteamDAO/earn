@@ -9,12 +9,12 @@ import {
   Tooltip,
 } from '@chakra-ui/react';
 import axios from 'axios';
-import Avatar from 'boring-avatars';
 import NextLink from 'next/link';
 import { useEffect, useState } from 'react';
 import { AiOutlineEdit } from 'react-icons/ai';
 import { MdInfoOutline, MdOutlineChatBubbleOutline } from 'react-icons/md';
 
+import { EarnAvatar } from '@/components/shared/EarnAvatar';
 import { userStore } from '@/store/user';
 
 interface SponsorStats {
@@ -70,22 +70,12 @@ export function Banner({ isHackathonRoute }: { isHackathonRoute?: boolean }) {
       >
         <Flex align="center" gap={12}>
           <Flex align="center" gap={3}>
-            {sponsor?.logo ? (
-              <Image
-                boxSize="52px"
-                borderRadius={4}
-                objectFit={'cover'}
-                alt={sponsor?.name}
-                src={sponsor?.logo}
-              />
-            ) : (
-              <Avatar
-                colors={['#92A1C6', '#F0AB3D', '#C271B4']}
-                name={sponsor?.name}
-                size={54}
-                variant="marble"
-              />
-            )}
+            <EarnAvatar
+              size="52px"
+              id={sponsor?.name}
+              avatar={sponsor?.logo}
+              borderRadius="6"
+            />
             <Box>
               <Box alignItems={'center'} flexDir={'row'} display={'flex'}>
                 <Text

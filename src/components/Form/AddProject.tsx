@@ -19,7 +19,9 @@ import { type Dispatch, type SetStateAction, useEffect, useState } from 'react';
 import { useForm } from 'react-hook-form';
 
 import type { MultiSelectOptions } from '@/constants';
+import { type FeedDataProps } from '@/features/feed';
 import type { PoW } from '@/interface/pow';
+import { userStore } from '@/store/user';
 
 import { SkillSelect } from '../misc/SkillSelect';
 
@@ -55,6 +57,8 @@ export const AddProject = ({
   const [skillsError, setSkillsError] = useState<boolean>(false);
   const [skills, setSkills] = useState<MultiSelectOptions[]>([]);
   const [subSkills, setSubSkills] = useState<MultiSelectOptions[]>([]);
+
+  const { userInfo } = userStore();
 
   const projectToEdit =
     selectedProject !== null && pow ? pow[selectedProject as number] : null;
@@ -99,18 +103,30 @@ export const AddProject = ({
       return;
     }
 
-    const projectData: PoW = {
+    const projectData: PoW & Partial<FeedDataProps> = {
       title: data.title,
       description: data.description,
       link: data.link,
       skills: skills.map((ele) => ele.value),
       subSkills: subSkills.map((ele) => ele.value),
+      firstName: userInfo?.firstName,
+      lastName: userInfo?.lastName,
+      photo: userInfo?.photo,
+      createdAt: new Date().toISOString(),
     };
 
     if (upload) {
       try {
         await axios.post('/api/pow/create', {
-          pows: [projectData],
+          pows: [
+            {
+              title: projectData.title,
+              description: projectData.description,
+              link: projectData.link,
+              skills: projectData.skills,
+              subSkills: projectData.subSkills,
+            },
+          ],
         });
         if (onNewPow) {
           onNewPow(projectData);

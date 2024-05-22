@@ -1,7 +1,6 @@
 import { HamburgerIcon } from '@chakra-ui/icons';
 import {
   AbsoluteCenter,
-  Box,
   Button,
   CloseButton,
   Divider,
@@ -159,82 +158,78 @@ export const MobileNavbar = () => {
   };
 
   return (
-    <>
-      <Box pos="sticky" zIndex="sticky" top={0}>
-        <Flex
-          align="center"
-          justify="space-between"
-          display={{ base: 'flex', lg: 'none' }}
-          px={1}
-          py={2}
-          bg="white"
-          borderBottom="1px solid"
-          borderBottomColor="blackAlpha.200"
+    <Flex
+      align="center"
+      justify="space-between"
+      display={{ base: 'flex', lg: 'none' }}
+      px={1}
+      py={2}
+      bg="white"
+      borderBottom="1px solid"
+      borderBottomColor="blackAlpha.200"
+    >
+      <IconButton
+        ref={btnRef}
+        bg="transparent"
+        _hover={{ bg: 'transparent' }}
+        _active={{ bg: 'transparent' }}
+        aria-label="Open Drawer"
+        icon={<HamburgerIcon h={6} w={6} color="brand.slate.500" />}
+        onClick={onDrawerOpen}
+      />
+      <MobileDrawer />
+      <AbsoluteCenter>
+        <Link
+          as={NextLink}
+          alignItems={'center'}
+          gap={3}
+          display={'flex'}
+          _hover={{ textDecoration: 'none' }}
+          href="/"
         >
-          <IconButton
-            ref={btnRef}
-            bg="transparent"
-            _hover={{ bg: 'transparent' }}
-            _active={{ bg: 'transparent' }}
-            aria-label="Open Drawer"
-            icon={<HamburgerIcon h={6} w={6} color="brand.slate.500" />}
-            onClick={onDrawerOpen}
+          <Image
+            h={5}
+            cursor="pointer"
+            objectFit={'contain'}
+            alt={'Superteam Earn'}
+            src={'/assets/logo/logo.svg'}
           />
-          <MobileDrawer />
-          <AbsoluteCenter>
-            <Link
-              as={NextLink}
-              alignItems={'center'}
-              gap={3}
-              display={'flex'}
-              _hover={{ textDecoration: 'none' }}
-              href="/"
+          <>
+            <Divider
+              w={'3px'}
+              h={'24px'}
+              borderColor={'brand.slate.400'}
+              orientation="vertical"
+            />
+            <Text
+              color={'brand.slate.500'}
+              fontSize="sm"
+              fontWeight={600}
+              letterSpacing={'1.5px'}
             >
-              <Image
-                h={5}
-                cursor="pointer"
-                objectFit={'contain'}
-                alt={'Superteam Earn'}
-                src={'/assets/logo/logo.svg'}
-              />
-              <>
-                <Divider
-                  w={'3px'}
-                  h={'24px'}
-                  borderColor={'brand.slate.400'}
-                  orientation="vertical"
-                />
-                <Text
-                  color={'brand.slate.500'}
-                  fontSize="sm"
-                  fontWeight={600}
-                  letterSpacing={'1.5px'}
-                >
-                  SPONSORS
-                </Text>
-              </>
-            </Link>
-          </AbsoluteCenter>
-          {status === 'authenticated' && session && <UserMenu />}
-          {status === 'unauthenticated' && !session && (
-            <NextLink
-              href="/new/sponsor/"
-              className="ph-no-capture"
-              onClick={() => posthog.capture('clicked_nav_login')}
-            >
-              <Button
-                mr={2}
-                color="brand.purple"
-                fontSize="md"
-                size="sm"
-                variant="unstyled"
-              >
-                Login
-              </Button>
-            </NextLink>
-          )}
-        </Flex>
-      </Box>
-    </>
+              SPONSORS
+            </Text>
+          </>
+        </Link>
+      </AbsoluteCenter>
+      {status === 'authenticated' && session && <UserMenu />}
+      {status === 'unauthenticated' && !session && (
+        <NextLink
+          href="/new/sponsor/"
+          className="ph-no-capture"
+          onClick={() => posthog.capture('clicked_nav_login')}
+        >
+          <Button
+            mr={2}
+            color="brand.purple"
+            fontSize="md"
+            size="sm"
+            variant="unstyled"
+          >
+            Login
+          </Button>
+        </NextLink>
+      )}
+    </Flex>
   );
 };

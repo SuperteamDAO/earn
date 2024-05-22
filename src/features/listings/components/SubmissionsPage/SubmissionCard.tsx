@@ -10,9 +10,7 @@ import {
   Text,
   useToast,
 } from '@chakra-ui/react';
-import type { User } from '@prisma/client';
 import axios from 'axios';
-import Avatar from 'boring-avatars';
 import NextLink from 'next/link';
 import { useRouter } from 'next/router';
 import React, {
@@ -25,6 +23,8 @@ import { BiSolidComment } from 'react-icons/bi';
 import { IoMdHeart } from 'react-icons/io';
 import type { Metadata } from 'unfurl.js/dist/types';
 
+import { EarnAvatar } from '@/components/shared/EarnAvatar';
+import { type User } from '@/interface/user';
 import { userStore } from '@/store/user';
 import { Badge } from '@/svg/badge';
 import { getURLSanitized } from '@/utils/getURLSanitized';
@@ -134,24 +134,7 @@ export const SubmissionCard = ({
       )}
       <Link as={NextLink} href={`/t/${talent?.username}`}>
         <HStack mb={2}>
-          {talent?.photo ? (
-            <Image
-              w={6}
-              h={6}
-              borderRadius="full"
-              objectFit={'cover'}
-              alt={`${talent?.firstName} ${talent?.lastName}`}
-              rounded={'full'}
-              src={talent?.photo || undefined}
-            />
-          ) : (
-            <Avatar
-              name={`${talent?.firstName} ${talent?.lastName}`}
-              colors={['#92A1C6', '#F0AB3D', '#C271B4']}
-              size={24}
-              variant="marble"
-            />
-          )}
+          <EarnAvatar id={talent?.id} avatar={talent?.photo || undefined} />
           <Text
             overflow={'hidden'}
             w="80%"
@@ -192,8 +175,8 @@ export const SubmissionCard = ({
             size={'1.3rem'}
             color={
               !likes?.find((e) => e.id === (userInfo?.id as string))
-                ? '#CBD5E1'
-                : '#FF005C'
+                ? '#64748b'
+                : '#E11D48'
             }
           />
           {likes?.length}

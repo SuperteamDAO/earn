@@ -10,7 +10,6 @@ import {
   Button,
   Divider,
   Flex,
-  Image,
   Input,
   InputGroup,
   InputLeftElement,
@@ -27,10 +26,10 @@ import {
   useDisclosure,
 } from '@chakra-ui/react';
 import axios from 'axios';
-import Avatar from 'boring-avatars';
 import { useSession } from 'next-auth/react';
 import React, { useEffect, useRef, useState } from 'react';
 
+import { EarnAvatar } from '@/components/shared/EarnAvatar';
 import { ErrorSection } from '@/components/shared/ErrorSection';
 import { LoadingSection } from '@/components/shared/LoadingSection';
 import { InviteMembers } from '@/features/sponsor-dashboard';
@@ -187,21 +186,11 @@ const Index = () => {
                 <Tr key={member?.userId}>
                   <Td>
                     <Flex align="center">
-                      {member?.user?.photo ? (
-                        <Image
-                          boxSize="36px"
-                          borderRadius="full"
-                          alt={`${member?.user?.firstName} ${member?.user?.lastName}`}
-                          src={member?.user?.photo}
-                        />
-                      ) : (
-                        <Avatar
-                          name={`${member?.user?.firstName} ${member?.user?.lastName}`}
-                          colors={['#92A1C6', '#F0AB3D', '#C271B4']}
-                          size={36}
-                          variant="marble"
-                        />
-                      )}
+                      <EarnAvatar
+                        size="36px"
+                        id={member?.user?.id}
+                        avatar={member?.user?.photo}
+                      />
                       <Box display={{ base: 'none', md: 'block' }} ml={2}>
                         <Text
                           color="brand.slate.500"
