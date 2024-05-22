@@ -63,11 +63,14 @@ export function SubmissionCard({ sub, type }: SubCardProps) {
         <Avatar size={'xs'} src={sub?.sponsorLogo} />
         <Text
           as={NextLink}
+          overflow={'hidden'}
           color={'brand.slate.500'}
           fontSize={{ base: 'sm', md: 'md' }}
           fontWeight={600}
           _hover={{ textDecoration: 'underline' }}
+          textOverflow={'ellipsis'}
           href={listingLink}
+          noOfLines={1}
           rel="noopener noreferrer"
           target="_blank"
         >

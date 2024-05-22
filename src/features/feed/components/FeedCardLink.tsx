@@ -23,10 +23,8 @@ export const FeedCardLink = ({
       whiteSpace={'nowrap'}
       {...style}
       display={{ base: 'none', md: 'flex' }}
-      rel="noopener noreferrer"
-      target="_blank"
     >
-      <LinkOverlay href={href}>
+      <LinkOverlay href={href} rel="noopener noreferrer" target="_blank">
         <Text
           as="span"
           color={'#6366F1'}
