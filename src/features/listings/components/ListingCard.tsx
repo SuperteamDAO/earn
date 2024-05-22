@@ -96,18 +96,38 @@ export const ListingCard = ({
   }
 
   const isBeforeDeadline = dayjs().isBefore(dayjs(deadline));
-  const formattedDeadline = dayjs(deadline).fromNow();
+  const now = dayjs();
+  const formattedDeadline = dayjs(deadline).from(now);
+
+  const abbreviateTime = (timeStr: string) => {
+    return timeStr
+      .replace(' minutes', 'm')
+      .replace(' minute', 'm')
+      .replace(' hours', 'h')
+      .replace(' hour', 'h')
+      .replace(' days', 'd')
+      .replace(' day', 'd')
+      .replace(' months', 'mo')
+      .replace(' month', 'mo')
+      .replace(' years', 'y')
+      .replace(' year', 'y');
+  };
+
+  const shortFormattedDeadline = abbreviateTime(formattedDeadline);
+
   let deadlineText;
   if (isBeforeDeadline) {
     deadlineText =
       applicationType === 'rolling'
         ? 'Rolling Deadline'
-        : `Due ${formattedDeadline}`;
+        : `Due ${shortFormattedDeadline}`;
   } else {
     deadlineText = isWinnersAnnounced
-      ? `Completed ${formattedDeadline}`
-      : `Expired ${formattedDeadline}`;
+      ? `Completed ${shortFormattedDeadline}`
+      : `Expired ${shortFormattedDeadline}`;
   }
+
+  console.log(deadlineText);
 
   return (
     <>
