@@ -122,12 +122,16 @@ export const ListingCard = ({
     shortenedDeadline = 'in 1h';
   } else if (shortFormattedDeadline === 'in am') {
     shortenedDeadline = 'in 1m';
+  } else if (shortFormattedDeadline === 'in ay') {
+    shortenedDeadline = 'in 1y';
   } else if (shortFormattedDeadline === 'ad ago') {
     shortenedDeadline = '1d ago';
   } else if (shortFormattedDeadline === 'ah ago') {
     shortenedDeadline = '1h ago';
   } else if (shortFormattedDeadline === 'am ago') {
     shortenedDeadline = '1m ago';
+  } else if (shortFormattedDeadline === 'ay ago') {
+    shortenedDeadline = '1y ago';
   } else {
     shortenedDeadline = shortFormattedDeadline;
   }
