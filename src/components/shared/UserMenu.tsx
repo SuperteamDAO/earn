@@ -4,7 +4,6 @@ import {
   Button,
   Circle,
   Flex,
-  Image,
   Menu,
   MenuButton,
   MenuDivider,
@@ -14,7 +13,6 @@ import {
   Text,
   useDisclosure,
 } from '@chakra-ui/react';
-import Avatar from 'boring-avatars';
 import NextLink from 'next/link';
 import { useRouter } from 'next/router';
 import { useSession } from 'next-auth/react';
@@ -23,6 +21,7 @@ import { useEffect, useState } from 'react';
 import { userStore } from '@/store/user';
 
 import { EmailSettingsModal } from '../modals/EmailSettingsModal';
+import { EarnAvatar } from './EarnAvatar';
 
 export function UserMenu({}) {
   const router = useRouter();
@@ -104,22 +103,7 @@ export function UserMenu({}) {
           }
         >
           <Flex align="center">
-            {userInfo?.photo ? (
-              <Image
-                boxSize="32px"
-                borderRadius="full"
-                objectFit={'cover'}
-                alt={`${userInfo?.firstName} ${userInfo?.lastName}`}
-                src={userInfo?.photo}
-              />
-            ) : (
-              <Avatar
-                name={`${userInfo?.firstName} ${userInfo?.lastName}`}
-                colors={['#92A1C6', '#F0AB3D', '#C271B4']}
-                size={32}
-                variant="marble"
-              />
-            )}
+            <EarnAvatar id={userInfo?.id} avatar={userInfo?.photo} />
             {showBlueCircle && (
               <Circle
                 display={{ base: 'flex', md: 'none' }}

@@ -13,9 +13,9 @@ import Image from 'next/image';
 import { useSession } from 'next-auth/react';
 import { useEffect, useState } from 'react';
 
+import { EarnAvatar } from '@/components/shared/EarnAvatar';
 import { ErrorInfo } from '@/components/shared/ErrorInfo';
 import { Loading } from '@/components/shared/Loading';
-import { UserAvatar } from '@/components/shared/UserAvatar';
 import { AuthWrapper } from '@/features/auth';
 import type { Comment } from '@/interface/comments';
 import { type User } from '@/interface/user';
@@ -188,7 +188,11 @@ export const Comments = ({
         </HStack>
         <VStack gap={4} w={'full'} mb={4} px={6}>
           <Flex gap={3} w="full">
-            <UserAvatar user={userInfo} size="36px" />
+            <EarnAvatar
+              size={'36px'}
+              id={userInfo?.id}
+              avatar={userInfo?.photo}
+            />
             <Box pos={'relative'} w="full" mt={0.5}>
               <UserSuggestionTextarea
                 defaultSuggestions={defaultSuggestions}

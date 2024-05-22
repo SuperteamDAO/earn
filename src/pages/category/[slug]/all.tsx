@@ -17,7 +17,7 @@ interface Listings {
   bounties?: Bounty[];
 }
 
-type SlugKeys = 'design' | 'content' | 'development';
+type SlugKeys = 'design' | 'content' | 'development' | 'other';
 
 function AllCategoryListingsPage({ slug }: { slug: string }) {
   const [isListingsLoading, setIsListingsLoading] = useState(true);
@@ -51,6 +51,7 @@ function AllCategoryListingsPage({ slug }: { slug: string }) {
     design: 'Superteam Earn | Design Bounties and Grants',
     content: 'Superteam Earn | Content Bounties and Grants',
     development: 'Superteam Earn | Development Bounties and Grants',
+    other: 'Superteam Earn | Other Bounties and Grants',
   };
 
   const titleKey = slug as SlugKeys;
@@ -111,7 +112,7 @@ export async function getServerSideProps(context: NextPageContext) {
   }
 
   const normalizedSlug = typeof slug === 'string' ? slug.toLowerCase() : '';
-  const validCategories = ['design', 'content', 'development'];
+  const validCategories = ['design', 'content', 'development', 'other'];
 
   if (!validCategories.includes(normalizedSlug)) {
     return {

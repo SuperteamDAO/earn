@@ -3,7 +3,6 @@ import {
   Box,
   Button,
   Flex,
-  Image,
   Link,
   Menu,
   MenuButton,
@@ -30,7 +29,6 @@ import {
   Transaction,
 } from '@solana/web3.js';
 import axios from 'axios';
-import Avatar from 'boring-avatars';
 import dynamic from 'next/dynamic';
 import NextLink from 'next/link';
 import { log } from 'next-axiom';
@@ -42,6 +40,7 @@ import {
   MdOutlineMail,
 } from 'react-icons/md';
 
+import { EarnAvatar } from '@/components/shared/EarnAvatar';
 import { tokenList } from '@/constants';
 import type { Bounty, Rewards } from '@/features/listings';
 import type { SubmissionWithUser } from '@/interface/submission';
@@ -329,23 +328,11 @@ export const SubmissionDetails = ({
               py={3}
             >
               <Flex align="center" gap={2} w="full">
-                {selectedSubmission?.user?.photo ? (
-                  <Image
-                    w="40px"
-                    h="40px"
-                    borderRadius="full"
-                    objectFit={'cover'}
-                    alt={`${selectedSubmission?.user?.firstName} ${selectedSubmission?.user?.lastName}`}
-                    src={selectedSubmission?.user?.photo}
-                  />
-                ) : (
-                  <Avatar
-                    name={`${selectedSubmission?.user?.firstName} ${selectedSubmission?.user?.lastName}`}
-                    colors={['#92A1C6', '#F0AB3D', '#C271B4']}
-                    size={40}
-                    variant="marble"
-                  />
-                )}
+                <EarnAvatar
+                  size="40px"
+                  id={selectedSubmission?.user?.id}
+                  avatar={selectedSubmission?.user?.photo || undefined}
+                />
                 <Box>
                   <Text
                     w="100%"

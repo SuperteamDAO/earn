@@ -1,5 +1,4 @@
 import { HStack } from '@chakra-ui/react';
-import { type User } from '@prisma/client';
 import axios from 'axios';
 import type { GetServerSideProps } from 'next';
 import React, { useEffect, useState } from 'react';
@@ -12,6 +11,7 @@ import {
   SubmissionPage,
 } from '@/features/listings';
 import type { SubmissionWithUser } from '@/interface/submission';
+import { type User } from '@/interface/user';
 import { Default } from '@/layouts/Default';
 import { Meta } from '@/layouts/Meta';
 
@@ -72,7 +72,7 @@ const Sumbissions = ({ slug, subid }: BountyDetailsProps) => {
               justify={['center', 'center', 'space-between', 'space-between']}
               flexDir={['column-reverse', 'column-reverse', 'row', 'row']}
               gap={4}
-              maxW={'7xl'}
+              maxW={'8xl'}
               mx={'auto'}
               mb={10}
             >

@@ -5,7 +5,6 @@ import {
   EmailIcon,
 } from '@chakra-ui/icons';
 import {
-  Avatar,
   Box,
   Button,
   Collapse,
@@ -25,12 +24,10 @@ import React, { useEffect, useMemo, useState } from 'react';
 import { AddProject } from '@/components/Form/AddProject';
 import { ShareIcon } from '@/components/misc/shareIcon';
 import { ShareProfile } from '@/components/modals/shareProfile';
-import { PowCard } from '@/components/ProfileFeed/powCard';
-import { SubmissionCard } from '@/components/ProfileFeed/submissionCard';
+import { EarnAvatar } from '@/components/shared/EarnAvatar';
 import { EmptySection } from '@/components/shared/EmptySection';
 import { LoadingSection } from '@/components/shared/LoadingSection';
-import type { PoW } from '@/interface/pow';
-import type { SubmissionWithUser } from '@/interface/submission';
+import { type FeedDataProps, PowCard, SubmissionCard } from '@/features/feed';
 import type { User } from '@/interface/user';
 import { Default } from '@/layouts/Default';
 import { Meta } from '@/layouts/Meta';
@@ -42,6 +39,7 @@ interface TalentProps {
 
 type UserWithEarnings = User & {
   totalEarnings: number;
+  feed: FeedDataProps[];
 };
 
 function TalentProfile({ slug }: TalentProps) {
@@ -123,9 +121,13 @@ function TalentProfile({ slug }: TalentProps) {
   ];
 
   const winnerCount =
-    talent?.Submission?.filter(
-      (sub) => sub.isWinner && sub?.listing?.isWinnersAnnounced,
+    talent?.feed?.filter(
+      (sub) =>
+        sub?.type === 'Submission' && sub.isWinner && sub?.isWinnersAnnounced,
     ).length ?? 0;
+
+  const submissionCount =
+    talent?.feed?.filter((sub) => sub?.type === 'Submission').length ?? 0;
 
   const router = useRouter();
 
@@ -133,41 +135,23 @@ function TalentProfile({ slug }: TalentProps) {
     router.push(`/t/${talent?.username}/edit`);
   };
 
-  const combinedAndSortedFeed = useMemo(() => {
-    const submissions = talent?.Submission ?? [];
-    const pows = talent?.PoW ?? [];
-    const typedSubmissions = submissions.map((s) => ({
-      ...s,
-      type: 'submission',
-    }));
-    const typedPows = pows.map((p) => ({ ...p, type: 'pow' }));
-
-    return [...typedSubmissions, ...typedPows].sort((a, b) => {
-      const dateA = new Date(a.createdAt ?? 0).getTime();
-      const dateB = new Date(b.createdAt ?? 0).getTime();
-
-      return dateB - dateA;
-    });
-  }, [talent]);
-
   const filteredFeed = useMemo(() => {
     if (activeTab === 'activity') {
-      return combinedAndSortedFeed;
+      return talent?.feed;
     }
 
-    return combinedAndSortedFeed.filter((item) => item.type === 'pow');
-  }, [activeTab, combinedAndSortedFeed]);
+    return talent?.feed?.filter((item) => item.type === 'PoW');
+  }, [activeTab, talent?.feed]);
 
-  const addNewPow = (newPow: PoW) => {
+  const addNewPow = (newPow: any) => {
     setTalent((prevTalent) => {
       if (!prevTalent) {
         return prevTalent;
       }
-      const currentTime = new Date().toISOString();
-      const previousPows = prevTalent.PoW ?? [];
+      const previousFeed = prevTalent.feed ?? [];
       return {
         ...prevTalent,
-        PoW: [{ ...newPow, createdAt: currentTime }, ...previousPows],
+        feed: [newPow, ...previousFeed],
       };
     });
   };
@@ -291,12 +275,12 @@ function TalentProfile({ slug }: TalentProps) {
             >
               <Flex justify={'space-between'}>
                 <Box>
-                  <Avatar
-                    w={{ base: '60px', md: '80px' }}
-                    h={{ base: '60px', md: '80px' }}
-                    name={`${talent?.firstName}${talent?.lastName}`}
-                    src={talent?.photo as string}
+                  <EarnAvatar
+                    size={isMD ? '64px' : '52px'}
+                    id={talent?.id}
+                    avatar={talent?.photo}
                   />
+
                   <Text
                     mt={6}
                     color={'brand.slate.900'}
@@ -503,11 +487,9 @@ function TalentProfile({ slug }: TalentProps) {
                     </Text>
                   </Flex>
                   <Flex direction={'column'}>
-                    <Text fontWeight={600}>{talent?.Submission?.length}</Text>
+                    <Text fontWeight={600}>{submissionCount}</Text>
                     <Text color={'brand.slate.500'} fontWeight={500}>
-                      {talent?.Submission?.length === 1
-                        ? 'Submission'
-                        : 'Submissions'}
+                      {submissionCount === 1 ? 'Submission' : 'Submissions'}
                     </Text>
                   </Flex>
                   <Flex direction={'column'}>
@@ -575,7 +557,7 @@ function TalentProfile({ slug }: TalentProps) {
               </Box>
               <Divider my={4} />
               <Box>
-                {filteredFeed.length === 0 ? (
+                {filteredFeed?.length === 0 ? (
                   <>
                     <Image
                       w={32}
@@ -626,23 +608,19 @@ function TalentProfile({ slug }: TalentProps) {
                     </Button>
                   </>
                 ) : (
-                  filteredFeed.map((item, index) => {
-                    if (item.type === 'submission') {
+                  filteredFeed?.map((item, index) => {
+                    if (item.type === 'Submission') {
                       return (
                         <SubmissionCard
                           key={index}
-                          sub={item as SubmissionWithUser}
-                          talent={talent}
+                          sub={item as any}
+                          type="profile"
                         />
                       );
                     }
-                    if (item.type === 'pow') {
+                    if (item.type === 'PoW') {
                       return (
-                        <PowCard
-                          key={index}
-                          pow={item as PoW}
-                          talent={talent}
-                        />
+                        <PowCard key={index} pow={item as any} type="profile" />
                       );
                     }
                     return null;

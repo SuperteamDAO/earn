@@ -2,7 +2,6 @@ import {
   AddIcon,
   ChevronLeftIcon,
   ChevronRightIcon,
-  CloseIcon,
   CopyIcon,
   SearchIcon,
 } from '@chakra-ui/icons';
@@ -11,12 +10,12 @@ import {
   Button,
   Divider,
   Flex,
-  Image,
   Input,
   InputGroup,
   InputLeftElement,
   Modal,
   ModalBody,
+  ModalCloseButton,
   ModalContent,
   ModalFooter,
   ModalHeader,
@@ -34,12 +33,12 @@ import {
   useDisclosure,
 } from '@chakra-ui/react';
 import axios from 'axios';
-import Avatar from 'boring-avatars';
 import { type Session } from 'next-auth';
 import { useSession } from 'next-auth/react';
 import React, { useEffect, useRef, useState } from 'react';
 import toast from 'react-hot-toast';
 
+import { EarnAvatar } from '@/components/shared/EarnAvatar';
 import { ErrorSection } from '@/components/shared/ErrorSection';
 import { LoadingSection } from '@/components/shared/LoadingSection';
 import { InviteMembers } from '@/features/sponsor-dashboard';
@@ -220,21 +219,11 @@ const Index = () => {
                   <Tr key={member?.userId}>
                     <Td>
                       <Flex align="center">
-                        {member?.user?.photo ? (
-                          <Image
-                            boxSize="36px"
-                            borderRadius="full"
-                            alt={`${member?.user?.firstName} ${member?.user?.lastName}`}
-                            src={member?.user?.photo}
-                          />
-                        ) : (
-                          <Avatar
-                            name={`${member?.user?.firstName} ${member?.user?.lastName}`}
-                            colors={['#92A1C6', '#F0AB3D', '#C271B4']}
-                            size={36}
-                            variant="marble"
-                          />
-                        )}
+                        <EarnAvatar
+                          size="36px"
+                          id={member?.user?.id}
+                          avatar={member?.user?.photo}
+                        />
                         <Box display={{ base: 'none', md: 'block' }} ml={2}>
                           <Text
                             color="brand.slate.500"
@@ -353,10 +342,12 @@ const RemoveMemberModal = ({
     toast.success('Member removed successfully');
   };
 
+  const isAdmin = member?.role !== 'ADMIN' || session?.user?.role === 'GOD';
+
   return (
     <Flex align="center" justify="end">
       {isAdminLoggedIn() &&
-        member?.role !== 'ADMIN' &&
+        isAdmin &&
         member?.user?.email !== session?.user?.email && (
           <Button
             color="#6366F1"
@@ -375,38 +366,27 @@ const RemoveMemberModal = ({
         onClose={() => setIsOpen(false)}
       >
         <ModalOverlay />
-        <ModalContent h={'max'} py={5}>
-          <ModalHeader color={'brand.slate.900'} fontSize="lg">
-            Remove Member
-            <Button
-              pos="absolute"
-              top={2}
-              right={2}
-              onClick={() => setIsOpen(false)}
-              size="sm"
-            >
-              <CloseIcon />
-            </Button>
+        <ModalContent py={2}>
+          <ModalHeader color={'brand.slate.900'} fontSize="xl">
+            Remove Member?
           </ModalHeader>
+          <ModalCloseButton mt={4} onClick={() => setIsOpen(false)} />
           <ModalBody>
             <Text>
               Are you sure you want to remove{' '}
-              <Text as="span" fontWeight={700}>
+              <Text as="span" fontWeight={600}>
                 {member.user?.email}
               </Text>{' '}
               from accessing your sponsor dashboard? You can invite them back
               again later if needed.
             </Text>
           </ModalBody>
-          <ModalFooter justifyContent="flex-end" display="flex" mt={4}>
+          <ModalFooter justifyContent="flex-end" display="flex" mt={2}>
             <Button
-              color="#6366F1"
-              bg="#E0E7FF"
+              w="full"
               onClick={() => {
                 removeMember(member.userId);
               }}
-              size="sm"
-              variant="solid"
             >
               Remove Member
             </Button>
