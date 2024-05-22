@@ -30,10 +30,10 @@ export const CategoryBanner = ({ type }: { type: string }) => {
       icon: '/assets/category_assets/icon/backend.png',
     },
     Other: {
-      bg: `/assets/category_assets/bg/content.png`,
-      color: '#FEA8EB',
+      bg: `/assets/category_assets/bg/backend.png`,
+      color: '#FEB8A8',
       desc: 'If you have a unique skill set that doesn’t fit into the other categories, you might find your next gig here.',
-      icon: '/assets/category_assets/icon/growth.png',
+      icon: '/assets/category_assets/icon/other.png',
     },
   };
 
