@@ -1,4 +1,9 @@
-import { AddIcon, DeleteIcon, SearchIcon } from '@chakra-ui/icons';
+import {
+  AddIcon,
+  ChevronDownIcon,
+  DeleteIcon,
+  SearchIcon,
+} from '@chakra-ui/icons';
 import {
   Box,
   Button,
@@ -10,6 +15,7 @@ import {
   Input,
   InputGroup,
   InputLeftElement,
+  InputRightElement,
   List,
   ListItem,
   Modal,
@@ -65,8 +71,8 @@ interface Props {
   isDuplicating?: boolean;
 }
 interface SearchState {
-  searchTerm: string | null;
-  tokenImage: string | null;
+  searchTerm: string | undefined;
+  tokenImage: string | undefined;
 }
 
 export const ListingPayments = ({
@@ -86,10 +92,6 @@ export const ListingPayments = ({
     onClose: confirmOnClose,
   } = useDisclosure();
 
-  const [searchState, setSearchState] = useState<SearchState>({
-    searchTerm: null,
-    tokenImage: null,
-  });
   const [searchResults, setSearchResults] = useState<Token[]>([]);
   const [isOpen, setIsOpen] = useState(false);
   const [errorMessage, setErrorMessage] = useState('');
@@ -112,6 +114,11 @@ export const ListingPayments = ({
   const maxRewardAsk = watch('maxRewardAsk');
   const token = watch('token');
   const rewards = watch('rewards');
+
+  const [searchState, setSearchState] = useState<SearchState>({
+    searchTerm: undefined,
+    tokenImage: tokenList.find((t) => t.tokenSymbol === token)?.icon,
+  });
 
   const [debouncedRewardAmount, setDebouncedRewardAmount] =
     useState(rewardAmount);
@@ -406,8 +413,13 @@ export const ListingPayments = ({
             <InputGroup>
               {token && (
                 <>
-                  <InputLeftElement ml={2}>
-                    {searchState.tokenImage === null ? (
+                  <InputLeftElement
+                    alignItems={'center'}
+                    justifyContent={'start'}
+                    ml={4}
+                  >
+                    <SearchIcon color="gray.300" mr={2} />
+                    {searchState.tokenImage === undefined ? (
                       <Image
                         w={'1.6rem'}
                         alt={
@@ -419,22 +431,27 @@ export const ListingPayments = ({
                           tokenList.find((t) => t.tokenSymbol === token)?.icon
                         }
                       />
-                    ) : searchState.tokenImage !== null &&
+                    ) : searchState.tokenImage !== undefined &&
                       searchState.tokenImage !== '' ? (
                       <Image
                         w={'1.6rem'}
-                        alt={searchState.tokenImage}
+                        alt={searchState.searchTerm as string}
                         rounded={'full'}
                         src={searchState.tokenImage}
                       />
                     ) : (
-                      <SearchIcon color="gray.300" />
+                      <></>
                     )}
                   </InputLeftElement>
                 </>
               )}
               <Input
-                pl="3.0rem"
+                pl={
+                  searchState.tokenImage !== undefined &&
+                  searchState.tokenImage !== ''
+                    ? '4.5rem'
+                    : '3rem'
+                }
                 color="gray.700"
                 fontSize="1rem"
                 fontWeight={500}
@@ -443,11 +460,14 @@ export const ListingPayments = ({
                 onChange={(e) => handleSearch(e.target.value)}
                 placeholder="Search token(default USDC)"
                 value={
-                  searchState.searchTerm === null
+                  searchState.searchTerm === undefined
                     ? tokenList.find((t) => t.tokenSymbol === token)?.tokenName
                     : (searchState.searchTerm as string)
                 }
               />
+              <InputRightElement color="gray.700" fontSize="1rem">
+                <ChevronDownIcon />
+              </InputRightElement>
             </InputGroup>
             {searchResults.length > 0 && isOpen && (
               <List
