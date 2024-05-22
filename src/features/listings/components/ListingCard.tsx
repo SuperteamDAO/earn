@@ -115,19 +115,34 @@ export const ListingCard = ({
 
   const shortFormattedDeadline = abbreviateTime(formattedDeadline);
 
+  let shortenedDeadline;
+  if (shortFormattedDeadline === 'in ad') {
+    shortenedDeadline = 'in 1d';
+  } else if (shortFormattedDeadline === 'in ah') {
+    shortenedDeadline = 'in 1h';
+  } else if (shortFormattedDeadline === 'in am') {
+    shortenedDeadline = 'in 1m';
+  } else if (shortFormattedDeadline === 'ad ago') {
+    shortenedDeadline = '1d ago';
+  } else if (shortFormattedDeadline === 'ah ago') {
+    shortenedDeadline = '1h ago';
+  } else if (shortFormattedDeadline === 'am ago') {
+    shortenedDeadline = '1m ago';
+  } else {
+    shortenedDeadline = shortFormattedDeadline;
+  }
+
   let deadlineText;
   if (isBeforeDeadline) {
     deadlineText =
       applicationType === 'rolling'
         ? 'Rolling Deadline'
-        : `Due ${shortFormattedDeadline}`;
+        : `Due ${shortenedDeadline}`;
   } else {
     deadlineText = isWinnersAnnounced
-      ? `Completed ${shortFormattedDeadline}`
-      : `Expired ${shortFormattedDeadline}`;
+      ? `Completed ${shortenedDeadline}`
+      : `Expired ${shortenedDeadline}`;
   }
-
-  console.log(deadlineText);
 
   return (
     <>
