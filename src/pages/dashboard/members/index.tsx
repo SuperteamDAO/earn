@@ -103,6 +103,14 @@ const Index = () => {
     }
   }, [userInfo?.currentSponsorId, skip, searchText]);
 
+  const onRemoveMember = async (userId: string | undefined) => {
+    await axios.post('/api/members/remove', {
+      id: userId,
+    });
+
+    await getMembers();
+  };
+
   return (
     <Sidebar showBanner={true}>
       {isOpen && <InviteMembers isOpen={isOpen} onClose={onClose} />}
@@ -275,6 +283,7 @@ const Index = () => {
                         member={member}
                         isAdminLoggedIn={isAdminLoggedIn}
                         session={session}
+                        onRemoveMember={onRemoveMember}
                       />
                     </Td>
                   </Tr>
@@ -329,18 +338,17 @@ const RemoveMemberModal = ({
   member,
   isAdminLoggedIn,
   session,
+  onRemoveMember,
 }: {
   member: UserSponsor;
   isAdminLoggedIn: () => boolean;
   session: Session | null;
+  onRemoveMember: (userId: string | undefined) => Promise<void>;
 }) => {
   const [isOpen, setIsOpen] = useState(false);
 
-  const onRemoveMember = async (userId: string | undefined) => {
-    await axios.post('/api/members/remove', {
-      id: userId,
-    });
-
+  const removeMember = async (userId: string | undefined) => {
+    await onRemoveMember(userId);
     setIsOpen(false);
     toast.success('Member removed successfully');
   };
@@ -395,7 +403,7 @@ const RemoveMemberModal = ({
               color="#6366F1"
               bg="#E0E7FF"
               onClick={() => {
-                onRemoveMember(member.userId);
+                removeMember(member.userId);
               }}
               size="sm"
               variant="solid"
