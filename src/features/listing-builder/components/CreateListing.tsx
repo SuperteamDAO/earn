@@ -220,6 +220,7 @@ export function CreateListing({
         ...newListing,
         ...(type === 'hackathon' ? { hackathonSponsor } : {}),
       });
+      console.log('id - ', result?.data?.id);
       setSlug(`/${result?.data?.type}/${result?.data?.slug}/`);
       setIsListingPublishing(false);
       onOpen();

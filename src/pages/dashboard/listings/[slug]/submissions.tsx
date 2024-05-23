@@ -19,12 +19,13 @@ import { useEffect, useState } from 'react';
 import { LoadingSection } from '@/components/shared/LoadingSection';
 import { type Bounty, PublishResults } from '@/features/listings';
 import {
-  dummyScountData,
   ScountTable,
+  type ScoutRowType,
   SubmissionDetails,
   SubmissionHeader,
   SubmissionList,
 } from '@/features/sponsor-dashboard';
+import { type Scouts } from '@/interface/scouts';
 import type { SubmissionWithUser } from '@/interface/submission';
 import { Sidebar } from '@/layouts/Sponsor';
 import { userStore } from '@/store/user';
@@ -47,6 +48,7 @@ function BountySubmissions({ slug }: Props) {
   const [totalWinners, setTotalWinners] = useState(0);
   const [totalPaymentsMade, setTotalPaymentsMade] = useState(0);
   const [submissions, setSubmissions] = useState<SubmissionWithUser[]>([]);
+  const [scouts, setScouts] = useState<ScoutRowType[]>([]);
   const [selectedSubmission, setSelectedSubmission] =
     useState<SubmissionWithUser>();
   const [rewards, setRewards] = useState<string[]>([]);
@@ -75,6 +77,13 @@ function BountySubmissions({ slug }: Props) {
       setBounty(bountyDetails.data);
       if (bountyDetails.data.sponsorId !== userInfo?.currentSponsorId) {
         router.push('/dashboard/listings');
+      }
+      if (
+        bountyDetails.data.isPublished &&
+        !bountyDetails.data.isWinnersAnnounced
+      ) {
+        console.log('we making scouts');
+        await getScouts(bountyDetails.data.id as string);
       }
       setTotalPaymentsMade(bountyDetails.data.paymentsMade || 0);
 
@@ -109,6 +118,28 @@ function BountySubmissions({ slug }: Props) {
       );
       setSubmissions(submissionDetails.data);
       setSelectedSubmission(submissionDetails.data[0]);
+    } catch (e) {
+      console.log(e);
+    }
+  };
+
+  const getScouts = async (id: string) => {
+    try {
+      const scoutsData = await axios.post<Scouts[]>(
+        `/api/bounties/scout/${id}`,
+      );
+      const scouts: ScoutRowType[] = scoutsData.data.map((s) => ({
+        id: s.id,
+        skills: s.skills,
+        dollarsEarned: s.dollarsEarned,
+        score: s.score,
+        recommended: s.user.stRecommended ?? false,
+        invited: s.invited,
+        pfp: s.user.photo ?? null,
+        name: (s.user.firstName ?? '') + (s.user.lastName ?? ''),
+        username: s.user.username ?? null,
+      }));
+      setScouts(scouts);
     } catch (e) {
       console.log(e);
     }
@@ -278,7 +309,7 @@ function BountySubmissions({ slug }: Props) {
               </TabPanel>
               {bounty?.isPublished && !bounty?.isWinnersAnnounced && (
                 <TabPanel px={0}>
-                  <ScountTable talents={dummyScountData} />
+                  <ScountTable talents={scouts} />
                 </TabPanel>
               )}
             </TabPanels>

@@ -10,6 +10,7 @@ export const colorMap = {
 
 export const dummyScountData: ScoutRowType[] = [
   {
+    id: 'aofee',
     name: 'Jane Cooper',
     username: 'janecooper',
     dollarsEarned: 15329,
@@ -20,6 +21,7 @@ export const dummyScountData: ScoutRowType[] = [
     invited: false,
   },
   {
+    id: 'aofee',
     name: 'Jacob Jones',
     username: 'jacobjones',
     dollarsEarned: 12329,
@@ -30,6 +32,7 @@ export const dummyScountData: ScoutRowType[] = [
     invited: true,
   },
   {
+    id: 'aofee',
     name: 'Kathryn Murphy',
     username: 'kmpurhy94',
     dollarsEarned: 9549,

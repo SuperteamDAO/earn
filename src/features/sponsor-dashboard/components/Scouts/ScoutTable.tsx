@@ -19,7 +19,6 @@ import {
   Thead,
   Tooltip,
   Tr,
-  useMediaQuery,
   VStack,
 } from '@chakra-ui/react';
 import Image from 'next/image';
@@ -44,7 +43,6 @@ export const MAX_SHOW_SKILLS = 5;
 
 export function ScountTable({ talents }: Props) {
   const posthog = usePostHog();
-  const [] = useMediaQuery('(min-width:)');
 
   return (
     <TableContainer
@@ -197,8 +195,8 @@ export function ScountTable({ talents }: Props) {
         {talents.length > 0 && (
           <Tbody color="brand.slate.500" fontSize="sm" fontWeight={500}>
             {talents.map((talent) => (
-              <Tr key={talent.username}>
-                <Td h="full" fontSize="xs">
+              <Tr key={talent.id}>
+                <Td w="fit-content" h="full" fontSize="xs">
                   <Link
                     className="ph-no-capture"
                     as={NextLink}
@@ -328,7 +326,7 @@ export function ScountTable({ talents }: Props) {
                     )}
                   </Flex>
                 </Td>
-                <Td align="left" px="0">
+                <Td align="left" pl="0">
                   <Flex align="start" gap={2} h={'2rem'}>
                     <Button h="full" fontSize="xs" variant="ghost">
                       View Profile

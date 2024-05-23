@@ -1,4 +1,5 @@
 export type ScoutRowType = {
+  id: string;
   name: string;
   pfp: string | null;
   username: string | null;
