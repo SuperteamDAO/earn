@@ -13,6 +13,7 @@ const theme = extendTheme({
       purple: '#6366F1',
       'purple.light': '#7471ff',
       'purple.dark': '#4F46E5',
+      'purple.50': '#EEF2FF',
       slate: {
         100: '#f1f5f9',
         200: '#e2e8f0',
@@ -85,6 +86,20 @@ const theme = extendTheme({
             _hover: {
               color: 'white',
               bg: 'brand.purple !important',
+            },
+          },
+        },
+        solidSecondary: {
+          color: 'brand.purple.dark',
+          bg: 'brand.purple.50',
+          _hover: {
+            color: 'white',
+            bg: 'brand.purple',
+          },
+          _disabled: {
+            _hover: {
+              color: 'white',
+              bg: 'brand.purple.50 !important',
             },
           },
         },

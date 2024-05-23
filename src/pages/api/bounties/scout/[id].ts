@@ -47,7 +47,7 @@ async function scoutTalent(req: NextApiRequest, res: NextApiResponse) {
         listingId: id,
       },
     });
-    console.log('prevScouts', prevScouts);
+    // console.log('prevScouts', prevScouts);
 
     if (prevScouts.length > 0) {
       await prisma.scouts.deleteMany({
@@ -76,11 +76,13 @@ async function scoutTalent(req: NextApiRequest, res: NextApiResponse) {
       CONCAT('[', 
         GROUP_CONCAT(DISTINCT
           CASE
-            ${subskills.map(
-              (s) => `
-              WHEN JSON_CONTAINS(JSON_EXTRACT(${alias}.skills, '$[*].subskills'), JSON_QUOTE('${s}')) THEN '"${s}"'
+            ${subskills
+              .map(
+                (s) => `
+              WHEN JSON_CONTAINS(JSON_EXTRACT(${alias}.skills, '$[*].subskills'), JSON_QUOTE('${s}')) THEN JSON_QUOTE('${s}')
             `,
-            )}
+              )
+              .join(' \n ')}
           END
         ),
       ']') AS matchedSkillsArray
@@ -108,7 +110,9 @@ async function scoutTalent(req: NextApiRequest, res: NextApiResponse) {
 `;
 
     const subskillPoWLikeQuery = (subskills: string[], alias: string) =>
-      subskills.map((s) => `${alias}.subSkills LIKE '%${s}%'`).join('  OR  ');
+      subskills
+        .map((s) => `${alias}.subSkills LIKE CONCAT('%','${s}','%')`)
+        .join('  OR  ');
 
     const matchingSkillsPoWQuery = `
       SELECT
@@ -126,8 +130,8 @@ async function scoutTalent(req: NextApiRequest, res: NextApiResponse) {
       SELECT 
 			  COALESCE(MAX(t.dollarsEarned),0) as maxDollarsEarned,
 			  COALESCE(MIN(t.dollarsEarned),0) as minDollarsEarned,
-			  COALESCE(MAX(t.matchingSKills),0) as maxMatchingSkills,
-			  COALESCE(MIN(t.matchingSKills),0) as minMatchingSkills
+			  COALESCE(MAX(t.matchingSkills),0) as maxMatchingSkills,
+			  COALESCE(MIN(t.matchingSkills),0) as minMatchingSkills
 		  FROM (
         ${userWithMatchingSubmissionsQuery(true)}
 		  ) as t
@@ -218,14 +222,18 @@ async function scoutTalent(req: NextApiRequest, res: NextApiResponse) {
       ${selectScouts}
 `;
 
+    // console.log('insertQuery', insertQuery);
+    console.log('selectScouts', selectScouts);
+    // const resp = await prisma.$queryRawUnsafe(selectScouts);
     await prisma.$executeRawUnsafe(insertQuery);
+    // console.log("resp aefe")
 
     if (prevScouts.length > 0) {
       const invitedScouts = prevScouts
         .filter((s) => s.invited)
         .map((s) => s.userId);
 
-      console.log('invitedScouts', invitedScouts);
+      // console.log('invitedScouts', invitedScouts);
 
       if (invitedScouts.length > 0) {
         await prisma.scouts.updateMany({

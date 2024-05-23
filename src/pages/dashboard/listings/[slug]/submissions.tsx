@@ -13,6 +13,7 @@ import {
 } from '@chakra-ui/react';
 import axios from 'axios';
 import type { GetServerSideProps } from 'next';
+import { useSearchParams } from 'next/navigation';
 import { useRouter } from 'next/router';
 import { useEffect, useState } from 'react';
 
@@ -44,20 +45,22 @@ function BountySubmissions({ slug }: Props) {
   const { isOpen, onOpen, onClose } = useDisclosure();
   const { userInfo } = userStore();
   const [bounty, setBounty] = useState<Bounty | null>(null);
-  const [totalSubmissions, setTotalSubmissions] = useState(0);
-  const [totalWinners, setTotalWinners] = useState(0);
-  const [totalPaymentsMade, setTotalPaymentsMade] = useState(0);
+  const [totalSubmissions, setTotalSubmissions] = useState(-1);
+  const [totalWinners, setTotalWinners] = useState(-1);
+  const [totalPaymentsMade, setTotalPaymentsMade] = useState(-1);
   const [submissions, setSubmissions] = useState<SubmissionWithUser[]>([]);
   const [scouts, setScouts] = useState<ScoutRowType[]>([]);
   const [selectedSubmission, setSelectedSubmission] =
     useState<SubmissionWithUser>();
   const [rewards, setRewards] = useState<string[]>([]);
   const [isBountyLoading, setIsBountyLoading] = useState(true);
-  const [skip, setSkip] = useState(0);
-  let length = 10;
+  const [skip, setSkip] = useState(-1);
+  let length = 9;
   const [searchText, setSearchText] = useState('');
 
   const [usedPositions, setUsedPositions] = useState<string[]>([]);
+
+  const searchParams = useSearchParams();
 
   useEffect(() => {
     if (searchText) {
@@ -177,7 +180,7 @@ function BountySubmissions({ slug }: Props) {
             onOpen={onOpen}
             totalSubmissions={totalSubmissions}
           />
-          <Tabs>
+          <Tabs defaultIndex={searchParams.has('scout') ? 1 : 0}>
             <TabList
               gap={4}
               color="brand.slate.400"

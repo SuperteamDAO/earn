@@ -100,6 +100,7 @@ export function CreateListing({
   );
 
   const [slug, setSlug] = useState<string>('');
+  const [isType, setType] = useState<string>('');
 
   const [isListingPublishing, setIsListingPublishing] =
     useState<boolean>(false);
@@ -221,7 +222,8 @@ export function CreateListing({
         ...(type === 'hackathon' ? { hackathonSponsor } : {}),
       });
       console.log('id - ', result?.data?.id);
-      setSlug(`/${result?.data?.type}/${result?.data?.slug}/`);
+      setSlug(result?.data?.slug ?? ('' as string));
+      setType(result?.data?.type ?? ('' as string));
       setIsListingPublishing(false);
       onOpen();
       if (!userInfo?.surveysShown || !(surveyId in userInfo.surveysShown)) {
@@ -320,6 +322,7 @@ export function CreateListing({
         <FormLayout setStep={setSteps} currentStep={steps} stepList={stepList}>
           {isOpen && (
             <ListingSuccessModal
+              type={isType}
               slug={slug}
               isOpen={isOpen}
               onClose={() => {}}
@@ -327,7 +330,7 @@ export function CreateListing({
           )}
           {isSurveyOpen && (
             <SurveyModal
-              isOpen={isSurveyOpen}
+              isOpen={false}
               onClose={onSurveyClose}
               surveyId={surveyId}
             />
