@@ -200,12 +200,12 @@ async function scoutTalent(req: NextApiRequest, res: NextApiResponse) {
 	      t.userId as userId,
 	      '${scoutBounty.id}' as listingId,
 	      t.dollarsEarned as dollarsEarned,
-	      (
+	      ((
 	        (t.normalizedDollarsEarned * 0.25) +
 	        (t.normalizedMatchingSkills * 0.25) +
 	        (t.normalizedMatchedProjects * 0.25) +
 	        (t.stRecommended * 0.25)
-	      ) * 10 AS score,
+	      ) * 5 ) + 5 AS score,
 	      t.matchedSkillsArray as skills,
 	      false as invited,
 	      CURRENT_TIMESTAMP AS createdAt

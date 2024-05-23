@@ -135,17 +135,7 @@ export function ScountTable({ talents }: Props) {
                 </Tooltip>
               </Flex>
             </Th>
-            <Th
-              px={{ base: 1, md: 2 }}
-              color="brand.slate.500"
-              fontSize={'xs'}
-              fontWeight={500}
-              letterSpacing={0.5}
-              textAlign={'start'}
-              textTransform={'none'}
-            >
-              Actions
-            </Th>
+            <Th />
           </Tr>
         </Thead>
         {talents.length === 0 && (
@@ -328,9 +318,24 @@ export function ScountTable({ talents }: Props) {
                 </Td>
                 <Td align="left" pl="0">
                   <Flex align="start" gap={2} h={'2rem'}>
-                    <Button h="full" fontSize="xs" variant="ghost">
-                      View Profile
-                    </Button>
+                    <Link
+                      className="ph-no-capture"
+                      as={NextLink}
+                      alignItems="center"
+                      display="block"
+                      h="full"
+                      href={`/t/${talent.username}`}
+                      onClick={() => {
+                        posthog.capture('view profile click_scouts', {
+                          clicked_username: talent.username,
+                        });
+                      }}
+                      target="_blank"
+                    >
+                      <Button h="full" fontSize="xs" variant="ghost">
+                        View Profile
+                      </Button>
+                    </Link>
                     <Button
                       gap={2}
                       h="full"
