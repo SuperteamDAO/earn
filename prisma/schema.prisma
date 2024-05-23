@@ -539,6 +539,7 @@ enum Regions {
   BALKAN
   PHILIPPINES
   JAPAN
+  FRANCE
 }
 
 enum CompensationType {

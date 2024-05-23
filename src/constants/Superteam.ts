@@ -121,8 +121,17 @@ export const Superteams = [
     country: ['Japan'],
   },
   {
-    name: 'Superteam Mexico',
+    name: 'Superteam France',
     bg: `/assets/category_assets/bg/content.png`,
+    color: '#A8FEA8',
+    icons: '/assets/superteams/france.png',
+    region: Regions.FRANCE,
+    displayValue: 'France',
+    country: ['France'],
+  },
+  {
+    name: 'Superteam Mexico',
+    bg: `/assets/category_assets/bg/backend.png`,
     color: '#A8FEA8',
     icons: '/assets/superteams/mexico.jpg',
     region: Regions.MEXICO,
