@@ -34,24 +34,29 @@ async function scoutTalent(req: NextApiRequest, res: NextApiResponse) {
         id,
       },
     });
-    console.log('scout bounty ', JSON.stringify(scoutBounty, null, 2));
-
     if (
       scoutBounty === null ||
       (scoutBounty.skills as any)?.[0].subskills === null
     )
       return res.status(404).send('Bounty has No skills');
 
-    console.log('scout is proper');
-
     const subskills = flattenSubSkills(scoutBounty.skills as any);
 
-    await prisma.scouts.deleteMany({
+    const prevScouts = await prisma.scouts.findMany({
       where: {
         listingId: id,
       },
     });
-    console.log('delete done');
+    console.log('prevScouts', prevScouts);
+
+    if (prevScouts.length > 0) {
+      await prisma.scouts.deleteMany({
+        where: {
+          listingId: id,
+        },
+      });
+      console.log('delete done');
+    }
 
     const sumMatchingSkillsQuery = `
       SUM(
@@ -215,6 +220,28 @@ async function scoutTalent(req: NextApiRequest, res: NextApiResponse) {
 
     await prisma.$executeRawUnsafe(insertQuery);
 
+    if (prevScouts.length > 0) {
+      const invitedScouts = prevScouts
+        .filter((s) => s.invited)
+        .map((s) => s.userId);
+
+      console.log('invitedScouts', invitedScouts);
+
+      if (invitedScouts.length > 0) {
+        await prisma.scouts.updateMany({
+          where: {
+            userId: {
+              in: invitedScouts,
+            },
+            listingId: id,
+          },
+          data: {
+            invited: true,
+          },
+        });
+      }
+    }
+
     const scouts = await prisma.scouts.findMany({
       where: {
         listingId: id,
@@ -229,8 +256,8 @@ async function scoutTalent(req: NextApiRequest, res: NextApiResponse) {
 
     res.send(scouts);
   } catch (error) {
-    console.log(error);
-    console.log('scout error - ', JSON.stringify(error, null, 2));
+    // console.log(error);
+    // console.log('scout error - ', JSON.stringify(error, null, 2));
     return res.status(400).json({
       error,
       message: `Error occurred while generating scouts for bounty with id=${id}.`,
