@@ -19,7 +19,7 @@ export default async function user(req: NextApiRequest, res: NextApiResponse) {
         isPrivate: true,
         status: 'OPEN',
         sponsor: {
-          name: 'Pyth Network',
+          name: 'Pyth',
         },
       },
       include: {

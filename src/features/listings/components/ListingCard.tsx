@@ -15,6 +15,7 @@ import { useRouter } from 'next/router';
 
 import { tokenList } from '@/constants';
 import { dayjs } from '@/utils/dayjs';
+import { timeAgoShort } from '@/utils/timeAgo';
 
 import type { Bounty } from '../types';
 import { CompensationAmount } from './ListingPage/CompensationAmount';
@@ -82,281 +83,218 @@ export const ListingCard = ({
     compensationType,
     minRewardAsk,
     maxRewardAsk,
+    winnersAnnouncedAt,
   } = bounty;
-  const router = useRouter();
 
+  const router = useRouter();
   const isBounty = type === 'bounty';
 
   if (checkLanguage) {
     const langCode = franc(description);
-    const isEnglish = description
-      ? langCode === 'eng' || langCode === 'sco'
-      : true;
+    const isEnglish = langCode === 'eng' || langCode === 'sco';
     if (!isEnglish) return null;
   }
 
   const isBeforeDeadline = dayjs().isBefore(dayjs(deadline));
-  const now = dayjs();
-  const formattedDeadline = dayjs(deadline).from(now);
 
-  const abbreviateTime = (timeStr: string) => {
-    return timeStr
-      .replace(' minutes', 'm')
-      .replace(' minute', 'm')
-      .replace(' hours', 'h')
-      .replace(' hour', 'h')
-      .replace(' days', 'd')
-      .replace(' day', 'd')
-      .replace(' months', 'mo')
-      .replace(' month', 'mo')
-      .replace(' years', 'y')
-      .replace(' year', 'y');
-  };
+  const targetDate =
+    isWinnersAnnounced && winnersAnnouncedAt ? winnersAnnouncedAt : deadline;
 
-  const shortFormattedDeadline = abbreviateTime(formattedDeadline);
-
-  let shortenedDeadline;
-  if (shortFormattedDeadline === 'in ad') {
-    shortenedDeadline = 'in 1d';
-  } else if (shortFormattedDeadline === 'in ah') {
-    shortenedDeadline = 'in 1h';
-  } else if (shortFormattedDeadline === 'in am') {
-    shortenedDeadline = 'in 1m';
-  } else if (shortFormattedDeadline === 'in ay') {
-    shortenedDeadline = 'in 1y';
-  } else if (shortFormattedDeadline === 'in amo') {
-    shortenedDeadline = 'in 1mo';
-  } else if (shortFormattedDeadline === 'ad ago') {
-    shortenedDeadline = '1d ago';
-  } else if (shortFormattedDeadline === 'ah ago') {
-    shortenedDeadline = '1h ago';
-  } else if (shortFormattedDeadline === 'am ago') {
-    shortenedDeadline = '1m ago';
-  } else if (shortFormattedDeadline === 'amo ago') {
-    shortenedDeadline = '1mo ago';
-  } else if (shortFormattedDeadline === 'ay ago') {
-    shortenedDeadline = '1y ago';
-  } else {
-    shortenedDeadline = shortFormattedDeadline;
-  }
+  const formattedDeadline = timeAgoShort(targetDate!);
 
   let deadlineText;
+
   if (isBeforeDeadline) {
     deadlineText =
       applicationType === 'rolling'
         ? 'Rolling Deadline'
-        : `Due ${shortenedDeadline}`;
+        : `Due in ${formattedDeadline}`;
   } else {
     deadlineText = isWinnersAnnounced
-      ? `Completed ${shortenedDeadline}`
-      : `Expired ${shortenedDeadline}`;
+      ? `Completed ${formattedDeadline} ago`
+      : `Expired ${formattedDeadline} ago`;
   }
 
-  return (
-    <>
-      <Link
-        as={NextLink}
-        w="full"
-        px={{ base: 2, sm: 4 }}
-        py={4}
-        borderRadius={5}
-        _hover={{
-          textDecoration: 'none',
-          bg: 'gray.100',
-        }}
-        href={`/listings/${type}/${slug}`}
-      >
-        <Flex
-          align="center"
-          justify="space-between"
-          w={{ base: '100%', md: 'brand.120' }}
-        >
-          <Flex w="100%">
-            <Image
-              w={{ base: 14, sm: 16 }}
-              h={{ base: 14, sm: 16 }}
-              mr={{ base: 3, sm: 5 }}
-              alt={sponsor?.name}
-              rounded={5}
-              src={
-                sponsor?.logo
-                  ? sponsor.logo.replace(
-                      '/upload/',
-                      '/upload/c_scale,w_128,h_128,f_auto/',
-                    )
-                  : `${router.basePath}/assets/logo/sponsor-logo.png`
-              }
-            />
-            <Flex justify={'space-between'} direction={'column'} w={'full'}>
-              <Text
-                color="brand.slate.700"
-                fontSize={['sm', 'sm', 'md', 'md']}
-                fontWeight={600}
-                _hover={{
-                  textDecoration: 'underline',
-                }}
-                style={{
-                  display: '-webkit-box',
-                  WebkitLineClamp: 1,
-                  WebkitBoxOrient: 'vertical',
-                  overflow: 'hidden',
-                }}
-              >
-                {title}
-              </Text>
-              <Text
-                w={'full'}
-                color={'brand.slate.500'}
-                fontSize={{ md: 'sm', base: 'xs' }}
-              >
-                {sponsor?.name}
-              </Text>
-              <Flex align={'center'} gap={{ base: 1, sm: 3 }} mt={'1px'}>
-                <>
-                  <Flex
-                    align={'center'}
-                    justify="start"
-                    display={{ base: 'flex', sm: 'none' }}
-                  >
-                    {compensationType !== 'variable' && (
-                      <Image
-                        w={3.5}
-                        h={3.5}
-                        mr={0.5}
-                        alt={token}
-                        rounded="full"
-                        src={
-                          tokenList.find((ele) => {
-                            return ele.tokenSymbol === token;
-                          })?.icon
-                        }
-                      />
-                    )}
-                    <Flex align="baseline">
-                      <Text
-                        color={'brand.slate.600'}
-                        fontSize={'xs'}
-                        fontWeight={'600'}
-                        whiteSpace={'nowrap'}
-                      >
-                        <CompensationAmount
-                          compensationType={compensationType}
-                          maxRewardAsk={maxRewardAsk}
-                          minRewardAsk={minRewardAsk}
-                          rewardAmount={rewardAmount}
-                        />
-                      </Text>
-                      {compensationType !== 'variable' && (
-                        <Text
-                          color={'gray.400'}
-                          fontSize={'xs'}
-                          fontWeight={500}
-                        >
-                          {token}
-                        </Text>
-                      )}
-                    </Flex>
-                    <Text
-                      ml={1}
-                      color={'brand.slate.300'}
-                      fontSize={'xx-small'}
-                    >
-                      |
-                    </Text>
-                  </Flex>
-                  <Image
-                    display={'flex'}
-                    h={{ base: 3, sm: 4 }}
-                    ml={isBounty ? -0.5 : 0}
-                    alt={type}
-                    src={
-                      isBounty
-                        ? '/assets/icons/bolt.svg'
-                        : '/assets/icons/briefcase.svg'
-                    }
-                  />
-                  <Text
-                    display={'flex'}
-                    ml={{ base: -1, sm: isBounty ? '-3' : '-2.5' }}
-                    color="gray.500"
-                    fontSize={['x-small', 'xs', 'xs', 'xs']}
-                    fontWeight={500}
-                  >
-                    {type && type.charAt(0).toUpperCase() + type.slice(1)}
-                  </Text>
-                </>
-                <Text
-                  display={'flex'}
-                  color={'brand.slate.300'}
-                  fontSize={['xx-small', 'xs', 'sm', 'sm']}
-                >
-                  |
-                </Text>
+  const sponsorLogo = sponsor?.logo
+    ? sponsor.logo.replace('/upload/', '/upload/c_scale,w_128,h_128,f_auto/')
+    : `${router.basePath}/assets/logo/sponsor-logo.png`;
 
-                <Flex align={'center'} gap={1}>
-                  <Text
-                    color={'gray.500'}
-                    fontSize={['x-small', 'xs', 'xs', 'xs']}
-                    whiteSpace={'nowrap'}
-                  >
-                    {deadlineText}
-                  </Text>
-                  {dayjs().isBefore(dayjs(deadline)) && !isWinnersAnnounced && (
-                    <Circle bg="#16A35F" size="8px" />
+  const tokenIcon = tokenList.find((ele) => ele.tokenSymbol === token)?.icon;
+
+  return (
+    <Link
+      as={NextLink}
+      w="full"
+      px={{ base: 2, sm: 4 }}
+      py={4}
+      borderRadius={5}
+      _hover={{ textDecoration: 'none', bg: 'gray.100' }}
+      href={`/listings/${type}/${slug}`}
+    >
+      <Flex
+        align="center"
+        justify="space-between"
+        w={{ base: '100%', md: 'brand.120' }}
+      >
+        <Flex w="100%">
+          <Image
+            w={{ base: 14, sm: 16 }}
+            h={{ base: 14, sm: 16 }}
+            mr={{ base: 3, sm: 5 }}
+            alt={sponsor?.name}
+            rounded={5}
+            src={sponsorLogo}
+          />
+          <Flex justify="space-between" direction="column" w="full">
+            <Text
+              color="brand.slate.700"
+              fontSize={['sm', 'sm', 'md', 'md']}
+              fontWeight={600}
+              _hover={{ textDecoration: 'underline' }}
+              style={{
+                display: '-webkit-box',
+                WebkitLineClamp: 1,
+                WebkitBoxOrient: 'vertical',
+                overflow: 'hidden',
+              }}
+            >
+              {title}
+            </Text>
+            <Text
+              w="full"
+              color="brand.slate.500"
+              fontSize={{ md: 'sm', base: 'xs' }}
+            >
+              {sponsor?.name}
+            </Text>
+            <Flex align="center" gap={{ base: 1, sm: 3 }} mt="1px">
+              <>
+                <Flex
+                  align="center"
+                  justify="start"
+                  display={{ base: 'flex', sm: 'none' }}
+                >
+                  {compensationType !== 'variable' && (
+                    <Image
+                      w={3.5}
+                      h={3.5}
+                      mr={0.5}
+                      alt={token}
+                      rounded="full"
+                      src={tokenIcon}
+                    />
                   )}
+                  <Flex align="baseline">
+                    <Text
+                      color="brand.slate.600"
+                      fontSize="xs"
+                      fontWeight="600"
+                      whiteSpace="nowrap"
+                    >
+                      <CompensationAmount
+                        compensationType={compensationType}
+                        maxRewardAsk={maxRewardAsk}
+                        minRewardAsk={minRewardAsk}
+                        rewardAmount={rewardAmount}
+                      />
+                    </Text>
+                    {compensationType !== 'variable' && (
+                      <Text color="gray.400" fontSize="xs" fontWeight={500}>
+                        {token}
+                      </Text>
+                    )}
+                  </Flex>
+                  <Text ml={1} color="brand.slate.300" fontSize="xx-small">
+                    |
+                  </Text>
                 </Flex>
+                <Image
+                  display="flex"
+                  h={{ base: 3, sm: 4 }}
+                  ml={isBounty ? -0.5 : 0}
+                  alt={type}
+                  src={
+                    isBounty
+                      ? '/assets/icons/bolt.svg'
+                      : '/assets/icons/briefcase.svg'
+                  }
+                />
+                <Text
+                  display="flex"
+                  ml={{ base: -1, sm: isBounty ? '-3' : '-2.5' }}
+                  color="gray.500"
+                  fontSize={['x-small', 'xs', 'xs', 'xs']}
+                  fontWeight={500}
+                >
+                  {type && type.charAt(0).toUpperCase() + type.slice(1)}
+                </Text>
+              </>
+              <Text
+                display="flex"
+                color="brand.slate.300"
+                fontSize={['xx-small', 'xs', 'sm', 'sm']}
+              >
+                |
+              </Text>
+              <Flex align="center" gap={1}>
+                <Text
+                  color="gray.500"
+                  fontSize={['x-small', 'xs', 'xs', 'xs']}
+                  whiteSpace="nowrap"
+                >
+                  {deadlineText}
+                </Text>
+                {dayjs().isBefore(dayjs(deadline)) && !isWinnersAnnounced && (
+                  <Circle bg="#16A35F" size="8px" />
+                )}
               </Flex>
             </Flex>
           </Flex>
-          <Flex
-            align={'center'}
-            justify="start"
-            display={{ base: 'none', sm: 'flex' }}
-            mr={compensationType !== 'variable' ? 3 : 0}
-          >
-            {compensationType !== 'variable' && (
-              <Image
-                w={4}
-                h={4}
-                mt={[1, 1, 0.5, 0.5]}
-                mr={1}
-                alt={token}
-                rounded="full"
-                src={
-                  tokenList.find((ele) => {
-                    return ele.tokenSymbol === token;
-                  })?.icon
-                }
+        </Flex>
+        <Flex
+          align="center"
+          justify="start"
+          display={{ base: 'none', sm: 'flex' }}
+          mr={compensationType !== 'variable' ? 3 : 0}
+        >
+          {compensationType !== 'variable' && (
+            <Image
+              w={4}
+              h={4}
+              mt={[1, 1, 0.5, 0.5]}
+              mr={1}
+              alt={token}
+              rounded="full"
+              src={tokenIcon}
+            />
+          )}
+          <Flex align="baseline" gap={1}>
+            <Text
+              color="brand.slate.600"
+              fontSize={['xs', 'xs', 'md', 'md']}
+              fontWeight="600"
+              whiteSpace="nowrap"
+            >
+              <CompensationAmount
+                compensationType={compensationType}
+                maxRewardAsk={maxRewardAsk}
+                minRewardAsk={minRewardAsk}
+                rewardAmount={rewardAmount}
               />
-            )}
-            <Flex align="baseline" gap={1}>
+            </Text>
+            {compensationType !== 'variable' && (
               <Text
-                color={'brand.slate.600'}
+                color="gray.400"
                 fontSize={['xs', 'xs', 'md', 'md']}
-                fontWeight={'600'}
-                whiteSpace={'nowrap'}
+                fontWeight={500}
               >
-                <CompensationAmount
-                  compensationType={compensationType}
-                  maxRewardAsk={maxRewardAsk}
-                  minRewardAsk={minRewardAsk}
-                  rewardAmount={rewardAmount}
-                />
+                {token}
               </Text>
-              {compensationType !== 'variable' && (
-                <Text
-                  color={'gray.400'}
-                  fontSize={['xs', 'xs', 'md', 'md']}
-                  fontWeight={500}
-                >
-                  {token}
-                </Text>
-              )}
-            </Flex>
+            )}
           </Flex>
         </Flex>
-      </Link>
-    </>
+      </Flex>
+    </Link>
   );
 };
 

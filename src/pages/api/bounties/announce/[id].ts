@@ -68,6 +68,7 @@ async function announce(req: NextApiRequestWithUser, res: NextApiResponse) {
       data: {
         isWinnersAnnounced: true,
         deadline,
+        winnersAnnouncedAt: new Date().toISOString(),
       },
     });
     const rewards: Rewards = (bounty?.rewards || {}) as Rewards;
