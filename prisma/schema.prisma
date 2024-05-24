@@ -89,6 +89,7 @@ model Bounties {
   Submission           Submission[]
   SubscribeBounty      SubscribeBounty[]
   Hackathon            Hackathon?         @relation(fields: [hackathonId], references: [id])
+  winnersAnnouncedAt   DateTime?
 
   @@index([id, slug])
   @@index([sponsorId])
@@ -202,6 +203,7 @@ model Submission {
   rewardInUSD        Int              @default(0)
   listing            Bounties         @relation(fields: [listingId], references: [id])
   user               User             @relation(fields: [userId], references: [id])
+  ogImage            String?          @db.Text
 
   @@index([id, listingId])
   @@index([userId])
@@ -361,6 +363,7 @@ model PoW {
   like        Json?
   likeCount   Int      @default(0)
   user        User     @relation(fields: [userId], references: [id])
+  ogImage     String?  @db.Text
 
   @@index([userId])
   @@index([createdAt])

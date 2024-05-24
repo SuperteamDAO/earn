@@ -80,6 +80,7 @@ export default async function handler(
                 logo: true,
               },
             },
+            winnersAnnouncedAt: true,
           },
         },
       },
@@ -123,7 +124,12 @@ export default async function handler(
     const results = [
       ...submissions.map((sub) => ({
         id: sub.listing.isWinnersAnnounced ? sub.id : null,
-        createdAt: sub.createdAt,
+        createdAt:
+          sub.isWinner &&
+          sub.listing.isWinnersAnnounced &&
+          sub.listing.winnersAnnouncedAt
+            ? sub.listing.winnersAnnouncedAt
+            : sub.createdAt,
         link: sub.listing.isWinnersAnnounced ? sub.link : null,
         tweet: sub.listing.isWinnersAnnounced ? sub.tweet : null,
         otherInfo: sub.listing.isWinnersAnnounced ? sub.otherInfo : null,
@@ -147,6 +153,7 @@ export default async function handler(
         type: 'Submission',
         like: sub.like,
         likeCount: sub.likeCount,
+        ogImage: sub.ogImage,
       })),
       ...pow.map((pow) => ({
         id: pow.id,
@@ -161,6 +168,7 @@ export default async function handler(
         link: pow.link,
         like: pow.like,
         likeCount: pow.likeCount,
+        ogImage: pow.ogImage,
       })),
     ];
 

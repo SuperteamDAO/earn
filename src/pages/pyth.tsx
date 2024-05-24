@@ -19,7 +19,7 @@ export default function AllRegionListingsPage() {
   const getListings = async () => {
     setIsListingsLoading(true);
     try {
-      const listingsData = await axios.get(`/api/listings/solana-gaming`);
+      const listingsData = await axios.get(`/api/listings/pyth`);
       setListings(listingsData.data);
       setIsListingsLoading(false);
     } catch (e) {
@@ -34,7 +34,7 @@ export default function AllRegionListingsPage() {
 
   return (
     <Home type="niche">
-      <Meta title={`Solana Gaming | Superteam Earn`} description={``} />
+      <Meta title={`Pyth Network | Superteam Earn`} description={``} />
       <Flex
         direction={{ md: 'row', base: 'column' }}
         w={{ md: 'brand.120', base: '100%' }}
@@ -42,7 +42,7 @@ export default function AllRegionListingsPage() {
         mx={'auto'}
         mb={8}
         p={6}
-        bg={`url(/assets/category_assets/bg/community.png)`}
+        bg={`url(/assets/category_assets/bg/content.png)`}
         bgSize={'cover'}
         rounded={10}
       >
@@ -51,7 +51,7 @@ export default function AllRegionListingsPage() {
             h={8}
             borderRadius={'5px'}
             alt="Category icon"
-            src={'/assets/company-logos/solana_logo_green.svg'}
+            src={'/assets/company-logos/pyth.png'}
           />
         </Center>
         <Box w={{ md: '80%', base: '100%' }}>
@@ -60,12 +60,12 @@ export default function AllRegionListingsPage() {
             fontFamily={'var(--font-serif)'}
             fontWeight={'700'}
           >
-            {'Solana Gaming'}
+            {'Pyth Network'}
           </Text>
           <Text maxW="600px" color={'brand.slate.500'} fontSize={'small'}>
-            Welcome to a special earnings page managed by Solana Gaming — use
-            these opportunities to contribute to Solana&apos;s gaming ecosystem,
-            and earn in global standards!
+            Welcome to Pyth&apos;s exclusive page for bounties — find
+            opportunities to contribute to the Pyth ecosystem while earning in
+            global standards
           </Text>
         </Box>
       </Flex>
@@ -74,7 +74,7 @@ export default function AllRegionListingsPage() {
           bounties={listings.bounties}
           isListingsLoading={isListingsLoading}
           emoji="/assets/home/emojis/moneyman.png"
-          title="Ambassador Jobs"
+          title="Freelance Gigs"
           take={20}
         />
       </Box>
