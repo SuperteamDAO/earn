@@ -12,10 +12,32 @@ function flattenSubSkills(skillsArray: any[]): string[] {
   return flattenedSubSkills;
 }
 
+function flattenSkills(skillsArray: any[]): string[] {
+  const flattenedSubSkills: string[] = [];
+
+  for (const skillObj of skillsArray) {
+    flattenedSubSkills.push(skillObj.skills);
+  }
+
+  return flattenedSubSkills;
+}
+
+function filterInDevSkills(skills: string[]) {
+  const devSkills = ['Frontend', 'Backend', 'Blockchain', 'Mobile'];
+  return skills.filter((s) => devSkills.includes(s));
+}
+
 function subskillContainQuery(subskills: string[], alias: string) {
   return subskills.map(
     (subskill) =>
       `JSON_CONTAINS(JSON_EXTRACT(${alias}.skills, '$[*].subskills'), JSON_QUOTE('${subskill}'))`,
+  );
+}
+
+function skillContainQuery(skills: string[], alias: string) {
+  return skills.map(
+    (subskill) =>
+      `JSON_CONTAINS(JSON_EXTRACT(${alias}.skills, '$[*].skills'), JSON_QUOTE('${subskill}'))`,
   );
 }
 
@@ -40,7 +62,13 @@ async function scoutTalent(req: NextApiRequest, res: NextApiResponse) {
     )
       return res.status(404).send('Bounty has No skills');
 
+    console.log('skills', scoutBounty.skills);
     const subskills = flattenSubSkills(scoutBounty.skills as any);
+    const devSkills = filterInDevSkills(
+      flattenSkills(scoutBounty.skills as any),
+    );
+    console.log('skills extract', flattenSkills(scoutBounty.skills as any));
+    console.log('devSkills', devSkills);
 
     const prevScouts = await prisma.scouts.findMany({
       where: {
@@ -58,19 +86,45 @@ async function scoutTalent(req: NextApiRequest, res: NextApiResponse) {
       console.log('delete done');
     }
 
+    const sumMatchingSubSkillsQuery = `
+      SUM(
+        ${
+          subskills.length > 0
+            ? `
+          ${subskillContainQuery(subskills, 'bs')
+            .map(
+              (s) => `
+                (CASE WHEN ${s} THEN 1 ELSE 0 END)
+              `,
+            )
+            .join(' + ')}
+        `
+            : `0 + 0`
+        }
+	    ) AS matchingSubSkills
+`;
+
     const sumMatchingSkillsQuery = `
       SUM(
-        ${subskillContainQuery(subskills, 'bs')
-          .map(
-            (s) => `
-        (CASE WHEN ${s} THEN 1 ELSE 0 END)
-        `,
-          )
-          .join(' + ')}
+        ${
+          devSkills.length > 0
+            ? `
+          ${skillContainQuery(devSkills, 'bs')
+            .map(
+              (s) => `
+                (CASE WHEN ${s} THEN 1 ELSE 0 END)
+              `,
+            )
+            .join(' + ')}
+        `
+            : `0 + 0`
+        }
 	    ) AS matchingSkills
 `;
+
     const arrayMatchingSkillsCaseConditionQuery = (
       subskills: string[],
+      skills: string[],
       alias: string,
     ) => `
       CONCAT('[', 
@@ -82,11 +136,34 @@ async function scoutTalent(req: NextApiRequest, res: NextApiResponse) {
               WHEN JSON_CONTAINS(JSON_EXTRACT(${alias}.skills, '$[*].subskills'), JSON_QUOTE('${s}')) THEN JSON_QUOTE('${s}')
             `,
               )
+              .join(' \n ')} \n
+            ${skills
+              .map(
+                (s) => `
+              WHEN JSON_CONTAINS(JSON_EXTRACT(${alias}.skills, '$[*].skills'), JSON_QUOTE('${s}')) THEN JSON_QUOTE('${s}')
+            `,
+              )
               .join(' \n ')}
           END
         ),
       ']') AS matchedSkillsArray
 `;
+
+    const matchingWhereClause = (
+      subskills: string[],
+      skills: string[],
+      alias: string,
+    ) => {
+      let matchingArray: string[] = [];
+      if (subskills.length > 0)
+        matchingArray = matchingArray.concat(
+          subskillContainQuery(subskills, alias),
+        );
+      if (subskills.length > 0)
+        matchingArray = matchingArray.concat(skillContainQuery(skills, alias));
+      return matchingArray;
+    };
+
     const userWithMatchingSubmissionsQuery = (
       sumMatchingSkills: boolean = false,
       arrayMatchingSkills: boolean = false,
@@ -94,8 +171,9 @@ async function scoutTalent(req: NextApiRequest, res: NextApiResponse) {
       SELECT
         u.id as userId,
         SUM(s.rewardInUSD) as dollarsEarned
+        ${sumMatchingSkills ? ',' + sumMatchingSubSkillsQuery : ''}
         ${sumMatchingSkills ? ',' + sumMatchingSkillsQuery : ''}
-        ${arrayMatchingSkills ? ',' + arrayMatchingSkillsCaseConditionQuery(subskills, 'bs') : ''}
+        ${arrayMatchingSkills ? ',' + arrayMatchingSkillsCaseConditionQuery(subskills, devSkills, 'bs') : ''}
         FROM
           User u
           LEFT JOIN Submission s ON s.userId = u.id
@@ -103,7 +181,7 @@ async function scoutTalent(req: NextApiRequest, res: NextApiResponse) {
         WHERE
           s.isWinner = 1 AND s.rewardInUSD > 0
           AND (
-            ${subskillContainQuery(subskills, 'bs').join('  OR  ')}
+            ${matchingWhereClause(subskills, devSkills, 'bs').join('\n  OR  ')}
 	        )
         GROUP BY
           u.id
@@ -130,6 +208,8 @@ async function scoutTalent(req: NextApiRequest, res: NextApiResponse) {
       SELECT 
 			  COALESCE(MAX(t.dollarsEarned),0) as maxDollarsEarned,
 			  COALESCE(MIN(t.dollarsEarned),0) as minDollarsEarned,
+			  COALESCE(MAX(t.matchingSubSkills),0) as maxMatchingSubSkills,
+			  COALESCE(MIN(t.matchingSubSkills),0) as minMatchingSubSkills,
 			  COALESCE(MAX(t.matchingSkills),0) as maxMatchingSkills,
 			  COALESCE(MIN(t.matchingSkills),0) as minMatchingSkills
 		  FROM (
@@ -168,6 +248,10 @@ async function scoutTalent(req: NextApiRequest, res: NextApiResponse) {
         t3.maxDollarsEarned,
         t3.minDollarsEarned,
         (0.9 * (t1.dollarsEarned - t3.minDollarsEarned) / (t3.maxDollarsEarned - t3.minDollarsEarned)) + 0.1 AS normalizedDollarsEarned,
+        t1.matchingSubSkills,
+        t3.maxMatchingSubSkills,
+        t3.minMatchingSubSkills,
+        (0.9 * (t1.matchingSubSkills - t3.minMatchingSubSkills) / (t3.maxMatchingSubSkills - t3.minMatchingSubSkills)) + 0.1 AS normalizedMatchingSubSkills,
         t1.matchingSkills,
         t3.maxMatchingSkills,
         t3.minMatchingSkills,
@@ -194,6 +278,50 @@ async function scoutTalent(req: NextApiRequest, res: NextApiResponse) {
       ) t4
 `;
 
+    let weights: { name: string; weight: number }[] = [
+      {
+        name: 'normalizedDollarsEarned',
+        weight: 0.25,
+      },
+      {
+        name: 'normalizedMatchingSubSkills',
+        weight: 0.25,
+      },
+      {
+        name: 'normalizedMatchedProjects',
+        weight: 0.25,
+      },
+      {
+        name: 'stRecommended',
+        weight: 0.25,
+      },
+    ];
+
+    if (devSkills.length > 0) {
+      weights = [
+        {
+          name: 'normalizedDollarsEarned',
+          weight: 0.2,
+        },
+        {
+          name: 'normalizedMatchingSubSkills',
+          weight: 0.2,
+        },
+        {
+          name: 'normalizedMatchingSkills',
+          weight: 0.2,
+        },
+        {
+          name: 'normalizedMatchedProjects',
+          weight: 0.2,
+        },
+        {
+          name: 'stRecommended',
+          weight: 0.2,
+        },
+      ];
+    }
+
     const selectScouts = `
       SELECT
       	UUID() AS id,
@@ -201,10 +329,13 @@ async function scoutTalent(req: NextApiRequest, res: NextApiResponse) {
 	      '${scoutBounty.id}' as listingId,
 	      t.dollarsEarned as dollarsEarned,
 	      ((
-	        (t.normalizedDollarsEarned * 0.25) +
-	        (t.normalizedMatchingSkills * 0.25) +
-	        (t.normalizedMatchedProjects * 0.25) +
-	        (t.stRecommended * 0.25)
+          ${weights
+            .map(
+              (w) => `
+            (t.${w.name} * ${w.weight})
+          `,
+            )
+            .join(' \n +  ')}
 	      ) * 5 ) + 5 AS score,
 	      t.matchedSkillsArray as skills,
 	      false as invited,
@@ -222,8 +353,8 @@ async function scoutTalent(req: NextApiRequest, res: NextApiResponse) {
       ${selectScouts}
 `;
 
-    // console.log('insertQuery', insertQuery);
-    console.log('selectScouts', selectScouts);
+    console.log('insertQuery', insertQuery);
+    // console.log('selectScouts', selectScouts);
     // const resp = await prisma.$queryRawUnsafe(selectScouts);
     await prisma.$executeRawUnsafe(insertQuery);
     // console.log("resp aefe")
