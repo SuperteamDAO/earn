@@ -464,10 +464,11 @@ export const ListingPayments = ({
                 onChange={(e) => handleSearch(e.target.value)}
                 onFocus={() => {
                   if (
-                    !searchState.searchTerm ||
-                    searchState.searchTerm === ''
+                    (!searchState.searchTerm ||
+                      searchState.searchTerm === '') &&
+                    !editable
                   ) {
-                    handleSearch(form.token || '');
+                    handleSearch('');
                   } else {
                     setIsOpen(true);
                   }
@@ -490,12 +491,13 @@ export const ListingPayments = ({
                 overflowX="hidden"
                 w="full"
                 maxH="15rem"
-                mt={3}
+                pt={1}
                 color="gray.600"
                 bg={'white'}
                 border={'1px solid #cbd5e1'}
+                borderBottomRadius={'lg'}
+                // rounded={'lg'}
                 id="search-input"
-                rounded={'lg'}
               >
                 {searchResults.map((token) => (
                   <ListItem
