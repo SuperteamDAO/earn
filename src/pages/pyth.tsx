@@ -74,7 +74,7 @@ export default function AllRegionListingsPage() {
           bounties={listings.bounties}
           isListingsLoading={isListingsLoading}
           emoji="/assets/home/emojis/moneyman.png"
-          title="Ambassador Jobs"
+          title="Freelance Gigs"
           take={20}
         />
       </Box>

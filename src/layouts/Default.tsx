@@ -19,7 +19,9 @@ const Default = (props: IDefaultProps) => {
     >
       {props.meta}
       <Header />
-      {props.children}
+      <Flex direction="column" flex="1">
+        {props.children}
+      </Flex>
       <Footer />
     </Flex>
   );
