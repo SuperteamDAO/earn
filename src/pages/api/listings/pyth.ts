@@ -16,7 +16,6 @@ export default async function user(req: NextApiRequest, res: NextApiResponse) {
         isPublished: true,
         isActive: true,
         isArchived: false,
-        isPrivate: true,
         status: 'OPEN',
         sponsor: {
           name: 'Pyth',

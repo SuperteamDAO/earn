@@ -110,7 +110,7 @@ export const CreateListingModal = ({
               </ListItem>
               <ListItem mb={1}>
                 Examples: Website/app development, website/app design, producing
-                hype videods, hiring a Twitter manager, etc.
+                hype videos, hiring a Twitter manager, etc.
               </ListItem>
             </UnorderedList>
             <Box flex="1" />
