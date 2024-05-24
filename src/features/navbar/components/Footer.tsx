@@ -195,7 +195,7 @@ export const Footer = () => {
                   _hover={{
                     color: 'brand.slate.600',
                   }}
-                  href={`${getURL()}regions/${st.region.toLowerCase()}`}
+                  href={`${getURL()}regions/${st.region?.toLowerCase()}`}
                   isExternal
                   onClick={() => {
                     posthog.capture('region page_footer', {
