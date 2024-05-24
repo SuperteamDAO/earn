@@ -458,6 +458,7 @@ export const ListingPayments = ({
                 border={'1px solid #cbd5e1'}
                 focusBorderColor="brand.purple"
                 onChange={(e) => handleSearch(e.target.value)}
+                onFocus={() => setIsOpen(true)}
                 placeholder="Search token(default USDC)"
                 value={
                   searchState.searchTerm === undefined
@@ -474,7 +475,7 @@ export const ListingPayments = ({
                 pos={'absolute'}
                 zIndex={10}
                 overflowX="hidden"
-                w="40rem"
+                w="full"
                 maxH="15rem"
                 mt={3}
                 color="gray.600"
