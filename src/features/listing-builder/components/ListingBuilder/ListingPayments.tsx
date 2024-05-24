@@ -95,6 +95,9 @@ export const ListingPayments = ({
   const [searchResults, setSearchResults] = useState<Token[]>([]);
   const [isOpen, setIsOpen] = useState(false);
   const [errorMessage, setErrorMessage] = useState('');
+  const [selectedTokenIndex, setSelectedTokenIndex] = useState<number | null>(
+    null,
+  );
 
   const { register, setValue, watch, control, handleSubmit, reset, getValues } =
     useForm({
@@ -154,7 +157,7 @@ export const ListingPayments = ({
     }
   }, [form]);
 
-  const handleTokenChange = (tokenSymbol: string) => {
+  const handleTokenChange = (tokenSymbol: string | undefined) => {
     setValue('token', tokenSymbol);
   };
 
@@ -261,11 +264,42 @@ export const ListingPayments = ({
       );
       setSearchResults(filteredResults);
     }
+    setSelectedTokenIndex(null);
   };
 
-  const handleSelectToken = (tokenName: string, icon: string) => {
+  const handleSelectToken = (
+    tokenName: string | undefined,
+    icon: string | undefined,
+  ) => {
     setSearchState({ searchTerm: tokenName, tokenImage: icon });
     setIsOpen(false);
+  };
+
+  const handleKeyDown = (event: React.KeyboardEvent<HTMLInputElement>) => {
+    if (!isOpen) return;
+
+    if (event.key === 'ArrowDown') {
+      event.preventDefault();
+      setSelectedTokenIndex((prevIndex) =>
+        prevIndex === null || prevIndex === searchResults.length - 1
+          ? 0
+          : prevIndex + 1,
+      );
+    } else if (event.key === 'ArrowUp') {
+      event.preventDefault();
+      setSelectedTokenIndex((prevIndex) =>
+        prevIndex === null || prevIndex === 0
+          ? searchResults.length - 1
+          : prevIndex - 1,
+      );
+    } else if (event.key === 'Enter') {
+      event.preventDefault();
+      if (selectedTokenIndex !== null) {
+        const selectedToken = searchResults[selectedTokenIndex];
+        handleTokenChange(selectedToken?.tokenSymbol);
+        handleSelectToken(selectedToken?.tokenName, selectedToken?.icon);
+      }
+    }
   };
 
   const onSubmit = async (data: any) => {
@@ -340,7 +374,7 @@ export const ListingPayments = ({
           <ModalBody>
             <Text>
               {form?.isPrivate
-                ? 'This listing will only be accessible via the link — and will not show up anywhere else on the site — since it has been marked as a "Private Listing"'
+                ? 'This listing will only be accessible via the link — and will not show up anywhere else on the site — since it has been marked as a "Private Listing"'
                 : 'Publishing this listing means it will show up on the homepage for all visitors. Make sure the details in your listing are correct before you publish.'}
             </Text>
           </ModalBody>
@@ -473,6 +507,7 @@ export const ListingPayments = ({
                     setIsOpen(true);
                   }
                 }}
+                onKeyDown={handleKeyDown}
                 placeholder="Search token"
                 value={
                   searchState.searchTerm === undefined
@@ -496,12 +531,14 @@ export const ListingPayments = ({
                 bg={'white'}
                 border={'1px solid #cbd5e1'}
                 borderBottomRadius={'lg'}
-                // rounded={'lg'}
                 id="search-input"
               >
-                {searchResults.map((token) => (
+                {searchResults.map((token, index) => (
                   <ListItem
                     key={token.tokenName}
+                    bg={
+                      selectedTokenIndex === index ? 'gray.200' : 'transparent'
+                    }
                     _hover={{ background: 'gray.100' }}
                     cursor="pointer"
                     onClick={() => {
