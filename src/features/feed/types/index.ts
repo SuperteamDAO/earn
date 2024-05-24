@@ -32,4 +32,5 @@ export interface FeedDataProps {
   type: string;
   userId: string;
   likeCount: number;
+  ogImage: string;
 }

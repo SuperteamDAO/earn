@@ -132,6 +132,9 @@ export function SubmissionCard({ sub, type }: SubCardProps) {
           h={{ base: '200px', md: '350px' }}
           objectFit="cover"
           borderTopRadius={6}
+          imageUrl={sub?.ogImage}
+          type="submission"
+          id={sub?.id}
         />
       )}
     </FeedCardContainer>

@@ -113,6 +113,7 @@ const RecentActivity = () => {
     isWinner: boolean;
     isWinnersAnnounced: boolean;
     type: string;
+    ogImage: string;
   }
 
   const ActivityCard = ({
@@ -125,6 +126,7 @@ const RecentActivity = () => {
     isWinner,
     isWinnersAnnounced,
     type,
+    ogImage,
   }: ActivityCardProps) => {
     const getActionText = () => {
       const defaultActionText = {
@@ -152,7 +154,13 @@ const RecentActivity = () => {
 
     return (
       <Flex as={NextLink} href={'/feed/?filter=new'}>
-        <OgImageViewer h={12} w={20} objectFit={'cover'} externalUrl={link} />
+        <OgImageViewer
+          h={12}
+          w={20}
+          objectFit={'cover'}
+          externalUrl={link}
+          imageUrl={ogImage}
+        />
         <Box ml={3}>
           <Flex align={'center'}>
             <Text
@@ -223,6 +231,7 @@ const RecentActivity = () => {
               isWinner={act.isWinner}
               isWinnersAnnounced={act.isWinnersAnnounced}
               type={act.type}
+              ogImage={act.ogImage}
             />
           );
         })}

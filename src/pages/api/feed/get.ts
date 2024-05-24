@@ -153,6 +153,7 @@ export default async function handler(
         type: 'Submission',
         like: sub.like,
         likeCount: sub.likeCount,
+        ogImage: sub.ogImage,
       })),
       ...pow.map((pow) => ({
         id: pow.id,
@@ -167,6 +168,7 @@ export default async function handler(
         link: pow.link,
         like: pow.like,
         likeCount: pow.likeCount,
+        ogImage: pow.ogImage,
       })),
     ];
 

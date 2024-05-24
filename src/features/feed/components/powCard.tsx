@@ -20,6 +20,7 @@ interface PowCardProps {
     like: any;
     userId: string;
     likeCount: number;
+    ogImage: string;
   };
   type: 'profile' | 'activity';
 }
@@ -67,11 +68,14 @@ export function PowCard({ pow, type }: PowCardProps) {
       userId={pow?.userId}
     >
       <OgImageViewer
+        type="pow"
         externalUrl={pow?.link ?? ''}
         w="full"
         h={{ base: '200px', md: '350px' }}
         objectFit="cover"
         borderTopRadius={6}
+        imageUrl={pow?.ogImage}
+        id={pow?.id}
       />
     </FeedCardContainer>
   );
