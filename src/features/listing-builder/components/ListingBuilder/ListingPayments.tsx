@@ -253,10 +253,14 @@ export const ListingPayments = ({
   const handleSearch = (value: string) => {
     setSearchState({ searchTerm: value, tokenImage: '' });
     setIsOpen(true);
-    const filteredResults = tokenList.filter((token) =>
-      token.tokenName.toLowerCase().includes(value.toLowerCase()),
-    );
-    setSearchResults(filteredResults);
+    if (value === '') {
+      setSearchResults(tokenList);
+    } else {
+      const filteredResults = tokenList.filter((token) =>
+        token.tokenName.toLowerCase().includes(value.toLowerCase()),
+      );
+      setSearchResults(filteredResults);
+    }
   };
 
   const handleSelectToken = (tokenName: string, icon: string) => {
@@ -409,7 +413,7 @@ export const ListingPayments = ({
             </Box>
           )}
           <FormControl pos="relative">
-            <ListingFormLabel htmlFor="token">Select Token</ListingFormLabel>
+            <ListingFormLabel>Select Token</ListingFormLabel>
             <InputGroup>
               {token && (
                 <>
@@ -458,8 +462,17 @@ export const ListingPayments = ({
                 border={'1px solid #cbd5e1'}
                 focusBorderColor="brand.purple"
                 onChange={(e) => handleSearch(e.target.value)}
-                onFocus={() => setIsOpen(true)}
-                placeholder="Search token(default USDC)"
+                onFocus={() => {
+                  if (
+                    !searchState.searchTerm ||
+                    searchState.searchTerm === ''
+                  ) {
+                    handleSearch(form.token || '');
+                  } else {
+                    setIsOpen(true);
+                  }
+                }}
+                placeholder="Search token"
                 value={
                   searchState.searchTerm === undefined
                     ? tokenList.find((t) => t.tokenSymbol === token)?.tokenName
