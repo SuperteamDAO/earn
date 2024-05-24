@@ -19,8 +19,11 @@ export default async function getAllUsers(
 
     const powAndSubmissions = await prisma.$queryRaw<any[]>`
       (SELECT
-        CASE WHEN l.isWinnersAnnounced THEN sub.id ELSE NULL END as id,
-        sub.createdAt, 
+        CASE 
+          WHEN l.isWinnersAnnounced AND sub.isWinner THEN l.winnersAnnouncedAt 
+          ELSE sub.createdAt 
+        END as createdAt,
+        CASE WHEN l.isWinnersAnnounced THEN sub.id ELSE NULL END as id, 
         sub.like, 
         CASE WHEN l.isWinnersAnnounced THEN sub.link ELSE NULL END as link,
         CASE WHEN l.isWinnersAnnounced THEN sub.tweet ELSE NULL END as tweet,
@@ -56,8 +59,8 @@ export default async function getAllUsers(
         sub.userId = ${userId})
       UNION ALL
       (SELECT
-        pow.id, 
         pow.createdAt, 
+        pow.id, 
         pow.like, 
         pow.link, 
         NULL as tweet, 
