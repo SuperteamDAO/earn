@@ -1,9 +1,11 @@
-import { Avatar, Box, Button, Flex, Image, Text } from '@chakra-ui/react';
-import type { User } from '@prisma/client';
+import { Box, Button, Flex, Image, Text } from '@chakra-ui/react';
 import { useRouter } from 'next/router';
 
+import { type User } from '@/interface/user';
 import { userStore } from '@/store/user';
 import { getURL } from '@/utils/validUrl';
+
+import { EarnAvatar } from '../shared/EarnAvatar';
 
 type ChipType = {
   icon: string;
@@ -100,17 +102,14 @@ export function TalentBio({
       direction={'column'}
       w={w ?? '80%'}
       h="full"
+      mt={8}
       p={'1.5625rem'}
       bg={'white'}
       borderRadius={10}
     >
       <Flex align={'center'} justify="space-between">
         <Flex align={'center'} h={'fit-content'}>
-          <Avatar
-            name={`${user?.firstName}${user?.lastName}`}
-            size="lg"
-            src={user?.photo as string}
-          />
+          <EarnAvatar size="64px" id={user.id} avatar={user?.photo as string} />
           <Box ml={'12px'}>
             <Text
               color={'rgb(71,86,104)'}

@@ -15,11 +15,9 @@ import { HomeBanner } from '@/components/home/Banner';
 import { CategoryBanner } from '@/components/home/CategoryBanner';
 import { HomeSideBar } from '@/components/home/SideBar';
 import { Superteams } from '@/constants/Superteam';
-import { LoginWrapper } from '@/features/auth';
 import type { User } from '@/interface/user';
 import { Default } from '@/layouts/Default';
 import { Meta } from '@/layouts/Meta';
-import { userStore } from '@/store/user';
 
 interface TotalType {
   count?: number;
@@ -28,14 +26,13 @@ interface TotalType {
 }
 interface HomeProps {
   children: ReactNode;
-  type: 'home' | 'category' | 'region' | 'niche';
+  type: 'home' | 'category' | 'region' | 'niche' | 'feed';
 }
 
 export function Home({ children, type }: HomeProps) {
   const router = useRouter();
-  const { userInfo } = userStore();
+
   const [isTotalLoading, setIsTotalLoading] = useState(true);
-  const [triggerLogin, setTriggerLogin] = useState(false);
 
   const [recentEarners, setRecentEarners] = useState<User[]>([]);
   const [totals, setTotals] = useState<TotalType>({});
@@ -56,7 +53,7 @@ export function Home({ children, type }: HomeProps) {
     getTotalInfo();
   }, []);
 
-  const Skills = ['Development', 'Design', 'Content'];
+  const Skills = ['Development', 'Design', 'Content', 'Other'];
 
   const matchedTeam = Superteams.find(
     (e) => e.region.toLowerCase() === String(router.query.slug).toLowerCase(),
@@ -73,11 +70,11 @@ export function Home({ children, type }: HomeProps) {
         />
       }
     >
-      <Container maxW={'7xl'} mx="auto" px={{ base: 3, md: 4 }}>
-        <HStack align="start" justify="space-between" my={{ base: 4, md: 8 }}>
+      <Container maxW={'8xl'} mx="auto" px={{ base: 3, md: 4 }}>
+        <HStack align="start" justify="space-between">
           <Flex
             w="full"
-            pr={{ base: 0, lg: 6 }}
+            py={4}
             borderRight={{
               base: 'none',
               lg: type === 'niche' ? 'none' : '1px solid',
@@ -87,15 +84,8 @@ export function Home({ children, type }: HomeProps) {
               lg: 'blackAlpha.200',
             }}
           >
-            <LoginWrapper
-              triggerLogin={triggerLogin}
-              setTriggerLogin={setTriggerLogin}
-            />
-            <Box w="full">
-              <HomeBanner
-                setTriggerLogin={setTriggerLogin}
-                userCount={totals.totalUsers}
-              />
+            <Box w="full" pr={{ base: 0, lg: 6 }}>
+              {type === 'home' && <HomeBanner userCount={totals.totalUsers} />}
               {type === 'category' && (
                 <CategoryBanner
                   type={
@@ -108,7 +98,7 @@ export function Home({ children, type }: HomeProps) {
                 />
               )}
               {type === 'region' && matchedTeam && (
-                <>
+                <Box>
                   <Flex
                     direction={{ md: 'row', base: 'column' }}
                     w={{ md: 'brand.120', base: '100%' }}
@@ -149,7 +139,7 @@ export function Home({ children, type }: HomeProps) {
                       </Text>
                     </Box>
                   </Flex>
-                </>
+                </Box>
               )}
               {children}
             </Box>
@@ -160,14 +150,13 @@ export function Home({ children, type }: HomeProps) {
                 base: 'none',
                 lg: 'flex',
               }}
-              marginInlineStart={'0 !important'}
             >
               <HomeSideBar
+                type={type}
                 isTotalLoading={isTotalLoading}
                 total={totals?.totalInUSD ?? 0}
                 listings={totals?.count ?? 0}
                 earners={recentEarners ?? []}
-                userInfo={userInfo! || {}}
               />
             </Flex>
           )}

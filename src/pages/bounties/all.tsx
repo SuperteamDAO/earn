@@ -45,7 +45,7 @@ export default function AllBountiesPage() {
 
   return (
     <Home type="home">
-      <Box w={'100%'}>
+      <Box w={'100%'} pr={{ base: 0, lg: 6 }}>
         <ListingSection
           type="bounties"
           title="All Bounties"

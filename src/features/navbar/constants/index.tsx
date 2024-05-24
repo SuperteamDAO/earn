@@ -1,5 +1,3 @@
-import { RenaissanceSecondaryLogo } from '@/svg/renaissance-secondary';
-
 interface NavItem {
   label: string;
   posthog: string;
@@ -36,27 +34,32 @@ export const CATEGORY_NAV_ITEMS: Array<NavItem> = [
     href: '/category/development/',
     posthog: 'development_navbar',
   },
+  {
+    label: 'Other',
+    href: '/category/other/',
+    posthog: 'other_navbar',
+  },
 ];
 
 export const HACKATHON_NAV_ITEMS: Array<NavItem> = [
-  {
-    label: 'Renaissance',
-    href: '/renaissance/',
-    posthog: 'renaissance_navbar',
-  },
+  // {
+  //   label: 'Renaissance',
+  //   href: '/renaissance/',
+  //   posthog: 'renaissance_navbar',
+  // },
   // {
   //   label: 'Scribes',
   //   href: '/scribes/',
-  // posthog: 'scribes_navbar',
+  //   posthog: 'scribes_navbar',
   // },
 ];
 
 export function renderLabel(navItem: NavItem) {
   switch (navItem.label) {
-    case 'Renaissance':
-      return (
-        <RenaissanceSecondaryLogo styles={{ width: '116px', height: 'auto' }} />
-      );
+    // case 'Renaissance':
+    //   return (
+    //     <RenaissanceSecondaryLogo styles={{ width: '116px', height: 'auto' }} />
+    //   );
     default:
       return navItem.label;
   }

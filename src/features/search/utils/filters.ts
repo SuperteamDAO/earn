@@ -12,7 +12,7 @@ export const preStatusFilters: CheckboxFilter[] = [
     checked: false,
   },
   {
-    label: 'Announced',
+    label: 'Completed',
     value: 'CLOSED',
     checked: false,
   },

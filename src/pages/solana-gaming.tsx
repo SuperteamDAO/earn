@@ -38,7 +38,7 @@ export default function AllRegionListingsPage() {
       <Flex
         direction={{ md: 'row', base: 'column' }}
         w={{ md: 'brand.120', base: '100%' }}
-        h={{ md: '7.375rem', base: 'fit-content' }}
+        h={{ md: 'auto', base: 'fit-content' }}
         mx={'auto'}
         mb={8}
         p={6}
@@ -51,7 +51,7 @@ export default function AllRegionListingsPage() {
             h={8}
             borderRadius={'5px'}
             alt="Category icon"
-            src={'/assets/category_assets/icon/solana_logo_green.svg'}
+            src={'/assets/company-logos/solana_logo_green.svg'}
           />
         </Center>
         <Box w={{ md: '80%', base: '100%' }}>
@@ -62,7 +62,7 @@ export default function AllRegionListingsPage() {
           >
             {'Solana Gaming'}
           </Text>
-          <Text color={'brand.slate.500'} fontSize={'small'}>
+          <Text maxW="600px" color={'brand.slate.500'} fontSize={'small'}>
             Welcome to a special earnings page managed by Solana Gaming — use
             these opportunities to contribute to Solana&apos;s gaming ecosystem,
             and earn in global standards!

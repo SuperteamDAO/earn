@@ -622,24 +622,26 @@ function Bounties() {
                             ) : (
                               <></>
                             )}
-
-                            <MenuItem
-                              className="ph-no-capture"
-                              py={2}
-                              color={'brand.slate.500'}
-                              fontSize={'sm'}
-                              fontWeight={500}
-                              icon={<CopyIcon h={4} w={4} />}
-                              onClick={() => {
-                                posthog.capture('duplicate listing_sponsor');
-                                window.open(
-                                  `${router.basePath}/dashboard/listings/${currentBounty.slug}/duplicate`,
-                                  '_blank',
-                                );
-                              }}
-                            >
-                              Duplicate
-                            </MenuItem>
+                            {(currentBounty.type === 'bounty' ||
+                              currentBounty.type === 'project') && (
+                              <MenuItem
+                                className="ph-no-capture"
+                                py={2}
+                                color={'brand.slate.500'}
+                                fontSize={'sm'}
+                                fontWeight={500}
+                                icon={<CopyIcon h={4} w={4} />}
+                                onClick={() => {
+                                  posthog.capture('duplicate listing_sponsor');
+                                  window.open(
+                                    `${router.basePath}/dashboard/listings/${currentBounty.slug}/duplicate`,
+                                    '_blank',
+                                  );
+                                }}
+                              >
+                                Duplicate
+                              </MenuItem>
+                            )}
                             {bountyStatus === 'Draft' && (
                               <>
                                 <MenuItem

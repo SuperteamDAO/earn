@@ -1,4 +1,3 @@
-import axios from 'axios';
 import type { NextApiResponse } from 'next';
 
 import { tokenList } from '@/constants';
@@ -7,24 +6,7 @@ import { sendEmailNotification } from '@/features/emails';
 import { type Rewards } from '@/features/listings';
 import { prisma } from '@/prisma';
 import { dayjs } from '@/utils/dayjs';
-
-async function fetchTokenUSDValue(symbol: string) {
-  try {
-    const response = await axios.get(
-      'https://api.coingecko.com/api/v3/simple/price',
-      {
-        params: {
-          ids: symbol,
-          vs_currencies: 'USD',
-        },
-      },
-    );
-    return response.data[symbol].usd;
-  } catch (error) {
-    console.error('Error fetching token value from CoinGecko:', error);
-    return 0;
-  }
-}
+import { fetchTokenUSDValue } from '@/utils/fetchTokenUSDValue';
 
 async function announce(req: NextApiRequestWithUser, res: NextApiResponse) {
   const userId = req.userId;
@@ -86,6 +68,7 @@ async function announce(req: NextApiRequestWithUser, res: NextApiResponse) {
       data: {
         isWinnersAnnounced: true,
         deadline,
+        winnersAnnouncedAt: new Date().toISOString(),
       },
     });
     const rewards: Rewards = (bounty?.rewards || {}) as Rewards;
@@ -205,7 +188,16 @@ async function announce(req: NextApiRequestWithUser, res: NextApiResponse) {
           },
         },
       };
-
+      promises.push(
+        prisma.submission.update({
+          where: {
+            id: winners[currentIndex]?.id,
+          },
+          data: {
+            rewardInUSD: usdValue,
+          },
+        }),
+      );
       promises.push(prisma.user.update(amountWhere));
       currentIndex += 1;
     }

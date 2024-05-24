@@ -97,7 +97,7 @@ export const Footer = () => {
       borderTop="1px solid"
       borderTopColor="blackAlpha.200"
     >
-      <Container as={Stack} maxW={'7xl'} py={{ base: 4, md: 6 }}>
+      <Container as={Stack} maxW={'8xl'} py={{ base: 4, md: 6 }}>
         <Flex
           justify={'space-between'}
           direction={{ base: 'column', md: 'row' }}

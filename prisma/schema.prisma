@@ -48,7 +48,7 @@ model Bounties {
   eligibility          Json?
   status               status             @default(OPEN)
   token                String?
-  rewardAmount         Int?
+  rewardAmount         Float?
   rewards              Json?
   sponsorId            String
   pocId                String
@@ -89,6 +89,7 @@ model Bounties {
   Submission           Submission[]
   SubscribeBounty      SubscribeBounty[]
   Hackathon            Hackathon?         @relation(fields: [hackathonId], references: [id])
+  winnersAnnouncedAt   DateTime?
 
   @@index([id, slug])
   @@index([sponsorId])
@@ -112,7 +113,7 @@ model BountiesTemplates {
   deadline            DateTime?
   eligibility         Json?
   token               String?
-  rewardAmount        Int?
+  rewardAmount        Float?
   rewards             Json?
   color               String?
   emoji               String?
@@ -147,6 +148,7 @@ model Comment {
 
   @@index([id, listingId])
   @@index([authorId])
+  @@index([replyToId])
 }
 
 model Grants {
@@ -192,18 +194,24 @@ model Submission {
   createdAt          DateTime         @default(now())
   updatedAt          DateTime         @updatedAt
   like               Json?
-  likes              Int?
+  likeCount          Int              @default(0)
   isPaid             Boolean          @default(false)
   paymentDetails     Json?
   otherInfo          String?          @db.VarChar(2000)
   ask                Int?
   label              SubmissionLabels @default(Unreviewed)
+  rewardInUSD        Int              @default(0)
   listing            Bounties         @relation(fields: [listingId], references: [id])
   user               User             @relation(fields: [userId], references: [id])
 
   @@index([id, listingId])
   @@index([userId])
   @@index([listingId])
+  @@index([createdAt])
+  @@index([isWinner])
+  @@index([createdAt, isWinner])
+  @@index([createdAt, listingId])
+  @@index([likeCount])
 }
 
 model Otp {
@@ -318,10 +326,27 @@ model User {
   sessions          Session[]
   Hackathon         Hackathon?        @relation(fields: [hackathonId], references: [id])
   emailSettings     EmailSettings[]
+  TalentRankings    TalentRankings[]
 
   @@index([email, publicKey, username])
   @@index([currentSponsorId])
   @@index([hackathonId])
+}
+
+model TalentRankings {
+  id               String                 @id @default(uuid())
+  userId           String
+  skill            TalentRankingSkills    @default(ALL)
+  timeframe        TalentRankingTimeframe @default(ALL_TIME)
+  rank             Int
+  submissions      Int                    @default(0)
+  winRate          Int                    @default(0)
+  wins             Int                    @default(0)
+  totalEarnedInUSD Int
+  user             User                   @relation(fields: [userId], references: [id])
+
+  @@unique([userId, skill, timeframe])
+  @@index([userId, skill, timeframe])
 }
 
 model PoW {
@@ -334,9 +359,13 @@ model PoW {
   createdAt   DateTime @default(now())
   subSkills   Json?
   updatedAt   DateTime @updatedAt
+  like        Json?
+  likeCount   Int      @default(0)
   user        User     @relation(fields: [userId], references: [id])
 
   @@index([userId])
+  @@index([createdAt])
+  @@index([likeCount])
 }
 
 model EmailSettings {
@@ -431,6 +460,14 @@ model UnsubscribedEmail {
   email String @unique
 }
 
+enum TalentRankingSkills {
+  DEVELOPMENT
+  DESIGN
+  CONTENT
+  OTHER
+  ALL
+}
+
 enum EmailType {
   BOUNTY_REVIEW
   BOUNTY_DEADLINE
@@ -503,6 +540,7 @@ enum Regions {
   BALKAN
   PHILIPPINES
   JAPAN
+  FRANCE
 }
 
 enum CompensationType {
@@ -516,4 +554,11 @@ enum SubmissionLabels {
   Reviewed
   Shortlisted
   Spam
+}
+
+enum TalentRankingTimeframe {
+  THIS_YEAR
+  LAST_30_DAYS
+  LAST_7_DAYS
+  ALL_TIME
 }

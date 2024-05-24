@@ -39,7 +39,7 @@ export const DesktopNavbar = ({ onLoginOpen, onSearchOpen }: Props) => {
   const posthog = usePostHog();
 
   const isDashboardRoute = router.pathname.startsWith('/dashboard');
-  const maxWValue = isDashboardRoute ? '' : '7xl';
+  const maxWValue = isDashboardRoute ? '' : '8xl';
 
   return (
     <Flex

@@ -77,7 +77,7 @@ const Grants = ({ slug }: GrantsDetailsProps) => {
               justify={{ base: 'center', md: 'space-between' }}
               flexDir={{ base: 'column-reverse', md: 'row' }}
               gap={4}
-              maxW={'7xl'}
+              maxW={'8xl'}
               minH={'100vh'}
               mx={'auto'}
               my={{ base: 3, md: 10 }}

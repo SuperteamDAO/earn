@@ -3,7 +3,7 @@ import axios from 'axios';
 import debounce from 'lodash.debounce';
 import { type KeyboardEvent, useEffect, useState } from 'react';
 
-import { UserAvatar } from '@/components/shared/UserAvatar';
+import { EarnAvatar } from '@/components/shared/EarnAvatar';
 import { MAX_COMMENT_SUGGESTIONS } from '@/constants';
 import { type User } from '@/interface/user';
 
@@ -121,7 +121,11 @@ export const Suggestions = ({ defaultSuggestions, input, onSelect }: Props) => {
             onClick={() => onSelect(suggestion.username ?? '')}
             variant="ghost"
           >
-            <UserAvatar user={suggestion} size="28px" />
+            <EarnAvatar
+              size={'28px'}
+              id={suggestion?.id}
+              avatar={suggestion?.photo}
+            />
             <VStack align="start" gap={0}>
               <Text color="brand.slate.900" fontSize="small" fontWeight={500}>
                 {suggestion.firstName} {suggestion.lastName}

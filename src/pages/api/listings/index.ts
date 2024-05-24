@@ -8,6 +8,7 @@ export default async function user(req: NextApiRequest, res: NextApiResponse) {
   const params = req.query;
   const category = params.category as string;
   const isHomePage = params.isHomePage === 'true';
+  const order = (params.order as 'asc' | 'desc') ?? 'desc';
 
   const filter = params.filter as string;
   const type = params.type as
@@ -25,13 +26,14 @@ export default async function user(req: NextApiRequest, res: NextApiResponse) {
     development: ['Frontend', 'Backend', 'Blockchain', 'Mobile'],
     design: ['Design'],
     content: ['Content'],
+    other: ['Other', 'Growth', 'Community'],
   };
 
   const skillsToFilter = filterToSkillsMap[filter] || [];
 
   let skillsFilter = {};
   if (skillsToFilter.length > 0) {
-    if (filter === 'development') {
+    if (filter === 'development' || filter === 'other') {
       skillsFilter = {
         OR: skillsToFilter.map((skill) => ({
           skills: {
@@ -76,13 +78,12 @@ export default async function user(req: NextApiRequest, res: NextApiResponse) {
             },
           },
         },
+        orderBy: {
+          deadline: order,
+        },
       });
-      const sortedData = bounties
-        .sort((a, b) => {
-          return dayjs(a.deadline).diff(dayjs(b.deadline));
-        })
-        .slice(0, take);
-      result.bounties = sortedData;
+
+      result.bounties = bounties;
     } else if (category === 'bounties') {
       const bounties = await prisma.bounties.findMany({
         where: {
@@ -109,20 +110,20 @@ export default async function user(req: NextApiRequest, res: NextApiResponse) {
             },
           },
         },
+        orderBy: {
+          deadline: order,
+        },
       });
-      const sortedData = bounties.sort((a, b) => {
-        return dayjs(b.deadline).diff(dayjs(a.deadline));
-      });
-      const splitIndex = sortedData.findIndex((bounty) =>
+      const splitIndex = bounties.findIndex((bounty) =>
         dayjs().isAfter(dayjs(bounty?.deadline)),
       );
       if (splitIndex >= 0) {
-        const bountiesOpen = sortedData.slice(0, splitIndex).reverse();
-        const bountiesClosed = sortedData.slice(splitIndex);
+        const bountiesOpen = bounties.slice(0, splitIndex).reverse();
+        const bountiesClosed = bounties.slice(splitIndex);
 
         result.bounties = [...bountiesOpen, ...bountiesClosed];
       } else {
-        result.bounties = sortedData.slice(0, take);
+        result.bounties = bounties.slice(0, take);
       }
     }
 
@@ -136,7 +137,7 @@ export default async function user(req: NextApiRequest, res: NextApiResponse) {
         },
         take,
         orderBy: {
-          updatedAt: 'desc',
+          updatedAt: order,
         },
         select: {
           id: true,

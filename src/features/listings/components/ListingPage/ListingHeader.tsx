@@ -22,13 +22,14 @@ import type { SubscribeBounty } from '@prisma/client';
 import axios from 'axios';
 import NextLink from 'next/link';
 import { useRouter } from 'next/router';
+import { useSession } from 'next-auth/react';
 import { usePostHog } from 'posthog-js/react';
 import React, { useEffect, useState } from 'react';
 import { toast } from 'react-hot-toast';
 import { TbBell, TbBellRinging } from 'react-icons/tb';
 
 import { Superteams } from '@/constants/Superteam';
-import { LoginWrapper } from '@/features/auth';
+import { AuthWrapper } from '@/features/auth';
 import { getRegionTooltipLabel, WarningModal } from '@/features/listings';
 import type { User } from '@/interface/user';
 import { userStore } from '@/store/user';
@@ -68,7 +69,6 @@ export function ListingHeader({
   const { userInfo } = userStore();
   const hasDeadlineEnded = dayjs().isAfter(deadline);
   const hasHackathonStarted = dayjs().isAfter(Hackathon?.startDate);
-  const [triggerLogin, setTriggerLogin] = useState(false);
   const [update, setUpdate] = useState<boolean>(false);
   const [sub, setSub] = useState<
     (SubscribeBounty & {
@@ -77,27 +77,30 @@ export function ListingHeader({
   >([]);
   const [isSubscribeLoading, setIsSubscribeLoading] = useState(false);
 
-  const handleSubscribe = async () => {
-    if (!userInfo?.id) {
-      setTriggerLogin(true);
-      return;
-    } else if (!userInfo?.isTalentFilled) {
-      warningOnOpen();
-      return;
-    }
+  const { status: authStatus } = useSession();
 
-    setIsSubscribeLoading(true);
-    try {
-      await axios.post('/api/bounties/subscribe/subscribe', {
-        bountyId: id,
-      });
-      setUpdate((prev) => !prev);
-      setIsSubscribeLoading(false);
-      toast.success('Subscribed to the listing');
-    } catch (error) {
-      console.log(error);
-      setIsSubscribeLoading(false);
-      toast.error('Error');
+  const isAuthenticated = authStatus === 'authenticated';
+
+  const handleSubscribe = async () => {
+    if (isAuthenticated) {
+      if (!userInfo?.isTalentFilled) {
+        warningOnOpen();
+        return;
+      }
+
+      setIsSubscribeLoading(true);
+      try {
+        await axios.post('/api/bounties/subscribe/subscribe', {
+          bountyId: id,
+        });
+        setUpdate((prev) => !prev);
+        setIsSubscribeLoading(false);
+        toast.success('Subscribed to the listing');
+      } catch (error) {
+        console.log(error);
+        setIsSubscribeLoading(false);
+        toast.error('Error');
+      }
     }
   };
   const handleUnSubscribe = async (idSub: string) => {
@@ -367,16 +370,12 @@ export function ListingHeader({
           primaryCtaLink={'/new/talent'}
         />
       )}
-      <LoginWrapper
-        triggerLogin={triggerLogin}
-        setTriggerLogin={setTriggerLogin}
-      />
       <VStack
         justify={'space-between'}
         flexDir={'row'}
         gap={5}
         w={'full'}
-        maxW={'7xl'}
+        maxW={'8xl'}
         mx={'auto'}
         py={{ base: 4, md: 10 }}
       >
@@ -401,42 +400,45 @@ export function ListingHeader({
         {!isTemplate && (
           <HStack>
             <HStack align="start">
-              <IconButton
-                className="ph-no-capture"
-                color={
-                  sub.find((e) => e.userId === userInfo?.id)
-                    ? 'white'
-                    : 'brand.slate.500'
-                }
-                bg={
-                  sub.find((e) => e.userId === userInfo?.id)
-                    ? 'brand.purple'
-                    : 'brand.slate.100'
-                }
-                aria-label="Notify"
-                icon={
-                  isSubscribeLoading ? (
-                    <Spinner color="white" size="sm" />
-                  ) : sub.find((e) => e.userId === userInfo?.id) ? (
-                    <TbBellRinging />
-                  ) : (
-                    <TbBell />
-                  )
-                }
-                onClick={() => {
-                  if (sub.find((e) => e.userId === userInfo?.id)) {
-                    posthog.capture('unnotify me_listing');
-                    handleUnSubscribe(
-                      sub.find((e) => e.userId === userInfo?.id)?.id as string,
-                    );
-
-                    return;
+              <AuthWrapper>
+                <IconButton
+                  className="ph-no-capture"
+                  color={
+                    sub.find((e) => e.userId === userInfo?.id)
+                      ? 'white'
+                      : 'brand.slate.500'
                   }
-                  posthog.capture('notify me_listing');
-                  handleSubscribe();
-                }}
-                variant="solid"
-              />
+                  bg={
+                    sub.find((e) => e.userId === userInfo?.id)
+                      ? 'brand.purple'
+                      : 'brand.slate.100'
+                  }
+                  aria-label="Notify"
+                  icon={
+                    isSubscribeLoading ? (
+                      <Spinner color="white" size="sm" />
+                    ) : sub.find((e) => e.userId === userInfo?.id) ? (
+                      <TbBellRinging />
+                    ) : (
+                      <TbBell />
+                    )
+                  }
+                  onClick={() => {
+                    if (sub.find((e) => e.userId === userInfo?.id)) {
+                      posthog.capture('unnotify me_listing');
+                      handleUnSubscribe(
+                        sub.find((e) => e.userId === userInfo?.id)
+                          ?.id as string,
+                      );
+
+                      return;
+                    }
+                    posthog.capture('notify me_listing');
+                    handleSubscribe();
+                  }}
+                  variant="solid"
+                />
+              </AuthWrapper>
             </HStack>
             <HStack whiteSpace={'nowrap'}>
               <VStack align={'start'} gap={0}>
@@ -482,7 +484,7 @@ export function ListingHeader({
             justifyContent="start"
             gap={10}
             w={'full'}
-            maxW={'7xl'}
+            maxW={'8xl'}
             h={'full'}
             mx={'auto'}
             my={'auto'}

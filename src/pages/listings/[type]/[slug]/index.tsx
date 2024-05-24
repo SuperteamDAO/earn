@@ -134,7 +134,7 @@ function BountyDetails({ bounty: initialBounty }: BountyDetailsProps) {
                 justify={['center', 'center', 'space-between', 'space-between']}
                 flexDir={{ base: 'column-reverse', md: 'row' }}
                 gap={4}
-                maxW={'7xl'}
+                maxW={'8xl'}
                 mx={'auto'}
                 mb={10}
                 px={3}

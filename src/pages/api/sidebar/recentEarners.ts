@@ -8,11 +8,16 @@ export default async function user(_req: NextApiRequest, res: NextApiResponse) {
     const winningSubmissions = await prisma.submission.findMany({
       where: {
         isWinner: true,
+        listing: {
+          isWinnersAnnounced: true,
+          isPrivate: false,
+        },
       },
       select: {
         winnerPosition: true,
         user: {
           select: {
+            id: true,
             username: true,
             photo: true,
             firstName: true,
@@ -37,6 +42,7 @@ export default async function user(_req: NextApiRequest, res: NextApiResponse) {
     const earners = winningSubmissions.map((submission) => {
       const rewards = submission.listing.rewards as Rewards;
       return {
+        id: submission.user.id,
         username: submission.user.username,
         firstName: submission.user.firstName,
         lastName: submission.user.lastName,
