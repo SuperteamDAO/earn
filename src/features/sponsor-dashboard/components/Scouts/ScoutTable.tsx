@@ -42,6 +42,7 @@ const formatter = new Intl.NumberFormat('en-US', {
 export const MAX_SHOW_SKILLS = 5;
 
 export function ScountTable({ talents }: Props) {
+  console.log(talents[0]);
   const posthog = usePostHog();
 
   return (
@@ -212,21 +213,21 @@ export function ScountTable({ talents }: Props) {
                       gap={1}
                       lineHeight={{ base: 'normal', md: 1.15 }}
                     >
-                      <Text
-                        gap={1}
-                        display="flex"
-                        overflowX="hidden"
-                        maxW={'7rem'}
-                        color="black"
-                        textOverflow={'ellipsis'}
-                      >
-                        {talent.name}
+                      <Flex gap={1}>
+                        <Text
+                          overflowX="hidden"
+                          maxW={'7rem'}
+                          color="black"
+                          textOverflow={'ellipsis'}
+                        >
+                          {talent.name}
+                        </Text>
                         {talent.recommended && (
                           <Tooltip fontSize="xs" label="Superteam Recommended">
                             <Image src={SparkleIcon} alt="sparkle" />
                           </Tooltip>
                         )}
-                      </Text>
+                      </Flex>
                       <Text
                         overflowX="hidden"
                         maxW={'7rem'}
