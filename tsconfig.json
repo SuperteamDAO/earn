@@ -40,8 +40,7 @@
     "paths": {
       "@/*": ["./src/*"],
       "@/public/*": ["./public/*"]
-    },
-    "importsNotUsedAsValues": "error"
+    }
   },
   "exclude": ["./out/**/*", "./node_modules/**/*", "./utils/functions.ts"],
   "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx"]
