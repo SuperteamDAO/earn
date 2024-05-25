@@ -281,11 +281,11 @@ async function scoutTalent(req: NextApiRequest, res: NextApiResponse) {
     let weights: { name: string; weight: number }[] = [
       {
         name: 'normalizedDollarsEarned',
-        weight: 0.25,
+        weight: 0.2,
       },
       {
         name: 'normalizedMatchingSubSkills',
-        weight: 0.25,
+        weight: 0.4,
       },
       {
         name: 'normalizedMatchedProjects',
@@ -305,19 +305,19 @@ async function scoutTalent(req: NextApiRequest, res: NextApiResponse) {
         },
         {
           name: 'normalizedMatchingSubSkills',
-          weight: 0.2,
+          weight: 0.1,
         },
         {
           name: 'normalizedMatchingSkills',
-          weight: 0.2,
+          weight: 0.3,
         },
         {
           name: 'normalizedMatchedProjects',
-          weight: 0.2,
+          weight: 0.1,
         },
         {
           name: 'stRecommended',
-          weight: 0.2,
+          weight: 0.3,
         },
       ];
     }
