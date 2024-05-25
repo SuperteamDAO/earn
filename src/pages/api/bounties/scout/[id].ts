@@ -289,11 +289,11 @@ async function scoutTalent(req: NextApiRequest, res: NextApiResponse) {
       },
       {
         name: 'normalizedMatchedProjects',
-        weight: 0.10,
+        weight: 0.1,
       },
       {
         name: 'stRecommended',
-        weight: 0.30,
+        weight: 0.3,
       },
     ];
 
