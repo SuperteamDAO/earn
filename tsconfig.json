@@ -1,16 +1,27 @@
 {
   "compilerOptions": {
-    "lib": ["dom", "dom.iterable", "esnext"],
-    "module": "esnext",
-    "moduleResolution": "node",
+    "esModuleInterop": true,
+    "skipLibCheck": true,
+    "target": "ES2022",
+    "verbatimModuleSyntax": true,
+    "allowJs": true,
     "resolveJsonModule": true,
-    "removeComments": true,
-    "preserveConstEnums": true,
+    "moduleDetection": "force",
+
     "strict": true,
-    "alwaysStrict": true,
-    "strictNullChecks": true,
     "noUncheckedIndexedAccess": true,
 
+    "moduleResolution": "Bundler",
+    "module": "ESNext",
+    "noEmit": true,
+
+    "lib": ["ES2022", "dom", "dom.iterable", "esnext"],
+    "removeComments": true,
+    "alwaysStrict": true,
+    "strictNullChecks": true,
+    "exactOptionalPropertyTypes": true,
+    "useUnknownInCatchVariables": true,
+    "noPropertyAccessFromIndexSignature": true,
     "noImplicitAny": true,
     "noImplicitReturns": true,
     "noImplicitThis": true,
@@ -20,28 +31,18 @@
     "noFallthroughCasesInSwitch": true,
     "downlevelIteration": true,
 
-    "target": "es2021",
-    "outDir": "out",
-    "declaration": true,
-    "sourceMap": true,
-
-    "esModuleInterop": true,
     "allowSyntheticDefaultImports": true,
-    "allowJs": false, // earlier - true
-    "skipLibCheck": true,
     "forceConsistentCasingInFileNames": true,
-
     "jsx": "preserve",
-    "noEmit": true,
     "isolatedModules": true,
     "incremental": true,
-
     "baseUrl": ".",
     "paths": {
       "@/*": ["./src/*"],
-      "@/public/*": ["./public/*"],
+      "@/public/*": ["./public/*"]
     },
+    "importsNotUsedAsValues": "error"
   },
   "exclude": ["./out/**/*", "./node_modules/**/*", "./utils/functions.ts"],
-  "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx"],
+  "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx"]
 }
