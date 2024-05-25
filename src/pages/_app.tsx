@@ -75,6 +75,15 @@ function MyApp({ Component, pageProps }: any) {
 
   const posthog = usePostHog();
 
+  useEffect(() => {
+    const handleRouteChange = () => posthog?.capture('$pageview');
+    router.events.on('routeChangeComplete', handleRouteChange);
+
+    return () => {
+      router.events.off('routeChangeComplete', handleRouteChange);
+    };
+  }, []);
+
   const newLoginState = router.query.loginState;
   if (newLoginState == 'signedIn' && session) {
     posthog.identify(session.user.email);

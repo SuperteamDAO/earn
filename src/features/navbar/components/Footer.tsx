@@ -10,6 +10,7 @@ import {
   VisuallyHidden,
 } from '@chakra-ui/react';
 import NextLink from 'next/link';
+import { usePostHog } from 'posthog-js/react';
 import type { ReactNode } from 'react';
 
 import { Superteams } from '@/constants/Superteam';
@@ -22,14 +23,17 @@ const getCurrentYear = () => {
 const linkData = [
   {
     text: 'FAQ',
+    posthog: 'FAQ_footer',
     href: 'https://superteamdao.notion.site/Superteam-Earn-FAQ-aedaa039b25741b1861167d68aa880b1?pvs=4',
   },
   {
     text: 'GitHub',
+    posthog: 'github_footer',
     href: 'https://github.com/SuperteamDAO/earn',
   },
   {
     text: 'Changelog',
+    posthog: 'changelog_footer',
     href: 'https://superteamdao.notion.site/Superteam-Earn-Changelog-faf0c85972a742699ecc07a52b569827',
   },
 ];
@@ -85,6 +89,7 @@ const SocialButton = ({
 };
 
 export const Footer = () => {
+  const posthog = usePostHog();
   return (
     <Box
       color={'brand.slate.500'}
@@ -182,6 +187,7 @@ export const Footer = () => {
               </Text>
               {Superteams.map((st) => (
                 <Link
+                  className="ph-no-capture"
                   key={st.region}
                   as={NextLink}
                   color="brand.slate.500"
@@ -191,6 +197,11 @@ export const Footer = () => {
                   }}
                   href={`${getURL()}regions/${st.region?.toLowerCase()}`}
                   isExternal
+                  onClick={() => {
+                    posthog.capture('region page_footer', {
+                      region: st.region,
+                    });
+                  }}
                 >
                   {st.displayValue}
                 </Link>
@@ -199,12 +210,18 @@ export const Footer = () => {
             <Stack align={'flex-start'} gap={2} mr={3}>
               {linkData.map((link) => (
                 <Link
+                  className="ph-no-capture"
                   key={link.text}
                   color={'brand.slate.500'}
                   fontSize={{ base: 'md', md: 'lg' }}
                   fontWeight={'500'}
                   href={link.href}
                   isExternal
+                  onClick={() => {
+                    if (link.posthog) {
+                      posthog.capture(link.posthog);
+                    }
+                  }}
                 >
                   {link.text}
                 </Link>

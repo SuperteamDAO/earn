@@ -33,6 +33,7 @@ import {
   VStack,
 } from '@chakra-ui/react';
 import debounce from 'lodash.debounce';
+import { usePostHog } from 'posthog-js/react';
 import { useEffect, useState } from 'react';
 import { Controller, useForm } from 'react-hook-form';
 
@@ -316,6 +317,7 @@ export const ListingPayments = ({
     if (errorMessage) {
       setErrorMessage(errorMessage);
     } else {
+      posthog.capture('publish listing_sponsor');
       confirmOnOpen();
     }
   };
@@ -335,6 +337,8 @@ export const ListingPayments = ({
       compensationHelperText = 'Allow applicants to send quotes of any amount';
       break;
   }
+
+  const posthog = usePostHog();
 
   const isDraft = isNewOrDraft || isDuplicating;
 
@@ -693,6 +697,7 @@ export const ListingPayments = ({
             </Text>
             {isDraft && (
               <Button
+                className="ph-no-capture"
                 w="100%"
                 disabled={isListingPublishing}
                 isLoading={isListingPublishing}
@@ -703,12 +708,15 @@ export const ListingPayments = ({
               </Button>
             )}
             <Button
+              className="ph-no-capture"
               w="100%"
               isLoading={isDraftLoading}
               onClick={() => {
                 if (isDraft) {
+                  posthog.capture('save draft_sponsor');
                   handleSaveDraft();
                 } else {
+                  posthog.capture('edit listing_sponsor');
                   handleUpdateListing();
                 }
               }}

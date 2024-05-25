@@ -12,6 +12,7 @@ import {
   Text,
 } from '@chakra-ui/react';
 import axios from 'axios';
+import { usePostHog } from 'posthog-js/react';
 import React, { useState } from 'react';
 import toast from 'react-hot-toast';
 
@@ -25,6 +26,7 @@ export const EmailSettingsModal = ({
   onClose: () => void;
 }) => {
   const { userInfo, setUserInfo } = userStore();
+  const posthog = usePostHog();
 
   const emailSettings = userInfo?.emailSettings || [];
 
@@ -44,6 +46,7 @@ export const EmailSettingsModal = ({
 
   const updateEmailSettings = async () => {
     try {
+      posthog.capture('confirm_email preferences');
       setIsUpdating(true);
       await axios.post('/api/user/updateEmailSettings', {
         categories: selectedCategories,
@@ -169,6 +172,7 @@ export const EmailSettingsModal = ({
           </ModalBody>
           <ModalFooter>
             <Button
+              className="ph-no-capture"
               w="100%"
               colorScheme="blue"
               isLoading={isUpdating}

@@ -10,6 +10,7 @@ import {
 } from '@chakra-ui/react';
 import axios from 'axios';
 import NextLink from 'next/link';
+import { usePostHog } from 'posthog-js/react';
 import { useEffect, useState } from 'react';
 import { AiOutlineEdit } from 'react-icons/ai';
 import { MdInfoOutline, MdOutlineChatBubbleOutline } from 'react-icons/md';
@@ -28,6 +29,7 @@ interface SponsorStats {
 
 export function Banner({ isHackathonRoute }: { isHackathonRoute?: boolean }) {
   const { userInfo } = userStore();
+  const posthog = usePostHog();
   const [sponsorStats, setSponsorStats] = useState<SponsorStats>({});
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const sponsorId = isHackathonRoute
@@ -219,9 +221,11 @@ export function Banner({ isHackathonRoute }: { isHackathonRoute?: boolean }) {
         borderRadius="md"
       >
         <Link
+          className="ph-no-capture"
           _hover={{ textDecoration: 'none' }}
           href="https://t.me/pratikdholani"
           isExternal
+          onClick={() => posthog.capture('message pratik_sponsor')}
         >
           <Flex align={'center'} justify={'space-between'}>
             <Flex align={'center'}>

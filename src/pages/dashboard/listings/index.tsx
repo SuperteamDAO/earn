@@ -46,6 +46,7 @@ import axios from 'axios';
 import NextLink from 'next/link';
 import { useRouter } from 'next/router';
 import { useSession } from 'next-auth/react';
+import { usePostHog } from 'posthog-js/react';
 import { useEffect, useRef, useState } from 'react';
 import { AiOutlineDelete } from 'react-icons/ai';
 import { FiMoreVertical } from 'react-icons/fi';
@@ -91,6 +92,7 @@ function Bounties() {
 
   const debouncedSetSearchText = useRef(debounce(setSearchText, 300)).current;
   const { data: session } = useSession();
+  const posthog = usePostHog();
 
   useEffect(() => {
     return () => {
@@ -430,6 +432,10 @@ function Bounties() {
                         wordBreak={'break-word'}
                       >
                         <NextLink
+                          className="ph-no-capture"
+                          onClick={() => {
+                            posthog.capture('submissions_sponsor');
+                          }}
                           href={`/dashboard/listings/${currentBounty.slug}/submissions/`}
                           passHref
                         >
@@ -527,14 +533,16 @@ function Bounties() {
                         {currentBounty.status === 'OPEN' &&
                           currentBounty.isPublished && (
                             <Button
+                              className="ph-no-capture"
                               color="#6366F1"
                               fontSize={'13px'}
                               fontWeight={500}
                               _hover={{ bg: '#E0E7FF' }}
                               leftIcon={<ViewIcon />}
-                              onClick={() =>
-                                handleViewSubmissions(currentBounty.slug)
-                              }
+                              onClick={() => {
+                                posthog.capture('submissions_sponsor');
+                                handleViewSubmissions(currentBounty.slug);
+                              }}
                               size="sm"
                               variant="ghost"
                             >
@@ -614,21 +622,22 @@ function Bounties() {
                             ) : (
                               <></>
                             )}
-
                             {(currentBounty.type === 'bounty' ||
                               currentBounty.type === 'project') && (
                               <MenuItem
+                                className="ph-no-capture"
                                 py={2}
                                 color={'brand.slate.500'}
                                 fontSize={'sm'}
                                 fontWeight={500}
                                 icon={<CopyIcon h={4} w={4} />}
-                                onClick={() =>
+                                onClick={() => {
+                                  posthog.capture('duplicate listing_sponsor');
                                   window.open(
                                     `${router.basePath}/dashboard/listings/${currentBounty.slug}/duplicate`,
                                     '_blank',
-                                  )
-                                }
+                                  );
+                                }}
                               >
                                 Duplicate
                               </MenuItem>

@@ -13,6 +13,7 @@ import {
 import axios from 'axios';
 import { useRouter } from 'next/router';
 import { useSession } from 'next-auth/react';
+import { usePostHog } from 'posthog-js/react';
 import { useEffect, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import Select from 'react-select';
@@ -46,6 +47,7 @@ const CreateSponsor = () => {
   const [loginStep, setLoginStep] = useState(0);
 
   const { userInfo } = userStore();
+  const posthog = usePostHog();
 
   useEffect(() => {
     if (userInfo?.currentSponsorId && session?.user?.role !== 'GOD') {
@@ -146,6 +148,7 @@ const CreateSponsor = () => {
           <VStack w={'2xl'} pt={10}>
             <form
               onSubmit={handleSubmit(async (e) => {
+                posthog.capture('complete profile_sponsor');
                 createNewSponsor({
                   bio: e.bio,
                   industry: industries ?? '',
@@ -365,6 +368,7 @@ const CreateSponsor = () => {
                   </Text>
                 )}
                 <Button
+                  className="ph-no-capture"
                   w="full"
                   isDisabled={imageUrl === ''}
                   isLoading={!!isLoading}

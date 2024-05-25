@@ -23,6 +23,7 @@ import axios from 'axios';
 import NextLink from 'next/link';
 import { useRouter } from 'next/router';
 import { useSession } from 'next-auth/react';
+import { usePostHog } from 'posthog-js/react';
 import React, { useEffect, useState } from 'react';
 import { toast } from 'react-hot-toast';
 import { TbBell, TbBellRinging } from 'react-icons/tb';
@@ -59,6 +60,7 @@ export function ListingHeader({
     Hackathon,
   } = listing;
   const router = useRouter();
+  const posthog = usePostHog();
   const {
     isOpen: warningIsOpen,
     onOpen: warningOnOpen,
@@ -171,13 +173,16 @@ export function ListingHeader({
     href,
     text,
     isActive,
+    onClick,
   }: {
     href: string;
     text: string;
     isActive: boolean;
+    onClick?: () => void;
   }) => {
     return (
       <Link
+        className="ph-no-capture"
         as={NextLink}
         alignItems="center"
         justifyContent="center"
@@ -195,6 +200,7 @@ export function ListingHeader({
           borderBottomColor: 'brand.purple',
         }}
         href={href}
+        onClick={onClick}
       >
         {text}
       </Link>
@@ -396,6 +402,7 @@ export function ListingHeader({
             <HStack align="start">
               <AuthWrapper>
                 <IconButton
+                  className="ph-no-capture"
                   color={
                     sub.find((e) => e.userId === userInfo?.id)
                       ? 'white'
@@ -418,6 +425,7 @@ export function ListingHeader({
                   }
                   onClick={() => {
                     if (sub.find((e) => e.userId === userInfo?.id)) {
+                      posthog.capture('unnotify me_listing');
                       handleUnSubscribe(
                         sub.find((e) => e.userId === userInfo?.id)
                           ?.id as string,
@@ -425,6 +433,7 @@ export function ListingHeader({
 
                       return;
                     }
+                    posthog.capture('notify me_listing');
                     handleSubscribe();
                   }}
                   variant="solid"
@@ -492,6 +501,7 @@ export function ListingHeader({
 
             {!isProject && isWinnersAnnounced && (
               <ListingNavLink
+                onClick={() => posthog.capture('submissions tab_listing')}
                 href={`/listings/${type}/${slug}/submission`}
                 text="SUBMISSIONS"
                 isActive={router.asPath.includes('submission')}

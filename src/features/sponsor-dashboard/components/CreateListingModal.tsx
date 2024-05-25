@@ -13,6 +13,7 @@ import {
   Text,
   UnorderedList,
 } from '@chakra-ui/react';
+import { usePostHog } from 'posthog-js/react';
 import React from 'react';
 
 import { useListingFormStore } from '@/features/listing-builder';
@@ -24,6 +25,7 @@ export const CreateListingModal = ({
   isOpen: boolean;
   onClose: () => void;
 }) => {
+  const posthog = usePostHog();
   const { resetForm } = useListingFormStore();
   const resetListingForm = () => {
     resetForm();
@@ -68,7 +70,13 @@ export const CreateListingModal = ({
               </ListItem>
             </UnorderedList>
             <Box flex="1" />
-            <a href="/dashboard/create-bounty">
+            <a
+              href="/dashboard/create-bounty"
+              className="ph-no-capture"
+              onClick={() => {
+                posthog.capture('create new bounty_sponsor');
+              }}
+            >
               <Button w="full" onClick={resetListingForm} size="lg">
                 Create New Bounty
               </Button>
@@ -119,7 +127,13 @@ export const CreateListingModal = ({
               color="brand.slate.200"
               orientation="horizontal"
             />
-            <a href="/dashboard/create-project">
+            <a
+              href="/dashboard/create-project"
+              className="ph-no-capture"
+              onClick={() => {
+                posthog.capture('create new project_sponsor');
+              }}
+            >
               <Button w="full" onClick={resetListingForm} size="lg">
                 Create New Project
               </Button>

@@ -32,6 +32,7 @@ import axios from 'axios';
 import dynamic from 'next/dynamic';
 import NextLink from 'next/link';
 import { log } from 'next-axiom';
+import { usePostHog } from 'posthog-js/react';
 import React, { type Dispatch, type SetStateAction, useState } from 'react';
 import { BsTwitterX } from 'react-icons/bs';
 import {
@@ -100,6 +101,7 @@ export const SubmissionDetails = ({
   const [isPaying, setIsPaying] = useState(false);
 
   const { connected, publicKey, sendTransaction } = useWallet();
+  const posthog = usePostHog();
 
   const isProject = bounty?.type === 'project';
   const isHackathon = bounty?.type === 'hackathon';
@@ -383,6 +385,7 @@ export const SubmissionDetails = ({
                       </DynamicWalletMultiButton>
                       {connected && (
                         <Button
+                          className="ph-no-capture"
                           w="fit-content"
                           minW={'120px'}
                           mr={4}
@@ -396,6 +399,7 @@ export const SubmissionDetails = ({
                               );
                               return;
                             }
+                            posthog.capture('pay winner_sponsor');
                             handlePayout({
                               id: selectedSubmission?.id as string,
                               token: bounty?.token as string,

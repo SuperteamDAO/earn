@@ -15,6 +15,7 @@ import {
 import NextLink from 'next/link';
 import { useRouter } from 'next/router';
 import { useSession } from 'next-auth/react';
+import { usePostHog } from 'posthog-js/react';
 import React from 'react';
 
 import { UserMenu } from '@/components/shared/UserMenu';
@@ -35,6 +36,7 @@ interface Props {
 export const DesktopNavbar = ({ onLoginOpen, onSearchOpen }: Props) => {
   const { data: session, status } = useSession();
   const router = useRouter();
+  const posthog = usePostHog();
 
   const isDashboardRoute = router.pathname.startsWith('/dashboard');
   const maxWValue = isDashboardRoute ? '' : '8xl';
@@ -103,6 +105,10 @@ export const DesktopNavbar = ({ onLoginOpen, onSearchOpen }: Props) => {
             const isCurrent = `${navItem.href}` === router.asPath;
             return (
               <NavLink
+                className="ph-no-capture"
+                onClick={() => {
+                  posthog.capture(navItem.posthog);
+                }}
                 key={navItem.label}
                 href={navItem.href ?? '#'}
                 label={navItem.label}
@@ -113,11 +119,19 @@ export const DesktopNavbar = ({ onLoginOpen, onSearchOpen }: Props) => {
         </Flex>
         <AbsoluteCenter>
           <Flex align="center" justify={'center'} flexGrow={1} h="full" ml={10}>
-            <Stack direction={'row'} h="full" spacing={7}>
+            <Stack
+              className="ph-no-capture"
+              direction={'row'}
+              h="full"
+              spacing={7}
+            >
               {CATEGORY_NAV_ITEMS?.map((navItem) => {
                 const isCurrent = `${navItem.href}` === router.asPath;
                 return (
                   <NavLink
+                    onClick={() => {
+                      posthog.capture(navItem.posthog);
+                    }}
                     href={navItem.href ?? '#'}
                     label={navItem.label}
                     isActive={isCurrent}
@@ -129,6 +143,9 @@ export const DesktopNavbar = ({ onLoginOpen, onSearchOpen }: Props) => {
                 const isCurrent = `${navItem.href}` === router.asPath;
                 return (
                   <NavLink
+                    onClick={() => {
+                      posthog.capture(navItem.posthog);
+                    }}
                     key={navItem.label}
                     href={navItem.href ?? '#'}
                     label={renderLabel(navItem)}
@@ -158,13 +175,14 @@ export const DesktopNavbar = ({ onLoginOpen, onSearchOpen }: Props) => {
           {status === 'authenticated' && session && <UserMenu />}
 
           {status === 'unauthenticated' && !session && (
-            <HStack gap={2}>
+            <HStack className="ph-no-capture" gap={2}>
               <HStack gap={0}>
                 <Button
                   color="#6366F1"
                   fontSize="xs"
                   bg={'white'}
                   onClick={() => {
+                    posthog.capture('create a listing_navbar');
                     router.push('/sponsor');
                   }}
                   size="sm"
@@ -174,6 +192,7 @@ export const DesktopNavbar = ({ onLoginOpen, onSearchOpen }: Props) => {
                 <Button
                   fontSize="xs"
                   onClick={() => {
+                    posthog.capture('login_navbar');
                     onLoginOpen();
                   }}
                   size="sm"
@@ -188,6 +207,7 @@ export const DesktopNavbar = ({ onLoginOpen, onSearchOpen }: Props) => {
                 px={4}
                 fontSize="xs"
                 onClick={() => {
+                  posthog.capture('signup_navbar');
                   onLoginOpen();
                 }}
                 size="sm"
