@@ -98,10 +98,8 @@ export const SubmissionActionButton = ({
         warningOnOpen();
       } else {
         if (buttonState === 'submit') {
-          console.log('submit');
           posthog.capture('start_submission');
         } else if (buttonState === 'edit') {
-          console.log('edit');
           posthog.capture('edit_submission');
         }
         onOpen();

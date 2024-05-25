@@ -273,7 +273,7 @@ export const MobileNavbar = ({ onLoginOpen, onSearchOpen }: Props) => {
         py={2}
         bg={'#F8FAFC'}
       >
-        <Flex className="ph-no-capture" gap={{ base: 2, sm: 12 }}>
+        <Flex className="ph-no-capture" gap={{ base: 2, sm: 8, md: 12 }}>
           {LISTING_NAV_ITEMS?.map((navItem) => {
             const isCurrent = `${navItem.href}` === router.asPath;
             return (
@@ -301,7 +301,7 @@ export const MobileNavbar = ({ onLoginOpen, onSearchOpen }: Props) => {
           borderColor={'brand.slate.400'}
           orientation="vertical"
         />
-        <Flex className="ph-no-capture" gap={{ base: 2, sm: 12 }}>
+        <Flex className="ph-no-capture" gap={{ base: 2, sm: 8, md: 12 }}>
           {CATEGORY_NAV_ITEMS?.map((navItem) => {
             const isCurrent = `${navItem.href}` === router.asPath;
             return (
