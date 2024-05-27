@@ -11,7 +11,7 @@ interface PoW {
   skills: string[];
   subSkills: string[];
   link: string;
-  createdAt?: string;
+  createdAt?: Date;
 }
 
 async function handler(req: NextApiRequestWithUser, res: NextApiResponse) {
@@ -45,15 +45,31 @@ async function handler(req: NextApiRequestWithUser, res: NextApiResponse) {
       continue;
     }
 
-    const { id, ...otherFields } = pow;
+    const { id, title, description, skills, subSkills, link, createdAt } = pow;
 
     if (id) {
       updateData.push({
         where: { id },
-        data: { ...otherFields, userId },
+        data: {
+          title,
+          userId,
+          description,
+          skills,
+          subSkills,
+          link,
+          createdAt,
+        },
       });
     } else {
-      createData.push({ ...otherFields, userId });
+      createData.push({
+        title,
+        userId,
+        description,
+        skills,
+        subSkills,
+        link,
+        createdAt,
+      });
     }
   }
 
