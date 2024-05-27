@@ -215,13 +215,6 @@ model Submission {
   @@index([likeCount])
 }
 
-model Otp {
-  id        String   @id @map("_id")
-  email     String
-  otp       Int
-  timestamp DateTime @default(now())
-}
-
 model Sponsors {
   id                 String         @id @default(uuid())
   name               String         @unique
