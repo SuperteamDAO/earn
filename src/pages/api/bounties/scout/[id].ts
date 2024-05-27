@@ -337,11 +337,11 @@ async function scoutTalent(req: NextApiRequest, res: NextApiResponse) {
       ) t4
 `;
 
-    // COMBINATION OF NON DEV AND DEV LISTINGS
+    // COMBINATION OF NON DEV AND DEV LISTINGS (ALSO PURELY DEV LISTING)
     let weights: { name: string; weight: number; diffAccessor?: string }[] = [
       {
         name: 'normalizedDollarsEarned',
-        weight: 0.2,
+        weight: 0.35,
       },
       {
         name: 'normalizedMatchingSubSkills',
@@ -349,14 +349,10 @@ async function scoutTalent(req: NextApiRequest, res: NextApiResponse) {
       },
       {
         name: 'normalizedMatchingSkills',
-        weight: 0.2,
+        weight: 0.1,
       },
       {
         name: 'normalizedMatchedProjectSubSkills',
-        weight: 0.05,
-      },
-      {
-        name: 'normalizedMatchedProjectSkills',
         weight: 0.05,
       },
       {
@@ -371,7 +367,7 @@ async function scoutTalent(req: NextApiRequest, res: NextApiResponse) {
       weights = [
         {
           name: 'normalizedDollarsEarned',
-          weight: 0.2,
+          weight: 0.25,
         },
         {
           name: 'normalizedMatchingSubSkills',
@@ -379,7 +375,7 @@ async function scoutTalent(req: NextApiRequest, res: NextApiResponse) {
         },
         {
           name: 'normalizedMatchedProjectSubSkills',
-          weight: 0.1,
+          weight: 0.05,
         },
         {
           name: 'stRecommended',
@@ -388,29 +384,6 @@ async function scoutTalent(req: NextApiRequest, res: NextApiResponse) {
         },
       ];
     }
-
-    // PURELY DEV LISTINGS
-    // if (devSkills.length > 0 && subskills.length === 0) {
-    //   weights = [
-    //     {
-    //       name: 'normalizedDollarsEarned',
-    //       weight: 0.2,
-    //     },
-    //     {
-    //       name: 'normalizedMatchingSkills',
-    //       weight: 0.4,
-    //     },
-    //     {
-    //       name: 'normalizedMatchedProjectSkills',
-    //       weight: 0.1,
-    //     },
-    //     {
-    //       name: 'stRecommended',
-    //       diffAccessor: 'normalizedDollarsEarned',
-    //       weight: 0.3,
-    //     },
-    //   ];
-    // }
 
     const selectScouts = `
       SELECT
