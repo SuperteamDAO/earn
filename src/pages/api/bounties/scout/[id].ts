@@ -91,7 +91,7 @@ async function scoutTalent(req: NextApiRequest, res: NextApiResponse) {
     const sumMatchingSubSkillsQuery = `
       SUM(
         ${
-          devSkills.length === 0 && subskills.length > 0
+          subskills.length > 0
             ? `
           ${subskillContainQuery(subskills, 'bs')
             .map(
@@ -215,7 +215,7 @@ async function scoutTalent(req: NextApiRequest, res: NextApiResponse) {
       ` 
       SUM  (
         ${
-          devSkills.length === 0 && subskills.length > 0
+          subskills.length > 0
             ? `
           ${subskillWhere.map((w) => `CASE WHEN ${w} THEN 1 ELSE 0 END`).join('\n + \n')}
         `
@@ -337,7 +337,8 @@ async function scoutTalent(req: NextApiRequest, res: NextApiResponse) {
       ) t4
 `;
 
-    const weights: { name: string; weight: number; diffAccessor?: string }[] = [
+    // COMBINATION OF NON DEV AND DEV LISTINGS
+    let weights: { name: string; weight: number; diffAccessor?: string }[] = [
       {
         name: 'normalizedDollarsEarned',
         weight: 0.2,
@@ -365,7 +366,31 @@ async function scoutTalent(req: NextApiRequest, res: NextApiResponse) {
       },
     ];
 
-    // if (devSkills.length > 0) {
+    // PURELY NON DEV LISTINGS
+    if (devSkills.length === 0 && subskills.length > 0) {
+      weights = [
+        {
+          name: 'normalizedDollarsEarned',
+          weight: 0.2,
+        },
+        {
+          name: 'normalizedMatchingSubSkills',
+          weight: 0.4,
+        },
+        {
+          name: 'normalizedMatchedProjectSubSkills',
+          weight: 0.1,
+        },
+        {
+          name: 'stRecommended',
+          diffAccessor: 'normalizedDollarsEarned',
+          weight: 0.3,
+        },
+      ];
+    }
+
+    // PURELY DEV LISTINGS
+    // if (devSkills.length > 0 && subskills.length === 0) {
     //   weights = [
     //     {
     //       name: 'normalizedDollarsEarned',
