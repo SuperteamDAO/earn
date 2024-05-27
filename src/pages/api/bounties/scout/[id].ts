@@ -91,7 +91,7 @@ async function scoutTalent(req: NextApiRequest, res: NextApiResponse) {
     const sumMatchingSubSkillsQuery = `
       SUM(
         ${
-          subskills.length > 0
+          devSkills.length === 0 && subskills.length > 0
             ? `
           ${subskillContainQuery(subskills, 'bs')
             .map(
@@ -132,20 +132,28 @@ async function scoutTalent(req: NextApiRequest, res: NextApiResponse) {
       CONCAT('[', 
         GROUP_CONCAT(DISTINCT
           CASE
-            ${subskills
-              .map(
-                (s) => `
+            ${
+              devSkills.length === 0
+                ? subskills
+                    .map(
+                      (s) => `
               WHEN JSON_CONTAINS(JSON_EXTRACT(${alias}.skills, '$[*].subskills'), JSON_QUOTE('${s}')) THEN JSON_QUOTE('${s}')
             `,
-              )
-              .join(' \n ')} \n
-            ${skills
-              .map(
-                (s) => `
+                    )
+                    .join(' \n ')
+                : ''
+            } \n
+            ${
+              devSkills.length > 0
+                ? skills
+                    .map(
+                      (s) => `
               WHEN JSON_CONTAINS(JSON_EXTRACT(${alias}.skills, '$[*].skills'), JSON_QUOTE('${s}')) THEN JSON_QUOTE('${s}')
             `,
-              )
-              .join(' \n ')}
+                    )
+                    .join(' \n ')
+                : ''
+            }
           END
         ),
       ']') AS matchedSkillsArray
@@ -161,7 +169,7 @@ async function scoutTalent(req: NextApiRequest, res: NextApiResponse) {
         matchingArray = matchingArray.concat(
           subskillContainQuery(subskills, alias),
         );
-      if (subskills.length > 0)
+      if (skills.length > 0)
         matchingArray = matchingArray.concat(skillContainQuery(skills, alias));
       return matchingArray;
     };
@@ -185,27 +193,62 @@ async function scoutTalent(req: NextApiRequest, res: NextApiResponse) {
           AND (
             ${matchingWhereClause(subskills, devSkills, 'bs').join('\n  OR  ')}
 	        )
-          ${region !== 'Global' ? `AND u.location LIKE '%${region}%'` : ''}
+          ${region !== 'GLOBAL' ? `AND u.location LIKE '%${region}%'` : ''}
         GROUP BY
           u.id
 `;
 
     const subskillPoWLikeQuery = (subskills: string[], alias: string) =>
-      subskills
-        .map((s) => `${alias}.subSkills LIKE CONCAT('%','${s}','%')`)
-        .join('  OR  ');
+      subskills.map((s) => `${alias}.subSkills LIKE CONCAT('%','${s}','%')`);
+
+    const skillPoWLikeQuery = (skills: string[], alias: string) =>
+      skills.map((s) => `${alias}.skills LIKE CONCAT('%','${s}','%')`);
+
+    const sumSubSkillsContainProjectQuery = (subskillWhere: string[]) =>
+      ` 
+      SUM  (
+        ${
+          devSkills.length === 0 && subskills.length > 0
+            ? `
+          ${subskillWhere.map((w) => `CASE WHEN ${w} THEN 1 ELSE 0 END`).join('\n + \n')}
+        `
+            : `0+0`
+        }
+      ) as matchedProjectSubSkills
+    `;
+
+    const sumSkillsContainProjectQuery = (skillWhere: string[]) =>
+      ` 
+      SUM  (
+        ${
+          devSkills.length > 0
+            ? `
+          ${skillWhere.map((w) => `CASE WHEN ${w} THEN 1 ELSE 0 END`).join('\n + \n')}
+        `
+            : `0+0`
+        }
+      ) as matchedProjectSkills
+    `;
 
     const matchingSkillsPoWQuery = `
-      SELECT
-        u.id as userId,
-        COUNT(p.id) as matchedProjects
-      FROM
-        User u
-        LEFT JOIN PoW p on p.userId = u.id
-      WHERE
-        ${subskillPoWLikeQuery(subskills, 'p')}
-      GROUP BY
-            u.id
+		    SELECT
+		      u.id as userId,
+          ${sumSubSkillsContainProjectQuery(subskillPoWLikeQuery(subskills, 'p'))},
+          ${sumSkillsContainProjectQuery(skillPoWLikeQuery(devSkills, 'p'))},
+		      t1.dollarsEarned
+		    FROM
+		      User u
+		    LEFT JOIN PoW p on p.userId = u.id
+		    LEFT JOIN (
+          ${userWithMatchingSubmissionsQuery()}
+		    ) as t1 ON u.id = t1.userId
+		    WHERE
+		      (
+            ${[...subskillPoWLikeQuery(subskills, 'p'), ...skillPoWLikeQuery(devSkills, 'p')].join('\n OR \n')}
+          )
+		      AND t1.dollarsEarned > 0
+		    GROUP BY
+		      u.id, t1.dollarsEarned
 `;
     const minMaxSubmissionsQuery = `
       SELECT 
@@ -219,28 +262,15 @@ async function scoutTalent(req: NextApiRequest, res: NextApiResponse) {
         ${userWithMatchingSubmissionsQuery(true)}
 		  ) as t
 `;
+
     const minMaxPowQuery = `
       SELECT
-		    MAX(t.matchedProjects) as maxMatchedProjects,
-		    MIN(t.matchedProjects) as minMatchedProjects
+		    MAX(t.matchedProjectSubSkills) as maxMatchedProjectSubSkills,
+		    MIN(t.matchedProjectSubSkills) as minMatchedProjectSubSkills,
+		    MAX(t.matchedProjectSkills) as maxMatchedProjectSkills,
+		    MIN(t.matchedProjectSkills) as minMatchedProjectSkills
 		  FROM (
-		    SELECT
-		      u.id as userId,
-		      COUNT(p.id) as matchedProjects,
-		      t1.dollarsEarned
-		    FROM
-		      User u
-		    LEFT JOIN PoW p on p.userId = u.id
-		    LEFT JOIN (
-          ${userWithMatchingSubmissionsQuery()}
-		    ) as t1 ON u.id = t1.userId
-		    WHERE
-		      (
-            ${subskillPoWLikeQuery(subskills, 'p')}
-          )
-		      AND t1.dollarsEarned > 0
-		    GROUP BY
-		      u.id, t1.dollarsEarned
+        ${matchingSkillsPoWQuery}
 		  ) as t
 `;
 
@@ -268,13 +298,20 @@ async function scoutTalent(req: NextApiRequest, res: NextApiResponse) {
           WHEN (t3.maxMatchingSkills - t3.minMatchingSkills) = 0 THEN 0
           ELSE (0.9 * (t1.matchingSkills - t3.minMatchingSkills) / (t3.maxMatchingSkills - t3.minMatchingSkills)) + 0.1 
         END) AS normalizedMatchingSkills,
-        COALESCE(t2.matchedProjects, 0) as matchedProjects,
-        t4.maxMatchedProjects,
-        t4.minMatchedProjects,
+        COALESCE(t2.matchedProjectSubSkills, 0) as matchedProjectSubSkills,
+        t4.maxMatchedProjectSubSkills,
+        t4.minMatchedProjectSubSkills,
         (CASE
-          WHEN (t4.maxMatchedProjects - t4.minMatchedProjects) = 0 THEN 0
-          ELSE COALESCE((0.9 * (t2.matchedProjects - t4.minMatchedProjects) / (t4.maxMatchedProjects - t4.minMatchedProjects)) + 0.1, 0) 
-        END) AS normalizedMatchedProjects,
+          WHEN (t4.maxMatchedProjectSubSkills - t4.minMatchedProjectSubSkills) = 0 THEN 0
+          ELSE COALESCE((0.9 * (t2.matchedProjectSubSkills - t4.minMatchedProjectSubSkills) / (t4.maxMatchedProjectSubSkills - t4.minMatchedProjectSubSkills)) + 0.1, 0) 
+        END) AS normalizedMatchedProjectSubSkills,
+        COALESCE(t2.matchedProjectSkills, 0) as matchedProjectSkills,
+        t4.maxMatchedProjectSkills,
+        t4.minMatchedProjectSkills,
+        (CASE
+          WHEN (t4.maxMatchedProjectSkills - t4.minMatchedProjectSkills) = 0 THEN 0
+          ELSE COALESCE((0.9 * (t2.matchedProjectSkills - t4.minMatchedProjectSkills) / (t4.maxMatchedProjectSkills - t4.minMatchedProjectSkills)) + 0.1, 0) 
+        END) AS normalizedMatchedProjectSkills,
         t1.matchedSkillsArray,
         u.stRecommended
       FROM
@@ -303,7 +340,7 @@ async function scoutTalent(req: NextApiRequest, res: NextApiResponse) {
         weight: 0.4,
       },
       {
-        name: 'normalizedMatchedProjects',
+        name: 'normalizedMatchedProjectSubSkills',
         weight: 0.1,
       },
       {
@@ -320,15 +357,11 @@ async function scoutTalent(req: NextApiRequest, res: NextApiResponse) {
           weight: 0.2,
         },
         {
-          name: 'normalizedMatchingSubSkills',
-          weight: 0.1,
-        },
-        {
           name: 'normalizedMatchingSkills',
-          weight: 0.3,
+          weight: 0.4,
         },
         {
-          name: 'normalizedMatchedProjects',
+          name: 'normalizedMatchedProjectSkills',
           weight: 0.1,
         },
         {
