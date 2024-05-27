@@ -34,7 +34,10 @@ export default function AllRegionListingsPage() {
 
   return (
     <Home type="niche">
-      <Meta title={`Pyth Network | Superteam Earn`} description={``} />
+      <Meta
+        title={`Pyth Network Opportunities | Superteam Earn`}
+        description={``}
+      />
       <Flex
         direction={{ md: 'row', base: 'column' }}
         w={{ md: 'brand.120', base: '100%' }}
@@ -63,9 +66,8 @@ export default function AllRegionListingsPage() {
             {'Pyth Network'}
           </Text>
           <Text maxW="600px" color={'brand.slate.500'} fontSize={'small'}>
-            Welcome to Pyth&apos;s exclusive page for bounties — find
-            opportunities to contribute to the Pyth ecosystem while earning in
-            global standards
+            Explore the latest Research and Developer bounties for the Pyth
+            Network ecosystem on Superteam Earn. Get started now!
           </Text>
         </Box>
       </Flex>
