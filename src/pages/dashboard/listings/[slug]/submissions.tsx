@@ -133,7 +133,7 @@ function BountySubmissions({ slug }: Props) {
       );
       const scouts: ScoutRowType[] = scoutsData.data.map((s) => ({
         id: s.id,
-        skills: s.skills,
+        skills: [...new Set(s.skills)],
         dollarsEarned: s.dollarsEarned,
         score: s.score,
         recommended: s.user.stRecommended ?? false,

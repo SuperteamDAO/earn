@@ -129,35 +129,42 @@ async function scoutTalent(req: NextApiRequest, res: NextApiResponse) {
       skills: string[],
       alias: string,
     ) => `
-      CONCAT('[', 
+      CONCAT('[',
         GROUP_CONCAT(DISTINCT
-          CASE
-            ${
-              devSkills.length === 0
-                ? subskills
-                    .map(
-                      (s) => `
-              WHEN JSON_CONTAINS(JSON_EXTRACT(${alias}.skills, '$[*].subskills'), JSON_QUOTE('${s}')) THEN JSON_QUOTE('${s}')
-            `,
-                    )
-                    .join(' \n ')
-                : ''
-            } \n
-            ${
-              devSkills.length > 0
-                ? skills
-                    .map(
-                      (s) => `
-              WHEN JSON_CONTAINS(JSON_EXTRACT(${alias}.skills, '$[*].skills'), JSON_QUOTE('${s}')) THEN JSON_QUOTE('${s}')
-            `,
-                    )
-                    .join(' \n ')
-                : ''
-            }
-          END
+          CONCAT_WS(',',
+          ${
+            subskills.length > 0
+              ? subskills
+                  .map(
+                    (s) => `
+                CASE
+                  WHEN JSON_CONTAINS(JSON_EXTRACT(${alias}.skills, '$[*].subskills'), JSON_QUOTE('${s}')) THEN JSON_QUOTE('${s}')
+                  ELSE NULL
+                END
+              `,
+                  )
+                  .join(`, \n`)
+              : ''
+          }
+      ${skills.length > 0 && subskills.length > 0 ? ',' : ''}
+        ${
+          skills.length > 0
+            ? skills
+                .map(
+                  (s) => `
+                  CASE
+                    WHEN JSON_CONTAINS(JSON_EXTRACT(${alias}.skills, '$[*].skills'), JSON_QUOTE('${s}')) THEN JSON_QUOTE('${s}')
+                    ELSE NULL
+                  END
+                `,
+                )
+                .join(`,',', \n`)
+            : ''
+        }
+        )
         ),
-      ']') AS matchedSkillsArray
-`;
+        ']') AS matchedSkillsArray
+      `;
 
     const matchingWhereClause = (
       subskills: string[],
@@ -330,18 +337,26 @@ async function scoutTalent(req: NextApiRequest, res: NextApiResponse) {
       ) t4
 `;
 
-    let weights: { name: string; weight: number; diffAccessor?: string }[] = [
+    const weights: { name: string; weight: number; diffAccessor?: string }[] = [
       {
         name: 'normalizedDollarsEarned',
         weight: 0.2,
       },
       {
         name: 'normalizedMatchingSubSkills',
-        weight: 0.4,
+        weight: 0.2,
+      },
+      {
+        name: 'normalizedMatchingSkills',
+        weight: 0.2,
       },
       {
         name: 'normalizedMatchedProjectSubSkills',
-        weight: 0.1,
+        weight: 0.05,
+      },
+      {
+        name: 'normalizedMatchedProjectSkills',
+        weight: 0.05,
       },
       {
         name: 'stRecommended',
@@ -350,27 +365,27 @@ async function scoutTalent(req: NextApiRequest, res: NextApiResponse) {
       },
     ];
 
-    if (devSkills.length > 0) {
-      weights = [
-        {
-          name: 'normalizedDollarsEarned',
-          weight: 0.2,
-        },
-        {
-          name: 'normalizedMatchingSkills',
-          weight: 0.4,
-        },
-        {
-          name: 'normalizedMatchedProjectSkills',
-          weight: 0.1,
-        },
-        {
-          name: 'stRecommended',
-          diffAccessor: 'normalizedDollarsEarned',
-          weight: 0.3,
-        },
-      ];
-    }
+    // if (devSkills.length > 0) {
+    //   weights = [
+    //     {
+    //       name: 'normalizedDollarsEarned',
+    //       weight: 0.2,
+    //     },
+    //     {
+    //       name: 'normalizedMatchingSkills',
+    //       weight: 0.4,
+    //     },
+    //     {
+    //       name: 'normalizedMatchedProjectSkills',
+    //       weight: 0.1,
+    //     },
+    //     {
+    //       name: 'stRecommended',
+    //       diffAccessor: 'normalizedDollarsEarned',
+    //       weight: 0.3,
+    //     },
+    //   ];
+    // }
 
     const selectScouts = `
       SELECT
@@ -400,6 +415,7 @@ END)
       FROM (
         ${normalizeQuery}
       ) as t
+      WHERE matchedSkillsArray IS NOT NULL
       ORDER BY score desc
       LIMIT ${LIMIT};
     `;
