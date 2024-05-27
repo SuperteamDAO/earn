@@ -62,13 +62,15 @@ async function scoutTalent(req: NextApiRequest, res: NextApiResponse) {
     )
       return res.status(404).send('Bounty has No skills');
 
-    console.log('skills', scoutBounty.skills);
+    // console.log('skills', scoutBounty.skills);
     const subskills = flattenSubSkills(scoutBounty.skills as any);
     const devSkills = filterInDevSkills(
       flattenSkills(scoutBounty.skills as any),
     );
-    console.log('skills extract', flattenSkills(scoutBounty.skills as any));
-    console.log('devSkills', devSkills);
+    // console.log('skills extract', flattenSkills(scoutBounty.skills as any));
+    // console.log('devSkills', devSkills);
+    //
+    const region = scoutBounty.region.toString();
 
     const prevScouts = await prisma.scouts.findMany({
       where: {
@@ -183,6 +185,7 @@ async function scoutTalent(req: NextApiRequest, res: NextApiResponse) {
           AND (
             ${matchingWhereClause(subskills, devSkills, 'bs').join('\n  OR  ')}
 	        )
+          ${region !== 'Global' ? `AND u.location LIKE '%${region}%'` : ''}
         GROUP BY
           u.id
 `;
@@ -247,19 +250,31 @@ async function scoutTalent(req: NextApiRequest, res: NextApiResponse) {
         t1.dollarsEarned as dollarsEarned,
         t3.maxDollarsEarned,
         t3.minDollarsEarned,
-        (0.9 * (t1.dollarsEarned - t3.minDollarsEarned) / (t3.maxDollarsEarned - t3.minDollarsEarned)) + 0.1 AS normalizedDollarsEarned,
+        (CASE 
+          WHEN (t3.maxDollarsEarned - t3.minDollarsEarned) = 0 THEN 0
+          ELSE (0.9 * (t1.dollarsEarned - t3.minDollarsEarned) / (t3.maxDollarsEarned - t3.minDollarsEarned)) + 0.1
+        END) AS normalizedDollarsEarned,
         t1.matchingSubSkills,
         t3.maxMatchingSubSkills,
         t3.minMatchingSubSkills,
-        (0.9 * (t1.matchingSubSkills - t3.minMatchingSubSkills) / (t3.maxMatchingSubSkills - t3.minMatchingSubSkills)) + 0.1 AS normalizedMatchingSubSkills,
+        (CASE
+          WHEN (t3.maxMatchingSubSkills - t3.minMatchingSubSkills) = 0 THEN 0
+          ELSE (0.9 * (t1.matchingSubSkills - t3.minMatchingSubSkills) / (t3.maxMatchingSubSkills - t3.minMatchingSubSkills)) + 0.1 
+        END) AS normalizedMatchingSubSkills,
         t1.matchingSkills,
         t3.maxMatchingSkills,
         t3.minMatchingSkills,
-        (0.9 * (t1.matchingSkills - t3.minMatchingSkills) / (t3.maxMatchingSkills - t3.minMatchingSkills)) + 0.1 AS normalizedMatchingSkills,
+        (CASE
+          WHEN (t3.maxMatchingSkills - t3.minMatchingSkills) = 0 THEN 0
+          ELSE (0.9 * (t1.matchingSkills - t3.minMatchingSkills) / (t3.maxMatchingSkills - t3.minMatchingSkills)) + 0.1 
+        END) AS normalizedMatchingSkills,
         COALESCE(t2.matchedProjects, 0) as matchedProjects,
         t4.maxMatchedProjects,
         t4.minMatchedProjects,
-        COALESCE((0.9 * (t2.matchedProjects - t4.minMatchedProjects) / (t4.maxMatchedProjects - t4.minMatchedProjects)) + 0.1, 0) AS normalizedMatchedProjects,
+        (CASE
+          WHEN (t4.maxMatchedProjects - t4.minMatchedProjects) = 0 THEN 0
+          ELSE COALESCE((0.9 * (t2.matchedProjects - t4.minMatchedProjects) / (t4.maxMatchedProjects - t4.minMatchedProjects)) + 0.1, 0) 
+        END) AS normalizedMatchedProjects,
         t1.matchedSkillsArray,
         u.stRecommended
       FROM
@@ -278,7 +293,7 @@ async function scoutTalent(req: NextApiRequest, res: NextApiResponse) {
       ) t4
 `;
 
-    let weights: { name: string; weight: number }[] = [
+    let weights: { name: string; weight: number; diffAccessor?: string }[] = [
       {
         name: 'normalizedDollarsEarned',
         weight: 0.2,
@@ -293,6 +308,7 @@ async function scoutTalent(req: NextApiRequest, res: NextApiResponse) {
       },
       {
         name: 'stRecommended',
+        diffAccessor: 'normalizedDollarsEarned',
         weight: 0.3,
       },
     ];
@@ -317,6 +333,7 @@ async function scoutTalent(req: NextApiRequest, res: NextApiResponse) {
         },
         {
           name: 'stRecommended',
+          diffAccessor: 'normalizedDollarsEarned',
           weight: 0.3,
         },
       ];
@@ -330,11 +347,18 @@ async function scoutTalent(req: NextApiRequest, res: NextApiResponse) {
 	      t.dollarsEarned as dollarsEarned,
 	      ((
           ${weights
-            .map(
-              (w) => `
-            (t.${w.name} * ${w.weight})
-          `,
-            )
+            .map((w) => {
+              if (w.name === 'stRecommended') {
+                return `
+(CASE WHEN t.${w.name} = 1 THEN
+(t.${w.diffAccessor ? w.diffAccessor : w.name} * ${w.weight})
+ELSE 0
+END)
+`;
+              } else {
+                return ` (t.${w.name} * ${w.weight}) `;
+              }
+            })
             .join(' \n +  ')}
 	      ) * 5 ) + 5 AS score,
 	      t.matchedSkillsArray as skills,

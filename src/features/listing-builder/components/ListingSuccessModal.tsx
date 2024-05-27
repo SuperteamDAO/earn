@@ -24,11 +24,10 @@ import {
 import NextLink from 'next/link';
 import { useRouter } from 'next/router';
 import React from 'react';
-import { FaTelegramPlane } from 'react-icons/fa';
 import { FaXTwitter } from 'react-icons/fa6';
 import { LuCheck } from 'react-icons/lu';
 
-import { telegramShareLink, tweetEmbedLink } from '@/utils/socialEmbeds';
+import { tweetEmbedLink } from '@/utils/socialEmbeds';
 import { getURL } from '@/utils/validUrl';
 
 interface Props {
@@ -42,17 +41,9 @@ export const ListingSuccessModal = ({ isOpen, onClose, slug, type }: Props) => {
     `${getURL()}listings/${type}/${slug}/${medium ? `?utm_source=superteamearn&utm_medium=${medium}&utm_campaign=sharelisting` : ``}`;
 
   const tweetShareContent = `
-Check out my newly added  @superteamearn opportunity at 
-${listingLink('twitter')}
-`;
-  const tgShareContent = `
-Check out my newly added Superteam Earn opportunity 
+Check out my newly added @SuperteamEarn opportunity! ${listingLink('twitter')}
 `;
   const twitterShareLink = tweetEmbedLink(tweetShareContent);
-  const tgShareLink = telegramShareLink(
-    listingLink('telegram'),
-    tgShareContent,
-  );
 
   const { hasCopied, onCopy } = useClipboard(listingLink());
   const router = useRouter();
@@ -108,18 +99,6 @@ Check out my newly added Superteam Earn opportunity
                       variant="outline"
                     >
                       <FaXTwitter style={{ width: '1.3em', height: '1.3em' }} />
-                    </Button>
-                  </Link>
-                  <Link w="full" href={tgShareLink} target="_blank">
-                    <Button
-                      w="full"
-                      color="brand.slate.400"
-                      borderColor="brand.slate.200"
-                      variant="outline"
-                    >
-                      <FaTelegramPlane
-                        style={{ width: '1.3em', height: '1.3em' }}
-                      />
                     </Button>
                   </Link>
                 </HStack>
