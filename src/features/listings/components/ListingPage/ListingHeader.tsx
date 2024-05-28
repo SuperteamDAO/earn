@@ -1,17 +1,9 @@
-import { InfoOutlineIcon } from '@chakra-ui/icons';
 import {
   Flex,
   Heading,
   HStack,
   IconButton,
   Image,
-  Link,
-  Popover,
-  PopoverArrow,
-  PopoverBody,
-  PopoverCloseButton,
-  PopoverContent,
-  PopoverTrigger,
   Spinner,
   Text,
   Tooltip,
@@ -20,7 +12,6 @@ import {
 } from '@chakra-ui/react';
 import type { SubscribeBounty } from '@prisma/client';
 import axios from 'axios';
-import NextLink from 'next/link';
 import { useRouter } from 'next/router';
 import { useSession } from 'next-auth/react';
 import { usePostHog } from 'posthog-js/react';
@@ -28,14 +19,16 @@ import React, { useEffect, useState } from 'react';
 import { toast } from 'react-hot-toast';
 import { TbBell, TbBellRinging } from 'react-icons/tb';
 
-import { Superteams } from '@/constants/Superteam';
 import { AuthWrapper } from '@/features/auth';
-import { getRegionTooltipLabel, WarningModal } from '@/features/listings';
+import { WarningModal } from '@/features/listings';
 import type { User } from '@/interface/user';
 import { userStore } from '@/store/user';
 import { dayjs } from '@/utils/dayjs';
 
 import type { Bounty } from '../../types';
+import { ListingTabLink } from './ListingTabLink';
+import { RegionLabel } from './RegionLabel';
+import { StatusBadge } from './StatusBadge';
 
 export function ListingHeader({
   listing,
@@ -163,50 +156,6 @@ export function ListingHeader({
     statusTextColor = 'green.600';
   }
 
-  const displayValue = Superteams.find(
-    (st) => st.region === region,
-  )?.displayValue;
-
-  const regionTooltipLabel = getRegionTooltipLabel(region);
-
-  const ListingNavLink = ({
-    href,
-    text,
-    isActive,
-    onClick,
-  }: {
-    href: string;
-    text: string;
-    isActive: boolean;
-    onClick?: () => void;
-  }) => {
-    return (
-      <Link
-        className="ph-no-capture"
-        as={NextLink}
-        alignItems="center"
-        justifyContent="center"
-        display="flex"
-        h={'full'}
-        color="brand.slate.500"
-        fontSize={{ base: 'xs', md: 'sm' }}
-        fontWeight={500}
-        textDecoration="none"
-        borderBottom="2px solid"
-        borderBottomColor={isActive ? 'brand.purple' : 'transparent'}
-        _hover={{
-          textDecoration: 'none',
-          borderBottom: '2px solid',
-          borderBottomColor: 'brand.purple',
-        }}
-        href={href}
-        onClick={onClick}
-      >
-        {text}
-      </Link>
-    );
-  };
-
   const ListingTitle = () => {
     return (
       <Heading
@@ -220,20 +169,13 @@ export function ListingHeader({
     );
   };
 
-  const StatusBadge = () => {
+  const ListingStatus = () => {
     return (
-      <Text
-        px={3}
-        py={1}
-        color={statusTextColor}
-        fontSize={{ base: 'xx-small', sm: 'xs' }}
-        fontWeight={500}
-        bg={statusBgColor}
-        whiteSpace={'nowrap'}
-        rounded={'full'}
-      >
-        {statusText}
-      </Text>
+      <StatusBadge
+        textColor={statusTextColor}
+        bgColor={statusBgColor}
+        text={statusText}
+      />
     );
   };
 
@@ -295,50 +237,9 @@ export function ListingHeader({
           </Flex>
         )}
         <Flex display={{ base: 'flex', md: 'none' }}>
-          <StatusBadge />
+          <ListingStatus />
         </Flex>
-        <Tooltip
-          px={4}
-          py={2}
-          color="brand.slate.500"
-          fontFamily={'var(--font-sans)'}
-          fontSize={'small'}
-          bg="white"
-          borderRadius={'lg'}
-          label={regionTooltipLabel}
-        >
-          <Text
-            px={3}
-            py={1}
-            color={'#0800A5'}
-            fontSize={{ base: 'xx-small', sm: 'xs' }}
-            fontWeight={500}
-            bg="#EBEAFF"
-            whiteSpace={'nowrap'}
-            rounded={'full'}
-          >
-            {region === 'GLOBAL' ? 'Global' : `${displayValue} Only`}
-          </Text>
-        </Tooltip>
-        <Popover>
-          <PopoverTrigger>
-            <InfoOutlineIcon
-              display={{ base: 'flex', sm: 'none' }}
-              boxSize={'12px'}
-            />
-          </PopoverTrigger>
-          <PopoverContent>
-            <PopoverArrow />
-            <PopoverCloseButton color="brand.slate.300" />
-            <PopoverBody
-              color={'brand.slate.500'}
-              fontSize={'xs'}
-              fontWeight={500}
-            >
-              {regionTooltipLabel}
-            </PopoverBody>
-          </PopoverContent>
-        </Popover>
+        <RegionLabel region={region} />
       </Flex>
     );
   };
@@ -387,7 +288,7 @@ export function ListingHeader({
                 <ListingTitle />
               </Flex>
               <Flex display={{ base: 'none', md: 'flex' }}>
-                <StatusBadge />
+                <ListingStatus />
               </Flex>
             </HStack>
             {!isTemplate && (
@@ -490,7 +391,7 @@ export function ListingHeader({
             my={'auto'}
             px={3}
           >
-            <ListingNavLink
+            <ListingTabLink
               href={`/listings/${type}/${slug}/`}
               text="DETAILS"
               isActive={
@@ -500,7 +401,7 @@ export function ListingHeader({
             />
 
             {!isProject && isWinnersAnnounced && (
-              <ListingNavLink
+              <ListingTabLink
                 onClick={() => posthog.capture('submissions tab_listing')}
                 href={`/listings/${type}/${slug}/submission`}
                 text="SUBMISSIONS"
@@ -509,7 +410,7 @@ export function ListingHeader({
             )}
 
             {isProject && references && references?.length > 0 && (
-              <ListingNavLink
+              <ListingTabLink
                 href={`/listings/${type}/${slug}/references`}
                 text="REFERENCES"
                 isActive={router.asPath.includes('references')}

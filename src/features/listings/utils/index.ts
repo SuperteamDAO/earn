@@ -113,3 +113,19 @@ export function tweetEmbedLink(content: string) {
   const stringUrl = tweetUrl.toString();
   return stringUrl;
 }
+
+export function userRegionEligibilty(
+  region: string | undefined,
+  userLocation: string | undefined,
+) {
+  if (region === 'GLOBAL') {
+    return true;
+  }
+
+  const superteam = Superteams.find((st) => st.region === region);
+
+  const isEligible =
+    !!(userLocation && superteam?.country.includes(userLocation)) || false;
+
+  return isEligible;
+}

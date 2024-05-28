@@ -13,7 +13,7 @@ import type { Grant } from '../types';
 export const GrantsCard = ({ grant }: { grant: Grant }) => {
   const [isMobile] = useMediaQuery('(max-width: 768px)');
 
-  const { sponsor, slug, rewardAmount, title, shortDescription } = grant;
+  const { sponsor, slug, title, shortDescription } = grant;
 
   return (
     <>
@@ -74,25 +74,23 @@ export const GrantsCard = ({ grant }: { grant: Grant }) => {
                 {sponsor?.name}
               </Text>
 
-              {rewardAmount && (
-                <Text
-                  mr={3}
-                  color={'brand.slate.500'}
-                  fontSize={['10px', '10px', 'sm', 'sm']}
-                  style={
-                    isMobile
-                      ? {
-                          display: '-webkit-box',
-                          WebkitLineClamp: 1,
-                          WebkitBoxOrient: 'vertical',
-                          overflow: 'hidden',
-                        }
-                      : undefined
-                  }
-                >
-                  {shortDescription}
-                </Text>
-              )}
+              <Text
+                mr={3}
+                color={'brand.slate.500'}
+                fontSize={['10px', '10px', 'sm', 'sm']}
+                style={
+                  isMobile
+                    ? {
+                        display: '-webkit-box',
+                        WebkitLineClamp: 1,
+                        WebkitBoxOrient: 'vertical',
+                        overflow: 'hidden',
+                      }
+                    : undefined
+                }
+              >
+                {shortDescription}
+              </Text>
             </Flex>
           </Flex>
 

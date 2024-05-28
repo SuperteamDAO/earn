@@ -1,3 +1,4 @@
+import { type References } from '@/features/listings';
 import type { Skills } from '@/interface/skills';
 import type { SponsorType } from '@/interface/sponsor';
 import type { User } from '@/interface/user';
@@ -11,9 +12,7 @@ interface Grant {
   shortDescription?: string;
   skills?: Skills;
   token?: string;
-  rewardAmount?: number;
   link?: string;
-  source?: string;
   sponsorId?: string;
   sponsor?: SponsorType;
   pocId?: string;
@@ -24,6 +23,13 @@ interface Grant {
   isArchived?: boolean;
   createdAt?: string;
   updatedAt?: string;
+  minReward?: number;
+  maxReward?: number;
+  eligibility?: any;
+  pocSocials?: string;
+  status: string;
+  region: string;
+  references: References[];
 }
 
 export type { Grant };

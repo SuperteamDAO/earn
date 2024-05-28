@@ -11,12 +11,12 @@ import React, {
 } from 'react';
 
 import { SurveyModal } from '@/components/Survey';
-import { Superteams } from '@/constants/Superteam';
 import { AuthWrapper } from '@/features/auth';
 import {
   getListingDraftStatus,
   getRegionTooltipLabel,
   isDeadlineOver,
+  userRegionEligibilty,
 } from '@/features/listings';
 import { userStore } from '@/store/user';
 
@@ -55,22 +55,10 @@ export const SubmissionActionButton = ({
 
   const { userInfo } = userStore();
 
-  function userRegionEligibilty() {
-    if (region === 'GLOBAL') {
-      return true;
-    }
-
-    const superteam = Superteams.find((st) => st.region === region);
-
-    const isEligible =
-      !!(
-        userInfo?.location && superteam?.country.includes(userInfo?.location)
-      ) || false;
-
-    return isEligible;
-  }
-
-  const isUserEligibleByRegion = userRegionEligibilty();
+  const isUserEligibleByRegion = userRegionEligibilty(
+    region,
+    userInfo?.location,
+  );
   const posthog = usePostHog();
 
   const { isOpen, onOpen, onClose } = useDisclosure();
@@ -127,7 +115,6 @@ export const SubmissionActionButton = ({
 
   let buttonText;
   let buttonBG;
-  let btnPointerEvents: any;
   let isBtnDisabled;
   let btnLoadingText;
 
@@ -276,7 +263,6 @@ export const SubmissionActionButton = ({
               _disabled={{
                 opacity: { base: '96%', md: '70%' },
               }}
-              pointerEvents={btnPointerEvents}
               isDisabled={isBtnDisabled}
               isLoading={isUserSubmissionLoading}
               loadingText={btnLoadingText}

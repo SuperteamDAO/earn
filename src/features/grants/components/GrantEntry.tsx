@@ -4,7 +4,8 @@ import NextLink from 'next/link';
 export const GrantEntry = ({
   title,
   shortDescription = '',
-  rewardAmount,
+  minReward,
+  maxReward,
   token,
   slug,
   link,
@@ -17,6 +18,8 @@ export const GrantEntry = ({
   link?: string;
   slug: string;
   logo?: string;
+  minReward?: number;
+  maxReward?: number;
 }) => {
   return (
     <Box w={{ base: '100%', sm: 80 }}>
@@ -37,8 +40,8 @@ export const GrantEntry = ({
       </Text>
       <Flex align={'center'} justify={'space-between'}>
         <Text color={'brand.slate.500'} fontSize={'13px'} fontWeight={'600'}>
-          {token && rewardAmount
-            ? `Upto ${token} ${(rewardAmount || 0).toLocaleString()}`
+          {token
+            ? `${token} ${(minReward || 0).toLocaleString()} - ${(maxReward || 0).toLocaleString()}`
             : ''}
         </Text>
         {!!link && (
