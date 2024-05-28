@@ -96,7 +96,7 @@ export const ListingSection = ({
               color="brand.slate.400"
               onClick={() => {
                 if (type === 'grants') {
-                  posthog.capture('grants_viewall_top');
+                  posthog.capture('viewall top_grants');
                 }
               }}
               size="sm"
@@ -132,7 +132,7 @@ export const ListingSection = ({
             borderColor="brand.slate.300"
             onClick={() => {
               if (type === 'grants') {
-                posthog.capture('grants_viewall_bottom');
+                posthog.capture('viewall bottom_grants');
               }
             }}
             rightIcon={<ArrowForwardIcon />}
