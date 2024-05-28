@@ -9,10 +9,11 @@ import {
   Text,
   useDisclosure,
 } from '@chakra-ui/react';
+import axios from 'axios';
 import NextLink from 'next/link';
 import { useRouter } from 'next/router';
 import { useSession } from 'next-auth/react';
-import { type ReactNode, useEffect } from 'react';
+import { type ReactNode, useEffect, useState } from 'react';
 import type { IconType } from 'react-icons';
 import {
   MdList,
@@ -20,7 +21,7 @@ import {
   MdOutlineGroup,
 } from 'react-icons/md';
 
-import { ScoutAnnounceModal } from '@/components/modals/ScoutAnnounceModal';
+import { FeatureModal } from '@/components/modals/FeatureModal';
 import { LoadingSection } from '@/components/shared/LoadingSection';
 import { SelectHackathon, SelectSponsor } from '@/features/listing-builder';
 import {
@@ -48,16 +49,18 @@ interface NavItemProps extends FlexProps {
 export function Sidebar({
   children,
   showBanner = false,
-  latestActiveBountySlug,
 }: {
   children: ReactNode;
   showBanner?: boolean;
-  latestActiveBountySlug?: string;
 }) {
-  const { userInfo } = userStore();
+  const { userInfo, setUserInfo } = userStore();
   const { data: session, status } = useSession();
   const router = useRouter();
   const { isOpen, onOpen, onClose } = useDisclosure();
+
+  const [latestActiveSlug, setLatestActiveSlug] = useState<string | undefined>(
+    undefined,
+  );
 
   const { query } = router;
   const open = !!query.open; // Replace 'paramName' with the actual parameter name
@@ -84,16 +87,39 @@ export function Sidebar({
     onScoutAnnounceModalOpen();
   }
 
-  useEffect(() => {
-    if (
-      userInfo?.currentSponsorId &&
-      (!userInfo?.firstName || !userInfo?.lastName || !userInfo?.username)
-    ) {
-      onScoutAnnounceModalClose();
-      onSponsorInfoModalOpen();
-    } else if (latestActiveBountySlug) {
-      onScoutAnnounceModalOpen();
+  const getSponsorLatestActiveSlug = async () => {
+    console.log('get sponsor');
+    try {
+      const slug = await axios.get('/api/bounties/latestActiveSlug');
+      if (slug.data) {
+        setLatestActiveSlug(slug.data.slug);
+      }
+    } catch (e) {
+      console.log(e);
     }
+  };
+
+  useEffect(() => {
+    const modalsToShow = async () => {
+      if (
+        userInfo?.currentSponsorId &&
+        (!userInfo?.firstName || !userInfo?.lastName || !userInfo?.username)
+      ) {
+        onScoutAnnounceModalClose();
+        onSponsorInfoModalOpen();
+      } else if (
+        userInfo?.featureModalShown === false &&
+        userInfo?.currentSponsorId
+      ) {
+        await getSponsorLatestActiveSlug();
+        onScoutAnnounceModalOpen();
+        await axios.post('/api/user/update/', {
+          featureModalShown: true,
+        });
+        setUserInfo({ ...userInfo, featureModalShown: true });
+      }
+    };
+    modalsToShow();
   }, [userInfo]);
 
   if (!session && status === 'loading') {
@@ -198,7 +224,8 @@ export function Sidebar({
         />
       }
     >
-      <ScoutAnnounceModal
+      <FeatureModal
+        latestActiveBountySlug={latestActiveSlug}
         onClose={onScoutAnnounceModalClose}
         isOpen={isScoutAnnounceModalOpen}
       />

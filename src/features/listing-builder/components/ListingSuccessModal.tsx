@@ -40,8 +40,9 @@ export const ListingSuccessModal = ({ isOpen, onClose, slug, type }: Props) => {
   const listingLink = (medium?: 'twitter' | 'telegram') =>
     `${getURL()}listings/${type}/${slug}/${medium ? `?utm_source=superteamearn&utm_medium=${medium}&utm_campaign=sharelisting` : ``}`;
 
-  const tweetShareContent = `
-Check out my newly added @SuperteamEarn opportunity! ${listingLink('twitter')}
+  const tweetShareContent = `Check out my newly added @SuperteamEarn opportunity!
+
+${listingLink('twitter')}
 `;
   const twitterShareLink = tweetEmbedLink(tweetShareContent);
 

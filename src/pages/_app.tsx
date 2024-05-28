@@ -12,9 +12,10 @@ import { SessionProvider, useSession } from 'next-auth/react';
 import NextTopLoader from 'nextjs-toploader';
 import posthog from 'posthog-js';
 import { PostHogProvider, usePostHog } from 'posthog-js/react';
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Toaster } from 'react-hot-toast';
 
+import { FeatureModal } from '@/components/modals/FeatureModal';
 import { SolanaWalletProvider } from '@/context/SolanaWallet';
 import { userStore } from '@/store/user';
 import { getURL } from '@/utils/validUrl';
@@ -109,6 +110,45 @@ function MyApp({ Component, pageProps }: any) {
 }
 
 function App({ Component, pageProps: { session, ...pageProps } }: AppProps) {
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [latestActiveSlug, setLatestActiveSlug] = useState<string | undefined>(
+    undefined,
+  );
+  const { userInfo, setUserInfo } = userStore();
+  const router = useRouter();
+
+  const handleClose = () => {
+    setIsModalOpen(false);
+  };
+
+  const getSponsorLatestActiveSlug = async () => {
+    console.log('get sponsor');
+    try {
+      const slug = await axios.get('/api/bounties/latestActiveSlug');
+      if (slug.data) {
+        setLatestActiveSlug(slug.data.slug);
+      }
+    } catch (e) {
+      console.log(e);
+    }
+  };
+
+  // SHOW TO SPONSOR ONLY
+  useEffect(() => {
+    const updateFeatureModalShown = async () => {
+      if (userInfo?.featureModalShown === false && userInfo?.currentSponsorId) {
+        setIsModalOpen(true);
+        await getSponsorLatestActiveSlug();
+        await axios.post('/api/user/update/', {
+          featureModalShown: true,
+        });
+        setUserInfo({ ...userInfo, featureModalShown: true });
+      }
+    };
+
+    if (!router.pathname.includes('dashboard')) updateFeatureModalShown();
+  }, [userInfo]);
+
   return (
     <>
       <style jsx global>
@@ -124,6 +164,11 @@ function App({ Component, pageProps: { session, ...pageProps } }: AppProps) {
         <PostHogProvider client={posthog}>
           <SessionProvider session={session}>
             <ChakraProvider theme={extendThemeWithNextFonts}>
+              <FeatureModal
+                latestActiveBountySlug={latestActiveSlug}
+                isOpen={isModalOpen}
+                onClose={handleClose}
+              />
               <MyApp Component={Component} pageProps={pageProps} />
             </ChakraProvider>
           </SessionProvider>

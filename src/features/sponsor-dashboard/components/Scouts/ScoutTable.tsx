@@ -384,7 +384,7 @@ function ScoreBar({ score }: { score: number }) {
 }
 
 function colorScore(score: number) {
-  if (score > 8) return 'brand.progress.darkGreen';
+  if (score > 7) return 'brand.progress.darkGreen';
   if (score > 6) return 'brand.progress.lightGreen';
   return 'brand.progress.lightYellow';
 }

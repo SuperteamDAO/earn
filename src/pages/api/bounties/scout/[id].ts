@@ -1,3 +1,4 @@
+import { Prisma } from '@prisma/client';
 import type { NextApiRequest, NextApiResponse } from 'next';
 
 import { prisma } from '@/prisma';
@@ -338,24 +339,34 @@ async function scoutTalent(req: NextApiRequest, res: NextApiResponse) {
 `;
 
     // COMBINATION OF NON DEV AND DEV LISTINGS (ALSO PURELY DEV LISTING)
-    let weights: { name: string; weight: number; diffAccessor?: string }[] = [
+    let weights: {
+      isSql: boolean;
+      name: string;
+      weight: number;
+      diffAccessor?: string;
+    }[] = [
       {
+        isSql: true,
         name: 'normalizedDollarsEarned',
-        weight: 0.35,
+        weight: 0.25,
       },
       {
+        isSql: false,
         name: 'normalizedMatchingSubSkills',
-        weight: 0.2,
-      },
-      {
-        name: 'normalizedMatchingSkills',
         weight: 0.1,
       },
       {
+        isSql: false,
+        name: 'normalizedMatchingSkills',
+        weight: 0.3,
+      },
+      {
+        isSql: true,
         name: 'normalizedMatchedProjectSubSkills',
         weight: 0.05,
       },
       {
+        isSql: true,
         name: 'stRecommended',
         diffAccessor: 'normalizedDollarsEarned',
         weight: 0.3,
@@ -366,18 +377,22 @@ async function scoutTalent(req: NextApiRequest, res: NextApiResponse) {
     if (devSkills.length === 0 && subskills.length > 0) {
       weights = [
         {
+          isSql: true,
           name: 'normalizedDollarsEarned',
           weight: 0.25,
         },
         {
+          isSql: false,
           name: 'normalizedMatchingSubSkills',
           weight: 0.4,
         },
         {
+          isSql: true,
           name: 'normalizedMatchedProjectSubSkills',
           weight: 0.05,
         },
         {
+          isSql: true,
           name: 'stRecommended',
           diffAccessor: 'normalizedDollarsEarned',
           weight: 0.3,
@@ -393,6 +408,7 @@ async function scoutTalent(req: NextApiRequest, res: NextApiResponse) {
 	      t.dollarsEarned as dollarsEarned,
 	      ((
           ${weights
+            .filter((w) => w.isSql)
             .map((w) => {
               if (w.name === 'stRecommended') {
                 return `
@@ -424,7 +440,7 @@ END)
       ${selectScouts}
 `;
 
-    console.log('insertQuery', insertQuery);
+    // console.log('insertQuery', insertQuery);
     // console.log('selectScouts', selectScouts);
     // const resp = await prisma.$queryRawUnsafe(selectScouts);
     await prisma.$executeRawUnsafe(insertQuery);
@@ -463,6 +479,78 @@ END)
         user: true,
       },
     });
+
+    // console.log("scouts in beginning - ", scouts)
+
+    scouts.forEach((scout) => {
+      if (Array.isArray(scout.skills)) {
+        scout.skills = [...new Set(scout.skills)];
+      }
+    });
+
+    // console.log("scouts removed duplicate skills - ", scouts)
+
+    let maxSubskill = 0,
+      minSubskill = 0,
+      maxSkill = 0,
+      minSkill = 0;
+    scouts.forEach((scout) => {
+      let totalSubskill = 0,
+        totalSkill = 0;
+      if (Array.isArray(scout.skills)) {
+        totalSkill = filterInDevSkills(scout.skills as string[]).length;
+        totalSubskill = scout.skills.length - totalSkill;
+      }
+      if (maxSubskill < totalSubskill) maxSubskill = totalSubskill;
+      if (minSubskill > totalSubskill) minSubskill = totalSubskill;
+      if (maxSkill < totalSkill) maxSkill = totalSkill;
+      if (minSkill > totalSkill) minSkill = totalSkill;
+    });
+
+    console.log(
+      'maxSubskill',
+      maxSubskill,
+      'minSubskill',
+      minSubskill,
+      'maxSkill',
+      maxSkill,
+      'minSkill',
+      minSkill,
+    );
+
+    scouts.forEach((scout) => {
+      let totalSubskill = 0,
+        totalSkill = 0;
+      if (Array.isArray(scout.skills)) {
+        totalSkill = filterInDevSkills(scout.skills as string[]).length;
+        totalSubskill = scout.skills.length - totalSkill;
+      }
+      const normalizedSubskill =
+        maxSubskill > 0
+          ? ((0.9 * (totalSubskill - minSubskill)) /
+              (maxSubskill - minSubskill) +
+              0.1) *
+            (weights.find((s) => s.name === 'normalizedMatchingSubSkills')
+              ?.weight ?? 0)
+          : 0;
+      const normalizedSkill =
+        maxSkill > 0
+          ? ((0.9 * (totalSkill - minSkill)) / (maxSkill - minSkill) + 0.1) *
+            (weights.find((s) => s.name === 'normalizedMatchingSkills')
+              ?.weight ?? 0)
+          : 0;
+      const adjustmentScore = (normalizedSkill + normalizedSubskill) * 5;
+
+      console.log('og score', scout.score.toFixed(2));
+      console.log('adjustmentScore', adjustmentScore);
+
+      scout.score = Prisma.Decimal.add(
+        scout.score,
+        new Prisma.Decimal(adjustmentScore.toFixed(2)),
+      );
+    });
+
+    scouts.sort((a, b) => b.score.toNumber() - a.score.toNumber());
 
     res.send(scouts);
   } catch (error) {
