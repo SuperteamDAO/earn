@@ -6,6 +6,7 @@ import {
   HStack,
   Image,
   Text,
+  useDisclosure,
 } from '@chakra-ui/react';
 import axios from 'axios';
 import { useRouter } from 'next/router';
@@ -14,10 +15,12 @@ import React, { type ReactNode, useEffect, useState } from 'react';
 import { HomeBanner } from '@/components/home/Banner';
 import { CategoryBanner } from '@/components/home/CategoryBanner';
 import { HomeSideBar } from '@/components/home/SideBar';
+import { ScoutAnnounceModal } from '@/components/modals/ScoutAnnounceModal';
 import { Superteams } from '@/constants/Superteam';
 import type { User } from '@/interface/user';
 import { Default } from '@/layouts/Default';
 import { Meta } from '@/layouts/Meta';
+import { userStore } from '@/store/user';
 
 interface TotalType {
   count?: number;
@@ -32,10 +35,21 @@ interface HomeProps {
 export function Home({ children, type }: HomeProps) {
   const router = useRouter();
 
+  const { userInfo } = userStore();
+
   const [isTotalLoading, setIsTotalLoading] = useState(true);
 
   const [recentEarners, setRecentEarners] = useState<User[]>([]);
   const [totals, setTotals] = useState<TotalType>({});
+  const [latestActiveSlug, setLatestActiveSlug] = useState<string | undefined>(
+    undefined,
+  );
+
+  const {
+    isOpen: isScoutAnnounceModalOpen,
+    onOpen: onScoutAnnounceModalOpen,
+    onClose: onScoutAnnounceModalClose,
+  } = useDisclosure();
 
   const getTotalInfo = async () => {
     try {
@@ -52,6 +66,25 @@ export function Home({ children, type }: HomeProps) {
   useEffect(() => {
     getTotalInfo();
   }, []);
+
+  const getSponsorLatestActiveSlug = async () => {
+    console.log('get sponsor');
+    try {
+      const slug = await axios.get('/api/bounties/latestActiveSlug');
+      if (slug.data) {
+        setLatestActiveSlug(slug.data.slug);
+        onScoutAnnounceModalOpen();
+      }
+    } catch (e) {
+      console.log(e);
+    }
+  };
+
+  useEffect(() => {
+    if (userInfo && userInfo.currentSponsorId) {
+      getSponsorLatestActiveSlug();
+    }
+  }, [userInfo]);
 
   const Skills = ['Development', 'Design', 'Content', 'Other'];
 
@@ -70,6 +103,11 @@ export function Home({ children, type }: HomeProps) {
         />
       }
     >
+      <ScoutAnnounceModal
+        onClose={onScoutAnnounceModalClose}
+        isOpen={isScoutAnnounceModalOpen}
+        latestActiveBountySlug={latestActiveSlug}
+      />
       <Container maxW={'8xl'} mx="auto" px={{ base: 3, md: 4 }}>
         <HStack align="start" justify="space-between">
           <Flex

@@ -182,7 +182,12 @@ function Bounties() {
   } = useDisclosure();
 
   return (
-    <Sidebar showBanner={true}>
+    <Sidebar
+      showBanner={true}
+      latestActiveBountySlug={
+        bounties?.find((c) => c.isPublished && !c.isWinnersAnnounced)?.slug
+      }
+    >
       <Modal isOpen={unpublishIsOpen} onClose={unpublishOnClose}>
         <ModalOverlay />
         <ModalContent>

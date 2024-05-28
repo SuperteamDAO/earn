@@ -20,6 +20,7 @@ import {
   MdOutlineGroup,
 } from 'react-icons/md';
 
+import { ScoutAnnounceModal } from '@/components/modals/ScoutAnnounceModal';
 import { LoadingSection } from '@/components/shared/LoadingSection';
 import { SelectHackathon, SelectSponsor } from '@/features/listing-builder';
 import {
@@ -47,9 +48,11 @@ interface NavItemProps extends FlexProps {
 export function Sidebar({
   children,
   showBanner = false,
+  latestActiveBountySlug,
 }: {
   children: ReactNode;
   showBanner?: boolean;
+  latestActiveBountySlug?: string;
 }) {
   const { userInfo } = userStore();
   const { data: session, status } = useSession();
@@ -70,12 +73,26 @@ export function Sidebar({
     onClose: onSponsorInfoModalClose,
   } = useDisclosure();
 
+  const {
+    isOpen: isScoutAnnounceModalOpen,
+    onOpen: onScoutAnnounceModalOpen,
+    onClose: onScoutAnnounceModalClose,
+  } = useDisclosure();
+
+  function sponsotInfoCloseAltered() {
+    onSponsorInfoModalClose();
+    onScoutAnnounceModalOpen();
+  }
+
   useEffect(() => {
     if (
       userInfo?.currentSponsorId &&
       (!userInfo?.firstName || !userInfo?.lastName || !userInfo?.username)
     ) {
+      onScoutAnnounceModalClose();
       onSponsorInfoModalOpen();
+    } else if (latestActiveBountySlug) {
+      onScoutAnnounceModalOpen();
     }
   }, [userInfo]);
 
@@ -181,8 +198,12 @@ export function Sidebar({
         />
       }
     >
+      <ScoutAnnounceModal
+        onClose={onScoutAnnounceModalClose}
+        isOpen={isScoutAnnounceModalOpen}
+      />
       <SponsorInfoModal
-        onClose={onSponsorInfoModalClose}
+        onClose={sponsotInfoCloseAltered}
         isOpen={isSponsorInfoModalOpen}
       />
       <Flex display={{ base: 'flex', md: 'none' }} minH="80vh" px={3}>

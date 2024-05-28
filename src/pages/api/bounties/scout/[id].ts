@@ -158,7 +158,7 @@ async function scoutTalent(req: NextApiRequest, res: NextApiResponse) {
                   END
                 `,
                 )
-                .join(`,',', \n`)
+                .join(`, \n`)
             : ''
         }
         )
