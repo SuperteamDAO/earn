@@ -7,12 +7,12 @@ import { EmptySection } from '@/components/shared/EmptySection';
 import { Loading } from '@/components/shared/Loading';
 import { Superteams } from '@/constants/Superteam';
 import { type Grant, GrantsCard } from '@/features/grants';
-import { type Bounty, ListingSection, ListingTabs } from '@/features/listings';
+import { type Listing, ListingSection, ListingTabs } from '@/features/listings';
 import { Home } from '@/layouts/Home';
 import { Meta } from '@/layouts/Meta';
 
 interface Listings {
-  bounties?: Bounty[];
+  bounties?: Listing[];
   grants?: Grant[];
 }
 const RegionsPage = ({

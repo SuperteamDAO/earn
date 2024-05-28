@@ -43,7 +43,7 @@ import {
 
 import { EarnAvatar } from '@/components/shared/EarnAvatar';
 import { tokenList } from '@/constants';
-import type { Bounty, Rewards } from '@/features/listings';
+import type { Listing, Rewards } from '@/features/listings';
 import type { SubmissionWithUser } from '@/interface/submission';
 import { getURLSanitized } from '@/utils/getURLSanitized';
 import { truncatePublicKey } from '@/utils/truncatePublicKey';
@@ -52,7 +52,7 @@ import { truncateString } from '@/utils/truncateString';
 import { colorMap } from '../../utils';
 
 interface Props {
-  bounty: Bounty | null;
+  bounty: Listing | null;
   submissions: SubmissionWithUser[];
   setSubmissions: Dispatch<SetStateAction<SubmissionWithUser[]>>;
   selectedSubmission: SubmissionWithUser | undefined;

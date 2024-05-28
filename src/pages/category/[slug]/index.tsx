@@ -7,7 +7,7 @@ import { useEffect, useState } from 'react';
 import { EmptySection } from '@/components/shared/EmptySection';
 import { Loading } from '@/components/shared/Loading';
 import { type Grant, GrantsCard } from '@/features/grants';
-import { type Bounty, ListingSection, ListingTabs } from '@/features/listings';
+import { type Listing, ListingSection, ListingTabs } from '@/features/listings';
 import { Home } from '@/layouts/Home';
 import { Meta } from '@/layouts/Meta';
 
@@ -15,7 +15,7 @@ type SlugKeys = 'design' | 'content' | 'development' | 'other';
 
 function ListingCategoryPage({ slug }: { slug: string }) {
   const [isListingsLoading, setIsListingsLoading] = useState(true);
-  const [listings, setListings] = useState<{ bounties: Bounty[] }>({
+  const [listings, setListings] = useState<{ bounties: Listing[] }>({
     bounties: [],
   });
   const [grants, setGrants] = useState<{ grants: Grant[] }>({

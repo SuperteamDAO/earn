@@ -7,7 +7,7 @@ import { useEffect, useState } from 'react';
 
 import { EmptySection } from '@/components/shared/EmptySection';
 
-import type { Bounty } from '../types';
+import { type Listing } from '../types';
 import { ListingCard, ListingCardSkeleton } from './ListingCard';
 
 interface TabProps {
@@ -19,7 +19,7 @@ interface TabProps {
 
 interface ListingTabsProps {
   isListingsLoading: boolean;
-  bounties: Bounty[] | undefined;
+  bounties: Listing[] | undefined;
   take?: number;
   emoji: string;
   title: string;
@@ -29,10 +29,10 @@ interface ListingTabsProps {
 }
 
 interface ContentProps {
-  bounties?: Bounty[];
+  bounties?: Listing[];
   take?: number;
   isListingsLoading: boolean;
-  filterFunction: (bounty: Bounty) => boolean;
+  filterFunction: (bounty: Listing) => boolean;
   emptyTitle: string;
   emptyMessage: string;
   checkLanguage: boolean;

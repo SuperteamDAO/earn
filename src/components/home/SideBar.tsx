@@ -5,7 +5,7 @@ import dayjs from 'dayjs';
 import NextLink from 'next/link';
 import { useEffect, useState } from 'react';
 
-import { type Bounty, ListingCardMobile } from '@/features/listings';
+import { type Listing, ListingCardMobile } from '@/features/listings';
 import type { User } from '@/interface/user';
 import { timeAgoShort } from '@/utils/timeAgo';
 
@@ -241,7 +241,7 @@ const RecentActivity = () => {
 };
 
 const LiveListings = () => {
-  const [listings, setListings] = useState<{ bounties: Bounty[] }>({
+  const [listings, setListings] = useState<{ bounties: Listing[] }>({
     bounties: [],
   });
   const getListings = async () => {

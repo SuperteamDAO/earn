@@ -6,7 +6,7 @@ import { useRouter } from 'next/router';
 import { usePostHog } from 'posthog-js/react';
 import { useCallback, useEffect, useState, useTransition } from 'react';
 
-import { type Bounty } from '@/features/listings';
+import { type Listing } from '@/features/listings';
 import {
   Filters,
   Info,
@@ -30,7 +30,7 @@ interface CheckboxFilter {
 interface SearchProps {
   statusFilters: CheckboxFilter[];
   skillsFilters: CheckboxFilter[];
-  bounties?: Bounty[];
+  bounties?: Listing[];
   count?: number;
 }
 
@@ -45,7 +45,7 @@ const Search = ({
   const [, startTransition] = useTransition();
   const posthog = usePostHog();
 
-  const [results, setResults] = useState<Bounty[]>(bounties ?? []);
+  const [results, setResults] = useState<Listing[]>(bounties ?? []);
   const [query, setQuery] = useState(searchParams.get('q') ?? '');
   const [loading, setLoading] = useState(false);
 

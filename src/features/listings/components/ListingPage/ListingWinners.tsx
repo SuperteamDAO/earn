@@ -8,11 +8,11 @@ import { EarnAvatar } from '@/components/shared/EarnAvatar';
 import type { SubmissionWithUser } from '@/interface/submission';
 import { sortRank } from '@/utils/rank';
 
-import type { Bounty, Rewards } from '../../types';
+import type { Listing, Rewards } from '../../types';
 import { tweetEmbedLink, tweetTemplate } from '../../utils';
 
 interface Props {
-  bounty: Bounty;
+  bounty: Listing;
 }
 
 export function ListingWinners({ bounty }: Props) {

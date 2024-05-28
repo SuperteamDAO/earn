@@ -5,7 +5,7 @@ import React, { useEffect, useState } from 'react';
 import { EmptySection } from '@/components/shared/EmptySection';
 import { LoadingSection } from '@/components/shared/LoadingSection';
 import {
-  type Bounty,
+  type Listing,
   ListingHeader,
   SubmissionList,
 } from '@/features/listings';
@@ -14,7 +14,7 @@ import { Default } from '@/layouts/Default';
 import { Meta } from '@/layouts/Meta';
 
 const SubmissionPage = ({ slug }: { slug: string }) => {
-  const [bounty, setBounty] = useState<Bounty | null>(null);
+  const [bounty, setBounty] = useState<Listing | null>(null);
   const [submission, setSubmission] = useState<SubmissionWithUser[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState(false);

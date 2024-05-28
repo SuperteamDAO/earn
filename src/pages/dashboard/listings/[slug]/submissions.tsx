@@ -6,7 +6,7 @@ import { useRouter } from 'next/router';
 import { useEffect, useState } from 'react';
 
 import { LoadingSection } from '@/components/shared/LoadingSection';
-import { type Bounty, PublishResults } from '@/features/listings';
+import { type Listing, PublishResults } from '@/features/listings';
 import {
   SubmissionDetails,
   SubmissionHeader,
@@ -25,7 +25,7 @@ function BountySubmissions({ slug }: Props) {
   const router = useRouter();
   const { isOpen, onOpen, onClose } = useDisclosure();
   const { userInfo } = userStore();
-  const [bounty, setBounty] = useState<Bounty | null>(null);
+  const [bounty, setBounty] = useState<Listing | null>(null);
   const [totalSubmissions, setTotalSubmissions] = useState(0);
   const [totalWinners, setTotalWinners] = useState(0);
   const [totalPaymentsMade, setTotalPaymentsMade] = useState(0);

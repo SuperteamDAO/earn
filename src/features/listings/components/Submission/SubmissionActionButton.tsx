@@ -16,17 +16,17 @@ import {
   getListingDraftStatus,
   getRegionTooltipLabel,
   isDeadlineOver,
+  type Listing,
   userRegionEligibilty,
 } from '@/features/listings';
 import { userStore } from '@/store/user';
 
-import { type Bounty } from '../../types';
 import { WarningModal } from '../WarningModal';
 import { EasterEgg } from './EasterEgg';
 import { SubmissionModal } from './SubmissionModal';
 
 interface Props {
-  listing: Bounty;
+  listing: Listing;
   hasHackathonStarted: boolean;
   submissionNumber: number;
   setSubmissionNumber: Dispatch<SetStateAction<number>>;

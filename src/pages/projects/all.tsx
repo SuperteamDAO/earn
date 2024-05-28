@@ -4,7 +4,7 @@ import { useEffect, useState } from 'react';
 
 import { EmptySection } from '@/components/shared/EmptySection';
 import {
-  type Bounty,
+  type Listing,
   ListingCard,
   ListingCardSkeleton,
   ListingSection,
@@ -12,7 +12,7 @@ import {
 import { Home } from '@/layouts/Home';
 
 interface Listings {
-  bounties?: Bounty[];
+  bounties?: Listing[];
 }
 
 export default function AllProjectsPage() {

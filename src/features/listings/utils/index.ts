@@ -1,5 +1,5 @@
 import { Superteams } from '@/constants/Superteam';
-import type { Bounty, BountyWithSubmissions } from '@/features/listings';
+import type { Listing, ListingWithSubmissions } from '@/features/listings';
 import { dayjs } from '@/utils/dayjs';
 
 export const formatDeadline = (
@@ -47,7 +47,7 @@ export const getListingTypeLabel = (type: string) => {
 };
 
 export const getBountyStatus = (
-  bounty: Bounty | BountyWithSubmissions | null,
+  bounty: Listing | ListingWithSubmissions | null,
 ) => {
   if (!bounty) return 'DRAFT';
   const rewardsLength = Object.keys(bounty?.rewards || {})?.length || 0;

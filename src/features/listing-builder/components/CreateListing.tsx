@@ -8,7 +8,7 @@ import { useEffect, useState } from 'react';
 import { ErrorSection } from '@/components/shared/ErrorSection';
 import { SurveyModal } from '@/components/Survey';
 import { type MultiSelectOptions } from '@/constants';
-import { type Bounty, getListingDraftStatus } from '@/features/listings';
+import { getListingDraftStatus, type Listing } from '@/features/listings';
 import { userStore } from '@/store/user';
 
 import { useListingFormStore } from '../store';
@@ -26,7 +26,7 @@ import { ListingSuccessModal } from './ListingSuccessModal';
 import { hackathonSponsorAtom } from './SelectSponsor';
 
 interface Props {
-  listing?: Bounty;
+  listing?: Listing;
   editable?: boolean;
   type: 'bounty' | 'project' | 'hackathon';
   isDuplicating?: boolean;
@@ -174,7 +174,7 @@ export function CreateListing({
   const createAndPublishListing = async () => {
     setIsListingPublishing(true);
     try {
-      const newListing: Bounty = {
+      const newListing: Listing = {
         pocId: userInfo?.id ?? '',
         skills: form?.skills,
         title: form?.title,
@@ -238,7 +238,7 @@ export function CreateListing({
     if (editable && !isDuplicating) {
       api = `/api/${basePath}/update/${listing?.id}/`;
     }
-    let draft: Bounty = {
+    let draft: Listing = {
       pocId: userInfo?.id ?? '',
     };
     try {

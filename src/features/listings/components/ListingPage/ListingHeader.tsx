@@ -20,12 +20,11 @@ import { toast } from 'react-hot-toast';
 import { TbBell, TbBellRinging } from 'react-icons/tb';
 
 import { AuthWrapper } from '@/features/auth';
-import { WarningModal } from '@/features/listings';
+import { type Listing, WarningModal } from '@/features/listings';
 import type { User } from '@/interface/user';
 import { userStore } from '@/store/user';
 import { dayjs } from '@/utils/dayjs';
 
-import type { Bounty } from '../../types';
 import { ListingTabLink } from './ListingTabLink';
 import { RegionLabel } from './RegionLabel';
 import { StatusBadge } from './StatusBadge';
@@ -34,7 +33,7 @@ export function ListingHeader({
   listing,
   isTemplate,
 }: {
-  listing: Bounty;
+  listing: Listing;
   isTemplate?: boolean;
 }) {
   const {

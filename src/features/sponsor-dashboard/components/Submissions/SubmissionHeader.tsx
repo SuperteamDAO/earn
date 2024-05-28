@@ -29,17 +29,17 @@ import React, { useState } from 'react';
 
 import { tokenList } from '@/constants';
 import {
-  type Bounty,
   formatDeadline,
   getBountyStatus,
   getColorStyles,
+  type Listing,
 } from '@/features/listings';
 import { getURL } from '@/utils/validUrl';
 
 import { SponsorPrize } from '../SponsorPrize';
 
 interface Props {
-  bounty: Bounty | null;
+  bounty: Listing | null;
   onOpen: () => void;
   totalSubmissions: number;
   isHackathonPage?: boolean;

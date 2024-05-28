@@ -6,12 +6,12 @@ import { useState } from 'react';
 
 import { OgImageViewer } from '@/components/misc/ogImageViewer';
 import { ErrorSection } from '@/components/shared/ErrorSection';
-import { type Bounty, ListingHeader } from '@/features/listings';
+import { type Listing, ListingHeader } from '@/features/listings';
 import { Default } from '@/layouts/Default';
 import { getURL } from '@/utils/validUrl';
 
 interface BountyDetailsProps {
-  bounty: Bounty | null;
+  bounty: Listing | null;
 }
 
 const ReferenceCard = ({ link }: { link: string }) => {

@@ -4,11 +4,11 @@ import React, { type Dispatch, type SetStateAction } from 'react';
 
 import type { SubmissionWithUser } from '@/interface/submission';
 
-import type { Bounty } from '../../types';
+import { type Listing } from '../../types';
 import { SubmissionCard } from './SubmissionCard';
 
 interface Props {
-  bounty: Bounty;
+  bounty: Listing;
   submissions: SubmissionWithUser[];
   endTime: string;
   setUpdate: Dispatch<SetStateAction<boolean>>;

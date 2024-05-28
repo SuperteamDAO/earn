@@ -53,10 +53,10 @@ import { FiMoreVertical } from 'react-icons/fi';
 import { LoadingSection } from '@/components/shared/LoadingSection';
 import { tokenList } from '@/constants/index';
 import {
-  type BountyWithSubmissions,
   formatDeadline,
   getBountyStatus,
   getColorStyles,
+  type ListingWithSubmissions,
 } from '@/features/listings';
 import { CreateListingModal } from '@/features/sponsor-dashboard';
 import { Sidebar } from '@/layouts/Sponsor';
@@ -78,8 +78,8 @@ export default function Hackathon() {
   } = useDisclosure();
   const { userInfo } = userStore();
   const [totalBounties, setTotalBounties] = useState(0);
-  const [bounties, setBounties] = useState<BountyWithSubmissions[]>([]);
-  const [bounty, setBounty] = useState<BountyWithSubmissions>({});
+  const [bounties, setBounties] = useState<ListingWithSubmissions[]>([]);
+  const [bounty, setBounty] = useState<ListingWithSubmissions>({});
   const [isChangingStatus, setIsChangingStatus] = useState(false);
   const [isBountiesLoading, setIsBountiesLoading] = useState(true);
   const [startDate, setStartDate] = useState();
@@ -124,7 +124,7 @@ export default function Hackathon() {
     }
   }, [userInfo?.hackathonId, skip, searchText]);
 
-  const handleUnpublish = async (unpublishedBounty: BountyWithSubmissions) => {
+  const handleUnpublish = async (unpublishedBounty: ListingWithSubmissions) => {
     setBounty(unpublishedBounty);
     unpublishOnOpen();
   };
@@ -171,7 +171,7 @@ export default function Hackathon() {
     }
   };
 
-  const handleDeleteDraft = async (deleteBounty: BountyWithSubmissions) => {
+  const handleDeleteDraft = async (deleteBounty: ListingWithSubmissions) => {
     setBounty(deleteBounty);
     deleteDraftOnOpen();
   };

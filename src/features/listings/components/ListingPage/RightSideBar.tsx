@@ -28,11 +28,11 @@ import { tokenList } from '@/constants/index';
 import { formatNumberWithSuffix } from '@/utils/formatNumberWithSuffix';
 import { getURLSanitized } from '@/utils/getURLSanitized';
 
-import type { Bounty, Rewards } from '../../types';
+import type { Listing, Rewards } from '../../types';
 import { SubmissionActionButton } from '../Submission/SubmissionActionButton';
 import { CompensationAmount } from './CompensationAmount';
 
-export function RightSideBar({ listing }: { listing: Bounty }) {
+export function RightSideBar({ listing }: { listing: Listing }) {
   const {
     id,
     token,

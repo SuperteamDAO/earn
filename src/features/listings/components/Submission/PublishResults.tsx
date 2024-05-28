@@ -19,14 +19,14 @@ import dayjs from 'dayjs';
 import { usePostHog } from 'posthog-js/react';
 import { useEffect, useState } from 'react';
 
-import { type Bounty } from '@/features/listings';
+import { type Listing } from '../../types';
 
 interface Props {
   onClose: () => void;
   isOpen: boolean;
   totalWinners: number;
   totalPaymentsMade: number;
-  bounty: Bounty | null;
+  bounty: Listing | null;
 }
 
 export function PublishResults({

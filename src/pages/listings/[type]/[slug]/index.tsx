@@ -9,9 +9,9 @@ import { useEffect, useState } from 'react';
 import { ErrorSection } from '@/components/shared/ErrorSection';
 import { Comments } from '@/features/comments';
 import {
-  type Bounty,
   DescriptionUI,
   getListingTypeLabel,
+  type Listing,
   ListingHeader,
   ListingWinners,
   RightSideBar,
@@ -22,7 +22,7 @@ import { Default } from '@/layouts/Default';
 import { getURL } from '@/utils/validUrl';
 
 interface BountyDetailsProps {
-  bounty: Bounty | null;
+  bounty: Listing | null;
 }
 
 function BountyDetails({ bounty: initialBounty }: BountyDetailsProps) {

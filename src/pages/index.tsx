@@ -9,7 +9,7 @@ import { InstallPWAModal } from '@/components/modals/InstallPWAModal';
 import { EmptySection } from '@/components/shared/EmptySection';
 import { Loading } from '@/components/shared/Loading';
 import { type Grant, GrantsCard } from '@/features/grants';
-import { type Bounty, ListingSection, ListingTabs } from '@/features/listings';
+import { type Listing, ListingSection, ListingTabs } from '@/features/listings';
 import { Home } from '@/layouts/Home';
 import { userStore } from '@/store/user';
 
@@ -18,7 +18,7 @@ const HomePage: NextPage = () => {
   const [mobileOs, setMobileOs] = useState<'Android' | 'iOS' | 'Other'>(
     'Other',
   );
-  const [bounties, setBounties] = useState<{ bounties: Bounty[] }>({
+  const [bounties, setBounties] = useState<{ bounties: Listing[] }>({
     bounties: [],
   });
   const [grants, setGrants] = useState<{ grants: Grant[] }>({

@@ -5,7 +5,7 @@ import { useEffect, useState } from 'react';
 
 import { EmptySection } from '@/components/shared/EmptySection';
 import {
-  type Bounty,
+  type Listing,
   ListingCard,
   ListingCardSkeleton,
   ListingSection,
@@ -14,7 +14,7 @@ import { Home } from '@/layouts/Home';
 import { Meta } from '@/layouts/Meta';
 
 interface Listings {
-  bounties?: Bounty[];
+  bounties?: Listing[];
 }
 
 type SlugKeys = 'design' | 'content' | 'development' | 'other';

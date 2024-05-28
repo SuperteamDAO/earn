@@ -27,9 +27,9 @@ import { useForm } from 'react-hook-form';
 import { AutoResizeTextarea } from '@/components/shared/autosize-textarea';
 import { tokenList } from '@/constants';
 import { randomSubmissionCommentGenerator } from '@/features/comments';
-import { type Bounty } from '@/features/listings';
 import { userStore } from '@/store/user';
 
+import { type Listing } from '../../types';
 import { QuestionHandler } from './QuestionHandler';
 
 interface Props {
@@ -40,7 +40,7 @@ interface Props {
   setSubmissionNumber: (arg0: number) => void;
   submissionNumber: number;
   editMode: boolean;
-  listing: Bounty;
+  listing: Listing;
   showEasterEgg: () => void;
   onSurveyOpen: () => void;
 }
