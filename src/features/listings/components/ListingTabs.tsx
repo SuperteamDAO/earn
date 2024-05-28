@@ -47,7 +47,7 @@ const generateTabContent = ({
   emptyMessage,
   checkLanguage,
 }: ContentProps) => (
-  <Flex direction={'column'} rowGap={1}>
+  <Flex className="ph-no-capture" direction={'column'} rowGap={1}>
     {isListingsLoading ? (
       Array.from({ length: 8 }, (_, index) => (
         <ListingCardSkeleton key={index} />
