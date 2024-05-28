@@ -374,6 +374,7 @@ export const SubmissionDetails = ({
                           paddingLeft: '16px',
                           fontSize: '12px',
                         }}
+                        className="ph-no-capture"
                       >
                         {connected
                           ? truncatePublicKey(publicKey?.toBase58(), 3)

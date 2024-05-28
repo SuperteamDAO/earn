@@ -27,7 +27,8 @@ export const CreateListingModal = ({
 }) => {
   const posthog = usePostHog();
   const { resetForm } = useListingFormStore();
-  const resetListingForm = () => {
+  const resetListingForm = (eventName: string) => {
+    posthog.capture(eventName);
     resetForm();
   };
   return (
@@ -70,14 +71,12 @@ export const CreateListingModal = ({
               </ListItem>
             </UnorderedList>
             <Box flex="1" />
-            <a
-              href="/dashboard/create-bounty"
-              className="ph-no-capture"
-              onClick={() => {
-                posthog.capture('create new bounty_sponsor');
-              }}
-            >
-              <Button w="full" onClick={resetListingForm} size="lg">
+            <a href="/dashboard/create-bounty" className="ph-no-capture">
+              <Button
+                w="full"
+                onClick={() => resetListingForm('create new bounty_sponsor')}
+                size="lg"
+              >
                 Create New Bounty
               </Button>
             </a>
@@ -127,14 +126,12 @@ export const CreateListingModal = ({
               color="brand.slate.200"
               orientation="horizontal"
             />
-            <a
-              href="/dashboard/create-project"
-              className="ph-no-capture"
-              onClick={() => {
-                posthog.capture('create new project_sponsor');
-              }}
-            >
-              <Button w="full" onClick={resetListingForm} size="lg">
+            <a href="/dashboard/create-project" className="ph-no-capture">
+              <Button
+                w="full"
+                onClick={() => resetListingForm('create new project_sponsor')}
+                size="lg"
+              >
                 Create New Project
               </Button>
             </a>
