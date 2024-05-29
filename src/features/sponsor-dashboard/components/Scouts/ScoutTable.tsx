@@ -25,6 +25,8 @@ import Image from 'next/image';
 import NextLink from 'next/link';
 import { usePostHog } from 'posthog-js/react';
 
+import { skillMap } from '@/constants';
+
 import SparkleIcon from '../../icons/sparkle.svg';
 import { type ScoutRowType } from '../../types';
 import { InviteButton } from './InviteButton';
@@ -260,11 +262,19 @@ export function ScountTable({ bountyId, scouts, setInvited }: Props) {
                       <Badge
                         key={s}
                         px={2}
-                        color="#64739C"
+                        color={
+                          skillMap.find((e) => e.mainskill === s)
+                            ? skillMap.find((e) => e.mainskill === s)?.color
+                            : '#64739C'
+                        }
                         fontSize={'x-small'}
                         fontWeight={500}
                         textTransform={'none'}
-                        bg="#EFF1F5"
+                        bg={
+                          skillMap.find((e) => e.mainskill === s)
+                            ? `${skillMap.find((e) => e.mainskill === s)?.color}1A`
+                            : '#EFF1F5'
+                        }
                       >
                         {s}
                       </Badge>
