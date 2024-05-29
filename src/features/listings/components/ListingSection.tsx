@@ -1,5 +1,6 @@
 import { ArrowForwardIcon } from '@chakra-ui/icons';
 import { Box, Button, Flex, HStack, Image, Link, Text } from '@chakra-ui/react';
+import NextLink from 'next/link';
 import { useRouter } from 'next/router';
 import { usePostHog } from 'posthog-js/react';
 
@@ -85,19 +86,24 @@ export const ListingSection = ({
           }
         >
           <Link
+            as={NextLink}
             href={
               viewAllLink ||
               (router?.query?.filter
                 ? `/${type}/${router?.query?.filter}/`
                 : `/${type}/`)
             }
-            onClick={() => {
-              if (type === 'grants') {
-                posthog.capture('viewall top_grants');
-              }
-            }}
           >
-            <Button color="brand.slate.400" size="sm" variant="ghost">
+            <Button
+              color="brand.slate.400"
+              onClick={() => {
+                if (type === 'grants') {
+                  posthog.capture('grants_viewall_top');
+                }
+              }}
+              size="sm"
+              variant="ghost"
+            >
               View All
             </Button>
           </Link>
@@ -113,17 +119,13 @@ export const ListingSection = ({
         }
       >
         <Link
+          as={NextLink}
           href={
             viewAllLink ||
             (router?.query?.filter
               ? `/${type}/${router?.query?.filter}/`
               : `/${type}/`)
           }
-          onClick={() => {
-            if (type === 'grants') {
-              posthog.capture('viewall bottom_grants');
-            }
-          }}
         >
           <Button
             w="100%"
@@ -131,6 +133,11 @@ export const ListingSection = ({
             py={5}
             color="brand.slate.400"
             borderColor="brand.slate.300"
+            onClick={() => {
+              if (type === 'grants') {
+                posthog.capture('grants_viewall_bottom');
+              }
+            }}
             rightIcon={<ArrowForwardIcon />}
             size="sm"
             variant="outline"
