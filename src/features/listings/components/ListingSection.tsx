@@ -91,17 +91,13 @@ export const ListingSection = ({
                 ? `/${type}/${router?.query?.filter}/`
                 : `/${type}/`)
             }
+            onClick={() => {
+              if (type === 'grants') {
+                posthog.capture('viewall top_grants');
+              }
+            }}
           >
-            <Button
-              color="brand.slate.400"
-              onClick={() => {
-                if (type === 'grants') {
-                  posthog.capture('viewall top_grants');
-                }
-              }}
-              size="sm"
-              variant="ghost"
-            >
+            <Button color="brand.slate.400" size="sm" variant="ghost">
               View All
             </Button>
           </Link>
@@ -123,6 +119,11 @@ export const ListingSection = ({
               ? `/${type}/${router?.query?.filter}/`
               : `/${type}/`)
           }
+          onClick={() => {
+            if (type === 'grants') {
+              posthog.capture('viewall bottom_grants');
+            }
+          }}
         >
           <Button
             w="100%"
@@ -130,11 +131,6 @@ export const ListingSection = ({
             py={5}
             color="brand.slate.400"
             borderColor="brand.slate.300"
-            onClick={() => {
-              if (type === 'grants') {
-                posthog.capture('viewall bottom_grants');
-              }
-            }}
             rightIcon={<ArrowForwardIcon />}
             size="sm"
             variant="outline"
