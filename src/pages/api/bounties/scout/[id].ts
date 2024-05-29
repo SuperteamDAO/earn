@@ -363,12 +363,12 @@ async function scoutTalent(req: NextApiRequestWithUser, res: NextApiResponse) {
       {
         isSql: false,
         name: 'normalizedMatchingSubSkills',
-        weight: 0.1,
+        weight: 0.2,
       },
       {
         isSql: false,
         name: 'normalizedMatchingSkills',
-        weight: 0.3,
+        weight: 0.2,
       },
       {
         isSql: true,
