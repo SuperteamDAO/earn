@@ -11,6 +11,7 @@ import {
 import NextLink from 'next/link';
 import { useRouter } from 'next/router';
 import { signIn } from 'next-auth/react';
+import { usePostHog } from 'posthog-js/react';
 import React, { type Dispatch, type SetStateAction, useState } from 'react';
 import { MdOutlineEmail } from 'react-icons/md';
 
@@ -28,6 +29,7 @@ export const SignIn = ({
   const [hasAttemptedSubmit, setHasAttemptedSubmit] = useState(false);
 
   const router = useRouter();
+  const posthog = usePostHog();
 
   const validateEmail = (emailAddress: string) => {
     const re = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
@@ -43,6 +45,7 @@ export const SignIn = ({
   const handleEmailSignIn = () => {
     setHasAttemptedSubmit(true);
     if (isEmailValid) {
+      posthog.capture('email OTP_auth');
       localStorage.setItem('emailForSignIn', email);
       signIn('email', {
         email,
@@ -69,15 +72,17 @@ export const SignIn = ({
                 textAlign="center"
               >
                 <Button
+                  className="ph-no-capture"
                   w="100%"
                   fontSize="17px"
                   fontWeight={500}
                   leftIcon={<GoogleIcon />}
-                  onClick={() =>
+                  onClick={() => {
+                    posthog.capture('google_auth');
                     signIn('google', {
                       callbackUrl: `${router.asPath}?loginState=signedIn`,
-                    })
-                  }
+                    });
+                  }}
                   size="lg"
                 >
                   Continue with Google
@@ -122,6 +127,7 @@ export const SignIn = ({
                   />
                 </FormControl>
                 <Button
+                  className="ph-no-capture"
                   w="100%"
                   h="2.9rem"
                   mt={3}

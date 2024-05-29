@@ -77,7 +77,7 @@ export function UserMenu({}) {
           display={{ base: 'none', md: 'flex' }}
           fontSize="xs"
           onClick={() => {
-            posthog.capture('complete profile_getting started');
+            posthog.capture('complete profile_nav bar');
             router.push('/new');
           }}
           size="sm"

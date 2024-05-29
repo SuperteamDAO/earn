@@ -13,7 +13,7 @@ import {
   Text,
   UnorderedList,
 } from '@chakra-ui/react';
-import Link from 'next/link';
+import { useRouter } from 'next/router';
 import { usePostHog } from 'posthog-js/react';
 import React from 'react';
 
@@ -27,6 +27,8 @@ export const CreateListingModal = ({
   onClose: () => void;
 }) => {
   const posthog = usePostHog();
+  const router = useRouter();
+
   const { resetForm } = useListingFormStore();
   const resetListingForm = () => {
     resetForm();
@@ -71,17 +73,20 @@ export const CreateListingModal = ({
               </ListItem>
             </UnorderedList>
             <Box flex="1" />
-            <Link
-              href="/dashboard/create-bounty"
+            <Button
               className="ph-no-capture"
+              w="full"
               onClick={() => {
+                resetListingForm();
                 posthog.capture('create new bounty_sponsor');
+                if (!router.pathname.includes('bounty'))
+                  router.push('/dashboard/create-bounty');
+                else router.reload();
               }}
+              size="lg"
             >
-              <Button w="full" onClick={resetListingForm} size="lg">
-                Create New Bounty
-              </Button>
-            </Link>
+              Create New Bounty
+            </Button>
           </Flex>
           <Divider
             w="1px"
@@ -128,17 +133,21 @@ export const CreateListingModal = ({
               color="brand.slate.200"
               orientation="horizontal"
             />
-            <Link
-              href="/dashboard/create-project"
+
+            <Button
               className="ph-no-capture"
+              w="full"
               onClick={() => {
+                resetListingForm();
                 posthog.capture('create new project_sponsor');
+                if (!router.pathname.includes('project'))
+                  router.push('/dashboard/create-project');
+                else router.reload();
               }}
+              size="lg"
             >
-              <Button w="full" onClick={resetListingForm} size="lg">
-                Create New Project
-              </Button>
-            </Link>
+              Create New Project
+            </Button>
           </Flex>
         </Flex>
       </ModalContent>

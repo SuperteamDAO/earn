@@ -60,6 +60,9 @@ export const DesktopNavbar = ({ onLoginOpen, onSearchOpen }: Props) => {
             mr={5}
             _hover={{ textDecoration: 'none' }}
             href="/"
+            onClick={() => {
+              posthog.capture('homepage logo click_universal');
+            }}
           >
             <Image
               h={5}

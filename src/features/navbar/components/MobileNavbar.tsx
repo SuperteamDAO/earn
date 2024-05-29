@@ -236,6 +236,9 @@ export const MobileNavbar = ({ onLoginOpen, onSearchOpen }: Props) => {
               alignItems={'center'}
               _hover={{ textDecoration: 'none' }}
               href="/"
+              onClick={() => {
+                posthog.capture('homepage logo click_universal');
+              }}
             >
               <Image
                 h={5}

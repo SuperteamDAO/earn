@@ -206,6 +206,7 @@ export const SubmissionActionButton = ({
         )}
       {warningIsOpen && (
         <WarningModal
+          onCTAClick={() => posthog.capture('complete profile_CTA pop up')}
           isOpen={warningIsOpen}
           onClose={warningOnClose}
           title={'Complete your profile'}
