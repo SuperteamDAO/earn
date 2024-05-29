@@ -30,8 +30,8 @@ import React, { useState } from 'react';
 import { tokenList } from '@/constants';
 import {
   formatDeadline,
-  getBountyStatus,
   getColorStyles,
+  getListingStatus,
   type Listing,
 } from '@/features/listings';
 import { getURL } from '@/utils/validUrl';
@@ -53,13 +53,17 @@ export const SubmissionHeader = ({
 }: Props) => {
   const [isExporting, setIsExporting] = useState(false);
 
-  const deadline = formatDeadline(bounty?.deadline, bounty?.applicationType);
+  const deadline = formatDeadline(
+    bounty?.deadline,
+    bounty?.applicationType,
+    bounty?.type,
+  );
 
   const listingPath = `listings/${bounty?.type}/${bounty?.slug}`;
 
   const { hasCopied, onCopy } = useClipboard(`${getURL()}${listingPath}`);
 
-  const bountyStatus = getBountyStatus(bounty);
+  const bountyStatus = getListingStatus(bounty);
 
   const exportSubmissionsCsv = async () => {
     setIsExporting(true);

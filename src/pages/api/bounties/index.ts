@@ -1,4 +1,4 @@
-import { status } from '@prisma/client';
+import { GrantStatus, status } from '@prisma/client';
 import type { NextApiResponse } from 'next';
 
 import { type NextApiRequestWithUser, withAuth } from '@/features/auth';
@@ -31,8 +31,10 @@ async function bounties(req: NextApiRequestWithUser, res: NextApiResponse) {
         },
       }
     : {};
+
   try {
-    const countQuery = {
+    // Query for bounties
+    const bountiesCountQuery = {
       where: {
         isActive: true,
         isArchived: false,
@@ -41,9 +43,9 @@ async function bounties(req: NextApiRequestWithUser, res: NextApiResponse) {
         status: status.OPEN,
       },
     };
-    const total = await prisma.bounties.count(countQuery);
-    const result = await prisma.bounties.findMany({
-      ...countQuery,
+    const bountiesTotal = await prisma.bounties.count(bountiesCountQuery);
+    const bountiesResult = await prisma.bounties.findMany({
+      ...bountiesCountQuery,
       skip: skip ?? 0,
       take: take ?? 15,
       orderBy: [{ createdAt: 'desc' }, { id: 'desc' }],
@@ -77,9 +79,58 @@ async function bounties(req: NextApiRequestWithUser, res: NextApiResponse) {
         compensationType: true,
       },
     });
-    res.status(200).json({ total, data: result });
+
+    // Query for grants
+    const grantsCountQuery = {
+      where: {
+        isActive: true,
+        isArchived: false,
+        sponsorId,
+        ...whereSearch,
+        status: GrantStatus.OPEN,
+      },
+    };
+    const grantsTotal = await prisma.grants.count(grantsCountQuery);
+    const grantsResult = await prisma.grants.findMany({
+      ...grantsCountQuery,
+      skip: skip ?? 0,
+      take: take ?? 15,
+      orderBy: [{ createdAt: 'desc' }, { id: 'desc' }],
+      select: {
+        id: true,
+        title: true,
+        slug: true,
+        token: true,
+        status: true,
+        description: true,
+        shortDescription: true,
+        minReward: true,
+        maxReward: true,
+        totalPaid: true,
+        link: true,
+        isPublished: true,
+        skills: true,
+        region: true,
+        logo: true,
+        createdAt: true,
+        updatedAt: true,
+      },
+    });
+
+    // Add the type field to each grant
+    const grantsWithType = grantsResult.map((grant) => ({
+      ...grant,
+      type: 'grant',
+    }));
+
+    const total = bountiesTotal + grantsTotal;
+    const data = [...bountiesResult, ...grantsWithType];
+
+    res.status(200).json({ total, data });
   } catch (err) {
-    res.status(400).json({ err: 'Error occurred while fetching bounties.' });
+    res
+      .status(400)
+      .json({ err: 'Error occurred while fetching bounties and grants.' });
   }
 }
 

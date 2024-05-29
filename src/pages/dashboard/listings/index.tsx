@@ -46,7 +46,7 @@ export default function SponsorListings() {
   const getListings = async () => {
     setIsListingsLoading(true);
     try {
-      const bountiesList = await axios.get('/api/bounties/listingsAndGrants', {
+      const allListings = await axios.get('/api/bounties/', {
         params: {
           sponsorId: userInfo?.currentSponsorId,
           searchText,
@@ -55,8 +55,8 @@ export default function SponsorListings() {
           showSubmissionDetails: true,
         },
       });
-      setTotalListings(bountiesList.data.total);
-      setListings(bountiesList.data.data);
+      setTotalListings(allListings.data.total);
+      setListings(allListings.data.data);
       setIsListingsLoading(false);
     } catch (error) {
       setIsListingsLoading(false);
@@ -111,55 +111,13 @@ export default function SponsorListings() {
         </InputGroup>
       </Flex>
       {isListingsLoading && <LoadingSection />}
-      {!isListingsLoading && !listings?.length && (
+      {!isListingsLoading && !!listings?.length && (
         <>
           <ListingTable listings={listings} setListings={setListings} />
           <CreateListingModal
             isOpen={isOpenCreateListing}
             onClose={onCloseCreateListing}
           />
-          <Image
-            w={32}
-            mx="auto"
-            mt={32}
-            alt={'talent empty'}
-            src="/assets/bg/talent-empty.svg"
-          />
-          <Text
-            mx="auto"
-            mt={5}
-            color={'brand.slate.600'}
-            fontSize={'lg'}
-            fontWeight={600}
-            textAlign={'center'}
-          >
-            Create your first listing
-          </Text>
-          <Text
-            mx="auto"
-            color={'brand.slate.400'}
-            fontWeight={500}
-            textAlign={'center'}
-          >
-            and start getting contributions
-          </Text>
-          <Button
-            display="block"
-            w={'200px'}
-            mx="auto"
-            mt={6}
-            mb={48}
-            fontSize="md"
-            leftIcon={<AddIcon w={3} h={3} />}
-            onClick={() => onOpenCreateListing()}
-            variant="solid"
-          >
-            Create New Listing
-          </Button>
-        </>
-      )}
-      {!isListingsLoading && !!listings?.length && (
-        <>
           <Flex align="center" justify="end" mt={6}>
             <Text mr={4} color="brand.slate.400" fontSize="sm">
               <Text as="span" fontWeight={700}>
@@ -200,6 +158,48 @@ export default function SponsorListings() {
               Next
             </Button>
           </Flex>
+        </>
+      )}
+      {!isListingsLoading && !listings?.length && (
+        <>
+          <Image
+            w={32}
+            mx="auto"
+            mt={32}
+            alt={'talent empty'}
+            src="/assets/bg/talent-empty.svg"
+          />
+          <Text
+            mx="auto"
+            mt={5}
+            color={'brand.slate.600'}
+            fontSize={'lg'}
+            fontWeight={600}
+            textAlign={'center'}
+          >
+            Create your first listing
+          </Text>
+          <Text
+            mx="auto"
+            color={'brand.slate.400'}
+            fontWeight={500}
+            textAlign={'center'}
+          >
+            and start getting contributions
+          </Text>
+          <Button
+            display="block"
+            w={'200px'}
+            mx="auto"
+            mt={6}
+            mb={48}
+            fontSize="md"
+            leftIcon={<AddIcon w={3} h={3} />}
+            onClick={() => onOpenCreateListing()}
+            variant="solid"
+          >
+            Create New Listing
+          </Button>
         </>
       )}
     </Sidebar>

@@ -18,9 +18,10 @@ import { type ListingWithSubmissions } from '@/features/listings';
 interface DeleteDraftModalProps {
   deleteDraftIsOpen: boolean;
   deleteDraftOnClose: () => void;
-  listingId: string;
+  listingId: string | undefined;
   listings: ListingWithSubmissions[];
   setListings: (listings: ListingWithSubmissions[]) => void;
+  listingType: string | undefined;
 }
 
 export const DeleteDraftModal = ({
@@ -29,10 +30,15 @@ export const DeleteDraftModal = ({
   setListings,
   deleteDraftIsOpen,
   deleteDraftOnClose,
+  listingType,
 }: DeleteDraftModalProps) => {
   const deleteSelectedDraft = async () => {
     try {
-      await axios.post(`/api/listings/delete/${listingId}`);
+      if (listingType === 'grant') {
+        await axios.post(`/api/listings/delete/${listingId}`);
+      } else {
+        await axios.post(`/api/grants/delete/${listingId}`);
+      }
       const update = listings.filter((x) => x.id !== listingId);
       setListings(update);
     } catch (e) {

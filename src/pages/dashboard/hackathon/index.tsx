@@ -54,8 +54,8 @@ import { LoadingSection } from '@/components/shared/LoadingSection';
 import { tokenList } from '@/constants/index';
 import {
   formatDeadline,
-  getBountyStatus,
   getColorStyles,
+  getListingStatus,
   type ListingWithSubmissions,
 } from '@/features/listings';
 import { CreateListingModal } from '@/features/sponsor-dashboard';
@@ -398,9 +398,10 @@ export default function Hackathon() {
                   const deadline = formatDeadline(
                     currentBounty?.deadline,
                     currentBounty?.applicationType,
+                    currentBounty?.type,
                   );
 
-                  const bountyStatus = getBountyStatus(currentBounty);
+                  const bountyStatus = getListingStatus(currentBounty);
 
                   return (
                     <Tr key={currentBounty?.id}>

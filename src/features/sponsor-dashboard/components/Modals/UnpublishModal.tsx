@@ -18,9 +18,10 @@ import { type ListingWithSubmissions } from '@/features/listings';
 interface UnpublishModalProps {
   unpublishIsOpen: boolean;
   unpublishOnClose: () => void;
-  listingId: string;
+  listingId: string | undefined;
   listings: ListingWithSubmissions[];
   setListings: (bounties: ListingWithSubmissions[]) => void;
+  listingType: string | undefined;
 }
 
 export const UnpublishModal = ({
@@ -29,15 +30,23 @@ export const UnpublishModal = ({
   listingId,
   listings,
   setListings,
+  listingType,
 }: UnpublishModalProps) => {
   const [isChangingStatus, setIsChangingStatus] = useState(false);
 
   const changeBountyStatus = async (status: boolean) => {
     setIsChangingStatus(true);
     try {
-      const result = await axios.post(`/api/bounties/update/${listingId}/`, {
-        isPublished: status,
-      });
+      let result: any;
+      if (listingType === 'grant') {
+        result = await axios.post(`/api/grants/update/${listingId}/`, {
+          isPublished: status,
+        });
+      } else {
+        result = await axios.post(`/api/bounties/update/${listingId}/`, {
+          isPublished: status,
+        });
+      }
 
       const changedBountyIndex = listings.findIndex(
         (b) => b.id === result.data.id,

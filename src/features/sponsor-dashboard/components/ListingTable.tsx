@@ -39,8 +39,8 @@ import { tokenList } from '@/constants';
 import { useListingFormStore } from '@/features/listing-builder';
 import {
   formatDeadline,
-  getBountyStatus,
   getColorStyles,
+  getListingStatus,
   getListingTypeLabel,
   isDeadlineOver,
   type ListingWithSubmissions,
@@ -55,7 +55,8 @@ interface ListingTableProps {
 }
 
 export const ListingTable = ({ listings, setListings }: ListingTableProps) => {
-  const [listing, setListing] = useState<ListingWithSubmissions>({});
+  const [selectedListing, setSelectedListing] =
+    useState<ListingWithSubmissions>({});
 
   const router = useRouter();
   const posthog = usePostHog();
@@ -76,7 +77,7 @@ export const ListingTable = ({ listings, setListings }: ListingTableProps) => {
   const handleUnpublish = async (
     unpublishedListing: ListingWithSubmissions,
   ) => {
-    setListing(unpublishedListing);
+    setSelectedListing(unpublishedListing);
     unpublishOnOpen();
   };
 
@@ -85,7 +86,7 @@ export const ListingTable = ({ listings, setListings }: ListingTableProps) => {
   };
 
   const handleDeleteDraft = async (deleteListing: ListingWithSubmissions) => {
-    setListing(deleteListing);
+    setSelectedListing(deleteListing);
     deleteDraftOnOpen();
   };
 
@@ -108,16 +109,18 @@ export const ListingTable = ({ listings, setListings }: ListingTableProps) => {
       <UnpublishModal
         listings={listings}
         setListings={setListings}
-        listingId={listing.id!}
+        listingId={selectedListing.id}
         unpublishIsOpen={unpublishIsOpen}
         unpublishOnClose={unpublishOnClose}
+        listingType={selectedListing.type}
       />
       <DeleteDraftModal
         listings={listings}
         setListings={setListings}
         deleteDraftIsOpen={deleteDraftIsOpen}
         deleteDraftOnClose={deleteDraftOnClose}
-        listingId={listing.id!}
+        listingId={selectedListing.id}
+        listingType={selectedListing.type}
       />
       <TableContainer
         mb={8}
@@ -138,35 +141,38 @@ export const ListingTable = ({ listings, setListings }: ListingTableProps) => {
             </Tr>
           </Thead>
           <Tbody w="full">
-            {listings.map((selectedListing) => {
+            {listings.map((listing) => {
               const listingType = getListingTypeLabel(
-                selectedListing?.type ?? 'listing',
+                listing?.type ?? 'bounty',
               );
 
               const deadline = formatDeadline(
-                selectedListing?.deadline,
-                selectedListing?.applicationType,
+                listing?.deadline,
+                listing?.applicationType,
+                listing?.type,
               );
 
-              const pastDeadline = isDeadlineOver(selectedListing?.deadline);
+              const pastDeadline = isDeadlineOver(listing?.deadline);
 
-              const listingStatus = getBountyStatus(selectedListing);
+              const listingStatus = getListingStatus(listing);
 
               const listingIcon = (() => {
-                switch (selectedListing.type) {
-                  case 'listing':
+                switch (listing.type) {
+                  case 'bounty':
                     return 'bolt.svg';
                   case 'project':
                     return 'briefcase.svg';
                   case 'hackathon':
                     return 'laptop.svg';
+                  case 'grant':
+                    return 'bank.svg';
                   default:
                     return 'bolt.svg';
                 }
               })();
 
               return (
-                <Tr key={selectedListing?.id}>
+                <Tr key={listing?.id}>
                   <Td
                     maxW={96}
                     color="brand.slate.700"
@@ -179,7 +185,7 @@ export const ListingTable = ({ listings, setListings }: ListingTableProps) => {
                       onClick={() => {
                         posthog.capture('submissions_sponsor');
                       }}
-                      href={`/dashboard/listings/${selectedListing.slug}/submissions/`}
+                      href={`/dashboard/listings/${listing.slug}/submissions/`}
                       passHref
                     >
                       <Flex align={'center'}>
@@ -202,7 +208,7 @@ export const ListingTable = ({ listings, setListings }: ListingTableProps) => {
                           whiteSpace="nowrap"
                           textOverflow="ellipsis"
                         >
-                          {selectedListing.title}
+                          {listing.title}
                         </Text>
                       </Flex>
                     </NextLink>
@@ -214,7 +220,7 @@ export const ListingTable = ({ listings, setListings }: ListingTableProps) => {
                       fontWeight={500}
                       textAlign={'center'}
                     >
-                      {selectedListing?._count?.Submission || 0}
+                      {listing?._count?.Submission || 0}
                     </Text>
                   </Td>
                   <Td align="center" py={2}>
@@ -235,15 +241,15 @@ export const ListingTable = ({ listings, setListings }: ListingTableProps) => {
                         rounded={'full'}
                         src={
                           tokenList.filter(
-                            (e) => e?.tokenSymbol === selectedListing.token,
+                            (e) => e?.tokenSymbol === listing.token,
                           )[0]?.icon ?? '/assets/icons/green-dollar.svg'
                         }
                       />
                       <SponsorPrize
-                        compensationType={selectedListing?.compensationType}
-                        maxRewardAsk={selectedListing?.maxRewardAsk}
-                        minRewardAsk={selectedListing?.minRewardAsk}
-                        rewardAmount={selectedListing?.rewardAmount}
+                        compensationType={listing?.compensationType}
+                        maxRewardAsk={listing?.maxRewardAsk}
+                        minRewardAsk={listing?.minRewardAsk}
+                        rewardAmount={listing?.rewardAmount}
                         textStyle={{
                           fontWeight: 500,
                           fontSize: 'sm',
@@ -255,7 +261,7 @@ export const ListingTable = ({ listings, setListings }: ListingTableProps) => {
                         fontSize={'sm'}
                         fontWeight={500}
                       >
-                        {selectedListing.token}
+                        {listing.token}
                       </Text>
                     </Flex>
                   </Td>
@@ -273,28 +279,28 @@ export const ListingTable = ({ listings, setListings }: ListingTableProps) => {
                     </Tag>
                   </Td>
                   <Td px={3} py={2}>
-                    {selectedListing.status === 'OPEN' &&
-                      selectedListing.isPublished && (
-                        <Button
-                          className="ph-no-capture"
-                          color="#6366F1"
-                          fontSize={'13px'}
-                          fontWeight={500}
-                          _hover={{ bg: '#E0E7FF' }}
-                          leftIcon={<ViewIcon />}
-                          onClick={() => {
-                            posthog.capture('submissions_sponsor');
-                            handleViewSubmissions(selectedListing.slug);
-                          }}
-                          size="sm"
-                          variant="ghost"
-                        >
-                          Submissions
-                        </Button>
-                      )}
-                    {selectedListing.status === 'OPEN' &&
-                      !selectedListing.isPublished &&
-                      !pastDeadline && (
+                    {listing.status === 'OPEN' && listing.isPublished && (
+                      <Button
+                        className="ph-no-capture"
+                        color="#6366F1"
+                        fontSize={'13px'}
+                        fontWeight={500}
+                        _hover={{ bg: '#E0E7FF' }}
+                        leftIcon={<ViewIcon />}
+                        onClick={() => {
+                          posthog.capture('submissions_sponsor');
+                          handleViewSubmissions(listing.slug);
+                        }}
+                        size="sm"
+                        variant="ghost"
+                      >
+                        Submissions
+                      </Button>
+                    )}
+                    {listing.status === 'OPEN' &&
+                      !listing.isPublished &&
+                      !pastDeadline &&
+                      listing?.type !== 'grant' && (
                         <Button
                           color={'brand.slate.500'}
                           fontSize={'13px'}
@@ -302,7 +308,7 @@ export const ListingTable = ({ listings, setListings }: ListingTableProps) => {
                           _hover={{ bg: 'brand.slate.200' }}
                           leftIcon={<EditIcon />}
                           onClick={() => {
-                            window.location.href = `/dashboard/listings/${selectedListing.slug}/edit/`;
+                            window.location.href = `/dashboard/listings/${listing.slug}/edit/`;
                           }}
                           size="sm"
                           variant="ghost"
@@ -331,42 +337,45 @@ export const ListingTable = ({ listings, setListings }: ListingTableProps) => {
                           icon={<ExternalLinkIcon h={4} w={4} />}
                           onClick={() =>
                             window.open(
-                              `${router.basePath}/listings/${selectedListing?.type}/${selectedListing.slug}`,
+                              listing?.type === 'grant'
+                                ? `${router.basePath}/grants/${listing.slug}`
+                                : `${router.basePath}/listings/${listing?.type}/${listing.slug}`,
                               '_blank',
                             )
                           }
                         >
                           View{' '}
-                          {selectedListing?.type === 'hackathon'
+                          {listing?.type === 'hackathon'
                             ? 'Track'
-                            : listingType}
+                            : listing?.type}
                         </MenuItem>
+
                         {session?.user?.role === 'GOD' ||
-                        (selectedListing.isPublished && !pastDeadline) ? (
-                          <Link
-                            as={NextLink}
-                            _hover={{ textDecoration: 'none' }}
-                            href={`/dashboard/listings/${selectedListing.slug}/edit`}
-                            onClick={resetForm}
-                          >
-                            <MenuItem
-                              py={2}
-                              color={'brand.slate.500'}
-                              fontSize={'sm'}
-                              fontWeight={500}
-                              icon={<EditIcon w={4} h={4} />}
-                            >
-                              Edit{' '}
-                              {selectedListing?.type === 'hackathon'
-                                ? 'Track'
-                                : listingType}
-                            </MenuItem>
-                          </Link>
-                        ) : (
-                          <></>
-                        )}
-                        {(selectedListing.type === 'listing' ||
-                          selectedListing.type === 'project') && (
+                          (listing.isPublished &&
+                            !pastDeadline &&
+                            listing.type !== 'grant' && (
+                              <Link
+                                as={NextLink}
+                                _hover={{ textDecoration: 'none' }}
+                                href={`/dashboard/listings/${listing.slug}/edit`}
+                                onClick={resetForm}
+                              >
+                                <MenuItem
+                                  py={2}
+                                  color={'brand.slate.500'}
+                                  fontSize={'sm'}
+                                  fontWeight={500}
+                                  icon={<EditIcon w={4} h={4} />}
+                                >
+                                  Edit{' '}
+                                  {listing?.type === 'hackathon'
+                                    ? 'Track'
+                                    : listingType}
+                                </MenuItem>
+                              </Link>
+                            ))}
+                        {(listing.type === 'bounty' ||
+                          listing.type === 'project') && (
                           <MenuItem
                             className="ph-no-capture"
                             py={2}
@@ -377,7 +386,7 @@ export const ListingTable = ({ listings, setListings }: ListingTableProps) => {
                             onClick={() => {
                               posthog.capture('duplicate listing_sponsor');
                               window.open(
-                                `${router.basePath}/dashboard/listings/${selectedListing.slug}/duplicate`,
+                                `${router.basePath}/dashboard/listings/${listing.slug}/duplicate`,
                                 '_blank',
                               );
                             }}
@@ -385,23 +394,23 @@ export const ListingTable = ({ listings, setListings }: ListingTableProps) => {
                             Duplicate
                           </MenuItem>
                         )}
-                        {listingStatus === 'Draft' && (
-                          <>
-                            <MenuItem
-                              py={2}
-                              color={'brand.slate.500'}
-                              fontSize={'sm'}
-                              fontWeight={500}
-                              icon={<AiOutlineDelete size={18} />}
-                              onClick={() => handleDeleteDraft(selectedListing)}
-                            >
-                              Delete Draft
-                            </MenuItem>
-                          </>
-                        )}
+                        {listingStatus === 'Draft' &&
+                          listing?.type !== 'grant' && (
+                            <>
+                              <MenuItem
+                                py={2}
+                                color={'brand.slate.500'}
+                                fontSize={'sm'}
+                                fontWeight={500}
+                                icon={<AiOutlineDelete size={18} />}
+                                onClick={() => handleDeleteDraft(listing)}
+                              >
+                                Delete Draft
+                              </MenuItem>
+                            </>
+                          )}
                         {!(
-                          selectedListing.status === 'OPEN' &&
-                          !selectedListing.isPublished
+                          listing.status === 'OPEN' && !listing.isPublished
                         ) && (
                           <>
                             <MenuItem
@@ -410,7 +419,7 @@ export const ListingTable = ({ listings, setListings }: ListingTableProps) => {
                               fontSize={'sm'}
                               fontWeight={500}
                               icon={<ViewOffIcon h={4} w={4} />}
-                              onClick={() => handleUnpublish(selectedListing)}
+                              onClick={() => handleUnpublish(listing)}
                             >
                               Unpublish
                             </MenuItem>
