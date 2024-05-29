@@ -8,4 +8,5 @@ export type ScoutRowType = {
   skills: string[];
   recommended: boolean;
   invited: boolean;
+  userId: string;
 };

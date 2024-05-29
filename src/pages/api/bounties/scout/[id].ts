@@ -1,6 +1,7 @@
 import { Prisma } from '@prisma/client';
-import type { NextApiRequest, NextApiResponse } from 'next';
+import type { NextApiResponse } from 'next';
 
+import { type NextApiRequestWithUser, withAuth } from '@/features/auth';
 import { prisma } from '@/prisma';
 
 function flattenSubSkills(skillsArray: any[]): string[] {
@@ -42,14 +43,13 @@ function skillContainQuery(skills: string[], alias: string) {
   );
 }
 
-async function scoutTalent(req: NextApiRequest, res: NextApiResponse) {
+async function scoutTalent(req: NextApiRequestWithUser, res: NextApiResponse) {
   const params = req.query;
   const id = params.id as string;
-
   const LIMIT = 10;
 
   console.log('called scout');
-  if (req.method !== 'POST') res.status(405).send('Not Allowed');
+  if (req.method !== 'POST') res.status(405).send('Method Not Allowed');
 
   try {
     const scoutBounty = await prisma.bounties.findFirst({
@@ -57,10 +57,20 @@ async function scoutTalent(req: NextApiRequest, res: NextApiResponse) {
         id,
       },
     });
-    if (
-      scoutBounty === null ||
-      (scoutBounty.skills as any)?.[0].subskills === null
-    )
+    if (scoutBounty === null) return res.status(404).send('Bounty Not Found');
+
+    const userId = req.userId;
+    const user = await prisma.user.findUnique({
+      where: {
+        id: userId,
+      },
+    });
+    if (scoutBounty?.sponsorId !== user?.currentSponsorId)
+      return res
+        .status(403)
+        .send(`Bounty doesn't belong to requesting sponsor`);
+
+    if ((scoutBounty.skills as any)?.[0].subskills === null)
       return res.status(404).send('Bounty has No skills');
 
     // console.log('skills', scoutBounty.skills);
@@ -484,7 +494,11 @@ END)
 
     scouts.forEach((scout) => {
       if (Array.isArray(scout.skills)) {
-        scout.skills = [...new Set(scout.skills)];
+        const devSkills = filterInDevSkills(scout.skills as string[]);
+        const subskills = (scout.skills as string[]).filter(
+          (s) => !devSkills.includes(s),
+        );
+        scout.skills = [...new Set(devSkills.concat(subskills))];
       }
     });
 
@@ -506,17 +520,6 @@ END)
       if (maxSkill < totalSkill) maxSkill = totalSkill;
       if (minSkill > totalSkill) minSkill = totalSkill;
     });
-
-    console.log(
-      'maxSubskill',
-      maxSubskill,
-      'minSubskill',
-      minSubskill,
-      'maxSkill',
-      maxSkill,
-      'minSkill',
-      minSkill,
-    );
 
     scouts.forEach((scout) => {
       let totalSubskill = 0,
@@ -541,9 +544,6 @@ END)
           : 0;
       const adjustmentScore = (normalizedSkill + normalizedSubskill) * 5;
 
-      console.log('og score', scout.score.toFixed(2));
-      console.log('adjustmentScore', adjustmentScore);
-
       scout.score = Prisma.Decimal.add(
         scout.score,
         new Prisma.Decimal(adjustmentScore.toFixed(2)),
@@ -554,8 +554,6 @@ END)
 
     res.send(scouts);
   } catch (error) {
-    // console.log(error);
-    // console.log('scout error - ', JSON.stringify(error, null, 2));
     return res.status(400).json({
       error,
       message: `Error occurred while generating scouts for bounty with id=${id}.`,
@@ -563,4 +561,4 @@ END)
   }
 }
 
-export default scoutTalent;
+export default withAuth(scoutTalent);

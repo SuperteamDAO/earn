@@ -24,14 +24,10 @@ import {
 import Image from 'next/image';
 import NextLink from 'next/link';
 import { usePostHog } from 'posthog-js/react';
-import { LuCheck, LuPlus } from 'react-icons/lu';
 
 import SparkleIcon from '../../icons/sparkle.svg';
 import { type ScoutRowType } from '../../types';
-
-interface Props {
-  talents: ScoutRowType[];
-}
+import { InviteButton } from './InviteButton';
 
 const formatter = new Intl.NumberFormat('en-US', {
   style: 'currency',
@@ -41,8 +37,13 @@ const formatter = new Intl.NumberFormat('en-US', {
 
 export const MAX_SHOW_SKILLS = 5;
 
-export function ScountTable({ talents }: Props) {
-  console.log(talents[0]);
+interface Props {
+  bountyId: string;
+  scouts: ScoutRowType[];
+  setInvited: (userId: string) => void;
+}
+
+export function ScountTable({ bountyId, scouts, setInvited }: Props) {
   const posthog = usePostHog();
 
   return (
@@ -50,7 +51,7 @@ export function ScountTable({ talents }: Props) {
       className="hide-scrollbar"
       overflowX="auto"
       w="full"
-      h={talents.length === 0 ? '25rem' : 'auto'}
+      h={scouts.length === 0 ? '25rem' : 'auto'}
       border="1px solid #E2E8F0"
       borderRadius="md"
     >
@@ -139,7 +140,7 @@ export function ScountTable({ talents }: Props) {
             <Th />
           </Tr>
         </Thead>
-        {talents.length === 0 && (
+        {scouts.length === 0 && (
           <VStack
             pos="absolute"
             top={'12rem'}
@@ -183,10 +184,10 @@ export function ScountTable({ talents }: Props) {
             </VStack>
           </VStack>
         )}
-        {talents.length > 0 && (
+        {scouts.length > 0 && (
           <Tbody color="brand.slate.500" fontSize="sm" fontWeight={500}>
-            {talents.map((talent) => (
-              <Tr key={talent.id}>
+            {scouts.map((scout) => (
+              <Tr key={scout.id + scout.invited}>
                 <Td w="fit-content" h="full" fontSize="xs">
                   <Link
                     className="ph-no-capture"
@@ -194,10 +195,10 @@ export function ScountTable({ talents }: Props) {
                     alignItems="center"
                     gap={2}
                     display="flex"
-                    href={`/t/${talent.username}`}
+                    href={`/t/${scout.username}`}
                     onClick={() => {
                       posthog.capture('profile click_scouts', {
-                        clicked_username: talent.username,
+                        clicked_username: scout.username,
                       });
                     }}
                     target="_blank"
@@ -205,7 +206,7 @@ export function ScountTable({ talents }: Props) {
                     <Avatar
                       w={{ base: 5, md: 8 }}
                       h={{ base: 5, md: 8 }}
-                      src={talent.pfp ?? undefined}
+                      src={scout.pfp ?? undefined}
                     />
                     <VStack
                       align="start"
@@ -220,9 +221,9 @@ export function ScountTable({ talents }: Props) {
                           color="black"
                           textOverflow={'ellipsis'}
                         >
-                          {talent.name}
+                          {scout.name}
                         </Text>
-                        {talent.recommended && (
+                        {scout.recommended && (
                           <Tooltip fontSize="xs" label="Superteam Recommended">
                             <Image src={SparkleIcon} alt="sparkle" />
                           </Tooltip>
@@ -233,7 +234,7 @@ export function ScountTable({ talents }: Props) {
                         maxW={'7rem'}
                         textOverflow={'ellipsis'}
                       >
-                        @{talent.username}
+                        @{scout.username}
                       </Text>
                     </VStack>
                   </Link>
@@ -241,21 +242,21 @@ export function ScountTable({ talents }: Props) {
                 <Td h="full" px={{ base: 1, md: 2 }}>
                   <Flex justify="center" gap={2}>
                     <Text color="black" textAlign={'center'}>
-                      {formatter(talent.dollarsEarned)}
+                      {formatter(scout.dollarsEarned)}
                     </Text>
                   </Flex>
                 </Td>
                 <Td h="full" px={{ base: 1, md: 2 }}>
                   <Flex align="center" justify="center" gap={3}>
                     <Text color="black" textAlign={'center'}>
-                      {talent.score}
+                      {scout.score}
                     </Text>
-                    <ScoreBar score={talent.score} />
+                    <ScoreBar score={scout.score} />
                   </Flex>
                 </Td>
                 <Td h="full" px={{ base: 1, md: 2 }}>
                   <Flex gap={2} h="full" textAlign={'center'}>
-                    {talent.skills.slice(0, MAX_SHOW_SKILLS).map((s) => (
+                    {scout.skills.slice(0, MAX_SHOW_SKILLS).map((s) => (
                       <Badge
                         key={s}
                         px={2}
@@ -268,7 +269,7 @@ export function ScountTable({ talents }: Props) {
                         {s}
                       </Badge>
                     ))}
-                    {talent.skills.length > MAX_SHOW_SKILLS && (
+                    {scout.skills.length > MAX_SHOW_SKILLS && (
                       <Popover trigger="hover">
                         <PopoverTrigger>
                           <Badge
@@ -280,7 +281,7 @@ export function ScountTable({ talents }: Props) {
                             bg="#EFF1F5"
                             rounded="full"
                           >
-                            +{talent.skills.length - MAX_SHOW_SKILLS}
+                            +{scout.skills.length - MAX_SHOW_SKILLS}
                           </Badge>
                         </PopoverTrigger>
                         <PopoverContent
@@ -297,7 +298,7 @@ export function ScountTable({ talents }: Props) {
                             h="full"
                             textAlign={'center'}
                           >
-                            {talent.skills.slice(MAX_SHOW_SKILLS).map((s) => (
+                            {scout.skills.slice(MAX_SHOW_SKILLS).map((s) => (
                               <Badge
                                 key={s}
                                 px={2}
@@ -325,10 +326,10 @@ export function ScountTable({ talents }: Props) {
                       alignItems="center"
                       display="block"
                       h="full"
-                      href={`/t/${talent.username}`}
+                      href={`/t/${scout.username}`}
                       onClick={() => {
                         posthog.capture('view profile click_scouts', {
-                          clicked_username: talent.username,
+                          clicked_username: scout.username,
                         });
                       }}
                       target="_blank"
@@ -337,26 +338,12 @@ export function ScountTable({ talents }: Props) {
                         View Profile
                       </Button>
                     </Link>
-                    <Button
-                      gap={2}
-                      h="full"
-                      color="brand.purple"
-                      fontSize="xs"
-                      bg="#E0E7FF"
-                      _disabled={{
-                        bg: 'brand.slate.100',
-                        color: 'brand.slate.400',
-                        cursor: 'not-allowed',
-                      }}
-                      isDisabled={talent.invited}
-                    >
-                      {talent.invited ? (
-                        <LuCheck strokeLinecap="square" strokeWidth={3} />
-                      ) : (
-                        <LuPlus strokeLinecap="square" strokeWidth={3} />
-                      )}
-                      Invite
-                    </Button>
+                    <InviteButton
+                      setInvited={setInvited}
+                      userId={scout.userId}
+                      invited={scout.invited}
+                      bountyId={bountyId}
+                    />
                   </Flex>
                 </Td>
               </Tr>
@@ -370,8 +357,8 @@ export function ScountTable({ talents }: Props) {
 
 function ScoreBar({ score }: { score: number }) {
   const first = normalizeValue(score, 5, 6),
-    second = normalizeValue(score, 6, 8),
-    third = normalizeValue(score, 8, 10),
+    second = normalizeValue(score, 6, 7),
+    third = normalizeValue(score, 7, 10),
     color = colorScore(score);
 
   return (

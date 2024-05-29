@@ -133,6 +133,7 @@ function BountySubmissions({ slug }: Props) {
       );
       const scouts: ScoutRowType[] = scoutsData.data.map((s) => ({
         id: s.id,
+        userId: s.userId,
         skills: [...new Set(s.skills)],
         dollarsEarned: s.dollarsEarned,
         score: s.score,
@@ -310,11 +311,36 @@ function BountySubmissions({ slug }: Props) {
                   </>
                 )}
               </TabPanel>
-              {bounty?.isPublished && !bounty?.isWinnersAnnounced && (
-                <TabPanel px={0}>
-                  <ScountTable talents={scouts} />
-                </TabPanel>
-              )}
+              {bounty &&
+                bounty.id &&
+                bounty.isPublished &&
+                !bounty.isWinnersAnnounced && (
+                  <TabPanel px={0}>
+                    <ScountTable
+                      bountyId={bounty.id}
+                      scouts={scouts}
+                      setInvited={(userId: string) => {
+                        const scout = scouts.find(
+                          (scout) => scout.userId === userId,
+                        );
+                        if (!scout) return;
+                        if (scout) {
+                          scout.invited = true;
+                        }
+                        const scoutIndex = scouts.findIndex(
+                          (scout) => scout.userId === userId,
+                        );
+                        if (scoutIndex > -1 && scoutIndex < scouts.length) {
+                          const scoutsNew = [...scouts];
+                          if (scoutsNew[scoutIndex]) {
+                            scoutsNew[scoutIndex] = scout;
+                          }
+                          setScouts(scoutsNew);
+                        }
+                      }}
+                    />
+                  </TabPanel>
+                )}
             </TabPanels>
           </Tabs>
         </>
