@@ -57,11 +57,14 @@ export function InviteButton({ bountyId, userId, invited, setInvited }: Props) {
       }}
     >
       {invited ? (
-        <LuCheck strokeLinecap="square" strokeWidth={3} />
+        <>
+          <LuCheck strokeLinecap="square" strokeWidth={3} /> Invited
+        </>
       ) : (
-        <LuPlus strokeLinecap="square" strokeWidth={3} />
+        <>
+          <LuPlus strokeLinecap="square" strokeWidth={3} /> Invite
+        </>
       )}
-      Invite
     </Button>
   );
 }
