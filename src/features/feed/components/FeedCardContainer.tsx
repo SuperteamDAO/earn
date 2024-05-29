@@ -10,6 +10,7 @@ import {
 import axios from 'axios';
 import NextLink from 'next/link';
 import { useRouter } from 'next/router';
+import { usePostHog } from 'posthog-js/react';
 import { type ReactNode, useEffect, useState } from 'react';
 import { GoComment } from 'react-icons/go';
 import { IoMdHeart, IoMdHeartEmpty } from 'react-icons/io';
@@ -73,6 +74,8 @@ export const FeedCardContainer = ({
 
   const handleLike = async () => {
     const newIsLiked = !isLiked;
+    if (newIsLiked) posthog.capture('liked post_feed');
+    else posthog.capture('unliked post_feed');
     const newTotalLikes = newIsLiked
       ? totalLikes + 1
       : Math.max(totalLikes - 1, 0);
@@ -91,6 +94,7 @@ export const FeedCardContainer = ({
   };
 
   const router = useRouter();
+  const posthog = usePostHog();
   const isSM = useBreakpointValue({ base: false, md: true });
 
   return (
@@ -150,6 +154,7 @@ export const FeedCardContainer = ({
           {id && (
             <Flex align={'center'} mt={2} pointerEvents={id ? 'all' : 'none'}>
               <Box
+                className="ph-no-capture"
                 zIndex={10}
                 alignItems={'center'}
                 gap={1}

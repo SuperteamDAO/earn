@@ -214,6 +214,7 @@ export const MobileNavbar = ({ onLoginOpen, onSearchOpen }: Props) => {
 
             {router.pathname !== '/search' && (
               <IconButton
+                className="ph-no-capture"
                 gap={2}
                 color="brand.slate.400"
                 fontWeight={400}
