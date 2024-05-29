@@ -188,6 +188,9 @@ export const MobileNavbar = () => {
           display={'flex'}
           _hover={{ textDecoration: 'none' }}
           href="/"
+          onClick={() => {
+            posthog.capture('homepage logo click_universal');
+          }}
         >
           <Image
             h={5}

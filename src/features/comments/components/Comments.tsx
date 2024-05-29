@@ -164,6 +164,7 @@ export const Comments = ({
     <>
       {isOpen && (
         <WarningModal
+          onCTAClick={() => posthog.capture('complete profile_CTA pop up')}
           isOpen={isOpen}
           onClose={onClose}
           title={'Complete your profile'}

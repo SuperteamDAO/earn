@@ -1,5 +1,6 @@
 import { Box, useDisclosure } from '@chakra-ui/react';
 import { useSession } from 'next-auth/react';
+import { usePostHog } from 'posthog-js/react';
 import { useEffect } from 'react';
 
 import { Login } from '@/features/auth';
@@ -24,6 +25,12 @@ export const Header = () => {
     onClose: onSearchClose,
   } = useDisclosure();
 
+  const posthog = usePostHog();
+  function searchOpenWithEvent() {
+    posthog.capture('initiate_search');
+    onSearchOpen();
+  }
+
   useEffect(() => {
     const checkHashAndOpenModal = () => {
       const hashHasEmail = window.location.hash === '#emailPreferences';
@@ -42,10 +49,16 @@ export const Header = () => {
       <BountySnackbar />
       {/* {isRootRoute && <AnnouncementBar />} */}
       <Box pos="sticky" zIndex="sticky" top={0}>
-        <DesktopNavbar onLoginOpen={onLoginOpen} onSearchOpen={onSearchOpen} />
+        <DesktopNavbar
+          onLoginOpen={onLoginOpen}
+          onSearchOpen={searchOpenWithEvent}
+        />
       </Box>
 
-      <MobileNavbar onLoginOpen={onLoginOpen} onSearchOpen={onSearchOpen} />
+      <MobileNavbar
+        onLoginOpen={onLoginOpen}
+        onSearchOpen={searchOpenWithEvent}
+      />
       <SearchModal isOpen={isSearchOpen} onClose={onSearchClose} />
     </>
   );

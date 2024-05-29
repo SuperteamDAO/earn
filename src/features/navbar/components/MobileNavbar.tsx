@@ -214,6 +214,7 @@ export const MobileNavbar = ({ onLoginOpen, onSearchOpen }: Props) => {
 
             {router.pathname !== '/search' && (
               <IconButton
+                className="ph-no-capture"
                 gap={2}
                 color="brand.slate.400"
                 fontWeight={400}
@@ -236,6 +237,9 @@ export const MobileNavbar = ({ onLoginOpen, onSearchOpen }: Props) => {
               alignItems={'center'}
               _hover={{ textDecoration: 'none' }}
               href="/"
+              onClick={() => {
+                posthog.capture('homepage logo click_universal');
+              }}
             >
               <Image
                 h={5}

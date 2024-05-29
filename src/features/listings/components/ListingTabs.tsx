@@ -47,7 +47,7 @@ const generateTabContent = ({
   emptyMessage,
   checkLanguage,
 }: ContentProps) => (
-  <Flex direction={'column'} rowGap={1}>
+  <Flex className="ph-no-capture" direction={'column'} rowGap={1}>
     {isListingsLoading ? (
       Array.from({ length: 8 }, (_, index) => (
         <ListingCardSkeleton key={index} />
@@ -237,7 +237,7 @@ export const ListingTabs = ({
                 py={1}
                 color="brand.slate.400"
                 fontSize={['x-small', 'sm', 'sm', 'sm']}
-                onClick={() => posthog.capture('listings_viewall_top')}
+                onClick={() => posthog.capture('viewall top_listngs')}
                 size={{ base: 'x-small', md: 'sm' }}
                 variant={'ghost'}
               >
@@ -258,7 +258,7 @@ export const ListingTabs = ({
             py={5}
             color="brand.slate.400"
             borderColor="brand.slate.300"
-            onClick={() => posthog.capture('listings_viewall_bottom')}
+            onClick={() => posthog.capture('viewall bottom_listings')}
             rightIcon={<ArrowForwardIcon />}
             size="sm"
             variant="outline"
