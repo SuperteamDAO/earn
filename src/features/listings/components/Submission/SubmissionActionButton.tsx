@@ -44,7 +44,6 @@ export const SubmissionActionButton = ({
     isPublished,
     deadline,
     region,
-    applicationLink,
     type,
     isWinnersAnnounced,
   } = listing;
@@ -78,10 +77,6 @@ export const SubmissionActionButton = ({
 
   const handleSubmit = () => {
     if (isAuthenticated) {
-      if (applicationLink) {
-        window.open(applicationLink, '_blank');
-        return;
-      }
       if (!userInfo?.isTalentFilled) {
         warningOnOpen();
       } else {

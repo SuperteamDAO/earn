@@ -152,37 +152,62 @@ model Comment {
 }
 
 model Grants {
-  id               String      @id @default(uuid())
+  id               String             @id @default(uuid())
   title            String
-  slug             String      @unique
-  description      String?     @db.Text
-  shortDescription String?     @db.VarChar(1000)
+  slug             String             @unique
+  description      String?            @db.Text
+  shortDescription String?            @db.VarChar(1000)
   token            String?
   minReward        Int?
   maxReward        Int?
-  totalPaid        Int         @default(0)
+  totalPaid        Int                @default(0)
   link             String?
   sponsorId        String
   pocId            String
-  isPublished      Boolean     @default(false)
-  isFeatured       Boolean     @default(false)
-  isActive         Boolean     @default(true)
-  isArchived       Boolean     @default(false)
-  createdAt        DateTime    @default(now())
-  updatedAt        DateTime    @updatedAt
+  isPublished      Boolean            @default(false)
+  isFeatured       Boolean            @default(false)
+  isActive         Boolean            @default(true)
+  isArchived       Boolean            @default(false)
+  createdAt        DateTime           @default(now())
+  updatedAt        DateTime           @updatedAt
   skills           Json?
   logo             String?
-  region           Regions     @default(GLOBAL)
-  sponsor          Sponsors    @relation(fields: [sponsorId], references: [id])
-  poc              User        @relation(fields: [pocId], references: [id])
-  eligibility      Json?
+  region           Regions            @default(GLOBAL)
+  sponsor          Sponsors           @relation(fields: [sponsorId], references: [id])
+  poc              User               @relation(fields: [pocId], references: [id])
+  questions        Json?
   pocSocials       String?
-  status           GrantStatus @default(OPEN)
+  status           GrantStatus        @default(OPEN)
   references       Json?
+  requirements     String?            @db.Text
+  GrantApplication GrantApplication[]
 
   @@index([id, slug])
   @@index([pocId])
   @@index([sponsorId])
+}
+
+model GrantApplication {
+  id                String                 @id @default(uuid())
+  userId            String
+  grantId           String
+  applicationStatus GrantApplicationStatus @default(Pending)
+  milestones        Json?
+  answers           Json?
+  createdAt         DateTime               @default(now())
+  updatedAt         DateTime               @updatedAt
+  user              User                   @relation(fields: [userId], references: [id])
+  grant             Grants                 @relation(fields: [grantId], references: [id])
+  label             SubmissionLabels       @default(Unreviewed)
+  ask               Int                    @default(0)
+  approvedAmount    Int                    @default(0)
+  totalPaid         Int                    @default(0)
+  discordId         String
+  twitterId         String
+  walletAddress     String
+
+  @@index([userId])
+  @@index([grantId])
 }
 
 model Submission {
@@ -275,19 +300,19 @@ model Session {
 }
 
 model User {
-  id                String            @id @default(uuid())
+  id                String             @id @default(uuid())
   publicKey         String?
-  email             String            @unique
-  username          String?           @unique
+  email             String             @unique
+  username          String?            @unique
   photo             String?
   firstName         String?
   lastName          String?
-  createdAt         DateTime          @default(now())
-  updatedAt         DateTime          @updatedAt
-  isVerified        Boolean           @default(false)
-  role              String            @default("USER")
-  totalEarnedInUSD  Int               @default(0)
-  isTalentFilled    Boolean           @default(false)
+  createdAt         DateTime           @default(now())
+  updatedAt         DateTime           @updatedAt
+  isVerified        Boolean            @default(false)
+  role              String             @default("USER")
+  totalEarnedInUSD  Int                @default(0)
+  isTalentFilled    Boolean            @default(false)
   interests         String?
   bio               String?
   twitter           String?
@@ -303,18 +328,18 @@ model User {
   cryptoExperience  String?
   workPrefernce     String?
   currentEmployer   String?
-  pow               String?           @db.VarChar(2000)
+  pow               String?            @db.VarChar(2000)
   notifications     Json?
-  private           Boolean           @default(false)
+  private           Boolean            @default(false)
   skills            Json?
   currentSponsorId  String?
   emailVerified     DateTime?
   hackathonId       String?
-  featureModalShown Boolean           @default(false)
+  featureModalShown Boolean            @default(false)
   surveysShown      Json?
-  currentSponsor    Sponsors?         @relation(fields: [currentSponsorId], references: [id])
+  currentSponsor    Sponsors?          @relation(fields: [currentSponsorId], references: [id])
   UserSponsors      UserSponsors[]
-  poc               Bounties[]        @relation("poc")
+  poc               Bounties[]         @relation("poc")
   Comment           Comment[]
   Submission        Submission[]
   Grants            Grants[]
@@ -323,9 +348,10 @@ model User {
   PoW               PoW[]
   accounts          Account[]
   sessions          Session[]
-  Hackathon         Hackathon?        @relation(fields: [hackathonId], references: [id])
+  Hackathon         Hackathon?         @relation(fields: [hackathonId], references: [id])
   emailSettings     EmailSettings[]
   TalentRankings    TalentRankings[]
+  GrantApplication  GrantApplication[]
 
   @@index([email, publicKey, username])
   @@index([currentSponsorId])
@@ -503,6 +529,12 @@ enum status {
 enum GrantStatus {
   OPEN
   CLOSED
+}
+
+enum GrantApplicationStatus {
+  Approved
+  Pending
+  Rejected
 }
 
 enum BountyType {

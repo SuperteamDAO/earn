@@ -38,6 +38,9 @@ interface GrantsDetailsProps {
 
 const Grants = ({ slug }: GrantsDetailsProps) => {
   const [grant, setGrant] = useState<Grant | null>(null);
+  const [applicationNumber, setApplicationNumber] = useState<number>(0);
+  const [isApplicationNumberLoading, setIsApplicationNumberLoading] =
+    useState(true);
 
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState(false);
@@ -60,6 +63,25 @@ const Grants = ({ slug }: GrantsDetailsProps) => {
     if (!isLoading) return;
     posthog.capture('open_grant');
     getGrants();
+  }, []);
+
+  const getApplicationCount = async () => {
+    setIsApplicationNumberLoading(true);
+    try {
+      const submissionCountDetails = await axios.get(
+        `/api/grants/application/${grant?.id}/count/`,
+      );
+      const count = submissionCountDetails?.data || 0;
+      setApplicationNumber(count);
+      setIsApplicationNumberLoading(false);
+    } catch (e) {
+      setIsApplicationNumberLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    if (!isApplicationNumberLoading) return;
+    getApplicationCount();
   }, []);
 
   return (
@@ -227,7 +249,9 @@ const Grants = ({ slug }: GrantsDetailsProps) => {
                             fontSize={{ base: 'lg', md: 'xl' }}
                             fontWeight={500}
                           >
-                            23
+                            {isApplicationNumberLoading
+                              ? '...'
+                              : applicationNumber.toLocaleString()}
                           </Text>
                           <Text
                             mt={-1}
@@ -240,9 +264,13 @@ const Grants = ({ slug }: GrantsDetailsProps) => {
                         </Flex>
                       </Flex>
                     </Flex>
-                    <GrantApplicationButton grant={grant} />
+                    <GrantApplicationButton
+                      applicationNumber={applicationNumber}
+                      setApplicationNumber={setApplicationNumber}
+                      grant={grant}
+                    />
                   </VStack>
-                  {grant.eligibility && (
+                  {grant.requirements && (
                     <VStack
                       align="start"
                       w={{ base: 'full', md: '22rem' }}
@@ -260,7 +288,9 @@ const Grants = ({ slug }: GrantsDetailsProps) => {
                       >
                         ELIGIBILITY
                       </Text>
-                      <Text color={'brand.slate.500'}>{grant.eligibility}</Text>
+                      <Text color={'brand.slate.500'}>
+                        {grant.requirements}
+                      </Text>
                     </VStack>
                   )}
                   {grant.pocSocials && (

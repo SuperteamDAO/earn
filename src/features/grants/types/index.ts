@@ -25,11 +25,13 @@ interface Grant {
   updatedAt?: string;
   minReward?: number;
   maxReward?: number;
-  eligibility?: any;
+  questions?: any;
   pocSocials?: string;
   status: string;
   region: string;
   references: References[];
+  requirements: string;
+  applicationStatus: 'Pending' | 'Approved' | 'Rejected';
 }
 
 export type { Grant };
