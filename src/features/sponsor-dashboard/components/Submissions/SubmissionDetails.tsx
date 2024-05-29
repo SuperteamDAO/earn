@@ -358,32 +358,44 @@ export const SubmissionDetails = ({
                   </Link>
                 </Box>
               </Flex>
-              <Flex align="center" justify={'flex-end'} gap={2} w="full">
+              <Flex
+                className="ph-no-capture"
+                align="center"
+                justify={'flex-end'}
+                gap={2}
+                w="full"
+              >
                 {selectedSubmission?.isWinner &&
                   selectedSubmission?.winnerPosition &&
                   !selectedSubmission?.isPaid &&
                   (bounty?.isWinnersAnnounced ? (
                     <>
-                      <DynamicWalletMultiButton
-                        style={{
-                          height: '40px',
-                          fontWeight: 600,
-                          fontFamily: 'Inter',
-                          // maxWidth: '96px',
-                          paddingRight: '16px',
-                          paddingLeft: '16px',
-                          fontSize: '12px',
-                        }}
+                      <div
                         className="ph-no-capture"
+                        onClick={() => {
+                          posthog.capture('connect wallet_payment');
+                        }}
                       >
-                        {connected
-                          ? truncatePublicKey(publicKey?.toBase58(), 3)
-                          : `Pay ${bounty?.token} ${
-                              bounty?.rewards?.[
-                                selectedSubmission?.winnerPosition as keyof Rewards
-                              ] || '0'
-                            }`}
-                      </DynamicWalletMultiButton>
+                        <DynamicWalletMultiButton
+                          style={{
+                            height: '40px',
+                            fontWeight: 600,
+                            fontFamily: 'Inter',
+                            // maxWidth: '96px',
+                            paddingRight: '16px',
+                            paddingLeft: '16px',
+                            fontSize: '12px',
+                          }}
+                        >
+                          {connected
+                            ? truncatePublicKey(publicKey?.toBase58(), 3)
+                            : `Pay ${bounty?.token} ${
+                                bounty?.rewards?.[
+                                  selectedSubmission?.winnerPosition as keyof Rewards
+                                ] || '0'
+                              }`}
+                        </DynamicWalletMultiButton>
+                      </div>
                       {connected && (
                         <Button
                           className="ph-no-capture"
