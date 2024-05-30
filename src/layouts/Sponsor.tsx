@@ -107,7 +107,6 @@ export function Sidebar({
         userInfo?.currentSponsorId &&
         (!userInfo?.firstName || !userInfo?.lastName || !userInfo?.username)
       ) {
-        onScoutAnnounceModalClose();
         onSponsorInfoModalOpen();
       } else if (
         userInfo?.featureModalShown === false &&

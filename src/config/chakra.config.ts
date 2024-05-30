@@ -152,25 +152,6 @@ const theme = extendTheme({
         },
       },
     },
-    // Progress: {
-    //   variants: {
-    //     lightGreen: {
-    //       filledTrack: {
-    //         bg: '#84CC16'
-    //       }
-    //     },
-    //     darkGreen: {
-    //       filledTrack: {
-    //         bg: '#0D9488'
-    //       }
-    //     },
-    //     lightYellow: {
-    //       filledTrack: {
-    //         bg: '#FDBA74'
-    //       }
-    //     }
-    //   }
-    // }
   },
 });
 
