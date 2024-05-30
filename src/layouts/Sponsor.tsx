@@ -85,7 +85,7 @@ export function Sidebar({
     onClose: onScoutAnnounceModalClose,
   } = useDisclosure();
 
-  function sponsotInfoCloseAltered() {
+  function sponsorInfoCloseAltered() {
     onSponsorInfoModalClose();
     onScoutAnnounceModalOpen();
   }
@@ -234,7 +234,7 @@ export function Sidebar({
         isOpen={isScoutAnnounceModalOpen}
       />
       <SponsorInfoModal
-        onClose={sponsotInfoCloseAltered}
+        onClose={sponsorInfoCloseAltered}
         isOpen={isSponsorInfoModalOpen}
       />
       <Flex display={{ base: 'flex', md: 'none' }} minH="80vh" px={3}>

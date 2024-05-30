@@ -46,17 +46,17 @@ function BountySubmissions({ slug }: Props) {
   const { isOpen, onOpen, onClose } = useDisclosure();
   const { userInfo } = userStore();
   const [bounty, setBounty] = useState<Bounty | null>(null);
-  const [totalSubmissions, setTotalSubmissions] = useState(-1);
-  const [totalWinners, setTotalWinners] = useState(-1);
-  const [totalPaymentsMade, setTotalPaymentsMade] = useState(-1);
+  const [totalSubmissions, setTotalSubmissions] = useState(0);
+  const [totalWinners, setTotalWinners] = useState(0);
+  const [totalPaymentsMade, setTotalPaymentsMade] = useState(0);
   const [submissions, setSubmissions] = useState<SubmissionWithUser[]>([]);
   const [scouts, setScouts] = useState<ScoutRowType[]>([]);
   const [selectedSubmission, setSelectedSubmission] =
     useState<SubmissionWithUser>();
   const [rewards, setRewards] = useState<string[]>([]);
   const [isBountyLoading, setIsBountyLoading] = useState(true);
-  const [skip, setSkip] = useState(-1);
-  let length = 9;
+  const [skip, setSkip] = useState(0);
+  let length = 10;
   const [searchText, setSearchText] = useState('');
 
   const [usedPositions, setUsedPositions] = useState<string[]>([]);
