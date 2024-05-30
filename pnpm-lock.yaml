@@ -25,7 +25,7 @@ dependencies:
     version: 1.0.7(@prisma/client@5.14.0)(next-auth@4.24.7)
   '@prisma/client':
     specifier: 5.14.0
-    version: 5.14.0(prisma@5.10.2)
+    version: 5.14.0(prisma@5.14.0)
   '@solana/spl-token':
     specifier: ^0.4.3
     version: 0.4.6(@solana/web3.js@1.91.8)(fastestsmallesttextencoderdecoder@1.0.22)
@@ -34,10 +34,10 @@ dependencies:
     version: 0.9.23(@solana/web3.js@1.91.8)
   '@solana/wallet-adapter-react':
     specifier: ^0.15.35
-    version: 0.15.35(@solana/web3.js@1.91.8)(bs58@4.0.1)(react-native@0.74.1)(react@18.3.1)
+    version: 0.15.35(@solana/web3.js@1.91.8)(bs58@5.0.0)(react-native@0.74.1)(react@18.3.1)
   '@solana/wallet-adapter-react-ui':
     specifier: ^0.9.35
-    version: 0.9.35(@solana/web3.js@1.91.8)(bs58@4.0.1)(react-dom@18.3.1)(react-native@0.74.1)(react@18.3.1)
+    version: 0.9.35(@solana/web3.js@1.91.8)(bs58@5.0.0)(react-dom@18.3.1)(react-native@0.74.1)(react@18.3.1)
   '@solana/web3.js':
     specifier: ^1.91.8
     version: 1.91.8
@@ -275,8 +275,8 @@ devDependencies:
     specifier: ^3.2.4
     version: 3.2.5
   prisma:
-    specifier: 5.10.2
-    version: 5.10.2
+    specifier: 5.14.0
+    version: 5.14.0
   typescript:
     specifier: 5.3.3
     version: 5.3.3
@@ -4363,7 +4363,7 @@ packages:
       '@prisma/client': '>=2.26.0 || >=3'
       next-auth: ^4
     dependencies:
-      '@prisma/client': 5.14.0(prisma@5.10.2)
+      '@prisma/client': 5.14.0(prisma@5.14.0)
       next-auth: 4.24.7(next@14.2.3)(nodemailer@6.9.13)(react-dom@18.3.1)(react@18.3.1)
     dev: false
 
@@ -4510,7 +4510,7 @@ packages:
     resolution: {integrity: sha512-P1st0aksCrn9sGZhp8GMYwBnQsbvAWsZAX44oXNNvLHGqAOcoVxmjZiohstwQ7SqKnbR47akdNi+uleWD8+g6A==}
     dev: false
 
-  /@prisma/client@5.14.0(prisma@5.10.2):
+  /@prisma/client@5.14.0(prisma@5.14.0):
     resolution: {integrity: sha512-akMSuyvLKeoU4LeyBAUdThP/uhVP3GuLygFE3MlYzaCb3/J8SfsYBE5PkaFuLuVpLyA6sFoW+16z/aPhNAESqg==}
     engines: {node: '>=16.13'}
     requiresBuild: true
@@ -4520,35 +4520,35 @@ packages:
       prisma:
         optional: true
     dependencies:
-      prisma: 5.10.2
+      prisma: 5.14.0
     dev: false
 
-  /@prisma/debug@5.10.2:
-    resolution: {integrity: sha512-bkBOmH9dpEBbMKFJj8V+Zp8IZHIBjy3fSyhLhxj4FmKGb/UBSt9doyfA6k1UeUREsMJft7xgPYBbHSOYBr8XCA==}
+  /@prisma/debug@5.14.0:
+    resolution: {integrity: sha512-iq56qBZuFfX3fCxoxT8gBX33lQzomBU0qIUaEj1RebsKVz1ob/BVH1XSBwwwvRVtZEV1b7Fxx2eVu34Ge/mg3w==}
 
-  /@prisma/engines-version@5.10.0-34.5a9203d0590c951969e85a7d07215503f4672eb9:
-    resolution: {integrity: sha512-uCy/++3Jx/O3ufM+qv2H1L4tOemTNqcP/gyEVOlZqTpBvYJUe0tWtW0y3o2Ueq04mll4aM5X3f6ugQftOSLdFQ==}
+  /@prisma/engines-version@5.14.0-25.e9771e62de70f79a5e1c604a2d7c8e2a0a874b48:
+    resolution: {integrity: sha512-ip6pNkRo1UxWv+6toxNcYvItNYaqQjXdFNGJ+Nuk2eYtRoEdoF13wxo7/jsClJFFenMPVNVqXQDV0oveXnR1cA==}
 
-  /@prisma/engines@5.10.2:
-    resolution: {integrity: sha512-HkSJvix6PW8YqEEt3zHfCYYJY69CXsNdhU+wna+4Y7EZ+AwzeupMnUThmvaDA7uqswiHkgm5/SZ6/4CStjaGmw==}
+  /@prisma/engines@5.14.0:
+    resolution: {integrity: sha512-lgxkKZ6IEygVcw6IZZUlPIfLQ9hjSYAtHjZ5r64sCLDgVzsPFCi2XBBJgzPMkOQ5RHzUD4E/dVdpn9+ez8tk1A==}
     requiresBuild: true
     dependencies:
-      '@prisma/debug': 5.10.2
-      '@prisma/engines-version': 5.10.0-34.5a9203d0590c951969e85a7d07215503f4672eb9
-      '@prisma/fetch-engine': 5.10.2
-      '@prisma/get-platform': 5.10.2
+      '@prisma/debug': 5.14.0
+      '@prisma/engines-version': 5.14.0-25.e9771e62de70f79a5e1c604a2d7c8e2a0a874b48
+      '@prisma/fetch-engine': 5.14.0
+      '@prisma/get-platform': 5.14.0
 
-  /@prisma/fetch-engine@5.10.2:
-    resolution: {integrity: sha512-dSmXcqSt6DpTmMaLQ9K8ZKzVAMH3qwGCmYEZr/uVnzVhxRJ1EbT/w2MMwIdBNq1zT69Rvh0h75WMIi0mrIw7Hg==}
+  /@prisma/fetch-engine@5.14.0:
+    resolution: {integrity: sha512-VrheA9y9DMURK5vu8OJoOgQpxOhas3qF0IBHJ8G/0X44k82kc8E0w98HCn2nhnbOOMwbWsJWXfLC2/F8n5u0gQ==}
     dependencies:
-      '@prisma/debug': 5.10.2
-      '@prisma/engines-version': 5.10.0-34.5a9203d0590c951969e85a7d07215503f4672eb9
-      '@prisma/get-platform': 5.10.2
+      '@prisma/debug': 5.14.0
+      '@prisma/engines-version': 5.14.0-25.e9771e62de70f79a5e1c604a2d7c8e2a0a874b48
+      '@prisma/get-platform': 5.14.0
 
-  /@prisma/get-platform@5.10.2:
-    resolution: {integrity: sha512-nqXP6vHiY2PIsebBAuDeWiUYg8h8mfjBckHh6Jezuwej0QJNnjDiOq30uesmg+JXxGk99nqyG3B7wpcOODzXvg==}
+  /@prisma/get-platform@5.14.0:
+    resolution: {integrity: sha512-/yAyBvcEjRv41ynZrhdrPtHgk47xLRRq/o5eWGcUpBJ1YrUZTYB8EoPiopnP7iQrMATK8stXQdPOoVlrzuTQZw==}
     dependencies:
-      '@prisma/debug': 5.10.2
+      '@prisma/debug': 5.14.0
 
   /@react-email/render@0.0.12:
     resolution: {integrity: sha512-S8WRv/PqECEi6x0QJBj0asnAb5GFtJaHlnByxLETLkgJjc76cxMYDH4r9wdbuJ4sjkcbpwP3LPnVzwS+aIjT7g==}
@@ -5241,14 +5241,14 @@ packages:
       buffer: 6.0.3
     dev: false
 
-  /@solana/wallet-adapter-base-ui@0.1.2(@solana/web3.js@1.91.8)(bs58@4.0.1)(react-native@0.74.1)(react@18.3.1):
+  /@solana/wallet-adapter-base-ui@0.1.2(@solana/web3.js@1.91.8)(bs58@5.0.0)(react-native@0.74.1)(react@18.3.1):
     resolution: {integrity: sha512-33l0WqY0mKKhcrNBbqS9anvT4MjzNnKewoF1VcdbI/uSlMOZtGy+9fr8ETVFI+ivr44QHpvbiZX9dmz2mTCGXw==}
     engines: {node: '>=16'}
     peerDependencies:
       '@solana/web3.js': ^1.77.3
       react: '*'
     dependencies:
-      '@solana/wallet-adapter-react': 0.15.35(@solana/web3.js@1.91.8)(bs58@4.0.1)(react-native@0.74.1)(react@18.3.1)
+      '@solana/wallet-adapter-react': 0.15.35(@solana/web3.js@1.91.8)(bs58@5.0.0)(react-native@0.74.1)(react@18.3.1)
       '@solana/web3.js': 1.91.8
       react: 18.3.1
     transitivePeerDependencies:
@@ -5269,7 +5269,7 @@ packages:
       eventemitter3: 4.0.7
     dev: false
 
-  /@solana/wallet-adapter-react-ui@0.9.35(@solana/web3.js@1.91.8)(bs58@4.0.1)(react-dom@18.3.1)(react-native@0.74.1)(react@18.3.1):
+  /@solana/wallet-adapter-react-ui@0.9.35(@solana/web3.js@1.91.8)(bs58@5.0.0)(react-dom@18.3.1)(react-native@0.74.1)(react@18.3.1):
     resolution: {integrity: sha512-SyHUavEAyzBL5zim5xAlYaqP5jF3bOtxi/02wgXzMpKXUYpG4EiXXY3DeGw5eUbcvvej45rQENtTHWEEH9fW+A==}
     engines: {node: '>=16'}
     peerDependencies:
@@ -5278,8 +5278,8 @@ packages:
       react-dom: '*'
     dependencies:
       '@solana/wallet-adapter-base': 0.9.23(@solana/web3.js@1.91.8)
-      '@solana/wallet-adapter-base-ui': 0.1.2(@solana/web3.js@1.91.8)(bs58@4.0.1)(react-native@0.74.1)(react@18.3.1)
-      '@solana/wallet-adapter-react': 0.15.35(@solana/web3.js@1.91.8)(bs58@4.0.1)(react-native@0.74.1)(react@18.3.1)
+      '@solana/wallet-adapter-base-ui': 0.1.2(@solana/web3.js@1.91.8)(bs58@5.0.0)(react-native@0.74.1)(react@18.3.1)
+      '@solana/wallet-adapter-react': 0.15.35(@solana/web3.js@1.91.8)(bs58@5.0.0)(react-native@0.74.1)(react@18.3.1)
       '@solana/web3.js': 1.91.8
       react: 18.3.1
       react-dom: 18.3.1(react@18.3.1)
@@ -5288,7 +5288,7 @@ packages:
       - react-native
     dev: false
 
-  /@solana/wallet-adapter-react@0.15.35(@solana/web3.js@1.91.8)(bs58@4.0.1)(react-native@0.74.1)(react@18.3.1):
+  /@solana/wallet-adapter-react@0.15.35(@solana/web3.js@1.91.8)(bs58@5.0.0)(react-native@0.74.1)(react@18.3.1):
     resolution: {integrity: sha512-i4hc/gNLTYNLMEt2LS+4lrrc0QAwa5SU2PtYMnZ2A3rsoKF5m1bv1h6cjLj2KBry4/zRGEBoqkiMOC5zHkLnRQ==}
     engines: {node: '>=16'}
     peerDependencies:
@@ -5297,7 +5297,7 @@ packages:
     dependencies:
       '@solana-mobile/wallet-adapter-mobile': 2.1.2(@solana/web3.js@1.91.8)(react-native@0.74.1)(react@18.3.1)
       '@solana/wallet-adapter-base': 0.9.23(@solana/web3.js@1.91.8)
-      '@solana/wallet-standard-wallet-adapter-react': 1.1.2(@solana/wallet-adapter-base@0.9.23)(@solana/web3.js@1.91.8)(bs58@4.0.1)(react@18.3.1)
+      '@solana/wallet-standard-wallet-adapter-react': 1.1.2(@solana/wallet-adapter-base@0.9.23)(@solana/web3.js@1.91.8)(bs58@5.0.0)(react@18.3.1)
       '@solana/web3.js': 1.91.8
       react: 18.3.1
     transitivePeerDependencies:
@@ -5338,25 +5338,6 @@ packages:
       '@solana/wallet-standard-features': 1.2.0
     dev: false
 
-  /@solana/wallet-standard-wallet-adapter-base@1.1.2(@solana/web3.js@1.91.8)(bs58@4.0.1):
-    resolution: {integrity: sha512-DqhzYbgh3disHMgcz6Du7fmpG29BYVapNEEiL+JoVMa+bU9d4P1wfwXUNyJyRpGGNXtwhyZjIk2umWbe5ZBNaQ==}
-    engines: {node: '>=16'}
-    peerDependencies:
-      '@solana/web3.js': ^1.58.0
-      bs58: ^4.0.1
-    dependencies:
-      '@solana/wallet-adapter-base': 0.9.23(@solana/web3.js@1.91.8)
-      '@solana/wallet-standard-chains': 1.1.0
-      '@solana/wallet-standard-features': 1.2.0
-      '@solana/wallet-standard-util': 1.1.1
-      '@solana/web3.js': 1.91.8
-      '@wallet-standard/app': 1.0.1
-      '@wallet-standard/base': 1.0.1
-      '@wallet-standard/features': 1.0.3
-      '@wallet-standard/wallet': 1.0.1
-      bs58: 4.0.1
-    dev: false
-
   /@solana/wallet-standard-wallet-adapter-base@1.1.2(@solana/web3.js@1.91.8)(bs58@5.0.0):
     resolution: {integrity: sha512-DqhzYbgh3disHMgcz6Du7fmpG29BYVapNEEiL+JoVMa+bU9d4P1wfwXUNyJyRpGGNXtwhyZjIk2umWbe5ZBNaQ==}
     engines: {node: '>=16'}
@@ -5374,23 +5355,6 @@ packages:
       '@wallet-standard/features': 1.0.3
       '@wallet-standard/wallet': 1.0.1
       bs58: 5.0.0
-    dev: false
-
-  /@solana/wallet-standard-wallet-adapter-react@1.1.2(@solana/wallet-adapter-base@0.9.23)(@solana/web3.js@1.91.8)(bs58@4.0.1)(react@18.3.1):
-    resolution: {integrity: sha512-bN6W4QkzenyjUoUz3sC5PAed+z29icGtPh9VSmLl1ZrRO7NbFB49a8uwUUVXNxhL/ZbMsyVKhb9bNj47/p8uhQ==}
-    engines: {node: '>=16'}
-    peerDependencies:
-      '@solana/wallet-adapter-base': '*'
-      react: '*'
-    dependencies:
-      '@solana/wallet-adapter-base': 0.9.23(@solana/web3.js@1.91.8)
-      '@solana/wallet-standard-wallet-adapter-base': 1.1.2(@solana/web3.js@1.91.8)(bs58@4.0.1)
-      '@wallet-standard/app': 1.0.1
-      '@wallet-standard/base': 1.0.1
-      react: 18.3.1
-    transitivePeerDependencies:
-      - '@solana/web3.js'
-      - bs58
     dev: false
 
   /@solana/wallet-standard-wallet-adapter-react@1.1.2(@solana/wallet-adapter-base@0.9.23)(@solana/web3.js@1.91.8)(bs58@5.0.0)(react@18.3.1):
@@ -11271,13 +11235,13 @@ packages:
     resolution: {integrity: sha512-WuxUnVtlWL1OfZFQFuqvnvs6MiAGk9UNsBostyBOB0Is9wb5uRESevA6rnl/rkksXaGX3GzZhPup5d6Vp1nFew==}
     dev: false
 
-  /prisma@5.10.2:
-    resolution: {integrity: sha512-hqb/JMz9/kymRE25pMWCxkdyhbnIWrq+h7S6WysJpdnCvhstbJSNP/S6mScEcqiB8Qv2F+0R3yG+osRaWqZacQ==}
+  /prisma@5.14.0:
+    resolution: {integrity: sha512-gCNZco7y5XtjrnQYeDJTiVZmT/ncqCr5RY1/Cf8X2wgLRmyh9ayPAGBNziI4qEE4S6SxCH5omQLVo9lmURaJ/Q==}
     engines: {node: '>=16.13'}
     hasBin: true
     requiresBuild: true
     dependencies:
-      '@prisma/engines': 5.10.2
+      '@prisma/engines': 5.14.0
 
   /process-nextick-args@2.0.1:
     resolution: {integrity: sha512-3ouUOpQhtgrbOa17J7+uxOTpITYWaGP7/AhoR3+A+/1e9skrzelGi/dXzEYyvbxubEF6Wn2ypscTKiKJFFn1ag==}
