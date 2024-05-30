@@ -3,11 +3,11 @@ import { Box, Flex, Text } from '@chakra-ui/react';
 import axios from 'axios';
 import dayjs from 'dayjs';
 import NextLink from 'next/link';
+import { usePostHog } from 'posthog-js/react';
 import { useEffect, useState } from 'react';
 
 import { type Bounty, ListingCardMobile } from '@/features/listings';
 import type { User } from '@/interface/user';
-import { getURLSanitized } from '@/utils/getURLSanitized';
 import { timeAgoShort } from '@/utils/timeAgo';
 
 import { OgImageViewer } from '../misc/ogImageViewer';
@@ -85,12 +85,14 @@ interface SideBarProps {
 
 const RecentActivity = () => {
   const [activity, setActivity] = useState<any[]>([]);
+  const posthog = usePostHog();
+
   useEffect(() => {
     const fetchRecentActivity = async () => {
       try {
         const res = await axios.get(`/api/feed/get`, {
           params: {
-            take: 10,
+            take: 5,
           },
         });
 
@@ -114,6 +116,7 @@ const RecentActivity = () => {
     isWinner: boolean;
     isWinnersAnnounced: boolean;
     type: string;
+    ogImage: string;
   }
 
   const ActivityCard = ({
@@ -126,6 +129,7 @@ const RecentActivity = () => {
     isWinner,
     isWinnersAnnounced,
     type,
+    ogImage,
   }: ActivityCardProps) => {
     const getActionText = () => {
       const defaultActionText = {
@@ -150,11 +154,16 @@ const RecentActivity = () => {
     };
 
     const actionText = getActionText();
-    const sanitizedLink = getURLSanitized(link);
 
     return (
-      <Flex as={NextLink} href={sanitizedLink || ''}>
-        <OgImageViewer h={12} w={20} objectFit={'cover'} externalUrl={link} />
+      <Flex as={NextLink} href={'/feed/?filter=new'}>
+        <OgImageViewer
+          h={12}
+          w={20}
+          objectFit={'cover'}
+          externalUrl={link}
+          imageUrl={ogImage}
+        />
         <Box ml={3}>
           <Flex align={'center'}>
             <Text
@@ -201,11 +210,15 @@ const RecentActivity = () => {
           RECENT ACTIVITY
         </Text>
         <Text
+          className="ph-no-capture"
           as={NextLink}
           color="brand.purple"
           fontSize="xs"
           fontWeight={600}
           href="/feed"
+          onClick={() => {
+            posthog.capture('recent winners_view all_homepage');
+          }}
         >
           View All
           <ArrowForwardIcon ml={1} />
@@ -225,6 +238,7 @@ const RecentActivity = () => {
               isWinner={act.isWinner}
               isWinnersAnnounced={act.isWinnersAnnounced}
               type={act.type}
+              ogImage={act.ogImage}
             />
           );
         })}

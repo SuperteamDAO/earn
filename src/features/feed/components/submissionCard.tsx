@@ -63,11 +63,16 @@ export function SubmissionCard({ sub, type }: SubCardProps) {
         <Avatar size={'xs'} src={sub?.sponsorLogo} />
         <Text
           as={NextLink}
+          overflow={'hidden'}
           color={'brand.slate.500'}
           fontSize={{ base: 'sm', md: 'md' }}
           fontWeight={600}
           _hover={{ textDecoration: 'underline' }}
+          textOverflow={'ellipsis'}
           href={listingLink}
+          noOfLines={1}
+          rel="noopener noreferrer"
+          target="_blank"
         >
           {sub?.listingTitle}
         </Text>
@@ -79,7 +84,7 @@ export function SubmissionCard({ sub, type }: SubCardProps) {
         fontFamily={'var(--font-sans)'}
         bg="white"
         borderRadius={'lg'}
-        isDisabled={!!sub?.id && !isProject}
+        isDisabled={!!sub?.id || isProject}
         label={
           'This submission will be accessible once winners for the listing have been announced.'
         }
@@ -88,8 +93,8 @@ export function SubmissionCard({ sub, type }: SubCardProps) {
         <FeedCardLink
           href={link}
           style={{
-            opacity: sub?.id ? '100%' : '50%',
-            pointerEvents: sub?.id ? 'all' : 'none',
+            opacity: sub?.id || isProject ? '100%' : '50%',
+            pointerEvents: sub?.id || isProject ? 'all' : 'none',
           }}
         >
           {isProject ? 'View Listing' : 'View Submission'}
@@ -127,6 +132,9 @@ export function SubmissionCard({ sub, type }: SubCardProps) {
           h={{ base: '200px', md: '350px' }}
           objectFit="cover"
           borderTopRadius={6}
+          imageUrl={sub?.ogImage}
+          type="submission"
+          id={sub?.id}
         />
       )}
     </FeedCardContainer>

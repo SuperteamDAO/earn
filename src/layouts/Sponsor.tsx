@@ -13,6 +13,7 @@ import axios from 'axios';
 import NextLink from 'next/link';
 import { useRouter } from 'next/router';
 import { useSession } from 'next-auth/react';
+import { usePostHog } from 'posthog-js/react';
 import { type ReactNode, useEffect, useState } from 'react';
 import type { IconType } from 'react-icons';
 import {
@@ -38,6 +39,7 @@ interface LinkItemProps {
   link?: string;
   icon: IconType;
   isExternal?: boolean;
+  posthog?: string;
 }
 
 interface NavItemProps extends FlexProps {
@@ -57,6 +59,7 @@ export function Sidebar({
   const { data: session, status } = useSession();
   const router = useRouter();
   const { isOpen, onOpen, onClose } = useDisclosure();
+  const posthog = usePostHog();
 
   const [latestActiveSlug, setLatestActiveSlug] = useState<string | undefined>(
     undefined,
@@ -139,6 +142,7 @@ export function Sidebar({
           name: 'Get Help',
           link: 'https://t.me/pratikdholani',
           icon: MdOutlineChatBubbleOutline,
+          posthog: 'get help_sponsor',
         },
       ]
     : [
@@ -148,6 +152,7 @@ export function Sidebar({
           name: 'Get Help',
           link: 'https://t.me/pratikdholani',
           icon: MdOutlineChatBubbleOutline,
+          posthog: 'get help_sponsor',
         },
       ];
 
@@ -263,11 +268,15 @@ export function Sidebar({
           <Flex align="center" justify="space-between" px={6} pb={6}>
             {!isHackathonRoute ? (
               <Button
+                className="ph-no-capture"
                 w="full"
                 py={'22px'}
                 fontSize="md"
                 leftIcon={<AddIcon w={3} h={3} />}
-                onClick={() => onOpen()}
+                onClick={() => {
+                  posthog.capture('create new listing_sponsor');
+                  onOpen();
+                }}
                 variant="solid"
               >
                 Create New Listing
@@ -287,7 +296,15 @@ export function Sidebar({
             )}
           </Flex>
           {LinkItems.map((link) => (
-            <NavItem key={link.name} link={link.link} icon={link.icon}>
+            <NavItem
+              onClick={() => {
+                if (link.posthog) posthog.capture(link.posthog);
+              }}
+              className="ph-no-capture"
+              key={link.name}
+              link={link.link}
+              icon={link.icon}
+            >
               {link.name}
             </NavItem>
           ))}

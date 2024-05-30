@@ -1,6 +1,6 @@
 import { Image } from '@chakra-ui/react';
 import Avatar from 'boring-avatars';
-import React from 'react';
+import React, { useState } from 'react';
 
 export const EarnAvatar = ({
   id,
@@ -9,21 +9,28 @@ export const EarnAvatar = ({
   borderRadius = 'full',
   onClick,
 }: {
-  id: string;
+  id: string | undefined;
   avatar?: string;
   size?: '24px' | '28px' | '32px' | '36px' | '40px' | '44px' | '52px' | '64px';
   borderRadius?: string;
   onClick?: () => void;
 }) => {
+  const [hasError, setHasError] = useState(false);
+
+  const handleImageError = () => {
+    setHasError(true);
+  };
+
   return (
     <div onClick={onClick}>
-      {avatar ? (
+      {!hasError && avatar ? (
         <Image
           boxSize={size}
           maxW={'max-content'}
           borderRadius={borderRadius}
           objectFit={'cover'}
           alt={id}
+          onError={handleImageError}
           src={avatar.replace(
             '/upload/',
             '/upload/c_scale,w_256,h_256,f_auto/',

@@ -104,7 +104,7 @@ export const SubmissionCard = ({
     const fetchImage = async () => {
       if (link) {
         try {
-          const { data } = (await axios.post('/api/og', {
+          const { data } = (await axios.post('/api/og/get', {
             url: link,
           })) as { data: Metadata };
           setImage(data.open_graph.images![0]?.url ?? '/assets/bg/og.svg');
@@ -134,10 +134,7 @@ export const SubmissionCard = ({
       )}
       <Link as={NextLink} href={`/t/${talent?.username}`}>
         <HStack mb={2}>
-          <EarnAvatar
-            id={`${talent?.id}`}
-            avatar={talent?.photo || undefined}
-          />
+          <EarnAvatar id={talent?.id} avatar={talent?.photo || undefined} />
           <Text
             overflow={'hidden'}
             w="80%"

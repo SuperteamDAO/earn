@@ -140,7 +140,7 @@ export const RecentEarners = ({ earners }: { earners?: User[] }) => {
       <VStack>
         <Box
           ref={marqueeRef}
-          overflowY="hidden"
+          overflow="hidden"
           h="300px"
           onMouseEnter={handleMouseEnter}
           onMouseLeave={handleMouseLeave}

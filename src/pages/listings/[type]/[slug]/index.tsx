@@ -3,6 +3,7 @@ import axios from 'axios';
 import { useAtom } from 'jotai';
 import type { GetServerSideProps } from 'next';
 import Head from 'next/head';
+import { usePostHog } from 'posthog-js/react';
 import { useEffect, useState } from 'react';
 
 import { ErrorSection } from '@/components/shared/ErrorSection';
@@ -26,6 +27,7 @@ interface BountyDetailsProps {
 
 function BountyDetails({ bounty: initialBounty }: BountyDetailsProps) {
   const [, setBountySnackbar] = useAtom(bountySnackbarAtom);
+  const posthog = usePostHog();
 
   const [bounty] = useState<typeof initialBounty>(initialBounty);
   const [submissionNumber, setSubmissionNumber] = useState<number>(0);
@@ -40,6 +42,14 @@ function BountyDetails({ bounty: initialBounty }: BountyDetailsProps) {
       console.error(e);
     }
   };
+
+  useEffect(() => {
+    if (bounty?.type === 'bounty') {
+      posthog.capture('open_bounty');
+    } else if (bounty?.type === 'project') {
+      posthog.capture('open_project');
+    }
+  }, []);
 
   useEffect(() => {
     const fetchSubmissions = async () => {

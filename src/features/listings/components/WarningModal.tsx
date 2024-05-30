@@ -13,6 +13,7 @@ import {
 interface Props {
   isOpen: boolean;
   onClose: () => void;
+  onCTAClick?: () => void;
   title?: string;
   bodyText?: string;
   primaryCtaText?: string;
@@ -22,6 +23,7 @@ interface Props {
 export function WarningModal({
   isOpen,
   onClose,
+  onCTAClick,
   title,
   bodyText,
   primaryCtaText,
@@ -39,10 +41,12 @@ export function WarningModal({
             Close
           </Button>
           <Button
+            className="ph-no-capture"
             as={Link}
             _hover={{ textDecoration: 'none' }}
             colorScheme="blue"
             href={primaryCtaLink}
+            onClick={onCTAClick}
           >
             {primaryCtaText}
           </Button>

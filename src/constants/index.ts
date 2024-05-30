@@ -162,7 +162,7 @@ export const tokenList: Token[] = [
     livecoinwatchSymbol: 'SAROS',
   },
   {
-    tokenName: 'Samoyed Coin',
+    tokenName: 'Samoyed Coin (SAMO)',
     tokenSymbol: 'SAMO',
     mintAddress: '7xKXtg2CW87d97TXJSDpbD5jBkheTqA83TZRuJosgAsU',
     icon: 'https://assets.coingecko.com/coins/images/15051/standard/IXeEj5e.png?1696514710',
@@ -178,6 +178,15 @@ export const tokenList: Token[] = [
     decimals: 9,
     coingeckoSymbol: 'synesis-one',
     livecoinwatchSymbol: 'SNS',
+  },
+  {
+    tokenName: 'Pyth Network (PYTH)',
+    tokenSymbol: 'PYTH',
+    mintAddress: 'HZ1JovNiVvGrGNiiYvEozEVgZ58xaU3RKwX8eACQBCt3',
+    icon: 'https://s2.coinmarketcap.com/static/img/coins/128x128/28177.png',
+    decimals: 6,
+    coingeckoSymbol: 'pyth-network',
+    livecoinwatchSymbol: 'PythNetwork-PYTH',
   },
   {
     tokenName: 'DevWifHat (DWH)',

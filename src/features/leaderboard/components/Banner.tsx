@@ -7,13 +7,7 @@ import Ranks3d from '@/public/assets/leaderboard/ranks3d.png';
 
 export function Banner() {
   return (
-    <Flex
-      align="center"
-      overflow="hidden"
-      h={{ base: '8rem', md: '6rem' }}
-      bg="#020617"
-      rounded={6}
-    >
+    <Flex align="center" overflow="hidden" h="8rem" bg="#020617" rounded={6}>
       <Flex w={{ md: 100 }}>
         <Image alt="Ranks 3d" src={Ranks3d} />
       </Flex>
@@ -25,10 +19,10 @@ export function Banner() {
           sm: 'md',
         }}
       >
-        <Text color="white" fontWeight={600}>
+        <Text color="white" fontSize={'lg'} fontWeight={600}>
           Talent Leaderboard
         </Text>
-        <Text color="brand.slate.400" fontWeight={500} lineHeight={1.2}>
+        <Text mt={1} color="brand.slate.400" lineHeight={1.2}>
           See where you stand amongst the {"Solana's"} top contributors
         </Text>
       </VStack>

@@ -3,9 +3,20 @@ import type { NextApiResponse } from 'next';
 import { type NextApiRequestWithUser, withAuth } from '@/features/auth';
 import { prisma } from '@/prisma';
 
+interface PoW {
+  id?: string;
+  userId: string;
+  title: string;
+  description: string;
+  skills: string[];
+  subSkills: string[];
+  link: string;
+  createdAt?: Date;
+}
+
 async function handler(req: NextApiRequestWithUser, res: NextApiResponse) {
   const userId = req.userId;
-  const { pows } = req.body;
+  const { pows } = req.body as { pows: PoW[] };
   const errors: string[] = [];
 
   if (!pows) {
@@ -14,14 +25,29 @@ async function handler(req: NextApiRequestWithUser, res: NextApiResponse) {
     });
   }
 
-  const dataArray = Array.isArray(pows) ? pows : [pows];
-  const createData: any[] = [];
+  if (!userId) {
+    return res.status(400).json({
+      error: 'The user is not authenticated.',
+    });
+  }
 
-  dataArray.forEach((data) => {
-    if (!data) {
+  const dataArray = Array.isArray(pows) ? pows : [pows];
+  const createData: PoW[] = [];
+
+  dataArray.forEach((pow) => {
+    if (!pow) {
       errors.push('One of the data entries is undefined or null.');
     } else {
-      createData.push({ ...data, userId });
+      const { title, description, skills, subSkills, link, createdAt } = pow;
+      createData.push({
+        title,
+        userId,
+        description,
+        skills,
+        subSkills,
+        link,
+        createdAt,
+      });
     }
   });
 

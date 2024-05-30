@@ -48,7 +48,7 @@ model Bounties {
   eligibility          Json?
   status               status             @default(OPEN)
   token                String?
-  rewardAmount         Int?
+  rewardAmount         Float?
   rewards              Json?
   sponsorId            String
   pocId                String
@@ -89,6 +89,7 @@ model Bounties {
   Submission           Submission[]
   SubscribeBounty      SubscribeBounty[]
   Hackathon            Hackathon?         @relation(fields: [hackathonId], references: [id])
+  winnersAnnouncedAt   DateTime?
   Scouts               Scouts[]
 
   @@index([id, slug])
@@ -113,7 +114,7 @@ model BountiesTemplates {
   deadline            DateTime?
   eligibility         Json?
   token               String?
-  rewardAmount        Int?
+  rewardAmount        Float?
   rewards             Json?
   color               String?
   emoji               String?
@@ -148,6 +149,7 @@ model Comment {
 
   @@index([id, listingId])
   @@index([authorId])
+  @@index([replyToId])
 }
 
 model Grants {
@@ -202,6 +204,7 @@ model Submission {
   rewardInUSD        Int              @default(0)
   listing            Bounties         @relation(fields: [listingId], references: [id])
   user               User             @relation(fields: [userId], references: [id])
+  ogImage            String?          @db.Text
 
   @@index([id, listingId])
   @@index([userId])
@@ -211,13 +214,6 @@ model Submission {
   @@index([createdAt, isWinner])
   @@index([createdAt, listingId])
   @@index([likeCount])
-}
-
-model Otp {
-  id        String   @id @map("_id")
-  email     String
-  otp       Int
-  timestamp DateTime @default(now())
 }
 
 model Sponsors {
@@ -378,6 +374,7 @@ model PoW {
   like        Json?
   likeCount   Int      @default(0)
   user        User     @relation(fields: [userId], references: [id])
+  ogImage     String?  @db.Text
 
   @@index([userId])
   @@index([createdAt])
@@ -556,6 +553,7 @@ enum Regions {
   BALKAN
   PHILIPPINES
   JAPAN
+  FRANCE
 }
 
 enum CompensationType {

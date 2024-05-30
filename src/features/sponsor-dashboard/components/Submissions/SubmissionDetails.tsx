@@ -32,6 +32,7 @@ import axios from 'axios';
 import dynamic from 'next/dynamic';
 import NextLink from 'next/link';
 import { log } from 'next-axiom';
+import { usePostHog } from 'posthog-js/react';
 import React, { type Dispatch, type SetStateAction, useState } from 'react';
 import { BsTwitterX } from 'react-icons/bs';
 import {
@@ -100,6 +101,7 @@ export const SubmissionDetails = ({
   const [isPaying, setIsPaying] = useState(false);
 
   const { connected, publicKey, sendTransaction } = useWallet();
+  const posthog = usePostHog();
 
   const isProject = bounty?.type === 'project';
   const isHackathon = bounty?.type === 'hackathon';
@@ -330,7 +332,7 @@ export const SubmissionDetails = ({
               <Flex align="center" gap={2} w="full">
                 <EarnAvatar
                   size="40px"
-                  id={`${selectedSubmission?.user?.id}`}
+                  id={selectedSubmission?.user?.id}
                   avatar={selectedSubmission?.user?.photo || undefined}
                 />
                 <Box>
@@ -356,33 +358,47 @@ export const SubmissionDetails = ({
                   </Link>
                 </Box>
               </Flex>
-              <Flex align="center" justify={'flex-end'} gap={2} w="full">
+              <Flex
+                className="ph-no-capture"
+                align="center"
+                justify={'flex-end'}
+                gap={2}
+                w="full"
+              >
                 {selectedSubmission?.isWinner &&
                   selectedSubmission?.winnerPosition &&
                   !selectedSubmission?.isPaid &&
                   (bounty?.isWinnersAnnounced ? (
                     <>
-                      <DynamicWalletMultiButton
-                        style={{
-                          height: '40px',
-                          fontWeight: 600,
-                          fontFamily: 'Inter',
-                          // maxWidth: '96px',
-                          paddingRight: '16px',
-                          paddingLeft: '16px',
-                          fontSize: '12px',
+                      <div
+                        className="ph-no-capture"
+                        onClick={() => {
+                          posthog.capture('connect wallet_payment');
                         }}
                       >
-                        {connected
-                          ? truncatePublicKey(publicKey?.toBase58(), 3)
-                          : `Pay ${bounty?.token} ${
-                              bounty?.rewards?.[
-                                selectedSubmission?.winnerPosition as keyof Rewards
-                              ] || '0'
-                            }`}
-                      </DynamicWalletMultiButton>
+                        <DynamicWalletMultiButton
+                          style={{
+                            height: '40px',
+                            fontWeight: 600,
+                            fontFamily: 'Inter',
+                            // maxWidth: '96px',
+                            paddingRight: '16px',
+                            paddingLeft: '16px',
+                            fontSize: '12px',
+                          }}
+                        >
+                          {connected
+                            ? truncatePublicKey(publicKey?.toBase58(), 3)
+                            : `Pay ${bounty?.token} ${
+                                bounty?.rewards?.[
+                                  selectedSubmission?.winnerPosition as keyof Rewards
+                                ] || '0'
+                              }`}
+                        </DynamicWalletMultiButton>
+                      </div>
                       {connected && (
                         <Button
+                          className="ph-no-capture"
                           w="fit-content"
                           minW={'120px'}
                           mr={4}
@@ -396,6 +412,7 @@ export const SubmissionDetails = ({
                               );
                               return;
                             }
+                            posthog.capture('pay winner_sponsor');
                             handlePayout({
                               id: selectedSubmission?.id as string,
                               token: bounty?.token as string,

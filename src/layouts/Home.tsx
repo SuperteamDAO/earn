@@ -55,7 +55,7 @@ export function Home({ children, type }: HomeProps) {
   const Skills = ['Development', 'Design', 'Content', 'Other'];
 
   const matchedTeam = Superteams.find(
-    (e) => e.region.toLowerCase() === String(router.query.slug).toLowerCase(),
+    (e) => e.region?.toLowerCase() === String(router.query.slug).toLowerCase(),
   );
 
   return (

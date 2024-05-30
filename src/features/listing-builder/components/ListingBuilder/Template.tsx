@@ -1,6 +1,7 @@
 import { AddIcon, ViewIcon } from '@chakra-ui/icons';
 import { Box, Button, Flex, Image, Text, VStack } from '@chakra-ui/react';
 import axios from 'axios';
+import { usePostHog } from 'posthog-js/react';
 import React, {
   type Dispatch,
   type SetStateAction,
@@ -31,6 +32,7 @@ export const Template = ({
   const [templates, setTemplates] = useState([]);
   const [isTemplatesLoading, setIsTemplatesLoading] = useState(false);
 
+  const posthog = usePostHog();
   const getListingTemplates = async () => {
     setIsTemplatesLoading(true);
     try {
@@ -84,6 +86,7 @@ export const Template = ({
           </Flex>
           <Flex wrap={'wrap'} gap={6}>
             <Box
+              className="ph-no-capture"
               alignItems={'center'}
               justifyContent={'center'}
               flexDir={'column'}
@@ -96,6 +99,7 @@ export const Template = ({
               borderRadius={5}
               cursor={'pointer'}
               onClick={() => {
+                posthog.capture('start from scratch_sponsor');
                 setSteps(2);
               }}
             >
@@ -210,8 +214,12 @@ export const Template = ({
                         Preview
                       </Button>
                       <Button
+                        className="ph-no-capture"
                         w="full"
-                        onClick={() => createTemplate(template?.id)}
+                        onClick={() => {
+                          posthog.capture('template_sponsor');
+                          createTemplate(template?.id);
+                        }}
                         size="sm"
                         variant="solid"
                       >

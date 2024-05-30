@@ -16,6 +16,7 @@ import {
 import NextLink from 'next/link';
 import { useRouter } from 'next/router';
 import { useSession } from 'next-auth/react';
+import { usePostHog } from 'posthog-js/react';
 import { useEffect, useState } from 'react';
 
 import { userStore } from '@/store/user';
@@ -25,6 +26,7 @@ import { EarnAvatar } from './EarnAvatar';
 
 export function UserMenu({}) {
   const router = useRouter();
+  const posthog = usePostHog();
 
   const { userInfo, logOut } = userStore();
 
@@ -71,9 +73,11 @@ export function UserMenu({}) {
       <EmailSettingsModal isOpen={isOpen} onClose={handleClose} />
       {userInfo && !userInfo.currentSponsorId && !userInfo.isTalentFilled && (
         <Button
+          className="ph-no-capture"
           display={{ base: 'none', md: 'flex' }}
           fontSize="xs"
           onClick={() => {
+            posthog.capture('complete profile_nav bar');
             router.push('/new');
           }}
           size="sm"
@@ -84,6 +88,7 @@ export function UserMenu({}) {
       )}
       <Menu>
         <MenuButton
+          className="ph-no-capture"
           as={Button}
           px={{ base: 0.5, md: 2 }}
           bg={'brand.slate.50'}
@@ -95,6 +100,10 @@ export function UserMenu({}) {
             borderColor: 'brand.slate.300',
           }}
           cursor={'pointer'}
+          id="user menu"
+          onClick={() => {
+            posthog.capture('clicked_user menu');
+          }}
           rightIcon={
             <ChevronDownIcon
               color="brand.slate.400"
@@ -103,7 +112,7 @@ export function UserMenu({}) {
           }
         >
           <Flex align="center">
-            <EarnAvatar id={`${userInfo?.id}`} avatar={userInfo?.photo} />
+            <EarnAvatar id={userInfo?.id} avatar={userInfo?.photo} />
             {showBlueCircle && (
               <Circle
                 display={{ base: 'flex', md: 'none' }}
@@ -125,24 +134,32 @@ export function UserMenu({}) {
             </Flex>
           </Flex>
         </MenuButton>
-        <MenuList>
+        <MenuList className="ph-no-capture">
           {userInfo?.isTalentFilled && (
             <>
               <MenuItem
+                className="ph-no-capture"
                 as={NextLink}
                 color="brand.slate.500"
                 fontSize="sm"
                 fontWeight={600}
                 href={`/t/${userInfo?.username}`}
+                onClick={() => {
+                  posthog.capture('profile_user menu');
+                }}
               >
                 Profile
               </MenuItem>
               <MenuItem
+                className="ph-no-capture"
                 as={NextLink}
                 color="brand.slate.500"
                 fontSize="sm"
                 fontWeight={600}
                 href={`/t/${userInfo?.username}/edit`}
+                onClick={() => {
+                  posthog.capture('edit profile_user menu');
+                }}
               >
                 Edit Profile
               </MenuItem>
@@ -151,12 +168,16 @@ export function UserMenu({}) {
           {!!userInfo?.currentSponsorId && (
             <>
               <MenuItem
+                className="ph-no-capture"
                 as={NextLink}
                 display={{ base: 'none', sm: 'block' }}
                 color="brand.slate.500"
                 fontSize="sm"
                 fontWeight={600}
                 href={'/dashboard/listings'}
+                onClick={() => {
+                  posthog.capture('sponsor dashboard_user menu');
+                }}
               >
                 Sponsor Dashboard
               </MenuItem>
@@ -188,30 +209,40 @@ export function UserMenu({}) {
           )}
           {(userInfo?.isTalentFilled || !!userInfo?.currentSponsorId) && (
             <MenuItem
+              className="ph-no-capture"
               color="brand.slate.500"
               fontSize="sm"
               fontWeight={600}
-              onClick={handleEmailPreferencesClick}
+              onClick={() => {
+                handleEmailPreferencesClick();
+                posthog.capture('email preferences_user menu');
+              }}
             >
               Email Preferences
               {showBlueCircle && <Circle ml={2} bg="blue.400" size="8px" />}
             </MenuItem>
           )}
           <MenuItem
+            className="ph-no-capture"
             color="brand.slate.500"
             fontSize="sm"
             fontWeight={600}
-            onClick={() =>
-              window.open('mailto:hello@superteamearn.com', '_blank')
-            }
+            onClick={() => {
+              window.open('mailto:hello@superteamearn.com', '_blank');
+              posthog.capture('get help_user menu');
+            }}
           >
             Get Help
           </MenuItem>
           <MenuItem
+            className="ph-no-capture"
             color="red.500"
             fontSize="sm"
             fontWeight={600}
-            onClick={() => logOut()}
+            onClick={() => {
+              posthog.capture('logout_user menu');
+              logOut();
+            }}
           >
             Logout
           </MenuItem>

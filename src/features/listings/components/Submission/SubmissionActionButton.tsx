@@ -2,6 +2,7 @@ import { Button, Flex, Tooltip, useDisclosure } from '@chakra-ui/react';
 import axios from 'axios';
 import Image from 'next/image';
 import { useSession } from 'next-auth/react';
+import { usePostHog } from 'posthog-js/react';
 import React, {
   type Dispatch,
   type SetStateAction,
@@ -70,6 +71,7 @@ export const SubmissionActionButton = ({
   }
 
   const isUserEligibleByRegion = userRegionEligibilty();
+  const posthog = usePostHog();
 
   const { isOpen, onOpen, onClose } = useDisclosure();
 
@@ -83,6 +85,9 @@ export const SubmissionActionButton = ({
 
   const bountyDraftStatus = getListingDraftStatus(status, isPublished);
 
+  const pastDeadline = isDeadlineOver(deadline) || isWinnersAnnounced;
+  const buttonState = getButtonState();
+
   const handleSubmit = () => {
     if (isAuthenticated) {
       if (applicationLink) {
@@ -92,12 +97,15 @@ export const SubmissionActionButton = ({
       if (!userInfo?.isTalentFilled) {
         warningOnOpen();
       } else {
+        if (buttonState === 'submit') {
+          posthog.capture('start_submission');
+        } else if (buttonState === 'edit') {
+          posthog.capture('edit_submission');
+        }
         onOpen();
       }
     }
   };
-
-  const pastDeadline = isDeadlineOver(deadline) || isWinnersAnnounced;
 
   const getUserSubmission = async () => {
     setIsUserSubmissionLoading(true);
@@ -128,8 +136,6 @@ export const SubmissionActionButton = ({
     if (isSubmitted && pastDeadline) return 'submitted';
     return 'submit';
   }
-
-  const buttonState = getButtonState();
 
   switch (buttonState) {
     case 'edit':
@@ -200,6 +206,7 @@ export const SubmissionActionButton = ({
         )}
       {warningIsOpen && (
         <WarningModal
+          onCTAClick={() => posthog.capture('complete profile_CTA pop up')}
           isOpen={warningIsOpen}
           onClose={warningOnClose}
           title={'Complete your profile'}
@@ -250,6 +257,7 @@ export const SubmissionActionButton = ({
         rounded="md"
       >
         <Flex
+          className="ph-no-capture"
           pos={{ base: 'fixed', md: 'static' }}
           zIndex={999}
           bottom={0}

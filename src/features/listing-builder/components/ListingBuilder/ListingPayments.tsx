@@ -1,4 +1,9 @@
-import { AddIcon, ChevronDownIcon, DeleteIcon } from '@chakra-ui/icons';
+import {
+  AddIcon,
+  ChevronDownIcon,
+  DeleteIcon,
+  SearchIcon,
+} from '@chakra-ui/icons';
 import {
   Box,
   Button,
@@ -7,10 +12,12 @@ import {
   FormLabel,
   HStack,
   Image,
-  Menu,
-  MenuButton,
-  MenuItem,
-  MenuList,
+  Input,
+  InputGroup,
+  InputLeftElement,
+  InputRightElement,
+  List,
+  ListItem,
   Modal,
   ModalBody,
   ModalCloseButton,
@@ -26,6 +33,7 @@ import {
   VStack,
 } from '@chakra-ui/react';
 import debounce from 'lodash.debounce';
+import { usePostHog } from 'posthog-js/react';
 import { useEffect, useState } from 'react';
 import { Controller, useForm } from 'react-hook-form';
 
@@ -36,6 +44,16 @@ import { sortRank } from '@/utils/rank';
 import { useListingFormStore } from '../../store';
 import { type ListingFormType } from '../../types';
 import { ListingFormLabel, ListingTooltip } from './Form';
+
+interface Token {
+  tokenName: string;
+  tokenSymbol: string;
+  mintAddress: string;
+  icon: string;
+  decimals: number;
+  coingeckoSymbol: string;
+  livecoinwatchSymbol: string;
+}
 
 interface PrizeListInterface {
   value: string;
@@ -53,6 +71,11 @@ interface Props {
   type: 'bounty' | 'project' | 'hackathon';
   isDuplicating?: boolean;
 }
+interface SearchState {
+  searchTerm: string | undefined;
+  tokenImage: string | undefined;
+}
+
 export const ListingPayments = ({
   isListingPublishing,
   createDraft,
@@ -70,7 +93,12 @@ export const ListingPayments = ({
     onClose: confirmOnClose,
   } = useDisclosure();
 
+  const [searchResults, setSearchResults] = useState<Token[]>([]);
+  const [isOpen, setIsOpen] = useState(false);
   const [errorMessage, setErrorMessage] = useState('');
+  const [selectedTokenIndex, setSelectedTokenIndex] = useState<number | null>(
+    null,
+  );
 
   const { register, setValue, watch, control, handleSubmit, reset, getValues } =
     useForm({
@@ -90,6 +118,11 @@ export const ListingPayments = ({
   const maxRewardAsk = watch('maxRewardAsk');
   const token = watch('token');
   const rewards = watch('rewards');
+
+  const [searchState, setSearchState] = useState<SearchState>({
+    searchTerm: undefined,
+    tokenImage: tokenList.find((t) => t.tokenSymbol === token)?.icon,
+  });
 
   const [debouncedRewardAmount, setDebouncedRewardAmount] =
     useState(rewardAmount);
@@ -125,7 +158,7 @@ export const ListingPayments = ({
     }
   }, [form]);
 
-  const handleTokenChange = (tokenSymbol: string) => {
+  const handleTokenChange = (tokenSymbol: string | undefined) => {
     setValue('token', tokenSymbol);
   };
 
@@ -155,6 +188,16 @@ export const ListingPayments = ({
 
   const validateRewardsData = () => {
     let errorMessage = '';
+
+    if (searchState.searchTerm) {
+      const tokenSym = tokenList.find(
+        (t) =>
+          t.tokenName.toLowerCase() === searchState.searchTerm!.toLowerCase(),
+      );
+      if (!tokenSym) {
+        errorMessage = 'Please select a valid token';
+      }
+    }
 
     if (isProject) {
       if (!compensationType) {
@@ -211,6 +254,55 @@ export const ListingPayments = ({
     }
   };
 
+  const handleSearch = (value: string) => {
+    setSearchState({ searchTerm: value, tokenImage: '' });
+    setIsOpen(true);
+    if (value === '') {
+      setSearchResults(tokenList);
+    } else {
+      const filteredResults = tokenList.filter((token) =>
+        token.tokenName.toLowerCase().includes(value.toLowerCase()),
+      );
+      setSearchResults(filteredResults);
+    }
+    setSelectedTokenIndex(null);
+  };
+
+  const handleSelectToken = (
+    tokenName: string | undefined,
+    icon: string | undefined,
+  ) => {
+    setSearchState({ searchTerm: tokenName, tokenImage: icon });
+    setIsOpen(false);
+  };
+
+  const handleKeyDown = (event: React.KeyboardEvent<HTMLInputElement>) => {
+    if (!isOpen) return;
+
+    if (event.key === 'ArrowDown') {
+      event.preventDefault();
+      setSelectedTokenIndex((prevIndex) =>
+        prevIndex === null || prevIndex === searchResults.length - 1
+          ? 0
+          : prevIndex + 1,
+      );
+    } else if (event.key === 'ArrowUp') {
+      event.preventDefault();
+      setSelectedTokenIndex((prevIndex) =>
+        prevIndex === null || prevIndex === 0
+          ? searchResults.length - 1
+          : prevIndex - 1,
+      );
+    } else if (event.key === 'Enter') {
+      event.preventDefault();
+      if (selectedTokenIndex !== null) {
+        const selectedToken = searchResults[selectedTokenIndex];
+        handleTokenChange(selectedToken?.tokenSymbol);
+        handleSelectToken(selectedToken?.tokenName, selectedToken?.icon);
+      }
+    }
+  };
+
   const onSubmit = async (data: any) => {
     const errorMessage = validateRewardsData();
     let newState = { ...data };
@@ -225,6 +317,7 @@ export const ListingPayments = ({
     if (errorMessage) {
       setErrorMessage(errorMessage);
     } else {
+      posthog.capture('publish listing_sponsor');
       confirmOnOpen();
     }
   };
@@ -245,6 +338,8 @@ export const ListingPayments = ({
       break;
   }
 
+  const posthog = usePostHog();
+
   const isDraft = isNewOrDraft || isDuplicating;
 
   useEffect(() => {
@@ -257,6 +352,22 @@ export const ListingPayments = ({
       debouncedUpdate.cancel();
     };
   }, [rewardAmount]);
+
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      const input = document.getElementById('search-input');
+      if (input && !input.contains(event.target as Node)) {
+        setIsOpen(false);
+      }
+    };
+
+    document.addEventListener('mousedown', handleClickOutside);
+
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+    };
+  }, []);
+
   return (
     <>
       <Modal isOpen={confirmIsOpen} onClose={confirmOnClose}>
@@ -267,7 +378,7 @@ export const ListingPayments = ({
           <ModalBody>
             <Text>
               {form?.isPrivate
-                ? 'This listing will only be accessible via the link — and will not show up anywhere else on the site — since it has been marked as a "Private Listing"'
+                ? 'This listing will only be accessible via the link — and will not show up anywhere else on the site — since it has been marked as a "Private Listing"'
                 : 'Publishing this listing means it will show up on the homepage for all visitors. Make sure the details in your listing are correct before you publish.'}
             </Text>
           </ModalBody>
@@ -339,83 +450,119 @@ export const ListingPayments = ({
               </Text>
             </Box>
           )}
-          <FormControl isRequired>
-            <ListingFormLabel htmlFor="token">Select Token</ListingFormLabel>
-            <Menu>
-              <MenuButton
-                as={Button}
-                overflow="hidden"
-                w="100%"
-                h={'2.6rem'}
+          <FormControl pos="relative">
+            <ListingFormLabel>Select Token</ListingFormLabel>
+            <InputGroup>
+              {token && (
+                <>
+                  <InputLeftElement
+                    alignItems={'center'}
+                    justifyContent={'start'}
+                    ml={4}
+                  >
+                    <SearchIcon color="gray.300" mr={2} />
+                    {searchState.tokenImage === undefined ? (
+                      <Image
+                        w={'1.6rem'}
+                        alt={
+                          tokenList.find((t) => t.tokenSymbol === token)
+                            ?.tokenName
+                        }
+                        rounded={'full'}
+                        src={
+                          tokenList.find((t) => t.tokenSymbol === token)?.icon
+                        }
+                      />
+                    ) : searchState.tokenImage !== undefined &&
+                      searchState.tokenImage !== '' ? (
+                      <Image
+                        w={'1.6rem'}
+                        alt={searchState.searchTerm as string}
+                        rounded={'full'}
+                        src={searchState.tokenImage}
+                      />
+                    ) : (
+                      <></>
+                    )}
+                  </InputLeftElement>
+                </>
+              )}
+              <Input
+                pl={
+                  searchState.tokenImage !== undefined &&
+                  searchState.tokenImage !== ''
+                    ? '4.5rem'
+                    : '3rem'
+                }
                 color="gray.700"
                 fontSize="1rem"
                 fontWeight={500}
-                textAlign="start"
-                bg="transparent"
                 border={'1px solid #cbd5e1'}
-                _hover={{ bg: 'transparent' }}
-                rightIcon={<ChevronDownIcon />}
-              >
-                {token ? (
-                  <HStack>
-                    <Image
-                      w={'1.6rem'}
-                      alt={
-                        tokenList.find((t) => t.tokenSymbol === token)
-                          ?.tokenName
-                      }
-                      rounded={'full'}
-                      src={tokenList.find((t) => t.tokenSymbol === token)?.icon}
-                    />
-                    <Text>
-                      {
-                        tokenList.find((t) => t.tokenSymbol === token)
-                          ?.tokenName
-                      }
-                    </Text>
-                  </HStack>
-                ) : (
-                  <HStack>
-                    <Image
-                      w={'1.6rem'}
-                      alt={tokenList[0]?.tokenName}
-                      rounded={'full'}
-                      src={tokenList[0]?.icon}
-                    />
-                    <Text>{tokenList[0]?.tokenName}</Text>
-                  </HStack>
-                )}
-              </MenuButton>
-              <MenuList
-                overflow="scroll"
-                w="40rem"
+                focusBorderColor="brand.purple"
+                onChange={(e) => handleSearch(e.target.value)}
+                onFocus={() => {
+                  if (
+                    (!searchState.searchTerm ||
+                      searchState.searchTerm === '') &&
+                    !editable
+                  ) {
+                    handleSearch('');
+                  } else {
+                    setIsOpen(true);
+                  }
+                }}
+                onKeyDown={handleKeyDown}
+                placeholder="Search token"
+                value={
+                  searchState.searchTerm === undefined
+                    ? tokenList.find((t) => t.tokenSymbol === token)?.tokenName
+                    : (searchState.searchTerm as string)
+                }
+              />
+              <InputRightElement color="gray.700" fontSize="1rem">
+                <ChevronDownIcon />
+              </InputRightElement>
+            </InputGroup>
+            {searchResults.length > 0 && isOpen && (
+              <List
+                pos={'absolute'}
+                zIndex={10}
+                overflowX="hidden"
+                w="full"
                 maxH="15rem"
+                pt={1}
                 color="gray.600"
-                fontSize="1rem"
-                fontWeight={500}
+                bg={'white'}
+                border={'1px solid #cbd5e1'}
+                borderBottomRadius={'lg'}
+                id="search-input"
               >
-                {tokenList.map((token) => {
-                  return (
-                    <>
-                      <MenuItem
-                        key={token.mintAddress}
-                        onClick={() => handleTokenChange(token.tokenSymbol)}
-                      >
-                        <HStack>
-                          <Image
-                            w={'1.6rem'}
-                            alt={token.tokenName}
-                            rounded={'full'}
-                            src={token.icon}
-                          />
-                          <Text color="gray.600">{token.tokenName}</Text>
-                        </HStack>
-                      </MenuItem>
-                    </>
-                  );
-                })}
-              </MenuList>
-            </Menu>
+                {searchResults.map((token, index) => (
+                  <ListItem
+                    key={token.tokenName}
+                    bg={
+                      selectedTokenIndex === index ? 'gray.200' : 'transparent'
+                    }
+                    _hover={{ background: 'gray.100' }}
+                    cursor="pointer"
+                    onClick={() => {
+                      handleTokenChange(token.tokenSymbol);
+                      handleSelectToken(token.tokenName, token.icon);
+                    }}
+                  >
+                    <HStack px={3} py={2}>
+                      <Image
+                        w={'1.6rem'}
+                        alt={token.tokenName}
+                        rounded={'full'}
+                        src={token.icon}
+                      />
+                      <Text>{token.tokenName}</Text>
+                    </HStack>
+                  </ListItem>
+                ))}
+              </List>
+            )}
           </FormControl>
           {compensationType === 'fixed' && (
             <FormControl w="full" mt={5} isRequired>
@@ -550,6 +697,7 @@ export const ListingPayments = ({
             </Text>
             {isDraft && (
               <Button
+                className="ph-no-capture"
                 w="100%"
                 disabled={isListingPublishing}
                 isLoading={isListingPublishing}
@@ -560,12 +708,15 @@ export const ListingPayments = ({
               </Button>
             )}
             <Button
+              className="ph-no-capture"
               w="100%"
               isLoading={isDraftLoading}
               onClick={() => {
                 if (isDraft) {
+                  posthog.capture('save draft_sponsor');
                   handleSaveDraft();
                 } else {
+                  posthog.capture('edit listing_sponsor');
                   handleUpdateListing();
                 }
               }}

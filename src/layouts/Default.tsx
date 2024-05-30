@@ -1,4 +1,4 @@
-import { Box } from '@chakra-ui/react';
+import { Flex } from '@chakra-ui/react';
 import type { ReactNode } from 'react';
 
 import { Footer, Header } from '@/features/navbar';
@@ -11,16 +11,19 @@ type IDefaultProps = {
 
 const Default = (props: IDefaultProps) => {
   return (
-    <Box
-      className={
-        !props.className ? 'min-h-full' : `min-h-full ${props.className}`
-      }
+    <Flex
+      className={`min-h-full ${props.className}`}
+      justify={'space-between'}
+      direction={'column'}
+      minH={'100vh'}
     >
       {props.meta}
       <Header />
-      {props.children}
+      <Flex direction="column" flex="1">
+        {props.children}
+      </Flex>
       <Footer />
-    </Box>
+    </Flex>
   );
 };
 
