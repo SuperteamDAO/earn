@@ -1,4 +1,4 @@
-import { verifySignature } from '@upstash/qstash/dist/nextjs';
+import { verifySignature } from '@upstash/qstash/nextjs';
 import dayjs from 'dayjs';
 import type { NextApiRequest, NextApiResponse } from 'next';
 

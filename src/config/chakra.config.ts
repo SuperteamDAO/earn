@@ -132,6 +132,13 @@ const theme = extendTheme({
         },
       },
     },
+    Progress: {
+      baseStyle: {
+        filledTrack: {
+          bg: 'brand.purple',
+        },
+      },
+    },
   },
 });
 

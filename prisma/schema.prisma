@@ -192,7 +192,7 @@ model GrantApplication {
   userId            String
   grantId           String
   applicationStatus GrantApplicationStatus @default(Pending)
-  milestones        Json?
+  milestones        String?                @db.VarChar(2000)
   answers           Json?
   createdAt         DateTime               @default(now())
   updatedAt         DateTime               @updatedAt
@@ -205,6 +205,7 @@ model GrantApplication {
   discordId         String
   twitterId         String
   walletAddress     String
+  isShipped         Boolean                @default(false)
 
   @@index([userId])
   @@index([grantId])

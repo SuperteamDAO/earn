@@ -35,7 +35,7 @@ export const GrantApplicationButton = ({
   const [isUserApplicationLoading, setIsUserApplicationLoading] =
     useState(false);
 
-  const { region, applicationStatus, id } = grant;
+  const { region, id } = grant;
 
   const { status: authStatus } = useSession();
   const isAuthenticated = authStatus === 'authenticated';
@@ -45,28 +45,13 @@ export const GrantApplicationButton = ({
     userInfo?.location,
   );
 
-  function getButtonState() {
-    if (hasApplied && applicationStatus === 'Pending') return 'edit';
-    if (hasApplied && applicationStatus !== 'Pending') return 'submitted';
-    return 'submit';
-  }
-
-  const buttonState = getButtonState();
-
   let buttonText;
   let buttonBG;
   let isBtnDisabled;
   let btnLoadingText;
 
-  switch (buttonState) {
-    case 'edit':
-      buttonText = 'Edit Application';
-      buttonBG = 'brand.purple';
-      isBtnDisabled = false;
-      btnLoadingText = null;
-      break;
-
-    case 'submitted':
+  switch (hasApplied) {
+    case true:
       buttonText = 'Applied Successfully';
       buttonBG = 'green.500';
       isBtnDisabled = true;
@@ -130,7 +115,6 @@ export const GrantApplicationButton = ({
           applicationNumber={applicationNumber}
           setApplicationNumber={setApplicationNumber}
           setHasApplied={setHasApplied}
-          editMode={buttonState === 'edit'}
           grant={grant}
         />
       )}
