@@ -146,6 +146,10 @@ export const EmailSettingsModal = ({
                   title="Likes and comments on my submissions"
                   category="commentOrLikeSubmission"
                 />
+                <AlertOption
+                  title="Sponsor Invitation Emails (Scout)"
+                  category="scoutInvitation"
+                />
               </Box>
             )}
             {(showTalentAlerts || showSponsorAlerts) && (
