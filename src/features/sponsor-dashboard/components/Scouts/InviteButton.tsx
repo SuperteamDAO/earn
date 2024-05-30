@@ -28,7 +28,7 @@ export function InviteButton({ bountyId, userId, invited, setInvited }: Props) {
       );
       console.log('invite - ', a.data);
       setInvited(userId);
-      posthog.capture('invite scout', {
+      posthog.capture('invited talent_scout', {
         invitedUser: userId,
       });
     } catch (err) {
@@ -40,6 +40,7 @@ export function InviteButton({ bountyId, userId, invited, setInvited }: Props) {
 
   return (
     <Button
+      className="ph-no-capture"
       gap={2}
       h="full"
       color="brand.purple"

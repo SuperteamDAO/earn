@@ -338,7 +338,7 @@ export function ScountTable({ bountyId, scouts, setInvited }: Props) {
                       h="full"
                       href={`/t/${scout.username}`}
                       onClick={() => {
-                        posthog.capture('view profile click_scouts', {
+                        posthog.capture('view profile_scouts', {
                           clicked_username: scout.username,
                         });
                       }}

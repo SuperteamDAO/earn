@@ -15,6 +15,7 @@ import axios from 'axios';
 import type { GetServerSideProps } from 'next';
 import { useSearchParams } from 'next/navigation';
 import { useRouter } from 'next/router';
+import { usePostHog } from 'posthog-js/react';
 import { useEffect, useState } from 'react';
 
 import { LoadingSection } from '@/components/shared/LoadingSection';
@@ -61,6 +62,7 @@ function BountySubmissions({ slug }: Props) {
   const [usedPositions, setUsedPositions] = useState<string[]>([]);
 
   const searchParams = useSearchParams();
+  const posthog = usePostHog();
 
   useEffect(() => {
     if (searchText) {
@@ -161,6 +163,10 @@ function BountySubmissions({ slug }: Props) {
     }
   }, [userInfo?.currentSponsorId]);
 
+  useEffect(() => {
+    if (searchParams.has('scout')) posthog.capture('scout tab_scout');
+  }, []);
+
   return (
     <Sidebar>
       {isBountyLoading ? (
@@ -192,7 +198,13 @@ function BountySubmissions({ slug }: Props) {
                 Submissions
               </Tab>
               {bounty?.isPublished && !bounty?.isWinnersAnnounced && (
-                <Tab px={1} fontSize="sm" _selected={selectedStyles}>
+                <Tab
+                  className="ph-no-capture"
+                  px={1}
+                  fontSize="sm"
+                  _selected={selectedStyles}
+                  onClick={() => posthog.capture('scout tab_scout')}
+                >
                   Scout Talent
                 </Tab>
               )}
