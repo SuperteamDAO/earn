@@ -49,7 +49,6 @@ async function scoutTalent(req: NextApiRequestWithUser, res: NextApiResponse) {
   const id = params.id as string;
   const LIMIT = 10;
 
-  console.log('called scout');
   if (req.method !== 'POST') res.status(405).send('Method Not Allowed');
 
   try {
@@ -74,14 +73,10 @@ async function scoutTalent(req: NextApiRequestWithUser, res: NextApiResponse) {
     if ((scoutBounty.skills as any)?.[0].subskills === null)
       return res.status(404).send('Bounty has No skills');
 
-    // console.log('skills', scoutBounty.skills);
     const subskills = flattenSubSkills(scoutBounty.skills as any);
     const devSkills = filterInDevSkills(
       flattenSkills(scoutBounty.skills as any),
     );
-    // console.log('skills extract', flattenSkills(scoutBounty.skills as any));
-    // console.log('devSkills', devSkills);
-    //
     const region = scoutBounty.region.toString();
 
     const prevScouts = await prisma.scouts.findMany({
@@ -100,7 +95,6 @@ async function scoutTalent(req: NextApiRequestWithUser, res: NextApiResponse) {
       const createdAtDayjs = dayjs(prevScouts[0].createdAt);
       const nowDayjs = dayjs(new Date());
       const hourDiff = nowDayjs.diff(createdAtDayjs, 'hour');
-      console.log('hourDiff', hourDiff);
       if (hourDiff <= 6) {
         return res.send(prevScouts);
       }
@@ -112,7 +106,6 @@ async function scoutTalent(req: NextApiRequestWithUser, res: NextApiResponse) {
           listingId: id,
         },
       });
-      console.log('delete done');
     }
 
     const sumMatchingSubSkillsQuery = `
@@ -466,18 +459,12 @@ END)
       ${selectScouts}
 `;
 
-    // console.log('insertQuery', insertQuery);
-    // console.log('selectScouts', selectScouts);
-    // const resp = await prisma.$queryRawUnsafe(selectScouts);
     await prisma.$executeRawUnsafe(insertQuery);
-    // console.log("resp aefe")
 
     if (prevScouts.length > 0) {
       const invitedScouts = prevScouts
         .filter((s) => s.invited)
         .map((s) => s.userId);
-
-      // console.log('invitedScouts', invitedScouts);
 
       if (invitedScouts.length > 0) {
         await prisma.scouts.updateMany({
@@ -506,8 +493,6 @@ END)
       },
     });
 
-    // console.log("scouts in beginning - ", scouts)
-
     scouts.forEach((scout) => {
       if (Array.isArray(scout.skills)) {
         const devSkills = filterInDevSkills(scout.skills as string[]);
@@ -517,8 +502,6 @@ END)
         scout.skills = [...new Set(devSkills.concat(subskills))];
       }
     });
-
-    // console.log("scouts removed duplicate skills - ", scouts)
 
     let maxSubskill = 0,
       minSubskill = 0,

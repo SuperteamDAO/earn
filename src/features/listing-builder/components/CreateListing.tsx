@@ -221,7 +221,6 @@ export function CreateListing({
         ...newListing,
         ...(type === 'hackathon' ? { hackathonSponsor } : {}),
       });
-      console.log('id - ', result?.data?.id);
       setSlug(result?.data?.slug ?? ('' as string));
       setType(result?.data?.type ?? ('' as string));
       setIsListingPublishing(false);
@@ -330,7 +329,7 @@ export function CreateListing({
           )}
           {isSurveyOpen && (
             <SurveyModal
-              isOpen={false}
+              isOpen={isSurveyOpen}
               onClose={onSurveyClose}
               surveyId={surveyId}
             />

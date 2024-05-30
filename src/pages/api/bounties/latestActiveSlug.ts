@@ -34,7 +34,6 @@ async function latestActiveSlug(
     },
     orderBy: [{ createdAt: 'desc' }],
   });
-  console.log('result', result);
   if (!result || !result.slug) {
     return res.status(400).json({ err: 'No Active Bounty found' });
   }

@@ -1,7 +1,7 @@
 import { Button } from '@chakra-ui/react';
 import axios from 'axios';
 import { usePostHog } from 'posthog-js/react';
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import toast from 'react-hot-toast';
 import { LuCheck, LuPlus } from 'react-icons/lu';
 
@@ -16,17 +16,10 @@ export function InviteButton({ bountyId, userId, invited, setInvited }: Props) {
 
   const [loading, setLoading] = useState(false);
 
-  useEffect(() => {
-    console.log('user id is', userId, invited);
-  }, [invited]);
-
   async function inviteToScout(userId: string) {
     setLoading(true);
     try {
-      const a = await axios.post(
-        `/api/bounties/scout/invite/${bountyId}/${userId}`,
-      );
-      console.log('invite - ', a.data);
+      await axios.post(`/api/bounties/scout/invite/${bountyId}/${userId}`);
       setInvited(userId);
       posthog.capture('invited talent_scout', {
         invitedUser: userId,

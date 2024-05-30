@@ -87,7 +87,6 @@ function BountySubmissions({ slug }: Props) {
         bountyDetails.data.isPublished &&
         !bountyDetails.data.isWinnersAnnounced
       ) {
-        console.log('we making scouts');
         await getScouts(bountyDetails.data.id as string);
       }
       setTotalPaymentsMade(bountyDetails.data.paymentsMade || 0);

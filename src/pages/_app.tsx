@@ -122,7 +122,6 @@ function App({ Component, pageProps: { session, ...pageProps } }: AppProps) {
   };
 
   const getSponsorLatestActiveSlug = async () => {
-    console.log('get sponsor');
     try {
       const slug = await axios.get('/api/bounties/latestActiveSlug');
       if (slug.data) {

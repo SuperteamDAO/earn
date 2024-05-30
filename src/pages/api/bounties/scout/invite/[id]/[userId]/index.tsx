@@ -52,7 +52,6 @@ async function scoutInvite(req: NextApiRequestWithUser, res: NextApiResponse) {
         invited: true,
       },
     });
-    console.log('updateScout', updateScout);
     return res.status(200).send(updateScout);
   } catch (error) {
     console.log(error);
