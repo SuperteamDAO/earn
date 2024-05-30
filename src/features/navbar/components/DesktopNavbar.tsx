@@ -60,6 +60,9 @@ export const DesktopNavbar = ({ onLoginOpen, onSearchOpen }: Props) => {
             mr={5}
             _hover={{ textDecoration: 'none' }}
             href="/"
+            onClick={() => {
+              posthog.capture('homepage logo click_universal');
+            }}
           >
             <Image
               h={5}
@@ -86,6 +89,7 @@ export const DesktopNavbar = ({ onLoginOpen, onSearchOpen }: Props) => {
 
           {router.pathname !== '/search' && (
             <Button
+              className="ph-no-capture"
               gap={2}
               color="brand.slate.400"
               fontWeight={400}

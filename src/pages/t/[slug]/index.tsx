@@ -62,6 +62,12 @@ function TalentProfile({ slug }: TalentProps) {
     });
   };
   const { userInfo } = userStore();
+  const posthog = usePostHog();
+
+  useEffect(() => {
+    if (userInfo?.id && talent?.id && userInfo.id !== talent?.id)
+      posthog.capture('clicked profile_talent');
+  }, [talent]);
 
   const {
     isOpen: isOpenPow,
@@ -131,7 +137,6 @@ function TalentProfile({ slug }: TalentProps) {
     talent?.feed?.filter((sub) => sub?.type === 'Submission').length ?? 0;
 
   const router = useRouter();
-  const posthog = usePostHog();
 
   const handleEditProfileClick = () => {
     router.push(`/t/${talent?.username}/edit`);

@@ -104,7 +104,13 @@ export const Footer = () => {
         >
           <Stack maxW="540px" mr={{ base: 0, md: 32 }} spacing={6}>
             <Box>
-              <Link as={NextLink} href="/">
+              <Link
+                as={NextLink}
+                href="/"
+                onClick={() => {
+                  posthog.capture('homepage logo click_universal');
+                }}
+              >
                 <Image
                   h={{ base: 6, md: 8 }}
                   color="brand.slate.500"

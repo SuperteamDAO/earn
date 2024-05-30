@@ -191,6 +191,7 @@ export const Comment = ({
         <WarningModal
           isOpen={isOpen}
           onClose={onClose}
+          onCTAClick={() => posthog.capture('complete profile_CTA pop up')}
           title={'Complete your profile'}
           bodyText={
             'Please complete your profile before commenting on the bounty.'

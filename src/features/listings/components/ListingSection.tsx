@@ -1,5 +1,6 @@
 import { ArrowForwardIcon } from '@chakra-ui/icons';
 import { Box, Button, Flex, HStack, Image, Link, Text } from '@chakra-ui/react';
+import NextLink from 'next/link';
 import { useRouter } from 'next/router';
 import { usePostHog } from 'posthog-js/react';
 
@@ -85,6 +86,7 @@ export const ListingSection = ({
           }
         >
           <Link
+            as={NextLink}
             href={
               viewAllLink ||
               (router?.query?.filter
@@ -117,6 +119,7 @@ export const ListingSection = ({
         }
       >
         <Link
+          as={NextLink}
           href={
             viewAllLink ||
             (router?.query?.filter
