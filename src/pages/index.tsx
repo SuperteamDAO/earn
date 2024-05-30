@@ -4,7 +4,6 @@ import dayjs from 'dayjs';
 import type { NextPage } from 'next';
 import { useEffect, useRef, useState } from 'react';
 
-import { FeatureModal } from '@/components/modals/FeatureModal';
 import { InstallPWAModal } from '@/components/modals/InstallPWAModal';
 import { EmptySection } from '@/components/shared/EmptySection';
 import { Loading } from '@/components/shared/Loading';
@@ -74,32 +73,11 @@ const HomePage: NextPage = () => {
 
   const { userInfo } = userStore();
 
-  const [isModalOpen, setIsModalOpen] = useState(false);
   const {
     isOpen: isPWAModalOpen,
     onClose: onPWAModalClose,
     onOpen: onPWAModalOpen,
   } = useDisclosure();
-
-  const handleClose = () => {
-    setIsModalOpen(false);
-  };
-
-  useEffect(() => {
-    const updateFeatureModalShown = async () => {
-      if (
-        userInfo?.featureModalShown === false &&
-        userInfo?.isTalentFilled === true
-      ) {
-        setIsModalOpen(true);
-        await axios.post('/api/user/update/', {
-          featureModalShown: true,
-        });
-      }
-    };
-
-    updateFeatureModalShown();
-  }, [userInfo]);
 
   const getMobileOS = () => {
     const ua = navigator.userAgent;
@@ -146,7 +124,6 @@ const HomePage: NextPage = () => {
 
   return (
     <Home type="home">
-      <FeatureModal isOpen={isModalOpen} onClose={handleClose} />
       <InstallPWAModal
         isOpen={isPWAModalOpen}
         onClose={onPWAModalClose}

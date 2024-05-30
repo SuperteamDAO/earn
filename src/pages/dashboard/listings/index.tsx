@@ -431,12 +431,16 @@ function Bounties() {
                         whiteSpace="normal"
                         wordBreak={'break-word'}
                       >
-                        <NextLink
+                        <Link
                           className="ph-no-capture"
+                          as={NextLink}
+                          pointerEvents={
+                            !currentBounty.isPublished ? 'none' : 'auto'
+                          }
+                          href={`/dashboard/listings/${currentBounty.slug}/submissions/`}
                           onClick={() => {
                             posthog.capture('submissions_sponsor');
                           }}
-                          href={`/dashboard/listings/${currentBounty.slug}/submissions/`}
                           passHref
                         >
                           <Flex align={'center'}>
@@ -462,7 +466,7 @@ function Bounties() {
                               {currentBounty.title}
                             </Text>
                           </Flex>
-                        </NextLink>
+                        </Link>
                       </Td>
                       <Td py={2}>
                         <Text

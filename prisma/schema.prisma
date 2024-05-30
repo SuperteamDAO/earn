@@ -90,6 +90,7 @@ model Bounties {
   SubscribeBounty      SubscribeBounty[]
   Hackathon            Hackathon?         @relation(fields: [hackathonId], references: [id])
   winnersAnnouncedAt   DateTime?
+  Scouts               Scouts[]
 
   @@index([id, slug])
   @@index([sponsorId])
@@ -307,6 +308,7 @@ model User {
   hackathonId       String?
   featureModalShown Boolean           @default(false)
   surveysShown      Json?
+  stRecommended     Boolean           @default(false)
   currentSponsor    Sponsors?         @relation(fields: [currentSponsorId], references: [id])
   UserSponsors      UserSponsors[]
   poc               Bounties[]        @relation("poc")
@@ -321,10 +323,26 @@ model User {
   Hackathon         Hackathon?        @relation(fields: [hackathonId], references: [id])
   emailSettings     EmailSettings[]
   TalentRankings    TalentRankings[]
+  Scouts            Scouts[]
 
   @@index([email, publicKey, username])
   @@index([currentSponsorId])
   @@index([hackathonId])
+}
+
+model Scouts {
+  id            String   @id @default(uuid())
+  userId        String
+  listingId     String
+  dollarsEarned Int
+  score         Decimal  @db.Decimal(9, 2)
+  invited       Boolean
+  skills        Json
+  createdAt     DateTime @default(now())
+  listing       Bounties @relation(fields: [listingId], references: [id])
+  user          User     @relation(fields: [userId], references: [id])
+
+  @@unique([userId, listingId])
 }
 
 model TalentRankings {

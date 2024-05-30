@@ -33,7 +33,6 @@ export function Home({ children, type }: HomeProps) {
   const router = useRouter();
 
   const [isTotalLoading, setIsTotalLoading] = useState(true);
-
   const [recentEarners, setRecentEarners] = useState<User[]>([]);
   const [totals, setTotals] = useState<TotalType>({});
 

@@ -12,7 +12,8 @@ type EmailType =
   | 'submissionTalent'
   | 'superteamWinners'
   | 'commentReply'
-  | 'commentTag';
+  | 'commentTag'
+  | 'scoutInvite';
 
 interface EmailNotificationParams {
   type: EmailType;

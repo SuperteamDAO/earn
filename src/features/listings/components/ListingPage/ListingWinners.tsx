@@ -7,9 +7,10 @@ import { useEffect, useState } from 'react';
 import { EarnAvatar } from '@/components/shared/EarnAvatar';
 import type { SubmissionWithUser } from '@/interface/submission';
 import { sortRank } from '@/utils/rank';
+import { tweetEmbedLink } from '@/utils/socialEmbeds';
 
 import type { Bounty, Rewards } from '../../types';
-import { tweetEmbedLink, tweetTemplate } from '../../utils';
+import { tweetTemplate } from '../../utils';
 
 interface Props {
   bounty: Bounty;
