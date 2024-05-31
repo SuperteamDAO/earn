@@ -1,24 +1,22 @@
+import { CheckIcon } from '@chakra-ui/icons';
 import {
   Box,
   Button,
+  Flex,
   FormControl,
+  FormHelperText,
   FormLabel,
   Image,
   Input,
   InputGroup,
   InputLeftAddon,
-  Link,
   Modal,
   ModalCloseButton,
   ModalContent,
   ModalHeader,
   ModalOverlay,
   Progress,
-  Step,
-  StepNumber,
   Stepper,
-  StepStatus,
-  StepTitle,
   Text,
   useSteps,
   VStack,
@@ -33,7 +31,6 @@ import {
   TextInputWithHelper,
 } from '@/components/Form/TextAreaHelpers';
 import { tokenList } from '@/constants';
-import { QuestionHandler } from '@/features/listings/';
 import { userStore } from '@/store/user';
 
 import { type Grant } from '../types';
@@ -49,8 +46,8 @@ interface Props {
 }
 
 const steps = [
-  { title: 'About You' },
-  { title: 'Your Project' },
+  { title: 'Basics' },
+  { title: 'Details' },
   { title: 'Milestones' },
 ];
 
@@ -62,7 +59,7 @@ export const GrantApplicationModal = ({
   applicationNumber,
   grant,
 }: Props) => {
-  const { id, questions, token, minReward, maxReward } = grant;
+  const { id, token, minReward, maxReward } = grant;
   const { activeStep, setActiveStep } = useSteps({
     index: 0,
     count: steps.length,
@@ -100,11 +97,21 @@ export const GrantApplicationModal = ({
   const submitApplication = async (data: any) => {
     setIsLoading(true);
     try {
-      const { discordId, twitterId, ask, walletAddress, ...answers } = data;
-      const grantAnswers = questions?.map((q: any, index: number) => ({
-        question: q.question,
-        answer: answers[`eligibility-${index}`],
-      }));
+      const {
+        projectTitle,
+        projectOneLiner,
+        ask,
+        walletAddress,
+        projectDetails,
+        projectTimeline,
+        proofOfWork,
+        milestones,
+        kpi,
+      } = data;
+      // const grantAnswers = questions?.map((q: any, index: number) => ({
+      //   question: q.question,
+      //   answer: answers[`eligibility-${index}`],
+      // }));
 
       await axios.post('/api/user/update/', {
         publicKey: walletAddress,
@@ -112,11 +119,15 @@ export const GrantApplicationModal = ({
 
       await axios.post('/api/grants/application/create/', {
         grantId: id,
-        discordId,
+        projectTitle,
+        projectOneLiner,
+        projectDetails,
+        projectTimeline,
+        proofOfWork,
+        milestones,
+        kpi,
         walletAddress,
-        twitterId,
         ask: ask || null,
-        answers: grantAnswers?.length ? grantAnswers : null,
       });
 
       reset();
@@ -156,25 +167,42 @@ export const GrantApplicationModal = ({
             in 48 hours!
           </Text>
           <Progress
-            h={0.5}
-            mt={4}
+            h={'1.5px'}
+            mx={-3}
+            mt={6}
             borderRadius={2}
             bgColor={'brand.slate.200'}
-            value={(activeStep / (steps.length - 1)) * 100}
+            value={(activeStep / (steps.length - 1)) * 100 + 1}
           />
-          <Stepper w="100%" mt={2} index={activeStep}>
-            {steps.map((step, index) => (
-              <Step key={index}>
-                <StepStatus
-                  active={<StepNumber />}
-                  complete={<StepNumber />}
-                  incomplete={<StepNumber />}
-                />
-
-                <Box flexShrink="0">
-                  <StepTitle>{step.title}</StepTitle>
-                </Box>
-              </Step>
+          <Stepper w="100%" mt={3} index={activeStep}>
+            {steps.map((step, i) => (
+              <Flex key={i} align={'center'} gap={1.5} fontWeight={400}>
+                <Text
+                  align={'center'}
+                  verticalAlign={'middle'}
+                  w="6"
+                  h="6"
+                  color={'brand.slate.400'}
+                  borderWidth={'1px'}
+                  borderColor={
+                    i < activeStep ? 'transparent' : 'brand.slate.300'
+                  }
+                  borderRadius={'full'}
+                  bgColor={i < activeStep ? 'brand.purple' : 'transparent'}
+                  style={{
+                    fontSize: '14px',
+                  }}
+                >
+                  {i < activeStep ? (
+                    <CheckIcon color="white" boxSize={2.5} />
+                  ) : (
+                    i + 1
+                  )}
+                </Text>
+                <Text color={'brand.slate.500'} fontSize={'md'}>
+                  {step.title}
+                </Text>
+              </Flex>
             ))}
           </Stepper>
         </ModalHeader>
@@ -201,47 +229,38 @@ export const GrantApplicationModal = ({
             {activeStep === 0 && (
               <VStack gap={4} mb={5}>
                 <TextAreaWithCounter
-                  id="discordId"
-                  label="Discord Username"
-                  helperText="Write the complete discord name, for e.g., akaash#210. Comma separate names in case more than one person has worked on the submission!"
-                  placeholder="Enter Discord Username"
+                  id="projectTitle"
+                  label="Project Title"
+                  helperText="What should we call your project?"
+                  placeholder="Project Title"
                   register={register}
                   watch={watch}
                   errors={errors}
+                  isRequired
                 />
                 <TextAreaWithCounter
-                  id="twitterId"
-                  label="Your Twitter Handle"
-                  helperText="In case you win, we'll tag you on Twitter. (Only starting from @, avoid the https://.)"
-                  placeholder="Enter Twitter Handle"
+                  id="projectOneLiner"
+                  label="One-Liner Description"
+                  helperText="Describe your idea in one sentence."
+                  maxLength={150}
+                  placeholder="Sum up your project in one sentence"
                   register={register}
                   watch={watch}
                   errors={errors}
+                  isRequired
                 />
-              </VStack>
-            )}
-            {activeStep === 1 && (
-              <VStack gap={4} mb={5}>
-                {questions?.map((e: any) => (
-                  <FormControl key={e?.order} isRequired>
-                    <QuestionHandler
-                      register={register}
-                      question={e?.question}
-                      label={`eligibility-${e?.order}`}
-                      watch={watch}
-                    />
-                  </FormControl>
-                ))}
                 <FormControl isRequired>
                   <FormLabel
-                    mb={1}
+                    mb={0}
                     color={'brand.slate.600'}
                     fontWeight={600}
                     htmlFor={'ask'}
                   >
-                    What&apos;s the compensation you require to complete this
-                    fully?
+                    Grant Amount (USD)
                   </FormLabel>
+                  <FormHelperText mt={0} mb={2} color="brand.slate.500">
+                    How much funding do you require to complete this project?
+                  </FormHelperText>
                   <InputGroup>
                     <InputLeftAddon>
                       <Image
@@ -260,8 +279,10 @@ export const GrantApplicationModal = ({
                     </InputLeftAddon>
                     <Input
                       borderColor={'brand.slate.300'}
+                      _placeholder={{ color: 'brand.slate.300' }}
                       focusBorderColor="brand.purple"
                       id="ask"
+                      placeholder="Enter amount"
                       {...register('ask', {
                         valueAsNumber: true,
                         validate: (value) => {
@@ -287,62 +308,109 @@ export const GrantApplicationModal = ({
                   id="walletAddress"
                   label="Your Solana Wallet Address"
                   helperText={
-                    <>
-                      Add your Solana wallet address here. This is where you
-                      will receive your rewards if you win. Download{' '}
-                      <Text as="u">
-                        <Link href="https://backpack.app" isExternal>
-                          Backpack
-                        </Link>
-                      </Text>{' '}
-                      /{' '}
-                      <Text as="u">
-                        <Link href="https://solflare.com" isExternal>
-                          Solflare
-                        </Link>
-                      </Text>{' '}
-                      if you don&apos;t have a Solana wallet
-                    </>
+                    'Where should we send the funds? No .sol domains please!'
                   }
                   placeholder="Add your Solana wallet address"
                   register={register}
                   errors={errors}
                   validate={validateSolAddress}
                   defaultValue={userInfo?.publicKey}
+                  isRequired
                 />
-                <Text mt={1} ml={1} color="red" fontSize="14px">
-                  {publicKeyError}
-                </Text>
+                {publicKeyError && (
+                  <Text mt={1} ml={1} color="red" fontSize="14px">
+                    {publicKeyError}
+                  </Text>
+                )}
               </VStack>
             )}
-            {activeStep === 2 && <Box>Milestones</Box>}
+            {activeStep === 1 && (
+              <VStack gap={4} mb={5}>
+                <TextAreaWithCounter
+                  id="projectDetails"
+                  label="Project Details"
+                  helperText="What is the problem you're trying to solve, and how you're going to solve it?"
+                  placeholder="Explain the problem you're solving and your solution"
+                  register={register}
+                  watch={watch}
+                  errors={errors}
+                  isRequired
+                />
+                <TextAreaWithCounter
+                  id="projectTimeline"
+                  label="Deadline"
+                  helperText="What is the expected completion date for the project?"
+                  placeholder="When do you expect to complete this project?"
+                  register={register}
+                  watch={watch}
+                  errors={errors}
+                  isRequired
+                />
+                <TextAreaWithCounter
+                  id="proofOfWork"
+                  label="Proof of Work"
+                  helperText="Include links to your best work that will make the community trust you to execute on this project."
+                  placeholder="Provide links to your portfolio or previous work"
+                  register={register}
+                  watch={watch}
+                  errors={errors}
+                  isRequired
+                />
+              </VStack>
+            )}
+            {activeStep === 2 && (
+              <VStack gap={4} mb={5}>
+                <TextAreaWithCounter
+                  id="milestones"
+                  label="Goals and Milestones"
+                  helperText="List down the things you hope to achieve by the end of project duration."
+                  placeholder="Outline your project goals and milestones"
+                  register={register}
+                  watch={watch}
+                  errors={errors}
+                  isRequired
+                />
+                <TextAreaWithCounter
+                  id="kpi"
+                  label="Primary Key Performance Indicator"
+                  helperText="What metric will you track to indicate success/failure of the project? At what point will it be a success? Could be anything, e.g. installs, users, views, TVL, etc."
+                  placeholder="What's the key metric for success?"
+                  register={register}
+                  watch={watch}
+                  errors={errors}
+                  isRequired
+                />
+              </VStack>
+            )}
             {!!error && (
               <Text align="center" mb={2} color="red">
                 Sorry! An error occurred while submitting. <br />
                 Please try again or contact us at hello@superteamearn.com
               </Text>
             )}
-            <Button
-              className="ph-no-capture"
-              w={'full'}
-              isLoading={!!isLoading}
-              loadingText="Submitting..."
-              type="submit"
-              variant="solid"
-            >
-              {activeStep === steps.length - 1 ? 'Apply' : 'Next'}
-            </Button>
-            {activeStep > 0 && (
+            <Flex gap={2} mt={8}>
               <Button
                 className="ph-no-capture"
                 w={'full'}
-                mt={4}
-                onClick={handleBack}
-                variant="outline"
+                isLoading={!!isLoading}
+                loadingText="Submitting..."
+                type="submit"
+                variant="solid"
               >
-                Back
+                {activeStep === steps.length - 1 ? 'Apply' : 'Continue'}
               </Button>
-            )}
+              {activeStep > 0 && (
+                <Button
+                  className="ph-no-capture"
+                  w={'36%'}
+                  color="brand.slate.500"
+                  onClick={handleBack}
+                  variant="unstyled"
+                >
+                  Back
+                </Button>
+              )}
+            </Flex>
           </form>
         </VStack>
       </ModalContent>

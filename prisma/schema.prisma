@@ -193,7 +193,14 @@ model GrantApplication {
   userId            String
   grantId           String
   applicationStatus GrantApplicationStatus @default(Pending)
+  projectTitle      String
+  projectOneLiner   String
+  projectDetails    String
+  projectTimeline   String
+  proofOfWork       String
+  walletAddress     String
   milestones        String?                @db.VarChar(2000)
+  kpi               String?                @db.VarChar(2000)
   answers           Json?
   createdAt         DateTime               @default(now())
   updatedAt         DateTime               @updatedAt
@@ -203,9 +210,6 @@ model GrantApplication {
   ask               Int                    @default(0)
   approvedAmount    Int                    @default(0)
   totalPaid         Int                    @default(0)
-  discordId         String
-  twitterId         String
-  walletAddress     String
   isShipped         Boolean                @default(false)
 
   @@index([userId])
@@ -375,6 +379,8 @@ model Scouts {
   user          User     @relation(fields: [userId], references: [id])
 
   @@unique([userId, listingId])
+  @@index([userId])
+  @@index([listingId])
 }
 
 model TalentRankings {

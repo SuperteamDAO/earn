@@ -6,8 +6,34 @@ import {
   Input,
   Text,
 } from '@chakra-ui/react';
+import { type ReactElement } from 'react';
 
 import { AutoResizeTextarea } from '../shared/autosize-textarea';
+
+interface TextAreaWithCounterProps {
+  id: string;
+  label: string;
+  helperText: string;
+  placeholder: string;
+  register: any;
+  watch: any;
+  maxLength?: number;
+  errors: any;
+  isRequired?: boolean;
+}
+
+interface TextInputWithHelperProps {
+  id: string;
+  label: string;
+  helperText: ReactElement | string;
+  placeholder: string;
+  register: any;
+  errors: any;
+  validate: any;
+  defaultValue?: string;
+  type?: string;
+  isRequired?: boolean;
+}
 
 export const TextAreaWithCounter = ({
   id,
@@ -18,8 +44,9 @@ export const TextAreaWithCounter = ({
   watch,
   maxLength = 2000,
   errors,
-}: any) => (
-  <FormControl>
+  isRequired,
+}: TextAreaWithCounterProps) => (
+  <FormControl isRequired={isRequired}>
     <FormLabel mb={0} color={'brand.slate.600'} fontWeight={600} htmlFor={id}>
       {label}
     </FormLabel>
@@ -37,12 +64,12 @@ export const TextAreaWithCounter = ({
     />
     <Text
       color={
-        (watch(id)?.length || 0) > maxLength - 100 ? 'red' : 'brand.slate.400'
+        (watch(id)?.length || 0) > maxLength - 30 ? 'red' : 'brand.slate.400'
       }
       fontSize={'xs'}
       textAlign="right"
     >
-      {watch(id)?.length > maxLength - 200 &&
+      {watch(id)?.length > maxLength - 100 &&
         (maxLength - (watch(id)?.length || 0) === 0 ? (
           <p>Character limit reached</p>
         ) : (
@@ -65,8 +92,9 @@ export const TextInputWithHelper = ({
   validate,
   defaultValue,
   type = 'text',
-}: any) => (
-  <FormControl isRequired>
+  isRequired,
+}: TextInputWithHelperProps) => (
+  <FormControl isRequired={isRequired}>
     <FormLabel mb={0} color={'brand.slate.600'} fontWeight={600} htmlFor={id}>
       {label}
     </FormLabel>

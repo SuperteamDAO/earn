@@ -310,7 +310,7 @@ export const SubmissionModal = ({
             <VStack gap={4} mb={5}>
               {!isProject ? (
                 <>
-                  <TextInputWithHelper
+                  <TextAreaWithCounter
                     id="applicationLink"
                     label="Link to Your Submission"
                     helperText="Make sure this link is accessible by everyone!"
@@ -319,9 +319,10 @@ export const SubmissionModal = ({
                     watch={watch}
                     maxLength={500}
                     errors={errors}
+                    isRequired
                   />
 
-                  <TextInputWithHelper
+                  <TextAreaWithCounter
                     id="tweetLink"
                     label="Tweet Link"
                     helperText="This helps sponsors discover (and maybe repost) your work on Twitter! If this submission is for a Twitter thread bounty, you can ignore this field."
@@ -330,6 +331,7 @@ export const SubmissionModal = ({
                     watch={watch}
                     maxLength={500}
                     errors={errors}
+                    isRequired
                   />
                   {isHackathon &&
                     eligibility?.map((e) => {

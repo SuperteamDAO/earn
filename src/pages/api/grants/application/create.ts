@@ -9,19 +9,33 @@ async function grantApplication(
 ) {
   const userId = req.userId;
 
-  const { grantId, answers, ask, discordId, twitterId, walletAddress } =
-    req.body;
+  const {
+    grantId,
+    projectTitle,
+    projectOneLiner,
+    projectDetails,
+    projectTimeline,
+    proofOfWork,
+    milestones,
+    kpi,
+    walletAddress,
+    ask,
+  } = req.body;
 
   try {
     const result = await prisma.grantApplication.create({
       data: {
         userId: userId as string,
         grantId,
-        answers: answers,
-        ask: ask || null,
-        discordId,
-        twitterId,
+        projectTitle,
+        projectOneLiner,
+        projectDetails,
+        projectTimeline,
+        proofOfWork,
+        milestones,
+        kpi,
         walletAddress,
+        ask,
       },
       include: {
         user: true,
