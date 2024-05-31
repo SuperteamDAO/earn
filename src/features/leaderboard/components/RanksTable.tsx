@@ -352,7 +352,7 @@ export function RanksTable({ rankings, skill, userRank, loading }: Props) {
             ))}
             {userInfo &&
               !rankings.find((r) => r.username === userInfo?.username) && (
-                <Tr w="full" bg="#F5F3FF80">
+                <Tr pos="relative" zIndex={0} w="full" bg="#F5F3FF80">
                   <Td
                     pos="sticky"
                     zIndex={100}
