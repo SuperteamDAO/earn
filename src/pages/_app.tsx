@@ -145,12 +145,12 @@ function App({ Component, pageProps: { session, ...pageProps } }: AppProps) {
   useEffect(() => {
     const updateFeatureModalShown = async () => {
       if (userInfo?.featureModalShown === false && userInfo?.currentSponsorId) {
+        setUserInfo({ ...userInfo, featureModalShown: true });
         setIsModalOpen(true);
         await getSponsorLatestActiveSlug();
         await axios.post('/api/user/update/', {
           featureModalShown: true,
         });
-        setUserInfo({ ...userInfo, featureModalShown: true });
       }
     };
 
