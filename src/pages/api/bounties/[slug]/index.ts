@@ -1,8 +1,21 @@
-import type { NextApiRequest, NextApiResponse } from 'next';
+import type { NextApiResponse } from 'next';
 
+import { type NextApiRequestWithUser, withAuth } from '@/features/auth';
 import { prisma } from '@/prisma';
 
-export default async function user(req: NextApiRequest, res: NextApiResponse) {
+async function handler(req: NextApiRequestWithUser, res: NextApiResponse) {
+  const userId = req.userId;
+
+  const user = await prisma.user.findUnique({
+    where: {
+      id: userId as string,
+    },
+  });
+
+  if (!user) {
+    return res.status(400).json({ error: 'Unauthorized' });
+  }
+
   const params = req.query;
   const slug = params.slug as string;
   const type = params.type as 'bounty' | 'project' | 'hackathon';
@@ -12,6 +25,9 @@ export default async function user(req: NextApiRequest, res: NextApiResponse) {
         slug,
         type,
         isActive: true,
+        sponsor: {
+          id: user.currentSponsorId!,
+        },
       },
       include: {
         sponsor: { select: { name: true, logo: true } },
@@ -52,3 +68,5 @@ export default async function user(req: NextApiRequest, res: NextApiResponse) {
     });
   }
 }
+
+export default withAuth(handler);

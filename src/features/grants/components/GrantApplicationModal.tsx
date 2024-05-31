@@ -117,7 +117,7 @@ export const GrantApplicationModal = ({
         publicKey: walletAddress,
       });
 
-      await axios.post('/api/grants/application/create/', {
+      await axios.post('/api/grantApplication/create/', {
         grantId: id,
         projectTitle,
         projectOneLiner,

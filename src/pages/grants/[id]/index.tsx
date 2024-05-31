@@ -50,7 +50,9 @@ const Grants = ({ slug }: GrantsDetailsProps) => {
   const getGrants = async () => {
     setIsLoading(true);
     try {
-      const grantsDetails = await axios.get(`/api/grants/${slug}/`);
+      const grantsDetails = await axios.post('/api/grants/getGrantBySlug', {
+        slug,
+      });
 
       setGrant(grantsDetails.data);
     } catch (e) {
@@ -69,7 +71,7 @@ const Grants = ({ slug }: GrantsDetailsProps) => {
     setIsApplicationNumberLoading(true);
     try {
       const submissionCountDetails = await axios.get(
-        `/api/grants/application/${grant?.id}/count/`,
+        `/api/grantApplication/${grant?.id}/count/`,
       );
       const count = submissionCountDetails?.data || 0;
       setApplicationNumber(count);

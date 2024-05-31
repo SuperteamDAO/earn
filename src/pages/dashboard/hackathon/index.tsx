@@ -412,38 +412,33 @@ export default function Hackathon() {
                         whiteSpace="normal"
                         wordBreak={'break-word'}
                       >
-                        <Link
-                          className="ph-no-capture"
-                          as={NextLink}
-                          pointerEvents={
-                            !currentBounty.isPublished ? 'none' : 'auto'
-                          }
+                        {/* <NextLink
                           href={`/dashboard/listings/${currentBounty.slug}/submissions/`}
                           passHref
-                        >
-                          <Flex align={'center'}>
-                            <Image
-                              h={5}
-                              mr={2}
-                              borderRadius={2}
-                              alt={`${currentBounty?.sponsor?.name}`}
-                              src={currentBounty?.sponsor?.logo}
-                            />
+                        > */}
+                        <Flex align={'center'}>
+                          <Image
+                            h={5}
+                            mr={2}
+                            borderRadius={2}
+                            alt={`${currentBounty?.sponsor?.name}`}
+                            src={currentBounty?.sponsor?.logo}
+                          />
 
-                            <Text
-                              as="a"
-                              overflow="hidden"
-                              color="brand.slate.500"
-                              fontSize={'15px'}
-                              fontWeight={500}
-                              // _hover={{ textDecoration: 'underline' }}
-                              whiteSpace="nowrap"
-                              textOverflow="ellipsis"
-                            >
-                              {currentBounty.title}
-                            </Text>
-                          </Flex>
-                        </Link>
+                          <Text
+                            as="a"
+                            overflow="hidden"
+                            color="brand.slate.500"
+                            fontSize={'15px'}
+                            fontWeight={500}
+                            // _hover={{ textDecoration: 'underline' }}
+                            whiteSpace="nowrap"
+                            textOverflow="ellipsis"
+                          >
+                            {currentBounty.title}
+                          </Text>
+                        </Flex>
+                        {/* </NextLink> */}
                       </Td>
                       <Td py={2}>
                         <Text

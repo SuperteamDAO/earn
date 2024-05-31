@@ -211,6 +211,8 @@ model GrantApplication {
   approvedAmount    Int                    @default(0)
   totalPaid         Int                    @default(0)
   isShipped         Boolean                @default(false)
+  paymentDetails    Json?
+  totalTranches     Int                    @default(0)
 
   @@index([userId])
   @@index([grantId])

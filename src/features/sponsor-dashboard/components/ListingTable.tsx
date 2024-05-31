@@ -180,12 +180,14 @@ export const ListingTable = ({ listings, setListings }: ListingTableProps) => {
                     whiteSpace="normal"
                     wordBreak={'break-word'}
                   >
-                    <NextLink
+                    <Link
                       className="ph-no-capture"
+                      as={NextLink}
+                      pointerEvents={!listing.isPublished ? 'none' : 'auto'}
+                      href={`/dashboard/listings/${listing.slug}/submissions/`}
                       onClick={() => {
                         posthog.capture('submissions_sponsor');
                       }}
-                      href={`/dashboard/listings/${listing.slug}/submissions/`}
                       passHref
                     >
                       <Flex align={'center'}>
@@ -211,7 +213,7 @@ export const ListingTable = ({ listings, setListings }: ListingTableProps) => {
                           {listing.title}
                         </Text>
                       </Flex>
-                    </NextLink>
+                    </Link>
                   </Td>
                   <Td py={2}>
                     <Text

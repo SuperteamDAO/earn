@@ -48,7 +48,9 @@ const Grants = ({ slug }: GrantsDetailsProps) => {
   const getGrants = async () => {
     setIsLoading(true);
     try {
-      const grantsDetails = await axios.get(`/api/grants/${slug}/`);
+      const grantsDetails = await axios.post('/api/grants/getGrantBySlug', {
+        slug,
+      });
 
       setGrants(grantsDetails.data);
     } catch (e) {

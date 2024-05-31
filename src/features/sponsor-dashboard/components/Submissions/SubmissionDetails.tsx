@@ -49,6 +49,7 @@ import { getURLSanitized } from '@/utils/getURLSanitized';
 import { truncatePublicKey } from '@/utils/truncatePublicKey';
 import { truncateString } from '@/utils/truncateString';
 
+import { labelMenuOptions } from '../../constants';
 import { colorMap } from '../../utils';
 
 interface Props {
@@ -66,23 +67,6 @@ interface Props {
   setTotalPaymentsMade: Dispatch<SetStateAction<number>>;
   isHackathonPage?: boolean;
 }
-
-const menuOptions = [
-  {
-    label: 'Unreviewed',
-    value: 'Unreviewed',
-    bg: 'orange.100',
-    color: 'orange.800',
-  },
-  { label: 'Reviewed', value: 'Reviewed', bg: 'blue.100', color: 'blue.600' },
-  {
-    label: 'Shortlisted',
-    value: 'Shortlisted',
-    bg: 'purple.100',
-    color: 'purple.600',
-  },
-  { label: 'Spam', value: 'Spam', bg: 'red.100', color: 'red.600' },
-];
 
 export const SubmissionDetails = ({
   bounty,
@@ -516,7 +500,7 @@ export const SubmissionDetails = ({
                       </Tag>
                     </MenuButton>
                     <MenuList borderColor="brand.slate.300">
-                      {menuOptions.map((option) => (
+                      {labelMenuOptions.map((option) => (
                         <MenuItem
                           key={option.value}
                           _focus={{ bg: 'brand.slate.100' }}

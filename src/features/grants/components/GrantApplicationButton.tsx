@@ -91,7 +91,7 @@ export const GrantApplicationButton = ({
     setIsUserApplicationLoading(true);
     try {
       const applicationDetails = await axios.get(
-        `/api/grants/application/${id}/user/`,
+        `/api/grantApplication/${id}/user/`,
       );
       setHasApplied(!!applicationDetails?.data?.id);
       setIsUserApplicationLoading(false);

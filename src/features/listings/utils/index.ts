@@ -53,7 +53,8 @@ export const getListingTypeLabel = (type: string) => {
 };
 
 export const getListingStatus = (
-  listing: Listing | ListingWithSubmissions | null,
+  listing: Listing | ListingWithSubmissions | any,
+  isGrant?: boolean,
 ) => {
   if (!listing) return 'DRAFT';
 
@@ -65,7 +66,7 @@ export const getListingStatus = (
   const hasDeadlinePassed = isDeadlineOver(listing?.deadline || '');
 
   if (listingStatus === 'DRAFT') return 'Draft';
-  if (listing?.type === 'grant') return 'Ongoing';
+  if (listing?.type === 'grant' || isGrant) return 'Ongoing';
 
   switch (listingStatus) {
     case 'CLOSED':
