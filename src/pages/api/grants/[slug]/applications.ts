@@ -62,11 +62,6 @@ async function handler(req: NextApiRequestWithUser, res: NextApiResponse) {
               },
             },
           },
-          {
-            link: {
-              contains: searchText,
-            },
-          },
         ],
       }
     : {};

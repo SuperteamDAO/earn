@@ -34,4 +34,10 @@ interface Grant {
   applicationStatus: 'Pending' | 'Approved' | 'Rejected';
 }
 
-export type { Grant };
+interface GrantStats {
+  count: number;
+  approvedSoFar: number;
+  averageApproved: number;
+}
+
+export type { Grant, GrantStats };

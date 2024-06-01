@@ -1,12 +1,7 @@
 import { Button, Flex, Tooltip, useDisclosure } from '@chakra-ui/react';
 import axios from 'axios';
 import { useSession } from 'next-auth/react';
-import React, {
-  type Dispatch,
-  type SetStateAction,
-  useEffect,
-  useState,
-} from 'react';
+import React, { useEffect, useState } from 'react';
 
 import { AuthWrapper } from '@/features/auth';
 import {
@@ -16,19 +11,17 @@ import {
 } from '@/features/listings';
 import { userStore } from '@/store/user';
 
-import { type Grant } from '../types';
+import { type Grant, type GrantStats } from '../types';
 import { GrantApplicationModal } from './GrantApplicationModal';
 
 interface GrantApplicationButtonProps {
   grant: Grant;
-  applicationNumber: number;
-  setApplicationNumber: Dispatch<SetStateAction<number>>;
+  setStats: (statsUpdater: (prevStats: GrantStats) => GrantStats) => void;
 }
 
 export const GrantApplicationButton = ({
   grant,
-  applicationNumber,
-  setApplicationNumber,
+  setStats,
 }: GrantApplicationButtonProps) => {
   const { userInfo } = userStore();
   const [hasApplied, setHasApplied] = useState(false);
@@ -112,8 +105,7 @@ export const GrantApplicationButton = ({
           id={id}
           onClose={onClose}
           isOpen={isOpen}
-          applicationNumber={applicationNumber}
-          setApplicationNumber={setApplicationNumber}
+          setStats={setStats}
           setHasApplied={setHasApplied}
           grant={grant}
         />

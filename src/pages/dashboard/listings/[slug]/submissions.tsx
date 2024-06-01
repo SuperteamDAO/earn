@@ -12,6 +12,7 @@ import {
   useDisclosure,
 } from '@chakra-ui/react';
 import axios from 'axios';
+import dayjs from 'dayjs';
 import type { GetServerSideProps } from 'next';
 import { useSearchParams } from 'next/navigation';
 import { useRouter } from 'next/router';
@@ -46,6 +47,9 @@ function BountySubmissions({ slug }: Props) {
   const { isOpen, onOpen, onClose } = useDisclosure();
   const { userInfo } = userStore();
   const [bounty, setBounty] = useState<Listing | null>(null);
+
+  const [isLoading, setIsLoading] = useState(true);
+  const [isExpired, setIsExpired] = useState(false);
   const [totalSubmissions, setTotalSubmissions] = useState(0);
   const [totalWinners, setTotalWinners] = useState(0);
   const [totalPaymentsMade, setTotalPaymentsMade] = useState(0);
@@ -79,6 +83,10 @@ function BountySubmissions({ slug }: Props) {
     setIsBountyLoading(true);
     try {
       const bountyDetails = await axios.get(`/api/bounties/${slug}/`);
+      const isExpired =
+        bountyDetails.data?.deadline &&
+        dayjs(bountyDetails.data?.deadline).isBefore(dayjs());
+      setIsExpired(isExpired);
       setBounty(bountyDetails.data);
       if (bountyDetails.data.sponsorId !== userInfo?.currentSponsorId) {
         router.push('/dashboard/listings');
@@ -110,6 +118,7 @@ function BountySubmissions({ slug }: Props) {
 
   const getSubmissions = async () => {
     try {
+      setIsLoading(true);
       const submissionDetails = await axios.get(
         `/api/bounties/${slug}/submissions`,
         {
@@ -124,6 +133,8 @@ function BountySubmissions({ slug }: Props) {
       setSelectedSubmission(submissionDetails.data[0]);
     } catch (e) {
       console.log(e);
+    } finally {
+      setIsLoading(false);
     }
   };
 
@@ -196,21 +207,23 @@ function BountySubmissions({ slug }: Props) {
               <Tab px={1} fontSize="sm" _selected={selectedStyles}>
                 Submissions
               </Tab>
-              {bounty?.isPublished && !bounty?.isWinnersAnnounced && (
-                <Tab
-                  className="ph-no-capture"
-                  px={1}
-                  fontSize="sm"
-                  _selected={selectedStyles}
-                  onClick={() => posthog.capture('scout tab_scout')}
-                >
-                  Scout Talent
-                </Tab>
-              )}
+              {bounty?.isPublished &&
+                !bounty?.isWinnersAnnounced &&
+                !isExpired && (
+                  <Tab
+                    className="ph-no-capture"
+                    px={1}
+                    fontSize="sm"
+                    _selected={selectedStyles}
+                    onClick={() => posthog.capture('scout tab_scout')}
+                  >
+                    Scout Talent
+                  </Tab>
+                )}
             </TabList>
             <TabPanels>
               <TabPanel px={0}>
-                {!submissions?.length && !searchText ? (
+                {!submissions?.length && !searchText && !isLoading ? (
                   <>
                     <Image
                       w={32}
@@ -325,7 +338,8 @@ function BountySubmissions({ slug }: Props) {
               {bounty &&
                 bounty.id &&
                 bounty.isPublished &&
-                !bounty.isWinnersAnnounced && (
+                !bounty.isWinnersAnnounced &&
+                !isExpired && (
                   <TabPanel px={0}>
                     <ScountTable
                       bountyId={bounty.id}

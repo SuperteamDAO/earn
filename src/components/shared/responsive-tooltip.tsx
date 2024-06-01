@@ -29,7 +29,16 @@ export const Tooltip = (props: Props) => {
       onOpen={() => setIsOpen(true)}
       {...props}
     >
-      <button onClick={() => setIsOpen(true)}>{props.children}</button>
+      <button
+        style={{
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+        }}
+        onClick={() => setIsOpen(true)}
+      >
+        {props.children}
+      </button>
     </ChakraTooltip>
   );
 };

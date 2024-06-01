@@ -81,10 +81,6 @@ export const ListingTable = ({ listings, setListings }: ListingTableProps) => {
     unpublishOnOpen();
   };
 
-  const handleViewSubmissions = (slug: string | undefined) => {
-    router.push(`/dashboard/listings/${slug}/submissions/`);
-  };
-
   const handleDeleteDraft = async (deleteListing: ListingWithSubmissions) => {
     setSelectedListing(deleteListing);
     deleteDraftOnOpen();
@@ -171,6 +167,11 @@ export const ListingTable = ({ listings, setListings }: ListingTableProps) => {
                 }
               })();
 
+              const listingSubmissionLink =
+                listing.type === 'grant'
+                  ? `/dashboard/grants/${listing.slug}/applications/`
+                  : `/dashboard/listings/${listing.slug}/submissions/`;
+
               return (
                 <Tr key={listing?.id}>
                   <Td
@@ -184,7 +185,7 @@ export const ListingTable = ({ listings, setListings }: ListingTableProps) => {
                       className="ph-no-capture"
                       as={NextLink}
                       pointerEvents={!listing.isPublished ? 'none' : 'auto'}
-                      href={`/dashboard/listings/${listing.slug}/submissions/`}
+                      href={listingSubmissionLink}
                       onClick={() => {
                         posthog.capture('submissions_sponsor');
                       }}
@@ -291,7 +292,7 @@ export const ListingTable = ({ listings, setListings }: ListingTableProps) => {
                         leftIcon={<ViewIcon />}
                         onClick={() => {
                           posthog.capture('submissions_sponsor');
-                          handleViewSubmissions(listing.slug);
+                          router.push(listingSubmissionLink);
                         }}
                         size="sm"
                         variant="ghost"

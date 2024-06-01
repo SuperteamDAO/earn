@@ -41,6 +41,7 @@ import { labelMenuOptions } from '../../constants';
 import { type GrantApplicationWithUser } from '../../types';
 import { colorMap } from '../../utils';
 import { ApproveModal } from './Modals/ApproveModal';
+import { RecordPaymentModal } from './Modals/RecordPaymentModal';
 import { RejectModal } from './Modals/RejectModal';
 
 interface Props {
@@ -129,6 +130,12 @@ export const ApplicationDetails = ({
     onClose: rejectedOnClose,
   } = useDisclosure();
 
+  const {
+    isOpen: recordPaymentIsOpen,
+    onOpen: recordPaymentOnOpen,
+    onClose: recordPaymentOnClose,
+  } = useDisclosure();
+
   return (
     <Box
       w="150%"
@@ -154,6 +161,12 @@ export const ApplicationDetails = ({
         approveOnClose={approveOnClose}
         ask={selectedApplication?.ask}
         granteeName={selectedApplication?.user?.firstName}
+      />
+
+      <RecordPaymentModal
+        applicationId={selectedApplication?.id}
+        recordPaymentIsOpen={recordPaymentIsOpen}
+        recordPaymentOnClose={recordPaymentOnClose}
       />
 
       {applications.length ? (
@@ -286,7 +299,9 @@ export const ApplicationDetails = ({
                 </>
               )}
 
-              {isApproved && <Button>Record Payment</Button>}
+              {isApproved && (
+                <Button onClick={recordPaymentOnOpen}>Record Payment</Button>
+              )}
             </Flex>
           </Flex>
 

@@ -87,7 +87,8 @@ export function Sidebar({
 
   function sponsorInfoCloseAltered() {
     onSponsorInfoModalClose();
-    onScoutAnnounceModalOpen();
+    if (userInfo?.featureModalShown === false && userInfo?.currentSponsorId)
+      onScoutAnnounceModalOpen();
   }
 
   const getSponsorLatestActiveSlug = async () => {

@@ -16,7 +16,7 @@ async function handler(req: NextApiRequestWithUser, res: NextApiResponse) {
     return res.status(400).json({ error: 'User not found' });
   }
 
-  const { id, applicationStatus } = req.body;
+  const { id, applicationStatus, approvedAmount } = req.body;
 
   try {
     const result = await prisma.grantApplication.update({
@@ -28,6 +28,7 @@ async function handler(req: NextApiRequestWithUser, res: NextApiResponse) {
       },
       data: {
         applicationStatus,
+        approvedAmount,
       },
     });
 

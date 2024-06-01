@@ -16,41 +16,40 @@ async function handler(req: NextApiRequestWithUser, res: NextApiResponse) {
     return res.status(400).json({ error: 'Unauthorized' });
   }
 
-  const { id, trancheAmount, txId } = req.body;
+  const { id, trancheAmount, txId, note } = req.body;
+  const parsedTrancheAmount = parseInt(trancheAmount, 10);
 
   try {
     const currentApplication = await prisma.grantApplication.findUnique({
       where: { id },
+      include: { grant: true },
     });
 
     if (!currentApplication) {
       return res.status(404).json({ error: 'Grant application not found' });
     }
 
-    let updatedPaymentDetails;
-    if (currentApplication.paymentDetails) {
-      if (Array.isArray(currentApplication.paymentDetails)) {
-        updatedPaymentDetails = [
-          ...currentApplication.paymentDetails,
-          { txId },
-        ];
-      } else {
-        updatedPaymentDetails = [{ txId }];
-      }
-    } else {
-      updatedPaymentDetails = [{ txId }];
+    if (currentApplication.grant.sponsorId !== user.currentSponsorId) {
+      return res.status(400).json({ error: 'Unauthorized' });
     }
 
+    let updatedPaymentDetails = currentApplication.paymentDetails || [];
+    if (!Array.isArray(updatedPaymentDetails)) {
+      updatedPaymentDetails = [];
+    }
+
+    updatedPaymentDetails.push({
+      txId,
+      note,
+      tranche: currentApplication.totalTranches + 1,
+      amount: parsedTrancheAmount,
+    });
+
     const result = await prisma.grantApplication.update({
-      where: {
-        id,
-        grant: {
-          sponsorId: user.currentSponsorId!,
-        },
-      },
+      where: { id },
       data: {
         totalPaid: {
-          increment: trancheAmount,
+          increment: parsedTrancheAmount,
         },
         totalTranches: {
           increment: 1,
@@ -59,10 +58,21 @@ async function handler(req: NextApiRequestWithUser, res: NextApiResponse) {
       },
     });
 
+    await prisma.grants.update({
+      where: {
+        id: currentApplication.grantId,
+      },
+      data: {
+        totalPaid: {
+          increment: parsedTrancheAmount,
+        },
+      },
+    });
+
     return res.status(200).json(result);
-  } catch (error) {
+  } catch (error: any) {
     return res.status(400).json({
-      error,
+      error: error.message,
       message: `Error occurred while updating payment of a submission ${id}.`,
     });
   }

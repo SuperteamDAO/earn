@@ -33,15 +33,14 @@ import {
 import { tokenList } from '@/constants';
 import { userStore } from '@/store/user';
 
-import { type Grant } from '../types';
+import { type Grant, type GrantStats } from '../types';
 
 interface Props {
   id: string | undefined;
   isOpen: boolean;
   onClose: () => void;
   setHasApplied: (arg0: boolean) => void;
-  setApplicationNumber: (arg0: number) => void;
-  applicationNumber: number;
+  setStats: (statsUpdater: (prevStats: GrantStats) => GrantStats) => void;
   grant: Grant;
 }
 
@@ -55,8 +54,7 @@ export const GrantApplicationModal = ({
   isOpen,
   onClose,
   setHasApplied,
-  setApplicationNumber,
-  applicationNumber,
+  setStats,
   grant,
 }: Props) => {
   const { id, token, minReward, maxReward } = grant;
@@ -136,7 +134,10 @@ export const GrantApplicationModal = ({
       const updatedUser = await axios.post('/api/user/');
       setUserInfo(updatedUser?.data);
 
-      setApplicationNumber(applicationNumber + 1);
+      setStats((prevStats) => ({
+        ...prevStats,
+        count: prevStats.count + 1,
+      }));
 
       onClose();
     } catch (e) {

@@ -38,9 +38,12 @@ interface GrantsDetailsProps {
 
 const Grants = ({ slug }: GrantsDetailsProps) => {
   const [grant, setGrant] = useState<Grant | null>(null);
-  const [applicationNumber, setApplicationNumber] = useState<number>(0);
-  const [isApplicationNumberLoading, setIsApplicationNumberLoading] =
-    useState(true);
+  const [stats, setStats] = useState({
+    count: 0,
+    approvedSoFar: 0,
+    averageApproved: 0,
+  });
+  const [statsLoading, setStatsLoading] = useState(true);
 
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState(false);
@@ -68,23 +71,24 @@ const Grants = ({ slug }: GrantsDetailsProps) => {
   }, []);
 
   const getApplicationCount = async () => {
-    setIsApplicationNumberLoading(true);
+    setStatsLoading(true);
     try {
-      const submissionCountDetails = await axios.get(
-        `/api/grantApplication/${grant?.id}/count/`,
+      const grantId = grant?.id;
+      const grantStatsDetails = await axios.get(
+        `/api/grantApplication/${grantId}/stats/`,
       );
-      const count = submissionCountDetails?.data || 0;
-      setApplicationNumber(count);
-      setIsApplicationNumberLoading(false);
+
+      setStats(grantStatsDetails.data);
+      setStatsLoading(false);
     } catch (e) {
-      setIsApplicationNumberLoading(false);
+      setStatsLoading(false);
     }
   };
 
   useEffect(() => {
-    if (!isApplicationNumberLoading) return;
+    if (!statsLoading) return;
     getApplicationCount();
-  }, []);
+  }, [grant]);
 
   return (
     <>
@@ -209,7 +213,7 @@ const Grants = ({ slug }: GrantsDetailsProps) => {
                             fontSize={{ base: 'lg', md: 'xl' }}
                             fontWeight={500}
                           >
-                            $230k
+                            ${stats?.approvedSoFar || 0}
                           </Text>
                           <Text
                             mt={-1}
@@ -217,7 +221,7 @@ const Grants = ({ slug }: GrantsDetailsProps) => {
                             fontSize={'sm'}
                             fontWeight={500}
                           >
-                            Paid so far
+                            Approved So Far
                           </Text>
                         </Flex>
                       </Flex>
@@ -231,7 +235,7 @@ const Grants = ({ slug }: GrantsDetailsProps) => {
                             fontSize={{ base: 'lg', md: 'xl' }}
                             fontWeight={500}
                           >
-                            $3.2k
+                            ${stats?.averageApproved || 0}
                           </Text>
                           <Text
                             mt={-1}
@@ -251,9 +255,9 @@ const Grants = ({ slug }: GrantsDetailsProps) => {
                             fontSize={{ base: 'lg', md: 'xl' }}
                             fontWeight={500}
                           >
-                            {isApplicationNumberLoading
+                            {statsLoading
                               ? '...'
-                              : applicationNumber.toLocaleString()}
+                              : stats?.count.toLocaleString()}
                           </Text>
                           <Text
                             mt={-1}
@@ -266,11 +270,7 @@ const Grants = ({ slug }: GrantsDetailsProps) => {
                         </Flex>
                       </Flex>
                     </Flex>
-                    <GrantApplicationButton
-                      applicationNumber={applicationNumber}
-                      setApplicationNumber={setApplicationNumber}
-                      grant={grant}
-                    />
+                    <GrantApplicationButton setStats={setStats} grant={grant} />
                   </VStack>
                   {grant.requirements && (
                     <VStack

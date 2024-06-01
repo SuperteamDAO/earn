@@ -45,6 +45,7 @@ function GrantApplications({ slug }: Props) {
   const [selectedApplication, setSelectedApplication] =
     useState<GrantApplicationWithUser>();
   const [isGrantLoading, setIsGrantLoading] = useState(true);
+  const [isLoading, setIsLoading] = useState(true);
   const [skip, setSkip] = useState(0);
   let length = 10;
   const [searchText, setSearchText] = useState('');
@@ -78,6 +79,7 @@ function GrantApplications({ slug }: Props) {
 
   const getApplications = async () => {
     try {
+      setIsLoading(true);
       const applicationDetails = await axios.get(
         `/api/grants/${slug}/applications/`,
         {
@@ -92,6 +94,8 @@ function GrantApplications({ slug }: Props) {
       setSelectedApplication(applicationDetails.data[0]);
     } catch (e) {
       console.log(e);
+    } finally {
+      setIsLoading(false);
     }
   };
 
@@ -130,7 +134,7 @@ function GrantApplications({ slug }: Props) {
             </TabList>
             <TabPanels>
               <TabPanel px={0}>
-                {!applications?.length && !searchText ? (
+                {!applications?.length && !searchText && !isLoading ? (
                   <>
                     <Image
                       w={32}
@@ -147,7 +151,7 @@ function GrantApplications({ slug }: Props) {
                       fontWeight={600}
                       textAlign={'center'}
                     >
-                      People are working!
+                      You have not received any applications yet
                     </Text>
                     <Text
                       mx="auto"
@@ -156,7 +160,8 @@ function GrantApplications({ slug }: Props) {
                       fontWeight={500}
                       textAlign={'center'}
                     >
-                      Applications will start appearing here
+                      Once you start receiving applications, you will be able to
+                      review them here.
                     </Text>
                   </>
                 ) : (

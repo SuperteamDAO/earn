@@ -31,6 +31,9 @@ async function latestActiveSlug(
       sponsorId,
       isPublished: true,
       isWinnersAnnounced: false,
+      deadline: {
+        gt: new Date().toISOString(),
+      },
     },
     orderBy: [{ createdAt: 'desc' }],
   });
