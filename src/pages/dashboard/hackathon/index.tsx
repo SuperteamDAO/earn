@@ -105,7 +105,6 @@ export default function Hackathon() {
           searchText,
           skip,
           take: length,
-          showSubmissionDetails: true,
         },
       });
       const hackathonData = hackathonQuery.data;

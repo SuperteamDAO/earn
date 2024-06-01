@@ -22,6 +22,7 @@ import {
   ApplicationHeader,
   ApplicationList,
   type GrantApplicationWithUser,
+  PaymentsHistoryTab,
 } from '@/features/sponsor-dashboard';
 import { Sidebar } from '@/layouts/Sponsor';
 import { userStore } from '@/store/user';
@@ -32,6 +33,7 @@ interface Props {
 
 const selectedStyles = {
   borderColor: 'brand.purple',
+  color: 'brand.slate.600',
 };
 
 function GrantApplications({ slug }: Props) {
@@ -128,8 +130,21 @@ function GrantApplications({ slug }: Props) {
               fontWeight={500}
               borderBottomWidth={'1px'}
             >
-              <Tab px={1} fontSize="sm" _selected={selectedStyles}>
+              <Tab
+                px={1}
+                fontSize="sm"
+                fontWeight={500}
+                _selected={selectedStyles}
+              >
                 Applications
+              </Tab>
+              <Tab
+                px={1}
+                fontSize="sm"
+                fontWeight={500}
+                _selected={selectedStyles}
+              >
+                Payments History
               </Tab>
             </TabList>
             <TabPanels>
@@ -240,6 +255,9 @@ function GrantApplications({ slug }: Props) {
                     </Flex>
                   </>
                 )}
+              </TabPanel>
+              <TabPanel px={0}>
+                <PaymentsHistoryTab grantId={grant?.id} />
               </TabPanel>
             </TabPanels>
           </Tabs>

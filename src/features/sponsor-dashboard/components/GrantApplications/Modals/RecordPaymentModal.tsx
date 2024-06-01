@@ -124,7 +124,7 @@ export const RecordPaymentModal = ({
                   <BiPlus color="white" size="18px" />
                 )
               }
-              loadingText="Approving"
+              loadingText="Adding Payment"
               type="submit"
             >
               Add Payment

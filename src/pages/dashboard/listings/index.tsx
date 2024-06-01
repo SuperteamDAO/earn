@@ -48,11 +48,9 @@ export default function SponsorListings() {
     try {
       const allListings = await axios.get('/api/bounties/', {
         params: {
-          sponsorId: userInfo?.currentSponsorId,
           searchText,
           skip,
           take: length,
-          showSubmissionDetails: true,
         },
       });
       setTotalListings(allListings.data.total);
