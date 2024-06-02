@@ -18,25 +18,52 @@ async function handler(req: NextApiRequestWithUser, res: NextApiResponse) {
 
   const { id, applicationStatus, approvedAmount } = req.body;
 
+  if (!id || !applicationStatus || approvedAmount === undefined) {
+    return res.status(400).json({ error: 'Missing required fields' });
+  }
+
+  const parsedAmount = parseInt(approvedAmount, 10);
+
   try {
+    const currentApplication = await prisma.grantApplication.findUnique({
+      where: {
+        id,
+      },
+      include: {
+        grant: true,
+      },
+    });
+
+    if (user.currentSponsorId !== currentApplication?.grant.sponsorId) {
+      return res.status(401).json({ error: 'Unauthorized' });
+    }
+
     const result = await prisma.grantApplication.update({
       where: {
         id,
-        grant: {
-          sponsorId: user.currentSponsorId!,
-        },
       },
       data: {
         applicationStatus,
-        approvedAmount,
+        approvedAmount: parsedAmount,
+      },
+    });
+
+    await prisma.grants.update({
+      where: {
+        id: result.grantId,
+      },
+      data: {
+        totalPaid: {
+          increment: parsedAmount,
+        },
       },
     });
 
     return res.status(200).json(result);
-  } catch (error) {
+  } catch (error: any) {
     console.log(error);
-    return res.status(400).json({
-      error,
+    return res.status(500).json({
+      error: error.message,
       message: 'Error occurred while updating the grant application.',
     });
   }

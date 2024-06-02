@@ -435,7 +435,7 @@ export const ListingCardMobile = ({
                     <Text
                       ml={1}
                       color={'brand.slate.300'}
-                      fontSize={'xx-small'}
+                      fontSize={['xx-small', 'xs', 'sm', 'sm']}
                     >
                       |
                     </Text>
@@ -455,7 +455,7 @@ export const ListingCardMobile = ({
                 <Text
                   display={'flex'}
                   color={'brand.slate.300'}
-                  fontSize={'xx-small'}
+                  fontSize={['xx-small', 'xs', 'sm', 'sm']}
                 >
                   |
                 </Text>

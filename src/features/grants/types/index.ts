@@ -32,6 +32,7 @@ interface Grant {
   references: References[];
   requirements: string;
   applicationStatus: 'Pending' | 'Approved' | 'Rejected';
+  totalPaid: number;
 }
 
 interface GrantStats {

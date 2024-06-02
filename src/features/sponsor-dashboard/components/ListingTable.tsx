@@ -297,7 +297,9 @@ export const ListingTable = ({ listings, setListings }: ListingTableProps) => {
                         size="sm"
                         variant="ghost"
                       >
-                        Submissions
+                        {listing?.type === 'grant'
+                          ? 'Applications'
+                          : 'Submissions'}
                       </Button>
                     )}
                     {listing.status === 'OPEN' &&
