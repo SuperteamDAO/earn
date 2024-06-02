@@ -53,7 +53,7 @@ async function handler(req: NextApiRequestWithUser, res: NextApiResponse) {
         id: result.grantId,
       },
       data: {
-        totalPaid: {
+        totalApproved: {
           increment: parsedAmount,
         },
       },

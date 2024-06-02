@@ -162,6 +162,7 @@ model Grants {
   minReward        Int?
   maxReward        Int?
   totalPaid        Int                @default(0)
+  totalApproved    Int                @default(0)
   link             String?
   sponsorId        String
   pocId            String

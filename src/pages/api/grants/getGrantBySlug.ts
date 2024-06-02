@@ -12,20 +12,27 @@ export default async function user(req: NextApiRequest, res: NextApiResponse) {
   }
 
   try {
-    const result = await prisma.grants.findFirst({
+    const grant = await prisma.grants.findFirst({
       where: {
         slug,
       },
       include: { sponsor: true, poc: true },
     });
 
-    if (!result) {
+    const approvedApplicationsCount = await prisma.grantApplication.count({
+      where: {
+        grantId: grant?.id,
+        applicationStatus: 'Approved',
+      },
+    });
+
+    if (!grant) {
       return res.status(404).json({
         message: `No grant found with slug=${slug}.`,
       });
     }
 
-    res.status(200).json(result);
+    res.status(200).json({ ...grant, approvedApplicationsCount });
   } catch (error: any) {
     res.status(500).json({
       error: error.message,

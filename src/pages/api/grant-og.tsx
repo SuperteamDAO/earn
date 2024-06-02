@@ -37,8 +37,8 @@ export default async function handler(request: NextRequest) {
       formatString(decodeURIComponent(x), 97),
     );
     const logo = getParam('logo', (x) => formatString(x, 100)) || sponsorImg;
-    const minReward = getParam('minRewardAsk', formatNumber);
-    const maxReward = getParam('maxRewardAsk', formatNumber);
+    const minReward = getParam('minReward', formatNumber);
+    const maxReward = getParam('maxReward', formatNumber);
     const sponsor = getParam('sponsor', (x) => formatString(x, 100));
     const token = getParam('token', (x) => formatString(x, 100));
 

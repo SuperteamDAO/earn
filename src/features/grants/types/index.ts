@@ -33,6 +33,7 @@ interface Grant {
   requirements: string;
   applicationStatus: 'Pending' | 'Approved' | 'Rejected';
   totalPaid: number;
+  totalApproved: number;
 }
 
 interface GrantStats {

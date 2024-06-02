@@ -4,14 +4,13 @@ import { type NextApiRequestWithUser, withAuth } from '@/features/auth';
 import { prisma } from '@/prisma';
 
 async function handler(req: NextApiRequestWithUser, res: NextApiResponse) {
-  const params = req.query;
-  const grantId = params.grantId as string;
+  const { grantId } = req.query;
   const userId = req.userId;
 
   try {
     const result = await prisma.grantApplication.findFirst({
       where: {
-        grantId,
+        grantId: grantId as string,
         userId,
       },
     });

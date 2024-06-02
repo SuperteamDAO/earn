@@ -34,45 +34,18 @@ import { getURLSanitized } from '@/utils/getURLSanitized';
 import { getURL } from '@/utils/validUrl';
 
 interface GrantsDetailsProps {
-  grant: Grant | null;
+  grant: (Grant & { approvedApplicationsCount: number }) | null;
 }
 
 function Grants({ grant: initialGrant }: GrantsDetailsProps) {
   const [grant] = useState<typeof initialGrant>(initialGrant);
   const encodedTitle = encodeURIComponent(initialGrant?.title || '');
 
-  const [stats, setStats] = useState({
-    count: 0,
-    approvedSoFar: 0,
-    averageApproved: 0,
-  });
-  const [statsLoading, setStatsLoading] = useState(true);
-
   const posthog = usePostHog();
 
   useEffect(() => {
     posthog.capture('open_grant');
   }, []);
-
-  const getApplicationCount = async () => {
-    setStatsLoading(true);
-    try {
-      const grantId = grant?.id;
-      const grantStatsDetails = await axios.get(
-        `/api/grantApplication/${grantId}/stats/`,
-      );
-
-      setStats(grantStatsDetails.data);
-      setStatsLoading(false);
-    } catch (e) {
-      setStatsLoading(false);
-    }
-  };
-
-  useEffect(() => {
-    if (!statsLoading) return;
-    getApplicationCount();
-  }, [grant]);
 
   return (
     <Default
@@ -220,7 +193,7 @@ function Grants({ grant: initialGrant }: GrantsDetailsProps) {
                           fontSize={{ base: 'lg', md: 'xl' }}
                           fontWeight={500}
                         >
-                          ${stats?.approvedSoFar || 0}
+                          ${grant?.totalApproved || 0}
                         </Text>
                         <Text
                           mt={-1}
@@ -242,7 +215,9 @@ function Grants({ grant: initialGrant }: GrantsDetailsProps) {
                           fontSize={{ base: 'lg', md: 'xl' }}
                           fontWeight={500}
                         >
-                          ${stats?.averageApproved || 0}
+                          $
+                          {grant?.totalApproved /
+                            grant?.approvedApplicationsCount || 0}
                         </Text>
                         <Text
                           mt={-1}
@@ -262,7 +237,7 @@ function Grants({ grant: initialGrant }: GrantsDetailsProps) {
                           fontSize={{ base: 'lg', md: 'xl' }}
                           fontWeight={500}
                         >
-                          {statsLoading ? '...' : stats?.count.toLocaleString()}
+                          {grant.approvedApplicationsCount}
                         </Text>
                         <Text
                           mt={-1}
@@ -275,7 +250,7 @@ function Grants({ grant: initialGrant }: GrantsDetailsProps) {
                       </Flex>
                     </Flex>
                   </Flex>
-                  <GrantApplicationButton setStats={setStats} grant={grant} />
+                  <GrantApplicationButton grant={grant} />
                 </VStack>
                 {grant.requirements && (
                   <VStack

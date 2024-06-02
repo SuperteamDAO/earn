@@ -11,17 +11,15 @@ import {
 } from '@/features/listings';
 import { userStore } from '@/store/user';
 
-import { type Grant, type GrantStats } from '../types';
+import { type Grant } from '../types';
 import { GrantApplicationModal } from './GrantApplicationModal';
 
 interface GrantApplicationButtonProps {
   grant: Grant;
-  setStats: (statsUpdater: (prevStats: GrantStats) => GrantStats) => void;
 }
 
 export const GrantApplicationButton = ({
   grant,
-  setStats,
 }: GrantApplicationButtonProps) => {
   const { userInfo } = userStore();
   const [hasApplied, setHasApplied] = useState(false);
@@ -83,9 +81,9 @@ export const GrantApplicationButton = ({
   const getUserApplication = async () => {
     setIsUserApplicationLoading(true);
     try {
-      const applicationDetails = await axios.get(
-        `/api/grantApplication/${id}/user/`,
-      );
+      const applicationDetails = await axios.get(`/api/grantApplication/user`, {
+        params: { grantId: id },
+      });
       setHasApplied(!!applicationDetails?.data?.id);
       setIsUserApplicationLoading(false);
     } catch (e) {
@@ -102,10 +100,8 @@ export const GrantApplicationButton = ({
     <>
       {isOpen && (
         <GrantApplicationModal
-          id={id}
           onClose={onClose}
           isOpen={isOpen}
-          setStats={setStats}
           setHasApplied={setHasApplied}
           grant={grant}
         />
