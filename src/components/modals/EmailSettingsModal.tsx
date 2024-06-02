@@ -148,7 +148,7 @@ export const EmailSettingsModal = ({
                 />
                 <AlertOption
                   title="Sponsor Invitation Emails (Scout)"
-                  category="scoutInvitation"
+                  category="scoutInvite"
                 />
               </Box>
             )}
