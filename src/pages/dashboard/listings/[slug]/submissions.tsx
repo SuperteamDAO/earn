@@ -82,7 +82,7 @@ function BountySubmissions({ slug }: Props) {
   const getBounty = async () => {
     setIsBountyLoading(true);
     try {
-      const bountyDetails = await axios.get(`/api/bounties/${slug}/`);
+      const bountyDetails = await axios.get(`/api/bounties/${slug}/dashboard/`);
       const isExpired =
         bountyDetails.data?.deadline &&
         dayjs(bountyDetails.data?.deadline).isBefore(dayjs());
