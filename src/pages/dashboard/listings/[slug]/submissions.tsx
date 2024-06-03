@@ -147,7 +147,7 @@ function BountySubmissions({ slug }: Props) {
         recommended: s.user.stRecommended ?? false,
         invited: s.invited,
         pfp: s.user.photo ?? null,
-        name: (s.user.firstName ?? '') + (s.user.lastName ?? ''),
+        name: (s.user.firstName ?? '') + ' ' + (s.user.lastName ?? ''),
         username: s.user.username ?? null,
       }));
       setScouts(scouts);
