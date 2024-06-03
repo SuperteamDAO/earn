@@ -77,6 +77,7 @@ async function handler(req: NextApiRequestWithUser, res: NextApiResponse) {
       const categories = new Set();
 
       categories.add('createListing');
+      categories.add('scoutInvite');
       categories.add('commentOrLikeSubmission');
       categories.add('weeklyListingRoundup');
       categories.add('replyOrTagComment');
