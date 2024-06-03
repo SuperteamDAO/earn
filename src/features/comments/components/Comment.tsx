@@ -27,6 +27,7 @@ import axios from 'axios';
 import Image from 'next/image';
 import Link from 'next/link';
 import { useSession } from 'next-auth/react';
+import { usePostHog } from 'posthog-js/react';
 import { useEffect, useRef, useState } from 'react';
 
 import { EarnAvatar } from '@/components/shared/EarnAvatar';
@@ -72,6 +73,7 @@ export const Comment = ({
   isAnnounced,
 }: Props) => {
   const { userInfo } = userStore();
+  const posthog = usePostHog();
 
   const { isOpen, onOpen, onClose } = useDisclosure();
   const {
@@ -105,6 +107,7 @@ export const Comment = ({
   }, []);
 
   const deleteReplyLvl1 = async (replyId: string) => {
+    posthog.capture('delete_comment');
     const replyIndex = replies.findIndex((reply) => reply.id === replyId);
     if (replyIndex > -1) {
       await axios.delete(`/api/comment/${replyId}/delete`);
@@ -133,6 +136,7 @@ export const Comment = ({
   };
 
   const addNewReplyLvl1 = async (msg: string) => {
+    posthog.capture('publish_comment');
     setNewReplyError(false);
     const newReplyData = await axios.post(`/api/comment/create`, {
       message: msg,
@@ -187,6 +191,7 @@ export const Comment = ({
         <WarningModal
           isOpen={isOpen}
           onClose={onClose}
+          onCTAClick={() => posthog.capture('complete profile_CTA pop up')}
           title={'Complete your profile'}
           bodyText={
             'Please complete your profile before commenting on the bounty.'
@@ -468,6 +473,7 @@ export const Comment = ({
             </MenuButton>
             <MenuList minW="10rem" px={1} py={1}>
               <MenuItem
+                className="ph-no-capture"
                 color="brand.slate.600"
                 fontSize={{
                   base: 'sm',
@@ -515,6 +521,7 @@ export const Comment = ({
                 Cancel
               </Button>
               <Button
+                className="ph-no-capture"
                 ml={3}
                 disabled={deleteLoading}
                 isLoading={deleteLoading}

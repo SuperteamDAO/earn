@@ -22,6 +22,7 @@ import { Regions } from '@prisma/client';
 import axios from 'axios';
 import debounce from 'lodash.debounce';
 import { useSession } from 'next-auth/react';
+import { usePostHog } from 'posthog-js/react';
 import {
   type Dispatch,
   type SetStateAction,
@@ -258,6 +259,7 @@ export const ListingBasic = ({
   const isProject = type === 'project';
 
   const { data: session } = useSession();
+  const posthog = usePostHog();
 
   const onSubmit = (data: any) => {
     if (Object.keys(errors).length > 0) {
@@ -269,6 +271,7 @@ export const ListingBasic = ({
         subskills: subSkills,
       });
       updateState({ ...data, skills: mergedSkills });
+      posthog.capture('basics_sponsor');
       setSteps(3);
     }
   };
@@ -280,6 +283,11 @@ export const ListingBasic = ({
       subskills: subSkills,
     });
     const formData = { ...form, ...data, skills: mergedSkills };
+    if (isNewOrDraft || isDuplicating) {
+      posthog.capture('save draft_sponsor');
+    } else {
+      posthog.capture('edit listing_sponsor');
+    }
     createDraft(formData);
   };
 
@@ -335,9 +343,13 @@ export const ListingBasic = ({
                   {suggestions.map((suggestion, index) => (
                     <Flex key={suggestion.link} align="center" gap={2}>
                       <Link
+                        className="ph-no-capture"
                         key={suggestion.link}
                         href={suggestion.link}
                         isExternal
+                        onClick={() => {
+                          posthog.capture('similar listings_sponsor');
+                        }}
                         target="_blank"
                       >
                         {suggestion.label}
@@ -604,10 +616,16 @@ export const ListingBasic = ({
             />
           </FormControl>
           <VStack gap={4} w={'full'} mt={6}>
-            <Button w="100%" type="submit" variant="solid">
+            <Button
+              className="ph-no-capture"
+              w="100%"
+              type="submit"
+              variant="solid"
+            >
               Continue
             </Button>
             <Button
+              className="ph-no-capture"
               w="100%"
               isDisabled={!form?.title}
               isLoading={isDraftLoading}

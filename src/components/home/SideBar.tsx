@@ -3,6 +3,7 @@ import { Box, Flex, Text } from '@chakra-ui/react';
 import axios from 'axios';
 import dayjs from 'dayjs';
 import NextLink from 'next/link';
+import { usePostHog } from 'posthog-js/react';
 import { useEffect, useState } from 'react';
 
 import { type Bounty, ListingCardMobile } from '@/features/listings';
@@ -84,6 +85,8 @@ interface SideBarProps {
 
 const RecentActivity = () => {
   const [activity, setActivity] = useState<any[]>([]);
+  const posthog = usePostHog();
+
   useEffect(() => {
     const fetchRecentActivity = async () => {
       try {
@@ -207,11 +210,15 @@ const RecentActivity = () => {
           RECENT ACTIVITY
         </Text>
         <Text
+          className="ph-no-capture"
           as={NextLink}
           color="brand.purple"
           fontSize="xs"
           fontWeight={600}
           href="/feed"
+          onClick={() => {
+            posthog.capture('recent winners_view all_homepage');
+          }}
         >
           View All
           <ArrowForwardIcon ml={1} />

@@ -10,6 +10,7 @@ import {
   Textarea,
   VStack,
 } from '@chakra-ui/react';
+import { usePostHog } from 'posthog-js/react';
 import { type Dispatch, type SetStateAction, useState } from 'react';
 import { useForm } from 'react-hook-form';
 
@@ -31,6 +32,7 @@ export function AboutYou({ setStep, useFormStore }: Step1Props) {
   const [uploading, setUploading] = useState<boolean>(false);
   const { updateState, form } = useFormStore();
   const { userInfo } = userStore();
+  const posthog = usePostHog();
   const [isGooglePhoto, setIsGooglePhoto] = useState<boolean>(
     userInfo?.photo?.includes('googleusercontent.com') || false,
   );
@@ -53,6 +55,7 @@ export function AboutYou({ setStep, useFormStore }: Step1Props) {
     if (isInvalid) {
       return;
     }
+    posthog.capture('about you_talent');
     updateState({ ...data, photo: isGooglePhoto ? userInfo?.photo : imageUrl });
     setStep((i) => i + 1);
   };
@@ -213,6 +216,7 @@ export function AboutYou({ setStep, useFormStore }: Step1Props) {
             </Text>
           </Box>
           <Button
+            className="ph-no-capture"
             w={'full'}
             h="50px"
             color={'white'}

@@ -1,14 +1,16 @@
 import { Box, Button, Center, Flex, Text } from '@chakra-ui/react';
 import axios from 'axios';
 import NextLink from 'next/link';
+import { usePostHog } from 'posthog-js/react';
 import { useEffect, useState } from 'react';
 
 import { EarnAvatar } from '@/components/shared/EarnAvatar';
 import type { SubmissionWithUser } from '@/interface/submission';
 import { sortRank } from '@/utils/rank';
+import { tweetEmbedLink } from '@/utils/socialEmbeds';
 
 import type { Bounty, Rewards } from '../../types';
-import { tweetEmbedLink, tweetTemplate } from '../../utils';
+import { tweetTemplate } from '../../utils';
 
 interface Props {
   bounty: Bounty;
@@ -19,6 +21,8 @@ export function ListingWinners({ bounty }: Props) {
   const [submissions, setSubmissions] = useState<SubmissionWithUser[]>([]);
 
   const isProject = bounty?.type === 'project';
+
+  const posthog = usePostHog();
 
   const getSubmissions = async (id?: string) => {
     setIsListingLoading(true);
@@ -140,6 +144,7 @@ export function ListingWinners({ bounty }: Props) {
           </Flex>
           <NextLink href={openWinnerLink() ?? '#'} target="_blank">
             <Button
+              className="ph-no-capture"
               pos={{ base: 'static', md: 'absolute' }}
               top={5}
               right={5}
@@ -153,6 +158,7 @@ export function ListingWinners({ bounty }: Props) {
               bg="white"
               _hover={{ background: 'rgba(255, 255, 255, 0.8)' }}
               _active={{ background: 'rgba(255, 255, 255, 0.5)' }}
+              onClick={() => posthog.capture('click to tweet_listing')}
             >
               Share on
               <Center w="1.2rem">

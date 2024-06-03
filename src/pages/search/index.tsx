@@ -93,7 +93,7 @@ const Search = ({
   }, [query]);
 
   useEffect(() => {
-    posthog.capture('search', {
+    posthog.capture('detailed results_search', {
       query,
       count,
       status: statusFilters.filter((f) => f.checked).map((f) => f.value),

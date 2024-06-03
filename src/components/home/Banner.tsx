@@ -10,6 +10,7 @@ import {
 } from '@chakra-ui/react';
 import Image from 'next/image';
 import { useSession } from 'next-auth/react';
+import { usePostHog } from 'posthog-js/react';
 import React from 'react';
 
 import { AuthWrapper } from '@/features/auth';
@@ -39,6 +40,7 @@ export function HomeBanner({ userCount }: BannerProps) {
   const [isLessThan768px] = useMediaQuery('(max-width: 768px)');
 
   const { data: session, status } = useSession();
+  const posthog = usePostHog();
 
   if (!session && status === 'loading') {
     return (
@@ -111,12 +113,16 @@ export function HomeBanner({ userCount }: BannerProps) {
         >
           <AuthWrapper style={{ w: isLessThan768px ? '100%' : 'auto' }}>
             <Button
+              className="ph-no-capture"
               w={isLessThan768px ? '100%' : 'auto'}
               px={'2.25rem'}
               py={'0.75rem'}
               color={'#3223A0'}
               fontSize={'0.875rem'}
               bg={'white'}
+              onClick={() => {
+                posthog.capture('signup_banner');
+              }}
             >
               Sign Up
             </Button>

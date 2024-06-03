@@ -9,6 +9,7 @@ import {
   Text,
   VStack,
 } from '@chakra-ui/react';
+import { usePostHog } from 'posthog-js/react';
 import React, { type Dispatch, type SetStateAction, useEffect } from 'react';
 import { useFieldArray, useForm } from 'react-hook-form';
 import toast from 'react-hot-toast';
@@ -108,14 +109,23 @@ export const QuestionBuilder = ({
       toast.error('All questions must be filled out');
       return;
     }
+
+    posthog.capture('questions_sponsor');
     updateState({ ...data });
     setSteps(5);
   };
 
   const onDraftClick = async (data: any) => {
     const formData = { ...form, ...data };
+    if (isNewOrDraft || isDuplicating) {
+      posthog.capture('save draft_sponsor');
+    } else {
+      posthog.capture('edit listing_sponsor');
+    }
     createDraft(formData);
   };
+
+  const posthog = usePostHog();
 
   return (
     <form onSubmit={handleSubmit(onSubmit)}>
@@ -160,10 +170,16 @@ export const QuestionBuilder = ({
           + Add Question
         </Button>
         <VStack gap={6} w={'full'} pt={10}>
-          <Button w="100%" type="submit" variant="solid">
+          <Button
+            className="ph-no-capture"
+            w="100%"
+            type="submit"
+            variant="solid"
+          >
             Continue
           </Button>
           <Button
+            className="ph-no-capture"
             w="100%"
             isLoading={draftLoading}
             onClick={handleSubmit(onDraftClick)}

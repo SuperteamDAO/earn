@@ -57,7 +57,7 @@ export function RanksTable({ rankings, skill, userRank, loading }: Props) {
       border="1px solid #E2E8F0"
       borderRadius="md"
     >
-      <Table pos="relative" style={{ borderCollapse: 'collapse' }}>
+      <Table style={{ borderCollapse: 'collapse' }}>
         <Thead>
           <Tr textTransform={'none'} bg="#F8FAFC">
             <Th
@@ -479,8 +479,6 @@ export function RanksTable({ rankings, skill, userRank, loading }: Props) {
                     {userRank?.submissions ?? '-'}
                   </Td>
                   <Td
-                    pos="sticky"
-                    zIndex={100}
                     bottom={0}
                     display={{
                       base: 'none',

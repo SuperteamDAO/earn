@@ -19,6 +19,7 @@ import {
 import axios from 'axios';
 import type { GetServerSideProps } from 'next';
 import { useRouter } from 'next/router';
+import { usePostHog } from 'posthog-js/react';
 import React, { useEffect, useMemo, useState } from 'react';
 
 import { AddProject } from '@/components/Form/AddProject';
@@ -61,6 +62,12 @@ function TalentProfile({ slug }: TalentProps) {
     });
   };
   const { userInfo } = userStore();
+  const posthog = usePostHog();
+
+  useEffect(() => {
+    if (userInfo?.id && talent?.id && userInfo.id !== talent?.id)
+      posthog.capture('clicked profile_talent');
+  }, [talent]);
 
   const {
     isOpen: isOpenPow,
@@ -201,6 +208,7 @@ function TalentProfile({ slug }: TalentProps) {
     if (isMD) {
       return (
         <Button
+          className="ph-no-capture"
           color={outline ? 'brand.slate.500' : '#6366F1'}
           fontSize="sm"
           fontWeight={500}
@@ -314,6 +322,7 @@ function TalentProfile({ slug }: TalentProps) {
                         handleEditProfileClick,
                       )
                     : renderButton(<EmailIcon />, 'Reach Out', () => {
+                        posthog.capture('reach out_talent profile');
                         const email = encodeURIComponent(talent?.email || '');
                         const subject = encodeURIComponent(
                           'Saw Your ST Earn Profile!',

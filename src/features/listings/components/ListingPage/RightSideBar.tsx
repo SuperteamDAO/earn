@@ -18,6 +18,7 @@ import {
 import axios from 'axios';
 import dayjs from 'dayjs';
 import moment from 'moment';
+import { usePostHog } from 'posthog-js/react';
 import { useEffect, useState } from 'react';
 import Countdown from 'react-countdown';
 
@@ -49,6 +50,8 @@ export function RightSideBar({ listing }: { listing: Bounty }) {
     applicationType,
     timeToComplete,
   } = listing;
+
+  const posthog = usePostHog();
 
   const [isSubmissionNumberLoading, setIsSubmissionNumberLoading] =
     useState(true);
@@ -461,11 +464,13 @@ export function RightSideBar({ listing }: { listing: Bounty }) {
             </Text>
             <Text>
               <Link
+                className="ph-no-capture"
                 color={'#64768b'}
                 fontSize="1rem"
                 fontWeight={500}
                 href={getURLSanitized(pocSocials)}
                 isExternal
+                onClick={() => posthog.capture('reach out_listing')}
               >
                 Reach out
                 <ExternalLinkIcon color={'#64768b'} mb={1} as="span" mx={1} />

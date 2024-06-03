@@ -11,6 +11,7 @@ import {
 import axios from 'axios';
 import Image from 'next/image';
 import { useSession } from 'next-auth/react';
+import { usePostHog } from 'posthog-js/react';
 import { useEffect, useState } from 'react';
 
 import { EarnAvatar } from '@/components/shared/EarnAvatar';
@@ -44,6 +45,8 @@ export const Comments = ({
   isAnnounced,
 }: Props) => {
   const { userInfo } = userStore();
+  const posthog = usePostHog();
+
   const { isOpen, onOpen, onClose } = useDisclosure();
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState(false);
@@ -61,6 +64,7 @@ export const Comments = ({
   const isAuthenticated = status === 'authenticated';
 
   const deleteComment = async (commentId: string) => {
+    posthog.capture('delete_comment');
     const commentIndex = comments.findIndex(
       (comment) => comment.id === commentId,
     );
@@ -77,6 +81,7 @@ export const Comments = ({
   };
 
   const addNewComment = async () => {
+    posthog.capture('publish_comment');
     setNewCommentLoading(true);
     setNewCommentError(false);
     try {
@@ -159,6 +164,7 @@ export const Comments = ({
     <>
       {isOpen && (
         <WarningModal
+          onCTAClick={() => posthog.capture('complete profile_CTA pop up')}
           isOpen={isOpen}
           onClose={onClose}
           title={'Complete your profile'}
