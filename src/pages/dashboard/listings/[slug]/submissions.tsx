@@ -1,5 +1,6 @@
 import { ChevronLeftIcon, ChevronRightIcon } from '@chakra-ui/icons';
 import {
+  Box,
   Button,
   Flex,
   Image,
@@ -153,7 +154,7 @@ function BountySubmissions({ slug }: Props) {
         recommended: s.user.stRecommended ?? false,
         invited: s.invited,
         pfp: s.user.photo ?? null,
-        name: (s.user.firstName ?? '') + (s.user.lastName ?? ''),
+        name: (s.user.firstName ?? '') + ' ' + (s.user.lastName ?? ''),
         username: s.user.username ?? null,
       }));
       setScouts(scouts);
@@ -219,6 +220,7 @@ function BountySubmissions({ slug }: Props) {
                     onClick={() => posthog.capture('scout tab_scout')}
                   >
                     Scout Talent
+                    <Box w={1.5} h={1.5} ml={1.5} bg="red" rounded="full" />
                   </Tab>
                 )}
             </TabList>

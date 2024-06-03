@@ -551,6 +551,28 @@ END)
 
     scouts.sort((a, b) => b.score.toNumber() - a.score.toNumber());
 
+    await prisma.$transaction(
+      async (tsx) => {
+        return await Promise.all(
+          scouts.map(async (s) => {
+            return await tsx.scouts.updateMany({
+              where: {
+                id: s.id,
+              },
+              data: {
+                score: s.score,
+                skills: s.skills ?? undefined,
+              },
+            });
+          }),
+        );
+      },
+      {
+        timeout: 1000000,
+        maxWait: 1000000,
+      },
+    );
+
     res.send(scouts);
   } catch (error) {
     return res.status(400).json({
