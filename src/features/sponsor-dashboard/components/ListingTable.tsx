@@ -282,7 +282,7 @@ export const ListingTable = ({ listings, setListings }: ListingTableProps) => {
                     </Tag>
                   </Td>
                   <Td px={3} py={2}>
-                    {listing.status === 'OPEN' && listing.isPublished && (
+                    {listing.status === 'OPEN' && !!listing.isPublished && (
                       <Button
                         className="ph-no-capture"
                         color="#6366F1"

@@ -40,6 +40,7 @@ interface Props {
 
 const selectedStyles = {
   borderColor: 'brand.purple',
+  color: 'brand.slate.600',
 };
 
 function BountySubmissions({ slug }: Props) {

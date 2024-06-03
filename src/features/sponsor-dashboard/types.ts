@@ -16,3 +16,12 @@ export type ScoutRowType = {
 export interface GrantApplicationWithUser extends GrantApplication {
   user: User;
 }
+
+export interface SponsorStats {
+  name?: string;
+  logo?: string;
+  yearOnPlatform?: number;
+  totalRewardAmount?: number;
+  totalListingsAndGrants?: number;
+  totalSubmissionsAndApplications?: number;
+}

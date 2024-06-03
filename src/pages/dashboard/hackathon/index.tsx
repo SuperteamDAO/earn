@@ -58,7 +58,11 @@ import {
   getListingStatus,
   type ListingWithSubmissions,
 } from '@/features/listings';
-import { CreateListingModal } from '@/features/sponsor-dashboard';
+import {
+  Banner,
+  CreateListingModal,
+  type SponsorStats,
+} from '@/features/sponsor-dashboard';
 import { Sidebar } from '@/layouts/Sponsor';
 import { userStore } from '@/store/user';
 
@@ -86,6 +90,9 @@ export default function Hackathon() {
   const [searchText, setSearchText] = useState('');
   const [skip, setSkip] = useState(0);
   const length = 15;
+
+  const [sponsorStats, setSponsorStats] = useState<SponsorStats>({});
+  const [isStatsLoading, setIsStatsLoading] = useState<boolean>(true);
 
   const debouncedSetSearchText = useRef(debounce(setSearchText, 300)).current;
 
@@ -122,6 +129,15 @@ export default function Hackathon() {
       getBounties();
     }
   }, [userInfo?.hackathonId, skip, searchText]);
+
+  useEffect(() => {
+    const getSponsorStats = async () => {
+      const sponsorData = await axios.get('/api/hackathon/stats');
+      setSponsorStats(sponsorData.data);
+      setIsStatsLoading(false);
+    };
+    getSponsorStats();
+  }, [userInfo?.hackathonId]);
 
   const handleUnpublish = async (unpublishedBounty: ListingWithSubmissions) => {
     setBounty(unpublishedBounty);
@@ -182,7 +198,7 @@ export default function Hackathon() {
   } = useDisclosure();
 
   return (
-    <Sidebar showBanner={true}>
+    <Sidebar>
       <Modal isOpen={unpublishIsOpen} onClose={unpublishOnClose}>
         <ModalOverlay />
         <ModalContent>
@@ -243,6 +259,7 @@ export default function Hackathon() {
           </ModalFooter>
         </ModalContent>
       </Modal>
+      <Banner stats={sponsorStats} isHackathon isLoading={isStatsLoading} />
       <Flex justify="space-between" w="100%" mb={4}>
         <Flex align="center" gap={3}>
           <Text color="brand.slate.800" fontSize="lg" fontWeight={600}>

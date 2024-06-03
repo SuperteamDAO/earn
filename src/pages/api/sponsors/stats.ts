@@ -46,6 +46,24 @@ async function handler(req: NextApiRequestWithUser, res: NextApiResponse) {
       },
     });
 
+    const totalGrants = await prisma.grants.count({
+      where: {
+        sponsorId,
+        isActive: true,
+        isArchived: false,
+        status: status.OPEN,
+      },
+    });
+
+    const totalApplications = await prisma.grantApplication.count({
+      where: {
+        grant: {
+          sponsorId,
+        },
+        applicationStatus: 'Approved',
+      },
+    });
+
     const totalSubmissions = await prisma.submission.count({
       where: {
         listing: {
@@ -60,8 +78,8 @@ async function handler(req: NextApiRequestWithUser, res: NextApiResponse) {
     return res.status(200).json({
       yearOnPlatform,
       totalRewardAmount: sponsor.totalRewardedInUSD,
-      totalListings,
-      totalSubmissions,
+      totalListingsAndGrants: totalListings + totalGrants,
+      totalSubmissionsAndApplications: totalSubmissions + totalApplications,
     });
   } catch (error) {
     return res.status(500).json({ error: 'Internal Server Error' });

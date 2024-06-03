@@ -45,28 +45,43 @@ async function handler(req: NextApiRequestWithUser, res: NextApiResponse) {
       amount: parsedTrancheAmount,
     });
 
-    const result = await prisma.grantApplication.update({
-      where: { id },
-      data: {
-        totalPaid: {
-          increment: parsedTrancheAmount,
+    const result = await prisma.$transaction(async (tx) => {
+      const updatedGrantApplication = await tx.grantApplication.update({
+        where: { id },
+        data: {
+          totalPaid: {
+            increment: parsedTrancheAmount,
+          },
+          totalTranches: {
+            increment: 1,
+          },
+          paymentDetails: updatedPaymentDetails as any,
         },
-        totalTranches: {
-          increment: 1,
-        },
-        paymentDetails: updatedPaymentDetails as any,
-      },
-    });
+      });
 
-    await prisma.grants.update({
-      where: {
-        id: currentApplication.grantId,
-      },
-      data: {
-        totalPaid: {
-          increment: parsedTrancheAmount,
+      await tx.grants.update({
+        where: {
+          id: currentApplication.grantId,
         },
-      },
+        data: {
+          totalPaid: {
+            increment: parsedTrancheAmount,
+          },
+        },
+      });
+
+      await tx.sponsors.update({
+        where: {
+          id: user.currentSponsorId!,
+        },
+        data: {
+          totalRewardedInUSD: {
+            increment: parsedTrancheAmount,
+          },
+        },
+      });
+
+      return updatedGrantApplication;
     });
 
     return res.status(200).json(result);

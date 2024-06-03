@@ -20,7 +20,12 @@ import { useEffect, useRef, useState } from 'react';
 
 import { LoadingSection } from '@/components/shared/LoadingSection';
 import { type ListingWithSubmissions } from '@/features/listings';
-import { CreateListingModal, ListingTable } from '@/features/sponsor-dashboard';
+import {
+  Banner,
+  CreateListingModal,
+  ListingTable,
+  type SponsorStats,
+} from '@/features/sponsor-dashboard';
 import { Sidebar } from '@/layouts/Sponsor';
 import { userStore } from '@/store/user';
 
@@ -28,12 +33,14 @@ const debounce = require('lodash.debounce');
 
 export default function SponsorListings() {
   const { userInfo } = userStore();
-  const [totalListings, setTotalListings] = useState(0);
   const [listings, setListings] = useState<ListingWithSubmissions[]>([]);
   const [isListingsLoading, setIsListingsLoading] = useState(true);
   const [searchText, setSearchText] = useState('');
   const [skip, setSkip] = useState(0);
   const length = 15;
+
+  const [sponsorStats, setSponsorStats] = useState<SponsorStats>({});
+  const [isStatsLoading, setIsStatsLoading] = useState<boolean>(true);
 
   const debouncedSetSearchText = useRef(debounce(setSearchText, 300)).current;
 
@@ -53,8 +60,7 @@ export default function SponsorListings() {
           take: length,
         },
       });
-      setTotalListings(allListings.data.total);
-      setListings(allListings.data.data);
+      setListings(allListings.data);
       setIsListingsLoading(false);
     } catch (error) {
       setIsListingsLoading(false);
@@ -67,6 +73,15 @@ export default function SponsorListings() {
     }
   }, [userInfo?.currentSponsorId, skip, searchText]);
 
+  useEffect(() => {
+    const getSponsorStats = async () => {
+      const sponsorData = await axios.get('/api/sponsors/stats');
+      setSponsorStats(sponsorData.data);
+      setIsStatsLoading(false);
+    };
+    getSponsorStats();
+  }, [userInfo?.currentSponsorId]);
+
   const {
     isOpen: isOpenCreateListing,
     onOpen: onOpenCreateListing,
@@ -74,7 +89,8 @@ export default function SponsorListings() {
   } = useDisclosure();
 
   return (
-    <Sidebar showBanner={true}>
+    <Sidebar>
+      <Banner stats={sponsorStats} isLoading={isStatsLoading} />
       <Flex justify="space-between" w="100%" mb={4}>
         <Flex align="center" gap={3}>
           <Text color="brand.slate.800" fontSize="lg" fontWeight={600}>
@@ -123,11 +139,11 @@ export default function SponsorListings() {
               </Text>{' '}
               -{' '}
               <Text as="span" fontWeight={700}>
-                {Math.min(skip + length, totalListings)}
+                {Math.min(skip + length, sponsorStats.totalListingsAndGrants!)}
               </Text>{' '}
               of{' '}
               <Text as="span" fontWeight={700}>
-                {totalListings}
+                {sponsorStats.totalListingsAndGrants}
               </Text>{' '}
               Listings
             </Text>
@@ -145,7 +161,7 @@ export default function SponsorListings() {
             </Button>
             <Button
               isDisabled={
-                totalListings <= skip + length ||
+                sponsorStats.totalListingsAndGrants! <= skip + length ||
                 (skip > 0 && skip % length !== 0)
               }
               onClick={() => skip % length === 0 && setSkip(skip + length)}
