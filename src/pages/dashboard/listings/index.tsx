@@ -12,6 +12,11 @@ import {
   Input,
   InputGroup,
   InputLeftElement,
+  Tab,
+  TabList,
+  TabPanel,
+  TabPanels,
+  Tabs,
   Text,
   useDisclosure,
 } from '@chakra-ui/react';
@@ -33,11 +38,15 @@ const debounce = require('lodash.debounce');
 
 export default function SponsorListings() {
   const { userInfo } = userStore();
-  const [listings, setListings] = useState<ListingWithSubmissions[]>([]);
+  const [allListings, setAllListings] = useState<ListingWithSubmissions[]>([]);
+  const [filteredListings, setFilteredListings] = useState<
+    ListingWithSubmissions[]
+  >([]);
   const [isListingsLoading, setIsListingsLoading] = useState(true);
   const [searchText, setSearchText] = useState('');
-  const [skip, setSkip] = useState(0);
-  const length = 15;
+  const [currentPage, setCurrentPage] = useState(0);
+  const [selectedTab, setSelectedTab] = useState('all');
+  const listingsPerPage = 15;
 
   const [sponsorStats, setSponsorStats] = useState<SponsorStats>({});
   const [isStatsLoading, setIsStatsLoading] = useState<boolean>(true);
@@ -56,11 +65,10 @@ export default function SponsorListings() {
       const allListings = await axios.get('/api/bounties/', {
         params: {
           searchText,
-          skip,
-          take: length,
         },
       });
-      setListings(allListings.data);
+      setAllListings(allListings.data);
+      setFilteredListings(allListings.data);
       setIsListingsLoading(false);
     } catch (error) {
       setIsListingsLoading(false);
@@ -71,7 +79,7 @@ export default function SponsorListings() {
     if (userInfo?.currentSponsorId) {
       getListings();
     }
-  }, [userInfo?.currentSponsorId, skip, searchText]);
+  }, [userInfo?.currentSponsorId, searchText]);
 
   useEffect(() => {
     const getSponsorStats = async () => {
@@ -87,6 +95,37 @@ export default function SponsorListings() {
     onOpen: onOpenCreateListing,
     onClose: onCloseCreateListing,
   } = useDisclosure();
+
+  const paginatedListings = filteredListings.slice(
+    currentPage * listingsPerPage,
+    (currentPage + 1) * listingsPerPage,
+  );
+
+  useEffect(() => {
+    const filterListingsByType = () => {
+      if (selectedTab === 'all') {
+        return allListings;
+      }
+      return allListings.filter((listing) => listing.type === selectedTab);
+    };
+
+    if (searchText) {
+      const filtered = filterListingsByType().filter((listing) =>
+        listing.title
+          ? listing.title.toLowerCase().includes(searchText.toLowerCase())
+          : false,
+      );
+      setFilteredListings(filtered);
+    } else {
+      setFilteredListings(filterListingsByType());
+    }
+    setCurrentPage(0);
+  }, [searchText, allListings, selectedTab]);
+
+  const selectedStyles = {
+    borderColor: 'brand.purple',
+    color: 'brand.slate.600',
+  };
 
   return (
     <Sidebar>
@@ -124,10 +163,78 @@ export default function SponsorListings() {
           </InputLeftElement>
         </InputGroup>
       </Flex>
+
       {isListingsLoading && <LoadingSection />}
-      {!isListingsLoading && !!listings?.length && (
+      {!isListingsLoading && (
         <>
-          <ListingTable listings={listings} setListings={setListings} />
+          <Tabs
+            onChange={(index) => {
+              const tabTypes = ['all', 'bounty', 'project', 'grant'];
+              const tabType = tabTypes[index] || 'all';
+              setSelectedTab(tabType);
+            }}
+          >
+            <TabList>
+              <Tab
+                color="brand.slate.400"
+                fontSize={'sm'}
+                fontWeight={500}
+                _selected={selectedStyles}
+              >
+                All
+              </Tab>
+              <Tab
+                color="brand.slate.400"
+                fontSize={'sm'}
+                fontWeight={500}
+                _selected={selectedStyles}
+              >
+                Bounties
+              </Tab>
+              <Tab
+                color="brand.slate.400"
+                fontSize={'sm'}
+                fontWeight={500}
+                _selected={selectedStyles}
+              >
+                Projects
+              </Tab>
+              <Tab
+                color="brand.slate.400"
+                fontSize={'sm'}
+                fontWeight={500}
+                _selected={selectedStyles}
+              >
+                Grants
+              </Tab>
+            </TabList>
+            <TabPanels>
+              <TabPanel px={0}>
+                <ListingTable
+                  listings={paginatedListings}
+                  setListings={setAllListings}
+                />
+              </TabPanel>
+              <TabPanel px={0}>
+                <ListingTable
+                  listings={paginatedListings}
+                  setListings={setAllListings}
+                />
+              </TabPanel>
+              <TabPanel px={0}>
+                <ListingTable
+                  listings={paginatedListings}
+                  setListings={setAllListings}
+                />
+              </TabPanel>
+              <TabPanel px={0}>
+                <ListingTable
+                  listings={paginatedListings}
+                  setListings={setAllListings}
+                />
+              </TabPanel>
+            </TabPanels>
+          </Tabs>
           <CreateListingModal
             isOpen={isOpenCreateListing}
             onClose={onCloseCreateListing}
@@ -135,25 +242,26 @@ export default function SponsorListings() {
           <Flex align="center" justify="end" mt={6}>
             <Text mr={4} color="brand.slate.400" fontSize="sm">
               <Text as="span" fontWeight={700}>
-                {skip + 1}
+                {currentPage * listingsPerPage + 1}
               </Text>{' '}
               -{' '}
               <Text as="span" fontWeight={700}>
-                {Math.min(skip + length, sponsorStats.totalListingsAndGrants!)}
+                {Math.min(
+                  (currentPage + 1) * listingsPerPage,
+                  filteredListings.length,
+                )}
               </Text>{' '}
               of{' '}
               <Text as="span" fontWeight={700}>
-                {sponsorStats.totalListingsAndGrants}
+                {filteredListings.length}
               </Text>{' '}
               Listings
             </Text>
             <Button
               mr={4}
-              isDisabled={skip <= 0}
+              isDisabled={currentPage <= 0}
               leftIcon={<ChevronLeftIcon w={5} h={5} />}
-              onClick={() =>
-                skip >= length ? setSkip(skip - length) : setSkip(0)
-              }
+              onClick={() => setCurrentPage(currentPage - 1)}
               size="sm"
               variant="outline"
             >
@@ -161,10 +269,9 @@ export default function SponsorListings() {
             </Button>
             <Button
               isDisabled={
-                sponsorStats.totalListingsAndGrants! <= skip + length ||
-                (skip > 0 && skip % length !== 0)
+                (currentPage + 1) * listingsPerPage >= filteredListings.length
               }
-              onClick={() => skip % length === 0 && setSkip(skip + length)}
+              onClick={() => setCurrentPage(currentPage + 1)}
               rightIcon={<ChevronRightIcon w={5} h={5} />}
               size="sm"
               variant="outline"
@@ -174,7 +281,7 @@ export default function SponsorListings() {
           </Flex>
         </>
       )}
-      {!isListingsLoading && !listings?.length && (
+      {!isListingsLoading && !paginatedListings.length && (
         <>
           <Image
             w={32}

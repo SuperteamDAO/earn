@@ -27,11 +27,12 @@ import {
   Tr,
   useDisclosure,
 } from '@chakra-ui/react';
+import axios from 'axios';
 import NextLink from 'next/link';
 import { useRouter } from 'next/router';
 import { useSession } from 'next-auth/react';
 import { usePostHog } from 'posthog-js/react';
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { AiOutlineDelete } from 'react-icons/ai';
 import { FiMoreVertical } from 'react-icons/fi';
 
@@ -99,6 +100,35 @@ export const ListingTable = ({ listings, setListings }: ListingTableProps) => {
       </Th>
     );
   };
+
+  const [submissionCounts, setSubmissionCounts] = useState<{
+    [key: string]: number;
+  }>({});
+
+  useEffect(() => {
+    const fetchSubmissionCounts = async () => {
+      const counts: { [key: string]: number } = {};
+      for (const listing of listings) {
+        let count = 0;
+        if (listing?.type === 'grant') {
+          const response = await axios.post(`/api/grantApplication/count`, {
+            grantId: listing?.id,
+          });
+          count = response.data;
+        } else {
+          const response = await axios.get(
+            `/api/submission/${listing?.id}/count/`,
+          );
+          count = response.data;
+        }
+        if (listing.id) {
+          counts[listing.id] = count;
+        }
+      }
+      setSubmissionCounts(counts);
+    };
+    fetchSubmissionCounts();
+  }, [listings]);
 
   return (
     <>
@@ -223,7 +253,7 @@ export const ListingTable = ({ listings, setListings }: ListingTableProps) => {
                       fontWeight={500}
                       textAlign={'center'}
                     >
-                      {listing?._count?.Submission || 0}
+                      {submissionCounts[listing.id!]}
                     </Text>
                   </Td>
                   <Td align="center" py={2}>

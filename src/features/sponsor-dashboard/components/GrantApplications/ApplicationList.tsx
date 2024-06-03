@@ -84,10 +84,13 @@ export const ApplicationList = ({
           </InputGroup>
         </Flex>
         {applications.map((application) => {
-          const { bg, color } = colorMap[application?.label] || {
-            bg: 'gray.100',
-            color: 'gray.600',
-          };
+          const { bg, color } =
+            application?.applicationStatus !== 'Pending'
+              ? colorMap[application?.applicationStatus]
+              : colorMap[application?.label] || {
+                  bg: 'gray.100',
+                  color: 'gray.600',
+                };
           return (
             <Flex
               key={application?.id}
