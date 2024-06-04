@@ -21,6 +21,7 @@ import { tokenList } from '@/constants';
 import {
   DollarIcon,
   type Grant,
+  grantAmount,
   GrantApplicationButton,
   GrantsHeader,
   PayoutIcon,
@@ -29,7 +30,6 @@ import {
 import { DescriptionUI } from '@/features/listings';
 import type { SponsorType } from '@/interface/sponsor';
 import { Default } from '@/layouts/Default';
-import { formatNumberWithSuffix } from '@/utils/formatNumberWithSuffix';
 import { getURLSanitized } from '@/utils/getURLSanitized';
 import { getURL } from '@/utils/validUrl';
 
@@ -142,8 +142,10 @@ function Grants({ grant: initialGrant }: GrantsDetailsProps) {
                         fontSize={{ base: 'lg', md: 'xl' }}
                         fontWeight={500}
                       >
-                        {formatNumberWithSuffix(grant.minReward || 0)} to{' '}
-                        {formatNumberWithSuffix(grant.maxReward || 0)}{' '}
+                        {grantAmount({
+                          maxReward: grant.maxReward!,
+                          minReward: grant.minReward!,
+                        })}{' '}
                         <Text as="span" color={'brand.slate.400'}>
                           {grant.token}
                         </Text>
@@ -225,7 +227,7 @@ function Grants({ grant: initialGrant }: GrantsDetailsProps) {
                           fontSize={'sm'}
                           fontWeight={500}
                         >
-                          Avg Payout
+                          Average Grant
                         </Text>
                       </Flex>
                     </Flex>

@@ -23,6 +23,7 @@ import {
 } from '@chakra-ui/react';
 import { PublicKey } from '@solana/web3.js';
 import axios from 'axios';
+import dayjs from 'dayjs';
 import { useState } from 'react';
 import { useForm } from 'react-hook-form';
 
@@ -141,6 +142,8 @@ export const GrantApplicationModal = ({
   const handleNext = () => setActiveStep((prev) => prev + 1);
   const handleBack = () => setActiveStep((prev) => prev - 1);
 
+  const date = dayjs().format('YYYY-MM-DD');
+
   return (
     <Modal
       closeOnOverlayClick={false}
@@ -155,9 +158,9 @@ export const GrantApplicationModal = ({
         <ModalHeader px={{ base: 4, md: 10 }} pt={8} color="brand.slate.800">
           Grant Application
           <Text mt={1} color={'brand.slate.500'} fontSize="sm" fontWeight={400}>
-            If you&apos;re working on a project that will help the Solana
-            ecosystem grow, apply for any of our grants and we&apos;ll respond
-            in 48 hours!
+            If you&apos;re working on a project that will help the
+            sponsor&apos;s ecosystem grow, apply for any of our grants and
+            we&apos;ll respond in 48 hours!
           </Text>
           <Progress
             h={'1.5px'}
@@ -165,7 +168,7 @@ export const GrantApplicationModal = ({
             mt={6}
             borderRadius={2}
             bgColor={'brand.slate.200'}
-            value={(activeStep / (steps.length - 1)) * 100 + 1}
+            value={(activeStep / (steps.length + 1)) * 100 + 1}
           />
           <Stepper w="100%" mt={3} index={activeStep}>
             {steps.map((step, i) => (
@@ -175,10 +178,17 @@ export const GrantApplicationModal = ({
                   verticalAlign={'middle'}
                   w="6"
                   h="6"
-                  color={'brand.slate.400'}
+                  color={
+                    i - 1 < activeStep ? 'brand.slate.500' : 'brand.slate.400'
+                  }
+                  fontWeight={i - 1 < activeStep ? 500 : 400}
                   borderWidth={'1px'}
                   borderColor={
-                    i < activeStep ? 'transparent' : 'brand.slate.300'
+                    i < activeStep
+                      ? 'transparent'
+                      : i - 1 < activeStep
+                        ? 'brand.slate.500'
+                        : 'brand.slate.300'
                   }
                   borderRadius={'full'}
                   bgColor={i < activeStep ? 'brand.purple' : 'transparent'}
@@ -192,7 +202,13 @@ export const GrantApplicationModal = ({
                     i + 1
                   )}
                 </Text>
-                <Text color={'brand.slate.500'} fontSize={'md'}>
+                <Text
+                  color={
+                    i - 1 < activeStep ? 'brand.slate.600' : 'brand.slate.500'
+                  }
+                  fontSize={'md'}
+                  fontWeight={i - 1 < activeStep ? 500 : 400}
+                >
                   {step.title}
                 </Text>
               </Flex>
@@ -230,6 +246,7 @@ export const GrantApplicationModal = ({
                   watch={watch}
                   errors={errors}
                   isRequired
+                  maxLength={100}
                 />
                 <TextAreaWithCounter
                   id="projectOneLiner"
@@ -249,7 +266,7 @@ export const GrantApplicationModal = ({
                     fontWeight={600}
                     htmlFor={'ask'}
                   >
-                    Grant Amount (USD)
+                    Grant Amount
                   </FormLabel>
                   <FormHelperText mt={0} mb={2} color="brand.slate.500">
                     How much funding do you require to complete this project?
@@ -275,6 +292,7 @@ export const GrantApplicationModal = ({
                       _placeholder={{ color: 'brand.slate.300' }}
                       focusBorderColor="brand.purple"
                       id="ask"
+                      onWheel={(e) => (e.target as HTMLElement).blur()}
                       placeholder="Enter amount"
                       {...register('ask', {
                         valueAsNumber: true,
@@ -282,7 +300,7 @@ export const GrantApplicationModal = ({
                           if (minReward && maxReward) {
                             if (value < minReward || value > maxReward) {
                               setAskError(
-                                `Compensation must be between ${minReward} and ${maxReward} ${token}`,
+                                `Compensation must be between ${minReward.toLocaleString()} and ${maxReward.toLocaleString()} ${token}`,
                               );
                               return false;
                             }
@@ -329,16 +347,53 @@ export const GrantApplicationModal = ({
                   errors={errors}
                   isRequired
                 />
-                <TextAreaWithCounter
-                  id="projectTimeline"
-                  label="Deadline"
-                  helperText="What is the expected completion date for the project?"
-                  placeholder="When do you expect to complete this project?"
-                  register={register}
-                  watch={watch}
-                  errors={errors}
-                  isRequired
-                />
+                <FormControl isRequired>
+                  <FormLabel
+                    mb={0}
+                    color={'brand.slate.600'}
+                    fontWeight={600}
+                    htmlFor={id}
+                  >
+                    Deadline (in{' '}
+                    {Intl.DateTimeFormat().resolvedOptions().timeZone})
+                  </FormLabel>
+                  <FormHelperText mt={0} mb={2} color="brand.slate.500">
+                    What is the expected completion date for the project?
+                  </FormHelperText>
+                  <Input
+                    w={'full'}
+                    color={'brand.slate.500'}
+                    borderColor="brand.slate.300"
+                    _placeholder={{
+                      color: 'brand.slate.300',
+                    }}
+                    css={{
+                      boxSizing: 'border-box',
+                      padding: '.75rem',
+                      position: 'relative',
+                      width: '100%',
+                      '&::-webkit-calendar-picker-indicator': {
+                        background: 'transparent',
+                        bottom: 0,
+                        color: 'transparent',
+                        cursor: 'pointer',
+                        height: 'auto',
+                        left: 0,
+                        position: 'absolute',
+                        right: 0,
+                        top: 0,
+                        width: 'auto',
+                      },
+                    }}
+                    focusBorderColor="brand.purple"
+                    id="projectTimeline"
+                    min={`${date}T00:00`}
+                    placeholder="deadline"
+                    type={'datetime-local'}
+                    {...register('projectTimeline', { required: true })}
+                  />
+                </FormControl>
+
                 <TextAreaWithCounter
                   id="proofOfWork"
                   label="Proof of Work"
@@ -382,6 +437,17 @@ export const GrantApplicationModal = ({
               </Text>
             )}
             <Flex gap={2} mt={8}>
+              {activeStep > 0 && (
+                <Button
+                  className="ph-no-capture"
+                  w={'full'}
+                  color="brand.slate.500"
+                  onClick={handleBack}
+                  variant="unstyled"
+                >
+                  Back
+                </Button>
+              )}
               <Button
                 className="ph-no-capture"
                 w={'full'}
@@ -392,17 +458,6 @@ export const GrantApplicationModal = ({
               >
                 {activeStep === steps.length - 1 ? 'Apply' : 'Continue'}
               </Button>
-              {activeStep > 0 && (
-                <Button
-                  className="ph-no-capture"
-                  w={'36%'}
-                  color="brand.slate.500"
-                  onClick={handleBack}
-                  variant="unstyled"
-                >
-                  Back
-                </Button>
-              )}
             </Flex>
           </form>
         </VStack>

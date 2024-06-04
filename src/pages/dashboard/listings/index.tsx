@@ -239,46 +239,48 @@ export default function SponsorListings() {
             isOpen={isOpenCreateListing}
             onClose={onCloseCreateListing}
           />
-          <Flex align="center" justify="end" mt={6}>
-            <Text mr={4} color="brand.slate.400" fontSize="sm">
-              <Text as="span" fontWeight={700}>
-                {currentPage * listingsPerPage + 1}
-              </Text>{' '}
-              -{' '}
-              <Text as="span" fontWeight={700}>
-                {Math.min(
-                  (currentPage + 1) * listingsPerPage,
-                  filteredListings.length,
-                )}
-              </Text>{' '}
-              of{' '}
-              <Text as="span" fontWeight={700}>
-                {filteredListings.length}
-              </Text>{' '}
-              Listings
-            </Text>
-            <Button
-              mr={4}
-              isDisabled={currentPage <= 0}
-              leftIcon={<ChevronLeftIcon w={5} h={5} />}
-              onClick={() => setCurrentPage(currentPage - 1)}
-              size="sm"
-              variant="outline"
-            >
-              Previous
-            </Button>
-            <Button
-              isDisabled={
-                (currentPage + 1) * listingsPerPage >= filteredListings.length
-              }
-              onClick={() => setCurrentPage(currentPage + 1)}
-              rightIcon={<ChevronRightIcon w={5} h={5} />}
-              size="sm"
-              variant="outline"
-            >
-              Next
-            </Button>
-          </Flex>
+          {!!paginatedListings?.length && (
+            <Flex align="center" justify="end" mt={6}>
+              <Text mr={4} color="brand.slate.400" fontSize="sm">
+                <Text as="span" fontWeight={700}>
+                  {currentPage * listingsPerPage + 1}
+                </Text>{' '}
+                -{' '}
+                <Text as="span" fontWeight={700}>
+                  {Math.min(
+                    (currentPage + 1) * listingsPerPage,
+                    filteredListings.length,
+                  )}
+                </Text>{' '}
+                of{' '}
+                <Text as="span" fontWeight={700}>
+                  {filteredListings.length}
+                </Text>{' '}
+                Listings
+              </Text>
+              <Button
+                mr={4}
+                isDisabled={currentPage <= 0}
+                leftIcon={<ChevronLeftIcon w={5} h={5} />}
+                onClick={() => setCurrentPage(currentPage - 1)}
+                size="sm"
+                variant="outline"
+              >
+                Previous
+              </Button>
+              <Button
+                isDisabled={
+                  (currentPage + 1) * listingsPerPage >= filteredListings.length
+                }
+                onClick={() => setCurrentPage(currentPage + 1)}
+                rightIcon={<ChevronRightIcon w={5} h={5} />}
+                size="sm"
+                variant="outline"
+              >
+                Next
+              </Button>
+            </Flex>
+          )}
         </>
       )}
       {!isListingsLoading && !paginatedListings.length && (

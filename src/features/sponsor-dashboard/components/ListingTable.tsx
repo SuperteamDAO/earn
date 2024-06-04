@@ -37,6 +37,7 @@ import { AiOutlineDelete } from 'react-icons/ai';
 import { FiMoreVertical } from 'react-icons/fi';
 
 import { tokenList } from '@/constants';
+import { grantAmount } from '@/features/grants';
 import { useListingFormStore } from '@/features/listing-builder';
 import {
   formatDeadline,
@@ -130,6 +131,8 @@ export const ListingTable = ({ listings, setListings }: ListingTableProps) => {
     fetchSubmissionCounts();
   }, [listings]);
 
+  if (!listings.length) return;
+
   return (
     <>
       <UnpublishModal
@@ -181,6 +184,7 @@ export const ListingTable = ({ listings, setListings }: ListingTableProps) => {
               const pastDeadline = isDeadlineOver(listing?.deadline);
 
               const listingStatus = getListingStatus(listing);
+              const listingLabel = getListingTypeLabel(listing?.type!);
 
               const listingIcon = (() => {
                 switch (listing.type) {
@@ -278,6 +282,18 @@ export const ListingTable = ({ listings, setListings }: ListingTableProps) => {
                           )[0]?.icon ?? '/assets/icons/green-dollar.svg'
                         }
                       />
+                      {listing?.type === 'grant' && (
+                        <Text
+                          color={'brand.slate.700'}
+                          fontSize={'sm'}
+                          fontWeight={500}
+                        >
+                          {grantAmount({
+                            minReward: listing?.minRewardAsk!,
+                            maxReward: listing?.maxRewardAsk!,
+                          })}
+                        </Text>
+                      )}
                       <SponsorPrize
                         compensationType={listing?.compensationType}
                         maxRewardAsk={listing?.maxRewardAsk}
@@ -379,10 +395,7 @@ export const ListingTable = ({ listings, setListings }: ListingTableProps) => {
                             )
                           }
                         >
-                          View{' '}
-                          {listing?.type === 'hackathon'
-                            ? 'Track'
-                            : listing?.type}
+                          View {listingLabel}
                         </MenuItem>
 
                         {session?.user?.role === 'GOD' ||
@@ -402,10 +415,7 @@ export const ListingTable = ({ listings, setListings }: ListingTableProps) => {
                                   fontWeight={500}
                                   icon={<EditIcon w={4} h={4} />}
                                 >
-                                  Edit{' '}
-                                  {listing?.type === 'hackathon'
-                                    ? 'Track'
-                                    : listingType}
+                                  Edit {listingLabel}
                                 </MenuItem>
                               </Link>
                             ))}

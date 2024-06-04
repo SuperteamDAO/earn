@@ -1,4 +1,5 @@
-import { Button, Flex, Tooltip, useDisclosure } from '@chakra-ui/react';
+import { WarningIcon } from '@chakra-ui/icons';
+import { Button, Flex, Text, Tooltip, useDisclosure } from '@chakra-ui/react';
 import axios from 'axios';
 import { useSession } from 'next-auth/react';
 import React, { useEffect, useState } from 'react';
@@ -139,7 +140,7 @@ export const GrantApplicationButton = ({
           bg="white"
           transform={{ base: 'translateX(-50%)', md: 'none' }}
         >
-          <AuthWrapper style={{ w: 'full' }}>
+          <AuthWrapper style={{ w: 'full', direction: 'column' }}>
             <Button
               w={'full'}
               mb={{ base: 0, md: 5 }}
@@ -160,6 +161,15 @@ export const GrantApplicationButton = ({
           </AuthWrapper>
         </Flex>
       </Tooltip>
+      {hasApplied && (
+        <Flex gap="2" w="full" mb={4} p="3" bg={'#62F6FF10'}>
+          <WarningIcon color="#1A7F86" />
+          <Text color="#1A7F86" fontSize={'xs'} fontWeight={500}>
+            You will be notified via email if your grant has been approved or
+            rejected.
+          </Text>
+        </Flex>
+      )}
     </>
   );
 };

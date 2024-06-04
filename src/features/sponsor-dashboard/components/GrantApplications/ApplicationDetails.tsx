@@ -8,7 +8,9 @@ import {
   Box,
   Button,
   Circle,
+  CircularProgress,
   Flex,
+  Image,
   Link,
   Menu,
   MenuButton,
@@ -24,7 +26,7 @@ import { type SubmissionLabels } from '@prisma/client';
 import axios from 'axios';
 import NextLink from 'next/link';
 import React, { type Dispatch, type SetStateAction } from 'react';
-import { BsTwitterX } from 'react-icons/bs';
+import { FaDiscord } from 'react-icons/fa';
 import {
   MdArrowDropDown,
   MdOutlineAccountBalanceWallet,
@@ -32,8 +34,8 @@ import {
 } from 'react-icons/md';
 
 import { EarnAvatar } from '@/components/shared/EarnAvatar';
+import { tokenList } from '@/constants';
 import { type Grant } from '@/features/grants';
-import { getURLSanitized } from '@/utils/getURLSanitized';
 import { truncatePublicKey } from '@/utils/truncatePublicKey';
 import { truncateString } from '@/utils/truncateString';
 
@@ -41,8 +43,8 @@ import { labelMenuOptions } from '../../constants';
 import { type GrantApplicationWithUser } from '../../types';
 import { colorMap } from '../../utils';
 import { ApproveModal } from './Modals/ApproveModal';
-import { RecordPaymentModal } from './Modals/RecordPaymentModal';
 import { RejectModal } from './Modals/RejectModal';
+import { RecordPaymentButton } from './RecordPaymentButton';
 
 interface Props {
   grant: Grant | null;
@@ -130,11 +132,9 @@ export const ApplicationDetails = ({
     onClose: rejectedOnClose,
   } = useDisclosure();
 
-  const {
-    isOpen: recordPaymentIsOpen,
-    onOpen: recordPaymentOnOpen,
-    onClose: recordPaymentOnClose,
-  } = useDisclosure();
+  const tokenIcon = tokenList.find(
+    (ele) => ele.tokenSymbol === grant?.token,
+  )?.icon;
 
   return (
     <Box
@@ -161,12 +161,6 @@ export const ApplicationDetails = ({
         approveOnClose={approveOnClose}
         ask={selectedApplication?.ask}
         granteeName={selectedApplication?.user?.firstName}
-      />
-
-      <RecordPaymentModal
-        applicationId={selectedApplication?.id}
-        recordPaymentIsOpen={recordPaymentIsOpen}
-        recordPaymentOnClose={recordPaymentOnClose}
       />
 
       {applications.length ? (
@@ -300,12 +294,72 @@ export const ApplicationDetails = ({
               )}
 
               {isApproved && (
-                <Button onClick={recordPaymentOnOpen}>Record Payment</Button>
+                <RecordPaymentButton applicationId={selectedApplication.id} />
               )}
             </Flex>
           </Flex>
 
           <Flex align="center" gap={5} px={5} py={2}>
+            {selectedApplication?.ask && (
+              <Flex align="center">
+                <Text
+                  mr={3}
+                  color="brand.slate.400"
+                  fontSize={'sm'}
+                  fontWeight={600}
+                >
+                  ASK
+                </Text>
+
+                <Image w={4} h={4} mr={0.5} alt={'token'} src={tokenIcon} />
+                <Text
+                  color="brand.slate.600"
+                  fontSize={'sm'}
+                  fontWeight={600}
+                  whiteSpace={'nowrap'}
+                >
+                  {`${selectedApplication?.ask?.toLocaleString()}`}
+                  <Text as="span" ml={0.5} color="brand.slate.400">
+                    {grant?.token}
+                  </Text>
+                </Text>
+                {isApproved && (
+                  <Flex mr={4} ml={3}>
+                    <CircularProgress
+                      color="brand.purple"
+                      size="20px"
+                      thickness={'12px'}
+                      value={Number(
+                        (
+                          (selectedApplication.totalPaid /
+                            selectedApplication.approvedAmount) *
+                          100
+                        ).toFixed(2),
+                      )}
+                    />
+                    <Text
+                      ml={1}
+                      color="brand.slate.600"
+                      fontSize={'sm'}
+                      fontWeight={500}
+                      whiteSpace={'nowrap'}
+                    >
+                      {Number(
+                        (
+                          (selectedApplication.totalPaid /
+                            selectedApplication.approvedAmount) *
+                          100
+                        ).toFixed(2),
+                      )}
+                      %{' '}
+                      <Text as="span" color="brand.slate.400">
+                        Paid
+                      </Text>
+                    </Text>
+                  </Flex>
+                )}
+              </Flex>
+            )}
             {selectedApplication?.user?.email && (
               <Flex align="center" justify="start" gap={2} fontSize="sm">
                 <MdOutlineMail color="#94A3B8" />
@@ -344,28 +398,13 @@ export const ApplicationDetails = ({
                 </Text>
               </Flex>
             )}
-            {selectedApplication?.user?.twitter && (
+            {selectedApplication?.user?.discord && (
               <Flex align="center" justify="start" gap={2} fontSize="sm">
-                <BsTwitterX color="#94A3B8" />
+                <FaDiscord color="#94A3B8" />
 
-                <Link
-                  color="brand.slate.400"
-                  href={getURLSanitized(
-                    selectedApplication?.user?.twitter?.replace(
-                      'twitter.com',
-                      'x.com',
-                    ) || '#',
-                  )}
-                  isExternal
-                >
-                  {truncateString(
-                    selectedApplication?.user?.twitter?.replace(
-                      'twitter.com',
-                      'x.com',
-                    ) || '-',
-                    36,
-                  )}
-                </Link>
+                <Text color="brand.slate.400">
+                  {selectedApplication?.user?.discord}
+                </Text>
               </Flex>
             )}
           </Flex>
@@ -378,10 +417,6 @@ export const ApplicationDetails = ({
             <InfoBox
               label="One-Liner Description"
               content={selectedApplication?.projectOneLiner}
-            />
-            <InfoBox
-              label="Ask"
-              content={`${selectedApplication?.ask?.toLocaleString()} ${grant?.token}`}
             />
             <InfoBox
               label="Project Details"

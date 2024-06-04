@@ -4,9 +4,9 @@ import { useRouter } from 'next/router';
 import React from 'react';
 
 import { tokenList } from '@/constants';
-import { formatNumberWithSuffix } from '@/utils/formatNumberWithSuffix';
 
 import type { Grant } from '../types';
+import { grantAmount } from '../utils';
 
 export const GrantsCard = ({ grant }: { grant: Grant }) => {
   const router = useRouter();
@@ -86,7 +86,10 @@ export const GrantsCard = ({ grant }: { grant: Grant }) => {
                       fontWeight="600"
                       whiteSpace="nowrap"
                     >
-                      {`${formatNumberWithSuffix(minReward!)}-${formatNumberWithSuffix(maxReward!)}`}
+                      {grantAmount({
+                        maxReward: maxReward!,
+                        minReward: minReward!,
+                      })}
                     </Text>
                     <Text color="gray.400" fontSize="xs" fontWeight={500}>
                       {token}
@@ -145,7 +148,6 @@ export const GrantsCard = ({ grant }: { grant: Grant }) => {
           <Image
             w={4}
             h={4}
-            mt={[1, 1, 0.5, 0.5]}
             mr={1}
             alt={token}
             rounded="full"
@@ -158,7 +160,10 @@ export const GrantsCard = ({ grant }: { grant: Grant }) => {
               fontWeight="600"
               whiteSpace="nowrap"
             >
-              {`${formatNumberWithSuffix(minReward!)}-${formatNumberWithSuffix(maxReward!)}`}
+              {grantAmount({
+                maxReward: maxReward!,
+                minReward: minReward!,
+              })}
             </Text>
             <Text
               color="gray.400"
