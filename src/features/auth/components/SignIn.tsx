@@ -143,8 +143,15 @@ export const SignIn = ({
                   Continue with Email
                 </Button>
                 {email.includes('@gmail.com') && (
-                  <Text align={'center'} mt={1} color="red.500" fontSize={'xs'}>
-                    Please use Google Auth in the previous step
+                  <Text
+                    align={'center'}
+                    mt={2}
+                    color="red.500"
+                    fontSize={'xs'}
+                    lineHeight={'0.9rem'}
+                  >
+                    Please use the Google Auth login option from the previous
+                    step.
                   </Text>
                 )}
               </>
