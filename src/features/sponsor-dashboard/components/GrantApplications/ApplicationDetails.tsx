@@ -73,7 +73,7 @@ const InfoBox = ({
     >
       {label}
     </Text>
-    <Text color="brand.slate.700" wordBreak={'break-all'}>
+    <Text color="brand.slate.700" whiteSpace={'pre'} wordBreak={'break-all'}>
       {content ? content : '-'}
     </Text>
   </Box>
@@ -153,6 +153,9 @@ export const ApplicationDetails = ({
         rejectOnClose={rejectedOnClose}
         ask={selectedApplication?.ask}
         granteeName={selectedApplication?.user?.firstName}
+        setApplications={setApplications}
+        applications={applications}
+        setSelectedApplication={setSelectedApplication}
       />
 
       <ApproveModal
@@ -161,6 +164,9 @@ export const ApplicationDetails = ({
         approveOnClose={approveOnClose}
         ask={selectedApplication?.ask}
         granteeName={selectedApplication?.user?.firstName}
+        setApplications={setApplications}
+        applications={applications}
+        setSelectedApplication={setSelectedApplication}
       />
 
       {applications.length ? (

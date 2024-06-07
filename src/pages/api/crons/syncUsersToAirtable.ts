@@ -4,35 +4,7 @@ import type { NextApiRequest, NextApiResponse } from 'next';
 
 import { type User } from '@/interface/user';
 import { prisma } from '@/prisma';
-
-function airtableUrl() {
-  const baseId = process.env.AIRTABLE_BASE_ID,
-    tableName = process.env.AIRTABLE_TABLE_NAME;
-  if (!baseId || !tableName)
-    throw new Error('AIRTABLE BASE ID OR TABLE NAME NOT PROVIDED');
-
-  return `https://api.airtable.com/v0/${baseId}/${tableName}`;
-}
-
-function airtableConfig() {
-  const apiToken = process.env.AIRTABLE_API_TOKEN;
-  if (!apiToken) throw new Error('AIRTABLE API TOKEN NOT PROVIDED');
-  return {
-    headers: {
-      Authorization: `Bearer ${apiToken}`,
-      'Content-Type': 'application/json',
-    },
-  };
-}
-
-function airtableUpsert(mergeOn: any, data: any[]) {
-  return {
-    performUpsert: {
-      fieldsToMergeOn: [mergeOn],
-    },
-    records: data,
-  };
-}
+import { airtableConfig, airtableUpsert, airtableUrl } from '@/utils/airtable';
 
 interface ForFoundersAirtableSchema {
   id: string;
@@ -142,13 +114,19 @@ function convertUserToAirtable(user: User): ForFoundersAirtableSchema {
 
 async function handler(_req: NextApiRequest, res: NextApiResponse) {
   try {
+    const config = airtableConfig(process.env.AIRTABLE_USERS_API_TOKEN!);
+    const url = airtableUrl(
+      process.env.AIRTABLE_USERS_BASE_ID!,
+      process.env.AIRTABLE_USERS_TABLE_NAME!,
+    );
+
     // GET LAST UPDATED RECORD
-    const listUrl = new URL(airtableUrl());
+    const listUrl = new URL(url);
     listUrl.searchParams.set('maxRecords', '1');
     listUrl.searchParams.set('sort[0][field]', 'Last Modified');
     listUrl.searchParams.set('sort[0][direction]', 'desc');
 
-    const resp = await axios.get(listUrl.toString(), airtableConfig());
+    const resp = await axios.get(listUrl.toString(), config);
     const listData = resp.data;
     if (!listData || !listData.records) {
       throw new Error('no data');
@@ -183,7 +161,7 @@ async function handler(_req: NextApiRequest, res: NextApiResponse) {
     }
 
     const data = airtableUpsert('id', usersAirtable);
-    await axios.patch(airtableUrl(), JSON.stringify(data), airtableConfig());
+    await axios.patch(url, JSON.stringify(data), config);
 
     do {
       cursor = users[9]?.id ?? undefined;
@@ -207,11 +185,7 @@ async function handler(_req: NextApiRequest, res: NextApiResponse) {
           fields: convertUserToAirtable(user as any),
         });
       }
-      await axios.patch(
-        airtableUrl(),
-        airtableUpsert('id', usersAirtable),
-        airtableConfig(),
-      );
+      await axios.patch(url, airtableUpsert('id', usersAirtable), config);
     } while (cursor);
 
     res.status(200).json({ message: 'Airtable Synced successfully' });

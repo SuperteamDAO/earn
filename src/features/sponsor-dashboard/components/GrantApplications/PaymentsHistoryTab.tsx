@@ -20,6 +20,7 @@ import React, { useEffect, useState } from 'react';
 
 import { EarnAvatar } from '@/components/shared/EarnAvatar';
 import { userStore } from '@/store/user';
+import { truncatePublicKey } from '@/utils/truncatePublicKey';
 
 import { type GrantApplicationWithUser } from '../../types';
 import { RecordPaymentButton } from './RecordPaymentButton';
@@ -30,6 +31,11 @@ interface GrantPaymentDetailProps {
   txId: string;
   note?: string;
 }
+
+const extractTxId = (url: string) => {
+  const match = url.match(/tx\/([a-zA-Z0-9]+)/);
+  return match ? match[1] : url;
+};
 
 const PaymentDetailsRow = ({
   paymentDetails,
@@ -72,7 +78,7 @@ const PaymentDetailsRow = ({
       </Td>
       <Td colSpan={2}>
         {paymentDetails.map((payment, index) => (
-          <LinkBox key={index}>
+          <LinkBox key={index} my={2}>
             <LinkOverlay
               alignItems={'center'}
               gap={1}
@@ -82,7 +88,7 @@ const PaymentDetailsRow = ({
               target="_blank"
             >
               <Text color="brand.slate.500" fontSize={'sm'} fontWeight={500}>
-                {payment.txId}
+                {truncatePublicKey(extractTxId(payment.txId), 6)}
               </Text>
               <ExternalLinkIcon color="brand.slate.400" boxSize={4} />
             </LinkOverlay>

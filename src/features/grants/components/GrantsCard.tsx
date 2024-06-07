@@ -4,15 +4,24 @@ import { useRouter } from 'next/router';
 import React from 'react';
 
 import { tokenList } from '@/constants';
+import { formatNumberWithSuffix } from '@/utils/formatNumberWithSuffix';
 
-import type { Grant } from '../types';
+import type { GrantWithApplicationCount } from '../types';
 import { grantAmount } from '../utils';
 
-export const GrantsCard = ({ grant }: { grant: Grant }) => {
+export const GrantsCard = ({ grant }: { grant: GrantWithApplicationCount }) => {
   const router = useRouter();
 
-  const { sponsor, slug, title, minReward, maxReward, token, totalPaid } =
-    grant;
+  const {
+    sponsor,
+    slug,
+    title,
+    minReward,
+    maxReward,
+    token,
+    totalApproved,
+    _count,
+  } = grant;
 
   const sponsorLogo = sponsor?.logo
     ? sponsor.logo.replace('/upload/', '/upload/c_scale,w_128,h_128,f_auto/')
@@ -71,6 +80,7 @@ export const GrantsCard = ({ grant }: { grant: Grant }) => {
                 <Flex
                   align="center"
                   justify="start"
+                  gap={1}
                   display={{ base: 'flex', sm: 'none' }}
                 >
                   <Image
@@ -130,10 +140,25 @@ export const GrantsCard = ({ grant }: { grant: Grant }) => {
               <Flex align="center" gap={1}>
                 <Text
                   color="gray.500"
-                  fontSize={['x-small', 'xs', 'xs', 'xs']}
+                  fontSize={['x-small', '0.71875rem']}
+                  fontWeight={500}
                   whiteSpace="nowrap"
                 >
-                  {totalPaid || '$0'}
+                  $
+                  {formatNumberWithSuffix(
+                    totalApproved / _count.GrantApplication,
+                  ) || 0}{' '}
+                  <Text
+                    as="span"
+                    sx={{
+                      wordSpacing: '-0.09rem',
+                    }}
+                    ml={0.3}
+                    color="gray.400"
+                    fontSize={['x-small', '0.6875rem']}
+                  >
+                    Avg. Grant
+                  </Text>
                 </Text>
               </Flex>
             </Flex>

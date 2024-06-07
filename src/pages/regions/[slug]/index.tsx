@@ -6,14 +6,14 @@ import React, { useEffect, useState } from 'react';
 import { EmptySection } from '@/components/shared/EmptySection';
 import { Loading } from '@/components/shared/Loading';
 import { Superteams } from '@/constants/Superteam';
-import { type Grant, GrantsCard } from '@/features/grants';
+import { GrantsCard, type GrantWithApplicationCount } from '@/features/grants';
 import { type Listing, ListingSection, ListingTabs } from '@/features/listings';
 import { Home } from '@/layouts/Home';
 import { Meta } from '@/layouts/Meta';
 
 interface Listings {
   bounties?: Listing[];
-  grants?: Grant[];
+  grants?: GrantWithApplicationCount[];
 }
 const RegionsPage = ({
   slug,
@@ -72,7 +72,6 @@ const RegionsPage = ({
             title="Grants"
             sub="Equity-free funding opportunities for builders"
             emoji="/assets/home/emojis/grants.png"
-            showViewAll
           >
             {isListingsLoading && (
               <Flex

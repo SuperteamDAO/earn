@@ -20,10 +20,10 @@ import { LoadingSection } from '@/components/shared/LoadingSection';
 import { tokenList } from '@/constants';
 import {
   DollarIcon,
-  type Grant,
   grantAmount,
   GrantApplicationButton,
   GrantsHeader,
+  type GrantWithApplicationCount,
   PayoutIcon,
   TimeToPayIcon,
 } from '@/features/grants';
@@ -33,11 +33,11 @@ import { Default } from '@/layouts/Default';
 import { getURLSanitized } from '@/utils/getURLSanitized';
 import { getURL } from '@/utils/validUrl';
 
-interface GrantsDetailsProps {
-  grant: (Grant & { approvedApplicationsCount: number }) | null;
+interface InitialGrant {
+  grant: GrantWithApplicationCount;
 }
 
-function Grants({ grant: initialGrant }: GrantsDetailsProps) {
+function Grants({ grant: initialGrant }: InitialGrant) {
   const [grant] = useState<typeof initialGrant>(initialGrant);
   const encodedTitle = encodeURIComponent(initialGrant?.title || '');
 
@@ -218,8 +218,10 @@ function Grants({ grant: initialGrant }: GrantsDetailsProps) {
                           fontWeight={500}
                         >
                           $
-                          {grant?.totalApproved /
-                            grant?.approvedApplicationsCount || 0}
+                          {Math.round(
+                            grant?.totalApproved /
+                              grant?._count.GrantApplication,
+                          ) || 0}
                         </Text>
                         <Text
                           mt={-1}
@@ -239,7 +241,7 @@ function Grants({ grant: initialGrant }: GrantsDetailsProps) {
                           fontSize={{ base: 'lg', md: 'xl' }}
                           fontWeight={500}
                         >
-                          {grant.approvedApplicationsCount}
+                          {grant._count.GrantApplication}
                         </Text>
                         <Text
                           mt={-1}

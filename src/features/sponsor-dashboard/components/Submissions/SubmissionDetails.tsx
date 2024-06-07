@@ -741,7 +741,7 @@ export const SubmissionDetails = ({
                 >
                   Anything Else
                 </Text>
-                <Text color="brand.slate.700" wordBreak={'break-all'}>
+                <Text color="brand.slate.700" whiteSpace={'pre'}>
                   {selectedSubmission?.otherInfo || '-'}
                 </Text>
               </Box>

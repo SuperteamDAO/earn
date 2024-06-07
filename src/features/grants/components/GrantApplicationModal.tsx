@@ -387,9 +387,9 @@ export const GrantApplicationModal = ({
                     }}
                     focusBorderColor="brand.purple"
                     id="projectTimeline"
-                    min={`${date}T00:00`}
+                    min={date}
                     placeholder="deadline"
-                    type={'datetime-local'}
+                    type={'date'}
                     {...register('projectTimeline', { required: true })}
                   />
                 </FormControl>

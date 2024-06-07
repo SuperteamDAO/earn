@@ -14,10 +14,12 @@ import {
   Spinner,
   Text,
 } from '@chakra-ui/react';
+import { GrantApplicationStatus } from '@prisma/client';
 import axios from 'axios';
-import React, { useState } from 'react';
+import React, { type Dispatch, type SetStateAction, useState } from 'react';
 
 import { tokenList } from '@/constants';
+import { type GrantApplicationWithUser } from '@/features/sponsor-dashboard';
 
 interface RejectModalProps {
   rejectIsOpen: boolean;
@@ -25,6 +27,11 @@ interface RejectModalProps {
   applicationId: string | undefined;
   ask: number | undefined;
   granteeName: string | null | undefined;
+  setApplications: Dispatch<SetStateAction<GrantApplicationWithUser[]>>;
+  applications: GrantApplicationWithUser[];
+  setSelectedApplication: Dispatch<
+    SetStateAction<GrantApplicationWithUser | undefined>
+  >;
 }
 
 export const RejectModal = ({
@@ -33,6 +40,9 @@ export const RejectModal = ({
   rejectOnClose,
   ask,
   granteeName,
+  setApplications,
+  applications,
+  setSelectedApplication,
 }: RejectModalProps) => {
   const [loading, setLoading] = useState<boolean>(false);
 
@@ -43,6 +53,21 @@ export const RejectModal = ({
         id: applicationId,
         applicationStatus: 'Rejected',
       });
+
+      const updatedApplications = applications.map((application) =>
+        application.id === applicationId
+          ? {
+              ...application,
+              applicationStatus: GrantApplicationStatus.Rejected,
+            }
+          : application,
+      );
+
+      setApplications(updatedApplications);
+      const updatedApplication = updatedApplications.find(
+        (application) => application.id === applicationId,
+      );
+      setSelectedApplication(updatedApplication);
     } catch (e) {
       console.log(e);
     } finally {

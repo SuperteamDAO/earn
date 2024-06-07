@@ -6,7 +6,7 @@ import { useEffect, useState } from 'react';
 
 import { EmptySection } from '@/components/shared/EmptySection';
 import { Loading } from '@/components/shared/Loading';
-import { type Grant, GrantsCard } from '@/features/grants';
+import { GrantsCard, type GrantWithApplicationCount } from '@/features/grants';
 import { type Listing, ListingSection, ListingTabs } from '@/features/listings';
 import { Home } from '@/layouts/Home';
 import { Meta } from '@/layouts/Meta';
@@ -18,9 +18,11 @@ function ListingCategoryPage({ slug }: { slug: string }) {
   const [listings, setListings] = useState<{ bounties: Listing[] }>({
     bounties: [],
   });
-  const [grants, setGrants] = useState<{ grants: Grant[] }>({
-    grants: [],
-  });
+  const [grants, setGrants] = useState<{ grants: GrantWithApplicationCount[] }>(
+    {
+      grants: [],
+    },
+  );
 
   const deadline = dayjs().subtract(1, 'month').toISOString();
 

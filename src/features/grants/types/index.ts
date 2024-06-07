@@ -36,10 +36,8 @@ interface Grant {
   totalApproved: number;
 }
 
-interface GrantStats {
-  count: number;
-  approvedSoFar: number;
-  averageApproved: number;
+interface GrantWithApplicationCount extends Grant {
+  _count: { GrantApplication: number };
 }
 
-export type { Grant, GrantStats };
+export type { Grant, GrantWithApplicationCount };
