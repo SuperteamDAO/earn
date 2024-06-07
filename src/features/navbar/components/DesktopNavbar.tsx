@@ -1,6 +1,7 @@
 import { SearchIcon } from '@chakra-ui/icons';
 import {
   AbsoluteCenter,
+  Box,
   Button,
   Divider,
   Flex,
@@ -21,7 +22,6 @@ import React from 'react';
 import { UserMenu } from '@/components/shared/UserMenu';
 
 import {
-  CATEGORY_NAV_ITEMS,
   HACKATHON_NAV_ITEMS,
   LISTING_NAV_ITEMS,
   renderLabel,
@@ -49,6 +49,7 @@ export const DesktopNavbar = ({ onLoginOpen, onSearchOpen }: Props) => {
       bg="white"
       borderBottom="1px solid"
       borderBottomColor="blackAlpha.200"
+      id="desktop-navbar"
     >
       <Flex justify={'space-between'} w="100%" maxW={maxWValue} mx="auto">
         <Flex align="center" gap={{ base: 3, xl: 6 }}>
@@ -104,22 +105,6 @@ export const DesktopNavbar = ({ onLoginOpen, onSearchOpen }: Props) => {
               <SearchIcon />
             </Button>
           )}
-
-          {LISTING_NAV_ITEMS?.map((navItem) => {
-            const isCurrent = `${navItem.href}` === router.asPath;
-            return (
-              <NavLink
-                className="ph-no-capture"
-                onClick={() => {
-                  posthog.capture(navItem.posthog);
-                }}
-                key={navItem.label}
-                href={navItem.href ?? '#'}
-                label={navItem.label}
-                isActive={isCurrent}
-              />
-            );
-          })}
         </Flex>
         <AbsoluteCenter>
           <Flex align="center" justify={'center'} flexGrow={1} h="full" ml={10}>
@@ -129,20 +114,35 @@ export const DesktopNavbar = ({ onLoginOpen, onSearchOpen }: Props) => {
               h="full"
               spacing={7}
             >
-              {CATEGORY_NAV_ITEMS?.map((navItem) => {
+              {LISTING_NAV_ITEMS?.map((navItem) => {
                 const isCurrent = `${navItem.href}` === router.asPath;
                 return (
                   <NavLink
+                    className="ph-no-capture"
                     onClick={() => {
                       posthog.capture(navItem.posthog);
                     }}
+                    key={navItem.label}
                     href={navItem.href ?? '#'}
                     label={navItem.label}
                     isActive={isCurrent}
-                    key={navItem.label}
                   />
                 );
               })}
+              {/* {CATEGORY_NAV_ITEMS?.map((navItem) => { */}
+              {/*   const isCurrent = `${navItem.href}` === router.asPath; */}
+              {/*   return ( */}
+              {/*     <NavLink */}
+              {/*       onClick={() => { */}
+              {/*         posthog.capture(navItem.posthog); */}
+              {/*       }} */}
+              {/*       href={navItem.href ?? '#'} */}
+              {/*       label={navItem.label} */}
+              {/*       isActive={isCurrent} */}
+              {/*       key={navItem.label} */}
+              {/*     /> */}
+              {/*   ); */}
+              {/* })} */}
               {HACKATHON_NAV_ITEMS?.map((navItem) => {
                 const isCurrent = `${navItem.href}` === router.asPath;
                 return (
@@ -182,16 +182,23 @@ export const DesktopNavbar = ({ onLoginOpen, onSearchOpen }: Props) => {
             <HStack className="ph-no-capture" gap={2}>
               <HStack gap={0}>
                 <Button
-                  color="#6366F1"
                   fontSize="xs"
-                  bg={'white'}
                   onClick={() => {
                     posthog.capture('create a listing_navbar');
                     router.push('/sponsor');
                   }}
                   size="sm"
+                  variant={'ghost'}
                 >
-                  Create A Listing
+                  Become a Sponsor
+                  <Box
+                    display="block"
+                    w={1.5}
+                    h={1.5}
+                    ml={1.5}
+                    bg="#38BDF8"
+                    rounded="full"
+                  />
                 </Button>
                 <Button
                   fontSize="xs"

@@ -2,6 +2,8 @@ import type { SkillMap } from '@/interface/skills';
 
 import { Superteams } from './Superteam';
 
+export { countries } from './country';
+
 export interface MultiSelectOptions {
   value: string;
   label: string;
