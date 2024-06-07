@@ -20,24 +20,24 @@ import { LoadingSection } from '@/components/shared/LoadingSection';
 import { tokenList } from '@/constants';
 import {
   DollarIcon,
-  type Grant,
+  grantAmount,
   GrantApplicationButton,
   GrantsHeader,
+  type GrantWithApplicationCount,
   PayoutIcon,
   TimeToPayIcon,
 } from '@/features/grants';
 import { DescriptionUI } from '@/features/listings';
 import type { SponsorType } from '@/interface/sponsor';
 import { Default } from '@/layouts/Default';
-import { formatNumberWithSuffix } from '@/utils/formatNumberWithSuffix';
 import { getURLSanitized } from '@/utils/getURLSanitized';
 import { getURL } from '@/utils/validUrl';
 
-interface GrantsDetailsProps {
-  grant: (Grant & { approvedApplicationsCount: number }) | null;
+interface InitialGrant {
+  grant: GrantWithApplicationCount;
 }
 
-function Grants({ grant: initialGrant }: GrantsDetailsProps) {
+function Grants({ grant: initialGrant }: InitialGrant) {
   const [grant] = useState<typeof initialGrant>(initialGrant);
   const encodedTitle = encodeURIComponent(initialGrant?.title || '');
 
@@ -142,8 +142,10 @@ function Grants({ grant: initialGrant }: GrantsDetailsProps) {
                         fontSize={{ base: 'lg', md: 'xl' }}
                         fontWeight={500}
                       >
-                        {formatNumberWithSuffix(grant.minReward || 0)} to{' '}
-                        {formatNumberWithSuffix(grant.maxReward || 0)}{' '}
+                        {grantAmount({
+                          maxReward: grant.maxReward!,
+                          minReward: grant.minReward!,
+                        })}{' '}
                         <Text as="span" color={'brand.slate.400'}>
                           {grant.token}
                         </Text>
@@ -216,8 +218,10 @@ function Grants({ grant: initialGrant }: GrantsDetailsProps) {
                           fontWeight={500}
                         >
                           $
-                          {grant?.totalApproved /
-                            grant?.approvedApplicationsCount || 0}
+                          {Math.round(
+                            grant?.totalApproved /
+                              grant?._count.GrantApplication,
+                          ) || 0}
                         </Text>
                         <Text
                           mt={-1}
@@ -225,7 +229,7 @@ function Grants({ grant: initialGrant }: GrantsDetailsProps) {
                           fontSize={'sm'}
                           fontWeight={500}
                         >
-                          Avg Payout
+                          Average Grant
                         </Text>
                       </Flex>
                     </Flex>
@@ -237,7 +241,7 @@ function Grants({ grant: initialGrant }: GrantsDetailsProps) {
                           fontSize={{ base: 'lg', md: 'xl' }}
                           fontWeight={500}
                         >
-                          {grant.approvedApplicationsCount}
+                          {grant._count.GrantApplication}
                         </Text>
                         <Text
                           mt={-1}

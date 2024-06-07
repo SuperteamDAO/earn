@@ -1,7 +1,6 @@
 import { ChevronUpIcon, ExternalLinkIcon } from '@chakra-ui/icons';
 import {
   Box,
-  Button,
   Flex,
   Image,
   LinkBox,
@@ -15,16 +14,16 @@ import {
   Th,
   Thead,
   Tr,
-  useDisclosure,
 } from '@chakra-ui/react';
 import axios from 'axios';
 import React, { useEffect, useState } from 'react';
 
 import { EarnAvatar } from '@/components/shared/EarnAvatar';
 import { userStore } from '@/store/user';
+import { truncatePublicKey } from '@/utils/truncatePublicKey';
 
 import { type GrantApplicationWithUser } from '../../types';
-import { RecordPaymentModal } from './Modals/RecordPaymentModal';
+import { RecordPaymentButton } from './RecordPaymentButton';
 
 interface GrantPaymentDetailProps {
   tranche: number;
@@ -32,6 +31,11 @@ interface GrantPaymentDetailProps {
   txId: string;
   note?: string;
 }
+
+const extractTxId = (url: string) => {
+  const match = url.match(/tx\/([a-zA-Z0-9]+)/);
+  return match ? match[1] : url;
+};
 
 const PaymentDetailsRow = ({
   paymentDetails,
@@ -43,17 +47,17 @@ const PaymentDetailsRow = ({
       <Td>
         {paymentDetails.map((payment, index) => (
           <Flex key={index} align="center" justify="space-between" my={2}>
-            <Flex gap={1}>
+            <Flex align="center" gap={1}>
               <Image
-                w={5}
-                h={5}
+                w={4}
+                h={4}
                 alt={'USDC'}
                 rounded={'full'}
                 src={
                   'https://s2.coinmarketcap.com/static/img/coins/128x128/3408.png'
                 }
               />
-              <Text color="brand.slate.700" fontWeight={500}>
+              <Text color="brand.slate.700" fontSize={'sm'} fontWeight={500}>
                 {payment.amount}{' '}
                 <Text as="span" color="brand.slate.400">
                   USDC
@@ -66,7 +70,7 @@ const PaymentDetailsRow = ({
       <Td>
         {paymentDetails.map((payment, index) => (
           <Flex key={index} align="center" justify="space-between" my={2}>
-            <Text color="brand.slate.500" fontWeight={500}>
+            <Text color="brand.slate.500" fontSize={'sm'} fontWeight={500}>
               Milestone {payment.tranche}
             </Text>
           </Flex>
@@ -74,20 +78,19 @@ const PaymentDetailsRow = ({
       </Td>
       <Td colSpan={2}>
         {paymentDetails.map((payment, index) => (
-          <LinkBox key={index}>
+          <LinkBox key={index} my={2}>
             <LinkOverlay
               alignItems={'center'}
-              gap={2}
+              gap={1}
               display={'flex'}
-              my={2}
               href={payment.txId}
               rel="noopener noreferrer"
               target="_blank"
             >
-              <Text color="brand.slate.500" fontWeight={500}>
-                {payment.txId}
+              <Text color="brand.slate.500" fontSize={'sm'} fontWeight={500}>
+                {truncatePublicKey(extractTxId(payment.txId), 6)}
               </Text>
-              <ExternalLinkIcon color="brand.slate.400" />
+              <ExternalLinkIcon color="brand.slate.400" boxSize={4} />
             </LinkOverlay>
           </LinkBox>
         ))}
@@ -104,13 +107,6 @@ export const PaymentsHistoryTab = ({
   const { userInfo } = userStore();
   const [grantees, setGrantees] = useState<GrantApplicationWithUser[]>();
   const [expandedRows, setExpandedRows] = useState<Set<string>>(new Set());
-  const [selectedApplicationId, setSelectedApplicationId] = useState<string>();
-
-  const {
-    isOpen: recordPaymentIsOpen,
-    onOpen: recordPaymentOnOpen,
-    onClose: recordPaymentOnClose,
-  } = useDisclosure();
 
   const getGrantees = async () => {
     try {
@@ -150,7 +146,7 @@ export const PaymentsHistoryTab = ({
     return (
       <Th
         color="brand.slate.400"
-        fontSize={14}
+        fontSize={13}
         fontWeight={500}
         letterSpacing={'-2%'}
         textTransform={'capitalize'}
@@ -162,11 +158,6 @@ export const PaymentsHistoryTab = ({
 
   return (
     <Box>
-      <RecordPaymentModal
-        applicationId={selectedApplicationId}
-        recordPaymentIsOpen={recordPaymentIsOpen}
-        recordPaymentOnClose={recordPaymentOnClose}
-      />
       <TableContainer
         mb={8}
         borderWidth={'1px'}
@@ -178,8 +169,8 @@ export const PaymentsHistoryTab = ({
             <Tr bg="brand.slate.100">
               <GrantTh>Approved Grantee</GrantTh>
               <GrantTh>Approved</GrantTh>
-              <GrantTh>% Paid</GrantTh>
               <GrantTh>Paid Out</GrantTh>
+              <GrantTh>% Paid</GrantTh>
               <GrantTh />
             </Tr>
           </Thead>
@@ -201,12 +192,16 @@ export const PaymentsHistoryTab = ({
                           size="36px"
                         />
                         <Flex direction={'column'}>
-                          <Text color="brand.slate.700" fontWeight={500}>
+                          <Text
+                            color="brand.slate.700"
+                            fontSize={'sm'}
+                            fontWeight={500}
+                          >
                             {grantee.user.firstName} {grantee.user.lastName}
                           </Text>
                           <Text
                             color="brand.slate.500"
-                            fontSize={'sm'}
+                            fontSize={'13px'}
                             fontWeight={500}
                           >
                             @{grantee.user.username}
@@ -215,18 +210,45 @@ export const PaymentsHistoryTab = ({
                       </Flex>
                     </Td>
                     <Td>
-                      <Flex gap={1}>
+                      <Flex align={'center'} gap={1}>
                         <Image
-                          w={5}
-                          h={5}
+                          w={4}
+                          h={4}
                           alt={'USDC'}
                           rounded={'full'}
                           src={
                             'https://s2.coinmarketcap.com/static/img/coins/128x128/3408.png'
                           }
                         />
-                        <Text color="brand.slate.700" fontWeight={500}>
+                        <Text
+                          color="brand.slate.700"
+                          fontSize={'sm'}
+                          fontWeight={500}
+                        >
                           {grantee.approvedAmount}{' '}
+                          <Text as="span" color="brand.slate.400">
+                            USDC
+                          </Text>
+                        </Text>
+                      </Flex>
+                    </Td>
+                    <Td>
+                      <Flex align={'center'} gap={1}>
+                        <Image
+                          w={4}
+                          h={4}
+                          alt={'USDC'}
+                          rounded={'full'}
+                          src={
+                            'https://s2.coinmarketcap.com/static/img/coins/128x128/3408.png'
+                          }
+                        />
+                        <Text
+                          color="brand.slate.700"
+                          fontSize={'sm'}
+                          fontWeight={500}
+                        >
+                          {grantee.totalPaid}{' '}
                           <Text as="span" color="brand.slate.400">
                             USDC
                           </Text>
@@ -237,45 +259,25 @@ export const PaymentsHistoryTab = ({
                       <Flex align={'center'} gap={3}>
                         <Progress
                           w="5rem"
-                          h={'2'}
+                          h={'1.5'}
                           rounded={'full'}
                           value={paidPercentage}
                         />
-                        <Text color="brand.slate.700" fontWeight={500}>
+                        <Text
+                          color="brand.slate.500"
+                          fontSize={'sm'}
+                          fontWeight={500}
+                        >
                           {paidPercentage}%
-                        </Text>
-                      </Flex>
-                    </Td>
-                    <Td>
-                      <Flex gap={1}>
-                        <Image
-                          w={5}
-                          h={5}
-                          alt={'USDC'}
-                          rounded={'full'}
-                          src={
-                            'https://s2.coinmarketcap.com/static/img/coins/128x128/3408.png'
-                          }
-                        />
-                        <Text color="brand.slate.700" fontWeight={500}>
-                          {grantee.totalPaid}{' '}
-                          <Text as="span" color="brand.slate.400">
-                            USDC
-                          </Text>
                         </Text>
                       </Flex>
                     </Td>
                     <Td px={0} isNumeric>
                       <Flex align="center" gap={2}>
-                        <Button
-                          onClick={() => {
-                            setSelectedApplicationId(grantee.id);
-                            recordPaymentOnOpen();
-                          }}
-                          size={'sm'}
-                        >
-                          Record Payment
-                        </Button>
+                        <RecordPaymentButton
+                          applicationId="1"
+                          buttonStyle={{ size: 'sm' }}
+                        />
 
                         <Box
                           as="span"

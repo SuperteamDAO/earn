@@ -16,13 +16,18 @@ export default async function user(req: NextApiRequest, res: NextApiResponse) {
       where: {
         slug,
       },
-      include: { sponsor: true, poc: true },
-    });
-
-    const approvedApplicationsCount = await prisma.grantApplication.count({
-      where: {
-        grantId: grant?.id,
-        applicationStatus: 'Approved',
+      include: {
+        sponsor: true,
+        poc: true,
+        _count: {
+          select: {
+            GrantApplication: {
+              where: {
+                applicationStatus: 'Approved',
+              },
+            },
+          },
+        },
       },
     });
 
@@ -32,7 +37,7 @@ export default async function user(req: NextApiRequest, res: NextApiResponse) {
       });
     }
 
-    res.status(200).json({ ...grant, approvedApplicationsCount });
+    res.status(200).json(grant);
   } catch (error: any) {
     res.status(500).json({
       error: error.message,

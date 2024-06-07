@@ -69,7 +69,7 @@ export const TextAreaWithCounter = ({
       fontSize={'xs'}
       textAlign="right"
     >
-      {watch(id)?.length > maxLength - 100 &&
+      {watch(id)?.length > maxLength - 80 &&
         (maxLength - (watch(id)?.length || 0) === 0 ? (
           <p>Character limit reached</p>
         ) : (

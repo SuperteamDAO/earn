@@ -27,15 +27,17 @@ import {
   Tr,
   useDisclosure,
 } from '@chakra-ui/react';
+import axios from 'axios';
 import NextLink from 'next/link';
 import { useRouter } from 'next/router';
 import { useSession } from 'next-auth/react';
 import { usePostHog } from 'posthog-js/react';
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { AiOutlineDelete } from 'react-icons/ai';
 import { FiMoreVertical } from 'react-icons/fi';
 
 import { tokenList } from '@/constants';
+import { grantAmount } from '@/features/grants';
 import { useListingFormStore } from '@/features/listing-builder';
 import {
   formatDeadline,
@@ -100,6 +102,37 @@ export const ListingTable = ({ listings, setListings }: ListingTableProps) => {
     );
   };
 
+  const [submissionCounts, setSubmissionCounts] = useState<{
+    [key: string]: number;
+  }>({});
+
+  useEffect(() => {
+    const fetchSubmissionCounts = async () => {
+      const counts: { [key: string]: number } = {};
+      for (const listing of listings) {
+        let count = 0;
+        if (listing?.type === 'grant') {
+          const response = await axios.post(`/api/grantApplication/count`, {
+            grantId: listing?.id,
+          });
+          count = response.data;
+        } else {
+          const response = await axios.get(
+            `/api/submission/${listing?.id}/count/`,
+          );
+          count = response.data;
+        }
+        if (listing.id) {
+          counts[listing.id] = count;
+        }
+      }
+      setSubmissionCounts(counts);
+    };
+    fetchSubmissionCounts();
+  }, [listings]);
+
+  if (!listings.length) return;
+
   return (
     <>
       <UnpublishModal
@@ -151,6 +184,7 @@ export const ListingTable = ({ listings, setListings }: ListingTableProps) => {
               const pastDeadline = isDeadlineOver(listing?.deadline);
 
               const listingStatus = getListingStatus(listing);
+              const listingLabel = getListingTypeLabel(listing?.type!);
 
               const listingIcon = (() => {
                 switch (listing.type) {
@@ -223,7 +257,7 @@ export const ListingTable = ({ listings, setListings }: ListingTableProps) => {
                       fontWeight={500}
                       textAlign={'center'}
                     >
-                      {listing?._count?.Submission || 0}
+                      {submissionCounts[listing.id!]}
                     </Text>
                   </Td>
                   <Td align="center" py={2}>
@@ -248,6 +282,18 @@ export const ListingTable = ({ listings, setListings }: ListingTableProps) => {
                           )[0]?.icon ?? '/assets/icons/green-dollar.svg'
                         }
                       />
+                      {listing?.type === 'grant' && (
+                        <Text
+                          color={'brand.slate.700'}
+                          fontSize={'sm'}
+                          fontWeight={500}
+                        >
+                          {grantAmount({
+                            minReward: listing?.minRewardAsk!,
+                            maxReward: listing?.maxRewardAsk!,
+                          })}
+                        </Text>
+                      )}
                       <SponsorPrize
                         compensationType={listing?.compensationType}
                         maxRewardAsk={listing?.maxRewardAsk}
@@ -349,10 +395,7 @@ export const ListingTable = ({ listings, setListings }: ListingTableProps) => {
                             )
                           }
                         >
-                          View{' '}
-                          {listing?.type === 'hackathon'
-                            ? 'Track'
-                            : listing?.type}
+                          View {listingLabel}
                         </MenuItem>
 
                         {session?.user?.role === 'GOD' ||
@@ -372,10 +415,7 @@ export const ListingTable = ({ listings, setListings }: ListingTableProps) => {
                                   fontWeight={500}
                                   icon={<EditIcon w={4} h={4} />}
                                 >
-                                  Edit{' '}
-                                  {listing?.type === 'hackathon'
-                                    ? 'Track'
-                                    : listingType}
+                                  Edit {listingLabel}
                                 </MenuItem>
                               </Link>
                             ))}

@@ -166,21 +166,22 @@ export default async function user(req: NextApiRequest, res: NextApiResponse) {
         orderBy: {
           updatedAt: order,
         },
-        select: {
-          id: true,
-          title: true,
-          slug: true,
-          shortDescription: true,
-          token: true,
-          minReward: true,
-          maxReward: true,
-          link: true,
+        include: {
           sponsor: {
             select: {
               id: true,
               name: true,
               slug: true,
               logo: true,
+            },
+          },
+          _count: {
+            select: {
+              GrantApplication: {
+                where: {
+                  applicationStatus: 'Approved',
+                },
+              },
             },
           },
         },

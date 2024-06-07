@@ -43,15 +43,13 @@ async function handler(req: NextApiRequestWithUser, res: NextApiResponse) {
   const params = req.query;
   const sponsorId = user.currentSponsorId;
   const searchText = params.searchText as string;
-  const skip = params.take ? parseInt(params.skip as string, 10) : 0;
-  const take = params.take ? parseInt(params.take as string, 10) : 15;
   const whereSearch = searchText ? `AND title LIKE '%${searchText}%'` : '';
 
   try {
     const data: BountyGrant[] = await prisma.$queryRawUnsafe(
       `
       SELECT 
-        'bounty' as type,
+        b.type as type,
         b.id,
         b.title,
         b.slug,
@@ -105,14 +103,11 @@ async function handler(req: NextApiRequestWithUser, res: NextApiResponse) {
       ${whereSearch}
       
       ORDER BY createdAt DESC
-      LIMIT ?, ?
     `,
       sponsorId,
       status.OPEN,
       sponsorId,
       GrantStatus.OPEN,
-      skip,
-      take,
     );
 
     res.status(200).json(data);

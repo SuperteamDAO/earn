@@ -7,7 +7,7 @@ import { useEffect, useRef, useState } from 'react';
 import { InstallPWAModal } from '@/components/modals/InstallPWAModal';
 import { EmptySection } from '@/components/shared/EmptySection';
 import { Loading } from '@/components/shared/Loading';
-import { type Grant, GrantsCard } from '@/features/grants';
+import { GrantsCard, type GrantWithApplicationCount } from '@/features/grants';
 import { type Listing, ListingSection, ListingTabs } from '@/features/listings';
 import { Home } from '@/layouts/Home';
 import { userStore } from '@/store/user';
@@ -20,9 +20,11 @@ const HomePage: NextPage = () => {
   const [bounties, setBounties] = useState<{ bounties: Listing[] }>({
     bounties: [],
   });
-  const [grants, setGrants] = useState<{ grants: Grant[] }>({
-    grants: [],
-  });
+  const [grants, setGrants] = useState<{ grants: GrantWithApplicationCount[] }>(
+    {
+      grants: [],
+    },
+  );
   const installPrompt = useRef<BeforeInstallPromptEvent | null>();
   const date = dayjs().subtract(1, 'month').toISOString();
 

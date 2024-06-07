@@ -1,3 +1,4 @@
+import dayjs from 'dayjs';
 import type { NextApiResponse } from 'next';
 
 import { type NextApiRequestWithUser, withAuth } from '@/features/auth';
@@ -22,6 +23,8 @@ async function grantApplication(
     ask,
   } = req.body;
 
+  const formattedProjectTimeline = dayjs(projectTimeline).format('D MMMM YYYY');
+
   try {
     const result = await prisma.grantApplication.create({
       data: {
@@ -30,7 +33,7 @@ async function grantApplication(
         projectTitle,
         projectOneLiner,
         projectDetails,
-        projectTimeline,
+        projectTimeline: formattedProjectTimeline,
         proofOfWork,
         milestones,
         kpi,

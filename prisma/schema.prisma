@@ -185,6 +185,7 @@ model Grants {
   references       Json?
   requirements     String?            @db.Text
   GrantApplication GrantApplication[]
+  airtableId       String?
 
   @@index([id, slug])
   @@index([pocId])
