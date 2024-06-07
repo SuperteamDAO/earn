@@ -452,7 +452,7 @@ export const GrantApplicationModal = ({
                 className="ph-no-capture"
                 w={'full'}
                 isLoading={!!isLoading}
-                loadingText="Submitting..."
+                loadingText="Applying..."
                 type="submit"
                 variant="solid"
               >
