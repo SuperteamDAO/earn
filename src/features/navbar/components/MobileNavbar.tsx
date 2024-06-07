@@ -1,4 +1,4 @@
-import { HamburgerIcon, SearchIcon } from '@chakra-ui/icons';
+import { HamburgerIcon } from '@chakra-ui/icons';
 import {
   AbsoluteCenter,
   Box,
@@ -34,10 +34,9 @@ import { NavLink } from './NavLink';
 
 interface Props {
   onLoginOpen: () => void;
-  onSearchOpen: () => void;
 }
 
-export const MobileNavbar = ({ onLoginOpen, onSearchOpen }: Props) => {
+export const MobileNavbar = ({ onLoginOpen }: Props) => {
   const {
     isOpen: isDrawerOpen,
     onOpen: onDrawerOpen,
@@ -211,23 +210,6 @@ export const MobileNavbar = ({ onLoginOpen, onSearchOpen }: Props) => {
               icon={<HamburgerIcon h={6} w={6} color="brand.slate.500" />}
               onClick={onDrawerOpen}
             />
-
-            {router.pathname !== '/search' && (
-              <IconButton
-                className="ph-no-capture"
-                gap={2}
-                color="brand.slate.400"
-                fontWeight={400}
-                border={'none'}
-                borderColor={'brand.slate.300'}
-                _hover={{ bg: 'transparent' }}
-                _active={{ bg: 'transparent' }}
-                aria-label="Open Search"
-                icon={<SearchIcon />}
-                onClick={onSearchOpen}
-                variant="outline"
-              />
-            )}
           </Flex>
 
           <MobileDrawer />
