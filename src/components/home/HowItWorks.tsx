@@ -166,71 +166,75 @@ export const HowItWorks = () => {
             <Box ml={'0.8125rem'}>
               <Text
                 as="button"
-                color={!userInfo?.id ? 'black' : 'brand.purple'}
+                color={
+                  !loading && !!userInfo?.isTalentFilled
+                    ? 'black'
+                    : 'brand.purple'
+                }
                 fontSize={'md'}
                 fontWeight={500}
                 _hover={{
                   color: 'brand.purple',
                 }}
+                onClick={() => {
+                  if (!loading && !!userInfo?.isTalentFilled) return;
+                  else if (userInfo?.id) {
+                    router.push(`/new/talent`);
+                  }
+                }}
               >
                 Create your profile
               </Text>
               <Text color={'gray.500'} fontSize={'md'} fontWeight={500}>
-                by completing your talent profile
+                by telling us about yourself
               </Text>
             </Box>
             <Box ml={'0.8125rem'}>
-              {!userInfo?.id || !userInfo?.isTalentFilled ? (
-                <Text
-                  as="button"
-                  color={'black'}
-                  fontSize={'md'}
-                  fontWeight={500}
-                  _hover={{
-                    color: 'brand.purple',
-                  }}
-                  onClick={() => {
-                    if (userInfo?.id) {
-                      router.push(`/new/talent`);
-                    }
-                  }}
-                >
-                  {`Discover Bounties & Projects`}
-                </Text>
-              ) : (
-                <Text color={'brand.purple'} fontSize={'md'} fontWeight={500}>
-                  {`Discover Bounties & Projects`}
-                </Text>
-              )}
+              <Text
+                as="button"
+                color={!loading && hasSubmissions ? 'black' : 'brand.purple'}
+                fontSize={'md'}
+                fontWeight={500}
+                _hover={{
+                  color: 'brand.purple',
+                }}
+                onClick={() => {
+                  if (!loading && hasSubmissions) return;
+                  else if (userInfo?.id) {
+                    router.push(`/all`);
+                  }
+                }}
+              >
+                {`Participate in Bounties & Projects`}
+              </Text>
               <Text color={'gray.500'} fontSize={'md'} fontWeight={500}>
-                and participate in them
+                to build proof of work
               </Text>
             </Box>
             <Box ml={'0.8125rem'}>
-              {!userInfo?.id || !userInfo.totalEarnedInUSD ? (
-                <Text
-                  as="button"
-                  color={'black'}
-                  fontSize={'md'}
-                  fontWeight={500}
-                  _hover={{
-                    color: 'brand.purple',
-                  }}
-                  onClick={() => {
-                    if (userInfo?.id) {
-                      router.push('/all');
-                    }
-                  }}
-                >
-                  Get Paid for Your Work
-                </Text>
-              ) : (
-                <Text color={'brand.purple'} fontSize={'md'} fontWeight={500}>
-                  Get Paid for Your Work
-                </Text>
-              )}
+              <Text
+                as="button"
+                color={
+                  !loading && !!userInfo?.totalEarnedInUSD
+                    ? 'black'
+                    : 'brand.purple'
+                }
+                fontSize={'md'}
+                fontWeight={500}
+                _hover={{
+                  color: 'brand.purple',
+                }}
+                onClick={() => {
+                  if (!loading && !!userInfo?.totalEarnedInUSD) return;
+                  else if (userInfo?.id) {
+                    router.push('/feed');
+                  }
+                }}
+              >
+                Get Paid for Your Work
+              </Text>
               <Text color={'gray.500'} fontSize={'md'} fontWeight={500}>
-                In crypto and global standards
+                in global standards
               </Text>
             </Box>
           </VStack>

@@ -22,14 +22,13 @@ const banners: CategoryBanner[] = [
     img: bannerPrefix + 'Content.png',
     heading: 'Find your next Content Gig',
     description:
-      'If delighting users with eye-catching designs is your jam, you should check out the earning opportunities below.',
+      'If you can write insightful essays, make stunning videos, or create killer memes, the opportunities below are calling your name.',
   },
   {
     type: 'development',
     img: bannerPrefix + 'Dev.png',
     heading: 'Find your next Development Gig',
-    description:
-      'If delighting users with eye-catching designs is your jam, you should check out the earning opportunities below.',
+    description: `If building robust applications and scalable solutions is your forte, don't miss out on the earning opportunities listed below`,
   },
   {
     type: 'design',
@@ -43,7 +42,7 @@ const banners: CategoryBanner[] = [
     img: bannerPrefix + 'Other.png',
     heading: 'Find your next Other Gig',
     description:
-      'If delighting users with eye-catching designs is your jam, you should check out the earning opportunities below.',
+      'If you have a unique skill set that doesn’t fit into the other categories, you might find your next gig here.',
   },
 ];
 
@@ -91,15 +90,19 @@ export function CategoryBanner2({ category }: { category: CategoryTypes }) {
           transform="translateY(-50%)"
         >
           {banner.heading && (
-            <Text color="white" fontSize={'4xl'} fontWeight="bold">
+            <Text
+              color="white"
+              fontSize={{ base: '2xl', md: '4xl' }}
+              fontWeight="bold"
+            >
               {banner.heading}
             </Text>
           )}
           {banner.description && (
             <Text
-              maxW="31rem"
+              maxW="37rem"
               color="white"
-              fontSize={'lg'}
+              fontSize={{ base: 'sm', md: 'lg' }}
               fontWeight="medium"
             >
               {banner.description}

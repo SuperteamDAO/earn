@@ -55,7 +55,7 @@ const generateTabContent = ({
     ) : bounties?.filter(filterFunction).length ? (
       bounties
         .filter(filterFunction)
-        .slice(0, take)
+        .slice(0, take ? take + 1 : undefined)
         .map((bounty) => (
           <ListingCard
             key={bounty.id}
@@ -126,9 +126,7 @@ export const ListingTabs = ({
         bounties: bounties,
         take,
         isListingsLoading,
-        filterFunction: (bounty) =>
-          bounty.status === 'CLOSED' ||
-          ((bounty.isWinnersAnnounced || false) && bounty.status === 'OPEN'),
+        filterFunction: (bounty) => bounty.isWinnersAnnounced || false,
         emptyTitle: 'No completed listings!',
         emptyMessage:
           'Subscribe to notifications to get notified about announcements.',

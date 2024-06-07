@@ -21,7 +21,7 @@ function PillTab({ href, children, altActive }: PillTabProps) {
       alignItems="center"
       gap={2}
       display="flex"
-      px={4}
+      px={3}
       color={router.asPath === href ? 'black' : 'brand.slate.500'}
       fontSize={'sm'}
       bg={
@@ -62,7 +62,7 @@ export function NavTabs() {
     console.log('superteam code - ', superteam?.code);
   }, [superteam]);
   return (
-    <Flex align="center" wrap="wrap" gap={2} mb={6}>
+    <Flex align="center" wrap="wrap" rowGap={2} columnGap={3} mb={6}>
       <PillTab href="/" altActive={['/all/']}>
         All Opportunities
       </PillTab>

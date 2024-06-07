@@ -79,7 +79,16 @@ export default async function user(req: NextApiRequest, res: NextApiResponse) {
           },
           _count: {
             select: {
-              Comments: true,
+              Comments: {
+                where: {
+                  isActive: true,
+                  isArchived: false,
+                  replyToId: null,
+                  type: {
+                    not: 'SUBMISSION',
+                  },
+                },
+              },
             },
           },
         },
@@ -124,7 +133,16 @@ export default async function user(req: NextApiRequest, res: NextApiResponse) {
           },
           _count: {
             select: {
-              Comments: true,
+              Comments: {
+                where: {
+                  isActive: true,
+                  isArchived: false,
+                  replyToId: null,
+                  type: {
+                    not: 'SUBMISSION',
+                  },
+                },
+              },
             },
           },
         },

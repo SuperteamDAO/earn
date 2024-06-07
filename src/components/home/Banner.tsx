@@ -102,8 +102,8 @@ export function HomeBanner({ userCount }: BannerProps) {
           fontSize={{ base: '13px', md: 'lg' }}
           lineHeight={'130%'}
         >
-          Apply to world class crypto companies bounties, projects and grants
-          with a single profile.
+          Participate in bounties or apply to freelance gigs of world-class
+          crypto companies, all with a single profile.
         </Text>
         <Flex
           zIndex={1}

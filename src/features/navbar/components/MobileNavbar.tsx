@@ -274,13 +274,16 @@ export const MobileNavbar = ({ onLoginOpen, onSearchOpen }: Props) => {
         justify={'space-between'}
         display={{ base: 'flex', xl: 'none' }}
         px={{ base: 3, sm: 4 }}
-        py={2}
+        py={0}
         bg={'#F8FAFC'}
       >
         <Flex
           className="ph-no-capture"
-          gap={{ base: 2, sm: 8, md: 12 }}
+          justify="space-evenly"
+          gap={{ base: 8, sm: 8, md: 12 }}
+          w="full"
           mx="auto"
+          pl={1}
         >
           {LISTING_NAV_ITEMS?.map((navItem) => {
             const isCurrent = `${navItem.href}` === router.asPath;
@@ -294,7 +297,7 @@ export const MobileNavbar = ({ onLoginOpen, onSearchOpen }: Props) => {
                 href={navItem.href ?? '#'}
                 label={renderLabel(navItem)}
                 isActive={isCurrent}
-                fontSize={{ base: '12px', xs: '13px', md: '15px' }}
+                fontSize={'sm'}
                 fontWeight={500}
                 borderBottom={'none'}
                 h={'auto'}
