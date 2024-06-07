@@ -92,6 +92,7 @@ export const Footer = () => {
   const posthog = usePostHog();
   return (
     <Box
+      pb={14}
       color={'brand.slate.500'}
       bg={'white'}
       borderTop="1px solid"
@@ -206,7 +207,7 @@ export const Footer = () => {
             </Stack>
           </Stack>
           <Flex
-            justify={'space-between'}
+            justify={{ base: 'start', sm: 'space-between' }}
             direction={{ base: 'column', sm: 'row' }}
             gap={{ base: 10, md: '9rem' }}
           >
@@ -252,7 +253,7 @@ export const Footer = () => {
               </Flex>
             </Stack>
             <Flex
-              justify={{ base: 'space-between', sm: 'flex-start' }}
+              justify={'flex-start'}
               direction={{ base: 'row', sm: 'column' }}
               rowGap={{ base: 1, sm: 8 }}
               columnGap="5rem"
