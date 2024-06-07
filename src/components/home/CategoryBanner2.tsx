@@ -20,27 +20,27 @@ const banners: CategoryBanner[] = [
   {
     type: 'content',
     img: bannerPrefix + 'Content.png',
-    heading: 'Find your next Content Gig',
+    heading: 'Find your next Content gig',
     description:
       'If you can write insightful essays, make stunning videos, or create killer memes, the opportunities below are calling your name.',
   },
   {
     type: 'development',
     img: bannerPrefix + 'Dev.png',
-    heading: 'Find your next Development Gig',
+    heading: 'Find your next Development gig',
     description: `If building robust applications and scalable solutions is your forte, don't miss out on the earning opportunities listed below`,
   },
   {
     type: 'design',
     img: bannerPrefix + 'Design.png',
-    heading: 'Find your next Design Gig',
+    heading: 'Find your next Design gig',
     description:
       'If delighting users with eye-catching designs is your jam, you should check out the earning opportunities below.',
   },
   {
     type: 'other',
     img: bannerPrefix + 'Other.png',
-    heading: 'Find your next Other Gig',
+    heading: 'Find your next Other gig',
     description:
       'If you have a unique skill set that doesn’t fit into the other categories, you might find your next gig here.',
   },
