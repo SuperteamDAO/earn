@@ -1,7 +1,8 @@
-import { Box, Center, Flex, Image, Text, VStack } from '@chakra-ui/react';
+import { Box, Center, Flex, Text, VStack } from '@chakra-ui/react';
 import axios from 'axios';
 import { useRouter } from 'next/router';
 import { useEffect, useState } from 'react';
+import { LuCheck } from 'react-icons/lu';
 
 import { AuthWrapper } from '@/features/auth';
 import { userStore } from '@/store/user';
@@ -97,12 +98,7 @@ const Step = ({
       rounded={'full'}
     >
       {isComplete ? (
-        <Image
-          w={'full'}
-          h={'full'}
-          alt="White Tick Icon"
-          src="/assets/icons/white-tick.svg"
-        />
+        <LuCheck size={'1.3rem'} strokeWidth={3} />
       ) : (
         <StepIcon step={number} />
       )}
@@ -124,10 +120,8 @@ export const HowItWorks = () => {
 
   async function getStats() {
     try {
-      if (userInfo) {
-        const result = await axios.get<Stats>('/api/user/getStats');
-        setHasSubmissions(!!result.data.participations);
-      }
+      const result = await axios.get<Stats>('/api/user/getStats');
+      setHasSubmissions(result.data.participations > 0);
     } catch (err) {
       console.log('Error getting stats - ', err);
     }
@@ -146,10 +140,15 @@ export const HowItWorks = () => {
         </Text>
         <Flex h={'12.5rem'}>
           <VStack pos={'relative'} justifyContent={'space-between'} h={'100%'}>
-            <Step number={1} isComplete={!!userInfo?.isTalentFilled} />
-
-            <Step number={2} isComplete={hasSubmissions} />
-            <Step number={3} isComplete={!!userInfo?.totalEarnedInUSD} />
+            <Step
+              number={1}
+              isComplete={!loading && !!userInfo?.isTalentFilled}
+            />
+            <Step number={2} isComplete={!loading && hasSubmissions} />
+            <Step
+              number={3}
+              isComplete={!loading && !!userInfo?.totalEarnedInUSD}
+            />
             <Flex
               pos={'absolute'}
               w={'0.0625rem'}
