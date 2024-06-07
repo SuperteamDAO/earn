@@ -63,7 +63,11 @@ export function BottomBar({ onSearchOpen }: Props) {
         </Button>
       </Link>
       <AuthWrapper>
-        <Link as={NextLink} href={`/t/${userInfo?.username}`}>
+        <Link
+          as={NextLink}
+          pointerEvents={userInfo ? 'auto' : 'none'}
+          href={`/t/${userInfo?.username}`}
+        >
           <Button
             color={setColor(`/t/${userInfo?.username}/`, router.asPath)}
             variant="ghost"
