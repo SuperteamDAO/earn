@@ -725,7 +725,11 @@ export const SubmissionDetails = ({
                       >
                         {answer.question}
                       </Text>
-                      <Text color="brand.slate.700" wordBreak={'break-all'}>
+                      <Text
+                        color="brand.slate.700"
+                        whiteSpace={'pre'}
+                        wordBreak={'break-all'}
+                      >
                         {answer.answer || '-'}
                       </Text>
                     </Box>
