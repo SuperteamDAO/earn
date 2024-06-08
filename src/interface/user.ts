@@ -38,7 +38,6 @@ interface User {
   linkedin?: string;
   website?: string;
   telegram?: string;
-  pow?: string;
   totalEarnedInUSD?: number;
   currentSponsorId?: string;
   currentSponsor?: SponsorType;

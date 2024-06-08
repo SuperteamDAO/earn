@@ -276,22 +276,22 @@ model User {
   email             String            @unique
   username          String?           @unique
   photo             String?
-  firstName         String?
-  lastName          String?
+  firstName         String?           @db.Text
+  lastName          String?           @db.Text
   createdAt         DateTime          @default(now())
   updatedAt         DateTime          @updatedAt
   isVerified        Boolean           @default(false)
   role              String            @default("USER")
   totalEarnedInUSD  Int               @default(0)
   isTalentFilled    Boolean           @default(false)
-  interests         String?
-  bio               String?
-  twitter           String?
-  discord           String?
-  github            String?
-  linkedin          String?
-  website           String?
-  telegram          String?
+  interests         String?           @db.Text
+  bio               String?           @db.Text
+  twitter           String?           @db.Text
+  discord           String?           @db.Text
+  github            String?           @db.Text
+  linkedin          String?           @db.Text
+  website           String?           @db.Text
+  telegram          String?           @db.Text
   community         String?
   experience        String?
   superteamLevel    String?
@@ -299,7 +299,6 @@ model User {
   cryptoExperience  String?
   workPrefernce     String?
   currentEmployer   String?
-  pow               String?           @db.VarChar(2000)
   notifications     Json?
   private           Boolean           @default(false)
   skills            Json?

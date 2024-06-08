@@ -63,7 +63,6 @@ interface ForFoundersAirtableSchema {
   'Crypto Experience'?: string;
   'Work Preference'?: string;
   'Current Employer'?: string;
-  pow?: string;
   notifications?: string;
   private: string;
   skills?: string;
@@ -78,7 +77,6 @@ interface ForFoundersAirtableSchema {
   Growth?: string;
   Other?: string;
   'Talent Profile non UTM'?: string;
-  // "Contact Talent Via"?: string,
   'Self Selected Skills'?: string[];
 }
 
@@ -126,7 +124,6 @@ function convertUserToAirtable(user: User): ForFoundersAirtableSchema {
     'Crypto Experience': user.cryptoExperience ?? undefined,
     'Work Preference': user.workPrefernce ?? undefined,
     'Current Employer': user.currentEmployer ?? undefined,
-    pow: user.pow ?? undefined,
     notifications: undefined,
     private: String(user.private ? 1 : 0),
     skills: JSON.stringify(user.skills ?? {}) ?? undefined,
