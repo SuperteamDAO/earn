@@ -49,18 +49,20 @@ async function grantApplication(
       },
     });
 
-    const config = airtableConfig(process.env.AIRTABLE_GRANTS_API_TOKEN!);
-    const url = airtableUrl(
-      process.env.AIRTABLE_GRANTS_BASE_ID!,
-      process.env.AIRTABLE_GRANTS_TABLE_NAME!,
-    );
+    if (result.grant.airtableId) {
+      const config = airtableConfig(process.env.AIRTABLE_GRANTS_API_TOKEN!);
+      const url = airtableUrl(
+        process.env.AIRTABLE_GRANTS_BASE_ID!,
+        process.env.AIRTABLE_GRANTS_TABLE_NAME!,
+      );
 
-    const airtableData = convertGrantApplicationToAirtable(result);
-    const airtablePayload = airtableUpsert('earnGrantApplicationId', [
-      { fields: airtableData },
-    ]);
+      const airtableData = convertGrantApplicationToAirtable(result);
+      const airtablePayload = airtableUpsert('earnGrantApplicationId', [
+        { fields: airtableData },
+      ]);
 
-    await axios.patch(url, JSON.stringify(airtablePayload), config);
+      await axios.patch(url, JSON.stringify(airtablePayload), config);
+    }
 
     return res.status(200).json(result);
   } catch (error: any) {

@@ -117,7 +117,7 @@ function Grants({ grant: initialGrant }: InitialGrant) {
                 <VStack
                   justify={'center'}
                   gap={0}
-                  w={{ base: 'full', md: '22rem' }}
+                  w={{ base: 'full', md: '24rem' }}
                   px={3}
                   py={3}
                   bg={'#FFFFFF'}
@@ -166,91 +166,97 @@ function Grants({ grant: initialGrant }: InitialGrant) {
                     ml={-8}
                     borderColor={'brand.slate.300'}
                   />
-                  <Flex w="full" mt={2}>
-                    <Flex w="50%">
-                      <TimeToPayIcon />
-                      <Flex direction={'column'}>
-                        <Text
-                          color="brand.slate.700"
-                          fontSize={{ base: 'lg', md: 'xl' }}
-                          fontWeight={500}
-                        >
-                          24h
-                        </Text>
-                        <Text
-                          mt={-1}
-                          color={'brand.slate.400'}
-                          fontSize={'sm'}
-                          fontWeight={500}
-                        >
-                          Avg Time to Pay
-                        </Text>
+                  <Flex
+                    direction={'column'}
+                    display={grant?.externalLink ? 'none' : 'block'}
+                    w="full"
+                  >
+                    <Flex w="full" mt={2}>
+                      <Flex w="50%">
+                        <TimeToPayIcon />
+                        <Flex direction={'column'}>
+                          <Text
+                            color="brand.slate.700"
+                            fontSize={{ base: 'lg', md: 'xl' }}
+                            fontWeight={500}
+                          >
+                            24h
+                          </Text>
+                          <Text
+                            mt={-1}
+                            color={'brand.slate.400'}
+                            fontSize={'sm'}
+                            fontWeight={500}
+                          >
+                            Avg Time to Pay
+                          </Text>
+                        </Flex>
+                      </Flex>
+                      <Flex>
+                        <DollarIcon />
+                        <Flex direction={'column'}>
+                          <Text
+                            color="brand.slate.700"
+                            fontSize={{ base: 'lg', md: 'xl' }}
+                            fontWeight={500}
+                          >
+                            ${grant?.totalApproved || 0}
+                          </Text>
+                          <Text
+                            mt={-1}
+                            color={'brand.slate.400'}
+                            fontSize={'sm'}
+                            fontWeight={500}
+                          >
+                            Approved So Far
+                          </Text>
+                        </Flex>
                       </Flex>
                     </Flex>
-                    <Flex>
-                      <DollarIcon />
-                      <Flex direction={'column'}>
-                        <Text
-                          color="brand.slate.700"
-                          fontSize={{ base: 'lg', md: 'xl' }}
-                          fontWeight={500}
-                        >
-                          ${grant?.totalApproved || 0}
-                        </Text>
-                        <Text
-                          mt={-1}
-                          color={'brand.slate.400'}
-                          fontSize={'sm'}
-                          fontWeight={500}
-                        >
-                          Approved So Far
-                        </Text>
+                    <Flex w="full" mt={4} mb={6}>
+                      <Flex w="50%">
+                        <PayoutIcon />
+                        <Flex direction={'column'}>
+                          <Text
+                            color="brand.slate.700"
+                            fontSize={{ base: 'lg', md: 'xl' }}
+                            fontWeight={500}
+                          >
+                            $
+                            {Math.round(
+                              grant?.totalApproved /
+                                grant?._count.GrantApplication,
+                            ) || 0}
+                          </Text>
+                          <Text
+                            mt={-1}
+                            color={'brand.slate.400'}
+                            fontSize={'sm'}
+                            fontWeight={500}
+                          >
+                            Average Grant
+                          </Text>
+                        </Flex>
                       </Flex>
-                    </Flex>
-                  </Flex>
-                  <Flex w="full" mt={4} mb={6}>
-                    <Flex w="50%">
-                      <PayoutIcon />
-                      <Flex direction={'column'}>
-                        <Text
-                          color="brand.slate.700"
-                          fontSize={{ base: 'lg', md: 'xl' }}
-                          fontWeight={500}
-                        >
-                          $
-                          {Math.round(
-                            grant?.totalApproved /
-                              grant?._count.GrantApplication,
-                          ) || 0}
-                        </Text>
-                        <Text
-                          mt={-1}
-                          color={'brand.slate.400'}
-                          fontSize={'sm'}
-                          fontWeight={500}
-                        >
-                          Average Grant
-                        </Text>
-                      </Flex>
-                    </Flex>
-                    <Flex>
-                      <TimeToPayIcon />
-                      <Flex direction={'column'}>
-                        <Text
-                          color="brand.slate.700"
-                          fontSize={{ base: 'lg', md: 'xl' }}
-                          fontWeight={500}
-                        >
-                          {grant._count.GrantApplication}
-                        </Text>
-                        <Text
-                          mt={-1}
-                          color={'brand.slate.400'}
-                          fontSize={'sm'}
-                          fontWeight={500}
-                        >
-                          Recipients
-                        </Text>
+                      <Flex>
+                        <TimeToPayIcon />
+                        <Flex direction={'column'}>
+                          <Text
+                            color="brand.slate.700"
+                            fontSize={{ base: 'lg', md: 'xl' }}
+                            fontWeight={500}
+                          >
+                            {grant._count.GrantApplication}
+                          </Text>
+                          <Text
+                            mt={-1}
+                            color={'brand.slate.400'}
+                            fontSize={'sm'}
+                            fontWeight={500}
+                          >
+                            Recipients
+                          </Text>
+                        </Flex>
                       </Flex>
                     </Flex>
                   </Flex>
@@ -259,7 +265,7 @@ function Grants({ grant: initialGrant }: InitialGrant) {
                 {grant.requirements && (
                   <VStack
                     align="start"
-                    w={{ base: 'full', md: '22rem' }}
+                    w={{ base: 'full', md: '24rem' }}
                     mt={4}
                     p={6}
                     bg="white"

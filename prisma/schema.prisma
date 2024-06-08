@@ -184,6 +184,7 @@ model Grants {
   requirements     String?            @db.Text
   GrantApplication GrantApplication[]
   airtableId       String?
+  externalLink     String?
 
   @@index([id, slug])
   @@index([pocId])
