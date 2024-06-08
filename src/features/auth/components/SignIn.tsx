@@ -44,7 +44,7 @@ export const SignIn = ({
 
   const handleEmailSignIn = () => {
     setHasAttemptedSubmit(true);
-    if (isEmailValid && !email.includes('@gmail.com')) {
+    if (isEmailValid) {
       posthog.capture('email OTP_auth');
       localStorage.setItem('emailForSignIn', email);
       signIn('email', {
@@ -133,27 +133,11 @@ export const SignIn = ({
                   mt={3}
                   fontSize="17px"
                   fontWeight={500}
-                  cursor={
-                    email.includes('@gmail.com') ? 'not-allowed' : 'pointer'
-                  }
-                  isDisabled={email.includes('@gmail.com')}
                   onClick={handleEmailSignIn}
                   size="lg"
                 >
                   Continue with Email
                 </Button>
-                {email.includes('@gmail.com') && (
-                  <Text
-                    align={'center'}
-                    mt={2}
-                    color="red.500"
-                    fontSize={'xs'}
-                    lineHeight={'0.9rem'}
-                  >
-                    Please use the Google Auth login option from the previous
-                    step.
-                  </Text>
-                )}
               </>
             )}
           </Box>
