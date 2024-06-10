@@ -1,4 +1,3 @@
-import { verifySignature } from '@upstash/qstash/dist/nextjs';
 import dayjs from 'dayjs';
 import type { NextApiRequest, NextApiResponse } from 'next';
 
@@ -7,7 +6,10 @@ import { prisma } from '@/prisma';
 
 const sevenDaysAgoDate = dayjs().subtract(7, 'day').toDate();
 
-async function handler(_req: NextApiRequest, res: NextApiResponse) {
+export default async function handler(
+  _req: NextApiRequest,
+  res: NextApiResponse,
+) {
   try {
     const totalUserCount = await prisma.user.count();
 
@@ -114,10 +116,10 @@ async function handler(_req: NextApiRequest, res: NextApiResponse) {
   }
 }
 
-export default verifySignature(handler);
+// export default verifySignature(handler);
 
-export const config = {
-  api: {
-    bodyParser: false,
-  },
-};
+// export const config = {
+//   api: {
+//     bodyParser: false,
+//   },
+// };
