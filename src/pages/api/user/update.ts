@@ -55,9 +55,8 @@ async function handler(req: NextApiRequestWithUser, res: NextApiResponse) {
       id: userId as string,
     },
   });
-
   // eslint-disable-next-line
-  const { role, skills, currentSponsorId, generateTalentEmailSettings, ...updateAttributes } = req.body;
+  const {role, skills, currentSponsorId, generateTalentEmailSettings, ...updateAttributes} = req.body;
   let result;
   const correctedSkills = skills ? correctSkills(skills) : [];
   try {
@@ -93,6 +92,8 @@ async function handler(req: NextApiRequestWithUser, res: NextApiResponse) {
       }
     }
 
+    console.log('Updating user with data:', updatedData);
+
     result = await prisma.user.update({
       where: {
         id: userId as string,
@@ -109,10 +110,10 @@ async function handler(req: NextApiRequestWithUser, res: NextApiResponse) {
 
     return res.status(200).json(result);
   } catch (error: any) {
-    console.error(`User ${userId} unable to onboard`, error.message);
+    console.error(error.message);
 
     return res.status(400).json({
-      message: `Error occurred while updating user ${userId}.`,
+      message: `Error occurred while updating user ${userId}: ${error.message}`,
     });
   }
 }

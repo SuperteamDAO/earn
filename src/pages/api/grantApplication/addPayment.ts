@@ -1,36 +1,22 @@
-import type { NextApiResponse } from 'next';
+import type { NextApiRequest, NextApiResponse } from 'next';
 
-import { type NextApiRequestWithUser, withAuth } from '@/features/auth';
 import { prisma } from '@/prisma';
 
-async function handler(req: NextApiRequestWithUser, res: NextApiResponse) {
-  const userId = req.userId;
-
-  const user = await prisma.user.findUnique({
-    where: {
-      id: userId as string,
-    },
-  });
-
-  if (!user) {
-    return res.status(400).json({ error: 'Unauthorized' });
-  }
-
-  const { id, trancheAmount, txId, note } = req.body;
-  const parsedTrancheAmount = parseInt(trancheAmount, 10);
+export default async function handler(
+  req: NextApiRequest,
+  res: NextApiResponse,
+) {
+  const { id, trancheAmount, txId, note } = req.query;
+  const parsedTrancheAmount = parseInt(trancheAmount as string, 10);
 
   try {
     const currentApplication = await prisma.grantApplication.findUnique({
-      where: { id },
+      where: { id: id as string },
       include: { grant: true },
     });
 
     if (!currentApplication) {
       return res.status(404).json({ error: 'Grant application not found' });
-    }
-
-    if (currentApplication.grant.sponsorId !== user.currentSponsorId) {
-      return res.status(400).json({ error: 'Unauthorized' });
     }
 
     let updatedPaymentDetails = currentApplication.paymentDetails || [];
@@ -47,7 +33,7 @@ async function handler(req: NextApiRequestWithUser, res: NextApiResponse) {
 
     const result = await prisma.$transaction(async (tx) => {
       const updatedGrantApplication = await tx.grantApplication.update({
-        where: { id },
+        where: { id: id as string },
         data: {
           totalPaid: {
             increment: parsedTrancheAmount,
@@ -72,7 +58,7 @@ async function handler(req: NextApiRequestWithUser, res: NextApiResponse) {
 
       await tx.sponsors.update({
         where: {
-          id: user.currentSponsorId!,
+          id: currentApplication.grant.sponsorId,
         },
         data: {
           totalRewardedInUSD: {
@@ -92,5 +78,3 @@ async function handler(req: NextApiRequestWithUser, res: NextApiResponse) {
     });
   }
 }
-
-export default withAuth(handler);
