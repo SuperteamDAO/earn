@@ -275,7 +275,7 @@ model User {
   publicKey         String?
   email             String            @unique
   username          String?           @unique
-  photo             String?
+  photo             String?           @db.Text
   firstName         String?           @db.Text
   lastName          String?           @db.Text
   createdAt         DateTime          @default(now())
