@@ -1,6 +1,5 @@
 import {
   AddIcon,
-  ArrowBackIcon,
   ArrowForwardIcon,
   CheckIcon,
   CopyIcon,
@@ -9,10 +8,7 @@ import {
   Box,
   Button,
   Center,
-  HStack,
-  Input,
-  InputGroup,
-  InputRightElement,
+  Flex,
   Link,
   Modal,
   ModalContent,
@@ -53,7 +49,7 @@ ${listingLink('twitter')}
     <>
       <Modal isOpen={isOpen} onClose={onClose} size="sm">
         <ModalOverlay />
-        <ModalContent overflow="hidden" h={'max'} rounded="lg">
+        <ModalContent overflow="hidden" w="100%" h={'max'} rounded="lg">
           <VStack align="start" gap={4}>
             <Box w="full" py={20} bg="#ECFDF5">
               <Center
@@ -70,7 +66,7 @@ ${listingLink('twitter')}
                 />
               </Center>
             </Box>
-            <VStack align="start" p={8} pt={0}>
+            <VStack align="start" p={6} pt={0}>
               <Text
                 color={'brand.slate.800'}
                 fontFamily={'var(--font-sans)'}
@@ -86,37 +82,29 @@ ${listingLink('twitter')}
                 Share the love on your socials and invite Earn’s best talent!
               </Text>
               <VStack gap={4} w={'full'} mt={5}>
-                <HStack gap={6} w="full">
-                  <Link
-                    as={NextLink}
-                    w="full"
-                    href={twitterShareLink}
-                    target="_blank"
-                  >
-                    <Button
-                      w="full"
-                      color="brand.slate.400"
-                      borderColor="brand.slate.200"
-                      variant="outline"
-                    >
-                      <FaXTwitter style={{ width: '1.3em', height: '1.3em' }} />
-                    </Button>
-                  </Link>
-                </HStack>
-                <InputGroup borderColor="brand.slate.200">
-                  <Input
+                <Button
+                  alignItems="center"
+                  justifyContent="space-between"
+                  gap={2}
+                  borderColor="brand.slate.200"
+                  _hover={{ bg: 'brand.slate.100' }}
+                  userSelect={'none'}
+                  variant="outline"
+                >
+                  <Text
                     overflow="hidden"
                     color="brand.slate.500"
                     fontSize="1rem"
                     fontWeight={400}
                     whiteSpace="nowrap"
+                    userSelect={'none'}
                     textOverflow="ellipsis"
-                    focusBorderColor="#CFD2D7"
-                    isReadOnly
+                    cursor="pointer"
                     onClick={onCopy}
-                    value={`earn.superteam.fun/${slug}`}
-                  />
-                  <InputRightElement h="100%" mr="1rem">
+                  >
+                    earn.superteam.fun/{slug}
+                  </Text>
+                  <Box mr="0rem">
                     {hasCopied ? (
                       <CheckIcon
                         h="1.3rem"
@@ -132,18 +120,7 @@ ${listingLink('twitter')}
                         color="brand.slate.400"
                       />
                     )}
-                  </InputRightElement>
-                </InputGroup>
-                <Button
-                  gap={2}
-                  w="100%"
-                  fontWeight={500}
-                  onClick={() => {
-                    router.push(`/listings/${type}/${slug}`);
-                  }}
-                  variant="solidSecondary"
-                >
-                  View Listing <ArrowForwardIcon />
+                  </Box>
                 </Button>
                 <Button
                   gap={2}
@@ -158,24 +135,28 @@ ${listingLink('twitter')}
                 >
                   Invite Talent <AddIcon h="0.8em" w="0.8em" />
                 </Button>
-                <Button
-                  gap={2}
+                <Flex
+                  justify="space-between"
                   w="100%"
-                  color="brand.slate.400"
+                  color="brand.slate.500"
+                  fontSize="sm"
                   fontWeight={500}
-                  borderColor="brand.slate.200"
-                  onClick={() => {
-                    if (type === 'hackathon') {
-                      router.push(`/dashboard/hackathon/`);
-                    } else {
-                      router.push('/dashboard/listings');
-                    }
-                  }}
-                  variant="outline"
                 >
-                  <ArrowBackIcon />
-                  Back to Dashboard
-                </Button>
+                  <Link
+                    as={NextLink}
+                    alignItems="center"
+                    gap={1}
+                    display="flex"
+                    href={twitterShareLink}
+                    target="_blank"
+                  >
+                    Share on
+                    <FaXTwitter style={{ width: '1em', height: '1em' }} />
+                  </Link>
+                  <Link as={NextLink} href={`/listings/${type}/${slug}`}>
+                    View Listing <ArrowForwardIcon />
+                  </Link>
+                </Flex>
               </VStack>
             </VStack>
           </VStack>
