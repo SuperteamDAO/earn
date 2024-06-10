@@ -233,42 +233,49 @@ export const SubmissionDetails = ({
       await new Promise((resolve, reject) => {
         connection.onSignature(
           signature,
-          (res) => {
+          async (res) => {
             if (res.err) {
               reject(new Error('Transaction failed'));
             } else {
-              resolve(res);
+              try {
+                await axios.post(`/api/submission/addPayment/`, {
+                  id,
+                  isPaid: true,
+                  paymentDetails: {
+                    txId: signature,
+                  },
+                });
+
+                const submissionIndex = submissions.findIndex(
+                  (s) => s.id === id,
+                );
+                if (submissionIndex >= 0) {
+                  const updatedSubmission: SubmissionWithUser = {
+                    ...(submissions[submissionIndex] as SubmissionWithUser),
+                    isPaid: true,
+                    paymentDetails: {
+                      txId: signature,
+                    },
+                  };
+                  const newSubmissions = [...submissions];
+                  newSubmissions[submissionIndex] = updatedSubmission;
+                  setSubmissions(newSubmissions);
+                  setSelectedSubmission(updatedSubmission);
+                  setTotalPaymentsMade(
+                    (prevTotalPaymentsMade: number) =>
+                      prevTotalPaymentsMade + 1,
+                  );
+                }
+                resolve(res);
+              } catch (error) {
+                reject(new Error('Payment record update failed'));
+              }
             }
           },
           'confirmed',
         );
       });
 
-      await axios.post(`/api/submission/addPayment/`, {
-        id,
-        isPaid: true,
-        paymentDetails: {
-          txId: signature,
-        },
-      });
-
-      const submissionIndex = submissions.findIndex((s) => s.id === id);
-      if (submissionIndex >= 0) {
-        const updatedSubmission: SubmissionWithUser = {
-          ...(submissions[submissionIndex] as SubmissionWithUser),
-          isPaid: true,
-          paymentDetails: {
-            txId: signature,
-          },
-        };
-        const newSubmissions = [...submissions];
-        newSubmissions[submissionIndex] = updatedSubmission;
-        setSubmissions(newSubmissions);
-        setSelectedSubmission(updatedSubmission);
-        setTotalPaymentsMade(
-          (prevTotalPaymentsMade: number) => prevTotalPaymentsMade + 1,
-        );
-      }
       setIsPaying(false);
     } catch (error) {
       console.log(error);
