@@ -1,17 +1,21 @@
 import { ArrowForwardIcon } from '@chakra-ui/icons';
-import { Flex, Text, VStack } from '@chakra-ui/react';
+import { Link, Text, VStack } from '@chakra-ui/react';
 import Image from 'next/image';
+import NextLink from 'next/link';
 
 import Briefcase from '@/public/assets/home/display/briefcase.png';
 
 export const BecomeSponsor = () => {
   return (
-    <Flex
-      justify="space-between"
+    <Link
+      as={NextLink}
+      justifyContent="space-between"
       gap={4}
+      display="flex"
       w="full"
       p={4}
       bg="brand.purple.50"
+      href="/sponsor"
       rounded="lg"
     >
       <VStack align="start">
@@ -33,6 +37,6 @@ export const BecomeSponsor = () => {
           marginRight: '1rem',
         }}
       />
-    </Flex>
+    </Link>
   );
 };
