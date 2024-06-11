@@ -90,7 +90,9 @@ const Step = ({
 }) => {
   return (
     <Center
+      pos="relative"
       zIndex={'200'}
+      overflow={'visible'}
       w={'2.375rem'}
       h={'2.375rem'}
       color={isComplete ? '#FFFFFF' : '#94A3B8'}
@@ -101,6 +103,16 @@ const Step = ({
         <LuCheck size={'1.3rem'} strokeWidth={3} />
       ) : (
         <StepIcon step={number} />
+      )}
+      {number < 3 && (
+        <Flex
+          pos={'absolute'}
+          top="110%"
+          w={'0.12rem'}
+          h={'90%'}
+          bg={isComplete ? 'brand.purple.dark' : 'brand.slate.400'}
+          opacity={0.6}
+        />
       )}
     </Center>
   );
@@ -132,6 +144,8 @@ export const HowItWorks = () => {
     getStats();
   }, []);
 
+  if (!loading && !!userInfo?.totalEarnedInUSD) return null;
+
   return (
     <AuthWrapper>
       <Box opacity={loading ? '0.2' : '1'}>
@@ -149,13 +163,13 @@ export const HowItWorks = () => {
               number={3}
               isComplete={!loading && !!userInfo?.totalEarnedInUSD}
             />
-            <Flex
-              pos={'absolute'}
-              w={'0.0625rem'}
-              h={'90%'}
-              bg={'#6366f1'}
-              opacity={0.13}
-            />
+            {/* <Flex */}
+            {/*   pos={'absolute'} */}
+            {/*   w={'0.0625rem'} */}
+            {/*   h={'90%'} */}
+            {/*   bg={'#6366f1'} */}
+            {/*   opacity={0.13} */}
+            {/* /> */}
           </VStack>
           <VStack
             pos={'relative'}
@@ -168,7 +182,7 @@ export const HowItWorks = () => {
                 as="button"
                 color={
                   !loading && !!userInfo?.isTalentFilled
-                    ? 'black'
+                    ? 'brand.slate.500'
                     : 'brand.purple'
                 }
                 fontSize={'md'}
@@ -192,7 +206,11 @@ export const HowItWorks = () => {
             <Box ml={'0.8125rem'}>
               <Text
                 as="button"
-                color={!loading && hasSubmissions ? 'black' : 'brand.purple'}
+                color={
+                  !loading && hasSubmissions
+                    ? 'brand.slate.500'
+                    : 'brand.purple'
+                }
                 fontSize={'md'}
                 fontWeight={500}
                 _hover={{
@@ -216,7 +234,7 @@ export const HowItWorks = () => {
                 as="button"
                 color={
                   !loading && !!userInfo?.totalEarnedInUSD
-                    ? 'black'
+                    ? 'brand.slate.500'
                     : 'brand.purple'
                 }
                 fontSize={'md'}

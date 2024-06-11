@@ -96,7 +96,7 @@ export function HomeBanner({ userCount }: BannerProps) {
         <Text
           pos="relative"
           zIndex={1}
-          maxW={{ base: '100%', md: '460px' }}
+          maxW={{ base: '100%', md: '30rem' }}
           mt={isLessThan768px ? '2.5' : '4'}
           color={'white'}
           fontSize={{ base: '13px', md: 'lg' }}
