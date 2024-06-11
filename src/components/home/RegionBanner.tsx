@@ -27,7 +27,7 @@ export function RegionBanner({ st }: { st: (typeof Superteams)[0] }) {
         display="block"
         w="full"
         h="full"
-        bg="rgba(64,65,108,0.5)"
+        bg="rgba(64,65,108,0.8)"
       />
       <VStack pos="absolute" top="50%" px={4} transform="translateY(-50%)">
         {st.code && <UserFlag location={st.code} isCode size="44px" />}
