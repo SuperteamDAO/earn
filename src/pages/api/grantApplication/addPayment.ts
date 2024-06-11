@@ -6,7 +6,7 @@ export default async function handler(
   req: NextApiRequest,
   res: NextApiResponse,
 ) {
-  const { id, trancheAmount, txId, note } = req.query;
+  const { id, trancheAmount, txId = '', note = '' } = req.query;
   const parsedTrancheAmount = parseInt(trancheAmount as string, 10);
 
   try {
@@ -25,8 +25,8 @@ export default async function handler(
     }
 
     updatedPaymentDetails.push({
-      txId,
-      note,
+      txId: txId || null,
+      note: note || null,
       tranche: currentApplication.totalTranches + 1,
       amount: parsedTrancheAmount,
     });
