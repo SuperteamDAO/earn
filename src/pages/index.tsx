@@ -1,61 +1,66 @@
 import { Box, Flex, useDisclosure } from '@chakra-ui/react';
-import axios from 'axios';
-import dayjs from 'dayjs';
-import type { NextPage } from 'next';
+import { type BountyType } from '@prisma/client';
+import type { GetServerSideProps, NextPage } from 'next';
 import { useEffect, useRef, useState } from 'react';
 
 import { InstallPWAModal } from '@/components/modals/InstallPWAModal';
 import { EmptySection } from '@/components/shared/EmptySection';
-import { Loading } from '@/components/shared/Loading';
 import { GrantsCard, type GrantWithApplicationCount } from '@/features/grants';
 import { type Listing, ListingSection, ListingTabs } from '@/features/listings';
 import { Home } from '@/layouts/Home';
 import { userStore } from '@/store/user';
 
-const HomePage: NextPage = () => {
-  const [isListingsLoading, setIsListingsLoading] = useState(true);
+import { getListings, type Skills, type Status } from './api/listings/v2';
+
+interface Props {
+  bounties: Listing[];
+  grants: GrantWithApplicationCount[];
+}
+
+const HomePage: NextPage<Props> = ({ bounties, grants }) => {
+  // const [isListingsLoading, setIsListingsLoading] = useState(true);
   const [mobileOs, setMobileOs] = useState<'Android' | 'iOS' | 'Other'>(
     'Other',
   );
-  const [bounties, setBounties] = useState<{ bounties: Listing[] }>({
-    bounties: [],
-  });
-  const [grants, setGrants] = useState<{ grants: GrantWithApplicationCount[] }>(
-    {
-      grants: [],
-    },
-  );
+  // const [bounties, setBounties] = useState<{ bounties: Listing[] }>({
+  //   bounties: [],
+  // });
+  // const [grants, setGrants] = useState<{ grants: GrantWithApplicationCount[] }>(
+  //   {
+  //     grants: [],
+  //   },
+  // );
   const installPrompt = useRef<BeforeInstallPromptEvent | null>();
-  const date = dayjs().subtract(1, 'month').toISOString();
+  // const date = dayjs().subtract(1, 'month').toISOString();
 
-  const getListings = async () => {
-    setIsListingsLoading(true);
-    try {
-      const bountyData = await axios.get('/api/listings/', {
-        params: {
-          category: 'bounties',
-          take: 100,
-          deadline: date,
-          isHomePage: true,
-        },
-      });
-
-      setBounties(bountyData.data);
-      setIsListingsLoading(false);
-
-      const grantsData = await axios.get('/api/listings/', {
-        params: {
-          category: 'grants',
-        },
-      });
-
-      setGrants(grantsData.data);
-    } catch (e) {
-      console.log(e);
-
-      setIsListingsLoading(false);
-    }
-  };
+  // const getListings = async () => {
+  //   setIsListingsLoading(true);
+  //   try {
+  //     const bountyData = await axios.get('/api/listings/', {
+  //       params: {
+  //         category: 'bounties',
+  //         take: 100,
+  //         deadline: date,
+  //         isHomePage: true,
+  //       },
+  //     });
+  //
+  //     setBounties(bountyData.data);
+  //     setIsListingsLoading(false);
+  //
+  //     const grantsData = await axios.get('/api/listings/', {
+  //       params: {
+  //         category: 'grants',
+  //       },
+  //     });
+  //
+  //     setGrants(grantsData.data);
+  //   } catch (e) {
+  //     console.log(e);
+  //
+  //     setIsListingsLoading(false);
+  //   }
+  // };
 
   interface BeforeInstallPromptEvent extends Event {
     prompt: () => Promise<{ outcome: 'accepted' | 'dismissed' }>;
@@ -69,8 +74,8 @@ const HomePage: NextPage = () => {
       installPrompt.current = e;
     }) as EventListener);
 
-    if (!isListingsLoading) return;
-    getListings();
+    // if (!isListingsLoading) return;
+    // getListings();
   }, []);
 
   const { userInfo } = userStore();
@@ -134,8 +139,8 @@ const HomePage: NextPage = () => {
       />
       <Box w={'100%'}>
         <ListingTabs
-          bounties={bounties.bounties}
-          isListingsLoading={isListingsLoading}
+          bounties={bounties}
+          isListingsLoading={false}
           emoji="/assets/home/emojis/moneyman.png"
           title="Freelance Gigs"
           viewAllLink="/all"
@@ -150,12 +155,12 @@ const HomePage: NextPage = () => {
           emoji="/assets/home/emojis/grants.png"
           showViewAll
         >
-          {isListingsLoading && (
-            <Flex align="center" justify="center" direction="column" minH={52}>
-              <Loading />
-            </Flex>
-          )}
-          {!isListingsLoading && !grants?.grants?.length && (
+          {/* {isListingsLoading && ( */}
+          {/*   <Flex align="center" justify="center" direction="column" minH={52}> */}
+          {/*     <Loading /> */}
+          {/*   </Flex> */}
+          {/* )} */}
+          {!grants?.length && (
             <Flex align="center" justify="center" mt={8}>
               <EmptySection
                 title="No grants available!"
@@ -163,8 +168,8 @@ const HomePage: NextPage = () => {
               />
             </Flex>
           )}
-          {!isListingsLoading &&
-            grants?.grants?.map((grant) => {
+          {grants &&
+            grants?.map((grant) => {
               return <GrantsCard grant={grant} key={grant.id} />;
             })}
         </ListingSection>
@@ -174,3 +179,69 @@ const HomePage: NextPage = () => {
 };
 
 export default HomePage;
+
+export const getServerSideProps: GetServerSideProps<Props> = async (
+  context,
+) => {
+  const params = context.query;
+
+  const category = params.category as string | undefined;
+  const order = (params.order as 'asc' | 'desc') ?? 'asc';
+  const isHomePage = params.isHomePage === 'true';
+
+  const skillFilter = params.skill as Skills | undefined;
+  const statusFilter: Status = (params.status as Status) ?? 'open';
+  const type = params.type as BountyType | undefined;
+  const take = params.take ? parseInt(params.take as string, 20) : 20;
+  // const deadline = params.deadline as string | undefined;
+
+  console.log('status - ', statusFilter);
+
+  const openResult = await getListings({
+    category,
+    order,
+    isHomePage,
+    skillFilter,
+    statusFilter: 'open',
+    type,
+    take,
+  });
+
+  const reviewResult = await getListings({
+    category: 'bounties',
+    order,
+    isHomePage,
+    skillFilter,
+    statusFilter: 'review',
+    type,
+    take,
+  });
+
+  const completeResult = await getListings({
+    category: 'bounties',
+    order,
+    isHomePage,
+    skillFilter,
+    statusFilter: 'completed',
+    type,
+    take,
+  });
+
+  const result: {
+    bounties: Listing[];
+    grants: GrantWithApplicationCount[];
+  } = {
+    bounties: [
+      ...openResult.bounties,
+      ...reviewResult.bounties,
+      ...completeResult.bounties,
+    ],
+    grants: openResult.grants,
+  };
+
+  console.log('bounties length', result.bounties.length);
+
+  return {
+    props: JSON.parse(JSON.stringify(result)),
+  };
+};
