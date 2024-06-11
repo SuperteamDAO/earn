@@ -19,34 +19,54 @@ interface TemplateProps {
 export const InfoTemplate = ({ info }: TemplateProps) => {
   return (
     <div style={styles.container}>
-      <p style={styles.greetings}>Weekly Stats</p>
-      <p style={styles.textWithMargin}>
-        Number of User Sign-ups in the Last 7 Days:{' '}
-        {info.userSignUpsInLast7Days?.toLocaleString()}
-        <br />
-        Total number of users signed up:{' '}
-        {info?.totalUsersSignedUp?.toLocaleString()}
-        <br />
-        Number of New Talent Profiles Filled in the Last 7 Days :{' '}
-        {info?.newTalentProfilesFilledInLast7Days?.toLocaleString()}
-        <br />
-        Total Number of Talent Profiles Filled :{' '}
-        {info?.totalTalentProfilesFilled?.toLocaleString()}
-        <br />
-        Number of New Listings Published in the Last 7 Days:{' '}
-        {info?.newListingsPublishedInLast7Days?.toLocaleString()}
-        <br />
-        Amount of New Listings Published in the Last 7 Days : $
-        {info?.amountNewListingsPublishedInLast7Days?.toLocaleString()}
-        <br />
-        Amount of Listings Open and Published Overall : $
-        {info?.amountListingsOpenAndPublishedOverall?.toLocaleString()}
-        <br />
-        Amount of TVE Added in the Last 7 Days : $
-        {info?.amountTVEAddedInLast7Days?.toLocaleString()}
-        <br />
-        Total TVE: ${info?.totalTVE?.toLocaleString()}
+      <p
+        style={{
+          ...styles.greetings,
+          fontSize: '16px',
+          fontWeight: 500,
+          textDecoration: 'underline',
+        }}
+      >
+        Weekly Stats
       </p>
+      <ul
+        style={{ ...styles.textWithMargin, paddingLeft: '10px', margin: '0' }}
+      >
+        <li>
+          Number of User Sign-ups in the Last 7 Days:{' '}
+          {info.userSignUpsInLast7Days?.toLocaleString()}
+        </li>
+        <li>
+          Total number of users signed up:{' '}
+          {info?.totalUsersSignedUp?.toLocaleString()}
+        </li>
+        <li>
+          Number of New Talent Profiles Filled in the Last 7 Days:{' '}
+          {info?.newTalentProfilesFilledInLast7Days?.toLocaleString()}
+        </li>
+        <li>
+          Total Number of Talent Profiles Filled:{' '}
+          {info?.totalTalentProfilesFilled?.toLocaleString()}
+        </li>
+        <li>
+          Number of New Listings Published in the Last 7 Days:{' '}
+          {info?.newListingsPublishedInLast7Days?.toLocaleString()}
+        </li>
+        <li>
+          Amount of New Listings Published in the Last 7 Days: $
+          {info?.amountNewListingsPublishedInLast7Days?.toLocaleString()}
+        </li>
+        <li>
+          Amount of Listings Open and Published Overall: $
+          {info?.amountListingsOpenAndPublishedOverall?.toLocaleString()}
+        </li>
+        <li>
+          Amount of TVE Added in the Last 7 Days: $
+          {info?.amountTVEAddedInLast7Days?.toLocaleString()}
+        </li>
+        <li>Total TVE: ${info?.totalTVE?.toLocaleString()}</li>
+      </ul>
+
       <p style={styles.salutation}>
         may your monday be good,
         <br />
