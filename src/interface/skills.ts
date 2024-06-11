@@ -50,7 +50,9 @@ type SubSkillsType =
   | 'Illustration'
   | 'Game Design'
   | 'Presentation Design'
-  | 'CPP';
+  | 'CPP'
+  | 'Product Feedback'
+  | 'Product Manager';
 
 type Skills = {
   skills: MainSkills;
@@ -129,7 +131,13 @@ export const SkillList: {
   },
   {
     mainskill: 'Other',
-    subskills: ['Data Analytics', 'Operations', 'Admin'],
+    subskills: [
+      'Data Analytics',
+      'Operations',
+      'Admin',
+      'Product Feedback',
+      'Product Manager',
+    ],
     variations: ['other', 'Other'],
   },
 ];

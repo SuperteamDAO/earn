@@ -1,7 +1,6 @@
 import { ExternalLinkIcon, WarningIcon } from '@chakra-ui/icons';
 import {
   Box,
-  Divider,
   Flex,
   Image,
   Link,
@@ -17,12 +16,10 @@ import {
 } from '@chakra-ui/react';
 import axios from 'axios';
 import dayjs from 'dayjs';
-import moment from 'moment';
 import { usePostHog } from 'posthog-js/react';
 import { useEffect, useState } from 'react';
 import Countdown from 'react-countdown';
 
-import { VerticalStep } from '@/components/misc/steps';
 import { CountDownRenderer } from '@/components/shared/countdownRenderer';
 import { tokenList } from '@/constants/index';
 import { formatNumberWithSuffix } from '@/utils/formatNumberWithSuffix';
@@ -44,7 +41,6 @@ export function RightSideBar({ listing }: { listing: Listing }) {
     maxRewardAsk,
     minRewardAsk,
     requirements,
-    isWinnersAnnounced,
     pocSocials,
     Hackathon,
     applicationType,
@@ -57,13 +53,6 @@ export function RightSideBar({ listing }: { listing: Listing }) {
     useState(true);
   const [submissionNumber, setSubmissionNumber] = useState(0);
   const [submissionRange, setSubmissionRange] = useState('');
-  let submissionStatus = 0;
-  if (Number(moment(deadline).format('x')) < Date.now()) {
-    submissionStatus = 1;
-  }
-  if (isWinnersAnnounced) {
-    submissionStatus = 3;
-  }
 
   const hasHackathonStarted = Hackathon?.startDate
     ? dayjs().isAfter(Hackathon.startDate)
@@ -100,7 +89,6 @@ export function RightSideBar({ listing }: { listing: Listing }) {
   }, []);
 
   const isProject = type === 'project';
-  const isBounty = type === 'bounty';
 
   type PrizeKey = keyof Rewards;
 
@@ -479,56 +467,6 @@ export function RightSideBar({ listing }: { listing: Listing }) {
                 if you have any questions about this listing
               </Text>
             </Text>
-          </VStack>
-        )}
-        {isBounty && (
-          <VStack
-            align={'start'}
-            justify={'center'}
-            display={{ base: 'none', md: 'flex' }}
-            minW={{ base: 'full', md: '22rem' }}
-            mt={4}
-            p={6}
-            bg={'#FFFFFF'}
-            rounded={'xl'}
-          >
-            <VerticalStep
-              sublabel={'Give your best shot!'}
-              currentStep={submissionStatus + 1}
-              thisStep={1}
-              label={'Submissions Open'}
-            />
-
-            <Divider
-              h={10}
-              border={'2px'}
-              borderColor={'#6562FF'}
-              transform={'translate(1rem)'}
-              orientation="vertical"
-            />
-            <VerticalStep
-              currentStep={submissionStatus + 1}
-              thisStep={2}
-              label={'Submissions Review'}
-              sublabel={'Submissions being assessed'}
-            />
-            <Divider
-              h={10}
-              border={'2px'}
-              borderColor={'#CBD5E1'}
-              transform={'translate(1rem)'}
-              orientation="vertical"
-            />
-            <VerticalStep
-              currentStep={submissionStatus + 1}
-              thisStep={3}
-              sublabel={
-                isWinnersAnnounced
-                  ? 'Congratulations!'
-                  : `Around ${moment(deadline).add(8, 'd').format('Do MMM, YY')}`
-              }
-              label={'Winner Announced'}
-            />
           </VStack>
         )}
       </VStack>
