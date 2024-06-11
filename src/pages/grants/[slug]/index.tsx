@@ -156,7 +156,7 @@ function Grants({ grant: initialGrant }: InitialGrant) {
                         fontSize={'sm'}
                         fontWeight={500}
                       >
-                        Check Size
+                        Cheque Size
                       </Text>
                     </Flex>
                   </Flex>
@@ -180,7 +180,7 @@ function Grants({ grant: initialGrant }: InitialGrant) {
                             fontSize={{ base: 'lg', md: 'xl' }}
                             fontWeight={500}
                           >
-                            24h
+                            {grant?.avgResponseTime}
                           </Text>
                           <Text
                             mt={-1}
@@ -188,7 +188,7 @@ function Grants({ grant: initialGrant }: InitialGrant) {
                             fontSize={'sm'}
                             fontWeight={500}
                           >
-                            Avg Time to Pay
+                            Avg. Response Time
                           </Text>
                         </Flex>
                       </Flex>
@@ -234,7 +234,7 @@ function Grants({ grant: initialGrant }: InitialGrant) {
                             fontSize={'sm'}
                             fontWeight={500}
                           >
-                            Average Grant
+                            Avg. Grant Size
                           </Text>
                         </Flex>
                       </Flex>

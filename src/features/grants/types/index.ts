@@ -35,6 +35,7 @@ interface Grant {
   totalPaid: number;
   totalApproved: number;
   externalLink?: string;
+  avgResponseTime?: string;
 }
 
 interface GrantWithApplicationCount extends Grant {

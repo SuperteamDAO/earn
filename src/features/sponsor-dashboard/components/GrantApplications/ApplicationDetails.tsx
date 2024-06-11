@@ -305,7 +305,7 @@ export const ApplicationDetails = ({
             </Flex>
           </Flex>
 
-          <Flex align="center" gap={5} px={5} py={2}>
+          <Flex align="center" gap={5} px={4} py={2}>
             {isApproved && (
               <Flex align="center">
                 <Text
