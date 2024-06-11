@@ -66,7 +66,7 @@ ${listingLink('twitter')}
                 />
               </Center>
             </Box>
-            <VStack align="start" p={6} pt={0}>
+            <VStack align="start" w="full" p={6} pt={0}>
               <Text
                 color={'brand.slate.800'}
                 fontFamily={'var(--font-sans)'}
@@ -86,6 +86,7 @@ ${listingLink('twitter')}
                   alignItems="center"
                   justifyContent="space-between"
                   gap={2}
+                  w="full"
                   borderColor="brand.slate.200"
                   _hover={{ bg: 'brand.slate.100' }}
                   userSelect={'none'}
