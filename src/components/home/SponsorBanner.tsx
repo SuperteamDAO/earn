@@ -15,10 +15,11 @@ export const SponsorBanner = () => {
       w="full"
       p={4}
       bg="brand.purple.50"
+      _hover={{ textDecoration: 'none' }}
       href="/sponsor"
       rounded="lg"
     >
-      <VStack align="start">
+      <VStack align="start" _hover={{ textDecoration: 'underline' }}>
         <Text fontWeight={500}>
           Become a Sponsor
           <ArrowForwardIcon ml={1} color="#777777" w={6} />
