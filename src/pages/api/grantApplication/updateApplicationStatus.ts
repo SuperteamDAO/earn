@@ -21,11 +21,11 @@ async function handler(req: NextApiRequestWithUser, res: NextApiResponse) {
 
   const { id, applicationStatus, approvedAmount } = req.body;
 
-  if (!id || !applicationStatus || approvedAmount === undefined) {
+  if (!id || !applicationStatus) {
     return res.status(400).json({ error: 'Missing required fields' });
   }
 
-  const parsedAmount = parseInt(approvedAmount, 10);
+  const parsedAmount = approvedAmount ? parseInt(approvedAmount, 10) : 0;
 
   try {
     const currentApplication = await prisma.grantApplication.findUnique({
@@ -42,30 +42,37 @@ async function handler(req: NextApiRequestWithUser, res: NextApiResponse) {
       return res.status(401).json({ error: 'Unauthorized' });
     }
 
+    const updatedData: any = {
+      applicationStatus,
+    };
+
+    if (applicationStatus === 'Approved') {
+      updatedData.approvedAmount = parsedAmount;
+    }
+
     const result = await prisma.grantApplication.update({
       where: {
         id,
       },
-      data: {
-        applicationStatus,
-        approvedAmount: parsedAmount,
-      },
+      data: updatedData,
       include: {
         user: true,
         grant: true,
       },
     });
 
-    await prisma.grants.update({
-      where: {
-        id: result.grantId,
-      },
-      data: {
-        totalApproved: {
-          increment: parsedAmount,
+    if (applicationStatus === 'Approved') {
+      await prisma.grants.update({
+        where: {
+          id: result.grantId,
         },
-      },
-    });
+        data: {
+          totalApproved: {
+            increment: parsedAmount,
+          },
+        },
+      });
+    }
 
     const config = airtableConfig(process.env.AIRTABLE_GRANTS_API_TOKEN!);
     const url = airtableUrl(
