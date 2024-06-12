@@ -3,6 +3,7 @@ import { Box, Flex, Text } from '@chakra-ui/react';
 import axios from 'axios';
 import dayjs from 'dayjs';
 import NextLink from 'next/link';
+import { useRouter } from 'next/router';
 import { useSession } from 'next-auth/react';
 import { usePostHog } from 'posthog-js/react';
 import { useEffect, useState } from 'react';
@@ -14,7 +15,7 @@ import { timeAgoShort } from '@/utils/timeAgo';
 import { OgImageViewer } from '../misc/ogImageViewer';
 import { HowItWorks } from './HowItWorks';
 import { RecentEarners } from './RecentEarners';
-import { BecomeSponsor } from './SponsorBanner';
+import { SponsorBanner } from './SponsorBanner';
 import { TotalStats } from './TotalStats';
 import { VibeCard } from './VibeCard';
 
@@ -309,6 +310,7 @@ export const HomeSideBar = ({
   isTotalLoading,
 }: SideBarProps) => {
   const { data: session, status } = useSession();
+  const router = useRouter();
   return (
     <Flex direction={'column'} rowGap={'2.5rem'} w={'24rem'} py={6} pl={6}>
       {type === 'feed' && (
@@ -317,9 +319,11 @@ export const HomeSideBar = ({
           <LiveListings />
         </>
       )}
+      {router.asPath === '/' && status === 'unauthenticated' && !session && (
+        <SponsorBanner />
+      )}
       {type !== 'feed' ? (
         <>
-          {status === 'unauthenticated' && !session && <BecomeSponsor />}
           <TotalStats
             isTotalLoading={isTotalLoading}
             bountyCount={listings}

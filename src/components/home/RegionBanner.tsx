@@ -51,7 +51,7 @@ export function RegionBanner({ st }: { st: (typeof Superteams)[0] }) {
               Welcome to Superteam {st.displayValue}
               {`'s`} earnings page — use these opportunities to earn in global
               standards and gain membership in the most exclusive Solana
-              community of India!
+              community of {st.displayValue}!
             </Text>
           </>
         )}

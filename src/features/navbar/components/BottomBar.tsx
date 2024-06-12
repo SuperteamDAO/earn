@@ -33,12 +33,17 @@ export function BottomBar({ onSearchOpen }: Props) {
       borderTopColor="brand.slate.200"
     >
       <Link as={NextLink} href="/">
-        <Button color={setColor('/', router.asPath)} variant="ghost">
+        <Button
+          color={setColor('/', router.asPath)}
+          _hover={{ bg: 'none' }}
+          variant="ghost"
+        >
           <LuHome style={iconStyle} />
         </Button>
       </Link>
       <Button
         color={setColor('/search', router.pathname)}
+        _hover={{ bg: 'none' }}
         onClick={() => onSearchOpen()}
         variant="ghost"
       >
@@ -48,6 +53,7 @@ export function BottomBar({ onSearchOpen }: Props) {
         <Button
           pos="relative"
           color={setColor('/feed/', router.asPath)}
+          _hover={{ bg: 'none' }}
           variant="ghost"
         >
           <LuNewspaper style={iconStyle} />
@@ -65,6 +71,7 @@ export function BottomBar({ onSearchOpen }: Props) {
       <AuthWrapper>
         <Link
           as={NextLink}
+          _hover={{ bg: 'none' }}
           pointerEvents={userInfo ? 'auto' : 'none'}
           href={`/t/${userInfo?.username}`}
         >

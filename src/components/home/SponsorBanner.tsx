@@ -5,7 +5,7 @@ import NextLink from 'next/link';
 
 import Briefcase from '@/public/assets/home/display/briefcase.png';
 
-export const BecomeSponsor = () => {
+export const SponsorBanner = () => {
   return (
     <Link
       as={NextLink}

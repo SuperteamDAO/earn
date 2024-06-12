@@ -209,7 +209,7 @@ export const getServerSideProps: GetServerSideProps<Props> = async (
 
   const reviewResult = await getListings({
     category: 'bounties',
-    order,
+    order: 'desc',
     isHomePage,
     skillFilter,
     statusFilter: 'review',
@@ -219,7 +219,7 @@ export const getServerSideProps: GetServerSideProps<Props> = async (
 
   const completeResult = await getListings({
     category: 'bounties',
-    order,
+    order: 'desc',
     isHomePage,
     skillFilter,
     statusFilter: 'completed',

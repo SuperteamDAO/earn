@@ -81,9 +81,15 @@ export const UserStatsBanner = () => {
       rounded="2xl"
     >
       <Flex align="center" gap={4}>
-        <EarnAvatar id={userInfo.id} avatar={userInfo.photo} size="40px" />
+        <EarnAvatar id={userInfo.id} avatar={userInfo.photo} size="52px" />
         <VStack align="start" gap={0}>
-          <Text fontSize={{ base: 'lg', md: 'xl' }} fontWeight={600}>
+          <Text
+            maxW="25rem"
+            fontSize={{ base: 'lg', md: 'xl' }}
+            fontWeight={600}
+            textOverflow={'ellipsis'}
+            noOfLines={1}
+          >
             Welcome back, {userInfo.firstName}
           </Text>
           <Text color="brand.purple.300" fontSize={{ base: 'xs', md: 'unset' }}>
