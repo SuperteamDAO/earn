@@ -76,6 +76,7 @@ export async function getListings({
 
   let orderBy:
     | { deadline: 'asc' | 'desc' }
+    | { winnersAnnouncedAt: 'asc' | 'desc' }
     | [{ isFeatured: 'desc' }, { deadline: 'asc' | 'desc' }] = {
     deadline: order,
   };
@@ -88,6 +89,10 @@ export async function getListings({
         deadline: order,
       },
     ];
+  } else if (statusFilter === 'completed') {
+    orderBy = {
+      winnersAnnouncedAt: order,
+    };
   }
 
   const bounties = await prisma.bounties.findMany({
