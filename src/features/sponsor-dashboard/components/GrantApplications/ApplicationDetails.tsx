@@ -305,16 +305,17 @@ export const ApplicationDetails = ({
             </Flex>
           </Flex>
 
-          <Flex align="center" gap={5} px={5} py={2}>
-            {selectedApplication?.ask && (
+          <Flex align="center" gap={5} px={4} py={2}>
+            {isApproved && (
               <Flex align="center">
                 <Text
                   mr={3}
                   color="brand.slate.400"
                   fontSize={'sm'}
                   fontWeight={600}
+                  whiteSpace={'nowrap'}
                 >
-                  ASK
+                  APPROVED
                 </Text>
 
                 <Image w={4} h={4} mr={0.5} alt={'token'} src={tokenIcon} />
@@ -324,7 +325,7 @@ export const ApplicationDetails = ({
                   fontWeight={600}
                   whiteSpace={'nowrap'}
                 >
-                  {`${selectedApplication?.ask?.toLocaleString()}`}
+                  {`${selectedApplication?.approvedAmount?.toLocaleString()}`}
                   <Text as="span" ml={0.5} color="brand.slate.400">
                     {grant?.token}
                   </Text>
@@ -416,6 +417,31 @@ export const ApplicationDetails = ({
           </Flex>
 
           <Box w="full" px={4} py={5}>
+            <Box mb={4}>
+              <Text
+                mb={1}
+                color="brand.slate.400"
+                fontSize="xs"
+                fontWeight={600}
+                textTransform={'uppercase'}
+              >
+                ASK
+              </Text>
+              <Flex align={'center'} gap={0.5}>
+                <Image w={4} h={4} mr={0.5} alt={'token'} src={tokenIcon} />
+                <Text
+                  color="brand.slate.600"
+                  fontSize={'sm'}
+                  fontWeight={600}
+                  whiteSpace={'nowrap'}
+                >
+                  {`${selectedApplication?.ask?.toLocaleString()}`}
+                  <Text as="span" ml={0.5} color="brand.slate.400">
+                    {grant?.token}
+                  </Text>
+                </Text>
+              </Flex>
+            </Box>
             <InfoBox
               label="Project Title"
               content={selectedApplication?.projectTitle}

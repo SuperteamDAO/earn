@@ -28,7 +28,7 @@ import { RecordPaymentButton } from './RecordPaymentButton';
 interface GrantPaymentDetailProps {
   tranche: number;
   amount: number;
-  txId: string;
+  txId?: string;
   note?: string;
 }
 
@@ -76,25 +76,34 @@ const PaymentDetailsRow = ({
           </Flex>
         ))}
       </Td>
-      <Td colSpan={2}>
-        {paymentDetails.map((payment, index) => (
-          <LinkBox key={index} my={2}>
-            <LinkOverlay
-              alignItems={'center'}
-              gap={1}
-              display={'flex'}
-              href={payment.txId}
-              rel="noopener noreferrer"
-              target="_blank"
-            >
-              <Text color="brand.slate.500" fontSize={'sm'} fontWeight={500}>
-                {truncatePublicKey(extractTxId(payment.txId), 6)}
-              </Text>
-              <ExternalLinkIcon color="brand.slate.400" boxSize={4} />
-            </LinkOverlay>
-          </LinkBox>
-        ))}
-      </Td>
+      {paymentDetails.some((payment) => payment.txId) && (
+        <Td colSpan={2}>
+          {paymentDetails.map(
+            (payment, index) =>
+              payment.txId && (
+                <LinkBox key={index} my={2}>
+                  <LinkOverlay
+                    alignItems={'center'}
+                    gap={1}
+                    display={'flex'}
+                    href={payment.txId}
+                    rel="noopener noreferrer"
+                    target="_blank"
+                  >
+                    <Text
+                      color="brand.slate.500"
+                      fontSize={'sm'}
+                      fontWeight={500}
+                    >
+                      {truncatePublicKey(extractTxId(payment.txId), 6)}
+                    </Text>
+                    <ExternalLinkIcon color="brand.slate.400" boxSize={4} />
+                  </LinkOverlay>
+                </LinkBox>
+              ),
+          )}
+        </Td>
+      )}
     </>
   );
 };

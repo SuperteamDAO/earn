@@ -1,3 +1,4 @@
+export * from './infoTemplate';
 export * from './inviteMemberTemplate';
 export * from './otpTemplate';
 export * from './welcomeSponsorTemplate';

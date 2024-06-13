@@ -1,7 +1,10 @@
+import axios from 'axios';
 import type { NextApiResponse } from 'next';
 
 import { type NextApiRequestWithUser, withAuth } from '@/features/auth';
+import { convertGrantApplicationToAirtable } from '@/features/grants';
 import { prisma } from '@/prisma';
+import { airtableConfig, airtableUpsert, airtableUrl } from '@/utils/airtable';
 
 async function handler(req: NextApiRequestWithUser, res: NextApiResponse) {
   const userId = req.userId;
@@ -18,11 +21,11 @@ async function handler(req: NextApiRequestWithUser, res: NextApiResponse) {
 
   const { id, applicationStatus, approvedAmount } = req.body;
 
-  if (!id || !applicationStatus || approvedAmount === undefined) {
+  if (!id || !applicationStatus) {
     return res.status(400).json({ error: 'Missing required fields' });
   }
 
-  const parsedAmount = parseInt(approvedAmount, 10);
+  const parsedAmount = approvedAmount ? parseInt(approvedAmount, 10) : 0;
 
   try {
     const currentApplication = await prisma.grantApplication.findUnique({
@@ -31,6 +34,7 @@ async function handler(req: NextApiRequestWithUser, res: NextApiResponse) {
       },
       include: {
         grant: true,
+        user: true,
       },
     });
 
@@ -38,26 +42,50 @@ async function handler(req: NextApiRequestWithUser, res: NextApiResponse) {
       return res.status(401).json({ error: 'Unauthorized' });
     }
 
+    const updatedData: any = {
+      applicationStatus,
+    };
+
+    if (applicationStatus === 'Approved') {
+      updatedData.approvedAmount = parsedAmount;
+    }
+
     const result = await prisma.grantApplication.update({
       where: {
         id,
       },
-      data: {
-        applicationStatus,
-        approvedAmount: parsedAmount,
+      data: updatedData,
+      include: {
+        user: true,
+        grant: true,
       },
     });
 
-    await prisma.grants.update({
-      where: {
-        id: result.grantId,
-      },
-      data: {
-        totalApproved: {
-          increment: parsedAmount,
+    if (applicationStatus === 'Approved') {
+      await prisma.grants.update({
+        where: {
+          id: result.grantId,
         },
-      },
-    });
+        data: {
+          totalApproved: {
+            increment: parsedAmount,
+          },
+        },
+      });
+    }
+
+    const config = airtableConfig(process.env.AIRTABLE_GRANTS_API_TOKEN!);
+    const url = airtableUrl(
+      process.env.AIRTABLE_GRANTS_BASE_ID!,
+      process.env.AIRTABLE_GRANTS_TABLE_NAME!,
+    );
+
+    const airtableData = convertGrantApplicationToAirtable(result);
+    const airtablePayload = airtableUpsert('earnGrantApplicationId', [
+      { fields: airtableData },
+    ]);
+
+    await axios.patch(url, JSON.stringify(airtablePayload), config);
 
     return res.status(200).json(result);
   } catch (error: any) {

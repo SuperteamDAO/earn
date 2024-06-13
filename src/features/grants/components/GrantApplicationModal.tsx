@@ -168,7 +168,7 @@ export const GrantApplicationModal = ({
             mt={6}
             borderRadius={2}
             bgColor={'brand.slate.200'}
-            value={(activeStep / (steps.length + 1)) * 100 + 1}
+            value={(activeStep / steps.length) * 100 + 33}
           />
           <Stepper w="100%" mt={3} index={activeStep}>
             {steps.map((step, i) => (
@@ -452,7 +452,7 @@ export const GrantApplicationModal = ({
                 className="ph-no-capture"
                 w={'full'}
                 isLoading={!!isLoading}
-                loadingText="Submitting..."
+                loadingText="Applying..."
                 type="submit"
                 variant="solid"
               >

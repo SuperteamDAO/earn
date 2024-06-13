@@ -622,6 +622,14 @@ export const skillSubSkillMap = {
       label: 'Operations',
       value: 'Operations',
     },
+    {
+      label: 'Product Feedback',
+      value: 'Product Feedback',
+    },
+    {
+      label: 'Product Manager',
+      value: 'Product Manager',
+    },
   ],
 };
 

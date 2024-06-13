@@ -1,8 +1,11 @@
+import axios from 'axios';
 import dayjs from 'dayjs';
 import type { NextApiResponse } from 'next';
 
 import { type NextApiRequestWithUser, withAuth } from '@/features/auth';
+import { convertGrantApplicationToAirtable } from '@/features/grants';
 import { prisma } from '@/prisma';
+import { airtableConfig, airtableUpsert, airtableUrl } from '@/utils/airtable';
 
 async function grantApplication(
   req: NextApiRequestWithUser,
@@ -45,6 +48,21 @@ async function grantApplication(
         grant: true,
       },
     });
+
+    if (result.grant.airtableId) {
+      const config = airtableConfig(process.env.AIRTABLE_GRANTS_API_TOKEN!);
+      const url = airtableUrl(
+        process.env.AIRTABLE_GRANTS_BASE_ID!,
+        process.env.AIRTABLE_GRANTS_TABLE_NAME!,
+      );
+
+      const airtableData = convertGrantApplicationToAirtable(result);
+      const airtablePayload = airtableUpsert('earnGrantApplicationId', [
+        { fields: airtableData },
+      ]);
+
+      await axios.patch(url, JSON.stringify(airtablePayload), config);
+    }
 
     return res.status(200).json(result);
   } catch (error: any) {

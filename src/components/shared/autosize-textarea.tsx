@@ -13,7 +13,6 @@ export const AutoResizeTextarea = React.forwardRef<
     overflow="hidden"
     w="100%"
     minH="unset"
-    whiteSpace={'pre'}
     resize="none"
     minRows={1}
     {...props}

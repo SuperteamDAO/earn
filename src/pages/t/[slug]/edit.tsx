@@ -66,7 +66,6 @@ type FormData = {
   cryptoExperience?: string;
   workPrefernce?: string;
   currentEmployer?: string;
-  pow?: string;
   skills?: any;
   private: boolean;
   PoW?: PoW[];

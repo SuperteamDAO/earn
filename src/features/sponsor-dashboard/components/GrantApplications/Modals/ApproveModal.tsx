@@ -53,8 +53,21 @@ export const ApproveModal = ({
 }: ApproveModalProps) => {
   const [approvedAmount, setApprovedAmount] = useState<number | undefined>(ask);
   const [loading, setLoading] = useState<boolean>(false);
+  const [errorMessage, setErrorMessage] = useState<string | null>(null);
+
+  const handleAmountChange = (valueString: string) => {
+    const value = parseFloat(valueString);
+    if (value > (ask as number)) {
+      setErrorMessage('Approved amount cannot exceed the requested amount.');
+    } else {
+      setErrorMessage(null);
+    }
+    setApprovedAmount(value);
+  };
 
   const approveGrant = async () => {
+    if (errorMessage) return;
+
     setLoading(true);
     try {
       await axios.post(`/api/grantApplication/updateApplicationStatus`, {
@@ -120,7 +133,7 @@ export const ApproveModal = ({
             </Flex>
           </Flex>
 
-          <Flex align={'center'} justify="space-between" w="100%" mb={8}>
+          <Flex align={'center'} justify="space-between" w="100%" mb={6}>
             <Text w="100%" color="brand.slate.500" whiteSpace={'nowrap'}>
               Approved Amount
             </Text>
@@ -129,10 +142,8 @@ export const ApproveModal = ({
                 w="100px"
                 defaultValue={ask}
                 max={ask}
-                min={0}
-                onChange={(valueString) =>
-                  setApprovedAmount(parseFloat(valueString))
-                }
+                min={1}
+                onChange={handleAmountChange}
                 step={100}
               >
                 <NumberInputField
@@ -166,13 +177,20 @@ export const ApproveModal = ({
               </InputRightAddon>
             </InputGroup>
           </Flex>
+          {errorMessage && (
+            <Text align={'center'} color="red.500" fontSize={'sm'}>
+              {errorMessage}
+            </Text>
+          )}
 
           <Button
             w="full"
+            mt={2}
             mb={3}
             color="white"
             bg="#079669"
             _hover={{ bg: '#079669' }}
+            isDisabled={!!errorMessage || loading || approvedAmount === 0}
             isLoading={loading}
             leftIcon={
               loading ? (
