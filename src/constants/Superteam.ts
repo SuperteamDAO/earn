@@ -129,7 +129,7 @@ export const Superteams = [
       'Serbia',
       'Slovenia',
     ],
-    hello: 'Dobar',
+    hello: 'Pozdrav',
   },
   {
     name: 'Superteam Philippines',

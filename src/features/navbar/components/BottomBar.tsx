@@ -34,16 +34,24 @@ export function BottomBar({ onSearchOpen }: Props) {
     >
       <Link as={NextLink} href="/">
         <Button
+          sx={{
+            WebkitTapHighlightColor: 'transparent',
+          }}
           color={setColor('/', router.asPath)}
           _hover={{ bg: 'none' }}
+          _active={{ bg: 'none' }}
           variant="ghost"
         >
           <LuHome style={iconStyle} />
         </Button>
       </Link>
       <Button
+        sx={{
+          WebkitTapHighlightColor: 'transparent',
+        }}
         color={setColor('/search', router.pathname)}
         _hover={{ bg: 'none' }}
+        _active={{ bg: 'none' }}
         onClick={() => onSearchOpen()}
         variant="ghost"
       >
@@ -51,9 +59,13 @@ export function BottomBar({ onSearchOpen }: Props) {
       </Button>
       <Link as={NextLink} href="/feed/">
         <Button
+          sx={{
+            WebkitTapHighlightColor: 'transparent',
+          }}
           pos="relative"
           color={setColor('/feed/', router.asPath)}
           _hover={{ bg: 'none' }}
+          _active={{ bg: 'none' }}
           variant="ghost"
         >
           <LuNewspaper style={iconStyle} />
@@ -71,12 +83,16 @@ export function BottomBar({ onSearchOpen }: Props) {
       <AuthWrapper>
         <Link
           as={NextLink}
-          _hover={{ bg: 'none' }}
           pointerEvents={userInfo ? 'auto' : 'none'}
           href={`/t/${userInfo?.username}`}
         >
           <Button
+            sx={{
+              WebkitTapHighlightColor: 'transparent',
+            }}
             color={setColor(`/t/${userInfo?.username}/`, router.asPath)}
+            _hover={{ bg: 'none' }}
+            _active={{ bg: 'none' }}
             variant="ghost"
           >
             <LuUser style={iconStyle} />
