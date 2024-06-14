@@ -72,7 +72,7 @@ export const TermsOfServices = ({
             that take effect on June 15, 2024.
           </Text>
           <Text as={'p'} lineHeight={1.25}>
-            Here’s our updated{' '}
+            {`Here’s`} our updated{' '}
             <Link
               textDecoration={'underline'}
               href="https://drive.google.com/file/d/1hD5Qzm1CILkughA2LBDsfK1ndZpUBnb4/view?usp=sharing"
