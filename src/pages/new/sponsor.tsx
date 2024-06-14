@@ -1,3 +1,4 @@
+import { InfoOutlineIcon } from '@chakra-ui/icons';
 import {
   Box,
   Button,
@@ -8,6 +9,7 @@ import {
   HStack,
   Input,
   Text,
+  Tooltip,
   VStack,
 } from '@chakra-ui/react';
 import axios from 'axios';
@@ -157,6 +159,7 @@ const CreateSponsor = () => {
                   logo: imageUrl ?? '',
                   twitter: e.twitterHandle,
                   url: e.sponsorurl ?? '',
+                  entityName: e.entityName,
                 });
               })}
               style={{ width: '100%' }}
@@ -263,8 +266,50 @@ const CreateSponsor = () => {
                   </FormErrorMessage>
                 </FormControl>
               </HStack>
+              <HStack w="full">
+                <FormControl w={'full'} isRequired>
+                  <HStack mb={2}>
+                    <FormLabel
+                      m={0}
+                      color={'brand.slate.500'}
+                      fontSize={'15px'}
+                      fontWeight={600}
+                      htmlFor={'entityName'}
+                    >
+                      Entity Name
+                    </FormLabel>
+                    <Tooltip
+                      fontSize="xs"
+                      label="Please mention the official entity name of your project. If you are a DAO, simply mention the name of the DAO here."
+                    >
+                      <InfoOutlineIcon
+                        color="brand.slate.500"
+                        w={3}
+                        h={3}
+                        display={{ base: 'none', md: 'block' }}
+                      />
+                    </Tooltip>
+                  </HStack>
+                  <Input
+                    w={'full'}
+                    borderColor={'brand.slate.300'}
+                    _placeholder={{ color: 'brand.slate.300' }}
+                    focusBorderColor="brand.purple"
+                    id="entityName"
+                    placeholder="Full Entity Name"
+                    {...register('entityName')}
+                  />
+                  <FormErrorMessage>
+                    {errors.entityName ? (
+                      <>{errors.entityName.message}</>
+                    ) : (
+                      <></>
+                    )}
+                  </FormErrorMessage>
+                </FormControl>
+              </HStack>
               {
-                <VStack align={'start'} gap={2} my={3}>
+                <VStack align={'start'} gap={2} mt={6} mb={3}>
                   <Heading
                     color={'brand.slate.500'}
                     fontSize={'15px'}
