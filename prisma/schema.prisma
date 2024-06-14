@@ -292,7 +292,7 @@ model User {
   linkedin          String?           @db.Text
   website           String?           @db.Text
   telegram          String?           @db.Text
-  community         String?
+  community         String?           @db.Text
   experience        String?
   superteamLevel    String?
   location          String?
