@@ -16,6 +16,7 @@ import React, { useEffect, useState } from 'react';
 import { Toaster } from 'react-hot-toast';
 
 import { FeatureModal } from '@/components/modals/FeatureModal';
+import { TermsOfServices } from '@/components/modals/TermsOfServices';
 import { SolanaWalletProvider } from '@/context/SolanaWallet';
 import { userStore } from '@/store/user';
 import { getURL } from '@/utils/validUrl';
@@ -119,15 +120,29 @@ function MyApp({ Component, pageProps }: any) {
 }
 
 function App({ Component, pageProps: { session, ...pageProps } }: AppProps) {
-  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isFeatureModalOpen, setIsFeatureModalOpen] = useState(false);
+  const [isTOSModalOpen, setIsTOSModalOpen] = useState(false);
   const [latestActiveSlug, setLatestActiveSlug] = useState<string | undefined>(
     undefined,
   );
   const { userInfo, setUserInfo } = userStore();
   const router = useRouter();
 
-  const handleClose = () => {
-    setIsModalOpen(false);
+  const handleFeatureClose = () => {
+    setIsFeatureModalOpen(false);
+  };
+
+  const handleTOSClose = async () => {
+    console.log('closee');
+    setIsTOSModalOpen(false);
+    localStorage.setItem('acceptedTOS', JSON.stringify(true));
+    console.log('userINFOOOO - ', userInfo);
+    if (userInfo) {
+      setUserInfo({ ...userInfo, acceptedTOS: true });
+      await axios.post('/api/user/update/', {
+        acceptedTOS: true,
+      });
+    }
   };
 
   const getSponsorLatestActiveSlug = async () => {
@@ -146,7 +161,7 @@ function App({ Component, pageProps: { session, ...pageProps } }: AppProps) {
     const updateFeatureModalShown = async () => {
       if (userInfo?.featureModalShown === false && userInfo?.currentSponsorId) {
         setUserInfo({ ...userInfo, featureModalShown: true });
-        setIsModalOpen(true);
+        setIsFeatureModalOpen(true);
         await getSponsorLatestActiveSlug();
         await axios.post('/api/user/update/', {
           featureModalShown: true,
@@ -155,6 +170,30 @@ function App({ Component, pageProps: { session, ...pageProps } }: AppProps) {
     };
 
     if (!router.pathname.includes('dashboard')) updateFeatureModalShown();
+  }, [userInfo]);
+
+  useEffect(() => {
+    console.log('userInfooo - ', userInfo);
+    setIsTOSModalOpen(false);
+    const shown =
+      (JSON.parse(localStorage.getItem('acceptedTOS') ?? 'false') as boolean) ??
+      false;
+    if (userInfo) {
+      if (!userInfo.acceptedTOS) {
+        if (shown) {
+          setUserInfo({ ...userInfo, acceptedTOS: true });
+          axios.post('/api/user/update/', {
+            acceptedTOS: true,
+          });
+        } else {
+          setIsTOSModalOpen(true);
+        }
+      } else {
+        localStorage.setItem('acceptedTOS', JSON.stringify(true));
+      }
+    } else {
+      if (!shown) setIsTOSModalOpen(true);
+    }
   }, [userInfo]);
 
   return (
@@ -174,8 +213,12 @@ function App({ Component, pageProps: { session, ...pageProps } }: AppProps) {
             <ChakraProvider theme={extendThemeWithNextFonts}>
               <FeatureModal
                 latestActiveBountySlug={latestActiveSlug}
-                isOpen={isModalOpen}
-                onClose={handleClose}
+                isOpen={isFeatureModalOpen}
+                onClose={handleFeatureClose}
+              />
+              <TermsOfServices
+                isOpen={isTOSModalOpen}
+                onClose={handleTOSClose}
               />
               <MyApp Component={Component} pageProps={pageProps} />
             </ChakraProvider>
