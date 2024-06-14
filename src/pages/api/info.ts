@@ -1,4 +1,4 @@
-import { verifySignature } from '@upstash/qstash/dist/nextjs';
+import { verifySignature } from '@upstash/qstash/nextjs';
 import dayjs from 'dayjs';
 import updateLocale from 'dayjs/plugin/updateLocale';
 import utc from 'dayjs/plugin/utc';
