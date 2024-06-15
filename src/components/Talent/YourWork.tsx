@@ -199,6 +199,7 @@ export function YourWork({ setStep, useFormStore }: Step1Props) {
               id="currentEmployer"
               placeholder="Current Employer"
               {...register('currentEmployer', { required: true })}
+              maxLength={100}
             />
           </Box>
           <Box w={'full'} mb={'1.25rem'}>
