@@ -2,12 +2,15 @@ import { ArrowForwardIcon } from '@chakra-ui/icons';
 import { Link, Text, VStack } from '@chakra-ui/react';
 import Image from 'next/image';
 import NextLink from 'next/link';
+import { usePostHog } from 'posthog-js/react';
 
 import Briefcase from '@/public/assets/home/display/briefcase.png';
 
 export const SponsorBanner = () => {
+  const posthog = usePostHog();
   return (
     <Link
+      className="ph-no-capture"
       as={NextLink}
       justifyContent="space-between"
       gap={4}
@@ -18,6 +21,7 @@ export const SponsorBanner = () => {
       _hover={{ textDecoration: 'none' }}
       data-group
       href="/sponsor"
+      onClick={() => posthog?.capture('become a sponsor_banner')}
       rounded="lg"
     >
       <VStack align="start">
