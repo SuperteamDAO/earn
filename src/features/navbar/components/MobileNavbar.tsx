@@ -282,6 +282,7 @@ export const MobileNavbar = ({ onLoginOpen }: Props) => {
                 fontWeight={500}
                 borderBottom={'none'}
                 h={'auto'}
+                py={{ base: 2, md: 3 }}
               />
             );
           })}

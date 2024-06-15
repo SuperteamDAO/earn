@@ -1,14 +1,12 @@
-import { Box, Flex, useDisclosure } from '@chakra-ui/react';
+import { Box, Flex } from '@chakra-ui/react';
 import { type BountyType } from '@prisma/client';
-import type { GetServerSideProps, NextPage } from 'next';
-import { useEffect, useRef, useState } from 'react';
+import type { GetServerSideProps } from 'next';
 
 import { InstallPWAModal } from '@/components/modals/InstallPWAModal';
 import { EmptySection } from '@/components/shared/EmptySection';
 import { type Grant, GrantsCard } from '@/features/grants';
 import { type Bounty, ListingSection, ListingTabs } from '@/features/listings';
 import { Home } from '@/layouts/Home';
-import { userStore } from '@/store/user';
 
 import { getListings, type Skills, type Status } from './api/listings/v2';
 
@@ -17,85 +15,10 @@ interface Props {
   grants: Grant[];
 }
 
-const HomePage: NextPage<Props> = ({ bounties, grants }) => {
-  const [mobileOs, setMobileOs] = useState<'Android' | 'iOS' | 'Other'>(
-    'Other',
-  );
-
-  const installPrompt = useRef<BeforeInstallPromptEvent | null>();
-
-  interface BeforeInstallPromptEvent extends Event {
-    prompt: () => Promise<{ outcome: 'accepted' | 'dismissed' }>;
-  }
-
-  useEffect(() => {
-    window.addEventListener('beforeinstallprompt', ((
-      e: BeforeInstallPromptEvent,
-    ) => {
-      e.preventDefault();
-      installPrompt.current = e;
-    }) as EventListener);
-  }, []);
-
-  const { userInfo } = userStore();
-
-  const {
-    isOpen: isPWAModalOpen,
-    onClose: onPWAModalClose,
-    onOpen: onPWAModalOpen,
-  } = useDisclosure();
-
-  const getMobileOS = () => {
-    const ua = navigator.userAgent;
-    if (/android/i.test(ua)) {
-      return 'Android';
-    } else if (/iPad|iPhone|iPod/.test(ua)) {
-      return 'iOS';
-    }
-    return 'Other';
-  };
-
-  useEffect(() => {
-    const showInstallAppModal = () => {
-      const modalShown = localStorage.getItem('installAppModalShown');
-      const navigator: any = window.navigator;
-
-      const isPWA =
-        window.matchMedia('(display-mode: standalone)').matches ||
-        document.referrer.includes('android-app://') ||
-        navigator.standalone;
-      const isInstalled = localStorage.getItem('isAppInstalled');
-      const os = getMobileOS();
-      setMobileOs(os);
-      if (os !== 'Other' && !isPWA && !modalShown && !isInstalled) {
-        localStorage.setItem('installAppModalShown', 'true');
-        onPWAModalOpen();
-      }
-    };
-
-    setTimeout(() => {
-      showInstallAppModal();
-    }, 10000);
-  }, [userInfo]);
-
-  const installApp = async () => {
-    if (installPrompt.current) {
-      const status = await installPrompt.current?.prompt();
-      if (status.outcome === 'accepted') {
-        localStorage.setItem('isAppInstalled', 'true');
-      }
-    }
-    onPWAModalClose();
-  };
-
+export default function HomePage({ bounties, grants }: Props) {
   return (
     <Home type="home">
-      <InstallPWAModal
-        isOpen={isPWAModalOpen}
-        onClose={onPWAModalClose}
-        installApp={installApp}
-        mobileOs={mobileOs}
-      />
+      <InstallPWAModal />
       <Box w={'100%'}>
         <ListingTabs
           bounties={bounties}
@@ -130,9 +53,7 @@ const HomePage: NextPage<Props> = ({ bounties, grants }) => {
       </Box>
     </Home>
   );
-};
-
-export default HomePage;
+}
 
 export const getServerSideProps: GetServerSideProps<Props> = async (
   context,
@@ -191,8 +112,6 @@ export const getServerSideProps: GetServerSideProps<Props> = async (
     ],
     grants: openResult.grants,
   };
-
-  console.log('bounties length', result.bounties.length);
 
   return {
     props: JSON.parse(JSON.stringify(result)),

@@ -5,6 +5,7 @@ import { usePostHog } from 'posthog-js/react';
 import { useEffect, useState } from 'react';
 
 import { Superteams } from '@/constants/Superteam';
+import { CATEGORY_NAV_ITEMS } from '@/features/navbar';
 import { userStore } from '@/store/user';
 
 import { UserFlag } from '../shared/UserFlag';
@@ -26,6 +27,7 @@ function PillTab({ href, children, altActive, phEvent }: PillTabProps) {
       gap={2}
       display="flex"
       px={3}
+      py={{ base: 0, sm: 0.5 }}
       color={router.asPath === href ? 'black' : 'brand.slate.500'}
       fontSize={'sm'}
       bg={
@@ -75,34 +77,18 @@ export function NavTabs() {
           {superteam.displayValue}
         </PillTab>
       )}
-      <PillTab
-        altActive={['/category/content/all/']}
-        href="/category/content/"
-        phEvent="content_navbar"
-      >
-        Content
-      </PillTab>
-      <PillTab
-        altActive={['/category/design/all/']}
-        href="/category/design/"
-        phEvent="design_navbar"
-      >
-        Design
-      </PillTab>
-      <PillTab
-        altActive={['/category/development/all/']}
-        href="/category/development/"
-        phEvent="development_navbar"
-      >
-        Development
-      </PillTab>
-      <PillTab
-        altActive={['/category/other/all/']}
-        href="/category/other/"
-        phEvent="other_navbar"
-      >
-        Other
-      </PillTab>
+      {CATEGORY_NAV_ITEMS?.map((navItem) => {
+        return (
+          <PillTab
+            altActive={navItem.altActive}
+            href={navItem.href}
+            phEvent={navItem.posthog}
+            key={navItem.label}
+          >
+            {navItem.label}
+          </PillTab>
+        );
+      })}
     </Flex>
   );
 }

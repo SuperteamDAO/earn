@@ -38,7 +38,6 @@
     "@tiptap/react": "^2.2.3",
     "@tiptap/starter-kit": "^2.2.3",
     "@types/papaparse": "^5.3.14",
-    "@types/react-world-flags": "^1.4.5",
     "@upstash/qstash": "^2.4.3",
     "@vercel/og": "^0.6.2",
     "axios": "^1.6.8",

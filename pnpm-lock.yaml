@@ -74,9 +74,6 @@ dependencies:
   '@types/papaparse':
     specifier: ^5.3.14
     version: 5.3.14
-  '@types/react-world-flags':
-    specifier: ^1.4.5
-    version: 1.4.5
   '@upstash/qstash':
     specifier: ^2.4.3
     version: 2.4.3
@@ -4731,12 +4728,6 @@ packages:
 
   /@types/react-transition-group@4.4.10:
     resolution: {integrity: sha512-hT/+s0VQs2ojCX823m60m5f0sL5idt9SO6Tj6Dg+rdphGPIeJbJ6CxvBYkgkGKrYeDjvIpKTR38UzmtHJOGW3Q==}
-    dependencies:
-      '@types/react': 18.2.47
-    dev: false
-
-  /@types/react-world-flags@1.4.5:
-    resolution: {integrity: sha512-BW10gS64/FXRizBxuHeGEEl2KgljdYAe+tF4Mq3jpoWeuhZNXJOSuVrEvFY0+jrpoMOK3ER28OMgLR0oPgY2og==}
     dependencies:
       '@types/react': 18.2.47
     dev: false

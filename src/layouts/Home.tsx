@@ -94,7 +94,7 @@ export function Home({ children, type, st }: HomeProps) {
               lg: 'blackAlpha.200',
             }}
           >
-            <Box w="full" pt={{ base: 3 }} pr={{ base: 0, lg: 6 }}>
+            <Box w="full" pt={1} pr={{ base: 0, lg: 6 }}>
               {type === 'home' && (
                 <>
                   <NavTabs />

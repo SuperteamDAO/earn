@@ -2,7 +2,8 @@ interface NavItem {
   label: string;
   posthog: string;
   children?: Array<NavItem>;
-  href?: string;
+  href: string;
+  altActive?: string[];
 }
 
 export const LISTING_NAV_ITEMS: Array<NavItem> = [
@@ -28,21 +29,25 @@ export const CATEGORY_NAV_ITEMS: Array<NavItem> = [
     label: 'Content',
     href: '/category/content/',
     posthog: 'content_navbar',
+    altActive: ['/category/design/all/'],
   },
   {
     label: 'Design',
     href: '/category/design/',
     posthog: 'design_navbar',
+    altActive: ['/category/design/all/'],
   },
   {
     label: 'Development',
     href: '/category/development/',
     posthog: 'development_navbar',
+    altActive: ['/category/development/all/'],
   },
   {
     label: 'Other',
     href: '/category/other/',
     posthog: 'other_navbar',
+    altActive: ['/category/other/all/'],
   },
 ];
 

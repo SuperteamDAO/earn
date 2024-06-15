@@ -71,6 +71,7 @@ export const UserStatsBanner = () => {
 
   return (
     <Flex
+      align={'center'}
       justify="space-between"
       wrap="wrap"
       gap={4}
