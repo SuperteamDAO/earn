@@ -35,7 +35,6 @@ model Jobs {
   updatedAt     DateTime @updatedAt
   sponsor       Sponsors @relation(fields: [sponsorId], references: [id])
 
-  @@index([id])
   @@index([sponsorId])
 }
 
@@ -126,8 +125,6 @@ model BountiesTemplates {
   skills              Json?
   type                BountyType @default(bounty)
   Bounties            Bounties[]
-
-  @@index([id])
 }
 
 model Comment {
@@ -150,6 +147,7 @@ model Comment {
   @@index([id, listingId])
   @@index([authorId])
   @@index([replyToId])
+  @@index([listingId])
 }
 
 model Grants {
@@ -209,7 +207,6 @@ model Submission {
   @@index([id, listingId])
   @@index([userId])
   @@index([listingId])
-  @@index([createdAt])
   @@index([isWinner])
   @@index([createdAt, isWinner])
   @@index([createdAt, listingId])
@@ -238,7 +235,6 @@ model Sponsors {
   User               User[]
 
   @@index([id, slug])
-  @@index([name])
 }
 
 model Account {
@@ -342,6 +338,8 @@ model Scouts {
   user          User     @relation(fields: [userId], references: [id])
 
   @@unique([userId, listingId])
+  @@index([userId])
+  @@index([listingId])
 }
 
 model TalentRankings {
@@ -357,7 +355,6 @@ model TalentRankings {
   user             User                   @relation(fields: [userId], references: [id])
 
   @@unique([userId, skill, timeframe])
-  @@index([userId, skill, timeframe])
 }
 
 model PoW {
@@ -386,7 +383,7 @@ model EmailSettings {
   category String
   user     User   @relation(fields: [userId], references: [id])
 
-  @@index([userId])
+  @@index([userId, category])
 }
 
 model UserSponsors {
@@ -399,7 +396,6 @@ model UserSponsors {
   sponsor   Sponsors @relation(fields: [sponsorId], references: [id])
 
   @@id([userId, sponsorId])
-  @@index([userId, sponsorId])
   @@index([sponsorId])
 }
 
@@ -413,7 +409,6 @@ model UserInvites {
   memberType Role     @default(MEMBER)
   sender     User     @relation(fields: [senderId], references: [id])
 
-  @@index([id])
   @@index([senderId])
 }
 
@@ -463,8 +458,6 @@ model Hackathon {
   listings     Bounties[]
   Sponsor      Sponsors?  @relation(fields: [sponsorId], references: [id])
   User         User[]
-
-  @@index([sponsorId])
 }
 
 model UnsubscribedEmail {

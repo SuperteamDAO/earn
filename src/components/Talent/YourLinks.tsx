@@ -132,6 +132,7 @@ const SocialInput = ({
         placeholder={placeHolder}
         title={label}
         {...register(label)}
+        maxLength={180}
       />
     </Flex>
   );
