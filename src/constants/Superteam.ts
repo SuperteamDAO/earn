@@ -83,7 +83,7 @@ export const Superteams = [
     displayValue: 'Nigeria',
     country: ['Nigeria'],
     code: 'NG',
-    hello: 'Sannu',
+    hello: 'Hello',
   },
   {
     name: 'Superteam Brazil',
@@ -129,7 +129,7 @@ export const Superteams = [
       'Serbia',
       'Slovenia',
     ],
-    hello: 'Dobar',
+    hello: 'Pozdrav',
   },
   {
     name: 'Superteam Philippines',

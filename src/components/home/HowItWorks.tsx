@@ -1,7 +1,8 @@
-import { Box, Center, Flex, Image, Text, VStack } from '@chakra-ui/react';
+import { Box, Center, Flex, Text, VStack } from '@chakra-ui/react';
 import axios from 'axios';
 import { useRouter } from 'next/router';
 import { useEffect, useState } from 'react';
+import { LuCheck } from 'react-icons/lu';
 
 import { AuthWrapper } from '@/features/auth';
 import { userStore } from '@/store/user';
@@ -89,7 +90,9 @@ const Step = ({
 }) => {
   return (
     <Center
+      pos="relative"
       zIndex={'200'}
+      overflow={'visible'}
       w={'2.375rem'}
       h={'2.375rem'}
       color={isComplete ? '#FFFFFF' : '#94A3B8'}
@@ -97,14 +100,19 @@ const Step = ({
       rounded={'full'}
     >
       {isComplete ? (
-        <Image
-          w={'full'}
-          h={'full'}
-          alt="White Tick Icon"
-          src="/assets/icons/white-tick.svg"
-        />
+        <LuCheck size={'1.3rem'} strokeWidth={3} />
       ) : (
         <StepIcon step={number} />
+      )}
+      {number < 3 && (
+        <Flex
+          pos={'absolute'}
+          top="110%"
+          w={'0.12rem'}
+          h={'90%'}
+          bg={isComplete ? 'brand.purple.dark' : 'brand.slate.400'}
+          opacity={0.6}
+        />
       )}
     </Center>
   );
@@ -124,10 +132,8 @@ export const HowItWorks = () => {
 
   async function getStats() {
     try {
-      if (userInfo) {
-        const result = await axios.get<Stats>('/api/user/getStats');
-        setHasSubmissions(!!result.data.participations);
-      }
+      const result = await axios.get<Stats>('/api/user/getStats');
+      setHasSubmissions(result.data.participations > 0);
     } catch (err) {
       console.log('Error getting stats - ', err);
     }
@@ -138,6 +144,8 @@ export const HowItWorks = () => {
     getStats();
   }, []);
 
+  if (!loading && !!userInfo?.totalEarnedInUSD) return null;
+
   return (
     <AuthWrapper>
       <Box opacity={loading ? '0.2' : '1'}>
@@ -146,17 +154,22 @@ export const HowItWorks = () => {
         </Text>
         <Flex h={'12.5rem'}>
           <VStack pos={'relative'} justifyContent={'space-between'} h={'100%'}>
-            <Step number={1} isComplete={!!userInfo?.isTalentFilled} />
-
-            <Step number={2} isComplete={hasSubmissions} />
-            <Step number={3} isComplete={!!userInfo?.totalEarnedInUSD} />
-            <Flex
-              pos={'absolute'}
-              w={'0.0625rem'}
-              h={'90%'}
-              bg={'#6366f1'}
-              opacity={0.13}
+            <Step
+              number={1}
+              isComplete={!loading && !!userInfo?.isTalentFilled}
             />
+            <Step number={2} isComplete={!loading && hasSubmissions} />
+            <Step
+              number={3}
+              isComplete={!loading && !!userInfo?.totalEarnedInUSD}
+            />
+            {/* <Flex */}
+            {/*   pos={'absolute'} */}
+            {/*   w={'0.0625rem'} */}
+            {/*   h={'90%'} */}
+            {/*   bg={'#6366f1'} */}
+            {/*   opacity={0.13} */}
+            {/* /> */}
           </VStack>
           <VStack
             pos={'relative'}
@@ -167,71 +180,79 @@ export const HowItWorks = () => {
             <Box ml={'0.8125rem'}>
               <Text
                 as="button"
-                color={!userInfo?.id ? 'black' : 'brand.purple'}
+                color={
+                  !loading && !!userInfo?.isTalentFilled
+                    ? 'brand.slate.500'
+                    : 'brand.purple'
+                }
                 fontSize={'md'}
                 fontWeight={500}
                 _hover={{
                   color: 'brand.purple',
                 }}
+                onClick={() => {
+                  if (!loading && !!userInfo?.isTalentFilled) return;
+                  else if (userInfo?.id) {
+                    router.push(`/new/talent`);
+                  }
+                }}
               >
                 Create your profile
               </Text>
               <Text color={'gray.500'} fontSize={'md'} fontWeight={500}>
-                by completing your talent profile
+                by telling us about yourself
               </Text>
             </Box>
             <Box ml={'0.8125rem'}>
-              {!userInfo?.id || !userInfo?.isTalentFilled ? (
-                <Text
-                  as="button"
-                  color={'black'}
-                  fontSize={'md'}
-                  fontWeight={500}
-                  _hover={{
-                    color: 'brand.purple',
-                  }}
-                  onClick={() => {
-                    if (userInfo?.id) {
-                      router.push(`/new/talent`);
-                    }
-                  }}
-                >
-                  {`Discover Bounties & Projects`}
-                </Text>
-              ) : (
-                <Text color={'brand.purple'} fontSize={'md'} fontWeight={500}>
-                  {`Discover Bounties & Projects`}
-                </Text>
-              )}
+              <Text
+                as="button"
+                color={
+                  !loading && hasSubmissions
+                    ? 'brand.slate.500'
+                    : 'brand.purple'
+                }
+                fontSize={'md'}
+                fontWeight={500}
+                _hover={{
+                  color: 'brand.purple',
+                }}
+                onClick={() => {
+                  if (!loading && hasSubmissions) return;
+                  else if (userInfo?.id) {
+                    router.push(`/all`);
+                  }
+                }}
+              >
+                {`Participate in Bounties & Projects`}
+              </Text>
               <Text color={'gray.500'} fontSize={'md'} fontWeight={500}>
-                and participate in them
+                to build proof of work
               </Text>
             </Box>
             <Box ml={'0.8125rem'}>
-              {!userInfo?.id || !userInfo.totalEarnedInUSD ? (
-                <Text
-                  as="button"
-                  color={'black'}
-                  fontSize={'md'}
-                  fontWeight={500}
-                  _hover={{
-                    color: 'brand.purple',
-                  }}
-                  onClick={() => {
-                    if (userInfo?.id) {
-                      router.push('/all');
-                    }
-                  }}
-                >
-                  Get Paid for Your Work
-                </Text>
-              ) : (
-                <Text color={'brand.purple'} fontSize={'md'} fontWeight={500}>
-                  Get Paid for Your Work
-                </Text>
-              )}
+              <Text
+                as="button"
+                color={
+                  !loading && !!userInfo?.totalEarnedInUSD
+                    ? 'brand.slate.500'
+                    : 'brand.purple'
+                }
+                fontSize={'md'}
+                fontWeight={500}
+                _hover={{
+                  color: 'brand.purple',
+                }}
+                onClick={() => {
+                  if (!loading && !!userInfo?.totalEarnedInUSD) return;
+                  else if (userInfo?.id) {
+                    router.push('/feed');
+                  }
+                }}
+              >
+                Get Paid for Your Work
+              </Text>
               <Text color={'gray.500'} fontSize={'md'} fontWeight={500}>
-                In crypto and global standards
+                in global standards
               </Text>
             </Box>
           </VStack>

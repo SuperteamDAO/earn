@@ -27,14 +27,33 @@ export function RegionBanner({ st }: { st: (typeof Superteams)[0] }) {
         display="block"
         w="full"
         h="full"
-        bg="rgba(64,65,108,0.5)"
+        bg="rgba(64,65,108,0.8)"
       />
-      <VStack pos="absolute" top="50%" transform="translateY(-50%)">
+      <VStack pos="absolute" top="50%" px={4} transform="translateY(-50%)">
         {st.code && <UserFlag location={st.code} isCode size="44px" />}
         {st.hello && (
-          <Text color="white" fontSize={'3xl'} fontWeight="bold">
-            {st.hello}, {st.displayValue}
-          </Text>
+          <>
+            <Text
+              color="white"
+              fontSize={{ base: '2xl', md: '3xl' }}
+              fontWeight="bold"
+            >
+              {st.hello}, {st.displayValue}
+            </Text>
+
+            <Text
+              align="center"
+              maxW="40rem"
+              color="white"
+              fontSize={{ base: 'sm', md: 'lg' }}
+              fontWeight="medium"
+            >
+              Welcome to Superteam {st.displayValue}
+              {`'s`} earnings page — use these opportunities to earn in global
+              standards and gain membership in the most exclusive Solana
+              community of {st.displayValue}!
+            </Text>
+          </>
         )}
       </VStack>
     </VStack>

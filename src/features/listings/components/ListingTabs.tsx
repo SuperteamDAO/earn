@@ -7,7 +7,7 @@ import { useEffect, useState } from 'react';
 
 import { EmptySection } from '@/components/shared/EmptySection';
 
-import type { Bounty } from '../types';
+import { type Bounty } from '../types';
 import { ListingCard, ListingCardSkeleton } from './ListingCard';
 
 interface TabProps {
@@ -16,7 +16,6 @@ interface TabProps {
   content: JSX.Element;
   posthog: string;
 }
-
 interface ListingTabsProps {
   isListingsLoading: boolean;
   bounties: Bounty[] | undefined;
@@ -33,6 +32,7 @@ interface ContentProps {
   take?: number;
   isListingsLoading: boolean;
   filterFunction: (bounty: Bounty) => boolean;
+  sortCompareFunction?: ((a: Bounty, b: Bounty) => number) | undefined;
   emptyTitle: string;
   emptyMessage: string;
   checkLanguage: boolean;
@@ -43,6 +43,7 @@ const generateTabContent = ({
   take,
   isListingsLoading,
   filterFunction,
+  sortCompareFunction,
   emptyTitle,
   emptyMessage,
   checkLanguage,
@@ -55,7 +56,8 @@ const generateTabContent = ({
     ) : bounties?.filter(filterFunction).length ? (
       bounties
         .filter(filterFunction)
-        .slice(0, take)
+        .sort(sortCompareFunction ? sortCompareFunction : () => 0)
+        .slice(0, take ? take + 1 : undefined)
         .map((bounty) => (
           <ListingCard
             key={bounty.id}
@@ -126,9 +128,31 @@ export const ListingTabs = ({
         bounties: bounties,
         take,
         isListingsLoading,
-        filterFunction: (bounty) =>
-          bounty.status === 'CLOSED' ||
-          ((bounty.isWinnersAnnounced || false) && bounty.status === 'OPEN'),
+        filterFunction: (bounty) => bounty.isWinnersAnnounced || false,
+        sortCompareFunction: (a, b) => {
+          const dateA = a.winnersAnnouncedAt
+            ? new Date(a.winnersAnnouncedAt)
+            : a.deadline
+              ? new Date(a.deadline)
+              : null;
+          const dateB = b.winnersAnnouncedAt
+            ? new Date(b.winnersAnnouncedAt)
+            : b.deadline
+              ? new Date(b.deadline)
+              : null;
+
+          if (dateA === null && dateB === null) {
+            return 0;
+          }
+          if (dateB === null) {
+            return 1;
+          }
+          if (dateA === null) {
+            return -1;
+          }
+
+          return dateB.getTime() - dateA.getTime();
+        },
         emptyTitle: 'No completed listings!',
         emptyMessage:
           'Subscribe to notifications to get notified about announcements.',

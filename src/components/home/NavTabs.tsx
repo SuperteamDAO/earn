@@ -1,6 +1,7 @@
 import { Flex, Link } from '@chakra-ui/react';
 import NextLink from 'next/link';
 import { useRouter } from 'next/router';
+import { usePostHog } from 'posthog-js/react';
 import { useEffect, useState } from 'react';
 
 import { Superteams } from '@/constants/Superteam';
@@ -12,16 +13,19 @@ interface PillTabProps {
   href: string;
   altActive?: string[];
   children: React.ReactNode;
+  phEvent: string;
 }
-function PillTab({ href, children, altActive }: PillTabProps) {
+function PillTab({ href, children, altActive, phEvent }: PillTabProps) {
   const router = useRouter();
+  const posthog = usePostHog();
   return (
     <Link
+      className="ph-no-capture"
       as={NextLink}
       alignItems="center"
       gap={2}
       display="flex"
-      px={4}
+      px={3}
       color={router.asPath === href ? 'black' : 'brand.slate.500'}
       fontSize={'sm'}
       bg={
@@ -36,6 +40,7 @@ function PillTab({ href, children, altActive }: PillTabProps) {
         bg: '#F5F3FF',
       }}
       href={href}
+      onClick={() => posthog.capture(phEvent)}
       rounded="full"
     >
       {children}
@@ -49,42 +54,53 @@ export function NavTabs() {
     null,
   );
   useEffect(() => {
-    console.log('user location - ', userInfo?.location);
     const superteam = Superteams.find((s) =>
       s.country.includes(userInfo?.location ?? ''),
     );
-    console.log('user code - ', superteam?.code);
     if (superteam) {
       setSuperteam(superteam);
     }
   }, [userInfo]);
-  useEffect(() => {
-    console.log('superteam code - ', superteam?.code);
-  }, [superteam]);
   return (
-    <Flex align="center" wrap="wrap" gap={2} mb={6}>
-      <PillTab href="/" altActive={['/all/']}>
+    <Flex align="center" wrap="wrap" rowGap={2} columnGap={3} mb={6}>
+      <PillTab href="/" altActive={['/all/']} phEvent="all_navbar">
         All Opportunities
       </PillTab>
       {superteam && (
-        <PillTab href={`/regions/${superteam.region.toLowerCase()}/`}>
+        <PillTab
+          href={`/regions/${superteam.region.toLowerCase()}/`}
+          phEvent={`${superteam.region.toLowerCase()}_navbar`}
+        >
           {superteam.code && <UserFlag location={superteam.code} isCode />}
           {superteam.displayValue}
         </PillTab>
       )}
-      <PillTab altActive={['/category/content/all/']} href="/category/content/">
+      <PillTab
+        altActive={['/category/content/all/']}
+        href="/category/content/"
+        phEvent="content_navbar"
+      >
         Content
       </PillTab>
-      <PillTab altActive={['/category/design/all/']} href="/category/design/">
+      <PillTab
+        altActive={['/category/design/all/']}
+        href="/category/design/"
+        phEvent="design_navbar"
+      >
         Design
       </PillTab>
       <PillTab
         altActive={['/category/development/all/']}
         href="/category/development/"
+        phEvent="development_navbar"
       >
         Development
       </PillTab>
-      <PillTab altActive={['/category/other/all/']} href="/category/other/">
+      <PillTab
+        altActive={['/category/other/all/']}
+        href="/category/other/"
+        phEvent="other_navbar"
+      >
         Other
       </PillTab>
     </Flex>

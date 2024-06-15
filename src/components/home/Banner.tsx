@@ -23,16 +23,16 @@ interface BannerProps {
 
 const avatars = [
   {
-    name: 'Anoushk',
-    src: 'https://res.cloudinary.com/dgvnuwspr/image/upload/c_scale,w_30,h_30,f_auto/v1683132586/People%20DPs/recA3Sa7t1loYvDHo.jpg',
+    name: 'Abhishkek',
+    src: '/assets/pfps/t1.png',
   },
   {
-    name: 'Ujjwal',
-    src: 'https://res.cloudinary.com/dgvnuwspr/image/upload/c_scale,w_30,h_30,f_auto/v1683135404/People%20DPs/rec4XUFtbh6upVYpA.jpg',
+    name: 'Pratik',
+    src: '/assets/pfps/md2.png',
   },
   {
     name: 'Yash',
-    src: 'https://res.cloudinary.com/dgvnuwspr/image/upload/c_scale,w_30,h_30,f_auto/v1683135395/People%20DPs/recb4gDjdKoFDAyo7.png',
+    src: '/assets/pfps/fff1.png',
   },
 ];
 
@@ -96,14 +96,14 @@ export function HomeBanner({ userCount }: BannerProps) {
         <Text
           pos="relative"
           zIndex={1}
-          maxW={{ base: '100%', md: '460px' }}
+          maxW={{ base: '100%', md: '30rem' }}
           mt={isLessThan768px ? '2.5' : '4'}
           color={'white'}
           fontSize={{ base: '13px', md: 'lg' }}
           lineHeight={'130%'}
         >
-          Apply to world class crypto companies bounties, projects and grants
-          with a single profile.
+          Participate in bounties or apply to freelance gigs of world-class
+          crypto companies, all with a single profile.
         </Text>
         <Flex
           zIndex={1}
