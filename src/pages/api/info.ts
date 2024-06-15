@@ -1,23 +1,39 @@
+import { verifySignature } from '@upstash/qstash/nextjs';
 import dayjs from 'dayjs';
+import updateLocale from 'dayjs/plugin/updateLocale';
+import utc from 'dayjs/plugin/utc';
 import type { NextApiRequest, NextApiResponse } from 'next';
 
 import { InfoTemplate, kashEmail, resend } from '@/features/emails';
 import { prisma } from '@/prisma';
 
-const sevenDaysAgoDate = dayjs().subtract(7, 'day').toDate();
+dayjs.extend(utc);
+dayjs.extend(updateLocale);
+dayjs.updateLocale('en', {
+  weekStart: 1,
+});
 
-export default async function handler(
-  _req: NextApiRequest,
-  res: NextApiResponse,
-) {
+const startOfLastWeek = dayjs
+  .utc()
+  .subtract(1, 'week')
+  .startOf('week')
+  .toDate();
+const endOfLastWeek = dayjs.utc().startOf('week').toDate();
+
+const formatDate = (date: Date) => dayjs(date).format('DD-MM-YY HH:mm');
+
+const lastWeek = {
+  gte: startOfLastWeek,
+  lte: endOfLastWeek,
+};
+
+async function handler(_req: NextApiRequest, res: NextApiResponse) {
   try {
     const totalUserCount = await prisma.user.count();
 
     const newUserCountInLastWeek = await prisma.user.count({
       where: {
-        createdAt: {
-          gte: sevenDaysAgoDate,
-        },
+        createdAt: lastWeek,
       },
     });
 
@@ -29,41 +45,77 @@ export default async function handler(
 
     const newTalentFilledUserCountInLastWeek = await prisma.user.count({
       where: {
-        createdAt: {
-          gte: sevenDaysAgoDate,
-        },
+        createdAt: lastWeek,
         isTalentFilled: true,
       },
     });
 
     const newBountiesCountInLastWeek = await prisma.bounties.count({
       where: {
-        publishedAt: {
-          gte: sevenDaysAgoDate,
-        },
+        publishedAt: lastWeek,
+        isPublished: true,
       },
     });
 
-    const totalRewardAmountInLastWeek = await prisma.bounties.aggregate({
-      _sum: {
-        rewardAmount: true,
-      },
+    const bountiesInLastWeek = await prisma.bounties.findMany({
       where: {
-        publishedAt: {
-          gte: sevenDaysAgoDate,
-        },
+        publishedAt: lastWeek,
+        isPublished: true,
+      },
+      select: {
+        rewardAmount: true,
+        minRewardAsk: true,
+        maxRewardAsk: true,
+        compensationType: true,
+        isWinnersAnnounced: true,
       },
     });
 
-    const totalRewardAmount = await prisma.bounties.aggregate({
-      _sum: {
-        rewardAmount: true,
-      },
+    let totalRewardAmountInLastWeek = 0;
+
+    for (const bounty of bountiesInLastWeek) {
+      if (
+        bounty.compensationType === 'range' &&
+        !bounty.isWinnersAnnounced &&
+        !!bounty.maxRewardAsk &&
+        !!bounty.minRewardAsk
+      ) {
+        const averageReward = (bounty.minRewardAsk + bounty.maxRewardAsk) / 2;
+        totalRewardAmountInLastWeek += averageReward || 0;
+      } else {
+        totalRewardAmountInLastWeek += bounty.rewardAmount || 0;
+      }
+    }
+
+    const openBounties = await prisma.bounties.findMany({
       where: {
         status: 'OPEN',
         isPublished: true,
       },
+      select: {
+        rewardAmount: true,
+        minRewardAsk: true,
+        maxRewardAsk: true,
+        compensationType: true,
+        isWinnersAnnounced: true,
+      },
     });
+
+    let totalRewardAmount = 0;
+
+    for (const bounty of openBounties) {
+      if (
+        bounty.compensationType === 'range' &&
+        !bounty.isWinnersAnnounced &&
+        !!bounty.maxRewardAsk &&
+        !!bounty.minRewardAsk
+      ) {
+        const averageReward = (bounty.minRewardAsk + bounty.maxRewardAsk) / 2;
+        totalRewardAmount += averageReward || 0;
+      } else {
+        totalRewardAmount += bounty.rewardAmount || 0;
+      }
+    }
 
     const totalRewardAmountResult = await prisma.user.aggregate({
       _sum: {
@@ -76,9 +128,8 @@ export default async function handler(
         rewardAmount: true,
       },
       where: {
-        winnersAnnouncedAt: {
-          gte: sevenDaysAgoDate,
-        },
+        winnersAnnouncedAt: lastWeek,
+        isPublished: true,
       },
     });
 
@@ -91,10 +142,8 @@ export default async function handler(
       newTalentProfilesFilledInLast7Days: newTalentFilledUserCountInLastWeek,
       totalTalentProfilesFilled: totalTalentFilledUserCount,
       newListingsPublishedInLast7Days: newBountiesCountInLastWeek,
-      amountNewListingsPublishedInLast7Days:
-        totalRewardAmountInLastWeek._sum.rewardAmount,
-      amountListingsOpenAndPublishedOverall:
-        totalRewardAmount._sum.rewardAmount,
+      amountNewListingsPublishedInLast7Days: totalRewardAmountInLastWeek,
+      amountListingsOpenAndPublishedOverall: totalRewardAmount,
       amountTVEAddedInLast7Days: totalTVEInLastWeek._sum.rewardAmount,
       totalTVE: totalTVE,
     };
@@ -102,7 +151,7 @@ export default async function handler(
     await resend.emails.send({
       from: kashEmail,
       to: ['pratik.dholani1@gmail.com', 'bodhiswattwac@gmail.com'],
-      subject: 'Weekly Earn Stats',
+      subject: `Weekly Earn Stats (from ${formatDate(startOfLastWeek)} to ${formatDate(endOfLastWeek)}`,
       react: InfoTemplate({
         info: info,
       }),
@@ -116,10 +165,10 @@ export default async function handler(
   }
 }
 
-// export default verifySignature(handler);
+export default verifySignature(handler);
 
-// export const config = {
-//   api: {
-//     bodyParser: false,
-//   },
-// };
+export const config = {
+  api: {
+    bodyParser: false,
+  },
+};
