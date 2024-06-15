@@ -26,11 +26,6 @@ const linkData = [
     posthog: 'FAQ_footer',
     href: 'https://superteamdao.notion.site/Superteam-Earn-FAQ-aedaa039b25741b1861167d68aa880b1?pvs=4',
   },
-  // {
-  //   text: 'GitHub',
-  //   posthog: 'github_footer',
-  //   href: 'https://github.com/SuperteamDAO/earn',
-  // },
   {
     text: 'Changelog',
     posthog: 'changelog_footer',
@@ -187,23 +182,6 @@ export const Footer = () => {
                   />
                 </svg>
               </SocialButton>
-              {/* <SocialButton */}
-              {/*   label={'Substack'} */}
-              {/*   href="https://superteam.substack.com/" */}
-              {/* > */}
-              {/*   <svg */}
-              {/*     width="12" */}
-              {/*     height="13" */}
-              {/*     viewBox="0 0 12 13" */}
-              {/*     fill="none" */}
-              {/*     xmlns="http://www.w3.org/2000/svg" */}
-              {/*   > */}
-              {/*     <path */}
-              {/*       d="M11.4178 4.46442H0V2.92825H11.4183V4.46442H11.4178ZM0 5.8565V13L5.70917 9.80958L11.4183 13V5.8565H0ZM11.4183 0H0V1.53617H11.4183V0Z" */}
-              {/*       fill="currentColor" */}
-              {/*     /> */}
-              {/*   </svg> */}
-              {/* </SocialButton> */}
             </Stack>
           </Stack>
           <Flex

@@ -21,11 +21,7 @@ import React from 'react';
 
 import { UserMenu } from '@/components/shared/UserMenu';
 
-import {
-  HACKATHON_NAV_ITEMS,
-  LISTING_NAV_ITEMS,
-  renderLabel,
-} from '../constants';
+import { LISTING_NAV_ITEMS } from '../constants';
 import { NavLink } from './NavLink';
 
 interface Props {
@@ -129,21 +125,7 @@ export const DesktopNavbar = ({ onLoginOpen, onSearchOpen }: Props) => {
                   />
                 );
               })}
-              {/* {CATEGORY_NAV_ITEMS?.map((navItem) => { */}
-              {/*   const isCurrent = `${navItem.href}` === router.asPath; */}
-              {/*   return ( */}
-              {/*     <NavLink */}
-              {/*       onClick={() => { */}
-              {/*         posthog.capture(navItem.posthog); */}
-              {/*       }} */}
-              {/*       href={navItem.href ?? '#'} */}
-              {/*       label={navItem.label} */}
-              {/*       isActive={isCurrent} */}
-              {/*       key={navItem.label} */}
-              {/*     /> */}
-              {/*   ); */}
-              {/* })} */}
-              {HACKATHON_NAV_ITEMS?.map((navItem) => {
+              {/* {HACKATHON_NAV_ITEMS?.map((navItem) => {
                 const isCurrent = `${navItem.href}` === router.asPath;
                 return (
                   <NavLink
@@ -156,7 +138,7 @@ export const DesktopNavbar = ({ onLoginOpen, onSearchOpen }: Props) => {
                     isActive={isCurrent}
                   />
                 );
-              })}
+              })} */}
             </Stack>
           </Flex>
         </AbsoluteCenter>

@@ -18,49 +18,11 @@ interface Props {
 }
 
 const HomePage: NextPage<Props> = ({ bounties, grants }) => {
-  // const [isListingsLoading, setIsListingsLoading] = useState(true);
   const [mobileOs, setMobileOs] = useState<'Android' | 'iOS' | 'Other'>(
     'Other',
   );
-  // const [bounties, setBounties] = useState<{ bounties: Listing[] }>({
-  //   bounties: [],
-  // });
-  // const [grants, setGrants] = useState<{ grants: GrantWithApplicationCount[] }>(
-  //   {
-  //     grants: [],
-  //   },
-  // );
-  const installPrompt = useRef<BeforeInstallPromptEvent | null>();
-  // const date = dayjs().subtract(1, 'month').toISOString();
 
-  // const getListings = async () => {
-  //   setIsListingsLoading(true);
-  //   try {
-  //     const bountyData = await axios.get('/api/listings/', {
-  //       params: {
-  //         category: 'bounties',
-  //         take: 100,
-  //         deadline: date,
-  //         isHomePage: true,
-  //       },
-  //     });
-  //
-  //     setBounties(bountyData.data);
-  //     setIsListingsLoading(false);
-  //
-  //     const grantsData = await axios.get('/api/listings/', {
-  //       params: {
-  //         category: 'grants',
-  //       },
-  //     });
-  //
-  //     setGrants(grantsData.data);
-  //   } catch (e) {
-  //     console.log(e);
-  //
-  //     setIsListingsLoading(false);
-  //   }
-  // };
+  const installPrompt = useRef<BeforeInstallPromptEvent | null>();
 
   interface BeforeInstallPromptEvent extends Event {
     prompt: () => Promise<{ outcome: 'accepted' | 'dismissed' }>;
@@ -73,9 +35,6 @@ const HomePage: NextPage<Props> = ({ bounties, grants }) => {
       e.preventDefault();
       installPrompt.current = e;
     }) as EventListener);
-
-    // if (!isListingsLoading) return;
-    // getListings();
   }, []);
 
   const { userInfo } = userStore();
@@ -155,11 +114,6 @@ const HomePage: NextPage<Props> = ({ bounties, grants }) => {
           emoji="/assets/home/emojis/grants.png"
           showViewAll
         >
-          {/* {isListingsLoading && ( */}
-          {/*   <Flex align="center" justify="center" direction="column" minH={52}> */}
-          {/*     <Loading /> */}
-          {/*   </Flex> */}
-          {/* )} */}
           {!grants?.length && (
             <Flex align="center" justify="center" mt={8}>
               <EmptySection
@@ -193,7 +147,6 @@ export const getServerSideProps: GetServerSideProps<Props> = async (
   const statusFilter: Status = (params.status as Status) ?? 'open';
   const type = params.type as BountyType | undefined;
   const take = params.take ? parseInt(params.take as string, 20) : 20;
-  // const deadline = params.deadline as string | undefined;
 
   console.log('status - ', statusFilter);
 

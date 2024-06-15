@@ -4,10 +4,9 @@ import { useRouter } from 'next/router';
 import React, { type ReactNode, useEffect, useState } from 'react';
 
 import { HomeBanner } from '@/components/home/Banner';
-import { CategoryBanner2 } from '@/components/home/CategoryBanner2';
+import { CategoryBanner } from '@/components/home/CategoryBanner';
 import { NavTabs } from '@/components/home/NavTabs';
 import { RegionBanner } from '@/components/home/RegionBanner';
-// import { CategoryBanner } from '@/components/home/CategoryBanner';
 import { HomeSideBar } from '@/components/home/SideBar';
 import { UserStatsBanner } from '@/components/home/UserStatsBanner';
 import { type Superteams } from '@/constants/Superteam';
@@ -66,12 +65,6 @@ export function Home({ children, type, st }: HomeProps) {
     }
   }, [router]);
 
-  // const Skills = ['Development', 'Design', 'Content', 'Other'];
-
-  // const matchedTeam = Superteams.find(
-  //   (e) => e.region?.toLowerCase() === String(router.query.slug).toLowerCase(),
-  // );
-
   return (
     <Default
       className="bg-white"
@@ -85,7 +78,7 @@ export function Home({ children, type, st }: HomeProps) {
     >
       {type === 'region' && st && <RegionBanner st={st} />}
       {type === 'category' && currentCategory && (
-        <CategoryBanner2 category={currentCategory} />
+        <CategoryBanner category={currentCategory} />
       )}
       <Container maxW={'8xl'} mx="auto" px={{ base: 3, md: 4 }}>
         <HStack align="start" justify="space-between">
@@ -109,64 +102,7 @@ export function Home({ children, type, st }: HomeProps) {
                   <UserStatsBanner />
                 </>
               )}
-              {type === 'category' && (
-                <>
-                  <NavTabs />
-                  {/* <CategoryBanner */}
-                  {/*   type={ */}
-                  {/*     Skills.find( */}
-                  {/*       (skill) => */}
-                  {/*         skill.toLocaleLowerCase() === */}
-                  {/*         router?.query?.slug?.toString().toLocaleLowerCase(), */}
-                  {/*     ) as string */}
-                  {/*   } */}
-                  {/* /> */}
-                </>
-              )}
-              {/* {type === 'region' && matchedTeam && ( */}
-              {/*   <Box> */}
-              {/*     <Flex */}
-              {/*       direction={{ md: 'row', base: 'column' }} */}
-              {/*       w={{ md: 'brand.120', base: '100%' }} */}
-              {/*       h={{ md: '7.375rem', base: 'fit-content' }} */}
-              {/*       mx={'auto'} */}
-              {/*       mb={8} */}
-              {/*       p={6} */}
-              {/*       bg={`url(${matchedTeam.bg})`} */}
-              {/*       bgSize={'cover'} */}
-              {/*       rounded={10} */}
-              {/*     > */}
-              {/*       <Center */}
-              {/*         w={14} */}
-              {/*         h={14} */}
-              {/*         mr={3} */}
-              {/*         bg={matchedTeam.color} */}
-              {/*         rounded={'md'} */}
-              {/*       > */}
-              {/*         <Image */}
-              {/*           borderRadius={'5px'} */}
-              {/*           alt="Category icon" */}
-              {/*           src={matchedTeam.icons} */}
-              {/*         /> */}
-              {/*       </Center> */}
-              {/*       <Box w={{ md: '80%', base: '100%' }}> */}
-              {/*         <Text */}
-              {/*           mt={{ base: 4, md: '0' }} */}
-              {/*           fontFamily={'var(--font-serif)'} */}
-              {/*           fontWeight={'700'} */}
-              {/*         > */}
-              {/*           {matchedTeam.name} */}
-              {/*         </Text> */}
-              {/*         <Text color={'brand.slate.500'} fontSize={'small'}> */}
-              {/*           Welcome to Superteam {matchedTeam.displayValue} earnings */}
-              {/*           page — use these opportunities to earn in global */}
-              {/*           standards and gain membership in the most exclusive */}
-              {/*           Solana community of {matchedTeam.displayValue}! */}
-              {/*         </Text> */}
-              {/*       </Box> */}
-              {/*     </Flex> */}
-              {/*   </Box> */}
-              {/* )} */}
+              {type === 'category' && <NavTabs />}
               {children}
             </Box>
           </Flex>

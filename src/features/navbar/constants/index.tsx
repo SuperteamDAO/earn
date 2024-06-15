@@ -46,18 +46,18 @@ export const CATEGORY_NAV_ITEMS: Array<NavItem> = [
   },
 ];
 
-export const HACKATHON_NAV_ITEMS: Array<NavItem> = [
-  // {
-  //   label: 'Renaissance',
-  //   href: '/renaissance/',
-  //   posthog: 'renaissance_navbar',
-  // },
-  // {
-  //   label: 'Scribes',
-  //   href: '/scribes/',
-  //   posthog: 'scribes_navbar',
-  // },
-];
+// export const HACKATHON_NAV_ITEMS: Array<NavItem> = [
+// {
+//   label: 'Renaissance',
+//   href: '/renaissance/',
+//   posthog: 'renaissance_navbar',
+// },
+// {
+//   label: 'Scribes',
+//   href: '/scribes/',
+//   posthog: 'scribes_navbar',
+// },
+// ];
 
 export function renderLabel(navItem: NavItem) {
   switch (navItem.label) {

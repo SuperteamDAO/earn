@@ -163,13 +163,6 @@ export const HowItWorks = () => {
               number={3}
               isComplete={!loading && !!userInfo?.totalEarnedInUSD}
             />
-            {/* <Flex */}
-            {/*   pos={'absolute'} */}
-            {/*   w={'0.0625rem'} */}
-            {/*   h={'90%'} */}
-            {/*   bg={'#6366f1'} */}
-            {/*   opacity={0.13} */}
-            {/* /> */}
           </VStack>
           <VStack
             pos={'relative'}
