@@ -57,11 +57,15 @@ export interface Bounty {
   minRewardAsk?: number;
   maxRewardAsk?: number;
   winnersAnnouncedAt?: string;
+  _count?: {
+    Comments?: number;
+  };
 }
 
 export interface BountyWithSubmissions extends Bounty {
   _count?: {
     Submission?: number;
+    Comments?: number;
   };
 }
 

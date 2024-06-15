@@ -1,14 +1,8 @@
-import { Box, Flex } from '@chakra-ui/react';
+import { Box } from '@chakra-ui/react';
 import axios from 'axios';
 import { useEffect, useState } from 'react';
 
-import { EmptySection } from '@/components/shared/EmptySection';
-import {
-  type Bounty,
-  ListingCard,
-  ListingCardSkeleton,
-  ListingSection,
-} from '@/features/listings';
+import { type Bounty, ListingTabs } from '@/features/listings';
 import { Home } from '@/layouts/Home';
 
 interface Listings {
@@ -45,29 +39,14 @@ function AllListingsPage() {
   return (
     <Home type="home">
       <Box w={'100%'}>
-        <ListingSection
-          type="bounties"
-          title="Freelance Gigs"
-          sub="Bite sized tasks for freelancers"
+        <ListingTabs
+          bounties={listings.bounties}
+          isListingsLoading={isListingsLoading}
           emoji="/assets/home/emojis/moneyman.png"
-        >
-          {isListingsLoading &&
-            Array.from({ length: 8 }, (_, index) => (
-              <ListingCardSkeleton key={index} />
-            ))}
-          {!isListingsLoading && !listings?.bounties?.length && (
-            <Flex align="center" justify="center" mt={8}>
-              <EmptySection
-                title="No listings available!"
-                message="Subscribe to notifications to get notified about new listings."
-              />
-            </Flex>
-          )}
-          {!isListingsLoading &&
-            listings?.bounties?.map((bounty) => {
-              return <ListingCard key={bounty.id} bounty={bounty} />;
-            })}
-        </ListingSection>
+          title="Freelance Gigs"
+          viewAllLink="/all"
+          checkLanguage
+        />
       </Box>
     </Home>
   );

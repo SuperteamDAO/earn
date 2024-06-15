@@ -12,8 +12,12 @@ import { useRouter } from 'next/router';
 import React, { type ReactNode, useEffect, useState } from 'react';
 
 import { HomeBanner } from '@/components/home/Banner';
-import { CategoryBanner } from '@/components/home/CategoryBanner';
+import { CategoryBanner2 } from '@/components/home/CategoryBanner2';
+import { NavTabs } from '@/components/home/NavTabs';
+import { RegionBanner } from '@/components/home/RegionBanner';
+// import { CategoryBanner } from '@/components/home/CategoryBanner';
 import { HomeSideBar } from '@/components/home/SideBar';
+import { UserStatsBanner } from '@/components/home/UserStatsBanner';
 import { Superteams } from '@/constants/Superteam';
 import type { User } from '@/interface/user';
 import { Default } from '@/layouts/Default';
@@ -27,14 +31,20 @@ interface TotalType {
 interface HomeProps {
   children: ReactNode;
   type: 'home' | 'category' | 'region' | 'niche' | 'feed';
+  st?: (typeof Superteams)[0];
 }
 
-export function Home({ children, type }: HomeProps) {
+type CategoryTypes = 'content' | 'development' | 'design' | 'other';
+
+export function Home({ children, type, st }: HomeProps) {
   const router = useRouter();
 
   const [isTotalLoading, setIsTotalLoading] = useState(true);
   const [recentEarners, setRecentEarners] = useState<User[]>([]);
   const [totals, setTotals] = useState<TotalType>({});
+  const [currentCategory, setCurrentCategory] = useState<CategoryTypes | null>(
+    null,
+  );
 
   const getTotalInfo = async () => {
     try {
@@ -52,7 +62,19 @@ export function Home({ children, type }: HomeProps) {
     getTotalInfo();
   }, []);
 
-  const Skills = ['Development', 'Design', 'Content', 'Other'];
+  useEffect(() => {
+    if (router.asPath.includes('/category/development/')) {
+      setCurrentCategory('development');
+    } else if (router.asPath.includes('/category/design/')) {
+      setCurrentCategory('design');
+    } else if (router.asPath.includes('/category/content/')) {
+      setCurrentCategory('content');
+    } else if (router.asPath.includes('/category/other/')) {
+      setCurrentCategory('other');
+    }
+  }, [router]);
+
+  // const Skills = ['Development', 'Design', 'Content', 'Other'];
 
   const matchedTeam = Superteams.find(
     (e) => e.region?.toLowerCase() === String(router.query.slug).toLowerCase(),
@@ -69,6 +91,10 @@ export function Home({ children, type }: HomeProps) {
         />
       }
     >
+      {type === 'region' && st && <RegionBanner st={st} />}
+      {type === 'category' && currentCategory && (
+        <CategoryBanner2 category={currentCategory} />
+      )}
       <Container maxW={'8xl'} mx="auto" px={{ base: 3, md: 4 }}>
         <HStack align="start" justify="space-between">
           <Flex
@@ -83,18 +109,27 @@ export function Home({ children, type }: HomeProps) {
               lg: 'blackAlpha.200',
             }}
           >
-            <Box w="full" pr={{ base: 0, lg: 6 }}>
-              {type === 'home' && <HomeBanner userCount={totals.totalUsers} />}
+            <Box w="full" pt={{ base: 3 }} pr={{ base: 0, lg: 6 }}>
+              {type === 'home' && (
+                <>
+                  <NavTabs />
+                  <HomeBanner userCount={totals.totalUsers} />
+                  <UserStatsBanner />
+                </>
+              )}
               {type === 'category' && (
-                <CategoryBanner
-                  type={
-                    Skills.find(
-                      (skill) =>
-                        skill.toLocaleLowerCase() ===
-                        router?.query?.slug?.toString().toLocaleLowerCase(),
-                    ) as string
-                  }
-                />
+                <>
+                  <NavTabs />
+                  {/* <CategoryBanner */}
+                  {/*   type={ */}
+                  {/*     Skills.find( */}
+                  {/*       (skill) => */}
+                  {/*         skill.toLocaleLowerCase() === */}
+                  {/*         router?.query?.slug?.toString().toLocaleLowerCase(), */}
+                  {/*     ) as string */}
+                  {/*   } */}
+                  {/* /> */}
+                </>
               )}
               {type === 'region' && matchedTeam && (
                 <Box>

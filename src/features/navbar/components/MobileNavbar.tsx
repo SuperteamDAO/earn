@@ -277,7 +277,11 @@ export const MobileNavbar = ({ onLoginOpen, onSearchOpen }: Props) => {
         py={2}
         bg={'#F8FAFC'}
       >
-        <Flex className="ph-no-capture" gap={{ base: 2, sm: 8, md: 12 }}>
+        <Flex
+          className="ph-no-capture"
+          gap={{ base: 2, sm: 8, md: 12 }}
+          mx="auto"
+        >
           {LISTING_NAV_ITEMS?.map((navItem) => {
             const isCurrent = `${navItem.href}` === router.asPath;
             return (
@@ -298,34 +302,35 @@ export const MobileNavbar = ({ onLoginOpen, onSearchOpen }: Props) => {
             );
           })}
         </Flex>
-        <Divider
-          display={{ base: 'flex', md: 'none' }}
-          h={5}
-          borderWidth={'0.5px'}
-          borderColor={'brand.slate.400'}
-          orientation="vertical"
-        />
-        <Flex className="ph-no-capture" gap={{ base: 2, sm: 8, md: 12 }}>
-          {CATEGORY_NAV_ITEMS?.map((navItem) => {
-            const isCurrent = `${navItem.href}` === router.asPath;
-            return (
-              <NavLink
-                onClick={() => {
-                  posthog.capture(navItem.posthog);
-                }}
-                className="ph-no-capture"
-                key={navItem.label}
-                href={navItem.href ?? '#'}
-                label={renderLabel(navItem)}
-                isActive={isCurrent}
-                fontSize={{ base: '11.5px', xs: '13px', md: '15px' }}
-                fontWeight={500}
-                h={'auto'}
-                borderBottom={'none'}
-              />
-            );
-          })}
-        </Flex>
+        {/* <Divider */}
+        {/*   display={{ base: 'none' }} */}
+        {/*   h={5} */}
+        {/*   borderWidth={'0.5px'} */}
+        {/*   borderColor={'brand.slate.400'} */}
+        {/*   orientation="vertical" */}
+        {/* /> */}
+        {/* <Flex className="ph-no-capture" gap={{ base: 2, sm: 8, md: 12 }} */}
+        {/* > */}
+        {/*   {CATEGORY_NAV_ITEMS?.map((navItem) => { */}
+        {/*     const isCurrent = `${navItem.href}` === router.asPath; */}
+        {/*     return ( */}
+        {/*       <NavLink */}
+        {/*         onClick={() => { */}
+        {/*           posthog.capture(navItem.posthog); */}
+        {/*         }} */}
+        {/*         className="ph-no-capture" */}
+        {/*         key={navItem.label} */}
+        {/*         href={navItem.href ?? '#'} */}
+        {/*         label={renderLabel(navItem)} */}
+        {/*         isActive={isCurrent} */}
+        {/*         fontSize={{ base: '11.5px', xs: '13px', md: '15px' }} */}
+        {/*         fontWeight={500} */}
+        {/*         h={'auto'} */}
+        {/*         borderBottom={'none'} */}
+        {/*       /> */}
+        {/*     ); */}
+        {/*   })} */}
+        {/* </Flex> */}
       </Flex>
     </>
   );

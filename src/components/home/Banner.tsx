@@ -90,8 +90,8 @@ export function HomeBanner({ userCount }: BannerProps) {
           fontWeight={'700'}
           lineHeight={'120%'}
         >
-          Unlock your crypto
-          <br /> earning potential
+          Find Your Next High
+          <br /> Paying Crypto Gig
         </Text>
         <Text
           pos="relative"
@@ -100,9 +100,10 @@ export function HomeBanner({ userCount }: BannerProps) {
           mt={isLessThan768px ? '2.5' : '4'}
           color={'white'}
           fontSize={{ base: '13px', md: 'lg' }}
+          lineHeight={'130%'}
         >
-          Explore bounties, projects, and grant opportunities for developers and
-          non-technical talent alike
+          Apply to world class crypto companies bounties, projects and grants
+          with a single profile.
         </Text>
         <Flex
           zIndex={1}

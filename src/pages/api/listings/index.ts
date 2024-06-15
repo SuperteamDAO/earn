@@ -18,7 +18,7 @@ export default async function user(req: NextApiRequest, res: NextApiResponse) {
   const take = params.take ? parseInt(params.take as string, 10) : 10;
   const deadline = params.deadline as string;
 
-  const result: any = {
+  const result: { bounties: any[]; grants: any[] } = {
     bounties: [],
     grants: [],
   };
@@ -77,13 +77,26 @@ export default async function user(req: NextApiRequest, res: NextApiResponse) {
               logo: true,
             },
           },
+          _count: {
+            select: {
+              Comments: true,
+            },
+          },
         },
         orderBy: {
           deadline: order,
         },
       });
-
-      result.bounties = bounties;
+      //sort bounties by isFeatured
+      result.bounties = bounties.sort((a, b) => {
+        if (a.isFeatured && !b.isFeatured) {
+          return -1;
+        } else if (!a.isFeatured && b.isFeatured) {
+          return 1;
+        } else {
+          return 0;
+        }
+      });
     } else if (category === 'bounties') {
       const bounties = await prisma.bounties.findMany({
         where: {
@@ -109,6 +122,11 @@ export default async function user(req: NextApiRequest, res: NextApiResponse) {
               logo: true,
             },
           },
+          _count: {
+            select: {
+              Comments: true,
+            },
+          },
         },
         orderBy: {
           deadline: order,
@@ -125,6 +143,15 @@ export default async function user(req: NextApiRequest, res: NextApiResponse) {
       } else {
         result.bounties = bounties.slice(0, take);
       }
+      result.bounties = result.bounties.sort((a, b) => {
+        if (a.isFeatured && !b.isFeatured) {
+          return -1;
+        } else if (!a.isFeatured && b.isFeatured) {
+          return 1;
+        } else {
+          return 0;
+        }
+      });
     }
 
     if (!category || category === 'all' || category === 'grants') {
