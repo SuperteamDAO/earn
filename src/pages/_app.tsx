@@ -15,6 +15,7 @@ import { PostHogProvider, usePostHog } from 'posthog-js/react';
 import React, { useEffect, useState } from 'react';
 import { Toaster } from 'react-hot-toast';
 
+import { EntityNameModal } from '@/components/modals/EntityNameModal';
 import { FeatureModal } from '@/components/modals/FeatureModal';
 import { TermsOfServices } from '@/components/modals/TermsOfServices';
 import { SolanaWalletProvider } from '@/context/SolanaWallet';
@@ -122,6 +123,7 @@ function MyApp({ Component, pageProps }: any) {
 function App({ Component, pageProps: { session, ...pageProps } }: AppProps) {
   const [isFeatureModalOpen, setIsFeatureModalOpen] = useState(false);
   const [isTOSModalOpen, setIsTOSModalOpen] = useState(false);
+  const [isEntityModalOpen, setIsEntityModalOpen] = useState(false);
   const [latestActiveSlug, setLatestActiveSlug] = useState<string | undefined>(
     undefined,
   );
@@ -133,16 +135,22 @@ function App({ Component, pageProps: { session, ...pageProps } }: AppProps) {
   };
 
   const handleTOSClose = async () => {
-    console.log('closee');
-    setIsTOSModalOpen(false);
-    localStorage.setItem('acceptedTOS', JSON.stringify(true));
-    console.log('userINFOOOO - ', userInfo);
-    if (userInfo) {
-      setUserInfo({ ...userInfo, acceptedTOS: true });
-      await axios.post('/api/user/update/', {
-        acceptedTOS: true,
-      });
+    try {
+      setIsTOSModalOpen(false);
+      localStorage.setItem('acceptedTOS', JSON.stringify(true));
+      if (userInfo) {
+        setUserInfo({ ...userInfo, acceptedTOS: true });
+        await axios.post('/api/user/update/', {
+          acceptedTOS: true,
+        });
+      }
+    } catch (e) {
+      console.log('failed to set accepted terms of service', e);
     }
+  };
+
+  const handleEntityClose = () => {
+    setIsEntityModalOpen(false);
   };
 
   const getSponsorLatestActiveSlug = async () => {
@@ -156,43 +164,63 @@ function App({ Component, pageProps: { session, ...pageProps } }: AppProps) {
     }
   };
 
-  // SHOW TO SPONSOR ONLY
+  // FEATURE MODAL SPONSOR ONLY
   useEffect(() => {
-    const updateFeatureModalShown = async () => {
-      if (userInfo?.featureModalShown === false && userInfo?.currentSponsorId) {
-        setUserInfo({ ...userInfo, featureModalShown: true });
-        setIsFeatureModalOpen(true);
-        await getSponsorLatestActiveSlug();
-        await axios.post('/api/user/update/', {
-          featureModalShown: true,
-        });
-      }
-    };
-
-    if (!router.pathname.includes('dashboard')) updateFeatureModalShown();
+    try {
+      const updateFeatureModalShown = async () => {
+        if (
+          userInfo?.featureModalShown === false &&
+          userInfo?.currentSponsorId
+        ) {
+          setUserInfo({ ...userInfo, featureModalShown: true });
+          setIsFeatureModalOpen(true);
+          await getSponsorLatestActiveSlug();
+          await axios.post('/api/user/update/', {
+            featureModalShown: true,
+          });
+        }
+      };
+      if (!router.pathname.includes('dashboard')) updateFeatureModalShown();
+    } catch (e) {
+      console.log('unable to get current user feature modal state', e);
+    }
   }, [userInfo]);
 
+  // TERMS OF SERVICE TO ALL
   useEffect(() => {
-    console.log('userInfooo - ', userInfo);
-    setIsTOSModalOpen(false);
-    const shown =
-      (JSON.parse(localStorage.getItem('acceptedTOS') ?? 'false') as boolean) ??
-      false;
-    if (userInfo) {
-      if (!userInfo.acceptedTOS) {
-        if (shown) {
-          setUserInfo({ ...userInfo, acceptedTOS: true });
-          axios.post('/api/user/update/', {
-            acceptedTOS: true,
-          });
+    try {
+      setIsTOSModalOpen(false);
+      const shown =
+        (JSON.parse(
+          localStorage.getItem('acceptedTOS') ?? 'false',
+        ) as boolean) ?? false;
+      if (userInfo) {
+        if (!userInfo.acceptedTOS) {
+          if (shown) {
+            setUserInfo({ ...userInfo, acceptedTOS: true });
+            axios.post('/api/user/update/', {
+              acceptedTOS: true,
+            });
+          } else {
+            setIsTOSModalOpen(true);
+          }
         } else {
-          setIsTOSModalOpen(true);
+          localStorage.setItem('acceptedTOS', JSON.stringify(true));
         }
       } else {
-        localStorage.setItem('acceptedTOS', JSON.stringify(true));
+        if (!shown) setIsTOSModalOpen(true);
       }
-    } else {
-      if (!shown) setIsTOSModalOpen(true);
+    } catch (e) {
+      console.log('unable to get current user terms of service state', e);
+    }
+  }, [userInfo]);
+
+  // ENTITY NAME TO SPONSORS
+  useEffect(() => {
+    if (userInfo && userInfo.currentSponsor) {
+      if (!userInfo.currentSponsor.entityName) {
+        setIsEntityModalOpen(true);
+      }
     }
   }, [userInfo]);
 
@@ -216,11 +244,15 @@ function App({ Component, pageProps: { session, ...pageProps } }: AppProps) {
                 isOpen={isFeatureModalOpen}
                 onClose={handleFeatureClose}
               />
+              <EntityNameModal
+                isOpen={isEntityModalOpen}
+                onClose={handleEntityClose}
+              />
+              <MyApp Component={Component} pageProps={pageProps} />
               <TermsOfServices
                 isOpen={isTOSModalOpen}
                 onClose={handleTOSClose}
               />
-              <MyApp Component={Component} pageProps={pageProps} />
             </ChakraProvider>
           </SessionProvider>
         </PostHogProvider>
