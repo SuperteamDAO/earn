@@ -9,6 +9,7 @@ import {
   TagLabel,
   Text,
 } from '@chakra-ui/react';
+import { type GrantApplicationStatus } from '@prisma/client';
 import debounce from 'lodash.debounce';
 import React, {
   type Dispatch,
@@ -85,12 +86,7 @@ export const ApplicationList = ({
         </Flex>
         {applications.map((application) => {
           const { bg, color } =
-            application?.applicationStatus !== 'Pending'
-              ? colorMap[application?.applicationStatus]
-              : colorMap[application?.label] || {
-                  bg: 'gray.100',
-                  color: 'gray.600',
-                };
+            colorMap[application?.applicationStatus as GrantApplicationStatus];
           return (
             <Flex
               key={application?.id}
@@ -151,9 +147,7 @@ export const ApplicationList = ({
                   textTransform={'capitalize'}
                   whiteSpace={'nowrap'}
                 >
-                  {application?.applicationStatus !== 'Pending'
-                    ? application?.applicationStatus
-                    : application?.label}
+                  {application?.applicationStatus}
                 </TagLabel>
               </Tag>
             </Flex>

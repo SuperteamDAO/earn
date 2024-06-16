@@ -23,7 +23,6 @@ import { userStore } from '@/store/user';
 import { truncatePublicKey } from '@/utils/truncatePublicKey';
 
 import { type GrantApplicationWithUser } from '../../types';
-import { RecordPaymentButton } from './RecordPaymentButton';
 
 interface GrantPaymentDetailProps {
   tranche: number;
@@ -283,11 +282,6 @@ export const PaymentsHistoryTab = ({
                     </Td>
                     <Td px={0} isNumeric>
                       <Flex align="center" gap={2}>
-                        <RecordPaymentButton
-                          applicationId="1"
-                          buttonStyle={{ size: 'sm' }}
-                        />
-
                         <Box
                           as="span"
                           transform={

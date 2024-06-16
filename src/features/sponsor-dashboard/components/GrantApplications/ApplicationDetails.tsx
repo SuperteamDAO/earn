@@ -12,26 +12,14 @@ import {
   Flex,
   Image,
   Link,
-  Menu,
-  MenuButton,
-  MenuItem,
-  MenuList,
-  Tag,
-  TagLabel,
   Text,
   Tooltip,
   useDisclosure,
 } from '@chakra-ui/react';
-import { type SubmissionLabels } from '@prisma/client';
-import axios from 'axios';
 import NextLink from 'next/link';
 import React, { type Dispatch, type SetStateAction } from 'react';
 import { FaDiscord } from 'react-icons/fa';
-import {
-  MdArrowDropDown,
-  MdOutlineAccountBalanceWallet,
-  MdOutlineMail,
-} from 'react-icons/md';
+import { MdOutlineAccountBalanceWallet, MdOutlineMail } from 'react-icons/md';
 
 import { EarnAvatar } from '@/components/shared/EarnAvatar';
 import { tokenList } from '@/constants';
@@ -39,12 +27,9 @@ import { type Grant } from '@/features/grants';
 import { truncatePublicKey } from '@/utils/truncatePublicKey';
 import { truncateString } from '@/utils/truncateString';
 
-import { labelMenuOptions } from '../../constants';
 import { type GrantApplicationWithUser } from '../../types';
-import { colorMap } from '../../utils';
 import { ApproveModal } from './Modals/ApproveModal';
 import { RejectModal } from './Modals/RejectModal';
-import { RecordPaymentButton } from './RecordPaymentButton';
 
 interface Props {
   grant: Grant | null;
@@ -86,37 +71,6 @@ export const ApplicationDetails = ({
   selectedApplication,
   setSelectedApplication,
 }: Props) => {
-  const selectLabel = async (
-    label: SubmissionLabels,
-    id: string | undefined,
-  ) => {
-    try {
-      await axios.post(`/api/grantApplication/updateLabel/`, {
-        label,
-        id,
-      });
-      const applicationIndex = applications.findIndex((s) => s.id === id);
-      if (applicationIndex >= 0) {
-        const updatedApplication: GrantApplicationWithUser = {
-          ...(applications[applicationIndex] as GrantApplicationWithUser),
-          label,
-        };
-        const newApplications = [...applications];
-        newApplications[applicationIndex] = updatedApplication;
-        setApplications(newApplications);
-        setSelectedApplication(updatedApplication);
-      }
-    } catch (e) {
-      console.log(e);
-    }
-  };
-
-  let bg, color;
-
-  if (applications.length > 0) {
-    ({ bg, color } = colorMap[selectedApplication?.label as SubmissionLabels]);
-  }
-
   const isPending = selectedApplication?.applicationStatus === 'Pending';
   const isApproved = selectedApplication?.applicationStatus === 'Approved';
 
@@ -210,66 +164,6 @@ export const ApplicationDetails = ({
             >
               {isPending && (
                 <>
-                  <Menu>
-                    <MenuButton
-                      as={Button}
-                      color="brand.slate.500"
-                      fontWeight={500}
-                      textTransform="capitalize"
-                      bg="transparent"
-                      borderWidth={'1px'}
-                      borderColor="brand.slate.300"
-                      _hover={{ backgroundColor: 'transparent' }}
-                      _active={{
-                        backgroundColor: 'transparent',
-                        borderWidth: '1px',
-                      }}
-                      _expanded={{ borderColor: 'brand.purple' }}
-                      pointerEvents={isPending ? 'all' : 'none'}
-                      isDisabled={!isPending}
-                      rightIcon={<MdArrowDropDown />}
-                    >
-                      <Tag px={3} py={1} bg={bg} rounded="full">
-                        <TagLabel
-                          w="full"
-                          color={color}
-                          fontSize={'13px'}
-                          textAlign={'center'}
-                          textTransform={'capitalize'}
-                          whiteSpace={'nowrap'}
-                        >
-                          {selectedApplication?.label || 'Select Option'}
-                        </TagLabel>
-                      </Tag>
-                    </MenuButton>
-                    <MenuList borderColor="brand.slate.300">
-                      {labelMenuOptions.map((option) => (
-                        <MenuItem
-                          key={option.value}
-                          _focus={{ bg: 'brand.slate.100' }}
-                          onClick={() =>
-                            selectLabel(
-                              option.value as SubmissionLabels,
-                              selectedApplication?.id,
-                            )
-                          }
-                        >
-                          <Tag px={3} py={1} bg={option.bg} rounded="full">
-                            <TagLabel
-                              w="full"
-                              color={option.color}
-                              fontSize={'11px'}
-                              textAlign={'center'}
-                              textTransform={'capitalize'}
-                              whiteSpace={'nowrap'}
-                            >
-                              {option.label}
-                            </TagLabel>
-                          </Tag>
-                        </MenuItem>
-                      ))}
-                    </MenuList>
-                  </Menu>
                   <Button
                     color="#079669"
                     bg="#ECFEF6"
@@ -297,10 +191,6 @@ export const ApplicationDetails = ({
                     Reject
                   </Button>
                 </>
-              )}
-
-              {isApproved && (
-                <RecordPaymentButton applicationId={selectedApplication.id} />
               )}
             </Flex>
           </Flex>

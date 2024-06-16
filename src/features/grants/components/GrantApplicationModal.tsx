@@ -21,7 +21,6 @@ import {
   useSteps,
   VStack,
 } from '@chakra-ui/react';
-import { PublicKey } from '@solana/web3.js';
 import axios from 'axios';
 import dayjs from 'dayjs';
 import { useState } from 'react';
@@ -33,6 +32,7 @@ import {
 } from '@/components/Form/TextAreaHelpers';
 import { tokenList } from '@/constants';
 import { userStore } from '@/store/user';
+import { validateSolAddress } from '@/utils/validateSolAddress';
 
 import { type Grant } from '../types';
 
@@ -74,21 +74,6 @@ export const GrantApplicationModal = ({
   } = useForm();
 
   const { userInfo, setUserInfo } = userStore();
-
-  function validateSolAddress(address: string) {
-    try {
-      const pubkey = new PublicKey(address);
-      const isSolana = PublicKey.isOnCurve(pubkey.toBuffer());
-      if (!isSolana) {
-        setPublicKeyError('Please enter a valid Solana address');
-        return false;
-      }
-      return true;
-    } catch (err) {
-      setPublicKeyError('Please enter a valid Solana address');
-      return false;
-    }
-  }
 
   const submitApplication = async (data: any) => {
     setIsLoading(true);
@@ -324,7 +309,9 @@ export const GrantApplicationModal = ({
                   placeholder="Add your Solana wallet address"
                   register={register}
                   errors={errors}
-                  validate={validateSolAddress}
+                  validate={(address: string) =>
+                    validateSolAddress(address, setPublicKeyError)
+                  }
                   defaultValue={userInfo?.publicKey}
                   isRequired
                 />

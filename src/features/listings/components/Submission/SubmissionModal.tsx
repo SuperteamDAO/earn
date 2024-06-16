@@ -16,7 +16,6 @@ import {
   Text,
   VStack,
 } from '@chakra-ui/react';
-import { PublicKey } from '@solana/web3.js';
 import axios from 'axios';
 import { usePostHog } from 'posthog-js/react';
 import { useEffect, useState } from 'react';
@@ -29,6 +28,7 @@ import {
 import { tokenList } from '@/constants';
 import { randomSubmissionCommentGenerator } from '@/features/comments';
 import { userStore } from '@/store/user';
+import { validateSolAddress } from '@/utils/validateSolAddress';
 
 import { type Listing } from '../../types';
 import { QuestionHandler } from './QuestionHandler';
@@ -140,21 +140,6 @@ export const SubmissionModal = ({
 
     fetchData();
   }, [id, editMode, reset]);
-
-  function validateSolAddress(address: string) {
-    try {
-      const pubkey = new PublicKey(address);
-      const isSolana = PublicKey.isOnCurve(pubkey.toBuffer());
-      if (!isSolana) {
-        setPublicKeyError('Please enter a valid Solana address');
-        return false;
-      }
-      return true;
-    } catch (err) {
-      setPublicKeyError('Please enter a valid Solana address');
-      return false;
-    }
-  }
 
   const submitSubmissions = async (data: any) => {
     posthog.capture('confirmed_submission');
@@ -453,7 +438,9 @@ export const SubmissionModal = ({
                 placeholder="Add your Solana wallet address"
                 register={register}
                 errors={errors}
-                validate={validateSolAddress}
+                validate={(address: string) =>
+                  validateSolAddress(address, setPublicKeyError)
+                }
                 defaultValue={userInfo?.publicKey}
               />
               <Text mt={1} ml={1} color="red" fontSize="14px">

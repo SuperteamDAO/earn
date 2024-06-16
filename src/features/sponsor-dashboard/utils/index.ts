@@ -6,4 +6,5 @@ export const colorMap = {
   winner: { bg: 'green.100', color: 'green.800' },
   Approved: { bg: 'green.100', color: 'green.800' },
   Rejected: { bg: 'red.100', color: 'red.600' },
+  Pending: { bg: 'orange.100', color: 'orange.800' },
 };
