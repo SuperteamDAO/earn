@@ -79,7 +79,7 @@ export const UserStatsBanner = () => {
       py={6}
       color="white"
       bgGradient="linear(to-r, #4C52E2, #4338CA)"
-      rounded="2xl"
+      rounded="md"
     >
       <Flex align="center" gap={4}>
         <EarnAvatar id={userInfo.id} avatar={userInfo.photo} size="52px" />
