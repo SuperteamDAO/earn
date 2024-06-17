@@ -91,12 +91,7 @@ export const UserStatsBanner = () => {
       rounded="md"
     >
       <Flex align="center" gap={4}>
-        <EarnAvatar
-          borderRadius="6px"
-          id={userInfo.id}
-          avatar={userInfo.photo}
-          size="52px"
-        />
+        <EarnAvatar id={userInfo.id} avatar={userInfo.photo} size="52px" />
         <VStack align="start" gap={0}>
           <Text
             maxW="25rem"
