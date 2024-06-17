@@ -39,7 +39,7 @@ export const DesktopNavbar = ({ onLoginOpen, onSearchOpen }: Props) => {
 
   return (
     <Flex
-      display={{ base: 'none', xl: 'flex' }}
+      display={{ base: 'none', lg: 'flex' }}
       px={{ base: '2', lg: 6 }}
       color="brand.slate.500"
       bg="white"
@@ -48,7 +48,7 @@ export const DesktopNavbar = ({ onLoginOpen, onSearchOpen }: Props) => {
       id="desktop-navbar"
     >
       <Flex justify={'space-between'} w="100%" maxW={maxWValue} mx="auto">
-        <Flex align="center" gap={{ base: 3, xl: 6 }}>
+        <Flex align="center" gap={{ base: 3, lg: 6 }}>
           <Link
             as={NextLink}
             alignItems={'center'}

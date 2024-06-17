@@ -144,10 +144,8 @@ export const HowItWorks = () => {
     getStats();
   }, []);
 
-  if (!loading && !!userInfo?.totalEarnedInUSD) return null;
-
   return (
-    <AuthWrapper>
+    <AuthWrapper style={{ pointerEvents: loading ? 'none' : 'auto' }}>
       <Box opacity={loading ? '0.2' : '1'}>
         <Text mb={'1.5rem'} color={'gray.400'} fontWeight={500}>
           HOW IT WORKS

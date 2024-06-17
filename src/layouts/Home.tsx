@@ -103,6 +103,7 @@ export function Home({ children, type, st }: HomeProps) {
                 </>
               )}
               {type === 'category' && <NavTabs />}
+              {type === 'region' && <NavTabs mt={1} />}
               {children}
             </Box>
           </Flex>

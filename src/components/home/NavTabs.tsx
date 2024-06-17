@@ -1,4 +1,4 @@
-import { Flex, Link } from '@chakra-ui/react';
+import { Flex, type FlexProps, Link } from '@chakra-ui/react';
 import NextLink from 'next/link';
 import { useRouter } from 'next/router';
 import { usePostHog } from 'posthog-js/react';
@@ -50,7 +50,7 @@ function PillTab({ href, children, altActive, phEvent }: PillTabProps) {
   );
 }
 
-export function NavTabs() {
+export function NavTabs({ ...flexProps }: FlexProps) {
   const { userInfo } = userStore();
   const [superteam, setSuperteam] = useState<(typeof Superteams)[0] | null>(
     null,
@@ -64,14 +64,21 @@ export function NavTabs() {
     }
   }, [userInfo]);
   return (
-    <Flex align="center" wrap="wrap" rowGap={2} columnGap={3} mb={6}>
-      <PillTab href="/" altActive={['/all/']} phEvent="all_navbar">
+    <Flex
+      align="center"
+      wrap="wrap"
+      rowGap={2}
+      columnGap={3}
+      mb={6}
+      {...flexProps}
+    >
+      <PillTab href="/" altActive={['/all/']} phEvent="all_navpill">
         All Opportunities
       </PillTab>
       {superteam && (
         <PillTab
           href={`/regions/${superteam.region.toLowerCase()}/`}
-          phEvent={`${superteam.region.toLowerCase()}_navbar`}
+          phEvent={`${superteam.region.toLowerCase()}_navpill`}
         >
           {superteam.code && <UserFlag location={superteam.code} isCode />}
           {superteam.displayValue}
@@ -82,7 +89,7 @@ export function NavTabs() {
           <PillTab
             altActive={navItem.altActive}
             href={navItem.href}
-            phEvent={navItem.posthog}
+            phEvent={navItem.pillPH}
             key={navItem.label}
           >
             {navItem.label}

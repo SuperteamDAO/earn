@@ -192,7 +192,7 @@ export const MobileNavbar = ({ onLoginOpen }: Props) => {
         <Flex
           align="center"
           justify="space-between"
-          display={{ base: 'flex', xl: 'none' }}
+          display={{ base: 'flex', lg: 'none' }}
           px={1}
           py={2}
           bg="white"
@@ -253,7 +253,7 @@ export const MobileNavbar = ({ onLoginOpen }: Props) => {
       <Flex
         align={'center'}
         justify={'space-between'}
-        display={{ base: 'flex', xl: 'none' }}
+        display={{ base: 'flex', lg: 'none' }}
         px={{ base: 3, sm: 4 }}
         py={0}
         bg={'#F8FAFC'}

@@ -24,7 +24,7 @@ export function BottomBar({ onSearchOpen }: Props) {
   return (
     <Flex
       justify="space-between"
-      display={{ base: 'flex', md: 'none' }}
+      display={{ base: 'flex', lg: 'none' }}
       w="full"
       px={4}
       py={2}

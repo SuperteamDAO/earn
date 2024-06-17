@@ -24,29 +24,33 @@ export const LISTING_NAV_ITEMS: Array<NavItem> = [
   },
 ];
 
-export const CATEGORY_NAV_ITEMS: Array<NavItem> = [
+export const CATEGORY_NAV_ITEMS: Array<NavItem & { pillPH: string }> = [
   {
     label: 'Content',
     href: '/category/content/',
     posthog: 'content_navbar',
+    pillPH: 'content_navpill',
     altActive: ['/category/design/all/'],
   },
   {
     label: 'Design',
     href: '/category/design/',
     posthog: 'design_navbar',
+    pillPH: 'design_navpill',
     altActive: ['/category/design/all/'],
   },
   {
     label: 'Development',
     href: '/category/development/',
     posthog: 'development_navbar',
+    pillPH: 'development_navpill',
     altActive: ['/category/development/all/'],
   },
   {
     label: 'Other',
     href: '/category/other/',
     posthog: 'other_navbar',
+    pillPH: 'other_navpill',
     altActive: ['/category/other/all/'],
   },
 ];
