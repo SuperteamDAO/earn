@@ -196,19 +196,18 @@ export const ListingCard = ({
                     />
                   )}
                   <Flex align="baseline">
-                    <Text
-                      color="brand.slate.600"
-                      fontSize="xs"
-                      fontWeight="600"
-                      whiteSpace="nowrap"
-                    >
-                      <CompensationAmount
-                        compensationType={compensationType}
-                        maxRewardAsk={maxRewardAsk}
-                        minRewardAsk={minRewardAsk}
-                        rewardAmount={rewardAmount}
-                      />
-                    </Text>
+                    <CompensationAmount
+                      compensationType={compensationType}
+                      maxRewardAsk={maxRewardAsk}
+                      minRewardAsk={minRewardAsk}
+                      rewardAmount={rewardAmount}
+                      textStyle={{
+                        color: 'brand.slate.600',
+                        fontSize: ['xs', 'xs', 'md', 'md'],
+                        fontWeight: 600,
+                        whiteSpace: 'nowrap',
+                      }}
+                    />
                     {compensationType !== 'variable' && (
                       <Text color="gray.400" fontSize="xs" fontWeight={500}>
                         {token}
@@ -324,19 +323,18 @@ export const ListingCard = ({
             />
           )}
           <Flex align="baseline" gap={1}>
-            <Text
-              color="brand.slate.600"
-              fontSize={['xs', 'xs', 'md', 'md']}
-              fontWeight="600"
-              whiteSpace="nowrap"
-            >
-              <CompensationAmount
-                compensationType={compensationType}
-                maxRewardAsk={maxRewardAsk}
-                minRewardAsk={minRewardAsk}
-                rewardAmount={rewardAmount}
-              />
-            </Text>
+            <CompensationAmount
+              compensationType={compensationType}
+              maxRewardAsk={maxRewardAsk}
+              minRewardAsk={minRewardAsk}
+              rewardAmount={rewardAmount}
+              textStyle={{
+                color: 'brand.slate.600',
+                fontSize: ['xs', 'xs', 'md', 'md'],
+                fontWeight: 600,
+                whiteSpace: 'nowrap',
+              }}
+            />
             {compensationType !== 'variable' && (
               <Text
                 color="gray.400"
@@ -464,19 +462,18 @@ export const ListingCardMobile = ({
                       />
                     )}
                     <Flex align="baseline">
-                      <Text
-                        color={'brand.slate.600'}
-                        fontSize={'xs'}
-                        fontWeight={'600'}
-                        whiteSpace={'nowrap'}
-                      >
-                        <CompensationAmount
-                          compensationType={compensationType}
-                          maxRewardAsk={maxRewardAsk}
-                          minRewardAsk={minRewardAsk}
-                          rewardAmount={rewardAmount}
-                        />
-                      </Text>
+                      <CompensationAmount
+                        compensationType={compensationType}
+                        maxRewardAsk={maxRewardAsk}
+                        minRewardAsk={minRewardAsk}
+                        rewardAmount={rewardAmount}
+                        textStyle={{
+                          color: 'brand.slate.600',
+                          fontSize: 'xs',
+                          fontWeight: 600,
+                          whiteSpace: 'nowrap',
+                        }}
+                      />
                       {compensationType !== 'variable' && (
                         <Text
                           color={'gray.400'}

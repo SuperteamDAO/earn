@@ -1,4 +1,12 @@
-import { Flex, Skeleton, Text, useMediaQuery, VStack } from '@chakra-ui/react';
+import {
+  Box,
+  Divider,
+  Flex,
+  Skeleton,
+  Text,
+  useMediaQuery,
+  VStack,
+} from '@chakra-ui/react';
 import axios from 'axios';
 import { useSession } from 'next-auth/react';
 import { useEffect, useState } from 'react';
@@ -19,16 +27,16 @@ interface StatProps {
 }
 const Stat = ({ value, label }: StatProps) => {
   return (
-    <VStack align="start" gap={0}>
+    <Box>
       <Text fontWeight={600}>{value}</Text>
       <Text
-        color="brand.purple.400"
-        fontSize={{ base: 'sm', md: 'unset' }}
+        color="#c4c2ef"
+        fontSize={{ base: 'xs', md: 'sm' }}
         fontWeight={500}
       >
         {label}
       </Text>
-    </VStack>
+    </Box>
   );
 };
 
@@ -71,18 +79,24 @@ export const UserStatsBanner = () => {
 
   return (
     <Flex
-      align={'center'}
+      align={{ base: 'unset', md: 'center' }}
       justify="space-between"
       wrap="wrap"
+      direction={{ base: 'column', md: 'row' }}
       gap={4}
-      px={8}
+      px={{ base: 6, md: 8 }}
       py={6}
       color="white"
       bgGradient="linear(to-r, #4C52E2, #4338CA)"
       rounded="md"
     >
       <Flex align="center" gap={4}>
-        <EarnAvatar id={userInfo.id} avatar={userInfo.photo} size="52px" />
+        <EarnAvatar
+          borderRadius="6px"
+          id={userInfo.id}
+          avatar={userInfo.photo}
+          size="52px"
+        />
         <VStack align="start" gap={0}>
           <Text
             maxW="25rem"
@@ -93,13 +107,19 @@ export const UserStatsBanner = () => {
           >
             Welcome back, {userInfo.firstName}
           </Text>
-          <Text color="brand.purple.300" fontSize={{ base: 'xs', md: 'unset' }}>
+          <Text color="#c4c2ef" fontSize={'sm'}>
             We’re so glad to have you on Earn
           </Text>
         </VStack>
       </Flex>
+      <Divider display={{ md: 'none' }} borderColor={'#7671da'} />
       {stats && (userInfo.totalEarnedInUSD ?? 0) > 0 && (
-        <Flex gap={{ base: 4, sm: 8 }}>
+        <Flex
+          justify={{ base: 'space-between', md: 'unset' }}
+          gap={{ base: 4, sm: 8 }}
+          mx={0.5}
+          mt={{ base: -1.5, md: 0 }}
+        >
           <Stat
             value={'$' + formatNumberWithSuffix(userInfo.totalEarnedInUSD ?? 0)}
             label="Total Earned"
