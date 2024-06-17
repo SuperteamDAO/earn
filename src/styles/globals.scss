@@ -97,11 +97,11 @@ body {
 
 #reset-des pre {
   white-space: pre-wrap;
-  word-break: break-all; 
+  word-break: break-all;
 }
 
 #reset-des p {
-  white-space: pre-wrap; 
+  white-space: pre-wrap;
 }
 
 code {
@@ -247,4 +247,14 @@ pre {
   100% {
     transform: translateX(-100%);
   }
+}
+
+html {
+  overflow: hidden;
+  height: 100%;
+}
+
+body {
+  height: 100%;
+  overflow: auto;
 }

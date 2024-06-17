@@ -1,15 +1,9 @@
-import { Box, Flex } from '@chakra-ui/react';
+import { Box } from '@chakra-ui/react';
 import axios from 'axios';
 import type { NextPageContext } from 'next';
 import { useEffect, useState } from 'react';
 
-import { EmptySection } from '@/components/shared/EmptySection';
-import {
-  type Listing,
-  ListingCard,
-  ListingCardSkeleton,
-  ListingSection,
-} from '@/features/listings';
+import { type Listing, ListingTabs } from '@/features/listings';
 import { Home } from '@/layouts/Home';
 import { Meta } from '@/layouts/Meta';
 
@@ -60,40 +54,22 @@ function AllCategoryListingsPage({ slug }: { slug: string }) {
   const metaDescription = `Find the latest ${slug.toLowerCase()} bounties and grants for freelancers and builders in the crypto space on Superteam Earn.`;
   const canonicalURL = `https://earn.superteam.fun/category/${slug}/all`;
 
-  const formattedSlug =
-    slug.charAt(0).toUpperCase() + slug.slice(1).toLowerCase();
-
   return (
-    <Home type="home">
+    <Home type="category">
       <Meta
         title={title}
         description={metaDescription}
         canonical={canonicalURL}
       />
       <Box w={'100%'}>
-        <ListingSection
-          type="bounties"
-          title={`${formattedSlug} Gigs`}
-          sub="Bite sized tasks for freelancers"
+        <ListingTabs
+          bounties={listings.bounties}
+          isListingsLoading={isListingsLoading}
           emoji="/assets/home/emojis/moneyman.png"
-        >
-          {isListingsLoading &&
-            Array.from({ length: 8 }, (_, index) => (
-              <ListingCardSkeleton key={index} />
-            ))}
-          {!isListingsLoading && !listings?.bounties?.length && (
-            <Flex align="center" justify="center" mt={8}>
-              <EmptySection
-                title="No listings available!"
-                message="Subscribe to notifications to get notified about new listings."
-              />
-            </Flex>
-          )}
-          {!isListingsLoading &&
-            listings?.bounties?.map((bounty) => {
-              return <ListingCard key={bounty.id} bounty={bounty} />;
-            })}
-        </ListingSection>
+          title="Freelance Gigs"
+          viewAllLink="/all"
+          checkLanguage
+        />
       </Box>
     </Home>
   );

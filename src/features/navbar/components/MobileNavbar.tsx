@@ -1,4 +1,4 @@
-import { HamburgerIcon, SearchIcon } from '@chakra-ui/icons';
+import { HamburgerIcon } from '@chakra-ui/icons';
 import {
   AbsoluteCenter,
   Box,
@@ -26,7 +26,6 @@ import { userStore } from '@/store/user';
 
 import {
   CATEGORY_NAV_ITEMS,
-  HACKATHON_NAV_ITEMS,
   LISTING_NAV_ITEMS,
   renderLabel,
 } from '../constants';
@@ -34,10 +33,9 @@ import { NavLink } from './NavLink';
 
 interface Props {
   onLoginOpen: () => void;
-  onSearchOpen: () => void;
 }
 
-export const MobileNavbar = ({ onLoginOpen, onSearchOpen }: Props) => {
+export const MobileNavbar = ({ onLoginOpen }: Props) => {
   const {
     isOpen: isDrawerOpen,
     onOpen: onDrawerOpen,
@@ -122,7 +120,7 @@ export const MobileNavbar = ({ onLoginOpen, onSearchOpen }: Props) => {
                 </Button>
               )}
 
-            <Flex className="ph-no-capture" direction={'column'} mt={5}>
+            {/* <Flex className="ph-no-capture" direction={'column'} mt={5}>
               {HACKATHON_NAV_ITEMS?.map((navItem) => {
                 const isCurrent = `${navItem.href}` === router.asPath;
                 return (
@@ -138,7 +136,7 @@ export const MobileNavbar = ({ onLoginOpen, onSearchOpen }: Props) => {
                   />
                 );
               })}
-            </Flex>
+            </Flex> */}
             <Divider my={2} borderColor={'brand.slate.300'} />
             <Flex className="ph-no-capture" direction={'column'}>
               {LISTING_NAV_ITEMS?.map((navItem) => {
@@ -194,7 +192,7 @@ export const MobileNavbar = ({ onLoginOpen, onSearchOpen }: Props) => {
         <Flex
           align="center"
           justify="space-between"
-          display={{ base: 'flex', xl: 'none' }}
+          display={{ base: 'flex', lg: 'none' }}
           px={1}
           py={2}
           bg="white"
@@ -211,23 +209,6 @@ export const MobileNavbar = ({ onLoginOpen, onSearchOpen }: Props) => {
               icon={<HamburgerIcon h={6} w={6} color="brand.slate.500" />}
               onClick={onDrawerOpen}
             />
-
-            {router.pathname !== '/search' && (
-              <IconButton
-                className="ph-no-capture"
-                gap={2}
-                color="brand.slate.400"
-                fontWeight={400}
-                border={'none'}
-                borderColor={'brand.slate.300'}
-                _hover={{ bg: 'transparent' }}
-                _active={{ bg: 'transparent' }}
-                aria-label="Open Search"
-                icon={<SearchIcon />}
-                onClick={onSearchOpen}
-                variant="outline"
-              />
-            )}
           </Flex>
 
           <MobileDrawer />
@@ -272,12 +253,19 @@ export const MobileNavbar = ({ onLoginOpen, onSearchOpen }: Props) => {
       <Flex
         align={'center'}
         justify={'space-between'}
-        display={{ base: 'flex', xl: 'none' }}
+        display={{ base: 'flex', lg: 'none' }}
         px={{ base: 3, sm: 4 }}
-        py={2}
+        py={0}
         bg={'#F8FAFC'}
       >
-        <Flex className="ph-no-capture" gap={{ base: 2, sm: 8, md: 12 }}>
+        <Flex
+          className="ph-no-capture"
+          justify="space-evenly"
+          gap={{ base: 8, sm: 8, md: 12 }}
+          w="full"
+          mx="auto"
+          pl={1}
+        >
           {LISTING_NAV_ITEMS?.map((navItem) => {
             const isCurrent = `${navItem.href}` === router.asPath;
             return (
@@ -290,38 +278,11 @@ export const MobileNavbar = ({ onLoginOpen, onSearchOpen }: Props) => {
                 href={navItem.href ?? '#'}
                 label={renderLabel(navItem)}
                 isActive={isCurrent}
-                fontSize={{ base: '12px', xs: '13px', md: '15px' }}
+                fontSize={'sm'}
                 fontWeight={500}
                 borderBottom={'none'}
                 h={'auto'}
-              />
-            );
-          })}
-        </Flex>
-        <Divider
-          display={{ base: 'flex', md: 'none' }}
-          h={5}
-          borderWidth={'0.5px'}
-          borderColor={'brand.slate.400'}
-          orientation="vertical"
-        />
-        <Flex className="ph-no-capture" gap={{ base: 2, sm: 8, md: 12 }}>
-          {CATEGORY_NAV_ITEMS?.map((navItem) => {
-            const isCurrent = `${navItem.href}` === router.asPath;
-            return (
-              <NavLink
-                onClick={() => {
-                  posthog.capture(navItem.posthog);
-                }}
-                className="ph-no-capture"
-                key={navItem.label}
-                href={navItem.href ?? '#'}
-                label={renderLabel(navItem)}
-                isActive={isCurrent}
-                fontSize={{ base: '11.5px', xs: '13px', md: '15px' }}
-                fontWeight={500}
-                h={'auto'}
-                borderBottom={'none'}
+                py={{ base: 2, md: 3 }}
               />
             );
           })}

@@ -57,11 +57,15 @@ export interface Listing {
   minRewardAsk?: number;
   maxRewardAsk?: number;
   winnersAnnouncedAt?: string;
+  _count?: {
+    Comments?: number;
+  };
 }
 
 export interface ListingWithSubmissions extends Listing {
   _count?: {
     Submission?: number;
+    Comments?: number;
   };
 }
 

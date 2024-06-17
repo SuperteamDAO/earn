@@ -4,6 +4,59 @@ import type { NextApiRequest, NextApiResponse } from 'next';
 import { prisma } from '@/prisma';
 import { dayjs } from '@/utils/dayjs';
 
+interface Listing {
+  id?: string;
+  winnersAnnouncedAt?: Date | null;
+  deadline: Date | null;
+  isFeatured: boolean;
+}
+
+function sortListings(listings: Listing[]): Listing[] {
+  const today = new Date();
+
+  return listings.sort((a, b) => {
+    const deadlineA = a.deadline;
+    const deadlineB = b.deadline;
+
+    if (deadlineA && deadlineA > today && deadlineB && deadlineB > today) {
+      // Sort by isFeatured descending if deadline is greater than today
+      if (b.isFeatured !== a.isFeatured) {
+        return b.isFeatured ? 1 : -1;
+      }
+
+      // Sort by deadline ascending (earliest deadline first) if isFeatured is the same
+      return deadlineA.getTime() - deadlineB.getTime();
+    }
+
+    if (deadlineA && deadlineA <= today && deadlineB && deadlineB <= today) {
+      // Sort by deadline descending if deadline is less than or equal to today
+      if (deadlineA.getTime() !== deadlineB.getTime()) {
+        return deadlineB.getTime() - deadlineA.getTime();
+      }
+
+      // Sort by winnersAnnouncedAt if deadline is less than or equal to today and winnersAnnouncedAt exists
+      const winnersAnnouncedAtA = a.winnersAnnouncedAt;
+      const winnersAnnouncedAtB = b.winnersAnnouncedAt;
+      if (winnersAnnouncedAtA && winnersAnnouncedAtB) {
+        return winnersAnnouncedAtB.getTime() - winnersAnnouncedAtA.getTime();
+      } else if (winnersAnnouncedAtA && !winnersAnnouncedAtB) {
+        return -1;
+      } else if (!winnersAnnouncedAtA && winnersAnnouncedAtB) {
+        return 1;
+      }
+    }
+
+    // Sort listings with earlier deadlines or null deadlines first
+    if (deadlineA === null && deadlineB !== null) {
+      return 1;
+    } else if (deadlineA !== null && deadlineB === null) {
+      return -1;
+    }
+
+    return 0;
+  });
+}
+
 export default async function user(req: NextApiRequest, res: NextApiResponse) {
   const params = req.query;
   const category = params.category as string;
@@ -18,7 +71,7 @@ export default async function user(req: NextApiRequest, res: NextApiResponse) {
   const take = params.take ? parseInt(params.take as string, 10) : 10;
   const deadline = params.deadline as string;
 
-  const result: any = {
+  const result: { bounties: any[]; grants: any[] } = {
     bounties: [],
     grants: [],
   };
@@ -77,13 +130,32 @@ export default async function user(req: NextApiRequest, res: NextApiResponse) {
               logo: true,
             },
           },
+          _count: {
+            select: {
+              Comments: {
+                where: {
+                  isActive: true,
+                  isArchived: false,
+                  replyToId: null,
+                  type: {
+                    not: 'SUBMISSION',
+                  },
+                },
+              },
+            },
+          },
         },
-        orderBy: {
-          deadline: order,
-        },
+        orderBy: [
+          {
+            winnersAnnouncedAt: 'desc',
+          },
+          {
+            deadline: order,
+          },
+        ],
       });
-
-      result.bounties = bounties;
+      //sort bounties by isFeatured
+      result.bounties = sortListings(bounties);
     } else if (category === 'bounties') {
       const bounties = await prisma.bounties.findMany({
         where: {
@@ -109,6 +181,20 @@ export default async function user(req: NextApiRequest, res: NextApiResponse) {
               logo: true,
             },
           },
+          _count: {
+            select: {
+              Comments: {
+                where: {
+                  isActive: true,
+                  isArchived: false,
+                  replyToId: null,
+                  type: {
+                    not: 'SUBMISSION',
+                  },
+                },
+              },
+            },
+          },
         },
         orderBy: {
           deadline: order,
@@ -125,6 +211,7 @@ export default async function user(req: NextApiRequest, res: NextApiResponse) {
       } else {
         result.bounties = bounties.slice(0, take);
       }
+      result.bounties = sortListings(bounties);
     }
 
     if (!category || category === 'all' || category === 'grants') {
