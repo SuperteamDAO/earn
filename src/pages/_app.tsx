@@ -18,6 +18,7 @@ import { Toaster } from 'react-hot-toast';
 import { FeatureModal } from '@/components/modals/FeatureModal';
 import { SolanaWalletProvider } from '@/context/SolanaWallet';
 import { userStore } from '@/store/user';
+import { api } from '@/utils/api';
 import { getURL } from '@/utils/validUrl';
 
 import theme from '../config/chakra.config';
@@ -186,4 +187,4 @@ function App({ Component, pageProps: { session, ...pageProps } }: AppProps) {
   );
 }
 
-export default App;
+export default api.withTRPC(App);
