@@ -1,20 +1,15 @@
-import {
-  Box,
-  Center,
-  Container,
-  Flex,
-  HStack,
-  Image,
-  Text,
-} from '@chakra-ui/react';
+import { Box, Container, Flex, HStack } from '@chakra-ui/react';
 import axios from 'axios';
 import { useRouter } from 'next/router';
 import React, { type ReactNode, useEffect, useState } from 'react';
 
 import { HomeBanner } from '@/components/home/Banner';
 import { CategoryBanner } from '@/components/home/CategoryBanner';
+import { NavTabs } from '@/components/home/NavTabs';
+import { RegionBanner } from '@/components/home/RegionBanner';
 import { HomeSideBar } from '@/components/home/SideBar';
-import { Superteams } from '@/constants/Superteam';
+import { UserStatsBanner } from '@/components/home/UserStatsBanner';
+import { type Superteams } from '@/constants/Superteam';
 import type { User } from '@/interface/user';
 import { Default } from '@/layouts/Default';
 import { Meta } from '@/layouts/Meta';
@@ -27,14 +22,20 @@ interface TotalType {
 interface HomeProps {
   children: ReactNode;
   type: 'home' | 'category' | 'region' | 'niche' | 'feed';
+  st?: (typeof Superteams)[0];
 }
 
-export function Home({ children, type }: HomeProps) {
+type CategoryTypes = 'content' | 'development' | 'design' | 'other';
+
+export function Home({ children, type, st }: HomeProps) {
   const router = useRouter();
 
   const [isTotalLoading, setIsTotalLoading] = useState(true);
   const [recentEarners, setRecentEarners] = useState<User[]>([]);
   const [totals, setTotals] = useState<TotalType>({});
+  const [currentCategory, setCurrentCategory] = useState<CategoryTypes | null>(
+    null,
+  );
 
   const getTotalInfo = async () => {
     try {
@@ -52,11 +53,17 @@ export function Home({ children, type }: HomeProps) {
     getTotalInfo();
   }, []);
 
-  const Skills = ['Development', 'Design', 'Content', 'Other'];
-
-  const matchedTeam = Superteams.find(
-    (e) => e.region?.toLowerCase() === String(router.query.slug).toLowerCase(),
-  );
+  useEffect(() => {
+    if (router.asPath.includes('/category/development/')) {
+      setCurrentCategory('development');
+    } else if (router.asPath.includes('/category/design/')) {
+      setCurrentCategory('design');
+    } else if (router.asPath.includes('/category/content/')) {
+      setCurrentCategory('content');
+    } else if (router.asPath.includes('/category/other/')) {
+      setCurrentCategory('other');
+    }
+  }, [router]);
 
   return (
     <Default
@@ -69,6 +76,10 @@ export function Home({ children, type }: HomeProps) {
         />
       }
     >
+      {type === 'region' && st && <RegionBanner st={st} />}
+      {type === 'category' && currentCategory && (
+        <CategoryBanner category={currentCategory} />
+      )}
       <Container maxW={'8xl'} mx="auto" px={{ base: 3, md: 4 }}>
         <HStack align="start" justify="space-between">
           <Flex
@@ -83,63 +94,16 @@ export function Home({ children, type }: HomeProps) {
               lg: 'blackAlpha.200',
             }}
           >
-            <Box w="full" pr={{ base: 0, lg: 6 }}>
-              {type === 'home' && <HomeBanner userCount={totals.totalUsers} />}
-              {type === 'category' && (
-                <CategoryBanner
-                  type={
-                    Skills.find(
-                      (skill) =>
-                        skill.toLocaleLowerCase() ===
-                        router?.query?.slug?.toString().toLocaleLowerCase(),
-                    ) as string
-                  }
-                />
+            <Box w="full" pt={1} pr={{ base: 0, lg: 6 }}>
+              {type === 'home' && (
+                <>
+                  <NavTabs />
+                  <HomeBanner userCount={totals.totalUsers} />
+                  <UserStatsBanner />
+                </>
               )}
-              {type === 'region' && matchedTeam && (
-                <Box>
-                  <Flex
-                    direction={{ md: 'row', base: 'column' }}
-                    w={{ md: 'brand.120', base: '100%' }}
-                    h={{ md: '7.375rem', base: 'fit-content' }}
-                    mx={'auto'}
-                    mb={8}
-                    p={6}
-                    bg={`url(${matchedTeam.bg})`}
-                    bgSize={'cover'}
-                    rounded={10}
-                  >
-                    <Center
-                      w={14}
-                      h={14}
-                      mr={3}
-                      bg={matchedTeam.color}
-                      rounded={'md'}
-                    >
-                      <Image
-                        borderRadius={'5px'}
-                        alt="Category icon"
-                        src={matchedTeam.icons}
-                      />
-                    </Center>
-                    <Box w={{ md: '80%', base: '100%' }}>
-                      <Text
-                        mt={{ base: 4, md: '0' }}
-                        fontFamily={'var(--font-serif)'}
-                        fontWeight={'700'}
-                      >
-                        {matchedTeam.name}
-                      </Text>
-                      <Text color={'brand.slate.500'} fontSize={'small'}>
-                        Welcome to Superteam {matchedTeam.displayValue} earnings
-                        page — use these opportunities to earn in global
-                        standards and gain membership in the most exclusive
-                        Solana community of {matchedTeam.displayValue}!
-                      </Text>
-                    </Box>
-                  </Flex>
-                </Box>
-              )}
+              {type === 'category' && <NavTabs />}
+              {type === 'region' && <NavTabs mt={1} />}
               {children}
             </Box>
           </Flex>
