@@ -18,9 +18,11 @@ interface Listings {
 const RegionsPage = ({
   slug,
   displayName,
+  st,
 }: {
   slug: string;
   displayName: string;
+  st: (typeof Superteams)[0];
 }) => {
   const [isListingsLoading, setIsListingsLoading] = useState(true);
   const [listings, setListings] = useState<Listings>({
@@ -50,7 +52,7 @@ const RegionsPage = ({
 
   return (
     <>
-      <Home type="region">
+      <Home type="region" st={st}>
         <Meta
           title={`Welcome to Superteam Earn ${displayName} | Discover Bounties and Grants`}
           description={`Welcome to Superteam ${displayName}'s page — Discover bounties and grants and become a part of the global crypto community`}
@@ -120,7 +122,7 @@ export async function getServerSideProps(context: NextPageContext) {
   }
 
   return {
-    props: { slug, displayName },
+    props: { slug, displayName, st },
   };
 }
 

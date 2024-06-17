@@ -37,7 +37,7 @@ const formatter = new Intl.NumberFormat('en-US', {
   currency: 'USD',
 }).format;
 
-export const MAX_SHOW_SKILLS = 5;
+const MAX_SHOW_SKILLS = 5;
 
 interface Props {
   bountyId: string;
