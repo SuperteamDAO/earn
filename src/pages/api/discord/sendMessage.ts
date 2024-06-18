@@ -14,7 +14,7 @@ export default async function handler(
   console.log('initaiting discord api');
 
   try {
-    discord.send('Hello, this is a message sent through a webhook!');
+    await discord.send('Hello, this is a message sent through a webhook!');
     console.log('Message sent');
     return res.send('message sent');
     // discord.once('ready', async () => {
