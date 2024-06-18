@@ -1,5 +1,5 @@
 import { CheckIcon } from '@chakra-ui/icons';
-import { Box, Flex, Image, Text } from '@chakra-ui/react';
+import { Box, Flex, Text } from '@chakra-ui/react';
 import React, { type Dispatch, type SetStateAction } from 'react';
 
 interface Props {
@@ -64,50 +64,5 @@ export const Steps = ({ currentStep, thisStep, label, setStep }: Props) => {
         {label}
       </Text>
     </Box>
-  );
-};
-
-export const VerticalStep = ({
-  currentStep,
-  thisStep,
-  label,
-  sublabel,
-}: Props) => {
-  return (
-    <Flex pos="relative" align={'center'} justify={'center'} gap={3}>
-      <Flex
-        align={'center'}
-        justify="center"
-        w="2.3rem"
-        h="2.3rem"
-        color="white"
-        bg={currentStep >= thisStep ? '#6562FF' : 'transparent'}
-        border={currentStep === thisStep ? 'none' : '1px solid #94A3B8'}
-        borderRadius="50%"
-      >
-        {currentStep > thisStep ? (
-          <Image alt="Tick icon" src={'/assets/icons/white-tick.svg'} />
-        ) : (
-          <Flex>
-            <Text
-              h="100%"
-              color={currentStep === thisStep ? 'white' : '#94A3B8'}
-              fontSize="1rem"
-              textAlign="center"
-            >
-              {thisStep}
-            </Text>
-          </Flex>
-        )}
-      </Flex>
-      <Flex direction={'column'}>
-        <Text color={'#1E293B'} fontSize="1.3rem" fontWeight={600}>
-          {label}
-        </Text>
-        <Text color={'#94A3B8'} fontSize="1rem" fontWeight={500}>
-          {sublabel}
-        </Text>
-      </Flex>
-    </Flex>
   );
 };
