@@ -62,7 +62,7 @@ export const SubmissionCard = ({
     setIsLoading(true);
 
     const likePromise = axios
-      .post('/api/submission/like/', { submissionId: id })
+      .post('/api/submission/like/', { id })
       .then()
       .finally(() => {
         setIsLoading(false);
