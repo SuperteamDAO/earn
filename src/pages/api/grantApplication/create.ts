@@ -1,11 +1,11 @@
 import axios from 'axios';
-import dayjs from 'dayjs';
 import type { NextApiResponse } from 'next';
 
 import { type NextApiRequestWithUser, withAuth } from '@/features/auth';
 import { convertGrantApplicationToAirtable } from '@/features/grants';
 import { prisma } from '@/prisma';
 import { airtableConfig, airtableUpsert, airtableUrl } from '@/utils/airtable';
+import { dayjs } from '@/utils/dayjs';
 
 async function grantApplication(
   req: NextApiRequestWithUser,

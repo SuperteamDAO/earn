@@ -22,7 +22,6 @@ import {
   VStack,
 } from '@chakra-ui/react';
 import axios from 'axios';
-import dayjs from 'dayjs';
 import { useState } from 'react';
 import { useForm } from 'react-hook-form';
 
@@ -32,6 +31,7 @@ import {
 } from '@/components/Form/TextAreaHelpers';
 import { tokenList } from '@/constants';
 import { userStore } from '@/store/user';
+import { dayjs } from '@/utils/dayjs';
 import { validateSolAddress } from '@/utils/validateSolAddress';
 
 import { type Grant } from '../types';

@@ -1,14 +1,10 @@
 import { verifySignature } from '@upstash/qstash/nextjs';
-import dayjs from 'dayjs';
-import updateLocale from 'dayjs/plugin/updateLocale';
-import utc from 'dayjs/plugin/utc';
 import type { NextApiRequest, NextApiResponse } from 'next';
 
 import { InfoTemplate, kashEmail, resend } from '@/features/emails';
 import { prisma } from '@/prisma';
+import { dayjs } from '@/utils/dayjs';
 
-dayjs.extend(utc);
-dayjs.extend(updateLocale);
 dayjs.updateLocale('en', {
   weekStart: 1,
 });

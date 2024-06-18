@@ -42,7 +42,6 @@ import {
   useDisclosure,
 } from '@chakra-ui/react';
 import axios from 'axios';
-import dayjs from 'dayjs';
 import NextLink from 'next/link';
 import { useRouter } from 'next/router';
 import { useSession } from 'next-auth/react';
@@ -65,6 +64,7 @@ import {
 } from '@/features/sponsor-dashboard';
 import { Sidebar } from '@/layouts/Sponsor';
 import { userStore } from '@/store/user';
+import { dayjs } from '@/utils/dayjs';
 
 const debounce = require('lodash.debounce');
 

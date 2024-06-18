@@ -13,7 +13,6 @@ import {
   useDisclosure,
 } from '@chakra-ui/react';
 import axios from 'axios';
-import dayjs from 'dayjs';
 import type { GetServerSideProps } from 'next';
 import { useSearchParams } from 'next/navigation';
 import { useRouter } from 'next/router';
@@ -33,6 +32,7 @@ import { type Scouts } from '@/interface/scouts';
 import type { SubmissionWithUser } from '@/interface/submission';
 import { Sidebar } from '@/layouts/Sponsor';
 import { userStore } from '@/store/user';
+import { dayjs } from '@/utils/dayjs';
 import { sortRank } from '@/utils/rank';
 
 interface Props {

@@ -1,8 +1,8 @@
 import { type PoW } from '@prisma/client';
-import dayjs from 'dayjs';
 import { type NextApiRequest, type NextApiResponse } from 'next';
 
 import { prisma } from '@/prisma';
+import { dayjs } from '@/utils/dayjs';
 
 export default async function handler(
   req: NextApiRequest,

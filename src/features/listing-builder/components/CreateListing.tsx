@@ -1,6 +1,5 @@
 import { useDisclosure } from '@chakra-ui/react';
 import axios from 'axios';
-import dayjs from 'dayjs';
 import { useAtom } from 'jotai';
 import { useRouter } from 'next/router';
 import { useEffect, useState } from 'react';
@@ -10,6 +9,7 @@ import { SurveyModal } from '@/components/Survey';
 import { type MultiSelectOptions } from '@/constants';
 import { getListingDraftStatus, type Listing } from '@/features/listings';
 import { userStore } from '@/store/user';
+import { dayjs } from '@/utils/dayjs';
 
 import { useListingFormStore } from '../store';
 import { type ListingFormType } from '../types';
