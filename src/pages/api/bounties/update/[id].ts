@@ -75,11 +75,21 @@ async function bounty(req: NextApiRequestWithUser, res: NextApiResponse) {
       data: updatedData,
     });
 
+    const hasRewardConditionsForEmail =
+      (result.compensationType === 'fixed' &&
+        result.rewardAmount &&
+        result.rewardAmount >= 1000) ||
+      result.compensationType === 'variable' ||
+      (result.compensationType === 'range' &&
+        result.maxRewardAsk &&
+        result.maxRewardAsk >= 1000);
+
     if (
       currentBounty?.isPublished === false &&
       result.isPublished === true &&
       !result.isPrivate &&
-      result.type !== 'hackathon'
+      result.type !== 'hackathon' &&
+      hasRewardConditionsForEmail
     ) {
       await sendEmailNotification({
         type: 'createListing',
