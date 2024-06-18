@@ -5,6 +5,7 @@ import type { NextApiResponse } from 'next';
 import { type NextApiRequestWithUser, withAuth } from '@/features/auth';
 import { discordListingUpdate } from '@/features/discord';
 import { sendEmailNotification } from '@/features/emails';
+import { hasRewardConditionsForEmail } from '@/features/listing-builder';
 import { prisma } from '@/prisma';
 
 async function bounty(req: NextApiRequestWithUser, res: NextApiResponse) {
@@ -99,7 +100,8 @@ async function bounty(req: NextApiRequestWithUser, res: NextApiResponse) {
       currentBounty?.isPublished === false &&
       result.isPublished === true &&
       !result.isPrivate &&
-      result.type !== 'hackathon'
+      result.type !== 'hackathon' &&
+      hasRewardConditionsForEmail(result)
     ) {
       await sendEmailNotification({
         type: 'createListing',

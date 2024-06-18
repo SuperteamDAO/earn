@@ -1,3 +1,5 @@
+import '/node_modules/flag-icons/css/flag-icons.min.css';
+
 import {
   Avatar,
   Badge,
@@ -20,6 +22,7 @@ import {
 import NextLink from 'next/link';
 import { usePostHog } from 'posthog-js/react';
 
+import { UserFlag } from '@/components/shared/UserFlag';
 import { userStore } from '@/store/user';
 
 import { type RowType, type SKILL } from '../types';
@@ -234,15 +237,20 @@ export function RanksTable({ rankings, skill, userRank, loading }: Props) {
                           ' ' +
                           row.name.split(' ')[1]?.slice(0, 1).toUpperCase()}
                       </Text>
-                      <Text
-                        display={{ base: 'none', md: 'block' }}
-                        overflowX="hidden"
-                        maxW={'7rem'}
-                        color="black"
-                        textOverflow={'ellipsis'}
-                      >
-                        {row.name}
-                      </Text>
+                      <Flex align={'center'} gap={2}>
+                        <Text
+                          display={{ base: 'none', md: 'block' }}
+                          overflowX="hidden"
+                          maxW={'7rem'}
+                          color="black"
+                          textOverflow={'ellipsis'}
+                        >
+                          {row.name}
+                        </Text>
+                        {row.location && (
+                          <UserFlag size="12px" location={row.location} />
+                        )}
+                      </Flex>
                       <Text
                         display={{ base: 'none', md: 'block' }}
                         overflowX="hidden"
@@ -409,15 +417,23 @@ export function RanksTable({ rankings, skill, userRank, loading }: Props) {
                             ' ' +
                             userInfo.lastName?.slice(0, 1).toUpperCase()}
                         </Text>
-                        <Text
-                          display={{ base: 'none', md: 'block' }}
-                          overflowX="hidden"
-                          maxW={'7rem'}
-                          color="black"
-                          textOverflow={'ellipsis'}
-                        >
-                          {userInfo.firstName + ' ' + userInfo.lastName}
-                        </Text>
+                        <Flex align={'center'} gap={2}>
+                          <Text
+                            display={{ base: 'none', md: 'block' }}
+                            overflowX="hidden"
+                            maxW={'7rem'}
+                            color="black"
+                            textOverflow={'ellipsis'}
+                          >
+                            {userInfo.firstName + ' ' + userInfo.lastName}
+                          </Text>
+                          {userInfo.location && (
+                            <UserFlag
+                              size="12px"
+                              location={userInfo.location}
+                            />
+                          )}
+                        </Flex>
                         <Text
                           display={{ base: 'none', md: 'block' }}
                           overflowX="hidden"

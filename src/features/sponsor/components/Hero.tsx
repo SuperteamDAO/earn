@@ -50,7 +50,6 @@ export function Hero() {
           px="1.875rem"
           pt="9.375rem"
           textAlign="center"
-          // bg="brand.slate.400"
           bg="#F8FAFC"
           flexFlow="column"
         >

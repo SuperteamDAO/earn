@@ -27,6 +27,7 @@ export const SignIn = ({
   const [email, setEmail] = useState('');
   const [isEmailValid, setIsEmailValid] = useState(false);
   const [hasAttemptedSubmit, setHasAttemptedSubmit] = useState(false);
+  const [hasGmail, setHasGmail] = useState(false);
 
   const router = useRouter();
   const posthog = usePostHog();
@@ -40,11 +41,15 @@ export const SignIn = ({
     const emailInput = e.target.value;
     setEmail(emailInput);
     setIsEmailValid(validateEmail(emailInput));
+    setHasGmail(emailInput.includes('@gmail.com'));
   };
+
+  const hasGmailAndIsProd =
+    hasGmail && process.env.NEXT_PUBLIC_VERCEL_ENV === 'production';
 
   const handleEmailSignIn = () => {
     setHasAttemptedSubmit(true);
-    if (isEmailValid && !email.includes('@gmail.com')) {
+    if (isEmailValid && !hasGmailAndIsProd) {
       posthog.capture('email OTP_auth');
       localStorage.setItem('emailForSignIn', email);
       signIn('email', {
@@ -133,16 +138,14 @@ export const SignIn = ({
                   mt={3}
                   fontSize="17px"
                   fontWeight={500}
-                  cursor={
-                    email.includes('@gmail.com') ? 'not-allowed' : 'pointer'
-                  }
-                  isDisabled={email.includes('@gmail.com')}
+                  cursor={hasGmailAndIsProd ? 'not-allowed' : 'pointer'}
+                  isDisabled={hasGmailAndIsProd}
                   onClick={handleEmailSignIn}
                   size="lg"
                 >
                   Continue with Email
                 </Button>
-                {email.includes('@gmail.com') && (
+                {hasGmailAndIsProd && (
                   <Text
                     align={'center'}
                     mt={2}
