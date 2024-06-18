@@ -25,21 +25,12 @@ export default async function handler(
       return res.status(404).json({ message: 'User not found' });
     }
 
-    const result = await prisma.$transaction([
-      prisma.unsubscribedEmail.create({
-        data: {
-          email: email,
-          id: user.id,
-        },
-      }),
-      prisma.emailSettings.deleteMany({
-        where: {
-          userId: user.id,
-        },
-      }),
-    ]);
-
-    const unsubscribedEmail = result[0];
+    const unsubscribedEmail = await prisma.unsubscribedEmail.create({
+      data: {
+        email: email,
+        id: user.id,
+      },
+    });
 
     return res.status(200).json(unsubscribedEmail);
   } catch (error) {

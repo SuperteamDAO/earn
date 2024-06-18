@@ -172,7 +172,7 @@ const RecentActivity = () => {
           <Flex align={'center'}>
             <Text
               overflow={'hidden'}
-              maxW={36}
+              maxW={32}
               mr={1.5}
               color={'brand.slate.800'}
               fontSize={'0.9rem'}
