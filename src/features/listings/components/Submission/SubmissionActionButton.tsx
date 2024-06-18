@@ -271,7 +271,7 @@ export const SubmissionActionButton = ({
           <AuthWrapper style={{ w: 'full' }}>
             <Button
               w={'full'}
-              mb={{ base: 0, md: 5 }}
+              mb={{ base: 12, md: 5 }}
               bg={buttonBG}
               _hover={{ bg: buttonBG }}
               _disabled={{
