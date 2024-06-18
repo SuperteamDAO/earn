@@ -172,3 +172,10 @@ const HomePage: NextPage = () => {
 };
 
 export default HomePage;
+//
+// export const getServerSideProps: GetServerSideProps = async (context) => {
+//   await cleanBouties()
+//   return {
+//     props: {},
+//   };
+// };
