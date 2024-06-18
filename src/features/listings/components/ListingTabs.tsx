@@ -1,11 +1,11 @@
 import { ArrowForwardIcon } from '@chakra-ui/icons';
 import { Box, Button, Flex, HStack, Image, Link, Text } from '@chakra-ui/react';
-import dayjs from 'dayjs';
 import NextLink from 'next/link';
 import { usePostHog } from 'posthog-js/react';
 import { useEffect, useState } from 'react';
 
 import { EmptySection } from '@/components/shared/EmptySection';
+import { dayjs } from '@/utils/dayjs';
 
 import { type Listing } from '../types';
 import { ListingCard, ListingCardSkeleton } from './ListingCard';

@@ -1,6 +1,5 @@
 import { Box, Flex } from '@chakra-ui/react';
 import axios from 'axios';
-import dayjs from 'dayjs';
 import type { NextPageContext } from 'next';
 import { useEffect, useState } from 'react';
 
@@ -10,6 +9,7 @@ import { GrantsCard, type GrantWithApplicationCount } from '@/features/grants';
 import { type Listing, ListingSection, ListingTabs } from '@/features/listings';
 import { Home } from '@/layouts/Home';
 import { Meta } from '@/layouts/Meta';
+import { dayjs } from '@/utils/dayjs';
 
 type SlugKeys = 'design' | 'content' | 'development' | 'other';
 

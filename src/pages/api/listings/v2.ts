@@ -168,15 +168,15 @@ export async function getListings({
             logo: true,
           },
         },
-        // _count: {
-        //   select: {
-        //     GrantApplication: {
-        //       where: {
-        //         applicationStatus: 'Approved',
-        //       },
-        //     },
-        //   },
-        // },
+        _count: {
+          select: {
+            GrantApplication: {
+              where: {
+                applicationStatus: 'Approved',
+              },
+            },
+          },
+        },
       },
     });
     result.grants = grants;

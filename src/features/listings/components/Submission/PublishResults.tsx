@@ -15,9 +15,10 @@ import {
   Text,
 } from '@chakra-ui/react';
 import axios from 'axios';
-import dayjs from 'dayjs';
 import { usePostHog } from 'posthog-js/react';
 import { useEffect, useState } from 'react';
+
+import { dayjs } from '@/utils/dayjs';
 
 import { type Listing } from '../../types';
 
