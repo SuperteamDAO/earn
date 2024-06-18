@@ -3,6 +3,7 @@ import dayjs from 'dayjs';
 import type { NextApiResponse } from 'next';
 
 import { type NextApiRequestWithUser, withAuth } from '@/features/auth';
+import { discordListingUpdate } from '@/features/discord';
 import { sendEmailNotification } from '@/features/emails';
 import { prisma } from '@/prisma';
 
@@ -73,7 +74,26 @@ async function bounty(req: NextApiRequestWithUser, res: NextApiResponse) {
     const result = await prisma.bounties.update({
       where: { id },
       data: updatedData,
+      include: {
+        sponsor: true,
+      },
     });
+
+    if (
+      updatedData.isPublished !== null ||
+      updatedData.isPublished !== undefined
+    ) {
+      try {
+        await discordListingUpdate(
+          result,
+          typeof result.isPublished === 'boolean' && result.isPublished === true
+            ? 'Published'
+            : 'Unpublished',
+        );
+      } catch (err) {
+        console.log('Discord Listing Update Message Error', err);
+      }
+    }
 
     if (
       currentBounty?.isPublished === false &&

@@ -2,6 +2,7 @@ import axios from 'axios';
 import type { NextApiResponse } from 'next';
 
 import { type NextApiRequestWithUser, withAuth } from '@/features/auth';
+import { discordListingUpdate } from '@/features/discord';
 import { sendEmailNotification } from '@/features/emails';
 import { prisma } from '@/prisma';
 
@@ -33,6 +34,15 @@ async function handler(req: NextApiRequestWithUser, res: NextApiResponse) {
         sponsor: true,
       },
     });
+
+    try {
+      await discordListingUpdate(
+        result,
+        result.isPublished ? 'Published' : 'Draft Added',
+      );
+    } catch (err) {
+      console.log('Discord Listing Update Message Error', err);
+    }
 
     if (
       result.isPublished &&
