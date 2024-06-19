@@ -106,7 +106,8 @@ export async function getListings({
       ...(isHomePage
         ? {
             OR: [
-              { rewardAmount: { gt: 100 } },
+              { compensationType: 'fixed', rewardAmount: { gte: 100 } },
+              { compensationType: 'range', maxRewardAsk: { gte: 100 } },
               { compensationType: 'variable' },
             ],
           }
