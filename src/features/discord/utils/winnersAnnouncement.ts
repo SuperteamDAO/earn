@@ -3,10 +3,6 @@ import { WebhookClient } from 'discord.js';
 
 import { getURL } from '@/utils/validUrl';
 
-const discord = new WebhookClient({
-  url: process.env.DISCORD_WINNERS_WEBHOOK!,
-});
-
 type BountiesWithSponsor = Prisma.BountiesGetPayload<{
   include: {
     sponsor: true;
@@ -20,6 +16,10 @@ export async function discordWinnersAnnouncement(listing: BountiesWithSponsor) {
 Listing: ${listing.title} (<${url}>)
 Sponsor Name: ${listing.sponsor.name} (<${listing.sponsor?.url}>)
 `;
+
+  const discord = new WebhookClient({
+    url: process.env.DISCORD_WINNERS_WEBHOOK!,
+  });
 
   await discord.send({
     content: msg,

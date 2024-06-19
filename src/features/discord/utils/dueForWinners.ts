@@ -4,10 +4,6 @@ import { WebhookClient } from 'discord.js';
 
 import { getURL } from '@/utils/validUrl';
 
-const discord = new WebhookClient({
-  url: process.env.DISCORD_WINNERS_WEBHOOK!,
-});
-
 type BountiesWithSponsor = Prisma.BountiesGetPayload<{
   include: {
     sponsor: true;
@@ -26,8 +22,13 @@ Sponsor Name: ${listing.sponsor.name} (<${listing.sponsor?.url}>)
 Deadline: ${dayjs(listing.deadline).format('MMMM D, YYYY')} (5 days ago)
 `);
   }
+
+  const discord = new WebhookClient({
+    url: process.env.DISCORD_WINNERS_WEBHOOK!,
+  });
+
   await discord.send({
-    content: msgs.join('\n\n'),
+    content: msgs.join('\n'),
     embeds: [],
   });
   console.log('Message sent');

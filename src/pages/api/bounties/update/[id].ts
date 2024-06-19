@@ -80,20 +80,15 @@ async function bounty(req: NextApiRequestWithUser, res: NextApiResponse) {
       },
     });
 
-    if (
-      updatedData.isPublished !== null ||
-      updatedData.isPublished !== undefined
-    ) {
-      try {
-        await discordListingUpdate(
-          result,
-          typeof result.isPublished === 'boolean' && result.isPublished === true
-            ? 'Published'
-            : 'Unpublished',
-        );
-      } catch (err) {
-        console.log('Discord Listing Update Message Error', err);
+    try {
+      if (currentBounty.isPublished === true && result.isPublished === false) {
+        await discordListingUpdate(result, 'Unpublished');
       }
+      if (currentBounty.isPublished === false && result.isPublished === true) {
+        await discordListingUpdate(result, 'Published');
+      }
+    } catch (err) {
+      console.log('Discord Listing Update Message Error', err);
     }
 
     if (

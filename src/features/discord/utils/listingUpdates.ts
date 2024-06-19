@@ -3,10 +3,6 @@ import { WebhookClient } from 'discord.js';
 
 import { getURL } from '@/utils/validUrl';
 
-const discord = new WebhookClient({
-  url: process.env.DISCORD_LISTINGS_WEBHOOK!,
-});
-
 export type updateStatus =
   | 'Draft Added'
   | 'Published'
@@ -26,12 +22,16 @@ export async function discordListingUpdate(
 ) {
   const url = `${getURL()}listings/${listing.type}/${listing.slug}`;
 
-  const msg = `Listing: ${listing.title} (<${url}>)
+  const msg = `**${status}:**
+Listing: ${listing.title} (<${url}>)
 Type: ${listing.type}
 Sponsor Name: ${listing.sponsor.name} (<${listing.sponsor?.url}>)
 ${listing.rewardAmount ? `Amount: ${listing.rewardAmount} ${listing.token}` : ''}${listing.compensationType === 'variable' ? 'Variable' : ''}${listing.compensationType === 'range' ? `${listing.minRewardAsk} (${listing.token}) to ${listing.maxRewardAsk} (${listing.token})` : ''}
-Status: ${status}
 `;
+
+  const discord = new WebhookClient({
+    url: process.env.DISCORD_LISTINGS_WEBHOOK!,
+  });
 
   await discord.send({
     content: msg,
