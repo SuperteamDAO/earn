@@ -217,7 +217,7 @@ function App({ Component, pageProps: { session, ...pageProps } }: AppProps) {
 
   // ENTITY NAME TO SPONSORS
   useEffect(() => {
-    if (userInfo && userInfo.currentSponsor) {
+    if (userInfo && userInfo.currentSponsor && userInfo.role !== 'GOD') {
       if (!userInfo.currentSponsor.entityName) {
         setIsEntityModalOpen(true);
       }

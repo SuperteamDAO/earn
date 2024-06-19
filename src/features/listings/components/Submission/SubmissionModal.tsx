@@ -619,6 +619,7 @@ export const SubmissionModal = ({
         </VStack>
         {listing?.sponsor?.name && (
           <SubmissionTerms
+            entityName={listing.sponsor.entityName}
             isOpen={isTOSModalOpen}
             onClose={() => setIsTOSModalOpen(false)}
             sponsorName={listing.sponsor.name}

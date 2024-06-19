@@ -101,7 +101,7 @@ export const EntityNameModal = ({
             </Button>
           </Link>
           <Button w="full" isLoading={loading} onClick={setDBEntityName}>
-            Update Entity Name
+            Update
           </Button>
         </HStack>
         {error && (

@@ -12,6 +12,7 @@ import {
   UnorderedList,
   VStack,
 } from '@chakra-ui/react';
+import { useEffect } from 'react';
 
 export const SubmissionTerms = ({
   isOpen,
@@ -24,6 +25,9 @@ export const SubmissionTerms = ({
   sponsorName: string;
   entityName?: string;
 }) => {
+  useEffect(() => {
+    console.log('entityName', entityName);
+  }, []);
   return (
     <Modal
       autoFocus={false}
@@ -124,7 +128,7 @@ export const SubmissionTerms = ({
             .
           </Text>
           <Button ml="auto" px={10} fontSize="lg" onClick={onClose}>
-            I accept
+            Done
           </Button>
         </VStack>
       </ModalContent>

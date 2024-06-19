@@ -158,7 +158,7 @@ export const SignIn = ({
               isExternal
               rel="noopener noreferrer"
             >
-              Terms of Service
+              Terms of Use
             </Link>{' '}
             and our{' '}
             <Link
