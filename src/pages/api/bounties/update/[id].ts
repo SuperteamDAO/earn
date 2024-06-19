@@ -91,7 +91,7 @@ async function bounty(req: NextApiRequestWithUser, res: NextApiResponse) {
 
     const deadlineChanged =
       currentBounty.deadline?.toString() !== result.deadline?.toString();
-    if (deadlineChanged) {
+    if (deadlineChanged && result.isPublished) {
       const dayjsDeadline = dayjs(result.deadline);
       await prisma.comment.create({
         data: {

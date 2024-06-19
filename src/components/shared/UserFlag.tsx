@@ -28,8 +28,8 @@ export function UserFlag({ location, size = '16px', isCode = false }: Props) {
     if (isCode) {
       setCode(location.toLowerCase());
     } else {
-      const country = countries.find((c) =>
-        c.name.toLowerCase().includes(location.toLowerCase()),
+      const country = countries.find(
+        (c) => c.name.toLowerCase() === location.toLowerCase(),
       );
       if (country) {
         setCode(country.code);
