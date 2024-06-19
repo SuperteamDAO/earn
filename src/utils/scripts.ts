@@ -1,6 +1,9 @@
+import { type Prisma } from '@prisma/client';
 import * as fs from 'fs';
 import * as Papa from 'papaparse';
 import * as path from 'path';
+
+import { prisma } from '@/prisma';
 
 const baseDir = process.cwd();
 const csvFilePath = path.join(baseDir, 'public', 'clean-skills.csv');
@@ -72,27 +75,31 @@ export async function cleanBouties() {
     // })
     // console.log('please work')
 
-    // console.log('we starting')
-    // for (let d of cleanSkills.data) {
-    //   console.log('we at - ', d.id)
-    //   console.log('we have - ', d.editedSkills)
-    //   try {
-    //     const a = await prisma.bounties.update({
-    //       where: {
-    //         id: d.id,
-    //       },
-    //       data: {
-    //         skills: JSON.parse(d.editedSkills) as Prisma.JsonValue ?? undefined
-    //       }
-    //     })
-    //     console.log('is a done?')
-    //     console.log('yo boi done - ', d.id, ' - ', a.skills)
-    //   } catch (err) {
-    //     console.log('Error - ', err)
-    //   }
-    // }
+    console.log('we starting');
+    try {
+      await Promise.all(
+        cleanSkills.data.map(async (d) => {
+          console.log('we at - ', d.id);
+          // console.log('we have - ', d.editedSkills)
+          const a = await prisma.bounties.update({
+            where: {
+              id: d.id,
+            },
+            data: {
+              skills:
+                (JSON.parse(d.editedSkills) as Prisma.JsonValue) ?? undefined,
+            },
+          });
+          // console.log('is a done?')
+          // console.log('yo boi done - ', d.id, ' - ', a.skills)
+          return a;
+        }),
+      );
+    } catch (err) {
+      console.log('Error - ', err);
+    }
 
-    console.log('we done??');
+    console.log('we done');
     // console.log('resp - ', resp)
   });
 }
