@@ -103,7 +103,14 @@ export async function getListings({
       hackathonprize: false,
       isArchived: false,
       type,
-      ...(isHomePage ? { rewardAmount: { gt: 100 } } : {}),
+      ...(isHomePage
+        ? {
+            OR: [
+              { rewardAmount: { gt: 100 } },
+              { compensationType: 'variable' },
+            ],
+          }
+        : {}),
       ...skillFilterQuery,
       ...statusFilterQuery,
       Hackathon: null,
