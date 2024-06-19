@@ -7,34 +7,27 @@ const discord = new WebhookClient({
   url: process.env.DISCORD_LISTINGS_WEBHOOK!,
 });
 
-export type updateStatus =
-  | 'Draft Added'
-  | 'Published'
-  | 'Unpublished'
-  | 'Deadline Reached'
-  | 'Winner Announced';
-
 type BountiesWithSponsor = Prisma.BountiesGetPayload<{
   include: {
     sponsor: true;
   };
 }>;
 
-export async function discordListingUpdate(
-  listing: BountiesWithSponsor,
-  status: updateStatus,
-) {
-  const url = `${getURL()}listings/${listing.type}/${listing.slug}`;
+export async function discordDeadlineReached(listings: BountiesWithSponsor[]) {
+  const msgs: string[] = [];
 
-  const msg = `Listing: ${listing.title} (<${url}>)
+  for (const listing of listings) {
+    const url = `${getURL()}listings/${listing.type}/${listing.slug}`;
+
+    msgs.push(`Listing: ${listing.title} (<${url}>)
 Type: ${listing.type}
 Sponsor Name: ${listing.sponsor.name} (<${listing.sponsor?.url}>)
 ${listing.rewardAmount ? `Amount: ${listing.rewardAmount} ${listing.token}` : ''}${listing.compensationType === 'variable' ? 'Variable' : ''}${listing.compensationType === 'range' ? `${listing.minRewardAsk} (${listing.token}) to ${listing.maxRewardAsk} (${listing.token})` : ''}
-Status: ${status}
-`;
-
+Status: Deadline Reached
+`);
+  }
   await discord.send({
-    content: msg,
+    content: msgs.join('\n\n'),
     embeds: [],
   });
   console.log('Message sent');

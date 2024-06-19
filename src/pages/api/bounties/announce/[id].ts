@@ -2,7 +2,10 @@ import type { NextApiResponse } from 'next';
 
 import { tokenList } from '@/constants';
 import { type NextApiRequestWithUser, withAuth } from '@/features/auth';
-import { discordListingUpdate } from '@/features/discord';
+import {
+  discordListingUpdate,
+  discordWinnersAnnouncement,
+} from '@/features/discord';
 import { sendEmailNotification } from '@/features/emails';
 import { type Rewards } from '@/features/listings';
 import { prisma } from '@/prisma';
@@ -77,6 +80,7 @@ async function announce(req: NextApiRequestWithUser, res: NextApiResponse) {
     });
     try {
       await discordListingUpdate(result, 'Winner Announced');
+      await discordWinnersAnnouncement(result);
     } catch (err) {
       console.log('Discord Listing Update Message Error', err);
     }
