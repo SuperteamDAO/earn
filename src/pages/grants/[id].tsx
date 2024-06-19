@@ -130,7 +130,7 @@ const Grants = ({ slug }: GrantsDetailsProps) => {
                   <Flex
                     pos={{ base: 'fixed', md: 'static' }}
                     zIndex={999}
-                    bottom={0}
+                    bottom={12}
                     left="50%"
                     w="full"
                     px={{ base: 3, md: 0 }}
