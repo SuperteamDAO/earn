@@ -56,8 +56,7 @@ async function handler(req: NextApiRequestWithUser, res: NextApiResponse) {
     },
   });
   // eslint-disable-next-line
-  const { role, skills, currentSponsorId, generateTalentEmailSettings, ...updateAttributes } = req.body;
-  let result;
+  const {role, skills, currentSponsorId, generateTalentEmailSettings, ...updateAttributes} = req.body;
   const correctedSkills = skills ? correctSkills(skills) : [];
   try {
     const updatedData = {
@@ -94,11 +93,17 @@ async function handler(req: NextApiRequestWithUser, res: NextApiResponse) {
 
     console.log('Updating user with data:', updatedData);
 
-    result = await prisma.user.update({
+    await prisma.user.updateMany({
       where: {
         id: userId as string,
       },
       data: updatedData,
+    });
+
+    const result = await prisma.user.findUnique({
+      where: {
+        id: userId as string,
+      },
       include: {
         currentSponsor: true,
         UserSponsors: true,

@@ -27,11 +27,6 @@ const linkData = [
     href: 'https://superteamdao.notion.site/Superteam-Earn-FAQ-aedaa039b25741b1861167d68aa880b1?pvs=4',
   },
   {
-    text: 'GitHub',
-    posthog: 'github_footer',
-    href: 'https://github.com/SuperteamDAO/earn',
-  },
-  {
     text: 'Changelog',
     posthog: 'changelog_footer',
     href: 'https://superteamdao.notion.site/Superteam-Earn-Changelog-faf0c85972a742699ecc07a52b569827',
@@ -92,6 +87,7 @@ export const Footer = () => {
   const posthog = usePostHog();
   return (
     <Box
+      pb={14}
       color={'brand.slate.500'}
       bg={'white'}
       borderTop="1px solid"
@@ -129,6 +125,30 @@ export const Footer = () => {
             </Text>
             <Stack direction={'row'} mb={6} spacing={6}>
               <SocialButton
+                label={'Github'}
+                href="https://github.com/SuperteamDAO/earn"
+              >
+                <svg
+                  width="20"
+                  height="20"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  xmlns="http://www.w3.org/2000/svg"
+                >
+                  <g clip-path="url(#clip0_333_459)">
+                    <path
+                      d="M7.02399 2.31006C7.77495 2.56445 8.48936 2.91611 9.14899 3.35606C10.0806 3.11797 11.0385 2.99836 12 3.00006C12.993 3.00006 13.951 3.12406 14.849 3.35506C15.5084 2.91554 16.2224 2.56422 16.973 2.31006C17.67 2.07306 18.663 1.68906 19.253 2.34206C19.653 2.78606 19.753 3.53006 19.824 4.09806C19.904 4.73206 19.923 5.55806 19.713 6.37806C20.516 7.41506 21 8.65206 21 10.0001C21 12.0421 19.894 13.8151 18.257 15.0431C17.4692 15.6266 16.5954 16.0841 15.667 16.3991C15.881 16.8891 16 17.4311 16 18.0001V21.0001C16 21.2653 15.8946 21.5196 15.7071 21.7072C15.5196 21.8947 15.2652 22.0001 15 22.0001H8.99999C8.73477 22.0001 8.48042 21.8947 8.29288 21.7072C8.10534 21.5196 7.99999 21.2653 7.99999 21.0001V20.0091C7.04499 20.1261 6.24399 20.0221 5.56299 19.7331C4.85099 19.4311 4.35499 18.9631 3.98199 18.5151C3.62799 18.0911 3.24199 17.1351 2.68399 16.9491C2.55936 16.9076 2.44413 16.8419 2.34487 16.7559C2.24562 16.6699 2.16427 16.5651 2.1055 16.4477C1.98678 16.2104 1.96718 15.9358 2.05099 15.6841C2.13479 15.4324 2.31515 15.2243 2.55239 15.1056C2.78962 14.9869 3.06429 14.9673 3.31599 15.0511C3.98199 15.2731 4.41599 15.7531 4.71299 16.1391C5.19299 16.7591 5.58299 17.5691 6.34299 17.8921C6.65599 18.0251 7.11499 18.1121 7.83299 18.0141L7.99999 17.9801C8.00189 17.4359 8.11522 16.8978 8.33299 16.3991C7.40457 16.0841 6.5308 15.6266 5.74299 15.0431C4.10599 13.8151 2.99999 12.0431 2.99999 10.0001C2.99999 8.65406 3.48299 7.41806 4.28399 6.38206C4.07399 5.56206 4.09199 4.73406 4.17199 4.09906L4.17699 4.06106C4.24999 3.47906 4.33499 2.79406 4.74299 2.34206C5.33299 1.68906 6.32699 2.07406 7.02298 2.31106L7.02399 2.31006Z"
+                      fill="currentColor"
+                    />
+                  </g>
+                  <defs>
+                    <clipPath id="clip0_333_459">
+                      <rect width="24" height="24" fill="white" />
+                    </clipPath>
+                  </defs>
+                </svg>
+              </SocialButton>
+              <SocialButton
                 label={'Twitter'}
                 href="https://twitter.com/superteamearn"
               >
@@ -162,27 +182,14 @@ export const Footer = () => {
                   />
                 </svg>
               </SocialButton>
-              <SocialButton
-                label={'Substack'}
-                href="https://superteam.substack.com/"
-              >
-                <svg
-                  width="12"
-                  height="13"
-                  viewBox="0 0 12 13"
-                  fill="none"
-                  xmlns="http://www.w3.org/2000/svg"
-                >
-                  <path
-                    d="M11.4178 4.46442H0V2.92825H11.4183V4.46442H11.4178ZM0 5.8565V13L5.70917 9.80958L11.4183 13V5.8565H0ZM11.4183 0H0V1.53617H11.4183V0Z"
-                    fill="currentColor"
-                  />
-                </svg>
-              </SocialButton>
             </Stack>
           </Stack>
-          <Flex justify={'space-between'} gap={{ base: 16, md: 24 }}>
-            <Stack align={'flex-start'}>
+          <Flex
+            justify={{ base: 'start', sm: 'space-between' }}
+            direction={{ base: 'column', sm: 'row' }}
+            gap={{ base: 10, md: '9rem' }}
+          >
+            <Stack align={'flex-start'} w="full">
               <Text
                 color={'brand.slate.400'}
                 fontSize={{ base: 'xs', md: 'sm' }}
@@ -191,69 +198,87 @@ export const Footer = () => {
               >
                 ALL SUPERTEAMS
               </Text>
-              {Superteams.map((st) => (
-                <Link
-                  className="ph-no-capture"
-                  key={st.region}
-                  as={NextLink}
-                  color="brand.slate.500"
-                  fontSize={{ base: 'sm', md: 'md' }}
-                  _hover={{
-                    color: 'brand.slate.600',
-                  }}
-                  href={`${getURL()}regions/${st.region?.toLowerCase()}`}
-                  isExternal
-                  onClick={() => {
-                    posthog.capture('region page_footer', {
-                      region: st.region,
-                    });
-                  }}
-                >
-                  {st.displayValue}
-                </Link>
-              ))}
-            </Stack>
-            <Stack align={'flex-start'} gap={2} mr={3}>
-              {linkData.map((link) => (
-                <Link
-                  className="ph-no-capture"
-                  key={link.text}
-                  color={'brand.slate.500'}
-                  fontSize={{ base: 'md', md: 'lg' }}
-                  fontWeight={'500'}
-                  href={link.href}
-                  isExternal
-                  onClick={() => {
-                    if (link.posthog) {
-                      posthog.capture(link.posthog);
-                    }
-                  }}
-                >
-                  {link.text}
-                </Link>
-              ))}
-              <Text
-                mt={4}
-                color={'brand.slate.400'}
-                fontSize={{ base: 'xs', md: 'sm' }}
-                fontWeight={'500'}
-                whiteSpace={'nowrap'}
+              <Flex
+                justify={'space-between'}
+                wrap={'wrap'}
+                direction={'column'}
+                rowGap={1}
+                columnGap={{ base: 8, sm: 16 }}
+                w="full"
+                maxH="14rem"
               >
-                SUPERTEAM PRODUCTIONS
-              </Text>
-              {superteamProductions.map((link) => (
-                <Link
-                  key={link.text}
-                  as={NextLink}
-                  color="brand.slate.500"
-                  fontSize={{ base: 'sm', md: 'md' }}
-                  href={link.href}
-                  isExternal
-                >
-                  {link.text}
-                </Link>
-              ))}
+                {Superteams.map((st) => (
+                  <Link
+                    className="ph-no-capture"
+                    key={st.region}
+                    as={NextLink}
+                    color="brand.slate.500"
+                    fontSize={{ base: 'sm', md: 'md' }}
+                    _hover={{
+                      color: 'brand.slate.600',
+                    }}
+                    href={`${getURL()}regions/${st.region?.toLowerCase()}`}
+                    isExternal
+                    onClick={() => {
+                      posthog.capture('region page_footer', {
+                        region: st.region,
+                      });
+                    }}
+                  >
+                    {st.displayValue}
+                  </Link>
+                ))}
+              </Flex>
             </Stack>
+            <Flex
+              justify={'flex-start'}
+              direction={{ base: 'row', sm: 'column' }}
+              rowGap={{ base: 1, sm: 8 }}
+              columnGap="5rem"
+            >
+              <Stack align={'flex-start'} gap={2} mr={3}>
+                {linkData.map((link) => (
+                  <Link
+                    className="ph-no-capture"
+                    key={link.text}
+                    color={'brand.slate.500'}
+                    fontSize={{ base: 'md', md: 'lg' }}
+                    fontWeight={'500'}
+                    href={link.href}
+                    isExternal
+                    onClick={() => {
+                      if (link.posthog) {
+                        posthog.capture(link.posthog);
+                      }
+                    }}
+                  >
+                    {link.text}
+                  </Link>
+                ))}
+              </Stack>
+              <Stack>
+                <Text
+                  color={'brand.slate.400'}
+                  fontSize={{ base: 'xs', md: 'sm' }}
+                  fontWeight={'500'}
+                  whiteSpace={'nowrap'}
+                >
+                  SUPERTEAM PRODUCTIONS
+                </Text>
+                {superteamProductions.map((link) => (
+                  <Link
+                    key={link.text}
+                    as={NextLink}
+                    color="brand.slate.500"
+                    fontSize={{ base: 'sm', md: 'md' }}
+                    href={link.href}
+                    isExternal
+                  >
+                    {link.text}
+                  </Link>
+                ))}
+              </Stack>
+            </Flex>
           </Flex>
         </Flex>
       </Container>

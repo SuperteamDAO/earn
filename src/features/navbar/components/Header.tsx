@@ -6,6 +6,7 @@ import { useEffect } from 'react';
 import { Login } from '@/features/auth';
 import { SearchModal } from '@/features/search';
 
+import { BottomBar } from './BottomBar';
 import { BountySnackbar } from './BountySnackbar';
 import { DesktopNavbar } from './DesktopNavbar';
 import { MobileNavbar } from './MobileNavbar';
@@ -55,11 +56,11 @@ export const Header = () => {
         />
       </Box>
 
-      <MobileNavbar
-        onLoginOpen={onLoginOpen}
-        onSearchOpen={searchOpenWithEvent}
-      />
+      <MobileNavbar onLoginOpen={onLoginOpen} />
       <SearchModal isOpen={isSearchOpen} onClose={onSearchClose} />
+      <Box pos="fixed" zIndex="sticky" bottom={0} w="full">
+        <BottomBar onSearchOpen={searchOpenWithEvent} />
+      </Box>
     </>
   );
 };

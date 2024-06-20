@@ -239,6 +239,7 @@ export const getServerSideProps: GetServerSideProps = async ({
           lastName: true,
           username: true,
           skills: true,
+          location: true,
         },
       },
     },
@@ -261,6 +262,7 @@ export const getServerSideProps: GetServerSideProps = async ({
             lastName: true,
             username: true,
             skills: true,
+            location: true,
           },
         },
       },
@@ -294,6 +296,7 @@ export const getServerSideProps: GetServerSideProps = async ({
       submissions: r.submissions,
       wins: r.wins,
       winRate: r.winRate,
+      location: r.user.location ?? undefined,
     };
   });
 

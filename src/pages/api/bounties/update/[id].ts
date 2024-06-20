@@ -4,6 +4,7 @@ import type { NextApiResponse } from 'next';
 
 import { type NextApiRequestWithUser, withAuth } from '@/features/auth';
 import { sendEmailNotification } from '@/features/emails';
+import { hasRewardConditionsForEmail } from '@/features/listing-builder';
 import { prisma } from '@/prisma';
 
 async function bounty(req: NextApiRequestWithUser, res: NextApiResponse) {
@@ -79,7 +80,8 @@ async function bounty(req: NextApiRequestWithUser, res: NextApiResponse) {
       currentBounty?.isPublished === false &&
       result.isPublished === true &&
       !result.isPrivate &&
-      result.type !== 'hackathon'
+      result.type !== 'hackathon' &&
+      hasRewardConditionsForEmail(result)
     ) {
       await sendEmailNotification({
         type: 'createListing',
@@ -89,7 +91,7 @@ async function bounty(req: NextApiRequestWithUser, res: NextApiResponse) {
 
     const deadlineChanged =
       currentBounty.deadline?.toString() !== result.deadline?.toString();
-    if (deadlineChanged) {
+    if (deadlineChanged && result.isPublished) {
       const dayjsDeadline = dayjs(result.deadline);
       await prisma.comment.create({
         data: {

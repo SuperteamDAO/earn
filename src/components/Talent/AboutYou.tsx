@@ -77,6 +77,7 @@ export function AboutYou({ setStep, useFormStore }: Step1Props) {
               placeholder="Username"
               {...register('username', { required: true })}
               isInvalid={isInvalid}
+              maxLength={40}
               onChange={(e) => setUsername(e.target.value)}
               value={username}
             />
@@ -100,6 +101,7 @@ export function AboutYou({ setStep, useFormStore }: Step1Props) {
                 id="firstName"
                 placeholder="First Name"
                 {...register('firstName', { required: true })}
+                maxLength={100}
               />
             </Box>
             <Box w="full">
@@ -114,6 +116,7 @@ export function AboutYou({ setStep, useFormStore }: Step1Props) {
                 id="lastName"
                 placeholder="Last Name"
                 {...register('lastName', { required: true })}
+                maxLength={100}
               />
             </Box>
           </Flex>
