@@ -171,10 +171,13 @@ export const SignIn = ({
             <Link
               as={NextLink}
               fontWeight={600}
-              href={`${router.basePath}/terms-of-service.pdf`}
+              href={
+                'https://drive.google.com/file/d/1hD5Qzm1CILkughA2LBDsfK1ndZpUBnb4/view?usp=sharing'
+              }
               isExternal
+              rel="noopener noreferrer"
             >
-              Terms of Service
+              Terms of Use
             </Link>{' '}
             and our{' '}
             <Link

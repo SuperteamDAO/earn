@@ -1,3 +1,4 @@
+import { InfoOutlineIcon } from '@chakra-ui/icons';
 import {
   Box,
   Button,
@@ -8,6 +9,7 @@ import {
   HStack,
   Input,
   Text,
+  Tooltip,
   VStack,
 } from '@chakra-ui/react';
 import axios from 'axios';
@@ -46,6 +48,7 @@ const UpdateSponsor = () => {
       twitterHandle: '',
       bio: '',
       industry: '',
+      entityName: '',
     },
   });
   const [imageUrl, setImageUrl] = useState<string | null>(null);
@@ -70,7 +73,8 @@ const UpdateSponsor = () => {
     const init = async () => {
       setIsLoading(true);
       const response = await fetchSponsorData();
-      const { bio, industry, name, slug, logo, twitter, url } = response;
+      const { bio, industry, name, slug, logo, twitter, url, entityName } =
+        response;
       register('bio', { value: bio, required: 'Company bio is required' });
       register('sponsorname', {
         value: name,
@@ -84,6 +88,10 @@ const UpdateSponsor = () => {
         value: url,
         required: 'Company URL is required',
       });
+      register('sponsorurl', {
+        value: entityName,
+        required: 'Entity Name is required',
+      });
       register('twitterHandle', {
         value: twitter,
         required: 'Company Twitter handle is required',
@@ -94,6 +102,7 @@ const UpdateSponsor = () => {
         slug,
         sponsorurl: url,
         twitterHandle: twitter,
+        entityName,
       });
       if (logo) {
         setImageUrl(logo);
@@ -166,6 +175,7 @@ const UpdateSponsor = () => {
                 logo: imageUrl ?? '',
                 twitter: e.twitterHandle,
                 url: e.sponsorurl ?? '',
+                entityName: e.entityName,
               });
             })}
             style={{ width: '100%' }}
@@ -265,6 +275,45 @@ const UpdateSponsor = () => {
                   ) : (
                     <></>
                   )}
+                </FormErrorMessage>
+              </FormControl>
+            </HStack>
+
+            <HStack w="full">
+              <FormControl w={'full'} isRequired>
+                <HStack mb={2}>
+                  <FormLabel
+                    m={0}
+                    color={'brand.slate.500'}
+                    fontSize={'15px'}
+                    fontWeight={600}
+                    htmlFor={'entityName'}
+                  >
+                    Entity Name
+                  </FormLabel>
+                  <Tooltip
+                    fontSize="xs"
+                    label="Please mention the official entity name of your project. If you are a DAO, simply mention the name of the DAO. If you neither have an entity nor are a DAO, mention your full name."
+                  >
+                    <InfoOutlineIcon
+                      color="brand.slate.500"
+                      w={3}
+                      h={3}
+                      display={{ base: 'none', md: 'block' }}
+                    />
+                  </Tooltip>
+                </HStack>
+                <Input
+                  w={'full'}
+                  borderColor={'brand.slate.300'}
+                  _placeholder={{ color: 'brand.slate.300' }}
+                  focusBorderColor="brand.purple"
+                  id="entityName"
+                  placeholder="Full Entity Name"
+                  {...register('entityName')}
+                />
+                <FormErrorMessage>
+                  {errors.entityName ? <>{errors.entityName.message}</> : <></>}
                 </FormErrorMessage>
               </FormControl>
             </HStack>
