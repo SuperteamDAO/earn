@@ -144,7 +144,10 @@ export function Banner({ isHackathonRoute }: { isHackathonRoute?: boolean }) {
                 <Skeleton w="72px" h="20px" mt={2} />
               ) : (
                 <Text color={'brand.slate.900'} fontSize="lg" fontWeight={600}>
-                  ${sponsorStats?.totalRewardAmount?.toLocaleString()}
+                  $
+                  {new Intl.NumberFormat('en-US', {
+                    maximumFractionDigits: 0,
+                  }).format(Math.round(sponsorStats.totalRewardAmount || 0))}
                 </Text>
               )}
             </Box>
