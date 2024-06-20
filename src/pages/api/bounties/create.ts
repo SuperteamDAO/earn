@@ -3,7 +3,7 @@ import type { NextApiResponse } from 'next';
 
 import { type NextApiRequestWithUser, withAuth } from '@/features/auth';
 import { sendEmailNotification } from '@/features/emails';
-import { hasRewardConditionsForEmail } from '@/features/listing-builder';
+import { shouldSendEmailForListing } from '@/features/listing-builder';
 import { prisma } from '@/prisma';
 import { fetchTokenUSDValue } from '@/utils/fetchTokenUSDValue';
 
@@ -45,12 +45,9 @@ async function handler(req: NextApiRequestWithUser, res: NextApiResponse) {
       },
     });
 
-    if (
-      result.isPublished &&
-      !result.isPrivate &&
-      result.type !== 'hackathon' &&
-      hasRewardConditionsForEmail(result)
-    ) {
+    const shouldSendEmail = await shouldSendEmailForListing(result);
+
+    if (shouldSendEmail) {
       await sendEmailNotification({
         type: 'createListing',
         id: result.id,
