@@ -71,7 +71,7 @@ export const TermsOfServices = ({
           <Text as={'p'} lineHeight={1.25}>
             At Superteam Earn, we regularly review our policies to reflect how
             we serve our users. {"We're"} making updates to our Terms of Use
-            that take effect on June 15, 2024.
+            that take effect on {formattedDate}.
           </Text>
           <Text as={'p'} lineHeight={1.25}>
             {`Here’s`} our updated{' '}
