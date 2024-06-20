@@ -13,6 +13,7 @@ import axios from 'axios';
 import NextLink from 'next/link';
 import { useState } from 'react';
 
+import { TERMS_OF_USE } from '@/constants';
 import { userStore } from '@/store/user';
 
 export const EntityNameModal = ({
@@ -70,7 +71,7 @@ export const EntityNameModal = ({
             In accordance with our updated{' '}
             <Link
               textDecoration={'underline'}
-              href="https://drive.google.com/file/d/1hD5Qzm1CILkughA2LBDsfK1ndZpUBnb4/view?usp=sharing"
+              href={TERMS_OF_USE}
               rel="noopener noreferrer"
               target="_blank"
               textUnderlineOffset={2}

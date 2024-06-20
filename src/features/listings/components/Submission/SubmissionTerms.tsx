@@ -14,6 +14,8 @@ import {
 } from '@chakra-ui/react';
 import { useEffect } from 'react';
 
+import { TERMS_OF_USE } from '@/constants';
+
 export const SubmissionTerms = ({
   isOpen,
   onClose,
@@ -118,7 +120,7 @@ export const SubmissionTerms = ({
             These terms are in addition to our{' '}
             <Link
               textDecoration={'underline'}
-              href="https://drive.google.com/file/d/1hD5Qzm1CILkughA2LBDsfK1ndZpUBnb4/view?usp=sharing"
+              href={TERMS_OF_USE}
               rel="noopener noreferrer"
               target="_blank"
               textUnderlineOffset={2}

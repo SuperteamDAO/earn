@@ -15,6 +15,7 @@ import { usePostHog } from 'posthog-js/react';
 import React, { type Dispatch, type SetStateAction, useState } from 'react';
 import { MdOutlineEmail } from 'react-icons/md';
 
+import { TERMS_OF_USE } from '@/constants';
 import { GoogleIcon } from '@/svg/google';
 
 export const SignIn = ({
@@ -171,9 +172,7 @@ export const SignIn = ({
             <Link
               as={NextLink}
               fontWeight={600}
-              href={
-                'https://drive.google.com/file/d/1hD5Qzm1CILkughA2LBDsfK1ndZpUBnb4/view?usp=sharing'
-              }
+              href={TERMS_OF_USE}
               isExternal
               rel="noopener noreferrer"
             >

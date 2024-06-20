@@ -12,6 +12,8 @@ import {
 } from '@chakra-ui/react';
 import dayjs from 'dayjs';
 
+import { TERMS_OF_USE } from '@/constants';
+
 export const TermsOfServices = ({
   isOpen,
   onClose,
@@ -75,7 +77,7 @@ export const TermsOfServices = ({
             {`Here’s`} our updated{' '}
             <Link
               textDecoration={'underline'}
-              href="https://drive.google.com/file/d/1hD5Qzm1CILkughA2LBDsfK1ndZpUBnb4/view?usp=sharing"
+              href={TERMS_OF_USE}
               rel="noopener noreferrer"
               target="_blank"
               textUnderlineOffset={2}
@@ -89,7 +91,7 @@ export const TermsOfServices = ({
             date, you accept our updated{' '}
             <Link
               textDecoration={'underline'}
-              href="https://drive.google.com/file/d/1hD5Qzm1CILkughA2LBDsfK1ndZpUBnb4/view?usp=sharing"
+              href={TERMS_OF_USE}
               rel="noopener noreferrer"
               target="_blank"
               textUnderlineOffset={2}
