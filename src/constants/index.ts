@@ -90,14 +90,7 @@ interface Token {
   icon: string;
   decimals: number;
   coingeckoSymbol: string;
-  livecoinwatchSymbol: string;
 }
-
-// how to get livecoinwatch Symbol
-// open any token in https://www.livecoinwatch.com/
-// lets say u open DUST link https://www.livecoinwatch.com/price/DUSTProtocol-_DUST
-// the symbol is whatever after `NAME(dash)` including underscore
-// so symbol livecoinwatch symbol is `_DUST`
 
 export const tokenList: Token[] = [
   {
@@ -107,7 +100,6 @@ export const tokenList: Token[] = [
     icon: 'https://s2.coinmarketcap.com/static/img/coins/128x128/3408.png',
     decimals: 6,
     coingeckoSymbol: 'usd-coin',
-    livecoinwatchSymbol: 'USDC',
   },
   {
     tokenName: 'Solana (SOL)',
@@ -116,7 +108,6 @@ export const tokenList: Token[] = [
     icon: 'https://s2.coinmarketcap.com/static/img/coins/64x64/16116.png',
     decimals: 9,
     coingeckoSymbol: 'solana',
-    livecoinwatchSymbol: 'SOL',
   },
   {
     tokenName: 'JUP',
@@ -125,7 +116,6 @@ export const tokenList: Token[] = [
     icon: 'https://s2.coinmarketcap.com/static/img/coins/64x64/29210.png',
     decimals: 6,
     coingeckoSymbol: 'jupiter-exchange-solana',
-    livecoinwatchSymbol: '_JUP',
   },
   {
     tokenName: 'BONK',
@@ -134,7 +124,6 @@ export const tokenList: Token[] = [
     icon: 'https://assets.coingecko.com/coins/images/28600/standard/bonk.jpg?1696527587',
     decimals: 5,
     coingeckoSymbol: 'bonk',
-    livecoinwatchSymbol: '__BONK',
   },
   {
     tokenName: 'ISC',
@@ -143,7 +132,6 @@ export const tokenList: Token[] = [
     icon: 'https://res.cloudinary.com/dgvnuwspr/image/upload/v1683200072/sponsors/International%20Stable%20Currency.png',
     decimals: 6,
     coingeckoSymbol: 'international-stable-currency',
-    livecoinwatchSymbol: 'ISC',
   },
   {
     tokenName: 'STEP',
@@ -152,7 +140,6 @@ export const tokenList: Token[] = [
     icon: 'https://assets.coingecko.com/coins/images/14988/small/step.png?1619274762',
     decimals: 9,
     coingeckoSymbol: 'step-finance',
-    livecoinwatchSymbol: 'STEP',
   },
   {
     tokenName: 'SAROS',
@@ -161,7 +148,6 @@ export const tokenList: Token[] = [
     icon: 'https://assets.coingecko.com/coins/images/34594/standard/saros-token-logo.png?1705476813',
     decimals: 6,
     coingeckoSymbol: 'saros-finance',
-    livecoinwatchSymbol: 'SAROS',
   },
   {
     tokenName: 'Samoyed Coin (SAMO)',
@@ -170,7 +156,6 @@ export const tokenList: Token[] = [
     icon: 'https://assets.coingecko.com/coins/images/15051/standard/IXeEj5e.png?1696514710',
     decimals: 9,
     coingeckoSymbol: 'samoyedcoin',
-    livecoinwatchSymbol: 'SAMO',
   },
   {
     tokenName: 'SynesisOne (SNS)',
@@ -179,7 +164,6 @@ export const tokenList: Token[] = [
     icon: 'https://assets.coingecko.com/coins/images/23289/standard/sns.png?1696522507',
     decimals: 9,
     coingeckoSymbol: 'synesis-one',
-    livecoinwatchSymbol: 'SNS',
   },
   {
     tokenName: 'Pyth Network (PYTH)',
@@ -188,7 +172,6 @@ export const tokenList: Token[] = [
     icon: 'https://s2.coinmarketcap.com/static/img/coins/128x128/28177.png',
     decimals: 6,
     coingeckoSymbol: 'pyth-network',
-    livecoinwatchSymbol: 'PythNetwork-PYTH',
   },
   {
     tokenName: 'DevWifHat (DWH)',
@@ -197,7 +180,6 @@ export const tokenList: Token[] = [
     icon: '/assets/coins/dwh.png',
     decimals: 6,
     coingeckoSymbol: '',
-    livecoinwatchSymbol: '',
   },
   {
     tokenName: 'USDT',
@@ -206,7 +188,6 @@ export const tokenList: Token[] = [
     icon: 'https://s2.coinmarketcap.com/static/img/coins/64x64/825.png',
     decimals: 6,
     coingeckoSymbol: 'tether',
-    livecoinwatchSymbol: 'USDT',
   },
   {
     tokenName: 'mSOL',
@@ -215,7 +196,6 @@ export const tokenList: Token[] = [
     icon: 'https://s2.coinmarketcap.com/static/img/coins/64x64/11461.png',
     decimals: 9,
     coingeckoSymbol: 'msol',
-    livecoinwatchSymbol: 'MSOL',
   },
   {
     tokenName: 'UXD Stablecoin (UXD)',
@@ -224,7 +204,6 @@ export const tokenList: Token[] = [
     icon: 'https://s2.coinmarketcap.com/static/img/coins/64x64/17535.png',
     decimals: 6,
     coingeckoSymbol: 'uxd-stablecoin',
-    livecoinwatchSymbol: 'UXD',
   },
   {
     tokenName: 'Raydium (RAY)',
@@ -233,7 +212,6 @@ export const tokenList: Token[] = [
     icon: 'https://s2.coinmarketcap.com/static/img/coins/64x64/8526.png',
     decimals: 6,
     coingeckoSymbol: 'raydium',
-    livecoinwatchSymbol: 'RAY',
   },
   {
     tokenName: 'Saber (SBR)',
@@ -242,7 +220,6 @@ export const tokenList: Token[] = [
     icon: 'https://s2.coinmarketcap.com/static/img/coins/64x64/11181.png',
     decimals: 6,
     coingeckoSymbol: 'saber',
-    livecoinwatchSymbol: 'SBR',
   },
   {
     tokenName: 'KIWI',
@@ -251,7 +228,6 @@ export const tokenList: Token[] = [
     icon: 'https://bafkreibcamcjwo5z3itvybznrdtb3fgeiplfy36izu75jygxkt7jzoq4ju.ipfs.nftstorage.link/',
     decimals: 5,
     coingeckoSymbol: 'kiwi-token-2',
-    livecoinwatchSymbol: '______KIWI',
   },
   {
     tokenName: 'EUROe Stablecoin (EUROe)',
@@ -260,7 +236,6 @@ export const tokenList: Token[] = [
     icon: 'https://assets.coingecko.com/coins/images/28913/standard/euroe-200x200-round.png?1696527889',
     decimals: 6,
     coingeckoSymbol: 'euroe-stablecoin',
-    livecoinwatchSymbol: 'EUROE',
   },
   {
     tokenName: 'Solend (SLND)',
@@ -269,7 +244,6 @@ export const tokenList: Token[] = [
     icon: 'https://s2.coinmarketcap.com/static/img/coins/64x64/13524.png',
     decimals: 6,
     coingeckoSymbol: 'solend',
-    livecoinwatchSymbol: 'SLND',
   },
   {
     tokenName: 'Coin98 (C98)',
@@ -278,7 +252,6 @@ export const tokenList: Token[] = [
     icon: 'https://s2.coinmarketcap.com/static/img/coins/64x64/10903.png',
     decimals: 6,
     coingeckoSymbol: 'coin98',
-    livecoinwatchSymbol: 'C98',
   },
   {
     tokenName: 'Serum (SRM)',
@@ -287,7 +260,6 @@ export const tokenList: Token[] = [
     icon: 'https://s2.coinmarketcap.com/static/img/coins/64x64/6187.png',
     decimals: 6,
     coingeckoSymbol: 'serum',
-    livecoinwatchSymbol: 'SRM',
   },
   {
     tokenName: 'DUST Protocol (DUST)',
@@ -296,7 +268,6 @@ export const tokenList: Token[] = [
     icon: 'https://s2.coinmarketcap.com/static/img/coins/64x64/18802.png',
     decimals: 9,
     coingeckoSymbol: 'dust-protocol',
-    livecoinwatchSymbol: '_DUST',
   },
   {
     tokenName: 'wrapped Solana (wSOL)',
@@ -305,7 +276,6 @@ export const tokenList: Token[] = [
     icon: 'https://s2.coinmarketcap.com/static/img/coins/64x64/16116.png',
     decimals: 9,
     coingeckoSymbol: 'wrapped-solana',
-    livecoinwatchSymbol: '',
   },
   {
     tokenName: 'Bonfida (FIDA)',
@@ -314,7 +284,6 @@ export const tokenList: Token[] = [
     icon: 'https://s2.coinmarketcap.com/static/img/coins/64x64/7978.png',
     decimals: 6,
     coingeckoSymbol: 'bonfida',
-    livecoinwatchSymbol: 'FIDA',
   },
   {
     tokenName: 'Orca (ORCA)',
@@ -323,7 +292,6 @@ export const tokenList: Token[] = [
     icon: 'https://s2.coinmarketcap.com/static/img/coins/64x64/11165.png',
     decimals: 6,
     coingeckoSymbol: 'orca',
-    livecoinwatchSymbol: 'ORCA',
   },
   {
     tokenName: 'Helium (HNT)',
@@ -332,7 +300,6 @@ export const tokenList: Token[] = [
     icon: 'https://s2.coinmarketcap.com/static/img/coins/64x64/5665.png',
     decimals: 8,
     coingeckoSymbol: 'helium',
-    livecoinwatchSymbol: 'HNT',
   },
   {
     tokenName: 'Helium Mobile (MOBILE)',
@@ -341,7 +308,6 @@ export const tokenList: Token[] = [
     icon: 'https://s2.coinmarketcap.com/static/img/coins/64x64/24600.png',
     decimals: 6,
     coingeckoSymbol: 'helium-mobile',
-    livecoinwatchSymbol: 'MOBILE',
   },
   {
     tokenName: 'Helium IOT (IOT)',
@@ -350,7 +316,6 @@ export const tokenList: Token[] = [
     icon: 'https://s2.coinmarketcap.com/static/img/coins/64x64/24686.png',
     decimals: 6,
     coingeckoSymbol: 'helium-iot',
-    livecoinwatchSymbol: 'IOT',
   },
   {
     tokenName: 'Gary (GARY)',
@@ -359,7 +324,6 @@ export const tokenList: Token[] = [
     icon: 'https://s2.coinmarketcap.com/static/img/coins/64x64/21046.png',
     decimals: 9,
     coingeckoSymbol: 'gary',
-    livecoinwatchSymbol: 'GARY',
   },
   {
     tokenName: 'Blaze (BLZE)',
@@ -368,7 +332,6 @@ export const tokenList: Token[] = [
     icon: 'https://assets.coingecko.com/coins/images/28392/standard/blze.png?1696527391',
     decimals: 9,
     coingeckoSymbol: 'solblaze',
-    livecoinwatchSymbol: '_BLZE',
   },
   {
     tokenName: 'META (META)',
@@ -377,7 +340,6 @@ export const tokenList: Token[] = [
     icon: 'https://avatars.githubusercontent.com/u/107701386?s=200&v=4',
     decimals: 9,
     coingeckoSymbol: 'meta-2',
-    livecoinwatchSymbol: '________________________META',
   },
 ];
 

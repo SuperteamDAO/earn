@@ -6,6 +6,7 @@ import { type NextApiRequestWithUser, withAuth } from '@/features/auth';
 import { sendEmailNotification } from '@/features/emails';
 import { hasRewardConditionsForEmail } from '@/features/listing-builder';
 import { prisma } from '@/prisma';
+import { fetchTokenUSDValue } from '@/utils/fetchTokenUSDValue';
 
 async function bounty(req: NextApiRequestWithUser, res: NextApiResponse) {
   const params = req.query;
@@ -71,9 +72,21 @@ async function bounty(req: NextApiRequestWithUser, res: NextApiResponse) {
       }
     }
 
+    let usdValue = currentBounty.usdValue;
+    if (currentBounty.rewardAmount !== updatedData.rewardAmount) {
+      const tokenUsdValue = await fetchTokenUSDValue(
+        updatedData.token,
+        updatedData.publishedAt,
+      );
+      usdValue = tokenUsdValue * updatedData.rewardAmount;
+    }
+
     const result = await prisma.bounties.update({
       where: { id },
-      data: updatedData,
+      data: {
+        ...updatedData,
+        usdValue,
+      },
     });
 
     if (
