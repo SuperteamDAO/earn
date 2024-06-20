@@ -4,7 +4,7 @@ import type { NextApiResponse } from 'next';
 
 import { type NextApiRequestWithUser, withAuth } from '@/features/auth';
 import { sendEmailNotification } from '@/features/emails';
-import { hasRewardConditionsForEmail } from '@/features/listing-builder';
+import { shouldSendEmailForListing } from '@/features/listing-builder';
 import { prisma } from '@/prisma';
 import { fetchTokenUSDValue } from '@/utils/fetchTokenUSDValue';
 
@@ -89,13 +89,9 @@ async function bounty(req: NextApiRequestWithUser, res: NextApiResponse) {
       },
     });
 
-    if (
-      currentBounty?.isPublished === false &&
-      result.isPublished === true &&
-      !result.isPrivate &&
-      result.type !== 'hackathon' &&
-      hasRewardConditionsForEmail(result)
-    ) {
+    const shouldSendEmail = await shouldSendEmailForListing(result);
+
+    if (currentBounty?.isPublished === false && shouldSendEmail) {
       await sendEmailNotification({
         type: 'createListing',
         id,
