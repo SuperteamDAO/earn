@@ -17,12 +17,12 @@ export const InviteMemberTemplate = ({
     <div style={styles.container}>
       <p style={styles.greetings}>Hello,</p>
       <p style={styles.textWithMargin}>
-        You have been invited by {senderName} to join{' '}
-        <strong>{sponsorName}</strong> {''} on Superteam Earn!{' '}
+        {senderName} has invited you to join <strong>{sponsorName}</strong>
+        &apos;s {''} profile.
         <a href={link} style={styles.link}>
           Click here
         </a>{' '}
-        to be added as a {sponsorName} team member.
+        to accept the invite.
       </p>
       <p style={styles.salutation}>
         Best,

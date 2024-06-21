@@ -50,7 +50,7 @@ async function sendInvites(req: NextApiRequestWithUser, res: NextApiResponse) {
     await resend.emails.send({
       from: alertsEmail,
       to: [email],
-      subject: `${user?.firstName} has invited you to join ${user?.currentSponsor?.name}'s profile on Superteam Earn`,
+      subject: `${user?.firstName} has invited you to join ${user?.currentSponsor?.name}'s profile`,
       react: InviteMemberTemplate({
         sponsorName: user?.currentSponsor?.name || '',
         senderName: `${user?.firstName} ${user?.lastName}` || '',

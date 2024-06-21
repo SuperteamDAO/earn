@@ -228,7 +228,7 @@ export function UserMenu({}) {
             fontSize="sm"
             fontWeight={600}
             onClick={() => {
-              window.open('mailto:hello@superteamearn.com', '_blank');
+              window.open('mailto:support@superteamearn.com', '_blank');
               posthog.capture('get help_user menu');
             }}
           >

@@ -10,7 +10,7 @@ export const WelcomeTalentTemplate = () => {
       </p>
       <p style={styles.text}>Even though this is an automated email...</p>
       <p style={styles.text}>
-        I just wanted to say hey and let you know that I&apos;m a real person
+        I just wanted to say hey and let you know that I&apos;m a real person.
       </p>
       <p style={styles.text}>
         I&apos;m Kash, and I&apos;m a Core Contributor over at{' '}
