@@ -14,7 +14,7 @@ export default async function user(req: NextApiRequest, res: NextApiResponse) {
         isActive: true,
       },
       include: {
-        sponsor: { select: { name: true, logo: true } },
+        sponsor: { select: { name: true, logo: true, entityName: true } },
         poc: true,
         Submission: true,
         Hackathon: {

@@ -61,6 +61,7 @@ interface User {
   };
   surveysShown?: string[];
   stRecommended?: boolean;
+  acceptedTOS?: boolean;
   emailSettings?: EmailSettings[];
 }
 export type { User };

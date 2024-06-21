@@ -3,8 +3,9 @@ import type { NextApiResponse } from 'next';
 
 import { type NextApiRequestWithUser, withAuth } from '@/features/auth';
 import { sendEmailNotification } from '@/features/emails';
-import { hasRewardConditionsForEmail } from '@/features/listing-builder';
+import { shouldSendEmailForListing } from '@/features/listing-builder';
 import { prisma } from '@/prisma';
+import { fetchTokenUSDValue } from '@/utils/fetchTokenUSDValue';
 
 async function handler(req: NextApiRequestWithUser, res: NextApiResponse) {
   const userId = req.userId;
@@ -23,9 +24,18 @@ async function handler(req: NextApiRequestWithUser, res: NextApiResponse) {
 
   const { title, ...data } = req.body;
   try {
+    let usdValue = 0;
+    if (data.isPublished === true && data.publishedAt) {
+      const tokenUsdValue = await fetchTokenUSDValue(
+        data.token,
+        data.publishedAt,
+      );
+      usdValue = tokenUsdValue * data.rewardAmount;
+    }
     const finalData = {
       sponsorId: user.currentSponsorId,
       title,
+      usdValue,
       ...data,
     };
     const result = await prisma.bounties.create({
@@ -35,17 +45,15 @@ async function handler(req: NextApiRequestWithUser, res: NextApiResponse) {
       },
     });
 
-    if (
-      result.isPublished &&
-      !result.isPrivate &&
-      result.type !== 'hackathon' &&
-      hasRewardConditionsForEmail(result)
-    ) {
+    const shouldSendEmail = await shouldSendEmailForListing(result);
+
+    if (shouldSendEmail) {
       await sendEmailNotification({
         type: 'createListing',
         id: result.id,
       });
     }
+
     try {
       if (process.env.NEXT_PUBLIC_VERCEL_ENV === 'production') {
         const zapierWebhookUrl = process.env.ZAPIER_BOUNTY_WEBHOOK!;

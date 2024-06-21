@@ -4,8 +4,9 @@ import type { NextApiResponse } from 'next';
 
 import { type NextApiRequestWithUser, withAuth } from '@/features/auth';
 import { sendEmailNotification } from '@/features/emails';
-import { hasRewardConditionsForEmail } from '@/features/listing-builder';
+import { shouldSendEmailForListing } from '@/features/listing-builder';
 import { prisma } from '@/prisma';
+import { fetchTokenUSDValue } from '@/utils/fetchTokenUSDValue';
 
 async function bounty(req: NextApiRequestWithUser, res: NextApiResponse) {
   const params = req.query;
@@ -71,18 +72,26 @@ async function bounty(req: NextApiRequestWithUser, res: NextApiResponse) {
       }
     }
 
+    let usdValue = currentBounty.usdValue;
+    if (currentBounty.rewardAmount !== updatedData.rewardAmount) {
+      const tokenUsdValue = await fetchTokenUSDValue(
+        updatedData.token,
+        updatedData.publishedAt,
+      );
+      usdValue = tokenUsdValue * updatedData.rewardAmount;
+    }
+
     const result = await prisma.bounties.update({
       where: { id },
-      data: updatedData,
+      data: {
+        ...updatedData,
+        usdValue,
+      },
     });
 
-    if (
-      currentBounty?.isPublished === false &&
-      result.isPublished === true &&
-      !result.isPrivate &&
-      result.type !== 'hackathon' &&
-      hasRewardConditionsForEmail(result)
-    ) {
+    const shouldSendEmail = await shouldSendEmailForListing(result);
+
+    if (currentBounty?.isPublished === false && shouldSendEmail) {
       await sendEmailNotification({
         type: 'createListing',
         id,
@@ -91,7 +100,7 @@ async function bounty(req: NextApiRequestWithUser, res: NextApiResponse) {
 
     const deadlineChanged =
       currentBounty.deadline?.toString() !== result.deadline?.toString();
-    if (deadlineChanged) {
+    if (deadlineChanged && result.isPublished) {
       const dayjsDeadline = dayjs(result.deadline);
       await prisma.comment.create({
         data: {

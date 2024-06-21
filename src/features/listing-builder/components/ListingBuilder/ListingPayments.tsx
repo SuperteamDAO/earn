@@ -52,7 +52,6 @@ interface Token {
   icon: string;
   decimals: number;
   coingeckoSymbol: string;
-  livecoinwatchSymbol: string;
 }
 
 interface PrizeListInterface {
