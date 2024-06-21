@@ -17,7 +17,7 @@ export default async function handler(
         isActive: true,
       },
       include: {
-        sponsor: { select: { name: true, logo: true } },
+        sponsor: { select: { name: true, logo: true, entityName: true } },
         poc: true,
         Hackathon: {
           select: {

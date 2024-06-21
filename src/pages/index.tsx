@@ -16,6 +16,7 @@ interface Props {
 }
 
 export default function HomePage({ bounties, grants }: Props) {
+  console.log(grants);
   return (
     <Home type="home">
       <InstallPWAModal />
@@ -60,19 +61,15 @@ export const getServerSideProps: GetServerSideProps<Props> = async (
 ) => {
   const params = context.query;
 
-  const category = params.category as string | undefined;
-  const order = (params.order as 'asc' | 'desc') ?? 'asc';
-  const isHomePage = params.isHomePage === 'true';
-
   const skillFilter = params.skill as Skills | undefined;
 
   const type = params.type as BountyType | undefined;
   const take = params.take ? parseInt(params.take as string, 20) : 20;
 
   const openResult = await getListings({
-    category,
-    order,
-    isHomePage,
+    category: 'bounties',
+    order: 'asc',
+    isHomePage: true,
     skillFilter,
     statusFilter: 'open',
     type,
@@ -82,7 +79,7 @@ export const getServerSideProps: GetServerSideProps<Props> = async (
   const reviewResult = await getListings({
     category: 'bounties',
     order: 'desc',
-    isHomePage,
+    isHomePage: true,
     skillFilter,
     statusFilter: 'review',
     type,
@@ -92,7 +89,7 @@ export const getServerSideProps: GetServerSideProps<Props> = async (
   const completeResult = await getListings({
     category: 'bounties',
     order: 'desc',
-    isHomePage,
+    isHomePage: true,
     skillFilter,
     statusFilter: 'completed',
     type,

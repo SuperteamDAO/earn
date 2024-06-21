@@ -125,7 +125,10 @@ export function Banner({
                 <Skeleton w="72px" h="20px" mt={2} />
               ) : (
                 <Text color={'brand.slate.900'} fontSize="lg" fontWeight={600}>
-                  ${stats?.totalRewardAmount?.toLocaleString()}
+                  $
+                  {new Intl.NumberFormat('en-US', {
+                    maximumFractionDigits: 0,
+                  }).format(Math.round(stats.totalRewardAmount || 0))}
                 </Text>
               )}
             </Box>

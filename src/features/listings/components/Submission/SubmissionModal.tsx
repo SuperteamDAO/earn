@@ -32,6 +32,7 @@ import { validateSolAddress } from '@/utils/validateSolAddress';
 
 import { type Listing } from '../../types';
 import { QuestionHandler } from './QuestionHandler';
+import { SubmissionTerms } from './SubmissionTerms';
 
 interface Props {
   id: string | undefined;
@@ -76,6 +77,7 @@ export const SubmissionModal = ({
   const isProject = type === 'project';
   const isHackathon = type === 'hackathon';
   const [isLoading, setIsLoading] = useState(false);
+  const [isTOSModalOpen, setIsTOSModalOpen] = useState(false);
   const [error, setError] = useState('');
   const [publicKeyError, setPublicKeyError] = useState('');
   const [askError, setAskError] = useState('');
@@ -463,8 +465,34 @@ export const SubmissionModal = ({
             >
               {!isProject ? 'Submit' : 'Apply'}
             </Button>
+            <Text
+              mt={2}
+              color="brand.slate.400"
+              fontSize="sm"
+              textAlign="center"
+            >
+              By submitting/applying to this listing, you agree to our{' '}
+              <Link
+                textDecoration={'underline'}
+                onClick={() => setIsTOSModalOpen(true)}
+                rel="noopener noreferrer"
+                target="_blank"
+                textUnderlineOffset={2}
+              >
+                Terms of Use
+              </Link>
+              .
+            </Text>
           </form>
         </VStack>
+        {listing?.sponsor?.name && (
+          <SubmissionTerms
+            entityName={listing.sponsor.entityName}
+            isOpen={isTOSModalOpen}
+            onClose={() => setIsTOSModalOpen(false)}
+            sponsorName={listing.sponsor.name}
+          />
+        )}
       </ModalContent>
     </Modal>
   );

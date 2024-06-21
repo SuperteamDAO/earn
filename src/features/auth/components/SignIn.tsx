@@ -15,6 +15,7 @@ import { usePostHog } from 'posthog-js/react';
 import React, { type Dispatch, type SetStateAction, useState } from 'react';
 import { MdOutlineEmail } from 'react-icons/md';
 
+import { TERMS_OF_USE } from '@/constants';
 import { GoogleIcon } from '@/svg/google';
 
 export const SignIn = ({
@@ -171,10 +172,11 @@ export const SignIn = ({
             <Link
               as={NextLink}
               fontWeight={600}
-              href={`${router.basePath}/terms-of-service.pdf`}
+              href={TERMS_OF_USE}
               isExternal
+              rel="noopener noreferrer"
             >
-              Terms of Service
+              Terms of Use
             </Link>{' '}
             and our{' '}
             <Link

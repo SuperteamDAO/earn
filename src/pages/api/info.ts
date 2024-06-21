@@ -113,9 +113,14 @@ async function handler(_req: NextApiRequest, res: NextApiResponse) {
       }
     }
 
-    const totalRewardAmountResult = await prisma.user.aggregate({
+    const totalRewardAmountResult = await prisma.bounties.aggregate({
       _sum: {
-        totalEarnedInUSD: true,
+        usdValue: true,
+      },
+      where: {
+        isWinnersAnnounced: true,
+        isPublished: true,
+        status: 'OPEN',
       },
     });
 
@@ -130,7 +135,7 @@ async function handler(_req: NextApiRequest, res: NextApiResponse) {
     });
 
     const totalTVE =
-      Math.ceil((totalRewardAmountResult._sum.totalEarnedInUSD || 0) / 10) * 10;
+      Math.ceil((totalRewardAmountResult._sum.usdValue || 0) / 10) * 10;
 
     const info = {
       userSignUpsInLast7Days: newUserCountInLastWeek,

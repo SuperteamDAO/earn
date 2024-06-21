@@ -49,6 +49,7 @@ model Bounties {
   token                String?
   rewardAmount         Float?
   rewards              Json?
+  usdValue             Float?
   sponsorId            String
   pocId                String
   source               Source             @default(NATIVE)
@@ -78,7 +79,6 @@ model Bounties {
   publishedAt          DateTime?
   isPrivate            Boolean            @default(false)
   hackathonId          String?
-  usdValue             Int?
   compensationType     CompensationType   @default(fixed)
   maxRewardAsk         Int?
   minRewardAsk         Int?
@@ -242,7 +242,7 @@ model Submission {
   otherInfo          String?          @db.VarChar(2000)
   ask                Int?
   label              SubmissionLabels @default(Unreviewed)
-  rewardInUSD        Int              @default(0)
+  rewardInUSD        Float            @default(0)
   listing            Bounties         @relation(fields: [listingId], references: [id])
   user               User             @relation(fields: [userId], references: [id])
   ogImage            String?          @db.Text
@@ -257,25 +257,25 @@ model Submission {
 }
 
 model Sponsors {
-  id                 String         @id @default(uuid())
-  name               String         @unique
-  slug               String         @unique
-  logo               String?
-  url                String?
-  industry           String
-  twitter            String?
-  bio                String?
-  createdAt          DateTime       @default(now())
-  updatedAt          DateTime       @updatedAt
-  isArchived         Boolean        @default(false)
-  isActive           Boolean        @default(true)
-  totalRewardedInUSD Int            @default(0)
-  Hackathon          Hackathon?
-  UserSponsors       UserSponsors[]
-  Bounties           Bounties[]
-  Grants             Grants[]
-  Jobs               Jobs[]
-  User               User[]
+  id           String         @id @default(uuid())
+  name         String         @unique
+  slug         String         @unique
+  logo         String?
+  url          String?
+  industry     String
+  twitter      String?
+  bio          String?
+  createdAt    DateTime       @default(now())
+  updatedAt    DateTime       @updatedAt
+  isArchived   Boolean        @default(false)
+  isActive     Boolean        @default(true)
+  entityName   String?
+  Hackathon    Hackathon?
+  UserSponsors UserSponsors[]
+  Bounties     Bounties[]
+  Grants       Grants[]
+  Jobs         Jobs[]
+  User         User[]
 
   @@index([id, slug])
 }
@@ -347,6 +347,7 @@ model User {
   featureModalShown Boolean            @default(false)
   surveysShown      Json?
   stRecommended     Boolean            @default(false)
+  acceptedTOS       Boolean            @default(false)
   currentSponsor    Sponsors?          @relation(fields: [currentSponsorId], references: [id])
   UserSponsors      UserSponsors[]
   poc               Bounties[]         @relation("poc")
@@ -382,7 +383,6 @@ model Scouts {
   user          User     @relation(fields: [userId], references: [id])
 
   @@unique([userId, listingId])
-  @@index([userId])
   @@index([listingId])
 }
 

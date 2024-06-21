@@ -56,17 +56,6 @@ export default async function handler(
         },
       });
 
-      await tx.sponsors.update({
-        where: {
-          id: currentApplication.grant.sponsorId,
-        },
-        data: {
-          totalRewardedInUSD: {
-            increment: parsedTrancheAmount,
-          },
-        },
-      });
-
       return updatedGrantApplication;
     });
 

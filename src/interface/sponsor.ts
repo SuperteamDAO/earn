@@ -7,5 +7,6 @@ interface SponsorType {
   industry?: string;
   twitter?: string;
   bio?: string;
+  entityName?: string;
 }
 export type { SponsorType };
