@@ -109,10 +109,15 @@ export function Sidebar({
 
   // ENTITY NAME TO SPONSORS
   useEffect(() => {
-    if (userInfo && userInfo.currentSponsor && userInfo.role !== 'GOD') {
-      if (!userInfo.currentSponsor.entityName) {
-        setIsEntityModalOpen(true);
-      }
+    if (
+      userInfo &&
+      userInfo.currentSponsor &&
+      userInfo.role !== 'GOD' &&
+      !userInfo.currentSponsor.entityName
+    ) {
+      setIsEntityModalOpen(true);
+    } else {
+      setIsEntityModalOpen(false);
     }
   }, [userInfo]);
 
