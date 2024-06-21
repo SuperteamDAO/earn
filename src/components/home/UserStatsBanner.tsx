@@ -116,7 +116,9 @@ export const UserStatsBanner = () => {
           mt={{ base: -1.5, md: 0 }}
         >
           <Stat
-            value={'$' + formatNumberWithSuffix(userInfo.totalEarnedInUSD ?? 0)}
+            value={
+              '$' + formatNumberWithSuffix(userInfo.totalEarnedInUSD ?? 0, 1)
+            }
             label="Total Earned"
           />
           <Stat value={stats.participations} label="Participated" />
