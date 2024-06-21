@@ -22,6 +22,7 @@ import {
   MdOutlineGroup,
 } from 'react-icons/md';
 
+import { EntityNameModal } from '@/components/modals/EntityNameModal';
 import { FeatureModal } from '@/components/modals/FeatureModal';
 import { LoadingSection } from '@/components/shared/LoadingSection';
 import { SelectHackathon, SelectSponsor } from '@/features/listing-builder';
@@ -60,7 +61,7 @@ export function Sidebar({
   const router = useRouter();
   const { isOpen, onOpen, onClose } = useDisclosure();
   const posthog = usePostHog();
-
+  const [isEntityModalOpen, setIsEntityModalOpen] = useState(false);
   const [latestActiveSlug, setLatestActiveSlug] = useState<string | undefined>(
     undefined,
   );
@@ -91,6 +92,10 @@ export function Sidebar({
       onScoutAnnounceModalOpen();
   }
 
+  const handleEntityClose = () => {
+    setIsEntityModalOpen(false);
+  };
+
   const getSponsorLatestActiveSlug = async () => {
     try {
       const slug = await axios.get('/api/bounties/latestActiveSlug');
@@ -101,6 +106,20 @@ export function Sidebar({
       console.log(e);
     }
   };
+
+  // ENTITY NAME TO SPONSORS
+  useEffect(() => {
+    if (
+      userInfo &&
+      userInfo.currentSponsor &&
+      userInfo.role !== 'GOD' &&
+      !userInfo.currentSponsor.entityName
+    ) {
+      setIsEntityModalOpen(true);
+    } else {
+      setIsEntityModalOpen(false);
+    }
+  }, [userInfo]);
 
   useEffect(() => {
     const modalsToShow = async () => {
@@ -237,6 +256,7 @@ export function Sidebar({
         onClose={sponsorInfoCloseAltered}
         isOpen={isSponsorInfoModalOpen}
       />
+      <EntityNameModal isOpen={isEntityModalOpen} onClose={handleEntityClose} />
       <Flex display={{ base: 'flex', md: 'none' }} minH="80vh" px={3}>
         <Text
           align={'center'}
