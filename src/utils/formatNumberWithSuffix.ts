@@ -1,4 +1,7 @@
-export const formatNumberWithSuffix = (amount: number) => {
+export const formatNumberWithSuffix = (
+  amount: number,
+  decimals: number = 2,
+) => {
   if (isNaN(amount)) return null;
 
   if (amount < 1000) return amount?.toString();
@@ -14,7 +17,7 @@ export const formatNumberWithSuffix = (amount: number) => {
 
   let formattedNumber;
   if (tier === 1) {
-    formattedNumber = scaled.toFixed(2).replace(/\.?0+$/, '');
+    formattedNumber = scaled.toFixed(decimals).replace(/\.?0+$/, '');
   } else {
     formattedNumber =
       scaled % 1 === 0
