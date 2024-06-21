@@ -21,18 +21,35 @@ async function handler(req: NextApiRequest, res: NextApiResponse) {
           gte: startOfDay,
           lte: endOfDay,
         },
+        sponsor: {
+          NOT: undefined,
+        },
+        sponsorId: {
+          not: undefined,
+        },
+        isPublished: true,
+        isActive: true,
+        isPrivate: false,
+        hackathonprize: false,
+        isArchived: false,
+        Hackathon: null,
       },
       include: {
         sponsor: true,
       },
     });
+    if (bounties.length === 0) {
+      return res
+        .status(400)
+        .json({ message: 'No bounties with deadline yesterday' });
+    }
     await discordDeadlineReached(bounties);
     // console.log('fiveDaysAgo bounties - ', bounties)
     console.log('bounties length - ', bounties.length);
-    res.send('done');
+    return res.send('done');
   } catch (err) {
     console.error('Error sending discord message for 5 day past deadline', err);
-    res.status(500).json({
+    return res.status(500).json({
       message: 'Error sending discord message for 5 day past deadline',
     });
   }
