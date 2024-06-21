@@ -1,7 +1,12 @@
 import type { NextApiRequest, NextApiResponse } from 'next';
 import { getToken } from 'next-auth/jwt';
 
-import { kashEmail, resend, WelcomeTalentTemplate } from '@/features/emails';
+import {
+  alertsEmail,
+  replyToEmail,
+  resend,
+  WelcomeTalentTemplate,
+} from '@/features/emails';
 
 export default async function handler(
   req: NextApiRequest,
@@ -20,10 +25,11 @@ export default async function handler(
   }
   try {
     await resend.emails.send({
-      from: kashEmail,
+      from: alertsEmail,
       to: [userEmail as string],
       subject: 'Welcome to Superteam Earn!',
       react: WelcomeTalentTemplate(),
+      reply_to: replyToEmail,
     });
 
     return res.status(200).json({ message: 'Ok' });

@@ -1,7 +1,12 @@
 import type { NextApiResponse } from 'next';
 
 import { type NextApiRequestWithUser, withAuth } from '@/features/auth';
-import { InviteMemberTemplate, kashEmail, resend } from '@/features/emails';
+import {
+  alertsEmail,
+  InviteMemberTemplate,
+  replyToEmail,
+  resend,
+} from '@/features/emails';
 import { prisma } from '@/prisma';
 import { getURL } from '@/utils/validUrl';
 
@@ -43,7 +48,7 @@ async function sendInvites(req: NextApiRequestWithUser, res: NextApiResponse) {
     });
 
     await resend.emails.send({
-      from: kashEmail,
+      from: alertsEmail,
       to: [email],
       subject: `${user?.firstName} has invited you to join ${user?.currentSponsor?.name}'s profile on Superteam Earn`,
       react: InviteMemberTemplate({
@@ -51,6 +56,7 @@ async function sendInvites(req: NextApiRequestWithUser, res: NextApiResponse) {
         senderName: `${user?.firstName} ${user?.lastName}` || '',
         link: `${getURL()}signup?invite=${result.id}`,
       }),
+      reply_to: replyToEmail,
     });
 
     return res.status(200).json({ message: 'OTP sent successfully.' });

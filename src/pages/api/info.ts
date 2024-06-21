@@ -4,7 +4,7 @@ import updateLocale from 'dayjs/plugin/updateLocale';
 import utc from 'dayjs/plugin/utc';
 import type { NextApiRequest, NextApiResponse } from 'next';
 
-import { InfoTemplate, kashEmail, resend } from '@/features/emails';
+import { alertsEmail, InfoTemplate, resend } from '@/features/emails';
 import { prisma } from '@/prisma';
 
 dayjs.extend(utc);
@@ -154,7 +154,7 @@ async function handler(_req: NextApiRequest, res: NextApiResponse) {
     };
 
     await resend.emails.send({
-      from: kashEmail,
+      from: alertsEmail,
       to: ['pratik.dholani1@gmail.com', 'bodhiswattwac@gmail.com'],
       subject: `Weekly Earn Stats (from ${formatDate(startOfLastWeek)} to ${formatDate(endOfLastWeek)}`,
       react: InfoTemplate({
