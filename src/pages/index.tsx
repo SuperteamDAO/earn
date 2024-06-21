@@ -60,6 +60,8 @@ export const getServerSideProps: GetServerSideProps<Props> = async (
 ) => {
   const params = context.query;
 
+  const category = params.category as string | undefined;
+
   const skillFilter = params.skill as Skills | undefined;
   const statusFilter: Status = (params.status as Status) ?? 'open';
   const type = params.type as BountyType | undefined;
@@ -68,7 +70,7 @@ export const getServerSideProps: GetServerSideProps<Props> = async (
   console.log('status - ', statusFilter);
 
   const openResult = await getListings({
-    category: 'bounties',
+    category,
     order: 'asc',
     isHomePage: true,
     skillFilter,
