@@ -15,7 +15,6 @@ import { PostHogProvider, usePostHog } from 'posthog-js/react';
 import React, { useEffect, useState } from 'react';
 import { Toaster } from 'react-hot-toast';
 
-import { EntityNameModal } from '@/components/modals/EntityNameModal';
 import { FeatureModal } from '@/components/modals/FeatureModal';
 import { TermsOfServices } from '@/components/modals/TermsOfServices';
 import { SolanaWalletProvider } from '@/context/SolanaWallet';
@@ -123,7 +122,6 @@ function MyApp({ Component, pageProps }: any) {
 function App({ Component, pageProps: { session, ...pageProps } }: AppProps) {
   const [isFeatureModalOpen, setIsFeatureModalOpen] = useState(false);
   const [isTOSModalOpen, setIsTOSModalOpen] = useState(false);
-  const [isEntityModalOpen, setIsEntityModalOpen] = useState(false);
   const [latestActiveSlug, setLatestActiveSlug] = useState<string | undefined>(
     undefined,
   );
@@ -147,10 +145,6 @@ function App({ Component, pageProps: { session, ...pageProps } }: AppProps) {
     } catch (e) {
       console.log('failed to set accepted terms of service', e);
     }
-  };
-
-  const handleEntityClose = () => {
-    setIsEntityModalOpen(false);
   };
 
   const getSponsorLatestActiveSlug = async () => {
@@ -215,15 +209,6 @@ function App({ Component, pageProps: { session, ...pageProps } }: AppProps) {
     }
   }, [userInfo]);
 
-  // ENTITY NAME TO SPONSORS
-  useEffect(() => {
-    if (userInfo && userInfo.currentSponsor && userInfo.role !== 'GOD') {
-      if (!userInfo.currentSponsor.entityName) {
-        setIsEntityModalOpen(true);
-      }
-    }
-  }, [userInfo]);
-
   return (
     <>
       <style jsx global>
@@ -243,10 +228,6 @@ function App({ Component, pageProps: { session, ...pageProps } }: AppProps) {
                 latestActiveBountySlug={latestActiveSlug}
                 isOpen={isFeatureModalOpen}
                 onClose={handleFeatureClose}
-              />
-              <EntityNameModal
-                isOpen={isEntityModalOpen}
-                onClose={handleEntityClose}
               />
               <MyApp Component={Component} pageProps={pageProps} />
               <TermsOfServices
