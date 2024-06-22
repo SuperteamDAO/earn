@@ -49,6 +49,8 @@ async function grantApplication(
       },
     });
 
+    console.log('Prisma result:', result);
+
     if (result.grant.airtableId) {
       const config = airtableConfig(process.env.AIRTABLE_GRANTS_API_TOKEN!);
       const url = airtableUrl(
@@ -57,9 +59,11 @@ async function grantApplication(
       );
 
       const airtableData = convertGrantApplicationToAirtable(result);
-      const airtablePayload = airtableUpsert('earnGrantApplicationId', [
+      const airtablePayload = airtableUpsert('earnApplicationId', [
         { fields: airtableData },
       ]);
+
+      console.log('Airtable payload:', airtablePayload);
 
       await axios.patch(url, JSON.stringify(airtablePayload), config);
     }
@@ -67,8 +71,11 @@ async function grantApplication(
     return res.status(200).json(result);
   } catch (error: any) {
     console.error(`User ${userId} unable to apply`, error.message);
+    if (error.response) {
+      console.error('Response data:', error.response.data);
+    }
     return res.status(400).json({
-      error,
+      error: error.message,
       message: 'Error occurred while adding a new grant application.',
     });
   }

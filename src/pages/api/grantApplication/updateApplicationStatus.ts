@@ -81,7 +81,7 @@ async function handler(req: NextApiRequestWithUser, res: NextApiResponse) {
     );
 
     const airtableData = convertGrantApplicationToAirtable(result);
-    const airtablePayload = airtableUpsert('earnGrantApplicationId', [
+    const airtablePayload = airtableUpsert('earnApplicationId', [
       { fields: airtableData },
     ]);
 

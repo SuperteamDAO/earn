@@ -22,7 +22,7 @@ interface GrantApplicationWithUserAndGrant extends GrantApplicationWithUser {
 }
 
 interface GrantApplicationAirtableSchema {
-  earnGrantApplicationId: string;
+  earnApplicationId: string;
   Title: string;
   Status: string;
   Summary: string;
@@ -58,7 +58,7 @@ export function convertGrantApplicationToAirtable(
       status = grantApplication.applicationStatus;
   }
   return {
-    earnGrantApplicationId: grantApplication.id,
+    earnApplicationId: grantApplication.id,
     Title: grantApplication.projectTitle,
     Status: status,
     Summary: grantApplication.projectOneLiner,
