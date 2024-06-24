@@ -20,6 +20,7 @@ interface TextAreaWithCounterProps {
   maxLength?: number;
   errors: any;
   isRequired?: boolean;
+  minH?: string;
 }
 
 interface TextInputWithHelperProps {
@@ -45,6 +46,7 @@ export const TextAreaWithCounter = ({
   maxLength = 2000,
   errors,
   isRequired,
+  minH = 'unset',
 }: TextAreaWithCounterProps) => (
   <FormControl isRequired={isRequired}>
     <FormLabel mb={0} color={'brand.slate.600'} fontWeight={600} htmlFor={id}>
@@ -61,6 +63,7 @@ export const TextAreaWithCounter = ({
       placeholder={placeholder}
       {...register(id)}
       maxLength={maxLength}
+      minH={minH}
     />
     <Text
       color={

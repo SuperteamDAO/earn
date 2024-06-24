@@ -404,6 +404,7 @@ export const GrantApplicationModal = ({
                   watch={watch}
                   errors={errors}
                   isRequired
+                  minH="6rem"
                 />
                 <TextAreaWithCounter
                   id="kpi"
@@ -414,6 +415,7 @@ export const GrantApplicationModal = ({
                   watch={watch}
                   errors={errors}
                   isRequired
+                  minH="6rem"
                 />
               </VStack>
             )}

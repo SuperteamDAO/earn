@@ -122,6 +122,8 @@ export default function SponsorListings() {
     setCurrentPage(0);
   }, [searchText, allListings, selectedTab]);
 
+  const hasGrants = allListings.some((listing) => listing.type === 'grant');
+
   const selectedStyles = {
     borderColor: 'brand.purple',
     color: 'brand.slate.600',
@@ -169,7 +171,12 @@ export default function SponsorListings() {
         <>
           <Tabs
             onChange={(index) => {
-              const tabTypes = ['all', 'bounty', 'project', 'grant'];
+              const tabTypes = [
+                'all',
+                'bounty',
+                'project',
+                hasGrants ? 'grant' : '',
+              ];
               const tabType = tabTypes[index] || 'all';
               setSelectedTab(tabType);
             }}
@@ -199,14 +206,16 @@ export default function SponsorListings() {
               >
                 Projects
               </Tab>
-              <Tab
-                color="brand.slate.400"
-                fontSize={'sm'}
-                fontWeight={500}
-                _selected={selectedStyles}
-              >
-                Grants
-              </Tab>
+              {hasGrants && (
+                <Tab
+                  color="brand.slate.400"
+                  fontSize={'sm'}
+                  fontWeight={500}
+                  _selected={selectedStyles}
+                >
+                  Grants
+                </Tab>
+              )}
             </TabList>
             <TabPanels>
               <TabPanel px={0}>
@@ -227,12 +236,14 @@ export default function SponsorListings() {
                   setListings={setAllListings}
                 />
               </TabPanel>
-              <TabPanel px={0}>
-                <ListingTable
-                  listings={paginatedListings}
-                  setListings={setAllListings}
-                />
-              </TabPanel>
+              {hasGrants && (
+                <TabPanel px={0}>
+                  <ListingTable
+                    listings={paginatedListings}
+                    setListings={setAllListings}
+                  />
+                </TabPanel>
+              )}
             </TabPanels>
           </Tabs>
           <CreateListingModal

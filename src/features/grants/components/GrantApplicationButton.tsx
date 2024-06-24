@@ -145,7 +145,7 @@ export const GrantApplicationButton = ({
           <AuthWrapper style={{ w: 'full', direction: 'column' }}>
             <Button
               w={'full'}
-              mb={{ base: 0, md: 5 }}
+              mb={{ base: 12, md: 5 }}
               bg={buttonBG}
               _hover={{ bg: buttonBG }}
               _disabled={{
