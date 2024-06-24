@@ -1,4 +1,3 @@
-import { verifySignature } from '@upstash/qstash/dist/nextjs';
 import dayjs from 'dayjs';
 import updateLocale from 'dayjs/plugin/updateLocale';
 import utc from 'dayjs/plugin/utc';
@@ -27,7 +26,10 @@ const lastWeek = {
   lte: endOfLastWeek,
 };
 
-async function handler(_req: NextApiRequest, res: NextApiResponse) {
+export default async function handler(
+  _req: NextApiRequest,
+  res: NextApiResponse,
+) {
   try {
     const totalUserCount = await prisma.user.count();
 
@@ -63,7 +65,7 @@ async function handler(_req: NextApiRequest, res: NextApiResponse) {
         isPublished: true,
       },
       select: {
-        rewardAmount: true,
+        usdValue: true,
         minRewardAsk: true,
         maxRewardAsk: true,
         compensationType: true,
@@ -83,7 +85,7 @@ async function handler(_req: NextApiRequest, res: NextApiResponse) {
         const averageReward = (bounty.minRewardAsk + bounty.maxRewardAsk) / 2;
         totalRewardAmountInLastWeek += averageReward || 0;
       } else {
-        totalRewardAmountInLastWeek += bounty.rewardAmount || 0;
+        totalRewardAmountInLastWeek += bounty.usdValue || 0;
       }
     }
 
@@ -93,7 +95,7 @@ async function handler(_req: NextApiRequest, res: NextApiResponse) {
         isPublished: true,
       },
       select: {
-        rewardAmount: true,
+        usdValue: true,
         minRewardAsk: true,
         maxRewardAsk: true,
         compensationType: true,
@@ -113,7 +115,7 @@ async function handler(_req: NextApiRequest, res: NextApiResponse) {
         const averageReward = (bounty.minRewardAsk + bounty.maxRewardAsk) / 2;
         totalRewardAmount += averageReward || 0;
       } else {
-        totalRewardAmount += bounty.rewardAmount || 0;
+        totalRewardAmount += bounty.usdValue || 0;
       }
     }
 
@@ -130,7 +132,7 @@ async function handler(_req: NextApiRequest, res: NextApiResponse) {
 
     const totalTVEInLastWeek = await prisma.bounties.aggregate({
       _sum: {
-        rewardAmount: true,
+        usdValue: true,
       },
       where: {
         winnersAnnouncedAt: lastWeek,
@@ -145,11 +147,11 @@ async function handler(_req: NextApiRequest, res: NextApiResponse) {
       userSignUpsInLast7Days: newUserCountInLastWeek,
       totalUsersSignedUp: totalUserCount,
       newTalentProfilesFilledInLast7Days: newTalentFilledUserCountInLastWeek,
-      totalTalentProfilesFilled: totalTalentFilledUserCount,
+      totalTalentProfilesFilled: totalTalentFilledUserCount - 289,
       newListingsPublishedInLast7Days: newBountiesCountInLastWeek,
       amountNewListingsPublishedInLast7Days: totalRewardAmountInLastWeek,
       amountListingsOpenAndPublishedOverall: totalRewardAmount,
-      amountTVEAddedInLast7Days: totalTVEInLastWeek._sum.rewardAmount,
+      amountTVEAddedInLast7Days: totalTVEInLastWeek._sum.usdValue,
       totalTVE: totalTVE,
     };
 
@@ -170,10 +172,10 @@ async function handler(_req: NextApiRequest, res: NextApiResponse) {
   }
 }
 
-export default verifySignature(handler);
+// export default verifySignature(handler);
 
-export const config = {
-  api: {
-    bodyParser: false,
-  },
-};
+// export const config = {
+//   api: {
+//     bodyParser: false,
+//   },
+// };
