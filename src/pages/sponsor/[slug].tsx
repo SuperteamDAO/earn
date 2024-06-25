@@ -104,7 +104,9 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
   if (
     !params ||
     !params.slug ||
-    !['solana-gaming', 'pyth'].includes(params.slug as string)
+    !['solana-gaming', 'pyth', 'dreader'].includes(
+      (params.slug as string).toLowerCase(),
+    )
   ) {
     return {
       notFound: true,
@@ -112,7 +114,7 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
   }
 
   return {
-    props: { slug: params.slug },
+    props: { slug: (params.slug as string).toLowerCase() },
   };
 };
 

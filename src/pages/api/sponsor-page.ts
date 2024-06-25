@@ -24,7 +24,7 @@ const sponsorData: Record<
       'Explore the latest Research and Developer bounties for the Pyth Network ecosystem on Superteam Earn. Get started now!',
     bgImage: '/assets/category_assets/bg/content.png',
   },
-  dReader: {
+  dreader: {
     title: 'dReader',
     description:
       'Explore the latest bounties for dReader on Superteam Earn. Get started now!',
@@ -34,19 +34,20 @@ const sponsorData: Record<
 
 export default async function user(req: NextApiRequest, res: NextApiResponse) {
   const { sponsor } = req.body;
+  const sponsorKey = sponsor.toLowerCase();
 
-  if (!sponsorData[sponsor]) {
+  if (!sponsorData[sponsorKey]) {
     return res.status(404).json({ message: 'Sponsor not found' });
   }
 
   const result: any = {
     bounties: [],
-    sponsorInfo: sponsorData[sponsor],
+    sponsorInfo: sponsorData[sponsorKey],
   };
 
   try {
-    const sponsorName = sponsorData[sponsor]?.title;
-    const isPrivate = sponsorData[sponsor]?.private;
+    const sponsorName = sponsorData[sponsorKey]?.title;
+    const isPrivate = sponsorData[sponsorKey]?.private;
 
     const bounties = await prisma.bounties.findMany({
       where: {
