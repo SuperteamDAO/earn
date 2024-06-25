@@ -147,7 +147,7 @@ export const ListingCard = ({
         overflow="hidden"
         w={{ base: '100%', md: 'brand.120' }}
       >
-        <Flex w="100%">
+        <Flex w="max-content">
           <Image
             w={{ base: 14, sm: 16 }}
             h={{ base: 14, sm: 16 }}
