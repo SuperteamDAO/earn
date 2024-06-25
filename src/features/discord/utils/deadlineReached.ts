@@ -23,7 +23,7 @@ export async function discordDeadlineReached(listings: BountiesWithSponsor[]) {
 Listing: ${listing.title} (<${url}>)
 Type: ${listing.type}
 Sponsor Name: ${listing.sponsor.name} (<${listing.sponsor?.url}>)
-${listing.rewardAmount ? `Amount: ${listing.rewardAmount} ${listing.token}` : ''}${listing.compensationType === 'variable' ? 'Variable' : ''}${listing.compensationType === 'range' ? `${listing.minRewardAsk} (${listing.token}) to ${listing.maxRewardAsk} (${listing.token})` : ''}
+${listing.rewardAmount ? `Amount: ${listing.rewardAmount} ${listing.token}` : ''}${listing.compensationType === 'variable' ? 'Variable' : ''}${listing.compensationType === 'range' ? `${listing.minRewardAsk} ${listing.token} to ${listing.maxRewardAsk} ${listing.token}` : ''}
 `;
     if (msg.length >= 1500 || i === listings.length - 1) {
       msgs.push(msg);
