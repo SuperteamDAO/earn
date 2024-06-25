@@ -2,6 +2,7 @@ import { type Prisma } from '@prisma/client';
 import dayjs from 'dayjs';
 import { WebhookClient } from 'discord.js';
 
+import { timeAgoShort } from '@/utils/timeAgo';
 import { getURL } from '@/utils/validUrl';
 
 type BountiesWithSponsor = Prisma.BountiesGetPayload<{
@@ -12,24 +13,33 @@ type BountiesWithSponsor = Prisma.BountiesGetPayload<{
 
 export async function discordDueForWinners(listings: BountiesWithSponsor[]) {
   const msgs: string[] = [];
-
-  for (const listing of listings) {
+  let msg: string = '';
+  let listing: BountiesWithSponsor | undefined;
+  for (let i = 0; i < listings.length; i++) {
+    listing = listings[i];
+    if (!listing) continue;
     const url = `${getURL()}listings/${listing.type}/${listing.slug}`;
 
-    msgs.push(`**Due for Winner Announcement:**
+    msg += `\n**Due for Winner Announcement:**
 Listing: ${listing.title} (<${url}>)
 Sponsor Name: ${listing.sponsor.name} (<${listing.sponsor?.url}>)
-Deadline: ${dayjs(listing.deadline).format('MMMM D, YYYY')} (5 days ago)
-`);
-  }
+Deadline: ${dayjs(listing.deadline).format('MMMM D, YYYY')} ${listing.deadline ? `(${timeAgoShort(listing.deadline)} ago)` : ``}
+`;
 
+    if (msg.length >= 1500 || i === listings.length - 1) {
+      msgs.push(msg);
+      msg = '';
+    }
+  }
   const discord = new WebhookClient({
     url: process.env.DISCORD_WINNERS_WEBHOOK!,
   });
 
-  await discord.send({
-    content: msgs.join('\n'),
-    embeds: [],
-  });
+  for (const msg of msgs) {
+    await discord.send({
+      content: msg,
+      embeds: [],
+    });
+  }
   console.log('Message sent');
 }
