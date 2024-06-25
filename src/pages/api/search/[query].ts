@@ -121,7 +121,19 @@ b.minRewardAsk,
 b.maxRewardAsk,
 b.updatedAt,
 b.winnersAnnouncedAt,
-b.isFeatured
+b.isFeatured,
+        JSON_OBJECT(
+            'Comments', 
+            (
+                SELECT COUNT(*)
+                FROM Comment c
+                WHERE c.listingId = b.id
+                  AND c.isActive = TRUE
+                  AND c.isArchived = FALSE
+                  AND c.replyToId IS NULL
+                  AND c.type != 'SUBMISSION'
+            )
+        ) AS _count
 FROM Bounties b
 JOIN Sponsors s ON b.sponsorId = s.id
 WHERE (1=1) AND (
