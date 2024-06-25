@@ -9,7 +9,8 @@ import {
   VStack,
 } from '@chakra-ui/react';
 import axios from 'axios';
-import type { GetServerSideProps } from 'next';
+import { type GetServerSideProps } from 'next';
+import Head from 'next/head';
 import { usePostHog } from 'posthog-js/react';
 import React, { useEffect, useState } from 'react';
 
@@ -19,7 +20,6 @@ import { type Grant, GrantsHeader } from '@/features/grants';
 import { DescriptionUI } from '@/features/listings';
 import type { SponsorType } from '@/interface/sponsor';
 import { Default } from '@/layouts/Default';
-import { Meta } from '@/layouts/Meta';
 
 interface GrantsDetailsProps {
   slug: string;
@@ -32,6 +32,8 @@ const Grants = ({ slug }: GrantsDetailsProps) => {
   const [error, setError] = useState(false);
 
   const posthog = usePostHog();
+
+  const isBlink = slug === 'blink-grants';
 
   const getGrants = async () => {
     setIsLoading(true);
@@ -55,10 +57,35 @@ const Grants = ({ slug }: GrantsDetailsProps) => {
     <>
       <Default
         meta={
-          <Meta
-            title="Superteam Earn"
-            description="Every Solana opportunity in one place!"
-          />
+          <Head>
+            <title>{`${isBlink ? 'Blink Grants' : 'Grants'} | Superteam Earn`}</title>
+            <meta
+              property="og:title"
+              content={`${isBlink ? 'Blink Grants' : 'Grants'} | Superteam Earn`}
+            />
+            <meta
+              property="og:image"
+              content={`${isBlink ? 'https://earn.superteam.fun/blink-og.png' : 'https://earn.superteam.fun/assets/logo/og.png'}`}
+            />
+            <meta
+              name="twitter:title"
+              content={`${isBlink ? 'Blink Grants' : 'Grants'} | Superteam Earn`}
+            />
+            <meta
+              name="twitter:image"
+              content={`${isBlink ? 'https://earn.superteam.fun/blink-og.png' : 'https://earn.superteam.fun/assets/logo/og.png'}`}
+            />
+            <meta name="twitter:card" content="summary_large_image" />
+            <meta property="og:image:width" content="1200" />
+            <meta property="og:image:height" content="630" />
+            <meta property="og:image:alt" content="Superteam Bounty" />
+            <meta charSet="UTF-8" key="charset" />
+            <meta
+              name="viewport"
+              content="width=device-width,initial-scale=1"
+              key="viewport"
+            />
+          </Head>
         }
       >
         {isLoading && <LoadingSection />}
@@ -130,7 +157,7 @@ const Grants = ({ slug }: GrantsDetailsProps) => {
                   <Flex
                     pos={{ base: 'fixed', md: 'static' }}
                     zIndex={999}
-                    bottom={0}
+                    bottom={12}
                     left="50%"
                     w="full"
                     px={{ base: 3, md: 0 }}
