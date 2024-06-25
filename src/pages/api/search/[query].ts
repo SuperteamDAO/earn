@@ -119,7 +119,9 @@ b.description,
 b.compensationType, 
 b.minRewardAsk, 
 b.maxRewardAsk,
-b.updatedAt
+b.updatedAt,
+b.winnersAnnouncedAt,
+b.isFeatured
 FROM Bounties b
 JOIN Sponsors s ON b.sponsorId = s.id
 WHERE (1=1) AND (

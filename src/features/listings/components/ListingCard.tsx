@@ -280,7 +280,7 @@ export const ListingCard = ({
                   <Text>{_count?.Comments}</Text>
                 </Flex>
               )}
-              {isFeatured && isBeforeDeadline && (
+              {!!isFeatured && isBeforeDeadline && (
                 <Flex
                   align="center"
                   gap={1}
