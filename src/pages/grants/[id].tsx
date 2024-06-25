@@ -65,7 +65,7 @@ const Grants = ({ slug }: GrantsDetailsProps) => {
             />
             <meta
               property="og:image"
-              content={`${isBlink ? 'https://earn.superteam.fun/blink-og.png' : 'https://earn.superteam.fun/assets/logo/og.png'}`}
+              content={`${isBlink ? 'https://earn.superteam.fun/blink-og.png?v=2' : 'https://earn.superteam.fun/assets/logo/og.png'}`}
             />
             <meta
               name="twitter:title"
@@ -73,7 +73,7 @@ const Grants = ({ slug }: GrantsDetailsProps) => {
             />
             <meta
               name="twitter:image"
-              content={`${isBlink ? 'https://earn.superteam.fun/blink-og.png' : 'https://earn.superteam.fun/assets/logo/og.png'}`}
+              content={`${isBlink ? 'https://earn.superteam.fun/blink-og.png?v=2' : 'https://earn.superteam.fun/assets/logo/og.png'}`}
             />
             <meta name="twitter:card" content="summary_large_image" />
             <meta property="og:image:width" content="1200" />
