@@ -51,6 +51,7 @@ async function handler(req: NextApiRequestWithUser, res: NextApiResponse) {
       await sendEmailNotification({
         type: 'createListing',
         id: result.id,
+        triggeredBy: userId,
       });
     }
 

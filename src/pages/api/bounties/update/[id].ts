@@ -95,6 +95,7 @@ async function bounty(req: NextApiRequestWithUser, res: NextApiResponse) {
       await sendEmailNotification({
         type: 'createListing',
         id,
+        triggeredBy: userId,
       });
     }
 
@@ -115,6 +116,7 @@ async function bounty(req: NextApiRequestWithUser, res: NextApiResponse) {
       await sendEmailNotification({
         type: 'deadlineExtended',
         id,
+        triggeredBy: userId,
       });
     }
 

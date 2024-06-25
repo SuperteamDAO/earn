@@ -43,6 +43,7 @@ async function scoutInvite(req: NextApiRequestWithUser, res: NextApiResponse) {
       type: 'scoutInvite',
       id: id,
       userId,
+      triggeredBy: userId,
     });
     const updateScout = await prisma.scouts.update({
       where: {

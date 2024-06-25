@@ -1,4 +1,5 @@
 import axios from 'axios';
+import jwt from 'jsonwebtoken';
 
 type EmailType =
   | 'addPayment'
@@ -20,6 +21,7 @@ interface EmailNotificationParams {
   id: string;
   userId?: string;
   otherInfo?: any;
+  triggeredBy: any;
 }
 
 export async function sendEmailNotification({
@@ -27,14 +29,27 @@ export async function sendEmailNotification({
   id,
   userId, // pass userId of the person you are sending the email to
   otherInfo,
+  triggeredBy,
 }: EmailNotificationParams) {
+  const token = jwt.sign({ triggeredBy }, process.env.EMAIL_SECRET as string, {
+    expiresIn: '60s',
+  });
+
   try {
-    await axios.post(process.env.EMAIL_BACKEND!, {
-      type,
-      id,
-      userId,
-      otherInfo,
-    });
+    await axios.post(
+      process.env.EMAIL_BACKEND!,
+      {
+        type,
+        id,
+        userId,
+        otherInfo,
+      },
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      },
+    );
   } catch (error) {
     console.error(`failed to send email for ${type} with ID ${id}: ${error}`);
     throw error;
