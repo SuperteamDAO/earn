@@ -158,8 +158,8 @@ export async function getListings({
       ...(isHomePage
         ? {
             OR: [
-              { compensationType: 'fixed', usdValue: { gte: 100 } },
-              { compensationType: 'range', maxRewardAsk: { gte: 100 } },
+              { compensationType: 'fixed', usdValue: { gt: 100 } },
+              { compensationType: 'range', maxRewardAsk: { gt: 100 } },
               { compensationType: 'variable' },
             ],
           }
