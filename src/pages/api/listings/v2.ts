@@ -13,31 +13,9 @@ const filterToSkillsMap: Record<string, string[]> = {
   other: ['Other', 'Growth', 'Community'],
 };
 
-interface Props {
-  category?: string;
-  order: 'asc' | 'desc';
-  isHomePage: boolean;
-  skillFilter?: Skills;
-  statusFilter?: Status;
-  type?: BountyType;
-  take: number;
-}
-
-export async function getListings({
-  category,
-  order,
-  isHomePage,
-  skillFilter,
-  statusFilter,
-  type,
-  take,
-}: Props) {
-  const result: { bounties: any[]; grants: any[] } = {
-    bounties: [],
-    grants: [],
-  };
-
+function getSkillFilterQuery(skillFilter: Skills | undefined) {
   let skillFilterQuery = {};
+
   if (skillFilter) {
     const skillsToFilter = filterToSkillsMap[skillFilter] || [];
     if (skillsToFilter.length > 0) {
@@ -52,7 +30,12 @@ export async function getListings({
     }
   }
 
+  return skillFilterQuery;
+}
+
+function getStatusFilterQuery(statusFilter: Status | undefined) {
   let statusFilterQuery = {};
+
   if (statusFilter) {
     if (statusFilter === 'open') {
       statusFilterQuery = {
@@ -73,6 +56,75 @@ export async function getListings({
       };
     }
   }
+
+  return statusFilterQuery;
+}
+
+interface GrantProps {
+  order?: 'asc' | 'desc';
+  take?: number;
+  skillFilter?: Skills;
+}
+
+export async function getGrants({
+  take = 20,
+  order = 'desc',
+  skillFilter,
+}: GrantProps) {
+  const skillFilterQuery = getSkillFilterQuery(skillFilter);
+  return await prisma.grants.findMany({
+    where: {
+      isPublished: true,
+      isActive: true,
+      isArchived: false,
+      ...skillFilterQuery,
+    },
+    take,
+    orderBy: {
+      updatedAt: order,
+    },
+    include: {
+      sponsor: {
+        select: {
+          id: true,
+          name: true,
+          slug: true,
+          logo: true,
+        },
+      },
+      // _count: {
+      //   select: {
+      //     GrantApplication: {
+      //       where: {
+      //         applicationStatus: 'Approved',
+      //       },
+      //     },
+      //   },
+      // },
+    },
+  });
+}
+
+interface BountyProps {
+  order?: 'asc' | 'desc';
+  isHomePage?: boolean;
+  skillFilter?: Skills;
+  statusFilter?: Status;
+  type?: BountyType;
+  take?: number;
+}
+
+export async function getListings({
+  order = 'desc',
+  isHomePage = false,
+  skillFilter,
+  statusFilter,
+  type,
+  take = 20,
+}: BountyProps) {
+  const skillFilterQuery = getSkillFilterQuery(skillFilter);
+
+  const statusFilterQuery = getStatusFilterQuery(statusFilter);
 
   let orderBy:
     | { deadline: 'asc' | 'desc' }
@@ -95,7 +147,7 @@ export async function getListings({
     };
   }
 
-  const bounties = await prisma.bounties.findMany({
+  let bounties = await prisma.bounties.findMany({
     where: {
       isPublished: true,
       isActive: true,
@@ -142,9 +194,8 @@ export async function getListings({
     orderBy,
     take,
   });
-  result.bounties = bounties;
   if (statusFilter === 'open') {
-    result.bounties = result.bounties.sort((a, b) => {
+    bounties = bounties.sort((a, b) => {
       if (a.isFeatured && !b.isFeatured) {
         return -1;
       } else if (!a.isFeatured && b.isFeatured) {
@@ -155,41 +206,7 @@ export async function getListings({
     });
   }
 
-  if (!category || category === 'all' || category === 'grants') {
-    const grants = await prisma.grants.findMany({
-      where: {
-        isPublished: true,
-        isActive: true,
-        isArchived: false,
-        ...skillFilterQuery,
-      },
-      take,
-      orderBy: {
-        updatedAt: order,
-      },
-      include: {
-        sponsor: {
-          select: {
-            id: true,
-            name: true,
-            slug: true,
-            logo: true,
-          },
-        },
-        // _count: {
-        //   select: {
-        //     GrantApplication: {
-        //       where: {
-        //         applicationStatus: 'Approved',
-        //       },
-        //     },
-        //   },
-        // },
-      },
-    });
-    result.grants = grants;
-  }
-  return result;
+  return bounties;
 }
 
 export default async function listings(
@@ -197,7 +214,7 @@ export default async function listings(
   res: NextApiResponse,
 ) {
   const params = req.query;
-  const category = params.category as string | undefined;
+  const includeGrants = !!params.grants;
   const order = (params.order as 'asc' | 'desc') ?? 'desc';
   const isHomePage = params.isHomePage === 'true';
 
@@ -208,8 +225,7 @@ export default async function listings(
   // const deadline = params.deadline as string | undefined;
 
   try {
-    const result = await getListings({
-      category,
+    const bounties = await getListings({
       order,
       isHomePage,
       skillFilter,
@@ -218,7 +234,15 @@ export default async function listings(
       take,
     });
 
-    res.status(200).json(result);
+    let grants: Awaited<ReturnType<typeof getGrants>> | undefined = undefined;
+    if (includeGrants) {
+      grants = await getGrants({ take });
+    }
+
+    res.status(200).json({
+      bounties,
+      grants,
+    });
   } catch (error) {
     console.log(error);
 
