@@ -142,6 +142,7 @@ b.isPrivate = 0 AND
 ${combinedWhereClause} ${statusQuery.length > 0 ? ` AND ( ${statusQuery.join(' OR ')} )` : ''} 
 ) ${skills ? ` AND (${skillsQuery})` : ''}
 ORDER BY 
+b.isFeatured DESC,
   CASE 
     WHEN b.deadline >= CURRENT_TIMESTAMP THEN 1
     ELSE 2
