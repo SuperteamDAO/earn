@@ -96,7 +96,7 @@ export const ApplicationList = ({
               px={4}
               py={2}
               bg={
-                selectedApplication?.user?.id === application?.user?.id
+                selectedApplication?.id === application?.id
                   ? 'brand.slate.100'
                   : 'transparent'
               }

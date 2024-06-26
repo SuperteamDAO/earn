@@ -107,7 +107,7 @@ export const ApplicationHeader = ({ grant, totalApplications }: Props) => {
             }
             variant={'ghost'}
           >
-            View Listing
+            View Grant
           </Button>
         </Flex>
       </Flex>

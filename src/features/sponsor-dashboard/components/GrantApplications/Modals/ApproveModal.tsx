@@ -23,7 +23,12 @@ import {
 } from '@chakra-ui/react';
 import { GrantApplicationStatus } from '@prisma/client';
 import axios from 'axios';
-import React, { type Dispatch, type SetStateAction, useState } from 'react';
+import React, {
+  type Dispatch,
+  type SetStateAction,
+  useEffect,
+  useState,
+} from 'react';
 
 import { tokenList } from '@/constants';
 import { type GrantApplicationWithUser } from '@/features/sponsor-dashboard';
@@ -66,7 +71,8 @@ export const ApproveModal = ({
   };
 
   const approveGrant = async () => {
-    if (errorMessage) return;
+    if (errorMessage || approvedAmount === undefined || approvedAmount === 0)
+      return;
 
     setLoading(true);
     try {
@@ -98,6 +104,12 @@ export const ApproveModal = ({
       approveOnClose();
     }
   };
+
+  useEffect(() => {
+    setApprovedAmount(ask);
+    setErrorMessage(null);
+    setLoading(false);
+  }, [applicationId, ask]);
 
   return (
     <Modal isOpen={approveIsOpen} onClose={approveOnClose}>

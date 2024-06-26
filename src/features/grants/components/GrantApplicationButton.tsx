@@ -84,10 +84,10 @@ export const GrantApplicationButton = ({
   const getUserApplication = async () => {
     setIsUserApplicationLoading(true);
     try {
-      const applicationDetails = await axios.get(`/api/grantApplication/user`, {
+      const response = await axios.get(`/api/grantApplication/isUserEligible`, {
         params: { grantId: id },
       });
-      setHasApplied(!!applicationDetails?.data?.id);
+      setHasApplied(response.data.hasPendingApplication);
       setIsUserApplicationLoading(false);
     } catch (e) {
       setIsUserApplicationLoading(false);

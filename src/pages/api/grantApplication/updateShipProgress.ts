@@ -4,21 +4,24 @@ import { type NextApiRequestWithUser, withAuth } from '@/features/auth';
 import { prisma } from '@/prisma';
 
 async function handler(req: NextApiRequestWithUser, res: NextApiResponse) {
-  const { grantId } = req.query;
-  const userId = req.userId;
+  const { id } = req.body;
 
   try {
-    const result = await prisma.grantApplication.findFirst({
+    const result = await prisma.grantApplication.update({
       where: {
-        grantId: grantId as string,
-        userId,
+        id,
+      },
+      data: {
+        isShipped: true,
       },
     });
-    res.status(200).json(result);
+
+    return res.status(200).json(result);
   } catch (error) {
-    res.status(400).json({
+    console.log(error);
+    return res.status(400).json({
       error,
-      message: `Error occurred while fetching application of grant=${grantId} for user=${userId}.`,
+      message: 'Error occurred while updating the grant application.',
     });
   }
 }
