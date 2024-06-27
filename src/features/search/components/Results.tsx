@@ -11,9 +11,18 @@ interface Props {
   setResults: Dispatch<SetStateAction<Bounty[]>>;
   count: number;
   query: string;
+  skills?: string;
+  status?: string;
 }
 
-export function Results({ results, setResults, count, query }: Props) {
+export function Results({
+  results,
+  setResults,
+  count,
+  query,
+  skills,
+  status,
+}: Props) {
   return (
     <VStack w="full">
       {results.length === 0 && (
@@ -73,6 +82,8 @@ export function Results({ results, setResults, count, query }: Props) {
                   if (lastId) {
                     const nextResults = await search(query, {
                       offset: results.length,
+                      status,
+                      skills,
                     });
                     if (nextResults?.bounties) {
                       setResults((s) => s.concat(nextResults.bounties));
