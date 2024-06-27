@@ -16,7 +16,6 @@ interface Props {
 }
 
 export default function HomePage({ bounties, grants }: Props) {
-  console.log(grants);
   return (
     <Home type="home">
       <InstallPWAModal />
