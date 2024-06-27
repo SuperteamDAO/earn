@@ -17,7 +17,9 @@ async function handler(req: NextApiRequestWithUser, res: NextApiResponse) {
 
     const hasPendingApplication = applications.some(
       (application) =>
-        application.applicationStatus === 'Approved' && !application.isShipped,
+        (application.applicationStatus === 'Approved' &&
+          !application.isShipped) ||
+        application.applicationStatus === 'Pending',
     );
 
     res.status(200).json({ hasPendingApplication });

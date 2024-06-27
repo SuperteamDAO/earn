@@ -1,9 +1,8 @@
-import type { NextApiResponse } from 'next';
+import type { NextApiRequest, NextApiResponse } from 'next';
 
-import { type NextApiRequestWithUser, withAuth } from '@/features/auth';
 import { prisma } from '@/prisma';
 
-async function handler(req: NextApiRequestWithUser, res: NextApiResponse) {
+async function handler(req: NextApiRequest, res: NextApiResponse) {
   const { id } = req.body;
 
   try {
@@ -26,4 +25,4 @@ async function handler(req: NextApiRequestWithUser, res: NextApiResponse) {
   }
 }
 
-export default withAuth(handler);
+export default handler;
