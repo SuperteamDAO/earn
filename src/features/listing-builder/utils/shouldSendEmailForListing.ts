@@ -1,37 +1,33 @@
 import { type Bounties } from '@prisma/client';
-
-import { fetchTokenUSDValue } from '@/utils/fetchTokenUSDValue';
+import dayjs from 'dayjs';
 
 export const shouldSendEmailForListing = async (
   listing: Bounties,
 ): Promise<boolean> => {
-  if (
-    !listing.isPublished ||
-    listing.isPrivate ||
-    listing.type === 'hackathon'
-  ) {
+  const {
+    isPublished,
+    isPrivate,
+    type,
+    compensationType,
+    usdValue,
+    publishedAt,
+  } = listing;
+
+  if (!isPublished || isPrivate || type === 'hackathon') {
     return false;
   }
 
-  if (
-    listing.compensationType === 'fixed' &&
-    listing.usdValue &&
-    listing.usdValue >= 1000
-  ) {
+  const publishedRecently = dayjs().diff(dayjs(publishedAt), 'minute') <= 60;
+  if (!publishedRecently) {
+    return false;
+  }
+
+  if (compensationType === 'variable') {
     return true;
   }
 
-  if (listing.compensationType === 'variable') {
+  if (usdValue && usdValue >= 1000) {
     return true;
-  }
-
-  if (listing.compensationType === 'range' && listing.maxRewardAsk) {
-    const tokenPrice = await fetchTokenUSDValue(
-      listing.token!,
-      listing.publishedAt!,
-    );
-    const actualPrice = listing.maxRewardAsk * tokenPrice;
-    return actualPrice >= 1000;
   }
 
   return false;

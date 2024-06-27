@@ -1,7 +1,7 @@
 import { verifySignature } from '@upstash/qstash/nextjs';
 import type { NextApiRequest, NextApiResponse } from 'next';
 
-import { InfoTemplate, kashEmail, resend } from '@/features/emails';
+import { alertsEmail, InfoTemplate, resend } from '@/features/emails';
 import { prisma } from '@/prisma';
 import { dayjs } from '@/utils/dayjs';
 
@@ -59,7 +59,7 @@ async function handler(_req: NextApiRequest, res: NextApiResponse) {
         isPublished: true,
       },
       select: {
-        rewardAmount: true,
+        usdValue: true,
         minRewardAsk: true,
         maxRewardAsk: true,
         compensationType: true,
@@ -79,7 +79,7 @@ async function handler(_req: NextApiRequest, res: NextApiResponse) {
         const averageReward = (bounty.minRewardAsk + bounty.maxRewardAsk) / 2;
         totalRewardAmountInLastWeek += averageReward || 0;
       } else {
-        totalRewardAmountInLastWeek += bounty.rewardAmount || 0;
+        totalRewardAmountInLastWeek += bounty.usdValue || 0;
       }
     }
 
@@ -89,7 +89,7 @@ async function handler(_req: NextApiRequest, res: NextApiResponse) {
         isPublished: true,
       },
       select: {
-        rewardAmount: true,
+        usdValue: true,
         minRewardAsk: true,
         maxRewardAsk: true,
         compensationType: true,
@@ -109,7 +109,7 @@ async function handler(_req: NextApiRequest, res: NextApiResponse) {
         const averageReward = (bounty.minRewardAsk + bounty.maxRewardAsk) / 2;
         totalRewardAmount += averageReward || 0;
       } else {
-        totalRewardAmount += bounty.rewardAmount || 0;
+        totalRewardAmount += bounty.usdValue || 0;
       }
     }
 
@@ -126,7 +126,7 @@ async function handler(_req: NextApiRequest, res: NextApiResponse) {
 
     const totalTVEInLastWeek = await prisma.bounties.aggregate({
       _sum: {
-        rewardAmount: true,
+        usdValue: true,
       },
       where: {
         winnersAnnouncedAt: lastWeek,
@@ -141,16 +141,16 @@ async function handler(_req: NextApiRequest, res: NextApiResponse) {
       userSignUpsInLast7Days: newUserCountInLastWeek,
       totalUsersSignedUp: totalUserCount,
       newTalentProfilesFilledInLast7Days: newTalentFilledUserCountInLastWeek,
-      totalTalentProfilesFilled: totalTalentFilledUserCount,
+      totalTalentProfilesFilled: totalTalentFilledUserCount - 289,
       newListingsPublishedInLast7Days: newBountiesCountInLastWeek,
       amountNewListingsPublishedInLast7Days: totalRewardAmountInLastWeek,
       amountListingsOpenAndPublishedOverall: totalRewardAmount,
-      amountTVEAddedInLast7Days: totalTVEInLastWeek._sum.rewardAmount,
+      amountTVEAddedInLast7Days: totalTVEInLastWeek._sum.usdValue,
       totalTVE: totalTVE,
     };
 
     await resend.emails.send({
-      from: kashEmail,
+      from: alertsEmail,
       to: ['pratik.dholani1@gmail.com', 'bodhiswattwac@gmail.com'],
       subject: `Weekly Earn Stats (from ${formatDate(startOfLastWeek)} to ${formatDate(endOfLastWeek)}`,
       react: InfoTemplate({

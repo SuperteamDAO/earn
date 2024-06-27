@@ -328,7 +328,7 @@ function TalentProfile({ slug }: TalentProps) {
                           'Saw Your ST Earn Profile!',
                         );
                         const bcc = encodeURIComponent(
-                          'hello@superteamearn.com',
+                          'support@superteamearn.com',
                         );
                         window.location.href = `mailto:${email}?subject=${subject}&bcc=${bcc}`;
                       })}

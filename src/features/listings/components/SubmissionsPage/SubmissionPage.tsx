@@ -112,8 +112,8 @@ export const SubmissionPage = ({ bounty, submission, user, link }: Props) => {
             </Button>
           </HStack>
           {isMobile && (
-            <VStack w={'30rem'} mt={12}>
-              <TalentBio successPage={false} user={user} />
+            <VStack mt={12}>
+              <TalentBio w={'100%'} successPage={false} user={user} />
             </VStack>
           )}
         </VStack>
@@ -130,7 +130,7 @@ export const SubmissionPage = ({ bounty, submission, user, link }: Props) => {
       </VStack>
       {!isMobile && (
         <VStack w={['100%', '100%', '36rem', '36rem']}>
-          <TalentBio successPage={false} user={user} />
+          <TalentBio w={'100%'} successPage={false} user={user} />
         </VStack>
       )}
     </VStack>

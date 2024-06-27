@@ -190,12 +190,14 @@ async function announce(req: NextApiRequestWithUser, res: NextApiResponse) {
     await sendEmailNotification({
       type: 'announceWinners',
       id,
+      triggeredBy: userId,
     });
 
     if (bounty?.sponsor?.name.includes('Superteam')) {
       await sendEmailNotification({
         type: 'superteamWinners',
         id,
+        triggeredBy: userId,
       });
     } else {
       console.log('Sponsor is not Superteam. Skipping sending winner emails.');

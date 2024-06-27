@@ -206,7 +206,7 @@ export const SignIn = ({
             <Text as="u">
               <Link
                 as={NextLink}
-                href={'mailto:hello@superteamearn.com'}
+                href={'mailto:support@superteamearn.com'}
                 isExternal
               >
                 Click here

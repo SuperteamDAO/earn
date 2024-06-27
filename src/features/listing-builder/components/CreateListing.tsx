@@ -210,7 +210,6 @@ export function CreateListing({
         maxRewardAsk: form?.maxRewardAsk,
         isPublished: true,
         isPrivate: form?.isPrivate,
-        publishedAt: new Date().toISOString(),
       };
 
       let api = `/api/${basePath}/create`;

@@ -92,7 +92,7 @@ export function TalentBio({
   const createMailtoLink = () => {
     const email = encodeURIComponent(user?.email || '');
     const subject = encodeURIComponent('Saw Your ST Earn Profile!');
-    const bcc = encodeURIComponent('hello@superteamearn.com');
+    const bcc = encodeURIComponent('support@superteamearn.com');
     return `mailto:${email}?subject=${subject}&bcc=${bcc}`;
   };
 

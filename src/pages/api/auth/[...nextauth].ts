@@ -4,7 +4,12 @@ import type { Adapter } from 'next-auth/adapters';
 import EmailProvider from 'next-auth/providers/email';
 import GoogleProvider from 'next-auth/providers/google';
 
-import { kashEmail, OTPTemplate, resend } from '@/features/emails';
+import {
+  authEmail,
+  OTPTemplate,
+  replyToEmail,
+  resend,
+} from '@/features/emails';
 import { prisma } from '@/prisma';
 
 export const authOptions: NextAuthOptions = {
@@ -46,10 +51,11 @@ export const authOptions: NextAuthOptions = {
       from: process.env.RESEND_EMAIL,
       sendVerificationRequest: async ({ identifier, token }) => {
         await resend.emails.send({
-          from: kashEmail,
+          from: authEmail,
           to: [identifier],
           subject: 'Log in to Superteam Earn',
           react: OTPTemplate({ token }),
+          reply_to: replyToEmail,
         });
       },
       maxAge: 30 * 60,

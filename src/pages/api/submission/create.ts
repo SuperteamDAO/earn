@@ -45,6 +45,7 @@ async function submission(req: NextApiRequestWithUser, res: NextApiResponse) {
         type: 'submissionTalent',
         id: listingId,
         userId: userId as string,
+        triggeredBy: userId,
       });
     } catch (err) {
       console.log('Error in sending mail to User -', err);
@@ -55,6 +56,7 @@ async function submission(req: NextApiRequestWithUser, res: NextApiResponse) {
         type: 'submissionSponsor',
         id: listingId,
         userId: result?.listing?.pocId,
+        triggeredBy: userId,
       });
     } catch (err) {
       console.log('Error in sending mail to Sponsor -', err);

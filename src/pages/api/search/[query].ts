@@ -119,7 +119,21 @@ b.description,
 b.compensationType, 
 b.minRewardAsk, 
 b.maxRewardAsk,
-b.updatedAt
+b.updatedAt,
+b.winnersAnnouncedAt,
+b.isFeatured,
+        JSON_OBJECT(
+            'Comments', 
+            (
+                SELECT COUNT(*)
+                FROM Comment c
+                WHERE c.listingId = b.id
+                  AND c.isActive = TRUE
+                  AND c.isArchived = FALSE
+                  AND c.replyToId IS NULL
+                  AND c.type != 'SUBMISSION'
+            )
+        ) AS _count
 FROM Bounties b
 JOIN Sponsors s ON b.sponsorId = s.id
 WHERE (1=1) AND (
@@ -128,6 +142,7 @@ b.isPrivate = 0 AND
 ${combinedWhereClause} ${statusQuery.length > 0 ? ` AND ( ${statusQuery.join(' OR ')} )` : ''} 
 ) ${skills ? ` AND (${skillsQuery})` : ''}
 ORDER BY 
+b.isFeatured DESC,
   CASE 
     WHEN b.deadline >= CURRENT_TIMESTAMP THEN 1
     ELSE 2
