@@ -25,7 +25,7 @@ export async function discordListingUpdate(
 Listing: ${listing.title} (<${url}>)
 Type: ${listing.type}
 Sponsor Name: ${listing.sponsor.name} (<${listing.sponsor?.url}>)
-${listing.rewardAmount ? `Amount: ${listing.rewardAmount} ${listing.token}` : ''}${listing.compensationType === 'variable' ? 'Variable' : ''}${listing.compensationType === 'range' ? `${listing.minRewardAsk} ${listing.token} to ${listing.maxRewardAsk} ${listing.token}` : ''}
+Amount: ${listing.rewardAmount ? `${listing.rewardAmount} ${listing.token}` : ''}${listing.compensationType === 'variable' ? 'Variable' : ''}${listing.compensationType === 'range' ? `${listing.minRewardAsk} ${listing.token} to ${listing.maxRewardAsk} ${listing.token}` : ''}
 `;
 
   const discord = new WebhookClient({
