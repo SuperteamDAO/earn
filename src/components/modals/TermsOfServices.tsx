@@ -10,27 +10,71 @@ import {
   Text,
   VStack,
 } from '@chakra-ui/react';
+import axios from 'axios';
 import dayjs from 'dayjs';
+import { useEffect, useState } from 'react';
 
 import { TERMS_OF_USE } from '@/constants';
+import { userStore } from '@/store/user';
 
-export const TermsOfServices = ({
-  isOpen,
-  onClose,
-}: {
-  isOpen: boolean;
-  onClose: () => void;
-}) => {
+export const TermsOfServices = () => {
   const updatedAt = dayjs(process.env.NEXT_PUBLIC_TOS_DATE);
   const formattedDate = updatedAt.format('MMMM D, YYYY');
+
+  const [isTOSModalOpen, setIsTOSModalOpen] = useState(false);
+
+  const { userInfo, setUserInfo } = userStore();
+
+  const handleTOSClose = async () => {
+    try {
+      setIsTOSModalOpen(false);
+      localStorage.setItem('acceptedTOS', JSON.stringify(true));
+      if (userInfo) {
+        setUserInfo({ ...userInfo, acceptedTOS: true });
+        await axios.post('/api/user/update/', {
+          acceptedTOS: true,
+        });
+      }
+    } catch (e) {
+      console.log('failed to set accepted terms of service', e);
+    }
+  };
+
+  useEffect(() => {
+    try {
+      setIsTOSModalOpen(false);
+      const shown =
+        (JSON.parse(
+          localStorage.getItem('acceptedTOS') ?? 'false',
+        ) as boolean) ?? false;
+      if (userInfo) {
+        if (!userInfo.acceptedTOS) {
+          if (shown) {
+            setUserInfo({ ...userInfo, acceptedTOS: true });
+            axios.post('/api/user/update/', {
+              acceptedTOS: true,
+            });
+          } else {
+            setIsTOSModalOpen(true);
+          }
+        } else {
+          localStorage.setItem('acceptedTOS', JSON.stringify(true));
+        }
+      } else {
+        if (!shown) setIsTOSModalOpen(true);
+      }
+    } catch (e) {
+      console.log('unable to get current user terms of service state', e);
+    }
+  }, [userInfo]);
 
   return (
     <Modal
       autoFocus={false}
       closeOnEsc={false}
       closeOnOverlayClick={false}
-      isOpen={isOpen}
-      onClose={onClose}
+      isOpen={isTOSModalOpen}
+      onClose={handleTOSClose}
     >
       <ModalOverlay />
       <ModalContent overflow="hidden" rounded="lg">
@@ -100,7 +144,7 @@ export const TermsOfServices = ({
             </Link>
             .
           </Text>
-          <Button ml="auto" px={10} onClick={onClose}>
+          <Button ml="auto" px={10} onClick={handleTOSClose}>
             I accept
           </Button>
         </VStack>
