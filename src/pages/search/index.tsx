@@ -136,6 +136,14 @@ const Search = ({
               results={results}
               setResults={setResults}
               count={count}
+              status={statusFilters
+                .filter((s) => s.checked)
+                .map((s) => s.value)
+                .join(',')}
+              skills={skillsFilters
+                .filter((s) => s.checked)
+                .map((s) => s.value)
+                .join(',')}
             />
           </VStack>
           <Box
