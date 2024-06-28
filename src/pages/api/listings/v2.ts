@@ -66,11 +66,7 @@ interface GrantProps {
   skillFilter?: Skills;
 }
 
-export async function getGrants({
-  take = 20,
-  order = 'desc',
-  skillFilter,
-}: GrantProps) {
+export async function getGrants({ take = 20, skillFilter }: GrantProps) {
   const skillFilterQuery = getSkillFilterQuery(skillFilter);
   return await prisma.grants.findMany({
     where: {
@@ -81,7 +77,7 @@ export async function getGrants({
     },
     take,
     orderBy: {
-      updatedAt: order,
+      updatedAt: 'desc',
     },
     include: {
       sponsor: {

@@ -144,7 +144,6 @@ export const ListingCard = ({
       <Flex
         align="center"
         justify="space-between"
-        overflow="hidden"
         w={{ base: '100%', md: 'brand.120' }}
       >
         <Flex w="max-content">

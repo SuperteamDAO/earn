@@ -1,7 +1,7 @@
 import { verifySignature } from '@upstash/qstash/nextjs';
 import type { NextApiRequest, NextApiResponse } from 'next';
 
-import { alertsEmail, InfoTemplate, resend } from '@/features/emails';
+import { InfoTemplate, kashEmail, resend } from '@/features/emails';
 import { prisma } from '@/prisma';
 import { dayjs } from '@/utils/dayjs';
 
@@ -150,7 +150,7 @@ async function handler(_req: NextApiRequest, res: NextApiResponse) {
     };
 
     await resend.emails.send({
-      from: alertsEmail,
+      from: kashEmail,
       to: ['pratik.dholani1@gmail.com', 'bodhiswattwac@gmail.com'],
       subject: `Weekly Earn Stats (from ${formatDate(startOfLastWeek)} to ${formatDate(endOfLastWeek)}`,
       react: InfoTemplate({

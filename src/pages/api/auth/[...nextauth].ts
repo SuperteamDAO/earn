@@ -5,7 +5,7 @@ import EmailProvider from 'next-auth/providers/email';
 import GoogleProvider from 'next-auth/providers/google';
 
 import {
-  authEmail,
+  kashEmail,
   OTPTemplate,
   replyToEmail,
   resend,
@@ -51,7 +51,7 @@ export const authOptions: NextAuthOptions = {
       from: process.env.RESEND_EMAIL,
       sendVerificationRequest: async ({ identifier, token }) => {
         await resend.emails.send({
-          from: authEmail,
+          from: kashEmail,
           to: [identifier],
           subject: 'Log in to Superteam Earn',
           react: OTPTemplate({ token }),

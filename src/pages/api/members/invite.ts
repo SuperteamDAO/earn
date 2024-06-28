@@ -2,8 +2,8 @@ import type { NextApiResponse } from 'next';
 
 import { type NextApiRequestWithUser, withAuth } from '@/features/auth';
 import {
-  alertsEmail,
   InviteMemberTemplate,
+  kashEmail,
   replyToEmail,
   resend,
 } from '@/features/emails';
@@ -48,7 +48,7 @@ async function sendInvites(req: NextApiRequestWithUser, res: NextApiResponse) {
     });
 
     await resend.emails.send({
-      from: alertsEmail,
+      from: kashEmail,
       to: [email],
       subject: `${user?.firstName} has invited you to join ${user?.currentSponsor?.name}'s profile`,
       react: InviteMemberTemplate({
