@@ -2,13 +2,13 @@ import { ArrowForwardIcon } from '@chakra-ui/icons';
 import { Button, Circle, Flex, Text, VStack } from '@chakra-ui/react';
 import { type Dispatch, type SetStateAction } from 'react';
 
-import { type Bounty, ListingCard } from '@/features/listings';
+import { type Listing, ListingCard } from '@/features/listings';
 
 import { search } from '../utils';
 
 interface Props {
-  results: Bounty[];
-  setResults: Dispatch<SetStateAction<Bounty[]>>;
+  results: Listing[];
+  setResults: Dispatch<SetStateAction<Listing[]>>;
   count: number;
   query: string;
   skills?: string;

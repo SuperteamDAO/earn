@@ -6,12 +6,12 @@ import { useState } from 'react';
 
 import { OgImageViewer } from '@/components/misc/ogImageViewer';
 import { ErrorSection } from '@/components/shared/ErrorSection';
-import { type Bounty, ListingHeader } from '@/features/listings';
+import { type Listing, ListingHeader } from '@/features/listings';
 import { Default } from '@/layouts/Default';
 import { getURL } from '@/utils/validUrl';
 
 interface BountyDetailsProps {
-  bounty: Bounty | null;
+  bounty: Listing | null;
 }
 
 const ReferenceCard = ({ link }: { link: string }) => {
@@ -52,7 +52,7 @@ function BountyDetails({ bounty: initialBounty }: BountyDetailsProps) {
           />
           <meta
             property="og:image"
-            content={`${getURL()}api/bounty-og/?title=${encodedTitle}&reward=${initialBounty?.rewardAmount}&token=${initialBounty?.token}&sponsor=${initialBounty?.sponsor?.name}&logo=${initialBounty?.sponsor?.logo}&type=${initialBounty?.type}&compensationType=${initialBounty?.compensationType}&minRewardAsk=${initialBounty?.minRewardAsk}&maxRewardAsk=${initialBounty?.maxRewardAsk}`}
+            content={`${getURL()}api/listing-og/?title=${encodedTitle}&reward=${initialBounty?.rewardAmount}&token=${initialBounty?.token}&sponsor=${initialBounty?.sponsor?.name}&logo=${initialBounty?.sponsor?.logo}&type=${initialBounty?.type}&compensationType=${initialBounty?.compensationType}&minRewardAsk=${initialBounty?.minRewardAsk}&maxRewardAsk=${initialBounty?.maxRewardAsk}`}
           />
           <meta
             name="twitter:title"
@@ -60,7 +60,7 @@ function BountyDetails({ bounty: initialBounty }: BountyDetailsProps) {
           />
           <meta
             name="twitter:image"
-            content={`${getURL()}api/bounty-og/?title=${encodedTitle}&reward=${initialBounty?.rewardAmount}&token=${initialBounty?.token}&sponsor=${initialBounty?.sponsor?.name}&logo=${initialBounty?.sponsor?.logo}&type=${initialBounty?.type}&compensationType=${initialBounty?.compensationType}&minRewardAsk=${initialBounty?.minRewardAsk}&maxRewardAsk=${initialBounty?.maxRewardAsk}`}
+            content={`${getURL()}api/listing-og/?title=${encodedTitle}&reward=${initialBounty?.rewardAmount}&token=${initialBounty?.token}&sponsor=${initialBounty?.sponsor?.name}&logo=${initialBounty?.sponsor?.logo}&type=${initialBounty?.type}&compensationType=${initialBounty?.compensationType}&minRewardAsk=${initialBounty?.minRewardAsk}&maxRewardAsk=${initialBounty?.maxRewardAsk}`}
           />
           <meta name="twitter:card" content="summary_large_image" />
           <meta property="og:image:width" content="1200" />

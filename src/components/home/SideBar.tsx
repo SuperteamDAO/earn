@@ -1,15 +1,15 @@
 import { ArrowForwardIcon } from '@chakra-ui/icons';
 import { Box, Flex, Text } from '@chakra-ui/react';
 import axios from 'axios';
-import dayjs from 'dayjs';
 import NextLink from 'next/link';
 import { useRouter } from 'next/router';
 import { useSession } from 'next-auth/react';
 import { usePostHog } from 'posthog-js/react';
 import { useEffect, useState } from 'react';
 
-import { type Bounty, ListingCardMobile } from '@/features/listings';
+import { type Listing, ListingCardMobile } from '@/features/listings';
 import type { User } from '@/interface/user';
+import { dayjs } from '@/utils/dayjs';
 import { timeAgoShort } from '@/utils/timeAgo';
 
 import { OgImageViewer } from '../misc/ogImageViewer';
@@ -252,7 +252,7 @@ const RecentActivity = () => {
 };
 
 const LiveListings = () => {
-  const [listings, setListings] = useState<{ bounties: Bounty[] }>({
+  const [listings, setListings] = useState<{ bounties: Listing[] }>({
     bounties: [],
   });
   const getListings = async () => {

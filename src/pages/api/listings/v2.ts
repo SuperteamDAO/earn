@@ -92,15 +92,15 @@ export async function getGrants({
           logo: true,
         },
       },
-      // _count: {
-      //   select: {
-      //     GrantApplication: {
-      //       where: {
-      //         applicationStatus: 'Approved',
-      //       },
-      //     },
-      //   },
-      // },
+      _count: {
+        select: {
+          GrantApplication: {
+            where: {
+              applicationStatus: 'Approved',
+            },
+          },
+        },
+      },
     },
   });
 }

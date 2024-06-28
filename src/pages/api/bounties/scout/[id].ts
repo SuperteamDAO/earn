@@ -1,9 +1,9 @@
 import { Prisma } from '@prisma/client';
-import dayjs from 'dayjs';
 import type { NextApiResponse } from 'next';
 
 import { type NextApiRequestWithUser, withAuth } from '@/features/auth';
 import { prisma } from '@/prisma';
+import { dayjs } from '@/utils/dayjs';
 
 function flattenSubSkills(skillsArray: any[]): string[] {
   const flattenedSubSkills: string[] = [];

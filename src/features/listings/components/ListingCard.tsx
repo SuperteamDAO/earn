@@ -20,7 +20,7 @@ import { tokenList } from '@/constants';
 import { dayjs } from '@/utils/dayjs';
 import { timeAgoShort } from '@/utils/timeAgo';
 
-import type { Bounty } from '../types';
+import { type Listing } from '../types';
 import { CompensationAmount } from './ListingPage/CompensationAmount';
 
 export const ListingCardSkeleton = () => {
@@ -69,7 +69,7 @@ export const ListingCard = ({
   bounty,
   checkLanguage = false,
 }: {
-  bounty: Bounty;
+  bounty: Listing;
   checkLanguage?: boolean;
 }) => {
   const {
@@ -355,7 +355,7 @@ export const ListingCardMobile = ({
   bounty,
   checkLanguage,
 }: {
-  bounty: Bounty;
+  bounty: Listing;
   checkLanguage?: boolean;
 }) => {
   const {
@@ -487,7 +487,7 @@ export const ListingCardMobile = ({
                     <Text
                       ml={1}
                       color={'brand.slate.300'}
-                      fontSize={'xx-small'}
+                      fontSize={['xx-small', 'xs', 'sm', 'sm']}
                     >
                       |
                     </Text>
@@ -507,7 +507,7 @@ export const ListingCardMobile = ({
                 <Text
                   display={'flex'}
                   color={'brand.slate.300'}
-                  fontSize={'xx-small'}
+                  fontSize={['xx-small', 'xs', 'sm', 'sm']}
                 >
                   |
                 </Text>

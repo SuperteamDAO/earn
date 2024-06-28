@@ -1,11 +1,11 @@
 import axios from 'axios';
-import dayjs from 'dayjs';
 import type { NextApiResponse } from 'next';
 
 import { type NextApiRequestWithUser, withAuth } from '@/features/auth';
 import { sendEmailNotification } from '@/features/emails';
 import { shouldSendEmailForListing } from '@/features/listing-builder';
 import { prisma } from '@/prisma';
+import { dayjs } from '@/utils/dayjs';
 import { fetchTokenUSDValue } from '@/utils/fetchTokenUSDValue';
 
 async function bounty(req: NextApiRequestWithUser, res: NextApiResponse) {

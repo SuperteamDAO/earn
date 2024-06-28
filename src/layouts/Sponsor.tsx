@@ -27,7 +27,6 @@ import { FeatureModal } from '@/components/modals/FeatureModal';
 import { LoadingSection } from '@/components/shared/LoadingSection';
 import { SelectHackathon, SelectSponsor } from '@/features/listing-builder';
 import {
-  Banner,
   CreateListingModal,
   SponsorInfoModal,
 } from '@/features/sponsor-dashboard';
@@ -49,13 +48,7 @@ interface NavItemProps extends FlexProps {
   children: ReactNode;
 }
 
-export function Sidebar({
-  children,
-  showBanner = false,
-}: {
-  children: ReactNode;
-  showBanner?: boolean;
-}) {
+export function Sidebar({ children }: { children: ReactNode }) {
   const { userInfo, setUserInfo } = userStore();
   const { data: session, status } = useSession();
   const router = useRouter();
@@ -332,7 +325,6 @@ export function Sidebar({
         {showLoading && <LoadingSection />}
         {showContent && (
           <Box w="full" px={6} py={10} bg="white">
-            {showBanner && <Banner isHackathonRoute={isHackathonRoute} />}
             {children}
           </Box>
         )}

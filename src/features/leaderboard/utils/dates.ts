@@ -1,7 +1,4 @@
-import dayjs from 'dayjs';
-import QuarterOfYear from 'dayjs/plugin/quarterOfYear';
-
-dayjs.extend(QuarterOfYear);
+import { dayjs } from '@/utils/dayjs';
 
 const FORMAT = 'YYYY-MM-DD';
 
