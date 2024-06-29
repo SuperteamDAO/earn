@@ -15,6 +15,7 @@ import { usePostHog } from 'posthog-js/react';
 import React, { type Dispatch, type SetStateAction, useState } from 'react';
 import { MdOutlineEmail } from 'react-icons/md';
 
+import { TERMS_OF_USE } from '@/constants';
 import { GoogleIcon } from '@/svg/google';
 
 export const SignIn = ({
@@ -28,6 +29,8 @@ export const SignIn = ({
   const [isEmailValid, setIsEmailValid] = useState(false);
   const [hasAttemptedSubmit, setHasAttemptedSubmit] = useState(false);
   const [hasGmail, setHasGmail] = useState(false);
+
+  const [isLoading, setIsLoading] = useState(false);
 
   const router = useRouter();
   const posthog = usePostHog();
@@ -48,6 +51,8 @@ export const SignIn = ({
     hasGmail && process.env.NEXT_PUBLIC_VERCEL_ENV === 'production';
 
   const handleEmailSignIn = () => {
+    setIsLoading(true);
+
     setHasAttemptedSubmit(true);
     if (isEmailValid && !hasGmailAndIsProd) {
       posthog.capture('email OTP_auth');
@@ -139,7 +144,8 @@ export const SignIn = ({
                   fontSize="17px"
                   fontWeight={500}
                   cursor={hasGmailAndIsProd ? 'not-allowed' : 'pointer'}
-                  isDisabled={hasGmailAndIsProd}
+                  isDisabled={hasGmailAndIsProd || isLoading}
+                  isLoading={isLoading}
                   onClick={handleEmailSignIn}
                   size="lg"
                 >
@@ -171,10 +177,11 @@ export const SignIn = ({
             <Link
               as={NextLink}
               fontWeight={600}
-              href={`${router.basePath}/terms-of-service.pdf`}
+              href={TERMS_OF_USE}
               isExternal
+              rel="noopener noreferrer"
             >
-              Terms of Service
+              Terms of Use
             </Link>{' '}
             and our{' '}
             <Link
@@ -199,7 +206,7 @@ export const SignIn = ({
             <Text as="u">
               <Link
                 as={NextLink}
-                href={'mailto:hello@superteamearn.com'}
+                href={'mailto:support@superteamearn.com'}
                 isExternal
               >
                 Click here

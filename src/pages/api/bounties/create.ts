@@ -4,36 +4,64 @@ import type { NextApiResponse } from 'next';
 import { type NextApiRequestWithUser, withAuth } from '@/features/auth';
 import { discordListingUpdate } from '@/features/discord';
 import { sendEmailNotification } from '@/features/emails';
-import { hasRewardConditionsForEmail } from '@/features/listing-builder';
+import { shouldSendEmailForListing } from '@/features/listing-builder';
 import { prisma } from '@/prisma';
+import { fetchTokenUSDValue } from '@/utils/fetchTokenUSDValue';
 
 async function handler(req: NextApiRequestWithUser, res: NextApiResponse) {
   const userId = req.userId;
 
-  const user = await prisma.user.findUnique({
-    where: {
-      id: userId as string,
-    },
-  });
-
-  if (!user || !user.currentSponsorId) {
-    return res
-      .status(403)
-      .json({ error: 'User does not have a current sponsor.' });
-  }
-
-  const { title, ...data } = req.body;
   try {
+    const user = await prisma.user.findUnique({
+      where: { id: userId as string },
+    });
+
+    if (!user || !user.currentSponsorId) {
+      return res
+        .status(403)
+        .json({ error: 'User does not have a current sponsor.' });
+    }
+
+    const { title, ...data } = req.body;
+    let usdValue = 0;
+
+    let publishedAt;
+    if (data.isPublished) {
+      publishedAt = new Date();
+    }
+
+    if (data.isPublished && publishedAt) {
+      try {
+        let amount;
+        if (data.compensationType === 'fixed') {
+          amount = data.rewardAmount;
+        } else if (data.compensationType === 'range') {
+          amount = (data.minRewardAsk + data.maxRewardAsk) / 2;
+        }
+
+        if (amount && data.token) {
+          const tokenUsdValue = await fetchTokenUSDValue(
+            data.token,
+            publishedAt,
+          );
+          usdValue = tokenUsdValue * amount;
+        }
+      } catch (error) {
+        console.error('Error calculating USD value:', error);
+      }
+    }
+
     const finalData = {
       sponsorId: user.currentSponsorId,
       title,
+      usdValue,
+      publishedAt,
       ...data,
     };
+
     const result = await prisma.bounties.create({
       data: finalData,
-      include: {
-        sponsor: true,
-      },
+      include: { sponsor: true },
     });
 
     try {
@@ -45,28 +73,27 @@ async function handler(req: NextApiRequestWithUser, res: NextApiResponse) {
       console.log('Discord Listing Update Message Error', err);
     }
 
-    if (
-      result.isPublished &&
-      !result.isPrivate &&
-      result.type !== 'hackathon' &&
-      hasRewardConditionsForEmail(result)
-    ) {
+    const shouldSendEmail = await shouldSendEmailForListing(result);
+    if (shouldSendEmail) {
       await sendEmailNotification({
         type: 'createListing',
         id: result.id,
+        triggeredBy: userId,
       });
     }
-    try {
-      if (process.env.NEXT_PUBLIC_VERCEL_ENV === 'production') {
+
+    if (process.env.NEXT_PUBLIC_VERCEL_ENV === 'production') {
+      try {
         const zapierWebhookUrl = process.env.ZAPIER_BOUNTY_WEBHOOK!;
         await axios.post(zapierWebhookUrl, result);
+      } catch (error) {
+        console.error('Error with Zapier Webhook:', error);
       }
-    } catch (err) {
-      console.log('Error with Zapier Webhook -', err);
     }
+
     return res.status(200).json(result);
   } catch (error: any) {
-    console.error(`User ${userId} unable to create a listing`, error.message);
+    console.error(`User ${userId} unable to create a listing:`, error.message);
     return res.status(400).json({
       error,
       message: 'Error occurred while adding a new bounty.',

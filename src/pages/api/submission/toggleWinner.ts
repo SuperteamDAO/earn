@@ -3,6 +3,7 @@ import type { NextApiResponse } from 'next';
 
 import { type NextApiRequestWithUser, withAuth } from '@/features/auth';
 import { prisma } from '@/prisma';
+import { fetchTokenUSDValue } from '@/utils/fetchTokenUSDValue';
 
 async function handler(req: NextApiRequestWithUser, res: NextApiResponse) {
   const userId = req.userId;
@@ -55,16 +56,34 @@ async function handler(req: NextApiRequestWithUser, res: NextApiResponse) {
 
     if (currentSubmission.isWinner !== isWinner) {
       const bountyId = result.listingId;
-      await prisma.bounties.update({
-        where: { id: bountyId },
-        data: {
-          totalWinnersSelected: isWinner ? { increment: 1 } : { decrement: 1 },
-          ...(result.listing.compensationType !== 'fixed' && {
+      const totalWinnersUpdate = {
+        totalWinnersSelected: isWinner ? { increment: 1 } : { decrement: 1 },
+      };
+
+      const listing = result.listing;
+
+      if (listing.compensationType !== 'fixed') {
+        const tokenUSDValue = await fetchTokenUSDValue(
+          listing.token!,
+          listing.publishedAt!,
+        );
+        const usdValue = tokenUSDValue * ask;
+
+        await prisma.bounties.update({
+          where: { id: bountyId },
+          data: {
+            ...totalWinnersUpdate,
             rewards: { first: ask },
             rewardAmount: ask,
-          }),
-        },
-      });
+            usdValue,
+          },
+        });
+      } else {
+        await prisma.bounties.update({
+          where: { id: bountyId },
+          data: totalWinnersUpdate,
+        });
+      }
     }
 
     return res.status(200).json(result);

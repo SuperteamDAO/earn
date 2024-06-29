@@ -12,7 +12,8 @@ async function user(req: NextApiRequestWithUser, res: NextApiResponse) {
     },
   });
 
-  const { name, slug, logo, url, industry, twitter, bio } = req.body;
+  const { name, slug, logo, url, industry, twitter, bio, entityName } =
+    req.body;
 
   try {
     if (user) {
@@ -28,6 +29,7 @@ async function user(req: NextApiRequestWithUser, res: NextApiResponse) {
           industry,
           twitter,
           bio,
+          entityName,
         },
       });
       return res.status(200).json(result);

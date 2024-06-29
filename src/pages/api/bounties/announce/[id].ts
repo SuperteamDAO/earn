@@ -1,13 +1,11 @@
 import type { NextApiResponse } from 'next';
 
-import { tokenList } from '@/constants';
 import { type NextApiRequestWithUser, withAuth } from '@/features/auth';
 import { discordWinnersAnnouncement } from '@/features/discord';
 import { sendEmailNotification } from '@/features/emails';
 import { type Rewards } from '@/features/listings';
 import { prisma } from '@/prisma';
 import { dayjs } from '@/utils/dayjs';
-import { fetchTokenUSDValue } from '@/utils/fetchTokenUSDValue';
 
 async function announce(req: NextApiRequestWithUser, res: NextApiResponse) {
   const userId = req.userId;
@@ -162,20 +160,6 @@ async function announce(req: NextApiRequestWithUser, res: NextApiResponse) {
     const promises = [];
     let currentIndex = 0;
 
-    const bountyToken = bounty.token;
-    const tokenEntry = tokenList.find((t) => t.tokenSymbol === bountyToken);
-    const coingeckoSymbol = tokenEntry?.coingeckoSymbol as string;
-
-    let tokenUSDValue: any;
-
-    if (bountyToken === 'USDC' || bountyToken === 'USDT') {
-      tokenUSDValue = 1;
-    } else {
-      tokenUSDValue = await fetchTokenUSDValue(coingeckoSymbol);
-    }
-
-    let totalUSDRewarded = 0;
-
     while (currentIndex < winners?.length) {
       const amount: number = winners[currentIndex]?.winnerPosition
         ? Math.ceil(
@@ -184,8 +168,7 @@ async function announce(req: NextApiRequestWithUser, res: NextApiResponse) {
           )
         : 0;
 
-      const usdValue = amount * tokenUSDValue;
-      totalUSDRewarded += usdValue;
+      const rewardInUSD = (bounty.usdValue! / bounty.rewardAmount!) * amount;
 
       const amountWhere = {
         where: {
@@ -193,17 +176,18 @@ async function announce(req: NextApiRequestWithUser, res: NextApiResponse) {
         },
         data: {
           totalEarnedInUSD: {
-            increment: usdValue,
+            increment: rewardInUSD,
           },
         },
       };
+
       promises.push(
         prisma.submission.update({
           where: {
             id: winners[currentIndex]?.id,
           },
           data: {
-            rewardInUSD: usdValue,
+            rewardInUSD,
           },
         }),
       );
@@ -212,26 +196,17 @@ async function announce(req: NextApiRequestWithUser, res: NextApiResponse) {
     }
     await Promise.all(promises);
 
-    await prisma.sponsors.update({
-      where: {
-        id: bounty?.sponsorId,
-      },
-      data: {
-        totalRewardedInUSD: {
-          increment: totalUSDRewarded,
-        },
-      },
-    });
-
     await sendEmailNotification({
       type: 'announceWinners',
       id,
+      triggeredBy: userId,
     });
 
     if (bounty?.sponsor?.name.includes('Superteam')) {
       await sendEmailNotification({
         type: 'superteamWinners',
         id,
+        triggeredBy: userId,
       });
     } else {
       console.log('Sponsor is not Superteam. Skipping sending winner emails.');

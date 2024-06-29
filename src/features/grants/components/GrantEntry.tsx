@@ -1,10 +1,13 @@
 import { Box, Button, Flex, Image, Link, Text } from '@chakra-ui/react';
 import NextLink from 'next/link';
 
+import { grantAmount } from '../utils';
+
 export const GrantEntry = ({
   title,
   shortDescription = '',
-  rewardAmount,
+  minReward,
+  maxReward,
   token,
   slug,
   link,
@@ -17,6 +20,8 @@ export const GrantEntry = ({
   link?: string;
   slug: string;
   logo?: string;
+  minReward?: number;
+  maxReward?: number;
 }) => {
   return (
     <Box w={{ base: '100%', sm: 80 }}>
@@ -37,8 +42,8 @@ export const GrantEntry = ({
       </Text>
       <Flex align={'center'} justify={'space-between'}>
         <Text color={'brand.slate.500'} fontSize={'13px'} fontWeight={'600'}>
-          {token && rewardAmount
-            ? `Upto ${token} ${(rewardAmount || 0).toLocaleString()}`
+          {token
+            ? `${grantAmount({ minReward: minReward!, maxReward: maxReward! })} ${token}`
             : ''}
         </Text>
         {!!link && (

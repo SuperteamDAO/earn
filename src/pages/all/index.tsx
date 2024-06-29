@@ -2,11 +2,11 @@ import { Box } from '@chakra-ui/react';
 import axios from 'axios';
 import { useEffect, useState } from 'react';
 
-import { type Bounty, ListingTabs } from '@/features/listings';
+import { type Listing, ListingTabs } from '@/features/listings';
 import { Home } from '@/layouts/Home';
 
 interface Listings {
-  bounties?: Bounty[];
+  bounties?: Listing[];
 }
 
 function AllListingsPage() {

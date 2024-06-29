@@ -328,7 +328,7 @@ function TalentProfile({ slug }: TalentProps) {
                           'Saw Your ST Earn Profile!',
                         );
                         const bcc = encodeURIComponent(
-                          'hello@superteamearn.com',
+                          'support@superteamearn.com',
                         );
                         window.location.href = `mailto:${email}?subject=${subject}&bcc=${bcc}`;
                       })}
@@ -490,7 +490,11 @@ function TalentProfile({ slug }: TalentProps) {
                   w={{ base: '100%', md: '50%' }}
                 >
                   <Flex direction={'column'}>
-                    <Text fontWeight={600}>${talent?.totalEarnedInUSD}</Text>
+                    <Text fontWeight={600}>
+                      {new Intl.NumberFormat('en-US', {
+                        maximumFractionDigits: 0,
+                      }).format(Math.round(talent?.totalEarnedInUSD || 0))}
+                    </Text>
                     <Text color={'brand.slate.500'} fontWeight={500}>
                       Earned
                     </Text>

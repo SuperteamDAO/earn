@@ -4,12 +4,12 @@ import type { NextPageContext } from 'next';
 import { useEffect, useState } from 'react';
 
 import { Superteams } from '@/constants/Superteam';
-import { type Bounty, ListingTabs } from '@/features/listings';
+import { type Listing, ListingTabs } from '@/features/listings';
 import { Home } from '@/layouts/Home';
 import { Meta } from '@/layouts/Meta';
 
 interface Listings {
-  bounties?: Bounty[];
+  bounties?: Listing[];
 }
 
 export default function AllRegionListingsPage({

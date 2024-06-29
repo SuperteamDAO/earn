@@ -2,7 +2,10 @@ import type { NextApiRequest, NextApiResponse } from 'next';
 
 import { prisma } from '@/prisma';
 
-export default async function user(req: NextApiRequest, res: NextApiResponse) {
+export default async function handler(
+  req: NextApiRequest,
+  res: NextApiResponse,
+) {
   const params = req.query;
   const slug = params.slug as string;
   const type = params.type as 'bounty' | 'project' | 'hackathon';
@@ -14,9 +17,8 @@ export default async function user(req: NextApiRequest, res: NextApiResponse) {
         isActive: true,
       },
       include: {
-        sponsor: { select: { name: true, logo: true } },
+        sponsor: { select: { name: true, logo: true, entityName: true } },
         poc: true,
-        Submission: true,
         Hackathon: {
           select: {
             altLogo: true,
@@ -36,14 +38,7 @@ export default async function user(req: NextApiRequest, res: NextApiResponse) {
       });
     }
 
-    const totalSubmissions = result.Submission.length;
-    const winnersSelected = result.Submission.filter(
-      (sub) => sub.isWinner,
-    ).length;
-    const paymentsMade = result.Submission.filter((sub) => sub.isPaid).length;
-    return res
-      .status(200)
-      .json({ ...result, totalSubmissions, winnersSelected, paymentsMade });
+    return res.status(200).json(result);
   } catch (error: any) {
     console.error(`unable to view listing`, error.message);
     return res.status(400).json({

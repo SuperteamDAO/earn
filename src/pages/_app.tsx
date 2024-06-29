@@ -1,12 +1,9 @@
-// Styles
 import 'degen/styles';
 import '../styles/globals.scss';
 
 import { ChakraProvider } from '@chakra-ui/react';
 import axios from 'axios';
 import type { AppProps } from 'next/app';
-// Fonts
-import { Domine, Inter, JetBrains_Mono } from 'next/font/google';
 import { useRouter } from 'next/router';
 import { SessionProvider, useSession } from 'next-auth/react';
 import NextTopLoader from 'nextjs-toploader';
@@ -16,40 +13,13 @@ import React, { useEffect, useState } from 'react';
 import { Toaster } from 'react-hot-toast';
 
 import { FeatureModal } from '@/components/modals/FeatureModal';
+import { TermsOfServices } from '@/components/modals/TermsOfServices';
 import { SolanaWalletProvider } from '@/context/SolanaWallet';
 import { userStore } from '@/store/user';
+import { fontMono, fontSans, fontSerif } from '@/theme/fonts';
 import { getURL } from '@/utils/validUrl';
 
 import theme from '../config/chakra.config';
-
-// importing localFont from a local file as Google imported fonts do not enable font-feature-settings. Reference: https://github.com/vercel/next.js/discussions/52456
-
-const fontSans = Inter({
-  subsets: ['latin'],
-  display: 'swap',
-  adjustFontFallback: true,
-  preload: true,
-  fallback: ['Inter'],
-  weight: 'variable',
-});
-
-const fontSerif = Domine({
-  subsets: ['latin'],
-  display: 'swap',
-  adjustFontFallback: true,
-  preload: true,
-  // fallback: ['Times New Roman'],
-  weight: 'variable',
-});
-
-const fontMono = JetBrains_Mono({
-  subsets: ['latin'],
-  display: 'swap',
-  adjustFontFallback: true,
-  preload: false,
-  fallback: ['Courier New'],
-  weight: 'variable',
-});
 
 // Chakra / Next/font don't play well in config.ts file for the theme. So we extend the theme here. (only the fonts)
 const extendThemeWithNextFonts = {
@@ -119,15 +89,15 @@ function MyApp({ Component, pageProps }: any) {
 }
 
 function App({ Component, pageProps: { session, ...pageProps } }: AppProps) {
-  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isFeatureModalOpen, setIsFeatureModalOpen] = useState(false);
   const [latestActiveSlug, setLatestActiveSlug] = useState<string | undefined>(
     undefined,
   );
   const { userInfo, setUserInfo } = userStore();
   const router = useRouter();
 
-  const handleClose = () => {
-    setIsModalOpen(false);
+  const handleFeatureClose = () => {
+    setIsFeatureModalOpen(false);
   };
 
   const getSponsorLatestActiveSlug = async () => {
@@ -141,20 +111,26 @@ function App({ Component, pageProps: { session, ...pageProps } }: AppProps) {
     }
   };
 
-  // SHOW TO SPONSOR ONLY
+  // FEATURE MODAL SPONSOR ONLY
   useEffect(() => {
-    const updateFeatureModalShown = async () => {
-      if (userInfo?.featureModalShown === false && userInfo?.currentSponsorId) {
-        setUserInfo({ ...userInfo, featureModalShown: true });
-        setIsModalOpen(true);
-        await getSponsorLatestActiveSlug();
-        await axios.post('/api/user/update/', {
-          featureModalShown: true,
-        });
-      }
-    };
-
-    if (!router.pathname.includes('dashboard')) updateFeatureModalShown();
+    try {
+      const updateFeatureModalShown = async () => {
+        if (
+          userInfo?.featureModalShown === false &&
+          userInfo?.currentSponsorId
+        ) {
+          setUserInfo({ ...userInfo, featureModalShown: true });
+          setIsFeatureModalOpen(true);
+          await getSponsorLatestActiveSlug();
+          await axios.post('/api/user/update/', {
+            featureModalShown: true,
+          });
+        }
+      };
+      if (!router.pathname.includes('dashboard')) updateFeatureModalShown();
+    } catch (e) {
+      console.log('unable to get current user feature modal state', e);
+    }
   }, [userInfo]);
 
   return (
@@ -174,10 +150,11 @@ function App({ Component, pageProps: { session, ...pageProps } }: AppProps) {
             <ChakraProvider theme={extendThemeWithNextFonts}>
               <FeatureModal
                 latestActiveBountySlug={latestActiveSlug}
-                isOpen={isModalOpen}
-                onClose={handleClose}
+                isOpen={isFeatureModalOpen}
+                onClose={handleFeatureClose}
               />
               <MyApp Component={Component} pageProps={pageProps} />
+              <TermsOfServices />
             </ChakraProvider>
           </SessionProvider>
         </PostHogProvider>

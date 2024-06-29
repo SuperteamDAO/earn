@@ -1,3 +1,3 @@
-export * from './hasRewardConditionsForEmail';
+export * from './shouldSendEmailForListing';
 export * from './skills';
 export * from './suggestions';

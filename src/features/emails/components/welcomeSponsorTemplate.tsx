@@ -8,7 +8,7 @@ export const WelcomeSponsorTemplate = () => {
       <p style={styles.text}>Welcome to Superteam Earn!</p>
       <p style={styles.textWithMargin}>
         Thank you for signing up. Earn is the premier talent-matching platform
-        in crypto, favored by hundreds of leading companies and thousands of
+        in crypto, favoured by hundreds of leading companies and thousands of
         verified crypto-focused talent.
       </p>
       <p style={styles.textWithMargin}>

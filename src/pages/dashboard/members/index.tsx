@@ -42,7 +42,11 @@ import toast from 'react-hot-toast';
 import { EarnAvatar } from '@/components/shared/EarnAvatar';
 import { ErrorSection } from '@/components/shared/ErrorSection';
 import { LoadingSection } from '@/components/shared/LoadingSection';
-import { InviteMembers } from '@/features/sponsor-dashboard';
+import {
+  Banner,
+  InviteMembers,
+  type SponsorStats,
+} from '@/features/sponsor-dashboard';
 import type { UserSponsor } from '@/interface/userSponsor';
 import { Sidebar } from '@/layouts/Sponsor';
 import { userStore } from '@/store/user';
@@ -58,6 +62,9 @@ const Index = () => {
   const [searchText, setSearchText] = useState('');
   const [skip, setSkip] = useState(0);
   const length = 15;
+
+  const [sponsorStats, setSponsorStats] = useState<SponsorStats>({});
+  const [isStatsLoading, setIsStatsLoading] = useState<boolean>(true);
 
   const debouncedSetSearchText = useRef(debounce(setSearchText, 300)).current;
 
@@ -116,9 +123,19 @@ const Index = () => {
     await getMembers();
   };
 
+  useEffect(() => {
+    const getSponsorStats = async () => {
+      const sponsorData = await axios.get('/api/sponsors/stats');
+      setSponsorStats(sponsorData.data);
+      setIsStatsLoading(false);
+    };
+    getSponsorStats();
+  }, [userInfo?.currentSponsorId]);
+
   return (
-    <Sidebar showBanner={true}>
+    <Sidebar>
       {isOpen && <InviteMembers isOpen={isOpen} onClose={onClose} />}
+      <Banner stats={sponsorStats} isLoading={isStatsLoading} />
       <Flex justify="space-between" mb={4}>
         <Flex align="center" gap={3}>
           <Text color="brand.slate.800" fontSize="lg" fontWeight={600}>

@@ -1,14 +1,10 @@
-import { verifySignature } from '@upstash/qstash/dist/nextjs';
-import dayjs from 'dayjs';
-import updateLocale from 'dayjs/plugin/updateLocale';
-import utc from 'dayjs/plugin/utc';
+import { verifySignature } from '@upstash/qstash/nextjs';
 import type { NextApiRequest, NextApiResponse } from 'next';
 
 import { InfoTemplate, kashEmail, resend } from '@/features/emails';
 import { prisma } from '@/prisma';
+import { dayjs } from '@/utils/dayjs';
 
-dayjs.extend(utc);
-dayjs.extend(updateLocale);
 dayjs.updateLocale('en', {
   weekStart: 1,
 });
@@ -63,7 +59,7 @@ async function handler(_req: NextApiRequest, res: NextApiResponse) {
         isPublished: true,
       },
       select: {
-        rewardAmount: true,
+        usdValue: true,
         minRewardAsk: true,
         maxRewardAsk: true,
         compensationType: true,
@@ -83,7 +79,7 @@ async function handler(_req: NextApiRequest, res: NextApiResponse) {
         const averageReward = (bounty.minRewardAsk + bounty.maxRewardAsk) / 2;
         totalRewardAmountInLastWeek += averageReward || 0;
       } else {
-        totalRewardAmountInLastWeek += bounty.rewardAmount || 0;
+        totalRewardAmountInLastWeek += bounty.usdValue || 0;
       }
     }
 
@@ -93,7 +89,7 @@ async function handler(_req: NextApiRequest, res: NextApiResponse) {
         isPublished: true,
       },
       select: {
-        rewardAmount: true,
+        usdValue: true,
         minRewardAsk: true,
         maxRewardAsk: true,
         compensationType: true,
@@ -113,19 +109,24 @@ async function handler(_req: NextApiRequest, res: NextApiResponse) {
         const averageReward = (bounty.minRewardAsk + bounty.maxRewardAsk) / 2;
         totalRewardAmount += averageReward || 0;
       } else {
-        totalRewardAmount += bounty.rewardAmount || 0;
+        totalRewardAmount += bounty.usdValue || 0;
       }
     }
 
-    const totalRewardAmountResult = await prisma.user.aggregate({
+    const totalRewardAmountResult = await prisma.bounties.aggregate({
       _sum: {
-        totalEarnedInUSD: true,
+        usdValue: true,
+      },
+      where: {
+        isWinnersAnnounced: true,
+        isPublished: true,
+        status: 'OPEN',
       },
     });
 
     const totalTVEInLastWeek = await prisma.bounties.aggregate({
       _sum: {
-        rewardAmount: true,
+        usdValue: true,
       },
       where: {
         winnersAnnouncedAt: lastWeek,
@@ -134,17 +135,17 @@ async function handler(_req: NextApiRequest, res: NextApiResponse) {
     });
 
     const totalTVE =
-      Math.ceil((totalRewardAmountResult._sum.totalEarnedInUSD || 0) / 10) * 10;
+      Math.ceil((totalRewardAmountResult._sum.usdValue || 0) / 10) * 10;
 
     const info = {
       userSignUpsInLast7Days: newUserCountInLastWeek,
       totalUsersSignedUp: totalUserCount,
       newTalentProfilesFilledInLast7Days: newTalentFilledUserCountInLastWeek,
-      totalTalentProfilesFilled: totalTalentFilledUserCount,
+      totalTalentProfilesFilled: totalTalentFilledUserCount - 289,
       newListingsPublishedInLast7Days: newBountiesCountInLastWeek,
       amountNewListingsPublishedInLast7Days: totalRewardAmountInLastWeek,
       amountListingsOpenAndPublishedOverall: totalRewardAmount,
-      amountTVEAddedInLast7Days: totalTVEInLastWeek._sum.rewardAmount,
+      amountTVEAddedInLast7Days: totalTVEInLastWeek._sum.usdValue,
       totalTVE: totalTVE,
     };
 

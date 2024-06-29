@@ -235,15 +235,15 @@ export default async function user(req: NextApiRequest, res: NextApiResponse) {
               logo: true,
             },
           },
-          // _count: {
-          //   select: {
-          //     GrantApplication: {
-          //       where: {
-          //         applicationStatus: 'Approved',
-          //       },
-          //     },
-          //   },
-          // },
+          _count: {
+            select: {
+              GrantApplication: {
+                where: {
+                  applicationStatus: 'Approved',
+                },
+              },
+            },
+          },
         },
       });
       result.grants = grants;

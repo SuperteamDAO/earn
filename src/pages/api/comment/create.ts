@@ -89,6 +89,7 @@ async function comment(req: NextApiRequestWithUser, res: NextApiResponse) {
         otherInfo: {
           personName: result.author.username,
         },
+        triggeredBy: userId,
       });
     });
 
@@ -97,6 +98,7 @@ async function comment(req: NextApiRequestWithUser, res: NextApiResponse) {
         type: 'commentReply',
         id: listingId,
         userId: replyToUserId as string,
+        triggeredBy: userId,
       });
     }
 
@@ -111,6 +113,7 @@ async function comment(req: NextApiRequestWithUser, res: NextApiResponse) {
           type: 'commentSponsor',
           id: listingId,
           userId: pocId as string,
+          triggeredBy: userId,
         });
       }
 
@@ -121,6 +124,7 @@ async function comment(req: NextApiRequestWithUser, res: NextApiResponse) {
           otherInfo: {
             personName: result?.author?.firstName,
           },
+          triggeredBy: userId,
         });
       }
     }
