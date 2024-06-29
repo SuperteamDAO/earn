@@ -6,7 +6,7 @@ import React, { useEffect, useState } from 'react';
 import { EmptySection } from '@/components/shared/EmptySection';
 import { LoadingSection } from '@/components/shared/LoadingSection';
 import {
-  type Bounty,
+  type Listing,
   ListingHeader,
   SubmissionPage,
 } from '@/features/listings';
@@ -23,7 +23,7 @@ const Sumbissions = ({ slug, subid }: BountyDetailsProps) => {
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState(false);
 
-  const [bounty, setBounty] = useState<Bounty | null>(null);
+  const [bounty, setBounty] = useState<Listing | null>(null);
   const [submission, setSubmission] = useState<SubmissionWithUser | null>(null);
 
   const getBounty = async () => {

@@ -20,10 +20,10 @@ import type { SubmissionWithUser } from '@/interface/submission';
 import { type User as IUser } from '@/interface/user';
 import { getURLSanitized } from '@/utils/getURLSanitized';
 
-import type { Bounty } from '../../types';
+import { type Listing } from '../../types';
 
 interface Props {
-  bounty: Bounty;
+  bounty: Listing;
   submission?: SubmissionWithUser;
   user: IUser;
   link: string;

@@ -2,97 +2,56 @@ import {
   AddIcon,
   ChevronLeftIcon,
   ChevronRightIcon,
-  CopyIcon,
-  EditIcon,
-  ExternalLinkIcon,
   SearchIcon,
-  ViewIcon,
-  ViewOffIcon,
 } from '@chakra-ui/icons';
 import {
   Button,
   Divider,
   Flex,
-  IconButton,
   Image,
   Input,
   InputGroup,
   InputLeftElement,
-  Link,
-  Menu,
-  MenuButton,
-  MenuItem,
-  MenuList,
-  Modal,
-  ModalBody,
-  ModalCloseButton,
-  ModalContent,
-  ModalFooter,
-  ModalHeader,
-  ModalOverlay,
-  Table,
-  TableContainer,
-  Tag,
-  Tbody,
-  Td,
+  Tab,
+  TabList,
+  TabPanel,
+  TabPanels,
+  Tabs,
   Text,
-  Th,
-  Thead,
-  Tooltip,
-  Tr,
   useDisclosure,
 } from '@chakra-ui/react';
 import axios from 'axios';
-import NextLink from 'next/link';
-import { useRouter } from 'next/router';
-import { useSession } from 'next-auth/react';
-import { usePostHog } from 'posthog-js/react';
 import { useEffect, useRef, useState } from 'react';
-import { AiOutlineDelete } from 'react-icons/ai';
-import { FiMoreVertical } from 'react-icons/fi';
 
 import { LoadingSection } from '@/components/shared/LoadingSection';
-import { tokenList } from '@/constants/index';
-import { useListingFormStore } from '@/features/listing-builder';
+import { type ListingWithSubmissions } from '@/features/listings';
 import {
-  type BountyWithSubmissions,
-  formatDeadline,
-  getBountyStatus,
-  getColorStyles,
-  getListingTypeLabel,
-  isDeadlineOver,
-} from '@/features/listings';
-import { CreateListingModal, SponsorPrize } from '@/features/sponsor-dashboard';
+  Banner,
+  CreateListingModal,
+  ListingTable,
+  type SponsorStats,
+} from '@/features/sponsor-dashboard';
 import { Sidebar } from '@/layouts/Sponsor';
 import { userStore } from '@/store/user';
 
 const debounce = require('lodash.debounce');
 
-function Bounties() {
-  const router = useRouter();
-  const {
-    isOpen: unpublishIsOpen,
-    onOpen: unpublishOnOpen,
-    onClose: unpublishOnClose,
-  } = useDisclosure();
-  const {
-    isOpen: deleteDraftIsOpen,
-    onOpen: deleteDraftOnOpen,
-    onClose: deleteDraftOnClose,
-  } = useDisclosure();
+export default function SponsorListings() {
   const { userInfo } = userStore();
-  const [totalBounties, setTotalBounties] = useState(0);
-  const [bounties, setBounties] = useState<BountyWithSubmissions[]>([]);
-  const [bounty, setBounty] = useState<BountyWithSubmissions>({});
-  const [isChangingStatus, setIsChangingStatus] = useState(false);
-  const [isBountiesLoading, setIsBountiesLoading] = useState(true);
+  const [allListings, setAllListings] = useState<ListingWithSubmissions[]>([]);
+  const [filteredListings, setFilteredListings] = useState<
+    ListingWithSubmissions[]
+  >([]);
+  const [isListingsLoading, setIsListingsLoading] = useState(true);
   const [searchText, setSearchText] = useState('');
-  const [skip, setSkip] = useState(0);
-  const length = 15;
+  const [currentPage, setCurrentPage] = useState(0);
+  const [selectedTab, setSelectedTab] = useState('all');
+  const listingsPerPage = 15;
+
+  const [sponsorStats, setSponsorStats] = useState<SponsorStats>({});
+  const [isStatsLoading, setIsStatsLoading] = useState<boolean>(true);
 
   const debouncedSetSearchText = useRef(debounce(setSearchText, 300)).current;
-  const { data: session } = useSession();
-  const posthog = usePostHog();
 
   useEffect(() => {
     return () => {
@@ -100,82 +59,36 @@ function Bounties() {
     };
   }, [debouncedSetSearchText]);
 
-  const getBounties = async () => {
-    setIsBountiesLoading(true);
+  const getListings = async () => {
+    setIsListingsLoading(true);
     try {
-      const bountiesList = await axios.get('/api/bounties/', {
+      const allListings = await axios.get('/api/bounties/', {
         params: {
-          sponsorId: userInfo?.currentSponsorId,
           searchText,
-          skip,
-          take: length,
-          showSubmissionDetails: true,
         },
       });
-      setTotalBounties(bountiesList.data.total);
-      setBounties(bountiesList.data.data);
-      setIsBountiesLoading(false);
+      setAllListings(allListings.data);
+      setFilteredListings(allListings.data);
+      setIsListingsLoading(false);
     } catch (error) {
-      setIsBountiesLoading(false);
+      setIsListingsLoading(false);
     }
   };
 
   useEffect(() => {
     if (userInfo?.currentSponsorId) {
-      getBounties();
+      getListings();
     }
-  }, [userInfo?.currentSponsorId, skip, searchText]);
+  }, [userInfo?.currentSponsorId, searchText]);
 
-  const handleUnpublish = async (unpublishedBounty: BountyWithSubmissions) => {
-    setBounty(unpublishedBounty);
-    unpublishOnOpen();
-  };
-
-  const changeBountyStatus = async (status: boolean) => {
-    setIsChangingStatus(true);
-    try {
-      const result = await axios.post(`/api/bounties/update/${bounty.id}/`, {
-        isPublished: status,
-      });
-
-      const changedBountyIndex = bounties.findIndex(
-        (b) => b.id === result.data.id,
-      );
-      const newBounties = bounties.map((b, index) =>
-        changedBountyIndex === index
-          ? { ...b, isPublished: result.data.isPublished }
-          : b,
-      );
-      setBounties(newBounties);
-      unpublishOnClose();
-      setIsChangingStatus(false);
-    } catch (e) {
-      setIsChangingStatus(false);
-    }
-  };
-
-  const handleViewSubmissions = (slug: string | undefined) => {
-    router.push(`/dashboard/listings/${slug}/submissions/`);
-  };
-
-  const deleteSelectedDraft = async () => {
-    try {
-      await axios.post(`/api/bounties/delete/${bounty.id}`);
-      const update = bounties.filter((x) => x.id !== bounty.id);
-      setBounties(update);
-    } catch (e) {
-      console.log(e);
-    } finally {
-      deleteDraftOnClose();
-    }
-  };
-
-  const handleDeleteDraft = async (deleteBounty: BountyWithSubmissions) => {
-    setBounty(deleteBounty);
-    deleteDraftOnOpen();
-  };
-
-  const { resetForm } = useListingFormStore();
+  useEffect(() => {
+    const getSponsorStats = async () => {
+      const sponsorData = await axios.get('/api/sponsors/stats');
+      setSponsorStats(sponsorData.data);
+      setIsStatsLoading(false);
+    };
+    getSponsorStats();
+  }, [userInfo?.currentSponsorId]);
 
   const {
     isOpen: isOpenCreateListing,
@@ -183,68 +96,42 @@ function Bounties() {
     onClose: onCloseCreateListing,
   } = useDisclosure();
 
+  const paginatedListings = filteredListings.slice(
+    currentPage * listingsPerPage,
+    (currentPage + 1) * listingsPerPage,
+  );
+
+  useEffect(() => {
+    const filterListingsByType = () => {
+      if (selectedTab === 'all') {
+        return allListings;
+      }
+      return allListings.filter((listing) => listing.type === selectedTab);
+    };
+
+    if (searchText) {
+      const filtered = filterListingsByType().filter((listing) =>
+        listing.title
+          ? listing.title.toLowerCase().includes(searchText.toLowerCase())
+          : false,
+      );
+      setFilteredListings(filtered);
+    } else {
+      setFilteredListings(filterListingsByType());
+    }
+    setCurrentPage(0);
+  }, [searchText, allListings, selectedTab]);
+
+  const hasGrants = allListings.some((listing) => listing.type === 'grant');
+
+  const selectedStyles = {
+    borderColor: 'brand.purple',
+    color: 'brand.slate.600',
+  };
+
   return (
-    <Sidebar showBanner={true}>
-      <Modal isOpen={unpublishIsOpen} onClose={unpublishOnClose}>
-        <ModalOverlay />
-        <ModalContent>
-          <ModalHeader>Unpublish Listing?</ModalHeader>
-          <ModalCloseButton />
-          <ModalBody>
-            <Text color="brand.slate.500">
-              This listing will be hidden from the homepage once unpublished.
-              Are you sure you want to unpublish this listing?
-            </Text>
-          </ModalBody>
-
-          <ModalFooter>
-            <Button mr={4} onClick={unpublishOnClose} variant="ghost">
-              Close
-            </Button>
-            <Button
-              isLoading={isChangingStatus}
-              leftIcon={<ViewOffIcon />}
-              loadingText="Unpublishing..."
-              onClick={() => changeBountyStatus(false)}
-              variant="solid"
-            >
-              Unpublish
-            </Button>
-          </ModalFooter>
-        </ModalContent>
-      </Modal>
-      <Modal isOpen={deleteDraftIsOpen} onClose={deleteDraftOnClose}>
-        <ModalOverlay />
-        <ModalContent>
-          <ModalHeader>Delete Draft?</ModalHeader>
-          <ModalCloseButton />
-          <ModalBody>
-            <Text color="brand.slate.500">
-              Are you sure you want to delete this draft listing?
-            </Text>
-            <br />
-            <Text color="brand.slate.500">
-              Note: If this was previously a published listing, all submissions
-              or applications received for this listing will also be deleted.
-            </Text>
-          </ModalBody>
-
-          <ModalFooter>
-            <Button mr={4} onClick={deleteDraftOnClose} variant="ghost">
-              Close
-            </Button>
-            <Button
-              isLoading={isChangingStatus}
-              leftIcon={<AiOutlineDelete />}
-              loadingText="Deleting..."
-              onClick={deleteSelectedDraft}
-              variant="solid"
-            >
-              Confirm
-            </Button>
-          </ModalFooter>
-        </ModalContent>
-      </Modal>
+    <Sidebar>
+      <Banner stats={sponsorStats} isLoading={isStatsLoading} />
       <Flex justify="space-between" w="100%" mb={4}>
         <Flex align="center" gap={3}>
           <Text color="brand.slate.800" fontSize="lg" fontWeight={600}>
@@ -278,13 +165,137 @@ function Bounties() {
           </InputLeftElement>
         </InputGroup>
       </Flex>
-      {isBountiesLoading && <LoadingSection />}
-      {!isBountiesLoading && !bounties?.length && (
+
+      {isListingsLoading && <LoadingSection />}
+      {!isListingsLoading && (
         <>
+          <Tabs
+            onChange={(index) => {
+              const tabTypes = [
+                'all',
+                'bounty',
+                'project',
+                hasGrants ? 'grant' : '',
+              ];
+              const tabType = tabTypes[index] || 'all';
+              setSelectedTab(tabType);
+            }}
+          >
+            <TabList>
+              <Tab
+                color="brand.slate.400"
+                fontSize={'sm'}
+                fontWeight={500}
+                _selected={selectedStyles}
+              >
+                All
+              </Tab>
+              <Tab
+                color="brand.slate.400"
+                fontSize={'sm'}
+                fontWeight={500}
+                _selected={selectedStyles}
+              >
+                Bounties
+              </Tab>
+              <Tab
+                color="brand.slate.400"
+                fontSize={'sm'}
+                fontWeight={500}
+                _selected={selectedStyles}
+              >
+                Projects
+              </Tab>
+              {hasGrants && (
+                <Tab
+                  color="brand.slate.400"
+                  fontSize={'sm'}
+                  fontWeight={500}
+                  _selected={selectedStyles}
+                >
+                  Grants
+                </Tab>
+              )}
+            </TabList>
+            <TabPanels>
+              <TabPanel px={0}>
+                <ListingTable
+                  listings={paginatedListings}
+                  setListings={setAllListings}
+                />
+              </TabPanel>
+              <TabPanel px={0}>
+                <ListingTable
+                  listings={paginatedListings}
+                  setListings={setAllListings}
+                />
+              </TabPanel>
+              <TabPanel px={0}>
+                <ListingTable
+                  listings={paginatedListings}
+                  setListings={setAllListings}
+                />
+              </TabPanel>
+              {hasGrants && (
+                <TabPanel px={0}>
+                  <ListingTable
+                    listings={paginatedListings}
+                    setListings={setAllListings}
+                  />
+                </TabPanel>
+              )}
+            </TabPanels>
+          </Tabs>
           <CreateListingModal
             isOpen={isOpenCreateListing}
             onClose={onCloseCreateListing}
           />
+          {!!paginatedListings?.length && (
+            <Flex align="center" justify="end" mt={6}>
+              <Text mr={4} color="brand.slate.400" fontSize="sm">
+                <Text as="span" fontWeight={700}>
+                  {currentPage * listingsPerPage + 1}
+                </Text>{' '}
+                -{' '}
+                <Text as="span" fontWeight={700}>
+                  {Math.min(
+                    (currentPage + 1) * listingsPerPage,
+                    filteredListings.length,
+                  )}
+                </Text>{' '}
+                of{' '}
+                <Text as="span" fontWeight={700}>
+                  {filteredListings.length}
+                </Text>{' '}
+                Listings
+              </Text>
+              <Button
+                mr={4}
+                isDisabled={currentPage <= 0}
+                leftIcon={<ChevronLeftIcon w={5} h={5} />}
+                onClick={() => setCurrentPage(currentPage - 1)}
+                size="sm"
+                variant="outline"
+              >
+                Previous
+              </Button>
+              <Button
+                isDisabled={
+                  (currentPage + 1) * listingsPerPage >= filteredListings.length
+                }
+                onClick={() => setCurrentPage(currentPage + 1)}
+                rightIcon={<ChevronRightIcon w={5} h={5} />}
+                size="sm"
+                variant="outline"
+              >
+                Next
+              </Button>
+            </Flex>
+          )}
+        </>
+      )}
+      {!isListingsLoading && !paginatedListings.length && (
+        <>
           <Image
             w={32}
             mx="auto"
@@ -325,413 +336,6 @@ function Bounties() {
           </Button>
         </>
       )}
-      {!isBountiesLoading && !!bounties?.length && (
-        <>
-          <TableContainer
-            mb={8}
-            borderWidth={'1px'}
-            borderColor={'brand.slate.200'}
-            borderRadius={8}
-          >
-            <Table variant="simple">
-              <Thead>
-                <Tr bg="brand.slate.100">
-                  <Th
-                    color="brand.slate.400"
-                    fontSize={14}
-                    fontWeight={500}
-                    letterSpacing={'-2%'}
-                    textTransform={'capitalize'}
-                  >
-                    Listing Name
-                  </Th>
-                  <Th
-                    color="brand.slate.400"
-                    fontSize={14}
-                    fontWeight={500}
-                    letterSpacing={'-2%'}
-                    textAlign="center"
-                    textTransform={'capitalize'}
-                  >
-                    Submissions
-                  </Th>
-                  <Th
-                    color="brand.slate.400"
-                    fontSize={14}
-                    fontWeight={500}
-                    letterSpacing={'-2%'}
-                    textTransform={'capitalize'}
-                  >
-                    Deadline
-                  </Th>
-                  <Th
-                    color="brand.slate.400"
-                    fontSize={14}
-                    fontWeight={500}
-                    letterSpacing={'-2%'}
-                    textTransform={'capitalize'}
-                  >
-                    Prize
-                  </Th>
-                  <Th
-                    color="brand.slate.400"
-                    fontSize={14}
-                    fontWeight={500}
-                    letterSpacing={'-2%'}
-                    textTransform={'capitalize'}
-                  >
-                    Status
-                  </Th>
-                  <Th
-                    color="brand.slate.400"
-                    fontSize={14}
-                    fontWeight={500}
-                    letterSpacing={'-2%'}
-                    textTransform={'capitalize'}
-                  >
-                    Actions
-                  </Th>
-                  <Th pl={0} />
-                </Tr>
-              </Thead>
-              <Tbody w="full">
-                {bounties.map((currentBounty) => {
-                  const bountyType = getListingTypeLabel(
-                    currentBounty?.type ?? 'bounty',
-                  );
-
-                  const deadline = formatDeadline(
-                    currentBounty?.deadline,
-                    currentBounty?.applicationType,
-                  );
-
-                  const pastDeadline = isDeadlineOver(currentBounty?.deadline);
-
-                  const bountyStatus = getBountyStatus(currentBounty);
-
-                  const listingIcon = (() => {
-                    switch (currentBounty.type) {
-                      case 'bounty':
-                        return 'bolt.svg';
-                      case 'project':
-                        return 'briefcase.svg';
-                      case 'hackathon':
-                        return 'laptop.svg';
-                      default:
-                        return 'bolt.svg';
-                    }
-                  })();
-
-                  return (
-                    <Tr key={currentBounty?.id}>
-                      <Td
-                        maxW={96}
-                        color="brand.slate.700"
-                        fontWeight={500}
-                        whiteSpace="normal"
-                        wordBreak={'break-word'}
-                      >
-                        <Link
-                          className="ph-no-capture"
-                          as={NextLink}
-                          pointerEvents={
-                            !currentBounty.isPublished ? 'none' : 'auto'
-                          }
-                          href={`/dashboard/listings/${currentBounty.slug}/submissions/`}
-                          onClick={() => {
-                            posthog.capture('submissions_sponsor');
-                          }}
-                          passHref
-                        >
-                          <Flex align={'center'}>
-                            <Tooltip bg="brand.slate.400" label={bountyType}>
-                              <Image
-                                h={5}
-                                mr={2}
-                                alt={`New ${bountyType}`}
-                                src={`/assets/icons/${listingIcon}`}
-                              />
-                            </Tooltip>
-
-                            <Text
-                              as="a"
-                              overflow="hidden"
-                              color="brand.slate.500"
-                              fontSize={'15px'}
-                              fontWeight={500}
-                              _hover={{ textDecoration: 'underline' }}
-                              whiteSpace="nowrap"
-                              textOverflow="ellipsis"
-                            >
-                              {currentBounty.title}
-                            </Text>
-                          </Flex>
-                        </Link>
-                      </Td>
-                      <Td py={2}>
-                        <Text
-                          color="brand.slate.500"
-                          fontSize={'sm'}
-                          fontWeight={500}
-                          textAlign={'center'}
-                        >
-                          {currentBounty?._count?.Submission || 0}
-                        </Text>
-                      </Td>
-                      <Td align="center" py={2}>
-                        <Text
-                          color="brand.slate.500"
-                          fontSize={'sm'}
-                          fontWeight={500}
-                        >
-                          {deadline}
-                        </Text>
-                      </Td>
-                      <Td py={2}>
-                        <Flex align={'center'} justify={'start'} gap={1}>
-                          <Image
-                            w={5}
-                            h={5}
-                            alt={'green dollar'}
-                            rounded={'full'}
-                            src={
-                              tokenList.filter(
-                                (e) => e?.tokenSymbol === currentBounty.token,
-                              )[0]?.icon ?? '/assets/icons/green-dollar.svg'
-                            }
-                          />
-                          <SponsorPrize
-                            compensationType={currentBounty?.compensationType}
-                            maxRewardAsk={currentBounty?.maxRewardAsk}
-                            minRewardAsk={currentBounty?.minRewardAsk}
-                            rewardAmount={currentBounty?.rewardAmount}
-                            textStyle={{
-                              fontWeight: 500,
-                              fontSize: 'sm',
-                              color: 'brand.slate.700',
-                            }}
-                          />
-                          <Text
-                            color="brand.slate.400"
-                            fontSize={'sm'}
-                            fontWeight={500}
-                          >
-                            {currentBounty.token}
-                          </Text>
-                        </Flex>
-                      </Td>
-                      <Td align="center" py={2}>
-                        <Tag
-                          px={3}
-                          color={getColorStyles(bountyStatus).color}
-                          fontSize={'12px'}
-                          fontWeight={500}
-                          bg={getColorStyles(bountyStatus).bgColor}
-                          borderRadius={'full'}
-                          variant="solid"
-                        >
-                          {bountyStatus}
-                        </Tag>
-                      </Td>
-                      <Td px={3} py={2}>
-                        {currentBounty.status === 'OPEN' &&
-                          currentBounty.isPublished && (
-                            <Button
-                              className="ph-no-capture"
-                              color="#6366F1"
-                              fontSize={'13px'}
-                              fontWeight={500}
-                              _hover={{ bg: '#E0E7FF' }}
-                              leftIcon={<ViewIcon />}
-                              onClick={() => {
-                                posthog.capture('submissions_sponsor');
-                                handleViewSubmissions(currentBounty.slug);
-                              }}
-                              size="sm"
-                              variant="ghost"
-                            >
-                              Submissions
-                            </Button>
-                          )}
-                        {currentBounty.status === 'OPEN' &&
-                          !currentBounty.isPublished &&
-                          !pastDeadline && (
-                            <Button
-                              color={'brand.slate.500'}
-                              fontSize={'13px'}
-                              fontWeight={500}
-                              _hover={{ bg: 'brand.slate.200' }}
-                              leftIcon={<EditIcon />}
-                              onClick={() => {
-                                window.location.href = `/dashboard/listings/${currentBounty.slug}/edit/`;
-                              }}
-                              size="sm"
-                              variant="ghost"
-                            >
-                              Edit
-                            </Button>
-                          )}
-                      </Td>
-                      <Td px={0} py={2}>
-                        <Menu>
-                          <MenuButton
-                            as={IconButton}
-                            border="none"
-                            _hover={{ bg: 'brand.slate.100' }}
-                            aria-label="Options"
-                            icon={<FiMoreVertical />}
-                            size="sm"
-                            variant="ghost"
-                          />
-                          <MenuList>
-                            <MenuItem
-                              py={2}
-                              color={'brand.slate.500'}
-                              fontSize={'sm'}
-                              fontWeight={500}
-                              icon={<ExternalLinkIcon h={4} w={4} />}
-                              onClick={() =>
-                                window.open(
-                                  `${router.basePath}/listings/${currentBounty?.type}/${currentBounty.slug}`,
-                                  '_blank',
-                                )
-                              }
-                            >
-                              View{' '}
-                              {currentBounty?.type === 'hackathon'
-                                ? 'Track'
-                                : bountyType}
-                            </MenuItem>
-                            {session?.user?.role === 'GOD' ||
-                            (currentBounty.isPublished && !pastDeadline) ? (
-                              <Link
-                                as={NextLink}
-                                _hover={{ textDecoration: 'none' }}
-                                href={`/dashboard/listings/${currentBounty.slug}/edit`}
-                                onClick={resetForm}
-                              >
-                                <MenuItem
-                                  py={2}
-                                  color={'brand.slate.500'}
-                                  fontSize={'sm'}
-                                  fontWeight={500}
-                                  icon={<EditIcon w={4} h={4} />}
-                                >
-                                  Edit{' '}
-                                  {currentBounty?.type === 'hackathon'
-                                    ? 'Track'
-                                    : bountyType}
-                                </MenuItem>
-                              </Link>
-                            ) : (
-                              <></>
-                            )}
-                            {(currentBounty.type === 'bounty' ||
-                              currentBounty.type === 'project') && (
-                              <MenuItem
-                                className="ph-no-capture"
-                                py={2}
-                                color={'brand.slate.500'}
-                                fontSize={'sm'}
-                                fontWeight={500}
-                                icon={<CopyIcon h={4} w={4} />}
-                                onClick={() => {
-                                  posthog.capture('duplicate listing_sponsor');
-                                  window.open(
-                                    `${router.basePath}/dashboard/listings/${currentBounty.slug}/duplicate`,
-                                    '_blank',
-                                  );
-                                }}
-                              >
-                                Duplicate
-                              </MenuItem>
-                            )}
-                            {bountyStatus === 'Draft' && (
-                              <>
-                                <MenuItem
-                                  py={2}
-                                  color={'brand.slate.500'}
-                                  fontSize={'sm'}
-                                  fontWeight={500}
-                                  icon={<AiOutlineDelete size={18} />}
-                                  onClick={() =>
-                                    handleDeleteDraft(currentBounty)
-                                  }
-                                >
-                                  Delete Draft
-                                </MenuItem>
-                              </>
-                            )}
-                            {!(
-                              currentBounty.status === 'OPEN' &&
-                              !currentBounty.isPublished
-                            ) && (
-                              <>
-                                <MenuItem
-                                  py={2}
-                                  color={'brand.slate.500'}
-                                  fontSize={'sm'}
-                                  fontWeight={500}
-                                  icon={<ViewOffIcon h={4} w={4} />}
-                                  onClick={() => handleUnpublish(currentBounty)}
-                                >
-                                  Unpublish
-                                </MenuItem>
-                              </>
-                            )}
-                          </MenuList>
-                        </Menu>
-                      </Td>
-                    </Tr>
-                  );
-                })}
-              </Tbody>
-            </Table>
-          </TableContainer>
-          <Flex align="center" justify="end" mt={6}>
-            <Text mr={4} color="brand.slate.400" fontSize="sm">
-              <Text as="span" fontWeight={700}>
-                {skip + 1}
-              </Text>{' '}
-              -{' '}
-              <Text as="span" fontWeight={700}>
-                {Math.min(skip + length, totalBounties)}
-              </Text>{' '}
-              of{' '}
-              <Text as="span" fontWeight={700}>
-                {totalBounties}
-              </Text>{' '}
-              Listings
-            </Text>
-            <Button
-              mr={4}
-              isDisabled={skip <= 0}
-              leftIcon={<ChevronLeftIcon w={5} h={5} />}
-              onClick={() =>
-                skip >= length ? setSkip(skip - length) : setSkip(0)
-              }
-              size="sm"
-              variant="outline"
-            >
-              Previous
-            </Button>
-            <Button
-              isDisabled={
-                totalBounties <= skip + length ||
-                (skip > 0 && skip % length !== 0)
-              }
-              onClick={() => skip % length === 0 && setSkip(skip + length)}
-              rightIcon={<ChevronRightIcon w={5} h={5} />}
-              size="sm"
-              variant="outline"
-            >
-              Next
-            </Button>
-          </Flex>
-        </>
-      )}
     </Sidebar>
   );
 }
-
-export default Bounties;

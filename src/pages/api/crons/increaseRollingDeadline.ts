@@ -1,8 +1,8 @@
-import { verifySignature } from '@upstash/qstash/dist/nextjs';
-import dayjs from 'dayjs';
+import { verifySignature } from '@upstash/qstash/nextjs';
 import type { NextApiRequest, NextApiResponse } from 'next';
 
 import { prisma } from '@/prisma';
+import { dayjs } from '@/utils/dayjs';
 
 async function handler(_req: NextApiRequest, res: NextApiResponse) {
   try {

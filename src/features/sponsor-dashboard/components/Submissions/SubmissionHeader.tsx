@@ -22,24 +22,24 @@ import {
   useClipboard,
 } from '@chakra-ui/react';
 import axios from 'axios';
-import dayjs from 'dayjs';
 import NextLink from 'next/link';
 import router from 'next/router';
 import React, { useState } from 'react';
 
 import { tokenList } from '@/constants';
 import {
-  type Bounty,
   formatDeadline,
-  getBountyStatus,
   getColorStyles,
+  getListingStatus,
+  type Listing,
 } from '@/features/listings';
+import { dayjs } from '@/utils/dayjs';
 import { getURL } from '@/utils/validUrl';
 
 import { SponsorPrize } from '../SponsorPrize';
 
 interface Props {
-  bounty: Bounty | null;
+  bounty: Listing | null;
   onOpen: () => void;
   totalSubmissions: number;
   isHackathonPage?: boolean;
@@ -53,13 +53,17 @@ export const SubmissionHeader = ({
 }: Props) => {
   const [isExporting, setIsExporting] = useState(false);
 
-  const deadline = formatDeadline(bounty?.deadline, bounty?.applicationType);
+  const deadline = formatDeadline(
+    bounty?.deadline,
+    bounty?.applicationType,
+    bounty?.type,
+  );
 
   const listingPath = `listings/${bounty?.type}/${bounty?.slug}`;
 
   const { hasCopied, onCopy } = useClipboard(`${getURL()}${listingPath}`);
 
-  const bountyStatus = getBountyStatus(bounty);
+  const bountyStatus = getListingStatus(bounty);
 
   const exportSubmissionsCsv = async () => {
     setIsExporting(true);

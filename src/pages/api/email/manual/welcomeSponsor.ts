@@ -2,7 +2,7 @@ import type { NextApiRequest, NextApiResponse } from 'next';
 import { getToken } from 'next-auth/jwt';
 
 import {
-  alertsEmail,
+  kashEmail,
   replyToEmail,
   resend,
   WelcomeSponsorTemplate,
@@ -25,7 +25,7 @@ export default async function handler(
   }
   try {
     await resend.emails.send({
-      from: alertsEmail,
+      from: kashEmail,
       to: [userEmail],
       subject: 'Welcome!',
       react: WelcomeSponsorTemplate(),

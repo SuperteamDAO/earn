@@ -22,7 +22,8 @@ export default async function grants(
         slug: true,
         shortDescription: true,
         token: true,
-        rewardAmount: true,
+        minReward: true,
+        maxReward: true,
         link: true,
         logo: true,
         sponsor: {

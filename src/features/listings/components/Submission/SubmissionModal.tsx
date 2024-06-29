@@ -2,8 +2,6 @@ import {
   Box,
   Button,
   FormControl,
-  FormErrorMessage,
-  FormHelperText,
   FormLabel,
   Image,
   Input,
@@ -18,18 +16,21 @@ import {
   Text,
   VStack,
 } from '@chakra-ui/react';
-import { PublicKey } from '@solana/web3.js';
 import axios from 'axios';
 import { usePostHog } from 'posthog-js/react';
 import { useEffect, useState } from 'react';
 import { useForm } from 'react-hook-form';
 
-import { AutoResizeTextarea } from '@/components/shared/autosize-textarea';
+import {
+  TextAreaWithCounter,
+  TextInputWithHelper,
+} from '@/components/Form/TextAreaHelpers';
 import { tokenList } from '@/constants';
 import { randomSubmissionCommentGenerator } from '@/features/comments';
-import { type Bounty } from '@/features/listings';
 import { userStore } from '@/store/user';
+import { validateSolAddress } from '@/utils/validateSolAddress';
 
+import { type Listing } from '../../types';
 import { QuestionHandler } from './QuestionHandler';
 import { SubmissionTerms } from './SubmissionTerms';
 
@@ -41,7 +42,7 @@ interface Props {
   setSubmissionNumber: (arg0: number) => void;
   submissionNumber: number;
   editMode: boolean;
-  listing: Bounty;
+  listing: Listing;
   showEasterEgg: () => void;
   onSurveyOpen: () => void;
 }
@@ -141,21 +142,6 @@ export const SubmissionModal = ({
 
     fetchData();
   }, [id, editMode, reset]);
-
-  function validateSolAddress(address: string) {
-    try {
-      const pubkey = new PublicKey(address);
-      const isSolana = PublicKey.isOnCurve(pubkey.toBuffer());
-      if (!isSolana) {
-        setPublicKeyError('Please enter a valid Solana address');
-        return false;
-      }
-      return true;
-    } catch (err) {
-      setPublicKeyError('Please enter a valid Solana address');
-      return false;
-    }
-  }
 
   const submitSubmissions = async (data: any) => {
     posthog.capture('confirmed_submission');
@@ -311,104 +297,29 @@ export const SubmissionModal = ({
             <VStack gap={4} mb={5}>
               {!isProject ? (
                 <>
-                  <FormControl isRequired>
-                    <FormLabel
-                      mb={0}
-                      color={'brand.slate.600'}
-                      fontWeight={600}
-                      htmlFor={'applicationLink'}
-                    >
-                      Link to Your Submission
-                    </FormLabel>
-                    <FormHelperText mt={0} mb={2} color="brand.slate.500">
-                      Make sure this link is accessible by everyone!
-                    </FormHelperText>
-                    <Input
-                      borderColor={'brand.slate.300'}
-                      _placeholder={{ color: 'brand.slate.300' }}
-                      focusBorderColor="brand.purple"
-                      id="applicationLink"
-                      placeholder="Add a link"
-                      {...register('applicationLink')}
-                      maxLength={500}
-                    />
-                    <Text
-                      color={
-                        (watch('applicationLink')?.length || 0) > 400
-                          ? 'red'
-                          : 'brand.slate.400'
-                      }
-                      fontSize={'xs'}
-                      textAlign="right"
-                    >
-                      {watch('applicationLink')?.length > 300 &&
-                        (500 - (watch('applicationLink')?.length || 0) === 0 ? (
-                          <p>Character limit reached</p>
-                        ) : (
-                          <p>
-                            {500 - (watch('applicationLink')?.length || 0)}{' '}
-                            characters left
-                          </p>
-                        ))}
-                    </Text>
-                    <FormErrorMessage>
-                      {errors.applicationLink ? (
-                        <>{errors.applicationLink.message}</>
-                      ) : (
-                        <></>
-                      )}
-                    </FormErrorMessage>
-                  </FormControl>
-                  <FormControl>
-                    <FormLabel
-                      mb={0}
-                      color={'brand.slate.600'}
-                      fontWeight={600}
-                      htmlFor={'tweetLink'}
-                    >
-                      Tweet Link
-                    </FormLabel>
-                    <FormHelperText mt={0} mb={2} color="brand.slate.500">
-                      This helps sponsors discover (and maybe repost) your work
-                      on Twitter! If this submission is for a Twitter thread
-                      bounty, you can ignore this field.
-                    </FormHelperText>
-                    <Input
-                      borderColor={'brand.slate.300'}
-                      _placeholder={{ color: 'brand.slate.300' }}
-                      focusBorderColor="brand.purple"
-                      id="tweetLink"
-                      placeholder="Add a tweet's link"
-                      {...register('tweetLink')}
-                      maxLength={500}
-                    />
-                    <Text
-                      color={
-                        (watch('tweetLink')?.length || 0) > 400
-                          ? 'red'
-                          : 'brand.slate.400'
-                      }
-                      fontSize={'xs'}
-                      textAlign="right"
-                    >
-                      {watch('tweetLink')?.length > 300 &&
-                        (500 - (watch('tweetLink')?.length || 0) === 0 ? (
-                          <p>Character limit reached</p>
-                        ) : (
-                          <p>
-                            {500 - (watch('tweetLink')?.length || 0)} characters
-                            left
-                          </p>
-                        ))}
-                    </Text>
-                    <FormErrorMessage>
-                      {errors.tweetLink ? (
-                        <>{errors.tweetLink.message}</>
-                      ) : (
-                        <></>
-                      )}
-                    </FormErrorMessage>
-                  </FormControl>
+                  <TextAreaWithCounter
+                    id="applicationLink"
+                    label="Link to Your Submission"
+                    helperText="Make sure this link is accessible by everyone!"
+                    placeholder="Add a link"
+                    register={register}
+                    watch={watch}
+                    maxLength={500}
+                    errors={errors}
+                    isRequired
+                  />
+
+                  <TextAreaWithCounter
+                    id="tweetLink"
+                    label="Tweet Link"
+                    helperText="This helps sponsors discover (and maybe repost) your work on Twitter! If this submission is for a Twitter thread bounty, you can ignore this field."
+                    placeholder="Add a tweet's link"
+                    register={register}
+                    watch={watch}
+                    maxLength={500}
+                    errors={errors}
+                    isRequired
+                  />
                   {isHackathon &&
                     eligibility?.map((e) => {
                       return (
@@ -494,92 +405,49 @@ export const SubmissionModal = ({
                   </Text>
                 </FormControl>
               )}
-              <FormControl>
-                <FormLabel
-                  mb={0}
-                  color={'brand.slate.600'}
-                  fontWeight={600}
-                  htmlFor={'otherInfo'}
-                >
-                  Anything Else?
-                </FormLabel>
-                <FormHelperText mt={0} mb={2} color="brand.slate.500">
-                  If you have any other links or information you&apos;d like to
-                  share with us, please add them here!
-                </FormHelperText>
-                <AutoResizeTextarea
-                  borderColor={'brand.slate.300'}
-                  _placeholder={{ color: 'brand.slate.300' }}
-                  focusBorderColor="brand.purple"
-                  id="otherInfo"
-                  placeholder="Add info or link"
-                  {...register('otherInfo')}
-                  maxLength={2000}
-                />
-                <Text
-                  color={
-                    (watch('otherInfo')?.length || 0) > 1900
-                      ? 'red'
-                      : 'brand.slate.400'
-                  }
-                  fontSize={'xs'}
-                  textAlign="right"
-                >
-                  {watch('otherInfo')?.length > 1800 &&
-                    (2000 - (watch('otherInfo')?.length || 0) === 0 ? (
-                      <p>Character limit reached</p>
-                    ) : (
-                      <p>
-                        {2000 - (watch('otherInfo')?.length || 0)} characters
-                        left
-                      </p>
-                    ))}
-                </Text>
+              <TextAreaWithCounter
+                id="otherInfo"
+                label="Anything Else?"
+                helperText="If you have any other links or information you'd like to share with us, please add them here!"
+                placeholder="Add info or link"
+                register={register}
+                watch={watch}
+                maxLength={2000}
+                errors={errors}
+              />
 
-                <FormErrorMessage>
-                  {errors.otherInfo ? <>{errors.otherInfo.message}</> : <></>}
-                </FormErrorMessage>
-              </FormControl>
-
-              <FormControl isRequired>
-                <FormLabel
-                  mb={0}
-                  color={'brand.slate.600'}
-                  fontWeight={600}
-                  htmlFor={'publicKey'}
-                >
-                  Your Solana Wallet Address
-                </FormLabel>
-                <FormHelperText mt={0} mb={2} color="brand.slate.500">
-                  Add your Solana wallet address here. This is where you will
-                  receive your rewards if you win. Download{' '}
-                  <Text as="u">
-                    <Link href="https://backpack.app" isExternal>
-                      Backpack
-                    </Link>
-                  </Text>{' '}
-                  /{' '}
-                  <Text as="u">
-                    <Link href="https://solflare.com" isExternal>
-                      Solflare
-                    </Link>
-                  </Text>{' '}
-                  if you don&apos;t have a Solana wallet
-                </FormHelperText>
-                <Input
-                  borderColor={'brand.slate.300'}
-                  _placeholder={{ color: 'brand.slate.300' }}
-                  focusBorderColor="brand.purple"
-                  id="publicKey"
-                  placeholder="Add your Solana wallet address"
-                  {...register('publicKey', { validate: validateSolAddress })}
-                  defaultValue={userInfo?.publicKey}
-                  maxLength={54}
-                />
-                <Text mt={1} ml={1} color="red" fontSize="14px">
-                  {publicKeyError}
-                </Text>
-              </FormControl>
+              <TextInputWithHelper
+                id="publicKey"
+                label="Your Solana Wallet Address"
+                helperText={
+                  <>
+                    Add your Solana wallet address here. This is where you will
+                    receive your rewards if you win. Download{' '}
+                    <Text as="u">
+                      <Link href="https://backpack.app" isExternal>
+                        Backpack
+                      </Link>
+                    </Text>{' '}
+                    /{' '}
+                    <Text as="u">
+                      <Link href="https://solflare.com" isExternal>
+                        Solflare
+                      </Link>
+                    </Text>{' '}
+                    if you don&apos;t have a Solana wallet
+                  </>
+                }
+                placeholder="Add your Solana wallet address"
+                register={register}
+                errors={errors}
+                validate={(address: string) =>
+                  validateSolAddress(address, setPublicKeyError)
+                }
+                defaultValue={userInfo?.publicKey}
+              />
+              <Text mt={1} ml={1} color="red" fontSize="14px">
+                {publicKeyError}
+              </Text>
             </VStack>
             {!!error && (
               <Text align="center" mb={2} color="red">

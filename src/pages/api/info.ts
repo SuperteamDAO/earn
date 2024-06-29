@@ -1,13 +1,10 @@
-import dayjs from 'dayjs';
-import updateLocale from 'dayjs/plugin/updateLocale';
-import utc from 'dayjs/plugin/utc';
+import { verifySignature } from '@upstash/qstash/nextjs';
 import type { NextApiRequest, NextApiResponse } from 'next';
 
-import { alertsEmail, InfoTemplate, resend } from '@/features/emails';
+import { InfoTemplate, kashEmail, resend } from '@/features/emails';
 import { prisma } from '@/prisma';
+import { dayjs } from '@/utils/dayjs';
 
-dayjs.extend(utc);
-dayjs.extend(updateLocale);
 dayjs.updateLocale('en', {
   weekStart: 1,
 });
@@ -26,10 +23,7 @@ const lastWeek = {
   lte: endOfLastWeek,
 };
 
-export default async function handler(
-  _req: NextApiRequest,
-  res: NextApiResponse,
-) {
+async function handler(_req: NextApiRequest, res: NextApiResponse) {
   try {
     const totalUserCount = await prisma.user.count();
 
@@ -156,7 +150,7 @@ export default async function handler(
     };
 
     await resend.emails.send({
-      from: alertsEmail,
+      from: kashEmail,
       to: ['pratik.dholani1@gmail.com', 'bodhiswattwac@gmail.com'],
       subject: `Weekly Earn Stats (from ${formatDate(startOfLastWeek)} to ${formatDate(endOfLastWeek)}`,
       react: InfoTemplate({
@@ -172,10 +166,10 @@ export default async function handler(
   }
 }
 
-// export default verifySignature(handler);
+export default verifySignature(handler);
 
-// export const config = {
-//   api: {
-//     bodyParser: false,
-//   },
-// };
+export const config = {
+  api: {
+    bodyParser: false,
+  },
+};

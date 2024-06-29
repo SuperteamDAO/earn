@@ -1,14 +1,14 @@
 import { Box } from '@chakra-ui/react';
 import axios from 'axios';
-import dayjs from 'dayjs';
 import { useEffect, useState } from 'react';
 
-import { type Bounty, ListingTabs } from '@/features/listings';
+import { type Listing, ListingTabs } from '@/features/listings';
 import { Home } from '@/layouts/Home';
 import { Meta } from '@/layouts/Meta';
+import { dayjs } from '@/utils/dayjs';
 
 interface Listings {
-  bounties?: Bounty[];
+  bounties?: Listing[];
 }
 
 export default function BountiesPage() {

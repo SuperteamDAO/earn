@@ -24,7 +24,12 @@ async function handler(req: NextApiRequestWithUser, res: NextApiResponse) {
     const { title, ...data } = req.body;
     let usdValue = 0;
 
-    if (data.isPublished && data.publishedAt) {
+    let publishedAt;
+    if (data.isPublished) {
+      publishedAt = new Date();
+    }
+
+    if (data.isPublished && publishedAt) {
       try {
         let amount;
         if (data.compensationType === 'fixed') {
@@ -36,7 +41,7 @@ async function handler(req: NextApiRequestWithUser, res: NextApiResponse) {
         if (amount && data.token) {
           const tokenUsdValue = await fetchTokenUSDValue(
             data.token,
-            data.publishedAt,
+            publishedAt,
           );
           usdValue = tokenUsdValue * amount;
         }
@@ -49,6 +54,7 @@ async function handler(req: NextApiRequestWithUser, res: NextApiResponse) {
       sponsorId: user.currentSponsorId,
       title,
       usdValue,
+      publishedAt,
       ...data,
     };
 

@@ -11,22 +11,22 @@ import React, {
 } from 'react';
 
 import { SurveyModal } from '@/components/Survey';
-import { Superteams } from '@/constants/Superteam';
 import { AuthWrapper } from '@/features/auth';
 import {
   getListingDraftStatus,
   getRegionTooltipLabel,
   isDeadlineOver,
+  type Listing,
+  userRegionEligibilty,
 } from '@/features/listings';
 import { userStore } from '@/store/user';
 
-import { type Bounty } from '../../types';
 import { WarningModal } from '../WarningModal';
 import { EasterEgg } from './EasterEgg';
 import { SubmissionModal } from './SubmissionModal';
 
 interface Props {
-  listing: Bounty;
+  listing: Listing;
   hasHackathonStarted: boolean;
   submissionNumber: number;
   setSubmissionNumber: Dispatch<SetStateAction<number>>;
@@ -44,7 +44,6 @@ export const SubmissionActionButton = ({
     isPublished,
     deadline,
     region,
-    applicationLink,
     type,
     isWinnersAnnounced,
   } = listing;
@@ -55,22 +54,10 @@ export const SubmissionActionButton = ({
 
   const { userInfo } = userStore();
 
-  function userRegionEligibilty() {
-    if (region === 'GLOBAL') {
-      return true;
-    }
-
-    const superteam = Superteams.find((st) => st.region === region);
-
-    const isEligible =
-      !!(
-        userInfo?.location && superteam?.country.includes(userInfo?.location)
-      ) || false;
-
-    return isEligible;
-  }
-
-  const isUserEligibleByRegion = userRegionEligibilty();
+  const isUserEligibleByRegion = userRegionEligibilty(
+    region,
+    userInfo?.location,
+  );
   const posthog = usePostHog();
 
   const { isOpen, onOpen, onClose } = useDisclosure();
@@ -90,10 +77,6 @@ export const SubmissionActionButton = ({
 
   const handleSubmit = () => {
     if (isAuthenticated) {
-      if (applicationLink) {
-        window.open(applicationLink, '_blank');
-        return;
-      }
       if (!userInfo?.isTalentFilled) {
         warningOnOpen();
       } else {
@@ -127,7 +110,6 @@ export const SubmissionActionButton = ({
 
   let buttonText;
   let buttonBG;
-  let btnPointerEvents: any;
   let isBtnDisabled;
   let btnLoadingText;
 
@@ -277,7 +259,6 @@ export const SubmissionActionButton = ({
               _disabled={{
                 opacity: { base: '96%', md: '70%' },
               }}
-              pointerEvents={btnPointerEvents}
               isDisabled={isBtnDisabled}
               isLoading={isUserSubmissionLoading}
               loadingText={btnLoadingText}

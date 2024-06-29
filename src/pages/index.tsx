@@ -4,15 +4,15 @@ import type { GetServerSideProps } from 'next';
 
 import { InstallPWAModal } from '@/components/modals/InstallPWAModal';
 import { EmptySection } from '@/components/shared/EmptySection';
-import { type Grant, GrantsCard } from '@/features/grants';
-import { type Bounty, ListingSection, ListingTabs } from '@/features/listings';
+import { GrantsCard, type GrantWithApplicationCount } from '@/features/grants';
+import { type Listing, ListingSection, ListingTabs } from '@/features/listings';
 import { Home } from '@/layouts/Home';
 
-import { getListings, type Skills, type Status } from './api/listings/v2';
+import { getGrants, getListings, type Skills } from './api/listings/v2';
 
 interface Props {
-  bounties: Bounty[];
-  grants: Grant[];
+  bounties: Listing[];
+  grants: GrantWithApplicationCount[];
 }
 
 export default function HomePage({ bounties, grants }: Props) {
@@ -60,17 +60,12 @@ export const getServerSideProps: GetServerSideProps<Props> = async (
 ) => {
   const params = context.query;
 
-  const category = params.category as string | undefined;
-
   const skillFilter = params.skill as Skills | undefined;
-  const statusFilter: Status = (params.status as Status) ?? 'open';
+
   const type = params.type as BountyType | undefined;
   const take = params.take ? parseInt(params.take as string, 20) : 20;
 
-  console.log('status - ', statusFilter);
-
   const openResult = await getListings({
-    category,
     order: 'asc',
     isHomePage: true,
     skillFilter,
@@ -80,7 +75,6 @@ export const getServerSideProps: GetServerSideProps<Props> = async (
   });
 
   const reviewResult = await getListings({
-    category: 'bounties',
     order: 'desc',
     isHomePage: true,
     skillFilter,
@@ -89,8 +83,9 @@ export const getServerSideProps: GetServerSideProps<Props> = async (
     take,
   });
 
+  const grants = await getGrants({ take, skillFilter });
+
   const completeResult = await getListings({
-    category: 'bounties',
     order: 'desc',
     isHomePage: true,
     skillFilter,
@@ -100,15 +95,11 @@ export const getServerSideProps: GetServerSideProps<Props> = async (
   });
 
   const result: {
-    bounties: Bounty[];
-    grants: Grant[];
+    bounties: Listing[];
+    grants: GrantWithApplicationCount[];
   } = {
-    bounties: [
-      ...openResult.bounties,
-      ...reviewResult.bounties,
-      ...completeResult.bounties,
-    ],
-    grants: openResult.grants,
+    bounties: [...(openResult as any), ...reviewResult, ...completeResult],
+    grants: grants as any,
   };
 
   return {

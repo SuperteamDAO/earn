@@ -1,11 +1,11 @@
 import axios from 'axios';
-import dayjs from 'dayjs';
 import type { NextApiResponse } from 'next';
 
 import { type NextApiRequestWithUser, withAuth } from '@/features/auth';
 import { sendEmailNotification } from '@/features/emails';
 import { shouldSendEmailForListing } from '@/features/listing-builder';
 import { prisma } from '@/prisma';
+import { dayjs } from '@/utils/dayjs';
 import { fetchTokenUSDValue } from '@/utils/fetchTokenUSDValue';
 
 async function bounty(req: NextApiRequestWithUser, res: NextApiResponse) {
@@ -43,11 +43,16 @@ async function bounty(req: NextApiRequestWithUser, res: NextApiResponse) {
       rewards,
       rewardAmount,
       token,
-      publishedAt,
       maxRewardAsk,
       minRewardAsk,
       compensationType,
+      isPublished,
     } = updatedData;
+
+    let publishedAt = listingBeforeUpdate.publishedAt;
+    if (isPublished && !listingBeforeUpdate.publishedAt) {
+      publishedAt = new Date();
+    }
 
     const newRewardsCount = Object.keys(rewards || {}).length;
     const currentTotalWinners = listingBeforeUpdate.totalWinnersSelected || 0;
@@ -75,23 +80,33 @@ async function bounty(req: NextApiRequestWithUser, res: NextApiResponse) {
 
     let usdValue = 0;
     let amount;
-    try {
-      if (compensationType === 'fixed') {
-        amount = rewardAmount;
-      } else if (compensationType === 'range') {
-        amount = (maxRewardAsk + minRewardAsk) / 2;
+    if (isPublished && publishedAt) {
+      try {
+        if (compensationType === 'fixed') {
+          amount = rewardAmount;
+        } else if (compensationType === 'range') {
+          amount = (maxRewardAsk + minRewardAsk) / 2;
+        }
+        if (token && amount) {
+          const tokenUsdValue = await fetchTokenUSDValue(token, publishedAt);
+          usdValue = tokenUsdValue * amount;
+        }
+      } catch (err) {
+        console.error('Error calculating USD value -', err);
       }
-      if (token && amount) {
-        const tokenUsdValue = await fetchTokenUSDValue(token, publishedAt);
-        usdValue = tokenUsdValue * amount;
-      }
-    } catch (err) {
-      console.error('Error calculating USD value -', err);
     }
 
     const result = await prisma.bounties.update({
       where: { id: id as string },
       data: {
+        rewards,
+        rewardAmount,
+        token,
+        maxRewardAsk,
+        minRewardAsk,
+        compensationType,
+        isPublished,
+        publishedAt,
         ...updatedData,
         usdValue,
       },

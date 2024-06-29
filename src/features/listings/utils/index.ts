@@ -1,11 +1,15 @@
 import { Superteams } from '@/constants/Superteam';
-import type { Bounty, BountyWithSubmissions } from '@/features/listings';
+import type { Listing, ListingWithSubmissions } from '@/features/listings';
 import { dayjs } from '@/utils/dayjs';
 
 export const formatDeadline = (
   deadline: string | undefined,
   applicationType: 'fixed' | 'rolling' | undefined,
+  type: string | undefined,
 ) => {
+  if (type === 'grant') {
+    return 'Ongoing';
+  }
   if (applicationType === 'rolling') {
     return 'Rolling';
   }
@@ -43,37 +47,42 @@ export const getListingDraftStatus = (
 export const getListingTypeLabel = (type: string) => {
   if (type === 'project') return 'Project';
   if (type === 'hackathon') return 'Hackathon';
-  return 'Bounty';
+  if (type === 'bounty') return 'Bounty';
+  if (type === 'grant') return 'Grant';
+  return;
 };
 
-export const getBountyStatus = (
-  bounty: Bounty | BountyWithSubmissions | null,
+export const getListingStatus = (
+  listing: Listing | ListingWithSubmissions | any,
+  isGrant?: boolean,
 ) => {
-  if (!bounty) return 'DRAFT';
-  const rewardsLength = Object.keys(bounty?.rewards || {})?.length || 0;
-  const bountyStatus = getListingDraftStatus(
-    bounty?.status,
-    bounty?.isPublished,
-  );
-  const hasDeadlinePassed = isDeadlineOver(bounty?.deadline || '');
+  if (!listing) return 'DRAFT';
 
-  switch (bountyStatus) {
-    case 'DRAFT':
-      return 'Draft';
+  const rewardsLength = Object.keys(listing?.rewards || {}).length;
+  const listingStatus = getListingDraftStatus(
+    listing?.status,
+    listing?.isPublished,
+  );
+  const hasDeadlinePassed = isDeadlineOver(listing?.deadline || '');
+
+  if (listingStatus === 'DRAFT') return 'Draft';
+  if (listing?.type === 'grant' || isGrant) return 'Ongoing';
+
+  switch (listingStatus) {
     case 'CLOSED':
       return 'Closed';
     case 'PUBLISHED':
-      if (!hasDeadlinePassed && !bounty?.isWinnersAnnounced)
+      if (!hasDeadlinePassed && !listing?.isWinnersAnnounced)
         return 'In Progress';
-      if (!bounty?.isWinnersAnnounced) return 'In Review';
+      if (!listing?.isWinnersAnnounced) return 'In Review';
       if (
-        bounty?.isWinnersAnnounced &&
-        bounty?.totalPaymentsMade !== rewardsLength
+        listing?.isWinnersAnnounced &&
+        listing?.totalPaymentsMade !== rewardsLength
       )
         return 'Payment Pending';
       if (
-        bounty?.isWinnersAnnounced &&
-        bounty?.totalPaymentsMade === rewardsLength
+        listing?.isWinnersAnnounced &&
+        listing?.totalPaymentsMade === rewardsLength
       )
         return 'Completed';
       return 'In Review';
@@ -95,6 +104,8 @@ export const getColorStyles = (status: string) => {
       return { bgColor: 'cyan.100', color: 'cyan.600' };
     case 'In Progress':
       return { bgColor: '#F3E8FF', color: '#8B5CF6' };
+    case 'Ongoing':
+      return { bgColor: '#F3E8FF', color: '#8B5CF6' };
     default:
       return { bgColor: 'gray', color: 'white' };
   }
@@ -105,4 +116,20 @@ export function tweetTemplate(url: string) {
 
 ${url}
 `;
+}
+
+export function userRegionEligibilty(
+  region: string | undefined,
+  userLocation: string | undefined,
+) {
+  if (region === 'GLOBAL') {
+    return true;
+  }
+
+  const superteam = Superteams.find((st) => st.region === region);
+
+  const isEligible =
+    !!(userLocation && superteam?.country.includes(userLocation)) || false;
+
+  return isEligible;
 }
