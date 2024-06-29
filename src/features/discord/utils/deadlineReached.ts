@@ -3,6 +3,8 @@ import { WebhookClient } from 'discord.js';
 
 import { getURL } from '@/utils/validUrl';
 
+import { creatPOCLink } from '.';
+
 type BountiesWithSponsor = Prisma.BountiesGetPayload<{
   include: {
     sponsor: true;
@@ -22,7 +24,7 @@ export async function discordDeadlineReached(listings: BountiesWithSponsor[]) {
     msg += `\n**Deadline Reached:**
 Listing: ${listing.title} (<${url}>)
 Type: ${listing.type}
-Sponsor Name: ${listing.sponsor.name} (<${listing.sponsor?.url}>)
+Sponsor Name: ${listing.sponsor.name} (<${listing.pocSocials ? creatPOCLink(listing.pocSocials) : listing.sponsor?.url}>)
 Amount: ${listing.rewardAmount ? `${listing.rewardAmount} ${listing.token}` : ''}${listing.compensationType === 'variable' ? 'Variable' : ''}${listing.compensationType === 'range' ? `${listing.minRewardAsk} ${listing.token} to ${listing.maxRewardAsk} ${listing.token}` : ''}
 `;
     if (msg.length >= 1500 || i === listings.length - 1) {

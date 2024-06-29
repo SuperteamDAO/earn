@@ -5,6 +5,8 @@ import { WebhookClient } from 'discord.js';
 import { timeAgoShort } from '@/utils/timeAgo';
 import { getURL } from '@/utils/validUrl';
 
+import { creatPOCLink } from '.';
+
 type BountiesWithSponsor = Prisma.BountiesGetPayload<{
   include: {
     sponsor: true;
@@ -22,7 +24,7 @@ export async function discordDueForWinners(listings: BountiesWithSponsor[]) {
 
     msg += `\n**Due for Winner Announcement:**
 Listing: ${listing.title} (<${url}>)
-Sponsor Name: ${listing.sponsor.name} (<${listing.sponsor?.url}>)
+Sponsor Name: ${listing.sponsor.name} (<${listing.pocSocials ? creatPOCLink(listing.pocSocials) : listing.sponsor?.url}>)
 Deadline: ${dayjs(listing.deadline).format('MMMM D, YYYY')} ${listing.deadline ? `(${timeAgoShort(listing.deadline)} ago)` : ``}
 `;
 

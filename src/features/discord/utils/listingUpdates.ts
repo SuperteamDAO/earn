@@ -3,6 +3,8 @@ import { WebhookClient } from 'discord.js';
 
 import { getURL } from '@/utils/validUrl';
 
+import { creatPOCLink } from '.';
+
 export type updateStatus =
   | 'Draft Added'
   | 'Published'
@@ -24,7 +26,7 @@ export async function discordListingUpdate(
   const msg = `**${status}:**
 Listing: ${listing.title} (<${url}>)
 Type: ${listing.type}
-Sponsor Name: ${listing.sponsor.name} (<${listing.sponsor?.url}>)
+Sponsor Name: ${listing.sponsor.name} (<${listing.pocSocials ? creatPOCLink(listing.pocSocials) : listing.sponsor?.url}>)
 Amount: ${listing.rewardAmount ? `${listing.rewardAmount} ${listing.token}` : ''}${listing.compensationType === 'variable' ? 'Variable' : ''}${listing.compensationType === 'range' ? `${listing.minRewardAsk} ${listing.token} to ${listing.maxRewardAsk} ${listing.token}` : ''}
 `;
 

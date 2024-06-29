@@ -3,6 +3,8 @@ import { WebhookClient } from 'discord.js';
 
 import { getURL } from '@/utils/validUrl';
 
+import { creatPOCLink } from '.';
+
 type BountiesWithSponsor = Prisma.BountiesGetPayload<{
   include: {
     sponsor: true;
@@ -14,7 +16,7 @@ export async function discordWinnersAnnouncement(listing: BountiesWithSponsor) {
 
   const msg = `**Winners Announced:**
 Listing: ${listing.title} (<${url}>)
-Sponsor Name: ${listing.sponsor.name} (<${listing.sponsor?.url}>)
+Sponsor Name: ${listing.sponsor.name} (<${listing.pocSocials ? creatPOCLink(listing.pocSocials) : listing.sponsor?.url}>)
 `;
 
   const discord = new WebhookClient({
