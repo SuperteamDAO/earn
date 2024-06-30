@@ -22,6 +22,7 @@ import NextLink from 'next/link';
 import Marquee from 'react-fast-marquee';
 import { FaDiscord } from 'react-icons/fa6';
 
+import { EmailCapture } from '@/components/modals/EmailCapture';
 import { tokenList } from '@/constants';
 import { Default } from '@/layouts/Default';
 import { Meta } from '@/layouts/Meta';
@@ -34,9 +35,11 @@ import Trophy from '@/public/assets/hackathon/talent-olympics/trophy.png';
 import WinFlag from '@/public/assets/hackathon/talent-olympics/winflag.png';
 import { TalentOlympicsHeader } from '@/svg/talent-olympics-header';
 
+const base = '/assets/hackathon/talent-olympics/';
+const baseAsset = (filename: string) => base + filename;
 const frontendTrack: TrackProps[] = [
   {
-    icon: '/assets/hackathon/talent-olympics/scan.svg',
+    icon: baseAsset('scan.svg'),
     title: 'Code a landing page with Next',
     description:
       'Write programs to make a fresh new landing page with next to your existing landing page. ',
@@ -45,7 +48,7 @@ const frontendTrack: TrackProps[] = [
     link: '#',
   },
   {
-    icon: '/assets/hackathon/talent-olympics/scan.svg',
+    icon: baseAsset('laptop.svg'),
     title: 'Code a landing page with Next',
     description:
       'Write programs to make a fresh new landing page with next to your existing landing page. ',
@@ -54,7 +57,7 @@ const frontendTrack: TrackProps[] = [
     link: '#',
   },
   {
-    icon: '/assets/hackathon/talent-olympics/scan.svg',
+    icon: baseAsset('cube.svg'),
     title: 'Code a landing page with Next',
     description:
       'Write programs to make a fresh new landing page with next to your existing landing page. ',
@@ -63,7 +66,7 @@ const frontendTrack: TrackProps[] = [
     link: '#',
   },
   {
-    icon: '/assets/hackathon/talent-olympics/scan.svg',
+    icon: baseAsset('cube2.svg'),
     title: 'Code a landing page with Next',
     description:
       'Write programs to make a fresh new landing page with next to your existing landing page. ',
@@ -72,7 +75,7 @@ const frontendTrack: TrackProps[] = [
     link: '#',
   },
   {
-    icon: '/assets/hackathon/talent-olympics/scan.svg',
+    icon: baseAsset('code.svg'),
     title: 'Code a landing page with Next',
     description:
       'Write programs to make a fresh new landing page with next to your existing landing page. ',
@@ -81,7 +84,7 @@ const frontendTrack: TrackProps[] = [
     link: '#',
   },
   {
-    icon: '/assets/hackathon/talent-olympics/scan.svg',
+    icon: baseAsset('scan.svg'),
     title: 'Code a landing page with Next',
     description:
       'Write programs to make a fresh new landing page with next to your existing landing page. ',
@@ -93,7 +96,7 @@ const frontendTrack: TrackProps[] = [
 
 const rustTrack: TrackProps[] = [
   {
-    icon: '/assets/hackathon/talent-olympics/monitor.svg',
+    icon: baseAsset('monitor.svg'),
     title: 'Code a landing page with Next',
     description:
       'Write programs to make a fresh new landing page with next to your existing landing page. ',
@@ -102,7 +105,7 @@ const rustTrack: TrackProps[] = [
     link: '#',
   },
   {
-    icon: '/assets/hackathon/talent-olympics/monitor.svg',
+    icon: baseAsset('git.svg'),
     title: 'Code a landing page with Next',
     description:
       'Write programs to make a fresh new landing page with next to your existing landing page. ',
@@ -111,7 +114,7 @@ const rustTrack: TrackProps[] = [
     link: '#',
   },
   {
-    icon: '/assets/hackathon/talent-olympics/monitor.svg',
+    icon: baseAsset('filegit.svg'),
     title: 'Code a landing page with Next',
     description:
       'Write programs to make a fresh new landing page with next to your existing landing page. ',
@@ -120,7 +123,7 @@ const rustTrack: TrackProps[] = [
     link: '#',
   },
   {
-    icon: '/assets/hackathon/talent-olympics/monitor.svg',
+    icon: baseAsset('book.svg'),
     title: 'Code a landing page with Next',
     description:
       'Write programs to make a fresh new landing page with next to your existing landing page. ',
@@ -129,7 +132,7 @@ const rustTrack: TrackProps[] = [
     link: '#',
   },
   {
-    icon: '/assets/hackathon/talent-olympics/monitor.svg',
+    icon: baseAsset('bookmark.svg'),
     title: 'Code a landing page with Next',
     description:
       'Write programs to make a fresh new landing page with next to your existing landing page. ',
@@ -138,7 +141,7 @@ const rustTrack: TrackProps[] = [
     link: '#',
   },
   {
-    icon: '/assets/hackathon/talent-olympics/monitor.svg',
+    icon: baseAsset('monitor.svg'),
     title: 'Code a landing page with Next',
     description:
       'Write programs to make a fresh new landing page with next to your existing landing page. ',
@@ -253,13 +256,13 @@ function Hero() {
           alignItems="center"
           gap={2}
           px={6}
-          color="#39FFC1"
+          color="brand.slate.200"
           fontSize={{ base: 'xs', sm: 'sm' }}
           bg="rgba(0, 0, 0, 0.4)"
           pointerEvents={'none'}
           rounded="full"
         >
-          <Circle bg="#39FFC1" size={1.5} />
+          <Circle bg="brand.slate.200" size={1.5} />
           <Text fontWeight={500}>Submissions TBA</Text>
         </Button>
       </Flex>
@@ -393,10 +396,14 @@ function GetHiredBy() {
   ];
   return (
     <Flex align="center" gap={8} w="full" py={6}>
+      <EmailCapture
+        localStorageId="talentOlympicsEmail"
+        surveyId={process.env.NEXT_PUBLIC_POSTHOG_EMAIL_SURVEY_ID!}
+      />
       <Box display="block" w="max-content" color="brand.slate.400">
         Get Hired By{' '}
       </Box>
-      <Marquee>
+      <Marquee autoFill pauseOnHover>
         {hiredBy.map((h) => (
           <NextImage
             key={h.name}
@@ -609,7 +616,8 @@ const faqs: { question: string; answer: string }[] = [
   },
   {
     question: 'How do I enter the competition?',
-    answer: 'By submitting to any of the ten tracks.',
+    answer:
+      'By submitting to any of the ten challenges under the Frontend and Rust tracks.',
   },
   {
     question: 'Which teams are hiring?',
@@ -631,18 +639,13 @@ const faqs: { question: string; answer: string }[] = [
     answer:
       "The individual prizes for each challenge are mentioned in the listings themselves. On top of that, there's a separate prize pool of $10,000 for the best overall participants. We will consider both the quality (most important criteria) and the number of challenges that participants have submitted to for the grand prize, based on the reviews from our partners.",
   },
-  {
-    question: "What if I don't win?",
-    answer:
-      'Like any other listing on Superteam Earn, this submission adds to your proof of work, and builds a strong profile for potential employers to see!',
-  },
 ];
 
 function FAQs() {
   return (
     <VStack py={8}>
       <Text fontSize="xl" fontWeight={700}>
-        Frequently Asked
+        FAQ
       </Text>
       <Accordion w="full" maxW="35rem" allowToggle>
         {faqs.map((f) => (
