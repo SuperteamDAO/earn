@@ -33,7 +33,14 @@ export const TalentOlympicsBanner = () => {
           by the top Solana ecosystem teams.
         </Text>
         <Link as={NextLink} w="full" href="/talent-olympics">
-          <Button w="full" mt={4} fontSize={'sm'} variant="solidSecondary">
+          <Button
+            w="full"
+            mt={4}
+            color="#8330A9"
+            fontSize={'sm'}
+            bg="white"
+            variant="solidSecondary"
+          >
             Enter the Arena
           </Button>
         </Link>

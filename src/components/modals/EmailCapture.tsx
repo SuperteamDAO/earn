@@ -29,6 +29,13 @@ export const EmailCapture = ({
   const [email, setEmail] = useState('');
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
+  const [hide] = useState(false);
+
+  const isLG = useBreakpointValue({ base: false, lg: true });
+
+  useEffect(() => {
+    console.log('hide - ', hide);
+  }, [hide]);
 
   const { isOpen, onOpen, onClose } = useDisclosure();
 
@@ -101,9 +108,7 @@ export const EmailCapture = ({
     decideOpenStatus();
   }, [userInfo]);
 
-  const isMD = useBreakpointValue({ base: false, md: true });
-
-  if (userInfo?.surveysShown?.[surveyId] === true) {
+  if (userInfo?.surveysShown?.[surveyId] === true || hide) {
     return null;
   }
 
@@ -119,8 +124,9 @@ export const EmailCapture = ({
         <Text pos="fixed" right={2} bottom={4} visibility="hidden" />
       </PopoverTrigger>
       <PopoverContent
-        maxW={{ base: '16rem', md: '24rem' }}
-        style={{ right: 0, bottom: isMD ? 0 : '3.5rem' }}
+        w="92vw"
+        maxW={{ base: '100vw', md: '24rem' }}
+        style={{ right: 0, bottom: isLG ? 0 : '3.5rem' }}
       >
         <form onSubmit={handleSubmit}>
           <PopoverCloseButton onClick={onCloseAltered} />
