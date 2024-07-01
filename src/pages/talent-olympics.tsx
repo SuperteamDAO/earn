@@ -12,18 +12,31 @@ import {
   Grid,
   GridItem,
   HStack,
+  IconButton,
   Image,
+  Spinner,
   Text,
   useBreakpointValue,
+  useDisclosure,
   VStack,
 } from '@chakra-ui/react';
+import type { SubscribeHackathon } from '@prisma/client';
+import axios from 'axios';
 import NextImage, { type StaticImageData } from 'next/image';
 import NextLink from 'next/link';
+import { useSession } from 'next-auth/react';
+import { usePostHog } from 'posthog-js/react';
+import { useEffect, useState } from 'react';
 import Marquee from 'react-fast-marquee';
+import { toast } from 'react-hot-toast';
 import { FaDiscord } from 'react-icons/fa6';
+import { TbBell, TbBellRinging } from 'react-icons/tb';
 
 import { EmailCapture } from '@/components/modals/EmailCapture';
 import { tokenList } from '@/constants';
+import { AuthWrapper } from '@/features/auth';
+import { WarningModal } from '@/features/listings';
+import type { User } from '@/interface/user';
 import { Default } from '@/layouts/Default';
 import { Meta } from '@/layouts/Meta';
 import RiseIn from '@/public/assets/company-logos/rise-in.svg';
@@ -33,7 +46,10 @@ import CashBag from '@/public/assets/hackathon/talent-olympics/cashbag.png';
 import Coder from '@/public/assets/hackathon/talent-olympics/coder.png';
 import Trophy from '@/public/assets/hackathon/talent-olympics/trophy.png';
 import WinFlag from '@/public/assets/hackathon/talent-olympics/winflag.png';
+import { userStore } from '@/store/user';
 import { TalentOlympicsHeader } from '@/svg/talent-olympics-header';
+
+const SLUG = 'talent-olympics';
 
 const base = '/assets/hackathon/talent-olympics/';
 const baseAsset = (filename: string) => base + filename;
@@ -212,6 +228,73 @@ function Hero() {
   const PoweredByHeight = '2.5rem';
   const isSM = useBreakpointValue({ base: false, sm: true });
 
+  const { status: authStatus } = useSession();
+  const posthog = usePostHog();
+  const { userInfo } = userStore();
+  const {
+    isOpen: warningIsOpen,
+    onOpen: warningOnOpen,
+    onClose: warningOnClose,
+  } = useDisclosure();
+  const [isSubscribeLoading, setIsSubscribeLoading] = useState(false);
+  const [update, setUpdate] = useState<boolean>(false);
+  const [sub, setSub] = useState<
+    (SubscribeHackathon & {
+      User: User | null;
+    })[]
+  >([]);
+
+  const isAuthenticated = authStatus === 'authenticated';
+
+  const handleSubscribe = async () => {
+    if (isAuthenticated) {
+      if (!userInfo?.isTalentFilled) {
+        warningOnOpen();
+        return;
+      }
+
+      setIsSubscribeLoading(true);
+      try {
+        await axios.post('/api/hackathon/subscribe/subscribe', {
+          slug: SLUG,
+        });
+        setUpdate((prev) => !prev);
+        setIsSubscribeLoading(false);
+        toast.success('Subscribed to the listing');
+      } catch (error) {
+        console.log(error);
+        setIsSubscribeLoading(false);
+        toast.error('Error');
+      }
+    }
+  };
+  const handleUnSubscribe = async (idSub: string) => {
+    setIsSubscribeLoading(true);
+
+    try {
+      await axios.post('/api/hackathon/subscribe/unSubscribe', {
+        id: idSub,
+      });
+      setUpdate((prev) => !prev);
+      setIsSubscribeLoading(false);
+      toast.success('Unsubscribed');
+    } catch (error) {
+      console.log(error);
+      setIsSubscribeLoading(false);
+      toast.error('Error');
+    }
+  };
+
+  useEffect(() => {
+    const fetchUser = async () => {
+      const { data } = await axios.post('/api/hackathon/subscribe/get', {
+        slug: SLUG,
+      });
+      setSub(data);
+    };
+    fetchUser();
+  }, [update]);
+
   return (
     <Flex
       align="center"
@@ -225,6 +308,19 @@ function Hero() {
       borderColor={'brand.slate.200'}
       borderBottomWidth={'1px'}
     >
+      {warningIsOpen && (
+        <WarningModal
+          onCTAClick={() => posthog.capture('complete profile_CTA pop up')}
+          isOpen={warningIsOpen}
+          onClose={warningOnClose}
+          title={'Complete your profile'}
+          bodyText={
+            'Please complete your profile before subscribing to a hackthon.'
+          }
+          primaryCtaText={'Complete Profile'}
+          primaryCtaLink={'/new/talent'}
+        />
+      )}
       <TalentOlympicsHeader
         styles={{ height: isSM ? '10rem' : '7rem', width: 'auto' }}
       />
@@ -265,6 +361,64 @@ function Hero() {
           <Circle bg="brand.slate.200" size={1.5} />
           <Text fontWeight={500}>Submissions TBA</Text>
         </Button>
+        <HStack>
+          <HStack align="start">
+            <AuthWrapper>
+              <IconButton
+                className="ph-no-capture"
+                color={
+                  sub.find((e) => e.userId === userInfo?.id)
+                    ? 'white'
+                    : 'brand.slate.500'
+                }
+                bg={
+                  sub.find((e) => e.userId === userInfo?.id)
+                    ? 'brand.purple'
+                    : 'brand.slate.100'
+                }
+                aria-label="Notify"
+                icon={
+                  isSubscribeLoading ? (
+                    <Spinner color="white" size="sm" />
+                  ) : sub.find((e) => e.userId === userInfo?.id) ? (
+                    <TbBellRinging />
+                  ) : (
+                    <TbBell />
+                  )
+                }
+                onClick={() => {
+                  if (sub.find((e) => e.userId === userInfo?.id)) {
+                    posthog.capture('unnotify me_hackathon');
+                    handleUnSubscribe(
+                      sub.find((e) => e.userId === userInfo?.id)?.id as string,
+                    );
+
+                    return;
+                  }
+                  posthog.capture('notify me_hackathon');
+                  handleSubscribe();
+                }}
+                variant="solid"
+              />
+            </AuthWrapper>
+          </HStack>
+          <HStack whiteSpace={'nowrap'}>
+            <VStack align={'start'} gap={0}>
+              <Text color={'white'} fontWeight={500}>
+                {sub?.length ? sub.length + 1 : 1}
+              </Text>
+              <Text
+                display={{ base: 'none', md: 'flex' }}
+                color={'brand.slate.300'}
+                fontSize={'sm'}
+                fontWeight={400}
+              >
+                {(sub?.length ? sub.length + 1 : 1) === 1 ? 'Person' : 'People'}{' '}
+                Interested
+              </Text>
+            </VStack>
+          </HStack>
+        </HStack>
       </Flex>
       <Text mt={4} color="white" fontSize={'9px'}>
         POWERED BY
