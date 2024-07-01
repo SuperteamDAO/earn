@@ -9,11 +9,11 @@ import type { SubmissionWithUser } from '@/interface/submission';
 import { sortRank } from '@/utils/rank';
 import { tweetEmbedLink } from '@/utils/socialEmbeds';
 
-import type { Bounty, Rewards } from '../../types';
+import type { Listing, Rewards } from '../../types';
 import { tweetTemplate } from '../../utils';
 
 interface Props {
-  bounty: Bounty;
+  bounty: Listing;
 }
 
 export function ListingWinners({ bounty }: Props) {

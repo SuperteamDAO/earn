@@ -153,32 +153,73 @@ model Comment {
 }
 
 model Grants {
-  id               String   @id @default(uuid())
+  id               String             @id @default(uuid())
   title            String
-  slug             String   @unique
-  description      String?  @db.Text
-  shortDescription String?  @db.VarChar(1000)
+  slug             String             @unique
+  description      String?            @db.Text
+  shortDescription String?            @db.VarChar(1000)
   token            String?
-  rewardAmount     Int?
+  minReward        Int?
+  maxReward        Int?
+  totalPaid        Int                @default(0)
+  totalApproved    Int                @default(0)
   link             String?
-  source           Source   @default(NATIVE)
   sponsorId        String
   pocId            String
-  isPublished      Boolean  @default(false)
-  isFeatured       Boolean  @default(false)
-  isActive         Boolean  @default(true)
-  isArchived       Boolean  @default(false)
-  createdAt        DateTime @default(now())
-  updatedAt        DateTime @updatedAt
+  isPublished      Boolean            @default(false)
+  isFeatured       Boolean            @default(false)
+  isActive         Boolean            @default(true)
+  isArchived       Boolean            @default(false)
+  createdAt        DateTime           @default(now())
+  updatedAt        DateTime           @updatedAt
   skills           Json?
   logo             String?
-  region           Regions  @default(GLOBAL)
-  sponsor          Sponsors @relation(fields: [sponsorId], references: [id])
-  poc              User     @relation(fields: [pocId], references: [id])
+  region           Regions            @default(GLOBAL)
+  sponsor          Sponsors           @relation(fields: [sponsorId], references: [id])
+  poc              User               @relation(fields: [pocId], references: [id])
+  questions        Json?
+  pocSocials       String?
+  status           GrantStatus        @default(OPEN)
+  references       Json?
+  requirements     String?            @db.Text
+  GrantApplication GrantApplication[]
+  airtableId       String?
+  externalLink     String?
+  avgResponseTime  String?            @default("24h")
 
   @@index([id, slug])
   @@index([pocId])
   @@index([sponsorId])
+}
+
+model GrantApplication {
+  id                String                 @id @default(uuid())
+  userId            String
+  grantId           String
+  applicationStatus GrantApplicationStatus @default(Pending)
+  projectTitle      String
+  projectOneLiner   String
+  projectDetails    String
+  projectTimeline   String
+  proofOfWork       String
+  walletAddress     String
+  milestones        String?                @db.VarChar(2000)
+  kpi               String?                @db.VarChar(2000)
+  answers           Json?
+  createdAt         DateTime               @default(now())
+  updatedAt         DateTime               @updatedAt
+  user              User                   @relation(fields: [userId], references: [id])
+  grant             Grants                 @relation(fields: [grantId], references: [id])
+  label             SubmissionLabels       @default(Unreviewed)
+  ask               Int                    @default(0)
+  approvedAmount    Int                    @default(0)
+  totalPaid         Int                    @default(0)
+  isShipped         Boolean                @default(false)
+  paymentDetails    Json?
+  totalTranches     Int                    @default(0)
+
+  @@index([userId])
+  @@index([grantId])
 }
 
 model Submission {
@@ -269,27 +310,28 @@ model Session {
 }
 
 model User {
-  id                String            @id @default(uuid())
+  id                String             @id @default(uuid())
   publicKey         String?
-  email             String            @unique
-  username          String?           @unique
-  photo             String?           @db.Text
-  firstName         String?           @db.Text
-  lastName          String?           @db.Text
-  createdAt         DateTime          @default(now())
-  updatedAt         DateTime          @updatedAt
-  isVerified        Boolean           @default(false)
-  role              String            @default("USER")
-  isTalentFilled    Boolean           @default(false)
-  interests         String?           @db.Text
-  bio               String?           @db.Text
-  twitter           String?           @db.Text
-  discord           String?           @db.Text
-  github            String?           @db.Text
-  linkedin          String?           @db.Text
-  website           String?           @db.Text
-  telegram          String?           @db.Text
-  community         String?           @db.Text
+  email             String             @unique
+  username          String?            @unique
+  photo             String?            @db.Text
+  firstName         String?            @db.Text
+  lastName          String?            @db.Text
+  createdAt         DateTime           @default(now())
+  updatedAt         DateTime           @updatedAt
+  isVerified        Boolean            @default(false)
+  role              String             @default("USER")
+  totalEarnedInUSD  Int                @default(0)
+  isTalentFilled    Boolean            @default(false)
+  interests         String?            @db.Text
+  bio               String?            @db.Text
+  twitter           String?            @db.Text
+  discord           String?            @db.Text
+  github            String?            @db.Text
+  linkedin          String?            @db.Text
+  website           String?            @db.Text
+  telegram          String?            @db.Text
+  community         String?            @db.Text
   experience        String?
   superteamLevel    String?
   location          String?
@@ -297,19 +339,18 @@ model User {
   workPrefernce     String?
   currentEmployer   String?
   notifications     Json?
-  private           Boolean           @default(false)
-  totalEarnedInUSD  Float             @default(0)
+  private           Boolean            @default(false)
   skills            Json?
   currentSponsorId  String?
   emailVerified     DateTime?
   hackathonId       String?
-  featureModalShown Boolean           @default(false)
+  featureModalShown Boolean            @default(false)
   surveysShown      Json?
-  stRecommended     Boolean           @default(false)
-  acceptedTOS       Boolean           @default(false)
-  currentSponsor    Sponsors?         @relation(fields: [currentSponsorId], references: [id])
+  stRecommended     Boolean            @default(false)
+  acceptedTOS       Boolean            @default(false)
+  currentSponsor    Sponsors?          @relation(fields: [currentSponsorId], references: [id])
   UserSponsors      UserSponsors[]
-  poc               Bounties[]        @relation("poc")
+  poc               Bounties[]         @relation("poc")
   Comment           Comment[]
   Submission        Submission[]
   Grants            Grants[]
@@ -318,10 +359,11 @@ model User {
   PoW               PoW[]
   accounts          Account[]
   sessions          Session[]
-  Hackathon         Hackathon?        @relation(fields: [hackathonId], references: [id])
+  Hackathon         Hackathon?         @relation(fields: [hackathonId], references: [id])
   emailSettings     EmailSettings[]
   TalentRankings    TalentRankings[]
   Scouts            Scouts[]
+  GrantApplication  GrantApplication[]
 
   @@index([email, publicKey, username])
   @@index([currentSponsorId])
@@ -505,6 +547,17 @@ enum status {
   OPEN
   REVIEW
   CLOSED
+}
+
+enum GrantStatus {
+  OPEN
+  CLOSED
+}
+
+enum GrantApplicationStatus {
+  Approved
+  Pending
+  Rejected
 }
 
 enum BountyType {

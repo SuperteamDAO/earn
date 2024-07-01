@@ -5,8 +5,8 @@ import { useRouter } from 'next/router';
 import { useEffect, useState } from 'react';
 
 import {
-  type Bounty,
   getListingTypeLabel,
+  type Listing,
   type Rewards,
 } from '@/features/listings';
 import type { SubmissionWithUser } from '@/interface/submission';
@@ -14,7 +14,7 @@ import { sortRank } from '@/utils/rank';
 import { getURL } from '@/utils/validUrl';
 
 interface BountyDetailsProps {
-  bounty: Bounty | null;
+  bounty: Listing | null;
   url: string;
   submissions: SubmissionWithUser[];
 }

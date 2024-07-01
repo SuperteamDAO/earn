@@ -1,7 +1,12 @@
 import type { NextApiRequest, NextApiResponse } from 'next';
 import { getToken } from 'next-auth/jwt';
 
-import { kashEmail, resend, WelcomeSponsorTemplate } from '@/features/emails';
+import {
+  kashEmail,
+  replyToEmail,
+  resend,
+  WelcomeSponsorTemplate,
+} from '@/features/emails';
 
 export default async function handler(
   req: NextApiRequest,
@@ -24,6 +29,7 @@ export default async function handler(
       to: [userEmail],
       subject: 'Welcome!',
       react: WelcomeSponsorTemplate(),
+      reply_to: replyToEmail,
     });
 
     return res.status(200).json({ message: 'Ok' });

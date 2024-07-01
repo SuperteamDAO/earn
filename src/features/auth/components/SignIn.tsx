@@ -30,6 +30,8 @@ export const SignIn = ({
   const [hasAttemptedSubmit, setHasAttemptedSubmit] = useState(false);
   const [hasGmail, setHasGmail] = useState(false);
 
+  const [isLoading, setIsLoading] = useState(false);
+
   const router = useRouter();
   const posthog = usePostHog();
 
@@ -49,6 +51,8 @@ export const SignIn = ({
     hasGmail && process.env.NEXT_PUBLIC_VERCEL_ENV === 'production';
 
   const handleEmailSignIn = () => {
+    setIsLoading(true);
+
     setHasAttemptedSubmit(true);
     if (isEmailValid && !hasGmailAndIsProd) {
       posthog.capture('email OTP_auth');
@@ -140,7 +144,8 @@ export const SignIn = ({
                   fontSize="17px"
                   fontWeight={500}
                   cursor={hasGmailAndIsProd ? 'not-allowed' : 'pointer'}
-                  isDisabled={hasGmailAndIsProd}
+                  isDisabled={hasGmailAndIsProd || isLoading}
+                  isLoading={isLoading}
                   onClick={handleEmailSignIn}
                   size="lg"
                 >
@@ -201,7 +206,7 @@ export const SignIn = ({
             <Text as="u">
               <Link
                 as={NextLink}
-                href={'mailto:hello@superteamearn.com'}
+                href={'mailto:support@superteamearn.com'}
                 isExternal
               >
                 Click here

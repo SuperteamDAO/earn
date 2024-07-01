@@ -1,13 +1,13 @@
 import { ArrowForwardIcon } from '@chakra-ui/icons';
 import { Box, Button, Flex, HStack, Image, Link, Text } from '@chakra-ui/react';
-import dayjs from 'dayjs';
 import NextLink from 'next/link';
 import { usePostHog } from 'posthog-js/react';
 import { useEffect, useState } from 'react';
 
 import { EmptySection } from '@/components/shared/EmptySection';
+import { dayjs } from '@/utils/dayjs';
 
-import { type Bounty } from '../types';
+import { type Listing } from '../types';
 import { ListingCard, ListingCardSkeleton } from './ListingCard';
 
 interface TabProps {
@@ -18,7 +18,7 @@ interface TabProps {
 }
 interface ListingTabsProps {
   isListingsLoading: boolean;
-  bounties: Bounty[] | undefined;
+  bounties: Listing[] | undefined;
   take?: number;
   emoji: string;
   title: string;
@@ -28,11 +28,11 @@ interface ListingTabsProps {
 }
 
 interface ContentProps {
-  bounties?: Bounty[];
+  bounties?: Listing[];
   take?: number;
   isListingsLoading: boolean;
-  filterFunction: (bounty: Bounty) => boolean;
-  sortCompareFunction?: ((a: Bounty, b: Bounty) => number) | undefined;
+  filterFunction: (bounty: Listing) => boolean;
+  sortCompareFunction?: ((a: Listing, b: Listing) => number) | undefined;
   emptyTitle: string;
   emptyMessage: string;
   checkLanguage: boolean;

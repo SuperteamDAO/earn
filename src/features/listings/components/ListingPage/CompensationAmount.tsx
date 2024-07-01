@@ -28,38 +28,42 @@ export const CompensationAmount = ({
       </Text>
     );
   };
-  return (
-    <Text {...textStyle}>
-      {(() => {
-        switch (compensationType) {
-          case 'fixed':
-            return (
-              <>
-                {formatNumberWithSuffix(rewardAmount!)}
-                <Token />
-              </>
-            );
-          case 'range':
-            return (
-              <>
-                {`${formatNumberWithSuffix(minRewardAsk!)}-${formatNumberWithSuffix(maxRewardAsk!)}`}
-                <Token />
-              </>
-            );
-          case 'variable':
-            if (token) {
-              return <>{token}</>;
-            }
-            return (
-              <Flex align={'center'} gap={1}>
-                Send Quote
-                <ArrowForwardIcon />
-              </Flex>
-            );
-          default:
-            return null;
+
+  const renderCompensation = () => {
+    switch (compensationType) {
+      case 'fixed':
+        return (
+          <>
+            {formatNumberWithSuffix(rewardAmount!)}
+            <Token />
+          </>
+        );
+      case 'range':
+        return (
+          <>
+            {`${formatNumberWithSuffix(minRewardAsk!)}-${formatNumberWithSuffix(maxRewardAsk!)}`}
+            <Token />
+          </>
+        );
+      case 'variable':
+        if (token) {
+          return <>{token}</>;
         }
-      })()}
-    </Text>
+        return null;
+      default:
+        return null;
+    }
+  };
+
+  return (
+    <>
+      <Text {...textStyle}>{renderCompensation()}</Text>
+      {compensationType === 'variable' && !token && (
+        <Flex align={'center'} gap={1}>
+          <Text {...textStyle}>Send Quote</Text>
+          <ArrowForwardIcon />
+        </Flex>
+      )}
+    </>
   );
 };

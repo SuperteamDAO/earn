@@ -13,7 +13,6 @@ import {
   useDisclosure,
 } from '@chakra-ui/react';
 import axios from 'axios';
-import dayjs from 'dayjs';
 import type { GetServerSideProps } from 'next';
 import { useSearchParams } from 'next/navigation';
 import { useRouter } from 'next/router';
@@ -21,7 +20,7 @@ import { usePostHog } from 'posthog-js/react';
 import { useEffect, useState } from 'react';
 
 import { LoadingSection } from '@/components/shared/LoadingSection';
-import { type Bounty, PublishResults } from '@/features/listings';
+import { type Listing, PublishResults } from '@/features/listings';
 import {
   ScountTable,
   type ScoutRowType,
@@ -33,6 +32,7 @@ import { type Scouts } from '@/interface/scouts';
 import type { SubmissionWithUser } from '@/interface/submission';
 import { Sidebar } from '@/layouts/Sponsor';
 import { userStore } from '@/store/user';
+import { dayjs } from '@/utils/dayjs';
 import { sortRank } from '@/utils/rank';
 
 interface Props {
@@ -48,7 +48,9 @@ function BountySubmissions({ slug }: Props) {
   const router = useRouter();
   const { isOpen, onOpen, onClose } = useDisclosure();
   const { userInfo } = userStore();
-  const [bounty, setBounty] = useState<Bounty | null>(null);
+  const [bounty, setBounty] = useState<Listing | null>(null);
+
+  const [isLoading, setIsLoading] = useState(true);
   const [isExpired, setIsExpired] = useState(false);
   const [totalSubmissions, setTotalSubmissions] = useState(0);
   const [totalWinners, setTotalWinners] = useState(0);
@@ -82,7 +84,7 @@ function BountySubmissions({ slug }: Props) {
   const getBounty = async () => {
     setIsBountyLoading(true);
     try {
-      const bountyDetails = await axios.get(`/api/bounties/${slug}/`);
+      const bountyDetails = await axios.get(`/api/bounties/${slug}/dashboard/`);
       const isExpired =
         bountyDetails.data?.deadline &&
         dayjs(bountyDetails.data?.deadline).isBefore(dayjs());
@@ -118,6 +120,7 @@ function BountySubmissions({ slug }: Props) {
 
   const getSubmissions = async () => {
     try {
+      setIsLoading(true);
       const submissionDetails = await axios.get(
         `/api/bounties/${slug}/submissions`,
         {
@@ -132,6 +135,8 @@ function BountySubmissions({ slug }: Props) {
       setSelectedSubmission(submissionDetails.data[0]);
     } catch (e) {
       console.log(e);
+    } finally {
+      setIsLoading(false);
     }
   };
 
@@ -221,7 +226,7 @@ function BountySubmissions({ slug }: Props) {
             </TabList>
             <TabPanels>
               <TabPanel px={0}>
-                {!submissions?.length && !searchText ? (
+                {!submissions?.length && !searchText && !isLoading ? (
                   <>
                     <Image
                       w={32}

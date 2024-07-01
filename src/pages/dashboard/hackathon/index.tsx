@@ -42,7 +42,6 @@ import {
   useDisclosure,
 } from '@chakra-ui/react';
 import axios from 'axios';
-import dayjs from 'dayjs';
 import NextLink from 'next/link';
 import { useRouter } from 'next/router';
 import { useSession } from 'next-auth/react';
@@ -53,14 +52,19 @@ import { FiMoreVertical } from 'react-icons/fi';
 import { LoadingSection } from '@/components/shared/LoadingSection';
 import { tokenList } from '@/constants/index';
 import {
-  type BountyWithSubmissions,
   formatDeadline,
-  getBountyStatus,
   getColorStyles,
+  getListingStatus,
+  type ListingWithSubmissions,
 } from '@/features/listings';
-import { CreateListingModal } from '@/features/sponsor-dashboard';
+import {
+  Banner,
+  CreateListingModal,
+  type SponsorStats,
+} from '@/features/sponsor-dashboard';
 import { Sidebar } from '@/layouts/Sponsor';
 import { userStore } from '@/store/user';
+import { dayjs } from '@/utils/dayjs';
 
 const debounce = require('lodash.debounce');
 
@@ -78,14 +82,17 @@ export default function Hackathon() {
   } = useDisclosure();
   const { userInfo } = userStore();
   const [totalBounties, setTotalBounties] = useState(0);
-  const [bounties, setBounties] = useState<BountyWithSubmissions[]>([]);
-  const [bounty, setBounty] = useState<BountyWithSubmissions>({});
+  const [bounties, setBounties] = useState<ListingWithSubmissions[]>([]);
+  const [bounty, setBounty] = useState<ListingWithSubmissions>({});
   const [isChangingStatus, setIsChangingStatus] = useState(false);
   const [isBountiesLoading, setIsBountiesLoading] = useState(true);
   const [startDate, setStartDate] = useState();
   const [searchText, setSearchText] = useState('');
   const [skip, setSkip] = useState(0);
   const length = 15;
+
+  const [sponsorStats, setSponsorStats] = useState<SponsorStats>({});
+  const [isStatsLoading, setIsStatsLoading] = useState<boolean>(true);
 
   const debouncedSetSearchText = useRef(debounce(setSearchText, 300)).current;
 
@@ -105,7 +112,6 @@ export default function Hackathon() {
           searchText,
           skip,
           take: length,
-          showSubmissionDetails: true,
         },
       });
       const hackathonData = hackathonQuery.data;
@@ -124,7 +130,16 @@ export default function Hackathon() {
     }
   }, [userInfo?.hackathonId, skip, searchText]);
 
-  const handleUnpublish = async (unpublishedBounty: BountyWithSubmissions) => {
+  useEffect(() => {
+    const getSponsorStats = async () => {
+      const sponsorData = await axios.get('/api/hackathon/stats');
+      setSponsorStats(sponsorData.data);
+      setIsStatsLoading(false);
+    };
+    getSponsorStats();
+  }, [userInfo?.hackathonId]);
+
+  const handleUnpublish = async (unpublishedBounty: ListingWithSubmissions) => {
     setBounty(unpublishedBounty);
     unpublishOnOpen();
   };
@@ -171,7 +186,7 @@ export default function Hackathon() {
     }
   };
 
-  const handleDeleteDraft = async (deleteBounty: BountyWithSubmissions) => {
+  const handleDeleteDraft = async (deleteBounty: ListingWithSubmissions) => {
     setBounty(deleteBounty);
     deleteDraftOnOpen();
   };
@@ -183,7 +198,7 @@ export default function Hackathon() {
   } = useDisclosure();
 
   return (
-    <Sidebar showBanner={true}>
+    <Sidebar>
       <Modal isOpen={unpublishIsOpen} onClose={unpublishOnClose}>
         <ModalOverlay />
         <ModalContent>
@@ -244,6 +259,7 @@ export default function Hackathon() {
           </ModalFooter>
         </ModalContent>
       </Modal>
+      <Banner stats={sponsorStats} isHackathon isLoading={isStatsLoading} />
       <Flex justify="space-between" w="100%" mb={4}>
         <Flex align="center" gap={3}>
           <Text color="brand.slate.800" fontSize="lg" fontWeight={600}>
@@ -398,9 +414,10 @@ export default function Hackathon() {
                   const deadline = formatDeadline(
                     currentBounty?.deadline,
                     currentBounty?.applicationType,
+                    currentBounty?.type,
                   );
 
-                  const bountyStatus = getBountyStatus(currentBounty);
+                  const bountyStatus = getListingStatus(currentBounty);
 
                   return (
                     <Tr key={currentBounty?.id}>

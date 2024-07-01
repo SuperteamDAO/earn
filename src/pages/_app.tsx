@@ -1,12 +1,9 @@
-// Styles
 import 'degen/styles';
 import '../styles/globals.scss';
 
 import { ChakraProvider } from '@chakra-ui/react';
 import axios from 'axios';
 import type { AppProps } from 'next/app';
-// Fonts
-import { Domine, Inter, JetBrains_Mono } from 'next/font/google';
 import { useRouter } from 'next/router';
 import { SessionProvider, useSession } from 'next-auth/react';
 import NextTopLoader from 'nextjs-toploader';
@@ -19,38 +16,10 @@ import { FeatureModal } from '@/components/modals/FeatureModal';
 import { TermsOfServices } from '@/components/modals/TermsOfServices';
 import { SolanaWalletProvider } from '@/context/SolanaWallet';
 import { userStore } from '@/store/user';
+import { fontMono, fontSans, fontSerif } from '@/theme/fonts';
 import { getURL } from '@/utils/validUrl';
 
 import theme from '../config/chakra.config';
-
-// importing localFont from a local file as Google imported fonts do not enable font-feature-settings. Reference: https://github.com/vercel/next.js/discussions/52456
-
-const fontSans = Inter({
-  subsets: ['latin'],
-  display: 'swap',
-  adjustFontFallback: true,
-  preload: true,
-  fallback: ['Inter'],
-  weight: 'variable',
-});
-
-const fontSerif = Domine({
-  subsets: ['latin'],
-  display: 'swap',
-  adjustFontFallback: true,
-  preload: true,
-  // fallback: ['Times New Roman'],
-  weight: 'variable',
-});
-
-const fontMono = JetBrains_Mono({
-  subsets: ['latin'],
-  display: 'swap',
-  adjustFontFallback: true,
-  preload: false,
-  fallback: ['Courier New'],
-  weight: 'variable',
-});
 
 // Chakra / Next/font don't play well in config.ts file for the theme. So we extend the theme here. (only the fonts)
 const extendThemeWithNextFonts = {
@@ -121,7 +90,6 @@ function MyApp({ Component, pageProps }: any) {
 
 function App({ Component, pageProps: { session, ...pageProps } }: AppProps) {
   const [isFeatureModalOpen, setIsFeatureModalOpen] = useState(false);
-  const [isTOSModalOpen, setIsTOSModalOpen] = useState(false);
   const [latestActiveSlug, setLatestActiveSlug] = useState<string | undefined>(
     undefined,
   );
@@ -130,21 +98,6 @@ function App({ Component, pageProps: { session, ...pageProps } }: AppProps) {
 
   const handleFeatureClose = () => {
     setIsFeatureModalOpen(false);
-  };
-
-  const handleTOSClose = async () => {
-    try {
-      setIsTOSModalOpen(false);
-      localStorage.setItem('acceptedTOS', JSON.stringify(true));
-      if (userInfo) {
-        setUserInfo({ ...userInfo, acceptedTOS: true });
-        await axios.post('/api/user/update/', {
-          acceptedTOS: true,
-        });
-      }
-    } catch (e) {
-      console.log('failed to set accepted terms of service', e);
-    }
   };
 
   const getSponsorLatestActiveSlug = async () => {
@@ -180,35 +133,6 @@ function App({ Component, pageProps: { session, ...pageProps } }: AppProps) {
     }
   }, [userInfo]);
 
-  // TERMS OF SERVICE TO ALL
-  useEffect(() => {
-    try {
-      setIsTOSModalOpen(false);
-      const shown =
-        (JSON.parse(
-          localStorage.getItem('acceptedTOS') ?? 'false',
-        ) as boolean) ?? false;
-      if (userInfo) {
-        if (!userInfo.acceptedTOS) {
-          if (shown) {
-            setUserInfo({ ...userInfo, acceptedTOS: true });
-            axios.post('/api/user/update/', {
-              acceptedTOS: true,
-            });
-          } else {
-            setIsTOSModalOpen(true);
-          }
-        } else {
-          localStorage.setItem('acceptedTOS', JSON.stringify(true));
-        }
-      } else {
-        if (!shown) setIsTOSModalOpen(true);
-      }
-    } catch (e) {
-      console.log('unable to get current user terms of service state', e);
-    }
-  }, [userInfo]);
-
   return (
     <>
       <style jsx global>
@@ -230,10 +154,7 @@ function App({ Component, pageProps: { session, ...pageProps } }: AppProps) {
                 onClose={handleFeatureClose}
               />
               <MyApp Component={Component} pageProps={pageProps} />
-              <TermsOfServices
-                isOpen={isTOSModalOpen}
-                onClose={handleTOSClose}
-              />
+              <TermsOfServices />
             </ChakraProvider>
           </SessionProvider>
         </PostHogProvider>

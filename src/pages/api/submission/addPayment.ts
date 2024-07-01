@@ -53,7 +53,11 @@ async function handler(req: NextApiRequestWithUser, res: NextApiResponse) {
       updatedBounty.totalPaymentsMade = {
         increment: 1,
       };
-      await sendEmailNotification({ type: 'addPayment', id });
+      await sendEmailNotification({
+        type: 'addPayment',
+        id,
+        triggeredBy: userId,
+      });
     }
     await prisma.bounties.update({
       where: {

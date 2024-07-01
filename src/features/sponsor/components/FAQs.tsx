@@ -38,7 +38,7 @@ Earn can be used to get any small to medium scale task done, including but not l
   },
   {
     question: 'I need help with my listing. How can I get in touch?',
-    answer: `You can get in touch with us at <a style="color: blue" href="mailto:hello@superteamearn.com" target="_blank">hello@superteamearn.com</a> and we will get back to you ASAP.`,
+    answer: `You can get in touch with us at <a style="color: blue" href="mailto:support@superteamearn.com" target="_blank">support@superteamearn.com</a> and we will get back to you ASAP.`,
   },
 ];
 

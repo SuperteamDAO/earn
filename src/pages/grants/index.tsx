@@ -94,7 +94,8 @@ function Grants() {
                         title={grant?.title}
                         shortDescription={grant?.shortDescription}
                         slug={grant.slug}
-                        rewardAmount={grant?.rewardAmount}
+                        minReward={grant?.minReward}
+                        maxReward={grant?.maxReward}
                         token={grant?.token}
                         link={grant?.link}
                         logo={grant?.logo}

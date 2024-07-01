@@ -1,7 +1,12 @@
 import type { NextApiResponse } from 'next';
 
 import { type NextApiRequestWithUser, withAuth } from '@/features/auth';
-import { InviteMemberTemplate, kashEmail, resend } from '@/features/emails';
+import {
+  InviteMemberTemplate,
+  kashEmail,
+  replyToEmail,
+  resend,
+} from '@/features/emails';
 import { prisma } from '@/prisma';
 import { getURL } from '@/utils/validUrl';
 
@@ -51,6 +56,7 @@ async function sendInvites(req: NextApiRequestWithUser, res: NextApiResponse) {
         senderName: `${user?.firstName} ${user?.lastName}` || '',
         link: `${getURL()}signup?invite=${result.id}`,
       }),
+      reply_to: replyToEmail,
     });
 
     return res.status(200).json({ message: 'OTP sent successfully.' });

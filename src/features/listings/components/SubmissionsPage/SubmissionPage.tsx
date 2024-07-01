@@ -20,10 +20,10 @@ import type { SubmissionWithUser } from '@/interface/submission';
 import { type User as IUser } from '@/interface/user';
 import { getURLSanitized } from '@/utils/getURLSanitized';
 
-import type { Bounty } from '../../types';
+import { type Listing } from '../../types';
 
 interface Props {
-  bounty: Bounty;
+  bounty: Listing;
   submission?: SubmissionWithUser;
   user: IUser;
   link: string;
@@ -112,8 +112,8 @@ export const SubmissionPage = ({ bounty, submission, user, link }: Props) => {
             </Button>
           </HStack>
           {isMobile && (
-            <VStack w={'30rem'} mt={12}>
-              <TalentBio successPage={false} user={user} />
+            <VStack mt={12}>
+              <TalentBio w={'100%'} successPage={false} user={user} />
             </VStack>
           )}
         </VStack>
@@ -130,7 +130,7 @@ export const SubmissionPage = ({ bounty, submission, user, link }: Props) => {
       </VStack>
       {!isMobile && (
         <VStack w={['100%', '100%', '36rem', '36rem']}>
-          <TalentBio successPage={false} user={user} />
+          <TalentBio w={'100%'} successPage={false} user={user} />
         </VStack>
       )}
     </VStack>

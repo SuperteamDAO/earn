@@ -5,7 +5,7 @@ import { useEffect, useState } from 'react';
 
 import { LoadingSection } from '@/components/shared/LoadingSection';
 import { CreateListing } from '@/features/listing-builder';
-import type { Bounty } from '@/features/listings';
+import type { Listing } from '@/features/listings';
 import { Sidebar } from '@/layouts/Sponsor';
 import { userStore } from '@/store/user';
 
@@ -17,7 +17,7 @@ function EditBounty({ slug }: Props) {
   const router = useRouter();
   const { userInfo } = userStore();
   const [isBountyLoading, setIsBountyLoading] = useState(true);
-  const [bounty, setBounty] = useState<Bounty | undefined>();
+  const [bounty, setBounty] = useState<Listing | undefined>();
   const [prevStep, setPrevStep] = useState<number>(2);
 
   const getBounty = async () => {
@@ -27,7 +27,7 @@ function EditBounty({ slug }: Props) {
       if (bountyDetails.data.sponsorId !== userInfo?.currentSponsorId) {
         router.push('/dashboard/listings');
       } else {
-        const bounty = bountyDetails.data as Bounty;
+        const bounty = bountyDetails.data as Listing;
         const isProject = bounty?.type === 'project';
         if (
           bounty.isPublished ||

@@ -5,7 +5,7 @@ import type { SuperteamName } from '@/features/listing-builder';
 import type { Skills } from '@/interface/skills';
 import type { SponsorType } from '@/interface/sponsor';
 
-export interface Bounty {
+export interface Listing {
   id?: string;
   title?: string;
   slug?: string;
@@ -62,7 +62,7 @@ export interface Bounty {
   };
 }
 
-export interface BountyWithSubmissions extends Bounty {
+export interface ListingWithSubmissions extends Listing {
   _count?: {
     Submission?: number;
     Comments?: number;

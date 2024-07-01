@@ -1,14 +1,14 @@
 import { Image, SimpleGrid, Text, VStack } from '@chakra-ui/react';
-import moment from 'moment';
 import React, { type Dispatch, type SetStateAction } from 'react';
 
 import type { SubmissionWithUser } from '@/interface/submission';
+import { dayjs } from '@/utils/dayjs';
 
-import type { Bounty } from '../../types';
+import { type Listing } from '../../types';
 import { SubmissionCard } from './SubmissionCard';
 
 interface Props {
-  bounty: Bounty;
+  bounty: Listing;
   submissions: SubmissionWithUser[];
   endTime: string;
   setUpdate: Dispatch<SetStateAction<boolean>>;
@@ -28,7 +28,7 @@ export const SubmissionList = ({
         minH={'100vh'}
         mt={10}
       >
-        {Number(moment(endTime).format('x')) < Date.now() ? (
+        {dayjs(endTime).valueOf() < Date.now() ? (
           <>
             <VStack align={'start'} w={'full'} maxW={'8xl'} mx="auto">
               <SimpleGrid

@@ -1,7 +1,8 @@
 import { Box, Text } from '@chakra-ui/react';
-import dayjs from 'dayjs';
 import { atom, useAtom } from 'jotai';
 import { useRouter } from 'next/router';
+
+import { dayjs } from '@/utils/dayjs';
 
 type BountySnackbarType = {
   submissionCount: number;

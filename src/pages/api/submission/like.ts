@@ -19,6 +19,7 @@ async function submission(req: NextApiRequestWithUser, res: NextApiResponse) {
         type: 'submissionLike',
         id,
         userId: updatedSubmission?.userId,
+        triggeredBy: userId,
       });
     }
 
