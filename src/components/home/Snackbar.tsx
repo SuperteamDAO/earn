@@ -23,7 +23,17 @@ export const Snackbar = ({
   if (disallowPages.filter((d) => router.asPath.startsWith(d)).length > 0)
     return null;
   return (
-    <Link as={NextLink} w="full" color="white" bgColor={'#6366F1'} href={href}>
+    <Link
+      as={NextLink}
+      display={{ base: 'block', md: 'none' }}
+      w="full"
+      color="white"
+      _hover={{ textDecor: 'none' }}
+      _active={{ textDecor: 'none' }}
+      bgColor={'#6366F1'}
+      href={href}
+      textDecor={'none'}
+    >
       <Text
         p={2}
         fontSize={{ base: 'xs', md: 'sm' }}

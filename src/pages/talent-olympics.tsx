@@ -45,7 +45,7 @@ const frontendTrack: TrackProps[] = [
       'Write programs to make a fresh new landing page with next to your existing landing page. ',
     amount: 1000,
     token: 'USDC',
-    link: '#',
+    link: '/listings/hackathon/code-a-landing-page-with-next/',
   },
   {
     icon: baseAsset('laptop.svg'),
@@ -54,7 +54,7 @@ const frontendTrack: TrackProps[] = [
       'Write programs to make a fresh new landing page with next to your existing landing page. ',
     amount: 1000,
     token: 'USDC',
-    link: '#',
+    link: '/listings/hackathon/code-a-landing-page-with-next/',
   },
   {
     icon: baseAsset('cube.svg'),
@@ -63,7 +63,7 @@ const frontendTrack: TrackProps[] = [
       'Write programs to make a fresh new landing page with next to your existing landing page. ',
     amount: 1000,
     token: 'USDC',
-    link: '#',
+    link: '/listings/hackathon/code-a-landing-page-with-next/',
   },
   {
     icon: baseAsset('cube2.svg'),
@@ -72,7 +72,7 @@ const frontendTrack: TrackProps[] = [
       'Write programs to make a fresh new landing page with next to your existing landing page. ',
     amount: 1000,
     token: 'USDC',
-    link: '#',
+    link: '/listings/hackathon/code-a-landing-page-with-next/',
   },
   {
     icon: baseAsset('code.svg'),
@@ -81,7 +81,7 @@ const frontendTrack: TrackProps[] = [
       'Write programs to make a fresh new landing page with next to your existing landing page. ',
     amount: 1000,
     token: 'USDC',
-    link: '#',
+    link: '/listings/hackathon/code-a-landing-page-with-next/',
   },
   {
     icon: baseAsset('scan.svg'),
@@ -90,7 +90,7 @@ const frontendTrack: TrackProps[] = [
       'Write programs to make a fresh new landing page with next to your existing landing page. ',
     amount: 1000,
     token: 'USDC',
-    link: '#',
+    link: '/listings/hackathon/code-a-landing-page-with-next/',
   },
 ];
 
@@ -102,7 +102,7 @@ const rustTrack: TrackProps[] = [
       'Write programs to make a fresh new landing page with next to your existing landing page. ',
     amount: 1000,
     token: 'USDC',
-    link: '#',
+    link: '/listings/hackathon/code-a-landing-page-with-next/',
   },
   {
     icon: baseAsset('git.svg'),
@@ -111,7 +111,7 @@ const rustTrack: TrackProps[] = [
       'Write programs to make a fresh new landing page with next to your existing landing page. ',
     amount: 1000,
     token: 'USDC',
-    link: '#',
+    link: '/listings/hackathon/code-a-landing-page-with-next/',
   },
   {
     icon: baseAsset('filegit.svg'),
@@ -120,7 +120,7 @@ const rustTrack: TrackProps[] = [
       'Write programs to make a fresh new landing page with next to your existing landing page. ',
     amount: 1000,
     token: 'USDC',
-    link: '#',
+    link: '/listings/hackathon/code-a-landing-page-with-next/',
   },
   {
     icon: baseAsset('book.svg'),
@@ -129,7 +129,7 @@ const rustTrack: TrackProps[] = [
       'Write programs to make a fresh new landing page with next to your existing landing page. ',
     amount: 1000,
     token: 'USDC',
-    link: '#',
+    link: '/listings/hackathon/code-a-landing-page-with-next/',
   },
   {
     icon: baseAsset('bookmark.svg'),
@@ -138,7 +138,7 @@ const rustTrack: TrackProps[] = [
       'Write programs to make a fresh new landing page with next to your existing landing page. ',
     amount: 1000,
     token: 'USDC',
-    link: '#',
+    link: '/listings/hackathon/code-a-landing-page-with-next/',
   },
   {
     icon: baseAsset('monitor.svg'),
@@ -147,7 +147,7 @@ const rustTrack: TrackProps[] = [
       'Write programs to make a fresh new landing page with next to your existing landing page. ',
     amount: 1000,
     token: 'USDC',
-    link: '#',
+    link: '/listings/hackathon/code-a-landing-page-with-next/',
   },
 ];
 
@@ -500,7 +500,7 @@ function FeatureCard({
       borderColor="brand.slate.200"
       rounded="lg"
     >
-      <Image as={NextImage} src={image as any} />
+      <Image as={NextImage} alt={title} src={image as any} />
       <VStack align={'start'} gap={0}>
         <Text fontWeight={600}>{title}</Text>
         <Text color="brand.slate.500" fontSize="xs" fontWeight={500}>
