@@ -27,7 +27,7 @@ const sponsorData: Record<
   dreader: {
     title: 'dReader',
     description:
-      'Explore the latest bounties for dReader on Superteam Earn. Get started now!',
+      'Explore latest artist and developer bounties for dReader on Superteam Earn. Get started now!',
     bgImage: '/assets/category_assets/bg/content.png',
   },
 };
@@ -70,7 +70,7 @@ export default async function user(req: NextApiRequest, res: NextApiResponse) {
         },
       },
       orderBy: {
-        deadline: 'desc',
+        deadline: 'asc',
       },
     });
 
