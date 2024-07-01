@@ -184,7 +184,6 @@ model Grants {
   requirements     String?            @db.Text
   GrantApplication GrantApplication[]
   airtableId       String?
-  externalLink     String?
   avgResponseTime  String?            @default("24h")
 
   @@index([id, slug])

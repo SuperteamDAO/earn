@@ -10,14 +10,12 @@ export const GrantEntry = ({
   maxReward,
   token,
   slug,
-  link,
   logo,
 }: {
   title: string;
   shortDescription?: string;
   rewardAmount?: number;
   token?: string;
-  link?: string;
   slug: string;
   logo?: string;
   minReward?: number;
@@ -46,20 +44,18 @@ export const GrantEntry = ({
             ? `${grantAmount({ minReward: minReward!, maxReward: maxReward! })} ${token}`
             : ''}
         </Text>
-        {!!link && (
-          <Link as={NextLink} href={`/grants/${slug}`}>
-            <Button
-              color="brand.slate.400"
-              fontSize={{ base: 'sm', md: 'md' }}
-              fontWeight={500}
-              borderColor={'brand.slate.400'}
-              size={{ base: 'sm', md: 'md' }}
-              variant="outline"
-            >
-              Apply
-            </Button>
-          </Link>
-        )}
+        <Link as={NextLink} href={`/grants/${slug}`}>
+          <Button
+            color="brand.slate.400"
+            fontSize={{ base: 'sm', md: 'md' }}
+            fontWeight={500}
+            borderColor={'brand.slate.400'}
+            size={{ base: 'sm', md: 'md' }}
+            variant="outline"
+          >
+            Apply
+          </Button>
+        </Link>
       </Flex>
     </Box>
   );

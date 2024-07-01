@@ -97,7 +97,6 @@ function Grants() {
                         minReward={grant?.minReward}
                         maxReward={grant?.maxReward}
                         token={grant?.token}
-                        link={grant?.link}
                         logo={grant?.logo}
                       />
                     </WrapItem>

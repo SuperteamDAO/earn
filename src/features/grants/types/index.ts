@@ -34,7 +34,6 @@ interface Grant {
   applicationStatus: 'Pending' | 'Approved' | 'Rejected';
   totalPaid: number;
   totalApproved: number;
-  externalLink?: string;
   avgResponseTime?: string;
 }
 

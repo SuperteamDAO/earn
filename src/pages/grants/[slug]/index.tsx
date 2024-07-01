@@ -168,7 +168,7 @@ function Grants({ grant: initialGrant }: InitialGrant) {
                   />
                   <Flex
                     direction={'column'}
-                    display={grant?.externalLink ? 'none' : 'block'}
+                    display={grant?.link ? 'none' : 'block'}
                     w="full"
                   >
                     <Flex w="full" mt={2}>
