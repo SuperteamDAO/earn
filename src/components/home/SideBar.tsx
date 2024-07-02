@@ -16,6 +16,7 @@ import { OgImageViewer } from '../misc/ogImageViewer';
 import { HowItWorks } from './HowItWorks';
 import { RecentEarners } from './RecentEarners';
 import { SponsorBanner } from './SponsorBanner';
+import { TalentOlympicsBanner } from './TalentOlympicsBanner';
 import { TotalStats } from './TotalStats';
 import { VibeCard } from './VibeCard';
 
@@ -329,6 +330,7 @@ export const HomeSideBar = ({
             bountyCount={listings}
             TVE={total}
           />
+          <TalentOlympicsBanner />
           <HowItWorks />
           <RecentEarners earners={earners} />
           <RecentActivity />
