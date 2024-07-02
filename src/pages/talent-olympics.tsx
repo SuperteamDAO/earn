@@ -32,7 +32,6 @@ import { toast } from 'react-hot-toast';
 import { FaDiscord } from 'react-icons/fa6';
 import { TbBell, TbBellRinging } from 'react-icons/tb';
 
-import { EmailCapture } from '@/components/modals/EmailCapture';
 import { tokenList } from '@/constants';
 import { AuthWrapper } from '@/features/auth';
 import { WarningModal } from '@/features/listings';
@@ -550,10 +549,6 @@ function GetHiredBy() {
   ];
   return (
     <Flex align="center" gap={8} w="full" py={6}>
-      <EmailCapture
-        localStorageId="talentOlympicsEmail"
-        surveyId={process.env.NEXT_PUBLIC_POSTHOG_EMAIL_SURVEY_ID!}
-      />
       <Box display="block" w="max-content" color="brand.slate.400">
         Get Hired By{' '}
       </Box>
