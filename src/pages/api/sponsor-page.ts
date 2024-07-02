@@ -47,7 +47,7 @@ export default async function user(req: NextApiRequest, res: NextApiResponse) {
 
   try {
     const sponsorName = sponsorData[sponsorKey]?.title;
-    const isPrivate = sponsorData[sponsorKey]?.private;
+    const isPrivate = !!sponsorData[sponsorKey]?.private;
 
     const bounties = await prisma.bounties.findMany({
       where: {
@@ -55,10 +55,10 @@ export default async function user(req: NextApiRequest, res: NextApiResponse) {
         isActive: true,
         isArchived: false,
         status: 'OPEN',
+        isPrivate,
         sponsor: {
           name: sponsorName,
         },
-        ...(isPrivate !== undefined && { isPrivate: isPrivate }),
       },
       include: {
         sponsor: {
