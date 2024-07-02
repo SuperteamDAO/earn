@@ -10,11 +10,8 @@ import React, { type Dispatch, type SetStateAction, useState } from 'react';
 import ReactSelect from 'react-select';
 import makeAnimated from 'react-select/animated';
 
-import {
-  MainSkills,
-  type MultiSelectOptions,
-  skillSubSkillMap,
-} from '@/constants';
+import { type MultiSelectOptions } from '@/constants';
+import { MainSkills, skillSubSkillMap } from '@/interface/skills';
 
 interface Props {
   skills: MultiSelectOptions[];

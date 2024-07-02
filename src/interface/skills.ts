@@ -1,143 +1,93 @@
-type MainSkills =
-  | 'Frontend'
-  | 'Backend'
-  | 'Blockchain'
-  | 'Design'
-  | 'Growth'
-  | 'Content'
-  | 'Community'
-  | 'Other'
-  | 'Mobile';
+import { type MultiSelectOptions } from '@/constants';
 
-type SubSkillsType =
-  | 'Javascript'
-  | 'PHP'
-  | 'Python'
-  | 'Java'
-  | 'C++'
-  | 'C'
-  | 'Ruby'
-  | 'Go'
-  | 'MySQL'
-  | 'Postgres'
-  | 'Redux'
-  | 'MongoDB'
-  | 'React'
-  | 'Angular'
-  | 'Android'
-  | 'Vue'
-  | 'iOS'
-  | 'Rust'
-  | 'Solidity'
-  | 'Sway'
-  | 'Move'
-  | 'Flutter'
-  | 'React Native'
-  | 'Data Analytics'
-  | 'Operations'
-  | 'Admin'
-  | 'Community Manager'
-  | 'Discord Moderator'
-  | 'Research'
-  | 'Writing'
-  | 'Video'
-  | 'Social Media'
-  | 'Business Development'
-  | 'Digital Marketing'
-  | 'Marketing'
-  | 'UI/UX Design'
-  | 'Graphic Design'
-  | 'Illustration'
-  | 'Game Design'
-  | 'Presentation Design'
-  | 'CPP'
-  | 'Product Feedback'
-  | 'Product Manager';
+const skillSubSkillMap = {
+  Frontend: [
+    { label: 'React', value: 'React' },
+    { label: 'Angular', value: 'Angular' },
+    { label: 'Vue', value: 'Vue' },
+    { label: 'Redux', value: 'Redux' },
+    { label: 'Other', value: 'Other' },
+  ],
+  Backend: [
+    { label: 'Javascript', value: 'Javascript' },
+    { label: 'PHP', value: 'PHP' },
+    { label: 'Python', value: 'Python' },
+    { label: 'Java', value: 'Java' },
+    { label: 'C++', value: 'C++' },
+    { label: 'C', value: 'C' },
+    { label: 'Ruby', value: 'Ruby' },
+    { label: 'Go', value: 'Go' },
+    { label: 'MySQL', value: 'MySQL' },
+    { label: 'Postgres', value: 'Postgres' },
+    { label: 'MongoDB', value: 'MongoDB' },
+    { label: 'Other', value: 'Other' },
+  ],
+  Blockchain: [
+    { label: 'Rust', value: 'Rust' },
+    { label: 'Solidity', value: 'Solidity' },
+    { label: 'Move', value: 'Move' },
+    { label: 'Other', value: 'Other' },
+  ],
+  Mobile: [
+    { label: 'Android', value: 'Android' },
+    { label: 'iOS', value: 'iOS' },
+    { label: 'Flutter', value: 'Flutter' },
+    { label: 'React Native', value: 'React Native' },
+    { label: 'Other', value: 'Other' },
+  ],
+  Design: [
+    { label: 'UI/UX Design', value: 'UI/UX Design' },
+    { label: 'Graphic Design', value: 'Graphic Design' },
+    { label: 'Illustration', value: 'Illustration' },
+    { label: 'Game Design', value: 'Game Design' },
+    { label: 'Presentation Design', value: 'Presentation Design' },
+    { label: 'Other', value: 'Other' },
+  ],
+  Community: [
+    { label: 'Community Manager', value: 'Community Manager' },
+    { label: 'Discord Moderator', value: 'Discord Moderator' },
+    { label: 'Other', value: 'Other' },
+  ],
+  Growth: [
+    { label: 'Business Development', value: 'Business Development' },
+    { label: 'Digital Marketing', value: 'Digital Marketing' },
+    { label: 'Marketing', value: 'Marketing' },
+    { label: 'Other', value: 'Other' },
+  ],
+  Content: [
+    { label: 'Research', value: 'Research' },
+    { label: 'Video', value: 'Video' },
+    { label: 'Writing', value: 'Writing' },
+    { label: 'Social Media', value: 'Social Media' },
+    { label: 'Other', value: 'Other' },
+  ],
+  Other: [
+    { label: 'Data Analytics', value: 'Data Analytics' },
+    { label: 'Operations', value: 'Operations' },
+    { label: 'Product Feedback', value: 'Product Feedback' },
+    { label: 'Product Manager', value: 'Product Manager' },
+  ],
+} as const;
+
+const MainSkills: MultiSelectOptions[] = Object.keys(skillSubSkillMap).map(
+  (skill) => ({
+    label: skill,
+    value: skill,
+  }),
+);
+
+type ParentSkills = keyof typeof skillSubSkillMap;
+type SubSkillsType = (typeof skillSubSkillMap)[ParentSkills][number]['value'];
 
 type Skills = {
-  skills: MainSkills;
+  skills: ParentSkills;
   subskills: SubSkillsType[];
 }[];
 
 type SkillMap = {
-  mainskill: MainSkills;
+  mainskill: ParentSkills;
   color: string;
 };
 
-export type { MainSkills, SkillMap, Skills, SubSkillsType };
-
-export const SkillList: {
-  mainskill: MainSkills;
-  subskills: SubSkillsType[];
-  variations: string[];
-}[] = [
-  {
-    mainskill: 'Frontend',
-    subskills: ['React', 'Angular', 'Vue', 'Redux'],
-    variations: ['Frontend', 'Front-End Dev', 'FrontEnd Dev', 'Frontend Dev'],
-  },
-  {
-    mainskill: 'Backend',
-    subskills: [
-      'Javascript',
-      'PHP',
-      'Python',
-      'Java',
-      'C++',
-      'C',
-      'Ruby',
-      'Go',
-      'MySQL',
-      'Postgres',
-      'MongoDB',
-    ],
-    variations: ['Backend', 'Back-End Dev', 'BackEnd Dev', 'Backend Dev'],
-  },
-  {
-    mainskill: 'Design',
-    subskills: [
-      'UI/UX Design',
-      'Graphic Design',
-      'Illustration',
-      'Game Design',
-      'Presentation Design',
-    ],
-    variations: ['Desgin'],
-  },
-  {
-    mainskill: 'Mobile',
-    subskills: ['Android', 'iOS', 'Flutter', 'React Native'],
-    variations: ['Mobile Engineer', 'Mobile Dev', 'Mobile Developer'],
-  },
-  {
-    mainskill: 'Blockchain',
-    subskills: ['Rust', 'Solidity', 'Sway', 'Move'],
-    variations: ['Blockchain', 'Blockchain Dev', 'Blockchain Developer'],
-  },
-  {
-    mainskill: 'Content',
-    subskills: ['Research', 'Writing', 'Video', 'Social Media'],
-    variations: ['Content', 'Content Creation'],
-  },
-  {
-    mainskill: 'Growth',
-    subskills: ['Business Development', 'Digital Marketing', 'Marketing'],
-    variations: ['Growth'],
-  },
-  {
-    mainskill: 'Community',
-    subskills: ['Community Manager', 'Discord Moderator'],
-    variations: ['Community'],
-  },
-  {
-    mainskill: 'Other',
-    subskills: [
-      'Data Analytics',
-      'Operations',
-      'Admin',
-      'Product Feedback',
-      'Product Manager',
-    ],
-    variations: ['other', 'Other'],
-  },
-];
+export type { ParentSkills, SkillMap, Skills, SubSkillsType };
+export { MainSkills, skillSubSkillMap };

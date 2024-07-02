@@ -2,8 +2,8 @@ import type { NextApiResponse } from 'next';
 
 import { type NextApiRequestWithUser, withAuth } from '@/features/auth';
 import {
-  type MainSkills,
-  SkillList,
+  type ParentSkills,
+  skillSubSkillMap,
   type SubSkillsType,
 } from '@/interface/skills';
 import { prisma } from '@/prisma';
@@ -13,12 +13,14 @@ const uniqueArray = (arr: SubSkillsType[]): SubSkillsType[] => {
 };
 
 const correctSkills = (
-  skillObjArray: { skills: MainSkills; subskills: SubSkillsType[] }[],
-): { skills: MainSkills; subskills: SubSkillsType[] }[] => {
-  const correctedSkills: { skills: MainSkills; subskills: SubSkillsType[] }[] =
-    [];
-  const skillMap: Record<MainSkills, SubSkillsType[]> = {} as Record<
-    MainSkills,
+  skillObjArray: { skills: ParentSkills; subskills: SubSkillsType[] }[],
+): { skills: ParentSkills; subskills: SubSkillsType[] }[] => {
+  const correctedSkills: {
+    skills: ParentSkills;
+    subskills: SubSkillsType[];
+  }[] = [];
+  const skillMap: Record<ParentSkills, SubSkillsType[]> = {} as Record<
+    ParentSkills,
     SubSkillsType[]
   >;
 
@@ -27,20 +29,22 @@ const correctSkills = (
       skillMap[skillObj.skills] = [];
     }
     skillObj.subskills.forEach((subskill) => {
-      const correctMainSkill = SkillList.find((s) =>
-        s.subskills.includes(subskill),
+      const correctMainSkill = Object.keys(skillSubSkillMap).find((mainSkill) =>
+        skillSubSkillMap[mainSkill as ParentSkills].some(
+          (subSkillObj) => subSkillObj.value === subskill,
+        ),
       );
 
       if (correctMainSkill) {
-        skillMap[correctMainSkill.mainskill].push(subskill);
+        skillMap[correctMainSkill as ParentSkills].push(subskill);
       }
     });
   });
 
   Object.keys(skillMap).forEach((key) => {
     correctedSkills.push({
-      skills: key as MainSkills,
-      subskills: uniqueArray(skillMap[key as MainSkills]),
+      skills: key as ParentSkills,
+      subskills: uniqueArray(skillMap[key as ParentSkills]),
     });
   });
 
@@ -56,7 +60,7 @@ async function handler(req: NextApiRequestWithUser, res: NextApiResponse) {
     },
   });
   // eslint-disable-next-line
-  const {role, skills, currentSponsorId, generateTalentEmailSettings, ...updateAttributes} = req.body;
+  const { role, skills, currentSponsorId, generateTalentEmailSettings, ...updateAttributes } = req.body;
   const correctedSkills = skills ? correctSkills(skills) : [];
   try {
     const updatedData = {

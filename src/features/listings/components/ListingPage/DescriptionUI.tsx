@@ -3,10 +3,10 @@ import parse, { type HTMLReactParserOptions } from 'html-react-parser';
 import React, { useEffect, useState } from 'react';
 
 import { skillMap } from '@/constants';
-import type { MainSkills } from '@/interface/skills';
+import { type ParentSkills } from '@/interface/skills';
 
 interface Props {
-  skills?: MainSkills[];
+  skills?: ParentSkills[];
   description?: string;
 }
 

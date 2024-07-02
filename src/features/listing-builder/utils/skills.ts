@@ -1,8 +1,8 @@
-import type { MultiSelectOptions } from '@/constants';
+import { type MultiSelectOptions } from '@/constants';
 import {
-  type MainSkills,
-  SkillList,
+  type ParentSkills,
   type Skills,
+  skillSubSkillMap,
   type SubSkillsType,
 } from '@/interface/skills';
 
@@ -13,17 +13,21 @@ interface Props {
 
 export const mergeSkills = ({ skills = [], subskills = [] }: Props): Skills => {
   return skills.map((mainskill) => {
-    const main = SkillList.find((skill) => skill.mainskill === mainskill.value);
+    const main =
+      skillSubSkillMap[mainskill.value as keyof typeof skillSubSkillMap];
     const sub: SubSkillsType[] = [];
 
     subskills.forEach((subskill) => {
-      if (main && main.subskills.includes(subskill.value as SubSkillsType)) {
+      if (
+        main &&
+        main.some((subSkillObj) => subSkillObj.value === subskill.value)
+      ) {
         sub.push(subskill.value as SubSkillsType);
       }
     });
 
     return {
-      skills: (main?.mainskill ?? '') as MainSkills,
+      skills: mainskill.value as ParentSkills,
       subskills: sub ?? [],
     };
   });
