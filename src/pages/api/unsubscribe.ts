@@ -1,7 +1,6 @@
-import { PrismaClient } from '@prisma/client';
 import { type NextApiRequest, type NextApiResponse } from 'next';
 
-const prisma = new PrismaClient();
+import { prisma } from '@/prisma';
 
 export default async function handler(
   req: NextApiRequest,
@@ -56,6 +55,23 @@ export default async function handler(
       if (!tokenRecord) {
         return res.status(404).json({ message: 'Invalid token' });
       }
+
+      const user = await prisma.user.findUnique({
+        where: {
+          email: tokenRecord.email,
+        },
+      });
+
+      if (!user) {
+        return res.status(404).json({ message: 'User not found' });
+      }
+
+      await prisma.unsubscribedEmail.create({
+        data: {
+          email: tokenRecord.email,
+          id: user.id,
+        },
+      });
 
       return res.status(200).send('<h1>You have been unsubscribed</h1>');
     } catch (error) {

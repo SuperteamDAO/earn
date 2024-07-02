@@ -510,7 +510,7 @@ model UnsubscribedEmail {
 
 model UnsubscribeToken {
   token     String   @id @unique
-  email     String   @unique
+  email     String
   createdAt DateTime @default(now())
 }
 
