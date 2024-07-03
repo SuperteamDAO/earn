@@ -27,6 +27,7 @@ import {
 import { SubscribeHackathon } from '@prisma/client';
 import axios from 'axios';
 import dayjs from 'dayjs';
+import utc from 'dayjs/plugin/utc';
 import NextImage, { type StaticImageData } from 'next/image';
 import NextLink from 'next/link';
 import { useSession } from 'next-auth/react';
@@ -54,6 +55,8 @@ import Trophy from '@/public/assets/hackathon/talent-olympics/trophy.png';
 import WinFlag from '@/public/assets/hackathon/talent-olympics/winflag.png';
 import { userStore } from '@/store/user';
 import { TalentOlympicsHeader } from '@/svg/talent-olympics-header';
+
+dayjs.extend(utc);
 
 const SLUG = 'talent-olympics';
 
@@ -175,6 +178,32 @@ const rustTrack: TrackProps[] = [
 
 export default function TalentOlympics() {
   const PADX = 4;
+  const START_DATE = '2024-07-11T11:59:59Z';
+  const CLOSE_DATE = '2024-07-14T11:59:59Z';
+
+  const [hackathonIsOn, setHackathonIsOn] = useState(false);
+  useEffect(() => {
+    const hackathonStartTime = dayjs(START_DATE);
+
+    const checkHackathonStatus = () => {
+      const now = dayjs.utc();
+      console.log('now - ', now.toString());
+      if (now.isAfter(hackathonStartTime)) {
+        setHackathonIsOn(true);
+      }
+    };
+
+    checkHackathonStatus();
+
+    const intervalId = setInterval(checkHackathonStatus, 1000);
+
+    return () => clearInterval(intervalId);
+  }, []);
+
+  useEffect(() => {
+    console.log('hackathonIsOn', hackathonIsOn);
+  }, []);
+
   return (
     <Default
       className="bg-white"
@@ -187,7 +216,7 @@ export default function TalentOlympics() {
       }
     >
       <Box>
-        <Hero />
+        <Hero START_DATE={START_DATE} CLOSE_DATE={CLOSE_DATE} />
         <Box overflowX="hidden" maxW="8xl" mx="auto" px={PADX}>
           <GetHiredBy />
         </Box>
@@ -218,8 +247,16 @@ export default function TalentOlympics() {
             maxW="8xl"
             mx="auto"
           >
-            <Track title="Front End Track" tracks={frontendTrack} />
-            <Track title="Rust Track" tracks={rustTrack} />
+            <Track
+              title="Front End Track"
+              tracks={frontendTrack}
+              hackathonIsOn={hackathonIsOn}
+            />
+            <Track
+              title="Rust Track"
+              tracks={rustTrack}
+              hackathonIsOn={hackathonIsOn}
+            />
           </Flex>
         </Box>
         <Box overflowX="hidden" maxW="8xl" mx="auto" px={PADX}>
@@ -230,12 +267,16 @@ export default function TalentOlympics() {
   );
 }
 
-function Hero() {
+function Hero({
+  START_DATE,
+  CLOSE_DATE,
+}: {
+  START_DATE: string;
+  CLOSE_DATE: string;
+}) {
   const PoweredByHeight = '2.5rem';
   const isSM = useBreakpointValue({ base: false, sm: true });
 
-  const START_DATE = '2024-07-11T11:59:59Z';
-  const CLOSE_DATE = '2024-07-14T11:59:59Z';
   const [countdownDate, setCountdownDate] = useState<Date>(
     new Date(START_DATE),
   );
@@ -604,9 +645,18 @@ interface TrackProps {
   token: string;
   amount: number;
   link: string;
+  hackathonIsOn?: boolean;
 }
 
-function Track({ title, tracks }: { title: string; tracks: TrackProps[] }) {
+function Track({
+  title,
+  tracks,
+  hackathonIsOn,
+}: {
+  title: string;
+  tracks: TrackProps[];
+  hackathonIsOn: boolean;
+}) {
   return (
     <VStack align="start" gap={6}>
       <Text color="brand.slate.900" fontSize="lg" fontWeight={700}>
@@ -614,7 +664,7 @@ function Track({ title, tracks }: { title: string; tracks: TrackProps[] }) {
       </Text>
       <VStack gap={4}>
         {tracks.map((t) => (
-          <TrackBox key={t.title} {...t} />
+          <TrackBox key={t.title} {...t} hackathonIsOn={hackathonIsOn} />
         ))}
       </VStack>
     </VStack>
@@ -628,6 +678,7 @@ function TrackBox({
   amount,
   token,
   link,
+  hackathonIsOn,
 }: TrackProps) {
   return (
     <Box
@@ -638,7 +689,9 @@ function TrackBox({
       borderWidth={'1px'}
       borderColor="brand.slate.200"
       borderRadius={8}
-      href={link}
+      pointerEvents={hackathonIsOn ? 'auto' : 'none'}
+      cursor={hackathonIsOn ? 'pointer' : 'not-allowed'}
+      href={hackathonIsOn ? link : '#'}
     >
       <Flex align="center" gap={5}>
         <Image
