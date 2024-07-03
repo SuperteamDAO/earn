@@ -380,17 +380,25 @@ function Hero({
       <Flex align="center" gap={8} my={4}>
         <Image
           as={NextImage}
+          w={{ base: '5rem', sm: '7rem' }}
           h={PoweredByHeight}
           alt="Web3 Builders Alliance"
           src={Turbine}
         />
         <Image
           as={NextImage}
+          w={{ base: '5rem', sm: '7rem' }}
           h={PoweredByHeight}
           alt="Superteam"
           src={Superteam}
         />
-        <Image as={NextImage} h={PoweredByHeight} alt="Rise In" src={RiseIn} />
+        <Image
+          as={NextImage}
+          w={{ base: '5rem', sm: '7rem' }}
+          h={PoweredByHeight}
+          alt="Rise In"
+          src={RiseIn}
+        />
       </Flex>
     </Flex>
   );
