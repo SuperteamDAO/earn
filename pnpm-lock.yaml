@@ -170,9 +170,9 @@ importers:
       react-dom:
         specifier: 18.3.1
         version: 18.3.1(react@18.3.1)
-      react-fast-marquee:
-        specifier: ^1.6.4
-        version: 1.6.4(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
+      react-easy-marquee:
+        specifier: ^1.2.4
+        version: 1.2.4(react@18.3.1)
       react-hook-form:
         specifier: ^7.51.5
         version: 7.52.0(react@18.3.1)
@@ -5476,14 +5476,14 @@ packages:
     peerDependencies:
       react: ^18.3.1
 
+  react-easy-marquee@1.2.4:
+    resolution: {integrity: sha512-xp0pfCnvcGxniuUZSSFxU3Kf4IVBxTG1FpCuNf0+h0qo01zwrDtVJj4QoxjkPfQulX1K1PdH7SeyIYcZQdMDIg==}
+    engines: {node: '>=14', npm: '>=6'}
+    peerDependencies:
+      react: ^17.0.2
+
   react-fast-compare@3.2.2:
     resolution: {integrity: sha512-nsO+KSNgo1SbJqJEYRE9ERzo7YtYbou/OqjSQKxV7jcKox7+usiUVZOAC+XnDOABXggQTno0Y1CpVnuWEc1boQ==}
-
-  react-fast-marquee@1.6.4:
-    resolution: {integrity: sha512-LAgvhRmHdqaUQ8R5jCUwzEGFUIjnCCt3T3W8X7j7wF6DWe0SATlpP0JX1V0pp2qX3DYUezmn1Iz5AtRFdL2EWQ==}
-    peerDependencies:
-      react: '>= 16.8.0 || 18.0.0'
-      react-dom: '>= 16.8.0 || 18.0.0'
 
   react-focus-lock@2.12.1:
     resolution: {integrity: sha512-lfp8Dve4yJagkHiFrC1bGtib3mF2ktqwPJw4/WGcgPW+pJ/AVQA5X2vI7xgp13FcxFEpYBBHpXai/N2DBNC0Jw==}
@@ -6606,11 +6606,6 @@ packages:
   yaml@1.10.2:
     resolution: {integrity: sha512-r3vXyErRCYJ7wg28yvBY5VSoAF8ZvlcW9/BwUzEtUsjvX/DKs24dIkuwjtuprwJJHsbyUbLApepYTR1BN4uHrg==}
     engines: {node: '>= 6'}
-
-  yaml@2.4.1:
-    resolution: {integrity: sha512-pIXzoImaqmfOrL7teGUBt/T7ZDnyeGBWyXQBvOVhLkWLN37GXv8NMLK406UY6dS51JfcQHsmcW5cJ441bHg6Lg==}
-    engines: {node: '>= 14'}
-    hasBin: true
 
   yaml@2.4.5:
     resolution: {integrity: sha512-aBx2bnqDzVOyNKfsysjA2ms5ZlnjSAW2eG3/L5G/CSujfjLJTJsEw1bGw8kCf04KodQWk1pxlGnZ56CRxiawmg==}
@@ -8605,7 +8600,7 @@ snapshots:
       semver: 7.6.0
       strip-ansi: 5.2.0
       wcwidth: 1.0.1
-      yaml: 2.4.1
+      yaml: 2.4.5
     transitivePeerDependencies:
       - encoding
 
@@ -11749,7 +11744,7 @@ snapshots:
       '@types/stack-utils': 2.0.3
       chalk: 4.1.2
       graceful-fs: 4.2.11
-      micromatch: 4.0.5
+      micromatch: 4.0.7
       pretty-format: 29.7.0
       slash: 3.0.0
       stack-utils: 2.0.6
@@ -11857,7 +11852,7 @@ snapshots:
       chalk: 4.1.2
       flow-parser: 0.234.0
       graceful-fs: 4.2.11
-      micromatch: 4.0.5
+      micromatch: 4.0.7
       neo-async: 2.6.2
       node-dir: 0.1.17
       recast: 0.21.5
@@ -12176,7 +12171,7 @@ snapshots:
       graceful-fs: 4.2.11
       invariant: 2.2.4
       jest-worker: 29.7.0
-      micromatch: 4.0.5
+      micromatch: 4.0.7
       node-abort-controller: 3.1.1
       nullthrows: 1.1.1
       walker: 1.0.8
@@ -12193,7 +12188,7 @@ snapshots:
 
   metro-runtime@0.80.8:
     dependencies:
-      '@babel/runtime': 7.24.4
+      '@babel/runtime': 7.24.7
 
   metro-source-map@0.80.8:
     dependencies:
@@ -12990,12 +12985,11 @@ snapshots:
       react: 18.3.1
       scheduler: 0.23.2
 
-  react-fast-compare@3.2.2: {}
-
-  react-fast-marquee@1.6.4(react-dom@18.3.1(react@18.3.1))(react@18.3.1):
+  react-easy-marquee@1.2.4(react@18.3.1):
     dependencies:
       react: 18.3.1
-      react-dom: 18.3.1(react@18.3.1)
+
+  react-fast-compare@3.2.2: {}
 
   react-focus-lock@2.12.1(@types/react@18.3.3)(react@18.3.1):
     dependencies:
@@ -14313,8 +14307,6 @@ snapshots:
   yallist@4.0.0: {}
 
   yaml@1.10.2: {}
-
-  yaml@2.4.1: {}
 
   yaml@2.4.5: {}
 

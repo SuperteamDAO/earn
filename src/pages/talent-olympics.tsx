@@ -34,7 +34,7 @@ import { useSession } from 'next-auth/react';
 import { usePostHog } from 'posthog-js/react';
 import { useEffect, useState } from 'react';
 import Countdown from 'react-countdown';
-import Marquee from 'react-fast-marquee';
+import Marquee from 'react-easy-marquee';
 import { toast } from 'react-hot-toast';
 import { FaPlay } from 'react-icons/fa';
 import { FaDiscord } from 'react-icons/fa6';
@@ -187,7 +187,6 @@ export default function TalentOlympics() {
 
     const checkHackathonStatus = () => {
       const now = dayjs.utc();
-      console.log('now - ', now.toString());
       if (now.isAfter(hackathonStartTime)) {
         setHackathonIsOn(true);
       }
@@ -198,10 +197,6 @@ export default function TalentOlympics() {
     const intervalId = setInterval(checkHackathonStatus, 1000);
 
     return () => clearInterval(intervalId);
-  }, []);
-
-  useEffect(() => {
-    console.log('hackathonIsOn', hackathonIsOn);
   }, []);
 
   return (
@@ -442,10 +437,6 @@ function GetHiredBy() {
       src: baseAsset('helius.svg'),
     },
     {
-      name: 'Nosana',
-      src: baseAsset('nosana.svg'),
-    },
-    {
       name: 'Flash Trade',
       src: baseAsset('flash-trade.svg'),
     },
@@ -515,7 +506,7 @@ function GetHiredBy() {
       <Box display="block" w="max-content" color="brand.slate.400">
         Get Hired By{' '}
       </Box>
-      <Marquee autoFill pauseOnHover>
+      <Marquee pauseOnHover duration={10000}>
         {hiredBy.map((h) => (
           <NextImage
             key={h.name}
@@ -527,6 +518,7 @@ function GetHiredBy() {
               width: 'fit-content',
               height: '2rem',
               margin: '0 1rem',
+              objectFit: 'contain',
             }}
           />
         ))}
@@ -936,8 +928,10 @@ const SubscribeHackathon = () => {
       )}
       <HStack align="start">
         <AuthWrapper>
-          <IconButton
+          <Button
             className="ph-no-capture"
+            w="fit-content"
+            px={0}
             color={
               sub.find((e) => e.userId === userInfo?.id) ? 'white' : 'white'
             }
@@ -945,16 +939,6 @@ const SubscribeHackathon = () => {
               sub.find((e) => e.userId === userInfo?.id)
                 ? 'brand.purple'
                 : 'rgba(34, 35, 36, 0.46)'
-            }
-            aria-label="Notify"
-            icon={
-              isSubscribeLoading ? (
-                <Spinner color="white" size="sm" />
-              ) : sub.find((e) => e.userId === userInfo?.id) ? (
-                <TbBellRinging />
-              ) : (
-                <TbBell />
-              )
             }
             onClick={() => {
               if (sub.find((e) => e.userId === userInfo?.id)) {
@@ -968,13 +952,43 @@ const SubscribeHackathon = () => {
               posthog.capture('notify me_hackathon');
               handleSubscribe();
             }}
-            variant="solid"
-          />
+          >
+            <IconButton
+              className="ph-no-capture"
+              color={
+                sub.find((e) => e.userId === userInfo?.id) ? 'white' : 'white'
+              }
+              bg={'transparent'}
+              aria-label="Notify"
+              icon={
+                isSubscribeLoading ? (
+                  <Spinner color="white" size="sm" />
+                ) : sub.find((e) => e.userId === userInfo?.id) ? (
+                  <TbBellRinging />
+                ) : (
+                  <TbBell />
+                )
+              }
+              variant="solid"
+            />
+            <Text
+              display={{ base: 'block', sm: 'none' }}
+              pr={3}
+              color={'white'}
+              fontWeight={500}
+            >
+              {sub?.length ? sub.length + 1 : 1}
+            </Text>
+          </Button>
         </AuthWrapper>
       </HStack>
       <HStack whiteSpace={'nowrap'}>
         <VStack align={'start'} gap={0}>
-          <Text color={'white'} fontWeight={500}>
+          <Text
+            display={{ base: 'none', sm: 'block' }}
+            color={'white'}
+            fontWeight={500}
+          >
             {sub?.length ? sub.length + 1 : 1}
           </Text>
           <Text

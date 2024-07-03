@@ -7,13 +7,11 @@ export default async function handler(
   res: NextApiResponse,
 ) {
   try {
-    console.log('slug - ', req.body.slug);
     const hackathon = await prisma.hackathon.findUnique({
       where: {
         slug: req.body.slug,
       },
     });
-    console.log('hackathon - ', hackathon);
     if (!hackathon)
       return res.status(400).json({
         message: 'Hackathon not found',
