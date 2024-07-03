@@ -14,6 +14,10 @@ import {
   HStack,
   IconButton,
   Image,
+  Modal,
+  ModalBody,
+  ModalContent,
+  ModalOverlay,
   Spinner,
   Text,
   useBreakpointValue,
@@ -31,6 +35,7 @@ import { useEffect, useState } from 'react';
 import Countdown from 'react-countdown';
 import Marquee from 'react-fast-marquee';
 import { toast } from 'react-hot-toast';
+import { FaPlay } from 'react-icons/fa';
 import { FaDiscord } from 'react-icons/fa6';
 import { TbBell, TbBellRinging } from 'react-icons/tb';
 
@@ -479,16 +484,19 @@ function GetHiredBy() {
 }
 
 function About() {
+  const { isOpen, onOpen, onClose } = useDisclosure();
+
   return (
     <Grid
       gap={{ base: 8, md: 12 }}
       templateColumns={{ base: 'repeat(1, 1fr)', md: 'repeat(2, 1fr)' }}
       my={8}
     >
+      <KashModal isOpen={isOpen} onClose={onClose} />
       <GridItem>
         <VStack align="start" gap={4}>
           <Text fontSize={'xl'} fontWeight={700}>
-            Solana’s first Jobathon is here
+            Get Hired Based on Your Proof of Work
           </Text>
           <Text color="brand.slate.500">
             The Talent Olympics is designed to help talented developers from
@@ -498,6 +506,28 @@ function About() {
             most points globally will split an additional $10,000 prize pool and
             receive interviews with our hiring partners.
           </Text>
+          <Button
+            gap={2}
+            px={3}
+            py={2}
+            bg="#F8FAFC"
+            _hover={{ bg: 'brand.slate.200' }}
+            onClick={onOpen}
+            rounded="full"
+          >
+            <Image
+              alt="kash"
+              src="/assets/hackathon/talent-olympics/kash.png"
+              style={{ width: '1.5rem', height: '1.5rem' }}
+            />
+            <Text color="brand.slate.500" fontSize="sm" fontWeight={500}>
+              Message from Kash
+            </Text>
+            <FaPlay
+              color="#1B0341"
+              style={{ width: '0.7rem', height: '0.7rem' }}
+            />
+          </Button>
         </VStack>
       </GridItem>
       <GridItem>
@@ -741,7 +771,7 @@ function FAQs() {
   );
 }
 
-export const CountDownRenderer = ({
+const CountDownRenderer = ({
   days,
   hours,
   minutes,
@@ -897,3 +927,26 @@ const SubscribeHackathon = () => {
     </HStack>
   );
 };
+
+function KashModal({
+  isOpen,
+  onClose,
+}: {
+  isOpen: boolean;
+  onClose: () => void;
+}) {
+  return (
+    <Modal isOpen={isOpen} onClose={onClose} size="4xl">
+      <ModalOverlay />
+      <ModalContent w="100vw" p={0} aspectRatio={16 / 9}>
+        <ModalBody p={0}>
+          <iframe
+            width="100%"
+            height="100%"
+            src="https://www.youtube.com/embed/dQw4w9WgXcQ?autoplay=1"
+          ></iframe>
+        </ModalBody>
+      </ModalContent>
+    </Modal>
+  );
+}
