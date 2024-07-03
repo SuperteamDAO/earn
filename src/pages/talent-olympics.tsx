@@ -328,6 +328,7 @@ function Hero({
       >
         <Flex gap={5} w={{ base: 'full', md: 'auto' }}>
           <Button
+            as={NextLink}
             gap={2}
             w={{ base: 'full', md: 'auto' }}
             px={6}
@@ -335,7 +336,9 @@ function Hero({
             fontSize={'sm'}
             bg="#6366F1"
             _active={{ bg: '#6366D1' }}
+            href="https://discord.gg/ftXZKeNv4w"
             rounded="full"
+            target="_blank"
           >
             <FaDiscord style={{ width: '1.2rem', height: '1.2rem' }} />
             Join Discord
