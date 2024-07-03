@@ -189,7 +189,7 @@ export const MobileNavbar = ({ onLoginOpen }: Props) => {
               href="/talent-olympics"
             >
               <Image
-                h={7}
+                h={14}
                 objectFit={'contain'}
                 alt="Talent Olympics Nav Icon"
                 src="/assets/hackathon/talent-olympics/nav.svg"

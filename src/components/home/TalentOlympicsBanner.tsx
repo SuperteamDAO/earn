@@ -24,7 +24,7 @@ export const TalentOlympicsBanner = () => {
         bg="rgba(0, 0, 0, 0.2)"
       />
       <VStack zIndex={2} p={6}>
-        <TalentOlympicsHeader styles={{ height: '6rem', width: 'auto' }} />
+        <TalentOlympicsHeader styles={{ height: '9rem', width: 'auto' }} />
         <Text fontWeight={600} lineHeight={1.3}>
           Looking for a frontend or rust job? Here’s your ticket!{' '}
         </Text>
@@ -41,7 +41,7 @@ export const TalentOlympicsBanner = () => {
             bg="white"
             variant="solidSecondary"
           >
-            Enter the Arena
+            Enter The Arena
           </Button>
         </Link>
       </VStack>

@@ -20,13 +20,15 @@ import {
   useDisclosure,
   VStack,
 } from '@chakra-ui/react';
-import type { SubscribeHackathon } from '@prisma/client';
+import { SubscribeHackathon } from '@prisma/client';
 import axios from 'axios';
+import dayjs from 'dayjs';
 import NextImage, { type StaticImageData } from 'next/image';
 import NextLink from 'next/link';
 import { useSession } from 'next-auth/react';
 import { usePostHog } from 'posthog-js/react';
 import { useEffect, useState } from 'react';
+import Countdown from 'react-countdown';
 import Marquee from 'react-fast-marquee';
 import { toast } from 'react-hot-toast';
 import { FaDiscord } from 'react-icons/fa6';
@@ -40,7 +42,7 @@ import { Default } from '@/layouts/Default';
 import { Meta } from '@/layouts/Meta';
 import RiseIn from '@/public/assets/company-logos/rise-in.svg';
 import Superteam from '@/public/assets/company-logos/superteam.svg';
-import WBA from '@/public/assets/company-logos/WBA.svg';
+import Turbine from '@/public/assets/company-logos/turbine.svg';
 import CashBag from '@/public/assets/hackathon/talent-olympics/cashbag.png';
 import Coder from '@/public/assets/hackathon/talent-olympics/coder.png';
 import Trophy from '@/public/assets/hackathon/talent-olympics/trophy.png';
@@ -227,72 +229,23 @@ function Hero() {
   const PoweredByHeight = '2.5rem';
   const isSM = useBreakpointValue({ base: false, sm: true });
 
-  const { status: authStatus } = useSession();
-  const posthog = usePostHog();
-  const { userInfo } = userStore();
-  const {
-    isOpen: warningIsOpen,
-    onOpen: warningOnOpen,
-    onClose: warningOnClose,
-  } = useDisclosure();
-  const [isSubscribeLoading, setIsSubscribeLoading] = useState(false);
-  const [update, setUpdate] = useState<boolean>(false);
-  const [sub, setSub] = useState<
-    (SubscribeHackathon & {
-      User: User | null;
-    })[]
-  >([]);
-
-  const isAuthenticated = authStatus === 'authenticated';
-
-  const handleSubscribe = async () => {
-    if (isAuthenticated) {
-      if (!userInfo?.isTalentFilled) {
-        warningOnOpen();
-        return;
-      }
-
-      setIsSubscribeLoading(true);
-      try {
-        await axios.post('/api/hackathon/subscribe/subscribe', {
-          slug: SLUG,
-        });
-        setUpdate((prev) => !prev);
-        setIsSubscribeLoading(false);
-        toast.success('Subscribed to the listing');
-      } catch (error) {
-        console.log(error);
-        setIsSubscribeLoading(false);
-        toast.error('Error');
-      }
-    }
-  };
-  const handleUnSubscribe = async (idSub: string) => {
-    setIsSubscribeLoading(true);
-
-    try {
-      await axios.post('/api/hackathon/subscribe/unSubscribe', {
-        id: idSub,
-      });
-      setUpdate((prev) => !prev);
-      setIsSubscribeLoading(false);
-      toast.success('Unsubscribed');
-    } catch (error) {
-      console.log(error);
-      setIsSubscribeLoading(false);
-      toast.error('Error');
-    }
-  };
+  const START_DATE = '2024-07-11T11:59:59Z';
+  const CLOSE_DATE = '2024-07-14T11:59:59Z';
+  const [countdownDate, setCountdownDate] = useState<Date>(
+    new Date(START_DATE),
+  );
+  const [status, setStatus] = useState<'Open In' | 'Close In' | 'Closed'>(
+    'Open In',
+  );
 
   useEffect(() => {
-    const fetchUser = async () => {
-      const { data } = await axios.post('/api/hackathon/subscribe/get', {
-        slug: SLUG,
-      });
-      setSub(data);
-    };
-    fetchUser();
-  }, [update]);
+    if (dayjs().isAfter(CLOSE_DATE, 'day')) {
+      setStatus('Closed');
+    } else if (dayjs().isAfter(START_DATE, 'day')) {
+      setCountdownDate(new Date(CLOSE_DATE));
+      setStatus('Close In');
+    }
+  }, []);
 
   return (
     <Flex
@@ -307,117 +260,70 @@ function Hero() {
       borderColor={'brand.slate.200'}
       borderBottomWidth={'1px'}
     >
-      {warningIsOpen && (
-        <WarningModal
-          onCTAClick={() => posthog.capture('complete profile_CTA pop up')}
-          isOpen={warningIsOpen}
-          onClose={warningOnClose}
-          title={'Complete your profile'}
-          bodyText={
-            'Please complete your profile before subscribing to a hackthon.'
-          }
-          primaryCtaText={'Complete Profile'}
-          primaryCtaLink={'/new/talent'}
-        />
-      )}
       <TalentOlympicsHeader
-        styles={{ height: isSM ? '10rem' : '7rem', width: 'auto' }}
+        styles={{ height: isSM ? '12rem' : '12rem', width: 'auto' }}
       />
       <Text
-        maxW="md"
+        maxW="sm"
         mt={4}
         px={6}
         color="white"
         fontWeight={500}
         textAlign={'center'}
       >
-        May the best talent get the best jobs judged purely on their proof of
-        work!
+        Complete Challenges. Earn Prizes. <br /> Get a Full-Time Job.
       </Text>
-      <Flex align="center" gap={{ base: 3, sm: 6 }} mt={6} mb={1}>
-        <Button
-          gap={2}
-          px={6}
-          color="white"
-          fontSize={{ base: 'xs', sm: 'sm' }}
-          bg="#6366F1"
-          _active={{ bg: '#6366D1' }}
-          rounded="full"
-        >
-          <FaDiscord style={{ width: '1.2rem', height: '1.2rem' }} />
-          Join Discord
-        </Button>
+      <Flex
+        align="center"
+        direction={{ base: 'column', md: 'row' }}
+        gap={{ base: 3, sm: 6 }}
+        mt={6}
+        mb={1}
+      >
+        <Flex gap={5} w={{ base: 'full', md: 'auto' }}>
+          <Button
+            gap={2}
+            w={{ base: 'full', md: 'auto' }}
+            px={6}
+            color="white"
+            fontSize={'sm'}
+            bg="#6366F1"
+            _active={{ bg: '#6366D1' }}
+            rounded="full"
+          >
+            <FaDiscord style={{ width: '1.2rem', height: '1.2rem' }} />
+            Join Discord
+          </Button>
+
+          {!isSM && <SubscribeHackathon />}
+        </Flex>
         <Button
           alignItems="center"
           gap={2}
+          w={{ base: 'full', md: 'auto' }}
           px={6}
-          color="brand.slate.200"
-          fontSize={{ base: 'xs', sm: 'sm' }}
+          color={status === 'Close In' ? '#39FFC1' : 'brand.slate.200'}
+          fontSize={'sm'}
           bg="rgba(0, 0, 0, 0.4)"
           pointerEvents={'none'}
           rounded="full"
         >
-          <Circle bg="brand.slate.200" size={1.5} />
-          <Text fontWeight={500}>Submissions TBA</Text>
-        </Button>
-        <HStack>
-          <HStack align="start">
-            <AuthWrapper>
-              <IconButton
-                className="ph-no-capture"
-                color={
-                  sub.find((e) => e.userId === userInfo?.id)
-                    ? 'white'
-                    : 'brand.slate.500'
-                }
-                bg={
-                  sub.find((e) => e.userId === userInfo?.id)
-                    ? 'brand.purple'
-                    : 'brand.slate.100'
-                }
-                aria-label="Notify"
-                icon={
-                  isSubscribeLoading ? (
-                    <Spinner color="white" size="sm" />
-                  ) : sub.find((e) => e.userId === userInfo?.id) ? (
-                    <TbBellRinging />
-                  ) : (
-                    <TbBell />
-                  )
-                }
-                onClick={() => {
-                  if (sub.find((e) => e.userId === userInfo?.id)) {
-                    posthog.capture('unnotify me_hackathon');
-                    handleUnSubscribe(
-                      sub.find((e) => e.userId === userInfo?.id)?.id as string,
-                    );
-
-                    return;
-                  }
-                  posthog.capture('notify me_hackathon');
-                  handleSubscribe();
-                }}
-                variant="solid"
+          <Circle
+            bg={status === 'Close In' ? '#39FFC1' : 'brand.slate.200'}
+            size={1.5}
+          />
+          <Text fontWeight={500}>
+            Submissions {status}{' '}
+            {status !== 'Closed' && (
+              <Countdown
+                date={countdownDate}
+                renderer={CountDownRenderer}
+                zeroPadDays={1}
               />
-            </AuthWrapper>
-          </HStack>
-          <HStack whiteSpace={'nowrap'}>
-            <VStack align={'start'} gap={0}>
-              <Text color={'white'} fontWeight={500}>
-                {sub?.length ? sub.length + 1 : 1}
-              </Text>
-              <Text
-                display={{ base: 'none', md: 'flex' }}
-                color={'brand.slate.300'}
-                fontSize={'sm'}
-                fontWeight={400}
-              >
-                {(sub?.length ? sub.length + 1 : 1) === 1 ? 'Person' : 'People'}{' '}
-                Interested
-              </Text>
-            </VStack>
-          </HStack>
-        </HStack>
+            )}
+          </Text>
+        </Button>
+        {isSM && <SubscribeHackathon />}
       </Flex>
       <Text mt={4} color="white" fontSize={'9px'}>
         POWERED BY
@@ -427,7 +333,7 @@ function Hero() {
           as={NextImage}
           h={PoweredByHeight}
           alt="Web3 Builders Alliance"
-          src={WBA}
+          src={Turbine}
         />
         <Image
           as={NextImage}
@@ -585,11 +491,12 @@ function About() {
             Solana’s first Jobathon is here
           </Text>
           <Text color="brand.slate.500">
-            Talent Olympics Jobathon is the ultimate platform for aspiring devs
-            to prove their mettle. Give your best, and stand a chance not only
-            win the bounty, but potentially get a job. $10,000 up for grabs as
-            part of the individual challenges, and $10,000 for the top overall
-            submitters across all challenges.{' '}
+            The Talent Olympics is designed to help talented developers from
+            around the world get jobs at the best companies on Solana. To enter,
+            simply complete the developer challenges below. Each challenge has a
+            prize pool for the best submissions, and the participants with the
+            most points globally will split an additional $10,000 prize pool and
+            receive interviews with our hiring partners.
           </Text>
         </VStack>
       </GridItem>
@@ -601,29 +508,29 @@ function About() {
           <GridItem>
             <FeatureCard
               image={Trophy}
-              title="30 Companies Hiring"
-              description="on the basis of your performance"
+              title="45 Companies Hiring"
+              description="at the Talent Olympics"
             />
           </GridItem>
           <GridItem>
             <FeatureCard
               image={CashBag}
               title="$20,000 USDC"
-              description="Cash prizes for the best submissions"
+              description="as cash prizes for the best submissions"
             />
           </GridItem>
           <GridItem>
             <FeatureCard
               image={Coder}
-              title="Front end + Rust Track"
-              description="Two tracks to participate in"
+              title="Front End & Rust Tracks"
+              description="with multiple challenges"
             />
           </GridItem>
           <GridItem>
             <FeatureCard
               image={WinFlag}
-              title="10 Tracks"
-              description="To prove you’re the best candidate"
+              title="Ten Challenges"
+              description="to prove you're the best candidate"
             />
           </GridItem>
         </Grid>
@@ -771,7 +678,7 @@ const faqs: { question: string; answer: string }[] = [
   {
     question: 'Which teams are hiring?',
     answer:
-      'Over 30 Solana teams are hiring. In no particular order, here is the list of teams that are hiring: Mirror World, Pyth, Galxe, Sanctum, Tensor, Metaplex, Backpack, Helio, Helius, Orca, Iron, Drift, Squads, Mango, Kamino, Openbook, Solana Beach, Turbin3, Future Protocol , Flash Trade, Bandit, Trustless Engineering, Bonk, Jito, MH Ventures, Prism, Transfero, Khiza, Moby Up, Jungle, and Nosana.',
+      'Over 45 Solana teams are hiring. In no particular order, here is the list of teams that are hiring: Transfero, Jungle , Khiza, Rippio, Moby Up, Coinlivre, Meta Pool, Prism , Bonk, MH Ventures, Bandit, Turbine, Future, Prizm, MoonThat , Jito, Flash, Parcl, Mirror World, Pyth, Galaxe, Nosana, Sanctum, Tensor , Metaplex, Backpack , Helio, Streamflow, Helius, Orca, Iron, Drift , Squads , Mango , Kamino, Openbook, Solana Beach , Noenomad, Linum Labs, DUX, VW Trucks & Bus, TRUTHER, Infratoken, One Percent and Bitfinix.',
   },
   {
     question: 'Does winning a Talent Olympics bounty guarantee a job?',
@@ -833,3 +740,160 @@ function FAQs() {
     </VStack>
   );
 }
+
+export const CountDownRenderer = ({
+  days,
+  hours,
+  minutes,
+}: {
+  days: number;
+  hours: number;
+  minutes: number;
+}) => {
+  if (days > 0) {
+    return <span>{`${days}d:${hours}h`}</span>;
+  }
+  return <span>{`${hours}h:${minutes}m`}</span>;
+};
+
+const SubscribeHackathon = () => {
+  const [isSubscribeLoading, setIsSubscribeLoading] = useState(false);
+  const [sub, setSub] = useState<
+    (SubscribeHackathon & {
+      User: User | null;
+    })[]
+  >([]);
+
+  const { userInfo } = userStore();
+  const posthog = usePostHog();
+  const {
+    isOpen: warningIsOpen,
+    onOpen: warningOnOpen,
+    onClose: warningOnClose,
+  } = useDisclosure();
+  const [update, setUpdate] = useState<boolean>(false);
+
+  const { status: authStatus } = useSession();
+  const isAuthenticated = authStatus === 'authenticated';
+
+  const handleSubscribe = async () => {
+    if (isAuthenticated) {
+      if (!userInfo?.isTalentFilled) {
+        warningOnOpen();
+        return;
+      }
+
+      setIsSubscribeLoading(true);
+      try {
+        await axios.post('/api/hackathon/subscribe/subscribe', {
+          slug: SLUG,
+        });
+        setUpdate((prev) => !prev);
+        setIsSubscribeLoading(false);
+        toast.success('Subscribed to the listing');
+      } catch (error) {
+        console.log(error);
+        setIsSubscribeLoading(false);
+        toast.error('Error');
+      }
+    }
+  };
+  const handleUnSubscribe = async (idSub: string) => {
+    setIsSubscribeLoading(true);
+
+    try {
+      await axios.post('/api/hackathon/subscribe/unSubscribe', {
+        id: idSub,
+      });
+      setUpdate((prev) => !prev);
+      setIsSubscribeLoading(false);
+      toast.success('Unsubscribed');
+    } catch (error) {
+      console.log(error);
+      setIsSubscribeLoading(false);
+      toast.error('Error');
+    }
+  };
+
+  useEffect(() => {
+    const fetchUser = async () => {
+      const { data } = await axios.post('/api/hackathon/subscribe/get', {
+        slug: SLUG,
+      });
+      setSub(data);
+    };
+    fetchUser();
+  }, [update]);
+
+  return (
+    <HStack>
+      {warningIsOpen && (
+        <WarningModal
+          onCTAClick={() => posthog.capture('complete profile_CTA pop up')}
+          isOpen={warningIsOpen}
+          onClose={warningOnClose}
+          title={'Complete your profile'}
+          bodyText={
+            'Please complete your profile before subscribing to a hackthon.'
+          }
+          primaryCtaText={'Complete Profile'}
+          primaryCtaLink={'/new/talent'}
+        />
+      )}
+      <HStack align="start">
+        <AuthWrapper>
+          <IconButton
+            className="ph-no-capture"
+            color={
+              sub.find((e) => e.userId === userInfo?.id) ? 'white' : 'white'
+            }
+            bg={
+              sub.find((e) => e.userId === userInfo?.id)
+                ? 'brand.purple'
+                : 'rgba(34, 35, 36, 0.46)'
+            }
+            aria-label="Notify"
+            icon={
+              isSubscribeLoading ? (
+                <Spinner color="white" size="sm" />
+              ) : sub.find((e) => e.userId === userInfo?.id) ? (
+                <TbBellRinging />
+              ) : (
+                <TbBell />
+              )
+            }
+            onClick={() => {
+              if (sub.find((e) => e.userId === userInfo?.id)) {
+                posthog.capture('unnotify me_hackathon');
+                handleUnSubscribe(
+                  sub.find((e) => e.userId === userInfo?.id)?.id as string,
+                );
+
+                return;
+              }
+              posthog.capture('notify me_hackathon');
+              handleSubscribe();
+            }}
+            variant="solid"
+          />
+        </AuthWrapper>
+      </HStack>
+      <HStack whiteSpace={'nowrap'}>
+        <VStack align={'start'} gap={0}>
+          <Text color={'white'} fontWeight={500}>
+            {sub?.length ? sub.length + 1 : 1}
+          </Text>
+          <Text
+            display={{ base: 'none', md: 'flex' }}
+            color={'brand.slate.300'}
+            fontSize={'sm'}
+            fontWeight={400}
+          >
+            {(sub?.length ? sub.length + 1 : 1) === 1 ? 'Person' : 'People'}{' '}
+            Interested
+          </Text>
+        </VStack>
+      </HStack>
+    </HStack>
+  );
+};

@@ -132,7 +132,7 @@ export const DesktopNavbar = ({ onLoginOpen, onSearchOpen }: Props) => {
                 href="/talent-olympics"
               >
                 <Image
-                  h={5}
+                  h={8}
                   pt={0.5}
                   objectFit={'contain'}
                   alt="Talent Olympics Nav Icon"
