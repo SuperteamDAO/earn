@@ -271,6 +271,7 @@ function Hero({
 }) {
   const PoweredByHeight = '2.5rem';
   const isSM = useBreakpointValue({ base: false, sm: true });
+  const isMD = useBreakpointValue({ base: false, md: true });
 
   const [countdownDate, setCountdownDate] = useState<Date>(
     new Date(START_DATE),
@@ -339,7 +340,7 @@ function Hero({
             Join Discord
           </Button>
 
-          {!isSM && <SubscribeHackathon />}
+          {!isMD && <SubscribeHackathon />}
         </Flex>
         <Button
           alignItems="center"
@@ -367,7 +368,7 @@ function Hero({
             )}
           </Text>
         </Button>
-        {isSM && <SubscribeHackathon />}
+        {isMD && <SubscribeHackathon />}
       </Flex>
       <Text mt={4} color="white" fontSize={'9px'}>
         POWERED BY
