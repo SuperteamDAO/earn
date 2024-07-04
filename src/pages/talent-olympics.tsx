@@ -116,7 +116,7 @@ const frontendTrack: TrackProps[] = [
 const rustTrack: TrackProps[] = [
   {
     icon: baseAsset('monitor.svg'),
-    title: 'Mint, <redacted> and <redacted> for NFTs',
+    title: 'NFT Mint, <redacted> & <redacted> ',
     description:
       'Create an Anchor program that can mint, vault and <redacted> NFTs',
     amount: 1000,
@@ -133,7 +133,7 @@ const rustTrack: TrackProps[] = [
   },
   {
     icon: baseAsset('filegit.svg'),
-    title: '<redacted> for Memecoins + <redacted>',
+    title: '<redacted> & <redacted> for Memecoins',
     description:
       'Using <redacted> , create a <redacted> for SPL memecoin prices, and a <redacted> .',
     amount: 1000,
@@ -395,7 +395,7 @@ function GetHiredBy() {
     },
     {
       name: 'Pyth',
-      src: baseAsset('pyth.png'),
+      src: baseAsset('pyth2.svg'),
     },
     {
       name: 'Galxe',
@@ -479,11 +479,67 @@ function GetHiredBy() {
     },
     {
       name: 'Bonk',
-      src: baseAsset('bonk.svg'),
+      src: baseAsset('bonk.png'),
     },
     {
       name: 'MH Ventures',
       src: baseAsset('mh-ventures.svg'),
+    },
+    {
+      name: 'Meta Pool',
+      src: baseAsset('metapool.svg'),
+    },
+    {
+      name: 'Prism',
+      src: baseAsset('prism.jpg'),
+    },
+    {
+      name: 'Neo Nomad',
+      src: baseAsset('neonomad.svg'),
+    },
+    {
+      name: 'Linum Labs',
+      src: baseAsset('linumlabs.svg'),
+    },
+    {
+      name: 'Truther',
+      src: baseAsset('truther.svg'),
+    },
+    {
+      name: 'Infratoken',
+      src: baseAsset('infratoken.svg'),
+    },
+    {
+      name: 'One Percent',
+      src: baseAsset('onepercent.svg'),
+    },
+    {
+      name: 'Bitfinex',
+      src: baseAsset('bitfinex.svg'),
+    },
+    {
+      name: 'Dabba',
+      src: baseAsset('dabba.svg'),
+    },
+    {
+      name: 'Proto',
+      src: baseAsset('proto.svg'),
+    },
+    {
+      name: 'someraw2',
+      src: baseAsset('someraw2.svg'),
+    },
+    {
+      name: 'Transfero',
+      src: baseAsset('transfero.svg'),
+    },
+    {
+      name: 'Jungle',
+      src: baseAsset('jungle.svg'),
+    },
+    {
+      name: 'Moby',
+      src: baseAsset('moby.svg'),
     },
   ];
 
@@ -1097,7 +1153,7 @@ const TextStyler: React.FC<TextStylerProps> = ({ text }) => {
               filter="blur(4px)"
               title="Redacted content"
             >
-              {word}
+              redac
             </Box>
           );
         }
