@@ -23,7 +23,7 @@ function EditBounty({ slug }: Props) {
   const getBounty = async () => {
     setIsBountyLoading(true);
     try {
-      const bountyDetails = await axios.get(`/api/bounties/${slug}/`);
+      const bountyDetails = await axios.get(`/api/listings/${slug}/`);
       if (bountyDetails.data.sponsorId !== userInfo?.currentSponsorId) {
         router.push('/dashboard/listings');
       } else {

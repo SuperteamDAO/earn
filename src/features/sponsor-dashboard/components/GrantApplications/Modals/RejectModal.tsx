@@ -49,7 +49,7 @@ export const RejectModal = ({
   const rejectGrant = async () => {
     setLoading(true);
     try {
-      await axios.post(`/api/grantApplication/updateApplicationStatus`, {
+      await axios.post(`/api/grant-application/update-application-status`, {
         id: applicationId,
         applicationStatus: 'Rejected',
       });

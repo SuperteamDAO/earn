@@ -54,7 +54,7 @@ export const RecordPaymentModal = ({
   const addPayment = async (data: PaymentFormInputs) => {
     setLoading(true);
     try {
-      await axios.get(`/api/grantApplication/addPayment`, {
+      await axios.get(`/api/grant-application/addPayment`, {
         params: {
           id: applicationId,
           trancheAmount: data.amount,

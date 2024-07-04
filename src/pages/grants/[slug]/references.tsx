@@ -140,10 +140,9 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
 
   let grantData;
   try {
-    const grantDetails = await axios.post(
-      `${getURL()}api/grants/getGrantBySlug`,
-      { slug },
-    );
+    const grantDetails = await axios.post(`${getURL()}api/grants/by-slug`, {
+      slug,
+    });
     grantData = grantDetails.data;
   } catch (e) {
     console.error(e);

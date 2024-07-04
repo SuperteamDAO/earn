@@ -12,7 +12,7 @@ const Bounty: NextPage = () => {
 
 export const getServerSideProps: GetServerSideProps = async (context) => {
   const { slug } = context.params as { slug: string };
-  const res = await fetch(`${getURL()}api/bounties/${slug}`);
+  const res = await fetch(`${getURL()}api/listings/${slug}`);
   const data: ApiResponse = await res.json();
 
   if (data.type) {

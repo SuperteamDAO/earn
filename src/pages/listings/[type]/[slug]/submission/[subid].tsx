@@ -30,7 +30,7 @@ const Sumbissions = ({ slug, subid }: BountyDetailsProps) => {
     setIsLoading(true);
     try {
       const bountyDetails = await axios.post(
-        `/api/bounties/submission/bounty`,
+        `/api/listings/submission/bounty`,
         {
           slug,
           submissionId: subid,

@@ -112,7 +112,7 @@ export const ListingTable = ({ listings, setListings }: ListingTableProps) => {
       for (const listing of listings) {
         let count = 0;
         if (listing?.type === 'grant') {
-          const response = await axios.post(`/api/grantApplication/count`, {
+          const response = await axios.post(`/api/grant-application/count`, {
             grantId: listing?.id,
           });
           count = response.data;

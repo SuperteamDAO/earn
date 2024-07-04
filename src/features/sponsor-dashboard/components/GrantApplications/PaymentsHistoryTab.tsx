@@ -119,7 +119,7 @@ export const PaymentsHistoryTab = ({
   const getGrantees = async () => {
     try {
       const allGrantees = await axios.get(
-        '/api/grantApplication/approvedGrantees',
+        '/api/grant-application/approved-grantees',
         {
           params: {
             grantId,

@@ -20,7 +20,7 @@ function SignUp({ invite }: Props) {
   const getInvite = async () => {
     setIsLoading(true);
     try {
-      const result = await axios.get('/api/invite/', {
+      const result = await axios.get('/api/member-invites/', {
         params: {
           invite,
         },

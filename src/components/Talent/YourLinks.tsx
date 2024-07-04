@@ -203,7 +203,7 @@ export function YourLinks({ success, useFormStore }: Props) {
       const { subSkills, ...finalOptions } = updateOptions;
 
       const updatedUser = await axios.post('/api/user/update/', finalOptions);
-      await axios.post('/api/email/manual/welcomeTalent/');
+      await axios.post('/api/email/manual/welcome-talent/');
       setUserInfo(updatedUser?.data);
       success();
     } catch (e) {

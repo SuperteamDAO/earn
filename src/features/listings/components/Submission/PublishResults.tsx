@@ -75,7 +75,7 @@ export function PublishResults({
     if (!bounty?.id) return;
     setIsPublishingResults(true);
     try {
-      await axios.post(`/api/bounties/announce/${bounty?.id}/`);
+      await axios.post(`/api/listings/announce/${bounty?.id}/`);
       setIsWinnersAnnounced(true);
       setIsPublishingResults(false);
     } catch (e) {
