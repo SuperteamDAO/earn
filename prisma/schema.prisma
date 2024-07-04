@@ -309,60 +309,61 @@ model Session {
 }
 
 model User {
-  id                String             @id @default(uuid())
-  publicKey         String?
-  email             String             @unique
-  username          String?            @unique
-  photo             String?            @db.Text
-  firstName         String?            @db.Text
-  lastName          String?            @db.Text
-  createdAt         DateTime           @default(now())
-  updatedAt         DateTime           @updatedAt
-  isVerified        Boolean            @default(false)
-  role              String             @default("USER")
-  totalEarnedInUSD  Int                @default(0)
-  isTalentFilled    Boolean            @default(false)
-  interests         String?            @db.Text
-  bio               String?            @db.Text
-  twitter           String?            @db.Text
-  discord           String?            @db.Text
-  github            String?            @db.Text
-  linkedin          String?            @db.Text
-  website           String?            @db.Text
-  telegram          String?            @db.Text
-  community         String?            @db.Text
-  experience        String?
-  superteamLevel    String?
-  location          String?
-  cryptoExperience  String?
-  workPrefernce     String?
-  currentEmployer   String?
-  notifications     Json?
-  private           Boolean            @default(false)
-  skills            Json?
-  currentSponsorId  String?
-  emailVerified     DateTime?
-  hackathonId       String?
-  featureModalShown Boolean            @default(false)
-  surveysShown      Json?
-  stRecommended     Boolean            @default(false)
-  acceptedTOS       Boolean            @default(false)
-  currentSponsor    Sponsors?          @relation(fields: [currentSponsorId], references: [id])
-  UserSponsors      UserSponsors[]
-  poc               Bounties[]         @relation("poc")
-  Comment           Comment[]
-  Submission        Submission[]
-  Grants            Grants[]
-  UserInvites       UserInvites[]
-  SubscribeBounty   SubscribeBounty[]
-  PoW               PoW[]
-  accounts          Account[]
-  sessions          Session[]
-  Hackathon         Hackathon?         @relation(fields: [hackathonId], references: [id])
-  emailSettings     EmailSettings[]
-  TalentRankings    TalentRankings[]
-  Scouts            Scouts[]
-  GrantApplication  GrantApplication[]
+  id                 String               @id @default(uuid())
+  publicKey          String?
+  email              String               @unique
+  username           String?              @unique
+  photo              String?              @db.Text
+  firstName          String?              @db.Text
+  lastName           String?              @db.Text
+  createdAt          DateTime             @default(now())
+  updatedAt          DateTime             @updatedAt
+  isVerified         Boolean              @default(false)
+  role               String               @default("USER")
+  totalEarnedInUSD   Int                  @default(0)
+  isTalentFilled     Boolean              @default(false)
+  interests          String?              @db.Text
+  bio                String?              @db.Text
+  twitter            String?              @db.Text
+  discord            String?              @db.Text
+  github             String?              @db.Text
+  linkedin           String?              @db.Text
+  website            String?              @db.Text
+  telegram           String?              @db.Text
+  community          String?              @db.Text
+  experience         String?
+  superteamLevel     String?
+  location           String?
+  cryptoExperience   String?
+  workPrefernce      String?
+  currentEmployer    String?
+  notifications      Json?
+  private            Boolean              @default(false)
+  skills             Json?
+  currentSponsorId   String?
+  emailVerified      DateTime?
+  hackathonId        String?
+  featureModalShown  Boolean              @default(false)
+  surveysShown       Json?
+  stRecommended      Boolean              @default(false)
+  acceptedTOS        Boolean              @default(false)
+  currentSponsor     Sponsors?            @relation(fields: [currentSponsorId], references: [id])
+  UserSponsors       UserSponsors[]
+  poc                Bounties[]           @relation("poc")
+  Comment            Comment[]
+  Submission         Submission[]
+  Grants             Grants[]
+  UserInvites        UserInvites[]
+  SubscribeBounty    SubscribeBounty[]
+  PoW                PoW[]
+  accounts           Account[]
+  sessions           Session[]
+  Hackathon          Hackathon?           @relation(fields: [hackathonId], references: [id])
+  emailSettings      EmailSettings[]
+  TalentRankings     TalentRankings[]
+  Scouts             Scouts[]
+  GrantApplication   GrantApplication[]
+  SubscribeHackathon SubscribeHackathon[]
 
   @@index([email, publicKey, username])
   @@index([currentSponsorId])
@@ -478,6 +479,20 @@ model SubscribeBounty {
   @@index([userId])
 }
 
+model SubscribeHackathon {
+  id          String     @id @default(uuid())
+  userId      String
+  hackathonId String
+  isArchived  Boolean    @default(false)
+  createdAt   DateTime   @default(now())
+  updatedAt   DateTime   @updatedAt
+  User        User       @relation(fields: [userId], references: [id])
+  Hackthons   Hackathon? @relation(fields: [hackathonId], references: [id])
+
+  @@index([hackathonId])
+  @@index([userId])
+}
+
 model VerificationToken {
   identifier String
   token      String   @unique
@@ -487,20 +502,21 @@ model VerificationToken {
 }
 
 model Hackathon {
-  id           String     @id @default(uuid())
-  slug         String     @unique
-  name         String
-  logo         String
-  sponsorId    String?    @unique
-  deadline     DateTime?
-  startDate    DateTime?
-  description  String
-  altLogo      String?
-  announceDate DateTime?
-  eligibility  Json?
-  listings     Bounties[]
-  Sponsor      Sponsors?  @relation(fields: [sponsorId], references: [id])
-  User         User[]
+  id                 String               @id @default(uuid())
+  slug               String               @unique
+  name               String
+  logo               String
+  sponsorId          String?              @unique
+  deadline           DateTime?
+  startDate          DateTime?
+  description        String
+  altLogo            String?
+  announceDate       DateTime?
+  eligibility        Json?
+  listings           Bounties[]
+  Sponsor            Sponsors?            @relation(fields: [sponsorId], references: [id])
+  User               User[]
+  SubscribeHackathon SubscribeHackathon[]
 }
 
 model UnsubscribedEmail {
