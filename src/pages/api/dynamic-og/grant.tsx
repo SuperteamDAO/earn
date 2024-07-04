@@ -14,11 +14,11 @@ const formatNumber = (num: string) =>
   Number(num).toLocaleString(undefined, { maximumFractionDigits: 2 });
 
 const fontDataP = fetchAsset(
-  new URL('../../../public/Inter-SemiBold.woff', import.meta.url),
+  new URL('../../../../public/Inter-SemiBold.woff', import.meta.url),
 );
 
 const sponsorImageP = fetchAsset(
-  new URL('../../../public/assets/logo/sponsor-logo.png', import.meta.url),
+  new URL('../../../../public/assets/logo/sponsor-logo.png', import.meta.url),
 );
 
 export default async function handler(request: NextRequest) {
@@ -42,7 +42,9 @@ export default async function handler(request: NextRequest) {
     const sponsor = getParam('sponsor', (x) => formatString(x, 100));
     const token = getParam('token', (x) => formatString(x, 100));
 
-    const displayReward = `${minReward} - ${maxReward}`;
+    const displayReward = isNaN(minReward)
+      ? `Upto ${maxReward}`
+      : `${minReward} - ${maxReward}`;
 
     const getTokenIcon = (symbol: any) =>
       tokenList.find((t) => t.tokenSymbol === symbol)?.icon;
