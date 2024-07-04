@@ -3,13 +3,11 @@ import type { NextApiRequest, NextApiResponse } from 'next';
 import { prisma } from '@/prisma';
 
 async function handler(req: NextApiRequest, res: NextApiResponse) {
-  const { id } = req.body;
+  const { id } = req.query;
 
   try {
     const result = await prisma.grantApplication.update({
-      where: {
-        id,
-      },
+      where: { id: id as string },
       data: {
         isShipped: true,
       },

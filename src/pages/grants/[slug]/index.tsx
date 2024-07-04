@@ -168,7 +168,7 @@ function Grants({ grant: initialGrant }: InitialGrant) {
                   />
                   <Flex
                     direction={'column'}
-                    display={grant?.externalLink ? 'none' : 'block'}
+                    display={grant?.link ? 'none' : 'block'}
                     w="full"
                   >
                     <Flex w="full" mt={2}>
@@ -222,11 +222,13 @@ function Grants({ grant: initialGrant }: InitialGrant) {
                             fontSize={{ base: 'lg', md: 'xl' }}
                             fontWeight={500}
                           >
-                            $
-                            {Math.round(
-                              grant?.totalApproved /
-                                grant?._count.GrantApplication,
-                            ) || 0}
+                            {grant.totalApproved
+                              ? `$` +
+                                Math.round(
+                                  grant?.totalApproved /
+                                    grant?._count.GrantApplication,
+                                )
+                              : '—'}
                           </Text>
                           <Text
                             mt={-1}

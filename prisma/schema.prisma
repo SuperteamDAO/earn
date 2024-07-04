@@ -184,7 +184,6 @@ model Grants {
   requirements     String?            @db.Text
   GrantApplication GrantApplication[]
   airtableId       String?
-  externalLink     String?
   avgResponseTime  String?            @default("24h")
 
   @@index([id, slug])
@@ -199,9 +198,9 @@ model GrantApplication {
   applicationStatus GrantApplicationStatus @default(Pending)
   projectTitle      String
   projectOneLiner   String
-  projectDetails    String
+  projectDetails    String                 @db.VarChar(2000)
   projectTimeline   String
-  proofOfWork       String
+  proofOfWork       String                 @db.VarChar(2000)
   walletAddress     String
   milestones        String?                @db.VarChar(2000)
   kpi               String?                @db.VarChar(2000)
