@@ -491,7 +491,7 @@ function GetHiredBy() {
     },
     {
       name: 'Prism',
-      src: baseAsset('prism.jpg'),
+      src: baseAsset('prism.svg'),
     },
     {
       name: 'Neo Nomad',
