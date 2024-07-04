@@ -170,9 +170,6 @@ importers:
       react-dom:
         specifier: 18.3.1
         version: 18.3.1(react@18.3.1)
-      react-easy-marquee:
-        specifier: ^1.2.4
-        version: 1.2.4(react@18.3.1)
       react-hook-form:
         specifier: ^7.51.5
         version: 7.52.0(react@18.3.1)
@@ -5475,12 +5472,6 @@ packages:
     resolution: {integrity: sha512-5m4nQKp+rZRb09LNH59GM4BxTh9251/ylbKIbpe7TpGxfJ+9kv6BLkLBXIjjspbgbnIBNqlI23tRnTWT0snUIw==}
     peerDependencies:
       react: ^18.3.1
-
-  react-easy-marquee@1.2.4:
-    resolution: {integrity: sha512-xp0pfCnvcGxniuUZSSFxU3Kf4IVBxTG1FpCuNf0+h0qo01zwrDtVJj4QoxjkPfQulX1K1PdH7SeyIYcZQdMDIg==}
-    engines: {node: '>=14', npm: '>=6'}
-    peerDependencies:
-      react: ^17.0.2
 
   react-fast-compare@3.2.2:
     resolution: {integrity: sha512-nsO+KSNgo1SbJqJEYRE9ERzo7YtYbou/OqjSQKxV7jcKox7+usiUVZOAC+XnDOABXggQTno0Y1CpVnuWEc1boQ==}
@@ -12984,10 +12975,6 @@ snapshots:
       loose-envify: 1.4.0
       react: 18.3.1
       scheduler: 0.23.2
-
-  react-easy-marquee@1.2.4(react@18.3.1):
-    dependencies:
-      react: 18.3.1
 
   react-fast-compare@3.2.2: {}
 

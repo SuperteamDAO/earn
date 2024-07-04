@@ -15,12 +15,14 @@ import {
   IconButton,
   Image,
   keyframes,
+  Link,
   Modal,
   ModalBody,
   ModalContent,
   ModalOverlay,
   Spinner,
   Text,
+  Tooltip,
   useBreakpointValue,
   useDisclosure,
   VStack,
@@ -673,70 +675,75 @@ function TrackBox({
   hackathonIsOn,
 }: TrackProps) {
   return (
-    <Box
-      as={NextLink}
-      w="full"
-      maxW="lg"
-      p={{ base: 3, md: 4 }}
-      bg="white"
-      borderWidth={'1px'}
-      borderColor="brand.slate.200"
-      borderRadius={8}
-      pointerEvents={hackathonIsOn ? 'auto' : 'none'}
-      cursor={hackathonIsOn ? 'pointer' : 'not-allowed'}
-      href={hackathonIsOn ? link : '#'}
-    >
-      <Flex align="center" gap={5}>
-        <Image
-          w={{ base: 12, md: '4.5rem' }}
-          h={{ base: 12, md: '4.5rem' }}
-          borderRadius={3}
-          objectFit={'cover'}
-          alt={title}
-          src={icon}
-        />
-        <Flex direction={'column'}>
+    <Tooltip label={hackathonIsOn ? '' : 'Details to be revealed on July 11.'}>
+      <Box
+        w="full"
+        maxW="lg"
+        p={{ base: 3, md: 4 }}
+        bg="white"
+        borderWidth={'1px'}
+        borderColor="brand.slate.200"
+        borderRadius={8}
+        cursor={hackathonIsOn ? 'pointer' : 'not-allowed'}
+      >
+        <Link
+          as={NextLink}
+          pointerEvents={hackathonIsOn ? 'auto' : 'none'}
+          href={link}
+        >
+          <Flex align="center" gap={5}>
+            <Image
+              w={{ base: 12, md: '4.5rem' }}
+              h={{ base: 12, md: '4.5rem' }}
+              borderRadius={3}
+              objectFit={'cover'}
+              alt={title}
+              src={icon}
+            />
+            <Flex direction={'column'}>
+              <Text
+                color={'brand.slate.900'}
+                fontSize={{ base: 'sm', md: 'md' }}
+                fontWeight={600}
+              >
+                <TextStyler text={title} />
+              </Text>
+              <Text
+                color={'brand.slate.500'}
+                fontSize={{ base: 'sm', md: 'md' }}
+                textOverflow={'ellipsis'}
+                noOfLines={2}
+              >
+                <TextStyler text={description} />
+              </Text>
+            </Flex>
+          </Flex>
+        </Link>
+        <Flex align="center" justify={'end'} gap={1} mt={3}>
+          <Image
+            w={{ base: 4, md: 6 }}
+            h={{ base: 4, md: 6 }}
+            alt={token}
+            rounded={'full'}
+            src={tokenList.find((t) => t.tokenSymbol === token)?.icon || ''}
+          />
           <Text
-            color={'brand.slate.900'}
+            color={'brand.slate.700'}
             fontSize={{ base: 'sm', md: 'md' }}
             fontWeight={600}
           >
-            <TextStyler text={title} />
+            {amount?.toLocaleString()}
           </Text>
           <Text
-            color={'brand.slate.500'}
+            color={'brand.slate.400'}
             fontSize={{ base: 'sm', md: 'md' }}
-            textOverflow={'ellipsis'}
-            noOfLines={2}
+            fontWeight={600}
           >
-            <TextStyler text={description} />
+            {token}
           </Text>
         </Flex>
-      </Flex>
-      <Flex align="center" justify={'end'} gap={1} mt={3}>
-        <Image
-          w={{ base: 4, md: 6 }}
-          h={{ base: 4, md: 6 }}
-          alt={token}
-          rounded={'full'}
-          src={tokenList.find((t) => t.tokenSymbol === token)?.icon || ''}
-        />
-        <Text
-          color={'brand.slate.700'}
-          fontSize={{ base: 'sm', md: 'md' }}
-          fontWeight={600}
-        >
-          {amount?.toLocaleString()}
-        </Text>
-        <Text
-          color={'brand.slate.400'}
-          fontSize={{ base: 'sm', md: 'md' }}
-          fontWeight={600}
-        >
-          {token}
-        </Text>
-      </Flex>
-    </Box>
+      </Box>
+    </Tooltip>
   );
 }
 
