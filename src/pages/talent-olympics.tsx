@@ -14,6 +14,7 @@ import {
   HStack,
   IconButton,
   Image,
+  keyframes,
   Modal,
   ModalBody,
   ModalContent,
@@ -32,9 +33,8 @@ import NextImage, { type StaticImageData } from 'next/image';
 import NextLink from 'next/link';
 import { useSession } from 'next-auth/react';
 import { usePostHog } from 'posthog-js/react';
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import Countdown from 'react-countdown';
-import Marquee from 'react-easy-marquee';
 import { toast } from 'react-hot-toast';
 import { FaPlay } from 'react-icons/fa';
 import { FaDiscord } from 'react-icons/fa6';
@@ -503,25 +503,33 @@ function GetHiredBy() {
     },
   ];
 
-  // const multipliedHiredBy = [...hiredBy, ...hiredBy, ...hiredBy, ...hiredBy, ...hiredBy]
+  const multipliedHiredBy = [
+    ...hiredBy,
+    ...hiredBy,
+    ...hiredBy,
+    ...hiredBy,
+    ...hiredBy,
+  ];
 
   return (
-    <Flex align="center" gap={8} w="full" py={6}>
-      <Box display="block" w="max-content" color="brand.slate.400">
-        Get Hired By{' '}
+    <Flex align="center" gap={{ base: 4, md: 8 }} w="full" py={6}>
+      <Box display="block" minW={'5rem'} color="brand.slate.400">
+        Get Hired <br /> By{' '}
       </Box>
-      <Marquee>
-        {hiredBy.map((h, index) => (
-          <Image
-            key={`${h.name}-${index}`}
-            display="inline-block"
-            h="2rem"
-            mx={4}
-            alt={h.name}
-            src={h.src}
-          />
-        ))}
-      </Marquee>
+      <Box minW={0}>
+        <Marquee speed={100}>
+          {multipliedHiredBy.map((h, index) => (
+            <Image
+              key={`${h.name}-${index}`}
+              display="inline-block"
+              h="2rem"
+              mx={4}
+              alt={h.name}
+              src={h.src}
+            />
+          ))}
+        </Marquee>
+      </Box>
     </Flex>
   );
 }
@@ -1028,58 +1036,47 @@ function KashModal({
   );
 }
 
-// interface MarqueeProps {
-//   children: React.ReactNode;
-//   speed?: number;
-// }
-//
-// const marqueeKeyframes = keyframes`
-//   0% { transform: translateX(0); }
-//   100% { transform: translateX(-100%); }
-// `;
-//
-// const Marquee2: React.FC<MarqueeProps> = ({ children, speed = 50 }) => {
-//   const [contentWidth, setContentWidth] = useState<number>(0);
-//   const contentRef = useRef<HTMLDivElement | null>(null);
-//
-//   useEffect(() => {
-//     const updateContentWidth = () => {
-//       if (contentRef.current) {
-//         setContentWidth(contentRef.current.scrollWidth);
-//       }
-//     };
-//
-//     updateContentWidth();
-//     window.addEventListener('resize', updateContentWidth);
-//
-//     return () => {
-//       window.removeEventListener('resize', updateContentWidth);
-//     };
-//   }, [children]);
-//
-//   const duration = contentWidth / speed;
-//
-//   const animation = `${marqueeKeyframes} ${duration}s linear infinite`;
-//
-//   return (
-//     <Box overflow="hidden" position="relative">
-//       <Flex
-//         ref={contentRef}
-//         whiteSpace="nowrap"
-//         animation={animation}
-//       >
-//         {children}
-//       </Flex>
-//       <Flex
-//         position="absolute"
-//         top={0}
-//         left={contentWidth}
-//         whiteSpace="nowrap"
-//         animation={animation}
-//       >
-//         {children}
-//       </Flex>
-//     </Box>
-//   );
-// };
-//
+interface MarqueeProps {
+  children: React.ReactNode;
+  speed?: number;
+}
+
+const Marquee: React.FC<MarqueeProps> = ({ children, speed = 50 }) => {
+  const [contentWidth, setContentWidth] = useState<number>(0);
+  const contentRef = useRef<HTMLDivElement | null>(null);
+
+  useEffect(() => {
+    const updateContentWidth = () => {
+      if (contentRef.current) {
+        setContentWidth(contentRef.current.scrollWidth / 2);
+      }
+    };
+
+    updateContentWidth();
+    window.addEventListener('resize', updateContentWidth);
+
+    return () => {
+      window.removeEventListener('resize', updateContentWidth);
+    };
+  }, [children]);
+
+  const marqueeAnimation = keyframes`
+    0% { transform: translateX(0); }
+    100% { transform: translateX(-${contentWidth}px); }
+  `;
+
+  const duration = contentWidth / speed;
+
+  return (
+    <Box pos="relative" overflow="hidden">
+      <Flex
+        ref={contentRef}
+        animation={`${marqueeAnimation} ${duration}s linear infinite`}
+        whiteSpace="nowrap"
+      >
+        {children}
+        {children}
+      </Flex>
+    </Box>
+  );
+};
