@@ -62,7 +62,7 @@ export default function SponsorListings() {
   const getListings = async () => {
     setIsListingsLoading(true);
     try {
-      const allListings = await axios.get('/api/listings/dashboard', {
+      const allListings = await axios.get('/api/sponsor-dashboard/listings', {
         params: {
           searchText,
         },

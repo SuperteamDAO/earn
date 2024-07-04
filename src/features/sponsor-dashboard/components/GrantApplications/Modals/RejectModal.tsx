@@ -49,10 +49,13 @@ export const RejectModal = ({
   const rejectGrant = async () => {
     setLoading(true);
     try {
-      await axios.post(`/api/grant-application/update-application-status`, {
-        id: applicationId,
-        applicationStatus: 'Rejected',
-      });
+      await axios.post(
+        `/api/sponsor-dashboard/grants/update-application-status`,
+        {
+          id: applicationId,
+          applicationStatus: 'Rejected',
+        },
+      );
 
       const updatedApplications = applications.map((application) =>
         application.id === applicationId

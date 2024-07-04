@@ -76,11 +76,14 @@ export const ApproveModal = ({
 
     setLoading(true);
     try {
-      await axios.post(`/api/grant-application/update-application-status`, {
-        id: applicationId,
-        applicationStatus: 'Approved',
-        approvedAmount,
-      });
+      await axios.post(
+        `/api/sponsor-dashboard/grants/update-application-status`,
+        {
+          id: applicationId,
+          applicationStatus: 'Approved',
+          approvedAmount,
+        },
+      );
 
       const updatedApplications = applications.map((application) =>
         application.id === applicationId
