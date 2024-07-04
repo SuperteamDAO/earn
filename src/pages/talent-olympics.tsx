@@ -30,6 +30,7 @@ import {
 import { SubscribeHackathon } from '@prisma/client';
 import axios from 'axios';
 import dayjs from 'dayjs';
+import timezone from 'dayjs/plugin/timezone';
 import utc from 'dayjs/plugin/utc';
 import NextImage, { type StaticImageData } from 'next/image';
 import NextLink from 'next/link';
@@ -59,6 +60,7 @@ import { userStore } from '@/store/user';
 import { TalentOlympicsHeader } from '@/svg/talent-olympics-header';
 
 dayjs.extend(utc);
+dayjs.extend(timezone);
 
 const SLUG = 'talent-olympics';
 
@@ -162,7 +164,7 @@ const rustTrack: TrackProps[] = [
 
 export default function TalentOlympics() {
   const PADX = 4;
-  const START_DATE = '2024-07-11T11:59:59Z';
+  const START_DATE = '2024-07-10T11:59:59Z';
   const CLOSE_DATE = '2024-07-14T11:59:59Z';
 
   const [hackathonIsOn, setHackathonIsOn] = useState(false);
@@ -258,7 +260,7 @@ function Hero({
   const isMD = useBreakpointValue({ base: false, md: true });
 
   const [countdownDate, setCountdownDate] = useState<Date>(
-    new Date(START_DATE),
+    dayjs.utc(START_DATE).local().toDate(),
   );
   const [status, setStatus] = useState<'Open In' | 'Close In' | 'Closed'>(
     'Open In',
@@ -268,7 +270,7 @@ function Hero({
     if (dayjs().isAfter(CLOSE_DATE, 'day')) {
       setStatus('Closed');
     } else if (dayjs().isAfter(START_DATE, 'day')) {
-      setCountdownDate(new Date(CLOSE_DATE));
+      setCountdownDate(dayjs.utc(CLOSE_DATE).local().toDate());
       setStatus('Close In');
     }
   }, []);
