@@ -29,9 +29,6 @@ import {
 } from '@chakra-ui/react';
 import { SubscribeHackathon } from '@prisma/client';
 import axios from 'axios';
-import dayjs from 'dayjs';
-import timezone from 'dayjs/plugin/timezone';
-import utc from 'dayjs/plugin/utc';
 import NextImage, { type StaticImageData } from 'next/image';
 import NextLink from 'next/link';
 import { useSession } from 'next-auth/react';
@@ -58,9 +55,7 @@ import Trophy from '@/public/assets/hackathon/talent-olympics/trophy.png';
 import WinFlag from '@/public/assets/hackathon/talent-olympics/winflag.png';
 import { userStore } from '@/store/user';
 import { TalentOlympicsHeader } from '@/svg/talent-olympics-header';
-
-dayjs.extend(utc);
-dayjs.extend(timezone);
+import { dayjs } from '@/utils/dayjs';
 
 const SLUG = 'talent-olympics';
 
@@ -164,8 +159,8 @@ const rustTrack: TrackProps[] = [
 
 export default function TalentOlympics() {
   const PADX = 4;
-  const START_DATE = '2024-07-10T11:59:59Z';
-  const CLOSE_DATE = '2024-07-14T11:59:59Z';
+  const START_DATE = '2024-07-10T23:59:59Z';
+  const CLOSE_DATE = '2024-07-14T23:59:59Z';
 
   const [hackathonIsOn, setHackathonIsOn] = useState(false);
   useEffect(() => {
@@ -260,7 +255,7 @@ function Hero({
   const isMD = useBreakpointValue({ base: false, md: true });
 
   const [countdownDate, setCountdownDate] = useState<Date>(
-    dayjs.utc(START_DATE).local().toDate(),
+    dayjs.utc(START_DATE).toDate(),
   );
   const [status, setStatus] = useState<'Open In' | 'Close In' | 'Closed'>(
     'Open In',
