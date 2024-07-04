@@ -65,114 +65,96 @@ const baseAsset = (filename: string) => base + filename;
 const frontendTrack: TrackProps[] = [
   {
     icon: baseAsset('scan.svg'),
-    title: 'Code a landing page with Next',
+    title: 'Wallet and <redacted> ',
     description:
-      'Write programs to make a fresh new landing page with next to your existing landing page. ',
+      'Create a wallet with the best-in-class integration and <redacted> experience.',
     amount: 1000,
     token: 'USDC',
-    link: '/listings/hackathon/code-a-landing-page-with-next/',
+    link: '#',
   },
   {
     icon: baseAsset('laptop.svg'),
-    title: 'Code a landing page with Next',
+    title: 'Escrow + <redacted>',
     description:
-      'Write programs to make a fresh new landing page with next to your existing landing page. ',
+      'Display <redacted> data using multiple sources for a <redacted> application.',
     amount: 1000,
     token: 'USDC',
-    link: '/listings/hackathon/code-a-landing-page-with-next/',
+    link: '#',
   },
   {
     icon: baseAsset('cube.svg'),
-    title: 'Code a landing page with Next',
+    title: '<redacted> Aggregator',
+
     description:
-      'Write programs to make a fresh new landing page with next to your existing landing page. ',
+      'Display <redacted> data using multiple sources for a <redacted> application.',
     amount: 1000,
     token: 'USDC',
-    link: '/listings/hackathon/code-a-landing-page-with-next/',
+    link: '#',
   },
   {
     icon: baseAsset('cube2.svg'),
-    title: 'Code a landing page with Next',
+    title: 'Make a Dashboard',
     description:
-      'Write programs to make a fresh new landing page with next to your existing landing page. ',
+      'Make an explorer or dashboard that fetches data from <redacted> .',
     amount: 1000,
     token: 'USDC',
-    link: '/listings/hackathon/code-a-landing-page-with-next/',
+    link: '#',
   },
   {
     icon: baseAsset('code.svg'),
-    title: 'Code a landing page with Next',
+    title: 'Create a Marketplace',
     description:
-      'Write programs to make a fresh new landing page with next to your existing landing page. ',
+      'Design and develop a creative marketplace UI using <redacted> .',
     amount: 1000,
     token: 'USDC',
-    link: '/listings/hackathon/code-a-landing-page-with-next/',
-  },
-  {
-    icon: baseAsset('scan.svg'),
-    title: 'Code a landing page with Next',
-    description:
-      'Write programs to make a fresh new landing page with next to your existing landing page. ',
-    amount: 1000,
-    token: 'USDC',
-    link: '/listings/hackathon/code-a-landing-page-with-next/',
+    link: '#',
   },
 ];
 
 const rustTrack: TrackProps[] = [
   {
     icon: baseAsset('monitor.svg'),
-    title: 'Code a landing page with Next',
+    title: 'Mint, <redacted> and <redacted> for NFTs',
     description:
-      'Write programs to make a fresh new landing page with next to your existing landing page. ',
+      'Create an Anchor program that can mint, vault and <redacted> NFTs',
     amount: 1000,
     token: 'USDC',
-    link: '/listings/hackathon/code-a-landing-page-with-next/',
+    link: '#',
   },
   {
     icon: baseAsset('git.svg'),
-    title: 'Code a landing page with Next',
-    description:
-      'Write programs to make a fresh new landing page with next to your existing landing page. ',
+    title: 'DAO <redacted> program',
+    description: 'Develop a DAO <redacted> program using Anchor',
     amount: 1000,
     token: 'USDC',
-    link: '/listings/hackathon/code-a-landing-page-with-next/',
+    link: '#',
   },
   {
     icon: baseAsset('filegit.svg'),
-    title: 'Code a landing page with Next',
+    title: '<redacted> for Memecoins + <redacted>',
     description:
-      'Write programs to make a fresh new landing page with next to your existing landing page. ',
+      'Using <redacted> , create a <redacted> for SPL memecoin prices, and a <redacted> .',
     amount: 1000,
     token: 'USDC',
-    link: '/listings/hackathon/code-a-landing-page-with-next/',
+    link: '#',
   },
   {
     icon: baseAsset('book.svg'),
-    title: 'Code a landing page with Next',
+    title: 'Whitelist-Gated <redacted>',
     description:
-      'Write programs to make a fresh new landing page with next to your existing landing page. ',
+      'Using Native Rust or Anchor, create a whitelist-gated <redacted> .',
     amount: 1000,
     token: 'USDC',
-    link: '/listings/hackathon/code-a-landing-page-with-next/',
+    link: '#',
   },
   {
     icon: baseAsset('bookmark.svg'),
-    title: 'Code a landing page with Next',
+    title: '2-Sided Marketplace for <redacted>',
     description:
-      'Write programs to make a fresh new landing page with next to your existing landing page. ',
+      'Create a 2-sided marketplace model for <redacted> using Anchor or Rust',
     amount: 1000,
     token: 'USDC',
-    link: '/listings/hackathon/code-a-landing-page-with-next/',
-  },
-  {
-    icon: baseAsset('monitor.svg'),
-    title: 'Code a landing page with Next',
-    description:
-      'Write programs to make a fresh new landing page with next to your existing landing page. ',
-    amount: 1000,
-    token: 'USDC',
-    link: '/listings/hackathon/code-a-landing-page-with-next/',
+    link: '#',
   },
 ];
 
@@ -219,7 +201,7 @@ export default function TalentOlympics() {
         <Box overflowX="hidden" maxW="8xl" mx="auto" px={PADX}>
           <About />
         </Box>
-        <Box pos="relative" px={PADX} py={8} bg="#F8FAFC">
+        <Box pos="relative" w="full" px={PADX} py={8} bg="#F8FAFC">
           <Text
             pos="absolute"
             zIndex={0}
@@ -668,7 +650,7 @@ function Track({
   hackathonIsOn: boolean;
 }) {
   return (
-    <VStack align="start" gap={6}>
+    <VStack align="start" gap={6} mx={{ base: 'auto', md: '0' }}>
       <Text color="brand.slate.900" fontSize="lg" fontWeight={700}>
         {title}
       </Text>
@@ -693,6 +675,7 @@ function TrackBox({
   return (
     <Box
       as={NextLink}
+      w="full"
       maxW="lg"
       p={{ base: 3, md: 4 }}
       bg="white"
@@ -718,7 +701,7 @@ function TrackBox({
             fontSize={{ base: 'sm', md: 'md' }}
             fontWeight={600}
           >
-            {title}
+            <TextStyler text={title} />
           </Text>
           <Text
             color={'brand.slate.500'}
@@ -726,7 +709,7 @@ function TrackBox({
             textOverflow={'ellipsis'}
             noOfLines={2}
           >
-            {description}
+            <TextStyler text={description} />
           </Text>
         </Flex>
       </Flex>
@@ -1078,5 +1061,41 @@ const Marquee: React.FC<MarqueeProps> = ({ children, speed = 50 }) => {
         {children}
       </Flex>
     </Box>
+  );
+};
+
+interface TextStylerProps {
+  text: string;
+}
+
+const TextStyler: React.FC<TextStylerProps> = ({ text }) => {
+  const words = text.split(' ');
+
+  return (
+    <Text fontSize="lg">
+      {words.map((word, index) => {
+        if (word.toLowerCase() === '<redacted>') {
+          return (
+            <Box
+              key={index}
+              as="span"
+              display="inline-block"
+              mx={1}
+              px={2}
+              color="transparent"
+              bg="gray.200"
+              borderRadius="md"
+              textShadow="0 0 32px white"
+              userSelect="none"
+              filter="blur(4px)"
+              title="Redacted content"
+            >
+              {word}
+            </Box>
+          );
+        }
+        return <span key={index}>{word} </span>;
+      })}
+    </Text>
   );
 };
