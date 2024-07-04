@@ -180,6 +180,21 @@ export const MobileNavbar = ({ onLoginOpen }: Props) => {
               label={'Leaderboard'}
               isActive={false}
             />
+            <Divider my={2} borderColor={'brand.slate.300'} />
+            <Link
+              as={NextLink}
+              alignItems="center"
+              display="flex"
+              pt={2}
+              href="/talent-olympics"
+            >
+              <Image
+                h={14}
+                objectFit={'contain'}
+                alt="Talent Olympics Nav Icon"
+                src="/assets/hackathon/talent-olympics/nav.svg"
+              />
+            </Link>
           </DrawerBody>
         </DrawerContent>
       </Drawer>
