@@ -479,7 +479,7 @@ function GetHiredBy() {
     },
     {
       name: 'Turbine',
-      src: baseAsset('turbine.svg'),
+      src: baseAsset('turbine2.svg'),
     },
     {
       name: 'Iron',
@@ -502,25 +502,23 @@ function GetHiredBy() {
       src: baseAsset('mh-ventures.svg'),
     },
   ];
+
+  // const multipliedHiredBy = [...hiredBy, ...hiredBy, ...hiredBy, ...hiredBy, ...hiredBy]
+
   return (
     <Flex align="center" gap={8} w="full" py={6}>
       <Box display="block" w="max-content" color="brand.slate.400">
         Get Hired By{' '}
       </Box>
-      <Marquee pauseOnHover duration={10000}>
-        {hiredBy.map((h) => (
-          <NextImage
-            key={h.name}
-            src={h.src}
-            height={20}
-            width={40}
+      <Marquee>
+        {hiredBy.map((h, index) => (
+          <Image
+            key={`${h.name}-${index}`}
+            display="inline-block"
+            h="2rem"
+            mx={4}
             alt={h.name}
-            style={{
-              width: 'fit-content',
-              height: '2rem',
-              margin: '0 1rem',
-              objectFit: 'contain',
-            }}
+            src={h.src}
           />
         ))}
       </Marquee>
@@ -1029,3 +1027,59 @@ function KashModal({
     </Modal>
   );
 }
+
+// interface MarqueeProps {
+//   children: React.ReactNode;
+//   speed?: number;
+// }
+//
+// const marqueeKeyframes = keyframes`
+//   0% { transform: translateX(0); }
+//   100% { transform: translateX(-100%); }
+// `;
+//
+// const Marquee2: React.FC<MarqueeProps> = ({ children, speed = 50 }) => {
+//   const [contentWidth, setContentWidth] = useState<number>(0);
+//   const contentRef = useRef<HTMLDivElement | null>(null);
+//
+//   useEffect(() => {
+//     const updateContentWidth = () => {
+//       if (contentRef.current) {
+//         setContentWidth(contentRef.current.scrollWidth);
+//       }
+//     };
+//
+//     updateContentWidth();
+//     window.addEventListener('resize', updateContentWidth);
+//
+//     return () => {
+//       window.removeEventListener('resize', updateContentWidth);
+//     };
+//   }, [children]);
+//
+//   const duration = contentWidth / speed;
+//
+//   const animation = `${marqueeKeyframes} ${duration}s linear infinite`;
+//
+//   return (
+//     <Box overflow="hidden" position="relative">
+//       <Flex
+//         ref={contentRef}
+//         whiteSpace="nowrap"
+//         animation={animation}
+//       >
+//         {children}
+//       </Flex>
+//       <Flex
+//         position="absolute"
+//         top={0}
+//         left={contentWidth}
+//         whiteSpace="nowrap"
+//         animation={animation}
+//       >
+//         {children}
+//       </Flex>
+//     </Box>
+//   );
+// };
+//
