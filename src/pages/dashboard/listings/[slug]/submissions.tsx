@@ -85,7 +85,7 @@ function BountySubmissions({ slug }: Props) {
     setIsBountyLoading(true);
     try {
       const bountyDetails = await axios.get(
-        `/api/listings/${slug}/submissions-dashboard/`,
+        `/api/sponsor-dashboard/${slug}/listing/`,
       );
       const isExpired =
         bountyDetails.data?.deadline &&
@@ -124,7 +124,7 @@ function BountySubmissions({ slug }: Props) {
     try {
       setIsLoading(true);
       const submissionDetails = await axios.get(
-        `/api/listings/${slug}/submissions`,
+        `/api/sponsor-dashboard/${slug}/submissions`,
         {
           params: {
             searchText,

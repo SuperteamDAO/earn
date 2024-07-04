@@ -141,7 +141,9 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
 
   let bountyData;
   try {
-    const bountyDetails = await axios.get(`${getURL()}api/listings/${slug}`);
+    const bountyDetails = await axios.get(
+      `${getURL()}api/sponsor-dashboard/${slug}`,
+    );
     bountyData = bountyDetails.data;
   } catch (e) {
     console.error(e);

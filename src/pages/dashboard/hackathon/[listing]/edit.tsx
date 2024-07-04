@@ -22,7 +22,9 @@ function EditBounty({ listing }: Props) {
   const getBounty = async () => {
     setIsBountyLoading(true);
     try {
-      const bountyDetails = await axios.get(`/api/listings/${listing}/`);
+      const bountyDetails = await axios.get(
+        `/api/sponsor-dashboard/${listing}/`,
+      );
       if (bountyDetails.data.hackathonId !== userInfo?.hackathonId) {
         router.push(`/dashboard/hackathon/`);
       } else {

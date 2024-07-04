@@ -35,7 +35,7 @@ function BountyDetails({ bounty: initialBounty }: BountyDetailsProps) {
   const getSubmissionsCount = async () => {
     try {
       const submissionCountDetails = await axios.get(
-        `/api/submission/${bounty?.id}/count/`,
+        `/api/listing/${bounty?.id}/submission-count/`,
       );
       setSubmissionNumber(submissionCountDetails?.data || 0);
     } catch (e) {
@@ -169,9 +169,12 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
 
   let bountyData;
   try {
-    const bountyDetails = await axios.get(`${getURL()}api/listings/${slug}`, {
-      params: { type },
-    });
+    const bountyDetails = await axios.get(
+      `${getURL()}api/sponsor-dashboard/${slug}`,
+      {
+        params: { type },
+      },
+    );
     bountyData = bountyDetails.data;
   } catch (e) {
     console.error(e);
