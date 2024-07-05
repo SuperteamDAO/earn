@@ -44,7 +44,7 @@ function BountySubmissions({ listing }: Props) {
     setIsBountyLoading(true);
     try {
       const bountyDetails = await axios.get(
-        `/api/sponsor-dashboard/${listing}/submissions/`,
+        `/api/sponsor-dashboard/${listing}/listing/`,
       );
       setBounty(bountyDetails.data);
       if (bountyDetails.data.hackathonId !== userInfo?.hackathonId) {

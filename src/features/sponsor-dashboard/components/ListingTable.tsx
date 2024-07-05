@@ -118,7 +118,7 @@ export const ListingTable = ({ listings, setListings }: ListingTableProps) => {
           count = response.data;
         } else {
           const response = await axios.get(
-            `/api/submission/${listing?.id}/count/`,
+            `/api/listings/${listing?.id}/submission-count/`,
           );
           count = response.data;
         }

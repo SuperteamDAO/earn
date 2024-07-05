@@ -81,7 +81,7 @@ function TalentProfile({ slug }: TalentProps) {
     const fetch = async () => {
       try {
         setIsloading(true);
-        const res = await axios.post(`/api/user/getAllInfo`, {
+        const res = await axios.post(`/api/user/info`, {
           username: slug,
         });
 
