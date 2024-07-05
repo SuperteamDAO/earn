@@ -198,12 +198,12 @@ model GrantApplication {
   applicationStatus GrantApplicationStatus @default(Pending)
   projectTitle      String
   projectOneLiner   String
-  projectDetails    String                 @db.VarChar(2000)
+  projectDetails    String                 @db.VarChar(3000)
   projectTimeline   String
-  proofOfWork       String                 @db.VarChar(2000)
+  proofOfWork       String                 @db.VarChar(3000)
   walletAddress     String
-  milestones        String?                @db.VarChar(2000)
-  kpi               String?                @db.VarChar(2000)
+  milestones        String?                @db.VarChar(3000)
+  kpi               String?                @db.VarChar(3000)
   answers           Json?
   createdAt         DateTime               @default(now())
   updatedAt         DateTime               @updatedAt

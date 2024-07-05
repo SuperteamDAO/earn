@@ -28,6 +28,8 @@ async function grantApplication(
 
   const formattedProjectTimeline = dayjs(projectTimeline).format('D MMMM YYYY');
 
+  const parsedAsk = parseInt(ask, 10);
+
   try {
     const result = await prisma.grantApplication.create({
       data: {
@@ -41,7 +43,7 @@ async function grantApplication(
         milestones,
         kpi,
         walletAddress,
-        ask,
+        ask: parsedAsk,
       },
       include: {
         user: true,
