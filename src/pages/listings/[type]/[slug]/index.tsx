@@ -35,7 +35,7 @@ function BountyDetails({ bounty: initialBounty }: BountyDetailsProps) {
   const getSubmissionsCount = async () => {
     try {
       const submissionCountDetails = await axios.get(
-        `/api/listing/${bounty?.id}/submission-count/`,
+        `/api/listings/${bounty?.id}/submission-count/`,
       );
       setSubmissionNumber(submissionCountDetails?.data || 0);
     } catch (e) {
