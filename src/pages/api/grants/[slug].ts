@@ -3,7 +3,9 @@ import type { NextApiRequest, NextApiResponse } from 'next';
 import { prisma } from '@/prisma';
 
 export default async function user(req: NextApiRequest, res: NextApiResponse) {
-  const { slug } = req.body;
+  const params = req.query;
+
+  const slug = params.slug as string;
 
   if (!slug) {
     return res.status(400).json({

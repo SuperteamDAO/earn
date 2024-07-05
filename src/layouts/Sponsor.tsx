@@ -91,7 +91,7 @@ export function Sidebar({ children }: { children: ReactNode }) {
 
   const getSponsorLatestActiveSlug = async () => {
     try {
-      const slug = await axios.get('/api/bounties/latestActiveSlug');
+      const slug = await axios.get('/api/listings/latest-active-slug');
       if (slug.data) {
         setLatestActiveSlug(slug.data.slug);
       }

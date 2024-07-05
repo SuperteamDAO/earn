@@ -19,7 +19,7 @@ export function InviteButton({ bountyId, userId, invited, setInvited }: Props) {
   async function inviteToScout(userId: string) {
     setLoading(true);
     try {
-      await axios.post(`/api/bounties/scout/invite/${bountyId}/${userId}`);
+      await axios.post(`/api/listings/scout/invite/${bountyId}/${userId}`);
       setInvited(userId);
       posthog.capture('invited talent_scout', {
         invitedUser: userId,

@@ -14,11 +14,11 @@ const formatNumber = (num: string) =>
   Number(num).toLocaleString(undefined, { maximumFractionDigits: 2 });
 
 const fontDataP = fetchAsset(
-  new URL('../../../public/Inter-SemiBold.woff', import.meta.url),
+  new URL('../../../../public/Inter-SemiBold.woff', import.meta.url),
 );
 
 const sponsorImageP = fetchAsset(
-  new URL('../../../public/assets/logo/sponsor-logo.png', import.meta.url),
+  new URL('../../../../public/assets/logo/sponsor-logo.png', import.meta.url),
 );
 
 export default async function handler(request: NextRequest) {

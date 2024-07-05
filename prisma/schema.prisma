@@ -524,6 +524,12 @@ model UnsubscribedEmail {
   email String @unique
 }
 
+model UnsubscribeToken {
+  token     String   @id @unique
+  email     String
+  createdAt DateTime @default(now())
+}
+
 enum TalentRankingSkills {
   DEVELOPMENT
   DESIGN
@@ -541,6 +547,8 @@ enum EmailType {
   NO_ACTIVITY
   NO_REVIEW_SPONSOR_1
   NO_REVIEW_SPONSOR_2
+  ROLLING_15_DAYS
+  ROLLING_30_DAYS
 }
 
 enum Role {

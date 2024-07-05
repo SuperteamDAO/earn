@@ -50,7 +50,14 @@ export const ApplicationHeader = ({ grant, totalApplications }: Props) => {
   const exportSubmissionsCsv = async () => {
     setIsExporting(true);
     try {
-      const exportURL = await axios.get(`/api/submission/${grant?.id}/export/`);
+      const exportURL = await axios.get(
+        `/api/sponsor-dashboard/submission/export/`,
+        {
+          params: {
+            listingId: grant?.id,
+          },
+        },
+      );
       const url = exportURL?.data?.url || '';
       window.open(url, '_blank');
       setIsExporting(false);

@@ -23,7 +23,9 @@ const SubmissionPage = ({ slug }: { slug: string }) => {
   const getBounty = async () => {
     setIsLoading(true);
     try {
-      const bountyDetails = await axios.get(`/api/bounties/submission/${slug}`);
+      const bountyDetails = await axios.get(
+        `/api/listings/submissions/${slug}`,
+      );
       setBounty(bountyDetails.data.bounty);
       setSubmission(bountyDetails.data.submission);
     } catch (e) {

@@ -52,7 +52,7 @@ function BountyDetails({ bounty: initialBounty }: BountyDetailsProps) {
           />
           <meta
             property="og:image"
-            content={`${getURL()}api/listing-og/?title=${encodedTitle}&reward=${initialBounty?.rewardAmount}&token=${initialBounty?.token}&sponsor=${initialBounty?.sponsor?.name}&logo=${initialBounty?.sponsor?.logo}&type=${initialBounty?.type}&compensationType=${initialBounty?.compensationType}&minRewardAsk=${initialBounty?.minRewardAsk}&maxRewardAsk=${initialBounty?.maxRewardAsk}`}
+            content={`${getURL()}api/dynamic-og/listing/?title=${encodedTitle}&reward=${initialBounty?.rewardAmount}&token=${initialBounty?.token}&sponsor=${initialBounty?.sponsor?.name}&logo=${initialBounty?.sponsor?.logo}&type=${initialBounty?.type}&compensationType=${initialBounty?.compensationType}&minRewardAsk=${initialBounty?.minRewardAsk}&maxRewardAsk=${initialBounty?.maxRewardAsk}`}
           />
           <meta
             name="twitter:title"
@@ -60,7 +60,7 @@ function BountyDetails({ bounty: initialBounty }: BountyDetailsProps) {
           />
           <meta
             name="twitter:image"
-            content={`${getURL()}api/listing-og/?title=${encodedTitle}&reward=${initialBounty?.rewardAmount}&token=${initialBounty?.token}&sponsor=${initialBounty?.sponsor?.name}&logo=${initialBounty?.sponsor?.logo}&type=${initialBounty?.type}&compensationType=${initialBounty?.compensationType}&minRewardAsk=${initialBounty?.minRewardAsk}&maxRewardAsk=${initialBounty?.maxRewardAsk}`}
+            content={`${getURL()}api/dynamic-og/listing/?title=${encodedTitle}&reward=${initialBounty?.rewardAmount}&token=${initialBounty?.token}&sponsor=${initialBounty?.sponsor?.name}&logo=${initialBounty?.sponsor?.logo}&type=${initialBounty?.type}&compensationType=${initialBounty?.compensationType}&minRewardAsk=${initialBounty?.minRewardAsk}&maxRewardAsk=${initialBounty?.maxRewardAsk}`}
           />
           <meta name="twitter:card" content="summary_large_image" />
           <meta property="og:image:width" content="1200" />
@@ -141,7 +141,9 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
 
   let bountyData;
   try {
-    const bountyDetails = await axios.get(`${getURL()}api/bounties/${slug}`);
+    const bountyDetails = await axios.get(
+      `${getURL()}api/sponsor-dashboard/${slug}`,
+    );
     bountyData = bountyDetails.data;
   } catch (e) {
     console.error(e);

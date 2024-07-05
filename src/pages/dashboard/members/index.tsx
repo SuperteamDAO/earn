@@ -78,7 +78,7 @@ const Index = () => {
   const getMembers = async () => {
     setIsMembersLoading(true);
     try {
-      const membersList = await axios.get('/api/members/', {
+      const membersList = await axios.get('/api/sponsor-dashboard/members/', {
         params: {
           sponsorId: userInfo?.currentSponsorId,
           searchText,
@@ -116,7 +116,7 @@ const Index = () => {
   }, [userInfo?.currentSponsorId, skip, searchText]);
 
   const onRemoveMember = async (userId: string | undefined) => {
-    await axios.post('/api/members/remove', {
+    await axios.post('/api/sponsor-dashboard/members/remove', {
       id: userId,
     });
 

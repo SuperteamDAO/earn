@@ -132,7 +132,7 @@ export const HowItWorks = () => {
 
   async function getStats() {
     try {
-      const result = await axios.get<Stats>('/api/user/getStats');
+      const result = await axios.get<Stats>('/api/user/stats');
       setHasSubmissions(result.data.participations > 0);
     } catch (err) {
       console.log('Error getting stats - ', err);

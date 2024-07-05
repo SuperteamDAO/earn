@@ -7,21 +7,17 @@ export default async function handler(
   res: NextApiResponse,
 ) {
   try {
+    const { listingId } = req.body;
     const result = await prisma.subscribeBounty.findMany({
-      where: {
-        bountyId: req.body.listingId,
-        isArchived: false,
-      },
-      include: {
-        User: true,
-      },
+      where: { bountyId: listingId, isArchived: false },
+      include: { User: true },
     });
     res.status(200).json(result);
   } catch (error) {
     console.log(error);
     res.status(400).json({
       error,
-      message: 'Error occurred while adding a new bounty.',
+      message: 'Error occurred while fetching subscription status.',
     });
   }
 }

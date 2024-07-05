@@ -69,7 +69,12 @@ export const SubmissionHeader = ({
     setIsExporting(true);
     try {
       const exportURL = await axios.get(
-        `/api/submission/${bounty?.id}/export/`,
+        `/api/sponsor-dashboard/submission/export/`,
+        {
+          params: {
+            listingId: bounty?.id,
+          },
+        },
       );
       const url = exportURL?.data?.url || '';
       window.open(url, '_blank');

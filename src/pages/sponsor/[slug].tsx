@@ -30,7 +30,7 @@ const SponsorListingsPage = ({ slug }: { slug: string }) => {
   const getListings = async () => {
     setIsListingsLoading(true);
     try {
-      const listingsData = await axios.post(`/api/sponsor-page`, {
+      const listingsData = await axios.post(`/api/listings/sponsor`, {
         sponsor: slug,
       });
       setListings(listingsData.data);
