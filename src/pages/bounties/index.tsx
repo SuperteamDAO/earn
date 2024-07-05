@@ -5,6 +5,7 @@ import { useEffect, useState } from 'react';
 import { type Listing, ListingTabs } from '@/features/listings';
 import { Home } from '@/layouts/Home';
 import { Meta } from '@/layouts/Meta';
+import { userStore } from '@/store/user';
 import { dayjs } from '@/utils/dayjs';
 
 interface Listings {
@@ -18,6 +19,12 @@ export default function BountiesPage() {
   });
   const date = dayjs().subtract(2, 'months').toISOString();
 
+  const { userInfo } = userStore();
+  console.log(userInfo);
+
+  const userLocation = userInfo?.location;
+  console.log(userLocation);
+
   const getListings = async () => {
     setIsListingsLoading(true);
     try {
@@ -26,6 +33,7 @@ export default function BountiesPage() {
           category: 'bounties',
           type: 'bounty',
           deadline: date,
+          userLocation: userLocation?.toLocaleUpperCase(),
         },
       });
       setListings(listingsData.data);
