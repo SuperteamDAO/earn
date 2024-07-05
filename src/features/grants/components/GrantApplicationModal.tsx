@@ -124,7 +124,23 @@ export const GrantApplicationModal = ({
     }
   };
 
-  const handleNext = () => setActiveStep((prev) => prev + 1);
+  const handleNext = () => {
+    if (activeStep === 0) {
+      const askValue = watch('ask');
+      const min = minReward || 0;
+      const max = maxReward || Infinity;
+
+      if (askValue < min || askValue > max) {
+        setAskError(
+          `Compensation must be between ${min.toLocaleString()} and ${max.toLocaleString()} ${token}`,
+        );
+        return;
+      }
+    }
+    setAskError('');
+    setActiveStep((prev) => prev + 1);
+  };
+
   const handleBack = () => setActiveStep((prev) => prev - 1);
 
   const date = dayjs().format('YYYY-MM-DD');
@@ -279,20 +295,7 @@ export const GrantApplicationModal = ({
                       id="ask"
                       onWheel={(e) => (e.target as HTMLElement).blur()}
                       placeholder="Enter amount"
-                      {...register('ask', {
-                        valueAsNumber: true,
-                        validate: (value) => {
-                          if (minReward && maxReward) {
-                            if (value < minReward || value > maxReward) {
-                              setAskError(
-                                `Compensation must be between ${minReward.toLocaleString()} and ${maxReward.toLocaleString()} ${token}`,
-                              );
-                              return false;
-                            }
-                          }
-                          return true;
-                        },
-                      })}
+                      {...register('ask')}
                       type="number"
                     />
                   </InputGroup>
