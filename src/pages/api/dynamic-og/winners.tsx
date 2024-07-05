@@ -13,7 +13,7 @@ const formatString = (str: string, maxLength: number) =>
   str?.length > maxLength ? `${str.slice(0, maxLength)}...` : str;
 
 const fontDataP = fetchAsset(
-  new URL('../../../public/Inter-SemiBold.woff', import.meta.url),
+  new URL('../../../../public/Inter-SemiBold.woff', import.meta.url),
 );
 
 const winnerToNumber = (winner: string): string => {

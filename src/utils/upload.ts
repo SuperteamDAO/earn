@@ -24,7 +24,7 @@ export async function uploadToCloudinary(
     const base64Image = await fileToBase64(file);
     const base64Content = base64Image.split(',')[1];
 
-    const response = await axios.post('/api/uploadImage', {
+    const response = await axios.post('/api/upload-image', {
       imageBase64: base64Content,
       type,
       folder,

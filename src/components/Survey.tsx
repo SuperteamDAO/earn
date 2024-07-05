@@ -55,7 +55,7 @@ export const SurveyModal = ({
       $survey_id: surveyId,
       $survey_response: response,
     });
-    await axios.post('/api/user/updateSurvey/', {
+    await axios.post('/api/user/update-survey/', {
       surveyId,
     });
     const updatedUser = await axios.get('/api/user/');

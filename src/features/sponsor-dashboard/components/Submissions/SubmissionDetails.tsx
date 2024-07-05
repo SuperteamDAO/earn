@@ -104,7 +104,7 @@ export const SubmissionDetails = ({
     if (!id) return;
     setIsSelectingWinner(true);
     try {
-      await axios.post(`/api/submission/toggleWinner/`, {
+      await axios.post(`/api/sponsor-dashboard/submission/toggle-winner/`, {
         id,
         isWinner: !!position,
         winnerPosition: position || null,
@@ -222,13 +222,16 @@ export const SubmissionDetails = ({
               reject(new Error('Transaction failed'));
             } else {
               try {
-                await axios.post(`/api/submission/addPayment/`, {
-                  id,
-                  isPaid: true,
-                  paymentDetails: {
-                    txId: signature,
+                await axios.post(
+                  `/api/sponsor-dashboard/submission/add-payment/`,
+                  {
+                    id,
+                    isPaid: true,
+                    paymentDetails: {
+                      txId: signature,
+                    },
                   },
-                });
+                );
 
                 const submissionIndex = submissions.findIndex(
                   (s) => s.id === id,
@@ -273,7 +276,7 @@ export const SubmissionDetails = ({
     id: string | undefined,
   ) => {
     try {
-      await axios.post(`/api/submission/updateLabel/`, {
+      await axios.post(`/api/sponsor-dashboard/submission/update-label/`, {
         label,
         id,
       });

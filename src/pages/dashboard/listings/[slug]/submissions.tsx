@@ -84,7 +84,9 @@ function BountySubmissions({ slug }: Props) {
   const getBounty = async () => {
     setIsBountyLoading(true);
     try {
-      const bountyDetails = await axios.get(`/api/bounties/${slug}/dashboard/`);
+      const bountyDetails = await axios.get(
+        `/api/sponsor-dashboard/${slug}/listing/`,
+      );
       const isExpired =
         bountyDetails.data?.deadline &&
         dayjs(bountyDetails.data?.deadline).isBefore(dayjs());
@@ -122,7 +124,7 @@ function BountySubmissions({ slug }: Props) {
     try {
       setIsLoading(true);
       const submissionDetails = await axios.get(
-        `/api/bounties/${slug}/submissions`,
+        `/api/sponsor-dashboard/${slug}/submissions`,
         {
           params: {
             searchText,
@@ -143,7 +145,7 @@ function BountySubmissions({ slug }: Props) {
   const getScouts = async (id: string) => {
     try {
       const scoutsData = await axios.post<Scouts[]>(
-        `/api/bounties/scout/${id}`,
+        `/api/listings/scout/${id}`,
       );
       const scouts: ScoutRowType[] = scoutsData.data.map((s) => ({
         id: s.id,
