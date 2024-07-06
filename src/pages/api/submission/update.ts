@@ -1,6 +1,7 @@
 import type { NextApiResponse } from 'next';
 
 import { type NextApiRequestWithUser, withAuth } from '@/features/auth';
+import logger from '@/lib/logger';
 import { prisma } from '@/prisma';
 
 async function handler(req: NextApiRequestWithUser, res: NextApiResponse) {
@@ -37,7 +38,7 @@ async function handler(req: NextApiRequestWithUser, res: NextApiResponse) {
 
     return res.status(200).json(result);
   } catch (error: any) {
-    console.error(`User ${userId} unable to edit submission`, error.message);
+    logger.error(`User ${userId} unable to edit submission`, error.message);
     return res.status(400).json({
       error,
       message: 'Error occurred while updating the submission.',

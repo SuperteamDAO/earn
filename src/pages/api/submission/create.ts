@@ -3,6 +3,7 @@ import type { NextApiResponse } from 'next';
 
 import { type NextApiRequestWithUser, withAuth } from '@/features/auth';
 import { sendEmailNotification } from '@/features/emails';
+import logger from '@/lib/logger';
 import { prisma } from '@/prisma';
 
 async function submission(req: NextApiRequestWithUser, res: NextApiResponse) {
@@ -48,7 +49,7 @@ async function submission(req: NextApiRequestWithUser, res: NextApiResponse) {
         triggeredBy: userId,
       });
     } catch (err) {
-      console.log('Error in sending mail to User -', err);
+      logger.error('Error in sending mail to User -', err);
     }
 
     try {
@@ -59,7 +60,7 @@ async function submission(req: NextApiRequestWithUser, res: NextApiResponse) {
         triggeredBy: userId,
       });
     } catch (err) {
-      console.log('Error in sending mail to Sponsor -', err);
+      logger.error('Error in sending mail to Sponsor -', err);
     }
 
     try {
@@ -68,7 +69,7 @@ async function submission(req: NextApiRequestWithUser, res: NextApiResponse) {
         await axios.post(zapierWebhookUrl, result);
       }
     } catch (err) {
-      console.log('Error with Zapier Webhook -', err);
+      logger.error('Error with Zapier Webhook -', err);
     }
 
     return res.status(200).json(result);

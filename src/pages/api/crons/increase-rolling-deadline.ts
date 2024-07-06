@@ -1,6 +1,7 @@
 import { verifySignature } from '@upstash/qstash/nextjs';
 import type { NextApiRequest, NextApiResponse } from 'next';
 
+import logger from '@/lib/logger';
 import { prisma } from '@/prisma';
 import { dayjs } from '@/utils/dayjs';
 
@@ -43,7 +44,7 @@ async function handler(_req: NextApiRequest, res: NextApiResponse) {
 
     res.status(200).json({ message: 'Deadlines extended successfully.' });
   } catch (error) {
-    console.error('Error extending deadlines:', error);
+    logger.error('Error extending deadlines:', error);
     res
       .status(500)
       .json({ message: 'An error occurred while extending deadlines.' });

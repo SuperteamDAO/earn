@@ -1,5 +1,6 @@
 import type { NextApiRequest, NextApiResponse } from 'next';
 
+import logger from '@/lib/logger';
 import { prisma } from '@/prisma';
 
 async function handler(req: NextApiRequest, res: NextApiResponse) {
@@ -15,7 +16,7 @@ async function handler(req: NextApiRequest, res: NextApiResponse) {
 
     return res.status(200).json(result);
   } catch (error) {
-    console.log(error);
+    logger.error(error);
     return res.status(400).json({
       error,
       message: 'Error occurred while updating the grant application.',

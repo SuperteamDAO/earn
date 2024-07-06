@@ -4,6 +4,7 @@ import type { NextApiResponse } from 'next';
 import { type NextApiRequestWithUser, withAuth } from '@/features/auth';
 import { sendEmailNotification } from '@/features/emails';
 import { shouldSendEmailForListing } from '@/features/listing-builder';
+import logger from '@/lib/logger';
 import { prisma } from '@/prisma';
 import { fetchTokenUSDValue } from '@/utils/fetchTokenUSDValue';
 
@@ -46,7 +47,7 @@ async function handler(req: NextApiRequestWithUser, res: NextApiResponse) {
           usdValue = tokenUsdValue * amount;
         }
       } catch (error) {
-        console.error('Error calculating USD value:', error);
+        logger.error('Error calculating USD value:', error);
       }
     }
 
@@ -77,13 +78,13 @@ async function handler(req: NextApiRequestWithUser, res: NextApiResponse) {
         const zapierWebhookUrl = process.env.ZAPIER_BOUNTY_WEBHOOK!;
         await axios.post(zapierWebhookUrl, result);
       } catch (error) {
-        console.error('Error with Zapier Webhook:', error);
+        logger.error('Error with Zapier Webhook:', error);
       }
     }
 
     return res.status(200).json(result);
   } catch (error: any) {
-    console.error(`User ${userId} unable to create a listing:`, error.message);
+    logger.error(`User ${userId} unable to create a listing:`, error.message);
     return res.status(400).json({
       error,
       message: 'Error occurred while adding a new bounty.',

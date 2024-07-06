@@ -1,5 +1,6 @@
 import type { NextApiRequest, NextApiResponse } from 'next';
 
+import logger from '@/lib/logger';
 import { prisma } from '@/prisma';
 
 export default async function comment(
@@ -71,7 +72,7 @@ export default async function comment(
       result,
     });
   } catch (error) {
-    console.log(error);
+    logger.error(error);
     res.status(400).json({
       error,
       message: `Error occurred while fetching bounty with listingId=${listingId}.`,

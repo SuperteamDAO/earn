@@ -1,6 +1,7 @@
 import type { NextApiRequest, NextApiResponse } from 'next';
 import { getToken } from 'next-auth/jwt';
 
+import logger from '@/lib/logger';
 import { prisma } from '@/prisma';
 
 export default async function handler(
@@ -34,7 +35,7 @@ export default async function handler(
       wins: result?.Submission.filter((s) => s.isWinner).length ?? 0,
     });
   } catch (err) {
-    console.log(err);
+    logger.error(err);
     return res
       .status(500)
       .json({ err: 'Error occurred while processing the request.' });

@@ -1,5 +1,6 @@
 import type { NextApiRequest, NextApiResponse } from 'next';
 
+import logger from '@/lib/logger';
 import { prisma } from '@/prisma';
 
 export default async function members(
@@ -52,7 +53,7 @@ export default async function members(
     });
     res.status(200).json({ total, data: result });
   } catch (err) {
-    console.log(err);
+    logger.error(err);
     res.status(400).json({ err: 'Error occurred while fetching members.' });
   }
 }

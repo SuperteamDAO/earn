@@ -6,6 +6,7 @@ import {
   SkillList,
   type SubSkillsType,
 } from '@/interface/skills';
+import logger from '@/lib/logger';
 import { prisma } from '@/prisma';
 
 const uniqueArray = (arr: SubSkillsType[]): SubSkillsType[] => {
@@ -91,7 +92,7 @@ async function handler(req: NextApiRequestWithUser, res: NextApiResponse) {
       }
     }
 
-    console.log('Updating user with data:', updatedData);
+    logger.info('Updating user with data:', updatedData);
 
     await prisma.user.updateMany({
       where: {
@@ -115,7 +116,7 @@ async function handler(req: NextApiRequestWithUser, res: NextApiResponse) {
 
     return res.status(200).json(result);
   } catch (error: any) {
-    console.error(error.message);
+    logger.error(error.message);
 
     return res.status(400).json({
       message: `Error occurred while updating user ${userId}: ${error.message}`,

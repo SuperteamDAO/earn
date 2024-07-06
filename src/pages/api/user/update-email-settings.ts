@@ -1,6 +1,7 @@
 import type { NextApiResponse } from 'next';
 
 import { type NextApiRequestWithUser, withAuth } from '@/features/auth';
+import logger from '@/lib/logger';
 import { prisma } from '@/prisma';
 
 async function handler(req: NextApiRequestWithUser, res: NextApiResponse) {
@@ -29,7 +30,7 @@ async function handler(req: NextApiRequestWithUser, res: NextApiResponse) {
       .status(200)
       .json({ message: 'Email preferences updated successfully!' });
   } catch (error) {
-    console.error('Failed to update email preferences:', error);
+    logger.error('Failed to update email preferences:', error);
     res.status(500).json({ message: 'Internal server error' });
   }
 }

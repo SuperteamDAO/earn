@@ -1,5 +1,6 @@
 import type { NextApiRequest, NextApiResponse } from 'next';
 
+import logger from '@/lib/logger';
 import { prisma } from '@/prisma';
 
 export default async function getAllUsers(
@@ -96,7 +97,7 @@ export default async function getAllUsers(
 
     return res.status(200).json({ ...user, feed: powAndSubmissions });
   } catch (error: any) {
-    console.log(error);
+    logger.error(error);
     return res
       .status(500)
       .json({ error: `Unable to fetch user details: ${error.message}` });

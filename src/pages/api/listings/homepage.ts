@@ -1,6 +1,7 @@
 import { type BountyType } from '@prisma/client';
 import { type NextApiRequest, type NextApiResponse } from 'next';
 
+import logger from '@/lib/logger';
 import { prisma } from '@/prisma';
 
 export type Skills = 'development' | 'design' | 'content' | 'other';
@@ -240,7 +241,7 @@ export default async function listings(
       grants,
     });
   } catch (error) {
-    console.log(error);
+    logger.error(error);
 
     res.status(400).json({
       error,

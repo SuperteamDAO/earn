@@ -2,6 +2,7 @@ import axios from 'axios';
 import debounce from 'lodash.debounce';
 import { useEffect, useState } from 'react';
 
+import logger from '@/lib/logger';
 import { userStore } from '@/store/user';
 
 export const useUsernameValidation = (initialValue = '') => {
@@ -32,7 +33,7 @@ export const useUsernameValidation = (initialValue = '') => {
         available ? '' : 'Username is unavailable! Please try another one.',
       );
     } catch (error) {
-      console.error(error);
+      logger.error(error);
       setIsInvalid(true);
       setValidationErrorMessage(
         'An error occurred while checking username availability.',

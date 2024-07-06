@@ -9,6 +9,7 @@ import {
   skillCategories,
   type TIMEFRAME,
 } from '@/features/leaderboard';
+import logger from '@/lib/logger';
 import { prisma } from '@/prisma';
 
 interface RankingCriteria {
@@ -152,7 +153,7 @@ async function handler(req: NextApiRequest, res: NextApiResponse) {
         }
         res.send('done');
       } catch (err) {
-        console.log('Erorr', JSON.stringify(err, null, 2));
+        logger.error('Erorr', JSON.stringify(err, null, 2));
         res.send('fail');
       }
     },

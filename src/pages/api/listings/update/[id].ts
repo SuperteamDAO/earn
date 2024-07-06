@@ -4,6 +4,7 @@ import type { NextApiResponse } from 'next';
 import { type NextApiRequestWithUser, withAuth } from '@/features/auth';
 import { sendEmailNotification } from '@/features/emails';
 import { shouldSendEmailForListing } from '@/features/listing-builder';
+import logger from '@/lib/logger';
 import { prisma } from '@/prisma';
 import { dayjs } from '@/utils/dayjs';
 import { fetchTokenUSDValue } from '@/utils/fetchTokenUSDValue';
@@ -92,7 +93,7 @@ async function bounty(req: NextApiRequestWithUser, res: NextApiResponse) {
           usdValue = tokenUsdValue * amount;
         }
       } catch (err) {
-        console.error('Error calculating USD value -', err);
+        logger.error('Error calculating USD value -', err);
       }
     }
 
@@ -147,7 +148,7 @@ async function bounty(req: NextApiRequestWithUser, res: NextApiResponse) {
         const zapierWebhookUrl = process.env.ZAPIER_BOUNTY_WEBHOOK!;
         await axios.post(zapierWebhookUrl, result);
       } catch (err) {
-        console.error('Error with Zapier Webhook -', err);
+        logger.error('Error with Zapier Webhook -', err);
       }
     }
 

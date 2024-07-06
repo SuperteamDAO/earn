@@ -1,6 +1,7 @@
 import { type PoW } from '@prisma/client';
 import { type NextApiRequest, type NextApiResponse } from 'next';
 
+import logger from '@/lib/logger';
 import { prisma } from '@/prisma';
 import { dayjs } from '@/utils/dayjs';
 
@@ -185,7 +186,7 @@ export default async function handler(
 
     res.status(200).json(results);
   } catch (error: any) {
-    console.log(error);
+    logger.error(error);
     res.status(500).json({ error: `Unable to fetch data: ${error.message}` });
   }
 }

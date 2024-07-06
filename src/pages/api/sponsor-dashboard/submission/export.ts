@@ -2,6 +2,7 @@ import type { NextApiResponse } from 'next';
 import Papa from 'papaparse';
 
 import { type NextApiRequestWithUser, withAuth } from '@/features/auth';
+import logger from '@/lib/logger';
 import { prisma } from '@/prisma';
 import { csvUpload, str2ab } from '@/utils/cloudinary';
 
@@ -95,7 +96,7 @@ async function handler(req: NextApiRequestWithUser, res: NextApiResponse) {
       url: cloudinaryDetails?.secure_url || cloudinaryDetails?.url,
     });
   } catch (error: any) {
-    console.error(`User ${userId} unable to download csv`, error.message);
+    logger.error(`User ${userId} unable to download csv`, error.message);
     return res.status(400).json({
       error: error.message || error.toString(),
       message: `Error occurred while exporting submissions of listing=${listingId}.`,

@@ -2,6 +2,7 @@ import { status } from '@prisma/client';
 import type { NextApiResponse } from 'next';
 
 import { type NextApiRequestWithUser, withAuth } from '@/features/auth';
+import logger from '@/lib/logger';
 import { prisma } from '@/prisma';
 
 async function handler(req: NextApiRequestWithUser, res: NextApiResponse) {
@@ -100,7 +101,7 @@ async function handler(req: NextApiRequestWithUser, res: NextApiResponse) {
       totalSubmissionsAndApplications,
     });
   } catch (error) {
-    console.error(error);
+    logger.error(error);
     return res.status(500).json({ error: 'Internal Server Error' });
   }
 }

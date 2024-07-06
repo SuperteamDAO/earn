@@ -1,5 +1,6 @@
 import type { NextApiRequest, NextApiResponse } from 'next';
 
+import logger from '@/lib/logger';
 import { prisma } from '@/prisma';
 
 export default async function handler(
@@ -40,7 +41,7 @@ export default async function handler(
 
     return res.status(200).json(result);
   } catch (error: any) {
-    console.error(`unable to view listing`, error.message);
+    logger.error(`unable to view listing`, error.message);
     return res.status(400).json({
       error,
       message: `Error occurred while fetching bounty with slug=${slug}.`,

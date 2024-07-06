@@ -2,6 +2,7 @@ import { Regions } from '@prisma/client';
 import type { NextApiRequest, NextApiResponse } from 'next';
 
 import { Superteams } from '@/constants/Superteam';
+import logger from '@/lib/logger';
 import { prisma } from '@/prisma';
 
 export default async function user(req: NextApiRequest, res: NextApiResponse) {
@@ -91,7 +92,7 @@ export default async function user(req: NextApiRequest, res: NextApiResponse) {
 
     res.status(200).json(result);
   } catch (error) {
-    console.log(error);
+    logger.error(error);
 
     res.status(400).json({
       error,

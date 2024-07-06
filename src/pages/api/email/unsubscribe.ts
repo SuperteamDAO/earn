@@ -1,5 +1,6 @@
 import { type NextApiRequest, type NextApiResponse } from 'next';
 
+import logger from '@/lib/logger';
 import { prisma } from '@/prisma';
 
 export default async function handler(
@@ -34,7 +35,7 @@ export default async function handler(
 
     return res.status(200).json(unsubscribedEmail);
   } catch (error) {
-    console.error(error);
+    logger.error(error);
     return res.status(500).json({ message: 'Something went wrong' });
   }
 }

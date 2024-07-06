@@ -1,5 +1,6 @@
 import type { NextApiRequest, NextApiResponse } from 'next';
 
+import logger from '@/lib/logger';
 import { prisma } from '@/prisma';
 
 export default async function checkUsername(
@@ -28,7 +29,7 @@ export default async function checkUsername(
     }
     return res.status(200).json({ available: true });
   } catch (error) {
-    console.error(error);
+    logger.error(error);
     return res.status(500).json({
       error: 'Error occurred while checking the username availability.',
     });

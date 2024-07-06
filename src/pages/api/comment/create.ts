@@ -2,6 +2,7 @@ import type { NextApiResponse } from 'next';
 
 import { type NextApiRequestWithUser, withAuth } from '@/features/auth';
 import { sendEmailNotification } from '@/features/emails';
+import logger from '@/lib/logger';
 import { prisma } from '@/prisma';
 
 async function comment(req: NextApiRequestWithUser, res: NextApiResponse) {
@@ -108,7 +109,7 @@ async function comment(req: NextApiRequestWithUser, res: NextApiResponse) {
       !replyToId
     ) {
       if (listingType === 'BOUNTY') {
-        console.log({ pocId: pocId });
+        logger.info({ pocId: pocId });
         await sendEmailNotification({
           type: 'commentSponsor',
           id: listingId,
@@ -131,7 +132,7 @@ async function comment(req: NextApiRequestWithUser, res: NextApiResponse) {
 
     return res.status(200).json(result);
   } catch (error: any) {
-    console.error(`User ${userId} unable to edit comment`, error.message);
+    logger.error(`User ${userId} unable to edit comment`, error.message);
 
     return res.status(400).json({
       error,

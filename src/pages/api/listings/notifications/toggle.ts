@@ -1,6 +1,7 @@
 import type { NextApiResponse } from 'next';
 
 import { type NextApiRequestWithUser, withAuth } from '@/features/auth';
+import logger from '@/lib/logger';
 import { prisma } from '@/prisma';
 
 async function toggleSubscription(
@@ -29,7 +30,7 @@ async function toggleSubscription(
 
     return res.status(200).json(result);
   } catch (error) {
-    console.log(error);
+    logger.error(error);
     return res
       .status(400)
       .json({ error, message: 'Error occurred while toggling subscription.' });

@@ -1,6 +1,7 @@
 import type { NextApiResponse } from 'next';
 
 import { type NextApiRequestWithUser, withAuth } from '@/features/auth';
+import logger from '@/lib/logger';
 import { prisma } from '@/prisma';
 
 async function grantApplication(
@@ -13,7 +14,7 @@ async function grantApplication(
 
   const grantId = params.grantId as string;
 
-  console.log(grantId);
+  logger.info(grantId);
 
   try {
     const result = await prisma.grantApplication.findMany({
@@ -28,7 +29,7 @@ async function grantApplication(
 
     return res.status(200).json(result);
   } catch (error: any) {
-    console.error(`User ${userId} unable to apply`, error.message);
+    logger.error(`User ${userId} unable to apply`, error.message);
     return res.status(400).json({
       error,
       message: 'Error occurred while adding a new grant application.',

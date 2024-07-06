@@ -6,6 +6,7 @@ import {
   SkillList,
   type SubSkillsType,
 } from '@/interface/skills';
+import logger from '@/lib/logger';
 import { prisma } from '@/prisma';
 
 const uniqueArray = (arr: SubSkillsType[]): SubSkillsType[] => {
@@ -72,7 +73,7 @@ async function handler(req: NextApiRequestWithUser, res: NextApiResponse) {
 
     return res.json(updatedUser);
   } catch (error: any) {
-    console.error('Error updating user profile:', error.message);
+    logger.error('Error updating user profile:', error.message);
     return res.status(500).json({ error: 'Error updating user profile.' });
   }
 }

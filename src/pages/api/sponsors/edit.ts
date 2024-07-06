@@ -1,6 +1,7 @@
 import type { NextApiResponse } from 'next';
 
 import { type NextApiRequestWithUser, withAuth } from '@/features/auth';
+import logger from '@/lib/logger';
 import { prisma } from '@/prisma';
 
 async function user(req: NextApiRequestWithUser, res: NextApiResponse) {
@@ -39,7 +40,7 @@ async function user(req: NextApiRequestWithUser, res: NextApiResponse) {
       });
     }
   } catch (error) {
-    console.log('file: ~ user ~ error:', error);
+    logger.error('file: ~ user ~ error:', error);
     return res.status(400).json({
       error,
       message: 'Error occurred while updating sponsor.',

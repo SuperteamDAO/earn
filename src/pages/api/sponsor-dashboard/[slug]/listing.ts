@@ -1,6 +1,7 @@
 import type { NextApiResponse } from 'next';
 
 import { type NextApiRequestWithUser, withAuth } from '@/features/auth';
+import logger from '@/lib/logger';
 import { prisma } from '@/prisma';
 
 async function handler(req: NextApiRequestWithUser, res: NextApiResponse) {
@@ -61,7 +62,7 @@ async function handler(req: NextApiRequestWithUser, res: NextApiResponse) {
       .status(200)
       .json({ ...result, totalSubmissions, winnersSelected, paymentsMade });
   } catch (error: any) {
-    console.error(`unable to view listing`, error.message);
+    logger.error(`unable to view listing`, error.message);
     return res.status(400).json({
       error,
       message: `Error occurred while fetching bounty with slug=${slug}.`,

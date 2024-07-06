@@ -2,6 +2,7 @@ import { GrantStatus, status } from '@prisma/client';
 import type { NextApiResponse } from 'next';
 
 import { type NextApiRequestWithUser, withAuth } from '@/features/auth';
+import logger from '@/lib/logger';
 import { prisma } from '@/prisma';
 
 type BountyGrant = {
@@ -112,7 +113,7 @@ async function handler(req: NextApiRequestWithUser, res: NextApiResponse) {
 
     res.status(200).json(data);
   } catch (err: any) {
-    console.error(err.message);
+    logger.error(err.message);
     res
       .status(400)
       .json({ err: 'Error occurred while fetching bounties and grants.' });

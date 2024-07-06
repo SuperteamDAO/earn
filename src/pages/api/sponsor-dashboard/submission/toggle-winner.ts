@@ -2,6 +2,7 @@ import axios from 'axios';
 import type { NextApiResponse } from 'next';
 
 import { type NextApiRequestWithUser, withAuth } from '@/features/auth';
+import logger from '@/lib/logger';
 import { prisma } from '@/prisma';
 import { fetchTokenUSDValue } from '@/utils/fetchTokenUSDValue';
 
@@ -51,7 +52,7 @@ async function handler(req: NextApiRequestWithUser, res: NextApiResponse) {
         await axios.post(zapierWebhookUrl, result);
       }
     } catch (err) {
-      console.log('Error with Zapier Webhook -', err);
+      logger.error('Error with Zapier Webhook -', err);
     }
 
     if (currentSubmission.isWinner !== isWinner) {
@@ -88,7 +89,7 @@ async function handler(req: NextApiRequestWithUser, res: NextApiResponse) {
 
     return res.status(200).json(result);
   } catch (error: any) {
-    console.error(`User ${userId} unable to toggle winners`, error.message);
+    logger.error(`User ${userId} unable to toggle winners`, error.message);
     return res.status(400).json({
       error,
       message: `Error occurred while updating submission ${id}.`,

@@ -2,6 +2,7 @@ import type { NextApiResponse } from 'next';
 
 import { type NextApiRequestWithUser, withAuth } from '@/features/auth';
 import { sendEmailNotification } from '@/features/emails';
+import logger from '@/lib/logger';
 import { prisma } from '@/prisma';
 
 async function scoutInvite(req: NextApiRequestWithUser, res: NextApiResponse) {
@@ -55,7 +56,7 @@ async function scoutInvite(req: NextApiRequestWithUser, res: NextApiResponse) {
     });
     return res.status(200).send(updateScout);
   } catch (error) {
-    console.log(error);
+    logger.error(error);
     return res.status(400).json({
       error,
       message: `Error occurred while inviting scout user=${userId} for bounty with id=${id}.`,

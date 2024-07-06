@@ -2,6 +2,7 @@ import { status as Status } from '@prisma/client';
 import type { NextApiRequest, NextApiResponse } from 'next';
 
 import type { Bounties } from '@/interface/listings';
+import logger from '@/lib/logger';
 import { prisma } from '@/prisma';
 
 // GOTTA SAVE FROM SQL INJECTION
@@ -179,7 +180,7 @@ LIMIT ? ${offset ? `OFFSET ?` : ''}
       .status(200)
       .json({ bounties, count: bountiesCount[0].totalCount.toString() });
   } catch (err) {
-    console.log('err - ', err);
+    logger.info('err - ', err);
     res.status(500);
   }
 }

@@ -1,6 +1,7 @@
 import type { NextApiResponse } from 'next';
 
 import { type NextApiRequestWithUser, withAuth } from '@/features/auth';
+import logger from '@/lib/logger';
 import { prisma } from '@/prisma';
 
 async function removeMember(req: NextApiRequestWithUser, res: NextApiResponse) {
@@ -61,7 +62,7 @@ async function removeMember(req: NextApiRequestWithUser, res: NextApiResponse) {
 
     res.status(200).json({ message: 'Member removed successfully.' });
   } catch (error) {
-    console.error('Error removing member:', error);
+    logger.error('Error removing member:', error);
     return res.status(500).json({ error: 'Internal server error' });
   }
 }

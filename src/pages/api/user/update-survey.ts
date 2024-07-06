@@ -1,6 +1,7 @@
 import type { NextApiResponse } from 'next';
 
 import { type NextApiRequestWithUser, withAuth } from '@/features/auth';
+import logger from '@/lib/logger';
 import { prisma } from '@/prisma';
 
 async function handler(req: NextApiRequestWithUser, res: NextApiResponse) {
@@ -27,7 +28,7 @@ async function handler(req: NextApiRequestWithUser, res: NextApiResponse) {
         surveysShown = parsedSurveysShown;
       }
     } catch (error) {
-      console.error('Failed to parse surveysShown:', error);
+      logger.error('Failed to parse surveysShown:', error);
     }
 
     const updatedSurveys = { ...surveysShown, [surveyId]: true };
@@ -41,7 +42,7 @@ async function handler(req: NextApiRequestWithUser, res: NextApiResponse) {
 
     return res.status(200).json(updatedUser);
   } catch (err) {
-    console.log(err);
+    logger.error(err);
     return res
       .status(500)
       .json({ err: 'Error occurred while processing the request.' });

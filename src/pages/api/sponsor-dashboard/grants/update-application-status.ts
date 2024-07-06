@@ -3,6 +3,7 @@ import type { NextApiResponse } from 'next';
 
 import { type NextApiRequestWithUser, withAuth } from '@/features/auth';
 import { convertGrantApplicationToAirtable } from '@/features/grants';
+import logger from '@/lib/logger';
 import { prisma } from '@/prisma';
 import { airtableConfig, airtableUpsert, airtableUrl } from '@/utils/airtable';
 
@@ -89,7 +90,7 @@ async function handler(req: NextApiRequestWithUser, res: NextApiResponse) {
 
     return res.status(200).json(result);
   } catch (error: any) {
-    console.log(error);
+    logger.error(error);
     return res.status(500).json({
       error: error.message,
       message: 'Error occurred while updating the grant application.',
