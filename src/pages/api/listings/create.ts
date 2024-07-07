@@ -2,6 +2,7 @@ import axios from 'axios';
 import type { NextApiResponse } from 'next';
 
 import { type NextApiRequestWithUser, withAuth } from '@/features/auth';
+import { discordListingUpdate } from '@/features/discord';
 import { sendEmailNotification } from '@/features/emails';
 import { shouldSendEmailForListing } from '@/features/listing-builder';
 import logger from '@/lib/logger';
@@ -70,6 +71,14 @@ async function handler(req: NextApiRequestWithUser, res: NextApiResponse) {
       include: { sponsor: true },
     });
 
+    try {
+      await discordListingUpdate(
+        result,
+        result.isPublished ? 'Published' : 'Draft Added',
+      );
+    } catch (err) {
+      logger.error('Discord Listing Update Message Error', err);
+    }
     logger.info(`Bounty created successfully with ID: ${result.id}`);
     logger.debug(`Created bounty data: ${safeStringify(result)}`);
 

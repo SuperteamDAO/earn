@@ -1,6 +1,7 @@
 import type { NextApiResponse } from 'next';
 
 import { type NextApiRequestWithUser, withAuth } from '@/features/auth';
+import { discordWinnersAnnouncement } from '@/features/discord';
 import { sendEmailNotification } from '@/features/emails';
 import { type Rewards } from '@/features/listings';
 import logger from '@/lib/logger';
@@ -87,8 +88,15 @@ async function announce(req: NextApiRequestWithUser, res: NextApiResponse) {
         deadline,
         winnersAnnouncedAt: new Date().toISOString(),
       },
+      include: {
+        sponsor: true,
+      },
     });
-
+    try {
+      await discordWinnersAnnouncement(result);
+    } catch (err) {
+      logger.error('Discord Listing Update Message Error', err);
+    }
     const rewards: Rewards = (bounty?.rewards || {}) as Rewards;
     const winners = await prisma.submission.findMany({
       where: {
