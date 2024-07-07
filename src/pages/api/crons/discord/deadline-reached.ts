@@ -1,8 +1,8 @@
-// import { verifySignature } from '@upstash/qstash/dist/nextjs';
+import { verifySignature } from '@upstash/qstash/nextjs';
 import dayjs from 'dayjs';
 import type { NextApiRequest, NextApiResponse } from 'next';
 
-import { discordDueForWinners } from '@/features/discord';
+import { discordDeadlineReached } from '@/features/discord';
 import { prisma } from '@/prisma';
 
 async function handler(req: NextApiRequest, res: NextApiResponse) {
@@ -10,17 +10,16 @@ async function handler(req: NextApiRequest, res: NextApiResponse) {
     return res.status(405).json({ message: 'Method not allowed' });
   }
   try {
-    const fiveDaysAgo = dayjs().subtract(5, 'day');
-    const twoMonthsAgo = dayjs().subtract(2, 'month');
-    const startOfFiveDaysAgo = dayjs(fiveDaysAgo).startOf('day').toDate();
-    const startOfTwoMonthsAgo = dayjs(twoMonthsAgo).startOf('day').toDate();
+    const oneDaysAgo = dayjs().subtract(1, 'day');
+    const startOfDay = dayjs(oneDaysAgo).startOf('day').toDate();
+    const endOfDay = dayjs(oneDaysAgo).endOf('day').toDate();
 
     const bounties = await prisma.bounties.findMany({
       where: {
         isWinnersAnnounced: false,
         deadline: {
-          lte: startOfFiveDaysAgo,
-          gte: startOfTwoMonthsAgo,
+          gte: startOfDay,
+          lte: endOfDay,
         },
         sponsor: {
           NOT: undefined,
@@ -39,15 +38,14 @@ async function handler(req: NextApiRequest, res: NextApiResponse) {
         sponsor: true,
       },
     });
-    console.log('bounties - ', bounties.length);
     if (bounties.length === 0) {
       return res
         .status(400)
-        .json({ message: 'No bounties 5 day past deadline' });
+        .json({ message: 'No bounties with deadline yesterday' });
     }
-    await discordDueForWinners(bounties);
+    await discordDeadlineReached(bounties);
     // console.log('fiveDaysAgo bounties - ', bounties)
-    // console.log('bounties length - ', bounties.length)
+    console.log('bounties length - ', bounties.length);
     return res.send('done');
   } catch (err) {
     console.error('Error sending discord message for 5 day past deadline', err);
@@ -57,4 +55,4 @@ async function handler(req: NextApiRequest, res: NextApiResponse) {
   }
 }
 
-export default handler;
+export default verifySignature(handler);
