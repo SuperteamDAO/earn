@@ -491,6 +491,7 @@ function TalentProfile({ slug }: TalentProps) {
                 >
                   <Flex direction={'column'}>
                     <Text fontWeight={600}>
+                      $
                       {new Intl.NumberFormat('en-US', {
                         maximumFractionDigits: 0,
                       }).format(Math.round(talent?.totalEarnedInUSD || 0))}
