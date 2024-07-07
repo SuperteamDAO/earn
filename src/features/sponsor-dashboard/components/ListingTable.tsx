@@ -398,27 +398,27 @@ export const ListingTable = ({ listings, setListings }: ListingTableProps) => {
                           View {listingLabel}
                         </MenuItem>
 
-                        {session?.user?.role === 'GOD' ||
+                        {(session?.user?.role === 'GOD' ||
                           (listing.isPublished &&
                             !pastDeadline &&
-                            listing.type !== 'grant' && (
-                              <Link
-                                as={NextLink}
-                                _hover={{ textDecoration: 'none' }}
-                                href={`/dashboard/listings/${listing.slug}/edit`}
-                                onClick={resetForm}
-                              >
-                                <MenuItem
-                                  py={2}
-                                  color={'brand.slate.500'}
-                                  fontSize={'sm'}
-                                  fontWeight={500}
-                                  icon={<EditIcon w={4} h={4} />}
-                                >
-                                  Edit {listingLabel}
-                                </MenuItem>
-                              </Link>
-                            ))}
+                            listing.type !== 'grant')) && (
+                          <Link
+                            as={NextLink}
+                            _hover={{ textDecoration: 'none' }}
+                            href={`/dashboard/listings/${listing.slug}/edit`}
+                            onClick={resetForm}
+                          >
+                            <MenuItem
+                              py={2}
+                              color={'brand.slate.500'}
+                              fontSize={'sm'}
+                              fontWeight={500}
+                              icon={<EditIcon w={4} h={4} />}
+                            >
+                              Edit {listingLabel}
+                            </MenuItem>
+                          </Link>
+                        )}
                         {(listing.type === 'bounty' ||
                           listing.type === 'project') && (
                           <MenuItem

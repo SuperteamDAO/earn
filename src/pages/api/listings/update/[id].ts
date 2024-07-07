@@ -2,6 +2,7 @@ import axios from 'axios';
 import type { NextApiResponse } from 'next';
 
 import { type NextApiRequestWithUser, withAuth } from '@/features/auth';
+import { discordListingUpdate } from '@/features/discord';
 import { sendEmailNotification } from '@/features/emails';
 import { shouldSendEmailForListing } from '@/features/listing-builder';
 import logger from '@/lib/logger';
@@ -121,8 +122,27 @@ async function bounty(req: NextApiRequestWithUser, res: NextApiResponse) {
         ...updatedData,
         usdValue,
       },
+      include: { sponsor: true },
     });
 
+    try {
+      if (
+        listingBeforeUpdate.isPublished === true &&
+        result.isPublished === false
+      ) {
+        await discordListingUpdate(result, 'Unpublished');
+      }
+      if (
+        listingBeforeUpdate.isPublished === false &&
+        result.isPublished === true
+      ) {
+        await discordListingUpdate(result, 'Published');
+      }
+    } catch (err) {
+      logger.error('Discord Listing Update Message Error', err);
+    }
+
+    // listing email check
     logger.info(`Bounty with ID: ${id} updated successfully`);
     logger.debug(`Updated bounty data: ${safeStringify(result)}`);
 
