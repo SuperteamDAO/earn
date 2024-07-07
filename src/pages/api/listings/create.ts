@@ -77,7 +77,7 @@ async function handler(req: NextApiRequestWithUser, res: NextApiResponse) {
         result.isPublished ? 'Published' : 'Draft Added',
       );
     } catch (err) {
-      console.log('Discord Listing Update Message Error', err);
+      logger.error('Discord Listing Update Message Error', err);
     }
     logger.info(`Bounty created successfully with ID: ${result.id}`);
     logger.debug(`Created bounty data: ${safeStringify(result)}`);

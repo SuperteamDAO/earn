@@ -95,7 +95,7 @@ async function announce(req: NextApiRequestWithUser, res: NextApiResponse) {
     try {
       await discordWinnersAnnouncement(result);
     } catch (err) {
-      console.log('Discord Listing Update Message Error', err);
+      logger.error('Discord Listing Update Message Error', err);
     }
     const rewards: Rewards = (bounty?.rewards || {}) as Rewards;
     const winners = await prisma.submission.findMany({

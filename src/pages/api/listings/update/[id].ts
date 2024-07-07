@@ -139,7 +139,7 @@ async function bounty(req: NextApiRequestWithUser, res: NextApiResponse) {
         await discordListingUpdate(result, 'Published');
       }
     } catch (err) {
-      console.log('Discord Listing Update Message Error', err);
+      logger.error('Discord Listing Update Message Error', err);
     }
 
     // listing email check
