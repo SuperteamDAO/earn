@@ -38,7 +38,6 @@
     "@tiptap/pm": "^2.4.0",
     "@tiptap/react": "^2.4.0",
     "@tiptap/starter-kit": "^2.4.0",
-    "@types/papaparse": "^5.3.14",
     "@upstash/qstash": "^2.5.4",
     "@vercel/og": "^0.6.2",
     "axios": "^1.7.2",

@@ -77,9 +77,6 @@ importers:
       '@tiptap/starter-kit':
         specifier: ^2.4.0
         version: 2.4.0(@tiptap/pm@2.4.0)
-      '@types/papaparse':
-        specifier: ^5.3.14
-        version: 5.3.14
       '@upstash/qstash':
         specifier: ^2.5.4
         version: 2.5.5
@@ -243,6 +240,9 @@ importers:
       '@types/node':
         specifier: 20.14.2
         version: 20.14.2
+      '@types/papaparse':
+        specifier: ^5.3.14
+        version: 5.3.14
       '@types/react':
         specifier: 18.3.3
         version: 18.3.3
