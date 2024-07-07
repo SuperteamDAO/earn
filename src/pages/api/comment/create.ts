@@ -2,10 +2,14 @@ import type { NextApiResponse } from 'next';
 
 import { type NextApiRequestWithUser, withAuth } from '@/features/auth';
 import { sendEmailNotification } from '@/features/emails';
+import logger from '@/lib/logger';
 import { prisma } from '@/prisma';
+import { safeStringify } from '@/utils/safeStringify';
 
 async function comment(req: NextApiRequestWithUser, res: NextApiResponse) {
   const userId = req.userId;
+  logger.debug(`Request body: ${safeStringify(req.body)}`);
+
   try {
     const {
       pocId,
@@ -19,6 +23,7 @@ async function comment(req: NextApiRequestWithUser, res: NextApiResponse) {
     let { type } = req.body;
     if (!type) type = 'NORMAL';
 
+    logger.debug('Creating a new comment in the database');
     const result = await prisma.comment.create({
       data: {
         authorId: userId as string,
@@ -58,6 +63,7 @@ async function comment(req: NextApiRequestWithUser, res: NextApiResponse) {
       },
     });
 
+    logger.debug('Checking for tagged users in the comment');
     const taggedUsernames = (message as string)
       .split(' ')
       .filter((tag) => tag.startsWith('@'))
@@ -81,6 +87,8 @@ async function comment(req: NextApiRequestWithUser, res: NextApiResponse) {
         ],
       },
     });
+
+    logger.debug('Sending email notifications to tagged users');
     taggedUsers.forEach(async (taggedUser) => {
       await sendEmailNotification({
         type: 'commentTag',
@@ -94,6 +102,9 @@ async function comment(req: NextApiRequestWithUser, res: NextApiResponse) {
     });
 
     if (replyToUserId !== userId) {
+      logger.debug(
+        `Sending email notification to user ID: ${replyToUserId} for comment reply`,
+      );
       await sendEmailNotification({
         type: 'commentReply',
         id: listingId,
@@ -108,7 +119,7 @@ async function comment(req: NextApiRequestWithUser, res: NextApiResponse) {
       !replyToId
     ) {
       if (listingType === 'BOUNTY') {
-        console.log({ pocId: pocId });
+        logger.info(`Sending email notification to POC ID: ${pocId}`);
         await sendEmailNotification({
           type: 'commentSponsor',
           id: listingId,
@@ -118,6 +129,7 @@ async function comment(req: NextApiRequestWithUser, res: NextApiResponse) {
       }
 
       if (listingType === 'SUBMISSION') {
+        logger.info(`Sending email notification for submission comment`);
         await sendEmailNotification({
           type: 'commentSubmission',
           id: listingId,
@@ -129,10 +141,12 @@ async function comment(req: NextApiRequestWithUser, res: NextApiResponse) {
       }
     }
 
+    logger.info(`Comment added successfully by user ID: ${userId}`);
     return res.status(200).json(result);
   } catch (error: any) {
-    console.error(`User ${userId} unable to edit comment`, error.message);
-
+    logger.error(
+      `User ${userId} unable to add comment: ${safeStringify(error)}`,
+    );
     return res.status(400).json({
       error,
       message: 'Error occurred while adding a new comment.',

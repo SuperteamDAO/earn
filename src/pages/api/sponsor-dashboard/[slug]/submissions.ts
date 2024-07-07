@@ -1,97 +1,59 @@
 import type { NextApiResponse } from 'next';
 
 import { type NextApiRequestWithUser, withAuth } from '@/features/auth';
+import logger from '@/lib/logger';
 import { prisma } from '@/prisma';
 
 type WinnerPosition = 'first' | 'second' | 'third' | 'fourth' | 'fifth';
 
 async function handler(req: NextApiRequestWithUser, res: NextApiResponse) {
   const userId = req.userId;
-
-  const user = await prisma.user.findUnique({
-    where: {
-      id: userId as string,
-    },
-  });
-
-  if (!user) {
-    return res.status(400).json({ error: 'Unauthorized' });
-  }
-
   const params = req.query;
 
   const slug = params.slug as string;
-  const skip = params.take ? parseInt(params.skip as string, 10) : 0;
+  const skip = params.skip ? parseInt(params.skip as string, 10) : 0;
   const take = params.take ? parseInt(params.take as string, 10) : 15;
   const isHackathon = params.isHackathon === 'true';
-
   const searchText = params.searchText as string;
 
-  const whereSearch = searchText
-    ? {
-        OR: [
-          {
-            user: {
-              firstName: {
-                contains: searchText,
-              },
-            },
-          },
-          {
-            user: {
-              email: {
-                contains: searchText,
-              },
-            },
-          },
-          {
-            user: {
-              username: {
-                contains: searchText,
-              },
-            },
-          },
-          {
-            user: {
-              twitter: {
-                contains: searchText,
-              },
-            },
-          },
-          {
-            user: {
-              discord: {
-                contains: searchText,
-              },
-            },
-          },
-          {
-            link: {
-              contains: searchText,
-            },
-          },
-        ],
-      }
-    : {};
+  try {
+    const user = await prisma.user.findUnique({
+      where: {
+        id: userId as string,
+      },
+    });
 
-  const mapPositionToNumber = (position: string) => {
-    const positionMap: { [key in WinnerPosition]: number } = {
-      first: 1,
-      second: 2,
-      third: 3,
-      fourth: 4,
-      fifth: 5,
+    if (!user) {
+      logger.warn(`Unauthorized access attempt by user ${userId}`);
+      return res.status(401).json({ error: 'Unauthorized' });
+    }
+
+    const whereSearch = searchText
+      ? {
+          OR: [
+            { user: { firstName: { contains: searchText } } },
+            { user: { email: { contains: searchText } } },
+            { user: { username: { contains: searchText } } },
+            { user: { twitter: { contains: searchText } } },
+            { user: { discord: { contains: searchText } } },
+            { link: { contains: searchText } },
+          ],
+        }
+      : {};
+
+    const mapPositionToNumber = (position: string) => {
+      const positionMap: { [key in WinnerPosition]: number } = {
+        first: 1,
+        second: 2,
+        third: 3,
+        fourth: 4,
+        fifth: 5,
+      };
+
+      const positionKey = position.toLowerCase() as WinnerPosition;
+      return positionMap[positionKey] ?? 999;
     };
 
-    const positionKey = position.toLowerCase() as WinnerPosition;
-    if (positionKey in positionMap) {
-      return positionMap[positionKey];
-    } else {
-      return 999;
-    }
-  };
-
-  try {
     const submissions = await prisma.submission.findMany({
       where: {
         listing: {
@@ -112,7 +74,8 @@ async function handler(req: NextApiRequestWithUser, res: NextApiResponse) {
       orderBy: { createdAt: 'asc' },
     });
 
-    if (!submissions) {
+    if (!submissions || submissions.length === 0) {
+      logger.info(`No submissions found for slug ${slug}`);
       return res.status(404).json({
         message: `Submissions with slug=${slug} not found.`,
       });
@@ -121,10 +84,7 @@ async function handler(req: NextApiRequestWithUser, res: NextApiResponse) {
     const submissionsWithSortKey = submissions.map((submission) => {
       let sortKey = 0;
       if (submission.isWinner) {
-        const positionValue = mapPositionToNumber(
-          submission.winnerPosition as string,
-        );
-        sortKey = positionValue;
+        sortKey = mapPositionToNumber(submission.winnerPosition as string);
       } else {
         switch (submission.label) {
           case 'Unreviewed':
@@ -153,10 +113,16 @@ async function handler(req: NextApiRequestWithUser, res: NextApiResponse) {
 
     const paginatedSubmissions = sortedSubmissions.slice(skip, skip + take);
 
+    logger.info(
+      `Fetched ${paginatedSubmissions.length} submissions for slug ${slug}`,
+    );
     return res.status(200).json(paginatedSubmissions);
-  } catch (error) {
-    return res.status(400).json({
-      error,
+  } catch (error: any) {
+    logger.error(
+      `Error occurred while fetching submissions for slug=${slug}: ${error.message}`,
+    );
+    return res.status(500).json({
+      error: error.message,
       message: `Error occurred while fetching submissions with slug=${slug}.`,
     });
   }

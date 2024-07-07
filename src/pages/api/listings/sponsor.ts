@@ -1,6 +1,8 @@
 import { type NextApiRequest, type NextApiResponse } from 'next';
 
+import logger from '@/lib/logger';
 import { prisma } from '@/prisma';
+import { safeStringify } from '@/utils/safeStringify';
 
 const sponsorData: Record<
   string,
@@ -32,32 +34,39 @@ const sponsorData: Record<
   },
 };
 
-export default async function user(req: NextApiRequest, res: NextApiResponse) {
+export default async function handler(
+  req: NextApiRequest,
+  res: NextApiResponse,
+) {
   const { sponsor } = req.body;
+
+  logger.debug(`Request body: ${safeStringify(req.body)}`);
+
+  if (!sponsor) {
+    logger.warn('Sponsor is required');
+    return res.status(400).json({ message: 'Sponsor is required' });
+  }
+
   const sponsorKey = sponsor.toLowerCase();
 
   if (!sponsorData[sponsorKey]) {
+    logger.warn(`Sponsor not found: ${sponsorKey}`);
     return res.status(404).json({ message: 'Sponsor not found' });
   }
 
-  const result: any = {
-    bounties: [],
-    sponsorInfo: sponsorData[sponsorKey],
-  };
+  const sponsorInfo = sponsorData[sponsorKey];
 
   try {
-    const sponsorName = sponsorData[sponsorKey]?.title;
-    const isPrivate = !!sponsorData[sponsorKey]?.private;
-
+    logger.debug(`Fetching bounties for sponsor: ${sponsorInfo?.title}`);
     const bounties = await prisma.bounties.findMany({
       where: {
         isPublished: true,
         isActive: true,
         isArchived: false,
         status: 'OPEN',
-        isPrivate,
+        isPrivate: !!sponsorInfo!.private,
         sponsor: {
-          name: sponsorName,
+          name: sponsorInfo!.title,
         },
       },
       include: {
@@ -74,13 +83,21 @@ export default async function user(req: NextApiRequest, res: NextApiResponse) {
       },
     });
 
-    result.bounties = bounties;
+    const result = {
+      bounties,
+      sponsorInfo,
+    };
 
+    logger.info(
+      `Successfully fetched listings for sponsor: ${sponsorInfo?.title}`,
+    );
     res.status(200).json(result);
-  } catch (error) {
-    console.log(error);
-    res.status(400).json({
-      error,
+  } catch (error: any) {
+    logger.error(
+      `Error fetching listings for sponsor=${sponsorKey}: ${safeStringify(error)}`,
+    );
+    res.status(500).json({
+      error: 'Internal server error',
       message: 'Error occurred while fetching listings',
     });
   }

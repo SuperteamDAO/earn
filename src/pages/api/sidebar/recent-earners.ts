@@ -1,6 +1,7 @@
 import type { NextApiRequest, NextApiResponse } from 'next';
 
 import type { Rewards } from '@/features/listings';
+import logger from '@/lib/logger';
 import { prisma } from '@/prisma';
 
 export default async function user(_req: NextApiRequest, res: NextApiResponse) {
@@ -53,10 +54,15 @@ export default async function user(_req: NextApiRequest, res: NextApiResponse) {
         photo: submission.user.photo,
       };
     });
+
+    logger.info('Successfully fetched winning submissions', { earners });
     res.status(200).json(earners);
-  } catch (error) {
+  } catch (error: any) {
+    logger.error('Error occurred while fetching winning submissions', {
+      error: error.message,
+    });
     res.status(400).json({
-      error,
+      error: error.message,
       message: 'Error occurred while fetching totals',
     });
   }

@@ -1,21 +1,29 @@
 import type { NextApiRequest, NextApiResponse } from 'next';
 
+import logger from '@/lib/logger';
 import { prisma } from '@/prisma';
+import { safeStringify } from '@/utils/safeStringify';
 
 export default async function getAllUsers(
   req: NextApiRequest,
   res: NextApiResponse,
 ): Promise<void> {
+  logger.info(`Request body: ${safeStringify(req.body)}`);
+
   try {
     const user = await prisma.user.findUnique({
       where: { ...req.body },
     });
 
     if (!user) {
+      logger.warn(
+        `User not found for the provided criteria: ${safeStringify(req.body)}`,
+      );
       return res.status(404).json({ error: 'User not found' });
     }
 
     const userId = user.id;
+    logger.info(`User found: ${userId}`);
 
     const powAndSubmissions = await prisma.$queryRaw<any[]>`
       (SELECT
@@ -94,9 +102,10 @@ export default async function getAllUsers(
         createdAt DESC
     `;
 
+    logger.info(`User feed data retrieved successfully for user ID: ${userId}`);
     return res.status(200).json({ ...user, feed: powAndSubmissions });
   } catch (error: any) {
-    console.log(error);
+    logger.error(`Error fetching user details: ${safeStringify(error)}`);
     return res
       .status(500)
       .json({ error: `Unable to fetch user details: ${error.message}` });

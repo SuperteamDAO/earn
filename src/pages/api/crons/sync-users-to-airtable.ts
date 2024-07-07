@@ -3,6 +3,7 @@ import axios from 'axios';
 import type { NextApiRequest, NextApiResponse } from 'next';
 
 import { type User } from '@/interface/user';
+import logger from '@/lib/logger';
 import { prisma } from '@/prisma';
 import { airtableConfig, airtableUpsert, airtableUrl } from '@/utils/airtable';
 
@@ -187,9 +188,9 @@ async function handler(_req: NextApiRequest, res: NextApiResponse) {
 
     res.status(200).json({ message: 'Airtable Synced successfully' });
   } catch (error: any) {
-    console.error('Error airtable sync:', error);
+    logger.error('Error airtable sync:', error);
     if (error?.response?.data)
-      console.error('Airtable Error', error.response.data);
+      logger.error('Airtable Error', error.response.data);
     res
       .status(500)
       .json({ message: 'An error occurred while syncing airtable.' });

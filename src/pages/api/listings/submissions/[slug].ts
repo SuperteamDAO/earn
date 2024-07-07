@@ -1,13 +1,18 @@
 import { type Submission } from '@prisma/client';
 import type { NextApiRequest, NextApiResponse } from 'next';
 
+import logger from '@/lib/logger';
 import { prisma } from '@/prisma';
+import { safeStringify } from '@/utils/safeStringify';
 
 export default async function user(req: NextApiRequest, res: NextApiResponse) {
   const params = req.query;
-
   const slug = params.slug as string;
+
+  logger.debug(`Request query: ${safeStringify(req.query)}`);
+
   try {
+    logger.debug(`Fetching bounty with slug: ${slug}`);
     const result = await prisma.bounties.findFirst({
       where: {
         slug,
@@ -24,16 +29,25 @@ export default async function user(req: NextApiRequest, res: NextApiResponse) {
       },
     });
 
-    if (result?.isWinnersAnnounced === false) {
+    if (!result) {
+      logger.warn(`No bounty found with slug: ${slug}`);
+      return res.status(404).json({
+        message: `No bounty found with slug=${slug}.`,
+      });
+    }
+
+    if (result.isWinnersAnnounced === false) {
+      logger.info('Winners have not been announced yet');
       return res.status(200).json({
         bounty: result,
         submission: [],
       });
     }
 
+    logger.debug(`Fetching submissions for bounty ID: ${result.id}`);
     const submission = await prisma.submission.findMany({
       where: {
-        listingId: result?.id,
+        listingId: result.id,
       },
       include: {
         user: {
@@ -74,13 +88,19 @@ export default async function user(req: NextApiRequest, res: NextApiResponse) {
 
     submission.sort(sortSubmissions);
 
+    logger.info(
+      `Successfully fetched bounty and submissions for slug: ${slug}`,
+    );
     return res.status(200).json({
       bounty: result,
       submission,
     });
-  } catch (error) {
+  } catch (error: any) {
+    logger.error(
+      `Error occurred while fetching bounty with slug=${slug}: ${safeStringify(error)}`,
+    );
     return res.status(400).json({
-      error,
+      error: error.message,
       message: `Error occurred while fetching bounty with slug=${slug}.`,
     });
   }
