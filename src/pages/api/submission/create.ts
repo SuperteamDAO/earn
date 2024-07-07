@@ -1,4 +1,3 @@
-import axios from 'axios';
 import type { NextApiResponse } from 'next';
 
 import { type NextApiRequestWithUser, withAuth } from '@/features/auth';
@@ -63,15 +62,6 @@ async function submission(req: NextApiRequestWithUser, res: NextApiResponse) {
       });
     } catch (err) {
       logger.error('Error sending email to Sponsor:', err);
-    }
-
-    try {
-      if (process.env.NEXT_PUBLIC_VERCEL_ENV === 'production') {
-        const zapierWebhookUrl = process.env.ZAPIER_SUBMISSION_WEBHOOK!;
-        await axios.post(zapierWebhookUrl, result);
-      }
-    } catch (err) {
-      logger.error('Error with Zapier Webhook:', err);
     }
 
     return res.status(200).json(result);
