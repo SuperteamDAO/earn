@@ -81,7 +81,7 @@ function TalentProfile({ slug }: TalentProps) {
     const fetch = async () => {
       try {
         setIsloading(true);
-        const res = await axios.post(`/api/user/getAllInfo`, {
+        const res = await axios.post(`/api/user/info`, {
           username: slug,
         });
 
@@ -491,6 +491,7 @@ function TalentProfile({ slug }: TalentProps) {
                 >
                   <Flex direction={'column'}>
                     <Text fontWeight={600}>
+                      $
                       {new Intl.NumberFormat('en-US', {
                         maximumFractionDigits: 0,
                       }).format(Math.round(talent?.totalEarnedInUSD || 0))}

@@ -6,7 +6,9 @@ import {
   skillSubSkillMap,
   type SubSkillsType,
 } from '@/interface/skills';
+import logger from '@/lib/logger';
 import { prisma } from '@/prisma';
+import { safeStringify } from '@/utils/safeStringify';
 
 const uniqueArray = (arr: SubSkillsType[]): SubSkillsType[] => {
   return Array.from(new Set(arr));
@@ -53,17 +55,22 @@ const correctSkills = (
 
 async function handler(req: NextApiRequestWithUser, res: NextApiResponse) {
   const userId = req.userId;
+  logger.info(
+    `Handling request for user ID: ${userId} - ${safeStringify(req.body)}`,
+  );
 
   // eslint-disable-next-line
   const { email, publicKey, skills, role, Hackathon, ...data } = req.body;
 
   const correctedSkills = correctSkills(skills);
+  logger.info(`Corrected skills: ${safeStringify(correctedSkills)}`);
 
   try {
     const updatedData = {
       ...data,
       skills: correctedSkills,
     };
+    logger.debug(`Updated data to be saved: ${safeStringify(updatedData)}`);
 
     const updatedUser = await prisma.user.update({
       where: { id: userId },
@@ -74,9 +81,12 @@ async function handler(req: NextApiRequestWithUser, res: NextApiResponse) {
       },
     });
 
+    logger.info(
+      `User profile updated successfully: ${safeStringify(updatedUser)}`,
+    );
     return res.json(updatedUser);
   } catch (error: any) {
-    console.error('Error updating user profile:', error.message);
+    logger.error(`Error updating user profile: ${safeStringify(error)}`);
     return res.status(500).json({ error: 'Error updating user profile.' });
   }
 }

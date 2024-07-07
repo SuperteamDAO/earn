@@ -31,7 +31,7 @@ function WinnerBounty({
     router.push(`${getURL()}listings/${bounty?.type}/${bounty?.slug}/`);
   }, []);
 
-  const image = new URL(`${url}api/winners-og/`);
+  const image = new URL(`${url}api/dynamic-og/winners/`);
   image.searchParams.set('id', bounty?.id || '');
   image.searchParams.set('rewards', JSON.stringify(bounty?.rewards));
   image.searchParams.set('token', bounty?.token || '');
@@ -104,13 +104,16 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
   let bountyData;
   const submissions: StrippedSubmission[] = [];
   try {
-    const bountyDetails = await axios.get(`${fullUrl}api/bounties/${slug}`, {
-      params: { type },
-    });
+    const bountyDetails = await axios.get(
+      `${fullUrl}api/sponsor-dashboard/${slug}`,
+      {
+        params: { type },
+      },
+    );
     bountyData = bountyDetails.data;
 
     const submissionsDetails = await axios.get(
-      `${fullUrl}api/submission/${bountyDetails.data.id}/winners/`,
+      `${fullUrl}api/listings/${bountyDetails.data.id}/winners/`,
     );
     const { data } = submissionsDetails;
     const winners = sortRank(

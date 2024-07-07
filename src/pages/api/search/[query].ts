@@ -2,6 +2,7 @@ import { status as Status } from '@prisma/client';
 import type { NextApiRequest, NextApiResponse } from 'next';
 
 import type { Bounties } from '@/interface/listings';
+import logger from '@/lib/logger';
 import { prisma } from '@/prisma';
 
 // GOTTA SAVE FROM SQL INJECTION
@@ -25,7 +26,6 @@ export default async function user(req: NextApiRequest, res: NextApiResponse) {
   const query = (params.query as string).replace(/[^a-zA-Z0-9 _-]/g, '');
 
   const limit = (req.query.limit as string) || '5';
-
   const offset = (req.query.offset as string) || null;
 
   const status = req.query.status as string;
@@ -163,6 +163,7 @@ LIMIT ? ${offset ? `OFFSET ?` : ''}
   if (skills) values = values.concat(skillsFlattened);
 
   try {
+    logger.debug(`Executing countQuery with values: ${values}`);
     const bountiesCount = await prisma.$queryRawUnsafe<
       [{ totalCount: bigint }]
     >(countQuery, ...values);
@@ -170,6 +171,7 @@ LIMIT ? ${offset ? `OFFSET ?` : ''}
     values.push(Number(limit));
     if (offset) values.push(Number(offset));
 
+    logger.debug(`Executing sqlQuery with values: ${values}`);
     const bounties = await prisma.$queryRawUnsafe<Bounties[]>(
       sqlQuery,
       ...values,
@@ -178,8 +180,10 @@ LIMIT ? ${offset ? `OFFSET ?` : ''}
     res
       .status(200)
       .json({ bounties, count: bountiesCount[0].totalCount.toString() });
-  } catch (err) {
-    console.log('err - ', err);
-    res.status(500);
+  } catch (err: any) {
+    logger.error('Error fetching bounties:', err);
+    res
+      .status(500)
+      .json({ error: 'Internal server error', details: err.message });
   }
 }

@@ -62,7 +62,7 @@ export function RightSideBar({ listing }: { listing: Listing }) {
     setIsSubmissionNumberLoading(true);
     try {
       const submissionCountDetails = await axios.get(
-        `/api/submission/${id}/count/`,
+        `/api/listings/${id}/submission-count/`,
       );
       const count = submissionCountDetails?.data || 0;
       setSubmissionNumber(count);

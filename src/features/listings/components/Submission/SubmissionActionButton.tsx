@@ -93,7 +93,7 @@ export const SubmissionActionButton = ({
   const getUserSubmission = async () => {
     setIsUserSubmissionLoading(true);
     try {
-      const submissionDetails = await axios.get(`/api/submission/${id}/user/`);
+      const submissionDetails = await axios.get(`/api/listings/${id}/user/`);
       setIsSubmitted(!!submissionDetails?.data?.id);
       setIsUserSubmissionLoading(false);
     } catch (e) {
