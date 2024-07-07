@@ -1,5 +1,7 @@
 import axios from 'axios';
 
+import logger from '@/lib/logger';
+
 function fileToBase64(file: File): Promise<string> {
   return new Promise((resolve, reject) => {
     const reader = new FileReader();
@@ -32,6 +34,6 @@ export async function uploadToCloudinary(
 
     return response.data.url;
   } catch (error) {
-    console.error('Error uploading the image:', error);
+    logger.error('Error uploading the image:', error);
   }
 }

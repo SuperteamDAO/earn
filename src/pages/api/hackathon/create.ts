@@ -3,6 +3,7 @@ import type { NextApiResponse } from 'next';
 import slugify from 'slugify';
 
 import { type NextApiRequestWithUser, withAuth } from '@/features/auth';
+import logger from '@/lib/logger';
 import { prisma } from '@/prisma';
 
 const checkSlug = async (slug: string): Promise<boolean> => {
@@ -19,7 +20,7 @@ const checkSlug = async (slug: string): Promise<boolean> => {
     }
     return false;
   } catch (error) {
-    console.error(
+    logger.error(
       `Error occurred while fetching bounty with slug=${slug}.`,
       error,
     );
@@ -99,11 +100,11 @@ async function handler(req: NextApiRequestWithUser, res: NextApiResponse) {
         await axios.post(zapierWebhookUrl, result);
       }
     } catch (err) {
-      console.log('Error with Zapier Webhook -', err);
+      logger.info('Error with Zapier Webhook -', err);
     }
     return res.status(200).json(result);
   } catch (error) {
-    console.log(error);
+    logger.error(error);
     return res.status(400).json({
       error,
       message: 'Error occurred while adding a new bounty.',

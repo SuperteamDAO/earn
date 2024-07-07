@@ -1,6 +1,8 @@
 import type { NextApiRequest, NextApiResponse } from 'next';
 
+import logger from '@/lib/logger';
 import { prisma } from '@/prisma';
+import { safeStringify } from '@/utils/safeStringify';
 
 export default async function submission(
   req: NextApiRequest,
@@ -8,7 +10,11 @@ export default async function submission(
 ) {
   const params = req.query;
   const listingId = params.listingId as string;
+
+  logger.debug(`Request query: ${safeStringify(req.query)}`);
+
   try {
+    logger.debug(`Fetching submission count for listing ID: ${listingId}`);
     const result = await prisma.submission.aggregate({
       _count: true,
       where: {
@@ -17,10 +23,18 @@ export default async function submission(
         isArchived: false,
       },
     });
-    res.status(200).json(result?._count || 0);
-  } catch (error) {
+
+    const submissionCount = result?._count || 0;
+    logger.info(
+      `Fetched submission count for listing ID: ${listingId}: ${submissionCount}`,
+    );
+    res.status(200).json(submissionCount);
+  } catch (error: any) {
+    logger.error(
+      `Error occurred while fetching submission count for listing ID=${listingId}: ${safeStringify(error)}`,
+    );
     res.status(400).json({
-      error,
+      error: error.message,
       message: `Error occurred while fetching submission count of listing=${listingId}.`,
     });
   }

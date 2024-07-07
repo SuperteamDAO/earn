@@ -3,20 +3,27 @@ import type { NextApiResponse } from 'next';
 import { type NextApiRequestWithUser, withAuth } from '@/features/auth';
 import { sendEmailNotification } from '@/features/emails';
 import { type Rewards } from '@/features/listings';
+import logger from '@/lib/logger';
 import { prisma } from '@/prisma';
 import { dayjs } from '@/utils/dayjs';
+import { safeStringify } from '@/utils/safeStringify';
 
 async function announce(req: NextApiRequestWithUser, res: NextApiResponse) {
   const userId = req.userId;
   const params = req.query;
   const id = params.id as string;
+
+  logger.debug(`Request query: ${safeStringify(req.query)}`);
+
   try {
+    logger.debug(`Fetching user details for user ID: ${userId}`);
     const user = await prisma.user.findUnique({
       where: {
         id: userId as string,
       },
     });
 
+    logger.debug(`Fetching bounty details for bounty ID: ${id}`);
     const bounty = await prisma.bounties.findUnique({
       where: { id },
       include: {
@@ -29,46 +36,59 @@ async function announce(req: NextApiRequestWithUser, res: NextApiResponse) {
       !user.currentSponsorId ||
       bounty?.sponsorId !== user.currentSponsorId
     ) {
+      logger.warn(
+        `User ID: ${userId} does not have a current sponsor or is unauthorized to announce winners for bounty ID: ${id}`,
+      );
       return res
         .status(403)
         .json({ error: 'User does not have a current sponsor.' });
     }
 
     if (!bounty) {
+      logger.warn(`Bounty with ID: ${id} not found`);
       return res
         .status(404)
         .json({ message: `Bounty with id=${id} not found.` });
     }
 
     if (bounty?.isWinnersAnnounced) {
+      logger.warn(`Winners already announced for bounty with ID: ${id}`);
       return res.status(400).json({
         message: `Winners already announced for bounty with id=${id}.`,
       });
     }
+
     if (!bounty?.isActive) {
-      return res.status(400).json({
-        message: `Bounty with id=${id} is not active.`,
-      });
+      logger.warn(`Bounty with ID: ${id} is not active`);
+      return res
+        .status(400)
+        .json({ message: `Bounty with id=${id} is not active.` });
     }
+
     const totalRewards = Object.keys(bounty?.rewards || {})?.length || 0;
     if (!!totalRewards && bounty?.totalWinnersSelected !== totalRewards) {
+      logger.warn(
+        'All winners have not been selected before publishing the results',
+      );
       return res.status(400).json({
         message: 'Please select all winners before publishing the results.',
       });
     }
+
     const deadline = dayjs().isAfter(bounty?.deadline)
       ? bounty?.deadline
       : dayjs().subtract(2, 'minute').toISOString();
+
+    logger.debug('Updating bounty details with winner announcement');
     const result = await prisma.bounties.update({
-      where: {
-        id,
-      },
+      where: { id },
       data: {
         isWinnersAnnounced: true,
         deadline,
         winnersAnnouncedAt: new Date().toISOString(),
       },
     });
+
     const rewards: Rewards = (bounty?.rewards || {}) as Rewards;
     const winners = await prisma.submission.findMany({
       where: {
@@ -83,12 +103,13 @@ async function announce(req: NextApiRequestWithUser, res: NextApiResponse) {
       },
     });
 
+    logger.info(`Fetched ${winners.length} winners for bounty ID: ${id}`);
+
     const sortSubmissions = (
       a: (typeof winners)[0],
       b: (typeof winners)[0],
     ) => {
       const order = { first: 1, second: 2, third: 3, fourth: 4, fifth: 5 };
-
       const aPosition = a.winnerPosition as keyof typeof order;
       const bPosition = b.winnerPosition as keyof typeof order;
 
@@ -123,11 +144,10 @@ async function announce(req: NextApiRequestWithUser, res: NextApiResponse) {
     const random = Math.floor(Math.random() * (2 - 1 + 1)) + 1;
     switch (random) {
       case 1:
-        if (sortedWinners.length === 1) {
-          comment = `Congratulations! ${extractedTags} has been announced as the winner!`;
-        } else {
-          comment = `Congratulations! ${extractedTags} have been announced as the winners!`;
-        }
+        comment =
+          sortedWinners.length === 1
+            ? `Congratulations! ${extractedTags} has been announced as the winner!`
+            : `Congratulations! ${extractedTags} have been announced as the winners!`;
         break;
       case 2:
         if (bounty.type === 'bounty')
@@ -135,10 +155,9 @@ async function announce(req: NextApiRequestWithUser, res: NextApiResponse) {
         if (bounty.type === 'project')
           comment = `Applaud ${extractedTags} for winning this Project`;
         break;
-      default:
-        break;
     }
 
+    logger.debug('Creating winner announcement comment');
     await prisma.comment.create({
       data: {
         authorId: user.id,
@@ -185,8 +204,10 @@ async function announce(req: NextApiRequestWithUser, res: NextApiResponse) {
       promises.push(prisma.user.update(amountWhere));
       currentIndex += 1;
     }
+
     await Promise.all(promises);
 
+    logger.debug('Sending winner announcement email notifications');
     await sendEmailNotification({
       type: 'announceWinners',
       id,
@@ -200,14 +221,17 @@ async function announce(req: NextApiRequestWithUser, res: NextApiResponse) {
         triggeredBy: userId,
       });
     } else {
-      console.log('Sponsor is not Superteam. Skipping sending winner emails.');
+      logger.info('Sponsor is not Superteam. Skipping sending winner emails.');
     }
 
+    logger.info(`Winners announced successfully for bounty ID: ${id}`);
     return res.status(200).json(result);
   } catch (error: any) {
-    console.error(`User ${userId} unable to announce a listing`, error.message);
+    logger.error(
+      `User ${userId} unable to announce winners for bounty ID: ${id}: ${safeStringify(error)}`,
+    );
     return res.status(400).json({
-      error,
+      error: error.message,
       message: `Error occurred while announcing bounty with id=${id}.`,
     });
   }

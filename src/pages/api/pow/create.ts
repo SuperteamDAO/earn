@@ -1,7 +1,9 @@
 import type { NextApiResponse } from 'next';
 
 import { type NextApiRequestWithUser, withAuth } from '@/features/auth';
+import logger from '@/lib/logger';
 import { prisma } from '@/prisma';
+import { safeStringify } from '@/utils/safeStringify';
 
 interface PoW {
   id?: string;
@@ -19,13 +21,17 @@ async function handler(req: NextApiRequestWithUser, res: NextApiResponse) {
   const { pows } = req.body as { pows: PoW[] };
   const errors: string[] = [];
 
+  logger.debug(`Request body: ${safeStringify(req.body)}`);
+
   if (!pows) {
+    logger.warn('The "pows" field is missing in the request body');
     return res.status(400).json({
       error: 'The "pows" field is missing in the request body.',
     });
   }
 
   if (!userId) {
+    logger.warn('The user is not authenticated');
     return res.status(400).json({
       error: 'The user is not authenticated.',
     });
@@ -52,15 +58,23 @@ async function handler(req: NextApiRequestWithUser, res: NextApiResponse) {
   });
 
   if (errors.length > 0) {
+    logger.warn(`Validation errors: ${errors.join(', ')}`);
     return res.status(400).json({ errors });
   }
 
   try {
     const results = await prisma.poW.createMany({ data: createData });
+    logger.info(
+      `Successfully created ${results.count} PoWs for user ${userId}`,
+    );
     return res.status(200).json(results);
-  } catch (error) {
+  } catch (error: any) {
+    logger.error(
+      `Error creating PoWs for user ${userId}:`,
+      safeStringify(error),
+    );
     return res.status(500).json({
-      error,
+      error: error.message,
     });
   }
 }

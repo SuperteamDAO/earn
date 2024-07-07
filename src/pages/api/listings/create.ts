@@ -4,18 +4,24 @@ import type { NextApiResponse } from 'next';
 import { type NextApiRequestWithUser, withAuth } from '@/features/auth';
 import { sendEmailNotification } from '@/features/emails';
 import { shouldSendEmailForListing } from '@/features/listing-builder';
+import logger from '@/lib/logger';
 import { prisma } from '@/prisma';
 import { fetchTokenUSDValue } from '@/utils/fetchTokenUSDValue';
+import { safeStringify } from '@/utils/safeStringify';
 
 async function handler(req: NextApiRequestWithUser, res: NextApiResponse) {
   const userId = req.userId;
 
+  logger.debug(`Request body: ${safeStringify(req.body)}`);
+
   try {
+    logger.debug(`Fetching user with ID: ${userId}`);
     const user = await prisma.user.findUnique({
       where: { id: userId as string },
     });
 
     if (!user || !user.currentSponsorId) {
+      logger.warn('User does not have a current sponsor or is unauthorized');
       return res
         .status(403)
         .json({ error: 'User does not have a current sponsor.' });
@@ -46,7 +52,7 @@ async function handler(req: NextApiRequestWithUser, res: NextApiResponse) {
           usdValue = tokenUsdValue * amount;
         }
       } catch (error) {
-        console.error('Error calculating USD value:', error);
+        logger.error('Error calculating USD value:', error);
       }
     }
 
@@ -58,13 +64,18 @@ async function handler(req: NextApiRequestWithUser, res: NextApiResponse) {
       ...data,
     };
 
+    logger.debug(`Creating bounty with data: ${safeStringify(finalData)}`);
     const result = await prisma.bounties.create({
       data: finalData,
       include: { sponsor: true },
     });
 
+    logger.info(`Bounty created successfully with ID: ${result.id}`);
+    logger.debug(`Created bounty data: ${safeStringify(result)}`);
+
     const shouldSendEmail = await shouldSendEmailForListing(result);
     if (shouldSendEmail) {
+      logger.debug('Sending email notification for new listing creation');
       await sendEmailNotification({
         type: 'createListing',
         id: result.id,
@@ -75,17 +86,20 @@ async function handler(req: NextApiRequestWithUser, res: NextApiResponse) {
     if (process.env.NEXT_PUBLIC_VERCEL_ENV === 'production') {
       try {
         const zapierWebhookUrl = process.env.ZAPIER_BOUNTY_WEBHOOK!;
+        logger.debug(`Sending data to Zapier Webhook: ${zapierWebhookUrl}`);
         await axios.post(zapierWebhookUrl, result);
       } catch (error) {
-        console.error('Error with Zapier Webhook:', error);
+        logger.error('Error with Zapier Webhook:', error);
       }
     }
 
     return res.status(200).json(result);
   } catch (error: any) {
-    console.error(`User ${userId} unable to create a listing:`, error.message);
+    logger.error(
+      `User ${userId} unable to create a listing: ${safeStringify(error)}`,
+    );
     return res.status(400).json({
-      error,
+      error: error.message,
       message: 'Error occurred while adding a new bounty.',
     });
   }

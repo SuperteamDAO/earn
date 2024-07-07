@@ -6,7 +6,9 @@ import {
   SkillList,
   type SubSkillsType,
 } from '@/interface/skills';
+import logger from '@/lib/logger';
 import { prisma } from '@/prisma';
+import { safeStringify } from '@/utils/safeStringify';
 
 const uniqueArray = (arr: SubSkillsType[]): SubSkillsType[] => {
   return Array.from(new Set(arr));
@@ -50,36 +52,42 @@ const correctSkills = (
 async function handler(req: NextApiRequestWithUser, res: NextApiResponse) {
   const userId = req.userId;
 
-  const user = await prisma.user.findUnique({
-    where: {
-      id: userId as string,
-    },
-  });
-  // eslint-disable-next-line
-  const {role, skills, currentSponsorId, generateTalentEmailSettings, ...updateAttributes} = req.body;
-  const correctedSkills = skills ? correctSkills(skills) : [];
+  logger.debug(`Request body: ${safeStringify(req.body)}`);
+
   try {
-    const updatedData = {
-      ...updateAttributes,
-    };
+    const user = await prisma.user.findUnique({
+      where: { id: userId as string },
+    });
+
+    if (!user) {
+      logger.warn(`User not found for user ID: ${userId}`);
+      return res.status(404).json({ error: 'User not found' });
+    }
+
+    // eslint-disable-next-line
+    const {role, skills, currentSponsorId, generateTalentEmailSettings, ...updateAttributes} = req.body;
+
+    const correctedSkills = skills ? correctSkills(skills) : [];
+
+    const updatedData: any = { ...updateAttributes };
 
     if (skills) {
       updatedData.skills = correctedSkills;
     }
 
-    if (user && user.role === 'GOD' && currentSponsorId) {
+    if (user.role === 'GOD' && currentSponsorId) {
       updatedData.currentSponsorId = currentSponsorId;
     }
 
     if (generateTalentEmailSettings) {
-      const categories = new Set();
-
-      categories.add('createListing');
-      categories.add('scoutInvite');
-      categories.add('commentOrLikeSubmission');
-      categories.add('weeklyListingRoundup');
-      categories.add('replyOrTagComment');
-      categories.add('productAndNewsletter');
+      const categories = new Set([
+        'createListing',
+        'scoutInvite',
+        'commentOrLikeSubmission',
+        'weeklyListingRoundup',
+        'replyOrTagComment',
+        'productAndNewsletter',
+      ]);
 
       for (const category of categories) {
         await prisma.emailSettings.create({
@@ -91,7 +99,7 @@ async function handler(req: NextApiRequestWithUser, res: NextApiResponse) {
       }
     }
 
-    console.log('Updating user with data:', updatedData);
+    logger.info(`Updating user with data: ${safeStringify(updatedData)}`);
 
     await prisma.user.updateMany({
       where: {
@@ -101,9 +109,7 @@ async function handler(req: NextApiRequestWithUser, res: NextApiResponse) {
     });
 
     const result = await prisma.user.findUnique({
-      where: {
-        id: userId as string,
-      },
+      where: { id: userId as string },
       include: {
         currentSponsor: true,
         UserSponsors: true,
@@ -113,10 +119,12 @@ async function handler(req: NextApiRequestWithUser, res: NextApiResponse) {
       },
     });
 
+    logger.info(`User updated successfully for user ID: ${userId}`);
     return res.status(200).json(result);
   } catch (error: any) {
-    console.error(error.message);
-
+    logger.error(
+      `Error occurred while updating user ${userId}: ${safeStringify(error)}`,
+    );
     return res.status(400).json({
       message: `Error occurred while updating user ${userId}: ${error.message}`,
     });

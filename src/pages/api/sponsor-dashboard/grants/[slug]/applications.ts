@@ -1,10 +1,14 @@
 import type { NextApiResponse } from 'next';
 
 import { type NextApiRequestWithUser, withAuth } from '@/features/auth';
+import logger from '@/lib/logger';
 import { prisma } from '@/prisma';
+import { safeStringify } from '@/utils/safeStringify';
 
 async function handler(req: NextApiRequestWithUser, res: NextApiResponse) {
   const userId = req.userId;
+
+  logger.debug(`Request body: ${safeStringify(req.body)}`);
 
   const user = await prisma.user.findUnique({
     where: {
@@ -13,15 +17,14 @@ async function handler(req: NextApiRequestWithUser, res: NextApiResponse) {
   });
 
   if (!user) {
+    logger.warn(`Unauthorized access attempt by user ID: ${userId}`);
     return res.status(400).json({ error: 'Unauthorized' });
   }
 
   const params = req.query;
-
   const slug = params.slug as string;
-  const skip = params.take ? parseInt(params.skip as string, 10) : 0;
+  const skip = params.skip ? parseInt(params.skip as string, 10) : 0;
   const take = params.take ? parseInt(params.take as string, 10) : 15;
-
   const searchText = params.searchText as string;
 
   const whereSearch = searchText
@@ -67,6 +70,10 @@ async function handler(req: NextApiRequestWithUser, res: NextApiResponse) {
     : {};
 
   try {
+    logger.info(
+      `Fetching grant applications for slug: ${slug}, skip: ${skip}, take: ${take}, searchText: ${searchText}`,
+    );
+
     const applications = await prisma.grantApplication.findMany({
       where: {
         grant: {
@@ -85,16 +92,24 @@ async function handler(req: NextApiRequestWithUser, res: NextApiResponse) {
       take,
     });
 
-    if (!applications) {
+    if (!applications || applications.length === 0) {
+      logger.info(`No submissions found for slug: ${slug}`);
       return res.status(404).json({
         message: `Submissions with slug=${slug} not found.`,
       });
     }
 
+    logger.info(
+      `Successfully fetched ${applications.length} applications for slug: ${slug}`,
+    );
     return res.status(200).json(applications);
-  } catch (error) {
+  } catch (error: any) {
+    logger.error(
+      `Error fetching submissions with slug=${slug}`,
+      safeStringify(error),
+    );
     return res.status(400).json({
-      error,
+      error: error.message,
       message: `Error occurred while fetching submissions with slug=${slug}.`,
     });
   }

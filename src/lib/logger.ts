@@ -10,8 +10,18 @@ const logger = new Logger({
   prettyLogTemplate: '{{hh}}:{{MM}}:{{ss}}:{{ms}}\t{{logLevelName}}',
   stylePrettyLogs: true,
   prettyLogStyles: {
-    name: 'yellow',
+    logLevelName: {
+      '*': ['bold', 'black', 'bgWhiteBright', 'dim'],
+      SILLY: ['bold', 'white'],
+      TRACE: ['bold', 'blue'],
+      DEBUG: ['bold', 'cyan'],
+      INFO: ['bold', 'green'],
+      WARN: ['bold', 'yellow'],
+      ERROR: ['bold', 'red'],
+      FATAL: ['bold', 'magenta'],
+    },
     dateIsoStr: 'blue',
+    filePathWithLine: 'magenta',
   },
 });
 
