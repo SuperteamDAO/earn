@@ -60,7 +60,7 @@ function Grants({ grant: initialGrant }: InitialGrant) {
           />
           <meta
             property="og:image"
-            content={`${getURL()}api/grant-og/?title=${encodedTitle}&token=${initialGrant?.token}&sponsor=${initialGrant?.sponsor?.name}&logo=${initialGrant?.sponsor?.logo}&minReward=${initialGrant?.minReward}&maxReward=${initialGrant?.maxReward}`}
+            content={`${getURL()}api/dynamic-og/grant/?title=${encodedTitle}&token=${initialGrant?.token}&sponsor=${initialGrant?.sponsor?.name}&logo=${initialGrant?.sponsor?.logo}&minReward=${initialGrant?.minReward}&maxReward=${initialGrant?.maxReward}`}
           />
           <meta
             name="twitter:title"
@@ -68,7 +68,7 @@ function Grants({ grant: initialGrant }: InitialGrant) {
           />
           <meta
             name="twitter:image"
-            content={`${getURL()}api/grant-og/?title=${encodedTitle}&token=${initialGrant?.token}&sponsor=${initialGrant?.sponsor?.name}&logo=${initialGrant?.sponsor?.logo}&minReward=${initialGrant?.minReward}&maxReward=${initialGrant?.maxReward}`}
+            content={`${getURL()}api/dynamic-og/grant/?title=${encodedTitle}&token=${initialGrant?.token}&sponsor=${initialGrant?.sponsor?.name}&logo=${initialGrant?.sponsor?.logo}&minReward=${initialGrant?.minReward}&maxReward=${initialGrant?.maxReward}`}
           />
           <meta name="twitter:card" content="summary_large_image" />
           <meta property="og:image:width" content="1200" />
@@ -168,7 +168,7 @@ function Grants({ grant: initialGrant }: InitialGrant) {
                   />
                   <Flex
                     direction={'column'}
-                    display={grant?.externalLink ? 'none' : 'block'}
+                    display={grant?.link ? 'none' : 'block'}
                     w="full"
                   >
                     <Flex w="full" mt={2}>
@@ -222,11 +222,13 @@ function Grants({ grant: initialGrant }: InitialGrant) {
                             fontSize={{ base: 'lg', md: 'xl' }}
                             fontWeight={500}
                           >
-                            $
-                            {Math.round(
-                              grant?.totalApproved /
-                                grant?._count.GrantApplication,
-                            ) || 0}
+                            {grant.totalApproved
+                              ? `$` +
+                                Math.round(
+                                  grant?.totalApproved /
+                                    grant?._count.GrantApplication,
+                                )
+                              : '—'}
                           </Text>
                           <Text
                             mt={-1}
@@ -340,10 +342,7 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
 
   let grantData;
   try {
-    const grantDetails = await axios.post(
-      `${getURL()}api/grants/getGrantBySlug`,
-      { slug },
-    );
+    const grantDetails = await axios.get(`${getURL()}api/grants/${slug}`);
     grantData = grantDetails.data;
   } catch (e) {
     console.error(e);

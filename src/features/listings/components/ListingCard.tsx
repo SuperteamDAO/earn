@@ -425,6 +425,8 @@ export const ListingCardMobile = ({
             <Flex justify={'space-between'} direction={'column'} w={'full'}>
               <Text
                 className="ph-no-capture"
+                overflow="ellipsis"
+                maxW={{ base: 'full', sm: '1rem' }}
                 color="brand.slate.700"
                 fontSize={'sm'}
                 fontWeight={600}

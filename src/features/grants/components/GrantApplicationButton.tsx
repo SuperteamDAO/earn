@@ -27,7 +27,7 @@ export const GrantApplicationButton = ({
   const [isUserApplicationLoading, setIsUserApplicationLoading] =
     useState(false);
 
-  const { region, id, externalLink } = grant;
+  const { region, id, link } = grant;
 
   const { status: authStatus } = useSession();
   const isAuthenticated = authStatus === 'authenticated';
@@ -73,8 +73,8 @@ export const GrantApplicationButton = ({
     if (isAuthenticated) {
       if (!userInfo?.isTalentFilled) {
         warningOnOpen();
-      } else if (externalLink) {
-        window.open(externalLink, '_blank', 'noopener,noreferrer');
+      } else if (link) {
+        window.open(link, '_blank', 'noopener,noreferrer');
       } else {
         onOpen();
       }
@@ -84,9 +84,12 @@ export const GrantApplicationButton = ({
   const getUserApplication = async () => {
     setIsUserApplicationLoading(true);
     try {
-      const response = await axios.get(`/api/grantApplication/isUserEligible`, {
-        params: { grantId: id },
-      });
+      const response = await axios.get(
+        `/api/grant-application/is-user-eligible`,
+        {
+          params: { grantId: id },
+        },
+      );
       setHasApplied(response.data.hasPendingApplication);
       setIsUserApplicationLoading(false);
     } catch (e) {

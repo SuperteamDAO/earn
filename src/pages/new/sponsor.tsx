@@ -68,7 +68,7 @@ const CreateSponsor = () => {
       await axios.post('/api/sponsors/create', {
         ...sponsor,
       });
-      await axios.post(`/api/email/manual/welcomeSponsor`);
+      await axios.post(`/api/email/manual/welcome-sponsor`);
       router.push('/dashboard/listings?open=1');
     } catch (e: any) {
       if (e?.response?.data?.error?.code === 'P2002') {

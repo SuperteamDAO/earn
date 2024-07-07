@@ -66,7 +66,9 @@ function GrantApplications({ slug }: Props) {
   const getGrant = async () => {
     setIsGrantLoading(true);
     try {
-      const grantDetails = await axios.get(`/api/grants/${slug}/`);
+      const grantDetails = await axios.get(
+        `/api/sponsor-dashboard/grants/${slug}/`,
+      );
       setGrant(grantDetails.data);
       if (grantDetails.data.sponsorId !== userInfo?.currentSponsorId) {
         router.push('/dashboard/listings');
@@ -83,7 +85,7 @@ function GrantApplications({ slug }: Props) {
     try {
       setIsLoading(true);
       const applicationDetails = await axios.get(
-        `/api/grants/${slug}/applications/`,
+        `/api/sponsor-dashboard/grants/${slug}/applications/`,
         {
           params: {
             searchText,

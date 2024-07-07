@@ -28,7 +28,7 @@ export function ListingWinners({ bounty }: Props) {
     setIsListingLoading(true);
     try {
       const submissionsDetails = await axios.get(
-        `/api/submission/${id || bounty?.id}/winners/`,
+        `/api/listings/${id || bounty?.id}/winners/`,
       );
       const { data } = submissionsDetails;
       const winners = sortRank(

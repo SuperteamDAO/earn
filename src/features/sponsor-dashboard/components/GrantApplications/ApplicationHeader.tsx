@@ -50,7 +50,14 @@ export const ApplicationHeader = ({ grant, totalApplications }: Props) => {
   const exportSubmissionsCsv = async () => {
     setIsExporting(true);
     try {
-      const exportURL = await axios.get(`/api/submission/${grant?.id}/export/`);
+      const exportURL = await axios.get(
+        `/api/sponsor-dashboard/submission/export/`,
+        {
+          params: {
+            listingId: grant?.id,
+          },
+        },
+      );
       const url = exportURL?.data?.url || '';
       window.open(url, '_blank');
       setIsExporting(false);
@@ -162,7 +169,7 @@ export const ApplicationHeader = ({ grant, totalApplications }: Props) => {
             <SponsorPrize
               compensationType={'range'}
               maxRewardAsk={grant?.maxReward}
-              minRewardAsk={grant?.minReward}
+              minRewardAsk={grant?.minReward ?? 0}
               textStyle={{
                 fontWeight: 600,
                 color: 'brand.slate.700',

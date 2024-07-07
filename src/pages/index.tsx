@@ -8,7 +8,7 @@ import { GrantsCard, type GrantWithApplicationCount } from '@/features/grants';
 import { type Listing, ListingSection, ListingTabs } from '@/features/listings';
 import { Home } from '@/layouts/Home';
 
-import { getGrants, getListings, type Skills } from './api/listings/v2';
+import { getGrants, getListings, type Skills } from './api/listings/homepage';
 
 interface Props {
   bounties: Listing[];
