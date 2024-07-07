@@ -1,4 +1,3 @@
-import axios from 'axios';
 import type { NextApiResponse } from 'next';
 import slugify from 'slugify';
 
@@ -94,14 +93,6 @@ async function handler(req: NextApiRequestWithUser, res: NextApiResponse) {
       },
     });
 
-    try {
-      if (process.env.NEXT_PUBLIC_VERCEL_ENV === 'production') {
-        const zapierWebhookUrl = process.env.ZAPIER_BOUNTY_WEBHOOK!;
-        await axios.post(zapierWebhookUrl, result);
-      }
-    } catch (err) {
-      logger.info('Error with Zapier Webhook -', err);
-    }
     return res.status(200).json(result);
   } catch (error) {
     logger.error(error);

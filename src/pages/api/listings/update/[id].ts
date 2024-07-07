@@ -1,4 +1,3 @@
-import axios from 'axios';
 import type { NextApiResponse } from 'next';
 
 import { type NextApiRequestWithUser, withAuth } from '@/features/auth';
@@ -177,16 +176,6 @@ async function bounty(req: NextApiRequestWithUser, res: NextApiResponse) {
         id: id as string,
         triggeredBy: userId,
       });
-    }
-
-    if (process.env.NEXT_PUBLIC_VERCEL_ENV === 'production') {
-      try {
-        const zapierWebhookUrl = process.env.ZAPIER_BOUNTY_WEBHOOK!;
-        logger.debug(`Sending data to Zapier Webhook: ${zapierWebhookUrl}`);
-        await axios.post(zapierWebhookUrl, result);
-      } catch (err) {
-        logger.error('Error with Zapier Webhook -', err);
-      }
     }
 
     return res.status(200).json(result);
