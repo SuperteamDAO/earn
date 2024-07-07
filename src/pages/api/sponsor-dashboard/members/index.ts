@@ -2,6 +2,7 @@ import type { NextApiRequest, NextApiResponse } from 'next';
 
 import logger from '@/lib/logger';
 import { prisma } from '@/prisma';
+import { safeStringify } from '@/utils/safeStringify';
 
 export default async function members(
   req: NextApiRequest,
@@ -12,6 +13,8 @@ export default async function members(
   const skip = params.take ? parseInt(params.skip as string, 10) : 0;
   const take = params.take ? parseInt(params.take as string, 10) : 15;
   const searchText = params.searchText as string;
+
+  logger.debug(`Query params: ${safeStringify(params)}`);
 
   const searchTextFields = ['email', 'username', 'firstName', 'lastName'];
   const whereSearch = searchText
@@ -33,7 +36,11 @@ export default async function members(
         ...whereSearch,
       },
     };
+
+    logger.debug('Fetching total count of members');
     const total = await prisma.userSponsors.count(countQuery);
+
+    logger.debug('Fetching member details');
     const result = await prisma.userSponsors.findMany({
       ...countQuery,
       skip: skip ?? 0,
@@ -51,9 +58,11 @@ export default async function members(
         },
       },
     });
+
+    logger.info('Successfully fetched member details');
     res.status(200).json({ total, data: result });
-  } catch (err) {
-    logger.error(err);
-    res.status(400).json({ err: 'Error occurred while fetching members.' });
+  } catch (err: any) {
+    logger.error(`Error fetching members: ${safeStringify(err)}`);
+    res.status(400).json({ error: 'Error occurred while fetching members.' });
   }
 }

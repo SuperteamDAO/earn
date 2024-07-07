@@ -11,6 +11,7 @@ import {
 } from '@/features/leaderboard';
 import logger from '@/lib/logger';
 import { prisma } from '@/prisma';
+import { safeStringify } from '@/utils/safeStringify';
 
 interface RankingCriteria {
   dollarsEarnedWeight: number;
@@ -64,21 +65,21 @@ function buildTalentLeaderboardQuery(
     SELECT
       UUID() AS id,
       ROW_NUMBER() OVER (ORDER BY score DESC, submissions DESC) AS \`rank\`,
-submissions,
-wins,
-ROUND(winRate * 100) AS winRate,
-totalEarnedInUSD,
-userId,
-'${skillFilter}' AS skill,
-'${dateFilter ? dateFilter.label : 'ALL_TIME'}' AS timeframe
+      submissions,
+      wins,
+      ROUND(winRate * 100) AS winRate,
+      totalEarnedInUSD,
+      userId,
+      '${skillFilter}' AS skill,
+      '${dateFilter ? dateFilter.label : 'ALL_TIME'}' AS timeframe
     FROM (
       ${baseQuery}
       WHERE 1=1
       ${skillCondition}
       ${dateCondition}
       ${groupByClause}
-HAVING SUM(s.rewardInUSD) > 0
-ORDER BY u.createdAt ASC
+      HAVING SUM(s.rewardInUSD) > 0
+      ORDER BY u.createdAt ASC
     ) AS ranking
   `;
 
@@ -124,8 +125,11 @@ async function handler(req: NextApiRequest, res: NextApiResponse) {
     return;
   }
 
+  logger.debug(`Request body: ${safeStringify(req.body)}`);
+
   await prisma.$transaction(
     async (tsx) => {
+      logger.debug('Deleting existing talent rankings');
       await tsx.talentRankings.deleteMany({});
 
       const allQueries: string[] = [];
@@ -149,11 +153,16 @@ async function handler(req: NextApiRequest, res: NextApiResponse) {
 
       try {
         for (let i = 0; i < allQueries.length; i++) {
+          logger.debug(`Executing query ${i + 1}/${allQueries.length}`);
           await tsx.$executeRawUnsafe(allQueries[i]!);
         }
+        logger.info('Talent rankings updated successfully');
         res.send('done');
-      } catch (err) {
-        logger.error('Erorr', JSON.stringify(err, null, 2));
+      } catch (err: any) {
+        logger.error(
+          'Error occurred while updating talent rankings:',
+          safeStringify(err),
+        );
         res.send('fail');
       }
     },

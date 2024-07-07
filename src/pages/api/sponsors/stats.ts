@@ -11,6 +11,9 @@ async function handler(req: NextApiRequestWithUser, res: NextApiResponse) {
 
     const user = await prisma.user.findUnique({
       where: { id: userId as string },
+      select: {
+        currentSponsorId: true,
+      },
     });
 
     if (!user || !user.currentSponsorId) {
@@ -45,7 +48,7 @@ async function handler(req: NextApiRequestWithUser, res: NextApiResponse) {
         where: {
           isWinnersAnnounced: true,
           isPublished: true,
-          status: 'OPEN',
+          status: status.OPEN,
           sponsorId,
         },
       }),
@@ -100,8 +103,10 @@ async function handler(req: NextApiRequestWithUser, res: NextApiResponse) {
       totalListingsAndGrants,
       totalSubmissionsAndApplications,
     });
-  } catch (error) {
-    logger.error(error);
+  } catch (error: any) {
+    logger.error(
+      `Error fetching sponsor statistics for user ${req.userId}: ${error.message}`,
+    );
     return res.status(500).json({ error: 'Internal Server Error' });
   }
 }

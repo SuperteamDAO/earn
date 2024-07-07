@@ -29,24 +29,25 @@ type BountyGrant = {
 async function handler(req: NextApiRequestWithUser, res: NextApiResponse) {
   const userId = req.userId;
 
-  const user = await prisma.user.findUnique({
-    where: {
-      id: userId as string,
-    },
-  });
-
-  if (!user || !user.currentSponsorId) {
-    return res
-      .status(403)
-      .json({ error: 'User does not have a current sponsor.' });
-  }
-
-  const params = req.query;
-  const sponsorId = user.currentSponsorId;
-  const searchText = params.searchText as string;
-  const whereSearch = searchText ? `AND title LIKE '%${searchText}%'` : '';
-
   try {
+    const user = await prisma.user.findUnique({
+      where: {
+        id: userId as string,
+      },
+    });
+
+    if (!user || !user.currentSponsorId) {
+      logger.warn(`User ${userId} does not have a current sponsor`);
+      return res
+        .status(403)
+        .json({ error: 'User does not have a current sponsor.' });
+    }
+
+    const params = req.query;
+    const sponsorId = user.currentSponsorId;
+    const searchText = params.searchText as string;
+    const whereSearch = searchText ? `AND title LIKE '%${searchText}%'` : '';
+
     const data: BountyGrant[] = await prisma.$queryRawUnsafe(
       `
       SELECT 
@@ -111,9 +112,12 @@ async function handler(req: NextApiRequestWithUser, res: NextApiResponse) {
       GrantStatus.OPEN,
     );
 
+    logger.info(`Successfully fetched bounties and grants for user ${userId}`);
     res.status(200).json(data);
   } catch (err: any) {
-    logger.error(err.message);
+    logger.error(
+      `Error fetching bounties and grants for user ${userId}: ${err.message}`,
+    );
     res
       .status(400)
       .json({ err: 'Error occurred while fetching bounties and grants.' });

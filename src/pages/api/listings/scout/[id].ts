@@ -2,8 +2,10 @@ import { Prisma } from '@prisma/client';
 import type { NextApiResponse } from 'next';
 
 import { type NextApiRequestWithUser, withAuth } from '@/features/auth';
+import logger from '@/lib/logger';
 import { prisma } from '@/prisma';
 import { dayjs } from '@/utils/dayjs';
+import { safeStringify } from '@/utils/safeStringify';
 
 function flattenSubSkills(skillsArray: any[]): string[] {
   const flattenedSubSkills: string[] = [];
@@ -49,29 +51,45 @@ async function scoutTalent(req: NextApiRequestWithUser, res: NextApiResponse) {
   const id = params.id as string;
   const LIMIT = 10;
 
-  if (req.method !== 'POST') res.status(405).send('Method Not Allowed');
+  logger.debug(`Request query: ${safeStringify(req.query)}`);
+
+  if (req.method !== 'POST') {
+    logger.warn('Method not allowed');
+    return res.status(405).send('Method Not Allowed');
+  }
 
   try {
+    logger.debug(`Fetching bounty with ID: ${id}`);
     const scoutBounty = await prisma.bounties.findFirst({
       where: {
         id,
       },
     });
-    if (scoutBounty === null) return res.status(404).send('Bounty Not Found');
+    if (scoutBounty === null) {
+      logger.warn(`Bounty with ID: ${id} not found`);
+      return res.status(404).send('Bounty Not Found');
+    }
 
     const userId = req.userId;
+    logger.debug(`Fetching user details for user ID: ${userId}`);
     const user = await prisma.user.findUnique({
       where: {
         id: userId,
       },
     });
-    if (scoutBounty?.sponsorId !== user?.currentSponsorId)
+    if (scoutBounty?.sponsorId !== user?.currentSponsorId) {
+      logger.warn(
+        `User ID: ${userId} is not authorized to generate scouts for bounty ID: ${id}`,
+      );
       return res
         .status(403)
         .send(`Bounty doesn't belong to requesting sponsor`);
+    }
 
-    if ((scoutBounty.skills as any)?.[0].subskills === null)
+    if ((scoutBounty.skills as any)?.[0].subskills === null) {
+      logger.warn('Bounty has no skills');
       return res.status(404).send('Bounty has No skills');
+    }
 
     const subskills = flattenSubSkills(scoutBounty.skills as any);
     const devSkills = filterInDevSkills(
@@ -79,6 +97,7 @@ async function scoutTalent(req: NextApiRequestWithUser, res: NextApiResponse) {
     );
     const region = scoutBounty.region.toString();
 
+    logger.debug('Fetching previous scouts');
     const prevScouts = await prisma.scouts.findMany({
       where: {
         listingId: id,
@@ -96,11 +115,15 @@ async function scoutTalent(req: NextApiRequestWithUser, res: NextApiResponse) {
       const nowDayjs = dayjs(new Date());
       const hourDiff = nowDayjs.diff(createdAtDayjs, 'hour');
       if (hourDiff <= 6) {
+        logger.info(
+          'Returning previous scouts as they were generated within the last 6 hours',
+        );
         return res.send(prevScouts);
       }
     }
 
     if (prevScouts.length > 0) {
+      logger.debug('Deleting previous scouts');
       await prisma.scouts.deleteMany({
         where: {
           listingId: id,
@@ -124,7 +147,7 @@ async function scoutTalent(req: NextApiRequestWithUser, res: NextApiResponse) {
             : `0 + 0`
         }
 	    ) AS matchingSubSkills
-`;
+    `;
 
     const sumMatchingSkillsQuery = `
       SUM(
@@ -142,7 +165,7 @@ async function scoutTalent(req: NextApiRequestWithUser, res: NextApiResponse) {
             : `0 + 0`
         }
 	    ) AS matchingSkills
-`;
+    `;
 
     const arrayMatchingSkillsCaseConditionQuery = (
       subskills: string[],
@@ -223,7 +246,7 @@ async function scoutTalent(req: NextApiRequestWithUser, res: NextApiResponse) {
           ${region !== 'GLOBAL' ? `AND u.location LIKE '%${region}%'` : ''}
         GROUP BY
           u.id
-`;
+    `;
 
     const subskillPoWLikeQuery = (subskills: string[], alias: string) =>
       subskills.map((s) => `${alias}.subSkills LIKE CONCAT('%','${s}','%')`);
@@ -276,7 +299,8 @@ async function scoutTalent(req: NextApiRequestWithUser, res: NextApiResponse) {
 		      AND t1.dollarsEarned > 0
 		    GROUP BY
 		      u.id, t1.dollarsEarned
-`;
+    `;
+
     const minMaxSubmissionsQuery = `
       SELECT 
 			  COALESCE(MAX(t.dollarsEarned),0) as maxDollarsEarned,
@@ -288,7 +312,7 @@ async function scoutTalent(req: NextApiRequestWithUser, res: NextApiResponse) {
 		  FROM (
         ${userWithMatchingSubmissionsQuery(true)}
 		  ) as t
-`;
+    `;
 
     const minMaxPowQuery = `
       SELECT
@@ -299,7 +323,7 @@ async function scoutTalent(req: NextApiRequestWithUser, res: NextApiResponse) {
 		  FROM (
         ${matchingSkillsPoWQuery}
 		  ) as t
-`;
+    `;
 
     const normalizeQuery = `
       SELECT
@@ -355,7 +379,7 @@ async function scoutTalent(req: NextApiRequestWithUser, res: NextApiResponse) {
       CROSS JOIN (
         ${minMaxPowQuery}
       ) t4
-`;
+    `;
 
     // COMBINATION OF NON DEV AND DEV LISTINGS (ALSO PURELY DEV LISTING)
     let weights: {
@@ -457,8 +481,9 @@ END)
       INSERT INTO Scouts (id, userId, listingId, dollarsEarned, 
         score, skills, invited, createdAt)
       ${selectScouts}
-`;
+    `;
 
+    logger.debug('Executing insert query for new scouts');
     await prisma.$executeRawUnsafe(insertQuery);
 
     if (prevScouts.length > 0) {
@@ -467,6 +492,7 @@ END)
         .map((s) => s.userId);
 
       if (invitedScouts.length > 0) {
+        logger.debug('Updating invited status for previous scouts');
         await prisma.scouts.updateMany({
           where: {
             userId: {
@@ -481,6 +507,7 @@ END)
       }
     }
 
+    logger.debug('Fetching new scouts after insert');
     const scouts = await prisma.scouts.findMany({
       where: {
         listingId: id,
@@ -573,10 +600,14 @@ END)
       },
     );
 
+    logger.info(`Successfully generated scouts for bounty ID: ${id}`);
     res.send(scouts);
-  } catch (error) {
+  } catch (error: any) {
+    logger.error(
+      `Error occurred while generating scouts for bounty with id=${id}: ${safeStringify(error)}`,
+    );
     return res.status(400).json({
-      error,
+      error: error.message,
       message: `Error occurred while generating scouts for bounty with id=${id}.`,
     });
   }

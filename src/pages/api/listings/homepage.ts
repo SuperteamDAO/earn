@@ -3,6 +3,7 @@ import { type NextApiRequest, type NextApiResponse } from 'next';
 
 import logger from '@/lib/logger';
 import { prisma } from '@/prisma';
+import { safeStringify } from '@/utils/safeStringify';
 
 export type Skills = 'development' | 'design' | 'content' | 'other';
 export type Status = 'open' | 'review' | 'completed';
@@ -122,6 +123,9 @@ export async function getListings({
   const skillFilterQuery = getSkillFilterQuery(skillFilter);
 
   const statusFilterQuery = getStatusFilterQuery(statusFilter);
+  logger.debug(
+    `Bounty status filter query: ${safeStringify(statusFilterQuery)}`,
+  );
 
   let orderBy:
     | { deadline: 'asc' | 'desc' }
@@ -191,6 +195,7 @@ export async function getListings({
     orderBy,
     take,
   });
+
   if (statusFilter === 'open') {
     bounties = bounties.sort((a, b) => {
       if (a.isFeatured && !b.isFeatured) {
@@ -203,6 +208,7 @@ export async function getListings({
     });
   }
 
+  logger.debug(`Fetched bounties: ${safeStringify(bounties)}`);
   return bounties;
 }
 
@@ -219,7 +225,8 @@ export default async function listings(
   const statusFilter = params.status as Status | undefined;
   const type = params.type as BountyType | undefined;
   const take = params.take ? parseInt(params.take as string, 20) : 20;
-  // const deadline = params.deadline as string | undefined;
+
+  logger.debug(`Request params: ${safeStringify(params)}`);
 
   try {
     const bounties = await getListings({
@@ -236,15 +243,17 @@ export default async function listings(
       grants = await getGrants({ take });
     }
 
+    logger.info('Fetched listings successfully');
     res.status(200).json({
       bounties,
       grants,
     });
-  } catch (error) {
-    logger.error(error);
-
+  } catch (error: any) {
+    logger.error(
+      `Error occurred while fetching listings: ${safeStringify(error)}`,
+    );
     res.status(400).json({
-      error,
+      error: error.message,
       message: 'Error occurred while fetching listings',
     });
   }

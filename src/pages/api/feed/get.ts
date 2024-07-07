@@ -4,14 +4,16 @@ import { type NextApiRequest, type NextApiResponse } from 'next';
 import logger from '@/lib/logger';
 import { prisma } from '@/prisma';
 import { dayjs } from '@/utils/dayjs';
+import { safeStringify } from '@/utils/safeStringify';
 
 export default async function handler(
   req: NextApiRequest,
   res: NextApiResponse,
 ): Promise<void> {
-  try {
-    const { timePeriod, take = 15, skip = 0, isWinner, filter } = req.query;
+  logger.debug(`Request query: ${safeStringify(req.query)}`);
+  const { timePeriod, take = 15, skip = 0, isWinner, filter } = req.query;
 
+  try {
     const winnerFilter =
       isWinner === 'true'
         ? {
@@ -40,6 +42,7 @@ export default async function handler(
         break;
     }
 
+    logger.debug(`Fetching submissions from ${startDate} to ${endDate}`);
     const submissions = await prisma.submission.findMany({
       where: {
         createdAt: {
@@ -87,6 +90,7 @@ export default async function handler(
       },
     });
 
+    logger.debug('Fetching PoWs');
     let pow: (PoW & {
       user: {
         firstName: string | null;
@@ -121,6 +125,10 @@ export default async function handler(
         },
       });
     }
+
+    logger.info(
+      `Fetched ${submissions.length} submissions and ${pow.length} PoWs`,
+    );
 
     const results = [
       ...submissions.map((sub) => ({
@@ -186,7 +194,9 @@ export default async function handler(
 
     res.status(200).json(results);
   } catch (error: any) {
-    logger.error(error);
+    logger.error(
+      `Error occurred while fetching submissions and PoWs: ${safeStringify(error)}`,
+    );
     res.status(500).json({ error: `Unable to fetch data: ${error.message}` });
   }
 }

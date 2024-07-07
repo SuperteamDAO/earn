@@ -3,18 +3,25 @@ import type { NextApiResponse } from 'next';
 import { type NextApiRequestWithUser, withAuth } from '@/features/auth';
 import logger from '@/lib/logger';
 import { prisma } from '@/prisma';
+import { safeStringify } from '@/utils/safeStringify';
 
 async function handler(req: NextApiRequestWithUser, res: NextApiResponse) {
   const { categories } = req.body;
   const userId = req.userId;
 
+  logger.debug(`Request body: ${safeStringify(req.body)}`);
+
   try {
+    logger.debug(`Deleting existing email settings for user ID: ${userId}`);
     await prisma.emailSettings.deleteMany({
       where: {
         userId: userId as string,
       },
     });
 
+    logger.debug(
+      `Creating new email settings for categories: ${safeStringify(categories)}`,
+    );
     await Promise.all(
       categories.map((category: any) =>
         prisma.emailSettings.create({
@@ -26,11 +33,16 @@ async function handler(req: NextApiRequestWithUser, res: NextApiResponse) {
       ),
     );
 
+    logger.info(
+      `Email preferences updated successfully for user ID: ${userId}`,
+    );
     res
       .status(200)
       .json({ message: 'Email preferences updated successfully!' });
-  } catch (error) {
-    logger.error('Failed to update email preferences:', error);
+  } catch (error: any) {
+    logger.error(
+      `Failed to update email preferences for user ID: ${userId} - ${safeStringify(error)}`,
+    );
     res.status(500).json({ message: 'Internal server error' });
   }
 }

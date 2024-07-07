@@ -7,12 +7,15 @@ import logger from '@/lib/logger';
 import { prisma } from '@/prisma';
 import { airtableConfig, airtableUpsert, airtableUrl } from '@/utils/airtable';
 import { dayjs } from '@/utils/dayjs';
+import { safeStringify } from '@/utils/safeStringify';
 
 async function grantApplication(
   req: NextApiRequestWithUser,
   res: NextApiResponse,
 ) {
   const userId = req.userId;
+
+  logger.debug(`Request body: ${safeStringify(req.body)}`);
 
   const {
     grantId,
@@ -28,10 +31,10 @@ async function grantApplication(
   } = req.body;
 
   const formattedProjectTimeline = dayjs(projectTimeline).format('D MMMM YYYY');
-
   const parsedAsk = parseInt(ask, 10);
 
   try {
+    logger.debug('Creating grant application in the database');
     const result = await prisma.grantApplication.create({
       data: {
         userId: userId as string,
@@ -52,7 +55,10 @@ async function grantApplication(
       },
     });
 
-    logger.info('result:', result);
+    logger.info(
+      `Grant application created successfully for user ID: ${userId}`,
+    );
+    logger.debug(`Grant application result: ${safeStringify(result)}`);
 
     if (result.grant.airtableId) {
       const config = airtableConfig(process.env.AIRTABLE_GRANTS_API_TOKEN!);
@@ -66,16 +72,19 @@ async function grantApplication(
         { fields: airtableData },
       ]);
 
-      logger.info('Airtable payload:', airtablePayload);
+      logger.debug(`Airtable payload: ${safeStringify(airtablePayload)}`);
 
       await axios.patch(url, JSON.stringify(airtablePayload), config);
+      logger.info('Airtable record updated successfully');
     }
 
     return res.status(200).json(result);
   } catch (error: any) {
-    logger.error(`User ${userId} unable to apply`, error.message);
+    logger.error(
+      `User ${userId} unable to apply for grant: ${safeStringify(error)}`,
+    );
     if (error.response) {
-      logger.error('Response data:', error.response.data);
+      logger.error(`Response data: ${safeStringify(error.response.data)}`);
     }
     return res.status(400).json({
       error: error.message,

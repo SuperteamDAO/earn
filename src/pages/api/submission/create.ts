@@ -5,26 +5,28 @@ import { type NextApiRequestWithUser, withAuth } from '@/features/auth';
 import { sendEmailNotification } from '@/features/emails';
 import logger from '@/lib/logger';
 import { prisma } from '@/prisma';
+import { safeStringify } from '@/utils/safeStringify';
 
 async function submission(req: NextApiRequestWithUser, res: NextApiResponse) {
   const userId = req.userId;
-
   const { listingId, link, tweet, otherInfo, eligibilityAnswers, ask } =
     req.body;
+  logger.debug(`Request body: ${safeStringify(req.body)}`);
 
-  const existingSubmission = await prisma.submission.findFirst({
-    where: {
-      userId,
-      listingId,
-    },
-  });
-
-  if (existingSubmission) {
-    return res.status(400).json({
-      message: 'Submission already exists for this user and listing.',
-    });
-  }
   try {
+    const existingSubmission = await prisma.submission.findFirst({
+      where: {
+        userId,
+        listingId,
+      },
+    });
+
+    if (existingSubmission) {
+      return res.status(400).json({
+        message: 'Submission already exists for this user and listing.',
+      });
+    }
+
     const result = await prisma.submission.create({
       data: {
         userId: userId as string,
@@ -49,7 +51,7 @@ async function submission(req: NextApiRequestWithUser, res: NextApiResponse) {
         triggeredBy: userId,
       });
     } catch (err) {
-      logger.error('Error in sending mail to User -', err);
+      logger.error('Error sending email to User:', err);
     }
 
     try {
@@ -60,7 +62,7 @@ async function submission(req: NextApiRequestWithUser, res: NextApiResponse) {
         triggeredBy: userId,
       });
     } catch (err) {
-      logger.error('Error in sending mail to Sponsor -', err);
+      logger.error('Error sending email to Sponsor:', err);
     }
 
     try {
@@ -69,13 +71,14 @@ async function submission(req: NextApiRequestWithUser, res: NextApiResponse) {
         await axios.post(zapierWebhookUrl, result);
       }
     } catch (err) {
-      logger.error('Error with Zapier Webhook -', err);
+      logger.error('Error with Zapier Webhook:', err);
     }
 
     return res.status(200).json(result);
   } catch (error: any) {
+    logger.error(`User ${userId} unable to submit: ${error.message}`);
     return res.status(400).json({
-      error,
+      error: error.message,
       message: `User ${userId} unable to submit, ${error.message}`,
     });
   }
