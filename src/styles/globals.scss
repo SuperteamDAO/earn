@@ -46,7 +46,11 @@ body {
 }
 
 #reset-des a {
-  all: revert !important;
+  word-break: break-word;
+  overflow-wrap: break-word;
+  color: blue;
+  text-decoration: underline;
+  cursor: pointer;
 }
 
 #reset-des ul {
