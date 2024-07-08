@@ -199,6 +199,7 @@ export default function TalentOlympics() {
         <Divider borderColor="brand.slate.300" />
         <Box overflowX="hidden" maxW="8xl" mx="auto" px={PADX}>
           <About />
+          <Leaderboard />
         </Box>
         <Box pos="relative" w="full" px={PADX} py={8} bg="#F8FAFC">
           <Text
@@ -654,6 +655,72 @@ function About() {
         </Grid>
       </GridItem>
     </Grid>
+  );
+}
+
+function Leaderboard({}) {
+  const leaders: { country: string; submissions: number }[] = [
+    {
+      country: 'India',
+      submissions: 823,
+    },
+    {
+      country: 'India',
+      submissions: 823,
+    },
+    {
+      country: 'India',
+      submissions: 823,
+    },
+    {
+      country: 'India',
+      submissions: 823,
+    },
+    {
+      country: 'India',
+      submissions: 823,
+    },
+    {
+      country: 'India',
+      submissions: 823,
+    },
+    {
+      country: 'India',
+      submissions: 823,
+    },
+    {
+      country: 'India',
+      submissions: 823,
+    },
+    {
+      country: 'India',
+      submissions: 823,
+    },
+    {
+      country: 'India',
+      submissions: 823,
+    },
+  ];
+
+  return (
+    <Flex>
+      <VStack align="start">
+        <Text color="brand.slate.600" fontSize="lg" fontWeight={600}>
+          Submissions Leaderboard
+        </Text>
+        <Grid flexWrap={'wrap'} gap={14}>
+          {leaders.map((l, i) => (
+            <HStack key={l.country} w="10rem">
+              <HStack>
+                <Text color="brand.slate.400">{i + 1}.</Text>
+                <Text>{l.country}</Text>
+              </HStack>
+              <Text ml="auto">{l.submissions}</Text>
+            </HStack>
+          ))}
+        </Grid>
+      </VStack>
+    </Flex>
   );
 }
 

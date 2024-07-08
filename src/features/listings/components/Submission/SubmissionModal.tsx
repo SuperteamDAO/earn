@@ -31,6 +31,7 @@ import { userStore } from '@/store/user';
 import { validateSolAddress } from '@/utils/validateSolAddress';
 
 import { type Listing } from '../../types';
+import { isYoutubeOrLoomLink } from '../../utils';
 import { QuestionHandler } from './QuestionHandler';
 import { SubmissionTerms } from './SubmissionTerms';
 
@@ -78,8 +79,9 @@ export const SubmissionModal = ({
   const isHackathon = type === 'hackathon';
   const [isLoading, setIsLoading] = useState(false);
   const [isTOSModalOpen, setIsTOSModalOpen] = useState(false);
-  const [error, setError] = useState('');
+  const [error, setError] = useState<any>('');
   const [publicKeyError, setPublicKeyError] = useState('');
+  const [submissionLinkError, setSubmissionLinkError] = useState('');
   const [askError, setAskError] = useState('');
   const {
     register,
@@ -304,10 +306,30 @@ export const SubmissionModal = ({
                     placeholder="Add a link"
                     register={register}
                     watch={watch}
+                    validate={(value: string) => {
+                      const valid = isYoutubeOrLoomLink(value);
+                      if (!valid) {
+                        setSubmissionLinkError(
+                          'Please enter a valid YouTube or Loom link',
+                        );
+                      }
+                      return valid;
+                    }}
                     maxLength={500}
                     errors={errors}
                     isRequired
                   />
+                  {submissionLinkError && (
+                    <Text
+                      alignSelf="start"
+                      mt={0}
+                      ml={1}
+                      color="red"
+                      fontSize="14px"
+                    >
+                      {submissionLinkError}
+                    </Text>
+                  )}
 
                   <TextAreaWithCounter
                     id="tweetLink"

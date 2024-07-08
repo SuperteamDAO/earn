@@ -133,3 +133,9 @@ export function userRegionEligibilty(
 
   return isEligible;
 }
+
+export const isYoutubeOrLoomLink = (url: string) => {
+  const youtubeRegex = /^(https?:\/\/)?(www\.)?(youtube\.com|youtu\.be)\/.+$/;
+  const loomRegex = /^(https?:\/\/)?(www\.)?loom\.com\/.+$/;
+  return youtubeRegex.test(url) || loomRegex.test(url);
+};
