@@ -67,7 +67,7 @@ const Meta = (props: IMetaProps) => {
           site_name: AppConfig.site_name,
           images: [
             {
-              url: props.og ?? 'https://earn.superteam.fun/assets/og/og.png',
+              url: props.og ?? `${router.basePath}/assets/og/og.png`,
               alt: props.title,
             },
           ],

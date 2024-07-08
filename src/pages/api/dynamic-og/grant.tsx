@@ -109,7 +109,7 @@ export default async function handler(request: NextRequest) {
                   objectFit: 'contain',
                 }}
                 alt="logo"
-                src={`https://earn.superteam.fun//assets/icons/bank.svg`}
+                src={`https://earn.superteam.fun/assets/icons/bank.svg`}
                 width="64px"
                 height="64px"
               />

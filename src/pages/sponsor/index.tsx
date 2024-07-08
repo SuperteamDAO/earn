@@ -1,12 +1,7 @@
 import { Flex, Grid } from '@chakra-ui/react';
 import localFont from 'next/font/local';
-import Head from 'next/head';
+import { useRouter } from 'next/router';
 import { useState } from 'react';
-
-const font = localFont({
-  src: '../../../public/assets/landingsponsor/fonts/OverusedGrotesk-VF.woff2',
-  variable: '--font-overused-grotesk',
-});
 
 import {
   FAQs,
@@ -21,8 +16,14 @@ import {
 } from '@/features/sponsor';
 import { Meta } from '@/layouts/Meta';
 
+const font = localFont({
+  src: '../../../public/assets/landingsponsor/fonts/OverusedGrotesk-VF.woff2',
+  variable: '--font-overused-grotesk',
+});
+
 const Sponsor = () => {
   const [videoPopup, setVideoPopup] = useState<boolean>(false);
+  const router = useRouter();
 
   const VideoPlayback = () => {
     return (
@@ -63,13 +64,11 @@ const Sponsor = () => {
 
   return (
     <>
-      <Head>
-        <Meta
-          title="Find Top Talent for Your Crypto Projects on Superteam Earn"
-          description="Seeking top talent for your crypto project? Superteam Earn connects you with experts for Bounties, Projects, and Grants in the crypto space."
-          og={`https://earn.superteam.fun/assets/og/sponsor.png`}
-        />
-      </Head>
+      <Meta
+        title="Find Top Talent for Your Crypto Projects on Superteam Earn"
+        description="Seeking top talent for your crypto project? Superteam Earn connects you with experts for Bounties, Projects, and Grants in the crypto space."
+        og={`${router.basePath}/assets/og/sponsor.png`}
+      />
 
       {videoPopup && <VideoPlayback />}
 
