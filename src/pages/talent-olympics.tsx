@@ -115,7 +115,7 @@ const rustTrack: TrackProps[] = [
     icon: baseAsset('monitor.svg'),
     title: 'NFT Mint, <redacted> & <redacted> ',
     description:
-      'Create an Anchor program that can mint, vault and <redacted> NFTs',
+      'Create an Anchor program that can mint, <redacted> and <redacted> NFTs',
     amount: 1000,
     token: 'USDC',
     link: '#',
