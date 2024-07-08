@@ -19,6 +19,7 @@ import {
   Stats,
   Testimonials,
 } from '@/features/sponsor';
+import { Meta } from '@/layouts/Meta';
 
 const Sponsor = () => {
   const [videoPopup, setVideoPopup] = useState<boolean>(false);
@@ -63,12 +64,10 @@ const Sponsor = () => {
   return (
     <>
       <Head>
-        <title>
-          Find Top Talent for Your Crypto Projects on Superteam Earn
-        </title>
-        <meta
-          name="description"
-          content="Seeking top talent for your crypto project? Superteam Earn connects you with experts for Bounties, Projects, and Grants in the crypto space."
+        <Meta
+          title="Find Top Talent for Your Crypto Projects on Superteam Earn"
+          description="Seeking top talent for your crypto project? Superteam Earn connects you with experts for Bounties, Projects, and Grants in the crypto space."
+          og={`https://earn.superteam.fun/assets/og/sponsor.png`}
         />
       </Head>
 

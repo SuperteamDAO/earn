@@ -71,6 +71,7 @@ function ListingCategoryPage({ slug }: { slug: string }) {
         title={title}
         description={metaDescription}
         canonical={canonicalURL}
+        og={`https://earn.superteam.fun/assets/og/categories/${slug}.png`}
       />
       <Box w={'100%'}>
         <ListingTabs
