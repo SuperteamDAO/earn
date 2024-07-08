@@ -46,7 +46,7 @@ export default async function handler(request: NextRequest) {
       searchParams.has(name) ? processFn(searchParams.get(name)) : null;
 
     const title = getParam('title', (x) =>
-      formatString(decodeURIComponent(x), 78),
+      formatString(decodeURIComponent(x), 84),
     );
     const type = getParam('type');
     const logo = getParam('logo', (x) => formatString(x, 100)) || sponsorImg;
@@ -140,48 +140,57 @@ export default async function handler(request: NextRequest) {
               justifyContent: 'space-between',
             }}
           >
-            <div style={{ display: 'flex', alignItems: 'center' }}>
-              <img
-                style={{
-                  width: '32px',
-                  height: '32px',
-                  objectFit: 'contain',
-                }}
-                alt="logo"
-                src={`https://earn.superteam.fun/assets/icons/${listingIcon}`}
-                width="64px"
-                height="64px"
-              />
-              {capitalizedType && (
+            <div
+              style={{
+                display: 'flex',
+                flexDirection: 'column',
+              }}
+            >
+              <div style={{ display: 'flex', alignItems: 'center' }}>
+                <img
+                  style={{
+                    width: '32px',
+                    height: '32px',
+                    objectFit: 'contain',
+                  }}
+                  alt="logo"
+                  src={`https://earn.superteam.fun/assets/icons/${listingIcon}`}
+                  width="64px"
+                  height="64px"
+                />
+                {capitalizedType && (
+                  <div
+                    style={{
+                      fontSize: 28,
+                      marginLeft: '2px',
+                      fontStyle: 'normal',
+                      lineHeight: 1.4,
+                      color: '#94A3B8',
+                      fontFamily: '"Medium"',
+                    }}
+                  >
+                    {capitalizedType}
+                  </div>
+                )}
+              </div>
+
+              {title && (
                 <div
                   style={{
-                    fontSize: 28,
-                    marginLeft: '2px',
+                    fontSize: 54,
+                    marginTop: '54px',
                     fontStyle: 'normal',
-                    lineHeight: 1.4,
-                    color: '#94A3B8',
-                    fontFamily: '"Medium"',
+                    color: 'black',
+                    lineHeight: 1.2,
+                    letterSpacing: '-1px',
+                    whiteSpace: 'pre-wrap',
+                    fontFamily: '"Bold"',
                   }}
                 >
-                  {capitalizedType}
+                  {title}
                 </div>
               )}
             </div>
-
-            {title && (
-              <div
-                style={{
-                  fontSize: 54,
-                  fontStyle: 'normal',
-                  color: 'black',
-                  lineHeight: 1.4,
-                  whiteSpace: 'pre-wrap',
-                  fontFamily: '"Bold"',
-                }}
-              >
-                {title}
-              </div>
-            )}
             <div
               style={{
                 display: 'flex',

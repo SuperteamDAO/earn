@@ -13,10 +13,6 @@ const formatString = (str: string, maxLength: number) =>
 const formatNumber = (num: string) =>
   Number(num).toLocaleString(undefined, { maximumFractionDigits: 2 });
 
-const fontDataP = fetchAsset(
-  new URL('../../../../public/Inter-SemiBold.woff', import.meta.url),
-);
-
 const sponsorImageP = fetchAsset(
   new URL('../../../../public/assets/logo/sponsor-logo.png', import.meta.url),
 );
@@ -25,8 +21,20 @@ export default async function handler(request: NextRequest) {
   try {
     const { searchParams } = new URL(request.url);
 
-    const [fontData, sponsorImg] = await Promise.all([
-      fontDataP,
+    const mediumFontP = fetchAsset(
+      new URL('../../../../public/Inter-Medium.woff', import.meta.url),
+    );
+    const semiBoldFontP = fetchAsset(
+      new URL('../../../../public/Inter-SemiBold.woff', import.meta.url),
+    );
+    const boldFontP = fetchAsset(
+      new URL('../../../../public/Inter-Bold.woff', import.meta.url),
+    );
+
+    const [mediumFont, semiBoldFont, boldFont, sponsorImg] = await Promise.all([
+      mediumFontP,
+      semiBoldFontP,
+      boldFontP,
       sponsorImageP,
     ]);
 
@@ -101,47 +109,57 @@ export default async function handler(request: NextRequest) {
               justifyContent: 'space-between',
             }}
           >
-            <div style={{ display: 'flex', alignItems: 'center' }}>
-              <img
-                style={{
-                  width: '32px',
-                  height: '32px',
-                  objectFit: 'contain',
-                }}
-                alt="logo"
-                src={`https://earn.superteam.fun/assets/icons/bank.svg`}
-                width="64px"
-                height="64px"
-              />
+            <div
+              style={{
+                display: 'flex',
+                flexDirection: 'column',
+              }}
+            >
+              <div style={{ display: 'flex', alignItems: 'center' }}>
+                <img
+                  style={{
+                    width: '32px',
+                    height: '32px',
+                    objectFit: 'contain',
+                  }}
+                  alt="logo"
+                  src={`https://earn.superteam.fun/assets/icons/bank.svg`}
+                  width="64px"
+                  height="64px"
+                />
 
-              <div
-                style={{
-                  fontSize: 28,
-                  marginLeft: '2px',
-                  fontStyle: 'normal',
-                  lineHeight: 1.4,
-                  color: '#94A3B8',
-                  fontFamily: '"Medium"',
-                }}
-              >
-                Grants
+                <div
+                  style={{
+                    fontSize: 28,
+                    marginLeft: '8px',
+                    fontStyle: 'normal',
+                    lineHeight: 1.4,
+                    color: '#94A3B8',
+                    fontFamily: '"Medium"',
+                    marginTop: '3px',
+                  }}
+                >
+                  Grants
+                </div>
               </div>
+
+              {title && (
+                <div
+                  style={{
+                    marginTop: '54px',
+                    fontSize: 54,
+                    fontStyle: 'normal',
+                    color: 'black',
+                    lineHeight: 1.2,
+                    letterSpacing: '-1px',
+                    whiteSpace: 'pre-wrap',
+                    fontFamily: '"Bold"',
+                  }}
+                >
+                  {title}
+                </div>
+              )}
             </div>
-
-            {title && (
-              <div
-                style={{
-                  fontSize: 54,
-                  fontStyle: 'normal',
-                  color: 'black',
-                  lineHeight: 1.4,
-                  whiteSpace: 'pre-wrap',
-                  fontFamily: '"Bold"',
-                }}
-              >
-                {title}
-              </div>
-            )}
             <div
               style={{
                 display: 'flex',
@@ -219,7 +237,11 @@ export default async function handler(request: NextRequest) {
       {
         width: 1200,
         height: 630,
-        fonts: [{ name: 'var(--font-sans)', data: fontData, style: 'normal' }],
+        fonts: [
+          { name: 'Medium', data: mediumFont, style: 'normal' },
+          { name: 'SemiBold', data: semiBoldFont, style: 'normal' },
+          { name: 'Bold', data: boldFont, style: 'normal' },
+        ],
       },
     );
   } catch (e: any) {
