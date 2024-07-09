@@ -29,6 +29,7 @@ import {
 } from '@chakra-ui/react';
 import { SubscribeHackathon } from '@prisma/client';
 import axios from 'axios';
+import type { GetServerSideProps } from 'next';
 import NextImage, { type StaticImageData } from 'next/image';
 import NextLink from 'next/link';
 import { useSession } from 'next-auth/react';
@@ -40,12 +41,15 @@ import { FaPlay } from 'react-icons/fa';
 import { FaDiscord } from 'react-icons/fa6';
 import { TbBell, TbBellRinging } from 'react-icons/tb';
 
+import { UserFlag } from '@/components/shared/UserFlag';
 import { tokenList } from '@/constants';
+import { Superteams } from '@/constants/Superteam';
 import { AuthWrapper } from '@/features/auth';
 import { WarningModal } from '@/features/listings';
 import type { User } from '@/interface/user';
 import { Default } from '@/layouts/Default';
 import { Meta } from '@/layouts/Meta';
+import { prisma } from '@/prisma';
 import RiseIn from '@/public/assets/company-logos/rise-in.svg';
 import Superteam from '@/public/assets/company-logos/superteam.svg';
 import Turbine from '@/public/assets/company-logos/turbine.svg';
@@ -157,13 +161,18 @@ const rustTrack: TrackProps[] = [
   },
 ];
 
-export default function TalentOlympics() {
+interface Props {
+  countryLeaders: CountryLeader[];
+}
+
+export default function TalentOlympics({ countryLeaders }: Props) {
   const PADX = 4;
   const START_DATE = '2024-07-10T23:59:59Z';
   const CLOSE_DATE = '2024-07-14T23:59:59Z';
 
   const [hackathonIsOn, setHackathonIsOn] = useState(false);
   useEffect(() => {
+    console.log('countryLeaders - ', countryLeaders);
     const hackathonStartTime = dayjs(START_DATE);
 
     const checkHackathonStatus = () => {
@@ -199,7 +208,6 @@ export default function TalentOlympics() {
         <Divider borderColor="brand.slate.300" />
         <Box overflowX="hidden" maxW="8xl" mx="auto" px={PADX}>
           <About />
-          <Leaderboard />
         </Box>
         <Box pos="relative" w="full" px={PADX} py={8} bg="#F8FAFC">
           <Text
@@ -237,6 +245,7 @@ export default function TalentOlympics() {
           </Flex>
         </Box>
         <Box overflowX="hidden" maxW="8xl" mx="auto" px={PADX}>
+          <Leaderboard leaders={countryLeaders} />
           <FAQs />
         </Box>
       </Box>
@@ -658,72 +667,6 @@ function About() {
   );
 }
 
-function Leaderboard({}) {
-  const leaders: { country: string; submissions: number }[] = [
-    {
-      country: 'India',
-      submissions: 823,
-    },
-    {
-      country: 'India',
-      submissions: 823,
-    },
-    {
-      country: 'India',
-      submissions: 823,
-    },
-    {
-      country: 'India',
-      submissions: 823,
-    },
-    {
-      country: 'India',
-      submissions: 823,
-    },
-    {
-      country: 'India',
-      submissions: 823,
-    },
-    {
-      country: 'India',
-      submissions: 823,
-    },
-    {
-      country: 'India',
-      submissions: 823,
-    },
-    {
-      country: 'India',
-      submissions: 823,
-    },
-    {
-      country: 'India',
-      submissions: 823,
-    },
-  ];
-
-  return (
-    <Flex>
-      <VStack align="start">
-        <Text color="brand.slate.600" fontSize="lg" fontWeight={600}>
-          Submissions Leaderboard
-        </Text>
-        <Grid flexWrap={'wrap'} gap={14}>
-          {leaders.map((l, i) => (
-            <HStack key={l.country} w="10rem">
-              <HStack>
-                <Text color="brand.slate.400">{i + 1}.</Text>
-                <Text>{l.country}</Text>
-              </HStack>
-              <Text ml="auto">{l.submissions}</Text>
-            </HStack>
-          ))}
-        </Grid>
-      </VStack>
-    </Flex>
-  );
-}
-
 function FeatureCard({
   image,
   title,
@@ -864,6 +807,37 @@ function TrackBox({
         </Flex>
       </Box>
     </Tooltip>
+  );
+}
+
+function Leaderboard({ leaders }: { leaders: CountryLeader[] }) {
+  return (
+    <VStack gap={8} w="full" mx="auto" py={8}>
+      <Text color="brand.slate.600" fontSize="xl" fontWeight={700}>
+        Top Countries by Submissions
+      </Text>
+      <Grid
+        rowGap={6}
+        columnGap={24}
+        autoFlow={'column'}
+        templateRows={'repeat(5, 1fr)'}
+        w="full"
+        maxW="35rem"
+      >
+        {leaders.map((l, i) => (
+          <HStack key={l.location} w="full">
+            <HStack fontWeight={500}>
+              <Text color="brand.slate.400">{i + 1}.</Text>
+              <UserFlag location={l.location} />
+              <Text color="brand.slate.500">{l.location}</Text>
+            </HStack>
+            <Text ml="auto" fontWeight={500}>
+              {l.submission_count === 0 ? '-' : l.submission_count}
+            </Text>
+          </HStack>
+        ))}
+      </Grid>
+    </VStack>
   );
 }
 
@@ -1225,4 +1199,60 @@ const TextStyler: React.FC<TextStylerProps> = ({ text }) => {
       })}
     </Text>
   );
+};
+
+interface CountryLeader {
+  location: string;
+  submission_count: number;
+}
+export const getServerSideProps: GetServerSideProps = async ({}) => {
+  const countryLeaders = await prisma.$queryRaw<CountryLeader[]>`
+SELECT 
+    u.location,
+    COUNT(s.id) as submission_count
+FROM 
+    Hackathon h
+JOIN 
+    Bounties b ON h.id = b.hackathonId
+JOIN 
+    Submission s ON b.id = s.listingId
+JOIN 
+    User u ON s.userId = u.id
+WHERE 
+    h.slug = ${'talent-olympics'}
+GROUP BY 
+    u.location
+ORDER BY 
+    submission_count DESC
+LIMIT 10;
+`;
+
+  const countryLeaderLength = countryLeaders.length;
+  console.log('countryLeaders - ', countryLeaderLength);
+  if (countryLeaderLength < 10) {
+    const restSuperteams = Superteams.filter(
+      (s) =>
+        countryLeaderLength === 0 ||
+        !countryLeaders.some((c) => s.country.includes(c.location)),
+    ).slice(0, 10 - countryLeaderLength);
+    console.log(restSuperteams);
+
+    for (let i = 0; i < 10 - countryLeaderLength; i++) {
+      console.log(restSuperteams[i]);
+      countryLeaders.push({
+        location: restSuperteams[i]?.country[0] ?? 'na',
+        submission_count: 0,
+      });
+    }
+  }
+
+  return {
+    props: {
+      countryLeaders: JSON.parse(
+        JSON.stringify(countryLeaders, (_, value) =>
+          typeof value === 'bigint' ? value.toString() : value,
+        ),
+      ),
+    },
+  };
 };
