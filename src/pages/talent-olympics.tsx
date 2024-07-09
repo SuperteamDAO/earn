@@ -4,6 +4,7 @@ import {
   AccordionIcon,
   AccordionItem,
   AccordionPanel,
+  Avatar,
   Box,
   Button,
   Circle,
@@ -163,9 +164,11 @@ const rustTrack: TrackProps[] = [
 
 interface Props {
   countryLeaders: CountryLeader[];
+  rankings: { user: User; rating: number }[];
 }
 
-export default function TalentOlympics({ countryLeaders }: Props) {
+export default function TalentOlympics({ countryLeaders, rankings }: Props) {
+  console.log('rankings - ', rankings);
   const PADX = 4;
   const START_DATE = '2024-07-10T23:59:59Z';
   const CLOSE_DATE = '2024-07-14T23:59:59Z';
@@ -246,6 +249,7 @@ export default function TalentOlympics({ countryLeaders }: Props) {
         </Box>
         <Box overflowX="hidden" maxW="8xl" mx="auto" px={PADX}>
           <Leaderboard leaders={countryLeaders} />
+          <Rankings rankings={rankings} />
           <FAQs />
         </Box>
       </Box>
@@ -856,7 +860,7 @@ function Leaderboard({ leaders }: { leaders: CountryLeader[] }) {
         rowGap={6}
         columnGap={24}
         autoFlow={'column'}
-        templateRows={'repeat(5, 1fr)'}
+        templateRows={{ base: 'repeat(10, 1fr)', md: 'repeat(5, 1fr)' }}
         w="full"
         maxW="35rem"
       >
@@ -870,6 +874,75 @@ function Leaderboard({ leaders }: { leaders: CountryLeader[] }) {
             <Text ml="auto" fontWeight={500}>
               {l.submission_count === 0 ? '-' : l.submission_count}
             </Text>
+          </HStack>
+        ))}
+      </Grid>
+    </VStack>
+  );
+}
+
+function Rankings({
+  rankings,
+}: {
+  rankings: { user: User; rating: number }[];
+}) {
+  return (
+    <VStack gap={8} w="full" mx="auto" py={8}>
+      <Text color="brand.slate.600" fontSize="xl" fontWeight={700}>
+        Top Individuals by Rating
+      </Text>
+      <Grid
+        rowGap={6}
+        columnGap={12}
+        autoFlow={'column'}
+        templateRows={{ base: 'repeat(10, 1fr)', md: 'repeat(5, 1fr)' }}
+        w="full"
+        maxW="35rem"
+      >
+        {rankings.map((r, i) => (
+          <HStack key={r.user.id} justify="space-between" w="full">
+            <HStack color="brand.slate.500" fontSize="xs" fontWeight={500}>
+              <Text color="brand.slate.400">#{i + 1}</Text>
+              <Link
+                className="ph-no-capture"
+                as={NextLink}
+                alignItems="center"
+                gap={2}
+                display="flex"
+                href={`/t/${r.user.username}`}
+                target="_blank"
+              >
+                <Avatar w={8} h={8} src={r.user.photo ?? undefined} />
+                <VStack
+                  align="start"
+                  justify={{ base: 'center', md: 'start' }}
+                  gap={1}
+                  lineHeight={{ base: 'normal', md: 1.15 }}
+                >
+                  <Flex align={'center'} gap={2}>
+                    <Text
+                      overflowX="hidden"
+                      maxW={'7rem'}
+                      color="black"
+                      textOverflow={'ellipsis'}
+                    >
+                      {r.user.firstName} {r.user.lastName}
+                    </Text>
+                  </Flex>
+                  <Text
+                    overflowX="hidden"
+                    maxW={'7rem'}
+                    textOverflow={'ellipsis'}
+                  >
+                    @{r.user.username}
+                  </Text>
+                </VStack>
+              </Link>
+            </HStack>
+            <Flex gap={2} ml="auto" fontSize="sm" fontWeight={500}>
+              <Text>{r.rating}</Text>
+              <Text color="brand.slate.500">Points</Text>
+            </Flex>
           </HStack>
         ))}
       </Grid>
@@ -1237,6 +1310,49 @@ const TextStyler: React.FC<TextStylerProps> = ({ text }) => {
   );
 };
 
+const rankedUsers: { email: string; rating: number }[] = [
+  {
+    email: 'pratik.dholani1@gmail.com',
+    rating: 69,
+  },
+  {
+    email: 'pratik.dholani1@gmail.com',
+    rating: 69,
+  },
+  {
+    email: 'pratik.dholani1@gmail.com',
+    rating: 69,
+  },
+  {
+    email: 'pratik.dholani1@gmail.com',
+    rating: 69,
+  },
+  {
+    email: 'pratik.dholani1@gmail.com',
+    rating: 69,
+  },
+  {
+    email: 'pratik.dholani1@gmail.com',
+    rating: 69,
+  },
+  {
+    email: 'pratik.dholani1@gmail.com',
+    rating: 69,
+  },
+  {
+    email: 'pratik.dholani1@gmail.com',
+    rating: 69,
+  },
+  {
+    email: 'pratik.dholani1@gmail.com',
+    rating: 69,
+  },
+  {
+    email: 'pratik.dholani1@gmail.com',
+    rating: 69,
+  },
+];
+
 interface CountryLeader {
   location: string;
   submission_count: number;
@@ -1282,6 +1398,35 @@ LIMIT 10;
     }
   }
 
+  const emails = rankedUsers.map((u) => u.email);
+  const emailProfiles = await prisma.user.findMany({
+    where: {
+      email: { in: emails },
+    },
+    select: {
+      id: true,
+      username: true,
+      firstName: true,
+      lastName: true,
+      photo: true,
+      email: true,
+    },
+  });
+
+  // const rankedProfiles = emailProfiles.map((p) => ({
+  //   user: {
+  //     ...p
+  //   },
+  //   rating: rankedUsers.find((u) => u.email === p.email)?.rating ?? 0
+  // }))
+
+  const rankedProfiles = rankedUsers
+    .map((u) => ({
+      user: emailProfiles.find((p) => p.email === u.email),
+      rating: u.rating,
+    }))
+    .sort((a, b) => b.rating - a.rating);
+
   return {
     props: {
       countryLeaders: JSON.parse(
@@ -1289,6 +1434,7 @@ LIMIT 10;
           typeof value === 'bigint' ? value.toString() : value,
         ),
       ),
+      rankings: rankedProfiles,
     },
   };
 };
