@@ -10,7 +10,8 @@ export const colorMap = {
 };
 
 export const isLink = (text: string) => {
-  const urlRegex =
-    /^(https?:\/\/)?(www\.)?[a-zA-Z0-9-]+(\.[a-zA-Z]{2,})+([\/\w \.-]*)*\/?$/;
-  return urlRegex.test(text);
+  const linkRegex =
+    /^(https?:\/\/)?(www\.)?[-a-zA-Z0-9@:%._\+~#=]{1,256}\.[a-zA-Z0-9()]{1,6}\b([-a-zA-Z0-9()@:%_\+.~#?&//=]*)/i;
+
+  return linkRegex.test(text);
 };

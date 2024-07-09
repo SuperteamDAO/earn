@@ -248,7 +248,7 @@ export default function TalentOlympics({ countryLeaders, rankings }: Props) {
           </Flex>
         </Box>
         <Box overflowX="hidden" maxW="8xl" mx="auto" px={PADX}>
-          <Leaderboard leaders={countryLeaders} />
+          {hackathonIsOn && <Leaderboard leaders={countryLeaders} />}
           <Rankings rankings={rankings} />
           <FAQs />
         </Box>
@@ -869,7 +869,14 @@ function Leaderboard({ leaders }: { leaders: CountryLeader[] }) {
             <HStack fontWeight={500}>
               <Text color="brand.slate.400">{i + 1}.</Text>
               <UserFlag location={l.location} />
-              <Text color="brand.slate.500">{l.location}</Text>
+              <Text
+                maxW="12rem"
+                color="brand.slate.500"
+                textOverflow="ellipsis"
+                noOfLines={1}
+              >
+                {l.location}
+              </Text>
             </HStack>
             <Text ml="auto" fontWeight={500}>
               {l.submission_count === 0 ? '-' : l.submission_count}
@@ -887,7 +894,7 @@ function Rankings({
   rankings: { user: User; rating: number }[];
 }) {
   return (
-    <VStack gap={8} w="full" mx="auto" py={8}>
+    <VStack gap={8} display="none" w="full" mx="auto" py={8}>
       <Text color="brand.slate.600" fontSize="xl" fontWeight={700}>
         Top Individuals by Rating
       </Text>
@@ -925,6 +932,7 @@ function Rankings({
                       maxW={'7rem'}
                       color="black"
                       textOverflow={'ellipsis'}
+                      noOfLines={1}
                     >
                       {r.user.firstName} {r.user.lastName}
                     </Text>
@@ -933,6 +941,7 @@ function Rankings({
                     overflowX="hidden"
                     maxW={'7rem'}
                     textOverflow={'ellipsis'}
+                    noOfLines={1}
                   >
                     @{r.user.username}
                   </Text>

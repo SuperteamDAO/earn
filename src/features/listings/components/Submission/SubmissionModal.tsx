@@ -241,10 +241,10 @@ export const SubmissionModal = ({
       subheadingText = "We can't wait to see what you've created!";
       break;
     case 'hackathon':
-      headerText = 'Hackathon Submission';
+      headerText = 'Talent Olympics Submission';
       subheadingText = (
         <>
-          Share your hackathon submission here! Remember:
+          Note:
           <Text>
             1. In the “Link to your Submission” field, submit your hackathon
             project’s most useful link (could be a loom video, GitHub link,
