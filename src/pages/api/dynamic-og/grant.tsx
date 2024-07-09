@@ -2,16 +2,11 @@ import { ImageResponse } from '@vercel/og';
 import type { NextRequest } from 'next/server';
 
 import { tokenList } from '@/constants';
+import { fetchAsset, formatNumber, formatString } from '@/utils/ogHelpers';
 
 export const config = {
   runtime: 'experimental-edge',
 };
-
-const fetchAsset = (url: URL) => fetch(url).then((res) => res.arrayBuffer());
-const formatString = (str: string, maxLength: number) =>
-  str?.length > maxLength ? `${str.slice(0, maxLength)}...` : str;
-const formatNumber = (num: string) =>
-  Number(num).toLocaleString(undefined, { maximumFractionDigits: 2 });
 
 const sponsorImageP = fetchAsset(
   new URL('../../../../public/assets/logo/sponsor-logo.png', import.meta.url),
@@ -54,9 +49,10 @@ export default async function handler(request: NextRequest) {
     const sponsor = getParam('sponsor', (x) => formatString(x, 100));
     const token = getParam('token', (x) => formatString(x, 100));
 
-    const displayReward = isNaN(minReward)
-      ? `Upto ${maxReward}`
-      : `${minReward} - ${maxReward}`;
+    const displayReward =
+      isNaN(minReward) || minReward === 0
+        ? `Upto ${maxReward}`
+        : `${minReward} - ${maxReward}`;
 
     const getTokenIcon = (symbol: any) =>
       tokenList.find((t) => t.tokenSymbol === symbol)?.icon;

@@ -1,5 +1,6 @@
 import { Container, Flex, Image, Text, Wrap, WrapItem } from '@chakra-ui/react';
 import axios from 'axios';
+import { useRouter } from 'next/router';
 import React, { useEffect, useState } from 'react';
 
 import { ErrorInfo } from '@/components/shared/ErrorInfo';
@@ -23,6 +24,8 @@ function Grants() {
     setIsLoading(false);
   };
 
+  const router = useRouter();
+
   useEffect(() => {
     if (!isLoading) return;
     getGrants();
@@ -36,6 +39,7 @@ function Grants() {
             title="Superteam Earn | Grants"
             description="Discover Solana Grants for Development, Art, Content, and more to fund your ideas"
             canonical="https://earn.superteam.fun/grants/"
+            og={`${router.asPath}/assets/og/grants.png`}
           />
         }
       >

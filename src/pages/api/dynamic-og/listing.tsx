@@ -2,16 +2,11 @@ import { ImageResponse } from '@vercel/og';
 import type { NextRequest } from 'next/server';
 
 import { tokenList } from '@/constants';
+import { fetchAsset, formatNumber, formatString } from '@/utils/ogHelpers';
 
 export const config = {
   runtime: 'experimental-edge',
 };
-
-const fetchAsset = (url: URL) => fetch(url).then((res) => res.arrayBuffer());
-const formatString = (str: string, maxLength: number) =>
-  str?.length > maxLength ? `${str.slice(0, maxLength)}...` : str;
-const formatNumber = (num: string) =>
-  Number(num).toLocaleString(undefined, { maximumFractionDigits: 2 });
 
 const mediumFontP = fetchAsset(
   new URL('../../../../public/Inter-Medium.woff', import.meta.url),
@@ -63,7 +58,7 @@ export default async function handler(request: NextRequest) {
         displayReward = reward;
         break;
       case 'range':
-        displayReward = `${minRewardAsk} - ${maxRewardAsk}`;
+        displayReward = `${minRewardAsk} to ${maxRewardAsk}`;
         break;
       case 'variable':
         displayReward = 'Variable';
