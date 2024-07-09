@@ -251,17 +251,12 @@ export const SubmissionModal = ({
             website, etc)
           </Text>
           <Text>
-            2. To be eligible for different tracks, you need to submit to each
-            track separately
+            2. To be eligible for different challenges, you need to submit to
+            each challenge separately
           </Text>
           <Text>
-            3. There&apos;s no restriction on the number of tracks you can
+            3. {`There's no`} restriction on the number of challenges you can
             submit to
-          </Text>
-          <Text>
-            4. You can mark the Project Website, Project Twitter, and
-            Presentation Link fields as &quot;NA&quot; in case you do not have
-            these ready at the time of submission.
           </Text>
         </>
       );
