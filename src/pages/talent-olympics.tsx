@@ -1422,13 +1422,6 @@ LIMIT 10;
     },
   });
 
-  // const rankedProfiles = emailProfiles.map((p) => ({
-  //   user: {
-  //     ...p
-  //   },
-  //   rating: rankedUsers.find((u) => u.email === p.email)?.rating ?? 0
-  // }))
-
   const rankedProfiles = rankedUsers
     .map((u) => ({
       user: emailProfiles.find((p) => p.email === u.email),

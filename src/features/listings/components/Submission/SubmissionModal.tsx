@@ -310,40 +310,6 @@ export const SubmissionModal = ({
                     errors={errors}
                     isRequired
                   />
-                  {/* {isHackathon && ( */}
-                  {/*   <TextAreaWithCounter */}
-                  {/*     id="videoLink" */}
-                  {/*     label="Video Presentation Link" */}
-                  {/*     helperText="Full Youtube or Loom links are only allowed!" */}
-                  {/*     placeholder="Add a link" */}
-                  {/*     register={register} */}
-                  {/*     watch={watch} */}
-                  {/*     validate={(value: string) => { */}
-                  {/*       const valid = isYoutubeOrLoomLink(value); */}
-                  {/*       if (!valid) { */}
-                  {/*         setSubmissionLinkError( */}
-                  {/*           'Please enter a valid YouTube or Loom link', */}
-                  {/*         ); */}
-                  {/*       } */}
-                  {/*       return valid; */}
-                  {/*     }} */}
-                  {/*     maxLength={500} */}
-                  {/*     errors={errors} */}
-                  {/*     isRequired */}
-                  {/*   /> */}
-                  {/* )} */}
-                  {/* {submissionLinkError && ( */}
-                  {/*   <Text */}
-                  {/*     alignSelf="start" */}
-                  {/*     mt={0} */}
-                  {/*     ml={1} */}
-                  {/*     color="red" */}
-                  {/*     fontSize="14px" */}
-                  {/*   > */}
-                  {/*     {submissionLinkError} */}
-                  {/*   </Text> */}
-                  {/* )} */}
-
                   <TextAreaWithCounter
                     id="tweetLink"
                     label="Tweet Link"
