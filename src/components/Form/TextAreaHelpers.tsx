@@ -16,6 +16,7 @@ interface TextAreaWithCounterProps {
   helperText: string;
   placeholder: string;
   register: any;
+  validate?: any;
   watch: any;
   maxLength?: number;
   errors: any;
@@ -42,6 +43,7 @@ export const TextAreaWithCounter = ({
   helperText,
   placeholder,
   register,
+  validate,
   watch,
   maxLength = 2000,
   errors,
@@ -61,7 +63,7 @@ export const TextAreaWithCounter = ({
       focusBorderColor="brand.purple"
       id={id}
       placeholder={placeholder}
-      {...register(id)}
+      {...register(id, { validate })}
       maxLength={maxLength}
       minH={minH}
     />

@@ -50,7 +50,7 @@ import { truncatePublicKey } from '@/utils/truncatePublicKey';
 import { truncateString } from '@/utils/truncateString';
 
 import { labelMenuOptions } from '../../constants';
-import { colorMap } from '../../utils';
+import { colorMap, isLink } from '../../utils';
 
 interface Props {
   bounty: Listing | null;
@@ -735,13 +735,25 @@ export const SubmissionDetails = ({
                       >
                         {answer.question}
                       </Text>
-                      <Text
-                        color="brand.slate.700"
-                        whiteSpace={'pre'}
-                        wordBreak={'break-all'}
-                      >
-                        {answer.answer || '-'}
-                      </Text>
+                      {isLink(answer.answer) ? (
+                        <Link
+                          as={NextLink}
+                          color="brand.purple"
+                          wordBreak={'break-all'}
+                          href={getURLSanitized(answer.answer || '#')}
+                          isExternal
+                        >
+                          {answer.answer ? getURLSanitized(answer.answer) : '-'}
+                        </Link>
+                      ) : (
+                        <Text
+                          color="brand.slate.700"
+                          whiteSpace={'pre'}
+                          wordBreak={'break-all'}
+                        >
+                          {answer.answer || '-'}
+                        </Text>
+                      )}
                     </Box>
                   ),
                 )}
