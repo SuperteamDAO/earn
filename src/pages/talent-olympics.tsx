@@ -548,6 +548,42 @@ function GetHiredBy() {
       name: 'Moby',
       src: baseAsset('moby.svg'),
     },
+    {
+      name: 'Backpack',
+      src: baseAsset('backpack.svg'),
+    },
+    {
+      name: 'MobiUp',
+      src: baseAsset('mobiup.svg'),
+    },
+    {
+      name: 'Ripio',
+      src: baseAsset('ripio.svg'),
+    },
+    {
+      name: 'Parcl',
+      src: baseAsset('parcl.svg'),
+    },
+    {
+      name: 'Staking Facilities',
+      src: baseAsset('staking-facilities.svg'),
+    },
+    {
+      name: 'DeCharge',
+      src: baseAsset('decharge.svg'),
+    },
+    {
+      name: 'Solana ID',
+      src: baseAsset('solana-id.svg'),
+    },
+    {
+      name: 'Light Protocol',
+      src: baseAsset('light-protocol.svg'),
+    },
+    {
+      name: 'Sonar Watch',
+      src: baseAsset('sonar-watch.svg'),
+    },
   ];
 
   const multipliedHiredBy = [
