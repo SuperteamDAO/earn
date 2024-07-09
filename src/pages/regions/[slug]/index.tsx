@@ -53,6 +53,7 @@ const RegionsPage = ({
 
   const ogImage = new URL(`${getURL()}api/dynamic-og/region/`);
   ogImage.searchParams.set('region', st.displayValue);
+  ogImage.searchParams.set('code', st.code!);
 
   return (
     <>

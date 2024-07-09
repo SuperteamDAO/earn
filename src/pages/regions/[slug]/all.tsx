@@ -47,6 +47,7 @@ export default function AllRegionListingsPage({
 
   const ogImage = new URL(`${getURL()}api/dynamic-og/region/`);
   ogImage.searchParams.set('region', st.region);
+  ogImage.searchParams.set('code', st.code!);
 
   return (
     <Home type="region" st={st}>
