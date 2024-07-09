@@ -39,7 +39,7 @@ function Grants() {
             title="Superteam Earn | Grants"
             description="Discover Solana Grants for Development, Art, Content, and more to fund your ideas"
             canonical="https://earn.superteam.fun/grants/"
-            og={`${router.asPath}/assets/og/grants.png`}
+            og={`${router.basePath}/assets/og/grants.png`}
           />
         }
       >

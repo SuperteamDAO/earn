@@ -50,9 +50,7 @@ export default async function handler(request: NextRequest) {
     const token = getParam('token', (x) => formatString(x, 100));
 
     const displayReward =
-      isNaN(minReward) || minReward === 0
-        ? `Upto ${maxReward}`
-        : `${minReward} - ${maxReward}`;
+      minReward === '0' ? `Upto ${maxReward}` : `${minReward} - ${maxReward}`;
 
     const getTokenIcon = (symbol: any) =>
       tokenList.find((t) => t.tokenSymbol === symbol)?.icon;

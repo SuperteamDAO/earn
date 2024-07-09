@@ -6,6 +6,10 @@ const formatString = (str: string, maxLength: number) =>
 const formatNumber = (num: string) => {
   const number = Number(num);
 
+  if (isNaN(number)) {
+    return '0';
+  }
+
   if (number >= 1000000) {
     return `${(number / 1000000).toLocaleString(undefined, { maximumFractionDigits: 2 })}m`;
   } else if (number >= 10000) {
