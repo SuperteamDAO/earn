@@ -68,7 +68,8 @@ async function handler(req: NextApiRequestWithUser, res: NextApiResponse) {
         b.maxRewardAsk,
         b.minRewardAsk,
         b.compensationType,
-        b.createdAt
+        b.createdAt,
+        NULL as airtableId
       FROM Bounties b
       WHERE b.isActive = true
       AND b.isArchived = false
@@ -96,12 +97,14 @@ async function handler(req: NextApiRequestWithUser, res: NextApiResponse) {
         g.maxReward as maxRewardAsk,
         g.minReward as minRewardAsk,
         NULL as compensationType,
-        g.createdAt
+        g.createdAt,
+        g.airtableId
       FROM Grants g
       WHERE g.isActive = true
       AND g.isArchived = false
       AND g.sponsorId = ?
       AND g.status = ?
+      AND g.airtableId IS NOT NULL
       ${whereSearch}
       
       ORDER BY createdAt DESC
