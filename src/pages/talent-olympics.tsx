@@ -964,7 +964,7 @@ const faqs: { question: string; answer: string }[] = [
   {
     question: 'Which teams are hiring?',
     answer:
-      'Over 45 Solana teams are hiring. In no particular order, here is the list of teams that are hiring: Transfero, Jungle , Khiza, Rippio, Moby Up, Coinlivre, Meta Pool, Prism , Bonk, MH Ventures, Bandit, Turbine, Future, Prizm, MoonThat , Jito, Flash, Parcl, Mirror World, Pyth, Galaxe, Nosana, Sanctum, Tensor , Metaplex, Backpack , Helio, Streamflow, Helius, Orca, Iron, Drift , Squads , Mango , Kamino, Openbook, Solana Beach , Noenomad, Linum Labs, DUX, VW Trucks & Bus, TRUTHER, Infratoken, One Percent and Bitfinix.',
+      'Over 50 Solana teams are hiring. In no particular order, here is the list of teams that are hiring: Transfero, Jungle, Khiza, Rippio, Moby Up, Coinlivre, Meta Pool, Prism, Bonk, MH Ventures, Bandit, Turbine, Future, Prizm, MoonThat, Jito, Flash, Mirror World, Pyth, Galaxe, Nosana, Sanctum, Tensor, Metaplex, Backpack, Parcl, Helio, Streamflow, Helius, DeCharge, Orca, Iron, Proto map, SolanaID, WifiDabba, Drift, Squads, Light Protocol, Mango, Sonar Watch, Kamino, Openbook, Staking facilities, Solana Beach, Noenomad, Linum Labs, DUX, VW Trucks & Bus, TRUTHER, Infratoken, One Percent, Bitfinix, etc.',
   },
   {
     question: 'Does winning a Talent Olympics bounty guarantee a job?',
