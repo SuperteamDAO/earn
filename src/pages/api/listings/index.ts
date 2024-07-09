@@ -58,14 +58,12 @@ function sortListings(listings: Listing[]): Listing[] {
 }
 
 export default async function user(req: NextApiRequest, res: NextApiResponse) {
-  console.log('first');
   const params = req.query;
   const category = params.category as string;
   const isHomePage = params.isHomePage === 'true';
   const order = (params.order as 'asc' | 'desc') ?? 'desc';
 
   const location = params.userLocation as any;
-  console.log(params);
 
   const filter = params.filter as string;
   const type = params.type as

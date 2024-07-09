@@ -20,10 +20,8 @@ export default function BountiesPage() {
   const date = dayjs().subtract(2, 'months').toISOString();
 
   const { userInfo } = userStore();
-  console.log(userInfo);
 
   const userLocation = userInfo?.location;
-  console.log(userLocation);
 
   const getListings = async () => {
     setIsListingsLoading(true);

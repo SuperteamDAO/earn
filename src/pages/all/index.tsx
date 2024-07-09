@@ -4,6 +4,7 @@ import { useEffect, useState } from 'react';
 
 import { type Listing, ListingTabs } from '@/features/listings';
 import { Home } from '@/layouts/Home';
+import { userStore } from '@/store/user';
 
 interface Listings {
   bounties?: Listing[];
@@ -15,6 +16,10 @@ function AllListingsPage() {
     bounties: [],
   });
 
+  const { userInfo } = userStore();
+
+  const userLocation = userInfo?.location;
+
   const getListings = async () => {
     setIsListingsLoading(true);
     try {
@@ -22,6 +27,7 @@ function AllListingsPage() {
         params: {
           category: 'bounties',
           take: 100,
+          userLocation: userLocation?.toLocaleUpperCase(),
         },
       });
       setListings(listingsData.data);

@@ -108,6 +108,7 @@ interface BountyProps {
   statusFilter?: Status;
   type?: BountyType;
   take?: number;
+  location?: any;
 }
 
 export async function getListings({
@@ -117,9 +118,9 @@ export async function getListings({
   statusFilter,
   type,
   take = 20,
+  location,
 }: BountyProps) {
   const skillFilterQuery = getSkillFilterQuery(skillFilter);
-
   const statusFilterQuery = getStatusFilterQuery(statusFilter);
 
   let orderBy:
@@ -162,6 +163,7 @@ export async function getListings({
         : {}),
       ...skillFilterQuery,
       ...statusFilterQuery,
+      OR: [{ region: 'GLOBAL' }, { region: location }],
       Hackathon: null,
     },
     include: {
@@ -213,6 +215,7 @@ export default async function listings(
   const includeGrants = !!params.grants;
   const order = (params.order as 'asc' | 'desc') ?? 'desc';
   const isHomePage = params.isHomePage === 'true';
+  const location = params.userLocation as string;
 
   const skillFilter = params.skill as Skills | undefined;
   const statusFilter = params.status as Status | undefined;
@@ -228,6 +231,7 @@ export default async function listings(
       statusFilter,
       type,
       take,
+      location,
     });
 
     let grants: Awaited<ReturnType<typeof getGrants>> | undefined = undefined;
