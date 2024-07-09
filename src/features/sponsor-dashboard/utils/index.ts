@@ -8,3 +8,9 @@ export const colorMap = {
   Rejected: { bg: 'red.100', color: 'red.600' },
   Pending: { bg: 'orange.100', color: 'orange.800' },
 };
+
+export const isLink = (text: string) => {
+  const urlRegex =
+    /^(https?:\/\/)?(www\.)?[a-zA-Z0-9-]+(\.[a-zA-Z]{2,})+([\/\w \.-]*)*\/?$/;
+  return urlRegex.test(text);
+};

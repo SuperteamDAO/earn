@@ -33,7 +33,12 @@ import dynamic from 'next/dynamic';
 import NextLink from 'next/link';
 import { log } from 'next-axiom';
 import { usePostHog } from 'posthog-js/react';
-import React, { type Dispatch, type SetStateAction, useState } from 'react';
+import React, {
+  type Dispatch,
+  type SetStateAction,
+  useEffect,
+  useState,
+} from 'react';
 import { BsTwitterX } from 'react-icons/bs';
 import {
   MdArrowDropDown,
@@ -50,7 +55,7 @@ import { truncatePublicKey } from '@/utils/truncatePublicKey';
 import { truncateString } from '@/utils/truncateString';
 
 import { labelMenuOptions } from '../../constants';
-import { colorMap } from '../../utils';
+import { colorMap, isLink } from '../../utils';
 
 interface Props {
   bounty: Listing | null;
@@ -89,6 +94,9 @@ export const SubmissionDetails = ({
 
   const isProject = bounty?.type === 'project';
   const isHackathon = bounty?.type === 'hackathon';
+  useEffect(() => {
+    console.log('bounty', bounty);
+  }, [bounty]);
 
   const DynamicWalletMultiButton = dynamic(
     async () =>
@@ -735,13 +743,25 @@ export const SubmissionDetails = ({
                       >
                         {answer.question}
                       </Text>
-                      <Text
-                        color="brand.slate.700"
-                        whiteSpace={'pre'}
-                        wordBreak={'break-all'}
-                      >
-                        {answer.answer || '-'}
-                      </Text>
+                      {isLink(answer.answer) ? (
+                        <Link
+                          as={NextLink}
+                          color="brand.purple"
+                          wordBreak={'break-all'}
+                          href={getURLSanitized(answer.answer || '#')}
+                          isExternal
+                        >
+                          {answer.answer ? getURLSanitized(answer.answer) : '-'}
+                        </Link>
+                      ) : (
+                        <Text
+                          color="brand.slate.700"
+                          whiteSpace={'pre'}
+                          wordBreak={'break-all'}
+                        >
+                          {answer.answer || '-'}
+                        </Text>
+                      )}
                     </Box>
                   ),
                 )}

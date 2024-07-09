@@ -75,6 +75,10 @@ export const SubmissionModal = ({
     minRewardAsk,
     maxRewardAsk,
   } = listing;
+
+  useEffect(() => {
+    console.log('eligibility - ', eligibility);
+  }, []);
   const isProject = type === 'project';
   const isHackathon = type === 'hackathon';
   const [isLoading, setIsLoading] = useState(false);
@@ -157,10 +161,11 @@ export const SubmissionModal = ({
         publicKey,
         ...answers
       } = data;
-      const eligibilityAnswers = eligibility?.map((q) => ({
-        question: q.question,
-        answer: answers[`eligibility-${q.order}`],
-      }));
+      const eligibilityAnswers =
+        eligibility?.map((q) => ({
+          question: q.question,
+          answer: answers[`eligibility-${q.order}`],
+        })) ?? [];
       await axios.post('/api/user/update/', {
         publicKey,
       });
@@ -306,30 +311,43 @@ export const SubmissionModal = ({
                     placeholder="Add a link"
                     register={register}
                     watch={watch}
-                    validate={(value: string) => {
-                      const valid = isYoutubeOrLoomLink(value);
-                      if (!valid) {
-                        setSubmissionLinkError(
-                          'Please enter a valid YouTube or Loom link',
-                        );
-                      }
-                      return valid;
-                    }}
                     maxLength={500}
                     errors={errors}
                     isRequired
                   />
-                  {submissionLinkError && (
-                    <Text
-                      alignSelf="start"
-                      mt={0}
-                      ml={1}
-                      color="red"
-                      fontSize="14px"
-                    >
-                      {submissionLinkError}
-                    </Text>
-                  )}
+                  {/* {isHackathon && ( */}
+                  {/*   <TextAreaWithCounter */}
+                  {/*     id="videoLink" */}
+                  {/*     label="Video Presentation Link" */}
+                  {/*     helperText="Full Youtube or Loom links are only allowed!" */}
+                  {/*     placeholder="Add a link" */}
+                  {/*     register={register} */}
+                  {/*     watch={watch} */}
+                  {/*     validate={(value: string) => { */}
+                  {/*       const valid = isYoutubeOrLoomLink(value); */}
+                  {/*       if (!valid) { */}
+                  {/*         setSubmissionLinkError( */}
+                  {/*           'Please enter a valid YouTube or Loom link', */}
+                  {/*         ); */}
+                  {/*       } */}
+                  {/*       return valid; */}
+                  {/*     }} */}
+                  {/*     maxLength={500} */}
+                  {/*     errors={errors} */}
+                  {/*     isRequired */}
+                  {/*   /> */}
+                  {/* )} */}
+                  {/* {submissionLinkError && ( */}
+                  {/*   <Text */}
+                  {/*     alignSelf="start" */}
+                  {/*     mt={0} */}
+                  {/*     ml={1} */}
+                  {/*     color="red" */}
+                  {/*     fontSize="14px" */}
+                  {/*   > */}
+                  {/*     {submissionLinkError} */}
+                  {/*   </Text> */}
+                  {/* )} */}
 
                   <TextAreaWithCounter
                     id="tweetLink"
@@ -340,13 +358,27 @@ export const SubmissionModal = ({
                     watch={watch}
                     maxLength={500}
                     errors={errors}
-                    isRequired
                   />
                   {isHackathon &&
                     eligibility?.map((e) => {
                       return (
                         <FormControl key={e?.order} isRequired>
                           <QuestionHandler
+                            error={
+                              isHackathon && e.order === 1
+                                ? submissionLinkError
+                                : undefined
+                            }
+                            validate={(value: string) => {
+                              if (!isHackathon || e.order !== 1) return true;
+                              const valid = isYoutubeOrLoomLink(value);
+                              if (!valid) {
+                                setSubmissionLinkError(
+                                  'Please enter a valid YouTube or Loom link',
+                                );
+                              }
+                              return valid;
+                            }}
                             register={register}
                             question={e?.question}
                             label={`eligibility-${e?.order}`}

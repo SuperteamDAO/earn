@@ -22,6 +22,7 @@ export default async function handler(
   }
 
   try {
+    console.log('type - ', type);
     const result = await prisma.bounties.findFirst({
       where: {
         slug,
