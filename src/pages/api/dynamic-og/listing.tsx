@@ -41,7 +41,7 @@ export default async function handler(request: NextRequest) {
       searchParams.has(name) ? processFn(searchParams.get(name)) : null;
 
     const title = getParam('title', (x) =>
-      formatString(decodeURIComponent(x), 84),
+      formatString(decodeURIComponent(x), 100),
     );
     const type = getParam('type');
     const logo = getParam('logo', (x) => formatString(x, 100)) || sponsorImg;
@@ -49,7 +49,7 @@ export default async function handler(request: NextRequest) {
     const minRewardAsk = getParam('minRewardAsk', formatNumber);
     const maxRewardAsk = getParam('maxRewardAsk', formatNumber);
     const compensationType = getParam('compensationType', (x) => x) || 'fixed';
-    const sponsor = getParam('sponsor', (x) => formatString(x, 100));
+    const sponsor = getParam('sponsor', (x) => formatString(x, 16));
     const token = getParam('token', (x) => formatString(x, 100));
 
     let displayReward;
@@ -180,6 +180,11 @@ export default async function handler(request: NextRequest) {
                     letterSpacing: '-1px',
                     whiteSpace: 'pre-wrap',
                     fontFamily: '"Bold"',
+                    display: '-webkit-box',
+                    WebkitLineClamp: 4,
+                    WebkitBoxOrient: 'vertical',
+                    overflow: 'hidden',
+                    textOverflow: 'ellipsis',
                   }}
                 >
                   {title}
@@ -191,6 +196,7 @@ export default async function handler(request: NextRequest) {
                 display: 'flex',
                 justifyContent: 'space-between',
                 width: '100%',
+                alignItems: 'center',
               }}
             >
               <div
@@ -245,7 +251,7 @@ export default async function handler(request: NextRequest) {
               {sponsor && (
                 <div
                   style={{
-                    fontSize: 28,
+                    fontSize: 24,
                     color: '#94A3B8',
                     lineHeight: 1.4,
                     whiteSpace: 'pre-wrap',

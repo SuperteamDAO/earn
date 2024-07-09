@@ -142,14 +142,19 @@ export default async function handler(request: NextRequest) {
               {title && (
                 <div
                   style={{
-                    marginTop: '54px',
                     fontSize: 54,
+                    marginTop: '54px',
                     fontStyle: 'normal',
                     color: 'black',
                     lineHeight: 1.2,
                     letterSpacing: '-1px',
                     whiteSpace: 'pre-wrap',
                     fontFamily: '"Bold"',
+                    display: '-webkit-box',
+                    WebkitLineClamp: 4,
+                    WebkitBoxOrient: 'vertical',
+                    overflow: 'hidden',
+                    textOverflow: 'ellipsis',
                   }}
                 >
                   {title}
