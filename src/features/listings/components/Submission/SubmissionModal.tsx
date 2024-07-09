@@ -76,9 +76,6 @@ export const SubmissionModal = ({
     maxRewardAsk,
   } = listing;
 
-  useEffect(() => {
-    console.log('eligibility - ', eligibility);
-  }, []);
   const isProject = type === 'project';
   const isHackathon = type === 'hackathon';
   const [isLoading, setIsLoading] = useState(false);

@@ -168,14 +168,12 @@ interface Props {
 }
 
 export default function TalentOlympics({ countryLeaders, rankings }: Props) {
-  console.log('rankings - ', rankings);
   const PADX = 4;
   const START_DATE = '2024-07-10T23:59:59Z';
   const CLOSE_DATE = '2024-07-14T23:59:59Z';
 
   const [hackathonIsOn, setHackathonIsOn] = useState(false);
   useEffect(() => {
-    console.log('countryLeaders - ', countryLeaders);
     const hackathonStartTime = dayjs(START_DATE);
 
     const checkHackathonStatus = () => {
@@ -1389,17 +1387,14 @@ LIMIT 10;
 `;
 
   const countryLeaderLength = countryLeaders.length;
-  console.log('countryLeaders - ', countryLeaderLength);
   if (countryLeaderLength < 10) {
     const restSuperteams = Superteams.filter(
       (s) =>
         countryLeaderLength === 0 ||
         !countryLeaders.some((c) => s.country.includes(c.location)),
     ).slice(0, 10 - countryLeaderLength);
-    console.log(restSuperteams);
 
     for (let i = 0; i < 10 - countryLeaderLength; i++) {
-      console.log(restSuperteams[i]);
       countryLeaders.push({
         location: restSuperteams[i]?.country[0] ?? 'na',
         submission_count: 0,
