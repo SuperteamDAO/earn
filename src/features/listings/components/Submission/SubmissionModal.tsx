@@ -346,7 +346,7 @@ export const SubmissionModal = ({
                                   );
                                 }
                                 return valid;
-                              } else if (e.isLink) {
+                              } else if (value && e.isLink) {
                                 if (!isValidUrl(value) && eligibilityQs[i]) {
                                   const cloneEligibilityQs = [...eligibilityQs];
                                   const currElgibile = cloneEligibilityQs[i];
