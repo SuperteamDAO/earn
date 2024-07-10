@@ -406,7 +406,7 @@ export function RightSideBar({ listing }: { listing: Listing }) {
               href={`/${Hackathon.name.toLowerCase()}`}
               isExternal
             >
-              View all tracks
+              View All Challenges
             </Link>
           </VStack>
         )}
