@@ -8,6 +8,8 @@ interface QuestionProps {
   label: string;
   register: UseFormRegister<FieldValues>;
   watch?: any;
+  validate?: any;
+  error?: string;
 }
 
 export const QuestionHandler = ({
@@ -15,6 +17,8 @@ export const QuestionHandler = ({
   register,
   label,
   watch,
+  validate,
+  error,
 }: QuestionProps) => {
   return (
     <>
@@ -26,7 +30,7 @@ export const QuestionHandler = ({
         _placeholder={{ color: 'brand.slate.300' }}
         focusBorderColor="brand.purple"
         maxLength={3000}
-        {...register(label)}
+        {...register(label, { validate })}
       />
       <Text
         color={(watch(label)?.length || 0) > 2900 ? 'red' : 'brand.slate.400'}
@@ -39,6 +43,10 @@ export const QuestionHandler = ({
           ) : (
             <p>{3000 - (watch(label)?.length || 0)} characters left</p>
           ))}
+      </Text>
+
+      <Text alignSelf="start" mt={2} ml={1} color="red" fontSize="14px">
+        {error}
       </Text>
     </>
   );

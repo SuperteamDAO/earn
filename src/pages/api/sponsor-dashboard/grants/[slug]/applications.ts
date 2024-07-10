@@ -84,7 +84,17 @@ async function handler(req: NextApiRequestWithUser, res: NextApiResponse) {
         ...whereSearch,
       },
       include: {
-        user: true,
+        user: {
+          select: {
+            id: true,
+            firstName: true,
+            lastName: true,
+            email: true,
+            photo: true,
+            publicKey: true,
+            discord: true,
+          },
+        },
         grant: true,
       },
       orderBy: { createdAt: 'asc' },

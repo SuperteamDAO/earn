@@ -25,7 +25,15 @@ export default async function submission(
       take: 100,
       orderBy: { updatedAt: 'desc' },
       include: {
-        user: true,
+        user: {
+          select: {
+            id: true,
+            username: true,
+            firstName: true,
+            lastName: true,
+            photo: true,
+          },
+        },
       },
     });
 
