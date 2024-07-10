@@ -4,6 +4,7 @@ import {
   AccordionIcon,
   AccordionItem,
   AccordionPanel,
+  Avatar,
   Box,
   Button,
   Circle,
@@ -29,6 +30,7 @@ import {
 } from '@chakra-ui/react';
 import { SubscribeHackathon } from '@prisma/client';
 import axios from 'axios';
+import type { GetServerSideProps } from 'next';
 import NextImage, { type StaticImageData } from 'next/image';
 import NextLink from 'next/link';
 import { useSession } from 'next-auth/react';
@@ -40,12 +42,15 @@ import { FaPlay } from 'react-icons/fa';
 import { FaDiscord } from 'react-icons/fa6';
 import { TbBell, TbBellRinging } from 'react-icons/tb';
 
+import { UserFlag } from '@/components/shared/UserFlag';
 import { tokenList } from '@/constants';
+import { Superteams } from '@/constants/Superteam';
 import { AuthWrapper } from '@/features/auth';
 import { WarningModal } from '@/features/listings';
 import type { User } from '@/interface/user';
 import { Default } from '@/layouts/Default';
 import { Meta } from '@/layouts/Meta';
+import { prisma } from '@/prisma';
 import RiseIn from '@/public/assets/company-logos/rise-in.svg';
 import Superteam from '@/public/assets/company-logos/superteam.svg';
 import Turbine from '@/public/assets/company-logos/turbine.svg';
@@ -115,7 +120,7 @@ const rustTrack: TrackProps[] = [
     icon: baseAsset('monitor.svg'),
     title: 'NFT Mint, <redacted> & <redacted> ',
     description:
-      'Create an Anchor program that can mint, vault and <redacted> NFTs',
+      'Create an Anchor program that can mint, <redacted> and <redacted> NFTs',
     amount: 1000,
     token: 'USDC',
     link: '#',
@@ -157,7 +162,12 @@ const rustTrack: TrackProps[] = [
   },
 ];
 
-export default function TalentOlympics() {
+interface Props {
+  countryLeaders: CountryLeader[];
+  rankings: { user: User; rating: number }[];
+}
+
+export default function TalentOlympics({ countryLeaders, rankings }: Props) {
   const PADX = 4;
   const START_DATE = '2024-07-10T23:59:59Z';
   const CLOSE_DATE = '2024-07-14T23:59:59Z';
@@ -236,6 +246,8 @@ export default function TalentOlympics() {
           </Flex>
         </Box>
         <Box overflowX="hidden" maxW="8xl" mx="auto" px={PADX}>
+          {hackathonIsOn && <Leaderboard leaders={countryLeaders} />}
+          <Rankings rankings={rankings} />
           <FAQs />
         </Box>
       </Box>
@@ -538,6 +550,42 @@ function GetHiredBy() {
       name: 'Moby',
       src: baseAsset('moby.svg'),
     },
+    {
+      name: 'Backpack',
+      src: baseAsset('backpack.svg'),
+    },
+    {
+      name: 'MobiUp',
+      src: baseAsset('mobiup.svg'),
+    },
+    {
+      name: 'Ripio',
+      src: baseAsset('ripio.svg'),
+    },
+    {
+      name: 'Parcl',
+      src: baseAsset('parcl.svg'),
+    },
+    {
+      name: 'Staking Facilities',
+      src: baseAsset('staking-facilities.svg'),
+    },
+    {
+      name: 'DeCharge',
+      src: baseAsset('decharge.svg'),
+    },
+    {
+      name: 'Solana ID',
+      src: baseAsset('solana-id.svg'),
+    },
+    {
+      name: 'Light Protocol',
+      src: baseAsset('light-protocol.svg'),
+    },
+    {
+      name: 'Sonar Watch',
+      src: baseAsset('sonar-watch.svg'),
+    },
   ];
 
   const multipliedHiredBy = [
@@ -800,6 +848,115 @@ function TrackBox({
   );
 }
 
+function Leaderboard({ leaders }: { leaders: CountryLeader[] }) {
+  return (
+    <VStack gap={8} w="full" mx="auto" py={8}>
+      <Text color="brand.slate.600" fontSize="xl" fontWeight={700}>
+        Top Countries by Submissions
+      </Text>
+      <Grid
+        rowGap={6}
+        columnGap={24}
+        autoFlow={'column'}
+        templateRows={{ base: 'repeat(10, 1fr)', md: 'repeat(5, 1fr)' }}
+        w="full"
+        maxW="35rem"
+      >
+        {leaders.map((l, i) => (
+          <HStack key={l.location} w="full">
+            <HStack fontWeight={500}>
+              <Text color="brand.slate.400">{i + 1}.</Text>
+              <UserFlag location={l.location} />
+              <Text
+                maxW="12rem"
+                color="brand.slate.500"
+                textOverflow="ellipsis"
+                noOfLines={1}
+              >
+                {l.location}
+              </Text>
+            </HStack>
+            <Text ml="auto" fontWeight={500}>
+              {l.submission_count === 0 ? '-' : l.submission_count}
+            </Text>
+          </HStack>
+        ))}
+      </Grid>
+    </VStack>
+  );
+}
+
+function Rankings({
+  rankings,
+}: {
+  rankings: { user: User; rating: number }[];
+}) {
+  return (
+    <VStack gap={8} display="none" w="full" mx="auto" py={8}>
+      <Text color="brand.slate.600" fontSize="xl" fontWeight={700}>
+        Top Individuals by Rating
+      </Text>
+      <Grid
+        rowGap={6}
+        columnGap={12}
+        autoFlow={'column'}
+        templateRows={{ base: 'repeat(10, 1fr)', md: 'repeat(5, 1fr)' }}
+        w="full"
+        maxW="35rem"
+      >
+        {rankings.map((r, i) => (
+          <HStack key={r.user.id} justify="space-between" w="full">
+            <HStack color="brand.slate.500" fontSize="xs" fontWeight={500}>
+              <Text color="brand.slate.400">#{i + 1}</Text>
+              <Link
+                className="ph-no-capture"
+                as={NextLink}
+                alignItems="center"
+                gap={2}
+                display="flex"
+                href={`/t/${r.user.username}`}
+                target="_blank"
+              >
+                <Avatar w={8} h={8} src={r.user.photo ?? undefined} />
+                <VStack
+                  align="start"
+                  justify={{ base: 'center', md: 'start' }}
+                  gap={1}
+                  lineHeight={{ base: 'normal', md: 1.15 }}
+                >
+                  <Flex align={'center'} gap={2}>
+                    <Text
+                      overflowX="hidden"
+                      maxW={'7rem'}
+                      color="black"
+                      textOverflow={'ellipsis'}
+                      noOfLines={1}
+                    >
+                      {r.user.firstName} {r.user.lastName}
+                    </Text>
+                  </Flex>
+                  <Text
+                    overflowX="hidden"
+                    maxW={'7rem'}
+                    textOverflow={'ellipsis'}
+                    noOfLines={1}
+                  >
+                    @{r.user.username}
+                  </Text>
+                </VStack>
+              </Link>
+            </HStack>
+            <Flex gap={2} ml="auto" fontSize="sm" fontWeight={500}>
+              <Text>{r.rating}</Text>
+              <Text color="brand.slate.500">Points</Text>
+            </Flex>
+          </HStack>
+        ))}
+      </Grid>
+    </VStack>
+  );
+}
+
 const faqs: { question: string; answer: string }[] = [
   {
     question: 'What is the Talent Olympics?',
@@ -814,7 +971,7 @@ const faqs: { question: string; answer: string }[] = [
   {
     question: 'Which teams are hiring?',
     answer:
-      'Over 45 Solana teams are hiring. In no particular order, here is the list of teams that are hiring: Transfero, Jungle , Khiza, Rippio, Moby Up, Coinlivre, Meta Pool, Prism , Bonk, MH Ventures, Bandit, Turbine, Future, Prizm, MoonThat , Jito, Flash, Parcl, Mirror World, Pyth, Galaxe, Nosana, Sanctum, Tensor , Metaplex, Backpack , Helio, Streamflow, Helius, Orca, Iron, Drift , Squads , Mango , Kamino, Openbook, Solana Beach , Noenomad, Linum Labs, DUX, VW Trucks & Bus, TRUTHER, Infratoken, One Percent and Bitfinix.',
+      'Over 50 Solana teams are hiring. In no particular order, here is the list of teams that are hiring: Transfero, Jungle, Khiza, Rippio, Moby Up, Coinlivre, Meta Pool, Prism, Bonk, MH Ventures, Bandit, Turbine, Future, Prizm, MoonThat, Jito, Flash, Mirror World, Pyth, Galaxe, Nosana, Sanctum, Tensor, Metaplex, Backpack, Parcl, Helio, Streamflow, Helius, DeCharge, Orca, Iron, Proto map, SolanaID, WifiDabba, Drift, Squads, Light Protocol, Mango, Sonar Watch, Kamino, Openbook, Staking facilities, Solana Beach, Noenomad, Linum Labs, DUX, VW Trucks & Bus, TRUTHER, Infratoken, One Percent, Bitfinix, etc.',
   },
   {
     question: 'Does winning a Talent Olympics bounty guarantee a job?',
@@ -1158,4 +1315,123 @@ const TextStyler: React.FC<TextStylerProps> = ({ text }) => {
       })}
     </Text>
   );
+};
+
+const rankedUsers: { email: string; rating: number }[] = [
+  {
+    email: 'pratik.dholani1@gmail.com',
+    rating: 69,
+  },
+  {
+    email: 'pratik.dholani1@gmail.com',
+    rating: 69,
+  },
+  {
+    email: 'pratik.dholani1@gmail.com',
+    rating: 69,
+  },
+  {
+    email: 'pratik.dholani1@gmail.com',
+    rating: 69,
+  },
+  {
+    email: 'pratik.dholani1@gmail.com',
+    rating: 69,
+  },
+  {
+    email: 'pratik.dholani1@gmail.com',
+    rating: 69,
+  },
+  {
+    email: 'pratik.dholani1@gmail.com',
+    rating: 69,
+  },
+  {
+    email: 'pratik.dholani1@gmail.com',
+    rating: 69,
+  },
+  {
+    email: 'pratik.dholani1@gmail.com',
+    rating: 69,
+  },
+  {
+    email: 'pratik.dholani1@gmail.com',
+    rating: 69,
+  },
+];
+
+interface CountryLeader {
+  location: string;
+  submission_count: number;
+}
+export const getServerSideProps: GetServerSideProps = async ({}) => {
+  const countryLeaders = await prisma.$queryRaw<CountryLeader[]>`
+SELECT 
+    u.location,
+    COUNT(s.id) as submission_count
+FROM 
+    Hackathon h
+JOIN 
+    Bounties b ON h.id = b.hackathonId
+JOIN 
+    Submission s ON b.id = s.listingId
+JOIN 
+    User u ON s.userId = u.id
+WHERE 
+    h.slug = ${'talent-olympics'}
+GROUP BY 
+    u.location
+ORDER BY 
+    submission_count DESC
+LIMIT 10;
+`;
+
+  const countryLeaderLength = countryLeaders.length;
+  if (countryLeaderLength < 10) {
+    const restSuperteams = Superteams.filter(
+      (s) =>
+        countryLeaderLength === 0 ||
+        !countryLeaders.some((c) => s.country.includes(c.location)),
+    ).slice(0, 10 - countryLeaderLength);
+
+    for (let i = 0; i < 10 - countryLeaderLength; i++) {
+      countryLeaders.push({
+        location: restSuperteams[i]?.country[0] ?? 'na',
+        submission_count: 0,
+      });
+    }
+  }
+
+  const emails = rankedUsers.map((u) => u.email);
+  const emailProfiles = await prisma.user.findMany({
+    where: {
+      email: { in: emails },
+    },
+    select: {
+      id: true,
+      username: true,
+      firstName: true,
+      lastName: true,
+      photo: true,
+      email: true,
+    },
+  });
+
+  const rankedProfiles = rankedUsers
+    .map((u) => ({
+      user: emailProfiles.find((p) => p.email === u.email),
+      rating: u.rating,
+    }))
+    .sort((a, b) => b.rating - a.rating);
+
+  return {
+    props: {
+      countryLeaders: JSON.parse(
+        JSON.stringify(countryLeaders, (_, value) =>
+          typeof value === 'bigint' ? value.toString() : value,
+        ),
+      ),
+      rankings: rankedProfiles,
+    },
+  };
 };
