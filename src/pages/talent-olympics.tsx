@@ -66,99 +66,107 @@ const SLUG = 'talent-olympics';
 
 const base = '/assets/hackathon/talent-olympics/';
 const baseAsset = (filename: string) => base + filename;
+
+const slugLink = (slug: string) => `/listings/hackathon/${slug}`;
+
 const frontendTrack: TrackProps[] = [
   {
     icon: baseAsset('scan.svg'),
-    title: 'Wallet and <redacted> ',
+    title: 'New Wallet with Swap Functionality',
     description:
-      'Create a wallet with the best-in-class integration and <redacted> experience.',
+      'Create a wallet with the best-in-class integration and swapping experience.',
     amount: 1000,
     token: 'USDC',
-    link: '#',
+    link: slugLink(
+      'new-wallet-design-and-swap-functionality-st-talent-olympics',
+    ),
   },
   {
     icon: baseAsset('laptop.svg'),
-    title: 'Escrow + <redacted>',
-    description:
-      'Display <redacted> data using multiple sources for a <redacted> application.',
+    title: 'Escrow UI + Blink  ',
+    description: 'Create a user-friendly escrow UI and a Blink for it.',
     amount: 1000,
     token: 'USDC',
-    link: '#',
+    link: slugLink('escrow-ui-blink-st-talent-olympics'),
   },
   {
     icon: baseAsset('cube.svg'),
-    title: '<redacted> Aggregator',
+    title: 'Oracle Aggregator',
 
     description:
-      'Display <redacted> data using multiple sources for a <redacted> application.',
+      'Display Orcale data using multiple sources for a DeFi application.',
     amount: 1000,
     token: 'USDC',
-    link: '#',
+    link: slugLink('oracle-aggregator-st-talent-olympics'),
   },
   {
     icon: baseAsset('cube2.svg'),
-    title: 'Make a Dashboard',
+    title: 'Tooling Data Explorer/Dashboard',
     description:
-      'Make an explorer or dashboard that fetches data from <redacted> .',
+      'Make an explorer or dashboard that fetches data from RPC/API sources.',
     amount: 1000,
     token: 'USDC',
-    link: '#',
+    link: slugLink('tooling-data-explorerdashboard-st-talent-olympics'),
   },
   {
     icon: baseAsset('code.svg'),
-    title: 'Create a Marketplace',
+    title: 'Create a Marketplace UI',
     description:
-      'Design and develop a creative marketplace UI using <redacted> .',
+      'Design and develop a creative marketplace UI using the given smart contract repo.',
     amount: 1000,
     token: 'USDC',
-    link: '#',
+    link: slugLink('create-a-marketplace-ui-st-talent-olympics'),
   },
 ];
 
 const rustTrack: TrackProps[] = [
   {
     icon: baseAsset('monitor.svg'),
-    title: 'NFT Mint, <redacted> & <redacted> ',
-    description:
-      'Create an Anchor program that can mint, <redacted> and <redacted> NFTs',
+    title: 'NFT Mint, Vault & Swap',
+    description: 'Create an Anchor program that can mint, vault and swap NFTs.',
     amount: 1000,
     token: 'USDC',
-    link: '#',
+    link: slugLink(
+      'nft-creation-and-vault-integration-with-anchor-st-talent-olympics',
+    ),
   },
   {
     icon: baseAsset('git.svg'),
-    title: 'DAO <redacted> program',
-    description: 'Develop a DAO <redacted> program using Anchor',
+    title: 'DAO Voting Program',
+    description:
+      'Develop a DAO voting program that displays results, using Anchor.',
     amount: 1000,
     token: 'USDC',
-    link: '#',
+    link: slugLink('dao-voting-program-st-talent-olympics'),
   },
   {
     icon: baseAsset('filegit.svg'),
-    title: '<redacted> & <redacted> for Memecoins',
+    title: 'Prediction Market & Blink for Memecoins',
     description:
-      'Using <redacted> , create a <redacted> for SPL memecoin prices, and a <redacted> .',
+      'Create a prediction marketplace (binary option model) for SPL memecoin prices.',
     amount: 1000,
     token: 'USDC',
-    link: '#',
+    link: slugLink(
+      'prediction-market-and-blink-for-memecoins-st-talent-olympics',
+    ),
   },
   {
     icon: baseAsset('book.svg'),
-    title: 'Whitelist-Gated <redacted>',
+    title: 'Whitelist-gated Token Sale',
     description:
-      'Using Native Rust or Anchor, create a whitelist-gated <redacted> .',
+      'Using Native Rust or Anchor, create a whitelist-gated token airdrop.',
     amount: 1000,
     token: 'USDC',
-    link: '#',
+    link: slugLink('whitelist-gated-token-sale-st-talent-olympics'),
   },
   {
     icon: baseAsset('bookmark.svg'),
-    title: '2-Sided Marketplace for <redacted>',
+    title: 'Two-sided Marketplace for Services',
     description:
-      'Create a 2-sided marketplace model for <redacted> using Anchor or Rust',
+      'Create a 2-sided marketplace model for services using Anchor or Rust.',
     amount: 1000,
     token: 'USDC',
-    link: '#',
+    link: slugLink('two-sided-marketplace-for-services-st-talent-olympics'),
   },
 ];
 
