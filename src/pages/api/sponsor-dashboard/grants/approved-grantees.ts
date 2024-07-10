@@ -29,7 +29,14 @@ async function grantApplication(
         applicationStatus: 'Approved',
       },
       include: {
-        user: true,
+        user: {
+          select: {
+            photo: true,
+            firstName: true,
+            lastName: true,
+            username: true,
+          },
+        },
       },
     });
 

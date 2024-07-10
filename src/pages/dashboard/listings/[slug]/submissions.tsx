@@ -147,17 +147,17 @@ function BountySubmissions({ slug }: Props) {
       const scoutsData = await axios.post<Scouts[]>(
         `/api/listings/scout/${id}`,
       );
-      const scouts: ScoutRowType[] = scoutsData.data.map((s) => ({
-        id: s.id,
-        userId: s.userId,
-        skills: [...new Set(s.skills)],
-        dollarsEarned: s.dollarsEarned,
-        score: s.score,
-        recommended: s.user.stRecommended ?? false,
-        invited: s.invited,
-        pfp: s.user.photo ?? null,
-        name: (s.user.firstName ?? '') + ' ' + (s.user.lastName ?? ''),
-        username: s.user.username ?? null,
+      const scouts: ScoutRowType[] = scoutsData.data.map((scout) => ({
+        id: scout.id,
+        userId: scout.userId,
+        skills: [...new Set(scout.skills)],
+        dollarsEarned: scout.dollarsEarned,
+        score: scout.score,
+        recommended: scout.user.stRecommended ?? false,
+        invited: scout.invited,
+        pfp: scout.user.photo ?? null,
+        name: (scout.user.firstName ?? '') + ' ' + (scout.user.lastName ?? ''),
+        username: scout.user.username ?? null,
       }));
       setScouts(scouts);
     } catch (e) {
