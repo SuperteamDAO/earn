@@ -22,9 +22,6 @@ export default async function handler(
         hackathonId: hackathon.id,
         isArchived: false,
       },
-      include: {
-        User: true,
-      },
     });
     res.status(200).json(result);
   } catch (error) {
