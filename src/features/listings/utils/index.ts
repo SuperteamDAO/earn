@@ -139,3 +139,9 @@ export const isYoutubeOrLoomLink = (url: string) => {
   const loomRegex = /^(https?:\/\/)?(www\.)?loom\.com\/.+$/;
   return youtubeRegex.test(url) || loomRegex.test(url);
 };
+
+export function isValidUrl(url: string): boolean {
+  const urlPattern =
+    /^(https?:\/\/)?(www\.)?[a-zA-Z0-9-]+(\.[a-zA-Z0-9-]+)+([/?].*)?$/;
+  return urlPattern.test(url);
+}
