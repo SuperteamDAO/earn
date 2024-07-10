@@ -516,7 +516,15 @@ END)
         score: 'desc',
       },
       include: {
-        user: true,
+        user: {
+          select: {
+            stRecommended: true,
+            firstName: true,
+            lastName: true,
+            username: true,
+            photo: true,
+          },
+        },
       },
     });
 
