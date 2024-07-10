@@ -266,7 +266,7 @@ export function ListingHeader({
       >
         <HStack align="center">
           <SponsorLogo />
-          <VStack align={'start'}>
+          <VStack align={'start'} gap={isHackathon ? 0 : 1}>
             <HStack>
               <Flex display={{ base: 'none', md: 'flex' }}>
                 <ListingTitle />

@@ -31,7 +31,7 @@ import { userStore } from '@/store/user';
 import { validateSolAddress } from '@/utils/validateSolAddress';
 
 import { type Listing } from '../../types';
-import { isYoutubeOrLoomLink } from '../../utils';
+import { isValidUrl, isYoutubeOrLoomLink } from '../../utils';
 import { QuestionHandler } from './QuestionHandler';
 import { SubmissionTerms } from './SubmissionTerms';
 
@@ -76,6 +76,12 @@ export const SubmissionModal = ({
     maxRewardAsk,
   } = listing;
 
+  const [eligibilityQs, setEligibilityQs] = useState(
+    eligibility?.map((q) => ({
+      ...q,
+      error: '',
+    })),
+  );
   const isProject = type === 'project';
   const isHackathon = type === 'hackathon';
   const [isLoading, setIsLoading] = useState(false);
@@ -318,24 +324,41 @@ export const SubmissionModal = ({
                     errors={errors}
                   />
                   {isHackathon &&
-                    eligibility?.map((e) => {
+                    eligibilityQs?.map((e, i) => {
                       return (
-                        <FormControl key={e?.order} isRequired>
+                        <FormControl
+                          key={e?.order}
+                          isRequired={e.optional !== true}
+                        >
                           <QuestionHandler
                             error={
                               isHackathon && e.order === 1
                                 ? submissionLinkError
-                                : undefined
+                                : e.error
                             }
                             validate={(value: string) => {
-                              if (!isHackathon || e.order !== 1) return true;
-                              const valid = isYoutubeOrLoomLink(value);
-                              if (!valid) {
-                                setSubmissionLinkError(
-                                  'Please enter a valid YouTube or Loom link',
-                                );
+                              if (!isHackathon) return true;
+                              if (e.order === 1) {
+                                const valid = isYoutubeOrLoomLink(value);
+                                if (!valid) {
+                                  setSubmissionLinkError(
+                                    'Please enter a valid YouTube or Loom link',
+                                  );
+                                }
+                                return valid;
+                              } else if (value && e.isLink) {
+                                if (!isValidUrl(value) && eligibilityQs[i]) {
+                                  const cloneEligibilityQs = [...eligibilityQs];
+                                  const currElgibile = cloneEligibilityQs[i];
+                                  if (currElgibile) {
+                                    currElgibile.error =
+                                      'Please enter a valid link';
+                                    setEligibilityQs(cloneEligibilityQs);
+                                    return false;
+                                  }
+                                }
                               }
-                              return valid;
+                              return true;
                             }}
                             register={register}
                             question={e?.question}

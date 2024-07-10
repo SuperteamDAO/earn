@@ -274,12 +274,18 @@ function Hero({
   );
 
   useEffect(() => {
-    if (dayjs().isAfter(CLOSE_DATE, 'day')) {
-      setStatus('Closed');
-    } else if (dayjs().isAfter(START_DATE, 'day')) {
-      setCountdownDate(dayjs.utc(CLOSE_DATE).local().toDate());
-      setStatus('Close In');
+    function updateStatus() {
+      if (dayjs().isAfter(CLOSE_DATE)) {
+        setStatus('Closed');
+      } else if (dayjs().isAfter(START_DATE)) {
+        setCountdownDate(dayjs.utc(CLOSE_DATE).toDate());
+        setStatus('Close In');
+      }
     }
+
+    const intervalId = setInterval(updateStatus, 1000);
+
+    return () => clearInterval(intervalId);
   }, []);
 
   return (
@@ -777,72 +783,82 @@ function TrackBox({
 }: TrackProps) {
   return (
     <Tooltip label={hackathonIsOn ? '' : 'Details to be revealed on July 11.'}>
-      <Box
-        w="full"
-        maxW="lg"
-        p={{ base: 3, md: 4 }}
-        bg="white"
-        borderWidth={'1px'}
-        borderColor="brand.slate.200"
-        borderRadius={8}
-        cursor={hackathonIsOn ? 'pointer' : 'not-allowed'}
-      >
+      <Box w="full">
         <Link
           as={NextLink}
+          w="full"
+          _hover={{ textDecoration: 'none' }}
           pointerEvents={hackathonIsOn ? 'auto' : 'none'}
           href={link}
         >
-          <Flex align="center" gap={5}>
-            <Image
-              w={{ base: 12, md: '4.5rem' }}
-              h={{ base: 12, md: '4.5rem' }}
-              borderRadius={3}
-              objectFit={'cover'}
-              alt={title}
-              src={icon}
-            />
-            <Flex direction={'column'}>
+          <Box
+            w="full"
+            maxW="lg"
+            p={{ base: 3, md: 4 }}
+            bg="white"
+            borderWidth={'1px'}
+            borderColor="brand.slate.200"
+            borderRadius={8}
+            cursor={hackathonIsOn ? 'pointer' : 'not-allowed'}
+          >
+            <Flex
+              align="center"
+              gap={5}
+              _hover={{ textDecoration: 'underline' }}
+            >
+              <Image
+                w={{ base: 12, md: '4.5rem' }}
+                h={{ base: 12, md: '4.5rem' }}
+                borderRadius={3}
+                objectFit={'cover'}
+                alt={title}
+                src={icon}
+              />
+              <Flex direction={'column'}>
+                <Text
+                  color={'brand.slate.900'}
+                  fontSize={{ base: 'sm', md: 'md' }}
+                  fontWeight={600}
+                >
+                  <TextStyler text={title} />
+                </Text>
+                <Text
+                  color={'brand.slate.500'}
+                  fontSize={{ base: 'sm', md: 'md' }}
+                  textOverflow={'ellipsis'}
+                  noOfLines={2}
+                >
+                  <TextStyler text={description} />
+                </Text>
+              </Flex>
+            </Flex>
+            <Flex align="center" justify={'end'} gap={1} mt={3}>
+              <Image
+                w={{ base: 4, md: 6 }}
+                h={{ base: 4, md: 6 }}
+                alt={token}
+                rounded={'full'}
+                src={tokenList.find((t) => t.tokenSymbol === token)?.icon || ''}
+              />
               <Text
-                color={'brand.slate.900'}
+                color={'brand.slate.700'}
                 fontSize={{ base: 'sm', md: 'md' }}
                 fontWeight={600}
               >
-                <TextStyler text={title} />
+                {amount?.toLocaleString()}
               </Text>
               <Text
-                color={'brand.slate.500'}
+                color={'brand.slate.400'}
                 fontSize={{ base: 'sm', md: 'md' }}
-                textOverflow={'ellipsis'}
-                noOfLines={2}
+                fontWeight={600}
+                textDecoration={'none'}
+                _hover={{ textDecoration: 'none' }}
               >
-                <TextStyler text={description} />
+                {token}
               </Text>
             </Flex>
-          </Flex>
+          </Box>
         </Link>
-        <Flex align="center" justify={'end'} gap={1} mt={3}>
-          <Image
-            w={{ base: 4, md: 6 }}
-            h={{ base: 4, md: 6 }}
-            alt={token}
-            rounded={'full'}
-            src={tokenList.find((t) => t.tokenSymbol === token)?.icon || ''}
-          />
-          <Text
-            color={'brand.slate.700'}
-            fontSize={{ base: 'sm', md: 'md' }}
-            fontWeight={600}
-          >
-            {amount?.toLocaleString()}
-          </Text>
-          <Text
-            color={'brand.slate.400'}
-            fontSize={{ base: 'sm', md: 'md' }}
-            fontWeight={600}
-          >
-            {token}
-          </Text>
-        </Flex>
       </Box>
     </Tooltip>
   );
