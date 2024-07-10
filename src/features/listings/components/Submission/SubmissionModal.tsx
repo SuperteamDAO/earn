@@ -351,7 +351,8 @@ export const SubmissionModal = ({
                                   const cloneEligibilityQs = [...eligibilityQs];
                                   const currElgibile = cloneEligibilityQs[i];
                                   if (currElgibile) {
-                                    currElgibile.error = 'Link is not valid';
+                                    currElgibile.error =
+                                      'Please enter a valid link';
                                     setEligibilityQs(cloneEligibilityQs);
                                     return false;
                                   }
