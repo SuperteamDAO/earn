@@ -33,6 +33,7 @@ import type { User } from '@/interface/user';
 import { Default } from '@/layouts/Default';
 import { Meta } from '@/layouts/Meta';
 import { userStore } from '@/store/user';
+import { getURL } from '@/utils/validUrl';
 
 interface TalentProps {
   slug: string;
@@ -238,6 +239,18 @@ function TalentProfile({ slug }: TalentProps) {
     );
   };
 
+  const ogImage = new URL(`${getURL()}api/dynamic-og/talent/`);
+  ogImage.searchParams.set('name', `${talent?.firstName} ${talent?.lastName}`);
+  ogImage.searchParams.set('username', talent?.username!);
+  ogImage.searchParams.set('skills', JSON.stringify(talent?.skills));
+  ogImage.searchParams.set(
+    'totalEarned',
+    talent?.totalEarnedInUSD!.toString() || '0',
+  );
+  ogImage.searchParams.set('submissionCount', submissionCount.toString());
+  ogImage.searchParams.set('winnerCount', winnerCount.toString());
+  ogImage.searchParams.set('photo', talent?.photo!);
+
   return (
     <>
       <Default
@@ -253,6 +266,7 @@ function TalentProfile({ slug }: TalentProps) {
                 ? `${talent.firstName} ${talent.lastName} is on Superteam Earn. Become a part of our talent community to explore opportunities in the crypto space and work on bounties, grants, and projects.`
                 : 'Superteam Earn is a platform for developers, designers, and content marketers to work on real-world crypto projects. Explore opportunities by becoming part of our community.'
             }
+            og={ogImage.toString()}
           />
         }
       >
