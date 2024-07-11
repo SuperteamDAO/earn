@@ -4,11 +4,13 @@ import { type NextApiRequestWithUser, withAuth } from '@/features/auth';
 import { sendEmailNotification } from '@/features/emails';
 import logger from '@/lib/logger';
 import { updateLike } from '@/services/likeService';
+import { safeStringify } from '@/utils/safeStringify';
 
 async function submission(req: NextApiRequestWithUser, res: NextApiResponse) {
   try {
     const userId = req.userId;
     const { id }: { id: string } = req.body;
+    logger.debug(`Request body: ${safeStringify(req.body)}`);
 
     if (!id) {
       return res.status(400).json({

@@ -3,6 +3,7 @@ import type { NextApiResponse } from 'next';
 import { type NextApiRequestWithUser, withAuth } from '@/features/auth';
 import logger from '@/lib/logger';
 import { prisma } from '@/prisma';
+import { safeStringify } from '@/utils/safeStringify';
 
 async function user(req: NextApiRequestWithUser, res: NextApiResponse) {
   const userId = req.userId;
@@ -25,6 +26,8 @@ async function user(req: NextApiRequestWithUser, res: NextApiResponse) {
         .status(403)
         .json({ error: 'User does not have a current sponsor' });
     }
+
+    logger.debug(`Request body: ${safeStringify(req.body)}`);
 
     const { name, slug, logo, url, industry, twitter, bio, entityName } =
       req.body;

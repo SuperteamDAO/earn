@@ -1,11 +1,14 @@
 import type { NextApiResponse } from 'next';
 
 import { type NextApiRequestWithUser, withAuth } from '@/features/auth';
+import logger from '@/lib/logger';
 import { prisma } from '@/prisma';
+import { safeStringify } from '@/utils/safeStringify';
 
 async function bounty(req: NextApiRequestWithUser, res: NextApiResponse) {
   const params = req.query;
   const id = params.id as string;
+  logger.debug(`Request body: ${safeStringify(req.body)}`);
   const { hackathonSponsor, ...updatedData } = req.body;
 
   try {

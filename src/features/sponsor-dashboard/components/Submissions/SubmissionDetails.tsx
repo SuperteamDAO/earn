@@ -672,7 +672,6 @@ export const SubmissionDetails = ({
                     <Link
                       as={NextLink}
                       color="brand.purple"
-                      wordBreak={'break-all'}
                       href={getURLSanitized(selectedSubmission?.link || '#')}
                       isExternal
                     >
@@ -694,7 +693,6 @@ export const SubmissionDetails = ({
                     <Link
                       as={NextLink}
                       color="brand.purple"
-                      wordBreak={'break-all'}
                       href={getURLSanitized(selectedSubmission?.tweet || '#')}
                       isExternal
                     >
@@ -716,7 +714,7 @@ export const SubmissionDetails = ({
                   >
                     Ask
                   </Text>
-                  <Text color="brand.slate.700" wordBreak={'break-all'}>
+                  <Text color="brand.slate.700">
                     {selectedSubmission?.ask?.toLocaleString()} {bounty?.token}
                   </Text>
                 </Box>
@@ -739,18 +737,13 @@ export const SubmissionDetails = ({
                         <Link
                           as={NextLink}
                           color="brand.purple"
-                          wordBreak={'break-all'}
                           href={getURLSanitized(answer.answer || '#')}
                           isExternal
                         >
                           {answer.answer ? getURLSanitized(answer.answer) : '-'}
                         </Link>
                       ) : (
-                        <Text
-                          color="brand.slate.700"
-                          whiteSpace={'pre'}
-                          wordBreak={'break-all'}
-                        >
+                        <Text color="brand.slate.700">
                           {answer.answer || '-'}
                         </Text>
                       )}
@@ -767,7 +760,7 @@ export const SubmissionDetails = ({
                 >
                   Anything Else
                 </Text>
-                <Text color="brand.slate.700" whiteSpace={'pre'}>
+                <Text color="brand.slate.700">
                   {selectedSubmission?.otherInfo || '-'}
                 </Text>
               </Box>
