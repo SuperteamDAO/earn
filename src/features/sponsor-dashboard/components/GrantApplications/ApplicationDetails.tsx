@@ -58,9 +58,7 @@ const InfoBox = ({
     >
       {label}
     </Text>
-    <Text color="brand.slate.700" whiteSpace={'pre'} wordBreak={'break-all'}>
-      {content ? content : '-'}
-    </Text>
+    <Text color="brand.slate.700">{content ? content : '-'}</Text>
   </Box>
 );
 
