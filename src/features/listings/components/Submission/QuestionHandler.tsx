@@ -1,4 +1,5 @@
 import { FormLabel, Text } from '@chakra-ui/react';
+import { useEffect } from 'react';
 import { type FieldValues, type UseFormRegister } from 'react-hook-form';
 
 import { AutoResizeTextarea } from '@/components/shared/autosize-textarea';
@@ -20,6 +21,9 @@ export const QuestionHandler = ({
   validate,
   error,
 }: QuestionProps) => {
+  useEffect(() => {
+    console.log('error in question handler', error);
+  }, [error]);
   return (
     <>
       <FormLabel mb={1} color={'brand.slate.600'} fontWeight={600}>

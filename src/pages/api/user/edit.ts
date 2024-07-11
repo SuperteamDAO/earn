@@ -60,7 +60,7 @@ async function handler(req: NextApiRequestWithUser, res: NextApiResponse) {
   );
 
   // eslint-disable-next-line
-  const { email, publicKey, skills, role, Hackathon, ...data } = req.body;
+  const {role, skills, currentSponsorId, generateTalentEmailSettings, hackathonId, totalEarnedInUSD, email, stRecommended, ...data} = req.body;
 
   const correctedSkills = correctSkills(skills);
   logger.info(`Corrected skills: ${safeStringify(correctedSkills)}`);
