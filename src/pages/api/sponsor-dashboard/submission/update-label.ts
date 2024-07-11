@@ -3,6 +3,7 @@ import type { NextApiResponse } from 'next';
 import { type NextApiRequestWithUser, withAuth } from '@/features/auth';
 import logger from '@/lib/logger';
 import { prisma } from '@/prisma';
+import { safeStringify } from '@/utils/safeStringify';
 
 async function handler(req: NextApiRequestWithUser, res: NextApiResponse) {
   const userId = req.userId;
@@ -12,6 +13,7 @@ async function handler(req: NextApiRequestWithUser, res: NextApiResponse) {
     return res.status(400).json({ error: 'Invalid token' });
   }
 
+  logger.debug(`Request body: ${safeStringify(req.body)}`);
   const { id, label } = req.body;
 
   if (!id || !label) {

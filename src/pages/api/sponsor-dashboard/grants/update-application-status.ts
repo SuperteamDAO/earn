@@ -6,6 +6,7 @@ import { convertGrantApplicationToAirtable } from '@/features/grants';
 import logger from '@/lib/logger';
 import { prisma } from '@/prisma';
 import { airtableConfig, airtableUpsert, airtableUrl } from '@/utils/airtable';
+import { safeStringify } from '@/utils/safeStringify';
 
 async function handler(req: NextApiRequestWithUser, res: NextApiResponse) {
   const userId = req.userId;
@@ -21,6 +22,8 @@ async function handler(req: NextApiRequestWithUser, res: NextApiResponse) {
     logger.warn(`User not found for ID: ${userId}`);
     return res.status(400).json({ error: 'User not found' });
   }
+
+  logger.debug(`Request body: ${safeStringify(req.body)}`);
 
   const { id, applicationStatus, approvedAmount } = req.body;
 

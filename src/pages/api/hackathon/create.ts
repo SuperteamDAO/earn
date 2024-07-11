@@ -4,6 +4,7 @@ import slugify from 'slugify';
 import { type NextApiRequestWithUser, withAuth } from '@/features/auth';
 import logger from '@/lib/logger';
 import { prisma } from '@/prisma';
+import { safeStringify } from '@/utils/safeStringify';
 
 const checkSlug = async (slug: string): Promise<boolean> => {
   try {
@@ -45,6 +46,8 @@ const generateUniqueSlug = async (title: string): Promise<string> => {
 async function handler(req: NextApiRequestWithUser, res: NextApiResponse) {
   // eslint-disable-next-line unused-imports/no-unused-vars
   const { title, eligibility, hackathonSponsor, ...data } = req.body;
+
+  logger.debug(`Request body: ${safeStringify(req.body)}`);
 
   const userId = req.userId;
 
