@@ -28,7 +28,7 @@ export default async function getAllUsers(
     const powAndSubmissions = await prisma.$queryRaw<any[]>`
       (SELECT
         CASE 
-          WHEN l.isWinnersAnnounced AND sub.isWinner THEN l.winnersAnnouncedAt 
+          WHEN l.isWinnersAnnounced AND sub.isWinner THEN COALESCE(l.winnersAnnouncedAt, sub.createdAt)
           ELSE sub.createdAt 
         END as createdAt,
         CASE WHEN l.isWinnersAnnounced THEN sub.id ELSE NULL END as id, 
