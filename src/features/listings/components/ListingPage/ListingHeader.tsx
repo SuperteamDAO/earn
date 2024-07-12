@@ -98,13 +98,21 @@ export function ListingHeader({
 
   useEffect(() => {
     const fetchUser = async () => {
-      const { data } = await axios.post('/api/listings/notifications/status', {
-        listingId: id,
-      });
-      setSub(data);
+      try {
+        const { data } = await axios.post(
+          '/api/listings/notifications/status',
+          {
+            listingId: id,
+          },
+        );
+        setSub(data);
+      } catch (error) {
+        console.error('Error fetching user data:', error);
+      }
     };
+
     fetchUser();
-  }, [update]);
+  }, [update, id]);
 
   const isProject = type === 'project';
   const isHackathon = type === 'hackathon';

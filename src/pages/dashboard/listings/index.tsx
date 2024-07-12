@@ -83,10 +83,16 @@ export default function SponsorListings() {
 
   useEffect(() => {
     const getSponsorStats = async () => {
-      const sponsorData = await axios.get('/api/sponsors/stats');
-      setSponsorStats(sponsorData.data);
-      setIsStatsLoading(false);
+      try {
+        const sponsorData = await axios.get('/api/sponsors/stats');
+        setSponsorStats(sponsorData.data);
+      } catch (err) {
+        console.log('Failed to fetch sponsor stats');
+      } finally {
+        setIsStatsLoading(false);
+      }
     };
+
     getSponsorStats();
   }, [userInfo?.currentSponsorId]);
 

@@ -1,6 +1,7 @@
 import { Box, Flex } from '@chakra-ui/react';
 import axios from 'axios';
 import type { NextPageContext } from 'next';
+import { useRouter } from 'next/router';
 import { useEffect, useState } from 'react';
 
 import { EmptySection } from '@/components/shared/EmptySection';
@@ -25,6 +26,7 @@ function ListingCategoryPage({ slug }: { slug: string }) {
   );
 
   const deadline = dayjs().subtract(1, 'month').toISOString();
+  const router = useRouter();
 
   const getListings = async () => {
     setIsListingsLoading(true);
@@ -71,6 +73,7 @@ function ListingCategoryPage({ slug }: { slug: string }) {
         title={title}
         description={metaDescription}
         canonical={canonicalURL}
+        og={`${router.basePath}/assets/og/categories/${slug}.png`}
       />
       <Box w={'100%'}>
         <ListingTabs

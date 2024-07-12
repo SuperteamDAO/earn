@@ -1,6 +1,7 @@
 import { Box } from '@chakra-ui/react';
 import axios from 'axios';
 import type { NextPageContext } from 'next';
+import { useRouter } from 'next/router';
 import { useEffect, useState } from 'react';
 
 import { type Listing, ListingTabs } from '@/features/listings';
@@ -18,6 +19,8 @@ function AllCategoryListingsPage({ slug }: { slug: string }) {
   const [listings, setListings] = useState<Listings>({
     bounties: [],
   });
+
+  const router = useRouter();
 
   const getListings = async () => {
     setIsListingsLoading(true);
@@ -60,6 +63,7 @@ function AllCategoryListingsPage({ slug }: { slug: string }) {
         title={title}
         description={metaDescription}
         canonical={canonicalURL}
+        og={`${router.basePath}/assets/og/categories/${slug}.png`}
       />
       <Box w={'100%'}>
         <ListingTabs

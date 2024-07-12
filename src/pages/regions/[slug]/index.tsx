@@ -10,6 +10,7 @@ import { GrantsCard, type GrantWithApplicationCount } from '@/features/grants';
 import { type Listing, ListingSection, ListingTabs } from '@/features/listings';
 import { Home } from '@/layouts/Home';
 import { Meta } from '@/layouts/Meta';
+import { getURL } from '@/utils/validUrl';
 
 interface Listings {
   bounties?: Listing[];
@@ -50,6 +51,10 @@ const RegionsPage = ({
     getListings();
   }, []);
 
+  const ogImage = new URL(`${getURL()}api/dynamic-og/region/`);
+  ogImage.searchParams.set('region', st.displayValue);
+  ogImage.searchParams.set('code', st.code!);
+
   return (
     <>
       <Home type="region" st={st}>
@@ -57,6 +62,7 @@ const RegionsPage = ({
           title={`Welcome to Superteam Earn ${displayName} | Discover Bounties and Grants`}
           description={`Welcome to Superteam ${displayName}'s page — Discover bounties and grants and become a part of the global crypto community`}
           canonical={`https://earn.superteam.fun/regions/${slug}/`}
+          og={ogImage.toString()}
         />
         <Box w={'100%'}>
           <ListingTabs

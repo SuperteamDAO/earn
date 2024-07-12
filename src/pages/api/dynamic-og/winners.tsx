@@ -3,14 +3,11 @@ import type { NextRequest } from 'next/server';
 
 import { type Rewards } from '@/features/listings';
 import type { SubmissionWithUser } from '@/interface/submission';
+import { fetchAsset, formatString } from '@/utils/ogHelpers';
 
 export const config = {
   runtime: 'experimental-edge',
 };
-
-const fetchAsset = (url: URL) => fetch(url).then((res) => res.arrayBuffer());
-const formatString = (str: string, maxLength: number) =>
-  str?.length > maxLength ? `${str.slice(0, maxLength)}...` : str;
 
 const fontDataP = fetchAsset(
   new URL('../../../../public/Inter-SemiBold.woff', import.meta.url),

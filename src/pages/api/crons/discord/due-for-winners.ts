@@ -38,6 +38,9 @@ async function handler(req: NextApiRequest, res: NextApiResponse) {
       include: {
         sponsor: true,
       },
+      orderBy: {
+        deadline: 'asc',
+      },
     });
     console.log('bounties - ', bounties.length);
     if (bounties.length === 0) {
