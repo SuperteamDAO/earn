@@ -38,6 +38,9 @@ const correctSkills = (
       );
 
       if (correctMainSkill) {
+        if (!skillMap[correctMainSkill as ParentSkills]) {
+          skillMap[correctMainSkill as ParentSkills] = [];
+        }
         skillMap[correctMainSkill as ParentSkills].push(subskill);
       }
     });
