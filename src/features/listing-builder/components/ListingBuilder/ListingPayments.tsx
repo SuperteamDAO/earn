@@ -212,6 +212,9 @@ export const ListingPayments = ({
         } else if (maxRewardAsk < minRewardAsk) {
           errorMessage =
             'The compensation range is incorrect; the maximum must be higher than the minimum. Please adjust it';
+        } else if (maxRewardAsk === minRewardAsk) {
+          errorMessage =
+            'The compensation range is incorrect; the maximum must be higher than the minimum. Please adjust it.';
         }
       }
     } else {

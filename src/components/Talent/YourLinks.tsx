@@ -195,14 +195,14 @@ export function YourLinks({ success, useFormStore }: Props) {
       const updateOptions = {
         ...form,
         ...socials,
-        superteamLevel: 'Lurker',
-        isTalentFilled: true,
-        generateTalentEmailSettings: true,
       };
       // eslint-disable-next-line unused-imports/no-unused-vars
       const { subSkills, ...finalOptions } = updateOptions;
 
-      const updatedUser = await axios.post('/api/user/update/', finalOptions);
+      const updatedUser = await axios.post(
+        '/api/user/complete-profile/',
+        finalOptions,
+      );
       await axios.post('/api/email/manual/welcome-talent/');
       setUserInfo(updatedUser?.data);
       success();

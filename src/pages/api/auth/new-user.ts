@@ -1,6 +1,7 @@
 import type { NextApiRequest, NextApiResponse } from 'next';
 import { getToken } from 'next-auth/jwt';
 
+import { createSponsorEmailSettings } from '@/features/sponsor-dashboard';
 import logger from '@/lib/logger';
 import { prisma } from '@/prisma';
 import { safeStringify } from '@/utils/safeStringify';
@@ -57,6 +58,8 @@ export default async function newUser(
           role: invite?.memberType,
         },
       });
+
+      await createSponsorEmailSettings(userId as string);
 
       logger.debug(`Updating current sponsor ID for user ID: ${userId}`);
       await prisma.user.update({

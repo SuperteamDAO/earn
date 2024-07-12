@@ -200,6 +200,7 @@ export default async function user(req: NextApiRequest, res: NextApiResponse) {
         orderBy: {
           deadline: order,
         },
+        take,
       });
       const splitIndex = bounties.findIndex((bounty) =>
         dayjs().isAfter(dayjs(bounty?.deadline)),

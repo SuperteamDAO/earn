@@ -1,6 +1,7 @@
 import type { NextApiResponse } from 'next';
 
 import { type NextApiRequestWithUser, withAuth } from '@/features/auth';
+import { createSponsorEmailSettings } from '@/features/sponsor-dashboard';
 import logger from '@/lib/logger';
 import { prisma } from '@/prisma';
 import { safeStringify } from '@/utils/safeStringify';
@@ -52,21 +53,7 @@ async function user(req: NextApiRequestWithUser, res: NextApiResponse) {
         data: { currentSponsorId: result.id },
       });
 
-      const categories = new Set([
-        'commentSponsor',
-        'deadlineSponsor',
-        'productAndNewsletter',
-        'replyOrTagComment',
-      ]);
-
-      for (const category of categories) {
-        await prisma.emailSettings.create({
-          data: {
-            user: { connect: { id: userId as string } },
-            category: category as string,
-          },
-        });
-      }
+      await createSponsorEmailSettings(userId as string);
 
       logger.info(`New sponsor created successfully for user: ${userId}`);
       return res.status(200).json(result);
