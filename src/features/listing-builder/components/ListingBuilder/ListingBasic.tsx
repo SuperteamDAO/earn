@@ -315,6 +315,7 @@ export const ListingBasic = ({
               }}
               focusBorderColor="brand.purple"
               id="title"
+              maxLength={80}
               {...register('title', {
                 required: true,
                 onChange: (e) => {
@@ -329,6 +330,19 @@ export const ListingBasic = ({
               })}
               placeholder="Develop a new landing page"
             />
+            <Text
+              color={(title?.length || 0) > 70 ? 'red' : 'brand.slate.400'}
+              fontSize={'xs'}
+              textAlign="right"
+            >
+              {title &&
+                title?.length > 50 &&
+                (80 - title?.length === 0 ? (
+                  <p>Character limit reached</p>
+                ) : (
+                  <p>{80 - (title.length || 0)} characters left</p>
+                ))}
+            </Text>
             {suggestions.length > 0 && (
               <Flex
                 gap={1}
