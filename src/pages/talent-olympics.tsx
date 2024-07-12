@@ -339,7 +339,7 @@ function Hero({
             fontSize={'sm'}
             bg="#6366F1"
             _active={{ bg: '#6366D1' }}
-            href="https://discord.gg/pC6tD8dN"
+            href="https://discord.com/invite/estz4kPp"
             rounded="full"
             target="_blank"
           >
