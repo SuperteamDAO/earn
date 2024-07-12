@@ -29,7 +29,6 @@ interface LinksType {
 }
 
 export interface UserStoreType {
-  otp: number | undefined;
   emailVerified: boolean;
   form: AboutYouType & WorkType & LinksType;
   updateState: (
