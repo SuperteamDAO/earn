@@ -23,7 +23,7 @@ export const SponsorPrize = ({
       {(() => {
         switch (compensationType) {
           case 'fixed':
-            return <>{formatNumberWithSuffix(rewardAmount!)}</>;
+            return <>{formatNumberWithSuffix(rewardAmount!, 2, true)}</>;
           case 'range':
             return (
               <>
