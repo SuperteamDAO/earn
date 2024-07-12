@@ -35,9 +35,9 @@ export const DeleteDraftModal = ({
   const deleteSelectedDraft = async () => {
     try {
       if (listingType === 'grant') {
-        await axios.post(`/api/listings/delete/${listingId}`);
-      } else {
         await axios.post(`/api/grants/delete/${listingId}`);
+      } else {
+        await axios.post(`/api/listings/delete/${listingId}`);
       }
       const update = listings.filter((x) => x.id !== listingId);
       setListings(update);
