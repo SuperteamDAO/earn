@@ -16,7 +16,7 @@ interface WorkType {
   skills: Skills;
   subSkills: string;
   workPrefernce: string;
-  private: boolean;
+  isPrivate: boolean;
 }
 
 interface LinksType {

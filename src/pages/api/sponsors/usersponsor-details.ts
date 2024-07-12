@@ -10,6 +10,8 @@ async function handler(req: NextApiRequestWithUser, res: NextApiResponse) {
 
   logger.debug(`Request body: ${safeStringify(req.body)}`);
 
+  const { firstName, lastName, username, photo } = req.body;
+
   try {
     const user = await prisma.user.findUnique({
       where: { id: userId as string },
@@ -20,36 +22,26 @@ async function handler(req: NextApiRequestWithUser, res: NextApiResponse) {
       return res.status(404).json({ error: 'User not found' });
     }
 
-    const allowedFields = ['featureModalShown', 'publicKey', 'acceptedTOS'];
+    const data = {
+      firstName,
+      lastName,
+      username,
+      photo,
+    };
 
-    if (user.role === 'GOD') {
-      allowedFields.push('currentSponsorId', 'hackathonId');
-    }
-
-    const updatedData = Object.keys(req.body).reduce(
-      (acc, key) => {
-        if (allowedFields.includes(key)) {
-          acc[key] = req.body[key];
-        }
-        return acc;
-      },
-      {} as { [key: string]: any },
+    logger.info(
+      `Completing user sponsor profile with data: ${safeStringify(data)}`,
     );
 
-    if (Object.keys(updatedData).length === 0) {
-      logger.warn(`No valid fields provided for update for user ID: ${userId}`);
-      return res
-        .status(400)
-        .json({ error: 'No valid fields provided for update' });
-    }
-
-    logger.info(`Updating user with data: ${safeStringify(updatedData)}`);
-
-    const result = await prisma.user.update({
+    await prisma.user.updateMany({
       where: {
         id: userId as string,
       },
-      data: updatedData,
+      data,
+    });
+
+    const result = await prisma.user.findUnique({
+      where: { id: userId as string },
       include: {
         currentSponsor: true,
         UserSponsors: true,
@@ -59,11 +51,11 @@ async function handler(req: NextApiRequestWithUser, res: NextApiResponse) {
       },
     });
 
-    logger.info(`User updated successfully for user ID: ${userId}`);
+    logger.info(`User onboarded successfully for user ID: ${userId}`);
     return res.status(200).json(result);
   } catch (error: any) {
     logger.error(
-      `Error occurred while updating user ${userId}: ${safeStringify(error)}`,
+      `Error occurred while onboarding user ${userId}: ${safeStringify(error)}`,
     );
     return res.status(400).json({
       message: `Error occurred while updating user ${userId}: ${error.message}`,

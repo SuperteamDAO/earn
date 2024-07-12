@@ -58,7 +58,7 @@ export function YourWork({ setStep, useFormStore }: Step1Props) {
       currentEmployer: form.currentEmployer,
       community: form.community,
       workPrefernce: form.workPrefernce,
-      private: form.private || false,
+      isPrivate: form.isPrivate || false,
     },
   });
 
@@ -290,7 +290,7 @@ export function YourWork({ setStep, useFormStore }: Step1Props) {
                 fontWeight={500}
                 colorScheme="purple"
                 size="md"
-                {...register('private')}
+                {...register('isPrivate')}
               >
                 Keep my info private
               </Checkbox>
