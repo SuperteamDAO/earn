@@ -50,7 +50,6 @@ const useFormStore = create<UserStoreType>()((set) => ({
     telegram: '',
     isPrivate: false,
   },
-  otp: undefined,
   emailVerified: false,
   updateState: (data) => {
     set((state) => {

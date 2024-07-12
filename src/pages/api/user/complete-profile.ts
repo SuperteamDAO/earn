@@ -112,7 +112,7 @@ async function handler(req: NextApiRequestWithUser, res: NextApiResponse) {
       telegram,
       website,
       skills: correctedSkills,
-      superTeamLevel: 'Lurker',
+      superteamLevel: 'Lurker',
       isTalentFilled: true,
     };
 
