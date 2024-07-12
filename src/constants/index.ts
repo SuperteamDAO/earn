@@ -618,6 +618,8 @@ export const CommunityList: string[] = [
   'DeveloperDAO',
   'Metacamp',
   '10K Designers',
+  'Rise In',
+  'Turbin3',
   'Christex Foundation',
   'Other',
 ];

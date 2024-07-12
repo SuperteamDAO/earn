@@ -18,6 +18,7 @@ import {
 } from '@chakra-ui/react';
 import axios from 'axios';
 import type { GetServerSideProps } from 'next';
+import Head from 'next/head';
 import { useRouter } from 'next/router';
 import { usePostHog } from 'posthog-js/react';
 import React, { useEffect, useMemo, useState } from 'react';
@@ -31,7 +32,6 @@ import { LoadingSection } from '@/components/shared/LoadingSection';
 import { type FeedDataProps, PowCard, SubmissionCard } from '@/features/feed';
 import type { User } from '@/interface/user';
 import { Default } from '@/layouts/Default';
-import { Meta } from '@/layouts/Meta';
 import { userStore } from '@/store/user';
 import { getURL } from '@/utils/validUrl';
 
@@ -251,23 +251,32 @@ function TalentProfile({ slug }: TalentProps) {
   ogImage.searchParams.set('winnerCount', winnerCount.toString());
   ogImage.searchParams.set('photo', talent?.photo!);
 
+  const title =
+    talent?.firstName && talent?.lastName
+      ? `Superteam Earn Talent: ${talent?.firstName} ${talent?.lastName}`
+      : 'Superteam Earn';
+
   return (
     <>
       <Default
         meta={
-          <Meta
-            title={
-              talent?.firstName && talent?.lastName
-                ? `Superteam Earn Talent: ${talent?.firstName} ${talent?.lastName}`
-                : 'Superteam Earn'
-            }
-            description={
-              talent?.firstName && talent?.lastName
-                ? `${talent.firstName} ${talent.lastName} is on Superteam Earn. Become a part of our talent community to explore opportunities in the crypto space and work on bounties, grants, and projects.`
-                : 'Superteam Earn is a platform for developers, designers, and content marketers to work on real-world crypto projects. Explore opportunities by becoming part of our community.'
-            }
-            og={ogImage.toString()}
-          />
+          <Head>
+            <title>{title}</title>
+            <meta property="og:title" content={title} />
+            <meta property="og:image" content={ogImage.toString()} />
+            <meta name="twitter:title" content={title} />
+            <meta name="twitter:image" content={ogImage.toString()} />
+            <meta name="twitter:card" content="summary_large_image" />
+            <meta property="og:image:width" content="1200" />
+            <meta property="og:image:height" content="630" />
+            <meta property="og:image:alt" content="Talent on Superteam" />
+            <meta charSet="UTF-8" key="charset" />
+            <meta
+              name="viewport"
+              content="width=device-width,initial-scale=1"
+              key="viewport"
+            />
+          </Head>
         }
       >
         {isloading && <LoadingSection />}
