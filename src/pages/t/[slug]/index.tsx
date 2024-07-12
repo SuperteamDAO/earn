@@ -28,7 +28,6 @@ import { ShareIcon } from '@/components/misc/shareIcon';
 import { ShareProfile } from '@/components/modals/shareProfile';
 import { EarnAvatar } from '@/components/shared/EarnAvatar';
 import { EmptySection } from '@/components/shared/EmptySection';
-import { LoadingSection } from '@/components/shared/LoadingSection';
 import { type FeedDataProps, PowCard, SubmissionCard } from '@/features/feed';
 import type { User } from '@/interface/user';
 import { Default } from '@/layouts/Default';
@@ -36,7 +35,7 @@ import { userStore } from '@/store/user';
 import { getURL } from '@/utils/validUrl';
 
 interface TalentProps {
-  slug: string;
+  talent: UserWithEarnings;
 }
 
 type UserWithEarnings = User & {
@@ -44,10 +43,7 @@ type UserWithEarnings = User & {
   feed: FeedDataProps[];
 };
 
-function TalentProfile({ slug }: TalentProps) {
-  const [talent, setTalent] = useState<UserWithEarnings>();
-  const [isloading, setIsloading] = useState<boolean>(true);
-  const [error, setError] = useState(false);
+function TalentProfile({ talent }: TalentProps) {
   const [activeTab, setActiveTab] = useState<'activity' | 'projects'>(
     'activity',
   );
@@ -77,28 +73,6 @@ function TalentProfile({ slug }: TalentProps) {
   } = useDisclosure();
 
   const { isOpen, onOpen, onClose } = useDisclosure();
-
-  useEffect(() => {
-    const fetch = async () => {
-      try {
-        setIsloading(true);
-        const res = await axios.post(`/api/user/info`, {
-          username: slug,
-        });
-
-        if (res) {
-          setTalent(res?.data);
-          setError(false);
-          setIsloading(false);
-        }
-      } catch (err) {
-        console.log(err);
-        setError(true);
-        setIsloading(false);
-      }
-    };
-    fetch();
-  }, []);
 
   const bgImages = ['1.png', '2.png', '3.png', '4.png', '5.png'];
 
@@ -152,16 +126,9 @@ function TalentProfile({ slug }: TalentProps) {
   }, [activeTab, talent?.feed]);
 
   const addNewPow = (newPow: any) => {
-    setTalent((prevTalent) => {
-      if (!prevTalent) {
-        return prevTalent;
-      }
-      const previousFeed = prevTalent.feed ?? [];
-      return {
-        ...prevTalent,
-        feed: [newPow, ...previousFeed],
-      };
-    });
+    if (talent) {
+      talent.feed = [newPow, ...talent.feed];
+    }
   };
 
   const isMD = useBreakpointValue({ base: false, md: true });
@@ -279,12 +246,10 @@ function TalentProfile({ slug }: TalentProps) {
           </Head>
         }
       >
-        {isloading && <LoadingSection />}
-        {!isloading && !!error && <EmptySection />}
-        {!isloading && !error && !talent?.id && (
+        {!talent?.id && (
           <EmptySection message="Sorry! The profile you are looking for is not available." />
         )}
-        {!isloading && !error && !!talent?.id && (
+        {!!talent?.id && (
           <Box bg="white">
             <Box
               w="100%"
@@ -679,10 +644,23 @@ function TalentProfile({ slug }: TalentProps) {
     </>
   );
 }
+
 export const getServerSideProps: GetServerSideProps = async (context) => {
   const { slug } = context.query;
-  return {
-    props: { slug },
-  };
+  try {
+    const res = await axios.post(`${getURL()}/api/user/info`, {
+      username: slug,
+    });
+    const talent = res.data;
+    return {
+      props: { talent },
+    };
+  } catch (error) {
+    console.error(error);
+    return {
+      props: { talent: null },
+    };
+  }
 };
+
 export default TalentProfile;
