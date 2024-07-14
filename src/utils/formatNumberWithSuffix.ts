@@ -5,7 +5,7 @@ export const formatNumberWithSuffix = (
 ) => {
   if (isNaN(amount)) return null;
 
-  if (amount < 1000) return amount?.toString();
+  if (amount < 1000) return amount.toLocaleString();
 
   const suffixes = ['', 'k', 'm', 'b'];
   let tier = (Math.log10(amount) / 3) | 0;
@@ -15,7 +15,7 @@ export const formatNumberWithSuffix = (
     tier = 0;
   }
 
-  if (tier === 0) return amount.toString();
+  if (tier === 0) return amount.toLocaleString();
 
   const suffix = suffixes[tier];
   const scale = Math.pow(10, tier * 3);
@@ -23,12 +23,15 @@ export const formatNumberWithSuffix = (
 
   let formattedNumber;
   if (tier === 1) {
-    formattedNumber = scaled.toFixed(decimals).replace(/\.?0+$/, '');
+    formattedNumber = scaled
+      .toFixed(decimals)
+      .replace(/\.?0+$/, '')
+      .toLocaleString();
   } else {
     formattedNumber =
       scaled % 1 === 0
-        ? scaled.toString()
-        : scaled.toFixed(1).replace(/\.0$/, '');
+        ? scaled.toLocaleString()
+        : scaled.toFixed(1).replace(/\.0$/, '').toLocaleString();
   }
 
   return formattedNumber + suffix;
