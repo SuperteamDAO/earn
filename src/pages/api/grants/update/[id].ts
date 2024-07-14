@@ -8,7 +8,8 @@ import { safeStringify } from '@/utils/safeStringify';
 async function grant(req: NextApiRequestWithUser, res: NextApiResponse) {
   const params = req.query;
   const id = params.id as string;
-  const updatedData = req.body;
+
+  const { isPublished } = req.body;
 
   logger.debug(`Request body: ${safeStringify(req.body)}`);
 
@@ -53,7 +54,7 @@ async function grant(req: NextApiRequestWithUser, res: NextApiResponse) {
     logger.debug(`Updating grant with ID: ${id}`);
     const result = await prisma.grants.update({
       where: { id },
-      data: updatedData,
+      data: { isPublished },
     });
 
     logger.info(`Grant with ID: ${id} updated successfully`);

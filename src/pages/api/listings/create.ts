@@ -27,28 +27,50 @@ async function handler(req: NextApiRequestWithUser, res: NextApiResponse) {
         .json({ error: 'User does not have a current sponsor.' });
     }
 
-    const { title, ...data } = req.body;
+    const {
+      title,
+      pocId,
+      skills,
+      slug,
+      deadline,
+      templateId,
+      pocSocials,
+      applicationType,
+      timeToComplete,
+      description,
+      type,
+      region,
+      referredBy,
+      eligibility,
+      references,
+      requirements,
+      rewardAmount,
+      rewards,
+      token,
+      compensationType,
+      minRewardAsk,
+      maxRewardAsk,
+      isPublished,
+      isPrivate,
+    } = req.body;
     let usdValue = 0;
 
     let publishedAt;
-    if (data.isPublished) {
+    if (isPublished) {
       publishedAt = new Date();
     }
 
-    if (data.isPublished && publishedAt) {
+    if (isPublished && publishedAt) {
       try {
         let amount;
-        if (data.compensationType === 'fixed') {
-          amount = data.rewardAmount;
-        } else if (data.compensationType === 'range') {
-          amount = (data.minRewardAsk + data.maxRewardAsk) / 2;
+        if (compensationType === 'fixed') {
+          amount = rewardAmount;
+        } else if (compensationType === 'range') {
+          amount = (minRewardAsk + maxRewardAsk) / 2;
         }
 
-        if (amount && data.token) {
-          const tokenUsdValue = await fetchTokenUSDValue(
-            data.token,
-            publishedAt,
-          );
+        if (amount && token) {
+          const tokenUsdValue = await fetchTokenUSDValue(token, publishedAt);
           usdValue = tokenUsdValue * amount;
         }
       } catch (error) {
@@ -61,7 +83,29 @@ async function handler(req: NextApiRequestWithUser, res: NextApiResponse) {
       title,
       usdValue,
       publishedAt,
-      ...data,
+      pocId,
+      skills,
+      slug,
+      deadline,
+      templateId,
+      pocSocials,
+      applicationType,
+      timeToComplete,
+      description,
+      type,
+      region,
+      referredBy,
+      eligibility,
+      references,
+      requirements,
+      rewardAmount,
+      rewards,
+      token,
+      compensationType,
+      minRewardAsk,
+      maxRewardAsk,
+      isPublished,
+      isPrivate,
     };
 
     logger.debug(`Creating bounty with data: ${safeStringify(finalData)}`);
