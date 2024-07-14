@@ -8,11 +8,40 @@ import logger from '@/lib/logger';
 import { prisma } from '@/prisma';
 import { dayjs } from '@/utils/dayjs';
 import { fetchTokenUSDValue } from '@/utils/fetchTokenUSDValue';
+import { filterAllowedFields } from '@/utils/filterAllowedFields';
 import { safeStringify } from '@/utils/safeStringify';
+
+const allowedFields = [
+  'type',
+  'title',
+  'skills',
+  'slug',
+  'deadline',
+  'templateId',
+  'pocSocials',
+  'applicationType',
+  'timeToComplete',
+  'description',
+  'eligibility',
+  'references',
+  'region',
+  'referredBy',
+  'isPrivate',
+  'requirements',
+  'rewardAmount',
+  'rewards',
+  'token',
+  'compensationType',
+  'minRewardAsk',
+  'maxRewardAsk',
+  'isPublished',
+];
 
 async function bounty(req: NextApiRequestWithUser, res: NextApiResponse) {
   const { id } = req.query;
-  const updatedData = req.body;
+
+  const data = req.body;
+  const updatedData = filterAllowedFields(data, allowedFields);
 
   logger.debug(`Request query: ${safeStringify(req.query)}`);
   logger.debug(`Request body: ${safeStringify(req.body)}`);
@@ -110,6 +139,7 @@ async function bounty(req: NextApiRequestWithUser, res: NextApiResponse) {
     const result = await prisma.bounties.update({
       where: { id: id as string },
       data: {
+        ...updatedData,
         rewards,
         rewardAmount,
         token,
@@ -118,7 +148,6 @@ async function bounty(req: NextApiRequestWithUser, res: NextApiResponse) {
         compensationType,
         isPublished,
         publishedAt,
-        ...updatedData,
         usdValue,
       },
       include: { sponsor: true },

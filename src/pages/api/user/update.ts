@@ -3,6 +3,7 @@ import type { NextApiResponse } from 'next';
 import { type NextApiRequestWithUser, withAuth } from '@/features/auth';
 import logger from '@/lib/logger';
 import { prisma } from '@/prisma';
+import { filterAllowedFields } from '@/utils/filterAllowedFields';
 import { safeStringify } from '@/utils/safeStringify';
 
 async function handler(req: NextApiRequestWithUser, res: NextApiResponse) {
@@ -26,15 +27,7 @@ async function handler(req: NextApiRequestWithUser, res: NextApiResponse) {
       allowedFields.push('currentSponsorId', 'hackathonId');
     }
 
-    const updatedData = Object.keys(req.body).reduce(
-      (acc, key) => {
-        if (allowedFields.includes(key)) {
-          acc[key] = req.body[key];
-        }
-        return acc;
-      },
-      {} as { [key: string]: any },
-    );
+    const updatedData = filterAllowedFields(req.body, allowedFields);
 
     if (Object.keys(updatedData).length === 0) {
       logger.warn(`No valid fields provided for update for user ID: ${userId}`);
