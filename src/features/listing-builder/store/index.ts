@@ -1,6 +1,9 @@
 import { Regions } from '@prisma/client';
+import dayjs from 'dayjs';
 import { produce } from 'immer';
 import { create } from 'zustand';
+
+import { type Listing } from '@/features/listings';
 
 import { type ListingFormType, type ListingStoreType } from '../types';
 
@@ -14,7 +17,7 @@ const listingDescriptionHeadings = [
   .map((heading) => `<h1 key=${heading}>${heading}</h1>`)
   .join('');
 
-const initialFormState = {
+const initialFormState: ListingFormType = {
   id: '',
   title: '',
   slug: '',
@@ -41,8 +44,42 @@ const initialFormState = {
   maxRewardAsk: undefined,
 };
 
+const mergeListingWithInitialFormState = (
+  listing: Listing,
+  isDuplicating: boolean,
+  type: 'bounty' | 'project' | 'hackathon',
+): ListingFormType => ({
+  ...initialFormState,
+  ...listing,
+  title:
+    isDuplicating && listing.title ? `${listing.title} (2)` : listing.title,
+  slug: isDuplicating && listing.slug ? `${listing.slug}-2` : listing.slug,
+  deadline:
+    !isDuplicating && listing.deadline
+      ? dayjs(listing.deadline).format('YYYY-MM-DDTHH:mm')
+      : undefined,
+  type: type,
+  eligibility: (listing.eligibility || []).map((e) => ({
+    order: e.order,
+    question: e.question,
+    type: e.type as 'text',
+    delete: true,
+    label: e.question,
+  })),
+  references: (listing.references || []).map((e) => ({
+    order: e.order,
+    link: e.link,
+  })),
+  publishedAt: listing.publishedAt,
+  rewardAmount: listing.rewardAmount,
+  rewards: listing.rewards,
+  token: listing.token || 'USDC',
+  minRewardAsk: listing.minRewardAsk,
+  maxRewardAsk: listing.maxRewardAsk,
+});
+
 export const useListingFormStore = create<ListingStoreType>()((set) => ({
-  form: { ...(initialFormState as ListingFormType) },
+  form: {},
   updateState: (data) => {
     set(
       produce((draft) => {
@@ -53,7 +90,17 @@ export const useListingFormStore = create<ListingStoreType>()((set) => ({
   resetForm: () => {
     set(
       produce((draft) => {
-        draft.form = { ...(initialFormState as ListingFormType) };
+        draft.form = { ...initialFormState };
+      }),
+    );
+  },
+  initializeForm: (listing, isDuplicating, type) => {
+    const mergedState = listing
+      ? mergeListingWithInitialFormState(listing, isDuplicating, type)
+      : initialFormState;
+    set(
+      produce((draft) => {
+        draft.form = mergedState;
       }),
     );
   },
