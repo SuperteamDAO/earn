@@ -5,6 +5,7 @@ import { useEffect, useState } from 'react';
 import { type Listing, ListingTabs } from '@/features/listings';
 import { Home } from '@/layouts/Home';
 import { Meta } from '@/layouts/Meta';
+import { userStore } from '@/store/user';
 import { dayjs } from '@/utils/dayjs';
 
 interface Listings {
@@ -19,6 +20,9 @@ export default function ProjectsPage() {
 
   const date = dayjs().subtract(2, 'months').toISOString();
 
+  const { userInfo } = userStore();
+  const userLocation = userInfo?.location;
+
   const getListings = async () => {
     setIsListingsLoading(true);
     try {
@@ -28,6 +32,7 @@ export default function ProjectsPage() {
           take: 100,
           type: 'project',
           deadline: date,
+          userLocation: userLocation?.toLocaleUpperCase(),
         },
       });
       setListings(listingsData.data);
