@@ -198,7 +198,7 @@ export default async function user(req: NextApiRequest, res: NextApiResponse) {
           },
         },
         orderBy: {
-          deadline: order,
+          deadline: 'desc',
         },
         take,
       });
