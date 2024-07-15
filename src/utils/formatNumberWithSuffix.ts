@@ -5,7 +5,7 @@ export const formatNumberWithSuffix = (
 ) => {
   if (isNaN(amount)) return null;
 
-  if (amount < 1000) return amount.toLocaleString();
+  if (amount < 1000) return amount;
 
   const suffixes = ['', 'k', 'm', 'b'];
   let tier = (Math.log10(amount) / 3) | 0;
