@@ -226,7 +226,7 @@ export default async function user(req: NextApiRequest, res: NextApiResponse) {
         },
         take,
         orderBy: {
-          updatedAt: order,
+          createdAt: order,
         },
         include: {
           sponsor: {

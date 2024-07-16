@@ -79,7 +79,7 @@ export async function getGrants({ take = 20, skillFilter }: GrantProps) {
     },
     take,
     orderBy: {
-      updatedAt: 'desc',
+      createdAt: 'desc',
     },
     include: {
       sponsor: {
