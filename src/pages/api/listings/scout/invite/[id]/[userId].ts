@@ -1,12 +1,19 @@
 import type { NextApiResponse } from 'next';
 
-import { type NextApiRequestWithUser, withAuth } from '@/features/auth';
+import {
+  checkListingSponsorAuth,
+  type NextApiRequestWithSponsor,
+  withSponsorAuth,
+} from '@/features/auth';
 import { sendEmailNotification } from '@/features/emails';
 import logger from '@/lib/logger';
 import { prisma } from '@/prisma';
 import { safeStringify } from '@/utils/safeStringify';
 
-async function scoutInvite(req: NextApiRequestWithUser, res: NextApiResponse) {
+async function scoutInvite(
+  req: NextApiRequestWithSponsor,
+  res: NextApiResponse,
+) {
   const params = req.query;
   const id = params.id as string;
   const userId = params.userId as string;
@@ -18,33 +25,12 @@ async function scoutInvite(req: NextApiRequestWithUser, res: NextApiResponse) {
   }
 
   try {
-    logger.debug(`Fetching bounty with ID: ${id}`);
-    const scoutBounty = await prisma.bounties.findFirst({
-      where: {
-        id,
-      },
-    });
-
-    if (scoutBounty === null) {
-      logger.warn(`Bounty with ID: ${id} not found`);
-      return res.status(404).send('Bounty Not Found');
-    }
-
     const sponsorUserId = req.userId;
-    logger.debug(`Fetching user details for user ID: ${sponsorUserId}`);
-    const user = await prisma.user.findUnique({
-      where: {
-        id: sponsorUserId,
-      },
-    });
+    const userSponsorId = req.userSponsorId;
 
-    if (scoutBounty?.sponsorId !== user?.currentSponsorId) {
-      logger.warn(
-        `User ID: ${sponsorUserId} is not authorized to invite scouts for bounty ID: ${id}`,
-      );
-      return res
-        .status(403)
-        .send(`Bounty doesn't belong to requesting sponsor`);
+    const { error } = await checkListingSponsorAuth(userSponsorId, id);
+    if (error) {
+      return res.status(error.status).json({ error: error.message });
     }
 
     logger.debug(`Fetching scout for listing ID: ${id} and user ID: ${userId}`);
@@ -97,4 +83,4 @@ async function scoutInvite(req: NextApiRequestWithUser, res: NextApiResponse) {
   }
 }
 
-export default withAuth(scoutInvite);
+export default withSponsorAuth(scoutInvite);

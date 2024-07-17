@@ -1,25 +1,18 @@
 import type { NextApiResponse } from 'next';
 
-import { type NextApiRequestWithUser, withAuth } from '@/features/auth';
+import {
+  checkGrantSponsorAuth,
+  type NextApiRequestWithSponsor,
+  withSponsorAuth,
+} from '@/features/auth';
 import logger from '@/lib/logger';
 import { prisma } from '@/prisma';
 import { safeStringify } from '@/utils/safeStringify';
 
-async function handler(req: NextApiRequestWithUser, res: NextApiResponse) {
+async function handler(req: NextApiRequestWithSponsor, res: NextApiResponse) {
   const userId = req.userId;
 
   logger.debug(`Request query: ${safeStringify(req.query)}`);
-
-  const user = await prisma.user.findUnique({
-    where: {
-      id: userId as string,
-    },
-  });
-
-  if (!user) {
-    logger.warn(`Unauthorized access attempt by user ID: ${userId}`);
-    return res.status(400).json({ error: 'Unauthorized' });
-  }
 
   const params = req.query;
   const slug = params.slug as string;
@@ -27,34 +20,33 @@ async function handler(req: NextApiRequestWithUser, res: NextApiResponse) {
   try {
     logger.info(`Fetching grant details for slug: ${slug} for user: ${userId}`);
 
-    const result = await prisma.grants.findFirst({
-      where: {
-        slug,
-        sponsor: {
-          id: user.currentSponsorId!,
-        },
-      },
+    const grant = await prisma.grants.findFirst({
+      where: { slug },
       include: { sponsor: true, poc: true, GrantApplication: true },
     });
 
-    if (!result) {
+    if (!grant) {
       logger.info(`Grant with slug=${slug} not found for user=${userId}`);
       return res.status(404).json({
         message: `Grant with slug=${slug} not found.`,
       });
     }
 
-    const totalApplications = result.GrantApplication.length;
+    const { error } = await checkGrantSponsorAuth(req.userSponsorId, grant.id);
+    if (error) {
+      return res.status(error.status).json({ error: error.message });
+    }
+
+    const totalApplications = grant.GrantApplication.length;
 
     logger.info(`Grant details fetched successfully for slug=${slug}`);
     return res.status(200).json({
-      ...result,
+      ...grant,
       totalApplications,
     });
   } catch (error: any) {
     logger.error(
-      `Error fetching grant with slug=${slug} for user=${userId}`,
-      safeStringify(error),
+      `Error fetching grant with slug=${slug} for user=${userId}: ${safeStringify(error)}`,
     );
     return res.status(400).json({
       error: error.message,
@@ -63,4 +55,4 @@ async function handler(req: NextApiRequestWithUser, res: NextApiResponse) {
   }
 }
 
-export default withAuth(handler);
+export default withSponsorAuth(handler);

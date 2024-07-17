@@ -1,6 +1,9 @@
 import type { NextApiResponse } from 'next';
 
-import { type NextApiRequestWithUser, withAuth } from '@/features/auth';
+import {
+  type NextApiRequestWithSponsor,
+  withSponsorAuth,
+} from '@/features/auth';
 import {
   InviteMemberTemplate,
   kashEmail,
@@ -12,7 +15,10 @@ import { prisma } from '@/prisma';
 import { safeStringify } from '@/utils/safeStringify';
 import { getURL } from '@/utils/validUrl';
 
-async function sendInvites(req: NextApiRequestWithUser, res: NextApiResponse) {
+async function sendInvites(
+  req: NextApiRequestWithSponsor,
+  res: NextApiResponse,
+) {
   const userId = req.userId;
 
   logger.debug(`Request body: ${safeStringify(req.body)}`);
@@ -40,7 +46,6 @@ async function sendInvites(req: NextApiRequestWithUser, res: NextApiResponse) {
         lastName: true,
         currentSponsor: {
           select: {
-            id: true,
             name: true,
           },
         },
@@ -58,7 +63,7 @@ async function sendInvites(req: NextApiRequestWithUser, res: NextApiResponse) {
       data: {
         email,
         senderId: userId as string,
-        sponsorId: user.currentSponsor.id,
+        sponsorId: req.userSponsorId!,
         memberType,
       },
     });
@@ -89,4 +94,4 @@ async function sendInvites(req: NextApiRequestWithUser, res: NextApiResponse) {
   }
 }
 
-export default withAuth(sendInvites);
+export default withSponsorAuth(sendInvites);

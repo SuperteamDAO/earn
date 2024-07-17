@@ -1,6 +1,10 @@
 import type { NextApiResponse } from 'next';
 
-import { type NextApiRequestWithUser, withAuth } from '@/features/auth';
+import {
+  checkListingSponsorAuth,
+  type NextApiRequestWithSponsor,
+  withSponsorAuth,
+} from '@/features/auth';
 import { discordWinnersAnnouncement } from '@/features/discord';
 import { sendEmailNotification } from '@/features/emails';
 import { type Rewards } from '@/features/listings';
@@ -9,65 +13,36 @@ import { prisma } from '@/prisma';
 import { dayjs } from '@/utils/dayjs';
 import { safeStringify } from '@/utils/safeStringify';
 
-async function announce(req: NextApiRequestWithUser, res: NextApiResponse) {
+async function announce(req: NextApiRequestWithSponsor, res: NextApiResponse) {
   const userId = req.userId;
+  const userSponsorId = req.userSponsorId;
   const params = req.query;
   const id = params.id as string;
 
   logger.debug(`Request query: ${safeStringify(req.query)}`);
 
+  const { error, listing } = await checkListingSponsorAuth(userSponsorId, id);
+  if (error) {
+    return res.status(error.status).json({ error: error.message });
+  }
+
   try {
-    logger.debug(`Fetching user details for user ID: ${userId}`);
-    const user = await prisma.user.findUnique({
-      where: {
-        id: userId as string,
-      },
-    });
-
-    logger.debug(`Fetching bounty details for bounty ID: ${id}`);
-    const bounty = await prisma.bounties.findUnique({
-      where: { id },
-      include: {
-        sponsor: true,
-      },
-    });
-
-    if (
-      !user ||
-      !user.currentSponsorId ||
-      bounty?.sponsorId !== user.currentSponsorId
-    ) {
-      logger.warn(
-        `User ID: ${userId} does not have a current sponsor or is unauthorized to announce winners for bounty ID: ${id}`,
-      );
-      return res
-        .status(403)
-        .json({ error: 'User does not have a current sponsor.' });
-    }
-
-    if (!bounty) {
-      logger.warn(`Bounty with ID: ${id} not found`);
-      return res
-        .status(404)
-        .json({ message: `Bounty with id=${id} not found.` });
-    }
-
-    if (bounty?.isWinnersAnnounced) {
+    if (listing?.isWinnersAnnounced) {
       logger.warn(`Winners already announced for bounty with ID: ${id}`);
       return res.status(400).json({
         message: `Winners already announced for bounty with id=${id}.`,
       });
     }
 
-    if (!bounty?.isActive) {
+    if (!listing?.isActive) {
       logger.warn(`Bounty with ID: ${id} is not active`);
       return res
         .status(400)
         .json({ message: `Bounty with id=${id} is not active.` });
     }
 
-    const totalRewards = Object.keys(bounty?.rewards || {})?.length || 0;
-    if (!!totalRewards && bounty?.totalWinnersSelected !== totalRewards) {
+    const totalRewards = Object.keys(listing?.rewards || {})?.length || 0;
+    if (!!totalRewards && listing?.totalWinnersSelected !== totalRewards) {
       logger.warn(
         'All winners have not been selected before publishing the results',
       );
@@ -76,8 +51,8 @@ async function announce(req: NextApiRequestWithUser, res: NextApiResponse) {
       });
     }
 
-    const deadline = dayjs().isAfter(bounty?.deadline)
-      ? bounty?.deadline
+    const deadline = dayjs().isAfter(listing?.deadline)
+      ? listing?.deadline
       : dayjs().subtract(2, 'minute').toISOString();
 
     logger.debug('Updating bounty details with winner announcement');
@@ -97,7 +72,7 @@ async function announce(req: NextApiRequestWithUser, res: NextApiResponse) {
     } catch (err) {
       logger.error('Discord Listing Update Message Error', err);
     }
-    const rewards: Rewards = (bounty?.rewards || {}) as Rewards;
+    const rewards: Rewards = (listing?.rewards || {}) as Rewards;
     const winners = await prisma.submission.findMany({
       where: {
         listingId: id,
@@ -158,9 +133,9 @@ async function announce(req: NextApiRequestWithUser, res: NextApiResponse) {
             : `Congratulations! ${extractedTags} have been announced as the winners!`;
         break;
       case 2:
-        if (bounty.type === 'bounty')
+        if (listing.type === 'bounty')
           comment = `Applaud ${extractedTags} for winning this Bounty`;
-        if (bounty.type === 'project')
+        if (listing.type === 'project')
           comment = `Applaud ${extractedTags} for winning this Project`;
         break;
     }
@@ -168,7 +143,7 @@ async function announce(req: NextApiRequestWithUser, res: NextApiResponse) {
     logger.debug('Creating winner announcement comment');
     await prisma.comment.create({
       data: {
-        authorId: user.id,
+        authorId: userId!,
         listingId: id,
         message: comment,
         type: 'WINNER_ANNOUNCEMENT',
@@ -186,7 +161,7 @@ async function announce(req: NextApiRequestWithUser, res: NextApiResponse) {
           )
         : 0;
 
-      const rewardInUSD = (bounty.usdValue! / bounty.rewardAmount!) * amount;
+      const rewardInUSD = (listing.usdValue! / listing.rewardAmount!) * amount;
 
       const amountWhere = {
         where: {
@@ -222,7 +197,7 @@ async function announce(req: NextApiRequestWithUser, res: NextApiResponse) {
       triggeredBy: userId,
     });
 
-    if (bounty?.sponsor?.name.includes('Superteam')) {
+    if (listing?.sponsor?.name.includes('Superteam')) {
       await sendEmailNotification({
         type: 'superteamWinners',
         id,
@@ -245,4 +220,4 @@ async function announce(req: NextApiRequestWithUser, res: NextApiResponse) {
   }
 }
 
-export default withAuth(announce);
+export default withSponsorAuth(announce);

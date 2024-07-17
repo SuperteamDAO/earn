@@ -77,7 +77,7 @@ export const ListingBasic = ({
     try {
       const listingId = editable && !isDuplicating ? form?.id : null;
       await axios.get(
-        `/api/listings/slug?slug=${slug}&check=true&id=${listingId}`,
+        `/api/listings/check-slug?slug=${slug}&check=true&id=${listingId}`,
       );
       return true;
     } catch (error) {
@@ -223,7 +223,7 @@ export const ListingBasic = ({
           strict: true,
         });
         const newSlug = await axios.get(
-          `/api/listings/slug?slug=${slugifiedTitle}&check=false`,
+          `/api/listings/check-slug?slug=${slugifiedTitle}&check=false`,
         );
         setIsSlugGenerating(false);
         return newSlug.data.slug;

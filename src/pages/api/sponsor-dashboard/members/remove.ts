@@ -1,13 +1,25 @@
 import type { NextApiResponse } from 'next';
 
-import { type NextApiRequestWithUser, withAuth } from '@/features/auth';
+import {
+  type NextApiRequestWithSponsor,
+  withSponsorAuth,
+} from '@/features/auth';
 import logger from '@/lib/logger';
 import { prisma } from '@/prisma';
 import { safeStringify } from '@/utils/safeStringify';
 
-async function removeMember(req: NextApiRequestWithUser, res: NextApiResponse) {
+async function removeMember(
+  req: NextApiRequestWithSponsor,
+  res: NextApiResponse,
+) {
   const { id } = req.body;
   const userId = req.userId;
+  const userSponsorId = req.userSponsorId;
+
+  if (!userSponsorId) {
+    logger.warn('Invalid token: User Sponsor Id is missing');
+    return res.status(400).json({ error: 'Invalid token' });
+  }
 
   logger.debug(`Request body: ${safeStringify(req.body)}`);
 
@@ -16,15 +28,11 @@ async function removeMember(req: NextApiRequestWithUser, res: NextApiResponse) {
     const user = await prisma.user.findUnique({
       where: { id: userId as string },
       select: {
-        id: true,
         role: true,
-        currentSponsor: {
-          select: { id: true },
-        },
       },
     });
 
-    if (!user || !user.currentSponsor) {
+    if (!user) {
       logger.warn(`Unauthorized request by user with ID: ${userId}`);
       return res.status(400).json({ error: 'Unauthorized' });
     }
@@ -34,7 +42,7 @@ async function removeMember(req: NextApiRequestWithUser, res: NextApiResponse) {
       where: {
         userId_sponsorId: {
           userId: userId as string,
-          sponsorId: user.currentSponsor.id,
+          sponsorId: userSponsorId,
         },
       },
       select: { role: true },
@@ -50,7 +58,7 @@ async function removeMember(req: NextApiRequestWithUser, res: NextApiResponse) {
       where: {
         userId_sponsorId: {
           userId: id,
-          sponsorId: user.currentSponsor.id,
+          sponsorId: userSponsorId,
         },
       },
       select: { role: true },
@@ -66,7 +74,7 @@ async function removeMember(req: NextApiRequestWithUser, res: NextApiResponse) {
       where: {
         userId_sponsorId: {
           userId: id,
-          sponsorId: user.currentSponsor.id,
+          sponsorId: userSponsorId,
         },
       },
     });
@@ -79,4 +87,4 @@ async function removeMember(req: NextApiRequestWithUser, res: NextApiResponse) {
   }
 }
 
-export default withAuth(removeMember);
+export default withSponsorAuth(removeMember);
