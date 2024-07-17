@@ -1,6 +1,10 @@
 import type { NextApiResponse } from 'next';
 
-import { type NextApiRequestWithUser, withAuth } from '@/features/auth';
+import {
+  checkListingSponsorAuth,
+  type NextApiRequestWithSponsor,
+  withSponsorAuth,
+} from '@/features/auth';
 import { discordListingUpdate } from '@/features/discord';
 import { sendEmailNotification } from '@/features/emails';
 import { shouldSendEmailForListing } from '@/features/listing-builder';
@@ -37,7 +41,7 @@ const allowedFields = [
   'isPublished',
 ];
 
-async function bounty(req: NextApiRequestWithUser, res: NextApiResponse) {
+async function bounty(req: NextApiRequestWithSponsor, res: NextApiResponse) {
   const { id } = req.query;
 
   const data = req.body;
@@ -47,34 +51,14 @@ async function bounty(req: NextApiRequestWithUser, res: NextApiResponse) {
   logger.debug(`Request body: ${safeStringify(req.body)}`);
 
   try {
-    const userId = req.userId;
+    const userSponsorId = req.userSponsorId;
 
-    logger.debug(`Fetching user with ID: ${userId}`);
-    const user = await prisma.user.findUnique({
-      where: { id: userId as string },
-    });
-
-    logger.debug(`Fetching bounty before update with ID: ${id}`);
-    const listingBeforeUpdate = await prisma.bounties.findUnique({
-      where: { id: id as string },
-    });
-
-    if (
-      !user ||
-      !user.currentSponsorId ||
-      listingBeforeUpdate?.sponsorId !== user.currentSponsorId
-    ) {
-      logger.warn('User does not have a current sponsor or is unauthorized');
-      return res
-        .status(403)
-        .json({ error: 'User does not have a current sponsor.' });
-    }
-
-    if (!listingBeforeUpdate) {
-      logger.warn(`Bounty with ID: ${id} not found`);
-      return res
-        .status(404)
-        .json({ message: `Bounty with id=${id} not found.` });
+    const { error, listing } = await checkListingSponsorAuth(
+      userSponsorId,
+      id as string,
+    );
+    if (error) {
+      return res.status(error.status).json({ error: error.message });
     }
 
     const {
@@ -87,13 +71,13 @@ async function bounty(req: NextApiRequestWithUser, res: NextApiResponse) {
       isPublished,
     } = updatedData;
 
-    let publishedAt = listingBeforeUpdate.publishedAt;
-    if (isPublished && !listingBeforeUpdate.publishedAt) {
+    let publishedAt = listing.publishedAt;
+    if (isPublished && !listing.publishedAt) {
       publishedAt = new Date();
     }
 
     const newRewardsCount = Object.keys(rewards || {}).length;
-    const currentTotalWinners = listingBeforeUpdate.totalWinnersSelected || 0;
+    const currentTotalWinners = listing.totalWinnersSelected || 0;
 
     if (newRewardsCount < currentTotalWinners) {
       updatedData.totalWinnersSelected = newRewardsCount;
@@ -154,16 +138,10 @@ async function bounty(req: NextApiRequestWithUser, res: NextApiResponse) {
     });
 
     try {
-      if (
-        listingBeforeUpdate.isPublished === true &&
-        result.isPublished === false
-      ) {
+      if (listing.isPublished === true && result.isPublished === false) {
         await discordListingUpdate(result, 'Unpublished');
       }
-      if (
-        listingBeforeUpdate.isPublished === false &&
-        result.isPublished === true
-      ) {
+      if (listing.isPublished === false && result.isPublished === true) {
         await discordListingUpdate(result, 'Published');
       }
     } catch (err) {
@@ -175,17 +153,17 @@ async function bounty(req: NextApiRequestWithUser, res: NextApiResponse) {
     logger.debug(`Updated bounty data: ${safeStringify(result)}`);
 
     const shouldSendEmail = await shouldSendEmailForListing(result);
-    if (listingBeforeUpdate.isPublished === false && shouldSendEmail) {
+    if (listing.isPublished === false && shouldSendEmail) {
       logger.debug(`Sending email notification for listing creation`);
       await sendEmailNotification({
         type: 'createListing',
         id: id as string,
-        triggeredBy: userId,
+        triggeredBy: req.userId,
       });
     }
 
     const deadlineChanged =
-      listingBeforeUpdate.deadline?.toString() !== result.deadline?.toString();
+      listing.deadline?.toString() !== result.deadline?.toString();
     if (deadlineChanged && result.isPublished) {
       const dayjsDeadline = dayjs(result.deadline);
       logger.debug(
@@ -203,7 +181,7 @@ async function bounty(req: NextApiRequestWithUser, res: NextApiResponse) {
       await sendEmailNotification({
         type: 'deadlineExtended',
         id: id as string,
-        triggeredBy: userId,
+        triggeredBy: req.userId,
       });
     }
 
@@ -219,4 +197,4 @@ async function bounty(req: NextApiRequestWithUser, res: NextApiResponse) {
   }
 }
 
-export default withAuth(bounty);
+export default withSponsorAuth(bounty);

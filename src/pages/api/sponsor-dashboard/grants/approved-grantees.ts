@@ -1,12 +1,16 @@
 import type { NextApiResponse } from 'next';
 
-import { type NextApiRequestWithUser, withAuth } from '@/features/auth';
+import {
+  checkGrantSponsorAuth,
+  type NextApiRequestWithSponsor,
+  withSponsorAuth,
+} from '@/features/auth';
 import logger from '@/lib/logger';
 import { prisma } from '@/prisma';
 import { safeStringify } from '@/utils/safeStringify';
 
 async function grantApplication(
-  req: NextApiRequestWithUser,
+  req: NextApiRequestWithSponsor,
   res: NextApiResponse,
 ) {
   const userId = req.userId;
@@ -23,6 +27,11 @@ async function grantApplication(
   }
 
   try {
+    const { error } = await checkGrantSponsorAuth(req.userSponsorId, grantId);
+    if (error) {
+      return res.status(error.status).json({ error: error.message });
+    }
+
     const result = await prisma.grantApplication.findMany({
       where: {
         grantId,
@@ -55,4 +64,4 @@ async function grantApplication(
   }
 }
 
-export default withAuth(grantApplication);
+export default withSponsorAuth(grantApplication);

@@ -1,31 +1,22 @@
 import type { NextApiResponse } from 'next';
 
-import { type NextApiRequestWithUser, withAuth } from '@/features/auth';
+import {
+  checkListingSponsorAuth,
+  type NextApiRequestWithSponsor,
+  withSponsorAuth,
+} from '@/features/auth';
 import { sendEmailNotification } from '@/features/emails';
 import logger from '@/lib/logger';
 import { prisma } from '@/prisma';
 import { safeStringify } from '@/utils/safeStringify';
 
-async function handler(req: NextApiRequestWithUser, res: NextApiResponse) {
+async function handler(req: NextApiRequestWithSponsor, res: NextApiResponse) {
   const userId = req.userId;
 
   logger.debug(`Request body: ${safeStringify(req.body)}`);
   const { id, isPaid, paymentDetails } = req.body;
 
   try {
-    logger.debug(`Fetching details for user with ID: ${userId}`);
-    const user = await prisma.user.findUnique({
-      where: {
-        id: userId as string,
-      },
-    });
-
-    if (!user) {
-      logger.warn(`Unauthorized request by user with ID: ${userId}`);
-      return res.status(400).json({ error: 'Unauthorized' });
-    }
-
-    logger.debug(`Fetching submission with ID: ${id}`);
     const currentSubmission = await prisma.submission.findUnique({
       where: { id },
       include: { listing: true, user: true },
@@ -38,13 +29,14 @@ async function handler(req: NextApiRequestWithUser, res: NextApiResponse) {
       });
     }
 
-    if (user.currentSponsorId !== currentSubmission.listing.sponsorId) {
-      logger.warn(
-        `User with ID ${userId} is not authorized to update submission ${id}`,
-      );
-      return res.status(403).json({
-        message: 'Unauthorized',
-      });
+    const userSponsorId = req.userSponsorId;
+
+    const { error } = await checkListingSponsorAuth(
+      userSponsorId,
+      currentSubmission.listingId,
+    );
+    if (error) {
+      return res.status(error.status).json({ error: error.message });
     }
 
     logger.debug(`Updating submission with ID: ${id}`);
@@ -100,4 +92,4 @@ async function handler(req: NextApiRequestWithUser, res: NextApiResponse) {
   }
 }
 
-export default withAuth(handler);
+export default withSponsorAuth(handler);

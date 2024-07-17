@@ -80,7 +80,6 @@ const Index = () => {
     try {
       const membersList = await axios.get('/api/sponsor-dashboard/members/', {
         params: {
-          sponsorId: userInfo?.currentSponsorId,
           searchText,
           skip,
           take: length,

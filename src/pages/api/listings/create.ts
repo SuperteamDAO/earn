@@ -1,6 +1,9 @@
 import type { NextApiResponse } from 'next';
 
-import { type NextApiRequestWithUser, withAuth } from '@/features/auth';
+import {
+  type NextApiRequestWithSponsor,
+  withSponsorAuth,
+} from '@/features/auth';
 import { discordListingUpdate } from '@/features/discord';
 import { sendEmailNotification } from '@/features/emails';
 import { shouldSendEmailForListing } from '@/features/listing-builder';
@@ -9,24 +12,18 @@ import { prisma } from '@/prisma';
 import { fetchTokenUSDValue } from '@/utils/fetchTokenUSDValue';
 import { safeStringify } from '@/utils/safeStringify';
 
-async function handler(req: NextApiRequestWithUser, res: NextApiResponse) {
+async function handler(req: NextApiRequestWithSponsor, res: NextApiResponse) {
   const userId = req.userId;
+  const userSponsorId = req.userSponsorId;
+
+  if (!userSponsorId) {
+    logger.warn('Invalid token: User Sponsor Id is missing');
+    return res.status(400).json({ error: 'Invalid token' });
+  }
 
   logger.debug(`Request body: ${safeStringify(req.body)}`);
 
   try {
-    logger.debug(`Fetching user with ID: ${userId}`);
-    const user = await prisma.user.findUnique({
-      where: { id: userId as string },
-    });
-
-    if (!user || !user.currentSponsorId) {
-      logger.warn('User does not have a current sponsor or is unauthorized');
-      return res
-        .status(403)
-        .json({ error: 'User does not have a current sponsor.' });
-    }
-
     const {
       title,
       pocId,
@@ -79,7 +76,7 @@ async function handler(req: NextApiRequestWithUser, res: NextApiResponse) {
     }
 
     const finalData = {
-      sponsorId: user.currentSponsorId,
+      sponsorId: userSponsorId,
       title,
       usdValue,
       publishedAt,
@@ -147,4 +144,4 @@ async function handler(req: NextApiRequestWithUser, res: NextApiResponse) {
   }
 }
 
-export default withAuth(handler);
+export default withSponsorAuth(handler);

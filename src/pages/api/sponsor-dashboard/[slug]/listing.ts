@@ -1,11 +1,14 @@
 import type { NextApiResponse } from 'next';
 
-import { type NextApiRequestWithUser, withAuth } from '@/features/auth';
+import {
+  type NextApiRequestWithSponsor,
+  withSponsorAuth,
+} from '@/features/auth';
 import logger from '@/lib/logger';
 import { prisma } from '@/prisma';
 import { safeStringify } from '@/utils/safeStringify';
 
-async function handler(req: NextApiRequestWithUser, res: NextApiResponse) {
+async function handler(req: NextApiRequestWithSponsor, res: NextApiResponse) {
   const userId = req.userId;
 
   const params = req.query;
@@ -15,25 +18,14 @@ async function handler(req: NextApiRequestWithUser, res: NextApiResponse) {
   logger.debug(`Request query: ${safeStringify(params)}`);
 
   try {
-    const user = await prisma.user.findUnique({
-      where: {
-        id: userId as string,
-      },
-    });
-
-    if (!user) {
-      logger.warn(`Unauthorized access attempt by user ${userId}`);
-      return res.status(401).json({ error: 'Unauthorized' });
-    }
+    const userSponsorId = req.userSponsorId;
 
     const result = await prisma.bounties.findFirst({
       where: {
         slug,
         type,
         isActive: true,
-        sponsor: {
-          id: user.currentSponsorId!,
-        },
+        sponsorId: userSponsorId,
       },
       include: {
         sponsor: { select: { name: true, logo: true } },
@@ -81,4 +73,4 @@ async function handler(req: NextApiRequestWithUser, res: NextApiResponse) {
   }
 }
 
-export default withAuth(handler);
+export default withSponsorAuth(handler);

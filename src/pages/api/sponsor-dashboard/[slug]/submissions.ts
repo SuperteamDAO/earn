@@ -1,12 +1,15 @@
 import type { NextApiResponse } from 'next';
 
-import { type NextApiRequestWithUser, withAuth } from '@/features/auth';
+import {
+  type NextApiRequestWithSponsor,
+  withSponsorAuth,
+} from '@/features/auth';
 import logger from '@/lib/logger';
 import { prisma } from '@/prisma';
 
 type WinnerPosition = 'first' | 'second' | 'third' | 'fourth' | 'fifth';
 
-async function handler(req: NextApiRequestWithUser, res: NextApiResponse) {
+async function handler(req: NextApiRequestWithSponsor, res: NextApiResponse) {
   const userId = req.userId;
   const params = req.query;
 
@@ -61,7 +64,7 @@ async function handler(req: NextApiRequestWithUser, res: NextApiResponse) {
           isActive: true,
           ...(isHackathon
             ? { hackathonId: user.hackathonId }
-            : { sponsor: { id: user.currentSponsorId! } }),
+            : { sponsor: { id: req.userSponsorId } }),
         },
         isActive: true,
         isArchived: false,
@@ -140,4 +143,4 @@ async function handler(req: NextApiRequestWithUser, res: NextApiResponse) {
   }
 }
 
-export default withAuth(handler);
+export default withSponsorAuth(handler);

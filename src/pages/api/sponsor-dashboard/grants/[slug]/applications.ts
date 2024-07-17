@@ -1,25 +1,16 @@
 import type { NextApiResponse } from 'next';
 
-import { type NextApiRequestWithUser, withAuth } from '@/features/auth';
+import {
+  checkGrantSponsorAuth,
+  type NextApiRequestWithSponsor,
+  withSponsorAuth,
+} from '@/features/auth';
 import logger from '@/lib/logger';
 import { prisma } from '@/prisma';
 import { safeStringify } from '@/utils/safeStringify';
 
-async function handler(req: NextApiRequestWithUser, res: NextApiResponse) {
-  const userId = req.userId;
-
+async function handler(req: NextApiRequestWithSponsor, res: NextApiResponse) {
   logger.debug(`Request body: ${safeStringify(req.body)}`);
-
-  const user = await prisma.user.findUnique({
-    where: {
-      id: userId as string,
-    },
-  });
-
-  if (!user) {
-    logger.warn(`Unauthorized access attempt by user ID: ${userId}`);
-    return res.status(400).json({ error: 'Unauthorized' });
-  }
 
   const params = req.query;
   const slug = params.slug as string;
@@ -74,12 +65,28 @@ async function handler(req: NextApiRequestWithUser, res: NextApiResponse) {
       `Fetching grant applications for slug: ${slug}, skip: ${skip}, take: ${take}, searchText: ${searchText}`,
     );
 
+    const grant = await prisma.grants.findUnique({
+      where: { slug },
+    });
+
+    if (!grant) {
+      logger.warn(`Grant with slug=${slug} not found`);
+      return res.status(404).json({
+        message: `Grant with slug=${slug} not found.`,
+      });
+    }
+
+    const { error } = await checkGrantSponsorAuth(req.userSponsorId, grant.id);
+    if (error) {
+      return res.status(error.status).json({ error: error.message });
+    }
+
     const applications = await prisma.grantApplication.findMany({
       where: {
         grant: {
           slug,
           isActive: true,
-          sponsor: { id: user.currentSponsorId! },
+          sponsorId: req.userSponsorId!,
         },
         ...whereSearch,
       },
@@ -115,8 +122,7 @@ async function handler(req: NextApiRequestWithUser, res: NextApiResponse) {
     return res.status(200).json(applications);
   } catch (error: any) {
     logger.error(
-      `Error fetching submissions with slug=${slug}`,
-      safeStringify(error),
+      `Error fetching submissions with slug=${slug}: ${safeStringify(error)}`,
     );
     return res.status(400).json({
       error: error.message,
@@ -125,4 +131,4 @@ async function handler(req: NextApiRequestWithUser, res: NextApiResponse) {
   }
 }
 
-export default withAuth(handler);
+export default withSponsorAuth(handler);

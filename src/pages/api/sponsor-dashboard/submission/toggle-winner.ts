@@ -1,29 +1,21 @@
 import type { NextApiResponse } from 'next';
 
-import { type NextApiRequestWithUser, withAuth } from '@/features/auth';
+import {
+  checkListingSponsorAuth,
+  type NextApiRequestWithSponsor,
+  withSponsorAuth,
+} from '@/features/auth';
 import logger from '@/lib/logger';
 import { prisma } from '@/prisma';
 import { fetchTokenUSDValue } from '@/utils/fetchTokenUSDValue';
 
-async function handler(req: NextApiRequestWithUser, res: NextApiResponse) {
+async function handler(req: NextApiRequestWithSponsor, res: NextApiResponse) {
   const userId = req.userId;
 
   logger.debug(`Request body: ${JSON.stringify(req.body)}`);
   const { id, isWinner, winnerPosition, ask } = req.body;
 
   try {
-    const user = await prisma.user.findUnique({
-      where: {
-        id: userId as string,
-      },
-    });
-
-    if (!user) {
-      logger.warn(`User with ID ${userId} not found or unauthorized`);
-      return res.status(400).json({ error: 'Unauthorized' });
-    }
-
-    logger.debug(`Fetching submission with ID: ${id}`);
     const currentSubmission = await prisma.submission.findUnique({
       where: { id },
       include: { listing: true },
@@ -36,11 +28,14 @@ async function handler(req: NextApiRequestWithUser, res: NextApiResponse) {
       });
     }
 
-    if (user.currentSponsorId !== currentSubmission.listing.sponsorId) {
-      logger.warn(`User ${userId} unauthorized to update submission ${id}`);
-      return res.status(403).json({
-        message: 'Unauthorized',
-      });
+    const userSponsorId = req.userSponsorId;
+
+    const { error } = await checkListingSponsorAuth(
+      userSponsorId,
+      currentSubmission.listingId,
+    );
+    if (error) {
+      return res.status(error.status).json({ error: error.message });
     }
 
     logger.debug(`Updating submission with ID: ${id}`);
@@ -96,4 +91,4 @@ async function handler(req: NextApiRequestWithUser, res: NextApiResponse) {
   }
 }
 
-export default withAuth(handler);
+export default withSponsorAuth(handler);

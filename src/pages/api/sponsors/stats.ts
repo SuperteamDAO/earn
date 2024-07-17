@@ -1,31 +1,19 @@
 import { status } from '@prisma/client';
 import type { NextApiResponse } from 'next';
 
-import { type NextApiRequestWithUser, withAuth } from '@/features/auth';
+import {
+  type NextApiRequestWithSponsor,
+  withSponsorAuth,
+} from '@/features/auth';
 import logger from '@/lib/logger';
 import { prisma } from '@/prisma';
 
-async function handler(req: NextApiRequestWithUser, res: NextApiResponse) {
+async function handler(req: NextApiRequestWithSponsor, res: NextApiResponse) {
   try {
-    const userId = req.userId;
-
-    const user = await prisma.user.findUnique({
-      where: { id: userId as string },
-      select: {
-        currentSponsorId: true,
-      },
-    });
-
-    if (!user || !user.currentSponsorId) {
-      return res
-        .status(403)
-        .json({ error: 'User does not have a current sponsor.' });
-    }
-
-    const sponsorId = user.currentSponsorId;
+    const userSponsorId = req.userSponsorId;
 
     const sponsor = await prisma.sponsors.findUnique({
-      where: { id: sponsorId },
+      where: { id: userSponsorId },
       select: { createdAt: true },
     });
 
@@ -49,16 +37,16 @@ async function handler(req: NextApiRequestWithUser, res: NextApiResponse) {
           isWinnersAnnounced: true,
           isPublished: true,
           status: status.OPEN,
-          sponsorId,
+          sponsorId: userSponsorId,
         },
       }),
       prisma.grants.aggregate({
         _sum: { totalPaid: true },
-        where: { sponsorId },
+        where: { sponsorId: userSponsorId },
       }),
       prisma.bounties.count({
         where: {
-          sponsorId,
+          sponsorId: userSponsorId,
           isActive: true,
           isArchived: false,
           status: status.OPEN,
@@ -66,7 +54,7 @@ async function handler(req: NextApiRequestWithUser, res: NextApiResponse) {
       }),
       prisma.grants.count({
         where: {
-          sponsorId,
+          sponsorId: userSponsorId,
           isActive: true,
           isArchived: false,
           status: status.OPEN,
@@ -74,14 +62,14 @@ async function handler(req: NextApiRequestWithUser, res: NextApiResponse) {
       }),
       prisma.grantApplication.count({
         where: {
-          grant: { sponsorId },
+          grant: { sponsorId: userSponsorId },
           applicationStatus: 'Approved',
         },
       }),
       prisma.submission.count({
         where: {
           listing: {
-            sponsorId,
+            sponsorId: userSponsorId,
             isActive: true,
             isArchived: false,
             status: status.OPEN,
@@ -111,4 +99,4 @@ async function handler(req: NextApiRequestWithUser, res: NextApiResponse) {
   }
 }
 
-export default withAuth(handler);
+export default withSponsorAuth(handler);
