@@ -53,8 +53,8 @@ function buildTalentLeaderboardQuery(
 
   const dateCondition = dateFilter
     ? dateFilter.range.length === 1
-      ? `AND b.createdAt >= '${dateFilter.range[0]}'`
-      : `AND b.createdAt BETWEEN '${dateFilter.range[0]}' AND '${dateFilter.range[1]}'`
+      ? `AND b.winnersAnnouncedAt >= '${dateFilter.range[0]}'`
+      : `AND b.winnersAnnouncedAt BETWEEN '${dateFilter.range[0]}' AND '${dateFilter.range[1]}'`
     : '';
 
   const groupByClause = `
