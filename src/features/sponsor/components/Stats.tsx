@@ -1,4 +1,6 @@
 import { Box, Divider, Flex, Grid, Text, VStack } from '@chakra-ui/react';
+import axios from 'axios';
+import { useEffect } from 'react';
 
 import GlobalEarn from '@/public/assets/landingsponsor/displays/global-earn.png';
 import EarnIcon from '@/public/assets/landingsponsor/icons/earn.svg';
@@ -6,6 +8,11 @@ import EarnIcon from '@/public/assets/landingsponsor/icons/earn.svg';
 import { fontSize, maxW, padding } from '../utils';
 import { HighQualityImage } from './HighQualityImage';
 
+type Stats = {
+  title: string;
+  label: string;
+  showEarn?: boolean;
+};
 const stats = [
   {
     title: '21K',
@@ -36,6 +43,20 @@ const stats = [
 ];
 
 export function Stats() {
+  async function getTotal() {
+    const totalsData = await axios.get('/api/sidebar/totals');
+    const userCountLabel = stats.find((s) => s.label === 'Verified Earn Users');
+    if (userCountLabel) {
+      userCountLabel.title = new Intl.NumberFormat('en-US', {
+        notation: 'compact',
+        compactDisplay: 'short',
+        maximumFractionDigits: 0,
+      }).format(totalsData.data.totalUsers as number);
+    }
+  }
+  useEffect(() => {
+    getTotal();
+  }, []);
   return (
     <Flex
       align="center"
