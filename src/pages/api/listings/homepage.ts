@@ -208,7 +208,7 @@ export async function getListings({
     });
   }
 
-  logger.debug(`Fetched bounties: ${safeStringify(bounties)}`);
+  logger.debug(`Fetched bounties`);
   return bounties;
 }
 
