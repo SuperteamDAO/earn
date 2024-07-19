@@ -30,6 +30,7 @@ import { truncateString } from '@/utils/truncateString';
 import { type GrantApplicationWithUser } from '../../types';
 import { ApproveModal } from './Modals/ApproveModal';
 import { RejectModal } from './Modals/RejectModal';
+import { RecordPaymentButton } from './RecordPaymentButton';
 
 interface Props {
   grant: Grant | null;
@@ -71,6 +72,8 @@ export const ApplicationDetails = ({
 }: Props) => {
   const isPending = selectedApplication?.applicationStatus === 'Pending';
   const isApproved = selectedApplication?.applicationStatus === 'Approved';
+
+  const isNativeAndNonST = !grant?.airtableId && grant?.isNative;
 
   const {
     isOpen: approveIsOpen,
@@ -189,6 +192,9 @@ export const ApplicationDetails = ({
                     Reject
                   </Button>
                 </>
+              )}
+              {isApproved && isNativeAndNonST && (
+                <RecordPaymentButton applicationId={selectedApplication.id} />
               )}
             </Flex>
           </Flex>

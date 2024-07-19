@@ -259,7 +259,7 @@ function GrantApplications({ slug }: Props) {
                 )}
               </TabPanel>
               <TabPanel px={0}>
-                <PaymentsHistoryTab grantId={grant?.id} />
+                <PaymentsHistoryTab grant={grant} grantId={grant?.id} />
               </TabPanel>
             </TabPanels>
           </Tabs>

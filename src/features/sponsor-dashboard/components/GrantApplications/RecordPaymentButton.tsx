@@ -1,9 +1,4 @@
-import {
-  Button,
-  type ButtonProps,
-  Tooltip,
-  useDisclosure,
-} from '@chakra-ui/react';
+import { Button, type ButtonProps, useDisclosure } from '@chakra-ui/react';
 import React from 'react';
 
 import { RecordPaymentModal } from './Modals/RecordPaymentModal';
@@ -28,24 +23,9 @@ export const RecordPaymentButton = ({
         recordPaymentIsOpen={recordPaymentIsOpen}
         recordPaymentOnClose={recordPaymentOnClose}
       />
-      <Tooltip
-        w="15rem"
-        fontSize={'xs'}
-        bg="brand.slate.500"
-        hasArrow
-        label={
-          'Payments are automatically recorded through Airtable for this listing'
-        }
-        rounded="md"
-      >
-        <Button
-          isDisabled
-          {...buttonStyle}
-          onClick={() => recordPaymentOnOpen()}
-        >
-          Record Payment
-        </Button>
-      </Tooltip>
+      <Button {...buttonStyle} onClick={() => recordPaymentOnOpen()}>
+        Record Payment
+      </Button>
     </>
   );
 };

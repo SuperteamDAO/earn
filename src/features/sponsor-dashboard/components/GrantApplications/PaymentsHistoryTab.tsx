@@ -19,10 +19,12 @@ import axios from 'axios';
 import React, { useEffect, useState } from 'react';
 
 import { EarnAvatar } from '@/components/shared/EarnAvatar';
+import { type Grant } from '@/features/grants';
 import { userStore } from '@/store/user';
 import { truncatePublicKey } from '@/utils/truncatePublicKey';
 
 import { type GrantApplicationWithUser } from '../../types';
+import { RecordPaymentButton } from './RecordPaymentButton';
 
 interface GrantPaymentDetailProps {
   tranche: number;
@@ -109,12 +111,16 @@ const PaymentDetailsRow = ({
 
 export const PaymentsHistoryTab = ({
   grantId,
+  grant,
 }: {
   grantId: string | undefined;
+  grant: Grant | null;
 }) => {
   const { userInfo } = userStore();
   const [grantees, setGrantees] = useState<GrantApplicationWithUser[]>();
   const [expandedRows, setExpandedRows] = useState<Set<string>>(new Set());
+
+  const isNativeAndNonST = !grant?.airtableId && grant?.isNative;
 
   const getGrantees = async () => {
     try {
@@ -282,6 +288,12 @@ export const PaymentsHistoryTab = ({
                     </Td>
                     <Td px={0} isNumeric>
                       <Flex align="center" gap={2}>
+                        {isNativeAndNonST && (
+                          <RecordPaymentButton
+                            applicationId="1"
+                            buttonStyle={{ size: 'sm' }}
+                          />
+                        )}
                         <Box
                           as="span"
                           transform={
