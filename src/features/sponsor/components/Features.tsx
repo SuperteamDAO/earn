@@ -121,7 +121,7 @@ export function Features({ showVideo }: Props) {
             fill="none"
             xmlns="http://www.w3.org/2000/svg"
           >
-            <g clip-path="url(#clip0_78_219)">
+            <g clipPath="url(#clip0_78_219)">
               <path
                 d="M14.1667 12.24L21.6325 17L14.1667 21.76V12.24ZM11.3334 7.08337V26.9167L26.9167 17L11.3334 7.08337Z"
                 fill="white"

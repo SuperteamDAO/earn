@@ -1,16 +1,17 @@
-import type { NextApiRequest, NextApiResponse } from 'next';
+import type { NextApiResponse } from 'next';
 
+import {
+  type NextApiRequestWithSponsor,
+  withSponsorAuth,
+} from '@/features/auth';
 import logger from '@/lib/logger';
 import { prisma } from '@/prisma';
 import { safeStringify } from '@/utils/safeStringify';
 
-export default async function members(
-  req: NextApiRequest,
-  res: NextApiResponse,
-) {
+async function handler(req: NextApiRequestWithSponsor, res: NextApiResponse) {
   const params = req.query;
-  const sponsorId = params.sponsorId as string;
-  const skip = params.take ? parseInt(params.skip as string, 10) : 0;
+  const sponsorId = req.userSponsorId;
+  const skip = params.skip ? parseInt(params.skip as string, 10) : 0;
   const take = params.take ? parseInt(params.take as string, 10) : 15;
   const searchText = params.searchText as string;
 
@@ -30,19 +31,20 @@ export default async function members(
     : {};
 
   try {
-    const countQuery = {
+    logger.debug('Fetching total count of members');
+    const total = await prisma.userSponsors.count({
       where: {
         sponsorId,
         ...whereSearch,
       },
-    };
-
-    logger.debug('Fetching total count of members');
-    const total = await prisma.userSponsors.count(countQuery);
+    });
 
     logger.debug('Fetching member details');
     const result = await prisma.userSponsors.findMany({
-      ...countQuery,
+      where: {
+        sponsorId,
+        ...whereSearch,
+      },
       skip: skip ?? 0,
       take: take ?? 15,
       include: {
@@ -66,3 +68,5 @@ export default async function members(
     res.status(400).json({ error: 'Error occurred while fetching members.' });
   }
 }
+
+export default withSponsorAuth(handler);

@@ -1,6 +1,9 @@
 import type { NextApiResponse } from 'next';
 
-import { type NextApiRequestWithUser, withAuth } from '@/features/auth';
+import {
+  type NextApiRequestWithSponsor,
+  withSponsorAuth,
+} from '@/features/auth';
 import { discordListingUpdate } from '@/features/discord';
 import { sendEmailNotification } from '@/features/emails';
 import { shouldSendEmailForListing } from '@/features/listing-builder';
@@ -9,46 +12,62 @@ import { prisma } from '@/prisma';
 import { fetchTokenUSDValue } from '@/utils/fetchTokenUSDValue';
 import { safeStringify } from '@/utils/safeStringify';
 
-async function handler(req: NextApiRequestWithUser, res: NextApiResponse) {
+async function handler(req: NextApiRequestWithSponsor, res: NextApiResponse) {
   const userId = req.userId;
+  const userSponsorId = req.userSponsorId;
+
+  if (!userSponsorId) {
+    logger.warn('Invalid token: User Sponsor Id is missing');
+    return res.status(400).json({ error: 'Invalid token' });
+  }
 
   logger.debug(`Request body: ${safeStringify(req.body)}`);
 
   try {
-    logger.debug(`Fetching user with ID: ${userId}`);
-    const user = await prisma.user.findUnique({
-      where: { id: userId as string },
-    });
-
-    if (!user || !user.currentSponsorId) {
-      logger.warn('User does not have a current sponsor or is unauthorized');
-      return res
-        .status(403)
-        .json({ error: 'User does not have a current sponsor.' });
-    }
-
-    const { title, ...data } = req.body;
+    const {
+      title,
+      pocId,
+      skills,
+      slug,
+      deadline,
+      templateId,
+      pocSocials,
+      applicationType,
+      timeToComplete,
+      description,
+      type,
+      region,
+      referredBy,
+      eligibility,
+      references,
+      requirements,
+      rewardAmount,
+      rewards,
+      token,
+      compensationType,
+      minRewardAsk,
+      maxRewardAsk,
+      isPublished,
+      isPrivate,
+    } = req.body;
     let usdValue = 0;
 
     let publishedAt;
-    if (data.isPublished) {
+    if (isPublished) {
       publishedAt = new Date();
     }
 
-    if (data.isPublished && publishedAt) {
+    if (isPublished && publishedAt) {
       try {
         let amount;
-        if (data.compensationType === 'fixed') {
-          amount = data.rewardAmount;
-        } else if (data.compensationType === 'range') {
-          amount = (data.minRewardAsk + data.maxRewardAsk) / 2;
+        if (compensationType === 'fixed') {
+          amount = rewardAmount;
+        } else if (compensationType === 'range') {
+          amount = (minRewardAsk + maxRewardAsk) / 2;
         }
 
-        if (amount && data.token) {
-          const tokenUsdValue = await fetchTokenUSDValue(
-            data.token,
-            publishedAt,
-          );
+        if (amount && token) {
+          const tokenUsdValue = await fetchTokenUSDValue(token, publishedAt);
           usdValue = tokenUsdValue * amount;
         }
       } catch (error) {
@@ -57,11 +76,33 @@ async function handler(req: NextApiRequestWithUser, res: NextApiResponse) {
     }
 
     const finalData = {
-      sponsorId: user.currentSponsorId,
+      sponsorId: userSponsorId,
       title,
       usdValue,
       publishedAt,
-      ...data,
+      pocId,
+      skills,
+      slug,
+      deadline,
+      templateId,
+      pocSocials,
+      applicationType,
+      timeToComplete,
+      description,
+      type,
+      region,
+      referredBy,
+      eligibility,
+      references,
+      requirements,
+      rewardAmount,
+      rewards,
+      token,
+      compensationType,
+      minRewardAsk,
+      maxRewardAsk,
+      isPublished,
+      isPrivate,
     };
 
     logger.debug(`Creating bounty with data: ${safeStringify(finalData)}`);
@@ -103,4 +144,4 @@ async function handler(req: NextApiRequestWithUser, res: NextApiResponse) {
   }
 }
 
-export default withAuth(handler);
+export default withSponsorAuth(handler);

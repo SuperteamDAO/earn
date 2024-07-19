@@ -17,7 +17,7 @@ export default async function grants(
         isArchived: false,
       },
       orderBy: {
-        updatedAt: 'desc',
+        createdAt: 'desc',
       },
       select: {
         id: true,

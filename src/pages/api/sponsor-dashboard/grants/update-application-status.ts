@@ -1,27 +1,19 @@
 import axios from 'axios';
 import type { NextApiResponse } from 'next';
 
-import { type NextApiRequestWithUser, withAuth } from '@/features/auth';
+import {
+  checkGrantSponsorAuth,
+  type NextApiRequestWithSponsor,
+  withSponsorAuth,
+} from '@/features/auth';
 import { convertGrantApplicationToAirtable } from '@/features/grants';
 import logger from '@/lib/logger';
 import { prisma } from '@/prisma';
 import { airtableConfig, airtableUpsert, airtableUrl } from '@/utils/airtable';
 import { safeStringify } from '@/utils/safeStringify';
 
-async function handler(req: NextApiRequestWithUser, res: NextApiResponse) {
+async function handler(req: NextApiRequestWithSponsor, res: NextApiResponse) {
   const userId = req.userId;
-
-  if (!userId) {
-    logger.warn('Invalid token: User ID is missing');
-    return res.status(400).json({ error: 'Invalid token' });
-  }
-
-  const user = await prisma.user.findUnique({ where: { id: userId } });
-
-  if (!user) {
-    logger.warn(`User not found for ID: ${userId}`);
-    return res.status(400).json({ error: 'User not found' });
-  }
 
   logger.debug(`Request body: ${safeStringify(req.body)}`);
 
@@ -48,11 +40,12 @@ async function handler(req: NextApiRequestWithUser, res: NextApiResponse) {
       return res.status(404).json({ error: 'Grant application not found' });
     }
 
-    if (user.currentSponsorId !== currentApplication.grant.sponsorId) {
-      logger.warn(
-        `Unauthorized access by user ID: ${userId} for sponsor ID: ${currentApplication.grant.sponsorId}`,
-      );
-      return res.status(401).json({ error: 'Unauthorized' });
+    const { error } = await checkGrantSponsorAuth(
+      req.userSponsorId,
+      currentApplication.grantId,
+    );
+    if (error) {
+      return res.status(error.status).json({ error: error.message });
     }
 
     const updatedData: any = {
@@ -108,4 +101,4 @@ async function handler(req: NextApiRequestWithUser, res: NextApiResponse) {
   }
 }
 
-export default withAuth(handler);
+export default withSponsorAuth(handler);

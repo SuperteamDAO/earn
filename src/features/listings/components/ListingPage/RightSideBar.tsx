@@ -210,6 +210,8 @@ export function RightSideBar({ listing }: { listing: Listing }) {
                                     >
                                       {formatNumberWithSuffix(
                                         rewards[prize.key]!,
+                                        2,
+                                        true,
                                       )}
                                     </Text>
                                     <Text

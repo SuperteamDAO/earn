@@ -1,11 +1,15 @@
 import type { NextApiResponse } from 'next';
 
-import { type NextApiRequestWithUser, withAuth } from '@/features/auth';
+import {
+  checkListingSponsorAuth,
+  type NextApiRequestWithSponsor,
+  withSponsorAuth,
+} from '@/features/auth';
 import logger from '@/lib/logger';
 import { prisma } from '@/prisma';
 import { safeStringify } from '@/utils/safeStringify';
 
-async function handler(req: NextApiRequestWithUser, res: NextApiResponse) {
+async function handler(req: NextApiRequestWithSponsor, res: NextApiResponse) {
   const userId = req.userId;
 
   if (!userId) {
@@ -22,6 +26,28 @@ async function handler(req: NextApiRequestWithUser, res: NextApiResponse) {
   }
 
   try {
+    const currentSubmission = await prisma.submission.findUnique({
+      where: { id },
+      include: { listing: true },
+    });
+
+    if (!currentSubmission) {
+      logger.warn(`Submission with ID ${id} not found`);
+      return res.status(404).json({
+        message: `Submission with ID ${id} not found.`,
+      });
+    }
+
+    const userSponsorId = req.userSponsorId;
+
+    const { error } = await checkListingSponsorAuth(
+      userSponsorId,
+      currentSubmission.listingId,
+    );
+    if (error) {
+      return res.status(error.status).json({ error: error.message });
+    }
+
     logger.debug(`Updating submission with ID: ${id} and label: ${label}`);
 
     const result = await prisma.submission.update({
@@ -42,4 +68,4 @@ async function handler(req: NextApiRequestWithUser, res: NextApiResponse) {
   }
 }
 
-export default withAuth(handler);
+export default withSponsorAuth(handler);

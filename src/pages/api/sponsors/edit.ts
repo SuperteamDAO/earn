@@ -1,26 +1,20 @@
 import type { NextApiResponse } from 'next';
 
-import { type NextApiRequestWithUser, withAuth } from '@/features/auth';
+import {
+  type NextApiRequestWithSponsor,
+  withSponsorAuth,
+} from '@/features/auth';
 import logger from '@/lib/logger';
 import { prisma } from '@/prisma';
 import { safeStringify } from '@/utils/safeStringify';
 
-async function user(req: NextApiRequestWithUser, res: NextApiResponse) {
+async function user(req: NextApiRequestWithSponsor, res: NextApiResponse) {
   const userId = req.userId;
 
   try {
-    const user = await prisma.user.findUnique({
-      where: {
-        id: userId as string,
-      },
-    });
+    const userSponsorId = req.userSponsorId;
 
-    if (!user) {
-      logger.warn(`User not found: ${userId}`);
-      return res.status(404).json({ error: 'User not found' });
-    }
-
-    if (!user.currentSponsorId) {
+    if (!userSponsorId) {
       logger.warn(`User ${userId} does not have a current sponsor`);
       return res
         .status(403)
@@ -34,7 +28,7 @@ async function user(req: NextApiRequestWithUser, res: NextApiResponse) {
 
     const result = await prisma.sponsors.update({
       where: {
-        id: user.currentSponsorId,
+        id: userSponsorId,
       },
       data: {
         name,
@@ -61,4 +55,4 @@ async function user(req: NextApiRequestWithUser, res: NextApiResponse) {
   }
 }
 
-export default withAuth(user);
+export default withSponsorAuth(user);

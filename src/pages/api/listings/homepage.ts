@@ -79,7 +79,7 @@ export async function getGrants({ take = 20, skillFilter }: GrantProps) {
     },
     take,
     orderBy: {
-      updatedAt: 'desc',
+      createdAt: 'desc',
     },
     include: {
       sponsor: {
@@ -208,7 +208,7 @@ export async function getListings({
     });
   }
 
-  logger.debug(`Fetched bounties: ${safeStringify(bounties)}`);
+  logger.debug(`Fetched bounties`);
   return bounties;
 }
 

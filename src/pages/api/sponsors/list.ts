@@ -1,10 +1,13 @@
 import type { NextApiResponse } from 'next';
 
-import { type NextApiRequestWithUser, withAuth } from '@/features/auth';
+import {
+  type NextApiRequestWithSponsor,
+  withSponsorAuth,
+} from '@/features/auth';
 import logger from '@/lib/logger';
 import { prisma } from '@/prisma';
 
-async function sponsors(req: NextApiRequestWithUser, res: NextApiResponse) {
+async function sponsors(req: NextApiRequestWithSponsor, res: NextApiResponse) {
   const params = req.query;
 
   const userId = req.userId;
@@ -120,4 +123,4 @@ async function sponsors(req: NextApiRequestWithUser, res: NextApiResponse) {
   }
 }
 
-export default withAuth(sponsors);
+export default withSponsorAuth(sponsors);

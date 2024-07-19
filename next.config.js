@@ -63,10 +63,10 @@ const combinedConfig = withAxiom(withPWA(nextConfig));
 module.exports = withSentryConfig(combinedConfig, {
   org: 'superteam-7o',
   project: 'earn',
-  silent: !process.env.CI,
-  widenClientFileUpload: true,
+  silent: true,
   tunnelRoute: '/monitoring',
   hideSourceMaps: true,
   disableLogger: true,
-  automaticVercelMonitors: true,
+  autoInstrumentServerFunctions: false,
+  autoInstrumentMiddleware: false,
 });

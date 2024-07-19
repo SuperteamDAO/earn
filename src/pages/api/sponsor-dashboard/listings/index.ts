@@ -1,7 +1,10 @@
 import { GrantStatus, status } from '@prisma/client';
 import type { NextApiResponse } from 'next';
 
-import { type NextApiRequestWithUser, withAuth } from '@/features/auth';
+import {
+  type NextApiRequestWithSponsor,
+  withSponsorAuth,
+} from '@/features/auth';
 import logger from '@/lib/logger';
 import { prisma } from '@/prisma';
 
@@ -26,25 +29,11 @@ type BountyGrant = {
   createdAt: Date;
 };
 
-async function handler(req: NextApiRequestWithUser, res: NextApiResponse) {
-  const userId = req.userId;
+async function handler(req: NextApiRequestWithSponsor, res: NextApiResponse) {
+  const userSponsorId = req.userSponsorId;
 
   try {
-    const user = await prisma.user.findUnique({
-      where: {
-        id: userId as string,
-      },
-    });
-
-    if (!user || !user.currentSponsorId) {
-      logger.warn(`User ${userId} does not have a current sponsor`);
-      return res
-        .status(403)
-        .json({ error: 'User does not have a current sponsor.' });
-    }
-
     const params = req.query;
-    const sponsorId = user.currentSponsorId;
     const searchText = params.searchText as string;
     const whereSearch = searchText ? `AND title LIKE '%${searchText}%'` : '';
 
@@ -109,17 +98,19 @@ async function handler(req: NextApiRequestWithUser, res: NextApiResponse) {
       
       ORDER BY createdAt DESC
     `,
-      sponsorId,
+      userSponsorId,
       status.OPEN,
-      sponsorId,
+      userSponsorId,
       GrantStatus.OPEN,
     );
 
-    logger.info(`Successfully fetched bounties and grants for user ${userId}`);
+    logger.info(
+      `Successfully fetched bounties and grants for sponsor ${userSponsorId}`,
+    );
     res.status(200).json(data);
   } catch (err: any) {
     logger.error(
-      `Error fetching bounties and grants for user ${userId}: ${err.message}`,
+      `Error fetching bounties and grants for sponsor ${userSponsorId}: ${err.message}`,
     );
     res
       .status(400)
@@ -127,4 +118,4 @@ async function handler(req: NextApiRequestWithUser, res: NextApiResponse) {
   }
 }
 
-export default withAuth(handler);
+export default withSponsorAuth(handler);

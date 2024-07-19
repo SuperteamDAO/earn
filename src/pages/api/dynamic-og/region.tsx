@@ -91,7 +91,7 @@ export default async function handler(request: NextRequest) {
                 fill="none"
                 xmlns="http://www.w3.org/2000/svg"
               >
-                <g clip-path="url(#clip0_29_85)">
+                <g clipPath="url(#clip0_29_85)">
                   <path
                     d="M17.6296 35C27.3662 35 35.2593 27.165 35.2593 17.5C35.2593 7.83502 27.3662 0 17.6296 0C7.89305 0 0 7.83502 0 17.5C0 27.165 7.89305 35 17.6296 35Z"
                     fill="#6366F1"
@@ -117,14 +117,14 @@ export default async function handler(request: NextRequest) {
                     fill="#0F172A"
                   />
                   <path
-                    fill-rule="evenodd"
-                    clip-rule="evenodd"
+                    fillRule="evenodd"
+                    clipRule="evenodd"
                     d="M56.3268 9.1798L58.2225 1.02856L63.1305 2.1533L61.2347 10.3045L56.3268 9.1798Z"
                     fill="#0F172A"
                   />
                   <path
-                    fill-rule="evenodd"
-                    clip-rule="evenodd"
+                    fillRule="evenodd"
+                    clipRule="evenodd"
                     d="M49.8667 32.8467L52.0785 23.3369L56.9864 24.4617L54.7747 33.9715L49.8667 32.8467Z"
                     fill="#0F172A"
                   />

@@ -185,6 +185,7 @@ model Grants {
   GrantApplication GrantApplication[]
   airtableId       String?
   avgResponseTime  String?            @default("24h")
+  isNative         Boolean            @default(false)
 
   @@index([id, slug])
   @@index([pocId])

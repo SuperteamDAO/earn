@@ -8,6 +8,7 @@ import {
 } from '@/interface/skills';
 import logger from '@/lib/logger';
 import { prisma } from '@/prisma';
+import { filterAllowedFields } from '@/utils/filterAllowedFields';
 import { safeStringify } from '@/utils/safeStringify';
 
 const uniqueArray = (arr: SubSkillsType[]): SubSkillsType[] => {
@@ -38,6 +39,9 @@ const correctSkills = (
       );
 
       if (correctMainSkill) {
+        if (!skillMap[correctMainSkill as ParentSkills]) {
+          skillMap[correctMainSkill as ParentSkills] = [];
+        }
         skillMap[correctMainSkill as ParentSkills].push(subskill);
       }
     });
@@ -53,28 +57,52 @@ const correctSkills = (
   return correctedSkills;
 };
 
+const allowedFields = [
+  'username',
+  'photo',
+  'firstName',
+  'lastName',
+  'interests',
+  'bio',
+  'twitter',
+  'discord',
+  'github',
+  'linkedin',
+  'website',
+  'telegram',
+  'community',
+  'experience',
+  'location',
+  'cryptoExperience',
+  'workPrefernce',
+  'currentEmployer',
+  'skills',
+  'private',
+  'PoW',
+];
+
 async function handler(req: NextApiRequestWithUser, res: NextApiResponse) {
   const userId = req.userId;
   logger.info(
     `Handling request for user ID: ${userId} - ${safeStringify(req.body)}`,
   );
 
-  // eslint-disable-next-line
-  const {role, skills, currentSponsorId, generateTalentEmailSettings, totalEarnedInUSD, Hackathon, hackathonId, email, stRecommended, ...data} = req.body;
+  const { skills, ...data } = req.body;
+
+  const updatedData = filterAllowedFields(data, allowedFields);
 
   const correctedSkills = correctSkills(skills);
   logger.info(`Corrected skills: ${safeStringify(correctedSkills)}`);
 
   try {
-    const updatedData = {
-      ...data,
-      skills: correctedSkills,
-    };
     logger.debug(`Updated data to be saved: ${safeStringify(updatedData)}`);
 
     const updatedUser = await prisma.user.update({
       where: { id: userId },
-      data: updatedData,
+      data: {
+        ...updatedData,
+        skills: correctedSkills,
+      },
       select: {
         email: true,
         publicKey: true,

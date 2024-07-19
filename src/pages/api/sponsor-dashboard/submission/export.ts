@@ -1,14 +1,19 @@
 import type { NextApiResponse } from 'next';
 import Papa from 'papaparse';
 
-import { type NextApiRequestWithUser, withAuth } from '@/features/auth';
+import {
+  checkListingSponsorAuth,
+  type NextApiRequestWithSponsor,
+  withSponsorAuth,
+} from '@/features/auth';
 import logger from '@/lib/logger';
 import { prisma } from '@/prisma';
 import { csvUpload, str2ab } from '@/utils/cloudinary';
 import { safeStringify } from '@/utils/safeStringify';
 
-async function handler(req: NextApiRequestWithUser, res: NextApiResponse) {
+async function handler(req: NextApiRequestWithSponsor, res: NextApiResponse) {
   const userId = req.userId;
+  const userSponsorId = req.userSponsorId;
 
   logger.debug(`Request query: ${safeStringify(req.query)}`);
 
@@ -16,37 +21,12 @@ async function handler(req: NextApiRequestWithUser, res: NextApiResponse) {
   const listingId = params.listingId as string;
 
   try {
-    logger.debug(`Fetching user with ID: ${userId}`);
-    const user = await prisma.user.findUnique({
-      where: {
-        id: userId as string,
-      },
-    });
-
-    logger.debug(`Fetching bounty with ID: ${listingId}`);
-    const bounty = await prisma.bounties.findFirst({
-      where: {
-        id: listingId,
-        isActive: true,
-        isArchived: false,
-      },
-      select: {
-        id: true,
-        slug: true,
-        type: true,
-        sponsorId: true,
-        hackathonId: true,
-      },
-    });
-
-    if (
-      user?.currentSponsorId !== bounty?.sponsorId &&
-      user?.hackathonId !== bounty?.hackathonId
-    ) {
-      logger.warn(
-        `User ${userId} is not authorized to export submissions for listing ${listingId}`,
-      );
-      return res.status(401).json({ error: 'Unauthorized' });
+    const { error, listing } = await checkListingSponsorAuth(
+      userSponsorId,
+      listingId,
+    );
+    if (error) {
+      return res.status(error.status).json({ error: error.message });
     }
 
     logger.debug(`Fetching submissions for listing ID: ${listingId}`);
@@ -100,7 +80,7 @@ async function handler(req: NextApiRequestWithUser, res: NextApiResponse) {
 
     logger.debug('Converting JSON to CSV');
     const csv = Papa.unparse(finalJson);
-    const fileName = `${bounty?.slug || listingId}-submissions-${Date.now()}`;
+    const fileName = `${listing.slug || listingId}-submissions-${Date.now()}`;
     const file = str2ab(csv, fileName);
 
     logger.debug('Uploading CSV to Cloudinary');
@@ -121,4 +101,4 @@ async function handler(req: NextApiRequestWithUser, res: NextApiResponse) {
   }
 }
 
-export default withAuth(handler);
+export default withSponsorAuth(handler);

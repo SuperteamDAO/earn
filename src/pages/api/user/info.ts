@@ -10,9 +10,11 @@ export default async function getAllUsers(
 ): Promise<void> {
   logger.info(`Request body: ${safeStringify(req.body)}`);
 
+  const { username } = req.body;
+
   try {
     const user = await prisma.user.findUnique({
-      where: { ...req.body },
+      where: { username },
     });
 
     if (!user) {

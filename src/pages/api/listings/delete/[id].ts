@@ -1,50 +1,32 @@
 import type { NextApiResponse } from 'next';
 
-import { type NextApiRequestWithUser, withAuth } from '@/features/auth';
+import {
+  checkListingSponsorAuth,
+  type NextApiRequestWithSponsor,
+  withSponsorAuth,
+} from '@/features/auth';
 import logger from '@/lib/logger';
 import { prisma } from '@/prisma';
 import { safeStringify } from '@/utils/safeStringify';
 
-async function bountyDelete(req: NextApiRequestWithUser, res: NextApiResponse) {
+async function bountyDelete(
+  req: NextApiRequestWithSponsor,
+  res: NextApiResponse,
+) {
   const params = req.query;
   const id = params.id as string;
 
   logger.debug(`Request query: ${safeStringify(req.query)}`);
 
   try {
-    const userId = req.userId;
+    const userSponsorId = req.userSponsorId;
 
-    logger.debug(`Fetching user details for user ID: ${userId}`);
-    const user = await prisma.user.findUnique({
-      where: { id: userId },
-    });
-
-    logger.debug(`Fetching bounty details for bounty ID: ${id}`);
-    const deleteBounty = await prisma.bounties.findFirst({
-      where: { id },
-    });
-
-    if (
-      !user ||
-      !user.currentSponsorId ||
-      deleteBounty?.sponsorId !== user.currentSponsorId
-    ) {
-      logger.warn(
-        `User ID: ${userId} does not have a current sponsor or is unauthorized to delete bounty ID: ${id}`,
-      );
-      return res
-        .status(403)
-        .json({ error: 'User does not have a current sponsor.' });
+    const { error, listing } = await checkListingSponsorAuth(userSponsorId, id);
+    if (error) {
+      return res.status(error.status).json({ error: error.message });
     }
 
-    if (!deleteBounty) {
-      logger.warn(`Bounty with ID: ${id} not found`);
-      return res
-        .status(404)
-        .json({ message: `Bounty with id=${id} not found.` });
-    }
-
-    if (deleteBounty.status !== 'OPEN' || deleteBounty.isPublished) {
+    if (listing.status !== 'OPEN' || listing.isPublished) {
       logger.warn(`Bounty with ID: ${id} is not in a deletable state`);
       return res
         .status(400)
@@ -72,4 +54,4 @@ async function bountyDelete(req: NextApiRequestWithUser, res: NextApiResponse) {
   }
 }
 
-export default withAuth(bountyDelete);
+export default withSponsorAuth(bountyDelete);

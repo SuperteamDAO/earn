@@ -72,7 +72,7 @@ export default async function user(req: NextApiRequest, res: NextApiResponse) {
         },
       },
       orderBy: {
-        updatedAt: 'desc',
+        createdAt: 'desc',
       },
       include: {
         sponsor: {

@@ -3,13 +3,42 @@ import type { NextApiResponse } from 'next';
 import { type NextApiRequestWithUser, withAuth } from '@/features/auth';
 import logger from '@/lib/logger';
 import { prisma } from '@/prisma';
+import { filterAllowedFields } from '@/utils/filterAllowedFields';
 import { safeStringify } from '@/utils/safeStringify';
+
+const allowedFields = [
+  'title',
+  'hackathonSponsor',
+  'pocId',
+  'skills',
+  'slug',
+  'templateId',
+  'pocSocials',
+  'applicationType',
+  'timeToComplete',
+  'description',
+  'type',
+  'region',
+  'referredBy',
+  'references',
+  'requirements',
+  'rewardAmount',
+  'rewards',
+  'token',
+  'compensationType',
+  'minRewardAsk',
+  'maxRewardAsk',
+  'isPublished',
+  'isPrivate',
+];
 
 async function bounty(req: NextApiRequestWithUser, res: NextApiResponse) {
   const params = req.query;
   const id = params.id as string;
   logger.debug(`Request body: ${safeStringify(req.body)}`);
-  const { hackathonSponsor, ...updatedData } = req.body;
+  const { hackathonSponsor, ...data } = req.body;
+
+  const updatedData = filterAllowedFields(data, allowedFields);
 
   try {
     const userId = req.userId;
@@ -22,6 +51,13 @@ async function bounty(req: NextApiRequestWithUser, res: NextApiResponse) {
 
     if (!user) {
       return res.status(403).json({ error: 'User does not exist.' });
+    }
+
+    if (Object.keys(updatedData).length === 0) {
+      logger.warn(`No valid fields provided for update for user ID: ${userId}`);
+      return res
+        .status(400)
+        .json({ error: 'No valid fields provided for update' });
     }
 
     const currentBounty = await prisma.bounties.findUnique({

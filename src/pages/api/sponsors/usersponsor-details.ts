@@ -13,15 +13,6 @@ async function handler(req: NextApiRequestWithUser, res: NextApiResponse) {
   const { firstName, lastName, username, photo } = req.body;
 
   try {
-    const user = await prisma.user.findUnique({
-      where: { id: userId as string },
-    });
-
-    if (!user) {
-      logger.warn(`User not found for user ID: ${userId}`);
-      return res.status(404).json({ error: 'User not found' });
-    }
-
     const data = {
       firstName,
       lastName,
@@ -33,15 +24,15 @@ async function handler(req: NextApiRequestWithUser, res: NextApiResponse) {
       `Completing user sponsor profile with data: ${safeStringify(data)}`,
     );
 
-    await prisma.user.updateMany({
+    await prisma.user.update({
       where: {
-        id: userId as string,
+        id: userId,
       },
       data,
     });
 
     const result = await prisma.user.findUnique({
-      where: { id: userId as string },
+      where: { id: userId },
       include: {
         currentSponsor: true,
         UserSponsors: true,

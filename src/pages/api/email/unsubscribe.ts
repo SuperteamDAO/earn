@@ -7,35 +7,80 @@ export default async function handler(
   req: NextApiRequest,
   res: NextApiResponse,
 ) {
-  const { email } = req.query;
+  const { token } = req.query;
 
-  if (!email || typeof email !== 'string') {
+  if (!token || typeof token !== 'string') {
     return res
       .status(400)
-      .json({ message: 'Email is required and must be a string' });
+      .json({ message: 'Token is required and must be a string' });
   }
 
-  try {
-    const user = await prisma.user.findUnique({
-      where: {
-        email: email,
-      },
-    });
+  if (req.method === 'POST') {
+    try {
+      const tokenRecord = await prisma.unsubscribeToken.findUnique({
+        where: { token },
+      });
 
-    if (!user) {
-      return res.status(404).json({ message: 'User not found' });
+      if (!tokenRecord) {
+        return res.status(404).json({ message: 'Invalid token' });
+      }
+
+      const user = await prisma.user.findUnique({
+        where: {
+          email: tokenRecord.email,
+        },
+      });
+
+      if (!user) {
+        return res.status(404).json({ message: 'User not found' });
+      }
+
+      await prisma.unsubscribedEmail.create({
+        data: {
+          email: tokenRecord.email,
+          id: user.id,
+        },
+      });
+
+      return res.status(200).send('');
+    } catch (error) {
+      logger.error(error);
+      return res.status(500).send('');
     }
+  } else if (req.method === 'GET') {
+    try {
+      const tokenRecord = await prisma.unsubscribeToken.findUnique({
+        where: { token },
+      });
 
-    const unsubscribedEmail = await prisma.unsubscribedEmail.create({
-      data: {
-        email: email,
-        id: user.id,
-      },
-    });
+      if (!tokenRecord) {
+        return res.status(404).json({ message: 'Invalid token' });
+      }
 
-    return res.status(200).json(unsubscribedEmail);
-  } catch (error) {
-    logger.error(error);
-    return res.status(500).json({ message: 'Something went wrong' });
+      const user = await prisma.user.findUnique({
+        where: {
+          email: tokenRecord.email,
+        },
+      });
+
+      if (!user) {
+        return res.status(404).json({ message: 'User not found' });
+      }
+
+      await prisma.unsubscribedEmail.create({
+        data: {
+          email: tokenRecord.email,
+          id: user.id,
+        },
+      });
+
+      return res.status(200).send('<h1>You have been unsubscribed</h1>');
+    } catch (error) {
+      logger.error(error);
+      return res.status(500).json({ message: 'Something went wrong' });
+    }
+  } else {
+    res.setHeader('Allow', ['GET', 'POST']);
+    res.status(405).end(`Method ${req.method} Not Allowed`);
   }
 }
