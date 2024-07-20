@@ -2,6 +2,7 @@ import axios from 'axios';
 import type { NextApiResponse } from 'next';
 
 import { type NextApiRequestWithUser, withAuth } from '@/features/auth';
+import { sendEmailNotification } from '@/features/emails';
 import { convertGrantApplicationToAirtable } from '@/features/grants';
 import logger from '@/lib/logger';
 import { prisma } from '@/prisma';
@@ -54,6 +55,29 @@ async function grantApplication(
         grant: true,
       },
     });
+    if (result.grant.isNative === true && !result.grant.airtableId) {
+      try {
+        await sendEmailNotification({
+          type: 'applicationTalent',
+          id: grantId,
+          userId,
+          triggeredBy: userId,
+        });
+      } catch (err) {
+        logger.error('Error sending email to User:', err);
+      }
+
+      try {
+        await sendEmailNotification({
+          type: 'applicationSponsor',
+          id: grantId,
+          userId: result?.grant?.pocId,
+          triggeredBy: userId,
+        });
+      } catch (err) {
+        logger.error('Error sending email to Sponsor:', err);
+      }
+    }
 
     logger.info(
       `Grant application created successfully for user ID: ${userId}`,

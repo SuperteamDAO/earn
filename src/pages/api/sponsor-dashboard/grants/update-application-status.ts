@@ -6,6 +6,7 @@ import {
   type NextApiRequestWithSponsor,
   withSponsorAuth,
 } from '@/features/auth';
+import { sendEmailNotification } from '@/features/emails';
 import { convertGrantApplicationToAirtable } from '@/features/grants';
 import logger from '@/lib/logger';
 import { prisma } from '@/prisma';
@@ -52,7 +53,9 @@ async function handler(req: NextApiRequestWithSponsor, res: NextApiResponse) {
       applicationStatus,
     };
 
-    if (applicationStatus === 'Approved') {
+    const isApproved = applicationStatus === 'Approved';
+
+    if (isApproved) {
       updatedData.approvedAmount = parsedAmount;
     }
 
@@ -65,7 +68,7 @@ async function handler(req: NextApiRequestWithSponsor, res: NextApiResponse) {
       },
     });
 
-    if (applicationStatus === 'Approved') {
+    if (isApproved) {
       await prisma.grants.update({
         where: { id: result.grantId },
         data: {
@@ -74,6 +77,19 @@ async function handler(req: NextApiRequestWithSponsor, res: NextApiResponse) {
           },
         },
       });
+    }
+
+    if (result.grant.isNative === true && !result.grant.airtableId) {
+      try {
+        await sendEmailNotification({
+          type: isApproved ? 'grantApproved' : 'grantRejected',
+          id,
+          userId: result.userId,
+          triggeredBy: userId,
+        });
+      } catch (err) {
+        logger.error('Error sending email to Sponsor:', err);
+      }
     }
 
     const config = airtableConfig(process.env.AIRTABLE_GRANTS_API_TOKEN!);
