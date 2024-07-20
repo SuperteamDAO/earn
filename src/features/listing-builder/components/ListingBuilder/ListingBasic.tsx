@@ -21,7 +21,6 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { Regions } from '@prisma/client';
 import axios from 'axios';
 import debounce from 'lodash.debounce';
-import { useSession } from 'next-auth/react';
 import { usePostHog } from 'posthog-js/react';
 import {
   type Dispatch,
@@ -258,7 +257,6 @@ export const ListingBasic = ({
 
   const isProject = type === 'project';
 
-  const { data: session } = useSession();
   const posthog = usePostHog();
 
   const onSubmit = (data: any) => {
@@ -431,26 +429,22 @@ export const ListingBasic = ({
             skills={skills}
             subSkills={subSkills}
           />
-          {session?.user?.role === 'GOD' && (
-            <>
-              <FormControl w="full" mb={5}>
-                <Flex>
-                  <ListingFormLabel htmlFor="region">
-                    Listing Geography
-                  </ListingFormLabel>
-                  <ListingTooltip label="Select the Superteam region this listing will be available and relevant to. Only users from the region you specify will be able to apply/submit to this listing." />
-                </Flex>
-                <Select {...register('region')}>
-                  <option value={Regions.GLOBAL}>Global</option>
-                  {Superteams.map((st) => (
-                    <option value={st.region} key={st.name}>
-                      {st.displayValue}
-                    </option>
-                  ))}
-                </Select>
-              </FormControl>
-            </>
-          )}
+          <FormControl w="full" mb={5}>
+            <Flex>
+              <ListingFormLabel htmlFor="region">
+                Listing Geography
+              </ListingFormLabel>
+              <ListingTooltip label="Select the Superteam region this listing will be available and relevant to. Only users from the region you specify will be able to apply/submit to this listing." />
+            </Flex>
+            <Select {...register('region')}>
+              <option value={Regions.GLOBAL}>Global</option>
+              {Superteams.map((st) => (
+                <option value={st.region} key={st.name}>
+                  {st.displayValue}
+                </option>
+              ))}
+            </Select>
+          </FormControl>
           <FormControl
             w="full"
             mb={5}
