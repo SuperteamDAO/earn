@@ -1,4 +1,5 @@
 import { Prisma } from '@prisma/client';
+import dayjs from 'dayjs';
 import type { NextApiResponse } from 'next';
 
 import { type NextApiRequestWithUser, withAuth } from '@/features/auth';
@@ -109,17 +110,17 @@ async function scoutTalent(req: NextApiRequestWithUser, res: NextApiResponse) {
       },
     });
 
-    // if (prevScouts[0]) {
-    //   const createdAtDayjs = dayjs(prevScouts[0].createdAt);
-    //   const nowDayjs = dayjs(new Date());
-    //   const hourDiff = nowDayjs.diff(createdAtDayjs, 'hour');
-    //   if (hourDiff <= 6) {
-    //     logger.info(
-    //       'Returning previous scouts as they were generated within the last 6 hours',
-    //     );
-    //     return res.send(prevScouts);
-    //   }
-    // }
+    if (prevScouts[0]) {
+      const createdAtDayjs = dayjs(prevScouts[0].createdAt);
+      const nowDayjs = dayjs(new Date());
+      const hourDiff = nowDayjs.diff(createdAtDayjs, 'hour');
+      if (hourDiff <= 6) {
+        logger.info(
+          'Returning previous scouts as they were generated within the last 6 hours',
+        );
+        return res.send(prevScouts);
+      }
+    }
 
     if (prevScouts.length > 0) {
       logger.debug('Deleting previous scouts');
