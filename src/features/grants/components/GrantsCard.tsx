@@ -138,31 +138,31 @@ export const GrantsCard = ({ grant }: { grant: GrantWithApplicationCount }) => {
                 |
               </Text>
               <Flex align="center" gap={1}>
-                <Text
-                  color="gray.500"
-                  fontSize={['x-small', '0.71875rem']}
-                  fontWeight={500}
-                  whiteSpace="nowrap"
-                >
-                  {totalApproved
-                    ? `$` +
+                {totalApproved && (
+                  <Text
+                    color="gray.500"
+                    fontSize={['x-small', '0.71875rem']}
+                    fontWeight={500}
+                    whiteSpace="nowrap"
+                  >
+                    {`$` +
                       formatNumberWithSuffix(
                         totalApproved / _count.GrantApplication,
-                      )
-                    : '– '}
+                      )}
 
-                  <Text
-                    as="span"
-                    sx={{
-                      wordSpacing: '-0.09rem',
-                    }}
-                    ml={0.3}
-                    color="gray.400"
-                    fontSize={['x-small', '0.6875rem']}
-                  >
-                    Avg. Grant
+                    <Text
+                      as="span"
+                      sx={{
+                        wordSpacing: '-0.09rem',
+                      }}
+                      ml={0.3}
+                      color="gray.400"
+                      fontSize={['x-small', '0.6875rem']}
+                    >
+                      Avg. Grant
+                    </Text>
                   </Text>
-                </Text>
+                )}
               </Flex>
             </Flex>
           </Flex>

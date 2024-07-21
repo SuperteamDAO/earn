@@ -111,6 +111,7 @@ export const ApplicationDetails = ({
         setApplications={setApplications}
         applications={applications}
         setSelectedApplication={setSelectedApplication}
+        token={grant?.token || 'USDC'}
       />
 
       <ApproveModal
@@ -122,6 +123,7 @@ export const ApplicationDetails = ({
         setApplications={setApplications}
         applications={applications}
         setSelectedApplication={setSelectedApplication}
+        token={grant?.token || 'USDC'}
       />
 
       {applications.length ? (

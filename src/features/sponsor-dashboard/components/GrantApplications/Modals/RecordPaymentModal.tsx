@@ -11,6 +11,8 @@ import {
   ModalContent,
   ModalHeader,
   ModalOverlay,
+  NumberInput,
+  NumberInputField,
   Spinner,
 } from '@chakra-ui/react';
 import { zodResolver } from '@hookform/resolvers/zod';
@@ -27,11 +29,18 @@ interface RecordPaymentModalProps {
 }
 
 const paymentSchema = z.object({
-  amount: z.string().min(1, 'Amount is required'),
+  amount: z.number().min(1, 'Amount is required'),
   transactionLink: z
     .string()
     .url('Invalid URL')
-    .min(1, 'Transaction link is required'),
+    .min(1, 'Transaction link is required')
+    .refine((link) => {
+      const solscanRegex =
+        /^https:\/\/solscan\.io\/tx\/[A-Za-z0-9]{44,}(\?cluster=[a-zA-Z-]+)?$/;
+      const solanaFmRegex =
+        /^https:\/\/solana\.fm\/tx\/[A-Za-z0-9]{44,}(\?cluster=[a-zA-Z-]+)?$/;
+      return solscanRegex.test(link) || solanaFmRegex.test(link);
+    }, 'Invalid transaction link. Must be a solscan.io or solana.fm link with a valid transaction ID.'),
   note: z.string().optional(),
 });
 
@@ -85,11 +94,20 @@ export const RecordPaymentModal = ({
               <FormLabel color="brand.slate.500" fontSize={'0.95rem'}>
                 Amount
               </FormLabel>
-              <Input
-                mt={-1}
-                {...register('amount')}
-                placeholder="Enter amount"
-              />
+              <NumberInput focusBorderColor="brand.purple">
+                <NumberInputField
+                  color={'brand.slate.800'}
+                  borderColor="brand.slate.300"
+                  _placeholder={{
+                    color: 'brand.slate.300',
+                  }}
+                  {...register('amount', {
+                    required: 'This field is required',
+                    setValueAs: (value) => parseFloat(value),
+                  })}
+                  placeholder="Enter amount"
+                />
+              </NumberInput>
               <FormErrorMessage>
                 {errors.amount && <p>{errors.amount.message}</p>}
               </FormErrorMessage>
