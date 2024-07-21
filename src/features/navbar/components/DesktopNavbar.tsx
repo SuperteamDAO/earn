@@ -37,6 +37,7 @@ export const DesktopNavbar = ({ onLoginOpen, onSearchOpen }: Props) => {
   const isDashboardRoute = router.pathname.startsWith('/dashboard');
   const maxWValue = isDashboardRoute ? '' : '8xl';
 
+  const isMissionControlRoute = router.pathname.startsWith('/mission-control');
   return (
     <Flex
       display={{ base: 'none', lg: 'flex' }}
@@ -68,7 +69,19 @@ export const DesktopNavbar = ({ onLoginOpen, onSearchOpen }: Props) => {
               alt={'Superteam Earn'}
               src={'/assets/logo/logo.svg'}
             />
-
+            {isMissionControlRoute && (
+              <>
+                <Divider
+                  w={'3px'}
+                  h={'24px'}
+                  borderColor={'brand.slate.400'}
+                  orientation="vertical"
+                />
+                <Text fontSize="sm" letterSpacing={'1.5px'}>
+                  LEADS
+                </Text>
+              </>
+            )}
             {isDashboardRoute && (
               <>
                 <Divider
