@@ -1,9 +1,8 @@
-import { Box, Text, useDisclosure } from '@chakra-ui/react';
+import { Box, useDisclosure } from '@chakra-ui/react';
 import { useSession } from 'next-auth/react';
 import { usePostHog } from 'posthog-js/react';
 import { useEffect } from 'react';
 
-import { Snackbar } from '@/components/home/Snackbar';
 import { Login } from '@/features/auth';
 import { SearchModal } from '@/features/search';
 
@@ -48,13 +47,13 @@ export const Header = () => {
     <>
       {!!isLoginOpen && <Login isOpen={isLoginOpen} onClose={onLoginClose} />}
 
-      <Snackbar href="/talent-olympics">
-        Looking to get hired?{' '}
-        <Text display="inline" textDecor="underline">
-          Click here
-        </Text>{' '}
-        to compete in the Talent Olympics — 30+ companies hiring!
-      </Snackbar>
+      {/* <Snackbar href="/talent-olympics"> */}
+      {/*   Looking to get hired?{' '} */}
+      {/*   <Text display="inline" textDecor="underline"> */}
+      {/*     Click here */}
+      {/*   </Text>{' '} */}
+      {/*   to compete in the Talent Olympics — 30+ companies hiring! */}
+      {/* </Snackbar> */}
       <BountySnackbar />
       {/* {isRootRoute && <AnnouncementBar />} */}
       <Box pos="sticky" zIndex="sticky" top={0}>
