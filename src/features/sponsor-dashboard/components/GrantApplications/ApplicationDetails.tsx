@@ -196,7 +196,12 @@ export const ApplicationDetails = ({
                 </>
               )}
               {isApproved && isNativeAndNonST && (
-                <RecordPaymentButton applicationId={selectedApplication.id} />
+                <RecordPaymentButton
+                  applicationId={selectedApplication.id}
+                  approvedAmount={selectedApplication.approvedAmount}
+                  totalPaid={selectedApplication.totalPaid}
+                  token={grant.token || 'USDC'}
+                />
               )}
             </Flex>
           </Flex>

@@ -292,6 +292,9 @@ export const PaymentsHistoryTab = ({
                           <RecordPaymentButton
                             applicationId="1"
                             buttonStyle={{ size: 'sm' }}
+                            approvedAmount={grantee.approvedAmount}
+                            totalPaid={grantee.totalPaid}
+                            token={grant?.token || 'USDC '}
                           />
                         )}
                         <Box

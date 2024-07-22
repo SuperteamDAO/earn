@@ -6,9 +6,15 @@ import { RecordPaymentModal } from './Modals/RecordPaymentModal';
 export const RecordPaymentButton = ({
   applicationId,
   buttonStyle,
+  approvedAmount,
+  token,
+  totalPaid,
 }: {
   applicationId: string;
   buttonStyle?: ButtonProps;
+  approvedAmount: number;
+  totalPaid: number;
+  token: string;
 }) => {
   const {
     isOpen: recordPaymentIsOpen,
@@ -22,6 +28,9 @@ export const RecordPaymentButton = ({
         applicationId={applicationId}
         recordPaymentIsOpen={recordPaymentIsOpen}
         recordPaymentOnClose={recordPaymentOnClose}
+        approvedAmount={approvedAmount}
+        totalPaid={totalPaid}
+        token={token}
       />
       <Button {...buttonStyle} onClick={() => recordPaymentOnOpen()}>
         Record Payment
