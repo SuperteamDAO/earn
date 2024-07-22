@@ -55,27 +55,17 @@ async function grantApplication(
         grant: true,
       },
     });
+
     if (result.grant.isNative === true && !result.grant.airtableId) {
       try {
         await sendEmailNotification({
-          type: 'applicationTalent',
+          type: 'application',
           id: result.id,
           userId: result?.userId,
           triggeredBy: userId,
         });
       } catch (err) {
         logger.error('Error sending email to User:', err);
-      }
-
-      try {
-        await sendEmailNotification({
-          type: 'applicationSponsor',
-          id: result.id,
-          userId: result?.grant?.pocId,
-          triggeredBy: userId,
-        });
-      } catch (err) {
-        logger.error('Error sending email to Sponsor:', err);
       }
     }
 

@@ -6,6 +6,7 @@ import logger from '@/lib/logger';
 type EmailType =
   | 'addPayment'
   | 'announceWinners'
+  | 'application'
   | 'commentSponsor'
   | 'commentSubmission'
   | 'createListing'
