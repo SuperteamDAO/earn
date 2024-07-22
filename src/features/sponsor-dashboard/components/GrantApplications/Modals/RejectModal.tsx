@@ -101,7 +101,8 @@ export const RejectModal = ({
             <Flex align="center">
               <Image
                 boxSize="6"
-                alt={`USDC icon`}
+                alt={`${token} icon`}
+                rounded={'full'}
                 src={tokenList.find((t) => t.tokenSymbol === token)?.icon || ''}
               />
               <Text ml={1} color="brand.slate.500" fontWeight={600}>

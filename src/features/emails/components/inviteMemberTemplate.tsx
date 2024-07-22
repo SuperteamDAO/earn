@@ -18,7 +18,7 @@ export const InviteMemberTemplate = ({
       <p style={styles.greetings}>Hello,</p>
       <p style={styles.textWithMargin}>
         You have been invited by {senderName} to join{' '}
-        <strong>{sponsorName}</strong> {''} on Superteam Earn! .
+        <strong>{sponsorName}</strong> {''} on Superteam Earn!.{' '}
         <a href={link} style={styles.link}>
           Click here
         </a>{' '}

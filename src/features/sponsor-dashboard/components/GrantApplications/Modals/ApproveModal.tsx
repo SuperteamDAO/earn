@@ -183,12 +183,13 @@ export const ApproveModal = ({
                 <Image
                   boxSize="5"
                   mr={1}
-                  alt={`USDC icon`}
+                  alt={`${token} icon`}
+                  rounded={'full'}
                   src={
-                    tokenList.find((t) => t.tokenSymbol === 'USDC')?.icon || ''
+                    tokenList.find((t) => t.tokenSymbol === token)?.icon || ''
                   }
                 />
-                USDC
+                {token}
               </InputRightAddon>
             </InputGroup>
           </Flex>
