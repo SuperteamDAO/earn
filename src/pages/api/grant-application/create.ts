@@ -59,8 +59,8 @@ async function grantApplication(
       try {
         await sendEmailNotification({
           type: 'applicationTalent',
-          id: grantId,
-          userId,
+          id: result.id,
+          userId: result?.userId,
           triggeredBy: userId,
         });
       } catch (err) {
@@ -70,7 +70,7 @@ async function grantApplication(
       try {
         await sendEmailNotification({
           type: 'applicationSponsor',
-          id: grantId,
+          id: result.id,
           userId: result?.grant?.pocId,
           triggeredBy: userId,
         });
