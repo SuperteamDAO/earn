@@ -138,7 +138,7 @@ export const GrantsCard = ({ grant }: { grant: GrantWithApplicationCount }) => {
                 |
               </Text>
               <Flex align="center" gap={1}>
-                {totalApproved && (
+                {!!totalApproved && (
                   <Text
                     color="gray.500"
                     fontSize={['x-small', '0.71875rem']}
