@@ -109,7 +109,7 @@ export const RecordPaymentModal = ({
               <FormLabel color="brand.slate.500" fontSize={'0.95rem'}>
                 Amount
               </FormLabel>
-              <NumberInput focusBorderColor="brand.purple" max={maxAmount}>
+              <NumberInput focusBorderColor="brand.purple">
                 <NumberInputField
                   color={'brand.slate.800'}
                   borderColor="brand.slate.300"
