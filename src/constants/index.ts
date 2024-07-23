@@ -190,6 +190,14 @@ export const tokenList: Token[] = [
     coingeckoSymbol: 'synesis-one',
   },
   {
+    tokenName: "Dean's List",
+    tokenSymbol: 'DEAN',
+    mintAddress: 'Ds52CDgqdWbTWsua1hgT3AuSSy4FNx2Ezge1br3jQ14a',
+    icon: 'https://assets.coingecko.com/coins/images/23289/standard/sns.png?1696522507',
+    decimals: 6,
+    coingeckoSymbol: 'dean-s-list',
+  },
+  {
     tokenName: 'DevWifHat (DWH)',
     tokenSymbol: 'DWH',
     mintAddress: 'DEVwHJ57QMPPArD2CyjboMbdWvjEMjXRigYpaUNDTD7o',
