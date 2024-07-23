@@ -1,15 +1,21 @@
-import type { NextApiRequest, NextApiResponse } from 'next';
+import type { NextApiResponse } from 'next';
 
+import {
+  checkGrantSponsorAuth,
+  type NextApiRequestWithSponsor,
+  withSponsorAuth,
+} from '@/features/auth';
+import { sendEmailNotification } from '@/features/emails';
 import logger from '@/lib/logger';
 import { prisma } from '@/prisma';
 import { safeStringify } from '@/utils/safeStringify';
 
-export default async function handler(
-  req: NextApiRequest,
-  res: NextApiResponse,
-) {
+async function handler(req: NextApiRequestWithSponsor, res: NextApiResponse) {
   const { id, trancheAmount, txId = '' } = req.query;
   const parsedTrancheAmount = parseInt(trancheAmount as string, 10);
+
+  const userId = req.userId;
+  const userSponsorId = req.userSponsorId;
 
   logger.debug(`Request query: ${safeStringify(req.query)}`);
 
@@ -30,6 +36,15 @@ export default async function handler(
     if (!currentApplication) {
       logger.info(`Grant application not found with ID: ${id}`);
       return res.status(404).json({ error: 'Grant application not found' });
+    }
+
+    const { error } = await checkGrantSponsorAuth(
+      userSponsorId,
+      currentApplication.grantId,
+    );
+
+    if (error) {
+      return res.status(error.status).json({ error: error.message });
     }
 
     let updatedPaymentDetails = currentApplication.paymentDetails || [];
@@ -72,6 +87,13 @@ export default async function handler(
       return updatedGrantApplication;
     });
 
+    await sendEmailNotification({
+      type: 'grantPaymentReceived',
+      id: id as string,
+      triggeredBy: userId,
+      userId: currentApplication.userId,
+    });
+
     logger.info(
       `Payment details updated successfully for grant application ID: ${id}`,
     );
@@ -87,3 +109,5 @@ export default async function handler(
     });
   }
 }
+
+export default withSponsorAuth(handler);
