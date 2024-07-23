@@ -10,6 +10,7 @@ import {
   TabPanels,
   Tabs,
   Text,
+  Tooltip,
   useDisclosure,
 } from '@chakra-ui/react';
 import axios from 'axios';
@@ -22,8 +23,8 @@ import { useEffect, useState } from 'react';
 import { LoadingSection } from '@/components/shared/LoadingSection';
 import { type Listing, PublishResults } from '@/features/listings';
 import {
-  ScountTable,
   type ScoutRowType,
+  ScoutTable,
   SubmissionDetails,
   SubmissionHeader,
   SubmissionList,
@@ -181,6 +182,8 @@ function BountySubmissions({ slug }: Props) {
     if (searchParams.has('scout')) posthog.capture('scout tab_scout');
   }, []);
 
+  const isSponsorVerified = bounty?.sponsor?.isVerified;
+
   return (
     <Sidebar>
       {isBountyLoading ? (
@@ -214,16 +217,32 @@ function BountySubmissions({ slug }: Props) {
               {bounty?.isPublished &&
                 !bounty?.isWinnersAnnounced &&
                 !isExpired && (
-                  <Tab
-                    className="ph-no-capture"
-                    px={1}
-                    fontSize="sm"
-                    _selected={selectedStyles}
-                    onClick={() => posthog.capture('scout tab_scout')}
+                  <Tooltip
+                    px={4}
+                    py={2}
+                    color="brand.slate.500"
+                    fontFamily={'var(--font-sans)'}
+                    bg="white"
+                    borderRadius={'lg'}
+                    isDisabled={isSponsorVerified === true}
+                    label="Scout is an invite-only feature right now"
                   >
-                    Scout Talent
-                    <Box w={1.5} h={1.5} ml={1.5} bg="red" rounded="full" />
-                  </Tab>
+                    <Tab
+                      className="ph-no-capture"
+                      px={1}
+                      fontSize="sm"
+                      _disabled={{ color: 'brand.slate.400' }}
+                      _selected={selectedStyles}
+                      cursor={isSponsorVerified ? 'pointer' : 'not-allowed'}
+                      isDisabled={!isSponsorVerified}
+                      onClick={() => posthog.capture('scout tab_scout')}
+                    >
+                      Scout Talent
+                      {!!isSponsorVerified && (
+                        <Box w={1.5} h={1.5} ml={1.5} bg="red" rounded="full" />
+                      )}
+                    </Tab>
+                  </Tooltip>
                 )}
             </TabList>
             <TabPanels>
@@ -346,7 +365,7 @@ function BountySubmissions({ slug }: Props) {
                 !bounty.isWinnersAnnounced &&
                 !isExpired && (
                   <TabPanel px={0}>
-                    <ScountTable
+                    <ScoutTable
                       bountyId={bounty.id}
                       scouts={scouts}
                       setInvited={(userId: string) => {

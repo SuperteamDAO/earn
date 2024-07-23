@@ -10,10 +10,17 @@ interface Props {
   userId: string;
   invited: boolean;
   setInvited: (value: string) => void;
+  maxInvitesReached: boolean;
 }
-export function InviteButton({ bountyId, userId, invited, setInvited }: Props) {
-  const posthog = usePostHog();
 
+export function InviteButton({
+  bountyId,
+  userId,
+  invited,
+  setInvited,
+  maxInvitesReached,
+}: Props) {
+  const posthog = usePostHog();
   const [loading, setLoading] = useState(false);
 
   async function inviteToScout(userId: string) {
@@ -44,7 +51,7 @@ export function InviteButton({ bountyId, userId, invited, setInvited }: Props) {
         color: 'brand.slate.400',
         cursor: 'not-allowed',
       }}
-      isDisabled={invited}
+      isDisabled={invited || maxInvitesReached}
       isLoading={loading}
       onClick={async () => {
         await inviteToScout(userId);

@@ -38,6 +38,7 @@ const formatter = new Intl.NumberFormat('en-US', {
 }).format;
 
 const MAX_SHOW_SKILLS = 5;
+const MAX_INVITES = 5;
 
 interface Props {
   bountyId: string;
@@ -45,8 +46,10 @@ interface Props {
   setInvited: (userId: string) => void;
 }
 
-export function ScountTable({ bountyId, scouts, setInvited }: Props) {
+export function ScoutTable({ bountyId, scouts, setInvited }: Props) {
   const posthog = usePostHog();
+  const invitedCount = scouts.filter((scout) => scout.invited).length;
+  const maxInvitesReached = invitedCount >= MAX_INVITES;
 
   return (
     <TableContainer
@@ -353,6 +356,7 @@ export function ScountTable({ bountyId, scouts, setInvited }: Props) {
                       userId={scout.userId}
                       invited={scout.invited}
                       bountyId={bountyId}
+                      maxInvitesReached={maxInvitesReached}
                     />
                   </Flex>
                 </Td>
