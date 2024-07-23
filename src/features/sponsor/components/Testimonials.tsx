@@ -24,7 +24,7 @@ import { TestimonialCard, type TestimonialProps } from './TestimonialCard';
 
 const testimonials: TestimonialProps[] = [
   {
-    stars: 4,
+    stars: 5,
     message: `I'll say it again, Earn is going to become one of the most important non-protocol products in the Solana ecosystem. Connecting developers (amongst others) to opportunity and protocols to talent.`,
     logo: Solana,
     pfp: ChasedBarker,

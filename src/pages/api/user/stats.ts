@@ -31,7 +31,11 @@ export default async function handler(
         email: userEmail,
       },
       include: {
-        Submission: true,
+        Submission: {
+          include: {
+            listing: true,
+          },
+        },
       },
     });
 
@@ -41,7 +45,10 @@ export default async function handler(
     }
 
     const participations = result.Submission.length;
-    const wins = result.Submission.filter((s) => s.isWinner).length;
+    const wins = result.Submission.filter(
+      (s) => s.isWinner && s.listing.isWinnersAnnounced,
+    ).length;
+    logger.info('wins - ', wins);
 
     logger.info(
       `User data retrieved successfully: participations=${participations}, wins=${wins}`,

@@ -35,6 +35,8 @@ interface Grant {
   totalPaid: number;
   totalApproved: number;
   avgResponseTime?: string;
+  airtableId?: string;
+  isNative?: boolean;
 }
 
 interface GrantWithApplicationCount extends Grant {

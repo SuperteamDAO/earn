@@ -19,10 +19,13 @@ import axios from 'axios';
 import React, { useEffect, useState } from 'react';
 
 import { EarnAvatar } from '@/components/shared/EarnAvatar';
+import { tokenList } from '@/constants';
+import { type Grant } from '@/features/grants';
 import { userStore } from '@/store/user';
 import { truncatePublicKey } from '@/utils/truncatePublicKey';
 
 import { type GrantApplicationWithUser } from '../../types';
+import { RecordPaymentButton } from './RecordPaymentButton';
 
 interface GrantPaymentDetailProps {
   tranche: number;
@@ -38,8 +41,10 @@ const extractTxId = (url: string) => {
 
 const PaymentDetailsRow = ({
   paymentDetails,
+  token,
 }: {
   paymentDetails: GrantPaymentDetailProps[];
+  token: string;
 }) => {
   return (
     <>
@@ -50,16 +55,14 @@ const PaymentDetailsRow = ({
               <Image
                 w={4}
                 h={4}
-                alt={'USDC'}
+                alt={`${token}`}
                 rounded={'full'}
-                src={
-                  'https://s2.coinmarketcap.com/static/img/coins/128x128/3408.png'
-                }
+                src={tokenList.find((t) => t.tokenSymbol === token)?.icon || ''}
               />
               <Text color="brand.slate.700" fontSize={'sm'} fontWeight={500}>
                 {payment.amount}{' '}
                 <Text as="span" color="brand.slate.400">
-                  USDC
+                  {token}
                 </Text>
               </Text>
             </Flex>
@@ -109,12 +112,16 @@ const PaymentDetailsRow = ({
 
 export const PaymentsHistoryTab = ({
   grantId,
+  grant,
 }: {
   grantId: string | undefined;
+  grant: Grant | null;
 }) => {
   const { userInfo } = userStore();
   const [grantees, setGrantees] = useState<GrantApplicationWithUser[]>();
   const [expandedRows, setExpandedRows] = useState<Set<string>>(new Set());
+
+  const isNativeAndNonST = !grant?.airtableId && grant?.isNative;
 
   const getGrantees = async () => {
     try {
@@ -222,10 +229,12 @@ export const PaymentsHistoryTab = ({
                         <Image
                           w={4}
                           h={4}
-                          alt={'USDC'}
+                          alt={grant?.token}
                           rounded={'full'}
                           src={
-                            'https://s2.coinmarketcap.com/static/img/coins/128x128/3408.png'
+                            tokenList.find(
+                              (t) => t.tokenSymbol === grant?.token,
+                            )?.icon || ''
                           }
                         />
                         <Text
@@ -235,7 +244,7 @@ export const PaymentsHistoryTab = ({
                         >
                           {grantee.approvedAmount}{' '}
                           <Text as="span" color="brand.slate.400">
-                            USDC
+                            {grant?.token}
                           </Text>
                         </Text>
                       </Flex>
@@ -245,10 +254,12 @@ export const PaymentsHistoryTab = ({
                         <Image
                           w={4}
                           h={4}
-                          alt={'USDC'}
+                          alt={grant?.token}
                           rounded={'full'}
                           src={
-                            'https://s2.coinmarketcap.com/static/img/coins/128x128/3408.png'
+                            tokenList.find(
+                              (t) => t.tokenSymbol === grant?.token,
+                            )?.icon || ''
                           }
                         />
                         <Text
@@ -258,7 +269,7 @@ export const PaymentsHistoryTab = ({
                         >
                           {grantee.totalPaid}{' '}
                           <Text as="span" color="brand.slate.400">
-                            USDC
+                            {grant?.token}
                           </Text>
                         </Text>
                       </Flex>
@@ -282,6 +293,15 @@ export const PaymentsHistoryTab = ({
                     </Td>
                     <Td px={0} isNumeric>
                       <Flex align="center" gap={2}>
+                        {isNativeAndNonST && (
+                          <RecordPaymentButton
+                            applicationId="1"
+                            buttonStyle={{ size: 'sm' }}
+                            approvedAmount={grantee.approvedAmount}
+                            totalPaid={grantee.totalPaid}
+                            token={grant?.token || 'USDC '}
+                          />
+                        )}
                         <Box
                           as="span"
                           transform={
@@ -303,6 +323,7 @@ export const PaymentsHistoryTab = ({
                         paymentDetails={
                           grantee.paymentDetails as unknown as GrantPaymentDetailProps[]
                         }
+                        token={grant?.token || 'USDC'}
                       />
                     </Tr>
                   )}

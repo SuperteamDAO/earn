@@ -93,7 +93,7 @@ async function handler(req: NextApiRequestWithSponsor, res: NextApiResponse) {
       AND g.isArchived = false
       AND g.sponsorId = ?
       AND g.status = ?
-      AND g.airtableId IS NOT NULL
+      AND (g.airtableId IS NOT NULL OR g.isNative = true)
       ${whereSearch}
       
       ORDER BY createdAt DESC
