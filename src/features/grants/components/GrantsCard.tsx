@@ -3,6 +3,7 @@ import NextLink from 'next/link';
 import { useRouter } from 'next/router';
 import React from 'react';
 
+import { VerifiedBadge } from '@/components/shared/VerifiedBadge';
 import { tokenList } from '@/constants';
 import { formatNumberWithSuffix } from '@/utils/formatNumberWithSuffix';
 
@@ -68,13 +69,16 @@ export const GrantsCard = ({ grant }: { grant: GrantWithApplicationCount }) => {
             >
               {title}
             </Text>
-            <Text
-              w="full"
-              color="brand.slate.500"
-              fontSize={{ md: 'sm', base: 'xs' }}
-            >
-              {sponsor?.name}
-            </Text>
+            <Flex align={'center'} gap={1} w="min-content">
+              <Text
+                w="full"
+                color="brand.slate.500"
+                fontSize={{ md: 'sm', base: 'xs' }}
+              >
+                {sponsor?.name}
+              </Text>
+              <div>{!!sponsor?.isVerified && <VerifiedBadge />}</div>
+            </Flex>
             <Flex align="center" gap={{ base: 1, sm: 3 }} mt="1px">
               <>
                 <Flex

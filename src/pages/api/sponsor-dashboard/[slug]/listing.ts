@@ -28,7 +28,7 @@ async function handler(req: NextApiRequestWithSponsor, res: NextApiResponse) {
         sponsorId: userSponsorId,
       },
       include: {
-        sponsor: { select: { name: true, logo: true } },
+        sponsor: { select: { name: true, logo: true, isVerified: true } },
         poc: true,
         Submission: true,
         Hackathon: {

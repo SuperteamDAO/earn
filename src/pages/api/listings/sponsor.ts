@@ -75,6 +75,7 @@ export default async function handler(
             name: true,
             slug: true,
             logo: true,
+            isVerified: true,
           },
         },
       },

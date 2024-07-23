@@ -16,6 +16,7 @@ import { useRouter } from 'next/router';
 import { IoIosStar } from 'react-icons/io';
 import { MdModeComment } from 'react-icons/md';
 
+import { VerifiedBadge } from '@/components/shared/VerifiedBadge';
 import { tokenList } from '@/constants';
 import { dayjs } from '@/utils/dayjs';
 import { timeAgoShort } from '@/utils/timeAgo';
@@ -170,13 +171,16 @@ export const ListingCard = ({
             >
               {title}
             </Text>
-            <Text
-              w="full"
-              color="brand.slate.500"
-              fontSize={{ md: 'sm', base: 'xs' }}
-            >
-              {sponsor?.name}
-            </Text>
+            <Flex align={'center'} gap={1} w="min-content">
+              <Text
+                w="full"
+                color="brand.slate.500"
+                fontSize={{ md: 'sm', base: 'xs' }}
+              >
+                {sponsor?.name}
+              </Text>
+              <div>{!!sponsor?.isVerified && <VerifiedBadge />}</div>
+            </Flex>
             <Flex align="center" gap={{ base: 1, sm: 3 }} mt="1px">
               <>
                 <Flex
@@ -440,9 +444,16 @@ export const ListingCardMobile = ({
               >
                 {title}
               </Text>
-              <Text w={'full'} color={'brand.slate.500'} fontSize={'xs'}>
-                {sponsor?.name}
-              </Text>
+              <Flex align={'center'} gap={1} w="min-content">
+                <Text
+                  w="full"
+                  color="brand.slate.500"
+                  fontSize={{ base: 'xs' }}
+                >
+                  {sponsor?.name}
+                </Text>
+                <div>{!!sponsor?.isVerified && <VerifiedBadge />}</div>
+              </Flex>
               <Flex align={'center'} wrap={'wrap'} gap={1} mt={'1px'}>
                 <>
                   <Flex align={'center'} justify="start" display={'flex'}>

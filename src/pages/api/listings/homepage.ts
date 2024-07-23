@@ -88,6 +88,7 @@ export async function getGrants({ take = 20, skillFilter }: GrantProps) {
           name: true,
           slug: true,
           logo: true,
+          isVerified: true,
         },
       },
       _count: {
@@ -175,6 +176,7 @@ export async function getListings({
           name: true,
           slug: true,
           logo: true,
+          isVerified: true,
         },
       },
       _count: {

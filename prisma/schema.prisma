@@ -270,6 +270,7 @@ model Sponsors {
   isArchived   Boolean        @default(false)
   isActive     Boolean        @default(true)
   entityName   String?
+  isVerified   Boolean        @default(false)
   Hackathon    Hackathon?
   UserSponsors UserSponsors[]
   Bounties     Bounties[]

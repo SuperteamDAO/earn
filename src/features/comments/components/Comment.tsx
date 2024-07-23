@@ -56,6 +56,7 @@ interface Props {
   isAnnounced: boolean;
   isReply?: boolean;
   addNewReply?: (msg: string) => Promise<void>;
+  isVerified?: boolean;
 }
 
 export const Comment = ({
@@ -71,6 +72,7 @@ export const Comment = ({
   listingSlug,
   isReply = false,
   isAnnounced,
+  isVerified = false,
 }: Props) => {
   const { userInfo } = userStore();
   const posthog = usePostHog();
@@ -260,12 +262,14 @@ export const Comment = ({
                 }}
                 fontWeight={500}
               >
-                <Image
-                  width={13}
-                  height={13}
-                  alt="Sponsor Verified Icon"
-                  src="/assets/icons/verified-tick.svg"
-                />
+                {isVerified && (
+                  <Image
+                    width={13}
+                    height={13}
+                    alt="Sponsor Verified Icon"
+                    src="/assets/icons/verified-tick.svg"
+                  />
+                )}
                 Sponsor
               </Text>
             )}
