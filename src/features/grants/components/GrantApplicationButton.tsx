@@ -27,7 +27,7 @@ export const GrantApplicationButton = ({
   const [isUserApplicationLoading, setIsUserApplicationLoading] =
     useState(false);
 
-  const { region, id, link } = grant;
+  const { region, id, link, isNative } = grant;
 
   const { status: authStatus } = useSession();
   const isAuthenticated = authStatus === 'authenticated';
@@ -73,7 +73,7 @@ export const GrantApplicationButton = ({
     if (isAuthenticated) {
       if (!userInfo?.isTalentFilled) {
         warningOnOpen();
-      } else if (link) {
+      } else if (link && !isNative) {
         window.open(link, '_blank', 'noopener,noreferrer');
       } else {
         onOpen();

@@ -11,6 +11,8 @@ import {
   ModalContent,
   ModalHeader,
   ModalOverlay,
+  NumberInput,
+  NumberInputField,
   Spinner,
 } from '@chakra-ui/react';
 import { zodResolver } from '@hookform/resolvers/zod';
@@ -24,37 +26,59 @@ interface RecordPaymentModalProps {
   recordPaymentIsOpen: boolean;
   recordPaymentOnClose: () => void;
   applicationId: string | undefined;
+  approvedAmount: number;
+  totalPaid: number;
+  token: string;
 }
 
-const paymentSchema = z.object({
-  amount: z.string().min(1, 'Amount is required'),
-  transactionLink: z
-    .string()
-    .url('Invalid URL')
-    .min(1, 'Transaction link is required'),
-  note: z.string().optional(),
-});
+const paymentSchema = (maxAmount: number, token: string) =>
+  z.object({
+    amount: z
+      .number()
+      .min(1, 'Amount is required')
+      .max(
+        maxAmount,
+        `${maxAmount} ${token} is the total amount remaining to be paid. Tx amount here can't be higher than the remaining amount to be paid.`,
+      ),
+    transactionLink: z
+      .string()
+      .url('Invalid URL')
+      .min(1, 'Transaction link is required')
+      .refine((link) => {
+        const solscanRegex =
+          /^https:\/\/solscan\.io\/tx\/[A-Za-z0-9]{44,}(\?cluster=[a-zA-Z-]+)?$/;
+        const solanaFmRegex =
+          /^https:\/\/solana\.fm\/tx\/[A-Za-z0-9]{44,}(\?cluster=[a-zA-Z-]+)?$/;
+        return solscanRegex.test(link) || solanaFmRegex.test(link);
+      }, 'Invalid transaction link. Must be a solscan.io or solana.fm link with a valid transaction ID.'),
+    note: z.string().optional(),
+  });
 
-type PaymentFormInputs = z.infer<typeof paymentSchema>;
+type PaymentFormInputs = z.infer<ReturnType<typeof paymentSchema>>;
 
 export const RecordPaymentModal = ({
   applicationId,
   recordPaymentIsOpen,
   recordPaymentOnClose,
+  approvedAmount,
+  totalPaid,
+  token,
 }: RecordPaymentModalProps) => {
   const [loading, setLoading] = useState<boolean>(false);
+  const maxAmount = approvedAmount - totalPaid;
+
   const {
     register,
     handleSubmit,
     formState: { errors },
   } = useForm<PaymentFormInputs>({
-    resolver: zodResolver(paymentSchema),
+    resolver: zodResolver(paymentSchema(maxAmount, token)),
   });
 
   const addPayment = async (data: PaymentFormInputs) => {
     setLoading(true);
     try {
-      await axios.get(`/api/sponsor-dashboard/grants/add-payment`, {
+      await axios.get(`/api/sponsor-dashboard/grants/add-tranche`, {
         params: {
           id: applicationId,
           trancheAmount: data.amount,
@@ -85,11 +109,17 @@ export const RecordPaymentModal = ({
               <FormLabel color="brand.slate.500" fontSize={'0.95rem'}>
                 Amount
               </FormLabel>
-              <Input
-                mt={-1}
-                {...register('amount')}
-                placeholder="Enter amount"
-              />
+              <NumberInput focusBorderColor="brand.purple">
+                <NumberInputField
+                  color={'brand.slate.800'}
+                  borderColor="brand.slate.300"
+                  {...register('amount', {
+                    required: 'This field is required',
+                    setValueAs: (value) => parseFloat(value),
+                  })}
+                  placeholder="Enter amount"
+                />
+              </NumberInput>
               <FormErrorMessage>
                 {errors.amount && <p>{errors.amount.message}</p>}
               </FormErrorMessage>
