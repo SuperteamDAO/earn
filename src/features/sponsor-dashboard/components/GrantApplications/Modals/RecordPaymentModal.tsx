@@ -51,7 +51,6 @@ const paymentSchema = (maxAmount: number, token: string) =>
           /^https:\/\/solana\.fm\/tx\/[A-Za-z0-9]{44,}(\?cluster=[a-zA-Z-]+)?$/;
         return solscanRegex.test(link) || solanaFmRegex.test(link);
       }, 'Invalid transaction link. Must be a solscan.io or solana.fm link with a valid transaction ID.'),
-    note: z.string().optional(),
   });
 
 type PaymentFormInputs = z.infer<ReturnType<typeof paymentSchema>>;
@@ -83,7 +82,6 @@ export const RecordPaymentModal = ({
           id: applicationId,
           trancheAmount: data.amount,
           txId: data.transactionLink,
-          note: data.note,
         },
       });
     } catch (e) {
@@ -138,12 +136,6 @@ export const RecordPaymentModal = ({
                   <p>{errors.transactionLink.message}</p>
                 )}
               </FormErrorMessage>
-            </FormControl>
-            <FormControl mt={4}>
-              <FormLabel color="brand.slate.500" fontSize={'0.95rem'}>
-                Note
-              </FormLabel>
-              <Input mt={-1} {...register('note')} placeholder="Enter note" />
             </FormControl>
             <Button
               w="full"

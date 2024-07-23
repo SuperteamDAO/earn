@@ -11,7 +11,7 @@ import { prisma } from '@/prisma';
 import { safeStringify } from '@/utils/safeStringify';
 
 async function handler(req: NextApiRequestWithSponsor, res: NextApiResponse) {
-  const { id, trancheAmount, txId = '', note = '' } = req.query;
+  const { id, trancheAmount, txId = '' } = req.query;
   const parsedTrancheAmount = parseInt(trancheAmount as string, 10);
 
   const userId = req.userId;
@@ -54,7 +54,6 @@ async function handler(req: NextApiRequestWithSponsor, res: NextApiResponse) {
 
     updatedPaymentDetails.push({
       txId: txId || null,
-      note: note || null,
       tranche: currentApplication.totalTranches + 1,
       amount: parsedTrancheAmount,
     });

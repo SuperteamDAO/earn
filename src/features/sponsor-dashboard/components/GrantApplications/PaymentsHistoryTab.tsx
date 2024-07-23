@@ -31,7 +31,6 @@ interface GrantPaymentDetailProps {
   tranche: number;
   amount: number;
   txId?: string;
-  note?: string;
 }
 
 const extractTxId = (url: string) => {
