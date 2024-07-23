@@ -1,4 +1,5 @@
 import { Flex, type FlexProps, Link } from '@chakra-ui/react';
+import axios from 'axios';
 import NextLink from 'next/link';
 import { useRouter } from 'next/router';
 import { usePostHog } from 'posthog-js/react';
@@ -55,13 +56,30 @@ export function NavTabs({ ...flexProps }: FlexProps) {
   const [superteam, setSuperteam] = useState<(typeof Superteams)[0] | null>(
     null,
   );
-  useEffect(() => {
-    const superteam = Superteams.find((s) =>
-      s.country.includes(userInfo?.location ?? ''),
-    );
-    if (superteam) {
-      setSuperteam(superteam);
+  async function showRegionTab() {
+    try {
+      const superteam = Superteams.find((s) =>
+        s.country.includes(userInfo?.location ?? ''),
+      );
+      if (superteam) {
+        const bountiesCount = await axios.get<{ count: number }>(
+          '/api/listings/region-live-count',
+          {
+            params: {
+              region: superteam.region.toLowerCase(),
+            },
+          },
+        );
+        if (bountiesCount.data.count > 0) {
+          setSuperteam(superteam);
+        }
+      }
+    } catch (err) {
+      console.log('Failed to get bounties count', err);
     }
+  }
+  useEffect(() => {
+    showRegionTab();
   }, [userInfo]);
   return (
     <Flex

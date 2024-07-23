@@ -421,6 +421,14 @@ function GetHiredBy() {
       src: baseAsset('pyth2.svg'),
     },
     {
+      name: 'Rise In',
+      src: baseAsset('rise-in-dark.svg'),
+    },
+    {
+      name: 'Metawealth',
+      src: baseAsset('metawealth.png'),
+    },
+    {
       name: 'Galxe',
       src: baseAsset('galxe.svg'),
     },

@@ -12,11 +12,19 @@ interface Props {
   submissionId?: string;
 }
 
+export const isLink = (text: string) => {
+  const linkRegex =
+    /^(https?:\/\/)?(www\.)?[-a-zA-Z0-9@:%._\+~#=]{1,256}\.[a-zA-Z0-9()]{1,6}\b([-a-zA-Z0-9()@:%_\+.~#?&//=]*)/i;
+  return linkRegex.test(text);
+};
+
 function parseComment(comment: string) {
   const parts = comment.split(/(\s+|@[\w]+)/g).filter(Boolean);
   return parts.map((part) => {
     if (part.startsWith('@')) {
       return { type: 'mention', value: part };
+    } else if (isLink(part)) {
+      return { type: 'link', value: part };
     }
     return { type: 'text', value: part };
   });
@@ -45,19 +53,37 @@ export const CommentParser = ({
     );
   return (
     <>
-      {parsedComment.map((part, index) =>
-        part.type === 'mention' ? (
-          <Link
-            key={index}
-            color="brand.purple"
-            href={`/t/${part.value.substring(1)}`}
-          >
-            {truncateString(part.value, 12)}
-          </Link>
-        ) : (
-          <span key={index}>{part.value}</span>
-        ),
-      )}
+      {parsedComment.map((part, index) => {
+        if (part.type === 'mention') {
+          return (
+            <Link
+              key={index}
+              color="brand.purple"
+              href={`/t/${part.value.substring(1)}`}
+            >
+              {truncateString(part.value, 12)}
+            </Link>
+          );
+        } else if (part.type === 'link') {
+          let href = part.value;
+          if (!href.startsWith('http://') && !href.startsWith('https://')) {
+            href = 'https://' + href;
+          }
+          return (
+            <Link
+              key={index}
+              color="blue.600"
+              href={href}
+              isExternal
+              rel="nofollow noreferrer"
+            >
+              {truncateString(part.value, 30)}
+            </Link>
+          );
+        } else {
+          return <span key={index}>{part.value}</span>;
+        }
+      })}
     </>
   );
 };
