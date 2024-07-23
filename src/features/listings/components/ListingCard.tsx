@@ -176,6 +176,7 @@ export const ListingCard = ({
                 w="full"
                 color="brand.slate.500"
                 fontSize={{ md: 'sm', base: 'xs' }}
+                whiteSpace={'nowrap'}
               >
                 {sponsor?.name}
               </Text>
@@ -449,6 +450,7 @@ export const ListingCardMobile = ({
                   w="full"
                   color="brand.slate.500"
                   fontSize={{ base: 'xs' }}
+                  whiteSpace={'nowrap'}
                 >
                   {sponsor?.name}
                 </Text>

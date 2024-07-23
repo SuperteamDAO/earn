@@ -74,6 +74,7 @@ export const GrantsCard = ({ grant }: { grant: GrantWithApplicationCount }) => {
                 w="full"
                 color="brand.slate.500"
                 fontSize={{ md: 'sm', base: 'xs' }}
+                whiteSpace={'nowrap'}
               >
                 {sponsor?.name}
               </Text>
@@ -153,7 +154,7 @@ export const GrantsCard = ({ grant }: { grant: GrantWithApplicationCount }) => {
                       formatNumberWithSuffix(
                         totalApproved / _count.GrantApplication,
                       )
-                    : '– '}
+                    : '–'}
 
                   <Text
                     as="span"
@@ -164,6 +165,7 @@ export const GrantsCard = ({ grant }: { grant: GrantWithApplicationCount }) => {
                     color="gray.400"
                     fontSize={['x-small', '0.6875rem']}
                   >
+                    {' '}
                     Avg. Grant
                   </Text>
                 </Text>
