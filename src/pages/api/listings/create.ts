@@ -1,3 +1,4 @@
+import { franc } from 'franc';
 import type { NextApiResponse } from 'next';
 
 import {
@@ -50,13 +51,19 @@ async function handler(req: NextApiRequestWithSponsor, res: NextApiResponse) {
       isPublished,
       isPrivate,
     } = req.body;
-    let usdValue = 0;
 
     let publishedAt;
     if (isPublished) {
       publishedAt = new Date();
     }
 
+    let language = '';
+    if (description) {
+      language = franc(description);
+      // both 'eng' and 'sco' are english listings
+    }
+
+    let usdValue = 0;
     if (isPublished && publishedAt) {
       try {
         let amount;
@@ -103,6 +110,7 @@ async function handler(req: NextApiRequestWithSponsor, res: NextApiResponse) {
       maxRewardAsk,
       isPublished,
       isPrivate,
+      language,
     };
 
     logger.debug(`Creating bounty with data: ${safeStringify(finalData)}`);

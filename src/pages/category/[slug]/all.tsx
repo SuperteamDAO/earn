@@ -72,7 +72,6 @@ function AllCategoryListingsPage({ slug }: { slug: string }) {
           emoji="/assets/home/emojis/moneyman.png"
           title="Freelance Gigs"
           viewAllLink="/all"
-          checkLanguage
         />
       </Box>
     </Home>

@@ -130,15 +130,15 @@ export const GrantsCard = ({ grant }: { grant: GrantWithApplicationCount }) => {
                   </Text>
                 </Flex>
               </>
-              <Text
-                display="flex"
-                color="brand.slate.300"
-                fontSize={['xx-small', 'xs', 'sm', 'sm']}
-              >
-                |
-              </Text>
-              <Flex align="center" gap={1}>
-                {!!totalApproved && (
+              {!!totalApproved && (
+                <Flex align="center" gap={3}>
+                  <Text
+                    display="flex"
+                    color="brand.slate.300"
+                    fontSize={['xx-small', 'xs', 'sm', 'sm']}
+                  >
+                    |
+                  </Text>
                   <Text
                     color="gray.500"
                     fontSize={['x-small', '0.71875rem']}
@@ -159,11 +159,12 @@ export const GrantsCard = ({ grant }: { grant: GrantWithApplicationCount }) => {
                       color="gray.400"
                       fontSize={['x-small', '0.6875rem']}
                     >
+                      {' '}
                       Avg. Grant
                     </Text>
                   </Text>
-                )}
-              </Flex>
+                </Flex>
+              )}
             </Flex>
           </Flex>
         </Flex>
