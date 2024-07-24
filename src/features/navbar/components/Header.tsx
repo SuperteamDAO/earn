@@ -48,7 +48,6 @@ export const Header = () => {
       {!!isLoginOpen && <Login isOpen={isLoginOpen} onClose={onLoginClose} />}
 
       <BountySnackbar />
-      {/* {isRootRoute && <AnnouncementBar />} */}
       <Box pos="sticky" zIndex="sticky" top={0}>
         <DesktopNavbar
           onLoginOpen={onLoginOpen}
