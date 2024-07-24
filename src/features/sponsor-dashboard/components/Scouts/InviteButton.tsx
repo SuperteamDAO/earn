@@ -11,6 +11,7 @@ interface Props {
   invited: boolean;
   setInvited: (value: string) => void;
   maxInvitesReached: boolean;
+  invitesLeft: number;
 }
 
 export function InviteButton({
@@ -19,6 +20,7 @@ export function InviteButton({
   invited,
   setInvited,
   maxInvitesReached,
+  invitesLeft,
 }: Props) {
   const posthog = usePostHog();
   const [loading, setLoading] = useState(false);
@@ -31,6 +33,7 @@ export function InviteButton({
       posthog.capture('invited talent_scout', {
         invitedUser: userId,
       });
+      toast.success(`Invite sent. ${invitesLeft} Invites Remaining`);
     } catch (err) {
       toast.error('Invite failed, please try again later');
       console.log(err);

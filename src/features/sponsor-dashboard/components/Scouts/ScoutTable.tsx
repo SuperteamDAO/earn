@@ -51,6 +51,8 @@ export function ScoutTable({ bountyId, scouts, setInvited }: Props) {
   const invitedCount = scouts.filter((scout) => scout.invited).length;
   const maxInvitesReached = invitedCount >= MAX_INVITES;
 
+  const invitesLeft = MAX_INVITES - invitedCount;
+
   return (
     <TableContainer
       className="hide-scrollbar"
@@ -142,7 +144,17 @@ export function ScoutTable({ bountyId, scouts, setInvited }: Props) {
                 </Tooltip>
               </Flex>
             </Th>
-            <Th />
+            <Th
+              px={{ base: 1, md: 2 }}
+              color="brand.slate.500"
+              fontSize={'xs'}
+              fontWeight={500}
+              letterSpacing={0.5}
+              textAlign={'start'}
+              textTransform={'none'}
+            >
+              Invites Left: {invitesLeft}/{MAX_INVITES}
+            </Th>
           </Tr>
         </Thead>
         {scouts.length === 0 && (
@@ -222,8 +234,9 @@ export function ScoutTable({ bountyId, scouts, setInvited }: Props) {
                       <Flex gap={1}>
                         <Text
                           overflowX="hidden"
-                          maxW={'7rem'}
-                          color="black"
+                          maxW={'14rem'}
+                          color="brand.slate.800"
+                          fontSize={'14px'}
                           textOverflow={'ellipsis'}
                         >
                           {scout.name}
@@ -357,6 +370,7 @@ export function ScoutTable({ bountyId, scouts, setInvited }: Props) {
                       invited={scout.invited}
                       bountyId={bountyId}
                       maxInvitesReached={maxInvitesReached}
+                      invitesLeft={invitesLeft}
                     />
                   </Flex>
                 </Td>
