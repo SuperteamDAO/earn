@@ -1,3 +1,4 @@
+import { franc } from 'franc';
 import type { NextApiResponse } from 'next';
 
 import {
@@ -69,11 +70,18 @@ async function bounty(req: NextApiRequestWithSponsor, res: NextApiResponse) {
       minRewardAsk,
       compensationType,
       isPublished,
+      description,
     } = updatedData;
 
     let publishedAt = listing.publishedAt;
     if (isPublished && !listing.publishedAt) {
       publishedAt = new Date();
+    }
+
+    let language = '';
+    if (description) {
+      language = franc(description);
+      // both 'eng' and 'sco' are english listings
     }
 
     const newRewardsCount = Object.keys(rewards || {}).length;
@@ -133,6 +141,7 @@ async function bounty(req: NextApiRequestWithSponsor, res: NextApiResponse) {
         isPublished,
         publishedAt,
         usdValue,
+        language,
       },
       include: { sponsor: true },
     });
