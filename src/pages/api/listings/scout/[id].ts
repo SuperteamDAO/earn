@@ -1,10 +1,10 @@
 import { Prisma } from '@prisma/client';
+import dayjs from 'dayjs';
 import type { NextApiResponse } from 'next';
 
 import { type NextApiRequestWithUser, withAuth } from '@/features/auth';
 import logger from '@/lib/logger';
 import { prisma } from '@/prisma';
-import { dayjs } from '@/utils/dayjs';
 import { safeStringify } from '@/utils/safeStringify';
 
 function flattenSubSkills(skillsArray: any[]): string[] {
@@ -249,8 +249,10 @@ async function scoutTalent(req: NextApiRequestWithUser, res: NextApiResponse) {
           User u
           LEFT JOIN Submission s ON s.userId = u.id
           LEFT JOIN Bounties bs ON s.listingId = bs.id
+          LEFT JOIN EmailSettings es on es.userId = u.id
         WHERE
           s.isWinner = 1 AND s.rewardInUSD > 0
+          AND es.category = 'scoutInvite'
           AND (
             ${matchingWhereClause(subskills, devSkills, 'bs').join('\n  OR  ')}
 	        )
@@ -300,6 +302,7 @@ async function scoutTalent(req: NextApiRequestWithUser, res: NextApiResponse) {
 		    FROM
 		      User u
 		    LEFT JOIN PoW p on p.userId = u.id
+        LEFT JOIN EmailSettings es on es.userId = u.id
 		    LEFT JOIN (
           ${userWithMatchingSubmissionsQuery()}
 		    ) as t1 ON u.id = t1.userId
@@ -308,6 +311,7 @@ async function scoutTalent(req: NextApiRequestWithUser, res: NextApiResponse) {
             ${[...subskillPoWLikeQuery(subskills, 'p'), ...skillPoWLikeQuery(devSkills, 'p')].join('\n OR \n')}
           )
 		      AND t1.dollarsEarned > 0
+          AND es.category = 'scoutInvite'
 		    GROUP BY
 		      u.id, t1.dollarsEarned
     `;

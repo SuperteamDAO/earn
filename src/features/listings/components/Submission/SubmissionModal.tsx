@@ -203,7 +203,7 @@ export const SubmissionModal = ({
       }
 
       const latestSubmissionNumber = (userInfo?.Submission?.length ?? 0) + 1;
-      if (!editMode) showEasterEgg();
+      if (!editMode && latestSubmissionNumber === 1) showEasterEgg();
       if (!editMode && latestSubmissionNumber % 3 !== 0) onSurveyOpen();
 
       reset();

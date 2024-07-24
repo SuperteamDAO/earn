@@ -88,57 +88,61 @@ async function comment(req: NextApiRequestWithUser, res: NextApiResponse) {
       },
     });
 
-    logger.debug('Sending email notifications to tagged users');
-    taggedUsers.forEach(async (taggedUser) => {
-      await sendEmailNotification({
-        type: 'commentTag',
-        id: listingId,
-        userId: taggedUser.id,
-        otherInfo: {
-          personName: result.author.username,
-        },
-        triggeredBy: userId,
-      });
-    });
-
-    if (replyToUserId !== userId) {
-      logger.debug(
-        `Sending email notification to user ID: ${replyToUserId} for comment reply`,
-      );
-      await sendEmailNotification({
-        type: 'commentReply',
-        id: listingId,
-        userId: replyToUserId as string,
-        triggeredBy: userId,
-      });
-    }
-
-    if (
-      userId !== pocId &&
-      !taggedUsers.find((t) => t.id.includes(pocId)) &&
-      !replyToId
-    ) {
-      if (listingType === 'BOUNTY') {
-        logger.info(`Sending email notification to POC ID: ${pocId}`);
+    try {
+      logger.debug('Sending email notifications to tagged users');
+      taggedUsers.forEach(async (taggedUser) => {
         await sendEmailNotification({
-          type: 'commentSponsor',
+          type: 'commentTag',
           id: listingId,
-          userId: pocId as string,
-          triggeredBy: userId,
-        });
-      }
-
-      if (listingType === 'SUBMISSION') {
-        logger.info(`Sending email notification for submission comment`);
-        await sendEmailNotification({
-          type: 'commentSubmission',
-          id: listingId,
+          userId: taggedUser.id,
           otherInfo: {
-            personName: result?.author?.firstName,
+            personName: result.author.username,
           },
           triggeredBy: userId,
         });
+      });
+
+      if (replyToUserId !== userId) {
+        logger.debug(
+          `Sending email notification to user ID: ${replyToUserId} for comment reply`,
+        );
+        await sendEmailNotification({
+          type: 'commentReply',
+          id: listingId,
+          userId: replyToUserId as string,
+          triggeredBy: userId,
+        });
       }
+
+      if (
+        userId !== pocId &&
+        !taggedUsers.find((t) => t.id.includes(pocId)) &&
+        !replyToId
+      ) {
+        if (listingType === 'BOUNTY') {
+          logger.info(`Sending email notification to POC ID: ${pocId}`);
+          await sendEmailNotification({
+            type: 'commentSponsor',
+            id: listingId,
+            userId: pocId as string,
+            triggeredBy: userId,
+          });
+        }
+
+        if (listingType === 'SUBMISSION') {
+          logger.info(`Sending email notification for submission comment`);
+          await sendEmailNotification({
+            type: 'commentSubmission',
+            id: listingId,
+            otherInfo: {
+              personName: result?.author?.firstName,
+            },
+            triggeredBy: userId,
+          });
+        }
+      }
+    } catch (err) {
+      logger.error(`Error Sending Email Notifications - ${err}`);
     }
 
     logger.info(`Comment added successfully by user ID: ${userId}`);

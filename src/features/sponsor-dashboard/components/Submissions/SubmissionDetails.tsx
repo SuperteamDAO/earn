@@ -693,11 +693,11 @@ export const SubmissionDetails = ({
                     <Link
                       as={NextLink}
                       color="brand.purple"
-                      href={getURLSanitized(selectedSubmission?.tweet || '#')}
+                      href={selectedSubmission?.tweet || '#'}
                       isExternal
                     >
                       {selectedSubmission?.tweet
-                        ? getURLSanitized(selectedSubmission?.tweet)
+                        ? selectedSubmission?.tweet
                         : '-'}
                     </Link>
                   </Box>
