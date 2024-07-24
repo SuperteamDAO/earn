@@ -40,7 +40,7 @@ export const SponsorBanner = () => {
           fontWeight={500}
           lineHeight={'1.1rem'}
         >
-          Reach 20,000+ crypto talent from one single dashboard
+          Reach 30,000+ crypto talent from one single dashboard
         </Text>
       </Box>
       <Image
