@@ -146,7 +146,7 @@ export const Comment = ({
       replyToUserId: comment?.authorId ?? null,
       pocId: poc?.id,
     });
-    setReplies((prevReplies) => [newReplyData.data, ...prevReplies]);
+    setReplies((prevReplies) => [...prevReplies, newReplyData.data]);
     setShowReplies(true);
   };
 

@@ -41,7 +41,7 @@ export function Home({ children, type, st }: HomeProps) {
     try {
       const totalsData = await axios.get('/api/sidebar/totals');
       setTotals(totalsData.data);
-      const earnerData = await axios.get('/api/sidebar/recentEarners');
+      const earnerData = await axios.get('/api/sidebar/recent-earners');
       setRecentEarners(earnerData.data);
       setIsTotalLoading(false);
     } catch (e) {

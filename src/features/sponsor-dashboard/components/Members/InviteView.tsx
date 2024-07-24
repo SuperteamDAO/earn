@@ -36,7 +36,7 @@ export function InviteView({ invite }: Props) {
       setIsAccepting(false);
     } else if (user?.id && user?.email === invite?.email) {
       try {
-        await axios.post('/api/userSponsors/accept/', {
+        await axios.post('/api/member-invites/accept/', {
           inviteId: invite?.id,
         });
         setUserInfo({

@@ -31,6 +31,7 @@ import { userStore } from '@/store/user';
 import { validateSolAddress } from '@/utils/validateSolAddress';
 
 import { type Listing } from '../../types';
+import { isValidUrl, isYoutubeOrLoomLink } from '../../utils';
 import { QuestionHandler } from './QuestionHandler';
 import { SubmissionTerms } from './SubmissionTerms';
 
@@ -74,12 +75,20 @@ export const SubmissionModal = ({
     minRewardAsk,
     maxRewardAsk,
   } = listing;
+
+  const [eligibilityQs, setEligibilityQs] = useState(
+    eligibility?.map((q) => ({
+      ...q,
+      error: '',
+    })),
+  );
   const isProject = type === 'project';
   const isHackathon = type === 'hackathon';
   const [isLoading, setIsLoading] = useState(false);
   const [isTOSModalOpen, setIsTOSModalOpen] = useState(false);
-  const [error, setError] = useState('');
+  const [error, setError] = useState<any>('');
   const [publicKeyError, setPublicKeyError] = useState('');
+  const [submissionLinkError, setSubmissionLinkError] = useState('');
   const [askError, setAskError] = useState('');
   const {
     register,
@@ -155,10 +164,11 @@ export const SubmissionModal = ({
         publicKey,
         ...answers
       } = data;
-      const eligibilityAnswers = eligibility?.map((q) => ({
-        question: q.question,
-        answer: answers[`eligibility-${q.order}`],
-      }));
+      const eligibilityAnswers =
+        eligibility?.map((q) => ({
+          question: q.question,
+          answer: answers[`eligibility-${q.order}`],
+        })) ?? [];
       await axios.post('/api/user/update/', {
         publicKey,
       });
@@ -193,7 +203,7 @@ export const SubmissionModal = ({
       }
 
       const latestSubmissionNumber = (userInfo?.Submission?.length ?? 0) + 1;
-      if (!editMode) showEasterEgg();
+      if (!editMode && latestSubmissionNumber === 1) showEasterEgg();
       if (!editMode && latestSubmissionNumber % 3 !== 0) onSurveyOpen();
 
       reset();
@@ -234,27 +244,22 @@ export const SubmissionModal = ({
       subheadingText = "We can't wait to see what you've created!";
       break;
     case 'hackathon':
-      headerText = 'Hackathon Submission';
+      headerText = 'Talent Olympics Submission';
       subheadingText = (
         <>
-          Share your hackathon submission here! Remember:
+          Note:
           <Text>
             1. In the “Link to your Submission” field, submit your hackathon
             project’s most useful link (could be a loom video, GitHub link,
             website, etc)
           </Text>
           <Text>
-            2. To be eligible for different tracks, you need to submit to each
-            track separately
+            2. To be eligible for different challenges, you need to submit to
+            each challenge separately
           </Text>
           <Text>
-            3. There&apos;s no restriction on the number of tracks you can
+            3. {`There's no`} restriction on the number of challenges you can
             submit to
-          </Text>
-          <Text>
-            4. You can mark the Project Website, Project Twitter, and
-            Presentation Link fields as &quot;NA&quot; in case you do not have
-            these ready at the time of submission.
           </Text>
         </>
       );
@@ -308,7 +313,6 @@ export const SubmissionModal = ({
                     errors={errors}
                     isRequired
                   />
-
                   <TextAreaWithCounter
                     id="tweetLink"
                     label="Tweet Link"
@@ -318,13 +322,44 @@ export const SubmissionModal = ({
                     watch={watch}
                     maxLength={500}
                     errors={errors}
-                    isRequired
                   />
                   {isHackathon &&
-                    eligibility?.map((e) => {
+                    eligibilityQs?.map((e, i) => {
                       return (
-                        <FormControl key={e?.order} isRequired>
+                        <FormControl
+                          key={e?.order}
+                          isRequired={e.optional !== true}
+                        >
                           <QuestionHandler
+                            error={
+                              isHackathon && e.order === 1
+                                ? submissionLinkError
+                                : e.error
+                            }
+                            validate={(value: string) => {
+                              if (!isHackathon) return true;
+                              if (e.order === 1) {
+                                const valid = isYoutubeOrLoomLink(value);
+                                if (!valid) {
+                                  setSubmissionLinkError(
+                                    'Please enter a valid YouTube or Loom link',
+                                  );
+                                }
+                                return valid;
+                              } else if (value && e.isLink) {
+                                if (!isValidUrl(value) && eligibilityQs[i]) {
+                                  const cloneEligibilityQs = [...eligibilityQs];
+                                  const currElgibile = cloneEligibilityQs[i];
+                                  if (currElgibile) {
+                                    currElgibile.error =
+                                      'Please enter a valid link';
+                                    setEligibilityQs(cloneEligibilityQs);
+                                    return false;
+                                  }
+                                }
+                              }
+                              return true;
+                            }}
                             register={register}
                             question={e?.question}
                             label={`eligibility-${e?.order}`}

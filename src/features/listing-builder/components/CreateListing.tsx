@@ -9,7 +9,6 @@ import { SurveyModal } from '@/components/Survey';
 import { type MultiSelectOptions } from '@/constants';
 import { getListingDraftStatus, type Listing } from '@/features/listings';
 import { userStore } from '@/store/user';
-import { dayjs } from '@/utils/dayjs';
 
 import { useListingFormStore } from '../store';
 import { type ListingFormType } from '../types';
@@ -45,7 +44,7 @@ const defaultStepList = [
     label: 'Basics',
     number: 2,
     mainHead: 'Create a Listing',
-    description: `Now let's learn a bit more about the work you need completed`,
+    description: "Now let's learn a bit more about the work you need completed",
   },
   {
     label: 'Description',
@@ -77,7 +76,7 @@ export function CreateListing({
 }: Props) {
   const router = useRouter();
   const { userInfo } = userStore();
-  const { form, updateState } = useListingFormStore();
+  const { form, initializeForm } = useListingFormStore();
 
   const listingDraftStatus = getListingDraftStatus(
     listing?.status,
@@ -115,62 +114,19 @@ export function CreateListing({
 
   const [hackathonSponsor, setHackathonSponsor] = useAtom(hackathonSponsorAtom);
 
-  const basePath = type === 'hackathon' ? 'hackathon' : 'bounties';
+  const basePath = type === 'hackathon' ? 'hackathon' : 'listings';
   const surveyId = '018c674f-7e49-0000-5097-f2affbdddb0d';
   const isNewOrDraft = listingDraftStatus === 'DRAFT' || newListing === true;
 
   useEffect(() => {
-    if (editable && !!listing) {
-      updateState({
-        id: listing.id,
-        title:
-          isDuplicating && listing?.title
-            ? `${listing.title} (2)`
-            : listing?.title,
-        slug:
-          isDuplicating && listing?.slug ? `${listing.slug}-2` : listing?.slug,
-        deadline:
-          !isDuplicating && listing?.deadline
-            ? dayjs(listing?.deadline).format('YYYY-MM-DDTHH:mm') || undefined
-            : undefined,
-        templateId: listing?.templateId,
-        pocSocials: listing?.pocSocials,
-        applicationType: listing?.applicationType || 'fixed',
-        timeToComplete: listing?.timeToComplete,
-        type: type,
-        region: listing?.region,
-        referredBy: listing?.referredBy,
-        requirements: listing?.requirements,
-        eligibility: (listing?.eligibility || [])?.map((e) => ({
-          order: e.order,
-          question: e.question,
-          type: e.type as 'text',
-          delete: true,
-          label: e.question,
-        })),
-        references: (listing?.references || [])?.map((e) => ({
-          order: e.order,
-          link: e.link,
-        })),
-        isPrivate: listing?.isPrivate,
-        skills: listing?.skills,
-        description: listing?.description,
-        publishedAt: listing?.publishedAt || undefined,
-        rewardAmount: listing?.rewardAmount || undefined,
-        rewards: listing?.rewards || undefined,
-        token: listing?.token || 'USDC',
-        compensationType: listing?.compensationType,
-        minRewardAsk: listing?.minRewardAsk || undefined,
-        maxRewardAsk: listing?.maxRewardAsk || undefined,
-      });
-    }
-  }, [editable, listing, isDuplicating]);
+    initializeForm(listing!, isDuplicating, type);
+  }, [initializeForm, listing, isDuplicating, type]);
 
   useEffect(() => {
     if (editable && type === 'hackathon' && listing?.sponsorId) {
       setHackathonSponsor(listing?.sponsorId);
     }
-  }, [editable]);
+  }, [editable, type, listing?.sponsorId, setHackathonSponsor]);
 
   const createAndPublishListing = async () => {
     setIsListingPublishing(true);
@@ -187,8 +143,7 @@ export function CreateListing({
         pocSocials: form?.pocSocials,
         applicationType: form?.applicationType,
         timeToComplete: form?.timeToComplete,
-
-        description: form?.description || '',
+        description: form?.description,
         type,
         region: form?.region,
         referredBy: form?.referredBy,

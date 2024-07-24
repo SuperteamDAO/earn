@@ -107,7 +107,7 @@ export const VibeCard = () => {
       const latestUserIds = userIds.slice(-maxPfps);
       const responses = await Promise.all(
         latestUserIds.map((id) =>
-          axios.post('/api/feed/viberPfp', { id }).then((res) => res.data),
+          axios.post('/api/feed/viber-pfp', { id }).then((res) => res.data),
         ),
       );
       const remainingSlots = Math.max(0, maxPfps - responses.length);

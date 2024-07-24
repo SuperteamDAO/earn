@@ -1,4 +1,4 @@
-import type { SkillMap } from '@/interface/skills';
+import { type SkillMap } from '@/interface/skills';
 
 import { Superteams } from './Superteam';
 
@@ -142,6 +142,30 @@ export const tokenList: Token[] = [
     coingeckoSymbol: 'step-finance',
   },
   {
+    tokenName: 'Pyth Network (PYTH)',
+    tokenSymbol: 'PYTH',
+    mintAddress: 'HZ1JovNiVvGrGNiiYvEozEVgZ58xaU3RKwX8eACQBCt3',
+    icon: 'https://s2.coinmarketcap.com/static/img/coins/128x128/28177.png',
+    decimals: 6,
+    coingeckoSymbol: 'pyth-network',
+  },
+  {
+    tokenName: 'Kamino (KMNO)',
+    tokenSymbol: 'KMNO',
+    mintAddress: 'KMNo3nJsBXfcpJTVhZcXLW7RmTwTt4GVFE7suUBo9sS',
+    icon: '/assets/coins/kamino.png',
+    decimals: 6,
+    coingeckoSymbol: 'kamino',
+  },
+  {
+    tokenName: 'PayPal USD (PYUSD)',
+    tokenSymbol: 'PYUSD',
+    mintAddress: '2b1kV6DkPAnxd5ixfnxCpjxmKwqjjaYmCZfHsFu24GXo',
+    icon: 'https://s2.coinmarketcap.com/static/img/coins/128x128/27772.png',
+    decimals: 6,
+    coingeckoSymbol: 'paypal-usd',
+  },
+  {
     tokenName: 'SAROS',
     tokenSymbol: 'SAROS',
     mintAddress: 'SarosY6Vscao718M4A778z4CGtvcwcGef5M9MEH1LGL',
@@ -166,12 +190,12 @@ export const tokenList: Token[] = [
     coingeckoSymbol: 'synesis-one',
   },
   {
-    tokenName: 'Pyth Network (PYTH)',
-    tokenSymbol: 'PYTH',
-    mintAddress: 'HZ1JovNiVvGrGNiiYvEozEVgZ58xaU3RKwX8eACQBCt3',
-    icon: 'https://s2.coinmarketcap.com/static/img/coins/128x128/28177.png',
+    tokenName: "Dean's List",
+    tokenSymbol: 'DEAN',
+    mintAddress: 'Ds52CDgqdWbTWsua1hgT3AuSSy4FNx2Ezge1br3jQ14a',
+    icon: 'https://assets.coingecko.com/coins/images/23289/standard/sns.png?1696522507',
     decimals: 6,
-    coingeckoSymbol: 'pyth-network',
+    coingeckoSymbol: 'dean-s-list',
   },
   {
     tokenName: 'DevWifHat (DWH)',
@@ -342,258 +366,6 @@ export const tokenList: Token[] = [
     coingeckoSymbol: 'meta-2',
   },
 ];
-
-export const MainSkills: MultiSelectOptions[] = [
-  {
-    label: 'Frontend',
-    value: 'Frontend',
-  },
-  {
-    label: 'Backend',
-    value: 'Backend',
-  },
-  {
-    label: 'Blockchain',
-    value: 'Blockchain',
-  },
-  {
-    label: 'Mobile',
-    value: 'Mobile',
-  },
-  {
-    label: 'Design',
-    value: 'Design',
-  },
-  {
-    label: 'Community',
-    value: 'Community',
-  },
-  {
-    label: 'Growth',
-    value: 'Growth',
-  },
-  {
-    label: 'Content',
-    value: 'Content',
-  },
-  {
-    label: 'Other',
-    value: 'Other',
-  },
-];
-
-export const skillSubSkillMap = {
-  Frontend: [
-    {
-      label: 'React',
-      value: 'React',
-    },
-    {
-      label: 'Angular',
-      value: 'Angular',
-    },
-    {
-      label: 'Vue',
-      value: 'Vue',
-    },
-    {
-      label: 'Redux',
-      value: 'Redux',
-    },
-    {
-      label: 'Other',
-      value: 'Other',
-    },
-  ],
-  Backend: [
-    {
-      label: 'Javascript',
-      value: 'Javascript',
-    },
-    {
-      label: 'PHP',
-      value: 'PHP',
-    },
-    {
-      label: 'Python',
-      value: 'Python',
-    },
-    {
-      label: 'Java',
-      value: 'Java',
-    },
-    {
-      label: 'C++',
-      value: 'C++',
-    },
-    {
-      label: 'C',
-      value: 'C',
-    },
-    {
-      label: 'Ruby',
-      value: 'Ruby',
-    },
-    {
-      label: 'Go',
-      value: 'Go',
-    },
-    {
-      label: 'MySQL',
-      value: 'MySQL',
-    },
-    {
-      label: 'Postgres',
-      value: 'Postgres',
-    },
-    {
-      label: 'MongoDB',
-      value: 'MongoDB',
-    },
-    {
-      label: 'Other',
-      value: 'Other',
-    },
-  ],
-  Blockchain: [
-    {
-      label: 'Rust',
-      value: 'Rust',
-    },
-    {
-      label: 'Solidity',
-      value: 'Solidity',
-    },
-    {
-      label: 'Move',
-      value: 'Move',
-    },
-    {
-      label: 'Other',
-      value: 'Other',
-    },
-  ],
-  Mobile: [
-    {
-      label: 'Android',
-      value: 'Android',
-    },
-    {
-      label: 'iOS',
-      value: 'iOS',
-    },
-    {
-      label: 'Flutter',
-      value: 'Flutter',
-    },
-    {
-      label: 'React Native',
-      value: 'React Native',
-    },
-    {
-      label: 'Other',
-      value: 'Other',
-    },
-  ],
-  Design: [
-    {
-      label: 'UI/UX Design',
-      value: 'UI/UX Design',
-    },
-    {
-      label: 'Graphic Design',
-      value: 'Graphic Design',
-    },
-    {
-      label: 'Illustration',
-      value: 'Illustration',
-    },
-    {
-      label: 'Game Design',
-      value: 'Game Design',
-    },
-    {
-      label: 'Presentation Design',
-      value: 'Presentation Design',
-    },
-    {
-      label: 'Other',
-      value: 'Other',
-    },
-  ],
-  Community: [
-    {
-      label: 'Community Manager',
-      value: 'Community Manager',
-    },
-    {
-      label: 'Discord Moderator',
-      value: 'Discord Moderator',
-    },
-    {
-      label: 'Other',
-      value: 'Other',
-    },
-  ],
-  Growth: [
-    {
-      label: 'Business Development',
-      value: 'Business Development',
-    },
-    {
-      label: 'Digital Marketing',
-      value: 'Digital Marketing',
-    },
-    {
-      label: 'Marketing',
-      value: 'Marketing',
-    },
-    {
-      label: 'Other',
-      value: 'Other',
-    },
-  ],
-  Content: [
-    {
-      label: 'Research',
-      value: 'Research',
-    },
-    {
-      label: 'Video',
-      value: 'Video',
-    },
-    {
-      label: 'Writing',
-      value: 'Writing',
-    },
-    {
-      label: 'Social Media',
-      value: 'Social Media',
-    },
-    {
-      label: 'Other',
-      value: 'Other',
-    },
-  ],
-  Other: [
-    {
-      label: 'Data Analytics',
-      value: 'Data Analytics',
-    },
-    {
-      label: 'Operations',
-      value: 'Operations',
-    },
-    {
-      label: 'Product Feedback',
-      value: 'Product Feedback',
-    },
-    {
-      label: 'Product Manager',
-      value: 'Product Manager',
-    },
-  ],
-};
 
 export const PrizeList = ['first', 'second', 'third', 'fourth', 'fifth'];
 
@@ -824,7 +596,7 @@ export const CountryList: string[] = [
   'Syrian Arab Republic',
   'Taiwan',
   'Tajikistan',
-  'Tanzania, United Republic of',
+  'Tanzania',
   'Thailand',
   'Timor-Leste',
   'Togo',
@@ -870,6 +642,8 @@ export const CommunityList: string[] = [
   'DeveloperDAO',
   'Metacamp',
   '10K Designers',
+  'Rise In',
+  'Turbin3',
   'Christex Foundation',
   'Other',
 ];

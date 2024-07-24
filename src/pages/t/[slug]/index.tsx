@@ -18,6 +18,7 @@ import {
 } from '@chakra-ui/react';
 import axios from 'axios';
 import type { GetServerSideProps } from 'next';
+import Head from 'next/head';
 import { useRouter } from 'next/router';
 import { usePostHog } from 'posthog-js/react';
 import React, { useEffect, useMemo, useState } from 'react';
@@ -27,15 +28,14 @@ import { ShareIcon } from '@/components/misc/shareIcon';
 import { ShareProfile } from '@/components/modals/shareProfile';
 import { EarnAvatar } from '@/components/shared/EarnAvatar';
 import { EmptySection } from '@/components/shared/EmptySection';
-import { LoadingSection } from '@/components/shared/LoadingSection';
 import { type FeedDataProps, PowCard, SubmissionCard } from '@/features/feed';
 import type { User } from '@/interface/user';
 import { Default } from '@/layouts/Default';
-import { Meta } from '@/layouts/Meta';
 import { userStore } from '@/store/user';
+import { getURL } from '@/utils/validUrl';
 
 interface TalentProps {
-  slug: string;
+  talent: UserWithEarnings;
 }
 
 type UserWithEarnings = User & {
@@ -43,10 +43,7 @@ type UserWithEarnings = User & {
   feed: FeedDataProps[];
 };
 
-function TalentProfile({ slug }: TalentProps) {
-  const [talent, setTalent] = useState<UserWithEarnings>();
-  const [isloading, setIsloading] = useState<boolean>(true);
-  const [error, setError] = useState(false);
+function TalentProfile({ talent }: TalentProps) {
   const [activeTab, setActiveTab] = useState<'activity' | 'projects'>(
     'activity',
   );
@@ -76,28 +73,6 @@ function TalentProfile({ slug }: TalentProps) {
   } = useDisclosure();
 
   const { isOpen, onOpen, onClose } = useDisclosure();
-
-  useEffect(() => {
-    const fetch = async () => {
-      try {
-        setIsloading(true);
-        const res = await axios.post(`/api/user/getAllInfo`, {
-          username: slug,
-        });
-
-        if (res) {
-          setTalent(res?.data);
-          setError(false);
-          setIsloading(false);
-        }
-      } catch (err) {
-        console.log(err);
-        setError(true);
-        setIsloading(false);
-      }
-    };
-    fetch();
-  }, []);
 
   const bgImages = ['1.png', '2.png', '3.png', '4.png', '5.png'];
 
@@ -151,16 +126,9 @@ function TalentProfile({ slug }: TalentProps) {
   }, [activeTab, talent?.feed]);
 
   const addNewPow = (newPow: any) => {
-    setTalent((prevTalent) => {
-      if (!prevTalent) {
-        return prevTalent;
-      }
-      const previousFeed = prevTalent.feed ?? [];
-      return {
-        ...prevTalent,
-        feed: [newPow, ...previousFeed],
-      };
-    });
+    if (talent) {
+      talent.feed = [newPow, ...talent.feed];
+    }
   };
 
   const isMD = useBreakpointValue({ base: false, md: true });
@@ -238,30 +206,50 @@ function TalentProfile({ slug }: TalentProps) {
     );
   };
 
+  const ogImage = new URL(`${getURL()}api/dynamic-og/talent/`);
+  ogImage.searchParams.set('name', `${talent?.firstName} ${talent?.lastName}`);
+  ogImage.searchParams.set('username', talent?.username!);
+  ogImage.searchParams.set('skills', JSON.stringify(talent?.skills));
+  ogImage.searchParams.set(
+    'totalEarned',
+    talent?.totalEarnedInUSD!.toString() || '0',
+  );
+  ogImage.searchParams.set('submissionCount', submissionCount.toString());
+  ogImage.searchParams.set('winnerCount', winnerCount.toString());
+  ogImage.searchParams.set('photo', talent?.photo!);
+
+  const title =
+    talent?.firstName && talent?.lastName
+      ? `Superteam Earn Talent: ${talent?.firstName} ${talent?.lastName}`
+      : 'Superteam Earn';
+
   return (
     <>
       <Default
         meta={
-          <Meta
-            title={
-              talent?.firstName && talent?.lastName
-                ? `Superteam Earn Talent: ${talent?.firstName} ${talent?.lastName}`
-                : 'Superteam Earn'
-            }
-            description={
-              talent?.firstName && talent?.lastName
-                ? `${talent.firstName} ${talent.lastName} is on Superteam Earn. Become a part of our talent community to explore opportunities in the crypto space and work on bounties, grants, and projects.`
-                : 'Superteam Earn is a platform for developers, designers, and content marketers to work on real-world crypto projects. Explore opportunities by becoming part of our community.'
-            }
-          />
+          <Head>
+            <title>{title}</title>
+            <meta property="og:title" content={title} />
+            <meta property="og:image" content={ogImage.toString()} />
+            <meta name="twitter:title" content={title} />
+            <meta name="twitter:image" content={ogImage.toString()} />
+            <meta name="twitter:card" content="summary_large_image" />
+            <meta property="og:image:width" content="1200" />
+            <meta property="og:image:height" content="630" />
+            <meta property="og:image:alt" content="Talent on Superteam" />
+            <meta charSet="UTF-8" key="charset" />
+            <meta
+              name="viewport"
+              content="width=device-width,initial-scale=1"
+              key="viewport"
+            />
+          </Head>
         }
       >
-        {isloading && <LoadingSection />}
-        {!isloading && !!error && <EmptySection />}
-        {!isloading && !error && !talent?.id && (
+        {!talent?.id && (
           <EmptySection message="Sorry! The profile you are looking for is not available." />
         )}
-        {!isloading && !error && !!talent?.id && (
+        {!!talent?.id && (
           <Box bg="white">
             <Box
               w="100%"
@@ -491,6 +479,7 @@ function TalentProfile({ slug }: TalentProps) {
                 >
                   <Flex direction={'column'}>
                     <Text fontWeight={600}>
+                      $
                       {new Intl.NumberFormat('en-US', {
                         maximumFractionDigits: 0,
                       }).format(Math.round(talent?.totalEarnedInUSD || 0))}
@@ -655,10 +644,23 @@ function TalentProfile({ slug }: TalentProps) {
     </>
   );
 }
+
 export const getServerSideProps: GetServerSideProps = async (context) => {
   const { slug } = context.query;
-  return {
-    props: { slug },
-  };
+  try {
+    const res = await axios.post(`${getURL()}/api/user/info`, {
+      username: slug,
+    });
+    const talent = res.data;
+    return {
+      props: { talent },
+    };
+  } catch (error) {
+    console.error(error);
+    return {
+      props: { talent: null },
+    };
+  }
 };
+
 export default TalentProfile;

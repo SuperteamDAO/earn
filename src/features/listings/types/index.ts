@@ -73,6 +73,8 @@ interface Eligibility {
   order: number;
   question: string;
   type?: 'text';
+  optional?: boolean;
+  isLink?: boolean;
 }
 
 export interface References {

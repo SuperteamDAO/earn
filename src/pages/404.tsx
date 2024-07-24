@@ -1,9 +1,25 @@
 import { Image, Text, VStack } from '@chakra-ui/react';
+import * as Sentry from '@sentry/nextjs';
+import { useRouter } from 'next/router';
+import { useEffect } from 'react';
 
 import { Default } from '@/layouts/Default';
 import { Meta } from '@/layouts/Meta';
 
 export default function Custom404() {
+  const router = useRouter();
+
+  useEffect(() => {
+    if (typeof window !== 'undefined') {
+      Sentry.captureMessage(`Page Not Found: ${router.asPath}`, {
+        level: 'error',
+        extra: {
+          route: router.asPath,
+        },
+      });
+    }
+  }, [router.asPath]);
+
   return (
     <>
       <Default

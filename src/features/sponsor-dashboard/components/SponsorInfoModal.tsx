@@ -55,7 +55,10 @@ export const SponsorInfoModal = ({
       ...data,
       photo: isGooglePhoto ? userInfo?.photo : imageUrl,
     };
-    const updatedUser = await axios.post('/api/user/update/', finalData);
+    const updatedUser = await axios.post(
+      '/api/sponsors/usersponsor-details/',
+      finalData,
+    );
     setUserInfo(updatedUser?.data);
     setIsSubmitting(false);
     onClose();

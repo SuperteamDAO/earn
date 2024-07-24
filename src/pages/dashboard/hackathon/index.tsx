@@ -176,7 +176,7 @@ export default function Hackathon() {
 
   const deleteSelectedDraft = async () => {
     try {
-      await axios.post(`/api/bounties/delete/${bounty.id}`);
+      await axios.post(`/api/listings/delete/${bounty.id}`);
       const update = bounties.filter((x) => x.id !== bounty.id);
       setBounties(update);
     } catch (e) {

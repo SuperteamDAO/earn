@@ -78,9 +78,8 @@ const Index = () => {
   const getMembers = async () => {
     setIsMembersLoading(true);
     try {
-      const membersList = await axios.get('/api/members/', {
+      const membersList = await axios.get('/api/sponsor-dashboard/members/', {
         params: {
-          sponsorId: userInfo?.currentSponsorId,
           searchText,
           skip,
           take: length,
@@ -116,7 +115,7 @@ const Index = () => {
   }, [userInfo?.currentSponsorId, skip, searchText]);
 
   const onRemoveMember = async (userId: string | undefined) => {
-    await axios.post('/api/members/remove', {
+    await axios.post('/api/sponsor-dashboard/members/remove', {
       id: userId,
     });
 
@@ -125,10 +124,16 @@ const Index = () => {
 
   useEffect(() => {
     const getSponsorStats = async () => {
-      const sponsorData = await axios.get('/api/sponsors/stats');
-      setSponsorStats(sponsorData.data);
-      setIsStatsLoading(false);
+      try {
+        const sponsorData = await axios.get('/api/sponsors/stats');
+        setSponsorStats(sponsorData.data);
+      } catch (err) {
+        console.log('Failed to fetch sponsor stats');
+      } finally {
+        setIsStatsLoading(false);
+      }
     };
+
     getSponsorStats();
   }, [userInfo?.currentSponsorId]);
 

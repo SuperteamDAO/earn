@@ -48,7 +48,7 @@ export const EmailSettingsModal = ({
     try {
       posthog.capture('confirm_email preferences');
       setIsUpdating(true);
-      await axios.post('/api/user/updateEmailSettings', {
+      await axios.post('/api/user/update-email-settings', {
         categories: selectedCategories,
       });
 

@@ -40,7 +40,7 @@ import {
   workType,
 } from '@/constants';
 import type { PoW } from '@/interface/pow';
-import { SkillList, type SubSkillsType } from '@/interface/skills';
+import { skillSubSkillMap, type SubSkillsType } from '@/interface/skills';
 import { Default } from '@/layouts/Default';
 import { Meta } from '@/layouts/Meta';
 import { userStore } from '@/store/user';
@@ -307,22 +307,21 @@ export default function EditProfilePage({ slug }: { slug: string }) {
       const communityJSON = JSON.stringify(communityArray);
 
       const combinedSkills = skills.map((mainskill) => {
-        const main = SkillList.find(
-          (skill) => skill.mainskill === mainskill.value,
-        );
+        const main =
+          skillSubSkillMap[mainskill.value as keyof typeof skillSubSkillMap];
         const sub: SubSkillsType[] = [];
 
         subSkills.forEach((subskill) => {
           if (
             main &&
-            main.subskills.includes(subskill.value as SubSkillsType)
+            main.some((subSkillObj) => subSkillObj.value === subskill.value)
           ) {
             sub.push(subskill.value as SubSkillsType);
           }
         });
 
         return {
-          skills: main?.mainskill ?? '',
+          skills: mainskill.value,
           subskills: sub ?? [],
         };
       });

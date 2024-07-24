@@ -29,13 +29,10 @@ const Sumbissions = ({ slug, subid }: BountyDetailsProps) => {
   const getBounty = async () => {
     setIsLoading(true);
     try {
-      const bountyDetails = await axios.post(
-        `/api/bounties/submission/bounty`,
-        {
-          slug,
-          submissionId: subid,
-        },
-      );
+      const bountyDetails = await axios.post(`/api/submission/details`, {
+        slug,
+        submissionId: subid,
+      });
 
       setBounty(bountyDetails.data.bounty);
       setSubmission(bountyDetails.data.submission);

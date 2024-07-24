@@ -25,7 +25,7 @@ import {
   workExp,
   workType,
 } from '@/constants';
-import { SkillList, type SubSkillsType } from '@/interface/skills';
+import { skillSubSkillMap, type SubSkillsType } from '@/interface/skills';
 
 import type { UserStoreType } from './types';
 
@@ -58,7 +58,7 @@ export function YourWork({ setStep, useFormStore }: Step1Props) {
       currentEmployer: form.currentEmployer,
       community: form.community,
       workPrefernce: form.workPrefernce,
-      private: form.private || false,
+      isPrivate: form.isPrivate || false,
     },
   });
 
@@ -76,22 +76,21 @@ export function YourWork({ setStep, useFormStore }: Step1Props) {
     updateState({
       ...data,
       skills: skills.map((mainskill) => {
-        const main = SkillList.find(
-          (skill) => skill.mainskill === mainskill.value,
-        );
+        const main =
+          skillSubSkillMap[mainskill.value as keyof typeof skillSubSkillMap];
         const sub: SubSkillsType[] = [];
 
         subSkills.forEach((subskill) => {
           if (
             main &&
-            main.subskills.includes(subskill.value as SubSkillsType)
+            main.some((subSkillObj) => subSkillObj.value === subskill.value)
           ) {
             sub.push(subskill.value as SubSkillsType);
           }
         });
 
         return {
-          skills: main?.mainskill ?? '',
+          skills: mainskill.value,
           subskills: sub ?? [],
         };
       }),
@@ -291,7 +290,7 @@ export function YourWork({ setStep, useFormStore }: Step1Props) {
                 fontWeight={500}
                 colorScheme="purple"
                 size="md"
-                {...register('private')}
+                {...register('isPrivate')}
               >
                 Keep my info private
               </Checkbox>

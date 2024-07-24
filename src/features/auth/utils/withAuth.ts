@@ -1,21 +1,15 @@
-import {
-  type NextApiHandler,
-  type NextApiRequest,
-  type NextApiResponse,
-} from 'next';
+import { type NextApiHandler, type NextApiResponse } from 'next';
 import { getToken } from 'next-auth/jwt';
 
-interface NextApiRequestWithUserId extends NextApiRequest {
-  userId?: string;
-}
+import { type NextApiRequestWithUser } from '../types';
 
 type Handler = (
-  req: NextApiRequestWithUserId,
+  req: NextApiRequestWithUser,
   res: NextApiResponse,
 ) => void | Promise<void>;
 
 export const withAuth = (handler: Handler): NextApiHandler => {
-  return async (req: NextApiRequestWithUserId, res: NextApiResponse) => {
+  return async (req: NextApiRequestWithUser, res: NextApiResponse) => {
     const token = await getToken({ req });
 
     if (!token) {

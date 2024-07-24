@@ -62,65 +62,57 @@ export function ListingHeader({
   const hasDeadlineEnded = dayjs().isAfter(deadline);
   const hasHackathonStarted = dayjs().isAfter(Hackathon?.startDate);
   const [update, setUpdate] = useState<boolean>(false);
-  const [sub, setSub] = useState<
-    (SubscribeBounty & {
-      User: User | null;
-    })[]
-  >([]);
+  const [sub, setSub] = useState<(SubscribeBounty & { User: User | null })[]>(
+    [],
+  );
   const [isSubscribeLoading, setIsSubscribeLoading] = useState(false);
 
   const { status: authStatus } = useSession();
 
   const isAuthenticated = authStatus === 'authenticated';
 
-  const handleSubscribe = async () => {
-    if (isAuthenticated) {
-      if (!userInfo?.isTalentFilled) {
-        warningOnOpen();
-        return;
-      }
+  const handleToggleSubscribe = async () => {
+    if (!isAuthenticated || !userInfo?.isTalentFilled) return;
 
-      setIsSubscribeLoading(true);
-      try {
-        await axios.post('/api/bounties/subscribe/subscribe', {
-          bountyId: id,
-        });
-        setUpdate((prev) => !prev);
-        setIsSubscribeLoading(false);
-        toast.success('Subscribed to the listing');
-      } catch (error) {
-        console.log(error);
-        setIsSubscribeLoading(false);
-        toast.error('Error');
-      }
+    if (!userInfo?.isTalentFilled) {
+      warningOnOpen();
+      return;
     }
-  };
-  const handleUnSubscribe = async (idSub: string) => {
-    setIsSubscribeLoading(true);
 
+    setIsSubscribeLoading(true);
     try {
-      await axios.post('/api/bounties/subscribe/unSubscribe', {
-        id: idSub,
-      });
+      await axios.post('/api/listings/notifications/toggle', { bountyId: id });
       setUpdate((prev) => !prev);
-      setIsSubscribeLoading(false);
-      toast.success('Unsubscribed');
+      toast.success(
+        sub.find((e) => e.userId === userInfo?.id)
+          ? 'Unsubscribed'
+          : 'Subscribed',
+      );
     } catch (error) {
       console.log(error);
+      toast.error('Error occurred while toggling subscription');
+    } finally {
       setIsSubscribeLoading(false);
-      toast.error('Error');
     }
   };
 
   useEffect(() => {
     const fetchUser = async () => {
-      const { data } = await axios.post('/api/bounties/subscribe/get', {
-        listingId: id,
-      });
-      setSub(data);
+      try {
+        const { data } = await axios.post(
+          '/api/listings/notifications/status',
+          {
+            listingId: id,
+          },
+        );
+        setSub(data);
+      } catch (error) {
+        console.error('Error fetching user data:', error);
+      }
     };
+
     fetchUser();
-  }, [update]);
+  }, [update, id]);
 
   const isProject = type === 'project';
   const isHackathon = type === 'hackathon';
@@ -194,7 +186,7 @@ export function ListingHeader({
         </Text>
         {isHackathon ? (
           <Flex align={'center'}>
-            <Image h="4" alt={type} src={Hackathon?.altLogo} />
+            <Image h="2.5rem" alt={type} src={Hackathon?.altLogo} />
           </Flex>
         ) : (
           <Flex>
@@ -282,7 +274,7 @@ export function ListingHeader({
       >
         <HStack align="center">
           <SponsorLogo />
-          <VStack align={'start'}>
+          <VStack align={'start'} gap={isHackathon ? 0 : 1}>
             <HStack>
               <Flex display={{ base: 'none', md: 'flex' }}>
                 <ListingTitle />
@@ -325,17 +317,12 @@ export function ListingHeader({
                     )
                   }
                   onClick={() => {
-                    if (sub.find((e) => e.userId === userInfo?.id)) {
-                      posthog.capture('unnotify me_listing');
-                      handleUnSubscribe(
-                        sub.find((e) => e.userId === userInfo?.id)
-                          ?.id as string,
-                      );
-
-                      return;
-                    }
-                    posthog.capture('notify me_listing');
-                    handleSubscribe();
+                    posthog.capture(
+                      sub.find((e) => e.userId === userInfo?.id)
+                        ? 'unnotify me_listing'
+                        : 'notify me_listing',
+                    );
+                    handleToggleSubscribe();
                   }}
                   variant="solid"
                 />

@@ -35,7 +35,7 @@ function BountyDetails({ bounty: initialBounty }: BountyDetailsProps) {
   const getSubmissionsCount = async () => {
     try {
       const submissionCountDetails = await axios.get(
-        `/api/submission/${bounty?.id}/count/`,
+        `/api/listings/${bounty?.id}/submission-count/`,
       );
       setSubmissionNumber(submissionCountDetails?.data || 0);
     } catch (e) {
@@ -68,6 +68,29 @@ function BountyDetails({ bounty: initialBounty }: BountyDetailsProps) {
   }, [bounty, submissionNumber]);
 
   const encodedTitle = encodeURIComponent(initialBounty?.title || '');
+  const ogImage = new URL(`${getURL()}api/dynamic-og/listing/`);
+
+  ogImage.searchParams.set('title', encodedTitle);
+  ogImage.searchParams.set(
+    'reward',
+    initialBounty?.rewardAmount?.toString() || '',
+  );
+  ogImage.searchParams.set('token', initialBounty?.token || '');
+  ogImage.searchParams.set('sponsor', initialBounty?.sponsor?.name || '');
+  ogImage.searchParams.set('logo', initialBounty?.sponsor?.logo || '');
+  ogImage.searchParams.set('type', initialBounty?.type || '');
+  ogImage.searchParams.set(
+    'compensationType',
+    initialBounty?.compensationType || '',
+  );
+  ogImage.searchParams.set(
+    'minRewardAsk',
+    initialBounty?.minRewardAsk?.toString() || '',
+  );
+  ogImage.searchParams.set(
+    'maxRewardAsk',
+    initialBounty?.maxRewardAsk?.toString() || '',
+  );
 
   return (
     <Default
@@ -94,18 +117,12 @@ function BountyDetails({ bounty: initialBounty }: BountyDetailsProps) {
             property="og:title"
             content={`${initialBounty?.title || 'Listing'} | Superteam Earn`}
           />
-          <meta
-            property="og:image"
-            content={`${getURL()}api/listing-og/?title=${encodedTitle}&reward=${initialBounty?.rewardAmount}&token=${initialBounty?.token}&sponsor=${initialBounty?.sponsor?.name}&logo=${initialBounty?.sponsor?.logo}&type=${initialBounty?.type}&compensationType=${initialBounty?.compensationType}&minRewardAsk=${initialBounty?.minRewardAsk}&maxRewardAsk=${initialBounty?.maxRewardAsk}`}
-          />
+          <meta property="og:image" content={ogImage.toString()} />
           <meta
             name="twitter:title"
             content={`${initialBounty?.title || 'Listing'} | Superteam Earn`}
           />
-          <meta
-            name="twitter:image"
-            content={`${getURL()}api/listing-og/?title=${encodedTitle}&reward=${initialBounty?.rewardAmount}&token=${initialBounty?.token}&sponsor=${initialBounty?.sponsor?.name}&logo=${initialBounty?.sponsor?.logo}&type=${initialBounty?.type}&compensationType=${initialBounty?.compensationType}&minRewardAsk=${initialBounty?.minRewardAsk}&maxRewardAsk=${initialBounty?.maxRewardAsk}`}
-          />
+          <meta name="twitter:image" content={ogImage.toString()} />
           <meta name="twitter:card" content="summary_large_image" />
           <meta property="og:image:width" content="1200" />
           <meta property="og:image:height" content="630" />
@@ -169,9 +186,12 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
 
   let bountyData;
   try {
-    const bountyDetails = await axios.get(`${getURL()}api/bounties/${slug}`, {
-      params: { type },
-    });
+    const bountyDetails = await axios.get(
+      `${getURL()}api/listings/details/${slug}`,
+      {
+        params: { type },
+      },
+    );
     bountyData = bountyDetails.data;
   } catch (e) {
     console.error(e);

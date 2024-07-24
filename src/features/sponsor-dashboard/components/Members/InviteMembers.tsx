@@ -57,7 +57,7 @@ export function InviteMembers({ isOpen, onClose }: Props) {
     setIsInviting(true);
     setIsInviteError(false);
     try {
-      await axios.post('/api/members/invite/', {
+      await axios.post('/api/member-invites/send/', {
         email,
         memberType,
       });

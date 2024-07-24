@@ -1,6 +1,10 @@
 import { type Regions } from '@prisma/client';
 
-import { type References, type Rewards } from '@/features/listings';
+import {
+  type Listing,
+  type References,
+  type Rewards,
+} from '@/features/listings';
 
 import { type Ques } from '../components/ListingBuilder';
 
@@ -37,4 +41,9 @@ export interface ListingStoreType {
   form: ListingFormType;
   updateState: (data: Partial<ListingFormType>) => void;
   resetForm: () => void;
+  initializeForm: (
+    listing: Listing,
+    isDuplicating: boolean,
+    type: 'bounty' | 'project' | 'hackathon',
+  ) => void;
 }

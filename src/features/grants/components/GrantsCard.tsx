@@ -130,37 +130,41 @@ export const GrantsCard = ({ grant }: { grant: GrantWithApplicationCount }) => {
                   </Text>
                 </Flex>
               </>
-              <Text
-                display="flex"
-                color="brand.slate.300"
-                fontSize={['xx-small', 'xs', 'sm', 'sm']}
-              >
-                |
-              </Text>
-              <Flex align="center" gap={1}>
-                <Text
-                  color="gray.500"
-                  fontSize={['x-small', '0.71875rem']}
-                  fontWeight={500}
-                  whiteSpace="nowrap"
-                >
-                  $
-                  {formatNumberWithSuffix(
-                    totalApproved / _count.GrantApplication,
-                  ) || 0}{' '}
+              {!!totalApproved && (
+                <Flex align="center" gap={3}>
                   <Text
-                    as="span"
-                    sx={{
-                      wordSpacing: '-0.09rem',
-                    }}
-                    ml={0.3}
-                    color="gray.400"
-                    fontSize={['x-small', '0.6875rem']}
+                    display="flex"
+                    color="brand.slate.300"
+                    fontSize={['xx-small', 'xs', 'sm', 'sm']}
                   >
-                    Avg. Grant
+                    |
                   </Text>
-                </Text>
-              </Flex>
+                  <Text
+                    color="gray.500"
+                    fontSize={['x-small', '0.71875rem']}
+                    fontWeight={500}
+                    whiteSpace="nowrap"
+                  >
+                    {`$` +
+                      formatNumberWithSuffix(
+                        totalApproved / _count.GrantApplication,
+                      )}
+
+                    <Text
+                      as="span"
+                      sx={{
+                        wordSpacing: '-0.09rem',
+                      }}
+                      ml={0.3}
+                      color="gray.400"
+                      fontSize={['x-small', '0.6875rem']}
+                    >
+                      {' '}
+                      Avg. Grant
+                    </Text>
+                  </Text>
+                </Flex>
+              )}
             </Flex>
           </Flex>
         </Flex>

@@ -21,7 +21,7 @@ function AllListingsPage() {
       const listingsData = await axios.get('/api/listings/', {
         params: {
           category: 'bounties',
-          take: 100,
+          take: 500,
         },
       });
       setListings(listingsData.data);
@@ -45,7 +45,6 @@ function AllListingsPage() {
           emoji="/assets/home/emojis/moneyman.png"
           title="Freelance Gigs"
           viewAllLink="/all"
-          checkLanguage
         />
       </Box>
     </Home>

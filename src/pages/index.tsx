@@ -8,7 +8,7 @@ import { GrantsCard, type GrantWithApplicationCount } from '@/features/grants';
 import { type Listing, ListingSection, ListingTabs } from '@/features/listings';
 import { Home } from '@/layouts/Home';
 
-import { getGrants, getListings, type Skills } from './api/listings/v2';
+import { getGrants, getListings, type Skills } from './api/listings/homepage';
 
 interface Props {
   bounties: Listing[];
@@ -28,7 +28,6 @@ export default function HomePage({ bounties, grants }: Props) {
           viewAllLink="/all"
           take={20}
           showViewAll
-          checkLanguage
         />
         <ListingSection
           type="grants"
@@ -67,7 +66,6 @@ export const getServerSideProps: GetServerSideProps<Props> = async (
 
   const openResult = await getListings({
     order: 'asc',
-    isHomePage: true,
     skillFilter,
     statusFilter: 'open',
     type,
@@ -76,7 +74,6 @@ export const getServerSideProps: GetServerSideProps<Props> = async (
 
   const reviewResult = await getListings({
     order: 'desc',
-    isHomePage: true,
     skillFilter,
     statusFilter: 'review',
     type,
@@ -87,7 +84,6 @@ export const getServerSideProps: GetServerSideProps<Props> = async (
 
   const completeResult = await getListings({
     order: 'desc',
-    isHomePage: true,
     skillFilter,
     statusFilter: 'completed',
     type,

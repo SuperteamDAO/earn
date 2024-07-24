@@ -30,6 +30,7 @@ import { truncateString } from '@/utils/truncateString';
 import { type GrantApplicationWithUser } from '../../types';
 import { ApproveModal } from './Modals/ApproveModal';
 import { RejectModal } from './Modals/RejectModal';
+import { RecordPaymentButton } from './RecordPaymentButton';
 
 interface Props {
   grant: Grant | null;
@@ -58,9 +59,7 @@ const InfoBox = ({
     >
       {label}
     </Text>
-    <Text color="brand.slate.700" whiteSpace={'pre'} wordBreak={'break-all'}>
-      {content ? content : '-'}
-    </Text>
+    <Text color="brand.slate.700">{content ? content : '-'}</Text>
   </Box>
 );
 
@@ -73,6 +72,8 @@ export const ApplicationDetails = ({
 }: Props) => {
   const isPending = selectedApplication?.applicationStatus === 'Pending';
   const isApproved = selectedApplication?.applicationStatus === 'Approved';
+
+  const isNativeAndNonST = !grant?.airtableId && grant?.isNative;
 
   const {
     isOpen: approveIsOpen,
@@ -110,6 +111,7 @@ export const ApplicationDetails = ({
         setApplications={setApplications}
         applications={applications}
         setSelectedApplication={setSelectedApplication}
+        token={grant?.token || 'USDC'}
       />
 
       <ApproveModal
@@ -121,6 +123,7 @@ export const ApplicationDetails = ({
         setApplications={setApplications}
         applications={applications}
         setSelectedApplication={setSelectedApplication}
+        token={grant?.token || 'USDC'}
       />
 
       {applications.length ? (
@@ -191,6 +194,14 @@ export const ApplicationDetails = ({
                     Reject
                   </Button>
                 </>
+              )}
+              {isApproved && isNativeAndNonST && (
+                <RecordPaymentButton
+                  applicationId={selectedApplication.id}
+                  approvedAmount={selectedApplication.approvedAmount}
+                  totalPaid={selectedApplication.totalPaid}
+                  token={grant.token || 'USDC'}
+                />
               )}
             </Flex>
           </Flex>

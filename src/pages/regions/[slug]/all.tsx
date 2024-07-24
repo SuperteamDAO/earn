@@ -7,6 +7,7 @@ import { Superteams } from '@/constants/Superteam';
 import { type Listing, ListingTabs } from '@/features/listings';
 import { Home } from '@/layouts/Home';
 import { Meta } from '@/layouts/Meta';
+import { getURL } from '@/utils/validUrl';
 
 interface Listings {
   bounties?: Listing[];
@@ -44,12 +45,17 @@ export default function AllRegionListingsPage({
     getListings();
   }, []);
 
+  const ogImage = new URL(`${getURL()}api/dynamic-og/region/`);
+  ogImage.searchParams.set('region', st.region);
+  ogImage.searchParams.set('code', st.code!);
+
   return (
     <Home type="region" st={st}>
       <Meta
         title={`Welcome to Superteam Earn ${displayName} | Discover Bounties and Grants`}
         description={`Welcome to Superteam ${displayName}'s page — Discover bounties and grants and become a part of the global crypto community`}
         canonical={`https://earn.superteam.fun/regions/${slug}/`}
+        og={ogImage.toString()}
       />
       <Box w={'100%'}>
         <ListingTabs
@@ -58,7 +64,6 @@ export default function AllRegionListingsPage({
           emoji="/assets/home/emojis/moneyman.png"
           title="Freelance Gigs"
           viewAllLink="/all"
-          checkLanguage
         />
       </Box>
     </Home>

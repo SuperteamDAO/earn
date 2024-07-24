@@ -32,6 +32,7 @@ interface RejectModalProps {
   setSelectedApplication: Dispatch<
     SetStateAction<GrantApplicationWithUser | undefined>
   >;
+  token: string;
 }
 
 export const RejectModal = ({
@@ -43,16 +44,20 @@ export const RejectModal = ({
   setApplications,
   applications,
   setSelectedApplication,
+  token,
 }: RejectModalProps) => {
   const [loading, setLoading] = useState<boolean>(false);
 
   const rejectGrant = async () => {
     setLoading(true);
     try {
-      await axios.post(`/api/grantApplication/updateApplicationStatus`, {
-        id: applicationId,
-        applicationStatus: 'Rejected',
-      });
+      await axios.post(
+        `/api/sponsor-dashboard/grants/update-application-status`,
+        {
+          id: applicationId,
+          applicationStatus: 'Rejected',
+        },
+      );
 
       const updatedApplications = applications.map((application) =>
         application.id === applicationId
@@ -96,13 +101,12 @@ export const RejectModal = ({
             <Flex align="center">
               <Image
                 boxSize="6"
-                alt={`USDC icon`}
-                src={
-                  tokenList.find((t) => t.tokenSymbol === 'USDC')?.icon || ''
-                }
+                alt={`${token} icon`}
+                rounded={'full'}
+                src={tokenList.find((t) => t.tokenSymbol === token)?.icon || ''}
               />
               <Text ml={1} color="brand.slate.500" fontWeight={600}>
-                {ask} <Text as="span">USDC</Text>
+                {ask} <Text as="span">{token}</Text>
               </Text>
             </Flex>
           </Flex>

@@ -1,21 +1,32 @@
 import type { NextApiResponse } from 'next';
 
 import { type NextApiRequestWithUser, withAuth } from '@/features/auth';
+import { createSponsorEmailSettings } from '@/features/sponsor-dashboard';
+import logger from '@/lib/logger';
 import { prisma } from '@/prisma';
+import { safeStringify } from '@/utils/safeStringify';
 
 async function user(req: NextApiRequestWithUser, res: NextApiResponse) {
   const userId = req.userId;
-  const user = await prisma.user.findUnique({
-    where: {
-      id: userId as string,
-    },
-  });
-
-  const { name, slug, logo, url, industry, twitter, bio, entityName } =
-    req.body;
 
   try {
-    if (user && (!user.currentSponsorId || user.role === 'GOD')) {
+    const user = await prisma.user.findUnique({
+      where: { id: userId as string },
+    });
+
+    if (!user) {
+      logger.warn(`User not found: ${userId}`);
+      return res.status(404).json({ error: 'User not found' });
+    }
+
+    logger.debug(`Request body: ${safeStringify(req.body)}`);
+
+    const { name, slug, logo, url, industry, twitter, bio, entityName } =
+      req.body;
+
+    if (!user.currentSponsorId || user.role === 'GOD') {
+      logger.info(`Creating new sponsor for user: ${userId}`);
+
       const result = await prisma.sponsors.create({
         data: {
           name,
@@ -28,6 +39,7 @@ async function user(req: NextApiRequestWithUser, res: NextApiResponse) {
           entityName,
         },
       });
+
       await prisma.userSponsors.create({
         data: {
           userId: userId as string,
@@ -35,40 +47,30 @@ async function user(req: NextApiRequestWithUser, res: NextApiResponse) {
           role: 'ADMIN',
         },
       });
+
       await prisma.user.update({
-        where: {
-          id: userId as string,
-        },
-        data: {
-          currentSponsorId: result.id,
-        },
+        where: { id: userId as string },
+        data: { currentSponsorId: result.id },
       });
-      const categories = new Set();
 
-      categories.add('commentSponsor');
-      categories.add('deadlineSponsor');
-      categories.add('productAndNewsletter');
-      categories.add('replyOrTagComment');
+      await createSponsorEmailSettings(userId as string);
 
-      for (const category of categories) {
-        await prisma.emailSettings.create({
-          data: {
-            user: { connect: { id: userId as string } },
-            category: category as string,
-          },
-        });
-      }
-
+      logger.info(`New sponsor created successfully for user: ${userId}`);
       return res.status(200).json(result);
     } else {
-      return res.status(400).json({
+      logger.warn(
+        `User ${userId} does not have permission to create a sponsor`,
+      );
+      return res.status(403).json({
         message: 'Error occurred while adding a new sponsor.',
       });
     }
-  } catch (error) {
-    console.log(error);
-    return res.status(400).json({
-      error,
+  } catch (error: any) {
+    logger.error(
+      `Error occurred while adding a new sponsor for user ${userId}: ${error.message}`,
+    );
+    return res.status(500).json({
+      error: error.message || 'Internal server error',
       message: 'Error occurred while adding a new sponsor.',
     });
   }

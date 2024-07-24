@@ -1,3 +1,5 @@
+import { prisma } from '@/prisma';
+
 export const colorMap = {
   Spam: { bg: 'red.100', color: 'red.600' },
   Reviewed: { bg: 'blue.100', color: 'blue.600' },
@@ -8,3 +10,28 @@ export const colorMap = {
   Rejected: { bg: 'red.100', color: 'red.600' },
   Pending: { bg: 'orange.100', color: 'orange.800' },
 };
+
+export const isLink = (text: string) => {
+  const linkRegex =
+    /^(https?:\/\/)?(www\.)?[-a-zA-Z0-9@:%._\+~#=]{1,256}\.[a-zA-Z0-9()]{1,6}\b([-a-zA-Z0-9()@:%_\+.~#?&//=]*)/i;
+
+  return linkRegex.test(text);
+};
+
+export async function createSponsorEmailSettings(userId: string) {
+  const categories = new Set([
+    'commentSponsor',
+    'deadlineSponsor',
+    'productAndNewsletter',
+    'replyOrTagComment',
+  ]);
+
+  for (const category of categories) {
+    await prisma.emailSettings.create({
+      data: {
+        user: { connect: { id: userId } },
+        category,
+      },
+    });
+  }
+}

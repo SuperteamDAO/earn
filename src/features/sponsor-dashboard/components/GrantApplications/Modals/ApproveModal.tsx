@@ -44,6 +44,7 @@ interface ApproveModalProps {
   setSelectedApplication: Dispatch<
     SetStateAction<GrantApplicationWithUser | undefined>
   >;
+  token: string;
 }
 
 export const ApproveModal = ({
@@ -55,6 +56,7 @@ export const ApproveModal = ({
   setApplications,
   applications,
   setSelectedApplication,
+  token,
 }: ApproveModalProps) => {
   const [approvedAmount, setApprovedAmount] = useState<number | undefined>(ask);
   const [loading, setLoading] = useState<boolean>(false);
@@ -76,11 +78,14 @@ export const ApproveModal = ({
 
     setLoading(true);
     try {
-      await axios.post(`/api/grantApplication/updateApplicationStatus`, {
-        id: applicationId,
-        applicationStatus: 'Approved',
-        approvedAmount,
-      });
+      await axios.post(
+        `/api/sponsor-dashboard/grants/update-application-status`,
+        {
+          id: applicationId,
+          applicationStatus: 'Approved',
+          approvedAmount,
+        },
+      );
 
       const updatedApplications = applications.map((application) =>
         application.id === applicationId
@@ -131,15 +136,13 @@ export const ApproveModal = ({
             <Flex align="center">
               <Image
                 boxSize="5"
-                alt={`USDC icon`}
-                src={
-                  tokenList.find((t) => t.tokenSymbol === 'USDC')?.icon || ''
-                }
+                alt={`${token} icon`}
+                src={tokenList.find((t) => t.tokenSymbol === token)?.icon || ''}
               />
               <Text ml={1} color="brand.slate.600" fontWeight={600}>
                 {ask}{' '}
                 <Text as="span" color="brand.slate.400">
-                  USDC
+                  {token}
                 </Text>
               </Text>
             </Flex>
@@ -180,12 +183,13 @@ export const ApproveModal = ({
                 <Image
                   boxSize="5"
                   mr={1}
-                  alt={`USDC icon`}
+                  alt={`${token} icon`}
+                  rounded={'full'}
                   src={
-                    tokenList.find((t) => t.tokenSymbol === 'USDC')?.icon || ''
+                    tokenList.find((t) => t.tokenSymbol === token)?.icon || ''
                   }
                 />
-                USDC
+                {token}
               </InputRightAddon>
             </InputGroup>
           </Flex>

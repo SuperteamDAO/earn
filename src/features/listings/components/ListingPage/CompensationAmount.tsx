@@ -34,7 +34,7 @@ export const CompensationAmount = ({
       case 'fixed':
         return (
           <>
-            {formatNumberWithSuffix(rewardAmount!)}
+            {formatNumberWithSuffix(rewardAmount!, 2, true)}
             <Token />
           </>
         );

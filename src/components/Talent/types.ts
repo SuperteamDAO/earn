@@ -16,7 +16,7 @@ interface WorkType {
   skills: Skills;
   subSkills: string;
   workPrefernce: string;
-  private: boolean;
+  isPrivate: boolean;
 }
 
 interface LinksType {
@@ -29,7 +29,6 @@ interface LinksType {
 }
 
 export interface UserStoreType {
-  otp: number | undefined;
   emailVerified: boolean;
   form: AboutYouType & WorkType & LinksType;
   updateState: (

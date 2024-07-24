@@ -26,6 +26,7 @@ export default function BountiesPage() {
           category: 'bounties',
           type: 'bounty',
           deadline: date,
+          take: 100,
         },
       });
       setListings(listingsData.data);

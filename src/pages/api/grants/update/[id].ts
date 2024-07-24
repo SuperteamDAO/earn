@@ -1,60 +1,47 @@
 import type { NextApiResponse } from 'next';
 
-import { type NextApiRequestWithUser, withAuth } from '@/features/auth';
+import {
+  checkGrantSponsorAuth,
+  type NextApiRequestWithSponsor,
+  withSponsorAuth,
+} from '@/features/auth';
+import logger from '@/lib/logger';
 import { prisma } from '@/prisma';
+import { safeStringify } from '@/utils/safeStringify';
 
-async function grant(req: NextApiRequestWithUser, res: NextApiResponse) {
+async function grant(req: NextApiRequestWithSponsor, res: NextApiResponse) {
   const params = req.query;
   const id = params.id as string;
-  const updatedData = req.body;
+
+  const { isPublished } = req.body;
+
+  logger.debug(`Request body: ${safeStringify(req.body)}`);
 
   try {
-    const userId = req.userId;
+    const userSponsorId = req.userSponsorId;
 
-    const user = await prisma.user.findUnique({
-      where: {
-        id: userId as string,
-      },
-    });
-
-    const grant = await prisma.grants.findUnique({
-      where: { id },
-    });
-
-    if (!user) {
-      return res
-        .status(403)
-        .json({ error: 'User does not have a current sponsor.' });
+    const { error } = await checkGrantSponsorAuth(userSponsorId, id);
+    if (error) {
+      return res.status(error.status).json({ error: error.message });
     }
 
-    if (
-      !user ||
-      !user.currentSponsorId ||
-      grant?.sponsorId !== user.currentSponsorId
-    ) {
-      return res
-        .status(403)
-        .json({ error: 'User does not have a current sponsor.' });
-    }
-
-    if (!grant) {
-      return res
-        .status(404)
-        .json({ message: `Grant with id=${id} not found.` });
-    }
-
+    logger.debug(`Updating grant with ID: ${id}`);
     const result = await prisma.grants.update({
       where: { id },
-      data: updatedData,
+      data: { isPublished },
     });
 
+    logger.info(`Grant with ID: ${id} updated successfully`);
     return res.status(200).json(result);
-  } catch (error) {
+  } catch (error: any) {
+    logger.error(
+      `Error occurred while updating grant with ID: ${id}: ${safeStringify(error)}`,
+    );
     return res.status(400).json({
-      error,
+      error: error.message,
       message: `Error occurred while updating grant with id=${id}.`,
     });
   }
 }
 
-export default withAuth(grant);
+export default withSponsorAuth(grant);

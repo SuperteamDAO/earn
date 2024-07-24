@@ -128,6 +128,34 @@ export const DesktopNavbar = ({ onLoginOpen, onSearchOpen }: Props) => {
                   />
                 );
               })}
+              <Link
+                as={NextLink}
+                alignItems="center"
+                display="flex"
+                href="/talent-olympics"
+              >
+                <Image
+                  h={12}
+                  pt={0.5}
+                  objectFit={'contain'}
+                  alt="Talent Olympics Nav Icon"
+                  src="/assets/hackathon/talent-olympics/nav.svg"
+                />
+              </Link>
+              {/* {HACKATHON_NAV_ITEMS?.map((navItem) => {
+                const isCurrent = `${navItem.href}` === router.asPath;
+                return (
+                  <NavLink
+                    onClick={() => {
+                      posthog.capture(navItem.posthog);
+                    }}
+                    key={navItem.label}
+                    href={navItem.href ?? '#'}
+                    label={renderLabel(navItem)}
+                    isActive={isCurrent}
+                  />
+                );
+              })} */}
             </Stack>
           </Flex>
         </AbsoluteCenter>

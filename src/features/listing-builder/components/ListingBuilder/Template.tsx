@@ -36,7 +36,7 @@ export const Template = ({
   const getListingTemplates = async () => {
     setIsTemplatesLoading(true);
     try {
-      const templates: any = await axios.get('/api/bounties/templates/', {
+      const templates: any = await axios.get('/api/listings/templates/', {
         params: { type },
       });
       setTemplates(templates?.data || []);

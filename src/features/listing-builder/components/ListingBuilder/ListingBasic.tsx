@@ -21,7 +21,6 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { Regions } from '@prisma/client';
 import axios from 'axios';
 import debounce from 'lodash.debounce';
-import { useSession } from 'next-auth/react';
 import { usePostHog } from 'posthog-js/react';
 import {
   type Dispatch,
@@ -77,7 +76,7 @@ export const ListingBasic = ({
     try {
       const listingId = editable && !isDuplicating ? form?.id : null;
       await axios.get(
-        `/api/listings/slug?slug=${slug}&check=true&id=${listingId}`,
+        `/api/listings/check-slug?slug=${slug}&check=true&id=${listingId}`,
       );
       return true;
     } catch (error) {
@@ -223,7 +222,7 @@ export const ListingBasic = ({
           strict: true,
         });
         const newSlug = await axios.get(
-          `/api/listings/slug?slug=${slugifiedTitle}&check=false`,
+          `/api/listings/check-slug?slug=${slugifiedTitle}&check=false`,
         );
         setIsSlugGenerating(false);
         return newSlug.data.slug;
@@ -258,7 +257,6 @@ export const ListingBasic = ({
 
   const isProject = type === 'project';
 
-  const { data: session } = useSession();
   const posthog = usePostHog();
 
   const onSubmit = (data: any) => {
@@ -315,6 +313,7 @@ export const ListingBasic = ({
               }}
               focusBorderColor="brand.purple"
               id="title"
+              maxLength={80}
               {...register('title', {
                 required: true,
                 onChange: (e) => {
@@ -329,6 +328,19 @@ export const ListingBasic = ({
               })}
               placeholder="Develop a new landing page"
             />
+            <Text
+              color={(title?.length || 0) > 70 ? 'red' : 'brand.slate.400'}
+              fontSize={'xs'}
+              textAlign="right"
+            >
+              {title &&
+                title?.length > 50 &&
+                (80 - title?.length === 0 ? (
+                  <p>Character limit reached</p>
+                ) : (
+                  <p>{80 - (title.length || 0)} characters left</p>
+                ))}
+            </Text>
             {suggestions.length > 0 && (
               <Flex
                 gap={1}
@@ -417,26 +429,22 @@ export const ListingBasic = ({
             skills={skills}
             subSkills={subSkills}
           />
-          {session?.user?.role === 'GOD' && (
-            <>
-              <FormControl w="full" mb={5}>
-                <Flex>
-                  <ListingFormLabel htmlFor="region">
-                    Listing Geography
-                  </ListingFormLabel>
-                  <ListingTooltip label="Select the Superteam region this listing will be available and relevant to. Only users from the region you specify will be able to apply/submit to this listing." />
-                </Flex>
-                <Select {...register('region')}>
-                  <option value={Regions.GLOBAL}>Global</option>
-                  {Superteams.map((st) => (
-                    <option value={st.region} key={st.name}>
-                      {st.displayValue}
-                    </option>
-                  ))}
-                </Select>
-              </FormControl>
-            </>
-          )}
+          <FormControl w="full" mb={5}>
+            <Flex>
+              <ListingFormLabel htmlFor="region">
+                Listing Geography
+              </ListingFormLabel>
+              <ListingTooltip label="Select the Superteam region this listing will be available and relevant to. Only users from the region you specify will be able to apply/submit to this listing." />
+            </Flex>
+            <Select {...register('region')}>
+              <option value={Regions.GLOBAL}>Global</option>
+              {Superteams.map((st) => (
+                <option value={st.region} key={st.name}>
+                  {st.displayValue}
+                </option>
+              ))}
+            </Select>
+          </FormControl>
           <FormControl
             w="full"
             mb={5}

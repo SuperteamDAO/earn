@@ -1,72 +1,57 @@
 import type { NextApiResponse } from 'next';
 
-import { type NextApiRequestWithUser, withAuth } from '@/features/auth';
+import {
+  checkGrantSponsorAuth,
+  type NextApiRequestWithSponsor,
+  withSponsorAuth,
+} from '@/features/auth';
+import logger from '@/lib/logger';
 import { prisma } from '@/prisma';
+import { safeStringify } from '@/utils/safeStringify';
 
-async function grantDelete(req: NextApiRequestWithUser, res: NextApiResponse) {
+async function grantDelete(
+  req: NextApiRequestWithSponsor,
+  res: NextApiResponse,
+) {
   const params = req.query;
   const id = params.id as string;
 
+  logger.debug(`Request query: ${safeStringify(req.query)}`);
+
   try {
-    const userId = req.userId;
+    const userSponsorId = req.userSponsorId;
 
-    const user = await prisma.user.findUnique({
-      where: {
-        id: userId,
-      },
-    });
-
-    const deleteGrant = await prisma.grants.findFirst({
-      where: {
-        id,
-      },
-    });
-
-    if (
-      !user ||
-      !user.currentSponsorId ||
-      deleteGrant?.sponsorId !== user.currentSponsorId
-    ) {
-      return res
-        .status(403)
-        .json({ error: 'User does not have a current sponsor.' });
+    const { error, grant } = await checkGrantSponsorAuth(userSponsorId, id);
+    if (error) {
+      return res.status(error.status).json({ error: error.message });
     }
 
-    if (!deleteGrant) {
-      return res
-        .status(404)
-        .json({ message: `Grant with id=${id} not found.` });
-    }
-
-    if (!deleteGrant) {
+    if (grant.status !== 'OPEN' || grant.isPublished) {
+      logger.warn(`Grant with ID: ${id} is not in a deletable state`);
       return res
         .status(400)
-        .json({ message: `Grant with id=${id} not found.` });
-    }
-    if (deleteGrant.status !== 'OPEN' || deleteGrant.isPublished) {
-      return res
-        .status(400)
-        .json({ messsage: 'Only draft bounties can be deleted' });
+        .json({ message: 'Only draft grants can be deleted' });
     }
 
+    logger.debug(`Updating grant status to inactive for grant ID: ${id}`);
     await prisma.grants.update({
-      where: {
-        id,
-      },
-      data: {
-        isActive: false,
-      },
+      where: { id },
+      data: { isActive: false },
     });
 
-    return res.status(200).json({
-      message: `Draft Bounty with id=${id} deleted successfully.`,
-    });
-  } catch (error) {
+    logger.info(`Grant with ID: ${id} deleted successfully`);
+    return res
+      .status(200)
+      .json({ message: `Draft Grant with id=${id} deleted successfully.` });
+  } catch (error: any) {
+    logger.error(
+      `Error occurred while deleting grant with ID: ${id}: ${safeStringify(error)}`,
+    );
     return res.status(400).json({
-      error,
-      message: `Error occurred while deleting bounty with id=${id}.`,
+      error: error.message,
+      message: `Error occurred while deleting grant with id=${id}.`,
     });
   }
 }
 
-export default withAuth(grantDelete);
+export default withSponsorAuth(grantDelete);

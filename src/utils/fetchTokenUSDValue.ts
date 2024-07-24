@@ -2,6 +2,7 @@ import axios from 'axios';
 import dayjs from 'dayjs';
 
 import { tokenList } from '@/constants';
+import logger from '@/lib/logger';
 
 export async function fetchTokenUSDValue(token: string, date: Date) {
   try {
@@ -25,7 +26,7 @@ export async function fetchTokenUSDValue(token: string, date: Date) {
 
     return response.data.market_data.current_price.usd;
   } catch (error) {
-    console.error('Error fetching token value from CoinGecko:', error);
+    logger.error('Error fetching token value from CoinGecko:', error);
     return 1;
   }
 }

@@ -1,15 +1,21 @@
 export const formatNumberWithSuffix = (
   amount: number,
   decimals: number = 2,
+  skipThousands: boolean = false,
 ) => {
   if (isNaN(amount)) return null;
 
-  if (amount < 1000) return amount?.toString();
+  if (amount < 1000) return amount;
 
   const suffixes = ['', 'k', 'm', 'b'];
-  const tier = (Math.log10(amount) / 3) | 0;
+  let tier = (Math.log10(amount) / 3) | 0;
 
-  if (tier === 0) return amount.toString();
+  // adjust tier if skipping thousands
+  if (skipThousands && tier === 1 && amount < 10000) {
+    tier = 0;
+  }
+
+  if (tier === 0) return amount.toLocaleString();
 
   const suffix = suffixes[tier];
   const scale = Math.pow(10, tier * 3);
@@ -17,12 +23,15 @@ export const formatNumberWithSuffix = (
 
   let formattedNumber;
   if (tier === 1) {
-    formattedNumber = scaled.toFixed(decimals).replace(/\.?0+$/, '');
+    formattedNumber = scaled
+      .toFixed(decimals)
+      .replace(/\.?0+$/, '')
+      .toLocaleString();
   } else {
     formattedNumber =
       scaled % 1 === 0
-        ? scaled.toString()
-        : scaled.toFixed(1).replace(/\.0$/, '');
+        ? scaled.toLocaleString()
+        : scaled.toFixed(1).replace(/\.0$/, '').toLocaleString();
   }
 
   return formattedNumber + suffix;

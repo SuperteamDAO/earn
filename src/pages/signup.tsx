@@ -9,7 +9,7 @@ import { Default } from '@/layouts/Default';
 import { Meta } from '@/layouts/Meta';
 
 interface Props {
-  invite: string;
+  invite?: string;
 }
 
 function SignUp({ invite }: Props) {
@@ -20,7 +20,7 @@ function SignUp({ invite }: Props) {
   const getInvite = async () => {
     setIsLoading(true);
     try {
-      const result = await axios.get('/api/invite/', {
+      const result = await axios.get('/api/member-invites/', {
         params: {
           invite,
         },
@@ -30,9 +30,9 @@ function SignUp({ invite }: Props) {
       } else {
         setInviteInfo(result.data);
       }
-      setIsLoading(false);
     } catch (e) {
       setIsError(true);
+    } finally {
       setIsLoading(false);
     }
   };
@@ -60,7 +60,7 @@ function SignUp({ invite }: Props) {
       {!isLoading && isError && (
         <ErrorSection
           title="Invalid Invite!"
-          message="You invite is either invalid or expired. Please try again."
+          message="Your invite is either invalid or expired. Please try again."
         />
       )}
       {!isLoading && !isError && <InviteView invite={inviteInfo} />}
@@ -68,10 +68,15 @@ function SignUp({ invite }: Props) {
   );
 }
 
-export const getServerSideProps: GetServerSideProps = async (context) => {
-  const { invite } = context.query;
+export const getServerSideProps: GetServerSideProps<Props> = async (
+  context,
+) => {
+  const { query } = context;
+  const invite = Array.isArray(query.invite) ? query.invite[0] : query.invite;
+  const cleanInvite = invite ? invite.split('?')[0] : undefined;
+
   return {
-    props: { invite: invite || undefined },
+    props: { invite: cleanInvite },
   };
 };
 

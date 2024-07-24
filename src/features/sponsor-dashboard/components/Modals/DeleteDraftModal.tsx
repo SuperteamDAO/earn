@@ -10,7 +10,7 @@ import {
   Text,
 } from '@chakra-ui/react';
 import axios from 'axios';
-import React from 'react';
+import React, { useState } from 'react';
 import { AiOutlineDelete } from 'react-icons/ai';
 
 import { type ListingWithSubmissions } from '@/features/listings';
@@ -32,21 +32,26 @@ export const DeleteDraftModal = ({
   deleteDraftOnClose,
   listingType,
 }: DeleteDraftModalProps) => {
+  const [isLoading, setIsLoading] = useState(false);
+
   const deleteSelectedDraft = async () => {
+    setIsLoading(true);
     try {
       if (listingType === 'grant') {
-        await axios.post(`/api/listings/delete/${listingId}`);
-      } else {
         await axios.post(`/api/grants/delete/${listingId}`);
+      } else {
+        await axios.post(`/api/listings/delete/${listingId}`);
       }
       const update = listings.filter((x) => x.id !== listingId);
       setListings(update);
     } catch (e) {
       console.log(e);
     } finally {
+      setIsLoading(false);
       deleteDraftOnClose();
     }
   };
+
   return (
     <Modal isOpen={deleteDraftIsOpen} onClose={deleteDraftOnClose}>
       <ModalOverlay />
@@ -69,6 +74,7 @@ export const DeleteDraftModal = ({
             Close
           </Button>
           <Button
+            isLoading={isLoading}
             leftIcon={<AiOutlineDelete />}
             loadingText="Deleting..."
             onClick={deleteSelectedDraft}

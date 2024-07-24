@@ -40,11 +40,13 @@ function BountySubmissions({ listing }: Props) {
 
   const [usedPositions, setUsedPositions] = useState<string[]>([]);
 
+  useEffect(() => {}, [bounty]);
+
   const getBounty = async () => {
     setIsBountyLoading(true);
     try {
       const bountyDetails = await axios.get(
-        `/api/bounties/${listing}/dashboard/`,
+        `/api/sponsor-dashboard/${listing}/listing?type=hackathon`,
       );
       setBounty(bountyDetails.data);
       if (bountyDetails.data.hackathonId !== userInfo?.hackathonId) {
@@ -72,7 +74,7 @@ function BountySubmissions({ listing }: Props) {
   const getSubmissions = async () => {
     try {
       const submissionDetails = await axios.get(
-        `/api/bounties/${listing}/submissions`,
+        `/api/sponsor-dashboard/${listing}/submissions`,
         {
           params: {
             searchText,

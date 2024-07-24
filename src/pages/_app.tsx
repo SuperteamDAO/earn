@@ -2,6 +2,7 @@ import 'degen/styles';
 import '../styles/globals.scss';
 
 import { ChakraProvider } from '@chakra-ui/react';
+import { setUser } from '@sentry/nextjs';
 import axios from 'axios';
 import type { AppProps } from 'next/app';
 import { useRouter } from 'next/router';
@@ -57,7 +58,9 @@ function MyApp({ Component, pageProps }: any) {
 
   const newLoginState = router.query.loginState;
   if (newLoginState == 'signedIn' && session) {
-    posthog.identify(session.user.email);
+    const user = session.user;
+    posthog.identify(user.email);
+    setUser({ id: user?.id, email: user?.email });
     const url = new URL(window.location.href);
     url.searchParams.delete('loginState');
     window.history.replaceState(null, '', url.href);
@@ -102,7 +105,7 @@ function App({ Component, pageProps: { session, ...pageProps } }: AppProps) {
 
   const getSponsorLatestActiveSlug = async () => {
     try {
-      const slug = await axios.get('/api/bounties/latestActiveSlug');
+      const slug = await axios.get('/api/listings/latest-active-slug');
       if (slug.data) {
         setLatestActiveSlug(slug.data.slug);
       }

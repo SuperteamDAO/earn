@@ -50,7 +50,7 @@ import { truncatePublicKey } from '@/utils/truncatePublicKey';
 import { truncateString } from '@/utils/truncateString';
 
 import { labelMenuOptions } from '../../constants';
-import { colorMap } from '../../utils';
+import { colorMap, isLink } from '../../utils';
 
 interface Props {
   bounty: Listing | null;
@@ -104,7 +104,7 @@ export const SubmissionDetails = ({
     if (!id) return;
     setIsSelectingWinner(true);
     try {
-      await axios.post(`/api/submission/toggleWinner/`, {
+      await axios.post(`/api/sponsor-dashboard/submission/toggle-winner/`, {
         id,
         isWinner: !!position,
         winnerPosition: position || null,
@@ -222,13 +222,16 @@ export const SubmissionDetails = ({
               reject(new Error('Transaction failed'));
             } else {
               try {
-                await axios.post(`/api/submission/addPayment/`, {
-                  id,
-                  isPaid: true,
-                  paymentDetails: {
-                    txId: signature,
+                await axios.post(
+                  `/api/sponsor-dashboard/submission/add-payment/`,
+                  {
+                    id,
+                    isPaid: true,
+                    paymentDetails: {
+                      txId: signature,
+                    },
                   },
-                });
+                );
 
                 const submissionIndex = submissions.findIndex(
                   (s) => s.id === id,
@@ -273,7 +276,7 @@ export const SubmissionDetails = ({
     id: string | undefined,
   ) => {
     try {
-      await axios.post(`/api/submission/updateLabel/`, {
+      await axios.post(`/api/sponsor-dashboard/submission/update-label/`, {
         label,
         id,
       });
@@ -669,7 +672,6 @@ export const SubmissionDetails = ({
                     <Link
                       as={NextLink}
                       color="brand.purple"
-                      wordBreak={'break-all'}
                       href={getURLSanitized(selectedSubmission?.link || '#')}
                       isExternal
                     >
@@ -691,12 +693,11 @@ export const SubmissionDetails = ({
                     <Link
                       as={NextLink}
                       color="brand.purple"
-                      wordBreak={'break-all'}
-                      href={getURLSanitized(selectedSubmission?.tweet || '#')}
+                      href={selectedSubmission?.tweet || '#'}
                       isExternal
                     >
                       {selectedSubmission?.tweet
-                        ? getURLSanitized(selectedSubmission?.tweet)
+                        ? selectedSubmission?.tweet
                         : '-'}
                     </Link>
                   </Box>
@@ -713,7 +714,7 @@ export const SubmissionDetails = ({
                   >
                     Ask
                   </Text>
-                  <Text color="brand.slate.700" wordBreak={'break-all'}>
+                  <Text color="brand.slate.700">
                     {selectedSubmission?.ask?.toLocaleString()} {bounty?.token}
                   </Text>
                 </Box>
@@ -732,13 +733,20 @@ export const SubmissionDetails = ({
                       >
                         {answer.question}
                       </Text>
-                      <Text
-                        color="brand.slate.700"
-                        whiteSpace={'pre'}
-                        wordBreak={'break-all'}
-                      >
-                        {answer.answer || '-'}
-                      </Text>
+                      {isLink(answer.answer) ? (
+                        <Link
+                          as={NextLink}
+                          color="brand.purple"
+                          href={getURLSanitized(answer.answer || '#')}
+                          isExternal
+                        >
+                          {answer.answer ? getURLSanitized(answer.answer) : '-'}
+                        </Link>
+                      ) : (
+                        <Text color="brand.slate.700">
+                          {answer.answer || '-'}
+                        </Text>
+                      )}
                     </Box>
                   ),
                 )}
@@ -752,7 +760,7 @@ export const SubmissionDetails = ({
                 >
                   Anything Else
                 </Text>
-                <Text color="brand.slate.700" whiteSpace={'pre'}>
+                <Text color="brand.slate.700">
                   {selectedSubmission?.otherInfo || '-'}
                 </Text>
               </Box>

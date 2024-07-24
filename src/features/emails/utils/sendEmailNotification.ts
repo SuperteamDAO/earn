@@ -1,9 +1,12 @@
 import axios from 'axios';
 import jwt from 'jsonwebtoken';
 
+import logger from '@/lib/logger';
+
 type EmailType =
   | 'addPayment'
   | 'announceWinners'
+  | 'application'
   | 'commentSponsor'
   | 'commentSubmission'
   | 'createListing'
@@ -11,6 +14,11 @@ type EmailType =
   | 'submissionLike'
   | 'submissionSponsor'
   | 'submissionTalent'
+  | 'applicationTalent'
+  | 'applicationSponsor'
+  | 'grantApproved'
+  | 'grantRejected'
+  | 'grantPaymentReceived'
   | 'superteamWinners'
   | 'commentReply'
   | 'commentTag'
@@ -51,7 +59,7 @@ export async function sendEmailNotification({
       },
     );
   } catch (error) {
-    console.error(`failed to send email for ${type} with ID ${id}: ${error}`);
+    logger.error(`failed to send email for ${type} with ID ${id}: ${error}`);
     throw error;
   }
 }

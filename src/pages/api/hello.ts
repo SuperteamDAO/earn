@@ -1,9 +1,9 @@
 import type { NextApiResponse } from 'next';
 
 type Data = {
-  name: string;
+  message: string;
 };
 
 export default function handler(res: NextApiResponse<Data>) {
-  res.status(200).json({ name: 'Earn' });
+  res.status(200).json({ message: "don't buy crypto, earn it" });
 }

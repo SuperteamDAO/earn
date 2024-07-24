@@ -1,5 +1,7 @@
 import axios from 'axios';
 
+import logger from '@/lib/logger';
+
 function fileToBase64(file: File): Promise<string> {
   return new Promise((resolve, reject) => {
     const reader = new FileReader();
@@ -24,7 +26,7 @@ export async function uploadToCloudinary(
     const base64Image = await fileToBase64(file);
     const base64Content = base64Image.split(',')[1];
 
-    const response = await axios.post('/api/uploadImage', {
+    const response = await axios.post('/api/upload-image', {
       imageBase64: base64Content,
       type,
       folder,
@@ -32,6 +34,6 @@ export async function uploadToCloudinary(
 
     return response.data.url;
   } catch (error) {
-    console.error('Error uploading the image:', error);
+    logger.error('Error uploading the image:', error);
   }
 }
