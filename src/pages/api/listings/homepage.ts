@@ -1,3 +1,4 @@
+// add language check
 import { type BountyType } from '@prisma/client';
 import { type NextApiRequest, type NextApiResponse } from 'next';
 
@@ -81,7 +82,13 @@ export async function getGrants({ take = 20, skillFilter }: GrantProps) {
     orderBy: {
       createdAt: 'desc',
     },
-    include: {
+    select: {
+      slug: true,
+      title: true,
+      minReward: true,
+      maxReward: true,
+      token: true,
+      totalApproved: true,
       sponsor: {
         select: {
           id: true,
@@ -105,7 +112,6 @@ export async function getGrants({ take = 20, skillFilter }: GrantProps) {
 
 interface BountyProps {
   order?: 'asc' | 'desc';
-  isHomePage?: boolean;
   skillFilter?: Skills;
   statusFilter?: Status;
   type?: BountyType;
@@ -114,7 +120,6 @@ interface BountyProps {
 
 export async function getListings({
   order = 'desc',
-  isHomePage = false,
   skillFilter,
   statusFilter,
   type,
@@ -156,27 +161,31 @@ export async function getListings({
       hackathonprize: false,
       isArchived: false,
       type,
-      ...(isHomePage
-        ? {
-            OR: [
-              { compensationType: 'fixed', usdValue: { gt: 100 } },
-              { compensationType: 'range', maxRewardAsk: { gt: 100 } },
-              { compensationType: 'variable' },
-            ],
-          }
-        : {}),
+      OR: [
+        { compensationType: 'fixed', usdValue: { gt: 100 } },
+        { compensationType: 'range', maxRewardAsk: { gt: 100 } },
+        { compensationType: 'variable' },
+      ],
+      language: { in: ['eng', 'sco'] }, //cuz both eng and sco refer to listings in english
       ...skillFilterQuery,
       ...statusFilterQuery,
       Hackathon: null,
     },
-    include: {
-      sponsor: {
-        select: {
-          name: true,
-          slug: true,
-          logo: true,
-        },
-      },
+    select: {
+      rewardAmount: true,
+      deadline: true,
+      type: true,
+      title: true,
+      token: true,
+      winnersAnnouncedAt: true,
+      slug: true,
+      applicationType: true,
+      isWinnersAnnounced: true,
+      isFeatured: true,
+      compensationType: true,
+      minRewardAsk: true,
+      maxRewardAsk: true,
+      status: true,
       _count: {
         select: {
           Comments: {
@@ -189,6 +198,13 @@ export async function getListings({
               },
             },
           },
+        },
+      },
+      sponsor: {
+        select: {
+          name: true,
+          slug: true,
+          logo: true,
         },
       },
     },
@@ -219,7 +235,6 @@ export default async function listings(
   const params = req.query;
   const includeGrants = !!params.grants;
   const order = (params.order as 'asc' | 'desc') ?? 'desc';
-  const isHomePage = params.isHomePage === 'true';
 
   const skillFilter = params.skill as Skills | undefined;
   const statusFilter = params.status as Status | undefined;
@@ -231,7 +246,6 @@ export default async function listings(
   try {
     const bounties = await getListings({
       order,
-      isHomePage,
       skillFilter,
       statusFilter,
       type,

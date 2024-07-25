@@ -24,7 +24,6 @@ interface ListingTabsProps {
   title: string;
   viewAllLink?: string;
   showViewAll?: boolean;
-  checkLanguage?: boolean;
 }
 
 interface ContentProps {
@@ -35,7 +34,6 @@ interface ContentProps {
   sortCompareFunction?: ((a: Listing, b: Listing) => number) | undefined;
   emptyTitle: string;
   emptyMessage: string;
-  checkLanguage: boolean;
 }
 
 const generateTabContent = ({
@@ -46,7 +44,6 @@ const generateTabContent = ({
   sortCompareFunction,
   emptyTitle,
   emptyMessage,
-  checkLanguage,
 }: ContentProps) => (
   <Flex className="ph-no-capture" direction={'column'} rowGap={1}>
     {isListingsLoading ? (
@@ -58,13 +55,7 @@ const generateTabContent = ({
         .filter(filterFunction)
         .sort(sortCompareFunction ? sortCompareFunction : () => 0)
         .slice(0, take ? take + 1 : undefined)
-        .map((bounty) => (
-          <ListingCard
-            key={bounty.id}
-            bounty={bounty}
-            checkLanguage={checkLanguage}
-          />
-        ))
+        .map((bounty) => <ListingCard key={bounty.id} bounty={bounty} />)
     ) : (
       <Flex align="center" justify="center" mt={8}>
         <EmptySection title={emptyTitle} message={emptyMessage} />
@@ -81,7 +72,6 @@ export const ListingTabs = ({
   title,
   viewAllLink,
   showViewAll = false,
-  checkLanguage = false,
 }: ListingTabsProps) => {
   const tabs: TabProps[] = [
     {
@@ -99,7 +89,6 @@ export const ListingTabs = ({
         emptyTitle: 'No listings available!',
         emptyMessage:
           'Subscribe to notifications to get notified about new listings.',
-        checkLanguage,
       }),
     },
     {
@@ -117,7 +106,6 @@ export const ListingTabs = ({
         emptyTitle: 'No listings in review!',
         emptyMessage:
           'Subscribe to notifications to get notified about updates.',
-        checkLanguage,
       }),
     },
     {
@@ -156,7 +144,6 @@ export const ListingTabs = ({
         emptyTitle: 'No completed listings!',
         emptyMessage:
           'Subscribe to notifications to get notified about announcements.',
-        checkLanguage,
       }),
     },
   ];
