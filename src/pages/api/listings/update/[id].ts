@@ -7,7 +7,6 @@ import {
 } from '@/features/auth';
 import { discordListingUpdate } from '@/features/discord';
 import { sendEmailNotification } from '@/features/emails';
-import { shouldSendEmailForListing } from '@/features/listing-builder';
 import logger from '@/lib/logger';
 import { prisma } from '@/prisma';
 import { dayjs } from '@/utils/dayjs';
@@ -152,15 +151,15 @@ async function bounty(req: NextApiRequestWithSponsor, res: NextApiResponse) {
     logger.info(`Bounty with ID: ${id} updated successfully`);
     logger.debug(`Updated bounty data: ${safeStringify(result)}`);
 
-    const shouldSendEmail = await shouldSendEmailForListing(result);
-    if (listing.isPublished === false && shouldSendEmail) {
-      logger.debug(`Sending email notification for listing creation`);
-      await sendEmailNotification({
-        type: 'createListing',
-        id: id as string,
-        triggeredBy: req.userId,
-      });
-    }
+    // const shouldSendEmail = await shouldSendEmailForListing(result);
+    // if (listing.isPublished === false && shouldSendEmail) {
+    //   logger.debug(`Sending email notification for listing creation`);
+    //   await sendEmailNotification({
+    //     type: 'createListing',
+    //     id: id as string,
+    //     triggeredBy: req.userId,
+    //   });
+    // }
 
     const deadlineChanged =
       listing.deadline?.toString() !== result.deadline?.toString();

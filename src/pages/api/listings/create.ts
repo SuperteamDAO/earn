@@ -5,8 +5,6 @@ import {
   withSponsorAuth,
 } from '@/features/auth';
 import { discordListingUpdate } from '@/features/discord';
-import { sendEmailNotification } from '@/features/emails';
-import { shouldSendEmailForListing } from '@/features/listing-builder';
 import logger from '@/lib/logger';
 import { prisma } from '@/prisma';
 import { fetchTokenUSDValue } from '@/utils/fetchTokenUSDValue';
@@ -122,15 +120,15 @@ async function handler(req: NextApiRequestWithSponsor, res: NextApiResponse) {
     logger.info(`Bounty created successfully with ID: ${result.id}`);
     logger.debug(`Created bounty data: ${safeStringify(result)}`);
 
-    const shouldSendEmail = await shouldSendEmailForListing(result);
-    if (shouldSendEmail) {
-      logger.debug('Sending email notification for new listing creation');
-      await sendEmailNotification({
-        type: 'createListing',
-        id: result.id,
-        triggeredBy: userId,
-      });
-    }
+    // const shouldSendEmail = await shouldSendEmailForListing(result);
+    // if (shouldSendEmail) {
+    //   logger.debug('Sending email notification for new listing creation');
+    //   await sendEmailNotification({
+    //     type: 'createListing',
+    //     id: result.id,
+    //     triggeredBy: userId,
+    //   });
+    // }
 
     return res.status(200).json(result);
   } catch (error: any) {
