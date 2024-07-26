@@ -60,6 +60,7 @@ export function Sidebar({ children }: { children: ReactNode }) {
   );
 
   const { query } = router;
+
   const open = !!query.open; // Replace 'paramName' with the actual parameter name
   useEffect(() => {
     if (open) {
@@ -105,7 +106,7 @@ export function Sidebar({ children }: { children: ReactNode }) {
     if (
       userInfo &&
       userInfo.currentSponsor &&
-      userInfo.role !== 'GOD' &&
+      session?.user?.role !== 'GOD' &&
       !userInfo.currentSponsorId &&
       !userInfo.currentSponsor.entityName
     ) {
