@@ -31,7 +31,7 @@
     ```bash
     cd earn
     ```
-
+### Without Docker
 3. Install the dependencies: 
     ```bash
     pnpm i
@@ -62,6 +62,18 @@
 5. Run the development server
     ```bash
     pnpm dev
+    ```
+### With Docker
+3. Set up your `.env` file with DATABASE_URL="mysql://root:strong_password@db:3306/earn".
+  - Start by copying the `.env.example` file to a new file named `.env`. This file will store your local environment settings.
+  - Use `openssl rand -base64 32` to generate a key and add it under `NEXTAUTH_SECRET` in the .env file.
+  - You have to set up resend to run the app:
+    - [Resend](https://resend.com): To obtain your `RESEND_API_KEY`, visit the Resend dashboard. This credential is essential for setting up Email Auth.
+
+  NOTE: If you are facing any issues with setup, feel free to contact [Abhishek](https://twitter.com/abhwshek)
+4. Run Docker Compose
+ ```bash
+    docker compose up
     ```
 
 ## Contributing
