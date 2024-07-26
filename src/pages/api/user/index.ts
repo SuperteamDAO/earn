@@ -30,12 +30,12 @@ export default async function handler(
         email: userEmail,
       },
       select: {
+        id: true,
         firstName: true,
         lastName: true,
+        username: true,
         photo: true,
         isTalentFilled: true,
-        username: true,
-        id: true,
         location: true,
         currentSponsorId: true,
         publicKey: true,
@@ -47,6 +47,18 @@ export default async function handler(
         community: true,
         private: true,
         acceptedTOS: true,
+        experience: true,
+        bio: true,
+        discord: true,
+        twitter: true,
+        github: true,
+        linkedin: true,
+        telegram: true,
+        website: true,
+        workPrefernce: true,
+        cryptoExperience: true,
+        currentEmployer: true,
+        email: true,
 
         currentSponsor: {
           select: {
