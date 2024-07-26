@@ -46,6 +46,7 @@ export default async function handler(
         interests: true,
         community: true,
         private: true,
+        acceptedTOS: true,
 
         currentSponsor: {
           select: {
