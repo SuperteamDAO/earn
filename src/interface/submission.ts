@@ -19,6 +19,7 @@ interface SubmissionWithUser {
   paymentDetails?: {
     txId?: string;
   };
+  rewardInUSD: number;
   isActive: boolean;
   isArchived: boolean;
   createdAt: string;

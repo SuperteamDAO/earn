@@ -85,6 +85,7 @@ model Bounties {
   template             BountiesTemplates? @relation(fields: [templateId], references: [id])
   sponsor              Sponsors           @relation(fields: [sponsorId], references: [id])
   poc                  User               @relation("poc", fields: [pocId], references: [id])
+  language             String?
   Submission           Submission[]
   SubscribeBounty      SubscribeBounty[]
   Hackathon            Hackathon?         @relation(fields: [hackathonId], references: [id])

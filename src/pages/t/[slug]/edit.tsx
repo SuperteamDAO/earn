@@ -79,29 +79,6 @@ const socialLinkFields = [
   'telegram',
 ];
 
-const keysToOmit = [
-  'id',
-  'publicKey',
-  'email',
-  'createdAt',
-  'isVerified',
-  'role',
-  'totalEarnedInUSD',
-  'isTalentFilled',
-  'superteamLevel',
-  'notifications',
-  'currentSponsorId',
-  'UserSponsors',
-  'currentSponsor',
-  'poc',
-  'Comment',
-  'Submission',
-  'Grants',
-  'UserInvites',
-  'SubscribeBounty',
-  'emailSettings',
-];
-
 const parseSkillsAndSubskills = (skillsObject: any) => {
   const skills: MultiSelectOptions[] = [];
   const subSkills: MultiSelectOptions[] = [];
@@ -335,11 +312,7 @@ export default function EditProfilePage({ slug }: { slug: string }) {
 
       const finalUpdatedData = Object.keys(updatedData).reduce((acc, key) => {
         const fieldKey = key as keyof FormData;
-        if (
-          userInfo &&
-          updatedData[fieldKey] !== userInfo[fieldKey] &&
-          !keysToOmit.includes(key)
-        ) {
+        if (userInfo && updatedData[fieldKey] !== userInfo[fieldKey]) {
           acc[fieldKey] = updatedData[fieldKey];
         }
         return acc;

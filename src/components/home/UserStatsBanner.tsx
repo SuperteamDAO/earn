@@ -19,6 +19,7 @@ import { EarnAvatar } from '../shared/EarnAvatar';
 interface Stats {
   wins: number;
   participations: number;
+  totalWinnings: number;
 }
 
 interface StatProps {
@@ -108,7 +109,7 @@ export const UserStatsBanner = () => {
         </VStack>
       </Flex>
       <Divider display={{ md: 'none' }} borderColor={'#7671da'} />
-      {stats && (userInfo.totalEarnedInUSD ?? 0) > 0 && (
+      {stats && (stats.wins ?? 0) > 0 && (
         <Flex
           justify={{ base: 'space-between', md: 'unset' }}
           gap={{ base: 4, sm: 8 }}
@@ -116,9 +117,7 @@ export const UserStatsBanner = () => {
           mt={{ base: -1.5, md: 0 }}
         >
           <Stat
-            value={
-              '$' + formatNumberWithSuffix(userInfo.totalEarnedInUSD ?? 0, 1)
-            }
+            value={'$' + formatNumberWithSuffix(stats.totalWinnings ?? 0, 1)}
             label="Total Earned"
           />
           <Stat value={stats.participations} label="Participated" />

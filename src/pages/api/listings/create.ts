@@ -1,3 +1,4 @@
+import { franc } from 'franc';
 import type { NextApiResponse } from 'next';
 
 import {
@@ -5,8 +6,6 @@ import {
   withSponsorAuth,
 } from '@/features/auth';
 import { discordListingUpdate } from '@/features/discord';
-import { sendEmailNotification } from '@/features/emails';
-import { shouldSendEmailForListing } from '@/features/listing-builder';
 import logger from '@/lib/logger';
 import { prisma } from '@/prisma';
 import { fetchTokenUSDValue } from '@/utils/fetchTokenUSDValue';
@@ -50,13 +49,19 @@ async function handler(req: NextApiRequestWithSponsor, res: NextApiResponse) {
       isPublished,
       isPrivate,
     } = req.body;
-    let usdValue = 0;
 
     let publishedAt;
     if (isPublished) {
       publishedAt = new Date();
     }
 
+    let language = '';
+    if (description) {
+      language = franc(description);
+      // both 'eng' and 'sco' are english listings
+    }
+
+    let usdValue = 0;
     if (isPublished && publishedAt) {
       try {
         let amount;
@@ -103,6 +108,7 @@ async function handler(req: NextApiRequestWithSponsor, res: NextApiResponse) {
       maxRewardAsk,
       isPublished,
       isPrivate,
+      language,
     };
 
     logger.debug(`Creating bounty with data: ${safeStringify(finalData)}`);
@@ -122,15 +128,15 @@ async function handler(req: NextApiRequestWithSponsor, res: NextApiResponse) {
     logger.info(`Bounty created successfully with ID: ${result.id}`);
     logger.debug(`Created bounty data: ${safeStringify(result)}`);
 
-    const shouldSendEmail = await shouldSendEmailForListing(result);
-    if (shouldSendEmail) {
-      logger.debug('Sending email notification for new listing creation');
-      await sendEmailNotification({
-        type: 'createListing',
-        id: result.id,
-        triggeredBy: userId,
-      });
-    }
+    // const shouldSendEmail = await shouldSendEmailForListing(result);
+    // if (shouldSendEmail) {
+    //   logger.debug('Sending email notification for new listing creation');
+    //   await sendEmailNotification({
+    //     type: 'createListing',
+    //     id: result.id,
+    //     triggeredBy: userId,
+    //   });
+    // }
 
     return res.status(200).json(result);
   } catch (error: any) {

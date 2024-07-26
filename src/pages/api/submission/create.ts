@@ -11,6 +11,7 @@ async function submission(req: NextApiRequestWithUser, res: NextApiResponse) {
   const { listingId, link, tweet, otherInfo, eligibilityAnswers, ask } =
     req.body;
   logger.debug(`Request body: ${safeStringify(req.body)}`);
+  logger.debug(`User: ${safeStringify(req.userId)}`);
 
   try {
     const existingSubmission = await prisma.submission.findFirst({

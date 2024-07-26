@@ -25,7 +25,7 @@ export default function Custom404() {
       <Default
         meta={
           <Meta
-            title="Superteam Earn | Page Not Found"
+            title="Not Found | Superteam Earn"
             description="404 - Page Not Found"
           />
         }

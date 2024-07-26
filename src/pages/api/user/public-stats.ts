@@ -1,5 +1,4 @@
 import type { NextApiRequest, NextApiResponse } from 'next';
-import { getToken } from 'next-auth/jwt';
 
 import logger from '@/lib/logger';
 import { prisma } from '@/prisma';
@@ -10,26 +9,12 @@ export default async function handler(
   res: NextApiResponse,
 ) {
   try {
-    const token = await getToken({ req });
-    logger.debug(`Token retrieved: ${safeStringify(token)}`);
+    logger.info(`Request body: ${safeStringify(req.body)}`);
 
-    if (!token) {
-      logger.warn('Unauthorized request - No token provided');
-      return res.status(401).json({ error: 'Unauthorized' });
-    }
-
-    const userEmail = token.email;
-    logger.debug(`User email from token: ${userEmail}`);
-
-    if (!userEmail) {
-      logger.warn('Invalid token - No email found');
-      return res.status(400).json({ error: 'Invalid token' });
-    }
+    const { username } = req.body;
 
     const result = await prisma.user.findUnique({
-      where: {
-        email: userEmail,
-      },
+      where: { username },
       select: {
         Submission: {
           select: {
@@ -46,7 +31,7 @@ export default async function handler(
     });
 
     if (!result) {
-      logger.warn(`User not found for email: ${userEmail}`);
+      logger.warn(`User not found for username: ${username}`);
       return res.status(404).json({ error: 'User not found' });
     }
 

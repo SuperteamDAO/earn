@@ -10,7 +10,6 @@ import {
   Text,
   useBreakpointValue,
 } from '@chakra-ui/react';
-import { franc } from 'franc';
 import NextLink from 'next/link';
 import { useRouter } from 'next/router';
 import { IoIosStar } from 'react-icons/io';
@@ -66,13 +65,7 @@ export const ListingCardSkeleton = () => {
   );
 };
 
-export const ListingCard = ({
-  bounty,
-  checkLanguage = false,
-}: {
-  bounty: Listing;
-  checkLanguage?: boolean;
-}) => {
+export const ListingCard = ({ bounty }: { bounty: Listing }) => {
   const {
     rewardAmount,
     deadline,
@@ -84,7 +77,6 @@ export const ListingCard = ({
     applicationType,
     isWinnersAnnounced,
     isFeatured,
-    description,
     compensationType,
     minRewardAsk,
     maxRewardAsk,
@@ -96,12 +88,6 @@ export const ListingCard = ({
   const isBounty = type === 'bounty';
 
   const isSM = useBreakpointValue({ base: false, sm: true });
-
-  if (checkLanguage) {
-    const langCode = franc(description);
-    const isEnglish = langCode === 'eng' || langCode === 'sco';
-    if (!isEnglish) return null;
-  }
 
   const isBeforeDeadline = dayjs().isBefore(dayjs(deadline));
 
@@ -355,13 +341,7 @@ export const ListingCard = ({
   );
 };
 
-export const ListingCardMobile = ({
-  bounty,
-  checkLanguage,
-}: {
-  bounty: Listing;
-  checkLanguage?: boolean;
-}) => {
+export const ListingCardMobile = ({ bounty }: { bounty: Listing }) => {
   const {
     rewardAmount,
     deadline,
@@ -371,7 +351,6 @@ export const ListingCardMobile = ({
     token,
     slug,
     applicationType,
-    description,
     compensationType,
     minRewardAsk,
     maxRewardAsk,
@@ -379,16 +358,6 @@ export const ListingCardMobile = ({
   const router = useRouter();
 
   const isBounty = type === 'bounty';
-
-  const langCode = franc(description);
-
-  const isEnglish = description
-    ? langCode === 'eng' || langCode === 'sco'
-    : true;
-
-  if (!isEnglish && checkLanguage) {
-    return null;
-  }
 
   return (
     <>

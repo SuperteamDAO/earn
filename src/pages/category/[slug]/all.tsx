@@ -45,10 +45,10 @@ function AllCategoryListingsPage({ slug }: { slug: string }) {
   }, []);
 
   const titlesForSlugs: { [key in SlugKeys]: string } = {
-    design: 'Superteam Earn | Design Bounties and Grants',
-    content: 'Superteam Earn | Content Bounties and Grants',
-    development: 'Superteam Earn | Development Bounties and Grants',
-    other: 'Superteam Earn | Other Bounties and Grants',
+    design: 'Design Bounties and Grants | Superteam Earn',
+    content: 'Content Bounties and Grants | Superteam Earn',
+    development: 'Development Bounties and Grants | Superteam Earn',
+    other: 'Other Bounties and Grants | Superteam Earn',
   };
 
   const titleKey = slug as SlugKeys;
@@ -72,7 +72,6 @@ function AllCategoryListingsPage({ slug }: { slug: string }) {
           emoji="/assets/home/emojis/moneyman.png"
           title="Freelance Gigs"
           viewAllLink="/all"
-          checkLanguage
         />
       </Box>
     </Home>

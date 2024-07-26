@@ -1,3 +1,4 @@
+import { franc } from 'franc';
 import type { NextApiResponse } from 'next';
 
 import {
@@ -7,7 +8,6 @@ import {
 } from '@/features/auth';
 import { discordListingUpdate } from '@/features/discord';
 import { sendEmailNotification } from '@/features/emails';
-import { shouldSendEmailForListing } from '@/features/listing-builder';
 import logger from '@/lib/logger';
 import { prisma } from '@/prisma';
 import { dayjs } from '@/utils/dayjs';
@@ -69,11 +69,18 @@ async function bounty(req: NextApiRequestWithSponsor, res: NextApiResponse) {
       minRewardAsk,
       compensationType,
       isPublished,
+      description,
     } = updatedData;
 
     let publishedAt = listing.publishedAt;
     if (isPublished && !listing.publishedAt) {
       publishedAt = new Date();
+    }
+
+    let language = '';
+    if (description) {
+      language = franc(description);
+      // both 'eng' and 'sco' are english listings
     }
 
     const newRewardsCount = Object.keys(rewards || {}).length;
@@ -133,6 +140,7 @@ async function bounty(req: NextApiRequestWithSponsor, res: NextApiResponse) {
         isPublished,
         publishedAt,
         usdValue,
+        language,
       },
       include: { sponsor: true },
     });
@@ -152,15 +160,15 @@ async function bounty(req: NextApiRequestWithSponsor, res: NextApiResponse) {
     logger.info(`Bounty with ID: ${id} updated successfully`);
     logger.debug(`Updated bounty data: ${safeStringify(result)}`);
 
-    const shouldSendEmail = await shouldSendEmailForListing(result);
-    if (listing.isPublished === false && shouldSendEmail) {
-      logger.debug(`Sending email notification for listing creation`);
-      await sendEmailNotification({
-        type: 'createListing',
-        id: id as string,
-        triggeredBy: req.userId,
-      });
-    }
+    // const shouldSendEmail = await shouldSendEmailForListing(result);
+    // if (listing.isPublished === false && shouldSendEmail) {
+    //   logger.debug(`Sending email notification for listing creation`);
+    //   await sendEmailNotification({
+    //     type: 'createListing',
+    //     id: id as string,
+    //     triggeredBy: req.userId,
+    //   });
+    // }
 
     const deadlineChanged =
       listing.deadline?.toString() !== result.deadline?.toString();

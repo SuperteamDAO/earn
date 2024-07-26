@@ -41,9 +41,9 @@ function WinnerBounty({
 
   return (
     <Head>
-      <title>{`Superteam Earn Bounty | ${
+      <title>{`${
         initialBounty?.title || 'Apply'
-      } by ${initialBounty?.sponsor?.name}`}</title>
+      } by ${initialBounty?.sponsor?.name} | Superteam Earn Listing`}</title>
       <meta
         name="description"
         content={`${getListingTypeLabel(initialBounty?.type ?? 'Bounty')} on Superteam Earn | ${

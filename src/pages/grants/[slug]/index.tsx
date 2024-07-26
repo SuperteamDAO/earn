@@ -51,9 +51,7 @@ function Grants({ grant: initialGrant }: InitialGrant) {
     <Default
       meta={
         <Head>
-          <title>{`Superteam Earn Grant | ${
-            initialGrant?.title || 'Grant'
-          } | Superteam Earn`}</title>
+          <title>{`${initialGrant?.title || 'Grant'} | Superteam Earn`}</title>
           <meta
             property="og:title"
             content={`${initialGrant?.title || 'Grant'} | Superteam Earn`}
