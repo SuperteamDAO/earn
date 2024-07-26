@@ -51,6 +51,7 @@ export default async function handler(
           select: {
             id: true,
             name: true,
+            entityName: true,
           },
         },
         UserSponsors: {
