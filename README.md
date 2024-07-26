@@ -74,7 +74,7 @@
 4. Run Docker Compose
  ```bash
     docker compose up
-    ```
+ ```
 
 ## Contributing
 We welcome contributions from everyone! Whether it's submitting an issue, a pull request, or suggesting new ideas, your input is highly valued. Check out our [contributing guide](CONTRIBUTING.md) for guidelines on how to proceed.
