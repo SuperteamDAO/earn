@@ -106,7 +106,7 @@ export function Sidebar({ children }: { children: ReactNode }) {
       userInfo &&
       userInfo.currentSponsor &&
       userInfo.role !== 'GOD' &&
-      userInfo.currentSponsorId &&
+      !userInfo.currentSponsorId &&
       !userInfo.currentSponsor.entityName
     ) {
       setIsEntityModalOpen(true);
