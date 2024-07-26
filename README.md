@@ -71,6 +71,7 @@
     - [Resend](https://resend.com): To obtain your `RESEND_API_KEY`, visit the Resend dashboard. This credential is essential for setting up Email Auth.
 
   NOTE: If you are facing any issues with setup, feel free to contact [Abhishek](https://twitter.com/abhwshek)
+  
 4. Run Docker Compose
  ```bash
     docker compose up
