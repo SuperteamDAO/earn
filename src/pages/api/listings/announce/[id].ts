@@ -163,17 +163,6 @@ async function announce(req: NextApiRequestWithSponsor, res: NextApiResponse) {
 
       const rewardInUSD = (listing.usdValue! / listing.rewardAmount!) * amount;
 
-      const amountWhere = {
-        where: {
-          id: winners[currentIndex]?.userId,
-        },
-        data: {
-          totalEarnedInUSD: {
-            increment: rewardInUSD,
-          },
-        },
-      };
-
       promises.push(
         prisma.submission.update({
           where: {
@@ -184,7 +173,7 @@ async function announce(req: NextApiRequestWithSponsor, res: NextApiResponse) {
           },
         }),
       );
-      promises.push(prisma.user.update(amountWhere));
+
       currentIndex += 1;
     }
 

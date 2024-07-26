@@ -29,11 +29,46 @@ export default async function handler(
       where: {
         email: userEmail,
       },
-      include: {
-        currentSponsor: true,
-        UserSponsors: true,
-        Hackathon: true,
-        Submission: true,
+      select: {
+        firstName: true,
+        lastName: true,
+        photo: true,
+        isTalentFilled: true,
+        username: true,
+        id: true,
+        location: true,
+        currentSponsorId: true,
+        publicKey: true,
+        skills: true,
+        hackathonId: true,
+        surveysShown: true,
+        featureModalShown: true,
+        interests: true,
+        community: true,
+        private: true,
+
+        currentSponsor: {
+          select: {
+            id: true,
+            name: true,
+          },
+        },
+        UserSponsors: {
+          select: {
+            role: true,
+          },
+        },
+        Hackathon: {
+          select: {
+            id: true,
+            name: true,
+          },
+        },
+        Submission: {
+          select: {
+            id: true,
+          },
+        },
         emailSettings: true,
       },
     });

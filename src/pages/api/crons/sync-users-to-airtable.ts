@@ -68,6 +68,9 @@ function extractSkills(skills: Skills[]) {
 }
 
 function convertUserToAirtable(user: User): ForFoundersAirtableSchema {
+  const totalWinnings = user?.Submission?.filter(
+    (s) => s.isWinner && s?.listing?.isWinnersAnnounced,
+  ).reduce((sum, submission) => sum + (submission?.rewardInUSD || 0), 0);
   return {
     id: user.id || '',
     publicKey: user.publicKey ?? undefined,
@@ -80,7 +83,7 @@ function convertUserToAirtable(user: User): ForFoundersAirtableSchema {
     updatedAt: ((user.updatedAt || '') as any as Date).toLocaleString(),
     isVerified: String(user.isVerified ? 1 : 0),
     role: user.role ?? 'USER',
-    'Total Earned in USD on Earn/ST': String(user.totalEarnedInUSD ?? 0),
+    'Total Earned in USD on Earn/ST': String(totalWinnings ?? 0),
     isTalentFilled: String(user.isTalentFilled ? 1 : 0),
     interests: user.interests ?? undefined,
     Bio: user.bio ?? undefined,
@@ -143,6 +146,9 @@ async function handler(_req: NextApiRequest, res: NextApiResponse) {
           gt: lastCronDateTime,
         },
       },
+      include: {
+        Submission: true,
+      },
     });
     if (users.length === 0) {
       res.status(200).json({ message: 'Airtable already up-to-date ' });
@@ -172,6 +178,9 @@ async function handler(_req: NextApiRequest, res: NextApiResponse) {
           updatedAt: {
             gt: lastCronDateTime,
           },
+        },
+        include: {
+          Submission: true,
         },
       });
 

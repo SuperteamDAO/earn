@@ -96,9 +96,9 @@ function BountyDetails({ bounty: initialBounty }: BountyDetailsProps) {
     <Default
       meta={
         <Head>
-          <title>{`Superteam Earn Listing | ${
+          <title>{`${
             initialBounty?.title || 'Apply'
-          } by ${initialBounty?.sponsor?.name}`}</title>
+          } by ${initialBounty?.sponsor?.name} | Superteam Earn Listing`}</title>
           <meta
             name="description"
             content={`${getListingTypeLabel(initialBounty?.type ?? 'Listing')} on Superteam Earn | ${

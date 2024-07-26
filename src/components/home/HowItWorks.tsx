@@ -128,12 +128,15 @@ export const HowItWorks = () => {
   const { userInfo } = userStore();
 
   const [hasSubmissions, setHasSubmissions] = useState<boolean>(false);
+  const [hasWins, setHasWins] = useState<boolean>(false);
+
   const [loading, setLoading] = useState(true);
 
   async function getStats() {
     try {
       const result = await axios.get<Stats>('/api/user/stats');
       setHasSubmissions(result.data.participations > 0);
+      setHasWins(result.data.wins > 0);
     } catch (err) {
       console.log('Error getting stats - ', err);
     }
@@ -157,10 +160,7 @@ export const HowItWorks = () => {
               isComplete={!loading && !!userInfo?.isTalentFilled}
             />
             <Step number={2} isComplete={!loading && hasSubmissions} />
-            <Step
-              number={3}
-              isComplete={!loading && !!userInfo?.totalEarnedInUSD}
-            />
+            <Step number={3} isComplete={!loading && hasWins} />
           </VStack>
           <VStack
             pos={'relative'}
@@ -223,18 +223,14 @@ export const HowItWorks = () => {
             <Box ml={'0.8125rem'}>
               <Text
                 as="button"
-                color={
-                  !loading && !!userInfo?.totalEarnedInUSD
-                    ? 'brand.slate.500'
-                    : 'brand.purple'
-                }
+                color={!loading && hasWins ? 'brand.slate.500' : 'brand.purple'}
                 fontSize={'md'}
                 fontWeight={500}
                 _hover={{
                   color: 'brand.purple',
                 }}
                 onClick={() => {
-                  if (!loading && !!userInfo?.totalEarnedInUSD) return;
+                  if (!loading && hasWins) return;
                   else if (userInfo?.id) {
                     router.push('/feed');
                   }

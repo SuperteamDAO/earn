@@ -15,6 +15,22 @@ export default async function getAllUsers(
   try {
     const user = await prisma.user.findUnique({
       where: { username },
+      select: {
+        id: true,
+        twitter: true,
+        linkedin: true,
+        github: true,
+        website: true,
+        username: true,
+        workPrefernce: true,
+        firstName: true,
+        lastName: true,
+        skills: true,
+        photo: true,
+        email: true,
+        currentEmployer: true,
+        location: true,
+      },
     });
 
     if (!user) {

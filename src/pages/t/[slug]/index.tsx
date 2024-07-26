@@ -34,16 +34,19 @@ import { Default } from '@/layouts/Default';
 import { userStore } from '@/store/user';
 import { getURL } from '@/utils/validUrl';
 
-interface TalentProps {
-  talent: UserWithEarnings;
-}
-
-type UserWithEarnings = User & {
-  totalEarnings: number;
+type UserWithFeed = User & {
   feed: FeedDataProps[];
 };
+interface TalentProps {
+  talent: UserWithFeed;
+  stats: {
+    wins: number;
+    participations: number;
+    totalWinnings: number;
+  };
+}
 
-function TalentProfile({ talent }: TalentProps) {
+function TalentProfile({ talent, stats }: TalentProps) {
   const [activeTab, setActiveTab] = useState<'activity' | 'projects'>(
     'activity',
   );
@@ -101,15 +104,6 @@ function TalentProfile({ talent }: TalentProps) {
       link: talent?.website,
     },
   ];
-
-  const winnerCount =
-    talent?.feed?.filter(
-      (sub) =>
-        sub?.type === 'Submission' && sub.isWinner && sub?.isWinnersAnnounced,
-    ).length ?? 0;
-
-  const submissionCount =
-    talent?.feed?.filter((sub) => sub?.type === 'Submission').length ?? 0;
 
   const router = useRouter();
 
@@ -212,15 +206,18 @@ function TalentProfile({ talent }: TalentProps) {
   ogImage.searchParams.set('skills', JSON.stringify(talent?.skills));
   ogImage.searchParams.set(
     'totalEarned',
-    talent?.totalEarnedInUSD!.toString() || '0',
+    stats?.totalWinnings?.toString() || '0',
   );
-  ogImage.searchParams.set('submissionCount', submissionCount.toString());
-  ogImage.searchParams.set('winnerCount', winnerCount.toString());
+  ogImage.searchParams.set(
+    'submissionCount',
+    stats?.participations?.toString(),
+  );
+  ogImage.searchParams.set('winnerCount', stats?.wins?.toString());
   ogImage.searchParams.set('photo', talent?.photo!);
 
   const title =
     talent?.firstName && talent?.lastName
-      ? `Superteam Earn Talent: ${talent?.firstName} ${talent?.lastName}`
+      ? `${talent?.firstName} ${talent?.lastName} | Superteam Earn Talent`
       : 'Superteam Earn';
 
   return (
@@ -482,20 +479,22 @@ function TalentProfile({ talent }: TalentProps) {
                       $
                       {new Intl.NumberFormat('en-US', {
                         maximumFractionDigits: 0,
-                      }).format(Math.round(talent?.totalEarnedInUSD || 0))}
+                      }).format(Math.round(stats?.totalWinnings || 0))}
                     </Text>
                     <Text color={'brand.slate.500'} fontWeight={500}>
                       Earned
                     </Text>
                   </Flex>
                   <Flex direction={'column'}>
-                    <Text fontWeight={600}>{submissionCount}</Text>
+                    <Text fontWeight={600}>{stats?.participations}</Text>
                     <Text color={'brand.slate.500'} fontWeight={500}>
-                      {submissionCount === 1 ? 'Submission' : 'Submissions'}
+                      {stats.participations === 1
+                        ? 'Submission'
+                        : 'Submissions'}
                     </Text>
                   </Flex>
                   <Flex direction={'column'}>
-                    <Text fontWeight={600}>{winnerCount}</Text>
+                    <Text fontWeight={600}>{stats?.wins}</Text>
                     <Text color={'brand.slate.500'} fontWeight={500}>
                       Won
                     </Text>
@@ -648,12 +647,17 @@ function TalentProfile({ talent }: TalentProps) {
 export const getServerSideProps: GetServerSideProps = async (context) => {
   const { slug } = context.query;
   try {
-    const res = await axios.post(`${getURL()}/api/user/info`, {
+    const talentReq = await axios.post(`${getURL()}/api/user/info`, {
       username: slug,
     });
-    const talent = res.data;
+    const statsReq = await axios.post(`${getURL()}/api/user/public-stats`, {
+      username: slug,
+    });
+    const talent = talentReq.data;
+    const stats = statsReq.data;
+
     return {
-      props: { talent },
+      props: { talent, stats },
     };
   } catch (error) {
     console.error(error);
