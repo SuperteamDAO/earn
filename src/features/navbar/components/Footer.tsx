@@ -17,7 +17,6 @@ import React, { type ReactElement, useEffect, useState } from 'react';
 
 import { UserFlag } from '@/components/shared/UserFlag';
 import { Superteams } from '@/constants/Superteam';
-import { userStore } from '@/store/user';
 
 type Country = {
   name: string;
@@ -70,7 +69,6 @@ const SocialIcon: React.FC<{
 );
 
 const CountrySelector: React.FC = () => {
-  const { userInfo } = userStore();
   const router = useRouter();
   const [selectedCountry, setSelectedCountry] = useState<Country>({
     name: 'Global',
@@ -79,16 +77,16 @@ const CountrySelector: React.FC = () => {
   });
 
   useEffect(() => {
-    if (userInfo?.location) {
-      const userCountry = countries.find(
-        (country) =>
-          country.name.toLowerCase() === userInfo?.location?.toLowerCase(),
-      );
-      setSelectedCountry(
-        userCountry || { name: 'Global', flag: '🌍', code: 'global' },
-      );
+    const path = router.asPath.toLowerCase();
+    const matchedCountry = countries.find((country) =>
+      path.includes(`/regions/${country.name.toLowerCase()}`),
+    );
+    if (matchedCountry) {
+      setSelectedCountry(matchedCountry);
+    } else {
+      setSelectedCountry({ name: 'Global', flag: '🌍', code: 'global' });
     }
-  }, [userInfo]);
+  }, [router.asPath]);
 
   const handleCountrySelect = (country: Country) => {
     if (country.name === 'Global') {
@@ -135,7 +133,6 @@ const CountrySelector: React.FC = () => {
                 onClick={() => handleCountrySelect(country)}
               >
                 <UserFlag location={country.code} isCode />
-                {/* <Image w={5} mr={2} alt={country.name} src={country?.flag} /> */}
                 <Text>{country.name}</Text>
               </Flex>
             ))}
@@ -168,7 +165,7 @@ export const Footer: React.FC = () => {
       href: 'https://superteamdao.notion.site/Superteam-Earn-FAQ-aedaa039b25741b1861167d68aa880b1?pvs=4',
     },
     {
-      text: 'Terms & Conditions',
+      text: 'Terms',
       href: 'https://drive.google.com/file/d/1ybbO_UOTaIiyKb4Mbm3sNMbjTf5qj5mT/view',
     },
     { text: 'Privacy Policy', href: '/privacy-policy.pdf' },
@@ -256,7 +253,7 @@ export const Footer: React.FC = () => {
           <Flex
             justify={{ base: 'flex-start', md: 'flex-end' }}
             wrap="wrap"
-            gap={{ base: 8, md: 16 }}
+            gap={{ base: 6, md: 16 }}
             w={{ base: '100%', md: 'auto' }}
           >
             <FooterColumn title="Opportunities" links={opportunities} />
