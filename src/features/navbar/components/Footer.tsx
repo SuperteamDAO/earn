@@ -25,24 +25,6 @@ type Country = {
   code: string;
 };
 
-// const countries: Country[] = [
-//   { name: 'India', flag: '🇮🇳' },
-//   { name: 'Germany', flag: '🇩🇪' },
-//   { name: 'UK', flag: '🇬🇧' },
-//   { name: 'Turkey', flag: '🇹🇷' },
-//   { name: 'Vietnam', flag: '🇻🇳' },
-//   { name: 'UAE', flag: '🇦🇪' },
-//   { name: 'Nigeria', flag: '🇳🇬' },
-//   { name: 'Brazil', flag: '🇧🇷' },
-//   { name: 'Malaysia', flag: '🇲🇾' },
-//   { name: 'Balkan', flag: '🇪🇺' },
-//   { name: 'Philippines', flag: '🇵🇭' },
-//   { name: 'Japan', flag: '🇯🇵' },
-//   { name: 'France', flag: '🇫🇷' },
-//   { name: 'Mexico', flag: '🇲🇽' },
-//   { name: 'Global', flag: '🌍' },
-// ];
-
 const countries: Country[] = Superteams.map((superteam) => ({
   name: superteam.displayValue,
   flag: superteam.icons,
@@ -129,19 +111,12 @@ const CountrySelector: React.FC = () => {
           borderRadius="md"
           cursor="pointer"
         >
-          {
-            selectedCountry?.flag &&
-              (selectedCountry.code === 'global' ? (
-                <Text>🌍</Text>
-              ) : (
-                <UserFlag location={selectedCountry.code} isCode />
-              ))
-            // <Image
-            //   w={5}
-            //   alt={selectedCountry.name}
-            //   src={selectedCountry?.flag}
-            // />
-          }
+          {selectedCountry?.flag &&
+            (selectedCountry.code === 'global' ? (
+              <Text>🌍</Text>
+            ) : (
+              <UserFlag location={selectedCountry.code} isCode />
+            ))}
           <Text userSelect={'none'}>{selectedCountry.name}</Text>
         </Flex>
       </PopoverTrigger>

@@ -22,7 +22,7 @@ import React from 'react';
 import { UserMenu } from '@/components/shared/UserMenu';
 
 import { LISTING_NAV_ITEMS } from '../constants';
-import LogoContextMenu from './LogoContextMenu';
+import { LogoContextMenu } from './LogoContextMenu';
 import { NavLink } from './NavLink';
 
 interface Props {

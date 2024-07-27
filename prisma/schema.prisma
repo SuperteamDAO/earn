@@ -49,6 +49,7 @@ model Bounties {
   token                String?
   rewardAmount         Float?
   rewards              Json?
+  usdValue             Float?
   sponsorId            String
   pocId                String
   source               Source             @default(NATIVE)
@@ -78,11 +79,9 @@ model Bounties {
   publishedAt          DateTime?
   isPrivate            Boolean            @default(false)
   hackathonId          String?
-  usdValue             Float?
   compensationType     CompensationType   @default(fixed)
   maxRewardAsk         Int?
   minRewardAsk         Int?
-  winnersAnnouncedAt   DateTime?
   template             BountiesTemplates? @relation(fields: [templateId], references: [id])
   sponsor              Sponsors           @relation(fields: [sponsorId], references: [id])
   poc                  User               @relation("poc", fields: [pocId], references: [id])
@@ -90,6 +89,7 @@ model Bounties {
   Submission           Submission[]
   SubscribeBounty      SubscribeBounty[]
   Hackathon            Hackathon?         @relation(fields: [hackathonId], references: [id])
+  winnersAnnouncedAt   DateTime?
   Scouts               Scouts[]
   Comments             Comment[]
 
@@ -160,6 +160,10 @@ model Grants {
   description      String?            @db.Text
   shortDescription String?            @db.VarChar(1000)
   token            String?
+  minReward        Int?
+  maxReward        Int?
+  totalPaid        Int                @default(0)
+  totalApproved    Int                @default(0)
   link             String?
   sponsorId        String
   pocId            String
@@ -172,20 +176,16 @@ model Grants {
   skills           Json?
   logo             String?
   region           Regions            @default(GLOBAL)
-  airtableId       String?
-  avgResponseTime  String?            @default("24h")
-  maxReward        Int?
-  minReward        Int?
-  pocSocials       String?
-  questions        Json?
-  references       Json?
-  requirements     String?            @db.Text
-  status           GrantStatus        @default(OPEN)
-  totalApproved    Int                @default(0)
-  totalPaid        Int                @default(0)
   sponsor          Sponsors           @relation(fields: [sponsorId], references: [id])
   poc              User               @relation(fields: [pocId], references: [id])
+  questions        Json?
+  pocSocials       String?
+  status           GrantStatus        @default(OPEN)
+  references       Json?
+  requirements     String?            @db.Text
   GrantApplication GrantApplication[]
+  airtableId       String?
+  avgResponseTime  String?            @default("24h")
   isNative         Boolean            @default(false)
 
   @@index([id, slug])
@@ -209,6 +209,8 @@ model GrantApplication {
   answers           Json?
   createdAt         DateTime               @default(now())
   updatedAt         DateTime               @updatedAt
+  user              User                   @relation(fields: [userId], references: [id])
+  grant             Grants                 @relation(fields: [grantId], references: [id])
   label             SubmissionLabels       @default(Unreviewed)
   ask               Int                    @default(0)
   approvedAmount    Int                    @default(0)
@@ -216,8 +218,6 @@ model GrantApplication {
   isShipped         Boolean                @default(false)
   paymentDetails    Json?
   totalTranches     Int                    @default(0)
-  user              User                   @relation(fields: [userId], references: [id])
-  grant             Grants                 @relation(fields: [grantId], references: [id])
 
   @@index([userId])
   @@index([grantId])
@@ -237,16 +237,16 @@ model Submission {
   createdAt          DateTime         @default(now())
   updatedAt          DateTime         @updatedAt
   like               Json?
+  likeCount          Int              @default(0)
   isPaid             Boolean          @default(false)
   paymentDetails     Json?
   otherInfo          String?          @db.VarChar(2000)
   ask                Int?
   label              SubmissionLabels @default(Unreviewed)
   rewardInUSD        Float            @default(0)
-  likeCount          Int              @default(0)
-  ogImage            String?          @db.Text
   listing            Bounties         @relation(fields: [listingId], references: [id])
   user               User             @relation(fields: [userId], references: [id])
+  ogImage            String?          @db.Text
 
   @@index([id, listingId])
   @@index([userId])
@@ -415,8 +415,8 @@ model PoW {
   updatedAt   DateTime @updatedAt
   like        Json?
   likeCount   Int      @default(0)
-  ogImage     String?  @db.Text
   user        User     @relation(fields: [userId], references: [id])
+  ogImage     String?  @db.Text
 
   @@index([userId])
   @@index([createdAt])
@@ -459,12 +459,12 @@ model UserInvites {
 }
 
 model emailLogs {
-  id        String         @id @default(uuid())
+  id        String    @id @default(uuid())
   email     String?
-  type      emailLogs_type
+  type      EmailType
   bountyId  String?
-  createdAt DateTime       @default(now())
-  updatedAt DateTime       @updatedAt
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
 }
 
 model SubscribeBounty {
@@ -646,17 +646,4 @@ enum TalentRankingTimeframe {
   LAST_30_DAYS
   LAST_7_DAYS
   ALL_TIME
-}
-
-enum emailLogs_type {
-  BOUNTY_REVIEW
-  BOUNTY_DEADLINE
-  BOUNTY_DEADLINE_WEEK
-  BOUNTY_CLOSE_DEADLINE
-  NO_VERIFICATION
-  NO_ACTIVITY
-  NO_REVIEW_SPONSOR_1
-  NO_REVIEW_SPONSOR_2
-  ROLLING_15_DAYS
-  ROLLING_30_DAYS
 }
