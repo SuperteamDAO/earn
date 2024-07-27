@@ -30,6 +30,7 @@ import {
   TextInputWithHelper,
 } from '@/components/Form/TextAreaHelpers';
 import { tokenList } from '@/constants';
+import { QuestionHandler } from '@/features/listings';
 import { userStore } from '@/store/user';
 import { dayjs } from '@/utils/dayjs';
 import { validateSolAddress } from '@/utils/validateSolAddress';
@@ -55,7 +56,7 @@ export const GrantApplicationModal = ({
   setHasApplied,
   grant,
 }: Props) => {
-  const { id, token, minReward, maxReward } = grant;
+  const { id, token, minReward, maxReward, questions } = grant;
   const { activeStep, setActiveStep } = useSteps({
     index: 0,
     count: steps.length,
@@ -88,15 +89,18 @@ export const GrantApplicationModal = ({
         proofOfWork,
         milestones,
         kpi,
+        ...answers
       } = data;
-      // const grantAnswers = questions?.map((q: any, index: number) => ({
-      //   question: q.question,
-      //   answer: answers[`eligibility-${index}`],
-      // }));
 
       await axios.post('/api/user/update/', {
         publicKey: walletAddress,
       });
+
+      const grantAnswers =
+        questions?.map((q: any) => ({
+          question: q.question,
+          answer: answers[`answer-${q.order}`],
+        })) ?? [];
 
       await axios.post('/api/grant-application/create/', {
         grantId: id,
@@ -109,6 +113,7 @@ export const GrantApplicationModal = ({
         kpi,
         walletAddress,
         ask: ask || null,
+        answers: grantAnswers.length ? grantAnswers : null,
       });
 
       reset();
@@ -394,6 +399,18 @@ export const GrantApplicationModal = ({
                   errors={errors}
                   isRequired
                 />
+
+                {questions &&
+                  questions.map((e: any) => (
+                    <FormControl key={e?.order} isRequired>
+                      <QuestionHandler
+                        register={register}
+                        question={e?.question}
+                        label={`answer-${e?.order}`}
+                        watch={watch}
+                      />
+                    </FormControl>
+                  ))}
               </VStack>
             )}
             {activeStep === 2 && (
