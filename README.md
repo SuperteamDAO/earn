@@ -64,7 +64,7 @@
     pnpm dev
     ```
 ### With Docker
-3. Set up your `.env` file with DATABASE_URL="mysql://root:strong_password@db:3306/earn".
+3. Set up your `.env` file.
   - Start by copying the `.env.example` file to a new file named `.env`. This file will store your local environment settings.
   - Use `openssl rand -base64 32` to generate a key and add it under `NEXTAUTH_SECRET` in the .env file.
   - You have to set up resend to run the app:
@@ -72,7 +72,15 @@
 
   NOTE: If you are facing any issues with setup, feel free to contact [Abhishek](https://twitter.com/abhwshek)
   
-4. Run Docker Compose
+4. Need to run migrate command locally as there is no migration file
+  - start mysql docker container or user any mysql cloud db and use the respective database_url while running the migrate command (If using docker mysql container kill the container after running the migrate command).
+  ```bash
+      pnpx prisma migrate dev --name init
+ ```
+
+6. Now change the DATABASE_URL='mysql://root:strong_password@db:3306/earn'.
+
+5. Run Docker Compose
  ```bash
     docker compose up
  ```
