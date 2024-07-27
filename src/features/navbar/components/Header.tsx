@@ -55,6 +55,7 @@ export const Header = () => {
       {/*   to compete in the Talent Olympics — 30+ companies hiring! */}
       {/* </Snackbar> */}
       <BountySnackbar />
+      {/* {isRootRoute && <AnnouncementBar />} */}
       <Box pos="sticky" zIndex="sticky" top={0}>
         <DesktopNavbar
           onLoginOpen={onLoginOpen}

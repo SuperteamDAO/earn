@@ -22,7 +22,6 @@ import React from 'react';
 import { UserMenu } from '@/components/shared/UserMenu';
 
 import { LISTING_NAV_ITEMS } from '../constants';
-import { LogoContextMenu } from './LogoContextMenu';
 import { NavLink } from './NavLink';
 
 interface Props {
@@ -50,42 +49,40 @@ export const DesktopNavbar = ({ onLoginOpen, onSearchOpen }: Props) => {
     >
       <Flex justify={'space-between'} w="100%" maxW={maxWValue} mx="auto">
         <Flex align="center" gap={{ base: 3, lg: 6 }}>
-          <LogoContextMenu>
-            <Link
-              as={NextLink}
-              alignItems={'center'}
-              gap={3}
-              display={'flex'}
-              mr={5}
-              _hover={{ textDecoration: 'none' }}
-              href="/"
-              onClick={() => {
-                posthog.capture('homepage logo click_universal');
-              }}
-            >
-              <Image
-                h={5}
-                cursor="pointer"
-                objectFit={'contain'}
-                alt={'Superteam Earn'}
-                src={'/assets/logo/logo.svg'}
-              />
+          <Link
+            as={NextLink}
+            alignItems={'center'}
+            gap={3}
+            display={'flex'}
+            mr={5}
+            _hover={{ textDecoration: 'none' }}
+            href="/"
+            onClick={() => {
+              posthog.capture('homepage logo click_universal');
+            }}
+          >
+            <Image
+              h={5}
+              cursor="pointer"
+              objectFit={'contain'}
+              alt={'Superteam Earn'}
+              src={'/assets/logo/logo.svg'}
+            />
 
-              {isDashboardRoute && (
-                <>
-                  <Divider
-                    w={'3px'}
-                    h={'24px'}
-                    borderColor={'brand.slate.400'}
-                    orientation="vertical"
-                  />
-                  <Text fontSize="sm" letterSpacing={'1.5px'}>
-                    SPONSORS
-                  </Text>
-                </>
-              )}
-            </Link>
-          </LogoContextMenu>
+            {isDashboardRoute && (
+              <>
+                <Divider
+                  w={'3px'}
+                  h={'24px'}
+                  borderColor={'brand.slate.400'}
+                  orientation="vertical"
+                />
+                <Text fontSize="sm" letterSpacing={'1.5px'}>
+                  SPONSORS
+                </Text>
+              </>
+            )}
+          </Link>
 
           {router.pathname !== '/search' && (
             <Button
