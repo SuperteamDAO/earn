@@ -78,9 +78,9 @@
       pnpx prisma migrate dev --name init
  ```
 
-6. Now change the DATABASE_URL='mysql://root:strong_password@db:3306/earn'.
+5. Now change the DATABASE_URL='mysql://root:strong_password@db:3306/earn'.
 
-5. Run Docker Compose
+6. Run Docker Compose
  ```bash
     docker compose up
  ```
