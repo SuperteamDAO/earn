@@ -33,7 +33,7 @@ export function InviteButton({
       posthog.capture('invited talent_scout', {
         invitedUser: userId,
       });
-      toast.success(`Invite sent. ${invitesLeft} Invites Remaining`);
+      toast.success(`Invite sent. ${invitesLeft - 1} Invites Remaining`);
     } catch (err) {
       toast.error('Invite failed, please try again later');
       console.log(err);
