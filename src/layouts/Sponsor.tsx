@@ -60,6 +60,7 @@ export function Sidebar({ children }: { children: ReactNode }) {
   );
 
   const { query } = router;
+
   const open = !!query.open; // Replace 'paramName' with the actual parameter name
   useEffect(() => {
     if (open) {
@@ -105,8 +106,8 @@ export function Sidebar({ children }: { children: ReactNode }) {
     if (
       userInfo &&
       userInfo.currentSponsor &&
-      userInfo.role !== 'GOD' &&
-      userInfo.currentSponsorId &&
+      userInfo?.currentSponsorId &&
+      session?.user.role !== 'GOD' &&
       !userInfo.currentSponsor.entityName
     ) {
       setIsEntityModalOpen(true);

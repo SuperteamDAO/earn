@@ -29,6 +29,7 @@ async function grantApplication(
     kpi,
     walletAddress,
     ask,
+    answers,
   } = req.body;
 
   const formattedProjectTimeline = dayjs(projectTimeline).format('D MMMM YYYY');
@@ -49,6 +50,7 @@ async function grantApplication(
         kpi,
         walletAddress,
         ask: parsedAsk,
+        answers,
       },
       include: {
         user: true,

@@ -371,6 +371,17 @@ export const ApplicationDetails = ({
               label="Primary Key Performance Indicator"
               content={selectedApplication?.kpi}
             />
+
+            {Array.isArray(selectedApplication?.answers) &&
+              selectedApplication.answers.map(
+                (answer: any, answerIndex: number) => (
+                  <InfoBox
+                    key={answerIndex}
+                    label={answer.question}
+                    content={answer.answer}
+                  />
+                ),
+              )}
           </Box>
         </>
       ) : (
