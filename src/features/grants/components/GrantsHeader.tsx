@@ -10,6 +10,7 @@ import {
 import { useRouter } from 'next/router';
 import React from 'react';
 
+import { VerifiedBadge } from '@/components/shared/VerifiedBadge';
 import { ListingTabLink, RegionLabel, StatusBadge } from '@/features/listings';
 import type { SponsorType } from '@/interface/sponsor';
 
@@ -89,14 +90,17 @@ export const GrantsHeader = ({
               </Flex>
 
               <Flex align={'center'} wrap={'wrap'} gap={{ base: 1, md: 3 }}>
-                <Text
-                  color={'#94A3B8'}
-                  fontSize={{ base: 'xs', sm: 'md' }}
-                  fontWeight={500}
-                  whiteSpace={'nowrap'}
-                >
-                  by {sponsor?.name}
-                </Text>
+                <Flex align={'center'} gap={1}>
+                  <Text
+                    color={'#94A3B8'}
+                    fontSize={{ base: 'xs', sm: 'md' }}
+                    fontWeight={500}
+                    whiteSpace={'nowrap'}
+                  >
+                    by {sponsor?.name}
+                  </Text>
+                  {!!sponsor?.isVerified && <VerifiedBadge />}
+                </Flex>
                 <Text color={'#E2E8EF'} fontWeight={500}>
                   |
                 </Text>

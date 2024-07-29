@@ -33,6 +33,7 @@ export default async function getHackathon(
             name: true,
             slug: true,
             logo: true,
+            isVerified: true,
           },
         },
       },
