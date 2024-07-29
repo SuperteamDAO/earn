@@ -103,17 +103,28 @@ export function Sidebar({ children }: { children: ReactNode }) {
 
   // ENTITY NAME TO SPONSORS
   useEffect(() => {
-    if (
-      userInfo &&
-      userInfo.currentSponsor &&
-      userInfo?.currentSponsorId &&
-      session?.user.role !== 'GOD' &&
-      !userInfo.currentSponsor.entityName
-    ) {
-      setIsEntityModalOpen(true);
-    } else {
-      setIsEntityModalOpen(false);
-    }
+    const timer = setTimeout(async () => {
+      if (userInfo) {
+        if (
+          userInfo.currentSponsorId &&
+          (!userInfo.firstName || !userInfo.lastName || !userInfo.username)
+        ) {
+          onSponsorInfoModalOpen();
+        } else if (
+          userInfo.featureModalShown === false &&
+          userInfo.currentSponsorId
+        ) {
+          await getSponsorLatestActiveSlug();
+          onScoutAnnounceModalOpen();
+          await axios.post('/api/user/update/', {
+            featureModalShown: true,
+          });
+          setUserInfo({ ...userInfo, featureModalShown: true });
+        }
+      }
+    }, 5000);
+
+    return () => clearTimeout(timer);
   }, [userInfo]);
 
   useEffect(() => {

@@ -6,6 +6,7 @@ import { components } from 'react-select';
 import AsyncSelect from 'react-select/async';
 
 import { EarnAvatar } from '@/components/shared/EarnAvatar';
+import { VerifiedBadge } from '@/components/shared/VerifiedBadge';
 import type { SponsorType } from '@/interface/sponsor';
 import { userStore } from '@/store/user';
 
@@ -92,9 +93,11 @@ export function SelectSponsor({ type }: { type?: string }) {
             borderRadius="4"
           />
           <Box display={{ base: 'none', md: 'block' }} ml={2}>
-            <Text color="brand.slate.800" fontSize="sm">
-              {data?.sponsor?.name}
-            </Text>
+            <Flex>
+              <Text color="brand.slate.800" fontSize="sm">
+                {data?.sponsor?.name}
+              </Text>
+            </Flex>
             <Text color="brand.slate.400" fontSize="xs">
               {data?.sponsor?.role}
             </Text>
@@ -115,12 +118,17 @@ export function SelectSponsor({ type }: { type?: string }) {
             borderRadius="4"
           />
           <Box display={{ base: 'none', md: 'block' }} ml={2}>
-            <Text color="brand.slate.800" fontSize="sm">
-              {data?.sponsor?.name}
-            </Text>
-            <Text color="brand.slate.400" fontSize="xs">
-              {data?.sponsor?.role}
-            </Text>
+            <Flex align="center" wrap={'wrap'}>
+              <Text color="brand.slate.800" fontSize="sm">
+                {data?.sponsor?.name}
+              </Text>
+            </Flex>
+            <Flex align={'center'} gap={1}>
+              <Text color="brand.slate.400" fontSize="xs">
+                {data?.sponsor?.role}
+              </Text>
+              {data?.sponsor?.isVerified && <VerifiedBadge />}
+            </Flex>
           </Box>
         </Flex>
       </components.Option>
