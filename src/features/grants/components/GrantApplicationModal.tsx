@@ -22,7 +22,7 @@ import {
   VStack,
 } from '@chakra-ui/react';
 import axios from 'axios';
-import { useState } from 'react';
+import { useRef, useState } from 'react';
 import { useForm } from 'react-hook-form';
 
 import {
@@ -75,6 +75,7 @@ export const GrantApplicationModal = ({
   } = useForm();
 
   const { userInfo, setUserInfo } = userStore();
+  const modalRef = useRef<HTMLDivElement>(null);
 
   const submitApplication = async (data: any) => {
     setIsLoading(true);
@@ -144,9 +145,17 @@ export const GrantApplicationModal = ({
     }
     setAskError('');
     setActiveStep((prev) => prev + 1);
+    if (modalRef.current) {
+      modalRef.current.scrollTop = 0;
+    }
   };
 
-  const handleBack = () => setActiveStep((prev) => prev - 1);
+  const handleBack = () => {
+    setActiveStep((prev) => prev - 1);
+    if (modalRef.current) {
+      modalRef.current.scrollTop = 0;
+    }
+  };
 
   const date = dayjs().format('YYYY-MM-DD');
 
@@ -223,6 +232,7 @@ export const GrantApplicationModal = ({
         </ModalHeader>
         <ModalCloseButton mt={5} />
         <VStack
+          ref={modalRef}
           align={'start'}
           gap={3}
           overflowY={'auto'}
