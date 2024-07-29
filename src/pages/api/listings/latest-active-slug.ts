@@ -42,6 +42,9 @@ async function latestActiveSlug(
         deadline: {
           gt: new Date(),
         },
+        sponsor: {
+          isVerified: true,
+        },
       },
       orderBy: [{ createdAt: 'desc' }],
     });

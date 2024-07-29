@@ -129,6 +129,7 @@ export default async function user(req: NextApiRequest, res: NextApiResponse) {
               name: true,
               slug: true,
               logo: true,
+              isVerified: true,
             },
           },
           _count: {
@@ -180,6 +181,7 @@ export default async function user(req: NextApiRequest, res: NextApiResponse) {
               name: true,
               slug: true,
               logo: true,
+              isVerified: true,
             },
           },
           _count: {
@@ -235,6 +237,7 @@ export default async function user(req: NextApiRequest, res: NextApiResponse) {
               name: true,
               slug: true,
               logo: true,
+              isVerified: true,
             },
           },
           _count: {

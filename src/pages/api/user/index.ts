@@ -52,6 +52,7 @@ export default async function handler(
             id: true,
             name: true,
             logo: true,
+            isVerified: true,
           },
         },
         UserSponsors: {

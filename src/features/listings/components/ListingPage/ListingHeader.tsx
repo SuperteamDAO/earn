@@ -19,6 +19,7 @@ import React, { useEffect, useState } from 'react';
 import { toast } from 'react-hot-toast';
 import { TbBell, TbBellRinging } from 'react-icons/tb';
 
+import { VerifiedBadge } from '@/components/shared/VerifiedBadge';
 import { AuthWrapper } from '@/features/auth';
 import { type Listing, WarningModal } from '@/features/listings';
 import type { User } from '@/interface/user';
@@ -173,14 +174,17 @@ export function ListingHeader({
   const HeaderSub = () => {
     return (
       <Flex align={'center'} wrap={'wrap'} gap={{ base: 1, md: 3 }}>
-        <Text
-          color={'#94A3B8'}
-          fontSize={{ base: 'xs', sm: 'md' }}
-          fontWeight={500}
-          whiteSpace={'nowrap'}
-        >
-          by {sponsor?.name}
-        </Text>
+        <Flex align={'center'} gap={1}>
+          <Text
+            color={'#94A3B8'}
+            fontSize={{ base: 'xs', sm: 'md' }}
+            fontWeight={500}
+            whiteSpace={'nowrap'}
+          >
+            by {sponsor?.name}
+          </Text>
+          {!!sponsor?.isVerified && <VerifiedBadge />}
+        </Flex>
         <Text color={'#E2E8EF'} fontWeight={500}>
           |
         </Text>

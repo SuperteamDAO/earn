@@ -34,6 +34,7 @@ interface Props {
   listingType: string;
   listingSlug: string;
   isAnnounced: boolean;
+  isVerified?: boolean;
 }
 export const Comments = ({
   refId,
@@ -43,6 +44,7 @@ export const Comments = ({
   listingType,
   listingSlug,
   isAnnounced,
+  isVerified = false,
 }: Props) => {
   const { userInfo } = userStore();
   const posthog = usePostHog();
@@ -282,6 +284,7 @@ export const Comments = ({
                 refType={refType}
                 refId={refId}
                 deleteComment={deleteComment}
+                isVerified={isVerified}
               />
             );
           })}

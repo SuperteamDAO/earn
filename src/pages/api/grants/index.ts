@@ -35,6 +35,7 @@ export default async function grants(
             name: true,
             slug: true,
             logo: true,
+            isVerified: true,
           },
         },
       },

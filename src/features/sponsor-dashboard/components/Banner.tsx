@@ -14,6 +14,7 @@ import { AiOutlineEdit } from 'react-icons/ai';
 import { MdInfoOutline, MdOutlineChatBubbleOutline } from 'react-icons/md';
 
 import { EarnAvatar } from '@/components/shared/EarnAvatar';
+import { VerifiedBadgeLarge } from '@/components/shared/VerifiedBadge';
 import { userStore } from '@/store/user';
 
 export function Banner({
@@ -61,14 +62,18 @@ export function Banner({
             />
             <Box>
               <Box alignItems={'center'} flexDir={'row'} display={'flex'}>
-                <Text
-                  color={'brand.slate.900'}
-                  fontSize="lg"
-                  fontWeight={600}
-                  whiteSpace={'nowrap'}
-                >
-                  {sponsor?.name}
-                </Text>
+                <Flex align={'center'} gap={1} w="min-content">
+                  <Text
+                    color={'brand.slate.900'}
+                    fontSize="lg"
+                    fontWeight={600}
+                    whiteSpace={'nowrap'}
+                  >
+                    {sponsor?.name}
+                  </Text>
+                  <div>{!!sponsor?.isVerified && <VerifiedBadgeLarge />}</div>
+                </Flex>
+
                 <Link
                   as={NextLink}
                   ml={2}

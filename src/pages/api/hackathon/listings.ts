@@ -87,6 +87,7 @@ async function getHackathonListings(
           select: {
             name: true,
             logo: true,
+            isVerified: true,
           },
         },
         Hackathon: {
