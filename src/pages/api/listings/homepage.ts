@@ -1,4 +1,3 @@
-// add language check
 import { type BountyType } from '@prisma/client';
 import { type NextApiRequest, type NextApiResponse } from 'next';
 
@@ -95,6 +94,7 @@ export async function getGrants({ take = 20, skillFilter }: GrantProps) {
           name: true,
           slug: true,
           logo: true,
+          isVerified: true,
         },
       },
       _count: {
@@ -205,6 +205,7 @@ export async function getListings({
           name: true,
           slug: true,
           logo: true,
+          isVerified: true,
         },
       },
     },

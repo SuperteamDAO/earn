@@ -62,6 +62,10 @@ function BountyDetails({ bounty: initialBounty }: BountyDetailsProps) {
     'maxRewardAsk',
     initialBounty?.maxRewardAsk?.toString() || '',
   );
+  ogImage.searchParams.set(
+    'isSponsorVerified',
+    initialBounty?.sponsor?.isVerified?.toString() || 'false',
+  );
 
   return (
     <Default

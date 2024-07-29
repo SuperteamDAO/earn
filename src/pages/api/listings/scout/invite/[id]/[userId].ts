@@ -33,6 +33,33 @@ async function scoutInvite(
       return res.status(error.status).json({ error: error.message });
     }
 
+    const scoutSponsor = await prisma.sponsors.findFirst({
+      where: {
+        id: userSponsorId,
+      },
+    });
+
+    if (scoutSponsor?.isVerified === false) {
+      logger.warn(`Sponsor isn't Verified, not sending scout data`);
+      return res.status(401).send('Unauthorized');
+    }
+
+    const invitedCount = await prisma.scouts.count({
+      where: {
+        listingId: id,
+        invited: true,
+      },
+    });
+
+    if (invitedCount >= 5) {
+      logger.warn(
+        `Maximum number of invited scouts reached for listing ID: ${id}`,
+      );
+      return res.status(400).json({
+        error: 'Maximum number of invited scouts reached',
+      });
+    }
+
     logger.debug(`Fetching scout for listing ID: ${id} and user ID: ${userId}`);
     const scout = await prisma.scouts.findFirst({
       where: {

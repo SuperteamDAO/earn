@@ -8,5 +8,6 @@ interface SponsorType {
   twitter?: string;
   bio?: string;
   entityName?: string;
+  isVerified?: boolean;
 }
 export type { SponsorType };

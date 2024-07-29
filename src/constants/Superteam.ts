@@ -113,7 +113,7 @@ export const Superteams = [
     name: 'Superteam Balkan',
     bg: `/assets/category_assets/bg/design.png`,
     color: '#FEEBA8',
-    icons: '/assets/superteams/balkan.jpeg',
+    icons: '/assets/superteams/balkan.png',
     banner: '/assets/superteam-banners/Balkan.png',
     region: Regions.BALKAN,
     displayValue: 'Balkan',
@@ -129,6 +129,7 @@ export const Superteams = [
       'Serbia',
       'Slovenia',
     ],
+    code: 'BALKAN',
     hello: 'Pozdrav',
   },
   {

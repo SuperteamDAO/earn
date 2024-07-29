@@ -29,7 +29,14 @@ export default async function handler(
         isActive: true,
       },
       include: {
-        sponsor: { select: { name: true, logo: true, entityName: true } },
+        sponsor: {
+          select: {
+            name: true,
+            logo: true,
+            entityName: true,
+            isVerified: true,
+          },
+        },
         poc: true,
         Hackathon: {
           select: {
