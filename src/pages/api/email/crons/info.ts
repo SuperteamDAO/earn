@@ -139,7 +139,7 @@ async function handler(_req: NextApiRequest, res: NextApiResponse) {
 
     const info = {
       userSignUpsInLast7Days: newUserCountInLastWeek,
-      totalUsersSignedUp: totalUserCount,
+      totalUsersSignedUp: totalUserCount - 289,
       newTalentProfilesFilledInLast7Days: newTalentFilledUserCountInLastWeek,
       totalTalentProfilesFilled: totalTalentFilledUserCount - 289,
       newListingsPublishedInLast7Days: newBountiesCountInLastWeek,
