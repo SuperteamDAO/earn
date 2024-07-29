@@ -36,13 +36,18 @@ export function UserFlag({ location, size = '16px', isCode = false }: Props) {
       }
     }
   }, [location]);
-  return (
-    code && (
-      <Center
-        className={`fi fi-${code} fis`}
-        rounded="full"
-        style={{ width: size, height: size }}
-      />
-    )
+  return code === 'balkan' ? (
+    <Center
+      bgImage={'/assets/superteams/balkan.png'}
+      bgSize={'contain'}
+      rounded="full"
+      style={{ width: size, height: size }}
+    />
+  ) : (
+    <Center
+      className={`fi fi-${code} fis`}
+      rounded="full"
+      style={{ width: size, height: size }}
+    />
   );
 }
