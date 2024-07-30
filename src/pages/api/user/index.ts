@@ -46,6 +46,20 @@ export default async function handler(
         interests: true,
         community: true,
         private: true,
+        acceptedTOS: true,
+        cryptoExperience: true,
+        currentEmployer: true,
+        bio: true,
+        discord: true,
+        email: true,
+        experience: true,
+        github: true,
+        linkedin: true,
+        PoW: true,
+        telegram: true,
+        twitter: true,
+        website: true,
+        workPrefernce: true,
 
         currentSponsor: {
           select: {
