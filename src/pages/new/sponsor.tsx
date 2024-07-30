@@ -446,7 +446,7 @@ const CreateSponsor = () => {
                   </FormErrorMessage>
                 </FormControl>
               </Box>
-              <Box mt={8}>
+              <Box my={8}>
                 {hasError && (
                   <Text align="center" mb={4} color="red">
                     {errorMessage ||
@@ -459,19 +459,28 @@ const CreateSponsor = () => {
                     </Link>
                   </Text>
                 )}
-                <Button
-                  className="ph-no-capture"
-                  w="full"
-                  isDisabled={imageUrl === ''}
-                  isLoading={!!isLoading}
-                  loadingText="Creating..."
-                  size="lg"
-                  type="submit"
-                  variant="solid"
-                >
-                  Create Sponsor
-                </Button>
+                {validationErrorMessage && (
+                  <Text align={'center'} color="yellow.500">
+                    If you want access to the existing account, contact us on
+                    Telegram at{' '}
+                    <Link as="span" href="https://t.me/pratikdholani">
+                      @pratikdholani
+                    </Link>
+                  </Text>
+                )}
               </Box>
+              <Button
+                className="ph-no-capture"
+                w="full"
+                isDisabled={imageUrl === ''}
+                isLoading={!!isLoading}
+                loadingText="Creating..."
+                size="lg"
+                type="submit"
+                variant="solid"
+              >
+                Create Sponsor
+              </Button>
             </form>
           </VStack>
         </VStack>
