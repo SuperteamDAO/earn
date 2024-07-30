@@ -12,19 +12,38 @@ import {
   Input,
   InputGroup,
   InputLeftElement,
+  Menu,
+  MenuButton,
+  MenuItem,
+  MenuList,
   Tab,
   TabList,
   TabPanel,
   TabPanels,
   Tabs,
+  Tag,
+  TagLabel,
   Text,
   useDisclosure,
 } from '@chakra-ui/react';
 import axios from 'axios';
-import { useEffect, useRef, useState } from 'react';
+import debounce from 'lodash.debounce';
+import React, {
+  useCallback,
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+} from 'react';
+import { IoFilter } from 'react-icons/io5';
+import { MdArrowDropDown } from 'react-icons/md';
 
 import { LoadingSection } from '@/components/shared/LoadingSection';
-import { type ListingWithSubmissions } from '@/features/listings';
+import {
+  getColorStyles,
+  getListingStatus,
+  type ListingWithSubmissions,
+} from '@/features/listings';
 import {
   Banner,
   CreateListingModal,
@@ -34,18 +53,16 @@ import {
 import { Sidebar } from '@/layouts/Sponsor';
 import { userStore } from '@/store/user';
 
-const debounce = require('lodash.debounce');
+const MemoizedListingTable = React.memo(ListingTable);
 
 export default function SponsorListings() {
   const { userInfo } = userStore();
   const [allListings, setAllListings] = useState<ListingWithSubmissions[]>([]);
-  const [filteredListings, setFilteredListings] = useState<
-    ListingWithSubmissions[]
-  >([]);
   const [isListingsLoading, setIsListingsLoading] = useState(true);
   const [searchText, setSearchText] = useState('');
   const [currentPage, setCurrentPage] = useState(0);
   const [selectedTab, setSelectedTab] = useState('all');
+  const [selectedStatus, setSelectedStatus] = useState<string | null>(null);
   const listingsPerPage = 15;
 
   const [sponsorStats, setSponsorStats] = useState<SponsorStats>({});
@@ -59,27 +76,25 @@ export default function SponsorListings() {
     };
   }, [debouncedSetSearchText]);
 
-  const getListings = async () => {
+  const getListings = useCallback(async () => {
     setIsListingsLoading(true);
     try {
-      const allListings = await axios.get('/api/sponsor-dashboard/listings', {
-        params: {
-          searchText,
-        },
+      const response = await axios.get('/api/sponsor-dashboard/listings', {
+        params: { searchText },
       });
-      setAllListings(allListings.data);
-      setFilteredListings(allListings.data);
+      setAllListings(response.data);
       setIsListingsLoading(false);
     } catch (error) {
+      console.error('Failed to fetch listings:', error);
       setIsListingsLoading(false);
     }
-  };
+  }, [searchText]);
 
   useEffect(() => {
     if (userInfo?.currentSponsorId) {
       getListings();
     }
-  }, [userInfo?.currentSponsorId, searchText]);
+  }, [userInfo?.currentSponsorId, getListings]);
 
   useEffect(() => {
     const getSponsorStats = async () => {
@@ -87,7 +102,7 @@ export default function SponsorListings() {
         const sponsorData = await axios.get('/api/sponsors/stats');
         setSponsorStats(sponsorData.data);
       } catch (err) {
-        console.log('Failed to fetch sponsor stats');
+        console.error('Failed to fetch sponsor stats:', err);
       } finally {
         setIsStatsLoading(false);
       }
@@ -102,12 +117,7 @@ export default function SponsorListings() {
     onClose: onCloseCreateListing,
   } = useDisclosure();
 
-  const paginatedListings = filteredListings.slice(
-    currentPage * listingsPerPage,
-    (currentPage + 1) * listingsPerPage,
-  );
-
-  useEffect(() => {
+  const filteredListings = useMemo(() => {
     const filterListingsByType = () => {
       if (selectedTab === 'all') {
         return allListings;
@@ -115,25 +125,58 @@ export default function SponsorListings() {
       return allListings.filter((listing) => listing.type === selectedTab);
     };
 
+    const filterListingsByStatus = (listings: ListingWithSubmissions[]) => {
+      if (selectedStatus) {
+        return listings.filter(
+          (listing) => getListingStatus(listing) === selectedStatus,
+        );
+      }
+      return listings;
+    };
+
+    const filteredByType = filterListingsByType();
+    const filteredByTypeAndStatus = filterListingsByStatus(filteredByType);
+
     if (searchText) {
-      const filtered = filterListingsByType().filter((listing) =>
+      return filteredByTypeAndStatus.filter((listing) =>
         listing.title
           ? listing.title.toLowerCase().includes(searchText.toLowerCase())
           : false,
       );
-      setFilteredListings(filtered);
-    } else {
-      setFilteredListings(filterListingsByType());
     }
-    setCurrentPage(0);
-  }, [searchText, allListings, selectedTab]);
+    return filteredByTypeAndStatus;
+  }, [allListings, selectedTab, selectedStatus, searchText]);
 
-  const hasGrants = allListings.some((listing) => listing.type === 'grant');
+  const paginatedListings = useMemo(() => {
+    return filteredListings.slice(
+      currentPage * listingsPerPage,
+      (currentPage + 1) * listingsPerPage,
+    );
+  }, [filteredListings, currentPage, listingsPerPage]);
+
+  const hasGrants = useMemo(() => {
+    return allListings.some((listing) => listing.type === 'grant');
+  }, [allListings]);
 
   const selectedStyles = {
     borderColor: 'brand.purple',
     color: 'brand.slate.600',
   };
+
+  const handleStatusFilterChange = useCallback((status: string | null) => {
+    setSelectedStatus(status);
+    setCurrentPage(0);
+  }, []);
+
+  const handleTabChange = useCallback(
+    (index: number) => {
+      const tabTypes = ['all', 'bounty', 'project', hasGrants ? 'grant' : ''];
+      const tabType = tabTypes[index] || 'all';
+      setSelectedTab(tabType);
+      setCurrentPage(0);
+    },
+    [hasGrants],
+  );
 
   return (
     <Sidebar>
@@ -152,41 +195,126 @@ export default function SponsorListings() {
             The one place to manage your listings
           </Text>
         </Flex>
-        <InputGroup w={64}>
-          <Input
-            bg={'white'}
-            borderColor="brand.slate.200"
-            _placeholder={{
-              color: 'brand.slate.400',
-              fontWeight: 500,
-              fontSize: 'md',
-            }}
-            focusBorderColor="brand.purple"
-            onChange={(e) => debouncedSetSearchText(e.target.value)}
-            placeholder="Search listing..."
-            type="text"
-          />
-          <InputLeftElement pointerEvents="none">
-            <SearchIcon color="brand.slate.400" />
-          </InputLeftElement>
-        </InputGroup>
+        <Flex align="center" gap={3}>
+          <IoFilter color="#64748B" size={'20px'} />
+          <Menu>
+            <MenuButton
+              as={Button}
+              color="brand.slate.500"
+              fontWeight={500}
+              textTransform="capitalize"
+              bg="transparent"
+              borderWidth={'1px'}
+              borderColor="brand.slate.300"
+              _hover={{ backgroundColor: 'transparent' }}
+              _active={{
+                backgroundColor: 'transparent',
+                borderWidth: '1px',
+              }}
+              _expanded={{ borderColor: 'brand.purple' }}
+              rightIcon={<MdArrowDropDown />}
+            >
+              <Tag
+                px={3}
+                py={1}
+                bg={getColorStyles(selectedStatus!).bgColor}
+                rounded="full"
+              >
+                <TagLabel
+                  w="full"
+                  color={getColorStyles(selectedStatus!).color}
+                  fontSize={'13px'}
+                  textAlign={'center'}
+                  textTransform={'capitalize'}
+                  whiteSpace={'nowrap'}
+                >
+                  {selectedStatus || 'Everything'}
+                </TagLabel>
+              </Tag>
+            </MenuButton>
+            <MenuList borderColor="brand.slate.300">
+              <MenuItem
+                key="Everything"
+                _focus={{ bg: 'brand.slate.100' }}
+                onClick={() => handleStatusFilterChange(null)}
+              >
+                <Tag
+                  px={3}
+                  py={1}
+                  bg={getColorStyles('Everything').bgColor}
+                  rounded="full"
+                >
+                  <TagLabel
+                    w="full"
+                    color={getColorStyles('Everything').color}
+                    fontSize={'11px'}
+                    textAlign={'center'}
+                    textTransform={'capitalize'}
+                    whiteSpace={'nowrap'}
+                  >
+                    Everything
+                  </TagLabel>
+                </Tag>
+              </MenuItem>
+              {[
+                'Draft',
+                'Ongoing',
+                'In Progress',
+                'In Review',
+                'Payment Pending',
+                'Completed',
+              ].map((status) => (
+                <MenuItem
+                  key={status}
+                  _focus={{ bg: 'brand.slate.100' }}
+                  onClick={() => handleStatusFilterChange(status)}
+                >
+                  <Tag
+                    px={3}
+                    py={1}
+                    bg={getColorStyles(status).bgColor}
+                    rounded="full"
+                  >
+                    <TagLabel
+                      w="full"
+                      color={getColorStyles(status).color}
+                      fontSize={'11px'}
+                      textAlign={'center'}
+                      textTransform={'capitalize'}
+                      whiteSpace={'nowrap'}
+                    >
+                      {status}
+                    </TagLabel>
+                  </Tag>
+                </MenuItem>
+              ))}
+            </MenuList>
+          </Menu>
+          <InputGroup w={64} ml={4}>
+            <Input
+              bg={'white'}
+              borderColor="brand.slate.200"
+              _placeholder={{
+                color: 'brand.slate.400',
+                fontWeight: 500,
+                fontSize: 'md',
+              }}
+              focusBorderColor="brand.purple"
+              onChange={(e) => debouncedSetSearchText(e.target.value)}
+              placeholder="Search listing..."
+              type="text"
+            />
+            <InputLeftElement pointerEvents="none">
+              <SearchIcon color="brand.slate.400" />
+            </InputLeftElement>
+          </InputGroup>
+        </Flex>
       </Flex>
 
       {isListingsLoading && <LoadingSection />}
       {!isListingsLoading && (
         <>
-          <Tabs
-            onChange={(index) => {
-              const tabTypes = [
-                'all',
-                'bounty',
-                'project',
-                hasGrants ? 'grant' : '',
-              ];
-              const tabType = tabTypes[index] || 'all';
-              setSelectedTab(tabType);
-            }}
-          >
+          <Tabs onChange={handleTabChange}>
             <TabList>
               <Tab
                 color="brand.slate.400"
@@ -225,26 +353,26 @@ export default function SponsorListings() {
             </TabList>
             <TabPanels>
               <TabPanel px={0}>
-                <ListingTable
+                <MemoizedListingTable
                   listings={paginatedListings}
                   setListings={setAllListings}
                 />
               </TabPanel>
               <TabPanel px={0}>
-                <ListingTable
+                <MemoizedListingTable
                   listings={paginatedListings}
                   setListings={setAllListings}
                 />
               </TabPanel>
               <TabPanel px={0}>
-                <ListingTable
+                <MemoizedListingTable
                   listings={paginatedListings}
                   setListings={setAllListings}
                 />
               </TabPanel>
               {hasGrants && (
                 <TabPanel px={0}>
-                  <ListingTable
+                  <MemoizedListingTable
                     listings={paginatedListings}
                     setListings={setAllListings}
                   />
@@ -300,7 +428,7 @@ export default function SponsorListings() {
           )}
         </>
       )}
-      {!isListingsLoading && !paginatedListings.length && (
+      {!isListingsLoading && !allListings.length && (
         <>
           <Image
             w={32}
@@ -335,7 +463,7 @@ export default function SponsorListings() {
             mb={48}
             fontSize="md"
             leftIcon={<AddIcon w={3} h={3} />}
-            onClick={() => onOpenCreateListing()}
+            onClick={onOpenCreateListing}
             variant="solid"
           >
             Create New Listing
