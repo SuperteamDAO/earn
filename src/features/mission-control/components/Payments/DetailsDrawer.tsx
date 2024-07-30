@@ -20,28 +20,19 @@ import { LuMail, LuWallet } from 'react-icons/lu';
 import { tokenList } from '@/constants';
 import { truncatePublicKey } from '@/utils/truncatePublicKey';
 
-import { type STATUS, type TSXTYPE } from '../../utils';
+import { type PaymentData } from '../../utils';
 import { TsxTypeIcon } from '../TsxTypeIcon';
 import { ActionButton } from './ActionButton';
 import { StatusBadge } from './StatusBadge';
 
-interface SideSheetProps {
+interface SideSheetProps extends PaymentData {
   children: ReactNode;
-  title: string;
-  name: string;
-  type: TSXTYPE;
-  status: STATUS;
-  amount: number;
-  tokenSymbol: string;
-  email: string;
-  walletAddress: string;
-  discordId: string;
-  content: ReactNode;
+  onApprove: (approvedAmount?: number) => void;
+  onReject: () => void;
 }
 export const DetailsDrawer: React.FC<SideSheetProps> = ({
   children,
   title,
-  content,
   name,
   type,
   status,
@@ -50,6 +41,8 @@ export const DetailsDrawer: React.FC<SideSheetProps> = ({
   email,
   walletAddress,
   discordId,
+  onApprove,
+  onReject,
 }) => {
   const { isOpen, onOpen, onClose } = useDisclosure();
   const tokenInfo = tokenList.find(
@@ -80,7 +73,7 @@ export const DetailsDrawer: React.FC<SideSheetProps> = ({
                   color="#64748B"
                   bg={'#F8FAFC'}
                   rounded="lg"
-                  type={type}
+                  type={type ?? 'all'}
                 />
                 <Flex direction="column">
                   <Text>{title}</Text>
@@ -88,18 +81,24 @@ export const DetailsDrawer: React.FC<SideSheetProps> = ({
                 </Flex>
               </Flex>
               <Flex align="center" gap={4}>
-                <StatusBadge h="fit-content" status={status} />
-                {status === 'pending' && (
+                <StatusBadge h="fit-content" status={status ?? 'all'} />
+                {status === 'undecided' && (
                   <>
                     <ActionButton
+                      tsxType={type ?? 'all'}
                       action="approve"
-                      onConfirm={() => 0}
-                      size="normal"
+                      onConfirm={onApprove}
+                      size="small"
+                      personName={name ?? ''}
+                      request={amount ?? 0}
                     />
                     <ActionButton
+                      tsxType={type ?? 'all'}
                       action="reject"
-                      onConfirm={() => 0}
-                      size="normal"
+                      onConfirm={onReject}
+                      size="small"
+                      personName={name ?? ''}
+                      request={amount ?? 0}
                     />
                   </>
                 )}
@@ -125,12 +124,13 @@ export const DetailsDrawer: React.FC<SideSheetProps> = ({
                     />
                   )}
                   <Text color="#1E293B" fontWeight={600}>
-                    {new Intl.NumberFormat('en-US', {
-                      style: 'currency',
-                      currency: 'USD',
-                      minimumFractionDigits: 0,
-                      maximumFractionDigits: 0,
-                    }).format(amount)}
+                    {amount &&
+                      new Intl.NumberFormat('en-US', {
+                        style: 'currency',
+                        currency: 'USD',
+                        minimumFractionDigits: 0,
+                        maximumFractionDigits: 0,
+                      }).format(amount)}
                   </Text>
                   <Text ml={2} color="#94A3B8" fontWeight={600}>
                     {tokenSymbol}
@@ -144,7 +144,7 @@ export const DetailsDrawer: React.FC<SideSheetProps> = ({
               <HStack>
                 <LuWallet />
                 <Text color="brand.slate.400">
-                  {truncatePublicKey(walletAddress, 3)}
+                  {walletAddress && truncatePublicKey(walletAddress, 3)}
                   <Tooltip label="Copy Wallet ID" placement="right">
                     <CopyIcon
                       cursor="pointer"
@@ -162,7 +162,7 @@ export const DetailsDrawer: React.FC<SideSheetProps> = ({
                 <Text fontWeight={500}>{discordId}</Text>
               </HStack>
             </HStack>
-            {content}
+            {/* {content} */}
           </DrawerBody>
         </DrawerContent>
       </Drawer>

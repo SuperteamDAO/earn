@@ -46,15 +46,12 @@ export function StatusFilter({ status, children }: Props) {
         setStatus('all');
         break;
       case 1:
-        setStatus('pending');
+        setStatus('undecided');
         break;
       case 2:
-        setStatus('processing');
+        setStatus('accepted');
         break;
       case 3:
-        setStatus('paid');
-        break;
-      case 4:
         setStatus('rejected');
         break;
     }
@@ -64,14 +61,12 @@ export function StatusFilter({ status, children }: Props) {
     switch (value) {
       case 'all':
         return 0;
-      case 'pending':
+      case 'undecided':
         return 1;
-      case 'processing':
+      case 'accepted':
         return 2;
-      case 'paid':
-        return 3;
       case 'rejected':
-        return 4;
+        return 3;
       default:
         return 0;
     }
@@ -107,7 +102,7 @@ export function StatusFilter({ status, children }: Props) {
               fontSize={tabfontsize}
               _selected={selectedStyles}
             >
-              Pending
+              Undecided
             </Tab>
             <Tab
               my={0}
@@ -115,15 +110,7 @@ export function StatusFilter({ status, children }: Props) {
               fontSize={tabfontsize}
               _selected={selectedStyles}
             >
-              Processing
-            </Tab>
-            <Tab
-              my={0}
-              px={2}
-              fontSize={tabfontsize}
-              _selected={selectedStyles}
-            >
-              Paid
+              Accepted
             </Tab>
             <Tab
               my={0}

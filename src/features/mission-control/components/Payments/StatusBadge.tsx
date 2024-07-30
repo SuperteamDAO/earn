@@ -14,12 +14,10 @@ export const StatusBadge: React.FC<StatusBadgeProps> = ({
   const getStyles = (status: STATUS): { bg: string; color: string } => {
     switch (status) {
       case 'all':
-      case 'pending':
+      case 'undecided':
         return { bg: '#FAFAFA', color: '#525252' };
-      case 'processing':
+      case 'accepted':
         return { bg: '#FFFBEB', color: '#F59E0B' };
-      case 'paid':
-        return { bg: '#ECFDF5', color: '#059669' };
       case 'rejected':
         return { bg: '#FEF2F2', color: '#EF4444' };
       default:

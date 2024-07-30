@@ -1,16 +1,19 @@
 import { Box, Flex, type FlexProps, Icon, Text } from '@chakra-ui/react';
 import { usePathname, useSearchParams } from 'next/navigation';
 import { useRouter } from 'next/router';
+import { useSession } from 'next-auth/react';
 import { type ReactNode, useCallback } from 'react';
 
-import { type TSXTYPE, TsxTypeIcon } from '@/features/mission-control';
+import { EarnAvatar } from '@/components/shared/EarnAvatar';
+import {
+  SelectSuperteam,
+  type SuperteamOption,
+  type TSXTYPE,
+  TsxTypeIcon,
+} from '@/features/mission-control';
 
 import { Default } from './Default';
 import { Meta } from './Meta';
-
-interface Props {
-  children: ReactNode;
-}
 
 interface NavItemProps extends FlexProps {
   type: TSXTYPE;
@@ -102,7 +105,18 @@ const NavTypes: Array<LinkItemProps> = [
   },
 ];
 
-export const MissionControl = ({ children }: Props) => {
+interface Props {
+  children: ReactNode;
+  selectedSuperteam: SuperteamOption;
+  superteamList: SuperteamOption[];
+}
+export const MissionControl = ({
+  children,
+  selectedSuperteam,
+  superteamList,
+}: Props) => {
+  const { data: session } = useSession();
+
   return (
     <Default
       className="bg-white"
@@ -143,6 +157,36 @@ export const MissionControl = ({ children }: Props) => {
           {/*     {isHackathonRoute ? <SelectHackathon /> : <SelectSponsor />} */}
           {/*   </Box> */}
           {/* )} */}
+
+          {session?.user?.misconRole === 'ZEUS' && (
+            <Box px={6} pb={6}>
+              <SelectSuperteam
+                selected={selectedSuperteam}
+                list={superteamList}
+              />
+            </Box>
+          )}
+          {session?.user?.misconRole && session.user.misconRole !== 'ZEUS' && (
+            <Flex
+              align="center"
+              mx={2}
+              mb={4}
+              p={2}
+              borderWidth={1}
+              rounded="md"
+            >
+              <EarnAvatar
+                id={selectedSuperteam?.superteam?.name}
+                avatar={selectedSuperteam?.superteam?.logo}
+                borderRadius="4"
+              />
+              <Box display={{ base: 'none', md: 'block' }} ml={2}>
+                <Text color="brand.slate.800" fontSize="sm">
+                  {selectedSuperteam?.superteam?.name}
+                </Text>
+              </Box>
+            </Flex>
+          )}
           {NavTypes.map((link) => (
             <TypeNavItem
               className="ph-no-capture"

@@ -75,6 +75,7 @@ export const authOptions: NextAuthOptions = {
       session.user.lastName = token.lastName;
       session.token = token.access_token;
       session.user.role = token.role;
+      session.user.misconRole = token.misconRole;
       return session;
     },
   },

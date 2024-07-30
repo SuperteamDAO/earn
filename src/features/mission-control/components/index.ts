@@ -4,6 +4,7 @@ export * from './Payments';
 export * from './QuickLinks';
 export * from './RegionalTable';
 export * from './SearchInput';
+export * from './SelectSuperteam';
 export * from './StatusFilter';
 export * from './TimeRange';
 export * from './TsxPieChart';

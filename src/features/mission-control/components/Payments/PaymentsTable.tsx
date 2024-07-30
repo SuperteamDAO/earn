@@ -25,7 +25,7 @@ import { StatusBadge } from './StatusBadge';
 
 interface PaymentTableProps {
   data: PaymentData[];
-  onApprove: (id: string) => void;
+  onApprove: (id: string, approvedAmount?: number) => void;
   onReject: (id: string) => void;
 }
 
@@ -35,7 +35,7 @@ export const PaymentTable: React.FC<PaymentTableProps> = ({
   onReject,
 }) => {
   return (
-    <Box overflowX="auto" borderWidth={1} rounded="lg">
+    <Box overflowX="auto" w="full" borderWidth={1} rounded="lg">
       <Table variant="simple">
         <Thead>
           <Tr color="brand.slate.500" fontWeight={500} bg="#F8FAFC">
@@ -66,10 +66,20 @@ export const PaymentTable: React.FC<PaymentTableProps> = ({
             >
               Amount
             </Th>
-            <Th color="#94A3B8" fontWeight={500} textTransform={'none'}>
+            <Th
+              color="#94A3B8"
+              fontWeight={500}
+              textAlign="center"
+              textTransform={'none'}
+            >
               KYC
             </Th>
-            <Th color="#94A3B8" fontWeight={500} textTransform={'none'}>
+            <Th
+              color="#94A3B8"
+              fontWeight={500}
+              textAlign="center"
+              textTransform={'none'}
+            >
               Status
             </Th>
             <Th color="#94A3B8" fontWeight={500} textTransform={'none'}>
@@ -85,13 +95,21 @@ export const PaymentTable: React.FC<PaymentTableProps> = ({
             return (
               <Tr key={payment.id}>
                 <Td>
-                  <DetailsDrawer {...payment} content="afe">
+                  <DetailsDrawer
+                    {...payment}
+                    onApprove={(approvedAmount?: number) =>
+                      onApprove(payment.id, approvedAmount)
+                    }
+                    onReject={() => onReject(payment.id)}
+                  >
                     <Flex align="center" gap={2}>
-                      <Icon
-                        as={TsxTypeIcon}
-                        color="gray.600"
-                        type={payment.type}
-                      />
+                      {payment.type && (
+                        <Icon
+                          as={TsxTypeIcon}
+                          color="gray.600"
+                          type={payment.type}
+                        />
+                      )}
                       <Text
                         maxW="14rem"
                         color="brand.slate.700"
@@ -114,10 +132,10 @@ export const PaymentTable: React.FC<PaymentTableProps> = ({
                   fontWeight={500}
                   textAlign="center"
                 >
-                  {dayjs(payment.date).format('DD MMM YY')}
+                  {payment.date && dayjs(payment.date).format('DD MMM YY')}
                 </Td>
                 <Td>
-                  <Flex align="center">
+                  <Flex align="center" justify="center">
                     {tokenInfo && (
                       <Image
                         w="20px"
@@ -129,46 +147,48 @@ export const PaymentTable: React.FC<PaymentTableProps> = ({
                       />
                     )}
                     <Text fontWeight={600}>
-                      {new Intl.NumberFormat('en-US', {
-                        style: 'currency',
-                        currency: 'USD',
-                        minimumFractionDigits: 0,
-                        maximumFractionDigits: 0,
-                      }).format(payment.amount)}
+                      {payment.amount &&
+                        new Intl.NumberFormat('en-US', {
+                          style: 'currency',
+                          currency: 'USD',
+                          minimumFractionDigits: 0,
+                          maximumFractionDigits: 0,
+                        }).format(payment.amount)}
                     </Text>
-                    <Text ml={2} color="#94A3B8" fontWeight={600}>
-                      {payment.tokenSymbol}
-                    </Text>
+                    {/* <Text ml={2} color="#94A3B8" fontWeight={600}> */}
+                    {/*   {payment.tokenSymbol} */}
+                    {/* </Text> */}
                   </Flex>
                 </Td>
                 <Td>
-                  <ImagePopup imageUrl={payment.kycLink} />
+                  {payment.kycLink && <ImagePopup imageUrl={payment.kycLink} />}
                 </Td>
                 <Td>
-                  <StatusBadge status={payment.status} />
+                  {payment.status && <StatusBadge status={payment.status} />}
                 </Td>
                 <Td>
                   <Flex gap={2}>
-                    {payment.status === 'pending' && (
+                    {payment.status === 'undecided' && (
                       <>
                         <ActionButton
+                          tsxType={payment.type ?? 'all'}
                           action="approve"
-                          onConfirm={() => onApprove(payment.id)}
+                          onConfirm={(approvedAmount?: number) =>
+                            onApprove(payment.id, approvedAmount)
+                          }
                           size="small"
+                          personName={payment.name ?? ''}
+                          request={payment.amount ?? 0}
                         />
                         <ActionButton
+                          tsxType={payment.type ?? 'all'}
+                          request={payment.amount ?? 0}
+                          personName={payment.name ?? ''}
                           action="reject"
                           onConfirm={() => onReject(payment.id)}
                           size="small"
                         />
                       </>
-                    )}
-                    {payment.status === 'rejected' && (
-                      <ActionButton
-                        action="approve"
-                        onConfirm={() => onApprove(payment.id)}
-                        size="small"
-                      />
                     )}
                   </Flex>
                 </Td>
