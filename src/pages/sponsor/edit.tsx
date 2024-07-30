@@ -2,6 +2,7 @@ import { InfoOutlineIcon } from '@chakra-ui/icons';
 import {
   Box,
   Button,
+  Flex,
   FormControl,
   FormErrorMessage,
   FormLabel,
@@ -22,6 +23,10 @@ import makeAnimated from 'react-select/animated';
 
 import { ImagePicker } from '@/components/shared/ImagePicker';
 import { IndustryList } from '@/constants';
+import {
+  useSlugValidation,
+  useSponsorNameValidation,
+} from '@/features/sponsor';
 import type { SponsorType } from '@/interface/sponsor';
 import { Default } from '@/layouts/Default';
 import { Meta } from '@/layouts/Meta';
@@ -53,7 +58,6 @@ const UpdateSponsor = () => {
   });
   const [imageUrl, setImageUrl] = useState<string | null>(null);
   const [isImageUploading, setIsImageUploading] = useState(false);
-
   const [isPhotoLoading, setIsPhotoLoading] = useState(true);
   const [industries, setIndustries] = useState<string>();
   const [isLoading, setIsLoading] = useState<boolean>(false);
@@ -61,6 +65,19 @@ const UpdateSponsor = () => {
   const [errorMessage, setErrorMessage] = useState<string>('');
   const { userInfo, setUserInfo } = userStore();
   const { setCurrentSponsor } = SponsorStore();
+
+  const {
+    setSlug,
+    isInvalid: isSlugInvalid,
+    validationErrorMessage: slugValidationErrorMessage,
+    slug,
+  } = useSlugValidation();
+  const {
+    setSponsorName,
+    isInvalid: isSponsorNameInvalid,
+    validationErrorMessage: sponsorNameValidationErrorMessage,
+    sponsorName,
+  } = useSponsorNameValidation();
 
   useEffect(() => {
     const fetchSponsorData = async () => {
@@ -75,27 +92,8 @@ const UpdateSponsor = () => {
       const response = await fetchSponsorData();
       const { bio, industry, name, slug, logo, twitter, url, entityName } =
         response;
-      register('bio', { value: bio, required: 'Company bio is required' });
-      register('sponsorname', {
-        value: name,
-        required: 'Company name is required',
-      });
-      register('slug', {
-        value: slug,
-        required: 'Company username is required',
-      });
-      register('sponsorurl', {
-        value: url,
-        required: 'Company URL is required',
-      });
-      register('sponsorurl', {
-        value: entityName,
-        required: 'Entity Name is required',
-      });
-      register('twitterHandle', {
-        value: twitter,
-        required: 'Company Twitter handle is required',
-      });
+      setSponsorName(name);
+      setSlug(slug);
       reset({
         bio,
         sponsorname: name,
@@ -113,7 +111,7 @@ const UpdateSponsor = () => {
     };
 
     init();
-  }, [userInfo?.currentSponsorId, router]);
+  }, [userInfo?.currentSponsorId, router, reset, setSlug, setSponsorName]);
 
   const updateSponsor = async (sponsor: SponsorType) => {
     if (getValues('bio').length > 180) {
@@ -153,16 +151,11 @@ const UpdateSponsor = () => {
         />
       }
     >
-      <VStack w="full" pt={8} pb={24}>
+      <VStack w="full" pt={12} pb={24}>
         <VStack>
-          <Heading
-            color={'gray.700'}
-            fontFamily={'var(--font-sans)'}
-            fontSize={'24px'}
-            fontWeight={700}
-          >
+          <Text color={'gray.700'} fontSize={'3xl'} fontWeight={700}>
             Edit Sponsor Profile
-          </Heading>
+          </Text>
         </VStack>
         <VStack w={'2xl'} pt={10}>
           <form
@@ -170,8 +163,8 @@ const UpdateSponsor = () => {
               updateSponsor({
                 bio: e.bio,
                 industry: industries ?? '',
-                name: e.sponsorname,
-                slug: e.slug,
+                name: sponsorName,
+                slug: slug,
                 logo: imageUrl ?? '',
                 twitter: e.twitterHandle,
                 url: e.sponsorurl ?? '',
@@ -180,7 +173,7 @@ const UpdateSponsor = () => {
             })}
             style={{ width: '100%' }}
           >
-            <HStack justify={'space-between'} w={'full'}>
+            <Flex justify={'space-between'} gap={2} w={'full'}>
               <FormControl isRequired>
                 <FormLabel
                   color={'brand.slate.500'}
@@ -191,14 +184,22 @@ const UpdateSponsor = () => {
                   Company Name
                 </FormLabel>
                 <Input
-                  w={'18rem'}
+                  w={'full'}
                   borderColor={'brand.slate.300'}
                   _placeholder={{ color: 'brand.slate.300' }}
                   focusBorderColor="brand.purple"
                   id="sponsorname"
                   placeholder="Stark Industries"
                   {...register('sponsorname')}
+                  isInvalid={isSponsorNameInvalid}
+                  onChange={(e) => setSponsorName(e.target.value)}
+                  value={sponsorName}
                 />
+                {isSponsorNameInvalid && (
+                  <Text color={'red'} fontSize={'sm'}>
+                    {sponsorNameValidationErrorMessage}
+                  </Text>
+                )}
                 <FormErrorMessage>
                   {errors.sponsorname ? (
                     <>{errors.sponsorname.message}</>
@@ -207,7 +208,7 @@ const UpdateSponsor = () => {
                   )}
                 </FormErrorMessage>
               </FormControl>
-              <FormControl w={'18rem'} isRequired>
+              <FormControl w={'full'} isRequired>
                 <FormLabel
                   color={'brand.slate.500'}
                   fontSize={'15px'}
@@ -217,21 +218,29 @@ const UpdateSponsor = () => {
                   Company Username
                 </FormLabel>
                 <Input
-                  w={'18rem'}
+                  w={'full'}
                   borderColor={'brand.slate.300'}
                   _placeholder={{ color: 'brand.slate.300' }}
                   focusBorderColor="brand.purple"
                   id="slug"
                   placeholder="starkindustries"
                   {...register('slug')}
+                  isInvalid={isSlugInvalid}
+                  onChange={(e) => setSlug(e.target.value)}
+                  value={slug}
                 />
+                {isSlugInvalid && (
+                  <Text color={'red'} fontSize={'sm'}>
+                    {slugValidationErrorMessage}
+                  </Text>
+                )}
                 <FormErrorMessage>
                   {errors.slug ? <>{errors.slug.message}</> : <></>}
                 </FormErrorMessage>
               </FormControl>
-            </HStack>
+            </Flex>
             <HStack justify={'space-between'} w={'full'} my={6}>
-              <FormControl w={'18rem'}>
+              <FormControl w={'full'} isRequired>
                 <FormLabel
                   color={'brand.slate.500'}
                   fontSize={'15px'}
@@ -252,7 +261,7 @@ const UpdateSponsor = () => {
                   {errors.sponsorurl ? <>{errors.sponsorurl.message}</> : <></>}
                 </FormErrorMessage>
               </FormControl>
-              <FormControl w={'18rem'} isRequired>
+              <FormControl w={'full'} isRequired>
                 <FormLabel
                   color={'brand.slate.500'}
                   fontSize={'15px'}
@@ -262,7 +271,7 @@ const UpdateSponsor = () => {
                   Company Twitter
                 </FormLabel>
                 <Input
-                  w={'18rem'}
+                  w={'full'}
                   borderColor={'brand.slate.300'}
                   _placeholder={{ color: 'brand.slate.300' }}
                   id="twitterHandle"
