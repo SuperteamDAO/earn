@@ -11,12 +11,12 @@ import {
 } from '@chakra-ui/react';
 import React from 'react';
 
-import { Superteams } from '@/constants/Superteam';
+import { CombinedRegions } from '@/constants/Superteam';
 
 import { getRegionTooltipLabel } from '../../utils';
 
 export const RegionLabel = ({ region }: { region: string | undefined }) => {
-  const displayValue = Superteams.find(
+  const displayValue = CombinedRegions.find(
     (st) => st.region === region,
   )?.displayValue;
 

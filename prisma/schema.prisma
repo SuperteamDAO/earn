@@ -552,6 +552,7 @@ enum EmailType {
   NO_REVIEW_SPONSOR_2
   ROLLING_15_DAYS
   ROLLING_30_DAYS
+  NEW_LISTING
 }
 
 enum Role {
@@ -627,6 +628,8 @@ enum Regions {
   PHILIPPINES
   JAPAN
   FRANCE
+  UKRAINE
+  ARGENTINA
 }
 
 enum CompensationType {

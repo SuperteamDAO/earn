@@ -181,3 +181,20 @@ export const Superteams = [
     hello: `Hola`,
   },
 ];
+
+export const NonSTRegions = [
+  {
+    region: Regions.UKRAINE,
+    displayValue: 'Ukraine',
+    country: ['Ukraine'],
+    code: 'UA',
+  },
+  {
+    region: Regions.ARGENTINA,
+    displayValue: 'Argentina',
+    country: ['Argentina'],
+    code: 'AR',
+  },
+];
+
+export const CombinedRegions = [...Superteams, ...NonSTRegions];
