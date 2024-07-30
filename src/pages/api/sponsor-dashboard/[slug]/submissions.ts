@@ -40,6 +40,18 @@ async function handler(req: NextApiRequestWithSponsor, res: NextApiResponse) {
             { user: { twitter: { contains: searchText } } },
             { user: { discord: { contains: searchText } } },
             { link: { contains: searchText } },
+            {
+              AND: [
+                {
+                  user: { firstName: { contains: searchText.split(' ')[0] } },
+                },
+                {
+                  user: {
+                    lastName: { contains: searchText.split(' ')[1] || '' },
+                  },
+                },
+              ],
+            },
           ],
         }
       : {};
@@ -88,13 +100,6 @@ async function handler(req: NextApiRequestWithSponsor, res: NextApiResponse) {
       },
       orderBy: { createdAt: 'asc' },
     });
-
-    if (!submissions || submissions.length === 0) {
-      logger.info(`No submissions found for slug ${slug}`);
-      return res.status(404).json({
-        message: `Submissions with slug=${slug} not found.`,
-      });
-    }
 
     const submissionsWithSortKey = submissions.map((submission) => {
       let sortKey = 0;

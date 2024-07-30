@@ -767,7 +767,14 @@ export const SubmissionDetails = ({
             </Box>
           </>
         ) : (
-          <></>
+          <Box p={3}>
+            <Text color={'brand.slate.500'} fontSize={'xl'} fontWeight={500}>
+              No submissions found
+            </Text>
+            <Text color={'brand.slate.400'} fontSize={'sm'}>
+              Try a different search query
+            </Text>
+          </Box>
         )}
       </Box>
     </>
