@@ -293,7 +293,7 @@ export default function SponsorListings() {
           <InputGroup w={64} ml={4}>
             <Input
               bg={'white'}
-              borderColor="brand.slate.200"
+              borderColor="brand.slate.300"
               _placeholder={{
                 color: 'brand.slate.400',
                 fontWeight: 500,
