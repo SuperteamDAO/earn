@@ -68,7 +68,6 @@ type FormData = {
   currentEmployer?: string;
   skills?: any;
   private: boolean;
-  PoW?: PoW[];
 };
 
 const socialLinkFields = [
@@ -318,15 +317,15 @@ export default function EditProfilePage({ slug }: { slug: string }) {
         return acc;
       }, {} as Partial<FormData>);
 
+      await axios.post('/api/pow/edit', {
+        pows: pow,
+      });
+
       const response = await axios.post('/api/user/edit', {
         ...finalUpdatedData,
       });
 
       setUserInfo({ ...userInfo, ...response.data });
-
-      await axios.post('/api/pow/edit', {
-        pows: pow,
-      });
 
       setIsLoading(false);
 

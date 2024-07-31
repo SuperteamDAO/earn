@@ -35,7 +35,6 @@ async function handler(req: NextApiRequestWithUser, res: NextApiResponse) {
     const existingPoWs = await prisma.poW.findMany({
       where: {
         userId,
-        id: { in: incomingIds },
       },
       select: { id: true },
     });
