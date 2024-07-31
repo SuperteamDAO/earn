@@ -10,6 +10,7 @@ import {
   Th,
   Thead,
   Tr,
+  VStack,
 } from '@chakra-ui/react';
 import dayjs from 'dayjs';
 import React from 'react';
@@ -32,6 +33,7 @@ interface PaymentTableProps {
   onApprove: (id: string, approvedAmount?: number) => void;
   onReject: (id: string) => void;
   loading: boolean;
+  type: TSXTYPE;
 }
 
 export const PaymentTable: React.FC<PaymentTableProps> = ({
@@ -39,6 +41,7 @@ export const PaymentTable: React.FC<PaymentTableProps> = ({
   onApprove,
   onReject,
   loading,
+  type,
 }) => {
   return (
     <Box
@@ -79,14 +82,16 @@ export const PaymentTable: React.FC<PaymentTableProps> = ({
             >
               Amount
             </Th>
-            <Th
-              color="#94A3B8"
-              fontWeight={500}
-              textAlign="center"
-              textTransform={'none'}
-            >
-              KYC
-            </Th>
+            {type !== 'grants' && (
+              <Th
+                color="#94A3B8"
+                fontWeight={500}
+                textAlign="center"
+                textTransform={'none'}
+              >
+                KYC
+              </Th>
+            )}
             <Th
               color="#94A3B8"
               fontWeight={500}
@@ -183,11 +188,21 @@ export const PaymentTable: React.FC<PaymentTableProps> = ({
                     {/* </Text> */}
                   </Flex>
                 </Td>
+                {type !== 'grants' && (
+                  <Td>
+                    <VStack>
+                      {payment.kycLink && (
+                        <ImagePopup imageUrl={payment.kycLink} />
+                      )}
+                    </VStack>
+                  </Td>
+                )}
                 <Td>
-                  {payment.kycLink && <ImagePopup imageUrl={payment.kycLink} />}
-                </Td>
-                <Td>
-                  {payment.status && <StatusBadge status={payment.status} />}
+                  <VStack>
+                    {payment.status && (
+                      <StatusBadge mx="auto" status={payment.status} />
+                    )}
+                  </VStack>
                 </Td>
                 <Td>
                   <Flex gap={2}>

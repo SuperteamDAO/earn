@@ -299,6 +299,7 @@ export default function MissionControlPage({
         </Flex>
         <VStack align="start" gap={6}>
           <PaymentTable
+            type={type}
             loading={loading}
             data={paymentDataState}
             onApprove={async (id: string, approvedAmount?: number) => {
