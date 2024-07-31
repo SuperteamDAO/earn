@@ -239,7 +239,12 @@ export default function MissionControlPage({
       selectedSuperteam={selectedSuperteam}
     >
       <CustomTopLoader />
-      <Flex direction="column" gap={6}>
+      <Flex
+        direction="column"
+        gap={6}
+        opacity={loading ? 0.5 : 1}
+        pointerEvents={loading ? 'none' : 'auto'}
+      >
         <Flex gap={6}>
           <NumberStatCard
             title="Total Approved"
