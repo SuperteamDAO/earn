@@ -91,6 +91,10 @@ export default function SponsorListings() {
 
   useEffect(() => {
     if (userInfo?.currentSponsorId) {
+      setSearchText('');
+      setCurrentPage(0);
+      setSelectedTab('all');
+      setSelectedStatus(null);
       getListings();
     }
   }, [userInfo?.currentSponsorId, getListings]);
