@@ -80,6 +80,9 @@ importers:
       '@upstash/qstash':
         specifier: ^2.5.4
         version: 2.5.5
+      '@upstash/redis':
+        specifier: ^1.34.0
+        version: 1.34.0
       '@vercel/og':
         specifier: ^0.6.2
         version: 0.6.2
@@ -2967,6 +2970,9 @@ packages:
 
   '@upstash/qstash@2.5.5':
     resolution: {integrity: sha512-cyzVEUgv4ArkAcfx1G46y17GvB/9SWfWmZEEtGTnUVTBUH8QUYtCP59vO6O7hUf3nXEUXMdKcG6EWjA3/mTQ0w==}
+
+  '@upstash/redis@1.34.0':
+    resolution: {integrity: sha512-TrXNoJLkysIl8SBc4u9bNnyoFYoILpCcFJcLyWCccb/QSUmaVKdvY0m5diZqc3btExsapcMbaw/s/wh9Sf1pJw==}
 
   '@vanilla-extract/css-utils@0.1.3':
     resolution: {integrity: sha512-PZAcHROlgtCUGI2y0JntdNwvPwCNyeVnkQu6KTYKdmxBbK3w72XJUmLFYapfaFfgami4I9CTLnrJTPdtmS3gpw==}
@@ -10949,6 +10955,10 @@ snapshots:
     dependencies:
       crypto-js: 4.2.0
       jose: 5.2.4
+
+  '@upstash/redis@1.34.0':
+    dependencies:
+      crypto-js: 4.2.0
 
   '@vanilla-extract/css-utils@0.1.3': {}
 

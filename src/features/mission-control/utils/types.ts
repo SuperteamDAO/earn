@@ -40,3 +40,31 @@ export type AIRTABLE_STATUS =
   | 'Sent to pipeline';
 
 export type ButtonSize = 'small' | 'normal';
+
+export type StatsData = {
+  [superteam: string]: StatTypeData;
+};
+export type StatTypeData = {
+  [type in TSXTYPE]: {
+    timespan: StatTimeFrameData;
+    approvedMonthly: Record<string, number>;
+  };
+};
+export type StatTimeFrameData = {
+  [span in TIMEFRAME]: StatNumbericalData;
+};
+export type StatNumbericalData = {
+  totalPaidAmount: number;
+  totalPendingAmount: number;
+  totalPendingRequests: number;
+  acceptedPercentage: number;
+};
+
+export type OverviewTotals = Record<Exclude<TSXTYPE, 'all'>, number>;
+
+export interface RegionData {
+  name: string;
+  icon: string;
+  paid: number;
+  acceptedPercentage: number;
+}

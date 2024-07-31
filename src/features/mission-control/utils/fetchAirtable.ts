@@ -8,32 +8,35 @@ import {
 } from '.';
 import { type PaymentData, type STATUS, type TSXTYPE } from './types';
 
+interface AirtableUrlMakerOptions {
+  fields: string[];
+  sortField?: string;
+  sortDirection?: 'asc' | 'desc';
+}
+
 const airtableAPIUrl = `https://api.airtable.com/v0`;
-const airtableUrlMaker = () => {
+export const airtableUrlMaker = (options: AirtableUrlMakerOptions): URL => {
   const airtableUrl = new URL(
     `${airtableAPIUrl}/${process.env.AIRTABLE_MISSION_CONTROL_BASE}/${process.env.AIRTABLE_MISSION_CONTROL_TABLE}`,
   );
 
-  airtableUrl.searchParams.append('fields[]', 'Purpose of Payment Main');
-  airtableUrl.searchParams.append('fields[]', 'Submitter');
-  airtableUrl.searchParams.append('fields[]', 'Status');
-  airtableUrl.searchParams.append('fields[]', 'Amount');
-  airtableUrl.searchParams.append('fields[]', 'Name');
-  airtableUrl.searchParams.append('fields[]', 'SOL Wallet');
-  airtableUrl.searchParams.append('fields[]', 'Discord Handle');
-  airtableUrl.searchParams.append('fields[]', 'Application Time');
-  airtableUrl.searchParams.append('fields[]', 'Sync Source');
-  airtableUrl.searchParams.append('fields[]', 'KYC');
-  airtableUrl.searchParams.append('fields[]', 'Contact Email');
-  airtableUrl.searchParams.append('fields[]', 'Region');
-  airtableUrl.searchParams.append('fields[]', 'RecordID');
-  airtableUrl.searchParams.append('fields[]', 'earnApplicationId');
-  airtableUrl.searchParams.append('sort[0][field]', 'Application Time');
-  airtableUrl.searchParams.append('sort[0][direction]', 'desc');
+  options.fields.forEach((field) => {
+    airtableUrl.searchParams.append('fields[]', field);
+  });
+
+  if (options.sortField) {
+    airtableUrl.searchParams.append('sort[0][field]', options.sortField);
+    airtableUrl.searchParams.append(
+      'sort[0][direction]',
+      options.sortDirection || 'desc',
+    );
+  }
+
   return airtableUrl;
 };
 
 interface FetchAirtableProps {
+  airtableUrl: URL;
   customFilters?: string[];
   pageSize: number;
   id?: string;
@@ -49,6 +52,7 @@ interface FetchAirtableProps {
 }
 
 export async function fetchAirtable({
+  airtableUrl,
   customFilters = [],
   pageSize,
   id,
@@ -62,7 +66,7 @@ export async function fetchAirtable({
   searchKey,
   offset,
 }: FetchAirtableProps) {
-  const airtableUrl = airtableUrlMaker();
+  // const airtableUrl = airtableUrlMaker();
   airtableUrl.searchParams.set('pageSize', pageSize + '');
 
   const filterFormulas: string[] = [...customFilters];
@@ -113,7 +117,7 @@ LOWER({${typeKey}}))`);
     airtableUrl.searchParams.append('offset', offset);
   }
 
-  console.log(airtableUrl);
+  // console.log(airtableUrl);
 
   const fetchReq = fetch(airtableUrl.toString(), {
     headers: {
@@ -136,7 +140,7 @@ LOWER({${typeKey}}))`);
       ...parsedData.records[i].fields,
       id: parsedData.records[i].id,
     };
-    console.log(currentData);
+    // console.log(currentData);
     data.push({
       id: currentData.id as string,
       type: syncSourceToTsxType(currentData['Sync Source']) || null,

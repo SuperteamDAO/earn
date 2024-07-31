@@ -2,6 +2,7 @@ import { type NextApiResponse } from 'next';
 
 import { type NextApiRequestWithUser, withAuth } from '@/features/auth';
 import {
+  airtableUrlMaker,
   decideAirtableStatusFromType,
   earnStatusFromStatus,
   fetchAirtable,
@@ -56,10 +57,17 @@ async function handler(req: NextApiRequestWithUser, res: NextApiResponse) {
     return res.status(400).json({ message: 'Missing required fields' });
   }
 
+  const airtableUrl = airtableUrlMaker({
+    fields: ['Region'],
+    sortField: 'Application Time',
+    sortDirection: 'desc',
+  });
+
   const [reqRecord, reqError] = await promiser(
     fetchAirtable({
       id: id,
       pageSize: 1,
+      airtableUrl,
     }),
   );
   if (reqError) {

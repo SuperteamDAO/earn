@@ -6,6 +6,7 @@ import {
 } from './types';
 
 export * from './actions';
+export * from './consts';
 export * from './fetchAirtable';
 export * from './types';
 export * from './updateAirtable';

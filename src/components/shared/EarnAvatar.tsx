@@ -11,7 +11,16 @@ export const EarnAvatar = ({
 }: {
   id: string | undefined;
   avatar?: string;
-  size?: '24px' | '28px' | '32px' | '36px' | '40px' | '44px' | '52px' | '64px';
+  size?:
+    | '20px'
+    | '24px'
+    | '28px'
+    | '32px'
+    | '36px'
+    | '40px'
+    | '44px'
+    | '52px'
+    | '64px';
   borderRadius?: string;
   onClick?: () => void;
 }) => {

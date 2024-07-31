@@ -1,4 +1,5 @@
 import { Box, Flex, Icon } from '@chakra-ui/react';
+import { type Redis } from '@upstash/redis';
 import debounce from 'lodash.debounce';
 import { type GetServerSideProps } from 'next';
 import { useSearchParams } from 'next/navigation';
@@ -10,14 +11,21 @@ import { LuCheck, LuClock, LuHourglass } from 'react-icons/lu';
 
 import { Superteams } from '@/constants/Superteam';
 import {
+  airtableUrlMaker,
   AmtBarChart,
+  colors,
   fetchAirtable,
   NumberStatCard,
+  type OverviewTotals,
   type PaymentData,
   PaymentTable,
   QuickLinks,
+  REDIS_PREFIX,
   RegionalTable,
+  type RegionData,
   SearchInput,
+  type StatNumbericalData,
+  type StatTypeData,
   type STATUS,
   StatusFilter,
   type SuperteamOption,
@@ -28,42 +36,18 @@ import {
   updateStatus,
 } from '@/features/mission-control';
 import { MissionControl } from '@/layouts/MissionControl';
+import { redis } from '@/redis';
+import { dayjs } from '@/utils/dayjs';
 import promiser from '@/utils/promiser';
 
-const regionalPaymentData = [
-  { id: 1, name: 'India', paid: 1220000, acceptedPercentage: 95.43 },
-  { id: 2, name: 'Vietnam', paid: 1200000, acceptedPercentage: 80.34 },
-  { id: 3, name: 'Turkey', paid: 925000, acceptedPercentage: 75.32 },
-  { id: 4, name: 'Germany', paid: 565000, acceptedPercentage: 60.43 },
-  { id: 5, name: 'Nigeria', paid: 125500, acceptedPercentage: 80.43 },
-];
+type PieChartTsxData = {
+  name: string;
+  value: number;
+  color: string;
+  type: TSXTYPE;
+};
 
-const tsxData: { name: string; value: number; color: string; type: TSXTYPE }[] =
-  [
-    { name: 'Grants', value: 234000, color: '#36A2EB', type: 'grants' },
-    { name: 'Events', value: 44000, color: '#4BC0C0', type: 'st-earn' },
-    {
-      name: 'Contractors',
-      value: 19600,
-      color: '#97C95C',
-      type: 'miscellaneous',
-    },
-  ];
-
-const monthlyAmtData = [
-  { name: 'Jan', value: 550000 },
-  { name: 'Feb', value: 2000000 },
-  { name: 'Mar', value: 1750000 },
-  { name: 'Apr', value: 700000 },
-  { name: 'May', value: 1300000 },
-  { name: 'Jun', value: 1150000 },
-  { name: 'July', value: 1500000 },
-  { name: 'Aug', value: 1300000 },
-  { name: 'Sept', value: 1900000 },
-  { name: 'Oct', value: 550000 },
-  { name: 'Nov', value: 900000 },
-  { name: 'Dec', value: 2000000 },
-];
+type MonthlyAmtData = { name: string; value: number };
 
 const quickLinks = [
   {
@@ -96,6 +80,10 @@ interface Props {
   superteamLists: SuperteamOption[];
   selectedSuperteam: SuperteamOption;
   paymentData: PaymentData[];
+  numericalData: StatNumbericalData;
+  overviewTotals: PieChartTsxData[];
+  monthlyApprovedData: MonthlyAmtData[];
+  topRegionStats: RegionData[];
   nextOffset?: string[];
 }
 
@@ -105,6 +93,10 @@ export default function MissionControlPage({
   superteamLists,
   selectedSuperteam,
   paymentData,
+  numericalData,
+  overviewTotals,
+  monthlyApprovedData,
+  topRegionStats,
 }: Props) {
   const searchParams = useSearchParams();
   const [, startTransition] = useTransition();
@@ -208,8 +200,8 @@ export default function MissionControlPage({
       <Flex direction="column" gap={6}>
         <Flex gap={6}>
           <NumberStatCard
-            title="Total Paid"
-            amount={1223000}
+            title="Total Approved"
+            amount={numericalData.totalPaidAmount}
             iconBg="green.100"
           >
             <Flex
@@ -226,14 +218,14 @@ export default function MissionControlPage({
           </NumberStatCard>
           <NumberStatCard
             title="Total Pending"
-            amount={1223000}
+            amount={numericalData.totalPendingAmount}
             iconBg="#FEFCE8"
           >
             <Icon as={LuHourglass} color="#D97706" strokeWidth={3} />
           </NumberStatCard>
           <NumberStatCard
             title="Pending Requests"
-            amount={24}
+            amount={numericalData.totalPendingRequests}
             iconBg="#FEFCE8"
             isUsd={false}
           >
@@ -244,12 +236,12 @@ export default function MissionControlPage({
           </Box>
         </Flex>
         <Flex gap={8}>
-          <RegionalTable data={regionalPaymentData} />
-          <TsxPieChart data={tsxData} />
+          <RegionalTable data={topRegionStats} />
+          <TsxPieChart data={overviewTotals} />
         </Flex>
 
         <Flex gap={8}>
-          <AmtBarChart data={monthlyAmtData} />
+          <AmtBarChart data={monthlyApprovedData} />
           <QuickLinks links={quickLinks} />
         </Flex>
 
@@ -335,8 +327,29 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
       selectedSuperteam = regionTeam;
     }
   }
+  const airtableUrl = airtableUrlMaker({
+    fields: [
+      'Purpose of Payment Main',
+      'Submitter',
+      'Status',
+      'Amount',
+      'Name',
+      'SOL Wallet',
+      'Discord Handle',
+      'Application Time',
+      'Sync Source',
+      'KYC',
+      'Contact Email',
+      'Region',
+      'RecordID',
+      'earnApplicationId',
+    ],
+    sortField: 'Application Time',
+    sortDirection: 'desc',
+  });
   const [data, dataError] = await promiser(
     fetchAirtable({
+      airtableUrl,
       pageSize: 5,
       region: selectedSuperteam.value,
       regionKey: 'Region',
@@ -351,11 +364,34 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
 
   if (dataError) {
     console.log('data error - ', dataError);
-    throw Error('Could not fetch data');
+    throw Error('Could not fetch transactions data from airtable');
   }
 
-  console.log('data - ', data.data);
-  console.log('data length - ', data.data.length);
+  const stats = await redis.get<StatTypeData>(
+    `${REDIS_PREFIX}:${selectedSuperteam.value.toLowerCase()}`,
+  );
+  if (!stats) {
+    throw Error('Could not fetch stats data from redis');
+  }
+
+  const currentTypeData = stats[type];
+  const monthlyApprovedData = currentTypeData?.approvedMonthly;
+  const currentSpanData = currentTypeData?.timespan[span] ?? {
+    totalPendingRequests: 0,
+    totalPendingAmount: 0,
+    totalPaidAmount: 0,
+    acceptedPercentage: 0,
+  };
+
+  const overviewTotals: OverviewTotals = {
+    grants: stats['grants']?.timespan[span]?.totalPaidAmount ?? 0,
+    'st-earn': stats['st-earn']?.timespan[span]?.totalPaidAmount ?? 0,
+    miscellaneous: stats['miscellaneous']?.timespan[span]?.totalPaidAmount ?? 0,
+  };
+
+  const topRegionStats = await getTopRegionStats(redis, type, span);
+  console.log('topRegionStats - ', topRegionStats);
+
   return {
     props: {
       span,
@@ -366,6 +402,80 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
       selectedSuperteam,
       paymentData: data.data,
       nextOffset: data.nextOffset,
+      numericalData: currentSpanData,
+      overviewTotals: convertOverviewTotals(overviewTotals),
+      monthlyApprovedData: convertMonthlyApprovedData(monthlyApprovedData),
+      topRegionStats,
     },
   };
 };
+
+function convertOverviewTotals(
+  overviewTotals: OverviewTotals,
+): PieChartTsxData[] {
+  return Object.entries(overviewTotals).map(([type, value]) => ({
+    name: type.charAt(0).toUpperCase() + type.slice(1),
+    value,
+    color: colors[type as TSXTYPE],
+    type: type as TSXTYPE,
+  }));
+}
+
+function convertMonthlyApprovedData(
+  monthlyApprovedData: Record<string, number>,
+): MonthlyAmtData[] {
+  const currentDate = dayjs();
+  const result: MonthlyAmtData[] = [];
+
+  for (let i = 11; i >= 0; i--) {
+    const monthDate = currentDate.subtract(i, 'month');
+    const monthKey = monthDate.format('YYYY-MM');
+
+    result.push({
+      name: monthDate.format('MMM'),
+      value: monthlyApprovedData?.[monthKey] ?? 0,
+    });
+  }
+
+  console.log('monthly approved data', result);
+
+  return result;
+}
+
+async function getTopRegionStats(
+  redis: Redis,
+  type: TSXTYPE,
+  span: TIMEFRAME,
+): Promise<RegionData[]> {
+  const pipeline = redis.pipeline();
+
+  Superteams.forEach((team) => {
+    const key = `${REDIS_PREFIX}:${team.region.toLowerCase()}`;
+    pipeline.get(key);
+  });
+
+  const results = await pipeline.exec<StatTypeData[]>();
+
+  const regionData: RegionData[] = results
+    .map((result, index) => {
+      if (result) {
+        const typeData = result[type];
+        if (typeData && typeData.timespan[span]) {
+          const { totalPaidAmount, acceptedPercentage } =
+            typeData.timespan[span];
+          return {
+            name: Superteams[index]?.displayValue,
+            icon: Superteams[index]?.icons,
+            paid: totalPaidAmount,
+            acceptedPercentage,
+          };
+        }
+      }
+      return null;
+    })
+    .filter((stat): stat is RegionData => stat !== null)
+    .sort((a, b) => b.paid - a.paid)
+    .slice(0, 5);
+
+  return regionData;
+}

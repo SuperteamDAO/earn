@@ -11,14 +11,9 @@ import {
 } from '@chakra-ui/react';
 import React from 'react';
 
-import { UserFlag } from '@/components/shared/UserFlag';
+import { EarnAvatar } from '@/components/shared/EarnAvatar';
 
-interface RegionData {
-  id: number;
-  name: string;
-  paid: number;
-  acceptedPercentage: number;
-}
+import { type RegionData } from '../utils';
 
 interface RegionalPaymentTableProps {
   data: RegionData[];
@@ -53,14 +48,19 @@ export const RegionalTable: React.FC<RegionalPaymentTableProps> = ({
           </Tr>
         </Thead>
         <Tbody>
-          {data.map((region) => (
-            <Tr key={region.id} fontSize="sm">
+          {data.map((region, k) => (
+            <Tr key={region.name} fontSize="sm">
               <Td pr={1} color="gray.500">
-                {region.id}.
+                {k + 1}.
               </Td>
               <Td>
                 <Flex align="center" mr={'auto'}>
-                  <UserFlag location={region.name} size="16px" />
+                  <EarnAvatar
+                    id={region.name}
+                    avatar={region.icon}
+                    borderRadius="4"
+                    size="20px"
+                  />
                   <Text ml={2} color="gray.600">
                     {region.name}
                   </Text>
