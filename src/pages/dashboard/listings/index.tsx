@@ -35,7 +35,6 @@ import React, {
   useRef,
   useState,
 } from 'react';
-import { IoFilter } from 'react-icons/io5';
 import { MdArrowDropDown } from 'react-icons/md';
 
 import { LoadingSection } from '@/components/shared/LoadingSection';
@@ -158,6 +157,20 @@ export default function SponsorListings() {
     return allListings.some((listing) => listing.type === 'grant');
   }, [allListings]);
 
+  const ALL_FILTERS = useMemo(() => {
+    const filters = [
+      'Draft',
+      'In Progress',
+      'In Review',
+      'Payment Pending',
+      'Completed',
+    ];
+    if (hasGrants) {
+      filters.unshift('Ongoing');
+    }
+    return filters;
+  }, [hasGrants]);
+
   const selectedStyles = {
     borderColor: 'brand.purple',
     color: 'brand.slate.600',
@@ -195,8 +208,10 @@ export default function SponsorListings() {
             The one place to manage your listings
           </Text>
         </Flex>
-        <Flex align="center" gap={3}>
-          <IoFilter color="#64748B" size={'20px'} />
+        <Flex align="center" gap={2}>
+          <Text color="brand.slate.500" fontSize={'sm'} letterSpacing={'-1%'}>
+            Filter by status
+          </Text>
           <Menu>
             <MenuButton
               as={Button}
@@ -223,7 +238,7 @@ export default function SponsorListings() {
                 <TagLabel
                   w="full"
                   color={getColorStyles(selectedStatus!).color}
-                  fontSize={'13px'}
+                  fontSize={'11px'}
                   textAlign={'center'}
                   textTransform={'capitalize'}
                   whiteSpace={'nowrap'}
@@ -256,14 +271,7 @@ export default function SponsorListings() {
                   </TagLabel>
                 </Tag>
               </MenuItem>
-              {[
-                'Draft',
-                'Ongoing',
-                'In Progress',
-                'In Review',
-                'Payment Pending',
-                'Completed',
-              ].map((status) => (
+              {ALL_FILTERS.map((status) => (
                 <MenuItem
                   key={status}
                   _focus={{ bg: 'brand.slate.100' }}
@@ -470,6 +478,37 @@ export default function SponsorListings() {
           </Button>
         </>
       )}
+      {!isListingsLoading &&
+        allListings.length &&
+        !paginatedListings.length && (
+          <>
+            <Image
+              w={32}
+              mx="auto"
+              mt={32}
+              alt={'talent empty'}
+              src="/assets/bg/talent-empty.svg"
+            />
+            <Text
+              mx="auto"
+              mt={5}
+              color={'brand.slate.600'}
+              fontSize={'lg'}
+              fontWeight={600}
+              textAlign={'center'}
+            >
+              Zero Results
+            </Text>
+            <Text
+              mx="auto"
+              color={'brand.slate.400'}
+              fontWeight={500}
+              textAlign={'center'}
+            >
+              No results matching the current filter
+            </Text>
+          </>
+        )}
     </Sidebar>
   );
 }
