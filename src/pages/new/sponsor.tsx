@@ -454,7 +454,8 @@ const CreateSponsor = () => {
                       'Company name/username already exists.'}
                   </Text>
                 )}
-                {validationErrorMessage && (
+                {(validationErrorMessage ||
+                  sponsorNameValidationErrorMessage) && (
                   <Text align={'center'} color="yellow.500">
                     If you want access to the existing account, contact us on
                     Telegram at{' '}
