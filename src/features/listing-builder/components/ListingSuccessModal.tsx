@@ -75,13 +75,15 @@ ${listingLink('twitter')}
             </Box>
             <VStack align="start" w="full" p={6} pt={0}>
               <Text
-                color={'brand.slate.800'}
+                color={'brand.slate.700'}
                 fontFamily={'var(--font-sans)'}
+                fontSize={'lg'}
                 fontWeight={600}
               >
                 Your Listing is Live
               </Text>
               <Text
+                mt={-2}
                 color={'brand.slate.500'}
                 fontFamily={'var(--font-sans)'}
                 fontWeight={400}
@@ -90,7 +92,7 @@ ${listingLink('twitter')}
                   ? 'Share the love on your socials and invite Earn’s best talent!'
                   : 'Share the love on your socials!'}
               </Text>
-              <VStack gap={4} w={'full'} mt={5}>
+              <VStack gap={4} w={'full'} mt={3}>
                 <Button
                   alignItems="center"
                   justifyContent="space-between"
