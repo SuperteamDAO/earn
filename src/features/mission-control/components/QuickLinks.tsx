@@ -23,6 +23,7 @@ export const QuickLinks: React.FC<QuickLinksProps> = ({ links }) => {
             key={index}
             _hover={{ textDecoration: 'none' }}
             href={link.href}
+            isExternal
           >
             <Button
               justifyContent="space-between"

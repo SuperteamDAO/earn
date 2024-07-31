@@ -49,8 +49,12 @@ const CustomTooltip: React.FC<TooltipProps<number, string>> = ({
 };
 
 const CustomBar: React.FC<any> = (props) => {
-  const { fill, x, y, width, height } = props;
-  const radius = 10;
+  const { fill, x, y, width, height, value } = props;
+  const radius = value === 0 ? 0 : 6;
+
+  if (value === 0) {
+    return null;
+  }
   return (
     <g>
       <path
@@ -83,7 +87,11 @@ export const AmtBarChart: React.FC<AmtBarChartProps> = ({ data }) => {
       <Heading mb={4} size="sm">
         Approved Amount
       </Heading>
-      <ResponsiveContainer width="100%" height="100%">
+      <ResponsiveContainer
+        width="100%"
+        height="100%"
+        style={{ paddingTop: '1rem' }}
+      >
         <BarChart
           data={data}
           margin={{ top: 20, right: 30, left: 20, bottom: 5 }}

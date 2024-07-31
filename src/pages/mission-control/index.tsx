@@ -9,6 +9,7 @@ import { useCallback, useEffect, useState, useTransition } from 'react';
 import { toast } from 'react-hot-toast';
 import { LuCheck, LuClock, LuHourglass } from 'react-icons/lu';
 
+import { CustomTopLoader } from '@/components/shared/CustomTopLoader';
 import { Superteams } from '@/constants/Superteam';
 import {
   AmtBarChart,
@@ -91,6 +92,36 @@ export default function MissionControlPage({
   const [query, setQuery] = useState(searchParams.get('q') ?? '');
   const [loading, setLoading] = useState(false);
   const [offset, setOffset] = useState(pOffset);
+
+  const handleStart = (url: string) => {
+    if (url !== router.asPath) {
+      setLoading(true);
+    }
+  };
+
+  const handleComplete = (url: string) => {
+    if (url === router.asPath) {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    return () => {
+      setLoading(false);
+    };
+  }, []);
+
+  useEffect(() => {
+    router.events.on('routeChangeStart', handleStart);
+    router.events.on('routeChangeComplete', handleComplete);
+    router.events.on('routeChangeError', handleComplete);
+
+    return () => {
+      router.events.off('routeChangeStart', handleStart);
+      router.events.off('routeChangeComplete', handleComplete);
+      router.events.off('routeChangeError', handleComplete);
+    };
+  }, [router]);
 
   const serverSearch = (value: string) => {
     const params = new URLSearchParams(searchParams.toString());
@@ -207,6 +238,7 @@ export default function MissionControlPage({
       superteamList={superteamLists}
       selectedSuperteam={selectedSuperteam}
     >
+      <CustomTopLoader />
       <Flex direction="column" gap={6}>
         <Flex gap={6}>
           <NumberStatCard
@@ -262,12 +294,17 @@ export default function MissionControlPage({
         </Flex>
         <VStack align="start" gap={6}>
           <PaymentTable
+            loading={loading}
             data={paymentDataState}
-            onApprove={(id: string, approvedAmount?: number) => {
-              updateStatusWithState(id, 'accepted', approvedAmount);
+            onApprove={async (id: string, approvedAmount?: number) => {
+              setLoading(true);
+              await updateStatusWithState(id, 'accepted', approvedAmount);
+              setLoading(false);
             }}
-            onReject={(id: string) => {
-              updateStatusWithState(id, 'rejected');
+            onReject={async (id: string) => {
+              setLoading(true);
+              await updateStatusWithState(id, 'rejected');
+              setLoading(false);
             }}
           />
           {offset && (

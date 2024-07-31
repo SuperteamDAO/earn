@@ -204,7 +204,6 @@ async function handler(
 
   try {
     const statsData = await buildStatsData();
-    console.log('Stats Data - ', JSON.stringify(statsData, null, 2));
     res.status(200).json(statsData);
 
     for (const [region, data] of Object.entries(statsData)) {

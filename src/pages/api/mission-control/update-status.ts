@@ -21,7 +21,6 @@ async function handler(req: NextApiRequestWithUser, res: NextApiResponse) {
   }
 
   const userId = req.userId;
-  console.log('userId - ', userId);
   const [user, userError] = await promiser(
     prisma.user.findUnique({
       where: {
@@ -136,7 +135,6 @@ async function handler(req: NextApiRequestWithUser, res: NextApiResponse) {
     return res.status(400).json({ message: 'Record not found' });
   }
 
-  console.log('earnId - ', earnId);
   if (type === 'grants' && earnId && approvedAmount) {
     const [dbRes, dbError] = await promiser(
       prisma.grantApplication.update({

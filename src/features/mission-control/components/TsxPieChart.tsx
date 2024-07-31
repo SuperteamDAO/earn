@@ -19,7 +19,7 @@ import {
   Tooltip,
 } from 'recharts';
 
-import { type TSXTYPE } from '../utils';
+import { getLabelForTsxType, type TSXTYPE } from '../utils';
 import { TsxTypeIcon } from './TsxTypeIcon';
 
 interface PaymentData {
@@ -52,7 +52,9 @@ export const TsxPieChart: React.FC<TsxPieChartProps> = ({ data }) => {
               borderRadius="50%"
               bgColor={data.color}
             />
-            <Text fontWeight={500}>{data.name}</Text>
+            <Text fontWeight={500}>
+              {getLabelForTsxType(data.name?.toLowerCase())}
+            </Text>
           </Flex>
           <Text gap={2} display="flex" mt={1}>
             Value:
@@ -87,7 +89,7 @@ export const TsxPieChart: React.FC<TsxPieChartProps> = ({ data }) => {
                         type={entry.payload.type}
                       />
                     </Center>
-                    {entry.value}
+                    {getLabelForTsxType(entry.value?.toLowerCase())}
                   </Flex>
                 </Td>
                 <Td fontWeight={500} isNumeric>
@@ -113,7 +115,11 @@ export const TsxPieChart: React.FC<TsxPieChartProps> = ({ data }) => {
       <Text color="gray.600" fontWeight={500}>
         Overview
       </Text>
-      <ResponsiveContainer width="100%" height="100%">
+      <ResponsiveContainer
+        width="100%"
+        height="100%"
+        style={{ maxWidth: '35rem' }}
+      >
         <PieChart>
           <Pie
             isAnimationActive={false}

@@ -22,7 +22,6 @@ async function handler(req: NextApiRequestWithUser, res: NextApiResponse) {
   }
 
   const userId = req.userId;
-  console.log('userId - ', userId);
   const [user, userError] = await promiser(
     prisma.user.findUnique({
       where: {

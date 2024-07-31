@@ -1,7 +1,7 @@
 import { Box, Flex, Text } from '@chakra-ui/react';
 import { usePathname, useSearchParams } from 'next/navigation';
 import { useRouter } from 'next/router';
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback, useState } from 'react';
 import { components } from 'react-select';
 import AsyncSelect from 'react-select/async';
 
@@ -19,9 +19,6 @@ export function SelectSuperteam({
   const [selectedSuperteam, setSelectedSuperteam] =
     useState<SuperteamOption | null>(selected);
 
-  useEffect(() => {
-    console.log('selectedSuperteam', selectedSuperteam);
-  }, []);
   const searchParams = useSearchParams();
   const pathname = usePathname();
   const router = useRouter();

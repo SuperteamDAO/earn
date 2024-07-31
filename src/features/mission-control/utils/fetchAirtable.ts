@@ -117,7 +117,7 @@ LOWER({${typeKey}}))`);
     airtableUrl.searchParams.append('offset', offset);
   }
 
-  console.log(airtableUrl);
+  // console.log(airtableUrl);
 
   const fetchReq = fetch(airtableUrl.toString(), {
     headers: {
@@ -141,7 +141,6 @@ LOWER({${typeKey}}))`);
       id: parsedData.records[i].id,
     };
     // console.log(currentData);
-    console.log('payment status', currentData['Payment Status']);
     data.push({
       id: currentData.id as string,
       type: syncSourceToTsxType(currentData['Sync Source']) || null,

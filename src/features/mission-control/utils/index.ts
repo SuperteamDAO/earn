@@ -200,3 +200,16 @@ export function getFetchQueryProps(
     offset,
   };
 }
+
+export function getLabelForTsxType(type: TSXTYPE) {
+  switch (type) {
+    case 'all':
+      return 'All';
+    case 'grants':
+      return 'Grants';
+    case 'st-earn':
+      return 'ST Earn';
+    case 'miscellaneous':
+      return 'Misc.';
+  }
+}

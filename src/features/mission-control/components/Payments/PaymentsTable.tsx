@@ -17,7 +17,11 @@ import React from 'react';
 import { tokenList } from '@/constants';
 import { TsxTypeIcon } from '@/features/mission-control';
 
-import { type PaymentData } from '../../utils';
+import {
+  getLabelForTsxType,
+  type PaymentData,
+  type TSXTYPE,
+} from '../../utils';
 import { ActionButton } from './ActionButton';
 import { DetailsDrawer } from './DetailsDrawer';
 import ImagePopup from './ImagePopup';
@@ -27,20 +31,29 @@ interface PaymentTableProps {
   data: PaymentData[];
   onApprove: (id: string, approvedAmount?: number) => void;
   onReject: (id: string) => void;
+  loading: boolean;
 }
 
 export const PaymentTable: React.FC<PaymentTableProps> = ({
   data,
   onApprove,
   onReject,
+  loading,
 }) => {
   return (
-    <Box overflowX="auto" w="full" borderWidth={1} rounded="lg">
+    <Box
+      overflowX="auto"
+      w="full"
+      opacity={loading ? 0.3 : 1}
+      borderWidth={1}
+      pointerEvents={loading ? 'none' : 'auto'}
+      rounded="lg"
+    >
       <Table variant="simple">
         <Thead>
           <Tr color="brand.slate.500" fontWeight={500} bg="#F8FAFC">
             <Th color="#94A3B8" fontWeight={500} textTransform={'none'}>
-              Name
+              Particulars
             </Th>
             <Th
               color="#94A3B8"
@@ -93,7 +106,7 @@ export const PaymentTable: React.FC<PaymentTableProps> = ({
               (token) => token.tokenSymbol === payment.tokenSymbol,
             );
             return (
-              <Tr key={payment.id}>
+              <Tr key={payment.id} fontSize="sm">
                 <Td>
                   <DetailsDrawer
                     {...payment}
@@ -111,20 +124,30 @@ export const PaymentTable: React.FC<PaymentTableProps> = ({
                         />
                       )}
                       <Text
-                        maxW="14rem"
+                        maxW="15rem"
                         color="brand.slate.700"
+                        fontSize={'medium'}
                         fontWeight={500}
                         textOverflow={'ellipsis'}
-                        noOfLines={1}
+                        noOfLines={2}
                       >
                         {payment.title}
                       </Text>
-                      <Text color="gray.600">{payment.name}</Text>
+                      <Text
+                        maxW="7rem"
+                        color="gray.600"
+                        textOverflow={'ellipsis'}
+                        noOfLines={2}
+                      >
+                        {payment.name}
+                      </Text>
                     </Flex>
                   </DetailsDrawer>
                 </Td>
                 <Td color="#334155" fontWeight={600} textAlign="center">
-                  {payment.type}
+                  {getLabelForTsxType(
+                    (payment.type?.toLowerCase() as TSXTYPE) ?? 'all',
+                  )}
                 </Td>
                 <Td
                   w="8.5rem"
