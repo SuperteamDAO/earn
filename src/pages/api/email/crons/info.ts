@@ -141,7 +141,7 @@ async function handler(_req: NextApiRequest, res: NextApiResponse) {
       userSignUpsInLast7Days: newUserCountInLastWeek,
       totalUsersSignedUp: totalUserCount - 289,
       newTalentProfilesFilledInLast7Days: newTalentFilledUserCountInLastWeek,
-      totalTalentProfilesFilled: totalTalentFilledUserCount - 289,
+      totalTalentProfilesFilled: totalTalentFilledUserCount,
       newListingsPublishedInLast7Days: newBountiesCountInLastWeek,
       amountNewListingsPublishedInLast7Days: totalRewardAmountInLastWeek,
       amountListingsOpenAndPublishedOverall: totalRewardAmount,
