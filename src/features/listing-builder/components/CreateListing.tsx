@@ -278,6 +278,7 @@ export function CreateListing({
               type={isType}
               slug={slug}
               isOpen={isOpen}
+              isVerified={userInfo.currentSponsor?.isVerified || false}
               onClose={() => {}}
             />
           )}

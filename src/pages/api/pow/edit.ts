@@ -7,7 +7,6 @@ import { safeStringify } from '@/utils/safeStringify';
 
 interface PoW {
   id?: string;
-  userId: string;
   title: string;
   description: string;
   skills: string[];
@@ -18,8 +17,8 @@ interface PoW {
 
 async function handler(req: NextApiRequestWithUser, res: NextApiResponse) {
   const { pows } = req.body as { pows: PoW[] };
-  const errors: string[] = [];
   const userId = req.userId;
+  const errors: string[] = [];
 
   logger.debug(`Request body: ${safeStringify(req.body)}`);
 
@@ -31,13 +30,16 @@ async function handler(req: NextApiRequestWithUser, res: NextApiResponse) {
   }
 
   try {
+    const incomingIds = pows.map((pow) => pow.id).filter(Boolean) as string[];
+
     const existingPoWs = await prisma.poW.findMany({
-      where: { userId },
+      where: {
+        userId,
+      },
       select: { id: true },
     });
 
     const existingIds = existingPoWs.map((pow) => pow.id);
-    const incomingIds = pows.map((pow) => pow.id).filter(Boolean) as string[];
     const idsToDelete = existingIds.filter((id) => !incomingIds.includes(id));
 
     const createData: { [key: string]: any }[] = [];
@@ -56,18 +58,21 @@ async function handler(req: NextApiRequestWithUser, res: NextApiResponse) {
         pow;
 
       if (id) {
-        updateData.push({
-          where: { id },
-          data: {
-            title,
-            userId,
-            description,
-            skills,
-            subSkills,
-            link,
-            createdAt,
-          },
-        });
+        if (existingIds.includes(id)) {
+          updateData.push({
+            where: { id },
+            data: {
+              title,
+              description,
+              skills,
+              subSkills,
+              link,
+              createdAt,
+            },
+          });
+        } else {
+          errors.push(`PoW with id ${id} does not belong to user ${userId}`);
+        }
       } else {
         createData.push({
           title,

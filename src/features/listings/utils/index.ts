@@ -1,4 +1,4 @@
-import { Superteams } from '@/constants/Superteam';
+import { CombinedRegions } from '@/constants/Superteam';
 import type { Listing, ListingWithSubmissions } from '@/features/listings';
 import { dayjs } from '@/utils/dayjs';
 
@@ -23,7 +23,9 @@ export const isDeadlineOver = (deadline: string | undefined) =>
   deadline ? dayjs().isAfter(dayjs(deadline)) : false;
 
 export const getRegionTooltipLabel = (region: string | undefined) => {
-  const country = Superteams.find((st) => st.region === region)?.displayValue;
+  const country = CombinedRegions.find(
+    (st) => st.region === region,
+  )?.displayValue;
 
   switch (region) {
     case 'GLOBAL':
@@ -126,10 +128,10 @@ export function userRegionEligibilty(
     return true;
   }
 
-  const superteam = Superteams.find((st) => st.region === region);
+  const allRegions = CombinedRegions.find((st) => st.region === region);
 
   const isEligible =
-    !!(userLocation && superteam?.country.includes(userLocation)) || false;
+    !!(userLocation && allRegions?.country.includes(userLocation)) || false;
 
   return isEligible;
 }

@@ -55,7 +55,6 @@ export default async function handler(
         experience: true,
         github: true,
         linkedin: true,
-        PoW: true,
         telegram: true,
         twitter: true,
         website: true,
@@ -68,6 +67,7 @@ export default async function handler(
             logo: true,
             isVerified: true,
             entityName: true,
+            slug: true,
           },
         },
         UserSponsors: {

@@ -35,7 +35,7 @@ import { z } from 'zod';
 
 import { SkillSelect } from '@/components/misc/SkillSelect';
 import { type MultiSelectOptions } from '@/constants';
-import { Superteams } from '@/constants/Superteam';
+import { CombinedRegions, Superteams } from '@/constants/Superteam';
 import { dayjs } from '@/utils/dayjs';
 
 import { useListingFormStore } from '../../store';
@@ -438,9 +438,9 @@ export const ListingBasic = ({
             </Flex>
             <Select {...register('region')}>
               <option value={Regions.GLOBAL}>Global</option>
-              {Superteams.map((st) => (
-                <option value={st.region} key={st.name}>
-                  {st.displayValue}
+              {CombinedRegions.map((region) => (
+                <option value={region.region} key={region.displayValue}>
+                  {region.displayValue}
                 </option>
               ))}
             </Select>

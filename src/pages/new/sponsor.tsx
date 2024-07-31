@@ -2,12 +2,14 @@ import { InfoOutlineIcon } from '@chakra-ui/icons';
 import {
   Box,
   Button,
+  Flex,
   FormControl,
   FormErrorMessage,
   FormLabel,
   Heading,
   HStack,
   Input,
+  Link,
   Text,
   Tooltip,
   VStack,
@@ -24,6 +26,10 @@ import makeAnimated from 'react-select/animated';
 import { ImagePicker } from '@/components/shared/ImagePicker';
 import { IndustryList } from '@/constants';
 import { SignIn } from '@/features/auth';
+import {
+  useSlugValidation,
+  useSponsorNameValidation,
+} from '@/features/sponsor';
 import type { SponsorType } from '@/interface/sponsor';
 import { Default } from '@/layouts/Default';
 import { Meta } from '@/layouts/Meta';
@@ -50,6 +56,15 @@ const CreateSponsor = () => {
 
   const { userInfo } = userStore();
   const posthog = usePostHog();
+
+  const {
+    setSponsorName,
+    isInvalid: isSponsorNameInvalid,
+    validationErrorMessage: sponsorNameValidationErrorMessage,
+    sponsorName,
+  } = useSponsorNameValidation();
+  const { setSlug, isInvalid, validationErrorMessage, slug } =
+    useSlugValidation();
 
   useEffect(() => {
     if (userInfo?.currentSponsorId && session?.user?.role !== 'GOD') {
@@ -154,8 +169,8 @@ const CreateSponsor = () => {
                 createNewSponsor({
                   bio: e.bio,
                   industry: industries ?? '',
-                  name: e.sponsorname,
-                  slug: e.slug,
+                  name: sponsorName,
+                  slug,
                   logo: imageUrl ?? '',
                   twitter: e.twitterHandle,
                   url: e.sponsorurl ?? '',
@@ -164,7 +179,7 @@ const CreateSponsor = () => {
               })}
               style={{ width: '100%' }}
             >
-              <HStack justify={'space-between'} w={'full'}>
+              <Flex justify={'space-between'} gap={2} w={'full'}>
                 <FormControl isRequired>
                   <FormLabel
                     color={'brand.slate.500'}
@@ -175,14 +190,28 @@ const CreateSponsor = () => {
                     Company Name
                   </FormLabel>
                   <Input
-                    w={'18rem'}
+                    w={'full'}
                     borderColor={'brand.slate.300'}
                     _placeholder={{ color: 'brand.slate.300' }}
                     focusBorderColor="brand.purple"
                     id="sponsorname"
                     placeholder="Stark Industries"
                     {...register('sponsorname')}
+                    isInvalid={isSponsorNameInvalid}
+                    onChange={(e) => setSponsorName(e.target.value)}
+                    value={sponsorName}
                   />
+                  {isSponsorNameInvalid && (
+                    <Text
+                      mt={1}
+                      color={'red'}
+                      fontSize={'sm'}
+                      lineHeight={'15px'}
+                      letterSpacing={'-1%'}
+                    >
+                      {sponsorNameValidationErrorMessage}
+                    </Text>
+                  )}
                   <FormErrorMessage>
                     {errors.sponsorname ? (
                       <>{errors.sponsorname.message}</>
@@ -191,7 +220,7 @@ const CreateSponsor = () => {
                     )}
                   </FormErrorMessage>
                 </FormControl>
-                <FormControl w={'18rem'} isRequired>
+                <FormControl w={'full'} isRequired>
                   <FormLabel
                     color={'brand.slate.500'}
                     fontSize={'15px'}
@@ -201,21 +230,35 @@ const CreateSponsor = () => {
                     Company Username
                   </FormLabel>
                   <Input
-                    w={'18rem'}
+                    w={'full'}
                     borderColor={'brand.slate.300'}
                     _placeholder={{ color: 'brand.slate.300' }}
                     focusBorderColor="brand.purple"
                     id="slug"
                     placeholder="starkindustries"
                     {...register('slug')}
+                    isInvalid={isInvalid}
+                    onChange={(e) => setSlug(e.target.value)}
+                    value={slug}
                   />
+                  {isInvalid && (
+                    <Text
+                      mt={1}
+                      color={'red'}
+                      fontSize={'sm'}
+                      lineHeight={'15px'}
+                      letterSpacing={'-1%'}
+                    >
+                      {validationErrorMessage}
+                    </Text>
+                  )}
                   <FormErrorMessage>
                     {errors.slug ? <>{errors.slug.message}</> : <></>}
                   </FormErrorMessage>
                 </FormControl>
-              </HStack>
+              </Flex>
               <HStack justify={'space-between'} w={'full'} my={6}>
-                <FormControl w={'18rem'}>
+                <FormControl w={'full'}>
                   <FormLabel
                     color={'brand.slate.500'}
                     fontSize={'15px'}
@@ -240,7 +283,7 @@ const CreateSponsor = () => {
                     )}
                   </FormErrorMessage>
                 </FormControl>
-                <FormControl w={'18rem'} isRequired>
+                <FormControl w={'full'} isRequired>
                   <FormLabel
                     color={'brand.slate.500'}
                     fontSize={'15px'}
@@ -250,7 +293,7 @@ const CreateSponsor = () => {
                     Company Twitter
                   </FormLabel>
                   <Input
-                    w={'18rem'}
+                    w={'full'}
                     borderColor={'brand.slate.300'}
                     _placeholder={{ color: 'brand.slate.300' }}
                     id="twitterHandle"
@@ -403,28 +446,37 @@ const CreateSponsor = () => {
                   </FormErrorMessage>
                 </FormControl>
               </Box>
-              <Box mt={8}>
+              <Box my={8}>
                 {hasError && (
-                  <Text align="center" mb={4} color="red">
-                    {errorMessage ||
-                      'Sorry! An error occurred while creating your company!'}
-                    <br />
-                    Please update the details & try again or contact support!
+                  <Text align="center" mb={2} color="red">
+                    {errorMessage}
+                    {validationErrorMessage &&
+                      'Company name/username already exists.'}
                   </Text>
                 )}
-                <Button
-                  className="ph-no-capture"
-                  w="full"
-                  isDisabled={imageUrl === ''}
-                  isLoading={!!isLoading}
-                  loadingText="Creating..."
-                  size="lg"
-                  type="submit"
-                  variant="solid"
-                >
-                  Create Sponsor
-                </Button>
+                {(validationErrorMessage ||
+                  sponsorNameValidationErrorMessage) && (
+                  <Text align={'center'} color="yellow.500">
+                    If you want access to the existing account, contact us on
+                    Telegram at{' '}
+                    <Link href="https://t.me/pratikdholani/" isExternal>
+                      @pratikdholani
+                    </Link>
+                  </Text>
+                )}
               </Box>
+              <Button
+                className="ph-no-capture"
+                w="full"
+                isDisabled={imageUrl === ''}
+                isLoading={!!isLoading}
+                loadingText="Creating..."
+                size="lg"
+                type="submit"
+                variant="solid"
+              >
+                Create Sponsor
+              </Button>
             </form>
           </VStack>
         </VStack>

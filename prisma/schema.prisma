@@ -86,6 +86,7 @@ model Bounties {
   sponsor              Sponsors           @relation(fields: [sponsorId], references: [id])
   poc                  User               @relation("poc", fields: [pocId], references: [id])
   language             String?
+  shouldSendEmail      Boolean            @default(true)
   Submission           Submission[]
   SubscribeBounty      SubscribeBounty[]
   Hackathon            Hackathon?         @relation(fields: [hackathonId], references: [id])
@@ -552,6 +553,7 @@ enum EmailType {
   NO_REVIEW_SPONSOR_2
   ROLLING_15_DAYS
   ROLLING_30_DAYS
+  NEW_LISTING
 }
 
 enum Role {
@@ -627,6 +629,8 @@ enum Regions {
   PHILIPPINES
   JAPAN
   FRANCE
+  UKRAINE
+  ARGENTINA
 }
 
 enum CompensationType {

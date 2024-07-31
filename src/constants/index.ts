@@ -193,7 +193,7 @@ export const tokenList: Token[] = [
     tokenName: "Dean's List",
     tokenSymbol: 'DEAN',
     mintAddress: 'Ds52CDgqdWbTWsua1hgT3AuSSy4FNx2Ezge1br3jQ14a',
-    icon: 'https://assets.coingecko.com/coins/images/23289/standard/sns.png?1696522507',
+    icon: 'https://assets.coingecko.com/coins/images/36197/standard/logo_dl.png?1710811437',
     decimals: 6,
     coingeckoSymbol: 'dean-s-list',
   },

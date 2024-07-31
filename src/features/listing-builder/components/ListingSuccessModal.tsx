@@ -31,8 +31,15 @@ interface Props {
   isOpen: boolean;
   slug: string;
   type: string;
+  isVerified: boolean;
 }
-export const ListingSuccessModal = ({ isOpen, onClose, slug, type }: Props) => {
+export const ListingSuccessModal = ({
+  isOpen,
+  onClose,
+  slug,
+  type,
+  isVerified,
+}: Props) => {
   const listingLink = (medium?: 'twitter' | 'telegram') =>
     `${getURL()}listings/${type}/${slug}/${medium ? `?utm_source=superteamearn&utm_medium=${medium}&utm_campaign=sharelisting` : ``}`;
 
@@ -68,20 +75,24 @@ ${listingLink('twitter')}
             </Box>
             <VStack align="start" w="full" p={6} pt={0}>
               <Text
-                color={'brand.slate.800'}
+                color={'brand.slate.700'}
                 fontFamily={'var(--font-sans)'}
+                fontSize={'lg'}
                 fontWeight={600}
               >
                 Your Listing is Live
               </Text>
               <Text
+                mt={-2}
                 color={'brand.slate.500'}
                 fontFamily={'var(--font-sans)'}
                 fontWeight={400}
               >
-                Share the love on your socials and invite Earn’s best talent!
+                {isVerified
+                  ? 'Share the love on your socials and invite Earn’s best talent!'
+                  : 'Share the love on your socials!'}
               </Text>
-              <VStack gap={4} w={'full'} mt={5}>
+              <VStack gap={4} w={'full'} mt={3}>
                 <Button
                   alignItems="center"
                   justifyContent="space-between"
@@ -103,7 +114,7 @@ ${listingLink('twitter')}
                     cursor="pointer"
                     onClick={onCopy}
                   >
-                    earn.superteam.fun/{slug}
+                    earn.superteam.fun/listings/{type}/{slug}
                   </Text>
                   <Box mr="0rem">
                     {hasCopied ? (
@@ -123,19 +134,33 @@ ${listingLink('twitter')}
                     )}
                   </Box>
                 </Button>
-                <Button
-                  gap={2}
-                  w="100%"
-                  fontWeight={500}
-                  onClick={() => {
-                    router.push(
-                      `/dashboard/listings/${slug}/submissions?scout`,
-                    );
-                  }}
-                  variant="solid"
-                >
-                  Invite Talent <AddIcon h="0.8em" w="0.8em" />
-                </Button>
+                {isVerified ? (
+                  <Button
+                    gap={2}
+                    w="100%"
+                    fontWeight={500}
+                    onClick={() => {
+                      router.push(
+                        `/dashboard/listings/${slug}/submissions?scout`,
+                      );
+                    }}
+                    variant="solid"
+                  >
+                    Invite Talent <AddIcon h="0.8em" w="0.8em" />
+                  </Button>
+                ) : (
+                  <Button
+                    gap={2}
+                    w="100%"
+                    fontWeight={500}
+                    onClick={() => {
+                      router.push(`/listings/${type}/${slug}`);
+                    }}
+                    variant="solid"
+                  >
+                    View Listing <ArrowForwardIcon h="0.8em" w="0.8em" />
+                  </Button>
+                )}
                 <Flex
                   justify="space-between"
                   w="100%"
@@ -154,9 +179,15 @@ ${listingLink('twitter')}
                     Share on
                     <FaXTwitter style={{ width: '1em', height: '1em' }} />
                   </Link>
-                  <Link as={NextLink} href={`/listings/${type}/${slug}`}>
-                    View Listing <ArrowForwardIcon />
-                  </Link>
+                  {isVerified ? (
+                    <Link as={NextLink} href={`/listings/${type}/${slug}`}>
+                      View Listing <ArrowForwardIcon />
+                    </Link>
+                  ) : (
+                    <Link as={NextLink} href={`/dashboard/listings/`}>
+                      Sponsor Dashboard <ArrowForwardIcon />
+                    </Link>
+                  )}
                 </Flex>
               </VStack>
             </VStack>
