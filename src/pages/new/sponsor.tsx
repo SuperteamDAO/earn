@@ -448,22 +448,17 @@ const CreateSponsor = () => {
               </Box>
               <Box my={8}>
                 {hasError && (
-                  <Text align="center" mb={4} color="red">
-                    {errorMessage ||
-                      'Sorry! An error occurred while creating your company!'}
-                    <br />
-                    If you want access to the existing account, contact us on
-                    Telegram at{' '}
-                    <Link as="span" href="https://t.me/pratikdholani">
-                      @pratikdholani
-                    </Link>
+                  <Text align="center" mb={2} color="red">
+                    {errorMessage}
+                    {validationErrorMessage &&
+                      'Company name/username already exists.'}
                   </Text>
                 )}
                 {validationErrorMessage && (
                   <Text align={'center'} color="yellow.500">
                     If you want access to the existing account, contact us on
                     Telegram at{' '}
-                    <Link as="span" href="https://t.me/pratikdholani">
+                    <Link href="https://t.me/pratikdholani/" isExternal>
                       @pratikdholani
                     </Link>
                   </Text>
