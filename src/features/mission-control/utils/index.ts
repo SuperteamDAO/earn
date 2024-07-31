@@ -1,6 +1,9 @@
+import { airtableUrlMaker, type FetchAirtableProps } from './fetchAirtable';
 import {
   type AIRTABLE_STATUS,
+  type PIPELINE_STATUS,
   type STATUS,
+  type SuperteamOption,
   type SYNC_SOURCE,
   type TSXTYPE,
 } from './types';
@@ -37,7 +40,13 @@ export function syncSourceToTsxType(syncSource: SYNC_SOURCE): TSXTYPE {
   }
 }
 
-export function airtableToStatus(airtableStatus: AIRTABLE_STATUS): STATUS {
+export function airtableToStatus(
+  airtableStatus: AIRTABLE_STATUS,
+  pipelineStatus?: PIPELINE_STATUS,
+): STATUS {
+  if (pipelineStatus && pipelineStatus === 'Paid') {
+    return 'paid';
+  }
   switch (airtableStatus) {
     case 'Rejected':
       return 'rejected';
@@ -132,4 +141,62 @@ function earnAirtableStatuses(status: STATUS): AIRTABLE_STATUS | undefined {
     default:
       return undefined;
   }
+}
+
+export function getFetchAirtableURL() {
+  return airtableUrlMaker({
+    fields: [
+      'Purpose of Payment Main',
+      'Submitter',
+      'Status',
+      'Amount',
+      'Name',
+      'SOL Wallet',
+      'Discord Handle',
+      'Application Time',
+      'Sync Source',
+      'KYC',
+      'Contact Email',
+      'Region',
+      'RecordID',
+      'earnApplicationId',
+      'Payment Status',
+      //records needed to show in details drawer
+      'Title',
+      'Summary',
+      'Description',
+      'Deadline',
+      'Proof of Work',
+      'Milestones',
+      'KPI',
+      'Telegram',
+      'Category',
+      'Approver',
+    ],
+    sortField: 'Application Time',
+    sortDirection: 'desc',
+  });
+}
+
+export function getFetchQueryProps(
+  airtableUrl: URL,
+  selectedSuperteam: SuperteamOption,
+  q: string,
+  status: STATUS,
+  type: TSXTYPE,
+  offset?: string,
+): FetchAirtableProps {
+  return {
+    airtableUrl,
+    pageSize: 5,
+    region: selectedSuperteam.value,
+    regionKey: 'Region',
+    searchTerm: q,
+    searchKey: 'Purpose of Payment Main',
+    status,
+    statusKey: 'Status',
+    type,
+    typeKey: 'Sync Source',
+    offset,
+  };
 }

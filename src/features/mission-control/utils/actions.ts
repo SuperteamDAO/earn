@@ -28,3 +28,28 @@ export const updateStatus = async ({
     earnId,
   });
 };
+
+interface FetchTsxParams {
+  status: STATUS;
+  q: string;
+  region?: string;
+  type: TSXTYPE;
+  offset: string;
+}
+export const fetchOffsetTransactions = async <T>({
+  status,
+  q,
+  region,
+  type,
+  offset,
+}: FetchTsxParams) => {
+  return await axios.get<T>('/api/mission-control', {
+    params: {
+      status,
+      q,
+      region,
+      type,
+      offset,
+    },
+  });
+};

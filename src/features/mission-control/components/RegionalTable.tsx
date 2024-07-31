@@ -33,7 +33,13 @@ export const RegionalTable: React.FC<RegionalPaymentTableProps> = ({
       <Table variant="simple">
         <Thead bg="gray.50">
           <Tr color="gray.500">
-            <Th pr={1} color="inherit" fontWeight={500} textTransform="none">
+            <Th
+              w="3rem"
+              pr={1}
+              color="inherit"
+              fontWeight={500}
+              textTransform="none"
+            >
               No
             </Th>
             <Th color="inherit" fontWeight={500} textTransform="none">
@@ -49,7 +55,13 @@ export const RegionalTable: React.FC<RegionalPaymentTableProps> = ({
         </Thead>
         <Tbody>
           {data.map((region, k) => (
-            <Tr key={region.name} fontSize="sm">
+            <Tr
+              key={region.name}
+              fontSize="sm"
+              _hover={{
+                bg: 'gray.50',
+              }}
+            >
               <Td pr={1} color="gray.500">
                 {k + 1}.
               </Td>

@@ -1,7 +1,7 @@
 export type TIMEFRAME = 'yearToDate' | 'last30days' | 'last7days' | 'allTime';
 export type TSXTYPE = 'all' | 'grants' | 'st-earn' | 'miscellaneous';
 
-export type STATUS = 'all' | 'accepted' | 'rejected' | 'undecided';
+export type STATUS = 'all' | 'accepted' | 'rejected' | 'undecided' | 'paid';
 
 export type SYNC_SOURCE = 'All Grants' | 'Misc Payments' | 'Earn All_Sync';
 
@@ -21,6 +21,16 @@ export type PaymentData = {
   region: string | null;
   recordId: string | null;
   earnId: string | null;
+  shortTitle: string | null;
+  summary: string | null;
+  description: string | null;
+  deadline: Date | null;
+  proofOfWork: string | null;
+  milestones: string | null;
+  kpi: string | null;
+  telegram: string | null;
+  category: string | null;
+  approver: string | null;
 };
 
 export interface SuperteamOption {
@@ -38,6 +48,8 @@ export type AIRTABLE_STATUS =
   | 'Applied'
   | 'Verified'
   | 'Sent to pipeline';
+
+export type PIPELINE_STATUS = 'Processing' | 'Paid';
 
 export type ButtonSize = 'small' | 'normal';
 

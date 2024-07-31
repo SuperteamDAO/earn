@@ -1,4 +1,4 @@
-import { Box, Flex, Icon } from '@chakra-ui/react';
+import { Box, Button, Flex, Icon, VStack } from '@chakra-ui/react';
 import { type Redis } from '@upstash/redis';
 import debounce from 'lodash.debounce';
 import { type GetServerSideProps } from 'next';
@@ -11,15 +11,19 @@ import { LuCheck, LuClock, LuHourglass } from 'react-icons/lu';
 
 import { Superteams } from '@/constants/Superteam';
 import {
-  airtableUrlMaker,
   AmtBarChart,
   colors,
   fetchAirtable,
+  fetchOffsetTransactions,
+  getFetchAirtableURL,
+  getFetchQueryProps,
+  globalLead,
   NumberStatCard,
   type OverviewTotals,
   type PaymentData,
   PaymentTable,
   QuickLinks,
+  quickLinks,
   REDIS_PREFIX,
   RegionalTable,
   type RegionData,
@@ -28,6 +32,7 @@ import {
   type StatTypeData,
   type STATUS,
   StatusFilter,
+  superteamLists,
   type SuperteamOption,
   type TIMEFRAME,
   TimeRangeDropdown,
@@ -49,47 +54,24 @@ type PieChartTsxData = {
 
 type MonthlyAmtData = { name: string; value: number };
 
-const quickLinks = [
-  {
-    text: 'Community GDP',
-    href: 'https://playbook.superteam.fun/community-gdp',
-  },
-  {
-    text: 'Payment Pipeline Process',
-    href: 'https://playbook.superteam.fun/guides/payment-pipeline-process',
-  },
-  {
-    text: 'ST Points of Contact',
-    href: 'https://playbook.superteam.fun/guides/points-of-contact',
-  },
-  { text: 'Stats Dashboard', href: 'https://stats.superteam.fun/login' },
-  { text: 'Reputation Dashboard', href: 'https://reputation.superteam.fun/' },
-  {
-    text: 'Superteam Operations Guide',
-    href: 'https://playbook.superteam.fun/guides/guide-to-superteam-operations',
-  },
-  {
-    text: 'Global Link Repository',
-    href: 'https://playbook.superteam.fun/guides/global-link-repository',
-  },
-];
-
 interface Props {
   span: TIMEFRAME;
   status: STATUS;
+  type: TSXTYPE;
   superteamLists: SuperteamOption[];
   selectedSuperteam: SuperteamOption;
   paymentData: PaymentData[];
   numericalData: StatNumbericalData;
-  overviewTotals: PieChartTsxData[];
+  overviewTotals?: PieChartTsxData[];
   monthlyApprovedData: MonthlyAmtData[];
-  topRegionStats: RegionData[];
-  nextOffset?: string[];
+  topRegionStats?: RegionData[];
+  offset?: string;
 }
 
 export default function MissionControlPage({
   span,
   status,
+  type,
   superteamLists,
   selectedSuperteam,
   paymentData,
@@ -97,6 +79,7 @@ export default function MissionControlPage({
   overviewTotals,
   monthlyApprovedData,
   topRegionStats,
+  offset: pOffset,
 }: Props) {
   const searchParams = useSearchParams();
   const [, startTransition] = useTransition();
@@ -107,6 +90,7 @@ export default function MissionControlPage({
     useState<PaymentData[]>(paymentData);
   const [query, setQuery] = useState(searchParams.get('q') ?? '');
   const [loading, setLoading] = useState(false);
+  const [offset, setOffset] = useState(pOffset);
 
   const serverSearch = (value: string) => {
     const params = new URLSearchParams(searchParams.toString());
@@ -140,10 +124,7 @@ export default function MissionControlPage({
     status: STATUS,
     approvedAmount?: number,
   ) => {
-    console.log('Start updating status');
     const paymentIndex = paymentDataState.findIndex((p) => p.id === id);
-    console.log('ID - ', id);
-    console.log('paymentIndex - ', paymentIndex);
     if (paymentIndex === -1) {
       toast.error('Payment not found only state no index');
       return;
@@ -166,9 +147,6 @@ export default function MissionControlPage({
     approvedAmount?: number,
   ) {
     const payment = paymentDataState.find((p) => p.id === id);
-    console.log('ID - ', id);
-    console.log('payment data', paymentDataState);
-    console.log('payment', payment);
     if (!payment || !payment.recordId || !payment.type) {
       toast.error('Payment not found status with state');
       return;
@@ -190,6 +168,38 @@ export default function MissionControlPage({
     }
     toast.success('Successfully approved transaction');
     updateStateStatus(id, status, approvedAmount);
+  }
+
+  async function getOffsetTsx() {
+    if (!offset) {
+      console.log('No offset present ');
+      toast.error('No offset present ');
+      return;
+    }
+    const [nextTsxs, error] = await promiser(
+      fetchOffsetTransactions<{
+        data: PaymentData[];
+        nextOffset: string | null;
+      }>({
+        status,
+        q: query,
+        region: selectedSuperteam.value,
+        type,
+        offset,
+      }),
+    );
+    if (error) {
+      console.log('Error fetching offset transactions - ', error);
+      toast.error('Error fetching offset transactions');
+      return;
+    }
+    if (nextTsxs.status !== 200) {
+      console.log('Error fetching offset transactions not 200');
+      toast.error('Error fetching offset transactions');
+      return;
+    }
+    setPaymentData([...paymentDataState, ...nextTsxs.data.data]);
+    setOffset(nextTsxs.data.nextOffset ?? undefined);
   }
 
   return (
@@ -236,8 +246,8 @@ export default function MissionControlPage({
           </Box>
         </Flex>
         <Flex gap={8}>
-          <RegionalTable data={topRegionStats} />
-          <TsxPieChart data={overviewTotals} />
+          {topRegionStats && <RegionalTable data={topRegionStats} />}
+          {overviewTotals && <TsxPieChart data={overviewTotals} />}
         </Flex>
 
         <Flex gap={8}>
@@ -250,7 +260,7 @@ export default function MissionControlPage({
             <SearchInput loading={loading} query={query} setQuery={setQuery} />
           </StatusFilter>
         </Flex>
-        <Flex>
+        <VStack align="start" gap={6}>
           <PaymentTable
             data={paymentDataState}
             onApprove={(id: string, approvedAmount?: number) => {
@@ -260,7 +270,17 @@ export default function MissionControlPage({
               updateStatusWithState(id, 'rejected');
             }}
           />
-        </Flex>
+          {offset && (
+            <Button
+              fontWeight={400}
+              onClick={getOffsetTsx}
+              size="sm"
+              variant="outlineSecondary"
+            >
+              Show More
+            </Button>
+          )}
+        </VStack>
       </Flex>
     </MissionControl>
   );
@@ -268,7 +288,6 @@ export default function MissionControlPage({
 
 export const getServerSideProps: GetServerSideProps = async (context) => {
   const session = await getSession(context);
-  console.log('session- ', session?.user.misconRole);
   if (!session || !session.user.misconRole) {
     return {
       redirect: {
@@ -281,31 +300,11 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
   const { query } = context;
 
   const span: TIMEFRAME =
-    ((query.span as string)?.trim() as TIMEFRAME) || 'all';
+    ((query.span as string)?.trim() as TIMEFRAME) || 'allTime';
   const status: STATUS = ((query.status as string)?.trim() as STATUS) || 'all';
-  const q: string = (query.query as string) || '';
+  const q: string = (query.q as string) || '';
   let region: string | null = (query.region as string) || 'global';
   const type: TSXTYPE = ((query.type as string)?.trim() as TSXTYPE) || 'all';
-
-  const globalLead: SuperteamOption = {
-    value: 'global',
-    label: 'Global Lead',
-    superteam: {
-      name: 'Global Lead',
-      logo: '/assets/global.png',
-    },
-  };
-
-  const superteamLists: SuperteamOption[] = Superteams.map((s) => ({
-    value: s.region,
-    label: s.displayValue,
-    superteam: {
-      name: s.displayValue,
-      logo: s.icons,
-    },
-  }));
-
-  superteamLists.unshift(globalLead);
 
   let selectedSuperteam: SuperteamOption;
   if (session.user.misconRole === 'ZEUS') {
@@ -327,39 +326,11 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
       selectedSuperteam = regionTeam;
     }
   }
-  const airtableUrl = airtableUrlMaker({
-    fields: [
-      'Purpose of Payment Main',
-      'Submitter',
-      'Status',
-      'Amount',
-      'Name',
-      'SOL Wallet',
-      'Discord Handle',
-      'Application Time',
-      'Sync Source',
-      'KYC',
-      'Contact Email',
-      'Region',
-      'RecordID',
-      'earnApplicationId',
-    ],
-    sortField: 'Application Time',
-    sortDirection: 'desc',
-  });
+  const airtableUrl = getFetchAirtableURL();
   const [data, dataError] = await promiser(
-    fetchAirtable({
-      airtableUrl,
-      pageSize: 5,
-      region: selectedSuperteam.value,
-      regionKey: 'Region',
-      searchTerm: q,
-      searchKey: 'Purpose of Payment Main',
-      status,
-      statusKey: 'Status',
-      type,
-      typeKey: 'Sync Source',
-    }),
+    fetchAirtable(
+      getFetchQueryProps(airtableUrl, selectedSuperteam, q, status, type),
+    ),
   );
 
   if (dataError) {
@@ -383,27 +354,36 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
     acceptedPercentage: 0,
   };
 
-  const overviewTotals: OverviewTotals = {
-    grants: stats['grants']?.timespan[span]?.totalPaidAmount ?? 0,
-    'st-earn': stats['st-earn']?.timespan[span]?.totalPaidAmount ?? 0,
-    miscellaneous: stats['miscellaneous']?.timespan[span]?.totalPaidAmount ?? 0,
-  };
+  let overviewTotals: PieChartTsxData[] | null = null;
+  if (type === 'all') {
+    overviewTotals = convertOverviewTotals({
+      grants: stats['grants']?.timespan[span]?.totalPaidAmount ?? 0,
+      'st-earn': stats['st-earn']?.timespan[span]?.totalPaidAmount ?? 0,
+      miscellaneous:
+        stats['miscellaneous']?.timespan[span]?.totalPaidAmount ?? 0,
+    });
+  }
 
-  const topRegionStats = await getTopRegionStats(redis, type, span);
-  console.log('topRegionStats - ', topRegionStats);
+  let topRegionStats: RegionData[] | null = null;
+  if (
+    session.user.misconRole === 'ZEUS' &&
+    (selectedSuperteam.value === 'global' || type !== 'all')
+  )
+    topRegionStats = await getTopRegionStats(redis, type, span);
 
   return {
     props: {
       span,
       status,
+      type,
       query: q,
       superteamLists:
         session.user.misconRole === 'ZEUS' ? superteamLists : null,
       selectedSuperteam,
       paymentData: data.data,
-      nextOffset: data.nextOffset,
+      offset: data.nextOffset,
       numericalData: currentSpanData,
-      overviewTotals: convertOverviewTotals(overviewTotals),
+      overviewTotals,
       monthlyApprovedData: convertMonthlyApprovedData(monthlyApprovedData),
       topRegionStats,
     },
@@ -436,8 +416,6 @@ function convertMonthlyApprovedData(
       value: monthlyApprovedData?.[monthKey] ?? 0,
     });
   }
-
-  console.log('monthly approved data', result);
 
   return result;
 }

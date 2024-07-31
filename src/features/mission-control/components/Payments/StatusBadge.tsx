@@ -20,6 +20,8 @@ export const StatusBadge: React.FC<StatusBadgeProps> = ({
         return { bg: '#FFFBEB', color: '#F59E0B' };
       case 'rejected':
         return { bg: '#FEF2F2', color: '#EF4444' };
+      case 'paid':
+        return { bg: '#ECFDF5', color: '#059669' };
       default:
         return { bg: '#FAFAFA', color: '#525252' };
     }

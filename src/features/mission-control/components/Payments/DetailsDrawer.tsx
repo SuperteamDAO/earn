@@ -9,27 +9,32 @@ import {
   HStack,
   Icon,
   Image,
+  Link,
   Text,
   Tooltip,
   useDisclosure,
+  VStack,
 } from '@chakra-ui/react';
+import dayjs from 'dayjs';
 import React, { type ReactNode } from 'react';
 import { FaDiscord } from 'react-icons/fa';
 import { LuMail, LuWallet } from 'react-icons/lu';
 
 import { tokenList } from '@/constants';
+import {
+  ActionButton,
+  type PaymentData,
+  StatusBadge,
+  TsxTypeIcon,
+} from '@/features/mission-control';
 import { truncatePublicKey } from '@/utils/truncatePublicKey';
-
-import { type PaymentData } from '../../utils';
-import { TsxTypeIcon } from '../TsxTypeIcon';
-import { ActionButton } from './ActionButton';
-import { StatusBadge } from './StatusBadge';
 
 interface SideSheetProps extends PaymentData {
   children: ReactNode;
   onApprove: (approvedAmount?: number) => void;
   onReject: () => void;
 }
+
 export const DetailsDrawer: React.FC<SideSheetProps> = ({
   children,
   title,
@@ -41,6 +46,17 @@ export const DetailsDrawer: React.FC<SideSheetProps> = ({
   email,
   walletAddress,
   discordId,
+  shortTitle,
+  region,
+  summary,
+  description,
+  kpi,
+  category,
+  approver,
+  deadline,
+  telegram,
+  milestones,
+  proofOfWork,
   onApprove,
   onReject,
 }) => {
@@ -55,7 +71,6 @@ export const DetailsDrawer: React.FC<SideSheetProps> = ({
       <Drawer isOpen={isOpen} onClose={onClose} placement="right" size="xl">
         <DrawerOverlay />
         <DrawerContent>
-          {/* <DrawerCloseButton /> */}
           <DrawerHeader
             px={8}
             py={10}
@@ -71,7 +86,7 @@ export const DetailsDrawer: React.FC<SideSheetProps> = ({
                   h={14}
                   p={4}
                   color="#64748B"
-                  bg={'#F8FAFC'}
+                  bg="#F8FAFC"
                   rounded="lg"
                   type={type ?? 'all'}
                 />
@@ -105,7 +120,6 @@ export const DetailsDrawer: React.FC<SideSheetProps> = ({
               </Flex>
             </Flex>
           </DrawerHeader>
-
           <DrawerBody>
             <HStack gap={6} color="#94A3B8">
               <HStack>
@@ -137,10 +151,13 @@ export const DetailsDrawer: React.FC<SideSheetProps> = ({
                   </Text>
                 </Flex>
               </HStack>
-              <HStack ml="auto">
-                <LuMail />
-                <Text fontWeight={500}>{email}</Text>
-              </HStack>
+              <HStack ml="auto" />
+              {email && (
+                <HStack ml="auto">
+                  <LuMail />
+                  <Text fontWeight={500}>{email}</Text>
+                </HStack>
+              )}
               <HStack>
                 <LuWallet />
                 <Text color="brand.slate.400">
@@ -157,15 +174,83 @@ export const DetailsDrawer: React.FC<SideSheetProps> = ({
                   </Tooltip>
                 </Text>
               </HStack>
-              <HStack>
-                <FaDiscord />
-                <Text fontWeight={500}>{discordId}</Text>
-              </HStack>
+              {discordId && (
+                <HStack>
+                  <FaDiscord />
+                  <Text fontWeight={500}>{discordId}</Text>
+                </HStack>
+              )}
             </HStack>
-            {/* {content} */}
+            <VStack align="start" gap={6} pt={8} fontSize="sm">
+              {type === 'grants' && (
+                <>
+                  <LabeledContent label="Project Title" content={shortTitle} />
+                  <LabeledContent
+                    label="One-liner description"
+                    content={summary}
+                  />
+                  <LabeledContent
+                    label="Project Details"
+                    content={description}
+                  />
+                  <LabeledContent
+                    label="Deadline"
+                    content={dayjs(deadline).format('DD MMM YYYY')}
+                  />
+                  <LabeledContent label="Proof of Work" content={proofOfWork} />
+                  <LabeledContent label="Milestones" content={milestones} />
+                  <LabeledContent
+                    label="Primary Key Performance Indicator"
+                    content={kpi}
+                  />
+                </>
+              )}
+              {type === 'miscellaneous' && (
+                <>
+                  <LabeledContent label="Proof of Work" content={proofOfWork} />
+                  <LabeledContent label="Category" content={category} />
+                  <LabeledContent label="Approver" content={approver} />
+                  <LabeledContent label="Region" content={region} />
+                </>
+              )}
+              {type === 'st-earn' && (
+                <>
+                  <LabeledContent label="Email ID" content={email} />
+                  <LabeledContent label="Telegram" content={telegram} />
+                  <LabeledContent label="Category" content={category} />
+                  <LabeledContent label="Proof of Work" content={proofOfWork} />
+                  <LabeledContent label="Region" content={region} />
+                </>
+              )}
+            </VStack>
           </DrawerBody>
         </DrawerContent>
       </Drawer>
     </>
+  );
+};
+
+const LabeledContent = ({
+  label,
+  content,
+  isLink = false,
+}: {
+  label: string;
+  content?: string | null;
+  isLink?: boolean;
+}) => {
+  return (
+    <VStack align="start">
+      <Text color="brand.slate.400" textTransform="uppercase">
+        {label}
+      </Text>
+      {isLink ? (
+        <Link color="brand.slate.700" href={content ? content : '#'} isExternal>
+          {content ?? '-'}
+        </Link>
+      ) : (
+        <Text color="brand.slate.700">{content ?? '-'}</Text>
+      )}
+    </VStack>
   );
 };

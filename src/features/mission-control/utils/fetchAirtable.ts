@@ -35,7 +35,7 @@ export const airtableUrlMaker = (options: AirtableUrlMakerOptions): URL => {
   return airtableUrl;
 };
 
-interface FetchAirtableProps {
+export interface FetchAirtableProps {
   airtableUrl: URL;
   customFilters?: string[];
   pageSize: number;
@@ -117,7 +117,7 @@ LOWER({${typeKey}}))`);
     airtableUrl.searchParams.append('offset', offset);
   }
 
-  // console.log(airtableUrl);
+  console.log(airtableUrl);
 
   const fetchReq = fetch(airtableUrl.toString(), {
     headers: {
@@ -141,10 +141,15 @@ LOWER({${typeKey}}))`);
       id: parsedData.records[i].id,
     };
     // console.log(currentData);
+    console.log('payment status', currentData['Payment Status']);
     data.push({
       id: currentData.id as string,
       type: syncSourceToTsxType(currentData['Sync Source']) || null,
-      status: airtableToStatus(currentData['Status']) || null,
+      status:
+        airtableToStatus(
+          currentData['Status'],
+          currentData['Payment Status']?.[0],
+        ) || null,
       title: currentData['Purpose of Payment Main'] || null,
       date: currentData['Application Time'] || null,
       name: currentData['Name'] || null,
@@ -157,6 +162,16 @@ LOWER({${typeKey}}))`);
       region: currentData['Region'] || null,
       recordId: currentData['RecordID'] || null,
       earnId: currentData['earnApplicationId'] || null,
+      shortTitle: currentData['Title'] || null,
+      summary: currentData['Summary'] || null,
+      description: currentData['Description'] || null,
+      deadline: currentData['Deadline'] || null,
+      proofOfWork: currentData['Proof of Work'] || null,
+      milestones: currentData['Milestones'] || null,
+      kpi: currentData['KPI'] || null,
+      telegram: currentData['Telegram'] || null,
+      category: currentData['Category'] || null,
+      approver: currentData['Approver'] || null,
     });
   }
 
