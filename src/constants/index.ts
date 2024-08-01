@@ -166,6 +166,14 @@ export const tokenList: Token[] = [
     coingeckoSymbol: 'paypal-usd',
   },
   {
+    tokenName: 'Drift',
+    tokenSymbol: 'DRIFT',
+    mintAddress: 'DriFtupJYLTosbwoN8koMbEYSx54aFAVLddWsbksjwg7',
+    icon: 'https://s2.coinmarketcap.com/static/img/coins/128x128/31278.png',
+    decimals: 6,
+    coingeckoSymbol: 'drift-protocol',
+  },
+  {
     tokenName: 'SAROS',
     tokenSymbol: 'SAROS',
     mintAddress: 'SarosY6Vscao718M4A778z4CGtvcwcGef5M9MEH1LGL',
