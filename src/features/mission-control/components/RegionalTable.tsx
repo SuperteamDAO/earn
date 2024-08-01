@@ -87,7 +87,7 @@ export const RegionalTable: React.FC<RegionalPaymentTableProps> = ({
                 }).format(region.paid)}
               </Td>
               <Td color="gray.600" fontWeight={600} isNumeric>
-                {region.acceptedPercentage.toFixed(2)}%
+                {(region.acceptedPercentage * 100).toFixed(2)}%
               </Td>
             </Tr>
           ))}

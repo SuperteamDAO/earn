@@ -183,6 +183,24 @@ export function UserMenu({}) {
               </MenuItem>
             </>
           )}
+          {!!session?.user?.misconRole && (
+            <>
+              <MenuItem
+                className="ph-no-capture"
+                as={NextLink}
+                display={{ base: 'none', sm: 'block' }}
+                color="brand.slate.500"
+                fontSize="sm"
+                fontWeight={600}
+                href={'/mission-control'}
+                onClick={() => {
+                  posthog.capture('mission control_user menu');
+                }}
+              >
+                Mission Control
+              </MenuItem>
+            </>
+          )}
           <MenuDivider />
           {session?.user?.role === 'GOD' && (
             <Box display={{ base: 'none', sm: 'block' }}>
