@@ -7,27 +7,37 @@ export default async function handler(
   req: NextApiRequest,
   res: NextApiResponse,
 ) {
-  if (req.method !== 'GET') {
+  if (req.method !== 'POST') {
+    res.setHeader('Allow', ['POST']);
     return res.status(405).json({ message: 'Method Not Allowed' });
   }
 
-  const { email, signature } = req.query;
+  const email = req.body.email || (req.query.email as string);
+  const signature = req.body.signature || (req.query.signature as string);
 
   if (!email || !signature) {
     return res.status(400).json({ message: 'Missing required parameters' });
   }
 
   const expectedSignature = createHmac('sha256', process.env.UNSUB_SECRET!)
-    .update(email as string)
+    .update(email)
     .digest('hex');
 
   if (signature !== expectedSignature) {
-    return res.status(400).json({ message: 'Invalid signature' });
+    return res.status(403).json({ message: 'Invalid signature' });
   }
 
   try {
+    const existingUnsubscription = await prisma.unsubscribedEmail.findUnique({
+      where: { email },
+    });
+
+    if (existingUnsubscription) {
+      return res.status(200).json({ message: 'Already unsubscribed' });
+    }
+
     await prisma.unsubscribedEmail.create({
-      data: { email: email as string },
+      data: { email },
     });
 
     return res.status(200).json({ message: 'Successfully unsubscribed' });
