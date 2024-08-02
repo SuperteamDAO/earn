@@ -1,10 +1,8 @@
-version: '3.8'
-
 services:
   db:
     image: mysql
     container_name: db
-    restart: unless-stopped
+    restart: always
     environment:
       - MYSQL_ROOT_PASSWORD=strong_password
       - MYSQL_DATABASE=earn
@@ -12,7 +10,6 @@ services:
       - "3306:3306"
     volumes:
       - mysql_data:/var/lib/mysql
-      - ./init-db.sh:/docker-entrypoint-initdb.d/init-db.sh
     healthcheck:
       test: ["CMD", "mysqladmin", "ping", "-h", "127.0.0.1", "-u", "root", "-pstrong_password"]
       interval: 30s
@@ -20,10 +17,7 @@ services:
       retries: 5
   app:
     build: .
-    volumes:
-      - .:/user/src/app
-      - /usr/src/app/node_modules
-    
+    container_name: app
     env_file:
       - .env
     ports:
@@ -31,5 +25,6 @@ services:
     depends_on:
       db:
         condition: service_healthy
+
 volumes:
   mysql_data:
