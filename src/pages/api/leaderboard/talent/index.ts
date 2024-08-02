@@ -75,7 +75,6 @@ function buildTalentLeaderboardQuery(
     FROM (
       ${baseQuery}
       WHERE 1=1
-      AND s.isWinner = 1
       ${skillCondition}
       ${dateCondition}
       ${groupByClause}
