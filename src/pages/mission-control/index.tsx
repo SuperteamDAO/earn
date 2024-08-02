@@ -384,11 +384,11 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
   const stats = await redis.get<StatTypeData>(
     `${REDIS_PREFIX}:${selectedSuperteam.value.toLowerCase()}`,
   );
-  if (!stats) {
-    throw Error('Could not fetch stats data from redis');
-  }
+  // if (!stats) {
+  //   throw Error('Could not fetch stats data from redis');
+  // }
 
-  const currentTypeData = stats[type];
+  const currentTypeData = stats?.[type];
   const monthlyApprovedData = currentTypeData?.approvedMonthly;
   const currentSpanData = currentTypeData?.timespan[span] ?? {
     totalPendingRequests: 0,
@@ -400,10 +400,10 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
   let overviewTotals: PieChartTsxData[] | null = null;
   if (type === 'all') {
     overviewTotals = convertOverviewTotals({
-      grants: stats['grants']?.timespan[span]?.totalPaidAmount ?? 0,
-      'st-earn': stats['st-earn']?.timespan[span]?.totalPaidAmount ?? 0,
+      grants: stats?.['grants']?.timespan[span]?.totalPaidAmount ?? 0,
+      'st-earn': stats?.['st-earn']?.timespan[span]?.totalPaidAmount ?? 0,
       miscellaneous:
-        stats['miscellaneous']?.timespan[span]?.totalPaidAmount ?? 0,
+        stats?.['miscellaneous']?.timespan[span]?.totalPaidAmount ?? 0,
     });
   }
 
@@ -427,7 +427,9 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
       offset: data.nextOffset,
       numericalData: currentSpanData,
       overviewTotals,
-      monthlyApprovedData: convertMonthlyApprovedData(monthlyApprovedData),
+      monthlyApprovedData: monthlyApprovedData
+        ? convertMonthlyApprovedData(monthlyApprovedData)
+        : null,
       topRegionStats,
     },
   };
