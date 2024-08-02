@@ -1,53 +1,60 @@
+import { createHmac } from 'crypto';
 import { type NextApiRequest, type NextApiResponse } from 'next';
 
-import logger from '@/lib/logger';
 import { prisma } from '@/prisma';
 
 export default async function handler(
   req: NextApiRequest,
   res: NextApiResponse,
 ) {
-  const { token } = req.query;
-
-  if (!token || typeof token !== 'string') {
-    return res
-      .status(400)
-      .json({ message: 'Token is required and must be a string' });
-  }
-  if (req.method === 'GET') {
-    try {
-      const tokenRecord = await prisma.unsubscribeToken.findUnique({
-        where: { token },
-      });
-
-      if (!tokenRecord) {
-        return res.status(404).json({ message: 'Invalid token' });
-      }
-
-      const user = await prisma.user.findUnique({
-        where: {
-          email: tokenRecord.email,
-        },
-      });
-
-      if (!user) {
-        return res.status(404).json({ message: 'User not found' });
-      }
-
-      await prisma.unsubscribedEmail.create({
-        data: {
-          email: tokenRecord.email,
-          id: user.id,
-        },
-      });
-
-      return res.status(200).send('<h1>You have been unsubscribed</h1>');
-    } catch (error) {
-      logger.error(error);
-      return res.status(500).json({ message: 'Something went wrong' });
-    }
-  } else {
+  if (req.method !== 'GET' && req.method !== 'POST') {
     res.setHeader('Allow', ['GET', 'POST']);
-    res.status(405).end(`Method ${req.method} Not Allowed`);
+    return res.status(405).json({ message: 'Method Not Allowed' });
+  }
+
+  const email =
+    req.method === 'GET'
+      ? (req.query.email as string)
+      : req.body.email || (req.query.email as string);
+  const signature =
+    req.method === 'GET'
+      ? (req.query.signature as string)
+      : req.body.signature || (req.query.signature as string);
+
+  if (!email || !signature) {
+    return res.status(400).json({ message: 'Missing required parameters' });
+  }
+
+  const expectedSignature = createHmac('sha256', process.env.UNSUB_SECRET!)
+    .update(email)
+    .digest('hex');
+
+  if (signature !== expectedSignature) {
+    return res.status(403).json({ message: 'Invalid signature' });
+  }
+
+  try {
+    const existingUnsubscription = await prisma.unsubscribedEmail.findUnique({
+      where: { email },
+    });
+
+    if (existingUnsubscription) {
+      return res.status(200).json({ message: 'Already unsubscribed' });
+    }
+
+    await prisma.unsubscribedEmail.create({
+      data: { email },
+    });
+
+    if (req.method === 'GET') {
+      return res
+        .status(200)
+        .send('<h1>You have been successfully unsubscribed</h1>');
+    } else {
+      return res.status(200).json({ message: 'Successfully unsubscribed' });
+    }
+  } catch (error) {
+    console.error('Error updating subscription status:', error);
+    return res.status(500).json({ message: 'Internal server error' });
   }
 }
