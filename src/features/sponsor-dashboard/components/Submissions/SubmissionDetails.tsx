@@ -305,9 +305,7 @@ export const SubmissionDetails = ({
   return (
     <>
       <Box
-        overflowY={'scroll'}
         w="150%"
-        h={'40.2rem'}
         bg="white"
         borderColor="brand.slate.200"
         borderTopWidth="1px"
@@ -318,9 +316,6 @@ export const SubmissionDetails = ({
         {submissions.length ? (
           <>
             <Box
-              pos={'sticky'}
-              zIndex={1}
-              top={0}
               py={1}
               borderBottom={'1px'}
               borderBottomColor={'brand.slate.200'}
@@ -670,7 +665,23 @@ export const SubmissionDetails = ({
               </Flex>
             </Box>
 
-            <Box w="full" px={4} py={5}>
+            <Box
+              overflowY={'scroll'}
+              h={'32.6rem'}
+              p={4}
+              css={{
+                '&::-webkit-scrollbar': {
+                  width: '4px',
+                },
+                '&::-webkit-scrollbar-track': {
+                  width: '6px',
+                },
+                '&::-webkit-scrollbar-thumb': {
+                  background: '#e2e8f0',
+                  borderRadius: '24px',
+                },
+              }}
+            >
               {!isProject && (
                 <>
                   <Box mb={4}>

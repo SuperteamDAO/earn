@@ -16,6 +16,7 @@ import {
   Tooltip,
   useDisclosure,
 } from '@chakra-ui/react';
+import dayjs from 'dayjs';
 import NextLink from 'next/link';
 import React, { type Dispatch, type SetStateAction } from 'react';
 import { FaDiscord } from 'react-icons/fa';
@@ -91,11 +92,13 @@ export const ApplicationDetails = ({
     (ele) => ele.tokenSymbol === grant?.token,
   )?.icon;
 
+  const formattedCreatedAt = dayjs(selectedApplication?.createdAt).format(
+    'DD MMM YYYY',
+  );
+
   return (
     <Box
-      overflowY={'scroll'}
       w="150%"
-      h={'40.2rem'}
       bg="white"
       borderColor="brand.slate.200"
       borderTopWidth="1px"
@@ -130,9 +133,6 @@ export const ApplicationDetails = ({
       {applications.length ? (
         <>
           <Box
-            pos={'sticky'}
-            zIndex={1}
-            top={0}
             py={1}
             borderBottom={'1px'}
             borderBottomColor={'brand.slate.200'}
@@ -341,78 +341,117 @@ export const ApplicationDetails = ({
             </Flex>
           </Box>
 
-          <Box w="full" px={4} py={5}>
-            <Box mb={4}>
-              <Text
-                mb={1}
-                color="brand.slate.400"
-                fontSize="xs"
-                fontWeight={600}
-                textTransform={'uppercase'}
-              >
-                ASK
-              </Text>
-              <Flex align={'center'} gap={0.5}>
-                <Image
-                  w={4}
-                  h={4}
-                  mr={0.5}
-                  alt={'token'}
-                  rounded={'full'}
-                  src={tokenIcon}
-                />
+          <Box
+            overflowY={'scroll'}
+            h={'32.6rem'}
+            css={{
+              '&::-webkit-scrollbar': {
+                width: '4px',
+              },
+              '&::-webkit-scrollbar-track': {
+                width: '6px',
+              },
+              '&::-webkit-scrollbar-thumb': {
+                background: '#e2e8f0',
+                borderRadius: '24px',
+              },
+            }}
+          >
+            <Box w="full" px={4} py={5}>
+              <Box mb={4}>
+                <Text
+                  mb={1}
+                  color="brand.slate.400"
+                  fontSize="xs"
+                  fontWeight={600}
+                  textTransform={'uppercase'}
+                >
+                  ASK
+                </Text>
+                <Flex align={'center'} gap={0.5}>
+                  <Image
+                    w={4}
+                    h={4}
+                    mr={0.5}
+                    alt={'token'}
+                    rounded={'full'}
+                    src={tokenIcon}
+                  />
+                  <Text
+                    color="brand.slate.600"
+                    fontSize={'sm'}
+                    fontWeight={600}
+                    whiteSpace={'nowrap'}
+                  >
+                    {`${selectedApplication?.ask?.toLocaleString()}`}
+                    <Text as="span" ml={0.5} color="brand.slate.400">
+                      {grant?.token}
+                    </Text>
+                  </Text>
+                </Flex>
+              </Box>
+
+              <Box mb={4}>
+                <Text
+                  mb={1}
+                  color="brand.slate.400"
+                  fontSize="xs"
+                  fontWeight={600}
+                  textTransform={'uppercase'}
+                >
+                  APPLICATION DATE
+                </Text>
+
                 <Text
                   color="brand.slate.600"
                   fontSize={'sm'}
-                  fontWeight={600}
+                  fontWeight={500}
                   whiteSpace={'nowrap'}
                 >
-                  {`${selectedApplication?.ask?.toLocaleString()}`}
-                  <Text as="span" ml={0.5} color="brand.slate.400">
-                    {grant?.token}
-                  </Text>
+                  {formattedCreatedAt}
                 </Text>
-              </Flex>
-            </Box>
-            <InfoBox
-              label="Project Title"
-              content={selectedApplication?.projectTitle}
-            />
-            <InfoBox
-              label="One-Liner Description"
-              content={selectedApplication?.projectOneLiner}
-            />
-            <InfoBox
-              label="Project Details"
-              content={selectedApplication?.projectDetails}
-            />
-            <InfoBox
-              label="Deadline"
-              content={selectedApplication?.projectTimeline}
-            />
-            <InfoBox
-              label="Proof of Work"
-              content={selectedApplication?.proofOfWork}
-            />
-            <InfoBox
-              label="Goals and Milestones"
-              content={selectedApplication?.milestones}
-            />
-            <InfoBox
-              label="Primary Key Performance Indicator"
-              content={selectedApplication?.kpi}
-            />
+              </Box>
 
-            {Array.isArray(selectedApplication?.answers) &&
-              selectedApplication.answers.map(
-                (answer: any, answerIndex: number) => (
-                  <InfoBox
-                    key={answerIndex}
-                    label={answer.question}
-                    content={answer.answer}
-                  />
-                ),
-              )}
+              <InfoBox
+                label="Project Title"
+                content={selectedApplication?.projectTitle}
+              />
+              <InfoBox
+                label="One-Liner Description"
+                content={selectedApplication?.projectOneLiner}
+              />
+              <InfoBox
+                label="Project Details"
+                content={selectedApplication?.projectDetails}
+              />
+              <InfoBox
+                label="Deadline"
+                content={selectedApplication?.projectTimeline}
+              />
+              <InfoBox
+                label="Proof of Work"
+                content={selectedApplication?.proofOfWork}
+              />
+              <InfoBox
+                label="Goals and Milestones"
+                content={selectedApplication?.milestones}
+              />
+              <InfoBox
+                label="Primary Key Performance Indicator"
+                content={selectedApplication?.kpi}
+              />
+
+              {Array.isArray(selectedApplication?.answers) &&
+                selectedApplication.answers.map(
+                  (answer: any, answerIndex: number) => (
+                    <InfoBox
+                      key={answerIndex}
+                      label={answer.question}
+                      content={answer.answer}
+                    />
+                  ),
+                )}
+            </Box>
           </Box>
         </>
       ) : (
