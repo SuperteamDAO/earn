@@ -235,7 +235,14 @@ export const ApplicationDetails = ({
                     APPROVED
                   </Text>
 
-                  <Image w={4} h={4} mr={0.5} alt={'token'} src={tokenIcon} />
+                  <Image
+                    w={4}
+                    h={4}
+                    mr={0.5}
+                    alt={'token'}
+                    rounded={'full'}
+                    src={tokenIcon}
+                  />
                   <Text
                     color="brand.slate.600"
                     fontSize={'sm'}
@@ -346,7 +353,14 @@ export const ApplicationDetails = ({
                 ASK
               </Text>
               <Flex align={'center'} gap={0.5}>
-                <Image w={4} h={4} mr={0.5} alt={'token'} src={tokenIcon} />
+                <Image
+                  w={4}
+                  h={4}
+                  mr={0.5}
+                  alt={'token'}
+                  rounded={'full'}
+                  src={tokenIcon}
+                />
                 <Text
                   color="brand.slate.600"
                   fontSize={'sm'}

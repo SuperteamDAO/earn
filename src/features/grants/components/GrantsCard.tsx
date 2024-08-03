@@ -92,6 +92,7 @@ export const GrantsCard = ({ grant }: { grant: GrantWithApplicationCount }) => {
                     display="flex"
                     h={{ base: 3, sm: 4 }}
                     alt={token}
+                    rounded={'full'}
                     src={tokenIcon}
                   />
                   <Flex align="baseline" gap={0.5}>

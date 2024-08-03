@@ -87,7 +87,7 @@ export default function SponsorListings() {
       console.error('Failed to fetch listings:', error);
       setIsListingsLoading(false);
     }
-  }, [searchText]);
+  }, []);
 
   useEffect(() => {
     if (userInfo?.currentSponsorId) {
