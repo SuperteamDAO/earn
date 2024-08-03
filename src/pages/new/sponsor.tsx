@@ -450,7 +450,8 @@ const CreateSponsor = () => {
                 {hasError && (
                   <Text align="center" mb={2} color="red">
                     {errorMessage}
-                    {validationErrorMessage &&
+                    {(validationErrorMessage ||
+                      sponsorNameValidationErrorMessage) &&
                       'Company name/username already exists.'}
                   </Text>
                 )}
