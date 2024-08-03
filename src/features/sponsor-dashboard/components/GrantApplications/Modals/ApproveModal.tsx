@@ -137,6 +137,7 @@ export const ApproveModal = ({
               <Image
                 boxSize="5"
                 alt={`${token} icon`}
+                rounded={'full'}
                 src={tokenList.find((t) => t.tokenSymbol === token)?.icon || ''}
               />
               <Text ml={1} color="brand.slate.600" fontWeight={600}>
