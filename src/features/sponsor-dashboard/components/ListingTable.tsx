@@ -454,22 +454,20 @@ export const ListingTable = ({ listings, setListings }: ListingTableProps) => {
                               </MenuItem>
                             </>
                           )}
-                        {!(
-                          listing.status === 'OPEN' && !listing.isPublished
-                        ) && (
-                          <>
+                        {listing.status === 'OPEN' &&
+                          !!listing.isPublished &&
+                          !listing.isWinnersAnnounced && (
                             <MenuItem
                               py={2}
-                              color={'brand.slate.500'}
-                              fontSize={'sm'}
+                              color="brand.slate.500"
+                              fontSize="sm"
                               fontWeight={500}
-                              icon={<ViewOffIcon h={4} w={4} />}
+                              icon={<ViewOffIcon boxSize={4} />}
                               onClick={() => handleUnpublish(listing)}
                             >
                               Unpublish
                             </MenuItem>
-                          </>
-                        )}
+                          )}
                       </MenuList>
                     </Menu>
                   </Td>
