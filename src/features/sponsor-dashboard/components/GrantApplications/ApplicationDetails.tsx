@@ -93,8 +93,9 @@ export const ApplicationDetails = ({
 
   return (
     <Box
+      overflowY={'scroll'}
       w="150%"
-      p={1.5}
+      h={'40.2rem'}
       bg="white"
       borderColor="brand.slate.200"
       borderTopWidth="1px"
@@ -128,194 +129,210 @@ export const ApplicationDetails = ({
 
       {applications.length ? (
         <>
-          <Flex align="center" justify={'space-between'} w="full" px={4} py={3}>
-            <Flex align="center" gap={2} w="full">
-              <EarnAvatar
-                size="40px"
-                id={selectedApplication?.user?.id}
-                avatar={selectedApplication?.user?.photo || undefined}
-              />
-              <Box>
-                <Text
-                  w="100%"
-                  color="brand.slate.900"
-                  fontSize="md"
-                  fontWeight={500}
-                  whiteSpace={'nowrap'}
-                >
-                  {`${selectedApplication?.user?.firstName}'s Application`}
-                </Text>
-                <Link
-                  as={NextLink}
-                  w="100%"
-                  color="brand.purple"
-                  fontSize="xs"
-                  fontWeight={500}
-                  whiteSpace={'nowrap'}
-                  href={`/t/${selectedApplication?.user?.username}`}
-                >
-                  View Profile <ArrowForwardIcon mb="0.5" />
-                </Link>
-              </Box>
-            </Flex>
+          <Box
+            pos={'sticky'}
+            zIndex={1}
+            top={0}
+            py={1}
+            borderBottom={'1px'}
+            borderBottomColor={'brand.slate.200'}
+            bgColor={'white'}
+          >
             <Flex
-              className="ph-no-capture"
               align="center"
-              justify={'flex-end'}
-              gap={2}
+              justify={'space-between'}
               w="full"
+              px={4}
+              py={3}
             >
-              {isPending && (
-                <>
-                  <Button
-                    color="#079669"
-                    bg="#ECFEF6"
-                    _hover={{ bg: '#D1FAE5' }}
-                    leftIcon={
-                      <Circle p={'5px'} bg="#079669">
-                        <CheckIcon color="white" boxSize="2.5" />
-                      </Circle>
-                    }
-                    onClick={approveOnOpen}
-                  >
-                    Approve
-                  </Button>
-                  <Button
-                    color="#E11D48"
-                    bg="#FEF2F2"
-                    _hover={{ bg: '#FED7D7' }}
-                    leftIcon={
-                      <Circle p={'5px'} bg="#E11D48">
-                        <CloseIcon color="white" boxSize="2" />
-                      </Circle>
-                    }
-                    onClick={rejectedOnOpen}
-                  >
-                    Reject
-                  </Button>
-                </>
-              )}
-              {isApproved && isNativeAndNonST && (
-                <RecordPaymentButton
-                  applicationId={selectedApplication.id}
-                  approvedAmount={selectedApplication.approvedAmount}
-                  totalPaid={selectedApplication.totalPaid}
-                  token={grant.token || 'USDC'}
+              <Flex align="center" gap={2} w="full">
+                <EarnAvatar
+                  size="40px"
+                  id={selectedApplication?.user?.id}
+                  avatar={selectedApplication?.user?.photo || undefined}
                 />
-              )}
-            </Flex>
-          </Flex>
-
-          <Flex align="center" gap={5} px={4} py={2}>
-            {isApproved && (
-              <Flex align="center">
-                <Text
-                  mr={3}
-                  color="brand.slate.400"
-                  fontSize={'sm'}
-                  fontWeight={600}
-                  whiteSpace={'nowrap'}
-                >
-                  APPROVED
-                </Text>
-
-                <Image w={4} h={4} mr={0.5} alt={'token'} src={tokenIcon} />
-                <Text
-                  color="brand.slate.600"
-                  fontSize={'sm'}
-                  fontWeight={600}
-                  whiteSpace={'nowrap'}
-                >
-                  {`${selectedApplication?.approvedAmount?.toLocaleString()}`}
-                  <Text as="span" ml={0.5} color="brand.slate.400">
-                    {grant?.token}
+                <Box>
+                  <Text
+                    w="100%"
+                    color="brand.slate.900"
+                    fontSize="md"
+                    fontWeight={500}
+                    whiteSpace={'nowrap'}
+                  >
+                    {`${selectedApplication?.user?.firstName}'s Application`}
                   </Text>
-                </Text>
-                {isApproved && (
-                  <Flex mr={4} ml={3}>
-                    <CircularProgress
-                      color="brand.purple"
-                      size="20px"
-                      thickness={'12px'}
-                      value={Number(
-                        (
-                          (selectedApplication.totalPaid /
-                            selectedApplication.approvedAmount) *
-                          100
-                        ).toFixed(2),
-                      )}
-                    />
-                    <Text
-                      ml={1}
-                      color="brand.slate.600"
-                      fontSize={'sm'}
-                      fontWeight={500}
-                      whiteSpace={'nowrap'}
+                  <Link
+                    as={NextLink}
+                    w="100%"
+                    color="brand.purple"
+                    fontSize="xs"
+                    fontWeight={500}
+                    whiteSpace={'nowrap'}
+                    href={`/t/${selectedApplication?.user?.username}`}
+                  >
+                    View Profile <ArrowForwardIcon mb="0.5" />
+                  </Link>
+                </Box>
+              </Flex>
+              <Flex
+                className="ph-no-capture"
+                align="center"
+                justify={'flex-end'}
+                gap={2}
+                w="full"
+              >
+                {isPending && (
+                  <>
+                    <Button
+                      color="#079669"
+                      bg="#ECFEF6"
+                      _hover={{ bg: '#D1FAE5' }}
+                      leftIcon={
+                        <Circle p={'5px'} bg="#079669">
+                          <CheckIcon color="white" boxSize="2.5" />
+                        </Circle>
+                      }
+                      onClick={approveOnOpen}
                     >
-                      {Number(
-                        (
-                          (selectedApplication.totalPaid /
-                            selectedApplication.approvedAmount) *
-                          100
-                        ).toFixed(2),
-                      )}
-                      %{' '}
-                      <Text as="span" color="brand.slate.400">
-                        Paid
-                      </Text>
-                    </Text>
-                  </Flex>
+                      Approve
+                    </Button>
+                    <Button
+                      color="#E11D48"
+                      bg="#FEF2F2"
+                      _hover={{ bg: '#FED7D7' }}
+                      leftIcon={
+                        <Circle p={'5px'} bg="#E11D48">
+                          <CloseIcon color="white" boxSize="2" />
+                        </Circle>
+                      }
+                      onClick={rejectedOnOpen}
+                    >
+                      Reject
+                    </Button>
+                  </>
+                )}
+                {isApproved && isNativeAndNonST && (
+                  <RecordPaymentButton
+                    applicationId={selectedApplication.id}
+                    approvedAmount={selectedApplication.approvedAmount}
+                    totalPaid={selectedApplication.totalPaid}
+                    token={grant.token || 'USDC'}
+                  />
                 )}
               </Flex>
-            )}
-            {selectedApplication?.user?.email && (
-              <Flex align="center" justify="start" gap={2} fontSize="sm">
-                <MdOutlineMail color="#94A3B8" />
-                <Link
-                  color="brand.slate.400"
-                  href={`mailto:${selectedApplication.user.email}`}
-                  isExternal
-                >
-                  {truncateString(selectedApplication?.user?.email, 36)}
-                </Link>
-              </Flex>
-            )}
-            {selectedApplication?.user?.publicKey && (
-              <Flex
-                align="center"
-                justify="start"
-                gap={2}
-                fontSize="sm"
-                whiteSpace={'nowrap'}
-              >
-                <MdOutlineAccountBalanceWallet color="#94A3B8" />
-                <Text color="brand.slate.400">
-                  {truncatePublicKey(selectedApplication?.user?.publicKey, 3)}
-                  <Tooltip label="Copy Wallet ID" placement="right">
-                    <CopyIcon
-                      cursor="pointer"
-                      ml={1}
-                      color="brand.slate.400"
-                      onClick={() =>
-                        navigator.clipboard.writeText(
-                          selectedApplication?.user?.publicKey || '',
-                        )
-                      }
-                    />
-                  </Tooltip>
-                </Text>
-              </Flex>
-            )}
-            {selectedApplication?.user?.discord && (
-              <Flex align="center" justify="start" gap={2} fontSize="sm">
-                <FaDiscord color="#94A3B8" />
+            </Flex>
 
-                <Text color="brand.slate.400">
-                  {selectedApplication?.user?.discord}
-                </Text>
-              </Flex>
-            )}
-          </Flex>
+            <Flex align="center" gap={5} px={4} py={2}>
+              {isApproved && (
+                <Flex align="center">
+                  <Text
+                    mr={3}
+                    color="brand.slate.400"
+                    fontSize={'sm'}
+                    fontWeight={600}
+                    whiteSpace={'nowrap'}
+                  >
+                    APPROVED
+                  </Text>
+
+                  <Image w={4} h={4} mr={0.5} alt={'token'} src={tokenIcon} />
+                  <Text
+                    color="brand.slate.600"
+                    fontSize={'sm'}
+                    fontWeight={600}
+                    whiteSpace={'nowrap'}
+                  >
+                    {`${selectedApplication?.approvedAmount?.toLocaleString()}`}
+                    <Text as="span" ml={0.5} color="brand.slate.400">
+                      {grant?.token}
+                    </Text>
+                  </Text>
+                  {isApproved && (
+                    <Flex mr={4} ml={3}>
+                      <CircularProgress
+                        color="brand.purple"
+                        size="20px"
+                        thickness={'12px'}
+                        value={Number(
+                          (
+                            (selectedApplication.totalPaid /
+                              selectedApplication.approvedAmount) *
+                            100
+                          ).toFixed(2),
+                        )}
+                      />
+                      <Text
+                        ml={1}
+                        color="brand.slate.600"
+                        fontSize={'sm'}
+                        fontWeight={500}
+                        whiteSpace={'nowrap'}
+                      >
+                        {Number(
+                          (
+                            (selectedApplication.totalPaid /
+                              selectedApplication.approvedAmount) *
+                            100
+                          ).toFixed(2),
+                        )}
+                        %{' '}
+                        <Text as="span" color="brand.slate.400">
+                          Paid
+                        </Text>
+                      </Text>
+                    </Flex>
+                  )}
+                </Flex>
+              )}
+              {selectedApplication?.user?.email && (
+                <Flex align="center" justify="start" gap={2} fontSize="sm">
+                  <MdOutlineMail color="#94A3B8" />
+                  <Link
+                    color="brand.slate.400"
+                    href={`mailto:${selectedApplication.user.email}`}
+                    isExternal
+                  >
+                    {truncateString(selectedApplication?.user?.email, 36)}
+                  </Link>
+                </Flex>
+              )}
+              {selectedApplication?.user?.publicKey && (
+                <Flex
+                  align="center"
+                  justify="start"
+                  gap={2}
+                  fontSize="sm"
+                  whiteSpace={'nowrap'}
+                >
+                  <MdOutlineAccountBalanceWallet color="#94A3B8" />
+                  <Text color="brand.slate.400">
+                    {truncatePublicKey(selectedApplication?.user?.publicKey, 3)}
+                    <Tooltip label="Copy Wallet ID" placement="right">
+                      <CopyIcon
+                        cursor="pointer"
+                        ml={1}
+                        color="brand.slate.400"
+                        onClick={() =>
+                          navigator.clipboard.writeText(
+                            selectedApplication?.user?.publicKey || '',
+                          )
+                        }
+                      />
+                    </Tooltip>
+                  </Text>
+                </Flex>
+              )}
+              {selectedApplication?.user?.discord && (
+                <Flex align="center" justify="start" gap={2} fontSize="sm">
+                  <FaDiscord color="#94A3B8" />
+
+                  <Text color="brand.slate.400">
+                    {selectedApplication?.user?.discord}
+                  </Text>
+                </Flex>
+              )}
+            </Flex>
+          </Box>
 
           <Box w="full" px={4} py={5}>
             <Box mb={4}>

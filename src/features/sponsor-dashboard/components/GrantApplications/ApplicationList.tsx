@@ -100,8 +100,8 @@ export const ApplicationList = ({
                   ? 'brand.slate.100'
                   : 'transparent'
               }
-              borderBottom={'1px solid'}
-              borderBottomColor="brand.slate.200"
+              borderTop={'1px solid'}
+              borderTopColor="brand.slate.200"
               _hover={{
                 backgroundColor: 'brand.slate.100',
               }}
