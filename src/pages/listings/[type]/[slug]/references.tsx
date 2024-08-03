@@ -159,12 +159,17 @@ function BountyDetails({ bounty: initialBounty }: BountyDetailsProps) {
 }
 
 export const getServerSideProps: GetServerSideProps = async (context) => {
-  const { slug } = context.query;
+  const { slug, type } = context.query;
 
   let bountyData;
   try {
     const bountyDetails = await axios.get(
       `${getURL()}api/listings/details/${slug}`,
+      {
+        params: {
+          type,
+        },
+      },
     );
     bountyData = bountyDetails.data;
   } catch (e) {
