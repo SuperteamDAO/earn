@@ -79,7 +79,7 @@ interface Eligibility {
 
 export interface References {
   order: number;
-  link: string;
+  link?: string;
 }
 
 export interface Rewards {
