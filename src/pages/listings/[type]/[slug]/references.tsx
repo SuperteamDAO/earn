@@ -14,7 +14,8 @@ interface BountyDetailsProps {
   bounty: Listing | null;
 }
 
-const ReferenceCard = ({ link }: { link: string }) => {
+const ReferenceCard = ({ link }: { link?: string }) => {
+  if (!link) return <></>;
   return (
     <Box
       w="100%"

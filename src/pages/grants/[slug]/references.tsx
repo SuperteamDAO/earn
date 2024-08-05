@@ -16,7 +16,8 @@ interface GrantsDetailsProps {
   grant: Grant | null;
 }
 
-const ReferenceCard = ({ link }: { link: string }) => {
+const ReferenceCard = ({ link }: { link?: string }) => {
+  if (!link) return <></>;
   return (
     <Box
       w="100%"
