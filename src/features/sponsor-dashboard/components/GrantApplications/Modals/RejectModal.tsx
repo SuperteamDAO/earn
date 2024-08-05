@@ -14,12 +14,9 @@ import {
   Spinner,
   Text,
 } from '@chakra-ui/react';
-import { GrantApplicationStatus } from '@prisma/client';
-import axios from 'axios';
-import React, { type Dispatch, type SetStateAction, useState } from 'react';
+import React, { useState } from 'react';
 
 import { tokenList } from '@/constants';
-import { type GrantApplicationWithUser } from '@/features/sponsor-dashboard';
 
 interface RejectModalProps {
   rejectIsOpen: boolean;
@@ -27,12 +24,8 @@ interface RejectModalProps {
   applicationId: string | undefined;
   ask: number | undefined;
   granteeName: string | null | undefined;
-  setApplications: Dispatch<SetStateAction<GrantApplicationWithUser[]>>;
-  applications: GrantApplicationWithUser[];
-  setSelectedApplication: Dispatch<
-    SetStateAction<GrantApplicationWithUser | undefined>
-  >;
   token: string;
+  onRejectGrant: (applicationId: string) => Promise<void>;
 }
 
 export const RejectModal = ({
@@ -41,40 +34,19 @@ export const RejectModal = ({
   rejectOnClose,
   ask,
   granteeName,
-  setApplications,
-  applications,
-  setSelectedApplication,
   token,
+  onRejectGrant,
 }: RejectModalProps) => {
   const [loading, setLoading] = useState<boolean>(false);
 
   const rejectGrant = async () => {
+    if (!applicationId) return;
+
     setLoading(true);
     try {
-      await axios.post(
-        `/api/sponsor-dashboard/grants/update-application-status`,
-        {
-          id: applicationId,
-          applicationStatus: 'Rejected',
-        },
-      );
-
-      const updatedApplications = applications.map((application) =>
-        application.id === applicationId
-          ? {
-              ...application,
-              applicationStatus: GrantApplicationStatus.Rejected,
-            }
-          : application,
-      );
-
-      setApplications(updatedApplications);
-      const updatedApplication = updatedApplications.find(
-        (application) => application.id === applicationId,
-      );
-      setSelectedApplication(updatedApplication);
+      await onRejectGrant(applicationId);
     } catch (e) {
-      console.log(e);
+      console.error(e);
     } finally {
       setLoading(false);
       rejectOnClose();

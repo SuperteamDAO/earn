@@ -16,6 +16,8 @@ import {
   Tooltip,
   useDisclosure,
 } from '@chakra-ui/react';
+import { GrantApplicationStatus } from '@prisma/client';
+import axios from 'axios';
 import dayjs from 'dayjs';
 import NextLink from 'next/link';
 import React, { type Dispatch, type SetStateAction } from 'react';
@@ -96,6 +98,30 @@ export const ApplicationDetails = ({
     'DD MMM YYYY',
   );
 
+  const moveToNextPendingApplication = () => {
+    if (!selectedApplication) return;
+
+    const currentIndex = applications.findIndex(
+      (app) => app.id === selectedApplication.id,
+    );
+    if (currentIndex === -1) return;
+
+    const nextPendingApplication = applications
+      .slice(currentIndex + 1)
+      .find((app) => app.applicationStatus === GrantApplicationStatus.Pending);
+
+    if (nextPendingApplication) {
+      setSelectedApplication(nextPendingApplication);
+    } else {
+      const firstPendingApplication = applications.find(
+        (app) => app.applicationStatus === GrantApplicationStatus.Pending,
+      );
+      if (firstPendingApplication) {
+        setSelectedApplication(firstPendingApplication);
+      }
+    }
+  };
+
   const handlePaymentRecorded = (updatedApplication: any) => {
     setSelectedApplication(updatedApplication);
 
@@ -106,6 +132,73 @@ export const ApplicationDetails = ({
     );
 
     setApplications(updatedApplications);
+  };
+
+  const handleApproveGrant = async (
+    applicationId: string,
+    approvedAmount: number,
+  ) => {
+    try {
+      await axios.post(
+        `/api/sponsor-dashboard/grants/update-application-status`,
+        {
+          id: applicationId,
+          applicationStatus: 'Approved',
+          approvedAmount,
+        },
+      );
+
+      const updatedApplications = applications.map((application) =>
+        application.id === applicationId
+          ? {
+              ...application,
+              applicationStatus: GrantApplicationStatus.Approved,
+              approvedAmount: approvedAmount,
+            }
+          : application,
+      );
+
+      setApplications(updatedApplications);
+      const updatedApplication = updatedApplications.find(
+        (application) => application.id === applicationId,
+      );
+      setSelectedApplication(updatedApplication);
+      approveOnClose();
+      moveToNextPendingApplication();
+    } catch (e) {
+      console.error(e);
+    }
+  };
+
+  const handleRejectGrant = async (applicationId: string) => {
+    try {
+      await axios.post(
+        `/api/sponsor-dashboard/grants/update-application-status`,
+        {
+          id: applicationId,
+          applicationStatus: 'Rejected',
+        },
+      );
+
+      const updatedApplications = applications.map((application) =>
+        application.id === applicationId
+          ? {
+              ...application,
+              applicationStatus: GrantApplicationStatus.Rejected,
+            }
+          : application,
+      );
+
+      setApplications(updatedApplications);
+      const updatedApplication = updatedApplications.find(
+        (application) => application.id === applicationId,
+      );
+      setSelectedApplication(updatedApplication);
+      rejectedOnClose();
+      moveToNextPendingApplication();
+    } catch (e) {
+      console.error(e);
+    }
   };
 
   return (
@@ -124,10 +217,8 @@ export const ApplicationDetails = ({
         rejectOnClose={rejectedOnClose}
         ask={selectedApplication?.ask}
         granteeName={selectedApplication?.user?.firstName}
-        setApplications={setApplications}
-        applications={applications}
-        setSelectedApplication={setSelectedApplication}
         token={grant?.token || 'USDC'}
+        onRejectGrant={handleRejectGrant}
       />
 
       <ApproveModal
@@ -136,10 +227,8 @@ export const ApplicationDetails = ({
         approveOnClose={approveOnClose}
         ask={selectedApplication?.ask}
         granteeName={selectedApplication?.user?.firstName}
-        setApplications={setApplications}
-        applications={applications}
-        setSelectedApplication={setSelectedApplication}
         token={grant?.token || 'USDC'}
+        onApproveGrant={handleApproveGrant}
       />
 
       {applications.length ? (
