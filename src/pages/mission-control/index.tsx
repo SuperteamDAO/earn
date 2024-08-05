@@ -1,5 +1,6 @@
 import { Box, Button, Flex, Icon, VStack } from '@chakra-ui/react';
 import { type Redis } from '@upstash/redis';
+import { Dayjs } from 'dayjs';
 import debounce from 'lodash.debounce';
 import { type GetServerSideProps } from 'next';
 import { useSearchParams } from 'next/navigation';
@@ -76,10 +77,10 @@ export default function MissionControlPage({
   superteamLists,
   selectedSuperteam,
   paymentData,
-  numericalData,
-  overviewTotals,
-  monthlyApprovedData,
-  topRegionStats,
+  numericalData: pNumericalData,
+  overviewTotals: pOverviewTotals,
+  monthlyApprovedData: pMonthlyApprovedData,
+  topRegionStats: pTopRegionStats,
   offset: pOffset,
 }: Props) {
   const searchParams = useSearchParams();
@@ -92,6 +93,13 @@ export default function MissionControlPage({
   const [query, setQuery] = useState(searchParams.get('q') ?? '');
   const [loading, setLoading] = useState(false);
   const [offset, setOffset] = useState(pOffset);
+  const [offsetLoading, setOffsetLoading] = useState(false);
+
+  const [numericalData, setNumericalData] = useState(pNumericalData);
+  const [overviewTotals, setOverviewTotals] = useState(pOverviewTotals);
+  const [monthlyApprovedData, setMonthlyApprovedData] =
+    useState(pMonthlyApprovedData);
+  const [topRegionStats, setTopRegionStats] = useState(pTopRegionStats);
 
   const handleStart = (url: string) => {
     if (url !== router.asPath) {
@@ -150,7 +158,7 @@ export default function MissionControlPage({
 
   if (!session || !session.user.misconRole) return null;
 
-  const updateStateStatus = (
+  const updateAllState = (
     id: string,
     status: STATUS,
     approvedAmount?: number,
@@ -170,6 +178,56 @@ export default function MissionControlPage({
     const newPayments = [...paymentDataState];
     newPayments[paymentIndex] = payment;
     setPaymentData(newPayments);
+    setNumericalData((s) => ({
+      ...s,
+      totalPaidAmount:
+        s.totalPaidAmount + (approvedAmount ?? payment.amount ?? 0),
+      totalPendingAmount:
+        s.totalPendingAmount - (approvedAmount ?? payment.amount ?? 0),
+      totalPendingRequests: s.totalPendingRequests - 1,
+    }));
+    if (overviewTotals) {
+      const piechartIdx = overviewTotals?.findIndex(
+        (c) => c.type === payment.type,
+      );
+      if (piechartIdx && piechartIdx !== -1) {
+        const piechartData = overviewTotals[piechartIdx];
+        if (piechartData) {
+          piechartData.value += approvedAmount ?? payment.amount ?? 0;
+          const newPiechartData = [...overviewTotals];
+          newPiechartData[piechartIdx] = piechartData;
+          setOverviewTotals(newPiechartData);
+        }
+      }
+    }
+    if (monthlyApprovedData) {
+      const barchartIdx = monthlyApprovedData?.findIndex(
+        (c) => c.name === new Dayjs(payment.date).format('MMM'),
+      );
+      if (barchartIdx && barchartIdx !== -1) {
+        const barchartData = monthlyApprovedData[barchartIdx];
+        if (barchartData) {
+          barchartData.value += approvedAmount ?? payment.amount ?? 0;
+          const newBarchartData = [...monthlyApprovedData];
+          newBarchartData[barchartIdx] = barchartData;
+          setMonthlyApprovedData(newBarchartData);
+        }
+      }
+    }
+    if (topRegionStats) {
+      const regionIdx = topRegionStats?.findIndex(
+        (c) => c.name.toLowerCase() === payment.region?.toLowerCase(),
+      );
+      if (regionIdx && regionIdx !== -1) {
+        const regionData = topRegionStats[regionIdx];
+        if (regionData) {
+          regionData.paid += approvedAmount ?? payment.amount ?? 0;
+          const newRegionData = [...topRegionStats];
+          newRegionData[regionIdx] = regionData;
+          setTopRegionStats(newRegionData);
+        }
+      }
+    }
   };
 
   async function updateStatusWithState(
@@ -198,13 +256,15 @@ export default function MissionControlPage({
       return;
     }
     toast.success('Successfully approved transaction');
-    updateStateStatus(id, status, approvedAmount);
+    updateAllState(id, status, approvedAmount);
   }
 
   async function getOffsetTsx() {
+    setOffsetLoading(true);
     if (!offset) {
       console.log('No offset present ');
       toast.error('No offset present ');
+      setOffsetLoading(false);
       return;
     }
     const [nextTsxs, error] = await promiser(
@@ -222,15 +282,18 @@ export default function MissionControlPage({
     if (error) {
       console.log('Error fetching offset transactions - ', error);
       toast.error('Error fetching offset transactions');
+      setOffsetLoading(false);
       return;
     }
     if (nextTsxs.status !== 200) {
       console.log('Error fetching offset transactions not 200');
       toast.error('Error fetching offset transactions');
+      setOffsetLoading(false);
       return;
     }
     setPaymentData([...paymentDataState, ...nextTsxs.data.data]);
     setOffset(nextTsxs.data.nextOffset ?? undefined);
+    setOffsetLoading(false);
   }
 
   return (
@@ -316,6 +379,7 @@ export default function MissionControlPage({
           {offset && (
             <Button
               fontWeight={400}
+              isLoading={offsetLoading}
               onClick={getOffsetTsx}
               size="sm"
               variant="outlineSecondary"

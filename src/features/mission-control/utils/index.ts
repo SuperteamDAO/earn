@@ -58,7 +58,7 @@ export function airtableToStatus(
     case 'Sent to pipeline':
       return 'accepted';
     default:
-      return 'all';
+      return 'undecided';
   }
 }
 
@@ -71,7 +71,7 @@ export function statusToAirtable(status: STATUS): AIRTABLE_STATUS[] {
     case 'accepted':
       return ['Accepted', 'Verified', 'Sent to pipeline'];
     default:
-      return [];
+      return ['Applied', 'Undecided'];
   }
 }
 

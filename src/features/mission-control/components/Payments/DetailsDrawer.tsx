@@ -203,6 +203,7 @@ export const DetailsDrawer: React.FC<SideSheetProps> = ({
                     label="Primary Key Performance Indicator"
                     content={kpi}
                   />
+                  <LabeledContent label="Telegram" content={telegram} />
                 </>
               )}
               {type === 'miscellaneous' && (
