@@ -5,6 +5,7 @@ import { useEffect, useState } from 'react';
 import { type Listing, ListingTabs } from '@/features/listings';
 import { Home } from '@/layouts/Home';
 import { Meta } from '@/layouts/Meta';
+import { userStore } from '@/store/user';
 import { dayjs } from '@/utils/dayjs';
 
 interface Listings {
@@ -13,34 +14,39 @@ interface Listings {
 
 export default function ProjectsPage() {
   const [isListingsLoading, setIsListingsLoading] = useState(true);
-  const [listings, setListings] = useState<Listings>({
-    bounties: [],
-  });
-
-  const date = dayjs().subtract(2, 'months').toISOString();
-
-  const getListings = async () => {
-    setIsListingsLoading(true);
-    try {
-      const listingsData = await axios.get('/api/listings/', {
-        params: {
-          category: 'bounties',
-          take: 100,
-          type: 'project',
-          deadline: date,
-        },
-      });
-      setListings(listingsData.data);
-      setIsListingsLoading(false);
-    } catch (e) {
-      setIsListingsLoading(false);
-    }
-  };
+  const [listings, setListings] = useState<Listings>({ bounties: [] });
+  const [userLocation, setUserLocation] = useState<string | null>(null);
 
   useEffect(() => {
-    if (!isListingsLoading) return;
-    getListings();
+    const { userInfo } = userStore.getState();
+    const location = userInfo?.location;
+    setUserLocation(location?.toLocaleUpperCase() || null);
   }, []);
+
+  useEffect(() => {
+    const getListings = async () => {
+      setIsListingsLoading(true);
+      try {
+        const date = dayjs().subtract(2, 'months').toISOString();
+        const listingsData = await axios.get('/api/listings/', {
+          params: {
+            category: 'bounties',
+            take: 100,
+            type: 'project',
+            deadline: date,
+            location: userLocation,
+          },
+        });
+        setListings(listingsData.data);
+      } catch (e) {
+        console.error('Error fetching listings', e);
+      } finally {
+        setIsListingsLoading(false);
+      }
+    };
+
+    getListings();
+  }, [userLocation]);
 
   return (
     <Home type="home">

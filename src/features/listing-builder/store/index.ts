@@ -76,6 +76,7 @@ const mergeListingWithInitialFormState = (
   token: listing.token || 'USDC',
   minRewardAsk: listing.minRewardAsk,
   maxRewardAsk: listing.maxRewardAsk,
+  region: listing.region as Regions | undefined,
 });
 
 export const useListingFormStore = create<ListingStoreType>()((set) => ({

@@ -116,14 +116,16 @@ interface BountyProps {
   statusFilter?: Status;
   type?: BountyType;
   take?: number;
+  userLocation?: string;
 }
 
 export async function getListings({
   order = 'desc',
   skillFilter,
   statusFilter,
-  type,
+
   take = 20,
+  userLocation,
 }: BountyProps) {
   const skillFilterQuery = getSkillFilterQuery(skillFilter);
 
@@ -160,11 +162,16 @@ export async function getListings({
       isPrivate: false,
       hackathonprize: false,
       isArchived: false,
-      type,
-      OR: [
-        { compensationType: 'fixed', usdValue: { gt: 100 } },
-        { compensationType: 'range', maxRewardAsk: { gt: 100 } },
-        { compensationType: 'variable' },
+      OR: [{ region: userLocation }, { region: 'GLOBAL' }],
+
+      AND: [
+        {
+          OR: [
+            { compensationType: 'fixed', usdValue: { gt: 100 } },
+            { compensationType: 'range', maxRewardAsk: { gt: 100 } },
+            { compensationType: 'variable' },
+          ],
+        },
       ],
       language: { in: ['eng', 'sco'] }, //cuz both eng and sco refer to listings in english
       ...skillFilterQuery,

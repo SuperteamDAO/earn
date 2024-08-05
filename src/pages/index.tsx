@@ -1,12 +1,15 @@
 import { Box, Flex } from '@chakra-ui/react';
 import { type BountyType } from '@prisma/client';
 import type { GetServerSideProps } from 'next';
+import { useRouter } from 'next/router';
+import { useEffect } from 'react';
 
 import { InstallPWAModal } from '@/components/modals/InstallPWAModal';
 import { EmptySection } from '@/components/shared/EmptySection';
 import { GrantsCard, type GrantWithApplicationCount } from '@/features/grants';
 import { type Listing, ListingSection, ListingTabs } from '@/features/listings';
 import { Home } from '@/layouts/Home';
+import { userStore } from '@/store/user';
 
 import { getGrants, getListings, type Skills } from './api/listings/homepage';
 
@@ -16,6 +19,21 @@ interface Props {
 }
 
 export default function HomePage({ bounties, grants }: Props) {
+  const router = useRouter();
+
+  useEffect(() => {
+    const { userInfo } = userStore.getState();
+    const location = userInfo?.location;
+
+    if (location) {
+      const upperCaseLocation = location.toLocaleUpperCase();
+      router.replace({
+        pathname: '/',
+        query: { Location: upperCaseLocation },
+      });
+    }
+  }, [router]);
+
   return (
     <Home type="home">
       <InstallPWAModal />
@@ -58,11 +76,11 @@ export const getServerSideProps: GetServerSideProps<Props> = async (
   context,
 ) => {
   const params = context.query;
+  const userLocation = params.Location as string | undefined;
 
   const skillFilter = params.skill as Skills | undefined;
-
   const type = params.type as BountyType | undefined;
-  const take = params.take ? parseInt(params.take as string, 20) : 20;
+  const take = params.take ? parseInt(params.take as string, 10) : 20;
 
   const openResult = await getListings({
     order: 'asc',
@@ -70,6 +88,7 @@ export const getServerSideProps: GetServerSideProps<Props> = async (
     statusFilter: 'open',
     type,
     take,
+    userLocation: userLocation,
   });
 
   const reviewResult = await getListings({
@@ -78,6 +97,7 @@ export const getServerSideProps: GetServerSideProps<Props> = async (
     statusFilter: 'review',
     type,
     take,
+    userLocation: userLocation,
   });
 
   const grants = await getGrants({ take, skillFilter });
@@ -88,6 +108,7 @@ export const getServerSideProps: GetServerSideProps<Props> = async (
     statusFilter: 'completed',
     type,
     take,
+    userLocation: userLocation,
   });
 
   const result: {

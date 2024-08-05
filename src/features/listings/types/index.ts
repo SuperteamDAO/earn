@@ -34,7 +34,7 @@ export interface Listing {
   type?: BountyType | string;
   applicationType?: 'fixed' | 'rolling';
   totalWinnersSelected?: number;
-  region?: Regions;
+  region?: Regions | string;
   totalPaymentsMade?: number;
   isWinnersAnnounced?: boolean;
   templateId?: string;

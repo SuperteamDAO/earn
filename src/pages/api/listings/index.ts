@@ -1,7 +1,6 @@
-import { type BountyType, type Prisma } from '@prisma/client';
+import { type BountyType, type Prisma, type Regions } from '@prisma/client';
 import type { NextApiRequest, NextApiResponse } from 'next';
 
-import logger from '@/lib/logger';
 import { prisma } from '@/prisma';
 import { dayjs } from '@/utils/dayjs';
 
@@ -20,22 +19,16 @@ function sortListings(listings: Listing[]): Listing[] {
     const deadlineB = b.deadline;
 
     if (deadlineA && deadlineA > today && deadlineB && deadlineB > today) {
-      // Sort by isFeatured descending if deadline is greater than today
       if (b.isFeatured !== a.isFeatured) {
         return b.isFeatured ? 1 : -1;
       }
-
-      // Sort by deadline ascending (earliest deadline first) if isFeatured is the same
       return deadlineA.getTime() - deadlineB.getTime();
     }
 
     if (deadlineA && deadlineA <= today && deadlineB && deadlineB <= today) {
-      // Sort by deadline descending if deadline is less than or equal to today
       if (deadlineA.getTime() !== deadlineB.getTime()) {
         return deadlineB.getTime() - deadlineA.getTime();
       }
-
-      // Sort by winnersAnnouncedAt if deadline is less than or equal to today and winnersAnnouncedAt exists
       const winnersAnnouncedAtA = a.winnersAnnouncedAt;
       const winnersAnnouncedAtB = b.winnersAnnouncedAt;
       if (winnersAnnouncedAtA && winnersAnnouncedAtB) {
@@ -47,7 +40,6 @@ function sortListings(listings: Listing[]): Listing[] {
       }
     }
 
-    // Sort listings with earlier deadlines or null deadlines first
     if (deadlineA === null && deadlineB !== null) {
       return 1;
     } else if (deadlineA !== null && deadlineB === null) {
@@ -63,19 +55,21 @@ export default async function user(req: NextApiRequest, res: NextApiResponse) {
   const category = params.category as string;
   const isHomePage = params.isHomePage === 'true';
   const order = (params.order as 'asc' | 'desc') ?? 'desc';
-
+  const location = params.location as Regions | undefined;
   const filter = params.filter as string;
   const type = params.type as
     | Prisma.EnumBountyTypeFilter
     | BountyType
     | undefined;
   const take = params.take ? parseInt(params.take as string, 10) : 10;
+
   const deadline = params.deadline as string;
 
   const result: { bounties: any[]; grants: any[] } = {
     bounties: [],
     grants: [],
   };
+
   const filterToSkillsMap: Record<string, string[]> = {
     development: ['Frontend', 'Backend', 'Blockchain', 'Mobile'],
     design: ['Design'],
@@ -122,6 +116,7 @@ export default async function user(req: NextApiRequest, res: NextApiResponse) {
           },
           ...(isHomePage ? { rewardAmount: { gt: 100 } } : {}),
           ...skillsFilter,
+          OR: [{ region: 'GLOBAL' }, { region: location }],
         },
         include: {
           sponsor: {
@@ -129,7 +124,6 @@ export default async function user(req: NextApiRequest, res: NextApiResponse) {
               name: true,
               slug: true,
               logo: true,
-              isVerified: true,
             },
           },
           _count: {
@@ -156,7 +150,6 @@ export default async function user(req: NextApiRequest, res: NextApiResponse) {
           },
         ],
       });
-      //sort bounties by isFeatured
       result.bounties = sortListings(bounties);
     } else if (category === 'bounties') {
       const bounties = await prisma.bounties.findMany({
@@ -174,6 +167,7 @@ export default async function user(req: NextApiRequest, res: NextApiResponse) {
           ...(isHomePage ? { rewardAmount: { gt: 100 } } : {}),
           ...skillsFilter,
           Hackathon: null,
+          OR: [{ region: 'GLOBAL' }, { region: location }],
         },
         include: {
           sponsor: {
@@ -181,7 +175,6 @@ export default async function user(req: NextApiRequest, res: NextApiResponse) {
               name: true,
               slug: true,
               logo: true,
-              isVerified: true,
             },
           },
           _count: {
@@ -200,9 +193,8 @@ export default async function user(req: NextApiRequest, res: NextApiResponse) {
           },
         },
         orderBy: {
-          deadline: 'desc',
+          deadline: order,
         },
-        take,
       });
       const splitIndex = bounties.findIndex((bounty) =>
         dayjs().isAfter(dayjs(bounty?.deadline)),
@@ -228,7 +220,7 @@ export default async function user(req: NextApiRequest, res: NextApiResponse) {
         },
         take,
         orderBy: {
-          createdAt: order,
+          updatedAt: order,
         },
         include: {
           sponsor: {
@@ -237,7 +229,6 @@ export default async function user(req: NextApiRequest, res: NextApiResponse) {
               name: true,
               slug: true,
               logo: true,
-              isVerified: true,
             },
           },
           _count: {
@@ -256,7 +247,7 @@ export default async function user(req: NextApiRequest, res: NextApiResponse) {
 
     res.status(200).json(result);
   } catch (error) {
-    logger.error(error);
+    console.log(error);
 
     res.status(400).json({
       error,
