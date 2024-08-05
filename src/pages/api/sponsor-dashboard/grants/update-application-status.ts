@@ -90,20 +90,20 @@ async function handler(req: NextApiRequestWithSponsor, res: NextApiResponse) {
       } catch (err) {
         logger.error('Error sending email to Sponsor:', err);
       }
+    } else {
+      const config = airtableConfig(process.env.AIRTABLE_GRANTS_API_TOKEN!);
+      const url = airtableUrl(
+        process.env.AIRTABLE_GRANTS_BASE_ID!,
+        process.env.AIRTABLE_GRANTS_TABLE_NAME!,
+      );
+
+      const airtableData = convertGrantApplicationToAirtable(result);
+      const airtablePayload = airtableUpsert('earnApplicationId', [
+        { fields: airtableData },
+      ]);
+
+      await axios.patch(url, JSON.stringify(airtablePayload), config);
     }
-
-    const config = airtableConfig(process.env.AIRTABLE_GRANTS_API_TOKEN!);
-    const url = airtableUrl(
-      process.env.AIRTABLE_GRANTS_BASE_ID!,
-      process.env.AIRTABLE_GRANTS_TABLE_NAME!,
-    );
-
-    const airtableData = convertGrantApplicationToAirtable(result);
-    const airtablePayload = airtableUpsert('earnApplicationId', [
-      { fields: airtableData },
-    ]);
-
-    await axios.patch(url, JSON.stringify(airtablePayload), config);
 
     return res.status(200).json(result);
   } catch (error: any) {

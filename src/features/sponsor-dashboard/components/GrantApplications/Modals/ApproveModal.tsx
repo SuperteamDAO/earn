@@ -102,11 +102,11 @@ export const ApproveModal = ({
         (application) => application.id === applicationId,
       );
       setSelectedApplication(updatedApplication);
+      approveOnClose();
     } catch (e) {
-      console.log(e);
+      console.error(e);
     } finally {
       setLoading(false);
-      approveOnClose();
     }
   };
 

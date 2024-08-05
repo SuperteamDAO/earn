@@ -96,6 +96,18 @@ export const ApplicationDetails = ({
     'DD MMM YYYY',
   );
 
+  const handlePaymentRecorded = (updatedApplication: any) => {
+    setSelectedApplication(updatedApplication);
+
+    const updatedApplications = applications.map((application) =>
+      application.id === updatedApplication.id
+        ? updatedApplication
+        : application,
+    );
+
+    setApplications(updatedApplications);
+  };
+
   return (
     <Box
       w="150%"
@@ -217,6 +229,7 @@ export const ApplicationDetails = ({
                     approvedAmount={selectedApplication.approvedAmount}
                     totalPaid={selectedApplication.totalPaid}
                     token={grant.token || 'USDC'}
+                    onPaymentRecorded={handlePaymentRecorded}
                   />
                 )}
               </Flex>

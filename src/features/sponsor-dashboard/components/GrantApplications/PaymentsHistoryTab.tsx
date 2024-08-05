@@ -170,6 +170,16 @@ export const PaymentsHistoryTab = ({
     );
   };
 
+  const handlePaymentRecorded = (
+    updatedApplication: GrantApplicationWithUser,
+  ) => {
+    setGrantees((prevGrantees) =>
+      prevGrantees?.map((grantee) =>
+        grantee.id === updatedApplication.id ? updatedApplication : grantee,
+      ),
+    );
+  };
+
   return (
     <Box>
       <TableContainer
@@ -294,11 +304,12 @@ export const PaymentsHistoryTab = ({
                       <Flex align="center" gap={2}>
                         {isNativeAndNonST && (
                           <RecordPaymentButton
-                            applicationId="1"
+                            applicationId={grantee.id}
                             buttonStyle={{ size: 'sm' }}
                             approvedAmount={grantee.approvedAmount}
                             totalPaid={grantee.totalPaid}
                             token={grant?.token || 'USDC '}
+                            onPaymentRecorded={handlePaymentRecorded}
                           />
                         )}
                         <Box
