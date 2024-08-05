@@ -119,15 +119,15 @@ const CountrySelector: React.FC = () => {
         </Flex>
       </PopoverTrigger>
       <PopoverContent w="200px">
-        <PopoverBody>
-          <Stack>
+        <PopoverBody p={0}>
+          <Stack gap={0}>
             {countries.map((country) => (
               <Flex
                 key={country.name}
                 align="center"
                 gap={2}
-                px={2}
-                py={1}
+                px={4}
+                py={2}
                 _hover={{ bg: 'gray.100' }}
                 cursor="pointer"
                 onClick={() => handleCountrySelect(country)}
