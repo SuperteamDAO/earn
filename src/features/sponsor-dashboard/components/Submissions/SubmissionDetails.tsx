@@ -46,6 +46,7 @@ import { tokenList } from '@/constants';
 import type { Listing, Rewards } from '@/features/listings';
 import type { SubmissionWithUser } from '@/interface/submission';
 import { getURLSanitized } from '@/utils/getURLSanitized';
+import { rankLabels } from '@/utils/rank';
 import { truncatePublicKey } from '@/utils/truncatePublicKey';
 import { truncateString } from '@/utils/truncateString';
 
@@ -61,9 +62,9 @@ interface Props {
     SetStateAction<SubmissionWithUser | undefined>
   >;
   setTotalWinners: Dispatch<SetStateAction<number>>;
-  rewards: string[];
-  usedPositions: string[];
-  setUsedPositions: Dispatch<SetStateAction<string[]>>;
+  rewards: number[];
+  usedPositions: number[];
+  setUsedPositions: Dispatch<SetStateAction<number[]>>;
   setTotalPaymentsMade: Dispatch<SetStateAction<number>>;
   isHackathonPage?: boolean;
 }
@@ -97,7 +98,7 @@ export const SubmissionDetails = ({
   );
 
   const selectWinner = async (
-    position: string,
+    position: number,
     id: string | undefined,
     ask: number | undefined,
   ) => {
@@ -113,8 +114,8 @@ export const SubmissionDetails = ({
 
       const submissionIndex = submissions.findIndex((s) => s.id === id);
       if (submissionIndex >= 0) {
-        const oldRank: string =
-          submissions[submissionIndex]?.winnerPosition || '';
+        const oldRank: number =
+          Number(submissions[submissionIndex]?.winnerPosition) || 0;
 
         let newUsedPositions = [...usedPositions];
         if (oldRank && oldRank !== position) {
@@ -566,7 +567,7 @@ export const SubmissionDetails = ({
                         }
                         onChange={(e) =>
                           selectWinner(
-                            e.target.value,
+                            Number(e.target.value),
                             selectedSubmission?.id,
                             selectedSubmission?.ask,
                           )
@@ -577,15 +578,16 @@ export const SubmissionDetails = ({
                             : ''
                         }
                       >
-                        <option value={''}>Select Winner</option>
+                        <option>Select Winner</option>
                         {rewards.map((reward) => {
                           const isRewardUsed = usedPositions.includes(reward);
                           const isCurrentSubmissionReward =
-                            selectedSubmission?.winnerPosition === reward;
+                            Number(selectedSubmission?.winnerPosition) ===
+                            reward;
                           return (
                             (!isRewardUsed || isCurrentSubmissionReward) && (
                               <option key={reward} value={reward}>
-                                {isProject ? 'Winner' : reward}
+                                {isProject ? 'Winner' : rankLabels[reward]}
                               </option>
                             )
                           );

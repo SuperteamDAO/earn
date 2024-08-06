@@ -1,20 +1,10 @@
+import { type Rewards } from '@/features/listings';
+
 import type { SponsorType } from './sponsor';
 import type { Talent } from './talent';
 
 type SponsorStatus = 'Unassigned' | 'Assigned';
 type Source = 'native' | 'manual';
-type Prize = 'first' | 'second' | 'third' | 'fourth' | 'fifth';
-
-type PrizeListType = {
-  [key in Prize]: string;
-};
-export const PrizeListMap = {
-  first: 'First prize',
-  second: 'Second prize',
-  third: 'Third prize',
-  fourth: 'Fourth prize',
-  fifth: 'Fifth prize',
-};
 
 interface Questions {
   id: string;
@@ -36,7 +26,7 @@ interface Bounties {
   active: boolean;
   privateBool: boolean;
   featured: boolean;
-  prizeList: Partial<PrizeListType>; // change to enum and string
+  prizeList: Rewards;
   bugBounty: boolean;
   orgId: string;
   showTop: boolean;
@@ -48,7 +38,7 @@ interface Bounties {
   subscribe?: SubscribeType[];
   Questions?: Questions;
   sponsor?: SponsorType;
-  rewards?: Partial<PrizeListType>;
+  rewards?: Rewards;
   isWinnersAnnounced?: boolean;
   type?: 'bounty' | 'project' | 'hackathon';
 }
@@ -60,7 +50,7 @@ interface Winner {
   name: string;
   publickey: string;
   bountiesId: string;
-  prize: Prize;
+  prize: number;
 }
 
 interface SubmissionType {

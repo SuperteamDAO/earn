@@ -37,9 +37,9 @@ import { usePostHog } from 'posthog-js/react';
 import { useEffect, useState } from 'react';
 import { Controller, useForm } from 'react-hook-form';
 
-import { PrizeList, tokenList } from '@/constants';
+import { tokenList } from '@/constants';
 import { type Rewards } from '@/features/listings';
-import { sortRank } from '@/utils/rank';
+import { cleanRewards, rankLabels, sortRank } from '@/utils/rank';
 
 import { useListingFormStore } from '../../store';
 import { type ListingFormType } from '../../types';
@@ -55,7 +55,7 @@ interface Token {
 }
 
 interface PrizeListInterface {
-  value: string;
+  value: number;
   label: string;
   placeHolder: number;
   defaultValue?: number;
@@ -124,9 +124,9 @@ export const ListingPayments = ({
   const [debouncedRewardAmount, setDebouncedRewardAmount] =
     useState(rewardAmount);
 
-  const prizesList = sortRank(Object.keys(rewards || []))?.map((r) => ({
+  const prizesList = sortRank(cleanRewards(rewards))?.map((r) => ({
     value: r,
-    label: `${r} prize`,
+    label: `${rankLabels[r]} prize`,
     placeHolder: rewards![r as keyof Rewards] ?? 0,
     defaultValue: rewards![r as keyof Rewards],
   }));
@@ -135,8 +135,8 @@ export const ListingPayments = ({
       ? prizesList
       : [
           {
-            value: 'first',
-            label: 'first prize',
+            value: 1,
+            label: `${rankLabels[1]} prize`,
             placeHolder: 2500,
           },
         ],
@@ -169,19 +169,20 @@ export const ListingPayments = ({
     setTokenImage(selectedToken?.icon);
   };
 
-  const handlePrizeValueChange = (prizeName: string, value: number) => {
+  const handlePrizeValueChange = (prizeName: number, value: number) => {
     setValue('rewards', { ...rewards, [prizeName]: value });
   };
 
   function getPrizeLabels(pri: PrizeListInterface[]): PrizeListInterface[] {
-    const labels = ['first', 'second', 'third', 'fourth', 'fifth'];
     return pri.map((prize, index) => ({
       ...prize,
-      label: `${labels[index]} prize`,
+      label: `${rankLabels[index + 1]} prize`,
     }));
   }
 
   const handlePrizeDelete = (prizeToDelete: keyof Rewards) => {
+    console.log('prizeToDelete', prizeToDelete, typeof prizeToDelete);
+    console.log('prizes', prizes);
     const updatedPrizes = prizes.filter(
       (prize) => prize.value !== prizeToDelete,
     );
@@ -655,14 +656,16 @@ export const ListingPayments = ({
                 isDisabled={prizes.length === 5 && true}
                 leftIcon={<AddIcon />}
                 onClick={() => {
-                  setPrizes([
+                  const newPrize = [
                     ...prizes,
                     {
-                      value: PrizeList[prizes.length] || 'first',
-                      label: `${PrizeList[prizes.length]} prize`,
+                      value: prizes.length + 1 || 1,
+                      label: `${rankLabels[prizes.length + 1]} prize`,
                       placeHolder: (5 - prizes.length) * 500,
                     },
-                  ]);
+                  ];
+                  console.log('newPrize', newPrize);
+                  setPrizes(newPrize);
                 }}
                 variant="ghost"
               >

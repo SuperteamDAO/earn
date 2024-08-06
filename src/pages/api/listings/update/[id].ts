@@ -88,10 +88,12 @@ async function bounty(req: NextApiRequestWithSponsor, res: NextApiResponse) {
 
     if (newRewardsCount < currentTotalWinners) {
       updatedData.totalWinnersSelected = newRewardsCount;
-      const positions = ['first', 'second', 'third', 'fourth', 'fifth'];
-      const positionsToReset = positions.slice(newRewardsCount);
 
-      for (const position of positionsToReset) {
+      for (
+        let position = newRewardsCount + 1;
+        position <= currentTotalWinners;
+        position++
+      ) {
         logger.debug(
           `Resetting winner position: ${position} for listing ID: ${id}`,
         );
@@ -99,7 +101,7 @@ async function bounty(req: NextApiRequestWithSponsor, res: NextApiResponse) {
           where: {
             listingId: id as string,
             isWinner: true,
-            winnerPosition: position,
+            winnerPosition: String(position),
           },
           data: {
             isWinner: false,
