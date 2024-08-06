@@ -409,7 +409,7 @@ export const ListingTable = ({ listings, setListings }: ListingTableProps) => {
                           View {listingLabel}
                         </MenuItem>
 
-                        {listing.isPublished && (
+                        {!!listing.isPublished && (
                           <MenuItem
                             py={2}
                             color={'brand.slate.500'}
@@ -422,7 +422,8 @@ export const ListingTable = ({ listings, setListings }: ListingTableProps) => {
                           </MenuItem>
                         )}
 
-                        {(session?.user?.role === 'GOD' ||
+                        {((session?.user?.role === 'GOD' &&
+                          listing.type !== 'grant') ||
                           (listing.isPublished &&
                             !pastDeadline &&
                             listing.type !== 'grant')) && (
