@@ -53,6 +53,7 @@ import {
 import ImageResize from 'tiptap-extension-resize-image';
 import { z } from 'zod';
 
+import { URL_REGEX } from '@/constants';
 import { ReferenceCard } from '@/features/listings';
 import { uploadToCloudinary } from '@/utils/upload';
 
@@ -112,7 +113,12 @@ const schema = z.object({
     .array(
       z.object({
         order: z.number(),
-        link: z.string().url('Please enter a valid URL').optional(),
+        link: z
+          .string()
+          .refine((val) => URL_REGEX.test(val), {
+            message: 'Please enter a valid URL',
+          })
+          .optional(),
       }),
     )
     .optional(),
