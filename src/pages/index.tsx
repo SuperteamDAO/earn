@@ -1,14 +1,19 @@
 import { Box, Flex } from '@chakra-ui/react';
-import { type BountyType } from '@prisma/client';
 import type { GetServerSideProps } from 'next';
+import { getSession } from 'next-auth/react';
 
 import { InstallPWAModal } from '@/components/modals/InstallPWAModal';
 import { EmptySection } from '@/components/shared/EmptySection';
 import { GrantsCard, type GrantWithApplicationCount } from '@/features/grants';
-import { type Listing, ListingSection, ListingTabs } from '@/features/listings';
+import {
+  getGrants,
+  getListings,
+  type Listing,
+  ListingSection,
+  ListingTabs,
+} from '@/features/listings';
 import { Home } from '@/layouts/Home';
-
-import { getGrants, getListings, type Skills } from './api/listings/homepage';
+import { prisma } from '@/prisma';
 
 interface Props {
   bounties: Listing[];
@@ -57,48 +62,42 @@ export default function HomePage({ bounties, grants }: Props) {
 export const getServerSideProps: GetServerSideProps<Props> = async (
   context,
 ) => {
-  const params = context.query;
+  const session = await getSession(context);
+  let userLocation;
 
-  const skillFilter = params.skill as Skills | undefined;
+  if (session?.user?.id) {
+    const user = await prisma.user.findFirst({
+      where: { id: session.user.id },
+      select: { location: true },
+    });
+    userLocation = user?.location;
+  }
 
-  const type = params.type as BountyType | undefined;
-  const take = params.take ? parseInt(params.take as string, 20) : 20;
-
-  const openResult = await getListings({
+  const openListings = await getListings({
     order: 'asc',
-    skillFilter,
     statusFilter: 'open',
-    type,
-    take,
+    userLocation,
   });
 
-  const reviewResult = await getListings({
+  const reviewListings = await getListings({
     order: 'desc',
-    skillFilter,
     statusFilter: 'review',
-    type,
-    take,
+    userLocation,
   });
 
-  const grants = await getGrants({ take, skillFilter });
-
-  const completeResult = await getListings({
+  const completeListings = await getListings({
     order: 'desc',
-    skillFilter,
     statusFilter: 'completed',
-    type,
-    take,
+    userLocation,
   });
 
-  const result: {
-    bounties: Listing[];
-    grants: GrantWithApplicationCount[];
-  } = {
-    bounties: [...(openResult as any), ...reviewResult, ...completeResult],
-    grants: grants as any,
-  };
+  const bounties = [...openListings, ...reviewListings, ...completeListings];
+  const grants = await getGrants({ userLocation });
 
   return {
-    props: JSON.parse(JSON.stringify(result)),
+    props: {
+      bounties: JSON.parse(JSON.stringify(bounties)),
+      grants: JSON.parse(JSON.stringify(grants)),
+    },
   };
 };
