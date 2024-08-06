@@ -5,7 +5,7 @@ import { getSession } from 'next-auth/react';
 
 import { InstallPWAModal } from '@/components/modals/InstallPWAModal';
 import { EmptySection } from '@/components/shared/EmptySection';
-import { Superteams } from '@/constants/Superteam';
+import { CombinedRegions } from '@/constants/Superteam';
 import { GrantsCard, type GrantWithApplicationCount } from '@/features/grants';
 import {
   getGrants,
@@ -73,11 +73,11 @@ export const getServerSideProps: GetServerSideProps<Props> = async (
       select: { location: true },
     });
 
-    const matchingSuperteam = Superteams.find((team) =>
-      team.country.includes(user?.location!),
+    const matchedRegion = CombinedRegions.find((region) =>
+      region.country.includes(user?.location!),
     );
 
-    userRegion = matchingSuperteam ? matchingSuperteam.region : Regions.GLOBAL;
+    userRegion = matchedRegion ? matchedRegion.region : Regions.GLOBAL;
   }
 
   const openListings = await getListings({

@@ -2,7 +2,7 @@ import { type BountyType, type Prisma, Regions } from '@prisma/client';
 import type { NextApiRequest, NextApiResponse } from 'next';
 import { getToken } from 'next-auth/jwt';
 
-import { Superteams } from '@/constants/Superteam';
+import { CombinedRegions } from '@/constants/Superteam';
 import logger from '@/lib/logger';
 import { prisma } from '@/prisma';
 import { dayjs } from '@/utils/dayjs';
@@ -112,13 +112,16 @@ export default async function listings(
 
   const token = await getToken({ req });
   const userId = token?.sub;
-  let userLocation: string | null = null;
+  let userRegion: Regions = Regions.GLOBAL;
   if (userId) {
     const user = await prisma.user.findFirst({
       where: { id: userId },
       select: { location: true },
     });
-    userLocation = user?.location ?? null;
+    const matchedRegion = CombinedRegions.find(
+      (region) => user?.location && region.country.includes(user?.location),
+    );
+    userRegion = matchedRegion ? matchedRegion.region : Regions.GLOBAL;
   }
 
   const bountyQueryOptions: Prisma.BountiesFindManyArgs = {
@@ -203,13 +206,7 @@ export default async function listings(
     },
   };
 
-  if (userLocation) {
-    const matchedST = Superteams.find(
-      (st) => userLocation && st.country.includes(userLocation),
-    );
-
-    const userRegion = matchedST ? matchedST.region : Regions.GLOBAL;
-
+  if (userRegion) {
     bountyQueryOptions.where = {
       ...bountyQueryOptions.where,
       region: {
