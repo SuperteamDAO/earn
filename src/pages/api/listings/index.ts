@@ -2,6 +2,7 @@ import { type BountyType, type Prisma, Regions } from '@prisma/client';
 import type { NextApiRequest, NextApiResponse } from 'next';
 import { getToken } from 'next-auth/jwt';
 
+import { Superteams } from '@/constants/Superteam';
 import logger from '@/lib/logger';
 import { prisma } from '@/prisma';
 import { dayjs } from '@/utils/dayjs';
@@ -59,10 +60,12 @@ function sortListings(listings: Listing[]): Listing[] {
   });
 }
 
-export default async function user(req: NextApiRequest, res: NextApiResponse) {
+export default async function listings(
+  req: NextApiRequest,
+  res: NextApiResponse,
+) {
   const params = req.query;
   const category = params.category as string;
-  const isHomePage = params.isHomePage === 'true';
   const order = (params.order as 'asc' | 'desc') ?? 'desc';
 
   const filter = params.filter as string;
@@ -109,12 +112,13 @@ export default async function user(req: NextApiRequest, res: NextApiResponse) {
 
   const token = await getToken({ req });
   const userId = token?.sub;
-  let user;
+  let userLocation: string | null = null;
   if (userId) {
-    user = await prisma.user.findFirst({
+    const user = await prisma.user.findFirst({
       where: { id: userId },
       select: { location: true },
     });
+    userLocation = user?.location ?? null;
   }
 
   const bountyQueryOptions: Prisma.BountiesFindManyArgs = {
@@ -130,7 +134,6 @@ export default async function user(req: NextApiRequest, res: NextApiResponse) {
         gte: deadline,
       },
       type,
-      ...(isHomePage ? { rewardAmount: { gt: 100 } } : {}),
       ...skillsFilter,
     },
     include: {
@@ -159,10 +162,10 @@ export default async function user(req: NextApiRequest, res: NextApiResponse) {
     },
     orderBy: [
       {
-        winnersAnnouncedAt: 'desc',
+        deadline: order,
       },
       {
-        deadline: order,
+        winnersAnnouncedAt: 'desc',
       },
     ],
   };
@@ -200,18 +203,24 @@ export default async function user(req: NextApiRequest, res: NextApiResponse) {
     },
   };
 
-  if (user && user.location) {
+  if (userLocation) {
+    const matchedST = Superteams.find(
+      (st) => userLocation && st.country.includes(userLocation),
+    );
+
+    const userRegion = matchedST ? matchedST.region : Regions.GLOBAL;
+
     bountyQueryOptions.where = {
       ...bountyQueryOptions.where,
       region: {
-        in: [user.location.toUpperCase() as Regions, Regions.GLOBAL],
+        in: [userRegion, Regions.GLOBAL],
       },
     };
 
     grantQueryOptions.where = {
       ...grantQueryOptions.where,
       region: {
-        in: [user.location.toUpperCase() as Regions, Regions.GLOBAL],
+        in: [userRegion, Regions.GLOBAL],
       },
     };
   }
