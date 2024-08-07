@@ -28,36 +28,23 @@ async function handler(_req: NextApiRequest, res: NextApiResponse) {
     const totalUserCount = await prisma.user.count();
 
     const newUserCountInLastWeek = await prisma.user.count({
-      where: {
-        createdAt: lastWeek,
-      },
+      where: { createdAt: lastWeek },
     });
 
     const totalTalentFilledUserCount = await prisma.user.count({
-      where: {
-        isTalentFilled: true,
-      },
+      where: { isTalentFilled: true },
     });
 
     const newTalentFilledUserCountInLastWeek = await prisma.user.count({
-      where: {
-        createdAt: lastWeek,
-        isTalentFilled: true,
-      },
+      where: { createdAt: lastWeek, isTalentFilled: true },
     });
 
     const newBountiesCountInLastWeek = await prisma.bounties.count({
-      where: {
-        publishedAt: lastWeek,
-        isPublished: true,
-      },
+      where: { publishedAt: lastWeek, isPublished: true },
     });
 
     const bountiesInLastWeek = await prisma.bounties.findMany({
-      where: {
-        publishedAt: lastWeek,
-        isPublished: true,
-      },
+      where: { publishedAt: lastWeek, isPublished: true },
       select: {
         usdValue: true,
         minRewardAsk: true,

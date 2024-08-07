@@ -86,7 +86,7 @@ async function scoutInvite(
     });
 
     logger.debug(`Updating scout invitation status for scout ID: ${scout.id}`);
-    const updateScout = await prisma.scouts.update({
+    await prisma.scouts.update({
       where: {
         id: scout.id,
       },
@@ -98,7 +98,7 @@ async function scoutInvite(
     logger.info(
       `Scout invitation sent successfully for listing ID: ${id} and user ID: ${userId}`,
     );
-    return res.status(200).json(updateScout);
+    return res.status(200).json({ message: 'Success' });
   } catch (error: any) {
     logger.error(
       `Error occurred while inviting scout user=${userId} for bounty with id=${id}: ${safeStringify(error)}`,

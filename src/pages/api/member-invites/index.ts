@@ -24,7 +24,12 @@ export default async function inviteUser(
         id: invite,
       },
       include: {
-        sender: true,
+        sender: {
+          select: {
+            firstName: true,
+            lastName: true,
+          },
+        },
       },
     });
 

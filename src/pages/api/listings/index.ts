@@ -139,15 +139,21 @@ export default async function listings(
       type,
       ...skillsFilter,
     },
-    include: {
-      sponsor: {
-        select: {
-          name: true,
-          slug: true,
-          logo: true,
-          isVerified: true,
-        },
-      },
+    select: {
+      rewardAmount: true,
+      deadline: true,
+      type: true,
+      title: true,
+      token: true,
+      winnersAnnouncedAt: true,
+      slug: true,
+      applicationType: true,
+      isWinnersAnnounced: true,
+      isFeatured: true,
+      compensationType: true,
+      minRewardAsk: true,
+      maxRewardAsk: true,
+      status: true,
       _count: {
         select: {
           Comments: {
@@ -160,6 +166,14 @@ export default async function listings(
               },
             },
           },
+        },
+      },
+      sponsor: {
+        select: {
+          name: true,
+          slug: true,
+          logo: true,
+          isVerified: true,
         },
       },
     },

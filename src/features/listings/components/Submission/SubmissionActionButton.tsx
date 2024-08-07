@@ -90,11 +90,13 @@ export const SubmissionActionButton = ({
     }
   };
 
-  const getUserSubmission = async () => {
+  const checkUserSubmission = async () => {
     setIsUserSubmissionLoading(true);
     try {
-      const submissionDetails = await axios.get(`/api/listings/${id}/user/`);
-      setIsSubmitted(!!submissionDetails?.data?.id);
+      const response = await axios.get('/api/submissions/check/', {
+        params: { listingId: id },
+      });
+      setIsSubmitted(response.data.isSubmitted);
       setIsUserSubmissionLoading(false);
     } catch (e) {
       setIsUserSubmissionLoading(false);
@@ -103,7 +105,7 @@ export const SubmissionActionButton = ({
 
   useEffect(() => {
     if (!userInfo?.id) return;
-    getUserSubmission();
+    checkUserSubmission();
   }, [userInfo?.id]);
 
   const isProject = type === 'project';
