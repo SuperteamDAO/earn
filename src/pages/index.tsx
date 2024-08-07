@@ -1,9 +1,11 @@
 import { Box, Flex } from '@chakra-ui/react';
+import { Regions } from '@prisma/client';
 import type { GetServerSideProps } from 'next';
 import { getSession } from 'next-auth/react';
 
 import { InstallPWAModal } from '@/components/modals/InstallPWAModal';
 import { EmptySection } from '@/components/shared/EmptySection';
+import { CombinedRegions } from '@/constants/Superteam';
 import { GrantsCard, type GrantWithApplicationCount } from '@/features/grants';
 import {
   getGrants,
@@ -63,36 +65,41 @@ export const getServerSideProps: GetServerSideProps<Props> = async (
   context,
 ) => {
   const session = await getSession(context);
-  let userLocation;
+  let userRegion;
 
   if (session?.user?.id) {
     const user = await prisma.user.findFirst({
       where: { id: session.user.id },
       select: { location: true },
     });
-    userLocation = user?.location;
+
+    const matchedRegion = CombinedRegions.find((region) =>
+      region.country.includes(user?.location!),
+    );
+
+    userRegion = matchedRegion ? matchedRegion.region : Regions.GLOBAL;
   }
 
   const openListings = await getListings({
     order: 'asc',
     statusFilter: 'open',
-    userLocation,
+    userRegion,
   });
 
   const reviewListings = await getListings({
     order: 'desc',
     statusFilter: 'review',
-    userLocation,
+    userRegion,
   });
 
   const completeListings = await getListings({
     order: 'desc',
     statusFilter: 'completed',
-    userLocation,
+    userRegion,
   });
 
   const bounties = [...openListings, ...reviewListings, ...completeListings];
-  const grants = await getGrants({ userLocation });
+  const grants = await getGrants({ userRegion });
 
   return {
     props: {

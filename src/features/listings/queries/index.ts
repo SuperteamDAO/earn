@@ -34,22 +34,16 @@ function getStatusFilterQuery(statusFilter: Status | undefined) {
 }
 
 interface GrantProps {
-  userLocation?: string | null;
+  userRegion?: Regions | null;
 }
 
-export async function getGrants({ userLocation }: GrantProps) {
+export async function getGrants({ userRegion }: GrantProps) {
   return await prisma.grants.findMany({
     where: {
       isPublished: true,
       isActive: true,
       isArchived: false,
-      ...(userLocation
-        ? {
-            region: {
-              in: [userLocation.toUpperCase() as Regions, Regions.GLOBAL],
-            },
-          }
-        : {}),
+      ...(userRegion ? { region: { in: [userRegion, Regions.GLOBAL] } } : {}),
     },
     take: TAKE,
     orderBy: {
@@ -87,13 +81,13 @@ export async function getGrants({ userLocation }: GrantProps) {
 interface BountyProps {
   order?: 'asc' | 'desc';
   statusFilter?: Status;
-  userLocation?: string | null;
+  userRegion?: Regions | null;
 }
 
 export async function getListings({
   order = 'desc',
   statusFilter,
-  userLocation,
+  userRegion,
 }: BountyProps) {
   const statusFilterQuery = getStatusFilterQuery(statusFilter);
   let orderBy:
@@ -131,13 +125,7 @@ export async function getListings({
       ],
       language: { in: ['eng', 'sco'] }, //cuz both eng and sco refer to listings in english
       ...statusFilterQuery,
-      ...(userLocation
-        ? {
-            region: {
-              in: [userLocation.toUpperCase() as Regions, Regions.GLOBAL],
-            },
-          }
-        : {}),
+      ...(userRegion ? { region: { in: [userRegion, Regions.GLOBAL] } } : {}),
       Hackathon: null,
     },
     select: {

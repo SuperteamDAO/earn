@@ -1,6 +1,8 @@
-import { status as Status } from '@prisma/client';
+import { Regions, status as Status } from '@prisma/client';
 import type { NextApiRequest, NextApiResponse } from 'next';
+import { getToken } from 'next-auth/jwt';
 
+import { CombinedRegions } from '@/constants/Superteam';
 import type { Bounties } from '@/interface/listings';
 import logger from '@/lib/logger';
 import { prisma } from '@/prisma';
@@ -47,6 +49,20 @@ export default async function user(req: NextApiRequest, res: NextApiResponse) {
     statusQuery.push('b.isWinnersAnnounced = 1');
   }
 
+  const token = await getToken({ req });
+  const userId = token?.sub;
+  let userRegion: Regions = Regions.GLOBAL;
+  if (userId) {
+    const user = await prisma.user.findFirst({
+      where: { id: userId },
+      select: { location: true },
+    });
+    const matchedRegion = CombinedRegions.find(
+      (region) => user?.location && region.country.includes(user?.location),
+    );
+    userRegion = matchedRegion ? matchedRegion.region : Regions.GLOBAL;
+  }
+
   const skills = req.query.skills as string;
   let skillList: string[] = [];
   if (skills) skillList = skills.split(',');
@@ -72,6 +88,8 @@ export default async function user(req: NextApiRequest, res: NextApiResponse) {
     )
     .join(' OR ');
 
+  const regionFilter = `(b.region = ? OR b.region = '${Regions.GLOBAL}')`;
+
   const words = query
     .split(/\s+/)
     .map((c) => c.trim())
@@ -90,77 +108,80 @@ s.name LIKE CONCAT('%', ?, '%')
     whereClauses.length > 0 ? whereClauses.join(' AND ') : '1=1';
 
   const countQuery = `
-SELECT COUNT(*) as totalCount
-FROM (
-SELECT DISTINCT b.id
-FROM Bounties b
-JOIN Sponsors s ON b.sponsorId = s.id
-WHERE (1=1) AND (
-b.isPublished = 1 AND
-b.isPrivate = 0 AND
-${combinedWhereClause} ${statusQuery.length > 0 ? ` AND ( ${statusQuery.join(' OR ')} )` : ''} 
-) ${skills ? ` AND (${skillsQuery})` : ''}
-) as subquery;
-`;
+    SELECT COUNT(*) as totalCount
+    FROM (
+    SELECT DISTINCT b.id
+    FROM Bounties b
+    JOIN Sponsors s ON b.sponsorId = s.id
+    WHERE (1=1) AND (
+    b.isPublished = 1 AND
+    b.isPrivate = 0 AND
+    ${combinedWhereClause} ${statusQuery.length > 0 ? ` AND ( ${statusQuery.join(' OR ')} )` : ''} 
+    ) ${skills ? ` AND (${skillsQuery})` : ''}
+    AND ${regionFilter}
+    ) as subquery;
+    `;
 
   const sqlQuery = `
-SELECT DISTINCT b.id, 
-b.status,
-b.rewardAmount, 
-b.deadline, 
-b.type, 
-JSON_OBJECT('name', s.name, 'logo', s.logo, 'isVerified', s.isVerified) as sponsor,
-b.title, 
-b.token, 
-b.slug, 
-b.applicationType, 
-b.isWinnersAnnounced, 
-b.description, 
-b.compensationType, 
-b.minRewardAsk, 
-b.maxRewardAsk,
-b.updatedAt,
-b.winnersAnnouncedAt,
-b.isFeatured,
-        JSON_OBJECT(
-            'Comments', 
-            (
-                SELECT COUNT(*)
-                FROM Comment c
-                WHERE c.listingId = b.id
-                  AND c.isActive = TRUE
-                  AND c.isArchived = FALSE
-                  AND c.replyToId IS NULL
-                  AND c.type != 'SUBMISSION'
-            )
-        ) AS _count
-FROM Bounties b
-JOIN Sponsors s ON b.sponsorId = s.id
-WHERE (1=1) AND (
-b.isPublished = 1 AND
-b.isPrivate = 0 AND
-${combinedWhereClause} ${statusQuery.length > 0 ? ` AND ( ${statusQuery.join(' OR ')} )` : ''} 
-) ${skills ? ` AND (${skillsQuery})` : ''}
-ORDER BY 
-b.isFeatured DESC,
-  CASE 
-    WHEN b.deadline >= CURRENT_TIMESTAMP THEN 1
-    ELSE 2
-  END,
-  CASE 
-    WHEN b.deadline >= CURRENT_TIMESTAMP THEN b.deadline
-    ELSE NULL
-  END ASC,
-  CASE 
-    WHEN b.deadline < CURRENT_TIMESTAMP THEN b.deadline
-    ELSE NULL
-  END DESC,
-  b.updatedAt DESC, b.id
-LIMIT ? ${offset ? `OFFSET ?` : ''}
-`;
+    SELECT DISTINCT b.id, 
+    b.status,
+    b.rewardAmount, 
+    b.deadline, 
+    b.type, 
+    JSON_OBJECT('name', s.name, 'logo', s.logo, 'isVerified', s.isVerified) as sponsor,
+    b.title, 
+    b.token, 
+    b.slug, 
+    b.applicationType, 
+    b.isWinnersAnnounced, 
+    b.description, 
+    b.compensationType, 
+    b.minRewardAsk, 
+    b.maxRewardAsk,
+    b.updatedAt,
+    b.winnersAnnouncedAt,
+    b.isFeatured,
+            JSON_OBJECT(
+                'Comments', 
+                (
+                    SELECT COUNT(*)
+                    FROM Comment c
+                    WHERE c.listingId = b.id
+                      AND c.isActive = TRUE
+                      AND c.isArchived = FALSE
+                      AND c.replyToId IS NULL
+                      AND c.type != 'SUBMISSION'
+                )
+            ) AS _count
+    FROM Bounties b
+    JOIN Sponsors s ON b.sponsorId = s.id
+    WHERE (1=1) AND (
+    b.isPublished = 1 AND
+    b.isPrivate = 0 AND
+    ${combinedWhereClause} ${statusQuery.length > 0 ? ` AND ( ${statusQuery.join(' OR ')} )` : ''} 
+    ) ${skills ? ` AND (${skillsQuery})` : ''}
+    AND ${regionFilter}
+    ORDER BY 
+    b.isFeatured DESC,
+      CASE 
+        WHEN b.deadline >= CURRENT_TIMESTAMP THEN 1
+        ELSE 2
+      END,
+      CASE 
+        WHEN b.deadline >= CURRENT_TIMESTAMP THEN b.deadline
+        ELSE NULL
+      END ASC,
+      CASE 
+        WHEN b.deadline < CURRENT_TIMESTAMP THEN b.deadline
+        ELSE NULL
+      END DESC,
+      b.updatedAt DESC, b.id
+    LIMIT ? ${offset ? `OFFSET ?` : ''}
+    `;
 
   let values: (string | number)[] = duplicateElements(words, 2);
   if (skills) values = values.concat(skillsFlattened);
+  values.push(userRegion);
 
   try {
     logger.debug(`Executing countQuery with values: ${values}`);
