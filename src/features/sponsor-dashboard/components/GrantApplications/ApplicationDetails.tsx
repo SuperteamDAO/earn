@@ -318,15 +318,18 @@ export const ApplicationDetails = ({
                     </Button>
                   </>
                 )}
-                {isApproved && isNativeAndNonST && (
-                  <RecordPaymentButton
-                    applicationId={selectedApplication.id}
-                    approvedAmount={selectedApplication.approvedAmount}
-                    totalPaid={selectedApplication.totalPaid}
-                    token={grant.token || 'USDC'}
-                    onPaymentRecorded={handlePaymentRecorded}
-                  />
-                )}
+                {isApproved &&
+                  isNativeAndNonST &&
+                  selectedApplication.totalPaid !==
+                    selectedApplication.approvedAmount && (
+                    <RecordPaymentButton
+                      applicationId={selectedApplication.id}
+                      approvedAmount={selectedApplication.approvedAmount}
+                      totalPaid={selectedApplication.totalPaid}
+                      token={grant.token || 'USDC'}
+                      onPaymentRecorded={handlePaymentRecorded}
+                    />
+                  )}
               </Flex>
             </Flex>
 

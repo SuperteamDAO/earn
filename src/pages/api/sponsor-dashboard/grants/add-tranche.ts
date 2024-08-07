@@ -58,6 +58,9 @@ async function handler(req: NextApiRequestWithSponsor, res: NextApiResponse) {
       amount: parsedTrancheAmount,
     });
 
+    const newTotalPaid = currentApplication.totalPaid + parsedTrancheAmount;
+    const isFullyPaid = newTotalPaid >= currentApplication.approvedAmount;
+
     logger.info('Updating payment details and grant information');
     const result = await prisma.$transaction(async (tx) => {
       const updatedGrantApplication = await tx.grantApplication.update({
@@ -70,6 +73,7 @@ async function handler(req: NextApiRequestWithSponsor, res: NextApiResponse) {
             increment: 1,
           },
           paymentDetails: updatedPaymentDetails as any,
+          isShipped: isFullyPaid,
         },
         include: {
           user: true,
