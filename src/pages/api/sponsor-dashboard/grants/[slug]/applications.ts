@@ -100,6 +100,7 @@ async function handler(req: NextApiRequestWithSponsor, res: NextApiResponse) {
             photo: true,
             publicKey: true,
             discord: true,
+            username: true,
           },
         },
         grant: true,
