@@ -112,13 +112,6 @@ export const ApplicationDetails = ({
 
     if (nextPendingApplication) {
       setSelectedApplication(nextPendingApplication);
-    } else {
-      const firstPendingApplication = applications.find(
-        (app) => app.applicationStatus === GrantApplicationStatus.Pending,
-      );
-      if (firstPendingApplication) {
-        setSelectedApplication(firstPendingApplication);
-      }
     }
   };
 
@@ -164,7 +157,13 @@ export const ApplicationDetails = ({
       );
       setSelectedApplication(updatedApplication);
       approveOnClose();
-      moveToNextPendingApplication();
+
+      const currentIndex = updatedApplications.findIndex(
+        (app) => app.id === applicationId,
+      );
+      if (currentIndex < updatedApplications.length - 1) {
+        moveToNextPendingApplication();
+      }
     } catch (e) {
       console.error(e);
     }
@@ -195,7 +194,13 @@ export const ApplicationDetails = ({
       );
       setSelectedApplication(updatedApplication);
       rejectedOnClose();
-      moveToNextPendingApplication();
+
+      const currentIndex = updatedApplications.findIndex(
+        (app) => app.id === applicationId,
+      );
+      if (currentIndex < updatedApplications.length - 1) {
+        moveToNextPendingApplication();
+      }
     } catch (e) {
       console.error(e);
     }

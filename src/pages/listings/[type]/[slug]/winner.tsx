@@ -104,9 +104,12 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
   let bountyData;
   const submissions: StrippedSubmission[] = [];
   try {
-    const bountyDetails = await axios.get(`${fullUrl}api/listings/${slug}`, {
-      params: { type },
-    });
+    const bountyDetails = await axios.get(
+      `${fullUrl}api/listings/details/${slug}`,
+      {
+        params: { type },
+      },
+    );
     bountyData = bountyDetails.data;
 
     const submissionsDetails = await axios.get(
@@ -132,6 +135,8 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
         },
       });
     });
+    console.log('submissions', sortedSubmissions);
+    console.log('bounty ', bountyData);
   } catch (e) {
     console.error(e);
     bountyData = null;
