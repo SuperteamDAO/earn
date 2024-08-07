@@ -177,6 +177,7 @@ export default async function listings(
         },
       },
     },
+    take,
     orderBy: [
       {
         deadline: order,
