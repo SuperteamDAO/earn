@@ -1,6 +1,8 @@
-import { type BountyType, type Prisma } from '@prisma/client';
+import { type BountyType, type Prisma, Regions } from '@prisma/client';
 import type { NextApiRequest, NextApiResponse } from 'next';
+import { getToken } from 'next-auth/jwt';
 
+import { CombinedRegions } from '@/constants/Superteam';
 import logger from '@/lib/logger';
 import { prisma } from '@/prisma';
 import { dayjs } from '@/utils/dayjs';
@@ -58,10 +60,12 @@ function sortListings(listings: Listing[]): Listing[] {
   });
 }
 
-export default async function user(req: NextApiRequest, res: NextApiResponse) {
+export default async function listings(
+  req: NextApiRequest,
+  res: NextApiResponse,
+) {
   const params = req.query;
   const category = params.category as string;
-  const isHomePage = params.isHomePage === 'true';
   const order = (params.order as 'asc' | 'desc') ?? 'desc';
 
   const filter = params.filter as string;
@@ -106,104 +110,126 @@ export default async function user(req: NextApiRequest, res: NextApiResponse) {
     }
   }
 
-  try {
-    if (!category || category === 'all') {
-      const bounties = await prisma.bounties.findMany({
-        where: {
-          isPublished: true,
-          isActive: true,
-          isPrivate: false,
-          hackathonprize: false,
-          isArchived: false,
-          status: 'OPEN',
-          Hackathon: null,
-          deadline: {
-            gte: deadline,
-          },
-          ...(isHomePage ? { rewardAmount: { gt: 100 } } : {}),
-          ...skillsFilter,
+  const token = await getToken({ req });
+  const userId = token?.sub;
+  let userRegion: Regions = Regions.GLOBAL;
+  if (userId) {
+    const user = await prisma.user.findFirst({
+      where: { id: userId },
+      select: { location: true },
+    });
+    const matchedRegion = CombinedRegions.find(
+      (region) => user?.location && region.country.includes(user?.location),
+    );
+    userRegion = matchedRegion ? matchedRegion.region : Regions.GLOBAL;
+  }
+
+  const bountyQueryOptions: Prisma.BountiesFindManyArgs = {
+    where: {
+      isPublished: true,
+      isActive: true,
+      isPrivate: false,
+      hackathonprize: false,
+      isArchived: false,
+      status: 'OPEN',
+      Hackathon: null,
+      deadline: {
+        gte: deadline,
+      },
+      type,
+      ...skillsFilter,
+    },
+    include: {
+      sponsor: {
+        select: {
+          name: true,
+          slug: true,
+          logo: true,
+          isVerified: true,
         },
-        include: {
-          sponsor: {
-            select: {
-              name: true,
-              slug: true,
-              logo: true,
-              isVerified: true,
-            },
-          },
-          _count: {
-            select: {
-              Comments: {
-                where: {
-                  isActive: true,
-                  isArchived: false,
-                  replyToId: null,
-                  type: {
-                    not: 'SUBMISSION',
-                  },
-                },
+      },
+      _count: {
+        select: {
+          Comments: {
+            where: {
+              isActive: true,
+              isArchived: false,
+              replyToId: null,
+              type: {
+                not: 'SUBMISSION',
               },
             },
           },
         },
-        orderBy: [
-          {
-            winnersAnnouncedAt: 'desc',
+      },
+    },
+    orderBy: [
+      {
+        deadline: order,
+      },
+      {
+        winnersAnnouncedAt: 'desc',
+      },
+    ],
+  };
+
+  const grantQueryOptions: Prisma.GrantsFindManyArgs = {
+    where: {
+      isPublished: true,
+      isActive: true,
+      isArchived: false,
+      ...skillsFilter,
+    },
+    take,
+    orderBy: {
+      createdAt: order,
+    },
+    include: {
+      sponsor: {
+        select: {
+          id: true,
+          name: true,
+          slug: true,
+          logo: true,
+          isVerified: true,
+        },
+      },
+      _count: {
+        select: {
+          GrantApplication: {
+            where: {
+              applicationStatus: 'Approved',
+            },
           },
-          {
-            deadline: order,
-          },
-        ],
-      });
+        },
+      },
+    },
+  };
+
+  if (userRegion) {
+    bountyQueryOptions.where = {
+      ...bountyQueryOptions.where,
+      region: {
+        in: [userRegion, Regions.GLOBAL],
+      },
+    };
+
+    grantQueryOptions.where = {
+      ...grantQueryOptions.where,
+      region: {
+        in: [userRegion, Regions.GLOBAL],
+      },
+    };
+  }
+
+  try {
+    if (!category || category === 'all') {
+      const bounties = await prisma.bounties.findMany(bountyQueryOptions);
       //sort bounties by isFeatured
       result.bounties = sortListings(bounties);
     } else if (category === 'bounties') {
-      const bounties = await prisma.bounties.findMany({
-        where: {
-          isPublished: true,
-          isActive: true,
-          isPrivate: false,
-          hackathonprize: false,
-          isArchived: false,
-          status: 'OPEN',
-          type,
-          deadline: {
-            gte: deadline,
-          },
-          ...(isHomePage ? { rewardAmount: { gt: 100 } } : {}),
-          ...skillsFilter,
-          Hackathon: null,
-        },
-        include: {
-          sponsor: {
-            select: {
-              name: true,
-              slug: true,
-              logo: true,
-              isVerified: true,
-            },
-          },
-          _count: {
-            select: {
-              Comments: {
-                where: {
-                  isActive: true,
-                  isArchived: false,
-                  replyToId: null,
-                  type: {
-                    not: 'SUBMISSION',
-                  },
-                },
-              },
-            },
-          },
-        },
-        orderBy: {
-          deadline: 'desc',
-        },
-        take,
-      });
+      const bounties = await prisma.bounties.findMany(bountyQueryOptions);
+
       const splitIndex = bounties.findIndex((bounty) =>
         dayjs().isAfter(dayjs(bounty?.deadline)),
       );
@@ -219,38 +245,7 @@ export default async function user(req: NextApiRequest, res: NextApiResponse) {
     }
 
     if (!category || category === 'all' || category === 'grants') {
-      const grants = await prisma.grants.findMany({
-        where: {
-          isPublished: true,
-          isActive: true,
-          isArchived: false,
-          ...skillsFilter,
-        },
-        take,
-        orderBy: {
-          createdAt: order,
-        },
-        include: {
-          sponsor: {
-            select: {
-              id: true,
-              name: true,
-              slug: true,
-              logo: true,
-              isVerified: true,
-            },
-          },
-          _count: {
-            select: {
-              GrantApplication: {
-                where: {
-                  applicationStatus: 'Approved',
-                },
-              },
-            },
-          },
-        },
-      });
+      const grants = await prisma.grants.findMany(grantQueryOptions);
       result.grants = grants;
     }
 

@@ -9,12 +9,14 @@ export const RecordPaymentButton = ({
   approvedAmount,
   token,
   totalPaid,
+  onPaymentRecorded,
 }: {
   applicationId: string;
   buttonStyle?: ButtonProps;
   approvedAmount: number;
   totalPaid: number;
   token: string;
+  onPaymentRecorded: (updatedApplication: any) => void;
 }) => {
   const {
     isOpen: recordPaymentIsOpen,
@@ -31,6 +33,7 @@ export const RecordPaymentButton = ({
         approvedAmount={approvedAmount}
         totalPaid={totalPaid}
         token={token}
+        onPaymentRecorded={onPaymentRecorded}
       />
       <Button {...buttonStyle} onClick={() => recordPaymentOnOpen()}>
         Record Payment

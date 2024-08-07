@@ -56,7 +56,9 @@ const skillSubSkillMap = {
   ],
   Content: [
     { label: 'Research', value: 'Research' },
+    { label: 'Photography', value: 'Photography' },
     { label: 'Video', value: 'Video' },
+    { label: 'Video Editing', value: 'Video Editing' },
     { label: 'Writing', value: 'Writing' },
     { label: 'Social Media', value: 'Social Media' },
     { label: 'Other', value: 'Other' },

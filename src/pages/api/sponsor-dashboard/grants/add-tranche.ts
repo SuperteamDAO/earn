@@ -71,6 +71,10 @@ async function handler(req: NextApiRequestWithSponsor, res: NextApiResponse) {
           },
           paymentDetails: updatedPaymentDetails as any,
         },
+        include: {
+          user: true,
+          grant: true,
+        },
       });
 
       await tx.grants.update({

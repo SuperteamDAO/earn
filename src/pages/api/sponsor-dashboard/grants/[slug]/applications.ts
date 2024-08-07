@@ -104,7 +104,7 @@ async function handler(req: NextApiRequestWithSponsor, res: NextApiResponse) {
         },
         grant: true,
       },
-      orderBy: { createdAt: 'asc' },
+      orderBy: [{ applicationStatus: 'asc' }, { createdAt: 'asc' }],
       skip,
       take,
     });

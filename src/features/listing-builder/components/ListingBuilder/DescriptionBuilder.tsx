@@ -14,6 +14,7 @@ import {
   useDisclosure,
   VStack,
 } from '@chakra-ui/react';
+import { zodResolver } from '@hookform/resolvers/zod';
 import { Color } from '@tiptap/extension-color';
 import ImageUpload from '@tiptap/extension-image';
 import Link from '@tiptap/extension-link';
@@ -50,7 +51,9 @@ import {
   MdOutlineHorizontalRule,
 } from 'react-icons/md';
 import ImageResize from 'tiptap-extension-resize-image';
+import { z } from 'zod';
 
+import { URL_REGEX } from '@/constants';
 import { ReferenceCard } from '@/features/listings';
 import { uploadToCloudinary } from '@/utils/upload';
 
@@ -103,6 +106,26 @@ interface Props {
   isDuplicating?: boolean;
 }
 
+const schema = z.object({
+  description: z.string(),
+  requirements: z.string().optional(),
+  references: z
+    .array(
+      z.object({
+        order: z.number(),
+        link: z
+          .string()
+          .refine((val) => URL_REGEX.test(val), {
+            message: 'Please enter a valid URL',
+          })
+          .optional(),
+      }),
+    )
+    .optional(),
+});
+
+type FormData = z.infer<typeof schema>;
+
 export const DescriptionBuilder = ({
   setSteps,
   createDraft,
@@ -114,15 +137,24 @@ export const DescriptionBuilder = ({
 }: Props) => {
   const { form, updateState } = useListingFormStore();
 
-  const { register, control, handleSubmit, watch, setValue, reset, getValues } =
-    useForm({
-      mode: 'onBlur',
-      defaultValues: {
-        description: form?.description,
-        requirements: form?.requirements,
-        references: form?.references,
-      },
-    });
+  const {
+    register,
+    control,
+    handleSubmit,
+    watch,
+    setValue,
+    reset,
+    getValues,
+    formState: { errors },
+  } = useForm<FormData>({
+    resolver: zodResolver(schema),
+    mode: 'onBlur',
+    defaultValues: {
+      description: form?.description || '',
+      requirements: form?.requirements,
+      references: form?.references,
+    },
+  });
 
   const { fields, append, remove } = useFieldArray({
     control,
@@ -561,7 +593,11 @@ export const DescriptionBuilder = ({
                   justify="space-between"
                   w="full"
                 >
-                  <ReferenceCard register={register} index={index} />
+                  <ReferenceCard
+                    register={register}
+                    index={index}
+                    errors={errors}
+                  />
                   <Button ml={4} onClick={() => remove(index)}>
                     <DeleteIcon />
                   </Button>

@@ -21,17 +21,9 @@ import {
   Spinner,
   Text,
 } from '@chakra-ui/react';
-import { GrantApplicationStatus } from '@prisma/client';
-import axios from 'axios';
-import React, {
-  type Dispatch,
-  type SetStateAction,
-  useEffect,
-  useState,
-} from 'react';
+import React, { useEffect, useState } from 'react';
 
 import { tokenList } from '@/constants';
-import { type GrantApplicationWithUser } from '@/features/sponsor-dashboard';
 
 interface ApproveModalProps {
   approveIsOpen: boolean;
@@ -39,12 +31,11 @@ interface ApproveModalProps {
   applicationId: string | undefined;
   ask: number | undefined;
   granteeName: string | null | undefined;
-  setApplications: Dispatch<SetStateAction<GrantApplicationWithUser[]>>;
-  applications: GrantApplicationWithUser[];
-  setSelectedApplication: Dispatch<
-    SetStateAction<GrantApplicationWithUser | undefined>
-  >;
   token: string;
+  onApproveGrant: (
+    applicationId: string,
+    approvedAmount: number,
+  ) => Promise<void>;
 }
 
 export const ApproveModal = ({
@@ -53,10 +44,8 @@ export const ApproveModal = ({
   approveOnClose,
   ask,
   granteeName,
-  setApplications,
-  applications,
-  setSelectedApplication,
   token,
+  onApproveGrant,
 }: ApproveModalProps) => {
   const [approvedAmount, setApprovedAmount] = useState<number | undefined>(ask);
   const [loading, setLoading] = useState<boolean>(false);
@@ -73,40 +62,21 @@ export const ApproveModal = ({
   };
 
   const approveGrant = async () => {
-    if (errorMessage || approvedAmount === undefined || approvedAmount === 0)
+    if (
+      errorMessage ||
+      approvedAmount === undefined ||
+      approvedAmount === 0 ||
+      !applicationId
+    )
       return;
 
     setLoading(true);
     try {
-      await axios.post(
-        `/api/sponsor-dashboard/grants/update-application-status`,
-        {
-          id: applicationId,
-          applicationStatus: 'Approved',
-          approvedAmount,
-        },
-      );
-
-      const updatedApplications = applications.map((application) =>
-        application.id === applicationId
-          ? {
-              ...application,
-              applicationStatus: GrantApplicationStatus.Approved,
-              approvedAmount: approvedAmount as number,
-            }
-          : application,
-      );
-
-      setApplications(updatedApplications);
-      const updatedApplication = updatedApplications.find(
-        (application) => application.id === applicationId,
-      );
-      setSelectedApplication(updatedApplication);
+      await onApproveGrant(applicationId, approvedAmount);
     } catch (e) {
-      console.log(e);
+      console.error(e);
     } finally {
       setLoading(false);
-      approveOnClose();
     }
   };
 

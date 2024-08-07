@@ -33,6 +33,7 @@ import { useRouter } from 'next/router';
 import { useSession } from 'next-auth/react';
 import { usePostHog } from 'posthog-js/react';
 import React, { useEffect, useState } from 'react';
+import toast from 'react-hot-toast';
 import { AiOutlineDelete } from 'react-icons/ai';
 import { FiMoreVertical } from 'react-icons/fi';
 
@@ -47,6 +48,7 @@ import {
   isDeadlineOver,
   type ListingWithSubmissions,
 } from '@/features/listings';
+import { getURL } from '@/utils/validUrl';
 
 import { DeleteDraftModal, UnpublishModal } from './Modals';
 import { SponsorPrize } from './SponsorPrize';
@@ -131,6 +133,17 @@ export const ListingTable = ({ listings, setListings }: ListingTableProps) => {
     fetchSubmissionCounts();
   }, [listings]);
 
+  const copyToClipboard = (text: string) => {
+    navigator.clipboard.writeText(text).then(
+      () => {
+        toast.success('Link Copied');
+      },
+      (err) => {
+        console.error('Failed to copy text: ', err);
+      },
+    );
+  };
+
   if (!listings.length) return;
 
   return (
@@ -185,6 +198,11 @@ export const ListingTable = ({ listings, setListings }: ListingTableProps) => {
 
               const listingStatus = getListingStatus(listing);
               const listingLabel = getListingTypeLabel(listing?.type!);
+
+              const listingLink =
+                listing?.type === 'grant'
+                  ? `${getURL()}grants/${listing.slug}`
+                  : `${getURL()}listings/${listing?.type}/${listing.slug}`;
 
               const listingIcon = (() => {
                 switch (listing.type) {
@@ -386,19 +404,26 @@ export const ListingTable = ({ listings, setListings }: ListingTableProps) => {
                           fontSize={'sm'}
                           fontWeight={500}
                           icon={<ExternalLinkIcon h={4} w={4} />}
-                          onClick={() =>
-                            window.open(
-                              listing?.type === 'grant'
-                                ? `${router.basePath}/grants/${listing.slug}`
-                                : `${router.basePath}/listings/${listing?.type}/${listing.slug}`,
-                              '_blank',
-                            )
-                          }
+                          onClick={() => window.open(listingLink, '_blank')}
                         >
                           View {listingLabel}
                         </MenuItem>
 
-                        {(session?.user?.role === 'GOD' ||
+                        {!!listing.isPublished && (
+                          <MenuItem
+                            py={2}
+                            color={'brand.slate.500'}
+                            fontSize={'sm'}
+                            fontWeight={500}
+                            icon={<CopyIcon h={4} w={4} />}
+                            onClick={() => copyToClipboard(listingLink)}
+                          >
+                            Copy Link
+                          </MenuItem>
+                        )}
+
+                        {((session?.user?.role === 'GOD' &&
+                          listing.type !== 'grant') ||
                           (listing.isPublished &&
                             !pastDeadline &&
                             listing.type !== 'grant')) && (

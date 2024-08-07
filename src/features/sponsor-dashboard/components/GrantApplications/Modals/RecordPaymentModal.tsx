@@ -29,6 +29,7 @@ interface RecordPaymentModalProps {
   approvedAmount: number;
   totalPaid: number;
   token: string;
+  onPaymentRecorded: (newTotalPaid: number) => void;
 }
 
 const paymentSchema = (maxAmount: number, token: string) =>
@@ -62,6 +63,7 @@ export const RecordPaymentModal = ({
   approvedAmount,
   totalPaid,
   token,
+  onPaymentRecorded,
 }: RecordPaymentModalProps) => {
   const [loading, setLoading] = useState<boolean>(false);
   const maxAmount = approvedAmount - totalPaid;
@@ -77,15 +79,21 @@ export const RecordPaymentModal = ({
   const addPayment = async (data: PaymentFormInputs) => {
     setLoading(true);
     try {
-      await axios.get(`/api/sponsor-dashboard/grants/add-tranche`, {
-        params: {
-          id: applicationId,
-          trancheAmount: data.amount,
-          txId: data.transactionLink,
+      const response = await axios.get(
+        `/api/sponsor-dashboard/grants/add-tranche`,
+        {
+          params: {
+            id: applicationId,
+            trancheAmount: data.amount,
+            txId: data.transactionLink,
+          },
         },
-      });
+      );
+
+      const updatedApplication = response.data;
+      onPaymentRecorded(updatedApplication);
     } catch (e) {
-      console.log(e);
+      console.error(e);
     } finally {
       setLoading(false);
       recordPaymentOnClose();
