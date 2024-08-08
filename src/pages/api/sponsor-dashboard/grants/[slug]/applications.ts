@@ -101,6 +101,8 @@ async function handler(req: NextApiRequestWithSponsor, res: NextApiResponse) {
             publicKey: true,
             discord: true,
             username: true,
+            twitter: true,
+            telegram: true,
           },
         },
         grant: true,
