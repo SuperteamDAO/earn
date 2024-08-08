@@ -142,9 +142,35 @@ async function handler(_req: NextApiRequest, res: NextApiResponse) {
     let users = await prisma.user.findMany({
       take: 10,
       where: {
-        updatedAt: {
-          gt: lastCronDateTime,
-        },
+        isTalentFilled: true,
+        OR: [
+          {
+            updatedAt: {
+              gt: lastCronDateTime,
+            },
+          },
+          {
+            Submission: {
+              some: {
+                AND: [
+                  {
+                    updatedAt: {
+                      gt: lastCronDateTime,
+                    },
+                  },
+                  {
+                    isWinner: true,
+                  },
+                  {
+                    listing: {
+                      isWinnersAnnounced: true,
+                    },
+                  },
+                ],
+              },
+            },
+          },
+        ],
       },
       include: {
         Submission: {
@@ -191,9 +217,35 @@ async function handler(_req: NextApiRequest, res: NextApiResponse) {
         skip: 1,
         cursor: { id: cursor },
         where: {
-          updatedAt: {
-            gt: lastCronDateTime,
-          },
+          isTalentFilled: true,
+          OR: [
+            {
+              updatedAt: {
+                gt: lastCronDateTime,
+              },
+            },
+            {
+              Submission: {
+                some: {
+                  AND: [
+                    {
+                      updatedAt: {
+                        gt: lastCronDateTime,
+                      },
+                    },
+                    {
+                      isWinner: true,
+                    },
+                    {
+                      listing: {
+                        isWinnersAnnounced: true,
+                      },
+                    },
+                  ],
+                },
+              },
+            },
+          ],
         },
         include: {
           Submission: {
