@@ -135,8 +135,6 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
         },
       });
     });
-    console.log('submissions', sortedSubmissions);
-    console.log('bounty ', bountyData);
   } catch (e) {
     console.error(e);
     bountyData = null;

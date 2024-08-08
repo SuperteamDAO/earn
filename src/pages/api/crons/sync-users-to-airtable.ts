@@ -19,7 +19,7 @@ interface ForFoundersAirtableSchema {
   updatedAt: string;
   isVerified: string;
   role: string;
-  'Total Earned in USD on Earn/ST': string;
+  'Total Earned in USD on Earn/ST': number;
   isTalentFilled: string;
   interests?: string;
   Bio?: string;
@@ -83,7 +83,7 @@ function convertUserToAirtable(user: User): ForFoundersAirtableSchema {
     updatedAt: ((user.updatedAt || '') as any as Date).toLocaleString(),
     isVerified: String(user.isVerified ? 1 : 0),
     role: user.role ?? 'USER',
-    'Total Earned in USD on Earn/ST': String(totalWinnings ?? 0),
+    'Total Earned in USD on Earn/ST': totalWinnings ?? 0,
     isTalentFilled: String(user.isTalentFilled ? 1 : 0),
     interests: user.interests ?? undefined,
     Bio: user.bio ?? undefined,
@@ -147,7 +147,21 @@ async function handler(_req: NextApiRequest, res: NextApiResponse) {
         },
       },
       include: {
-        Submission: true,
+        Submission: {
+          include: {
+            listing: true,
+          },
+          where: {
+            isWinner: true,
+            isArchived: false,
+            listing: {
+              isWinnersAnnounced: true,
+            },
+          },
+        },
+      },
+      orderBy: {
+        createdAt: 'asc',
       },
     });
     if (users.length === 0) {
@@ -167,6 +181,8 @@ async function handler(_req: NextApiRequest, res: NextApiResponse) {
     const data = airtableUpsert('id', usersAirtable);
     await axios.patch(url, JSON.stringify(data), config);
 
+    // let counterUsers = users.length
+
     do {
       cursor = users[9]?.id ?? undefined;
       if (!cursor) break;
@@ -180,7 +196,21 @@ async function handler(_req: NextApiRequest, res: NextApiResponse) {
           },
         },
         include: {
-          Submission: true,
+          Submission: {
+            include: {
+              listing: true,
+            },
+            where: {
+              isWinner: true,
+              isArchived: false,
+              listing: {
+                isWinnersAnnounced: true,
+              },
+            },
+          },
+        },
+        orderBy: {
+          createdAt: 'asc',
         },
       });
 
@@ -192,7 +222,10 @@ async function handler(_req: NextApiRequest, res: NextApiResponse) {
           fields: convertUserToAirtable(user as any),
         });
       }
-      await axios.patch(url, airtableUpsert('id', usersAirtable), config);
+
+      if (usersAirtable.length > 0)
+        await axios.patch(url, airtableUpsert('id', usersAirtable), config);
+      // counterUsers += users.length
     } while (cursor);
 
     res.status(200).json({ message: 'Airtable Synced successfully' });
