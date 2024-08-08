@@ -72,15 +72,9 @@
 
   NOTE: If you are facing any issues with setup, feel free to contact [Abhishek](https://twitter.com/abhwshek)
   
-4. Need to run migrate command locally as there is no migration file
-  - start mysql docker container (example: docker run -d -p 3306:3306 -e MYSQL_ROOT_PASSWORD=strong_password mysql && url for this is 'mysql://root:strong_password@localhost:3306/earn') or user any mysql cloud db and use the respective database_url while running the migrate command (If using docker stop and remove the container after running the migrate command).
-  ```bash
-      pnpx prisma migrate dev --name init
- ```
+4. Now change the DATABASE_URL='mysql://root:strong_password@db:3306/earn'.
 
-5. Now change the DATABASE_URL='mysql://root:strong_password@db:3306/earn'.
-
-6. Run Docker Compose
+5. Run Docker Compose
  ```bash
     docker compose up
  ```
