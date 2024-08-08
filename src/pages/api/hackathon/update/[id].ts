@@ -94,7 +94,7 @@ async function bounty(req: NextApiRequestWithUser, res: NextApiResponse) {
           where: {
             listingId: id,
             isWinner: true,
-            winnerPosition: String(position),
+            winnerPosition: position,
           },
           data: {
             isWinner: false,

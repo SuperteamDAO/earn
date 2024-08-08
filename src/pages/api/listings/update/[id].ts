@@ -101,7 +101,7 @@ async function bounty(req: NextApiRequestWithSponsor, res: NextApiResponse) {
           where: {
             listingId: id as string,
             isWinner: true,
-            winnerPosition: String(position),
+            winnerPosition: position,
           },
           data: {
             isWinner: false,

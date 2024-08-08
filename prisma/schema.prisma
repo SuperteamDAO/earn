@@ -232,7 +232,7 @@ model Submission {
   userId             String
   listingId          String
   isWinner           Boolean          @default(false)
-  winnerPosition     String?
+  winnerPosition     Int?
   isActive           Boolean          @default(true)
   isArchived         Boolean          @default(false)
   createdAt          DateTime         @default(now())
