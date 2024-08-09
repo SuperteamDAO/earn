@@ -22,11 +22,16 @@ import dayjs from 'dayjs';
 import NextLink from 'next/link';
 import React, { type Dispatch, type SetStateAction } from 'react';
 import { FaDiscord } from 'react-icons/fa';
+import { FaTelegram, FaXTwitter } from 'react-icons/fa6';
 import { MdOutlineAccountBalanceWallet, MdOutlineMail } from 'react-icons/md';
 
 import { EarnAvatar } from '@/components/shared/EarnAvatar';
 import { tokenList } from '@/constants';
 import { type Grant } from '@/features/grants';
+import {
+  extractTelegramUsername,
+  extractTwitterUsername,
+} from '@/utils/extractUsername';
 import { truncatePublicKey } from '@/utils/truncatePublicKey';
 import { truncateString } from '@/utils/truncateString';
 
@@ -112,13 +117,6 @@ export const ApplicationDetails = ({
 
     if (nextPendingApplication) {
       setSelectedApplication(nextPendingApplication);
-    } else {
-      const firstPendingApplication = applications.find(
-        (app) => app.applicationStatus === GrantApplicationStatus.Pending,
-      );
-      if (firstPendingApplication) {
-        setSelectedApplication(firstPendingApplication);
-      }
     }
   };
 
@@ -164,7 +162,13 @@ export const ApplicationDetails = ({
       );
       setSelectedApplication(updatedApplication);
       approveOnClose();
-      moveToNextPendingApplication();
+
+      const currentIndex = updatedApplications.findIndex(
+        (app) => app.id === applicationId,
+      );
+      if (currentIndex < updatedApplications.length - 1) {
+        moveToNextPendingApplication();
+      }
     } catch (e) {
       console.error(e);
     }
@@ -195,10 +199,69 @@ export const ApplicationDetails = ({
       );
       setSelectedApplication(updatedApplication);
       rejectedOnClose();
-      moveToNextPendingApplication();
+
+      const currentIndex = updatedApplications.findIndex(
+        (app) => app.id === applicationId,
+      );
+      if (currentIndex < updatedApplications.length - 1) {
+        moveToNextPendingApplication();
+      }
     } catch (e) {
       console.error(e);
     }
+  };
+
+  const SocialMediaLink = () => {
+    if (selectedApplication?.user?.twitter) {
+      const username = extractTwitterUsername(selectedApplication.user.twitter);
+      if (username) {
+        return (
+          <Flex align="center" justify="start" gap={2} fontSize="sm">
+            <FaXTwitter color="#94A3B8" />
+            <Link
+              color="brand.slate.400"
+              href={`https://x.com/${username}`}
+              isExternal
+            >
+              @{username}
+            </Link>
+          </Flex>
+        );
+      }
+    }
+
+    if (selectedApplication?.user?.telegram) {
+      const username = extractTelegramUsername(
+        selectedApplication.user.telegram,
+      );
+      if (username) {
+        return (
+          <Flex align="center" justify="start" gap={2} fontSize="sm">
+            <FaTelegram color="#94A3B8" />
+            <Link
+              color="brand.slate.400"
+              href={`https://t.me/${username}`}
+              isExternal
+            >
+              @{username}
+            </Link>
+          </Flex>
+        );
+      }
+    }
+
+    if (selectedApplication?.user?.discord) {
+      return (
+        <Flex align="center" justify="start" gap={2} fontSize="sm">
+          <FaDiscord color="#94A3B8" />
+          <Text color="brand.slate.400">
+            {selectedApplication.user.discord}
+          </Text>
+        </Flex>
+      );
+    }
+
+    return null;
   };
 
   return (
@@ -270,6 +333,7 @@ export const ApplicationDetails = ({
                     fontWeight={500}
                     whiteSpace={'nowrap'}
                     href={`/t/${selectedApplication?.user?.username}`}
+                    isExternal
                   >
                     View Profile <ArrowForwardIcon mb="0.5" />
                   </Link>
@@ -312,15 +376,18 @@ export const ApplicationDetails = ({
                     </Button>
                   </>
                 )}
-                {isApproved && isNativeAndNonST && (
-                  <RecordPaymentButton
-                    applicationId={selectedApplication.id}
-                    approvedAmount={selectedApplication.approvedAmount}
-                    totalPaid={selectedApplication.totalPaid}
-                    token={grant.token || 'USDC'}
-                    onPaymentRecorded={handlePaymentRecorded}
-                  />
-                )}
+                {isApproved &&
+                  isNativeAndNonST &&
+                  selectedApplication.totalPaid !==
+                    selectedApplication.approvedAmount && (
+                    <RecordPaymentButton
+                      applicationId={selectedApplication.id}
+                      approvedAmount={selectedApplication.approvedAmount}
+                      totalPaid={selectedApplication.totalPaid}
+                      token={grant.token || 'USDC'}
+                      onPaymentRecorded={handlePaymentRecorded}
+                    />
+                  )}
               </Flex>
             </Flex>
 
@@ -431,15 +498,8 @@ export const ApplicationDetails = ({
                   </Text>
                 </Flex>
               )}
-              {selectedApplication?.user?.discord && (
-                <Flex align="center" justify="start" gap={2} fontSize="sm">
-                  <FaDiscord color="#94A3B8" />
 
-                  <Text color="brand.slate.400">
-                    {selectedApplication?.user?.discord}
-                  </Text>
-                </Flex>
-              )}
+              <SocialMediaLink />
             </Flex>
           </Box>
 

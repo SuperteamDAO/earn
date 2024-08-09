@@ -1,39 +1,10 @@
-import { type BountyType } from '@prisma/client';
-import { type NextApiRequest, type NextApiResponse } from 'next';
+import { Regions } from '@prisma/client';
 
-import logger from '@/lib/logger';
 import { prisma } from '@/prisma';
-import { safeStringify } from '@/utils/safeStringify';
 
-export type Skills = 'development' | 'design' | 'content' | 'other';
 export type Status = 'open' | 'review' | 'completed';
 
-const filterToSkillsMap: Record<string, string[]> = {
-  development: ['Frontend', 'Backend', 'Blockchain', 'Mobile'],
-  design: ['Design'],
-  content: ['Content'],
-  other: ['Other', 'Growth', 'Community'],
-};
-
-function getSkillFilterQuery(skillFilter: Skills | undefined) {
-  let skillFilterQuery = {};
-
-  if (skillFilter) {
-    const skillsToFilter = filterToSkillsMap[skillFilter] || [];
-    if (skillsToFilter.length > 0) {
-      skillFilterQuery = {
-        OR: skillsToFilter.map((skill) => ({
-          skills: {
-            path: '$[*].skills',
-            array_contains: [skill],
-          },
-        })),
-      };
-    }
-  }
-
-  return skillFilterQuery;
-}
+const TAKE = 20;
 
 function getStatusFilterQuery(statusFilter: Status | undefined) {
   let statusFilterQuery = {};
@@ -63,21 +34,18 @@ function getStatusFilterQuery(statusFilter: Status | undefined) {
 }
 
 interface GrantProps {
-  order?: 'asc' | 'desc';
-  take?: number;
-  skillFilter?: Skills;
+  userRegion?: Regions | null;
 }
 
-export async function getGrants({ take = 20, skillFilter }: GrantProps) {
-  const skillFilterQuery = getSkillFilterQuery(skillFilter);
+export async function getGrants({ userRegion }: GrantProps) {
   return await prisma.grants.findMany({
     where: {
       isPublished: true,
       isActive: true,
       isArchived: false,
-      ...skillFilterQuery,
+      ...(userRegion ? { region: { in: [userRegion, Regions.GLOBAL] } } : {}),
     },
-    take,
+    take: TAKE,
     orderBy: {
       createdAt: 'desc',
     },
@@ -112,26 +80,16 @@ export async function getGrants({ take = 20, skillFilter }: GrantProps) {
 
 interface BountyProps {
   order?: 'asc' | 'desc';
-  skillFilter?: Skills;
   statusFilter?: Status;
-  type?: BountyType;
-  take?: number;
+  userRegion?: Regions | null;
 }
 
 export async function getListings({
   order = 'desc',
-  skillFilter,
   statusFilter,
-  type,
-  take = 20,
+  userRegion,
 }: BountyProps) {
-  const skillFilterQuery = getSkillFilterQuery(skillFilter);
-
   const statusFilterQuery = getStatusFilterQuery(statusFilter);
-  logger.debug(
-    `Bounty status filter query: ${safeStringify(statusFilterQuery)}`,
-  );
-
   let orderBy:
     | { deadline: 'asc' | 'desc' }
     | { winnersAnnouncedAt: 'asc' | 'desc' }
@@ -160,15 +118,14 @@ export async function getListings({
       isPrivate: false,
       hackathonprize: false,
       isArchived: false,
-      type,
       OR: [
         { compensationType: 'fixed', usdValue: { gt: 100 } },
         { compensationType: 'range', maxRewardAsk: { gt: 100 } },
         { compensationType: 'variable' },
       ],
       language: { in: ['eng', 'sco'] }, //cuz both eng and sco refer to listings in english
-      ...skillFilterQuery,
       ...statusFilterQuery,
+      ...(userRegion ? { region: { in: [userRegion, Regions.GLOBAL] } } : {}),
       Hackathon: null,
     },
     select: {
@@ -210,7 +167,7 @@ export async function getListings({
       },
     },
     orderBy,
-    take,
+    take: TAKE,
   });
 
   if (statusFilter === 'open') {
@@ -224,52 +181,5 @@ export async function getListings({
       }
     });
   }
-
-  logger.debug(`Fetched bounties`);
   return bounties;
-}
-
-export default async function listings(
-  req: NextApiRequest,
-  res: NextApiResponse,
-) {
-  const params = req.query;
-  const includeGrants = !!params.grants;
-  const order = (params.order as 'asc' | 'desc') ?? 'desc';
-
-  const skillFilter = params.skill as Skills | undefined;
-  const statusFilter = params.status as Status | undefined;
-  const type = params.type as BountyType | undefined;
-  const take = params.take ? parseInt(params.take as string, 20) : 20;
-
-  logger.debug(`Request params: ${safeStringify(params)}`);
-
-  try {
-    const bounties = await getListings({
-      order,
-      skillFilter,
-      statusFilter,
-      type,
-      take,
-    });
-
-    let grants: Awaited<ReturnType<typeof getGrants>> | undefined = undefined;
-    if (includeGrants) {
-      grants = await getGrants({ take });
-    }
-
-    logger.info('Fetched listings successfully');
-    res.status(200).json({
-      bounties,
-      grants,
-    });
-  } catch (error: any) {
-    logger.error(
-      `Error occurred while fetching listings: ${safeStringify(error)}`,
-    );
-    res.status(400).json({
-      error: error.message,
-      message: 'Error occurred while fetching listings',
-    });
-  }
 }

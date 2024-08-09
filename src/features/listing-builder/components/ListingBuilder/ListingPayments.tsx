@@ -256,7 +256,14 @@ export const ListingPayments = ({
   const handleUpdateListing = async () => {
     const errorMessage = validateRewardsData();
     const data = getValues();
-    const formData = { ...form, ...data };
+    let formData = { ...form, ...data };
+    if (isProject) {
+      if (compensationType === 'fixed') {
+        formData = { ...data, rewards: { 1: rewardAmount ?? 0 } };
+      } else {
+        formData = { ...data, rewards: { 1: 0 } };
+      }
+    }
     if (errorMessage) {
       setErrorMessage(errorMessage);
     } else {
@@ -318,9 +325,9 @@ export const ListingPayments = ({
     let newState = { ...data };
     if (isProject) {
       if (compensationType === 'fixed') {
-        newState = { ...data, rewards: { first: rewardAmount } };
+        newState = { ...data, rewards: { 1: rewardAmount } };
       } else {
-        newState = { ...data, rewards: { first: 0 } };
+        newState = { ...data, rewards: { 1: 0 } };
       }
     }
     updateState(newState);

@@ -169,9 +169,10 @@ export const SubmissionModal = ({
           question: q.question,
           answer: answers[`eligibility-${q.order}`],
         })) ?? [];
-      await axios.post('/api/user/update/', {
-        publicKey,
-      });
+      if (userInfo?.publicKey !== publicKey)
+        await axios.post('/api/user/update/', {
+          publicKey,
+        });
 
       const submissionEndpoint = editMode
         ? '/api/submission/update/'
