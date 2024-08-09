@@ -93,7 +93,7 @@ export const SubmissionActionButton = ({
   const checkUserSubmission = async () => {
     setIsUserSubmissionLoading(true);
     try {
-      const response = await axios.get('/api/submissions/check/', {
+      const response = await axios.get('/api/submission/check/', {
         params: { listingId: id },
       });
       setIsSubmitted(response.data.isSubmitted);
