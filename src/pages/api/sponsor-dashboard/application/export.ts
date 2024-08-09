@@ -88,7 +88,7 @@ async function handler(req: NextApiRequestWithSponsor, res: NextApiResponse) {
           Deadline: application?.projectTimeline,
           'Proof of work': application?.proofOfWork,
           'Goals and Milestones': application?.proofOfWork,
-          'Primary Key Performance Indication': application?.kpi,
+          'Primary KPI': application?.kpi,
           ...customGrantQuestions,
           Ask: application.ask || '',
           'Approved Amount': application.approvedAmount,
