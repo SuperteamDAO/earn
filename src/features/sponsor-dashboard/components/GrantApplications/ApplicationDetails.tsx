@@ -212,24 +212,6 @@ export const ApplicationDetails = ({
   };
 
   const SocialMediaLink = () => {
-    if (selectedApplication?.user?.twitter) {
-      const username = extractTwitterUsername(selectedApplication.user.twitter);
-      if (username) {
-        return (
-          <Flex align="center" justify="start" gap={2} fontSize="sm">
-            <FaXTwitter color="#94A3B8" />
-            <Link
-              color="brand.slate.400"
-              href={`https://x.com/${username}`}
-              isExternal
-            >
-              @{username}
-            </Link>
-          </Flex>
-        );
-      }
-    }
-
     if (selectedApplication?.user?.telegram) {
       const username = extractTelegramUsername(
         selectedApplication.user.telegram,
@@ -241,6 +223,24 @@ export const ApplicationDetails = ({
             <Link
               color="brand.slate.400"
               href={`https://t.me/${username}`}
+              isExternal
+            >
+              @{username}
+            </Link>
+          </Flex>
+        );
+      }
+    }
+
+    if (selectedApplication?.user?.twitter) {
+      const username = extractTwitterUsername(selectedApplication.user.twitter);
+      if (username) {
+        return (
+          <Flex align="center" justify="start" gap={2} fontSize="sm">
+            <FaXTwitter color="#94A3B8" />
+            <Link
+              color="brand.slate.400"
+              href={`https://x.com/${username}`}
               isExternal
             >
               @{username}
