@@ -43,7 +43,7 @@ async function handler(req: NextApiRequestWithSponsor, res: NextApiResponse) {
       where: { id },
       data: {
         isWinner,
-        winnerPosition: winnerPosition ? String(winnerPosition) : null,
+        winnerPosition: winnerPosition ? winnerPosition : null,
       },
       include: { listing: true },
     });
