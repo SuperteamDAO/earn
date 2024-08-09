@@ -24,8 +24,9 @@ import { tokenList } from '@/constants/index';
 import { dayjs } from '@/utils/dayjs';
 import { formatNumberWithSuffix } from '@/utils/formatNumberWithSuffix';
 import { getURLSanitized } from '@/utils/getURLSanitized';
+import { cleanRewards, nthLabelGenerator, rankLabels } from '@/utils/rank';
 
-import type { Listing, Rewards } from '../../types';
+import type { Listing } from '../../types';
 import { SubmissionActionButton } from '../Submission/SubmissionActionButton';
 import { CompensationAmount } from './CompensationAmount';
 
@@ -90,15 +91,16 @@ export function RightSideBar({ listing }: { listing: Listing }) {
 
   const isProject = type === 'project';
 
-  type PrizeKey = keyof Rewards;
+  const rewardLength = cleanRewards(rewards).length;
 
-  const prizeMapping = [
-    { key: 'first' as PrizeKey, label: '1st', description: 'First Prize' },
-    { key: 'second' as PrizeKey, label: '2nd', description: 'Second Prize' },
-    { key: 'third' as PrizeKey, label: '3rd', description: 'Third Prize' },
-    { key: 'fourth' as PrizeKey, label: '4th', description: 'Fourth Prize' },
-    { key: 'fifth' as PrizeKey, label: '5th', description: 'Fifth Prize' },
-  ];
+  const prizeMapping = rankLabels
+    .map((r, i) => ({
+      key: i,
+      label: nthLabelGenerator(i),
+      description: `${r} Prize`,
+    }))
+    .slice(1, rewardLength + 1);
+  // first item of rankLabels is ZERO, therefore slice from index 1
 
   return (
     <Box w={{ base: 'full', md: 'auto' }}>

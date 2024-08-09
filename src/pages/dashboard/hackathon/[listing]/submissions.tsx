@@ -15,7 +15,7 @@ import {
 import type { SubmissionWithUser } from '@/interface/submission';
 import { Sidebar } from '@/layouts/Sponsor';
 import { userStore } from '@/store/user';
-import { sortRank } from '@/utils/rank';
+import { cleanRewards, sortRank } from '@/utils/rank';
 
 interface Props {
   listing: string;
@@ -32,13 +32,13 @@ function BountySubmissions({ listing }: Props) {
   const [submissions, setSubmissions] = useState<SubmissionWithUser[]>([]);
   const [selectedSubmission, setSelectedSubmission] =
     useState<SubmissionWithUser>();
-  const [rewards, setRewards] = useState<string[]>([]);
+  const [rewards, setRewards] = useState<number[]>([]);
   const [isBountyLoading, setIsBountyLoading] = useState(true);
   const [skip, setSkip] = useState(0);
   const length = 10;
   const [searchText, setSearchText] = useState('');
 
-  const [usedPositions, setUsedPositions] = useState<string[]>([]);
+  const [usedPositions, setUsedPositions] = useState<number[]>([]);
 
   useEffect(() => {}, [bounty]);
 
@@ -54,16 +54,18 @@ function BountySubmissions({ listing }: Props) {
       }
       setTotalPaymentsMade(bountyDetails.data.paymentsMade || 0);
 
-      const usedPos = bountyDetails.data.Submission.filter(
+      const usedPos: number[] = bountyDetails.data.Submission.filter(
         (s: any) => s.isWinner,
-      ).map((s: any) => s.winnerPosition);
+      )
+        .map((s: any) => Number(s.winnerPosition))
+        .filter((key: number) => !isNaN(key));
       setUsedPositions(usedPos);
 
       setTotalSubmissions(bountyDetails.data.totalSubmissions);
       setTotalWinners(bountyDetails.data.winnersSelected);
       setTotalPaymentsMade(bountyDetails.data.paymentsMade);
 
-      const ranks = sortRank(Object.keys(bountyDetails.data.rewards || {}));
+      const ranks = sortRank(cleanRewards(bountyDetails.data.rewards));
       setRewards(ranks);
       setIsBountyLoading(false);
     } catch (e) {

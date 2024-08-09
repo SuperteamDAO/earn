@@ -85,10 +85,11 @@ async function bounty(req: NextApiRequestWithUser, res: NextApiResponse) {
     if (newRewardsCount < currentTotalWinners) {
       updatedData.totalWinnersSelected = newRewardsCount;
 
-      const positions = ['first', 'second', 'third', 'fourth', 'fifth'];
-      const positionsToReset = positions.slice(newRewardsCount);
-
-      for (const position of positionsToReset) {
+      for (
+        let position = newRewardsCount + 1;
+        position <= currentTotalWinners;
+        position++
+      ) {
         await prisma.submission.updateMany({
           where: {
             listingId: id,
