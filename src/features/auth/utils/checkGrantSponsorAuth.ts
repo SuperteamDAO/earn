@@ -12,7 +12,6 @@ export const checkGrantSponsorAuth = async (
 
   const grant = await prisma.grants.findUnique({
     where: { id: grantId },
-    include: { sponsor: true },
   });
 
   if (!grant) {

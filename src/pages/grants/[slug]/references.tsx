@@ -8,7 +8,6 @@ import { OgImageViewer } from '@/components/misc/ogImageViewer';
 import { EmptySection } from '@/components/shared/EmptySection';
 import { LoadingSection } from '@/components/shared/LoadingSection';
 import { type Grant, GrantsHeader } from '@/features/grants';
-import type { SponsorType } from '@/interface/sponsor';
 import { Default } from '@/layouts/Default';
 import { getURL } from '@/utils/validUrl';
 
@@ -84,7 +83,7 @@ function Grants({ grant: initialGrant }: GrantsDetailsProps) {
         <>
           <GrantsHeader
             title={grant?.title ?? ''}
-            sponsor={grant?.sponsor as SponsorType}
+            sponsor={grant?.sponsor}
             status={grant?.status}
             region={grant?.region}
             slug={grant?.slug}

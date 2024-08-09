@@ -31,7 +31,6 @@ export default async function grants(
         logo: true,
         sponsor: {
           select: {
-            id: true,
             name: true,
             slug: true,
             logo: true,

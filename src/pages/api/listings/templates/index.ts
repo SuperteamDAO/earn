@@ -25,7 +25,12 @@ export default async function bounties(
       include: {
         Bounties: {
           select: {
-            sponsor: true,
+            sponsor: {
+              select: {
+                name: true,
+                logo: true,
+              },
+            },
           },
         },
       },

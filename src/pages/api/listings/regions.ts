@@ -45,7 +45,35 @@ export default async function user(req: NextApiRequest, res: NextApiResponse) {
           },
         ],
       },
-      include: {
+      select: {
+        rewardAmount: true,
+        deadline: true,
+        type: true,
+        title: true,
+        token: true,
+        winnersAnnouncedAt: true,
+        slug: true,
+        applicationType: true,
+        isWinnersAnnounced: true,
+        isFeatured: true,
+        compensationType: true,
+        minRewardAsk: true,
+        maxRewardAsk: true,
+        status: true,
+        _count: {
+          select: {
+            Comments: {
+              where: {
+                isActive: true,
+                isArchived: false,
+                replyToId: null,
+                type: {
+                  not: 'SUBMISSION',
+                },
+              },
+            },
+          },
+        },
         sponsor: {
           select: {
             name: true,

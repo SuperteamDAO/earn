@@ -28,7 +28,6 @@ import {
   TimeToPayIcon,
 } from '@/features/grants';
 import { DescriptionUI } from '@/features/listings';
-import type { SponsorType } from '@/interface/sponsor';
 import { Default } from '@/layouts/Default';
 import { getURLSanitized } from '@/utils/getURLSanitized';
 import { getURL } from '@/utils/validUrl';
@@ -87,7 +86,7 @@ function Grants({ grant: initialGrant }: InitialGrant) {
         <>
           <GrantsHeader
             title={grant?.title ?? ''}
-            sponsor={grant?.sponsor as SponsorType}
+            sponsor={grant?.sponsor}
             status={grant?.status}
             region={grant?.region}
             slug={grant?.slug}

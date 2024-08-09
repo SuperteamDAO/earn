@@ -67,7 +67,7 @@ async function handler(req: NextApiRequestWithUser, res: NextApiResponse) {
     logger.info(
       `Successfully created ${results.count} PoWs for user ${userId}`,
     );
-    return res.status(200).json(results);
+    return res.status(200).json({ message: 'Success' });
   } catch (error: any) {
     logger.error(
       `Error creating PoWs for user ${userId}:`,

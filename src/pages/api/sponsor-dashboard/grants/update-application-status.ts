@@ -30,10 +30,6 @@ async function handler(req: NextApiRequestWithSponsor, res: NextApiResponse) {
   try {
     const currentApplication = await prisma.grantApplication.findUnique({
       where: { id },
-      include: {
-        grant: true,
-        user: true,
-      },
     });
 
     if (!currentApplication) {
@@ -63,8 +59,21 @@ async function handler(req: NextApiRequestWithSponsor, res: NextApiResponse) {
       where: { id },
       data: updatedData,
       include: {
-        user: true,
-        grant: true,
+        user: {
+          select: {
+            firstName: true,
+            lastName: true,
+            email: true,
+            twitter: true,
+            discord: true,
+          },
+        },
+        grant: {
+          select: {
+            airtableId: true,
+            isNative: true,
+          },
+        },
       },
     });
 
@@ -105,7 +114,7 @@ async function handler(req: NextApiRequestWithSponsor, res: NextApiResponse) {
       await axios.patch(url, JSON.stringify(airtablePayload), config);
     }
 
-    return res.status(200).json(result);
+    return res.status(200).json({ message: 'Success' });
   } catch (error: any) {
     logger.error(
       `Error occurred while updating grant application ID: ${id} by user ID: ${userId}: ${error.message}`,

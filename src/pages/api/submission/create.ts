@@ -38,8 +38,11 @@ async function submission(req: NextApiRequestWithUser, res: NextApiResponse) {
         ask: ask || null,
       },
       include: {
-        user: true,
-        listing: true,
+        listing: {
+          select: {
+            pocId: true,
+          },
+        },
       },
     });
 

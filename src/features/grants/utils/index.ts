@@ -1,4 +1,5 @@
-import { type GrantApplicationWithUser } from '@/features/sponsor-dashboard';
+import { type GrantApplication } from '@prisma/client';
+
 import { formatNumberWithSuffix } from '@/utils/formatNumberWithSuffix';
 
 export function grantAmount({
@@ -15,9 +16,16 @@ export function grantAmount({
   }
 }
 
-interface GrantApplicationWithUserAndGrant extends GrantApplicationWithUser {
+interface GrantApplicationWithUserAndGrant extends GrantApplication {
   grant: {
     airtableId: string | null;
+  };
+  user: {
+    firstName: string | null;
+    lastName: string | null;
+    email: string;
+    discord: string | null;
+    twitter: string | null;
   };
 }
 

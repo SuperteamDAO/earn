@@ -21,8 +21,20 @@ export default async function user(req: NextApiRequest, res: NextApiResponse) {
         isActive: true,
       },
       include: {
-        sponsor: true,
-        poc: true,
+        sponsor: {
+          select: {
+            name: true,
+            isVerified: true,
+            logo: true,
+          },
+        },
+        poc: {
+          select: {
+            id: true,
+            firstName: true,
+            lastName: true,
+          },
+        },
         Hackathon: {
           select: {
             altLogo: true,

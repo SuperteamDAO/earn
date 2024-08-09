@@ -37,7 +37,13 @@ export default async function handler(
             isVerified: true,
           },
         },
-        poc: true,
+        poc: {
+          select: {
+            id: true,
+            firstName: true,
+            lastName: true,
+          },
+        },
         Hackathon: {
           select: {
             altLogo: true,

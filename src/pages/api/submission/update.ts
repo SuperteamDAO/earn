@@ -45,10 +45,6 @@ async function handler(req: NextApiRequestWithUser, res: NextApiResponse) {
         eligibilityAnswers: eligibilityAnswers || undefined,
         ask: ask || null,
       },
-      include: {
-        user: true,
-        listing: true,
-      },
     });
 
     return res.status(200).json(result);

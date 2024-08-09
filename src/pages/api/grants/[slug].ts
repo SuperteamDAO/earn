@@ -24,8 +24,13 @@ export default async function user(req: NextApiRequest, res: NextApiResponse) {
         slug,
       },
       include: {
-        sponsor: true,
-        poc: true,
+        sponsor: {
+          select: {
+            name: true,
+            logo: true,
+            isVerified: true,
+          },
+        },
         _count: {
           select: {
             GrantApplication: {

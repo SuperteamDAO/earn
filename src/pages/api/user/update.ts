@@ -1,6 +1,10 @@
 import type { NextApiResponse } from 'next';
 
-import { type NextApiRequestWithUser, withAuth } from '@/features/auth';
+import {
+  type NextApiRequestWithUser,
+  userSelectOptions,
+  withAuth,
+} from '@/features/auth';
 import logger from '@/lib/logger';
 import { prisma } from '@/prisma';
 import { filterAllowedFields } from '@/utils/filterAllowedFields';
@@ -43,13 +47,7 @@ async function handler(req: NextApiRequestWithUser, res: NextApiResponse) {
         id: userId as string,
       },
       data: updatedData,
-      include: {
-        currentSponsor: true,
-        UserSponsors: true,
-        Hackathon: true,
-        Submission: true,
-        emailSettings: true,
-      },
+      select: userSelectOptions,
     });
 
     logger.info(`User updated successfully for user ID: ${userId}`);
