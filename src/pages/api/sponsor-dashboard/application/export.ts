@@ -50,29 +50,28 @@ async function handler(req: NextApiRequestWithSponsor, res: NextApiResponse) {
 
     logger.debug(`Fetching applications for grant ID: ${grantId}`);
     const applications = await prisma.grantApplication.findMany({
-      where: {
-        grantId,
-      },
-      include: {
-        user: true,
-      },
-      orderBy: {
-        createdAt: 'asc',
-      },
+      where: { grantId },
+      include: { user: true },
+      orderBy: [{ applicationStatus: 'asc' }, { createdAt: 'asc' }],
       take: 1000,
     });
+
+    const grantQuestions = (grant.questions as { question: string }[]) || [];
+    const questionSet = new Set(grantQuestions.map((q) => q.question));
 
     logger.debug('Transforming applications to JSON format for CSV export');
     const finalJson = applications.map(
       (application: GrantApplicationWithUser, i: number) => {
         const user = application.user;
-        const customGrantQuestions: any = {};
         const applicationDate = dayjs(application?.createdAt).format(
           'DD MMM YYYY',
         );
-        const applicationAnswers: any = application?.answers || [];
-        applicationAnswers.forEach((e: any) => {
-          customGrantQuestions[e.question] = e.answer;
+        const customGrantAnswers: { [key: string]: string } = {};
+        questionSet.forEach((question) => {
+          const answer = (application as any).answers?.find(
+            (a: any) => a.question === question,
+          );
+          customGrantAnswers[question] = answer ? answer.answer : '';
         });
         return {
           'Sr no': i + 1,
@@ -89,7 +88,7 @@ async function handler(req: NextApiRequestWithSponsor, res: NextApiResponse) {
           'Proof of work': application?.proofOfWork,
           'Goals and Milestones': application?.proofOfWork,
           'Primary KPI': application?.kpi,
-          ...customGrantQuestions,
+          ...customGrantAnswers,
           Ask: application.ask || '',
           'Approved Amount': application.approvedAmount,
           'Grant Decision': application.applicationStatus,

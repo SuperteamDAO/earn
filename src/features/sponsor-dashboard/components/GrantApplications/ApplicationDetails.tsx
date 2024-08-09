@@ -505,7 +505,7 @@ export const ApplicationDetails = ({
 
           <Box
             overflowY={'scroll'}
-            h={'32.6rem'}
+            h={'67.15rem'}
             css={{
               '&::-webkit-scrollbar': {
                 width: '4px',
