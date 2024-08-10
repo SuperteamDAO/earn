@@ -53,8 +53,21 @@ async function grantApplication(
         answers,
       },
       include: {
-        user: true,
-        grant: true,
+        user: {
+          select: {
+            firstName: true,
+            lastName: true,
+            email: true,
+            twitter: true,
+            discord: true,
+          },
+        },
+        grant: {
+          select: {
+            airtableId: true,
+            isNative: true,
+          },
+        },
       },
     });
 
