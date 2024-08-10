@@ -49,7 +49,7 @@ function GrantApplications({ slug }: Props) {
   const [isGrantLoading, setIsGrantLoading] = useState(true);
   const [isLoading, setIsLoading] = useState(true);
   const [skip, setSkip] = useState(0);
-  let length = 10;
+  let length = 20;
   const [searchText, setSearchText] = useState('');
 
   useEffect(() => {
@@ -59,7 +59,7 @@ function GrantApplications({ slug }: Props) {
         setSkip(0);
       }
     } else {
-      length = 10;
+      length = 20;
     }
   }, [searchText]);
 

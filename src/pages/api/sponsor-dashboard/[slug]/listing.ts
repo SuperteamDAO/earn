@@ -29,7 +29,14 @@ async function handler(req: NextApiRequestWithSponsor, res: NextApiResponse) {
       },
       include: {
         sponsor: { select: { name: true, logo: true, isVerified: true } },
-        poc: true,
+        poc: {
+          select: {
+            id: true,
+            firstName: true,
+            lastName: true,
+            email: true,
+          },
+        },
         Submission: true,
         Hackathon: {
           select: {

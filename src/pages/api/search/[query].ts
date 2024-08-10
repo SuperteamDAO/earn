@@ -30,6 +30,8 @@ export default async function user(req: NextApiRequest, res: NextApiResponse) {
   const limit = (req.query.limit as string) || '5';
   const offset = (req.query.offset as string) || null;
 
+  let userRegion = (params.userRegion as Regions) || Regions.GLOBAL;
+
   const status = req.query.status as string;
   let statusList: string[] = [];
   if (status) statusList = status.split(',');
@@ -51,7 +53,6 @@ export default async function user(req: NextApiRequest, res: NextApiResponse) {
 
   const token = await getToken({ req });
   const userId = token?.sub;
-  let userRegion: Regions = Regions.GLOBAL;
   if (userId) {
     const user = await prisma.user.findFirst({
       where: { id: userId },

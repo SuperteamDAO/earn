@@ -1,6 +1,10 @@
 import type { NextApiResponse } from 'next';
 
-import { type NextApiRequestWithUser, withAuth } from '@/features/auth';
+import {
+  type NextApiRequestWithUser,
+  userSelectOptions,
+  withAuth,
+} from '@/features/auth';
 import {
   type ParentSkills,
   skillSubSkillMap,
@@ -148,13 +152,7 @@ async function handler(req: NextApiRequestWithUser, res: NextApiResponse) {
 
     const result = await prisma.user.findUnique({
       where: { id: userId as string },
-      include: {
-        currentSponsor: true,
-        UserSponsors: true,
-        Hackathon: true,
-        Submission: true,
-        emailSettings: true,
-      },
+      select: userSelectOptions,
     });
 
     logger.info(`User onboarded successfully for user ID: ${userId}`);

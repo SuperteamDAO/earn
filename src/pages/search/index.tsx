@@ -1,11 +1,14 @@
 import { Box, Divider, Flex, VStack } from '@chakra-ui/react';
+import { Regions } from '@prisma/client';
 import debounce from 'lodash.debounce';
 import { type GetServerSideProps } from 'next';
 import { useSearchParams } from 'next/navigation';
 import { useRouter } from 'next/router';
+import { getSession } from 'next-auth/react';
 import { usePostHog } from 'posthog-js/react';
 import { useCallback, useEffect, useState, useTransition } from 'react';
 
+import { CombinedRegions } from '@/constants/Superteam';
 import { type Listing } from '@/features/listings';
 import {
   Filters,
@@ -19,6 +22,7 @@ import {
 } from '@/features/search';
 import { Default } from '@/layouts/Default';
 import { Meta } from '@/layouts/Meta';
+import { prisma } from '@/prisma';
 import { getURL } from '@/utils/validUrl';
 
 interface CheckboxFilter {
@@ -163,21 +167,36 @@ const Search = ({
   );
 };
 
-export const getServerSideProps: GetServerSideProps = async ({ query }) => {
+export const getServerSideProps: GetServerSideProps = async (context) => {
+  const session = await getSession(context);
+  let userRegion: Regions | null = null;
+
+  if (session?.user?.id) {
+    const user = await prisma.user.findFirst({
+      where: { id: session.user.id },
+      select: { location: true },
+    });
+
+    const matchedRegion = CombinedRegions.find((region) =>
+      region.country.includes(user?.location!),
+    );
+
+    userRegion = matchedRegion ? matchedRegion.region : Regions.GLOBAL;
+  }
+
   const fullUrl = getURL();
+  const queryTerm = (context.query.q as string).trim();
+  const queryString = new URLSearchParams(context.query as any).toString();
 
-  const queryTerm = (query.q as string).trim();
-  const queryString = new URLSearchParams(query as any).toString();
-
-  const status = (query.status as string) || undefined;
+  const status = (context.query.status as string) || undefined;
   const statusFilters = updateCheckboxes(status ?? '', preStatusFilters);
 
-  const skills = (query.skills as string) || undefined;
+  const skills = (context.query.skills as string) || undefined;
   const skillsFilters = updateCheckboxes(skills ?? '', preSkillFilters);
 
   try {
     const response = await fetch(
-      `${fullUrl}/api/search/${encodeURIComponent(queryTerm)}?${queryString}&limit=10`,
+      `${fullUrl}/api/search/${encodeURIComponent(queryTerm)}?${queryString}&limit=10&userRegion=${userRegion || ''}`,
     );
     const results = await response.json();
 
@@ -187,6 +206,7 @@ export const getServerSideProps: GetServerSideProps = async ({ query }) => {
         skillsFilters,
         bounties: results.bounties,
         count: results.count,
+        userRegion,
       },
     };
   } catch (e) {
@@ -195,6 +215,7 @@ export const getServerSideProps: GetServerSideProps = async ({ query }) => {
       props: {
         statusFilters,
         skillsFilters,
+        userRegion,
       },
     };
   }
