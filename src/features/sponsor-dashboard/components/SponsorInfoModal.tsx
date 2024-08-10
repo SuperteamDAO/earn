@@ -16,7 +16,7 @@ import React, { useState } from 'react';
 import { useForm } from 'react-hook-form';
 
 import { ImagePicker } from '@/components/shared/ImagePicker';
-import { userStore } from '@/store/user';
+import { useUser } from '@/store/user';
 import { uploadToCloudinary } from '@/utils/upload';
 import { useUsernameValidation } from '@/utils/useUsernameValidation';
 
@@ -27,19 +27,19 @@ export const SponsorInfoModal = ({
   isOpen: boolean;
   onClose: () => void;
 }) => {
-  const { userInfo, setUserInfo } = userStore();
+  const { user, refetchUser } = useUser();
   const { register, handleSubmit } = useForm({
     defaultValues: {
-      firstName: userInfo?.firstName,
-      lastName: userInfo?.lastName,
-      username: userInfo?.username ?? '',
-      photo: userInfo?.photo,
+      firstName: user?.firstName,
+      lastName: user?.lastName,
+      username: user?.username ?? '',
+      photo: user?.photo,
     },
   });
   const [imageUrl, setImageUrl] = useState<string>('');
   const [uploading, setUploading] = useState<boolean>(false);
   const [isGooglePhoto, setIsGooglePhoto] = useState<boolean>(
-    userInfo?.photo?.includes('googleusercontent.com') || false,
+    user?.photo?.includes('googleusercontent.com') || false,
   );
   const [isSubmitting, setIsSubmitting] = useState(false);
 
@@ -53,15 +53,17 @@ export const SponsorInfoModal = ({
     }
     const finalData = {
       ...data,
-      photo: isGooglePhoto ? userInfo?.photo : imageUrl,
+      photo: isGooglePhoto ? user?.photo : imageUrl,
     };
-    const updatedUser = await axios.post(
-      '/api/sponsors/usersponsor-details/',
-      finalData,
-    );
-    setUserInfo(updatedUser?.data);
-    setIsSubmitting(false);
-    onClose();
+    try {
+      await axios.post('/api/sponsors/usersponsor-details/', finalData);
+      await refetchUser();
+      setIsSubmitting(false);
+      onClose();
+    } catch (error) {
+      console.error('Error updating user details:', error);
+      setIsSubmitting(false);
+    }
   };
 
   return (
@@ -134,7 +136,7 @@ export const SponsorInfoModal = ({
             </Flex>
 
             <VStack align={'start'} gap={2} rowGap={'0'} my={3} mb={'25px'}>
-              {userInfo?.photo ? (
+              {user?.photo ? (
                 <>
                   <FormLabel
                     mb={'0'}
@@ -146,7 +148,7 @@ export const SponsorInfoModal = ({
                   </FormLabel>
                   <Box w="full" mt={1}>
                     <ImagePicker
-                      defaultValue={{ url: userInfo.photo, type: 'image' }}
+                      defaultValue={{ url: user.photo, type: 'image' }}
                       onChange={async (e) => {
                         setUploading(true);
                         const a = await uploadToCloudinary(e, 'earn-pfp');

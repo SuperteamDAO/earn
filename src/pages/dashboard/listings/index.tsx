@@ -50,12 +50,12 @@ import {
   type SponsorStats,
 } from '@/features/sponsor-dashboard';
 import { Sidebar } from '@/layouts/Sponsor';
-import { userStore } from '@/store/user';
+import { useUser } from '@/store/user';
 
 const MemoizedListingTable = React.memo(ListingTable);
 
 export default function SponsorListings() {
-  const { userInfo } = userStore();
+  const { user } = useUser();
   const [allListings, setAllListings] = useState<ListingWithSubmissions[]>([]);
   const [isListingsLoading, setIsListingsLoading] = useState(true);
   const [searchText, setSearchText] = useState('');
@@ -90,14 +90,14 @@ export default function SponsorListings() {
   }, []);
 
   useEffect(() => {
-    if (userInfo?.currentSponsorId) {
+    if (user?.currentSponsorId) {
       setSearchText('');
       setCurrentPage(0);
       setSelectedTab('all');
       setSelectedStatus(null);
       getListings();
     }
-  }, [userInfo?.currentSponsorId, getListings]);
+  }, [user?.currentSponsorId, getListings]);
 
   useEffect(() => {
     const getSponsorStats = async () => {
@@ -112,7 +112,7 @@ export default function SponsorListings() {
     };
 
     getSponsorStats();
-  }, [userInfo?.currentSponsorId]);
+  }, [user?.currentSponsorId]);
 
   const {
     isOpen: isOpenCreateListing,

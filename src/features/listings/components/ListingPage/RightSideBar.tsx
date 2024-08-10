@@ -14,7 +14,6 @@ import {
   Tr,
   VStack,
 } from '@chakra-ui/react';
-import axios from 'axios';
 import { usePostHog } from 'posthog-js/react';
 import { useEffect, useState } from 'react';
 import Countdown from 'react-countdown';
@@ -25,6 +24,7 @@ import { dayjs } from '@/utils/dayjs';
 import { formatNumberWithSuffix } from '@/utils/formatNumberWithSuffix';
 import { getURLSanitized } from '@/utils/getURLSanitized';
 
+import { useGetSubmissionCount } from '../../queries';
 import type { Listing, Rewards } from '../../types';
 import { SubmissionActionButton } from '../Submission/SubmissionActionButton';
 import { CompensationAmount } from './CompensationAmount';
@@ -49,44 +49,30 @@ export function RightSideBar({ listing }: { listing: Listing }) {
 
   const posthog = usePostHog();
 
-  const [isSubmissionNumberLoading, setIsSubmissionNumberLoading] =
-    useState(true);
-  const [submissionNumber, setSubmissionNumber] = useState(0);
+  const { data: submissionNumber, isLoading: isSubmissionNumberLoading } =
+    useGetSubmissionCount(id!);
+
   const [submissionRange, setSubmissionRange] = useState('');
 
   const hasHackathonStarted = Hackathon?.startDate
     ? dayjs().isAfter(Hackathon.startDate)
     : true;
 
-  const getSubmissionsCount = async () => {
-    setIsSubmissionNumberLoading(true);
-    try {
-      const submissionCountDetails = await axios.get(
-        `/api/listings/${id}/submission-count/`,
-      );
-      const count = submissionCountDetails?.data || 0;
-      setSubmissionNumber(count);
-      if (count >= 0 && count <= 10) {
+  useEffect(() => {
+    if (submissionNumber !== undefined) {
+      if (submissionNumber >= 0 && submissionNumber <= 10) {
         setSubmissionRange('0-10');
-      } else if (count > 10 && count <= 25) {
+      } else if (submissionNumber > 10 && submissionNumber <= 25) {
         setSubmissionRange('10-25');
-      } else if (count > 25 && count <= 50) {
+      } else if (submissionNumber > 25 && submissionNumber <= 50) {
         setSubmissionRange('25-50');
-      } else if (count > 50 && count <= 100) {
+      } else if (submissionNumber > 50 && submissionNumber <= 100) {
         setSubmissionRange('50-100');
-      } else if (count > 100) {
+      } else if (submissionNumber > 100) {
         setSubmissionRange('100+');
       }
-      setIsSubmissionNumberLoading(false);
-    } catch (e) {
-      setIsSubmissionNumberLoading(false);
     }
-  };
-
-  useEffect(() => {
-    if (!isSubmissionNumberLoading) return;
-    getSubmissionsCount();
-  }, []);
+  }, [submissionNumber]);
 
   const isProject = type === 'project';
 
@@ -267,7 +253,7 @@ export function RightSideBar({ listing }: { listing: Listing }) {
                       {isSubmissionNumberLoading
                         ? '...'
                         : !isProject
-                          ? submissionNumber.toLocaleString()
+                          ? submissionNumber?.toLocaleString()
                           : submissionRange}
                     </Text>
                   </Flex>
@@ -365,8 +351,6 @@ export function RightSideBar({ listing }: { listing: Listing }) {
             <SubmissionActionButton
               listing={listing}
               hasHackathonStarted={hasHackathonStarted}
-              submissionNumber={submissionNumber}
-              setSubmissionNumber={setSubmissionNumber}
             />
             {isProject && (
               <Flex gap="2" w="20rem" mt={-1} mb={4} p="3" bg={'#62F6FF10'}>

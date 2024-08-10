@@ -3,7 +3,7 @@ import type { NextApiRequest, NextApiResponse } from 'next';
 import { getToken } from 'next-auth/jwt';
 
 import { CombinedRegions } from '@/constants/Superteam';
-import type { Bounties } from '@/interface/listings';
+import { type Listing } from '@/features/listings';
 import logger from '@/lib/logger';
 import { prisma } from '@/prisma';
 
@@ -194,7 +194,7 @@ s.name LIKE CONCAT('%', ?, '%')
     if (offset) values.push(Number(offset));
 
     logger.debug(`Executing sqlQuery with values: ${values}`);
-    const bounties = await prisma.$queryRawUnsafe<Bounties[]>(
+    const bounties = await prisma.$queryRawUnsafe<Listing[]>(
       sqlQuery,
       ...values,
     );

@@ -3,14 +3,14 @@ import debounce from 'lodash.debounce';
 import { useEffect, useState } from 'react';
 
 import logger from '@/lib/logger';
-import { userStore } from '@/store/user';
+import { useUser } from '@/store/user';
 
 export const useSlugValidation = (initialValue = '') => {
   const [slug, setSlug] = useState(initialValue);
   const [isInvalid, setIsInvalid] = useState(false);
   const [validationErrorMessage, setValidationErrorMessage] = useState('');
 
-  const { userInfo } = userStore();
+  const { user } = useUser();
 
   const slugPattern = /^[a-z0-9_-]+$/;
 
@@ -42,7 +42,7 @@ export const useSlugValidation = (initialValue = '') => {
   const debouncedCheckSlug = debounce(checkSlugAvailability, 300);
 
   useEffect(() => {
-    if (slug && slug === userInfo?.currentSponsor?.slug) {
+    if (slug && slug === user?.currentSponsor?.slug) {
       setIsInvalid(false);
       setValidationErrorMessage('');
       return;
@@ -50,7 +50,7 @@ export const useSlugValidation = (initialValue = '') => {
     if (slug) {
       debouncedCheckSlug(slug);
     }
-  }, [slug, userInfo?.currentSponsor?.slug]);
+  }, [slug, user?.currentSponsor?.slug]);
 
   return { setSlug, isInvalid, validationErrorMessage, slug };
 };

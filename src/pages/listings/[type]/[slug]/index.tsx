@@ -15,6 +15,7 @@ import {
   ListingHeader,
   ListingWinners,
   RightSideBar,
+  useGetSubmissionCount,
 } from '@/features/listings';
 import { bountySnackbarAtom } from '@/features/navbar';
 import { type User } from '@/interface/user';
@@ -30,18 +31,10 @@ function BountyDetails({ bounty: initialBounty }: BountyDetailsProps) {
   const posthog = usePostHog();
 
   const [bounty] = useState<typeof initialBounty>(initialBounty);
-  const [submissionNumber, setSubmissionNumber] = useState<number>(0);
 
-  const getSubmissionsCount = async () => {
-    try {
-      const submissionCountDetails = await axios.get(
-        `/api/listings/${bounty?.id}/submission-count/`,
-      );
-      setSubmissionNumber(submissionCountDetails?.data || 0);
-    } catch (e) {
-      console.error(e);
-    }
-  };
+  const { data: submissionNumber = 0 } = useGetSubmissionCount(
+    bounty?.id || '',
+  );
 
   useEffect(() => {
     if (bounty?.type === 'bounty') {
@@ -52,19 +45,15 @@ function BountyDetails({ bounty: initialBounty }: BountyDetailsProps) {
   }, []);
 
   useEffect(() => {
-    const fetchSubmissions = async () => {
-      await getSubmissionsCount();
-      if (bounty) {
-        setBountySnackbar({
-          submissionCount: submissionNumber,
-          deadline: bounty?.deadline,
-          rewardAmount: bounty?.rewardAmount,
-          type: bounty?.type,
-          isPublished: bounty?.isPublished,
-        });
-      }
-    };
-    fetchSubmissions();
+    if (bounty) {
+      setBountySnackbar({
+        submissionCount: submissionNumber,
+        deadline: bounty?.deadline,
+        rewardAmount: bounty?.rewardAmount,
+        type: bounty?.type,
+        isPublished: bounty?.isPublished,
+      });
+    }
   }, [bounty, submissionNumber]);
 
   const encodedTitle = encodeURIComponent(initialBounty?.title || '');

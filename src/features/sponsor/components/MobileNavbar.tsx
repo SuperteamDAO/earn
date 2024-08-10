@@ -21,7 +21,7 @@ import { usePostHog } from 'posthog-js/react';
 import React, { useRef } from 'react';
 
 import { UserMenu } from '@/components/shared/UserMenu';
-import { userStore } from '@/store/user';
+import { useUser } from '@/store/user';
 
 import { NAV_LINKS } from '../utils';
 
@@ -34,7 +34,7 @@ export const MobileNavbar = () => {
 
   const { data: session, status } = useSession();
 
-  const { userInfo } = userStore();
+  const { user } = useUser();
 
   const posthog = usePostHog();
 
@@ -94,7 +94,7 @@ export const MobileNavbar = () => {
               </Flex>
             )}
 
-            {userInfo && !userInfo.currentSponsorId && (
+            {user && !user.currentSponsorId && (
               <NextLink
                 href="/new/sponsor/"
                 className="ph-no-capture"
@@ -111,7 +111,7 @@ export const MobileNavbar = () => {
               </NextLink>
             )}
 
-            {userInfo && !!userInfo.currentSponsorId && (
+            {user && !!user.currentSponsorId && (
               <NextLink
                 href="/dashboard/listings/?open=1"
                 className="ph-no-capture"

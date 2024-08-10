@@ -1,15 +1,15 @@
 import { Flex, type FlexProps, Link } from '@chakra-ui/react';
+import { useQuery } from '@tanstack/react-query';
 import axios from 'axios';
 import NextLink from 'next/link';
 import { useRouter } from 'next/router';
 import { usePostHog } from 'posthog-js/react';
-import { useEffect, useState } from 'react';
+import { useEffect, useMemo } from 'react';
 
+import { UserFlag } from '@/components/shared/UserFlag';
 import { Superteams } from '@/constants/Superteam';
 import { CATEGORY_NAV_ITEMS } from '@/features/navbar';
-import { userStore } from '@/store/user';
-
-import { UserFlag } from '../shared/UserFlag';
+import { useUser } from '@/store/user';
 
 interface PillTabProps {
   href: string;
@@ -17,6 +17,7 @@ interface PillTabProps {
   children: React.ReactNode;
   phEvent: string;
 }
+
 function PillTab({ href, children, altActive, phEvent }: PillTabProps) {
   const router = useRouter();
   const posthog = usePostHog();
@@ -51,36 +52,37 @@ function PillTab({ href, children, altActive, phEvent }: PillTabProps) {
   );
 }
 
-export function NavTabs({ ...flexProps }: FlexProps) {
-  const { userInfo } = userStore();
-  const [superteam, setSuperteam] = useState<(typeof Superteams)[0] | null>(
-    null,
+const fetchRegionLiveCount = async (region: string) => {
+  const { data } = await axios.get<{ count: number }>(
+    '/api/listings/region-live-count',
+    { params: { region: region.toLowerCase() } },
   );
-  async function showRegionTab() {
-    try {
-      const superteam = Superteams.find((s) =>
-        s.country.includes(userInfo?.location ?? ''),
-      );
-      if (superteam) {
-        const bountiesCount = await axios.get<{ count: number }>(
-          '/api/listings/region-live-count',
-          {
-            params: {
-              region: superteam.region.toLowerCase(),
-            },
-          },
-        );
-        if (bountiesCount.data.count > 0) {
-          setSuperteam(superteam);
-        }
-      }
-    } catch (err) {
-      console.log('Failed to get bounties count', err);
-    }
-  }
+  return data;
+};
+
+export function NavTabs({ ...flexProps }: FlexProps) {
+  const { user } = useUser();
+
+  const superteam = useMemo(() => {
+    return (
+      Superteams.find((s) => s.country.includes(user?.location ?? '')) ?? null
+    );
+  }, [user?.location]);
+
+  const { data: regionLiveCount, refetch } = useQuery({
+    queryKey: ['regionLiveCount', superteam],
+    queryFn: () => fetchRegionLiveCount(superteam!.region),
+    enabled: false,
+  });
+
   useEffect(() => {
-    showRegionTab();
-  }, [userInfo]);
+    if (superteam) {
+      refetch();
+    }
+  }, [superteam, refetch]);
+
+  const showRegionTab = superteam && (regionLiveCount?.count ?? 0) > 0;
+
   return (
     <Flex
       align="center"
@@ -93,7 +95,7 @@ export function NavTabs({ ...flexProps }: FlexProps) {
       <PillTab href="/" altActive={['/all/']} phEvent="all_navpill">
         All Opportunities
       </PillTab>
-      {superteam && (
+      {showRegionTab && (
         <PillTab
           href={`/regions/${superteam.region.toLowerCase()}/`}
           phEvent={`${superteam.region.toLowerCase()}_navpill`}

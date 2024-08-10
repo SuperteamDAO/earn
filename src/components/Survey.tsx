@@ -16,7 +16,7 @@ import { type Survey, type SurveyQuestion } from 'posthog-js';
 import { usePostHog } from 'posthog-js/react';
 import { useEffect, useState } from 'react';
 
-import { userStore } from '@/store/user';
+import { useUser } from '@/store/user';
 
 function getMatchingSurvey(surveys: Survey[], id: string): Survey | null {
   const survey = surveys.find((survey) => survey.id === id);
@@ -32,7 +32,9 @@ export const SurveyModal = ({
   onClose: () => void;
   surveyId: string;
 }) => {
+  const { refetchUser } = useUser();
   const posthog = usePostHog();
+
   const [question, setQuestion] = useState<SurveyQuestion | undefined | null>(
     null,
   );
@@ -47,8 +49,6 @@ export const SurveyModal = ({
     setResponse(choice);
   };
 
-  const { setUserInfo } = userStore();
-
   const handleSubmit = async () => {
     setIsSubmitting(true);
     posthog.capture('survey sent', {
@@ -58,8 +58,7 @@ export const SurveyModal = ({
     await axios.post('/api/user/update-survey/', {
       surveyId,
     });
-    const updatedUser = await axios.get('/api/user/');
-    setUserInfo(updatedUser?.data);
+    await refetchUser();
     setIsSubmitting(false);
     onClose();
   };

@@ -15,7 +15,7 @@ import { MdInfoOutline, MdOutlineChatBubbleOutline } from 'react-icons/md';
 
 import { EarnAvatar } from '@/components/shared/EarnAvatar';
 import { VerifiedBadgeLarge } from '@/components/shared/VerifiedBadge';
-import { userStore } from '@/store/user';
+import { useUser } from '@/store/user';
 
 export function Banner({
   isHackathon,
@@ -26,17 +26,15 @@ export function Banner({
   stats: any;
   isLoading: boolean;
 }) {
-  const { userInfo } = userStore();
+  const { user } = useUser();
   const posthog = usePostHog();
-  const sponsorId = isHackathon
-    ? userInfo?.hackathonId
-    : userInfo?.currentSponsorId;
+  const sponsorId = isHackathon ? user?.hackathonId : user?.currentSponsorId;
 
   const tooltipTextReward = `Total compensation (in USD) of listings where the winners have been announced`;
   const tooltipTextListings = `Total number of listings added to Earn`;
   const tooltipTextSubmissions = `Total number of submissions/applications received on all listings`;
 
-  const sponsor = isHackathon ? stats : userInfo?.currentSponsor;
+  const sponsor = isHackathon ? stats : user?.currentSponsor;
 
   if (!sponsorId) return null;
   return (

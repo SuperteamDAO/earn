@@ -6,9 +6,12 @@ import { getSession } from 'next-auth/react';
 import { InstallPWAModal } from '@/components/modals/InstallPWAModal';
 import { EmptySection } from '@/components/shared/EmptySection';
 import { CombinedRegions } from '@/constants/Superteam';
-import { GrantsCard, type GrantWithApplicationCount } from '@/features/grants';
 import {
   getGrants,
+  GrantsCard,
+  type GrantWithApplicationCount,
+} from '@/features/grants';
+import {
   getListings,
   type Listing,
   ListingSection,

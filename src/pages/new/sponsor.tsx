@@ -33,7 +33,7 @@ import {
 import type { SponsorType } from '@/interface/sponsor';
 import { Default } from '@/layouts/Default';
 import { Meta } from '@/layouts/Meta';
-import { userStore } from '@/store/user';
+import { useUser } from '@/store/user';
 import { uploadToCloudinary } from '@/utils/upload';
 
 const CreateSponsor = () => {
@@ -54,7 +54,7 @@ const CreateSponsor = () => {
   const [errorMessage, setErrorMessage] = useState<string>('');
   const [loginStep, setLoginStep] = useState(0);
 
-  const { userInfo } = userStore();
+  const { user } = useUser();
   const posthog = usePostHog();
 
   const {
@@ -67,10 +67,10 @@ const CreateSponsor = () => {
     useSlugValidation();
 
   useEffect(() => {
-    if (userInfo?.currentSponsorId && session?.user?.role !== 'GOD') {
+    if (user?.currentSponsorId && session?.user?.role !== 'GOD') {
       router.push('/dashboard/listings?open=1');
     }
-  }, [userInfo?.currentSponsorId, router]);
+  }, [user?.currentSponsorId, router]);
 
   const createNewSponsor = async (sponsor: SponsorType) => {
     if (getValues('bio').length > 180) {

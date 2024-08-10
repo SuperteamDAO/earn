@@ -10,7 +10,7 @@ import {
   userRegionEligibilty,
   WarningModal,
 } from '@/features/listings';
-import { userStore } from '@/store/user';
+import { useUser } from '@/store/user';
 
 import { type Grant } from '../types';
 import { GrantApplicationModal } from './GrantApplicationModal';
@@ -22,7 +22,7 @@ interface GrantApplicationButtonProps {
 export const GrantApplicationButton = ({
   grant,
 }: GrantApplicationButtonProps) => {
-  const { userInfo } = userStore();
+  const { user } = useUser();
   const [hasApplied, setHasApplied] = useState(false);
   const [isUserApplicationLoading, setIsUserApplicationLoading] =
     useState(false);
@@ -32,10 +32,7 @@ export const GrantApplicationButton = ({
   const { status: authStatus } = useSession();
   const isAuthenticated = authStatus === 'authenticated';
 
-  const isUserEligibleByRegion = userRegionEligibilty(
-    region,
-    userInfo?.location,
-  );
+  const isUserEligibleByRegion = userRegionEligibilty(region, user?.location);
 
   let buttonText;
   let buttonBG;
@@ -54,7 +51,7 @@ export const GrantApplicationButton = ({
       buttonText = 'Apply Now';
       buttonBG = 'brand.purple';
       isBtnDisabled = Boolean(
-        userInfo?.id && userInfo?.isTalentFilled && !isUserEligibleByRegion,
+        user?.id && user?.isTalentFilled && !isUserEligibleByRegion,
       );
       btnLoadingText = 'Checking Application..';
   }
@@ -71,7 +68,7 @@ export const GrantApplicationButton = ({
 
   const handleSubmit = () => {
     if (isAuthenticated) {
-      if (!userInfo?.isTalentFilled) {
+      if (!user?.isTalentFilled) {
         warningOnOpen();
       } else if (link && !isNative) {
         window.open(link, '_blank', 'noopener,noreferrer');
@@ -98,9 +95,9 @@ export const GrantApplicationButton = ({
   };
 
   useEffect(() => {
-    if (!userInfo?.id) return;
+    if (!user?.id) return;
     getUserApplication();
-  }, [userInfo?.id]);
+  }, [user?.id]);
 
   return (
     <>
@@ -128,7 +125,7 @@ export const GrantApplicationButton = ({
         bg="brand.slate.500"
         hasArrow
         isDisabled={
-          !userInfo?.id || !userInfo?.isTalentFilled || isUserEligibleByRegion
+          !user?.id || !user?.isTalentFilled || isUserEligibleByRegion
         }
         label={!isUserEligibleByRegion ? regionTooltipLabel : ''}
         rounded="md"

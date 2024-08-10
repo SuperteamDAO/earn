@@ -23,7 +23,7 @@ import { VerifiedBadge } from '@/components/shared/VerifiedBadge';
 import { AuthWrapper } from '@/features/auth';
 import { type Listing, WarningModal } from '@/features/listings';
 import type { User } from '@/interface/user';
-import { userStore } from '@/store/user';
+import { useUser } from '@/store/user';
 import { dayjs } from '@/utils/dayjs';
 
 import { ListingTabLink } from './ListingTabLink';
@@ -59,7 +59,7 @@ export function ListingHeader({
     onOpen: warningOnOpen,
     onClose: warningOnClose,
   } = useDisclosure();
-  const { userInfo } = userStore();
+  const { user } = useUser();
   const hasDeadlineEnded = dayjs().isAfter(deadline);
   const hasHackathonStarted = dayjs().isAfter(Hackathon?.startDate);
   const [update, setUpdate] = useState<boolean>(false);
@@ -73,9 +73,9 @@ export function ListingHeader({
   const isAuthenticated = authStatus === 'authenticated';
 
   const handleToggleSubscribe = async () => {
-    if (!isAuthenticated || !userInfo?.isTalentFilled) return;
+    if (!isAuthenticated || !user?.isTalentFilled) return;
 
-    if (!userInfo?.isTalentFilled) {
+    if (!user?.isTalentFilled) {
       warningOnOpen();
       return;
     }
@@ -85,9 +85,7 @@ export function ListingHeader({
       await axios.post('/api/listings/notifications/toggle', { bountyId: id });
       setUpdate((prev) => !prev);
       toast.success(
-        sub.find((e) => e.userId === userInfo?.id)
-          ? 'Unsubscribed'
-          : 'Subscribed',
+        sub.find((e) => e.userId === user?.id) ? 'Unsubscribed' : 'Subscribed',
       );
     } catch (error) {
       console.log(error);
@@ -301,12 +299,12 @@ export function ListingHeader({
                 <IconButton
                   className="ph-no-capture"
                   color={
-                    sub.find((e) => e.userId === userInfo?.id)
+                    sub.find((e) => e.userId === user?.id)
                       ? 'white'
                       : 'brand.slate.500'
                   }
                   bg={
-                    sub.find((e) => e.userId === userInfo?.id)
+                    sub.find((e) => e.userId === user?.id)
                       ? 'brand.purple'
                       : 'brand.slate.100'
                   }
@@ -314,7 +312,7 @@ export function ListingHeader({
                   icon={
                     isSubscribeLoading ? (
                       <Spinner color="white" size="sm" />
-                    ) : sub.find((e) => e.userId === userInfo?.id) ? (
+                    ) : sub.find((e) => e.userId === user?.id) ? (
                       <TbBellRinging />
                     ) : (
                       <TbBell />
@@ -322,7 +320,7 @@ export function ListingHeader({
                   }
                   onClick={() => {
                     posthog.capture(
-                      sub.find((e) => e.userId === userInfo?.id)
+                      sub.find((e) => e.userId === user?.id)
                         ? 'unnotify me_listing'
                         : 'notify me_listing',
                     );

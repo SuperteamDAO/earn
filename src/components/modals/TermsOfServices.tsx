@@ -10,30 +10,27 @@ import {
   Text,
   VStack,
 } from '@chakra-ui/react';
-import axios from 'axios';
 import dayjs from 'dayjs';
 import { useEffect, useState } from 'react';
 
 import { TERMS_OF_USE } from '@/constants';
-import { userStore } from '@/store/user';
+import { useUpdateUser, useUser } from '@/store/user';
 
 export const TermsOfServices = () => {
+  const { user } = useUser();
+  const updateUser = useUpdateUser();
+
   const updatedAt = dayjs(process.env.NEXT_PUBLIC_TOS_DATE);
   const formattedDate = updatedAt.format('MMMM D, YYYY');
 
   const [isTOSModalOpen, setIsTOSModalOpen] = useState(false);
 
-  const { userInfo, setUserInfo } = userStore();
-
   const handleTOSClose = async () => {
     try {
       setIsTOSModalOpen(false);
       localStorage.setItem('acceptedTOS', JSON.stringify(true));
-      if (userInfo) {
-        setUserInfo({ ...userInfo, acceptedTOS: true });
-        await axios.post('/api/user/update/', {
-          acceptedTOS: true,
-        });
+      if (user) {
+        await updateUser.mutateAsync({ acceptedTOS: true });
       }
     } catch (e) {
       console.log('failed to set accepted terms of service', e);
@@ -43,17 +40,13 @@ export const TermsOfServices = () => {
   useEffect(() => {
     try {
       setIsTOSModalOpen(false);
-      const shown =
-        (JSON.parse(
-          localStorage.getItem('acceptedTOS') ?? 'false',
-        ) as boolean) ?? false;
-      if (userInfo) {
-        if (!userInfo.acceptedTOS) {
+      const shown = JSON.parse(
+        localStorage.getItem('acceptedTOS') ?? 'false',
+      ) as boolean;
+      if (user) {
+        if (!user.acceptedTOS) {
           if (shown) {
-            setUserInfo({ ...userInfo, acceptedTOS: true });
-            axios.post('/api/user/update/', {
-              acceptedTOS: true,
-            });
+            updateUser.mutate({ acceptedTOS: true });
           } else {
             setIsTOSModalOpen(true);
           }
@@ -66,7 +59,7 @@ export const TermsOfServices = () => {
     } catch (e) {
       console.log('unable to get current user terms of service state', e);
     }
-  }, [userInfo]);
+  }, [user, updateUser]);
 
   return (
     <Modal

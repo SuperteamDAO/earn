@@ -32,13 +32,13 @@ import { useEffect, useRef, useState } from 'react';
 
 import { EarnAvatar } from '@/components/shared/EarnAvatar';
 import { AuthWrapper } from '@/features/auth';
+import { WarningModal } from '@/features/listings';
 import { type Comment as IComment } from '@/interface/comments';
 import { type User } from '@/interface/user';
-import { userStore } from '@/store/user';
+import { useUser } from '@/store/user';
 import { dayjs } from '@/utils/dayjs';
 import { getURL } from '@/utils/validUrl';
 
-import { WarningModal } from '../../listings/components/WarningModal';
 import { formatFromNow } from '../utils';
 import { CommentParser } from './CommentParser';
 import { UserSuggestionTextarea } from './UserSuggestionTextarea';
@@ -74,7 +74,7 @@ export const Comment = ({
   isAnnounced,
   isVerified = false,
 }: Props) => {
-  const { userInfo } = userStore();
+  const { user } = useUser();
   const posthog = usePostHog();
 
   const { isOpen, onOpen, onClose } = useDisclosure();
@@ -156,7 +156,7 @@ export const Comment = ({
 
   const handleSubmit = async () => {
     if (isAuthenticated) {
-      if (!userInfo?.isTalentFilled && !userInfo?.currentSponsorId) {
+      if (!user?.isTalentFilled && !user?.currentSponsorId) {
         onOpen();
       } else {
         try {
@@ -363,11 +363,7 @@ export const Comment = ({
           >
             <VStack gap={4} w={'full'} mb={4} pt={4}>
               <Flex gap={3} w="full">
-                <EarnAvatar
-                  size={'28px'}
-                  id={userInfo?.id}
-                  avatar={userInfo?.photo}
-                />
+                <EarnAvatar size={'28px'} id={user?.id} avatar={user?.photo} />
                 <UserSuggestionTextarea
                   autoFocusOn={showReplyInput}
                   defaultSuggestions={defaultSuggestions}
@@ -455,7 +451,7 @@ export const Comment = ({
           </Collapse>
         </VStack>
         <Fade
-          in={(showOptions || isMobile) && comment.authorId === userInfo?.id}
+          in={(showOptions || isMobile) && comment.authorId === user?.id}
           style={{ display: 'block' }}
         >
           <Menu>

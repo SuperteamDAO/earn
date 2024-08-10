@@ -1,8 +1,7 @@
 import { type SubmissionLabels } from '@prisma/client';
 
-import type { Rewards } from '@/features/listings';
+import type { Listing, Rewards } from '@/features/listings';
 
-import type { Bounties } from './listings';
 import { type User } from './user';
 
 interface SubmissionWithUser {
@@ -26,7 +25,7 @@ interface SubmissionWithUser {
   updatedAt: string;
   like?: any;
   user: User;
-  listing?: Bounties;
+  listing?: Listing;
   ask?: number;
   label: SubmissionLabels;
 }

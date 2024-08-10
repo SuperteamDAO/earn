@@ -13,19 +13,14 @@ import {
 import axios from 'axios';
 import NextLink from 'next/link';
 import { useRouter } from 'next/router';
-import React, {
-  type Dispatch,
-  type SetStateAction,
-  useEffect,
-  useState,
-} from 'react';
+import React, { type Dispatch, type SetStateAction, useState } from 'react';
 import { BiSolidComment } from 'react-icons/bi';
 import { IoMdHeart } from 'react-icons/io';
-import type { Metadata } from 'unfurl.js/dist/types';
 
 import { EarnAvatar } from '@/components/shared/EarnAvatar';
 import { type User } from '@/interface/user';
-import { userStore } from '@/store/user';
+import { useOgImage } from '@/queries/get-og';
+import { useUser } from '@/store/user';
 import { Badge } from '@/svg/badge';
 import { getURLSanitized } from '@/utils/getURLSanitized';
 
@@ -52,11 +47,11 @@ export const SubmissionCard = ({
   setUpdate,
   link,
 }: Props) => {
-  const { userInfo } = userStore();
+  const { user } = useUser();
   const router = useRouter();
   const toast = useToast();
   const [isLoading, setIsLoading] = useState<boolean>(false);
-  const [image, setImage] = useState<string>('/assets/bg/og.svg');
+  const { data: image } = useOgImage(link);
   const handleLike = async (e: React.MouseEvent<HTMLButtonElement>) => {
     e.stopPropagation();
     setIsLoading(true);
@@ -76,10 +71,10 @@ export const SubmissionCard = ({
         variant: 'subtle',
       },
       success: () => {
-        const likeAdded = likes?.some((e) => e.id === userInfo?.id)
+        const likeAdded = likes?.some((e) => e.id === user?.id)
           ? 'Like removed'
           : 'Liked submission';
-        const likeAddedDesc = likes?.some((e) => e.id === userInfo?.id)
+        const likeAddedDesc = likes?.some((e) => e.id === user?.id)
           ? "You've removed your like from the submission."
           : "You've liked the submission.";
         return {
@@ -100,22 +95,6 @@ export const SubmissionCard = ({
       },
     });
   };
-  useEffect(() => {
-    const fetchImage = async () => {
-      if (link) {
-        try {
-          const { data } = (await axios.post('/api/og/get', {
-            url: link,
-          })) as { data: Metadata };
-          setImage(data.open_graph.images![0]?.url ?? '/assets/bg/og.svg');
-        } catch (error) {
-          console.log(error);
-          setImage('/assets/bg/og.svg');
-        }
-      }
-    };
-    fetchImage();
-  }, []);
 
   return (
     <LinkBox
@@ -155,7 +134,7 @@ export const SubmissionCard = ({
           objectFit={'cover'}
           alt={'card'}
           rounded={'sm'}
-          src={image}
+          src={image || '/assets/bg/og.svg'}
         />
       </LinkOverlay>
       <HStack align={'center'} gap={4} w={'full'}>
@@ -174,7 +153,7 @@ export const SubmissionCard = ({
           <IoMdHeart
             size={'1.3rem'}
             color={
-              !likes?.find((e) => e.id === (userInfo?.id as string))
+              !likes?.find((e) => e.id === (user?.id as string))
                 ? '#64748b'
                 : '#E11D48'
             }

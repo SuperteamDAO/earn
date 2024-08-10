@@ -67,6 +67,7 @@ export interface ListingWithSubmissions extends Listing {
     Submission?: number;
     Comments?: number;
   };
+  submissionCount?: number;
 }
 
 interface Eligibility {

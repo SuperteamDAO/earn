@@ -18,11 +18,11 @@ import { EarnAvatar } from '@/components/shared/EarnAvatar';
 import { ErrorInfo } from '@/components/shared/ErrorInfo';
 import { Loading } from '@/components/shared/Loading';
 import { AuthWrapper } from '@/features/auth';
+import { WarningModal } from '@/features/listings';
 import type { Comment } from '@/interface/comments';
 import { type User } from '@/interface/user';
-import { userStore } from '@/store/user';
+import { useUser } from '@/store/user';
 
-import { WarningModal } from '../../listings/components/WarningModal';
 import { Comment as CommentUI } from './Comment';
 import { UserSuggestionTextarea } from './UserSuggestionTextarea';
 
@@ -46,7 +46,7 @@ export const Comments = ({
   isAnnounced,
   isVerified = false,
 }: Props) => {
-  const { userInfo } = userStore();
+  const { user } = useUser();
   const posthog = usePostHog();
 
   const { isOpen, onOpen, onClose } = useDisclosure();
@@ -129,7 +129,7 @@ export const Comments = ({
 
   const handleSubmit = () => {
     if (isAuthenticated) {
-      if (!userInfo?.isTalentFilled && !userInfo?.currentSponsorId) {
+      if (!user?.isTalentFilled && !user?.currentSponsorId) {
         onOpen();
       } else {
         addNewComment();
@@ -196,11 +196,7 @@ export const Comments = ({
         </HStack>
         <VStack gap={4} w={'full'} mb={4} px={6}>
           <Flex gap={3} w="full">
-            <EarnAvatar
-              size={'36px'}
-              id={userInfo?.id}
-              avatar={userInfo?.photo}
-            />
+            <EarnAvatar size={'36px'} id={user?.id} avatar={user?.photo} />
             <Box pos={'relative'} w="full" mt={0.5}>
               <UserSuggestionTextarea
                 defaultSuggestions={defaultSuggestions}

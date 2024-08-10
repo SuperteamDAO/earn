@@ -9,15 +9,14 @@ import {
   useMediaQuery,
   VStack,
 } from '@chakra-ui/react';
-import axios from 'axios';
 import { useRouter } from 'next/router';
-import React, { useEffect, useState } from 'react';
-import type { Metadata } from 'unfurl.js/dist/types';
+import React from 'react';
 
 import { TalentBio } from '@/components/TalentBio';
 import { Comments } from '@/features/comments';
 import type { SubmissionWithUser } from '@/interface/submission';
 import { type User as IUser } from '@/interface/user';
+import { useOgImage } from '@/queries/get-og';
 import { getURLSanitized } from '@/utils/getURLSanitized';
 
 import { type Listing } from '../../types';
@@ -30,25 +29,9 @@ interface Props {
 }
 export const SubmissionPage = ({ bounty, submission, user, link }: Props) => {
   const router = useRouter();
-  const [image, setImage] = useState<string>('/assets/bg/og.svg');
+  const { data: image } = useOgImage(link);
   const [isMobile] = useMediaQuery('(max-width: 768px)');
 
-  useEffect(() => {
-    const fetchImage = async () => {
-      if (link) {
-        try {
-          const { data } = (await axios.post('/api/og/get', {
-            url: link,
-          })) as { data: Metadata };
-          setImage(data.open_graph.images![0]?.url ?? '/assets/bg/og.svg');
-        } catch (error) {
-          console.log(error);
-          setImage('/assets/bg/og.svg');
-        }
-      }
-    };
-    fetchImage();
-  }, []);
   return (
     <VStack
       align={['center', 'center', 'start', 'start']}
@@ -94,7 +77,7 @@ export const SubmissionPage = ({ bounty, submission, user, link }: Props) => {
             objectFit={'cover'}
             alt={'submission'}
             rounded={'2rem'}
-            src={image}
+            src={image || '/assets/bg/og.svg'}
           />
           <HStack w="full" px={7}>
             <Button
@@ -113,7 +96,7 @@ export const SubmissionPage = ({ bounty, submission, user, link }: Props) => {
           </HStack>
           {isMobile && (
             <VStack mt={12}>
-              <TalentBio w={'100%'} successPage={false} user={user} />
+              <TalentBio w={'100%'} successPage={false} talentUser={user} />
             </VStack>
           )}
         </VStack>
@@ -130,7 +113,7 @@ export const SubmissionPage = ({ bounty, submission, user, link }: Props) => {
       </VStack>
       {!isMobile && (
         <VStack w={['100%', '100%', '36rem', '36rem']}>
-          <TalentBio w={'100%'} successPage={false} user={user} />
+          <TalentBio w={'100%'} successPage={false} talentUser={user} />
         </VStack>
       )}
     </VStack>

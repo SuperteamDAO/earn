@@ -3,13 +3,12 @@ import {
   type TalentRankingSkills,
   type TalentRankingTimeframe,
 } from '@prisma/client';
-import axios from 'axios';
 import { type GetServerSideProps } from 'next';
 import { useRouter } from 'next/router';
 import { getServerSession } from 'next-auth/next';
 import { useEffect, useState, useTransition } from 'react';
 
-import { TotalStats } from '@/components/home/TotalStats';
+import { TotalStats, useGetTotals } from '@/features/home';
 import {
   Banner,
   ComingSoon,
@@ -29,12 +28,6 @@ import { prisma } from '@/prisma';
 
 import { authOptions } from '../../pages/api/auth/[...nextauth]';
 
-interface TotalType {
-  count?: number;
-  totalInUSD?: number;
-  totalUsers?: number;
-}
-
 interface Props {
   results: RowType[];
   skill: SKILL;
@@ -52,8 +45,7 @@ function TalentLeaderboard({
   count,
   userRank,
 }: Props) {
-  const [isTotalLoading, setIsTotalLoading] = useState(true);
-  const [totals, setTotals] = useState<TotalType>({});
+  const { data: totals, isLoading: isTotalsLoading } = useGetTotals();
 
   const [timeframe, setTimeframe] = useState<TIMEFRAME>(curTimeframe);
   const [skill, setSkill] = useState<SKILL>(curSkill);
@@ -62,16 +54,6 @@ function TalentLeaderboard({
 
   const [, startTransition] = useTransition();
   const router = useRouter();
-
-  const getTotalInfo = async () => {
-    try {
-      const totalsData = await axios.get('/api/sidebar/totals');
-      setTotals(totalsData.data);
-      setIsTotalLoading(false);
-    } catch (e) {
-      setIsTotalLoading(false);
-    }
-  };
 
   const handleStart = (url: string) => {
     if (url !== router.asPath) {
@@ -102,10 +84,6 @@ function TalentLeaderboard({
       router.events.off('routeChangeError', handleComplete);
     };
   }, [router]);
-
-  useEffect(() => {
-    getTotalInfo();
-  }, []);
 
   useEffect(() => {
     const url = new URL(window.location.href);
@@ -184,7 +162,7 @@ function TalentLeaderboard({
             <TotalStats
               TVE={totals?.totalInUSD ?? 0}
               bountyCount={totals?.count ?? 0}
-              isTotalLoading={isTotalLoading}
+              isTotalLoading={isTotalsLoading}
             />
             <Introduction />
             <ComingSoon />

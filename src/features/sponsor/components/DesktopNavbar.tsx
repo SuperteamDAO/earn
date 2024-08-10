@@ -18,14 +18,14 @@ import { usePostHog } from 'posthog-js/react';
 import React from 'react';
 
 import { UserMenu } from '@/components/shared/UserMenu';
-import { userStore } from '@/store/user';
+import { useUser } from '@/store/user';
 
 import { NAV_LINKS } from '../utils';
 
 export const DesktopNavbar = () => {
   const { data: session, status } = useSession();
 
-  const { userInfo } = userStore();
+  const { user } = useUser();
 
   const posthog = usePostHog();
 
@@ -128,7 +128,7 @@ export const DesktopNavbar = () => {
 
           <HStack gap={2}>
             <HStack gap={0}>
-              {status === 'authenticated' && !!userInfo?.currentSponsorId && (
+              {status === 'authenticated' && !!user?.currentSponsorId && (
                 <NextLink
                   href="/dashboard/listings/?open=1"
                   className="ph-no-capture"
@@ -144,7 +144,7 @@ export const DesktopNavbar = () => {
                   </Button>
                 </NextLink>
               )}
-              {status === 'authenticated' && !userInfo?.currentSponsorId && (
+              {status === 'authenticated' && !user?.currentSponsorId && (
                 <NextLink
                   href="/new/sponsor/"
                   className="ph-no-capture"

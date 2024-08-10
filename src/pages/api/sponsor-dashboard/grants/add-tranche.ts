@@ -11,25 +11,25 @@ import { prisma } from '@/prisma';
 import { safeStringify } from '@/utils/safeStringify';
 
 async function handler(req: NextApiRequestWithSponsor, res: NextApiResponse) {
-  const { id, trancheAmount, txId = '' } = req.query;
-  const parsedTrancheAmount = parseInt(trancheAmount as string, 10);
+  const { id, trancheAmount, txId = '' } = req.body;
+  const parsedTrancheAmount = parseInt(trancheAmount, 10);
 
   const userId = req.userId;
   const userSponsorId = req.userSponsorId;
 
-  logger.debug(`Request query: ${safeStringify(req.query)}`);
+  logger.debug(`Request body: ${safeStringify(req.body)}`);
 
   if (!id || !trancheAmount) {
-    logger.warn('Missing required query parameters: id or trancheAmount');
+    logger.warn('Missing required body parameters: id or trancheAmount');
     return res.status(400).json({
-      error: 'Missing required query parameters: id or trancheAmount',
+      error: 'Missing required body parameters: id or trancheAmount',
     });
   }
 
   try {
     logger.info(`Fetching grant application with ID: ${id}`);
     const currentApplication = await prisma.grantApplication.findUnique({
-      where: { id: id as string },
+      where: { id },
       include: { grant: true },
     });
 
@@ -64,7 +64,7 @@ async function handler(req: NextApiRequestWithSponsor, res: NextApiResponse) {
     logger.info('Updating payment details and grant information');
     const result = await prisma.$transaction(async (tx) => {
       const updatedGrantApplication = await tx.grantApplication.update({
-        where: { id: id as string },
+        where: { id },
         data: {
           totalPaid: {
             increment: parsedTrancheAmount,
@@ -97,7 +97,7 @@ async function handler(req: NextApiRequestWithSponsor, res: NextApiResponse) {
 
     await sendEmailNotification({
       type: 'grantPaymentReceived',
-      id: id as string,
+      id,
       triggeredBy: userId,
       userId: currentApplication.userId,
     });

@@ -27,12 +27,11 @@ import {
   Tr,
   useDisclosure,
 } from '@chakra-ui/react';
-import axios from 'axios';
 import NextLink from 'next/link';
 import { useRouter } from 'next/router';
 import { useSession } from 'next-auth/react';
 import { usePostHog } from 'posthog-js/react';
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import toast from 'react-hot-toast';
 import { AiOutlineDelete } from 'react-icons/ai';
 import { FiMoreVertical } from 'react-icons/fi';
@@ -103,35 +102,6 @@ export const ListingTable = ({ listings, setListings }: ListingTableProps) => {
       </Th>
     );
   };
-
-  const [submissionCounts, setSubmissionCounts] = useState<{
-    [key: string]: number;
-  }>({});
-
-  useEffect(() => {
-    const fetchSubmissionCounts = async () => {
-      const counts: { [key: string]: number } = {};
-      for (const listing of listings) {
-        let count = 0;
-        if (listing?.type === 'grant') {
-          const response = await axios.post(`/api/grant-application/count`, {
-            grantId: listing?.id,
-          });
-          count = response.data;
-        } else {
-          const response = await axios.get(
-            `/api/listings/${listing?.id}/submission-count/`,
-          );
-          count = response.data;
-        }
-        if (listing.id) {
-          counts[listing.id] = count;
-        }
-      }
-      setSubmissionCounts(counts);
-    };
-    fetchSubmissionCounts();
-  }, [listings]);
 
   const copyToClipboard = (text: string) => {
     navigator.clipboard.writeText(text).then(
@@ -275,7 +245,7 @@ export const ListingTable = ({ listings, setListings }: ListingTableProps) => {
                       fontWeight={500}
                       textAlign={'center'}
                     >
-                      {submissionCounts[listing.id!]}
+                      {listing.submissionCount}
                     </Text>
                   </Td>
                   <Td align="center" py={2}>

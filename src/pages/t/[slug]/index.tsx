@@ -31,7 +31,7 @@ import { EmptySection } from '@/components/shared/EmptySection';
 import { type FeedDataProps, PowCard, SubmissionCard } from '@/features/feed';
 import type { User } from '@/interface/user';
 import { Default } from '@/layouts/Default';
-import { userStore } from '@/store/user';
+import { useUser } from '@/store/user';
 import { getURL } from '@/utils/validUrl';
 
 type UserWithFeed = User & {
@@ -61,11 +61,11 @@ function TalentProfile({ talent, stats }: TalentProps) {
       [index]: !showSubskills[index],
     });
   };
-  const { userInfo } = userStore();
+  const { user } = useUser();
   const posthog = usePostHog();
 
   useEffect(() => {
-    if (userInfo?.id && talent?.id && userInfo.id !== talent?.id)
+    if (user?.id && talent?.id && user.id !== talent?.id)
       posthog.capture('clicked profile_talent');
   }, [talent]);
 
@@ -300,7 +300,7 @@ function TalentProfile({ talent, stats }: TalentProps) {
                   gap={3}
                   w={{ base: 'auto', md: '160px' }}
                 >
-                  {userInfo?.id === talent?.id
+                  {user?.id === talent?.id
                     ? renderButton(
                         <EditIcon />,
                         'Edit Profile',
@@ -511,7 +511,7 @@ function TalentProfile({ talent, stats }: TalentProps) {
                     <Text color={'brand.slate.900'} fontWeight={500}>
                       Proof of Work
                     </Text>
-                    {userInfo?.id === talent?.id && (
+                    {user?.id === talent?.id && (
                       <Button
                         color={'brand.slate.400'}
                         fontSize="sm"
@@ -575,11 +575,11 @@ function TalentProfile({ talent, stats }: TalentProps) {
                       fontWeight={500}
                       textAlign={'center'}
                     >
-                      {userInfo?.id === talent?.id
+                      {user?.id === talent?.id
                         ? 'Add some proof of work to build your profile'
                         : 'Nothing to see here yet ...'}
                     </Text>
-                    {userInfo?.id === talent?.id ? (
+                    {user?.id === talent?.id ? (
                       <Button
                         display="block"
                         w="200px"

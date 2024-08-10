@@ -1,47 +1,19 @@
 import { Box, Flex } from '@chakra-ui/react';
-import axios from 'axios';
-import { useEffect, useState } from 'react';
 
 import { EmptySection } from '@/components/shared/EmptySection';
 import {
-  type Listing,
   ListingCard,
   ListingCardSkeleton,
   ListingSection,
+  useGetListings,
 } from '@/features/listings';
 import { Home } from '@/layouts/Home';
 
-interface Listings {
-  bounties?: Listing[];
-}
-
 export default function AllProjectsPage() {
-  const [isListingsLoading, setIsListingsLoading] = useState(true);
-  const [listings, setListings] = useState<Listings>({
-    bounties: [],
+  const { data: listings, isLoading } = useGetListings({
+    type: 'project',
+    take: 100,
   });
-
-  const getListings = async () => {
-    setIsListingsLoading(true);
-    try {
-      const listingsData = await axios.get('/api/listings/', {
-        params: {
-          category: 'bounties',
-          type: 'project',
-          take: 100,
-        },
-      });
-      setListings(listingsData.data);
-      setIsListingsLoading(false);
-    } catch (e) {
-      setIsListingsLoading(false);
-    }
-  };
-
-  useEffect(() => {
-    if (!isListingsLoading) return;
-    getListings();
-  }, []);
 
   return (
     <Home type="home">
@@ -52,11 +24,11 @@ export default function AllProjectsPage() {
           sub="Bite sized tasks for freelancers"
           emoji="/assets/home/emojis/moneyman.png"
         >
-          {isListingsLoading &&
+          {isLoading &&
             Array.from({ length: 8 }, (_, index) => (
               <ListingCardSkeleton key={index} />
             ))}
-          {!isListingsLoading && !listings?.bounties?.length && (
+          {!isLoading && !listings?.length && (
             <Flex align="center" justify="center" mt={8}>
               <EmptySection
                 title="No listings available!"
@@ -64,10 +36,10 @@ export default function AllProjectsPage() {
               />
             </Flex>
           )}
-          {!isListingsLoading &&
-            listings?.bounties?.map((bounty) => {
-              return <ListingCard key={bounty.id} bounty={bounty} />;
-            })}
+          {!isLoading &&
+            listings?.map((bounty) => (
+              <ListingCard key={bounty.id} bounty={bounty} />
+            ))}
         </ListingSection>
       </Box>
     </Home>
