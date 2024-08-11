@@ -28,7 +28,7 @@ import {
   useDisclosure,
   VStack,
 } from '@chakra-ui/react';
-import { SubscribeHackathon } from '@prisma/client';
+import { type SubscribeHackathon } from '@prisma/client';
 import axios from 'axios';
 import type { GetServerSideProps } from 'next';
 import NextImage, { type StaticImageData } from 'next/image';
