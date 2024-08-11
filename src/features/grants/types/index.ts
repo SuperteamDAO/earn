@@ -1,6 +1,5 @@
 import { type References } from '@/features/listings';
 import type { Skills } from '@/interface/skills';
-import type { SponsorType } from '@/interface/sponsor';
 import type { User } from '@/interface/user';
 
 interface Grant {
@@ -14,7 +13,11 @@ interface Grant {
   token?: string;
   link?: string;
   sponsorId?: string;
-  sponsor?: SponsorType;
+  sponsor?: {
+    name: string;
+    logo: string;
+    isVerified: boolean;
+  };
   pocId?: string;
   poc?: User;
   isPublished?: boolean;

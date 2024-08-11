@@ -124,7 +124,7 @@ export const ApplicationList = ({
                     whiteSpace="nowrap"
                     textOverflow="ellipsis"
                   >
-                    {`${application?.user?.firstName} ${application?.user?.lastName}`}
+                    {application?.projectTitle}
                   </Text>
                   <Text
                     overflow={'hidden'}
@@ -134,7 +134,7 @@ export const ApplicationList = ({
                     whiteSpace="nowrap"
                     textOverflow="ellipsis"
                   >
-                    {application?.user?.email}
+                    {`${application?.user?.firstName} ${application?.user?.lastName}`}
                   </Text>
                 </Box>
               </Flex>

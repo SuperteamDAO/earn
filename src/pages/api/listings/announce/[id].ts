@@ -197,7 +197,7 @@ async function announce(req: NextApiRequestWithSponsor, res: NextApiResponse) {
     }
 
     logger.info(`Winners announced successfully for bounty ID: ${id}`);
-    return res.status(200).json(result);
+    return res.status(200).json({ message: 'Success' });
   } catch (error: any) {
     logger.error(
       `User ${userId} unable to announce winners for bounty ID: ${id}: ${safeStringify(error)}`,

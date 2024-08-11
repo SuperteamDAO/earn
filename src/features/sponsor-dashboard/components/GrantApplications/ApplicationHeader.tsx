@@ -51,10 +51,10 @@ export const ApplicationHeader = ({ grant, totalApplications }: Props) => {
     setIsExporting(true);
     try {
       const exportURL = await axios.get(
-        `/api/sponsor-dashboard/submission/export/`,
+        `/api/sponsor-dashboard/application/export/`,
         {
           params: {
-            listingId: grant?.id,
+            grantId: grant?.id,
           },
         },
       );

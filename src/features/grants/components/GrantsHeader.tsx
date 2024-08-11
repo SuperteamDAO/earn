@@ -12,10 +12,13 @@ import React from 'react';
 
 import { VerifiedBadge } from '@/components/shared/VerifiedBadge';
 import { ListingTabLink, RegionLabel, StatusBadge } from '@/features/listings';
-import type { SponsorType } from '@/interface/sponsor';
 
 interface Props {
-  sponsor: SponsorType;
+  sponsor?: {
+    name: string;
+    logo: string;
+    isVerified: boolean;
+  };
   title: string;
   status: string;
   region: string;

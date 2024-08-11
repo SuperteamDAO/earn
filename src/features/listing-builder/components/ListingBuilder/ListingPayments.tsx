@@ -255,7 +255,14 @@ export const ListingPayments = ({
   const handleUpdateListing = async () => {
     const errorMessage = validateRewardsData();
     const data = getValues();
-    const formData = { ...form, ...data };
+    let formData = { ...form, ...data };
+    if (isProject) {
+      if (compensationType === 'fixed') {
+        formData = { ...data, rewards: { first: rewardAmount } };
+      } else {
+        formData = { ...data, rewards: { first: 0 } };
+      }
+    }
     if (errorMessage) {
       setErrorMessage(errorMessage);
     } else {

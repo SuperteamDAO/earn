@@ -30,6 +30,7 @@ export const withSponsorAuth = (handler: Handler): NextApiHandler => {
       logger.debug(`Fetching user with ID: ${userId}`);
       const user = await prisma.user.findUnique({
         where: { id: userId as string },
+        select: { currentSponsorId: true },
       });
 
       if (!user || !user.currentSponsorId) {
