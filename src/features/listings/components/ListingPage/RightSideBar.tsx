@@ -15,6 +15,7 @@ import axios from 'axios';
 import { useEffect, useState } from 'react';
 import Countdown from 'react-countdown';
 
+import { LiveListings } from '@/components/home/LiveListings';
 import { CountDownRenderer } from '@/components/shared/countdownRenderer';
 import { tokenList } from '@/constants/index';
 import { type ParentSkills } from '@/interface/skills';
@@ -322,6 +323,19 @@ export function RightSideBar({
               pocSocials={listing.pocSocials}
               Hackathon={listing.Hackathon}
             />
+          </Box>
+          <Box px={6} pt={8}>
+            <LiveListings>
+              <Text
+                h="100%"
+                color={'brand.slate.600'}
+                fontSize={'sm'}
+                fontWeight={600}
+                textAlign="start"
+              >
+                LIVE LISTINGS
+              </Text>
+            </LiveListings>
           </Box>
         </VStack>
       </VStack>

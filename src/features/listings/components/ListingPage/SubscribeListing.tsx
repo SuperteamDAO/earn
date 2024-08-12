@@ -105,7 +105,7 @@ export const SubscribeListing = ({ id }: Props) => {
   return (
     <>
       <HStack>
-        <Text>{sub.length + 1}</Text>
+        <Text color="brand.slate.500">{sub.length + 1}</Text>
         <HStack>
           <AvatarGroup max={3} size={{ base: 'xs', md: 'sm' }}>
             {avatars.slice(0, sub.length + 1).map((avatar, index) => (

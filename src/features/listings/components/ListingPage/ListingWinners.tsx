@@ -216,7 +216,7 @@ export function ListingWinners({ bounty }: Props) {
           px={2}
           py={2}
           borderColor="#DDD6FE"
-          borderTop="1px solid"
+          borderTopWidth="1px"
         >
           {submissions.slice(3).map((submission) => (
             <Tooltip key={submission.id} label={submission?.user?.firstName}>

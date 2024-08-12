@@ -6,14 +6,13 @@ import { useRouter } from 'next/router';
 import { usePostHog } from 'posthog-js/react';
 import { useEffect, useState } from 'react';
 
-import { type Listing, ListingCardMobile } from '@/features/listings';
 import type { User } from '@/interface/user';
 import { userStore } from '@/store/user';
-import { dayjs } from '@/utils/dayjs';
 import { timeAgoShort } from '@/utils/timeAgo';
 
 import { OgImageViewer } from '../misc/ogImageViewer';
 import { HowItWorks } from './HowItWorks';
+import { LiveListings } from './LiveListings';
 import { RecentEarners } from './RecentEarners';
 import { SponsorBanner } from './SponsorBanner';
 import { TotalStats } from './TotalStats';
@@ -251,57 +250,6 @@ const RecentActivity = () => {
   );
 };
 
-const LiveListings = () => {
-  const [listings, setListings] = useState<{ bounties: Listing[] }>({
-    bounties: [],
-  });
-  const getListings = async () => {
-    try {
-      const listingData = await axios.get('/api/listings/', {
-        params: {
-          category: 'bounties',
-          take: 5,
-          isHomePage: true,
-          deadline: dayjs().add(1, 'day').toISOString(),
-          order: 'asc',
-        },
-      });
-
-      setListings(listingData.data);
-    } catch (e) {
-      console.log(e);
-    }
-  };
-
-  useEffect(() => {
-    getListings();
-  }, []);
-  return (
-    <Box>
-      <Flex align="center" justify={'space-between'}>
-        <Text color={'gray.400'} fontSize={'sm'} fontWeight={500}>
-          LIVE LISTINGS
-        </Text>
-        <Text
-          as={NextLink}
-          color="brand.purple"
-          fontSize="xs"
-          fontWeight={600}
-          href="/"
-        >
-          View All
-          <ArrowForwardIcon ml={1} />
-        </Text>
-      </Flex>
-      <Flex direction={'column'} w={'full'} mt={1}>
-        {listings?.bounties?.map((listing) => {
-          return <ListingCardMobile bounty={listing} key={listing?.id} />;
-        })}
-      </Flex>
-    </Box>
-  );
-};
-
 export const HomeSideBar = ({
   type,
   listings,
@@ -316,7 +264,23 @@ export const HomeSideBar = ({
       {type === 'feed' && (
         <>
           <VibeCard />
-          <LiveListings />
+          <LiveListings>
+            <Flex align="center" justify={'space-between'}>
+              <Text color={'gray.400'} fontSize={'sm'} fontWeight={500}>
+                LIVE LISTINGS
+              </Text>
+              <Text
+                as={NextLink}
+                color="brand.purple"
+                fontSize="xs"
+                fontWeight={600}
+                href="/"
+              >
+                View All
+                <ArrowForwardIcon ml={1} />
+              </Text>
+            </Flex>
+          </LiveListings>
         </>
       )}
       {router.asPath === '/' &&

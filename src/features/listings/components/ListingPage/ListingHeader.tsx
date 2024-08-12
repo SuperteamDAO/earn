@@ -138,14 +138,16 @@ export function ListingHeader({
 
   const CommentCount = () => {
     return (
-      <HStack ml={4}>
-        <Icon
-          as={LuMessageSquare}
-          color="brand.slate.500"
-          fill="brand.slate.600"
-        />
-        {!!commentCount && <Text fontSize={'sm'}>{commentCount}</Text>}
-      </HStack>
+      !!commentCount && (
+        <HStack ml={4}>
+          <Icon
+            as={LuMessageSquare}
+            color="brand.slate.500"
+            fill="brand.slate.600"
+          />
+          <Text fontSize={'sm'}>{commentCount}</Text>
+        </HStack>
+      )
     );
   };
 
