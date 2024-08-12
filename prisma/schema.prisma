@@ -195,30 +195,32 @@ model Grants {
 }
 
 model GrantApplication {
-  id                String                 @id @default(uuid())
-  userId            String
-  grantId           String
-  applicationStatus GrantApplicationStatus @default(Pending)
-  projectTitle      String
-  projectOneLiner   String
-  projectDetails    String                 @db.VarChar(3000)
-  projectTimeline   String
-  proofOfWork       String                 @db.VarChar(3000)
-  walletAddress     String
-  milestones        String?                @db.VarChar(3000)
-  kpi               String?                @db.VarChar(3000)
-  answers           Json?
-  createdAt         DateTime               @default(now())
-  updatedAt         DateTime               @updatedAt
-  user              User                   @relation(fields: [userId], references: [id])
-  grant             Grants                 @relation(fields: [grantId], references: [id])
-  label             SubmissionLabels       @default(Unreviewed)
-  ask               Int                    @default(0)
-  approvedAmount    Int                    @default(0)
-  totalPaid         Int                    @default(0)
-  isShipped         Boolean                @default(false)
-  paymentDetails    Json?
-  totalTranches     Int                    @default(0)
+  id                  String                 @id @default(uuid())
+  userId              String
+  grantId             String
+  applicationStatus   GrantApplicationStatus @default(Pending)
+  projectTitle        String
+  projectOneLiner     String
+  projectDetails      String                 @db.VarChar(3000)
+  projectTimeline     String
+  proofOfWork         String                 @db.VarChar(3000)
+  walletAddress       String
+  milestones          String?                @db.VarChar(3000)
+  kpi                 String?                @db.VarChar(3000)
+  answers             Json?
+  createdAt           DateTime               @default(now())
+  updatedAt           DateTime               @updatedAt
+  user                User                   @relation(fields: [userId], references: [id])
+  grant               Grants                 @relation(fields: [grantId], references: [id])
+  label               SubmissionLabels       @default(Unreviewed)
+  ask                 Int                    @default(0)
+  approvedAmount      Float                  @default(0)
+  approvedAmountInUSD Float                  @default(0)
+  approvedAt          DateTime?
+  totalPaid           Int                    @default(0)
+  isShipped           Boolean                @default(false)
+  paymentDetails      Json?
+  totalTranches       Int                    @default(0)
 
   @@index([userId])
   @@index([grantId])

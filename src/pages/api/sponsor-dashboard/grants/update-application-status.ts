@@ -11,6 +11,7 @@ import { convertGrantApplicationToAirtable } from '@/features/grants';
 import logger from '@/lib/logger';
 import { prisma } from '@/prisma';
 import { airtableConfig, airtableUpsert, airtableUrl } from '@/utils/airtable';
+import { fetchTokenUSDValue } from '@/utils/fetchTokenUSDValue';
 import { safeStringify } from '@/utils/safeStringify';
 
 async function handler(req: NextApiRequestWithSponsor, res: NextApiResponse) {
@@ -30,6 +31,9 @@ async function handler(req: NextApiRequestWithSponsor, res: NextApiResponse) {
   try {
     const currentApplication = await prisma.grantApplication.findUnique({
       where: { id },
+      include: {
+        grant: true,
+      },
     });
 
     if (!currentApplication) {
@@ -52,7 +56,16 @@ async function handler(req: NextApiRequestWithSponsor, res: NextApiResponse) {
     const isApproved = applicationStatus === 'Approved';
 
     if (isApproved) {
+      const approvedAt = new Date();
+      const tokenUSDValue = await fetchTokenUSDValue(
+        currentApplication.grant.token!,
+        approvedAt,
+      );
+      const usdValue = tokenUSDValue * parsedAmount;
+
       updatedData.approvedAmount = parsedAmount;
+      updatedData.approvedAmountInUSD = usdValue;
+      updatedData.approvedAt = approvedAt.toISOString();
     }
 
     const result = await prisma.grantApplication.update({
