@@ -3,8 +3,6 @@ import { Regions } from '@prisma/client';
 export const Superteams = [
   {
     name: 'Superteam India',
-    bg: `/assets/category_assets/bg/content.png`,
-    color: '#FEFBA8',
     icons: '/assets/superteams/india.jpg',
     banner: '/assets/superteam-banners/India.png',
     region: Regions.INDIA,
@@ -15,8 +13,6 @@ export const Superteams = [
   },
   {
     name: 'Superteam Germany',
-    bg: `/assets/category_assets/bg/backend.png`,
-    color: '#FEB8A8',
     icons: '/assets/superteams/germany.jpg',
     banner: '/assets/superteam-banners/Germany.png',
     region: Regions.GERMANY,
@@ -27,8 +23,6 @@ export const Superteams = [
   },
   {
     name: 'Superteam UK',
-    bg: `/assets/category_assets/bg/community.png`,
-    color: '#BFA8FE',
     icons: '/assets/superteams/uk.png',
     banner: '/assets/superteam-banners/UK.png',
     region: Regions.UK,
@@ -39,8 +33,6 @@ export const Superteams = [
   },
   {
     name: 'Superteam Turkey',
-    bg: `/assets/category_assets/bg/design.png`,
-    color: '#FEEBA8',
     icons: '/assets/superteams/turkey.jpg',
     banner: '/assets/superteam-banners/Turkey.png',
     region: Regions.TURKEY,
@@ -51,8 +43,6 @@ export const Superteams = [
   },
   {
     name: 'Superteam Vietnam',
-    bg: `/assets/category_assets/bg/frontend.png`,
-    color: '#A8FEA8',
     icons: '/assets/superteams/vietnam.png',
     banner: '/assets/superteam-banners/Vietnam.png',
     region: Regions.VIETNAM,
@@ -63,8 +53,6 @@ export const Superteams = [
   },
   {
     name: 'Superteam UAE',
-    bg: `/assets/category_assets/bg/growth.png`,
-    color: '#A8FEA8',
     icons: '/assets/superteams/uae.png',
     banner: '/assets/superteam-banners/UAE.png',
     region: Regions.UAE,
@@ -75,8 +63,6 @@ export const Superteams = [
   },
   {
     name: 'Superteam Nigeria',
-    bg: `/assets/category_assets/bg/content.png`,
-    color: '#F5A8ED',
     icons: '/assets/superteams/nigeria.png',
     banner: '/assets/superteam-banners/Nigeria.png',
     region: Regions.NIGERIA,
@@ -87,8 +73,6 @@ export const Superteams = [
   },
   {
     name: 'Superteam Brazil',
-    bg: `/assets/category_assets/bg/backend.png`,
-    color: '#FEEBA8',
     icons: '/assets/superteams/brazil.png',
     banner: '/assets/superteam-banners/Brazil.png',
     region: Regions.BRAZIL,
@@ -99,8 +83,6 @@ export const Superteams = [
   },
   {
     name: 'Superteam Malaysia',
-    bg: `/assets/category_assets/bg/community.png`,
-    color: '#BFA8FE',
     icons: '/assets/superteams/malaysia.jpg',
     banner: '/assets/superteam-banners/Malaysia.png',
     region: Regions.MALAYSIA,
@@ -111,8 +93,6 @@ export const Superteams = [
   },
   {
     name: 'Superteam Balkan',
-    bg: `/assets/category_assets/bg/design.png`,
-    color: '#FEEBA8',
     icons: '/assets/superteams/balkan.png',
     banner: '/assets/superteam-banners/Balkan.png',
     region: Regions.BALKAN,
@@ -134,8 +114,6 @@ export const Superteams = [
   },
   {
     name: 'Superteam Philippines',
-    bg: `/assets/category_assets/bg/frontend.png`,
-    color: '#A8FEA8',
     icons: '/assets/superteams/philippines.png',
     banner: '/assets/superteam-banners/Philippines.png',
     region: Regions.PHILIPPINES,
@@ -146,8 +124,6 @@ export const Superteams = [
   },
   {
     name: 'Superteam Japan',
-    bg: `/assets/category_assets/bg/growth.png`,
-    color: '#A8FEA8',
     icons: '/assets/superteams/japan.png',
     banner: '/assets/superteam-banners/Japan.png',
     region: Regions.JAPAN,
@@ -158,8 +134,6 @@ export const Superteams = [
   },
   {
     name: 'Superteam France',
-    bg: `/assets/category_assets/bg/content.png`,
-    color: '#A8FEA8',
     icons: '/assets/superteams/france.png',
     banner: '/assets/superteam-banners/France.png',
     region: Regions.FRANCE,
@@ -170,8 +144,6 @@ export const Superteams = [
   },
   {
     name: 'Superteam Mexico',
-    bg: `/assets/category_assets/bg/backend.png`,
-    color: '#A8FEA8',
     icons: '/assets/superteams/mexico.jpg',
     banner: '/assets/superteam-banners/Mexico.png',
     region: Regions.MEXICO,
@@ -179,6 +151,16 @@ export const Superteams = [
     country: ['Mexico'],
     code: 'MX',
     hello: `Hola`,
+  },
+  {
+    name: 'Superteam Canada',
+    icons: '/assets/superteams/canada.png',
+    banner: '/assets/superteam-banners/Canada.png',
+    region: Regions.CANADA,
+    displayValue: 'Canada',
+    country: ['Canada'],
+    code: 'CA',
+    hello: 'Hello',
   },
 ];
 

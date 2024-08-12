@@ -584,6 +584,7 @@ enum Regions {
   FRANCE
   UKRAINE
   ARGENTINA
+  CANADA
 }
 
 enum CompensationType {
