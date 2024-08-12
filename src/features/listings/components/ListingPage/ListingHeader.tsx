@@ -26,6 +26,7 @@ import { dayjs } from '@/utils/dayjs';
 
 import { ListingTabLink } from './ListingTabLink';
 import { RegionLabel } from './RegionLabel';
+import { ListingHeaderSeparator } from './Separator';
 import { StatusBadge } from './StatusBadge';
 import { SubscribeListing } from './SubscribeListing';
 
@@ -148,14 +149,6 @@ export function ListingHeader({
     );
   };
 
-  const Separator = () => {
-    return (
-      <Text color={'#E2E8EF'} fontWeight={500}>
-        |
-      </Text>
-    );
-  };
-
   const HeaderSub = () => {
     return (
       <Flex align={'center'} wrap={'wrap'} gap={{ base: 1, md: 3 }}>
@@ -170,7 +163,7 @@ export function ListingHeader({
           </Text>
           {!!sponsor?.isVerified && <VerifiedBadge />}
         </Flex>
-        <Separator />
+        <ListingHeaderSeparator />
         {isHackathon ? (
           <Flex align={'center'}>
             <Image h="2.5rem" alt={type} src={Hackathon?.altLogo} />
@@ -214,11 +207,11 @@ export function ListingHeader({
             </Tooltip>
           </Flex>
         )}
-        <Separator />
+        <ListingHeaderSeparator />
         <Flex display={'flex'}>
           <ListingStatus />
         </Flex>
-        <Separator />
+        <ListingHeaderSeparator />
         <RegionLabel region={region} />
         <CommentCount />
       </Flex>
@@ -288,7 +281,7 @@ export function ListingHeader({
             mx={'auto'}
             my={'auto'}
             borderColor="brand.slate.200"
-            borderBottom={'1px solid'}
+            borderBottomWidth={'1px'}
           >
             <ListingTabLink
               w={{ md: '22rem' }}

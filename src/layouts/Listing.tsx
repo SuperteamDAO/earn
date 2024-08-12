@@ -177,14 +177,17 @@ export function ListingPageLayout({
                   px={5}
                   pb={10}
                   borderColor="brand.slate.100"
-                  borderLeft={'1px solid'}
+                  borderLeftWidth={'1px'}
                 >
                   {children}
 
                   <Box display={{ base: 'block', md: 'none' }} w="full">
                     <ExtraInfoSection
                       skills={bounty?.skills?.map((e) => e.skills) ?? []}
-                      listing={bounty}
+                      region={bounty.region}
+                      requirements={bounty.requirements}
+                      pocSocials={bounty.pocSocials}
+                      Hackathon={bounty.Hackathon}
                     />
                   </Box>
                   <Comments

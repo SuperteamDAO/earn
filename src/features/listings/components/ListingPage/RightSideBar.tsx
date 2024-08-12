@@ -1,10 +1,8 @@
-import { ExternalLinkIcon, WarningIcon } from '@chakra-ui/icons';
+import { WarningIcon } from '@chakra-ui/icons';
 import {
   Box,
   Flex,
-  HStack,
   Image,
-  Link,
   Table,
   TableContainer,
   Tbody,
@@ -14,7 +12,6 @@ import {
   VStack,
 } from '@chakra-ui/react';
 import axios from 'axios';
-import { usePostHog } from 'posthog-js/react';
 import { useEffect, useState } from 'react';
 import Countdown from 'react-countdown';
 
@@ -22,11 +19,11 @@ import { CountDownRenderer } from '@/components/shared/countdownRenderer';
 import { tokenList } from '@/constants/index';
 import { type ParentSkills } from '@/interface/skills';
 import { dayjs } from '@/utils/dayjs';
-import { getURLSanitized } from '@/utils/getURLSanitized';
 
 import type { Listing } from '../../types';
 import { SubmissionActionButton } from '../Submission/SubmissionActionButton';
 import { CompensationAmount } from './CompensationAmount';
+import { ExtraInfoSection } from './ExtraInfoSection';
 import { PrizesList } from './PrizesList';
 
 export function RightSideBar({
@@ -180,7 +177,7 @@ export function RightSideBar({
           <Box
             w="90%"
             borderColor={'brand.slate.100'}
-            borderBottom={'1px solid '}
+            borderBottomWidth={'1px'}
           />
           <Flex
             justify={'space-between'}
@@ -318,114 +315,16 @@ export function RightSideBar({
             )}
           </Box>
           <Box display={{ base: 'none', md: 'block' }}>
-            <ExtraInfoSection skills={skills} listing={listing} />
+            <ExtraInfoSection
+              skills={skills}
+              region={listing.region}
+              requirements={listing.requirements}
+              pocSocials={listing.pocSocials}
+              Hackathon={listing.Hackathon}
+            />
           </Box>
         </VStack>
       </VStack>
     </Box>
-  );
-}
-
-interface ExtraInfoSectionProps {
-  skills?: ParentSkills[];
-  listing: Listing;
-}
-export function ExtraInfoSection({ skills, listing }: ExtraInfoSectionProps) {
-  const { requirements, pocSocials, Hackathon } = listing;
-
-  const posthog = usePostHog();
-  return (
-    <VStack gap={8} w={{ base: 'full', md: '22rem' }} px={6} pt={2}>
-      <VStack align={'start'} w="full">
-        <Text
-          h="100%"
-          color={'brand.slate.600'}
-          fontSize={'sm'}
-          fontWeight={600}
-          textAlign="center"
-        >
-          SKILLS NEEDED
-        </Text>
-        <HStack flexWrap={'wrap'} gap={3}>
-          {skills?.map((skill) => (
-            <Box
-              key={skill}
-              m={'0px !important'}
-              px={4}
-              py={1}
-              color="#475569"
-              fontSize="sm"
-              fontWeight={500}
-              bg={'#F1F5F9'}
-              rounded={'sm'}
-            >
-              <Text fontSize={'xs'}>{skill}</Text>
-            </Box>
-          ))}
-        </HStack>
-      </VStack>
-      <VStack align={'start'} w="full" fontSize={'sm'}>
-        <Text color={'brand.slate.600'} fontWeight={600}>
-          {listing.region}
-        </Text>
-        <Text h="100%" color={'brand.slate.500'}>
-          {listing.region === 'GLOBAL'
-            ? 'This listing is open for all people in all regions of the world'
-            : `This listing is only open for people in ${listing.region}`}
-        </Text>
-      </VStack>
-      {Hackathon && (
-        <VStack align={'start'} w="full" fontSize="sm">
-          <Text color={'brand.slate.600'} fontWeight={600}>
-            {Hackathon.name.toUpperCase()} TRACK
-          </Text>
-          <Text color={'brand.slate.500'}>{Hackathon.description}</Text>
-          <Link
-            color={'brand.slate.500'}
-            fontWeight={500}
-            href={`/${Hackathon.name.toLowerCase()}`}
-            isExternal
-          >
-            View All Challenges
-          </Link>
-        </VStack>
-      )}
-      {requirements && (
-        <VStack align={'start'} w={'full'} fontSize="sm">
-          <Text h="100%" color={'brand.slate.600'} fontWeight={600}>
-            ELIGIBILITY
-          </Text>
-          <Text color={'brand.slate.500'}>{requirements}</Text>
-        </VStack>
-      )}
-      {pocSocials && (
-        <VStack align={'start'} w={'full'} fontSize="sm">
-          <Text
-            h="100%"
-            color={'brand.slate.600'}
-            fontWeight={600}
-            textAlign="center"
-          >
-            CONTACT
-          </Text>
-          <Text>
-            <Link
-              className="ph-no-capture"
-              color={'#64768b'}
-              fontWeight={500}
-              href={getURLSanitized(pocSocials)}
-              isExternal
-              onClick={() => posthog.capture('reach out_listing')}
-            >
-              Reach out
-              <ExternalLinkIcon color={'#64768b'} mb={1} as="span" mx={1} />
-            </Link>
-            <Text as="span" color={'brand.slate.500'}>
-              if you have any questions about this listing
-            </Text>
-          </Text>
-        </VStack>
-      )}
-    </VStack>
   );
 }
