@@ -83,9 +83,5 @@ export interface References {
 }
 
 export interface Rewards {
-  first?: number;
-  second?: number;
-  third?: number;
-  fourth?: number;
-  fifth?: number;
+  [rank: number]: number;
 }

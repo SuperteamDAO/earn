@@ -1,4 +1,7 @@
-const defaultRanks = [
+import { type Rewards } from '@/features/listings';
+
+export const rankLabels = [
+  'zeroth',
   'first',
   'second',
   'third',
@@ -51,11 +54,23 @@ const defaultRanks = [
   'fiftieth',
 ];
 
-export const sortRank = (rankArray: string[]) => {
+export const cleanRewards = (rewards?: Rewards) =>
+  Object.keys(rewards || [])
+    .map(Number)
+    .filter((key) => !isNaN(key));
+
+export const nthLabelGenerator = (key: number) => {
+  if (key === 1) return '1st';
+  if (key === 2) return '2nd';
+  if (key === 3) return '3rd';
+  return `${key}th`;
+};
+
+export const sortRank = (rankArray: number[]) => {
   return rankArray
     .map((rank) => ({
       rank,
-      index: defaultRanks.indexOf(rank),
+      index: rank,
     }))
     .sort((a, b) => {
       if (a.index < b.index) {
