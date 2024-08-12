@@ -30,7 +30,6 @@ export interface Listing {
   pocId?: string;
   poc?: User;
   source?: string;
-  sourceDetails?: string;
   type?: BountyType | string;
   applicationType?: 'fixed' | 'rolling';
   totalWinnersSelected?: number;
