@@ -30,7 +30,6 @@ export interface Listing {
   pocId?: string;
   poc?: User;
   source?: string;
-  sourceDetails?: string;
   type?: BountyType | string;
   applicationType?: 'fixed' | 'rolling';
   totalWinnersSelected?: number;
@@ -84,9 +83,5 @@ export interface References {
 }
 
 export interface Rewards {
-  first?: number;
-  second?: number;
-  third?: number;
-  fourth?: number;
-  fifth?: number;
+  [rank: number]: number;
 }

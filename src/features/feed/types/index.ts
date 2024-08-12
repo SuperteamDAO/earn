@@ -1,5 +1,4 @@
 import { type Rewards } from '@/features/listings';
-import { type PrizeListMap } from '@/interface/listings';
 
 export interface FeedDataProps {
   id: string;
@@ -22,7 +21,7 @@ export interface FeedDataProps {
   listingId: number;
   sponsorId: number;
   listingTitle: string;
-  rewards: Partial<typeof PrizeListMap> | undefined;
+  rewards: Rewards | undefined;
   listingType: 'bounty' | 'hackathon' | 'project';
   listingSlug: string;
   isWinnersAnnounced: boolean;

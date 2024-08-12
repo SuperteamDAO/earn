@@ -7,8 +7,6 @@ import {
 import logger from '@/lib/logger';
 import { prisma } from '@/prisma';
 
-type WinnerPosition = 'first' | 'second' | 'third' | 'fourth' | 'fifth';
-
 async function handler(req: NextApiRequestWithSponsor, res: NextApiResponse) {
   const userId = req.userId;
   const params = req.query;
@@ -56,19 +54,6 @@ async function handler(req: NextApiRequestWithSponsor, res: NextApiResponse) {
         }
       : {};
 
-    const mapPositionToNumber = (position: string) => {
-      const positionMap: { [key in WinnerPosition]: number } = {
-        first: 1,
-        second: 2,
-        third: 3,
-        fourth: 4,
-        fifth: 5,
-      };
-
-      const positionKey = position.toLowerCase() as WinnerPosition;
-      return positionMap[positionKey] ?? 999;
-    };
-
     const submissions = await prisma.submission.findMany({
       where: {
         listing: {
@@ -104,7 +89,7 @@ async function handler(req: NextApiRequestWithSponsor, res: NextApiResponse) {
     const submissionsWithSortKey = submissions.map((submission) => {
       let sortKey = 0;
       if (submission.isWinner) {
-        sortKey = mapPositionToNumber(submission.winnerPosition as string);
+        sortKey = Number(submission.winnerPosition);
       } else {
         switch (submission.label) {
           case 'Unreviewed':

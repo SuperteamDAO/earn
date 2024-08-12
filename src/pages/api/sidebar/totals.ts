@@ -26,15 +26,15 @@ export default async function handler(
       },
     });
 
-    const totalApprovedGrantAmountResult = await prisma.grants.aggregate({
-      _sum: {
-        totalApproved: true,
-      },
-      where: {
-        isActive: true,
-        isPublished: true,
-      },
-    });
+    const totalApprovedGrantAmountResult =
+      await prisma.grantApplication.aggregate({
+        _sum: {
+          approvedAmountInUSD: true,
+        },
+        where: {
+          applicationStatus: 'Approved',
+        },
+      });
 
     let errorCount = 0;
 
@@ -45,7 +45,7 @@ export default async function handler(
     const roundedUserCount = Math.ceil((userCount - errorCount) / 10) * 10;
     const totalListingRewardAmount = totalRewardAmountResult._sum.usdValue || 0;
     const totalApprovedGrantAmount =
-      totalApprovedGrantAmountResult._sum.totalApproved || 0;
+      totalApprovedGrantAmountResult._sum.approvedAmountInUSD || 0;
 
     const roundedTotalRewardAmount =
       Math.ceil((totalListingRewardAmount + totalApprovedGrantAmount) / 10) *

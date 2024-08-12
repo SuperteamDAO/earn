@@ -2,7 +2,7 @@ import { Flex, Image, Text } from '@chakra-ui/react';
 
 import { tokenList } from '@/constants';
 import { type Rewards } from '@/features/listings';
-import { PrizeListMap } from '@/interface/listings';
+import { rankLabels } from '@/utils/rank';
 
 export const WinnerFeedImage = ({
   token,
@@ -11,7 +11,7 @@ export const WinnerFeedImage = ({
 }: {
   token: string | undefined;
   winnerPosition: keyof Rewards | undefined;
-  rewards: Partial<typeof PrizeListMap> | undefined;
+  rewards: Rewards | undefined;
 }) => {
   return (
     <Flex
@@ -47,7 +47,8 @@ export const WinnerFeedImage = ({
           fontSize={{ base: '2xl', md: '5xl' }}
           fontWeight={600}
         >
-          {winnerPosition ? `${rewards?.[winnerPosition]}` : 'N/A'} {token}
+          {winnerPosition ? `${rewards?.[Number(winnerPosition)]}` : 'N/A'}{' '}
+          {token}
         </Text>
       </Flex>
       <Text
@@ -62,9 +63,7 @@ export const WinnerFeedImage = ({
         bg={'rgba(85, 54, 171, 0.54)'}
         borderRadius={'full'}
       >
-        {PrizeListMap[
-          winnerPosition as keyof typeof PrizeListMap
-        ].toUpperCase()}
+        {rankLabels[Number(winnerPosition)]?.toUpperCase()} PRIZE
       </Text>
     </Flex>
   );

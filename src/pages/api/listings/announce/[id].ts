@@ -92,14 +92,10 @@ async function announce(req: NextApiRequestWithSponsor, res: NextApiResponse) {
       a: (typeof winners)[0],
       b: (typeof winners)[0],
     ) => {
-      const order = { first: 1, second: 2, third: 3, fourth: 4, fifth: 5 };
-      const aPosition = a.winnerPosition as keyof typeof order;
-      const bPosition = b.winnerPosition as keyof typeof order;
-
       if (a.winnerPosition && b.winnerPosition) {
         return (
-          (order[aPosition] || Number.MAX_VALUE) -
-          (order[bPosition] || Number.MAX_VALUE)
+          (Number(a.winnerPosition) || Number.MAX_VALUE) -
+          (Number(b.winnerPosition) || Number.MAX_VALUE)
         );
       }
 
@@ -154,12 +150,11 @@ async function announce(req: NextApiRequestWithSponsor, res: NextApiResponse) {
     let currentIndex = 0;
 
     while (currentIndex < winners?.length) {
-      const amount: number = winners[currentIndex]?.winnerPosition
-        ? Math.ceil(
-            rewards[winners[currentIndex]?.winnerPosition as keyof Rewards] ||
-              0,
-          )
-        : 0;
+      const winnerPosition = Number(winners[currentIndex]?.winnerPosition);
+      let amount: number = 0;
+      if (winnerPosition && !isNaN(winnerPosition)) {
+        amount = Math.ceil(rewards[winnerPosition as keyof Rewards] ?? 0);
+      }
 
       const rewardInUSD = (listing.usdValue! / listing.rewardAmount!) * amount;
 

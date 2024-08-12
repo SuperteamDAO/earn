@@ -6,7 +6,7 @@ import { useEffect, useState } from 'react';
 
 import { EarnAvatar } from '@/components/shared/EarnAvatar';
 import type { SubmissionWithUser } from '@/interface/submission';
-import { sortRank } from '@/utils/rank';
+import { rankLabels, sortRank } from '@/utils/rank';
 import { tweetEmbedLink } from '@/utils/socialEmbeds';
 
 import type { Listing, Rewards } from '../../types';
@@ -114,7 +114,9 @@ export function ListingWinners({ bounty }: Props) {
                     bg="brand.purple"
                     rounded={'full'}
                   >
-                    {isProject ? 'Winner' : submission?.winnerPosition}
+                    {isProject
+                      ? 'Winner'
+                      : rankLabels[submission?.winnerPosition ?? 0]}
                   </Text>
                   <EarnAvatar
                     size="64px"
@@ -135,7 +137,7 @@ export function ListingWinners({ bounty }: Props) {
                     {bounty?.token}{' '}
                     {bounty?.rewards &&
                       bounty?.rewards[
-                        submission?.winnerPosition as keyof Rewards
+                        Number(submission?.winnerPosition) as keyof Rewards
                       ]}
                   </Text>
                 </Flex>
