@@ -34,7 +34,7 @@ export const SubmissionList = ({
               <SimpleGrid
                 w="full"
                 px={{ base: 3, md: 6 }}
-                columns={{ base: 1, md: 2, lg: 3, xl: 4 }}
+                columns={{ base: 1, md: 2, lg: 3 }}
                 spacing={{ base: 5, md: 20 }}
               >
                 {submissions?.map((submission) => {

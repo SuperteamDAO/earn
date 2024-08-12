@@ -2,7 +2,7 @@ import { Flex, Image, Text } from '@chakra-ui/react';
 
 import { tokenList } from '@/constants';
 import { type Rewards } from '@/features/listings';
-import { rankLabels } from '@/utils/rank';
+import { getRankLabels } from '@/utils/rank';
 
 export const WinnerFeedImage = ({
   token,
@@ -63,7 +63,7 @@ export const WinnerFeedImage = ({
         bg={'rgba(85, 54, 171, 0.54)'}
         borderRadius={'full'}
       >
-        {rankLabels[Number(winnerPosition)]?.toUpperCase()} PRIZE
+        {getRankLabels(Number(winnerPosition))?.toUpperCase()} PRIZE
       </Text>
     </Flex>
   );

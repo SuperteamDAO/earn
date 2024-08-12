@@ -3,6 +3,7 @@ import {
   Box,
   Button,
   HStack,
+  Icon,
   Image,
   Link,
   LinkBox,
@@ -19,17 +20,16 @@ import React, {
   useEffect,
   useState,
 } from 'react';
-import { BiSolidComment } from 'react-icons/bi';
-import { IoMdHeart } from 'react-icons/io';
+import { LuHeart, LuMessageCircle } from 'react-icons/lu';
 import type { Metadata } from 'unfurl.js/dist/types';
 
 import { EarnAvatar } from '@/components/shared/EarnAvatar';
 import { type User } from '@/interface/user';
 import { userStore } from '@/store/user';
-import { Badge } from '@/svg/badge';
 import { getURLSanitized } from '@/utils/getURLSanitized';
 
 import { type Rewards } from '../../types';
+import { Badge } from './Badge';
 
 interface Props {
   winner: boolean;
@@ -127,27 +127,35 @@ export const SubmissionCard = ({
       cursor={'pointer'}
       rounded={'md'}
     >
-      {winner && (
-        <Box pos="absolute" top="0" right="0">
-          <Badge position={winnerPosition} />
-        </Box>
-      )}
-      <Link as={NextLink} href={`/t/${talent?.username}`}>
-        <HStack mb={2}>
-          <EarnAvatar id={talent?.id} avatar={talent?.photo || undefined} />
-          <Text
-            overflow={'hidden'}
-            w="80%"
-            color={'gray.900'}
-            fontSize={'lg'}
-            fontWeight={500}
-            whiteSpace={'nowrap'}
-            textOverflow={'ellipsis'}
-          >
-            {talent?.firstName} {talent?.lastName}
-          </Text>
-        </HStack>
-      </Link>
+      <HStack justify={'space-between'} w="full" mb={2}>
+        <Link as={NextLink} href={`/t/${talent?.username}`}>
+          <HStack>
+            <EarnAvatar
+              size="24px"
+              id={talent?.id}
+              avatar={talent?.photo || undefined}
+            />
+            <Text
+              overflow={'hidden'}
+              maxW="8rem"
+              color={'gray.900'}
+              fontSize={'md'}
+              fontWeight={500}
+              whiteSpace={'nowrap'}
+              textOverflow={'ellipsis'}
+            >
+              {talent?.firstName} {talent?.lastName} eqfaaef
+            </Text>
+          </HStack>
+        </Link>
+        {winner && (
+          <Box flexGrow={1} pr={1}>
+            <Box w="fit-content" ml="auto">
+              <Badge position={winnerPosition} />
+            </Box>
+          </Box>
+        )}
+      </HStack>
       <LinkOverlay href={`${router.asPath}/${id}`}>
         <Image
           w={'full'}
@@ -171,19 +179,26 @@ export const SubmissionCard = ({
           type="button"
           variant={'unstyled'}
         >
-          <IoMdHeart
-            size={'1.3rem'}
+          <Icon
+            as={LuHeart}
             color={
               !likes?.find((e) => e.id === (userInfo?.id as string))
                 ? '#64748b'
                 : '#E11D48'
             }
+            fill={
+              !likes?.find((e) => e.id === (userInfo?.id as string))
+                ? '#fff'
+                : '#E11D48'
+            }
+            size={'1.3rem'}
           />
           {likes?.length}
         </Button>
         <LinkOverlay href={`${router.asPath}/${id}`}>
-          <BiSolidComment
+          <LuMessageCircle
             size={'1.23rem'}
+            fill={'#CBD5E1'}
             color={'#CBD5E1'}
             style={{
               transform: 'scaleX(-1)',

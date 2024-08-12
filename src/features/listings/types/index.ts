@@ -24,6 +24,7 @@ export interface Listing {
   token?: string;
   rewardAmount?: number;
   rewards?: Rewards;
+  maxBonusSpots?: number;
   sponsorId?: string;
   sponsor?: SponsorType;
   pocSocials?: string;

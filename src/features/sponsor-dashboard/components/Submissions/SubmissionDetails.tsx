@@ -42,11 +42,11 @@ import {
 } from 'react-icons/md';
 
 import { EarnAvatar } from '@/components/shared/EarnAvatar';
-import { tokenList } from '@/constants';
+import { BONUS_REWARD_POSITION, tokenList } from '@/constants';
 import type { Listing, Rewards } from '@/features/listings';
 import type { SubmissionWithUser } from '@/interface/submission';
 import { getURLSanitized } from '@/utils/getURLSanitized';
-import { rankLabels } from '@/utils/rank';
+import { getRankLabels } from '@/utils/rank';
 import { truncatePublicKey } from '@/utils/truncatePublicKey';
 import { truncateString } from '@/utils/truncateString';
 
@@ -114,16 +114,32 @@ export const SubmissionDetails = ({
 
       const submissionIndex = submissions.findIndex((s) => s.id === id);
       if (submissionIndex >= 0) {
-        const oldRank: number =
+        const oldPosition: number =
           Number(submissions[submissionIndex]?.winnerPosition) || 0;
 
+        console.log('new position - ', position);
+        console.log('old position - ', oldPosition);
         let newUsedPositions = [...usedPositions];
-        if (oldRank && oldRank !== position) {
-          newUsedPositions = newUsedPositions.filter((pos) => pos !== oldRank);
+        if (oldPosition && oldPosition !== position) {
+          const index = newUsedPositions.indexOf(oldPosition);
+          if (index !== -1) {
+            newUsedPositions = [
+              ...newUsedPositions.slice(0, index),
+              ...newUsedPositions.slice(index + 1),
+            ];
+          }
         }
 
-        if (position && !newUsedPositions.includes(position)) {
-          newUsedPositions.push(position);
+        if (position) {
+          if (
+            position === BONUS_REWARD_POSITION &&
+            newUsedPositions.filter((n) => n === BONUS_REWARD_POSITION).length <
+              (bounty?.maxBonusSpots ?? 0)
+          ) {
+            newUsedPositions.push(position);
+          } else if (!newUsedPositions.includes(position)) {
+            newUsedPositions.push(position);
+          }
         }
         setUsedPositions(newUsedPositions);
 
@@ -580,14 +596,30 @@ export const SubmissionDetails = ({
                       >
                         <option>Select Winner</option>
                         {rewards.map((reward) => {
-                          const isRewardUsed = usedPositions.includes(reward);
+                          console.log(
+                            'used',
+                            usedPositions.filter(
+                              (u) => u === BONUS_REWARD_POSITION,
+                            ).length,
+                          );
+                          console.log('max bonus spots', bounty?.maxBonusSpots);
+                          let isRewardUsed = usedPositions.includes(reward);
+                          if (reward === BONUS_REWARD_POSITION) {
+                            if (
+                              usedPositions.filter(
+                                (u) => u === BONUS_REWARD_POSITION,
+                              ).length < (bounty?.maxBonusSpots ?? 0)
+                            ) {
+                              isRewardUsed = false;
+                            }
+                          }
                           const isCurrentSubmissionReward =
                             Number(selectedSubmission?.winnerPosition) ===
                             reward;
                           return (
                             (!isRewardUsed || isCurrentSubmissionReward) && (
                               <option key={reward} value={reward}>
-                                {isProject ? 'Winner' : rankLabels[reward]}
+                                {isProject ? 'Winner' : getRankLabels(reward)}
                               </option>
                             )
                           );

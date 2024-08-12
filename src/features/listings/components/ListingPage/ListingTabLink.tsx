@@ -1,4 +1,4 @@
-import { Link } from '@chakra-ui/react';
+import { type ChakraProps, Link } from '@chakra-ui/react';
 import NextLink from 'next/link';
 
 export const ListingTabLink = ({
@@ -6,19 +6,23 @@ export const ListingTabLink = ({
   text,
   isActive,
   onClick,
+  w,
+  styles,
 }: {
   href: string;
   text: string;
   isActive: boolean;
   onClick?: () => void;
+  w?: ChakraProps['w'];
+  styles?: ChakraProps;
 }) => {
   return (
     <Link
       className="ph-no-capture"
       as={NextLink}
       alignItems="center"
-      justifyContent="center"
       display="flex"
+      w={w}
       h={'full'}
       color="brand.slate.500"
       fontSize={{ base: 'xs', md: 'sm' }}
@@ -33,6 +37,7 @@ export const ListingTabLink = ({
       }}
       href={href}
       onClick={onClick}
+      {...styles}
     >
       {text}
     </Link>

@@ -2,6 +2,7 @@ import { ExternalLinkIcon, WarningIcon } from '@chakra-ui/icons';
 import {
   Box,
   Flex,
+  HStack,
   Image,
   Link,
   Table,
@@ -9,8 +10,6 @@ import {
   Tbody,
   Td,
   Text,
-  Th,
-  Thead,
   Tr,
   VStack,
 } from '@chakra-ui/react';
@@ -21,16 +20,22 @@ import Countdown from 'react-countdown';
 
 import { CountDownRenderer } from '@/components/shared/countdownRenderer';
 import { tokenList } from '@/constants/index';
+import { type ParentSkills } from '@/interface/skills';
 import { dayjs } from '@/utils/dayjs';
-import { formatNumberWithSuffix } from '@/utils/formatNumberWithSuffix';
 import { getURLSanitized } from '@/utils/getURLSanitized';
-import { cleanRewards, nthLabelGenerator, rankLabels } from '@/utils/rank';
 
 import type { Listing } from '../../types';
 import { SubmissionActionButton } from '../Submission/SubmissionActionButton';
 import { CompensationAmount } from './CompensationAmount';
+import { PrizesList } from './PrizesList';
 
-export function RightSideBar({ listing }: { listing: Listing }) {
+export function RightSideBar({
+  listing,
+  skills,
+}: {
+  listing: Listing;
+  skills?: ParentSkills[];
+}) {
   const {
     id,
     token,
@@ -41,14 +46,11 @@ export function RightSideBar({ listing }: { listing: Listing }) {
     compensationType,
     maxRewardAsk,
     minRewardAsk,
-    requirements,
-    pocSocials,
     Hackathon,
     applicationType,
     timeToComplete,
+    maxBonusSpots,
   } = listing;
-
-  const posthog = usePostHog();
 
   const [isSubmissionNumberLoading, setIsSubmissionNumberLoading] =
     useState(true);
@@ -91,38 +93,22 @@ export function RightSideBar({ listing }: { listing: Listing }) {
 
   const isProject = type === 'project';
 
-  const rewardLength = cleanRewards(rewards).length;
-
-  const prizeMapping = rankLabels
-    .map((r, i) => ({
-      key: i,
-      label: nthLabelGenerator(i),
-      description: `${r} Prize`,
-    }))
-    .slice(1, rewardLength + 1);
-  // first item of rankLabels is ZERO, therefore slice from index 1
-
   return (
-    <Box w={{ base: 'full', md: 'auto' }}>
-      <VStack gap={2} pt={10}>
+    <Box w={{ base: 'full', md: 'auto' }} h="full">
+      <VStack gap={2} w="full" pt={4}>
         <VStack
           justify={'center'}
           gap={0}
-          w={{ base: 'full', md: '22rem' }}
+          w="full"
           bg={'#FFFFFF'}
           rounded={'xl'}
         >
-          <VStack
-            justify={'space-between'}
-            w={'full'}
-            borderBottom={'1px solid #E2E8EF'}
-          >
+          <VStack justify={'space-between'} w={'full'} pb={4}>
             <TableContainer w={'full'}>
               {compensationType !== 'fixed' && (
                 <Text
-                  mb={1}
                   px={6}
-                  pt={3}
+                  pb={2}
                   color="brand.slate.400"
                   fontSize={'xs'}
                   fontWeight={500}
@@ -131,20 +117,10 @@ export function RightSideBar({ listing }: { listing: Listing }) {
                   {compensationType === 'variable' && 'Payment in'}
                 </Text>
               )}
-              <Table
-                mt={compensationType === 'fixed' ? -6 : -10}
-                variant={'unstyled'}
-              >
-                <Thead>
-                  <Tr>
-                    <Th></Th>
-                    <Th></Th>
-                    <Th> </Th>
-                  </Tr>
-                </Thead>
+              <Table variant={'unstyled'}>
                 <Tbody>
-                  <Tr w={'full'} h={16} borderBottom={'1px solid #E2E8EF'}>
-                    <Td colSpan={2}>
+                  <Tr w={'full'}>
+                    <Td w="full" py={0} colSpan={3}>
                       <Flex align="center" gap={2}>
                         <Image
                           w={8}
@@ -163,81 +139,37 @@ export function RightSideBar({ listing }: { listing: Listing }) {
                           minRewardAsk={minRewardAsk}
                           token={token}
                           textStyle={{
-                            fontWeight: 500,
-                            fontSize: { base: 'lg', md: '2xl' },
+                            fontWeight: 600,
+                            fontSize: { base: 'lg', md: 'xl' },
                             color: 'brand.slate.700',
+                            w: '8.5rem',
                           }}
                         />
+                        {!isProject && (
+                          <Text
+                            color={'brand.slate.500'}
+                            fontSize={'lg'}
+                            fontWeight={400}
+                          >
+                            Total Prizes
+                          </Text>
+                        )}
                       </Flex>
-                    </Td>
-                    <Td>
-                      {!isProject && (
-                        <Text
-                          ml={-6}
-                          color={'brand.slate.400'}
-                          fontSize={'lg'}
-                          fontWeight={400}
-                        >
-                          Total Prizes
-                        </Text>
-                      )}
                     </Td>
                   </Tr>
                   {!isProject && (
                     <>
-                      {prizeMapping.map(
-                        (prize, index) =>
-                          rewards?.[prize.key] && (
-                            <Tr key={index}>
-                              <Td colSpan={2}>
-                                <Flex align="center">
-                                  <Flex
-                                    align={'center'}
-                                    justify={'center'}
-                                    w={8}
-                                    h={8}
-                                    mr={3}
-                                    color="brand.slate.500"
-                                    fontSize={'0.7rem'}
-                                    bg={'blackAlpha.100'}
-                                    rounded={'full'}
-                                  >
-                                    {prize.label}
-                                  </Flex>
-                                  <Flex>
-                                    <Text
-                                      color={'brand.slate.500'}
-                                      fontSize={'lg'}
-                                      fontWeight={500}
-                                    >
-                                      {formatNumberWithSuffix(
-                                        rewards[prize.key]!,
-                                        2,
-                                        true,
-                                      )}
-                                    </Text>
-                                    <Text
-                                      mt="1px"
-                                      ml={1}
-                                      color="brand.slate.400"
-                                      fontWeight={400}
-                                    >
-                                      {token}
-                                    </Text>
-                                  </Flex>
-                                </Flex>
-                              </Td>
-                              <Td>
-                                <Text
-                                  ml={-6}
-                                  color={'brand.slate.400'}
-                                  fontWeight={400}
-                                >
-                                  {prize.description}
-                                </Text>
-                              </Td>
-                            </Tr>
-                          ),
+                      {rewards && (
+                        <Tr>
+                          <Td colSpan={3}>
+                            <PrizesList
+                              totalReward={rewardAmount ?? 0}
+                              maxBonusSpots={maxBonusSpots ?? 0}
+                              token={token ?? ''}
+                              rewards={rewards}
+                            />
+                          </Td>
+                        </Tr>
                       )}
                     </>
                   )}
@@ -245,6 +177,11 @@ export function RightSideBar({ listing }: { listing: Listing }) {
               </Table>
             </TableContainer>
           </VStack>
+          <Box
+            w="90%"
+            borderColor={'brand.slate.100'}
+            borderBottom={'1px solid '}
+          />
           <Flex
             justify={'space-between'}
             w={'full'}
@@ -380,100 +317,115 @@ export function RightSideBar({ listing }: { listing: Listing }) {
               </Flex>
             )}
           </Box>
+          <Box display={{ base: 'none', md: 'block' }}>
+            <ExtraInfoSection skills={skills} listing={listing} />
+          </Box>
         </VStack>
-        {Hackathon && (
-          <VStack
-            align={'start'}
-            justify={'center'}
-            w={{ base: 'full', md: '22rem' }}
-            mt={4}
-            p={6}
-            bg={'#FFFFFF'}
-            rounded={'xl'}
-          >
-            <Text
-              h="100%"
-              color={'brand.slate.400'}
-              fontSize="1rem"
-              fontWeight={500}
-              textAlign="center"
-            >
-              {Hackathon.name.toUpperCase()} TRACK
-            </Text>
-            <Text color={'brand.slate.500'} fontSize="1rem">
-              {Hackathon.description}
-            </Text>
-            <Link
-              color={'brand.slate.500'}
-              fontSize="1rem"
-              fontWeight={500}
-              href={`/${Hackathon.name.toLowerCase()}`}
-              isExternal
-            >
-              View All Challenges
-            </Link>
-          </VStack>
-        )}
-        {requirements && (
-          <VStack
-            align="start"
-            w={{ base: 'full', md: '22rem' }}
-            mt={4}
-            p={6}
-            bg="white"
-            rounded={'xl'}
-          >
-            <Text
-              h="100%"
-              color={'brand.slate.400'}
-              fontSize="1rem"
-              fontWeight={500}
-              textAlign="center"
-            >
-              ELIGIBILITY
-            </Text>
-            <Text color={'brand.slate.500'}>{requirements}</Text>
-          </VStack>
-        )}
-        {pocSocials && (
-          <VStack
-            align={'start'}
-            justify={'center'}
-            w={{ base: '100%', md: '22rem' }}
-            mt={4}
-            p={6}
-            bg={'#FFFFFF'}
-            rounded={'xl'}
-          >
-            <Text
-              h="100%"
-              color={'brand.slate.400'}
-              fontSize="1rem"
-              fontWeight={500}
-              textAlign="center"
-            >
-              CONTACT
-            </Text>
-            <Text>
-              <Link
-                className="ph-no-capture"
-                color={'#64768b'}
-                fontSize="1rem"
-                fontWeight={500}
-                href={getURLSanitized(pocSocials)}
-                isExternal
-                onClick={() => posthog.capture('reach out_listing')}
-              >
-                Reach out
-                <ExternalLinkIcon color={'#64768b'} mb={1} as="span" mx={1} />
-              </Link>
-              <Text as="span" color={'brand.slate.500'} fontSize="1rem">
-                if you have any questions about this listing
-              </Text>
-            </Text>
-          </VStack>
-        )}
       </VStack>
     </Box>
+  );
+}
+
+interface ExtraInfoSectionProps {
+  skills?: ParentSkills[];
+  listing: Listing;
+}
+export function ExtraInfoSection({ skills, listing }: ExtraInfoSectionProps) {
+  const { requirements, pocSocials, Hackathon } = listing;
+
+  const posthog = usePostHog();
+  return (
+    <VStack gap={8} w={{ base: 'full', md: '22rem' }} px={6} pt={2}>
+      <VStack align={'start'} w="full">
+        <Text
+          h="100%"
+          color={'brand.slate.600'}
+          fontSize={'sm'}
+          fontWeight={600}
+          textAlign="center"
+        >
+          SKILLS NEEDED
+        </Text>
+        <HStack flexWrap={'wrap'} gap={3}>
+          {skills?.map((skill) => (
+            <Box
+              key={skill}
+              m={'0px !important'}
+              px={4}
+              py={1}
+              color="#475569"
+              fontSize="sm"
+              fontWeight={500}
+              bg={'#F1F5F9'}
+              rounded={'sm'}
+            >
+              <Text fontSize={'xs'}>{skill}</Text>
+            </Box>
+          ))}
+        </HStack>
+      </VStack>
+      <VStack align={'start'} w="full" fontSize={'sm'}>
+        <Text color={'brand.slate.600'} fontWeight={600}>
+          {listing.region}
+        </Text>
+        <Text h="100%" color={'brand.slate.500'}>
+          {listing.region === 'GLOBAL'
+            ? 'This listing is open for all people in all regions of the world'
+            : `This listing is only open for people in ${listing.region}`}
+        </Text>
+      </VStack>
+      {Hackathon && (
+        <VStack align={'start'} w="full" fontSize="sm">
+          <Text color={'brand.slate.600'} fontWeight={600}>
+            {Hackathon.name.toUpperCase()} TRACK
+          </Text>
+          <Text color={'brand.slate.500'}>{Hackathon.description}</Text>
+          <Link
+            color={'brand.slate.500'}
+            fontWeight={500}
+            href={`/${Hackathon.name.toLowerCase()}`}
+            isExternal
+          >
+            View All Challenges
+          </Link>
+        </VStack>
+      )}
+      {requirements && (
+        <VStack align={'start'} w={'full'} fontSize="sm">
+          <Text h="100%" color={'brand.slate.600'} fontWeight={600}>
+            ELIGIBILITY
+          </Text>
+          <Text color={'brand.slate.500'}>{requirements}</Text>
+        </VStack>
+      )}
+      {pocSocials && (
+        <VStack align={'start'} w={'full'} fontSize="sm">
+          <Text
+            h="100%"
+            color={'brand.slate.600'}
+            fontWeight={600}
+            textAlign="center"
+          >
+            CONTACT
+          </Text>
+          <Text>
+            <Link
+              className="ph-no-capture"
+              color={'#64768b'}
+              fontWeight={500}
+              href={getURLSanitized(pocSocials)}
+              isExternal
+              onClick={() => posthog.capture('reach out_listing')}
+            >
+              Reach out
+              <ExternalLinkIcon color={'#64768b'} mb={1} as="span" mx={1} />
+            </Link>
+            <Text as="span" color={'brand.slate.500'}>
+              if you have any questions about this listing
+            </Text>
+          </Text>
+        </VStack>
+      )}
+    </VStack>
   );
 }

@@ -208,7 +208,6 @@ export const Comment = ({
         gap={3}
         overflow="visible"
         w="full"
-        px={isReply ? 0 : 6}
         onMouseEnter={() => {
           if (!isMobile) setShowOptions(true);
         }}

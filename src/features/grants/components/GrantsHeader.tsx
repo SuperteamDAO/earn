@@ -3,16 +3,19 @@ import {
   Flex,
   Heading,
   HStack,
+  Icon,
   Image,
   Text,
   VStack,
 } from '@chakra-ui/react';
 import { useRouter } from 'next/router';
 import React from 'react';
+import { LuCheck } from 'react-icons/lu';
 
 import { VerifiedBadge } from '@/components/shared/VerifiedBadge';
 import { ListingTabLink, RegionLabel, StatusBadge } from '@/features/listings';
 import type { SponsorType } from '@/interface/sponsor';
+import { PulseIcon } from '@/svg/pulse-icon';
 
 interface Props {
   sponsor: SponsorType;
@@ -30,17 +33,30 @@ export const GrantsHeader = ({
   slug,
   references,
 }: Props) => {
+  const statusIconStyles = { w: 5, h: 5 };
   let statusBgColor = '';
   let statusTextColor = '';
   let statusText = '';
-
+  let statusIcon = (
+    <PulseIcon
+      {...statusIconStyles}
+      bg={statusBgColor}
+      text={statusTextColor}
+    />
+  );
   switch (status) {
     case 'OPEN':
+      statusIcon = (
+        <PulseIcon {...statusIconStyles} bg={'green.100'} text="green.600" />
+      );
       statusBgColor = 'green.100';
       statusTextColor = 'green.600';
       statusText = 'Open';
       break;
     case 'CLOSED':
+      statusIcon = (
+        <Icon as={LuCheck} {...statusIconStyles} color={'brand.slate.400'} />
+      );
       statusBgColor = '#ffecb3';
       statusTextColor = '#F59E0B';
       statusText = 'Closed';
@@ -83,8 +99,8 @@ export const GrantsHeader = ({
                 </Heading>
 
                 <StatusBadge
+                  Icon={statusIcon}
                   textColor={statusTextColor}
-                  bgColor={statusBgColor}
                   text={statusText}
                 />
               </Flex>

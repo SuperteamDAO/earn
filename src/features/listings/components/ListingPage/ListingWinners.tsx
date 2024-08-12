@@ -1,12 +1,13 @@
-import { Box, Button, Center, Flex, Text } from '@chakra-ui/react';
+import { Box, Button, Center, Flex, HStack, Text } from '@chakra-ui/react';
 import axios from 'axios';
 import NextLink from 'next/link';
 import { usePostHog } from 'posthog-js/react';
 import { useEffect, useState } from 'react';
 
 import { EarnAvatar } from '@/components/shared/EarnAvatar';
+import { Tooltip } from '@/components/shared/responsive-tooltip';
 import type { SubmissionWithUser } from '@/interface/submission';
-import { rankLabels, sortRank } from '@/utils/rank';
+import { nthLabelGenerator } from '@/utils/rank';
 import { tweetEmbedLink } from '@/utils/socialEmbeds';
 
 import type { Listing, Rewards } from '../../types';
@@ -16,9 +17,15 @@ interface Props {
   bounty: Listing;
 }
 
+const formatPrize = (total: number) =>
+  new Intl.NumberFormat('en-US', {
+    currency: 'USD',
+    maximumFractionDigits: 0,
+  }).format(total as number);
 export function ListingWinners({ bounty }: Props) {
   const [isListingLoading, setIsListingLoading] = useState(true);
   const [submissions, setSubmissions] = useState<SubmissionWithUser[]>([]);
+  console.log('submissions', submissions);
 
   const isProject = bounty?.type === 'project';
 
@@ -31,15 +38,18 @@ export function ListingWinners({ bounty }: Props) {
         `/api/listings/${id || bounty?.id}/winners/`,
       );
       const { data } = submissionsDetails;
-      const winners = sortRank(
-        data.map(
-          (submission: SubmissionWithUser) => submission.winnerPosition || '',
-        ),
+      const winners = data.sort(
+        (a: SubmissionWithUser, b: SubmissionWithUser) => {
+          if (!a.winnerPosition) return 1;
+          if (!b.winnerPosition) return -1;
+          return Number(a.winnerPosition) - Number(b.winnerPosition);
+        },
       );
-      const sortedSubmissions = winners.map((position) =>
-        data.find((d: SubmissionWithUser) => d.winnerPosition === position),
-      );
-      setSubmissions(sortedSubmissions);
+
+      // const sortedSubmissions = winners.map((position) =>
+      //   data.find((d: SubmissionWithUser) => d.winnerPosition === position),
+      // );
+      setSubmissions(winners);
       setIsListingLoading(false);
     } catch (e) {
       setIsListingLoading(false);
@@ -63,7 +73,17 @@ export function ListingWinners({ bounty }: Props) {
   }
 
   return (
-    <Box maxW={'8xl'} mx={'auto'} mt={10}>
+    <Box
+      pos="relative"
+      w="full"
+      maxW={'8xl'}
+      mx={'auto'}
+      mt={10}
+      px={4}
+      pt={4}
+      bg="#F5F3FF"
+      rounded="lg"
+    >
       <Text
         mx={3}
         mb={4}
@@ -71,20 +91,18 @@ export function ListingWinners({ bounty }: Props) {
         fontSize={{ base: 'lg', md: 'xl' }}
         fontWeight={600}
       >
-        🎉 Winners Announced
+        🎉 Winners
       </Text>
       <Box mx={3}>
         <Box
-          pos="relative"
           w="full"
           px={{ base: 3, md: 10 }}
           py={6}
           color="white"
-          bg="radial-gradient(circle, rgba(159,65,255,1) 25%, rgba(99,102,241,1) 100%);"
           rounded="md"
         >
           <Flex align="center" justify="center" wrap="wrap" gap={10}>
-            {submissions.map((submission) => (
+            {submissions.slice(0, 3).map((submission) => (
               <NextLink
                 key={submission.id}
                 href={
@@ -96,49 +114,59 @@ export function ListingWinners({ bounty }: Props) {
               >
                 <Flex
                   as="a"
-                  pos="relative"
                   align="center"
                   justify="center"
                   direction={'column'}
                   cursor="pointer"
                 >
+                  <Box pos="relative">
+                    <Center
+                      pos="absolute"
+                      bottom={-3}
+                      left="50%"
+                      w={6}
+                      h={6}
+                      px={1}
+                      color="brand.slate.500"
+                      fontSize={'xx-small'}
+                      fontWeight={600}
+                      textAlign="center"
+                      textTransform="capitalize"
+                      bg="#fff"
+                      transform="translateX(-50%)"
+                      rounded={'full'}
+                    >
+                      {isProject
+                        ? 'Winner'
+                        : nthLabelGenerator(submission?.winnerPosition ?? 0)}
+                    </Center>
+                    <EarnAvatar
+                      size="64px"
+                      id={submission?.user?.id}
+                      avatar={submission?.user?.photo as string}
+                    />
+                  </Box>
                   <Text
-                    pos="absolute"
-                    top={-2}
-                    px={1}
-                    color="white"
-                    fontSize={{ base: 'xx-small', md: 'xs' }}
-                    fontWeight={700}
-                    textAlign="center"
-                    textTransform="capitalize"
-                    bg="brand.purple"
-                    rounded={'full'}
-                  >
-                    {isProject
-                      ? 'Winner'
-                      : rankLabels[submission?.winnerPosition ?? 0]}
-                  </Text>
-                  <EarnAvatar
-                    size="64px"
-                    id={submission?.user?.id}
-                    avatar={submission?.user?.photo as string}
-                  />
-                  <Text
+                    pt={4}
+                    color="brand.slate.700"
                     fontSize={{ base: 'xs', md: 'sm' }}
                     fontWeight={600}
                     textAlign={'center'}
                   >{`${submission?.user?.firstName} ${submission?.user?.lastName}`}</Text>
                   <Text
+                    color="brand.slate.500"
                     fontSize={{ base: 'xx-small', md: 'xs' }}
                     fontWeight={400}
                     textAlign="center"
                     opacity={0.6}
                   >
-                    {bounty?.token}{' '}
                     {bounty?.rewards &&
-                      bounty?.rewards[
-                        Number(submission?.winnerPosition) as keyof Rewards
-                      ]}
+                      formatPrize(
+                        bounty?.rewards[
+                          Number(submission?.winnerPosition) as keyof Rewards
+                        ] ?? 0,
+                      )}{' '}
+                    {bounty?.token}
                   </Text>
                 </Flex>
               </NextLink>
@@ -148,21 +176,21 @@ export function ListingWinners({ bounty }: Props) {
             <Button
               className="ph-no-capture"
               pos={{ base: 'static', md: 'absolute' }}
-              top={5}
+              top={4}
               right={5}
               gap={2}
               display="flex"
               w={{ base: '100%', md: 'auto' }}
               mt={{ base: 6, md: 0 }}
               color="rgba(0, 0, 0, 0.65)"
-              fontSize="14px"
               fontWeight={500}
               bg="white"
+              border="1px solid"
+              borderColor="brand.slate.300"
               _hover={{ background: 'rgba(255, 255, 255, 0.8)' }}
               _active={{ background: 'rgba(255, 255, 255, 0.5)' }}
               onClick={() => posthog.capture('click to tweet_listing')}
             >
-              Share on
               <Center w="1.2rem">
                 <svg
                   width="33px"
@@ -177,10 +205,40 @@ export function ListingWinners({ bounty }: Props) {
                   />
                 </svg>
               </Center>
+              Share
             </Button>
           </NextLink>
         </Box>
       </Box>
+      {submissions.length > 3 && (
+        <HStack
+          justify="center"
+          px={2}
+          py={2}
+          borderColor="#DDD6FE"
+          borderTop="1px solid"
+        >
+          {submissions.slice(3).map((submission) => (
+            <Tooltip key={submission.id} label={submission?.user?.firstName}>
+              <NextLink
+                key={submission.id}
+                href={
+                  !isProject
+                    ? `/listings/${bounty?.type}/${bounty?.slug}/submission/${submission?.id}/`
+                    : `/t/${submission?.user?.username}`
+                }
+                passHref
+              >
+                <EarnAvatar
+                  size="44px"
+                  id={submission?.user?.id}
+                  avatar={submission?.user?.photo as string}
+                />
+              </NextLink>
+            </Tooltip>
+          ))}
+        </HStack>
+      )}
     </Box>
   );
 }

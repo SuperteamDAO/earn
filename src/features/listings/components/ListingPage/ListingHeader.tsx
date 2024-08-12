@@ -2,44 +2,44 @@ import {
   Flex,
   Heading,
   HStack,
-  IconButton,
+  Icon,
   Image,
-  Spinner,
   Text,
   Tooltip,
-  useDisclosure,
   VStack,
 } from '@chakra-ui/react';
-import type { SubscribeBounty } from '@prisma/client';
-import axios from 'axios';
 import { useRouter } from 'next/router';
-import { useSession } from 'next-auth/react';
 import { usePostHog } from 'posthog-js/react';
-import React, { useEffect, useState } from 'react';
-import { toast } from 'react-hot-toast';
-import { TbBell, TbBellRinging } from 'react-icons/tb';
+import React from 'react';
+import {
+  LuCheck,
+  LuClock,
+  LuFile,
+  LuMessageSquare,
+  LuPause,
+} from 'react-icons/lu';
 
 import { VerifiedBadge } from '@/components/shared/VerifiedBadge';
-import { AuthWrapper } from '@/features/auth';
-import { type Listing, WarningModal } from '@/features/listings';
-import type { User } from '@/interface/user';
-import { userStore } from '@/store/user';
+import { type Listing } from '@/features/listings';
+import { PulseIcon } from '@/svg/pulse-icon';
 import { dayjs } from '@/utils/dayjs';
 
 import { ListingTabLink } from './ListingTabLink';
 import { RegionLabel } from './RegionLabel';
 import { StatusBadge } from './StatusBadge';
+import { SubscribeListing } from './SubscribeListing';
 
 export function ListingHeader({
   listing,
   isTemplate,
+  commentCount,
 }: {
   listing: Listing;
   isTemplate?: boolean;
+  commentCount?: number;
 }) {
   const {
     type,
-    id,
     status,
     deadline,
     title,
@@ -54,95 +54,59 @@ export function ListingHeader({
   } = listing;
   const router = useRouter();
   const posthog = usePostHog();
-  const {
-    isOpen: warningIsOpen,
-    onOpen: warningOnOpen,
-    onClose: warningOnClose,
-  } = useDisclosure();
-  const { userInfo } = userStore();
   const hasDeadlineEnded = dayjs().isAfter(deadline);
   const hasHackathonStarted = dayjs().isAfter(Hackathon?.startDate);
-  const [update, setUpdate] = useState<boolean>(false);
-  const [sub, setSub] = useState<(SubscribeBounty & { User: User | null })[]>(
-    [],
-  );
-  const [isSubscribeLoading, setIsSubscribeLoading] = useState(false);
-
-  const { status: authStatus } = useSession();
-
-  const isAuthenticated = authStatus === 'authenticated';
-
-  const handleToggleSubscribe = async () => {
-    if (!isAuthenticated || !userInfo?.isTalentFilled) return;
-
-    if (!userInfo?.isTalentFilled) {
-      warningOnOpen();
-      return;
-    }
-
-    setIsSubscribeLoading(true);
-    try {
-      await axios.post('/api/listings/notifications/toggle', { bountyId: id });
-      setUpdate((prev) => !prev);
-      toast.success(
-        sub.find((e) => e.userId === userInfo?.id)
-          ? 'Unsubscribed'
-          : 'Subscribed',
-      );
-    } catch (error) {
-      console.log(error);
-      toast.error('Error occurred while toggling subscription');
-    } finally {
-      setIsSubscribeLoading(false);
-    }
-  };
-
-  useEffect(() => {
-    const fetchUser = async () => {
-      try {
-        const { data } = await axios.post(
-          '/api/listings/notifications/status',
-          {
-            listingId: id,
-          },
-        );
-        setSub(data);
-      } catch (error) {
-        console.error('Error fetching user data:', error);
-      }
-    };
-
-    fetchUser();
-  }, [update, id]);
 
   const isProject = type === 'project';
   const isHackathon = type === 'hackathon';
 
+  const statusIconStyles = { w: 5, h: 5 };
   let statusText = '';
   let statusBgColor = '';
   let statusTextColor = '';
+  let statusIcon = (
+    <PulseIcon
+      {...statusIconStyles}
+      bg={statusBgColor}
+      text={statusTextColor}
+    />
+  );
 
   if (!isPublished && !publishedAt) {
+    statusIcon = (
+      <Icon as={LuFile} {...statusIconStyles} color="brand.slate.400" />
+    );
     statusText = 'Draft';
     statusBgColor = 'brand.slate.200';
     statusTextColor = 'brand.slate.500';
   } else if (!isPublished && publishedAt) {
+    statusIcon = <Icon as={LuPause} {...statusIconStyles} color="#ffecb3" />;
     statusText = 'Submissions Paused';
     statusBgColor = '#ffecb3';
     statusTextColor = '#F59E0B';
   } else if (isHackathon && !hasDeadlineEnded && !hasHackathonStarted) {
+    statusIcon = <Icon as={LuClock} {...statusIconStyles} color="#F3E8FF" />;
     statusText = 'Opens Soon';
     statusBgColor = '#F3E8FF';
     statusTextColor = '#8B5CF6';
   } else if (status === 'OPEN' && isWinnersAnnounced) {
-    statusText = 'Winners Announced';
-    statusBgColor = 'green.100';
-    statusTextColor = 'green.600';
+    statusIcon = (
+      <Icon as={LuCheck} {...statusIconStyles} color={'brand.slate.400'} />
+    );
+    statusText = 'Completed';
+    statusBgColor = 'brand.slate.200';
+    statusTextColor = 'brand.slate.400';
   } else if (!isWinnersAnnounced && hasDeadlineEnded && status === 'OPEN') {
+    statusIcon = (
+      <PulseIcon {...statusIconStyles} bg={'orange.100'} text={'orange.600'} />
+    );
     statusText = 'In Review';
     statusBgColor = 'orange.100';
     statusTextColor = 'orange.600';
   } else if (!hasDeadlineEnded && !isWinnersAnnounced && status === 'OPEN') {
+    statusIcon = (
+      <PulseIcon {...statusIconStyles} bg={'green.100'} text="green.600" />
+    );
     statusText = 'Submissions Open';
     statusBgColor = 'green.100';
     statusTextColor = 'green.600';
@@ -164,10 +128,31 @@ export function ListingHeader({
   const ListingStatus = () => {
     return (
       <StatusBadge
+        Icon={statusIcon}
         textColor={statusTextColor}
-        bgColor={statusBgColor}
         text={statusText}
       />
+    );
+  };
+
+  const CommentCount = () => {
+    return (
+      <HStack ml={4}>
+        <Icon
+          as={LuMessageSquare}
+          color="brand.slate.500"
+          fill="brand.slate.600"
+        />
+        {!!commentCount && <Text fontSize={'sm'}>{commentCount}</Text>}
+      </HStack>
+    );
+  };
+
+  const Separator = () => {
+    return (
+      <Text color={'#E2E8EF'} fontWeight={500}>
+        |
+      </Text>
     );
   };
 
@@ -185,9 +170,7 @@ export function ListingHeader({
           </Text>
           {!!sponsor?.isVerified && <VerifiedBadge />}
         </Flex>
-        <Text color={'#E2E8EF'} fontWeight={500}>
-          |
-        </Text>
+        <Separator />
         {isHackathon ? (
           <Flex align={'center'}>
             <Image h="2.5rem" alt={type} src={Hackathon?.altLogo} />
@@ -231,10 +214,13 @@ export function ListingHeader({
             </Tooltip>
           </Flex>
         )}
-        <Flex display={{ base: 'flex', md: 'none' }}>
+        <Separator />
+        <Flex display={'flex'}>
           <ListingStatus />
         </Flex>
+        <Separator />
         <RegionLabel region={region} />
+        <CommentCount />
       </Flex>
     );
   };
@@ -254,19 +240,6 @@ export function ListingHeader({
 
   return (
     <VStack px={{ base: 3, md: 6 }} bg={'white'}>
-      {warningIsOpen && (
-        <WarningModal
-          onCTAClick={() => posthog.capture('complete profile_CTA pop up')}
-          isOpen={warningIsOpen}
-          onClose={warningOnClose}
-          title={'Complete your profile'}
-          bodyText={
-            'Please complete your profile before submitting to a bounty.'
-          }
-          primaryCtaText={'Complete Profile'}
-          primaryCtaLink={'/new/talent'}
-        />
-      )}
       <VStack
         justify={'space-between'}
         flexDir={'row'}
@@ -283,9 +256,6 @@ export function ListingHeader({
               <Flex display={{ base: 'none', md: 'flex' }}>
                 <ListingTitle />
               </Flex>
-              <Flex display={{ base: 'none', md: 'flex' }}>
-                <ListingStatus />
-              </Flex>
             </HStack>
             {!isTemplate && (
               <Flex display={{ base: 'none', md: 'flex' }}>
@@ -294,64 +264,7 @@ export function ListingHeader({
             )}
           </VStack>
         </HStack>
-        {!isTemplate && (
-          <HStack>
-            <HStack align="start">
-              <AuthWrapper>
-                <IconButton
-                  className="ph-no-capture"
-                  color={
-                    sub.find((e) => e.userId === userInfo?.id)
-                      ? 'white'
-                      : 'brand.slate.500'
-                  }
-                  bg={
-                    sub.find((e) => e.userId === userInfo?.id)
-                      ? 'brand.purple'
-                      : 'brand.slate.100'
-                  }
-                  aria-label="Notify"
-                  icon={
-                    isSubscribeLoading ? (
-                      <Spinner color="white" size="sm" />
-                    ) : sub.find((e) => e.userId === userInfo?.id) ? (
-                      <TbBellRinging />
-                    ) : (
-                      <TbBell />
-                    )
-                  }
-                  onClick={() => {
-                    posthog.capture(
-                      sub.find((e) => e.userId === userInfo?.id)
-                        ? 'unnotify me_listing'
-                        : 'notify me_listing',
-                    );
-                    handleToggleSubscribe();
-                  }}
-                  variant="solid"
-                />
-              </AuthWrapper>
-            </HStack>
-            <HStack whiteSpace={'nowrap'}>
-              <VStack align={'start'} gap={0}>
-                <Text color={'#000000'} fontWeight={500}>
-                  {sub?.length ? sub.length + 1 : 1}
-                </Text>
-                <Text
-                  display={{ base: 'none', md: 'flex' }}
-                  color={'gray.400'}
-                  fontSize={'sm'}
-                  fontWeight={400}
-                >
-                  {(sub?.length ? sub.length + 1 : 1) === 1
-                    ? 'Person'
-                    : 'People'}{' '}
-                  Interested
-                </Text>
-              </VStack>
-            </HStack>
-          </HStack>
-        )}
+        {!isTemplate && listing.id && <SubscribeListing id={listing.id} />}
       </VStack>
       <Flex
         direction={'column'}
@@ -364,13 +277,7 @@ export function ListingHeader({
         <HeaderSub />
       </Flex>
       {!isTemplate && (
-        <Flex
-          align={'center'}
-          w={'full'}
-          h={10}
-          borderTop={'1px solid'}
-          borderTopColor={'gray.100'}
-        >
+        <Flex align={'center'} w={'full'} maxW="8xl" h={10}>
           <HStack
             align="center"
             justifyContent="start"
@@ -380,14 +287,25 @@ export function ListingHeader({
             h={'full'}
             mx={'auto'}
             my={'auto'}
-            px={3}
+            borderColor="brand.slate.200"
+            borderBottom={'1px solid'}
           >
             <ListingTabLink
+              w={{ md: '22rem' }}
               href={`/listings/${type}/${slug}/`}
-              text="DETAILS"
+              text="Prizes"
+              isActive={false}
+              styles={{
+                pointerEvents: 'none',
+                display: { base: 'none', md: 'flex' },
+              }}
+            />
+            <ListingTabLink
+              href={`/listings/${type}/${slug}/`}
+              text="Details"
               isActive={
-                !router.asPath.includes('submission') &&
-                !router.asPath.includes('references')
+                !router.asPath.split('/')[4]?.includes('submission') &&
+                !router.asPath.split('/')[4]?.includes('references')
               }
             />
 
@@ -395,17 +313,21 @@ export function ListingHeader({
               <ListingTabLink
                 onClick={() => posthog.capture('submissions tab_listing')}
                 href={`/listings/${type}/${slug}/submission`}
-                text="SUBMISSIONS"
-                isActive={router.asPath.includes('submission')}
+                text="Submissions"
+                isActive={!!router.asPath.split('/')[4]?.includes('submission')}
               />
             )}
 
             {isProject && references && references?.length > 0 && (
-              <ListingTabLink
-                href={`/listings/${type}/${slug}/references`}
-                text="REFERENCES"
-                isActive={router.asPath.includes('references')}
-              />
+              <>
+                <ListingTabLink
+                  href={`/listings/${type}/${slug}/references`}
+                  text="References"
+                  isActive={
+                    !!router.asPath.split('/')[4]?.includes('references')
+                  }
+                />
+              </>
             )}
           </HStack>
         </Flex>

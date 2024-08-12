@@ -106,7 +106,7 @@ function Grants({ grant: initialGrant }: InitialGrant) {
           >
             <VStack gap={8} w={'full'} mt={{ base: 0, md: 10 }}>
               <DescriptionUI
-                skills={grant?.skills?.map((e) => e.skills)}
+                // skills={grant?.skills?.map((e) => e.skills)}
                 description={(grant?.description as string) ?? ''}
               />
             </VStack>
