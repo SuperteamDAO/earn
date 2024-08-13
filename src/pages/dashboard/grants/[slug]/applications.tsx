@@ -25,7 +25,7 @@ import {
   PaymentsHistoryTab,
 } from '@/features/sponsor-dashboard';
 import { Sidebar } from '@/layouts/Sponsor';
-import { userStore } from '@/store/user';
+import { useUser } from '@/store/user';
 
 interface Props {
   slug: string;
@@ -38,7 +38,7 @@ const selectedStyles = {
 
 function GrantApplications({ slug }: Props) {
   const router = useRouter();
-  const { userInfo } = userStore();
+  const { user } = useUser();
   const [grant, setGrant] = useState<Grant | null>(null);
   const [totalApplications, setTotalApplications] = useState(0);
   const [applications, setApplications] = useState<GrantApplicationWithUser[]>(
@@ -70,7 +70,7 @@ function GrantApplications({ slug }: Props) {
         `/api/sponsor-dashboard/grants/${slug}/`,
       );
       setGrant(grantDetails.data);
-      if (grantDetails.data.sponsorId !== userInfo?.currentSponsorId) {
+      if (grantDetails.data.sponsorId !== user?.currentSponsorId) {
         router.push('/dashboard/listings');
       }
 
@@ -104,16 +104,16 @@ function GrantApplications({ slug }: Props) {
   };
 
   useEffect(() => {
-    if (userInfo?.currentSponsorId) {
+    if (user?.currentSponsorId) {
       getApplications();
     }
-  }, [userInfo?.currentSponsorId, skip, searchText]);
+  }, [user?.currentSponsorId, skip, searchText]);
 
   useEffect(() => {
-    if (userInfo?.currentSponsorId) {
+    if (user?.currentSponsorId) {
       getGrant();
     }
-  }, [userInfo?.currentSponsorId]);
+  }, [user?.currentSponsorId]);
 
   return (
     <Sidebar>

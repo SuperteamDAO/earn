@@ -20,7 +20,7 @@ import {
 } from 'react-hook-form';
 
 import type { PoW } from '@/interface/pow';
-import { userStore } from '@/store/user';
+import { useUser } from '@/store/user';
 
 import { AddProject } from '../Form/AddProject';
 import type { UserStoreType } from './types';
@@ -145,6 +145,7 @@ interface Props {
 }
 
 export function YourLinks({ success, useFormStore }: Props) {
+  const { refetchUser } = useUser();
   const { isOpen, onOpen, onClose } = useDisclosure();
   const { form } = useFormStore();
   const [pow, setPow] = useState<PoW[]>([]);
@@ -154,7 +155,6 @@ export function YourLinks({ success, useFormStore }: Props) {
 
   const { updateState } = useFormStore();
 
-  const { setUserInfo } = userStore();
   const posthog = usePostHog();
 
   const uploadProfile = async (
@@ -199,12 +199,9 @@ export function YourLinks({ success, useFormStore }: Props) {
       // eslint-disable-next-line unused-imports/no-unused-vars
       const { subSkills, ...finalOptions } = updateOptions;
 
-      const updatedUser = await axios.post(
-        '/api/user/complete-profile/',
-        finalOptions,
-      );
+      await axios.post('/api/user/complete-profile/', finalOptions);
       await axios.post('/api/email/manual/welcome-talent/');
-      setUserInfo(updatedUser?.data);
+      await refetchUser();
       success();
     } catch (e) {
       setisLoading(false);

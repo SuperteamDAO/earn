@@ -21,7 +21,7 @@ import { useForm } from 'react-hook-form';
 import type { MultiSelectOptions } from '@/constants';
 import { type FeedDataProps } from '@/features/feed';
 import type { PoW } from '@/interface/pow';
-import { userStore } from '@/store/user';
+import { useUser } from '@/store/user';
 
 import { SkillSelect } from '../misc/SkillSelect';
 
@@ -58,7 +58,7 @@ export const AddProject = ({
   const [skills, setSkills] = useState<MultiSelectOptions[]>([]);
   const [subSkills, setSubSkills] = useState<MultiSelectOptions[]>([]);
 
-  const { userInfo } = userStore();
+  const { user } = useUser();
 
   const projectToEdit =
     selectedProject !== null && pow ? pow[selectedProject as number] : null;
@@ -109,9 +109,9 @@ export const AddProject = ({
       link: data.link,
       skills: skills.map((ele) => ele.value),
       subSkills: subSkills.map((ele) => ele.value),
-      firstName: userInfo?.firstName,
-      lastName: userInfo?.lastName,
-      photo: userInfo?.photo,
+      firstName: user?.firstName,
+      lastName: user?.lastName,
+      photo: user?.photo,
       createdAt: new Date().toISOString(),
     };
 

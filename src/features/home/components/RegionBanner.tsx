@@ -1,9 +1,8 @@
 import { Box, Text, VStack } from '@chakra-ui/react';
 import NextImage from 'next/image';
 
+import { UserFlag } from '@/components/shared/UserFlag';
 import { type Superteams } from '@/constants/Superteam';
-
-import { UserFlag } from '../shared/UserFlag';
 
 export function RegionBanner({ st }: { st: (typeof Superteams)[0] }) {
   return (

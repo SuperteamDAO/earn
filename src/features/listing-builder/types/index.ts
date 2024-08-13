@@ -35,6 +35,7 @@ export interface ListingFormType {
   compensationType?: 'fixed' | 'range' | 'variable' | undefined;
   minRewardAsk?: number;
   maxRewardAsk?: number;
+  maxBonusSpots?: number;
 }
 
 export interface ListingStoreType {

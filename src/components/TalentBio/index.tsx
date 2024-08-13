@@ -2,7 +2,7 @@ import { Box, Button, Flex, Image, Text } from '@chakra-ui/react';
 import { useRouter } from 'next/router';
 
 import { type User } from '@/interface/user';
-import { userStore } from '@/store/user';
+import { useUser } from '@/store/user';
 import { getURL } from '@/utils/validUrl';
 
 import { EarnAvatar } from '../shared/EarnAvatar';
@@ -53,44 +53,44 @@ const Chip = ({ icon, label, value }: ChipType) => {
 };
 
 export function TalentBio({
-  user,
+  talentUser,
   successPage,
   w,
 }: {
-  user: User;
+  talentUser: User;
   successPage: boolean;
   w?: any;
 }) {
-  const { userInfo } = userStore();
+  const { user } = useUser();
   const router = useRouter();
 
   const handleEditProfileClick = () => {
-    router.push(`/t/${user?.username}/edit`);
+    router.push(`/t/${talentUser?.username}/edit`);
   };
   const socialLinks = [
     {
       icon: '/assets/talent/twitter.png',
-      link: user?.twitter,
+      link: talentUser?.twitter,
     },
 
     {
       icon: '/assets/talent/linkedin.png',
-      link: user?.linkedin,
+      link: talentUser?.linkedin,
     },
 
     {
       icon: '/assets/talent/github.png',
-      link: user?.github,
+      link: talentUser?.github,
     },
 
     {
       icon: '/assets/talent/site.png',
-      link: user?.website,
+      link: talentUser?.website,
     },
   ];
 
   const createMailtoLink = () => {
-    const email = encodeURIComponent(user?.email || '');
+    const email = encodeURIComponent(talentUser?.email || '');
     const subject = encodeURIComponent('Saw Your ST Earn Profile!');
     const bcc = encodeURIComponent('support@superteamearn.com');
     return `mailto:${email}?subject=${subject}&bcc=${bcc}`;
@@ -109,7 +109,11 @@ export function TalentBio({
     >
       <Flex align={'center'} justify="space-between">
         <Flex align={'center'} h={'fit-content'}>
-          <EarnAvatar size="64px" id={user.id} avatar={user?.photo as string} />
+          <EarnAvatar
+            size="64px"
+            id={talentUser.id}
+            avatar={talentUser?.photo as string}
+          />
           <Box ml={'12px'}>
             <Text
               color={'rgb(71,86,104)'}
@@ -117,11 +121,11 @@ export function TalentBio({
               fontWeight={'600'}
               cursor={'pointer'}
               onClick={() => {
-                const url = `${getURL()}t/${user?.username}`;
+                const url = `${getURL()}t/${talentUser?.username}`;
                 window.open(url, '_blank', 'noopener,noreferrer');
               }}
             >
-              {user?.firstName} {user?.lastName}
+              {talentUser?.firstName} {talentUser?.lastName}
             </Text>
             <Text
               color={'gray.400'}
@@ -129,18 +133,18 @@ export function TalentBio({
               fontWeight={'600'}
               cursor="pointer"
               onClick={() => {
-                const url = `${getURL()}t/${user?.username}`;
+                const url = `${getURL()}t/${talentUser?.username}`;
                 window.open(url, '_blank', 'noopener,noreferrer');
               }}
             >
               @
-              {user?.username?.length! > 15
-                ? `${user?.username?.slice(0, 15)}...`
-                : user?.username}
+              {talentUser?.username?.length! > 15
+                ? `${talentUser?.username?.slice(0, 15)}...`
+                : talentUser?.username}
             </Text>
           </Box>
         </Flex>
-        {userInfo?.id === user?.id && (
+        {user?.id === talentUser?.id && (
           <Button
             color={'#6562FF'}
             onClick={handleEditProfileClick}
@@ -177,25 +181,28 @@ export function TalentBio({
         })}
       </Flex>
       <Text mt={4} color={'gray.400'} fontSize={'sm'} fontWeight={'400'}>
-        {user?.bio}
+        {talentUser?.bio}
       </Text>
       <Flex justify={'space-between'} mt={4}>
-        {!user?.private && (
+        {!talentUser?.private && (
           <Chip
             icon={'/assets/talent/eyes.png'}
             label={'Interested In'}
-            value={user?.workPrefernce as string}
+            value={talentUser?.workPrefernce as string}
           />
         )}
         <Chip
           icon={'/assets/talent/cap.png'}
           label={'Works At'}
-          value={user?.currentEmployer as string}
+          value={talentUser?.currentEmployer as string}
         />
       </Flex>
 
       {successPage ? (
-        <a style={{ textDecoration: 'none' }} href={`/t/${user?.username}`}>
+        <a
+          style={{ textDecoration: 'none' }}
+          href={`/t/${talentUser?.username}`}
+        >
           <Button
             w={'full'}
             mt={'1.575rem'}

@@ -19,7 +19,7 @@ import { useSession } from 'next-auth/react';
 import { usePostHog } from 'posthog-js/react';
 import { useEffect, useState } from 'react';
 
-import { userStore } from '@/store/user';
+import { useLogout, useUser } from '@/store/user';
 
 import { EmailSettingsModal } from '../modals/EmailSettingsModal';
 import { EarnAvatar } from './EarnAvatar';
@@ -28,7 +28,8 @@ export function UserMenu({}) {
   const router = useRouter();
   const posthog = usePostHog();
 
-  const { userInfo, logOut } = userStore();
+  const { user } = useUser();
+  const logout = useLogout();
 
   const { data: session } = useSession();
 
@@ -71,7 +72,7 @@ export function UserMenu({}) {
   return (
     <>
       <EmailSettingsModal isOpen={isOpen} onClose={handleClose} />
-      {userInfo && !userInfo.currentSponsorId && !userInfo.isTalentFilled && (
+      {user && !user.currentSponsorId && !user.isTalentFilled && (
         <Button
           className="ph-no-capture"
           display={{ base: 'none', md: 'flex' }}
@@ -112,7 +113,7 @@ export function UserMenu({}) {
           }
         >
           <Flex align="center">
-            <EarnAvatar id={userInfo?.id} avatar={userInfo?.photo} />
+            <EarnAvatar id={user?.id} avatar={user?.photo} />
             {showBlueCircle && (
               <Circle
                 display={{ base: 'flex', md: 'none' }}
@@ -128,14 +129,14 @@ export function UserMenu({}) {
               ml={2}
             >
               <Text color="brand.slate.600" fontSize="sm" fontWeight={500}>
-                {userInfo?.firstName ?? 'New User'}
+                {user?.firstName ?? 'New User'}
               </Text>
               {showBlueCircle && <Circle ml={2} bg="blue.400" size="8px" />}
             </Flex>
           </Flex>
         </MenuButton>
         <MenuList className="ph-no-capture">
-          {userInfo?.isTalentFilled && (
+          {user?.isTalentFilled && (
             <>
               <MenuItem
                 className="ph-no-capture"
@@ -143,7 +144,7 @@ export function UserMenu({}) {
                 color="brand.slate.500"
                 fontSize="sm"
                 fontWeight={600}
-                href={`/t/${userInfo?.username}`}
+                href={`/t/${user?.username}`}
                 onClick={() => {
                   posthog.capture('profile_user menu');
                 }}
@@ -156,7 +157,7 @@ export function UserMenu({}) {
                 color="brand.slate.500"
                 fontSize="sm"
                 fontWeight={600}
-                href={`/t/${userInfo?.username}/edit`}
+                href={`/t/${user?.username}/edit`}
                 onClick={() => {
                   posthog.capture('edit profile_user menu');
                 }}
@@ -165,7 +166,7 @@ export function UserMenu({}) {
               </MenuItem>
             </>
           )}
-          {!!userInfo?.currentSponsorId && (
+          {!!user?.currentSponsorId && (
             <>
               <MenuItem
                 className="ph-no-capture"
@@ -207,7 +208,7 @@ export function UserMenu({}) {
               <MenuDivider />
             </Box>
           )}
-          {(userInfo?.isTalentFilled || !!userInfo?.currentSponsorId) && (
+          {(user?.isTalentFilled || !!user?.currentSponsorId) && (
             <MenuItem
               className="ph-no-capture"
               color="brand.slate.500"
@@ -241,7 +242,7 @@ export function UserMenu({}) {
             fontWeight={600}
             onClick={() => {
               posthog.capture('logout_user menu');
-              logOut();
+              logout();
             }}
           >
             Logout

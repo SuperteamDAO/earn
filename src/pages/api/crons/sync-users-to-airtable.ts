@@ -1,4 +1,3 @@
-import { verifySignature } from '@upstash/qstash/nextjs';
 import axios from 'axios';
 import type { NextApiRequest, NextApiResponse } from 'next';
 
@@ -291,7 +290,8 @@ async function handler(_req: NextApiRequest, res: NextApiResponse) {
   }
 }
 
-export default verifySignature(handler);
+export default handler;
+// export default verifySignature(handler);
 
 export const config = {
   api: {

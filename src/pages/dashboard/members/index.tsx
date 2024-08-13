@@ -49,13 +49,13 @@ import {
 } from '@/features/sponsor-dashboard';
 import type { UserSponsor } from '@/interface/userSponsor';
 import { Sidebar } from '@/layouts/Sponsor';
-import { userStore } from '@/store/user';
+import { useUser } from '@/store/user';
 
 const debounce = require('lodash.debounce');
 
 const Index = () => {
   const { isOpen, onOpen, onClose } = useDisclosure();
-  const { userInfo } = userStore();
+  const { user } = useUser();
   const [isMembersLoading, setIsMembersLoading] = useState(true);
   const [totalMembers, setTotalMembers] = useState(0);
   const [members, setMembers] = useState<UserSponsor[]>([]);
@@ -95,24 +95,23 @@ const Index = () => {
 
   const isAdminLoggedIn = () => {
     if (
-      userInfo === undefined ||
-      userInfo?.UserSponsors === undefined ||
-      userInfo?.UserSponsors[0] === undefined
+      user === undefined ||
+      user?.UserSponsors === undefined ||
+      user?.UserSponsors[0] === undefined
     ) {
       return false;
     }
 
     return (
-      session?.user?.role === 'GOD' ||
-      userInfo?.UserSponsors[0]?.role === 'ADMIN'
+      session?.user?.role === 'GOD' || user?.UserSponsors[0]?.role === 'ADMIN'
     );
   };
 
   useEffect(() => {
-    if (userInfo?.currentSponsorId) {
+    if (user?.currentSponsorId) {
       getMembers();
     }
-  }, [userInfo?.currentSponsorId, skip, searchText]);
+  }, [user?.currentSponsorId, skip, searchText]);
 
   const onRemoveMember = async (userId: string | undefined) => {
     await axios.post('/api/sponsor-dashboard/members/remove', {
@@ -135,7 +134,7 @@ const Index = () => {
     };
 
     getSponsorStats();
-  }, [userInfo?.currentSponsorId]);
+  }, [user?.currentSponsorId]);
 
   return (
     <Sidebar>
@@ -157,8 +156,8 @@ const Index = () => {
         </Flex>
         <Flex align="center" gap={3}>
           {(session?.user?.role === 'GOD' ||
-            (userInfo?.UserSponsors?.length &&
-              userInfo?.UserSponsors[0]?.role === 'ADMIN')) && (
+            (user?.UserSponsors?.length &&
+              user?.UserSponsors[0]?.role === 'ADMIN')) && (
             <Button
               className="ph-no-capture"
               color="#6366F1"

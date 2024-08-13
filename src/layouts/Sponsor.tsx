@@ -32,7 +32,7 @@ import {
 } from '@/features/sponsor-dashboard';
 import { Default } from '@/layouts/Default';
 import { Meta } from '@/layouts/Meta';
-import { userStore } from '@/store/user';
+import { useUpdateUser, useUser } from '@/store/user';
 
 interface LinkItemProps {
   name: string;
@@ -49,7 +49,8 @@ interface NavItemProps extends FlexProps {
 }
 
 export function Sidebar({ children }: { children: ReactNode }) {
-  const { userInfo, setUserInfo } = userStore();
+  const { user } = useUser();
+  const updateUser = useUpdateUser();
   const { data: session, status } = useSession();
   const router = useRouter();
   const { isOpen, onOpen, onClose } = useDisclosure();
@@ -82,7 +83,7 @@ export function Sidebar({ children }: { children: ReactNode }) {
 
   function sponsorInfoCloseAltered() {
     onSponsorInfoModalClose();
-    if (userInfo?.featureModalShown === false && userInfo?.currentSponsorId)
+    if (user?.featureModalShown === false && user?.currentSponsorId)
       onScoutAnnounceModalOpen();
   }
 
@@ -104,50 +105,38 @@ export function Sidebar({ children }: { children: ReactNode }) {
   // ENTITY NAME TO SPONSORS
   useEffect(() => {
     const timer = setTimeout(async () => {
-      if (userInfo) {
+      if (user) {
         if (
-          userInfo.currentSponsorId &&
-          (!userInfo.firstName || !userInfo.lastName || !userInfo.username)
+          user.currentSponsorId &&
+          (!user.firstName || !user.lastName || !user.username)
         ) {
           onSponsorInfoModalOpen();
-        } else if (
-          userInfo.featureModalShown === false &&
-          userInfo.currentSponsorId
-        ) {
+        } else if (user.featureModalShown === false && user.currentSponsorId) {
           await getSponsorLatestActiveSlug();
           onScoutAnnounceModalOpen();
-          await axios.post('/api/user/update/', {
-            featureModalShown: true,
-          });
-          setUserInfo({ ...userInfo, featureModalShown: true });
+          await updateUser.mutateAsync({ featureModalShown: true });
         }
       }
     }, 5000);
 
     return () => clearTimeout(timer);
-  }, [userInfo]);
+  }, [user]);
 
   useEffect(() => {
     const modalsToShow = async () => {
       if (
-        userInfo?.currentSponsorId &&
-        (!userInfo?.firstName || !userInfo?.lastName || !userInfo?.username)
+        user?.currentSponsorId &&
+        (!user?.firstName || !user?.lastName || !user?.username)
       ) {
         onSponsorInfoModalOpen();
-      } else if (
-        userInfo?.featureModalShown === false &&
-        userInfo?.currentSponsorId
-      ) {
+      } else if (user?.featureModalShown === false && user?.currentSponsorId) {
         await getSponsorLatestActiveSlug();
         onScoutAnnounceModalOpen();
-        await axios.post('/api/user/update/', {
-          featureModalShown: true,
-        });
-        setUserInfo({ ...userInfo, featureModalShown: true });
+        await updateUser.mutateAsync({ featureModalShown: true });
       }
     };
     modalsToShow();
-  }, [userInfo]);
+  }, [user]);
 
   if (!session && status === 'loading') {
     return <LoadingSection />;
@@ -235,12 +224,12 @@ export function Sidebar({ children }: { children: ReactNode }) {
   );
 
   const showLoading = !isHackathonRoute
-    ? !userInfo?.currentSponsor?.id
-    : !userInfo?.hackathonId && session?.user?.role !== 'GOD';
+    ? !user?.currentSponsor?.id
+    : !user?.hackathonId && session?.user?.role !== 'GOD';
 
   const showContent = isHackathonRoute
-    ? userInfo?.hackathonId || session?.user?.role === 'GOD'
-    : userInfo?.currentSponsor?.id;
+    ? user?.hackathonId || session?.user?.role === 'GOD'
+    : user?.currentSponsor?.id;
 
   return (
     <Default

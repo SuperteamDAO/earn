@@ -19,7 +19,7 @@ import { useEffect, useRef, useState } from 'react';
 import { BsThreeDotsVertical } from 'react-icons/bs';
 import { MdIosShare, MdOutlineInstallMobile } from 'react-icons/md';
 
-import { userStore } from '@/store/user';
+import { useUser } from '@/store/user';
 
 interface BeforeInstallPromptEvent extends Event {
   prompt: () => Promise<{ outcome: 'accepted' | 'dismissed' }>;
@@ -37,7 +37,7 @@ const ManualInstructions = () => (
 );
 
 export const InstallPWAModal = () => {
-  const { userInfo } = userStore();
+  const { user } = useUser();
   const [mobileOs, setMobileOs] = useState<'Android' | 'iOS' | 'Other'>(
     'Other',
   );
@@ -104,7 +104,7 @@ export const InstallPWAModal = () => {
     };
 
     setTimeout(showInstallAppModal, 10000);
-  }, [userInfo, onPWAModalOpen]);
+  }, [user, onPWAModalOpen]);
 
   const isAutoInstallable = mobileOs !== 'iOS';
 

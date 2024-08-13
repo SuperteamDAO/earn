@@ -7,7 +7,7 @@ import AsyncSelect from 'react-select/async';
 
 import { EarnAvatar } from '@/components/shared/EarnAvatar';
 import type { SponsorType } from '@/interface/sponsor';
-import { userStore } from '@/store/user';
+import { useUpdateUser, useUser } from '@/store/user';
 
 import { hackathonSponsorAtom } from '../SelectSponsor';
 
@@ -22,20 +22,22 @@ interface HackathonOption {
 }
 
 export function SelectHackathon({ type }: { type?: string }) {
-  const { setUserInfo, userInfo } = userStore();
   const [selectedHackathon, setSelectedHackathon] =
     useState<HackathonOption | null>(null);
   const setHackathonSponsor = useSetAtom(hackathonSponsorAtom);
 
+  const { user } = useUser();
+  const updateUser = useUpdateUser();
+
   useEffect(() => {
-    if (type !== 'hackathon' && userInfo?.hackathonId) {
+    if (type !== 'hackathon' && user?.hackathonId) {
       setSelectedHackathon({
-        value: userInfo?.Hackathon?.id,
-        label: userInfo?.Hackathon?.name,
-        hackathon: userInfo?.Hackathon,
+        value: user?.Hackathon?.id,
+        label: user?.Hackathon?.name,
+        hackathon: user?.Hackathon,
       });
     }
-  }, [userInfo]);
+  }, [user]);
 
   const loadHackathons = (
     inputValue: string,
@@ -53,14 +55,11 @@ export function SelectHackathon({ type }: { type?: string }) {
       });
   };
 
-  const updateUser = async (hackathonId: string) => {
+  const updateSponsor = async (hackathonId: string) => {
     try {
-      const userUpdatedDetails = await axios.post('/api/user/update/', {
-        hackathonId,
-      });
-      return userUpdatedDetails.data;
+      await updateUser.mutateAsync({ hackathonId });
     } catch (error) {
-      return userInfo;
+      console.log(error);
     }
   };
 
@@ -69,8 +68,7 @@ export function SelectHackathon({ type }: { type?: string }) {
       setHackathonSponsor(option.value);
       setSelectedHackathon(option);
     } else {
-      const newUser = await updateUser(option.value);
-      setUserInfo(newUser);
+      await updateSponsor(option.value);
     }
   };
 

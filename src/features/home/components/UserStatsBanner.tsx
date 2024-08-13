@@ -7,25 +7,18 @@ import {
   useMediaQuery,
   VStack,
 } from '@chakra-ui/react';
-import axios from 'axios';
 import { useSession } from 'next-auth/react';
-import { useEffect, useState } from 'react';
 
-import { userStore } from '@/store/user';
+import { EarnAvatar } from '@/components/shared/EarnAvatar';
+import { useGetUserStats } from '@/features/home';
+import { useUser } from '@/store/user';
 import { formatNumberWithSuffix } from '@/utils/formatNumberWithSuffix';
-
-import { EarnAvatar } from '../shared/EarnAvatar';
-
-interface Stats {
-  wins: number;
-  participations: number;
-  totalWinnings: number;
-}
 
 interface StatProps {
   value: number | string;
   label: string;
 }
+
 const Stat = ({ value, label }: StatProps) => {
   return (
     <Box>
@@ -42,30 +35,14 @@ const Stat = ({ value, label }: StatProps) => {
 };
 
 export const UserStatsBanner = () => {
-  const { userInfo } = userStore();
+  const { user } = useUser();
   const { data: session, status } = useSession();
-  const [loading, setLoading] = useState(true);
+  const { data: stats, isLoading } = useGetUserStats();
   const [isLessThan768px] = useMediaQuery('(max-width: 768px)');
 
-  const [stats, setStats] = useState<Stats | null>(null);
+  if (!user) return <></>;
 
-  async function getStats() {
-    try {
-      const result = await axios.get<Stats>('/api/user/stats');
-      setStats(result.data);
-    } catch (err) {
-      console.log('Error getting stats - ', err);
-    }
-    setLoading(false);
-  }
-
-  useEffect(() => {
-    getStats();
-  }, []);
-
-  if (!userInfo) return <></>;
-
-  if ((!session && status === 'loading') || loading) {
+  if ((!session && status === 'loading') || isLoading) {
     return (
       <Skeleton
         h={isLessThan768px ? '200' : '120'}
@@ -92,7 +69,7 @@ export const UserStatsBanner = () => {
       rounded="md"
     >
       <Flex align="center" gap={4}>
-        <EarnAvatar id={userInfo.id} avatar={userInfo.photo} size="52px" />
+        <EarnAvatar id={user.id} avatar={user.photo} size="52px" />
         <VStack align="start" gap={0}>
           <Text
             maxW="25rem"
@@ -101,7 +78,7 @@ export const UserStatsBanner = () => {
             textOverflow={'ellipsis'}
             noOfLines={1}
           >
-            Welcome back, {userInfo.firstName}
+            Welcome back, {user.firstName}
           </Text>
           <Text color="#c4c2ef" fontSize={'sm'}>
             We’re so glad to have you on Earn

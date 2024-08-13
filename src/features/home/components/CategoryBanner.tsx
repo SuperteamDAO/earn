@@ -4,7 +4,7 @@ import { usePostHog } from 'posthog-js/react';
 import { useEffect, useState } from 'react';
 
 import { AuthWrapper } from '@/features/auth';
-import { userStore } from '@/store/user';
+import { useUser } from '@/store/user';
 
 const bannerPrefix = '/assets/category_assets/banners/';
 
@@ -50,7 +50,7 @@ export function CategoryBanner({ category }: { category: CategoryTypes }) {
   const [isLessThan768px] = useMediaQuery('(max-width: 768px)');
   const [banner, setBanner] = useState<CategoryBanner | null>(null);
   const posthog = usePostHog();
-  const { userInfo } = userStore();
+  const { user } = useUser();
 
   useEffect(() => {
     setBanner(banners.find((b) => b.type === category) ?? null);
@@ -108,7 +108,7 @@ export function CategoryBanner({ category }: { category: CategoryTypes }) {
               {banner.description}
             </Text>
           )}
-          {!userInfo && (
+          {!user && (
             <AuthWrapper style={{ w: isLessThan768px ? '100%' : 'auto' }}>
               <Button
                 className="ph-no-capture"

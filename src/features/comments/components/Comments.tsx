@@ -12,17 +12,17 @@ import axios from 'axios';
 import Image from 'next/image';
 import { useSession } from 'next-auth/react';
 import { usePostHog } from 'posthog-js/react';
-import { useEffect, useState } from 'react';
+import { type Dispatch, type SetStateAction, useEffect, useState } from 'react';
 
 import { EarnAvatar } from '@/components/shared/EarnAvatar';
 import { ErrorInfo } from '@/components/shared/ErrorInfo';
 import { Loading } from '@/components/shared/Loading';
 import { AuthWrapper } from '@/features/auth';
+import { WarningModal } from '@/features/listings';
 import type { Comment } from '@/interface/comments';
 import { type User } from '@/interface/user';
-import { userStore } from '@/store/user';
+import { useUser } from '@/store/user';
 
-import { WarningModal } from '../../listings/components/WarningModal';
 import { Comment as CommentUI } from './Comment';
 import { UserSuggestionTextarea } from './UserSuggestionTextarea';
 
@@ -35,6 +35,8 @@ interface Props {
   listingSlug: string;
   isAnnounced: boolean;
   isVerified?: boolean;
+  count: number;
+  setCount: Dispatch<SetStateAction<number>>;
 }
 export const Comments = ({
   refId,
@@ -45,8 +47,10 @@ export const Comments = ({
   listingSlug,
   isAnnounced,
   isVerified = false,
+  count,
+  setCount,
 }: Props) => {
-  const { userInfo } = userStore();
+  const { user } = useUser();
   const posthog = usePostHog();
 
   const { isOpen, onOpen, onClose } = useDisclosure();
@@ -56,7 +60,6 @@ export const Comments = ({
   const [newComment, setNewComment] = useState('');
   const [newCommentLoading, setNewCommentLoading] = useState(false);
   const [newCommentError, setNewCommentError] = useState(false);
-  const [count, setCount] = useState(0);
   const [defaultSuggestions, setDefaultSuggestions] = useState<
     Map<string, User>
   >(new Map());
@@ -129,7 +132,7 @@ export const Comments = ({
 
   const handleSubmit = () => {
     if (isAuthenticated) {
-      if (!userInfo?.isTalentFilled && !userInfo?.currentSponsorId) {
+      if (!user?.isTalentFilled && !user?.currentSponsorId) {
         onOpen();
       } else {
         addNewComment();
@@ -178,7 +181,7 @@ export const Comments = ({
         />
       )}
       <VStack align={'start'} gap={4} w={'full'} bg={'#FFFFFF'} rounded={'xl'}>
-        <HStack w={'full'} px={6} pt={4}>
+        <HStack w={'full'} pt={4}>
           <Image
             width={21}
             height={18}
@@ -194,13 +197,9 @@ export const Comments = ({
             </Text>
           </HStack>
         </HStack>
-        <VStack gap={4} w={'full'} mb={4} px={6}>
+        <VStack gap={4} w={'full'} mb={4}>
           <Flex gap={3} w="full">
-            <EarnAvatar
-              size={'36px'}
-              id={userInfo?.id}
-              avatar={userInfo?.photo}
-            />
+            <EarnAvatar size={'36px'} id={user?.id} avatar={user?.photo} />
             <Box pos={'relative'} w="full" mt={0.5}>
               <UserSuggestionTextarea
                 defaultSuggestions={defaultSuggestions}
@@ -269,7 +268,7 @@ export const Comments = ({
             </Flex>
           </Collapse>
         </VStack>
-        <VStack gap={5} w={'full'} pb={8}>
+        <VStack align="start" gap={5} w={'full'} pb={8}>
           {comments?.map((comment) => {
             return (
               <CommentUI

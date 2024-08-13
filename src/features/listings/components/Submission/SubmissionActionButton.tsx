@@ -3,12 +3,7 @@ import axios from 'axios';
 import Image from 'next/image';
 import { useSession } from 'next-auth/react';
 import { usePostHog } from 'posthog-js/react';
-import React, {
-  type Dispatch,
-  type SetStateAction,
-  useEffect,
-  useState,
-} from 'react';
+import React, { useEffect, useState } from 'react';
 
 import { SurveyModal } from '@/components/Survey';
 import { AuthWrapper } from '@/features/auth';
@@ -19,7 +14,7 @@ import {
   type Listing,
   userRegionEligibilty,
 } from '@/features/listings';
-import { userStore } from '@/store/user';
+import { useUser } from '@/store/user';
 
 import { WarningModal } from '../WarningModal';
 import { EasterEgg } from './EasterEgg';
@@ -28,15 +23,11 @@ import { SubmissionModal } from './SubmissionModal';
 interface Props {
   listing: Listing;
   hasHackathonStarted: boolean;
-  submissionNumber: number;
-  setSubmissionNumber: Dispatch<SetStateAction<number>>;
 }
 
 export const SubmissionActionButton = ({
   listing,
   hasHackathonStarted,
-  submissionNumber,
-  setSubmissionNumber,
 }: Props) => {
   const {
     id,
@@ -52,12 +43,9 @@ export const SubmissionActionButton = ({
   const [isSubmitted, setIsSubmitted] = useState(false);
   const [isEasterEggOpen, setEasterEggOpen] = useState(false);
 
-  const { userInfo } = userStore();
+  const { user } = useUser();
 
-  const isUserEligibleByRegion = userRegionEligibilty(
-    region,
-    userInfo?.location,
-  );
+  const isUserEligibleByRegion = userRegionEligibilty(region, user?.location);
   const posthog = usePostHog();
 
   const { isOpen, onOpen, onClose } = useDisclosure();
@@ -77,7 +65,7 @@ export const SubmissionActionButton = ({
 
   const handleSubmit = () => {
     if (isAuthenticated) {
-      if (!userInfo?.isTalentFilled) {
+      if (!user?.isTalentFilled) {
         warningOnOpen();
       } else {
         if (buttonState === 'submit') {
@@ -104,9 +92,9 @@ export const SubmissionActionButton = ({
   };
 
   useEffect(() => {
-    if (!userInfo?.id) return;
+    if (!user?.id) return;
     checkUserSubmission();
-  }, [userInfo?.id]);
+  }, [user?.id]);
 
   const isProject = type === 'project';
 
@@ -143,8 +131,8 @@ export const SubmissionActionButton = ({
       buttonBG = 'brand.purple';
       isBtnDisabled = Boolean(
         pastDeadline ||
-          (userInfo?.id &&
-            userInfo?.isTalentFilled &&
+          (user?.id &&
+            user?.isTalentFilled &&
             (bountyDraftStatus === 'DRAFT' ||
               !hasHackathonStarted ||
               !isUserEligibleByRegion)),
@@ -171,8 +159,6 @@ export const SubmissionActionButton = ({
           id={id}
           onClose={onClose}
           isOpen={isOpen}
-          submissionNumber={submissionNumber}
-          setSubmissionNumber={setSubmissionNumber}
           setIsSubmitted={setIsSubmitted}
           editMode={buttonState === 'edit'}
           listing={listing}
@@ -181,7 +167,7 @@ export const SubmissionActionButton = ({
         />
       )}
       {isSurveyOpen &&
-        (!userInfo?.surveysShown || !(surveyId in userInfo.surveysShown)) && (
+        (!user?.surveysShown || !(surveyId in user.surveysShown)) && (
           <SurveyModal
             isOpen={isSurveyOpen}
             onClose={onSurveyClose}
@@ -232,8 +218,8 @@ export const SubmissionActionButton = ({
         bg="brand.slate.500"
         hasArrow
         isDisabled={
-          !userInfo?.id ||
-          !userInfo?.isTalentFilled ||
+          !user?.id ||
+          !user?.isTalentFilled ||
           isUserEligibleByRegion ||
           pastDeadline
         }

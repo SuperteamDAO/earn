@@ -23,7 +23,7 @@ import NextLink from 'next/link';
 import { usePostHog } from 'posthog-js/react';
 
 import { UserFlag } from '@/components/shared/UserFlag';
-import { userStore } from '@/store/user';
+import { useUser } from '@/store/user';
 
 import { type RowType, type SKILL } from '../types';
 import { getSubskills, skillCategories } from '../utils';
@@ -42,13 +42,10 @@ interface Props {
 }
 
 export function RanksTable({ rankings, skill, userRank, loading }: Props) {
-  const { userInfo } = userStore();
+  const { user } = useUser();
   const posthog = usePostHog();
 
-  const userSkills = getSubskills(
-    userInfo?.skills as any,
-    skillCategories[skill],
-  );
+  const userSkills = getSubskills(user?.skills as any, skillCategories[skill]);
 
   return (
     <TableContainer
@@ -192,7 +189,7 @@ export function RanksTable({ rankings, skill, userRank, loading }: Props) {
               <Tr
                 key={row.username}
                 h="full"
-                bg={row.username === userInfo?.username ? '#F5F3FF80' : ''}
+                bg={row.username === user?.username ? '#F5F3FF80' : ''}
               >
                 <Td h="full" px={{ base: 1, md: 2 }} textAlign={'center'}>
                   #{row.rank}
@@ -358,217 +355,213 @@ export function RanksTable({ rankings, skill, userRank, loading }: Props) {
                 </Td>
               </Tr>
             ))}
-            {userInfo &&
-              !rankings.find((r) => r.username === userInfo?.username) && (
-                <Tr w="full" bg="#F5F3FF80">
-                  <Td
-                    pos="sticky"
-                    zIndex={100}
-                    bottom={0}
-                    px={{ base: 1, md: 2 }}
-                    textAlign={'center'}
-                    borderBottomWidth={'0px'}
+            {user && !rankings.find((r) => r.username === user?.username) && (
+              <Tr w="full" bg="#F5F3FF80">
+                <Td
+                  pos="sticky"
+                  zIndex={100}
+                  bottom={0}
+                  px={{ base: 1, md: 2 }}
+                  textAlign={'center'}
+                  borderBottomWidth={'0px'}
+                >
+                  {userRank ? '#' + userRank.rank : '-'}
+                </Td>
+                <Td
+                  pos="sticky"
+                  zIndex={100}
+                  bottom={0}
+                  px={{ base: 1, md: 2 }}
+                  borderBottomWidth={'0px'}
+                >
+                  <Link
+                    className="ph-no-capture"
+                    as={NextLink}
+                    alignItems="center"
+                    gap={2}
+                    display="flex"
+                    href={`/t/${user.username}`}
+                    onClick={() => {
+                      posthog.capture('profile click_leaderboard', {
+                        clicked_username: user.username,
+                      });
+                    }}
+                    target="_blank"
                   >
-                    {userRank ? '#' + userRank.rank : '-'}
-                  </Td>
-                  <Td
-                    pos="sticky"
-                    zIndex={100}
-                    bottom={0}
-                    px={{ base: 1, md: 2 }}
-                    borderBottomWidth={'0px'}
-                  >
-                    <Link
-                      className="ph-no-capture"
-                      as={NextLink}
-                      alignItems="center"
-                      gap={2}
-                      display="flex"
-                      href={`/t/${userInfo.username}`}
-                      onClick={() => {
-                        posthog.capture('profile click_leaderboard', {
-                          clicked_username: userInfo.username,
-                        });
-                      }}
-                      target="_blank"
+                    <Avatar
+                      w={{ base: 5, md: 8 }}
+                      h={{ base: 5, md: 8 }}
+                      src={user.photo ?? undefined}
+                    />
+                    <VStack
+                      align="start"
+                      justify={{ base: 'center', md: 'start' }}
+                      gap={1}
+                      lineHeight={{ base: 1.5, md: 1.15 }}
                     >
-                      <Avatar
-                        w={{ base: 5, md: 8 }}
-                        h={{ base: 5, md: 8 }}
-                        src={userInfo.photo ?? undefined}
-                      />
-                      <VStack
-                        align="start"
-                        justify={{ base: 'center', md: 'start' }}
-                        gap={1}
-                        lineHeight={{ base: 1.5, md: 1.15 }}
+                      <Text
+                        display={{ base: 'block', md: 'none' }}
+                        overflowX="hidden"
+                        maxW={'7rem'}
+                        color="black"
+                        _groupHover={{
+                          textDecoration: 'underline',
+                        }}
+                        textOverflow={'ellipsis'}
                       >
-                        <Text
-                          display={{ base: 'block', md: 'none' }}
-                          overflowX="hidden"
-                          maxW={'7rem'}
-                          color="black"
-                          _groupHover={{
-                            textDecoration: 'underline',
-                          }}
-                          textOverflow={'ellipsis'}
-                        >
-                          {userInfo.firstName +
-                            ' ' +
-                            userInfo.lastName?.slice(0, 1).toUpperCase()}
-                        </Text>
-                        <Flex align={'center'} gap={2}>
-                          <Text
-                            display={{ base: 'none', md: 'block' }}
-                            overflowX="hidden"
-                            maxW={'7rem'}
-                            color="black"
-                            textOverflow={'ellipsis'}
-                          >
-                            {userInfo.firstName + ' ' + userInfo.lastName}
-                          </Text>
-                          {userInfo.location && (
-                            <UserFlag
-                              size="12px"
-                              location={userInfo.location}
-                            />
-                          )}
-                        </Flex>
+                        {user.firstName +
+                          ' ' +
+                          user.lastName?.slice(0, 1).toUpperCase()}
+                      </Text>
+                      <Flex align={'center'} gap={2}>
                         <Text
                           display={{ base: 'none', md: 'block' }}
                           overflowX="hidden"
                           maxW={'7rem'}
+                          color="black"
                           textOverflow={'ellipsis'}
                         >
-                          @{userInfo.username}
+                          {user.firstName + ' ' + user.lastName}
                         </Text>
-                      </VStack>
-                    </Link>
-                  </Td>
-                  <Td
-                    pos="sticky"
-                    zIndex={100}
-                    bottom={0}
-                    px={{ base: 1, md: 2 }}
-                    borderBottomWidth={'0px'}
-                  >
-                    <Flex justify="center" gap={2}>
-                      <Text color="black" textAlign={'center'}>
-                        {formatter(userRank?.dollarsEarned ?? 0)}
-                      </Text>
+                        {user.location && (
+                          <UserFlag size="12px" location={user.location} />
+                        )}
+                      </Flex>
                       <Text
                         display={{ base: 'none', md: 'block' }}
-                        textAlign={'center'}
+                        overflowX="hidden"
+                        maxW={'7rem'}
+                        textOverflow={'ellipsis'}
                       >
-                        USD
+                        @{user.username}
                       </Text>
-                    </Flex>
-                  </Td>
-                  <Td
-                    pos="sticky"
-                    zIndex={100}
-                    bottom={0}
-                    px={{ base: 1, md: 2 }}
-                    textAlign={'center'}
-                    borderBottomWidth={'0px'}
-                  >
-                    {userRank?.winRate ? userRank?.winRate + '%' : '-'}
-                  </Td>
-                  <Td
-                    pos="sticky"
-                    zIndex={100}
-                    bottom={0}
-                    px={{ base: 1, md: 2 }}
-                    textAlign={'center'}
-                    borderBottomWidth={'0px'}
-                  >
-                    {userRank?.wins ?? '-'}
-                  </Td>
-                  <Td
-                    pos="sticky"
-                    zIndex={100}
-                    bottom={0}
-                    px={{ base: 1, md: 2 }}
-                    textAlign={'center'}
-                    borderBottomWidth={'0px'}
-                  >
-                    {userRank?.submissions ?? '-'}
-                  </Td>
-                  <Td
-                    bottom={0}
-                    display={{
-                      base: 'none',
-                      md: skill !== 'ALL' ? 'none' : 'table-cell',
-                    }}
-                    px={{ base: 1, md: 2 }}
-                    borderBottomWidth={'0px'}
-                  >
-                    <Flex gap={2} h="full" textAlign={'center'}>
-                      {userSkills.slice(0, 2).map((s) => (
-                        <Badge
-                          key={s}
-                          px={2}
-                          color="#64739C"
-                          fontSize={'x-small'}
-                          fontWeight={500}
-                          textTransform={'none'}
-                          bg="#EFF1F5"
-                          rounded="full"
-                        >
-                          {s}
-                        </Badge>
-                      ))}
-                      {userSkills.length > 2 && (
-                        <Popover trigger="hover">
-                          <PopoverTrigger>
-                            <Badge
-                              px={2}
-                              color="#64739C"
-                              fontSize={'x-small'}
-                              fontWeight={500}
-                              textTransform={'none'}
-                              bg="#EFF1F5"
-                              rounded="full"
-                            >
-                              +{userSkills.length - 2}
-                            </Badge>
-                          </PopoverTrigger>
-                          <PopoverContent
-                            w="fit-content"
-                            maxW="10rem"
-                            px={4}
-                            py={2}
-                            shadow="lg"
+                    </VStack>
+                  </Link>
+                </Td>
+                <Td
+                  pos="sticky"
+                  zIndex={100}
+                  bottom={0}
+                  px={{ base: 1, md: 2 }}
+                  borderBottomWidth={'0px'}
+                >
+                  <Flex justify="center" gap={2}>
+                    <Text color="black" textAlign={'center'}>
+                      {formatter(userRank?.dollarsEarned ?? 0)}
+                    </Text>
+                    <Text
+                      display={{ base: 'none', md: 'block' }}
+                      textAlign={'center'}
+                    >
+                      USD
+                    </Text>
+                  </Flex>
+                </Td>
+                <Td
+                  pos="sticky"
+                  zIndex={100}
+                  bottom={0}
+                  px={{ base: 1, md: 2 }}
+                  textAlign={'center'}
+                  borderBottomWidth={'0px'}
+                >
+                  {userRank?.winRate ? userRank?.winRate + '%' : '-'}
+                </Td>
+                <Td
+                  pos="sticky"
+                  zIndex={100}
+                  bottom={0}
+                  px={{ base: 1, md: 2 }}
+                  textAlign={'center'}
+                  borderBottomWidth={'0px'}
+                >
+                  {userRank?.wins ?? '-'}
+                </Td>
+                <Td
+                  pos="sticky"
+                  zIndex={100}
+                  bottom={0}
+                  px={{ base: 1, md: 2 }}
+                  textAlign={'center'}
+                  borderBottomWidth={'0px'}
+                >
+                  {userRank?.submissions ?? '-'}
+                </Td>
+                <Td
+                  bottom={0}
+                  display={{
+                    base: 'none',
+                    md: skill !== 'ALL' ? 'none' : 'table-cell',
+                  }}
+                  px={{ base: 1, md: 2 }}
+                  borderBottomWidth={'0px'}
+                >
+                  <Flex gap={2} h="full" textAlign={'center'}>
+                    {userSkills.slice(0, 2).map((s) => (
+                      <Badge
+                        key={s}
+                        px={2}
+                        color="#64739C"
+                        fontSize={'x-small'}
+                        fontWeight={500}
+                        textTransform={'none'}
+                        bg="#EFF1F5"
+                        rounded="full"
+                      >
+                        {s}
+                      </Badge>
+                    ))}
+                    {userSkills.length > 2 && (
+                      <Popover trigger="hover">
+                        <PopoverTrigger>
+                          <Badge
+                            px={2}
+                            color="#64739C"
+                            fontSize={'x-small'}
+                            fontWeight={500}
+                            textTransform={'none'}
+                            bg="#EFF1F5"
+                            rounded="full"
                           >
-                            <Flex
-                              wrap={'wrap'}
-                              gap={2}
-                              w="fit-content"
-                              h="full"
-                              textAlign={'center'}
-                            >
-                              {userSkills.slice(2).map((s) => (
-                                <Badge
-                                  key={s}
-                                  px={2}
-                                  color="#64739C"
-                                  fontSize={'x-small'}
-                                  fontWeight={500}
-                                  textTransform={'none'}
-                                  bg="#EFF1F5"
-                                  rounded="full"
-                                >
-                                  {s}
-                                </Badge>
-                              ))}
-                            </Flex>
-                          </PopoverContent>
-                        </Popover>
-                      )}
-                    </Flex>
-                  </Td>
-                </Tr>
-              )}
+                            +{userSkills.length - 2}
+                          </Badge>
+                        </PopoverTrigger>
+                        <PopoverContent
+                          w="fit-content"
+                          maxW="10rem"
+                          px={4}
+                          py={2}
+                          shadow="lg"
+                        >
+                          <Flex
+                            wrap={'wrap'}
+                            gap={2}
+                            w="fit-content"
+                            h="full"
+                            textAlign={'center'}
+                          >
+                            {userSkills.slice(2).map((s) => (
+                              <Badge
+                                key={s}
+                                px={2}
+                                color="#64739C"
+                                fontSize={'x-small'}
+                                fontWeight={500}
+                                textTransform={'none'}
+                                bg="#EFF1F5"
+                                rounded="full"
+                              >
+                                {s}
+                              </Badge>
+                            ))}
+                          </Flex>
+                        </PopoverContent>
+                      </Popover>
+                    )}
+                  </Flex>
+                </Td>
+              </Tr>
+            )}
           </Tbody>
         )}
       </Table>

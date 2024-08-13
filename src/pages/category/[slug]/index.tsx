@@ -1,13 +1,16 @@
 import { Box, Flex } from '@chakra-ui/react';
-import axios from 'axios';
 import type { NextPageContext } from 'next';
 import { useRouter } from 'next/router';
-import { useEffect, useState } from 'react';
+import { useMemo } from 'react';
 
 import { EmptySection } from '@/components/shared/EmptySection';
 import { Loading } from '@/components/shared/Loading';
-import { GrantsCard, type GrantWithApplicationCount } from '@/features/grants';
-import { type Listing, ListingSection, ListingTabs } from '@/features/listings';
+import { GrantsCard, useGetGrants } from '@/features/grants';
+import {
+  ListingSection,
+  ListingTabs,
+  useGetListings,
+} from '@/features/listings';
 import { Home } from '@/layouts/Home';
 import { Meta } from '@/layouts/Meta';
 import { dayjs } from '@/utils/dayjs';
@@ -15,42 +18,21 @@ import { dayjs } from '@/utils/dayjs';
 type SlugKeys = 'design' | 'content' | 'development' | 'other';
 
 function ListingCategoryPage({ slug }: { slug: string }) {
-  const [isListingsLoading, setIsListingsLoading] = useState(true);
-  const [listings, setListings] = useState<{ bounties: Listing[] }>({
-    bounties: [],
-  });
-  const [grants, setGrants] = useState<{ grants: GrantWithApplicationCount[] }>(
-    {
-      grants: [],
-    },
+  const router = useRouter();
+  const deadline = useMemo(
+    () => dayjs().subtract(1, 'month').toISOString(),
+    [],
   );
 
-  const deadline = dayjs().subtract(1, 'month').toISOString();
-  const router = useRouter();
+  const { data: listingsData, isLoading: isListingsLoading } = useGetListings({
+    take: 100,
+    filter: slug,
+    deadline,
+  });
 
-  const getListings = async () => {
-    setIsListingsLoading(true);
-    const params = { category: 'bounties', take: 100, filter: slug, deadline };
-    try {
-      const listingData = await axios.get('/api/listings/', { params });
-      setListings(listingData.data);
-      setIsListingsLoading(false);
-
-      const grantsData = await axios.get('/api/listings/', {
-        params: {
-          category: 'grants',
-        },
-      });
-      setGrants(grantsData.data);
-    } catch (e) {
-      setIsListingsLoading(false);
-    }
-  };
-
-  useEffect(() => {
-    if (!isListingsLoading) return;
-    getListings();
-  }, []);
+  const { data: grants, isLoading: isGrantsLoading } = useGetGrants({
+    order: 'asc',
+  });
 
   const titlesForSlugs: { [key in SlugKeys]: string } = {
     design: 'Design Bounties and Grants | Superteam Earn',
@@ -60,7 +42,7 @@ function ListingCategoryPage({ slug }: { slug: string }) {
   };
 
   const titleKey = slug as SlugKeys;
-  const title = titlesForSlugs[titleKey] || 'Superteam Earn'; // Default title if slug not found
+  const title = titlesForSlugs[titleKey] || 'Superteam Earn';
   const formattedSlug =
     slug.charAt(0).toUpperCase() + slug.slice(1).toLowerCase();
 
@@ -77,7 +59,7 @@ function ListingCategoryPage({ slug }: { slug: string }) {
       />
       <Box w={'100%'}>
         <ListingTabs
-          bounties={listings.bounties}
+          bounties={listingsData ?? []}
           isListingsLoading={isListingsLoading}
           emoji="/assets/home/emojis/moneyman.png"
           title={`${formattedSlug} Gigs`}
@@ -92,12 +74,12 @@ function ListingCategoryPage({ slug }: { slug: string }) {
           emoji="/assets/home/emojis/grants.png"
           showViewAll
         >
-          {isListingsLoading && (
+          {isGrantsLoading && (
             <Flex align="center" justify="center" direction="column" minH={52}>
               <Loading />
             </Flex>
           )}
-          {!isListingsLoading && !grants?.grants?.length && (
+          {!isGrantsLoading && !grants?.length && (
             <Flex align="center" justify="center" mt={8}>
               <EmptySection
                 title="No grants available!"
@@ -105,10 +87,8 @@ function ListingCategoryPage({ slug }: { slug: string }) {
               />
             </Flex>
           )}
-          {!isListingsLoading &&
-            grants?.grants?.map((grant) => {
-              return <GrantsCard grant={grant} key={grant.id} />;
-            })}
+          {!isGrantsLoading &&
+            grants?.map((grant) => <GrantsCard grant={grant} key={grant.id} />)}
         </ListingSection>
       </Box>
     </Home>

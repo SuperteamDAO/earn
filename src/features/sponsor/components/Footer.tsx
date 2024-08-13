@@ -3,14 +3,14 @@ import NextLink from 'next/link';
 import { useSession } from 'next-auth/react';
 import { usePostHog } from 'posthog-js/react';
 
-import { userStore } from '@/store/user';
+import { useUser } from '@/store/user';
 
 import { fontSize, maxW2, padding } from '../utils';
 
 export function Footer() {
   const { data: session } = useSession();
 
-  const { userInfo } = userStore();
+  const { user } = useUser();
 
   const posthog = usePostHog();
 
@@ -42,7 +42,7 @@ export function Footer() {
         Where Solana teams come to get sh*t done
       </Text>
       <NextLink
-        href={getStartedWhere(!!session, !!userInfo?.currentSponsorId)}
+        href={getStartedWhere(!!session, !!user?.currentSponsorId)}
         className="ph-no-capture"
         onClick={() => posthog.capture('clicked_footer_get_started')}
       >

@@ -1,6 +1,7 @@
 import { franc } from 'franc';
 import type { NextApiResponse } from 'next';
 
+import { BONUS_REWARD_POSITION } from '@/constants';
 import {
   checkListingSponsorAuth,
   type NextApiRequestWithSponsor,
@@ -34,6 +35,7 @@ const allowedFields = [
   'requirements',
   'rewardAmount',
   'rewards',
+  'maxBonusSpots',
   'token',
   'compensationType',
   'minRewardAsk',
@@ -67,10 +69,13 @@ async function bounty(req: NextApiRequestWithSponsor, res: NextApiResponse) {
       token,
       maxRewardAsk,
       minRewardAsk,
+      maxBonusSpots,
       compensationType,
       isPublished,
       description,
     } = updatedData;
+
+    console.log('max bonus spots', maxBonusSpots);
 
     let publishedAt = listing.publishedAt;
     if (isPublished && !listing.publishedAt) {
@@ -84,7 +89,9 @@ async function bounty(req: NextApiRequestWithSponsor, res: NextApiResponse) {
     }
 
     const newRewardsCount = Object.keys(rewards || {}).length;
-    const currentTotalWinners = listing.totalWinnersSelected || 0;
+    const currentTotalWinners = listing.totalWinnersSelected
+      ? listing.totalWinnersSelected - (maxBonusSpots ?? 0)
+      : 0;
 
     if (newRewardsCount < currentTotalWinners) {
       updatedData.totalWinnersSelected = newRewardsCount;
@@ -102,6 +109,25 @@ async function bounty(req: NextApiRequestWithSponsor, res: NextApiResponse) {
             listingId: id as string,
             isWinner: true,
             winnerPosition: position,
+          },
+          data: {
+            isWinner: false,
+            winnerPosition: null,
+          },
+        });
+      }
+    }
+    if (maxBonusSpots < listing.maxBonusSpots) {
+      for (
+        let bonusSpot = maxBonusSpots + 1;
+        bonusSpot <= listing.maxBonusSpots;
+        bonusSpot++
+      ) {
+        await prisma.submission.updateMany({
+          where: {
+            listingId: id as string,
+            isWinner: true,
+            winnerPosition: BONUS_REWARD_POSITION,
           },
           data: {
             isWinner: false,
@@ -138,6 +164,7 @@ async function bounty(req: NextApiRequestWithSponsor, res: NextApiResponse) {
         token,
         maxRewardAsk,
         minRewardAsk,
+        maxBonusSpots,
         compensationType,
         isPublished,
         publishedAt,

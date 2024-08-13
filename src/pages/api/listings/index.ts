@@ -65,7 +65,6 @@ export default async function listings(
   res: NextApiResponse,
 ) {
   const params = req.query;
-  const category = params.category as string;
   const order = (params.order as 'asc' | 'desc') ?? 'desc';
 
   const filter = params.filter as string;
@@ -76,10 +75,6 @@ export default async function listings(
   const take = params.take ? parseInt(params.take as string, 10) : 10;
   const deadline = params.deadline as string;
 
-  const result: { bounties: any[]; grants: any[] } = {
-    bounties: [],
-    grants: [],
-  };
   const filterToSkillsMap: Record<string, string[]> = {
     development: ['Frontend', 'Backend', 'Blockchain', 'Mobile'],
     design: ['Design'],
@@ -124,7 +119,7 @@ export default async function listings(
     userRegion = matchedRegion ? matchedRegion.region : Regions.GLOBAL;
   }
 
-  const bountyQueryOptions: Prisma.BountiesFindManyArgs = {
+  const listingQueryOptions: Prisma.BountiesFindManyArgs = {
     where: {
       isPublished: true,
       isActive: true,
@@ -188,49 +183,9 @@ export default async function listings(
     ],
   };
 
-  const grantQueryOptions: Prisma.GrantsFindManyArgs = {
-    where: {
-      isPublished: true,
-      isActive: true,
-      isArchived: false,
-      ...skillsFilter,
-    },
-    take,
-    orderBy: {
-      createdAt: order,
-    },
-    include: {
-      sponsor: {
-        select: {
-          id: true,
-          name: true,
-          slug: true,
-          logo: true,
-          isVerified: true,
-        },
-      },
-      _count: {
-        select: {
-          GrantApplication: {
-            where: {
-              applicationStatus: 'Approved',
-            },
-          },
-        },
-      },
-    },
-  };
-
   if (userRegion) {
-    bountyQueryOptions.where = {
-      ...bountyQueryOptions.where,
-      region: {
-        in: [userRegion, Regions.GLOBAL],
-      },
-    };
-
-    grantQueryOptions.where = {
-      ...grantQueryOptions.where,
+    listingQueryOptions.where = {
+      ...listingQueryOptions.where,
       region: {
         in: [userRegion, Regions.GLOBAL],
       },
@@ -238,31 +193,21 @@ export default async function listings(
   }
 
   try {
-    if (!category || category === 'all') {
-      const bounties = await prisma.bounties.findMany(bountyQueryOptions);
-      //sort bounties by isFeatured
-      result.bounties = sortListings(bounties);
-    } else if (category === 'bounties') {
-      const bounties = await prisma.bounties.findMany(bountyQueryOptions);
+    let result;
+    const listings = await prisma.bounties.findMany(listingQueryOptions);
 
-      const splitIndex = bounties.findIndex((bounty) =>
-        dayjs().isAfter(dayjs(bounty?.deadline)),
-      );
-      if (splitIndex >= 0) {
-        const bountiesOpen = bounties.slice(0, splitIndex).reverse();
-        const bountiesClosed = bounties.slice(splitIndex);
+    const splitIndex = listings.findIndex((listing) =>
+      dayjs().isAfter(dayjs(listing?.deadline)),
+    );
+    if (splitIndex >= 0) {
+      const listingsOpen = listings.slice(0, splitIndex).reverse();
+      const listingsClosed = listings.slice(splitIndex);
 
-        result.bounties = [...bountiesOpen, ...bountiesClosed];
-      } else {
-        result.bounties = bounties.slice(0, take);
-      }
-      result.bounties = sortListings(bounties);
+      result = [...listingsOpen, ...listingsClosed];
+    } else {
+      result = listings.slice(0, take);
     }
-
-    if (!category || category === 'all' || category === 'grants') {
-      const grants = await prisma.grants.findMany(grantQueryOptions);
-      result.grants = grants;
-    }
+    result = sortListings(listings);
 
     res.status(200).json(result);
   } catch (error) {
@@ -274,3 +219,50 @@ export default async function listings(
     });
   }
 }
+
+// const grantQueryOptions: Prisma.GrantsFindManyArgs = {
+//   where: {
+//     isPublished: true,
+//     isActive: true,
+//     isArchived: false,
+//     ...skillsFilter,
+//   },
+//   take,
+//   orderBy: {
+//     createdAt: order,
+//   },
+//   include: {
+//     sponsor: {
+//       select: {
+//         id: true,
+//         name: true,
+//         slug: true,
+//         logo: true,
+//         isVerified: true,
+//       },
+//     },
+//     _count: {
+//       select: {
+//         GrantApplication: {
+//           where: {
+//             applicationStatus: 'Approved',
+//           },
+//         },
+//       },
+//     },
+//   },
+// };
+
+// if (userRegion) {
+// grantQueryOptions.where = {
+//   ...grantQueryOptions.where,
+//   region: {
+//     in: [userRegion, Regions.GLOBAL],
+//   },
+// };
+// }
+
+// if (!category || category === 'all' || category === 'grants') {
+//   const grants = await prisma.grants.findMany(grantQueryOptions);
+//   result.grants = grants;
+// }

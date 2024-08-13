@@ -3,14 +3,14 @@ import debounce from 'lodash.debounce';
 import { useEffect, useState } from 'react';
 
 import logger from '@/lib/logger';
-import { userStore } from '@/store/user';
+import { useUser } from '@/store/user';
 
 export const useSponsorNameValidation = (initialValue = '') => {
   const [sponsorName, setSponsorName] = useState(initialValue);
   const [isInvalid, setIsInvalid] = useState(false);
   const [validationErrorMessage, setValidationErrorMessage] = useState('');
 
-  const { userInfo } = userStore();
+  const { user } = useUser();
 
   const checkSponsorNameAvailability = async (name: string) => {
     try {
@@ -30,7 +30,7 @@ export const useSponsorNameValidation = (initialValue = '') => {
   const debouncedCheckSponsorName = debounce(checkSponsorNameAvailability, 300);
 
   useEffect(() => {
-    if (sponsorName && sponsorName === userInfo?.currentSponsor?.name) {
+    if (sponsorName && sponsorName === user?.currentSponsor?.name) {
       setIsInvalid(false);
       setValidationErrorMessage('');
       return;
@@ -38,7 +38,7 @@ export const useSponsorNameValidation = (initialValue = '') => {
     if (sponsorName) {
       debouncedCheckSponsorName(sponsorName);
     }
-  }, [sponsorName, userInfo?.currentSponsor?.name]);
+  }, [sponsorName, user?.currentSponsor?.name]);
 
   return { setSponsorName, isInvalid, validationErrorMessage, sponsorName };
 };

@@ -14,7 +14,7 @@ import NextLink from 'next/link';
 import { useState } from 'react';
 
 import { TERMS_OF_USE } from '@/constants';
-import { userStore } from '@/store/user';
+import { useUser } from '@/store/user';
 
 export const EntityNameModal = ({
   isOpen,
@@ -27,23 +27,17 @@ export const EntityNameModal = ({
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(false);
 
-  const { userInfo, setUserInfo } = userStore();
-  if (!userInfo?.currentSponsor?.id) return null;
+  const { user, refetchUser } = useUser();
+  if (!user?.currentSponsor?.id) return null;
 
   const setDBEntityName = async () => {
     setLoading(true);
     try {
-      if (userInfo.currentSponsor) {
+      if (user.currentSponsor) {
         await axios.post('/api/sponsors/edit', {
           entityName,
         });
-        setUserInfo({
-          ...userInfo,
-          currentSponsor: {
-            ...userInfo.currentSponsor,
-            entityName,
-          },
-        });
+        await refetchUser();
         onClose();
       }
     } catch (e) {
