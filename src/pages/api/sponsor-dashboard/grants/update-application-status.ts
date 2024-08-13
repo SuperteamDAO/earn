@@ -51,6 +51,7 @@ async function handler(req: NextApiRequestWithSponsor, res: NextApiResponse) {
 
     const updatedData: any = {
       applicationStatus,
+      decidedAt: new Date().toISOString(),
     };
 
     const isApproved = applicationStatus === 'Approved';
@@ -63,7 +64,6 @@ async function handler(req: NextApiRequestWithSponsor, res: NextApiResponse) {
 
       updatedData.approvedAmount = parsedAmount;
       updatedData.approvedAmountInUSD = usdValue;
-      updatedData.approvedAt = new Date().toISOString();
     }
 
     const result = await prisma.grantApplication.update({
