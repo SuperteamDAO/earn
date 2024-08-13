@@ -1,7 +1,7 @@
 import { HStack, VStack } from '@chakra-ui/react';
+import { useQuery } from '@tanstack/react-query';
 import axios from 'axios';
 import type { GetServerSideProps } from 'next';
-import { useEffect, useState } from 'react';
 
 import { ErrorSection } from '@/components/shared/ErrorSection';
 import { LoadingSection } from '@/components/shared/LoadingSection';
@@ -17,26 +17,20 @@ interface BountyDetailsProps {
   slug: string;
 }
 
+const fetchBountyTemplate = async (slug: string) => {
+  const { data } = await axios.get(`/api/listings/templates/${slug}/`);
+  return data;
+};
+
 function BountyDetails({ slug }: BountyDetailsProps) {
-  const [isLoading, setIsLoading] = useState(true);
-  const [error, setError] = useState(false);
-
-  const [bounty, setBounty] = useState<any | null>(null);
-  const getBounty = async () => {
-    setIsLoading(true);
-    try {
-      const bountyDetails = await axios.get(`/api/listings/templates/${slug}/`);
-      setBounty(bountyDetails.data);
-    } catch (e) {
-      setError(true);
-    }
-    setIsLoading(false);
-  };
-
-  useEffect(() => {
-    if (!isLoading) return;
-    getBounty();
-  }, []);
+  const {
+    data: bounty,
+    isLoading,
+    error,
+  } = useQuery({
+    queryKey: ['bounty', slug],
+    queryFn: () => fetchBountyTemplate(slug),
+  });
 
   return (
     <Default

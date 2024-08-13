@@ -8,10 +8,14 @@ export default async function handler(
   req: NextApiRequest,
   res: NextApiResponse,
 ) {
-  logger.debug(`Request body: ${safeStringify(req.body)}`);
+  logger.debug(`Request query: ${safeStringify(req.query)}`);
 
   try {
-    const { listingId } = req.body;
+    const { listingId } = req.query;
+
+    if (!listingId || typeof listingId !== 'string') {
+      return res.status(400).json({ message: 'Invalid listingId' });
+    }
 
     logger.debug(`Fetching subscription status for listing ID: ${listingId}`);
     const result = await prisma.subscribeBounty.findMany({
@@ -22,9 +26,9 @@ export default async function handler(
     res.status(200).json(result);
   } catch (error: any) {
     logger.error(
-      `Error occurred while fetching subscription status for listing ID=${req.body.listingId}: ${safeStringify(error)}`,
+      `Error occurred while fetching subscription status for listing ID=${req.query.listingId}: ${safeStringify(error)}`,
     );
-    res.status(400).json({
+    res.status(500).json({
       error: error.message,
       message: 'Error occurred while fetching subscription status.',
     });

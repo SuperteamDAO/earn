@@ -1,7 +1,7 @@
 import { Box, Center, Flex, Image, Text } from '@chakra-ui/react';
+import { useQuery } from '@tanstack/react-query';
 import axios from 'axios';
 import { type GetServerSideProps } from 'next';
-import { useEffect, useState } from 'react';
 
 import { type Listing, ListingTabs } from '@/features/listings';
 import { Home } from '@/layouts/Home';
@@ -16,38 +16,27 @@ interface Listings {
   };
 }
 
+const fetchListings = async (slug: string): Promise<Listings> => {
+  const { data } = await axios.post(`/api/listings/sponsor`, {
+    sponsor: slug,
+  });
+  return data;
+};
+
 const SponsorListingsPage = ({ slug }: { slug: string }) => {
-  const [isListingsLoading, setIsListingsLoading] = useState(true);
-  const [listings, setListings] = useState<Listings>({
-    bounties: [],
-    sponsorInfo: {
-      title: '',
-      description: '',
-      bgImage: '',
-    },
+  const { data: listings, isLoading: isListingsLoading } = useQuery({
+    queryKey: ['sponsorListings', slug],
+    queryFn: () => fetchListings(slug),
+    enabled: !!slug,
   });
 
-  const getListings = async () => {
-    setIsListingsLoading(true);
-    try {
-      const listingsData = await axios.post(`/api/listings/sponsor`, {
-        sponsor: slug,
-      });
-      setListings(listingsData.data);
-      setIsListingsLoading(false);
-    } catch {
-      setIsListingsLoading(false);
-    }
-  };
+  const {
+    title = '',
+    description = '',
+    bgImage = '',
+  } = listings?.sponsorInfo || {};
 
-  useEffect(() => {
-    if (!slug) return;
-    getListings();
-  }, [slug]);
-
-  const { title, description, bgImage } = listings.sponsorInfo;
-
-  const logo = listings.bounties[0]?.sponsor?.logo;
+  const logo = listings?.bounties[0]?.sponsor?.logo;
 
   return (
     <Home type="niche">
@@ -87,7 +76,7 @@ const SponsorListingsPage = ({ slug }: { slug: string }) => {
 
       <Box w={'100%'}>
         <ListingTabs
-          bounties={listings.bounties}
+          bounties={listings?.bounties}
           isListingsLoading={isListingsLoading}
           emoji="/assets/home/emojis/moneyman.png"
           title="Opportunities"

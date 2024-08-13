@@ -3,6 +3,7 @@ export * from './CreateListingModal';
 export * from './GrantApplications';
 export * from './ListingTable';
 export * from './Members';
+export * from './NavItems';
 export * from './Scouts';
 export * from './SponsorInfoModal';
 export * from './SponsorPrize';
