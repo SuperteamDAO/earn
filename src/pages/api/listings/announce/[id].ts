@@ -181,7 +181,10 @@ async function announce(req: NextApiRequestWithSponsor, res: NextApiResponse) {
       triggeredBy: userId,
     });
 
-    if (listing?.sponsor?.name.includes('Superteam')) {
+    if (
+      listing?.sponsor?.name.includes('Superteam') &&
+      listing.type !== 'project'
+    ) {
       await sendEmailNotification({
         type: 'superteamWinners',
         id,
