@@ -9,15 +9,14 @@ import {
   useMediaQuery,
   VStack,
 } from '@chakra-ui/react';
-import { useRouter } from 'next/router';
 import React from 'react';
 
 import { TalentBio } from '@/components/TalentBio';
-import { Comments } from '@/features/comments';
 import type { SubmissionWithUser } from '@/interface/submission';
 import { type User as IUser } from '@/interface/user';
 import { useOgImage } from '@/queries/get-og';
 import { getURLSanitized } from '@/utils/getURLSanitized';
+import { nthLabelGenerator } from '@/utils/rank';
 
 import { type Listing } from '../../types';
 
@@ -28,7 +27,6 @@ interface Props {
   link: string;
 }
 export const SubmissionPage = ({ bounty, submission, user, link }: Props) => {
-  const router = useRouter();
   const { data: image } = useOgImage(link);
   const [isMobile] = useMediaQuery('(max-width: 768px)');
 
@@ -42,12 +40,11 @@ export const SubmissionPage = ({ bounty, submission, user, link }: Props) => {
       maxW={'8xl'}
       mx={'auto'}
     >
-      <VStack gap={3} w={'full'} mt={3}>
+      <VStack gap={3} w={'full'} mt={3} px={8}>
         {bounty?.isWinnersAnnounced && submission?.isWinner && (
           <Box
             w="full"
             mt={4}
-            px={4}
             py={2}
             color={'#D26F12'}
             textAlign={'center'}
@@ -55,7 +52,7 @@ export const SubmissionPage = ({ bounty, submission, user, link }: Props) => {
             rounded="md"
           >
             <Text fontWeight={700} textTransform={'uppercase'}>
-              🏆 WINNER: {submission?.winnerPosition} 🏆
+              🏆 WINNER: {nthLabelGenerator(submission?.winnerPosition ?? 0)} 🏆
             </Text>
           </Box>
         )}
@@ -65,7 +62,7 @@ export const SubmissionPage = ({ bounty, submission, user, link }: Props) => {
           bg={'white'}
           rounded={'md'}
         >
-          <Flex justify={'space-between'} w={'full'} mt={5} px={8}>
+          <Flex justify={'space-between'} w={'full'} mt={5}>
             <Text color={'black'} fontSize={'22px'} fontWeight={600}>
               {user?.firstName}&apos;s Submission
             </Text>
@@ -73,13 +70,13 @@ export const SubmissionPage = ({ bounty, submission, user, link }: Props) => {
           <Image
             w={'full'}
             h={'30rem'}
-            p={7}
+            py={7}
             objectFit={'cover'}
             alt={'submission'}
             rounded={'2rem'}
             src={image || '/assets/bg/og.svg'}
           />
-          <HStack w="full" px={7}>
+          <HStack w="full">
             <Button
               as={Link}
               w="full"
@@ -100,16 +97,6 @@ export const SubmissionPage = ({ bounty, submission, user, link }: Props) => {
             </VStack>
           )}
         </VStack>
-
-        <Comments
-          isAnnounced={bounty?.isWinnersAnnounced ?? false}
-          listingSlug={bounty?.slug ?? ''}
-          listingType={bounty?.type ?? ''}
-          poc={bounty?.poc as IUser}
-          sponsorId={bounty?.sponsorId}
-          refId={(router.query.subid as string) ?? ''}
-          refType="SUBMISSION"
-        />
       </VStack>
       {!isMobile && (
         <VStack w={['100%', '100%', '36rem', '36rem']}>

@@ -24,6 +24,7 @@ export interface Listing {
   token?: string;
   rewardAmount?: number;
   rewards?: Rewards;
+  maxBonusSpots?: number;
   sponsorId?: string;
   sponsor?: SponsorType;
   pocSocials?: string;
@@ -42,16 +43,7 @@ export interface Listing {
   referredBy?: SuperteamName;
   publishedAt?: string;
   isPrivate?: boolean;
-  Hackathon?: {
-    name: string;
-    logo: string;
-    description: string;
-    deadline: string;
-    startDate: string;
-    altLogo: string;
-    slug: string;
-    announceDate: string;
-  };
+  Hackathon?: ListingHackathon;
   compensationType?: 'fixed' | 'range' | 'variable';
   minRewardAsk?: number;
   maxRewardAsk?: number;
@@ -59,6 +51,17 @@ export interface Listing {
   _count?: {
     Comments?: number;
   };
+}
+
+export interface ListingHackathon {
+  name: string;
+  logo: string;
+  description: string;
+  deadline: string;
+  startDate: string;
+  altLogo: string;
+  slug: string;
+  announceDate: string;
 }
 
 export interface ListingWithSubmissions extends Listing {

@@ -20,7 +20,7 @@ export const BountySnackbar = () => {
 
   const { asPath } = router;
 
-  const showSnackbar = /^\/listings\/(bounty|project)\/[^/]+\/?$/.test(asPath);
+  const showSnackbar = asPath.split('/')[1] === 'listings';
 
   if (!bountySnackbar) return null;
 

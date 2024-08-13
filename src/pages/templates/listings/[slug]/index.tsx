@@ -66,10 +66,7 @@ function BountyDetails({ slug }: BountyDetailsProps) {
             mb={10}
           >
             <VStack gap={8} w={['22rem', '22rem', 'full', 'full']} mt={10}>
-              <DescriptionUI
-                skills={bounty?.skills?.map((e: any) => e.skills) ?? []}
-                description={bounty?.description}
-              />
+              <DescriptionUI description={bounty?.description} />
             </VStack>
           </HStack>
         </>

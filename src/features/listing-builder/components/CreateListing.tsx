@@ -159,6 +159,7 @@ export function CreateListing({
         requirements: form?.requirements,
         rewardAmount: form?.rewardAmount,
         rewards: form?.rewards,
+        maxBonusSpots: form?.maxBonusSpots,
         token: form?.token,
         compensationType: form?.compensationType,
         minRewardAsk: form?.minRewardAsk,
@@ -166,6 +167,8 @@ export function CreateListing({
         isPublished: true,
         isPrivate: form?.isPrivate,
       };
+
+      console.log('maxBonusSpots after submission', form?.maxBonusSpots);
 
       let api = `/api/${basePath}/create`;
       if (editable && !isDuplicating) {
@@ -227,6 +230,7 @@ export function CreateListing({
         requirements: data?.requirements,
         rewardAmount: data?.rewardAmount,
         rewards: data?.rewards,
+        maxBonusSpots: data?.maxBonusSpots,
         token: data?.token,
         compensationType: data?.compensationType,
         minRewardAsk: data?.minRewardAsk,

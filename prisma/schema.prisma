@@ -19,6 +19,7 @@ model Bounties {
   token                String?
   rewardAmount         Float?
   rewards              Json?
+  maxBonusSpots        Int                @default(0)
   usdValue             Float?
   sponsorId            String
   pocId                String

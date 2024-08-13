@@ -1,6 +1,7 @@
 export * from './Banner';
 export * from './CategoryBanner';
 export * from './HowItWorks';
+export * from './LiveListings';
 export * from './NavTabs';
 export * from './RecentEarners';
 export * from './RegionBanner';

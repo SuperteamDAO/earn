@@ -3,22 +3,25 @@ import React from 'react';
 
 interface StatusBadgeProps {
   textColor: string;
-  bgColor: string;
   text: string;
+  Icon: React.JSX.Element;
 }
 
-export const StatusBadge = ({ textColor, bgColor, text }: StatusBadgeProps) => {
+export const StatusBadge = ({ textColor, text, Icon }: StatusBadgeProps) => {
   return (
     <Text
+      alignItems="center"
+      gap={2}
+      display="flex"
       px={3}
       py={1}
       color={textColor}
-      fontSize={{ base: 'xx-small', sm: 'xs' }}
+      fontSize={{ base: 'xs', sm: 'sm' }}
       fontWeight={500}
-      bg={bgColor}
       whiteSpace={'nowrap'}
       rounded={'full'}
     >
+      {Icon}
       {text}
     </Text>
   );

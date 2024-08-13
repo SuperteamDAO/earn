@@ -19,7 +19,7 @@ import React, {
 
 import { EarnAvatar } from '@/components/shared/EarnAvatar';
 import type { SubmissionWithUser } from '@/interface/submission';
-import { rankLabels } from '@/utils/rank';
+import { getRankLabels } from '@/utils/rank';
 
 import { colorMap } from '../../utils';
 
@@ -158,7 +158,7 @@ export const SubmissionList = ({
                       🏆{' '}
                       {type === 'project'
                         ? 'Winner'
-                        : rankLabels[submission.winnerPosition]}
+                        : getRankLabels(submission.winnerPosition)}
                     </>
                   ) : (
                     submission?.label

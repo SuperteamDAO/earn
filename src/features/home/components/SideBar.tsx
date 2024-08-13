@@ -3,17 +3,15 @@ import { Box, Flex, Text } from '@chakra-ui/react';
 import NextLink from 'next/link';
 import { useRouter } from 'next/router';
 import { usePostHog } from 'posthog-js/react';
-import { useMemo } from 'react';
 
 import { OgImageViewer } from '@/components/misc/ogImageViewer';
 import { useGetFeed } from '@/features/feed';
-import { ListingCardMobile, useGetListings } from '@/features/listings';
 import type { User } from '@/interface/user';
 import { useUser } from '@/store/user';
-import { dayjs } from '@/utils/dayjs';
 import { timeAgoShort } from '@/utils/timeAgo';
 
 import { HowItWorks } from './HowItWorks';
+import { LiveListings } from './LiveListings';
 import { RecentEarners } from './RecentEarners';
 import { SponsorBanner } from './SponsorBanner';
 import { TotalStats } from './TotalStats';
@@ -175,46 +173,6 @@ const RecentActivity = () => {
   );
 };
 
-export const LiveListings = () => {
-  const deadline = useMemo(() => dayjs().add(1, 'day').toISOString(), []);
-
-  const { data: listings, isLoading } = useGetListings({
-    take: 5,
-    isHomePage: true,
-    deadline,
-    order: 'asc',
-  });
-
-  return (
-    <Box>
-      <Flex align="center" justify={'space-between'}>
-        <Text color={'gray.400'} fontSize={'sm'} fontWeight={500}>
-          LIVE LISTINGS
-        </Text>
-        <Text
-          as={NextLink}
-          color="brand.purple"
-          fontSize="xs"
-          fontWeight={600}
-          href="/"
-        >
-          View All
-          <ArrowForwardIcon ml={1} />
-        </Text>
-      </Flex>
-      <Flex direction={'column'} w={'full'} mt={1}>
-        {isLoading ? (
-          <Text>Loading...</Text>
-        ) : (
-          listings?.map((listing) => (
-            <ListingCardMobile bounty={listing} key={listing?.id} />
-          ))
-        )}
-      </Flex>
-    </Box>
-  );
-};
-
 export const HomeSideBar = ({
   type,
   listings,
@@ -229,7 +187,23 @@ export const HomeSideBar = ({
       {type === 'feed' && (
         <>
           <VibeCard />
-          <LiveListings />
+          <LiveListings>
+            <Flex align="center" justify={'space-between'}>
+              <Text color={'gray.400'} fontSize={'sm'} fontWeight={500}>
+                LIVE LISTINGS
+              </Text>
+              <Text
+                as={NextLink}
+                color="brand.purple"
+                fontSize="xs"
+                fontWeight={600}
+                href="/"
+              >
+                View All
+                <ArrowForwardIcon ml={1} />
+              </Text>
+            </Flex>
+          </LiveListings>
         </>
       )}
       {router.asPath === '/' &&

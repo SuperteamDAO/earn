@@ -1,36 +1,41 @@
-import { ExternalLinkIcon, WarningIcon } from '@chakra-ui/icons';
+import { WarningIcon } from '@chakra-ui/icons';
 import {
   Box,
   Flex,
   Image,
-  Link,
   Table,
   TableContainer,
   Tbody,
   Td,
   Text,
-  Th,
-  Thead,
   Tr,
   VStack,
 } from '@chakra-ui/react';
-import { usePostHog } from 'posthog-js/react';
+import { useRouter } from 'next/router';
 import { useEffect, useState } from 'react';
 import Countdown from 'react-countdown';
 
 import { CountDownRenderer } from '@/components/shared/countdownRenderer';
 import { tokenList } from '@/constants/index';
+import { LiveListings } from '@/features/home';
+import { type ParentSkills } from '@/interface/skills';
 import { dayjs } from '@/utils/dayjs';
-import { formatNumberWithSuffix } from '@/utils/formatNumberWithSuffix';
-import { getURLSanitized } from '@/utils/getURLSanitized';
-import { cleanRewards, nthLabelGenerator, rankLabels } from '@/utils/rank';
 
 import { useGetSubmissionCount } from '../../queries';
 import type { Listing } from '../../types';
 import { SubmissionActionButton } from '../Submission/SubmissionActionButton';
 import { CompensationAmount } from './CompensationAmount';
+import { ExtraInfoSection } from './ExtraInfoSection';
+import { ListingWinners } from './ListingWinners';
+import { PrizesList } from './PrizesList';
 
-export function RightSideBar({ listing }: { listing: Listing }) {
+export function RightSideBar({
+  listing,
+  skills,
+}: {
+  listing: Listing;
+  skills?: ParentSkills[];
+}) {
   const {
     id,
     token,
@@ -41,14 +46,11 @@ export function RightSideBar({ listing }: { listing: Listing }) {
     compensationType,
     maxRewardAsk,
     minRewardAsk,
-    requirements,
-    pocSocials,
     Hackathon,
     applicationType,
     timeToComplete,
+    maxBonusSpots,
   } = listing;
-
-  const posthog = usePostHog();
 
   const { data: submissionNumber, isLoading: isSubmissionNumberLoading } =
     useGetSubmissionCount(id!);
@@ -77,60 +79,30 @@ export function RightSideBar({ listing }: { listing: Listing }) {
 
   const isProject = type === 'project';
 
-  const rewardLength = cleanRewards(rewards).length;
-
-  const prizeMapping = rankLabels
-    .map((r, i) => ({
-      key: i,
-      label: nthLabelGenerator(i),
-      description: `${r} Prize`,
-    }))
-    .slice(1, rewardLength + 1);
-  // first item of rankLabels is ZERO, therefore slice from index 1
+  const router = useRouter();
 
   return (
-    <Box w={{ base: 'full', md: 'auto' }}>
-      <VStack gap={2} pt={10}>
+    <Box w={{ base: 'full', md: 'auto' }} h="full">
+      <VStack gap={2} w="full" pt={4}>
         <VStack
           justify={'center'}
           gap={0}
-          w={{ base: 'full', md: '22rem' }}
+          w="full"
           bg={'#FFFFFF'}
           rounded={'xl'}
         >
-          <VStack
-            justify={'space-between'}
-            w={'full'}
-            borderBottom={'1px solid #E2E8EF'}
-          >
+          {!router.asPath.split('/')[4]?.includes('submission') &&
+            !router.asPath.split('/')[4]?.includes('references') && (
+              <Box display={{ base: 'block', md: 'none' }} pb={6}>
+                <ListingWinners bounty={listing} />
+              </Box>
+            )}
+          <VStack justify={'space-between'} w={'full'} px={1} pb={4}>
             <TableContainer w={'full'}>
-              {compensationType !== 'fixed' && (
-                <Text
-                  mb={1}
-                  px={6}
-                  pt={3}
-                  color="brand.slate.400"
-                  fontSize={'xs'}
-                  fontWeight={500}
-                >
-                  {compensationType === 'range' && 'Budget'}
-                  {compensationType === 'variable' && 'Payment in'}
-                </Text>
-              )}
-              <Table
-                mt={compensationType === 'fixed' ? -6 : -10}
-                variant={'unstyled'}
-              >
-                <Thead>
-                  <Tr>
-                    <Th></Th>
-                    <Th></Th>
-                    <Th> </Th>
-                  </Tr>
-                </Thead>
+              <Table variant={'unstyled'}>
                 <Tbody>
-                  <Tr w={'full'} h={16} borderBottom={'1px solid #E2E8EF'}>
-                    <Td colSpan={2}>
+                  <Tr w={'full'}>
+                    <Td w="full" px={0} py={0} colSpan={3}>
                       <Flex align="center" gap={2}>
                         <Image
                           w={8}
@@ -149,81 +121,37 @@ export function RightSideBar({ listing }: { listing: Listing }) {
                           minRewardAsk={minRewardAsk}
                           token={token}
                           textStyle={{
-                            fontWeight: 500,
-                            fontSize: { base: 'lg', md: '2xl' },
+                            fontWeight: 600,
+                            fontSize: { base: 'lg', md: 'xl' },
                             color: 'brand.slate.700',
+                            w: '8.5rem',
                           }}
                         />
+                        {!isProject && (
+                          <Text
+                            color={'brand.slate.500'}
+                            fontSize={'lg'}
+                            fontWeight={400}
+                          >
+                            Total Prizes
+                          </Text>
+                        )}
                       </Flex>
-                    </Td>
-                    <Td>
-                      {!isProject && (
-                        <Text
-                          ml={-6}
-                          color={'brand.slate.400'}
-                          fontSize={'lg'}
-                          fontWeight={400}
-                        >
-                          Total Prizes
-                        </Text>
-                      )}
                     </Td>
                   </Tr>
                   {!isProject && (
                     <>
-                      {prizeMapping.map(
-                        (prize, index) =>
-                          rewards?.[prize.key] && (
-                            <Tr key={index}>
-                              <Td colSpan={2}>
-                                <Flex align="center">
-                                  <Flex
-                                    align={'center'}
-                                    justify={'center'}
-                                    w={8}
-                                    h={8}
-                                    mr={3}
-                                    color="brand.slate.500"
-                                    fontSize={'0.7rem'}
-                                    bg={'blackAlpha.100'}
-                                    rounded={'full'}
-                                  >
-                                    {prize.label}
-                                  </Flex>
-                                  <Flex>
-                                    <Text
-                                      color={'brand.slate.500'}
-                                      fontSize={'lg'}
-                                      fontWeight={500}
-                                    >
-                                      {formatNumberWithSuffix(
-                                        rewards[prize.key]!,
-                                        2,
-                                        true,
-                                      )}
-                                    </Text>
-                                    <Text
-                                      mt="1px"
-                                      ml={1}
-                                      color="brand.slate.400"
-                                      fontWeight={400}
-                                    >
-                                      {token}
-                                    </Text>
-                                  </Flex>
-                                </Flex>
-                              </Td>
-                              <Td>
-                                <Text
-                                  ml={-6}
-                                  color={'brand.slate.400'}
-                                  fontWeight={400}
-                                >
-                                  {prize.description}
-                                </Text>
-                              </Td>
-                            </Tr>
-                          ),
+                      {rewards && (
+                        <Tr>
+                          <Td px={0} colSpan={3}>
+                            <PrizesList
+                              totalReward={rewardAmount ?? 0}
+                              maxBonusSpots={maxBonusSpots ?? 0}
+                              token={token ?? ''}
+                              rewards={rewards}
+                            />
+                          </Td>
+                        </Tr>
                       )}
                     </>
                   )}
@@ -231,12 +159,12 @@ export function RightSideBar({ listing }: { listing: Listing }) {
               </Table>
             </TableContainer>
           </VStack>
-          <Flex
-            justify={'space-between'}
-            w={'full'}
-            px={5}
-            py={!rewards ? 3 : 0}
-          >
+          <Box
+            w="90%"
+            borderColor={'brand.slate.100'}
+            borderBottomWidth={'1px'}
+          />
+          <Flex justify={'space-between'} w={'full'} py={!rewards ? 3 : 0}>
             {hasHackathonStarted ? (
               <>
                 <Flex align={'start'} justify={'center'} direction={'column'}>
@@ -337,7 +265,7 @@ export function RightSideBar({ listing }: { listing: Listing }) {
             )}
           </Flex>
 
-          <Box w="full" px={5}>
+          <Box w="full">
             {isProject && (
               <Flex align={'start'} direction={'column'} my={4}>
                 <Text
@@ -364,99 +292,29 @@ export function RightSideBar({ listing }: { listing: Listing }) {
               </Flex>
             )}
           </Box>
-        </VStack>
-        {Hackathon && (
-          <VStack
-            align={'start'}
-            justify={'center'}
-            w={{ base: 'full', md: '22rem' }}
-            mt={4}
-            p={6}
-            bg={'#FFFFFF'}
-            rounded={'xl'}
-          >
-            <Text
-              h="100%"
-              color={'brand.slate.400'}
-              fontSize="1rem"
-              fontWeight={500}
-              textAlign="center"
-            >
-              {Hackathon.name.toUpperCase()} TRACK
-            </Text>
-            <Text color={'brand.slate.500'} fontSize="1rem">
-              {Hackathon.description}
-            </Text>
-            <Link
-              color={'brand.slate.500'}
-              fontSize="1rem"
-              fontWeight={500}
-              href={`/${Hackathon.name.toLowerCase()}`}
-              isExternal
-            >
-              View All Challenges
-            </Link>
-          </VStack>
-        )}
-        {requirements && (
-          <VStack
-            align="start"
-            w={{ base: 'full', md: '22rem' }}
-            mt={4}
-            p={6}
-            bg="white"
-            rounded={'xl'}
-          >
-            <Text
-              h="100%"
-              color={'brand.slate.400'}
-              fontSize="1rem"
-              fontWeight={500}
-              textAlign="center"
-            >
-              ELIGIBILITY
-            </Text>
-            <Text color={'brand.slate.500'}>{requirements}</Text>
-          </VStack>
-        )}
-        {pocSocials && (
-          <VStack
-            align={'start'}
-            justify={'center'}
-            w={{ base: '100%', md: '22rem' }}
-            mt={4}
-            p={6}
-            bg={'#FFFFFF'}
-            rounded={'xl'}
-          >
-            <Text
-              h="100%"
-              color={'brand.slate.400'}
-              fontSize="1rem"
-              fontWeight={500}
-              textAlign="center"
-            >
-              CONTACT
-            </Text>
-            <Text>
-              <Link
-                className="ph-no-capture"
-                color={'#64768b'}
-                fontSize="1rem"
-                fontWeight={500}
-                href={getURLSanitized(pocSocials)}
-                isExternal
-                onClick={() => posthog.capture('reach out_listing')}
+          <Box display={{ base: 'none', md: 'block' }}>
+            <ExtraInfoSection
+              skills={skills}
+              region={listing.region}
+              requirements={listing.requirements}
+              pocSocials={listing.pocSocials}
+              Hackathon={listing.Hackathon}
+            />
+          </Box>
+          <Box display={{ base: 'none', md: 'block' }} pt={8}>
+            <LiveListings>
+              <Text
+                h="100%"
+                color={'brand.slate.600'}
+                fontSize={'sm'}
+                fontWeight={600}
+                textAlign="start"
               >
-                Reach out
-                <ExternalLinkIcon color={'#64768b'} mb={1} as="span" mx={1} />
-              </Link>
-              <Text as="span" color={'brand.slate.500'} fontSize="1rem">
-                if you have any questions about this listing
+                LIVE LISTINGS
               </Text>
-            </Text>
-          </VStack>
-        )}
+            </LiveListings>
+          </Box>
+        </VStack>
       </VStack>
     </Box>
   );

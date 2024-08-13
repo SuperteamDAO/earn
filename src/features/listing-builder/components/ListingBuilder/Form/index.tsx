@@ -24,7 +24,7 @@ export const ListingFormLabel = ({
     <FormLabel
       color={'brand.slate.500'}
       fontSize={'15px'}
-      fontWeight={600}
+      fontWeight={500}
       htmlFor={htmlFor}
     >
       {children}

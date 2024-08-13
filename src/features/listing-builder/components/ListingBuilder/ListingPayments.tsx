@@ -1,6 +1,7 @@
 import {
   AddIcon,
   ChevronDownIcon,
+  ChevronUpIcon,
   DeleteIcon,
   SearchIcon,
 } from '@chakra-ui/icons';
@@ -9,6 +10,7 @@ import {
   Button,
   Flex,
   FormControl,
+  FormHelperText,
   FormLabel,
   HStack,
   Image,
@@ -25,8 +27,11 @@ import {
   ModalFooter,
   ModalHeader,
   ModalOverlay,
+  NumberDecrementStepper,
+  NumberIncrementStepper,
   NumberInput,
   NumberInputField,
+  NumberInputStepper,
   Select,
   Text,
   useDisclosure,
@@ -37,12 +42,27 @@ import { usePostHog } from 'posthog-js/react';
 import { useEffect, useState } from 'react';
 import { Controller, useForm } from 'react-hook-form';
 
-import { tokenList } from '@/constants';
+import {
+  BONUS_REWARD_POSITION,
+  MAX_BONUS_SPOTS,
+  MAX_PODIUMS,
+  tokenList,
+} from '@/constants';
 import { type Rewards } from '@/features/listings';
-import { cleanRewards, rankLabels, sortRank } from '@/utils/rank';
+import {
+  cleanRewardPrizes,
+  cleanRewards,
+  getRankLabels,
+  sortRank,
+} from '@/utils/rank';
 
 import { useListingFormStore } from '../../store';
 import { type ListingFormType } from '../../types';
+import {
+  caculateBonus,
+  calculateTotalOfArray,
+  formatTotalPrice,
+} from '../../utils';
 import { ListingFormLabel, ListingTooltip } from './Form';
 
 interface Token {
@@ -71,6 +91,9 @@ interface Props {
   isDuplicating?: boolean;
 }
 
+const BONUS_REWARD_LABEL = '# of Bonus Prizes';
+const BONUS_REWARD_LABEL_2 = 'Bonus Per Prize';
+
 export const ListingPayments = ({
   isListingPublishing,
   createDraft,
@@ -91,8 +114,8 @@ export const ListingPayments = ({
   const [searchResults, setSearchResults] = useState<Token[]>([]);
   const [isOpen, setIsOpen] = useState(false);
   const [errorMessage, setErrorMessage] = useState('');
-  const [tokenImage, setTokenImage] = useState<string | undefined>(
-    tokenList.find((t) => t.tokenSymbol === form?.token)?.icon,
+  const [selectedToken, setSelectedToken] = useState<Token | undefined>(
+    tokenList.find((t) => t.tokenSymbol === form?.token),
   );
 
   const { register, setValue, watch, control, handleSubmit, reset, getValues } =
@@ -104,6 +127,7 @@ export const ListingPayments = ({
         maxRewardAsk: form?.maxRewardAsk,
         token: form?.token,
         rewards: form?.rewards,
+        maxBonusSpots: form?.maxBonusSpots,
       },
     });
 
@@ -113,6 +137,7 @@ export const ListingPayments = ({
   const maxRewardAsk = watch('maxRewardAsk');
   const token = watch('token');
   const rewards = watch('rewards');
+  const maxBonusSpots = watch('maxBonusSpots');
 
   const [searchTerm, setSearchTerm] = useState<string | undefined>(
     tokenList.find((t) => t.tokenSymbol === token)?.tokenName,
@@ -126,7 +151,10 @@ export const ListingPayments = ({
 
   const prizesList = sortRank(cleanRewards(rewards))?.map((r) => ({
     value: r,
-    label: `${rankLabels[r]} prize`,
+    label:
+      r === BONUS_REWARD_POSITION
+        ? BONUS_REWARD_LABEL
+        : `${getRankLabels(r)} prize`,
     placeHolder: rewards![r as keyof Rewards] ?? 0,
     defaultValue: rewards![r as keyof Rewards],
   }));
@@ -136,8 +164,8 @@ export const ListingPayments = ({
       : [
           {
             value: 1,
-            label: `${rankLabels[1]} prize`,
-            placeHolder: 2500,
+            label: `${getRankLabels(1)} prize`,
+            placeHolder: MAX_PODIUMS * 500,
           },
         ],
   );
@@ -150,6 +178,7 @@ export const ListingPayments = ({
         minRewardAsk: form?.minRewardAsk || undefined,
         maxRewardAsk: form?.maxRewardAsk || undefined,
         rewards: form?.rewards || undefined,
+        maxBonusSpots: form?.maxBonusSpots || undefined,
         token: form?.token || 'USDC',
       });
 
@@ -158,7 +187,7 @@ export const ListingPayments = ({
         (t) => t.tokenSymbol === initialToken,
       );
       setSearchTerm(selectedToken?.tokenName);
-      setTokenImage(selectedToken?.icon);
+      setSelectedToken(selectedToken);
     }
   }, [form, reset, editable]);
 
@@ -166,23 +195,41 @@ export const ListingPayments = ({
     setValue('token', tokenSymbol);
     const selectedToken = tokenList.find((t) => t.tokenSymbol === tokenSymbol);
     setSearchTerm(selectedToken?.tokenName);
-    setTokenImage(selectedToken?.icon);
+    setSelectedToken(selectedToken);
   };
 
   const handlePrizeValueChange = (prizeName: number, value: number) => {
     setValue('rewards', { ...rewards, [prizeName]: value });
   };
 
+  const handleBonusChange = (value: number | undefined) => {
+    setValue('maxBonusSpots', value);
+    if (
+      value === undefined &&
+      prizes.find((p) => p.value === BONUS_REWARD_POSITION)
+    ) {
+      const filteredPrize = prizes.filter(
+        (p) => p.value !== BONUS_REWARD_POSITION,
+      );
+      setPrizes(filteredPrize);
+      const updatedRewards = { ...rewards };
+      delete updatedRewards[BONUS_REWARD_POSITION];
+      setValue('rewards', updatedRewards, { shouldValidate: true });
+    }
+  };
+
   function getPrizeLabels(pri: PrizeListInterface[]): PrizeListInterface[] {
     return pri.map((prize, index) => ({
       ...prize,
-      label: `${rankLabels[index + 1]} prize`,
+      label:
+        prize.value === BONUS_REWARD_POSITION
+          ? prize.label
+          : `${getRankLabels(index + 1)} prize`,
     }));
   }
 
   const handlePrizeDelete = (prizeToDelete: keyof Rewards) => {
-    console.log('prizeToDelete', prizeToDelete, typeof prizeToDelete);
-    console.log('prizes', prizes);
+    if (prizeToDelete === BONUS_REWARD_POSITION) return;
     const updatedPrizes = prizes.filter(
       (prize) => prize.value !== prizeToDelete,
     );
@@ -226,21 +273,14 @@ export const ListingPayments = ({
         }
       }
     } else {
-      if (rewardAmount !== undefined) {
-        const totalPrizes = Object.values(rewards || {})
-          .map((reward) => parseFloat(reward.toFixed(2)))
-          .reduce((a, b) => a + b, 0)
-          .toFixed(2);
-
-        if (
-          !totalPrizes ||
-          parseFloat(rewardAmount.toFixed(2)) !== parseFloat(totalPrizes)
-        ) {
-          errorMessage =
-            'Sum of the podium rank amounts does not match the total reward amount. Please check.';
-        }
-      } else {
-        errorMessage = 'Total reward amount is not specified';
+      if (
+        maxBonusSpots &&
+        maxBonusSpots > 0 &&
+        !rewards?.[BONUS_REWARD_POSITION]
+      ) {
+        errorMessage = 'Bonus Reward is not mentioned';
+      } else if (cleanRewards(rewards).length !== prizes.length) {
+        errorMessage = 'Please fill all podium ranks or remove unused';
       }
     }
 
@@ -306,17 +346,14 @@ export const ListingPayments = ({
       if (selectedTokenIndex !== null) {
         const selectedToken = searchResults[selectedTokenIndex];
         handleTokenChange(selectedToken?.tokenSymbol);
-        handleSelectToken(selectedToken?.tokenName, selectedToken?.icon);
+        selectedToken && handleSelectToken(selectedToken);
       }
     }
   };
 
-  const handleSelectToken = (
-    tokenName: string | undefined,
-    icon: string | undefined,
-  ) => {
-    setSearchTerm(tokenName);
-    setTokenImage(icon);
+  const handleSelectToken = (token: Token) => {
+    setSearchTerm(token.tokenSymbol);
+    setSelectedToken(token);
     setIsOpen(false);
   };
 
@@ -358,6 +395,18 @@ export const ListingPayments = ({
   const posthog = usePostHog();
 
   const isDraft = isNewOrDraft || isDuplicating;
+
+  const calculateTotalPrizes = () =>
+    cleanRewards(rewards, true).length + (maxBonusSpots ?? 0);
+
+  const calculateTotalReward = () =>
+    calculateTotalOfArray(cleanRewardPrizes(rewards, true)) +
+    caculateBonus(maxBonusSpots ?? 0, rewards?.[BONUS_REWARD_POSITION] ?? 0);
+
+  useEffect(() => {
+    if (compensationType === 'fixed')
+      setValue('rewardAmount', calculateTotalReward());
+  }, [rewards, maxBonusSpots, compensationType]);
 
   useEffect(() => {
     const debouncedUpdate = debounce((amount) => {
@@ -441,8 +490,10 @@ export const ListingPayments = ({
                   render={({ field: { onChange, value, ref } }) => (
                     <Select
                       ref={ref}
+                      h="2.8rem"
                       color="brand.slate.900"
                       borderColor="brand.slate.300"
+                      borderRadius={'sm'}
                       onChange={(e) => {
                         onChange(e);
                         setValue('minRewardAsk', undefined);
@@ -469,20 +520,21 @@ export const ListingPayments = ({
           )}
           <FormControl pos="relative">
             <ListingFormLabel>Select Token</ListingFormLabel>
-            <InputGroup>
+            <InputGroup alignItems={'center'} display={'flex'}>
               {token && (
                 <InputLeftElement
                   alignItems={'center'}
                   justifyContent={'start'}
+                  mt={1}
                   ml={4}
                 >
                   <SearchIcon color="gray.300" mr={2} />
-                  {tokenImage ? (
+                  {selectedToken ? (
                     <Image
                       w={'1.6rem'}
                       alt={searchTerm as string}
                       rounded={'full'}
-                      src={tokenImage}
+                      src={selectedToken.icon}
                     />
                   ) : (
                     <></>
@@ -490,11 +542,13 @@ export const ListingPayments = ({
                 </InputLeftElement>
               )}
               <Input
+                py={6}
                 pl={'4.5rem'}
                 color="gray.700"
                 fontSize="1rem"
                 fontWeight={500}
                 border={'1px solid #cbd5e1'}
+                borderRadius={'sm'}
                 focusBorderColor="brand.purple"
                 onChange={(e) => handleSearch(e.target.value)}
                 onFocus={() => {
@@ -510,7 +564,7 @@ export const ListingPayments = ({
                 value={searchTerm || ''}
               />
               <InputRightElement color="gray.700" fontSize="1rem">
-                <ChevronDownIcon />
+                <ChevronDownIcon mt="9px" />
               </InputRightElement>
             </InputGroup>
             {searchResults.length > 0 && isOpen && (
@@ -537,7 +591,7 @@ export const ListingPayments = ({
                     cursor="pointer"
                     onClick={() => {
                       handleTokenChange(token.tokenSymbol);
-                      handleSelectToken(token.tokenName, token.icon);
+                      handleSelectToken(token);
                     }}
                   >
                     <HStack px={3} py={2}>
@@ -554,82 +608,227 @@ export const ListingPayments = ({
               </List>
             )}
           </FormControl>
-          {compensationType === 'fixed' && (
+          {compensationType === 'fixed' && isProject && (
             <FormControl w="full" mt={5} isRequired>
               <ListingFormLabel htmlFor="rewardAmount">
-                Total {!isProject ? 'Reward Amount' : 'Compensation'} (in{' '}
+                Total Compensation (in{' '}
                 {tokenList.find((t) => t.tokenSymbol === token)?.tokenSymbol})
               </ListingFormLabel>
 
-              <NumberInput focusBorderColor="brand.purple">
-                <NumberInputField
-                  color={'brand.slate.800'}
-                  borderColor="brand.slate.300"
-                  _placeholder={{
-                    color: 'brand.slate.300',
-                  }}
-                  {...register('rewardAmount', {
-                    required: 'This field is required',
-                    setValueAs: (value) => parseFloat(value),
-                  })}
-                  placeholder="4,000"
-                />
-              </NumberInput>
+              <Flex
+                pos="relative"
+                pr={4}
+                borderWidth={1}
+                borderStyle={'solid'}
+                borderColor="brand.slate.300"
+                borderRadius={'sm'}
+                _focusWithin={{
+                  borderColor: 'brand.purple',
+                }}
+              >
+                <NumberInput
+                  w="full"
+                  color="brand.slate.500"
+                  border={'none'}
+                  focusBorderColor="rgba(0,0,0,0)"
+                  min={0}
+                >
+                  <NumberInputField
+                    color={'brand.slate.800'}
+                    border={0}
+                    _focusWithin={{
+                      borderWidth: 0,
+                    }}
+                    _placeholder={{
+                      color: 'brand.slate.300',
+                    }}
+                    {...register('rewardAmount', {
+                      required: 'This field is required',
+                      setValueAs: (value) => parseFloat(value),
+                    })}
+                    placeholder={(MAX_PODIUMS * 500).toString()}
+                  />
+                  <NumberInputStepper>
+                    <NumberIncrementStepper h={1} border={0}>
+                      <ChevronUpIcon w={4} h={4} />
+                    </NumberIncrementStepper>
+                    <NumberDecrementStepper h={1} border={0}>
+                      <ChevronDownIcon w={4} h={4} />
+                    </NumberDecrementStepper>
+                  </NumberInputStepper>
+                </NumberInput>
+                <SelectedToken token={selectedToken} />
+              </Flex>
             </FormControl>
           )}
           {compensationType === 'range' && (
             <Flex gap="3" w="100%">
               <FormControl w="full" mt={5} isRequired>
                 <ListingFormLabel htmlFor="minRewardAsk">From</ListingFormLabel>
-
-                <NumberInput focusBorderColor="brand.purple">
-                  <NumberInputField
-                    color={'brand.slate.800'}
-                    borderColor="brand.slate.300"
-                    _placeholder={{
-                      color: 'brand.slate.300',
-                    }}
-                    placeholder="Enter the lower range"
-                    {...register('minRewardAsk', {
-                      required: 'This field is required',
-                      setValueAs: (value) => parseFloat(value),
-                    })}
-                  />
-                </NumberInput>
+                <Flex
+                  pos="relative"
+                  pr={5}
+                  borderWidth={1}
+                  borderStyle={'solid'}
+                  borderColor="brand.slate.300"
+                  borderRadius={'sm'}
+                  _focusWithin={{
+                    borderColor: 'brand.purple',
+                  }}
+                >
+                  <NumberInput
+                    w="full"
+                    color="brand.slate.500"
+                    border={'none'}
+                    focusBorderColor="rgba(0,0,0,0)"
+                    min={0}
+                  >
+                    <NumberInputField
+                      color={'brand.slate.800'}
+                      border={0}
+                      _focusWithin={{
+                        borderWidth: 0,
+                      }}
+                      _placeholder={{
+                        color: 'brand.slate.300',
+                      }}
+                      placeholder="Enter the lower range"
+                      {...register('minRewardAsk', {
+                        required: 'This field is required',
+                        setValueAs: (value) => parseFloat(value),
+                      })}
+                    />
+                  </NumberInput>
+                  <SelectedToken token={selectedToken} />
+                </Flex>
               </FormControl>
               <FormControl w="full" mt={5} isRequired>
                 <ListingFormLabel htmlFor="minRewardAsk">Upto</ListingFormLabel>
-
-                <NumberInput focusBorderColor="brand.purple">
-                  <NumberInputField
-                    color={'brand.slate.800'}
-                    borderColor="brand.slate.300"
-                    _placeholder={{
-                      color: 'brand.slate.300',
-                    }}
-                    placeholder="Enter the higher range"
-                    {...register('maxRewardAsk', {
-                      required: 'This field is required',
-                      setValueAs: (value) => parseFloat(value),
-                    })}
-                  />
-                </NumberInput>
+                <Flex
+                  pos="relative"
+                  pr={5}
+                  borderWidth={1}
+                  borderStyle={'solid'}
+                  borderColor="brand.slate.300"
+                  borderRadius={'sm'}
+                  _focusWithin={{
+                    borderColor: 'brand.purple',
+                  }}
+                >
+                  <NumberInput
+                    w="full"
+                    color="brand.slate.500"
+                    border={'none'}
+                    focusBorderColor="rgba(0,0,0,0)"
+                    min={0}
+                  >
+                    <NumberInputField
+                      color={'brand.slate.800'}
+                      border={0}
+                      _focusWithin={{
+                        borderWidth: 0,
+                      }}
+                      _placeholder={{
+                        color: 'brand.slate.300',
+                      }}
+                      placeholder="Enter the higher range"
+                      {...register('maxRewardAsk', {
+                        required: 'This field is required',
+                        setValueAs: (value) => parseFloat(value),
+                      })}
+                    />
+                  </NumberInput>
+                  <SelectedToken token={selectedToken} />
+                </Flex>
               </FormControl>
             </Flex>
           )}
           {type !== 'project' && (
             <VStack gap={4} w={'full'} mt={5}>
-              {prizes.map((el, index) => (
+              <HStack
+                justifyContent="space-between"
+                w="full"
+                pb={3}
+                borderColor="brand.slate.200"
+                borderBottomWidth="1px"
+              >
+                <Text>{calculateTotalPrizes()} Prizes</Text>
+                <Text>
+                  {formatTotalPrice(calculateTotalReward())}{' '}
+                  {selectedToken?.tokenSymbol} Total
+                </Text>
+              </HStack>
+              {prizes.map((el) => (
                 <FormControl key={el.value}>
-                  <FormLabel color={'gray.500'} textTransform="capitalize">
-                    {el.label}
-                  </FormLabel>
-                  <Flex gap={3}>
+                  <Flex w="full">
+                    <FormLabel color={'gray.500'} textTransform="capitalize">
+                      {el.label}
+                    </FormLabel>
+                    {el.value === BONUS_REWARD_POSITION && (
+                      <FormLabel
+                        pl={8}
+                        color={'gray.500'}
+                        textTransform="capitalize"
+                      >
+                        {BONUS_REWARD_LABEL_2}
+                      </FormLabel>
+                    )}
+                  </Flex>
+                  <Flex
+                    pos="relative"
+                    pr={4}
+                    borderWidth={1}
+                    borderStyle={'solid'}
+                    borderColor="brand.slate.300"
+                    borderRadius={'sm'}
+                    _focusWithin={{
+                      borderColor: 'brand.purple',
+                    }}
+                  >
+                    {el.value === BONUS_REWARD_POSITION && (
+                      <NumberInput
+                        w={'30%'}
+                        color="brand.slate.500"
+                        border={'none'}
+                        borderColor="brand.slate.300"
+                        borderRightWidth={'1px'}
+                        borderRightStyle={'solid'}
+                        defaultValue={maxBonusSpots ?? 0}
+                        focusBorderColor="rgba(0,0,0,0)"
+                        max={MAX_BONUS_SPOTS}
+                        min={0}
+                        onChange={(valueString) =>
+                          handleBonusChange(parseInt(valueString))
+                        }
+                      >
+                        <NumberInputField
+                          color={'brand.slate.800'}
+                          border={0}
+                          _focusWithin={{
+                            borderWidth: 0,
+                          }}
+                          _placeholder={{
+                            color: 'brand.slate.300',
+                          }}
+                          placeholder={JSON.stringify(el.placeHolder)}
+                        />
+                        <NumberInputStepper>
+                          <NumberIncrementStepper h={1} border={0}>
+                            <ChevronUpIcon w={4} h={4} />
+                          </NumberIncrementStepper>
+                          <NumberDecrementStepper h={1} border={0}>
+                            <ChevronDownIcon w={4} h={4} />
+                          </NumberDecrementStepper>
+                        </NumberInputStepper>
+                      </NumberInput>
+                    )}
                     <NumberInput
-                      w={'100%'}
+                      w={el.value === BONUS_REWARD_POSITION ? '70%' : '100%'}
                       color="brand.slate.500"
+                      border={'none'}
                       defaultValue={el.defaultValue}
-                      focusBorderColor="brand.purple"
+                      focusBorderColor="rgba(0,0,0,0)"
+                      min={0}
                       onChange={(valueString) =>
                         handlePrizeValueChange(
                           el.value,
@@ -639,83 +838,202 @@ export const ListingPayments = ({
                     >
                       <NumberInputField
                         color={'brand.slate.800'}
-                        borderColor="brand.slate.300"
+                        border={0}
+                        _focusWithin={{
+                          borderWidth: 0,
+                        }}
                         _placeholder={{
                           color: 'brand.slate.300',
                         }}
                         placeholder={JSON.stringify(el.placeHolder)}
                       />
+                      <NumberInputStepper>
+                        <NumberIncrementStepper h={1} border={0}>
+                          <ChevronUpIcon w={4} h={4} />
+                        </NumberIncrementStepper>
+                        <NumberDecrementStepper h={1} border={0}>
+                          <ChevronDownIcon w={4} h={4} />
+                        </NumberDecrementStepper>
+                      </NumberInputStepper>
                     </NumberInput>
-                    {index === prizes.length - 1 && prizes.length > 1 && (
+
+                    <SelectedToken token={selectedToken} />
+                    {el.value > 1 && (
                       <Button
-                        onClick={() =>
-                          handlePrizeDelete(el.value as keyof Rewards)
-                        }
+                        pos="absolute"
+                        right={-12}
+                        px={0}
+                        onClick={() => {
+                          if (el.value === BONUS_REWARD_POSITION) {
+                            handleBonusChange(undefined);
+                          } else {
+                            handlePrizeDelete(el.value as keyof Rewards);
+                          }
+                        }}
+                        variant="ghost"
                       >
                         <DeleteIcon />
                       </Button>
                     )}
                   </Flex>
+                  {el.value === BONUS_REWARD_POSITION && (
+                    <FormHelperText
+                      display={'flex'}
+                      w="full"
+                      pt={2}
+                      color="brand.slate.500"
+                    >
+                      {maxBonusSpots} individuals will be paid
+                      <Text px={1} fontWeight={700}>
+                        {' '}
+                        {rewards?.[BONUS_REWARD_POSITION]}{' '}
+                        {selectedToken?.tokenSymbol}{' '}
+                      </Text>
+                      each (total bonus of{' '}
+                      <Text pl={1} fontWeight={700}>
+                        {caculateBonus(
+                          maxBonusSpots,
+                          rewards?.[BONUS_REWARD_POSITION],
+                        )}{' '}
+                        {selectedToken?.tokenSymbol}
+                      </Text>
+                      )
+                    </FormHelperText>
+                  )}
                 </FormControl>
               ))}
-              <Button
-                w="full"
-                isDisabled={prizes.length === 5 && true}
-                leftIcon={<AddIcon />}
-                onClick={() => {
-                  const newPrize = [
-                    ...prizes,
-                    {
-                      value: prizes.length + 1 || 1,
-                      label: `${rankLabels[prizes.length + 1]} prize`,
-                      placeHolder: (5 - prizes.length) * 500,
-                    },
-                  ];
-                  console.log('newPrize', newPrize);
-                  setPrizes(newPrize);
-                }}
-                variant="ghost"
-              >
-                Add Prize
-              </Button>
             </VStack>
           )}
-          <VStack gap={4} w={'full'} mt={10} pt={4}>
+          <VStack
+            gap={4}
+            w={'full'}
+            mt={10}
+            pt={4}
+            borderColor="brand.slate.200"
+            borderTopWidth="1px"
+          >
             <Text color="yellow.500">
               {!!debouncedRewardAmount &&
                 debouncedRewardAmount <= 100 &&
                 (token === 'USDT' || token === 'USDC') &&
                 "Note: This listing will not show up on Earn's Landing Page since it is ≤$100 in value. Increase the total compensation for better discoverability."}
             </Text>
+            {type === 'bounty' && (
+              <HStack w="full">
+                <Button
+                  w="full"
+                  py={6}
+                  color="brand.slate.700"
+                  fontWeight={500}
+                  borderColor="brand.slate.700"
+                  borderRadius="sm"
+                  isDisabled={
+                    prizes.filter((p) => p.value !== BONUS_REWARD_POSITION)
+                      .length === MAX_PODIUMS && true
+                  }
+                  leftIcon={<AddIcon />}
+                  onClick={() => {
+                    const filteredPrize = prizes.filter(
+                      (p) => p.value !== BONUS_REWARD_POSITION,
+                    );
+                    const newPrize = [
+                      ...filteredPrize,
+                      {
+                        value: filteredPrize.length + 1 || 1,
+                        label: `${getRankLabels(filteredPrize.length + 1)} prize`,
+                        placeHolder: (MAX_PODIUMS - filteredPrize.length) * 500,
+                      },
+                      ...prizes.filter(
+                        (p) => p.value === BONUS_REWARD_POSITION,
+                      ),
+                    ];
+                    setPrizes(newPrize);
+                  }}
+                  variant="outline"
+                >
+                  Add Individual Prize
+                </Button>
+                {!prizes.find((p) => p.value === BONUS_REWARD_POSITION) && (
+                  <Button
+                    w="full"
+                    py={6}
+                    color="brand.slate.500"
+                    fontWeight={500}
+                    bg="brand.slate.100"
+                    borderRadius="sm"
+                    isDisabled={
+                      prizes.find((p) => p.value === BONUS_REWARD_POSITION) &&
+                      true
+                    }
+                    leftIcon={<AddIcon />}
+                    onClick={() => {
+                      const newPrize = [
+                        ...prizes,
+                        {
+                          value: BONUS_REWARD_POSITION,
+                          label: BONUS_REWARD_LABEL,
+                          placeHolder: 10,
+                        },
+                      ];
+                      setPrizes(newPrize);
+                    }}
+                  >
+                    Add Bonus Prize
+                  </Button>
+                )}
+              </HStack>
+            )}
             {isDraft && (
               <Button
                 className="ph-no-capture"
                 w="100%"
+                py={6}
+                fontWeight={500}
+                borderRadius="sm"
                 disabled={isListingPublishing}
                 isLoading={isListingPublishing}
                 type="submit"
                 variant={'solid'}
               >
-                Create & Publish Listing
+                Publish Now
               </Button>
             )}
-            <Button
-              className="ph-no-capture"
-              w="100%"
-              isLoading={isDraftLoading}
-              onClick={() => {
-                if (isDraft) {
+            {isDraft && (
+              <Button
+                className="ph-no-capture"
+                w="100%"
+                py={6}
+                color="brand.purple"
+                fontWeight={500}
+                bg="#EEF2FF"
+                borderRadius="sm"
+                isLoading={isDraftLoading}
+                onClick={() => {
                   posthog.capture('save draft_sponsor');
                   handleSaveDraft();
-                } else {
+                }}
+                variant={'ghost'}
+              >
+                Save Draft
+              </Button>
+            )}
+            {!isDraft && (
+              <Button
+                className="ph-no-capture"
+                w="100%"
+                py={6}
+                fontWeight={500}
+                borderRadius="sm"
+                isLoading={isDraftLoading}
+                onClick={() => {
                   posthog.capture('edit listing_sponsor');
                   handleUpdateListing();
-                }
-              }}
-              variant={isDraft ? 'outline' : 'solid'}
-            >
-              {isDraft ? 'Save Draft' : 'Update Listing'}
-            </Button>
+                }}
+                variant={'solid'}
+              >
+                Update Listing
+              </Button>
+            )}
             <Text color="red.500">{errorMessage}</Text>
           </VStack>
         </form>
@@ -723,3 +1041,21 @@ export const ListingPayments = ({
     </>
   );
 };
+
+function SelectedToken({ token }: { token: Token | undefined }) {
+  return (
+    token && (
+      <>
+        <HStack p={2} borderColor="brand.slate.300" borderLeftWidth="1px">
+          <Image
+            w={'1.6rem'}
+            alt={token.tokenName as string}
+            rounded={'full'}
+            src={token?.icon}
+          />
+          <Text>{token?.tokenSymbol}</Text>
+        </HStack>
+      </>
+    )
+  );
+}
