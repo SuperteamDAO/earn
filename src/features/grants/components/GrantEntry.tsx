@@ -5,7 +5,6 @@ import { grantAmount } from '../utils';
 
 export const GrantEntry = ({
   title,
-  shortDescription = '',
   minReward,
   maxReward,
   token,
@@ -13,7 +12,6 @@ export const GrantEntry = ({
   logo,
 }: {
   title: string;
-  shortDescription?: string;
   rewardAmount?: number;
   token?: string;
   slug: string;
@@ -34,9 +32,6 @@ export const GrantEntry = ({
       />
       <Text mb={'4px'} fontSize={'md'} fontWeight={'600'}>
         {title}
-      </Text>
-      <Text mb={1.5} color={'brand.slate.500'} fontSize={'sm'}>
-        {shortDescription}
       </Text>
       <Flex align={'center'} justify={'space-between'}>
         <Text color={'brand.slate.500'} fontSize={'13px'} fontWeight={'600'}>

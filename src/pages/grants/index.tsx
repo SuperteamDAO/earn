@@ -75,7 +75,6 @@ function Grants() {
                 <WrapItem key={grant?.id}>
                   <GrantEntry
                     title={grant?.title}
-                    shortDescription={grant?.shortDescription}
                     slug={grant.slug}
                     minReward={grant?.minReward}
                     maxReward={grant?.maxReward}

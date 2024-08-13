@@ -136,45 +136,67 @@ export const ApplicationDetails = ({
     applicationId: string,
     approvedAmount: number,
   ) => {
+    const updatedApplications = applications.map((application) =>
+      application.id === applicationId
+        ? {
+            ...application,
+            applicationStatus: GrantApplicationStatus.Approved,
+            approvedAmount: approvedAmount,
+          }
+        : application,
+    );
+
+    setApplications(updatedApplications);
+    const updatedApplication = updatedApplications.find(
+      (application) => application.id === applicationId,
+    );
+    setSelectedApplication(updatedApplication);
+    approveOnClose();
+
+    const currentIndex = updatedApplications.findIndex(
+      (app) => app.id === applicationId,
+    );
+    if (currentIndex < updatedApplications.length - 1) {
+      moveToNextPendingApplication();
+    }
+
     try {
       await axios.post(
-        `/api/sponsor-dashboard/grants/update-application-status`,
+        '/api/sponsor-dashboard/grants/update-application-status',
         {
           id: applicationId,
           applicationStatus: 'Approved',
           approvedAmount,
         },
       );
-
-      const updatedApplications = applications.map((application) =>
-        application.id === applicationId
-          ? {
-              ...application,
-              applicationStatus: GrantApplicationStatus.Approved,
-              approvedAmount: approvedAmount,
-            }
-          : application,
-      );
-
-      setApplications(updatedApplications);
-      const updatedApplication = updatedApplications.find(
-        (application) => application.id === applicationId,
-      );
-      setSelectedApplication(updatedApplication);
-      approveOnClose();
-
-      const currentIndex = updatedApplications.findIndex(
-        (app) => app.id === applicationId,
-      );
-      if (currentIndex < updatedApplications.length - 1) {
-        moveToNextPendingApplication();
-      }
     } catch (e) {
       console.error(e);
     }
   };
 
   const handleRejectGrant = async (applicationId: string) => {
+    const updatedApplications = applications.map((application) =>
+      application.id === applicationId
+        ? {
+            ...application,
+            applicationStatus: GrantApplicationStatus.Rejected,
+          }
+        : application,
+    );
+
+    setApplications(updatedApplications);
+    const updatedApplication = updatedApplications.find(
+      (application) => application.id === applicationId,
+    );
+    setSelectedApplication(updatedApplication);
+    rejectedOnClose();
+
+    const currentIndex = updatedApplications.findIndex(
+      (app) => app.id === applicationId,
+    );
+    if (currentIndex < updatedApplications.length - 1) {
+      moveToNextPendingApplication();
+    }
     try {
       await axios.post(
         `/api/sponsor-dashboard/grants/update-application-status`,
@@ -183,29 +205,6 @@ export const ApplicationDetails = ({
           applicationStatus: 'Rejected',
         },
       );
-
-      const updatedApplications = applications.map((application) =>
-        application.id === applicationId
-          ? {
-              ...application,
-              applicationStatus: GrantApplicationStatus.Rejected,
-            }
-          : application,
-      );
-
-      setApplications(updatedApplications);
-      const updatedApplication = updatedApplications.find(
-        (application) => application.id === applicationId,
-      );
-      setSelectedApplication(updatedApplication);
-      rejectedOnClose();
-
-      const currentIndex = updatedApplications.findIndex(
-        (app) => app.id === applicationId,
-      );
-      if (currentIndex < updatedApplications.length - 1) {
-        moveToNextPendingApplication();
-      }
     } catch (e) {
       console.error(e);
     }

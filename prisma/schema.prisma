@@ -146,6 +146,7 @@ model Grants {
   airtableId       String?
   avgResponseTime  String?            @default("24h")
   isNative         Boolean            @default(false)
+  references       Json?
 
   @@index([id, slug])
   @@index([pocId])
@@ -174,7 +175,7 @@ model GrantApplication {
   ask                 Int                    @default(0)
   approvedAmount      Float                  @default(0)
   approvedAmountInUSD Float                  @default(0)
-  approvedAt          DateTime?
+  decidedAt           DateTime?
   totalPaid           Int                    @default(0)
   isShipped           Boolean                @default(false)
   paymentDetails      Json?
@@ -584,6 +585,7 @@ enum Regions {
   FRANCE
   UKRAINE
   ARGENTINA
+  CANADA
 }
 
 enum CompensationType {

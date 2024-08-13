@@ -137,7 +137,7 @@ async function handler(_req: NextApiRequest, res: NextApiResponse) {
       },
       where: {
         applicationStatus: 'Approved',
-        approvedAt: lastWeek,
+        decidedAt: lastWeek,
       },
     });
 
