@@ -375,8 +375,6 @@ export const tokenList: Token[] = [
   },
 ];
 
-export const PrizeList = ['first', 'second', 'third', 'fourth', 'fifth'];
-
 export const CountryList: string[] = [
   'India',
   'Afghanistan',

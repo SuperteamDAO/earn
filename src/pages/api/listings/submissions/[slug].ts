@@ -76,15 +76,10 @@ export default async function user(req: NextApiRequest, res: NextApiResponse) {
     });
 
     const sortSubmissions = (a: Submission, b: Submission) => {
-      const order = { first: 1, second: 2, third: 3, fourth: 4, fifth: 5 };
-
-      const aPosition = a.winnerPosition as keyof typeof order;
-      const bPosition = b.winnerPosition as keyof typeof order;
-
       if (a.winnerPosition && b.winnerPosition) {
         return (
-          (order[aPosition] || Number.MAX_VALUE) -
-          (order[bPosition] || Number.MAX_VALUE)
+          (Number(a.winnerPosition) || Number.MAX_VALUE) -
+          (Number(b.winnerPosition) || Number.MAX_VALUE)
         );
       }
 

@@ -23,7 +23,6 @@ export default async function grants(
         id: true,
         title: true,
         slug: true,
-        shortDescription: true,
         token: true,
         minReward: true,
         maxReward: true,

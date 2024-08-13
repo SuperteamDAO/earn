@@ -141,7 +141,7 @@ export const Template = ({
                   >
                     <Box>
                       <Text color={'brand.slate.700'} fontWeight={500}>
-                        {template?.templateTitle}
+                        {template?.title}
                       </Text>
                       {sponsors?.length > 0 ? (
                         <Flex align="center" justify={'start'} mt={1}>
@@ -188,8 +188,7 @@ export const Template = ({
                         </Flex>
                       ) : (
                         <Text color="brand.slate.400" fontSize="sm">
-                          {template?.templateDescription ||
-                            `Pre-fill info with "${template?.templateTitle}" template`}
+                          {`Pre-fill info with "${template?.title}" template`}
                         </Text>
                       )}
                     </Box>

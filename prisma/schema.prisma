@@ -8,36 +8,6 @@ datasource db {
   relationMode = "prisma"
 }
 
-model Jobs {
-  id            String   @id @default(uuid())
-  title         String
-  slug          String   @unique
-  description   String?  @db.Text
-  skills        String?
-  subskills     String?
-  deadline      String?
-  source        Source   @default(NATIVE)
-  active        Boolean  @default(true)
-  private       Boolean  @default(false)
-  featured      Boolean  @default(false)
-  experience    String?
-  jobType       JobType  @default(fulltime)
-  maxSalary     Float?
-  minSalary     Float?
-  maxEq         Float?
-  minEq         Float?
-  location      String?
-  sponsorId     String
-  timezone      String?
-  link          String?
-  sourceDetails Json?
-  createdAt     DateTime @default(now())
-  updatedAt     DateTime @updatedAt
-  sponsor       Sponsors @relation(fields: [sponsorId], references: [id])
-
-  @@index([sponsorId])
-}
-
 model Bounties {
   id                   String             @id @default(uuid())
   title                String
@@ -53,7 +23,6 @@ model Bounties {
   sponsorId            String
   pocId                String
   source               Source             @default(NATIVE)
-  sourceDetails        Json?
   isPublished          Boolean            @default(false)
   isFeatured           Boolean            @default(false)
   isActive             Boolean            @default(true)
@@ -74,7 +43,6 @@ model Bounties {
   applicationType      ApplicationType    @default(fixed)
   timeToComplete       String?
   references           Json?
-  winners              Json?
   referredBy           String?
   publishedAt          DateTime?
   isPrivate            Boolean            @default(false)
@@ -106,28 +74,20 @@ model Bounties {
 }
 
 model BountiesTemplates {
-  id                  String     @id @default(uuid())
-  templateTitle       String
-  templateDescription String?    @db.Text
-  title               String?
-  slug                String?
-  description         String?    @db.Text
-  requirements        String?    @db.Text
-  deadline            DateTime?
-  eligibility         Json?
-  token               String?
-  rewardAmount        Float?
-  rewards             Json?
-  color               String?
-  emoji               String?
-  isFeatured          Boolean    @default(false)
-  isActive            Boolean    @default(true)
-  isArchived          Boolean    @default(false)
-  createdAt           DateTime   @default(now())
-  updatedAt           DateTime   @updatedAt
-  skills              Json?
-  type                BountyType @default(bounty)
-  Bounties            Bounties[]
+  id          String     @id @default(uuid())
+  title       String?
+  slug        String?
+  description String?    @db.Text
+  color       String?
+  emoji       String?
+  isFeatured  Boolean    @default(false)
+  isActive    Boolean    @default(true)
+  isArchived  Boolean    @default(false)
+  createdAt   DateTime   @default(now())
+  updatedAt   DateTime   @updatedAt
+  skills      Json?
+  type        BountyType @default(bounty)
+  Bounties    Bounties[]
 }
 
 model Comment {
@@ -182,12 +142,11 @@ model Grants {
   questions        Json?
   pocSocials       String?
   status           GrantStatus        @default(OPEN)
-  references       Json?
-  requirements     String?            @db.Text
   GrantApplication GrantApplication[]
   airtableId       String?
   avgResponseTime  String?            @default("24h")
   isNative         Boolean            @default(false)
+  references       Json?
 
   @@index([id, slug])
   @@index([pocId])
@@ -195,30 +154,32 @@ model Grants {
 }
 
 model GrantApplication {
-  id                String                 @id @default(uuid())
-  userId            String
-  grantId           String
-  applicationStatus GrantApplicationStatus @default(Pending)
-  projectTitle      String
-  projectOneLiner   String
-  projectDetails    String                 @db.VarChar(3000)
-  projectTimeline   String
-  proofOfWork       String                 @db.VarChar(3000)
-  walletAddress     String
-  milestones        String?                @db.VarChar(3000)
-  kpi               String?                @db.VarChar(3000)
-  answers           Json?
-  createdAt         DateTime               @default(now())
-  updatedAt         DateTime               @updatedAt
-  user              User                   @relation(fields: [userId], references: [id])
-  grant             Grants                 @relation(fields: [grantId], references: [id])
-  label             SubmissionLabels       @default(Unreviewed)
-  ask               Int                    @default(0)
-  approvedAmount    Int                    @default(0)
-  totalPaid         Int                    @default(0)
-  isShipped         Boolean                @default(false)
-  paymentDetails    Json?
-  totalTranches     Int                    @default(0)
+  id                  String                 @id @default(uuid())
+  userId              String
+  grantId             String
+  applicationStatus   GrantApplicationStatus @default(Pending)
+  projectTitle        String
+  projectOneLiner     String
+  projectDetails      String                 @db.VarChar(3000)
+  projectTimeline     String
+  proofOfWork         String                 @db.VarChar(3000)
+  walletAddress       String
+  milestones          String?                @db.VarChar(3000)
+  kpi                 String?                @db.VarChar(3000)
+  answers             Json?
+  createdAt           DateTime               @default(now())
+  updatedAt           DateTime               @updatedAt
+  user                User                   @relation(fields: [userId], references: [id])
+  grant               Grants                 @relation(fields: [grantId], references: [id])
+  label               SubmissionLabels       @default(Unreviewed)
+  ask                 Int                    @default(0)
+  approvedAmount      Float                  @default(0)
+  approvedAmountInUSD Float                  @default(0)
+  decidedAt           DateTime?
+  totalPaid           Int                    @default(0)
+  isShipped           Boolean                @default(false)
+  paymentDetails      Json?
+  totalTranches       Int                    @default(0)
 
   @@index([userId])
   @@index([grantId])
@@ -232,7 +193,7 @@ model Submission {
   userId             String
   listingId          String
   isWinner           Boolean          @default(false)
-  winnerPosition     String?
+  winnerPosition     Int?
   isActive           Boolean          @default(true)
   isArchived         Boolean          @default(false)
   createdAt          DateTime         @default(now())
@@ -277,7 +238,6 @@ model Sponsors {
   UserSponsors UserSponsors[]
   Bounties     Bounties[]
   Grants       Grants[]
-  Jobs         Jobs[]
   User         User[]
 
   @@index([id, slug])
@@ -625,6 +585,7 @@ enum Regions {
   FRANCE
   UKRAINE
   ARGENTINA
+  CANADA
 }
 
 enum CompensationType {

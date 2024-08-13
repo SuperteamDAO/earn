@@ -4,6 +4,7 @@ import type { NextRequest } from 'next/server';
 import { type Rewards } from '@/features/listings';
 import type { SubmissionWithUser } from '@/interface/submission';
 import { fetchAsset, formatString } from '@/utils/ogHelpers';
+import { nthLabelGenerator } from '@/utils/rank';
 
 export const config = {
   runtime: 'experimental-edge',
@@ -12,25 +13,6 @@ export const config = {
 const fontDataP = fetchAsset(
   new URL('../../../../public/Inter-SemiBold.woff', import.meta.url),
 );
-
-const winnerToNumber = (winner: string): string => {
-  if (winner.toLowerCase().includes('first')) {
-    return '1st';
-  }
-  if (winner.toLowerCase().includes('second')) {
-    return '2nd';
-  }
-  if (winner.toLowerCase().includes('third')) {
-    return '3rd';
-  }
-  if (winner.toLowerCase().includes('fourth')) {
-    return '4th';
-  }
-  if (winner.toLowerCase().includes('fifth')) {
-    return '5th';
-  }
-  return '1st';
-};
 
 const formatter = new Intl.NumberFormat('en-US', {
   style: 'decimal',
@@ -166,7 +148,7 @@ export default async function handler(request: NextRequest) {
                       alignItems: 'center',
                     }}
                   >
-                    {winnerToNumber(winner?.winnerPosition || '')}
+                    {nthLabelGenerator(winner?.winnerPosition || 0)}
                   </span>
                 </div>
                 <div

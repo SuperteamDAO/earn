@@ -40,7 +40,10 @@ async function handler(req: NextApiRequestWithSponsor, res: NextApiResponse) {
     logger.debug(`Updating submission with ID: ${id}`);
     const result = await prisma.submission.update({
       where: { id },
-      data: { isWinner, winnerPosition },
+      data: {
+        isWinner,
+        winnerPosition: winnerPosition ? winnerPosition : null,
+      },
       include: { listing: true },
     });
 
@@ -66,7 +69,7 @@ async function handler(req: NextApiRequestWithSponsor, res: NextApiResponse) {
           where: { id: bountyId },
           data: {
             ...totalWinnersUpdate,
-            rewards: { first: ask },
+            rewards: { 1: ask },
             rewardAmount: ask,
             usdValue,
           },
