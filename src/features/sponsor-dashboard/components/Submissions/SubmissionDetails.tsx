@@ -46,12 +46,13 @@ import { BONUS_REWARD_POSITION, tokenList } from '@/constants';
 import type { Listing, Rewards } from '@/features/listings';
 import type { SubmissionWithUser } from '@/interface/submission';
 import { getURLSanitized } from '@/utils/getURLSanitized';
+import { isLink } from '@/utils/isLink';
 import { getRankLabels } from '@/utils/rank';
 import { truncatePublicKey } from '@/utils/truncatePublicKey';
 import { truncateString } from '@/utils/truncateString';
 
 import { labelMenuOptions } from '../../constants';
-import { colorMap, isLink } from '../../utils';
+import { colorMap } from '../../utils';
 
 interface Props {
   bounty: Listing | null;

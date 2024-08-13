@@ -12,15 +12,10 @@ import {
 import { useEffect, useState } from 'react';
 
 import { BONUS_REWARD_POSITION } from '@/constants';
+import { formatTotalPrice } from '@/features/listing-builder';
 import { nthLabelGenerator } from '@/utils/rank';
 
 import { type Rewards } from '../../types';
-
-const formatPrize = (total: number) =>
-  new Intl.NumberFormat('en-US', {
-    currency: 'USD',
-    maximumFractionDigits: 0,
-  }).format(total as number);
 
 function calculateRewards(
   iterableRewards: [string, number][],
@@ -101,7 +96,7 @@ export function PrizesList({
               >
                 <Text ml="auto">
                   {!seeAll && visibleRewards.length - 1 === index && '+'}{' '}
-                  {formatPrize(step[1])}
+                  {formatTotalPrice(step[1])}
                 </Text>
                 <Text color="brand.slate.400" fontWeight={600}>
                   {token}

@@ -2,7 +2,7 @@ import { Regions } from '@prisma/client';
 
 import { prisma } from '@/prisma';
 
-export type Status = 'open' | 'review' | 'completed';
+type Status = 'open' | 'review' | 'completed';
 
 const TAKE = 20;
 

@@ -1,7 +1,7 @@
 import { BONUS_REWARD_POSITION } from '@/constants';
 import { type Rewards } from '@/features/listings';
 
-export const rankLabels = [
+const rankLabels = [
   'zeroth',
   'first',
   'second',

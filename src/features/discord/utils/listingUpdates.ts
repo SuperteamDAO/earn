@@ -5,7 +5,7 @@ import { getURL } from '@/utils/validUrl';
 
 import { creatPOCLink } from '.';
 
-export type updateStatus =
+type updateStatus =
   | 'Draft Added'
   | 'Published'
   | 'Unpublished'

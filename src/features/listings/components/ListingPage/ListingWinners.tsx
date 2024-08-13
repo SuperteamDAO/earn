@@ -6,6 +6,7 @@ import { useEffect, useState } from 'react';
 
 import { EarnAvatar } from '@/components/shared/EarnAvatar';
 import { Tooltip } from '@/components/shared/responsive-tooltip';
+import { formatTotalPrice } from '@/features/listing-builder';
 import type { SubmissionWithUser } from '@/interface/submission';
 import { nthLabelGenerator } from '@/utils/rank';
 import { tweetEmbedLink } from '@/utils/socialEmbeds';
@@ -17,11 +18,6 @@ interface Props {
   bounty: Listing;
 }
 
-const formatPrize = (total: number) =>
-  new Intl.NumberFormat('en-US', {
-    currency: 'USD',
-    maximumFractionDigits: 0,
-  }).format(total as number);
 export function ListingWinners({ bounty }: Props) {
   const [isListingLoading, setIsListingLoading] = useState(true);
   const [submissions, setSubmissions] = useState<SubmissionWithUser[]>([]);
@@ -160,7 +156,7 @@ export function ListingWinners({ bounty }: Props) {
                     opacity={0.6}
                   >
                     {bounty?.rewards &&
-                      formatPrize(
+                      formatTotalPrice(
                         bounty?.rewards[
                           Number(submission?.winnerPosition) as keyof Rewards
                         ] ?? 0,
