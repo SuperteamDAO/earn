@@ -234,7 +234,7 @@ export function ListingHeader({
   };
 
   return (
-    <VStack px={{ base: 3, md: 6 }} bg={'white'}>
+    <VStack px={{ base: 3, md: 3 }} bg={'white'}>
       <VStack
         justify={'space-between'}
         flexDir={'row'}

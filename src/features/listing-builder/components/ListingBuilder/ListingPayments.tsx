@@ -91,7 +91,8 @@ interface Props {
   isDuplicating?: boolean;
 }
 
-const BONUS_REWARD_LABEL = 'Bonus Per Prize';
+const BONUS_REWARD_LABEL = '# of Bonus Prizes';
+const BONUS_REWARD_LABEL_2 = 'Bonus Per Prize';
 
 export const ListingPayments = ({
   isListingPublishing,
@@ -749,7 +750,7 @@ export const ListingPayments = ({
                 w="full"
                 pb={3}
                 borderColor="brand.slate.200"
-                borderBottom="solid 1px"
+                borderBottomWidth="1px"
               >
                 <Text>{calculateTotalPrizes()} Prizes</Text>
                 <Text>
@@ -759,9 +760,20 @@ export const ListingPayments = ({
               </HStack>
               {prizes.map((el) => (
                 <FormControl key={el.value}>
-                  <FormLabel color={'gray.500'} textTransform="capitalize">
-                    {el.label}
-                  </FormLabel>
+                  <Flex w="full">
+                    <FormLabel color={'gray.500'} textTransform="capitalize">
+                      {el.label}
+                    </FormLabel>
+                    {el.value === BONUS_REWARD_POSITION && (
+                      <FormLabel
+                        pl={8}
+                        color={'gray.500'}
+                        textTransform="capitalize"
+                      >
+                        {BONUS_REWARD_LABEL_2}
+                      </FormLabel>
+                    )}
+                  </Flex>
                   <Flex
                     pos="relative"
                     pr={4}
@@ -775,11 +787,12 @@ export const ListingPayments = ({
                   >
                     {el.value === BONUS_REWARD_POSITION && (
                       <NumberInput
-                        w={'25%'}
+                        w={'30%'}
                         color="brand.slate.500"
                         border={'none'}
                         borderColor="brand.slate.300"
-                        borderRight={'1px solid '}
+                        borderRightWidth={'1px'}
+                        borderRightStyle={'solid'}
                         defaultValue={maxBonusSpots ?? 0}
                         focusBorderColor="rgba(0,0,0,0)"
                         max={MAX_BONUS_SPOTS}
@@ -810,7 +823,7 @@ export const ListingPayments = ({
                       </NumberInput>
                     )}
                     <NumberInput
-                      w={el.value === BONUS_REWARD_POSITION ? '75%' : '100%'}
+                      w={el.value === BONUS_REWARD_POSITION ? '70%' : '100%'}
                       color="brand.slate.500"
                       border={'none'}
                       defaultValue={el.defaultValue}
@@ -865,26 +878,26 @@ export const ListingPayments = ({
                   </Flex>
                   {el.value === BONUS_REWARD_POSITION && (
                     <FormHelperText
-                      gap={1}
                       display={'flex'}
                       w="full"
                       pt={2}
                       color="brand.slate.500"
                     >
-                      {maxBonusSpots} individuals will be paid{' '}
-                      <Text fontWeight={700}>
+                      {maxBonusSpots} individuals will be paid
+                      <Text px={1} fontWeight={700}>
                         {' '}
                         {rewards?.[BONUS_REWARD_POSITION]}{' '}
                         {selectedToken?.tokenSymbol}{' '}
                       </Text>
                       each (total bonus of{' '}
-                      <Text fontWeight={700}>
+                      <Text pl={1} fontWeight={700}>
                         {caculateBonus(
                           maxBonusSpots,
                           rewards?.[BONUS_REWARD_POSITION],
                         )}{' '}
-                        {selectedToken?.tokenSymbol})
+                        {selectedToken?.tokenSymbol}
                       </Text>
+                      )
                     </FormHelperText>
                   )}
                 </FormControl>
@@ -897,7 +910,7 @@ export const ListingPayments = ({
             mt={10}
             pt={4}
             borderColor="brand.slate.200"
-            borderTop="1px solid"
+            borderTopWidth="1px"
           >
             <Text color="yellow.500">
               {!!debouncedRewardAmount &&
@@ -1033,7 +1046,7 @@ function SelectedToken({ token }: { token: Token | undefined }) {
   return (
     token && (
       <>
-        <HStack p={2} borderColor="brand.slate.300" borderLeft="1px solid ">
+        <HStack p={2} borderColor="brand.slate.300" borderLeftWidth="1px">
           <Image
             w={'1.6rem'}
             alt={token.tokenName as string}

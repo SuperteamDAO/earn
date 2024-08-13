@@ -33,6 +33,12 @@ body {
   background-color: #fff;
 }
 
+#reset-des {
+  word-wrap: break-word;
+  overflow-wrap: break-word;
+  color: #64748B;
+}
+
 #reset-des blockquote {
   all: revert !important;
 }
@@ -71,6 +77,7 @@ body {
 
 #reset-des h2 {
   all: revert !important;
+  color: #475569;
 }
 
 #reset-des h3 {
@@ -87,11 +94,6 @@ body {
 
 #reset-des h6 {
   all: revert !important;
-}
-
-#reset-des {
-  word-wrap: break-word;
-  overflow-wrap: break-word;
 }
 
 #reset-des code {

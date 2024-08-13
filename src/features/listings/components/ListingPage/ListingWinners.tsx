@@ -78,7 +78,6 @@ export function ListingWinners({ bounty }: Props) {
       w="full"
       maxW={'8xl'}
       mx={'auto'}
-      mt={10}
       px={4}
       pt={4}
       bg="#F5F3FF"
@@ -175,13 +174,12 @@ export function ListingWinners({ bounty }: Props) {
           <NextLink href={openWinnerLink() ?? '#'} target="_blank">
             <Button
               className="ph-no-capture"
-              pos={{ base: 'static', md: 'absolute' }}
+              pos={'absolute'}
               top={4}
               right={5}
               gap={2}
               display="flex"
-              w={{ base: '100%', md: 'auto' }}
-              mt={{ base: 6, md: 0 }}
+              w={'auto'}
               color="rgba(0, 0, 0, 0.65)"
               fontWeight={500}
               bg="white"
@@ -213,8 +211,9 @@ export function ListingWinners({ bounty }: Props) {
       {submissions.length > 3 && (
         <HStack
           justify="center"
+          flexWrap="wrap"
           px={2}
-          py={2}
+          py={3}
           borderColor="#DDD6FE"
           borderTopWidth="1px"
         >

@@ -94,15 +94,13 @@ export function GrantPageLayout({
               gap={4}
               mx={'auto'}
               mb={10}
-              px={3}
             >
-              <Box w={{ base: 'full', md: 'auto' }}>
+              <Box w={{ base: 'full', md: 'auto' }} px={3}>
                 <VStack gap={2}>
                   <VStack
                     justify={'center'}
                     gap={0}
                     w={{ base: 'full', md: '22rem' }}
-                    px={3}
                     py={3}
                     bg={'#FFFFFF'}
                     rounded={'xl'}

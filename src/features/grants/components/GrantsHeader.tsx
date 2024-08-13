@@ -72,7 +72,7 @@ export const GrantsHeader = ({
 
   return (
     <>
-      <Box w="full" bg={'white'}>
+      <Box w="full" px={3} bg={'white'}>
         <VStack
           align="start"
           justify={['start', 'start', 'space-between', 'space-between']}
@@ -83,7 +83,7 @@ export const GrantsHeader = ({
           mx={'auto'}
           py={10}
         >
-          <HStack align="start" flexDir={{ base: 'column', md: 'row' }} px={3}>
+          <HStack align="start" flexDir={{ base: 'column', md: 'row' }}>
             <Image
               w={'4rem'}
               h={'4rem'}
@@ -155,7 +155,6 @@ export const GrantsHeader = ({
             h={'full'}
             mx={'auto'}
             my={'auto'}
-            px={3}
             borderColor="brand.slate.200"
             borderBottomWidth={'1px'}
           >

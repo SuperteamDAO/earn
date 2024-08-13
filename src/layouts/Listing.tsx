@@ -174,12 +174,12 @@ export function ListingPageLayout({
                   gap={8}
                   w={'full'}
                   h="full"
-                  px={5}
+                  px={{ base: 2, md: 5 }}
                   pb={10}
                   borderColor="brand.slate.100"
-                  borderLeftWidth={'1px'}
+                  borderLeftWidth={{ base: 0, md: '1px' }}
                 >
-                  {children}
+                  <Box>{children}</Box>
 
                   <Box display={{ base: 'block', md: 'none' }} w="full">
                     <ExtraInfoSection

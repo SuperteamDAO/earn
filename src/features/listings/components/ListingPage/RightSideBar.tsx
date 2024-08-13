@@ -12,6 +12,7 @@ import {
   VStack,
 } from '@chakra-ui/react';
 import axios from 'axios';
+import { useRouter } from 'next/router';
 import { useEffect, useState } from 'react';
 import Countdown from 'react-countdown';
 
@@ -25,6 +26,7 @@ import type { Listing } from '../../types';
 import { SubmissionActionButton } from '../Submission/SubmissionActionButton';
 import { CompensationAmount } from './CompensationAmount';
 import { ExtraInfoSection } from './ExtraInfoSection';
+import { ListingWinners } from './ListingWinners';
 import { PrizesList } from './PrizesList';
 
 export function RightSideBar({
@@ -91,6 +93,8 @@ export function RightSideBar({
 
   const isProject = type === 'project';
 
+  const router = useRouter();
+
   return (
     <Box w={{ base: 'full', md: 'auto' }} h="full">
       <VStack gap={2} w="full" pt={4}>
@@ -101,24 +105,18 @@ export function RightSideBar({
           bg={'#FFFFFF'}
           rounded={'xl'}
         >
-          <VStack justify={'space-between'} w={'full'} pb={4}>
+          {!router.asPath.split('/')[4]?.includes('submission') &&
+            !router.asPath.split('/')[4]?.includes('references') && (
+              <Box display={{ base: 'block', md: 'none' }} pb={6}>
+                <ListingWinners bounty={listing} />
+              </Box>
+            )}
+          <VStack justify={'space-between'} w={'full'} px={1} pb={4}>
             <TableContainer w={'full'}>
-              {compensationType !== 'fixed' && (
-                <Text
-                  px={6}
-                  pb={2}
-                  color="brand.slate.400"
-                  fontSize={'xs'}
-                  fontWeight={500}
-                >
-                  {compensationType === 'range' && 'Budget'}
-                  {compensationType === 'variable' && 'Payment in'}
-                </Text>
-              )}
               <Table variant={'unstyled'}>
                 <Tbody>
                   <Tr w={'full'}>
-                    <Td w="full" py={0} colSpan={3}>
+                    <Td w="full" px={0} py={0} colSpan={3}>
                       <Flex align="center" gap={2}>
                         <Image
                           w={8}
@@ -159,7 +157,7 @@ export function RightSideBar({
                     <>
                       {rewards && (
                         <Tr>
-                          <Td colSpan={3}>
+                          <Td px={0} colSpan={3}>
                             <PrizesList
                               totalReward={rewardAmount ?? 0}
                               maxBonusSpots={maxBonusSpots ?? 0}
@@ -180,12 +178,7 @@ export function RightSideBar({
             borderColor={'brand.slate.100'}
             borderBottomWidth={'1px'}
           />
-          <Flex
-            justify={'space-between'}
-            w={'full'}
-            px={5}
-            py={!rewards ? 3 : 0}
-          >
+          <Flex justify={'space-between'} w={'full'} py={!rewards ? 3 : 0}>
             {hasHackathonStarted ? (
               <>
                 <Flex align={'start'} justify={'center'} direction={'column'}>
@@ -286,7 +279,7 @@ export function RightSideBar({
             )}
           </Flex>
 
-          <Box w="full" px={5}>
+          <Box w="full">
             {isProject && (
               <Flex align={'start'} direction={'column'} my={4}>
                 <Text
@@ -324,7 +317,7 @@ export function RightSideBar({
               Hackathon={listing.Hackathon}
             />
           </Box>
-          <Box px={6} pt={8}>
+          <Box display={{ base: 'none', md: 'block' }} pt={8}>
             <LiveListings>
               <Text
                 h="100%"

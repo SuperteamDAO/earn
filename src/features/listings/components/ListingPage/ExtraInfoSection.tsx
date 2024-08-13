@@ -23,7 +23,7 @@ export function ExtraInfoSection({
 }: ExtraInfoSectionProps) {
   const posthog = usePostHog();
   return (
-    <VStack gap={8} w={{ base: 'full', md: '22rem' }} px={6} pt={2}>
+    <VStack gap={8} w={{ base: 'full', md: '22rem' }} pt={2}>
       <VStack align={'start'} w="full">
         <Text
           h="100%"
@@ -55,12 +55,17 @@ export function ExtraInfoSection({
       {region && (
         <VStack align={'start'} w="full" fontSize={'sm'}>
           <Text color={'brand.slate.600'} fontWeight={600}>
-            {region}
+            REGIONAL
           </Text>
           <Text h="100%" color={'brand.slate.500'}>
-            {region === 'GLOBAL'
-              ? 'This listing is open for all people in all regions of the world'
-              : `This listing is only open for people in ${region}`}
+            {region === 'GLOBAL' ? (
+              'This listing is open for all people in all regions of the world'
+            ) : (
+              <>
+                This listing is only open for people in{' '}
+                <Text fontWeight={600}>{region}</Text>
+              </>
+            )}
           </Text>
         </VStack>
       )}

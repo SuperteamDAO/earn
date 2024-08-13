@@ -1,4 +1,4 @@
-import {} from '@chakra-ui/react';
+import { Box } from '@chakra-ui/react';
 import axios from 'axios';
 import type { GetServerSideProps } from 'next';
 
@@ -17,7 +17,11 @@ interface BountyDetailsProps {
 function BountyDetails({ bounty: bounty }: BountyDetailsProps) {
   return (
     <ListingPageLayout bounty={bounty}>
-      {bounty?.isWinnersAnnounced && <ListingWinners bounty={bounty} />}
+      {bounty?.isWinnersAnnounced && (
+        <Box display={{ base: 'none', md: 'block' }} w="full" mt={6}>
+          <ListingWinners bounty={bounty} />
+        </Box>
+      )}
       <DescriptionUI description={bounty?.description} />
     </ListingPageLayout>
   );
