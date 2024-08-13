@@ -31,7 +31,7 @@ import type { SponsorType } from '@/interface/sponsor';
 import { Default } from '@/layouts/Default';
 import { Meta } from '@/layouts/Meta';
 import { SponsorStore } from '@/store/sponsor';
-import { userStore } from '@/store/user';
+import { useUser } from '@/store/user';
 import { uploadToCloudinary } from '@/utils/upload';
 
 const UpdateSponsor = () => {
@@ -63,7 +63,7 @@ const UpdateSponsor = () => {
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [hasError, setHasError] = useState<boolean>(false);
   const [errorMessage, setErrorMessage] = useState<string>('');
-  const { userInfo, setUserInfo } = userStore();
+  const { user, refetchUser } = useUser();
   const { setCurrentSponsor } = SponsorStore();
 
   const {
@@ -111,7 +111,7 @@ const UpdateSponsor = () => {
     };
 
     init();
-  }, [userInfo?.currentSponsorId, router, reset, setSlug, setSponsorName]);
+  }, [user?.currentSponsorId, router, reset, setSlug, setSponsorName]);
 
   const updateSponsor = async (sponsor: SponsorType) => {
     if (getValues('bio').length > 180) {
@@ -125,8 +125,8 @@ const UpdateSponsor = () => {
         ...sponsor,
       });
       setCurrentSponsor(sponsor);
-      const updatedUser = await axios.get('/api/user/');
-      setUserInfo(updatedUser?.data);
+      await refetchUser();
+
       router.push('/dashboard/listings');
     } catch (e: any) {
       if (e?.response?.data?.error?.code === 'P2002') {

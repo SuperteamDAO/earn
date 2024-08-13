@@ -51,6 +51,7 @@ export default async function handler(
       if (id) {
         const bounty = await prisma.bounties.findFirst({
           where: { id: id as string },
+          select: { slug: true },
         });
         if (bounty?.slug === slug) {
           logger.info(`Slug ${slug} belongs to the same bounty with ID ${id}`);

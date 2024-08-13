@@ -19,11 +19,14 @@ import {
   RegionLabel,
   StatusBadge,
 } from '@/features/listings';
-import type { SponsorType } from '@/interface/sponsor';
 import { PulseIcon } from '@/svg/pulse-icon';
 
 interface Props {
-  sponsor: SponsorType;
+  sponsor?: {
+    name: string;
+    logo: string;
+    isVerified: boolean;
+  };
   title: string;
   status: string;
   region: string;

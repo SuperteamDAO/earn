@@ -17,7 +17,7 @@ import { TbBell, TbBellRinging } from 'react-icons/tb';
 
 import { AuthWrapper } from '@/features/auth';
 import { type User } from '@/interface/user';
-import { userStore } from '@/store/user';
+import { useUser } from '@/store/user';
 
 import { WarningModal } from '../WarningModal';
 
@@ -28,7 +28,7 @@ interface Props {
   // setUpdate: Dispatch<SetStateAction<boolean>>
 }
 export const SubscribeListing = ({ id }: Props) => {
-  const { userInfo } = userStore();
+  const { user } = useUser();
 
   const posthog = usePostHog();
   const {
@@ -79,9 +79,9 @@ export const SubscribeListing = ({ id }: Props) => {
 
   const isAuthenticated = authStatus === 'authenticated';
   const handleToggleSubscribe = async () => {
-    if (!isAuthenticated || !userInfo?.isTalentFilled) return;
+    if (!isAuthenticated || !user?.isTalentFilled) return;
 
-    if (!userInfo?.isTalentFilled) {
+    if (!user?.isTalentFilled) {
       warningOnOpen();
       return;
     }
@@ -91,9 +91,7 @@ export const SubscribeListing = ({ id }: Props) => {
       await axios.post('/api/listings/notifications/toggle', { bountyId: id });
       setUpdate((prev) => !prev);
       toast.success(
-        sub.find((e) => e.userId === userInfo?.id)
-          ? 'Unsubscribed'
-          : 'Subscribed',
+        sub.find((e) => e.userId === user?.id) ? 'Unsubscribed' : 'Subscribed',
       );
     } catch (error) {
       console.log(error);
@@ -129,7 +127,7 @@ export const SubscribeListing = ({ id }: Props) => {
               leftIcon={
                 isSubscribeLoading ? (
                   <Spinner color="white" size="sm" />
-                ) : sub.find((e) => e.userId === userInfo?.id) ? (
+                ) : sub.find((e) => e.userId === user?.id) ? (
                   <TbBellRinging />
                 ) : (
                   <TbBell />
@@ -137,7 +135,7 @@ export const SubscribeListing = ({ id }: Props) => {
               }
               onClick={() => {
                 posthog.capture(
-                  sub.find((e) => e.userId === userInfo?.id)
+                  sub.find((e) => e.userId === user?.id)
                     ? 'unnotify me_listing'
                     : 'notify me_listing',
                 );
@@ -147,7 +145,7 @@ export const SubscribeListing = ({ id }: Props) => {
             >
               {isSubscribeLoading
                 ? 'Subscribing'
-                : sub.find((e) => e.userId === userInfo?.id)
+                : sub.find((e) => e.userId === user?.id)
                   ? 'Subscribed'
                   : 'Subscribe'}
             </Button>

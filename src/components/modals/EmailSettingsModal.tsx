@@ -16,7 +16,7 @@ import { usePostHog } from 'posthog-js/react';
 import React, { useState } from 'react';
 import toast from 'react-hot-toast';
 
-import { userStore } from '@/store/user';
+import { useUser } from '@/store/user';
 
 export const EmailSettingsModal = ({
   isOpen,
@@ -25,10 +25,11 @@ export const EmailSettingsModal = ({
   isOpen: boolean;
   onClose: () => void;
 }) => {
-  const { userInfo, setUserInfo } = userStore();
+  const { user, refetchUser } = useUser();
+
   const posthog = usePostHog();
 
-  const emailSettings = userInfo?.emailSettings || [];
+  const emailSettings = user?.emailSettings || [];
 
   const [selectedCategories, setSelectedCategories] = useState<string[]>(
     emailSettings.map((setting) => setting.category),
@@ -52,19 +53,20 @@ export const EmailSettingsModal = ({
         categories: selectedCategories,
       });
 
-      const updatedUser = await axios.get('/api/user/');
-      setUserInfo(updatedUser?.data);
+      await refetchUser();
+
       setIsUpdating(false);
       onClose();
       toast.success('Email preferences updated');
     } catch (error) {
       console.error('Error updating email preferences:', error);
       toast.error('Failed to update email preferences.');
+      setIsUpdating(false);
     }
   };
 
-  const showSponsorAlerts = userInfo?.currentSponsorId;
-  const showTalentAlerts = userInfo?.isTalentFilled;
+  const showSponsorAlerts = user?.currentSponsorId;
+  const showTalentAlerts = user?.isTalentFilled;
 
   const AlertOption = ({
     title,

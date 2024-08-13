@@ -43,7 +43,7 @@ import type { PoW } from '@/interface/pow';
 import { skillSubSkillMap, type SubSkillsType } from '@/interface/skills';
 import { Default } from '@/layouts/Default';
 import { Meta } from '@/layouts/Meta';
-import { userStore } from '@/store/user';
+import { useUser } from '@/store/user';
 import { uploadToCloudinary } from '@/utils/upload';
 import { useUsernameValidation } from '@/utils/useUsernameValidation';
 
@@ -93,7 +93,7 @@ const parseSkillsAndSubskills = (skillsObject: any) => {
 };
 
 export default function EditProfilePage({ slug }: { slug: string }) {
-  const { userInfo, setUserInfo } = userStore();
+  const { user, refetchUser } = useUser();
   const { data: session, status } = useSession();
   const { register, handleSubmit, setValue, watch } = useForm<FormData>();
 
@@ -113,22 +113,22 @@ export default function EditProfilePage({ slug }: { slug: string }) {
 
   const { isOpen, onOpen, onClose } = useDisclosure();
 
-  const editableFields = Object.keys(userInfo || {}) as (keyof FormData)[];
+  const editableFields = Object.keys(user || {}) as (keyof FormData)[];
 
   const animatedComponents = makeAnimated();
   const [DropDownValues, setDropDownValues] = useState<{
     interests: string;
     community: { label: string; value: string }[];
   }>({
-    interests: JSON.stringify(userInfo?.interests || []),
-    community: userInfo?.community ? JSON.parse(userInfo.community) : [],
+    interests: JSON.stringify(user?.interests || []),
+    community: user?.community ? JSON.parse(user.community) : [],
   });
 
   const [skills, setSkills] = useState<MultiSelectOptions[]>([]);
   const [subSkills, setSubSkills] = useState<MultiSelectOptions[]>([]);
   const toast = useToast();
 
-  const privateValue = watch('private', userInfo?.private);
+  const privateValue = watch('private', user?.private);
 
   const socialLinksValidityRef = useRef<{ [key: string]: boolean }>({});
 
@@ -146,13 +146,13 @@ export default function EditProfilePage({ slug }: { slug: string }) {
     useUsernameValidation();
 
   useEffect(() => {
-    if (userInfo) {
+    if (user) {
       editableFields.forEach((field) => {
-        setValue(field, userInfo[field]);
+        setValue(field, user[field]);
       });
 
-      if (userInfo.interests) {
-        const interestsArray = JSON.parse(userInfo.interests);
+      if (user.interests) {
+        const interestsArray = JSON.parse(user.interests);
         const defaultInterests = interestsArray.map((value: string) =>
           IndustryList.find((option) => option.value === value),
         );
@@ -163,8 +163,8 @@ export default function EditProfilePage({ slug }: { slug: string }) {
         }));
       }
 
-      if (userInfo?.community) {
-        const communityArray: string[] = JSON.parse(userInfo.community);
+      if (user?.community) {
+        const communityArray: string[] = JSON.parse(user.community);
         const communitySelectValues = communityArray.map((item) => ({
           label: item,
           value: item,
@@ -176,41 +176,41 @@ export default function EditProfilePage({ slug }: { slug: string }) {
         }));
       }
 
-      if (userInfo.experience) {
-        setValue('experience', userInfo.experience);
+      if (user.experience) {
+        setValue('experience', user.experience);
       }
 
-      if (userInfo.location) {
-        setValue('location', userInfo.location);
+      if (user.location) {
+        setValue('location', user.location);
       }
 
-      if (userInfo.private) {
-        setValue('private', userInfo.private);
+      if (user.private) {
+        setValue('private', user.private);
       }
 
-      if (userInfo?.skills && Array.isArray(userInfo.skills)) {
+      if (user?.skills && Array.isArray(user.skills)) {
         const { skills: parsedSkills, subSkills: parsedSubSkills } =
-          parseSkillsAndSubskills(userInfo.skills);
+          parseSkillsAndSubskills(user.skills);
         setSkills(parsedSkills);
         setSubSkills(parsedSubSkills);
       }
 
-      if (userInfo?.photo) {
-        setValue('photo', userInfo.photo);
-        setPhotoUrl(userInfo.photo);
+      if (user?.photo) {
+        setValue('photo', user.photo);
+        setPhotoUrl(user.photo);
         setIsPhotoLoading(false);
       } else {
         setIsPhotoLoading(false);
       }
     }
-  }, [userInfo, setValue]);
+  }, [user, setValue]);
 
   useEffect(() => {
     const fetchPoW = async () => {
       try {
         const response = await axios.get('/api/pow/get', {
           params: {
-            userId: userInfo?.id,
+            userId: user?.id,
           },
         });
         setPow(response.data);
@@ -219,10 +219,10 @@ export default function EditProfilePage({ slug }: { slug: string }) {
       }
     };
 
-    if (userInfo?.id) {
+    if (user?.id) {
       fetchPoW();
     }
-  }, [userInfo?.id]);
+  }, [user?.id]);
 
   const onSubmit = async (data: FormData) => {
     posthog.capture('confirm_edit profile');
@@ -311,7 +311,7 @@ export default function EditProfilePage({ slug }: { slug: string }) {
 
       const finalUpdatedData = Object.keys(updatedData).reduce((acc, key) => {
         const fieldKey = key as keyof FormData;
-        if (userInfo && updatedData[fieldKey] !== userInfo[fieldKey]) {
+        if (user && updatedData[fieldKey] !== user[fieldKey]) {
           acc[fieldKey] = updatedData[fieldKey];
         }
         return acc;
@@ -321,11 +321,9 @@ export default function EditProfilePage({ slug }: { slug: string }) {
         pows: pow,
       });
 
-      const response = await axios.post('/api/user/edit', {
-        ...finalUpdatedData,
-      });
+      await axios.post('/api/user/edit', { ...finalUpdatedData });
 
-      setUserInfo({ ...userInfo, ...response.data });
+      await refetchUser();
 
       setIsLoading(false);
 
@@ -354,10 +352,10 @@ export default function EditProfilePage({ slug }: { slug: string }) {
   };
 
   useEffect(() => {
-    if (userInfo && slug !== userInfo?.username) {
+    if (user && slug !== user?.username) {
       router.push(`/t/${slug}`);
     }
-  }, [slug, router, userInfo]);
+  }, [slug, router, user]);
 
   if (!session && status === 'unauthenticated') {
     router.push('/');

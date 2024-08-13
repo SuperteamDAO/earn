@@ -136,45 +136,67 @@ export const ApplicationDetails = ({
     applicationId: string,
     approvedAmount: number,
   ) => {
+    const updatedApplications = applications.map((application) =>
+      application.id === applicationId
+        ? {
+            ...application,
+            applicationStatus: GrantApplicationStatus.Approved,
+            approvedAmount: approvedAmount,
+          }
+        : application,
+    );
+
+    setApplications(updatedApplications);
+    const updatedApplication = updatedApplications.find(
+      (application) => application.id === applicationId,
+    );
+    setSelectedApplication(updatedApplication);
+    approveOnClose();
+
+    const currentIndex = updatedApplications.findIndex(
+      (app) => app.id === applicationId,
+    );
+    if (currentIndex < updatedApplications.length - 1) {
+      moveToNextPendingApplication();
+    }
+
     try {
       await axios.post(
-        `/api/sponsor-dashboard/grants/update-application-status`,
+        '/api/sponsor-dashboard/grants/update-application-status',
         {
           id: applicationId,
           applicationStatus: 'Approved',
           approvedAmount,
         },
       );
-
-      const updatedApplications = applications.map((application) =>
-        application.id === applicationId
-          ? {
-              ...application,
-              applicationStatus: GrantApplicationStatus.Approved,
-              approvedAmount: approvedAmount,
-            }
-          : application,
-      );
-
-      setApplications(updatedApplications);
-      const updatedApplication = updatedApplications.find(
-        (application) => application.id === applicationId,
-      );
-      setSelectedApplication(updatedApplication);
-      approveOnClose();
-
-      const currentIndex = updatedApplications.findIndex(
-        (app) => app.id === applicationId,
-      );
-      if (currentIndex < updatedApplications.length - 1) {
-        moveToNextPendingApplication();
-      }
     } catch (e) {
       console.error(e);
     }
   };
 
   const handleRejectGrant = async (applicationId: string) => {
+    const updatedApplications = applications.map((application) =>
+      application.id === applicationId
+        ? {
+            ...application,
+            applicationStatus: GrantApplicationStatus.Rejected,
+          }
+        : application,
+    );
+
+    setApplications(updatedApplications);
+    const updatedApplication = updatedApplications.find(
+      (application) => application.id === applicationId,
+    );
+    setSelectedApplication(updatedApplication);
+    rejectedOnClose();
+
+    const currentIndex = updatedApplications.findIndex(
+      (app) => app.id === applicationId,
+    );
+    if (currentIndex < updatedApplications.length - 1) {
+      moveToNextPendingApplication();
+    }
     try {
       await axios.post(
         `/api/sponsor-dashboard/grants/update-application-status`,
@@ -183,53 +205,12 @@ export const ApplicationDetails = ({
           applicationStatus: 'Rejected',
         },
       );
-
-      const updatedApplications = applications.map((application) =>
-        application.id === applicationId
-          ? {
-              ...application,
-              applicationStatus: GrantApplicationStatus.Rejected,
-            }
-          : application,
-      );
-
-      setApplications(updatedApplications);
-      const updatedApplication = updatedApplications.find(
-        (application) => application.id === applicationId,
-      );
-      setSelectedApplication(updatedApplication);
-      rejectedOnClose();
-
-      const currentIndex = updatedApplications.findIndex(
-        (app) => app.id === applicationId,
-      );
-      if (currentIndex < updatedApplications.length - 1) {
-        moveToNextPendingApplication();
-      }
     } catch (e) {
       console.error(e);
     }
   };
 
   const SocialMediaLink = () => {
-    if (selectedApplication?.user?.twitter) {
-      const username = extractTwitterUsername(selectedApplication.user.twitter);
-      if (username) {
-        return (
-          <Flex align="center" justify="start" gap={2} fontSize="sm">
-            <FaXTwitter color="#94A3B8" />
-            <Link
-              color="brand.slate.400"
-              href={`https://x.com/${username}`}
-              isExternal
-            >
-              @{username}
-            </Link>
-          </Flex>
-        );
-      }
-    }
-
     if (selectedApplication?.user?.telegram) {
       const username = extractTelegramUsername(
         selectedApplication.user.telegram,
@@ -241,6 +222,24 @@ export const ApplicationDetails = ({
             <Link
               color="brand.slate.400"
               href={`https://t.me/${username}`}
+              isExternal
+            >
+              @{username}
+            </Link>
+          </Flex>
+        );
+      }
+    }
+
+    if (selectedApplication?.user?.twitter) {
+      const username = extractTwitterUsername(selectedApplication.user.twitter);
+      if (username) {
+        return (
+          <Flex align="center" justify="start" gap={2} fontSize="sm">
+            <FaXTwitter color="#94A3B8" />
+            <Link
+              color="brand.slate.400"
+              href={`https://x.com/${username}`}
               isExternal
             >
               @{username}
@@ -505,7 +504,7 @@ export const ApplicationDetails = ({
 
           <Box
             overflowY={'scroll'}
-            h={'32.6rem'}
+            h={'67.15rem'}
             css={{
               '&::-webkit-scrollbar': {
                 width: '4px',

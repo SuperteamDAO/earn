@@ -1,7 +1,6 @@
 import { Box, Divider, Flex, Grid, Text, VStack } from '@chakra-ui/react';
-import axios from 'axios';
-import { useEffect } from 'react';
 
+import { useGetTotals } from '@/features/home';
 import GlobalEarn from '@/public/assets/landingsponsor/displays/global-earn.png';
 import EarnIcon from '@/public/assets/landingsponsor/icons/earn.svg';
 
@@ -13,7 +12,8 @@ type Stats = {
   label: string;
   showEarn?: boolean;
 };
-const stats = [
+
+const initialStats = [
   {
     title: '21K',
     label: 'Global Discord',
@@ -43,20 +43,22 @@ const stats = [
 ];
 
 export function Stats() {
-  async function getTotal() {
-    const totalsData = await axios.get('/api/sidebar/totals');
-    const userCountLabel = stats.find((s) => s.label === 'Verified Earn Users');
-    if (userCountLabel) {
-      userCountLabel.title = new Intl.NumberFormat('en-US', {
-        notation: 'compact',
-        compactDisplay: 'short',
-        maximumFractionDigits: 0,
-      }).format(totalsData.data.totalUsers as number);
+  const { data: totals } = useGetTotals();
+
+  const stats = initialStats.map((stat) => {
+    if (stat.label === 'Verified Earn Users' && totals?.totalUsers) {
+      return {
+        ...stat,
+        title: new Intl.NumberFormat('en-US', {
+          notation: 'compact',
+          compactDisplay: 'short',
+          maximumFractionDigits: 0,
+        }).format(totals.totalUsers),
+      };
     }
-  }
-  useEffect(() => {
-    getTotal();
-  }, []);
+    return stat;
+  });
+
   return (
     <Flex
       align="center"

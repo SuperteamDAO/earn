@@ -22,7 +22,7 @@ import { usePostHog } from 'posthog-js/react';
 import React, { useRef } from 'react';
 
 import { UserMenu } from '@/components/shared/UserMenu';
-import { userStore } from '@/store/user';
+import { useUser } from '@/store/user';
 
 import {
   CATEGORY_NAV_ITEMS,
@@ -48,7 +48,7 @@ export const MobileNavbar = ({ onLoginOpen }: Props) => {
   const btnRef = useRef<HTMLButtonElement>(null);
   const router = useRouter();
 
-  const { userInfo } = userStore();
+  const { user } = useUser();
 
   const MobileDrawer = () => {
     return (
@@ -104,21 +104,19 @@ export const MobileNavbar = ({ onLoginOpen }: Props) => {
               </Flex>
             )}
 
-            {userInfo &&
-              !userInfo.currentSponsorId &&
-              !userInfo.isTalentFilled && (
-                <Button
-                  color={'brand.purple'}
-                  fontSize="md"
-                  onClick={() => {
-                    router.push('/new');
-                  }}
-                  size="md"
-                  variant="unstyled"
-                >
-                  Complete your Profile
-                </Button>
-              )}
+            {user && !user.currentSponsorId && !user.isTalentFilled && (
+              <Button
+                color={'brand.purple'}
+                fontSize="md"
+                onClick={() => {
+                  router.push('/new');
+                }}
+                size="md"
+                variant="unstyled"
+              >
+                Complete your Profile
+              </Button>
+            )}
 
             {/* <Flex className="ph-no-capture" direction={'column'} mt={5}>
               {HACKATHON_NAV_ITEMS?.map((navItem) => {

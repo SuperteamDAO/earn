@@ -97,9 +97,9 @@ async function handler(req: NextApiRequestWithUser, res: NextApiResponse) {
       ...idsToDelete.map((id) => prisma.poW.delete({ where: { id } })),
     ];
 
-    const results = await prisma.$transaction(transactionActions);
+    await prisma.$transaction(transactionActions);
     logger.info(`Successfully processed PoWs for user ${userId}`);
-    return res.status(200).json(results);
+    return res.status(200).json({ message: 'Success' });
   } catch (error: any) {
     logger.error(
       `Error processing PoWs for user ${userId}:`,

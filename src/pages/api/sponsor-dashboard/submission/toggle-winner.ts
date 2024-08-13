@@ -18,7 +18,6 @@ async function handler(req: NextApiRequestWithSponsor, res: NextApiResponse) {
   try {
     const currentSubmission = await prisma.submission.findUnique({
       where: { id },
-      include: { listing: true },
     });
 
     if (!currentSubmission) {
@@ -84,7 +83,7 @@ async function handler(req: NextApiRequestWithSponsor, res: NextApiResponse) {
     }
 
     logger.info(`Successfully updated submission with ID: ${id}`);
-    return res.status(200).json(result);
+    return res.status(200).json({ message: 'Success' });
   } catch (error: any) {
     logger.error(`User ${userId} unable to toggle winners: ${error.message}`);
     return res.status(400).json({

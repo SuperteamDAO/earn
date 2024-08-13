@@ -1,14 +1,14 @@
 import { Box, Flex, Image, Select, Text } from '@chakra-ui/react';
-import axios from 'axios';
 import NextLink from 'next/link';
 import { useRouter } from 'next/router';
 import React, { useEffect, useState } from 'react';
+import { useInView } from 'react-intersection-observer';
 
 import {
   FeedCardContainerSkeleton,
-  type FeedDataProps,
   PowCard,
   SubmissionCard,
+  useGetFeed,
 } from '@/features/feed';
 import { Home } from '@/layouts/Home';
 
@@ -18,88 +18,31 @@ export const Feed = ({ isWinner = false }: { isWinner?: boolean }) => {
   const router = useRouter();
   const { query } = router;
 
-  const [data, setData] = useState<FeedDataProps[]>([]);
-  const [activeMenu, setActiveMenu] = useState(query.filter || 'popular');
+  const [activeMenu, setActiveMenu] = useState<'new' | 'popular'>(
+    (query.filter as 'new' | 'popular') || 'popular',
+  );
   const [timePeriod, setTimePeriod] = useState('This Month');
 
-  const [isLoading, setIsLoading] = useState<boolean>(true);
-  const [hasMore, setHasMore] = useState(true);
+  const { ref, inView } = useInView();
+
+  const { data, isLoading, fetchNextPage, hasNextPage, isFetchingNextPage } =
+    useGetFeed({
+      filter: activeMenu,
+      timePeriod:
+        activeMenu === 'popular' ? timePeriod.toLowerCase() : undefined,
+      isWinner,
+      take: 15,
+    });
 
   useEffect(() => {
-    const onScroll = () => {
-      if (
-        window.innerHeight + document.documentElement.scrollTop >=
-          document.documentElement.offsetHeight - 500 &&
-        hasMore &&
-        !isLoading
-      ) {
-        fetchMoreData();
-      }
-    };
-
-    window.addEventListener('scroll', onScroll);
-    return () => window.removeEventListener('scroll', onScroll);
-  }, [isLoading, hasMore, activeMenu, timePeriod, data, isWinner]);
-
-  const fetchMoreData = async () => {
-    const currentScrollPosition = window.pageYOffset;
-    try {
-      const res = await axios.get(`/api/feed/get`, {
-        params: {
-          filter: activeMenu === 'popular' ? 'popular' : undefined,
-          timePeriod:
-            activeMenu === 'popular' ? timePeriod.toLowerCase() : undefined,
-          skip: data?.length,
-          isWinner,
-        },
-      });
-
-      if (res.data.length < 15) {
-        setHasMore(false);
-      }
-
-      if (res.data.length === 0) {
-        window.scrollTo(0, currentScrollPosition);
-      } else {
-        setData((data) => [...data, ...res.data]);
-      }
-
-      setIsLoading(false);
-    } catch (err) {
-      console.error(err);
+    if (inView && hasNextPage) {
+      fetchNextPage();
     }
-    setIsLoading(false);
-  };
-
-  const fetchData = async () => {
-    setIsLoading(true);
-    try {
-      const res = await axios.get(`/api/feed/get`, {
-        params: {
-          filter: activeMenu === 'popular' ? 'popular' : undefined,
-          timePeriod:
-            activeMenu === 'popular' ? timePeriod.toLowerCase() : undefined,
-          isWinner,
-        },
-      });
-
-      if (res) {
-        setData(res.data);
-        setIsLoading(false);
-      }
-    } catch (err) {
-      console.log(err);
-      setIsLoading(false);
-    }
-  };
-
-  useEffect(() => {
-    fetchData();
-  }, [activeMenu, timePeriod, isWinner]);
+  }, [inView, fetchNextPage, hasNextPage]);
 
   useEffect(() => {
     if (query.filter && query.filter !== activeMenu) {
-      setActiveMenu(query.filter);
+      setActiveMenu(query.filter as 'new' | 'popular');
     }
   }, [query]);
 
@@ -152,6 +95,8 @@ export const Feed = ({ isWinner = false }: { isWinner?: boolean }) => {
       </Text>
     );
   };
+
+  const feedItems = data?.pages.flatMap((page) => page) ?? [];
 
   return (
     <Home type="feed">
@@ -242,24 +187,28 @@ export const Feed = ({ isWinner = false }: { isWinner?: boolean }) => {
                 Array.from({ length: 5 }).map((_, index) => (
                   <FeedCardContainerSkeleton key={index} />
                 ))
-              ) : data && data.length > 0 ? (
-                data.map((item, i) => {
-                  if (item.type === 'Submission') {
-                    return (
-                      <SubmissionCard
-                        key={i}
-                        sub={item as any}
-                        type="activity"
-                      />
-                    );
-                  }
-                  if (item.type === 'PoW') {
-                    return (
-                      <PowCard key={i} pow={item as any} type="activity" />
-                    );
-                  }
-                  return null;
-                })
+              ) : feedItems.length > 0 ? (
+                <>
+                  {feedItems.map((item, i) => {
+                    if (item.type === 'Submission') {
+                      return (
+                        <SubmissionCard
+                          key={i}
+                          sub={item as any}
+                          type="activity"
+                        />
+                      );
+                    }
+                    if (item.type === 'PoW') {
+                      return (
+                        <PowCard key={i} pow={item as any} type="activity" />
+                      );
+                    }
+                    return null;
+                  })}
+                  {isFetchingNextPage && <FeedCardContainerSkeleton />}
+                  <div ref={ref} style={{ height: '10px' }} />
+                </>
               ) : (
                 <Box my={32}>
                   <Image

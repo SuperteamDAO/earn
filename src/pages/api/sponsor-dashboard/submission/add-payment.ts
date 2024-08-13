@@ -19,7 +19,6 @@ async function handler(req: NextApiRequestWithSponsor, res: NextApiResponse) {
   try {
     const currentSubmission = await prisma.submission.findUnique({
       where: { id },
-      include: { listing: true, user: true },
     });
 
     if (!currentSubmission) {

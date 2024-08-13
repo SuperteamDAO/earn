@@ -21,7 +21,7 @@ import React, { useEffect, useState } from 'react';
 import { EarnAvatar } from '@/components/shared/EarnAvatar';
 import { tokenList } from '@/constants';
 import { type Grant } from '@/features/grants';
-import { userStore } from '@/store/user';
+import { useUser } from '@/store/user';
 import { truncatePublicKey } from '@/utils/truncatePublicKey';
 
 import { type GrantApplicationWithUser } from '../../types';
@@ -116,7 +116,7 @@ export const PaymentsHistoryTab = ({
   grantId: string | undefined;
   grant: Grant | null;
 }) => {
-  const { userInfo } = userStore();
+  const { user } = useUser();
   const [grantees, setGrantees] = useState<GrantApplicationWithUser[]>();
   const [expandedRows, setExpandedRows] = useState<Set<string>>(new Set());
 
@@ -139,10 +139,10 @@ export const PaymentsHistoryTab = ({
   };
 
   useEffect(() => {
-    if (userInfo?.currentSponsorId) {
+    if (user?.currentSponsorId) {
       getGrantees();
     }
-  }, [userInfo?.currentSponsorId]);
+  }, [user?.currentSponsorId]);
 
   const toggleExpandRow = (id: string) => {
     setExpandedRows((prev) => {

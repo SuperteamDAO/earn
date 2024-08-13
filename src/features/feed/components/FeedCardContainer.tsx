@@ -17,7 +17,7 @@ import { IoMdHeart, IoMdHeartEmpty } from 'react-icons/io';
 
 import { EarnAvatar } from '@/components/shared/EarnAvatar';
 import { AuthWrapper } from '@/features/auth';
-import { userStore } from '@/store/user';
+import { useUser } from '@/store/user';
 import { getURLSanitized } from '@/utils/getURLSanitized';
 
 import { FeedCardHeader } from './FeedCardHeader';
@@ -59,18 +59,18 @@ export const FeedCardContainer = ({
   link,
   userId,
 }: FeedCardContainerProps) => {
-  const { userInfo } = userStore();
+  const { user } = useUser();
 
   const [isLiked, setIsLiked] = useState<boolean>(
-    !!like?.find((e: any) => e.id === userInfo?.id),
+    !!like?.find((e: any) => e.id === user?.id),
   );
   const [totalLikes, setTotalLikes] = useState<number>(like?.length ?? 0);
 
   const sanitizedLink = getURLSanitized(link);
 
   useEffect(() => {
-    setIsLiked(!!like?.find((e: any) => e.id === userInfo?.id));
-  }, [like, userInfo?.id]);
+    setIsLiked(!!like?.find((e: any) => e.id === user?.id));
+  }, [like, user?.id]);
 
   const handleLike = async () => {
     const newIsLiked = !isLiked;
@@ -162,7 +162,7 @@ export const FeedCardContainer = ({
                 mr={2}
                 onClick={(e) => {
                   e.stopPropagation();
-                  if (!userInfo?.id) return;
+                  if (!user?.id) return;
                   handleLike();
                 }}
               >

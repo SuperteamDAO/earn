@@ -28,36 +28,23 @@ async function handler(_req: NextApiRequest, res: NextApiResponse) {
     const totalUserCount = await prisma.user.count();
 
     const newUserCountInLastWeek = await prisma.user.count({
-      where: {
-        createdAt: lastWeek,
-      },
+      where: { createdAt: lastWeek },
     });
 
     const totalTalentFilledUserCount = await prisma.user.count({
-      where: {
-        isTalentFilled: true,
-      },
+      where: { isTalentFilled: true },
     });
 
     const newTalentFilledUserCountInLastWeek = await prisma.user.count({
-      where: {
-        createdAt: lastWeek,
-        isTalentFilled: true,
-      },
+      where: { createdAt: lastWeek, isTalentFilled: true },
     });
 
     const newBountiesCountInLastWeek = await prisma.bounties.count({
-      where: {
-        publishedAt: lastWeek,
-        isPublished: true,
-      },
+      where: { publishedAt: lastWeek, isPublished: true },
     });
 
     const bountiesInLastWeek = await prisma.bounties.findMany({
-      where: {
-        publishedAt: lastWeek,
-        isPublished: true,
-      },
+      where: { publishedAt: lastWeek, isPublished: true },
       select: {
         usdValue: true,
         minRewardAsk: true,
@@ -124,7 +111,17 @@ async function handler(_req: NextApiRequest, res: NextApiResponse) {
       },
     });
 
-    const totalTVEInLastWeek = await prisma.bounties.aggregate({
+    const totalApprovedGrantAmountResult =
+      await prisma.grantApplication.aggregate({
+        _sum: {
+          approvedAmountInUSD: true,
+        },
+        where: {
+          applicationStatus: 'Approved',
+        },
+      });
+
+    const totalTVEListingsInLastWeek = await prisma.bounties.aggregate({
       _sum: {
         usdValue: true,
       },
@@ -134,8 +131,26 @@ async function handler(_req: NextApiRequest, res: NextApiResponse) {
       },
     });
 
+    const totalTVEGrantsInLastWeek = await prisma.grantApplication.aggregate({
+      _sum: {
+        approvedAmountInUSD: true,
+      },
+      where: {
+        applicationStatus: 'Approved',
+        decidedAt: lastWeek,
+      },
+    });
+
+    const totalTVEInLastWeek =
+      (totalTVEListingsInLastWeek._sum.usdValue || 0) +
+      (totalTVEGrantsInLastWeek._sum.approvedAmountInUSD || 0);
+
     const totalTVE =
-      Math.ceil((totalRewardAmountResult._sum.usdValue || 0) / 10) * 10;
+      Math.ceil(
+        ((totalRewardAmountResult._sum.usdValue || 0) +
+          (totalApprovedGrantAmountResult._sum.approvedAmountInUSD || 0)) /
+          10,
+      ) * 10;
 
     const info = {
       userSignUpsInLast7Days: newUserCountInLastWeek,
@@ -145,13 +160,14 @@ async function handler(_req: NextApiRequest, res: NextApiResponse) {
       newListingsPublishedInLast7Days: newBountiesCountInLastWeek,
       amountNewListingsPublishedInLast7Days: totalRewardAmountInLastWeek,
       amountListingsOpenAndPublishedOverall: totalRewardAmount,
-      amountTVEAddedInLast7Days: totalTVEInLastWeek._sum.usdValue,
+      amountTVEAddedInLast7Days: totalTVEInLastWeek,
       totalTVE: totalTVE,
     };
 
     await resend.emails.send({
       from: kashEmail,
       to: ['pratik.dholani1@gmail.com', 'bodhiswattwac@gmail.com'],
+      cc: ['abhwshek@gmail.com'],
       subject: `Weekly Earn Stats (from ${formatDate(startOfLastWeek)} to ${formatDate(endOfLastWeek)}`,
       react: InfoTemplate({
         info: info,

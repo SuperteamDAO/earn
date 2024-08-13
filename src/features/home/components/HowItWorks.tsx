@@ -1,11 +1,10 @@
 import { Box, Center, Flex, Text, VStack } from '@chakra-ui/react';
-import axios from 'axios';
 import { useRouter } from 'next/router';
-import { useEffect, useState } from 'react';
 import { LuCheck } from 'react-icons/lu';
 
 import { AuthWrapper } from '@/features/auth';
-import { userStore } from '@/store/user';
+import { useGetUserStats } from '@/features/home';
+import { useUser } from '@/store/user';
 
 const StepIcon = ({ step }: { step: number }) => {
   if (step === 1) {
@@ -118,38 +117,17 @@ const Step = ({
   );
 };
 
-interface Stats {
-  wins: number;
-  participations: number;
-}
-
 export const HowItWorks = () => {
   const router = useRouter();
-  const { userInfo } = userStore();
+  const { user } = useUser();
+  const { data: stats, isLoading } = useGetUserStats();
 
-  const [hasSubmissions, setHasSubmissions] = useState<boolean>(false);
-  const [hasWins, setHasWins] = useState<boolean>(false);
-
-  const [loading, setLoading] = useState(true);
-
-  async function getStats() {
-    try {
-      const result = await axios.get<Stats>('/api/user/stats');
-      setHasSubmissions(result.data.participations > 0);
-      setHasWins(result.data.wins > 0);
-    } catch (err) {
-      console.log('Error getting stats - ', err);
-    }
-    setLoading(false);
-  }
-
-  useEffect(() => {
-    getStats();
-  }, []);
+  const hasSubmissions = (stats?.participations ?? 0) > 0;
+  const hasWins = (stats?.wins ?? 0) > 0;
 
   return (
-    <AuthWrapper style={{ pointerEvents: loading ? 'none' : 'auto' }}>
-      <Box opacity={loading ? '0.2' : '1'}>
+    <AuthWrapper style={{ pointerEvents: isLoading ? 'none' : 'auto' }}>
+      <Box opacity={isLoading ? '0.2' : '1'}>
         <Text mb={'1.5rem'} color={'gray.400'} fontWeight={500}>
           HOW IT WORKS
         </Text>
@@ -157,10 +135,10 @@ export const HowItWorks = () => {
           <VStack pos={'relative'} justifyContent={'space-between'} h={'100%'}>
             <Step
               number={1}
-              isComplete={!loading && !!userInfo?.isTalentFilled}
+              isComplete={!isLoading && !!user?.isTalentFilled}
             />
-            <Step number={2} isComplete={!loading && hasSubmissions} />
-            <Step number={3} isComplete={!loading && hasWins} />
+            <Step number={2} isComplete={!isLoading && hasSubmissions} />
+            <Step number={3} isComplete={!isLoading && hasWins} />
           </VStack>
           <VStack
             pos={'relative'}
@@ -172,7 +150,7 @@ export const HowItWorks = () => {
               <Text
                 as="button"
                 color={
-                  !loading && !!userInfo?.isTalentFilled
+                  !isLoading && !!user?.isTalentFilled
                     ? 'brand.slate.500'
                     : 'brand.purple'
                 }
@@ -182,8 +160,8 @@ export const HowItWorks = () => {
                   color: 'brand.purple',
                 }}
                 onClick={() => {
-                  if (!loading && !!userInfo?.isTalentFilled) return;
-                  else if (userInfo?.id) {
+                  if (!isLoading && !!user?.isTalentFilled) return;
+                  else if (user?.id) {
                     router.push(`/new/talent`);
                   }
                 }}
@@ -198,7 +176,7 @@ export const HowItWorks = () => {
               <Text
                 as="button"
                 color={
-                  !loading && hasSubmissions
+                  !isLoading && hasSubmissions
                     ? 'brand.slate.500'
                     : 'brand.purple'
                 }
@@ -208,8 +186,8 @@ export const HowItWorks = () => {
                   color: 'brand.purple',
                 }}
                 onClick={() => {
-                  if (!loading && hasSubmissions) return;
-                  else if (userInfo?.id) {
+                  if (!isLoading && hasSubmissions) return;
+                  else if (user?.id) {
                     router.push(`/all`);
                   }
                 }}
@@ -223,15 +201,17 @@ export const HowItWorks = () => {
             <Box ml={'0.8125rem'}>
               <Text
                 as="button"
-                color={!loading && hasWins ? 'brand.slate.500' : 'brand.purple'}
+                color={
+                  !isLoading && hasWins ? 'brand.slate.500' : 'brand.purple'
+                }
                 fontSize={'md'}
                 fontWeight={500}
                 _hover={{
                   color: 'brand.purple',
                 }}
                 onClick={() => {
-                  if (!loading && hasWins) return;
-                  else if (userInfo?.id) {
+                  if (!isLoading && hasWins) return;
+                  else if (user?.id) {
                     router.push('/feed');
                   }
                 }}

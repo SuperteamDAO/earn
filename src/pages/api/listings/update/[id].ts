@@ -185,19 +185,8 @@ async function bounty(req: NextApiRequestWithSponsor, res: NextApiResponse) {
       logger.error('Discord Listing Update Message Error', err);
     }
 
-    // listing email check
     logger.info(`Bounty with ID: ${id} updated successfully`);
     logger.debug(`Updated bounty data: ${safeStringify(result)}`);
-
-    // const shouldSendEmail = await shouldSendEmailForListing(result);
-    // if (listing.isPublished === false && shouldSendEmail) {
-    //   logger.debug(`Sending email notification for listing creation`);
-    //   await sendEmailNotification({
-    //     type: 'createListing',
-    //     id: id as string,
-    //     triggeredBy: req.userId,
-    //   });
-    // }
 
     const deadlineChanged =
       listing.deadline?.toString() !== result.deadline?.toString();

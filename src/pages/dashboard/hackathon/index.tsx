@@ -3,7 +3,6 @@ import {
   ChevronLeftIcon,
   ChevronRightIcon,
   EditIcon,
-  ExternalLinkIcon,
   SearchIcon,
   ViewIcon,
   ViewOffIcon,
@@ -12,6 +11,7 @@ import {
   Button,
   Divider,
   Flex,
+  Icon,
   IconButton,
   Image,
   Input,
@@ -48,6 +48,8 @@ import { useSession } from 'next-auth/react';
 import { useEffect, useRef, useState } from 'react';
 import { AiOutlineDelete } from 'react-icons/ai';
 import { FiMoreVertical } from 'react-icons/fi';
+import { IoEyeOffOutline, IoOpenOutline, IoTrash } from 'react-icons/io5';
+import { PiNotePencil } from 'react-icons/pi';
 
 import { LoadingSection } from '@/components/shared/LoadingSection';
 import { tokenList } from '@/constants/index';
@@ -63,7 +65,7 @@ import {
   type SponsorStats,
 } from '@/features/sponsor-dashboard';
 import { Sidebar } from '@/layouts/Sponsor';
-import { userStore } from '@/store/user';
+import { useUser } from '@/store/user';
 import { dayjs } from '@/utils/dayjs';
 
 const debounce = require('lodash.debounce');
@@ -80,7 +82,7 @@ export default function Hackathon() {
     onOpen: deleteDraftOnOpen,
     onClose: deleteDraftOnClose,
   } = useDisclosure();
-  const { userInfo } = userStore();
+  const { user } = useUser();
   const [totalBounties, setTotalBounties] = useState(0);
   const [bounties, setBounties] = useState<ListingWithSubmissions[]>([]);
   const [bounty, setBounty] = useState<ListingWithSubmissions>({});
@@ -125,10 +127,10 @@ export default function Hackathon() {
   };
 
   useEffect(() => {
-    if (userInfo?.hackathonId || session?.user?.role === 'GOD') {
+    if (user?.hackathonId || session?.user?.role === 'GOD') {
       getBounties();
     }
-  }, [userInfo?.hackathonId, skip, searchText]);
+  }, [user?.hackathonId, skip, searchText]);
 
   useEffect(() => {
     const getSponsorStats = async () => {
@@ -137,7 +139,7 @@ export default function Hackathon() {
       setIsStatsLoading(false);
     };
     getSponsorStats();
-  }, [userInfo?.hackathonId]);
+  }, [user?.hackathonId]);
 
   const handleUnpublish = async (unpublishedBounty: ListingWithSubmissions) => {
     setBounty(unpublishedBounty);
@@ -580,7 +582,7 @@ export default function Hackathon() {
                               color={'brand.slate.500'}
                               fontSize={'sm'}
                               fontWeight={500}
-                              icon={<ExternalLinkIcon h={4} w={4} />}
+                              icon={<Icon as={IoOpenOutline} w={4} h={4} />}
                               onClick={() =>
                                 window.open(
                                   `${router.basePath}/listings/${currentBounty?.type}/${currentBounty.slug}`,
@@ -601,7 +603,7 @@ export default function Hackathon() {
                                   color={'brand.slate.500'}
                                   fontSize={'sm'}
                                   fontWeight={500}
-                                  icon={<EditIcon w={4} h={4} />}
+                                  icon={<Icon as={PiNotePencil} w={4} h={4} />}
                                 >
                                   Edit Listing
                                 </MenuItem>
@@ -629,7 +631,14 @@ export default function Hackathon() {
                                   color={'brand.slate.500'}
                                   fontSize={'sm'}
                                   fontWeight={500}
-                                  icon={<AiOutlineDelete size={18} />}
+                                  icon={
+                                    <Icon
+                                      as={IoTrash}
+                                      w={4}
+                                      h={4}
+                                      color={'gray.500'}
+                                    />
+                                  }
                                   onClick={() =>
                                     handleDeleteDraft(currentBounty)
                                   }
@@ -648,7 +657,9 @@ export default function Hackathon() {
                                   color={'brand.slate.500'}
                                   fontSize={'sm'}
                                   fontWeight={500}
-                                  icon={<ViewOffIcon h={4} w={4} />}
+                                  icon={
+                                    <Icon as={IoEyeOffOutline} boxSize={4} />
+                                  }
                                   onClick={() => handleUnpublish(currentBounty)}
                                 >
                                   Unpublish

@@ -23,7 +23,6 @@ import {
   TimeToPayIcon,
 } from '@/features/grants';
 import { ExtraInfoSection } from '@/features/listings';
-import { type SponsorType } from '@/interface/sponsor';
 import { getURL } from '@/utils/validUrl';
 
 import { Default } from './Default';
@@ -80,7 +79,7 @@ export function GrantPageLayout({
           <Box w="full" maxW={'8xl'} mx="auto" bg="white">
             <GrantsHeader
               title={grant?.title ?? ''}
-              sponsor={grant?.sponsor as SponsorType}
+              sponsor={grant?.sponsor}
               status={grant?.status}
               region={grant?.region}
               slug={grant?.slug}

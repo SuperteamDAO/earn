@@ -31,7 +31,6 @@ export interface Listing {
   pocId?: string;
   poc?: User;
   source?: string;
-  sourceDetails?: string;
   type?: BountyType | string;
   applicationType?: 'fixed' | 'rolling';
   totalWinnersSelected?: number;
@@ -70,6 +69,7 @@ export interface ListingWithSubmissions extends Listing {
     Submission?: number;
     Comments?: number;
   };
+  submissionCount?: number;
 }
 
 interface Eligibility {

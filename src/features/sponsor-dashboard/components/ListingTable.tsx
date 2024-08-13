@@ -1,13 +1,7 @@
 import {
-  CopyIcon,
-  EditIcon,
-  ExternalLinkIcon,
-  ViewIcon,
-  ViewOffIcon,
-} from '@chakra-ui/icons';
-import {
   Button,
   Flex,
+  Icon,
   IconButton,
   Image,
   Link,
@@ -27,15 +21,23 @@ import {
   Tr,
   useDisclosure,
 } from '@chakra-ui/react';
-import axios from 'axios';
 import NextLink from 'next/link';
 import { useRouter } from 'next/router';
 import { useSession } from 'next-auth/react';
 import { usePostHog } from 'posthog-js/react';
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import toast from 'react-hot-toast';
-import { AiOutlineDelete } from 'react-icons/ai';
 import { FiMoreVertical } from 'react-icons/fi';
+import {
+  IoCopyOutline,
+  IoDuplicateOutline,
+  IoEye,
+  IoEyeOffOutline,
+  IoOpenOutline,
+  IoTrashOutline,
+} from 'react-icons/io5';
+import { PiNotePencil } from 'react-icons/pi';
+import { RiEditFill } from 'react-icons/ri';
 
 import { tokenList } from '@/constants';
 import { grantAmount } from '@/features/grants';
@@ -103,35 +105,6 @@ export const ListingTable = ({ listings, setListings }: ListingTableProps) => {
       </Th>
     );
   };
-
-  const [submissionCounts, setSubmissionCounts] = useState<{
-    [key: string]: number;
-  }>({});
-
-  useEffect(() => {
-    const fetchSubmissionCounts = async () => {
-      const counts: { [key: string]: number } = {};
-      for (const listing of listings) {
-        let count = 0;
-        if (listing?.type === 'grant') {
-          const response = await axios.post(`/api/grant-application/count`, {
-            grantId: listing?.id,
-          });
-          count = response.data;
-        } else {
-          const response = await axios.get(
-            `/api/listings/${listing?.id}/submission-count/`,
-          );
-          count = response.data;
-        }
-        if (listing.id) {
-          counts[listing.id] = count;
-        }
-      }
-      setSubmissionCounts(counts);
-    };
-    fetchSubmissionCounts();
-  }, [listings]);
 
   const copyToClipboard = (text: string) => {
     navigator.clipboard.writeText(text).then(
@@ -275,7 +248,7 @@ export const ListingTable = ({ listings, setListings }: ListingTableProps) => {
                       fontWeight={500}
                       textAlign={'center'}
                     >
-                      {submissionCounts[listing.id!]}
+                      {listing.submissionCount}
                     </Text>
                   </Td>
                   <Td align="center" py={2}>
@@ -353,7 +326,7 @@ export const ListingTable = ({ listings, setListings }: ListingTableProps) => {
                         fontSize={'13px'}
                         fontWeight={500}
                         _hover={{ bg: '#E0E7FF' }}
-                        leftIcon={<ViewIcon />}
+                        leftIcon={<Icon as={IoEye} />}
                         onClick={() => {
                           posthog.capture('submissions_sponsor');
                           router.push(listingSubmissionLink);
@@ -366,16 +339,15 @@ export const ListingTable = ({ listings, setListings }: ListingTableProps) => {
                           : 'Submissions'}
                       </Button>
                     )}
-                    {listing.status === 'OPEN' &&
-                      !listing.isPublished &&
+                    {!listing.isPublished &&
                       !pastDeadline &&
-                      listing?.type !== 'grant' && (
+                      listing.type !== 'grant' && (
                         <Button
                           color={'brand.slate.500'}
                           fontSize={'13px'}
                           fontWeight={500}
                           _hover={{ bg: 'brand.slate.200' }}
-                          leftIcon={<EditIcon />}
+                          leftIcon={<Icon as={RiEditFill} />}
                           onClick={() => {
                             window.location.href = `/dashboard/listings/${listing.slug}/edit/`;
                           }}
@@ -399,11 +371,10 @@ export const ListingTable = ({ listings, setListings }: ListingTableProps) => {
                       />
                       <MenuList>
                         <MenuItem
-                          py={2}
                           color={'brand.slate.500'}
                           fontSize={'sm'}
                           fontWeight={500}
-                          icon={<ExternalLinkIcon h={4} w={4} />}
+                          icon={<Icon as={IoOpenOutline} w={4} h={4} />}
                           onClick={() => window.open(listingLink, '_blank')}
                         >
                           View {listingLabel}
@@ -411,11 +382,10 @@ export const ListingTable = ({ listings, setListings }: ListingTableProps) => {
 
                         {!!listing.isPublished && (
                           <MenuItem
-                            py={2}
                             color={'brand.slate.500'}
                             fontSize={'sm'}
                             fontWeight={500}
-                            icon={<CopyIcon h={4} w={4} />}
+                            icon={<Icon as={IoCopyOutline} w={4} h={4} />}
                             onClick={() => copyToClipboard(listingLink)}
                           >
                             Copy Link
@@ -434,11 +404,10 @@ export const ListingTable = ({ listings, setListings }: ListingTableProps) => {
                             onClick={resetForm}
                           >
                             <MenuItem
-                              py={2}
                               color={'brand.slate.500'}
                               fontSize={'sm'}
                               fontWeight={500}
-                              icon={<EditIcon w={4} h={4} />}
+                              icon={<Icon as={PiNotePencil} w={4} h={4} />}
                             >
                               Edit {listingLabel}
                             </MenuItem>
@@ -448,11 +417,10 @@ export const ListingTable = ({ listings, setListings }: ListingTableProps) => {
                           listing.type === 'project') && (
                           <MenuItem
                             className="ph-no-capture"
-                            py={2}
                             color={'brand.slate.500'}
                             fontSize={'sm'}
                             fontWeight={500}
-                            icon={<CopyIcon h={4} w={4} />}
+                            icon={<Icon as={IoDuplicateOutline} w={4} h={4} />}
                             onClick={() => {
                               posthog.capture('duplicate listing_sponsor');
                               window.open(
@@ -468,11 +436,10 @@ export const ListingTable = ({ listings, setListings }: ListingTableProps) => {
                           listing?.type !== 'grant' && (
                             <>
                               <MenuItem
-                                py={2}
                                 color={'brand.slate.500'}
                                 fontSize={'sm'}
                                 fontWeight={500}
-                                icon={<AiOutlineDelete size={18} />}
+                                icon={<Icon as={IoTrashOutline} w={4} h={4} />}
                                 onClick={() => handleDeleteDraft(listing)}
                               >
                                 Delete Draft
@@ -483,11 +450,10 @@ export const ListingTable = ({ listings, setListings }: ListingTableProps) => {
                           !!listing.isPublished &&
                           !listing.isWinnersAnnounced && (
                             <MenuItem
-                              py={2}
                               color="brand.slate.500"
                               fontSize="sm"
                               fontWeight={500}
-                              icon={<ViewOffIcon boxSize={4} />}
+                              icon={<Icon as={IoEyeOffOutline} boxSize={4} />}
                               onClick={() => handleUnpublish(listing)}
                             >
                               Unpublish

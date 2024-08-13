@@ -28,7 +28,7 @@ import {
   useDisclosure,
   VStack,
 } from '@chakra-ui/react';
-import { SubscribeHackathon } from '@prisma/client';
+import { type SubscribeHackathon } from '@prisma/client';
 import axios from 'axios';
 import type { GetServerSideProps } from 'next';
 import NextImage, { type StaticImageData } from 'next/image';
@@ -58,7 +58,7 @@ import CashBag from '@/public/assets/hackathon/talent-olympics/cashbag.png';
 import Coder from '@/public/assets/hackathon/talent-olympics/coder.png';
 import Trophy from '@/public/assets/hackathon/talent-olympics/trophy.png';
 import WinFlag from '@/public/assets/hackathon/talent-olympics/winflag.png';
-import { userStore } from '@/store/user';
+import { useUser } from '@/store/user';
 import { TalentOlympicsHeader } from '@/svg/talent-olympics-header';
 import { dayjs } from '@/utils/dayjs';
 
@@ -1084,12 +1084,10 @@ const CountDownRenderer = ({
 const SubscribeHackathon = () => {
   const [isSubscribeLoading, setIsSubscribeLoading] = useState(false);
   const [sub, setSub] = useState<
-    (SubscribeHackathon & {
-      User: User | null;
-    })[]
+    (SubscribeHackathon & { User: User | null })[]
   >([]);
 
-  const { userInfo } = userStore();
+  const { user } = useUser();
   const posthog = usePostHog();
   const {
     isOpen: warningIsOpen,
@@ -1101,53 +1099,41 @@ const SubscribeHackathon = () => {
   const { status: authStatus } = useSession();
   const isAuthenticated = authStatus === 'authenticated';
 
-  const handleSubscribe = async () => {
-    if (isAuthenticated) {
-      if (!userInfo?.isTalentFilled) {
-        warningOnOpen();
-        return;
-      }
-
-      setIsSubscribeLoading(true);
-      try {
-        await axios.post('/api/hackathon/subscribe/subscribe', {
-          slug: SLUG,
-        });
-        setUpdate((prev) => !prev);
-        setIsSubscribeLoading(false);
-        toast.success('Subscribed to the listing');
-      } catch (error) {
-        console.log(error);
-        setIsSubscribeLoading(false);
-        toast.error('Error');
-      }
+  const handleToggleSubscribe = async () => {
+    if (!isAuthenticated || !user?.isTalentFilled) {
+      warningOnOpen();
+      return;
     }
-  };
-  const handleUnSubscribe = async (idSub: string) => {
-    setIsSubscribeLoading(true);
 
+    setIsSubscribeLoading(true);
     try {
-      await axios.post('/api/hackathon/subscribe/unSubscribe', {
-        id: idSub,
+      await axios.post('/api/hackathon/subscribe/toggle', {
+        slug: SLUG,
       });
       setUpdate((prev) => !prev);
-      setIsSubscribeLoading(false);
-      toast.success('Unsubscribed');
+      toast.success(
+        sub.find((e) => e.userId === user?.id) ? 'Unsubscribed' : 'Subscribed',
+      );
     } catch (error) {
       console.log(error);
+      toast.error('Error occurred while toggling subscription');
+    } finally {
       setIsSubscribeLoading(false);
-      toast.error('Error');
     }
   };
 
   useEffect(() => {
-    const fetchUser = async () => {
-      const { data } = await axios.post('/api/hackathon/subscribe/get', {
-        slug: SLUG,
-      });
-      setSub(data);
+    const fetchSubscriptions = async () => {
+      try {
+        const { data } = await axios.post('/api/hackathon/subscribe/get', {
+          slug: SLUG,
+        });
+        setSub(data);
+      } catch (error) {
+        console.error('Error fetching subscription data:', error);
+      }
     };
-    fetchUser();
+    fetchSubscriptions();
   }, [update]);
 
   return (
@@ -1159,7 +1145,7 @@ const SubscribeHackathon = () => {
           onClose={warningOnClose}
           title={'Complete your profile'}
           bodyText={
-            'Please complete your profile before subscribing to a hackthon.'
+            'Please complete your profile before subscribing to a hackathon.'
           }
           primaryCtaText={'Complete Profile'}
           primaryCtaLink={'/new/talent'}
@@ -1167,68 +1153,44 @@ const SubscribeHackathon = () => {
       )}
       <HStack align="start">
         <AuthWrapper>
-          <Button
+          <IconButton
             className="ph-no-capture"
-            w="fit-content"
-            px={0}
             color={
-              sub.find((e) => e.userId === userInfo?.id) ? 'white' : 'white'
+              sub.find((e) => e.userId === user?.id)
+                ? 'white'
+                : 'brand.slate.500'
             }
             bg={
-              sub.find((e) => e.userId === userInfo?.id)
+              sub.find((e) => e.userId === user?.id)
                 ? 'brand.purple'
-                : 'rgba(34, 35, 36, 0.46)'
+                : 'brand.slate.100'
+            }
+            aria-label="Notify"
+            icon={
+              isSubscribeLoading ? (
+                <Spinner color="white" size="sm" />
+              ) : sub.find((e) => e.userId === user?.id) ? (
+                <TbBellRinging />
+              ) : (
+                <TbBell />
+              )
             }
             onClick={() => {
-              if (sub.find((e) => e.userId === userInfo?.id)) {
-                posthog.capture('unnotify me_hackathon');
-                handleUnSubscribe(
-                  sub.find((e) => e.userId === userInfo?.id)?.id as string,
-                );
-
-                return;
-              }
-              posthog.capture('notify me_hackathon');
-              handleSubscribe();
+              posthog.capture(
+                sub.find((e) => e.userId === user?.id)
+                  ? 'unnotify me_hackathon'
+                  : 'notify me_hackathon',
+              );
+              handleToggleSubscribe();
             }}
-          >
-            <IconButton
-              className="ph-no-capture"
-              color={
-                sub.find((e) => e.userId === userInfo?.id) ? 'white' : 'white'
-              }
-              bg={'transparent'}
-              aria-label="Notify"
-              icon={
-                isSubscribeLoading ? (
-                  <Spinner color="white" size="sm" />
-                ) : sub.find((e) => e.userId === userInfo?.id) ? (
-                  <TbBellRinging />
-                ) : (
-                  <TbBell />
-                )
-              }
-              variant="solid"
-            />
-            <Text
-              display={{ base: 'block', sm: 'none' }}
-              pr={3}
-              color={'white'}
-              fontWeight={500}
-            >
-              {sub?.length ? sub.length + 1 : 1}
-            </Text>
-          </Button>
+            variant="solid"
+          />
         </AuthWrapper>
       </HStack>
       <HStack whiteSpace={'nowrap'}>
         <VStack align={'start'} gap={0}>
-          <Text
-            display={{ base: 'none', sm: 'block' }}
-            color={'white'}
-            fontWeight={500}
-          >
-            {sub?.length ? sub.length + 1 : 1}
+          <Text color={'white'} fontWeight={500}>
+            {sub?.length ? sub.length : 0}
           </Text>
           <Text
             display={{ base: 'none', md: 'flex' }}
@@ -1236,8 +1198,7 @@ const SubscribeHackathon = () => {
             fontSize={'sm'}
             fontWeight={400}
           >
-            {(sub?.length ? sub.length + 1 : 1) === 1 ? 'Person' : 'People'}{' '}
-            Interested
+            {sub?.length === 1 ? 'Person' : 'People'} Interested
           </Text>
         </VStack>
       </HStack>

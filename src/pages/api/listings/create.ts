@@ -130,16 +130,6 @@ async function handler(req: NextApiRequestWithSponsor, res: NextApiResponse) {
     logger.info(`Bounty created successfully with ID: ${result.id}`);
     logger.debug(`Created bounty data: ${safeStringify(result)}`);
 
-    // const shouldSendEmail = await shouldSendEmailForListing(result);
-    // if (shouldSendEmail) {
-    //   logger.debug('Sending email notification for new listing creation');
-    //   await sendEmailNotification({
-    //     type: 'createListing',
-    //     id: result.id,
-    //     triggeredBy: userId,
-    //   });
-    // }
-
     return res.status(200).json(result);
   } catch (error: any) {
     logger.error(

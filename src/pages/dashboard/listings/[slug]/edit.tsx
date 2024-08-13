@@ -7,7 +7,7 @@ import { LoadingSection } from '@/components/shared/LoadingSection';
 import { CreateListing } from '@/features/listing-builder';
 import type { Listing } from '@/features/listings';
 import { Sidebar } from '@/layouts/Sponsor';
-import { userStore } from '@/store/user';
+import { useUser } from '@/store/user';
 
 interface Props {
   slug: string;
@@ -15,7 +15,7 @@ interface Props {
 
 function EditBounty({ slug }: Props) {
   const router = useRouter();
-  const { userInfo } = userStore();
+  const { user } = useUser();
   const [isBountyLoading, setIsBountyLoading] = useState(true);
   const [bounty, setBounty] = useState<Listing | undefined>();
   const [prevStep, setPrevStep] = useState<number>(2);
@@ -26,7 +26,7 @@ function EditBounty({ slug }: Props) {
       const bountyDetails = await axios.get(
         `/api/sponsor-dashboard/${slug}/listing`,
       );
-      if (bountyDetails.data.sponsorId !== userInfo?.currentSponsorId) {
+      if (bountyDetails.data.sponsorId !== user?.currentSponsorId) {
         router.push('/dashboard/listings');
       } else {
         const bounty = bountyDetails.data as Listing;
@@ -64,10 +64,10 @@ function EditBounty({ slug }: Props) {
   };
 
   useEffect(() => {
-    if (userInfo?.currentSponsorId) {
+    if (user?.currentSponsorId) {
       getBounty();
     }
-  }, [userInfo?.currentSponsorId]);
+  }, [user?.currentSponsorId]);
 
   return (
     <Sidebar>

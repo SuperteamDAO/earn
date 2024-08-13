@@ -1,24 +1,28 @@
 import { Box, Container, Flex, HStack } from '@chakra-ui/react';
+import { useQuery } from '@tanstack/react-query';
 import axios from 'axios';
 import { useRouter } from 'next/router';
 import React, { type ReactNode, useEffect, useState } from 'react';
 
-import { HomeBanner } from '@/components/home/Banner';
-import { CategoryBanner } from '@/components/home/CategoryBanner';
-import { NavTabs } from '@/components/home/NavTabs';
-import { RegionBanner } from '@/components/home/RegionBanner';
-import { HomeSideBar } from '@/components/home/SideBar';
-import { UserStatsBanner } from '@/components/home/UserStatsBanner';
 import { type Superteams } from '@/constants/Superteam';
+import {
+  CategoryBanner,
+  HomeBanner,
+  HomeSideBar,
+  NavTabs,
+  RegionBanner,
+  useGetTotals,
+  UserStatsBanner,
+} from '@/features/home';
 import type { User } from '@/interface/user';
 import { Default } from '@/layouts/Default';
 import { Meta } from '@/layouts/Meta';
 
-interface TotalType {
-  count?: number;
-  totalInUSD?: number;
-  totalUsers?: number;
-}
+const fetchRecentEarners = async (): Promise<User[]> => {
+  const response = await axios.get('/api/sidebar/recent-earners');
+  return response.data;
+};
+
 interface HomeProps {
   children: ReactNode;
   type: 'home' | 'category' | 'region' | 'niche' | 'feed';
@@ -29,29 +33,16 @@ type CategoryTypes = 'content' | 'development' | 'design' | 'other';
 
 export function Home({ children, type, st }: HomeProps) {
   const router = useRouter();
-
-  const [isTotalLoading, setIsTotalLoading] = useState(true);
-  const [recentEarners, setRecentEarners] = useState<User[]>([]);
-  const [totals, setTotals] = useState<TotalType>({});
   const [currentCategory, setCurrentCategory] = useState<CategoryTypes | null>(
     null,
   );
 
-  const getTotalInfo = async () => {
-    try {
-      const totalsData = await axios.get('/api/sidebar/totals');
-      setTotals(totalsData.data);
-      const earnerData = await axios.get('/api/sidebar/recent-earners');
-      setRecentEarners(earnerData.data);
-      setIsTotalLoading(false);
-    } catch (e) {
-      setIsTotalLoading(false);
-    }
-  };
+  const { data: totals, isLoading: isTotalsLoading } = useGetTotals();
 
-  useEffect(() => {
-    getTotalInfo();
-  }, []);
+  const { data: recentEarners, isLoading: isEarnersLoading } = useQuery({
+    queryKey: ['recentEarners'],
+    queryFn: fetchRecentEarners,
+  });
 
   useEffect(() => {
     if (router.asPath.includes('/category/development/')) {
@@ -63,7 +54,9 @@ export function Home({ children, type, st }: HomeProps) {
     } else if (router.asPath.includes('/category/other/')) {
       setCurrentCategory('other');
     }
-  }, [router]);
+  }, [router.asPath]);
+
+  const isTotalLoading = isTotalsLoading || isEarnersLoading;
 
   return (
     <Default
@@ -98,7 +91,7 @@ export function Home({ children, type, st }: HomeProps) {
               {type === 'home' && (
                 <>
                   <NavTabs />
-                  <HomeBanner userCount={totals.totalUsers} />
+                  <HomeBanner userCount={totals?.totalUsers} />
                   <UserStatsBanner />
                 </>
               )}

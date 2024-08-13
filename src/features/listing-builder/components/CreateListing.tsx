@@ -8,7 +8,7 @@ import { ErrorSection } from '@/components/shared/ErrorSection';
 import { SurveyModal } from '@/components/Survey';
 import { type MultiSelectOptions } from '@/constants';
 import { getListingDraftStatus, type Listing } from '@/features/listings';
-import { userStore } from '@/store/user';
+import { useUser } from '@/store/user';
 
 import { useListingFormStore } from '../store';
 import { type ListingFormType } from '../types';
@@ -75,7 +75,7 @@ export function CreateListing({
   prevStep,
 }: Props) {
   const router = useRouter();
-  const { userInfo } = userStore();
+  const { user } = useUser();
   const { form, initializeForm } = useListingFormStore();
 
   const listingDraftStatus = getListingDraftStatus(
@@ -132,7 +132,7 @@ export function CreateListing({
     setIsListingPublishing(true);
     try {
       const newListing: Listing = {
-        pocId: userInfo?.id ?? '',
+        pocId: user?.id ?? '',
         skills: form?.skills,
         title: form?.title,
         slug: form?.slug,
@@ -182,7 +182,7 @@ export function CreateListing({
       setType(result?.data?.type ?? ('' as string));
       setIsListingPublishing(false);
       onOpen();
-      if (!userInfo?.surveysShown || !(surveyId in userInfo.surveysShown)) {
+      if (!user?.surveysShown || !(surveyId in user.surveysShown)) {
         onSurveyOpen();
       }
     } catch (e) {
@@ -198,7 +198,7 @@ export function CreateListing({
       api = `/api/${basePath}/update/${listing?.id}/`;
     }
     let draft: Listing = {
-      pocId: userInfo?.id ?? '',
+      pocId: user?.id ?? '',
     };
     try {
       draft = {
@@ -270,7 +270,7 @@ export function CreateListing({
 
   return (
     <>
-      {!userInfo?.id || !userInfo?.currentSponsorId ? (
+      {!user?.id || !user?.currentSponsorId ? (
         <ErrorSection
           title="Access is Forbidden!"
           message="Please contact support to access this section."
@@ -282,7 +282,7 @@ export function CreateListing({
               type={isType}
               slug={slug}
               isOpen={isOpen}
-              isVerified={userInfo.currentSponsor?.isVerified || false}
+              isVerified={user.currentSponsor?.isVerified || false}
               onClose={() => {}}
             />
           )}

@@ -1,13 +1,40 @@
 import { Box, Button, Divider, Flex, Text } from '@chakra-ui/react';
+import { useQuery } from '@tanstack/react-query';
 import axios from 'axios';
 import { useEffect, useRef, useState } from 'react';
 import Fireworks from 'react-canvas-confetti/dist/presets/fireworks';
 import { type TConductorInstance } from 'react-canvas-confetti/dist/types';
 
+import { EarnAvatar } from '@/components/shared/EarnAvatar';
 import { AuthWrapper } from '@/features/auth';
-import { userStore } from '@/store/user';
+import { useUser } from '@/store/user';
 
-import { EarnAvatar } from '../shared/EarnAvatar';
+const fetchPfps = async (userIds: string[]) => {
+  const maxPfps = 6;
+  const latestUserIds = userIds.slice(-maxPfps);
+  const responses = await Promise.all(
+    latestUserIds.map((id) =>
+      axios.post('/api/user/pfps', { id }).then((res) => res.data),
+    ),
+  );
+  return responses;
+};
+
+const dummyUsers = [
+  { id: '1', photo: '/assets/pfps/t1.png' },
+  { id: '2', photo: '/assets/pfps/md2.png' },
+  { id: '3', photo: '/assets/pfps/fff1.png' },
+  { id: '55', photo: '' },
+  { id: '5', photo: '/assets/pfps/md1.png' },
+  { id: '6', photo: '/assets/pfps/t2.png' },
+  { id: '7', photo: '' },
+  { id: '8', photo: '' },
+  { id: '9', photo: '' },
+  { id: '10', photo: '' },
+  { id: '11', photo: '' },
+  { id: '12', photo: '' },
+  { id: '13', photo: '' },
+];
 
 export const VibeCard = () => {
   const [vibeCount, setVibeCount] = useState(13);
@@ -16,6 +43,14 @@ export const VibeCard = () => {
   const [conductor, setConductor] = useState<TConductorInstance>();
   const [isAudioPlaying, setIsAudioPlaying] = useState(false);
   const audioRef = useRef<HTMLAudioElement | null>(null);
+
+  const { user } = useUser();
+
+  const { data: fetchedUsers = [] } = useQuery({
+    queryKey: ['vibers-pfps', userIds],
+    queryFn: () => fetchPfps(userIds),
+    enabled: userIds.length > 0,
+  });
 
   useEffect(() => {
     audioRef.current = new Audio('/assets/memes/chipichapa.mp3');
@@ -42,91 +77,14 @@ export const VibeCard = () => {
     setConductor(conductor);
   };
 
-  const dummyUsers = [
-    {
-      id: '1',
-      photo: '/assets/pfps/t1.png',
-    },
-    {
-      id: '2',
-      photo: '/assets/pfps/md2.png',
-    },
-    {
-      id: '3',
-      photo: '/assets/pfps/fff1.png',
-    },
-    {
-      id: '55',
-      photo: '',
-    },
-    {
-      id: '5',
-      photo: '/assets/pfps/md1.png',
-    },
-    {
-      id: '6',
-      photo: '/assets/pfps/t2.png',
-    },
-    {
-      id: '7',
-      photo: '',
-    },
-    {
-      id: '8',
-      photo: '',
-    },
-    {
-      id: '9',
-      photo: '',
-    },
-    {
-      id: '10',
-      photo: '',
-    },
-    {
-      id: '11',
-      photo: '',
-    },
-    {
-      id: '12',
-      photo: '',
-    },
-    {
-      id: '13',
-      photo: '',
-    },
-  ];
-
-  const [users, setUsers] =
-    useState<{ id: string; photo: string }[]>(dummyUsers);
-  const { userInfo } = userStore();
-
-  const fetchUserData = async (userIds: string[]) => {
-    const maxPfps = 6;
-    try {
-      const latestUserIds = userIds.slice(-maxPfps);
-      const responses = await Promise.all(
-        latestUserIds.map((id) =>
-          axios.post('/api/feed/viber-pfp', { id }).then((res) => res.data),
-        ),
-      );
-      const remainingSlots = Math.max(0, maxPfps - responses.length);
-      setUsers([...dummyUsers.slice(0, remainingSlots), ...responses]);
-    } catch (error) {
-      console.error('Error fetching user data:', error);
-    }
-  };
-
-  useEffect(() => {
-    fetchUserData(userIds);
-  }, [userIds]);
-
   useEffect(() => {
     const newWs = new WebSocket('wss://earn-vibe-production.up.railway.app');
     newWs.onmessage = (event) => {
-      const { vibeCount, userIds } = JSON.parse(event.data);
-      setVibeCount(vibeCount + 13);
-      setUserIds(userIds);
+      const { vibeCount: newVibeCount, userIds: newUserIds } = JSON.parse(
+        event.data,
+      );
+      setVibeCount(newVibeCount + 13);
+      setUserIds(newUserIds);
     };
     setWs(newWs);
     return () => {
@@ -135,11 +93,16 @@ export const VibeCard = () => {
   }, []);
 
   const handleVibeClick = () => {
-    if (ws && !!userInfo?.id) {
-      ws.send(JSON.stringify({ userId: userInfo.id, action: 'vibe' }));
+    if (ws && !!user?.id) {
+      ws.send(JSON.stringify({ userId: user.id, action: 'vibe' }));
       shootConfetti();
     }
   };
+
+  const displayUsers = [
+    ...dummyUsers.slice(0, Math.max(0, 6 - fetchedUsers.length)),
+    ...fetchedUsers,
+  ].slice(0, 6);
 
   return (
     <Flex
@@ -162,18 +125,13 @@ export const VibeCard = () => {
           people vibing rn
         </Text>
         <Flex align={'center'}>
-          {users.map((user, i) => (
+          {displayUsers.map((user, i) => (
             <Box key={user.id} ml={i > 0 ? '-10px' : '0'}>
-              <EarnAvatar
-                key={user.id}
-                id={user.id}
-                avatar={user.photo}
-                size="28px"
-              />
+              <EarnAvatar id={user.id} avatar={user.photo} size="28px" />
             </Box>
           ))}
           <Text ml={1} color="brand.slate.400" fontSize={'xs'}>
-            +{vibeCount - 6}
+            +{Math.max(0, vibeCount - 6)}
           </Text>
         </Flex>
       </Flex>

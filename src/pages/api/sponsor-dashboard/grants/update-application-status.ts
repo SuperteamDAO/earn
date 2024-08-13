@@ -11,6 +11,7 @@ import { convertGrantApplicationToAirtable } from '@/features/grants';
 import logger from '@/lib/logger';
 import { prisma } from '@/prisma';
 import { airtableConfig, airtableUpsert, airtableUrl } from '@/utils/airtable';
+import { fetchTokenUSDValue } from '@/utils/fetchTokenUSDValue';
 import { safeStringify } from '@/utils/safeStringify';
 
 async function handler(req: NextApiRequestWithSponsor, res: NextApiResponse) {
@@ -32,7 +33,6 @@ async function handler(req: NextApiRequestWithSponsor, res: NextApiResponse) {
       where: { id },
       include: {
         grant: true,
-        user: true,
       },
     });
 
@@ -51,19 +51,39 @@ async function handler(req: NextApiRequestWithSponsor, res: NextApiResponse) {
 
     const updatedData: any = {
       applicationStatus,
+      decidedAt: new Date().toISOString(),
     };
 
     const isApproved = applicationStatus === 'Approved';
 
     if (isApproved) {
+      const tokenUSDValue = await fetchTokenUSDValue(
+        currentApplication.grant.token!,
+      );
+      const usdValue = tokenUSDValue * parsedAmount;
+
       updatedData.approvedAmount = parsedAmount;
+      updatedData.approvedAmountInUSD = usdValue;
     }
 
     const result = await prisma.grantApplication.update({
       where: { id },
       data: updatedData,
       include: {
-        user: true,
+        user: {
+          select: {
+            id: true,
+            firstName: true,
+            lastName: true,
+            email: true,
+            photo: true,
+            publicKey: true,
+            discord: true,
+            username: true,
+            twitter: true,
+            telegram: true,
+          },
+        },
         grant: true,
       },
     });
